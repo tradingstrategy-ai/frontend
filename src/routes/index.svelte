@@ -1,5 +1,13 @@
 <script context="module" lang="ts">
-	export const prerender = true;
+
+	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
+	export async function load({ page, session, fetch, context }) {
+		return {
+			redirect: "/datasets",
+			status: 302,
+		};
+	}
+
 </script>
 
 <script lang="ts">

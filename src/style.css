@@ -1,0 +1,279 @@
+.card-comments img {
+  width: 4rem; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #fafafa;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Exo 2', sans-serif;
+}
+
+a {
+  color: #023dee;
+} 
+
+.img-logo {
+  max-height: 28px;
+}
+
+.navbar.navbar-light .breadcrumb .nav-item .nav-link, .navbar.navbar-light .navbar-nav .nav-item .nav-link {
+  transition: .35s;
+  text-transform: none
+}
+
+.navbar-brand {
+  margin-right: 60px;
+}
+
+.mr-auto .nav-item {
+  margin-right: 20px;
+}
+
+.nav-flex-icons i {
+  font-size: 24px;
+  /*color: #b68300;*/
+  /*color: #023dee;*/
+}
+
+.navbar.navbar-light .navbar-nav .nav-item {
+  transition: all 0.3s;
+  border-bottom: 4px solid white;
+  position: relative;
+  top: 4px;
+}
+
+.navbar.navbar-light .navbar-nav .nav-item.active {
+  border-bottom: 4px solid #b68300;
+}
+
+.navbar.navbar-light .navbar-nav .nav-item.active>.nav-link {
+  background: inherit;
+}
+
+.navbar.navbar-light .navbar-nav .nav-item:hover {
+  background: inherit;
+  border-bottom: 4px solid #b68300;
+}
+
+
+/* Header image adjust */
+.tmpl-home, .tmpl-post, .tmpl-blog-roll, .tmpl-page {
+  margin-top: 0 !important;
+  padding-top: 0  !important;
+}
+
+.card-jumbo {
+  background: #EEEEEE url(../img/splash4.jpg);
+  color: black;
+  background-size: cover;
+  background-position: top center;
+}
+
+.card-jumbo .lead {
+  font-weight: 500;
+  /*text-shadow: 0 1px 1px rgba(0,0,0,0.1);*/ 
+  background: #eeb302;
+  color: white;
+  display: inline-block;
+  padding: 0.5rem;
+}
+
+.jumbo-bg-image {
+  
+}
+
+/* 1px 16px 4px 0px rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); */
+.card-home, .section-header-image {
+  box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.25);
+}
+
+.card-home h1 {
+  /*color: #b78400;*/
+  color: #b68300;
+}
+
+.card-deck-home {
+  margin-top: 6rem;
+}
+
+.card-deck-home .card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-deck-home .card-body strong {
+  color: #b78400;
+}
+
+.card-deck-home .card-body .card-text {
+  flex: auto;
+}
+
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/::marker 
+
+Does not work in Chrome yet, experimental
+*/
+/*
+.card-deck-home li::marker {
+  color: #eeb302;
+  font-size: 1.2em;
+}*/
+
+/* https://stackoverflow.com/a/5308785/315168 */
+.card-deck-home ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 20px;
+}
+
+.card-deck-home li::before {
+  content: "▶";
+  font-size: 80%;
+  color: #eeb302;
+  position: relative;
+  left: -10px;
+}
+
+.card-deck-home li {
+  text-indent: -12px;
+  margin-bottom: 10px;
+}
+
+.card-deck-home .card-body .btn {
+  align-self: flex-end;
+}
+
+.card-deck-home .card-body .btn-primary {
+
+  /*
+  background: #023dee !important;
+  */
+  background: black !important;
+  color: white;
+  font-family: "Exo 2";
+  /*
+  color: black;
+  */
+}
+
+/* Plain pages */
+
+.body-tmpl-plain {
+  background: white;  
+}
+
+.tmpl-plain {
+  padding: 0;
+}
+
+.tmpl-plain .view {
+  /* Fix for box shadow not rendering on <img> */
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.gold-text {
+  color: #eeb302;
+}
+
+ul.follow-person {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.follow-person li {
+  display: inline-block;
+}
+
+.follow-person i {
+ font-size: 24px;
+}
+
+.follow-person a {
+  transition: 0.35s;
+  color: black;
+}
+
+.follow-person a:hover {
+  color: #ffe54c;
+}
+
+
+footer.page-footer {
+  /* background: #eeb302; */
+  background: #eeb302; 
+  color: black;
+  margin-top: 6rem;
+  padding: 3rem 0;
+}
+
+.page-footer h4 {
+  color: black;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+  .page-footer h4 {
+    margin-top: 3rem;
+  }
+}
+
+.page-footer .alert {
+  background: #ffe54c;
+}
+
+.page-footer ul {
+  list-style: none;
+  padding: 0;  
+}
+
+.page-footer li {
+  margin-bottom: 10px;
+}
+
+.page-footer .btn-outline {
+  color: black !important;
+  border: 2px solid #b78400 !important;
+}
+
+.page-footer .md-form input[type=email]:focus {
+  border-bottom: 1px solid #b68300 !important;
+  box-shadow: 0 1px 0 0 #b68300 !important;
+}
+
+.page-footer .input-group {
+  display: flex;
+}
+
+.page-footer .input-group input[type=email] {
+  flex: auto;
+}
+
+.page-footer .input-group .btn {
+  padding: 0.84rem;
+  border: 2px solid #475056;
+  color: #475056;
+}
+
+footer.page-footer a {
+  color: black;
+}
+
+
+footer.page-footer a.mailto {
+  color: black;
+  font-weight: bold;
+}
+
+.page-footer a:hover {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+
