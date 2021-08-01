@@ -14,10 +14,12 @@
 		const url = `https://candlelightdinner.capitalgram.com/datasets`;
 		const res = await fetch(url);
 
+		const datasets = await res.json();
+
 		if (res.ok) {
 			return {
 				props: {
-					datasets: await res.json()
+					datasets
 				}
 			};
 		}
@@ -30,10 +32,14 @@
 
 </script>
 
+<script>
+	import Time from "svelte-time";
+	export let datasets;
+</script>
 
 <svelte:head>
 	<title>On-chain quantative finance datasets</title>
-	<decription>Download OHLCV and liquidity data for decentralised exchanges and blockchains</decription>
+	<meta name="description" content="Download OHLCV and liquidity data for decentralised exchanges and blockchains">
 </svelte:head>
 
 <div class="container">
@@ -43,14 +49,78 @@
 				<h1>Datasets</h1>
 
 				<p>
-					The following blockchain trade and liquidity datasets are available for
-					<a href="https://docs.capitalgram.com/">Capitalgram clients.</a> You can use them for
+					The following on-chain trade and liquidity datasets are available for decentralised finance research,
 					cryptocurrency algorithmic trading, automated trading strategy research and execution.
+					You can download them with <a href="https://docs.capitalgram.com/">Capitalgram Python client.</a>
 				</p>
 
 				<p>
-					<a href="https://docs.capitalgram.com/">Getting started</a> - <a href="https://github.com/miohtama/capitalgram-onchain-dex-quant-data">Github</a>
+					These datasets contain trade and liquidity data from several blockchains and
+					<a href="https://docs.capitalgram.com/glossary.html#term-AMM">automatic market maker</a> exchanges. The supported blockchains include popular
+					Ethereum, Binance Smart Chain and Polygon chains.
 				</p>
+
+				<p>
+					Datasets are large. We expect you to download the dataset, cache the resulting file on a local disk and
+					perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute
+					candle data takes several gigabyte of memory.
+				</p>
+
+				<p>
+					Datasets are distributed either in <a href="https://arrow.apache.org/">compressed Parquet</a> or JSON file formats.
+					Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
+				</p>
+
+
+				<h2>Learn more</h2>
+
+				<ul>
+					<li>
+						<a href="https://docs.capitalgram.com/">Getting started</a>
+					</li>
+					<li>
+						<a href="https://docs.capitalgram.com/">Documentation</a>
+					</li>
+					<li>
+						<a href="https://github.com/miohtama/capitalgram-onchain-dex-quant-data">Github</a>
+					</li>
+				</ul>
+
+				<h2>Available datasets</h2>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Tag</th>
+							<th>Entry count (k)</th>
+							<th>Size (MBytes)</th>
+							<th>Format</th>
+							<th>Last updated</th>
+							<th>Links</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						{#each datasets as row }
+							<tr>
+								<td>{row.name}</td>
+								<td>{row.designation}</td>
+								<td>{(row.entries/1000).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+								<td>{(row.size/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+								<td>{row.format}</td>
+								<td>
+									<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
+								</td>
+								<td>
+									<a href={row.documentation}>
+										Documentation
+									</a>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
 
 
 			</div>

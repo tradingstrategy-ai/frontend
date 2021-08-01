@@ -8,8 +8,8 @@
   <div class="container">
 
     <!-- Brand -->
-    <a class="navbar-brand waves-effect" href="/">
-      <img class="img-logo" src={logo} alt="On-chain quantative finance" />
+    <a class="navbar-brand waves-effect" href="https://capitalgram.com">
+      <img class="img-logo" src={logo} alt="On-chain quantitative finance" />
     </a>
 
     <!-- Collapse -->
@@ -25,8 +25,13 @@
       <ul class="navbar-nav mr-auto">
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="/">Datasets</a>
+            <a class="nav-link waves-effect" href="/datasets">Datasets</a>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="https://docs.capitalgram.com">Documentation</a>
+          </li>
+
 
           <li class="nav-item">
             <a class="nav-link waves-effect" href="https://capitalgram.com/about">About</a>

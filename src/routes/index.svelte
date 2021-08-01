@@ -3,12 +3,13 @@
 	export const prerender = true;
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
+	/*
 	export async function load({ page, session, fetch, context }) {
 		return {
 			redirect: "/datasets",
 			status: 302,
 		};
-	}
+	}*/
 
 </script>
 
@@ -21,22 +22,7 @@
 </svelte:head>
 
 <section>
-	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
-		</div>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
-
-	<Counter />
+	<a href="/datasets">View datasets</a>
 </section>
 
 <style>
