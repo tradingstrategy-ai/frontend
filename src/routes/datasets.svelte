@@ -33,6 +33,7 @@
 
 <svelte:head>
 	<title>On-chain quantative finance datasets</title>
+	<decription>Download OHLCV and liquidity data for decentralised exchanges and blockchains</decription>
 </svelte:head>
 
 <div class="container">

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from '$lib/header/Header.svelte';
 	import Navbar from '$lib/header/Navbar.svelte';
 	// Old imports from the blog website
 	import '../bootstrap.min.css';
