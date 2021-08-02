@@ -104,40 +104,41 @@
 
 				<h2>Available datasets</h2>
 
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Tag</th>
-							<th>Entry count (k)</th>
-							<th>Size (MBytes)</th>
-							<th>Format</th>
-							<th>Last updated</th>
-							<th>Links</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{#each datasets as row }
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
 							<tr>
-								<td>{row.name}</td>
-								<td>{row.designation}</td>
-								<td>{formatNumber(row.entries)}</td>
-								<td>{formatSize(row.size)}</td>
-								<td>{row.format}</td>
-								<td>
-									<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
-								</td>
-								<td>
-									<a href={row.documentation}>
-										Documentation
-									</a>
-								</td>
+								<th>Name</th>
+								<th>Tag</th>
+								<th>Entry count (k)</th>
+								<th>Size (MBytes)</th>
+								<th>Format</th>
+								<th>Last updated</th>
+								<th>Links</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
 
+						<tbody>
+							{#each datasets as row }
+								<tr>
+									<td>{row.name}</td>
+									<td>{row.designation}</td>
+									<td>{formatNumber(row.entries)}</td>
+									<td>{formatSize(row.size)}</td>
+									<td>{row.format}</td>
+									<td>
+										<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
+									</td>
+									<td>
+										<a href={row.documentation}>
+											Documentation
+										</a>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 
 			</div>
 		</div>
