@@ -48,7 +48,7 @@
 		if(n <= 1024*1024) {
 			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
 		} else{
-			return (n/1024*1024).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
 		}
 	}
 </script>
