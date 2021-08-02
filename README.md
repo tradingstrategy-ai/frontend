@@ -10,10 +10,9 @@ npm run dev
 
 ## Running on production
 
-Hack solution:
-
 ```shell
-node_modules/.bin/svelte-kit dev --port 80 --host <your public IP>
+export PRODUCTION=true 
+node_modules/.bin/svelte-kit build && node build/index.js
 ```
 
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)

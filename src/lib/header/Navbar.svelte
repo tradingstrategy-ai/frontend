@@ -25,7 +25,7 @@
       <ul class="navbar-nav mr-auto">
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="/datasets">Datasets</a>
+            <a class="nav-link waves-effect" href="/datasets">DeFi datasets</a>
           </li>
 
           <li class="nav-item">

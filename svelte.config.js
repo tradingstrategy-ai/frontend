@@ -5,6 +5,7 @@ import adapter from '@sveltejs/adapter-static';
 let config;
 
 if(process.env.PRODUCTION) {
+	console.log("Using production config");
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
@@ -18,6 +19,7 @@ if(process.env.PRODUCTION) {
 
 	};
 } else {
+	console.log("Using local dev env config");
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
