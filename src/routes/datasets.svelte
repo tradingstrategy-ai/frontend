@@ -35,6 +35,22 @@
 <script>
 	import Time from "svelte-time";
 	export let datasets;
+
+	function formatNumber(n) {
+		if(n <= 1000) {
+			return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
+		} else{
+			return (n/1000).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+		}
+	}
+
+	function formatSize(n) {
+		if(n <= 1024*1024) {
+			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
+		} else{
+			return (n/1024*1024).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+		}
+	}
 </script>
 
 <svelte:head>
@@ -46,12 +62,12 @@
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
-				<h1>Datasets</h1>
+				<h1>DeFi datasets</h1>
 
 				<p>
 					The following on-chain trade and liquidity datasets are available for decentralised finance research,
 					cryptocurrency algorithmic trading, automated trading strategy research and execution.
-					You can download them with <a href="https://docs.capitalgram.com/">Capitalgram Python client.</a>
+					You can download the datasets with <a href="https://docs.capitalgram.com/">Capitalgram Python client.</a>
 				</p>
 
 				<p>
@@ -106,8 +122,8 @@
 							<tr>
 								<td>{row.name}</td>
 								<td>{row.designation}</td>
-								<td>{(row.entries/1000).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
-								<td>{(row.size/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+								<td>{formatNumber(row.entries)}</td>
+								<td>{formatSize(row.size)}</td>
 								<td>{row.format}</td>
 								<td>
 									<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
