@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logo from './logo.png';
+	import logo from '../assets/logo-with-text.svg';
 </script>
 
 
@@ -16,6 +16,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
+      <span class="">TradingStrategy.ai</span>
     </button>
 
     <!-- Links -->
@@ -32,7 +33,7 @@
             <a class="nav-link waves-effect" href="https://docs.capitalgram.com">Documentation</a>
           </li>
 
-
+          <!--
           <li class="nav-item">
             <a class="nav-link waves-effect" href="https://capitalgram.com/about">About</a>
           </li>
@@ -40,9 +41,11 @@
           <li class="nav-item">
             <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
           </li>
+          --?
       </ul>
 
       <!-- Right -->
+      <!--
       <ul class="navbar-nav nav-flex-icons">
         <li class="nav-item">
           <a href="https://twitter.com/moo9000" class="nav-link waves-effect" target="_blank">
@@ -50,6 +53,7 @@
           </a>
         </li>
       </ul>
+      -->
 
     </div>
 
