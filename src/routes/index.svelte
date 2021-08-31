@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	export const prerender = true;
+	import splash from '../lib/assets/splash.jpg';
 </script>
 
 <script lang="ts">
@@ -11,14 +12,26 @@
 	<meta name="description" content="On-chain systematic investing and trading">
 </svelte:head>
 
-<section>
-	<img src="">
-	<a href="/">Home</a>
-	<a href="/datasets">View datasets</a>
-	<a href="/docs">Documentation</a>
-</section>
+
+<main style="background-image: url({splash});">>
+	<div >
+		<section class="card-home card-jumbo">
+			<div class="container">
+				<h1>Algorithmic trading strategy protocol</h1>
+			</div>
+		</section>
+	</div>
+</main>
 
 <style>
+
+	main {
+		min-height: 100vw;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center center;
+	}
+
 	section {
 		display: flex;
 		flex-direction: column;
@@ -27,8 +40,14 @@
 		flex: 1;
 	}
 
+	.card-jumbo {
+		background: transparent;
+		box-shadow: none;
+	}
+
 	h1 {
 		width: 100%;
+		color: white;
 	}
 
 	.welcome {

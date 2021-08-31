@@ -1,18 +1,18 @@
 <script lang="ts">
 	import Navbar from '$lib/header/Navbar.svelte';
-	// Old imports from the blog website
+	import AppHead from '$lib/header/AppHead.svelte';
+
+	// Old imports from the Capitalgram blog website
 	import '../bootstrap.min.css';
 	import '../theme.css';
+	import '../app.css';
 	import '../style.css';
-	// Going forward with the ap from here
-	// import '../app.css';
 </script>
 
+<AppHead />
 <Navbar />
 
-<main>
-	<slot />
-</main>
+<slot />
 
 <style>
 	main {

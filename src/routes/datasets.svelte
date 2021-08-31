@@ -153,7 +153,7 @@
 	}
 
 	.card-body a {
-	  color: #b68300;
+	  color: var(--link-color);
 	  text-decoration: none;
 	  font-weight: bold;
 	  transition: 0.3s;
@@ -161,7 +161,7 @@
 
 	.card-body a:hover {
 	  text-decoration: underline;
-	  color: #eeb302;
+	  color: var(--link-color);
 	}
 
 </style>

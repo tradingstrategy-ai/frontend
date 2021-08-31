@@ -1,17 +1,14 @@
+
+
 .card-comments img {
   width: 4rem; }
-
-body {
-  font-family: 'Roboto', sans-serif;
-  background: #fafafa;
-}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Exo 2', sans-serif;
 }
 
 a {
-  color: #023dee;
+  color: #00d400;
 } 
 
 .img-logo {

@@ -24,7 +24,7 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.47433592"
-     inkscape:cx="651.43707"
+     inkscape:cx="650.38296"
      inkscape:cy="157.06169"
      inkscape:window-width="1615"
      inkscape:window-height="997"
@@ -70,13 +70,13 @@
        id="path171" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:36.507px;line-height:1.25;font-family:sans-serif;fill:#225500;fill-opacity:1;stroke:none;stroke-width:0.91268"
+       style="font-style:normal;font-weight:normal;font-size:36.507px;line-height:1.25;font-family:sans-serif;fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.91268"
        x="144.46123"
        y="118.91285"
        id="text6777"><tspan
          sodipodi:role="line"
          id="tspan6775"
-         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:36.507px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#225500;stroke-width:0.91268"
+         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:36.507px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#333333;stroke-width:0.91268"
          x="144.46123"
          y="118.91285">TradingStrategy.ai</tspan></text>
   </g>

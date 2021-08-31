@@ -8,7 +8,7 @@
   <div class="container">
 
     <!-- Brand -->
-    <a class="navbar-brand waves-effect" href="https://capitalgram.com">
+    <a class="navbar-brand waves-effect" href="/">
       <img class="img-logo" src={logo} alt="On-chain quantitative finance" />
     </a>
 
