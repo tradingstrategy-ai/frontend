@@ -3,10 +3,10 @@
 	import AppHead from '$lib/header/AppHead.svelte';
 
 	// Old imports from the Capitalgram blog website
-	import '../bootstrap.min.css';
-	import '../theme.css';
-	import '../app.css';
-	import '../style.css';
+	//import '../bootstrap.min.css';
+	import '../../theme/dist/css/neumorphism.css';
+	//import '../app.css';
+	//import '../style.css';
 </script>
 
 <AppHead />
