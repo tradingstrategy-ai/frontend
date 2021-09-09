@@ -43,7 +43,10 @@ npm run dev
 This will run server-side generated (SSR) pages.
 
 ```shell
+screen -S frontend
 export PRODUCTION=true 
+npm install
+(cd theme && npm install && npx gulp build:dist)
 node_modules/.bin/svelte-kit build && node build/index.js
 ```
 

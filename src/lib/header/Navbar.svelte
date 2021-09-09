@@ -26,11 +26,11 @@
       <ul class="navbar-nav mr-auto">
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="/datasets">DeFi datasets</a>
+            <a class="nav-link waves-effect" href="/datasets">Datasets</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="https://docs.capitalgram.com">Documentation</a>
+            <a class="nav-link waves-effect" href="https://tradingstrategy.ai/docs/">Documentation</a>
           </li>
 
           <!--

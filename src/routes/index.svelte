@@ -13,11 +13,14 @@
 </svelte:head>
 
 
-<main style="background-image: url({splash});">>
-	<div >
+<main>
+	<div>
 		<section class="card-home card-jumbo">
 			<div class="container">
 				<h1>Algorithmic trading strategy protocol</h1>
+				<p class="lead">Does exactly what it says on the tin</p>
+
+				<p>Contact via <a href="https://t.me/miohtama">Telegram</a></p>
 			</div>
 		</section>
 	</div>
@@ -32,22 +35,28 @@
 		background-position: center center;
 	}
 
+	/*
 	section {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		flex: 1;
-	}
+	}*/
 
 	.card-jumbo {
 		background: transparent;
 		box-shadow: none;
 	}
 
+	.card-jumbo p {
+		text-align: center;
+	}
+
 	h1 {
 		width: 100%;
-		color: white;
+		color: black;
+		text-align: center;
 	}
 
 	.welcome {

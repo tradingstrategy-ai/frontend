@@ -62,7 +62,7 @@
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
-				<h1>DeFi datasets</h1>
+				<h1>DeFi trading datasets for backtesting</h1>
 
 				<p>
 					The following on-chain trade and liquidity datasets are available for decentralised finance research,
