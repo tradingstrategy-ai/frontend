@@ -30,7 +30,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="https://tradingstrategy.ai/docs/">Documentation</a>
+            <a rel="external" class="nav-link waves-effect" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
           </li>
 
           <!--

@@ -64,11 +64,28 @@ You can also open the theme development server:
 npx gulp
 ```
 
+## Color scheme
+
+Primary background: #FFF1E5
+
+Primary darker: #CCBEB3
+
+Secondary background: #80DEEA
+
+Darker secondary: #4BACB8
+
+Link on white documentation: #005b49
+
 Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
 
-Palette tools: https://material.io/resources/color/#!/?view.left=0&view.right=1&primary.color=eeb302&secondary.color=80DEEA
+[Color scheme in Codepen](https://codepen.io/miohtama/pen/OJgpqNa)
+
+[Palette tools in Material palette designer](https://material.io/resources/color/#!/?view.left=0&view.right=1&primary.color=eeb302&secondary.color=80DEEA)
+
+[Palette generator](https://mycolor.space/?hex=%23FFF1E5&sub=1)
 
 ![colormap](./colormap.png)
+
 
 ## More information
 
