@@ -84,7 +84,7 @@ Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
 
 [Palette generator](https://mycolor.space/?hex=%23FFF1E5&sub=1)
 
-![colormap](./colormap.png)
+![colormap](./colormap.png?)
 
 
 ## More information
