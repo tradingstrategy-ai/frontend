@@ -34,7 +34,15 @@
 
 <script>
 	import Time from "svelte-time";
+	import Spinner from 'svelte-spinner';
+
 	export let datasets;
+	export let submitting = false;
+	export let validApiKey = null;
+	export let apiKeyError = null;
+
+
+	const apiUrl = "https://candlelightdinner.tradingstrategy.ai";
 
 	function formatNumber(n) {
 		if(n <= 1000) {
@@ -51,6 +59,63 @@
 			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
 		}
 	}
+
+	function formatDownloadLink(key, link) {
+		// Cannot downlaod without API key
+		if(!validApiKey) {
+			return "javascript:";
+		}
+
+		const url = new URL(link);
+		url.searchParams.set("api-key", key);
+		return url.toString();
+	}
+
+	async function handleSubmit(event) {
+
+		const url = `${apiUrl}/validate-api-key`;
+        //console.log(event);
+        //console.log(event.target);
+        //console.log(event.target.apiKey.value);
+		let key = event.target.apiKey.value;
+
+		// Avoid whitespace issues
+		key = key.trim();
+
+		apiKeyError = null;
+		submitting = true;
+
+		try {
+
+			// https://stackoverflow.com/a/53189376/315168
+			console.log("Posting to", url);
+			const res = await fetch(url, {
+				method: 'POST',
+				body: new URLSearchParams({key})
+			});
+
+			if(res.status != 200) {
+				apiKeyError = `Server failure: ${res.status} ${res.statusText}`;
+				return;
+			}
+
+			const data = await res.json();
+
+			console.log("Got validation response", data);
+
+			if(!data.valid) {
+				apiKeyError = "The API key is not valid";
+			}
+
+			validApiKey = key;
+
+		} catch(e) {
+			apiKeyError = e.toString();
+		} finally {
+			submitting = false;
+		}
+	}
+
 </script>
 
 <svelte:head>
@@ -73,7 +138,7 @@
 					You can download the datasets with an API key. Request an API key via Telegram or <a href="https://tradingstrategy.ai/docs/">Python client.</a>
 				</p>
 
-				<h2>Available data</h2>
+				<h2>Supported blockchains and DEXes</h2>
 
 				<p>
 					These datasets contain trade and liquidity data from several blockchains and
@@ -111,19 +176,41 @@
 
 				<h2>Available datasets</h2>
 
-				<div class="form-group">
-					<label>Enter API key to enable download</label>
-					<!-- <div class="d-flex flex-row justify-content-center"> -->
-					<div>
-						<div class="input-group"><input class="form-control"
-														id="subscribeInputEmail" placeholder="TS-"
-														type="email">
-							<div class="input-group-prepend">
-								<button type="submit" class="btn btn-primary rounded-right">Enter</button>
-							</div>
+				{#if !validApiKey}
+					<form id="form-api-key" class="form-group" on:submit|preventDefault="{handleSubmit}">
+
+						<label for="apiKey">Enter API key to enable download</label>
+
+						<!-- <div class="d-flex flex-row justify-content-center"> -->
+						<div id="form-group-api-key">
+
+							<input class="form-control form-group-api-key-item"
+								   id="apiKey"
+								   placeholder="secret-token:tradingstrategy-"
+								   type="text">
+
+
+							<button type="submit" class="btn btn-primary form-group-api-key-item" disabled={submitting}>Enter</button>
+
+							{#if submitting}
+								<Spinner />
+							{/if}
+
 						</div>
+					</form>
+				{/if}
+
+				{#if apiKeyError}
+					<div class="alert alert-danger shadow-soft" role="alert">
+            			<span class="alert-inner--text">{apiKeyError}</span>
 					</div>
-				</div>
+				{/if}
+
+				{#if validApiKey}
+					<p>
+						Using API key <strong>{validApiKey}</strong>
+					</p>
+				{/if}
 
 				<div class="table-responsive">
 					<table class="table table-datasets">
@@ -156,7 +243,7 @@
 											Documentation
 										</a>
 
-										<a class=action-link base-href={row.download} href="javascript:" disabled>
+										<a class=action-link target="{validApiKey ? `_blank` : undefined}" href="{formatDownloadLink(validApiKey, row.download_link)}" disabled="{validApiKey ? undefined : 'disabled'}">
 											Download
 										</a>
 									</td>
@@ -173,17 +260,17 @@
 </div>
 
 <style>
-	.content {
-		width: 100%;
-		max-width: var(--column-width);
-		margin: var(--column-margin-top) auto 0 auto;
+
+	.card-body {
+		/* Align text left edge with logo */
+		padding: 0;
 	}
 
 	.card-body a {
-	  color: var(--link-color);
-	  text-decoration: none;
-	  font-weight: bold;
-	  transition: 0.3s;
+	  	color: var(--link-color);
+	  	text-decoration: none;
+	  	font-weight: bold;
+		transition: 0.3s;
 	}
 
 	.card-body a:hover {
@@ -191,7 +278,7 @@
 	  color: var(--link-color);
 	}
 
-	.table-datasets time {
+	.table-datasets :global(time) {
 		white-space: nowrap;
 	}
 
@@ -203,6 +290,15 @@
 	.action-link[disabled] {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+
+	#form-group-api-key {
+		display: flex;
+	}
+
+	#form-group-api-key input {
+		max-width: 400px;
+		margin-right: 20px;
 	}
 
 </style>

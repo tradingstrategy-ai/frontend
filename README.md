@@ -32,6 +32,12 @@ npx gulp build:dist
 
 This will produce files in `theme/dist` folder.
 
+Or as one liner:
+
+```shell
+( cd theme && npx gulp build:dist )
+```
+
 ## Running in local dev
 
 ```shell
