@@ -11,7 +11,7 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ page, session, fetch, context }) {
-		const url = `https://candlelightdinner.capitalgram.com/datasets`;
+		const url = `https://candlelightdinner.tradingstrategy.ai/datasets`;
 		const res = await fetch(url);
 
 		const datasets = await res.json();
@@ -54,26 +54,39 @@
 </script>
 
 <svelte:head>
-	<title>On-chain quantative finance datasets</title>
-	<meta name="description" content="Download OHLCV and liquidity data for decentralised exchanges and blockchains">
+	<title>DEX trading and quantative finance datasets</title>
+	<meta name="description" content="Download OHLCV and liquidity data for DEXes">
 </svelte:head>
 
 <div class="container">
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
-				<h1>DeFi trading datasets for backtesting</h1>
+				<h1>On-chain trading data for backtesting</h1>
 
 				<p>
-					The following on-chain trade and liquidity datasets are available for decentralised finance research,
+					The following on-chain trade and liquidity datasets are available for decentralised finance (DeFi) research,
 					cryptocurrency algorithmic trading, automated trading strategy research and execution.
-					You can download the datasets with <a href="https://docs.capitalgram.com/">Capitalgram Python client.</a>
 				</p>
 
 				<p>
+					You can download the datasets with an API key. Request an API key via Telegram or <a href="https://tradingstrategy.ai/docs/">Python client.</a>
+				</p>
+
+				<h2>Available data</h2>
+
+				<p>
 					These datasets contain trade and liquidity data from several blockchains and
-					<a href="https://docs.capitalgram.com/glossary.html#term-AMM">automatic market maker</a> exchanges. The supported blockchains include popular
-					Ethereum, Binance Smart Chain and Polygon chains.
+					<a href="https://tradingstrategy.ai/docs/glossary.html#term-AMM">automatic market maker (AMM)</a> exchanges. The supported blockchains include popular
+					Ethereum, Binance Smart Chain <span class="badge text-uppercase">Coming soon</span>, Polygon <span class="badge text-uppercase">Coming soon</span>
+					and Avalanche <span class="badge text-uppercase">Coming soon</span>.
+				</p>
+
+				<h2>Data logistics</h2>
+
+				<p>
+					Datasets are distributed either in <a href="https://arrow.apache.org/">compressed Parquet</a> file format
+					designed for data research. Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
 				</p>
 
 				<p>
@@ -82,30 +95,38 @@
 					candle data takes several gigabyte of memory.
 				</p>
 
-				<p>
-					Datasets are distributed either in <a href="https://arrow.apache.org/">compressed Parquet</a> or JSON file formats.
-					Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
-				</p>
-
-
 				<h2>Learn more</h2>
 
 				<ul>
 					<li>
-						<a href="https://docs.capitalgram.com/">Getting started</a>
+						<a href="https://tradingstrategy.ai/docs/">Getting started</a>
 					</li>
 					<li>
-						<a href="https://docs.capitalgram.com/">Documentation</a>
+						<a href="https://tradingstrategy.ai/docs/">Documentation</a>
 					</li>
 					<li>
-						<a href="https://github.com/miohtama/capitalgram-onchain-dex-quant-data">Github</a>
+						<a href="https://github.com/tradingstrategy-ai/client">Github</a>
 					</li>
 				</ul>
 
 				<h2>Available datasets</h2>
 
+				<div class="form-group">
+					<label>Enter API key to enable download</label>
+					<!-- <div class="d-flex flex-row justify-content-center"> -->
+					<div>
+						<div class="input-group"><input class="form-control"
+														id="subscribeInputEmail" placeholder="TS-"
+														type="email">
+							<div class="input-group-prepend">
+								<button type="submit" class="btn btn-primary rounded-right">Enter</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div class="table-responsive">
-					<table class="table">
+					<table class="table table-datasets">
 						<thead>
 							<tr>
 								<th>Name</th>
@@ -129,11 +150,17 @@
 									<td>
 										<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
 									</td>
+
 									<td>
-										<a href={row.documentation}>
+										<a class=action-link href={row.documentation}>
 											Documentation
 										</a>
+
+										<a class=action-link base-href={row.download} href="javascript:" disabled>
+											Download
+										</a>
 									</td>
+
 								</tr>
 							{/each}
 						</tbody>
@@ -162,6 +189,20 @@
 	.card-body a:hover {
 	  text-decoration: underline;
 	  color: var(--link-color);
+	}
+
+	.table-datasets time {
+		white-space: nowrap;
+	}
+
+	.action-link {
+		font-size: 80%;
+		text-transform: uppercase;
+	}
+
+	.action-link[disabled] {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 </style>
