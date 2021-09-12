@@ -150,8 +150,9 @@
 				<h2>Data logistics</h2>
 
 				<p>
-					Datasets are distributed either in <a href="https://arrow.apache.org/">compressed Parquet</a> file format
+					Datasets are distributed either in <a href="https://parquet.apache.org/">Parquet</a> file format
 					designed for data research. Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
+					Datasets are compressed using Parquet built-in Snappy compression.
 				</p>
 
 				<p>
