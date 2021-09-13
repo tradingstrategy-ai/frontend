@@ -1,26 +1,44 @@
 <script lang="ts">
-	import logo from '../assets/logo-with-text.svg';
-</script>
 
+  import logo from '../assets/logo-web.svg';
+
+  let isOpen = false;
+
+  function handleUpdate(event) {
+    isOpen = event.detail.isOpen;
+  }
+
+  function clickCollapse(e) {
+      console.log("Clicked", e);
+      isOpen = !isOpen;
+  }
+</script>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar">
   <div class="container">
 
     <!-- Brand -->
-    <a class="navbar-brand waves-effect" href="/">
+    <a class="navbar-brand" href="/">
       <img class="img-logo" src={logo} alt="On-chain quantitative finance" />
     </a>
 
     <!-- Collapse -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            on:click={clickCollapse}
+      >
       <span class="navbar-toggler-icon"></span>
-      <span class="">TradingStrategy.ai</span>
     </button>
 
     <!-- Links -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="{'collapse navbar-collapse ' + (isOpen ? 'show' : '')}" id="navbarSupportedContent">
 
       <!-- Left -->
       <ul class="navbar-nav mr-auto">
@@ -41,7 +59,7 @@
           <li class="nav-item">
             <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
           </li>
-          --?
+          -->
       </ul>
 
       <!-- Right -->
@@ -59,4 +77,13 @@
 
   </div>
 </nav>
-<!-- Navbar -->
+
+<style>
+    .img-logo {
+        height: 36px;
+    }
+
+    .navbar-toggler {
+        z-index: 2000;
+    }
+</style>

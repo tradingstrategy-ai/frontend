@@ -14,8 +14,3 @@
 
 <slot />
 
-<style>
-	main {
-		margin-top: 20px;
-	}
-</style>

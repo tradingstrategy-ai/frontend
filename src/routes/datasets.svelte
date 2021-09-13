@@ -123,7 +123,7 @@
 	<meta name="description" content="Download OHLCV and liquidity data for DEXes">
 </svelte:head>
 
-<div class="container">
+<div class="container container-main">
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
@@ -265,6 +265,14 @@
 	.card-body {
 		/* Align text left edge with logo */
 		padding: 0;
+	}
+
+	/* Fix paddign on mobile */
+	@media (max-width: 960px) {
+		.container-main {
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 
 	.card-body a {

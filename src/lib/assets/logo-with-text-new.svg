@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   inkscape:export-ydpi="96"
+   inkscape:export-xdpi="96"
+   inkscape:export-filename="/Users/moo/code/ts/frontend/src/lib/assets/brand-mark.png"
+   sodipodi:docname="logo-with-text-new.svg"
+   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 420 297"
+   height="297mm"
+   width="420mm"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     inkscape:window-maximized="0"
+     inkscape:window-y="164"
+     inkscape:window-x="2287"
+     inkscape:window-height="1173"
+     inkscape:window-width="1811"
+     inkscape:guide-bbox="true"
+     showguides="true"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="894.28571"
+     inkscape:cx="354.28571"
+     inkscape:zoom="0.175"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#fff1e5"
+     id="base"
+     inkscape:pagecheckerboard="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <g
+       id="g3342"
+       transform="matrix(0.39931574,0,0,0.39931574,14.136916,9.0459282)">
+      <rect
+         y="41.57737"
+         x="23.534687"
+         height="142.11905"
+         width="23.365368"
+         id="rect26"
+         style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.273753" />
+      <rect
+         style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.153359"
+         id="rect26-1"
+         width="23.365368"
+         height="44.601192"
+         x="51.471539"
+         y="41.57737" />
+      <rect
+         y="74.772575"
+         x="80.932228"
+         height="48.447651"
+         width="23.365368"
+         id="rect26-1-4"
+         style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.159834" />
+      <rect
+         style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.148766"
+         id="rect26-1-4-5"
+         width="23.365368"
+         height="41.970398"
+         x="107.34525"
+         y="112.62939" />
+      <rect
+         style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.16222"
+         id="rect26-9"
+         width="23.365368"
+         height="49.90456"
+         x="134.77419"
+         y="74.833427" />
+      <rect
+         y="15.059373"
+         x="161.18718"
+         height="83.220306"
+         width="23.365368"
+         id="rect26-9-2"
+         style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.209484" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:45.6954px;line-height:1.25;font-family:'Saira Condensed';-inkscape-font-specification:'Saira Condensed, ';stroke-width:1.14239"
+       x="96.398933"
+       y="26.431335"
+       id="text1504"
+       transform="scale(1.0127285,0.98743147)"><tspan
+         sodipodi:role="line"
+         id="tspan1502"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:condensed;font-family:'Saira Condensed';-inkscape-font-specification:'Saira Condensed,  Medium Condensed';stroke-width:1.14239"
+         x="96.398933"
+         y="26.431335"
+         dy="19.132544">TRADING</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:condensed;font-family:'Saira Condensed';-inkscape-font-specification:'Saira Condensed,  Medium Condensed';stroke-width:1.14239"
+         x="96.398933"
+         y="83.550583"
+         id="tspan1506">STRATEGY.AI</tspan></text>
+  </g>
+</svg>

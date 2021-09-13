@@ -22,7 +22,7 @@
     "eslint-plugin-svelte3": "^3.2.0",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
-    "svelte": "^3.34.0",
+    "svelte": "^3.42.5",
     "svelte-check": "^2.0.0",
     "svelte-preprocess": "^4.0.0",
     "svelte-time": "^0.4.0",
@@ -34,6 +34,7 @@
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
     "cookie": "^0.4.1",
-    "svelte-spinner": "^2.0.2"
+    "svelte-spinner": "^2.0.2",
+    "sveltestrap": "^4.2.1"
   }
 }
