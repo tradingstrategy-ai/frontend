@@ -135,7 +135,7 @@
 				</p>
 
 				<p>
-					You can download the datasets with an API key. Request an API key via Telegram or <a href="https://tradingstrategy.ai/docs/">Python client.</a>
+					You can download the datasets with an API key. Request an API key via Telegram or <a href="https://tradingstrategy.ai/docs/">Python client registration.</a>
 				</p>
 
 				<h2>Supported blockchains and DEXes</h2>
@@ -150,13 +150,13 @@
 				<h2>Data logistics</h2>
 
 				<p>
-					Datasets are distributed either in <a href="https://parquet.apache.org/">Parquet</a> file format
+					Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format
 					designed for data research. Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
-					Datasets are compressed using Parquet built-in Snappy compression.
 				</p>
 
 				<p>
-					Datasets are large. We expect you to download the dataset, cache the resulting file on a local disk and
+					Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably larger when expanded to RAM.
+					We expect you to download the dataset, cache the resulting file on a local disk and
 					perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute
 					candle data takes several gigabyte of memory.
 				</p>
