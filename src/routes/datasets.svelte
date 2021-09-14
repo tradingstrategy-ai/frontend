@@ -267,14 +267,6 @@
 		padding: 0;
 	}
 
-	/* Fix paddign on mobile */
-	@media (max-width: 960px) {
-		.container-main {
-			padding-left: 0;
-			padding-right: 0;
-		}
-	}
-
 	.card-body a {
 	  	color: var(--link-color);
 	  	text-decoration: none;

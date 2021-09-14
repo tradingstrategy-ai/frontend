@@ -1,6 +1,14 @@
+<!--
+
+  Sveltestrap Navbar did not work with our theme, as it changes some core Bootstrap CSS rules.
+  We have now in-house hacked together navbar.
+
+-->
+
 <script lang="ts">
 
   import logo from '../assets/logo-web.svg';
+  import logoMobile from '../assets/logo-two-lines.png';
 
   let isOpen = false;
 
@@ -15,12 +23,13 @@
 </script>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar">
+<nav class="navbar navbar-light white scrolling-navbar">
   <div class="container">
 
     <!-- Brand -->
     <a class="navbar-brand" href="/">
-      <img class="img-logo" src={logo} alt="On-chain quantitative finance" />
+      <img class="img-logo img-logo-desktop" src={logo} alt="On-chain quantitative finance" />
+      <img class="img-logo img-logo-mobile" src={logoMobile} alt="On-chain quantitative finance" />
     </a>
 
     <!-- Collapse -->
@@ -44,7 +53,7 @@
       <ul class="navbar-nav mr-auto">
 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="/datasets">Datasets</a>
+            <a rel="external" class="nav-link waves-effect" href="/datasets">Datasets</a>
           </li>
 
           <li class="nav-item">
@@ -83,7 +92,21 @@
         height: 36px;
     }
 
+    .img-logo-mobile {
+      display: none;
+      max-width: 200px;
+    }
+
+	/* Switch loglo */
+	@media (max-width: 960px) {
+      .img-logo-mobile { display: block }
+      .img-logo-desktop { display: none }
+	}
+
+
     .navbar-toggler {
         z-index: 2000;
     }
+
+
 </style>
