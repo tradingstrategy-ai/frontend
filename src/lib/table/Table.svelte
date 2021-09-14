@@ -9,8 +9,7 @@
 	let loading = true;
 
 	$: currentPageRows = totalPages.length > 0 ? totalPages[page] : [];
-	$: console.log('Page is', page);
-
+  
 	const paginate = (items) => {
 		const pages = Math.ceil(items.length / itemsPerPage);
 
