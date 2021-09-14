@@ -41,7 +41,6 @@
 			<div class="card-body">
 				<h1>Exchanges</h1>
                 <Table rows={exchangesMock} />
-
 			</div>
 		</div>
 	</section>
