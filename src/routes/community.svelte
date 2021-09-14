@@ -26,7 +26,7 @@
 
                             <p class="card-text">Learn how to run backtests with DEX trading data</p>
 
-                            <a ref="external" href="/docs/algorithms/ape-in.html" class="btn btn-primary btn-sm">View example</a>
+                            <a rel="external" href="https://tradingstrategy.ai/docs/algorithms/ape-in.html" class="btn btn-primary btn-sm">View example</a>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
 
                             <p class="card-text">Browser source code and discuss technical issues</p>
 
-                            <a href="https://github.com/tradingstrategy-ai/client" class="btn btn-primary btn-sm">View repository</a>
+                            <a rel="external" href="https://github.com/tradingstrategy-ai/client" class="btn btn-primary btn-sm">View repository</a>
                         </div>
                     </div>
                 </div>
