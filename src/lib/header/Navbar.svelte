@@ -54,18 +54,18 @@
         <ul class="navbar-nav mr-auto">
 
             <li class="nav-item">
-              <a rel="external" class="nav-link waves-effect" href="/datasets">Datasets</a>
+              <a rel="external" class="nav-link" href="/datasets">Datasets</a>
             </li>
 
             <li class="nav-item">
-              <a rel="external" class="nav-link waves-effect" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
+              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
+            </li>
+
+            <li class="nav-item">
+              <a rel="external" class="nav-link" href="/community">Community</a>
             </li>
 
             <!--
-            <li class="nav-item">
-              <a class="nav-link waves-effect" href="https://capitalgram.com/about">About</a>
-            </li>
-
             <li class="nav-item">
               <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
             </li>
@@ -103,7 +103,7 @@
       max-width: 200px;
     }
 
-	/* Switch loglo */
+	/* Switch logos */
 	@media (max-width: 960px) {
       .img-logo-mobile { display: block }
       .img-logo-desktop { display: none }

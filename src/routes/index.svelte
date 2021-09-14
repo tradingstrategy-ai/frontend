@@ -1,12 +1,3 @@
-<script context="module" lang="ts">
-	export const prerender = true;
-	import splash from '../lib/assets/splash.jpg';
-</script>
-
-<script lang="ts">
-	import Counter from '$lib/Counter.svelte';
-</script>
-
 <svelte:head>
 	<title>TradingStrategy.ai - Algorithmic trading strategy protocol</title>
 	<meta name="description" content="On-chain systematic investing and trading">
@@ -35,15 +26,6 @@
 		background-position: center center;
 	}
 
-	/*
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 1;
-	}*/
-
 	.card-jumbo {
 		background: transparent;
 		box-shadow: none;
@@ -57,13 +39,6 @@
 		width: 100%;
 		color: black;
 		text-align: center;
-	}
-
-	.welcome {
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
 	}
 
 	.welcome img {

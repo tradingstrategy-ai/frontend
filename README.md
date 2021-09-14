@@ -70,19 +70,23 @@ You can also open the theme development server:
 npx gulp
 ```
 
+Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
+
 ## Color scheme
 
-Primary background: #FFF1E5
+Primary background: #FFF1E5 - light beige
 
-Primary darker: #CCBEB3
+Primary darker: #CCBEB3 - dark beige
 
-Secondary background: #80DEEA
+Secondary background: #80DEEA - light turquoise
 
-Darker secondary: #4BACB8
+Darker secondary: #4BACB8 - dark turquoise
 
 Link on white documentation: #005b49
 
-Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
+Number go up green: #458b00
+
+Number go down red: #cc0000
 
 [Color scheme in Codepen](https://codepen.io/miohtama/pen/OJgpqNa)
 
