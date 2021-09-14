@@ -33,13 +33,6 @@
       }
   </script>
   
-  <style>
-      nav > ul {
-          list-style-type: none;
-          display: flex;
-      }
-  </style>
-  
   <table class="table table-datasets">
     <thead>
       <tr>
@@ -70,7 +63,7 @@
       <li>
         <button
           type="button"
-          class="btn-next-prev"
+          class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-next-prev"
           on:click={() => setPage(page - 1)}
         >
                   PREV
@@ -81,7 +74,7 @@
         <li>
           <button
                       type="button"
-                      class="btn-page-number"
+                      class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-page-number"
                       on:click={() => setPage(i)}
                   >
                       {i + 1}
@@ -92,7 +85,7 @@
       <li>
         <button
           type="button"
-          class="btn-next-prev"
+          class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-next-prev"
           on:click={() => setPage(page + 1)}
         >
                   NEXT
@@ -100,3 +93,13 @@
       </li>
     </ul>
   </nav>
+
+  <style>
+    nav > ul {
+      list-style-type: none;
+      display: flex;
+    }
+    button { 
+      margin-right: 6px;
+    }
+  </style>
