@@ -8,12 +8,33 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
-    "format": "prettier --write --plugin-search-dir=. ."
+    "format": "prettier --write --plugin-search-dir=. .",
+    "test": "jest",
+    "test:watch": "npm test -- --watch"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.svelte$": [
+        "svelte-jester",
+        {
+          "preprocess": true
+        }
+      ],
+      "^.+\\.ts$": "ts-jest",
+      "^.+\\.js$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "svelte"
+    ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.15.6",
     "@sveltejs/adapter-node": "^1.0.0-next.36",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
     "@sveltejs/kit": "next",
+    "@testing-library/jest-dom": "^5.14.1",
     "@types/cookie": "^0.4.0",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
@@ -24,10 +45,16 @@
     "prettier-plugin-svelte": "^2.2.0",
     "svelte": "^3.42.5",
     "svelte-check": "^2.0.0",
-    "svelte-preprocess": "^4.0.0",
+    "svelte-preprocess": "^4.9.4",
     "svelte-time": "^0.4.0",
     "tslib": "^2.0.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.0.0",
+    "@testing-library/svelte": "^3.0.0",
+    "@types/jest": "^26.0.14",
+    "babel-jest": "^26.5.2",
+    "jest": "^26.5.2",
+    "svelte-jester": "^1.1.5",
+    "ts-jest": "^26.4.1"
   },
   "type": "module",
   "dependencies": {
