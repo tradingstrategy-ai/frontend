@@ -10,7 +10,7 @@
         value: "",
         placeholder: "Enter email...",
         label: "Email",
-        required: true,
+        required: true
       },
       {
         name: "firstName",
@@ -34,12 +34,16 @@
   </script>
 
   <div class="container">
-    <Form
-        onSubmit={(body) => {
-          result = body;
-        }}
-    {fields} />      
+    <div class="row">
+        <div class="col-8">
+            <div class="card bg-primary shadow-soft border-light px-4 py-5">
+                <h1>Request your Api Key</h1>
+                <Form
+                    onSubmit={(body) => {
+                      result = body;
+                    }}
+                {fields} />      
+            </div>
+        </div>
+    </div>
   </div>
-
-  Show the current state of our Form
-  <pre><code>{JSON.stringify(result, 0, 2)}</code></pre>
