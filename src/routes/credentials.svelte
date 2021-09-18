@@ -10,6 +10,7 @@
         value: "",
         placeholder: "Enter email...",
         label: "Email",
+        required: true,
       },
       {
         name: "firstName",
@@ -17,6 +18,7 @@
         value: "",
         placeholder: "Enter first name...",
         label: "First name",
+        required: true
       },
       {
         name: "lastName",
@@ -24,6 +26,7 @@
         value: "",
         placeholder: "Enter last name...",
         label: "Last name",
+        required: true
       },
     ];
   
@@ -38,5 +41,5 @@
     {fields} />      
   </div>
 
-  <!-- Show the current state of our Form
-  <pre><code>{JSON.stringify(result, 0, 2)}</code></pre> -->
+  Show the current state of our Form
+  <pre><code>{JSON.stringify(result, 0, 2)}</code></pre>
