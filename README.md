@@ -94,7 +94,11 @@ Number go down red: #cc0000
 
 [Palette generator](https://mycolor.space/?hex=%23FFF1E5&sub=1)
 
-![colormap](./colormap.png?)
+![colormap](./colormap.png?)]
+
+## Fonts
+
+Logo font: 
 
 
 ## More information
