@@ -1,11 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
+	import { formatNumber } from "../helpers/utils";
 
 	export let rows = [];
 	let page = 0;
 	let totalPages = [];
 	let currentPageRows = [];
-	let itemsPerPage = 5;
+	let itemsPerPage = 50;
 	let loading = true;
 
 	$: currentPageRows = totalPages.length > 0 ? totalPages[page] : [];
@@ -44,9 +45,9 @@
 	<tbody>
 		{#each currentPageRows as row, i}
 			<tr>
-				<td>{row.id}</td>
-				<td>{row.name}</td>
-				<td>{row.volume}</td>
+				<td>{row.exchange_id}</td>
+				<td>{row.human_readable_name}</td>
+				<td>{formatNumber(row.usd_volume_30d)}</td>
 			</tr>
 		{:else}
 			<tr>

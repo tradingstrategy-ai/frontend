@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
     import Input from "./Input.svelte";
     import InputEmail from "./InputEmail.svelte";
   
