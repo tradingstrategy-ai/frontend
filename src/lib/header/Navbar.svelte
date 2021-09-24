@@ -57,6 +57,10 @@
               <a rel="external" class="nav-link" href="/datasets">Datasets</a>
             </li>
 
+            <!-- <li class="nav-item">
+              <a rel="external" class="nav-link" href="/exchanges">Exchanges</a>
+            </li> -->
+
             <li class="nav-item">
               <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
             </li>
