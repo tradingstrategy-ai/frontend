@@ -1,8 +1,10 @@
-<script>
+<script lang="typescript">
+	import { ApiError } from '../../models/exchanges.svelte';
 	import { onMount } from 'svelte';
 	import { formatNumber } from "../helpers/utils";
 
 	export let rows = [];
+	export let apiError: ApiError;
 	let page = 0;
 	let totalPages = [];
 	let currentPageRows = [];
@@ -50,11 +52,19 @@
 				<td>{formatNumber(row.usd_volume_30d)}</td>
 			</tr>
 		{:else}
-			<tr>
-				<td colspan="100%">
-					<h5 class="text-center">There is no data to display here.</h5>
-				</td>
-			</tr>
+			{#if apiError}
+				<tr>
+					<td>
+						<h5 class="text-center">Api unavailabe, {apiError} </h5>
+					</td>
+				</tr>
+			{:else}
+				<tr>
+					<td>
+						<h5 class="text-center">There is no data to display here.</h5>
+					</td>
+				</tr>
+			{/if}
 		{/each}
 	</tbody>
 </table>
