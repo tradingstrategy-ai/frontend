@@ -40,18 +40,6 @@
     
     export let exchanges = [];
     
-    // const exchangesMock = [
-    //     { id: 1, name: 'Uniswap v2', volume: 10470075809.75 },
-    //     { id: 2, name: 'Sushiswap v2', volume: 55996876388.92 },
-    //     { id: 3, name: 'Shiba Swap v2', volume: 10470075809.75 },
-    //     { id: 4, name: 'Mikko Swap', volume: 50000.75 },
-    //     { id: 5, name: 'Pancake Swap', volume: 231231.92 },
-    //     { id: 6, name: '1 Inch', volume: 10470075809.75 },
-    //     { id: 7, name: 'Salmon is the new sushi', volume: 10470075809.75 },
-    //     { id: 8, name: 'Ape Swap', volume: 55996876388.92 },
-    //     { id: 9, name: 'Divance Swap v2', volume: 10470075809.75 },
-    // ]
-
     onMount(async () => {
 
     })
