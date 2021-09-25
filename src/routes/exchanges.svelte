@@ -11,7 +11,7 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ page, session, fetch, context }) {
-		const url = `https://matilda.tradingstrategy.ai/exchanges/`;
+		const url = `https://matilda.tradingstrategy.ai/exchanges`;
 		const res = await fetch(url);
 
 		const exchanges = await res.json();
@@ -38,7 +38,7 @@
     import { onMount } from 'svelte';
     import Table from "../lib/table/Table.svelte";
     
-    export let exchanges;
+    export let exchanges = [];
     
     // const exchangesMock = [
     //     { id: 1, name: 'Uniswap v2', volume: 10470075809.75 },
@@ -51,8 +51,6 @@
     //     { id: 8, name: 'Ape Swap', volume: 55996876388.92 },
     //     { id: 9, name: 'Divance Swap v2', volume: 10470075809.75 },
     // ]
-
-    let echanges = [];
 
     onMount(async () => {
 
