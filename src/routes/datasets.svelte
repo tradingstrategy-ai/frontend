@@ -74,9 +74,6 @@
 	async function handleSubmit(event) {
 
 		const url = `${apiUrl}/validate-api-key`;
-        //console.log(event);
-        //console.log(event.target);
-        //console.log(event.target.apiKey.value);
 		let key = event.target.apiKey.value;
 
 		// Avoid whitespace issues
