@@ -1,7 +1,7 @@
 <script lang="typescript">
-	import { ApiError } from '../../models/exchanges.svelte';
+	import { ApiError } from '../../lib/models/exchanges.svelte';
 	import { onMount } from 'svelte';
-	import { formatNumber } from "../helpers/utils";
+	import { formatNumber } from "../../lib/helpers/utils";
 
 	export let rows = [];
 	export let apiError: ApiError;

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import {render, fireEvent} from '@testing-library/svelte';
-import exchanges from '../../routes/exchanges.svelte';
+import exchanges from './exchanges.svelte';
 
 describe('Exchanges Page', () => {
   it('shows proper heading when rendered exchanges page', () => {

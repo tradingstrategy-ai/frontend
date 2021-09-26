@@ -1,6 +1,6 @@
 <!-- src/App.svelte -->
 <script>
-    import Form from "../lib/form/Form.svelte";
+    import Form from "../components/form/Form.svelte";
   
     //   Our field representation, let's us easily specify several inputs
     let fields = [

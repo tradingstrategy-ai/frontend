@@ -9,8 +9,7 @@
 		message: string
 	}
 
-	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
-	export async function load({ page, session, fetch, context }) {
+	export async function load({ fetch }) {
 		const url = `https://matilda.tradingstrategy.ai/exchanges`;
 		const res = await fetch(url);
 
@@ -41,14 +40,11 @@
 	}
 </script>
 
-<script lang="typescript"> 
-	import { onMount } from 'svelte';
-	import Table from '../lib/table/Table.svelte';
-
+<script lang="typescript">
+	import Table from '../components/table/Table.svelte';
+	
 	export let exchanges = [];
 	export let apiError: ApiError | undefined;
-
-	onMount(async () => {});
 
 	function formatNumber(n) {
 		if (n <= 1000) {
@@ -73,16 +69,10 @@
 <div class="container container-main">
 	<section class="md-12">
 		<div class="card">
-			{#await exchanges}
-				<p>...waiting</p>
-			{:then users}
 				<div class="card-body">
 					<h1>Exchanges</h1>
 					<Table rows={exchanges} apiError={apiError}/>
 				</div>
-			{:catch error}
-				<p style="color: red">{error.message}</p>
-			{/await}
 		</div>
 	</section>
 </div>

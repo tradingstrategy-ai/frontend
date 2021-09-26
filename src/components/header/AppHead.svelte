@@ -1,5 +1,5 @@
 <script lang="ts">
-	import favicon from '../assets/brand-mark.svg';
+	import favicon from '../../lib/assets/brand-mark.svg';
 </script>
 
 <svelte:head>
