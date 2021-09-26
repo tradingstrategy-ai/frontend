@@ -11,7 +11,7 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ page, session, fetch, context }) {
-		const url = `https://matilda.tradingstrategy.ai/exchanges/`;
+		const url = `https://matilda.tradingstrategy.ai/exchanges`;
 		const res = await fetch(url);
 
 		
