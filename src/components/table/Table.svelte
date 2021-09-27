@@ -48,7 +48,7 @@
 		{#each currentPageRows as row, i}
 			<tr>
 				<td>{row.exchange_id}</td>
-				<td>{row.human_readable_name}</td>
+				<td><a class="nav-link" href="/ethereum/uniswap-v2">{row.human_readable_name}</a></td>
 				<td>{formatNumber(row.usd_volume_30d)}</td>
 			</tr>
 		{:else}
