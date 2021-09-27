@@ -38,18 +38,18 @@
 <table class="table table-datasets">
 	<thead>
 		<tr>
-			<th>id</th>
-			<th>name</th>
-			<th>USD Volume</th>
+			<th></th>
+			<th>Volume (USD)</th>
+			<th>Trades</th>
 		</tr>
 	</thead>
 
 	<tbody>
 		{#each currentPageRows as row, i}
 			<tr>
-				<td>{row.exchange_id}</td>
-				<td>{row.human_readable_name}</td>
-				<td>{formatNumber(row.usd_volume_30d)}</td>
+				<td>{row.period}</td>
+				<td>{formatNumber(row.volume)}</td>
+				<td>{formatNumber(row.trade)}</td>
 			</tr>
 		{:else}
 			{#if apiError}
@@ -68,41 +68,6 @@
 		{/each}
 	</tbody>
 </table>
-<nav class="pagination">
-	<ul>
-		<li>
-			<button
-				type="button"
-				class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-next-prev"
-				on:click={() => setPage(page - 1)}
-			>
-				PREV
-			</button>
-		</li>
-
-		{#each totalPages as page, i}
-			<li>
-				<button
-					type="button"
-					class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-page-number"
-					on:click={() => setPage(i)}
-				>
-					{i + 1}
-				</button>
-			</li>
-		{/each}
-
-		<li>
-			<button
-				type="button"
-				class="btn btn-primary form-group-api-key-item s-corywHGE_LaK btn-next-prev"
-				on:click={() => setPage(page + 1)}
-			>
-				NEXT
-			</button>
-		</li>
-	</ul>
-</nav>
 
 <style>
 	nav > ul {

@@ -38,18 +38,20 @@
 <table class="table table-datasets">
 	<thead>
 		<tr>
-			<th>id</th>
-			<th>name</th>
-			<th>USD Volume</th>
+			<th>Quote</th>
+			<th>Volume 24h</th>
+			<th>Liquidity</th>
+			<th>Price</th>
 		</tr>
 	</thead>
 
 	<tbody>
 		{#each currentPageRows as row, i}
 			<tr>
-				<td>{row.exchange_id}</td>
-				<td>{row.human_readable_name}</td>
-				<td>{formatNumber(row.usd_volume_30d)}</td>
+				<td>{row.base_token_symbol}/{row.quote_token_symbol}</td>
+				<td>{formatNumber(row.usd_volume_1d)}</td>
+				<td>{formatNumber(row.usd_liquidity_high_24h)}</td>
+				<td>{formatNumber(row.usd_price_15m_close)}</td>
 			</tr>
 		{:else}
 			{#if apiError}
