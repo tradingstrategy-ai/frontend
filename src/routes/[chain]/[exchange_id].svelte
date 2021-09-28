@@ -1,8 +1,9 @@
 <script context="module"> 
     export async function load({ page }) {
         const exchangeId = page.params.exchange_id;
-        const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=ethereum`;
-        const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=ethereum&exchange_slugs=${exchangeId.toLowerCase()}`;
+        const chain = page.params.chain;
+        const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
+        const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
         const pairs = await fetch(urlTopPairs);
         const exchangesPairs = await pairs.json();
         const details = await fetch(urlDetails);
