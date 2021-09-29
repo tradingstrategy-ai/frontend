@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Navbar from '$lib/header/Navbar.svelte';
-	import AppHead from '$lib/header/AppHead.svelte';
+	import Navbar from '../components/header/Navbar.svelte';
+	import AppHead from '../components/header/AppHead.svelte';
 
 	import '../../theme/dist/css/neumorphism.css';
 </script>
