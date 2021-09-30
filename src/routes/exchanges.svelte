@@ -4,16 +4,11 @@
 	export const hydrate = dev;
 	export const router = browser;
 
-	interface ApiError {
-		status: number,
-		message: string
-	}
-
 	export async function load({ fetch }) {
 		const url = `https://matilda.tradingstrategy.ai/exchanges`;
 		const res = await fetch(url);
 
-		
+
 		if (res.ok) {
 			const exchanges = await res.json();
 			return {
@@ -42,9 +37,9 @@
 
 <script lang="typescript">
 	import Table from '../components/table/Table.svelte';
-	
+
 	export let exchanges = [];
-	export let apiError: ApiError | undefined;
+	export let apiError;
 
 	function formatNumber(n) {
 		if (n <= 1000) {

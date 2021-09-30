@@ -1,10 +1,9 @@
 <script lang="typescript">
-	import { ApiError } from '$lib/models/exchanges.svelte';
 	import { onMount } from 'svelte';
 	import { formatNumber } from '$lib/helpers/utils';
 
 	export let rows = [];
-	export let apiError: ApiError;
+	export let apiError;
 	let page = 0;
 	let totalPages = [];
 	let currentPageRows = [];
@@ -12,7 +11,7 @@
 	let loading = true;
 
 	$: currentPageRows = totalPages.length > 0 ? totalPages[page] : [];
-  
+
 	const paginate = (items) => {
 		const pages = Math.ceil(items.length / itemsPerPage);
 
