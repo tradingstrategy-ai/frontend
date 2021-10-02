@@ -40,6 +40,17 @@ Or as one liner:
 
 ## Running in local dev
 
+Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte). 
+
+```shell
+export VITE_PUBLIC_BACKEND_URL=shttp://tradingstrategy.ai/api
+
+# Or if you run on localhost
+export VITE_PUBLIC_BACKEND_URL=http://localhost:3456/api
+```
+`
+Then start SvelteKit development server
+
 ```shell
 npm run dev
 ```

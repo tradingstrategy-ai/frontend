@@ -23,3 +23,28 @@ export function formatDownloadLink(validApiKey, key, link) {
     url.searchParams.set("api-key", key);
     return url.toString();
 }
+
+
+export function formatDollar(n: number): string {
+    if(n >= 1000*1000*1000) {
+        return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3
+        }) + "B"
+    } else if(n >= 1000*1000) {
+        return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3
+        }) + "M"
+    } else {
+        return "$" + n.toLocaleString("en", {
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3
+        });
+    }
+}
+
+
+export function formatPriceChange(n: number): string {
+    return (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
+}
