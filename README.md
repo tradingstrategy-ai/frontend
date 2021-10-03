@@ -78,7 +78,7 @@ netstat -ltnp | grep -w ':80'
 You can also open the theme development server:
 
 ```shell
-npx gulp
+( cd theme && npx gulp )
 ```
 
 Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.

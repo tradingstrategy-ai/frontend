@@ -9,9 +9,8 @@
 		<section class="card-home card-jumbo">
 			<div class="container">
 				<h1>Algorithmic trading strategy protocol</h1>
-				<p class="lead">Does exactly what it says on the tin</p>
 
-				<p>Contact via <a href="https://t.me/miohtama">Telegram</a></p>
+				<p>Coming soon</p>
 			</div>
 		</section>
 	</div>

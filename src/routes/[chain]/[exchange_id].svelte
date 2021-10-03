@@ -5,6 +5,12 @@
         const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
         const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
         const pairs = await fetch(urlTopPairs);
+
+        if(!pairs.ok) {
+            console.error(pairs);
+            throw new Error(`Could not load {urlTopPairs}`);
+        }
+
         const exchangesPairs = await pairs.json();
         const details = await fetch(urlDetails);
         const exchangesDetails = await details.json();
