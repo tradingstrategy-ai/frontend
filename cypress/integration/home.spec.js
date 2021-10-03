@@ -1,11 +1,3 @@
-
-// app.spec.js created with Cypress
-//
-// Start writing your Cypress tests below!
-// If you're unfamiliar with how Cypress works,
-// check out the link below and learn how to write your first test:
-// https://on.cypress.io/writing-first-test
-
 describe('Traging strategy Home', () => {
 
     beforeEach(() => {
@@ -14,6 +6,7 @@ describe('Traging strategy Home', () => {
 
     it('should render Home with navbar with 3 elements', () => {
         cy.contains('Algorithmic trading strategy protocol').should('be.visible');
+        cy.contains('Does exactly what it says on the tin').should('be.visible');
         cy.get('.navbar-nav li').should('have.length', 3)
             .last()
             .should('have.text', 'Community')
