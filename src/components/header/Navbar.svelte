@@ -23,7 +23,7 @@
 </script>
 
 <!-- Navbar -->
-<div class="container">
+<div class="container" data-testid={'navbar'}>
   <nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar">
 
 
@@ -53,7 +53,7 @@
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
 
-            <li class="nav-item">
+            <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/datasets">Datasets</a>
             </li>
 
@@ -61,11 +61,11 @@
               <a rel="external" class="nav-link" href="/exchanges">Exchanges</a>
             </li> -->
 
-            <li class="nav-item">
+            <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/community">Community</a>
             </li>
 
