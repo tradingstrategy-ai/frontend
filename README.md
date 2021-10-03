@@ -55,6 +55,14 @@ Then start SvelteKit development server
 npm run dev
 ```
 
+## Before commit
+
+Test that everything compiles in the production build:
+
+```shell
+rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
+```
+
 ## Running on production
 
 This will run server-side generated (SSR) pages.
@@ -62,6 +70,7 @@ This will run server-side generated (SSR) pages.
 ```shell
 screen -S frontend
 export PRODUCTION=true 
+export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 npm install
 (cd theme && npm install && npx gulp build:dist)
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js

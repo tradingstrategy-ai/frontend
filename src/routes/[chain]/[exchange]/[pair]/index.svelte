@@ -184,11 +184,18 @@
     $: console.log(`The active bucket is ${bucket}`);
 
     // Price text
-    export const priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "prince-change-red";
+    $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
 
     $: reloadCandlesOnBucketChange(bucket);
 
 </script>
+
+<svelte:head>
+	<title>
+        {summary.pair_symbol} trading on {details.exchange_name} on {details.chain_name}
+    </title>
+	<meta name="description" content={"Price chart and technical analysis for trading " + summary.pair_symbol + " on " + details.exchange_name + " on " + details.chain_name}>
+</svelte:head>
 
 <div class="container">
     <h1>

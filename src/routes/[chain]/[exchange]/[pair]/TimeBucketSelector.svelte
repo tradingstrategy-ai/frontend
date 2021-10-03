@@ -26,7 +26,7 @@
 <script lang="ts">
     export let activeBucket = null;
 
-    function onBucketClick(bucket: string) {
+    function onBucketClick(bucket) {
         window.location.hash = bucket;
         // Strip leading #
         activeBucket = fromHashToTimeBucket('#' + bucket);

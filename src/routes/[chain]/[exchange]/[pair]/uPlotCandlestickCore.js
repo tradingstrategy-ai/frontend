@@ -167,8 +167,8 @@ function candlestickPlugin() {
     const shadowColor = "#000000";
     const bearishColor = "#cc0000";
     const bullishColor = "#458b00";
-    const volumeBearishColor = "#c88776";
-    const volumeBullishColor = "#x9db883";
+    const volumeBearishColor = "#bea6a0";
+    const volumeBullishColor = "#a6ae9d";
     const bodyMaxWidth = 20;
     const shadowWidth = 2;
     const bodyOutline = 1;

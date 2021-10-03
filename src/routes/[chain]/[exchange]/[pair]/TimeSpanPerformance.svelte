@@ -6,8 +6,9 @@
 
     import SkeletonLine from '$lib/SkeletonLine.svelte';
     import IntersectionObserver from "svelte-intersection-observer";
-    import {formatDollar, formatAmount} from "$lib/helpers/formatters";
-    import {candles, summary} from "./index.svelte";
+    import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
+    import '$lib/styles/price.css';
+    import {summary} from "./index.svelte";
 
 
     // TimeSpanTradeData, see https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
@@ -42,9 +43,9 @@
     }
 
     async function triggerLoadWhenVisible(visible) {
-        console.log("Triggered", visible);
+        // console.log("Triggered", visible);
         if(visible) {
-            console.log("Visible");
+            // console.log("Visible");
             if(!timeSpanTradeData && !loadingStarted) {
                 loadingStarted = true;
                 await loadData();
@@ -52,7 +53,25 @@
         }
     }
 
+    function determinePriceChangeClass(timeSpanTradeData) {
+        if(!timeSpanTradeData) {
+            return "price-change-black"; // Data not loaded
+        }
+
+        console.log("Open", timeSpanTradeData.open, "close", timeSpanTradeData.close);
+        if(timeSpanTradeData.price_open == timeSpanTradeData.price_close) {
+            return "price-change-black";
+        } else if(timeSpanTradeData.price_open >= timeSpanTradeData.price_close) {
+            return "price-change-green";
+        } else {
+            return "price-change-red";
+        }
+    }
+
     $: triggerLoadWhenVisible(intersecting);
+
+    // close > open determines if the period was succesful
+    $: priceChangeColorClass = determinePriceChangeClass(timeSpanTradeData)
 
 </script>
 
@@ -60,8 +79,24 @@
     <IntersectionObserver {element} bind:intersecting once>
         <table bind:this={element}>
             <tr>
-                <th class="title" colspan="2">{title}</th>
+                <th class={"title " + priceChangeColorClass} colspan="2">
+                    {title}
+                </th>
             </tr>
+
+            <tr class="data-row">
+                <th>Change</th>
+                <td>
+                    <span class={priceChangeColorClass}>
+                        {#if timeSpanTradeData}
+                            {formatPriceChange(timeSpanTradeData.price_close / timeSpanTradeData.price_open - 1)}
+                        {:else}
+                            <SkeletonLine />
+                        {/if}
+                    </span>
+                </td>
+            </tr>
+
 
             <tr class="data-row">
                 <th>Open price</th>
