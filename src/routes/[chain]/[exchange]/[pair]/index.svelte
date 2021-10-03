@@ -32,9 +32,10 @@
                     error: `Trading pair not found: ${pair_slug}`
                 }
             } else {
+                console.error(resp);
                 return {
                     status: resp.status,
-                    error: new Error()
+                    error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
                 };
             }
         }
@@ -109,7 +110,7 @@
      *
      * @param bucket
      */
-    function reloadCandlesOnBucketChange(bucket: string) {
+    async function reloadCandlesOnBucketChange(bucket: string) {
 
         if(!bucket) {
             // Only start loading after we get a valid bucket on the client side
@@ -126,7 +127,17 @@
         }
 
         const encoded = new URLSearchParams(params);
-        const apiUrl = `${backendUrl}/candles${encoded}`;
+        const apiUrl = `${backendUrl}/candles?${encoded}`;
+
+        console.log("Fetching candles for bucket", bucket, apiUrl);
+
+        const resp = await fetch(apiUrl);
+        if(!resp.ok) {
+            console.error(resp);
+            return;
+        }
+
+        candles = await resp.json();
     }
 
     export let bucket = fromHashToTimeBucket(hash);
@@ -166,7 +177,11 @@
 
     <h2>Price chart</h2>
     <TimeBucketSelector bind:activeBucket={bucket} />
-    <CandleStickChart bind:candles={candles} />
+
+    <div class="chart-wrapper">
+        <CandleStickChart title={summary.pair_name + " converted to USD"} bind:candles={candles} />
+    </div>
+
 
     <h2>Price and liquidity movement</h2>
 
@@ -189,4 +204,10 @@
         </div>
     </div>
 
-</div>  
+</div>
+
+<style>
+    .chart-wrapper {
+        margin: 20px 0;
+    }
+</style>

@@ -68,6 +68,7 @@
 <style>
 	.skeleton-line {
 		width: 100%;
+		min-width: 60px;
 		max-height: 1rem;
 		display: inline-block;
 	}

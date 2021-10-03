@@ -8,9 +8,14 @@
      */
     export function fromHashToTimeBucket(hash: string): string {
         if(hash) {
+
+            if(!hash.startsWith("#")) {
+                throw new Error(`Does not look like a hash ${hash}`);
+            }
+
             const b = hash.substring(1).toLowerCase();
             if(validBuckets.includes(b)) {
-                return hash;
+                return b;
             }
         }
         return "4h";
@@ -23,7 +28,8 @@
 
     function onBucketClick(bucket: string) {
         window.location.hash = bucket;
-        activeBucket = bucket;
+        // Strip leading #
+        activeBucket = fromHashToTimeBucket('#' + bucket);
     }
 
 </script>
