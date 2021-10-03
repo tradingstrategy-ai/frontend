@@ -57,12 +57,15 @@
     "prettier-plugin-svelte": "^2.2.0",
     "svelte": "^3.42.5",
     "svelte-check": "^2.0.0",
+    "svelte-intersection-observer": "^0.8.0",
     "svelte-jester": "^1.1.5",
     "svelte-preprocess": "^4.9.4",
     "svelte-time": "^0.4.0",
     "ts-jest": "^26.4.1",
     "tslib": "^2.0.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.0.0",
+    "uplot": "^1.6.16",
+    "jest-transform-stub": "^2.0.0"
   },
   "type": "module",
   "dependencies": {

@@ -1,6 +1,4 @@
 :root {
-	font-family: 'Roboto', sans-serif;
-	--font-mono: 'Fira Mono', monospace;
 	--pure-white: #ffffff;
 	--primary-color: #b9c6d2;
 	--secondary-color: #d0dde9;
@@ -79,7 +77,6 @@ h2 {
 
 pre {
 	font-size: 16px;
-	font-family: var(--font-mono);
 	background-color: rgba(255, 255, 255, 0.45);
 	border-radius: 3px;
 	box-shadow: 2px 2px 6px rgb(255 255 255 / 25%);
@@ -103,3 +100,4 @@ button:focus:not(:focus-visible) {
 		font-size: 2.4rem;
 	}
 }
+

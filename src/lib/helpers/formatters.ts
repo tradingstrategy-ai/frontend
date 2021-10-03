@@ -25,26 +25,51 @@ export function formatDownloadLink(validApiKey, key, link) {
 }
 
 
-export function formatDollar(n: number): string {
+export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
+
+    if(n === undefined) {
+        // Plz avoid ending here
+        return "---";
+    }
+
     if(n >= 1000*1000*1000) {
         return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         }) + "B"
     } else if(n >= 1000*1000) {
-        return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+        return "$" + (n / (1000 * 1000)).toLocaleString("en", {
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         }) + "M"
+    } else if(n >= 1000) {
+        return "$" + (n / (1000)).toLocaleString("en", {
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
+        }) + "k"
     } else {
         return "$" + n.toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         });
     }
 }
 
 
 export function formatPriceChange(n: number): string {
-    return (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
+    return (n > 0 ? "+" : "") + (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
+}
+
+// Use a thousand separator
+export function formatAmount(n: number): string {
+    return n.toLocaleString("en");
+}
+
+/**
+ * Format UNIX timestamp
+ * @param ts Timestamp in seconds
+ */
+export function formatUnixTimestamp(ts: number): string {
+    const d = new Date(ts * 1000);
+    return d.toUTCString();
 }

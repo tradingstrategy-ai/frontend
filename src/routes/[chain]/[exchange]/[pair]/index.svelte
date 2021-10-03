@@ -1,0 +1,258 @@
+<script context="module">
+    /*
+        Render the pair trading page
+
+        - Load pair core data on the SSR.
+
+        - Candle data loading is delayed to the client side (though in theory the first run could be done on the SSR)
+
+        - Selected candle stick time bucket is carried over in URL fragment - this could be moved to SvelteKit routing query parameter
+    */
+
+    import { backendUrl } from '$lib/config';
+    import '$lib/styles/price.css';
+    import '$lib/styles/bodytext.css';
+
+    export async function load({ page }) {
+
+        const exchange_slug = page.params.exchange;
+        const chain_slug = page.params.chain;
+        const pair_slug = page.params.pair;
+        const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
+        const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+
+        console.log("Loading", page, apiUrl);
+
+        const resp = await fetch(apiUrl);
+
+        if(!resp.ok) {
+            if(resp.status === 404) {
+                return {
+                    status: 404,
+                    error: `Trading pair not found: ${pair_slug}`
+                }
+            } else {
+                console.error(resp);
+                return {
+                    status: resp.status,
+                    error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
+                };
+            }
+        }
+
+        const pairDetails = await resp.json()
+
+        const summary = pairDetails.summary;
+        const details = pairDetails.additional_details;
+        const daily = pairDetails.daily;
+
+        console.log("Pair details", pairDetails);
+
+        // const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
+        // const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
+        // const pairs = await fetch(urlTopPairs);
+        // const exchangesPairs = await pairs.json();
+        // const details = await fetch(urlDetails);
+        // const exchangesDetails = await details.json();
+
+        return {
+            props: {
+                exchange_slug,
+                chain_slug,
+                pair_slug,
+                summary,
+                details,
+                daily
+            }
+        }
+    }
+</script>
+
+<script lang="ts">
+    // import TradingViewWidget from "svelte-tradingview-widget";
+    //import TablePairs from '../../../components/table_quote_summary/Table.svelte';
+    // export let pairId;
+    // export let chain;
+    // export let exchangeId;
+    // export let pairs;
+    import Time from "svelte-time";
+    import { formatDollar } from '$lib/helpers/formatters';
+    import { formatPriceChange } from '$lib/helpers/formatters';
+    import { fromHashToTimeBucket } from './TimeBucketSelector.svelte';
+    import { browser } from '$app/env';
+
+    import TimeBucketSelector from './TimeBucketSelector.svelte';
+    import CandleStickChart from './CandleStickChart.svelte';
+    import TimeSpanPerformance from './TimeSpanPerformance.svelte';
+
+    export let exchange_slug;
+    export let chain_slug;
+    export let pair_slug;
+    export let summary; // PairSummary OpenAPI
+    export let details; // PairAdditionalDetails OpenAPI
+
+    export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
+
+    // Loaded candle data
+    // See Candle OpenAPI
+    export let candles = null;
+
+    // Resolve the initial candle stick chart from the fragment parameter
+    let hash;
+    if(browser) {
+        hash = window.location.hash;
+    } else {
+        hash = null;
+    }
+
+    /**
+     * Convert candle data to internal uPlot format.
+     *
+     * Candles from from the server as descripted in OpenAPI
+     * https://tradingstrategy.ai/api/explorer/
+     *
+     * The server returns one list of JavaScript objects (o, h, l, c, v).
+     * uPlot wants x-array (time) and five separate y arrays (o, h, l, c, v).
+     *
+     */
+    function massageCandles(candles: any[]): number[][] {
+        const cols = candles.length;
+        const rows = 6;
+
+        // Try to be smart and hint typed arrays and length for JavaScript VM
+        // So sad JavaScript can't do even this basic shit.
+        // https://stackoverflow.com/a/68411296/315168
+        let matrix = Array(rows).fill().map(entry => Array(cols))
+
+        candles.forEach(function(obj: any, idx: number) {
+
+            // Time series
+            const unixTime = Date.parse(obj.ts) / 1000;
+            matrix[0][idx] = unixTime;
+
+            // OHLCV core data
+            matrix[1][idx] = obj.o;
+            matrix[2][idx] = obj.h;
+            matrix[3][idx] = obj.l;
+            matrix[4][idx] = obj.c;
+            matrix[5][idx] = obj.v;
+            //matrix[5][idx] = 0
+        });
+
+        return matrix;
+    }
+
+    /**
+     * Reload new candle data from the server and update the candle stick chart compontent.
+     *
+     * @param bucket
+     */
+    async function reloadCandlesOnBucketChange(bucket: string) {
+
+        if(!bucket) {
+            // Only start loading after we get a valid bucket on the client side
+            return;
+        }
+
+        // Switch to skeleton loader on the candle view
+        candles = null;
+
+        // https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
+        const params = {
+            pair_id: summary.pair_id,
+            time_bucket: bucket,
+        }
+
+        const encoded = new URLSearchParams(params);
+        const apiUrl = `${backendUrl}/candles?${encoded}`;
+
+        console.log("Fetching candles for bucket", bucket, apiUrl);
+
+        const resp = await fetch(apiUrl);
+        if(!resp.ok) {
+            console.error(resp);
+            return;
+        }
+
+        const rawCandles = await resp.json();
+        candles = massageCandles(rawCandles);
+    }
+
+    export let bucket = fromHashToTimeBucket(hash);
+    console.log("Got hash", hash, "bucket", bucket);
+
+    $: console.log(`The active bucket is ${bucket}`);
+
+    // Price text
+    $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+
+    $: reloadCandlesOnBucketChange(bucket);
+
+</script>
+
+<svelte:head>
+	<title>
+        {summary.pair_symbol} trading on {details.exchange_name} on {details.chain_name}
+    </title>
+	<meta name="description" content={"Price chart and technical analysis for trading " + summary.pair_symbol + " on " + details.exchange_name + " on " + details.chain_name}>
+</svelte:head>
+
+<div class="container">
+    <h1>
+        {summary.pair_symbol} trading on
+        <a href="/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
+        on <a href="/{chain_slug}">{details.chain_name}</a>
+    </h1>
+
+    <p>
+        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
+        on <a class=body-link href="/{chain_slug}">{details.chain_name}</a>.
+    </p>
+
+    <p>
+        The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
+        <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
+    </p>
+
+    <p>
+        The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
+
+        The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
+    </p>
+
+    <h2>Price chart</h2>
+    <TimeBucketSelector bind:activeBucket={bucket} />
+
+    <div class="chart-wrapper">
+        <CandleStickChart title={summary.pair_name + " converted to USD"} bind:candles={candles} />
+    </div>
+
+
+    <h2>Price and liquidity movement</h2>
+
+    <p>
+        The price and liquidity of <strong>{summary.base_token_symbol_friendly}</strong> in this trading pair. The amounts are converted to US dollar through  <strong>{summary.quote_token_symbol_friendly}/USD</strong>.
+    </p>
+
+    <div class="row">
+        <div class="col-md-3">
+            <TimeSpanPerformance pairId={summary.pair_id} title="Hourly" timeSpanTradeData={hourly} period="hourly"/>
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance pairId={summary.pair_id} title="Daily" timeSpanTradeData={daily} period="daily"/>
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance pairId={summary.pair_id} title="Weekly" timeSpanTradeData={weekly} period="weekly" />
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance pairId={summary.pair_id} title="Monthly" timeSpanTradeData={monthly} period="monthly" />
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .chart-wrapper {
+        margin: 20px 0;
+    }
+</style>

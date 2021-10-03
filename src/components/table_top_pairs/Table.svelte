@@ -1,6 +1,6 @@
 <script lang="typescript">
 	import { onMount } from 'svelte';
-	import { formatNumber } from '$lib/helpers/utils';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	export let rows = [];
 	export let apiError;

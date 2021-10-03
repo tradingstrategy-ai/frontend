@@ -1,0 +1,11 @@
+/**
+ * Price action and candle colors
+ */
+
+.price-change-green {
+	color: #458b00;
+}
+
+.price-change-red {
+	color: #cc0000;
+}

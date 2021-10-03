@@ -43,7 +43,7 @@ Or as one liner:
 Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte). 
 
 ```shell
-export VITE_PUBLIC_BACKEND_URL=shttp://tradingstrategy.ai/api
+export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 
 # Or if you run on localhost
 export VITE_PUBLIC_BACKEND_URL=http://localhost:3456/api
@@ -55,6 +55,14 @@ Then start SvelteKit development server
 npm run dev
 ```
 
+## Before commit
+
+Test that everything compiles in the production build:
+
+```shell
+rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
+```
+
 ## Running on production
 
 This will run server-side generated (SSR) pages.
@@ -62,6 +70,7 @@ This will run server-side generated (SSR) pages.
 ```shell
 screen -S frontend
 export PRODUCTION=true 
+export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 npm install
 (cd theme && npm install && npx gulp build:dist)
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
@@ -78,7 +87,7 @@ netstat -ltnp | grep -w ':80'
 You can also open the theme development server:
 
 ```shell
-npx gulp
+( cd theme && npx gulp )
 ```
 
 Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
@@ -111,8 +120,11 @@ Number go down red: #cc0000
 
 Logo font: 
 
+# Svelte
 
-## More information
+[Any external Svelte components need to be installed as development dependency because of SSR](https://github.com/sveltejs/sapper-template#using-external-components).
 
-* https://docs.capitalgram.com/
+```shell
+
+```
 
