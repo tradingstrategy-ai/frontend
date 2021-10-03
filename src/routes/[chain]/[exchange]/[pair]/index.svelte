@@ -229,16 +229,16 @@
 
     <div class="row">
         <div class="col-md-3">
-            <TimeSpanPerformance title="Hourly" timeSpanTradeData={hourly} />
+            <TimeSpanPerformance pairId={summary.pair_id} title="Hourly" timeSpanTradeData={hourly} period="hourly"/>
         </div>
         <div class="col-md-3">
-            <TimeSpanPerformance title="Daily" timeSpanTradeData={daily} />
+            <TimeSpanPerformance pairId={summary.pair_id} title="Daily" timeSpanTradeData={daily} period="daily"/>
         </div>
         <div class="col-md-3">
-            <TimeSpanPerformance title="Weekly" timeSpanTradeData={daily} />
+            <TimeSpanPerformance pairId={summary.pair_id} title="Weekly" timeSpanTradeData={weekly} period="weekly" />
         </div>
         <div class="col-md-3">
-            <TimeSpanPerformance title="Monthly" timeSpanTradeData={daily} />
+            <TimeSpanPerformance pairId={summary.pair_id} title="Monthly" timeSpanTradeData={monthly} period="monthly" />
         </div>
     </div>
 
