@@ -15,8 +15,6 @@
 
     export async function load({ page }) {
 
-        //
-        // C
         const exchange_slug = page.params.exchange;
         const chain_slug = page.params.chain;
         const pair_slug = page.params.pair;
@@ -69,7 +67,7 @@
     }
 </script>
 
-<script>
+<script lang="ts">
     // import TradingViewWidget from "svelte-tradingview-widget";
     //import TablePairs from '../../../components/table_quote_summary/Table.svelte';
     // export let pairId;
@@ -80,16 +78,19 @@
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
     import { fromHashToTimeBucket } from './TimeBucketSelector.svelte';
+    import { browser } from '$app/env';
+
     import TimeBucketSelector from './TimeBucketSelector.svelte';
     import CandleStickChart from './CandleStickChart.svelte';
-    import { browser } from '$app/env';
+    import TimeSpanPerformance from './TimeSpanPerformance.svelte';
 
     export let exchange_slug;
     export let chain_slug;
     export let pair_slug;
     export let summary; // PairSummary OpenAPI
     export let details; // PairAdditionalDetails OpenAPI
-    export let daily; // TimeSpanTradeData OpenAPI
+
+    export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
     // Loaded candle data
     // See Candle OpenAPI
@@ -103,6 +104,31 @@
         hash = null;
     }
 
+    /**
+     * Reload new candle data from the server and update the candle stick chart compontent.
+     *
+     * @param bucket
+     */
+    function reloadCandlesOnBucketChange(bucket: string) {
+
+        if(!bucket) {
+            // Only start loading after we get a valid bucket on the client side
+            return;
+        }
+
+        // Switch to skeleton loader on the candle view
+        candles = null;
+
+        // https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
+        const params = {
+            pair_id: summary.pair_id,
+            time_bucket: bucket,
+        }
+
+        const encoded = new URLSearchParams(params);
+        const apiUrl = `${backendUrl}/candles${encoded}`;
+    }
+
     export let bucket = fromHashToTimeBucket(hash);
     console.log("Got hash", hash, "bucket", bucket);
 
@@ -110,6 +136,8 @@
 
     // Price text
     export const priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "prince-change-red";
+
+    $: reloadCandlesOnBucketChange(bucket);
 
 </script>
 
@@ -140,6 +168,25 @@
     <TimeBucketSelector bind:activeBucket={bucket} />
     <CandleStickChart bind:candles={candles} />
 
-    <h2>Trading pair performance</h2>
+    <h2>Price and liquidity movement</h2>
+
+    <p>
+        The price and liquidity of <strong>{summary.base_token_symbol_friendly}</strong> in this trading pair. The amounts are converted to US dollar through  <strong>{summary.quote_token_symbol_friendly}/USD</strong>.
+    </p>
+
+    <div class="row">
+        <div class="col-md-3">
+            <TimeSpanPerformance title="Hourly" timeSpanTradeData={hourly} />
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance title="Daily" timeSpanTradeData={daily} />
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance title="Weekly" timeSpanTradeData={daily} />
+        </div>
+        <div class="col-md-3">
+            <TimeSpanPerformance title="Monthly" timeSpanTradeData={daily} />
+        </div>
+    </div>
 
 </div>  

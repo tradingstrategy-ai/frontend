@@ -26,6 +26,12 @@ export function formatDownloadLink(validApiKey, key, link) {
 
 
 export function formatDollar(n: number): string {
+
+    if(n === undefined) {
+        // Plz avoid ending here
+        return "---";
+    }
+
     if(n >= 1000*1000*1000) {
         return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: 3,
@@ -47,4 +53,9 @@ export function formatDollar(n: number): string {
 
 export function formatPriceChange(n: number): string {
     return (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
+}
+
+// Use a thousand separator
+export function formatAmount(n: number): string {
+    return n.toLocaleString("en");
 }
