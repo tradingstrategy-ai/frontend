@@ -3,7 +3,10 @@
         Render the pair trading page
     */
 
+
     import { backendUrl } from '$lib/config';
+    import '$lib/styles/price.css';
+    import '$lib/styles/bodytext.css';
 
     export async function load({ page }) {
 
@@ -70,6 +73,10 @@
     import Time from "svelte-time";
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
+    import url from '$lib/helpers/url';
+    import { fromHashToTimeBucket } from './TimeBucketSelector.svelte';
+    import TimeBucketSelector from './TimeBucketSelector.svelte';
+    import { browser } from '$app/env';
 
     export let exchange_slug;
     export let chain_slug;
@@ -78,7 +85,23 @@
     export let details; // PairAdditionalDetails OpenAPI
     export let daily; // TimeSpanTradeData OpenAPI
 
+    export const priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "prince-change-red";
+
     // let options = { symbol: "BINANCE:ETHUSDT", theme: "dark", autosize: false, locale: "fr" };
+
+    // Resolve the initial candle stick chart from the fragment parameter
+    let hash;
+    if(browser) {
+        hash = window.location.hash;
+    } else {
+        hash = null;
+    }
+
+    export let bucket = fromHashToTimeBucket(hash);
+    console.log("Got hash", hash, "bucket", bucket);
+
+    $: console.log(`The active bucket is ${bucket}`);
+
 </script>
 
 <div class="container">
@@ -89,12 +112,13 @@
     </h1>
 
     <p>
-        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong>.
+        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
+        on <a class=body-link href="/{chain_slug}">{details.chain_name}</a>.
     </p>
 
     <p>
-        The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong>{formatDollar(summary.usd_price_latest)}</strong> and is
-        <strong>{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
+        The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
+        <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
     </p>
 
     <p>
@@ -102,6 +126,9 @@
 
         The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
     </p>
+
+    <h2>Price chart</h2>
+    <TimeBucketSelector bind:activeBucket={bucket} />
 
 
 </div>  
