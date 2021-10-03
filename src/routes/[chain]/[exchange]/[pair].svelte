@@ -1,8 +1,13 @@
 <script context="module">
     /*
         Render the pair trading page
-    */
 
+        - Load pair core data on the SSR.
+
+        - Candle data loading is delayed to the client side (though in theory the first run could be done on the SSR)
+
+        - Selected candle stick time bucket is carried over in URL fragment - this could be moved to SvelteKit routing query parameter
+    */
 
     import { backendUrl } from '$lib/config';
     import '$lib/styles/price.css';
@@ -10,10 +15,11 @@
 
     export async function load({ page }) {
 
+        //
+        // C
         const exchange_slug = page.params.exchange;
         const chain_slug = page.params.chain;
         const pair_slug = page.params.pair;
-
         const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
         const apiUrl = `${backendUrl}/pair-details?${encoded}`;
 
@@ -73,9 +79,9 @@
     import Time from "svelte-time";
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
-    import url from '$lib/helpers/url';
     import { fromHashToTimeBucket } from './TimeBucketSelector.svelte';
     import TimeBucketSelector from './TimeBucketSelector.svelte';
+    import CandleStickChart from './CandleStickChart.svelte';
     import { browser } from '$app/env';
 
     export let exchange_slug;
@@ -85,9 +91,9 @@
     export let details; // PairAdditionalDetails OpenAPI
     export let daily; // TimeSpanTradeData OpenAPI
 
-    export const priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "prince-change-red";
-
-    // let options = { symbol: "BINANCE:ETHUSDT", theme: "dark", autosize: false, locale: "fr" };
+    // Loaded candle data
+    // See Candle OpenAPI
+    export let candles = null;
 
     // Resolve the initial candle stick chart from the fragment parameter
     let hash;
@@ -101,6 +107,9 @@
     console.log("Got hash", hash, "bucket", bucket);
 
     $: console.log(`The active bucket is ${bucket}`);
+
+    // Price text
+    export const priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "prince-change-red";
 
 </script>
 
@@ -129,6 +138,8 @@
 
     <h2>Price chart</h2>
     <TimeBucketSelector bind:activeBucket={bucket} />
+    <CandleStickChart bind:candles={candles} />
 
+    <h2>Trading pair performance</h2>
 
 </div>  

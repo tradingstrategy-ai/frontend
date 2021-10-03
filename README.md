@@ -111,8 +111,11 @@ Number go down red: #cc0000
 
 Logo font: 
 
+# Svelte
 
-## More information
+[Any external Svelte components need to be installed as development dependency because of SSR](https://github.com/sveltejs/sapper-template#using-external-components).
 
-* https://docs.capitalgram.com/
+```shell
+
+```
 
