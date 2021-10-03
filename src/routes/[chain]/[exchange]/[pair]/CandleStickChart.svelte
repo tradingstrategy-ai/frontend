@@ -14,7 +14,7 @@
     import { browser } from '$app/env';
     import { onMount } from 'svelte';
     import "uplot/dist/uPlot.min.css";
-    import { drawCandleStickChart } from  "./uPlotCandlestickCore.js";
+    import {clearChart, drawCandleStickChart} from "./uPlotCandlestickCore.js";
 
     // See CandleList https://tradingstrategy.ai/api/explorer/
     export let candles = null;
@@ -23,7 +23,6 @@
     // Dynamically imported uplot
     let uPlot;
 
-
     function redrawCandles(candles: any[], uPlot) {
 
         if(!uPlot) {
@@ -31,16 +30,19 @@
             return;
         }
 
+        const elem = document.getElementById("uplot-wrapper");
+
         if(!candles) {
             // console.log("Skipping candle draw - no candles loaded");
+            clearChart(elem);
             return;
         }
 
         console.log("Redrawing candles", candles);
 
-        const elem = document.getElementById("uplot-wrapper");
-        drawCandleStickChart(uPlot, title, elem);
+        drawCandleStickChart(uPlot, title, elem, candles);
     }
+
 
     // https://stackoverflow.com/questions/57030895/whats-the-best-way-to-run-some-code-only-client-side
     onMount(async () => {

@@ -25,7 +25,7 @@ export function formatDownloadLink(validApiKey, key, link) {
 }
 
 
-export function formatDollar(n: number): string {
+export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
 
     if(n === undefined) {
         // Plz avoid ending here
@@ -34,18 +34,23 @@ export function formatDollar(n: number): string {
 
     if(n >= 1000*1000*1000) {
         return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         }) + "B"
     } else if(n >= 1000*1000) {
-        return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+        return "$" + (n / (1000 * 1000)).toLocaleString("en", {
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         }) + "M"
+    } else if(n >= 1000) {
+        return "$" + (n / (1000)).toLocaleString("en", {
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
+        }) + "k"
     } else {
         return "$" + n.toLocaleString("en", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: minFrag,
+            maximumFractionDigits: maxFrag
         });
     }
 }

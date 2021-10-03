@@ -1,9 +1,13 @@
+import {formatDollar} from "$lib/helpers/formatters";
+
 /**
  * A modified OHLC example from uPlot
  *
  * The original OHLC: https://github.com/leeoniya/uPlot/blob/master/demos/candlestick-ohlc.html
  *
  * Resizing: https://github.com/leeoniya/uPlot/blob/master/demos/resize.html
+ *
+ * Currently hardcoded to handle only 1 chart per page.
  */
 
 
@@ -12,9 +16,6 @@ let uPlot = null;
 
 // The current window.addEventListener callback for resizes
 let resizeCallback = null;
-
-// The current uPlot instance
-let diagram = null;
 
 
 function throttle(cb, limit) {
@@ -270,12 +271,7 @@ const data = [
     [1283.35,1315.3,1326.1,1317.4,1321.5,1317.4,1323.5,1319.2,1321.3,1323.3,1319.7,1325.1,1323.6,1313.8,1282.05,1279.05,1314.2,1315.2,1310.8,1329.1,1334.5,1340.2,1340.5,1350,1347.1,1344.3,1344.6,1339.7,1339.4,1343.7,1337,1338.9,1340.1,1338.7,1346.8,1324.25,1329.55,1369.6,1372.5,1352.4,1357.6,1354.2,1353.4,1346,1341,1323.8,1311.9,1309.1,1312.2,1310.7,1324.3,1315.7,1322.4,1333.8,1319.4,1327.1,1325.8,1330.9,1325.8,1331.6,1336.5,1346.7,1339.2,1334.7,1313.3,1316.5,1312.4,1313.4,1313.3,1312.2,1313.7,1319.9,1326.3,1331.9,1311.3,1313.4,1309.4,1295.2,1294.7,1294.1,1277.9,1295.8,1291.2,1297.4,1297.7,1306.8,1299.4,1303.6,1302.2,1289.9,1299.2,1301.8,1303.6,1299.5,1303.2,1305.3,1319.5,1313.6,1315.1,1303.5,1293,1294.6,1290.4,1291.4,1302.7,1301,1284.15,1284.95,1294.3,1297.9,1304.1,1322.6,1339.3,1340.1,1344.9,1354,1357.4,1340.7,1342.7,1348.2,1355.1,1355.9,1354.2,1362.1,1360.1,1408.3,1411.2,1429.5,1430.1,1426.8,1423.4,1425.1,1400.8,1419.8,1432.9,1423.55,1412.1,1412.2,1412.8,1424.9,1419.3,1424.8,1426.1,1423.6,1435.9,1440.8,1439.4,1439.7,1434.5,1436.5,1427.5,1432.2,1433.3,1441.8,1437.8,1432.4,1457.5,1476.5,1484.2,1519.6,1509.5,1508.5,1517.2,1514.1,1527.8,1531.2,1523.6,1511.6,1515.7,1515.7,1508.5,1537.6,1537.2,1551.8,1549.1,1536.9,1529.4,1538.05,1535.15,1555.9,1560.4,1525.5,1515.5,1511.1,1499.2,1503.2,1507.4,1499.5,1511.5,1513.4,1515.8,1506.2,1515.1,1531.5,1540.2,1512.3,1515.2,1506.4,1472.9,1489,1507.9,1513.8,1512.9,1504.4,1503.9,1512.8,1500.9,1488.7,1497.6,1483.5,1494,1498.3,1494.1,1488.1,1487.5,1495.7,1504.7,1505.3],
 ];
 
-
-export function drawCandleStickChart(_uPlot, title, elem) {
-
-    console.log("Starting drawCandleStickChart", title);
-    uPlot = _uPlot;
-
+export function clearChart(elem) {
     // Clear any existing uPlot diagrams within the element
     const children = elem.querySelectorAll(".uplot");
     children.forEach(function(child) {
@@ -284,10 +280,21 @@ export function drawCandleStickChart(_uPlot, title, elem) {
 
     if(resizeCallback) {
         window.removeEventListener("resize", resizeCallback);
+        resizeCallback = null;
     }
+}
 
+
+export function drawCandleStickChart(_uPlot, title, elem, data) {
+
+    console.log("Starting drawCandleStickChart", title);
+    uPlot = _uPlot;
+
+    clearChart(elem);
     // random volume data
-    data.push(data[0].map(v => randInt(10, 250)));
+    // data.push(data[0].map(v => randInt(10, 250)));
+
+    let maxVol = Math.max.apply(null, data[5]);
 
     const fmtDate = uPlot.fmtDate("{YYYY}-{MM}-{DD}");
     const tzDate = ts => uPlot.tzDate(new Date(ts * 1e3), "Etc/UTC");
@@ -305,8 +312,56 @@ export function drawCandleStickChart(_uPlot, title, elem) {
         }
     }
 
+    const size = getSize();
+
+    // A hack tp make the chart more suitable for mobile
+    // We do not dynamically manipulate axes
+    // so you get whatever size you have on the page load
+    const largeScreen = size.width > 900;
+    let axes;
+
+    if(largeScreen) {
+        axes = [
+            {},
+            {
+                label: "Price",
+                space: 40,
+                size: 60,
+                gap: 0,
+                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+            },
+            {
+                label: "Vol",
+                side: 1,
+                space: 40,
+                size: 80,
+                scale: 'vol',
+                grid: {show: false},
+                values: (u, vals) => vals.map(v => formatDollar(v, 1, 1)),
+            }
+        ];
+    } else {
+        // No label on mobile
+        axes = [
+            {},
+            {
+                space: 40,
+                size: 40,
+                gap: 0,
+                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+            },
+            {
+                side: 1,
+                space: 40,
+                size: 40,
+                scale: 'vol',
+                grid: {show: false},
+            }
+        ];
+    }
+
     const opts = {
-        ...getSize(),
+        ...size,
         title: title,
         tzDate,
         plugins: [
@@ -319,7 +374,7 @@ export function drawCandleStickChart(_uPlot, title, elem) {
                 distr: 2,
             },
             vol: {
-                range: [0, 2000],
+                range: [0, maxVol * 3],
             },
         },
         series: [
@@ -348,17 +403,7 @@ export function drawCandleStickChart(_uPlot, title, elem) {
                 scale: 'vol',
             },
         ],
-        axes: [
-            {},
-            {
-                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
-            },
-            {
-                side: 1,
-                scale: 'vol',
-                grid: {show: false},
-            }
-        ]
+        axes: axes,
     };
 
     let u = new uPlot(opts, data, elem);

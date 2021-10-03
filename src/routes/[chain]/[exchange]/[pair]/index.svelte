@@ -106,6 +106,43 @@
     }
 
     /**
+     * Convert candle data to internal uPlot format.
+     *
+     * Candles from from the server as descripted in OpenAPI
+     * https://tradingstrategy.ai/api/explorer/
+     *
+     * The server returns one list of JavaScript objects (o, h, l, c, v).
+     * uPlot wants x-array (time) and five separate y arrays (o, h, l, c, v).
+     *
+     */
+    function massageCandles(candles: any[]): number[][] {
+        const cols = candles.length;
+        const rows = 6;
+
+        // Try to be smart and hint typed arrays and length for JavaScript VM
+        // So sad JavaScript can't do even this basic shit.
+        // https://stackoverflow.com/a/68411296/315168
+        let matrix = Array(rows).fill().map(entry => Array(cols))
+
+        candles.forEach(function(obj: any, idx: number) {
+
+            // Time series
+            const unixTime = Date.parse(obj.ts) / 1000;
+            matrix[0][idx] = unixTime;
+
+            // OHLCV core data
+            matrix[1][idx] = obj.o;
+            matrix[2][idx] = obj.h;
+            matrix[3][idx] = obj.l;
+            matrix[4][idx] = obj.c;
+            matrix[5][idx] = obj.v;
+            //matrix[5][idx] = 0
+        });
+
+        return matrix;
+    }
+
+    /**
      * Reload new candle data from the server and update the candle stick chart compontent.
      *
      * @param bucket
@@ -137,7 +174,8 @@
             return;
         }
 
-        candles = await resp.json();
+        const rawCandles = await resp.json();
+        candles = massageCandles(rawCandles);
     }
 
     export let bucket = fromHashToTimeBucket(hash);
