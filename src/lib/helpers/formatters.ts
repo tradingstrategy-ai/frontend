@@ -64,3 +64,12 @@ export function formatPriceChange(n: number): string {
 export function formatAmount(n: number): string {
     return n.toLocaleString("en");
 }
+
+/**
+ * Format UNIX timestamp
+ * @param ts Timestamp in seconds
+ */
+export function formatUnixTimestamp(ts: number): string {
+    const d = new Date(ts * 1000);
+    return d.toUTCString();
+}
