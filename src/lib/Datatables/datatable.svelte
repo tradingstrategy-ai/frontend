@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
 
@@ -57,8 +57,8 @@
 			<th>Salary</th>
 		</tr>
 	</tfoot>
-</table> -->
-<script lang="ts">
+</table>
+<!-- <script lang="ts">
 	import { browser } from '$app/env';
 	import { onMount, tick } from 'svelte';
 
@@ -76,4 +76,4 @@
 
 </script>
 
-<p id="example">Hello World</p>
+<p id="example">Hello World</p> -->
