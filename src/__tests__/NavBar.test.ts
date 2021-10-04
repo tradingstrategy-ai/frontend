@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import {render, screen, fireEvent} from '@testing-library/svelte';
-import NavBar from '../components/header/Navbar.svelte';
+import NavBar from '../lib/header/Navbar.svelte';
 
 describe('Navigation Bar', () => {
   it('shows proper heading when rendered main page', () => {
