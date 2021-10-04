@@ -1,6 +1,8 @@
 <script lang="ts">
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
+	import jQuery from 'jquery';
+	import datatableModule from 'datatables.net-dt';
 
 	import { onMount, tick } from 'svelte';
 
@@ -20,8 +22,30 @@
 
 	onMount(async () => {
 		if (browser) {
-            const jQuery = await import('jquery');
-			table = jQuery(el).DataTable();
+
+			// const module = await import('jquery');
+			//console.log("jQuery module is", module);
+			// const jQuery = module.jQuery;
+			// const jQuery = window.jQuery;
+			//const jQuery = module; // Looks like this is supposed to work like this
+			console.log("jQuery the function is", jQuery);
+
+			const jQueryX = jQuery.noConflict(true);
+
+			// Check we have loaded a functional jQuery
+			// console.log("jQuery function result", jQuery("body"));
+
+			// https://datatables.net/manual/installation#NPM
+			const DataTable = datatableModule();
+
+			let table = new DataTable(el);
+			console.log("Got my table", table);
+			const result = await load();
+
+			console.log("Result data is", result);
+
+			table.rows.add(result);
+
 			load().then((rows) => {
 				table.rows.add(rows).draw();
 			});

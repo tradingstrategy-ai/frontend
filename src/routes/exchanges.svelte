@@ -42,6 +42,9 @@ import { onMount, tick } from 'svelte';
 
 	onMount(async () => {
 		if (browser) {
+
+			// const jQuery = (await import('jQuery')).default;
+
             const initDt = (await import('datatables.net-dt')).default;
 			initDt()
 		}
