@@ -104,7 +104,7 @@ Darker secondary: #4BACB8 - dark turquoise
 
 Link on white documentation: #005b49
 
-Number go up green: #458b00
+    Number go up green: #458b00
 
 Number go down red: #cc0000
 

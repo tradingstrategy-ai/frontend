@@ -1,3 +1,7 @@
+<script>
+	import PoolPreview from '$lib//pool/PoolPreview.svelte';
+</script>
+
 <svelte:head>
 	<title>TradingStrategy.ai - Algorithmic trading strategy protocol</title>
 	<meta name="description" content="On-chain systematic investing and trading">
@@ -5,15 +9,32 @@
 
 
 <main>
-	<div>
-		<section class="card-home card-jumbo">
-			<div class="container">
-				<h1>Algorithmic trading strategy protocol</h1>
+	<section class="card-home card-jumbo">
+		<div class="container">
+			<h1>Algorithmic trading strategy protocol</h1>
 
-				<p>Coming soon</p>
+			<p>Invest and offer active trading strategies run by a decentralised oracle network</p>
+		</div>
+	</section>
+
+	<section class="section-pool-preview">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<PoolPreview
+						title="ETH-USDC on"
+						preview={true} />
+				</div>
+
+				<div class="col-md-6">
+					<PoolPreview
+						title="CAKE-USDC on PancakeSwap"
+						preview={true} />
+
+				</div>
 			</div>
-		</section>
-	</div>
+		</div>
+	</section>
 </main>
 
 <style>
@@ -26,8 +47,9 @@
 	}
 
 	.card-jumbo {
-		background: transparent;
+		background: #F2DFCE;
 		box-shadow: none;
+		padding: 60px 0;
 	}
 
 	.card-jumbo p {
@@ -39,12 +61,7 @@
 		color: black;
 		text-align: center;
 	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	.section-pool-preview :global(.card) {
+		margin: 60px 0;
 	}
 </style>
