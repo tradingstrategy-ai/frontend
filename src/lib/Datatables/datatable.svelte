@@ -30,7 +30,7 @@
 			//const jQuery = module; // Looks like this is supposed to work like this
 			console.log("jQuery the function is", jQuery);
 
-			const jQueryX = jQuery.noConflict(true);
+			// const jQueryX = jQuery.noConflict(true);
 
 			// Check we have loaded a functional jQuery
 			// console.log("jQuery function result", jQuery("body"));
