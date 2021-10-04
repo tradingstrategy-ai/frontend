@@ -21,9 +21,7 @@
 	onMount(async () => {
 		if (browser) {
             const jQuery = await import('jquery');
-        	const initDt = await import('datatables.net-dt');
-			initDt()
-			table = jquery(el).DataTable();
+			table = jQuery(el).DataTable();
 			load().then((rows) => {
 				table.rows.add(rows).draw();
 			});

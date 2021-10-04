@@ -36,6 +36,17 @@
 </script>
 
 <script lang="typescript">
+
+import { onMount, tick } from 'svelte';
+
+
+	onMount(async () => {
+		if (browser) {
+            const initDt = (await import('datatables.net-dt')).default;
+			initDt()
+		}
+	});
+
 	import Table from '../lib/table/Table.svelte';
 	import Datatable from '../lib/Datatables/datatable.svelte';
 
