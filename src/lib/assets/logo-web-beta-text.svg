@@ -3,7 +3,7 @@
    inkscape:export-ydpi="96"
    inkscape:export-xdpi="96"
    inkscape:export-filename="/Users/moo/code/ts/frontend/src/lib/assets/brand-mark.png"
-   sodipodi:docname="logo-web-beta.svg"
+   sodipodi:docname="logo-web-beta-text.svg"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
    id="svg8"
    version="1.1"
@@ -205,26 +205,17 @@
          style="font-size:63.7494px;stroke:#458b00;stroke-width:6.72e-06;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path12725" />
     </g>
-    <g
-       aria-label="BETA"
-       id="text569"
-       style="font-size:26.3825px;line-height:1.25;font-family:'Saira Condensed';-inkscape-font-specification:'Saira Condensed, ';letter-spacing:2.64583px;fill:#fff1e5;stroke:#458b00;stroke-width:6.72e-06;stroke-linejoin:round">
-      <path
-         d="m 579.10016,249.4298 h 6.22627 q 2.13698,0 3.19228,1.13445 1.08169,1.13445 1.08169,3.42973 0,1.92592 -0.58042,2.95484 -0.58041,1.00253 -1.82039,1.31912 v 0.10553 q 1.37189,0.34297 1.9523,1.31913 0.6068,0.97615 0.6068,3.03398 0,2.40081 -1.02892,3.64079 -1.02891,1.21359 -3.40334,1.21359 h -6.22627 z m 5.25012,7.41349 q 0.68594,0 1.02892,-0.1583 0.36935,-0.15829 0.50126,-0.6068 0.1583,-0.4485 0.1583,-1.3455 0,-0.94977 -0.13191,-1.37189 -0.13192,-0.44851 -0.47489,-0.58042 -0.34297,-0.15829 -1.08168,-0.15829 h -1.6621 v 4.2212 z m 0.0792,7.54539 q 0.73871,0 1.08168,-0.15829 0.34297,-0.1583 0.47488,-0.6068 0.13192,-0.4485 0.13192,-1.42466 0,-0.97615 -0.13192,-1.42465 -0.13191,-0.47489 -0.50126,-0.63318 -0.34298,-0.1583 -1.0553,-0.1583 h -1.74125 v 4.40588 z"
-         style="font-weight:bold"
-         id="path6095" />
-      <path
-         d="M 594.62807,267.58096 V 249.4298 h 8.81176 v 3.19229 h -5.17097 v 4.19481 h 4.45864 v 3.19229 h -4.45864 v 4.37949 h 5.17097 v 3.19228 z"
-         style="font-weight:bold"
-         id="path6097" />
-      <path
-         d="m 610.72568,267.58096 v -14.85334 h -3.42973 v -3.29782 h 10.50024 v 3.29782 h -3.42973 v 14.85334 z"
-         style="font-weight:bold"
-         id="path6099" />
-      <path
-         d="m 629.19359,267.58096 -0.71233,-3.71993 h -4.0629 l -0.71233,3.71993 h -3.6144 l 3.74631,-18.15116 h 5.30288 l 3.74632,18.15116 z m -2.66463,-14.72143 h -0.1583 l -1.42465,7.86198 h 2.98122 z"
-         style="font-weight:bold"
-         id="path6101" />
-    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:26.3825px;line-height:1.25;font-family:'Saira Condensed';-inkscape-font-specification:'Saira Condensed, ';letter-spacing:2.64583px;fill:#fff1e5;fill-opacity:1;stroke:#458b00;stroke-width:0.00000672;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       x="567.72827"
+       y="267.58096"
+       id="text569"><tspan
+         sodipodi:role="line"
+         id="tspan567"
+         style="font-weight:bold;fill:#fff1e5;fill-opacity:1;stroke:#458b00;stroke-width:0.00000672;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         x="567.72827"
+         y="267.58096"
+         dx="10">BETA</tspan></text>
   </g>
 </svg>
