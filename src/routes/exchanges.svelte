@@ -37,6 +37,7 @@
 
 <script lang="typescript">
 	import Table from '../lib/table/Table.svelte';
+	import Datatable from '../lib/Datatables/datatable.svelte';
 
 	export let exchanges = [];
 	export let apiError;
@@ -65,6 +66,7 @@
 	<section class="md-12">
 		<div class="card">
 				<div class="card-body">
+					<Datatable />
 					<h1>Exchanges</h1>
 					<Table rows={exchanges} apiError={apiError}/>
 				</div>
