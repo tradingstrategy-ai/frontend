@@ -122,6 +122,10 @@
 		padding: 60px 0;
 	}
 
+	.learn-more {
+		padding-bottom: 60px;
+	}
+
 	.pulse {
 	  display: inline-block;
 	  width: 16px;

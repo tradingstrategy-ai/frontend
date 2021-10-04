@@ -22,7 +22,7 @@
 
         <div class="buttons">
             {#if learnLink}
-                <a href="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html" class="btn btn-primary">
+                <a rel="external" href="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html" class="btn btn-primary">
                     Learn more
                 </a>
             {:else}
