@@ -1,7 +1,7 @@
 <!-- src/App.svelte -->
 <script>
-    import Form from "../components/form/Form.svelte";
-  
+    import Form from "../lib/form/Form.svelte";
+
     //   Our field representation, let's us easily specify several inputs
     let fields = [
       {
@@ -29,7 +29,7 @@
         required: true
       },
     ];
-  
+
     let result = {};
   </script>
 
@@ -42,7 +42,7 @@
                     onSubmit={(body) => {
                       result = body;
                     }}
-                {fields} />      
+                {fields} />
             </div>
         </div>
     </div>

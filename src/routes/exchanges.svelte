@@ -36,7 +36,7 @@
 </script>
 
 <script lang="typescript">
-	import Table from '../components/table/Table.svelte';
+	import Table from '../lib/table/Table.svelte';
 
 	export let exchanges = [];
 	export let apiError;
