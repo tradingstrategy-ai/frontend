@@ -63,17 +63,21 @@
 					<h3>About Trading Strategy</h3>
 
 					<p>
-						Trading Strategy is a decentralised protocol for the next generation quantitative finance. Easy-to-accesss automated strategies allow traders to invest with higher profit and lower risk.
-						Strategies are run by a decentralised oracles. On-chain smart contract based asset management. Trading Strategy protocol disrupts
-						centralised exchange, broker and hedge funds by giving investors direct access to high quality investing strategies and real-time control over their assets.
+						Trading Strategy is a decentralised protocol for the next generation quantitative finance.
+						Decentralised automated trading strategies allow investing with more profit and lower risk, as investors get direct access to high quality investing strategies and real-time control over their assets.
+					</p>
+					<p>
+						As the first in the world, Trading Strategy covers everything from market connectivity, trading signals, backtesting, trade execution, fund management and rewarding quantitative finance experts in a single permissionless protocol.
+						This disrupts centralised exchanges and hedge funds by replacing their roles with smart contracts based asset management.
+						Open ecosystem around the protocol nurtures fast community growth, so that strategy developers reach global earning potential not possible otherwise.
 					</p>
 
 					<p>
-						<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/protocol/comparison.html">How Trading Strategy is different</a>
+						<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/protocol/comparison.html">How is Trading Strategy different</a>
 						•
 						<a class="body-link" rel="external"  href="https://tradingstrategy.ai/docs/index.html">Learn how the protocol works</a>
 						•
-						<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Become a strategy developer to earn</a>
+						<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Develop strategies to earn</a>
 						•
 						<a class="body-link" href="mailto:info@tradingstrategy.ai">Contact for business inquiries</a>
 
