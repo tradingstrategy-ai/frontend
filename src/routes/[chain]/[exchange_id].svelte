@@ -1,4 +1,4 @@
-<script context="module"> 
+<script context="module">
     export async function load({ page }) {
         const exchangeId = page.params.exchange_id;
         const chain = page.params.chain;
@@ -43,8 +43,8 @@
 </script>
 
 <script>
-    import TablePairs from '../../components/table_top_pairs/Table.svelte';
-    import TableExchangeDetails from '../../components/table_volume_summary/Table.svelte';
+    import TablePairs from '../../lib/table_top_pairs/Table.svelte';
+    import TableExchangeDetails from '../../lib/table_volume_summary/Table.svelte';
     export let exchangesPairs;
     export let exchangeId;
     export let exchangeSummary;
@@ -57,5 +57,4 @@
     <h2>Top Pairs</h2>
     <TablePairs rows={exchangesPairs.results} />
 
-</div>  
- 
+</div>
