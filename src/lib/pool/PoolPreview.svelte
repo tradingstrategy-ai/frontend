@@ -1,29 +1,39 @@
 <script>
-
+    export let title;
+    export let description;
+    export let tradesOn;
+    export let learnLink;
+    export let preview;
 </script>
 
 <div class="card bg-primary shadow-soft border-light">
     <div class="card-body">
-        <h3 class="h5 card-title">ETH-USDC double seven</h3>
+        <h3 class="h5 card-title">{ title }</h3>
 
         <p class="card-text">
-            A school book strategy for a single trading pair volatility trading.
+            { description }
         </p>
 
         <p class="info">Currently invested: <span class="badge text-uppercase">Coming soon</span></p>
 
         <p class="info">
-            Trades on: Sushiswap on Ethereum
+            Trades on: <span class="data">{ tradesOn }</span>
         </p>
 
         <div class="buttons">
-            <a href="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html" class="btn btn-primary">
-                Learn more
-            </a>
+            {#if learnLink}
+                <a href="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html" class="btn btn-primary">
+                    Learn more
+                </a>
+            {:else}
+                <button class="btn" disabled>
+                    Learn more
+                </button>
+            {/if}
 
-            <a href="#" class="btn btn-primary" disabled>
+            <button class="btn" disabled>
                 Invest now
-            </a>
+            </button>
         </div>
     </div>
 
@@ -33,6 +43,10 @@
     .info {
         font-size: 80%;
         font-weight: bold;
+    }
+
+    .data {
+        font-weight: normal;
     }
 
     .buttons {
