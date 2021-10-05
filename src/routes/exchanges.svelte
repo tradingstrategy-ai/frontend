@@ -37,38 +37,29 @@
 
 <script lang="typescript">
 
-import { onMount, tick } from 'svelte';
-
-
-	onMount(async () => {
-		if (browser) {
-
-			// const jQuery = (await import('jQuery')).default;
-
-            const initDt = (await import('datatables.net-dt')).default;
-			initDt()
-		}
-	});
-
+	import { onMount, tick } from 'svelte';
 	import Table from '../lib/table/Table.svelte';
 	import Datatable from '../lib/Datatables/datatable.svelte';
 
 	export let exchanges = [];
 	export let apiError;
 
-	function formatNumber(n) {
-		if (n <= 1000) {
-			return (n / 1000).toLocaleString('en', {
-				minimumFractionDigits: 3,
-				maximumFractionDigits: 3
-			});
-		} else {
-			return (n / 1000).toLocaleString('en', {
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 0
-			});
+	const columns = [ 'id', 'name', 'USD Volume'];
+
+
+	onMount(async () => {
+		if (browser) {
+            const initDt = (await import('datatables.net-dt')).default;
+			initDt();
 		}
-	}
+	});
+
+	const load = async () => {
+		const exchangeData = exchanges.map((exchange) => {
+			return [ exchange.exchange_id, exchange.human_readable_name, exchange.usd_volume_30d ]
+		});
+	    return exchangeData;
+    }
 </script>
 
 <svelte:head>
@@ -80,9 +71,8 @@ import { onMount, tick } from 'svelte';
 	<section class="md-12">
 		<div class="card">
 				<div class="card-body">
-					<Datatable />
 					<h1>Exchanges</h1>
-					<Table rows={exchanges} apiError={apiError}/>
+					<Datatable columns={columns} load={load} />
 				</div>
 		</div>
 	</section>
