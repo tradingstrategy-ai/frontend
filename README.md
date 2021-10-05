@@ -12,7 +12,7 @@ npm install
 
 ## Building the theme
 
-Theme is available as a separate git submodule. 
+Theme is available as a separate git submodule.
 It is based on a MIT licensed [Neumorphism UI by Themesberg](https://github.com/themesberg/neumorphism-ui-bootstrap).
 The theme is Bootstrap v4 based.
 
@@ -40,7 +40,7 @@ Or as one liner:
 
 ## Running in local dev
 
-Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte). 
+Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
 
 ```shell
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
@@ -71,7 +71,7 @@ This will run server-side generated (SSR) pages.
 
 ```shell
 screen -S frontend
-export PRODUCTION=true 
+export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 npm install
 (cd theme && npm install && npx gulp build:dist)
@@ -81,7 +81,7 @@ rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)
 
 ```shell
-netstat -ltnp | grep -w ':80' 
+netstat -ltnp | grep -w ':80'
 ```
 
 ## Theme development
