@@ -53,7 +53,7 @@
 			dataSrc: function ( { exchanges } ) {
 				return exchanges.map((exchange) => [
 					exchange.exchange_id,
-					`<a class="nav-link" href="/ethereum/${exchange.human_readable_name}">${exchange.human_readable_name}</a>`,
+					`<a class="nav-link" href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
 					exchange.usd_volume_30d ]
 				);
    		    }
