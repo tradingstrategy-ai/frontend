@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-4 mb-4">
 
-                    <div class="card bg-primary shadow-soft border-sharp text-center h-100">
+                    <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
@@ -50,7 +50,7 @@
 
                 <div class="col-md-4 mb-4">
 
-                    <div class="card bg-primary shadow-soft border-sharp text-center h-100">
+                    <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">

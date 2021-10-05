@@ -120,7 +120,15 @@ Number go down red: #cc0000
 
 ## Fonts
 
-Logo font: 
+Logo font: Saira Condensed
+
+Headings: Exo 2
+
+Body Text: Open Sans
+
+## Icons
+
+[Licensed Streamline Freehand icons](https://app.streamlinehq.com/icons/streamline-freehand)
 
 # Svelte
 

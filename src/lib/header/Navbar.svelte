@@ -95,47 +95,8 @@
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
 
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link" data-toggle="dropdown-market" on:click|preventDefault={handleDropdownToggle}>
-                    <span class="nav-link-inner-text">Market data</span>
-                    <span class="fas fa-angle-down nav-link-arrow ml-2"></span>
-                </a>
-                <ul class="dropdown-menu" id="dropdown-market">
-                    <li><a class="dropdown-item disabled">Blockchains <span class="badge text-uppercase">Soon</span></a></li>
-                    <li><a class="dropdown-item" href="javascript:" disabled>Exchanges <span class="badge text-uppercase">Soon</span></a></li>
-                    <li><a class="dropdown-item" href="javascript:" disabled>Trading pairs <span class="badge text-uppercase">Soon</span></a></li>
-                    <li><a rel="external" class="dropdown-item" href="/datasets">Backtesting</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link" data-toggle="dropdown-protocol" on:click|preventDefault|stopPropagation={handleDropdownToggle}>
-                    <span class="nav-link-inner-text">Protocol</span>
-                    <span class="fas fa-angle-down nav-link-arrow ml-2"></span>
-                </a>
-                <ul class="dropdown-menu" id="dropdown-protocol">
-                    <li><a class="dropdown-item" href="javascript:">Blockchains</a> <span class="badge text-uppercase">Soon</span></li>
-                    <li><a class="dropdown-item" href="javascript:">Exchanges</a> <span class="badge text-uppercase">Soon</span></li>
-                    <li><a class="dropdown-item" href="javascript:">Trading pairs</a> <span class="badge text-uppercase">Soon</span></li>
-                    <li><a rel="external" class="dropdown-item" href="/datasets">Backtesting</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link" data-toggle="dropdown" on:click|preventDefault={handleDropdownToggle}>
-                    <span class="nav-link-inner-text">Community</span>
-                    <span class="fas fa-angle-down nav-link-arrow ml-2"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="javascript:">Blockchains</a> <span class="badge text-uppercase">Coming soon</span></li>
-                    <li><a class="dropdown-item" href="javascript:">Exchanges</a> <span class="badge text-uppercase">Coming soon</span></li>
-                    <li><a class="dropdown-item" href="javascript:">Trading pairs</a> <span class="badge text-uppercase">Coming soon</span></li>
-                    <li><a rel="external" class="dropdown-item" href="/datasets">Backtesting</a></li>
-                </ul>
-            </li>
-
             <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="/datasets">Datasets</a>
+              <a rel="external" class="nav-link" href="/about">About</a>
             </li>
 
             <!-- <li class="nav-item">
@@ -143,7 +104,7 @@
             </li> -->
 
             <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
+              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Docs</a>
             </li>
 
             <li class="nav-item" data-testid={'navigation-link'}>
