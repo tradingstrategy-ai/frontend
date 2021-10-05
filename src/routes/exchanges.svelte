@@ -45,7 +45,9 @@
 	export let apiError;
 
 	const columns = [ 'id', 'name', 'USD Volume'];
-
+	const options = {
+		"order": [[ 2, "desc" ]]
+	}
 
 	onMount(async () => {
 		if (browser) {
@@ -72,7 +74,11 @@
 		<div class="card">
 				<div class="card-body">
 					<h1>Exchanges</h1>
-					<Datatable columns={columns} load={load} />
+					<Datatable
+					 	columns={columns}
+						load={load}
+					    options={options}
+					/>
 				</div>
 		</div>
 	</section>

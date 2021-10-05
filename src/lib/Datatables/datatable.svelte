@@ -12,17 +12,20 @@
 	let table; // table object (API)
 	export let columns;
 	export let load;
+	export let options;
 
 	onMount(async () => {
 		if (browser) {
 			const DataTable = datatableModule();
-			let table = new DataTable(el);
+			let table = new DataTable(el, options || {});
 			const result = await load();
 			table.rows.add(result);
 
 			load().then((rows) => {
 				table.draw();
+				table.column(2).data().sort()
 			});
+
 		}
 	});
 </script>
@@ -31,7 +34,7 @@
 	<link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
 </svelte:head>
 
-<table bind:this={el}  class="table table-datasets">
+<table bind:this={el}  class="table table-datasets" style="width:100%">
 	<thead>
 		<tr>
 			{#each columns as column}
