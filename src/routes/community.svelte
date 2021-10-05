@@ -10,43 +10,69 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Learn more</h1>
+                    <h1>Community</h1>
                 </div>
             </div>
 
-            <div class="row">
 
-                <div class="col-12 col-md-6 col-lg-4 mb-5">
-                    <div class="card bg-primary shadow-soft text-center border-light">
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="card bg-primary shadow-soft border-sharp text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
                                 <i class="fas fa-chart-line"></i>
-                                Backtesting
+                                Blog
                             </h3>
 
-                            <p class="card-text">Learn how to run backtests with DEX trading data</p>
+                            <p class="card-text">Follow Trading Strategy protocol development and gain insights in the decentralised trading</p>
 
-                            <a rel="external" href="https://tradingstrategy.ai/docs/algorithms/ape-in.html" class="btn btn-primary btn-sm">View example</a>
+                            <p>
+                                <span class="badge text-uppercase">Coming soon</span>
+                            </p>
+
+                            <button disabled class="btn btn-primary btn-sm">Read blog </button>
                         </div>
                     </div>
+
+
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-4 mb-5">
-                    <div class="card bg-primary shadow-soft text-center border-light">
+                <div class="col-md-4">
+
+                    <div class="card bg-primary shadow-soft border-sharp text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
-                                <span aria-hidden="true" class="fab fa-github"></span> Github
+                                <i class="fas fa-chart-line"></i>
+                                Blog
                             </h3>
 
-                            <p class="card-text">Browser source code and discuss technical issues</p>
+                            <p class="card-text">Follow Trading Strategy protocol development and gain insights in the decentralised trading</p>
 
-                            <a rel="external" href="https://github.com/tradingstrategy-ai/client" class="btn btn-primary btn-sm">View repository</a>
+                            <a rel="external" href="https://tradingstrategy.ai/docs/algorithms/ape-in.html" class="btn btn-primary btn-sm">Read blog </a>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card bg-primary shadow-soft border-sharp text-center h-100">
+                        <div class="card-body">
+                            <h3 class="h5 card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Blog
+                            </h3>
+
+                            <p class="card-text">Follow Trading Strategy protocol development and gain insights in the decentralised trading</p>
+
+                            <a rel="external" href="https://tradingstrategy.ai/docs/algorithms/ape-in.html" class="btn btn-primary btn-sm">Read blog </a>
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
         </div>
     </section>
 </main>
