@@ -40,23 +40,24 @@
 	import { onMount, tick } from 'svelte';
 	import Table from '../lib/table/Table.svelte';
 	import Datatable from '../lib/Datatables/datatable.svelte';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	export let exchanges = [];
 
 	const columns = [ 'id', 'name', 'USD Volume'];
 	const options = {
-		order: [[ 2, "desc" ]],
+	    order: [[ 2, "desc" ]],
 		serverSide: false,
 		ajax: {
             url: 'https://matilda.tradingstrategy.ai/exchanges',
             type: 'GET',
-			dataSrc: function ( { exchanges } ) {
+			dataSrc: function ({ exchanges }) {
 				return exchanges.map((exchange) => [
 					exchange.exchange_id,
 					`<a class="nav-link" href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
-					exchange.usd_volume_30d ]
+					formatNumber(exchange.usd_volume_30d) ]
 				);
-   		    }
+			}
         }
 	}
 

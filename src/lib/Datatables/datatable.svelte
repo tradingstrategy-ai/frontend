@@ -17,8 +17,6 @@
 		if (browser) {
 			const DataTable = datatableModule();
 			let table = new DataTable(el, options || {});
-			const result = await load();
-			table.rows.add(result);
 		}
 	});
 </script>
