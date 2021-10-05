@@ -55,9 +55,6 @@
     const columnsPairs = [ 'Quote', 'Volume 24h', 'Liquidity', 'Price' ];
 	const optionsPairs = {
 	    order: [[ 1, "desc" ]],
-        paging: false,
-        info: false,
-        searching: false,
 		serverSide: false,
 		ajax: {
             url: `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`,
