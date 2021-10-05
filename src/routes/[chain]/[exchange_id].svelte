@@ -1,4 +1,6 @@
 <script context="module">
+    import { browser, dev } from '$app/env';
+
     export async function load({ page }) {
         const exchangeId = page.params.exchange_id;
         const chain = page.params.chain;
@@ -34,27 +36,75 @@
 
         return {
             props: {
-                exchangeSummary,
-                exchangesPairs,
-                exchangeId
+                exchangeId,
+                chain,
             }
         }
     }
 </script>
 
 <script>
-    import TablePairs from '../../lib/table_top_pairs/Table.svelte';
-    import TableExchangeDetails from '../../lib/table_volume_summary/Table.svelte';
-    export let exchangesPairs;
+	import Datatable from '$lib/Datatables/datatable.svelte';
+	import { formatNumber } from '$lib/helpers/formatters';
+	import { onMount, tick } from 'svelte';
     export let exchangeId;
-    export let exchangeSummary;
+    export let chain;
+
+    const columns = [ 'Period', 'Volume (USD)', 'Trades'];
+	const options = {
+	    order: [[ 1, "desc" ]],
+        paging: false,
+        info: false,
+        searching: false,
+		serverSide: false,
+		ajax: {
+            url: `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`,
+            type: 'GET',
+			dataSrc: function (exchangeDetails) {
+                const monthlyData = {
+                    period: 'Monthly',
+                    volume: formatNumber(exchangeDetails.buy_volume_30d),
+                    trade: 0,
+                };
+
+                const allTimeData = {
+                    period: 'All Time',
+                    volume: formatNumber(exchangeDetails.buy_volume_all_time),
+                    trade: exchangeDetails.buy_count_all_time,
+                };
+
+                return [
+                    Object.values(monthlyData),
+                    Object.values(allTimeData)
+                ];
+            }
+        }
+	}
+
+    onMount(async () => {
+		if (browser) {
+            const initDt = (await import('datatables.net-dt')).default;
+			initDt();
+		}
+	});
 </script>
 
+<svelte:head>
+	<title>DEX trading and quantative finance datasets</title>
+	<meta name="description" content="Download OHLCV and liquidity data for DEXes" />
+</svelte:head>
+
 <div class="container">
-    <h1>    {exchangeId}</h1>
+    <h1>Exchange Details {exchangeId}</h1>
     <h2>Summary</h2>
-    <TableExchangeDetails rows={exchangeSummary} />
+    <Datatable
+      columns={columns}
+      options={options}
+    />
     <h2>Top Pairs</h2>
-    <TablePairs rows={exchangesPairs.results} />
+    <!-- <Datatable
+      columns={columns}
+      options={options}
+    /> -->
 
 </div>

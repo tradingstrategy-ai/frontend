@@ -1,48 +1,13 @@
 <script context="module" lang="typescript">
 	import { browser, dev } from '$app/env';
-
 	export const hydrate = dev;
 	export const router = browser;
-
-	export async function load({ fetch }) {
-		const url = `https://matilda.tradingstrategy.ai/exchanges`;
-		const res = await fetch(url);
-
-
-		if (res.ok) {
-			const exchanges = await res.json();
-			return {
-				props: {
-					exchanges: exchanges.exchanges,
-					apiError: undefined
-				}
-			};
-		}
-
-		const errorTypes = {
-			'404': {
-				status: 404,
-				message: `can get exchanges data from our API, our team is probably already working to solve this issue`
-			}
-		}
-
-		return {
-			props: {
-				exchanges: [],
-				apiError: `Could not load, ${errorTypes[res.status].message}`
-			}
-		};
-	}
 </script>
 
 <script lang="typescript">
-
 	import { onMount, tick } from 'svelte';
-	import Table from '../lib/table/Table.svelte';
 	import Datatable from '../lib/Datatables/datatable.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
-
-	export let exchanges = [];
 
 	const columns = [ 'id', 'name', 'USD Volume'];
 	const options = {
@@ -68,12 +33,6 @@
 		}
 	});
 
-	const load = async () => {
-		const exchangeData = exchanges.map((exchange) => {
-			return [ exchange.exchange_id, exchange.human_readable_name, exchange.usd_volume_30d ]
-		});
-	    return exchangeData;
-    }
 </script>
 
 <svelte:head>
