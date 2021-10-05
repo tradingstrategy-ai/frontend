@@ -11,7 +11,6 @@
 	let el; // table element
 	let table; // table object (API)
 	export let columns;
-	export let load;
 	export let options;
 
 	onMount(async () => {
@@ -20,12 +19,6 @@
 			let table = new DataTable(el, options || {});
 			const result = await load();
 			table.rows.add(result);
-
-			load().then((rows) => {
-				table.draw();
-				table.column(2).data().sort()
-			});
-
 		}
 	});
 </script>

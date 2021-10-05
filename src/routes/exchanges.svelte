@@ -42,11 +42,22 @@
 	import Datatable from '../lib/Datatables/datatable.svelte';
 
 	export let exchanges = [];
-	export let apiError;
 
 	const columns = [ 'id', 'name', 'USD Volume'];
 	const options = {
-		"order": [[ 2, "desc" ]]
+		order: [[ 2, "desc" ]],
+		serverSide: false,
+		ajax: {
+            url: 'https://matilda.tradingstrategy.ai/exchanges',
+            type: 'GET',
+			dataSrc: function ( { exchanges } ) {
+				return exchanges.map((exchange) => [
+					exchange.exchange_id,
+					`<a class="nav-link" href="/ethereum/${exchange.human_readable_name}">${exchange.human_readable_name}</a>`,
+					exchange.usd_volume_30d ]
+				);
+   		    }
+        }
 	}
 
 	onMount(async () => {
@@ -76,7 +87,6 @@
 					<h1>Exchanges</h1>
 					<Datatable
 					 	columns={columns}
-						load={load}
 					    options={options}
 					/>
 				</div>
