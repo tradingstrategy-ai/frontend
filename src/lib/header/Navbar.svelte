@@ -7,7 +7,7 @@
 
 <script lang="ts">
 
-  import logo from '../../lib/assets/logo-web.svg';
+  import logo from '../../lib/assets/logo-web-beta.svg';
   import logoMobile from '../../lib/assets/logo-two-lines.png';
 
   let isOpen = false;

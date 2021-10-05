@@ -8,8 +8,6 @@
     import IntersectionObserver from "svelte-intersection-observer";
     import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
     import '$lib/styles/price.css';
-    import {summary} from "./index.svelte";
-
 
     // TimeSpanTradeData, see https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
     // Set null to have a skeleton loader
@@ -58,10 +56,9 @@
             return "price-change-black"; // Data not loaded
         }
 
-        console.log("Open", timeSpanTradeData.open, "close", timeSpanTradeData.close);
         if(timeSpanTradeData.price_open == timeSpanTradeData.price_close) {
             return "price-change-black";
-        } else if(timeSpanTradeData.price_open >= timeSpanTradeData.price_close) {
+        } else if(timeSpanTradeData.price_close > timeSpanTradeData.price_open) {
             return "price-change-green";
         } else {
             return "price-change-red";
