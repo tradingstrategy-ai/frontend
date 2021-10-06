@@ -24,10 +24,7 @@
 	import 'datatables.net-bs4/css/dataTables.bootstrap4.css';
 	import 'datatables.net-responsive-bs4/css/responsive.bootstrap4.css';
 
-
 	import { onMount } from 'svelte';
-
-    const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 	// Is DataTables initialised
 	let loaded = false;
@@ -55,7 +52,7 @@
 				console.log( 'Redraw occurred at: '+new Date().getTime() );
 				// Datatables fires not one but two redraw events
 				// Add some timeout  before making the datatables visible
-				// to avoid page layout shifts on the second event
+				// to avoid page layout shifts on the second redraw event
 				setTimeout(() => {loaded = true;}, 250);
 			} );
 
@@ -65,11 +62,6 @@
 	});
 </script>
 
-<!--
-<svelte:head>
-	<link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
-</svelte:head>
--->
 
 <div class="datatables-wrapper">
 	<table bind:this={el}  class="table table-datatable" style={loaded ? "display: table" : "display: none"}>
@@ -134,6 +126,5 @@
 	.datatables-wrapper :global(.paginate_button.disabled)  {
 		opacity: 0.3;
 	}
-
 
 </style>

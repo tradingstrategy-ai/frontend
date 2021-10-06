@@ -12,18 +12,30 @@
 </script>
 
 <script lang="typescript">
-	import { onMount, tick } from 'svelte';
-	import Datatable from '../lib/Datatables/datatable.svelte';
-	import { formatNumber } from '$lib/helpers/formatters';
+	import { onMount } from 'svelte';
+	import Datatable from '$lib/datatable/datatable.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
+	// https://tradingstrategy.ai/api/explorer/
+	// See https://datatables.net/reference/option/columns
 	const columns = [
 		{
 			name: "Exchange",
-			className: "col-exchange"
+			className: "col-exchange",
+			data: "human_readable_name",
+			// https://datatables.net/reference/option/columns.render
+			render: function(data, type, row, meta) {
+				return `<a href="/${row.chain_slug}/${row.exchange_slug}">${row.human_readable_name}</a>`;
+			}
 		},
 		{
 			name: "Volume 24h (USD)",
-			className: "col-volume"
+			data: "usd_volume_30d",
+			className: "col-volume",
+			type: "num", // https://datatables.net/reference/option/columns.type
+			render: function(data, type, row, meta) {
+				return formatDollar(data);
+			}
 		}
 	];
 
@@ -32,15 +44,12 @@
 		searching: false,
 		serverSide: false,
 		lengthChange: false,
+		// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchanges
 		ajax: {
             url: `${backendUrl}/exchanges`,
             type: 'GET',
-			dataSrc: function ({ exchanges }) {
-				return exchanges.map((exchange) => [
-					//exchange.exchange_id,
-					`<a href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
-					formatNumber(exchange.usd_volume_30d) ]
-				);
+			dataSrc: function (resp) {
+				return resp.exchanges;
 			}
         }
 	}
