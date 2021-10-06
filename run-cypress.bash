@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL"
 
@@ -11,6 +12,7 @@ PID_SVELTE=$!
 
 sleep 1
 
+# https://stackoverflow.com/a/44364396/315168
 test_command='curl -sL \
     -w "%{http_code}\\n" \
     "http://localhost:3000/" \
