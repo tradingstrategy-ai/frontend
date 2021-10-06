@@ -16,17 +16,29 @@
 	import Datatable from '../lib/Datatables/datatable.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
 
-	const columns = [ 'Name', 'Volume 24h (USD)'];
+	const columns = [
+		{
+			name: "Exchange",
+			className: "col-exchange"
+		},
+		{
+			name: "Volume 24h (USD)",
+			className: "col-volume"
+		}
+	];
+
 	const options = {
 	    order: [[ 1, "desc" ]],
+		searching: false,
 		serverSide: false,
+		lengthChange: false,
 		ajax: {
             url: `${backendUrl}/exchanges`,
             type: 'GET',
 			dataSrc: function ({ exchanges }) {
 				return exchanges.map((exchange) => [
 					//exchange.exchange_id,
-					`<a class="nav-link" href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
+					`<a href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
 					formatNumber(exchange.usd_volume_30d) ]
 				);
 			}
@@ -47,24 +59,40 @@
 	<meta name="description" content="Supported decentralised exchanges for Trading Strategy algorithms" />
 </svelte:head>
 
-<div class="container container-main">
-	<section class="md-12">
-		<div class="card">
-				<div class="card-body">
-					<h1>Exchanges</h1>
+<div class="container container-main exchanges">
+	<div class="row">
+		<div class="col-md-12">
 
-					<p>
-						Trading Strategy oracle network connects to the following exchanges. Choose an exchange to explore its trading pairs.
-					</p>
+			<div class="exchanges-content">
+				<h1>Decentralised exchanges</h1>
 
-					<Datatable
-					 	columns={columns}
-					    options={options}
-					/>
-				</div>
+				<p>
+					Trading Strategy oracle network connects to the following exchanges. Choose an exchange to explore its trading pairs.
+				</p>
+
+				<Datatable
+					columns={columns}
+					options={options}
+				/>
+			</div>
+
 		</div>
-	</section>
+	</div>
 </div>
 
 <style>
+
+.exchanges-content {
+	margin: 60px 0;
+}
+
+.exchanges :global(.col-exchange)  {
+	width: 75%;
+	padding-left: 0;
+}
+
+.exchanges :global(.col-volume)  {
+	width: 25%;
+}
+
 </style>
