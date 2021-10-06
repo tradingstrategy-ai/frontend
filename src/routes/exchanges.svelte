@@ -29,7 +29,7 @@
 			}
 		},
 		{
-			name: "Volume 24h (USD)",
+			name: "Volume 30d (USD)",
 			data: "usd_volume_30d",
 			className: "col-volume",
 			type: "num", // https://datatables.net/reference/option/columns.type
@@ -53,13 +53,6 @@
 			}
         }
 	}
-
-	onMount(async () => {
-		if (browser) {
-            const initDt = (await import('datatables.net-dt')).default;
-			initDt();
-		}
-	});
 
 </script>
 

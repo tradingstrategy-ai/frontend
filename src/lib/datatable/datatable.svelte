@@ -15,7 +15,7 @@
 	 */
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
-	import jQuery from 'jQuery';
+	import jQuery from 'jquery';
 	import datatableModule from 'datatables.net-dt';
 	import Skeleton from '$lib/Skeleton.svelte';
 
