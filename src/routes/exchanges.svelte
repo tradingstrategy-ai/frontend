@@ -1,4 +1,11 @@
 <script context="module" lang="typescript">
+
+	/*
+
+		Render listing of all available exchanges
+
+	 */
+
 	import { browser } from '$app/env';
 	export const router = browser;
 	import { backendUrl } from '$lib/config';
@@ -9,16 +16,16 @@
 	import Datatable from '../lib/Datatables/datatable.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
 
-	const columns = [ 'id', 'name', 'USD Volume'];
+	const columns = [ 'Name', 'Volume 24h (USD)'];
 	const options = {
-	    order: [[ 2, "desc" ]],
+	    order: [[ 1, "desc" ]],
 		serverSide: false,
 		ajax: {
             url: `${backendUrl}/exchanges`,
             type: 'GET',
 			dataSrc: function ({ exchanges }) {
 				return exchanges.map((exchange) => [
-					exchange.exchange_id,
+					//exchange.exchange_id,
 					`<a class="nav-link" href="/ethereum/${exchange.exchange_slug}">${exchange.human_readable_name}</a>`,
 					formatNumber(exchange.usd_volume_30d) ]
 				);
@@ -36,8 +43,8 @@
 </script>
 
 <svelte:head>
-	<title>DEX trading and quantative finance datasets</title>
-	<meta name="description" content="Download OHLCV and liquidity data for DEXes" />
+	<title>Decentralised exchanges</title>
+	<meta name="description" content="Supported decentralised exchanges for Trading Strategy algorithms" />
 </svelte:head>
 
 <div class="container container-main">
@@ -45,6 +52,11 @@
 		<div class="card">
 				<div class="card-body">
 					<h1>Exchanges</h1>
+
+					<p>
+						Trading Strategy oracle network connects to the following exchanges. Choose an exchange to explore its trading pairs.
+					</p>
+
 					<Datatable
 					 	columns={columns}
 					    options={options}
