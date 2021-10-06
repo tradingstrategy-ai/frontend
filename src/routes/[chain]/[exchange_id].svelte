@@ -1,15 +1,15 @@
 <script context="module">
-    import {browser} from '$app/env';
-    import {backendUrl} from '$lib/config';
+    import { browser } from '$app/env';
+    import { backendUrl } from '$lib/config';
 
     // Load and render exchange details on the server side
     // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
-    export async function load({page}) {
+    export async function load({ page }) {
         const exchange_slug = page.params.exchange_id;
         const chain_slug = page.params.chain;
 
         //const details = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
-        const encoded = new URLSearchParams({exchange_id, chain_slug});
+        const encoded = new URLSearchParams({exchange_slug, chain_slug});
         const apiUrl = `${backendUrl}/exchange-details?${encoded}`;
 
         const resp = await fetch(apiUrl);
@@ -49,8 +49,6 @@
     import {onMount, tick} from 'svelte';
 
     export let exchange_slug;
-    export let chain;
-
     export let chain_slug;
     export let details;
 
@@ -59,7 +57,7 @@
         order: [[1, 'desc']],
         serverSide: false,
         ajax: {
-            url: `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`,
+            url: `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain_slug}&exchange_slugs=${exchange_slug}`,
             type: 'GET',
             dataSrc: function (exchangePairs) {
                 return exchangePairs.results.map((exchangePair) => [
@@ -87,11 +85,11 @@
 
 <svelte:head>
     <title>
-        {details.human_readable - name} trading on {details.chain_slug}
+        {details.human_readable_name} trading on {details.chain_slug}
     </title>
     <meta
             name="description"
-            content={'Decentralise exchange top trading pairs for' + details.human_readable - name}
+            content={'Decentralise exchange top trading pairs for' + details.human_readable_name}
     />
 </svelte:head>
 

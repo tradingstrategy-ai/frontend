@@ -18,7 +18,7 @@ jobs:
           npm install
     - name: Run Cypress
       run: |
-        npm run cypress:run
+        bash run-cypress.bash
       env:
         VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
     - name: Package for server-side rendering using SvelteKit Node.js adapter
