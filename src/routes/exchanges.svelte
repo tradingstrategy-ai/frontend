@@ -1,7 +1,7 @@
 <script context="module" lang="typescript">
-	import { browser, dev } from '$app/env';
-	export const hydrate = dev;
+	import { browser } from '$app/env';
 	export const router = browser;
+	import { backendUrl } from '$lib/config';
 </script>
 
 <script lang="typescript">
@@ -14,7 +14,7 @@
 	    order: [[ 2, "desc" ]],
 		serverSide: false,
 		ajax: {
-            url: 'https://matilda.tradingstrategy.ai/exchanges',
+            url: `${backendUrl}/exchanges`,
             type: 'GET',
 			dataSrc: function ({ exchanges }) {
 				return exchanges.map((exchange) => [
