@@ -15,6 +15,7 @@
 	 */
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
+	import jQuery from 'jQuery';
 	import datatableModule from 'datatables.net-dt';
 	import Skeleton from '$lib/Skeleton.svelte';
 
@@ -26,17 +27,40 @@
 
 	import { onMount } from 'svelte';
 
+	// See https://datatables.net/reference/option/columns
+	export let columns;
+
+	// See https://datatables.net/reference/option/
+	export let options;
+
+	// Make rows clickable.
+	// Use the first <a> tag within the row for the link target
+	export let clickableRows = false;
+
 	// Is DataTables initialised
 	let loaded = false;
 
 	let el; // table element
 	let table; // table object (API)
 
-	// See https://datatables.net/reference/option/columns
-	export let columns;
+	let extraClass = clickableRows ? "clickable" : "";
 
-	// See https://datatables.net/reference/option/
-	export let options;
+
+	// jQuery, jQuery never fails
+	function installRowHandlers() {
+
+		if(!clickableRows) {
+			return;
+		}
+
+		jQuery(el).on('click', 'tbody tr', function(e, e2) {
+			// Find the first <a> element as the click target
+			const row = jQuery(e.currentTarget);
+			const link = row.find("a");
+			const loc = link.attr("href");
+		  	window.location.href = loc;
+		});
+	}
 
 	onMount(async () => {
 		if (browser) {
@@ -53,7 +77,7 @@
 				// Datatables fires not one but two redraw events
 				// Add some timeout  before making the datatables visible
 				// to avoid page layout shifts on the second redraw event
-				setTimeout(() => {loaded = true;}, 250);
+				setTimeout(() => {loaded = true; installRowHandlers() }, 250);
 			} );
 
 			table.draw();
@@ -64,7 +88,7 @@
 
 
 <div class="datatables-wrapper">
-	<table bind:this={el}  class="table table-datatable" style={loaded ? "display: table" : "display: none"}>
+	<table bind:this={el}  class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"}>
 		<thead>
 			<tr>
 				{#each columns as column}
@@ -125,6 +149,15 @@
 
 	.datatables-wrapper :global(.paginate_button.disabled)  {
 		opacity: 0.3;
+	}
+
+	/* Clickable rows */
+	.clickable :global(tr)  {
+		cursor: pointer;
+	}
+
+	.clickable tbody :global(tr):hover  {
+		background: #80DEEA;
 	}
 
 </style>

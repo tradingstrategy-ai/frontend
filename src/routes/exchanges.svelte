@@ -82,6 +82,7 @@
 				<Datatable
 					columns={columns}
 					options={options}
+					clickableRows={true}
 				/>
 			</div>
 
