@@ -96,7 +96,7 @@
 </svelte:head>
 
 <div class="container">
-    <h1>classNameils.human_readable_name} on {chain_slug}</h1>
+    <h1>{details.human_readable_name} on {chain_slug}</h1>
 
     <h2>Trading Pairs</h2>
     <Datatable columns={columnsPairs} options={optionsPairs}/>
