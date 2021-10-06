@@ -129,8 +129,9 @@
 		searching: false,
 		serverSide: false,
 		lengthChange: false,
+        // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
         ajax: {
-            url: `${backendUrl}/pairs?chain_slugs=${chain_slug}&exchange_slugs=${exchange_slug}`,
+            url: `${backendUrl}/pairs?chain_slugs=${chain_slug}&exchange_slugs=${exchange_slug}&direction=desc&sort=volume`,
             type: 'GET',
             dataSrc: function (pairResult) {
                 // {total: 57476, pages: 575, results: Array(100)}
