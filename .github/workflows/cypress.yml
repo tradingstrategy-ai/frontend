@@ -23,3 +23,8 @@ jobs:
           npm run cypress:run
         env:
           VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
+      - name: Build server-side rendering SvelteKit adapter
+        run: |
+          node_modules/.bin/svelte-kit build && node build/index.js
+        env:
+          VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
