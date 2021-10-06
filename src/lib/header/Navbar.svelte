@@ -70,7 +70,7 @@
   <nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar">
 
       <!-- Brand -->
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand" href="/" data-cy="logo">
         <img class="img-logo img-logo-desktop" src={logo} alt="On-chain quantitative finance" />
         <img class="img-logo img-logo-mobile" src={logoMobile} alt="On-chain quantitative finance" />
       </a>
