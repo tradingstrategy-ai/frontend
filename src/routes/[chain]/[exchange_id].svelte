@@ -52,7 +52,6 @@
     export let exchange_slug;
     export let chain_slug;
     export let details;
-    export let backendUrl;
 
     // const colums = ['Quote', 'Volume 24h', 'Liquidity', 'Price'];
 
