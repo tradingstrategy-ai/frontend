@@ -4,8 +4,8 @@ import adapter from '@sveltejs/adapter-static';
 
 let config;
 
-if(process.env.PRODUCTION) {
-	console.log("Using production config");
+if (process.env.PRODUCTION) {
+	console.log('Using production config');
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
@@ -14,12 +14,11 @@ if(process.env.PRODUCTION) {
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
 		kit: {
-			adapter: node(),
+			adapter: node()
 		}
-
 	};
 } else {
-	console.log("Using local dev env config");
+	console.log('Using local dev env config');
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
@@ -31,6 +30,5 @@ if(process.env.PRODUCTION) {
 		}
 	};
 }
-
 
 export default config;

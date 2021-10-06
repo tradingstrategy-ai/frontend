@@ -48,6 +48,7 @@ export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 # Or if you run on localhost
 export VITE_PUBLIC_BACKEND_URL=http://localhost:3456/api
 ```
+
 `
 Then start SvelteKit development server
 
@@ -63,6 +64,14 @@ Test that everything compiles in the production build:
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
+```
+
+## Tests
+
+Run Cypress locally:
+
+```shell
+
 ```
 
 ## Running on production
@@ -137,4 +146,3 @@ Body Text: Open Sans
 ```shell
 
 ```
-

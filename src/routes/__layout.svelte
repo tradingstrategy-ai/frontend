@@ -9,4 +9,3 @@
 <Navbar />
 
 <slot />
-
