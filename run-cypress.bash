@@ -2,6 +2,8 @@
 
 set -e
 
+echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL"
+
 # Start dev server
 npm run dev &
 
