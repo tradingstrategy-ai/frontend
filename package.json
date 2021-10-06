@@ -61,7 +61,7 @@
     "jquery": "^3.6.0",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
-    "svelte": "^3.42.5",
+    "svelte": "^3.43.1",
     "svelte-check": "^2.0.0",
     "svelte-intersection-observer": "^0.8.0",
     "svelte-jester": "^1.1.5",
