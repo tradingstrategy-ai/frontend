@@ -1,0 +1,29 @@
+name: Automated test suite
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+          npm install
+    - name: Run Cypress
+      run: |
+        npm run cypress:run
+      env:
+        VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+    - name: Package for server-side rendering using SvelteKit Node.js adapter
+      run: |
+        npm run ssr:node
+      env:
+        VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+

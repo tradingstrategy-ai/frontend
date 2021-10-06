@@ -12,7 +12,8 @@
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "ssr:node": "svelte-kit build"
   },
   "jest": {
     "transform": {
