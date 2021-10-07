@@ -13,14 +13,14 @@ describe('Traging strategy Home', () => {
         cy.get('[data-cy=logo]')
     });
 
-    it('has a navigation about link', () => {
+    it('User Should be able to Navigate to the about page', () => {
         cy.contains(/about/i).click();
         cy.get('.navbar-nav li')
             .first()
             .should('have.text', 'About')
     });
 
-    it('has a link to community', () => {
+    it('User should be ablte to visit the community', () => {
         const textNavLink = 'community';
         cy.contains(/community/i).click();
         cy.get('.navbar-nav li')
@@ -36,9 +36,10 @@ describe('Traging strategy Home', () => {
         //cy.contains('Algorithmic trading strategy protocol').should('be.not.visible');
         cy.get('[data-cy=logo]').click()
         cy.contains('Algorithmic trading strategy protocol').should('be.visible');
+        cy.get('[data-cy=logo]').should("not.have.attr", "href", "/about");
     });
 
-    it('click all links', () => {
+    it('Use can navigate the site from home page', () => {
 
         cy.visit('/')
 

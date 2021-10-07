@@ -4,8 +4,11 @@ describe('Traging strategy Home', () => {
         cy.visit('/ethereum/uniswap-v2/ZRX-WETH');
     })
 
-    it('should render Home with navbar with 3 elements', () => {
-        cy.contains('ETH-ZRX trading on Uniswap v2 on Ethereum')
+    it('has a navigation about link', () => {
+        cy.contains(/about/i);
+        cy.get('.navbar-nav li')
+            .first()
+            .should('have.text', 'About')
     });
 
 });

@@ -76,6 +76,7 @@
 					columns={columns}
 					options={options}
 					clickableRows={true}
+					dataCy="exchange-table"
 				/>
 			</div>
 
