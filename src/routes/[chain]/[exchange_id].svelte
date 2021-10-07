@@ -218,12 +218,14 @@
     <div class="exchange-content">
         <h1>{details.human_readable_name} on {chainName}</h1>
 
-        <h2>Trading Pairs</h2>
-        <Datatable
+        <div class="trading-pairs">
+            <h2>Trading Pairs</h2>
+            <Datatable
                 columns={columns}
                 options={options}
                 clickableRows={true}
                 />
+        </div>
     </div>
 </div>
 
@@ -231,4 +233,10 @@
     .exchange-content {
 	    margin: 60px 0;
     }
+
+    /* Make sure columns do not wiggle when resorting and the data in the cells change */
+    .trading-pairs  :global(td)  {
+        width: 17%; /* 1/6 */
+    }
+
 </style>
