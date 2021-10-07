@@ -76,12 +76,18 @@
           <div class="card bg-primary border-light shadow-soft card-post">
 
             {#if post.feature_image}
-              <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt}>
+              <a href={`/blog/${post.slug}`}>
+                <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt}>
+              </a>
             {/if}
 
             <div class="card-body">
 
-              <h5 class="card-title">{post.title}</h5>
+              <h5 class="card-title">
+                <a href={`/blog/${post.slug}`}>
+                  {post.title}
+                </a>
+              </h5>
 
               <p class="text-published text-muted text-sm">
                 Published: <Time relative timestamp="{Date.parse(post.published_at)}" />

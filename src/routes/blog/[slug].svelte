@@ -52,22 +52,44 @@
 
   export let post;
 
-    onMount(async () => {
-      const wrapper = document.createElement('div');
-      wrapper.className = "table-responsive"
-      document.querySelectorAll('.body-text .table').forEach(function(elem) {
-        wrap(elem, wrapper);
-      })
-    });
+  // Make tables mobile friendly
+  onMount(async () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = "table-responsive"
+    document.querySelectorAll('.body-text .table').forEach(function(elem) {
+      wrap(elem, wrapper);
+    })
+  });
 
 </script>
 
-<div class="container">
+<svelte:head>
+    <title>{post.title}</title>
+    <meta name="description" content={post.excerpt}>
+</svelte:head>
 
+<section class="heading" style={`background-image: url(${post.feature_image})`}>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{post.title}</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="container">
   <div class="section-post">
     <div class="row">
       <div class="col-md-8">
+        <!--
         <h1>{ post.title }</h1>
+        -->
+
+        <p class="text-published text-muted text-sm">
+          Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
+        </p>
 
         <div class="body-text">
           { @html post.html}
@@ -80,8 +102,29 @@
 
 <style>
 
+  .heading {
+    min-height: 200px;
+    padding: 80px 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat
+  }
+
+  .heading h1 {
+    color: white;
+    text-transform: none;
+    font-size: 120%;
+    text-shadow: 0 0 3px black;
+    text-align: center;
+  }
+
   .section-post {
     margin: 60px 0;
+  }
+
+  .text-published {
+    font-size: 70%;
+    text-transform: uppercase;
   }
 
   .body-text :global(.kg-image) {
