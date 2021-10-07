@@ -15,7 +15,7 @@ export function getGhostCredentials() {
         apiUrl: import.meta.env.VITE_PUBLIC_GHOST_API_URL,
     }
 
-    if(!keys.contentApiKey) {
+    if(!keys.contentApiKey || !keys.apiUrl) {
         throw new Error("You need configure Ghost API keys to render the blog");
     }
 

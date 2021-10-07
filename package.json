@@ -76,7 +76,9 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
+    "@tryghost/content-api": "^1.5.13",
     "cookie": "^0.4.1",
+    "gulp": "^4.0.2",
     "svelte-spinner": "^2.0.2",
     "svelte-tradingview-widget": "^2.3.0",
     "sveltestrap": "^4.2.1"
