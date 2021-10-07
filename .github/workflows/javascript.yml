@@ -13,12 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: elstudio/actions-js-build/commit@v4
     - name: Install dependencies
       run: |
           npm install && npm install gulp -g
     - name: Install theme
       run: |
-          cd theme && npm install && npx gulp build:dist
+          cd theme && npm install
     - name: Package version check
       run: |
           npm ls
