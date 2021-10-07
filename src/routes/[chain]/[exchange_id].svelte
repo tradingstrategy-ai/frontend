@@ -33,6 +33,8 @@
 
         const details = await resp.json();
 
+        console.log("Received exchange details", details);
+
         return {
             props: {
                 exchange_slug,
@@ -48,6 +50,7 @@
     import Datatable from '$lib/datatable/datatable.svelte';
     import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
     import { escapeHtml } from "$lib/helpers/html";
+    import jQuery from 'jquery';
 
     export let exchange_slug;
     export let chain_slug;
@@ -84,7 +87,7 @@
 		},
 
 		{
-			name: "Price Δ",
+			name: "Price 24h Δ",
 			data: "price_change_24h",
 			className: "col-price-change",
 			type: "num", // https://datatables.net/reference/option/columns.type
@@ -114,7 +117,7 @@
 		},
 
 		{
-			name: "Liq Δ",
+			name: "Liq 24h Δ",
             orderable: false,
 			data: "liquidity_change_24h",
 			className: "col-liquidity-change",
@@ -126,10 +129,38 @@
 	];
 
     const options = {
-        order: [[4, 'desc']],
+        order: [[3, 'desc']], // Default sorting is liquidity desc
 		searching: false,
 		serverSide: true,
 		lengthChange: false,
+
+        // Add DataTable.createRow callback to style rows
+        // https://datatables.net/reference/option/createdRow
+        createdRow: function(row, data, dataIndex) {
+
+            const priceChange = data.price_change_24h;
+            let priceChangeClass = "price-change-black";
+
+            if(priceChange > 0) {
+                priceChangeClass = "price-change-green";
+            } else if(priceChange < 0) {
+                priceChangeClass = "price-change-red";
+            }
+
+            jQuery(row).find(".col-price-change").addClass(priceChangeClass);
+
+            const liqChange = data.liquidity_change_24h;
+            let liqChangeClass = "price-change-black";
+
+            if(liqChange > 0) {
+                liqChangeClass = "price-change-green";
+            } else if(liqChange < 0) {
+                liqChangeClass = "price-change-red";
+            }
+
+            jQuery(row).find(".col-liquidity-change").addClass(liqChangeClass);
+
+        },
 
         ajax: async function(data, callback, settings) {
             // https://datatables.net/reference/option/ajax
@@ -218,8 +249,67 @@
     <div class="exchange-content">
         <h1>{details.human_readable_name} on {chainName}</h1>
 
+        <div class="statistics">
+            <h2>Statistics</h2>
+            <!-- See ExchangeDetails at https://tradingstrategy.ai/api/explorer -->
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-summary table-summary-30d">
+                        <tr>
+                            <th></th>
+                            <td>
+                                <strong>Last 30 days</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Buy volume</th>
+                            <td>
+                                {formatDollar(details.buy_volume_30d || 0)}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Sell volume</th>
+                            <td>
+                                {formatDollar(details.sell_volume_30d || 0)}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <table class="table table-summary table-summary-all-time">
+
+                        <tr>
+                            <th></th>
+                            <td>
+                                <strong>All time</strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Buy volume</th>
+                            <td>
+                                {formatDollar(details.buy_volume_all_time || 0)}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Sell volume</th>
+                            <td>
+                                {formatDollar(details.sell_volume_all_time || 0)}
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
         <div class="trading-pairs">
             <h2>Trading Pairs</h2>
+            <p>Click trading pairs to open price chart.</p>
             <Datatable
                 columns={columns}
                 options={options}
@@ -230,13 +320,21 @@
 </div>
 
 <style>
-    .exchange-content {
+    .exchange-content, .statistics, .trading-pairs {
 	    margin: 60px 0;
     }
 
     /* Make sure columns do not wiggle when resorting and the data in the cells change */
     .trading-pairs  :global(td)  {
         width: 17%; /* 1/6 */
+    }
+
+    .trading-pairs  :global(.price-change-green)  {
+        color: #458b00;
+    }
+
+    .trading-pairs  :global(.price-change-red)  {
+        color: #cc0000;
     }
 
 </style>
