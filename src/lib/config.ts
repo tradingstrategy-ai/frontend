@@ -9,6 +9,10 @@ if(backendUrl.endsWith("/")) {
     throw new Error(`Backend URL cannot end with slash: ${backendUrl}`);
 }
 
+
+/**
+ * Load Ghost API credentials and loudly bark if they are not available.
+ */
 export function getGhostCredentials() {
     const keys = {
         contentApiKey: import.meta.env.VITE_PUBLIC_GHOST_CONTENT_API_KEY,

@@ -13,7 +13,7 @@
     import '$lib/styles/price.css';
     import '$lib/styles/bodytext.css';
 
-    export async function load({ page }) {
+    export async function load({ page, fetch }) {
 
         const exchange_slug = page.params.exchange;
         const chain_slug = page.params.chain;

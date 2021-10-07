@@ -4,7 +4,7 @@
 
     // Load and render exchange details on the server side
     // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
-    export async function load({ page }) {
+    export async function load({ page, fetch }) {
         const exchange_slug = page.params.exchange_id;
         const chain_slug = page.params.chain;
 
@@ -16,10 +16,11 @@
 
         if (!resp.ok) {
             if (resp.status === 404) {
-                return {
-                    status: 404,
-                    error: `Exchange not found: ${exchange_slug}`
-                };
+                return;
+                //return {
+                //    status: 404,
+                //    error: `Exchange not found: ${exchange_slug}`
+                //};
             } else {
                 console.error(resp);
                 return {

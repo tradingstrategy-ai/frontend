@@ -4,10 +4,11 @@
   // Ghost client
   import GhostContentAPI from '@tryghost/content-api'
 
-  let ghostKeys = null;
+  // Pure server-side rendered page - no interactive JS
+  export const hydrate = false;
 
   export async function load({ page, fetch, session, stuff }) {
-      ghostKeys = getGhostCredentials();
+      const ghostKeys = getGhostCredentials();
 
       const api = new GhostContentAPI({
         url: ghostKeys.apiUrl,
@@ -33,8 +34,6 @@
       // https://ghost.org/docs/content-api/#posts
       const posts = await api.posts.browse();
 
-      console.log("Got posts", posts);
-
       return {
           props: {
               posts
@@ -50,6 +49,12 @@
 
   export let posts;
 </script>
+
+<svelte:head>
+    <title>Trading Strategy blog</title>
+    <meta name="description" content="Learn about decentralised and algorithmic trading">
+</svelte:head>
+
 
 <div class="container">
 

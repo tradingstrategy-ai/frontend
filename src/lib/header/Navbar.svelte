@@ -111,6 +111,10 @@
               <a rel="external" class="nav-link" href="/community">Community</a>
             </li>
 
+            <li class="nav-item" data-testid={'navigation-link'}>
+              <a rel="external" class="nav-link" href="/blog">Blog</a>
+            </li>
+
             <!--
             <li class="nav-item">
               <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
