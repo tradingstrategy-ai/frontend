@@ -45,19 +45,20 @@
   import {browser} from "$app/env";
 
   // https://stackoverflow.com/a/57377341/315168
-  function wrap(el, wrapper) {
+  function wrapResponsive(el) {
+      const wrapper = document.createElement('div');
+      wrapper.className = "table-responsive"
       el.parentNode.insertBefore(wrapper, el);
       wrapper.appendChild(el);
   }
 
   export let post;
 
-  // Make tables mobile friendly
+  // Make tables mobile friendly by wrapping them with the Bootstrap responsible table handling
   onMount(async () => {
-    const wrapper = document.createElement('div');
-    wrapper.className = "table-responsive"
+
     document.querySelectorAll('.body-text .table').forEach(function(elem) {
-      wrap(elem, wrapper);
+      wrapResponsive(elem);
     })
   });
 
