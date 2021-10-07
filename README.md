@@ -67,6 +67,13 @@ export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 ```
 
+To render the blog roll you also ened
+
+```shell
+export VITE_PUBLIC_GHOST_API_URL=https://trading-strategy.ghost.io
+export VITE_PUBLIC_GHOST_CONTENT_API_KEY=...
+```
+
 ## Running on production
 
 This will run server-side generated (SSR) pages.
@@ -75,6 +82,7 @@ This will run server-side generated (SSR) pages.
 screen -S frontend
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+source ~/secrets.env
 npm install
 (cd theme && npm install && npx gulp build:dist)
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js

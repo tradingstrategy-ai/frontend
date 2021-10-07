@@ -8,3 +8,16 @@ if(!backendUrl) {
 if(backendUrl.endsWith("/")) {
     throw new Error(`Backend URL cannot end with slash: ${backendUrl}`);
 }
+
+export function getGhostCredentials() {
+    const keys = {
+        contentApiKey: import.meta.env.VITE_PUBLIC_GHOST_CONTENT_API_KEY,
+        apiUrl: import.meta.env.VITE_PUBLIC_GHOST_API_URL,
+    }
+
+    if(!keys.contentApiKey) {
+        throw new Error("You need configure Ghost API keys to render the blog");
+    }
+
+    return keys;
+}
