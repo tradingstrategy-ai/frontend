@@ -15,6 +15,7 @@
 	 */
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
 	import jQuery from 'jquery';
 	import datatableModule from 'datatables.net-dt';
 	import Skeleton from '$lib/Skeleton.svelte';
@@ -45,20 +46,23 @@
 
 	let extraClass = clickableRows ? "clickable" : "";
 
-
 	// jQuery, jQuery never fails
 	function installRowHandlers() {
 
 		if(!clickableRows) {
+			// Normal table, no clickable rows
 			return;
 		}
 
+		// Add jQuery event catcher
 		jQuery(el).on('click', 'tbody tr', function(e, e2) {
 			// Find the first <a> element as the click target
 			const row = jQuery(e.currentTarget);
 			const link = row.find("a");
 			const loc = link.attr("href");
+			// TODO: figure out why Svelte routing does not work
 		  	window.location.href = loc;
+			//goto(loc);
 		});
 	}
 
@@ -141,6 +145,11 @@
 
 	.datatables-wrapper :global(.paginate_button)  {
 		font-weight: lighter;
+	}
+
+	/* Don't break headings to two rows */
+	.datatables-wrapper :global(th)  {
+		white-space: nowrap;
 	}
 
 	.datatables-wrapper :global(.paginate_button.current)  {

@@ -53,8 +53,7 @@
     export let chain_slug;
     export let details;
 
-    // const colums = ['Quote', 'Volume 24h', 'Liquidity', 'Price'];
-
+    // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
 	// See https://datatables.net/reference/option/columns
 	const columns = [
@@ -62,6 +61,7 @@
 			name: "Trading pair",
 			className: "col-exchange",
 			data: "pair_name",
+            orderable: false,
 			// https://datatables.net/reference/option/columns.render
 			render: function(data, type, row, meta) {
                 const chain = escapeHtml(row.chain_slug);
@@ -74,6 +74,7 @@
 
 		{
 			name: "Price (USD)",
+            orderable: false,
 			data: "usd_price_latest",
 			className: "col-price",
 			type: "num", // https://datatables.net/reference/option/columns.type
@@ -114,6 +115,7 @@
 
 		{
 			name: "Liq Δ",
+            orderable: false,
 			data: "liquidity_change_24h",
 			className: "col-liquidity-change",
 			type: "num", // https://datatables.net/reference/option/columns.type
@@ -124,37 +126,97 @@
 	];
 
     const options = {
-        order: [[3, 'desc']],
+        order: [[4, 'desc']],
 		searching: false,
-		serverSide: false,
+		serverSide: true,
 		lengthChange: false,
-        // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
-        ajax: {
-            url: `${backendUrl}/pairs?chain_slugs=${chain_slug}&exchange_slugs=${exchange_slug}&direction=desc&sort=volume`,
-            type: 'GET',
-            dataSrc: function (pairResult) {
-                // {total: 57476, pages: 575, results: Array(100)}
-                console.log(pairResult);
-                return pairResult.results;
+
+        ajax: async function(data, callback, settings) {
+            // https://datatables.net/reference/option/ajax
+            console.log("AJAX", data, callback, settings);
+
+            // Match column id to a sort key
+            let sortKey = null;
+            switch(data.order[0].column) {
+                case 3:
+                    sortKey = "volume";
+                    break;
+                case 2:
+                    sortKey = "price_change";
+                    break;
+                case 4:
+                    sortKey = "liquidity";
+                    break;
+                default:
+                    // Server-side sorting not supported for this column at the moment
+                    sortKey = null;
             }
+
+            // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
+            const params = {
+                chain_slugs: chain_slug,
+                exchange_slugs: exchange_slug,
+            }
+
+            // TODO: Add paging to the server query parameters
+
+            // Add sorting parameters if supported
+            if(sortKey) {
+                params.direction = data.order[0].dir === "desc" ? "desc" : "asc";
+                params.sort = sortKey;
+            }
+            const encoded = new URLSearchParams(params);
+            const resp = await fetch(`${backendUrl}/pairs?${encoded}`);
+
+            if (!resp.ok) {
+
+                // Decode 422 invalid input parameter error from the server
+                // with JSON payload
+                let errorDetails;
+                try {
+                    // GenericErrorModel in OpenAPI
+                    errorDetails = await resp.json()
+                    callback({"error": errorDetails.message});
+                } catch(e) {
+                }
+
+                console.log("API error:", resp, "error details:", errorDetails);
+                return;
+            }
+
+            // Result object is
+            // {total: 57483, pages: 575, results: Array(100)
+            const result = await resp.json();
+
+            // Mangle the result object for Datatables format
+            result.recordsTotal = result.total;
+            result.recordsFiltered = result.total;
+            result.data = result.results;
+
+            console.log("Rendering", result.data);
+
+            callback(result);
         }
     };
+
+    // TODO: make this information to come from server-side
+    const chainName = chain_slug.charAt(0).toUpperCase() + chain_slug.slice(1);
 
 </script>
 
 <svelte:head>
     <title>
-        {details.human_readable_name} trading on {details.human_readable_name}
+        {details.human_readable_name} exchange on {chainName}
     </title>
     <meta
             name="description"
-            content={'Decentralise exchange top trading pairs for' + details.human_readable_name}
+            content={'Decentralise exchange top trading pairs for' + chainName}
     />
 </svelte:head>
 
 <div class="container">
     <div class="exchange-content">
-        <h1>{details.human_readable_name} on {chain_slug}</h1>
+        <h1>{details.human_readable_name} on {chainName}</h1>
 
         <h2>Trading Pairs</h2>
         <Datatable
