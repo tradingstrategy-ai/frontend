@@ -5,7 +5,7 @@
   import GhostContentAPI from '@tryghost/content-api'
 
   // Pure server-side rendered page - no interactive JS
-  export const hydrate = false;
+  import { dev } from "$app/env";
 
   export async function load({ page, fetch, session, stuff }) {
       const ghostKeys = getGhostCredentials();
@@ -41,7 +41,7 @@
 
 <script>
   import Time from "svelte-time";
-  import {onMount} from "svelte";
+  import {onMount, afterUpdate} from "svelte";
   import {browser} from "$app/env";
 
   // https://stackoverflow.com/a/57377341/315168
@@ -50,16 +50,17 @@
       wrapper.className = "table-responsive"
       el.parentNode.insertBefore(wrapper, el);
       wrapper.appendChild(el);
+      console.log("Wrapped table", el);
   }
 
   export let post;
 
   // Make tables mobile friendly by wrapping them with the Bootstrap responsible table handling
-  onMount(async () => {
-
-    document.querySelectorAll('.body-text .table').forEach(function(elem) {
-      wrapResponsive(elem);
-    })
+  onMount(() => {
+      // TODO: Run this on parsed HTML feed from Ghost.io, not on the live document
+      document.querySelectorAll('.body-text .table').forEach(function (elem) {
+          wrapResponsive(elem);
+      });
   });
 
 </script>
