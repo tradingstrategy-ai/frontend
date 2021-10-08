@@ -12,10 +12,6 @@ echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BAC
 # https://stackoverflow.com/a/2173421/315168
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-#pull submodule
-
-git submodule update --init --recursive
-
 #install theme
 cd theme && pwd
 npm install && npx gulp build:dist
