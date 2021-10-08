@@ -38,11 +38,14 @@
 	// Use the first <a> tag within the row for the link target
 	export let clickableRows = false;
 
+	export let dataCy;
+
 	// Is DataTables initialised
 	let loaded = false;
 
 	let el; // table element
 	let table; // table object (API)
+
 
 	let extraClass = clickableRows ? "clickable" : "";
 
@@ -92,7 +95,7 @@
 
 
 <div class="datatables-wrapper">
-	<table bind:this={el}  class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"}>
+	<table bind:this={el}  class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"} data-cy={dataCy || ''}>
 		<thead>
 			<tr>
 				{#each columns as column}
