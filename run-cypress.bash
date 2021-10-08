@@ -41,4 +41,4 @@ sleep 3
 npm run cypress:run
 
 # Kill dev server
-kill $PID_SVELTE
+# kill $PID_SVELTE
