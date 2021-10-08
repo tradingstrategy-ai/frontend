@@ -5,7 +5,7 @@ describe('Traging strategy Home', () => {
     })
 
     it('User should be able to render the home page with header and navigation', () => {
-        cy.contains('Algorithmic trading strategy protocol').should('be.visible');
+        cy.contains('Algorithmic trading protocol for decentralised markets').should('be.visible');
         cy.contains(/Coming soon/i).should('be.visible');
         cy.get('.navbar-nav li').should('have.length', 4)
             .last()
