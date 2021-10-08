@@ -16,10 +16,6 @@ jobs:
     - name: Install dependencies
       run: |
           npm install
-    - uses: elstudio/actions-js-build/commit@v4
-    - name: Install theme
-      run: |
-         cd theme && npm install && npx gulp build:dist
     - name: Package version check
       run: |
           npm ls
