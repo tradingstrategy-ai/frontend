@@ -13,9 +13,9 @@
 <main>
 	<section class="card-home card-jumbo">
 		<div class="container">
-			<h1>Algorithmic trading strategy protocol</h1>
+			<h1>Algorithmic trading protocol for decentralised markets/h1>
 
-			<p>Invest and offer active trading strategies run by a decentralised oracle network</p>
+			<p>Invest in ready-made strategies or offer your own trading strategies run by a decentralised oracle network</p>
 		</div>
 	</section>
 
