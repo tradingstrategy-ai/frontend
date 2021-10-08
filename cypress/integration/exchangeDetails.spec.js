@@ -5,7 +5,7 @@ describe('Traging strategy Exchanges Details', () => {
     })
 
     it('should render Home with navbar with 3 elements', () => {
-        cy.contains('Uniswap v2 on ethereum')
+        cy.contains('Uniswap v2 on Ethereum')
     });
 
     it('should verify table data loads', () => {

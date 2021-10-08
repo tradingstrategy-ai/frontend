@@ -7,9 +7,9 @@ describe('Traging strategy Home', () => {
     it('User should be able to render the home page with header and navigation', () => {
         cy.contains('Algorithmic trading strategy protocol').should('be.visible');
         cy.contains(/Coming soon/i).should('be.visible');
-        cy.get('.navbar-nav li').should('have.length', 3)
+        cy.get('.navbar-nav li').should('have.length', 4)
             .last()
-            .should('have.text', 'Community')
+            .should('have.text', 'Blog')
         cy.get('[data-cy=logo]')
     });
 
@@ -29,7 +29,7 @@ describe('Traging strategy Home', () => {
         cy.wait("@community");
         cy.get('.navbar-nav li')
             .last()
-            .should('have.text', 'Community')
+            .should('have.text', 'Blog')
     });
 
     it('logo should redirect an user back to home', () => {
@@ -59,5 +59,4 @@ describe('Traging strategy Home', () => {
         cy.go('back');
         cy.wait("@home")
       });
-
 })
