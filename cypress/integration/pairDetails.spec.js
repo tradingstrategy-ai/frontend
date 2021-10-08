@@ -1,4 +1,4 @@
-describe('Traging strategy Home', () => {
+describe('Traging strategy Pair Details', () => {
 
     beforeEach(() => {
         cy.visit('/ethereum/uniswap-v2/ZRX-WETH');
