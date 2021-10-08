@@ -13,7 +13,7 @@
     import '$lib/styles/price.css';
     import '$lib/styles/bodytext.css';
 
-    export async function load({ page }) {
+    export async function load({ page, fetch }) {
 
         const exchange_slug = page.params.exchange;
         const chain_slug = page.params.chain;
@@ -220,11 +220,12 @@
         The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
     </p>
 
-    <h2>Price chart</h2>
+    <h2>{summary.pair_symbol} price chart</h2>
+
     <TimeBucketSelector bind:activeBucket={bucket} />
 
     <div class="chart-wrapper">
-        <CandleStickChart title={summary.pair_name + " converted to USD"} bind:candles={candles} />
+        <CandleStickChart title={summary.pair_name + "(as USD)"} bind:candles={candles} />
     </div>
 
 

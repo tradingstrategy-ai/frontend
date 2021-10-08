@@ -40,7 +40,7 @@
 
         console.log("Redrawing candles", candles);
 
-        drawCandleStickChart(uPlot, title, elem, candles);
+        drawCandleStickChart(uPlot, null, elem, candles);
     }
 
 

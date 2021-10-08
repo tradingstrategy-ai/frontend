@@ -27,7 +27,7 @@ export function formatDownloadLink(validApiKey, key, link) {
 
 export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
 
-    if(n === undefined) {
+    if(n === undefined || n === null) {
         // Plz avoid ending here
         return "---";
     }
