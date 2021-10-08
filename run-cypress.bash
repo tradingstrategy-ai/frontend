@@ -10,7 +10,7 @@ echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BAC
 
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+# trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 #install theme
 cd theme && pwd
