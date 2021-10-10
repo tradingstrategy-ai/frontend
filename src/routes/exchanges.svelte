@@ -14,25 +14,37 @@
 <script lang="typescript">
 	import { onMount } from 'svelte';
 	import Datatable from '$lib/datatable/datatable.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
 	// https://tradingstrategy.ai/api/explorer/
-	// See https://datatables.net/reference/option/columns
+	// See
+	// https://datatables.net/reference/option/columns
+	// https://datatables.net/reference/option/columns.render
+	// https://datatables.net/reference/option/columns.type
 	const columns = [
 		{
 			name: "Exchange",
 			className: "col-exchange",
 			data: "human_readable_name",
-			// https://datatables.net/reference/option/columns.render
+
 			render: function(data, type, row, meta) {
 				return `<a href="/${row.chain_slug}/${row.exchange_slug}">${row.human_readable_name}</a>`;
+			}
+		},
+		{
+			name: "Trading pairs",
+			data: "pair_count",
+			className: "col-pair-count",
+			type: "num",
+			render: function(data, type, row, meta) {
+				return formatAmount(data);
 			}
 		},
 		{
 			name: "Volume 30d (USD)",
 			data: "usd_volume_30d",
 			className: "col-volume",
-			type: "num", // https://datatables.net/reference/option/columns.type
+			type: "num",
 			render: function(data, type, row, meta) {
 				return formatDollar(data);
 			}

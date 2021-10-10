@@ -1,4 +1,4 @@
-export function formatNumber(n) {
+export function formatKilos(n) {
     if(n <= 1000) {
         return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
     } else{

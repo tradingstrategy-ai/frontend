@@ -78,12 +78,12 @@
     import Time from "svelte-time";
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
-    import { fromHashToTimeBucket } from './TimeBucketSelector.svelte';
+    import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
     import { browser } from '$app/env';
 
-    import TimeBucketSelector from './TimeBucketSelector.svelte';
-    import CandleStickChart from './CandleStickChart.svelte';
-    import TimeSpanPerformance from './TimeSpanPerformance.svelte';
+    import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
+    import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
+    import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 
     export let exchange_slug;
     export let chain_slug;
@@ -92,6 +92,9 @@
     export let details; // PairAdditionalDetails OpenAPI
 
     export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
+
+    // Candle data array loaded from the server
+    export let rawCandles = [];
 
     // Loaded candle data
     // See Candle OpenAPI
@@ -175,7 +178,14 @@
         }
 
         const rawCandles = await resp.json();
-        candles = massageCandles(rawCandles);
+
+        if(rawCandles) {
+            // We have some candles for this time period
+            candles = massageCandles(rawCandles);
+        } else {
+            candles = [];
+        }
+
     }
 
     export let bucket = fromHashToTimeBucket(hash);

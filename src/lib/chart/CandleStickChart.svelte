@@ -14,7 +14,7 @@
     import { browser } from '$app/env';
     import { onMount } from 'svelte';
     import "uplot/dist/uPlot.min.css";
-    import {clearChart, drawCandleStickChart} from "./uPlotCandlestickCore.js";
+    import { clearChart, drawCandleStickChart } from "./uPlotCandlestickCore.js";
 
     // See CandleList https://tradingstrategy.ai/api/explorer/
     export let candles = null;
@@ -22,6 +22,8 @@
 
     // Dynamically imported uplot
     let uPlot;
+
+    let classes;
 
     function redrawCandles(candles: any[], uPlot) {
 
@@ -40,9 +42,13 @@
 
         console.log("Redrawing candles", candles);
 
-        drawCandleStickChart(uPlot, null, elem, candles);
+        if(candles[0].length > 0) {
+            classes = "uplot-wrapper";
+            drawCandleStickChart(uPlot, null, elem, candles);
+        } else {
+            classes = "uplot-wrapper uplot-wrapper-empty";
+        }
     }
-
 
     // https://stackoverflow.com/questions/57030895/whats-the-best-way-to-run-some-code-only-client-side
     onMount(async () => {
@@ -62,10 +68,18 @@
 
 
 <div class="candle-stick-chart">
-    <div id="uplot-wrapper">
+    <div id="uplot-wrapper" class={classes}>
         {#if candles}
-            {#if candles.length === 0 }
-                <p>No data available for the selected period</p>
+            {#if candles[0].length === 0 }
+                <div class="alert alert-danger shadow-inset fade show" role="alert"><span
+                        class="alert-inner--icon"><span class="fas fa-exclamation-circle"></span></span> <span
+                        class="alert-inner--text">
+
+
+                    <p>No data available for the selected period</p>
+
+                </div>
+
             {:else}
                 <!-- We should place uplot-wapper here but there is a race condition with uPlot renderer -->
             {/if}
@@ -76,9 +90,13 @@
 </div>
 
 <style>
-    #uplot-wrapper {
+    .uplot-wrapper {
         width: 100%;
         min-height: 600px;
+    }
+
+    .uplot-wrapper-empty {
+        min-height: auto;
     }
 
 </style>
