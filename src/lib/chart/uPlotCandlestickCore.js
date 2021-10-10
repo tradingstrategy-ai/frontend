@@ -340,6 +340,7 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
             {},
             {
                 label: "Price",
+                side: 1,
                 space: 40,
                 size: 60,
                 gap: 0,
@@ -347,13 +348,12 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
             },
             {
                 label: "Volume",
-                side: 1,
                 space: 40,
                 size: 80,
                 scale: 'vol',
                 grid: {show: false},
                 values: (u, vals) => vals.map(v => formatDollar(v, 1, 1)),
-            }
+            },
         ];
     } else {
         // No label on mobile
@@ -362,16 +362,16 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
             {
                 space: 40,
                 size: 40,
-                gap: 0,
-                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+                scale: 'vol',
+                grid: {show: false},
             },
             {
                 side: 1,
                 space: 40,
                 size: 40,
-                scale: 'vol',
-                grid: {show: false},
-            }
+                gap: 0,
+                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+            },
         ];
     }
 

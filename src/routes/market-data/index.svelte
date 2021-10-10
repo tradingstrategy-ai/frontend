@@ -18,8 +18,7 @@
                     <h1>Market data</h1>
 
 					<p class="lead">
-						Trading Strategy oracles connect to multiple blockchains and produce trading data real-time.
-
+						Explore and download price charts from multiple blockchains and decentralised exchanges.
 					</p>
                 </div>
             </div>
@@ -108,6 +107,7 @@
 
                             <p class="card-text">
 								Read API documentation how to access the data as a developer.
+                                You can access real-time data for live trading and download backtesting datasets.
 							</p>
 
                         </div>

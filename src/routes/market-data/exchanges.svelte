@@ -28,7 +28,7 @@
 			data: "human_readable_name",
 
 			render: function(data, type, row, meta) {
-				return `<a href="/${row.chain_slug}/${row.exchange_slug}">${row.human_readable_name}</a>`;
+				return `<a href="/market-data/${row.chain_slug}/${row.exchange_slug}">${row.human_readable_name}</a>`;
 			}
 		},
 		{
