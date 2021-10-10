@@ -1,4 +1,5 @@
-export function formatKilos(n) {
+
+export function formatKilos(n): string {
     if(n <= 1000) {
         return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
     } else{
@@ -6,7 +7,11 @@ export function formatKilos(n) {
     }
 }
 
-export function formatSize(n) {
+/**
+ *
+ * @param n
+ */
+export function formatSize(n): string {
     if(n <= 1024*1024) {
         return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
     } else{
@@ -25,6 +30,13 @@ export function formatDownloadLink(validApiKey, key, link) {
 }
 
 
+/**
+ * Format large money amounts in human friendly manner.
+ *
+ * @param n
+ * @param minFrag
+ * @param maxFrag
+ */
 export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
 
     if(n === undefined || n === null) {
@@ -62,6 +74,11 @@ export function formatPriceChange(n: number): string {
 
 // Use a thousand separator
 export function formatAmount(n: number): string {
+
+    if(!n) {
+        return "---";
+    }
+
     return n.toLocaleString("en");
 }
 
@@ -70,6 +87,11 @@ export function formatAmount(n: number): string {
  * @param ts Timestamp in seconds
  */
 export function formatUnixTimestamp(ts: number): string {
+
+    if(!ts) {
+        return "---";
+    }
+
     const d = new Date(ts * 1000);
     return d.toUTCString();
 }

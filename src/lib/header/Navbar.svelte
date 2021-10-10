@@ -95,6 +95,10 @@
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
 
+            <li class="nav-item">
+              <a class="nav-link" href="/market-data">Market data</a>
+            </li>
+
             <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/about">About</a>
             </li>

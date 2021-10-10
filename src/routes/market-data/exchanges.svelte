@@ -32,6 +32,11 @@
 			}
 		},
 		{
+			name: "Blockchain",
+			data: "chain_name",
+			className: "col-chain-name",
+		},
+		{
 			name: "Trading pairs",
 			data: "pair_count",
 			className: "col-pair-count",
