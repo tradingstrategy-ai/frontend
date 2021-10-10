@@ -15,7 +15,7 @@ import {formatDollar, formatUnixTimestamp,} from "$lib/helpers/formatters";
 let uPlot = null;
 
 // The current window.addEventListener callback for resizes
-let resizeCallback = null;formatUnixTimestamp
+let resizeCallback = null;
 
 
 function throttle(cb, limit) {
