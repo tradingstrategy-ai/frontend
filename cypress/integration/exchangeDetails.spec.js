@@ -4,19 +4,19 @@ describe('Traging strategy Exchanges Details', () => {
         cy.visit('/market-data/ethereum/uniswap-v2');
     })
 
-    it('should render Home with navbar with 3 elements', () => {
-        cy.contains('Uniswap v2 on Ethereum')
+    it('Should show correct title', () => {
+        cy.get('[data-test-id=title]').contains('Uniswap v2 on Ethereum');
     });
 
-    it('should verify table data loads', () => {
-
+    it('User can see navigation', () => {
+        cy.get('nav').should('be.visible');
     });
 
-    it('should verify table has pagination', () => {
-
+    it('statistics should be visible', () => {
+        cy.get('[data-test-id=statistics]').should('be.visible');
     });
 
-    it('should verify table volume is sorted descending', () => {
-
+    it('trading pairs should be visible', () => {
+        cy.get('[data-test-id=pairs]').should('be.visible');
     });
 });
