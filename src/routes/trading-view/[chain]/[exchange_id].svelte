@@ -72,7 +72,7 @@
                 const exchange = escapeHtml(row.exchange_slug);
                 const pair = escapeHtml(row.pair_slug);
                 const symbols = escapeHtml(row.pair_symbol);
-				return `<a href="/market-data/${chain}/${exchange}/${pair}">${symbols}</a>`;
+				return `<a href="/trading-view/${chain}/${exchange}/${pair}">${symbols}</a>`;
 			}
 		},
 

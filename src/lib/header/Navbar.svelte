@@ -7,7 +7,7 @@
 
 <script lang="ts">
 
-  import logo from '../../lib/assets/logo-web-beta.svg';
+  import logo from '../../lib/assets/logo-web-beta-2.svg';
   import logoMobile from '../../lib/assets/logo-two-lines.png';
 
   import {
@@ -96,7 +96,7 @@
         <ul class="navbar-nav mr-auto">
 
             <li class="nav-item">
-              <a class="nav-link" href="/market-data">Market data</a>
+              <a class="nav-link" href="/trading-view">Trading data</a>
             </li>
 
             <li class="nav-item" data-testid={'navigation-link'}>
