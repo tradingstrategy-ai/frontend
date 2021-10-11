@@ -9,7 +9,7 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ page, session, fetch, context }) {
-		const url = `https://candlelightdinner.tradingstrategy.ai/datasets`;
+		const url = `https://tradingstrategy.ai/api/datasets`;
 		const res = await fetch(url);
 
 		const datasets = await res.json();
@@ -40,7 +40,7 @@
 	export let apiKeyError = null;
 
 
-	const apiUrl = "https://candlelightdinner.tradingstrategy.ai";
+	const apiUrl = "https://tradingstrategy.ai/api";
 
 	function formatNumber(n) {
 		if(n <= 1000) {
@@ -123,6 +123,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>Decentralised trading data for backtesting</h1>
+
 
 				<p>
 					The following on-chain trade and liquidity datasets are available for decentralised finance (DeFi) research,
