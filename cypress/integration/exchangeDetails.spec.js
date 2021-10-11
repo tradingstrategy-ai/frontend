@@ -1,7 +1,7 @@
 describe('Traging strategy Exchanges Details', () => {
 
     beforeEach(() => {
-        cy.visit('/ethereum/uniswap-v2');
+        cy.visit('/market-data/ethereum/uniswap-v2');
     })
 
     it('should render Home with navbar with 3 elements', () => {

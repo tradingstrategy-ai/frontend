@@ -1,14 +1,14 @@
 describe('Traging strategy Pair Details', () => {
 
     beforeEach(() => {
-        cy.visit('/ethereum/uniswap-v2/ZRX-WETH');
+        cy.visit('/market-data/ethereum/uniswap-v2/eth-usdt');
     })
 
     it('has a navigation about link', () => {
-        cy.contains(/about/i);
+        cy.contains(/ETH-USDT trading on Uniswap v2 on Ethereum/i);
         cy.get('.navbar-nav li')
             .first()
-            .should('have.text', 'About')
+            .should('have.text', 'Market data')
     });
 
 });
