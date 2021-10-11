@@ -248,9 +248,9 @@
 
 <div class="container">
     <div class="exchange-content">
-        <h1>{details.human_readable_name} on {chainName}</h1>
+        <h1 id='title' data-test-id="title">{details.human_readable_name} on {chainName}</h1>
 
-        <div class="statistics">
+        <div class="statistics" data-test-id="statistics">
             <h2>Statistics</h2>
             <!-- See ExchangeDetails at https://tradingstrategy.ai/api/explorer -->
             <div class="row">
@@ -279,7 +279,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <table class="table table-summary table-summary-all-time">
+                    <table class="table table-summary table-summary-all-time" data-test-id="pairs">
 
                         <tr>
                             <th></th>
