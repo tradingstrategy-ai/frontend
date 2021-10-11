@@ -114,7 +114,7 @@
 </script>
 
 <svelte:head>
-	<title>DEX trading and quantative finance datasets</title>
+	<title>DEX trading and quantitative finance datasets</title>
 	<meta name="description" content="Download OHLCV and liquidity data for DEXes">
 </svelte:head>
 
@@ -122,7 +122,7 @@
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
-				<h1>On-chain trading data for backtesting</h1>
+				<h1>Decentralised trading data for backtesting</h1>
 
 				<p>
 					The following on-chain trade and liquidity datasets are available for decentralised finance (DeFi) research,
