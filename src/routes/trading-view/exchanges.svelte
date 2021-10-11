@@ -1,21 +1,35 @@
 <script context="module" lang="typescript">
-
 	/*
 
 		Render listing of all available exchanges
 
 	 */
-
 	import { browser } from '$app/env';
 	export const router = browser;
 	import { backendUrl } from '$lib/config';
+	import { buildBreadcrumbs } from '$lib/helpers/html';
+
+	export async function load({page}){
+      // using the page object from the Input object we can get the param
+      // In the return value of this function we can specify props
+	  return {
+        props: {
+      		breadcrumbs: buildBreadcrumbs(page.path)
+        }
+      }
+    }
+
 </script>
 
 <script lang="typescript">
 	import { onMount } from 'svelte';
+	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
 	import Datatable from '$lib/datatable/datatable.svelte';
+
+
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
+	export let breadcrumbs;
 	// https://tradingstrategy.ai/api/explorer/
 	// See
 	// https://datatables.net/reference/option/columns
@@ -79,12 +93,12 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
+	<Breadcrumb breadcrumbs={breadcrumbs} />
 	<div class="row">
 		<div class="col-md-12">
 
 			<div class="exchanges-content">
 				<h1>Decentralised exchanges</h1>
-
 				<p>
 					Trading Strategy oracle network connects to the following exchanges. Choose an exchange to explore its trading pairs.
 				</p>

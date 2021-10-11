@@ -10,6 +10,7 @@
     */
 
     import { backendUrl } from '$lib/config';
+	import { buildBreadcrumbs } from '$lib/helpers/html';
     import '$lib/styles/price.css';
     import '$lib/styles/bodytext.css';
 
@@ -62,7 +63,8 @@
                 pair_slug,
                 summary,
                 details,
-                daily
+                daily,
+				breadcrumbs: buildBreadcrumbs(page.path)
             }
         }
     }
@@ -84,12 +86,14 @@
     import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
     import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
     import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
+	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
 
     export let exchange_slug;
     export let chain_slug;
     export let pair_slug;
     export let summary; // PairSummary OpenAPI
     export let details; // PairAdditionalDetails OpenAPI
+    export let breadcrumbs;
 
     export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
@@ -208,6 +212,7 @@
 </svelte:head>
 
 <div class="container">
+    <Breadcrumb breadcrumbs={breadcrumbs} />
     <h1>
         {summary.pair_symbol} trading on
         <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>

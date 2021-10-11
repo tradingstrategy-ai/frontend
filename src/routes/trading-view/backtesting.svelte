@@ -1,5 +1,6 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
+	import { buildBreadcrumbs } from '$lib/helpers/html';
 
 	export const hydrate = true;
 
@@ -17,14 +18,16 @@
 		if (res.ok) {
 			return {
 				props: {
-					datasets
+					datasets,
+					breadcrumbs: buildBreadcrumbs(page.path)
+
 				}
 			};
 		}
 
 		return {
 			status: res.status,
-			error: new Error(`Could not load ${url}`)
+			error: new Error(`Could not load ${url}`),
 		};
 	}
 
@@ -33,12 +36,14 @@
 <script>
 	import Time from "svelte-time";
 	import Spinner from 'svelte-spinner';
+	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
 
 	export let datasets;
 	export let submitting = false;
 	export let validApiKey = null;
 	export let apiKeyError = null;
 
+	export let breadcrumbs;
 
 	const apiUrl = "https://candlelightdinner.tradingstrategy.ai";
 
@@ -119,6 +124,7 @@
 </svelte:head>
 
 <div class="container container-main">
+	<Breadcrumb breadcrumbs={breadcrumbs} />
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
