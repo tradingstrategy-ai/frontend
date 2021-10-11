@@ -52,7 +52,7 @@
 <script>
     import Datatable from '$lib/datatable/datatable.svelte';
     import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
-	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import { escapeHtml } from "$lib/helpers/html";
     import jQuery from 'jquery';
 

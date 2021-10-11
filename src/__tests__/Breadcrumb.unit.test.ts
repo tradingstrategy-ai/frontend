@@ -1,0 +1,24 @@
+import '@testing-library/jest-dom'
+import {render, screen, fireEvent} from '@testing-library/svelte';
+import NavBar from '../lib/header/Navbar.svelte';
+//import Breadcrumb from '../lib/breadcrumb/Breadcrumb.svelte';
+import { buildBreadcrumbs } from '../lib/helpers/html';
+
+describe('test breadcrums builder', () => {
+    it('should build a breadcrum with one element given this path /trading', () => {
+        const path = '/trading';
+        const result = buildBreadcrumbs(path);
+        expect(result.length).toBe(1);
+        expect(result[0].name).toEqual('trading');
+    });
+});
+
+// describe('Breadcrumb component', () => {
+//   it('given a url with a single path should render a breadcrum with one element', () => {
+//     const breadcrums =  [
+//         { url: '/trading', name: 'trading', linkActive: true,  head: true }
+//     ]
+//     render(Breadcrumb, {});
+//     const nav = screen.getByTestId(/navbar/i);
+//   });
+// });

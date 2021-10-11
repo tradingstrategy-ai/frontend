@@ -23,7 +23,7 @@
 
 <script lang="typescript">
 	import { onMount } from 'svelte';
-	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import Datatable from '$lib/datatable/datatable.svelte';
 
 

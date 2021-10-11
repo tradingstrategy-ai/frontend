@@ -36,7 +36,7 @@
 <script>
 	import Time from "svelte-time";
 	import Spinner from 'svelte-spinner';
-	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 
 	export let datasets;
 	export let submitting = false;

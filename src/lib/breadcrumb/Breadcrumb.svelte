@@ -1,5 +1,4 @@
 <script contecxt module lang="ts">
-  import { Breadcrumb } from "sveltestrap";
   import {browser} from "$app/env";
   import { onMount } from "svelte";
 

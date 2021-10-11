@@ -86,7 +86,7 @@
     import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
     import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
     import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
-	import Breadcrumb from '$lib/breadcrumb/breadcrumb.svelte';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 
     export let exchange_slug;
     export let chain_slug;

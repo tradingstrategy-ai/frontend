@@ -27,7 +27,7 @@ export function escapeHtml(unsafe: string): string {
         head: lastElement
       }
     })
-    //console.log('result', breadCrumbs)
+    console.log('result', breadCrumbs)
     // { url: '/trading-view/exchanges',  name: 'exchanges', head: false  },
     return breadCrumbs;
   }
