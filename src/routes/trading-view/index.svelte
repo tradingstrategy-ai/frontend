@@ -15,7 +15,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Market data</h1>
+                    <h1>Trading data</h1>
 
 					<p class="lead">
 						Explore and download price charts from multiple blockchains and decentralised exchanges.
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/market-data/exchanges" class="btn btn-primary btn-sm">View exchanges</a>
+                            <a href="/trading-view/exchanges" class="btn btn-primary btn-sm">View exchanges</a>
                         </div>
                     </div>
 

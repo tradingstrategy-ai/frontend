@@ -210,13 +210,13 @@
 <div class="container">
     <h1>
         {summary.pair_symbol} trading on
-        <a href="/market-data/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
-        on <a href="/market-data/{chain_slug}">{details.chain_name}</a>
+        <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
+        on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
     </h1>
 
     <p>
-        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/market-data/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
-        on <a class=body-link href="/market-data/{chain_slug}">{details.chain_name}</a>.
+        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
+        on <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name}</a>.
     </p>
 
     <p>
