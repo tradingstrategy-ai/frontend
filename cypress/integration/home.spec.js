@@ -40,10 +40,10 @@ describe('Traging strategy Home', () => {
         // cy.get('[data-cy=logo]').should("not.have.attr", "href", "/about");
     });
 
-    it('First in link in nav bar menu is Market Data', () => {
+    it('First in link in nav bar menu is Trading Data', () => {
         cy.get('.navbar-nav li')
             .first()
-            .should('have.text', 'Market data')
+            .should('have.text', 'Trading data')
     })
 
     it('Use can navigate the site from home page', () => {
