@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import {render, screen, fireEvent} from '@testing-library/svelte';
-import NavBar from '../lib/header/Navbar.svelte';
-//import Breadcrumb from '../lib/breadcrumb/Breadcrumb.svelte';
+import Breadcrumb from '../lib/breadcrumb/Breadcrumb.svelte';
 import { buildBreadcrumbs } from '../lib/helpers/html';
 
 describe('test breadcrums builder', () => {
@@ -18,7 +17,6 @@ describe('test breadcrums builder', () => {
 //     const breadcrums =  [
 //         { url: '/trading', name: 'trading', linkActive: true,  head: true }
 //     ]
-//     render(Breadcrumb, {});
-//     const nav = screen.getByTestId(/navbar/i);
+//     render(Breadcrumb, { breadcrums });
 //   });
 // });
