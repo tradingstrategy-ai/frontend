@@ -4,7 +4,7 @@
     ]
 </script>
 
-<nav aria-label="breadcrumb shadow-none">
+<nav aria-label="breadcrumb shadow-none" data-test-id="breadcrumb">
   <ol class="breadcrumb breadcrumb-gray  shadow-none" >
     {#each breadcrumbs  as breadcrumb, i}
       <li class="breadcrumb-item">
