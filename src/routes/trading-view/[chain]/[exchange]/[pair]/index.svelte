@@ -11,6 +11,8 @@
 
     import { backendUrl } from '$lib/config';
 	import { buildBreadcrumbs } from '$lib/helpers/html';
+    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+
     import '$lib/styles/price.css';
     import '$lib/styles/bodytext.css';
 
@@ -49,6 +51,14 @@
 
         console.log("Pair details", pairDetails);
 
+        const readableNames = {
+            ...breadcrumbTranslations,
+            [exchange_slug]: details.exchange_name,
+            [pair_slug]: pairDetails.summary.pair_name
+        };
+
+        console.log(readableNames);
+
         // const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
         // const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
         // const pairs = await fetch(urlTopPairs);
@@ -64,7 +74,7 @@
                 summary,
                 details,
                 daily,
-				breadcrumbs: buildBreadcrumbs(page.path)
+				breadcrumbs: buildBreadcrumbs(page.path, readableNames)
             }
         }
     }

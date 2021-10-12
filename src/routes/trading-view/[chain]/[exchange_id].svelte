@@ -2,6 +2,7 @@
     import { browser } from '$app/env';
     import { backendUrl } from '$lib/config';
 	import { buildBreadcrumbs } from '$lib/helpers/html';
+    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
 
     // Load and render exchange details on the server side
     // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
@@ -35,6 +36,11 @@
 
         const details = await resp.json();
 
+        const readableNames = {
+            ...breadcrumbTranslations,
+            [exchange_slug]: details.human_readable_name
+        };
+
         console.log("Received exchange details", details);
 
         return {
@@ -43,7 +49,7 @@
                 chain_slug,
                 details,
                 backendUrl,
-                breadcrumbs: buildBreadcrumbs(page.path)
+                breadcrumbs: buildBreadcrumbs(page.path, readableNames)
             }
         };
     }

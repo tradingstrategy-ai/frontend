@@ -1,6 +1,7 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
 	import { buildBreadcrumbs } from '$lib/helpers/html';
+	import breadcrumbTranslations from '$lib/constants/Breadcrumb';
 
 	export const hydrate = true;
 
@@ -15,12 +16,15 @@
 
 		const datasets = await res.json();
 
+		const readableNames = {
+			...breadcrumbTranslations
+      	};
+
 		if (res.ok) {
 			return {
 				props: {
 					datasets,
-					breadcrumbs: buildBreadcrumbs(page.path)
-
+					breadcrumbs: buildBreadcrumbs(page.path, readableNames)
 				}
 			};
 		}

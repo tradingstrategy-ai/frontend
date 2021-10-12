@@ -6,9 +6,12 @@ import { buildBreadcrumbs } from '../lib/helpers/html';
 describe('test breadcrums builder', () => {
     it('should build a breadcrum with one element given this path /trading', () => {
         const path = '/trading';
-        const result = buildBreadcrumbs(path);
+        const readableNames = {
+          'trading': 'Trading Data'
+        }
+        const result = buildBreadcrumbs(path, readableNames);
         expect(result.length).toBe(1);
-        expect(result[0].name).toEqual('trading');
+        expect(result[0].name).toEqual('Trading Data');
     });
 });
 

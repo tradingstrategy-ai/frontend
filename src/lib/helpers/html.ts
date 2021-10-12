@@ -8,10 +8,21 @@ export function escapeHtml(unsafe: string): string {
          .replace(/'/g, "&#039;");
  }
 
- export const buildBreadcrumbs = (pagePath) => {
+ export const buildBreadcrumbs = (pagePath: string, readableNames) => {
     console.log(pagePath)
+
+    // const readablePagesName = {
+    //   'trading-view': 'Trading Data'
+    // }
+
+    const getReadableName = (name: string) => {
+      return readableNames[name] ? readableNames[name] : name;
+    }
+
     const chains = [
-      'ethereum'
+      'ethereum',
+      'bsc',
+      'polygon'
     ]
 
     const parts = pagePath.split('/').slice(1);
@@ -22,12 +33,12 @@ export function escapeHtml(unsafe: string): string {
       currentPath = lastElement ? `${currentPath}${pathPart}` : `${currentPath}${pathPart}/`;
       return {
         url: currentPath,
-        name: pathPart,
+        name: getReadableName(pathPart),
         linkActive: chains.includes(pathPart) ? false : true,
         head: lastElement
       }
     })
-    console.log('result', breadCrumbs)
     // { url: '/trading-view/exchanges',  name: 'exchanges', head: false  },
     return breadCrumbs;
   }
+

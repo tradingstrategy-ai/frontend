@@ -1,14 +1,11 @@
 <script contecxt module lang="ts">
-  import {browser} from "$app/env";
-  import { onMount } from "svelte";
-
   export let breadcrumbs = [
       { url: '/',  name: 'empty not working', linkActive: false, head: true  },
     ]
 </script>
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb breadcrumb-gray">
+<nav aria-label="breadcrumb shadow-none">
+  <ol class="breadcrumb breadcrumb-gray  shadow-none" >
     {#each breadcrumbs  as breadcrumb, i}
       <li class="breadcrumb-item">
         {#if breadcrumb.head || !breadcrumb.url }

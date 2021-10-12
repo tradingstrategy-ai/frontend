@@ -8,15 +8,21 @@
 	export const router = browser;
 	import { backendUrl } from '$lib/config';
 	import { buildBreadcrumbs } from '$lib/helpers/html';
+    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+
 
 	export async function load({page}){
       // using the page object from the Input object we can get the param
       // In the return value of this function we can specify props
+	  const readableNames = {
+        ...breadcrumbTranslations
+      };
+
 	  return {
         props: {
-      		breadcrumbs: buildBreadcrumbs(page.path)
+      		breadcrumbs: buildBreadcrumbs(page.path, readableNames)
         }
-      }
+      };
     }
 
 </script>
