@@ -1,38 +1,3 @@
-<script context="module" lang="typescript">
-	/*
-
-		Render listing of all available exchanges
-
-	 */
-	import { browser } from '$app/env';
-	export const router = browser;
-	import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
-
-
-	export async function load({page}){
-      // using the page object from the Input object we can get the param
-      // In the return value of this function we can specify props
-	  const readableNames = {
-        ...breadcrumbTranslations
-      };
-
-	  return {
-        props: {
-      		breadcrumbs: buildBreadcrumbs(page.path, readableNames)
-        }
-      };
-    }
-
-</script>
-
-<script>
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-
-	export let breadcrumbs;
-</script>
-
 <svelte:head>
     <title>TradingStrategy.ai community resources</title>
     <meta name="description" content="Resources to learn algorithmic trading for crypto">
@@ -42,7 +7,6 @@
 <main>
     <section>
         <div class="container">
-            <Breadcrumb breadcrumbs={breadcrumbs} />
             <div class="row">
                 <div class="col-md-12">
                     <h1>Community</h1>
