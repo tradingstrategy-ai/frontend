@@ -1,5 +1,7 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
+	import { buildBreadcrumbs } from '$lib/helpers/html';
+	import breadcrumbTranslations from '$lib/constants/Breadcrumb';
 
 	export const hydrate = true;
 
@@ -14,17 +16,22 @@
 
 		const datasets = await res.json();
 
+		const readableNames = {
+			...breadcrumbTranslations
+      	};
+
 		if (res.ok) {
 			return {
 				props: {
-					datasets
+					datasets,
+					breadcrumbs: buildBreadcrumbs(page.path, readableNames)
 				}
 			};
 		}
 
 		return {
 			status: res.status,
-			error: new Error(`Could not load ${url}`)
+			error: new Error(`Could not load ${url}`),
 		};
 	}
 
@@ -33,12 +40,14 @@
 <script>
 	import Time from "svelte-time";
 	import Spinner from 'svelte-spinner';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 
 	export let datasets;
 	export let submitting = false;
 	export let validApiKey = null;
 	export let apiKeyError = null;
 
+	export let breadcrumbs;
 
 	const apiUrl = "https://tradingstrategy.ai/api";
 
@@ -119,6 +128,7 @@
 </svelte:head>
 
 <div class="container container-main">
+	<Breadcrumb breadcrumbs={breadcrumbs} />
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">

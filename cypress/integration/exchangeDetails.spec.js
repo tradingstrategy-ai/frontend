@@ -19,4 +19,11 @@ describe('Traging strategy Exchanges Details', () => {
     it('trading pairs should be visible', () => {
         cy.get('[data-test-id=pairs]').should('be.visible');
     });
+
+    it('Breadcrumb should be visible and have 1 element', () => {
+        cy.get('[data-test-id=breadcrumb]').should('be.visible');
+        cy.get('[data-test-id=breadcrumb] li')
+            .should('have.length', 3)
+            .contains(/Trading data/i)
+    });
 });

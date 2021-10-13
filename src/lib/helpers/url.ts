@@ -2,6 +2,7 @@
  * https://svelte.dev/repl/5abaac000b164aa1aacc6051d5c4f584?version=3.43.1
  */
 
+import { current_component } from 'svelte/internal'
 import { derived, writable } from 'svelte/store'
 
 const isBrowser = typeof window !== 'undefined'
@@ -32,5 +33,5 @@ if (isBrowser) {
 
 export default {
   subscribe: derived(href, ($href) => new URL($href)).subscribe,
-  ssrSet: (urlHref) => href.set(urlHref),
+  ssrSet: (urlHref) => href.set(urlHref)
 }

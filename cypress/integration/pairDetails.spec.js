@@ -11,4 +11,10 @@ describe('Traging strategy Pair Details', () => {
             .should('have.text', 'Trading data')
     });
 
+    it('Breadcrumb should be visible and have 1 element', () => {
+        cy.get('[data-test-id=breadcrumb]').should('be.visible');
+        cy.get('[data-test-id=breadcrumb] li')
+            .should('have.length', 4)
+            .contains(/Trading data/i)
+    });
 });

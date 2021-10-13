@@ -1,6 +1,8 @@
 <script context="module">
     import { browser } from '$app/env';
     import { backendUrl } from '$lib/config';
+	import { buildBreadcrumbs } from '$lib/helpers/html';
+    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
 
     // Load and render exchange details on the server side
     // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
@@ -34,6 +36,11 @@
 
         const details = await resp.json();
 
+        const readableNames = {
+            ...breadcrumbTranslations,
+            [exchange_slug]: details.human_readable_name
+        };
+
         console.log("Received exchange details", details);
 
         return {
@@ -42,6 +49,7 @@
                 chain_slug,
                 details,
                 backendUrl,
+                breadcrumbs: buildBreadcrumbs(page.path, readableNames)
             }
         };
     }
@@ -50,12 +58,15 @@
 <script>
     import Datatable from '$lib/datatable/datatable.svelte';
     import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import { escapeHtml } from "$lib/helpers/html";
     import jQuery from 'jquery';
 
     export let exchange_slug;
     export let chain_slug;
     export let details;
+
+    export let breadcrumbs;
 
     // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
@@ -247,6 +258,7 @@
 </svelte:head>
 
 <div class="container">
+	<Breadcrumb breadcrumbs={breadcrumbs} />
     <div class="exchange-content">
         <h1 id='title' data-test-id="title">{details.human_readable_name} on {chainName}</h1>
 

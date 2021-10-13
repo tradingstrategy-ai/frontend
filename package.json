@@ -9,7 +9,7 @@
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "npm test -- --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
@@ -25,7 +25,7 @@
       ],
       "^.+\\.svg$": "jest-transform-stub",
       "^.+\\.png$": "jest-transform-stub",
-      "^.+\\.js$": "babel-jest",
+      "^.+\\.(ts|tsx|js|jsx)$":  ["esbuild-jest"],
       "^.+\\.ts$": "ts-jest"
     },
     "testPathIgnorePatterns": [
@@ -35,7 +35,11 @@
       "js",
       "ts",
       "svelte"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^\\$lib(.*)$": "<rootDir>/src/lib$1",
+      "^\\$app(.*)$": "<rootDir>/.svelte-kit/dev/runtime/app$1"
+    }
   },
   "devDependencies": {
     "@babel/preset-env": "^7.15.6",
@@ -52,6 +56,8 @@
     "cypress": "^8.5.0",
     "datatables.net-dt": "^1.11.3",
     "datatables.net-responsive-bs4": "^2.2.9",
+    "esbuild": "^0.13.4",
+    "esbuild-jest": "^0.5.0",
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-svelte3": "^3.2.0",
