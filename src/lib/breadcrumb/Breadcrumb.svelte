@@ -1,4 +1,4 @@
-<script contecxt module lang="ts">
+<script context="module" lang="ts">
   export let breadcrumbs = [
       { url: '/',  name: 'empty not working', linkActive: false, head: true  },
     ]
