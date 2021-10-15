@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script lang="ts">
   export let breadcrumbs = [
       { url: '/',  name: 'empty not working', linkActive: false, head: true  },
     ]
