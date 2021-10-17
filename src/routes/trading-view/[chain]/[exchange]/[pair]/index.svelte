@@ -201,8 +201,13 @@
 
     export let bucket = fromHashToTimeBucket(hash);
     // console.log("Got hash", hash, "bucket", bucket);
-
     // $: console.log(`The active bucket is ${bucket}`);
+
+    // Leave room for Trade now?
+    export let tradingLink = details.trade_link
+    export let splashColClass = tradingLink ? "col-md-8" : "col-md-12";
+
+    // console.log("Trading link", tradingLink);
 
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
@@ -219,28 +224,54 @@
 </svelte:head>
 
 <div class="container">
+
     <Breadcrumb breadcrumbs={breadcrumbs} />
-    <h1>
-        {summary.pair_symbol} trading on
-        <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
-        on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
-    </h1>
 
-    <p>
-        <strong>{summary.pair_name}</strong> trades as <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name}</a>
-        on <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name}</a>.
-    </p>
+    <div class="text-section">
+        <div class="row">
+            <div class={splashColClass}>
+                <h1>
+                    {summary.pair_symbol} trading on
+                    <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} </a>
+                    on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
+                </h1>
 
-    <p>
-        The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
-        <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
-    </p>
+                <p>
+                    The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
+                    on <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
+                </p>
 
-    <p>
-        The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
+                <p>
+                    The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
+                    <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
+                </p>
 
-        The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
-    </p>
+                <p>
+                    The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
+
+                    The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
+                </p>
+            </div>
+
+            {#if tradingLink}
+                <div class="col-md-4">
+                    <div class="card card-trade shadow-soft border-light">
+                        <div class="card-body">
+                            <h5>Trade {summary.pair_symbol}</h5>
+
+                            <p>
+                                Buy, sell and provide liquidity for the {summary.pair_name} trading pair on {details.exchange_name}.
+                            </p>
+                        </div>
+
+                        <div class="card-footer">
+                            <a href={tradingLink} class="btn btn-primary btn-block"><i class="fas fa-coins"></i> Trade now</a>
+                        </div>
+                    </div>
+                </div>
+            {/if}
+        </div>
+    </div>
 
     <h2>{summary.pair_symbol} price chart</h2>
 
@@ -283,11 +314,20 @@
 </div>
 
 <style>
+
+    .text-section {
+        margin-top: 20px;
+    }
+
     .chart-wrapper {
         margin: 20px 0;
     }
 
     .time-span-wrapper {
         margin: 0 auto;
+    }
+
+    .card-trade {
+        margin-bottom: 20px;
     }
 </style>

@@ -258,7 +258,7 @@
 <div class="container">
 	<Breadcrumb breadcrumbs={breadcrumbs} />
     <div class="exchange-content">
-        <h1 id='title' data-test-id="title">{details.human_readable_name} on {chainName}</h1>
+        <h1 id='title' data-test-id="title">{details.human_readable_name} exchange on {chainName}</h1>
 
         <div class="statistics" data-test-id="statistics">
             <h2>Statistics</h2>
