@@ -11,6 +11,7 @@ const staticPages = [
     "trading-view/exchanges",
     "trading-view/blockchains",
     "api/explorer/",
+    "blog",
 ]
 
 

@@ -23,7 +23,7 @@
         const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
         const apiUrl = `${backendUrl}/pair-details?${encoded}`;
 
-        console.log("Loading", page, apiUrl);
+        // console.log("Loading", page, apiUrl);
 
         const resp = await fetch(apiUrl);
 
@@ -48,7 +48,7 @@
         const details = pairDetails.additional_details;
         const daily = pairDetails.daily;
 
-        console.log("Pair details", pairDetails);
+        // console.log("Pair details", pairDetails);
 
         const readableNames = {
             ...breadcrumbTranslations,
@@ -182,7 +182,7 @@
         const encoded = new URLSearchParams(params);
         const apiUrl = `${backendUrl}/candles?${encoded}`;
 
-        console.log("Fetching candles for bucket", bucket, apiUrl);
+        // console.log("Fetching candles for bucket", bucket, apiUrl);
 
         const resp = await fetch(apiUrl);
         if(!resp.ok) {
@@ -202,9 +202,9 @@
     }
 
     export let bucket = fromHashToTimeBucket(hash);
-    console.log("Got hash", hash, "bucket", bucket);
+    // console.log("Got hash", hash, "bucket", bucket);
 
-    $: console.log(`The active bucket is ${bucket}`);
+    // $: console.log(`The active bucket is ${bucket}`);
 
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
