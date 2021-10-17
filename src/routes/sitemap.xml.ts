@@ -20,16 +20,20 @@ const staticPages = [
  */
 export async function get(page) {
 
+  // SvelteKit page object does not include protocol, so assume HTTPS
+  const proto = "https";
+
   // Generate the sitemap.xml file with string fiddling
   const fragments = [];
   for(let path of staticPages) {
-    const fullUrl = `${page.host}/${path}`;
+    const fullUrl = `${proto}://${page.host}/${path}`;
     fragments.push(`<url><loc>${fullUrl}</loc></url>`);
   }
 
   // Build the XML for pages
   const urlXml = "".concat(...fragments);
 
+  // See https://en.wikipedia.org/wiki/Sitemaps
   const xml =
     `<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
