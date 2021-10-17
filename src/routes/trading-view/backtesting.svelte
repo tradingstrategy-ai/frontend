@@ -91,7 +91,7 @@
 		try {
 
 			// https://stackoverflow.com/a/53189376/315168
-			console.log("Posting to", url);
+			//console.log("Posting to", url);
 			const res = await fetch(url, {
 				method: 'POST',
 				body: new URLSearchParams({key})
@@ -104,7 +104,7 @@
 
 			const data = await res.json();
 
-			console.log("Got validation response", data);
+			// console.log("Got validation response", data);
 
 			if(!data.valid) {
 				apiKeyError = "The API key is not valid";

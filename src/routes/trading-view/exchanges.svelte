@@ -123,7 +123,7 @@
 <style>
 
 .exchanges-content {
-	margin: 60px 0;
+	margin: 0px 0;
 }
 
 .exchanges :global(.col-exchange)  {

@@ -32,7 +32,7 @@
       const json = await response.json()
       const result = JSON.stringify(json)
       submitted = true;
-      console.log(result)
+      //console.log(result)
 		}
 		
     const fieldsToObject = (fields) =>

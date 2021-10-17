@@ -41,9 +41,9 @@
 
       const toggleId = toggler.getAttribute("data-toggle");
 
-      console.log("Toggle element is", e.target, toggler, toggleId);
-      console.log(e.target.parentNode);
-      console.log(toggleId);
+      //console.log("Toggle element is", e.target, toggler, toggleId);
+      //console.log(e.target.parentNode);
+      //console.log(toggleId);
 
       const menu = document.getElementById(toggleId);
       // const menu = e.target.closest(".dropdown");
