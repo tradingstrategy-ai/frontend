@@ -10,6 +10,7 @@ const staticPages = [
     "community",
     "trading-view/exchanges",
     "trading-view/blockchains",
+    "api/explorer/",
 ]
 
 
