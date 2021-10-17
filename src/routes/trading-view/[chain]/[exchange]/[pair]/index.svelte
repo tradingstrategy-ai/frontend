@@ -56,8 +56,6 @@
             [pair_slug]: pairDetails.summary.pair_name
         };
 
-        console.log(readableNames);
-
         // const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
         // const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
         // const pairs = await fetch(urlTopPairs);
@@ -260,17 +258,25 @@
     </p>
 
     <div class="row">
-        <div class="col-md-3">
-            <TimeSpanPerformance pairId={summary.pair_id} title="Hourly" timeSpanTradeData={hourly} period="hourly"/>
+        <div class="col-lg-3 col-md-6">
+            <div class="time-span-wrapper">
+                <TimeSpanPerformance pairId={summary.pair_id} title="Hourly" timeSpanTradeData={hourly} period="hourly"/>
+            </div>
         </div>
-        <div class="col-md-3">
-            <TimeSpanPerformance pairId={summary.pair_id} title="Daily" timeSpanTradeData={daily} period="daily"/>
+        <div class="col-lg-3 col-md-6">
+            <div class="time-span-wrapper">
+                <TimeSpanPerformance pairId={summary.pair_id} title="Daily" timeSpanTradeData={daily} period="daily"/>
+            </div>
         </div>
-        <div class="col-md-3">
-            <TimeSpanPerformance pairId={summary.pair_id} title="Weekly" timeSpanTradeData={weekly} period="weekly" />
+        <div class="col-lg-3 col-md-6">
+            <div class="time-span-wrapper">
+                <TimeSpanPerformance pairId={summary.pair_id} title="Weekly" timeSpanTradeData={weekly} period="weekly" />
+            </div>
         </div>
-        <div class="col-md-3">
-            <TimeSpanPerformance pairId={summary.pair_id} title="Monthly" timeSpanTradeData={monthly} period="monthly" />
+        <div class="col-lg-3 col-md-6">
+            <div class="time-span-wrapper">
+                <TimeSpanPerformance pairId={summary.pair_id} title="Monthly" timeSpanTradeData={monthly} period="monthly" />
+            </div>
         </div>
     </div>
 
@@ -279,5 +285,9 @@
 <style>
     .chart-wrapper {
         margin: 20px 0;
+    }
+
+    .time-span-wrapper {
+        margin: 0 auto;
     }
 </style>

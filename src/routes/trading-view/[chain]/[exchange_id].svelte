@@ -40,7 +40,7 @@
             [exchange_slug]: details.human_readable_name
         };
 
-        console.log("Received exchange details", details);
+        //console.log("Received exchange details", details);
 
         return {
             props: {

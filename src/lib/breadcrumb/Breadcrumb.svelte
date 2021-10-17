@@ -33,6 +33,7 @@
   .breadcrumb-item a {
     color: #232833;
     font-weight: 300;
+    font-size: 0.9rem;
   }
 
   .breadcrumb-item a {

@@ -189,12 +189,16 @@
 </div>
 
 
-    <style>
+<style>
 
-        th {
-            text-align: right;
-            padding-right: 5px;
-        }
+    table {
+        margin: 0 auto;
+    }
+
+    th {
+        text-align: right;
+        padding-right: 5px;
+    }
 
     .data-row {
         font-size: 80%;
@@ -206,6 +210,30 @@
 
     .title {
         text-align: center;
+    }
+
+    /* --breakpoint-md */
+    @media(max-width: 992px) {
+        .time-span-stats {
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th {
+            text-align: left;
+        }
+
+        td {
+            width: 50%;
+        }
+
+        .title {
+            text-align: left;
+        }
+
     }
 
 

@@ -37,7 +37,7 @@
 			"blockchains": "Blockchains",
         };
 
-        console.log("Received chains", chains);
+        // console.log("Received chains", chains);
 
         return {
             props: {

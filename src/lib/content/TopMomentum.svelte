@@ -39,7 +39,7 @@
             },
 
             {
-                name: "Liquidity added 24h",
+                name: "Liquidity increased 24h",
                 detail: "Pairs with min. $1M liquidity",
                 pairs: momentumDetails.top_liquidity_added_24h_min_liq_1m.slice(0, pairsToShow),
                 indicator: "liquidity",
@@ -55,7 +55,7 @@
 <div class="top-momentum">
     <div class="row">
         {#each slots as slot}
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-6">
                 <div class="card bg-primary shadow-soft border-light">
                     <div class="card-body">
 
@@ -68,7 +68,7 @@
                         <table>
                             {#each slot.pairs as pair}
                                 <tr>
-                                    <td>
+                                    <td class="cell-pair-name ellipsis">
                                         <a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}/${pair.pair_slug}`}>
                                             {pair.pair_symbol} on
                                             {pair.exchange_name}
@@ -107,5 +107,26 @@
 
     td {
         white-space: nowrap;
+        padding-bottom: 10px;
+    }
+
+    .cell-pair-name {
+        width: 100%;
+    }
+
+    .ellipsis {
+        position: relative;
+    }
+    .ellipsis:before {
+        content: '&nbsp;';
+        visibility: hidden;
+    }
+    .ellipsis a {
+        position: absolute;
+        left: 0;
+        right: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>

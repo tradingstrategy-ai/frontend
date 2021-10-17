@@ -174,8 +174,11 @@
 	}
 
 	.heading-momentum {
-
 		margin-bottom: 60px;
+	}
+
+	.top-momentum :global(.card) {
+		margin: 20px 0;
 	}
 
 	.network-status {

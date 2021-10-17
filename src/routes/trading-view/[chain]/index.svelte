@@ -40,7 +40,7 @@
         };
         readableNames[slug] = details.chain_name;
 
-        console.log("Received chain details", details);
+        // console.log("Received chain details", details);
 
         return {
             props: {
