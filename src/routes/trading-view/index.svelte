@@ -70,14 +70,11 @@
 
                             <p class="card-text">View blockchain metrics and status</p>
 
-                            <p>
-                                <span class="badge text-uppercase">Coming soon</span>
-                            </p>
 
                         </div>
 
                         <div class="card-footer">
-                            <button disabled class="btn btn-primary btn-sm">View blockchains</button>
+                            <a href="/trading-view/blockchains" class="btn btn-primary btn-sm">View blockchains</a>
                         </div>
                     </div>
 

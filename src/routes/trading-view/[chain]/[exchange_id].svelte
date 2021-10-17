@@ -65,7 +65,6 @@
     export let exchange_slug;
     export let chain_slug;
     export let details;
-
     export let breadcrumbs;
 
     // Currently server-side supports the following sort options: volume, liquidity, price change
