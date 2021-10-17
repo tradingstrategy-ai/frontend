@@ -21,6 +21,7 @@
 
     let element;
     let intersecting = false;
+    let priceChangeColorClass = "";
 
     async function loadData() {
         // https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
@@ -40,6 +41,7 @@
 
         const data = await resp.json();
         timeSpanTradeData = data;
+
     }
 
     async function triggerLoadWhenVisible(visible) {
@@ -54,19 +56,19 @@
     }
 
     function getPriceChange(timeSpanTradeData) {
-        if(timeSpanTradeData) {
-            delta = timeSpanTradeData.price_close - timeSpanTradeData.price_close;
-        } else {
+        let delta;
+        if(!timeSpanTradeData) {
             delta = 0;
+        } else {
+            delta = timeSpanTradeData.price_close - timeSpanTradeData.price_open;
         }
         return delta;
     }
 
-
     $: triggerLoadWhenVisible(intersecting);
 
     // close > open determines if the period was succesful
-    let priceChangeColorClass  = getPriceChange(timeSpanTradeData);
+    $: priceChangeColorClass  = determinePriceChangeClass(getPriceChange(timeSpanTradeData));
 
 </script>
 

@@ -82,8 +82,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<h3 class="heading-momentum text-center">Top momentum</h3>
-							<TopMomentum momentumDetails={topMomentum}
-							/>
+							<TopMomentum momentumDetails={topMomentum} />
 					</div>
 				</div>
 			</div>
