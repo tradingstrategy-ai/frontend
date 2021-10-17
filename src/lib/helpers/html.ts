@@ -19,12 +19,6 @@ export function escapeHtml(unsafe: string): string {
       return readableNames[name] ? readableNames[name] : name;
     }
 
-    const chains = [
-      'ethereum',
-      'bsc',
-      'polygon'
-    ]
-
     const parts = pagePath.split('/').slice(1);
 
     let currentPath = '/';
@@ -34,7 +28,7 @@ export function escapeHtml(unsafe: string): string {
       return {
         url: currentPath,
         name: getReadableName(pathPart),
-        linkActive: chains.includes(pathPart) ? false : true,
+        linkActive: true,
         head: lastElement
       }
     })

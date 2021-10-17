@@ -4,8 +4,8 @@
     ]
 </script>
 
-<nav aria-label="breadcrumb shadow-none" data-test-id="breadcrumb">
-  <ol class="breadcrumb breadcrumb-gray  shadow-none" >
+<nav aria-label="breadcrumb breadcrumb-gray" data-test-id="breadcrumb">
+  <ol class="breadcrumb breadcrumb-gray" >
     {#each breadcrumbs  as breadcrumb, i}
       <li class="breadcrumb-item">
         {#if breadcrumb.head || !breadcrumb.url }
@@ -21,3 +21,25 @@
     {/each}
   </ol>
 </nav>
+
+<style>
+  .breadcrumb {
+    box-shadow: inset 2px 2px 5px #b8b9be,inset -3px -3px 7px #fff;
+    margin: 10px 0;
+    padding: 12px;
+  }
+
+  .breadcrumb-item,
+  .breadcrumb-item a {
+    color: #232833;
+  }
+
+  .breadcrumb-item a {
+    font-weight: 500;
+  }
+
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+
+</style>

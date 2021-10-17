@@ -33,8 +33,9 @@
 
         const chains = await resp.json();
 
-        const readableNames = {
-            ...breadcrumbTranslations,
+        const breadcrumbs = {
+            "trading-view": "Trading data",
+			"blockchains": "Blockchains",
         };
 
         console.log("Received chains", chains);
@@ -42,7 +43,7 @@
         return {
             props: {
                 chains,
-                breadcrumbs: buildBreadcrumbs(page.path, readableNames)
+                breadcrumbs: buildBreadcrumbs(page.path, breadcrumbs),
             }
         };
     }
@@ -72,7 +73,8 @@
 				<h1>Blockchains</h1>
 
 				<p>
-					List of currently active blockchains producing trading data.
+					List of currently active blockchains producing trading data. You can explore the blockchains for
+					supported decentralised exchanges, trading pairs and price charts.
 				</p>
 
 				<table class="table">
@@ -85,10 +87,10 @@
 					{#each chains as chain}
 						<tr>
 							<td>
-								<a class="chain-img-link" href={`/trading-view/{chain.chain_slug}`}>
-									<img class="chain-logo" src={chain.chain_logo} />
+								<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>
+									<img alt={`${chain.chain_name} logo`} class="chain-logo" src={chain.chain_logo} />
 								</a>
-								<a class="chain-link" href={`/trading-view/{chain.chain_slug}`}>
+								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
 									{chain.chain_name}
 								</a>
 							</td>
@@ -97,7 +99,7 @@
 							</td>
 
 							<td>
-								<a class="chain-link" href={`/trading-view/{chain.chain_slug}`}>
+								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
 									Details
 								</a>
 							</td>
@@ -119,7 +121,7 @@
 	}
 
 	.chain-link {
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.chain-link:hover {
