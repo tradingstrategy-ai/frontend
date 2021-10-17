@@ -14,5 +14,5 @@
 
 <div class="happy-date">
     { formatDatetime(d) },
-    <Time relative timestamp="{d}" />
+    <Time relative timestamp={d} />
 </div>

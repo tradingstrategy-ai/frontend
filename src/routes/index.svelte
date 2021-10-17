@@ -1,12 +1,43 @@
+<script context="module">
+    import { backendUrl } from '$lib/config';
+
+	// Load top momentum data to display on the front page
+    // https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
+    export async function load({ page, fetch }) {
+
+        const apiUrl = `${backendUrl}/top-momentum`;
+
+        const resp = await fetch(apiUrl);
+
+		let topMomentum;
+
+        if (!resp.ok) {
+			// Try render the frontpage even if the backend is down
+			topMomentum = null;
+        } else {
+			topMomentum = await resp.json();
+		}
+
+        return {
+            props: {
+                topMomentum
+            }
+        };
+    }
+</script>
+
 <script>
 	import PoolPreview from '$lib/pool/PoolPreview.svelte';
 	import '$lib/styles/bodytext.css';
 	import ElevatorPitch from '$lib/content/ElevatorPitch.svelte';
+	import TopMomentum from '$lib/content/TopMomentum.svelte';
+
+	export let topMomentum;
 </script>
 
 <svelte:head>
 	<title>TradingStrategy.ai - Algorithmic trading strategy protocol</title>
-	<meta name="description" content="On-chain systematic investing and trading">
+	<meta name="description" content="DeFi quantitative investing and trading">
 </svelte:head>
 
 
@@ -23,6 +54,9 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 strategy-cards">
+
+					<h3 class="heading-strategies text-center">Strategies</h3>
+
 					<PoolPreview
 						title="ETH-USDC double seven"
 						description="A school book strategy for a single trading pair volatility trading by using closing price momentum."
@@ -41,6 +75,20 @@
 			</div>
 		</div>
 	</section>
+
+	{#if topMomentum}
+		<section class="top-momentum">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<h3 class="heading-momentum text-center">Top momentum</h3>
+							<TopMomentum momentumDetails={topMomentum}
+							/>
+					</div>
+				</div>
+			</div>
+		</section>
+	{/if}
 
 	<section class="network-status">
 		<div class="container">
@@ -117,8 +165,18 @@
 		color: black;
 		text-align: center;
 	}
+
+	.heading-strategies {
+		margin-top: 60px;
+	}
+
 	.pool-preview :global(.card) {
 		margin: 60px 0;
+	}
+
+	.heading-momentum {
+
+		margin-bottom: 60px;
 	}
 
 	.network-status {

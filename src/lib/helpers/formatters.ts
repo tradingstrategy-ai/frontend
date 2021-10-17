@@ -77,7 +77,7 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
 
 
 export function formatPriceChange(n: number): string {
-    return (n > 0 ? "+" : "") + (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
+    return (n > 0 ? "▲" : "▼") + (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
 }
 
 /**

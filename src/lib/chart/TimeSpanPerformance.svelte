@@ -7,7 +7,9 @@
     import SkeletonLine from '$lib/SkeletonLine.svelte';
     import IntersectionObserver from "svelte-intersection-observer";
     import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
+    import { determinePriceChangeClass } from "$lib/helpers/price";
     import '$lib/styles/price.css';
+
 
     // TimeSpanTradeData, see https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
     // Set null to have a skeleton loader
@@ -51,24 +53,20 @@
         }
     }
 
-    function determinePriceChangeClass(timeSpanTradeData) {
-        if(!timeSpanTradeData) {
-            return "price-change-black"; // Data not loaded
-        }
-
-        if(timeSpanTradeData.price_open == timeSpanTradeData.price_close) {
-            return "price-change-black";
-        } else if(timeSpanTradeData.price_close > timeSpanTradeData.price_open) {
-            return "price-change-green";
+    function getPriceChange(timeSpanTradeData) {
+        if(timeSpanTradeData) {
+            delta = timeSpanTradeData.price_close - timeSpanTradeData.price_close;
         } else {
-            return "price-change-red";
+            delta = 0;
         }
+        return delta;
     }
+
 
     $: triggerLoadWhenVisible(intersecting);
 
     // close > open determines if the period was succesful
-    $: priceChangeColorClass = determinePriceChangeClass(timeSpanTradeData)
+    let priceChangeColorClass  = getPriceChange(timeSpanTradeData);
 
 </script>
 
