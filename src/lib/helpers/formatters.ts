@@ -19,6 +19,14 @@ export function formatSize(n): string {
     }
 }
 
+
+/**
+ * Format dataset download key and adds API link as a parameter
+ *
+ * @param validApiKey
+ * @param key
+ * @param link
+ */
 export function formatDownloadLink(validApiKey, key, link) {
     if(!validApiKey) {
         return "javascript:";
@@ -72,7 +80,10 @@ export function formatPriceChange(n: number): string {
     return (n > 0 ? "+" : "") + (n * 100).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3}) + "%";
 }
 
-// Use a thousand separator
+/**
+ * Format number using an English thousand separation
+ * @param n
+ */
 export function formatAmount(n: number): string {
 
     if(!n) {
@@ -94,4 +105,23 @@ export function formatUnixTimestamp(ts: number): string {
 
     const d = new Date(ts * 1000);
     return d.toUTCString();
+}
+
+/**
+ * Grabs only the domain part from the URL
+ */
+export function formatUrlAsDomain(u: string): string {
+   const url = new URL(u);
+   return url.hostname;
+}
+
+/**
+ * Format a datetime string to human readable format.
+ *
+ * Mostly useful for formattiong ISO-8601 datetime strings coming from the backend.
+ *
+ */
+export function formatDatetime(d: Date): string {
+    const s = d.toLocaleString('en-GB', { timeZone: 'UTC' })
+    return s + " UTC";
 }

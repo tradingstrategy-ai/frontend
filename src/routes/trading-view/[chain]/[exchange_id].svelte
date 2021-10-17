@@ -1,8 +1,7 @@
 <script context="module">
     import { browser } from '$app/env';
     import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     // Load and render exchange details on the server side
     // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details

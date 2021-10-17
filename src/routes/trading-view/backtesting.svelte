@@ -1,7 +1,6 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-	import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
 	export const hydrate = true;
 

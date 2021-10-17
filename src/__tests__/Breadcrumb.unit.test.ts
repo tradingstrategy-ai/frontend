@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import {render, screen, fireEvent} from '@testing-library/svelte';
 import Breadcrumb from '../lib/breadcrumb/Breadcrumb.svelte';
-import { buildBreadcrumbs } from '../lib/helpers/html';
+import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
 describe('test breadcrums builder', () => {
     it('should build a breadcrum with one element given this path /trading', () => {

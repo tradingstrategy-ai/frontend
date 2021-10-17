@@ -1,12 +1,10 @@
 <script context="module">
 
     import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     /**
      * Display chain information and indexing status
-     *
      */
 
     export async function load({ page, fetch }) {
@@ -14,13 +12,14 @@
 
         // Load and render exchange details on the server side
         // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-        const encoded = new URLSearchParams({exchange_slug, chain_slug});
+        const encoded = new URLSearchParams({chain_slug});
         const apiUrl = `${backendUrl}/chain-details?${encoded}`;
 
         const resp = await fetch(apiUrl);
 
         if (!resp.ok) {
             if (resp.status === 404) {
+                console.error("Not found", resp.status);
                 return;
             } else {
                 console.error(resp);
@@ -34,11 +33,12 @@
         }
 
         const details = await resp.json();
+        const slug = details.chain_slug;
 
         const readableNames = {
-            ...breadcrumbTranslations,
-            [chain_slug]: details['chain_name']
+            "trading-view": "Trading data",
         };
+        readableNames[slug] = details.chain_name;
 
         console.log("Received chain details", details);
 
@@ -52,7 +52,13 @@
 </script>
 
 <script>
-    import '$lib/styles/bodytext.css';
+    import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+    import HappyDatetime from '$lib/content/HappyDatetime.svelte';
+    import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
+
+    export let details;
+    export let breadcrumbs;
+
 </script>
 
 <svelte:head>
@@ -65,10 +71,102 @@
     <Breadcrumb breadcrumbs={breadcrumbs} />
 
     <div class="exchange-content">
-        <h1>{details.chain_name} blockchain</h1>
+        <h1>
+            <img alt={`${details.chain_name} logo`} class="chain-logo" src={details.chain_logo} />
+            {details.chain_name} blockchain
+        </h1>
+
+        <p>
+
+        </p>
+
+        <table class="table">
+
+            <tr>
+                <th>Blockchain website</th>
+                <td>
+                    <a class="homepage" href={details.homepage}>
+                        {formatUrlAsDomain(details.homepage)}
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                    Exchanges
+                    <p class="hint">Supported exchanges on Trading Strategy</p>
+                </th>
+                <td>{details.exchanges}</td>
+            </tr>
+
+            <tr>
+                <th>
+                    Trading pairs
+                    <p class="hint">Supported trading pairs on Trading Strategy</p>
+                </th>
+                <td>{formatAmount(details.pairs)}</td>
+            </tr>
+
+            <tr>
+                <th>
+                    First indexed block
+                    <p class="hint">Starting block when Trading Strategy started collect data</p>
+                </th>
+                <td>{formatAmount(details.start_block)}</td>
+            </tr>
+
+            <tr>
+                <th>
+                    Last indexed block
+                    <p class="hint">Currently seen last block with available trading data</p>
+                </th>
+                <td>{formatAmount(details.end_block)}</td>
+            </tr>
+
+            <tr>
+                <th>
+                    First indexed trade
+                    <p class="hint">When the first trade was detected on this chain</p>
+                </th>
+                <td>
+                    <HappyDatetime when={details.first_swap_at} />
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                    Last indexed trade
+                    <p class="hint">Last trade seen on this chain</p>
+                </th>
+                <td>
+                    <HappyDatetime when={details.last_swap_at} />
+                </td>
+            </tr>
+
+
+        </table>
+
     </div>
 </div>
 
 
 <style>
+
+    h1 {
+        margin: 20px 0;
+    }
+
+	.chain-logo {
+		max-width: 48px;
+		max-height: 48px;
+	}
+
+    .homepage {
+        text-decoration: underline;
+    }
+
+    .hint {
+        color: var(--gray-800);
+        font-size: 75%;
+    }
 </style>

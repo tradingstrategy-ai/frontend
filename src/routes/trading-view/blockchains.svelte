@@ -1,8 +1,7 @@
 <script context="module">
 
     import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+	import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     /**
      * Display chain information and indexing status

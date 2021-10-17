@@ -10,11 +10,10 @@
     */
 
     import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
 
     import '$lib/styles/price.css';
     import '$lib/styles/bodytext.css';
+    import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     export async function load({ page, fetch }) {
 

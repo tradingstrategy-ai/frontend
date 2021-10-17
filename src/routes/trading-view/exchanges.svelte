@@ -7,8 +7,7 @@
 	import { browser } from '$app/env';
 	export const router = browser;
 	import { backendUrl } from '$lib/config';
-	import { buildBreadcrumbs } from '$lib/helpers/html';
-    import breadcrumbTranslations from '$lib/constants/Breadcrumb';
+	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
 
 	export async function load({page}){
