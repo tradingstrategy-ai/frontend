@@ -163,6 +163,7 @@
 		width: 100%;
 		color: black;
 		text-align: center;
+		font-size: 2.3rem;
 	}
 
 	.heading-strategies {

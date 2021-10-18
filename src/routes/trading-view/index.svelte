@@ -155,7 +155,6 @@
 <style>
     h1 {
         margin: 30px 0;
-        font-size: 2.3em;
     }
 
     .card {
