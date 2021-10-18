@@ -29,12 +29,13 @@
 
         if(!resp.ok) {
             if(resp.status === 404) {
+                console.error("Pair missing", pair_slug)
                 return {
                     status: 404,
                     error: `Trading pair not found: ${pair_slug}`
                 }
             } else {
-                console.error(resp);
+                console.error("Failed to load pair", apiUrl);
                 return {
                     status: resp.status,
                     error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
@@ -228,13 +229,19 @@
     <Breadcrumb breadcrumbs={breadcrumbs} />
 
     <div class="text-section">
+
         <div class="row">
-            <div class={splashColClass}>
+            <div class="col-md-12">
                 <h1>
                     {summary.pair_symbol} trading on
                     <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} </a>
                     on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
                 </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class={splashColClass}>
 
                 <p>
                     The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>

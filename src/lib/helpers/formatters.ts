@@ -52,6 +52,14 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
         return "---";
     }
 
+    if(n < 0.01) {
+        // Format funny tokens
+        return "$" + n.toLocaleString( "en",  {
+            minimumFractionDigits: 10,
+            maximumFractionDigits: 10
+        });
+    }
+
     if(n >= 1000*1000*1000) {
         return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,

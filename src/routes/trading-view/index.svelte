@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/exchanges" class="btn btn-primary btn-sm">View exchanges</a>
+                            <a href="/trading-view/exchanges" class="btn btn-primary btn-sm">View exchanges and trading pairs</a>
                         </div>
                     </div>
 
