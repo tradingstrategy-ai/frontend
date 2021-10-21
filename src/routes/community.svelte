@@ -1,5 +1,5 @@
 <svelte:head>
-    <title>Trading Strategy community resources</title>
+    <title>Learn and meet Trading Strategy</title>
     <meta name="description" content="Learn algo trading and follow the protocol development">
 </svelte:head>
 
@@ -9,7 +9,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Community</h1>
+                    <h1>Learn and meet Trading Strategy community</h1>
                 </div>
             </div>
 
