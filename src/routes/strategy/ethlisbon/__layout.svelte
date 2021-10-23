@@ -33,12 +33,6 @@
       <div class="row">
         <div class="col-md-12">
           <h1>EthLisbon Aave 👻 boosted 🔥 Double Seven</h1>
-
-          <div class="alert alert-danger" role="alert">
-                      <span class="alert-inner--text">
-                          This strategy is made for EthLisbon hackathon demo. Do not invest - the smart contract is not secure.
-                      </span>
-          </div>
         </div>
       </div>
 
