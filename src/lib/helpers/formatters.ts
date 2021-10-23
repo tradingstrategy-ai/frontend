@@ -143,5 +143,5 @@ export function formatUSDCBalance(web3, b: string): string {
     const usd = new web3.utils.BN(b);
     const div = (new web3.utils.BN("10")).pow(new web3.utils.BN("6"));
     const f = usd.div(div).toNumber();
-    return formatDollar(f, 2, 2);
+    return f.toLocaleString("en",  {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
