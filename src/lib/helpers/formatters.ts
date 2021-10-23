@@ -139,9 +139,9 @@ export function formatDatetime(d: Date): string {
  *
  *
  */
-export function formatUSDCBalance(web3, b: string): string {
-    const usd = new web3.utils.BN(b);
-    const div = (new web3.utils.BN("10")).pow(new web3.utils.BN("6"));
-    const f = usd.div(div).toNumber();
-    return f.toLocaleString("en",  {minimumFractionDigits: 2, maximumFractionDigits: 2});
+export function formatUSDCBalance(web3, b: string, decimals: number): string {
+
+    const n = parseFloat(b);
+    const val =  n / Math.pow(10, decimals);
+    return val.toLocaleString("en",  {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }

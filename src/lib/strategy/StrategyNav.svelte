@@ -34,6 +34,11 @@
 </div>
 
 <style>
+
+  .nav-wrapper {
+      margin-bottom: 0px !important;
+  }
+
   .nav-item {
       width: 200px;
       text-align: center;

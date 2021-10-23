@@ -19,7 +19,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <p>
+    <p class="lead">
       This strategy buys into ETH-USDC when the price is raising. When there is no position open, the strategy
       accures interest in USDC pool in Aave.
     </p>
@@ -76,6 +76,10 @@
         margin: 30px 0;
     }
 
+    h5 {
+        margin-bottom: 20px;
+    }
+
     .card {
     }
 
@@ -91,5 +95,9 @@
 
     .btn[disabled] {
         cursor: not-allowed;
+    }
+
+    .lead {
+        margin: 0 0 20px 0;
     }
 </style>

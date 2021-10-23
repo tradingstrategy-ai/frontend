@@ -18,18 +18,18 @@
     let investing = false;
     const usdcAddress = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174";
     // https://polygonscan.com/address/0xe8a1331524e93b54204f4555b874657304d55fd7#code
-    const poolAddress = "0xe8a1331524e93B54204F4555b874657304D55fD7";
+    const poolAddress = "0x6590D62f2Af8717295563514239A71B36FA78341";
 
     async function getAvailableToInvest($web3, $selectedAccount) {
         const usdc = new $web3.eth.Contract(erc20ABI, usdcAddress);
         const balance = await usdc.methods.balanceOf($selectedAccount).call();
-        return formatUSDCBalance($web3, balance);
+        return formatUSDCBalance($web3, balance, 6);
     }
 
     async function getInvestedBalance($web3, $selectedAccount) {
         const pool = new $web3.eth.Contract(danpoolABI, poolAddress);
         const balance = await pool.methods.totalFundValue().call();
-        return formatUSDCBalance($web3, balance);
+        return formatUSDCBalance($web3, balance, 8);
     }
 
     async function connect() {

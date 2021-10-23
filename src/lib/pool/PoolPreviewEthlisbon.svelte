@@ -18,14 +18,12 @@
             { description }
         </p>
 
-        <p class="info">Currently invested: <strong>$100,00 USDC</strong></p>
-
         <p class="info">
             Trades on: <strong><img src={oneinch}>1inch on <img src={polygon}> Polygon</strong>
         </p>
 
         <p class="info">
-            Backtested ROI: <span class="data">21%</span>
+            Expected return: <span class="data">21%</span>
         </p>
 
 
