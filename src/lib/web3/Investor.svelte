@@ -65,7 +65,7 @@
     {/if}
   </p>
 
-  <p class="info">Position:
+  <p class="info">Your position:
 
     {#if positionSize}
       <strong>{positionSize}</strong>
@@ -89,7 +89,7 @@
   <div class="buttons">
 
     <button class="btn" on:click={connect} disabled={connectDisabled}>
-      Connect
+      Connect wallet
     </button>
 
 

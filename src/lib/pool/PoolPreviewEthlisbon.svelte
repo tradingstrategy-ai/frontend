@@ -1,4 +1,8 @@
 <script>
+
+    import polygon from '$lib/assets/logos/polygon.svg';
+    import oneinch from '$lib/assets/logos/1inch.svg';
+
     export let title;
     export let description;
     export let tradesOn;
@@ -17,7 +21,7 @@
         <p class="info">Currently invested: <strong>$100,00 USDC</strong></p>
 
         <p class="info">
-            Trades on: <span class="data">{ tradesOn }</span>
+            Trades on: <strong><img src={oneinch}>1inch on <img src={polygon}> Polygon</strong>
         </p>
 
         <p class="info">
@@ -72,5 +76,9 @@
 
     .btn:hover {
         background: blue;
+    }
+
+    img {
+        width: 24px;
     }
 </style>

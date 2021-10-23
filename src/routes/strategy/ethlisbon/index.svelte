@@ -4,12 +4,15 @@
 
     import { page } from '$app/stores';
 
+    import polygon from '$lib/assets/logos/polygon.svg';
+    import oneinch from '$lib/assets/logos/1inch.svg';
+
     $: current = $page.path.split('/').pop();
 
 </script>
 
 <svelte:head>
-  <title>EthLisbon hackathon example</title>
+  <title>EthLisbon Aave 👻 boosted 🔥 Double Seven</title>
   <meta name="description" content="An example strategy">
 </svelte:head>
 
@@ -24,49 +27,46 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
-    <div class="card bg-primary shadow-soft border-light">
-      <div class="card-body">
-        <h5>Invest</h5>
+  <div class="col-md-12">
+    <div class="card-deck">
+      <div class="card bg-primary shadow-soft border-light">
+        <div class="card-body">
+          <h5>Invest</h5>
 
-        <Investor/>
+          <Investor/>
 
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="col-md-6">
-    <div class="card bg-primary shadow-soft border-light">
-      <div class="card-body">
-        <h5>Key facts</h5>
-
-        <p class="info">
-          Expected profit: <strong>21%</strong>
-          <a href="/"></a>
-        </p>
-
-        <p class="info">Trading started: <strong>o days ago</strong></p>
-
-        <p class="info">Trades made: <strong>o</strong></p>
-
-        <p class="info">Fee model: <strong>zero fee</strong></p>
-
-        <p class="info">Developed by: <strong>ChainYoda fan boi</strong></p>
-
-        <p class="info">Developer shares: <strong>100,00%</strong></p>
-
-        <p class="info">Trades tokens: <strong>ETH, USDC</strong></p>
-
-        <p class="info">Leverage: <strong>1x</strong></p>
-
-        <p class="info">Markets: <strong>1inch on Polygon</strong></p>
+        </div>
 
       </div>
 
-    </div>
+      <div class="card bg-primary shadow-soft border-light">
+        <div class="card-body">
+          <h5>Key facts</h5>
 
+          <p class="info">
+            Expected profit: <strong>21%</strong>
+            <a href="/"></a>
+          </p>
+
+          <p class="info">Markets: <strong><img src={oneinch}>1inch on <img src={polygon}> Polygon</strong></p>
+
+          <p class="info">Trades tokens: <strong>ETH, USDC</strong></p>
+
+          <p class="info">Trading started: <strong>o days ago</strong></p>
+
+          <p class="info">Trades made: <strong>o</strong></p>
+
+          <p class="info">Leverage: <strong>1x</strong></p>
+
+          <p class="info">Fee model: <strong>zero fee</strong></p>
+
+          <p class="info">Developed by: <strong>ChainYoda fan boi</strong></p>
+
+          <p class="info">Developer shares: <strong>100,00%</strong></p>
+
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -77,6 +77,10 @@
     }
 
     .card {
+    }
+
+    img {
+        width: 24px;
     }
 
     svg {

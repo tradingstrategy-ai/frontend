@@ -32,11 +32,11 @@
 
       <div class="row">
         <div class="col-md-12">
-          <h1>ETH-USDC Double 5 strategy</h1>
+          <h1>EthLisbon Aave 👻 boosted 🔥 Double Seven</h1>
 
           <div class="alert alert-danger" role="alert">
                       <span class="alert-inner--text">
-                          This strategy is made for EthLisbon hackathon demo. Do not invest - the smart contract is unaudited proof of concept, wrote until severe lack of sleep.
+                          This strategy is made for EthLisbon hackathon demo. Do not invest - the smart contract is not secure.
                       </span>
           </div>
         </div>
