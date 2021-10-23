@@ -25,7 +25,9 @@
       ],
       "^.+\\.svg$": "jest-transform-stub",
       "^.+\\.png$": "jest-transform-stub",
-      "^.+\\.(ts|tsx|js|jsx)$":  ["esbuild-jest"],
+      "^.+\\.(ts|tsx|js|jsx)$": [
+        "esbuild-jest"
+      ],
       "^.+\\.ts$": "ts-jest"
     },
     "testPathIgnorePatterns": [
@@ -69,6 +71,7 @@
     "prettier-plugin-svelte": "^2.2.0",
     "svelte": "^3.43.1",
     "svelte-check": "^2.0.0",
+    "svelte-highlight": "^5.1.2",
     "svelte-intersection-observer": "^0.8.0",
     "svelte-jester": "^1.1.5",
     "svelte-preprocess": "^4.9.4",

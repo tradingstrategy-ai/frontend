@@ -32,5 +32,10 @@ if(process.env.PRODUCTION) {
 	};
 }
 
+config.kit.vite = {
+	optimizeDeps: {
+		include: ["highlight.js/lib/core"],
+	}
+}
 
 export default config;
