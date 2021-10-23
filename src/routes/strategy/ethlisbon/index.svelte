@@ -2,6 +2,11 @@
     import {TabContent, TabPane} from 'sveltestrap';
     import StrategyNav from '$lib/strategy/StrategyNav.svelte';
 
+
+    import { page } from '$app/stores';
+
+    $: current = $page.path.split('/').pop();
+
 </script>
 
 <svelte:head>
@@ -23,6 +28,7 @@
   <div class="col-md-6">
     <div class="card bg-primary shadow-soft border-light">
       <div class="card-body">
+        <h5>Invest</h5>
 
         <p class="info">Position: <strong>Open</strong>, holding 100% ETH</p>
 
