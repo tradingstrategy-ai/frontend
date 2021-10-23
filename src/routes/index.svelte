@@ -28,6 +28,7 @@
 
 <script>
 	import PoolPreview from '$lib/pool/PoolPreview.svelte';
+	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import '$lib/styles/bodytext.css';
 	import ElevatorPitch from '$lib/content/ElevatorPitch.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
@@ -56,6 +57,13 @@
 				<div class="col-md-12 strategy-cards">
 
 					<h3 class="heading-strategies text-center">Strategies</h3>
+
+					<PoolPreviewEthLisbon
+						title="EthLisbon Aave 👻 boosted 🔥 Double Seven"
+						description="A volatility trading strategy that keeps capital accruing interest in Aave USDC pool when the strategy does not have a trading position open."
+						tradesOn="1inch on Polygon"
+						learnLink="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html"
+						preview={true} />
 
 					<PoolPreview
 						title="ETH-USDC double seven"
