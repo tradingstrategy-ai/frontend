@@ -1,7 +1,6 @@
 <script>
     import {TabContent, TabPane} from 'sveltestrap';
-    import StrategyNav from '$lib/strategy/StrategyNav.svelte';
-
+    import Investor from '$lib/web3/Investor.svelte';
 
     import { page } from '$app/stores';
 
@@ -30,20 +29,8 @@
       <div class="card-body">
         <h5>Invest</h5>
 
-        <p class="info">Position: <strong>Open</strong>, holding 100% ETH</p>
+        <Investor/>
 
-        <p class="info">Currently invested: $100,00</p>
-
-        <div class="buttons">
-          <button class="btn" disabled>
-            Invest
-          </button>
-
-          <button class="btn" disabled>
-            Withdraw
-          </button>
-
-        </div>
       </div>
 
     </div>

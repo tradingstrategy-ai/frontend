@@ -1,4 +1,3 @@
-
 export function formatKilos(n): string {
     if(n <= 1000) {
         return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
@@ -132,4 +131,17 @@ export function formatUrlAsDomain(u: string): string {
 export function formatDatetime(d: Date): string {
     const s = d.toLocaleString('en-GB', { timeZone: 'UTC' })
     return s + " UTC";
+}
+
+
+/**
+ * Format a USDC balance as it comes out from the contract.
+ *
+ *
+ */
+export function formatUSDCBalance(web3, b: string): string {
+    const usd = new web3.utils.BN(b);
+    const div = (new web3.utils.BN("10")).pow(new web3.utils.BN("6"));
+    const f = usd.div(div).toNumber();
+    return formatDollar(f, 2, 2);
 }
