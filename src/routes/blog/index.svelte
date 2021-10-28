@@ -29,7 +29,6 @@
         'excerpt'
       ]
 
-
       // See post data model
       // https://ghost.org/docs/content-api/#posts
       const posts = await api.posts.browse();
@@ -46,6 +45,7 @@
 
 <script>
   import Time from "svelte-time";
+  import Sidebar from "$lib/blog/Sidebar.svelte";
 
   export let posts;
 </script>
@@ -70,7 +70,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
         {#each posts as post}
 
           <div class="card bg-primary border-light shadow-soft card-post">
@@ -102,6 +102,10 @@
 
           </div>
         {/each}
+      </div>
+
+      <div class="col-md-3">
+        <Sidebar />
       </div>
     </div>
   </div>

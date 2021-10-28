@@ -6,6 +6,7 @@
 
   // Pure server-side rendered page - no interactive JS
   import { dev } from "$app/env";
+  import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
   export async function load({ page, fetch, session, stuff }) {
       const ghostKeys = getGhostCredentials();
@@ -29,9 +30,15 @@
         return;
       }
 
+      const readableNames = {
+            "blog": "Blog",
+      };
+      readableNames[slug] = post.title;
+
       return {
           props: {
               post,
+              breadcrumbs: buildBreadcrumbs(page.path, readableNames),
           }
       }
 
@@ -42,7 +49,8 @@
 <script>
   import Time from "svelte-time";
   import {onMount, afterUpdate} from "svelte";
-  import {browser} from "$app/env";
+  import Sidebar from "$lib/blog/Sidebar.svelte";
+  import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
 
   // https://stackoverflow.com/a/57377341/315168
   function wrapResponsive(el) {
@@ -54,6 +62,7 @@
   }
 
   export let post;
+  export let breadcrumbs;
 
   // Make tables mobile friendly by wrapping them with the Bootstrap responsible table handling
   onMount(() => {
@@ -70,6 +79,7 @@
     <meta name="description" content={post.excerpt}>
 </svelte:head>
 
+
 <section class="heading" style={`background-image: url(${post.feature_image})`}>
     <div class="container">
         <div class="row">
@@ -80,11 +90,21 @@
     </div>
 </section>
 
+<section>
+  <div class="container container-breadcrumb">
+    <div class="row">
+      <div class="col-md-12">
+        <Breadcrumb breadcrumbs={breadcrumbs} />
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="container">
   <div class="section-post">
+
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
         <!--
         <h1>{ post.title }</h1>
         -->
@@ -98,11 +118,19 @@
         </div>
 
       </div>
+
+      <div class="col-md-3">
+        <Sidebar />
+      </div>
     </div>
   </div>
 </div>
 
 <style>
+
+  .container-breadcrumb :global(.breadcrumb) {
+      margin: 40px 0 0 0;
+  }
 
   .heading {
     min-height: 200px;
@@ -121,7 +149,7 @@
   }
 
   .section-post {
-    margin: 60px 0;
+    margin: 40px 0;
   }
 
   .text-published {
