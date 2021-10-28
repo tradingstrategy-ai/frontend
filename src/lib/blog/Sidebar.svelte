@@ -27,7 +27,7 @@
 
           </g></g></svg>
 
-      <button class="btn btn-primary btn-sm">Follow us in Twitter</button>
+      <a href="https://twitter.com/TradingProtocol" class="btn btn-primary btn-sm">Follow us in Twitter</a>
     </div>
   </div>
 

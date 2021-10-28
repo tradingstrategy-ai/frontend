@@ -90,15 +90,6 @@
     </div>
 </section>
 
-<section>
-  <div class="container container-breadcrumb">
-    <div class="row">
-      <div class="col-md-12">
-        <Breadcrumb breadcrumbs={breadcrumbs} />
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="container">
   <div class="section-post">
