@@ -52,7 +52,7 @@
 
 <svelte:head>
     <title>Trading Strategy blog</title>
-    <meta name="description" content="Learn about decentralised and algorithmic trading">
+    <meta name="description" content="Follow our decentralised algorithmic trading protocol development">
 </svelte:head>
 
 
@@ -64,7 +64,7 @@
         <h1>Trading Strategy blog</h1>
 
         <p class="lead">
-          Follow the protocol development.
+          Follow our decentralised algorithmic trading protocol development.
         </p>
       </div>
     </div>
@@ -111,6 +111,10 @@
 
   .section-blog-roll {
     margin: 60px 0;
+  }
+
+  .card {
+      margin-bottom: 60px;
   }
 
   .card-img-top {
