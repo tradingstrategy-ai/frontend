@@ -5,7 +5,7 @@ describe('Traging strategy Exchanges Details', () => {
     })
 
     it('Should show correct title', () => {
-        cy.get('[data-test-id=title]').contains('Uniswap v2 on Ethereum');
+        cy.get('[data-test-id=title]').contains('Uniswap v2 exchange on Ethereum');
     });
 
     it('User can see navigation', () => {
