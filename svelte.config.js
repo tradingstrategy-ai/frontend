@@ -35,7 +35,14 @@ if(process.env.PRODUCTION) {
 config.kit.vite = {
 	optimizeDeps: {
 		include: ["highlight.js/lib/core"],
-	}
+	},
+	server: {
+    fs: {
+      allow: [
+					`${process.env.PWD}`
+			]
+    }
+  }
 }
 
 export default config;
