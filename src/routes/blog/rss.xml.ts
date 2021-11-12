@@ -33,12 +33,12 @@ const render = (posts) => `<?xml version="1.0" encoding="UTF-8" ?>
 ${posts
   .map(
     (post) => `<item>
-<guid>https://tradingstrategy.ai/blog/${post.slug}</guid>
-<title>${post.title}</title>
-<link>https://tradingstrategy.ai/blog/${post.slug}</link>
-<description>${post.custom_excerpt}</description>
-<pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
-</item>`
+                  <guid>https://tradingstrategy.ai/blog/${post.slug}</guid>
+                  <title>${post.title}</title>
+                  <link>https://tradingstrategy.ai/blog/${post.slug}</link>
+                  <description>${post.custom_excerpt}</description>
+                  <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
+              </item>`
   )
   .join('')}
 </channel>
