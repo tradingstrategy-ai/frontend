@@ -120,6 +120,12 @@ rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 netstat -ltnp | grep -w ':80'
 ```
 
+## Testing against staging backend
+
+```shell
+export VITE_PUBLIC_BACKEND_URL=https://pinky.tradingstrategy.ai/api     
+```
+
 ## Theme development
 
 You can also open the theme development server:

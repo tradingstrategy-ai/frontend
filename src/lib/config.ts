@@ -25,3 +25,10 @@ export function getGhostCredentials() {
 
     return keys;
 }
+
+// Add some site features depending if we run prod, staging or local dev
+export const siteMode = import.meta.env.VITE_SITE_MODE || 'local';
+
+if(!(siteMode == 'production' || siteMode == 'staging' || siteMode == 'local')) {
+    throw new Error(`Bad site mode ${siteMode}`);
+}
