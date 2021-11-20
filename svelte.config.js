@@ -7,13 +7,11 @@ let config;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_SSR = process.env.FRONTEND_SSR || false;
 
-
 console.log(`Frontend SSR: ${FRONTEND_SSR}`);
 console.log(`Frontend post: ${FRONTEND_PORT}`);
 
 if(FRONTEND_SSR || process.env.PRODUCTION) {
 	// build server-side rendering
-	console.log(`Using frontend Node.js SSR config, starting at port ${FRONTEND_PORT}`);
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
@@ -24,7 +22,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 		kit: {
 			adapter: node({
 				env: {
-					port: FRONTEND_PORT,
+					port: 'FRONTEND_PORT',
 			}}),
 		}
 
