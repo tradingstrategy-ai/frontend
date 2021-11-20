@@ -1,6 +1,6 @@
 <svelte:head>
-    <title>TradingStrategy.ai community resources</title>
-    <meta name="description" content="Resources to learn algorithmic trading for crypto">
+    <title>Learn and meet Trading Strategy</title>
+    <meta name="description" content="Learn algo trading and follow the protocol development">
 </svelte:head>
 
 
@@ -9,7 +9,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Community</h1>
+                    <h1>Learn and meet Trading Strategy community</h1>
                 </div>
             </div>
 
@@ -32,15 +32,10 @@
 
                             <p class="card-text">Follow Trading Strategy protocol development and gain insights in the decentralised trading.</p>
 
-                            <p>
-                                <span class="badge text-uppercase">Coming soon</span>
-                            </p>
-
-
                         </div>
 
                         <div class="card-footer">
-                            <button disabled class="btn btn-primary btn-sm">Read blog </button>
+                            <a rel="external" href="/blog" class="btn btn-primary btn-sm">Read blog</a>
                         </div>
                     </div>
 
@@ -101,7 +96,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://github.com/tradingstrategy-ai/" class="btn btn-primary btn-sm">Dive into code</a>
+                            <a rel="external" href="https://github.com/tradingstrategy-ai/" class="btn btn-primary btn-sm">View Github</a>
                         </div>
                     </div>
                 </div>

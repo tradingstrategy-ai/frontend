@@ -25,7 +25,9 @@
       ],
       "^.+\\.svg$": "jest-transform-stub",
       "^.+\\.png$": "jest-transform-stub",
-      "^.+\\.(ts|tsx|js|jsx)$":  ["esbuild-jest"],
+      "^.+\\.(ts|tsx|js|jsx)$": [
+        "esbuild-jest"
+      ],
       "^.+\\.ts$": "ts-jest"
     },
     "testPathIgnorePatterns": [
@@ -43,6 +45,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.15.6",
+    "@rollup/plugin-json": "^4.1.0",
     "@sveltejs/adapter-node": "^1.0.0-next.36",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
     "@sveltejs/kit": "next",
@@ -67,12 +70,14 @@
     "jquery": "^3.6.0",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
-    "svelte": "^3.43.1",
+    "svelte": "^3.44.1",
     "svelte-check": "^2.0.0",
+    "svelte-highlight": "^5.1.2",
     "svelte-intersection-observer": "^0.8.0",
     "svelte-jester": "^1.1.5",
     "svelte-preprocess": "^4.9.4",
     "svelte-time": "^0.4.0",
+    "svelte-web3": "^2.2.1",
     "ts-jest": "^26.4.1",
     "tslib": "^2.0.0",
     "typescript": "^4.0.0",
@@ -82,11 +87,13 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
+    "@metamask/detect-provider": "^1.2.0",
     "@tryghost/content-api": "^1.5.13",
     "cookie": "^0.4.1",
     "gulp": "^4.0.2",
     "svelte-spinner": "^2.0.2",
     "svelte-tradingview-widget": "^2.3.0",
-    "sveltestrap": "^4.2.1"
+    "sveltestrap": "^4.2.1",
+    "web3": "^1.6.0"
   }
 }
