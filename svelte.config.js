@@ -4,8 +4,16 @@ import adapter from '@sveltejs/adapter-static';
 
 let config;
 
-if(process.env.PRODUCTION) {
-	console.log("Using production config");
+const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
+const FRONTEND_SSR = process.env.FRONTEND_SSR || false;
+
+
+console.log(`Frontend SSR: ${FRONTEND_SSR}`);
+console.log(`Frontend post: ${FRONTEND_PORT}`);
+
+if(FRONTEND_SSR || process.env.PRODUCTION) {
+	// build server-side rendering
+	console.log(`Using frontend Node.js SSR config, starting at port ${FRONTEND_PORT}`);
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
@@ -14,11 +22,15 @@ if(process.env.PRODUCTION) {
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
 		kit: {
-			adapter: node(),
+			adapter: node({
+				env: {
+					port: FRONTEND_PORT,
+			}}),
 		}
 
 	};
 } else {
+	// build single page app
 	console.log("Using local dev env config");
 	config = {
 		// Consult https://github.com/sveltejs/svelte-preprocess
