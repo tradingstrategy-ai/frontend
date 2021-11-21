@@ -15,7 +15,9 @@ export const get = async () => {
   const body = render(posts);
   const headers = {
     'Cache-Control': `max-age=0, s-max-age=${600}`,
-    'Content-Type': 'application/xml',
+    // https://stackoverflow.com/questions/595616/what-is-the-correct-mime-type-to-use-for-an-rss-feed
+    //'Content-Type': 'application/xml',
+    'Content-Type': 'application/rss+xml',
   };
   return {
     body,
