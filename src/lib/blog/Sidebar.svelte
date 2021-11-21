@@ -62,7 +62,7 @@
   <div class="card">
     <div class="card-body shadow-soft">
       <h5>RSS feed</h5>
-        
+
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
 
         <g transform="matrix(10.416666666666666,0,0,10.416666666666666,0,0)"><g>
@@ -79,6 +79,12 @@
 </div>
 
 <style>
+
+    /* Subscribe to newsletter text too long on FF 0 0.875rem !important*/
+   .btn-sm {
+       font-size: 0.80rem !important
+   }
+
   .card {
       margin-bottom: 60px;
       text-align: center;
