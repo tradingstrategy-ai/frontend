@@ -32,5 +32,6 @@ const breadcrumbTranslations = {
     about: 'About',
     ethereum: 'Ethereum',
     bsc: 'Binance Smart Chain',
+    binance: 'Binance Smart Chain',
 };
 export default breadcrumbTranslations;
