@@ -27,10 +27,8 @@
 </script>
 
 <script lang="typescript">
-	import { onMount } from 'svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import Datatable from '$lib/datatable/datatable.svelte';
-
 
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
@@ -59,7 +57,7 @@
 			name: "Trading pairs",
 			data: "pair_count",
 			className: "col-pair-count",
-			type: "num",
+			type: "num-fmt",
 			render: function(data, type, row, meta) {
 				return formatAmount(data);
 			}
@@ -68,15 +66,17 @@
 			name: "Volume 30d (USD)",
 			data: "usd_volume_30d",
 			className: "col-volume",
-			type: "num",
+			type: "num-fmt",
 			render: function(data, type, row, meta) {
 				return formatDollar(data);
 			}
 		}
 	];
 
+	//
 	const options = {
-	    order: [[ 1, "desc" ]],
+		// Volume 30d is the last column (4th)
+	    order: [[ 3, "desc" ]],
 		searching: false,
 		serverSide: false,
 		lengthChange: false,
