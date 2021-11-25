@@ -23,8 +23,6 @@
         const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
         const apiUrl = `${backendUrl}/pair-details?${encoded}`;
 
-        // console.log("Loading", page, apiUrl);
-
         const resp = await fetch(apiUrl);
 
         if(!resp.ok) {
@@ -49,20 +47,11 @@
         const details = pairDetails.additional_details;
         const daily = pairDetails.daily;
 
-        // console.log("Pair details", pairDetails);
-
         const readableNames = {
             ...breadcrumbTranslations,
             [exchange_slug]: details.exchange_name,
             [pair_slug]: pairDetails.summary.pair_name
         };
-
-        // const urlDetails = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
-        // const urlTopPairs = `https://matilda.tradingstrategy.ai/pairs?chain_slugs=${chain}&exchange_slugs=${exchangeId.toLowerCase()}`;
-        // const pairs = await fetch(urlTopPairs);
-        // const exchangesPairs = await pairs.json();
-        // const details = await fetch(urlDetails);
-        // const exchangesDetails = await details.json();
 
         return {
             props: {
@@ -79,12 +68,7 @@
 </script>
 
 <script lang="ts">
-    // import TradingViewWidget from "svelte-tradingview-widget";
-    //import TablePairs from '../../../components/table_quote_summary/Table.svelte';
-    // export let pairId;
-    // export let chain;
-    // export let exchangeId;
-    // export let pairs;
+
     import Time from "svelte-time";
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
@@ -321,6 +305,13 @@
 </div>
 
 <style>
+
+    /* Decrease the main heading font size so we can fit
+      BNB-BUSD trading on PancakeSwap v2 on Binance Smart Chain on a single row
+     */
+    h1 {
+        font-size: 2.2rem;
+    }
 
     .text-section {
         margin-top: 20px;

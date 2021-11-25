@@ -68,7 +68,7 @@
 
 <div class="container">
 
-    <Breadcrumb breadcrumbs={breadcrumbs} />
+    <Breadcrumb breadcrumbs={breadcrumbs}  />
 
     <div class="exchange-content">
         <h1>
@@ -101,11 +101,20 @@
 
             <tr>
                 <th>
-                    Trading pairs
+                    Total trading pairs
                     <p class="hint">Supported trading pairs on Trading Strategy</p>
                 </th>
                 <td>{formatAmount(details.pairs)}</td>
             </tr>
+
+            <tr>
+                <th>
+                    Tracked trading pairs
+                    <p class="hint">Trading pairs with exceeding activity threshold to have market data feeds generated for them</p>
+                </th>
+                <td>{formatAmount(details.tracked_pairs)}</td>
+            </tr>
+
 
             <tr>
                 <th>
