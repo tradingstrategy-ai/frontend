@@ -7,8 +7,20 @@
 </script>
 
 <AppHead />
+
+<div class="site-alert text-center">
+    We are currently upgrading the service to a new version. Some pages and APIs might not be accessible.
+</div>
+
 <Navbar />
 
 <slot />
 <SiteMode />
 
+<style>
+    .site-alert {
+        padding: 10px;
+        background: red;
+        color: white;
+    }
+</style>
