@@ -7,16 +7,31 @@ export function formatKilos(n): string {
 }
 
 /**
+ * Format size in megabytes
  *
  * @param n
  */
-export function formatSize(n): string {
+export function formatSizeMegabytes(n): string {
     if(n <= 1024*1024) {
         return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
     } else{
         return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
     }
 }
+
+/**
+ * Format size in gigabyttes
+ *
+ * @param n
+ */
+export function formatSizeGigabytes(n): string {
+    if(n <= 1024*1024) {
+        return (n/(1024*1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
+    } else{
+        return (n/(1024*1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+    }
+}
+
 
 
 /**
