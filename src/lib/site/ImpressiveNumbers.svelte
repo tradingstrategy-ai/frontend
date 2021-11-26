@@ -21,7 +21,7 @@
         <a href="/trading-view/exchanges"><strong>{formatAmount(numbers.exchanges)}</strong> decentralised exchanges</a> with
         <strong>{formatAmount(numbers.pairs)}</strong> trading pairs and
         <strong>{formatAmount(numbers.tokens)}</strong> tokens.
-        Automated trading strategies make decisions based on <strong>{formatSizeGigabytes(numbers.database_size)} GB</strong> market data.
+        Automated trading strategies make decisions based on <a href="/trading-view"><strong>{formatSizeGigabytes(numbers.database_size)} GB</strong> market data</a>.
         The protocol is beta version and under active development.
     </p>
 </div>

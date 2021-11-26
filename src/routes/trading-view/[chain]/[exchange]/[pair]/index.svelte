@@ -47,6 +47,9 @@
         const details = pairDetails.additional_details;
         const daily = pairDetails.daily;
 
+        console.log("Summary", summary);
+        console.log("Details", details);
+
         const readableNames = {
             ...breadcrumbTranslations,
             [exchange_slug]: details.exchange_name,
@@ -225,7 +228,7 @@
         </div>
 
         <div class="row">
-            <div class={splashColClass}>
+            <div class="col-md-12">
 
                 <p>
                     The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
@@ -243,24 +246,16 @@
                     The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
                 </p>
             </div>
+        </div>
+    </div>
 
-            {#if tradingLink}
-                <div class="col-md-4">
-                    <div class="card card-trade shadow-soft border-light">
-                        <div class="card-body">
-                            <h5>Trade {summary.pair_symbol}</h5>
-
-                            <p>
-                                Buy, sell and provide liquidity for the {summary.pair_name} trading pair on {details.exchange_name}.
-                            </p>
-                        </div>
-
-                        <div class="card-footer">
-                            <a href={tradingLink} class="btn btn-primary btn-block"><i class="fas fa-coins"></i> Trade now</a>
-                        </div>
-                    </div>
-                </div>
-            {/if}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="trade-actions">
+                <a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol}</a>
+                <a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol}</a>
+                <a href={details.explorer_link} class="btn btn-primary">Blockchain explorer</a>
+            </div>
         </div>
     </div>
 
@@ -327,5 +322,13 @@
 
     .card-trade {
         margin-bottom: 20px;
+    }
+
+    .trade-actions {
+        margin: 20px 0;
+    }
+
+    .trade-actions .btn {
+        margin-right: 20px;
     }
 </style>
