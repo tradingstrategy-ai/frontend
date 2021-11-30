@@ -55,6 +55,7 @@
     import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import HappyDatetime from '$lib/content/HappyDatetime.svelte';
     import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
+    import PairExplorer from "$lib/pair/PairExplorer.svelte";
 
     export let details;
     export let breadcrumbs;
@@ -101,7 +102,7 @@
 
             <tr>
                 <th>
-                    Untracked pairs
+                    Untracked trading pairs
                     <p class="hint">
                         Not all trading pairs are being tracked.
                         <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">See the inclusion criteria.</a>
@@ -173,6 +174,10 @@
         </table>
 
     </div>
+
+    <h2>Trading pairs on {details.chain_name}</h2>
+
+    <PairExplorer chainSlug={details.chain_slug} />
 </div>
 
 

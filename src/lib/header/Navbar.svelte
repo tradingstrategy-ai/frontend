@@ -119,6 +119,21 @@
               <a rel="external" class="nav-link" href="/blog">Blog</a>
             </li>
 
+          <li class="nav-item nav-item-mobile-only">
+            <a href="https://twitter.com/tradingprotocol" class="nav-link">
+              <i class="fab fa-twitter"></i> <span class="mobile-text">Twitter</span>
+            </a>
+          <li class="nav-item nav-item-mobile-only">
+            <a href="/community#discord" class="nav-link">
+              <i class="fab fa-discord"></i> <span class="mobile-text">Discord</span>
+            </a>
+          </li>
+          <li class="nav-item nav-item-mobile-only">
+            <a href="https://t.me/trading_protocol" class="nav-link">
+              <i class="fab fa-telegram"></i> <span class="mobile-text">Telegram</span>
+            </a>
+          </li>
+
             <!--
             <li class="nav-item">
               <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
@@ -127,15 +142,23 @@
         </ul>
 
         <!-- Right -->
-        <!--
         <ul class="navbar-nav nav-flex-icons">
-          <li class="nav-item">
-            <a href="https://twitter.com/moo9000" class="nav-link waves-effect" target="_blank">
-              <i class="fab fa-twitter"></i> Twitter
+          <li class="nav-item nav-item-right">
+            <a href="https://twitter.com/tradingprotocol" class="nav-link">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </li>
+          <li class="nav-item nav-item-right">
+            <a href="/community#discord" class="nav-link">
+              <i class="fab fa-discord"></i>
+            </a>
+          </li>
+          <li class="nav-item nav-item-right">
+            <a href="https://t.me/trading_protocol" class="nav-link">
+              <i class="fab fa-telegram"></i>
             </a>
           </li>
         </ul>
-        -->
 
       </div>
   </nav>
@@ -143,9 +166,17 @@
 
 <style>
 
+    .nav-item-mobile-only {
+        display: none;
+    }
+
     /* Fix left aligment issues */
     .navbar {
       padding: 5px;
+    }
+
+    .nav-link {
+        white-space: nowrap;
     }
 
     .img-logo {
@@ -163,14 +194,28 @@
     }
 
 	/* Switch logos */
-	@media (max-width: 960px) {
+	@media (max-width: 992px) {
       .img-logo-mobile { display: block }
       .img-logo-desktop { display: none }
+      .nav-item-mobile-only { display: block }
+      .nav-item-mobile-only a { display: block }
+      .nav-item-right { display: none }
 	}
-
 
     .navbar-toggler {
         z-index: 2000;
+    }
+
+    .nav-item-right {
+        margin-right: 0;
+    }
+
+    .nav-item-right .nav-link {
+        padding-right: 0;
+    }
+
+    .nav-item-right .nav-link i {
+        font-size: 1.4rem;
     }
 
 
