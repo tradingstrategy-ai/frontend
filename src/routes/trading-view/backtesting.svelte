@@ -140,16 +140,15 @@
 				</p>
 
 				<p>
-					You can download the datasets with an API key. Request an API key via Telegram or <a href="https://tradingstrategy.ai/docs/">Python client registration.</a>
+					You can download the datasets with an API key. Request an API key via Discord or get one automatically
+					by completing  <a href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Trading Strategy Python client tutorial.</a>
 				</p>
 
 				<h2>Supported blockchains and DEXes</h2>
 
 				<p>
-					These datasets contain trade and liquidity data from several blockchains and
-					<a href="https://tradingstrategy.ai/docs/glossary.html#term-AMM">automatic market maker (AMM)</a> exchanges. The supported blockchains include popular
-					Ethereum, Binance Smart Chain <span class="badge text-uppercase">Coming soon</span>, Polygon <span class="badge text-uppercase">Coming soon</span>
-					and Avalanche <span class="badge text-uppercase">Coming soon</span>.
+					The datasets include trade and liquidity data for <a href="https://tradingstrategy.ai/docs/glossary.html#term-AMM">automatic market maker (AMM)</a> exchanges.
+					For <a href="https://tradingstrategy.ai/trading-view/blockchains">the list of supported blockchains and exchanges, view trading data on Trading Strategy website.</a>
 				</p>
 
 				<h2>Data logistics</h2>
@@ -170,10 +169,10 @@
 
 				<ul>
 					<li>
-						<a href="https://tradingstrategy.ai/docs/">Getting started</a>
+						<a href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Getting started with Trading Strategy Python client</a>
 					</li>
 					<li>
-						<a href="https://tradingstrategy.ai/docs/">Documentation</a>
+						<a href="https://tradingstrategy.ai/docs/">Technical documentation</a>
 					</li>
 					<li>
 						<a href="https://github.com/tradingstrategy-ai/client">Github</a>

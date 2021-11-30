@@ -101,16 +101,30 @@
 
             <tr>
                 <th>
-                    Total trading pairs
-                    <p class="hint">Supported trading pairs on Trading Strategy</p>
+                    Untracked pairs
+                    <p class="hint">
+                        Not all trading pairs are being tracked.
+                        <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">See the inclusion criteria.</a>
+                    </p>
+                </th>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <th>
+                    Tracked trading pairs
+                    <p class="hint">Total trading pairs on Trading Strategy for this blockchain.</p>
                 </th>
                 <td>{formatAmount(details.pairs)}</td>
             </tr>
 
             <tr>
                 <th>
-                    Tracked trading pairs
-                    <p class="hint">Trading pairs with exceeding activity threshold to have market data feeds generated for them</p>
+                    Active trading pairs
+                    <p class="hint">
+                        Trading pairs with market data feeds.
+                        Active trading pairs have enough trading activity to have data feeds generated for them.
+                    </p>
                 </th>
                 <td>{formatAmount(details.tracked_pairs)}</td>
             </tr>
@@ -132,6 +146,7 @@
                 <td>{formatAmount(details.end_block)}</td>
             </tr>
 
+            <!--
             <tr>
                 <th>
                     First indexed trade
@@ -142,6 +157,7 @@
                 </td>
             </tr>
 
+
             <tr>
                 <th>
                     Last indexed trade
@@ -151,6 +167,7 @@
                     <HappyDatetime when={details.last_swap_at} />
                 </td>
             </tr>
+            -->
 
 
         </table>
