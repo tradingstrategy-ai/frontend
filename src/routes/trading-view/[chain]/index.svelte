@@ -53,9 +53,9 @@
 
 <script>
     import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import HappyDatetime from '$lib/content/HappyDatetime.svelte';
     import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
     import PairExplorer from "$lib/pair/PairExplorer.svelte";
+    import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
 
     export let details;
     export let breadcrumbs;
@@ -174,6 +174,8 @@
     </div>
 
     <h2>Trading pairs on {details.chain_name}</h2>
+
+    <StaleDataWarning chainSlugs={[details.chain_slug]}/>
 
     <div class="pair-explorer-wrapper">
         <PairExplorer
