@@ -152,4 +152,19 @@
 </div>
 
 <style>
+
+    /* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
+    .exchanges :global(.datatables-wrapper)  {
+        font-size: 0.8rem;
+    }
+
+    /* Fix sorting icon position after making the font smaller */
+    .exchanges :global(.sorting::before) {
+        bottom: 1.3em;
+    }
+
+    .exchanges :global(.sorting::after) {
+        bottom: 1.3em;
+    }
+
 </style>

@@ -42,7 +42,7 @@
 	<div class="row">
 		<div class="col-md-12">
 
-			<div class="exchanges-content">
+			<div class="exchanges">
 				<h1>Decentralised exchanges</h1>
 
 				<p>
@@ -64,18 +64,17 @@
 
 <style>
 
-.exchanges-content {
-	margin: 0px 0;
-}
-
 .exchanges :global(.col-exchange)  {
 	padding-left: 0;
 }
 
 .exchanges :global(.col-volume)  {
-	width: 25%;
+	width: 10%;
 }
 
+.exchanges :global(.col-chain-name)  {
+	width: 25%;
+}
 
 
 </style>

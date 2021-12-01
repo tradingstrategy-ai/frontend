@@ -277,6 +277,20 @@
 
 <style>
 
+    /* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
+    .trading-pairs :global(.datatables-wrapper)  {
+        font-size: 0.8rem;
+    }
+
+    /* Fix sorting icon position after making the font smaller */
+    .trading-pairs :global(.sorting::before) {
+        bottom: 1.3em;
+    }
+
+    .trading-pairs :global(.sorting::after) {
+        bottom: 1.3em;
+    }
+
     /* Make sure columns do not wiggle when resorting and the data in the cells change */
     .trading-pairs  :global(td)  {
 
