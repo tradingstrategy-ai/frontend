@@ -177,8 +177,19 @@
             jQuery(row).find(".col-liquidity-change").addClass(liqChangeClass);
         },
 
+
+        /**
+         *
+         * AJAX data fetch hook for Datatables
+         *
+         * https://datatables.net/reference/option/ajax
+         *
+         * @param data See https://datatables.net/manual/server-side
+         * @param callback When the data has been obtained from the data source, the second parameter (callback here) should be called with a single parameter passed in - the data to use to draw the table.
+         * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
+         */
         ajax: async function(data, callback, settings) {
-            // https://datatables.net/reference/option/ajax
+
             console.log("AJAX", data, callback, settings);
 
             // Match column index given by DataTables to the server-side sort key
@@ -191,7 +202,10 @@
             }
 
             const params = {
-                page_size: pageSize,
+                // https://datatables.net/manual/server-side
+                page_size: data.length,
+                // Zero-based rendered page
+                page: data.start,
             };
 
             if(chainSlug) {

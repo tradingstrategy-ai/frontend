@@ -175,11 +175,13 @@
 
     <h2>Trading pairs on {details.chain_name}</h2>
 
-    <PairExplorer
-        chainSlug={details.chain_slug}
-        enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "usd_volume_30d", "usd_liquidity_latest"]}
-        orderColumnIndex={3}
-        />
+    <div class="pair-explorer-wrapper">
+        <PairExplorer
+            chainSlug={details.chain_slug}
+            enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "usd_volume_30d", "usd_liquidity_latest"]}
+            orderColumnIndex={3}
+            />
+    </div>
 </div>
 
 
@@ -201,5 +203,9 @@
     .hint {
         color: var(--gray-800);
         font-size: 75%;
+    }
+
+    .pair-explorer-wrapper {
+        margin-bottom: 60px;
     }
 </style>
