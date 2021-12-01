@@ -11,7 +11,7 @@
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
     // The chain slug for which the exchanges pairs are rendered like ["binance"]
-    export let chainSlugs = [];
+    export let chainSlug = null;
 
     // What columns we will show in the explorer.
     // See allColumns for options.
@@ -93,10 +93,12 @@
         ajax: async function(data, callback, settings) {
 
             // console.log("AJAX", data, callback, settings);
-            const params = {};
+            const params = {
+                filter_zero_volume: "true"
+            };
 
-            if(chainSlugs) {
-                params.chain_slugs = chainSlugs;
+            if(chainSlug) {
+                params.chain_slug = chainSlug;
             }
 
             // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs

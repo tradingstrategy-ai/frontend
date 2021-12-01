@@ -179,8 +179,10 @@
 
         <StaleDataWarning chainSlugs={[details.chain_slug]}/>
 
+        <p>Showing exchanges with trading activity in last 30 days.</p>
+
         <ExchangeExplorer
-            chainSlugs={[details.chain_slug]}
+            chainSlug={details.chain_slug}
             enabledColums={["human_readable_name", "pair_count", "usd_volume_30d"]}
             orderColumnIndex={2}
             />
