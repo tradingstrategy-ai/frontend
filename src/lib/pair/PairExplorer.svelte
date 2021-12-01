@@ -17,80 +17,133 @@
     // The chain slug for which the trading pairs are rendered like "binance"
     export let chainSlug = null;
 
+    // What columns we will show in the explorer.
+    // See allColumns for options.
+    export let enabledColumns = ["pair_name", "usd_price_latest"];
+
+    export let orderColumnIndex = 3;
+
+    export let orderColumnDirection = "desc";
+
     // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
 	// See https://datatables.net/reference/option/columns
-	const columns = [
-		{
-			name: "Trading pair",
-			className: "col-exchange",
-			data: "pair_name",
+
+    // All possible configurable columns.
+    // These match what data is available from the backend.
+    const allColumns = {
+        "pair_name": {
+            name: "Trading pair",
+            className: "col-pair",
+            data: "pair_name",
+            serverSideSortKey: null,
             orderable: false,
-			// https://datatables.net/reference/option/columns.render
-			render: function(data, type, row, meta) {
+            // https://datatables.net/reference/option/columns.render
+            render: function (data, type, row, meta) {
                 const chain = escapeHtml(row.chain_slug);
                 const exchange = escapeHtml(row.exchange_slug);
                 const pair = escapeHtml(row.pair_slug);
                 const symbols = escapeHtml(row.pair_symbol);
-				return `<a href="/trading-view/${chain}/${exchange}/${pair}">${symbols}</a>`;
-			}
-		},
+                return `<a href="/trading-view/${chain}/${exchange}/${pair}">${symbols}</a>`;
+            }
+        },
 
-		{
-			name: "Price (USD)",
+        "exchange_name": {
+            name: "Exchange",
+            className: "col-exchange",
+            data: "exchange_name",
+            serverSideSortKey: null,
             orderable: false,
-			data: "usd_price_latest",
-			className: "col-price",
-			type: "num", // https://datatables.net/reference/option/columns.type
-			render: function(data, type, row, meta) {
-				return formatDollar(data);
-			}
-		},
+            // https://datatables.net/reference/option/columns.render
+            render: function (data, type, row, meta) {
+                const chain = escapeHtml(row.chain_slug);
+                const exchange_slug = escapeHtml(row.exchange_slug);
+                const exchange_name = escapeHtml(row.exchange_name);
+                return `<a href="/trading-view/${chain}/${exchange_slug}/">${exchange_name}</a>`;
+            }
+        },
 
-		{
-			name: "Price 24h Δ",
-			data: "price_change_24h",
-			className: "col-price-change",
-			type: "num", // https://datatables.net/reference/option/columns.type
-			render: function(data, type, row, meta) {
-				return formatPriceChange(data);
-			}
-		},
 
-		{
-			name: "Volume 24h (USD)",
-			data: "usd_volume_24h",
-			className: "col-volume",
-			type: "num", // https://datatables.net/reference/option/columns.type
-			render: function(data, type, row, meta) {
-				return formatDollar(data);
-			}
-		},
-
-		{
-			name: "Liquidity (USD)",
-			data: "usd_liquidity_latest",
-			className: "col-liquidity",
-			type: "num", // https://datatables.net/reference/option/columns.type
-			render: function(data, type, row, meta) {
-				return formatDollar(data);
-			}
-		},
-
-		{
-			name: "Liq 24h Δ",
+        "usd_price_latest": {
+            name: "Price (USD)",
             orderable: false,
-			data: "liquidity_change_24h",
-			className: "col-liquidity-change",
-			type: "num", // https://datatables.net/reference/option/columns.type
-			render: function(data, type, row, meta) {
-				return formatPriceChange(data);
-			}
-		}
-	];
+            data: "usd_price_latest",
+            serverSideSortKey: null,
+            className: "col-price",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatDollar(data);
+            }
+        },
+
+        "price_change_24h": {
+            name: "Price 24h Δ",
+            data: "price_change_24h",
+            serverSideSortKey: "price_change_24h",
+            className: "col-price-change",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatPriceChange(data);
+            }
+        },
+
+        "usd_volume_24h": {
+            name: "Volume 24h (USD)",
+            data: "usd_volume_24h",
+            className: "col-volume",
+            serverSideSortKey: "volume_1d",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatDollar(data);
+            }
+        },
+
+        "usd_volume_30d": {
+            name: "Volume 30d (USD)",
+            data: "usd_volume_30d",
+            className: "col-volume",
+            serverSideSortKey: "volume_30d",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatDollar(data);
+            }
+        },
+
+        "usd_liquidity_latest": {
+            name: "Liquidity (USD)",
+            data: "usd_liquidity_latest",
+            serverSideSortKey: "liquidity",
+            className: "col-liquidity",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatDollar(data);
+            }
+        },
+
+        "liquidity_change_24h": {
+            name: "Liq 24h Δ",
+            orderable: false,
+            data: "liquidity_change_24h",
+            className: "col-liquidity-change",
+            type: "num", // https://datatables.net/reference/option/columns.type
+            render: function (data, type, row, meta) {
+                return formatPriceChange(data);
+            }
+        }
+    }
+
+    // Build columns based on the component arguments
+    const columns = [];
+    for(const columnName of enabledColumns) {
+        const column = allColumns[columnName];
+        if(!column) {
+            throw new Error(`Unknown column: ${columnName}`);
+        }
+        columns.push(column);
+    }
 
     const options = {
-        order: [[3, 'desc']], // Default sorting is liquidity desc
+        order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
 		serverSide: true,
 		lengthChange: false,
@@ -126,32 +179,23 @@
             // https://datatables.net/reference/option/ajax
             console.log("AJAX", data, callback, settings);
 
-            // Match column id to a sort key
-            let sortKey = null;
-            switch(data.order[0].column) {
-                case 3:
-                    sortKey = "volume";
-                    break;
-                case 2:
-                    sortKey = "price_change";
-                    break;
-                case 4:
-                    sortKey = "liquidity";
-                    break;
-                default:
-                    // Server-side sorting not supported for this column at the moment
-                    sortKey = null;
+            // Match column index given by DataTables to the server-side sort key
+
+            const sortColumnIndex = data.order[0].column;
+            let sortKey = columns[sortColumnIndex].serverSideSortKey;
+
+            if(!sortKey) {
+                throw new Error(`Column does not support sorting: ${sortColumnIndex}`)
             }
 
-            // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
             const params = {};
 
             if(chainSlug) {
-                params.chain_slug = chainSlug;
+                params.chain_slugs = chainSlug;
             }
 
             if(exchangeSlug) {
-                params.exchange_slug = exchangeSlug;
+                params.exchange_slugs = exchangeSlug;
             }
 
             // TODO: Add paging to the server query parameters
@@ -161,8 +205,12 @@
                 params.direction = data.order[0].dir === "desc" ? "desc" : "asc";
                 params.sort = sortKey;
             }
+
+            // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
             const encoded = new URLSearchParams(params);
-            const resp = await fetch(`${backendUrl}/pairs?${encoded}`);
+            const url = `${backendUrl}/pairs?${encoded}`;
+            console.log("Reading pair data from", url);
+            const resp = await fetch(url);
 
             if (!resp.ok) {
 

@@ -130,7 +130,6 @@
                 <td>{formatAmount(details.tracked_pairs)}</td>
             </tr>
 
-
             <tr>
                 <th>
                     First indexed block
@@ -158,7 +157,6 @@
                 </td>
             </tr>
 
-
             <tr>
                 <th>
                     Last indexed trade
@@ -177,7 +175,11 @@
 
     <h2>Trading pairs on {details.chain_name}</h2>
 
-    <PairExplorer chainSlug={details.chain_slug} />
+    <PairExplorer
+        chainSlug={details.chain_slug}
+        enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "usd_volume_30d", "usd_liquidity_latest"]}
+        orderColumnIndex={3}
+        />
 </div>
 
 
