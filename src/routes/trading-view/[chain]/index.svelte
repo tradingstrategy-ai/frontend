@@ -63,8 +63,8 @@
 </script>
 
 <svelte:head>
-    <title>{details.chain_name} decentralised exchanges and trades</title>
-    <meta name="description" content={`${details.chain_slug} available aexchanges and trading pairs`}>
+    <title>{details.chain_name} decentralised exchanges and trading pairs</title>
+    <meta name="description" content={`${details.chain_name} market data and token prices`}>
 </svelte:head>
 
 <div class="container">
