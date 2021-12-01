@@ -58,7 +58,7 @@
     import Datatable from '$lib/datatable/datatable.svelte';
     import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import PairExplorer from "$lib/pair/PairExplorer.svelte";
+    import PairExplorer from "$lib/explorer/PairExplorer.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
 
     export let exchange_slug;

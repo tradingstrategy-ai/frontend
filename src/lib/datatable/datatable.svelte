@@ -120,6 +120,10 @@
 		contain: paint;
 	}
 
+	:global(.table-datatable thead th) {
+		border-top: 0;
+	}
+
 	.datatables-wrapper :global(.paginate_button)  {
 		margin: 0 10px;
 		border-bottom: 1px solid black;

@@ -1,6 +1,8 @@
 <script>
     /**
-     * Explore trading pairs that match certain filter criteria.
+     * Explore exchanges  that match certain filter criteria.
+     *
+     * Sorting, etc. is done on the client side, as the number of exchanges should be < 2000.
      */
 
     import Datatable from '$lib/datatable/datatable.svelte';
@@ -13,20 +15,18 @@
 
     // What columns we will show in the explorer.
     // See allColumns for options.
-    export let enabledColumns = ["human_readable_name", "usd_volume_30d"];
+    export let enabledColumns = ["human_readable_name", "pair_count", "usd_volume_30d"];
 
-    export let orderColumnIndex = 3;
+    export let orderColumnIndex = 2;
 
     export let orderColumnDirection = "desc";
-
-    export let pageSize = 20;
 
 	// https://tradingstrategy.ai/api/explorer/
 	// See
 	// https://datatables.net/reference/option/columns
 	// https://datatables.net/reference/option/columns.render
 	// https://datatables.net/reference/option/columns.type
-	const availableColums = {
+	const availableColumns = {
 		"human_readable_name": {
 			name: "Exchange",
 			className: "col-exchange",
@@ -40,6 +40,9 @@
 			name: "Blockchain",
 			data: "chain_name",
 			className: "col-chain-name",
+			render: function(data, type, row, meta) {
+				return `<a href="/trading-view/${row.chain_slug}">${row.chain_name}</a>`;
+			}
 		},
 		"pair_count": {
 			name: "Trading pairs",
@@ -64,7 +67,7 @@
     // Build columns based on the component arguments
     const columns = [];
     for(const columnName of enabledColumns) {
-        const column = availableColums[columnName];
+        const column = availableColumns[columnName];
         if(!column) {
             throw new Error(`Unknown column: ${columnName}`);
         }
@@ -76,17 +79,62 @@
 		searching: false,
 		serverSide: false,
 		lengthChange: false,
-		// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchanges
-		ajax: {
-            url: `${backendUrl}/exchanges`,
-            type: 'GET',
-			dataSrc: function (resp) {
-				return resp.exchanges;
-			}
+
+        /**
+         *
+         * AJAX data fetch hook for Datatables
+         *
+         * https://datatables.net/reference/option/ajax
+         *
+         * @param data See https://datatables.net/manual/server-side
+         * @param callback When the data has been obtained from the data source, the second parameter (callback here) should be called with a single parameter passed in - the data to use to draw the table.
+         * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
+         */
+        ajax: async function(data, callback, settings) {
+
+            // console.log("AJAX", data, callback, settings);
+            const params = {};
+
+            if(chainSlugs) {
+                params.chain_slugs = chainSlugs;
+            }
+
+            // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
+            const encoded = new URLSearchParams(params);
+            const url = `${backendUrl}/exchanges?${encoded}`;
+            console.log("Reading pair data from", url);
+            const resp = await fetch(url);
+
+            if (!resp.ok) {
+
+                // Decode 422 invalid input parameter error from the server
+                // with JSON payload
+                let errorDetails;
+                try {
+                    // GenericErrorModel in OpenAPI
+                    errorDetails = await resp.json()
+                    callback({"error": errorDetails.message});
+                } catch(e) {
+                }
+
+                console.log("API error:", resp, "error details:", errorDetails);
+                return;
+            }
+
+            const result = await resp.json();
+            console.log("Got exchange result", result);
+
+            // TODO: Maybe add pagination on one day
+            // Mangle the result object for Datatables format
+            result.recordsTotal = result.exchanges.length;
+            result.recordsFiltered = result.exchanges.length;
+            result.data = result.exchanges;
+
+            callback(result);
         }
 	}
 
-
+    console.log("foo", columns, options)
 </script>
 
 <div class="exchanges">
