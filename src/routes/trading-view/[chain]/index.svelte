@@ -54,8 +54,9 @@
 <script>
     import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
-    import PairExplorer from "$lib/pair/PairExplorer.svelte";
+    import PairExplorer from "$lib/explorer/PairExplorer.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
+    import ExchangeExplorer from "$lib/explorer/ExchangeExplorer.svelte";
 
     export let details;
     export let breadcrumbs;
@@ -64,7 +65,7 @@
 
 <svelte:head>
     <title>{details.chain_name} decentralised exchanges and trading pairs</title>
-    <meta name="description" content={`Explore ${details.chain_name} tokens and prices`}>
+    <meta name="description" content={`Top ${details.chain_name} tokens and prices`}>
 </svelte:head>
 
 <div class="container">
@@ -173,11 +174,25 @@
 
     </div>
 
-    <h2>Trading pairs on {details.chain_name}</h2>
+    <div class="exchange-explorer-wrapper">
+        <h2>Exchanges on {details.chain_name}</h2>
 
-    <StaleDataWarning chainSlugs={[details.chain_slug]}/>
+        <StaleDataWarning chainSlugs={[details.chain_slug]}/>
+
+        <p>Showing exchanges with trading activity in last 30 days.</p>
+
+        <ExchangeExplorer
+            chainSlug={details.chain_slug}
+            enabledColums={["human_readable_name", "pair_count", "usd_volume_30d"]}
+            orderColumnIndex={2}
+            />
+    </div>
 
     <div class="pair-explorer-wrapper">
+        <h2>Trading pairs on {details.chain_name}</h2>
+
+        <StaleDataWarning chainSlugs={[details.chain_slug]}/>
+
         <PairExplorer
             chainSlug={details.chain_slug}
             enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "usd_volume_30d", "usd_liquidity_latest"]}
@@ -195,6 +210,11 @@
 
     h1 {
         margin: 20px 0;
+    }
+
+    .exchange-explorer-wrapper,
+    .pair-explorer-wrapper {
+        margin: 60px 0;
     }
 
 	.chain-logo {

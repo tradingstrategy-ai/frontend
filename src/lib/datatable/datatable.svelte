@@ -2,6 +2,7 @@
 	/*
 
 		Render dynamic tables using server-side sorting and filtering using DataTables library.
+		While the DataTables is settings up itself, server a skeleton loader.
 
 		https://datatables.net/manual/index
 
@@ -15,18 +16,14 @@
 	 */
     // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
-	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import jQuery from 'jquery';
 	import datatableModule from 'datatables.net-dt';
-	import Skeleton from '$lib/Skeleton.svelte';
-
 	// DataTables CSS
-	// import 'datatables.net-dt/css/jquery.datatables.css';
-	//import 'datatables.net-bs4';
 	import 'datatables.net-bs4/css/dataTables.bootstrap4.css';
 	import 'datatables.net-responsive-bs4/css/responsive.bootstrap4.css';
 
-	import { onMount } from 'svelte';
+	import Skeleton from '$lib/Skeleton.svelte';
 
 	// See https://datatables.net/reference/option/columns
 	export let columns;
@@ -38,14 +35,14 @@
 	// Use the first <a> tag within the row for the link target
 	export let clickableRows = false;
 
-	export let dataCy;
+	// ???
+	export let dataCy = '';
 
 	// Is DataTables initialised
 	let loaded = false;
 
 	let el; // table element
 	let table; // table object (API)
-
 
 	let extraClass = clickableRows ? "clickable" : "";
 
@@ -118,6 +115,10 @@
 
 	.datatables-wrapper {
 		contain: paint;
+	}
+
+	:global(.table-datatable thead th) {
+		border-top: 0;
 	}
 
 	.datatables-wrapper :global(.paginate_button)  {
