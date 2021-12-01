@@ -21,6 +21,8 @@
 
     export let orderColumnDirection = "desc";
 
+    export let filterJunk = true;
+
 	// https://tradingstrategy.ai/api/explorer/
 	// See
 	// https://datatables.net/reference/option/columns
@@ -79,6 +81,7 @@
 		searching: false,
 		serverSide: false,
 		lengthChange: false,
+        scrollX: false,
 
         /**
          *
@@ -92,10 +95,11 @@
          */
         ajax: async function(data, callback, settings) {
 
-            // console.log("AJAX", data, callback, settings);
-            const params = {
-                filter_zero_volume: "true"
-            };
+            const params = {};
+
+            if(filterJunk) {
+                params.filter_zero_volume = "true";
+            }
 
             if(chainSlug) {
                 params.chain_slug = chainSlug;

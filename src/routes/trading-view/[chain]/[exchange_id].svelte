@@ -35,6 +35,8 @@
 
         const details = await resp.json();
 
+        // console.log("Details", details);
+
         const readableNames = {
             ...breadcrumbTranslations,
             [exchange_slug]: details.human_readable_name
@@ -55,8 +57,7 @@
 </script>
 
 <script>
-    import Datatable from '$lib/datatable/datatable.svelte';
-    import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
+    import { formatDollar  } from "$lib/helpers/formatters";
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairExplorer from "$lib/explorer/PairExplorer.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
@@ -66,7 +67,7 @@
     export let details;
     export let breadcrumbs;
 
-    const chainName = details.chainName;
+    const chainName = details.chain_name;
 
 </script>
 

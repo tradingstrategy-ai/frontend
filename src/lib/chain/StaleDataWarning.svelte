@@ -9,12 +9,20 @@
     // List of chain slugs we give a warning for
     export let chainSlugs = [];
 
+    export let allChains = false;
+
 
 </script>
 
 <!-- A placeholder until we get this information from the SSR hook -->
-{#if chainSlugs.includes("binance")}
+{#if chainSlugs.includes("binance") || allChains }
     <div class="alert alert-danger">
-        Binance Smart Chain has lagging data. Real-time prices and price changes may not be available at the moment.
+        <a href="/trading-view/binance">Binance Smart Chain</a> data is lagging. Real-time prices and price changes may not be available at the moment.
     </div>
 {/if}
+
+<style>
+    .alert-danger a {
+        color: #a91e2c;
+    }
+</style>

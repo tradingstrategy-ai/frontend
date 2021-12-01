@@ -155,7 +155,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/exchanges" class="btn btn-primary">View trading pairs</a>
+                            <a href="/trading-view/trading-pairs" class="btn btn-primary">View trading pairs</a>
                         </div>
                     </div>
                 </div>

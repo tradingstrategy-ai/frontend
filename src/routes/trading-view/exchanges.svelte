@@ -4,97 +4,37 @@
 		Render listing of all available exchanges
 
 	 */
-	import { browser } from '$app/env';
-	export const router = browser;
-	import { backendUrl } from '$lib/config';
+
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
+	export async function load({ page }){
+        const pathTranslations = {
+            "trading-view": "Trading data",
+			"exchanges": "Decentralised exchanges",
+        };
 
-	export async function load({page}){
-      // using the page object from the Input object we can get the param
-      // In the return value of this function we can specify props
-	  const readableNames = {
-        ...breadcrumbTranslations
-      };
+		const crumbs = buildBreadcrumbs(page.path, pathTranslations);
 
-	  return {
-        props: {
-      		breadcrumbs: buildBreadcrumbs(page.path, readableNames)
-        }
-      };
+	  	return {
+			props: {
+				breadcrumbs: crumbs
+			}
+		};
     }
 
 </script>
 
 <script lang="typescript">
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-	import Datatable from '$lib/datatable/datatable.svelte';
-
-	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
+	import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
+	import ExchangeExplorer from "$lib/explorer/ExchangeExplorer.svelte";
 
 	export let breadcrumbs;
-	// https://tradingstrategy.ai/api/explorer/
-	// See
-	// https://datatables.net/reference/option/columns
-	// https://datatables.net/reference/option/columns.render
-	// https://datatables.net/reference/option/columns.type
-	const columns = [
-		{
-			name: "Exchange",
-			className: "col-exchange",
-			data: "human_readable_name",
-
-			render: function(data, type, row, meta) {
-				return `<a href="/trading-view/${row.chain_slug}/${row.exchange_slug}">${row.human_readable_name}</a>`;
-			}
-		},
-		{
-			name: "Blockchain",
-			data: "chain_name",
-			className: "col-chain-name",
-		},
-		{
-			name: "Trading pairs",
-			data: "pair_count",
-			className: "col-pair-count",
-			type: "num-fmt",
-			render: function(data, type, row, meta) {
-				return formatAmount(data);
-			}
-		},
-		{
-			name: "Volume 30d (USD)",
-			data: "usd_volume_30d",
-			className: "col-volume",
-			type: "num-fmt",
-			render: function(data, type, row, meta) {
-				return formatDollar(data);
-			}
-		}
-	];
-
-	//
-	const options = {
-		// Volume 30d is the last column (4th)
-	    order: [[ 3, "desc" ]],
-		searching: false,
-		serverSide: false,
-		lengthChange: false,
-		// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchanges
-		ajax: {
-            url: `${backendUrl}/exchanges`,
-            type: 'GET',
-			dataSrc: function (resp) {
-				return resp.exchanges;
-			}
-        }
-	}
-
 </script>
 
 <svelte:head>
 	<title>Decentralised exchanges</title>
-	<meta name="description" content="Supported decentralised exchanges for Trading Strategy algorithms" />
+	<meta name="description" content="Top decentralised exchanges" />
 </svelte:head>
 
 <div class="container container-main exchanges">
@@ -104,16 +44,18 @@
 
 			<div class="exchanges-content">
 				<h1>Decentralised exchanges</h1>
+
 				<p>
-					Trading Strategy oracle network connects to the following exchanges. Choose an exchange to explore its trading pairs.
+					Browse supported decentralised exchanges across all <a href="/trading-view/blockchains">blockchains</a> below.
 				</p>
 
-				<Datatable
-					columns={columns}
-					options={options}
-					clickableRows={true}
-					dataCy="exchange-table"
-				/>
+				<StaleDataWarning allChains={true} />
+
+				<ExchangeExplorer
+					enabledColumns={["human_readable_name", "chain_name", "pair_count", "usd_volume_30d"]}
+					orderColumnIndex={3}
+					filterJunk={false}
+					/>
 			</div>
 
 		</div>
@@ -127,12 +69,13 @@
 }
 
 .exchanges :global(.col-exchange)  {
-	width: 75%;
 	padding-left: 0;
 }
 
 .exchanges :global(.col-volume)  {
 	width: 25%;
 }
+
+
 
 </style>

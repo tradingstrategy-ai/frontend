@@ -25,6 +25,8 @@
 
     export let orderColumnDirection = "desc";
 
+    export let pageLength = 20;
+
     // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
 	// See https://datatables.net/reference/option/columns
@@ -147,6 +149,11 @@
 		searching: false,
 		serverSide: true,
 		lengthChange: false,
+        pageLength: pageLength,
+
+        // TODO: If set we would be mobile compatible, but causes the table header to disappear
+        // because whatever jQuery trickery is used to render this
+        scrollX: false,
 
         // Add DataTable.createRow callback to style rows
         // https://datatables.net/reference/option/createdRow
@@ -272,7 +279,7 @@
 
     /* Make sure columns do not wiggle when resorting and the data in the cells change */
     .trading-pairs  :global(td)  {
-        width: 17%; /* 1/6 */
+
     }
 
     .trading-pairs  :global(.price-change-green)  {
