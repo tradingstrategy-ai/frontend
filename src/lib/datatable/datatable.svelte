@@ -116,6 +116,10 @@
 		margin-bottom: 20px;
 	}
 
+	.datatables-wrapper {
+		contain: paint;
+	}
+
 	.datatables-wrapper :global(.paginate_button)  {
 		margin: 0 10px;
 		border-bottom: 1px solid black;
@@ -123,7 +127,7 @@
 
 	.datatables-wrapper :global(.dataTables_info)  {
 		float: left;
-
+		padding-top: 0;
 	}
 
 	.datatables-wrapper :global(.dataTables_paginate)  {

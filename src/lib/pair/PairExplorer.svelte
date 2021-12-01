@@ -25,6 +25,8 @@
 
     export let orderColumnDirection = "desc";
 
+    export let pageSize = 20;
+
     // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
 	// See https://datatables.net/reference/option/columns
@@ -188,7 +190,9 @@
                 throw new Error(`Column does not support sorting: ${sortColumnIndex}`)
             }
 
-            const params = {};
+            const params = {
+                page_size: pageSize,
+            };
 
             if(chainSlug) {
                 params.chain_slugs = chainSlug;
