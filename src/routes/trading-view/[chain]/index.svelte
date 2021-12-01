@@ -63,8 +63,8 @@
 </script>
 
 <svelte:head>
-    <title>{details.chain_name} decentralised exchanges and trades</title>
-    <meta name="description" content={`${details.chain_slug} available aexchanges and trading pairs`}>
+    <title>{details.chain_name} decentralised exchanges and trading pairs</title>
+    <meta name="description" content={`Explore ${details.chain_name} tokens and prices`}>
 </svelte:head>
 
 <div class="container">
@@ -95,7 +95,7 @@
             <tr>
                 <th>
                     Exchanges
-                    <p class="hint">Supported exchanges on Trading Strategy</p>
+                    <p class="hint">Decentralised exchanges with market data available on Trading Strategy</p>
                 </th>
                 <td>{details.exchanges}</td>
             </tr>
@@ -188,6 +188,10 @@
 
 
 <style>
+
+    .table {
+        max-width: 600px;
+    }
 
     h1 {
         margin: 20px 0;
