@@ -150,6 +150,7 @@
             <StaleDataWarning chainSlugs={[details.chain_slug]}/>
 
             <PairExplorer
+                chainSlug={details.chain_slug}
                 exchangeSlug={details.exchange_slug}
                 enabledColumns={["pair_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
                 orderColumnIndex={3}

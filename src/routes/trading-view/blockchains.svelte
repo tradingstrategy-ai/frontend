@@ -60,7 +60,7 @@
 	<title>Supported blockchains</title>
 	<meta name="description" content="Trading strategy and viewing is supported on these blockchains" />
 </svelte:head>
-
+*
 <div class="container container-main exchanges">
 
 	<Breadcrumb breadcrumbs={breadcrumbs} />
@@ -117,6 +117,12 @@
 	.chain-logo {
 		max-width: 24px;
 		max-height: 24px;
+	}
+
+	.chain-img-link {
+		min-width: 32px;
+		text-align: center;
+		display: inline-block;
 	}
 
 	.chain-link {
