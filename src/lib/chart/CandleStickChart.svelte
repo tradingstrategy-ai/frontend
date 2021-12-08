@@ -68,6 +68,16 @@
 
 
 <div class="candle-stick-chart">
+
+    {#if candles}
+        {#if candles[0].length !== 0 }
+            <div class="hacky-axis-labels">
+                <span class="label-hacky label-volume">Volume</span>
+                <span class="label-hacky label-price">Price</span>
+            </div>
+        {/if}
+    {/if}
+
     <div id="uplot-wrapper" class={classes}>
         {#if candles}
             {#if candles[0].length === 0 }
@@ -90,6 +100,7 @@
 </div>
 
 <style>
+    /*
     .uplot-wrapper {
         width: 100%;
         min-height: 600px;
@@ -97,6 +108,17 @@
 
     .uplot-wrapper-empty {
         min-height: auto;
+    }*/
+
+    .hacky-axis-labels {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .label-hacky {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 10px;
     }
 
 </style>

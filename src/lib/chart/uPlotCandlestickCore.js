@@ -32,6 +32,7 @@ function throttle(cb, limit) {
     }
 }
 
+
 function fmtUSD(val, dec) {
     return "$" + val.toFixed(dec).replace(/\d(?=(\d{3})+(?:\.|$))/g, "$&,");
 }
@@ -339,20 +340,21 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
         axes = [
             {},
             {
-                label: "Price",
+                //label: "Price",
                 side: 1,
                 space: 40,
-                size: 60,
+                size: 70,
                 gap: 0,
-                values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+                //values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
+                values: (u, vals) => vals.map(v => formatDollar(v)),
             },
             {
-                label: "Volume",
+                // label: "Volume",
                 space: 40,
-                size: 80,
+                size: 75,
                 scale: 'vol',
                 grid: {show: false},
-                values: (u, vals) => vals.map(v => formatDollar(v, 1, 1)),
+                values: (u, vals) => vals.map(v => formatDollar(v, 2, 4)),
             },
         ];
     } else {
@@ -399,19 +401,19 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
             },
             {
                 label: "Open",
-                value: (u, v) => fmtUSD(v, 2),
+                value: (u, v) => formatDollar(v),
             },
             {
                 label: "High",
-                value: (u, v) => fmtUSD(v, 2),
+                value: (u, v) => formatDollar(v, 2),
             },
             {
                 label: "Low",
-                value: (u, v) => fmtUSD(v, 2),
+                value: (u, v) => formatDollar(v, 2),
             },
             {
                 label: "Close",
-                value: (u, v) => fmtUSD(v, 2),
+                value: (u, v) => formatDollar(v, 2),
             },
             {
                 label: "Volume",

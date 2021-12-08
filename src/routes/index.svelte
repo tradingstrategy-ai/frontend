@@ -41,9 +41,8 @@
 	import PoolPreview from '$lib/pool/PoolPreview.svelte';
 	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import '$lib/styles/bodytext.css';
-	import ElevatorPitch from '$lib/content/ElevatorPitch.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
-	import ImpressiveNumbers from "$lib/site/ImpressiveNumbers.svelte";
+	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
 
 	export let topMomentum;
 	export let impressiveNumbers;

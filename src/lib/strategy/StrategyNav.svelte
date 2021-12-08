@@ -5,7 +5,6 @@
 
     $: current = $page.path.split('/').pop();
 
-    console.log("Selected page", current);
 </script>
 
 <div>

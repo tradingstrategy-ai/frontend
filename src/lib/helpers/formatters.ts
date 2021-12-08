@@ -66,6 +66,10 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
         return "---";
     }
 
+    if(n === 0) {
+        return "$ 0";
+    }
+
     if(n < 0.01) {
         // Format funny tokens
         return "$" + n.toLocaleString( "en",  {
