@@ -1,10 +1,10 @@
 <script>
     /**
-     * Top momentum information row for the front page/
+     * Top momentum information row for the front page.
      */
 
     import '$lib/styles/price.css';
-    import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
+    import { formatPriceChange } from "$lib/helpers/formatters";
     import { determinePriceChangeClass } from "$lib/helpers/price";
 
     // As returned by https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
