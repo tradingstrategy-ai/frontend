@@ -82,6 +82,7 @@
     import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
     import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+    import PairInfoTable from "$lib/content/PairInfoTable.svelte";
 
     export let exchange_slug;
     export let chain_slug;
@@ -228,7 +229,12 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12">
+
+            <div class="col-lg-3">
+                <PairInfoTable {summary} {details} />
+            </div>
+
+            <div class="col-lg-9">
 
                 <p>
                     The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
@@ -244,6 +250,7 @@
                     The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
 
                     The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
+                    The last trade was seen less than <strong><Time relative timestamp="{Date.parse(details.last_trade_at)}" /></strong>.
                 </p>
             </div>
         </div>
@@ -252,8 +259,8 @@
     <div class="row">
         <div class="col-md-12">
             <div class="trade-actions">
-                <a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol}</a>
-                <a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol}</a>
+                <a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol_friendly}</a>
+                <a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol_friendly}</a>
                 <a href={details.explorer_link} class="btn btn-primary">Blockchain explorer</a>
             </div>
         </div>
@@ -308,6 +315,7 @@
      */
     h1 {
         font-size: 2rem;
+        margin-bottom: 20px;
     }
 
     h2 {
@@ -326,15 +334,11 @@
         margin: 0 auto;
     }
 
-    .card-trade {
-        margin-bottom: 20px;
-    }
-
     .trade-actions {
-        margin: 20px 0;
+
     }
 
     .trade-actions .btn {
-        margin-right: 20px;
+        margin: 20px 20px 20px 0;
     }
 </style>
