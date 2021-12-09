@@ -336,6 +336,21 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
     const largeScreen = size.width > 900;
     let axes;
 
+    // SHIB price is in very small decimals $0.0000363
+    // dynamically adjust price axis label widths if the price is very low
+    let priceColumnWidth = 55;
+    if(data) {
+        // The open price of the first tick
+        if(data[1]) {
+            const firstOpenPrice = data[1][0];
+            if(firstOpenPrice) {
+                if(firstOpenPrice < 0.001) {
+                    priceColumnWidth = 80;
+                }
+            }
+        }
+    }
+
     if(largeScreen) {
         axes = [
             {},
@@ -343,7 +358,7 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
                 //label: "Price",
                 side: 1,
                 space: 40,
-                size: 70,
+                size: priceColumnWidth,
                 gap: 0,
                 //values: (u, vals) => vals.map(v => fmtUSD(v, 0)),
                 values: (u, vals) => vals.map(v => formatDollar(v)),

@@ -55,6 +55,9 @@ export function formatDownloadLink(validApiKey, key, link) {
 /**
  * Format large money amounts in human friendly manner.
  *
+ * Crypto prices can vary highly between $1B to $0.00000001.
+ * Try to format everything gracefully.
+ *
  * @param n
  * @param minFrag
  * @param maxFrag
@@ -70,11 +73,21 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
         return "$ 0";
     }
 
-    if(n < 0.01) {
-        // Format funny tokens
-        return "$" + n.toLocaleString( "en",  {
+    if(n < 0.000001) {
+        return "$" + n.toLocaleString("en", {
             minimumFractionDigits: 10,
             maximumFractionDigits: 10
+        });
+    } else if(n < 0.0001) {
+        return "$" + n.toLocaleString( "en",  {
+            minimumFractionDigits: 7,
+            maximumFractionDigits: 7
+        });
+    } else if(n < 0.01) {
+        // Format funny tokens
+        return "$" + n.toLocaleString( "en",  {
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         });
     }
 

@@ -303,9 +303,15 @@
 
     /* Decrease the main heading font size so we can fit
       BNB-BUSD trading on PancakeSwap v2 on Binance Smart Chain on a single row
+
+      Note that 2rem is different size for Firefox and Chrome
      */
     h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 2rem;
     }
 
     .text-section {
