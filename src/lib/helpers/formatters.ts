@@ -62,7 +62,7 @@ export function formatDownloadLink(validApiKey, key, link) {
  * @param minFrag
  * @param maxFrag
  */
-export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
+export function formatDollar(n: number, minFrag = 3, maxFrag = 3, prefix= "$"): string {
 
     if(n === undefined || n === null) {
         // Plz avoid ending here
@@ -70,44 +70,44 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3): string {
     }
 
     if(n === 0) {
-        return "$ 0";
+        return `${prefix}0`;
     }
 
     if(n < 0.000001) {
-        return "$" + n.toLocaleString("en", {
+        return prefix + n.toLocaleString("en", {
             minimumFractionDigits: 10,
             maximumFractionDigits: 10
         });
     } else if(n < 0.0001) {
-        return "$" + n.toLocaleString( "en",  {
+        return prefix + n.toLocaleString( "en",  {
             minimumFractionDigits: 7,
             maximumFractionDigits: 7
         });
     } else if(n < 0.01) {
         // Format funny tokens
-        return "$" + n.toLocaleString( "en",  {
+        return prefix + n.toLocaleString( "en",  {
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
         });
     }
 
     if(n >= 1000*1000*1000) {
-        return "$" + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
+        return prefix + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         }) + "B"
     } else if(n >= 1000*1000) {
-        return "$" + (n / (1000 * 1000)).toLocaleString("en", {
+        return prefix + (n / (1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         }) + "M"
     } else if(n >= 1000) {
-        return "$" + (n / (1000)).toLocaleString("en", {
+        return prefix + (n / (1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         }) + "k"
     } else {
-        return "$" + n.toLocaleString("en", {
+        return prefix + n.toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         });

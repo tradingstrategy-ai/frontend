@@ -86,7 +86,6 @@
 
     export let exchange_slug;
     export let chain_slug;
-    export let pair_slug;
     export let summary; // PairSummary OpenAPI
     export let details; // PairAdditionalDetails OpenAPI
     export let breadcrumbs;
@@ -230,11 +229,11 @@
 
         <div class="row">
 
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <PairInfoTable {summary} {details} />
             </div>
 
-            <div class="col-lg-9">
+            <div class="col-lg-8">
 
                 <p>
                     The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
@@ -243,7 +242,7 @@
 
                 <p>
                     The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
-                    <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> for the last 24h.
+                    <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> against US Dollar for the last 24h.
                 </p>
 
                 <p>
@@ -252,6 +251,12 @@
                     The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
                     The last trade was seen less than <strong><Time relative timestamp="{Date.parse(details.last_trade_at)}" /></strong>.
                 </p>
+
+                {#if details.pair_contract_address }
+                    <p>
+                        The trading pair smart contract is at address <a href={details.explorer_link} class="body-link">{details.pair_contract_address}</a>.
+                    </p>
+                {/if}
             </div>
         </div>
     </div>

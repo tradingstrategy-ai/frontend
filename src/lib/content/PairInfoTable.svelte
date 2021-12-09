@@ -21,7 +21,7 @@
         <th>Price</th>
         <td>
             <strong class="{priceChangeColorClass}">
-                { formatDollar(summary.usd_price_latest) } USD
+                { formatDollar(summary.usd_price_latest, 3, 3, "") } USD
             </strong>
         </td>
     </tr>
