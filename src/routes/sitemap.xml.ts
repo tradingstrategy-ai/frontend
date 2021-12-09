@@ -1,5 +1,6 @@
-// sitemap.xml generation
-
+/**
+ * sitemap.xml generation
+ */
 
 // This sitemap is manually maintained and page paths included here one by one
 const staticPages = [

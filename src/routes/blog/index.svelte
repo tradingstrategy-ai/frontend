@@ -1,41 +1,16 @@
 <script context="module">
-  import { getGhostCredentials } from "$lib/config";
 
   // Ghost client
-  import GhostContentAPI from '@tryghost/content-api'
+  import {fetchBlogroll} from "$lib/blog/feed";
 
   // Pure server-side rendered page - no interactive JS
   export const hydrate = false;
 
   export async function load({ page, fetch, session, stuff }) {
-      const ghostKeys = getGhostCredentials();
-
-      const api = new GhostContentAPI({
-        url: ghostKeys.apiUrl,
-        key: ghostKeys.contentApiKey,
-        version: "v3"
-      });
-
-      // https://morioh.com/p/a655d08860dd
-      const postIndexFields = [
-        'id',
-        'uuid',
-        'title',
-        'slug',
-        'feature_image',
-        'feature_image_alt',
-        'published_at',
-        //'html',
-        'excerpt'
-      ]
-
-      // See post data model
-      // https://ghost.org/docs/content-api/#posts
-      const posts = await api.posts.browse();
 
       return {
           props: {
-              posts
+              posts: await fetchBlogroll(10)
           }
       }
 
@@ -70,7 +45,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-12">
         {#each posts as post}
 
           <div class="card bg-primary border-light shadow-soft card-post">

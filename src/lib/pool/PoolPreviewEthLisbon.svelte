@@ -23,17 +23,13 @@
         </p>
 
         <p class="info">
-            Expected return: <span class="data">21%</span>
+            Historical return: <span class="data">21%</span>
         </p>
 
 
         <div class="buttons">
             <a href="/strategy/ethlisbon" class="btn btn-secondary">
-                Learn more
-            </a>
-
-            <a href="/strategy/ethlisbon" class="btn btn-secondary">
-                Invest now
+                View demo
             </a>
         </div>
     </div>

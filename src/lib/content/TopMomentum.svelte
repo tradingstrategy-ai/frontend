@@ -27,24 +27,28 @@
 
         return [
             {
-                name: "Price up 24h",
-                detail: "Pairs with min. $1M liquidity",
+                name: "Most profitable 24h",
+                detail: "",
                 pairs: momentumDetails.top_up_24h_min_liq_1m.slice(0, pairsToShow),
+                link: "/trading-view/top-list/daily-up",
+                linkName: "View winning trading pairs"
             },
 
             {
-                name: "Price down 24h",
-                detail: "Pairs with min. $1M liquidity",
+                name: "Worst performance 24h",
+                detail: "",
                 pairs: momentumDetails.top_down_24h_min_liq_1m.slice(0, pairsToShow),
-            },
+                link: "/trading-view/top-list/daily-down",
+                linkName: "View losing trading pairs"
+            }
 
+            /*
             {
                 name: "Liquidity increased 24h",
                 detail: "Pairs with min. $1M liquidity",
                 pairs: momentumDetails.top_liquidity_added_24h_min_liq_1m.slice(0, pairsToShow),
                 indicator: "liquidity",
-            }
-
+            }*/
         ]
     }
 
@@ -55,7 +59,7 @@
 <div class="top-momentum">
     <div class="row">
         {#each slots as slot}
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-6 col-md-6">
                 <div class="card bg-primary shadow-soft border-light">
                     <div class="card-body">
 
@@ -87,6 +91,11 @@
                                 </tr>
                             {/each}
                         </table>
+
+                        <a href={slot.link} class="btn btn-primary btn-block">
+                            {slot.linkName}
+                        </a>
+
                     </div>
                 </div>
             </div>

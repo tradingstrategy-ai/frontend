@@ -10,20 +10,6 @@
   import logo from '../../lib/assets/logo-web-beta-2.svg';
   import logoMobile from '../../lib/assets/logo-two-lines.png';
 
-  import {
-    Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem
-  } from 'sveltestrap';
-
   let isOpen = false;
 
   function handleUpdate(event) {
@@ -115,9 +101,11 @@
               <a rel="external" class="nav-link" href="/community">Community</a>
             </li>
 
+            <!--
             <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/blog">Blog</a>
             </li>
+            -->
 
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
