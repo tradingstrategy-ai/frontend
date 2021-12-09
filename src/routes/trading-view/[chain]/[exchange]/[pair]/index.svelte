@@ -195,6 +195,8 @@
     export let tradingLink = details.trade_link
     export let splashColClass = tradingLink ? "col-md-8" : "col-md-12";
 
+    export let ridiculousPrice = summary.usd_price_latest < 0.000001;
+
     // console.log("Trading link", tradingLink);
 
     // Price text
@@ -226,6 +228,12 @@
                 </h1>
             </div>
         </div>
+
+        {#if ridiculousPrice}
+            <div class="alert alert-danger">
+                This trading pair is using such ridiculous price units that we cannot display the price data properly.
+            </div>
+        {/if}
 
         <div class="row">
 
