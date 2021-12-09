@@ -10,6 +10,10 @@ const staticPages = [
     "community",
     "trading-view/exchanges",
     "trading-view/blockchains",
+    "trading-view/trading-pairs",
+    "trading-view/top-list",
+    "trading-view/top-list/daily-up",
+    "trading-view/top-list/daily-down",
     "api/explorer/",
     "blog",
 ]
