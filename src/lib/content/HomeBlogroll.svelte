@@ -46,6 +46,11 @@
 </div>
 
 <style>
+
+    .card {
+        margin-bottom: 20px
+    }
+
     .card-footer {
         text-align: right;
     }
