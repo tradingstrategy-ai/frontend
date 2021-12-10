@@ -16,7 +16,14 @@ const staticPages = [
     "trading-view/top-list/daily-up",
     "trading-view/top-list/daily-down",
     "api/explorer/",
+    "docs",
     "blog",
+
+    // refer to other sitemaps
+    "blog/rss.xml",
+    "api/sitemap/pairs/paged/0.xml",
+    "api/sitemap/pairs/paged/1.xml",
+    "api/sitemap/pairs/paged/2.xml",
 ]
 
 
