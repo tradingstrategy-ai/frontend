@@ -45,7 +45,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-lg-9 col-md-12">
         {#each posts as post}
 
           <div class="card bg-primary border-light shadow-soft card-post">
@@ -79,7 +79,7 @@
         {/each}
       </div>
 
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-12">
         <Sidebar />
       </div>
     </div>

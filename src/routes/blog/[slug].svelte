@@ -95,7 +95,7 @@
   <div class="section-post">
 
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-lg-9 col-md-12">
         <!--
         <h1>{ post.title }</h1>
         -->
@@ -110,7 +110,7 @@
 
       </div>
 
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-12">
         <Sidebar />
       </div>
     </div>

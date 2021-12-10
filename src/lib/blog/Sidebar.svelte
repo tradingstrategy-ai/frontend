@@ -74,7 +74,6 @@
    .btn-sm {
        font-size: 0.80rem !important;
        /* Make all buttons equally wide */
-       width: 200px;
        display: block;
    }
 
