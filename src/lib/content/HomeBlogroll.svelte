@@ -28,7 +28,7 @@
                     </a>
 
                     <p class="text-published text-muted text-sm">
-                         Published: <Time relative timestamp="{Date.parse(post.published_at)}" />
+                         <Time relative timestamp="{Date.parse(post.published_at)}" />
                     </p>
 
                     <p class="detail">
@@ -54,4 +54,9 @@
     .card-footer {
         text-align: right;
     }
+
+  .text-published {
+    font-size: 70%;
+    text-transform: uppercase;
+  }
 </style>
