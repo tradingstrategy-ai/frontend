@@ -93,4 +93,9 @@
     a {
         border-bottom: 1px solid var(--link-underline);
     }
+
+    a:hover {
+        color: var(--link-underline);
+    }
+
 </style>

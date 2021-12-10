@@ -31,6 +31,11 @@
         border-bottom: 2px solid var(--link-underline);
     }
 
+    a:hover {
+        color: var(--link-underline);
+    }
+
+
     .lead {
         margin-top: 2rem;
     }

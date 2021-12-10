@@ -172,7 +172,7 @@
     }
 
     .img-logo {
-        height: 36px;
+        height: 32px;
     }
 
     .img-logo-mobile {
