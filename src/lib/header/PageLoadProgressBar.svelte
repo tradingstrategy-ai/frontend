@@ -4,6 +4,8 @@
      * Svelte uses internal router, not server-side loading.
 	 * Thus, we need to manually give some indication in the user interface if the loading takes more than a blink of an eye.
 	 *
+	 * The component is originally made for https://tradingstrategy.ai
+	 *
 	 * Based on the original implementation https://github.com/shajidhasan/sveltekit-page-progress-demo by Shajid Hasan.
 	 *
 	 * As this component is absolutely position, you can put it at any part of your __layout.svelte.

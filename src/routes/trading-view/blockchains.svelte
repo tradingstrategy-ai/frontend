@@ -57,10 +57,10 @@
 </script>
 
 <svelte:head>
-	<title>Supported blockchains</title>
-	<meta name="description" content="Trading strategy and viewing is supported on these blockchains" />
+	<title>Blockchain overview</title>
+	<meta name="description" content="Supported blockchains" />
 </svelte:head>
-*
+
 <div class="container container-main exchanges">
 
 	<Breadcrumb breadcrumbs={breadcrumbs} />
