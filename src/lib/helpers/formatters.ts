@@ -62,7 +62,7 @@ export function formatDownloadLink(validApiKey, key, link) {
  * @param minFrag
  * @param maxFrag
  */
-export function formatDollar(n: number, minFrag = 3, maxFrag = 3, prefix= "$"): string {
+export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix= "$"): string {
 
     if(n === undefined || n === null) {
         // Plz avoid ending here
@@ -116,7 +116,7 @@ export function formatDollar(n: number, minFrag = 3, maxFrag = 3, prefix= "$"): 
 
 
 export function formatPriceChange(n: number): string {
-    return (n > 0 ? "▲" : "▼") + (Math.abs(n) * 100).toLocaleString("en",  {minimumFractionDigits: 1, maximumFractionDigits: 1}) + " %";
+    return (n > 0 ? "▲" : "▼") + (Math.abs(n) * 100).toLocaleString("en",  {minimumFractionDigits: 1, maximumFractionDigits: 1}) + "%";
 }
 
 /**

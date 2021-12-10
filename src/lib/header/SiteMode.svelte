@@ -10,7 +10,13 @@
 
 {#if siteBar}
     <div class="site-mode text-center">
-        Frontend running in <strong>{siteMode}</strong> mode, backend is <strong>{backendUrl}</strong>.
+        <p>
+            vFrontend running in <strong>{siteMode}</strong> mode, backend is <strong>{backendUrl}</strong>.
+        </p>
+
+        <p>
+            <a href="/slow-load">Go to slow page</a>
+        </p>
     </div>
 {/if}
 
@@ -18,6 +24,10 @@
     .site-mode {
         padding: 10px;
         background: blue;
+        color: white;
+    }
+
+    .site-mode a {
         color: white;
     }
 </style>

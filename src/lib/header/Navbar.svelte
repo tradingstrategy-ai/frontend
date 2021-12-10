@@ -8,7 +8,7 @@
 <script lang="ts">
 
   import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
-  import logoMobile from '../../lib/assets/logo-two-lines.png';
+  import logoMobile from '../../lib/assets/logo-two-lines-new-no-text.svg';
 
   let isOpen = false;
 
