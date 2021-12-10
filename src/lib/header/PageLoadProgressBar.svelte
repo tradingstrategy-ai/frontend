@@ -25,7 +25,7 @@
 		// You will always get state=undefined
 		// event on the server-side rendering, so
 		// safely ignore it
-		console.log("The loading state is", state);
+		//console.log("The loading state is", state);
 
 		if (state === 'loading-with-progress-bar') {
 			progress.set(0, { duration: 0 });
@@ -43,6 +43,7 @@
 	});
 </script>
 
+<!-- See the (little) documentation of special SvelteKit events here https://kit.svelte.dev/docs#events -->
 <svelte:window
 	on:sveltekit:navigation-start={() => {
 
@@ -66,10 +67,11 @@
 <!--
 	Make sure the container component is always in the DOM structure.
 
-	If we make changes to the page structure during the navigation, we get a page double rendered error:
+	If we make changes to the page structure during the navigation, we get a page double render error:
 	https://stackoverflow.com/questions/70051025/sveltekit-adds-new-page-on-top-of-old-one
 
 	Not sure if this is a bug or a feature.
+	Thus, make sure any progress animation is done using CSS only.
 -->
 <div class="page-progress-bar" class:loaded={$navigationState === 'loaded'} class:preloading={$navigationState === 'preloading'} class:loading={$navigationState === 'loading-with-progress-bar'}>
 	<div class="progress-sliver" style={`--width: ${$progress * 100}%`} />
