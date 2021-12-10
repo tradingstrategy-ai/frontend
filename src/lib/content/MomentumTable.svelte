@@ -17,8 +17,8 @@
             <tr>
                 <th></th>
                 <th>Trading pair</th>
-                <th>Exchange</th>
-                <th>Blockchain</th>
+                <th class="exchange">Exchange</th>
+                <th class="blockchain">Blockchain</th>
                 <th>Price change</th>
             </tr>
         </thead>
@@ -63,3 +63,13 @@
         </tbody>
     </table>
 </div>
+
+<style>
+    /* Remove less relevant columns on mobile */
+    /* --breakpoint-md */
+    @media(max-width: 992px) {
+        .exchange, .blockchain {
+            display: none;
+        }
+    }
+</style>
