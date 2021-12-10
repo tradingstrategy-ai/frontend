@@ -31,7 +31,7 @@
                 detail: "",
                 pairs: momentumDetails.top_up_24h_min_liq_1m.slice(0, pairsToShow),
                 link: "/trading-view/top-list/daily-up",
-                linkName: "View winning trading pairs"
+                linkName: "View all winning pairs"
             },
 
             {
@@ -39,7 +39,7 @@
                 detail: "",
                 pairs: momentumDetails.top_down_24h_min_liq_1m.slice(0, pairsToShow),
                 link: "/trading-view/top-list/daily-down",
-                linkName: "View losing trading pairs"
+                linkName: "View all losing trading"
             }
 
             /*
@@ -107,7 +107,7 @@
 
 
     .detail, table {
-        font-size: 85%;
+
     }
 
     .detail {

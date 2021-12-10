@@ -52,8 +52,8 @@
 </script>
 
 <svelte:head>
-	<title>TradingStrategy.ai - Algorithmic trading strategy protocol</title>
-	<meta name="description" content="DeFi quantitative investing and trading">
+	<title>Trading Strategy - Algorithmic trading strategy protocol</title>
+	<meta name="description" content="DeFi quantitative finance and systematic trading">
 </svelte:head>
 
 

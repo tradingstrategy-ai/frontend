@@ -28,7 +28,7 @@
 <style>
 
     a {
-        border-bottom: 1px solid black;
+        border-bottom: 2px solid var(--link-underline);
     }
 
     .lead {
@@ -43,38 +43,21 @@
 	  width: 16px;
 	  height: 16px;
 	  border-radius: 50%;
-	  background: #f0f0f0;
+	  background: var(--price-up-green);
 	  cursor: pointer;
-	  box-shadow: 0 0 0 rgba(255,255,255, 0.4);
+	  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 	  animation: pulse 2s infinite;
 	}
-	.pulse:hover {
-	  animation: none;
-	}
 
-	@-webkit-keyframes pulse {
-	  0% {
-		-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 255, 0.4);
-	  }
-	  70% {
-		  -webkit-box-shadow: 0 0 0 10px rgba(0,0,255, 0);
-	  }
-	  100% {
-		  -webkit-box-shadow: 0 0 0 0 rgba(0,0,255, 0);
-	  }
-	}
 	@keyframes pulse {
-	  0% {
-		-moz-box-shadow: 0 0 0 0 rgba(0,0,255, 0.4);
-		box-shadow: 0 0 0 0 rgba(0,0,255, 0.4);
+	  0% {box-shadow: 0 0 0 0 rgba(219, 0, 0, 0.4);
+       /* box-shadow: 0 0 0 0 var(--price-up-green); */
 	  }
 	  70% {
-		  -moz-box-shadow: 0 0 0 10px rgba(0,0,255, 0);
-		  box-shadow: 0 0 0 10px rgba(0,0,255, 0);
+		  box-shadow: 0 0 0 10px rgba(219, 0, 0, 0);
 	  }
 	  100% {
-		  -moz-box-shadow: 0 0 0 0 rgba(0,0,255, 0);
-		  box-shadow: 0 0 0 0 rgba(0,0,255, 0);
+		  -moz-box-shadow: 0 0 0 0 rgba(219, 0, 0, 0);
 	  }
 	}
 </style>

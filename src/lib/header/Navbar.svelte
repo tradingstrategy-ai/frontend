@@ -7,7 +7,7 @@
 
 <script lang="ts">
 
-  import logo from '../../lib/assets/logo-web-beta-2.svg';
+  import logo from '../../lib/assets/logo-two-lines-new.png';
   import logoMobile from '../../lib/assets/logo-two-lines.png';
 
   let isOpen = false;
@@ -167,6 +167,10 @@
         white-space: nowrap;
     }
 
+    .nav-link:hover {
+        color: var(--price-up-green) !important;
+    }
+
     .img-logo {
         height: 36px;
     }
@@ -200,6 +204,10 @@
 
     .nav-item-right .nav-link {
         padding-right: 0;
+    }
+
+    .nav-item-right .nav-link:hover {
+        color: var(--price-up-green);
     }
 
     .nav-item-right .nav-link i {

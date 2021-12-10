@@ -91,6 +91,6 @@
     }
 
     a {
-        text-decoration: underline;
+        border-bottom: 1px solid var(--link-underline);
     }
 </style>
