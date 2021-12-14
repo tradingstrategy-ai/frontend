@@ -33,5 +33,7 @@ jobs:
         npm run ssr:node
       env:
         VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
+        VITE_PUBLIC_GHOST_API_URL: ${{ env.VITE_PUBLIC_GHOST_API_URL }}
+        VITE_PUBLIC_GHOST_CONTENT_API_KEY : ${{ env.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
         PRODUCTION: true
 
