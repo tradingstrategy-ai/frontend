@@ -20,7 +20,7 @@ describe('Navigation Bar', () => {
   it('Should render Navigation Items', () => {
     render(NavBar, {});
     const nav = screen.getAllByTestId(/navigation-link/i);
-    expect(nav.length).toBe(4);
+    expect(nav.length).toBe(3);
   });
 
   it('Should load a logo', () => {
