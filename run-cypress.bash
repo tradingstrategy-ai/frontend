@@ -18,7 +18,9 @@ npm install && npx gulp build:dist
 cd ..
 
 # Start dev server
-npm run dev &
+echo $VITE_PUBLIC_GHOST_API_URL check
+echo $VITE_PUBLIC_BACKEND_URL
+npm run dev
 
 sleep 3
 
