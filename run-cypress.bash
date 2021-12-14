@@ -6,7 +6,7 @@
 set -e
 set -x
 
-echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL"
+echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL $VITE_PUBLIC_GHOST_API_URL"
 
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
@@ -18,9 +18,7 @@ npm install && npx gulp build:dist
 cd ..
 
 # Start dev server
-echo $VITE_PUBLIC_GHOST_API_URL
-echo $VITE_PUBLIC_BACKEND_URL
-npm run dev
+npm run dev &
 
 sleep 3
 
