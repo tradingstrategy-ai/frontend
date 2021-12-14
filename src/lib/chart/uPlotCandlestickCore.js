@@ -320,11 +320,9 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
         //    width: window.innerWidth - 100,
         //    height: window.innerHeight - 200,
         //}
-
-
         return {
             width: elem.offsetWidth,
-            height: elem.offsetHeight,
+            height: elem.offsetHeight - 40,
         }
     }
 
