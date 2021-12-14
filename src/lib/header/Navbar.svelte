@@ -79,9 +79,9 @@
       <div class="{'collapse navbar-collapse ' + (isOpen ? 'show' : '')}" id="navbarSupportedContent">
 
         <!-- Left -->
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav mr-auto" data-cy="navigation">
 
-            <li class="nav-item">
+            <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/trading-view">Trading data</a>
             </li>
 
