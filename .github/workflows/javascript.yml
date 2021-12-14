@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-
+    env:
+      VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
+      VITE_PUBLIC_GHOST_API_URL: ${{ env.VITE_PUBLIC_GHOST_API_URL }}
+      VITE_PUBLIC_GHOST_CONTENT_API_KEY : ${{ env.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +29,6 @@ jobs:
         bash run-cypress.bash
       env:
         VITE_PUBLIC_BACKEND_URL: https://tradingstrategy.ai/api
-        VITE_PUBLIC_GHOST_API_URL: ${{ secrets.VITE_PUBLIC_GHOST_API_URL }}
-        VITE_PUBLIC_GHOST_CONTENT_API_KEY : ${{ secrets.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
     - name: Package for server-side rendering using SvelteKit Node.js adapter
       run: |
         npm run ssr:node
