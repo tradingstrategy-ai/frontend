@@ -79,7 +79,7 @@
     {/if}
 
     <div id="uplot-wrapper" class={classes}>
-        {#if candles}
+        {#if candles }
             {#if candles[0].length === 0 }
                 <div class="alert alert-danger shadow-inset fade show" role="alert"><span
                         class="alert-inner--icon"><span class="fas fa-exclamation-circle"></span></span> <span

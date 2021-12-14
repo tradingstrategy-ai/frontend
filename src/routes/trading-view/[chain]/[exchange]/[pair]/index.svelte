@@ -355,4 +355,20 @@
     .trade-actions .btn {
         margin: 20px 20px 20px 0;
     }
+
+    /**
+     * Prevent CLS issues on desktop
+     *
+     * https://web.dev/cls/
+     */
+    @media (min-width: 992px) {
+        .chart-wrapper {
+            min-height: 820px;
+            contain: size paint;
+        }
+
+        :global(.skeleton) {
+            height: 800px;
+        }
+    }
 </style>
