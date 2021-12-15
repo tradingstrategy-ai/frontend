@@ -52,13 +52,13 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" data-testid="explore-title">
                 <div class="col-md-12">
                     <h2>Explore data</h2>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="blockchains">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -87,13 +87,13 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/blockchains" class="btn btn-primary">View blockchains</a>
+                            <a data-testid="link-blockchains" href="/trading-view/blockchains" class="btn btn-primary">View blockchains</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="exchanges">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -122,13 +122,13 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/exchanges" class="btn btn-primary">View exchanges</a>
+                            <a data-testid="link-exchanges" href="/trading-view/exchanges" class="btn btn-primary">View exchanges</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="tradingpairs">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -155,19 +155,19 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/trading-pairs" class="btn btn-primary">View trading pairs</a>
+                            <a data-testid="link-tradingpairs" href="/trading-view/trading-pairs" class="btn btn-primary">View trading pairs</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" data-testid="programmatic-access">
                 <div class="col-md-12">
                     <h2>Programmatic access</h2>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="backtesting">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -194,13 +194,13 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/trading-view/backtesting" class="btn btn-primary">Download datasets</a>
+                            <a data-testid="link-backtesting" href="/trading-view/backtesting" class="btn btn-primary">Download datasets</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="realtime">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -232,13 +232,13 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://tradingstrategy.ai/api/explorer/" class="btn btn-primary">Read API specification</a>
+                            <a  data-testid="link-realtime" rel="external" href="https://tradingstrategy.ai/api/explorer/" class="btn btn-primary">Read API specification</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-mega shadow-soft">
+            <div class="card card-mega shadow-soft" data-testid="doc-notebooks">
                 <div class="row no-gutters align-items-top">
                     <div class="col-sm-5">
                         <div class="card-header text-center pb-0">
@@ -267,7 +267,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://tradingstrategy.ai/docs/programming/index.html" class="btn btn-primary">Read documentation</a>
+                            <a  data-testid="link-notebooks" rel="external" href="https://tradingstrategy.ai/docs/programming/index.html" class="btn btn-primary">Read documentation</a>
                         </div>
                     </div>
                 </div>
