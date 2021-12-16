@@ -228,7 +228,7 @@
 
                 </div>
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="link-active-trading">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
