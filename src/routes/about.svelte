@@ -36,7 +36,7 @@
             <div class="row">
 
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="traders">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -60,13 +60,13 @@
                         </div>
 
                         <div class="card-footer">
-                            <a href="/" class="btn btn-primary">Explore strategies</a>
+                            <a href="/" class="btn btn-primary" data-testid="link-traders">Explore strategies</a>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="hedge">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -94,14 +94,14 @@
                         </div>
 
                         <div class="card-footer">
-                             <a class="btn btn-primary" href="mailto:info@tradingstrategy.ai">Contact to discuss mode</a>
+                             <a data-testid="link-hedge" class="btn btn-primary" href="mailto:info@tradingstrategy.ai">Contact to discuss mode</a>
                         </div>
                     </div>
 
 
                 </div>
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="defi">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="card-footer">
-                             <a class="btn btn-primary" href="mailto:info@tradingstrategy.ai">Contact to discuss mode</a>
+                             <a data-testid="link-defi" class="btn btn-primary" href="mailto:info@tradingstrategy.ai">Contact to discuss mode</a>
                         </div>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
             <div class="row">
 
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="link-active-trading">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -194,7 +194,7 @@
 
                 </div>
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-testid="link-funds-control">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
