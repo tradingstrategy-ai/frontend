@@ -3,7 +3,7 @@ describe('Traging strategy Community', () => {
         cy.visit('/community');
     })
 
-    it('User should be able to navigate to the about site', () => {
+    it('User should be able to navigate to the Community site', () => {
         cy.visit('/community')
         cy.contains(/community/i);
     });
