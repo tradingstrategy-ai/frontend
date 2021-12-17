@@ -17,7 +17,7 @@ describe('Traging strategy trading-view blockchains index', () => {
 
   it('User should be able to navigate to the polygon chain site', () => {
     cy.visit('/trading-view/polygon');
-    cy.contains(/Polygon Blockchains/i);
+    cy.contains(/Polygon Blockchain/i);
     cy.contains(/Exchanges on polygon/i);
   });
 });
