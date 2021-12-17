@@ -23,7 +23,7 @@
 
             <div class="row">
                 <!-- Blog -->
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="blog">
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
@@ -42,12 +42,12 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="/blog" class="btn btn-primary ">Read blog</a>
+                            <a data-testid="link-blog" rel="external" href="/blog" class="btn btn-primary ">Read blog</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="twitter">
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
@@ -67,14 +67,14 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://twitter.com/TradingProtocol" class="btn btn-primary ">Follow on Twitter</a>
+                            <a data-testid="link-twitter" rel="external" href="https://twitter.com/TradingProtocol" class="btn btn-primary ">Follow on Twitter</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="w-100"></div>
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="telegram">
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
@@ -91,12 +91,12 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://t.me/trading_protocol" class="btn btn-primary ">Subscribe to Telegram</a>
+                            <a data-testid="link-telegram" rel="external" href="https://t.me/trading_protocol" class="btn btn-primary ">Subscribe to Telegram</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="newsletter">
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
                             <h3 class="h5 card-title">
@@ -126,7 +126,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://newsletter.tradingstrategy.ai/" class="btn btn-primary">Subscribe to newsletter</a>
+                            <a data-testid="link-newsletter" rel="external" href="https://newsletter.tradingstrategy.ai/" class="btn btn-primary">Subscribe to newsletter</a>
                         </div>
                     </div>
                 </div>
@@ -139,9 +139,7 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                    <a id="discord"></a>
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="discord">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -162,14 +160,14 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://discord.gg/yReMpKykaS" class="btn btn-primary ">Open discussion</a>
+                            <a data-testid="link-discord" rel="external" href="https://discord.gg/yReMpKykaS" class="btn btn-primary ">Open discussion</a>
                         </div>
                     </div>
 
 
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="github">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -186,12 +184,12 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://github.com/tradingstrategy-ai/" class="btn btn-primary ">Explore Github</a>
+                            <a data-testid="link-github" rel="external" href="https://github.com/tradingstrategy-ai/" class="btn btn-primary ">Explore Github</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4" data-testid="algorithm">
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
@@ -217,7 +215,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html" class="btn btn-primary">Start learning</a>
+                            <a data-testid="link-algorithm" rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html" class="btn btn-primary">Start learning</a>
                         </div>
                     </div>
                 </div>
