@@ -11,7 +11,7 @@
 {#if siteBar}
     <div class="site-mode text-center">
         <p>
-            vFrontend running in <strong>{siteMode}</strong> mode, backend is <strong>{backendUrl}</strong>.
+            Frontend running in <strong>{siteMode}</strong> mode, backend is <strong>{backendUrl}</strong>.
         </p>
 
         <p>

@@ -101,16 +101,16 @@
               <a rel="external" class="nav-link" href="/community">Community</a>
             </li>
 
-            <!--
             <li class="nav-item" data-testid={'navigation-link'}>
               <a rel="external" class="nav-link" href="/blog">Blog</a>
             </li>
-            -->
 
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
               <i class="fab fa-twitter"></i> <span class="mobile-text">Twitter</span>
             </a>
+          </li>
+
           <li class="nav-item nav-item-mobile-only">
             <a href="/community#discord" class="nav-link">
               <i class="fab fa-discord"></i> <span class="mobile-text">Discord</span>

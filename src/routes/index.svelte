@@ -114,6 +114,10 @@
 			<div class="container">
 				<h3 class="heading-blog text-center">Blog</h3>
 				<HomeBlogroll {posts} />
+				<p class="text-center blog-all">
+					<a href="/blog/">See all posts</a>
+				</p>
+
 			</div>
 		</section>
 	{/if}
@@ -177,6 +181,14 @@
 	svg {
 		max-height: 160px;
 		margin: 0 auto;
+	}
+
+	.blog-all {
+
+	}
+
+	.blog-all a {
+		text-decoration: underline
 	}
 
 	@media(max-width: 768px) {
