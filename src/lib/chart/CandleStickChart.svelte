@@ -18,7 +18,6 @@
 
     // See CandleList https://tradingstrategy.ai/api/explorer/
     export let candles = null;
-    export let title = "";
 
     // Dynamically imported uplot
     let uPlot;

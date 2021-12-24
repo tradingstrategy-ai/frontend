@@ -1,10 +1,7 @@
 <script>
-    export let root;
-
     import { page } from '$app/stores';
 
     $: current = $page.path.split('/').pop();
-
 </script>
 
 <div>

@@ -24,6 +24,9 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 				env: {
 					port: 'FRONTEND_PORT',
 			}}),
+			files: {
+				hooks: "src/hooks"
+			}
 		}
 
 	};
@@ -47,12 +50,12 @@ config.kit.vite = {
 		include: ["highlight.js/lib/core"],
 	},
 	server: {
-    fs: {
-      allow: [
-					`${process.env.PWD}`
-			]
-    }
-  }
+		fs: {
+		  allow: [
+		  	`${process.env.PWD}`
+		  ]
+		}
+  	}
 }
 
 export default config;

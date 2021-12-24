@@ -90,7 +90,7 @@ Test that everything compiles in the production build:
 ```shell
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
-rm -rf build && node_modules/.bin/svelte-kit build && node build/index.svelte
+rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 ```
 
 To render the blog roll you also ened
