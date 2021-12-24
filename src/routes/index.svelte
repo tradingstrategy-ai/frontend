@@ -188,11 +188,11 @@
 	}
 
 	.blog-all {
-
+		margin-top: 40px;
 	}
 
 	.blog-all a {
-		text-decoration: underline
+		text-decoration: underline;
 	}
 
 	@media(max-width: 768px) {
