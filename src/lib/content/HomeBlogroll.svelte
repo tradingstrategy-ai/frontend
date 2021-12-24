@@ -17,7 +17,7 @@
 
                 {#if post.feature_image}
                   <a href={`/blog/${post.slug}`}>
-                    <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt} width=489>
+                    <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt} width=489 height=200>
                   </a>
                 {/if}
 
@@ -53,6 +53,23 @@
 
     .card-footer {
         text-align: right;
+    }
+
+    /*
+        This will cause cumulative layout shift event after the image is loaded, but
+        it really does not matter if the image is not in the initial viewport (top of o the page).
+        We will just use this to get rid of CLS warning on pagespeed.web.dev:
+
+            Image elements do not have explicit width and height
+
+        One could get rid of the CLS events by setting the min-height for the
+        container element that contains the image - in our case <a>,
+        and have few height pixels of background coloured playground to make everything aligned.
+        However, this would need to be tailored to every mobile breakpoint in the layout.
+
+    */
+    .card-img-top {
+        height: auto;
     }
 
    /* Make sure we do not get too narrow cards on tablet screens */
