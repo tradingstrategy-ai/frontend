@@ -8,7 +8,6 @@
 <script lang="ts">
 
   import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
-  import logoMobile from '../../lib/assets/logo-two-lines-new-no-text.svg';
   import twitter from './twitter.svg';
   import telegram from './telegram.svg';
   import discord from './discord.svg';
@@ -61,7 +60,13 @@
       <!-- Brand -->
       <a class="navbar-brand" href="/" data-cy="logo">
         <img class="img-logo img-logo-desktop" src={logo} alt="On-chain quantitative finance" />
-        <img class="img-logo img-logo-mobile" src={logoMobile} alt="On-chain quantitative finance" />
+        <img
+            class="img-logo img-logo-mobile"
+            src={logo}
+            alt="On-chain quantitative finance"
+            width="128"
+            height="40"
+            />
       </a>
 
       <!-- Collapse -->
@@ -185,7 +190,6 @@
 
     .img-logo-mobile {
       display: none;
-      max-width: 200px;
     }
 
     .dropdown-menu.disabled {

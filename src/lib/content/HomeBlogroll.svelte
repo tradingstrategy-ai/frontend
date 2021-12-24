@@ -11,13 +11,13 @@
 </script>
 
 <div class="home-blogroll">
-    <div class="card-deck">
+    <div class="card-deck"><!-- wrap every 2 on sm-->
         {#each posts as post}
             <div class="card bg-primary shadow-soft border-light">
 
                 {#if post.feature_image}
                   <a href={`/blog/${post.slug}`}>
-                    <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt}>
+                    <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt} width=489>
                   </a>
                 {/if}
 
@@ -54,6 +54,13 @@
     .card-footer {
         text-align: right;
     }
+
+   /* Make sure we do not get too narrow cards on tablet screens */
+   @media (max-width: 992px) {
+       .card-deck {
+           display: block; /* Remove flex layout from card-deck */
+       }
+   }
 
   .text-published {
     font-size: 70%;

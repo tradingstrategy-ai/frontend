@@ -19,7 +19,7 @@
         </p>
 
         <p class="info">
-            Trades on: <strong><img src={oneinch}>1inch on <img src={polygon}> Polygon</strong>
+            Trades on: <strong><img src={oneinch} width=24 height=24> 1inch on <img src={polygon} width=24 height=24> Polygon</strong>
         </p>
 
         <p class="info">
@@ -42,6 +42,13 @@
         background: linear-gradient( rgba(0,0,0,.5), rgba(0,0,0,.5) ), url(../assets/ethlisbon.webp);
         color: white;
         font-weight: bold;
+    }
+
+    @media (max-width: 992px) {
+        /* Optimize mobile loading time */
+        .card {
+            background: blue !important;
+        }
     }
 
     h3 {
@@ -72,7 +79,4 @@
         background: blue;
     }
 
-    img {
-        width: 24px;
-    }
 </style>
