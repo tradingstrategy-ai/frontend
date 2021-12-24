@@ -18,20 +18,34 @@ function fixLinkModulePreloadIssue(response: ServerResponse) {
 	}
 	const $ = cheerio.load(response.body);
 
-	// https://stackoverflow.com/a/60011663/315168
+	const body = $("body");
+
+	// Replace <link rel="modulepreload"> with <script type="module">
 	// https://api.jquery.com/replacewith/
-	$('link[rel="modulepreload"]').replaceWith(function() {
-	  const src = $(this).attr('href');
-	  return `<script type="module" defer src="${src}"></script>`;
+	//$('link[rel="modulepreload"]').replaceWith(function() {
+	//  const src = $(this).attr('href');
+	//// The defer attribute has no effect on module scripts — they defer by default.
+	//  return `<script type="module" src="${src}"></script>`;
+	//});
+
+	$('link[rel="modulepreload"]').each(function(idx, elem) {
+		const $this = $(this);
+		const src = $this.attr('href');
+		$(`<script type="module" async src="${src}"></script>`).appendTo(body);
+		$this.remove();
 	});
+
+	// Move starter section to the <body> end
+	// Assume we have only one <script type="module"> in our generated <head>
+	// const starter = $("head script[type='module']");
+	//starter.appendTo(body);
+	//starter.remove();
 
 	response.body = $.html();
 }
 
 
 export const handle: Handle = async ({ request, resolve }) => {
-
-	console.log("Hook triggered");
 
 	// TODO https://github.com/sveltejs/kit/issues/1046
 	if (request.query.has('_method')) {
