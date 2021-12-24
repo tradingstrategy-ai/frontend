@@ -9,6 +9,9 @@
 
   import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
   import logoMobile from '../../lib/assets/logo-two-lines-new-no-text.svg';
+  import twitter from './twitter.svg';
+  import telegram from './telegram.svg';
+  import discord from './discord.svg';
 
   let isOpen = false;
 
@@ -107,43 +110,37 @@
 
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
-              <i class="fab fa-twitter"></i> <span class="mobile-text">Twitter</span>
+              <img src={twitter} loading="lazy" /> <span class="mobile-text">Twitter</span>
             </a>
           </li>
 
           <li class="nav-item nav-item-mobile-only">
             <a href="/community#discord" class="nav-link">
-              <i class="fab fa-discord"></i> <span class="mobile-text">Discord</span>
+              <img src={discord} loading="lazy" /> <span class="mobile-text">Discord</span>
             </a>
           </li>
           <li class="nav-item nav-item-mobile-only">
             <a href="https://t.me/trading_protocol" class="nav-link">
-              <i class="fab fa-telegram"></i> <span class="mobile-text">Telegram</span>
+              <img src={telegram} loading="lazy" /> <span class="mobile-text">Telegram</span>
             </a>
           </li>
-
-            <!--
-            <li class="nav-item">
-              <a class="nav-link waves-effect" href="https://capitalgram.com/blog">Blog</a>
-            </li>
-            -->
         </ul>
 
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item nav-item-right">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
-              <i class="fab fa-twitter"></i>
+              <img src={twitter} loading="lazy" />
             </a>
           </li>
           <li class="nav-item nav-item-right">
             <a href="/community#discord" class="nav-link">
-              <i class="fab fa-discord"></i>
+              <img src={discord} loading="lazy" />
             </a>
           </li>
           <li class="nav-item nav-item-right">
             <a href="https://t.me/trading_protocol" class="nav-link">
-              <i class="fab fa-telegram"></i>
+              <img src={telegram} loading="lazy" />
             </a>
           </li>
         </ul>
@@ -165,6 +162,17 @@
 
     .nav-link {
         white-space: nowrap;
+    }
+
+    /* SVG icons */
+    .nav-item a img {
+        width: 28px;
+        height: 28px;
+        opacity: 1;
+    }
+
+    .nav-item a:hover img {
+        opacity: 0.5;
     }
 
     .nav-link:hover {
@@ -189,6 +197,9 @@
 	@media (max-width: 992px) {
       .img-logo-mobile { display: block }
       .img-logo-desktop { display: none }
+      .nav-item {
+          margin-bottom: 10px;
+      }
       .nav-item-mobile-only { display: block }
       .nav-item-mobile-only a { display: block }
       .nav-item-right { display: none }
