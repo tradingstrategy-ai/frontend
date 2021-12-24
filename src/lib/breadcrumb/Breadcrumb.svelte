@@ -27,6 +27,7 @@
     box-shadow: inset 2px 2px 5px #b8b9be,inset -3px -3px 7px #fff;
     margin: 10px 0;
     padding: 12px 12px;
+    background: var(--soft);
   }
 
   .breadcrumb-item,
