@@ -8,7 +8,7 @@
     import IntersectionObserver from "svelte-intersection-observer";
     import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
     import { determinePriceChangeClass } from "$lib/helpers/price";
-    import '$lib/styles/price.css';
+
 
 
     // TimeSpanTradeData, see https://tradingstrategy.ai/api/explorer/#/Pair/web_candles

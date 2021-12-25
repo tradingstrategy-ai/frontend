@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>Decentralised exchange market data</title>
+	<title>Trading Strategy - Decentralised exchange market data</title>
 	<meta name="description" content="Real-time and backtesting OHLCV data">
 </svelte:head>
 

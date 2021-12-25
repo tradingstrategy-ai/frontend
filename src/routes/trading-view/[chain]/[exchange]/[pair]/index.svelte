@@ -11,7 +11,7 @@
 
     import { backendUrl } from '$lib/config';
 
-    import '$lib/styles/price.css';
+
 
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 

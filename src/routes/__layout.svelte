@@ -38,4 +38,16 @@
         color: var(--link-underline);
     }
 
+    /**
+     * Price action and candle colors
+     */
+
+    :global(.price-change-green) {
+        color: var(--price-up-green);
+    }
+
+    :global(.price-change-red) {
+        color: var(--price-down-red);
+    }
+
 </style>

@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-    <title>TradingStrategy.ai community resources</title>
+    <title>Trading Strategy community</title>
     <meta name="description" content="Resources to learn algorithmic trading for crypto">
 </svelte:head>
 

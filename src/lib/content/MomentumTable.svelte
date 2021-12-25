@@ -1,6 +1,6 @@
 <script>
 
-    import '$lib/styles/price.css';
+
     import { determinePriceChangeClass } from "$lib/helpers/price";
     import { formatPriceChange } from "$lib/helpers/formatters";
 

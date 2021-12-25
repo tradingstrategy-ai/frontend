@@ -3,7 +3,7 @@
      * Render blog roll on the homepage.
      */
 
-    import '$lib/styles/price.css';
+
     import Time from "svelte-time";
 
     export let posts;

@@ -3,7 +3,7 @@
      * Top momentum information row for the front page.
      */
 
-    import '$lib/styles/price.css';
+
     import { formatPriceChange } from "$lib/helpers/formatters";
     import { determinePriceChangeClass } from "$lib/helpers/price";
 
