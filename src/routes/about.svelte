@@ -1,5 +1,4 @@
 <script>
-    import "$lib/styles/bodytext.css";
     import ElevatorPitch from '$lib/content/ElevatorPitch.svelte';
 </script>
 

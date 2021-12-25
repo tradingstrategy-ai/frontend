@@ -27,7 +27,7 @@
 
 <script>
 	import PoolPreview from '$lib/pool/PoolPreview.svelte';
-	import '$lib/styles/bodytext.css';
+
     import {formatAmount, formatSizeGigabytes} from "$lib/helpers/formatters";
 
     export let impressiveNumbers;

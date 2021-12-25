@@ -15,7 +15,7 @@
 </script>
 
 <script>
-	import '$lib/styles/bodytext.css';
+
     import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
 
     export let breadcrumbs;

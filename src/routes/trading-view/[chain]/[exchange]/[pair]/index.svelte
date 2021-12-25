@@ -12,7 +12,7 @@
     import { backendUrl } from '$lib/config';
 
     import '$lib/styles/price.css';
-    import '$lib/styles/bodytext.css';
+
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     export async function load({ page, fetch }) {

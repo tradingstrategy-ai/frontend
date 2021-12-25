@@ -21,7 +21,7 @@
 </script>
 
 <script>
-    import '$lib/styles/bodytext.css';
+
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
     import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
     import MomentumTable from "$lib/content/MomentumTable.svelte";

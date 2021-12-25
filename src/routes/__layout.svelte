@@ -19,15 +19,23 @@
 
 
 <style>
-    .site-alert {
-        padding: 10px;
-        background: red;
-        color: white;
-    }
 
     :global(:root) {
 	    --price-up-green: #458b00;
 	    --price-down-red: #cc0000;
         --link-underline: #458b00;
     }
+
+    /**
+     * Body text helpers
+    */
+
+    :global(a.body-link) {
+        border-bottom: 1px solid var(--link-underline);
+    }
+
+    :global(a.body-link:hover) {
+        color: var(--link-underline);
+    }
+
 </style>

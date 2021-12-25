@@ -1,7 +1,7 @@
 <script>
     import {TabContent, TabPane} from 'sveltestrap';
     import StrategyNav from '$lib/strategy/StrategyNav.svelte';
-    import '$lib/styles/bodytext.css';
+
 </script>
 
 <svelte:head>

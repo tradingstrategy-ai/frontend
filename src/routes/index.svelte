@@ -47,7 +47,7 @@
 	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
-	import '$lib/styles/bodytext.css';
+
 	import HomeBlogroll from "$lib/content/HomeBlogroll.svelte";
 
 	export let topMomentum;
