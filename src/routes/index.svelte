@@ -57,7 +57,7 @@
 
 <svelte:head>
 	<title>Trading Strategy - Algorithmic trading strategy protocol</title>
-	<meta name="description" content="DeFi quantitative finance and systematic trading">
+	<meta name="description" content="DeFi market data and systematic trading">
 </svelte:head>
 
 
