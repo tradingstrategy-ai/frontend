@@ -1,15 +1,17 @@
 <script context="module">
-    import { browser } from '$app/env';
+    /**
+     * Exchange info page with all of its trading pairs.
+     */
+
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-    // Load and render exchange details on the server side
-    // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
     export async function load({ page, fetch }) {
         const exchange_slug = page.params.exchange_id;
         const chain_slug = page.params.chain;
 
-        //const details = `https://matilda.tradingstrategy.ai/exchange-details?exchange_slug=${exchangeId.toLowerCase()}&chain_slug=${chain}`;
+        // Load and render exchange details on the server side
+        // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
         const encoded = new URLSearchParams({exchange_slug, chain_slug});
         const apiUrl = `${backendUrl}/exchange-details?${encoded}`;
 
@@ -17,11 +19,8 @@
 
         if (!resp.ok) {
             if (resp.status === 404) {
+                // TODO: Might happen if the sitemap is out of sync
                 return;
-                //return {
-                //    status: 404,
-                //    error: `Exchange not found: ${exchange_slug}`
-                //};
             } else {
                 console.error(resp);
                 return {
@@ -35,14 +34,10 @@
 
         const details = await resp.json();
 
-        // console.log("Details", details);
-
         const readableNames = {
             ...breadcrumbTranslations,
             [exchange_slug]: details.human_readable_name
         };
-
-        //console.log("Received exchange details", details);
 
         return {
             props: {
@@ -61,88 +56,62 @@
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairExplorer from "$lib/explorer/PairExplorer.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
+    import ExchangeInfoTable from "$lib/content/ExchangeInfoTable.svelte";
 
     export let exchange_slug;
     export let chain_slug;
     export let details;
     export let breadcrumbs;
 
-    const chainName = details.chain_name;
-
 </script>
 
 <svelte:head>
     <title>
-        {details.human_readable_name} exchange on {chainName}
+        {details.human_readable_name} on {details.chain_name}
     </title>
     <meta
             name="description"
-            content={'Decentralise exchange top trading pairs for' + chainName}
+            content={`Decentralise exchange ${details.chain_name} on ${details.chain_name} blockchain`}
     />
 </svelte:head>
 
 <div class="container">
 	<Breadcrumb breadcrumbs={breadcrumbs} />
     <div class="exchange-content">
-        <h1 id='title' data-test-id="title">{details.human_readable_name} exchange on {chainName}</h1>
 
-        <div class="statistics" data-test-id="statistics">
-            <h2>Statistics</h2>
-            <!-- See ExchangeDetails at https://tradingstrategy.ai/api/explorer -->
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table table-summary table-summary-30d">
-                        <tr>
-                            <th></th>
-                            <td>
-                                <strong>Last 30 days</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Buy volume</th>
-                            <td>
-                                {formatDollar(details.buy_volume_30d || 0)}
-                            </td>
-                        </tr>
+        <div class="row">
+            <div class="col-md-12">
+                <h1 id='title' data-test-id="title">{details.human_readable_name} exchange on {details.chain_name}</h1>
+            </div>
+        </div>
 
-                        <tr>
-                            <th>Sell volume</th>
-                            <td>
-                                {formatDollar(details.sell_volume_30d || 0)}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <ExchangeInfoTable {details} />
+            </div>
 
-                <div class="col-md-6">
-                    <table class="table table-summary table-summary-all-time" data-test-id="pairs">
+            <div class="col-lg-8">
+                <p>
+                    <strong>{details.human_readable_name}</strong> is a decentralised exchange on  <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
+                </p>
 
-                        <tr>
-                            <th></th>
-                            <td>
-                                <strong>All time</strong>
-                            </td>
-                        </tr>
+                <p>
+                    {details.human_readable_name} has 30 days trade volume of <strong>{formatDollar((details.buy_volume_30d || 0) + (details.sell_volume_30d || 0))}</strong>
+                    and all-time volume of <strong>{formatDollar((details.buy_volume_all_time || 0) + (details.sell_volume_all_time || 0))}</strong>.
+                </p>
 
-                        <tr>
-                            <th>Buy volume</th>
-                            <td>
-                                {formatDollar(details.buy_volume_all_time || 0)}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>Sell volume</th>
-                            <td>
-                                {formatDollar(details.sell_volume_all_time || 0)}
-                            </td>
-                        </tr>
-                    </table>
-
-                </div>
 
             </div>
         </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="exchange-actions">
+                <a href="/trading-view/{chain_slug}" class="btn btn-primary">View exchanges on {details.chain_name}</a>
+                <a href="/trading-view/exchanges" class="btn btn-primary">View all exchanges</a>
+            </div>
+        </div>
+    </div>
 
         <div class="trading-pairs">
             <h2>Trading Pairs</h2>
@@ -160,8 +129,8 @@
 </div>
 
 <style>
-    .exchange-content, .statistics, .trading-pairs {
-	    margin: 60px 0;
+    .trading-pairs {
+	    margin-bottom: 60px;
     }
 
     /* Make sure columns do not wiggle when resorting and the data in the cells change */
@@ -169,12 +138,8 @@
         width: 17%; /* 1/6 */
     }
 
-    .trading-pairs  :global(.price-change-green)  {
-        color: #458b00;
-    }
-
-    .trading-pairs  :global(.price-change-red)  {
-        color: #cc0000;
+    .exchange-actions .btn {
+        margin: 20px 20px 20px 0;
     }
 
 </style>

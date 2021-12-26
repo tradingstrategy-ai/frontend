@@ -11,8 +11,6 @@
 
     import { backendUrl } from '$lib/config';
 
-
-
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     export async function load({ page, fetch }) {
