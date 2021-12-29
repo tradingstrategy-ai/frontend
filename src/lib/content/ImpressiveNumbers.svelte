@@ -15,13 +15,11 @@
 
     <p class="lead">
         <span class="pulse"></span>
-        Current <a href="/trading-view">market feeds</a> include
+        Price, liquidity and systematic trading data for
         <a href="/trading-view/blockchains"><strong>{numbers.blockchains}</strong> blockchains</a>,
-        <a href="/trading-view/exchanges"><strong>{formatAmount(numbers.exchanges)}</strong> decentralised exchanges</a> with
+        <a href="/trading-view/exchanges"><strong>{formatAmount(numbers.exchanges)}</strong> decentralised exchanges</a>,
         <a href="/trading-view/trading-pairs"><strong>{formatAmount(numbers.pairs)}</strong> trading pairs</a> and
         <strong>{formatAmount(numbers.tokens)}</strong> tokens.
-        Utilise <a href="/trading-view"><strong>{formatSizeGigabytes(numbers.database_size)} GB</strong> market data</a>
-        to trade systematically.
     </p>
 </div>
 
@@ -38,6 +36,7 @@
 
     .lead {
         margin-top: 2rem;
+        max-width: 950px;
     }
 
     .impressive-numbers {
