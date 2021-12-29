@@ -52,6 +52,17 @@
   import Sidebar from "$lib/blog/Sidebar.svelte";
   import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
 
+  // This will prevent any interactive JavaScript to load on blog (as there should be none)
+  export const hydrate = false;
+
+  // Our blog posts contain links to /docs
+  // Svelte internal router will try to intercept links in the blog posts
+  // and gives 404 because docs are not Svelte pages.
+  // This fixes this - and makes all links on the blog post to behave like normal
+  // links.
+  // https://kit.svelte.dev/docs#ssr-and-javascript-router
+  export const router = false;
+
   // https://stackoverflow.com/a/57377341/315168
   function wrapResponsive(el) {
       const wrapper = document.createElement('div');
