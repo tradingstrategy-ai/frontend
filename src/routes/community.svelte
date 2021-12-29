@@ -1,6 +1,6 @@
 <svelte:head>
-    <title>Learn and meet Trading Strategy</title>
-    <meta name="description" content="Learn algo trading and follow the protocol development">
+    <title>Community</title>
+    <meta name="description" content="Blog, Discord and discussion">
 </svelte:head>
 
 

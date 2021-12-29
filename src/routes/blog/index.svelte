@@ -26,8 +26,8 @@
 </script>
 
 <svelte:head>
-    <title>Trading Strategy blog</title>
-    <meta name="description" content="Follow our decentralised algorithmic trading protocol development">
+    <title>Blog</title>
+    <meta name="description" content="Latest on algorithmic trading">
 </svelte:head>
 
 

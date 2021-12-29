@@ -34,8 +34,8 @@
 </script>
 
 <svelte:head>
-	<title>Trading Strategy - Decentralised exchange market data</title>
-	<meta name="description" content="Real-time and backtesting OHLCV data">
+	<title>Trading Strategy</title>
+	<meta name="description" content="XEX token pair price, volume and liquidity data">
 </svelte:head>
 
 <main>
