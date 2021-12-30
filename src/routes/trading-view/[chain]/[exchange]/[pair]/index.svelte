@@ -208,7 +208,7 @@
 	<title>
         {summary.pair_symbol} token pair price on {details.exchange_name}
     </title>
-	<meta name="description" content={`Price and liquidity for ${summary.pair_symbol} on ${details.exchange_name} on ${details.chain_name}`>
+	<meta name="description" content={`Price and liquidity for ${summary.pair_symbol} on ${details.exchange_name} on ${details.chain_name}`}>
 </svelte:head>
 
 <div class="container">

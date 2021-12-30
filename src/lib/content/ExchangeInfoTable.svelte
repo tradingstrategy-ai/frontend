@@ -20,6 +20,19 @@
     </tr>
 
     <tr>
+        <th>Homepage</th>
+        <td>
+            {#if details.homepage}
+                <a href={details.homepage}>
+                    {details.homepage}
+                </a>
+            {:else}
+                Not available
+            {/if}
+        </td>
+    </tr>
+
+    <tr>
         <th>Volume 30d</th>
         <td>{formatDollar((details.buy_volume_30d || 0) + (details.sell_volume_30d || 0))}</td>
     </tr>

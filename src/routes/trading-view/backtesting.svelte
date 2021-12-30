@@ -122,8 +122,8 @@
 </script>
 
 <svelte:head>
-	<title>DEX trading and quantitative finance datasets</title>
-	<meta name="description" content="Download OHLCV and liquidity data for DEXes">
+	<title>Historical DEX trading data</title>
+	<meta name="description" content="Download price, OHLCV and liquidity backtesting data">
 </svelte:head>
 
 <div class="container container-main">
@@ -131,11 +131,10 @@
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
-				<h1>Decentralised trading data for backtesting</h1>
-
+				<h1>Historical DEX trading data</h1>
 
 				<p>
-					The following on-chain trade and liquidity datasets are available for decentralised finance (DeFi) research,
+					Trading Strategy protocol datasets are available for decentralised finance (DeFi) research,
 					cryptocurrency algorithmic trading, automated trading strategy research and execution.
 				</p>
 
