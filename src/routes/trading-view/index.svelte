@@ -34,8 +34,8 @@
 </script>
 
 <svelte:head>
-	<title>Trading Strategy</title>
-	<meta name="description" content="XEX token pair price, volume and liquidity data">
+	<title>DEX trading view</title>
+	<meta name="description" content="DEX trading view">
 </svelte:head>
 
 <main>
