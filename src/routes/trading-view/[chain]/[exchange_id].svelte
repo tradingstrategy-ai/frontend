@@ -123,7 +123,7 @@
             <div class="exchange-actions">
                 <a href={details.homepage} class="btn btn-primary">Visit {nameDetails.name}</a>
                 <a href={details.blockchain_explorer_link} class="btn btn-primary">View {nameDetails.name} on blockchain exlorer</a>
-                <a href="/trading-view/exchanges" class="btn btn-primary">View all exchanges</a>
+                <a href="/trading-view/backtesting" class="btn btn-primary">Download historical data</a>
             </div>
         </div>
     </div>

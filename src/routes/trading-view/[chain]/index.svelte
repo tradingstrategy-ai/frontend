@@ -73,105 +73,106 @@
     <Breadcrumb breadcrumbs={breadcrumbs}  />
 
     <div class="exchange-content">
-        <h1>
-            <img alt={`${details.chain_name} logo`} class="chain-logo" src={details.chain_logo} />
-            {details.chain_name} blockchain
-        </h1>
-
-        <p>
-
-        </p>
-
-        <table class="table">
-
-            <tr>
-                <th>Blockchain website</th>
-                <td>
-                    <a class="homepage" href={details.homepage}>
-                        {formatUrlAsDomain(details.homepage)}
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    Exchanges
-                    <p class="hint">Decentralised exchanges with market data available on Trading Strategy</p>
-                </th>
-                <td>{details.exchanges}</td>
-            </tr>
-
-            <tr>
-                <th>
-                    Untracked trading pairs
-                    <p class="hint">
-                        Not all trading pairs are being tracked.
-                        <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">See the inclusion criteria.</a>
-                    </p>
-                </th>
-                <td>-</td>
-            </tr>
-
-            <tr>
-                <th>
-                    Tracked trading pairs
-                    <p class="hint">Total trading pairs on Trading Strategy for this blockchain.</p>
-                </th>
-                <td>{formatAmount(details.pairs)}</td>
-            </tr>
-
-            <tr>
-                <th>
-                    Active trading pairs
-                    <p class="hint">
-                        Trading pairs with market data feeds.
-                        Active trading pairs have enough trading activity to have data feeds generated for them.
-                    </p>
-                </th>
-                <td>{formatAmount(details.tracked_pairs)}</td>
-            </tr>
-
-            <tr>
-                <th>
-                    First indexed block
-                    <p class="hint">Starting block when Trading Strategy started collect data</p>
-                </th>
-                <td>{formatAmount(details.start_block)}</td>
-            </tr>
-
-            <tr>
-                <th>
-                    Last indexed block
-                    <p class="hint">Currently seen last block with available trading data</p>
-                </th>
-                <td>{formatAmount(details.end_block)}</td>
-            </tr>
-
-            <!--
-            <tr>
-                <th>
-                    First indexed trade
-                    <p class="hint">When the first trade was detected on this chain</p>
-                </th>
-                <td>
-                    <HappyDatetime when={details.first_swap_at} />
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    Last indexed trade
-                    <p class="hint">Last trade seen on this chain</p>
-                </th>
-                <td>
-                    <HappyDatetime when={details.last_swap_at} />
-                </td>
-            </tr>
-            -->
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <img alt={`${details.chain_name} logo`} class="chain-logo" src={details.chain_logo} />
+                    {details.chain_name} blockchain
+                </h1>
+            </div>
+        </div>
 
 
-        </table>
+        <div class="row">
+            <div class="col-lg-6">
 
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Homepage</th>
+                            <td>
+                                <a class="homepage" href={details.homepage}>
+                                    {formatUrlAsDomain(details.homepage)}
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Exchanges
+                                <p class="hint">Decentralised exchanges with market data available on Trading Strategy</p>
+                            </th>
+                            <td>{details.exchanges}</td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Tracked trading pairs
+                                <p class="hint">Total trading pairs on Trading Strategy for this blockchain.</p>
+                            </th>
+                            <td>{formatAmount(details.pairs)}</td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Active trading pairs
+                                <p class="hint">
+                                    Trading pairs with market data feeds.
+                                    Active trading pairs have enough trading activity to have data feeds generated for them.
+                                    <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">See the inclusion criteria.</a>
+                                </p>
+                            </th>
+                            <td>{formatAmount(details.tracked_pairs)}</td>
+                        </tr>
+
+                        <!--
+                        <tr>
+                            <th>
+                                First indexed trade
+                                <p class="hint">When the first trade was detected on this chain</p>
+                            </th>
+                            <td>
+                                <HappyDatetime when={details.first_swap_at} />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Last indexed trade
+                                <p class="hint">Last trade seen on this chain</p>
+                            </th>
+                            <td>
+                                <HappyDatetime when={details.last_swap_at} />
+                            </td>
+                        </tr>
+                        -->
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-lg-6">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>
+                                First indexed block
+                                <p class="hint">Starting block when Trading Strategy started collect data</p>
+                            </th>
+                            <td>{formatAmount(details.start_block)}</td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Last indexed block
+                                <p class="hint">Currently seen last block with available trading data</p>
+                            </th>
+                            <td>{formatAmount(details.end_block)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <div class="exchange-explorer-wrapper">
@@ -204,17 +205,17 @@
 
 <style>
 
-    .table {
-        max-width: 600px;
-    }
-
     h1 {
         margin: 20px 0;
     }
 
-    .exchange-explorer-wrapper,
+    tbody tr:first-child th,
+    tbody tr:first-child td {
+        border-top: 0;
+    }
+
     .pair-explorer-wrapper {
-        margin: 60px 0;
+        margin-top: 60px;
     }
 
 	.chain-logo {
