@@ -8,6 +8,20 @@
     export let summary;
     export let details;
 
+    /**
+     * Reverse-calculate raw price using the US/quota token exchange rate
+     */
+    function calculateTokenPrice() {
+        if(!summary.exchange_rate) {
+            return null;
+        }
+
+        const tokenPrice = summary.usd_price_latest / summary.exchange_rate;
+        return tokenPrice;
+    }
+
+    let tokenPrice = calculateTokenPrice();
+
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
 </script>
 
@@ -18,6 +32,10 @@
     </tr>
 
     <tr>
+        <th>Quoted in</th>
+        <td>{summary.quote_token_symbol_friendly}</td>
+    </tr>
+    <tr>
         <th>Price</th>
         <td>
             <strong class="{priceChangeColorClass}">
@@ -25,6 +43,17 @@
             </strong>
         </td>
     </tr>
+
+    {#if tokenPrice}
+        <tr>
+            <th>Token price</th>
+            <td>
+                <strong class="{priceChangeColorClass}">
+                    { formatDollar(tokenPrice, 3, 3, "") } {summary.quote_token_symbol_friendly}
+                </strong>
+            </td>
+        </tr>
+    {/if}
 
     <tr>
         <th>Change 24h</th>
@@ -49,6 +78,14 @@
         </td>
     </tr>
 
+    {#if summary.exchange_rate }
+        <tr>
+            <th>Dollar exchange rate</th>
+            <td>
+                { formatDollar(summary.exchange_rate, 3, 3, "") } USD / {summary.quote_token_symbol_friendly}
+            </td>
+        </tr>
+    {/if}
 
     <tr>
         <th>Trading pair</th>
