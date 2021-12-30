@@ -10,8 +10,8 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ url, session, fetch, context }) {
-		const url = `https://tradingstrategy.ai/api/datasets`;
-		const res = await fetch(url);
+		const apiUrl = `https://tradingstrategy.ai/api/datasets`;
+		const res = await fetch(apiUrl);
 
 		const datasets = await res.json();
 
