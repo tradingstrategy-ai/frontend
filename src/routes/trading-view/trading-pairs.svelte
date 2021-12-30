@@ -5,13 +5,13 @@
 
 	import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-	export async function load({ page }){
+	export async function load({ url }){
         const pathTranslations = {
             "trading-view": "Trading data",
 			"trading-pairs": "All trading pairs",
         };
 
-		const crumbs = buildBreadcrumbs(page.path, pathTranslations);
+		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
 
 	  	return {
 			props: {

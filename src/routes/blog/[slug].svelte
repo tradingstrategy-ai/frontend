@@ -8,7 +8,7 @@
   import { dev } from "$app/env";
   import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-  export async function load({ page, fetch, session, stuff }) {
+  export async function load({ url, params, fetch }) {
       const ghostKeys = getGhostCredentials();
 
       const api = new GhostContentAPI({
@@ -17,7 +17,7 @@
         version: "v3"
       });
 
-      const slug = page.params.slug;
+      const slug = params.slug;
 
       // See post data model
       // https://ghost.org/docs/content-api/#posts
@@ -38,7 +38,7 @@
       return {
           props: {
               post,
-              breadcrumbs: buildBreadcrumbs(page.path, readableNames),
+              breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
           }
       }
 

@@ -7,7 +7,7 @@
   // Pure server-side rendered page - no interactive JS
   export const hydrate = true;
 
-  export async function load({ page, fetch, session, stuff }) {
+  export async function load({ fetch }) {
 
       return {
           props: {
