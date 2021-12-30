@@ -7,8 +7,8 @@
      * Display chain information and indexing status
      */
 
-    export async function load({ page, fetch }) {
-        const chain_slug = page.params.chain;
+    export async function load({ url, params, fetch }) {
+        const chain_slug = params.chain;
 
         // Load and render exchange details on the server side
         // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
@@ -45,7 +45,7 @@
         return {
             props: {
                 details,
-                breadcrumbs: buildBreadcrumbs(page.path, readableNames)
+                breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         };
     }

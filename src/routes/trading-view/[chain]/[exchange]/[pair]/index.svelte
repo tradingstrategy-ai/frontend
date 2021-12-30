@@ -13,11 +13,11 @@
 
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-    export async function load({ page, fetch }) {
+    export async function load({ url, params, fetch }) {
 
-        const exchange_slug = page.params.exchange;
-        const chain_slug = page.params.chain;
-        const pair_slug = page.params.pair;
+        const exchange_slug = params.exchange;
+        const chain_slug = params.chain;
+        const pair_slug = params.pair;
         const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
         const apiUrl = `${backendUrl}/pair-details?${encoded}`;
 
@@ -62,7 +62,7 @@
                 summary,
                 details,
                 daily,
-				breadcrumbs: buildBreadcrumbs(page.path, readableNames)
+				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         }
     }

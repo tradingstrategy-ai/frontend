@@ -9,7 +9,7 @@
 	export const router = browser;
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
-	export async function load({ page, session, fetch, context }) {
+	export async function load({ url, session, fetch, context }) {
 		const url = `https://tradingstrategy.ai/api/datasets`;
 		const res = await fetch(url);
 
@@ -23,7 +23,7 @@
 			return {
 				props: {
 					datasets,
-					breadcrumbs: buildBreadcrumbs(page.path, readableNames)
+					breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
 				}
 			};
 		}

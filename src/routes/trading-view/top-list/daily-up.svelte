@@ -5,7 +5,7 @@
     import { loadMomentumData } from "$lib/content/momentum.ts";
     import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-    export async function load({ page, fetch }) {
+    export async function load({ url, fetch }) {
         const breadcrumbs = {
             "trading-view": "Trading data",
             "top-list": "Top lists",
@@ -14,7 +14,7 @@
         return {
             props: {
                 momentumData: await loadMomentumData(fetch),
-                breadcrumbs: buildBreadcrumbs(page.path, breadcrumbs),
+                breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs),
             }
         };
     }

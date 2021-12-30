@@ -7,13 +7,13 @@
 
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-	export async function load({ page }){
+	export async function load({ url }){
         const pathTranslations = {
             "trading-view": "Trading data",
 			"exchanges": "Decentralised exchanges",
         };
 
-		const crumbs = buildBreadcrumbs(page.path, pathTranslations);
+		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
 
 	  	return {
 			props: {

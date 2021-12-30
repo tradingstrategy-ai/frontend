@@ -8,7 +8,7 @@
      *
      */
 
-    export async function load({ page, fetch }) {
+    export async function load({ url, fetch }) {
 
         // Load and render exchange details on the server side
         // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
@@ -42,7 +42,7 @@
         return {
             props: {
                 chains,
-                breadcrumbs: buildBreadcrumbs(page.path, breadcrumbs),
+                breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs),
             }
         };
     }

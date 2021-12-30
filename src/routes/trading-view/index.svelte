@@ -4,7 +4,7 @@
 	 */
     import { backendUrl } from '$lib/config';
 
-    export async function load({ page, fetch }) {
+    export async function load({ fetch }) {
 
         const impressiveNumbersResp = await fetch(`${backendUrl}/impressive-numbers`);
         let impressiveNumbers;

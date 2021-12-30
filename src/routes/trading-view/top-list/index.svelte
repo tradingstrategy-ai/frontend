@@ -1,14 +1,14 @@
 <script context="module">
     import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-    export async function load({ page, fetch }) {
+    export async function load({ url, fetch }) {
         const breadcrumbs = {
             "trading-view": "Trading data",
             "top-list": "Top lists",
         };
         return {
             props: {
-                breadcrumbs: buildBreadcrumbs(page.path, breadcrumbs),
+                breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs),
             }
         };
     }

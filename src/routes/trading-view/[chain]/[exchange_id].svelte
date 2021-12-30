@@ -6,9 +6,9 @@
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
-    export async function load({ page, fetch }) {
-        const exchange_slug = page.params.exchange_id;
-        const chain_slug = page.params.chain;
+    export async function load({ url, params, fetch }) {
+        const exchange_slug = params.exchange_id;
+        const chain_slug = params.chain;
 
         // Load and render exchange details on the server side
         // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
@@ -45,7 +45,7 @@
                 chain_slug,
                 details,
                 backendUrl,
-                breadcrumbs: buildBreadcrumbs(page.path, readableNames)
+                breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         };
     }
