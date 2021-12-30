@@ -206,9 +206,9 @@
 
 <svelte:head>
 	<title>
-        {summary.pair_symbol} trading on {details.exchange_name} on {details.chain_name}
+        {summary.pair_symbol} token pair price on {details.exchange_name}
     </title>
-	<meta name="description" content={"Price chart and technical analysis for trading " + summary.pair_symbol + " on " + details.exchange_name + " on " + details.chain_name}>
+	<meta name="description" content={`Price and liquidity for ${summary.pair_symbol} on ${details.exchange_name} on ${details.chain_name}`>
 </svelte:head>
 
 <div class="container">
@@ -220,7 +220,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h1>
-                    {summary.pair_symbol} trading on
+                    {summary.pair_symbol} token pair on
                     <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} </a>
                     on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
                 </h1>
