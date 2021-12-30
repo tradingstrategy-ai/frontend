@@ -64,7 +64,7 @@
 <main>
 	<section class="card-home card-jumbo">
 		<div class="container">
-			<h1>Algorithmic trading protocol for decentralised markets</h1>
+			<p class="heading-p">Algorithmic trading protocol for decentralised markets</p>
 
 			{#if impressiveNumbers}
 				<ImpressiveNumbers numbers={impressiveNumbers} />
@@ -144,13 +144,24 @@
 	}
 
 	.card-jumbo p {
-		text-align: center;
 	}
 
 	h1 {
 		width: 100%;
 		color: black;
 		font-size: 2.3rem;
+	}
+
+	/**
+	 * Optimize for SEO - google was not picking up heading
+	 */
+	.heading-p {
+		width: 100%;
+		color: black;
+		font-size: 2.3rem;
+		font-family: "Exo 2",sans-serif;
+    	font-weight: 400;
+		text-align: left;
 	}
 
 	.heading-strategies,
