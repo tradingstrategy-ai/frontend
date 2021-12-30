@@ -29,7 +29,10 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			},
 
 			// https://kit.svelte.dev/docs#configuration-hostheader
-			hostHeader: 'X-Forwarded-Host'
+			headers: {
+				host: 'X-Forwarded-Host',
+				protocol: 'X-Forwarded-Proto'
+			}
 		}
 
 	};
