@@ -3,7 +3,7 @@
      * Render exchange summary table on exchange page.
      */
 
-    import { formatDollar } from '$lib/helpers/formatters';
+    import {formatAmount, formatDollar, formatUnixTimestampAsMonth, formatUrlAsDomain} from '$lib/helpers/formatters';
     import {parseExchangeName} from "$lib/helpers/exchange";
 
     export let details;
@@ -24,7 +24,7 @@
         <td>
             {#if details.homepage}
                 <a href={details.homepage}>
-                    {details.homepage}
+                    {formatUrlAsDomain(details.homepage)}
                 </a>
             {:else}
                 Not available
@@ -42,6 +42,31 @@
         <td>{formatDollar((details.buy_volume_all_time || 0) + (details.sell_volume_all_time || 0))}</td>
     </tr>
 
+    <tr>
+        <th>Trading pairs</th>
+        <td>{formatAmount(details.pair_count)}</td>
+    </tr>
+
+    <tr>
+        <th>
+            <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">
+                Tracked trading pairs
+            </a>
+        </th>
+        <td>{formatAmount(details.active_pair_count)}</td>
+    </tr>
+
+
+    {#if details.first_trade_at}
+        <tr>
+            <th>Launched</th>
+            <td>
+                {formatUnixTimestampAsMonth(details.first_trade_at)}
+            </td>
+        </tr>
+    {/if}
+
+
     {#if nameDetails.version != 1 }
         <tr>
             <th>Version</th>
@@ -58,6 +83,17 @@
         <th>Blockchain</th>
         <td>
             <a href="/trading-view/{details.chain_slug}">{details.chain_name}</a>
+        </td>
+    </tr>
+
+    <tr>
+        <th>
+            <a rel="external" href="https://tradingstrategy.ai/docs/programming/internal-id.html">
+                Internal id
+            </a>
+        </th>
+        <td>
+            {details.exchange_id}
         </td>
     </tr>
 
@@ -84,6 +120,11 @@
 
     a {
         border-bottom: 1px solid var(--link-underline);
+    }
+
+    th a {
+        font-weight: bold;
+        color: #44476a;
     }
 
     a:hover {

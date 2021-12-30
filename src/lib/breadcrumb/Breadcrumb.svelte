@@ -1,20 +1,40 @@
 <script lang="ts">
+  /**
+   *
+   * Render the top breadcrumbs path bar.
+   *
+   * For Google breadcrumbs SEO metadata see
+   *
+   * https://developers.google.com/search/docs/data-types/breadcrumbs
+   */
   export let breadcrumbs = [
       { url: '/',  name: 'empty not working', linkActive: false, head: true  },
     ]
 </script>
 
 <nav aria-label="breadcrumb breadcrumb-gray" data-test-id="breadcrumb">
-  <ol class="breadcrumb breadcrumb-gray" >
+  <ol class="breadcrumb breadcrumb-gray" itemscope itemtype="http://schema.org/BreadcrumbList">
     {#each breadcrumbs  as breadcrumb, i}
-      <li class="breadcrumb-item">
+      <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
         {#if breadcrumb.head || !breadcrumb.url }
-          {breadcrumb.name}
+            <span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+              <span itemprop="name">
+                {breadcrumb.name}
+              </span>
+            </span>
         {:else}
           {#if breadcrumb.linkActive}
-            <a href={breadcrumb.url}> {breadcrumb.name} </a>
+            <a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+              <span itemprop="name">
+                {breadcrumb.name}
+              </span>
+            </a>
           {:else}
-            {breadcrumb.name}
+            <span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+              <span itemprop="name">
+                {breadcrumb.name}
+              </span>
+            </span>
           {/if}
         {/if}
       </li>

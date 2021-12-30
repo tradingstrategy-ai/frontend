@@ -147,6 +147,35 @@ export function formatUnixTimestamp(ts: number): string {
 }
 
 /**
+ * Format UNIX timestamp
+ * @param ts Timestamp in seconds
+ */
+export function formatUnixTimestampAsMonth(ts: number): string {
+
+    if(!ts) {
+        return "---";
+    }
+
+    const d = new Date(ts * 1000);
+    // https://stackoverflow.com/a/67699283/315168
+    return d.toLocaleString('en-us',{month:'short', year:'numeric'})
+}
+
+/**
+ * Format UNIX timestamp
+ * @param ts Timestamp in seconds
+ */
+export function formatUnixTimestampAsDate(ts: number): string {
+
+    if(!ts) {
+        return "---";
+    }
+
+    const d = new Date(ts * 1000);
+    return d.toDateString();
+}
+
+/**
  * Grabs only the domain part from the URL
  */
 export function formatUrlAsDomain(u: string): string {
@@ -177,3 +206,4 @@ export function formatUSDCBalance(web3, b: string, decimals: number): string {
     const val =  n / Math.pow(10, decimals);
     return val.toLocaleString("en",  {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
+
