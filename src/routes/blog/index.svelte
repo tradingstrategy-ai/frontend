@@ -3,8 +3,9 @@
   // Ghost client
   import {fetchBlogroll} from "$lib/blog/feed";
 
+  // TODO: Mobile menu requires hydrate
   // Pure server-side rendered page - no interactive JS
-  export const hydrate = false;
+  export const hydrate = true;
 
   export async function load({ page, fetch, session, stuff }) {
 

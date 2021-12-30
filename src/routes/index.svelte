@@ -5,9 +5,10 @@
     import { backendUrl } from '$lib/config';
 	import {fetchBlogroll} from "$lib/blog/feed";
 
+	// TODO: Mobile menu requires hydrate
 	// This will prevent any interactive JavaScript on the front page,
 	// but it will also prevent extra request to ghost.io to get the blog feed
-	export const hydrate = false;
+	export const hydrate = true;
 
 	// Load top momentum data to display on the front page
     // https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
