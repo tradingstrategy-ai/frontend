@@ -89,11 +89,11 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <ExchangeInfoTable {details} />
             </div>
 
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <p>
                     <strong>{details.human_readable_name}</strong> is a decentralised exchange on  <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
                 </p>

@@ -235,11 +235,11 @@
 
         <div class="row">
 
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <PairInfoTable {summary} {details} />
             </div>
 
-            <div class="col-lg-8">
+            <div class="col-lg-7">
 
                 <p>
                     The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
