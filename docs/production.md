@@ -1,6 +1,8 @@
 # Production
 
-This will run server-side generated (SSR) pages.
+This will run server-side generated (SSR) pages using node.js server.
+
+The server default port is 3000.
 
 ```shell
 screen -S frontend
