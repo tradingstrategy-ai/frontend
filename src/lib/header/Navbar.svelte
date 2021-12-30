@@ -102,7 +102,7 @@
             </li> -->
 
             <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Docs</a>
+              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
             </li>
 
             <li class="nav-item" data-testid={'navigation-link'}>

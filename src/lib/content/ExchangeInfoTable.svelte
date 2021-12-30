@@ -33,12 +33,20 @@
     </tr>
 
     <tr>
-        <th>Volume 30d</th>
+        <th>
+            <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html#volume-calculations">
+                Volume 30d
+            </a>
+        </th>
         <td>{formatDollar((details.buy_volume_30d || 0) + (details.sell_volume_30d || 0))}</td>
     </tr>
 
     <tr>
-        <th>Volume all-time</th>
+        <th>
+            <a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html#volume-calculations">
+                Volume all-time
+            </a>
+        </th>
         <td>{formatDollar((details.buy_volume_all_time || 0) + (details.sell_volume_all_time || 0))}</td>
     </tr>
 
