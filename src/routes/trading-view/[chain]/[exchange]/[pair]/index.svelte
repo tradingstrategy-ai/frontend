@@ -361,8 +361,10 @@
      */
     @media (min-width: 992px) {
         .chart-wrapper {
+            /*
             min-height: 820px;
             contain: size paint;
+             */
         }
 
         :global(.skeleton) {

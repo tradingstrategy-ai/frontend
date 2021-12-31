@@ -316,10 +316,7 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
     const tzDate = ts => uPlot.tzDate(new Date(ts * 1e3), "Etc/UTC");
 
     function getSize() {
-        // return {
-        //    width: window.innerWidth - 100,
-        //    height: window.innerHeight - 200,
-        //}
+
         return {
             width: elem.offsetWidth,
             height: elem.offsetHeight - 40,
@@ -332,11 +329,22 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
     // We do not dynamically manipulate axes
     // so you get whatever size you have on the page load
     const largeScreen = size.width > 900;
+
+    let minHeight;
+    if(largeScreen) {
+        // min 600px height
+        minHeight = 600;
+    } else {
+        minHeight = 400;
+    }
+
+    size.height = Math.min(size.height, minHeight);
+
     let axes;
 
     // SHIB price is in very small decimals $0.0000363
     // dynamically adjust price axis label widths if the price is very low
-    let priceColumnWidth = 55;
+    let priceColumnWidth = 60;
     if(data) {
         // The open price of the first tick
         if(data[1]) {
@@ -440,7 +448,11 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
     let u = new uPlot(opts, data, elem);
 
     // console.log("uPlot draw complete", u);
-    resizeCallback = throttle(() => u.setSize(getSize()), 100);
+    resizeCallback = throttle(() => {
+            let size = getSize();
+            size.height = Math.min(size.height, minHeight);
+            u.setSize(size);
+        }, 100);
 
     window.addEventListener("resize", resizeCallback);
     //window.addEventListener("resize", e => {u.setSize(getSize());
