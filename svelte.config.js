@@ -1,6 +1,5 @@
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
-import adapter from '@sveltejs/adapter-static';
 
 let config;
 
@@ -11,11 +10,23 @@ console.log(`Frontend SSR: ${FRONTEND_SSR}`);
 console.log(`Frontend post: ${FRONTEND_PORT}`);
 
 if(FRONTEND_SSR || process.env.PRODUCTION) {
+	console.log("Using SSR config");
 	// build server-side rendering
 	config = {
+
+		onwarn: (warning, defaultHandler) => {
+			// Disable all warnings during the local compilation for now
+		},
+
+		compilerOptions: {
+			enableSourcemap: true,
+		},
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
-		preprocess: preprocess(),
+		preprocess: preprocess({
+			sourceMap: true,
+		}),
+
 
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
@@ -32,7 +43,8 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			headers: {
 				host: 'X-Forwarded-Host',
 				protocol: 'X-Forwarded-Proto'
-			}
+			},
+
 		}
 
 	};
@@ -40,9 +52,20 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 	// build single page app
 	console.log("Using local dev env config");
 	config = {
+
+		onwarn: (warning, defaultHandler) => {
+			// Disable all warnings during the local compilation for now
+		},
+
+		compilerOptions: {
+			enableSourcemap: true,
+		},
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
-		preprocess: preprocess(),
+		preprocess: preprocess({
+			sourceMap: true,
+		}),
+
 
 		kit: {
 			// hydrate the <div id="svelte"> element in src/app.html
@@ -53,7 +76,6 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 
 config.kit.vite = {
 	optimizeDeps: {
-		include: ["highlight.js/lib/core"],
 	},
 	server: {
 		fs: {
@@ -61,7 +83,18 @@ config.kit.vite = {
 		  	`${process.env.PWD}`
 		  ]
 		}
-  	}
+  	},
+
+	// Disable 300kb vendor.js chunk generation
+	// https://rollupjs.org/guide/en/#big-list-of-options
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: undefined
+			}
+		}
+	}
+
 }
 
 export default config;

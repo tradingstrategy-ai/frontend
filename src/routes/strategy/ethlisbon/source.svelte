@@ -1,7 +1,4 @@
 <script>
-  import Highlight from "svelte-highlight";
-  import python from "svelte-highlight/src/languages/python";
-  import github from "svelte-highlight/src/styles/github";
 
   const code = `# Modified double 7 for
 import pandas as pd
@@ -130,11 +127,12 @@ class Double7(DEXStrategy):
 </script>
 
 <svelte:head>
-  {@html github}
 </svelte:head>
 
 <div class="row">
   <div class="col-md-12">
-    <Highlight language={python} {code} />
+    <pre>
+      {code}
+    </pre>
   </div>
 </div>
