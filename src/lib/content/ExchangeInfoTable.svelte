@@ -121,8 +121,8 @@
     /* --breakpoint-md */
     @media(max-width: 992px) {
         /* On mobile, don't render headings too wide */
-        table th {
-            width: 30%;
+        table th, table td {
+            border-bottom: 1px solid #ccbeb3;
         }
     }
 

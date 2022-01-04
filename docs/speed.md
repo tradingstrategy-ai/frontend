@@ -32,7 +32,7 @@ The downside is, of course, that we do not have proper styling with fonts on mob
 However I consider Core Web Vitals score more important than artistic essence of the website
 on mobile.
 
-![img.png](font-breakdown.png)
+![Download bytes breakdown](font-breakdown.png)
 			 
 # Analyzing vendor.js bundle
 
