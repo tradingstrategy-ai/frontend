@@ -7,7 +7,7 @@ describe('Traging strategy Home', () => {
     it('User should be able to render the home page with header and navigation', () => {
         cy.contains('Algorithmic trading protocol for decentralised markets').should('be.visible');
         cy.contains(/Coming soon/i).should('be.visible');
-        cy.get('[data-cy=navigation]').get('li').should('have.length', 10)
+        cy.get('[data-cy=navigation]').get('li').should('have.length', 11)
         cy.get('[data-cy=logo]')
     });
 
@@ -22,9 +22,6 @@ describe('Traging strategy Home', () => {
         cy.intercept('/community').as("community");
         cy.contains(/community/i).click();
         cy.wait("@community");
-        cy.get('[data-cy=navigation]')
-            .last()
-            .should('have.text', 'Trading data About Docs Community  Twitter  Discord  Telegram')
     });
 
     it('logo should redirect an user back to home', () => {
@@ -33,12 +30,6 @@ describe('Traging strategy Home', () => {
         cy.contains(/about/i).click();
         cy.wait("@about");
     });
-
-    it('First in link in nav bar menu is Trading Data', () => {
-        cy.get('[data-cy=navigation]')
-            .first()
-            .should('have.text', 'Trading data About Docs Community  Twitter  Discord  Telegram')
-    })
 
     it('Use can navigate the site from home page', () => {
         cy.intercept('/').as("home");

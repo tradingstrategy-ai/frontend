@@ -80,7 +80,7 @@
 
 <div class="container">
 	<Breadcrumb breadcrumbs={breadcrumbs} />
-    <div class="exchange-content">
+    <div class="exchange-content"  data-test-id="statistics">
 
         <div class="row">
             <div class="col-md-12">
@@ -128,7 +128,7 @@
         </div>
     </div>
 
-        <div class="trading-pairs">
+        <div class="trading-pairs" data-test-id="pairs">
             <h2>Trading Pairs</h2>
 
             <StaleDataWarning chainSlugs={[details.chain_slug]}/>
