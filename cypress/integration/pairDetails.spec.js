@@ -5,7 +5,7 @@ describe('Traging strategy Pair Details', () => {
     })
 
     it('has a navigation about link', () => {
-        cy.contains(/ETH-USDT trading on Uniswap v2 on Ethereum/i);
+        cy.contains(/ETH-USDT token pair on Uniswap v2 on Ethereum/i);
         cy.get('.navbar-nav li')
             .first()
             .should('have.text', 'Trading data')
