@@ -62,7 +62,7 @@ export const handle: Handle = async ({ request, resolve }) => {
 	if (response.headers["content-type"] === "text/html") {
 		// Only try to transform HTML pages,
 		// do not touch binary etc. loads
-		fixLinkModulePreloadIssue(response);
+		// fixLinkModulePreloadIssue(response);
 	}
 
 	return response;
