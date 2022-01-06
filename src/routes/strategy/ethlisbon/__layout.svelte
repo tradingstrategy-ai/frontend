@@ -15,7 +15,7 @@
           ["source"]: "Algorithm source code",
       };
 
-    $: breadcrumbs = buildBreadcrumbs($page.path, readableNames);
+    $: breadcrumbs = buildBreadcrumbs($page.url.pathname, readableNames);
 
 </script>
 

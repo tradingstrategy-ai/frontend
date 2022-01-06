@@ -1,7 +1,7 @@
 <script>
     import { page } from '$app/stores';
 
-    $: current = $page.path.split('/').pop();
+    $: current = $page.url.pathname.split('/').pop();
 </script>
 
 <div>

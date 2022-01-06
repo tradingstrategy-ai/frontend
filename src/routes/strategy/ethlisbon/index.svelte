@@ -7,7 +7,7 @@
     import polygon from '$lib/assets/logos/polygon.svg';
     import oneinch from '$lib/assets/logos/1inch.svg';
 
-    $: current = $page.path.split('/').pop();
+    $: current = $page.url.pathname.split('/').pop();
 
 </script>
 
