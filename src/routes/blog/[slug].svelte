@@ -46,11 +46,12 @@
 
 </script>
 
-<script>
+<script lang="ts">
   import Time from "svelte-time";
   import {onMount, afterUpdate} from "svelte";
   import Sidebar from "$lib/blog/Sidebar.svelte";
   import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
+  import {slugify} from "$lib/helpers/slugify";
 
   // TODO: Mobile menu requires hydrate
   // This will prevent any interactive JavaScript to load on blog (as there should be none)
@@ -73,6 +74,52 @@
     el.setAttribute("rel", "external");
   }
 
+
+  /**
+   * Build table of content for the body text.
+   *
+   * The Ghost blog post must add an empty markup element
+   *
+   * <div id="table-of-content"></div>
+   *
+   * and the TOC is generated in the frontend side rendering.
+   *
+   * @param el Body text element
+   */
+
+  function buildTableOfContent(el) {
+
+      const document = el.ownerDocument;
+
+      const placeHolder = el.querySelector("div[id='table-of-contents']");
+      if(!placeHolder) {
+          // This blog post does not ask for TOC
+          return;
+      }
+
+      console.log("Building toc");
+
+      // Wrap all h1s to <a name> and add a link to toc
+      el.querySelectorAll('h2').forEach(function (h) {
+          // Wrap h1
+          const wrapper = document.createElement('a');
+          const slug = slugify(h.innerText);
+          if(!slug) {
+              return;
+          }
+          console.log("Adding", slug, h.innerText);
+          wrapper.setAttribute("name", slug);
+          h.parentNode.insertBefore(wrapper, h);
+
+          // Add TOC entry
+          const tocEntry = document.createElement('a');
+          tocEntry.setAttribute("href", `#${slug}`);
+          tocEntry.innerText = h.innerText;
+          placeHolder.appendChild(tocEntry);
+      });
+
+  }
+
   export let post;
   export let breadcrumbs;
 
@@ -86,6 +133,11 @@
       document.querySelectorAll('.body-text a').forEach(function (elem) {
           fixLink(elem);
       });
+
+      const bodyText = document.querySelector('.body-text');
+      if(bodyText) {
+          buildTableOfContent(bodyText);
+      }
   });
 
 </script>
@@ -192,17 +244,22 @@
   }
 
 
-  .card-img-top {
-    max-height: 220px;
-    object-fit: cover;
-  }
-
   .text-published {
     font-size: 70%;
     text-transform: uppercase;
   }
 
-  .btn-read {
-    float: right;
+  /* JavaScript generated TOC */
+  :global(#table-of-contents) {
+      border: 1px solid #F2DFCE;
+      padding: 20px;
+      margin-bottom: 20px;
   }
+
+  :global(#table-of-contents a) {
+      display: block;
+      margin-bottom: 10px;
+      border: 0;
+  }
+
 </style>
