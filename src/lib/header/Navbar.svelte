@@ -59,11 +59,11 @@
 
       <!-- Brand -->
       <a class="navbar-brand" href="/" data-cy="logo">
-        <img class="img-logo img-logo-desktop" src={logo} alt="On-chain quantitative finance" />
+        <img class="img-logo img-logo-desktop" src={logo} alt="Trading Strategy" />
         <img
             class="img-logo img-logo-mobile"
             src={logo}
-            alt="On-chain quantitative finance"
+            alt="Trading Strategy"
             width="128"
             height="40"
             />
@@ -135,17 +135,17 @@
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item nav-item-right">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
-              <img src={twitter} loading="lazy" />
+              <img src={twitter} loading="lazy" alt="Twitter"/>
             </a>
           </li>
           <li class="nav-item nav-item-right">
             <a href="/community#discord" class="nav-link">
-              <img src={discord} loading="lazy" />
+              <img src={discord} loading="lazy" alt="Discord" />
             </a>
           </li>
           <li class="nav-item nav-item-right">
             <a href="https://t.me/trading_protocol" class="nav-link">
-              <img src={telegram} loading="lazy" />
+              <img src={telegram} loading="lazy" alt="Telegram"/>
             </a>
           </li>
         </ul>
