@@ -14,7 +14,7 @@
 
 <nav aria-label="breadcrumb breadcrumb-gray" data-test-id="breadcrumb">
   <ol class="breadcrumb breadcrumb-gray" itemscope itemtype="http://schema.org/BreadcrumbList">
-    {#each breadcrumbs  as breadcrumb, i}
+    {#each breadcrumbs as breadcrumb, i}
       <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
         {#if breadcrumb.head || !breadcrumb.url }
             <span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
@@ -37,6 +37,7 @@
             </span>
           {/if}
         {/if}
+        <meta itemprop="position" content={i+1} />
       </li>
     {/each}
   </ol>
