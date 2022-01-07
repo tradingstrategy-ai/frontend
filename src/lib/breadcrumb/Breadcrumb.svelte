@@ -6,6 +6,10 @@
    * For Google breadcrumbs SEO metadata see
    *
    * https://developers.google.com/search/docs/data-types/breadcrumbs
+   *
+   * Test at:
+   *
+   * https://search.google.com/structured-data/testing-tool
    */
   export let breadcrumbs = [
       { url: '/',  name: 'empty not working', linkActive: false, head: true  },
@@ -17,11 +21,11 @@
     {#each breadcrumbs as breadcrumb, i}
       <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
         {#if breadcrumb.head || !breadcrumb.url }
-            <span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+            <a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing" class="breadcrumb-head">
               <span itemprop="name">
                 {breadcrumb.name}
               </span>
-            </span>
+            </a>
         {:else}
           {#if breadcrumb.linkActive}
             <a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
