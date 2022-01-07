@@ -115,18 +115,18 @@
 
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
-              <img src={twitter} loading="lazy" /> <span class="mobile-text">Twitter</span>
+              <img src={twitter} loading="lazy"  alt="Twitter" /> <span class="mobile-text">Twitter</span>
             </a>
           </li>
 
           <li class="nav-item nav-item-mobile-only">
             <a href="/community#discord" class="nav-link">
-              <img src={discord} loading="lazy" /> <span class="mobile-text">Discord</span>
+              <img src={discord} loading="lazy" alt="Discord" /> <span class="mobile-text">Discord</span>
             </a>
           </li>
           <li class="nav-item nav-item-mobile-only">
             <a href="https://t.me/trading_protocol" class="nav-link">
-              <img src={telegram} loading="lazy" /> <span class="mobile-text">Telegram</span>
+              <img src={telegram} loading="lazy" alt="Telegram" /> <span class="mobile-text">Telegram</span>
             </a>
           </li>
         </ul>
