@@ -4,11 +4,6 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link id="font-stylesheet" rel="conditional-stylesheet" href="/fonts2.css">
-		%svelte.head%
-	</head>
-	<body>
-		<div id="svelte">%svelte.body%</div>
-
 		<script>
 			/**
 			 * Cheating on the Largest Contentful Paint (LCP) event.
@@ -19,7 +14,7 @@
 			 * for more information.
 			 *
 			 */
-			window.addEventListener('DOMContentLoaded', () => {
+			function loadFontsConditionally() {
 				 // 800px is an arbitrary pick
 				 const largeScreenMQ = window.matchMedia('(min-width: 800px)');
 				 if(largeScreenMQ.matches) {
@@ -28,7 +23,13 @@
 					fontStylesheet.setAttribute("rel", "stylesheet");
 				 }
 				 // TODO: drop a localStorage hint to load the fonts on the next page fetch?
-			});
+			}
+			loadFontsConditionally();
 		</script>
+		%svelte.head%
+	</head>
+	<body>
+		<div id="svelte">%svelte.body%</div>
+
 	</body>
 </html>
