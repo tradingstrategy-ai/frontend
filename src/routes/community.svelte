@@ -143,6 +143,9 @@
 
                     <div class="card bg-primary shadow-soft border-light text-center h-100">
                         <div class="card-body">
+
+                            <a name="discord"></a>
+
                             <h3 class="h5 card-title">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
                                     <g transform="matrix(10.416666666666666,0,0,10.416666666666666,0,0)"><g>
@@ -160,7 +163,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a data-testid="link-discord" rel="external" hrehttps://discord.gg/en8tW6MDtw" class="btn btn-primary ">Open discussion</a>
+                            <a data-testid="link-discord" rel="external" href="https://discord.gg/en8tW6MDtw" class="btn btn-primary ">Open discussion</a>
                         </div>
                     </div>
 

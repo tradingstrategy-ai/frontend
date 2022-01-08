@@ -120,7 +120,7 @@
           </li>
 
           <li class="nav-item nav-item-mobile-only">
-            <a href="/community#discord" class="nav-link">
+            <a href="https://discord.gg/en8tW6MDtw" class="nav-link">
               <img src={discord} loading="lazy" alt="Discord" /> <span class="mobile-text">Discord</span>
             </a>
           </li>
@@ -139,7 +139,7 @@
             </a>
           </li>
           <li class="nav-item nav-item-right">
-            <a href="/community#discord" class="nav-link">
+            <a href="https://discord.gg/en8tW6MDtw" class="nav-link">
               <img src={discord} loading="lazy" alt="Discord" />
             </a>
           </li>
