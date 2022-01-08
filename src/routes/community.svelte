@@ -160,7 +160,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a data-testid="link-discord" rel="external" href="https://discord.gg/yReMpKykaS" class="btn btn-primary ">Open discussion</a>
+                            <a data-testid="link-discord" rel="external" hrehttps://discord.gg/en8tW6MDtw" class="btn btn-primary ">Open discussion</a>
                         </div>
                     </div>
 
