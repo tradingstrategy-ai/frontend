@@ -11,7 +11,20 @@
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ url, session, fetch, context }) {
 		const apiUrl = `https://tradingstrategy.ai/api/datasets`;
-		const res = await fetch(apiUrl);
+
+		const res = await fetch(apiUrl, {
+			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
+			// See hooks/index.ts for more information.
+			// However, in this case, the backend does not know our domain name. For this particular API call,
+			// The backend is using Pyramid request.route_url() function to generate download URLs.
+			// This is different from hitting the API from the client side, because in that case these
+			// fields would be correct, and also overwritten by the web browser / Cloudflare.
+			headers: {
+				'X-Forwarded-Host': "tradingstrategy.ai",
+				'X-Forwarded-Proto': "https",
+				'Host': "tradingstrategy.ai",
+			}
+		});
 
 		const datasets = await res.json();
 
@@ -94,7 +107,7 @@
 			//console.log("Posting to", url);
 			const res = await fetch(url, {
 				method: 'POST',
-				body: new URLSearchParams({key})
+				body: new URLSearchParams({key}),
 			});
 
 			if(res.status != 200) {
