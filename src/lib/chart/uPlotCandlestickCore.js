@@ -310,7 +310,13 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
     // random volume data
     // data.push(data[0].map(v => randInt(10, 250)));
 
+    // Figure out scale for Volume axis
     let maxVol = Math.max.apply(null, data[5]);
+
+    // Figure out scale for Price axis
+    let highPrice = Math.max.apply(null, data[2]);
+    let lowPrice = Math.min.apply(null, data[3]);
+    const priceMargin = (highPrice - lowPrice) * 0.1;
 
     const fmtDate = uPlot.fmtDate("{YYYY}-{MM}-{DD}");
     const tzDate = ts => uPlot.tzDate(new Date(ts * 1e3), "Etc/UTC");
@@ -414,6 +420,9 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
             vol: {
                 range: [0, maxVol * 3],
             },
+            y: {
+                range: [lowPrice - priceMargin, highPrice + priceMargin],
+            }
         },
         series: [
             {

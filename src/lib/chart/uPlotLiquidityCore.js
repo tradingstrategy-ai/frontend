@@ -302,6 +302,11 @@ export function drawLiquidityStickChart(_uPlot, title, elem, data) {
     console.log("Starting drawLiquidityStickChart");
     uPlot = _uPlot;
 
+    // Figure out scale for liquidity axis
+    let highLiq = Math.max.apply(null, data[2]);
+    let lowLiq = Math.min.apply(null, data[3]);
+    const liqRange = (highLiq - lowLiq) * 0.1;
+
     // Calculate the top liquidity flow bar
     let maxFlow = 0;
     // Series 6 is added liquidity $, series 7 removed
@@ -398,6 +403,9 @@ export function drawLiquidityStickChart(_uPlot, title, elem, data) {
             flow: {
                 range: [0, maxFlow * 3],
             },
+            y: {
+                range: [lowLiq - liqRange, highLiq + liqRange]
+            }
         },
         series: [
             {
