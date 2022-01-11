@@ -76,7 +76,7 @@
 <script lang="ts">
 
     import Time from "svelte-time";
-    import { formatDollar } from '$lib/helpers/formatters';
+    import {formatDollar, formatUnixTimestamp, parseUTCTime} from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
     import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
     import { browser } from '$app/env';
@@ -146,7 +146,7 @@
      */
     function massageCandles(candles: any[]): number[][] {
         const cols = candles.length;
-        const rows = 6;
+        const rows = 10;
 
         // Try to be smart and hint typed arrays and length for JavaScript VM
         // So sad JavaScript can't do even this basic shit.
@@ -156,7 +156,7 @@
         candles.forEach(function(obj: any, idx: number) {
 
             // Time series
-            const unixTime = Date.parse(obj.ts) / 1000;
+            const unixTime = parseUTCTime(obj.ts);
             matrix[0][idx] = unixTime;
 
             // OHLCV core data
@@ -165,7 +165,13 @@
             matrix[3][idx] = obj.l;
             matrix[4][idx] = obj.c;
             matrix[5][idx] = obj.v;
-            //matrix[5][idx] = 0
+
+            // Additional Trading Strategy data
+            // See Candle model here https://tradingstrategy.ai/api/explorer/
+            matrix[6][idx] = obj.b;
+            matrix[7][idx] = obj.s;
+            matrix[8][idx] = obj.bv;
+            matrix[9][idx] = obj.sv;
         });
 
         return matrix;
@@ -193,10 +199,10 @@
         candles.forEach(function(obj: any, idx: number) {
 
             // Time series
-            const unixTime = Date.parse(obj.ts) / 1000;
+            const unixTime = parseUTCTime(obj.ts);
             matrix[0][idx] = unixTime;
 
-            // OHLCV core data
+            // Liquidity data as in XYLiquiditySample description
             matrix[1][idx] = obj.o;
             matrix[2][idx] = obj.h;
             matrix[3][idx] = obj.l;
@@ -205,7 +211,6 @@
             matrix[6][idx] = obj.r;
             matrix[7][idx] = obj.av;
             matrix[8][idx] = obj.rv;
-            //matrix[5][idx] = 0
         });
 
         return matrix;
@@ -378,12 +383,23 @@
 
     <div class="chart-wrapper">
         <CandleStickChart bind:candles={candles} {uPlot} />
+        <p class="chart-help-text">
+            The trading activity expressef as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+                OHLCV candles.
+            </a>
+        </p>
+
     </div>
 
     <h3>Liquidity chart</h3>
 
     <div class="chart-wrapper">
         <LiquidityChart bind:liquiditySamples={liquidity} {uPlot} />
+        <p class="chart-help-text">
+            The available liquidity is expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+                one side of XY liquidity curve.
+            </a>
+        </p>
     </div>
 
     <h2>Time period summary</h2>
@@ -447,6 +463,12 @@
 
     .trade-actions {
 
+    }
+
+    .chart-help-text {
+        text-align: center;
+        font-size: 80%;
+        color: #525480;
     }
 
     .trade-actions .btn {

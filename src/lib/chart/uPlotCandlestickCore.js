@@ -1,4 +1,4 @@
-import {formatDollar, formatUnixTimestamp,} from "$lib/helpers/formatters";
+import {formatAmount, formatDollar, formatUnixTimestamp,} from "$lib/helpers/formatters";
 
 /**
  * A modified OHLC example from uPlot
@@ -436,11 +436,35 @@ export function drawCandleStickChart(_uPlot, title, elem, data) {
                 label: "Close",
                 value: (u, v) => formatDollar(v, 2),
             },
+
             {
                 label: "Volume",
                 scale: 'vol',
                 value: (u, v) => formatDollar(v),
             },
+
+            {
+                label: "Buy txs",
+                value: (u, v) => formatAmount(v),
+            },
+
+            {
+                label: "Sell txs",
+                value: (u, v) => formatAmount(v),
+            },
+
+            {
+                label: "Buy volume",
+                scale: 'vol',
+                value: (u, v) => formatDollar(v),
+            },
+
+            {
+                label: "Sell volume",
+                scale: 'vol',
+                value: (u, v) => formatDollar(v),
+            },
+
         ],
         axes: axes,
     };
