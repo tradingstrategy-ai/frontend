@@ -106,6 +106,12 @@
         </td>
     </tr>
 
+    <tr>
+        <th>Internal id</th>
+        <td>
+            {summary.pair_id}
+        </td>
+    </tr>
 </table>
 
 <style>
