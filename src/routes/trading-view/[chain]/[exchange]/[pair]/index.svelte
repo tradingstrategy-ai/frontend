@@ -260,7 +260,9 @@
 
                 {#if details.pair_contract_address }
                     <p>
-                        The trading pair smart contract is at address <a href={details.explorer_link} class="body-link">{details.pair_contract_address}</a>.
+                        The trading pair pool smart contract is at address <a href={details.pair_explorer_link} class="body-link">{details.pair_contract_address}</a>.
+                        {summary.base_token_symbol_friendly} is  <a href={details.base_token_explorer_link} class="body-link">{summary.base_token_address}</a> and
+                        {summary.quote_token_symbol_friendly} is <a href={details.quote_token_explorer_link} class="body-link">{summary.quote_token_address}</a>.
                     </p>
                 {/if}
             </div>
