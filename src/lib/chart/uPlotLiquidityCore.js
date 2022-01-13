@@ -320,10 +320,9 @@ export function drawLiquidityStickChart(_uPlot, title, elem, data) {
     const tzDate = ts => uPlot.tzDate(new Date(ts * 1e3), "Etc/UTC");
 
     function getSize() {
-
         return {
             width: elem.offsetWidth,
-            height: elem.offsetHeight - 40,
+            height: elem.offsetHeight,
         }
     }
 
@@ -455,6 +454,7 @@ export function drawLiquidityStickChart(_uPlot, title, elem, data) {
 
     resizeCallback = throttle(() => {
             let size = getSize();
+            console.log("uPlot liquidity resize", size);
             size.height = Math.min(size.height, minHeight);
             u.setSize(size);
         }, 100);

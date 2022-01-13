@@ -384,7 +384,7 @@
     <div class="chart-wrapper">
         <CandleStickChart bind:candles={candles} {uPlot} />
         <p class="chart-help-text">
-            The trading activity expressef as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+            Trading activity expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
                 OHLCV candles.
             </a>
         </p>
@@ -396,8 +396,8 @@
     <div class="chart-wrapper">
         <LiquidityChart bind:liquiditySamples={liquidity} {uPlot} />
         <p class="chart-help-text">
-            The available liquidity is expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
-                one side of XY liquidity curve.
+            Available liquidity expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+                the US Dollar value of one side of XY liquidity curve.
             </a>
         </p>
     </div>

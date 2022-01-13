@@ -92,16 +92,18 @@
 
 
 <div class="datatables-wrapper">
-	<table bind:this={el}  class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"} data-cy={dataCy || 'exchange-table'}>
-		<thead>
-			<tr>
-				{#each columns as column}
-					<th>{ column.name }</th>
-				{/each}
-			</tr>
-		</thead>
-		<tbody />
-	</table>
+	<div class="table-responsive">
+		<table bind:this={el} class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"} data-cy={dataCy || 'exchange-table'}>
+			<thead>
+				<tr>
+					{#each columns as column}
+						<th>{ column.name }</th>
+					{/each}
+				</tr>
+			</thead>
+			<tbody />
+		</table>
+	</div>
 	<div class="data-tables-skeleton" style={!loaded ? "display: block" : "display: none"}>
 		<Skeleton />
 	</div>

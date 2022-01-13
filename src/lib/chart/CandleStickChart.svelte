@@ -105,6 +105,7 @@
         text-transform: uppercase;
         font-weight: bold;
         font-size: 10px;
+        font-family: "Open Sans", sans-serif;
     }
 
 </style>
