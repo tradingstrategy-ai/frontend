@@ -90,6 +90,7 @@
     "@lukeed/uuid": "^2.0.0",
     "@metamask/detect-provider": "^1.2.0",
     "@tryghost/content-api": "^1.5.13",
+    "cheerio": "^1.0.0-rc.10",
     "cookie": "^0.4.1",
     "gulp": "^4.0.2",
     "svelte-spinner": "^2.0.2",
