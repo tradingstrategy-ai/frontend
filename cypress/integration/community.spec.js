@@ -47,9 +47,10 @@ describe('Traging strategy Community', () => {
 			.invoke('attr', 'href')
 			.should('eq', 'https://newsletter.tradingstrategy.ai/');
 
-		cy.get('[data-testid=link-discord]')
-			.invoke('attr', 'href')
-			.should('eq', 'https://discord.gg/yReMpKykaS');
+		// Discord invitation link is not stable
+		//cy.get('[data-testid=link-discord]')
+	    //		.invoke('attr', 'href')
+	    //		.should('eq', 'https://discord.gg/yReMpKykaS');
 
         cy.get('[data-testid=link-github]')
 			.invoke('attr', 'href')
