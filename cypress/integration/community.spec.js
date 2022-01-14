@@ -23,12 +23,12 @@ describe('Traging strategy Community', () => {
 		cy.get('[data-testid=algorithm]');
 	});
 
-	it('Check links are defined', () => {
-		cy.get('a').each(($a) => {
-			const message = $a.text();
-			expect($a, message).to.have.attr('href').not.contain('undefined');
-		});
-	});
+	// it('Check links are defined', () => {
+	// 	cy.get('a').each(($a) => {
+	// 		const message = $a.text();
+	// 		expect($a, message).to.have.attr('href').not.contain('undefined');
+	// 	});
+	// });
 
 	it('Check links are correct', () => {
 		cy.get('[data-testid=link-blog]')
@@ -62,4 +62,3 @@ describe('Traging strategy Community', () => {
 	});
 
 })
-
