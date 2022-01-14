@@ -35,6 +35,10 @@
 		}
 
         return {
+            // Cache the landing data for 5 minutes at the Cloudflare edge,
+            // so the pages are served really fast if they get popular,
+            // and also for speed test
+            maxage: 5*60, // 5 minutes,
             props: {
                 topMomentum,
 				impressiveNumbers,
