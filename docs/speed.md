@@ -7,6 +7,10 @@ Page speed utilities to see First Contentful Paint (FCP) and Largest Contentful 
 * https://www.webpagetest.org/
   * Example: https://www.webpagetest.org/result/211230_BiDc5M_0b72ec65b0eb6523fddb06496ab832d4/1/details/#waterfall_view_step1
 
+## Enabling early hint testing 
+
+https://blog.cloudflare.com/early-hints/#testing-early-hints-with-web-page-test
+
 # Mobile friendliness tests
 
 * https://search.google.com/test/mobile-friendly

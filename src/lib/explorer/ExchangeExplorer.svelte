@@ -140,7 +140,6 @@
         }
 	}
 
-    console.log("foo", columns, options)
 </script>
 
 <div class="exchanges">
