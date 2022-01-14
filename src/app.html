@@ -3,29 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link id="font-stylesheet" rel="conditional-stylesheet" href="/fonts2.css">
-		<script>
-			/**
-			 * Cheating on the Largest Contentful Paint (LCP) event.
-			 *
-			 * The largest contentful paint event is a measure Google uses to
-			 * rank pages up in its search listing. Because we have pretty much optimized everything else.
-			 * See https://github.com/tradingstrategy-ai/frontend/blob/master/docs/speed.md
-			 * for more information.
-			 *
-			 */
-			function loadFontsConditionally() {
-				 // 800px is an arbitrary pick
-				 const largeScreenMQ = window.matchMedia('(min-width: 800px)');
-				 if(largeScreenMQ.matches) {
-					const fontStylesheet = document.getElementById("font-stylesheet");
-					// Triggers CSS loading
-					fontStylesheet.setAttribute("rel", "stylesheet");
-				 }
-				 // TODO: drop a localStorage hint to load the fonts on the next page fetch?
-			}
-			loadFontsConditionally();
-		</script>
+		<link rel="stylesheet" href="/fonts3.css">
 		%svelte.head%
 	</head>
 	<body>
