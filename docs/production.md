@@ -19,3 +19,17 @@ rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 ```shell
 netstat -ltnp | grep -w ':80'
 ```
+
+# Testing production build locally
+
+```shell
+export PRODUCTION=true
+export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
+```
+
+Then you can check e.g. HTTP headers:
+
+```shell
+wget -S http://localhost:3000
+```

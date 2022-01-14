@@ -140,6 +140,17 @@
             </tr>
 
             <tr class="data-row">
+                <th>Volume</th>
+                <td>
+                    {#if timeSpanTradeData}
+                        {formatDollar(timeSpanTradeData.volume)}
+                    {:else}
+                        <SkeletonLine />
+                    {/if}
+                </td>
+            </tr>
+
+            <tr class="data-row">
                 <th>Highest liquidity</th>
                 <td>
                     {#if timeSpanTradeData}

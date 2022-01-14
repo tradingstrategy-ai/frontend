@@ -2,7 +2,7 @@
 
     /*
 
-        Render candlestick chart using uPlot
+        Render liquidity map using uPlot
 
         https://github.com/leeoniya/uPlot
 
@@ -12,10 +12,11 @@
 
     import Skeleton from '$lib/Skeleton.svelte';
     import "uplot/dist/uPlot.min.css";
-    import { clearChart, drawCandleStickChart } from "./uPlotCandlestickCore.js";
+    import {drawLiquidityStickChart} from "$lib/chart/uPlotLiquidityCore";
+    import {clearChart} from "$lib/chart/uPlotCandlestickCore";
 
-    // See massageCandles()
-    export let candles = null;
+    // See massageLiquidity()
+    export let liquiditySamples = null;
 
     // Dynamically imported uplot
     export let uPlot = null;
@@ -29,44 +30,44 @@
             return;
         }
 
-        const elem = document.getElementById("candlestick-uplot-wrapper");
+        const elem = document.getElementById("liquidity-uplot-wrapper");
 
-        if(!candles) {
-            //console.log("Skipping candle draw - no candles loaded");
-            console.log("Clearing", elem);
+        if(!liquiditySamples) {
+            console.log("Clearing element", elem);
             clearChart(elem);
             return;
         }
 
-        console.log("Redrawing candles", candles);
+        console.log("Redrawing liquidity", candles);
 
-        if(candles[0].length > 0) {
+        if(liquiditySamples[0].length > 0) {
             classes = "uplot-wrapper";
-            drawCandleStickChart(uPlot, null, elem, candles);
+            clearChart(elem);
+            drawLiquidityStickChart(uPlot, null, elem, liquiditySamples);
         } else {
             classes = "uplot-wrapper uplot-wrapper-empty";
         }
     }
 
-    $: redrawCandles(candles, uPlot);
+    $: redrawCandles(liquiditySamples, uPlot);
 
 </script>
 
 
-<div class="candle-stick-chart">
+<div class="liquidity-chart">
 
-    {#if candles}
-        {#if candles[0].length !== 0 }
+    {#if liquiditySamples}
+        {#if liquiditySamples[0].length !== 0 }
             <div class="hacky-axis-labels">
-                <span class="label-hacky label-volume">Volume</span>
-                <span class="label-hacky label-price">Price</span>
+                <span class="label-hacky">In/out flow</span>
+                <span class="label-hacky">Available liquidity</span>
             </div>
         {/if}
     {/if}
 
-    <div id="candlestick-uplot-wrapper" class={classes}>
-        {#if candles }
-            {#if candles[0].length === 0 }
+    <div id="liquidity-uplot-wrapper" class={classes}>
+        {#if liquiditySamples }
+            {#if liquiditySamples[0].length === 0 }
                 <div class="alert alert-danger shadow-inset fade show" role="alert"><span
                         class="alert-inner--icon"><span class="fas fa-exclamation-circle"></span></span> <span
                         class="alert-inner--text">
@@ -86,15 +87,6 @@
 </div>
 
 <style>
-    /*
-    .uplot-wrapper {
-        width: 100%;
-        min-height: 600px;
-    }
-
-    .uplot-wrapper-empty {
-        min-height: auto;
-    }*/
 
     .hacky-axis-labels {
         display: flex;

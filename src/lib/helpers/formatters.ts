@@ -132,6 +132,21 @@ export function formatAmount(n: number): string {
     return n.toLocaleString("en");
 }
 
+
+/**
+ * Parses an ISO 8601 date format string and assumes UTC timezone.
+ *
+ * @param ts UNIX timestamp in seconds
+ */
+export function parseUTCTime(s: string): number {
+    // This SHIT is called Javascript
+    // https://stackoverflow.com/a/37750412/315168
+    const d = new Date(s);
+    const utc = d.getTime() - (d.getTimezoneOffset() * 60000);
+    return utc / 1000;
+}
+
+
 /**
  * Format UNIX timestamp
  * @param ts Timestamp in seconds
