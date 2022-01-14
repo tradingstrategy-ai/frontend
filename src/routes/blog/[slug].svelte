@@ -52,6 +52,7 @@
   import Sidebar from "$lib/blog/Sidebar.svelte";
   import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
   import {slugify} from "$lib/helpers/slugify";
+  import { serializePost } from "$lib/helpers/googleMeta";
 
   // TODO: Mobile menu requires hydrate
   // This will prevent any interactive JavaScript to load on blog (as there should be none)
@@ -145,6 +146,7 @@
 <svelte:head>
     <title>{post.title}</title>
     <meta name="description" content={post.excerpt}>
+    {@html serializePost(post)}
 </svelte:head>
 
 
@@ -167,7 +169,6 @@
         <!--
         <h1>{ post.title }</h1>
         -->
-
         <p class="text-published text-muted text-sm">
           Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
         </p>
