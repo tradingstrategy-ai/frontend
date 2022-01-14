@@ -169,7 +169,6 @@
         <!--
         <h1>{ post.title }</h1>
         -->
-
         <p class="text-published text-muted text-sm">
           Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
         </p>

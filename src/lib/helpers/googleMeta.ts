@@ -12,10 +12,10 @@ export function serializePost(postData: Post) {
       "headline": postData.title,
       "author": {
           "@type": "Person",
-          "name": postData.author
+          "name": "tradingstrategy.ai"
       },
-      "datePublished": postData.datePublished,
-      "dateModified": postData.dateModified,
+      "datePublished": postData.published_at,
+      "dateModified": postData.updated_at,
     }
 
     return `<script type="application/ld+json">${JSON.stringify(metadata, null, 2)}</script>`
