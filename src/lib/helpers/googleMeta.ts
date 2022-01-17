@@ -1,8 +1,8 @@
 interface Post {
   title: string,
   author: string,
-  datePublished: Date,
-  dateModified: string
+  published_at: Date,
+  updated_at: string
 }
 
 export function serializePost(postData: Post) {

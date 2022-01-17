@@ -66,7 +66,7 @@
               </h5>
 
               <p class="text-published text-muted text-sm">
-                Published: <Time relative timestamp="{Date.parse(post.published_at)}" />
+                {new Date(post.published_at).toDateString()} Published: <Time relative timestamp="{Date.parse(post.published_at)}" />
               </p>
 
               <p class="card-text">
