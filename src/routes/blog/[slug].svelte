@@ -173,7 +173,7 @@
         <h1>{ post.title }</h1>
         -->
         <p class="text-published text-muted text-sm">
-          {new Date(post.published_at).toDateString()}
+          {new Date(post.published_at).toDateString()},
           Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
         </p>
 
