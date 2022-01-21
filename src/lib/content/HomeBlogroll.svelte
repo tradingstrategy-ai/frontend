@@ -28,7 +28,7 @@
                     </a>
 
                     <p class="text-published text-muted text-sm">
-                        {new Date(post.published_at).toDateString()} <Time relative timestamp="{Date.parse(post.published_at)}" />
+                        <Time relative timestamp="{Date.parse(post.published_at)}" />
                     </p>
 
                     <p class="detail">
