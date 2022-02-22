@@ -1,0 +1,73 @@
+<script>
+  import SearchClient from "typesense/lib/Typesense/SearchClient.js";
+  import { Input, ListGroup, ListGroupItem } from "sveltestrap";
+
+  let isOpen = false;
+  let results = [];
+
+  const query_by = "name,token_tickers,token_names,smart_contract_addresses";
+
+  const client = new SearchClient({
+    apiKey: "G26ReHm1VZwTpKye2w4P5hZkmQghb6i9",
+    nodes: [{
+      host: "4relmbjhcysqztv9p-1.a1.typesense.net",
+      port: 443,
+      protocol: "https"
+    }],
+  });
+  const tradingEntities = client.collections("trading-entities").documents();
+
+  async function handleInput({ target }) {
+    const q = target.value.trim();
+
+    if (q === "") {
+      results = [];
+      return;
+    }
+
+    try {
+      const response = await tradingEntities.search({ q, query_by }, {});
+      results = response.hits;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+</script>
+
+<div class="search-container">
+  <Input
+    type="search"
+    placeholder="Search"
+    on:focus={() => isOpen = true}
+    on:blur={() => isOpen = false}
+    on:input={handleInput}
+  />
+
+  {#if isOpen}
+    <div class="card bg-primary shadow-soft border-light">
+      {#if results.length > 0}
+        <ListGroup flush>
+          {#each results as { document } (document.id)}
+            <ListGroupItem>{document.description}</ListGroupItem>
+          {/each}
+        </ListGroup>
+      {:else}
+        <div class="card-body">Search exchanges, tokens and pairs</div>
+      {/if}
+    </div>
+  {/if}
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+  }
+
+  .card {
+    position: absolute;
+    z-index: 1;
+    top: 3rem;
+    right: 0;
+    width: 450px;
+  }
+</style>

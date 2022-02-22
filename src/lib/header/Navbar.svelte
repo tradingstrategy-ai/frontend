@@ -7,6 +7,7 @@
 
 <script lang="ts">
 
+  import Search from '../search/Search.svelte';
   import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
   import twitter from './twitter.svg';
   import telegram from './telegram.svg';
@@ -84,34 +85,29 @@
       </button>
 
       <!-- Links -->
-      <div class="{'collapse navbar-collapse ' + (isOpen ? 'show' : '')}" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse" class:show={isOpen} id="navbarSupportedContent">
 
         <!-- Left -->
         <ul class="navbar-nav mr-auto" data-cy="navigation">
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="/trading-view">Trading data</a>
+          </li>
 
-            <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="/trading-view">Trading data</a>
-            </li>
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="/about">About</a>
+          </li>
 
-            <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="/about">About</a>
-            </li>
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
+          </li>
 
-            <!-- <li class="nav-item">
-              <a rel="external" class="nav-link" href="/exchanges">Exchanges</a>
-            </li> -->
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="/community">Community</a>
+          </li>
 
-            <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="https://tradingstrategy.ai/docs/index.html">Documentation</a>
-            </li>
-
-            <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="/community">Community</a>
-            </li>
-
-            <li class="nav-item" data-testid={'navigation-link'}>
-              <a rel="external" class="nav-link" href="/blog">Blog</a>
-            </li>
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="/blog">Blog</a>
+          </li>
 
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
@@ -124,12 +120,15 @@
               <img src={discord} loading="lazy" alt="Discord" /> <span class="mobile-text">Discord</span>
             </a>
           </li>
+
           <li class="nav-item nav-item-mobile-only">
             <a href="https://t.me/trading_protocol" class="nav-link">
               <img src={telegram} loading="lazy" alt="Telegram" /> <span class="mobile-text">Telegram</span>
             </a>
           </li>
         </ul>
+
+        <Search />
 
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
@@ -138,11 +137,13 @@
               <img src={twitter} loading="lazy" alt="Twitter"/>
             </a>
           </li>
+
           <li class="nav-item nav-item-right">
             <a href="https://discord.gg/en8tW6MDtw" class="nav-link">
               <img src={discord} loading="lazy" alt="Discord" />
             </a>
           </li>
+
           <li class="nav-item nav-item-right">
             <a href="https://t.me/trading_protocol" class="nav-link">
               <img src={telegram} loading="lazy" alt="Telegram"/>
@@ -155,7 +156,6 @@
 </div>
 
 <style>
-
     .nav-item-mobile-only {
         display: none;
     }
@@ -228,6 +228,4 @@
     .nav-item-right .nav-link i {
         font-size: 1.4rem;
     }
-
-
 </style>
