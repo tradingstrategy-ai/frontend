@@ -1,17 +1,14 @@
-import { typesenseConfig as config } from "$lib/config";
+import { typesenseConfig } from "$lib/config";
 import SearchClient from "typesense/lib/Typesense/SearchClient.js";
 
-let client;
+const url = new URL(typesenseConfig.apiUrl);
 
-if (config.apiKey && config.host) {
-  client = new SearchClient({
-    apiKey: config.apiKey,
-    nodes: [{
-      host: config.host,
-      port: 443,
-      protocol: "https"
-    }],
-  });
-}
+const host = url.hostname;
+const protocol = url.protocol.slice(0,-1);
+const port = Number.parseInt(url.port, 10) || (protocol === 'http' ? 80 : 443);
+const path = url.pathname;
 
-export default client;
+export default new SearchClient({
+  apiKey: typesenseConfig.apiKey,
+  nodes: [{ host, protocol, port, path }]
+});

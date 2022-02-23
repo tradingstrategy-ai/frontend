@@ -42,8 +42,8 @@ Or as one liner after the installation of the theme packages:
 
 ## Running in local dev
 
-Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
-
+Environment variables required by the app are maintained in a `.env` file. Read about about
+[magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
 
 Then start SvelteKit development server
 

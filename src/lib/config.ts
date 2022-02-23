@@ -31,11 +31,11 @@ export function getGhostCredentials() {
  */
 export const typesenseConfig = ((env) => {
     const apiKey = env.VITE_PUBLIC_TYPESENSE_API_KEY;
-    const host = env.VITE_PUBLIC_TYPESENSE_HOST;
-    if (!(apiKey && host)) {
+    const apiUrl = env.VITE_PUBLIC_TYPESENSE_API_URL;
+    if (!apiKey || !apiUrl) {
         console.warn("You need to configure Typesense options to enable search");
     }
-    return { apiKey, host };
+    return { apiKey, apiUrl };
 })(import.meta.env);
 
 // Add some site features depending if we run prod, staging or local dev
