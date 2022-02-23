@@ -2,20 +2,23 @@
   import { Input, ListGroup, ListGroupItem } from "sveltestrap";
   import tradingEntities from "./trading-entities";
 
+  let value = "";
+  let isOpen = false;
+
+  $: tradingEntities.search(value);
+
   function getLabel({ type }) {
     return type === "exchange" ? "DEX" : type;
   }
-
-  let isOpen = false;
 </script>
 
 <div class="search-container">
   <Input
     type="search"
     placeholder="Search"
+    bind:value
     on:focus={() => isOpen = true}
     on:blur={() => isOpen = false}
-    on:input={(e) => tradingEntities.search(e.target.value)}
   />
 
   {#if isOpen}
