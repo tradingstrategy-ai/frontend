@@ -26,6 +26,18 @@ export function getGhostCredentials() {
     return keys;
 }
 
+/**
+ * Load Typesense config options and warn if not available.
+ */
+export const typesenseConfig = ((env) => {
+    const apiKey = env.VITE_PUBLIC_TYPESENSE_API_KEY;
+    const host = env.VITE_PUBLIC_TYPESENSE_HOST;
+    if (!(apiKey && host)) {
+        console.warn("You need to configure Typesense options to enable search");
+    }
+    return { apiKey, host };
+})(import.meta.env);
+
 // Add some site features depending if we run prod, staging or local dev
 export const siteMode = import.meta.env.VITE_SITE_MODE || 'local';
 
