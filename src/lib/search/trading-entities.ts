@@ -17,7 +17,7 @@ if (searchClient) {
 async function search(query) {
   const q = query.trim();
 
-  if (!(collection && q)) {
+  if (!collection || q === "") {
     set([]);
     return;
   }
