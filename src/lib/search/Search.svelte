@@ -1,32 +1,8 @@
 <script>
   import { Input, ListGroup, ListGroupItem } from "sveltestrap";
-  import searchClient from "./client";
+  import tradingEntities from "./trading-entities";
 
-  let tradingEntities;
   let isOpen = false;
-  let results = [];
-  const query_by = "name,token_tickers,token_names,smart_contract_addresses";
-
-  if (searchClient) {
-    tradingEntities = searchClient.collections("trading-entities").documents();
-  }
-
-  async function handleInput({ target }) {
-    if (!tradingEntities) return;
-
-    const q = target.value.trim();
-    if (q === "") {
-      results = [];
-      return;
-    }
-
-    try {
-      const response = await tradingEntities.search({ q, query_by }, {});
-      results = response.hits;
-    } catch (error) {
-      console.error(error);
-    }
-  }
 </script>
 
 <div class="search-container">
@@ -35,14 +11,14 @@
     placeholder="Search"
     on:focus={() => isOpen = true}
     on:blur={() => isOpen = false}
-    on:input={handleInput}
+    on:input={(e) => tradingEntities.search(e.target.value)}
   />
 
   {#if isOpen}
     <div class="card bg-primary shadow-soft border-light">
-      {#if results.length > 0}
+      {#if $tradingEntities.length > 0}
         <ListGroup flush>
-          {#each results as { document } (document.id)}
+          {#each $tradingEntities as { document } (document.id)}
             <ListGroupItem>{document.description}</ListGroupItem>
           {/each}
         </ListGroup>
