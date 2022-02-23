@@ -46,8 +46,11 @@ Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.co
 
 ```shell
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+export VITE_PUBLIC_GHOST_API_URL=https://trading-strategy.ghost.io 
+export VITE_PUBLIC_GHOST_CONTENT_API_KEY=4f54e499a627473f560945d52  # Will be shared in the web browser as well
 ```
-`
+
+
 Then start SvelteKit development server
 
 ```shell
