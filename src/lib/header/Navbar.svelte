@@ -4,9 +4,7 @@
   We have now in-house hacked together navbar.
 
 -->
-
 <script lang="ts">
-
   import Search from '../search/Search.svelte';
   import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
   import twitter from './twitter.svg';
@@ -15,42 +13,8 @@
 
   let isOpen = false;
 
-  function handleUpdate(event) {
-    isOpen = event.detail.isOpen;
-  }
-
-  function clickCollapse(e) {
-      console.log("Clicked collapse", e);
-      isOpen = !isOpen;
-  }
-
-  function handleDropdownToggle(e) {
-
-      const toggler = e.target.closest(".nav-link");
-
-      const toggleId = toggler.getAttribute("data-toggle");
-
-      //console.log("Toggle element is", e.target, toggler, toggleId);
-      //console.log(e.target.parentNode);
-      //console.log(toggleId);
-
-      const menu = document.getElementById(toggleId);
-      // const menu = e.target.closest(".dropdown");
-      const navBar = menu.closest(".navbar");
-
-      console.log("Navbar is", navBar, "menu is", menu);
-
-      if(menu.classList.contains("show")) {
-          // Close menu
-          menu.classList.toggle("show");
-      } else {
-        // Open this menu, close others
-        // https://stackoverflow.com/a/61773683/315168
-        Array.from(navBar.querySelectorAll('.show')).forEach((el) => el.classList.remove('show'));
-        menu.classList.add("show");
-      }
-
-      return true;
+  function toggleMenu() {
+    isOpen = !isOpen;
   }
 </script>
 
@@ -79,7 +43,7 @@
               aria-controls="navbarSupportedContent"
               aria-expanded="false"
               aria-label="Toggle navigation"
-              on:click={clickCollapse}
+              on:click={toggleMenu}
         >
         <span class="navbar-toggler-icon"></span>
       </button>
