@@ -1,37 +1,27 @@
-<script type="ts">
-  import { ListGroupItem } from "sveltestrap";
+<script lang="ts">
+  import { determinePriceChangeClass } from "$lib/helpers/price";
 
   export let document;
 
   const { description, type, price_change_24h } = document;
-
   const label = type === "exchange" ? "DEX" : type;
+  const priceChangeClass = determinePriceChangeClass(price_change_24h);
 
   function getPriceChangePct() {
     return Math.abs(price_change_24h * 100).toFixed(1);
   }
-
-  function getPriceChangeClass() {
-    if (price_change_24h > 0) {
-      return "price-change-green";
-    } else if (price_change_24h < 0) {
-      return "price-change-red";
-    } else {
-      return "";
-    }
-  }
 </script>
 
-<ListGroupItem class="result-line-item d-flex align-items-center">
+<li class="list-group-item d-flex align-items-center">
   <div class="type badge-{type}">{label}</div>
   <div class="flex-grow-1">{description}</div>
   {#if price_change_24h !== undefined}
-    <div class="price-change {getPriceChangeClass()}">{getPriceChangePct()}%</div>
+    <div class="price-change {priceChangeClass}">{getPriceChangePct()}%</div>
   {/if}
-</ListGroupItem>
+</li>
 
 <style>
-  :global(.result-line-item) {
+  .list-group-item {
     border: none;
     font-size: 0.9rem;
     font-weight: normal;
@@ -57,7 +47,10 @@
   .price-change::after {
     display: inline-block;
     width: 1.25em;
-    content: "–";
+  }
+
+  .price-change-black::after {
+    content: "-";
   }
 
   .price-change-green::after {

@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import tradingEntities from "./trading-entities";
   import { Fade, Input, ListGroup, ListGroupItem } from "sveltestrap";
   import ResultLineItem from "./ResultLineItem.svelte";
