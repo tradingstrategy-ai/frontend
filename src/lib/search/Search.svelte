@@ -1,25 +1,29 @@
 <script>
+  import { typesenseConfig as config } from "$lib/config";
   import SearchClient from "typesense/lib/Typesense/SearchClient.js";
   import { Input, ListGroup, ListGroupItem } from "sveltestrap";
 
+  let tradingEntities;
   let isOpen = false;
   let results = [];
-
   const query_by = "name,token_tickers,token_names,smart_contract_addresses";
 
-  const client = new SearchClient({
-    apiKey: "G26ReHm1VZwTpKye2w4P5hZkmQghb6i9",
-    nodes: [{
-      host: "4relmbjhcysqztv9p-1.a1.typesense.net",
-      port: 443,
-      protocol: "https"
-    }],
-  });
-  const tradingEntities = client.collections("trading-entities").documents();
+  if (config.apiKey && config.host) {
+    const client = new SearchClient({
+      apiKey: config.apiKey,
+      nodes: [{
+        host: config.host,
+        port: 443,
+        protocol: "https"
+      }],
+    });
+    tradingEntities = client.collections("trading-entities").documents();
+  }
 
   async function handleInput({ target }) {
-    const q = target.value.trim();
+    if (!tradingEntities) return;
 
+    const q = target.value.trim();
     if (q === "") {
       results = [];
       return;
