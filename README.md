@@ -42,14 +42,19 @@ Or as one liner after the installation of the theme packages:
 
 ## Running in local dev
 
-Set the backend URL. [Read about about magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
+Set `env` variables required by backend services (read about
+[magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte)).
+`VITE_PUBLIC_BACKEND_URL` is required; other services fail gracefully.
 
 ```shell
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 export VITE_PUBLIC_GHOST_API_URL=https://trading-strategy.ghost.io 
-export VITE_PUBLIC_GHOST_CONTENT_API_KEY=4f54e499a627473f560945d52  # Will be shared in the web browser as well
+export VITE_PUBLIC_GHOST_CONTENT_API_KEY=4f54e499a627473f560945d52
+export VITE_PUBLIC_TYPESENSE_API_URL=https://4relmbjhcysqztv9p-1.a1.typesense.net
+export VITE_PUBLIC_TYPESENSE_API_KEY=G26ReHm1VZwTpKye2w4P5hZkmQghb6i9
 ```
-
+> **Note:** the API keys above are for publically available services and data; they are exposed to
+the browser by `vite` for direct client-side requests (they don't need to be kept secure).
 
 Then start SvelteKit development server
 
