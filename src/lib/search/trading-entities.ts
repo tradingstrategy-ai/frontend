@@ -3,7 +3,8 @@ import searchClient from "./client";
 
 const searchOptions = {
   query_by: "name,token_tickers,token_names,smart_contract_addresses",
-  sort_by: "type_rank:asc,_text_match:desc,volume_24h:desc"
+  sort_by: "type_rank:asc,_text_match:desc,volume_24h:desc",
+  group_by: "type"
 };
 
 const { subscribe, set } = writable([]);
@@ -23,7 +24,7 @@ async function search(query) {
 
   try {
     const response = await collection.search({ q, ...searchOptions });
-    set(response.hits);
+    set(response.grouped_hits.flatMap((group) => group.hits));
   } catch (error) {
     console.error(error);
   }
