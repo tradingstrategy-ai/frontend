@@ -16,15 +16,13 @@
 
   {#if isOpen}
     <div class="card bg-primary shadow-soft border-light">
-      {#if $tradingEntities.length > 0}
-        <ListGroup flush>
-          {#each $tradingEntities as { document } (document.id)}
-            <ListGroupItem>{document.description}</ListGroupItem>
-          {/each}
-        </ListGroup>
-      {:else}
-        <div class="card-body">Search exchanges, tokens and pairs</div>
-      {/if}
+      <ListGroup flush>
+        {#each $tradingEntities as { document } (document.id)}
+          <ListGroupItem>{document.description}</ListGroupItem>
+        {:else}
+          <ListGroupItem>Search exchanges, tokens and pairs</ListGroupItem>
+        {/each}
+      </ListGroup>
     </div>
   {/if}
 </div>
