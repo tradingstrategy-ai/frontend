@@ -3,7 +3,7 @@
   import tradingEntities from "./trading-entities";
 
   let value = "";
-  let isOpen = false;
+  let hasFocus = false;
 
   $: tradingEntities.search(value);
 
@@ -17,11 +17,11 @@
     type="search"
     placeholder="Search"
     bind:value
-    on:focus={() => isOpen = true}
-    on:blur={() => isOpen = false}
+    on:focus={() => hasFocus = true}
+    on:blur={() => hasFocus = false}
   />
 
-  {#if isOpen}
+  {#if hasFocus && value}
     <div class="card bg-primary shadow-soft border-light">
       <ListGroup flush>
         {#each $tradingEntities as { document } (document.id)}
