@@ -1,5 +1,5 @@
 <script>
-  import { Input, ListGroup, ListGroupItem } from "sveltestrap";
+  import { Fade, Input, ListGroup, ListGroupItem } from "sveltestrap";
   import tradingEntities from "./trading-entities";
 
   let value = "";
@@ -21,20 +21,20 @@
     on:blur={() => hasFocus = false}
   />
 
-  {#if hasFocus && value}
+  <Fade isOpen={hasFocus && value}>
     <div class="card bg-primary shadow-soft border-light">
       <ListGroup flush>
         {#each $tradingEntities as { document } (document.id)}
-          <ListGroupItem>
-            <span class="tag {document.type}">{getLabel(document)}</span>
-            {document.description}
+          <ListGroupItem class="result-row d-flex align-items-center">
+            <div class="type badge-{document.type}">{getLabel(document)}</div>
+            <div>{document.description}</div>
           </ListGroupItem>
         {:else}
           <ListGroupItem>Search exchanges, tokens and pairs</ListGroupItem>
         {/each}
       </ListGroup>
     </div>
-  {/if}
+  </Fade>
 </div>
 
 <style>
@@ -50,19 +50,21 @@
     width: 450px;
   }
 
-  .card :global(.list-group-item) {
+  .card :global(.result-row) {
     border: none;
+    font-size: 0.9rem;
+    font-weight: normal;
+    line-height: 1.25;
+    gap: 1em;
   }
 
-  .tag {
-    display: inline-block;
-    width: 4em;
-    margin-right: 0.5ex;
+  .type {
+    flex: 0 0 55px;
     border-radius: 6px;
-    background-color: #666;
     color: white;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-align: center;
+    line-height: 1.75;
   }
 </style>
