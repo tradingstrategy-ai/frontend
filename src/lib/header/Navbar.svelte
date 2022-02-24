@@ -31,20 +31,20 @@
             alt="Trading Strategy"
             width="128"
             height="40"
-            />
+        />
       </a>
 
       <!-- Collapse -->
       <button
-              class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-              on:click={toggleMenu}
-        >
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          on:click={toggleMenu}
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -161,17 +161,17 @@
         cursor: not-allowed;
     }
 
-	/* Switch logos */
-	@media (max-width: 992px) {
-      .img-logo-mobile { display: block }
-      .img-logo-desktop { display: none }
-      .nav-item {
-          margin-bottom: 10px;
-      }
-      .nav-item-mobile-only { display: block }
-      .nav-item-mobile-only a { display: block }
-      .nav-item-right { display: none }
-	}
+    /* Switch logos */
+    @media (max-width: 992px) {
+        .img-logo-mobile { display: block }
+        .img-logo-desktop { display: none }
+        .nav-item {
+            margin-bottom: 10px;
+        }
+        .nav-item-mobile-only { display: block }
+        .nav-item-mobile-only a { display: block }
+        .nav-item-right { display: none }
+    }
 
     .navbar-toggler {
         z-index: 2000;
