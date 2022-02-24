@@ -1,17 +1,7 @@
-import { getGhostCredentials } from "$lib/config";
-import GhostContentAPI from '@tryghost/content-api';
-
-const ghostKeys = getGhostCredentials();
-
-const api = new GhostContentAPI({
-  url: ghostKeys.apiUrl,
-  key: ghostKeys.contentApiKey,
-  version: "v3"
-});
+import ghostClient from "$lib/blog/client";
 
 export const get = async () => {
-
-  const posts = await api.posts.browse();
+  const posts = await ghostClient.posts.browse();
   const body = render(posts);
   const headers = {
     'Cache-Control': `max-age=0, s-max-age=${600}`,

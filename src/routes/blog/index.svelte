@@ -1,29 +1,25 @@
 <script context="module">
-
   // Ghost client
-  import {fetchBlogroll} from "$lib/blog/feed";
+  import { fetchBlogroll } from "$lib/blog/feed";
 
   // TODO: Mobile menu requires hydrate
   // Pure server-side rendered page - no interactive JS
   export const hydrate = true;
 
   export async function load({ fetch }) {
-
-      return {
-          props: {
-              posts: await fetchBlogroll(10)
-          }
+    return {
+      props: {
+        posts: await fetchBlogroll(10)
       }
-
+    }
   }
-
 </script>
 
 <script>
   import Time from "svelte-time";
   import Sidebar from "$lib/blog/Sidebar.svelte";
 
-  export let posts;
+  export let posts = [];
 </script>
 
 <svelte:head>
@@ -77,6 +73,10 @@
             </div>
 
           </div>
+        {:else}
+          <p>
+            No blog posts found (check if Ghost is properly configured)
+          </p>
         {/each}
       </div>
 

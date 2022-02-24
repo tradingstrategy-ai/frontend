@@ -3,7 +3,7 @@
 	 * Frontpage renderer
 	 */
   import { backendUrl } from '$lib/config';
-	import {fetchBlogroll} from "$lib/blog/feed";
+	import { fetchBlogroll } from '$lib/blog/feed';
 
 	// TODO: Mobile menu requires hydrate
 	// This will prevent any interactive JavaScript on the front page,
@@ -11,41 +11,40 @@
 	export const hydrate = true;
 
 	// Load top momentum data to display on the front page
-  // https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
-  export async function load({ fetch }) {
+	// https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
+	export async function load({ fetch }) {
+		// Load frontpage API calls in parallel to cut that 1 ms
+		// https://stackoverflow.com/q/59663929/315168
+		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
+			fetch(`${backendUrl}/top-momentum`),
+			fetch(`${backendUrl}/impressive-numbers`),
+			fetchBlogroll(3)
+		]);
 
-	// Load frontpage API calls in parallel to cut that 1 ms
-	// https://stackoverflow.com/q/59663929/315168
-  const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([fetch(`${backendUrl}/top-momentum`), fetch(`${backendUrl}/impressive-numbers`), fetchBlogroll(3)]);
+		let topMomentum, impressiveNumbers;
 
-	let topMomentum, impressiveNumbers;
-
-  if (momentumResp.ok) {
+		if (momentumResp.ok) {
 			topMomentum = await momentumResp.json();
-        } else {
+		} else {
 			// Try render the frontpage even if the backend is down
 			topMomentum = null;
-	}
+		}
 
-  if (impressiveNumbersResp.ok) {
+		if (impressiveNumbersResp.ok) {
 			impressiveNumbers = await impressiveNumbersResp.json();
-        } else {
+		} else {
 			// Try render the frontpage even if the backend is down
 			impressiveNumbers = null;
-	}
+		}
 
-  return {
-    // Cache the landing data for 5 minutes at the Cloudflare edge,
-    // so the pages are served really fast if they get popular,
-    // and also for speed test
-    maxage: 5*60, // 5 minutes,
-    props: {
-            topMomentum,
-		impressiveNumbers,
-		posts
-        }
-    };
-    }
+		return {
+			// Cache the landing data for 5 minutes at the Cloudflare edge,
+			// so the pages are served really fast if they get popular,
+			// and also for speed test
+			maxage: 5*60, // 5 minutes,
+			props: { topMomentum, impressiveNumbers, posts }
+		};
+	}
 </script>
 
 <script>
