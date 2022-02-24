@@ -1,46 +1,49 @@
 // https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte
-export const backendUrl = import.meta.env.VITE_PUBLIC_BACKEND_URL;
-
-if(!backendUrl) {
-    throw new Error("VITE_PUBLIC_BACKEND_URL missing");
-}
-
-if(backendUrl.endsWith("/")) {
-    throw new Error(`Backend URL cannot end with slash: ${backendUrl}`);
-}
-
 
 /**
- * Load Ghost API credentials and loudly bark if they are not available.
+ * Load Backend URL and fail loudly if not set
  */
-export function getGhostCredentials() {
-    const keys = {
-        contentApiKey: import.meta.env.VITE_PUBLIC_GHOST_CONTENT_API_KEY,
-        apiUrl: import.meta.env.VITE_PUBLIC_GHOST_API_URL,
-    }
+export const backendUrl = (({ VITE_PUBLIC_BACKEND_URL }) => {
+  if (!VITE_PUBLIC_BACKEND_URL) {
+    throw new Error("VITE_PUBLIC_BACKEND_URL missing");
+  } else if (VITE_PUBLIC_BACKEND_URL.endsWith("/")) {
+    throw new Error(`Backend URL cannot end with slash: ${backendUrl}`);
+  }
+  return VITE_PUBLIC_BACKEND_URL;
+})(import.meta.env);
 
-    if(!keys.contentApiKey || !keys.apiUrl) {
-        throw new Error("You need configure Ghost API keys to render the blog");
-    }
-
-    return keys;
-}
+/**
+ * Load Ghost API credentials and warn if not available.
+ */
+export const ghostConfig = ((env) => {
+  const contentApiKey = env.VITE_PUBLIC_GHOST_CONTENT_API_KEY;
+  const apiUrl = env.VITE_PUBLIC_GHOST_API_URL;
+  if (!contentApiKey || !apiUrl) {
+    console.warn("You need configure Ghost API keys to render the blog");
+  }
+  return { contentApiKey, apiUrl };
+})(import.meta.env);
 
 /**
  * Load Typesense config options and warn if not available.
  */
 export const typesenseConfig = ((env) => {
-    const apiKey = env.VITE_PUBLIC_TYPESENSE_API_KEY;
-    const apiUrl = env.VITE_PUBLIC_TYPESENSE_API_URL;
-    if (!apiKey || !apiUrl) {
-        console.warn("You need to configure Typesense options to enable search");
-    }
-    return { apiKey, apiUrl };
+  const apiKey = env.VITE_PUBLIC_TYPESENSE_API_KEY;
+  const apiUrl = env.VITE_PUBLIC_TYPESENSE_API_URL;
+  if (!apiKey || !apiUrl) {
+    console.warn("You need to configure Typesense options to enable search");
+  }
+  return { apiKey, apiUrl };
 })(import.meta.env);
 
-// Add some site features depending if we run prod, staging or local dev
-export const siteMode = import.meta.env.VITE_SITE_MODE || 'local';
-
-if(!(siteMode == 'production' || siteMode == 'staging' || siteMode == 'local')) {
-    throw new Error(`Bad site mode ${siteMode}`);
-}
+/**
+ * Load Site Mode and fail loudly if not a valid value
+ * - some site features depending on whether we run prod, staging or local dev
+ * - defaults to "local"
+ */
+export const siteMode = (({ VITE_SITE_MODE = "local" }) => {
+  if(!["production", "staging", "local"].includes(VITE_SITE_MODE)) {
+    throw new Error(`Bad site mode ${VITE_SITE_MODE}`);
+  }
+  return VITE_SITE_MODE;
+})(import.meta.env);
