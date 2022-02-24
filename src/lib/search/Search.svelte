@@ -9,7 +9,7 @@
   $: tradingEntities.search(value);
 </script>
 
-<div class="search-container">
+<div class="search">
   <Input
     type="search"
     placeholder="Search"
@@ -32,15 +32,37 @@
 </div>
 
 <style>
-  .search-container {
+  .search {
     position: relative;
   }
 
   .card {
     position: absolute;
     z-index: 1;
-    top: 3rem;
     right: 0;
     width: 450px;
+    margin-top: 5px;
+  }
+
+
+  @media (max-width: 768px) {
+    .search {
+      position: revert;
+    }
+
+    .card {
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+
+  }
+
+  @media (max-width: 450px) {
+    .card {
+      width: 100vw;
+      border-radius: 0;
+      border-left-width: 0;
+      border-right-width: 0;
+    }
   }
 </style>

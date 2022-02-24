@@ -20,21 +20,8 @@
 
 <!-- Navbar -->
 <div class="container" data-testid={'navbar'}>
-  <nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar">
-
-      <!-- Brand -->
-      <a class="navbar-brand" href="/" data-cy="logo">
-        <img class="img-logo img-logo-desktop" src={logo} alt="Trading Strategy" />
-        <img
-            class="img-logo img-logo-mobile"
-            src={logo}
-            alt="Trading Strategy"
-            width="128"
-            height="40"
-        />
-      </a>
-
-      <!-- Collapse -->
+  <nav class="navbar navbar-expand-lg navbar-light white scrolling-navbar flex-nowrap">
+      <!-- Expand/collapse nav options -->
       <button
           class="navbar-toggler"
           type="button"
@@ -48,10 +35,20 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Links -->
-      <div class="collapse navbar-collapse" class:show={isOpen} id="navbarSupportedContent">
+      <!-- Brand -->
+      <a class="navbar-brand" href="/" data-cy="logo">
+        <img class="img-logo img-logo-desktop" src={logo} alt="Trading Strategy" />
+        <img
+            class="img-logo img-logo-mobile"
+            src={logo}
+            alt="Trading Strategy"
+            width="128"
+            height="40"
+        />
+      </a>
 
-        <!-- Left -->
+      <!-- Left - primary nav options -->
+      <div class="collapse navbar-collapse" class:show={isOpen} id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto" data-cy="navigation">
           <li class="nav-item" data-testid={'navigation-link'}>
             <a rel="external" class="nav-link" href="/trading-view">Trading data</a>
@@ -67,10 +64,6 @@
 
           <li class="nav-item" data-testid={'navigation-link'}>
             <a rel="external" class="nav-link" href="/community">Community</a>
-          </li>
-
-          <li class="nav-item" data-testid={'navigation-link'}>
-            <a rel="external" class="nav-link" href="/blog">Blog</a>
           </li>
 
           <li class="nav-item nav-item-mobile-only">
@@ -91,10 +84,15 @@
             </a>
           </li>
         </ul>
+      </div>
 
+      <!-- Search box -->
+      <form class="form-inline flex-grow-1 d-flex flex-row-reverse">
         <Search />
+      </form>
 
-        <!-- Right -->
+      <!-- Right - social icons/links (desktop) -->
+      <div class="collapse navbar-collapse flex-grow-0">
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item nav-item-right">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
@@ -114,7 +112,6 @@
             </a>
           </li>
         </ul>
-
       </div>
   </nav>
 </div>
@@ -127,6 +124,11 @@
     /* Fix left aligment issues */
     .navbar {
       padding: 5px;
+    }
+
+    .navbar-toggler {
+      order: 99;
+      z-index: 2000;
     }
 
     .nav-link {
@@ -146,6 +148,10 @@
 
     .nav-link:hover {
         color: var(--price-up-green) !important;
+    }
+
+    img {
+      max-width: unset;
     }
 
     .img-logo {
@@ -173,23 +179,11 @@
         .nav-item-right { display: none }
     }
 
-    .navbar-toggler {
-        z-index: 2000;
-    }
-
     .nav-item-right {
         margin-right: 0;
     }
 
     .nav-item-right .nav-link {
         padding-right: 0;
-    }
-
-    .nav-item-right .nav-link:hover {
-        color: var(--price-up-green);
-    }
-
-    .nav-item-right .nav-link i {
-        font-size: 1.4rem;
     }
 </style>
