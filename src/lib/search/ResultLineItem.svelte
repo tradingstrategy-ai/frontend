@@ -1,7 +1,7 @@
 <script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
 
-  export let document;
+  export let document, selected;
 
   const { description, type, price_change_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
@@ -12,7 +12,12 @@
   }
 </script>
 
-<li class="list-group-item d-flex align-items-center">
+<li
+  class="list-group-item d-flex align-items-center"
+  class:selected
+  on:mouseenter
+  on:pointerdown
+>
   <div class="type badge-{type}">{label}</div>
   <div class="flex-grow-1">{description}</div>
   {#if price_change_24h !== undefined}
@@ -21,12 +26,17 @@
 </li>
 
 <style>
-  .list-group-item {
+  li {
     border: none;
     font-size: 0.9rem;
     font-weight: normal;
     line-height: 1.25;
     gap: 1em;
+    cursor: pointer;
+  }
+
+  .selected {
+    background-color: #E5DFD9;
   }
 
   .type {

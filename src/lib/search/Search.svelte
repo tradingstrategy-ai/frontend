@@ -1,12 +1,44 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import tradingEntities from "./trading-entities";
   import { Fade, Input, ListGroup, ListGroupItem } from "sveltestrap";
   import ResultLineItem from "./ResultLineItem.svelte";
 
   let value = "";
   let hasFocus = false;
+  let selectedIndex = 0;
 
   $: tradingEntities.search(value);
+
+  $: {
+    length = $tradingEntities.length;
+    selectedIndex = Math.min(selectedIndex, Math.max(length - 1, 0));
+  }
+
+  function handleKeydown(event) {
+    switch (event.key) {
+      case "ArrowDown":
+        selectedIndex = (selectedIndex + 1) % length;
+        break;
+      case "ArrowUp":
+        selectedIndex = (selectedIndex + length - 1) % length;
+        break;
+      case "Enter":
+        gotoEntity($tradingEntities[selectedIndex].document);
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+  }
+
+  function gotoEntity({ url_path, description }) {
+    if (url_path) {
+      goto (url_path.replace(/^\/+/g, "/"));
+    } else {
+      console.log(`GOTO ${description}`);
+    }
+  }
 </script>
 
 <div class="search">
@@ -16,13 +48,19 @@
     bind:value
     on:focus={() => hasFocus = true}
     on:blur={() => hasFocus = false}
+    on:keydown={handleKeydown}
   />
 
   <Fade isOpen={hasFocus && value}>
     <div class="card bg-primary shadow-soft border-light">
       <ListGroup flush>
-        {#each $tradingEntities as { document } (document.id)}
-          <ResultLineItem {document} />
+        {#each $tradingEntities as { document }, index (document.id)}
+          <ResultLineItem
+            {document}
+            selected={index === selectedIndex}
+            on:mouseenter={() => selectedIndex = index}
+            on:pointerdown={() => gotoEntity(document)}
+          />
         {:else}
           <ListGroupItem>Search exchanges, tokens and pairs</ListGroupItem>
         {/each}
