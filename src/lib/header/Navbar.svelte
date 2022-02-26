@@ -93,7 +93,7 @@
 
       <!-- Right - social icons/links (desktop) -->
       <div class="collapse navbar-collapse flex-grow-0">
-        <ul class="navbar-nav nav-flex-icons">
+        <ul class="navbar-nav nav-flex-icons" data-cy="navigation">
           <li class="nav-item nav-item-right">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
               <img src={twitter} loading="lazy" alt="Twitter"/>

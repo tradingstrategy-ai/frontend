@@ -44,6 +44,7 @@
 <div class="search">
   <input
     type="search"
+    data-cy="search"
     placeholder="search"
     autocapitalize="none"
     spellcheck="false"
