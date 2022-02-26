@@ -7,8 +7,9 @@ describe('Traging strategy Home', () => {
     it('User should be able to render the home page with header and navigation', () => {
         cy.contains('Algorithmic trading protocol for decentralised markets').should('be.visible');
         cy.contains(/Coming soon/i).should('be.visible');
-        cy.get('[data-cy=navigation]').get('li').should('have.length', 11)
-        cy.get('[data-cy=logo]')
+        cy.get('[data-cy=navigation]').get('li').should('have.length', 10);
+        cy.get('[data-cy=logo]');
+        cy.get('[data-cy=search]');
     });
 
     it('User Should be able to Navigate to the about page', () => {
