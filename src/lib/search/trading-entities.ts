@@ -19,11 +19,12 @@ const searchOptions = {
 const collection = searchClient?.collections("trading-entities").documents();
 
 const { subscribe, set } = writable([]);
+let lastQuery: string;
 
 async function search(query: string): Promise<void> {
   if (!collection) return;
 
-  const q = query.trim();
+  const q = lastQuery = query.trim();
 
   if (q === "") {
     set([]);
@@ -32,7 +33,10 @@ async function search(query: string): Promise<void> {
 
   try {
     const response = await collection.search({ q, ...searchOptions });
-    set(response.grouped_hits.flatMap((group) => group.hits));
+    // prevent race conditions - only update store if this was the last query
+    if (q === lastQuery) {
+      set(response.grouped_hits.flatMap((group) => group.hits));
+    }
   } catch (error) {
     console.error(error);
   }
