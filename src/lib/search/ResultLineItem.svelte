@@ -19,7 +19,7 @@
   on:pointerdown
 >
   <div class="type badge-{type}">{label}</div>
-  <div class="flex-grow-1">{description}</div>
+  <div class="description flex-grow-1">{description}</div>
   {#if price_change_24h !== undefined}
     <div class="price-change {priceChangeClass}">{getPriceChangePct()}%</div>
   {/if}
@@ -47,6 +47,13 @@
     font-weight: 600;
     text-align: center;
     line-height: 1.75;
+  }
+
+  .description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .price-change {
