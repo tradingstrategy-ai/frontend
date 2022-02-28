@@ -7,21 +7,22 @@
   let value = "";
   let hasFocus = false;
   let selectedIndex = 0;
+  let resultCount = 0;
 
   $: tradingEntities.search(value);
 
   $: {
-    length = $tradingEntities.length;
-    selectedIndex = Math.min(selectedIndex, Math.max(length - 1, 0));
+    resultCount = $tradingEntities.length;
+    selectedIndex = Math.min(selectedIndex, Math.max(resultCount - 1, 0));
   }
 
   function handleKeydown(event) {
     switch (event.key) {
       case "ArrowDown":
-        selectedIndex = (selectedIndex + 1) % length;
+        selectedIndex = (selectedIndex + 1) % resultCount;
         break;
       case "ArrowUp":
-        selectedIndex = (selectedIndex + length - 1) % length;
+        selectedIndex = (selectedIndex + resultCount - 1) % resultCount;
         break;
       case "Enter":
         gotoEntity($tradingEntities[selectedIndex].document);
@@ -91,7 +92,7 @@
     padding: 0 1ex 0 2em;
     border: 2px solid #44476a;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.5) url("images/search.svg") 1ex 55%/14px no-repeat;
+    background: rgba(255, 255, 255, 0.5) url("/images/search.svg") 1ex 55%/14px no-repeat;
     font-size: 0.8rem;
     color: #44476a;
   }
