@@ -92,24 +92,6 @@
         </td>
     </tr>
 </table>
-
-
-<div class="trading-pairs">
-    <h1>Trading pairs</h1>
-
-    <p>
-        Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
-    </p>
-
-    <StaleDataWarning allChains={true} />
-
-    <PairExplorer
-        enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
-        orderColumnIndex={4}
-        pageLength={50}
-        />
-</div>
-
 s
 <style>
 
