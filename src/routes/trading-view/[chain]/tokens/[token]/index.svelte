@@ -99,22 +99,17 @@
 
 <script lang="ts">
 
-    import Time from "svelte-time";
-    import {formatDollar, formatUnixTimestamp, parseUTCTime} from '$lib/helpers/formatters';
-    import { formatPriceChange } from '$lib/helpers/formatters';
-    import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
-    import { browser } from '$app/env';
-
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
-;
+    import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
+	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
 
     export let exchange_slug;
     export let chain_slug;
     export let summary; // PairSummary OpenAPI
-    export let details; // PairAdditionalDetails OpenAPI
-    export let breadcrumbs;
     export let token_slug;
+    export let breadcrumbs;
+    export let details; // PairAdditionalDetails OpenAPI
 
 
 </script>

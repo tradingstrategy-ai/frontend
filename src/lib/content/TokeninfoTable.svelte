@@ -88,7 +88,7 @@
     <tr>
         <th>Blockchain</th>
         <td>
-            <a href="/trading-view/{summary.blockchn}"></a>
+            <a href="/trading-view/{summary.blockchain}"></a>
         </td>
     </tr>
 </table>
