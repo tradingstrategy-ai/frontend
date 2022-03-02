@@ -1,0 +1,141 @@
+<script>
+
+
+    import { formatDollar } from '$lib/helpers/formatters';
+    import { formatPriceChange } from '$lib/helpers/formatters';
+
+
+    export let summary;
+    /**
+     * Reverse-calculate raw price using the US/quota token exchange rate
+     */
+    function calculateTokenPrice() {
+        if(!summary.exchange_rate) {
+            return null;
+        }
+
+        const tokenPrice = summary.usd_price_latest / summary.exchange_rate;
+        return tokenPrice;
+    }
+
+    let tokenPrice = calculateTokenPrice();
+
+    $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+</script>
+
+<table class="table">
+    <tr>
+        <th>Symbol</th>
+        <td>{summary.symbol}</td>
+    </tr>
+    <tr>
+        <th>Total Supply</th>
+        <td>{summary.total_supply}</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>
+            <strong class="{priceChangeColorClass}">
+                { formatDollar(summary.usd_price_latest, 3, 3, "") } USD
+            </strong>
+        </td>
+    </tr>
+
+    {#if tokenPrice}
+        <tr>
+            <th>Token price</th>
+            <td>
+                <strong class="{priceChangeColorClass}">
+                    { formatDollar(tokenPrice, 3, 3, "") } {summary.quote_token_symbol_friendly}
+                </strong>
+            </td>
+        </tr>
+    {/if}
+
+    <tr>
+        <th>Liquidity</th>
+        <td>
+            {formatDollar(summary.usd_liquidity_latest)}
+        </td>
+    </tr>
+
+    <tr>
+        <th>Volume 24h</th>
+        <td>
+            <strong class="{priceChangeColorClass}">
+                { formatPriceChange(summary.price_change_24h) }
+            </strong>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Trading pair</th>
+        <td>{summary.tradingPairs}</td>
+    </tr>
+
+    <tr>
+        <th>Market cap</th>
+        <td>{summary.maketCap}</td>
+    </tr>
+
+    <tr>
+        <th>Address</th>
+        <td>
+            <a href="/trading-view/{summary.address}">{'test'}</a>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Blockchain</th>
+        <td>
+            <a href="/trading-view/{summary.blockchn}"></a>
+        </td>
+    </tr>
+</table>
+
+
+<div class="trading-pairs">
+    <h1>Trading pairs</h1>
+
+    <p>
+        Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
+    </p>
+
+    <StaleDataWarning allChains={true} />
+
+    <PairExplorer
+        enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
+        orderColumnIndex={4}
+        pageLength={50}
+        />
+</div>
+
+s
+<style>
+
+    table {
+        font-size: 1rem;
+    }
+
+    table td, table th {
+        padding: 0.25rem;
+        border: 0;
+    }
+
+    /* --breakpoint-md */
+    @media(max-width: 992px) {
+        /* On mobile, don't render headings too wide */
+        table th, table td {
+            border-bottom: 1px solid #ccbeb3;
+        }
+    }
+
+    a {
+        border-bottom: 1px solid var(--link-underline);
+    }
+
+    a:hover {
+        color: var(--link-underline);
+    }
+
+</style>

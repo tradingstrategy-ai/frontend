@@ -20,24 +20,46 @@
      */
     export async function load({ url, params, fetch }) {
 
+
+        //  {
+        //   "exchange_id": "uniswap_v2",
+        //   "human_readable_name": "Uniswap",
+        //   "homepage": "https://uniswap.org",
+        //   "twitter": "https://twitter.com/uniswap",
+        //   "blockchain_explorer_link": "https://etherscan.io/address/0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+        //   "address": 5.275853591037655e+47,
+        //   "buy_volume_30d": 100000,
+        //   "sell_volume_30d": 100000,
+        //   "buy_volume_all_time": 100000,
+        //   "sell_volume_all_time": 100000,
+        //   "buy_count_all_time": 1,
+        //   "sell_count_all_time": 1,
+        //   "pair_count": 500,
+        //   "active_pair_count": 1,
+        //   "first_trade_at": "string"
+        // }
+
+
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
         const pair_slug = params.pair;
         const token_slug = params.token;
-        const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
-        const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+        // const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
+        const apiUrl = `${backendUrl}/token/details?chain_slug=ethereum&address=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48`;
 
         const resp = await fetch(apiUrl);
 
+        console.log(resp)
+
         if(!resp.ok) {
             if(resp.status === 404) {
-                console.error("Pair missing", pair_slug)
+                console.error("Token missing", pair_slug)
                 return {
                     status: 404,
-                    error: `Trading pair not found: ${pair_slug}`
+                    error: `Token not found: ${pair_slug}`
                 }
             } else {
-                console.error("Failed to load pair", apiUrl);
+                console.error("Failed to load token", apiUrl);
                 return {
                     status: resp.status,
                     error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
@@ -45,19 +67,16 @@
             }
         }
 
-        const pairDetails = await resp.json()
+        const tokenDetails = await resp.json()
 
-        const summary = pairDetails.summary;
-        const details = pairDetails.additional_details;
-        const daily = pairDetails.daily;
+        const summary = tokenDetails;
 
         console.log("Summary", summary);
-        console.log("Details", details);
 
         const readableNames = {
             ...breadcrumbTranslations,
-            [exchange_slug]: details.exchange_name,
-            [pair_slug]: pairDetails.summary.pair_name
+            [exchange_slug]: exchange_slug,
+            [pair_slug]: token_slug
         };
 
 
@@ -72,8 +91,6 @@
                 pair_slug,
                 token_slug,
                 summary,
-                details,
-                daily,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         }
@@ -88,13 +105,9 @@
     import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
     import { browser } from '$app/env';
 
-    import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-    import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
-    import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import PairInfoTable from "$lib/content/PairInfoTable.svelte";
-    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
-    import {onMount} from "svelte";
+    import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
+;
 
     export let exchange_slug;
     export let chain_slug;
@@ -103,22 +116,6 @@
     export let breadcrumbs;
     export let token_slug;
 
-    export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
-
-    // Candle data array loaded from the server
-    export let rawCandles = [];
-
-    // XYLiquidity data array loaded from the server
-    export let rawLiquidity = [];
-
-    // Candle data massaged for uPlot
-    export let candles = null;
-
-    // Liquidity data massaged for uPlot
-    export let liquidity = null;
-
-    // Loaded uPlot library
-    export let uPlot;
 
 </script>
 
@@ -126,7 +123,7 @@
 	<title>
       token pair price on ${token_slug}
     </title>
-	<meta name="description" content={`Price and liquidity for ${summary.pair_symbol} on ${details.exchange_name} on ${details.chain_name}`}>
+	<meta name="description" content={`Token slug`}>
 </svelte:head>
 
 <div class="container">
@@ -138,17 +135,33 @@
             <div class="col-md-12">
                 <h1>
                     {token_slug} token pair on
-                    <a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} </a>
-                    on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
+                    <a href="/trading-view/{chain_slug}/{exchange_slug}"></a>
+                    on <a href="/trading-view/{chain_slug}"></a>
                 </h1>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-5">
-                <PairInfoTable {summary} {details} />
+                <TokenInfoTable {summary} />
             </div>
         </div>
+    </div>
+
+    <div class="trading-pairs">
+        <h1>Trading pairs</h1>
+
+        <p>
+            Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
+        </p>
+
+        <StaleDataWarning allChains={true} />
+
+        <PairExplorer
+            enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
+            orderColumnIndex={4}
+            pageLength={50}
+            />
     </div>
 </div>
 
