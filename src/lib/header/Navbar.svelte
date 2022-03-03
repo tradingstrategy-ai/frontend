@@ -5,11 +5,14 @@
 
 -->
 <script lang="ts">
-  import Search from '../search/Search.svelte';
-  import logo from '../../lib/assets/logo-two-lines-new-no-text.svg';
+  import { page } from '$app/stores';
+  import Search from '$lib/search/Search.svelte';
+  import logo from '$lib/assets/logo-two-lines-new-no-text.svg';
   import twitter from './twitter.svg';
   import telegram from './telegram.svg';
   import discord from './discord.svg';
+
+  $: showSearch = $page.url.pathname !== '/search';
 
   let isOpen = false;
 
@@ -86,10 +89,12 @@
         </ul>
       </div>
 
-      <!-- Search box -->
-      <form class="form-inline flex-grow-1 d-flex flex-row-reverse">
-        <Search />
-      </form>
+      <!-- Search box (NOT shown on full search page) -->
+      {#if showSearch}
+        <form class="form-inline flex-grow-1 d-flex flex-row-reverse">
+          <Search />
+        </form>
+      {/if}
 
       <!-- Right - social icons/links (desktop) -->
       <div class="collapse navbar-collapse flex-grow-0">
