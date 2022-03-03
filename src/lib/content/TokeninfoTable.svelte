@@ -33,25 +33,13 @@
         <td>{summary.total_supply}</td>
     </tr>
     <tr>
-        <th>Price</th>
+    <th>Token Price</th>
         <td>
             <strong class="{priceChangeColorClass}">
                 { formatDollar(summary.usd_price_latest, 3, 3, "") } USD
             </strong>
         </td>
     </tr>
-
-    {#if tokenPrice}
-        <tr>
-            <th>Token price</th>
-            <td>
-                <strong class="{priceChangeColorClass}">
-                    { formatDollar(tokenPrice, 3, 3, "") } {summary.quote_token_symbol_friendly}
-                </strong>
-            </td>
-        </tr>
-    {/if}
-
     <tr>
         <th>Liquidity</th>
         <td>
@@ -63,36 +51,36 @@
         <th>Volume 24h</th>
         <td>
             <strong class="{priceChangeColorClass}">
-                { formatPriceChange(summary.price_change_24h) }
+                { formatPriceChange(summary.price_change_24h || 0 ) }
             </strong>
         </td>
     </tr>
 
     <tr>
         <th>Trading pair</th>
-        <td>{summary.tradingPairs}</td>
+        <td>{summary.tradingPairs || 0 }</td>
     </tr>
 
     <tr>
         <th>Market cap</th>
-        <td>{summary.maketCap}</td>
+        <td>{summary.maketCap || 0}</td>
     </tr>
 
     <tr>
         <th>Address</th>
         <td>
-            <a href="/trading-view/{summary.address}">{'test'}</a>
+            <a href="/trading-view/{summary.address}">{'0x0...'}</a>
         </td>
     </tr>
 
     <tr>
         <th>Blockchain</th>
         <td>
-            <a href="/trading-view/{summary.blockchain}"></a>
+            <a href="/trading-view/{summary.blockchain || 'ethereum' }"></a>
         </td>
     </tr>
 </table>
-s
+
 <style>
 
     table {

@@ -21,25 +21,6 @@
     export async function load({ url, params, fetch }) {
 
 
-        //  {
-        //   "exchange_id": "uniswap_v2",
-        //   "human_readable_name": "Uniswap",
-        //   "homepage": "https://uniswap.org",
-        //   "twitter": "https://twitter.com/uniswap",
-        //   "blockchain_explorer_link": "https://etherscan.io/address/0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-        //   "address": 5.275853591037655e+47,
-        //   "buy_volume_30d": 100000,
-        //   "sell_volume_30d": 100000,
-        //   "buy_volume_all_time": 100000,
-        //   "sell_volume_all_time": 100000,
-        //   "buy_count_all_time": 1,
-        //   "sell_count_all_time": 1,
-        //   "pair_count": 500,
-        //   "active_pair_count": 1,
-        //   "first_trade_at": "string"
-        // }
-
-
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
         const pair_slug = params.pair;
@@ -129,7 +110,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h1>
-                    {token_slug} token pair on
+                    Token {token_slug}
                     <a href="/trading-view/{chain_slug}/{exchange_slug}"></a>
                     on <a href="/trading-view/{chain_slug}"></a>
                 </h1>
