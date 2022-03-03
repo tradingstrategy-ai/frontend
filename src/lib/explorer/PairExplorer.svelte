@@ -16,6 +16,7 @@
 
     // The chain slug for which the trading pairs are rendered like "binance"
     export let chainSlug = null;
+    export let tokenSlug = null;
 
     // What columns we will show in the explorer.
     // See allColumns for options.
@@ -212,6 +213,10 @@
                 // Zero-based rendered page
                 page: data.start,
             };
+
+            if(tokenSlug) {
+                params.token_slugs = chainSlug;
+            }
 
             if(chainSlug) {
                 params.chain_slugs = chainSlug;
