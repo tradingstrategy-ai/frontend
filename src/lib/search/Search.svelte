@@ -54,7 +54,6 @@
     on:blur={() => hasFocus = false}
     on:keydown={handleKeydown}
   />
-<br>
   <Fade isOpen={hasFocus && value}>
     <div class="card bg-primary shadow-soft border-light">
       <ListGroup flush>
