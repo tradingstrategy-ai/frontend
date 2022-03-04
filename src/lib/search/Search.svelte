@@ -4,15 +4,19 @@
   import { Fade, ListGroup, ListGroupItem } from "sveltestrap";
   import ResultLineItem from "./ResultLineItem.svelte";
 
-  let value = "";
+  let q = "";
   let hasFocus = false;
   let selectedIndex = 0;
   let resultCount = 0;
 
-  $: tradingEntities.search(value);
+  $: tradingEntities.search({
+    q,
+    sort_by: ["type_rank:asc", "_text_match:desc", "volume_24h:desc"],
+    group_by: ["type"]
+  });
 
   $: {
-    resultCount = $tradingEntities.length;
+    resultCount = $tradingEntities.hits.length;
     selectedIndex = Math.min(selectedIndex, Math.max(resultCount - 1, 0));
   }
 
@@ -25,7 +29,7 @@
         selectedIndex = (selectedIndex + resultCount - 1) % resultCount;
         break;
       case "Enter":
-        gotoEntity($tradingEntities[selectedIndex].document);
+        gotoEntity($tradingEntities.hits[selectedIndex].document);
         break;
       default:
         return;
@@ -49,15 +53,15 @@
     placeholder="search"
     autocapitalize="none"
     spellcheck="false"
-    bind:value
+    bind:value={q}
     on:focus={() => hasFocus = true}
     on:blur={() => hasFocus = false}
     on:keydown={handleKeydown}
   />
-  <Fade isOpen={hasFocus && value}>
+  <Fade isOpen={hasFocus && q}>
     <div class="card bg-primary shadow-soft border-light">
       <ListGroup flush>
-        {#each $tradingEntities as { document }, index (document.id)}
+        {#each $tradingEntities.hits as { document }, index (document.id)}
           <ResultLineItem
             {document}
             selected={index === selectedIndex}

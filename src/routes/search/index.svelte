@@ -3,9 +3,12 @@
   import { ListGroup } from "sveltestrap";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
-  let value="";
+  let q = "";
 
-  $: tradingEntities.search(value);
+  $: tradingEntities.search({
+    q,
+    facet_by: ["type", "blockchain", "exchange"]
+  });
 </script>
 
 <svelte:head>
@@ -27,7 +30,7 @@
                       placeholder="search"
                       autocapitalize="none"
                       spellcheck="false"
-                      bind:value
+                      bind:value={q}
                     />
                 </div>
             </div>
@@ -38,7 +41,7 @@
               </div>
               <div class="col-md-9 col-sm-12">
                   <ListGroup>
-                      {#each $tradingEntities as { document }, index (document.id)}
+                      {#each $tradingEntities.hits as { document }, index (document.id)}
                           <ResultLineItem {document} />
                       {/each}
                   </ListGroup>
