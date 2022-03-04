@@ -1,5 +1,11 @@
 <script lang="ts">
+  import tradingEntities from "$lib/search/trading-entities";
+  import { ListGroup } from "sveltestrap";
+  import ResultLineItem from "./_ResultLineItem.svelte";
+
   let value="";
+
+  $: tradingEntities.search(value);
 </script>
 
 <svelte:head>
@@ -26,12 +32,16 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mt-1">
               <div class="col-md-3">
                   <h2>Filters</h2>
               </div>
               <div class="col-md-9 col-sm-12">
-                <h2>Search Results</h2>
+                  <ListGroup>
+                      {#each $tradingEntities as { document }, index (document.id)}
+                          <ResultLineItem {document} />
+                      {/each}
+                  </ListGroup>
               </div>
             </div>
         </div>
