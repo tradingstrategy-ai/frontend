@@ -91,6 +91,7 @@
     padding: 0 1ex 0 2em;
     border: 2px solid #44476a;
     border-radius: 16px;
+    outline: none;
     background: rgba(255, 255, 255, 0.5) url("/images/search.svg") 1ex 55%/14px no-repeat;
     font-size: 0.8rem;
     color: #44476a;
@@ -98,7 +99,6 @@
 
   input:focus {
     background-color: rgba(255, 255, 255, 0.75);
-    outline: none;
     box-shadow: 0 0 10px #44476a55;
   }
 
