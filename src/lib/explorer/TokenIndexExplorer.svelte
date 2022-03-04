@@ -33,7 +33,7 @@
 			data: 'name',
 
 			render: function (data, type, row, meta) {
-				return `<a href="/trading-view/${row.chain_slug}/token/">${row.human_readable_name}</a>`;
+				return `<a href="/trading-view/${row.chain_slug}/token/">${row.name}</a>`;
 			}
 		},
 		symbol: {
@@ -41,7 +41,7 @@
 			className: 'col-symbol',
 			data: 'symbol',
 			render: function (data, type, row, meta) {
-				return `<a href="/trading-view/${row.chain_slug}">${row.chain_name}</a>`;
+				return `<a href="/trading-view/${row.chain_slug}">${row.symbol}</a>`;
 			}
 		}
 	};
@@ -109,10 +109,9 @@
 
 			// TODO: Maybe add pagination on one day
 			// Mangle the result object for Datatables format
-			// result.recordsTotal = result.length;
-			// result.recordsFiltered = result.length;
+			result.recordsTotal = result.length;
+			result.recordsFiltered = result.length;
 			result.data = result;
-      console.log(result[0])
 
 			callback(result);
 		}

@@ -28,7 +28,7 @@
 <script lang="typescript">
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
-	import TokenExplorer from "$lib/explorer/TokensExplorer.svelte";
+	import TokenIndexExplorer from "$lib/explorer/TokenIndexExplorer.svelte";
 
 	export let breadcrumbs;
 	export let chain;
@@ -53,12 +53,12 @@
 
 				<StaleDataWarning allChains={true} />
 
-				<TokenExplorer
+				<TokenIndexExplorer
 					enabledColumns={["name", "symbol"]}
 					orderColumnIndex={1}
 					filterJunk={false}
 					chainSlug={chain}
-					/>
+				/>
 			</div>
 
 		</div>

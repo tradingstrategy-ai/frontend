@@ -253,8 +253,6 @@
             result.recordsFiltered = result.total;
             result.data = result.results;
 
-            // console.log("Rendering", result.data);
-
             callback(result);
         }
     };
