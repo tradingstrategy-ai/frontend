@@ -34,5 +34,6 @@ const breadcrumbTranslations = {
     bsc: 'Binance Smart Chain',
     binance: 'Binance Smart Chain',
     polygon: 'Polygon',
+    tokens: 'Tokens',
 };
 export default breadcrumbTranslations;

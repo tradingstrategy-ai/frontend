@@ -25,12 +25,12 @@
         const chain_slug = params.chain;
         const pair_slug = params.pair;
         const token_slug = params.token;
-        // const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
-        const apiUrl = `${backendUrl}/token/details?chain_slug=ethereum&address=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48`;
+        const address = url.searchParams.get('token_address')
+        const encoded = new URLSearchParams({chain_slug, address});
+
+        const apiUrl = `${backendUrl}/token/details?${encoded}`;
 
         const resp = await fetch(apiUrl);
-
-        console.log(resp)
 
         if(!resp.ok) {
             if(resp.status === 404) {
@@ -83,7 +83,7 @@
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
-	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
+	import TokenExplorer from "$lib/explorer/TokenExplorer.svelte";
 
     export let exchange_slug;
     export let chain_slug;
@@ -111,8 +111,6 @@
             <div class="col-md-12">
                 <h1>
                     Token {token_slug}
-                    <a href="/trading-view/{chain_slug}/{exchange_slug}"></a>
-                    on <a href="/trading-view/{chain_slug}"></a>
                 </h1>
             </div>
         </div>
@@ -128,15 +126,16 @@
         <h1>Trading pairs</h1>
 
         <p>
-            Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
+            Browse trading tokens across all <a href="/trading-view/tokens">decentralised exchanges</a> below.
         </p>
 
         <StaleDataWarning allChains={true} />
 
-        <PairExplorer
+        <TokenExplorer
             enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
             orderColumnIndex={4}
             pageLength={50}
+            tokenSlug={token_slug}
             />
     </div>
 </div>
