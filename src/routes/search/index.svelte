@@ -1,13 +1,31 @@
 <script lang="ts">
   import tradingEntities from "$lib/search/trading-entities";
   import { ListGroup } from "sveltestrap";
+  import FacetFilter from "./_FacetFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
   let q = "";
 
+  let filters = {
+    type: [],
+    blockchain: [],
+    exchange: []
+  };
+
+  function getFilterBy(filters) {
+    const filterBy = [];
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value.length > 0) {
+        filterBy.push(`${key}:=[${value}]`)
+      }
+    });
+    return filterBy;
+  }
+
   $: tradingEntities.search({
     q,
-    facet_by: ["type", "blockchain", "exchange"]
+    facet_by: ["type", "blockchain", "exchange"],
+    filter_by: getFilterBy(filters)
   });
 </script>
 
@@ -36,8 +54,14 @@
             </div>
 
             <div class="row mt-1">
-              <div class="col-md-3">
-                  <h2>Filters</h2>
+              <div class="filters col-md-3">
+                  {#each $tradingEntities.facets as { field_name, counts } (field_name)}
+                    <FacetFilter
+                      bind:group={filters[field_name]}
+                      title={field_name}
+                      options={counts}
+                    />
+                  {/each}
               </div>
               <div class="col-md-9 col-sm-12">
                   <ListGroup>

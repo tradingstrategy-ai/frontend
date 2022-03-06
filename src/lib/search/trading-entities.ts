@@ -32,6 +32,7 @@ let lastSearchIndex = 0;
 interface SearchOptions {
   q: string;
   facet_by?: Array<string>;
+  filter_by?: Array<string>;
   group_by?: Array<string>;
   sort_by?: Array<string>;
 }
@@ -39,7 +40,9 @@ interface SearchOptions {
 function typesenseOptions(options: SearchOptions) {
   const mergedOptions = {...defaultOptions, ...options };
   for (const key in mergedOptions) {
-    if (mergedOptions[key] instanceof Array) {
+    if (key === "filter_by") {
+      mergedOptions[key] = mergedOptions[key].join(" && ");
+    } else if (mergedOptions[key] instanceof Array) {
       mergedOptions[key] = mergedOptions[key].toString();
     }
   }
