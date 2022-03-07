@@ -12,7 +12,7 @@ import searchClient from "./client";
 
 const defaultOptions = {
   query_by: ["description", "token_tickers", "token_names" ,"smart_contract_addresses"],
-  sort_by: ["type_rank:asc", "_text_match:desc", "volume_24h:desc"],
+  sort_by: [],
   highlight_full_fields: "description",
   highlight_start_tag: "<em>",
   highlight_end_tag: "</em>"

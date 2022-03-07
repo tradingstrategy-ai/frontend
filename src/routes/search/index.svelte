@@ -25,7 +25,8 @@
   $: tradingEntities.search({
     q,
     facet_by: ["type", "blockchain", "exchange"],
-    filter_by: getFilterBy(filters)
+    filter_by: getFilterBy(filters),
+    sort_by: ["_text_match:desc", "volume_24h:desc"]
   });
 </script>
 
