@@ -1,5 +1,8 @@
 <script>
-  export let title, options, group;
+  export let title, options, filter;
+  let selected = [];
+
+  $: filter = selected.length ? `${title}:=[${selected}]` : null;
 </script>
 
 <h2>{title}</h2>
@@ -7,7 +10,7 @@
     {#each options as { value, count } (value)}
         {#if value}
             <label>
-              <input type="checkbox" bind:group {value} />
+              <input type="checkbox" bind:group={selected} {value} />
               <div class="value">{value}</div>
               <div class="count">{count.toLocaleString('en')}</div>
             </label>

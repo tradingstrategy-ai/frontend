@@ -13,20 +13,10 @@
     exchange: []
   };
 
-  function getFilterBy(filters) {
-    const filterBy = [];
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value.length > 0) {
-        filterBy.push(`${key}:=[${value}]`)
-      }
-    });
-    return filterBy;
-  }
-
   $: tradingEntities.search({
     q,
     facet_by: ["type", "blockchain", "exchange"],
-    filter_by: getFilterBy(filters),
+    filter_by: Object.values(filters).filter((v) => v),
     sort_by: ["_text_match:desc", "volume_24h:desc"]
   });
 </script>
@@ -59,7 +49,7 @@
               <div class="filters col-md-3">
                   {#each $tradingEntities.facets as { field_name, counts } (field_name)}
                     <FacetFilter
-                      bind:group={filters[field_name]}
+                      bind:filter={filters[field_name]}
                       title={field_name}
                       options={counts}
                     />
