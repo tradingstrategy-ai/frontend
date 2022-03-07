@@ -1,11 +1,11 @@
 <script>
-  export let title, options, filter;
+  export let fieldName, options, filter;
   let selected = [];
 
-  $: filter = selected.length ? `${title}:=[${selected}]` : null;
+  $: filter = selected.length ? `${fieldName}:=[${selected}]` : null;
 </script>
 
-<h2>{title}</h2>
+<h2>{fieldName}</h2>
 <div class="option-group">
     {#each options as { value, count } (value)}
         {#if value}

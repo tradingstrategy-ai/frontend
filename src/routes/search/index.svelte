@@ -1,22 +1,20 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { formatDollar } from "$lib/helpers/formatters";
   import tradingEntities from "$lib/search/trading-entities";
   import { ListGroup } from "sveltestrap";
   import FacetFilter from "./_FacetFilter.svelte";
+  import RangeFilter from "./_RangeFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
   let q = $page.url.searchParams.get('q') || "";
 
-  let filters = {
-    type: [],
-    blockchain: [],
-    exchange: []
-  };
+  let filters = {};
 
   $: tradingEntities.search({
     q,
     facet_by: ["type", "blockchain", "exchange"],
-    filter_by: Object.values(filters).filter((v) => v),
+    filter_by: Object.values(filters).filter((v) => v), // refactor "filter filter" into tradingEntities
     sort_by: ["_text_match:desc", "volume_24h:desc"]
   });
 </script>
@@ -50,10 +48,28 @@
                   {#each $tradingEntities.facets as { field_name, counts } (field_name)}
                     <FacetFilter
                       bind:filter={filters[field_name]}
-                      title={field_name}
+                      fieldName={field_name}
                       options={counts}
                     />
                   {/each}
+                  <RangeFilter
+                    bind:filter={filters['volume_24h']}
+                    fieldName="volume_24h"
+                    breakpoints={[0, 100, 1000, 10000, Infinity]}
+                    formatter={formatDollar}
+                  />
+                  <RangeFilter
+                    bind:filter={filters['liquidity']}
+                    fieldName="liquidity"
+                    breakpoints={[0, 100, 1000, 10000, Infinity]}
+                    formatter={formatDollar}
+                  />
+                  <RangeFilter
+                    bind:filter={filters['price_change_24h']}
+                    fieldName="price_change_24h"
+                    breakpoints={[-Infinity, -0.01, -0.0001, 0.0001, 0.01, Infinity]}
+                    formatter={(v) => v.toLocaleString("en", { style: "percent",  minimumFractionDigits: 1 })}
+                  />
               </div>
               <div class="col-md-9 col-sm-12">
                   {#if /^\s*$/.test(q)}
