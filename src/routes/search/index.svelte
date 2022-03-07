@@ -65,11 +65,15 @@
                   {/each}
               </div>
               <div class="col-md-9 col-sm-12">
-                  <ListGroup>
-                      {#each $tradingEntities.hits as { document }, index (document.id)}
-                          <ResultLineItem {document} />
-                      {/each}
-                  </ListGroup>
+                  {#if /^\s*$/.test(q)}
+                      <div>Search exchanges, tokens and trading pairs.</div>
+                  {:else}
+                      <ListGroup>
+                          {#each $tradingEntities.hits as { document }, index (document.id)}
+                              <ResultLineItem {document} />
+                          {/each}
+                      </ListGroup>
+                  {/if}
               </div>
             </div>
         </div>
