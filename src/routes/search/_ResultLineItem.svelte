@@ -1,5 +1,6 @@
 <script>
   import { determinePriceChangeClass } from "$lib/helpers/price";
+  import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 
   export let document;
 
@@ -15,14 +16,6 @@
       minimumFractionDigits: 1
     });
   }
-
-  // TODO: refactor to helper
-  function USD(value) {
-    return (price_usd_latest || 0).toLocaleString('en-US', {
-      style: "currency",
-      currency: "USD"
-    });
-  }
 </script>
 
 <li class="list-group-item d-flex align-items-center">
@@ -32,21 +25,21 @@
       <div class="d-flex flex-grow-1">
         <div class="desc flex-grow-1">{description}</div>
         {#if isPair}
-            <div class="price {priceChangeClass}">{USD(price_usd_latest)}</div>
+            <div class="price {priceChangeClass}">{formatDollar(price_usd_latest)}</div>
         {/if}
       </div>
       {#if isPair}
           <div class="details d-flex flex-grow-1">
               <div>
                 <dt>volume 24h:</dt>
-                <dd>{USD(volume_24h)}</dd>
+                <dd>{formatDollar(volume_24h)}</dd>
               </div>
               <div>
                 <dt>liquidity:</dt>
-                <dd>{USD(liquidity)}</dd>
+                <dd>{formatDollar(liquidity)}</dd>
               </div>
               <div class="price-change">
-                <dd class="{priceChangeClass}">{getPriceChangePct()}</dd>
+                <dd class="{priceChangeClass}">{formatPriceChange(price_change_24h)}</dd>
               </div>
           </div>
       {/if}
@@ -108,19 +101,5 @@
   .details dd {
     display: inline;
     font-weight: 500;
-  }
-
-  .price-change dd::after {
-    content: "~";
-    display: inline-block;
-    width: 1.25em;
-  }
-
-  dd.price-change-red::after {
-    content: "▼";
-  }
-
-  dd.price-change-green::after {
-    content: "▲";
   }
 </style>
