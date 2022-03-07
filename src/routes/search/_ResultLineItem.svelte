@@ -1,13 +1,56 @@
 <script>
+  import { determinePriceChangeClass } from "$lib/helpers/price";
+
   export let document;
 
-  const { description, type } = document;
+  const { description, type, price_usd_latest, price_change_24h, liquidity, volume_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
+  const isPair = type === "pair";
+  const priceChangeClass = determinePriceChangeClass(price_change_24h);
+
+  // TODO: refactor to helper
+  function getPriceChangePct() {
+    return Math.abs(price_change_24h).toLocaleString("en-US", {
+      style: "percent",
+      minimumFractionDigits: 1
+    });
+  }
+
+  // TODO: refactor to helper
+  function USD(value) {
+    return (price_usd_latest || 0).toLocaleString('en-US', {
+      style: "currency",
+      currency: "USD"
+    });
+  }
 </script>
 
 <li class="list-group-item d-flex align-items-center">
-  <div class="type badge-{type}">{label}</div>
-  <div class="desc flex-grow-1">{description}</div>
+    <div class="type badge-{type}">{label}</div>
+    <div class="flex-grow-1">
+
+      <div class="d-flex flex-grow-1">
+        <div class="desc flex-grow-1">{description}</div>
+        {#if isPair}
+            <div class="price {priceChangeClass}">{USD(price_usd_latest)}</div>
+        {/if}
+      </div>
+      {#if isPair}
+          <div class="details d-flex flex-grow-1">
+              <div>
+                <dt>volume 24h:</dt>
+                <dd>{USD(volume_24h)}</dd>
+              </div>
+              <div>
+                <dt>liquidity:</dt>
+                <dd>{USD(liquidity)}</dd>
+              </div>
+              <div class="price-change">
+                <dd class="{priceChangeClass}">{getPriceChangePct()}</dd>
+              </div>
+          </div>
+      {/if}
+    </div>
 </li>
 
 <style>
@@ -39,5 +82,45 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .details {
+    justify-content: space-between;
+    margin-top: 1ex;
+    font-size: 0.75rem;
+  }
+
+  .details div {
+    width: 12em;
+  }
+
+  .details div.price-change {
+    width: 5em;
+    text-align: right;
+  }
+
+  .details dt {
+    display: inline;
+    font-weight: 300;
+    color: #777777;
+  }
+
+  .details dd {
+    display: inline;
+    font-weight: 500;
+  }
+
+  .price-change dd::after {
+    content: "~";
+    display: inline-block;
+    width: 1.25em;
+  }
+
+  dd.price-change-red::after {
+    content: "▼";
+  }
+
+  dd.price-change-green::after {
+    content: "▲";
   }
 </style>
