@@ -1,12 +1,8 @@
 <script context="module">
     /*
-        Render the pair trading page
+        Render the token page
 
-        - Load pair core data on the SSR.
-
-        - Candle data loading is delayed to the client side (though in theory the first run could be done on the SSR)
-
-        - Selected candle stick time bucket is carried over in URL fragment - this could be moved to SvelteKit routing query parameter
+        - Load token core data on the SSR.
     */
 
     import { backendUrl } from '$lib/config';
@@ -14,9 +10,7 @@
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
     /**
-     * On the server-side, we load only pair details.
-     *
-     * All charting data fetches are done on the client side.
+     * On the server-side, we load only token details.
      */
     export async function load({ url, params, fetch }) {
 
@@ -83,14 +77,11 @@
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
-	import TokenExplorer from "$lib/explorer/TokenExplorer.svelte";
+	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
 
-    export let exchange_slug;
-    export let chain_slug;
-    export let summary; // PairSummary OpenAPI
+    export let summary;
     export let token_slug;
     export let breadcrumbs;
-    export let details; // PairAdditionalDetails OpenAPI
 
 
 </script>
@@ -131,12 +122,12 @@
 
         <StaleDataWarning allChains={true} />
 
-        <TokenExplorer
+        <PairExplorer
             enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
             orderColumnIndex={4}
             pageLength={50}
-            tokenSlug={token_slug}
-            />
+            tokenSymbol={summary.symbol}
+        />
     </div>
 </div>
 
@@ -150,10 +141,6 @@
     h1 {
         font-size: 2rem;
         margin-bottom: 20px;
-    }
-
-    h2 {
-        font-size: 2rem;
     }
 
     .text-section {

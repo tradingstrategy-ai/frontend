@@ -8,12 +8,13 @@
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
 	export async function load({ url, params }){
-        const pathTranslations = {
-            "trading-view": "Trading data",
-			"exchanges": "Decentralised exchanges",
-        };
+    const pathTranslations = {
+      "trading-view": "Trading data",
+		  "exchanges": "Decentralised exchanges",
+			"ethereum": "Ethereum",
+			"tokens": "Tokens"
+    };
 
-		console.log(params)
     const chain_slug = params.chain;
 		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
 

@@ -16,7 +16,9 @@
 
     // The chain slug for which the trading pairs are rendered like "binance"
     export let chainSlug = null;
-    export let tokenSlug = null;
+
+    // The token Symbol to get the all the pairs "WETH"
+    export let tokenSymbol = null;
 
     // What columns we will show in the explorer.
     // See allColumns for options.
@@ -214,8 +216,8 @@
                 page: data.start,
             };
 
-            if(tokenSlug) {
-                params.token_slugs = chainSlug;
+            if(tokenSymbol) {
+                params.tokenSymbol = tokenSymbol;
             }
 
             if(chainSlug) {

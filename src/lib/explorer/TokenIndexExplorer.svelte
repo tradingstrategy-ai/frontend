@@ -28,7 +28,7 @@
 	// https://datatables.net/reference/option/columns.type
 	const availableColumns = {
 		name: {
-			name: 'name',
+			name: 'Name',
 			className: 'col-token',
 			data: 'name',
 
@@ -37,7 +37,7 @@
 			}
 		},
 		symbol: {
-			name: 'symbol',
+			name: 'Symbol',
 			className: 'col-symbol',
 			data: 'symbol',
 			render: function (data, type, row, meta) {
@@ -84,7 +84,7 @@
 				params.chain_slug = chainSlug;
 			}
 
-			// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
+			// https://tradingstrategy.ai/api/explorer/#/Token/web_tokens
 			const encoded = new URLSearchParams({chain_slug: params.chain_slug});
 			const url = `${backendUrl}/tokens?${encoded}`;
 			const resp = await fetch(url);
@@ -106,8 +106,6 @@
 			const result = await resp.json();
 			console.log('Got token result', result);
 
-			// TODO: Maybe add pagination on one day
-			// Mangle the result object for Datatables format
 			result.recordsTotal = result.length;
 			result.recordsFiltered = result.length;
 			result.data = result;
