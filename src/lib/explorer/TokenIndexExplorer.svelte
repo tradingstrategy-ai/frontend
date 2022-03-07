@@ -33,7 +33,7 @@
 			data: 'name',
 
 			render: function (data, type, row, meta) {
-				return `<a href="/trading-view/${row.chain_slug}/token/">${row.name}</a>`;
+				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.name}</a>`;
 			}
 		},
 		symbol: {
@@ -41,7 +41,7 @@
 			className: 'col-symbol',
 			data: 'symbol',
 			render: function (data, type, row, meta) {
-				return `<a href="/trading-view/${row.chain_slug}">${row.symbol}</a>`;
+				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.symbol}</a>`;
 			}
 		}
 	};
@@ -85,9 +85,8 @@
 			}
 
 			// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
-			const encoded = new URLSearchParams(params);
+			const encoded = new URLSearchParams({chain_slug: params.chain_slug});
 			const url = `${backendUrl}/tokens?${encoded}`;
-			console.log('Reading tokens', url);
 			const resp = await fetch(url);
 
 			if (!resp.ok) {

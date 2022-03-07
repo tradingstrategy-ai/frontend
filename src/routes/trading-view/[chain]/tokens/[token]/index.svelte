@@ -25,7 +25,7 @@
         const chain_slug = params.chain;
         const pair_slug = params.pair;
         const token_slug = params.token;
-        const address = url.searchParams.get('token_address')
+        const address = token_slug;
         const encoded = new URLSearchParams({chain_slug, address});
 
         const apiUrl = `${backendUrl}/token/details?${encoded}`;
@@ -97,7 +97,7 @@
 
 <svelte:head>
 	<title>
-      token pair price on ${token_slug}
+      token {summary.name}
     </title>
 	<meta name="description" content={`Token slug`}>
 </svelte:head>
@@ -110,7 +110,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h1>
-                    Token {token_slug}
+                    Token {summary.name}
                 </h1>
             </div>
         </div>

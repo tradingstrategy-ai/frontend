@@ -13,12 +13,14 @@
 			"exchanges": "Decentralised exchanges",
         };
 
+		console.log(params)
+    const chain_slug = params.chain;
 		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
 
 	  	return {
 			props: {
 				breadcrumbs: crumbs,
-				chain: params.chain
+				chain_slug
 			}
 		};
     }
@@ -31,7 +33,7 @@
 	import TokenIndexExplorer from "$lib/explorer/TokenIndexExplorer.svelte";
 
 	export let breadcrumbs;
-	export let chain;
+	export let chain_slug;
 </script>
 
 <svelte:head>
@@ -48,7 +50,7 @@
 				<h1>Tokens</h1>
 
 				<p>
-					Browse supported decentralised tokens across all <a href="/trading-view/blockchains">blockchains</a> below.
+					Browse supported decentralised tokens across {chain_slug} <a href="/trading-view/blockchains">blockchain</a> below.
 				</p>
 
 				<StaleDataWarning allChains={true} />
@@ -57,7 +59,7 @@
 					enabledColumns={["name", "symbol"]}
 					orderColumnIndex={1}
 					filterJunk={false}
-					chainSlug={chain}
+					chainSlug={chain_slug}
 				/>
 			</div>
 
