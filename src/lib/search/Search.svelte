@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import tradingEntities from "./trading-entities";
-  import { Fade, ListGroup, ListGroupItem } from "sveltestrap";
+  import { Fade, ListGroup } from "sveltestrap";
   import ResultLineItem from "./ResultLineItem.svelte";
 
   let q = "";
@@ -47,33 +47,34 @@
 </script>
 
 <div class="search">
-  <input
-    type="search"
-    data-cy="search"
-    placeholder="search"
-    autocapitalize="none"
-    spellcheck="false"
-    bind:value={q}
-    on:focus={() => hasFocus = true}
-    on:blur={() => hasFocus = false}
-    on:keydown={handleKeydown}
-  />
-  <Fade isOpen={hasFocus && q}>
-    <div class="card bg-primary shadow-soft border-light">
-      <ListGroup flush>
-        {#each $tradingEntities.hits as { document }, index (document.id)}
-          <ResultLineItem
-            {document}
-            selected={index === selectedIndex}
-            on:mouseenter={() => selectedIndex = index}
-            on:pointerdown={() => gotoEntity(document)}
-          />
-        {:else}
-          <ListGroupItem>Search exchanges, tokens and pairs</ListGroupItem>
-        {/each}
-      </ListGroup>
-    </div>
-  </Fade>
+    <input
+      type="search"
+      data-cy="search"
+      placeholder="search"
+      autocapitalize="none"
+      spellcheck="false"
+      bind:value={q}
+      on:focus={() => hasFocus = true}
+      on:blur={() => hasFocus = false}
+      on:keydown={handleKeydown}
+    />
+    <Fade isOpen={hasFocus && q}>
+        <div class="card bg-primary shadow-soft border-light">
+            <ListGroup flush>
+                {#each $tradingEntities.hits as { document }, index (document.id)}
+                    <ResultLineItem
+                      {document}
+                      selected={index === selectedIndex}
+                      on:mouseenter={() => selectedIndex = index}
+                      on:pointerdown={() => gotoEntity(document)}
+                    />
+                {/each}
+                <li class="show-all list-group-item" on:pointerdown={goto(`/search?q=${q}`)}>
+                    Show all results
+                </li>
+            </ListGroup>
+        </div>
+    </Fade>
 </div>
 
 <style>
@@ -116,6 +117,21 @@
     right: 0;
     width: 450px;
     margin-top: 5px;
+  }
+
+  .show-all {
+    background-color: #d4cdc8;
+    cursor: pointer;
+    text-align: center;
+    padding: 0.5em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .show-all:hover {
+    filter: brightness(0.9);
   }
 
   @media (max-width: 768px) {

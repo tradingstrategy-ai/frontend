@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import tradingEntities from "$lib/search/trading-entities";
   import { ListGroup } from "sveltestrap";
   import FacetFilter from "./_FacetFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
-  let q = "";
+  let q = $page.url.searchParams.get('q') || "";
 
   let filters = {
     type: [],
