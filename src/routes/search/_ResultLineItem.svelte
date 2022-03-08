@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
   import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 

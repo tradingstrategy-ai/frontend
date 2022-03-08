@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Filter from "./_Filter.svelte";
 
   export let fieldName, breakpoints;

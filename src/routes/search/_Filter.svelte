@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let fieldName, options;
   export let selected = [];
 </script>
