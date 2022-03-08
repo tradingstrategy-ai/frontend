@@ -1,15 +1,13 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
   import Filter from "./_Filter.svelte";
 
   export let fieldName, breakpoints;
-  export let filter = null;
+  export let selected = [];
+  export let formatter = (val) => val; // default formatter returns value unchanged
 
-  // default formatter returns value unchanged
-  export let formatter = (val) => val;
-
-  let selected = [];
-
-  $: filter = getFilter(selected.flat());
+  const dispatch = createEventDispatcher();  
+  $: dispatch("change", { fieldName, filter: getFilter(selected) });
 
   const options = [];
   for (let i = 0; i < breakpoints.length - 1; i++) {
@@ -29,9 +27,10 @@
   }
 
   function getFilter(values) {
-    if (values.length > 0) {
-      const min = Math.min(...values);
-      const max = Math.max(...values);
+    const allValues = values.flat();
+    if (allValues.length > 0) {
+      const min = Math.min(...allValues);
+      const max = Math.max(...allValues);
       const filters = [];
       if (Number.isFinite(min)) filters.push(`${fieldName}:>=${min}`);
       if (Number.isFinite(max)) filters.push(`${fieldName}:<${max}`);

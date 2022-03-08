@@ -27,7 +27,7 @@ const { subscribe, set } = writable({
   total: null
 });
 
-let lastSearchIndex = 0;
+let lastSearchJSON;
 
 interface SearchOptions {
   q: string;
@@ -52,12 +52,17 @@ function typesenseOptions(options: SearchOptions) {
 async function search(options: SearchOptions): Promise<void> {
   if (!collection) return;
 
-  const searchIndex = ++lastSearchIndex;
+  const searchJSON = JSON.stringify(options);
+  if (searchJSON === lastSearchJSON) {
+    return;
+  } else {
+    lastSearchJSON = searchJSON;
+  }
 
   try {
     const response = await collection.search(typesenseOptions(options), {});
     // prevent race conditions - only update store if this was the last query
-    if (searchIndex === lastSearchIndex) {
+    if (searchJSON === lastSearchJSON) {
       const hits = response.hits || response.grouped_hits.flatMap((group) => group.hits);
       set({
         hits,

@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
   import Filter from "./_Filter.svelte";
-
+  
   export let fieldName, options;
-  export let filter = null;
+  export let selected = [];
 
-  let selected = [];
+  const dispatch = createEventDispatcher();
+  $: dispatch("change", { fieldName, filter: getFilter(selected) });
 
-  $: filter = selected.length ? `${fieldName}:=[${selected}]` : null;
+  function getFilter(values) {
+    return values.length ? `${fieldName}:=[${values}]` : null;
+  }
 </script>
 
 <Filter bind:selected {fieldName} {options} />
