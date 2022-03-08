@@ -1,48 +1,56 @@
 <script lang="ts">
-  export let sort_by;
+	import { createEventDispatcher, onMount } from 'svelte';
 
-  const options = [
-    {
+  export let value = 'default';
+
+  const dispatch = createEventDispatcher();
+
+  function dispatchChange() {
+    dispatch("change", options[value]);
+  }
+
+  // this is needed to ensure the sort_by value is set on initial load
+  onMount(dispatchChange);
+
+  const options = {
+    default: {
       shortLabel: "text match",
       longLabel: "text match",
       direction: "desc",
-      value: ["_text_match:desc", "volume_24h:desc"]
+      sort_by: ["_text_match:desc", "volume_24h:desc"]
     },
-    {
+    volume: {
       shortLabel: "volume",
       longLabel: "volume (high to low)",
       direction: "desc",
-      value: ["volume_24h:desc", "_text_match:desc"]
+      sort_by: ["volume_24h:desc", "_text_match:desc"]
     },
-    {
+    liquidity: {
       shortLabel: "liquidity",
       longLabel: "liquidity (high to low)",
       direction: "desc",
-      value: ["liquidity:desc", "_text_match:desc"]
+      sort_by: ["liquidity:desc", "_text_match:desc"]
     },
-    {
+    priceChangeDesc: {
       shortLabel: "price change",
       longLabel: "price change (high to low)",
       direction: "desc",
-      value: ["price_change_24h:desc", "_text_match:desc"]
+      sort_by: ["price_change_24h:desc", "_text_match:desc"]
     },
-    {
+    priceChangeAsc: {
       shortLabel: "price change",
       longLabel: "price change (low to high)",
       direction: "asc",
-      value: ["price_change_24h:asc", "_text_match:desc"]
+      sort_by: ["price_change_24h:asc", "_text_match:desc"]
     }
-  ];
-
-  let selected = options[0];
-  $: sort_by = selected.value;
+  };
 </script>
 
-<div class={selected.direction}>
-    <label for="sort-select">{selected.shortLabel}</label>
-    <select id="sort-select" bind:value={selected}>
-        {#each options as option, idx (idx)}
-            <option value={option}>
+<div class={options[value].direction}>
+    <label for="sort-select">{options[value].shortLabel}</label>
+    <select id="sort-select" bind:value on:change={dispatchChange}>
+        {#each Object.entries(options) as [key, option] (key)}
+            <option value={key}>
                 {option.longLabel}
             </option>
         {/each}
@@ -53,7 +61,6 @@
   div {
     position: relative;
     width: 8em;
-    height: 100%;
   }
 
   div > * {

@@ -11,7 +11,7 @@
   let q = $page.url.searchParams.get('q') || "";
 
   let filters = {};
-  let sort_by;
+  let sortOption, sort_by;
 
   $: tradingEntities.search({
     q,
@@ -42,7 +42,7 @@
                       spellcheck="false"
                       bind:value={q}
                     />
-                    <SortSelect bind:sort_by />
+                    <SortSelect bind:value={sortOption} on:change={(e) => ({sort_by} = e.detail)} />
                 </div>
             </div>
 
