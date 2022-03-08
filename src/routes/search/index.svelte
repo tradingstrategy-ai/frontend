@@ -3,6 +3,7 @@
   import { formatDollar } from "$lib/helpers/formatters";
   import tradingEntities from "$lib/search/trading-entities";
   import { ListGroup } from "sveltestrap";
+  import SortSelect from "./_SortSelect.svelte";
   import FacetFilter from "./_FacetFilter.svelte";
   import RangeFilter from "./_RangeFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
@@ -10,12 +11,13 @@
   let q = $page.url.searchParams.get('q') || "";
 
   let filters = {};
+  let sort_by;
 
   $: tradingEntities.search({
     q,
     facet_by: ["type", "blockchain", "exchange"],
     filter_by: Object.values(filters).filter((v) => v), // refactor "filter filter" into tradingEntities
-    sort_by: ["_text_match:desc", "volume_24h:desc"]
+    sort_by
   });
 </script>
 
@@ -31,7 +33,7 @@
                 <div class="col-md-3">
                     <h1>Search</h1>
                 </div>
-                <div class="col-md-9 col-sm-12 d-flex align-items-center">
+                <div class="search-box col-md-9 col-sm-12 d-flex align-items-center">
                     <input
                       type="search"
                       data-cy="search"
@@ -40,6 +42,7 @@
                       spellcheck="false"
                       bind:value={q}
                     />
+                    <SortSelect bind:sort_by />
                 </div>
             </div>
 
@@ -88,6 +91,10 @@
 </main>
 
 <style>
+  .search-box {
+    gap: 1em;
+  }
+
   input {
     flex: 1;
     height: 40px;
