@@ -29,11 +29,11 @@
 <main>
     <section>
         <div class="container">
-            <div class="row">
-                <div class="col-md-3">
+            <div class="row my-3 my-md-0">
+                <div class="col-md-3 d-none d-md-block">
                     <h1>Search</h1>
                 </div>
-                <div class="search-box col-md-9 col-sm-12 d-flex align-items-center">
+                <div class="search-box col-md-9 d-flex align-items-center">
                     <input
                       type="search"
                       data-cy="search"
@@ -48,33 +48,39 @@
 
             <div class="row mt-1">
               <div class="filters col-md-3">
-                  {#each $tradingEntities.facets as { field_name, counts } (field_name)}
-                    <FacetFilter
-                      bind:filter={filters[field_name]}
-                      fieldName={field_name}
-                      options={counts}
-                    />
-                  {/each}
-                  <RangeFilter
-                    bind:filter={filters['volume_24h']}
-                    fieldName="volume_24h"
-                    breakpoints={[0, 100, 1000, 10000, Infinity]}
-                    formatter={formatDollar}
-                  />
-                  <RangeFilter
-                    bind:filter={filters['liquidity']}
-                    fieldName="liquidity"
-                    breakpoints={[0, 100, 1000, 10000, Infinity]}
-                    formatter={formatDollar}
-                  />
-                  <RangeFilter
-                    bind:filter={filters['price_change_24h']}
-                    fieldName="price_change_24h"
-                    breakpoints={[-Infinity, -0.01, -0.0001, 0.0001, 0.01, Infinity]}
-                    formatter={(v) => v.toLocaleString("en", { style: "percent",  minimumFractionDigits: 1 })}
-                  />
+                  <div class="row">
+                      <div class="col-6 col-md-12">
+                          {#each $tradingEntities.facets as { field_name, counts } (field_name)}
+                            <FacetFilter
+                              bind:filter={filters[field_name]}
+                              fieldName={field_name}
+                              options={counts}
+                            />
+                          {/each}
+                      </div>
+                      <div class="col-6 col-md-12">
+                          <RangeFilter
+                            bind:filter={filters['volume_24h']}
+                            fieldName="volume_24h"
+                            breakpoints={[0, 100, 1000, 10000, Infinity]}
+                            formatter={formatDollar}
+                          />
+                          <RangeFilter
+                            bind:filter={filters['liquidity']}
+                            fieldName="liquidity"
+                            breakpoints={[0, 100, 1000, 10000, Infinity]}
+                            formatter={formatDollar}
+                          />
+                          <RangeFilter
+                            bind:filter={filters['price_change_24h']}
+                            fieldName="price_change_24h"
+                            breakpoints={[-Infinity, -0.01, -0.0001, 0.0001, 0.01, Infinity]}
+                            formatter={(v) => v.toLocaleString("en", { style: "percent",  minimumFractionDigits: 1 })}
+                          />
+                      </div>
+                  </div>
               </div>
-              <div class="col-md-9 col-sm-12">
+              <div class="results col-md-9 col-sm-12">
                   {#if /^\s*$/.test(q)}
                       <div>Search exchanges, tokens and trading pairs.</div>
                   {:else}
@@ -116,5 +122,11 @@
 
   input::placeholder {
     color: #44476a80;
+  }
+
+  @media (max-width: 576px) {
+    .results {
+      padding: 0;
+    }
   }
 </style>

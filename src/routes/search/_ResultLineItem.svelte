@@ -61,10 +61,10 @@
   }
 
   .type {
-    flex: 0 0 64px;
+    flex: 0 0 4.6em;
     border-radius: 6px;
     color: white;
-    font-size: 0.875rem;
+    font-size: 0.875em;
     font-weight: 600;
     text-align: center;
     line-height: 1.85;
@@ -101,5 +101,25 @@
   .details dd {
     display: inline;
     font-weight: 500;
+  }
+
+  @media (max-width: 576px) {
+    li {
+      margin: -1px 0 0 0;
+      padding: 15px;
+      font-size: 0.875rem;
+      border-left: none;
+      border-right: none;
+      /* override bootstrap border radiuses - requires corner-specific properties */
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .details div,
+    .details div.price-change {
+      width: auto;
+    }
   }
 </style>
