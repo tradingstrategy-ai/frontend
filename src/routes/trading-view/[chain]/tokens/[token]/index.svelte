@@ -46,12 +46,11 @@
 
         const summary = tokenDetails;
 
-        console.log("Summary", summary);
-
         const readableNames = {
             ...breadcrumbTranslations,
             [exchange_slug]: exchange_slug,
-            [pair_slug]: token_slug
+            [pair_slug]: token_slug,
+            [address]: tokenDetails.name
         };
 
 
