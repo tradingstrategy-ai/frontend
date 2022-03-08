@@ -19,6 +19,7 @@
         const chain_slug = params.chain;
         const pair_slug = params.pair;
         const token_slug = params.token;
+        const token_address = token_slug;
         const address = token_slug;
         const encoded = new URLSearchParams({chain_slug, address});
 
@@ -50,7 +51,7 @@
             ...breadcrumbTranslations,
             [exchange_slug]: exchange_slug,
             [pair_slug]: token_slug,
-            [address]: tokenDetails.name
+            [token_address]: tokenDetails.name
         };
 
 
@@ -65,6 +66,7 @@
                 pair_slug,
                 token_slug,
                 summary,
+                token_address,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         }
@@ -82,8 +84,7 @@
     export let chain_slug;
     export let token_slug;
     export let breadcrumbs;
-    export let address;
-
+    export let token_address;
 
 </script>
 
@@ -128,7 +129,7 @@
             orderColumnIndex={4}
             pageLength={50}
             tokenSymbol={summary.symbol}
-            tokenAddress={address}
+            tokenAddress={token_address}
         />
     </div>
 </div>

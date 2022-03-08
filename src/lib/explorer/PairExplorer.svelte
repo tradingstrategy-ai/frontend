@@ -235,7 +235,7 @@
             }
 
             if(tokenAddress) {
-                params.token_address = tokenAddress;
+                params.token_addresses = tokenAddress;
             }
 
             // Add sorting parameters if supported
@@ -247,7 +247,6 @@
             // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
             const encoded = new URLSearchParams(params);
             const url = `${backendUrl}/pairs?${encoded}`;
-            console.log("Reading pair data from", url);
             const resp = await fetch(url);
             if (!resp.ok) {
 
