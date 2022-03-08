@@ -12,6 +12,7 @@
 
   let filters = {};
   let sortOption, sort_by;
+  let isOpen = true;
 
   $: tradingEntities.search({
     q,
@@ -41,13 +42,32 @@
                       autocapitalize="none"
                       spellcheck="false"
                       bind:value={q}
+                      on:focus={() => isOpen = true}
                     />
-                    <SortSelect bind:value={sortOption} on:change={(e) => ({sort_by} = e.detail)} />
+                    <SortSelect
+                      class="d-none d-md-block"
+                      bind:value={sortOption}
+                      on:change={(e) => ({sort_by} = e.detail)}
+                    />
+                    <button
+                      class:isOpen
+                      class="close-filters d-md-none"
+                      on:click={() => isOpen = false}
+                    >Done</button>
                 </div>
             </div>
 
             <div class="row mt-1">
-              <div class="filters col-md-3">
+              <div class:isOpen class="filters col-md-3">
+                  <div class="row d-md-none">
+                      <div class="col d-flex align-items-center mb-3">
+                          <h2>Sort by:</h2>
+                          <SortSelect
+                            bind:value={sortOption}
+                            on:change={(e) => ({sort_by} = e.detail)}
+                          />
+                      </div>
+                  </div>
                   <div class="row">
                       <div class="col-6 col-md-12">
                           {#each $tradingEntities.facets as { field_name, counts } (field_name)}
@@ -99,13 +119,19 @@
 <style>
   .search-box {
     gap: 1em;
+    max-width: 630px;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 0 1ex 0 0;
+    white-space: nowrap;
   }
 
   input {
     flex: 1;
     height: 40px;
     width: 100%;
-    max-width: 500px;
     padding: 0 1ex 0 2em;
     border: 2px solid #44476a;
     border-radius: 20px;
@@ -122,6 +148,30 @@
 
   input::placeholder {
     color: #44476a80;
+  }
+
+  button.close-filters {
+    background-color: #44476a;
+    border: none;
+    border-radius: 1em;
+    height: 100%;
+    padding: 0 1em;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: white;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+
+  @media (max-width: 768px) {
+    .filters, .close-filters {
+      display: none;
+    }
+
+    .isOpen {
+      display: block;
+    }
   }
 
   @media (max-width: 576px) {

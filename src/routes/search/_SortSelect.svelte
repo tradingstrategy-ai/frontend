@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-  export let value = 'default';
+  export let value = "default";
+  let className = "";
+  export { className as class };
 
   const dispatch = createEventDispatcher();
 
@@ -46,7 +48,7 @@
   };
 </script>
 
-<div class={options[value].direction}>
+<div class="{className} {options[value].direction}">
     <label for="sort-select">{options[value].shortLabel}</label>
     <select id="sort-select" bind:value on:change={dispatchChange}>
         {#each Object.entries(options) as [key, option] (key)}
@@ -60,7 +62,7 @@
 <style>
   div {
     position: relative;
-    width: 8em;
+    width: 7em;
   }
 
   div > * {
@@ -71,17 +73,17 @@
   }
 
   label {
-    font-size: 1rem;
     font-weight: 500;
     color: #44476a;
+    white-space: nowrap;
   }
 
   label::before {
     content: "▾";
     display: inline-block;
-    font-size: 1.25rem;
-    line-height: 1rem;
-    margin-right: 0.6ex;
+    font-size: 1.25em;
+    line-height: 1;
+    margin-right: 0.5ex;
   }
 
   .asc label::before {
