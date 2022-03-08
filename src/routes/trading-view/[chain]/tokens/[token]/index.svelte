@@ -82,6 +82,7 @@
     export let chain_slug;
     export let token_slug;
     export let breadcrumbs;
+    export let address;
 
 
 </script>
@@ -109,7 +110,7 @@
         <div class="row">
             <div class="col-lg-5">
                 <TokenInfoTable {summary} />
-            </div>
+            </div>s
         </div>
     </div>
 
@@ -127,6 +128,7 @@
             orderColumnIndex={4}
             pageLength={50}
             tokenSymbol={summary.symbol}
+            tokenAddress={address}
         />
     </div>
 </div>

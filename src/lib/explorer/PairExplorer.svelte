@@ -16,7 +16,9 @@
 
     // The chain slug for which the trading pairs are rendered like "binance"
     export let chainSlug = null;
+    export let tokenSlug = null;
 
+    export let tokenAddress = null;
     // The token Symbol to get the all the pairs "WETH"
     export let tokenSymbol = null;
 
@@ -228,6 +230,14 @@
                 params.exchange_slugs = exchangeSlug;
             }
 
+            if(tokenSlug) {
+                params.token_slugs = tokenSlug;
+            }
+
+            if(tokenAddress) {
+                params.token_address = tokenAddress;
+            }
+
             // Add sorting parameters if supported
             if(sortKey) {
                 params.direction = data.order[0].dir === "desc" ? "desc" : "asc";
@@ -239,7 +249,6 @@
             const url = `${backendUrl}/pairs?${encoded}`;
             console.log("Reading pair data from", url);
             const resp = await fetch(url);
-
             if (!resp.ok) {
 
                 // Decode 422 invalid input parameter error from the server
