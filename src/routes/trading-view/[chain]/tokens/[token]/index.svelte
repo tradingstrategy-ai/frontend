@@ -79,6 +79,7 @@
 	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
 
     export let summary;
+    export let chain_slug;
     export let token_slug;
     export let breadcrumbs;
 
@@ -112,11 +113,11 @@
         </div>
     </div>
 
-    <div class="trading-pairs">
+    <div class="pair-explorer-wrapper">
         <h1>Trading pairs</h1>
 
         <p>
-            Browse trading tokens across all <a href="/trading-view/tokens">decentralised exchanges</a> below.
+            Browse token pairs across <a href="/trading-view/tokens">{chain_slug}</a> below.
         </p>
 
         <StaleDataWarning allChains={true} />
@@ -131,12 +132,6 @@
 </div>
 
 <style>
-
-    /* Decrease the main heading font size so we can fit
-      BNB-BUSD trading on PancakeSwap v2 on Binance Smart Chain on a single row
-
-      Note that 2rem is different size for Firefox and Chrome
-     */
     h1 {
         font-size: 2rem;
         margin-bottom: 20px;
@@ -154,10 +149,6 @@
         margin: 0 auto;
     }
 
-    .trade-actions {
-
-    }
-
     .chart-help-text {
         text-align: center;
         font-size: 80%;
@@ -166,6 +157,10 @@
 
     .trade-actions .btn {
         margin: 20px 20px 20px 0;
+    }
+
+    .pair-explorer-wrapper {
+        margin-bottom: 60px;
     }
 
     /**

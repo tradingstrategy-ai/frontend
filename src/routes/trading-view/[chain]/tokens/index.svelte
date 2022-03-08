@@ -1,7 +1,7 @@
 <script context="module" lang="typescript">
 	/*
 
-		Render listing of all available exchanges
+		Render listing of all available tokens
 
 	 */
 
