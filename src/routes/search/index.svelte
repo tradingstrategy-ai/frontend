@@ -13,11 +13,15 @@
   let isOpen = true;
   let filters = {}, filterVals = {}, filter_by = [];
   let sortOption = "default", sort_by = [];
-  const facet_by = ["type", "blockchain", "exchange"];
+
+  const searchDefaults = {
+    facet_by: ["type", "blockchain", "exchange"],
+    per_page: 200
+  };
 
   $: filter_by = Object.values(filterVals).filter((v) => v);
   $: hasSearch = filter_by.length > 0 || q.trim().length > 0;
-  $: tradingEntities.search({ q, facet_by, filter_by, sort_by });
+  $: tradingEntities.search({ q, filter_by, sort_by, ...searchDefaults });
 
   function handleFilterChange({ detail }) {
     filterVals[detail.fieldName] = detail.filter;

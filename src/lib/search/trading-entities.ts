@@ -35,6 +35,7 @@ interface SearchOptions {
   filter_by?: Array<string>;
   group_by?: Array<string>;
   sort_by?: Array<string>;
+  per_page?: number;
 }
 
 function typesenseOptions(options: SearchOptions) {
