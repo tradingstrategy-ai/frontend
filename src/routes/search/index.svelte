@@ -16,6 +16,7 @@
   const facet_by = ["type", "blockchain", "exchange"];
 
   $: filter_by = Object.values(filterVals).filter((v) => v);
+  $: hasSearch = filter_by.length > 0 || q.trim().length > 0;
   $: tradingEntities.search({ q, facet_by, filter_by, sort_by });
 
   function handleFilterChange({ detail }) {
@@ -119,14 +120,14 @@
                   </div>
               </div>
               <div class="results col-md-9 col-sm-12">
-                  {#if /^\s*$/.test(q)}
-                      <div>Search exchanges, tokens and trading pairs.</div>
-                  {:else}
+                  {#if hasSearch}
                       <ListGroup>
                           {#each $tradingEntities.hits as { document }, index (document.id)}
                               <ResultLineItem {document} />
                           {/each}
                       </ListGroup>
+                  {:else}
+                      <div>Search exchanges, tokens and trading pairs.</div>
                   {/if}
               </div>
             </div>
