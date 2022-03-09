@@ -102,15 +102,15 @@
                           <RangeFilter
                             bind:selected={filters['volume_24h']}
                             fieldName="volume_24h"
-                            breakpoints={[0, 100, 1000, 10000, Infinity]}
-                            formatter={formatDollar}
+                            breakpoints={[0, 50_000, 1_000_000, Infinity]}
+                            formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
                           <RangeFilter
                             bind:selected={filters['liquidity']}
                             fieldName="liquidity"
-                            breakpoints={[0, 100, 1000, 10000, Infinity]}
-                            formatter={formatDollar}
+                            breakpoints={[0, 500_000, 5_000_000, Infinity]}
+                            formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
                           <RangeFilter
