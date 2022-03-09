@@ -39,7 +39,7 @@
 
   function gotoEntity({ url_path, description }) {
     if (url_path) {
-      goto (url_path.replace(/^\/+/g, "/"));
+      goto (url_path);
     } else {
       console.log(`GOTO ${description}`);
     }
@@ -69,7 +69,7 @@
                       on:pointerdown={() => gotoEntity(document)}
                     />
                 {/each}
-                <li class="show-all list-group-item" on:pointerdown={goto(`/search?q=${q}`)}>
+                <li class="show-all list-group-item" on:pointerdown={() => goto(`/search?q=${q}`)}>
                     Show all results
                 </li>
             </ListGroup>

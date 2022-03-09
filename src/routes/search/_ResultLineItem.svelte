@@ -1,10 +1,13 @@
 <script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
   import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
+  import { goto } from "$app/navigation";
 
   export let document;
 
-  const { description, type, price_usd_latest, price_change_24h, liquidity, volume_24h } = document;
+  const {
+    description, type, price_usd_latest, price_change_24h, liquidity, volume_24h, url_path
+  } = document;
   const label = type === "exchange" ? "DEX" : type;
   const isPair = type === "pair";
   const priceChangeClass = determinePriceChangeClass(price_change_24h);
@@ -18,7 +21,7 @@
   }
 </script>
 
-<li class="list-group-item d-flex align-items-center">
+<li class="list-group-item d-flex align-items-center" on:click={() => goto(url_path)}>
     <div class="type badge-{type}">{label}</div>
     <div class="flex-grow-1">
 
