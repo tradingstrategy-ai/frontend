@@ -1,6 +1,26 @@
+<!--
+@component
+**Filter** displays a set of checkboxes for filtering search queries.
+- `options` must include a `value` prop; may include `label` and `count`
+- selected values are assigned to the `selected` array
+
+#### Usage:
+```tsx
+  <Filter bind:selected fieldName="product_types" options={[{ value: "shoes" }]} />
+```
+-->
+<script context="module" lang="ts">
+  export interface FilterOption {
+    value: string;
+    label?: string;
+    count?: number;
+  }
+</script>
+
 <script lang="ts">
-  export let fieldName, options;
-  export let selected = [];
+  export let fieldName: string;
+  export let options: FilterOption[];
+  export let selected: string[] = [];
 </script>
 
 <h2>{fieldName.replace(/_/g, " ")}</h2>
