@@ -11,14 +11,6 @@
   const label = type === "exchange" ? "DEX" : type;
   const isPair = type === "pair";
   const priceChangeClass = determinePriceChangeClass(price_change_24h);
-
-  // TODO: refactor to helper
-  function getPriceChangePct() {
-    return Math.abs(price_change_24h).toLocaleString("en-US", {
-      style: "percent",
-      minimumFractionDigits: 1
-    });
-  }
 </script>
 
 <li class="list-group-item d-flex align-items-center" on:click={() => goto(url_path)}>
