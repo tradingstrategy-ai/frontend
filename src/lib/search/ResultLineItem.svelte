@@ -6,10 +6,10 @@
   const { description, type, price_change_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
   const priceChangeClass = determinePriceChangeClass(price_change_24h);
-
-  function getPriceChangePct() {
-    return Math.abs(price_change_24h * 100).toFixed(1);
-  }
+  const priceChangePct = Math.abs(price_change_24h).toLocaleString("en-US", {
+    style: "percent",
+    minimumFractionDigits: 1
+  });
 </script>
 
 <li
@@ -21,7 +21,7 @@
   <div class="type badge-{type}">{label}</div>
   <div class="desc flex-grow-1">{description}</div>
   {#if price_change_24h !== undefined}
-    <div class="price-change {priceChangeClass}">{getPriceChangePct()}%</div>
+    <div class="price-change {priceChangeClass}">{priceChangePct}</div>
   {/if}
 </li>
 
