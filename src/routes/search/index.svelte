@@ -102,22 +102,22 @@
                           <RangeFilter
                             bind:selected={filters['volume_24h']}
                             fieldName="volume_24h"
-                            breakpoints={[0, 50_000, 1_000_000, Infinity]}
+                            breakpoints={[Infinity, 1_000_000, 50_000, 0]}
                             formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
                           <RangeFilter
                             bind:selected={filters['liquidity']}
                             fieldName="liquidity"
-                            breakpoints={[0, 500_000, 5_000_000, Infinity]}
+                            breakpoints={[Infinity, 5_000_000, 500_000, 0]}
                             formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
                           <RangeFilter
                             bind:selected={filters['price_change_24h']}
                             fieldName="price_change_24h"
-                            breakpoints={[-Infinity, -0.01, -0.0001, 0.0001, 0.01, Infinity]}
-                            formatter={(v) => v.toLocaleString("en", { style: "percent",  minimumFractionDigits: 1 })}
+                            breakpoints={[Infinity, 0.01, 0.0001, -0.0001, -0.01, -Infinity]}
+                            labels={["▲ > 1%", "△ 0.01% - 1%", "⬦ 0% ± 0.01%", "▽ 0.01% - 1%", "▼ > 1%"]}
                             on:change={handleFilterChange}
                           />
                       </div>

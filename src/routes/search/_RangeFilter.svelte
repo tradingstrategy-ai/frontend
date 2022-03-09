@@ -5,6 +5,7 @@
   export let fieldName, breakpoints;
   export let selected = [];
   export let formatter = (val) => val; // default formatter returns value unchanged
+  export let labels = [];
 
   const dispatch = createEventDispatcher();  
   $: dispatch("change", { fieldName, filter: getFilter(selected) });
@@ -12,11 +13,12 @@
   const options = [];
   for (let i = 0; i < breakpoints.length - 1; i++) {
     const value = breakpoints.slice(i, i + 2);
-    const label = getLabel(value);
+    const label = labels[i] || getLabel(value);
     options.push({ label, value });
   }
 
-  function getLabel([ min, max ]) {
+  function getLabel(range) {
+    const [ min, max ] = range.sort();
     if (Number.isFinite(min) && Number.isFinite(max)) {
       return `${formatter(min)} - ${formatter(max)}`;
     } else if (Number.isFinite(min)) {
