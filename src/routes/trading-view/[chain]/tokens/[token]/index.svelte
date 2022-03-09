@@ -103,7 +103,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h1>
-                    Token {summary.name}
+                    {summary.name} ({summary.symbol})
                 </h1>
             </div>
         </div>
@@ -111,7 +111,7 @@
         <div class="row">
             <div class="col-lg-5">
                 <TokenInfoTable {summary} />
-            </div>s
+            </div>
         </div>
     </div>
 

@@ -8,13 +8,18 @@
         <td>{summary.name}</td>
     </tr>
     <tr>
-        <th>Symbol</th>
+        <th>Token symbol</th>
         <td>{summary.symbol}</td>
     </tr>
     <tr>
         <th>Total Supply</th>
-        <td>{summary.total_supply}</td>
+        <td>{summary.total_supply} {summary.symbol}</td>
     </tr>
+    <tr>
+        <th>Standard</th>
+        <td>ERC-20 token</td>
+    </tr>
+
 </table>
 
 <style>
