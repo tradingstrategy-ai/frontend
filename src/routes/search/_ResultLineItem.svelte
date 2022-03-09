@@ -59,7 +59,7 @@
     flex: 0 0 4.6em;
     border-radius: 6px;
     color: white;
-    font-size: 0.875em;
+    font-size: 0.8em;
     font-weight: 600;
     text-align: center;
     line-height: 1.85;
