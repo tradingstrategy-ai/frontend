@@ -90,9 +90,9 @@
 
 <svelte:head>
 	<title>
-      token {summary.name}
+      {summary.symbol} token
     </title>
-	<meta name="description" content={`Token slug`}>
+	<meta name="description" content={`${summary.name} (${summary.symbol} token`}>
 </svelte:head>
 
 <div class="container">
