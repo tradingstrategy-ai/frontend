@@ -1,49 +1,37 @@
 <script context="module">
-  import { getGhostCredentials } from "$lib/config";
-
-  // Ghost client
-  import GhostContentAPI from '@tryghost/content-api'
+  import ghostClient from "$lib/blog/client";
 
   // Pure server-side rendered page - no interactive JS
-  import { dev } from "$app/env";
-  import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+  import { buildBreadcrumbs } from "$lib/breadcrumb/builder";
 
-  export async function load({ url, params, fetch }) {
-      const ghostKeys = getGhostCredentials();
+  export async function load({ url, params }) {
+    const { slug } = params;
 
-      const api = new GhostContentAPI({
-        url: ghostKeys.apiUrl,
-        key: ghostKeys.contentApiKey,
-        version: "v3"
-      });
+    // See post data model
+    // https://ghost.org/docs/content-api/#posts
+    let post;
+    try {
+      post = await ghostClient.posts.read({ slug: slug }, { formats: ['html'] });
+    } catch (error) {
+      // swallow 404 (see below); re-throw anything else
+      if (error.response?.status !== 404) throw error;
+    } 
 
-      const slug = params.slug;
+    // Explicit 404
+    if (!post) return;
 
-      // See post data model
-      // https://ghost.org/docs/content-api/#posts
-      const post = await api.posts.read({ slug: slug}, { formats: ['html']});
+    const readableNames = {
+      blog: "Blog",
+      [slug]: post.title
+    };
 
-      // console.log("Got post", slug, post);
-
-      if(!post) {
-        // Explicit 404
-        return;
+    return {
+      props: {
+        post,
+        breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
       }
-
-      const readableNames = {
-            "blog": "Blog",
-      };
-      readableNames[slug] = post.title;
-
-      return {
-          props: {
-              post,
-              breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
-          }
-      }
-
+    }
   }
-
 </script>
 
 <script lang="ts">
@@ -60,11 +48,11 @@
 
   // https://stackoverflow.com/a/57377341/315168
   function wrapResponsive(el) {
-      const wrapper = document.createElement('div');
-      wrapper.className = "table-responsive"
-      el.parentNode.insertBefore(wrapper, el);
-      wrapper.appendChild(el);
-      console.log("Wrapped table", el);
+    const wrapper = document.createElement('div');
+    wrapper.className = "table-responsive"
+    el.parentNode.insertBefore(wrapper, el);
+    wrapper.appendChild(el);
+    console.log("Wrapped table", el);
   }
 
   // Our blog posts contain links to /docs
@@ -74,7 +62,6 @@
   function fixLink(el) {
     el.setAttribute("rel", "external");
   }
-
 
   /**
    * Build table of content for the body text.
@@ -87,41 +74,38 @@
    *
    * @param el Body text element
    */
-
   function buildTableOfContent(el) {
+    const document = el.ownerDocument;
 
-      const document = el.ownerDocument;
+    const placeHolder = el.querySelector("div[id='table-of-contents']");
+    if(!placeHolder) {
+      // This blog post does not ask for TOC
+      return;
+    }
 
-      const placeHolder = el.querySelector("div[id='table-of-contents']");
-      if(!placeHolder) {
-          // This blog post does not ask for TOC
+    console.log("Building toc");
+
+    // Wrap all h1s to <a name> and add a link to toc
+    el.querySelectorAll('h2').forEach(function (h) {
+      // Wrap h1
+      const wrapper = document.createElement('a');
+      const slug = slugify(h.innerText);
+      if(!slug) {
           return;
       }
+      console.log("Adding", slug, h.innerText);
+      wrapper.setAttribute("name", slug);
+      h.parentNode.insertBefore(wrapper, h);
 
-      console.log("Building toc");
+      // Add TOC entry
+      const tocEntry = document.createElement('a');
+      tocEntry.setAttribute("href", `#${slug}`);
+      tocEntry.innerText = h.innerText;
+      placeHolder.appendChild(tocEntry);
+    });
 
-      // Wrap all h1s to <a name> and add a link to toc
-      el.querySelectorAll('h2').forEach(function (h) {
-          // Wrap h1
-          const wrapper = document.createElement('a');
-          const slug = slugify(h.innerText);
-          if(!slug) {
-              return;
-          }
-          console.log("Adding", slug, h.innerText);
-          wrapper.setAttribute("name", slug);
-          h.parentNode.insertBefore(wrapper, h);
-
-          // Add TOC entry
-          const tocEntry = document.createElement('a');
-          tocEntry.setAttribute("href", `#${slug}`);
-          tocEntry.innerText = h.innerText;
-          placeHolder.appendChild(tocEntry);
-      });
-
-      const fecha = new Date()
-      fecha.toISOString
-
+    const fecha = new Date()
+    fecha.toISOString
   }
 
   export let post;
@@ -129,21 +113,20 @@
 
   // Make tables mobile friendly by wrapping them with the Bootstrap responsible table handling
   onMount(() => {
-      // TODO: Run this on parsed HTML feed from Ghost.io, not on the live document
-      document.querySelectorAll('.body-text .table').forEach(function (elem) {
-          wrapResponsive(elem);
-      });
+    // TODO: Run this on parsed HTML feed from Ghost.io, not on the live document
+    document.querySelectorAll('.body-text .table').forEach(function (elem) {
+      wrapResponsive(elem);
+    });
 
-      document.querySelectorAll('.body-text a').forEach(function (elem) {
-          fixLink(elem);
-      });
+    document.querySelectorAll('.body-text a').forEach(function (elem) {
+      fixLink(elem);
+    });
 
-      const bodyText = document.querySelector('.body-text');
-      if(bodyText) {
-          buildTableOfContent(bodyText);
-      }
+    const bodyText = document.querySelector('.body-text');
+    if(bodyText) {
+      buildTableOfContent(bodyText);
+    }
   });
-
 </script>
 
 <svelte:head>

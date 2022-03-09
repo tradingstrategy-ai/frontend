@@ -24,6 +24,9 @@
 	    --price-up-green: #458b00;
 	    --price-down-red: #cc0000;
         --link-underline: #458b00;
+        --badge-exchange: #458b00;
+        --badge-token: #b99537;
+        --badge-pair: #496abf;
     }
 
     /**
@@ -48,6 +51,22 @@
 
     :global(.price-change-red) {
         color: var(--price-down-red);
+    }
+
+    /**
+     * Entity badge colors
+     */
+
+    :global(.badge-exchange) {
+        background-color: var(--badge-exchange);
+    }
+
+    :global(.badge-token) {
+        background-color: var(--badge-token);
+    }
+
+    :global(.badge-pair) {
+        background-color: var(--badge-pair);
     }
 
 </style>
