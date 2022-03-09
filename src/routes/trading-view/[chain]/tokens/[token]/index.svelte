@@ -119,7 +119,7 @@
         <h1>Trading pairs</h1>
 
         <p>
-            Browse token pairs across <a href="/trading-view/tokens">{chain_slug}</a> below.
+            Browse <strong>{summary.symbol}</strong> trading pairs.
         </p>
 
         <StaleDataWarning allChains={true} />
