@@ -1,3 +1,9 @@
+<!--
+Advanced Search page
+- uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
+- auto-populates search box with `q` query param if supplied
+- returns first 200 matching results (future: pagination or infinite scroll)
+-->
 <script lang="ts">
   import { page } from "$app/stores";
   import { formatDollar } from "$lib/helpers/formatters";
