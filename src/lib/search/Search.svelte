@@ -1,3 +1,14 @@
+<!--
+@component
+**Search** generates a site-wide search box for use in top-nav.
+- used for limited inline results; advanced search available through `/search` page
+- uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
+
+#### Usage:
+```tsx
+<Search />
+```
+-->
 <script lang="ts">
   import { goto } from "$app/navigation";
   import tradingEntities from "./trading-entities";

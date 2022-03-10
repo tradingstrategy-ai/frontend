@@ -1,7 +1,26 @@
+<!--
+@component
+**ResultLineItem** displays a single `tradingEntity` search result line item.
+Used for showing simple search results from top-nav.
+- `document` object comes from `$tradingEntity.hits`
+- `selected` is used for styling the currently selected result item
+- forwards native `mouseenter` and `pointerdown` events
+
+#### Usage:
+```tsx
+  <ResultLineItem {document} selected={true}
+    on:mouseenter={handleMouseEnter} on:mouseenter={handlePointerDown} />
+```
+-->
 <script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
 
-  export let document, selected;
+  /**
+   * document returned by Typesense `tradingEntity` search hits
+   * see (Trading Entities Collection)[https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md]
+   */
+  export let document
+  export let selected = false;
 
   const { description, type, price_change_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
