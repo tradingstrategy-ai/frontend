@@ -9,7 +9,7 @@ Advanced Search page
   import { formatDollar } from "$lib/helpers/formatters";
   import tradingEntities from "$lib/search/trading-entities";
   import { ListGroup } from "sveltestrap";
-  import SortSelect from "./_SortSelect.svelte";
+  import SortSelect, { sortOptions } from "./_SortSelect.svelte";
   import FacetFilter from "./_FacetFilter.svelte";
   import RangeFilter from "./_RangeFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
@@ -18,16 +18,17 @@ Advanced Search page
 
   let isOpen = true;
   let filters = {}, filterVals = {}, filter_by = [];
-  let sortOption = "default", sort_by = [];
-
-  const searchDefaults = {
-    facet_by: ["type", "blockchain", "exchange"],
-    per_page: 200
-  };
+  let sortOption = "default"
 
   $: filter_by = Object.values(filterVals).filter((v) => v);
   $: hasSearch = filter_by.length > 0 || q.trim().length > 0;
-  $: tradingEntities.search({ q, filter_by, sort_by, ...searchDefaults });
+  $: tradingEntities.search({
+    q,
+    filter_by,
+    sort_by: sortOptions[sortOption].value,
+    facet_by: ["type", "blockchain", "exchange"],
+    per_page: 200
+  });
 
   function handleFilterChange({ detail }) {
     filterVals[detail.fieldName] = detail.filter;
@@ -62,11 +63,7 @@ Advanced Search page
                       bind:value={q}
                       on:focus={() => isOpen = true}
                     />
-                    <SortSelect
-                      class="d-none d-md-block"
-                      bind:value={sortOption}
-                      on:change={(e) => ({sort_by} = e.detail)}
-                    />
+                    <SortSelect class="d-none d-md-block" bind:value={sortOption} />
                     <button
                       class:isOpen
                       class="close-filters d-md-none"
@@ -87,10 +84,7 @@ Advanced Search page
                       </div>
                       <div class="col-6 d-md-none d-flex align-items-center">
                           <h2>Sort by:</h2>
-                          <SortSelect
-                            bind:value={sortOption}
-                            on:change={(e) => ({sort_by} = e.detail)}
-                          />
+                          <SortSelect bind:value={sortOption} />
                       </div>
                   </div>
                   <div class="row">
