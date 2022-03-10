@@ -1,8 +1,22 @@
+<!--
+@component
+**ResultLineItem** displays a single `tradingEntity` search result line item.
+Used for showing advanced search results.
+
+#### Usage:
+```tsx
+  <ResultLineItem {document} />
+```
+-->
 <script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
   import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
   import { goto } from "$app/navigation";
 
+  /**
+   * document returned by Typesense `tradingEntity` search hits
+   * see (Trading Entities Collection)[https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md]
+   */
   export let document;
 
   const {

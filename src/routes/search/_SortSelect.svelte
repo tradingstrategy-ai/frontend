@@ -1,3 +1,16 @@
+<!--
+@component
+**SortSelect** is a custom drop-down component used for selecting from a
+pre-defined set of sort options. Used for advanced searches.
+- `value` should be bound (as with a native `<select>`)
+- passes through `class` prop
+- dispatches `on:change` event with the selcted option
+
+#### Usage:
+```tsx
+  <SortSelect bind:value on:change={handleChange} />
+```
+-->
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
