@@ -1,16 +1,15 @@
 <!--
 @component
-**FacetFilter** extends the standard **Filter** component by dispatching a `filter`
-string that can be used for filtering facet-based fields in Typesense searches.
-- `options` must include a `value` prop; may include `label` and `count`
-- selected values are assigned to the `selected` array
-- the generated `filter` string is dispatched `on:change`
+Display filter options for facet-based search fields; dispatches valid Typesense
+filter on:change.
 
 #### Usage:
 ```tsx
-  <Filter bind:selected fieldName="product_types"
-    options={[{ value: "shoes" }]}
-    on:change={({ fieldName, filter }) => ... )}
+  <Filter
+    bind:selected
+    fieldName="facet_search_field"
+    options={[option1, option2]}
+    on:change={({ fieldName, filter }) => setFilter(filter) )}
   />
 ```
 -->

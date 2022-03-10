@@ -1,7 +1,7 @@
 <!--
 @component
-**ResultLineItem** displays a single `tradingEntity` search result line item.
-Used for showing advanced search results.
+Used for advanced search results; displays a single `$tradingEntity.hits`
+search result line item.
 
 #### Usage:
 ```tsx
@@ -14,8 +14,8 @@ Used for showing advanced search results.
   import { goto } from "$app/navigation";
 
   /**
-   * document returned by Typesense `tradingEntity` search hits
-   * see (Trading Entities Collection)[https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md]
+   * object returned by Typesense `tradingEntity` search hits; see:
+   * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
    */
   export let document;
 

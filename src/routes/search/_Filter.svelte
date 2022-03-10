@@ -1,12 +1,14 @@
 <!--
 @component
-**Filter** displays a set of checkboxes for filtering search queries.
-- `options` must include a `value` prop; may include `label` and `count`
-- selected values are assigned to the `selected` array
+Display filter options as checkboxes search queries.
 
 #### Usage:
 ```tsx
-  <Filter bind:selected fieldName="product_types" options={[{ value: "shoes" }]} />
+  <Filter
+    bind:selected
+    fieldName="search_field_1"
+    options={[option1, option2]}
+  />
 ```
 -->
 <script context="module" lang="ts">
