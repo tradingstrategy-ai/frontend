@@ -81,7 +81,7 @@ Display site-wide search box for use in top-nav.
                     />
                 {/each}
                 <li class="show-all list-group-item" on:pointerdown={() => goto(`/search?q=${q}`)}>
-                    Show more | advanced options
+                    Show all results | advanced options
                 </li>
             </ListGroup>
         </div>
