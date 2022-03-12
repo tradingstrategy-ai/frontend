@@ -11,10 +11,10 @@ pre-defined set of sort options.
 <script context="module" lang="ts">
   export const sortOptions = {
     default: {
-      shortLabel: "text match",
-      longLabel: "text match",
+      shortLabel: "relevance",
+      longLabel: "relevance (text match, volume)",
       direction: "desc",
-      value: ["_text_match:desc", "volume_24h:desc"]
+      value: ["_text_match:desc", "volume_24h:desc", "liquidity:desc"]
     },
 
     volume: {
