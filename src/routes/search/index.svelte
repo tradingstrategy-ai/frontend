@@ -18,7 +18,7 @@ Advanced Search page
 
   let isOpen = true;
   let filters = {}, filterVals = {}, filter_by = [];
-  let sortOption = "default"
+  let sortOption = "liquidity"
 
   $: filter_by = Object.values(filterVals).filter((v) => v);
   $: hasSearch = filter_by.length > 0 || q.trim().length > 0;

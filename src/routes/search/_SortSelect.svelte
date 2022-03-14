@@ -10,12 +10,17 @@ pre-defined set of sort options.
 -->
 <script context="module" lang="ts">
   export const sortOptions = {
-    default: {
-      shortLabel: "relevance",
-      longLabel: "relevance (text match, liquidity)",
-      direction: "desc",
-      value: ["_text_match:desc", "liquidity:desc", "volume_24h:desc"]
-    },
+    /**
+     * NOTE: removing default / relevance sort for now - results in too many low-quality
+     * `pair` records sorting above high-quality; defaulting sort-by to `liquidity` instead.
+        default: {
+          shortLabel: "relevance",
+          longLabel: "relevance (text match, liquidity)",
+          direction: "desc",
+          value: ["_text_match:desc", "liquidity:desc", "volume_24h:desc"]
+        },
+     *
+     */
 
     liquidity: {
       shortLabel: "liquidity",

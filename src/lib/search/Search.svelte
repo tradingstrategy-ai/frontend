@@ -22,7 +22,7 @@ Display site-wide search box for use in top-nav.
 
   $: tradingEntities.search({
     q,
-    sort_by: ["type_rank:asc", "_text_match:desc", "volume_24h:desc"],
+    sort_by: ["type_rank:asc", "liquidity:desc", "_text_match:desc"],
     group_by: ["type"]
   });
 
