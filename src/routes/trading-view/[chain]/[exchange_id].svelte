@@ -74,7 +74,7 @@
     </title>
     <meta
             name="description"
-            content={`Decentralise exchange ${details.exchange_name} on ${details.chain_name} blockchain`}
+            content={`Decentralise exchange ${details.human_readable_name} on ${details.chain_name} blockchain`}
     />
 </svelte:head>
 
