@@ -12,16 +12,9 @@ pre-defined set of sort options.
   export const sortOptions = {
     default: {
       shortLabel: "relevance",
-      longLabel: "relevance (text match, volume)",
+      longLabel: "relevance (text match, liquidity)",
       direction: "desc",
-      value: ["_text_match:desc", "volume_24h:desc", "liquidity:desc"]
-    },
-
-    volume: {
-      shortLabel: "volume",
-      longLabel: "volume (high to low)",
-      direction: "desc",
-      value: ["volume_24h:desc", "_text_match:desc"]
+      value: ["_text_match:desc", "liquidity:desc", "volume_24h:desc"]
     },
 
     liquidity: {
@@ -29,6 +22,13 @@ pre-defined set of sort options.
       longLabel: "liquidity (high to low)",
       direction: "desc",
       value: ["liquidity:desc", "_text_match:desc"]
+    },
+
+    volume: {
+      shortLabel: "volume",
+      longLabel: "volume (high to low)",
+      direction: "desc",
+      value: ["volume_24h:desc", "_text_match:desc"]
     },
 
     priceChangeDesc: {
