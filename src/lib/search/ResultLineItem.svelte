@@ -1,15 +1,36 @@
+<!--
+@component
+Used for simple search results from top-nav; displays a single
+`$tradingEntity.hits` search result line item.
+
+#### Usage:
+```tsx
+  <ResultLineItem
+    {document}
+    selected={true}
+    on:mouseenter={handleMouseEnter}
+    on:mouseenter={handlePointerDown}
+  />
+```
+-->
 <script lang="ts">
   import { determinePriceChangeClass } from "$lib/helpers/price";
 
-  export let document, selected;
+  /**
+   * object returned by Typesense `tradingEntity` search hits; see:
+   * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
+   */
+  export let document
+
+  export let selected = false;
 
   const { description, type, price_change_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
   const priceChangeClass = determinePriceChangeClass(price_change_24h);
-
-  function getPriceChangePct() {
-    return Math.abs(price_change_24h * 100).toFixed(1);
-  }
+  const priceChangePct = Math.abs(price_change_24h).toLocaleString("en-US", {
+    style: "percent",
+    minimumFractionDigits: 1
+  });
 </script>
 
 <li
@@ -19,16 +40,16 @@
   on:pointerdown
 >
   <div class="type badge-{type}">{label}</div>
-  <div class="description flex-grow-1">{description}</div>
+  <div class="desc flex-grow-1">{description}</div>
   {#if price_change_24h !== undefined}
-    <div class="price-change {priceChangeClass}">{getPriceChangePct()}%</div>
+    <div class="price-change {priceChangeClass}">{priceChangePct}</div>
   {/if}
 </li>
 
 <style>
   li {
     border: none;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: normal;
     line-height: 1.25;
     gap: 1em;
@@ -49,7 +70,7 @@
     line-height: 1.75;
   }
 
-  .description {
+  .desc {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
