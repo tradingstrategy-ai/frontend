@@ -80,7 +80,9 @@ Advanced Search page
                             class="clear-filters"
                             disabled={filter_by.length === 0}
                             on:click={clearAllFilters}
-                          >× clear all filters</button>
+                          >
+                              {filter_by.length === 0 ? 'Select filters' : '× Clear filters'}
+                          </button>
                       </div>
                       <div class="col-6 d-md-none d-flex align-items-center">
                           <h2>Sort by:</h2>
@@ -192,6 +194,8 @@ Advanced Search page
     padding: 0;
     font-size: 0.875rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1ex;
     color: var(--link-underline);
     cursor: pointer;
   }
@@ -202,8 +206,8 @@ Advanced Search page
 
   button.clear-filters:disabled {
     color: black;
+    font-weight: 400;
     border-color: transparent;
-    opacity: 0.5;
     text-decoration: none;
     cursor: default;
   }
