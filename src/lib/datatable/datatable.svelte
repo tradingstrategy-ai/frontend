@@ -93,7 +93,7 @@
 
 <div class="datatables-wrapper">
 	<div class="table-responsive">
-		<table bind:this={el} class={"table table-datatable " + extraClass} style={loaded ? "display: table" : "display: none"} data-cy={dataCy || 'exchange-table'}>
+		<table bind:this={el} class={"table table-datatable " + extraClass} style={loaded ? "display: table; width: 100%;" : "display: none"} data-cy={dataCy || 'exchange-table'}>
 			<thead>
 				<tr>
 					{#each columns as column}
