@@ -257,11 +257,6 @@
             const status = resp.status;
 
             if (!resp.ok) {
-                const errorResponses = {
-                   422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}`,
-                   500: `Internal server error`,
-                   'default': `${status} ${resp.statusText}`
-                }
                 // Decode 422 invalid input parameter error from the server
                 // with JSON payload
                 let errorDetails;
@@ -273,13 +268,17 @@
                         recordsTotal: 0,
                         recordsFiltered: 0,
                     }
+                    const errorResponses = {
+                       422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}: ${errorDetails.message}`,
+                       500: `Internal server error`,
+                       'default': `${status} ${resp.statusText}`
+                    }
                     settings.oLanguage.sEmptyTable = errorResponses[status] || errorResponses['default'];
                     callback(result);
                 } catch(e) {
-                    // No JSON payload
-                    errorDetails = {
-                        "message": resp.statusText
-                    }
+                    console.error(e);
+                    settings.oLanguage.sEmptyTable = `${status} ${resp.statusText}`;
+                    callback([]);
                 }
 
                 console.error("API error:", resp, "error details:", errorDetails);
