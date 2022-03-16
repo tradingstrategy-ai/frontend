@@ -74,6 +74,11 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 	};
 }
 
+// Disable service worker for now: https://github.com/sveltejs/kit/issues/3159
+config.kit.serviceWorker = {
+	register: false,
+}
+
 config.kit.vite = {
 	optimizeDeps: {
 	},
