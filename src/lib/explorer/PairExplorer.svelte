@@ -18,9 +18,12 @@
     export let chainSlug = null;
     export let tokenSlug = null;
 
-    export let tokenAddress = null;
-    // The token Symbol to get the all the pairs "WETH"
+    // The token match the filter criteria.
     export let tokenSymbol = null;
+    export let tokenAddress = null;
+
+    // Auxiliar Data based on different context
+    export let auxiliarData = null;
 
     // What columns we will show in the explorer.
     // See allColumns for options.
@@ -156,7 +159,7 @@
 		lengthChange: false,
         pageLength: pageLength,
 
-        // TODO: If set we would be mobile compatible, but causes the table header to disappear
+        // TODO: If set we would     be mobile compatible, but causes the table header to disappear
         // because whatever jQuery trickery is used to render this
         scrollX: false,
 
@@ -201,6 +204,8 @@
         ajax: async function(data, callback, settings) {
 
             // console.log("AJAX", data, callback, settings);
+
+            console.log("AJAX", settings);
 
             // Match column index given by DataTables to the server-side sort key
 
@@ -247,17 +252,34 @@
             // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
             const encoded = new URLSearchParams(params);
             const url = `${backendUrl}/pairs?${encoded}`;
-            const resp = await fetch(url);
-            if (!resp.ok) {
 
+            const resp = await fetch(url);
+            const status = resp.status;
+
+            if (!resp.ok) {
+                const errorResponses = {
+                   422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}`,
+                   500: `Internal server error`,
+                   'default': `${status} ${resp.statusText}`
+                }
                 // Decode 422 invalid input parameter error from the server
                 // with JSON payload
                 let errorDetails;
                 try {
                     // GenericErrorModel in OpenAPI
                     errorDetails = await resp.json()
-                    callback({"error": errorDetails.message});
+                    const result = {
+                        data: [],
+                        recordsTotal: 0,
+                        recordsFiltered: 0,
+                    }
+                    settings.oLanguage.sEmptyTable = errorResponses[status] || errorResponses['default'];
+                    callback(result);
                 } catch(e) {
+                    // No JSON payload
+                    errorDetails = {
+                        "message": resp.statusText
+                    }
                 }
 
                 console.error("API error:", resp, "error details:", errorDetails);

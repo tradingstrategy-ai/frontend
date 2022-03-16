@@ -54,6 +54,9 @@
             [token_address]: tokenDetails.name
         };
 
+        const auxiliarData = {
+            tokenName: summary.name,
+        }
 
         return {
             // Cache the pair data pages for 30 minutes at the Cloudflare edge,
@@ -65,8 +68,9 @@
                 chain_slug,
                 pair_slug,
                 token_slug,
-                summary,
                 token_address,
+                summary,
+                auxiliarData,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
             }
         }
@@ -84,6 +88,7 @@
     export let chain_slug;
     export let token_slug;
     export let breadcrumbs;
+    export let auxiliarData;
     export let token_address;
 
 </script>
@@ -128,6 +133,7 @@
             enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
             orderColumnIndex={4}
             pageLength={50}
+            auxiliarData={auxiliarData}
             tokenSymbol={summary.symbol}
             tokenAddress={token_address}
         />
