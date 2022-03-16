@@ -1,5 +1,6 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
+	import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
 
 	export const hydrate = true;
@@ -10,7 +11,7 @@
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ url, session, fetch, context }) {
-		const apiUrl = `https://tradingstrategy.ai/api/datasets`;
+		const apiUrl = `${backendUrl}/datasets`;
 
 		const res = await fetch(apiUrl, {
 			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
@@ -61,8 +62,6 @@
 
 	export let breadcrumbs;
 
-	const apiUrl = "https://tradingstrategy.ai/api";
-
 	function formatNumber(n) {
 		if(n <= 1000) {
 			return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
@@ -92,7 +91,7 @@
 
 	async function handleSubmit(event) {
 
-		const url = `${apiUrl}/validate-api-key`;
+		const url = `${backendUrl}/validate-api-key`;
 		let key = event.target.apiKey.value;
 
 		// Avoid whitespace issues
@@ -119,8 +118,9 @@
 
 			// console.log("Got validation response", data);
 
-			if(!data.valid) {
+			if (!data.valid) {
 				apiKeyError = "The API key is not valid";
+				return;
 			}
 
 			validApiKey = key;
@@ -153,13 +153,13 @@
 
 				<p>
 					You can download the datasets with an API key. Request an API key via Discord or get one automatically
-					by completing  <a href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Trading Strategy Python client tutorial.</a>
+					by completing  <a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Trading Strategy Python client tutorial.</a>
 				</p>
 
 				<h2>Supported blockchains and DEXes</h2>
 
 				<p>
-					The datasets include trade and liquidity data for <a href="https://tradingstrategy.ai/docs/glossary.html#term-AMM">automatic market maker (AMM)</a> exchanges.
+					The datasets include trade and liquidity data for <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-AMM">automatic market maker (AMM)</a> exchanges.
 					For <a href="https://tradingstrategy.ai/trading-view/blockchains">the list of supported blockchains and exchanges, view trading data on Trading Strategy website.</a>
 				</p>
 
@@ -181,10 +181,10 @@
 
 				<ul>
 					<li>
-						<a href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Getting started with Trading Strategy Python client</a>
+						<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Getting started with Trading Strategy Python client</a>
 					</li>
 					<li>
-						<a href="https://tradingstrategy.ai/docs/">Technical documentation</a>
+						<a rel="external" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
 					</li>
 					<li>
 						<a href="https://github.com/tradingstrategy-ai/client">Github</a>
@@ -256,12 +256,12 @@
 									</td>
 
 									<td>
-										<a class=action-link href={row.documentation}>
+										<a class=action-link rel="external" href={row.documentation}>
 											Documentation
 										</a>
 
-										<a class=action-link target="{validApiKey ? `_blank` : undefined}" href="{formatDownloadLink(validApiKey, row.download_link)}" disabled="{validApiKey ? undefined : 'disabled'}">
-											Download
+										<a class=action-link rel="external" target="{validApiKey ? `_blank` : undefined}" href="{formatDownloadLink(validApiKey, row.download_link)}" disabled="{validApiKey ? undefined : 'disabled'}">
+											Download 
 										</a>
 									</td>
 
