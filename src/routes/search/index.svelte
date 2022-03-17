@@ -12,6 +12,7 @@ Advanced Search page
   import SortSelect, { sortOptions } from "./_SortSelect.svelte";
   import FacetFilter from "./_FacetFilter.svelte";
   import RangeFilter from "./_RangeFilter.svelte";
+  import NumericFilter from "./_NumericFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
   let q = $page.url.searchParams.get('q') || "";
@@ -115,11 +116,11 @@ Advanced Search page
                             formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
-                          <RangeFilter
+                          <NumericFilter
                             bind:selected={filters['price_change_24h']}
                             fieldName="price_change_24h"
-                            breakpoints={[Infinity, 0.01, 0.0001, -0.0001, -0.01, -Infinity]}
-                            labels={["▲ > 1%", "△ 0.01% - 1%", "⬦ 0% ± 0.01%", "▽ 0.01% - 1%", "▼ > 1%"]}
+                            filters={[">0.05", ">0", "<0", "<-0.05"]}
+                            labels={["▲ Up > 5%", "△ Up", "▽ Down", "▼ Down > 5%"]}
                             on:change={handleFilterChange}
                           />
                       </div>

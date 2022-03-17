@@ -5,9 +5,9 @@ filter on:change.
 
 #### Usage:
 ```tsx
-  <Filter
+  <FacetFilter
     bind:selected
-    fieldName="facet_search_field"
+    fieldName="facet_field"
     options={[option1, option2]}
     on:change={({ fieldName, filter }) => setFilter(filter) )}
   />
