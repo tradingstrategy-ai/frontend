@@ -26,6 +26,7 @@ Used for simple search results from top-nav; displays a single
 
   const { description, type, price_change_24h } = document;
   const label = type === "exchange" ? "DEX" : type;
+  const lowQuality = document.liquidity < 10_000;
   const priceChangeClass = determinePriceChangeClass(price_change_24h);
   const priceChangePct = Math.abs(price_change_24h).toLocaleString("en-US", {
     style: "percent",
@@ -36,12 +37,13 @@ Used for simple search results from top-nav; displays a single
 <li
   class="list-group-item d-flex align-items-center"
   class:selected
+  class:lowQuality
   on:mouseenter
   on:pointerdown
 >
   <div class="type badge-{type}">{label}</div>
   <div class="desc flex-grow-1">{description}</div>
-  {#if price_change_24h !== undefined}
+  {#if !lowQuality && price_change_24h !== undefined}
     <div class="price-change {priceChangeClass}">{priceChangePct}</div>
   {/if}
 </li>
@@ -58,6 +60,18 @@ Used for simple search results from top-nav; displays a single
 
   .selected {
     background-color: #E5DFD9;
+  }
+
+  .lowQuality {
+    background-image: url("/images/quality-warning.svg");
+    background-origin: content-box;
+    background-position: right center;
+    background-size: 16px;
+    background-repeat: no-repeat;
+  }
+  
+  .lowQuality > * {
+    opacity: 0.5;
   }
 
   .type {
