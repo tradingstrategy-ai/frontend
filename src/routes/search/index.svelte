@@ -8,12 +8,11 @@ Advanced Search page
   import { page } from "$app/stores";
   import { formatDollar } from "$lib/helpers/formatters";
   import tradingEntities from "$lib/search/trading-entities";
-  import { ListGroup } from "sveltestrap";
   import SortSelect, { sortOptions } from "./_SortSelect.svelte";
   import FacetFilter from "./_FacetFilter.svelte";
   import RangeFilter from "./_RangeFilter.svelte";
   import NumericFilter from "./_NumericFilter.svelte";
-  import ResultLineItem from "./_ResultLineItem.svelte";
+  import TradingEntityHit from "$lib/search/TradingEntityHit.svelte"
 
   let q = $page.url.searchParams.get('q') || "";
 
@@ -128,11 +127,11 @@ Advanced Search page
               </div>
               <div class="results col-md-9 col-sm-12">
                   {#if hasSearch}
-                      <ListGroup>
-                          {#each $tradingEntities.hits as { document }, index (document.id)}
-                              <ResultLineItem {document} />
+                      <ul class="list-group">
+                          {#each $tradingEntities.hits as { document } (document.id)}
+                              <TradingEntityHit {document} layout="advanced" />
                           {/each}
-                      </ListGroup>
+                      </ul>
                   {:else}
                       <div>Search exchanges, tokens and trading pairs.</div>
                   {/if}
@@ -211,6 +210,10 @@ Advanced Search page
     border-color: transparent;
     text-decoration: none;
     cursor: default;
+  }
+
+  .results .list-group {
+    max-width: 600px;
   }
 
   @media (max-width: 768px) {

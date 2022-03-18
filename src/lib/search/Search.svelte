@@ -12,8 +12,8 @@ Display site-wide search box for use in top-nav.
 <script lang="ts">
   import { goto } from "$app/navigation";
   import tradingEntities from "./trading-entities";
-  import { Fade, ListGroup } from "sveltestrap";
-  import ResultLineItem from "./ResultLineItem.svelte";
+  import { Fade } from "sveltestrap";
+  import TradingEntityHit from "./TradingEntityHit.svelte";
 
   let q = "";
   let hasFocus = false;
@@ -71,10 +71,11 @@ Display site-wide search box for use in top-nav.
     />
     <Fade isOpen={hasFocus && q}>
         <div class="card bg-primary shadow-soft border-light">
-            <ListGroup flush>
+            <ul class="list-group flush">
                 {#each $tradingEntities.hits as { document }, index (document.id)}
-                    <ResultLineItem
+                    <TradingEntityHit
                       {document}
+                      layout="basic"
                       selected={index === selectedIndex}
                       on:mouseenter={() => selectedIndex = index}
                       on:pointerdown={() => gotoEntity(document)}
@@ -83,7 +84,7 @@ Display site-wide search box for use in top-nav.
                 <li class="show-all list-group-item" on:pointerdown={() => goto(`/search?q=${q}`)}>
                     Show all results | advanced options
                 </li>
-            </ListGroup>
+            </ul>
         </div>
     </Fade>
 </div>
