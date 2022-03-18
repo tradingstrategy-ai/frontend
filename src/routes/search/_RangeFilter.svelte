@@ -1,13 +1,13 @@
 <!--
 @component
-Displays filter options for numeric filter search fields; generates options
-based on breakpoints; generates valid Typesense filter on:change.
+Displays filter options as ranges for numeric filter search fields; generates
+range options based on breakpoints; dispatches valid Typesense filter on:change.
 
 #### Usage:
 ```tsx
-  <Filter
+  <RangeFilter
     bind:selected
-    fieldName="numeric_search_field"
+    fieldName="range_field"
     breakpoints={[0, 100, 1000, 10000, Infinity]}
     formatter={formatFunction}
     labels={[label1, label2, ...]}

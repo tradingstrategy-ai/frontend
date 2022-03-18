@@ -12,6 +12,7 @@ Advanced Search page
   import SortSelect, { sortOptions } from "./_SortSelect.svelte";
   import FacetFilter from "./_FacetFilter.svelte";
   import RangeFilter from "./_RangeFilter.svelte";
+  import NumericFilter from "./_NumericFilter.svelte";
   import ResultLineItem from "./_ResultLineItem.svelte";
 
   let q = $page.url.searchParams.get('q') || "";
@@ -42,8 +43,8 @@ Advanced Search page
 </script>
 
 <svelte:head>
-    <title>Search</title>
-    <meta name="description" content="Search Trading Entities">
+    <title>Token search</title>
+    <meta name="description" content="Find best tokens on any DEX">
 </svelte:head>
 
 <main>
@@ -80,7 +81,9 @@ Advanced Search page
                             class="clear-filters"
                             disabled={filter_by.length === 0}
                             on:click={clearAllFilters}
-                          >× clear all filters</button>
+                          >
+                              {filter_by.length === 0 ? 'Select filters' : '× Clear filters'}
+                          </button>
                       </div>
                       <div class="col-6 d-md-none d-flex align-items-center">
                           <h2>Sort by:</h2>
@@ -113,11 +116,11 @@ Advanced Search page
                             formatter={(v) => formatDollar(v, 0, 0)}
                             on:change={handleFilterChange}
                           />
-                          <RangeFilter
+                          <NumericFilter
                             bind:selected={filters['price_change_24h']}
                             fieldName="price_change_24h"
-                            breakpoints={[Infinity, 0.01, 0.0001, -0.0001, -0.01, -Infinity]}
-                            labels={["▲ > 1%", "△ 0.01% - 1%", "⬦ 0% ± 0.01%", "▽ 0.01% - 1%", "▼ > 1%"]}
+                            filters={[">0.05", ">0", "<0", "<-0.05"]}
+                            labels={["▲ Up > 5%", "△ Up", "▽ Down", "▼ Down > 5%"]}
                             on:change={handleFilterChange}
                           />
                       </div>
@@ -192,6 +195,8 @@ Advanced Search page
     padding: 0;
     font-size: 0.875rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1ex;
     color: var(--link-underline);
     cursor: pointer;
   }
@@ -202,8 +207,8 @@ Advanced Search page
 
   button.clear-filters:disabled {
     color: black;
+    font-weight: 400;
     border-color: transparent;
-    opacity: 0.5;
     text-decoration: none;
     cursor: default;
   }

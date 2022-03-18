@@ -9,7 +9,7 @@
   export async function load({ fetch }) {
     return {
       props: {
-        posts: await fetchBlogroll(10)
+        posts: await fetchBlogroll(25)
       }
     }
   }

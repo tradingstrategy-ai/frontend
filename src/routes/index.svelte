@@ -123,7 +123,7 @@
 				<h3 class="heading-blog text-center">Blog</h3>
 				<HomeBlogroll {posts} />
 				<p class="text-center blog-all">
-					<a href="/blog/">See all posts</a>
+					<a class="btn" href="/blog/">View blog</a>
 				</p>
 
 			</div>
@@ -204,10 +204,6 @@
 
 	.blog-all {
 		margin-top: 40px;
-	}
-
-	.blog-all a {
-		text-decoration: underline;
 	}
 
 	@media(max-width: 768px) {

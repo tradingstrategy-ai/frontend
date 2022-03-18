@@ -39,7 +39,7 @@
                 detail: "",
                 pairs: momentumDetails.top_down_24h_min_liq_1m.slice(0, pairsToShow),
                 link: "/trading-view/top-list/daily-down",
-                linkName: "View all losing trading"
+                linkName: "View all losing pairs"
             }
 
             /*
