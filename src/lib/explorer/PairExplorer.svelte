@@ -247,29 +247,22 @@
 
             const resp = await fetch(url);
 
-            if (!resp.ok) {
+            if (resp.ok) {
+                // Result object: {total: 57483, pages: 575, results: Array(100)
+                const result = await resp.json();
+                callback({
+                    recordsTotal: result.total,
+                    recordsFiltered: result.total,
+                    data: result.results
+                });
+            } else {
                 settings.oLanguage.sEmptyTable = await decodeAjaxError(resp);
-
                 callback({
                     data: [],
                     recordsTotal: 0,
                     recordsFiltered: 0,
                 });
-                return;
             }
-
-            // Result object is
-            // {total: 57483, pages: 575, results: Array(100)
-            const result = await resp.json();
-
-            // Mangle the result object for Datatables format
-            result.recordsTotal = result.total;
-            result.recordsFiltered = result.total;
-            result.data = result.results;
-
-            // console.log("Rendering", result.data);
-
-            callback(result);
         }
     };
 
