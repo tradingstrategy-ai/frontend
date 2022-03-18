@@ -70,7 +70,7 @@
 
             {#if !submitted}
                 <div class="row audience">
-                    <div class="col-md-12 text-center">
+                    <div class="col-md-8 text-center align-center">
                         <h2>API key generator form</h2>
                         <form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
 
@@ -84,21 +84,21 @@
 
                             <div id="form-group-registration">
                                 <input
-                                    class="form-control form-group-registration-item"
+                                    class="form-control form-group-registration-item mb-4"
                                     id="email"
                                     placeholder="email"
                                     type="text"
                                 />
 
                                 <input
-                                    class="form-control form-group-registration-item"
+                                    class="form-control form-group-registration-item mb-4"
                                     id="firstName"
                                     placeholder="first name"
                                     type="text"
                                 />
 
                                 <input
-                                    class="form-control form-group-registration-item"
+                                    class="form-control form-group-registration-item mb-4"
                                     id="lastName"
                                     placeholder="last name"
                                     type="text"
@@ -106,7 +106,7 @@
 
                                 <button
                                     type="submit"
-                                    class="btn btn-primary form-group-api-key-item"
+                                    class="btn btn-primary form-group-api-key-item mb-4"
                                     disabled={submitting}>Enter</button
                                 >
 
