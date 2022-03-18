@@ -179,6 +179,18 @@
         return JSON.parse(JSON.stringify(params));
     }
 
+    async function decodeAjaxError(resp) {
+        // Decode 422 invalid input parameter error from the server
+        const errorDetails = await resp.json();
+
+        const errorResponses = {
+            422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}: ${errorDetails.message}`,
+            500: `Internal server error`,
+            default: `${resp.status} ${resp.statusText} ${errorDetails.message}`
+        }
+        return errorResponses[resp.status] || errorResponses['default'];
+    }
+
     const options = {
         order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
@@ -234,34 +246,15 @@
             const url = `${backendUrl}/pairs?${urlParams}`;
 
             const resp = await fetch(url);
-            const status = resp.status;
 
             if (!resp.ok) {
-                // Decode 422 invalid input parameter error from the server
-                // with JSON payload
-                let errorDetails;
-                try {
-                    // GenericErrorModel in OpenAPI
-                    errorDetails = await resp.json()
-                    const result = {
-                        data: [],
-                        recordsTotal: 0,
-                        recordsFiltered: 0,
-                    }
-                    const errorResponses = {
-                       422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}: ${errorDetails.message}`,
-                       500: `Internal server error`,
-                       'default': `${status} ${resp.statusText}`
-                    }
-                    settings.oLanguage.sEmptyTable = errorResponses[status] || errorResponses['default'];
-                    callback(result);
-                } catch(e) {
-                    console.error(e);
-                    settings.oLanguage.sEmptyTable = `${status} ${resp.statusText}`;
-                    callback([]);
-                }
+                settings.oLanguage.sEmptyTable = await decodeAjaxError(resp);
 
-                console.error("API error:", resp, "error details:", errorDetails);
+                callback({
+                    data: [],
+                    recordsTotal: 0,
+                    recordsFiltered: 0,
+                });
                 return;
             }
 
