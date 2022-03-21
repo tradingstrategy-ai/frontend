@@ -30,9 +30,14 @@
 
   async function fetchNextPage() {
     page.loading = true;
-    const response = await fetchPosts(page);
-    posts = [...posts, ...response.posts];
-    page = response.page;
+    try {
+      const response = await fetchPosts(page);
+      posts = [...posts, ...response.posts];
+      page = response.page;
+    } catch(e) {
+      page.error = e.message;
+      page.loading = false;
+    }
   }
 </script>
 
@@ -96,6 +101,9 @@
         <p class="text-center font-weight-bolder">
           {#if page.loading}
             <Spinner />
+          {:else if page.error}
+            Error loading blog posts:
+            <pre class="font-weight-normal">{page.error}</pre>
           {:else if page.next}
             <div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
           {:else}
