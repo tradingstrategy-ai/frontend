@@ -10,7 +10,6 @@ search result line item.
     layout="basic|advanced"
     selected={true}
     on:mouseenter={handleMouseEnter}
-    on:pointerdown={handlePointerDown}
   />
 ```
 -->
@@ -45,79 +44,75 @@ search result line item.
     });
 </script>
 
-<li
-  class="list-group-item d-flex align-items-center {layout}"
-  class:selected
-  class:low-quality={isLowQuality}
-  on:mouseenter
-  on:pointerdown
->
-    <div class="type badge-{document.type}">{label}</div>
-    <div class="flex-grow-1">
-        <div class="d-flex flex-grow-1">
-            <div class="desc flex-grow-1">{document.description}</div>
+<li class="list-group-item {layout}" class:selected class:isLowQuality on:mouseenter>
+    <a class="d-flex align-items-center" href={document.url_path} on:mousedown|preventDefault>
+        <div class="type badge-{document.type}">{label}</div>
+        <div class="flex-grow-1">
+            <div class="d-flex flex-grow-1">
+                <div class="desc flex-grow-1">{document.description}</div>
 
-            {#if isBasicLayout && !isLowQuality && Number.isFinite(document.price_change_24h)}
-                <div class="price-change {priceChangeClass}">{priceChangePct}</div>
-            {:else if isAdvancedLayout && hasTradingData}
-                <div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
+                {#if isBasicLayout && !isLowQuality && Number.isFinite(document.price_change_24h)}
+                    <div class="price-change {priceChangeClass}">{priceChangePct}</div>
+                {:else if isAdvancedLayout && hasTradingData}
+                    <div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
+                {/if}
+            </div>
+
+            {#if isAdvancedLayout && hasTradingData}
+                <div class="secondary d-flex flex-grow-1">
+                    <div class="volume">
+                        <dt>volume 24h:</dt>
+                        <dd>{formatDollar(document.volume_24h)}</dd>
+                    </div>
+                    <div class="liquidity">
+                        <dt>liquidity:</dt>
+                        <dd>{formatDollar(document.liquidity)}</dd>
+                    </div>
+                    <div class="price-change">
+                        <dd class="{priceChangeClass}">{formatPriceChange(document.price_change_24h)}</dd>
+                    </div>
+                </div>
             {/if}
         </div>
-
-        {#if isAdvancedLayout && hasTradingData}
-            <div class="secondary d-flex flex-grow-1">
-                <div>
-                    <dt>volume 24h:</dt>
-                    <dd>{formatDollar(document.volume_24h)}</dd>
-                </div>
-                <div>
-                    <dt>liquidity:</dt>
-                    <dd>{formatDollar(document.liquidity)}</dd>
-                </div>
-                <div class="price-change">
-                    <dd class="{priceChangeClass}">{formatPriceChange(document.price_change_24h)}</dd>
-                </div>
-            </div>
-        {/if}
-    </div>
+    </a>
 </li>
 
 <style>
   li {
-    font-weight: normal;
-    line-height: 1.25;
-    gap: 1em;
-    cursor: pointer;
+    padding: 0;
   }
 
   .basic {
     border: none;
-    font-size: 0.875rem;
   }
 
   .advanced {
     margin-bottom: 0.65em;
-    padding: 20px 30px;
     border: 1px solid #ccbbab;
     border-radius: 8px;
     background-color: #fff8f2;
+    background-clip: content-box;
+  }
+
+  a {
+    gap: 1em;
+    font-weight: normal;
+    line-height: 1.25;
+    outline: none;
+  }
+
+  .basic a {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .advanced a {
+    padding: 20px 30px;
     font-weight: normal;
   }
 
   .selected {
     background-color: #E5DFD9;
-  }
-
-  .basic.low-quality {
-    background-image: url("/images/quality-warning.svg");
-    background-origin: content-box;
-    background-position: right center;
-    background-size: 16px;
-    background-repeat: no-repeat;
-  }
-
-  .low-quality > * {
-    opacity: 0.5;
   }
 
   .type {
@@ -193,18 +188,41 @@ search result line item.
     font-weight: 500;
   }
 
+  .isLowQuality a {
+    opacity: 0.5;
+  }
+
+  .basic.isLowQuality a {
+    background: content-box url("/images/quality-warning.svg") right/16px no-repeat;
+  }
+
+  .advanced.isLowQuality div.liquidity {
+    position: relative;
+  }
+
+  .advanced.isLowQuality div.liquidity::before {
+    position: absolute;
+    content: "";
+    left: -1.35em;
+    width: 1em;
+    height: 100%;
+    background: url("/images/quality-warning.svg") center no-repeat;
+  }
+
   @media (max-width: 576px) {
     .advanced {
-      margin: -1px 0 0 0;
+      margin: 0;
+      border-width: 1px 0 0 0;
+      border-radius: 0;
+    }
+
+    .advanced:last-child {
+      border-bottom-width: 1px;
+    }
+
+    .advanced a {
       padding: 15px;
       font-size: 0.875rem;
-      border-left: none;
-      border-right: none;
-      /* override bootstrap border radiuses - requires corner-specific properties */
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
     }
 
     .secondary div,

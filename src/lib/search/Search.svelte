@@ -40,20 +40,12 @@ Display site-wide search box for use in top-nav.
         selectedIndex = (selectedIndex + resultCount - 1) % resultCount;
         break;
       case "Enter":
-        gotoEntity($tradingEntities.hits[selectedIndex].document);
+        goto($tradingEntities.hits[selectedIndex].document.url_path);
         break;
       default:
         return;
     }
     event.preventDefault();
-  }
-
-  function gotoEntity({ url_path, description }) {
-    if (url_path) {
-      goto (url_path);
-    } else {
-      console.log(`GOTO ${description}`);
-    }
   }
 </script>
 
@@ -78,11 +70,12 @@ Display site-wide search box for use in top-nav.
                       layout="basic"
                       selected={index === selectedIndex}
                       on:mouseenter={() => selectedIndex = index}
-                      on:pointerdown={() => gotoEntity(document)}
                     />
                 {/each}
-                <li class="show-all list-group-item" on:pointerdown={() => goto(`/search?q=${q}`)}>
-                    Show all results | advanced options
+                <li class="show-all list-group-item">
+                    <a href="/search?q={q}" on:mousedown|preventDefault>
+                      Show all results | advanced options
+                    </a>
                 </li>
             </ul>
         </div>
@@ -132,8 +125,12 @@ Display site-wide search box for use in top-nav.
   }
 
   .show-all {
+    padding: 0;
     background-color: #d4cdc8;
-    cursor: pointer;
+  }
+
+  .show-all a {
+    display: block;
     text-align: center;
     padding: 0.5em;
     font-size: 0.75rem;
