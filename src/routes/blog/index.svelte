@@ -1,25 +1,39 @@
 <script context="module">
-  // Ghost client
-  import { fetchBlogroll } from "$lib/blog/feed";
+  import ghostClient from "$lib/blog/client";
 
-  // TODO: Mobile menu requires hydrate
-  // Pure server-side rendered page - no interactive JS
-  export const hydrate = true;
+  const limit = 15;
 
-  export async function load({ fetch }) {
+  async function fetchPosts(page = { next: 1 }) {
+    if (!page.next) return { page, posts: [] };
+    const response = await ghostClient?.posts.browse({ limit, page: page.next });
     return {
-      props: {
-        posts: await fetchBlogroll(25)
-      }
-    }
+      posts: [...response],
+      page: response.meta.pagination
+    };
+  }
+
+  export async function load() {
+    return {
+      props: await fetchPosts()
+    };
   }
 </script>
 
 <script>
   import Time from "svelte-time";
   import Sidebar from "$lib/blog/Sidebar.svelte";
+  import { inview } from 'svelte-inview';
+	import Spinner from 'svelte-spinner';
 
   export let posts = [];
+  export let page = {};
+
+  async function fetchNextPage() {
+    page.loading = true;
+    const response = await fetchPosts(page);
+    posts = [...posts, ...response.posts];
+    page = response.page;
+  }
 </script>
 
 <svelte:head>
@@ -78,6 +92,16 @@
             No blog posts found (check if Ghost is properly configured)
           </p>
         {/each}
+
+        <p class="text-center font-weight-bolder">
+          {#if page.loading}
+            <Spinner />
+          {:else if page.next}
+            <div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
+          {:else}
+            Congratulations – you've reached the end 🎉! Check back soon for new posts.
+          {/if}
+        </p>
       </div>
 
       <div class="col-lg-3 col-md-12">
@@ -94,7 +118,7 @@
   }
 
   .card {
-      margin-bottom: 60px;
+    margin-bottom: 60px;
   }
 
   .card-img-top {
