@@ -51,8 +51,7 @@
 	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
-
-	import HomeBlogroll from "$lib/content/HomeBlogroll.svelte";
+  import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte"
 
 	export let topMomentum;
 	export let impressiveNumbers;
@@ -109,8 +108,8 @@
 						description="A volatility trading strategy that keeps capital accruing interest in Aave USDC pool when the strategy does not have a trading position open."
 						tradesOn="1inch on Polygon"
 						learnLink="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html"
-						preview={true} />
-
+						preview={true}
+					/>
 
 				</div>
 			</div>
@@ -121,11 +120,14 @@
 		<section class="blog">
 			<div class="container">
 				<h3 class="heading-blog text-center">Blog</h3>
-				<HomeBlogroll {posts} />
+					<div class="card-deck d-block d-lg-flex">
+						{#each posts as post (post.id)}
+							<BlogPreviewCard {post} layout="compact" />
+						{/each}
+					</div>
 				<p class="text-center blog-all">
 					<a class="btn" href="/blog/">View blog</a>
 				</p>
-
 			</div>
 		</section>
 	{/if}
@@ -133,7 +135,6 @@
 </main>
 
 <style>
-
 	main {
 		min-height: 100vw;
 		background-size: cover;
@@ -145,9 +146,6 @@
 		background: #F2DFCE;
 		box-shadow: none;
 		padding: 60px 0;
-	}
-
-	.card-jumbo p {
 	}
 
 	h1 {
@@ -163,8 +161,8 @@
 		width: 100%;
 		color: black;
 		font-size: 2.3rem;
-		font-family: "Exo 2",sans-serif;
-    	font-weight: 400;
+		font-family: "Exo 2", sans-serif;
+		font-weight: 400;
 		text-align: left;
 	}
 
@@ -211,5 +209,4 @@
 			display: none;
 		}
 	}
-
 </style>
