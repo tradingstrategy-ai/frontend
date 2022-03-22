@@ -98,7 +98,7 @@
           </p>
         {/each}
 
-        <p class="text-center font-weight-bolder">
+        <div class="text-center font-weight-bolder">
           {#if page.loading}
             <Spinner />
           {:else if page.error}
@@ -109,7 +109,7 @@
           {:else}
             Congratulations – you've reached the end 🎉! Check back soon for new posts.
           {/if}
-        </p>
+        </div>
       </div>
 
       <div class="col-lg-3 col-md-12">
