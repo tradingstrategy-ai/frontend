@@ -1,8 +1,5 @@
-<script context="module">
-	import { backendUrl } from '$lib/config';
-</script>
-
 <script>
+	import { backendUrl } from '$lib/config';
 	import Spinner from 'svelte-spinner';
 
     export let submitting, submitted = false;
@@ -72,55 +69,55 @@
 				</div>
 			</div>
 
-                <div class="row audience">
-                    <div class="col-md-8 text-center align-center">
-                        <form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
+            <div class="row audience">
+                <div class="col-md-8 text-center align-center">
+                    <form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
 
-                            {#if apiRegistrationError}
-                                <div class="alert alert-danger">
-                                    {apiRegistrationError}
-                                </div>
-                            {:else if submitted}
-                                <label for="apiKeyInfo" class="alert alert-info">Check your email your keys have been sent properly.</label>
-                            {:else}
-                                <label for="apiKey">Please register to receive an apikey in your email inbox.</label>
-                            {/if}
-
-                            <div id="form-group-registration">
-                                <input
-                                    class="form-control form-group-registration-item mb-4"
-                                    id="email"
-                                    placeholder="email"
-                                    type="text"
-                                />
-
-                                <input
-                                    class="form-control form-group-registration-item mb-4"
-                                    id="firstName"
-                                    placeholder="first name"
-                                    type="text"
-                                />
-
-                                <input
-                                    class="form-control form-group-registration-item mb-4"
-                                    id="lastName"
-                                    placeholder="last name"
-                                    type="text"
-                                />
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary form-group-api-key-item mb-4"
-                                    disabled={submitting}>Enter</button
-                                >
-
-                                {#if submitting}
-                                    <Spinner />
-                                {/if}
+                        {#if apiRegistrationError}
+                            <div class="alert alert-danger">
+                                {apiRegistrationError}
                             </div>
-                        </form>
-                    </div>
+                        {:else if submitted}
+                            <label for="apiKeyInfo" class="alert alert-info">Check your email your keys have been sent properly.</label>
+                        {:else}
+                            <label for="apiKey">Please register to receive an apikey in your email inbox.</label>
+                        {/if}
+
+                        <div id="form-group-registration">
+                            <input
+                                class="form-control form-group-registration-item mb-4"
+                                id="email"
+                                placeholder="email"
+                                type="text"
+                            />
+
+                            <input
+                                class="form-control form-group-registration-item mb-4"
+                                id="firstName"
+                                placeholder="first name"
+                                type="text"
+                            />
+
+                            <input
+                                class="form-control form-group-registration-item mb-4"
+                                id="lastName"
+                                placeholder="last name"
+                                type="text"
+                            />
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary form-group-api-key-item mb-4"
+                                disabled={submitting}>Enter</button
+                            >
+
+                            {#if submitting}
+                                <Spinner />
+                            {/if}
+                        </div>
+                    </form>
                 </div>
+            </div>
 		</div>
 	</section>
 </main>
