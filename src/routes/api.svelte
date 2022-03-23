@@ -2,36 +2,31 @@
 	import { backendUrl } from '$lib/config';
 	import Spinner from 'svelte-spinner';
 
-    export let submitting, submitted = false;
-	$: submitted = false;
-    export let apiRegistrationError = null;
+    const url = `${backendUrl}/register`;
 
-	async function handleSubmit(event) {
-        submitting = false;
-		const url = `${backendUrl}/register`;
-		let email = event.target.email.value;
-		let firstName = event.target.firstName.value;
-		let lastName = event.target.lastName.value;
+    let submitting = false;
+    let submitted = false;
+    let apiRegistrationError = null;
+
+    let email = "";
+    let firstName = "";
+    let lastName = "";
+
+    async function handleSubmit() {
+        submitting = true;
+        apiRegistrationError = null;
 
 		// Avoid whitespace issues
-		email = email.trim();
-		firstName = firstName.trim();
-		lastName = lastName.trim();
-
-		submitting = true;
-
-        const params =  {
-            email,
-            first_name: firstName,
-            last_name: lastName
-        }
-
-        const encoded = new URLSearchParams(params)
+        const params = new URLSearchParams({
+            email: email.trim(),
+            firstName: firstName.trim(),
+            lastName: lastName.trim()
+        });
 
 		try {
 			const res = await fetch(url, {
 				method: 'POST',
-				body: encoded
+				body: params
 			});
 
 			const data = await res.json();
@@ -41,8 +36,6 @@
 			}
 
             submitted = true;
-            console.log({ submitted })
-
 		} catch (e) {
            apiRegistrationError = e.message;
         } finally {
@@ -85,6 +78,7 @@
 
                         <div id="form-group-registration">
                             <input
+                                bind:value={email}
                                 class="form-control form-group-registration-item mb-4"
                                 id="email"
                                 placeholder="email"
@@ -92,6 +86,7 @@
                             />
 
                             <input
+                                bind:value={firstName}
                                 class="form-control form-group-registration-item mb-4"
                                 id="firstName"
                                 placeholder="first name"
@@ -99,6 +94,7 @@
                             />
 
                             <input
+                                bind:value={lastName}
                                 class="form-control form-group-registration-item mb-4"
                                 id="lastName"
                                 placeholder="last name"
