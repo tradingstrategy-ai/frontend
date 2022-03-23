@@ -5,16 +5,18 @@
     const url = `${backendUrl}/register`;
 
     let submitting = false;
-    let submitted = false;
-    let apiRegistrationError = null;
+    let success = false;
+    let error = null;
 
     let email = "";
     let firstName = "";
     let lastName = "";
 
+    $: disabled = submitting || success;
+
     async function handleSubmit() {
         submitting = true;
-        apiRegistrationError = null;
+        error = null;
 
 		// Avoid whitespace issues
         const params = new URLSearchParams({
@@ -31,13 +33,13 @@
 
 			const data = await res.json();
 			if (!data.valid) {
-                apiRegistrationError = data.error;
+                error = data.error;
 				return;
 			}
 
-            submitted = true;
+            success = true;
 		} catch (e) {
-           apiRegistrationError = e.message;
+           error = e.message;
         } finally {
 		   submitting = false;
 		}
@@ -52,7 +54,7 @@
 <main>
 	<section>
 		<div class="container">
-			<div class="row">
+			<div class="row  mt-5">
 				<div class="col-md-12">
 					<h1>API generator form</h1>
 
@@ -66,50 +68,62 @@
                 <div class="col-md-8 text-center align-center">
                     <form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
 
-                        {#if apiRegistrationError}
+                        {#if error}
                             <div class="alert alert-danger">
-                                {apiRegistrationError}
+                                {error}
                             </div>
-                        {:else if submitted}
-                            <label for="apiKeyInfo" class="alert alert-info">Check your email your keys have been sent properly.</label>
+                        {:else if success}
+                            <div class="alert alert-info">
+                                Check your email – your keys have been sent properly.
+                            </div>
                         {:else}
-                            <label for="apiKey">Please register to receive an apikey in your email inbox.</label>
+                            <div class="instructions">
+                                Please register to receive an API Key in your email inbox.
+                            </div>
                         {/if}
 
                         <div id="form-group-registration">
                             <input
                                 bind:value={email}
                                 class="form-control form-group-registration-item mb-4"
-                                id="email"
+                                type="email"
                                 placeholder="email"
-                                type="text"
+                                required
+                                {disabled}
                             />
 
                             <input
                                 bind:value={firstName}
                                 class="form-control form-group-registration-item mb-4"
-                                id="firstName"
-                                placeholder="first name"
                                 type="text"
+                                placeholder="first name"
+                                spellcheck="false"
+                                required
+                                {disabled}
                             />
 
                             <input
                                 bind:value={lastName}
                                 class="form-control form-group-registration-item mb-4"
-                                id="lastName"
-                                placeholder="last name"
                                 type="text"
+                                placeholder="last name"
+                                spellcheck="false"
+                                required
+                                {disabled}
                             />
 
                             <button
                                 type="submit"
                                 class="btn btn-primary form-group-api-key-item mb-4"
-                                disabled={submitting}>Enter</button
+                                class:submitting
+                                {disabled}
                             >
-
-                            {#if submitting}
-                                <Spinner />
-                            {/if}
+                                {#if submitting}
+                                    Submitting <Spinner />
+                                {:else}
+                                    Generate Key
+                                {/if}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -119,21 +133,24 @@
 </main>
 
 <style>
-	h1 {
-		margin: 30px 0;
+    .instructions {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        font-size: 0.875rem;
+    }
+
+    button[disabled] {
+        height: 2.8rem;
+        cursor: not-allowed;
+        background: #cccccc;
+        border: 2px solid #888888;
+        opacity: 0.25;
 	}
 
-	.questions,
-
-	svg {
-		width: 92px;
-		display: block;
-		margin: 0 auto 20px auto;
-	}
-
-	.btn[disabled] {
-		cursor: not-allowed;
-	}
+    button.submitting {
+        opacity: 0.5;
+    }
 
     #form-group-registration {
 		display: flex;
