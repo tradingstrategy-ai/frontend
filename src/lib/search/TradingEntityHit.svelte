@@ -17,6 +17,8 @@ search result line item.
   import { determinePriceChangeClass } from "$lib/helpers/price";
   import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 
+  // Any token with less than this liquidity
+  // is grayed out in the search results
   const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
 
   /**
