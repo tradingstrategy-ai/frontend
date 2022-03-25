@@ -17,7 +17,7 @@ search result line item.
   import { determinePriceChangeClass } from "$lib/helpers/price";
   import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 
-  const LIQUIDITY_QUALITY_THRESHOLD = 10_000;
+  const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
 
   /**
    * object returned by Typesense `tradingEntity` search hits; see:

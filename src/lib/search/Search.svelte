@@ -74,7 +74,7 @@ Display site-wide search box for use in top-nav.
                 {/each}
                 <li class="show-all list-group-item">
                     <a href="/search?q={q}" on:mousedown|preventDefault>
-                      Show all results | advanced options
+                      Show all results | Advanced search
                     </a>
                 </li>
             </ul>
