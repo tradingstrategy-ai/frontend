@@ -1,25 +1,44 @@
 <script context="module">
-  // Ghost client
-  import { fetchBlogroll } from "$lib/blog/feed";
+  import ghostClient from "$lib/blog/client";
 
-  // TODO: Mobile menu requires hydrate
-  // Pure server-side rendered page - no interactive JS
-  export const hydrate = true;
+  const limit = 15;
 
-  export async function load({ fetch }) {
+  async function fetchPosts(page = { next: 1 }) {
+    if (!page.next) return { page, posts: [] };
+    const response = await ghostClient?.posts.browse({ limit, page: page.next });
     return {
-      props: {
-        posts: await fetchBlogroll(25)
-      }
-    }
+      posts: [...response],
+      page: response.meta.pagination
+    };
+  }
+
+  export async function load() {
+    return {
+      props: await fetchPosts()
+    };
   }
 </script>
 
 <script>
-  import Time from "svelte-time";
   import Sidebar from "$lib/blog/Sidebar.svelte";
+  import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte"
+  import { inview } from 'svelte-inview';
+	import Spinner from 'svelte-spinner';
 
   export let posts = [];
+  export let page = {};
+
+  async function fetchNextPage() {
+    page.loading = true;
+    try {
+      const response = await fetchPosts(page);
+      posts = [...posts, ...response.posts];
+      page = response.page;
+    } catch(e) {
+      page.error = e.message;
+      page.loading = false;
+    }
+  }
 </script>
 
 <svelte:head>
@@ -43,41 +62,26 @@
 
     <div class="row">
       <div class="col-lg-9 col-md-12">
-        {#each posts as post}
-
-          <div class="card bg-primary border-light shadow-soft card-post">
-
-            {#if post.feature_image}
-              <a href={`/blog/${post.slug}`}>
-                <img class="card-img-top rounded-top" src={post.feature_image} alt={post.feature_image_alt}>
-              </a>
-            {/if}
-
-            <div class="card-body">
-
-              <h5 class="card-title">
-                <a href={`/blog/${post.slug}`}>
-                  {post.title}
-                </a>
-              </h5>
-
-              <p class="text-published text-muted text-sm">
-                {new Date(post.published_at).toDateString()} Published: <Time relative timestamp="{Date.parse(post.published_at)}" />
-              </p>
-
-              <p class="card-text">
-                {post.excerpt}
-              </p>
-
-              <a class="btn btn-primary btn-sm btn-read" href={`/blog/${post.slug}`}>Read post</a>
-            </div>
-
-          </div>
+        {#each posts as post (post.id)}
+          <BlogPreviewCard {post} layout="full" />
         {:else}
           <p>
             No blog posts found (check if Ghost is properly configured)
           </p>
         {/each}
+
+        <div class="text-center font-weight-bolder">
+          {#if page.loading}
+            <Spinner />
+          {:else if page.error}
+            Error loading blog posts:
+            <pre class="font-weight-normal">{page.error}</pre>
+          {:else if page.next}
+            <div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
+          {:else}
+            Congratulations – you've reached the end 🎉! Check back soon for new posts.
+          {/if}
+        </div>
       </div>
 
       <div class="col-lg-3 col-md-12">
@@ -88,26 +92,7 @@
 </div>
 
 <style>
-
   .section-blog-roll {
     margin: 60px 0;
-  }
-
-  .card {
-      margin-bottom: 60px;
-  }
-
-  .card-img-top {
-    max-height: 220px;
-    object-fit: cover;
-  }
-
-  .text-published {
-    font-size: 70%;
-    text-transform: uppercase;
-  }
-
-  .btn-read {
-    float: right;
   }
 </style>
