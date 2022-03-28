@@ -180,15 +180,8 @@
     }
 
     async function decodeAjaxError(resp) {
-        // Decode 422 invalid input parameter error from the server
         const errorDetails = await resp.json();
-
-        const errorResponses = {
-            422: `No data for ${tokenSymbol} ${auxiliarData.tokenName}: ${errorDetails.message}`,
-            500: `Internal server error`,
-            default: `${resp.status} ${resp.statusText} ${errorDetails.message}`
-        }
-        return errorResponses[resp.status] || errorResponses['default'];
+        return `${resp.statusText} ${errorDetails.message}`;
     }
 
     const options = {
