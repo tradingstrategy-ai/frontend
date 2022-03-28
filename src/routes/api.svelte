@@ -21,8 +21,8 @@
 		// Avoid whitespace issues
         const params = new URLSearchParams({
             email: email.trim(),
-            firstName: firstName.trim(),
-            lastName: lastName.trim()
+            first_name: firstName.trim(),
+            last_name: lastName.trim()
         });
 
 		try {
