@@ -51,7 +51,8 @@
 	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
-  import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte"
+	import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte";
+	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let topMomentum;
 	export let impressiveNumbers;
@@ -61,8 +62,8 @@
 <svelte:head>
 	<title>Trading Strategy - Algorithmic trading strategy protocol</title>
 	<meta name="description" content="DeFi market data and systematic trading">
+	{@html sitelinksSearchBox()}
 </svelte:head>
-
 
 <main>
 	<section class="card-home card-jumbo">
