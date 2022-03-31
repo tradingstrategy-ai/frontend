@@ -32,7 +32,7 @@ describe('Traging strategy Home', () => {
         cy.wait("@about");
     });
 
-    it('Use can navigate the site from home page', () => {
+    it('User can navigate the site from home page', () => {
         cy.intercept('/').as("home");
         cy.intercept('/community').as("community");
         cy.intercept('/about').as("about");
@@ -47,5 +47,12 @@ describe('Traging strategy Home', () => {
         cy.location('pathname').should('eq', '/about');
         cy.go('back');
         cy.wait("@home")
-      });
-})
+    });
+
+    it('should include Google Sitelinks search box metadata', () => {
+        cy.get('head > script[type="application/ld+json"]')
+            .invoke('html')
+            .then(JSON.parse)
+            .should('have.nested.property', 'potentialAction.@type', 'SearchAction');
+    });
+});
