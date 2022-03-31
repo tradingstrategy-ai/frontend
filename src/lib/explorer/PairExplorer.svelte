@@ -12,15 +12,18 @@
 
     // The exchange slug for which the trading pairs are render, like "sushiswap"
     // Optional.
-    export let exchangeSlug = null;
+    export let exchangeSlug = undefined;
 
     // The chain slug for which the trading pairs are rendered like "binance"
-    export let chainSlug = null;
-    export let tokenSlug = null;
+    export let chainSlug = undefined;
+    export let tokenSlug = undefined;
 
-    export let tokenAddress = null;
-    // The token Symbol to get the all the pairs "WETH"
-    export let tokenSymbol = null;
+    // The token match the filter criteria.
+    export let tokenSymbol = undefined;
+    export let tokenAddress = undefined;
+
+    // Auxiliar Data based on different context
+    export let auxiliarData = undefined;
 
     // What columns we will show in the explorer.
     // See allColumns for options.
@@ -149,6 +152,38 @@
         columns.push(column);
     }
 
+    function getAjaxParams(data) {
+        // Match column index given by DataTables to the server-side sort key
+        const sortColumnIndex = data.order[0].column;
+        const sortKey = columns[sortColumnIndex].serverSideSortKey;
+
+        if (!sortKey) {
+            throw new Error(`Column does not support sorting: ${sortColumnIndex}`);
+        }
+
+        const params = {
+            direction: data.order[0].dir === "desc" ? "desc" : "asc",
+            sort: sortKey,
+            // https://datatables.net/manual/server-side
+            page_size: data.length,
+            // Zero-based rendered page
+            page: data.start,
+            tokenSymbol,
+            chain_slugs: chainSlug,
+            exchange_slugs: exchangeSlug,
+            token_slugs: tokenSlug,
+            token_addresses: tokenAddress
+        };
+
+        // return a sparse version of params (undefined values removed)
+        return JSON.parse(JSON.stringify(params));
+    }
+
+    async function decodeAjaxError(resp) {
+        const errorDetails = await resp.json();
+        return `${resp.statusText} ${errorDetails.message}`;
+    }
+
     const options = {
         order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
@@ -156,7 +191,7 @@
 		lengthChange: false,
         pageLength: pageLength,
 
-        // TODO: If set we would be mobile compatible, but causes the table header to disappear
+        // TODO: If set we would     be mobile compatible, but causes the table header to disappear
         // because whatever jQuery trickery is used to render this
         scrollX: false,
 
@@ -199,83 +234,28 @@
          * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
          */
         ajax: async function(data, callback, settings) {
-
-            // console.log("AJAX", data, callback, settings);
-
-            // Match column index given by DataTables to the server-side sort key
-
-            const sortColumnIndex = data.order[0].column;
-            let sortKey = columns[sortColumnIndex].serverSideSortKey;
-
-            if(!sortKey) {
-                throw new Error(`Column does not support sorting: ${sortColumnIndex}`)
-            }
-
-            const params = {
-                // https://datatables.net/manual/server-side
-                page_size: data.length,
-                // Zero-based rendered page
-                page: data.start,
-            };
-
-            if(tokenSymbol) {
-                params.tokenSymbol = tokenSymbol;
-            }
-
-            if(chainSlug) {
-                params.chain_slugs = chainSlug;
-            }
-
-            if(exchangeSlug) {
-                params.exchange_slugs = exchangeSlug;
-            }
-
-            if(tokenSlug) {
-                params.token_slugs = tokenSlug;
-            }
-
-            if(tokenAddress) {
-                params.token_addresses = tokenAddress;
-            }
-
-            // Add sorting parameters if supported
-            if(sortKey) {
-                params.direction = data.order[0].dir === "desc" ? "desc" : "asc";
-                params.sort = sortKey;
-            }
-
             // https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
-            const encoded = new URLSearchParams(params);
-            const url = `${backendUrl}/pairs?${encoded}`;
+            const urlParams = new URLSearchParams(getAjaxParams(data));
+            const url = `${backendUrl}/pairs?${urlParams}`;
+
             const resp = await fetch(url);
-            if (!resp.ok) {
 
-                // Decode 422 invalid input parameter error from the server
-                // with JSON payload
-                let errorDetails;
-                try {
-                    // GenericErrorModel in OpenAPI
-                    errorDetails = await resp.json()
-                    callback({"error": errorDetails.message});
-                } catch(e) {
-                }
-
-                console.error("API error:", resp, "error details:", errorDetails);
-                return;
+            if (resp.ok) {
+                // Result object: {total: 57483, pages: 575, results: Array(100)
+                const result = await resp.json();
+                callback({
+                    recordsTotal: result.total,
+                    recordsFiltered: result.total,
+                    data: result.results
+                });
+            } else {
+                settings.oLanguage.sEmptyTable = await decodeAjaxError(resp);
+                callback({
+                    data: [],
+                    recordsTotal: 0,
+                    recordsFiltered: 0,
+                });
             }
-
-            // Result object is
-            // {total: 57483, pages: 575, results: Array(100)
-            const result = await resp.json();
-
-            // Mangle the result object for Datatables format
-            result.recordsTotal = result.total;
-            result.recordsFiltered = result.total;
-            result.data = result.results;
-
-            // console.log("Rendering", result.data);
-
-            callback(result);
         }
     };
 
