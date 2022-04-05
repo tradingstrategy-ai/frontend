@@ -103,15 +103,6 @@
 					<p class="lead coming-soon">
 						Invest in non-custodial, active, trading strategies run by the oracle network.
 					</p>
-
-					<PoolPreviewEthLisbon
-						title="EthLisbon Aave 👻 boosted 🔥 Double Seven"
-						description="A volatility trading strategy that keeps capital accruing interest in Aave USDC pool when the strategy does not have a trading position open."
-						tradesOn="1inch on Polygon"
-						learnLink="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html"
-						preview={true}
-					/>
-
 				</div>
 			</div>
 		</div>
