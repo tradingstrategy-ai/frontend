@@ -1,36 +1,33 @@
 ### Build Step
-# pull the Node.js Docker image
-FROM node:16.2 as builder
+FROM node:16.14-alpine as builder
 
-# change working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# copy the package.json files from local machine to the workdir in container
+# install deps first so we can cache this layer
 COPY package*.json ./
-
-# run npm install in our local machine
 RUN npm ci
 
-# copy the generated modules and all other files to the container
+# then copy the rest
 COPY . .
 
-# build the application
-RUN npm run build
+# build theme
+RUN cd theme && npm ci && npx gulp build:dist
+
+# build app
+RUN PRODUCTION=true npm run build
 
 ### Serve Step
-# pull the Node.js Docker image
-FROM node:16.2.0-alpine3.13
+FROM node:16.14-alpine
 
-# change working directory
 WORKDIR /app
 
 # copy files from previous step
-COPY --from=builder /usr/src/app/build .
-COPY --from=builder /usr/src/app/package.json .
-COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /app/package.json .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
 
 # our app is running on port 3000 within the container, so need to expose it
 EXPOSE 3000
 
 # the command that starts our app
-CMD ["node", "index.js"]
+CMD ["node", "build/index.js"]

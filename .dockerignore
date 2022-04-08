@@ -1,0 +1,8 @@
+.git/
+node_modules/
+cypress/
+docs/
+.svelte-kit/
+build/
+theme/node_modules/
+theme/dist/
