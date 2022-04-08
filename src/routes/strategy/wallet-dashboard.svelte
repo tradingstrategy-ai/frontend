@@ -29,6 +29,7 @@
 
   async function disconnectWallet() {
       account = null;
+			usdcBalanceFetched = false;
 			metamaskConnected = false;
 	}
 
