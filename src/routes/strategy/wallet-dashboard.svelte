@@ -9,6 +9,7 @@
 	let provider = null;
 	let signerInit = null;
 
+	// usdc polygon contract
 	const usdcAddress = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174';
 
 	async function getAvailableToInvest(web3, signer, selectedAccount) {
@@ -57,7 +58,6 @@
 			<div class="card bg-primary shadow-soft border-light">
 				<div class="card-body">
 					<h5>Investor Info</h5>
-
 					<div class="investor">
 						<p class="info">
 							Your address:
