@@ -20,7 +20,7 @@
 		return utils.formatEther(balance);
 	}
 
-  async function handleWalletConnection() {
+  function handleWalletConnection() {
 		if(!walletConnected) {
 			connectWallet();
 		} else {
@@ -29,8 +29,9 @@
 	}
 
   async function disconnectWallet() {
-      account = '0x000...000';
+      account = null;
 			walletConnected = false;
+			metamaskConnected = false;
 	}
 
 	async function connectWallet() {
@@ -48,7 +49,6 @@
 			metamaskConnected = true;
 		} catch(error) {
 			walletConnected = false;
-			connectWalletError = error;
 			console.log('error connecting wallet', error);
 		}
 	}
@@ -82,7 +82,7 @@
 						</p>
 
 						<div class="buttons">
-							<button class="btn" on:click={connectWallet}>
+							<button class="btn" on:click={handleWalletConnection}>
 								{#if metamaskConnected}
 						   		Disconnect wallet
 							  {:else}
