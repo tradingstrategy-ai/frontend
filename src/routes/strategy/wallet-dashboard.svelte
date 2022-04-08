@@ -1,7 +1,5 @@
 <script>
 	import { ethers, utils } from 'ethers';
-	import { InputGroup, InputGroupText, Input, Spinner } from 'sveltestrap';
-	import { formatUSDCBalance } from '$lib/helpers/formatters';
 	import erc20ABI from '../../lib/abi/erc20.json';
 
 	let metamaskConnected = false;
@@ -9,8 +7,7 @@
 	let usdcBalanceFetched = false;
 
 	let walletConnected = false;
-	let connectWalletError = false;
-	let account = '0x000...000';
+	let account = null;
 	let provider = null;
 	let signerInit = null;
 
