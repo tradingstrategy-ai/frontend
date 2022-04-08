@@ -92,9 +92,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.alert {
-		margin-top: 20px;
-	}
-</style>
