@@ -5,8 +5,6 @@
 	let metamaskConnected = false;
 	let usdcBalance = null;
 	let usdcBalanceFetched = false;
-
-	let walletConnected = false;
 	let account = null;
 	let provider = null;
 	let signerInit = null;
@@ -21,7 +19,7 @@
 	}
 
   function handleWalletConnection() {
-		if(!walletConnected) {
+		if(!metamaskConnected) {
 			connectWallet();
 		} else {
 			disconnectWallet();
@@ -30,25 +28,23 @@
 
   async function disconnectWallet() {
       account = null;
-			walletConnected = false;
 			metamaskConnected = false;
 	}
 
 	async function connectWallet() {
 		try {
-			walletConnected = false;
+			metamaskConnected = false;
 			const { ethereum } = window;
 			const accountList = await ethereum.request({ method: 'eth_requestAccounts' })
 			const [firstAccount] = accountList;
 			account = firstAccount;
-			walletConnected = true;
 			provider = new ethers.providers.Web3Provider(ethereum);
 			signerInit = await provider.getSigner();
 			usdcBalance = await getAvailableToInvest(provider, signerInit, account);
 			console.log(usdcBalance)
 			metamaskConnected = true;
 		} catch(error) {
-			walletConnected = false;
+			metamaskConnected = false;
 			console.log('error connecting wallet', error);
 		}
 	}
