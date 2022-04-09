@@ -1,5 +1,5 @@
 ### Build Step
-FROM node:16.14-alpine as builder
+FROM node:14.19-alpine as builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN cd theme && npm ci && npx gulp build:dist
 RUN PRODUCTION=true npm run build
 
 ### Serve Step
-FROM node:16.14-alpine
+FROM node:14.19-alpine
 
 WORKDIR /app
 
