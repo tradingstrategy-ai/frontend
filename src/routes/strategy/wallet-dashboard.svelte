@@ -2,7 +2,6 @@
 	import { ethers, utils } from 'ethers';
 	import erc20ABI from '../../lib/abi/erc20.json';
 
-	let metamaskConnected = false;
 	let usdcBalance = null;
 	let usdcBalanceFetched = false;
 	let account = null;
@@ -20,7 +19,7 @@
 	}
 
   function handleWalletConnection() {
-		if(!metamaskConnected) {
+		if (!account) {
 			connectWallet();
 		} else {
 			disconnectWallet();
@@ -30,12 +29,10 @@
   async function disconnectWallet() {
       account = null;
 			usdcBalanceFetched = false;
-			metamaskConnected = false;
 	}
 
 	async function connectWallet() {
 		try {
-			metamaskConnected = false;
 			const { ethereum } = window;
 			const accountList = await ethereum.request({ method: 'eth_requestAccounts' })
 			const [firstAccount] = accountList;
@@ -43,10 +40,7 @@
 			provider = new ethers.providers.Web3Provider(ethereum);
 			signerInit = await provider.getSigner();
 			usdcBalance = await getAvailableToInvest(provider, signerInit, account);
-			console.log(usdcBalance)
-			metamaskConnected = true;
 		} catch(error) {
-			metamaskConnected = false;
 			console.log('error connecting wallet', error);
 		}
 	}
@@ -80,7 +74,7 @@
 
 						<div class="buttons">
 							<button class="btn" on:click={handleWalletConnection}>
-								{#if metamaskConnected}
+								{#if account}
 						   		Disconnect wallet
 							  {:else}
 							  	Connected wallet
