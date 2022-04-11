@@ -30,7 +30,7 @@ export function serializePost(postData: Post) {
       "headline": postData.title,
       "author": {
           "@type": "Person",
-          "name": "tradingstrategy.ai"
+          "name": "Trading Strategy"
       },
       "datePublished": postData.published_at,
       "dateModified": postData.updated_at,

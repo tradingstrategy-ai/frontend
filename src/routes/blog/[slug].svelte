@@ -41,6 +41,7 @@
   import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
   import {slugify} from "$lib/helpers/slugify";
   import { serializePost } from "$lib/helpers/googleMeta";
+  import { page } from "$app/stores";
 
   // TODO: Mobile menu requires hydrate
   // This will prevent any interactive JavaScript to load on blog (as there should be none)
@@ -127,12 +128,38 @@
       buildTableOfContent(bodyText);
     }
   });
+
+  const canonicalUrl = $page.url;
 </script>
 
+<!-- Facebook, Twitter and Google SEO tags.
+
+    To test:
+
+    - https://developers.facebook.com/tools/debug/
+ -->
 <svelte:head>
     <title>{post.title}</title>
     <meta name="description" content={post.excerpt}>
+
+    <!-- Google -->
     {@html serializePost(post)}
+
+    <!-- Facebook -->
+    <meta property="og:site_name" content="Trading Strategy">
+    <meta property="og:title" content={ post.title }>
+    <meta property="og:url"  content={ canonicalUrl } />
+    <meta property="og:description" content="{ post.excerpt }" />
+    <meta property="og:image" content="{ post.feature_image }" />
+    <meta property="og:type" content="article" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@TradingProtocol" />
+    <meta name="twitter:title" content="{ post.title }" />
+    <meta name="twitter:description" content="{ post.excerpt }" />
+    <meta name="twitter:image" content="{ post.feature_image }" />
+
 </svelte:head>
 
 
