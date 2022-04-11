@@ -130,6 +130,7 @@
   });
 
   const canonicalUrl = $page.url;
+
 </script>
 
 <!-- Facebook, Twitter and Google SEO tags.
@@ -137,6 +138,8 @@
     To test:
 
     - https://developers.facebook.com/tools/debug/
+
+    - https://cards-dev.twitter.com/validator
  -->
 <svelte:head>
     <title>{post.title}</title>
@@ -149,7 +152,7 @@
     <meta property="og:site_name" content="Trading Strategy">
     <meta property="og:title" content={ post.title }>
     <meta property="og:url"  content={ canonicalUrl } />
-    <meta property="og:description" content="{ post.excerpt }" />
+    <meta property="og:description" content="{ post.og_description || post.excerpt }" />
     <meta property="og:image" content="{ post.feature_image }" />
     <meta property="og:type" content="article" />
 
@@ -157,8 +160,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@TradingProtocol" />
     <meta name="twitter:title" content="{ post.title }" />
-    <meta name="twitter:description" content="{ post.excerpt }" />
-    <meta name="twitter:image" content="{ post.feature_image }" />
+    <meta name="twitter:description" content="{ post.twitter_description || post.excerpt }" />
+    <meta name="twitter:image" content="{ post.feature_image.replace("https://trading-strategy.ghost.io", $page.url.protocol + "//" + $page.url.host + "/blog-img") }" />
 
 </svelte:head>
 
