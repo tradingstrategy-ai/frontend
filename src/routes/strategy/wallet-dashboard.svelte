@@ -35,10 +35,9 @@
 		try {
 			const { ethereum } = window;
 			const accountList = await ethereum.request({ method: 'eth_requestAccounts' })
-			const [firstAccount] = accountList;
-			account = firstAccount;
+			account = accountList[0];
 			provider = new ethers.providers.Web3Provider(ethereum);
-			signerInit = await provider.getSigner();
+			signerInit = provider.getSigner();
 			usdcBalance = await getAvailableToInvest(provider, signerInit, account);
 		} catch(error) {
 			console.log('error connecting wallet', error);
@@ -74,11 +73,7 @@
 
 						<div class="buttons">
 							<button class="btn" on:click={handleWalletConnection}>
-								{#if account}
-						   		Disconnect wallet
-							  {:else}
-							  	Connected wallet
-							  {/if}
+								{account ? 'Disconnect' : 'Connect'} wallet
 							</button>
 						</div>
 					</div>
