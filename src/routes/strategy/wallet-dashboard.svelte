@@ -27,7 +27,7 @@
 	}
 
   async function disconnectWallet() {
-      account = null;
+			account = null;
 			usdcBalanceFetched = false;
 	}
 
@@ -65,7 +65,7 @@
 							USDC to invest:
 
 							{#if usdcBalanceFetched}
-                {usdcBalance}
+								{usdcBalance}
 							{:else}
 								<strong>Not available</strong>
 							{/if}
