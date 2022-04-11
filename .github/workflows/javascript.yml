@@ -2,13 +2,10 @@ name: Automated test suite
 
 on:
   push:
-    branches: 
-      - master
-    tags:
-      - 'v*'
+    branches: [ master ]
+    tags: [ v* ]
   pull_request: # we can use docker image in PR for testing
-    branches: 
-      - master
+    branches: [ master ]
 
 jobs:
 
@@ -27,8 +24,6 @@ jobs:
             theme/package-lock.json
       - name: Install dependencies
         run: npm install
-      # - name: Package version check
-      #   run: npm ls
       - name: Run Cypress
         run: bash run-cypress.bash
 
@@ -36,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     # Skip build on master push
-    if: ${{ !(github.event_name == 'push' && github.ref == 'master') }}
+    if: github.event_name != 'push' || github.ref != 'refs/heads/master'
     env:
       REGISTRY: ghcr.io
     steps:
