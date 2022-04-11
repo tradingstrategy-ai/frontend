@@ -161,7 +161,8 @@
     <meta name="twitter:site" content="@TradingProtocol" />
     <meta name="twitter:title" content="{ post.title }" />
     <meta name="twitter:description" content="{ post.twitter_description || post.excerpt }" />
-    <meta name="twitter:image" content="{ post.feature_image.replace("https://trading-strategy.ghost.io", $page.url.protocol + "//" + $page.url.host + "/blog-img") }" />
+    <!-- See blog-img hack for Twitter -->
+    <meta name="twitter:image" content="{ post.feature_image.replace("https://trading-strategy.ghost.io", $page.url.protocol + "//" + ($page.url.host || "tradingstrategy.ai") + "/blog-img") }" />
 
 </svelte:head>
 
