@@ -6,7 +6,6 @@
     /**
      * Display chain information and indexing status
      */
-
     export async function load({ url, params, fetch }) {
         const chain_slug = params.chain;
 

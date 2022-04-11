@@ -205,11 +205,14 @@
   }
 
   .body-text :global(.kg-image) {
-    margin: 20px 0;
-    /* Fix explicit width and height attributes on <img> in Ghost HTML export */
-    width: auto;
-    height: auto;
-    max-width: 100%;
+      margin: 20px auto;
+      /* Fix explicit width and height attributes on <img> in Ghost HTML export */
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      display: block;
+      box-shadow: .6px .6px 10.5px -1px rgba(0,0,0,.042),.7px .7px 16.2px -1px rgba(0,0,0,.06),.8px .8px 21.3px -1px rgba(0,0,0,.078),1px 1px 33px -1px rgba(0,0,0,.12) !important;
+      border-radius: 0.55rem;
   }
 
   .body-text :global(a) {
@@ -249,5 +252,6 @@
       margin-bottom: 10px;
       border: 0;
   }
+
 
 </style>
