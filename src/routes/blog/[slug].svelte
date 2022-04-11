@@ -219,6 +219,8 @@
     border-bottom: 1px solid black;
   }
 
+
+
   .body-text :global(figcaption) {
     font-size: 80%;
     font-style: italic;
@@ -233,6 +235,11 @@
     width: 100%;
     min-height: 450px;
   }
+
+  .body-text :global(li) {
+    margin-bottom: 0.5em;
+  }
+
 
 
   .text-published {
