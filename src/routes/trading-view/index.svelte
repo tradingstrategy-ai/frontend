@@ -184,7 +184,7 @@
                         </div>
 
                         <div class="card-footer">
-                            <a data-testid="link-tradingpairs" href="/search" class="btn btn-primary">Search tokens</a>
+                            <a data-testid="link-search" href="/search" class="btn btn-primary">Search tokens</a>
                         </div>
                     </div>
                 </div>
