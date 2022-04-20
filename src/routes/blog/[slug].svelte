@@ -171,7 +171,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>{post.title}</h1>
+                <!-- --->
             </div>
         </div>
     </div>
@@ -183,9 +183,9 @@
 
     <div class="row">
       <div class="col-lg-9 col-md-12">
-        <!--
+
         <h1>{ post.title }</h1>
-        -->
+
         <p class="text-published text-muted text-sm">
           {new Date(post.published_at).toDateString()},
           Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
@@ -211,7 +211,7 @@
   }
 
   .heading {
-    min-height: 200px;
+    min-height: 240px;
     padding: 80px 0;
     background-size: cover;
     background-position: center center;
