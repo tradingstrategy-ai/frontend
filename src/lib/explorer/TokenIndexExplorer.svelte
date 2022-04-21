@@ -5,6 +5,7 @@
 	 */
 
 	import Datatable from '$lib/datatable/datatable.svelte';
+	import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
 
 	import { backendUrl } from '$lib/config';
 
@@ -13,7 +14,7 @@
 
 	// What columns we will show in the explorer.
 	// See allColumns for options.
-	export let enabledColumns = ['name', 'symbol'];
+	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
 
 	export let orderColumnIndex = 2;
 
@@ -41,12 +42,33 @@
 			render: function (data, type, row, meta) {
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.symbol}</a>`;
 			}
+		},
+		liquidity_latest: {
+			name: 'Liq 24h Δ',
+			data: 'liquidity_latest',
+			className: 'col-liquidity-change',
+			serverSideSortKey: 'liquidity_latest',
+			type: 'num', // https://datatables.net/reference/option/columns.type
+			render: function (data, type, row, meta) {
+				return formatPriceChange(data);
+			}
+		},
+		volume_24h: {
+			name: 'Volume 24h (USD)',
+			data: 'volume_24h',
+			className: 'col-volume',
+			serverSideSortKey: 'volume_24h',
+			type: 'num', // https://datatables.net/reference/option/columns.type
+			render: function (data, type, row, meta) {
+				return formatDollar(data);
+			}
 		}
 	};
 
 	// Build columns based on the component arguments
 	const columns = [];
 	for (const columnName of enabledColumns) {
+		console.log('column', enabledColumns	)
 		const column = availableColumns[columnName];
 		if (!column) {
 			throw new Error(`Unknown column: ${columnName}`);
@@ -79,7 +101,7 @@
 			}
 
 			// https://tradingstrategy.ai/api/explorer/#/Token/web_tokens
-			const encoded = new URLSearchParams({chain_slug: params.chain_slug});
+			const encoded = new URLSearchParams({ chain_slug: params.chain_slug });
 			const url = `${backendUrl}/tokens?${encoded}`;
 			const resp = await fetch(url);
 
