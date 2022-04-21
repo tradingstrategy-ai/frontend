@@ -35,6 +35,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
   const isAdvancedLayout = layout === "advanced";
   const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
   const hasPriceChange = Number.isFinite(document.price_change_24h);
+  const hasValidPrice = document.price_usd_latest > 0;
   const hasTradingData = [
     document.liquidity, document.volume_24h, document.price_change_24h
   ].some(Number.isFinite);
@@ -56,7 +57,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
                 {#if isBasicLayout && !isLowQuality && hasPriceChange}
                     <div class="price-change {priceChangeClass}">{priceChangePct}</div>
-                {:else if isAdvancedLayout && hasTradingData}
+                {:else if isAdvancedLayout && hasValidPrice}
                     <div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
                 {/if}
             </div>
