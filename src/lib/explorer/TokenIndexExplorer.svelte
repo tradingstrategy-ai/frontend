@@ -93,7 +93,6 @@
 		 * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
 		 */
 		ajax: async function (data, callback, settings) {
-			console.log(data);
 			const urlParams = new URLSearchParams(getAjaxParams(data));
 			const url = `${backendUrl}/tokens?${urlParams}`;
 			const response = await fetch(url);
