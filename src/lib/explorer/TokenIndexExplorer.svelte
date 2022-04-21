@@ -3,7 +3,7 @@
 	 * Tokens Explorer
 	 */
 	import Datatable from '$lib/datatable/datatable.svelte';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { backendUrl } from '$lib/config';
 	export let chainSlug = null;
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
@@ -36,7 +36,7 @@
 			serverSideSortKey: 'liquidity_latest',
 			type: 'num',
 			render: function (data, type, row, meta) {
-				return formatPriceChange(data);
+				return formatDollar(data);
 			}
 		},
 		"volume_24h": {
