@@ -7,28 +7,29 @@
 	import { backendUrl } from '$lib/config';
 	export let chainSlug = null;
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
-	export let orderColumnIndex = 2;
+	export let orderColumnIndex = 3;
 	export let orderColumnDirection = 'desc';
 
 	const availableColumns = {
-		name: {
+		"name": {
 			name: 'Name',
 			className: 'col-token',
 			data: 'name',
-
+			orderable: false,
 			render: function (data, type, row, meta) {
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.name}</a>`;
 			}
 		},
-		symbol: {
+		"symbol": {
 			name: 'Symbol',
 			className: 'col-symbol',
 			data: 'symbol',
+			orderable: false,
 			render: function (data, type, row, meta) {
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.symbol}</a>`;
 			}
 		},
-		liquidity_latest: {
+		"liquidity_latest": {
 			name: 'Liq 24h Δ',
 			data: 'liquidity_latest',
 			className: 'col-liquidity-change',
@@ -38,7 +39,7 @@
 				return formatPriceChange(data);
 			}
 		},
-		volume_24h: {
+		"volume_24h": {
 			name: 'Volume 24h (USD)',
 			data: 'volume_24h',
 			className: 'col-volume',
@@ -51,13 +52,12 @@
 	};
 
 	function getAjaxParams(data) {
-		// const sortColumnIndex = data.order[0].column;
-		// const sortKey = columns[sortColumnIndex].serverSideSortKey;
-
+		const sortColumnIndex = data.order[0].column;
+		const sortKey = columns[sortColumnIndex].serverSideSortKey;
 		// if (!sortKey) {
 		// 	throw new Error(`Column does not support sorting: ${sortColumnIndex}`);
 		// }
-
+    // TODO enable sorting when API supports it
 		const params = {
 			chain_slug: chainSlug
 		};
@@ -70,24 +70,18 @@
 		return `${resp.statusText} ${errorDetails.message}`;
 	}
 
-	// Build columns based on the component arguments
-	const columns = [];
-	for (const columnName of enabledColumns) {
-		console.log('column', enabledColumns);
-		const column = availableColumns[columnName];
-		if (!column) {
+	const columns = enabledColumns.map((columnName) => {
+		if (!availableColumns[columnName]) {
 			throw new Error(`Unknown column: ${columnName}`);
 		}
-		columns.push(column);
-	}
+		return availableColumns[columnName];
+	});
 
 	const options = {
-		order: [[orderColumnIndex, orderColumnDirection]],
+		order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
-		serverSide: false,
+		serverSide: true,
 		lengthChange: false,
-		scrollX: false,
-
 		/**
 		 *
 		 * AJAX data fetch hook for Datatables
@@ -99,6 +93,7 @@
 		 * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
 		 */
 		ajax: async function (data, callback, settings) {
+			console.log(data);
 			const urlParams = new URLSearchParams(getAjaxParams(data));
 			const url = `${backendUrl}/tokens?${urlParams}`;
 			const response = await fetch(url);
@@ -111,7 +106,7 @@
 					data: result
 				});
 			} else {
-			  settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
+				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
 				callback({
 					data: [],
 					recordsTotal: 0,
@@ -123,7 +118,11 @@
 </script>
 
 <div class="tokens">
-	<Datatable {columns} {options} clickableRows={true} />
+	<Datatable
+	  columns={columns}
+	  options={options}
+    clickableRows={true}
+	/>
 </div>
 
 <style>
