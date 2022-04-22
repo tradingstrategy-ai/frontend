@@ -48,7 +48,6 @@
 
         const summary = pairDetails.summary;
         const details = pairDetails.additional_details;
-        const daily = pairDetails.daily;
 
         console.log("Pair page, summary", summary);
         console.log("Pair page, details", details);
@@ -73,9 +72,8 @@
                 chain_slug,
                 summary,
                 details,
-                daily,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
-                tokenTax,
+                tokenTax
             }
         }
     }
@@ -99,8 +97,6 @@
     export let details; // PairAdditionalDetails OpenAPI
     export let breadcrumbs;
     export let tokenTax: TokenTax;
-
-    export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
     // Resolve the initial candle stick chart from the fragment parameter
     let hash = null;
@@ -259,22 +255,22 @@
     <div class="row">
         <div class="col-lg-3 col-md-6">
             <div class="time-span-wrapper">
-                <TimeSpanPerformance pairId={summary.pair_id} title="Hourly" timeSpanTradeData={hourly} period="hourly"/>
+                <TimeSpanPerformance pairId={summary.pair_id} period="hourly" />
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
             <div class="time-span-wrapper">
-                <TimeSpanPerformance pairId={summary.pair_id} title="Daily" timeSpanTradeData={daily} period="daily"/>
+                <TimeSpanPerformance pairId={summary.pair_id} period="daily" />
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
             <div class="time-span-wrapper">
-                <TimeSpanPerformance pairId={summary.pair_id} title="Weekly" timeSpanTradeData={weekly} period="weekly" />
+                <TimeSpanPerformance pairId={summary.pair_id} period="weekly" />
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
             <div class="time-span-wrapper">
-                <TimeSpanPerformance pairId={summary.pair_id} title="Monthly" timeSpanTradeData={monthly} period="monthly" />
+                <TimeSpanPerformance pairId={summary.pair_id} period="monthly" />
             </div>
         </div>
     </div>

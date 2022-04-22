@@ -1,207 +1,177 @@
-<script context="module">
-    import { backendUrl } from '$lib/config';
-</script>
+<!--
+@component
+Display summary performance data for a given period; lazy-fetches data from
+backend API when scrolled into view.
 
+#### Usage:
+```tsx
+<TimeSpanPerformance pairId={1234} period="hourly|daily|weekly|monthly" />
+```
+-->
 <script lang="ts">
-
-    import SkeletonLine from '$lib/SkeletonLine.svelte';
-    import IntersectionObserver from "svelte-intersection-observer";
-    import {formatDollar, formatAmount, formatPriceChange} from "$lib/helpers/formatters";
+    import { backendUrl } from '$lib/config';
+    import { inview } from 'svelte-inview';
+    import { formatDollar, formatAmount, formatPriceChange } from "$lib/helpers/formatters";
     import { determinePriceChangeClass } from "$lib/helpers/price";
+    import SkeletonLine from '$lib/SkeletonLine.svelte';
 
+    export let pairId: number;
+    export let period: string;
 
-
-    // TimeSpanTradeData, see https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
-    // Set null to have a skeleton loader
-    export let timeSpanTradeData = null
-    export let loadingStarted = false;
-    export let period: string = null;
-    export let title;
-    export let pairId: string = null;
-
-    let element;
-    let intersecting = false;
+    let tradeData = null;
     let priceChangeColorClass = "";
 
-    async function loadData() {
-        // https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
-        const params = {
-            pair_id: pairId,
-            period: period,
-        }
+    const inviewOptions = {
+        rootMargin: '100px',
+        unobserveOnEnter: true
+    };
 
-        const encoded = new URLSearchParams(params);
-        const apiUrl = `${backendUrl}/pair-trade-data?${encoded}`;
+    // see: https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
+    async function loadData() {
+        const params = new URLSearchParams({
+            pair_id: pairId.toString(),
+            period
+        });
+        const apiUrl = `${backendUrl}/pair-trade-data?${params}`;
 
         const resp = await fetch(apiUrl);
-        if(!resp.ok) {
+        if (!resp.ok) {
             console.error(resp);
             return;
         }
 
-        const data = await resp.json();
-        timeSpanTradeData = data;
-
+        tradeData = await resp.json();
     }
 
-    async function triggerLoadWhenVisible(visible) {
-        // console.log("Triggered", visible);
-        if(visible) {
-            // console.log("Visible");
-            if(!timeSpanTradeData && !loadingStarted) {
-                loadingStarted = true;
-                await loadData();
-            }
-        }
+    function getPriceChange(data) {
+        return data ? (data.price_close - data.price_open) : 0;
     }
-
-    function getPriceChange(timeSpanTradeData) {
-        let delta;
-        if(!timeSpanTradeData) {
-            delta = 0;
-        } else {
-            delta = timeSpanTradeData.price_close - timeSpanTradeData.price_open;
-        }
-        return delta;
-    }
-
-    $: triggerLoadWhenVisible(intersecting);
 
     // close > open determines if the period was succesful
-    $: priceChangeColorClass  = determinePriceChangeClass(getPriceChange(timeSpanTradeData));
-
+    $: priceChangeColorClass = determinePriceChangeClass(getPriceChange(tradeData));
 </script>
 
-<div class="time-span-stats">
-    <IntersectionObserver {element} bind:intersecting once>
-        <table bind:this={element}>
-            <tr>
-                <th class={"title " + priceChangeColorClass} colspan="2">
-                    {title}
-                </th>
-            </tr>
+<table use:inview={inviewOptions} on:enter={loadData}>
+    <tr>
+        <th class="title {priceChangeColorClass}" colspan="2">
+            {period}
+        </th>
+    </tr>
 
-            <tr class="data-row">
-                <th>Change</th>
-                <td>
-                    <span class={priceChangeColorClass}>
-                        {#if timeSpanTradeData}
-                            {formatPriceChange(timeSpanTradeData.price_close / timeSpanTradeData.price_open - 1)}
-                        {:else}
-                            <SkeletonLine />
-                        {/if}
-                    </span>
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Change</th>
+        <td>
+            <span class={priceChangeColorClass}>
+                {#if tradeData}
+                    {formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
+                {:else}
+                    <SkeletonLine />
+                {/if}
+            </span>
+        </td>
+    </tr>
 
+    <tr class="data-row">
+        <th>Open price</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.price_open)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Open price</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.price_open)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Highest price</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.price_high)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Highest price</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.price_high)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Lowest price</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.price_low)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Lowest price</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.price_low)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Close price</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.price_close)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Close price</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.price_close)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Volume</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.volume)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Volume</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.volume)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Highest liquidity</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.liquidity_high)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Highest liquidity</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.liquidity_high)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Lowest liquidity</th>
+        <td>
+            {#if tradeData}
+                {formatDollar(tradeData.liquidity_low)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-            <tr class="data-row">
-                <th>Lowest liquidity</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatDollar(timeSpanTradeData.liquidity_low)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
+    <tr class="data-row">
+        <th>Buying trades</th>
+        <td>
+            {#if tradeData}
+                {formatAmount(tradeData.buys)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
 
-
-            <tr class="data-row">
-                <th>Buying trades</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatAmount(timeSpanTradeData.buys)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
-
-            <tr class="data-row">
-                <th>Selling trades</th>
-                <td>
-                    {#if timeSpanTradeData}
-                        {formatAmount(timeSpanTradeData.sells)}
-                    {:else}
-                        <SkeletonLine />
-                    {/if}
-                </td>
-            </tr>
-
-        </table>
-    </IntersectionObserver>
-</div>
-
+    <tr class="data-row">
+        <th>Selling trades</th>
+        <td>
+            {#if tradeData}
+                {formatAmount(tradeData.sells)}
+            {:else}
+                <SkeletonLine />
+            {/if}
+        </td>
+    </tr>
+</table>
 
 <style>
-
     table {
         margin: 0 auto;
     }
@@ -221,15 +191,13 @@
 
     .title {
         text-align: center;
+        text-transform: capitalize;
     }
 
     /* --breakpoint-md */
     @media(max-width: 992px) {
-        .time-span-stats {
-            margin-bottom: 40px;
-        }
-
         table {
+            margin-bottom: 40px;
             width: 100%;
         }
 
@@ -244,8 +212,5 @@
         .title {
             text-align: left;
         }
-
     }
-
-
 </style>
