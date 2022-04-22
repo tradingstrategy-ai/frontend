@@ -11,7 +11,7 @@
 
     import { backendUrl } from '$lib/config';
 
-    import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import breadcrumbTranslations, { buildBreadcrumbs } from "$lib/breadcrumb/builder";
     import {getTokenTaxInformation} from "$lib/helpers/tokentax";
 
     /**
@@ -20,7 +20,6 @@
      * All charting data fetches are done on the client side.
      */
     export async function load({ url, params, fetch }) {
-
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
         const pair_slug = params.pair;
@@ -45,7 +44,7 @@
             }
         }
 
-        const pairDetails = await resp.json()
+        const pairDetails = await resp.json();
 
         const summary = pairDetails.summary;
         const details = pairDetails.additional_details;
@@ -72,7 +71,6 @@
             props: {
                 exchange_slug,
                 chain_slug,
-                pair_slug,
                 summary,
                 details,
                 daily,
@@ -84,16 +82,12 @@
 </script>
 
 <script lang="ts">
-
-    import {formatDollar, formatUnixTimestamp, parseUTCTime, formatTimeAgo} from '$lib/helpers/formatters';
+    import { browser } from '$app/env';
+    import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
     import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
-    import { browser } from '$app/env';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairInfoTable from "$lib/content/PairInfoTable.svelte";
-    import {onMount} from "svelte";
-    import CandleStickChart from "$lib/chart/CandleStickChart.svelte";
-    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
     import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
     import RelativeDate from "$lib/blog/RelativeDate.svelte";
     import type { TokenTax } from "$lib/helpers/tokentax";
@@ -108,193 +102,10 @@
 
     export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
-    // Candle data array loaded from the server
-    export let rawCandles = [];
-
-    // XYLiquidity data array loaded from the server
-    export let rawLiquidity = [];
-
-    // Candle data massaged for uPlot
-    export let candles = null;
-
-    // Liquidity data massaged for uPlot
-    export let liquidity = null;
-
-    // Loaded uPlot library
-    export let uPlot;
-
     // Resolve the initial candle stick chart from the fragment parameter
-    let hash;
-    if(browser) {
-        hash = window.location.hash;
-    } else {
-        hash = null;
-    }
-
-    /**
-     * We can only import uPlot on the client side.
-     */
-    onMount(async () => {
-        // https://stackoverflow.com/questions/57030895/whats-the-best-way-to-run-some-code-only-client-side
-        if (browser) {
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#dynamic_imports
-            const uplotModule = await import('uplot');
-            // console.log("uPlot imported dynamically", uplotModule, uplotModule.default);
-            // This will trigger candle redraw if candles data was raced faster than uplot
-            uPlot = uplotModule.default;
-        }
-    });
-
-    /**
-     * Convert candle data to internal uPlot format.
-     *
-     * Candles from from the server as descripted in OpenAPI
-     * https://tradingstrategy.ai/api/explorer/
-     *
-     * The server returns one list of JavaScript objects (o, h, l, c, v).
-     * uPlot wants x-array (time) and five separate y arrays (o, h, l, c, v).
-     *
-     */
-    function massageCandles(candles: any[]): number[][] {
-        const cols = candles.length;
-        const rows = 10;
-
-        // Try to be smart and hint typed arrays and length for JavaScript VM
-        // So sad JavaScript can't do even this basic shit.
-        // https://stackoverflow.com/a/68411296/315168
-        let matrix = Array(rows).fill().map(entry => Array(cols))
-
-        candles.forEach(function(obj: any, idx: number) {
-
-            // Time series
-            const unixTime = parseUTCTime(obj.ts);
-            matrix[0][idx] = unixTime;
-
-            // OHLCV core data
-            matrix[1][idx] = obj.o;
-            matrix[2][idx] = obj.h;
-            matrix[3][idx] = obj.l;
-            matrix[4][idx] = obj.c;
-            matrix[5][idx] = obj.v;
-
-            // Additional Trading Strategy data
-            // See Candle model here https://tradingstrategy.ai/api/explorer/
-            matrix[6][idx] = obj.b;
-            matrix[7][idx] = obj.s;
-            matrix[8][idx] = obj.bv;
-            matrix[9][idx] = obj.sv;
-        });
-
-        return matrix;
-    }
-
-    /**
-     * Convert liquidity samples to internal uPlot format.
-     *
-     * XYLiquidity samples from from the server as descripted in OpenAPI
-     * https://tradingstrategy.ai/api/explorer/
-     *
-     * The server returns one list of JavaScript objects (o, h, l, c, v).
-     * uPlot wants x-array (time) and five separate y arrays (o, h, l, c, v).
-     *
-     */
-    function massageLiquidity(candles: any[]): number[][] {
-        const cols = candles.length;
-        const rows = 9;
-
-        // Try to be smart and hint typed arrays and length for JavaScript VM
-        // So sad JavaScript can't do even this basic shit.
-        // https://stackoverflow.com/a/68411296/315168
-        let matrix = Array(rows).fill().map(entry => Array(cols))
-
-        candles.forEach(function(obj: any, idx: number) {
-
-            // Time series
-            const unixTime = parseUTCTime(obj.ts);
-            matrix[0][idx] = unixTime;
-
-            // Liquidity data as in XYLiquiditySample description
-            matrix[1][idx] = obj.o;
-            matrix[2][idx] = obj.h;
-            matrix[3][idx] = obj.l;
-            matrix[4][idx] = obj.c;
-            matrix[5][idx] = obj.a;
-            matrix[6][idx] = obj.r;
-            matrix[7][idx] = obj.av;
-            matrix[8][idx] = obj.rv;
-        });
-
-        return matrix;
-    }
-
-    /**
-     * Reload new candle data from the server and update the candle stick chart compontent.
-     *
-     * @param bucket
-     */
-    async function reloadCandlesOnBucketChange(bucket: string) {
-
-        // Only start loading after we get a valid bucket on the client side
-        if (!(browser && bucket)) {
-            return;
-        }
-
-        // Switch to skeleton loader on the candle view
-        candles = null;
-        liquidity = null;
-
-        // https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
-        const params = {
-            pair_id: summary.pair_id,
-            time_bucket: bucket,
-        }
-
-        const encoded = new URLSearchParams(params);
-        const candlesApiUrl = `${backendUrl}/candles?${encoded}`;
-        const liquidityApiUrl = `${backendUrl}/xyliquidity?${encoded}`;
-
-        const [candleResp, liquidityResp] = await Promise.all([fetch(candlesApiUrl), fetch(liquidityApiUrl)]);
-
-        if(!candleResp.ok) {
-            console.error(candleResp);
-            return;
-        }
-
-        if(!liquidityResp.ok) {
-            console.error(liquidityResp);
-            return;
-        }
-
-        const rawCandles = await candleResp.json();
-        const rawLiquiditySamples = await liquidityResp.json();
-
-        console.log("Loaded", rawCandles.length, "candles and ", rawLiquiditySamples.length, "liquidity samples");
-
-        if(rawCandles) {
-            // We have some candles for this time period
-            candles = massageCandles(rawCandles);
-        } else {
-            console.error("No candles");
-            candles = [];
-        }
-
-        if(rawLiquiditySamples) {
-            // We have some candles for this time period
-            liquidity = massageLiquidity(rawLiquiditySamples);
-        } else {
-            console.error("No liquidity samples");
-            liquidity = [];
-        }
-
-    }
-
-    export let bucket = fromHashToTimeBucket(hash);
-    // console.log("Got hash", hash, "bucket", bucket);
-    // $: console.log(`The active bucket is ${bucket}`);
-
-    // Leave room for Trade now?
-    export let tradingLink = details.trade_link
-    export let splashColClass = tradingLink ? "col-md-8" : "col-md-12";
+    let hash = null;
+    if (browser) hash = window.location.hash;
+    let bucket = fromHashToTimeBucket(hash);
 
     // Ridiculous token price warning.
     // It is common with scam tokens to price the token super low so that prices are not readable
@@ -303,18 +114,11 @@
 
     export let baseTokenName, quoteTokenName;
 
-    // console.log("Trading link", tradingLink);
-
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
 
     // TODO: Fix this in the data source
-    $: {
-        [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
-    }
-
-    $: reloadCandlesOnBucketChange(bucket);
-
+    $: [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
 </script>
 
 <svelte:head>
@@ -347,7 +151,6 @@
             </div>
 
             <div class="col-lg-7">
-
                 <p>
                     The token pair
 
@@ -376,7 +179,6 @@
 
                 <p>
                     The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
-
                     The trading of {summary.pair_symbol} started at <strong><RelativeDate timestamp={details.first_trade_at} /></strong>.
                     The last trade was seen less than <strong><RelativeDate hours timestamp={details.last_trade_at} /></strong>.
                 </p>
@@ -429,21 +231,20 @@
     <h3>Price and volume chart</h3>
 
     <div class="chart-wrapper">
-        <CandleStickChart bind:candles={candles} {uPlot} />
         <p class="chart-help-text">
-            Trading activity expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+            Trading activity expressed as
+            <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
                 OHLCV candles.
             </a>
         </p>
-
     </div>
 
     <h3>Liquidity chart</h3>
 
     <div class="chart-wrapper">
-        <LiquidityChart bind:liquiditySamples={liquidity} {uPlot} />
         <p class="chart-help-text">
-            Available liquidity expressed as <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+            Available liquidity expressed as
+            <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
                 the US Dollar value of one side of XY liquidity curve.
             </a>
         </p>
@@ -505,10 +306,6 @@
 
     .time-span-wrapper {
         margin: 0 auto;
-    }
-
-    .trade-actions {
-
     }
 
     .chart-help-text {
