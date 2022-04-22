@@ -54,12 +54,10 @@
 	function getAjaxParams(data) {
 		const sortColumnIndex = data.order[0].column;
 		const sortKey = columns[sortColumnIndex].serverSideSortKey;
-		// if (!sortKey) {
-		// 	throw new Error(`Column does not support sorting: ${sortColumnIndex}`);
-		// }
-    // TODO enable sorting when API supports it
+
 		const params = {
-			chain_slug: chainSlug
+			chain_slug: chainSlug,
+			sort: sortKey
 		};
 
 		return JSON.parse(JSON.stringify(params));
@@ -82,6 +80,7 @@
 		searching: false,
 		serverSide: true,
 		lengthChange: false,
+		scrollX: false,
 		/**
 		 *
 		 * AJAX data fetch hook for Datatables
