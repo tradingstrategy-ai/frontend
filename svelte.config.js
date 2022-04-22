@@ -69,10 +69,10 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			sourceMap: true,
 		}),
 
-		kit: {
-			// hydrate the <div id="svelte"> element in src/app.html
-			target: '#svelte',
-		},
+        kit: {
+
+        }
+
 	};
 }
 

@@ -13,7 +13,8 @@
     "test:watch": "npm test -- --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "ssr:node": "svelte-kit build"
+    "ssr:node": "svelte-kit build",
+    "prepare": "svelte-kit sync"
   },
   "jest": {
     "transform": {
@@ -48,7 +49,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@sveltejs/adapter-node": "^1.0.0-next.60",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
-    "@sveltejs/kit": "next",
+    "@sveltejs/kit": "1.0.0-next.308",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
