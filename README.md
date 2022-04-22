@@ -6,7 +6,7 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install
 
-Node v14+ required.
+Node v16+ required.
 
 ```sh
 npm install

@@ -1,5 +1,6 @@
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
+import path from "path";
 
 let config;
 
@@ -35,6 +36,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 				env: {
 					port: 'FRONTEND_PORT',
 			}}),
+
 			files: {
 				hooks: "src/hooks"
 			},
@@ -51,6 +53,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 } else {
 	// build single page app
 	console.log("Using local dev env config");
+
 	config = {
 
 		onwarn: (warning, defaultHandler) => {
@@ -66,11 +69,10 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			sourceMap: true,
 		}),
 
-
 		kit: {
 			// hydrate the <div id="svelte"> element in src/app.html
-			target: '#svelte'
-		}
+			target: '#svelte',
+		},
 	};
 }
 
@@ -95,7 +97,14 @@ config.kit.vite = {
 				manualChunks: undefined
 			}
 		}
-	}
+	},
+
+    // Dropping in the executor frontend
+    resolve: {
+        alias: {
+            'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
+        }
+    }
 
 }
 

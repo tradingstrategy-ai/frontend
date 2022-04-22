@@ -28,7 +28,7 @@
 
 
         <div class="buttons">
-            <a href="/strategy/ethlisbon" class="btn btn-secondary">
+            <a href="/strategy-demo/ethlisbon" class="btn btn-secondary">
                 View demo
             </a>
         </div>
