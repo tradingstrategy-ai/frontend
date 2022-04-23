@@ -30,7 +30,7 @@ URL=http://localhost:3000
 # Smoke check
 # Abort early if the site does not come up, don't bother with Cypress tests
 # Check with the curl the site came up
-curl -sSf $URL
+curl -sSf $URL > /dev/null
 if [ $? != 0 ]; then
   echo "curl could not connect to $URL"
   exit 1
