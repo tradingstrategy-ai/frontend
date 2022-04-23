@@ -27,6 +27,7 @@ cd ..
 
 # Start dev server
 # npm run dev &
+export FRONTEND_SSR=true
 if [ -e build ] ; then
   rm -rf build
 fi
