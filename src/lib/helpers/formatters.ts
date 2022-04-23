@@ -1,4 +1,4 @@
-import assert from "assert-ts";
+import assert from 'assert-ts';
 
 export function formatKilos(n): string {
     if(n <= 1000) {

@@ -47,7 +47,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.15.6",
     "@rollup/plugin-json": "^4.1.0",
-    "@sveltejs/adapter-node": "^1.0.0-next.60",
+    "@sveltejs/adapter-node": "^1.0.0-next.73",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
     "@sveltejs/kit": "1.0.0-next.308",
     "@testing-library/jest-dom": "^5.14.1",

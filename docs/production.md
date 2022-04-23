@@ -25,8 +25,12 @@ netstat -ltnp | grep -w ':80'
 ```shell
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
+export FRONTEND_PORT=3000
+export FRONTEND_ADDRESS_HEADER=X-Forwarded-For
 rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 ```
+
+This launched production build at http://localhost:3000/
 
 Then you can check e.g. HTTP headers:
 

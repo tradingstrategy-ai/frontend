@@ -1,3 +1,12 @@
+/**
+ * SvelteKit configuration for Trading Strategy frontend
+ *
+ * Supports
+ *
+ * - Local dev server using Vite w/ SSR
+ * - Production Node.js server w/SSR
+ *
+ */
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 import path from "path";
@@ -6,9 +15,11 @@ let config;
 
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_SSR = process.env.FRONTEND_SSR || false;
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
 console.log(`Frontend SSR: ${FRONTEND_SSR}`);
-console.log(`Frontend post: ${FRONTEND_PORT}`);
+console.log(`Frontend port: ${FRONTEND_PORT}`);
+console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
 if(FRONTEND_SSR || process.env.PRODUCTION) {
 	console.log("Using SSR config");
@@ -17,6 +28,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 
 		onwarn: (warning, defaultHandler) => {
 			// Disable all warnings during the local compilation for now
+            // As these warnings are spammy
 		},
 
 		compilerOptions: {
@@ -28,14 +40,15 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			sourceMap: true,
 		}),
 
-
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
 		kit: {
 			adapter: node({
-				env: {
-					port: 'FRONTEND_PORT',
-			}}),
+                // All Node adapter configuration options are in format
+                // FRONTEND_PORT
+                // FRONTEND_ORIGIN
+                envPrefix: "FRONTEND_"
+            }),
 
 			files: {
 				hooks: "src/hooks"
