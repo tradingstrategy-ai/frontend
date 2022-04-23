@@ -1,33 +1,24 @@
-<script lang="ts">
-	import StrategyMenu from 'trade-executor-frontend/strategy/StrategyMenu.svelte';
-	import AssetOverview from 'trade-executor-frontend/strategy/AssetOverview.svelte';
-	import PerformanceOverview from 'trade-executor-frontend/strategy/PerformanceOverview.svelte';
+<script context="module">
+    import StrategyOverviewPage from "trade-executor-frontend/strategy/StrategyOverviewPage.svelte";
+    import {getConfiguredStrategyById} from "trade-executor-frontend/strategy/configuration";
+    import {getStrategyMetadata} from "trade-executor-frontend/strategy/metadata";
+
+    // Load strategy specific metadata that is used in the overview
+	export async function load({ params, fetch }) {
+
+        const strategy = getConfiguredStrategyById(params.strategy_id);
+		const metadata = await getStrategyMetadata(strategy, fetch);
+
+		return {
+			props: {
+                metadata
+			}
+		};
+	}
 </script>
 
-<div class="overview-card-wrapper">
-	<AssetOverview />
-</div>
+<script lang="ts">
+    export let metadata;
+</script>
 
-<div class="overview-card-wrapper">
-	<PerformanceOverview />
-</div>
-
-<div class="strategy-menu-mobile">
-	<StrategyMenu />
-</div>
-
-<style>
-	.strategy-menu-mobile {
-		display: none;
-	}
-
-	@media (max-width: 992px) {
-		.strategy-menu-mobile {
-			display: block;
-		}
-	}
-
-	.overview-card-wrapper {
-		margin-bottom: 20px;
-	}
-</style>
+<StrategyOverviewPage metadata={metadata}/>

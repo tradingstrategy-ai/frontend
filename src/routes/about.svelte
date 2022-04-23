@@ -260,7 +260,7 @@
                             </h3>
 
                             <p class="card-text">
-                                Aa a quantitative finance expert or programmer, launch your algorithm on the protocol and earn fees from investors.
+                                As a quantitative finance expert or programmer, launch your algorithm on the protocol and earn fees from investors.
                                 The decentralised protocol enables fee sharing with flexible structures, including profit sharing and management fees, similar to hedge funds.
                             </p>
 

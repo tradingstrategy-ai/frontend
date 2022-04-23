@@ -1,6 +1,6 @@
 <script lang="ts">
-	import PositionDetails from 'trade-executor-frontend/strategy/PositionDetails.svelte';
+	import PositionDetailsPage from 'trade-executor-frontend/strategy/PositionDetailsPage.svelte';
 	import { PositionKind } from 'trade-executor-frontend/state/interface';
 </script>
 
-<PositionDetails positionKind={PositionKind.frozen} />
+<PositionDetailsPage positionKind={PositionKind.frozen} />
