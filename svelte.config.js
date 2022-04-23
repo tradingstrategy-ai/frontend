@@ -13,6 +13,8 @@ import path from "path";
 
 let config;
 
+// We prefix all environment variables with FRONTEND_
+// so that they do not get mixed up e.g. with Docker environment variables
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_SSR = process.env.FRONTEND_SSR || false;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
