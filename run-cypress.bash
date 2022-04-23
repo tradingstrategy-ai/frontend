@@ -26,7 +26,13 @@ cd ..
 (cd tests && npm ci)
 
 # Start dev server
-npm run dev &
+# npm run dev &
+if [ -e build ] ; then
+  rm -rf build
+fi
+node_modules/.bin/svelte-kit build
+node build &
+
 PID_SVELTE=$$
 echo "SvelteKit Vite server running at PID $PID_SVELTE"
 sleep 3
@@ -44,21 +50,6 @@ fi
 
 echo "Pretest is"
 head /tmp/pretest.txt
-
-
-# Did not figure out why curl returns 000 in scripted, though works from the command lien
-# https://stackoverflow.com/a/44364396/315168
-#test_command='curl -sL -w "%{http_code}\\n" "http://localhost:3000/" -o /dev/null --connect-timeout 15 --max-time 15'
-
-#echo $test_command
-#res=`$test_command`
-
-#if [ $res == "200" ] ; then
-#   echo "Test server is up" ;
-#else
-#   echo "FAILED to start server"
-#   exit 1
-#fi
 
 # Run Cypress
 if [ ! -z "$CYPRESS_KEY" ] ; then

@@ -22,7 +22,9 @@ jobs:
     - name: Checkout submodules
       run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git && git submodule update --init --recursive
     - name: Checkout executor frontend
-      run: git clone https://github.com/tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend
+      run:
+        git clone https://github.com/tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend |
+        cd ../trade-executor-frontend && npm ci
     - name: Run Cypress
       run: |
         bash run-cypress.bash
