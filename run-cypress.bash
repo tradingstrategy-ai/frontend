@@ -8,7 +8,7 @@ set -x
 
 source .env
 
-echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL $VITE_PUBLIC_GHOST_API_URL"
+echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL, Ghost API $VITE_PUBLIC_GHOST_API_URL"
 
 # Kill dangling servers
 kill -SIGKILL $(lsof -ti:3000)
@@ -56,7 +56,7 @@ fi
 
 # Run Cypress
 cd tests
-npm install
+npm ci
 npm run cypress:run
 
 # Kill dev server
