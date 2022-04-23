@@ -29,6 +29,7 @@ jobs:
       env:
         VITE_PUBLIC_GHOST_API_URL: ${{ secrets.VITE_PUBLIC_GHOST_API_URL }}
         VITE_PUBLIC_GHOST_CONTENT_API_KEY : ${{ secrets.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
+        CYPRESS_KEY : ${{ secrets.CYPRESS_KEY }}
     - name: Package for server-side rendering using SvelteKit Node.js adapter
       run: |
         npm run ssr:node

@@ -57,7 +57,13 @@ fi
 # Run Cypress
 cd tests
 npm ci
-npm run cypress:run
+
+if [ ! -e "$CYPRESS_KEY"] ; then
+  # Github CI run using Cypress web browser recorder
+  npx cypress run --record --key $CYPRESS_KEY
+else
+  npm run cypress:run
+fi
 
 # Kill dev server
 kill $PID_SVELTE
