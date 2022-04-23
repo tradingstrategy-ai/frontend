@@ -11,7 +11,7 @@ source .env
 echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL, Ghost API $VITE_PUBLIC_GHOST_API_URL"
 
 # Kill dangling servers
-kill -SIGKILL $(lsof -ti:3000) || true
+kill -SIGKILL $(lsof -ti:3000) || false
 
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
