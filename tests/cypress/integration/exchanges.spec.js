@@ -1,4 +1,4 @@
-describe('Traging strategy Exchanges', () => {
+describe('Trading strategy Exchanges', () => {
     it('User should be able to list exchanges', () => {
       cy.visit('/trading-view/exchanges');
       cy.contains(/exchanges/i);

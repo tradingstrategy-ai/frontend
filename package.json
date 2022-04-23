@@ -11,8 +11,6 @@
     "format": "prettier --write --plugin-search-dir=. .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "npm test -- --watch",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
     "ssr:node": "svelte-kit build",
     "prepare": "svelte-kit sync"
   },
@@ -85,7 +83,7 @@
     "typescript": "~4.6.2",
     "uplot": "^1.6.16"
   },
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",

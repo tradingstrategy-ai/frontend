@@ -38,6 +38,8 @@ sleep 3
 
 
 # Run Cypress
+cd tests
+npm install
 npm run cypress:run
 
 # Kill dev server

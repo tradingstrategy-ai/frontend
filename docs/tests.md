@@ -2,6 +2,16 @@
 
 We use Cypress as our main tool for testing, the scripts are following the cypress standard.
 
+### Test package
+
+Tests are in a separate package because of conflict of TS module type for SvelteKit (`type: "module"`)
+and Cypress (`type: "node"`).
+
+```shell
+cd tests 
+npm install
+```
+
 ### Start interactive Cypress
 
 Run cypress in the browser.
