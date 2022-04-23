@@ -19,7 +19,8 @@ const SSR = process.env.SSR || false;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
-console.log(`Frontend SSR: ${FRONTEND_SSR}`);
+console.log(`SSR: ${SSR}`);
+console.log(`PRODUCTION: ${PRODUCTION}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
