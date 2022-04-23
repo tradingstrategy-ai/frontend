@@ -187,7 +187,7 @@
         <h1>{ post.title }</h1>
 
         <p class="text-published text-muted text-sm">
-          Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={Date.parse(post.published_at)} />.
+          Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
         </p>
 
         <div class="body-text">

@@ -31,7 +31,7 @@ Display a blog post preview card (e.g, on home page or blog index).
         {new Date(post.published_at).toDateString()}
         Published:
       {/if}
-      <RelativeDate timestamp={Date.parse(post.published_at)} />
+      <RelativeDate timestamp={post.published_at} />
     </p>
 
     <p class="card-text">
