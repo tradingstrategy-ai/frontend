@@ -10,6 +10,9 @@ source .env
 
 echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL $VITE_PUBLIC_GHOST_API_URL"
 
+# Kill dangling servers
+kill -SIGKILL $(lsof -ti:3000)
+
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
 # trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
@@ -30,7 +33,7 @@ URL=http://localhost:3000/about
 # Smoke check
 # Abort early if the site does not come up, don't bother with Cypress tests
 # Check with the curl the site came up
-curl -sSf $URL > /dev/null
+curl -sSf "$URL" > /dev/null
 if [ $? != 0 ]; then
   echo "curl could not connect to $URL"
   exit 1
@@ -50,7 +53,6 @@ fi
 #   echo "FAILED to start server"
 #   exit 1
 #fi
-
 
 # Run Cypress
 cd tests
