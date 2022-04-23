@@ -85,7 +85,7 @@
     "typescript": "~4.6.2",
     "uplot": "^1.6.16"
   },
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
