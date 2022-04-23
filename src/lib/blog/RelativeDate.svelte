@@ -30,7 +30,6 @@ More info:
     if(typeof timestamp == "number") {
         timestamp = new Date().setUTCSeconds(timestamp);
     } else if(typeof timestamp == "string") {
-        console.log("Timestamp string is", timestamp);
         if(!(timestamp.includes("Z") || timestamp.includes("+"))) {
             // 2022-03-07T13:20:47
             // 2022-04-20T08:47:00.000+00:00
