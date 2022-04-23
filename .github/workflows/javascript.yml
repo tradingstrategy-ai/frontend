@@ -1,4 +1,4 @@
-name: Automated test suite
+name: Cypress integration tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  cypress:
 
     runs-on: ubuntu-latest
 
