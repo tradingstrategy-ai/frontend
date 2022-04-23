@@ -1,4 +1,4 @@
-<!--
+<x></x><!--
 @component
 Display a blog post preview card (e.g, on home page or blog index).
 
@@ -8,7 +8,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 ```
 -->
 <script lang="ts">
-  import Time from "svelte-time";
+  import RelativeDate from "$lib/blog/RelativeDate.svelte";
 
   export let post;
   export let layout: "compact" | "full";
@@ -31,7 +31,7 @@ Display a blog post preview card (e.g, on home page or blog index).
         {new Date(post.published_at).toDateString()}
         Published:
       {/if}
-      <Time relative timestamp="{Date.parse(post.published_at)}" />
+      <RelativeDate timestamp={Date.parse(post.published_at)} />
     </p>
 
     <p class="card-text">
