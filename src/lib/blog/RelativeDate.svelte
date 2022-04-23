@@ -40,8 +40,6 @@ More info:
         timestamp = new Date(Date.parse(timestamp));
     }
 
-    console.log("Got timestamp", timestamp, typeof timestamp);
-
     let relativeText;
 
     const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'narrow' });
@@ -49,8 +47,6 @@ More info:
 
     if(timestamp) {
         if(hours) {
-            //
-            console.log("Formatting", timestamp);
             relativeText = formatTimeAgo(timestamp);
         } else {
             relativeText = rtf1.format(days, "days");
