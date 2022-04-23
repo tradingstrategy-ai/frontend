@@ -8,7 +8,12 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 Node v16+ required.
 
+Clone `trade-executor` and master of `trade-executor-frontend` with the following folder structure:
+
 ```sh
+git clone git@github.com:tradingstrategy-ai/frontend.git
+cd frontend
+git clone git@github.com:tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend
 npm install
 ```
 
