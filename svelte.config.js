@@ -39,13 +39,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 
 			files: {
 				hooks: "src/hooks"
-			},
-
-			// https://kit.svelte.dev/docs#configuration-hostheader
-			headers: {
-				host: 'X-Forwarded-Host',
-				protocol: 'X-Forwarded-Proto'
-			},
+			}
 
 		}
 

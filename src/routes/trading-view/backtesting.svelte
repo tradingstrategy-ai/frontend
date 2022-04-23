@@ -51,9 +51,9 @@
 </script>
 
 <script>
-	import Time from "svelte-time";
 	import Spinner from 'svelte-spinner';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+    import {formatTimeAgo} from '$lib/helpers/formatters';
 
 	export let datasets;
 	export let submitting = false;
@@ -217,7 +217,7 @@
 									<td>{formatSize(row.size)}</td>
 									<td>{row.format}</td>
 									<td>
-										<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
+                                        {formatTimeAgo(row.last_updated_at)}
 									</td>
 
 									<td>

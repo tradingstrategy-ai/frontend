@@ -21,6 +21,8 @@ jobs:
           npm ls
     - name: Checkout submodules
       run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git && git submodule update --init --recursive
+    - name: Checkout executor frontend
+      run: git checkout https://github.com/tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend
     - name: Run Cypress
       run: |
         bash run-cypress.bash
