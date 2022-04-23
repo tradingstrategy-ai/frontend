@@ -61,4 +61,4 @@ else
 fi
 
 # Kill dev server
-kill $PID_SVELTE
+kill $PID_SVELTE || true
