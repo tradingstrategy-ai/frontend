@@ -25,7 +25,7 @@ PID_SVELTE=$$
 echo "SvelteKit Vite server running at PID $PID_SVELTE"
 sleep 3
 
-URL=http://localhost:3000
+URL=http://localhost:3000/about
 
 # Smoke check
 # Abort early if the site does not come up, don't bother with Cypress tests
