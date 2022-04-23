@@ -19,8 +19,11 @@ kill -SIGKILL $(lsof -ti:3000) || true
 
 #install theme
 cd theme && pwd
-npm install && npx gulp build:dist
+npm ci && npx gulp build:dist
 cd ..
+
+# Install Cypress
+(cd tests && npm ci)
 
 # Start dev server
 npm run dev &
@@ -33,11 +36,14 @@ URL=http://localhost:3000/about
 # Smoke check
 # Abort early if the site does not come up, don't bother with Cypress tests
 # Check with the curl the site came up
-curl -sSf "$URL" > /dev/null
+curl -sSf "$URL" > /tmp/pretest.txt
 if [ $? != 0 ]; then
   echo "curl could not connect to $URL"
   exit 1
 fi
+
+echo "Pretest is"
+head /tmp/pretest.txt
 
 
 # Did not figure out why curl returns 000 in scripted, though works from the command lien
@@ -55,14 +61,11 @@ fi
 #fi
 
 # Run Cypress
-cd tests
-npm ci
-
 if [ ! -e "$CYPRESS_KEY"] ; then
   # Github CI run using Cypress web browser recorder
-  npx cypress run --record --key $CYPRESS_KEY
+  (cd tests && npx cypress run --record --key $CYPRESS_KEY)
 else
-  npm run cypress:run
+  (cd tests && npm run cypress:run)
 fi
 
 # Kill dev server
