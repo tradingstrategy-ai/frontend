@@ -16,6 +16,7 @@ let config;
 // We prefix all environment variables with FRONTEND_
 // so that they do not get mixed up e.g. with Docker environment variables
 const SSR = process.env.SSR || false;
+const PRODUCTION = process.env.PRODUCTION || false;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
