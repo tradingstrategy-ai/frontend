@@ -26,6 +26,7 @@ cd ..
 (cd tests && npm ci)
 
 # Start dev server
+# See https://stackoverflow.com/questions/71984376/cypress-your-page-did-not-fire-its-load-event-within-60000ms-only-on-github
 # npm run dev &
 export SSR=true
 if [ -e build ] ; then
