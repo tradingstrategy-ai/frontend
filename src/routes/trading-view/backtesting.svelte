@@ -13,6 +13,7 @@
 	export async function load({ url, session, fetch, context }) {
 		const apiUrl = `${backendUrl}/datasets`;
 
+        // TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
 		const res = await fetch(apiUrl, {
 			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
 			// See hooks/index.ts for more information.
@@ -51,9 +52,9 @@
 </script>
 
 <script>
-	import Time from "svelte-time";
 	import Spinner from 'svelte-spinner';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+    import {formatTimeAgo} from '$lib/helpers/formatters';
 
 	export let datasets;
 	export let submitting = false;
@@ -217,7 +218,7 @@
 									<td>{formatSize(row.size)}</td>
 									<td>{row.format}</td>
 									<td>
-										<Time relative timestamp="{new Date(row.last_updated_at * 1000)}" />
+                                        {formatTimeAgo(row.last_updated_at)}
 									</td>
 
 									<td>
@@ -263,7 +264,6 @@
 						<a href="https://github.com/tradingstrategy-ai/client">Github</a>
 					</li>
 				</ul>
-
 
 			</div>
 		</div>

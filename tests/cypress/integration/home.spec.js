@@ -1,4 +1,4 @@
-describe('Traging strategy Home', () => {
+describe('Trading strategy Home', () => {
 
     beforeEach(() => {
         cy.visit('/');

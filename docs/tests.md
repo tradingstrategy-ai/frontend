@@ -2,6 +2,16 @@
 
 We use Cypress as our main tool for testing, the scripts are following the cypress standard.
 
+### Test package
+
+Tests are in a separate package because of conflict of TS module type for SvelteKit (`type: "module"`)
+and Cypress (`type: "node"`).
+
+```shell
+cd tests 
+npm install
+```
+
 ### Start interactive Cypress
 
 Run cypress in the browser.
@@ -16,8 +26,15 @@ npm run cypress:open
 Run cypress with the headless browser. Before running cypress tests the app should be running.
 
 ```shell
-npm run cypress:open
+npm run cypress:run
 ```
+
+You might also want to kill danling frontend servers:
+
+```shell
+kill -SIGKILL $(lsof -ti:3000)
+```
+
 ### Run unit tests made with svelte-testing-library
 
 Still experimental we can run unit tests for components but not working with routes yet. This

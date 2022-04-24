@@ -1,21 +1,38 @@
+/**
+ * SvelteKit configuration for Trading Strategy frontend
+ *
+ * Supports
+ *
+ * - Local dev server using Vite w/ SSR
+ * - Production Node.js server w/SSR
+ *
+ */
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
+import path from "path";
 
 let config;
 
+// We prefix all environment variables with FRONTEND_
+// so that they do not get mixed up e.g. with Docker environment variables
+const SSR = process.env.SSR || false;
+const PRODUCTION = process.env.PRODUCTION || false;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
-const FRONTEND_SSR = process.env.FRONTEND_SSR || false;
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
-console.log(`Frontend SSR: ${FRONTEND_SSR}`);
-console.log(`Frontend post: ${FRONTEND_PORT}`);
+console.log(`SSR: ${SSR}`);
+console.log(`PRODUCTION: ${PRODUCTION}`);
+console.log(`Frontend port: ${FRONTEND_PORT}`);
+console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
-if(FRONTEND_SSR || process.env.PRODUCTION) {
+if(SSR || process.env.PRODUCTION) {
 	console.log("Using SSR config");
 	// build server-side rendering
 	config = {
 
 		onwarn: (warning, defaultHandler) => {
 			// Disable all warnings during the local compilation for now
+            // As these warnings are spammy
 		},
 
 		compilerOptions: {
@@ -27,23 +44,19 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			sourceMap: true,
 		}),
 
-
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
 		kit: {
 			adapter: node({
-				env: {
-					port: 'FRONTEND_PORT',
-			}}),
+                // All Node adapter configuration options are in format
+                // FRONTEND_PORT
+                // FRONTEND_ORIGIN
+                envPrefix: "FRONTEND_"
+            }),
+
 			files: {
 				hooks: "src/hooks"
-			},
-
-			// https://kit.svelte.dev/docs#configuration-hostheader
-			headers: {
-				host: 'X-Forwarded-Host',
-				protocol: 'X-Forwarded-Proto'
-			},
+			}
 
 		}
 
@@ -51,6 +64,7 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 } else {
 	// build single page app
 	console.log("Using local dev env config");
+
 	config = {
 
 		onwarn: (warning, defaultHandler) => {
@@ -66,11 +80,10 @@ if(FRONTEND_SSR || process.env.PRODUCTION) {
 			sourceMap: true,
 		}),
 
+        kit: {
 
-		kit: {
-			// hydrate the <div id="svelte"> element in src/app.html
-			target: '#svelte'
-		}
+        }
+
 	};
 }
 
@@ -95,7 +108,14 @@ config.kit.vite = {
 				manualChunks: undefined
 			}
 		}
-	}
+	},
+
+    // Dropping in the executor frontend
+    resolve: {
+        alias: {
+            'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
+        }
+    }
 
 }
 

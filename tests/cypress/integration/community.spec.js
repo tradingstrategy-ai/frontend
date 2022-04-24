@@ -1,4 +1,4 @@
-describe('Traging strategy Community', () => {
+describe('Trading strategy Community', () => {
     before(() => {
         cy.visit('/community');
     })

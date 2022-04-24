@@ -6,9 +6,9 @@ import * as cheerio from 'cheerio';
 /**
  * SSR response transformations hook.
  */
-export const handle: Handle = async ({ request, resolve }) => {
+export const handle: Handle = async ({ event, resolve }) => {
 
-	const response = await resolve(request);
+	const response = await resolve(event);
 
 	// When the next client fetches this SSR rendered page,
 	// Cloudflare servers CSS files as early hints
@@ -49,7 +49,7 @@ export const handle: Handle = async ({ request, resolve }) => {
  * @return Value for Link header. Empty string if no header added.
  *
  */
-function generateEarlyHintHeader(response: ServerResponse): string {
+function generateEarlyHintHeader(response): string {
 
 	if(!response.body) {
 		throw new Error("text/html response was missing body");

@@ -1,5 +1,5 @@
 {
-  "name": "~TODO~",
+  "name": "frontend",
   "version": "0.0.1",
   "scripts": {
     "dev": "svelte-kit dev",
@@ -11,9 +11,8 @@
     "format": "prettier --write --plugin-search-dir=. .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "npm test -- --watch",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "ssr:node": "svelte-kit build"
+    "ssr:node": "svelte-kit build",
+    "prepare": "svelte-kit sync"
   },
   "jest": {
     "transform": {
@@ -46,9 +45,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.15.6",
     "@rollup/plugin-json": "^4.1.0",
-    "@sveltejs/adapter-node": "^1.0.0-next.60",
+    "@sveltejs/adapter-node": "^1.0.0-next.73",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
-    "@sveltejs/kit": "^1.0.0-next.213",
+    "@sveltejs/kit": "1.0.0-next.308",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
@@ -56,7 +55,6 @@
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
     "babel-jest": "^26.5.2",
-    "cypress": "^8.5.0",
     "datatables.net-dt": "^1.11.3",
     "datatables.net-responsive-bs4": "^2.2.9",
     "esbuild": "^0.13.4",
@@ -65,23 +63,25 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-svelte3": "^3.2.0",
+    "gridjs-svelte": "^2.1.1",
+    "gridjs": "^5.0.2",
+    "assert-ts": "^0.3.4",
     "jest": "^26.5.2",
     "jest-transform-stub": "^2.0.0",
     "jest-transform-svelte": "^2.1.1",
     "jquery": "^3.6.0",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
-    "svelte": "^3.44.1",
+    "svelte": "^3.46.0",
     "svelte-check": "^2.0.0",
     "svelte-highlight": "^5.1.2",
     "svelte-intersection-observer": "^0.8.0",
     "svelte-jester": "^1.1.5",
     "svelte-preprocess": "^4.9.4",
-    "svelte-time": "^0.4.0",
     "svelte-web3": "^2.2.1",
     "ts-jest": "^26.4.1",
     "tslib": "^2.0.0",
-    "typescript": "^4.0.0",
+    "typescript": "~4.6.2",
     "uplot": "^1.6.16"
   },
   "type": "module",
@@ -94,8 +94,8 @@
     "cookie": "^0.4.1",
     "gulp": "^4.0.2",
     "svelte-inview": "^3.0.0",
-    "svelte-spinner": "^2.0.2",
     "svelte-tradingview-widget": "^2.3.0",
+    "svelte-spinner": "^2.0.2",
     "sveltestrap": "^4.2.1",
     "typesense": "^1.2.1",
     "web3": "^1.6.0"

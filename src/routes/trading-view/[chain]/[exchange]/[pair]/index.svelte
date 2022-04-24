@@ -81,19 +81,17 @@
 
 <script lang="ts">
 
-    import Time from "svelte-time";
-    import {formatDollar, formatUnixTimestamp, parseUTCTime} from '$lib/helpers/formatters';
+    import {formatDollar, formatUnixTimestamp, parseUTCTime, formatTimeAgo} from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
-    import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
+    import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
     import { browser } from '$app/env';
-
-    import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-    import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
-    import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairInfoTable from "$lib/content/PairInfoTable.svelte";
-    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
     import {onMount} from "svelte";
+    import CandleStickChart from "$lib/chart/CandleStickChart.svelte";
+    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
+    import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
+    import RelativeDate from "$lib/blog/RelativeDate.svelte";
 
     export let exchange_slug;
     export let chain_slug;
@@ -355,8 +353,8 @@
                 <p>
                     The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
 
-                    The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
-                    The last trade was seen less than <strong><Time relative timestamp="{Date.parse(details.last_trade_at)}" /></strong>.
+                    The trading of {summary.pair_symbol} started at <strong><RelativeDate timestamp={details.first_trade_at} /></strong>.
+                    The last trade was seen less than <strong><RelativeDate hours timestamp={details.last_trade_at} /></strong>.
                 </p>
 
                 {#if details.pair_contract_address }

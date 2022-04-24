@@ -6,7 +6,12 @@
 set -e
 set -x
 
-echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL $VITE_PUBLIC_GHOST_API_URL"
+source .env
+
+echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL, Ghost API $VITE_PUBLIC_GHOST_API_URL"
+
+# Kill dangling SvelteKit servers
+kill -SIGKILL $(lsof -ti:3000) || true
 
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
@@ -14,31 +19,49 @@ echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BAC
 
 #install theme
 cd theme && pwd
-npm install && npx gulp build:dist
+npm ci && npx gulp build:dist
 cd ..
 
-# Start dev server
-npm run dev &
+# Install Cypress
+(cd tests && npm ci)
 
+# Start dev server
+# See https://stackoverflow.com/questions/71984376/cypress-your-page-did-not-fire-its-load-event-within-60000ms-only-on-github
+# npm run dev &
+export SSR=true
+if [ -e build ] ; then
+  rm -rf build
+fi
+node_modules/.bin/svelte-kit build
+node build &
+
+PID_SVELTE=$$
+echo "SvelteKit Vite server running at PID $PID_SVELTE"
 sleep 3
 
-# Did not figure out why curl returns 000 in scripted, though works from the command lien
-# https://stackoverflow.com/a/44364396/315168
-#test_command='curl -sL -w "%{http_code}\\n" "http://localhost:3000/" -o /dev/null --connect-timeout 15 --max-time 15'
+URL=http://localhost:3000/about
 
-#echo $test_command
-#res=`$test_command`
+# Smoke check
+# Abort early if the site does not come up, don't bother with Cypress tests
+# Check with the curl the site came up
+curl -sSf "$URL" > /tmp/pretest.txt
+if [ $? != 0 ]; then
+  echo "curl could not connect to $URL"
+  exit 1
+fi
 
-#if [ $res == "200" ] ; then
-#   echo "Test server is up" ;
-#else
-#   echo "FAILED to start server"
-#   exit 1
-#fi
-
+echo "Pretest is"
+head /tmp/pretest.txt
 
 # Run Cypress
-npm run cypress:run
+if [ ! -z "$CYPRESS_KEY" ] ; then
+  # Github CI run using Cypress web browser recorder
+  (cd tests && npx cypress run --record --key $CYPRESS_KEY)
+else
+  (cd tests && npm run cypress:run)
+fi
 
 # Kill dev server
-# kill $PID_SVELTE
+# kill $PID_SVELTE || true
+
+exit 0
