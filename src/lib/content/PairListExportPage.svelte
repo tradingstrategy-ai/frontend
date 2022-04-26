@@ -94,7 +94,7 @@ Render export page for a trading pair list.
 
     <p>
         This data export contains only data for <a class="body-link" href="/trading-view/{chain_slug}/{exchange_slug}">{exchange_name}</a>.
-        Read <a class="body-link" rel="external" href="https://https://tradingstrategy.ai/api/explorer/">column format documentation in PairSummary section of the API documentation.</a>
+        Read about <a class="body-link" rel="external" href="https://tradingstrategy.ai/api/explorer/">the column format in PairSummary section of the API documentation.</a>
         For all datasets, see <a class="body-link" href="/trading-view/backtesting">Backtesting</a> page.
     </p>
 </div>
