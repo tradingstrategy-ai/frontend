@@ -123,7 +123,7 @@
             <div class="exchange-actions">
                 <a href={details.homepage} class="btn btn-primary">Visit {nameDetails.name}</a>
                 <a href={details.blockchain_explorer_link} class="btn btn-primary">View {nameDetails.name} on blockchain explorer</a>
-                <a href="/trading-view/{details.chain_slug}/{details.exchange_slug}/export-data" class="btn btn-primary">Download Excel</a>
+                <a href="/trading-view/{details.chain_slug}/{details.exchange_slug}/export-data" class="btn btn-primary">Download as Excel</a>
             </div>
         </div>
     </div>
