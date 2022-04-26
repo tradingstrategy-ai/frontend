@@ -53,10 +53,15 @@
 	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
 	import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte";
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
+    import {goto} from "$app/navigation";
 
 	export let topMomentum;
 	export let impressiveNumbers;
 	export let posts;
+
+    function doSecretNavigation() {
+        goto("/strategy");
+    }
 </script>
 
 <svelte:head>
@@ -66,7 +71,7 @@
 </svelte:head>
 
 <main>
-	<section class="card-home card-jumbo">
+	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation} >
 		<div class="container">
 			<p class="heading-p">Algorithmic trading protocol for decentralised markets</p>
 
