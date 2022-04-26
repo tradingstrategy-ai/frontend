@@ -12,7 +12,7 @@
 			tokens: 'Tokens'
 		};
 
-	const chain_slug = $page.params.chain;
+	const chainSlug = $page.params.chain;
 	const breadcrumbs = buildBreadcrumbs($page.url.pathname, pathTranslations);
 </script>
 
@@ -29,7 +29,7 @@
 				<h1>Tokens</h1>
 
 				<p>
-					Browse supported decentralised tokens across {chain_slug}
+					Browse supported decentralised tokens across {chainSlug}
 					<a href='/trading-view/blockchains'>blockchain</a> below.
 				</p>
 
@@ -38,7 +38,7 @@
 				<TokenIndexExplorer
 					enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
 					orderColumnIndex={1}
-					chainSlug={chain_slug}
+					{chainSlug}
 				/>
 			</div>
 		</div>
