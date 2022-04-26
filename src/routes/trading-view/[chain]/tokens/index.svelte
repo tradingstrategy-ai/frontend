@@ -1,8 +1,10 @@
-<script context='module' lang='typescript'>
+<!-- <script context='module' lang='ts'>
 	/*
 		Render listing of all available tokens
 	*/
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
+
+
+
 
 	export async function load({ url, params }) {
 		const pathTranslations = {
@@ -22,15 +24,29 @@
 			}
 		};
 	}
-</script>
+</script> -->
 
-<script lang='typescript'>
+<script lang='ts'>
+	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
+
+	const pathTranslations = {
+			'trading-view': 'Trading data',
+			exchanges: 'Decentralised exchanges',
+			ethereum: 'Ethereum',
+			tokens: 'Tokens'
+		};
+
+//	const chain_slug = $page.params.chain;
+	const crumbs = buildBreadcrumbs($page.url.pathname, pathTranslations);
 
 	export let breadcrumbs;
-	export let chain_slug;
+	export let chain_slug = $page.params.chain;
+
+
 </script>
 
 <svelte:head>
@@ -55,7 +71,6 @@
 				<TokenIndexExplorer
 					enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
 					orderColumnIndex={1}
-					filterJunk={false}
 					chainSlug={chain_slug}
 				/>
 			</div>
