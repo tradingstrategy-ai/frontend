@@ -68,7 +68,8 @@ Render export page for a trading pair list.
 
         <label for="export_dataset">Sorted by</label>
         <select class="form-control" id="sorted_by" bind:value={selectedSort}>
-            <option value="liquidity_change_24h">Liquidity change 24h</option>
+            <option value="liquidity_change_24h">Liquidity % change 24h</option>
+            <option value="usd_liquidity_change_24h">Liquidity USD change 24h</option>
             <option value="usd_liquidity_latest">Liquidity available latest</option>
             <option value="usd_volume_24h">Volume 24h</option>
             <option value="price_change_24h">Price change 24h</option>
