@@ -15,7 +15,8 @@ filter on:change.
 -->
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-  import Filter, { FilterOption } from "./_Filter.svelte";
+  import Filter from "./_Filter.svelte";
+  import type { FilterOption } from "./_Filter.svelte";
 
   export let fieldName: string;
   export let options: FilterOption[];
