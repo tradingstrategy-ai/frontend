@@ -1,31 +1,3 @@
-<!-- <script context='module' lang='ts'>
-	/*
-		Render listing of all available tokens
-	*/
-
-
-
-
-	export async function load({ url, params }) {
-		const pathTranslations = {
-			'trading-view': 'Trading data',
-			exchanges: 'Decentralised exchanges',
-			ethereum: 'Ethereum',
-			tokens: 'Tokens'
-		};
-
-		const chain_slug = params.chain;
-		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
-
-		return {
-			props: {
-				breadcrumbs: crumbs,
-				chain_slug
-			}
-		};
-	}
-</script> -->
-
 <script lang='ts'>
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
@@ -40,13 +12,8 @@
 			tokens: 'Tokens'
 		};
 
-//	const chain_slug = $page.params.chain;
-	const crumbs = buildBreadcrumbs($page.url.pathname, pathTranslations);
-
-	export let breadcrumbs;
-	export let chain_slug = $page.params.chain;
-
-
+	const chain_slug = $page.params.chain;
+	const breadcrumbs = buildBreadcrumbs($page.url.pathname, pathTranslations);
 </script>
 
 <svelte:head>
