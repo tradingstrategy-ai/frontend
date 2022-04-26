@@ -35,12 +35,13 @@
 </script>
 
 <script lang="ts">
-  import Time from "svelte-time";
   import {onMount, afterUpdate} from "svelte";
   import Sidebar from "$lib/blog/Sidebar.svelte";
-  import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
   import {slugify} from "$lib/helpers/slugify";
   import { serializePost } from "$lib/helpers/googleMeta";
+  import { page } from "$app/stores";
+  import {formatTimeAgo} from "$lib/helpers/formatters";
+  import RelativeDate from "$lib/blog/RelativeDate.svelte";
 
   // TODO: Mobile menu requires hydrate
   // This will prevent any interactive JavaScript to load on blog (as there should be none)
@@ -127,12 +128,42 @@
       buildTableOfContent(bodyText);
     }
   });
+
+  const canonicalUrl = $page.url;
+
 </script>
 
+<!-- Facebook, Twitter and Google SEO tags.
+
+    To test:
+
+    - https://developers.facebook.com/tools/debug/
+
+    - https://cards-dev.twitter.com/validator
+ -->
 <svelte:head>
     <title>{post.title}</title>
     <meta name="description" content={post.excerpt}>
+
+    <!-- Google -->
     {@html serializePost(post)}
+
+    <!-- Facebook -->
+    <meta property="og:site_name" content="Trading Strategy">
+    <meta property="og:title" content={ post.title }>
+    <meta property="og:url"  content={ canonicalUrl } />
+    <meta property="og:description" content="{ post.og_description || post.excerpt }" />
+    <meta property="og:image" content="{ post.feature_image }" />
+    <meta property="og:type" content="article" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@TradingProtocol" />
+    <meta name="twitter:title" content="{ post.title }" />
+    <meta name="twitter:description" content="{ post.twitter_description || post.excerpt }" />
+    <!-- See blog-img hack for Twitter -->
+    <meta name="twitter:image" content="{ post.feature_image.replace("https://trading-strategy.ghost.io", $page.url.protocol + "//" + "tradingstrategy.ai" + "/blog-img") }" />
+
 </svelte:head>
 
 
@@ -140,7 +171,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>{post.title}</h1>
+                <!-- --->
             </div>
         </div>
     </div>
@@ -152,12 +183,11 @@
 
     <div class="row">
       <div class="col-lg-9 col-md-12">
-        <!--
+
         <h1>{ post.title }</h1>
-        -->
+
         <p class="text-published text-muted text-sm">
-          {new Date(post.published_at).toDateString()},
-          Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
+          Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
         </p>
 
         <div class="body-text">
@@ -180,7 +210,7 @@
   }
 
   .heading {
-    min-height: 200px;
+    min-height: 240px;
     padding: 80px 0;
     background-size: cover;
     background-position: center center;
@@ -205,16 +235,21 @@
   }
 
   .body-text :global(.kg-image) {
-    margin: 20px 0;
-    /* Fix explicit width and height attributes on <img> in Ghost HTML export */
-    width: auto;
-    height: auto;
-    max-width: 100%;
+      margin: 20px auto;
+      /* Fix explicit width and height attributes on <img> in Ghost HTML export */
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      display: block;
+      box-shadow: .6px .6px 10.5px -1px rgba(0,0,0,.042),.7px .7px 16.2px -1px rgba(0,0,0,.06),.8px .8px 21.3px -1px rgba(0,0,0,.078),1px 1px 33px -1px rgba(0,0,0,.12) !important;
+      border-radius: 0.55rem;
   }
 
   .body-text :global(a) {
     border-bottom: 1px solid black;
   }
+
+
 
   .body-text :global(figcaption) {
     font-size: 80%;
@@ -230,6 +265,11 @@
     width: 100%;
     min-height: 450px;
   }
+
+  .body-text :global(li) {
+    margin-bottom: 0.5em;
+  }
+
 
 
   .text-published {
@@ -249,5 +289,6 @@
       margin-bottom: 10px;
       border: 0;
   }
+
 
 </style>

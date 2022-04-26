@@ -6,9 +6,14 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install
 
-Node v14+ required.
+Node v16+ required.
+
+Clone `trade-executor` and master of `trade-executor-frontend` with the following folder structure:
 
 ```sh
+git clone git@github.com:tradingstrategy-ai/frontend.git
+cd frontend
+git clone git@github.com:tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend
 npm install
 ```
 
@@ -37,7 +42,7 @@ This will produce files in `theme/dist` folder.
 Or as one liner after the installation of the theme packages:
 
 ```shell
-(cd theme && npx gulp build:dist)
+(cd theme && npm install && npx gulp build:dist)
 ```
 
 ## Running in local dev

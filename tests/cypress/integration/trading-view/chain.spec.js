@@ -1,4 +1,4 @@
-describe('Traging strategy trading-view blockchains index', () => {
+describe('Trading strategy trading-view blockchains index', () => {
   before(() => {
     cy.visit('/trading-view/ethereum');
   })

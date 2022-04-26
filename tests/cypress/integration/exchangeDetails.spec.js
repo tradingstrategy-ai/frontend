@@ -1,4 +1,4 @@
-describe('Traging strategy Exchanges Details', () => {
+describe('Trading strategy Exchanges Details', () => {
 
     beforeEach(() => {
         cy.visit('/trading-view/ethereum/uniswap-v2');

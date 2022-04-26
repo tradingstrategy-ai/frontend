@@ -1,4 +1,4 @@
-describe('Traging strategy Trading View', () => {
+describe('Trading strategy Trading View', () => {
   before(() => {
     cy.visit('/trading-view')
   })
