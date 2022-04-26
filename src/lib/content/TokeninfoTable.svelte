@@ -1,5 +1,7 @@
 <script>
+    import { formatDollar } from "$lib/helpers/formatters";
     export let summary;
+
 </script>
 
 <table class="table">
@@ -19,7 +21,14 @@
         <th>Standard</th>
         <td>ERC-20 token</td>
     </tr>
-
+    <tr>
+        <th>liquidity last 24h</th>
+        <td>{formatDollar(summary.liquidity_latest)}</td>
+    </tr>
+    <tr>
+        <th>Volume 24h</th>
+        <td>{formatDollar(summary.volume_24h)}</td>
+    </tr>
 </table>
 
 <style>
