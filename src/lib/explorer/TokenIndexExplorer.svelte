@@ -11,7 +11,7 @@
 	export let orderColumnDirection = 'desc';
 
 	const availableColumns = {
-		"name": {
+		name: {
 			name: 'Name',
 			className: 'col-token',
 			data: 'name',
@@ -20,7 +20,7 @@
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.name}</a>`;
 			}
 		},
-		"symbol": {
+		symbol: {
 			name: 'Symbol',
 			className: 'col-symbol',
 			data: 'symbol',
@@ -29,7 +29,7 @@
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.symbol}</a>`;
 			}
 		},
-		"liquidity_latest": {
+		liquidity_latest: {
 			name: 'Liq 24h Δ',
 			data: 'liquidity_latest',
 			className: 'col-liquidity-change',
@@ -39,7 +39,7 @@
 				return formatDollar(data);
 			}
 		},
-		"volume_24h": {
+		volume_24h: {
 			name: 'Volume 24h (USD)',
 			data: 'volume_24h',
 			className: 'col-volume',
@@ -116,11 +116,7 @@
 </script>
 
 <div class="tokens">
-	<Datatable
-	  columns={columns}
-	  options={options}
-    clickableRows={true}
-	/>
+	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
 <style>
