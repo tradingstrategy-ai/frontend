@@ -41,7 +41,7 @@ Render export page for a trading pair list.
     }
 </script>
 
-<h1>Export trading pair data for {exchange_name}</h1>
+<h1 data-test-id="title">Export trading pair data for {exchange_name}</h1>
 
 <p>Download data as Microsoft Excel file for analysis.</p>
 

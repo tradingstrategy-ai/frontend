@@ -26,7 +26,7 @@ npm run cypress:open
 Run cypress with the headless browser. Before running cypress tests the app should be running.
 
 ```shell
-npm run cypress:run
+(cd tests && npm run cypress:run)
 ```
 
 You might also want to kill danling frontend servers:
