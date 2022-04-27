@@ -80,11 +80,11 @@
 
 <div class="container">
 	<Breadcrumb breadcrumbs={breadcrumbs} />
-    <div class="exchange-content"  data-test-id="statistics">
+    <div class="exchange-content"  data-testid="statistics">
 
         <div class="row">
             <div class="col-md-12">
-                <h1 id='title' data-test-id="title">{details.human_readable_name} exchange on {details.chain_name}</h1>
+                <h1 id='title' data-testid="title">{details.human_readable_name} exchange on {details.chain_name}</h1>
             </div>
         </div>
 
@@ -128,7 +128,7 @@
         </div>
     </div>
 
-        <div class="trading-pairs" data-test-id="pairs">
+        <div class="trading-pairs" data-testid="pairs">
             <h2>Trading Pairs</h2>
 
             <StaleDataWarning chainSlugs={[details.chain_slug]}/>

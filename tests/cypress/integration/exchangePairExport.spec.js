@@ -5,7 +5,7 @@ describe('Trading Strategy exchanges trading pair export', () => {
     })
 
     it('Should show correct title', () => {
-        cy.get('[data-test-id=title]').contains('Export trading pair data for Uniswap v2');
+        cy.get('[data-testid=title]').contains('Export trading pair data for Uniswap v2');
     });
 
 });

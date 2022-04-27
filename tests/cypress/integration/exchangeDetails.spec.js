@@ -5,7 +5,7 @@ describe('Trading strategy Exchanges Details', () => {
     })
 
     it('Should show correct title', () => {
-        cy.get('[data-test-id=title]').contains('Uniswap v2 exchange on Ethereum');
+        cy.get('[data-testid=title]').contains('Uniswap v2 exchange on Ethereum');
     });
 
     it('User can see navigation', () => {
@@ -13,17 +13,18 @@ describe('Trading strategy Exchanges Details', () => {
     });
 
     it('statistics should be visible', () => {
-        cy.get('[data-test-id=statistics]').should('be.visible');
+        cy.get('[data-testid=statistics]').should('be.visible');
     });
 
     it('trading pairs should be visible', () => {
-        cy.get('[data-test-id=pairs]').should('be.visible');
+        cy.get('[data-testid=pairs]').should('be.visible');
     });
 
     it('Breadcrumb should be visible and have 1 element', () => {
-        cy.get('[data-test-id=breadcrumb]').should('be.visible');
-        cy.get('[data-test-id=breadcrumb] li')
+        cy.get('[data-testid=breadcrumb]')
+            .should('be.visible')
+            .find('li')
             .should('have.length', 3)
-            .contains(/Trading data/i)
+            .contains(/Trading data/i);
     });
 });

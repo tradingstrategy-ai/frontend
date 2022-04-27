@@ -12,9 +12,10 @@ describe('Trading strategy Pair Details', () => {
     });
 
     it('Breadcrumb should be visible and have 1 element', () => {
-        cy.get('[data-test-id=breadcrumb]').should('be.visible');
-        cy.get('[data-test-id=breadcrumb] li')
+        cy.get('[data-testid=breadcrumb]')
+            .should('be.visible')
+            .find('li')
             .should('have.length', 4)
-            .contains(/Trading data/i)
+            .contains(/Trading data/i);
     });
 });

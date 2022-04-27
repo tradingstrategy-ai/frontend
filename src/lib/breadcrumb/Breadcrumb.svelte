@@ -16,7 +16,7 @@
     ]
 </script>
 
-<nav aria-label="breadcrumb breadcrumb-gray" data-test-id="breadcrumb">
+<nav aria-label="breadcrumb breadcrumb-gray" data-testid="breadcrumb">
   <ol class="breadcrumb breadcrumb-gray" itemscope itemtype="http://schema.org/BreadcrumbList">
     {#each breadcrumbs as breadcrumb, i}
       <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
