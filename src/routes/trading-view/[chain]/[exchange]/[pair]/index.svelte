@@ -90,6 +90,7 @@
     import RelativeDate from "$lib/blog/RelativeDate.svelte";
     import type { TokenTax } from "$lib/helpers/tokentax";
     import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
+    import ChartIQ from "$lib/chart/ChartIQ.svelte";
 
     export let exchange_slug;
     export let chain_slug;
@@ -227,6 +228,7 @@
     <h3>Price and volume chart</h3>
 
     <div class="chart-wrapper">
+        <ChartIQ />
         <p class="chart-help-text">
             Trading activity expressed as
             <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
