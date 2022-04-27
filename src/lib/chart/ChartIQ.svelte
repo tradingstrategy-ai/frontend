@@ -1,7 +1,7 @@
 <script context="module">
   import { browser } from '$app/env';
 
-  let CIQ, initialized;
+  let CIQ;
 
   /**
    * NOTE: normal dynamic import doesn't work for optional dependency due to
@@ -17,21 +17,23 @@
 
   async function initialize() {
     if (Object.keys(modules).length === 0) {
-      throw new Error('chartiq not loaded!');
+      return false;
     }
 
     await importMod('css/chartiq.css');
     const module = await importMod('js/standard.js');
     CIQ = module.CIQ;
-  }
 
-  if (browser) initialized = initialize();
+    return true;
+  }
 </script>
 
-{#await initialized}
-  <p>Loading ChartIQ library…</p>
-{:then}
-  <p>ChartIQ loaded!</p>
-{:catch}
-  <p>ChartIQ library not available</p>
+{#await initialize()}
+    <p>Loading ChartIQ library…</p>
+{:then success}
+    {#if success}
+        <p data-testid="chartiq-widget">ChartIQ loaded!</p>
+    {:else}
+        <p>ChartIQ library not available</p>
+    {/if}
 {/await}

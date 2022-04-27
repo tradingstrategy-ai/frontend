@@ -18,4 +18,8 @@ describe('Trading strategy Pair Details', () => {
             .should('have.length', 4)
             .contains(/Trading data/i);
     });
+
+    it('ChartIQ widget should be visible', () => {
+        cy.get('[data-testid=chartiq-widget]').should('be.visible');
+    });
 });
