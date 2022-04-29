@@ -227,8 +227,8 @@
      */
     async function reloadCandlesOnBucketChange(bucket: string) {
 
-        if(!bucket) {
-            // Only start loading after we get a valid bucket on the client side
+        // Only start loading after we get a valid bucket on the client side
+        if (!(browser && bucket)) {
             return;
         }
 
