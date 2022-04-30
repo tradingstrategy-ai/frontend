@@ -24,7 +24,8 @@
 <style>
 
     :global(:root) {
-	    --price-up-green: #458b00;
+        --background-color: #fff1e5;
+        --price-up-green: #458b00;
 	    --price-down-red: #cc0000;
         --link-underline: #458b00;
         --badge-exchange: #458b00;

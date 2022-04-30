@@ -27,13 +27,14 @@
   }
 
   async function importJs() {
-    const [ chartiqJs, standardJs ] = await Promise.all([
+    const [ chartiqJs, standardJs, advancedJs ] = await Promise.all([
       importMod('js/chartiq.js'),
-      importMod('js/standard.js')
+      importMod('js/standard.js'),
+      importMod('js/advanced.js')
     ]);
 
     CIQ = chartiqJs.CIQ;
-    CIQ.activateImports(standardJs.quoteFeed);
+    CIQ.activateImports(standardJs.quoteFeed, advancedJs.volumeStudies);
   }
 </script>
 
@@ -71,6 +72,11 @@
     const stxx = new CIQ.ChartEngine({
       container: node,
       ...chartOptions
+    });
+
+    CIQ.Studies.addStudy(stxx, "vol undr", {}, {
+      'Up Volume': '#458b00',
+      'Down Volume': '#cc0000'
     });
 
     stxx.attachQuoteFeed(feed, {});
