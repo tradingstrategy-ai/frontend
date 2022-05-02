@@ -69,27 +69,39 @@ chartiq dependency.
     dontRoll: true
   };
 
-  function chartIQ(node, { periodicity }) {
+  function chartIQ(node, { pairId, periodicity }) {
+    let prevPairId = pairId;
+
     const stxx = new CIQ.ChartEngine({
       container: node,
       ...chartOptions
     });
 
     CIQ.Studies.addStudy(stxx, 'Volume Underlay');
-
     stxx.attachQuoteFeed(feed, {});
+
+    stxx.addEventListener('symbolChange', () => {
+      stxx.chart.yAxis.maxDecimalPlaces = stxx.chart.yAxis.printDecimalPlaces;
+    });
+
     stxx.loadChart(pairId, { periodicity });
 
-    return {
-      update: ({ periodicity }) => stxx.setPeriodicity(periodicity)
-    };
+    function update({ pairId, periodicity }) {
+      if (pairId !== prevPairId) {
+        stxx.loadChart(pairId);
+        prevPairId = pairId;
+      }
+      stxx.setPeriodicity(periodicity);
+    }
+
+    return { update };
   }
 </script>
 
 {#await initialize() then success}
     {#if success}
         <div
-          use:chartIQ={{ periodicity }}
+          use:chartIQ={{ pairId, periodicity }}
           data-testid="chartiq-widget"
         />
     {:else}
