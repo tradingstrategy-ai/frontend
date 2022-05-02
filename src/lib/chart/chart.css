@@ -1,3 +1,7 @@
+/**
+ * ChartIQ style overrides. See:
+ * https://documentation.chartiq.com/tutorial-CSS%20Overview.html
+ */
 .stx_candle_up,
 .stx_candle_shadow_up {
   color: var(--price-up-green);

@@ -1,3 +1,7 @@
+/**
+ * ChartIQ quote-feed adapter for Trading Strategy candle data. See:
+ * https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
+ */
 import { backendUrl } from '$lib/config';
 
 function dateUrlParam(date) {
@@ -24,7 +28,7 @@ async function fetchData(symbol, startDate, endDate, params) {
   const quotes = await response.json();
 
   return quotes.map(({ ts, o, h, l, c, v }) => ({
-    DT: `${ts}Z`,
+    Date: ts,
     Open: o,
     High: h,
     Low: l,

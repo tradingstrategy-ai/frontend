@@ -1,3 +1,15 @@
+<!--
+@component
+Used for loading ChartIQ candle (ohlc+v) chart. Dyamically imports optional
+chartiq dependency.
+
+#### Usage:
+```tsx
+  <ChartIQ feed={quotefeed} pairId={12345} timeBucket="4h">
+    Fallback content to display if chartiq not imported
+  </ChartIQ>
+```
+-->
 <script context="module" lang="ts">
   let CIQ;
 
@@ -39,7 +51,9 @@
 </script>
 
 <script lang="ts">
-  export let feed, pairId, timeBucket;
+  export let feed: object;
+  export let pairId: number;
+  export let timeBucket: string;
 
   const timeUnits = {
     m: 'minute',
@@ -47,7 +61,7 @@
     d: 'day'
   };
 
-  function getPeriodicity(bucket) {
+  function getPeriodicity(bucket: string) {
     const [, quantity, unit ] = bucket.match(/^(\d+)(\w)$/);
     const timeUnit = timeUnits[unit];
     let interval = Number.parseInt(quantity, 10);
