@@ -39,14 +39,17 @@ chartiq dependency.
   }
 
   async function importJs() {
-    const [ chartiqJs, standardJs, advancedJs ] = await Promise.all([
+    const [ chartiqJs, standardJs, volumeJs] = await Promise.all([
       importMod('js/chartiq.js'),
       importMod('js/standard.js'),
-      importMod('js/advanced.js')
+      import('./volumeStudy')
     ]);
 
     CIQ = chartiqJs.CIQ;
-    CIQ.activateImports(standardJs.quoteFeed, advancedJs.volumeStudies);
+    CIQ.activateImports(standardJs.quoteFeed);
+
+    const volumeStudy = volumeJs.default(CIQ);
+    CIQ.Studies.studyLibrary[volumeStudy.name] = volumeStudy;
   }
 </script>
 
@@ -72,19 +75,14 @@ chartiq dependency.
       ...chartOptions
     });
 
-    CIQ.Studies.addStudy(stxx, "vol undr", {}, {
-      'Up Volume': '#458b00',
-      'Down Volume': '#cc0000'
-    });
+    CIQ.Studies.addStudy(stxx, 'Volume Underlay');
 
     stxx.attachQuoteFeed(feed, {});
     stxx.loadChart(pairId, { periodicity });
 
-    function update({ periodicity }) {
-      stxx.setPeriodicity(periodicity);
-    }
-
-    return { update };
+    return {
+      update: ({ periodicity }) => stxx.setPeriodicity(periodicity)
+    };
   }
 </script>
 
