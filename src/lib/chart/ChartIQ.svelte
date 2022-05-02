@@ -51,35 +51,19 @@ chartiq dependency.
 </script>
 
 <script lang="ts">
+  import type { TimeBucket } from '$lib/chart/timeBucketConverters';
+  import { timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+
   export let feed: object;
   export let pairId: number;
-  export let timeBucket: string;
+  export let timeBucket: TimeBucket;
 
-  const timeUnits = {
-    m: 'minute',
-    h: 'hour',
-    d: 'day'
-  };
-
-  function getPeriodicity(bucket: string) {
-    const [, quantity, unit ] = bucket.match(/^(\d+)(\w)$/);
-    const timeUnit = timeUnits[unit];
-    let interval = Number.parseInt(quantity, 10);
-    let period = 1;
-
-    if (timeUnit === 'day') {
-      period = interval;
-      interval = 1;
-    }
-
-    return { period, interval, timeUnit };
-  }
-
-  $: periodicity = getPeriodicity(timeBucket);
+  $: periodicity = timeBucketToPeriodicity(timeBucket);
 
   const chartOptions = {
     layout: { crosshair: true },
-    controls: { chartControls: null }
+    controls: { chartControls: null },
+    dontRoll: true
   };
 
   function chartIQ(node, { periodicity }) {

@@ -3,23 +3,16 @@
  * https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
 import { backendUrl } from '$lib/config';
+import { feedParamsToTimeBucket } from '$lib/chart/timeBucketConverters';
 
 function dateUrlParam(date) {
   return date.toISOString().slice(0,19);
 }
 
-function getTimeBucket({ period, interval }) {
-  if (interval === 'minute') {
-    return period % 60 === 0 ? `${period / 60}h` : `${period}m`;
-  } else if (interval === 'day') {
-    return `${period}d`;
-  }
-}
-
 async function fetchData(symbol, startDate, endDate, params) {
   const urlParams = new URLSearchParams({
     pair_id: symbol,
-    time_bucket: getTimeBucket(params),
+    time_bucket: feedParamsToTimeBucket(params.period, params.interval),
     start: dateUrlParam(startDate),
     end: dateUrlParam(endDate)
   });
