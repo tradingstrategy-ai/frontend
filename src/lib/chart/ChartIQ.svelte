@@ -78,12 +78,20 @@ chartiq dependency.
     });
 
     CIQ.Studies.addStudy(stxx, 'Volume Underlay');
-    stxx.attachQuoteFeed(feed, {});
 
+    // match the current price label precision to other yAxis labels
     stxx.addEventListener('symbolChange', () => {
       stxx.chart.yAxis.maxDecimalPlaces = stxx.chart.yAxis.printDecimalPlaces;
     });
 
+    // cancel mouseWheel zoom unless a modifier key is pressed
+    stxx.prepend('mouseWheel', function(event) {
+      const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
+      const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+      return !modifierPressed && verticalScroll;
+    });
+
+    stxx.attachQuoteFeed(feed, {});
     stxx.loadChart(pairId, { periodicity });
 
     function update({ pairId, periodicity }) {
