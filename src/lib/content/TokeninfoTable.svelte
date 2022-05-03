@@ -1,5 +1,5 @@
 <script>
-    import { formatDollar } from "$lib/helpers/formatters";
+    import { formatDollar, formatShortAddress } from "$lib/helpers/formatters";
     export let summary;
 
 </script>
@@ -29,6 +29,23 @@
         <th>Volume 24h</th>
         <td>{formatDollar(summary.volume_24h)}</td>
     </tr>
+
+    <tr>
+        <th>Blockchain</th>
+        <td>
+            <a href="/trading-view/{summary.chain_slug}">{summary.chain_name}</a>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Address</th>
+        <td>
+            <a href={summary.explorer_link}>
+                {formatShortAddress(summary.address)}
+            </a>
+        </td>
+    </tr>
+
 </table>
 
 <style>
