@@ -7,7 +7,7 @@
 export const TOKEN_STANDARDS = {
     "ethereum": "ERC-20",
     "binance": "BEP-20",
-    "polygon": "MAT-20",
+    "polygon": "ERC-20",
 }
 
 
