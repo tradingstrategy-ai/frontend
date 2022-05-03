@@ -54,8 +54,8 @@ chartiq dependency.
 </script>
 
 <script lang="ts">
-  import type { TimeBucket } from '$lib/chart/timeBucketConverters';
-  import { timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+  import type { TimeBucket } from './timeBucketConverters';
+  import { timeBucketToPeriodicity } from './timeBucketConverters';
 
   export let feed: object;
   export let pairId: number;
