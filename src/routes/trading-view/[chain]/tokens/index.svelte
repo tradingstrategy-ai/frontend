@@ -37,7 +37,7 @@
 
 				<TokenIndexExplorer
 					enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
-					orderColumnIndex={1}
+					orderColumnIndex={2}
 					{chainSlug}
 				/>
 			</div>
