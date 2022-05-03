@@ -45,6 +45,8 @@
 
         const tokenDetails = await resp.json()
 
+        console.log("Token details is", tokenDetails);
+
         const summary = tokenDetails;
 
         const readableNames = {
@@ -83,6 +85,8 @@
     import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
 	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
+    import { getTokenStandardName } from "$lib/chain/tokenstandard";
+    import { formatAmount } from "$lib/helpers/formatters";
 
     export let summary;
     export let chain_slug;
@@ -91,13 +95,17 @@
     export let auxiliarData;
     export let token_address;
 
+    export let tokenStandardName;
+
+    $: tokenStandardName = getTokenStandardName(summary.chain_slug);
+
 </script>
 
 <svelte:head>
 	<title>
-      {summary.symbol} token
+      {summary.symbol} on ${summary.chain_name}
     </title>
-	<meta name="description" content={`${summary.name} (${summary.symbol} token`}>
+	<meta name="description" content={`${summary.name} (${summary.symbol} ${tokenStandardName} on ${summary.chain_name}`}>
 </svelte:head>
 
 <div class="container">
@@ -117,15 +125,46 @@
             <div class="col-lg-5">
                 <TokenInfoTable {summary} />
             </div>
+
+            <div class="col-lg-7">
+                <p>
+                    <strong>{summary.name}</strong> is a {tokenStandardName} token on
+                    <a class=body-link href="/trading-view/{chain_slug}">{summary.chain_name} blockchain</a>.
+                    It trades under <strong>{summary.symbol}</strong> ticker.
+                </p>
+
+                <p>
+                    <strong>{summary.name}</strong> token supply is
+                    {summary.total_supply}
+                    <strong>{summary.symbol}s</strong>.
+                </p>
+
+                {#if summary.pair_count}
+                    <p>
+                        There are total {formatAmount(summary.pair_count)} pairs trading against
+                        <strong>{summary.symbol}</strong>.
+                    </p>
+                {/if}
+
+                <p>
+                    The token smart contract address is
+                    <a class=body-link href={summary.explorer_link}>
+                        {summary.address}</a>.
+                </p>
+
+                <p>
+                    The information on this page is for <a class=body-link href="/trading-view/{chain_slug}">{summary.chain_name}</a>.
+                    <strong>{summary.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the figures.
+                </p>
+
+            </div>
+
         </div>
+
     </div>
 
     <div class="pair-explorer-wrapper">
         <h1>Trading pairs</h1>
-
-        <p>
-            Browse <strong>{summary.symbol}</strong> trading pairs.
-        </p>
 
         <StaleDataWarning allChains={true} />
 
@@ -137,6 +176,12 @@
             tokenSymbol={summary.symbol}
             tokenAddress={token_address}
         />
+
+        <p>
+            <small>
+                * Trading pairs with complications, like the lack of liquidity, might not be displayed.
+            </small>
+        </p>
     </div>
 </div>
 
@@ -170,6 +215,10 @@
 
     .pair-explorer-wrapper {
         margin-bottom: 60px;
+    }
+
+    small {
+        opacity: 0.3;
     }
 
     /**

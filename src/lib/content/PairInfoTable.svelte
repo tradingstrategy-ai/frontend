@@ -28,12 +28,20 @@
 <table class="table">
     <tr>
         <th>Token</th>
-        <td>{summary.base_token_symbol_friendly}</td>
+        <td>
+            <a href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+                {summary.base_token_symbol_friendly}
+            </a>
+        </td>
     </tr>
 
     <tr>
         <th>Quoted in</th>
-        <td>{summary.quote_token_symbol_friendly}</td>
+        <td>
+            <a href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+                {summary.quote_token_symbol_friendly}
+            </a>
+        </td>
     </tr>
     <tr>
         <th>Price</th>

@@ -267,3 +267,18 @@ export function formatTimeAgo(input: number|Date) {
         }
     }
 }
+
+
+/**
+ * Shorten Ethereum address
+ *
+ */
+export function formatShortAddress(address: string): string {
+
+    if(!address) {
+        return "---";
+    }
+
+    return address.substring(0, 8) + "…";
+}
+
