@@ -22,7 +22,7 @@
         <td>ERC-20 token</td>
     </tr>
     <tr>
-        <th>liquidity last 24h</th>
+        <th>Available liquidity</th>
         <td>{formatDollar(summary.liquidity_latest)}</td>
     </tr>
     <tr>

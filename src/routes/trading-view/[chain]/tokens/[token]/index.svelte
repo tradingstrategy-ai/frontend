@@ -45,6 +45,8 @@
 
         const tokenDetails = await resp.json()
 
+        console.log("Token details is", tokenDetails);
+
         const summary = tokenDetails;
 
         const readableNames = {
@@ -83,6 +85,7 @@
     import TokenInfoTable from "$lib/content/TokeninfoTable.svelte";
     import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
 	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
+    import {getTokenStandardName} from "$lib/chain/tokenstandard";
 
     export let summary;
     export let chain_slug;
@@ -91,13 +94,17 @@
     export let auxiliarData;
     export let token_address;
 
+    export let tokenStandardName;
+
+    $: tokenStandardName = getTokenStandardName(summary.chain_slug);
+
 </script>
 
 <svelte:head>
 	<title>
-      {summary.symbol} token
+      {summary.symbol} on ${summary.chain_name}
     </title>
-	<meta name="description" content={`${summary.name} (${summary.symbol} token`}>
+	<meta name="description" content={`${summary.name} (${summary.symbol} ${tokenStandardName} on ${summary.chain_name}`}>
 </svelte:head>
 
 <div class="container">
@@ -117,6 +124,13 @@
             <div class="col-lg-5">
                 <TokenInfoTable {summary} />
             </div>
+        </div>
+
+        <div class="col-lg-7">
+            <p>
+                <strong>{summary.name}</strong> is a {tokenStandardName} token on
+                <a class=body-link href="/trading-view/{chain_slug}">{summary.chain_name} blockchain</a>.
+            </p>
         </div>
     </div>
 

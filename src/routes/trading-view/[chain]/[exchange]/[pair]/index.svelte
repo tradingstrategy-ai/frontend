@@ -294,10 +294,17 @@
     // when converted to USD.
     export let ridiculousPrice = summary.usd_price_latest < 0.000001;
 
+    export let baseTokenName, quoteTokenName;
+
     // console.log("Trading link", tradingLink);
 
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+
+    // TODO: Fix this in the data source
+    $: {
+        [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
+    }
 
     $: reloadCandlesOnBucketChange(bucket);
 
@@ -326,12 +333,6 @@
             </div>
         </div>
 
-        {#if ridiculousPrice}
-            <div class="alert alert-danger">
-                This trading pair is using such ridiculous price units that we cannot display the price data properly.
-            </div>
-        {/if}
-
         <div class="row">
 
             <div class="col-lg-5">
@@ -341,12 +342,28 @@
             <div class="col-lg-7">
 
                 <p>
-                    The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
+                    The token pair
+
+                    <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+                        {baseTokenName}
+                    </a>
+
+                    –
+
+                    <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+                        {quoteTokenName}
+                    </a>
+
+                    trades as the ticker
+
+                    <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
                     on <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
                 </p>
 
                 <p>
-                    The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
+                    The price of <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+                        {summary.base_token_symbol}
+                    </a> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
                     <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> against US Dollar for the last 24h.
                 </p>
 
@@ -364,6 +381,13 @@
                         {summary.quote_token_symbol_friendly} is <a href={details.quote_token_explorer_link} class="body-link">{summary.quote_token_address}</a>.
                     </p>
                 {/if}
+
+                {#if ridiculousPrice}
+                    <div class="alert alert-danger">
+                        This trading pair is using unconventional price units that could prevent displaying the price data properly.
+                    </div>
+                {/if}
+
             </div>
         </div>
     </div>
