@@ -12,6 +12,7 @@
     import { backendUrl } from '$lib/config';
 
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import {getTokenTaxInformation} from "$lib/helpers/tokentax";
 
     /**
      * On the server-side, we load only pair details.
@@ -59,7 +60,9 @@
             [pair_slug]: pairDetails.summary.pair_name
         };
 
+        const tokenTax = getTokenTaxInformation(details);
 
+        console.log("Token tax", tokenTax);
 
         return {
             // Cache the pair data pages for 30 minutes at the Cloudflare edge,
@@ -73,7 +76,8 @@
                 summary,
                 details,
                 daily,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
+				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
+                tokenTax,
             }
         }
     }
@@ -92,12 +96,14 @@
     import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
     import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
     import RelativeDate from "$lib/blog/RelativeDate.svelte";
+    import type { TokenTax } from "$lib/helpers/tokentax";
 
     export let exchange_slug;
     export let chain_slug;
     export let summary; // PairSummary OpenAPI
     export let details; // PairAdditionalDetails OpenAPI
     export let breadcrumbs;
+    export let tokenTax: TokenTax;
 
     export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
@@ -336,7 +342,7 @@
         <div class="row">
 
             <div class="col-lg-5">
-                <PairInfoTable {summary} {details} />
+                <PairInfoTable {summary} {details} {tokenTax} />
             </div>
 
             <div class="col-lg-7">
@@ -380,13 +386,28 @@
                     </p>
                 {/if}
 
-                {#if ridiculousPrice}
-                    <div class="alert alert-danger">
-                        This trading pair is using low digit price units that may prevent displaying the price data properly.
-                    </div>
-                {/if}
+
 
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {#if tokenTax.broken }
+                <div class="alert alert-danger">
+                    ⚠️ This token is unlikely to be tradeable.
+                    <a rel="external" class="body-link" href="https://tradingstrategy.ai/docs/programming/token-tax.html">
+                        Read more about tokens being broken, malicious or honeypots.
+                    </a>
+                </div>
+            {/if}
+
+            {#if ridiculousPrice}
+                <div class="alert alert-danger">
+                    ⚠️ This trading pair is using low digit price units that may prevent displaying the price data properly.
+                </div>
+            {/if}
         </div>
     </div>
 

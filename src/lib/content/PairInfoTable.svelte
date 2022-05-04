@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
 
 
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
+    import type { TokenTax } from "./TokenTaxInfoLine.svelte";
+    import TokenTaxInfoLine from "$lib/content/TokenTaxInfoLine.svelte";
 
 
     export let summary;
     export let details;
+    export let tokenTax: TokenTax;
 
     /**
      * Reverse-calculate raw price using the US/quota token exchange rate
@@ -96,8 +99,10 @@
     {/if}
 
     <tr>
-        <th>Trading pair</th>
-        <td>{summary.pair_symbol}</td>
+        <th>Token tax</th>
+        <td>
+            <TokenTaxInfoLine {tokenTax} />
+        </td>
     </tr>
 
     <tr>
@@ -117,7 +122,9 @@
     <tr>
         <th>Internal id</th>
         <td>
-            {summary.pair_id}
+            <a rel="external" href="https://tradingstrategy.ai/docs/programming/internal-id.html">
+                {summary.pair_id}
+            </a>
         </td>
     </tr>
 </table>
