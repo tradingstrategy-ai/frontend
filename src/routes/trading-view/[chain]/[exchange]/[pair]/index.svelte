@@ -91,7 +91,7 @@
     import type { TokenTax } from "$lib/helpers/tokentax";
     import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
     import ChartIQ from "$lib/chart/ChartIQ.svelte";
-    import feed from '$lib/chart/feed';
+    import quoteFeed from '$lib/chart/quoteFeed';
 
     export let exchange_slug;
     export let chain_slug;
@@ -229,7 +229,11 @@
     <h3>Price and volume chart</h3>
 
     <div class="chart-wrapper">
-        <ChartIQ {feed} pairId={summary.pair_id} timeBucket={bucket}>
+        <ChartIQ
+            feed={quoteFeed('price')}
+            pairId={summary.pair_id}
+            timeBucket={bucket}
+        >
             ChartIQ not available
         </ChartIQ>
         <p class="chart-help-text">
@@ -243,6 +247,13 @@
     <h3>Liquidity chart</h3>
 
     <div class="chart-wrapper">
+        <ChartIQ
+            feed={quoteFeed('liquidity')}
+            pairId={summary.pair_id}
+            timeBucket={bucket}
+        >
+            ChartIQ not available
+        </ChartIQ>
         <p class="chart-help-text">
             Available liquidity expressed as
             <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
