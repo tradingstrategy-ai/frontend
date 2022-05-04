@@ -9,7 +9,7 @@
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
 	export let orderColumnIndex = 2;
 	export let orderColumnDirection = 'desc';
-	export let pageLength = 50;
+	export let pageLength = 20;
 
 	const availableColumns = {
 		name: {

@@ -9,6 +9,8 @@
 			'trading-view': 'Trading data',
 			exchanges: 'Decentralised exchanges',
 			ethereum: 'Ethereum',
+			binance: 'Binance',
+			polygon: 'Polygon',
 			tokens: 'Tokens'
 		};
 

@@ -36,6 +36,11 @@
 
         const readableNames = {
             "trading-view": "Trading data",
+            "binance": "Binance",
+            "bittrex": "Bittrex",
+            "ethereum": "Ethereum",
+            "binence": "Binance",
+            "polygon": "Polygon",
         };
         readableNames[slug] = details.chain_name;
 
