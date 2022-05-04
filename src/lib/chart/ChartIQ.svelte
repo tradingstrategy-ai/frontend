@@ -63,6 +63,7 @@ chartiq dependency.
   export let pairId: number;
   export let timeBucket: TimeBucket;
   export let studies = [];
+  export let linker = null;
 
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
@@ -75,39 +76,47 @@ chartiq dependency.
   function chartIQ(node, { pairId, periodicity }) {
     let prevPairId = pairId;
 
-    const stxx = new CIQ.ChartEngine({
+    let chartEngine = new CIQ.ChartEngine({
       container: node,
       ...chartOptions
     });
 
     for (const study of studies) {
-      CIQ.Studies.addStudy(stxx, study);
+      CIQ.Studies.addStudy(chartEngine, study);
     }
 
     // match the current price label precision to other yAxis labels
-    stxx.addEventListener('symbolChange', () => {
-      stxx.chart.yAxis.maxDecimalPlaces = stxx.chart.yAxis.printDecimalPlaces;
+    chartEngine.addEventListener('symbolChange', () => {
+      chartEngine.chart.yAxis.maxDecimalPlaces = chartEngine.chart.yAxis.printDecimalPlaces;
     });
 
     // cancel mouseWheel zoom unless a modifier key is pressed
-    stxx.prepend('mouseWheel', function(event) {
+    chartEngine.prepend('mouseWheel', function(event) {
       const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
       const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
       return !modifierPressed && verticalScroll;
     });
 
-    stxx.attachQuoteFeed(feed, {});
-    stxx.loadChart(pairId, { periodicity });
+    linker?.add(chartEngine);
+
+    chartEngine.attachQuoteFeed(feed, {});
+    chartEngine.loadChart(pairId, { periodicity });
 
     function update({ pairId, periodicity }) {
       if (pairId !== prevPairId) {
-        stxx.loadChart(pairId);
+        chartEngine.loadChart(pairId);
         prevPairId = pairId;
       }
-      stxx.setPeriodicity(periodicity);
+      chartEngine.setPeriodicity(periodicity);
     }
 
-    return { update };
+    function destroy() {
+      linker?.remove(chartEngine);
+      chartEngine.destroy();
+      chartEngine = null;
+    }
+
+    return { update, destroy };
   }
 </script>
 

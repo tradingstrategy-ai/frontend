@@ -85,13 +85,14 @@
     import { formatPriceChange } from '$lib/helpers/formatters';
     import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import PairInfoTable from "$lib/content/PairInfoTable.svelte";
-    import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
-    import RelativeDate from "$lib/blog/RelativeDate.svelte";
-    import type { TokenTax } from "$lib/helpers/tokentax";
-    import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
-    import ChartIQ from "$lib/chart/ChartIQ.svelte";
+    import PairInfoTable from '$lib/content/PairInfoTable.svelte';
+    import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
+    import RelativeDate from '$lib/blog/RelativeDate.svelte';
+    import type { TokenTax } from '$lib/helpers/tokentax';
+    import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
+    import ChartIQ from '$lib/chart/ChartIQ.svelte';
     import quoteFeed from '$lib/chart/quoteFeed';
+    import ChartLinker from '$lib/chart/ChartLinker';
 
     export let exchange_slug;
     export let chain_slug;
@@ -115,6 +116,8 @@
 
     // TODO: Fix this in the data source
     $: [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
+
+    const chartLinker = new ChartLinker();
 </script>
 
 <svelte:head>
@@ -232,6 +235,7 @@
             pairId={summary.pair_id}
             timeBucket={bucket}
             studies={['Volume Underlay']}
+            linker={chartLinker}
         >
             ChartIQ not available
         </ChartIQ>
@@ -251,6 +255,7 @@
             pairId={summary.pair_id}
             timeBucket={bucket}
             studies={['Liquidity AR']}
+            linker={chartLinker}
         >
             ChartIQ not available
         </ChartIQ>
