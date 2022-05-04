@@ -377,14 +377,12 @@
                 {#if details.pair_contract_address }
                     <p>
                         The trading pair pool smart contract is at address <a href={details.pair_explorer_link} class="body-link">{details.pair_contract_address}</a>.
-                        {summary.base_token_symbol_friendly} is  <a href={details.base_token_explorer_link} class="body-link">{summary.base_token_address}</a> and
-                        {summary.quote_token_symbol_friendly} is <a href={details.quote_token_explorer_link} class="body-link">{summary.quote_token_address}</a>.
                     </p>
                 {/if}
 
                 {#if ridiculousPrice}
                     <div class="alert alert-danger">
-                        This trading pair is using unconventional price units that could prevent displaying the price data properly.
+                        This trading pair is using low digit price units that may prevent displaying the price data properly.
                     </div>
                 {/if}
 

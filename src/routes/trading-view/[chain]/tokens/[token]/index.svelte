@@ -135,7 +135,7 @@
 
                 <p>
                     <strong>{summary.name}</strong> token supply is
-                    {summary.total_supply}
+                    {formatAmount(parseFloat(summary.total_supply))}
                     <strong>{summary.symbol}s</strong>.
                 </p>
 
@@ -180,6 +180,9 @@
         <p>
             <small>
                 * Trading pairs with complications, like the lack of liquidity, might not be displayed.
+                <a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html">
+                    Read the rules for tracked trading pairs.
+                </a>
             </small>
         </p>
     </div>
@@ -220,7 +223,6 @@
     small {
         opacity: 0.3;
     }
-
     /**
      * Prevent CLS issues on desktop
      *

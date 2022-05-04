@@ -1,6 +1,9 @@
 <script>
-    import { formatDollar, formatShortAddress } from "$lib/helpers/formatters";
+    import { formatDollar, formatShortAddress, formatAmount } from "$lib/helpers/formatters";
+    import { getTokenStandardName } from "$lib/chain/tokenstandard";
     export let summary;
+
+    $: tokenStandardName = getTokenStandardName(summary.chain_slug);
 
 </script>
 
@@ -15,11 +18,11 @@
     </tr>
     <tr>
         <th>Total Supply</th>
-        <td>{summary.total_supply} {summary.symbol}</td>
+        <td>{formatAmount(parseFloat(summary.total_supply))} {summary.symbol}</td>
     </tr>
     <tr>
         <th>Standard</th>
-        <td>ERC-20 token</td>
+        <td>{tokenStandardName}</td>
     </tr>
     <tr>
         <th>Available liquidity</th>
@@ -38,7 +41,7 @@
     </tr>
 
     <tr>
-        <th>Address</th>
+        <th>Contract address</th>
         <td>
             <a href={summary.explorer_link}>
                 {formatShortAddress(summary.address)}
