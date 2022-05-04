@@ -9,7 +9,7 @@
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
 	export let orderColumnIndex = 2;
 	export let orderColumnDirection = 'desc';
-	export let pageLength = 20;
+	export let pageLength = 50;
 
 	const availableColumns = {
 		name: {
@@ -102,6 +102,11 @@
 
 			if (response.ok) {
 				const result = await response.json();
+				callback({
+					recordsTotal: result.total,
+					recordsFiltered: result.total,
+					data: result
+				});
 			} else {
 				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
 				callback({
