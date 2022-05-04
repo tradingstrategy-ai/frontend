@@ -108,9 +108,7 @@
     // Ridiculous token price warning.
     // It is common with scam tokens to price the token super low so that prices are not readable
     // when converted to USD.
-    export let ridiculousPrice = summary.usd_price_latest < 0.000001;
-
-    export let baseTokenName, quoteTokenName;
+    $: ridiculousPrice = summary.usd_price_latest < 0.000001;
 
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
