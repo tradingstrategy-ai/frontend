@@ -39,17 +39,19 @@ chartiq dependency.
   }
 
   async function importJs() {
-    const [ chartiqJs, standardJs, volumeJs] = await Promise.all([
+    const [ chartiqJs, standardJs, studies] = await Promise.all([
       importMod('js/chartiq.js'),
       importMod('js/standard.js'),
-      import('./volumeStudy')
+      import('./studies')
     ]);
 
     CIQ = chartiqJs.CIQ;
     CIQ.activateImports(standardJs.quoteFeed);
 
-    const volumeStudy = volumeJs.default(CIQ);
-    CIQ.Studies.studyLibrary[volumeStudy.name] = volumeStudy;
+    for (const key in studies) {
+      const study = studies[key](CIQ);
+      CIQ.Studies.studyLibrary[study.name] = study;
+    }
   }
 </script>
 
@@ -60,6 +62,7 @@ chartiq dependency.
   export let feed: object;
   export let pairId: number;
   export let timeBucket: TimeBucket;
+  export let studies = [];
 
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
@@ -77,7 +80,9 @@ chartiq dependency.
       ...chartOptions
     });
 
-    CIQ.Studies.addStudy(stxx, 'Volume Underlay');
+    for (const study of studies) {
+      CIQ.Studies.addStudy(stxx, study);
+    }
 
     // match the current price label precision to other yAxis labels
     stxx.addEventListener('symbolChange', () => {

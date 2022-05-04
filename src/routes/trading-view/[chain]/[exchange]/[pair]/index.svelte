@@ -233,6 +233,7 @@
             feed={quoteFeed('price')}
             pairId={summary.pair_id}
             timeBucket={bucket}
+            studies={['Volume Underlay']}
         >
             ChartIQ not available
         </ChartIQ>
@@ -251,6 +252,7 @@
             feed={quoteFeed('liquidity')}
             pairId={summary.pair_id}
             timeBucket={bucket}
+            studies={['Liquidity AR']}
         >
             ChartIQ not available
         </ChartIQ>

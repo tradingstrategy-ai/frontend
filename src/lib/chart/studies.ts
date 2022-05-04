@@ -2,7 +2,8 @@
  * Custom Volume Underlay study. See:
  * https://documentation.chartiq.com/tutorial-Using%20and%20Customizing%20Studies%20-%20Creating%20New%20Studies.html
  */
-export default function(CIQ) {
+
+export function volumeStudy(CIQ) {
   return {
     name: 'Volume Underlay',
     seriesFN: CIQ.Studies.createVolumeChart,
@@ -12,6 +13,7 @@ export default function(CIQ) {
       'Up Volume': '#458b00',
       'Down Volume': '#cc0000'
     },
+    parameters: { widthFactor: 0.95 },
     range: '0 to max',
     yAxis: {
       ground: true,
@@ -19,11 +21,27 @@ export default function(CIQ) {
       position: 'none',
       heightFactor: 0.25,
     },
-    underlay: true,
-    customRemoval: true,
-    removeFN: (stx) => {
-      stx.layout.volumeUnderlay = false;
-      stx.changeOccurred('layout');
-    }
+    underlay: true
+  };
+}
+
+export function liquidityStudy(CIQ) {
+  return {
+    name: 'Liquidity AR',
+    seriesFN: CIQ.Studies.displaySeriesAsHistogram,
+    inputs: { HistogramType: 'stacked' },
+    outputs: {
+      av: '#458b00',
+      rv: '#cc0000'
+    },
+    parameters: { widthFactor: 0.95 },
+    range: '0 to max',
+    yAxis: {
+      ground: true,
+      initialMarginTop: 0,
+      position: 'none',
+      heightFactor: 0.5,
+    },
+    underlay: true
   };
 }

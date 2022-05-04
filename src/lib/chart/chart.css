@@ -25,7 +25,7 @@
 .stx_volume_underlay_up,
 .stx_volume_underlay_down {
 	border-left-color: var(--background-color);
-	opacity: 0.4;
+	opacity: 0.3;
 }
 
 .stx_grid {
