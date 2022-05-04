@@ -4,18 +4,6 @@
 Present token tax in the user interface as buy tax / transfer tax / sell tax tuple.
 Links to the documentation.
 
-Values for error code:
-
-    lack_of_liquidity = 999
-    contract_logic_failed = 998
-    router_info_missing = 997
-    transfer_from_failed = 996
-    out_of_gas_during_transfer = 995
-    sell_failed = 994
-    out_of_gas_during_sell = 993
-    approval_failure = 992
-    unsupported_quote_token = 991
-
 -->
 
 <script lang="ts">
@@ -41,6 +29,8 @@ Values for error code:
         {:else}
             N/A (no liquidity)
         {/if}
+    {:else if tokenTax.routerIssue }
+        N/A (no routing)
     {:else if tokenTax.measurementIssue}
         Token not tradeable
     {:else if tokenTax.maxTax > 0 }

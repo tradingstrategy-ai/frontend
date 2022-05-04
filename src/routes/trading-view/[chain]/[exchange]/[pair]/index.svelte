@@ -386,8 +386,6 @@
                     </p>
                 {/if}
 
-
-
             </div>
         </div>
     </div>
@@ -399,7 +397,8 @@
                     ⚠️ This token is unlikely to be tradeable.
                     <a rel="external" class="body-link" href="https://tradingstrategy.ai/docs/programming/token-tax.html">
                         Read more about tokens being broken, malicious or honeypots.
-                    </a>
+                    </a>.
+                    Error code <strong>{tokenTax.sellTax}<strong>.
                 </div>
             {/if}
 
