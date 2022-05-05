@@ -25,7 +25,7 @@ export const buildBreadcrumbs = (pagePath: string, readableNames) => {
     return breadCrumbs;
 }
 const breadcrumbTranslations = {
-    'trading-view': 'Trading Data',
+    'trading-view': 'Trading data',
     'backtesting': 'Historical data',
     exchanges: 'Exchanges',
     community: 'Community',
