@@ -1,16 +1,21 @@
+<!--
+@component
+SvelteKit does not provide a load indicator when you navigate to a page with
+slow `load()` function. SvelteKit uses an internal router, not server-side
+loading. Thus, we need to manually provide some indication in the UI if page
+exceeds a tenth of a second. Component is absolutely positioned – include it
+anywhere in `__layout.svelte`.
+
+Based on the original implementation by Shajid Hasan:
+https://github.com/shajidhasan/sveltekit-page-progress-demo
+
+#### Usage:
+```tsx
+<PageLoadProgressBar />
+```
+-->
 <script>
-    /**
-     * Svelte does not give a load indication if you hit a link that leads to a page with slow load() function.
-     * Svelte uses internal router, not server-side loading.
-	 * Thus, we need to manually give some indication in the user interface if the loading takes more than a blink of an eye.
-	 *
-	 * The component is originally made for https://tradingstrategy.ai
-	 *
-	 * Based on the original implementation https://github.com/shajidhasan/sveltekit-page-progress-demo by Shajid Hasan.
-	 *
-	 * As this component is absolutely position, you can put it at any part of your __layout.svelte.
-     */
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -23,12 +28,7 @@
 	});
 
 	const unsubscribe = navigationState.subscribe((state) => {
-
-		// You will always get state=undefined
-		// event on the server-side rendering, so
-		// safely ignore it
-		//console.log("The loading state is", state);
-
+		// `state` will always be `undefined` for SSR, so safely ignore it
 		if (state === 'loading-with-progress-bar') {
 			progress.set(0, { duration: 0 });
 			progress.set(0.8, { duration: 5000 });
@@ -37,33 +37,25 @@
 		}
 	});
 
-	onMount(() => {
-		// progress.set(0.7);
-	});
-	onDestroy(() => {
-		unsubscribe();
-	});
+	function handleNavStart() {
+		// Don't show progress bar if the page loads fast enough in preloading state
+		$navigationState = 'preloading';
+
+		// Display progress bar if page load > 250 ms
+		setTimeout(function() {
+			if ($navigationState === 'preloading') {
+				$navigationState = 'loading-with-progress-bar';
+			}
+		}, 500);
+	}
+
+	onDestroy(unsubscribe);
 </script>
 
 <!-- See the (little) documentation of special SvelteKit events here https://kit.svelte.dev/docs#events -->
 <svelte:window
-	on:sveltekit:navigation-start={() => {
-
-		// If the page loads fast enough in the preloading state,
-		// never display the progress bar
-		$navigationState = 'preloading';
-
-        // Delay the progress bar to become visible an eyeblink... only show if the page load takes too long
-        setTimeout(function() {
-			// After 250ms switch preloading to loading-with-progress-bar
-            if($navigationState === 'preloading') {
-                $navigationState = 'loading-with-progress-bar';
-            }
-        }, 500);
-	}}
-	on:sveltekit:navigation-end={() => {
-		$navigationState = 'loaded';
-	}}
+	on:sveltekit:navigation-start={handleNavStart}
+	on:sveltekit:navigation-end={() => navigationState.set('loaded')}
 />
 
 <!--
