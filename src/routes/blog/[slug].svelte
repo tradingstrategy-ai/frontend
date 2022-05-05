@@ -35,13 +35,13 @@
 </script>
 
 <script lang="ts">
-  import Time from "svelte-time";
   import {onMount, afterUpdate} from "svelte";
   import Sidebar from "$lib/blog/Sidebar.svelte";
-  import Breadcrumb from "$lib/breadcrumb/Breadcrumb.svelte";
   import {slugify} from "$lib/helpers/slugify";
   import { serializePost } from "$lib/helpers/googleMeta";
   import { page } from "$app/stores";
+  import {formatTimeAgo} from "$lib/helpers/formatters";
+  import RelativeDate from "$lib/blog/RelativeDate.svelte";
 
   // TODO: Mobile menu requires hydrate
   // This will prevent any interactive JavaScript to load on blog (as there should be none)
@@ -171,7 +171,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>{post.title}</h1>
+                <!-- --->
             </div>
         </div>
     </div>
@@ -183,12 +183,11 @@
 
     <div class="row">
       <div class="col-lg-9 col-md-12">
-        <!--
+
         <h1>{ post.title }</h1>
-        -->
+
         <p class="text-published text-muted text-sm">
-          {new Date(post.published_at).toDateString()},
-          Published: <Time relative timestamp="{Date.parse(post.published_at)}" />.
+          Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
         </p>
 
         <div class="body-text">
@@ -211,7 +210,7 @@
   }
 
   .heading {
-    min-height: 200px;
+    min-height: 240px;
     padding: 80px 0;
     background-size: cover;
     background-position: center center;

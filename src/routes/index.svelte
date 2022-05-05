@@ -53,10 +53,15 @@
 	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
 	import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte";
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
+    import {goto} from "$app/navigation";
 
 	export let topMomentum;
 	export let impressiveNumbers;
 	export let posts;
+
+    function doSecretNavigation() {
+        goto("/strategy");
+    }
 </script>
 
 <svelte:head>
@@ -66,7 +71,7 @@
 </svelte:head>
 
 <main>
-	<section class="card-home card-jumbo">
+	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation} >
 		<div class="container">
 			<p class="heading-p">Algorithmic trading protocol for decentralised markets</p>
 
@@ -103,15 +108,6 @@
 					<p class="lead coming-soon">
 						Invest in non-custodial, active, trading strategies run by the oracle network.
 					</p>
-
-					<PoolPreviewEthLisbon
-						title="EthLisbon Aave 👻 boosted 🔥 Double Seven"
-						description="A volatility trading strategy that keeps capital accruing interest in Aave USDC pool when the strategy does not have a trading position open."
-						tradesOn="1inch on Polygon"
-						learnLink="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html"
-						preview={true}
-					/>
-
 				</div>
 			</div>
 		</div>

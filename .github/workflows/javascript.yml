@@ -1,4 +1,4 @@
-name: Automated test suite
+name: Cypress integration tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  cypress:
 
     runs-on: ubuntu-latest
 
@@ -15,18 +15,23 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-          npm install
+          npm ci
     - name: Package version check
       run: |
           npm ls
     - name: Checkout submodules
       run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git && git submodule update --init --recursive
+    - name: Checkout executor frontend
+      run: |
+        git clone https://github.com/tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend 
+        cd ../trade-executor-frontend && npm ci
     - name: Run Cypress
       run: |
         bash run-cypress.bash
       env:
         VITE_PUBLIC_GHOST_API_URL: ${{ secrets.VITE_PUBLIC_GHOST_API_URL }}
         VITE_PUBLIC_GHOST_CONTENT_API_KEY : ${{ secrets.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
+        CYPRESS_KEY : ${{ secrets.CYPRESS_KEY }}
     - name: Package for server-side rendering using SvelteKit Node.js adapter
       run: |
         npm run ssr:node

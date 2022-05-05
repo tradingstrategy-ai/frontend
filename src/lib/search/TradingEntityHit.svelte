@@ -1,7 +1,7 @@
 <!--
 @component
-Used for simple search results from top-nav; displays a single `$tradingEntity`
-search result line item.
+Used for displaying search results; displays a single `$tradingEntity` result
+line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 #### Usage:
 ```tsx
@@ -30,10 +30,12 @@ search result line item.
   export let selected = false;
 
   const label = document.type === "exchange" ? "DEX" : document.type;
+
   const isBasicLayout = layout === "basic";
   const isAdvancedLayout = layout === "advanced";
   const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
-
+  const hasPriceChange = Number.isFinite(document.price_change_24h);
+  const hasValidPrice = document.price_usd_latest > 0;
   const hasTradingData = [
     document.liquidity, document.volume_24h, document.price_change_24h
   ].some(Number.isFinite);
@@ -53,9 +55,9 @@ search result line item.
             <div class="d-flex flex-grow-1">
                 <div class="desc flex-grow-1">{document.description}</div>
 
-                {#if isBasicLayout && !isLowQuality && Number.isFinite(document.price_change_24h)}
+                {#if isBasicLayout && !isLowQuality && hasPriceChange}
                     <div class="price-change {priceChangeClass}">{priceChangePct}</div>
-                {:else if isAdvancedLayout && hasTradingData}
+                {:else if isAdvancedLayout && hasValidPrice}
                     <div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
                 {/if}
             </div>
@@ -71,7 +73,9 @@ search result line item.
                         <dd>{formatDollar(document.liquidity)}</dd>
                     </div>
                     <div class="price-change">
-                        <dd class="{priceChangeClass}">{formatPriceChange(document.price_change_24h)}</dd>
+                        <dd class="{priceChangeClass}">
+                            {hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
+                        </dd>
                     </div>
                 </div>
             {/if}

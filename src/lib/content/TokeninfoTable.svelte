@@ -1,5 +1,10 @@
 <script>
+    import { formatDollar, formatShortAddress, formatAmount } from "$lib/helpers/formatters";
+    import { getTokenStandardName } from "$lib/chain/tokenstandard";
     export let summary;
+
+    $: tokenStandardName = getTokenStandardName(summary.chain_slug);
+
 </script>
 
 <table class="table">
@@ -13,11 +18,35 @@
     </tr>
     <tr>
         <th>Total Supply</th>
-        <td>{summary.total_supply} {summary.symbol}</td>
+        <td>{formatAmount(parseFloat(summary.total_supply))} {summary.symbol}</td>
     </tr>
     <tr>
         <th>Standard</th>
-        <td>ERC-20 token</td>
+        <td>{tokenStandardName}</td>
+    </tr>
+    <tr>
+        <th>Available liquidity</th>
+        <td>{formatDollar(summary.liquidity_latest)}</td>
+    </tr>
+    <tr>
+        <th>Volume 24h</th>
+        <td>{formatDollar(summary.volume_24h)}</td>
+    </tr>
+
+    <tr>
+        <th>Blockchain</th>
+        <td>
+            <a href="/trading-view/{summary.chain_slug}">{summary.chain_name}</a>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Contract address</th>
+        <td>
+            <a href={summary.explorer_link}>
+                {formatShortAddress(summary.address)}
+            </a>
+        </td>
     </tr>
 
 </table>

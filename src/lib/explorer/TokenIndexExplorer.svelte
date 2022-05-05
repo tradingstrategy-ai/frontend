@@ -1,35 +1,21 @@
 <script>
 	/**
 	 * Tokens Explorer
-	 *
 	 */
-
 	import Datatable from '$lib/datatable/datatable.svelte';
-
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { backendUrl } from '$lib/config';
-
-	// The chain slug for which the exchanges pairs are rendered like ["binance"]
 	export let chainSlug = null;
-
-	// What columns we will show in the explorer.
-	// See allColumns for options.
-	export let enabledColumns = ['name', 'symbol'];
-
-	export let orderColumnIndex = 2;
-
+	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
+	export let orderColumnIndex = 3;
 	export let orderColumnDirection = 'desc';
 
-	// https://tradingstrategy.ai/api/tokens/
-	// See
-	// https://datatables.net/reference/option/columns
-	// https://datatables.net/reference/option/columns.render
-	// https://datatables.net/reference/option/columns.type
 	const availableColumns = {
 		name: {
 			name: 'Name',
 			className: 'col-token',
 			data: 'name',
-
+			orderable: false,
 			render: function (data, type, row, meta) {
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.name}</a>`;
 			}
@@ -38,29 +24,63 @@
 			name: 'Symbol',
 			className: 'col-symbol',
 			data: 'symbol',
+			orderable: false,
 			render: function (data, type, row, meta) {
 				return `<a href="/trading-view/${chainSlug}/tokens/${row.address}">${row.symbol}</a>`;
+			}
+		},
+		liquidity_latest: {
+			name: 'Liq 24h Δ',
+			data: 'liquidity_latest',
+			className: 'col-liquidity-change',
+			serverSideSortKey: 'liquidity_latest',
+			type: 'num',
+			render: function (data, type, row, meta) {
+				return formatDollar(data);
+			}
+		},
+		volume_24h: {
+			name: 'Volume 24h (USD)',
+			data: 'volume_24h',
+			className: 'col-volume',
+			serverSideSortKey: 'volume_24h',
+			type: 'num',
+			render: function (data, type, row, meta) {
+				return formatDollar(data);
 			}
 		}
 	};
 
-	// Build columns based on the component arguments
-	const columns = [];
-	for (const columnName of enabledColumns) {
-		const column = availableColumns[columnName];
-		if (!column) {
-			throw new Error(`Unknown column: ${columnName}`);
-		}
-		columns.push(column);
+	function getAjaxParams(data) {
+		const sortColumnIndex = data.order[0].column;
+		const sortKey = columns[sortColumnIndex].serverSideSortKey;
+
+		const params = {
+			chain_slug: chainSlug,
+			sort: sortKey
+		};
+
+		return JSON.parse(JSON.stringify(params));
 	}
 
+	async function decodeAjaxError(resp) {
+		const errorDetails = await resp.json();
+		return `${resp.statusText} ${errorDetails.message}`;
+	}
+
+	const columns = enabledColumns.map((columnName) => {
+		if (!availableColumns[columnName]) {
+			throw new Error(`Unknown column: ${columnName}`);
+		}
+		return availableColumns[columnName];
+	});
+
 	const options = {
-		order: [[orderColumnIndex, orderColumnDirection]],
+		order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
-		serverSide: false,
+		serverSide: true,
 		lengthChange: false,
 		scrollX: false,
-
 		/**
 		 *
 		 * AJAX data fetch hook for Datatables
@@ -72,39 +92,25 @@
 		 * @param settings Setting for the table: https://datatables.net/reference/type/DataTables.Settings
 		 */
 		ajax: async function (data, callback, settings) {
-			const params = {};
+			const urlParams = new URLSearchParams(getAjaxParams(data));
+			const url = `${backendUrl}/tokens?${urlParams}`;
+			const response = await fetch(url);
 
-			if (chainSlug) {
-				params.chain_slug = chainSlug;
+			if (response.ok) {
+				const result = await response.json();
+				callback({
+					recordsTotal: result.total,
+					recordsFiltered: result.total,
+					data: result
+				});
+			} else {
+				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
+				callback({
+					data: [],
+					recordsTotal: 0,
+					recordsFiltered: 0
+				});
 			}
-
-			// https://tradingstrategy.ai/api/explorer/#/Token/web_tokens
-			const encoded = new URLSearchParams({chain_slug: params.chain_slug});
-			const url = `${backendUrl}/tokens?${encoded}`;
-			const resp = await fetch(url);
-
-			if (!resp.ok) {
-				// Decode 422 invalid input parameter error from the server
-				// with JSON payload
-				let errorDetails;
-				try {
-					// GenericErrorModel in OpenAPI
-					errorDetails = await resp.json();
-					callback({ error: errorDetails.message });
-				} catch (e) {}
-
-				console.log('API error:', resp, 'error details:', errorDetails);
-				return;
-			}
-
-			const result = await resp.json();
-			console.log('Got token result', result);
-
-			result.recordsTotal = result.length;
-			result.recordsFiltered = result.length;
-			result.data = result;
-
-			callback(result);
 		}
 	};
 </script>

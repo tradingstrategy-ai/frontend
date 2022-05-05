@@ -12,6 +12,7 @@
     import { backendUrl } from '$lib/config';
 
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import {getTokenTaxInformation} from "$lib/helpers/tokentax";
 
     /**
      * On the server-side, we load only pair details.
@@ -59,7 +60,9 @@
             [pair_slug]: pairDetails.summary.pair_name
         };
 
+        const tokenTax = getTokenTaxInformation(details);
 
+        console.log("Token tax", tokenTax);
 
         return {
             // Cache the pair data pages for 30 minutes at the Cloudflare edge,
@@ -73,7 +76,8 @@
                 summary,
                 details,
                 daily,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
+				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
+                tokenTax,
             }
         }
     }
@@ -81,25 +85,26 @@
 
 <script lang="ts">
 
-    import Time from "svelte-time";
-    import {formatDollar, formatUnixTimestamp, parseUTCTime} from '$lib/helpers/formatters';
+    import {formatDollar, formatUnixTimestamp, parseUTCTime, formatTimeAgo} from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
-    import { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
+    import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
     import { browser } from '$app/env';
-
-    import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-    import CandleStickChart from '$lib/chart/CandleStickChart.svelte';
-    import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairInfoTable from "$lib/content/PairInfoTable.svelte";
-    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
     import {onMount} from "svelte";
+    import CandleStickChart from "$lib/chart/CandleStickChart.svelte";
+    import LiquidityChart from "$lib/chart/LiquidityChart.svelte";
+    import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
+    import RelativeDate from "$lib/blog/RelativeDate.svelte";
+    import type { TokenTax } from "$lib/helpers/tokentax";
+    import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
 
     export let exchange_slug;
     export let chain_slug;
     export let summary; // PairSummary OpenAPI
     export let details; // PairAdditionalDetails OpenAPI
     export let breadcrumbs;
+    export let tokenTax: TokenTax;
 
     export let hourly, daily, weekly, monthly; // TimeSpanTradeData OpenAPI
 
@@ -229,8 +234,8 @@
      */
     async function reloadCandlesOnBucketChange(bucket: string) {
 
-        if(!bucket) {
-            // Only start loading after we get a valid bucket on the client side
+        // Only start loading after we get a valid bucket on the client side
+        if (!(browser && bucket)) {
             return;
         }
 
@@ -296,10 +301,17 @@
     // when converted to USD.
     export let ridiculousPrice = summary.usd_price_latest < 0.000001;
 
+    export let baseTokenName, quoteTokenName;
+
     // console.log("Trading link", tradingLink);
 
     // Price text
     $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+
+    // TODO: Fix this in the data source
+    $: {
+        [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
+    }
 
     $: reloadCandlesOnBucketChange(bucket);
 
@@ -328,45 +340,74 @@
             </div>
         </div>
 
-        {#if ridiculousPrice}
-            <div class="alert alert-danger">
-                This trading pair is using such ridiculous price units that we cannot display the price data properly.
-            </div>
-        {/if}
-
         <div class="row">
 
             <div class="col-lg-5">
-                <PairInfoTable {summary} {details} />
+                <PairInfoTable {summary} {details} {tokenTax} />
             </div>
 
             <div class="col-lg-7">
 
                 <p>
-                    The trading pair <strong>{summary.pair_name}</strong> trades as the ticker <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
+                    The token pair
+
+                    <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+                        {baseTokenName}
+                    </a>
+
+                    –
+
+                    <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+                        {quoteTokenName}
+                    </a>
+
+                    trades as the ticker
+
+                    <strong>{summary.pair_symbol}</strong> on <a class=body-link href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
                     on <a class=body-link href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
                 </p>
 
                 <p>
-                    The price of <strong>{summary.base_token_symbol_friendly}</strong> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
+                    The price of <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+                        {summary.base_token_symbol}
+                    </a> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
                     <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> against US Dollar for the last 24h.
                 </p>
 
                 <p>
                     The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with <strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
 
-                    The trading of {summary.pair_symbol} started at <strong><Time relative timestamp="{Date.parse(details.first_trade_at)}" /></strong>.
-                    The last trade was seen less than <strong><Time relative timestamp="{Date.parse(details.last_trade_at)}" /></strong>.
+                    The trading of {summary.pair_symbol} started at <strong><RelativeDate timestamp={details.first_trade_at} /></strong>.
+                    The last trade was seen less than <strong><RelativeDate hours timestamp={details.last_trade_at} /></strong>.
                 </p>
 
                 {#if details.pair_contract_address }
                     <p>
                         The trading pair pool smart contract is at address <a href={details.pair_explorer_link} class="body-link">{details.pair_contract_address}</a>.
-                        {summary.base_token_symbol_friendly} is  <a href={details.base_token_explorer_link} class="body-link">{summary.base_token_address}</a> and
-                        {summary.quote_token_symbol_friendly} is <a href={details.quote_token_explorer_link} class="body-link">{summary.quote_token_address}</a>.
                     </p>
                 {/if}
+
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {#if tokenTax.broken }
+                <div class="alert alert-danger">
+                    ⚠️ This token is unlikely to be tradeable.
+                    <a rel="external" class="body-link" href="https://tradingstrategy.ai/docs/programming/token-tax.html">
+                        Read more about tokens being broken, malicious or honeypots.
+                    </a>.
+                    Error code <strong>{tokenTax.sellTax}<strong>.
+                </div>
+            {/if}
+
+            {#if ridiculousPrice}
+                <div class="alert alert-danger">
+                    ⚠️ This trading pair is using low digit price units that may prevent displaying the price data properly.
+                </div>
+            {/if}
         </div>
     </div>
 
@@ -376,7 +417,7 @@
                 <a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol_friendly}</a>
                 <a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol_friendly}</a>
                 <a href={details.explorer_link} class="btn btn-primary">Blockchain explorer</a>
-                <a href="/trading-view/backtesting" class="btn btn-primary">Download historical data</a>
+                <a href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data" class="btn btn-primary">{summary.pair_symbol} API and historical data</a>
             </div>
         </div>
     </div>
@@ -436,7 +477,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <style>
