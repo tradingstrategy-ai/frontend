@@ -56,3 +56,7 @@
 	border-left: dashed rgba(0, 0, 0, 0.5) 1px;
 	background-color: transparent;
 }
+
+.mSticky {
+	display: none !important;
+}
