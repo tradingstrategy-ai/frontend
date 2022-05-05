@@ -105,7 +105,7 @@
 				callback({
 					recordsTotal: result.total,
 					recordsFiltered: result.total,
-					data: result
+					data: result.result
 				});
 			} else {
 				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
