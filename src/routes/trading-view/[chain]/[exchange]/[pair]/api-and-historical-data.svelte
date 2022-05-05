@@ -1,0 +1,104 @@
+<!--
+
+Real time examples for the API
+
+-->
+<script context="module">
+
+    import { backendUrl } from '$lib/config';
+	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+
+    /**
+     * On the server-side, we load only pair details.
+     *
+     * All charting data fetches are done on the client side.
+     */
+    export async function load({ url, params, fetch }) {
+
+        const exchange_slug = params.exchange;
+        const chain_slug = params.chain;
+        const pair_slug = params.pair;
+        const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
+        const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+
+        const resp = await fetch(apiUrl);
+
+        if(!resp.ok) {
+            if(resp.status === 404) {
+                console.error("Pair missing", pair_slug)
+                return {
+                    status: 404,
+                    error: `Trading pair not found: ${pair_slug}`
+                }
+            } else {
+                console.error("Failed to load pair", apiUrl);
+                return {
+                    status: resp.status,
+                    error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
+                };
+            }
+        }
+
+        const pairDetails = await resp.json()
+
+        const summary = pairDetails.summary;
+        const details = pairDetails.additional_details;
+
+        console.log("Summary", summary);
+        console.log("Details", details);
+
+        const readableNames = {
+            ...breadcrumbTranslations,
+            [exchange_slug]: details.exchange_name,
+            [pair_slug]: pairDetails.summary.pair_name,
+            "api-and-historical-data": "API and historical data",
+        };
+
+        return {
+            // Cache the pair data pages for 30 minutes at the Cloudflare edge,
+            // so the pages are served really fast if they get popular,
+            // and also for speed test
+            maxage: 30*60, // 30 minutes,
+            props: {
+                exchange_slug,
+                chain_slug,
+                pair_slug,
+                summary,
+                details,
+				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
+            }
+        }
+    }
+</script>
+
+<script>
+    import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+    import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
+
+    export let details;
+    export let summary;
+    export let breadcrumbs;
+</script>
+
+<svelte:head>
+    <title>
+        {details.pair_symbol} API and historical data
+    </title>
+</svelte:head>
+
+<div class="container">
+
+    <Breadcrumb breadcrumbs={breadcrumbs} />
+
+    <h1>{summary.pair_symbol} API and historical data</h1>
+
+    <p>
+        Here are some quickstart examples for <strong>{summary.pair_symbol}</strong>.
+        <a class="body-link" href="https://tradingstrategy.ai/api/explorer/">
+            Read full real-time API documentation.
+        </a>. Examples here do not cover the full API.
+    </p>
+
+    <TradingPairAPIExamples {summary} {details} />
+
+</div>

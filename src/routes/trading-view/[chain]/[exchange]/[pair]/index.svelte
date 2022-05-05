@@ -97,6 +97,7 @@
     import TimeSpanPerformance from "$lib/chart/TimeSpanPerformance.svelte";
     import RelativeDate from "$lib/blog/RelativeDate.svelte";
     import type { TokenTax } from "$lib/helpers/tokentax";
+    import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
 
     export let exchange_slug;
     export let chain_slug;
@@ -416,7 +417,7 @@
                 <a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol_friendly}</a>
                 <a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol_friendly}</a>
                 <a href={details.explorer_link} class="btn btn-primary">Blockchain explorer</a>
-                <a href="/trading-view/backtesting" class="btn btn-primary">Download historical data</a>
+                <a href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data" class="btn btn-primary">{summary.base_token_symbol} API and historical data</a>
             </div>
         </div>
     </div>
@@ -476,7 +477,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <style>

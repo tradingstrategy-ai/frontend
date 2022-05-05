@@ -5,9 +5,6 @@ Export data for exchange trading pair list
 -->
 
 <script context="module">
-    /**
-     * Exchange info page with all of its trading pairs.
-     */
 
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";

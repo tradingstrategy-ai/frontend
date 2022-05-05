@@ -23,7 +23,9 @@ Links to the documentation.
    href="https://tradingstrategy.ai/docs/programming/token-tax.html"
    class="token-tax body-link">
 
-    {#if tokenTax.liquidityIssue}
+    {#if tokenTax.missing}
+        Data not yet available
+    {:else if tokenTax.liquidityIssue}
         {#if longFormat}
             Not available (no trading liquidity to measure tax).
         {:else}

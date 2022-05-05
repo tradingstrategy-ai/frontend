@@ -3,7 +3,7 @@
      * A test endpoint for the page load progress bar.
      *
      */
-	export async function load({ page, fetch, session, context }) {
+	export async function load({ }) {
 		// Sleep for 2 seconds
 		const sleep = new Promise((resolve) => setTimeout(resolve, 4000));
 		await sleep;

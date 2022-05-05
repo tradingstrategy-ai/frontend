@@ -23,6 +23,9 @@
  */
 export interface TokenTax {
 
+    /* Data is missing - not collected yet */
+    missing: boolean;
+
     /* This token could not be trade for any reason*/
     measurementIssue: boolean;
 
@@ -54,12 +57,14 @@ export function formatTokenTaxPercent(n: number): string {
  */
 export function getTokenTaxInformation(details): TokenTax {
 
+    const missing = (details.buy_tax === null) || (details.buy_tax === undefined);
     const liquidityIssue = (details.buy_tax == 999) || (details.sell_tax == 999) || (details.transfer_tax == 999);
     const measurementIssue = (details.buy_tax > 1) || (details.sell_tax > 1) || (details.transfer_tax > 1);
     const routerIssue = (details.buy_tax == 997) || (details.sell_tax == 997) || (details.transfer_tax == 997);
     const broken = measurementIssue && !liquidityIssue && !routerIssue;
 
     return {
+        missing,
         broken,
         measurementIssue,
         liquidityIssue,
