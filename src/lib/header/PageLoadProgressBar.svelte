@@ -1,99 +1,87 @@
 <!--
 @component
-SvelteKit does not provide a load indicator when you navigate to a page with
-slow `load()` function. SvelteKit uses an internal router, not server-side
-loading. Thus, we need to manually provide some indication in the UI if page
-exceeds a tenth of a second. Component is absolutely positioned – include it
-anywhere in `__layout.svelte`.
-
-Based on the original implementation by Shajid Hasan:
-https://github.com/shajidhasan/sveltekit-page-progress-demo
+Display a loading indicator during client-side routing. Invoked when a page
+`load` function takes longer than 250ms to complete. The component uses
+`fixed` positioning – it may be included anywhere in the page layout.
 
 #### Usage:
 ```tsx
-<PageLoadProgressBar />
+	<PageLoadProgressBar />
 ```
 -->
-<script>
-	import { onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
+<script context="module" lang="ts">
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
+	import fsm from 'svelte-fsm';
 
-	const navigationState = writable();
+	const progress = tweened(0, { easing: cubicOut });
 
-	const progress = tweened(0, {
-		duration: 3500,
-		easing: cubicOut
-	});
+	/**
+	 * Using Finite State Machine for more predictable behavior. Using the
+	 * module context so the FSM is a singleton (in case the component gets
+	 * unmounted / re-added, which can occur in dev mode).
+	 * See: https://github.com/kenkunz/svelte-fsm/
+	 */
+	const state = fsm('loaded', {
+		loaded: {
+			load: 'preloading'
+		},
 
-	const unsubscribe = navigationState.subscribe((state) => {
-		// `state` will always be `undefined` for SSR, so safely ignore it
-		if (state === 'loading-with-progress-bar') {
-			progress.set(0, { duration: 0 });
-			progress.set(0.8, { duration: 5000 });
-		} else if (state === 'loaded') {
-			progress.set(1, { duration: 1000 });
+		preloading: {
+			_enter() {
+				progress.set(0, { duration: 0 });
+				this.advance.debounce(250);
+			},
+			advance: 'loading',
+			complete: 'loaded'
+		},
+
+		loading: {
+			_enter() {
+				progress.set(0.8, { duration: 5000 });
+			},
+			_exit() {
+				progress.set(1, { duration: 1000 });
+			},
+			complete: 'loaded'
 		}
 	});
-
-	function handleNavStart() {
-		// Don't show progress bar if the page loads fast enough in preloading state
-		$navigationState = 'preloading';
-
-		// Display progress bar if page load > 250 ms
-		setTimeout(function() {
-			if ($navigationState === 'preloading') {
-				$navigationState = 'loading-with-progress-bar';
-			}
-		}, 500);
-	}
-
-	onDestroy(unsubscribe);
 </script>
 
-<!-- See the (little) documentation of special SvelteKit events here https://kit.svelte.dev/docs#events -->
-<svelte:window
-	on:sveltekit:navigation-start={handleNavStart}
-	on:sveltekit:navigation-end={() => navigationState.set('loaded')}
-/>
+<script>
+	import { navigating } from '$app/stores';
+	$: $navigating ? state.load() : state.complete();
+</script>
 
-<!--
-	Make sure the container component is always in the DOM structure.
-
-	If we make changes to the page structure during the navigation, we get a page double render error:
-	https://stackoverflow.com/questions/70051025/sveltekit-adds-new-page-on-top-of-old-one
-
-	Not sure if this is a bug or a feature.
-	Thus, make sure any progress animation is done using CSS only.
--->
-<div class="page-progress-bar" class:loaded={$navigationState === 'loaded'} class:preloading={$navigationState === 'preloading'} class:loading={$navigationState === 'loading-with-progress-bar'}>
-	<div class="progress-sliver" style={`--width: ${$progress * 100}%`} />
-</div>
+<progress class={$state} value={$progress}></progress>
 
 <style>
-	 /* Always stay fixed at the top, but stay transparent if no activity is going on */
-	.page-progress-bar {
+	progress {
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
 		position: fixed;
 		top: 0;
 		left: 0;
-		right: 0;
+		width: 100vw;
 		height: 0.5rem;
-		background: transparent;
 		z-index: 100;
+		border: none;
+		background: transparent;
 		opacity: 0;
 		transition: opacity 0.5s;
 	}
 
-	 /* After transitioning from preloading to loading state, make the progress bar visible with CSS transition on opacity */
-	.page-progress-bar.loading {
+	progress.loading {
 		opacity: 1;
-		transition: opacity 0.5s;
 	}
 
-	.progress-sliver {
-		width: var(--width);
-		background-color: var(--price-up-green);
-		height: 100%;
+	progress::-webkit-progress-bar {
+		background: transparent;
+	}
+
+	progress::-webkit-progress-value,
+	progress::-moz-progress-bar {
+		background: var(--price-up-green);
 	}
 </style>
