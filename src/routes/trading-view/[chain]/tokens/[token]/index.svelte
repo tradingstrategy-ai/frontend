@@ -103,7 +103,7 @@
 
 <svelte:head>
 	<title>
-      {summary.symbol} on ${summary.chain_name}
+      {summary.symbol} on {summary.chain_name}
     </title>
 	<meta name="description" content={`${summary.name} (${summary.symbol} ${tokenStandardName} on ${summary.chain_name}`}>
 </svelte:head>
