@@ -93,10 +93,24 @@ Real time examples for the API
     <h1>{summary.pair_symbol} API and historical data</h1>
 
     <p>
-        Here are some quickstart examples for <strong>{summary.pair_symbol}</strong>.
+        Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on <strong>{summary.exchange_name}</strong>.
+    </p>
+
+    <p>
+        Examples here do not cover the full API.
+        Read the full
         <a class="body-link" href="https://tradingstrategy.ai/api/explorer/">
-            Read full real-time API documentation.
-        </a>. Examples here do not cover the full API.
+            real-time API
+        </a>
+
+        or
+
+        <a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
+            algorithmic trading programming
+        </a>
+
+        documentation.
+
     </p>
 
     <TradingPairAPIExamples {summary} {details} />
