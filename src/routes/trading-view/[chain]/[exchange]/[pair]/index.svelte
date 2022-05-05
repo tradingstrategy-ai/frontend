@@ -51,8 +51,8 @@
         const details = pairDetails.additional_details;
         const daily = pairDetails.daily;
 
-        console.log("Summary", summary);
-        console.log("Details", details);
+        console.log("Pair page, summary", summary);
+        console.log("Pair page, details", details);
 
         const readableNames = {
             ...breadcrumbTranslations,
@@ -62,7 +62,7 @@
 
         const tokenTax = getTokenTaxInformation(details);
 
-        console.log("Token tax", tokenTax);
+        // console.log("Token tax", tokenTax);
 
         return {
             // Cache the pair data pages for 30 minutes at the Cloudflare edge,

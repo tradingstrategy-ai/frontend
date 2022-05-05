@@ -45,7 +45,7 @@
 
         const tokenDetails = await resp.json()
 
-        console.log("Token details is", tokenDetails);
+        console.log("Token page, token details is", tokenDetails);
 
         const summary = tokenDetails;
 
