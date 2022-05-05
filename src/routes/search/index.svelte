@@ -43,7 +43,7 @@ Advanced Search page
 
 <svelte:head>
     <title>Token search</title>
-    <meta name="description" content="Find best tokens on any DEX">
+    <meta name="description" content="Find best tokens and DEX exchanges">
 </svelte:head>
 
 <main>

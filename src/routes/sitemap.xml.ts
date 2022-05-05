@@ -8,8 +8,11 @@ const staticPages = [
     "about",
     "trading-view",
     "trading-view/backtesting",
-    "community",
     "trading-view/exchanges",
+    "trading-view/api",
+    "trading-view/binance/tokens",
+    "trading-view/polygon/tokens",
+    "trading-view/ethereum/tokens",
     "trading-view/blockchains",
     "trading-view/trading-pairs",
     "trading-view/top-list",
@@ -18,6 +21,8 @@ const staticPages = [
     "api/explorer/",
     "docs",
     "blog",
+    "community",
+    "search",
 
     // refer to other sitemaps
     "blog/rss.xml",
