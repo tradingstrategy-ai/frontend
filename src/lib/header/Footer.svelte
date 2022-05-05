@@ -21,7 +21,7 @@ We don't do footers here. Thus, this only is displayed on mobile and has social 
 
     <li>
         <a href="https://discord.gg/en8tW6MDtw">
-            <img src={dis   cord} loading="lazy" alt="Discord"/>
+            <img src={discord} loading="lazy" alt="Discord"/>
         </a>
     </li>
 
