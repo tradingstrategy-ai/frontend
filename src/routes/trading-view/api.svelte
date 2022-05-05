@@ -52,8 +52,8 @@
 </script>
 
 <svelte:head>
-	<title>Sign up free free DEX data API key</title>
-	<meta name="description" content="Get API access to DeFi Markets" />
+	<title>Sign up for free DEX data API key</title>
+	<meta name="description" content="DeFi markets API access and data download" />
 </svelte:head>
 
 <main>
