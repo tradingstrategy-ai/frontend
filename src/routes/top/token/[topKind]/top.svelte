@@ -73,7 +73,7 @@
 	<h1>Trading pairs with the most liquidity for the last 24h</h1>
 
 	<p class="lead">
-		<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a> with the highest
+		<a class="body-link" href="/trading-view/trading-pairs">Top Trading pairs</a> with the highest
 		{topKind} on <a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a> today.
 		Showing only the pairs with minimum $1M liquidity. All trading pairs are benchmarked against the
 		US Dollar.
