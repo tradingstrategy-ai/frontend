@@ -80,19 +80,15 @@
 </script>
 
 <script lang="ts">
-    import { browser } from '$app/env';
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
-    import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairInfoTable from '$lib/content/PairInfoTable.svelte';
     import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
     import RelativeDate from '$lib/blog/RelativeDate.svelte';
     import type { TokenTax } from '$lib/helpers/tokentax';
     import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
-    import ChartIQ from '$lib/chart/ChartIQ.svelte';
-    import quoteFeed from '$lib/chart/quoteFeed';
-    import ChartLinker from '$lib/chart/ChartLinker';
+    import ChartSection from './_ChartSection.svelte';
 
     export let exchange_slug;
     export let chain_slug;
@@ -100,11 +96,6 @@
     export let details; // PairAdditionalDetails OpenAPI
     export let breadcrumbs;
     export let tokenTax: TokenTax;
-
-    // Resolve the initial candle stick chart from the fragment parameter
-    let hash = null;
-    if (browser) hash = window.location.hash;
-    let bucket = fromHashToTimeBucket(hash);
 
     // Ridiculous token price warning.
     // It is common with scam tokens to price the token super low so that prices are not readable
@@ -116,8 +107,6 @@
 
     // TODO: Fix this in the data source
     $: [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
-
-    const chartLinker = new ChartLinker();
 </script>
 
 <svelte:head>
@@ -223,49 +212,7 @@
         </div>
     </div>
 
-    <h2>{summary.pair_symbol} charts</h2>
-
-    <TimeBucketSelector bind:activeBucket={bucket} />
-
-    <h3>Price and volume chart</h3>
-
-    <div class="chart-wrapper">
-        <ChartIQ
-            feed={quoteFeed('price')}
-            pairId={summary.pair_id}
-            timeBucket={bucket}
-            studies={['Volume Underlay']}
-            linker={chartLinker}
-        >
-            ChartIQ not available
-        </ChartIQ>
-        <p class="chart-help-text">
-            Trading activity expressed as
-            <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
-                OHLCV candles.
-            </a>
-        </p>
-    </div>
-
-    <h3>Liquidity chart</h3>
-
-    <div class="chart-wrapper">
-        <ChartIQ
-            feed={quoteFeed('liquidity')}
-            pairId={summary.pair_id}
-            timeBucket={bucket}
-            studies={['Liquidity AR']}
-            linker={chartLinker}
-        >
-            ChartIQ not available
-        </ChartIQ>
-        <p class="chart-help-text">
-            Available liquidity expressed as
-            <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
-                the US Dollar value of one side of XY liquidity curve.
-            </a>
-        </p>
-    </div>
+    <ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} />
 
     <h2>Time period summary</h2>
 
@@ -298,12 +245,12 @@
 </div>
 
 <style>
-
-    /* Decrease the main heading font size so we can fit
-      BNB-BUSD trading on PancakeSwap v2 on Binance Smart Chain on a single row
-
-      Note that 2rem is different size for Firefox and Chrome
-     */
+   /**
+    * Decrease the main heading font size so we can fit on a single row:
+    * > BNB-BUSD trading on PancakeSwap v2 on Binance Smart Chain
+    *
+    * Note that 2rem is different size for Firefox and Chrome
+    */
     h1 {
         font-size: 2rem;
         margin-bottom: 20px;
@@ -317,39 +264,11 @@
         margin-top: 20px;
     }
 
-    .chart-wrapper {
-        margin: 20px 0;
-    }
-
     .time-span-wrapper {
         margin: 0 auto;
     }
 
-    .chart-help-text {
-        text-align: center;
-        font-size: 80%;
-        color: #525480;
-    }
-
     .trade-actions .btn {
         margin: 20px 20px 20px 0;
-    }
-
-    /**
-     * Prevent CLS issues on desktop
-     *
-     * https://web.dev/cls/
-     */
-    @media (min-width: 992px) {
-        .chart-wrapper {
-            /*
-            min-height: 820px;
-            contain: size paint;
-             */
-        }
-
-        :global(.skeleton) {
-            height: 800px;
-        }
     }
 </style>

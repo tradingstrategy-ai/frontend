@@ -127,7 +127,7 @@ chartiq dependency.
           data-testid="chartiq-widget"
         />
     {:else}
-        <slot />
+        ChartIQ not available
     {/if}
 {/await}
 
