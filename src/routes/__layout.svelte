@@ -6,8 +6,10 @@
 	import AppHead from '$lib/header/AppHead.svelte';
     import SiteMode from "$lib/header/SiteMode.svelte";
     import PageLoadProgressBar from "$lib/header/PageLoadProgressBar.svelte";
+    import Footer from "$lib/header/Footer.svelte";
 
 	import '../../theme/dist/css/neumorphism.css';
+
 </script>
 
 <AppHead />
@@ -15,6 +17,7 @@
 <PageLoadProgressBar />
 <Navbar />
 <slot />
+<Footer />
 <SiteMode />
 
 

@@ -69,6 +69,10 @@
             <a rel="external" class="nav-link" href="/community">Community</a>
           </li>
 
+          <li class="nav-item" data-testid={'navigation-link'}>
+            <a rel="external" class="nav-link" href="/blog">Blog</a>
+          </li>
+
           <li class="nav-item nav-item-mobile-only">
             <a href="https://twitter.com/tradingprotocol" class="nav-link">
               <img src={twitter} loading="lazy"  alt="Twitter" /> <span class="mobile-text">Twitter</span>

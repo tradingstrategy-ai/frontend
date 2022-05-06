@@ -9,6 +9,8 @@
 			'trading-view': 'Trading data',
 			exchanges: 'Decentralised exchanges',
 			ethereum: 'Ethereum',
+			binance: 'Binance',
+			polygon: 'Polygon',
 			tokens: 'Tokens'
 		};
 
@@ -37,7 +39,7 @@
 
 				<TokenIndexExplorer
 					enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
-					orderColumnIndex={1}
+					orderColumnIndex={2}
 					{chainSlug}
 				/>
 			</div>

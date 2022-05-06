@@ -7,8 +7,9 @@
 	import { backendUrl } from '$lib/config';
 	export let chainSlug = null;
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
-	export let orderColumnIndex = 3;
+	export let orderColumnIndex = 2;
 	export let orderColumnDirection = 'desc';
+	export let pageLength = 50;
 
 	const availableColumns = {
 		name: {
@@ -34,6 +35,7 @@
 			data: 'liquidity_latest',
 			className: 'col-liquidity-change',
 			serverSideSortKey: 'liquidity_latest',
+			orderable: true,
 			type: 'num',
 			render: function (data, type, row, meta) {
 				return formatDollar(data);
@@ -56,6 +58,7 @@
 		const sortKey = columns[sortColumnIndex].serverSideSortKey;
 
 		const params = {
+			direction: data.order[0].dir === "desc" ? "desc" : "asc",
 			chain_slug: chainSlug,
 			sort: sortKey
 		};
@@ -81,6 +84,7 @@
 		serverSide: true,
 		lengthChange: false,
 		scrollX: false,
+    pageLength: pageLength,
 		/**
 		 *
 		 * AJAX data fetch hook for Datatables
@@ -101,7 +105,7 @@
 				callback({
 					recordsTotal: result.total,
 					recordsFiltered: result.total,
-					data: result
+					data: result.result
 				});
 			} else {
 				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);

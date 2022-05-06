@@ -45,7 +45,7 @@
 
         const tokenDetails = await resp.json()
 
-        console.log("Token details is", tokenDetails);
+        console.log("Token page, token details is", tokenDetails);
 
         const summary = tokenDetails;
 
@@ -103,7 +103,7 @@
 
 <svelte:head>
 	<title>
-      {summary.symbol} on ${summary.chain_name}
+      {summary.symbol} on {summary.chain_name}
     </title>
 	<meta name="description" content={`${summary.name} (${summary.symbol} ${tokenStandardName} on ${summary.chain_name}`}>
 </svelte:head>
