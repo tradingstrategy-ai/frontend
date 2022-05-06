@@ -4,7 +4,7 @@
      *
      * For the API see impressive-numbers here https://tradingstrategy.ai/api/explorer/
      */
-    import {formatAmount, formatSizeGigabytes} from "$lib/helpers/formatters";
+    import {formatAmount, formatDollar } from "$lib/helpers/formatters";
 
     // Might be null if API
     export let numbers;
@@ -15,11 +15,12 @@
 
     <p class="lead">
         <span class="pulse"></span>
-        Price, liquidity and systematic trading data for
+        Market data and trading strategy framework for
         <a href="/trading-view/blockchains"><strong>{numbers.blockchains}</strong> blockchains</a>,
         <a href="/trading-view/exchanges"><strong>{formatAmount(numbers.exchanges)}</strong> decentralised exchanges</a>,
         <a href="/trading-view/trading-pairs"><strong>{formatAmount(numbers.pairs)}</strong> trading pairs</a> and
-        <strong>{formatAmount(numbers.tokens)}</strong> tokens.
+        <a href="/trading-view/binance/tokens">{formatAmount(numbers.tokens)}</a> tokens with
+        <a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)}</a> liquidity.
     </p>
 </div>
 
