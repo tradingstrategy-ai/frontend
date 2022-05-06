@@ -34,6 +34,7 @@
     export let orderColumnDirection = "desc";
 
     export let pageLength = 20;
+    export let paging = 0
 
     // Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
@@ -184,12 +185,15 @@
         return `${resp.statusText} ${errorDetails.message}`;
     }
 
+    console.log(paging)
+
     const options = {
         order: [[orderColumnIndex, orderColumnDirection]], // Default sorting is liquidity desc
 		searching: false,
 		serverSide: true,
 		lengthChange: false,
         pageLength: pageLength,
+        paging: paging,
 
         // TODO: If set we would     be mobile compatible, but causes the table header to disappear
         // because whatever jQuery trickery is used to render this
