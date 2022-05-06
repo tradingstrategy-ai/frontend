@@ -51,6 +51,7 @@
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import TokenTopTable from '$lib/content/TokenTopTable.svelte';
+	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
 
 	export let topData;
 	export let breadcrumbs;
@@ -81,11 +82,12 @@
 	<div class="trading-pairs">
 		<StaleDataWarning allChains={true} />
 
-		{#if tokens}
-			<TokenTopTable {tokens} topKind="liquidity" />
-		{:else}
-			<div class="alert alert-danger">Daily volatility data is not available at the moment.</div>
-		{/if}
+		<PairExplorer
+			enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
+			orderColumnIndex={4}
+			pageLength={50}
+			paging={0}
+		/>
 	</div>
 </div>
 
