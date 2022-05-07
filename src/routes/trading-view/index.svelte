@@ -252,11 +252,12 @@
 
                         <div class="card-body pb-0">
                             <p class="card-text">
-								Connect your trading algorithm for real-time market feeds for live trading.
+								Connect your trading algorithms for real-time market feeds for live trading.
 							</p>
 
                             <p class="card-text">
-                                REST and WebSocket <span class="badge text-uppercase">soon</span> APIs are available.
+                                Real-time API is available in OpenAPI v3
+                                format, no API keys or sign ups needed.
                             </p>
                         </div>
 
