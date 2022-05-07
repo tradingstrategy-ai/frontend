@@ -1,12 +1,16 @@
+<!--
+    @component
+
+    Frontpage impressive numbers widget.
+
+    For the API see impressive-numbers here https://tradingstrategy.ai/api/explorer/
+-->
+
 <script>
-    /**
-     * Frontpage impressive numbers widget.
-     *
-     * For the API see impressive-numbers here https://tradingstrategy.ai/api/explorer/
-     */
+
     import {formatAmount, formatDollar } from "$lib/helpers/formatters";
 
-    // Might be null if API
+    // Might be null if API down - we still render the frontpage gracefully
     export let numbers;
 
 </script>
