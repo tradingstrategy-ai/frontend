@@ -85,17 +85,19 @@ export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix= "$"): 
         return `${prefix}0`;
     }
 
-    if(n < 0.000001) {
+    const absN = Math.abs(n);
+
+    if(absN < 0.000001) {
         return prefix + n.toLocaleString("en", {
             minimumFractionDigits: 10,
             maximumFractionDigits: 10
         });
-    } else if(n < 0.0001) {
+    } else if(absN < 0.0001) {
         return prefix + n.toLocaleString( "en",  {
             minimumFractionDigits: 7,
             maximumFractionDigits: 7
         });
-    } else if(n < 0.01) {
+    } else if(absN < 0.01) {
         // Format funny tokens
         return prefix + n.toLocaleString( "en",  {
             minimumFractionDigits: 5,
@@ -103,17 +105,17 @@ export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix= "$"): 
         });
     }
 
-    if(n >= 1000*1000*1000) {
+    if(absN >= 1000*1000*1000) {
         return prefix + (n / (1000 * 1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         }) + "B"
-    } else if(n >= 1000*1000) {
+    } else if(absN >= 1000*1000) {
         return prefix + (n / (1000 * 1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag
         }) + "M"
-    } else if(n >= 1000) {
+    } else if(absN >= 1000) {
         return prefix + (n / (1000)).toLocaleString("en", {
             minimumFractionDigits: minFrag,
             maximumFractionDigits: maxFrag

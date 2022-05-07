@@ -58,6 +58,8 @@ chartiq dependency.
 <script lang="ts">
   import type { TimeBucket } from './timeBucketConverters';
   import { timeBucketToPeriodicity } from './timeBucketConverters';
+  import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+  import { determinePriceChangeClass } from "$lib/helpers/price";
 
   export let feed: object;
   export let pairId: number;
@@ -67,13 +69,21 @@ chartiq dependency.
 
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
+  let active;
+  $: priceChangeAmt = active && active.Close - active.Open;
+  $: priceChangePct = active && priceChangeAmt / active.Open;
+
   const chartOptions = {
     layout: { crosshair: true },
     controls: { chartControls: null },
     dontRoll: true
   };
 
-  function chartIQ(node, { pairId, periodicity }) {
+  function formatForHud(value: number) {
+    return formatDollar(value, 3, 3, '');
+  }
+
+  function chartIQ(node: HTMLElement, { pairId, periodicity }) {
     let prevPairId = pairId;
 
     let chartEngine = new CIQ.ChartEngine({
@@ -91,10 +101,16 @@ chartiq dependency.
     });
 
     // cancel mouseWheel zoom unless a modifier key is pressed
-    chartEngine.prepend('mouseWheel', function(event) {
+    chartEngine.prepend('mouseWheel', (event) => {
       const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
       const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
       return !modifierPressed && verticalScroll;
+    });
+
+    chartEngine.append("headsUpHR", () => {
+      const tick = chartEngine.barFromPixel(chartEngine.cx);
+      const prices = chartEngine.chart.xaxis[tick];
+      if (prices) active = prices.data;
     });
 
     linker?.add(chartEngine);
@@ -123,17 +139,67 @@ chartiq dependency.
 {#await initialize() then success}
     {#if success}
         <div
+          class="chart-container"
           use:chartIQ={{ pairId, periodicity }}
           data-testid="chartiq-widget"
-        />
+        >
+            {#if active}
+                <div class="hud">
+                    <slot name="hud-row-1" {active} {formatForHud}>
+                        <div class="hud-row {determinePriceChangeClass(priceChangeAmt)}">
+                            <dl><dt>O</dt><dd>{formatForHud(active.Open)}</dd></dl>
+                            <dl><dt>H</dt><dd>{formatForHud(active.High)}</dd></dl>
+                            <dl><dt>L</dt><dd>{formatForHud(active.Low)}</dd></dl>
+                            <dl><dt>C</dt><dd>{formatForHud(active.Close)}</dd></dl>
+                            <dl><dd>{formatForHud(priceChangeAmt)}</dd></dl>
+                            <dl><dd>{formatPriceChange(priceChangePct)}</dd></dl>
+                        </div>
+                    </slot>
+                    <slot name="hud-row-2" {active} {formatForHud}>
+                        <div class="hud-row">
+                            <dl><dt>Vol</dt><dd>{formatForHud(active.Volume)}</dd></dl>
+                        </div>
+                    </slot>
+                </div>
+            {/if}
+        </div>
     {:else}
         ChartIQ not available
     {/if}
 {/await}
 
 <style>
-  div {
+  .chart-container {
     position: relative;
     aspect-ratio: 16/9;
+  }
+
+  .hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+  }
+
+  .hud :global(.hud-row) {
+    display: flex;
+  }
+
+  .hud :global(dl) {
+    display: flex;
+    margin-bottom: 0;
+  }
+
+  .hud :global(dt) {
+    margin-right: 0.5ex;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+  }
+
+  .hud :global(dd) {
+    margin-bottom: 0;
+    margin-right: 1ex;
+    font-weight: 400;
   }
 </style>

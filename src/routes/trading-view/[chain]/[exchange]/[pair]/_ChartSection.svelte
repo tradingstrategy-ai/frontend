@@ -20,7 +20,7 @@
 
 <TimeBucketSelector bind:activeBucket={bucket} />
 
-<div>
+<div class="chart-wrapper">
     <h3>Price and volume chart</h3>
     <ChartIQ
         feed={quoteFeed('price')}
@@ -28,8 +28,7 @@
         timeBucket={bucket}
         studies={['Volume Underlay']}
         linker={chartLinker}
-    >
-    </ChartIQ>
+    />
     <p class="help">
         Trading activity expressed as
         <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
@@ -38,7 +37,7 @@
     </p>
 </div>
 
-<div>
+<div class="chart-wrapper">
     <h3>Liquidity chart</h3>
     <ChartIQ
         feed={quoteFeed('liquidity')}
@@ -47,6 +46,10 @@
         studies={['Liquidity AR']}
         linker={chartLinker}
     >
+        <div slot="hud-row-2" class="hud-row" let:active let:formatForHud>
+            <dl class="vol-added"><dt>Vol Added</dt><dd>{formatForHud(active.av)}</dd></dl>
+            <dl class="vol-removed"><dt>Vol Removed</dt><dd>{formatForHud(active.rv)}</dd></dl>
+        </div>
     </ChartIQ>
     <p class="help">
         Available liquidity expressed as
@@ -69,5 +72,14 @@
     text-align: center;
     font-size: 80%;
     color: #525480;
+  }
+
+  .vol-added dd {
+    color: var(--price-up-green);
+    min-width: 4.5em;
+  }
+
+  .vol-removed dd {
+    color: var(--price-down-red);
   }
 </style>
