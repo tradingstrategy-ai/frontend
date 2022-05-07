@@ -16,11 +16,11 @@
     <p class="lead">
         <span class="pulse"></span>
         Market data and trading strategy framework for
-        <a href="/trading-view/blockchains"><strong>{numbers.blockchains}</strong> blockchains</a>,
-        <a href="/trading-view/exchanges"><strong>{formatAmount(numbers.exchanges)}</strong> decentralised exchanges</a>,
-        <a href="/trading-view/trading-pairs"><strong>{formatAmount(numbers.pairs)}</strong> trading pairs</a> and
-        <a href="/trading-view/binance/tokens">{formatAmount(numbers.tokens)}</a> tokens with
-        <a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)}</a> liquidity.
+        <a href="/trading-view/blockchains">{numbers.blockchains} blockchains</a>,
+        <a href="/trading-view/exchanges">{formatAmount(numbers.exchanges)} decentralised exchanges</a>,
+        <a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a> and
+        <a href="/trading-view/binance/tokens">{formatAmount(numbers.tokens)} tokens</a> with
+        <a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a>.
     </p>
 </div>
 
