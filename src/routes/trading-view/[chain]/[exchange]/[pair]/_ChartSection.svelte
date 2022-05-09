@@ -16,12 +16,21 @@
   let bucket = fromHashToTimeBucket(hash);
 </script>
 
-<h2>{pairSymbol} charts</h2>
-
-<TimeBucketSelector bind:activeBucket={bucket} />
+<div class="chart-header">
+  <h2>{pairSymbol} charts</h2>
+  <TimeBucketSelector bind:activeBucket={bucket} />
+</div>
 
 <div class="chart-wrapper">
-    <h3>Price and volume chart</h3>
+    <div class="chart-title">
+        <h3>Price & volume</h3>
+        <div class="help">
+            expressed as
+            <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+                OHLCV candles
+            </a>
+        </div>
+    </div>
     <ChartIQ
         feed={quoteFeed('price')}
         {pairId}
@@ -29,16 +38,18 @@
         studies={['Volume Underlay']}
         linker={chartLinker}
     />
-    <p class="help">
-        Trading activity expressed as
-        <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
-            OHLCV candles.
-        </a>
-    </p>
 </div>
 
 <div class="chart-wrapper">
-    <h3>Liquidity chart</h3>
+    <div class="chart-title">
+        <h3>Liquidity</h3>
+        <div class="help">
+            expressed as
+            <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+                USD value of one side of XY liquidity curve
+            </a>
+        </div>
+    </div>
     <ChartIQ
         feed={quoteFeed('liquidity')}
         {pairId}
@@ -51,16 +62,16 @@
             <dl class="vol-removed"><dt>Vol Removed</dt><dd>{formatForHud(active.rv)}</dd></dl>
         </div>
     </ChartIQ>
-    <p class="help">
-        Available liquidity expressed as
-        <a rel="external" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
-            the US Dollar value of one side of XY liquidity curve.
-        </a>
-    </p>
 </div>
 
 <style>
+  .chart-header {
+    display: flex;
+    align-items: center;
+  }
+
   h2 {
+    flex: 1;
     font-size: 2rem;
   }
 
@@ -68,10 +79,32 @@
     margin: 20px 0;
   }
 
+  .chart-title {
+    display: flex;
+    align-items: baseline;
+    border-bottom: 1px solid #999;
+  }
+
+  h3 {
+    flex: 1;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
   .help {
-    text-align: center;
-    font-size: 80%;
+    font-size: 0.875rem;
+    text-align: right;
+  }
+
+  .help a {
+    font-weight: 500;
     color: #525480;
+  }
+
+  .help a:hover {
+    text-decoration: underline;
   }
 
   .vol-added dd {

@@ -36,7 +36,6 @@
 
 
 <div class="time-bucket-selector">
-    <span>Candle time frame: </span>
     {#each validBuckets as bucket}
         <a href={'#' + bucket} class={bucket === activeBucket ? "active" : ""} on:click|preventDefault={() => onBucketClick(bucket)}>
             {bucket}
