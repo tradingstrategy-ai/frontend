@@ -9,7 +9,15 @@ screen -S frontend
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 source ~/secrets.env
-npm install
+
+# Re-institate SSH agent connection if needed
+eval `ssh-agent`
+
+# Add the SSH deploy key needed to access the private ChartIQ repository
+# on the production deployment
+ssh-add ~/.ssh/gh-deploy 
+
+npm ci
 (cd theme && npm install && npx gulp build:dist)
 rm -rf build && node_modules/.bin/svelte-kit build && node build
 ```
