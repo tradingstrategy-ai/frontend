@@ -60,12 +60,16 @@ chartiq dependency.
   import { timeBucketToPeriodicity } from './timeBucketConverters';
   import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
   import { determinePriceChangeClass } from "$lib/helpers/price";
+	import { fade } from 'svelte/transition';
+  import Spinner from 'svelte-spinner';
 
   export let feed: object;
   export let pairId: number;
   export let timeBucket: TimeBucket;
   export let studies = [];
   export let linker = null;
+
+  let loading = false;
 
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
@@ -116,14 +120,26 @@ chartiq dependency.
     linker?.add(chartEngine);
 
     chartEngine.attachQuoteFeed(feed, {});
-    chartEngine.loadChart(pairId, { periodicity });
+
+    function loadChart() {
+      loading = true;
+      chartEngine.loadChart(pairId, { periodicity }, () => loading = false);
+    }
+
+    loadChart();
 
     function update({ pairId, periodicity }) {
       if (pairId !== prevPairId) {
-        chartEngine.loadChart(pairId);
+        loadChart();
         prevPairId = pairId;
+      } else {
+        chartEngine.hideCrosshairs();
+        loading = true;
+        chartEngine.setPeriodicity(periodicity, () => {
+          chartEngine.showCrosshairs();
+          loading = false;
+        });
       }
-      chartEngine.setPeriodicity(periodicity);
     }
 
     function destroy() {
@@ -143,6 +159,11 @@ chartiq dependency.
           use:chartIQ={{ pairId, periodicity }}
           data-testid="chartiq-widget"
         >
+            {#if loading}
+                <div class="loading" transition:fade={{ duration: 250 }}>
+                  <Spinner size="60" />
+                </div>
+            {/if}
             {#if active}
                 <div class="hud">
                     <slot name="hud-row-1" {active} {formatForHud}>
@@ -172,6 +193,19 @@ chartiq dependency.
   .chart-container {
     position: relative;
     aspect-ratio: 16/9;
+  }
+
+  .loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 241, 229, 0.75);
   }
 
   .hud {
