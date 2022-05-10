@@ -16,7 +16,7 @@
 		// Load frontpage API calls in parallel to cut that 1 ms
 		// https://stackoverflow.com/q/59663929/315168
 		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
-			fetch(`${backendUrl}/top-momentum`),
+			fetch(`${backendUrl}/top-momentum?summary=true`),
 			fetch(`${backendUrl}/impressive-numbers`),
 			fetchBlogroll(3)
 		]);
