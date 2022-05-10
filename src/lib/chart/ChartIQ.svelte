@@ -213,7 +213,7 @@ chartiq dependency.
     top: 4px;
     left: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .hud :global(.hud-row) {
@@ -235,5 +235,21 @@ chartiq dependency.
     margin-bottom: 0;
     margin-right: 1ex;
     font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    .chart-container {
+      aspect-ratio: 3/2;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .chart-container {
+      aspect-ratio: 4/3;
+    }
+
+    .hud {
+      font-size: 0.75rem;
+    }
   }
 </style>

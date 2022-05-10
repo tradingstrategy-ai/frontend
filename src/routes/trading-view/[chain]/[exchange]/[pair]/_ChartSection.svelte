@@ -22,7 +22,7 @@
     <div class="chart-title">
         <h3>Price & volume</h3>
         <div class="help">
-            expressed as
+            <span class="prefix">expressed as</span>
             <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
                 OHLCV candles
             </a>
@@ -41,7 +41,7 @@
     <div class="chart-title">
         <h3>Liquidity</h3>
         <div class="help">
-            expressed as
+            <span class="prefix">expressed as</span>
             <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
                 USD value of one side of XY liquidity curve
             </a>
@@ -66,6 +66,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    margin-bottom: 1em;
   }
 
   h2 {
@@ -78,10 +79,6 @@
     display: flex;
     align-items: baseline;
     border-bottom: 1px solid #999;
-  }
-
-  .chart-wrapper {
-    margin: 20px 0;
   }
 
   h3 {
@@ -113,5 +110,19 @@
 
   .vol-removed dd {
     color: var(--price-down-red);
+  }
+
+  @media (max-width: 576px) {
+    h3 {
+      font-size: 1rem;
+    }
+
+    .help {
+      font-size: 0.8rem;
+    }
+
+    .help .prefix {
+      display: none;
+    }
   }
 </style>
