@@ -77,6 +77,9 @@ chartiq dependency.
   $: priceChangeAmt = active && active.Close - active.Open;
   $: priceChangePct = active && priceChangeAmt / active.Open;
 
+  let ww;
+  $: showYAxis = (ww >= 576);
+
   const chartOptions = {
     layout: { crosshair: true },
     controls: { chartControls: null },
@@ -87,7 +90,7 @@ chartiq dependency.
     return formatDollar(value, 3, 3, '');
   }
 
-  function chartIQ(node: HTMLElement, { pairId, periodicity }) {
+  function chartIQ(node: HTMLElement, { pairId, periodicity, showYAxis }) {
     let prevPairId = pairId;
 
     let chartEngine = new CIQ.ChartEngine({
@@ -121,14 +124,19 @@ chartiq dependency.
 
     chartEngine.attachQuoteFeed(feed, {});
 
+    function setYAxis(val: boolean) {
+      chartEngine.chart.yAxis.position = val ? 'right' : 'none';
+    }
+
     function loadChart() {
       loading = true;
       chartEngine.loadChart(pairId, { periodicity }, () => loading = false);
     }
 
+    setYAxis(showYAxis);
     loadChart();
 
-    function update({ pairId, periodicity }) {
+    function update({ pairId, periodicity, showYAxis }) {
       if (pairId !== prevPairId) {
         loadChart();
         prevPairId = pairId;
@@ -140,6 +148,7 @@ chartiq dependency.
           loading = false;
         });
       }
+      setYAxis(showYAxis);
     }
 
     function destroy() {
@@ -152,11 +161,13 @@ chartiq dependency.
   }
 </script>
 
+<svelte:window bind:innerWidth={ww} />
+
 {#await initialize() then success}
     {#if success}
         <div
           class="chart-container"
-          use:chartIQ={{ pairId, periodicity }}
+          use:chartIQ={{ pairId, periodicity, showYAxis }}
           data-testid="chartiq-widget"
         >
             {#if loading}
