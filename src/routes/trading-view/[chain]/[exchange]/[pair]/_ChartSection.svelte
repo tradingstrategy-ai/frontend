@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { browser } from '$app/env';
-  import TimeBucketSelector, { fromHashToTimeBucket } from '$lib/chart/TimeBucketSelector.svelte';
+  import { page } from '$app/stores';
+  import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
   import ChartIQ from '$lib/chart/ChartIQ.svelte';
   import quoteFeed from '$lib/chart/quoteFeed';
   import ChartLinker from '$lib/chart/ChartLinker';
@@ -10,15 +10,12 @@
 
   const chartLinker = new ChartLinker();
 
-  // Resolve the initial candle stick chart from the fragment parameter
-  let hash = null;
-  if (browser) hash = window.location.hash;
-  let bucket = fromHashToTimeBucket(hash);
+  $: timeBucket = $page.url.hash.slice(1) || '4h';
 </script>
 
 <div class="chart-header">
   <h2>{pairSymbol} charts</h2>
-  <TimeBucketSelector bind:activeBucket={bucket} />
+  <TimeBucketSelector active={timeBucket} />
 </div>
 
 <div class="chart-wrapper">
@@ -34,7 +31,7 @@
     <ChartIQ
         feed={quoteFeed('price')}
         {pairId}
-        timeBucket={bucket}
+        {timeBucket}
         studies={['Volume Underlay']}
         linker={chartLinker}
     />
@@ -53,7 +50,7 @@
     <ChartIQ
         feed={quoteFeed('liquidity')}
         {pairId}
-        timeBucket={bucket}
+        {timeBucket}
         studies={['Liquidity AR']}
         linker={chartLinker}
     >
@@ -67,22 +64,24 @@
 <style>
   .chart-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
   }
 
   h2 {
     flex: 1;
     font-size: 2rem;
-  }
-
-  .chart-wrapper {
-    margin: 20px 0;
+    white-space: nowrap;
   }
 
   .chart-title {
     display: flex;
     align-items: baseline;
     border-bottom: 1px solid #999;
+  }
+
+  .chart-wrapper {
+    margin: 20px 0;
   }
 
   h3 {
