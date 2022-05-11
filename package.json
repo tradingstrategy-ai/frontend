@@ -101,6 +101,7 @@
     "svelte-spinner": "^2.0.2",
     "svelte-tradingview-widget": "^2.3.0",
     "sveltestrap": "^4.2.1",
+    "trade-executor-frontend": "file:../trade-executor-frontend/package",
     "ts-custom-error": "^3.2.0",
     "typesense": "^1.2.1",
     "web3": "^1.6.0"
