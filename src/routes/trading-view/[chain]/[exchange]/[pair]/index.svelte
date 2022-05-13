@@ -1,25 +1,20 @@
+<!--
+Render the pair trading page
+- Load core pair data during SSR
+- Detailed candle data loading is delayed to the client-side (though in theory
+  the first run could be done in SSR)
+- Selected time bucket (for charts) is carried over in URL fragment; this could
+  be moved to SvelteKit routing query parameter
+-->
 <script context="module">
-    /*
-        Render the pair trading page
-
-        - Load pair core data on the SSR.
-
-        - Candle data loading is delayed to the client side (though in theory the first run could be done on the SSR)
-
-        - Selected candle stick time bucket is carried over in URL fragment - this could be moved to SvelteKit routing query parameter
-    */
-
     import { backendUrl } from '$lib/config';
 
     import breadcrumbTranslations, { buildBreadcrumbs } from "$lib/breadcrumb/builder";
-    import {getTokenTaxInformation} from "$lib/helpers/tokentax";
+    import { getTokenTaxInformation } from "$lib/helpers/tokentax";
 
-    /**
-     * On the server-side, we load only pair details.
-     *
-     * All charting data fetches are done on the client side.
-     */
-    export async function load({ url, params, fetch }) {
+     // During SSR we only load only pair details; all trading data (price and
+     // liquidity candles, trading summaries) are done client-side.
+     export async function load({ url, params, fetch }) {
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
         const pair_slug = params.pair;
@@ -60,8 +55,6 @@
 
         const tokenTax = getTokenTaxInformation(details);
 
-        // console.log("Token tax", tokenTax);
-
         return {
             // Cache the pair data pages for 30 minutes at the Cloudflare edge,
             // so the pages are served really fast if they get popular,
@@ -82,12 +75,12 @@
 <script lang="ts">
     import { formatDollar } from '$lib/helpers/formatters';
     import { formatPriceChange } from '$lib/helpers/formatters';
+    import { determinePriceChangeClass } from '$lib/helpers/price';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
     import PairInfoTable from '$lib/content/PairInfoTable.svelte';
     import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
     import RelativeDate from '$lib/blog/RelativeDate.svelte';
     import type { TokenTax } from '$lib/helpers/tokentax';
-    import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
     import ChartSection from './_ChartSection.svelte';
 
     export let exchange_slug;
@@ -97,13 +90,12 @@
     export let breadcrumbs;
     export let tokenTax: TokenTax;
 
-    // Ridiculous token price warning.
-    // It is common with scam tokens to price the token super low so that prices are not readable
-    // when converted to USD.
+    // Ridiculous token price warning:
+    // It is common with scam tokens to price the token super low so that
+    // prices are not readable when converted to USD.
     $: ridiculousPrice = summary.usd_price_latest < 0.000001;
 
-    // Price text
-    $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+    $: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 
     // TODO: Fix this in the data source
     $: [baseTokenName, quoteTokenName] = summary.pair_name.split("-");
@@ -161,8 +153,8 @@
                 <p>
                     The price of <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
                         {summary.base_token_symbol}
-                    </a> in <strong>{summary.pair_symbol}</strong> pair is <strong class="{priceChangeColorClass}">{formatDollar(summary.usd_price_latest)}</strong> and is
-                    <strong class="{priceChangeColorClass}">{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> against US Dollar for the last 24h.
+                    </a> in <strong>{summary.pair_symbol}</strong> pair is <strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong> and is
+                    <strong class={priceChangeColorClass}>{formatPriceChange(summary.price_change_24h)} {summary.price_change_24h > 0 ? "up" : "down"}</strong> against US Dollar for the last 24h.
                 </p>
 
                 <p>

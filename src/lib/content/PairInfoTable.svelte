@@ -1,19 +1,14 @@
 <script lang="ts">
-
-
-    import { formatDollar } from '$lib/helpers/formatters';
-    import { formatPriceChange } from '$lib/helpers/formatters';
+    import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+    import { determinePriceChangeClass } from '$lib/helpers/price';
     import type { TokenTax } from "./TokenTaxInfoLine.svelte";
     import TokenTaxInfoLine from "$lib/content/TokenTaxInfoLine.svelte";
-
 
     export let summary;
     export let details;
     export let tokenTax: TokenTax;
 
-    /**
-     * Reverse-calculate raw price using the US/quota token exchange rate
-     */
+    // Reverse-calculate raw price using the US/quota token exchange rate
     function calculateTokenPrice() {
         if(!summary.exchange_rate) {
             return null;
@@ -25,7 +20,7 @@
 
     let tokenPrice = calculateTokenPrice();
 
-    $: priceChangeColorClass = summary.price_change_24h >= 0 ? "price-change-green" : "price-change-red";
+    $: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 </script>
 
 <table class="table">
@@ -49,7 +44,7 @@
     <tr>
         <th>Price</th>
         <td>
-            <strong class="{priceChangeColorClass}">
+            <strong class={priceChangeColorClass}>
                 { formatDollar(summary.usd_price_latest, 3, 3, "") } USD
             </strong>
         </td>
@@ -59,7 +54,7 @@
         <tr>
             <th>Token price</th>
             <td>
-                <strong class="{priceChangeColorClass}">
+                <strong class={priceChangeColorClass}>
                     { formatDollar(tokenPrice, 3, 3, "") } {summary.quote_token_symbol_friendly}
                 </strong>
             </td>
@@ -69,7 +64,7 @@
     <tr>
         <th>Change 24h</th>
         <td>
-            <strong class="{priceChangeColorClass}">
+            <strong class={priceChangeColorClass}>
                 { formatPriceChange(summary.price_change_24h) }
             </strong>
         </td>

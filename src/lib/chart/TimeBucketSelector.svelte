@@ -1,61 +1,56 @@
-<script context="module" lang="ts">
+<!--
+@component
+Used for selecting a time bucket for chart data feeds.default
 
-    const validBuckets = ["1m", "5m", "15m", "1h", "4h", "1d", "7d", "30d"];
-
-
-    /**
-     * Figure out from the URL fragment which time bucket to choose
-     */
-    export function fromHashToTimeBucket(hash: string): string {
-        if(hash) {
-
-            if(!hash.startsWith("#")) {
-                throw new Error(`Does not look like a hash ${hash}`);
-            }
-
-            const b = hash.substring(1).toLowerCase();
-            if(validBuckets.includes(b)) {
-                return b;
-            }
-        }
-        return "4h";
-    }
+#### Usage:
+```tsx
+  <TimeBucketSelector active="4h" />
+```
+-->
+<script lang='ts'>
+  export let active: string;
+  const buckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'];
 </script>
 
-
-<script lang="ts">
-    export let activeBucket = null;
-
-    function onBucketClick(bucket) {
-        window.location.hash = bucket;
-        // Strip leading #
-        activeBucket = fromHashToTimeBucket('#' + bucket);
-    }
-
-</script>
-
-
-<div class="time-bucket-selector">
-    {#each validBuckets as bucket}
-        <a href={'#' + bucket} class={bucket === activeBucket ? "active" : ""} on:click|preventDefault={() => onBucketClick(bucket)}>
+<div>
+    {#each buckets as bucket}
+        <a href='#{bucket}' class:active={bucket === active}>
             {bucket}
         </a>
     {/each}
 </div>
 
 <style>
+    div {
+        display: flex;
+        margin-bottom: 0.5em;
+        border: 1px solid #ccbeb3;
+        border-radius: 0.55rem;
+        box-shadow: 3px 3px 6px #ccbeb3, -3px -3px 6px #ccbeb3;
+        font-size: 0.875rem;
+    }
 
     a {
-        font-weight: normal;
-        border-bottom: 1px dotted black;
-        margin-left: 10px;
-        display: inline-block;
-        min-width: 30px; /* Needed because bold text */
-        text-align: center;
+        padding: 0.4em 1em;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.8);
+        border-left: 1px solid #ccbeb3;
+    }
+
+    a:hover {
+        color: rgba(0, 0, 0, 0.9);
+        background-color: rgba(128, 222, 234, 0.8);
     }
 
     .active {
         font-weight: bold;
-        border-bottom: 1px solid black;
+        background-color: var(--secondary);
+        color: black;
+    }
+
+    @media (max-width: 576px) {
+        div {
+            font-size: 0.75rem;
+        }
     }
 </style>

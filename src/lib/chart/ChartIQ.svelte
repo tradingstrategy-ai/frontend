@@ -60,6 +60,8 @@ chartiq dependency.
   import { timeBucketToPeriodicity } from './timeBucketConverters';
   import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
   import { determinePriceChangeClass } from "$lib/helpers/price";
+	import { fade } from 'svelte/transition';
+  import Spinner from 'svelte-spinner';
 
   export let feed: object;
   export let pairId: number;
@@ -67,11 +69,16 @@ chartiq dependency.
   export let studies = [];
   export let linker = null;
 
+  let loading = false;
+
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
   let active;
   $: priceChangeAmt = active && active.Close - active.Open;
   $: priceChangePct = active && priceChangeAmt / active.Open;
+
+  let ww;
+  $: showYAxis = (ww >= 576);
 
   const chartOptions = {
     layout: { crosshair: true },
@@ -83,7 +90,7 @@ chartiq dependency.
     return formatDollar(value, 3, 3, '');
   }
 
-  function chartIQ(node: HTMLElement, { pairId, periodicity }) {
+  function chartIQ(node: HTMLElement, { pairId, periodicity, showYAxis }) {
     let prevPairId = pairId;
 
     let chartEngine = new CIQ.ChartEngine({
@@ -116,14 +123,32 @@ chartiq dependency.
     linker?.add(chartEngine);
 
     chartEngine.attachQuoteFeed(feed, {});
-    chartEngine.loadChart(pairId, { periodicity });
 
-    function update({ pairId, periodicity }) {
+    function setYAxis(val: boolean) {
+      chartEngine.chart.yAxis.position = val ? 'right' : 'none';
+    }
+
+    function loadChart() {
+      loading = true;
+      chartEngine.loadChart(pairId, { periodicity }, () => loading = false);
+    }
+
+    setYAxis(showYAxis);
+    loadChart();
+
+    function update({ pairId, periodicity, showYAxis }) {
       if (pairId !== prevPairId) {
-        chartEngine.loadChart(pairId);
+        loadChart();
         prevPairId = pairId;
+      } else {
+        chartEngine.hideCrosshairs();
+        loading = true;
+        chartEngine.setPeriodicity(periodicity, () => {
+          chartEngine.showCrosshairs();
+          loading = false;
+        });
       }
-      chartEngine.setPeriodicity(periodicity);
+      setYAxis(showYAxis);
     }
 
     function destroy() {
@@ -136,13 +161,20 @@ chartiq dependency.
   }
 </script>
 
+<svelte:window bind:innerWidth={ww} />
+
 {#await initialize() then success}
     {#if success}
         <div
           class="chart-container"
-          use:chartIQ={{ pairId, periodicity }}
+          use:chartIQ={{ pairId, periodicity, showYAxis }}
           data-testid="chartiq-widget"
         >
+            {#if loading}
+                <div class="loading" transition:fade={{ duration: 250 }}>
+                  <Spinner size="60" />
+                </div>
+            {/if}
             {#if active}
                 <div class="hud">
                     <slot name="hud-row-1" {active} {formatForHud}>
@@ -174,12 +206,25 @@ chartiq dependency.
     aspect-ratio: 16/9;
   }
 
+  .loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 241, 229, 0.75);
+  }
+
   .hud {
     position: absolute;
     top: 4px;
     left: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .hud :global(.hud-row) {
@@ -201,5 +246,21 @@ chartiq dependency.
     margin-bottom: 0;
     margin-right: 1ex;
     font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    .chart-container {
+      aspect-ratio: 3/2;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .chart-container {
+      aspect-ratio: 4/3;
+    }
+
+    .hud {
+      font-size: 0.75rem;
+    }
   }
 </style>
