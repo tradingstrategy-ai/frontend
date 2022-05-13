@@ -204,7 +204,11 @@ Render the pair trading page
         </div>
     </div>
 
-    <ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} />
+    <ChartSection
+        pairId={summary.pair_id}
+        pairSymbol={summary.pair_symbol}
+        firstTradeDate={details.first_trade_at}
+    />
 
     <h2>Time period summary</h2>
 

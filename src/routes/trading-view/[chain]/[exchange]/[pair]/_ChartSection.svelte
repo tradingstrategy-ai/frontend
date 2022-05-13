@@ -1,16 +1,33 @@
+<!--
+@component
+Displays trading pair price/volume and liquidity charts. The two charts are
+linked so they scroll/zoom together and display crosshairs and HUD data
+for the same hovered date. Also displays a time-bucket selector.
+
+#### Usage:
+```tsx
+  <ChartSection
+    pairId={12345}
+    pairSymbol={"ELON-ETH"}
+    firstTradeDate={"2020-01-02T00:00"}
+  />
+```
+-->
 <script lang="ts">
   import { page } from '$app/stores';
+  import type { TimeBucket } from '$lib/chart/timeBucketConverters';
   import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
   import ChartIQ from '$lib/chart/ChartIQ.svelte';
   import quoteFeed from '$lib/chart/quoteFeed';
   import ChartLinker from '$lib/chart/ChartLinker';
 
-  export let pairSymbol;
-  export let pairId;
+  export let pairSymbol: string;
+  export let pairId: number | string;
+  export let firstTradeDate: string;
 
   const chartLinker = new ChartLinker();
 
-  $: timeBucket = $page.url.hash.slice(1) || '4h';
+  $: timeBucket = (($page.url.hash.slice(1) || '4h') as TimeBucket);
 </script>
 
 <div class="chart-header">
@@ -32,6 +49,7 @@
         feed={quoteFeed('price')}
         {pairId}
         {timeBucket}
+        {firstTradeDate}
         studies={['Volume Underlay']}
         linker={chartLinker}
     />
@@ -51,6 +69,7 @@
         feed={quoteFeed('liquidity')}
         {pairId}
         {timeBucket}
+        {firstTradeDate}
         studies={['Liquidity AR']}
         linker={chartLinker}
     >

@@ -64,8 +64,9 @@ chartiq dependency.
   import Spinner from 'svelte-spinner';
 
   export let feed: object;
-  export let pairId: number;
+  export let pairId: number | string;
   export let timeBucket: TimeBucket;
+  export let firstTradeDate: string;
   export let studies = [];
   export let linker = null;
 
@@ -80,22 +81,18 @@ chartiq dependency.
   let ww;
   $: showYAxis = (ww >= 576);
 
-  const chartOptions = {
-    layout: { crosshair: true },
-    controls: { chartControls: null },
-    dontRoll: true
-  };
-
   function formatForHud(value: number) {
     return formatDollar(value, 3, 3, '');
   }
 
-  function chartIQ(node: HTMLElement, { pairId, periodicity, showYAxis }) {
-    let prevPairId = pairId;
+  function chartIQ(node: HTMLElement, options) {
+    let prevPairId = options.pairId;
 
     let chartEngine = new CIQ.ChartEngine({
       container: node,
-      ...chartOptions
+      layout: { crosshair: true },
+      controls: { chartControls: null },
+      dontRoll: true
     });
 
     for (const study of studies) {
@@ -123,23 +120,25 @@ chartiq dependency.
     linker?.add(chartEngine);
 
     chartEngine.attachQuoteFeed(feed, {});
+    chartEngine.cleanupGaps = 'carry';
 
-    function setYAxis(val: boolean) {
-      chartEngine.chart.yAxis.position = val ? 'right' : 'none';
+    function setYAxis() {
+      chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
     }
 
     function loadChart() {
       loading = true;
+      chartEngine.chart.firstTradeDate = firstTradeDate;
       chartEngine.loadChart(pairId, { periodicity }, () => loading = false);
     }
 
-    setYAxis(showYAxis);
+    setYAxis();
     loadChart();
 
-    function update({ pairId, periodicity, showYAxis }) {
-      if (pairId !== prevPairId) {
+    function update(options) {
+      if (options.pairId !== prevPairId) {
         loadChart();
-        prevPairId = pairId;
+        prevPairId = options.pairId;
       } else {
         chartEngine.hideCrosshairs();
         loading = true;
@@ -148,7 +147,7 @@ chartiq dependency.
           loading = false;
         });
       }
-      setYAxis(showYAxis);
+      setYAxis();
     }
 
     function destroy() {
@@ -167,7 +166,7 @@ chartiq dependency.
     {#if success}
         <div
           class="chart-container"
-          use:chartIQ={{ pairId, periodicity, showYAxis }}
+          use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate }}
           data-testid="chartiq-widget"
         >
             {#if loading}
