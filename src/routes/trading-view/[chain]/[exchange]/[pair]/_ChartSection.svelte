@@ -73,9 +73,9 @@ for the same hovered date. Also displays a time-bucket selector.
         studies={['Liquidity AR']}
         linker={chartLinker}
     >
-        <div slot="hud-row-2" class="hud-row" let:active let:formatForHud>
-            <dl class="vol-added"><dt>Vol Added</dt><dd>{formatForHud(active.av)}</dd></dl>
-            <dl class="vol-removed"><dt>Vol Removed</dt><dd>{formatForHud(active.rv)}</dd></dl>
+        <div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
+            <dl class="vol-added"><dt>Vol Added</dt><dd>{formatForHud(activeTick.av)}</dd></dl>
+            <dl class="vol-removed"><dt>Vol Removed</dt><dd>{formatForHud(activeTick.rv)}</dd></dl>
         </div>
     </ChartIQ>
 </div>

@@ -7,20 +7,24 @@
 export default class ChartLinker {
   linked = new Map();
 
+  // register a ChartEngine instance with this linker (add various injections)
   add(chartEngine): void {
     const refs = [
-      chartEngine.prepend('mousemoveinner', this.mouseMove.bind(this, chartEngine)),
-      chartEngine.prepend('doDisplayCrosshairs', this.displayCrosshairs.bind(this, chartEngine)),
+      chartEngine.prepend('mousemoveinner', this.mousemoveinner.bind(this, chartEngine)),
+      chartEngine.prepend('doDisplayCrosshairs', this.doDisplayCrosshairs.bind(this, chartEngine)),
       chartEngine.append('draw', this.draw.bind(this, chartEngine)),
     ];
     this.linked.set(chartEngine, refs);
   }
 
+  // unregister - remove the injections
   remove(chartEngine): boolean {
     this.linked.get(chartEngine).forEach(chartEngine.removeInjection);
     return this.linked.delete(chartEngine);
   }
 
+  // iterate over all registered ChartEngine instances that are not the
+  // conductor (and flag them with isFollowing during the callback execution)
   eachFollower(conductor, callback): void {
     for (const follower of this.linked.keys()) {
       if (follower === conductor || !follower.chart?.dataSegment) continue;
@@ -30,18 +34,33 @@ export default class ChartLinker {
     }
   }
 
-  draw(conductor): void {
-    if (conductor.isFollowing || !conductor.chart?.dataSegment) return;
+  // inject draw method - detects zoom/scroll changes on the conductor and
+  // mirrors the changes to all followers
+  draw(conductor, params): void {
+    // using params to determine whether `isFollowing = true` because:
+    // (a) draw method accepts optional params (other injection methods don't)
+    // (b) follower operations are invokded asynchronously, so we can't count
+    //     on the state of conductor.isFollowing
+    if (params?.isFollowing || !conductor.chart?.dataSegment) return;
 
     this.eachFollower(conductor, (follower) => {
-      follower.micropixels = conductor.micropixels;
-      follower.chart.scroll = conductor.chart.scroll;
-      follower.setCandleWidth(conductor.layout.candleWidth);
-      follower.draw();
+      // Performance optimiation: draw is invoked on animation loop; handle
+      // potentially costly operations asynchronously (on event loop) to
+      // prevent page jank. See:
+      // https://documentation.chartiq.com/tutorial-Using%20the%20Injection%20API.html#toc13__anchor
+      // https://documentation.chartiq.com/CIQ.ChartEngine.html#draw__anchor
+      setTimeout(() => {
+        follower.micropixels = conductor.micropixels;
+        follower.chart.scroll = conductor.chart.scroll;
+        follower.setCandleWidth(conductor.layout.candleWidth);
+        follower.draw({ isFollowing: true });
+      });
     });
   }
 
-  mouseMove(conductor): void {
+  // inject mousemoveinner method - detect crosshair position on conductor and
+  // mirror to all followers
+  mousemoveinner(conductor): void {
     if (conductor.isFollowing || !conductor.chart?.dataSegment) return;
 
     this.eachFollower(conductor, (follower) => {
@@ -55,7 +74,10 @@ export default class ChartLinker {
     });
   }
 
-  displayCrosshairs(conductor) {
+  // inject doDisplayCrosshairs - used in conjunction with mousemoveinner so
+  // can display only the vertical crosshair on followers (doesn't makes sense
+  // to show horizontal b/c different Y-Axis scale)
+  doDisplayCrosshairs(conductor) {
     if (conductor.isFollowing || !conductor.chart?.dataSegment) return;
 
     // reset values that may have been hidden as a follower
