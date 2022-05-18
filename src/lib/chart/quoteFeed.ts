@@ -18,7 +18,7 @@ function dateUrlParam(date: Date): string {
 
 function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
   return {
-    Date: ts,
+    DT: `${ts}Z`,
     Open: o,
     High: h,
     Low: l,

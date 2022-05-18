@@ -95,6 +95,9 @@ chartiq dependency.
       dontRoll: true
     });
 
+    // display X-Axis time markers in UTC
+    chartEngine.setTimeZone(null, 'UTC');
+
     // attach custom studies - e.g., volume, liquidity bar charts
     for (const study of studies) {
       CIQ.Studies.addStudy(chartEngine, study);
