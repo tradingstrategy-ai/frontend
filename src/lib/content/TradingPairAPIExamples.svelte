@@ -24,7 +24,7 @@ Add inline curl examples to the trading pair page.
     Get trading pair overview as JSON over HTTP GET.
 </p>
 
-<pre>curl {pairInfoUrl}</pre>
+<pre>curl "{pairInfoUrl}"</pre>
 
 <a class="body-link" href={pairInfoUrl}>
     Click here to test.
@@ -36,7 +36,7 @@ Add inline curl examples to the trading pair page.
     Download daily <a class="body-link" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">OHLCV</a> candles as JSON over HTTP GET.
 </p>
 
-<pre>curl {candlesUrl}</pre>
+<pre>curl "{candlesUrl}"</pre>
 
 <a class="body-link" href={candlesUrl}>
     Click here to test.
