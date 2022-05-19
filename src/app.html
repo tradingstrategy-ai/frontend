@@ -31,7 +31,9 @@
 
         if (loadFonts) {
             const fontStylesheet = document.getElementById("font-stylesheet");
-            fontStylesheet.setAttribute("rel", "stylesheet");
+            if(fontStylesheet) {
+                fontStylesheet.setAttribute("rel", "stylesheet");
+            }
         }
 
         window.localStorage.setItem("fontWarmup", "true");
