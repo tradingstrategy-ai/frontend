@@ -90,7 +90,7 @@ export async function externalFetch(request) {
 		// Write API URL to the internal network
 		// TODO: Make these URLs part of config
 		const publicHost = "https://tradingstrategy.ai/api";
-		const internalHost = "http://127.0.0.1:3456"
+		const internalHost = "http://127.0.0.1:3456/api"
 
 		if (request.url.startsWith(publicHost)) {
 			// clone the original request, but change the URL
