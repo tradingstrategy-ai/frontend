@@ -7,37 +7,42 @@
     <meta http-equiv="origin-trial"
           content="AiZVd1wp+hzmekqLXy5WhOkpNq24UuvYqOcJ7ymO1a5jSrO1H/XMoXhFJ60xv+OSSJb6f2EVav/QgPonbWXgvgAAAABqeyJvcmlnaW4iOiJodHRwczovL3RyYWRpbmdzdHJhdGVneS5haTo0NDMiLCJmZWF0dXJlIjoiRWFybHlIaW50c1ByZWxvYWRGb3JOYXZpZ2F0aW9uIiwiZXhwaXJ5IjoxNjQ1NTc0Mzk5fQ==">
     <link id="font-stylesheet" rel="conditional-stylesheet" href="/fonts3.css">
+
+    <script>
+        // Implement optimised font loading strategy as per
+        // https://github.com/tradingstrategy-ai/design-system/issues/9
+        // Implemented as <body> script to trigger this as early as possible.
+        // Note: The font CSS itself has a condition that fonts are not loaded on mobile.
+        function early() {
+            // Do not load fonts on the first load if the visitor is accessing trading data
+            // because this cause performance hit and CLS on the page.
+            const isTrading = window.location.pathname.includes("trading-view/");
+            const hasFontWarmup = window.localStorage.getItem("fontWarmup") === "true";
+
+            let loadFonts;
+
+            if(isTrading) {
+                loadFonts = hasFontWarmup;
+            } else {
+                loadFonts = true;
+            }
+
+            if (loadFonts) {
+                const fontStylesheet = document.getElementById("font-stylesheet");
+                if(fontStylesheet) {
+                    fontStylesheet.setAttribute("rel", "stylesheet");
+                }
+            }
+
+            window.localStorage.setItem("fontWarmup", "true");
+        }
+
+        early();
+    </script>
     %svelte.head%
 </head>
 <body>
 <div id="svelte">%svelte.body%</div>
-<script>
-    // Implement optimised font loading strategy as per
-    // https://github.com/tradingstrategy-ai/design-system/issues/9
-    window.addEventListener('DOMContentLoaded', () => {
-        // Do not load fonts on the first load if the visitor is accessing trading data
-        // because this cause performance hit and CLS on the page.
-        const isTrading = window.location.pathname.includes("trading-view/");
-        const hasFontWarmup = window.localStorage.getItem("fontWarmup") === "true";
 
-        let loadFonts;
-
-        // Note: The font CSS itself has a condition that fonts are not loaded on mobile.
-        if(isTrading) {
-            loadFonts = hasFontWarmup;
-        } else {
-            loadFonts = true;
-        }
-
-        if (loadFonts) {
-            const fontStylesheet = document.getElementById("font-stylesheet");
-            if(fontStylesheet) {
-                fontStylesheet.setAttribute("rel", "stylesheet");
-            }
-        }
-
-        window.localStorage.setItem("fontWarmup", "true");
-    });
-</script>
 </body>
 </html>

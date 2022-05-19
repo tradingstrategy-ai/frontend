@@ -34,7 +34,6 @@ netstat -ltnp | grep -w ':80'
 export PRODUCTION=true
 export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 export FRONTEND_PORT=3000
-export FRONTEND_ADDRESS_HEADER=X-Forwarded-For
 rm -rf build && node_modules/.bin/svelte-kit build && node build
 ```
 
