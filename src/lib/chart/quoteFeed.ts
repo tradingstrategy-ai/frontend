@@ -5,6 +5,8 @@
 import { backendUrl } from '$lib/config';
 import { feedParamsToTimeBucket } from '$lib/chart/timeBucketConverters';
 
+const maxTicks = 2000;
+
 const endpoints = {
   price: 'candles',
   liquidity: 'xyliquidity'
@@ -16,7 +18,7 @@ function dateUrlParam(date: Date): string {
 
 function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
   return {
-    Date: ts,
+    DT: `${ts}Z`,
     Open: o,
     High: h,
     Low: l,
@@ -26,33 +28,47 @@ function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
   };
 }
 
-async function fetchData(url, symbol, startDate, endDate, params) {
-  const urlParams = new URLSearchParams({
-    pair_id: symbol,
-    time_bucket: feedParamsToTimeBucket(params.period, params.interval),
-    start: dateUrlParam(startDate),
-    end: dateUrlParam(endDate)
-  });
-
-  const response = await fetch(`${url}?${urlParams}`);
-  const quotes = await response.json();
-
-  return quotes.map(fieldMapper);
-}
-
 export default function(type: 'price' | 'liquidity') {
-  const url = `${backendUrl}/${endpoints[type]}`;
+  const baseUrl = `${backendUrl}/${endpoints[type]}`;
+  const lastRequest = {
+    price: null,
+    liquidity: null
+  };
+
+  async function fetchData(symbol, startDate, endDate, params) {
+    const urlParams = new URLSearchParams({
+      pair_id: symbol,
+      time_bucket: feedParamsToTimeBucket(params.period, params.interval),
+      start: dateUrlParam(startDate),
+      end: dateUrlParam(endDate)
+    });
+
+    const queryString = `?${urlParams}`;
+
+    // Prevent infinite request loops: if request is identical to last request,
+    // instruct ChartIQ to check for older data. See:
+    // https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html#toc6__anchor
+    if (lastRequest[type] === queryString) {
+      return [{ DT: startDate - (endDate - startDate) }];
+    }
+
+    lastRequest[type] = queryString;
+    const response = await fetch(baseUrl + queryString);
+    const quotes = await response.json();
+
+    return quotes.map(fieldMapper);
+  }
 
   async function fetchInitialData(symbol, startDate, endDate, params, callback) {
-    const quotes = await fetchData(url, symbol, startDate, endDate, params);
+    const quotes = await fetchData(symbol, startDate, endDate, params);
     callback({ quotes });
   }
 
   async function fetchPaginationData(symbol, startDate, endDate, params, callback) {
-    const quotes = await fetchData(url, symbol, startDate, endDate, params);
-    const moreAvailable = quotes.length > 0;
+    const quotes = await fetchData(symbol, startDate, endDate, params);
+    const moreAvailable = dateUrlParam(startDate) > params.chart.firstTradeDate;
     callback({ quotes, moreAvailable });
   }
 
-  return { fetchInitialData, fetchPaginationData };
+  return { fetchInitialData, fetchPaginationData, maxTicks };
 }

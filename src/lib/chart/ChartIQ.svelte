@@ -64,8 +64,9 @@ chartiq dependency.
   import Spinner from 'svelte-spinner';
 
   export let feed: object;
-  export let pairId: number;
+  export let pairId: number | string;
   export let timeBucket: TimeBucket;
+  export let firstTradeDate: string;
   export let studies = [];
   export let linker = null;
 
@@ -73,31 +74,31 @@ chartiq dependency.
 
   $: periodicity = timeBucketToPeriodicity(timeBucket);
 
-  let active;
-  $: priceChangeAmt = active && active.Close - active.Open;
-  $: priceChangePct = active && priceChangeAmt / active.Open;
+  let activeTick;
+  $: priceChangeAmt = activeTick && activeTick.Close - activeTick.Open;
+  $: priceChangePct = activeTick && priceChangeAmt / activeTick.Open;
 
   let ww;
   $: showYAxis = (ww >= 576);
-
-  const chartOptions = {
-    layout: { crosshair: true },
-    controls: { chartControls: null },
-    dontRoll: true
-  };
 
   function formatForHud(value: number) {
     return formatDollar(value, 3, 3, '');
   }
 
-  function chartIQ(node: HTMLElement, { pairId, periodicity, showYAxis }) {
-    let prevPairId = pairId;
+  function chartIQ(node: HTMLElement, options) {
+    let prevPairId = options.pairId;
 
     let chartEngine = new CIQ.ChartEngine({
       container: node,
-      ...chartOptions
+      layout: { crosshair: true },
+      controls: { chartControls: null },
+      dontRoll: true
     });
 
+    // display X-Axis time markers in UTC
+    chartEngine.setTimeZone(null, 'UTC');
+
+    // attach custom studies - e.g., volume, liquidity bar charts
     for (const study of studies) {
       CIQ.Studies.addStudy(chartEngine, study);
     }
@@ -114,41 +115,75 @@ chartiq dependency.
       return !modifierPressed && verticalScroll;
     });
 
+    // update active tick data based on crosshair position
     chartEngine.append("headsUpHR", () => {
       const tick = chartEngine.barFromPixel(chartEngine.cx);
       const prices = chartEngine.chart.xaxis[tick];
-      if (prices) active = prices.data;
+      if (prices) activeTick = prices.data;
     });
 
+    // register this ChartEngine instance with ChartLinker (if provided)
     linker?.add(chartEngine);
 
+    // ignore mouse/touch movements if chart is in loading state;
+    // this must come _after_ linker registration (above)
+    chartEngine.prepend('mousemoveinner', () => {
+      return loading;
+    });
+
+    // attach the provided quote feed (API data adapter)
     chartEngine.attachQuoteFeed(feed, {});
 
-    function setYAxis(val: boolean) {
-      chartEngine.chart.yAxis.position = val ? 'right' : 'none';
+    // fill gaps in data (closing price carried forward); see:
+    // https://documentation.chartiq.com/CIQ.ChartEngine.html#cleanupGaps
+    chartEngine.cleanupGaps = 'carry';
+
+    // hide the Y Axis on smaller screens
+    function setYAxis() {
+      chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
     }
 
+    // load the chart! used for both initial load and updates
     function loadChart() {
       loading = true;
-      chartEngine.loadChart(pairId, { periodicity }, () => loading = false);
+
+      // make firstTradeDate available to the quoteFeed
+      chartEngine.chart.firstTradeDate = firstTradeDate;
+
+      chartEngine.loadChart(pairId, { periodicity }, () => {
+        loading = false
+      });
     }
 
-    setYAxis(showYAxis);
+    function updatePeriodicity() {
+      loading = true;
+
+      // disable crosshairs and zoom while loading
+      chartEngine.hideCrosshairs();
+      chartEngine.allowZoom = false;
+
+      chartEngine.setPeriodicity(periodicity, () => {
+        chartEngine.showCrosshairs();
+        chartEngine.allowZoom = true;
+        loading = false;
+      });
+    }
+
+
+    setYAxis();
     loadChart();
 
-    function update({ pairId, periodicity, showYAxis }) {
-      if (pairId !== prevPairId) {
+    // handle changes to action params
+    function update(options) {
+      if (options.pairId !== prevPairId) {
+        // pairId changed - reload chart with new pairId & firstTradeDate
         loadChart();
-        prevPairId = pairId;
+        prevPairId = options.pairId;
       } else {
-        chartEngine.hideCrosshairs();
-        loading = true;
-        chartEngine.setPeriodicity(periodicity, () => {
-          chartEngine.showCrosshairs();
-          loading = false;
-        });
+        // otherwise, assume periodicity changed
+        updatePeriodicity();
       }
-      setYAxis(showYAxis);
+      setYAxis();
     }
 
     function destroy() {
@@ -167,7 +202,7 @@ chartiq dependency.
     {#if success}
         <div
           class="chart-container"
-          use:chartIQ={{ pairId, periodicity, showYAxis }}
+          use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate }}
           data-testid="chartiq-widget"
         >
             {#if loading}
@@ -175,21 +210,21 @@ chartiq dependency.
                   <Spinner size="60" />
                 </div>
             {/if}
-            {#if active}
+            {#if activeTick}
                 <div class="hud">
-                    <slot name="hud-row-1" {active} {formatForHud}>
+                    <slot name="hud-row-1" {activeTick} {formatForHud}>
                         <div class="hud-row {determinePriceChangeClass(priceChangeAmt)}">
-                            <dl><dt>O</dt><dd>{formatForHud(active.Open)}</dd></dl>
-                            <dl><dt>H</dt><dd>{formatForHud(active.High)}</dd></dl>
-                            <dl><dt>L</dt><dd>{formatForHud(active.Low)}</dd></dl>
-                            <dl><dt>C</dt><dd>{formatForHud(active.Close)}</dd></dl>
+                            <dl><dt>O</dt><dd>{formatForHud(activeTick.Open)}</dd></dl>
+                            <dl><dt>H</dt><dd>{formatForHud(activeTick.High)}</dd></dl>
+                            <dl><dt>L</dt><dd>{formatForHud(activeTick.Low)}</dd></dl>
+                            <dl><dt>C</dt><dd>{formatForHud(activeTick.Close)}</dd></dl>
                             <dl><dd>{formatForHud(priceChangeAmt)}</dd></dl>
                             <dl><dd>{formatPriceChange(priceChangePct)}</dd></dl>
                         </div>
                     </slot>
-                    <slot name="hud-row-2" {active} {formatForHud}>
+                    <slot name="hud-row-2" {activeTick} {formatForHud}>
                         <div class="hud-row">
-                            <dl><dt>Vol</dt><dd>{formatForHud(active.Volume)}</dd></dl>
+                            <dl><dt>Vol</dt><dd>{formatForHud(activeTick.Volume)}</dd></dl>
                         </div>
                     </slot>
                 </div>
