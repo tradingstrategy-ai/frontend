@@ -9,6 +9,7 @@
  */
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
+import path from 'path';
 
 let config;
 
@@ -96,6 +97,12 @@ config.kit.vite = {
 			output: {
 				manualChunks: undefined
 			}
+		}
+	},
+
+	resolve: {
+		alias: {
+			'trade-executor-frontend': path.resolve('./trade-executor-frontend')
 		}
 	}
 };
