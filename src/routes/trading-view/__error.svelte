@@ -37,6 +37,10 @@
     export let chainName;
 </script>
 
+<svelte:head>
+    <title>Error: {title}</title>
+</svelte:head>
+
 <div class="container">
     {#if maintenance}
         <h1 class="text-center">{chainName} data under maintenance</h1>
