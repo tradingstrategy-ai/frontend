@@ -5,6 +5,7 @@
 
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import {checkChainMaintenance} from "$lib/chain/maintenance";
 
     export async function load({ url, params, fetch }) {
         const exchange_slug = params.exchange_id;
@@ -33,6 +34,8 @@
         }
 
         const details = await resp.json();
+
+        checkChainMaintenance(chain_slug, details.chain_name);
 
         const readableNames = {
             ...breadcrumbTranslations,

@@ -2,6 +2,7 @@
 
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import {checkChainMaintenance} from "$lib/chain/maintenance";
 
     /**
      * Display chain information and indexing status
@@ -19,7 +20,13 @@
         if (!resp.ok) {
             if (resp.status === 404) {
                 console.error("Not found", resp.status);
-                return;
+                return {
+                    status: resp.status,
+                    error: new Error(
+                        `Chain not found: ${chain_slug}`
+                    )
+                };
+
             } else {
                 console.error(resp);
                 return {
@@ -32,6 +39,10 @@
         }
 
         const details = await resp.json();
+
+         // Check we should tell user to go away from this page
+        checkChainMaintenance(details.chain_slug, details.chain_name);
+
         const slug = details.chain_slug;
 
         const readableNames = {

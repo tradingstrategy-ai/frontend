@@ -8,12 +8,12 @@
     import { backendUrl } from '$lib/config';
 
     import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+    import {checkChainMaintenance} from "$lib/chain/maintenance";
 
     /**
      * On the server-side, we load only token details.
      */
     export async function load({ url, params, fetch }) {
-
 
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
@@ -46,6 +46,9 @@
         const tokenDetails = await resp.json()
 
         console.log("Token page, token details is", tokenDetails);
+
+        // Check we should tell user to go away from this page
+        checkChainMaintenance(tokenDetails.chain_slug, tokenDetails.chain_name);
 
         const summary = tokenDetails;
 

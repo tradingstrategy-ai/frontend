@@ -47,3 +47,11 @@ export const siteMode = (({ VITE_SITE_MODE = "local" }) => {
   }
   return VITE_SITE_MODE;
 })(import.meta.env);
+
+
+/**
+ * See isChainInMaintenance()
+ */
+export const chainsUnderMaintenance = {
+    "binance": true,
+}
