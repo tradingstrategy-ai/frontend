@@ -30,14 +30,22 @@ export class ChainInMaintenance extends CustomError {
 }
 
 /**
+ * Helper function (not exported)
+ *
+ * Returns human-readable chain name for slug if chain is under maintenance
+ */
+function getChainName(chainSlug: string): string {
+    return chainsUnderMaintenance[chainSlug];
+}
+
+/**
  * Check if we should not serve data pages for a certain chain due to maintenance.
  *
  * @param chainSlug E.g. "binance"
  */
-export function isChainInMaintenance(chainSlug: string): bool {
-    return chainsUnderMaintenance[chainSlug] === true;
+export function isChainInMaintenance(chainSlug: string): boolean {
+    return chainSlug in chainsUnderMaintenance;
 }
-
 
 /**
  * Throw an error and interrupt page loading if we detect we are on a page with maintenance data.
@@ -46,12 +54,12 @@ export function isChainInMaintenance(chainSlug: string): bool {
  *
  * @param chainSlug
  */
-export function checkChainMaintenance(chainSlug: string, chainName: string) {
+export function checkChainMaintenance(chainSlug: string) {
     console.log("Checking ", chainSlug);
 
     assert(chainSlug, "Cannot check maintenance mode against undefined chain slug");
 
     if(isChainInMaintenance(chainSlug)) {
-        throw new ChainInMaintenance(chainName);
+        throw new ChainInMaintenance(getChainName(chainSlug));
     }
 }

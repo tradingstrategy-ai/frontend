@@ -2,7 +2,6 @@
 
     import { backendUrl } from '$lib/config';
 	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
-    import {checkChainMaintenance} from "$lib/chain/maintenance";
 
     /**
      * Display chain information and indexing status
@@ -39,9 +38,6 @@
         }
 
         const details = await resp.json();
-
-         // Check we should tell user to go away from this page
-        checkChainMaintenance(details.chain_slug, details.chain_name);
 
         const slug = details.chain_slug;
 

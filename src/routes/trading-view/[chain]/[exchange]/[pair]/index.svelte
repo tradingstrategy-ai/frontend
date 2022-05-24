@@ -11,7 +11,6 @@ Render the pair trading page
 
     import breadcrumbTranslations, { buildBreadcrumbs } from "$lib/breadcrumb/builder";
     import { getTokenTaxInformation } from "$lib/helpers/tokentax";
-    import { checkChainMaintenance } from "$lib/chain/maintenance";
 
      // During SSR we only load only pair details; all trading data (price and
      // liquidity candles, trading summaries) are done client-side.
@@ -41,9 +40,6 @@ Render the pair trading page
         }
 
         const pairDetails = await resp.json();
-
-         // Check we should tell user to go away from this page
-        checkChainMaintenance(pairDetails.summary.chain_slug, pairDetails.summary.chain_name);
 
         const summary = pairDetails.summary;
         const details = pairDetails.additional_details;
