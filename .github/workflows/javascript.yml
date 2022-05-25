@@ -20,6 +20,8 @@ jobs:
         run: npm ci
       - name: Package version check
         run: npm ls
+      - name: Code format check
+        run: npm run format:check
       - name: Checkout submodules
         run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git && git submodule update --init --recursive
       - name: Checkout executor frontend
