@@ -1,4 +1,8 @@
-.svelte-kit/**
-static/**
-build/**
-node_modules/**
+/.svelte-kit
+/.vscode
+/build
+/static
+/theme
+node_modules
+package.json
+package-lock.json
