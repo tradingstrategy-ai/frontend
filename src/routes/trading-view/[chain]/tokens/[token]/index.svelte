@@ -14,7 +14,6 @@
      */
     export async function load({ url, params, fetch }) {
 
-
         const exchange_slug = params.exchange;
         const chain_slug = params.chain;
         const pair_slug = params.pair;

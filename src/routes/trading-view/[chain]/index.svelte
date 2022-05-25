@@ -19,7 +19,13 @@
         if (!resp.ok) {
             if (resp.status === 404) {
                 console.error("Not found", resp.status);
-                return;
+                return {
+                    status: resp.status,
+                    error: new Error(
+                        `Chain not found: ${chain_slug}`
+                    )
+                };
+
             } else {
                 console.error(resp);
                 return {
@@ -32,6 +38,7 @@
         }
 
         const details = await resp.json();
+
         const slug = details.chain_slug;
 
         const readableNames = {
