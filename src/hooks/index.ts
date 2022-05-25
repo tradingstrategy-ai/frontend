@@ -1,13 +1,11 @@
 import type { Handle } from '@sveltejs/kit';
-import {siteMode} from "$lib/config";
+import { siteMode } from '$lib/config';
 import * as cheerio from 'cheerio';
-
 
 /**
  * SSR response transformations hook.
  */
 export const handle: Handle = async ({ event, resolve }) => {
-
 	const response = await resolve(event);
 
 	// When the next client fetches this SSR rendered page,
@@ -15,16 +13,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// and browser can load and decode them while
 	// the server is waiting for expensive database queries
 	// to create the SSR page.
-	if (response.headers["content-type"] === "text/html") {
+	if (response.headers['content-type'] === 'text/html') {
 		const earlyHintHeader = generateEarlyHintHeader(response);
-		if(earlyHintHeader) {
-			response.headers["Link"] = earlyHintHeader;
+		if (earlyHintHeader) {
+			response.headers['Link'] = earlyHintHeader;
 		}
 	}
 
 	return response;
 };
-
 
 /**
  * Generates early hint headers.
@@ -50,23 +47,22 @@ export const handle: Handle = async ({ event, resolve }) => {
  *
  */
 function generateEarlyHintHeader(response): string {
-
-	if(!response.body) {
-		throw new Error("text/html response was missing body");
+	if (!response.body) {
+		throw new Error('text/html response was missing body');
 	}
 
 	const $ = cheerio.load(response.body);
 
-	let header = "";
+	let header = '';
 
-	$('link[rel="stylesheet"]').each(function(idx, elem) {
+	$('link[rel="stylesheet"]').each(function (idx, elem) {
 		const $this = $(this);
 
 		// The SSR server generates root relative CSS links.
 		// We need to transform them for full URLs for HTTP Link header spec
 		const src = $this.attr('href');
-		if(header) {
-			header += ", ";
+		if (header) {
+			header += ', ';
 		}
 
 		header += `<${src}>; rel="preconnect"`;
@@ -74,7 +70,6 @@ function generateEarlyHintHeader(response): string {
 
 	return header;
 }
-
 
 /**
  * Shortcut fetch() API requests on the server-side rendering.
@@ -84,21 +79,16 @@ function generateEarlyHintHeader(response): string {
  * @type {import('@sveltejs/kit').ExternalFetch}
  */
 export async function externalFetch(request) {
-
-	if(siteMode == "production") {
-
+	if (siteMode == 'production') {
 		// Write API URL to the internal network
 		// TODO: Make these URLs part of config
-		const publicHost = "https://tradingstrategy.ai/api";
-		const internalHost = "http://127.0.0.1:3456/api"
+		const publicHost = 'https://tradingstrategy.ai/api';
+		const internalHost = 'http://127.0.0.1:3456/api';
 
 		if (request.url.startsWith(publicHost)) {
 			// clone the original request, but change the URL
-			request = new Request(
-				request.url.replace(publicHost, internalHost),
-				request
-			);}
-
+			request = new Request(request.url.replace(publicHost, internalHost), request);
+		}
 	}
 	return fetch(request);
 }

@@ -4,22 +4,22 @@
  */
 .stx_candle_up,
 .stx_candle_shadow_up {
-  color: var(--price-up-green);
-  border-left-color: var(--price-up-green);
+	color: var(--price-up-green);
+	border-left-color: var(--price-up-green);
 }
 
 .stx_candle_down,
 .stx_candle_shadow_down {
-  color: var(--price-down-red);
-  border-left-color: var(--price-down-red);
+	color: var(--price-down-red);
+	border-left-color: var(--price-down-red);
 }
 
 .stx_current_hr_up {
-  background-color: var(--price-up-green);
+	background-color: var(--price-up-green);
 }
 
 .stx_current_hr_down {
-  background-color: var(--price-down-red);
+	background-color: var(--price-down-red);
 }
 
 .stx_volume_underlay_up,
@@ -35,11 +35,11 @@
 }
 
 .stx-panel-title {
-  display: none;
+	display: none;
 }
 
 .stx_jump_today {
-  background-color: rgba(0, 0, 0, 0.15);
+	background-color: rgba(0, 0, 0, 0.15);
 }
 
 .crossY,

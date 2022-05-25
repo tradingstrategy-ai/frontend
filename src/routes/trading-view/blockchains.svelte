@@ -1,59 +1,54 @@
 <script context="module">
+	import { backendUrl } from '$lib/config';
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-    import { backendUrl } from '$lib/config';
-	import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+	/**
+	 * Display chain information and indexing status
+	 *
+	 */
 
-    /**
-     * Display chain information and indexing status
-     *
-     */
+	export async function load({ url, fetch }) {
+		// Load and render exchange details on the server side
+		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
+		const apiUrl = `${backendUrl}/chains`;
 
-    export async function load({ url, fetch }) {
+		const resp = await fetch(apiUrl);
 
-        // Load and render exchange details on the server side
-        // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-        const apiUrl = `${backendUrl}/chains`;
+		if (!resp.ok) {
+			if (resp.status === 404) {
+				return;
+			} else {
+				console.error(resp);
+				return {
+					status: resp.status,
+					error: new Error(`Could not load data for the chain details: ${apiUrl}. See console for details.`)
+				};
+			}
+		}
 
-        const resp = await fetch(apiUrl);
+		const chains = await resp.json();
 
-        if (!resp.ok) {
-            if (resp.status === 404) {
-                return;
-            } else {
-                console.error(resp);
-                return {
-                    status: resp.status,
-                    error: new Error(
-                        `Could not load data for the chain details: ${apiUrl}. See console for details.`
-                    )
-                };
-            }
-        }
+		const breadcrumbs = {
+			'trading-view': 'Trading data',
+			blockchains: 'Blockchains'
+		};
 
-        const chains = await resp.json();
+		// console.log("Received chains", chains);
 
-        const breadcrumbs = {
-            "trading-view": "Trading data",
-			"blockchains": "Blockchains",
-        };
-
-        // console.log("Received chains", chains);
-
-        return {
-            props: {
-                chains,
-                breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs),
-            }
-        };
-    }
+		return {
+			props: {
+				chains,
+				breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs)
+			}
+		};
+	}
 </script>
 
 <script>
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 
 	export let chains;
-    export let breadcrumbs;
-
+	export let breadcrumbs;
 </script>
 
 <svelte:head>
@@ -62,18 +57,16 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
-
-	<Breadcrumb breadcrumbs={breadcrumbs} />
+	<Breadcrumb {breadcrumbs} />
 
 	<div class="row">
 		<div class="col-md-12">
-
 			<div class="exchanges-content">
 				<h1>Blockchains</h1>
 
 				<p>
-					List of currently active blockchains producing trading data. You can explore the blockchains for
-					supported decentralised exchanges, trading pairs and price charts.
+					List of currently active blockchains producing trading data. You can explore the blockchains for supported
+					decentralised exchanges, trading pairs and price charts.
 				</p>
 
 				<table class="table">
@@ -98,17 +91,12 @@
 							</td>
 
 							<td>
-								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
-									Details
-								</a>
+								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}> Details </a>
 							</td>
-
 						</tr>
 					{/each}
 				</table>
-
 			</div>
-
 		</div>
 	</div>
 </div>
@@ -132,5 +120,4 @@
 	.chain-link:hover {
 		text-decoration: underline;
 	}
-
 </style>

@@ -15,13 +15,13 @@ eval `ssh-agent`
 
 # Add the SSH deploy key needed to access the private ChartIQ repository
 # on the production deployment
-ssh-add ~/.ssh/gh-deploy 
+ssh-add ~/.ssh/gh-deploy
 
 npm ci
 (cd theme && npm install && npx gulp build:dist)
 
 while true ; do  rm -rf build && node_modules/.bin/svelte-kit build && node build ; sleep 10 ; done
-  
+
 ```
 
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)

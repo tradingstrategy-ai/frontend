@@ -14,134 +14,138 @@ for the same hovered date. Also displays a time-bucket selector.
 ```
 -->
 <script lang="ts">
-  import { page } from '$app/stores';
-  import type { TimeBucket } from '$lib/chart/timeBucketConverters';
-  import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-  import ChartIQ from '$lib/chart/ChartIQ.svelte';
-  import quoteFeed from '$lib/chart/quoteFeed';
-  import ChartLinker from '$lib/chart/ChartLinker';
+	import { page } from '$app/stores';
+	import type { TimeBucket } from '$lib/chart/timeBucketConverters';
+	import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
+	import ChartIQ from '$lib/chart/ChartIQ.svelte';
+	import quoteFeed from '$lib/chart/quoteFeed';
+	import ChartLinker from '$lib/chart/ChartLinker';
 
-  export let pairSymbol: string;
-  export let pairId: number | string;
-  export let firstTradeDate: string;
+	export let pairSymbol: string;
+	export let pairId: number | string;
+	export let firstTradeDate: string;
 
-  const chartLinker = new ChartLinker();
+	const chartLinker = new ChartLinker();
 
-  $: timeBucket = (($page.url.hash.slice(1) || '4h') as TimeBucket);
+	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
 </script>
 
 <div class="chart-header">
-  <h2>{pairSymbol} charts</h2>
-  <TimeBucketSelector active={timeBucket} />
+	<h2>{pairSymbol} charts</h2>
+	<TimeBucketSelector active={timeBucket} />
 </div>
 
 <div class="chart-wrapper">
-    <div class="chart-title">
-        <h3>Price & volume</h3>
-        <div class="help">
-            <span class="prefix">expressed as</span>
-            <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
-                OHLCV candles
-            </a>
-        </div>
-    </div>
-    <ChartIQ
-        feed={quoteFeed('price')}
-        {pairId}
-        {timeBucket}
-        {firstTradeDate}
-        studies={['Volume Underlay']}
-        linker={chartLinker}
-    />
+	<div class="chart-title">
+		<h3>Price & volume</h3>
+		<div class="help">
+			<span class="prefix">expressed as</span>
+			<a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV"> OHLCV candles </a>
+		</div>
+	</div>
+	<ChartIQ
+		feed={quoteFeed('price')}
+		{pairId}
+		{timeBucket}
+		{firstTradeDate}
+		studies={['Volume Underlay']}
+		linker={chartLinker}
+	/>
 </div>
 
 <div class="chart-wrapper">
-    <div class="chart-title">
-        <h3>Liquidity</h3>
-        <div class="help">
-            <span class="prefix">expressed as</span>
-            <a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
-                USD value of one side of XY liquidity curve
-            </a>
-        </div>
-    </div>
-    <ChartIQ
-        feed={quoteFeed('liquidity')}
-        {pairId}
-        {timeBucket}
-        {firstTradeDate}
-        studies={['Liquidity AR']}
-        linker={chartLinker}
-    >
-        <div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
-            <dl class="vol-added"><dt>Vol Added</dt><dd>{formatForHud(activeTick.av)}</dd></dl>
-            <dl class="vol-removed"><dt>Vol Removed</dt><dd>{formatForHud(activeTick.rv)}</dd></dl>
-        </div>
-    </ChartIQ>
+	<div class="chart-title">
+		<h3>Liquidity</h3>
+		<div class="help">
+			<span class="prefix">expressed as</span>
+			<a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+				USD value of one side of XY liquidity curve
+			</a>
+		</div>
+	</div>
+	<ChartIQ
+		feed={quoteFeed('liquidity')}
+		{pairId}
+		{timeBucket}
+		{firstTradeDate}
+		studies={['Liquidity AR']}
+		linker={chartLinker}
+	>
+		<div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
+			<dl class="vol-added">
+				<dt>Vol Added</dt>
+				<dd>{formatForHud(activeTick.av)}</dd>
+			</dl>
+			<dl class="vol-removed">
+				<dt>Vol Removed</dt>
+				<dd>{formatForHud(activeTick.rv)}</dd>
+			</dl>
+		</div>
+	</ChartIQ>
 </div>
 
 <style>
-  .chart-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 1em;
-  }
+	.chart-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-bottom: 1em;
+	}
 
-  h2 {
-    flex: 1;
-    font-size: 2rem;
-    white-space: nowrap;
-  }
+	h2 {
+		flex: 1;
+		font-size: 2rem;
+		white-space: nowrap;
+	}
 
-  .chart-title {
-    display: flex;
-    align-items: baseline;
-    border-bottom: 1px solid #999;
-  }
+	.chart-title {
+		display: flex;
+		align-items: baseline;
+		border-bottom: 1px solid #999;
+	}
 
-  h3 {
-    flex: 1;
-    font-size: 1.25rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+	h3 {
+		flex: 1;
+		font-size: 1.25rem;
+		font-weight: bold;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
 
-  .help {
-    font-size: 0.875rem;
-    text-align: right;
-  }
+	.help {
+		font-size: 0.875rem;
+		text-align: right;
+	}
 
-  .help a {
-    font-weight: 500;
-    color: #525480;
-  }
+	.help a {
+		font-weight: 500;
+		color: #525480;
+	}
 
-  .help a:hover {
-    text-decoration: underline;
-  }
+	.help a:hover {
+		text-decoration: underline;
+	}
 
-  .vol-added dd {
-    color: var(--price-up-green);
-    min-width: 4.5em;
-  }
+	.vol-added dd {
+		color: var(--price-up-green);
+		min-width: 4.5em;
+	}
 
-  .vol-removed dd {
-    color: var(--price-down-red);
-  }
+	.vol-removed dd {
+		color: var(--price-down-red);
+	}
 
-  @media (max-width: 576px) {
-    h3 {
-      font-size: 1rem;
-    }
+	@media (max-width: 576px) {
+		h3 {
+			font-size: 1rem;
+		}
 
-    .help {
-      font-size: 0.8rem;
-    }
+		.help {
+			font-size: 0.8rem;
+		}
 
-    .help .prefix {
-      display: none;
-    }
-  }
+		.help .prefix {
+			display: none;
+		}
+	}
 </style>

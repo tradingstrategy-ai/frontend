@@ -1,31 +1,30 @@
 <script context="module" lang="typescript">
 	/**
 	 * Render list of all trading pairs
- 	 */
+	 */
 
-	import {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	export async function load({ url }){
-        const pathTranslations = {
-            "trading-view": "Trading data",
-			"trading-pairs": "All trading pairs",
-        };
+	export async function load({ url }) {
+		const pathTranslations = {
+			'trading-view': 'Trading data',
+			'trading-pairs': 'All trading pairs'
+		};
 
 		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
 
-	  	return {
+		return {
 			props: {
 				breadcrumbs: crumbs
 			}
 		};
-    }
-
+	}
 </script>
 
 <script lang="typescript">
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-	import StaleDataWarning from "$lib/chain/StaleDataWarning.svelte";
-	import PairExplorer from "$lib/explorer/PairExplorer.svelte";
+	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
+	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 
 	export let breadcrumbs;
 </script>
@@ -36,10 +35,9 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
-	<Breadcrumb breadcrumbs={breadcrumbs} />
+	<Breadcrumb {breadcrumbs} />
 	<div class="row">
 		<div class="col-md-12">
-
 			<div class="trading-pairs">
 				<h1>Trading pairs</h1>
 
@@ -50,19 +48,25 @@
 				<StaleDataWarning allChains={true} />
 
 				<PairExplorer
-					enabledColumns={["pair_name", "exchange_name", "usd_price_latest", "price_change_24h", "usd_volume_30d", "usd_liquidity_latest", "liquidity_change_24h",]}
+					enabledColumns={[
+						'pair_name',
+						'exchange_name',
+						'usd_price_latest',
+						'price_change_24h',
+						'usd_volume_30d',
+						'usd_liquidity_latest',
+						'liquidity_change_24h'
+					]}
 					orderColumnIndex={4}
 					pageLength={50}
-					/>
+				/>
 			</div>
-
 		</div>
 	</div>
 </div>
 
-
 <style>
-	.trading-pairs :global(.col-exchange)  {
+	.trading-pairs :global(.col-exchange) {
 		white-space: nowrap;
 	}
 </style>

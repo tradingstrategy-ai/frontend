@@ -58,14 +58,13 @@ npm run dev
 
 ## Documentation
 
-* [How to develop and integrate the Bootstrap theme](./docs/theme.md)
-* [Testing](./docs/tests.md)
-* [Running in production](./docs/production.md)
-* [Doing page speed tests](./docs/speed.md)
+- [How to develop and integrate the Bootstrap theme](./docs/theme.md)
+- [Testing](./docs/tests.md)
+- [Running in production](./docs/production.md)
+- [Doing page speed tests](./docs/speed.md)
 
 ## Notes
 
 ### SvelteKit and Svelte component installation issue
 
 [Any external Svelte components need to be installed as development dependency because of SSR](https://github.com/sveltejs/sapper-template#using-external-components).
-

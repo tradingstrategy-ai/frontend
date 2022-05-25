@@ -6,16 +6,16 @@
  * TODO: Fix properly by fixing Ghost?
  */
 export async function get({ params }) {
-    // https://kit.svelte.dev/docs/routing#advanced-routing-rest-parameters
-    const { file } = params;
-    console.log("Got file", file);
-    const res = await fetch(`https://trading-strategy.ghost.io/${file}`);
-    const bin = await res.arrayBuffer();
-    console.log("Got body", bin.byteLength);
+	// https://kit.svelte.dev/docs/routing#advanced-routing-rest-parameters
+	const { file } = params;
+	console.log('Got file', file);
+	const res = await fetch(`https://trading-strategy.ghost.io/${file}`);
+	const bin = await res.arrayBuffer();
+	console.log('Got body', bin.byteLength);
 
-    // Proxy image to the client
-    return {
-        headers: { 'content-type': 'image/jpeg' },
-        body: new Uint8Array(bin)
-    };
+	// Proxy image to the client
+	return {
+		headers: { 'content-type': 'image/jpeg' },
+		body: new Uint8Array(bin)
+	};
 }

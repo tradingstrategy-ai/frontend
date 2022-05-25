@@ -53,7 +53,7 @@ Display a loading indicator during client-side routing. Invoked when a page
 	$: $navigating ? state.load() : state.complete();
 </script>
 
-<progress class={$state} value={$progress}></progress>
+<progress class={$state} value={$progress} />
 
 <style>
 	progress {

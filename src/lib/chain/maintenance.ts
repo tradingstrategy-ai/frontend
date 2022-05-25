@@ -4,12 +4,10 @@
  * Routes can check if chain data is good.
  */
 
+import { CustomError } from 'ts-custom-error';
 
-import { CustomError } from 'ts-custom-error'
-
-import { chainsUnderMaintenance } from "../config";
-import { assert } from "assert-ts";
-
+import { chainsUnderMaintenance } from '../config';
+import { assert } from 'assert-ts';
 
 /**
  * A custom error class that gives more information on which chain does not have good data..
@@ -17,16 +15,14 @@ import { assert } from "assert-ts";
  * See https://www.npmjs.com/package/ts-custom-error for more information.
  */
 export class ChainInMaintenance extends CustomError {
+	public constructor(public chainName: string) {
+		super(`Chain under maintenance: ${chainName}`);
 
-    public constructor(public chainName: string) {
-        super(`Chain under maintenance: ${chainName}`);
-
-        // It has been 25 years and JavaScript still does not have proper exception classes.
-        // Set name explicitly as minification can mangle class names,
-        // as this needs to be checked in __error.svelte.
-        Object.defineProperty(this, 'name', { value: 'ChainInMaintenance' })
-    }
-
+		// It has been 25 years and JavaScript still does not have proper exception classes.
+		// Set name explicitly as minification can mangle class names,
+		// as this needs to be checked in __error.svelte.
+		Object.defineProperty(this, 'name', { value: 'ChainInMaintenance' });
+	}
 }
 
 /**
@@ -35,7 +31,7 @@ export class ChainInMaintenance extends CustomError {
  * Returns human-readable chain name for slug if chain is under maintenance
  */
 function getChainName(chainSlug: string): string {
-    return chainsUnderMaintenance[chainSlug];
+	return chainsUnderMaintenance[chainSlug];
 }
 
 /**
@@ -44,7 +40,7 @@ function getChainName(chainSlug: string): string {
  * @param chainSlug E.g. "binance"
  */
 export function isChainInMaintenance(chainSlug: string): boolean {
-    return chainSlug in chainsUnderMaintenance;
+	return chainSlug in chainsUnderMaintenance;
 }
 
 /**
@@ -55,11 +51,11 @@ export function isChainInMaintenance(chainSlug: string): boolean {
  * @param chainSlug
  */
 export function checkChainMaintenance(chainSlug: string) {
-    console.log("Checking ", chainSlug);
+	console.log('Checking ', chainSlug);
 
-    assert(chainSlug, "Cannot check maintenance mode against undefined chain slug");
+	assert(chainSlug, 'Cannot check maintenance mode against undefined chain slug');
 
-    if(isChainInMaintenance(chainSlug)) {
-        throw new ChainInMaintenance(getChainName(chainSlug));
-    }
+	if (isChainInMaintenance(chainSlug)) {
+		throw new ChainInMaintenance(getChainName(chainSlug));
+	}
 }

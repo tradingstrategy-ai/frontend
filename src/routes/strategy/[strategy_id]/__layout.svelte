@@ -5,7 +5,6 @@
 - Toggle strategy state loading on mount
 
 -->
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';

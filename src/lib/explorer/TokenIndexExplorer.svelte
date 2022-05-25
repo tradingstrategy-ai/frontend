@@ -58,7 +58,7 @@
 		const sortKey = columns[sortColumnIndex].serverSideSortKey;
 
 		const params = {
-			direction: data.order[0].dir === "desc" ? "desc" : "asc",
+			direction: data.order[0].dir === 'desc' ? 'desc' : 'asc',
 			chain_slug: chainSlug,
 			sort: sortKey
 		};
@@ -84,7 +84,7 @@
 		serverSide: true,
 		lengthChange: false,
 		scrollX: false,
-    pageLength: pageLength,
+		pageLength: pageLength,
 		/**
 		 *
 		 * AJAX data fetch hook for Datatables

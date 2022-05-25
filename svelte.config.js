@@ -9,7 +9,7 @@
  */
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
-import path from "path";
+import path from 'path';
 
 let config;
 
@@ -25,78 +25,68 @@ console.log(`PRODUCTION: ${PRODUCTION}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
-if(SSR || process.env.PRODUCTION) {
-	console.log("Using SSR config");
+if (SSR || process.env.PRODUCTION) {
+	console.log('Using SSR config');
 	// build server-side rendering
 	config = {
-
 		onwarn: (warning, defaultHandler) => {
 			// Disable all warnings during the local compilation for now
-            // As these warnings are spammy
+			// As these warnings are spammy
 		},
 
 		compilerOptions: {
-			enableSourcemap: true,
+			enableSourcemap: true
 		},
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true,
+			sourceMap: true
 		}),
 
 		// Create an adapter that creates build/index.js Node application
 		// https://github.com/sveltejs/kit/tree/master/packages/adapter-node
 		kit: {
 			adapter: node({
-                // All Node adapter configuration options are in format
-                // FRONTEND_PORT
-                // FRONTEND_ORIGIN
-                envPrefix: "FRONTEND_"
-            }),
+				// All Node adapter configuration options are in format
+				// FRONTEND_PORT
+				// FRONTEND_ORIGIN
+				envPrefix: 'FRONTEND_'
+			}),
 
 			files: {
-				hooks: "src/hooks"
+				hooks: 'src/hooks'
 			}
-
 		}
-
 	};
 } else {
 	// build single page app
-	console.log("Using local dev env config");
+	console.log('Using local dev env config');
 
 	config = {
-
 		onwarn: (warning, defaultHandler) => {
 			// Disable all warnings during the local compilation for now
 		},
 
 		compilerOptions: {
-			enableSourcemap: true,
+			enableSourcemap: true
 		},
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true,
+			sourceMap: true
 		}),
 
-        kit: {
-
-        }
-
+		kit: {}
 	};
 }
 
 config.kit.vite = {
-	optimizeDeps: {
-	},
+	optimizeDeps: {},
 	server: {
 		fs: {
-		  allow: [
-		  	`${process.env.PWD}`
-		  ]
+			allow: [`${process.env.PWD}`]
 		}
-  	},
+	},
 
 	// Disable 300kb vendor.js chunk generation
 	// https://rollupjs.org/guide/en/#big-list-of-options
@@ -110,13 +100,12 @@ config.kit.vite = {
 		}
 	},
 
-    // Dropping in the executor frontend
-    resolve: {
-        alias: {
-            'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
-        }
-    }
-
-}
+	// Dropping in the executor frontend
+	resolve: {
+		alias: {
+			'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
+		}
+	}
+};
 
 export default config;

@@ -5,9 +5,8 @@
 
 // Utility function for generating metadata script tag
 function generateScriptTag(metadata) {
-  return `<script type="application/ld+json">${JSON.stringify(metadata)}</script>`;
+	return `<script type="application/ld+json">${JSON.stringify(metadata)}</script>`;
 }
-
 
 /**
  * Google Article – enhanced search results for blog posts:
@@ -17,28 +16,27 @@ function generateScriptTag(metadata) {
  * as raw @html
  */
 interface Post {
-  title: string,
-  author: string,
-  published_at: Date,
-  updated_at: string
+	title: string;
+	author: string;
+	published_at: Date;
+	updated_at: string;
 }
 
 export function serializePost(postData: Post) {
-    const metadata = {
-      "@context": "http://schema.org",
-      "@type": "NewsArticle",
-      "headline": postData.title,
-      "author": {
-          "@type": "Person",
-          "name": "Trading Strategy"
-      },
-      "datePublished": postData.published_at,
-      "dateModified": postData.updated_at,
-    }
+	const metadata = {
+		'@context': 'http://schema.org',
+		'@type': 'NewsArticle',
+		headline: postData.title,
+		author: {
+			'@type': 'Person',
+			name: 'Trading Strategy'
+		},
+		datePublished: postData.published_at,
+		dateModified: postData.updated_at
+	};
 
-    return generateScriptTag(metadata);
+	return generateScriptTag(metadata);
 }
-
 
 /**
  * Sitelinks Search Box – for including an embedded search box in search results:
@@ -48,21 +46,21 @@ export function serializePost(postData: Post) {
  * (only) as raw @html
  */
 export function sitelinksSearchBox() {
-  const url = "https://tradingstrategy.ai/";
+	const url = 'https://tradingstrategy.ai/';
 
-  const metadata = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": url,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${url}search?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
-  };
+	const metadata = {
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		url: url,
+		potentialAction: {
+			'@type': 'SearchAction',
+			target: {
+				'@type': 'EntryPoint',
+				urlTemplate: `${url}search?q={search_term_string}`
+			},
+			'query-input': 'required name=search_term_string'
+		}
+	};
 
-  return generateScriptTag(metadata);
+	return generateScriptTag(metadata);
 }
