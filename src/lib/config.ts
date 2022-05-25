@@ -53,5 +53,5 @@ export const siteMode = (({ VITE_SITE_MODE = "local" }) => {
  * See isChainInMaintenance()
  */
 export const chainsUnderMaintenance = {
-    "binance": "Binance"
+    "binance": "BNB Chain"
 };
