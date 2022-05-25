@@ -19,7 +19,9 @@ ssh-add ~/.ssh/gh-deploy
 
 npm ci
 (cd theme && npm install && npx gulp build:dist)
-rm -rf build && node_modules/.bin/svelte-kit build && node build
+
+while true ; do  rm -rf build && node_modules/.bin/svelte-kit build && node build ; sleep 10 ; done
+  
 ```
 
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)
