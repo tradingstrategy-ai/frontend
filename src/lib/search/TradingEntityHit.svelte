@@ -14,226 +14,223 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 ```
 -->
 <script lang="ts">
-  import { determinePriceChangeClass } from "$lib/helpers/price";
-  import { formatDollar, formatPriceChange } from "$lib/helpers/formatters";
+	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 
-  // Any token with less than this liquidity
-  // is grayed out in the search results
-  const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
+	// Any token with less than this liquidity
+	// is grayed out in the search results
+	const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
 
-  /**
-   * object returned by Typesense `tradingEntity` search hits; see:
-   * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
-   */
-  export let document;
-  export let layout: "basic" | "advanced";
-  export let selected = false;
+	/**
+	 * object returned by Typesense `tradingEntity` search hits; see:
+	 * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
+	 */
+	export let document;
+	export let layout: 'basic' | 'advanced';
+	export let selected = false;
 
-  const label = document.type === "exchange" ? "DEX" : document.type;
+	const label = document.type === 'exchange' ? 'DEX' : document.type;
 
-  const isBasicLayout = layout === "basic";
-  const isAdvancedLayout = layout === "advanced";
-  const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
-  const hasPriceChange = Number.isFinite(document.price_change_24h);
-  const hasValidPrice = document.price_usd_latest > 0;
-  const hasTradingData = [
-    document.liquidity, document.volume_24h, document.price_change_24h
-  ].some(Number.isFinite);
+	const isBasicLayout = layout === 'basic';
+	const isAdvancedLayout = layout === 'advanced';
+	const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
+	const hasPriceChange = Number.isFinite(document.price_change_24h);
+	const hasValidPrice = document.price_usd_latest > 0;
+	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
 
-  const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
-  const priceChangePct = Math.abs(document.price_change_24h)
-    .toLocaleString("en-US", {
-      style: "percent",
-      minimumFractionDigits: 1
-    });
+	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
+	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
+		style: 'percent',
+		minimumFractionDigits: 1
+	});
 </script>
 
 <li class="list-group-item {layout}" class:selected class:isLowQuality on:mouseenter>
-    <a class="d-flex align-items-center" href={document.url_path} on:mousedown|preventDefault>
-        <div class="type badge-{document.type}">{label}</div>
-        <div class="flex-grow-1">
-            <div class="d-flex flex-grow-1">
-                <div class="desc flex-grow-1">{document.description}</div>
+	<a class="d-flex align-items-center" href={document.url_path} on:mousedown|preventDefault>
+		<div class="type badge-{document.type}">{label}</div>
+		<div class="flex-grow-1">
+			<div class="d-flex flex-grow-1">
+				<div class="desc flex-grow-1">{document.description}</div>
 
-                {#if isBasicLayout && !isLowQuality && hasPriceChange}
-                    <div class="price-change {priceChangeClass}">{priceChangePct}</div>
-                {:else if isAdvancedLayout && hasValidPrice}
-                    <div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
-                {/if}
-            </div>
+				{#if isBasicLayout && !isLowQuality && hasPriceChange}
+					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
+				{:else if isAdvancedLayout && hasValidPrice}
+					<div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
+				{/if}
+			</div>
 
-            {#if isAdvancedLayout && hasTradingData}
-                <div class="secondary d-flex flex-grow-1">
-                    <div class="volume">
-                        <dt>volume 24h:</dt>
-                        <dd>{formatDollar(document.volume_24h)}</dd>
-                    </div>
-                    <div class="liquidity">
-                        <dt>liquidity:</dt>
-                        <dd>{formatDollar(document.liquidity)}</dd>
-                    </div>
-                    <div class="price-change">
-                        <dd class="{priceChangeClass}">
-                            {hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
-                        </dd>
-                    </div>
-                </div>
-            {/if}
-        </div>
-    </a>
+			{#if isAdvancedLayout && hasTradingData}
+				<div class="secondary d-flex flex-grow-1">
+					<div class="volume">
+						<dt>volume 24h:</dt>
+						<dd>{formatDollar(document.volume_24h)}</dd>
+					</div>
+					<div class="liquidity">
+						<dt>liquidity:</dt>
+						<dd>{formatDollar(document.liquidity)}</dd>
+					</div>
+					<div class="price-change">
+						<dd class={priceChangeClass}>
+							{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
+						</dd>
+					</div>
+				</div>
+			{/if}
+		</div>
+	</a>
 </li>
 
 <style>
-  li {
-    padding: 0;
-  }
+	li {
+		padding: 0;
+	}
 
-  .basic {
-    border: none;
-  }
+	.basic {
+		border: none;
+	}
 
-  .advanced {
-    margin-bottom: 0.65em;
-    border: 1px solid #ccbbab;
-    border-radius: 8px;
-    background-color: #fff8f2;
-    background-clip: content-box;
-  }
+	.advanced {
+		margin-bottom: 0.65em;
+		border: 1px solid #ccbbab;
+		border-radius: 8px;
+		background-color: #fff8f2;
+		background-clip: content-box;
+	}
 
-  a {
-    gap: 1em;
-    font-weight: normal;
-    line-height: 1.25;
-    outline: none;
-  }
+	a {
+		gap: 1em;
+		font-weight: normal;
+		line-height: 1.25;
+		outline: none;
+	}
 
-  .basic a {
-    padding: 1rem;
-    font-size: 0.875rem;
-  }
+	.basic a {
+		padding: 1rem;
+		font-size: 0.875rem;
+	}
 
-  .advanced a {
-    padding: 20px 30px;
-    font-weight: normal;
-  }
+	.advanced a {
+		padding: 20px 30px;
+		font-weight: normal;
+	}
 
-  .selected {
-    background-color: #E5DFD9;
-  }
+	.selected {
+		background-color: #e5dfd9;
+	}
 
-  .type {
-    flex: 0 0 4.6em;
-    border-radius: 6px;
-    color: white;
-    font-weight: 600;
-    text-align: center;
-  }
+	.type {
+		flex: 0 0 4.6em;
+		border-radius: 6px;
+		color: white;
+		font-weight: 600;
+		text-align: center;
+	}
 
-  .basic .type {
-    font-size: 0.75rem;
-    line-height: 1.75;
-  }
+	.basic .type {
+		font-size: 0.75rem;
+		line-height: 1.75;
+	}
 
-  .advanced .type {
-    font-size: 0.8em;
-    line-height: 1.85;
-  }
+	.advanced .type {
+		font-size: 0.8em;
+		line-height: 1.85;
+	}
 
-  .desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+	.desc {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
 
-  .price-change {
-    text-align: right;
-    white-space: pre;
-  }
+	.price-change {
+		text-align: right;
+		white-space: pre;
+	}
 
-  .basic .price-change::after {
-    display: inline-block;
-    width: 1.25em;
-  }
+	.basic .price-change::after {
+		display: inline-block;
+		width: 1.25em;
+	}
 
-  .basic .price-change-black::after {
-    content: "-";
-  }
+	.basic .price-change-black::after {
+		content: '-';
+	}
 
-  .basic .price-change-green::after {
-    content: "▲";
-  }
+	.basic .price-change-green::after {
+		content: '▲';
+	}
 
-  .basic .price-change-red::after {
-    content: "▼";
-  }
+	.basic .price-change-red::after {
+		content: '▼';
+	}
 
-  .secondary {
-    justify-content: space-between;
-    margin-top: 1ex;
-    font-size: 0.75rem;
-  }
+	.secondary {
+		justify-content: space-between;
+		margin-top: 1ex;
+		font-size: 0.75rem;
+	}
 
-  .secondary div {
-    width: 12em;
-  }
+	.secondary div {
+		width: 12em;
+	}
 
-  .secondary div.price-change {
-    width: 5em;
-    text-align: right;
-  }
+	.secondary div.price-change {
+		width: 5em;
+		text-align: right;
+	}
 
-  .secondary dt {
-    display: inline;
-    font-weight: 300;
-    color: #777777;
-  }
+	.secondary dt {
+		display: inline;
+		font-weight: 300;
+		color: #777777;
+	}
 
-  .secondary dd {
-    display: inline;
-    font-weight: 500;
-  }
+	.secondary dd {
+		display: inline;
+		font-weight: 500;
+	}
 
-  .isLowQuality a {
-    opacity: 0.5;
-  }
+	.isLowQuality a {
+		opacity: 0.5;
+	}
 
-  .basic.isLowQuality a {
-    background: content-box url("/images/quality-warning.svg") right/16px no-repeat;
-  }
+	.basic.isLowQuality a {
+		background: content-box url('/images/quality-warning.svg') right/16px no-repeat;
+	}
 
-  .advanced.isLowQuality div.liquidity {
-    position: relative;
-  }
+	.advanced.isLowQuality div.liquidity {
+		position: relative;
+	}
 
-  .advanced.isLowQuality div.liquidity::before {
-    position: absolute;
-    content: "";
-    left: -1.35em;
-    width: 1em;
-    height: 100%;
-    background: url("/images/quality-warning.svg") center no-repeat;
-  }
+	.advanced.isLowQuality div.liquidity::before {
+		position: absolute;
+		content: '';
+		left: -1.35em;
+		width: 1em;
+		height: 100%;
+		background: url('/images/quality-warning.svg') center no-repeat;
+	}
 
-  @media (max-width: 576px) {
-    .advanced {
-      margin: 0;
-      border-width: 1px 0 0 0;
-      border-radius: 0;
-    }
+	@media (max-width: 576px) {
+		.advanced {
+			margin: 0;
+			border-width: 1px 0 0 0;
+			border-radius: 0;
+		}
 
-    .advanced:last-child {
-      border-bottom-width: 1px;
-    }
+		.advanced:last-child {
+			border-bottom-width: 1px;
+		}
 
-    .advanced a {
-      padding: 15px;
-      font-size: 0.875rem;
-    }
+		.advanced a {
+			padding: 15px;
+			font-size: 0.875rem;
+		}
 
-    .secondary div,
-    .secondary div.price-change {
-      width: auto;
-    }
-  }
+		.secondary div,
+		.secondary div.price-change {
+			width: auto;
+		}
+	}
 </style>

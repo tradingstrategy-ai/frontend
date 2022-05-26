@@ -4,115 +4,108 @@ Real time examples for the API
 
 -->
 <script context="module">
+	import { backendUrl } from '$lib/config';
+	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-    import { backendUrl } from '$lib/config';
-	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+	/**
+	 * On the server-side, we load only pair details.
+	 *
+	 * All charting data fetches are done on the client side.
+	 */
+	export async function load({ url, params, fetch }) {
+		const exchange_slug = params.exchange;
+		const chain_slug = params.chain;
+		const pair_slug = params.pair;
+		const encoded = new URLSearchParams({ exchange_slug, chain_slug, pair_slug });
+		const apiUrl = `${backendUrl}/pair-details?${encoded}`;
 
-    /**
-     * On the server-side, we load only pair details.
-     *
-     * All charting data fetches are done on the client side.
-     */
-    export async function load({ url, params, fetch }) {
+		const resp = await fetch(apiUrl);
 
-        const exchange_slug = params.exchange;
-        const chain_slug = params.chain;
-        const pair_slug = params.pair;
-        const encoded = new URLSearchParams({exchange_slug, chain_slug, pair_slug});
-        const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+		if (!resp.ok) {
+			if (resp.status === 404) {
+				console.error('Pair missing', pair_slug);
+				return {
+					status: 404,
+					error: `Trading pair not found: ${pair_slug}`
+				};
+			} else {
+				console.error('Failed to load pair', apiUrl);
+				return {
+					status: resp.status,
+					error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
+				};
+			}
+		}
 
-        const resp = await fetch(apiUrl);
+		const pairDetails = await resp.json();
 
-        if(!resp.ok) {
-            if(resp.status === 404) {
-                console.error("Pair missing", pair_slug)
-                return {
-                    status: 404,
-                    error: `Trading pair not found: ${pair_slug}`
-                }
-            } else {
-                console.error("Failed to load pair", apiUrl);
-                return {
-                    status: resp.status,
-                    error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
-                };
-            }
-        }
+		const summary = pairDetails.summary;
+		const details = pairDetails.additional_details;
 
-        const pairDetails = await resp.json()
+		console.log('Summary', summary);
+		console.log('Details', details);
 
-        const summary = pairDetails.summary;
-        const details = pairDetails.additional_details;
+		const readableNames = {
+			...breadcrumbTranslations,
+			[exchange_slug]: details.exchange_name,
+			[pair_slug]: pairDetails.summary.pair_name,
+			'api-and-historical-data': 'API and historical data'
+		};
 
-        console.log("Summary", summary);
-        console.log("Details", details);
-
-        const readableNames = {
-            ...breadcrumbTranslations,
-            [exchange_slug]: details.exchange_name,
-            [pair_slug]: pairDetails.summary.pair_name,
-            "api-and-historical-data": "API and historical data",
-        };
-
-        return {
-            // Cache the pair data pages for 30 minutes at the Cloudflare edge,
-            // so the pages are served really fast if they get popular,
-            // and also for speed test
-            maxage: 30*60, // 30 minutes,
-            props: {
-                exchange_slug,
-                chain_slug,
-                pair_slug,
-                summary,
-                details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
-            }
-        }
-    }
+		return {
+			// Cache the pair data pages for 30 minutes at the Cloudflare edge,
+			// so the pages are served really fast if they get popular,
+			// and also for speed test
+			maxage: 30 * 60, // 30 minutes,
+			props: {
+				exchange_slug,
+				chain_slug,
+				pair_slug,
+				summary,
+				details,
+				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
+			}
+		};
+	}
 </script>
 
 <script>
-    import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import TradingPairAPIExamples from "$lib/content/TradingPairAPIExamples.svelte";
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
 
-    export let details;
-    export let summary;
-    export let breadcrumbs;
+	export let details;
+	export let summary;
+	export let breadcrumbs;
 </script>
 
 <svelte:head>
-    <title>
-        {details.pair_symbol} API and historical data
-    </title>
+	<title>
+		{details.pair_symbol} API and historical data
+	</title>
 </svelte:head>
 
 <div class="container">
+	<Breadcrumb {breadcrumbs} />
 
-    <Breadcrumb breadcrumbs={breadcrumbs} />
+	<h1>{summary.pair_symbol} API and historical data</h1>
 
-    <h1>{summary.pair_symbol} API and historical data</h1>
+	<p>
+		Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on
+		<strong>{summary.exchange_name}</strong>.
+	</p>
 
-    <p>
-        Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on <strong>{summary.exchange_name}</strong>.
-    </p>
+	<p>
+		Examples here do not cover the full API. Read the full
+		<a class="body-link" href="https://tradingstrategy.ai/api/explorer/"> real-time API </a>
 
-    <p>
-        Examples here do not cover the full API.
-        Read the full
-        <a class="body-link" href="https://tradingstrategy.ai/api/explorer/">
-            real-time API
-        </a>
+		or
 
-        or
+		<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
+			algorithmic trading programming
+		</a>
 
-        <a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
-            algorithmic trading programming
-        </a>
+		documentation.
+	</p>
 
-        documentation.
-
-    </p>
-
-    <TradingPairAPIExamples {summary} {details} />
-
+	<TradingPairAPIExamples {summary} {details} />
 </div>

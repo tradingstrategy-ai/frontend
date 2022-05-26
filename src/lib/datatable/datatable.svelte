@@ -14,7 +14,7 @@
 		npm install --save datatables.net-responsive-bs4
 
 	 */
-    // https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
+	// https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
 	import { browser } from '$app/env';
 	import { onMount } from 'svelte';
 	import jQuery from 'jquery';
@@ -44,24 +44,23 @@
 	let el; // table element
 	let table; // table object (API)
 
-	let extraClass = clickableRows ? "clickable" : "";
+	let extraClass = clickableRows ? 'clickable' : '';
 
 	// jQuery, jQuery never fails
 	function installRowHandlers() {
-
-		if(!clickableRows) {
+		if (!clickableRows) {
 			// Normal table, no clickable rows
 			return;
 		}
 
 		// Add jQuery event catcher
-		jQuery(el).on('click', 'tbody tr', function(e, e2) {
+		jQuery(el).on('click', 'tbody tr', function (e, e2) {
 			// Find the first <a> element as the click target
 			const row = jQuery(e.currentTarget);
-			const link = row.find("a");
-			const loc = link.attr("href");
+			const link = row.find('a');
+			const loc = link.attr('href');
 			// TODO: figure out why Svelte routing does not work
-		  	window.location.href = loc;
+			window.location.href = loc;
 			//goto(loc);
 		});
 	}
@@ -71,40 +70,47 @@
 			const DataTable = datatableModule();
 
 			let _options = options || {};
-			_options["columns"] = columns;
+			_options['columns'] = columns;
 
 			let table = new DataTable(el, _options);
 
 			// https://datatables.net/reference/event/draw
-			table.on( 'draw', function () {
-				console.log( 'Redraw occurred at: '+new Date().getTime() );
+			table.on('draw', function () {
+				console.log('Redraw occurred at: ' + new Date().getTime());
 				// Datatables fires not one but two redraw events
 				// Add some timeout  before making the datatables visible
 				// to avoid page layout shifts on the second redraw event
-				setTimeout(() => {loaded = true; installRowHandlers() }, 250);
-			} );
+				setTimeout(() => {
+					loaded = true;
+					installRowHandlers();
+				}, 250);
+			});
 
 			table.draw();
-			console.log("DataTable loaded");
+			console.log('DataTable loaded');
 		}
 	});
 </script>
 
-
 <div class="datatables-wrapper">
 	<div class="table-responsive">
-		<table bind:this={el} class={"table table-datatable " + extraClass} style={loaded ? "display: table; width: 100%;" : "display: none"} data-cy={dataCy || 'exchange-table'}>
+		<table
+			bind:this={el}
+			class={'table table-datatable ' + extraClass}
+			style={loaded ? 'display: table; width: 100%;' : 'display: none'}
+			data-cy={dataCy || 'exchange-table'}
+		>
 			<thead>
 				<tr>
 					{#each columns as column}
-						<th>{ column.name }</th>
+						<th>{column.name}</th>
 					{/each}
 				</tr>
 			</thead>
 			<tbody />
 		</table>
 	</div>
-	<div class="data-tables-skeleton" style={!loaded ? "display: block" : "display: none"}>
+	<div class="data-tables-skeleton" style={!loaded ? 'display: block' : 'display: none'}>
 		<Skeleton />
 	</div>
 </div>
@@ -123,60 +129,56 @@
 		border-top: 0;
 	}
 
-	.datatables-wrapper :global(.paginate_button)  {
+	.datatables-wrapper :global(.paginate_button) {
 		margin: 0 10px;
 		border-bottom: 1px solid black;
 	}
 
-	.datatables-wrapper :global(.dataTables_info)  {
+	.datatables-wrapper :global(.dataTables_info) {
 		float: left;
 		padding-top: 0;
 	}
 
-	.datatables-wrapper :global(.dataTables_paginate)  {
+	.datatables-wrapper :global(.dataTables_paginate) {
 		float: right;
 	}
 
-	@media(max-width: 960px) {
-
-		.datatables-wrapper :global(.dataTables_info)  {
+	@media (max-width: 960px) {
+		.datatables-wrapper :global(.dataTables_info) {
 			float: none;
 			text-align: center;
 			margin-bottom: 20px;
-
 		}
 
-		.datatables-wrapper :global(.dataTables_paginate)  {
+		.datatables-wrapper :global(.dataTables_paginate) {
 			float: none;
 			text-align: center;
 		}
-
 	}
 
-	.datatables-wrapper :global(.paginate_button)  {
+	.datatables-wrapper :global(.paginate_button) {
 		font-weight: lighter;
 	}
 
 	/* Don't break headings to two rows */
-	.datatables-wrapper :global(th)  {
+	.datatables-wrapper :global(th) {
 		white-space: nowrap;
 	}
 
-	.datatables-wrapper :global(.paginate_button.current)  {
+	.datatables-wrapper :global(.paginate_button.current) {
 		font-weight: bold;
 	}
 
-	.datatables-wrapper :global(.paginate_button.disabled)  {
+	.datatables-wrapper :global(.paginate_button.disabled) {
 		opacity: 0.3;
 	}
 
 	/* Clickable rows */
-	.clickable :global(tr)  {
+	.clickable :global(tr) {
 		cursor: pointer;
 	}
 
-	.clickable tbody :global(tr):hover  {
-		background: #80DEEA;
+	.clickable tbody :global(tr):hover {
+		background: #80deea;
 	}
-
 </style>

@@ -1,20 +1,20 @@
 <script>
-    /**
-     * Show a warning if any specific chains we have lagging or stale data.
-     *
-     * Gets list of chain slugs for which we display data and check if any of those
-     * slugs are on the red list.
-     */
+	/**
+	 * Show a warning if any specific chains we have lagging or stale data.
+	 *
+	 * Gets list of chain slugs for which we display data and check if any of those
+	 * slugs are on the red list.
+	 */
 
-    // List of chain slugs we give a warning for
-    export const chainSlugs = [];
+	// List of chain slugs we give a warning for
+	export const chainSlugs = [];
 
-    // Set to true to display a warning if any of the blockchain sources is having an issue
-    export const allChains = false;
-
+	// Set to true to display a warning if any of the blockchain sources is having an issue
+	export const allChains = false;
 </script>
 
 <!-- A placeholder until we get this information from the SSR hook -->
+
 <!--
 {#if chainSlugs.includes("binance") || allChains }
     <div class="alert alert-danger">
@@ -22,9 +22,8 @@
     </div>
 {/if}
 -->
-
 <style>
-    .alert-danger a {
-        color: #a91e2c;
-    }
+	.alert-danger a {
+		color: #a91e2c;
+	}
 </style>

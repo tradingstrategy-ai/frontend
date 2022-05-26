@@ -1,8 +1,7 @@
 describe('Trading strategy About', () => {
-
-    before(() => {
-        cy.visit('/about');
-    })
+	before(() => {
+		cy.visit('/about');
+	});
 
 	it('User should be able to navigate to the about site', () => {
 		cy.contains(/about/i);
@@ -23,20 +22,14 @@ describe('Trading strategy About', () => {
 	});
 
 	it('Check links are correct', () => {
-		cy.get('[data-testid=link-traders]')
-			.invoke('attr', 'href')
-			.should('eq', '/');
+		cy.get('[data-testid=link-traders]').invoke('attr', 'href').should('eq', '/');
 
-		cy.get('[data-testid=link-hedge ]')
-			.invoke('attr', 'href')
-			.should('eq', 'mailto:info@tradingstrategy.ai');
+		cy.get('[data-testid=link-hedge ]').invoke('attr', 'href').should('eq', 'mailto:info@tradingstrategy.ai');
 
-		cy.get('[data-testid=link-defi]')
-			.invoke('attr', 'href')
-			.should('eq', 'mailto:info@tradingstrategy.ai');
+		cy.get('[data-testid=link-defi]').invoke('attr', 'href').should('eq', 'mailto:info@tradingstrategy.ai');
 	});
 
-    it('Should have a Unique Value proposition section with 3 cards', () => {
+	it('Should have a Unique Value proposition section with 3 cards', () => {
 		cy.contains(/Unique value proposition/i);
 		cy.get('[data-testid=link-active-trading]');
 		cy.get('[data-testid=link-funds-control]');

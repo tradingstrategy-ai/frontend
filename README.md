@@ -58,14 +58,31 @@ npm run dev
 
 ## Documentation
 
-* [How to develop and integrate the Bootstrap theme](./docs/theme.md)
-* [Testing](./docs/tests.md)
-* [Running in production](./docs/production.md)
-* [Doing page speed tests](./docs/speed.md)
+- [How to develop and integrate the Bootstrap theme](./docs/theme.md)
+- [Testing](./docs/tests.md)
+- [Running in production](./docs/production.md)
+- [Doing page speed tests](./docs/speed.md)
 
 ## Notes
+
+### Code Formatting Standards
+
+We are using [Prettier](https://prettier.io/) for code formatting. Extensions are available for
+most code editors / IDEs (see "Editor Support" on Prettier homepage).
+
+If you prefer not to have your editor do automatic formatting, please run the following command and
+commit properly formatted code before pushing a PR:
+
+```bash
+npm run format
+```
+
+Our CI/CD pipeline runs the following chack on PRs or pushes to `master`:
+
+```bash
+npm run format:check
+```
 
 ### SvelteKit and Svelte component installation issue
 
 [Any external Svelte components need to be installed as development dependency because of SSR](https://github.com/sveltejs/sapper-template#using-external-components).
-

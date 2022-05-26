@@ -15,23 +15,23 @@ Typesense filter on:change.
 ```
 -->
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import Filter from "./_Filter.svelte";
+	import { createEventDispatcher } from 'svelte';
+	import Filter from './_Filter.svelte';
 
-  export let fieldName: string;
-  export let selected: string[] = [];
-  export let filters: string[] = [];
-  export let labels: string[] = [];
+	export let fieldName: string;
+	export let selected: string[] = [];
+	export let filters: string[] = [];
+	export let labels: string[] = [];
 
-  const options = filters.map((filter, idx) => {
-    return {
-      label: labels[idx],
-      value: `${fieldName}:${filters[idx]}`
-    };
-  });
+	const options = filters.map((filter, idx) => {
+		return {
+			label: labels[idx],
+			value: `${fieldName}:${filters[idx]}`
+		};
+	});
 
-  const dispatch = createEventDispatcher();  
-  $: dispatch("change", { fieldName, filter: selected.join(" && ") });
+	const dispatch = createEventDispatcher();
+	$: dispatch('change', { fieldName, filter: selected.join(' && ') });
 </script>
 
 <Filter bind:selected {fieldName} {options} />

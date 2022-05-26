@@ -8,7 +8,7 @@ Tests are in a separate package because of conflict of TS module type for Svelte
 and Cypress (`type: "node"`).
 
 ```shell
-cd tests 
+cd tests
 npm install
 ```
 
@@ -21,6 +21,7 @@ Run cypress in the browser.
 ```shell
 npm run cypress:open
 ```
+
 ### Cypress for continous integration
 
 Run cypress with the headless browser. Before running cypress tests the app should be running.
@@ -42,6 +43,7 @@ Still experimental we can run unit tests for components but not working with rou
 ```shell
 npm run test
 ```
+
 ## Before commit
 
 Test that everything compiles in the production build:

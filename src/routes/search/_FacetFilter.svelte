@@ -15,19 +15,19 @@ filter on:change.
 -->
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-  import Filter from "./_Filter.svelte";
-  import type { FilterOption } from "./_Filter.svelte";
+	import Filter from './_Filter.svelte';
+	import type { FilterOption } from './_Filter.svelte';
 
-  export let fieldName: string;
-  export let options: FilterOption[];
-  export let selected: string[] = [];
+	export let fieldName: string;
+	export let options: FilterOption[];
+	export let selected: string[] = [];
 
-  const dispatch = createEventDispatcher();
-  $: dispatch("change", { fieldName, filter: getFilter(selected) });
+	const dispatch = createEventDispatcher();
+	$: dispatch('change', { fieldName, filter: getFilter(selected) });
 
-  function getFilter(values) {
-    return values.length ? `${fieldName}:=[${values}]` : null;
-  }
+	function getFilter(values) {
+		return values.length ? `${fieldName}:=[${values}]` : null;
+	}
 </script>
 
 <Filter bind:selected {fieldName} {options} />

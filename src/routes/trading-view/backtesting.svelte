@@ -1,7 +1,7 @@
 <script context="module">
 	import { browser, dev } from '$app/env';
 	import { backendUrl } from '$lib/config';
-	import breadcrumbTranslations, {buildBreadcrumbs} from "$lib/breadcrumb/builder";
+	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export const hydrate = true;
 
@@ -13,7 +13,7 @@
 	export async function load({ url, session, fetch, context }) {
 		const apiUrl = `${backendUrl}/datasets`;
 
-        // TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
+		// TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
 		const res = await fetch(apiUrl, {
 			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
 			// See hooks/index.ts for more information.
@@ -22,9 +22,9 @@
 			// This is different from hitting the API from the client side, because in that case these
 			// fields would be correct, and also overwritten by the web browser / Cloudflare.
 			headers: {
-				'X-Forwarded-Host': "tradingstrategy.ai",
-				'X-Forwarded-Proto': "https",
-				'Host': "tradingstrategy.ai",
+				'X-Forwarded-Host': 'tradingstrategy.ai',
+				'X-Forwarded-Proto': 'https',
+				Host: 'tradingstrategy.ai'
 			}
 		});
 
@@ -32,7 +32,7 @@
 
 		const readableNames = {
 			...breadcrumbTranslations
-      	};
+		};
 
 		if (res.ok) {
 			return {
@@ -45,16 +45,15 @@
 
 		return {
 			status: res.status,
-			error: new Error(`Could not load ${url}`),
+			error: new Error(`Could not load ${url}`)
 		};
 	}
-
 </script>
 
 <script>
 	import Spinner from 'svelte-spinner';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-    import {formatTimeAgo} from '$lib/helpers/formatters';
+	import { formatTimeAgo } from '$lib/helpers/formatters';
 
 	export let datasets;
 	export let submitting = false;
@@ -64,34 +63,45 @@
 	export let breadcrumbs;
 
 	function formatNumber(n) {
-		if(n <= 1000) {
-			return (n/1000).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
-		} else{
-			return (n/1000).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+		if (n <= 1000) {
+			return (n / 1000).toLocaleString('en', {
+				minimumFractionDigits: 3,
+				maximumFractionDigits: 3
+			});
+		} else {
+			return (n / 1000).toLocaleString('en', {
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 0
+			});
 		}
 	}
 
 	function formatSize(n) {
-		if(n <= 1024*1024) {
-			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 3, maximumFractionDigits: 3})
-		} else{
-			return (n/(1024*1024)).toLocaleString("en",  {minimumFractionDigits: 0, maximumFractionDigits: 0})
+		if (n <= 1024 * 1024) {
+			return (n / (1024 * 1024)).toLocaleString('en', {
+				minimumFractionDigits: 3,
+				maximumFractionDigits: 3
+			});
+		} else {
+			return (n / (1024 * 1024)).toLocaleString('en', {
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 0
+			});
 		}
 	}
 
 	function formatDownloadLink(key, link) {
 		// Cannot downlaod without API key
-		if(!validApiKey) {
-			return "javascript:";
+		if (!validApiKey) {
+			return 'javascript:';
 		}
 
 		const url = new URL(link);
-		url.searchParams.set("api-key", key);
+		url.searchParams.set('api-key', key);
 		return url.toString();
 	}
 
 	async function handleSubmit(event) {
-
 		const url = `${backendUrl}/validate-api-key`;
 		let key = event.target.apiKey.value;
 
@@ -102,15 +112,14 @@
 		submitting = true;
 
 		try {
-
 			// https://stackoverflow.com/a/53189376/315168
 			//console.log("Posting to", url);
 			const res = await fetch(url, {
 				method: 'POST',
-				body: new URLSearchParams({key}),
+				body: new URLSearchParams({ key })
 			});
 
-			if(res.status != 200) {
+			if (res.status != 200) {
 				apiKeyError = `Server failure: ${res.status} ${res.statusText}`;
 				return;
 			}
@@ -120,28 +129,26 @@
 			// console.log("Got validation response", data);
 
 			if (!data.valid) {
-				apiKeyError = "The API key is not valid";
+				apiKeyError = 'The API key is not valid';
 				return;
 			}
 
 			validApiKey = key;
-
-		} catch(e) {
+		} catch (e) {
 			apiKeyError = e.toString();
 		} finally {
 			submitting = false;
 		}
 	}
-
 </script>
 
 <svelte:head>
 	<title>Historical DEX trading data</title>
-	<meta name="description" content="Download price, OHLCV and liquidity backtesting data">
+	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
 </svelte:head>
 
 <div class="container container-main">
-	<Breadcrumb breadcrumbs={breadcrumbs} />
+	<Breadcrumb {breadcrumbs} />
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">
@@ -154,38 +161,38 @@
 
 				<p>
 					Read the documentation
-					<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">how to get started with Trading Strategy Python library for algorithmic trading</a>.
+					<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"
+						>how to get started with Trading Strategy Python library for algorithmic trading</a
+					>.
 				</p>
 
 				<h2>Available datasets</h2>
 
 				{#if !validApiKey}
-					<form id="form-api-key" class="form-group" on:submit|preventDefault="{handleSubmit}">
-
+					<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
 						<label for="apiKey">Enter API key to enable download</label>
 
 						<!-- <div class="d-flex flex-row justify-content-center"> -->
 						<div id="form-group-api-key">
-
-							<input class="form-control form-group-api-key-item"
-								   id="apiKey"
-								   placeholder="secret-token:tradingstrategy-"
-								   type="text">
-
+							<input
+								class="form-control form-group-api-key-item"
+								id="apiKey"
+								placeholder="secret-token:tradingstrategy-"
+								type="text"
+							/>
 
 							<button type="submit" class="btn btn-primary form-group-api-key-item" disabled={submitting}>Enter</button>
 
 							{#if submitting}
 								<Spinner />
 							{/if}
-
 						</div>
 					</form>
 				{/if}
 
 				{#if apiKeyError}
 					<div class="alert alert-danger shadow-soft" role="alert">
-            			<span class="alert-inner--text">{apiKeyError}</span>
+						<span class="alert-inner--text">{apiKeyError}</span>
 					</div>
 				{/if}
 
@@ -210,7 +217,7 @@
 						</thead>
 
 						<tbody>
-							{#each datasets as row }
+							{#each datasets as row}
 								<tr>
 									<td>{row.name}</td>
 									<td>{row.designation}</td>
@@ -218,19 +225,22 @@
 									<td>{formatSize(row.size)}</td>
 									<td>{row.format}</td>
 									<td>
-                                        {formatTimeAgo(row.last_updated_at)}
+										{formatTimeAgo(row.last_updated_at)}
 									</td>
 
 									<td>
-										<a class=action-link rel="external" href={row.documentation}>
-											Documentation
-										</a>
+										<a class="action-link" rel="external" href={row.documentation}> Documentation </a>
 
-										<a class=action-link rel="external" target="{validApiKey ? `_blank` : undefined}" href="{formatDownloadLink(validApiKey, row.download_link)}" disabled="{validApiKey ? undefined : 'disabled'}">
-											Download 
+										<a
+											class="action-link"
+											rel="external"
+											target={validApiKey ? `_blank` : undefined}
+											href={formatDownloadLink(validApiKey, row.download_link)}
+											disabled={validApiKey ? undefined : 'disabled'}
+										>
+											Download
 										</a>
 									</td>
-
 								</tr>
 							{/each}
 						</tbody>
@@ -240,14 +250,14 @@
 				<h2>Data logistics</h2>
 
 				<p>
-					Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format
-					designed for data research. Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
+					Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
+					Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
 				</p>
 
 				<p>
-					Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably larger when expanded to RAM.
-					We expect you to download the dataset, cache the resulting file on a local disk and
-					perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute
+					Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably
+					larger when expanded to RAM. We expect you to download the dataset, cache the resulting file on a local disk
+					and perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute
 					candle data takes several gigabyte of memory.
 				</p>
 
@@ -255,7 +265,9 @@
 
 				<ul>
 					<li>
-						<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html">Getting started with Trading Strategy Python client</a>
+						<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"
+							>Getting started with Trading Strategy Python client</a
+						>
 					</li>
 					<li>
 						<a rel="external" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
@@ -264,29 +276,27 @@
 						<a href="https://github.com/tradingstrategy-ai/client">Github</a>
 					</li>
 				</ul>
-
 			</div>
 		</div>
 	</section>
 </div>
 
 <style>
-
 	.card-body {
 		/* Align text left edge with logo */
 		padding: 0;
 	}
 
 	.card-body a {
-	  	color: var(--link-color);
-	  	text-decoration: none;
-	  	font-weight: bold;
+		color: var(--link-color);
+		text-decoration: none;
+		font-weight: bold;
 		transition: 0.3s;
 	}
 
 	.card-body a:hover {
-	  text-decoration: underline;
-	  color: var(--link-color);
+		text-decoration: underline;
+		color: var(--link-color);
 	}
 
 	.table-datasets :global(time) {
@@ -311,5 +321,4 @@
 		max-width: 400px;
 		margin-right: 20px;
 	}
-
 </style>

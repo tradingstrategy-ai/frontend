@@ -19,10 +19,8 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 		<h1>You're on Page {page}.</h1>
 		<p>
 			In this page's <code>load</code> function, we waited for {page * 2}
-			seconds to mimick a real-world API call before rendering. You can go
-			back to the home page, which should load instantaneously because it
-			doesn't do much server side. Page 2 (and beyond) will have a longer
-			delay of {(page + 1) * 2} seconds.
+			seconds to mimick a real-world API call before rendering. You can go back to the home page, which should load instantaneously
+			because it doesn't do much server side. Page 2 (and beyond) will have a longer delay of {(page + 1) * 2} seconds.
 		</p>
 		<div class="links">
 			<a href="/">Home</a>

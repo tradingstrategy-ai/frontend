@@ -19,71 +19,64 @@
     ```
 -->
 <script context="module" lang="ts">
-    import {backendUrl} from '$lib/config';
+	import { backendUrl } from '$lib/config';
 
-    export let apiKey = import.meta.env.VITE_TRADING_STRATEGY_API_KEY;
+	export let apiKey = import.meta.env.VITE_TRADING_STRATEGY_API_KEY;
 </script>
 
 <script lang="ts">
-    import {onMount} from "svelte";
-    import api from "./trading-view/api.svelte";
+	import { onMount } from 'svelte';
+	import api from './trading-view/api.svelte';
 
-    export let page: number;
+	export let page: number;
 
-    export let apiKey;
+	export let apiKey;
 
-    export let motd;
+	export let motd;
 
-    onMount(async () => {
+	onMount(async () => {
+		if (!apiKey) {
+			apiKey = window.localStorage.getItem('tsApiKey');
+		}
 
-        if(!apiKey) {
-            apiKey = window.localStorage.getItem("tsApiKey");
-        }
+		const resp = await fetch(`${backendUrl}/message-of-the-day`, {
+			headers: new Headers({
+				Authorization: apiKey,
+				'Content-Type': 'application/json'
+			})
+		});
+		console.log('Resp is', resp);
 
-        const resp = await fetch(
-            `${backendUrl}/message-of-the-day`,
-            {
-                headers: new Headers({
-                    'Authorization': apiKey,
-                    'Content-Type': 'application/json'
-                }),
-            },
-        );
-        console.log("Resp is", resp);
+		const data = await resp.json();
+		console.log('Data is', data);
 
-        const data = await resp.json();
-        console.log("Data is", data);
-
-        motd = data.message;
-    });
-
+		motd = data.message;
+	});
 </script>
 
 <div class="container">
-    <div class="content">
-        <h1>Backtesting dataset download in a browser</h1>
+	<div class="content">
+		<h1>Backtesting dataset download in a browser</h1>
 
-        <p>
-            Testing download datasets using fetch().
-        </p>
+		<p>Testing download datasets using fetch().</p>
 
-        {#if !apiKey}
-            <div class="alert alert-danger">
-                API key missing. Please run locally and export VITE_TRADING_STRATEGY_API_KEY
-                or set via JavaScript console window.localStorage.setItem("tsApiKey", "");
-            </div>
-        {/if}
+		{#if !apiKey}
+			<div class="alert alert-danger">
+				API key missing. Please run locally and export VITE_TRADING_STRATEGY_API_KEY or set via JavaScript console
+				window.localStorage.setItem("tsApiKey", "");
+			</div>
+		{/if}
 
-        <p>
-            API URL is: <strong>{backendUrl}</strong>
-        </p>
+		<p>
+			API URL is: <strong>{backendUrl}</strong>
+		</p>
 
-        <p>
-            API key is: <strong>{apiKey}</strong>
-        </p>
+		<p>
+			API key is: <strong>{apiKey}</strong>
+		</p>
 
-        <p>
-            Message of the day: <strong>{motd}</strong>
-        </p>
-    </div>
+		<p>
+			Message of the day: <strong>{motd}</strong>
+		</p>
+	</div>
 </div>

@@ -2,7 +2,7 @@
 	/**
 	 * Frontpage renderer
 	 */
-  import { backendUrl } from '$lib/config';
+	import { backendUrl } from '$lib/config';
 	import { fetchBlogroll } from '$lib/blog/feed';
 
 	// TODO: Mobile menu requires hydrate
@@ -41,7 +41,7 @@
 			// Cache the landing data for 5 minutes at the Cloudflare edge,
 			// so the pages are served really fast if they get popular,
 			// and also for speed test
-			maxage: 5*60, // 5 minutes,
+			maxage: 5 * 60, // 5 minutes,
 			props: { topMomentum, impressiveNumbers, posts }
 		};
 	}
@@ -50,28 +50,28 @@
 <script>
 	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
-	import ImpressiveNumbers from "$lib/content/ImpressiveNumbers.svelte";
-	import BlogPreviewCard from "$lib/blog/BlogPreviewCard.svelte";
+	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
+	import BlogPreviewCard from '$lib/blog/BlogPreviewCard.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
-    import {goto} from "$app/navigation";
+	import { goto } from '$app/navigation';
 
 	export let topMomentum;
 	export let impressiveNumbers;
 	export let posts;
 
-    function doSecretNavigation() {
-        goto("/strategy");
-    }
+	function doSecretNavigation() {
+		goto('/strategy');
+	}
 </script>
 
 <svelte:head>
 	<title>Trading Strategy - Algorithmic trading strategy protocol</title>
-	<meta name="description" content="DeFi market data and systematic trading">
+	<meta name="description" content="DeFi market data and systematic trading" />
 	{@html sitelinksSearchBox()}
 </svelte:head>
 
 <main>
-	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation} >
+	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation}>
 		<div class="container">
 			<p class="heading-p">Algorithmic trading protocol for decentralised markets</p>
 
@@ -87,7 +87,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<h3 class="heading-momentum text-center">Top trades today</h3>
-							<TopMomentum momentumDetails={topMomentum} />
+						<TopMomentum momentumDetails={topMomentum} />
 					</div>
 				</div>
 			</div>
@@ -98,16 +98,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 strategy-cards">
-
 					<h3 class="heading-strategies text-center">Strategies</h3>
 
 					<p class="lead coming-soon">
 						<span class="badge text-uppercase">Coming soon</span>
 					</p>
 
-					<p class="lead coming-soon">
-						Invest in non-custodial, active, trading strategies run by the oracle network.
-					</p>
+					<p class="lead coming-soon">Invest in non-custodial, active, trading strategies run by the oracle network.</p>
 				</div>
 			</div>
 		</div>
@@ -117,18 +114,17 @@
 		<section class="blog">
 			<div class="container">
 				<h3 class="heading-blog text-center">Blog</h3>
-					<div class="card-deck d-block d-lg-flex">
-						{#each posts as post (post.id)}
-							<BlogPreviewCard {post} layout="compact" />
-						{/each}
-					</div>
+				<div class="card-deck d-block d-lg-flex">
+					{#each posts as post (post.id)}
+						<BlogPreviewCard {post} layout="compact" />
+					{/each}
+				</div>
 				<p class="text-center blog-all">
 					<a class="btn" href="/blog/">View blog</a>
 				</p>
 			</div>
 		</section>
 	{/if}
-
 </main>
 
 <style>
@@ -140,7 +136,7 @@
 	}
 
 	.card-jumbo {
-		background: #F2DFCE;
+		background: #f2dfce;
 		box-shadow: none;
 		padding: 60px 0;
 	}
@@ -158,7 +154,7 @@
 		width: 100%;
 		color: black;
 		font-size: 2.3rem;
-		font-family: "Exo 2", sans-serif;
+		font-family: 'Exo 2', sans-serif;
 		font-weight: 400;
 		text-align: left;
 	}
@@ -201,7 +197,7 @@
 		margin-top: 40px;
 	}
 
-	@media(max-width: 768px) {
+	@media (max-width: 768px) {
 		svg {
 			display: none;
 		}
