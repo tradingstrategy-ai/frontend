@@ -55,5 +55,6 @@ export const siteMode = (({ VITE_SITE_MODE = "local" }) => {
  * TODO: Make this environment variable based or to be received from the backend.
  */
 export const chainsUnderMaintenance = {
+
     "binance": "BNB Chain"
 };
