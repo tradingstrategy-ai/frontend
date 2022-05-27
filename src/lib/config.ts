@@ -49,10 +49,19 @@ export const siteMode = (({ VITE_SITE_MODE = 'local' }) => {
 })(import.meta.env);
 
 /**
- * See isChainInMaintenance()
+ * Specify chains under maintence as JSON string, e.g.:
+ * VITE_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
  *
- * TODO: Make this environment variable based or to be received from the backend.
+ * NOTE: fresh `npm run build` is required for update to take effect.
+ *
+ * See: checkChainMaintenance
  */
-export const chainsUnderMaintenance = {
-	// binance: 'BNB Chain'
-};
+export const chainsUnderMaintenance = ((env) => {
+	const jsonStr = env.VITE_PUBLIC_CHAINS_UNDER_MAINTENANCE || '{}';
+	try {
+		return JSON.parse(jsonStr);
+	} catch (e) {
+		console.warn('VITE_PUBLIC_CHAINS_UNDER_MAINTENANCE is not valid JSON', jsonStr);
+		return {};
+	}
+})(import.meta.env);

@@ -1,11 +1,7 @@
 /**
- * Chain checks.
- *
- * Routes can check if chain data is good.
+ * Chain checks. Enables routes to verify if data is valid for a given chain.
  */
-
 import { CustomError } from 'ts-custom-error';
-
 import { chainsUnderMaintenance } from '../config';
 import { assert } from 'assert-ts';
 
@@ -26,24 +22,6 @@ export class ChainInMaintenance extends CustomError {
 }
 
 /**
- * Helper function (not exported)
- *
- * Returns human-readable chain name for slug if chain is under maintenance
- */
-function getChainName(chainSlug: string): string {
-	return chainsUnderMaintenance[chainSlug];
-}
-
-/**
- * Check if we should not serve data pages for a certain chain due to maintenance.
- *
- * @param chainSlug E.g. "binance"
- */
-export function isChainInMaintenance(chainSlug: string): boolean {
-	return chainSlug in chainsUnderMaintenance;
-}
-
-/**
  * Throw an error and interrupt page loading if we detect we are on a page with maintenance data.
  *
  * Then this will be caught in __error.svelte.
@@ -55,7 +33,7 @@ export function checkChainMaintenance(chainSlug: string) {
 
 	assert(chainSlug, 'Cannot check maintenance mode against undefined chain slug');
 
-	if (isChainInMaintenance(chainSlug)) {
-		throw new ChainInMaintenance(getChainName(chainSlug));
+	if (chainSlug in chainsUnderMaintenance) {
+		throw new ChainInMaintenance(chainsUnderMaintenance[chainSlug]);
 	}
 }
