@@ -8,7 +8,7 @@ Render the pair trading page
 -->
 <script context="module">
 	import { backendUrl } from '$lib/config';
-
+	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 
@@ -24,19 +24,7 @@ Render the pair trading page
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				console.error('Pair missing', pair_slug);
-				return {
-					status: 404,
-					error: `Trading pair not found: ${pair_slug}`
-				};
-			} else {
-				console.error('Failed to load pair', apiUrl);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
-				};
-			}
+			return getApiError(resp, 'Trading pair', [chain_slug, exchange_slug, pair_slug]);
 		}
 
 		const pairDetails = await resp.json();

@@ -5,6 +5,7 @@ Export data for exchange trading pair list
 -->
 <script context="module">
 	import { backendUrl } from '$lib/config';
+	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url, params, fetch }) {
@@ -19,16 +20,7 @@ Export data for exchange trading pair list
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				// TODO: Might happen if the sitemap is out of sync
-				return;
-			} else {
-				console.error(resp);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for the exchange details: ${apiUrl}. See console for details.`)
-				};
-			}
+			return getApiError(resp, 'Exchange', [chain_slug, exchange_slug]);
 		}
 
 		const details = await resp.json();
@@ -44,7 +36,6 @@ Export data for exchange trading pair list
 				exchange_slug,
 				chain_slug,
 				details,
-				_backendUrl: backendUrl,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
 			}
 		};
@@ -55,7 +46,6 @@ Export data for exchange trading pair list
 	import PairListExportPage from '$lib/content/PairListExportPage.svelte';
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 
-	export let _backendUrl;
 	export let exchange_slug;
 	export let chain_slug;
 	export let details;
@@ -76,5 +66,5 @@ Export data for exchange trading pair list
 
 <div class="container">
 	<Breadcrumb {breadcrumbs} />
-	<PairListExportPage backendUrl={_backendUrl} {chain_slug} {exchange_slug} {exchange_name} />
+	<PairListExportPage {backendUrl} {chain_slug} {exchange_slug} {exchange_name} />
 </div>

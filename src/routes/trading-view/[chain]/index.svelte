@@ -1,6 +1,7 @@
 <script context="module">
 	import { backendUrl } from '$lib/config';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
+	import getApiError from '$lib/chain/getApiError';
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	/**
 	 * Display chain information and indexing status
@@ -16,19 +17,7 @@
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				console.error('Not found', resp.status);
-				return {
-					status: resp.status,
-					error: new Error(`Chain not found: ${chain_slug}`)
-				};
-			} else {
-				console.error(resp);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for the chain details: ${apiUrl}. See console for details.`)
-				};
-			}
+			return getApiError(resp, 'Chain', [chain_slug]);
 		}
 
 		const details = await resp.json();
