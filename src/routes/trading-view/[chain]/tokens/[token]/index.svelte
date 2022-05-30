@@ -1,78 +1,38 @@
+<!--
+	Render the token page
+-->
 <script context="module">
-	/*
-        Render the token page
-
-        - Load token core data on the SSR.
-    */
-
 	import { backendUrl } from '$lib/config';
-
+	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	/**
-	 * On the server-side, we load only token details.
-	 */
+	// load core token data server-side
 	export async function load({ url, params, fetch }) {
-		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
-		const pair_slug = params.pair;
-		const token_slug = params.token;
-		const token_address = token_slug;
-		const address = token_slug;
-		const encoded = new URLSearchParams({ chain_slug, address });
+		const address = params.token;
 
+		const encoded = new URLSearchParams({ chain_slug, address });
 		const apiUrl = `${backendUrl}/token/details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				console.error('Token missing', pair_slug);
-				return {
-					status: 404,
-					error: `Token not found: ${pair_slug}`
-				};
-			} else {
-				console.error('Failed to load token', apiUrl);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for trading pair: ${apiUrl}. See console for details.`)
-				};
-			}
+			return getApiError(resp, 'token', [chain_slug, address]);
 		}
 
 		const tokenDetails = await resp.json();
+		console.log('Token page > token details:', tokenDetails);
 
-		console.log('Token page, token details is', tokenDetails);
-
-		const summary = tokenDetails;
-
-		const readableNames = {
+		const breadcrumbs = buildBreadcrumbs(url.pathname, {
 			...breadcrumbTranslations,
-			[exchange_slug]: exchange_slug,
-			[pair_slug]: token_slug,
-			[token_address]: tokenDetails.name
-		};
-
-		const auxiliarData = {
-			tokenName: summary.name
-		};
+			[address]: tokenDetails.name
+		});
 
 		return {
-			// Cache the pair data pages for 30 minutes at the Cloudflare edge,
-			// so the pages are served really fast if they get popular,
-			// and also for speed test
+			// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
+			// pages are served really fast if they get popular, and also for speed test
 			maxage: 30 * 60, // 30 minutes,
-			props: {
-				exchange_slug,
-				chain_slug,
-				pair_slug,
-				token_slug,
-				token_address,
-				summary,
-				auxiliarData,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
+			props: { chain_slug, address, tokenDetails, breadcrumbs }
 		};
 	}
 </script>
@@ -85,25 +45,21 @@
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { formatAmount } from '$lib/helpers/formatters';
 
-	export let summary;
 	export let chain_slug;
-	export let token_slug;
+	export let address;
+	export let tokenDetails;
 	export let breadcrumbs;
-	export let auxiliarData;
-	export let token_address;
 
-	export let tokenStandardName;
-
-	$: tokenStandardName = getTokenStandardName(summary.chain_slug);
+	$: tokenStandardName = getTokenStandardName(chain_slug);
 </script>
 
 <svelte:head>
 	<title>
-		{summary.symbol} on {summary.chain_name}
+		{tokenDetails.symbol} on {tokenDetails.chain_name}
 	</title>
 	<meta
 		name="description"
-		content={`${summary.name} (${summary.symbol} ${tokenStandardName} on ${summary.chain_name}`}
+		content={`${tokenDetails.name} (${tokenDetails.symbol} ${tokenStandardName} on ${tokenDetails.chain_name}`}
 	/>
 </svelte:head>
 
@@ -114,47 +70,48 @@
 		<div class="row">
 			<div class="col-md-12">
 				<h1>
-					{summary.name} ({summary.symbol})
+					{tokenDetails.name} ({tokenDetails.symbol})
 				</h1>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-lg-5">
-				<TokenInfoTable {summary} />
+				<TokenInfoTable summary={tokenDetails} />
 			</div>
 
 			<div class="col-lg-7">
 				<p>
-					<strong>{summary.name}</strong> is a {tokenStandardName} token on
-					<a class="body-link" href="/trading-view/{chain_slug}">{summary.chain_name} blockchain</a>. It trades under
-					<strong>{summary.symbol}</strong> ticker.
+					<strong>{tokenDetails.name}</strong> is a {tokenStandardName} token on
+					<a class="body-link" href="/trading-view/{chain_slug}">{tokenDetails.chain_name} blockchain</a>. It trades
+					under
+					<strong>{tokenDetails.symbol}</strong> ticker.
 				</p>
 
 				<p>
-					<strong>{summary.name}</strong> token supply is
-					{formatAmount(parseFloat(summary.total_supply))}
-					<strong>{summary.symbol}s</strong>.
+					<strong>{tokenDetails.name}</strong> token supply is
+					{formatAmount(parseFloat(tokenDetails.total_supply))}
+					<strong>{tokenDetails.symbol}s</strong>.
 				</p>
 
-				{#if summary.pair_count}
+				{#if tokenDetails.pair_count}
 					<p>
-						There are total {formatAmount(summary.pair_count)} pairs trading against
-						<strong>{summary.symbol}</strong>.
+						There are total {formatAmount(tokenDetails.pair_count)} pairs trading against
+						<strong>{tokenDetails.symbol}</strong>.
 					</p>
 				{/if}
 
 				<p>
 					The token smart contract address is
-					<a class="body-link" href={summary.explorer_link}> {summary.address}</a>.
+					<a class="body-link" href={tokenDetails.explorer_link}> {tokenDetails.address}</a>.
 				</p>
 
 				<p>
 					The information on this page is for <a class="body-link" href="/trading-view/{chain_slug}"
-						>{summary.chain_name}</a
+						>{tokenDetails.chain_name}</a
 					>.
-					<strong>{summary.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the
-					figures.
+					<strong>{tokenDetails.symbol}</strong> presentations bridged and wrapped on other blockchains are not included
+					in the figures.
 				</p>
 			</div>
 		</div>
@@ -177,9 +134,9 @@
 			]}
 			orderColumnIndex={4}
 			pageLength={50}
-			{auxiliarData}
-			tokenSymbol={summary.symbol}
-			tokenAddress={token_address}
+			auxiliarData={{ tokenName: tokenDetails.name }}
+			tokenSymbol={tokenDetails.symbol}
+			tokenAddress={address}
 		/>
 
 		<p>

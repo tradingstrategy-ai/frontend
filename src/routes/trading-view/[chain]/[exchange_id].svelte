@@ -4,6 +4,7 @@
 	 */
 
 	import { backendUrl } from '$lib/config';
+	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url, params, fetch }) {
@@ -18,16 +19,7 @@
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				// TODO: Might happen if the sitemap is out of sync
-				return;
-			} else {
-				console.error(resp);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for the exchange details: ${apiUrl}. See console for details.`)
-				};
-			}
+			return getApiError(resp, 'Exchange', [chain_slug, exchange_slug]);
 		}
 
 		const details = await resp.json();

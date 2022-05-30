@@ -13,12 +13,11 @@
 		try {
 			post = await ghostClient.posts.read({ slug: slug }, { formats: ['html'] });
 		} catch (error) {
-			// swallow 404 (see below); re-throw anything else
-			if (error.response?.status !== 404) throw error;
+			return {
+				status: error.response?.status || 500,
+				error: error.message
+			};
 		}
-
-		// Explicit 404
-		if (!post) return;
 
 		const readableNames = {
 			blog: 'Blog',

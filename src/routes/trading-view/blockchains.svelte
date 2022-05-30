@@ -15,15 +15,10 @@
 		const resp = await fetch(apiUrl);
 
 		if (!resp.ok) {
-			if (resp.status === 404) {
-				return;
-			} else {
-				console.error(resp);
-				return {
-					status: resp.status,
-					error: new Error(`Could not load data for the chain details: ${apiUrl}. See console for details.`)
-				};
-			}
+			return {
+				status: resp.status,
+				error: new Error(`Error loading ${apiUrl}: ${resp.statusText}`)
+			};
 		}
 
 		const chains = await resp.json();

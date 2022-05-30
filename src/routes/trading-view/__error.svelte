@@ -1,19 +1,9 @@
 <!--
-
-    Handle maintenance plus chain specific errors.
-
-    Often blockchain data is bad and we want to drop users away from the page.
-
-
-    For more information see
-
-    - https://kit.svelte.dev/docs/layouts#error-pages
-
+	Handle maintenance plus chain specific errors.
+	Often blockchain data is bad and we want to drop users away from the page. See:
+	https://kit.svelte.dev/docs/layouts#error-pages
 -->
 <script context="module">
-	import { ChainInMaintenance } from '$lib/chain/maintenance';
-
-	/** @type {import('@sveltejs/kit').Load} */
 	export function load({ error, status }) {
 		console.error('Ooops, reached trading data error handle, error is', error);
 		const maintenance = error.name === 'ChainInMaintenance';
