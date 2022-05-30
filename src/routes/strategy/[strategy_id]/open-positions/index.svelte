@@ -5,4 +5,9 @@
 	$: openPositions = $portfolio?.open_positions;
 </script>
 
-<PositionList positions={openPositions} stats={$stats} columns={{ opened_at: true }} pagination={false} />
+<PositionList
+	positions={openPositions}
+	stats={$stats}
+	columns={{ opened_at: true }}
+	pagination={false}
+/>
