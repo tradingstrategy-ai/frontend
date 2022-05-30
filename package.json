@@ -15,6 +15,9 @@
     "ssr:node": "svelte-kit build",
     "prepare": "svelte-kit sync"
   },
+  "engines": {
+    "node": "^16.15.0"
+  },
   "jest": {
     "transform": {
       "^.+\\.svelte$": [
