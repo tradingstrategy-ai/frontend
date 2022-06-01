@@ -6,9 +6,8 @@
 </script>
 
 <div class="alert alert-info">
-	The frozen positions could not be automatically open or closed, usually due to a problem with related
-	tokens or blockchains. The profitabitility cannot be established for the same reason.
-    Manual intervention maybe needed.
+	The frozen positions could not be automatically open or closed, usually due to a problem with related tokens or
+	blockchains. The profitabitility cannot be established for the same reason. Manual intervention maybe needed.
 </div>
 
 <PositionList
