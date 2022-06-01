@@ -7,7 +7,7 @@
 
 <PositionList
 	positions={closedPositions}
-	columns={{ closed_at: true }}
+	columns={{ closed_at: true, profitability: true, value_for_close: true }}
 	stats={$stats}
 	pagination={true}
 	search={true}
