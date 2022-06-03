@@ -14,7 +14,7 @@
     "test:watch": "npm test -- --watch",
     "ssr:node": "svelte-kit build",
     "prepare": "svelte-kit sync",
-    "postinstall": "cp -R node_modules/@tradingstrategy-ai/trade-executor-frontend ."
+    "postinstall": "rsync -a --delete node_modules/@tradingstrategy-ai/trade-executor-frontend/ trade-executor-frontend/"
   },
   "engines": {
     "node": "^16.15.0"
