@@ -92,7 +92,7 @@
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@tradingstrategy-ai/trade-executor-frontend": "^0.1.0",
+    "@tradingstrategy-ai/trade-executor-frontend": "^0.1.1",
     "@tryghost/content-api": "^1.5.13",
     "cheerio": "^1.0.0-rc.10",
     "cookie": "^0.4.1",
