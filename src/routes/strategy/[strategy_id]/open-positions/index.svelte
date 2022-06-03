@@ -8,6 +8,6 @@
 <PositionList
 	positions={openPositions}
 	stats={$stats}
-	columns={{ opened_at: true, value: true, profitability: true }}
+	columns={{ opened_at: true, value: true, profitability: true, details: true }}
 	pagination={false}
 />
