@@ -14,7 +14,7 @@
 </script>
 
 <script>
-	import StrategySummaryPage from 'trade-executor-frontend/strategy/StrategySummaryPage.svelte';
+	import { StrategySummaryPage } from 'trade-executor-frontend';
 
 	export let strategies;
 </script>

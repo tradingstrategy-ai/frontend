@@ -40,8 +40,7 @@
 
 		<!-- Brand -->
 		<a class="navbar-brand" href="/" data-cy="logo">
-			<img class="img-logo img-logo-desktop" src={logo} alt="Trading Strategy" />
-			<img class="img-logo img-logo-mobile" src={logo} alt="Trading Strategy" width="128" height="40" />
+			<img class="img-logo" src={logo} alt="Trading Strategy" />
 		</a>
 
 		<!-- Left - primary nav options -->
@@ -161,11 +160,8 @@
 	}
 
 	.img-logo {
+		width: 127px;
 		height: 32px;
-	}
-
-	.img-logo-mobile {
-		display: none;
 	}
 
 	.dropdown-menu.disabled {
@@ -175,12 +171,6 @@
 
 	/* Switch logos */
 	@media (max-width: 992px) {
-		.img-logo-mobile {
-			display: block;
-		}
-		.img-logo-desktop {
-			display: none;
-		}
 		.nav-item {
 			margin-bottom: 10px;
 		}

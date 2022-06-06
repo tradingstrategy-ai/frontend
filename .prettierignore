@@ -3,6 +3,7 @@
 /build
 /static
 /theme
+/trade-executor-frontend
 node_modules
 package.json
 package-lock.json
