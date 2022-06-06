@@ -13,7 +13,7 @@ fi
 
 
 # Create the Bootstrap precompiled CSS bundle
-(cd deps/theme && npm install && npx gulp build:dist)
+(cd deps/theme && npm ci && npx gulp build:dist)
 
 
 # Needed to correctly build the executor frontend.
@@ -24,5 +24,5 @@ if [ -z "VITE_PUBLIC_STRATEGIES" ]; then
 fi
 
 # Package trade-executor-frontend for SvelteKit
-(cd deps/trade-executor-frontend && npm run build)
+(cd deps/trade-executor-frontend && npm ci)
 
