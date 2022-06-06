@@ -17,11 +17,6 @@ kill -SIGKILL $(lsof -ti:3000) || true
 # https://stackoverflow.com/a/2173421/315168
 # trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-#install theme
-cd theme && pwd
-npm ci && npx gulp build:dist
-cd ..
-
 # Install Cypress
 (cd tests && npm ci)
 

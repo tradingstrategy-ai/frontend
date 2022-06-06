@@ -29,7 +29,9 @@ jobs:
       - name: Code format check
         run: npm run format:check
       - name: Checkout submodules
-        run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git && git submodule update --init --recursive
+        run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git
+      - name: Setup submodules
+        run: bash scripts/build-deps.sh
       - name: Run Cypress
         run: bash scripts/run-cypress.bash
         env:
