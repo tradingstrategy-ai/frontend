@@ -27,11 +27,18 @@
 		--badge-exchange: #458b00;
 		--badge-token: #b99537;
 		--badge-pair: #496abf;
+
+		/**
+		 * New (2022) design-system colors:
+		 * - introduce here as needed for theme transition
+		 * - to be replaced with new design-system CSS as bootstrap theme is phased out
+		 */
+		--c-parchment-dark: #fbeedb;
 	}
 
 	/**
-     * Body text helpers
-    */
+	 * Body text helpers
+	 */
 
 	:global(a.body-link) {
 		border-bottom: 1px solid var(--link-underline);
@@ -42,8 +49,8 @@
 	}
 
 	/**
-     * Price action and candle colors
-     */
+	 * Price action and candle colors
+	 */
 
 	:global(.price-change-green) {
 		color: var(--price-up-green);
@@ -54,8 +61,8 @@
 	}
 
 	/**
-     * Entity badge colors
-     */
+	 * Entity badge colors
+	 */
 
 	:global(.badge-exchange) {
 		background-color: var(--badge-exchange);

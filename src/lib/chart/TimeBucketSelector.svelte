@@ -24,28 +24,27 @@ Used for selecting a time bucket for chart data feeds.default
 	div {
 		display: flex;
 		margin-bottom: 0.5em;
-		border: 1px solid #ccbeb3;
+		border: 1px solid var(--light);
 		border-radius: 0.55rem;
-		box-shadow: 3px 3px 6px #ccbeb3, -3px -3px 6px #ccbeb3;
+		box-shadow: 3px 3px 6px var(--light), -3px -3px 6px var(--light);
 		font-size: 0.875rem;
 	}
 
 	a {
 		padding: 0.4em 1em;
 		font-weight: 500;
-		color: rgba(0, 0, 0, 0.8);
-		border-left: 1px solid #ccbeb3;
+		border-left: 1px solid var(--light);
 	}
 
 	a:hover {
-		color: rgba(0, 0, 0, 0.9);
-		background-color: rgba(128, 222, 234, 0.8);
+		background-color: var(--light);
 	}
 
-	.active {
-		font-weight: bold;
+	.active,
+	.active:hover {
 		background-color: var(--secondary);
-		color: black;
+		color: white;
+		cursor: default;
 	}
 
 	@media (max-width: 576px) {

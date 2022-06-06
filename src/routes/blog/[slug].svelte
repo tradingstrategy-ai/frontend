@@ -273,7 +273,7 @@
 
 	/* JavaScript generated TOC */
 	:global(#table-of-contents) {
-		border: 1px solid #f2dfce;
+		border: 1px solid var(--light);
 		padding: 20px;
 		margin-bottom: 20px;
 	}

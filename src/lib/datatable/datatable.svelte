@@ -179,6 +179,6 @@
 	}
 
 	.clickable tbody :global(tr):hover {
-		background: #80deea;
+		background: var(--secondary);
 	}
 </style>

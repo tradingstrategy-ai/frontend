@@ -136,7 +136,7 @@
 	}
 
 	.card-jumbo {
-		background: #f2dfce;
+		background: var(--c-parchment-dark);
 		box-shadow: none;
 		padding: 60px 0;
 	}

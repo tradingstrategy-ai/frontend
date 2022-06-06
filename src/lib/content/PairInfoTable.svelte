@@ -141,7 +141,7 @@
 		/* On mobile, don't render headings too wide */
 		table th,
 		table td {
-			border-bottom: 1px solid #ccbeb3;
+			border-bottom: 1px solid var(--light);
 		}
 	}
 
