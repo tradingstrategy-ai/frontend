@@ -6,7 +6,7 @@
  * `node server.js`
  */
 import { createServer } from 'http';
-import { handler } from './build/handler.js';
+import { handler } from '../build/handler.js';
 
 const port = process.env.FRONTEND_PORT || 3000;
 

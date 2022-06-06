@@ -22,7 +22,7 @@ npm install
 Theme is available as a separate git submodule.
 It is based on a MIT licensed [Neumorphism UI by Themesberg](https://github.com/themesberg/neumorphism-ui-bootstrap).
 The theme is Bootstrap v4 based.
-    
+
 Pull the submodule
 
 ```shell

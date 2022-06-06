@@ -17,11 +17,8 @@ eval `ssh-agent`
 # on the production deployment
 ssh-add ~/.ssh/gh-deploy
 
-npm ci
-(cd theme && npm install && npx gulp build:dist)
-
-while true ; do  rm -rf build && node_modules/.bin/svelte-kit build && node build ; sleep 10 ; done
-
+cd ~/frontend
+scripts/update-production.sh && node scripts/server.js
 ```
 
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)

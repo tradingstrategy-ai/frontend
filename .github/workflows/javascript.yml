@@ -32,7 +32,7 @@ jobs:
           git clone https://github.com/tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend 
           cd ../trade-executor-frontend && npm ci
       - name: Run Cypress
-        run: bash run-cypress.bash
+        run: bash scripts/run-cypress.bash
         env:
           VITE_PUBLIC_GHOST_API_URL: ${{ secrets.VITE_PUBLIC_GHOST_API_URL }}
           VITE_PUBLIC_GHOST_CONTENT_API_KEY: ${{ secrets.VITE_PUBLIC_GHOST_CONTENT_API_KEY }}
