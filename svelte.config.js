@@ -100,10 +100,9 @@ config.kit.vite = {
 		}
 	},
 
-	// Dropping in the executor frontend
 	resolve: {
 		alias: {
-			'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
+			'trade-executor-frontend': path.resolve('./trade-executor-frontend')
 		}
 	}
 };
