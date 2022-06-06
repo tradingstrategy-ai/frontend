@@ -12,24 +12,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: 16.15
-          registry-url: https://npm.pkg.github.com/
       - name: Use SSH deploy key
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Install dependencies
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
         run: npm ci
       - name: Package version check
         run: npm ls
       - name: Code format check
         run: npm run format:check
-      - name: Checkout submodules
-        run: git submodule set-url theme https://github.com/tradingstrategy-ai/theme.git
       - name: Setup submodules
         run: bash scripts/build-deps.sh
       - name: Run Cypress
