@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TradeDetailsPage from 'trade-executor-frontend/strategy/TradeDetailsPage.svelte';
+	import { TradeDetailsPage } from 'trade-executor-frontend';
 	import { PositionKind } from 'trade-executor-frontend/state/interface';
 </script>
 

@@ -10,6 +10,7 @@
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 import path from 'path';
+import replace from '@rollup/plugin-replace';
 
 let config;
 
@@ -100,12 +101,19 @@ config.kit.vite = {
 		}
 	},
 
-	// Dropping in the executor frontend
 	resolve: {
 		alias: {
-			'trade-executor-frontend': path.resolve('./trade-executor-frontend/src/lib')
+			// Dropping in the executor frontend
+			'trade-executor-frontend': path.resolve('../trade-executor-frontend/src/lib')
 		}
-	}
+	},
+
+	plugins: [
+		replace({
+			// Strip bogus sourcemap from chartiq.css
+			'sourceMappingURL=chartiq.css.map': ''
+		})
+	]
 };
 
 export default config;

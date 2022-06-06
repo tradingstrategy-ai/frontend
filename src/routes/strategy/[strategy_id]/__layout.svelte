@@ -10,9 +10,7 @@
 	import { onMount } from 'svelte';
 
 	import { loadStrategyById } from 'trade-executor-frontend/state/store';
-	import StrategyHeader from 'trade-executor-frontend/strategy/StrategyHeader.svelte';
-	import StrategyLoadIndicator from 'trade-executor-frontend/strategy/StrategyLoadIndicator.svelte';
-	import StrategyMenu from 'trade-executor-frontend/strategy/StrategyMenu.svelte';
+	import { StrategyHeader, StrategyLoadIndicator, StrategyMenu } from 'trade-executor-frontend';
 
 	const strategyId = $page.params.strategy_id;
 
