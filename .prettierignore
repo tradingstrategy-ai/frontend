@@ -2,8 +2,7 @@
 /.vscode
 /build
 /static
-/theme
-/trade-executor-frontend
+/deps
 node_modules
 package.json
 package-lock.json
