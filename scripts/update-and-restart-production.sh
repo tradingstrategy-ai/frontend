@@ -19,6 +19,13 @@ if [[ -z "${VITE_PUBLIC_BACKEND_URL}" ]]; then
   exit 1
 fi
 
+# Build will fail without this,
+# bail out early
+if [[ -z "${VITE_PUBLIC_STRATEGIES}" ]]; then
+  echo "VITE_PUBLIC_STRATEGIES config for trade-executor-frontend missing"
+  exit 1
+fi
+
 echo "Building dependencies"
 scripts/build-deps.sh
 
@@ -29,5 +36,6 @@ npm ci
 echo "Building frontend"
 node_modules/.bin/svelte-kit build
 
+# Start SvelteKit node-adapter at port 3000
 node scripts/server.js
 
