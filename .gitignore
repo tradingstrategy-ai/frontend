@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-/trade-executor-frontend
 /.svelte-kit
 /package
 .idea
