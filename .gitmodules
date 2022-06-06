@@ -1,3 +1,6 @@
 [submodule "theme"]
-	path = theme
+	path = deps/theme
 	url = git@github.com:tradingstrategy-ai/theme.git
+[submodule "deps/trade-executor-frontend"]
+	path = deps/trade-executor-frontend
+	url = https://github.com/tradingstrategy-ai/trade-executor-frontend.git

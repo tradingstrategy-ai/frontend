@@ -32,17 +32,8 @@ git submodule update --init --recursive
 Then
 
 ```shell
-cd theme
-npm install
-npx gulp build:dist
-```
-
-This will produce files in `theme/dist` folder.
-
-Or as one liner after the installation of the theme packages:
-
-```shell
-(cd theme && npm install && npx gulp build:dist)
+# Runs npm build steps on packages included as submodules and generates old theme Bootstrap bundle
+bash scripts/build-deps.sh
 ```
 
 ## Running in local dev
