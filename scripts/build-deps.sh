@@ -24,5 +24,6 @@ if [ -z "VITE_PUBLIC_STRATEGIES" ]; then
 fi
 
 # Package trade-executor-frontend for SvelteKit
-(cd deps/trade-executor-frontend && npm run build)
+#(cd deps/trade-executor-frontend && npm run build)
+(cd deps/trade-executor-frontend && npm install)
 
