@@ -1,15 +1,18 @@
-<script>
-	/*
+<!--
+@component
+Based on the original work of Denis Stasyev = https://github.com/denisstasyev/svelte-skeleton
+Modified for resizeablility and mobile friendliness.
 
-        Based on the original work of Denis Stasyev = https://github.com/denisstasyev/svelte-skeleton
+#### Usage:
+```tsx
+	<Skeleton layout="full|line" />
+```
+-->
+<script lang="ts">
+	export let layout: 'full' | 'line';
 
-        Modified for resizeablility and mobile friendliness.
-
-     */
-	// export let secondaryColor = '#F5F5F7' // do not use rgba() - not working in Safari on iOS 11
-	// export let primaryColor = '#EBECEF'
-
-	export let secondaryColor = '#FFF1E5'; // do not use rgba() - not working in Safari on iOS 11
+	// NOTE: do not use rgba() - not working in Safari on iOS 11
+	export let secondaryColor = '#FFF1E5';
 	export let primaryColor = '#CCBEB3';
 
 	export let height = 200;
@@ -26,7 +29,7 @@
 	}
 </script>
 
-<svg viewBox="0 0 100 100" class="skeleton" aria-labelledby="loading-aria" preserveAspectRatio="none">
+<svg viewBox="0 0 100 100" class="skeleton-{layout}" aria-labelledby="loading-aria" preserveAspectRatio="none">
 	<rect fill="url(#{idGradient})" clip-path="url(#{idClip})" {width} {height} x="0" y="0" />
 	<defs>
 		<clipPath id={idClip}>
@@ -60,8 +63,15 @@
 </svg>
 
 <style>
-	.skeleton {
+	.skeleton-full {
 		width: 100%;
 		max-height: 80vh;
+	}
+
+	.skeleton-line {
+		width: 100%;
+		min-width: 60px;
+		max-height: 1rem;
+		display: inline-block;
 	}
 </style>

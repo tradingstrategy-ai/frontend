@@ -13,7 +13,7 @@ backend API when scrolled into view.
 	import { inview } from 'svelte-inview';
 	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import SkeletonLine from '$lib/SkeletonLine.svelte';
+	import Skeleton from '$lib/Skeleton.svelte';
 
 	export let pairId: number;
 	export let period: string;
@@ -65,7 +65,7 @@ backend API when scrolled into view.
 				{#if tradeData}
 					{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
 				{:else}
-					<SkeletonLine />
+					<Skeleton layout="line" />
 				{/if}
 			</span>
 		</td>
@@ -77,7 +77,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.price_open)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -88,7 +88,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.price_high)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -99,7 +99,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.price_low)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -110,7 +110,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.price_close)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -121,7 +121,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.volume)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -132,7 +132,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.liquidity_high)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -143,7 +143,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatDollar(tradeData.liquidity_low)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -154,7 +154,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatAmount(tradeData.buys)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>
@@ -165,7 +165,7 @@ backend API when scrolled into view.
 			{#if tradeData}
 				{formatAmount(tradeData.sells)}
 			{:else}
-				<SkeletonLine />
+				<Skeleton layout="line" />
 			{/if}
 		</td>
 	</tr>

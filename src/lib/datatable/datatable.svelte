@@ -111,7 +111,7 @@
 		</table>
 	</div>
 	<div class="data-tables-skeleton" style={!loaded ? 'display: block' : 'display: none'}>
-		<Skeleton />
+		<Skeleton layout="full" />
 	</div>
 </div>
 
