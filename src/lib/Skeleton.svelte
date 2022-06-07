@@ -9,11 +9,13 @@ Modified for resizeablility and mobile friendliness.
 ```
 -->
 <script lang="ts">
+	import colors from '$lib/colors';
+
 	export let layout: 'full' | 'line';
 
 	// NOTE: do not use rgba() - not working in Safari on iOS 11
-	export let secondaryColor = '#FFF1E5';
-	export let primaryColor = '#CCBEB3';
+	export let secondaryColor = colors.grayLight;
+	export let primaryColor = colors.parchment;
 
 	export let height = 200;
 	export let width = 400;
