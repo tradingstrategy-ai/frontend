@@ -31,9 +31,9 @@
 		--c-parchment: var(--primary);
 		--c-parchment-dark: #fbeedb;
 		--c-bullish: #22b554;
-		--c-bullish-dark: #1D9B48;
+		--c-bullish-dark: #1d9b48;
 		--c-bearish: #f62f2f;
-		--c-bearish-dark: #DC0A0A;
+		--c-bearish-dark: #dc0a0a;
 
 		/**
 		 * Old CSS color vars still used in various components
@@ -84,5 +84,21 @@
 
 	:global(.badge-pair) {
 		background-color: var(--badge-pair);
+	}
+
+	/**
+	 * Inline SVG icon set colors
+	 */
+
+	:global(.icons-duotone-1) {
+		fill: var(--c-bullish);
+	}
+
+	:global(.icons-duotone-2) {
+		fill: var(--c-bearish);
+	}
+
+	:global(.icons-duotone-1-stroke) {
+		stroke: var(--c-bullish);
 	}
 </style>
