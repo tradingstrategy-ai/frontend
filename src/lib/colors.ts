@@ -6,5 +6,7 @@
  */
 export default {
 	parchment: '#fdf8f2',
-	grayLight: '#A9A9B2'
+	grayLight: '#A9A9B2',
+	bullish: '#22b554',
+	bearish: '#f62f2f'
 };

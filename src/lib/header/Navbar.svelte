@@ -152,7 +152,7 @@
 	}
 
 	.nav-link:hover {
-		color: var(--price-up-green) !important;
+		color: var(--link-underline) !important;
 	}
 
 	img {

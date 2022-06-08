@@ -127,12 +127,12 @@ for the same hovered date. Also displays a time-bucket selector.
 	}
 
 	.vol-added dd {
-		color: var(--price-up-green);
+		color: var(--c-bullish-dark);
 		min-width: 4.5em;
 	}
 
 	.vol-removed dd {
-		color: var(--price-down-red);
+		color: var(--c-bearish-dark);
 	}
 
 	@media (max-width: 576px) {

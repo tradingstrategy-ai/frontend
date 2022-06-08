@@ -21,19 +21,29 @@
 
 <style>
 	:global(:root) {
-		--price-up-green: #458b00;
-		--price-down-red: #cc0000;
-		--link-underline: #458b00;
-		--badge-exchange: #458b00;
-		--badge-token: #b99537;
-		--badge-pair: #496abf;
-
 		/**
 		 * New (2022) design-system colors:
 		 * - introduce here as needed for theme transition
-		 * - to be replaced with new design-system CSS as bootstrap theme is phased out
+		 * - inherit from bootstrap theme colors where possible
+		 * - replace with new design-system CSS as bootstrap theme is phased out
 		 */
+		--c-ink: var(--default);
+		--c-parchment: var(--primary);
 		--c-parchment-dark: #fbeedb;
+		--c-bullish: #22b554;
+		--c-bullish-dark: #1D9B48;
+		--c-bearish: #f62f2f;
+		--c-bearish-dark: #DC0A0A;
+
+		/**
+		 * Old CSS color vars still used in various components
+		 */
+		--price-up-green: var(--c-bullish);
+		--price-down-red: var(--c-bearish);
+		--link-underline: var(--c-bullish-dark);
+		--badge-exchange: var(--c-bullish-dark);
+		--badge-token: #b99537;
+		--badge-pair: #496abf;
 	}
 
 	/**
@@ -53,11 +63,11 @@
 	 */
 
 	:global(.price-change-green) {
-		color: var(--price-up-green);
+		color: var(--c-bullish-dark);
 	}
 
 	:global(.price-change-red) {
-		color: var(--price-down-red);
+		color: var(--c-bearish-dark);
 	}
 
 	/**
