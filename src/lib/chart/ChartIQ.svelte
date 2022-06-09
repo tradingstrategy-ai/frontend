@@ -265,7 +265,8 @@ chartiq dependency.
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: rgba(255, 241, 229, 0.75);
+		background-color: var(--c-parchment);
+		opacity: 0.75;
 	}
 
 	.hud {
