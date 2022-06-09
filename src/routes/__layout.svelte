@@ -30,6 +30,7 @@
 		--c-ink: var(--default);
 		--c-parchment: var(--primary);
 		--c-parchment-dark: #fbeedb;
+		--c-parchment-extra-dark: #d9c4a6;
 		--c-bullish: #22b554;
 		--c-bullish-dark: #1d9b48;
 		--c-bearish: #f62f2f;

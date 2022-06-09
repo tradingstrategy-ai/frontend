@@ -26,7 +26,7 @@ Used for selecting a time bucket for chart data feeds.default
 		margin-bottom: 0.5em;
 		border: 1px solid var(--light);
 		border-radius: 0.55rem;
-		box-shadow: 3px 3px 6px var(--light), -3px -3px 6px var(--light);
+		box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25), -3px -3px 6px rgba(0, 0, 0, 0.25);
 		font-size: 0.875rem;
 	}
 
@@ -36,13 +36,22 @@ Used for selecting a time bucket for chart data feeds.default
 		border-left: 1px solid var(--light);
 	}
 
+	a:first-child {
+		border-left: none;
+		border-radius: 0.5rem 0 0 0.5rem;
+	}
+
+	a:last-child {
+		border-radius: 0 0.5rem 0.5rem 0;
+	}
+
 	a:hover {
-		background-color: var(--light);
+		background-color: rgba(0, 0, 0, 0.25);
 	}
 
 	.active,
 	.active:hover {
-		background-color: var(--secondary);
+		background-color: rgba(0, 0, 0, 0.5);
 		color: white;
 		cursor: default;
 	}

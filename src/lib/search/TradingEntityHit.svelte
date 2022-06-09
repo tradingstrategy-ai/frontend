@@ -86,14 +86,15 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.basic {
+		background-color: var(--c-parchment);
 		border: none;
 	}
 
 	.advanced {
 		margin-bottom: 0.65em;
-		border: 1px solid #ccbbab;
+		border: 1px solid var(--c-parchment-extra-dark);
 		border-radius: 8px;
-		background-color: #fff8f2;
+		background-color: rgba(255, 255, 255, 0.75);
 		background-clip: content-box;
 	}
 
@@ -115,7 +116,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.selected {
-		background-color: #e5dfd9;
+		filter: brightness(0.85);
 	}
 
 	.type {

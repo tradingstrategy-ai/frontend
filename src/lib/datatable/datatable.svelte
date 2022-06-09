@@ -179,6 +179,7 @@
 	}
 
 	.clickable tbody :global(tr):hover {
-		background: var(--secondary);
+		background: var(--c-parchment);
+		filter: brightness(0.85);
 	}
 </style>
