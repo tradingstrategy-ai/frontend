@@ -1,36 +1,27 @@
 # Theme development
 
-You can also open the theme development server:
+We are transitioning from a Bootstrap 4 theme to a custom Svelte-component-based
+design system.
+
+- [Bootstrap 4 theme](https://github.com/tradingstrategy-ai/theme) (phasing-out)
+- [Trading Strategy Design System](https://github.com/tradingstrategy-ai/design-system) (phasing-in)
+
+The Bootstrap theme is included as a submodule under `deps/theme`. You can start a
+dev server for the theme:
 
 ```shell
-( cd theme && npx gulp )
+( cd deps/theme && npx gulp )
 ```
 
-Editing theme mainly happens in `theme/src/scss/neumorphism/_variables.scss`.
+Most theme configuration options can be edited in: `deps/theme/src/scss/neumorphism/_variables.scss`.
 
 ## Color scheme
 
-Primary background: #FFF1E5 - light beige
-
-Primary darker: #CCBEB3 - dark beige
-
-Secondary background: #80DEEA - light turquoise
-
-Darker secondary: #4BACB8 - dark turquoise
-
-Link on white documentation: #005b49
-
-Number go up green: #458b00
-
-Number go down red: #cc0000
-
-[Color scheme in Codepen](https://codepen.io/miohtama/pen/OJgpqNa)
-
-[Palette tools in Material palette designer](https://material.io/resources/color/#!/?view.left=0&view.right=1&primary.color=eeb302&secondary.color=80DEEA)
-
-[Palette generator](https://mycolor.space/?hex=%23FFF1E5&sub=1)
-
-![colormap](./colormap.png?)]
+- Primary background: #fdf8f2 - light beige
+- Primary darker: #d9c4a6 - dark beige
+- Secondary/accent color: #a9a9b2 - light gray
+- Bullish green: #22b554
+- Bearish red: #f62f2f
 
 ## Fonts
 
