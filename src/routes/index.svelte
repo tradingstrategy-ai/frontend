@@ -73,7 +73,11 @@
 <main>
 	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation}>
 		<div class="container">
-			<p class="heading-p">Algorithmic trading protocol for decentralised markets</p>
+			<h1>
+				<div>Next Generation</div>
+				<div>Algorithmic Trading Protocol</div>
+				<div class="secondary">For Decentralised Markets</div>
+			</h1>
 
 			{#if impressiveNumbers}
 				<ImpressiveNumbers numbers={impressiveNumbers} />
@@ -86,7 +90,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
-						<h3 class="heading-momentum text-center">Top trades today</h3>
+						<h3 class="heading-momentum text-center">Top Trades</h3>
 						<TopMomentum momentumDetails={topMomentum} />
 					</div>
 				</div>
@@ -138,25 +142,15 @@
 	.card-jumbo {
 		background: var(--c-parchment-dark);
 		box-shadow: none;
-		padding: 60px 0;
+		padding: 8rem 0;
 	}
 
 	h1 {
-		width: 100%;
-		color: black;
-		font-size: 2.3rem;
+		font-weight: bold;
 	}
 
-	/**
-	 * Optimize for SEO - google was not picking up heading
-	 */
-	.heading-p {
-		width: 100%;
-		color: black;
-		font-size: 2.3rem;
-		font-family: 'Exo 2', sans-serif;
-		font-weight: 400;
-		text-align: left;
+	h1 .secondary {
+		color: var(--c-gray-dark);
 	}
 
 	.heading-strategies,
