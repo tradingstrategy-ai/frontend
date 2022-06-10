@@ -102,8 +102,10 @@ config.kit.vite = {
 	},
 
 	resolve: {
+		// alias submodule dependencies
 		alias: {
-			// Dropping in the executor frontend
+			'design-system-fonts': path.resolve('deps/fonts'),
+			'bootstrap-theme': path.resolve('deps/theme/dist'),
 			'trade-executor-frontend': path.resolve('deps/trade-executor-frontend/src/lib')
 		}
 	},

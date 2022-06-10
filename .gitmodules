@@ -4,3 +4,6 @@
 [submodule "deps/trade-executor-frontend"]
 	path = deps/trade-executor-frontend
 	url = https://github.com/tradingstrategy-ai/trade-executor-frontend.git
+[submodule "deps/fonts"]
+	path = deps/fonts
+	url = git@github.com:tradingstrategy-ai/fonts.git

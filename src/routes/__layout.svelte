@@ -8,7 +8,8 @@
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
 	import Footer from '$lib/header/Footer.svelte';
 
-	import '../../deps/theme/dist/css/neumorphism.css';
+	import 'design-system-fonts/index.css';
+	import 'bootstrap-theme/css/neumorphism.css';
 </script>
 
 <AppHead />
