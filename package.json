@@ -97,6 +97,7 @@
     "cookie": "^0.4.1",
     "ethers": "^5.6.4",
     "gulp": "^4.0.2",
+    "postcss-font-display": "^0.3.0",
     "svelte-fsm": "^1.1.2",
     "svelte-inview": "^3.0.0",
     "svelte-spinner": "^2.0.2",
