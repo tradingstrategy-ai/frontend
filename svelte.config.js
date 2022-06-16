@@ -110,8 +110,11 @@ config.kit.vite = {
 
 	plugins: [
 		replace({
-			// Strip bogus sourcemap from chartiq.css
-			'sourceMappingURL=chartiq.css.map': ''
+			values: {
+				// Strip bogus sourcemap from chartiq.css
+				'sourceMappingURL=chartiq.css.map': ''
+			},
+			preventAssignment: true
 		})
 	]
 };
