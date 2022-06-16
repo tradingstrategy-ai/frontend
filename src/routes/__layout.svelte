@@ -52,6 +52,14 @@
 	/**
 	 * Body text helpers
 	 */
+	/* ol li, p, ul li */
+	:global(.body-text),
+	:global(.body-text p),
+	:global(.body-text ol li),
+	:global(.body-text ul li) {
+		font-family: 'Source Serif Pro', serif;
+		line-height: 1.7;
+	}
 
 	:global(a.body-link) {
 		border-bottom: 1px solid var(--link-underline);
