@@ -34,8 +34,8 @@ npm ci
 
 # Creates build/server.js
 echo "Building frontend"
-node_modules/.bin/svelte-kit build
+npm run build
 
 # Start SvelteKit node-adapter at port 3000
-#node scripts/server.js
-
+echo "Serve"
+while true ; do node scripts/server.js ; sleep 10 ; done

@@ -5,9 +5,8 @@ This will run server-side generated (SSR) pages using node.js server.
 The server default port is 3000.
 
 ```shell
-screen -S frontend
+tmux -CC -L web attach
 export PRODUCTION=true
-export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
 source ~/secrets.env
 
 # Re-institate SSH agent connection if needed
@@ -15,10 +14,10 @@ eval `ssh-agent`
 
 # Add the SSH deploy key needed to access the private ChartIQ repository
 # on the production deployment
-ssh-add ~/.ssh/gh-deploy
+ssh-add ~/.ssh/chartiq-dist ~/.ssh/fonts
 
 cd ~/frontend
-scripts/update-production.sh && node scripts/server.js
+scripts/update-and-restart-production.sh
 ```
 
 [Port troubleshooting](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)
