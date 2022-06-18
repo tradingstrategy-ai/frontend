@@ -16,14 +16,12 @@ jobs:
         with:
           node-version: 16.15
           registry-url: https://npm.pkg.github.com/
-      - name: Set up SSH deploy key for ChartIQ
+      - name: Set up SSH deploy keys for ChartIQ & fonts
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
-      - name: Set up SSH deploy key for private fonts
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
+          ssh-private-key: |
+            ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
+            ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
       - name: Install dependencies
         run: npm ci
       - name: Package version check
