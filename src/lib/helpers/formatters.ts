@@ -184,6 +184,36 @@ export function formatAmount(n: number): string {
 }
 
 /**
+ * Format number using an English thousand separation
+ * @param n
+ */
+export function formatMillion(n: number): string {
+	if (!n) {
+		return '---';
+	}
+
+	return (n / 1_000_000).toLocaleString('en', {
+			minimumFractionDigits: 1,
+			maximumFractionDigits: 1
+		});
+}
+
+/**
+ * Format number using an English thousand separation
+ * @param n
+ */
+export function formatMillion2(n: number): string {
+	if (!n) {
+		return '---';
+	}
+
+	return (n / 1_000_000).toLocaleString('en', {
+			minimumFractionDigits: 1,
+			maximumFractionDigits: 1
+		});
+}
+
+/**
  * Parses an ISO 8601 date format string and assumes UTC timezone.
  *
  * @param ts UNIX timestamp in seconds

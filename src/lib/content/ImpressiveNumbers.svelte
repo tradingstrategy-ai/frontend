@@ -6,7 +6,7 @@
     For the API see impressive-numbers here https://tradingstrategy.ai/api/explorer/
 -->
 <script>
-	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import { formatAmount, formatDollar, formatMillion } from '$lib/helpers/formatters';
 
 	// Might be null if API down - we still render the frontpage gracefully
 	export let numbers;
@@ -14,15 +14,23 @@
 
 <div class="impressive-numbers">
 	<p class="lead">
-		<span class="pulse" />
-		Market data and trading strategy framework for
+		Market data and trading strategy framework for<br>
+		<a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a> providing
+		<a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a> across
+        <a href="/trading-view/blockchains">{numbers.blockchains} blockchains</a>,.
+	</p>
+</div>
+
+<!--
+<div class="impressive-numbers">
+	<p class="lead">
+		Market data and trading strategy framework across<br>
 		<a href="/trading-view/blockchains">{numbers.blockchains} blockchains</a>,
-		<a href="/trading-view/exchanges">{formatAmount(numbers.exchanges)} decentralised exchanges</a>,
-		<a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a> and
-		<a href="/trading-view/binance/tokens">{formatAmount(numbers.tokens)} tokens</a> with
+		<a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} pairs</a> providing
 		<a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a>.
 	</p>
 </div>
+-->
 
 <style>
 	a {

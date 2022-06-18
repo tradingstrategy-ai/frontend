@@ -74,9 +74,9 @@
 	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation}>
 		<div class="container">
 			<h1>
-				<div>Next Generation</div>
-				<div>Algorithmic Trading Protocol</div>
-				<div class="secondary">For Decentralised Markets</div>
+				<div>Next generation</div>
+				<div>algorithmic trading protocol</div>
+				<div class="secondary">for decentralised markets</div>
 			</h1>
 
 			{#if impressiveNumbers}
@@ -90,7 +90,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
-						<h3 class="heading-momentum text-center">Top Trades</h3>
+						<h3 class="heading-momentum text-center">Top trades</h3>
 						<TopMomentum momentumDetails={topMomentum} />
 					</div>
 				</div>
