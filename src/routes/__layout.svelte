@@ -8,7 +8,10 @@
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
 	import Footer from '$lib/header/Footer.svelte';
 
-	import 'design-system-fonts/index.css';
+	// design-system-fonts is an optional dependency, so we use Vite's glob import
+	// feature to import / fail gracefully if not installed. Must assign the returned
+	// value or you get a syntax error.
+	const _ = import.meta.globEager('design-system-fonts/index.css');
 	import 'bootstrap-theme/css/neumorphism.css';
 </script>
 
