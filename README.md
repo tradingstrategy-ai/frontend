@@ -15,6 +15,7 @@ npm install
 ## Install submodules
 
 `frontend` has several submodule dependencies installed under `deps`, including:
+
 - `theme` - Bootstrap v4 theme (being phased out)
 - `trade-executor-frontend` - frontend to `trade-executor` (beta UI for active trading strategies)
 - `fonts` - optional licensed fonts used by `theme` and our new `design-system`

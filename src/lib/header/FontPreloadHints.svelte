@@ -11,29 +11,29 @@ page load. Only rendered during SSR, and only if `deps/fonts` submodule is insta
 ```
 -->
 <script lang="ts" context="module">
-  import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/env';
 
-  const fonts = [
-    'NeueHaasGroteskDisplay/65.woff2',
-    'NeueHaasGroteskDisplay/75.woff2',
-    'NeueHaasGroteskText/55.woff2',
-    'SourceSerifPro/latin-400-normal.woff2'
-  ];
+	const fonts = [
+		'NeueHaasGroteskDisplay/65.woff2',
+		'NeueHaasGroteskDisplay/75.woff2',
+		'NeueHaasGroteskText/55.woff2',
+		'SourceSerifPro/latin-400-normal.woff2'
+	];
 
-  // get all design-system-font asset paths (optional module - may be empty)
-  const modules = import.meta.globEager('design-system-fonts/**/*.woff2');
+	// get all design-system-font asset paths (optional module - may be empty)
+	const modules = import.meta.globEager('design-system-fonts/**/*.woff2');
 
-  const fontPaths = [];
+	const fontPaths = [];
 
-  for (const path in modules) {
-    for (const font of fonts) {
-      if (path.includes(font)) fontPaths.push(modules[path].default);
-    }
-  }
+	for (const path in modules) {
+		for (const font of fonts) {
+			if (path.includes(font)) fontPaths.push(modules[path].default);
+		}
+	}
 </script>
 
 {#if !(browser || dev)}
-  {#each fontPaths as fontPath}
-    <link rel="preload" href={fontPath} as="font" crossorigin="anonymous" />
-  {/each}
+	{#each fontPaths as fontPath}
+		<link rel="preload" href={fontPath} as="font" crossorigin="anonymous" />
+	{/each}
 {/if}
