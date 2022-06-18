@@ -2,6 +2,7 @@
  * Custom Volume Underlay study. See:
  * https://documentation.chartiq.com/tutorial-Using%20and%20Customizing%20Studies%20-%20Creating%20New%20Studies.html
  */
+import colors from '$lib/colors';
 
 export function volumeStudy(CIQ) {
 	return {
@@ -10,8 +11,8 @@ export function volumeStudy(CIQ) {
 		calculateFN: CIQ.Studies.calculateVolume,
 		inputs: {},
 		outputs: {
-			'Up Volume': '#458b00',
-			'Down Volume': '#cc0000'
+			'Up Volume': colors.bullish,
+			'Down Volume': colors.bearish
 		},
 		parameters: { widthFactor: 0.95 },
 		range: '0 to max',
@@ -31,8 +32,8 @@ export function liquidityStudy(CIQ) {
 		seriesFN: CIQ.Studies.displaySeriesAsHistogram,
 		inputs: { HistogramType: 'stacked' },
 		outputs: {
-			av: '#458b00',
-			rv: '#cc0000'
+			av: colors.bullish,
+			rv: colors.bearish
 		},
 		parameters: { widthFactor: 0.95 },
 		range: '0 to max',

@@ -111,7 +111,7 @@
 		</table>
 	</div>
 	<div class="data-tables-skeleton" style={!loaded ? 'display: block' : 'display: none'}>
-		<Skeleton />
+		<Skeleton layout="full" />
 	</div>
 </div>
 
@@ -179,6 +179,7 @@
 	}
 
 	.clickable tbody :global(tr):hover {
-		background: #80deea;
+		background: var(--c-parchment);
+		filter: brightness(0.85);
 	}
 </style>

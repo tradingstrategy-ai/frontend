@@ -59,7 +59,7 @@
 			<div class="col-lg-6 col-md-6">
 				<div class="card bg-primary shadow-soft border-light">
 					<div class="card-body">
-						<h5 class="h5 card-title">{slot.name}</h5>
+						<h4 class="h4 card-title">{slot.name}</h4>
 
 						<p class="detail">
 							{slot.detail}
@@ -99,10 +99,6 @@
 </div>
 
 <style>
-	.detail,
-	table {
-	}
-
 	.detail {
 		color: --var(--gray-700);
 	}

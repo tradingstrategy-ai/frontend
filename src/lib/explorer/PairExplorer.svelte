@@ -275,16 +275,4 @@
 	.trading-pairs :global(.sorting::after) {
 		bottom: 1.3em;
 	}
-
-	/* Make sure columns do not wiggle when resorting and the data in the cells change */
-	.trading-pairs :global(td) {
-	}
-
-	.trading-pairs :global(.price-change-green) {
-		color: #458b00;
-	}
-
-	.trading-pairs :global(.price-change-red) {
-		color: #cc0000;
-	}
 </style>

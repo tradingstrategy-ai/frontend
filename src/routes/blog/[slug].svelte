@@ -34,12 +34,11 @@
 </script>
 
 <script lang="ts">
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import Sidebar from '$lib/blog/Sidebar.svelte';
 	import { slugify } from '$lib/helpers/slugify';
 	import { serializePost } from '$lib/helpers/googleMeta';
 	import { page } from '$app/stores';
-	import { formatTimeAgo } from '$lib/helpers/formatters';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 
 	// TODO: Mobile menu requires hydrate
@@ -273,7 +272,7 @@
 
 	/* JavaScript generated TOC */
 	:global(#table-of-contents) {
-		border: 1px solid #f2dfce;
+		border: 1px solid var(--light);
 		padding: 20px;
 		margin-bottom: 20px;
 	}

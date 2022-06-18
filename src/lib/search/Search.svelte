@@ -124,7 +124,7 @@ Display site-wide search box for use in top-nav.
 
 	.show-all {
 		padding: 0;
-		background-color: #d4cdc8;
+		background-color: var(--c-parchment-extra-dark);
 	}
 
 	.show-all a {

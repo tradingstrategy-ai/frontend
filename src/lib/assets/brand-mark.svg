@@ -38,7 +38,7 @@
      inkscape:pageopacity="0"
      borderopacity="1.0"
      bordercolor="#666666"
-     pagecolor="#fff1e5"
+     pagecolor="#fdf8f2"
      id="base">
     <sodipodi:guide
        id="guide964"
@@ -67,9 +67,9 @@
        height="142.11905"
        width="23.365368"
        id="rect26"
-       style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.273753" />
+       style="fill:#22b554;fill-opacity:1;fill-rule:evenodd;stroke-width:0.273753" />
     <rect
-       style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.153359"
+       style="fill:#f62f2f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.153359"
        id="rect26-1"
        width="23.365368"
        height="44.601192"
@@ -81,16 +81,16 @@
        height="48.447651"
        width="23.365368"
        id="rect26-1-4"
-       style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.159834" />
+       style="fill:#f62f2f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.159834" />
     <rect
-       style="fill:#cc0000;fill-opacity:1;fill-rule:evenodd;stroke-width:0.148766"
+       style="fill:#f62f2f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.148766"
        id="rect26-1-4-5"
        width="23.365368"
        height="41.970398"
        x="107.34525"
        y="112.62939" />
     <rect
-       style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.16222"
+       style="fill:#22b554;fill-opacity:1;fill-rule:evenodd;stroke-width:0.16222"
        id="rect26-9"
        width="23.365368"
        height="49.90456"
@@ -102,6 +102,6 @@
        height="83.220306"
        width="23.365368"
        id="rect26-9-2"
-       style="fill:#458b00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.209484" />
+       style="fill:#22b554;fill-opacity:1;fill-rule:evenodd;stroke-width:0.209484" />
   </g>
 </svg>

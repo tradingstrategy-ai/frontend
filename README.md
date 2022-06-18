@@ -4,35 +4,45 @@
 
 A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
-## Install
+## Install NPM dependencies
 
 Node v16+ required.
 
-Clone `trade-executor` and master of `trade-executor-frontend` with the following folder structure:
-
-```sh
-git clone git@github.com:tradingstrategy-ai/frontend.git
-cd frontend
-git clone git@github.com:tradingstrategy-ai/trade-executor-frontend.git ../trade-executor-frontend
+```shell
 npm install
 ```
 
-## Building the theme
+## Install submodules
 
-Theme is available as a separate git submodule.
-It is based on a MIT licensed [Neumorphism UI by Themesberg](https://github.com/themesberg/neumorphism-ui-bootstrap).
-The theme is Bootstrap v4 based.
+`frontend` has several submodule dependencies installed under `deps`, including:
 
-Pull the submodule
+- `theme` - Bootstrap v4 theme (being phased out)
+- `trade-executor-frontend` - frontend to `trade-executor` (beta UI for active trading strategies)
+- `fonts` - optional licensed fonts used by `theme` and our new `design-system`
+
+### Install all submodules (inclduing private `fonts`)
+
+If you have access to the private `tradingstrategy-ai/fonts`, initialize and install all submodules:
 
 ```shell
 git submodule update --init --recursive
 ```
 
-Then
+### Install only public submodules
+
+If you don't have access to `fonts`, install only the public submodules:
 
 ```shell
-# Runs npm build steps on packages included as submodules and generates old theme Bootstrap bundle
+git submodule update --init --recursive -- deps/theme deps/trade-executor-frontend
+```
+
+### Building submodule dependencies
+
+Once the submodules have been installed, their own install/build steps need to be run in order
+to have a fully working environment. The following script runs `npm build` on submodules and
+generates old Bootstrap v4 theme bundle:
+
+```shell
 bash scripts/build-deps.sh
 ```
 
@@ -41,7 +51,7 @@ bash scripts/build-deps.sh
 Environment variables required by the app are maintained in a `.env` file. Read about about
 [magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
 
-Then start SvelteKit development server
+Start the SvelteKit development server:
 
 ```shell
 npm run dev
@@ -64,13 +74,13 @@ most code editors / IDEs (see "Editor Support" on Prettier homepage).
 If you prefer not to have your editor do automatic formatting, please run the following command and
 commit properly formatted code before pushing a PR:
 
-```bash
+```shell
 npm run format
 ```
 
 Our CI/CD pipeline runs the following chack on PRs or pushes to `master`:
 
-```bash
+```shell
 npm run format:check
 ```
 

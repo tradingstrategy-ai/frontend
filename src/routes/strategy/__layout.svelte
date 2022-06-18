@@ -15,9 +15,9 @@
 -->
 <style>
 	:global(:root) {
-		--profit-green: #458b00;
-		--profit-red: #cc0000;
-		--profit-black: #000;
+		--profit-green: var(--c-bullish-dark);
+		--profit-red: var(--c-bearish-dark);
+		--profit-black: var(--c-ink);
 	}
 
 	/**

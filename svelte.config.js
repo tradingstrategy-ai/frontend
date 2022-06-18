@@ -11,6 +11,7 @@ import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 import path from 'path';
 import replace from '@rollup/plugin-replace';
+import fontDisplay from 'postcss-font-display';
 
 let config;
 
@@ -26,7 +27,7 @@ console.log(`PRODUCTION: ${PRODUCTION}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
-if (SSR || process.env.PRODUCTION) {
+if (SSR || PRODUCTION) {
 	console.log('Using SSR config');
 	// build server-side rendering
 	config = {
@@ -102,8 +103,10 @@ config.kit.vite = {
 	},
 
 	resolve: {
+		// alias submodule dependencies
 		alias: {
-			// Dropping in the executor frontend
+			'design-system-fonts': path.resolve('deps/fonts'),
+			'bootstrap-theme': path.resolve('deps/theme/dist'),
 			'trade-executor-frontend': path.resolve('deps/trade-executor-frontend/src/lib')
 		}
 	},
@@ -116,7 +119,14 @@ config.kit.vite = {
 			},
 			preventAssignment: true
 		})
-	]
+	],
+
+	css: {
+		postcss: {
+			// use `font-display: optional` in SSR build (minimize CLS/FOUT)
+			plugins: [fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true })]
+		}
+	}
 };
 
 export default config;

@@ -34,7 +34,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			<RelativeDate timestamp={post.published_at} />
 		</p>
 
-		<p class="card-text">
+		<p class="card-text body-text">
 			{post.excerpt}
 		</p>
 	</div>
