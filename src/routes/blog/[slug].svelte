@@ -226,6 +226,7 @@
 	}
 
 	.text-published {
+		margin-top: 2em;
 		font-size: 70%;
 		text-transform: uppercase;
 	}
