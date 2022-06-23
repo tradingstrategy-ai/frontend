@@ -97,7 +97,7 @@
 		{/if}
 
 		<!-- Right - social icons/links (desktop) -->
-        <!--
+		<!--
 		<div class="collapse navbar-collapse flex-grow-0">
 			<ul class="navbar-nav nav-flex-icons" data-cy="navigation">
 				<li class="nav-item nav-item-right">

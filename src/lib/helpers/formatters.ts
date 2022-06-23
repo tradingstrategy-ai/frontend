@@ -193,9 +193,9 @@ export function formatMillion(n: number): string {
 	}
 
 	return (n / 1_000_000).toLocaleString('en', {
-			minimumFractionDigits: 1,
-			maximumFractionDigits: 1
-		});
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	});
 }
 
 /**
@@ -208,9 +208,9 @@ export function formatMillion2(n: number): string {
 	}
 
 	return (n / 1_000_000).toLocaleString('en', {
-			minimumFractionDigits: 1,
-			maximumFractionDigits: 1
-		});
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	});
 }
 
 /**

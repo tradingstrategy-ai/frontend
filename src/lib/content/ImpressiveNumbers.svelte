@@ -14,10 +14,10 @@
 
 <div class="impressive-numbers">
 	<p class="lead">
-		Market data and trading strategy framework for<br>
+		Market data and trading strategy framework for<br />
 		<a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a> providing
 		<a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a> across
-        <a href="/trading-view/blockchains">{numbers.blockchains} blockchains</a>
+		<a href="/trading-view/blockchains">{numbers.blockchains} blockchains</a>
 	</p>
 </div>
 
@@ -31,7 +31,6 @@
 	</p>
 </div>
 -->
-
 <style>
 	a {
 		border-bottom: 2px solid var(--link-underline);
