@@ -1,33 +1,41 @@
-### Build Step
-FROM node:14.19-alpine as builder
+#######################################
+# Build stage
+#######################################
+FROM node:16.15 as builder
 
 WORKDIR /app
+ENV SSR=TRUE PRODUCTION=TRUE
 
-# install deps first so we can cache this layer
+# install theme (cache first)
+COPY deps/theme ./deps/theme
+RUN (cd deps/theme && npm ci && npx gulp build:dist)
+
+# install trade-executor-frontend (cache second)
+COPY deps/trade-executor-frontend ./deps/trade-executor-frontend
+RUN (cd deps/trade-executor-frontend && npm ci)
+
+# install npm dependencies (cache third)
 COPY package*.json ./
-RUN npm ci
+RUN --mount=type=ssh npm ci
 
-# then copy the rest
+# copy remaining files
 COPY . .
 
-# build theme
-RUN cd theme && npm ci && npx gulp build:dist
-
 # build app
-RUN PRODUCTION=true npm run build
+RUN npm run build
 
-### Serve Step
-FROM node:14.19-alpine
+#######################################
+# Serve stage
+#######################################
+FROM node:16.15-slim
 
 WORKDIR /app
 
-# copy files from previous step
 COPY --from=builder /app/package.json .
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
+COPY --from=builder /app/scripts/server.js ./scripts/
 
-# our app is running on port 3000 within the container, so need to expose it
 EXPOSE 3000
 
-# the command that starts our app
-CMD ["node", "build/index.js"]
+CMD ["node", "scripts/server.js"]
