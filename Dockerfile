@@ -16,6 +16,7 @@ RUN (cd deps/trade-executor-frontend && npm ci)
 
 # install npm dependencies (cache third)
 COPY package*.json ./
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 RUN --mount=type=ssh npm ci
 
 # copy remaining files
