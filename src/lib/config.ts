@@ -3,13 +3,24 @@
 /**
  * Load Backend URL and fail loudly if not set
  */
-export const backendUrl = (({ VITE_PUBLIC_BACKEND_URL }) => {
-	if (!VITE_PUBLIC_BACKEND_URL) {
+export const backendUrl = (({ VITE_PUBLIC_BACKEND_URL: BACKEND_URL }) => {
+	if (!BACKEND_URL) {
 		throw new Error('VITE_PUBLIC_BACKEND_URL missing');
-	} else if (VITE_PUBLIC_BACKEND_URL.endsWith('/')) {
-		throw new Error(`Backend URL cannot end with slash: ${backendUrl}`);
+	} else if (BACKEND_URL.endsWith('/')) {
+		throw new Error(`Backend URL cannot end with slash: ${BACKEND_URL}`);
 	}
-	return VITE_PUBLIC_BACKEND_URL;
+	return BACKEND_URL;
+})(import.meta.env);
+
+/**
+ * Backend internal URL (optional); set this when running frontend and backend on the
+ * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
+ */
+export const backendInternalUrl = (({ VITE_PUBLIC_BACKEND_INTERNAL_URL: INTERNAL_URL }) => {
+	if (INTERNAL_URL?.endsWith('/')) {
+		throw new Error(`Backend internal URL cannot end with slash: ${INTERNAL_URL}`);
+	}
+	return INTERNAL_URL;
 })(import.meta.env);
 
 /**
@@ -38,7 +49,7 @@ export const typesenseConfig = ((env) => {
 
 /**
  * Load Site Mode and fail loudly if not a valid value
- * - some site features depending on whether we run prod, staging or local dev
+ * - some site features depend on whether we run prod, staging or local dev
  * - defaults to "local"
  */
 export const siteMode = (({ VITE_SITE_MODE = 'local' }) => {
