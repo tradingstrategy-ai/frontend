@@ -84,6 +84,8 @@ To list tags
 curl -H "Authorization: Bearer $GHCR_TOKEN" https://ghcr.io/v2/tradingstrategy-ai/frontend/tags/list
 ```
 
+You should get a JSON reply like:
+
 ```
 {"name":"tradingstrategy-ai/frontend","tags":["pr-58"]}
 ```

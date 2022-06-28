@@ -6,7 +6,7 @@ version: "3.9"
 services:
   frontend:
     container_name: frontend
-    image: "ghcr.io/tradingstrategy-ai/frontend:pr-58"
+    image: "ghcr.io/tradingstrategy-ai/frontend:master"
     ports:
       # The production server has :80 port bind by Caddy.
       # Mapped in reverse proxy Caddyfile
@@ -17,7 +17,7 @@ services:
       - SSR=true
       - VITE_SITE_MODE=production
       # See config.ts
-      # See .env
+      # See .env - docker-compose reads .env file
       - VITE_PUBLIC_BACKEND_URL
       - VITE_PUBLIC_BACKEND_INTERNAL_URL
       - VITE_PUBLIC_GHOST_CONTENT_API_KEY
