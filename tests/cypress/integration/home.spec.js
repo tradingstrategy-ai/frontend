@@ -4,9 +4,9 @@ describe('Trading strategy Home', () => {
 	});
 
 	it('User should be able to render the home page with header and navigation', () => {
-		cy.contains('Next Generation Algorithmic Trading Protocol For Decentralised Markets').should('be.visible');
+		cy.contains('Next generation algorithmic trading protocol for decentralised markets').should('be.visible');
 		cy.contains(/Coming soon/i).should('be.visible');
-		cy.get('[data-cy=navigation]').get('li').should('have.length', 14);
+		cy.get('[data-cy=navigation]').get('li').should('have.length', 11);
 		cy.get('[data-cy=logo]');
 		cy.get('[data-cy=search]');
 	});

@@ -12,7 +12,6 @@ We don't do footers here. Thus, this only is displayed on mobile and has social 
 </script>
 
 <ul>
-
 	<li>
 		<a href="https://discord.gg/en8tW6MDtw">
 			<img src={discord} loading="lazy" alt="Discord" />
@@ -33,18 +32,17 @@ We don't do footers here. Thus, this only is displayed on mobile and has social 
 </ul>
 
 <style>
+	ul {
+		display: block;
+		margin: 1rem auto;
+		padding: 0;
+		text-align: center;
+	}
 
-    ul {
-        display: block;
-        margin: 1rem auto;
-        padding: 0;
-        text-align: center;
-    }
-
-    li {
-        display: inline;
-        margin: 0 1rem;
-    }
+	li {
+		display: inline;
+		margin: 0 1rem;
+	}
 
 	/* SVG icons */
 	a img {

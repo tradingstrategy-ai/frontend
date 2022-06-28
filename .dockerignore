@@ -1,0 +1,19 @@
+# common
+**/.git/
+**/node_modules/
+**/.svelte-kit/
+
+# frontend (root)
+build/
+tests/
+docs/
+
+# deps/theme
+deps/theme/dist/
+deps/theme/html?css/
+deps/theme/.temp/
+
+# deps/trade-executor-frontend
+deps/trade-executor-frontend/build/
+deps/trade-executor-frontend/package/
+deps/trade-executor-frontend/tests/
