@@ -1,0 +1,21 @@
+# A docker-compose file to run frontend SvelteKit SSR with node-adapter.
+#
+# The Docker container is automatically built by the Github action in javascript.yml.
+#
+version: "3.9"
+services:
+  frontend:
+    container_name: frontend
+    image: trading-strategy/frontend:latest
+    ports:
+      # Mapped in reverse proxy Caddyfile
+      # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
+      - "127.0.0.1:80:3000"
+    command: node scripts/server.js
+    environment:
+      - PRODUCTION=true
+      # Assume backend runs on the same host
+      # See scripts/hooks/index.ts
+      - VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
+      - VITE_SITE_MODE=production
+

@@ -14,6 +14,10 @@
 
 set -e
 
+# Add the SSH deploy key needed to access the private ChartIQ repository
+# on the production deployment
+ssh-add ~/.ssh/chartiq-dist ~/.ssh/fonts
+
 if [[ -z "${VITE_PUBLIC_BACKEND_URL}" ]]; then
   echo "Please load secrets.env file"
   exit 1

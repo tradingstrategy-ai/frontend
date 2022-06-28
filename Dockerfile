@@ -5,8 +5,8 @@ FROM node:16.15 as builder
 
 WORKDIR /app
 
-ENV SSR=TRUE PRODUCTION=TRUE VITE_SITE_MODE=production
-ENV VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
+# ENV SSR=TRUE PRODUCTION=TRUE VITE_SITE_MODE=production
+# ENV VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
 
 # install theme (cache first)
 COPY deps/theme ./deps/theme
