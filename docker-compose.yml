@@ -6,7 +6,7 @@ version: "3.9"
 services:
   frontend:
     container_name: frontend
-    image: trading-strategy/frontend:latest
+    image: "ghcr.io/tradingstrategy-ai/frontend:pr-58"
     ports:
       # Mapped in reverse proxy Caddyfile
       # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
@@ -14,6 +14,7 @@ services:
     command: node scripts/server.js
     environment:
       - PRODUCTION=true
+      - SSR=true
       # Assume backend runs on the same host
       # See scripts/hooks/index.ts
       - VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
