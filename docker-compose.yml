@@ -2,16 +2,16 @@
 #
 # The Docker container is automatically built by the Github action in javascript.yml.
 #
-version: "3.9"
+version: '3.9'
 services:
   frontend:
     container_name: frontend
-    image: "ghcr.io/tradingstrategy-ai/frontend:master"
+    image: 'ghcr.io/tradingstrategy-ai/frontend:master'
     ports:
       # The production server has :80 port bind by Caddy.
       # Mapped in reverse proxy Caddyfile
       # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
-      - "127.0.0.1:3000:3000"
+      - '127.0.0.1:3000:3000'
     command: node scripts/server.js
     environment:
       - SSR=true

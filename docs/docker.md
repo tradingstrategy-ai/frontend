@@ -33,7 +33,7 @@ docker login ghcr.io -u miohtama
 
 Then pull any image using its pull request number:
 
-```shell
+````shell
 docker pull ghcr.io/tradingstrategy-ai/frontend:pr-58
 
 Run it with your environment variables:
@@ -44,7 +44,7 @@ export SSR=TRUE
 export VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
 export VITE_SITE_MODE=production
 docker run -p 3000:3000 --platform linux/amd64 ghcr.io/tradingstrategy-ai/frontend:pr-58
-```
+````
 
 Then visit [http://localhost:3000/](http://localhost:3000/).
 
@@ -54,7 +54,7 @@ You can run the latest frontend on the production server with:
 
 ```shell
 docker login ghcr.io -u miohtama
-docker-compose up -d 
+docker-compose up -d
 ```
 
 This will fetch the latest version and restart the frontend.
@@ -78,6 +78,7 @@ ghp_mmc...
 ```shell
 export GHCR_TOKEN=$(echo $GITHUB_TOKEN | base64)
 ```
+
 To list tags
 
 ```
@@ -92,6 +93,6 @@ You should get a JSON reply like:
 
 ## More information
 
-* https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry
+- https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry
 
-* https://nira.com/github-container-registry/
+- https://nira.com/github-container-registry/
