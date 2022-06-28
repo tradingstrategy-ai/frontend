@@ -8,9 +8,10 @@ services:
     container_name: frontend
     image: "ghcr.io/tradingstrategy-ai/frontend:pr-58"
     ports:
+      # The production server has :80 port bind by Caddy.
       # Mapped in reverse proxy Caddyfile
       # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
-      - "127.0.0.1:80:3000"
+      - "127.0.0.1:3000:3000"
     command: node scripts/server.js
     environment:
       - SSR=true

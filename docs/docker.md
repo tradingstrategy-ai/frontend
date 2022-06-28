@@ -59,7 +59,7 @@ docker-compose up -d
 
 This will fetch the latest version and restart the frontend.
 
-Then visit [http://localhost/](http://localhost/)
+Then visit [http://localhost:3000](http://localhost:3000).
 
 ## Listing available tags for a container on ghcr.io
 
