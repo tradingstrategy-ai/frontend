@@ -61,7 +61,7 @@ npm run dev
 
 - [How to develop and integrate the Bootstrap theme](./docs/theme.md)
 - [Testing](./docs/tests.md)
-- [Running in production](./docs/production.md)
+- [Running in production](./docs/old-production.md)
 - [Doing page speed tests](./docs/speed.md)
 
 ## Notes

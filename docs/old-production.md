@@ -1,4 +1,4 @@
-# Production
+# Old production (deprecated)
 
 This will run server-side generated (SSR) pages using node.js server.
 

@@ -2,7 +2,9 @@
 
 The SvelteKit is run in a docker container.
 
-## Building the container
+## Production
+
+### Building the container
 
 - The container is build in [javascript.yml](../.github/workflows/javascript.yml) and uploaded to Github registry.
 
@@ -14,7 +16,48 @@ Example container name that can be accepted by `docker` or `docker-compose`
 ghcr.io/tradingstrategy-ai/frontend:pr-58
 ```
 
-## Creating PAT to access Github container registry
+### Creating a production tag
+
+Any tag starting with `v` is consired a production tag.
+
+Production tags are a sequential series of versions:
+
+- `v1`
+- `v2`
+- ...
+- `v23`
+
+To tag a container for production run:
+
+```shell
+git tag v1
+git push origin v1
+```
+
+[Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions).
+
+### Updating the production server
+
+Sync `docker-compose.yml` to the server (only if compose updates needed):
+
+```shell
+scp docker-compose.yml $PROD:./frontend
+```
+
+The run:
+
+```shell
+ssh $PROD
+cd frontend
+source ~/secrets.env
+docker login ghcr.io -u miohtama  # Password is your PAT, see below
+export FRONTEND_PRODUCTION_TAG=v1
+```
+
+
+## Local containers
+
+### Creating PAT to access Github container registry
 
 - Go to [Personal tokens](https://github.com/settings/tokens) in Github Developer settings.
 - Generate new token
@@ -23,7 +66,7 @@ ghcr.io/tradingstrategy-ai/frontend:pr-58
 - Select the write:packages scope to download and upload container images and read and write their metadata.
 - Select the delete:packages scope to delete container images.
 
-## Running the container locally
+### Running the container locally
 
 Login to the ghcr using your Github username and access token as a password:
 
@@ -61,7 +104,7 @@ This will fetch the latest version and restart the frontend.
 
 Then visit [http://localhost:3000](http://localhost:3000).
 
-## Listing available tags for a container on ghcr.io
+### Listing available tags for a container on ghcr.io
 
 [See this post how to list the tags in ghcr.io](https://github.community/t/how-to-check-if-a-container-image-exists-on-ghcr/154836/6).
 
