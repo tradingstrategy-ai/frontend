@@ -52,8 +52,16 @@ cd frontend
 source ~/secrets.env
 docker login ghcr.io -u miohtama  # Password is your PAT, see below
 export FRONTEND_PRODUCTION_TAG=v1
+docker-compose up -d 
 ```
 
+Check logs that the node-adapter starts properly:
+
+```shell
+docker-compose logs
+```
+
+Then check the [website itself](https://tradingstrategy.ai).
 
 ## Local containers
 
