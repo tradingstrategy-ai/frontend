@@ -3,10 +3,9 @@ node_modules
 /.svelte-kit
 /package
 .idea
-./vscode
 .vscode
 /build
-
+.env*.local
 
 # cypress
 screenshots

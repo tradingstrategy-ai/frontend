@@ -12,10 +12,6 @@ source ~/secrets.env
 # Re-institate SSH agent connection if needed
 eval `ssh-agent`
 
-# Add the SSH deploy key needed to access the private ChartIQ repository
-# on the production deployment
-ssh-add ~/.ssh/chartiq-dist ~/.ssh/fonts
-
 cd ~/frontend
 scripts/update-and-restart-production.sh
 ```
