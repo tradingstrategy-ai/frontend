@@ -59,6 +59,8 @@ docker-compose up -d
 
 This will fetch the latest version and restart the frontend.
 
+Then visit [http://localhost/](http://localhost/)
+
 ## Listing available tags for a container on ghcr.io
 
 [See this post how to list the tags in ghcr.io](https://github.community/t/how-to-check-if-a-container-image-exists-on-ghcr/154836/6).

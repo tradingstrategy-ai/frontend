@@ -13,10 +13,14 @@ services:
       - "127.0.0.1:80:3000"
     command: node scripts/server.js
     environment:
-      - PRODUCTION=true
       - SSR=true
-      # Assume backend runs on the same host
-      # See scripts/hooks/index.ts
-      - VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
       - VITE_SITE_MODE=production
-
+      # See config.ts
+      # See .env
+      - VITE_PUBLIC_BACKEND_URL
+      - VITE_PUBLIC_BACKEND_INTERNAL_URL
+      - VITE_PUBLIC_GHOST_CONTENT_API_KEY
+      - VITE_PUBLIC_TYPESENSE_API_KEY
+      - VITE_PUBLIC_TYPESENSE_API_URL
+      - VITE_PUBLIC_STRATEGIES
+      - VITE_PUBLIC_CHAINS_UNDER_MAINTENANCE
