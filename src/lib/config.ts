@@ -11,14 +11,3 @@ export const backendUrl = (({ VITE_PUBLIC_BACKEND_URL: BACKEND_URL }) => {
 	}
 	return BACKEND_URL;
 })(import.meta.env);
-
-/**
- * Backend internal URL (optional); set this when running frontend and backend on the
- * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
- */
-export const backendInternalUrl = (({ VITE_PUBLIC_BACKEND_INTERNAL_URL: INTERNAL_URL }) => {
-	if (INTERNAL_URL?.endsWith('/')) {
-		throw new Error(`Backend internal URL cannot end with slash: ${INTERNAL_URL}`);
-	}
-	return INTERNAL_URL;
-})(import.meta.env);

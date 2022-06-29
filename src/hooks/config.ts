@@ -47,6 +47,17 @@ configurePublicVar('siteMode', 'SITE_MODE', ({ SITE_MODE = 'local' }) => {
 });
 
 /**
+ * Backend internal URL (optional); set this when running frontend and backend on the
+ * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
+ */
+configurePublicVar('backendInternalUrl', 'BACKEND_INTERNAL_URL', ({ BACKEND_INTERNAL_URL }) => {
+	if (BACKEND_INTERNAL_URL?.endsWith('/')) {
+		throw new Error(`Backend internal URL cannot end with slash: ${BACKEND_INTERNAL_URL}`);
+	}
+	return BACKEND_INTERNAL_URL;
+});
+
+/**
  * Load Ghost API credentials and warn if not available.
  */
 configurePublicVar('ghost', 'GHOST_', (env) => {

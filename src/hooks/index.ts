@@ -1,4 +1,4 @@
-import { backendUrl, backendInternalUrl } from '$lib/config';
+import { backendUrl } from '$lib/config';
 
 import config from './config';
 
@@ -12,10 +12,10 @@ export function getSession(event) {
  * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
  */
 export async function externalFetch(request: Request): Promise<Response> {
-	if (backendInternalUrl) {
+	if (config.backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
-			request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
+			request = new Request(request.url.replace(backendUrl, config.backendInternalUrl), request);
 		}
 	}
 
