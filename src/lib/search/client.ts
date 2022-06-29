@@ -1,7 +1,6 @@
-import { typesenseConfig } from '$lib/config';
 import { SearchClient } from 'typesense';
 
-export default (({ apiKey, apiUrl }) => {
+export default function getSearchClient({ apiKey, apiUrl }) {
 	if (!apiKey || !apiUrl) return;
 
 	const url = new URL(apiUrl);
@@ -14,4 +13,4 @@ export default (({ apiKey, apiUrl }) => {
 		apiKey,
 		nodes: [{ host, protocol, port, path }]
 	});
-})(typesenseConfig);
+}

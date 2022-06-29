@@ -37,13 +37,25 @@ function configurePublicVar(configKey: string, pattern: string, setFn: Function)
 /**
  * Load Ghost API credentials and warn if not available.
  */
-configurePublicVar('ghost', 'GHOST_', (envData) => {
-	const contentApiKey = envData.GHOST_CONTENT_API_KEY;
-	const apiUrl = envData.GHOST_API_URL;
+configurePublicVar('ghost', 'GHOST_', (env) => {
+	const contentApiKey = env.GHOST_CONTENT_API_KEY;
+	const apiUrl = env.GHOST_API_URL;
 	if (!contentApiKey || !apiUrl) {
 		console.warn('You need configure Ghost API keys to render the blog');
 	}
 	return { contentApiKey, apiUrl };
+});
+
+/**
+ * Load Typesense config options and warn if not available.
+ */
+configurePublicVar('typesense', 'TYPESENSE_API_', (env) => {
+	const apiKey = env.TYPESENSE_API_KEY;
+	const apiUrl = env.TYPESENSE_API_URL;
+	if (!apiKey || !apiUrl) {
+		console.warn('You need to configure Typesense options to enable search');
+	}
+	return { apiKey, apiUrl };
 });
 
 export default publicConfig;
