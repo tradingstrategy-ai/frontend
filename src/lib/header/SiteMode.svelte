@@ -1,10 +1,18 @@
-<script context="module">
-	/**
-	 * A helpful widget to identify non-production deployment and give some developer diagnostics.
-	 */
-	import { siteMode, backendUrl } from '$lib/config';
+<!--
+@component
+A helpful widget to identify non-production deployment and give some developer diagnostics.
 
-	const siteBar = siteMode == 'local' || siteMode == 'staging';
+#### Usage:
+```tsx
+	<SiteMode />
+```
+-->
+<script lang="ts">
+	import { session } from '$app/stores';
+	import { backendUrl } from '$lib/config';
+
+	const siteMode = $session.config.siteMode;
+	const siteBar = siteMode !== 'production';
 </script>
 
 {#if siteBar}

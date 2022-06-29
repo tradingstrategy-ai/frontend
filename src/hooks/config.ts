@@ -35,6 +35,18 @@ function configurePublicVar(configKey: string, pattern: string, setFn: Function)
 }
 
 /**
+ * Load Site Mode and fail loudly if not a valid value
+ * - some site features depend on whether we run prod, staging or local dev
+ * - defaults to "local"
+ */
+configurePublicVar('siteMode', 'SITE_MODE', ({ SITE_MODE = 'local' }) => {
+	if (!['production', 'staging', 'local'].includes(SITE_MODE)) {
+		throw new Error(`Bad site mode ${SITE_MODE}`);
+	}
+	return SITE_MODE;
+});
+
+/**
  * Load Ghost API credentials and warn if not available.
  */
 configurePublicVar('ghost', 'GHOST_', (env) => {

@@ -22,15 +22,3 @@ export const backendInternalUrl = (({ VITE_PUBLIC_BACKEND_INTERNAL_URL: INTERNAL
 	}
 	return INTERNAL_URL;
 })(import.meta.env);
-
-/**
- * Load Site Mode and fail loudly if not a valid value
- * - some site features depend on whether we run prod, staging or local dev
- * - defaults to "local"
- */
-export const siteMode = (({ VITE_SITE_MODE = 'local' }) => {
-	if (!['production', 'staging', 'local'].includes(VITE_SITE_MODE)) {
-		throw new Error(`Bad site mode ${VITE_SITE_MODE}`);
-	}
-	return VITE_SITE_MODE;
-})(import.meta.env);
