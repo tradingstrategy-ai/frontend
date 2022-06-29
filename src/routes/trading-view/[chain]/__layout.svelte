@@ -2,12 +2,11 @@
 	import { checkChainMaintenance } from '$lib/chain/maintenance';
 
 	/** @type {import('@sveltejs/kit').Load} */
-	export function load({ params }) {
-		// Check for the data maintenance status.
-		// If under maintenance, trigger __error with a special
-		// layout and message.
+	export function load({ params, session }) {
+		// Check chain maintenance status; if under maintenance, trigger __error
+		// with a special layout and message.
 		try {
-			checkChainMaintenance(params.chain);
+			checkChainMaintenance(session.config.chainsUnderMaintenance, params.chain);
 		} catch (error) {
 			return { status: 503, error };
 		}

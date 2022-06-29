@@ -2,7 +2,6 @@
  * Chain checks. Enables routes to verify if data is valid for a given chain.
  */
 import { CustomError } from 'ts-custom-error';
-import { chainsUnderMaintenance } from '../config';
 import { assert } from 'assert-ts';
 
 /**
@@ -23,12 +22,9 @@ export class ChainInMaintenance extends CustomError {
 
 /**
  * Throw an error and interrupt page loading if we detect we are on a page with maintenance data.
- *
  * Then this will be caught in __error.svelte.
- *
- * @param chainSlug
  */
-export function checkChainMaintenance(chainSlug: string) {
+export function checkChainMaintenance(chainsUnderMaintenance: any, chainSlug: string) {
 	console.log('Checking ', chainSlug);
 
 	assert(chainSlug, 'Cannot check maintenance mode against undefined chain slug');

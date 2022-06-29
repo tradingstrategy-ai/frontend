@@ -58,4 +58,20 @@ configurePublicVar('typesense', 'TYPESENSE_API_', (env) => {
 	return { apiKey, apiUrl };
 });
 
+/**
+ * Specify chains under maintence as JSON string, e.g.:
+ * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
+ *
+ * See: checkChainMaintenance
+ */
+configurePublicVar('chainsUnderMaintenance', 'CHAINS_UNDER_MAINTENANCE', (env) => {
+	const jsonStr = env.CHAINS_UNDER_MAINTENANCE || '{}';
+	try {
+		return JSON.parse(jsonStr);
+	} catch (e) {
+		console.warn('TS_PUBLIC_CHAINS_UNDER_MAINTENANCE is not valid JSON', jsonStr);
+		return {};
+	}
+});
+
 export default publicConfig;
