@@ -1,10 +1,11 @@
 <script context="module">
-	import ghostClient from '$lib/blog/client';
+	import getGhostClient from '$lib/blog/client';
 
 	// Pure server-side rendered page - no interactive JS
 	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	export async function load({ url, params }) {
+	export async function load({ url, params, session }) {
+		const ghostClient = getGhostClient(session.config.ghost);
 		const { slug } = params;
 
 		// See post data model

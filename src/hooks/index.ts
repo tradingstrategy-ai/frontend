@@ -1,5 +1,12 @@
 import { backendUrl, backendInternalUrl } from '$lib/config';
 
+import config from './config';
+
+/** @type {import('@sveltejs/kit').GetSession} */
+export function getSession(event) {
+	return { config };
+}
+
 /**
  * Shortcut fetch() API requests in SSR; see:
  * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile

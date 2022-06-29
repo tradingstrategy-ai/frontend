@@ -24,18 +24,6 @@ export const backendInternalUrl = (({ VITE_PUBLIC_BACKEND_INTERNAL_URL: INTERNAL
 })(import.meta.env);
 
 /**
- * Load Ghost API credentials and warn if not available.
- */
-export const ghostConfig = ((env) => {
-	const contentApiKey = env.VITE_PUBLIC_GHOST_CONTENT_API_KEY;
-	const apiUrl = env.VITE_PUBLIC_GHOST_API_URL;
-	if (!contentApiKey || !apiUrl) {
-		console.warn('You need configure Ghost API keys to render the blog');
-	}
-	return { contentApiKey, apiUrl };
-})(import.meta.env);
-
-/**
  * Load Typesense config options and warn if not available.
  */
 export const typesenseConfig = ((env) => {

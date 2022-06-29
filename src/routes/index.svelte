@@ -3,7 +3,7 @@
 	 * Frontpage renderer
 	 */
 	import { backendUrl } from '$lib/config';
-	import { fetchBlogroll } from '$lib/blog/feed';
+	import getGhostClient from '$lib/blog/client';
 
 	// TODO: Mobile menu requires hydrate
 	// This will prevent any interactive JavaScript on the front page,
@@ -12,13 +12,15 @@
 
 	// Load top momentum data to display on the front page
 	// https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
-	export async function load({ fetch }) {
+	export async function load({ fetch, session }) {
+		const ghostClient = getGhostClient(session.config.ghost);
+
 		// Load frontpage API calls in parallel to cut that 1 ms
 		// https://stackoverflow.com/q/59663929/315168
 		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
 			fetch(`${backendUrl}/top-momentum?summary=true`),
 			fetch(`${backendUrl}/impressive-numbers`),
-			fetchBlogroll(3)
+			ghostClient.posts?.browse({ limit: 3 })
 		]);
 
 		let topMomentum, impressiveNumbers;
