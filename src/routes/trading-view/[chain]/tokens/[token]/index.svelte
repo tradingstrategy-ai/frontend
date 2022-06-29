@@ -2,12 +2,12 @@
 	Render the token page
 -->
 <script context="module">
-	import { backendUrl } from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	// load core token data server-side
-	export async function load({ url, params, fetch }) {
+	export async function load({ url, params, fetch, session }) {
+		const { backendUrl } = session.config;
 		const chain_slug = params.chain;
 		const address = params.token;
 
@@ -134,7 +134,6 @@
 			]}
 			orderColumnIndex={4}
 			pageLength={50}
-			auxiliarData={{ tokenName: tokenDetails.name }}
 			tokenSymbol={tokenDetails.symbol}
 			tokenAddress={address}
 		/>

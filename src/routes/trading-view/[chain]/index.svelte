@@ -1,12 +1,12 @@
 <script context="module">
-	import { backendUrl } from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	/**
 	 * Display chain information and indexing status
 	 */
-	export async function load({ url, params, fetch }) {
+	export async function load({ url, params, fetch, session }) {
+		const { backendUrl } = session.config;
 		const chain_slug = params.chain;
 
 		// Load and render exchange details on the server side
@@ -170,7 +170,7 @@
 
 		<ExchangeExplorer
 			chainSlug={details.chain_slug}
-			enabledColums={['human_readable_name', 'pair_count', 'usd_volume_30d']}
+			enabledColumns={['human_readable_name', 'pair_count', 'usd_volume_30d']}
 			orderColumnIndex={2}
 		/>
 	</div>

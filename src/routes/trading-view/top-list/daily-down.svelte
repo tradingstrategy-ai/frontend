@@ -1,19 +1,22 @@
+<!--
+	Daily losers page
+-->
 <script context="module">
-	/**
-	 * Daily losers page
-	 */
-	import { loadMomentumData } from '$lib/content/momentum.ts';
+	import { loadMomentumData } from '$lib/content/momentum';
 	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	export async function load({ url, fetch }) {
+	export async function load({ url, fetch, session }) {
+		const { backendUrl } = session.config;
+
 		const breadcrumbs = {
 			'trading-view': 'Trading data',
 			'top-list': 'Top lists',
 			'daily-down': 'Daily losers'
 		};
+
 		return {
 			props: {
-				momentumData: await loadMomentumData(fetch),
+				momentumData: await loadMomentumData(backendUrl, fetch),
 				breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs)
 			}
 		};

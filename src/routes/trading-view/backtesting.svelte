@@ -1,6 +1,5 @@
 <script context="module">
-	import { browser, dev } from '$app/env';
-	import { backendUrl } from '$lib/config';
+	import { browser } from '$app/env';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export const hydrate = true;
@@ -10,7 +9,8 @@
 	export const router = browser;
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
-	export async function load({ url, session, fetch, context }) {
+	export async function load({ url, session, fetch }) {
+		const { backendUrl } = session.config;
 		const apiUrl = `${backendUrl}/datasets`;
 
 		// TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
@@ -37,6 +37,7 @@
 		if (res.ok) {
 			return {
 				props: {
+					backendUrl,
 					datasets,
 					breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
 				}
@@ -55,12 +56,13 @@
 	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import { formatTimeAgo } from '$lib/helpers/formatters';
 
+	export let backendUrl;
 	export let datasets;
-	export let submitting = false;
-	export let validApiKey = null;
-	export let apiKeyError = null;
-
 	export let breadcrumbs;
+
+	let submitting = false;
+	let validApiKey = null;
+	let apiKeyError = null;
 
 	function formatNumber(n) {
 		if (n <= 1000) {

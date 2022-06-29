@@ -1,15 +1,13 @@
+<!--
+	Display chain information and indexing status
+-->
 <script context="module">
-	import { backendUrl } from '$lib/config';
 	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	/**
-	 * Display chain information and indexing status
-	 *
-	 */
-
-	export async function load({ url, fetch }) {
+	export async function load({ url, fetch, session }) {
 		// Load and render exchange details on the server side
 		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
+		const { backendUrl } = session.config;
 		const apiUrl = `${backendUrl}/chains`;
 
 		const resp = await fetch(apiUrl);

@@ -1,30 +1,34 @@
 <!--
 @component
-
 Render export page for a trading pair list.
+
+#### Usage:
+```tsx
+	<PairListExportPage
+		chain_slug="ethereum"
+		exchange_slug="uniswap-v2"
+		exchange_name="Uniswap v2"
+	/>
+```
 -->
 <script lang="ts">
-	// Our API URL that does exporting
-	export let backendUrl;
+	import { session } from '$app/stores';
 
-	// Chain wher exchange is
-	export let chain_slug;
+	const { backendUrl } = $session.config;
 
-	// Exchange id
-	export let exchange_slug;
-
-	// Exchange name
-	export let exchange_name;
+	export let chain_slug: string;
+	export let exchange_slug: string;
+	export let exchange_name: string;
 
 	// Download customization
-	export let selectedFormat = 'excel',
-		selectedDataset = 'top_3000_rows',
-		selectedSort = 'price_change_24h',
-		selectedFilter = 'min_liquidity_1M';
+	let selectedFormat = 'excel';
+	let selectedDataset = 'top_3000_rows';
+	let selectedSort = 'price_change_24h';
+	let selectedFilter = 'min_liquidity_1M';
 
-	export let link;
+	let link: string;
 
-	export let downloadDisabled = false;
+	let downloadDisabled = false;
 
 	function handleDownloadClick() {
 		downloadDisabled = true;

@@ -4,7 +4,6 @@ Real time examples for the API
 
 -->
 <script context="module">
-	import { backendUrl } from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
@@ -13,7 +12,8 @@ Real time examples for the API
 	 *
 	 * All charting data fetches are done on the client side.
 	 */
-	export async function load({ url, params, fetch }) {
+	export async function load({ url, params, fetch, session }) {
+		const { backendUrl } = session.config;
 		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
 		const pair_slug = params.pair;

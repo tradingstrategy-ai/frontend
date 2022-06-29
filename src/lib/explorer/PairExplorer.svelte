@@ -1,46 +1,46 @@
-<script>
-	/**
-	 * Explore trading pairs that match certain filter criteria.
-	 */
+<!--
+@component
+Explore trading pairs that match certain filter criteria.
 
+#### Usage:
+```tsx
+	<PairExplorer
+		exchangeSlug="uniswap-v2"
+		chainSlug="ethereum"
+		tokenSymbol="WETH"
+		tokenAddress="OXC0..."
+		enabledColumns={['pair_name', 'exchange_name', 'usd_price_latest', ...]}
+		orderColumnIndex={4}
+		orderColumnDirection="asc|desc"
+		pageLength={50}
+	/>
+```
+-->
+<script lang="ts">
+	import { session } from '$app/stores';
 	import jQuery from 'jquery';
 	import Datatable from '$lib/datatable/datatable.svelte';
-
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { escapeHtml } from '$lib/helpers/html';
-	import { backendUrl } from '$lib/config';
 
-	// The exchange slug for which the trading pairs are render, like "sushiswap"
-	// Optional.
+	const { backendUrl } = $session.config;
+
 	export let exchangeSlug = undefined;
-
-	// The chain slug for which the trading pairs are rendered like "binance"
 	export let chainSlug = undefined;
 	export let tokenSlug = undefined;
-
-	// The token match the filter criteria.
 	export let tokenSymbol = undefined;
 	export let tokenAddress = undefined;
-
-	// Auxiliar Data based on different context
-	export let auxiliarData = undefined;
-
-	// What columns we will show in the explorer.
-	// See allColumns for options.
+	// What columns we will show in the explorer; see allColumns for options.
 	export let enabledColumns = ['pair_name', 'usd_price_latest'];
-
 	export let orderColumnIndex = 3;
-
 	export let orderColumnDirection = 'desc';
-
 	export let pageLength = 20;
 
 	// Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
 	// See https://datatables.net/reference/option/columns
 
-	// All possible configurable columns.
-	// These match what data is available from the backend.
+	// All possible configurable columns. These match the data is available from the backend.
 	const allColumns = {
 		pair_name: {
 			name: 'Trading pair',
@@ -190,7 +190,7 @@
 		lengthChange: false,
 		pageLength: pageLength,
 
-		// TODO: If set we would     be mobile compatible, but causes the table header to disappear
+		// TODO: If set we would be mobile compatible, but causes the table header to disappear
 		// because whatever jQuery trickery is used to render this
 		scrollX: false,
 
@@ -221,7 +221,6 @@
 		},
 
 		/**
-		 *
 		 * AJAX data fetch hook for Datatables
 		 *
 		 * https://datatables.net/reference/option/ajax

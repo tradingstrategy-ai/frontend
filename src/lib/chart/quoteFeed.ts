@@ -2,7 +2,6 @@
  * ChartIQ quote feed adapter for Trading Strategy candle and liquidity data.
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
-import { backendUrl } from '$lib/config';
 import { feedParamsToTimeBucket } from '$lib/chart/timeBucketConverters';
 
 const maxTicks = 2000;
@@ -28,7 +27,7 @@ function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
 	};
 }
 
-export default function (type: 'price' | 'liquidity') {
+export default function quoteFeed(backendUrl: string, type: 'price' | 'liquidity') {
 	const baseUrl = `${backendUrl}/${endpoints[type]}`;
 	const lastRequest = {
 		price: null,

@@ -1,26 +1,31 @@
-<script>
-	/**
-	 * Explore exchanges  that match certain filter criteria.
-	 *
-	 * Sorting, etc. is done on the client side, as the number of exchanges should be < 2000.
-	 */
+<!--
+@component
+Explore exchanges that match certain filter criteria.
+Sorting, etc. is done on the client side, as the number of exchanges should be < 2000.
 
+#### Usage:
+```tsx
+	<ExchangeExplorer
+		chainSlug={null|"ethereum"}
+		enabledColumns={['human_readable_name', 'chain_name', 'pair_count', 'usd_volume_30d']}
+		orderColumnIndex={3}
+		orderColumnDirection="asc|desc"
+		filterJunk={true|false}
+	/>
+```
+-->
+<script lang="ts">
+	import { session } from '$app/stores';
 	import Datatable from '$lib/datatable/datatable.svelte';
-
-	import { backendUrl } from '$lib/config';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
-	// The chain slug for which the exchanges pairs are rendered like ["binance"]
+	const { backendUrl } = $session.config;
+
 	export let chainSlug = null;
-
-	// What columns we will show in the explorer.
-	// See allColumns for options.
+	// What columns we will show in the explorer; see allColumns for options.
 	export let enabledColumns = ['human_readable_name', 'pair_count', 'usd_volume_30d'];
-
 	export let orderColumnIndex = 2;
-
 	export let orderColumnDirection = 'desc';
-
 	export let filterJunk = true;
 
 	// https://tradingstrategy.ai/api/explorer/

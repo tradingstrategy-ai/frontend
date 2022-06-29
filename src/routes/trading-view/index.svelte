@@ -1,10 +1,9 @@
+<!--
+	Trading data splash page renderer
+-->
 <script context="module">
-	/**
-	 * Trading data splash page renderer
-	 */
-	import { backendUrl } from '$lib/config';
-
-	export async function load({ fetch }) {
+	export async function load({ fetch, session }) {
+		const { backendUrl } = session.config;
 		const impressiveNumbersResp = await fetch(`${backendUrl}/impressive-numbers`);
 		let impressiveNumbers;
 

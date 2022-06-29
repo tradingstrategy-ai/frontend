@@ -1,8 +1,7 @@
+<!--
+	Render list of all trading pairs
+-->
 <script context="module" lang="typescript">
-	/**
-	 * Render list of all trading pairs
-	 */
-
 	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url }) {

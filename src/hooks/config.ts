@@ -47,6 +47,18 @@ configurePublicVar('siteMode', 'SITE_MODE', ({ SITE_MODE = 'local' }) => {
 });
 
 /**
+ * Load Backend URL and fail loudly if not set
+ */
+configurePublicVar('backendUrl', 'BACKEND_URL', ({ BACKEND_URL }) => {
+	if (!BACKEND_URL) {
+		throw new Error('TS_PUBLIC_BACKEND_URL missing');
+	} else if (BACKEND_URL.endsWith('/')) {
+		throw new Error(`Backend URL cannot end with slash: ${BACKEND_URL}`);
+	}
+	return BACKEND_URL;
+});
+
+/**
  * Backend internal URL (optional); set this when running frontend and backend on the
  * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
  */

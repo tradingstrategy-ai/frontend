@@ -1,11 +1,8 @@
+<!--
+	Render listing of all available exchanges
+-->
 <script context="module" lang="typescript">
-	/*
-
-		Render listing of all available exchanges
-
-	 */
-
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url }) {
 		const pathTranslations = {

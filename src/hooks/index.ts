@@ -1,5 +1,3 @@
-import { backendUrl } from '$lib/config';
-
 import config from './config';
 
 /** @type {import('@sveltejs/kit').GetSession} */
@@ -12,10 +10,11 @@ export function getSession(event) {
  * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
  */
 export async function externalFetch(request: Request): Promise<Response> {
-	if (config.backendInternalUrl) {
+	const { backendUrl, backendInternalUrl } = config;
+	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
-			request = new Request(request.url.replace(backendUrl, config.backendInternalUrl), request);
+			request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
 		}
 	}
 

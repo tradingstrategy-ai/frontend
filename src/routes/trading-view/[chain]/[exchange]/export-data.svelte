@@ -4,11 +4,11 @@ Export data for exchange trading pair list
 
 -->
 <script context="module">
-	import { backendUrl } from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	export async function load({ url, params, fetch }) {
+	export async function load({ url, params, fetch, session }) {
+		const { backendUrl } = session.config;
 		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
 
@@ -66,5 +66,5 @@ Export data for exchange trading pair list
 
 <div class="container">
 	<Breadcrumb {breadcrumbs} />
-	<PairListExportPage {backendUrl} {chain_slug} {exchange_slug} {exchange_name} />
+	<PairListExportPage {chain_slug} {exchange_slug} {exchange_name} />
 </div>

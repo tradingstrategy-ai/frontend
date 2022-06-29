@@ -2,7 +2,6 @@
 	/**
 	 * Frontpage renderer
 	 */
-	import { backendUrl } from '$lib/config';
 	import getGhostClient from '$lib/blog/client';
 
 	// TODO: Mobile menu requires hydrate
@@ -13,6 +12,7 @@
 	// Load top momentum data to display on the front page
 	// https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
 	export async function load({ fetch, session }) {
+		const { backendUrl } = session.config;
 		const ghostClient = getGhostClient(session.config.ghost);
 
 		// Load frontpage API calls in parallel to cut that 1 ms

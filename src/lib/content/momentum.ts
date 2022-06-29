@@ -1,4 +1,3 @@
-import { backendUrl } from '$lib/config';
 import type { Json } from '$lib/types';
 
 /**
@@ -6,7 +5,7 @@ import type { Json } from '$lib/types';
  *
  * If server cannot give us data, return `null`.
  */
-export async function loadMomentumData(fetch: Function): Promise<Json> {
+export async function loadMomentumData(backendUrl: string, fetch: Function): Promise<Json> {
 	const momentumResp = await fetch(`${backendUrl}/top-momentum`);
 
 	let topMomentum;
