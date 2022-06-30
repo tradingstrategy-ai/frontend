@@ -10,6 +10,11 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 	}
 </script>
 
+<svelte:head>
+	<title>Developer diagnostics page</title>
+	<meta name="description" content="Information about the currently running frontend version" />
+</svelte:head>
+
 <script lang="ts">
 	export let page: number;
 </script>
