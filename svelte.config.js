@@ -15,19 +15,17 @@ import fontDisplay from 'postcss-font-display';
 
 let config;
 
-// We prefix all environment variables with FRONTEND_
+// We prefix adapter-node environment variables with FRONTEND_
 // so that they do not get mixed up e.g. with Docker environment variables
 const SSR = process.env.SSR || false;
-const PRODUCTION = process.env.PRODUCTION || false;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
 console.log(`SSR: ${SSR}`);
-console.log(`PRODUCTION: ${PRODUCTION}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
-if (SSR || PRODUCTION) {
+if (SSR) {
 	console.log('Using SSR config');
 	// build server-side rendering
 	config = {
