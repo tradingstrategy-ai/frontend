@@ -7,14 +7,10 @@ The SvelteKit is run in a docker container.
 ### Building the container
 
 - The container is build in [javascript.yml](../.github/workflows/javascript.yml) and uploaded to Github registry.
-
-- The container is published on Github registry ghcr.io based on PR id
-
-Example container name that can be accepted by `docker` or `docker-compose`
-
-```
-ghcr.io/tradingstrategy-ai/frontend:pr-58
-```
+- The container is published on Github registry ghcr.io based on PR id or tag
+- Example container names that can be accepted by `docker` or `docker-compose`
+  - `ghcr.io/tradingstrategy-ai/frontend:pr-58`
+  - `ghcr.io/tradingstrategy-ai/frontend:v1.0.1`
 
 ### Creating a production tag
 
@@ -84,18 +80,20 @@ docker login ghcr.io -u miohtama
 
 Then pull any image using its pull request number:
 
-````shell
+```shell
 docker pull ghcr.io/tradingstrategy-ai/frontend:pr-58
+```
 
 Run it with your environment variables:
 
 ```shell
-export SSR=TRUE
 # Assume locally run backend, see backend/docs/local-staging.md
-export VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
-export VITE_SITE_MODE=production
-docker run -p 3000:3000 --platform linux/amd64 ghcr.io/tradingstrategy-ai/frontend:pr-58
-````
+export TS_PUBLIC_SITE_MODE=production
+export TS_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
+# On an M1/M2 mac, add `--platform linux/amd64` option to below command
+docker run --env-file .env -e TS_PUBLIC_SITE_MODE -e TS_PUBLIC_BACKEND_INTERNAL_URL \
+  -p 3000:3000 ghcr.io/tradingstrategy-ai/frontend:pr-58
+```
 
 Then visit [http://localhost:3000/](http://localhost:3000/).
 
@@ -104,7 +102,8 @@ Then visit [http://localhost:3000/](http://localhost:3000/).
 You can run the latest frontend on the production server with:
 
 ```shell
-docker login ghcr.io -u miohtama
+docker login ghcr.io -u miohtama  # Password is your PAT, see above
+export FRONTEND_PRODUCTION_TAG=v1 # replace with appropriate tag
 docker-compose up -d
 ```
 

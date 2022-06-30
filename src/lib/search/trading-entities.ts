@@ -1,6 +1,6 @@
 /**
- * This module exports a single default object: a svelte store for searching
- * the Typesense `trading-entities` collection.
+ * This module exports a single default factory function, which creates a
+ * svelte store for searching the Typesense `trading-entities` collection.
  *
  * usage:
  *   tradingEntities.search({ q: "foo" }) // search the collection
