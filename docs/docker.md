@@ -56,7 +56,10 @@ docker-compose logs frontend
 
 ### Creating a production tag
 
+Check out the `master` branch locally.
+
 Any tag starting with `v` is consired a production tag.
+[You can view existing tags here](https://github.com/tradingstrategy-ai/frontend/pkgs/container/frontend).
 
 Production tags are a sequential series of versions:
 
@@ -68,8 +71,7 @@ Production tags are a sequential series of versions:
 Tag the image for production run with the following one-liner:
 
 ```shell
-prettier --check --plugin-search-dir=. .
-TAG=v4 ; git tag $TAG ; ;git push origin $TAG
+TAG=v4 ; git tag $TAG ; git push origin $TAG
 ```
 
 - [Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions)
@@ -77,7 +79,7 @@ TAG=v4 ; git tag $TAG ; ;git push origin $TAG
 
 ### Updating the production server
 
-Sync `docker-compose.yml` to the server (only if compose updates needed):
+Sync `docker-compose.yml` to the server (only if yml updates needed):
 
 ```shell
 scp docker-compose.yml $PROD:./frontend
@@ -91,11 +93,11 @@ cd frontend
 # Check that prettier passes
 source ~/secrets.env
 
-# Create a GHCR access keys.
+# Create a GHCR access keys if not available yet.
 # These will be permanently stored in
 # .docker/config.json
 # Password is your PAT with GHCR perms, see below.
-docker login ghcr.io -u miohtama
+# docker login ghcr.io -u miohtama
 
 # Pass the currently acivated version tag to the docker
 # to pull the right image, but also to the
@@ -111,7 +113,7 @@ Check logs that the node-adapter starts properly:
 docker-compose logs
 ```
 
-Then visit the [diagnostics page(https://tradingstrategy.ai/diagnostics) to see the version tag has been updated.
+Then visit the [diagnostics page](https://tradingstrategy.ai/diagnostics) to see the version tag has been updated.
 
 ## Local containers
 
