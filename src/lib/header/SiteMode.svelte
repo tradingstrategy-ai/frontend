@@ -22,7 +22,7 @@ A helpful widget to identify non-production deployment and give some developer d
 		</p>
 
 		<p>
-			<a href="/slow-load">Go to slow page</a>
+			<a href="/slow-load">Go to slow page</a> | <a href="/diagnostics">Go to diagnostics page</a>
 		</p>
 	</div>
 {/if}

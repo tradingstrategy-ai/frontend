@@ -23,11 +23,10 @@ Production tags are a sequential series of versions:
 - ...
 - `v23`
 
-To tag a container for production run:
+Tag the image for production run with the following one-liner:
 
 ```shell
-git tag v1
-git push origin v1
+TAG=v3 ; git tag $TAG ; ;git push origin $TAG
 ```
 
 [Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions).
@@ -47,7 +46,7 @@ ssh $PROD
 cd frontend
 source ~/secrets.env
 docker login ghcr.io -u miohtama  # Password is your PAT, see below
-export FRONTEND_PRODUCTION_TAG=v1
+export TS_PUBLIC_FRONTEND_VERSION_TAG=v3
 docker-compose up -d
 ```
 
@@ -57,7 +56,7 @@ Check logs that the node-adapter starts properly:
 docker-compose logs
 ```
 
-Then check the [website itself](https://tradingstrategy.ai).
+Then visit the [diagnostics page(https://tradingstrategy.ai/diagnostics) to see the version tag has been updated.
 
 ## Local containers
 

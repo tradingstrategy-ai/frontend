@@ -81,6 +81,14 @@ configureEnvVar('backendInternalUrl', 'BACKEND_INTERNAL_URL', ({ BACKEND_INTERNA
 });
 
 /**
+ * Backend internal URL (optional); set this when running frontend and backend on the
+ * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
+ */
+configureEnvVar('frontendVersionTag', 'FRONTEND_VERSION_TAG', ({ FRONTEND_VERSION_TAG }) => {
+	return FRONTEND_VERSION_TAG;
+});
+
+/**
  * Load Ghost API credentials and warn if not available.
  */
 interface GhostConfig {
@@ -141,6 +149,7 @@ export interface Config {
 	ghost: GhostConfig;
 	typesense: TypesenseConfig;
 	chainsUnderMaintenance: ChainsUnderMaintenance;
+    frontendVersionTag: str;
 }
 
 export default config as Config;

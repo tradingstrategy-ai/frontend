@@ -6,7 +6,7 @@ version: '3.9'
 services:
   frontend:
     container_name: frontend
-    image: 'ghcr.io/tradingstrategy-ai/frontend:${FRONTEND_PRODUCTION_TAG}'
+    image: 'ghcr.io/tradingstrategy-ai/frontend:${TS_PUBLIC_FRONTEND_VERSION_TAG}'
     ports:
       # The production server has :80 port bind by Caddy.
       # Mapped in reverse proxy Caddyfile
@@ -24,4 +24,5 @@ services:
       - TS_PUBLIC_TYPESENSE_API_KEY
       - TS_PUBLIC_TYPESENSE_API_URL
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      - TS_PUBLIC_FRONTEND_VERSION_TAG
       # TODO: make VITE_PUBLIC_STRATEGIES run-time configurable
