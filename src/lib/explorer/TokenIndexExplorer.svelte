@@ -1,10 +1,25 @@
-<script>
-	/**
-	 * Tokens Explorer
-	 */
+<!--
+@component
+Tokens Explorer
+
+#### Usage:
+```tsx
+	<TokenIndexExplorer
+		chainSlug="ethereum"
+		enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
+		orderColumnIndex={4}
+		orderColumnDirection="asc|desc"
+		pageLength={50}
+	/>
+```
+-->
+<script lang="ts">
+	import { session } from '$app/stores';
 	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { backendUrl } from '$lib/config';
+
+	const { backendUrl } = $session.config;
+
 	export let chainSlug = null;
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
 	export let orderColumnIndex = 2;

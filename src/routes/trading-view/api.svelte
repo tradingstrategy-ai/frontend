@@ -1,7 +1,8 @@
-<script>
-	import { backendUrl } from '$lib/config';
+<script lang="ts">
+	import { session } from '$app/stores';
 	import Spinner from 'svelte-spinner';
 
+	const { backendUrl } = $session.config;
 	const url = `${backendUrl}/register`;
 
 	let submitting = false;

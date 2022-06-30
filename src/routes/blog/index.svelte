@@ -1,18 +1,21 @@
 <script context="module">
-	import ghostClient from '$lib/blog/client';
+	import getGhostClient from '$lib/blog/client';
 
-	const limit = 15;
+	let ghostClient = {};
+	const limit = 5;
 
 	async function fetchPosts(page = { next: 1 }) {
 		if (!page.next) return { page, posts: [] };
-		const response = await ghostClient?.posts.browse({ limit, page: page.next });
+		const response = await ghostClient.posts?.browse({ limit, page: page.next });
 		return {
 			posts: [...response],
 			page: response.meta.pagination
 		};
 	}
 
-	export async function load() {
+	export async function load({ session }) {
+		ghostClient = getGhostClient(session.config.ghost);
+
 		return {
 			props: await fetchPosts()
 		};
@@ -29,6 +32,7 @@
 	export let page = {};
 
 	async function fetchNextPage() {
+		console.log('FETCHING NEXT PAGE!!');
 		page.loading = true;
 		try {
 			const response = await fetchPosts(page);

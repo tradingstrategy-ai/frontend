@@ -11,9 +11,12 @@ Display site-wide search box for use in top-nav.
 -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import tradingEntities from './trading-entities';
+	import { session } from '$app/stores';
+	import tradingEntitiesStore from './trading-entities';
 	import { Fade } from 'sveltestrap';
 	import TradingEntityHit from './TradingEntityHit.svelte';
+
+	const tradingEntities = tradingEntitiesStore($session.config.typesense);
 
 	let q = '';
 	let hasFocus = false;

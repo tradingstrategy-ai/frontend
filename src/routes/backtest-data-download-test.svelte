@@ -7,7 +7,7 @@
 
     ```
     export VITE_TRADING_STRATEGY_API_KEY="..."
-    export VITE_PUBLIC_BACKEND_URL=http://127.0.0.1:3456/api
+    export TS_PUBLIC_BACKEND_URL=http://127.0.0.1:3456/api
     npm run dev
     ````
 
@@ -18,21 +18,16 @@
     window.localStorage.setItem("tsApiKey", "secret-token:tradingstrategy-...");
     ```
 -->
-<script context="module" lang="ts">
-	import { backendUrl } from '$lib/config';
-
-	export let apiKey = import.meta.env.VITE_TRADING_STRATEGY_API_KEY;
-</script>
-
 <script lang="ts">
+	import { session } from '$app/stores';
 	import { onMount } from 'svelte';
-	import api from './trading-view/api.svelte';
 
-	export let page: number;
+	const { backendUrl } = $session.config;
 
-	export let apiKey;
+	// This will only work in local dev (and should only be used for local dev/testing)
+	let apiKey = import.meta.env.VITE_TRADING_STRATEGY_API_KEY;
 
-	export let motd;
+	let motd;
 
 	onMount(async () => {
 		if (!apiKey) {

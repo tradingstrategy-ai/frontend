@@ -5,9 +5,6 @@ FROM node:16.15 as builder
 
 WORKDIR /app
 
-# ENV SSR=TRUE PRODUCTION=TRUE VITE_SITE_MODE=production
-# ENV VITE_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
-
 # install theme (cache first)
 COPY deps/theme ./deps/theme
 RUN (cd deps/theme && npm ci && npx gulp build:dist)
@@ -25,7 +22,7 @@ RUN --mount=type=ssh npm ci
 COPY . .
 
 # build app
-RUN npm run build
+RUN SSR=true npm run build
 
 #######################################
 # Serve stage

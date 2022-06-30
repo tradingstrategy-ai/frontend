@@ -1,13 +1,12 @@
+<!--
+	Exchange info page with all of its trading pairs.
+-->
 <script context="module">
-	/**
-	 * Exchange info page with all of its trading pairs.
-	 */
-
-	import { backendUrl } from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
-	export async function load({ url, params, fetch }) {
+	export async function load({ url, params, fetch, session }) {
+		const { backendUrl } = session.config;
 		const exchange_slug = params.exchange_id;
 		const chain_slug = params.chain;
 
@@ -31,10 +30,8 @@
 
 		return {
 			props: {
-				exchange_slug,
 				chain_slug,
 				details,
-				backendUrl,
 				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
 			}
 		};
@@ -49,7 +46,6 @@
 	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 
-	export let exchange_slug;
 	export let chain_slug;
 	export let details;
 	export let breadcrumbs;

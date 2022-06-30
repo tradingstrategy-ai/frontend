@@ -6,7 +6,7 @@
 #
 #    # TODO add necessary envs for product build here
 #    # Try out build:
-#    export PRODUCTION=true
+#    export SSR=true
 #    svelte-kit sync
 #    bash scripts/update-and-restart-production.sh
 #

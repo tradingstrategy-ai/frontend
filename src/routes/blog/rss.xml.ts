@@ -1,4 +1,7 @@
-import ghostClient from '$lib/blog/client';
+import config from '$lib/config';
+import getGhostClient from '$lib/blog/client';
+
+const ghostClient = getGhostClient(config.ghost);
 
 export const get = async () => {
 	const posts = await ghostClient.posts.browse();
