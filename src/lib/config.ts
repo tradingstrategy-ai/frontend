@@ -149,7 +149,7 @@ export interface Config {
 	ghost: GhostConfig;
 	typesense: TypesenseConfig;
 	chainsUnderMaintenance: ChainsUnderMaintenance;
-    frontendVersionTag: str;
+	frontendVersionTag: str;
 }
 
 export default config as Config;

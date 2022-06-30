@@ -26,7 +26,8 @@ Production tags are a sequential series of versions:
 Tag the image for production run with the following one-liner:
 
 ```shell
-TAG=v3 ; git tag $TAG ; ;git push origin $TAG
+prettier --check --plugin-search-dir=. .
+TAG=v4 ; git tag $TAG ; ;git push origin $TAG
 ```
 
 [Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions).
@@ -44,8 +45,14 @@ The run:
 ```shell
 ssh $PROD
 cd frontend
+# Check that prettier passes
 source ~/secrets.env
-docker login ghcr.io -u miohtama  # Password is your PAT, see below
+# Password is your PAT, see below
+docker login ghcr.io -u miohtama
+# Pass the currently acivated version tag to the docker
+# to pull the right image, but also to the
+# container itself to display the running version
+# (see /diagnostics)
 export TS_PUBLIC_FRONTEND_VERSION_TAG=v3
 docker-compose up -d
 ```
