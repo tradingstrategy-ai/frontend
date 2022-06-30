@@ -6,7 +6,7 @@ The SvelteKit is run in a docker container.
 
 ### Building the container
 
-- GHCR (Github registry) is used to store frontend images 
+- GHCR (Github registry) is used to store frontend images
 - The container is build in [javascript.yml](../.github/workflows/javascript.yml) and uploaded to Github registry.
 - The container is published on Github registry ghcr.io based on pull request id or version tag
 - Example container names that can be accepted by `docker` or `docker-compose`
@@ -225,7 +225,7 @@ Then you can try to poke the backend port directly:
 
 ```shell
 apt update
-apt install -y telnet 
+apt install -y telnet
 telnet host.docker.internal 3456
 ```
 
