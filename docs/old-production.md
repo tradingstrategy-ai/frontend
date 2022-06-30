@@ -1,5 +1,7 @@
 # Old production (deprecated)
 
+Deprecated. See [Docker info](./docker.md) instead.
+
 This will run server-side generated (SSR) pages using node.js server.
 
 The server default port is 3000.

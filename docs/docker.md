@@ -1,4 +1,4 @@
-# Docker container
+# Running frontend SvelteKit app as Docker container
 
 The SvelteKit is run in a docker container.
 
@@ -6,11 +6,53 @@ The SvelteKit is run in a docker container.
 
 ### Building the container
 
+- GHCR (Github registry) is used to store frontend images 
 - The container is build in [javascript.yml](../.github/workflows/javascript.yml) and uploaded to Github registry.
-- The container is published on Github registry ghcr.io based on PR id or tag
+- The container is published on Github registry ghcr.io based on pull request id or version tag
 - Example container names that can be accepted by `docker` or `docker-compose`
   - `ghcr.io/tradingstrategy-ai/frontend:pr-58`
   - `ghcr.io/tradingstrategy-ai/frontend:v1.0.1`
+
+### Viewing the running container
+
+View the running containerr and its environment.
+
+```shell
+ssh $PROD
+cd ~/frontend
+docker-compose ps
+```
+
+Should produce:
+
+```
+NAME                COMMAND                  SERVICE             STATUS              PORTS
+frontend            "docker-entrypoint.s…"   frontend            running             127.0.0.1:3000->3000/tcp
+```
+
+To view the the currently running version tag:
+
+```shell
+docker inspect frontend|grep -i version
+```
+
+Should produce:
+
+```
+"TS_PUBLIC_FRONTEND_VERSION_TAG=v4",
+"NODE_VERSION=16.15.1",
+"YARN_VERSION=1.22.19"
+"com.docker.compose.version": "2.5.0",
+"org.opencontainers.image.version": "v4"
+```
+
+### Viewing frontend logs
+
+```shell
+ssh $PROD
+cd ~/frontend
+docker-compose logs frontend
+```
 
 ### Creating a production tag
 
@@ -30,7 +72,8 @@ prettier --check --plugin-search-dir=. .
 TAG=v4 ; git tag $TAG ; ;git push origin $TAG
 ```
 
-[Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions).
+- [Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions)
+- [Check container releases on org level](https://github.com/orgs/tradingstrategy-ai/packages)
 
 ### Updating the production server
 
@@ -47,8 +90,13 @@ ssh $PROD
 cd frontend
 # Check that prettier passes
 source ~/secrets.env
-# Password is your PAT, see below
+
+# Create a GHCR access keys.
+# These will be permanently stored in
+# .docker/config.json
+# Password is your PAT with GHCR perms, see below.
 docker login ghcr.io -u miohtama
+
 # Pass the currently acivated version tag to the docker
 # to pull the right image, but also to the
 # container itself to display the running version
@@ -95,7 +143,7 @@ Run it with your environment variables:
 ```shell
 # Assume locally run backend, see backend/docs/local-staging.md
 export TS_PUBLIC_SITE_MODE=production
-export TS_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
+    export TS_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
 # On an M1/M2 mac, add `--platform linux/amd64` option to below command
 docker run --env-file .env -e TS_PUBLIC_SITE_MODE -e TS_PUBLIC_BACKEND_INTERNAL_URL \
   -p 3000:3000 ghcr.io/tradingstrategy-ai/frontend:pr-58
@@ -118,6 +166,10 @@ This will fetch the latest version and restart the frontend.
 Then visit [http://localhost:3000](http://localhost:3000).
 
 ### Listing available tags for a container on ghcr.io
+
+[You can view releases on Packages section of your project on Github](https://github.com/tradingstrategy-ai/frontend/pkgs/container/frontend).
+
+#### Machine readable way
 
 [See this post how to list the tags in ghcr.io](https://github.community/t/how-to-check-if-a-container-image-exists-on-ghcr/154836/6).
 
@@ -149,6 +201,30 @@ You should get a JSON reply like:
 
 ## More information
 
-- https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry
+- [Learn about GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry)
 
-- https://nira.com/github-container-registry/
+- [GHCR recipes](https://nira.com/github-container-registry/)
+
+## Troubleshooting
+
+### Testing the Linux host gateway (host.docker.internal)
+
+Bash in the container with the host gateway enabled:
+
+```shell
+docker run \
+  -ti \
+  --entrypoint /bin/bash \
+  --add-host=host.docker.internal:host-gateway \
+  ghcr.io/tradingstrategy-ai/frontend:v4
+```
+
+Then you can try to poke the backend port directly:
+
+```shell
+apt update
+apt install -y telnet 
+telnet host.docker.internal 3456
+```
+
+For more information, see [host.docker.internal on Linux](https://stackoverflow.com/questions/48546124/what-is-linux-equivalent-of-host-docker-internal).

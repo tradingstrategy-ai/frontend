@@ -13,6 +13,9 @@ services:
       # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
       - '127.0.0.1:3000:3000'
     command: node scripts/server.js
+    # See https://stackoverflow.com/a/67158212/315168
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       # See config.ts
       # See .env - docker-compose reads .env file
