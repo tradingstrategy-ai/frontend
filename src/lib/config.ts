@@ -32,8 +32,22 @@ interface Env {
 
 /**
  * Utility function for safely adding TS_PUBLIC_ environment variables to config
+ *
+ * Usage:
+ *
+ * configureEnvVar('configKey', 'CONFIG_VAR');
+ * - sets configKey directly from TS_PUBLIC_CONFIG_VAR
+ *
+ * configureEnvVar('configKey', 'CONFIG_PATTERN', setFn);
+ * - sets configKey to value returned by setFn
+ * - any env vars that begin with CONFIG_PATTERN are passed to setFn as object
  */
-function configureEnvVar(configKey: string, pattern: string, setFn: Function) {
+function configureEnvVar(configKey: string, pattern: string, setFn?: Function) {
+	if (!setFn) {
+		config[configKey] = process.env[`${prefix}${pattern}`];
+		return;
+	}
+
 	const env: Env = {};
 	for (const key of envKeys) {
 		if (key.startsWith(pattern)) {
@@ -81,12 +95,10 @@ configureEnvVar('backendInternalUrl', 'BACKEND_INTERNAL_URL', ({ BACKEND_INTERNA
 });
 
 /**
- * Backend internal URL (optional); set this when running frontend and backend on the
- * same host or same local network (e.g., production). See: hooks/index.ts:externalFetch
+ * Specify version tag; used to deploy Docker container.
+ * See: docker.md, docker-compose.yml
  */
-configureEnvVar('frontendVersionTag', 'FRONTEND_VERSION_TAG', ({ FRONTEND_VERSION_TAG }) => {
-	return FRONTEND_VERSION_TAG;
-});
+configureEnvVar('frontendVersionTag', 'FRONTEND_VERSION_TAG');
 
 /**
  * Load Ghost API credentials and warn if not available.
@@ -149,7 +161,7 @@ export interface Config {
 	ghost: GhostConfig;
 	typesense: TypesenseConfig;
 	chainsUnderMaintenance: ChainsUnderMaintenance;
-	frontendVersionTag: str;
+	frontendVersionTag: string;
 }
 
 export default config as Config;
