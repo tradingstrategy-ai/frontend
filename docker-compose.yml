@@ -14,14 +14,14 @@ services:
       - '127.0.0.1:3000:3000'
     command: node scripts/server.js
     environment:
-      - SSR=true
-      - VITE_SITE_MODE=production
       # See config.ts
       # See .env - docker-compose reads .env file
-      - VITE_PUBLIC_BACKEND_URL
-      - VITE_PUBLIC_BACKEND_INTERNAL_URL
-      - VITE_PUBLIC_GHOST_CONTENT_API_KEY
-      - VITE_PUBLIC_TYPESENSE_API_KEY
-      - VITE_PUBLIC_TYPESENSE_API_URL
-      - VITE_PUBLIC_STRATEGIES
-      - VITE_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      - TS_PUBLIC_SITE_MODE
+      - TS_PUBLIC_BACKEND_URL
+      - TS_PUBLIC_BACKEND_INTERNAL_URL
+      - TS_PUBLIC_GHOST_CONTENT_API_KEY
+      - TS_PUBLIC_GHOST_API_URL
+      - TS_PUBLIC_TYPESENSE_API_KEY
+      - TS_PUBLIC_TYPESENSE_API_URL
+      - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      # TODO: make VITE_PUBLIC_STRATEGIES run-time configurable
