@@ -2,6 +2,7 @@
 	import IntroHero from './_IntroHero.svelte';
 	import Audience from './_Audience.svelte';
 	import Inquiry from './_Inquiry.svelte';
+	import Platform from './_Platform.svelte';
 </script>
 
 <svelte:head>
@@ -24,6 +25,8 @@
 			<li><strong>Host private strategies</strong> on your own private server(s)</li>
 		</ul>
 	</Inquiry>
+
+	<Platform />
 </main>
 
 <style>
