@@ -58,6 +58,10 @@ docker-compose logs frontend
 
 Check out the `master` branch locally.
 
+Then run [../scripts/release.bash](release.bash).
+
+#### Creating production tag manually
+
 Any tag starting with `v` is consired a production tag.
 [You can view existing tags here](https://github.com/tradingstrategy-ai/frontend/pkgs/container/frontend).
 
