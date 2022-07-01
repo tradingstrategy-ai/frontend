@@ -7,7 +7,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Search from '$lib/search/Search.svelte';
-	import logo from '$lib/assets/logo-two-lines-new-no-text.svg';
+	import logo from '$lib/assets/logo-horizontal-light.svg';
 	import twitter from './twitter.svg';
 	import telegram from './telegram.svg';
 	import discord from './discord.svg';
@@ -130,7 +130,7 @@
 
 	/* Fix left aligment issues */
 	.navbar {
-		padding: 5px;
+		padding: 10px 5px;
 	}
 
 	.navbar-toggler {
@@ -140,6 +140,8 @@
 
 	.nav-link {
 		white-space: nowrap;
+		color: var(--c-ink);
+		font-weight: 500;
 	}
 
 	/* SVG icons */
@@ -154,7 +156,7 @@
 	}
 
 	.nav-link:hover {
-		color: var(--link-underline) !important;
+		opacity: 0.7;
 	}
 
 	img {
@@ -162,8 +164,9 @@
 	}
 
 	.img-logo {
-		width: 127px;
-		height: 32px;
+		height: 34px;
+		aspect-ratio: 5.233;
+		margin-right: 1rem;
 	}
 
 	.dropdown-menu.disabled {
@@ -173,15 +176,23 @@
 
 	/* Switch logos */
 	@media (max-width: 992px) {
+		.img-logo {
+			height: 28px;
+			margin-right: 0;
+		}
+
 		.nav-item {
 			margin-bottom: 10px;
 		}
+
 		.nav-item-mobile-only {
 			display: block;
 		}
+
 		.nav-item-mobile-only a {
 			display: block;
 		}
+
 		.nav-item-right {
 			display: none;
 		}

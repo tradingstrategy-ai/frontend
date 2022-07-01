@@ -53,6 +53,17 @@
 	}
 
 	/**
+	 * Improve text rendering / font smoothing.
+	 * TODO: remove this once design-system CSS is imported
+	 */
+	:global(html),
+	:global(body) {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/**
 	 * Body text helpers
 	 */
 	/* ol li, p, ul li */
