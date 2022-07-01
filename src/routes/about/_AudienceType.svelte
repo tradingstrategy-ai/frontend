@@ -31,15 +31,6 @@
 		padding-top: 0.5rem;
 	}
 
-	ul {
-		padding-left: inherit;
-	}
-
-	ul > :global(li) {
-		line-height: 1.2;
-		margin-bottom: 1em;
-	}
-
 	@media (max-width: 992px) {
 		.btn-cta {
 			width: 100%;
