@@ -29,3 +29,9 @@ services:
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
       - TS_PUBLIC_FRONTEND_VERSION_TAG
       # TODO: make VITE_PUBLIC_STRATEGIES run-time configurable
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
