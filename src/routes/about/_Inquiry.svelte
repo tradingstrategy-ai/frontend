@@ -23,9 +23,10 @@
 	}
 
 	section > div {
-		max-width: 740px;
+		box-sizing: content-box;
 		margin: 0 auto;
 		padding: 0 2rem;
+		max-width: var(--max-width, 960px);
 	}
 
 	.cta-wrapper {
