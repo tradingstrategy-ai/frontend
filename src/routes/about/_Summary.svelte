@@ -1,11 +1,11 @@
 <script lang="ts">
-	import laptopChartImage from './laptop-chart.png';
+	import LaptopChartImage from './images/laptop-chart.png';
 </script>
 
 <section class="container">
 	<div class="row">
 		<div class="col-lg col-image">
-			<img src={laptopChartImage} alt="ETH-USDC charts" />
+			<img src={LaptopChartImage} alt="ETH-USDC charts" />
 		</div>
 		<div class="col-lg col-text">
 			<p>

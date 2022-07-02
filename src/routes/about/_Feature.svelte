@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	const imageAssets = import.meta.globEager('./feature-images/*.svg');
+	const imageAssets = import.meta.globEager('./images/*.svg');
 
 	function getImageAsset(fileName: string) {
 		for (const key of Object.keys(imageAssets)) {

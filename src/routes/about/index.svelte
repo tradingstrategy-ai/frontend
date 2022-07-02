@@ -4,6 +4,9 @@
 	import Inquiry from './_Inquiry.svelte';
 	import Platform from './_Platform.svelte';
 	import Summary from './_Summary.svelte';
+
+	import DiscordIcon from './images/icon-discord.svg';
+	import EmailIcon from './images/icon-email.svg';
 </script>
 
 <svelte:head>
@@ -44,6 +47,19 @@
 	</Inquiry>
 
 	<Summary />
+
+	<Inquiry title="Get in touch">
+		<svelte:fragment slot="cta">
+			<a class="btn-cta cta-email" href="mailto:info@tradingstrategy.ai">
+				Send us an email
+				<img src={EmailIcon} alt="email" />
+			</a>
+			<a class="btn-cta cta-discord" href="https://discord.gg/en8tW6MDtw" target="_blank">
+				Join our Discord server
+				<img src={DiscordIcon} alt="discord" />
+			</a>
+		</svelte:fragment>
+	</Inquiry>
 </main>
 
 <style>
@@ -68,5 +84,16 @@
 	main :global(li) {
 		line-height: 1.2;
 		margin-bottom: 1em;
+	}
+
+	.btn-cta {
+		width: 13rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.btn-cta img {
+		height: 16px;
+		margin-left: 0.25rem;
+		margin-bottom: 2px;
 	}
 </style>

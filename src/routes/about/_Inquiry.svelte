@@ -7,7 +7,9 @@
 		<h4 class="text-center">{title}</h4>
 		<slot />
 		<div class="cta-wrapper">
-			<a class="btn-cta" href="/about">Contact Now</a>
+			<slot name="cta">
+				<a class="btn-cta" href="/about">Contact Now</a>
+			</slot>
 		</div>
 	</div>
 </section>
