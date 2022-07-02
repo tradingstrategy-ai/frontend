@@ -11,7 +11,7 @@
 			</ul>
 		</div>
 		<div class="card-footer">
-			<a class="btn-cta" href="/about">Explore Strategies Now</a>
+			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">Explore Strategies Now</a>
 		</div>
 	</div>
 </div>

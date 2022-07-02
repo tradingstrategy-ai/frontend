@@ -8,7 +8,7 @@
 		<slot />
 		<div class="cta-wrapper">
 			<slot name="cta">
-				<a class="btn-cta" href="/about">Contact Now</a>
+				<a class="btn-cta" href="mailto:info@tradingstrategy.ai">Contact Now</a>
 			</slot>
 		</div>
 	</div>
