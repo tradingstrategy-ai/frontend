@@ -3,6 +3,7 @@
 	import Audience from './_Audience.svelte';
 	import Inquiry from './_Inquiry.svelte';
 	import Platform from './_Platform.svelte';
+	import Summary from './_Summary.svelte';
 </script>
 
 <svelte:head>
@@ -41,6 +42,8 @@
 			<li><strong>Flexible payment plans</strong> from upfront payment, 14-day net, quarterly invoice payment</li>
 		</ul>
 	</Inquiry>
+
+	<Summary />
 </main>
 
 <style>
