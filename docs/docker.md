@@ -107,6 +107,7 @@ source ~/secrets.env
 # to pull the right image, but also to the
 # container itself to display the running version
 # (see /diagnostics)
+# Error "Error response from daemon: manifest unknown" means that the image build is not ready
 export TS_PUBLIC_FRONTEND_VERSION_TAG=v3
 docker-compose up -d
 ```
