@@ -13,7 +13,7 @@
 	-->
 
 	<div class="row">
-		<AudienceType title="For rraders and investors">
+		<AudienceType title="For traders and investors">
 			<li>Access automated trading strategies created by skilled strategy developers</li>
 			<li>
 				Provides typically better yield than lending pools, with considerably less risk than buy-and-hold strategies
