@@ -3,15 +3,17 @@
 </script>
 
 <section class="container">
+    <!--
 	<div class="row">
 		<div class="col text-center">
 			<h2>Audience</h2>
 			<p>The Trading Strategy protocol creates value for all participants within the DeFi ecosystem.</p>
 		</div>
 	</div>
+	-->
 
 	<div class="row">
-		<AudienceType title="Traders and Investors">
+		<AudienceType title="For rraders and investors">
 			<li>Access automated trading strategies created by skilled strategy developers</li>
 			<li>
 				Provides typically better yield than lending pools, with considerably less risk than buy-and-hold strategies
@@ -22,7 +24,7 @@
 			<li>Direct trade execution on-chain without a counter-party risk</li>
 		</AudienceType>
 
-		<AudienceType title="Strategy Developers">
+		<AudienceType title="For strategy developers">
 			<li>Create and easily deploy trading algorithms for decentralised markets</li>
 			<li>Access decentralised markets without needing technical knowledge of blockchains or smart contracts</li>
 			<li>Easily backtest and optimise your strategies against huge datasets before launching it</li>

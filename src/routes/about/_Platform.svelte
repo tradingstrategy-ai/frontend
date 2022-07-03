@@ -5,8 +5,8 @@
 <section class="container">
 	<div class="row">
 		<div class="col text-center">
-			<h2>The Trading Strategy Protocol / Platform</h2>
-			<p>Trading Strategy is the first protocol replacing investment managers and fund back offices with code.</p>
+			<h2>The Trading Strategy protocol</h2>
+			<p>Trading Strategy is the first protocol replacing investment managers with code.</p>
 			<p>Read how Trading Strategy protocol compares to yield farming and quantative hedge funds.</p>
 		</div>
 	</div>
