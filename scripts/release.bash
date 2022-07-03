@@ -3,7 +3,8 @@
 # Create a new releease
 #
 # - increment version number by 1
-# - push a release to Github
+# - push a new release to Github
+# - trigger new image build
 #
 
 set -e
