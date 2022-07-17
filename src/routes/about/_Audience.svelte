@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AudienceType from './_AudienceType.svelte';
-	import DiscordIcon from './images/icon-discord.svg';
+	import DiscordIcon from '$lib/assets/icons/discord.svg';
 </script>
 
 <section class="container">

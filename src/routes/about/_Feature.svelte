@@ -1,20 +1,12 @@
-<script context="module" lang="ts">
-	const imageAssets = import.meta.globEager('./images/*.svg');
-
-	function getImageAsset(fileName: string) {
-		for (const key of Object.keys(imageAssets)) {
-			if (key.endsWith(fileName)) return imageAssets[key].default;
-		}
-	}
-</script>
-
 <script lang="ts">
+	import { imageUrl } from '$lib/helpers/assets';
+
 	export let title: string;
 	export let image: string;
 	export let ctaUrl: string | undefined = undefined;
 	export let ctaTarget: string | undefined = undefined;
 
-	const imageAsset = getImageAsset(image);
+	const imageAsset = imageUrl(`/milano/${image}`);
 </script>
 
 <div class="row">

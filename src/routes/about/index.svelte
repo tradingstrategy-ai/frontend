@@ -4,8 +4,8 @@
 	import Inquiry from './_Inquiry.svelte';
 	import Platform from './_Platform.svelte';
 
-	import DiscordIcon from './images/icon-discord.svg';
-	import EmailIcon from './images/icon-email.svg';
+	import DiscordIcon from '$lib/assets/icons/discord.svg';
+	import EmailIcon from '$lib/assets/icons/email.svg';
 </script>
 
 <svelte:head>
