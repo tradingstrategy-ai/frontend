@@ -2,6 +2,7 @@
 	import IntroHero from './_IntroHero.svelte';
 	import Audience from './_Audience.svelte';
 	import Inquiry from './_Inquiry.svelte';
+	import Partners from './_Partners.svelte';
 	import Platform from './_Platform.svelte';
 
 	import DiscordIcon from '$lib/assets/icons/discord.svg';
@@ -29,6 +30,8 @@
 			<li><strong>Host private strategies</strong> on your own private server(s)</li>
 		</ul>
 	</Inquiry>
+
+	<Partners />
 
 	<Platform />
 
