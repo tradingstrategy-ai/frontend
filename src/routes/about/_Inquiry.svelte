@@ -1,8 +1,9 @@
 <script lang="ts">
 	export let title: string;
+	export let secondary = false;
 </script>
 
-<section class="jumbotron jumbotron-fluid">
+<section class="jumbotron jumbotron-fluid" class:secondary>
 	<div>
 		<h4 class="text-center">{title}</h4>
 		<slot />
@@ -18,6 +19,11 @@
 	section {
 		margin: 3rem 0;
 		background-color: var(--c-parchment-dark);
+	}
+
+	.secondary {
+		background-color: var(--c-parchment);
+		padding-top: 1rem;
 	}
 
 	h4 {

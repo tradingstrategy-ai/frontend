@@ -45,8 +45,8 @@
 		</ul>
 	</Inquiry>
 
-	<Inquiry title="Get in touch">
-		<svelte:fragment slot="cta">
+	<Inquiry secondary title="Get in touch">
+		<div class="get-in-touch-ctas" slot="cta">
 			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">
 				Send us an email
 				<img src={EmailIcon} alt="email" />
@@ -55,7 +55,7 @@
 				Join our Discord server
 				<img src={DiscordIcon} alt="discord" />
 			</a>
-		</svelte:fragment>
+		</div>
 	</Inquiry>
 </main>
 
@@ -90,8 +90,11 @@
 		margin-bottom: 1em;
 	}
 
-	.btn-cta {
-		width: 13rem;
-		margin-bottom: 0.5rem;
+	.get-in-touch-ctas {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, 13rem);
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
 	}
 </style>
