@@ -11,6 +11,8 @@
 <script lang="ts">
 	export let title: string;
 	export let image: string;
+	export let ctaUrl: string | undefined = undefined;
+	export let ctaTarget: string | undefined = undefined;
 
 	const imageAsset = getImageAsset(image);
 </script>
@@ -25,6 +27,9 @@
 		<ul>
 			<slot />
 		</ul>
+		{#if ctaUrl}
+			<div class="cta"><a class="btn-cta" href={ctaUrl} target={ctaTarget}>See More</a></div>
+		{/if}
 	</div>
 </div>
 
@@ -70,6 +75,10 @@
 	}
 
 	@media (max-width: 576px) {
+		.col-text .cta {
+			text-align: center;
+		}
+
 		.col-image img {
 			width: 80%;
 		}
