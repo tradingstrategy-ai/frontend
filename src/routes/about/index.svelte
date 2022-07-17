@@ -2,11 +2,11 @@
 	import IntroHero from './_IntroHero.svelte';
 	import Audience from './_Audience.svelte';
 	import Inquiry from './_Inquiry.svelte';
+	import Partners from './_Partners.svelte';
 	import Platform from './_Platform.svelte';
-	import Summary from './_Summary.svelte';
 
-	import DiscordIcon from './images/icon-discord.svg';
-	import EmailIcon from './images/icon-email.svg';
+	import DiscordIcon from '$lib/assets/icons/discord.svg';
+	import EmailIcon from '$lib/assets/icons/email.svg';
 </script>
 
 <svelte:head>
@@ -31,34 +31,34 @@
 		</ul>
 	</Inquiry>
 
+	<Partners />
+
 	<Platform />
 
-	<Inquiry title="Interested in our data for your service or platform?" --max-width="840px">
+	<Inquiry title="Do you want to trade on decentralised markets?" --max-width="840px">
 		<p>
 			You can leverage our decentralised market data for your market analytics, technical analysis, service or platform.
 		</p>
-		<p>We offer bespoke services for market data where you will benefit from:</p>
+		<p>We offer customised services for market data where you will benefit from:</p>
 		<ul>
 			<li>On-chain market data <strong>directly from the integrated blockchains</strong></li>
-			<li><strong>3 or more API keys</strong> included</li>
+			<li><strong>Many API keys</strong> included</li>
 			<li>Customer support with <strong>24 hour response time</strong> (business days)</li>
 			<li><strong>Flexible payment plans</strong> from upfront payment, 14-day net, quarterly invoice payment</li>
 		</ul>
 	</Inquiry>
 
-	<Summary />
-
-	<Inquiry title="Get in touch">
-		<svelte:fragment slot="cta">
-			<a class="btn-cta cta-email" href="mailto:info@tradingstrategy.ai">
+	<Inquiry secondary title="Get in touch">
+		<div class="get-in-touch-ctas" slot="cta">
+			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">
 				Send us an email
 				<img src={EmailIcon} alt="email" />
 			</a>
-			<a class="btn-cta cta-discord" href="https://discord.gg/en8tW6MDtw" target="_blank">
+			<a class="btn-cta" href="https://discord.gg/en8tW6MDtw" target="_blank">
 				Join our Discord server
 				<img src={DiscordIcon} alt="discord" />
 			</a>
-		</svelte:fragment>
+		</div>
 	</Inquiry>
 </main>
 
@@ -71,10 +71,17 @@
 		font-size: 0.8rem;
 		font-weight: 500;
 		text-align: center;
+		text-transform: capitalize;
 	}
 
 	main :global(.btn-cta:hover) {
 		opacity: 0.8;
+	}
+
+	main :global(.btn-cta img) {
+		height: 16px;
+		margin-left: 0.25rem;
+		margin-bottom: 2px;
 	}
 
 	main :global(ul) {
@@ -86,14 +93,11 @@
 		margin-bottom: 1em;
 	}
 
-	.btn-cta {
-		width: 13rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.btn-cta img {
-		height: 16px;
-		margin-left: 0.25rem;
-		margin-bottom: 2px;
+	.get-in-touch-ctas {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, 13rem);
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
 	}
 </style>
