@@ -3,7 +3,6 @@
 	import Audience from './_Audience.svelte';
 	import Inquiry from './_Inquiry.svelte';
 	import Platform from './_Platform.svelte';
-	import Summary from './_Summary.svelte';
 
 	import DiscordIcon from './images/icon-discord.svg';
 	import EmailIcon from './images/icon-email.svg';
@@ -45,8 +44,6 @@
 			<li><strong>Flexible payment plans</strong> from upfront payment, 14-day net, quarterly invoice payment</li>
 		</ul>
 	</Inquiry>
-
-	<Summary />
 
 	<Inquiry title="Get in touch">
 		<svelte:fragment slot="cta">
