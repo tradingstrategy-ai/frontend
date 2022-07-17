@@ -50,11 +50,11 @@
 
 	<Inquiry title="Get in touch">
 		<svelte:fragment slot="cta">
-			<a class="btn-cta cta-email" href="mailto:info@tradingstrategy.ai">
+			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">
 				Send us an email
 				<img src={EmailIcon} alt="email" />
 			</a>
-			<a class="btn-cta cta-discord" href="https://discord.gg/en8tW6MDtw" target="_blank">
+			<a class="btn-cta" href="https://discord.gg/en8tW6MDtw" target="_blank">
 				Join our Discord server
 				<img src={DiscordIcon} alt="discord" />
 			</a>
@@ -71,10 +71,17 @@
 		font-size: 0.8rem;
 		font-weight: 500;
 		text-align: center;
+		text-transform: capitalize;
 	}
 
 	main :global(.btn-cta:hover) {
 		opacity: 0.8;
+	}
+
+	main :global(.btn-cta img) {
+		height: 16px;
+		margin-left: 0.25rem;
+		margin-bottom: 2px;
 	}
 
 	main :global(ul) {
@@ -89,11 +96,5 @@
 	.btn-cta {
 		width: 13rem;
 		margin-bottom: 0.5rem;
-	}
-
-	.btn-cta img {
-		height: 16px;
-		margin-left: 0.25rem;
-		margin-bottom: 2px;
 	}
 </style>

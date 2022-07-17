@@ -10,6 +10,9 @@
 				<slot />
 			</ul>
 		</div>
+		<div class="card-footer text-center">
+			<slot name="cta" />
+		</div>
 	</div>
 </div>
 
