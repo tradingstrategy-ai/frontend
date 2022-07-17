@@ -14,6 +14,7 @@ To set it:
 ```shell
 export TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
 ```
+
 - Add this to `~/secrets.env`
 - Refresh the environment `source ~/secrets.env`
 - Then [restart the frontend docker](./docker.md)
@@ -28,6 +29,3 @@ docker-compose up -d --force-recreate frontend
 Check maintanance page comes up
 
 - https://tradingstrategy.ai/trading-view/binance/pancakeswap-v2/hash-usdt-2
-
-
-
