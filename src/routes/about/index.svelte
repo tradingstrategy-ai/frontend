@@ -33,14 +33,14 @@
 
 	<Platform />
 
-	<Inquiry title="Interested in our data for your service or platform?" --max-width="840px">
+	<Inquiry title="Do you want to trade on decentralised markets?" --max-width="840px">
 		<p>
 			You can leverage our decentralised market data for your market analytics, technical analysis, service or platform.
 		</p>
-		<p>We offer bespoke services for market data where you will benefit from:</p>
+		<p>We offer customised services for market data where you will benefit from:</p>
 		<ul>
 			<li>On-chain market data <strong>directly from the integrated blockchains</strong></li>
-			<li><strong>3 or more API keys</strong> included</li>
+			<li><strong>Many API keys</strong> included</li>
 			<li>Customer support with <strong>24 hour response time</strong> (business days)</li>
 			<li><strong>Flexible payment plans</strong> from upfront payment, 14-day net, quarterly invoice payment</li>
 		</ul>
