@@ -4,7 +4,7 @@
 
 <section class="jumbotron jumbotron-fluid">
 	<div>
-		<h4 class="text-center">Our Partners</h4>
+		<h2 class="text-center">Our partners</h2>
 
 		<div class="partner-logos">
 			<a href="https://www.avax.network/" target="_blank">
@@ -50,7 +50,7 @@
 		justify-content: center;
 		align-items: center;
 		gap: 4rem;
-		margin-top: 5rem;
+		margin: 5rem 0 1rem 0;
 	}
 
 	@media (max-width: 576px) {
