@@ -94,6 +94,7 @@
     "@metamask/detect-provider": "^1.2.0",
     "@tryghost/content-api": "^1.5.13",
     "cookie": "^0.4.1",
+    "date-fns": "^2.29.1",
     "dotenv": "^16.0.1",
     "ethers": "^5.6.4",
     "gulp": "^4.0.2",
