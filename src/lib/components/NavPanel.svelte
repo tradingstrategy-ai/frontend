@@ -1,0 +1,65 @@
+<script lang="ts">
+	import Menu from './Menu.svelte';
+	import Icon from './Icon.svelte';
+
+	export let hidden = false;
+	export let open = false;
+
+	const close = () => (open = false);
+</script>
+
+{#if !hidden}
+	<nav class:open>
+		<header>
+			<h4>Menu</h4>
+			<button on:click={close}>
+				<Icon name="cancel" />
+			</button>
+		</header>
+		<Menu align="center" on:click={close}>
+			<slot />
+		</Menu>
+	</nav>
+{/if}
+
+<style>
+	nav {
+		position: fixed;
+		z-index: 99;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 420px;
+		padding: 1rem;
+		background: var(--c-body);
+		box-shadow: 0.25rem 0 2rem var(--c-border-1);
+		transform: translateX(calc(100% + 2rem));
+		transition: transform 0.25s;
+	}
+
+	nav.open {
+		transform: translateX(0);
+	}
+
+	header {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	h4 {
+		font: 600 var(--fs-heading-sm);
+	}
+
+	button {
+		display: flex;
+		background: transparent;
+		border: none;
+		font-size: 16px;
+		padding: 0;
+		cursor: pointer;
+	}
+</style>
