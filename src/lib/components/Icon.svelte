@@ -7,18 +7,21 @@
 		// Path must match glob path above.
 		return icons[`../assets/icons/${name}.svg`];
 	}
+
+	const notFound = '‽';
 </script>
 
 <script lang="ts">
 	export let name: string;
-	const notFound = '‽';
+	export let size: string = undefined;
 </script>
 
-<div>{@html rawSVG(name) || notFound}</div>
+<div style:--size={size}>{@html rawSVG(name) || notFound}</div>
 
 <style>
 	div {
 		display: contents;
+		font-size: var(--icon-size, var(--size, auto));
 	}
 
 	div > :global(svg) {

@@ -6,7 +6,7 @@
 	import AppHead from '$lib/header/AppHead.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
-	import Footer from '$lib/header/Footer.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 
 	// design-system-fonts is an optional dependency, so we use Vite's glob import
 	// feature to import / fail gracefully if not installed. Must assign the returned
