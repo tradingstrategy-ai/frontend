@@ -4,7 +4,7 @@ import getGhostClient from '$lib/blog/client';
 const ghostClient = getGhostClient(config.ghost);
 
 export const get = async () => {
-	const posts = await ghostClient.posts.browse();
+	const posts = await ghostClient.posts.browse({ limit: 'all' });
 	const body = render(posts);
 	const headers = {
 		'Cache-Control': `max-age=0, s-max-age=${600}`,
