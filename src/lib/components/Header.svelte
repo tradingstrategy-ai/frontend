@@ -5,24 +5,15 @@
 	import NavPanel from './NavPanel.svelte';
 	import TextInput from './TextInput.svelte';
 
-	let hasOverflow = false;
 	let panelOpen = false;
-
-	function checkOverflow(node: HTMLElement) {
-		const ro = new ResizeObserver(() => {
-			hasOverflow = node.scrollWidth > node.clientWidth;
-		});
-		ro.observe(node);
-		return { destroy: () => ro.unobserve(node) };
-	}
 </script>
 
-<header class:hasOverflow>
+<header>
 	<div class="logo">
 		<a href="/"><Logo /></a>
 	</div>
 
-	<nav use:checkOverflow data-cy="navbar">
+	<nav>
 		<Menu horizontal align="center">
 			<slot name="menu" />
 		</Menu>
@@ -39,9 +30,11 @@
 	</button>
 </header>
 
-<NavPanel hidden={!hasOverflow} bind:open={panelOpen}>
-	<slot name="menu" />
-</NavPanel>
+<div class="nav-panel">
+	<NavPanel bind:open={panelOpen}>
+		<slot name="menu" />
+	</NavPanel>
+</div>
 
 <style>
 	header {
@@ -59,18 +52,9 @@
 		grid-row: 1;
 	}
 
-	.hasOverflow {
-		height: 3.75rem;
-	}
-
 	.logo {
 		grid-column: logo-start / logo-end-lg;
 		--logo-height: 38px;
-	}
-
-	.hasOverflow .logo {
-		grid-column-end: logo-end-sm;
-		--logo-height: 32px;
 	}
 
 	.logo a {
@@ -82,10 +66,6 @@
 		grid-column: menu-start / menu-end;
 	}
 
-	.hasOverflow nav {
-		visibility: hidden;
-	}
-
 	.search {
 		grid-column: search-start-lg / search-end;
 		width: 100%;
@@ -93,12 +73,9 @@
 		justify-self: end;
 	}
 
-	.hasOverflow .search {
-		grid-column-start: search-start-sm;
-	}
-
 	.show-nav-panel {
-		display: flex;
+		/* hidden by default; display: flex in @media query below */
+		display: none;
 		background: transparent;
 		border: none;
 		font-size: 24px;
@@ -106,7 +83,35 @@
 		cursor: pointer;
 	}
 
-	:not(.hasOverflow) .show-nav-panel {
+	.nav-panel {
+		/* hidden by default; display: contents in @media query below */
 		display: none;
+	}
+
+	@media (max-width: 1150px) {
+		header {
+			height: 3.75rem;
+		}
+
+		nav {
+			display: none;
+		}
+
+		.logo {
+			grid-column-end: logo-end-sm;
+			--logo-height: 32px;
+		}
+
+		.search {
+			grid-column-start: search-start-sm;
+		}
+
+		.show-nav-panel {
+			display: flex;
+		}
+
+		.nav-panel {
+			display: contents;
+		}
 	}
 </style>
