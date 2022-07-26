@@ -22,7 +22,7 @@
 		<a href="/"><Logo /></a>
 	</div>
 
-	<nav use:checkOverflow>
+	<nav use:checkOverflow data-cy="navbar">
 		<Menu horizontal align="center">
 			<slot name="menu" />
 		</Menu>
