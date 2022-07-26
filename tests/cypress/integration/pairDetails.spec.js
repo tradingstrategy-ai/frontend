@@ -5,7 +5,7 @@ describe('Trading strategy Pair Details', () => {
 
 	it('has a navigation about link', () => {
 		cy.contains(/ETH-USDT token pair on Uniswap v2 on Ethereum/i);
-		cy.get('.navbar-nav li').first().should('have.text', 'Trading data');
+		cy.get('header nav li').first().should('have.text', 'Trading data');
 	});
 
 	it('Breadcrumb should be visible and have 1 element', () => {

@@ -26,6 +26,8 @@ describe('Trading strategy Trading View', () => {
 	it('Check links are defined', () => {
 		cy.get('a').each(($a) => {
 			const message = $a.text();
+			// skip check for 'Trading data' nav element (disabled since we're on that page)
+			if (message === 'Trading data') return;
 			expect($a, message).to.have.attr('href').not.contain('undefined');
 		});
 	});
