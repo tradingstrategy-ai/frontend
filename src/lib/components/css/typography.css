@@ -1,0 +1,192 @@
+/* Font Families and base font sizes */
+:root {
+	--ff-display: 'Neue Haas Grotesk Display', system-ui, sans-serif;
+	--ff-ui: 'Neue Haas Grotesk Text', system-ui, sans-serif;
+	--ff-text: 'Source Serif Pro', serif;
+
+	--fs-heading-xxl: 48px/56px var(--ff-display);
+	--fs-heading-xl: 38px/44px var(--ff-display);
+	--fs-heading-lg: 32px/40px var(--ff-display);
+	--fs-heading-md: 26px/36px var(--ff-display);
+	--fs-heading-sm: 22px/28px var(--ff-display);
+	--fs-heading-xs: 19px/24px var(--ff-display);
+
+	--fs-ui-xl: 20px/24px var(--ff-ui);
+	--fs-ui-lg: 18px/20px var(--ff-ui);
+	--fs-ui-md: 16px/20px var(--ff-ui);
+	--fs-ui-sm: 14px/16px var(--ff-ui);
+	--fs-ui-xs: 12px/12px var(--ff-ui);
+
+	--fs-text-lg: 26px/36px var(--ff-text);
+	--fs-text-md: 19px/32px var(--ff-text);
+	--fs-text-sm: 16px/28px var(--ff-text);
+}
+
+/* Font Pairings - Mobile */
+:root {
+	--f-h1-bold: 700 var(--fs-heading-xl);
+	--f-h1-medium: 600 var(--fs-heading-xl);
+	--f-h1-roman: 500 var(--fs-heading-xl);
+	--f-h1-light: 400 var(--fs-heading-xl);
+
+	--f-h2-bold: 700 var(--fs-heading-lg);
+	--f-h2-medium: 600 var(--fs-heading-lg);
+	--f-h2-roman: 500 var(--fs-heading-lg);
+	--f-h2-light: 400 var(--fs-heading-lg);
+
+	--f-h3-bold: 700 var(--fs-heading-md);
+	--f-h3-medium: 600 var(--fs-heading-md);
+	--f-h3-roman: 500 var(--fs-heading-md);
+	--f-h3-light: 400 var(--fs-heading-md);
+
+	--f-h4-bold: 700 var(--fs-heading-sm);
+	--f-h4-medium: 600 var(--fs-heading-sm);
+	--f-h4-roman: 500 var(--fs-heading-sm);
+	--f-h4-light: 400 var(--fs-heading-sm);
+
+	--f-h5-bold: 700 var(--fs-heading-xs);
+	--f-h5-medium: 600 var(--fs-heading-xs);
+	--f-h5-roman: 500 var(--fs-heading-xs);
+	--f-h5-light: 400 var(--fs-heading-xs);
+
+	/* TODO: need smaller size for mobile h6? (currently same as h5) */
+	--f-h6-bold: 700 var(--fs-heading-xs);
+	--f-h6-medium: 600 var(--fs-heading-xs);
+	--f-h6-roman: 500 var(--fs-heading-xs);
+	--f-h6-light: 400 var(--fs-heading-xs);
+
+	--f-ui-large-bold: 700 var(--fs-ui-lg);
+	--f-ui-large-medium: 500 var(--fs-ui-lg);
+	--f-ui-large-roman: 400 var(--fs-ui-lg);
+	--f-ui-large-light: 300 var(--fs-ui-lg);
+
+	--f-ui-body-bold: 700 var(--fs-ui-md);
+	--f-ui-body-medium: 500 var(--fs-ui-md);
+	--f-ui-body-roman: 400 var(--fs-ui-md);
+	--f-ui-body-light: 300 var(--fs-ui-md);
+
+	--f-ui-small-bold: 700 var(--fs-ui-sm);
+	--f-ui-small-medium: 500 var(--fs-ui-sm);
+	--f-ui-small-roman: 400 var(--fs-ui-sm);
+	--f-ui-small-light: 300 var(--fs-ui-sm);
+
+	--f-ui-xsmall-bold: 700 var(--fs-ui-xs);
+	--f-ui-xsmall-medium: 500 var(--fs-ui-xs);
+	--f-ui-xsmall-roman: 400 var(--fs-ui-xs);
+	--f-ui-xsmall-light: 300 var(--fs-ui-xs);
+
+	--f-text-large-bold: 700 var(--fs-text-lg);
+	--f-text-large-semibold: 600 var(--fs-text-lg);
+	--f-text-large-regular: 400 var(--fs-text-lg);
+
+	--f-text-body-bold: 700 var(--fs-text-md);
+	--f-text-body-semibold: 600 var(--fs-text-md);
+	--f-text-body-regular: 400 var(--fs-text-md);
+
+	--f-text-small-bold: 700 var(--fs-text-sm);
+	--f-text-small-semibold: 600 var(--fs-text-sm);
+	--f-text-small-regular: 400 var(--fs-text-sm);
+}
+
+/* Font Pairings - Desktop */
+@media (min-width: 768px) {
+	:root {
+		--f-h1-bold: 700 var(--fs-heading-xxl);
+		--f-h1-medium: 600 var(--fs-heading-xxl);
+		--f-h1-roman: 500 var(--fs-heading-xxl);
+		--f-h1-light: 400 var(--fs-heading-xxl);
+
+		--f-h2-bold: 700 var(--fs-heading-xl);
+		--f-h2-medium: 600 var(--fs-heading-xl);
+		--f-h2-roman: 500 var(--fs-heading-xl);
+		--f-h2-light: 400 var(--fs-heading-xl);
+
+		--f-h3-bold: 700 var(--fs-heading-lg);
+		--f-h3-medium: 600 var(--fs-heading-lg);
+		--f-h3-roman: 500 var(--fs-heading-lg);
+		--f-h3-light: 400 var(--fs-heading-lg);
+
+		--f-h4-bold: 700 var(--fs-heading-md);
+		--f-h4-medium: 600 var(--fs-heading-md);
+		--f-h4-roman: 500 var(--fs-heading-md);
+		--f-h4-light: 400 var(--fs-heading-md);
+
+		--f-h5-bold: 700 var(--fs-heading-sm);
+		--f-h5-medium: 600 var(--fs-heading-sm);
+		--f-h5-roman: 500 var(--fs-heading-sm);
+		--f-h5-light: 400 var(--fs-heading-sm);
+
+		--f-h6-bold: 700 var(--fs-heading-xs);
+		--f-h6-medium: 600 var(--fs-heading-xs);
+		--f-h6-roman: 500 var(--fs-heading-xs);
+		--f-h6-light: 400 var(--fs-heading-xs);
+
+		--f-ui-large-bold: 700 var(--fs-ui-xl);
+		--f-ui-large-medium: 500 var(--fs-ui-xl);
+		--f-ui-large-roman: 400 var(--fs-ui-xl);
+		--f-ui-large-light: 300 var(--fs-ui-xl);
+
+		--f-ui-body-bold: 700 var(--fs-ui-lg);
+		--f-ui-body-medium: 500 var(--fs-ui-lg);
+		--f-ui-body-roman: 400 var(--fs-ui-lg);
+		--f-ui-body-light: 300 var(--fs-ui-lg);
+
+		--f-ui-small-bold: 700 var(--fs-ui-md);
+		--f-ui-small-medium: 500 var(--fs-ui-md);
+		--f-ui-small-roman: 400 var(--fs-ui-md);
+		--f-ui-small-light: 300 var(--fs-ui-md);
+
+		--f-ui-xsmall-bold: 700 var(--fs-ui-sm);
+		--f-ui-xsmall-medium: 400 var(--fs-ui-sm);
+		--f-ui-xsmall-roman: 400 var(--fs-ui-sm);
+		--f-ui-xsmall-light: 300 var(--fs-ui-sm);
+
+		/* NOTE: no override needed for --f-text values */
+	}
+}
+
+html,
+body {
+	font-family: var(--ff-ui);
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+.ds-container h1,
+.ds-container h2,
+.ds-container h3,
+.ds-container h4,
+.ds-container h5,
+.ds-container h6 {
+	margin: 0;
+}
+
+/* scoping base styles under .ds-container to avoid conflicting w/bootstrap */
+.ds-container h1 {
+	font: var(--f-h1-medium);
+}
+
+.ds-container h2 {
+	font: var(--f-h2-medium);
+}
+
+.ds-container h3 {
+	font: var(--f-h3-medium);
+}
+
+.ds-container h4 {
+	font: var(--f-h4-medium);
+}
+
+.ds-container h5 {
+	font: var(--f-h5-medium);
+}
+
+.ds-container h6 {
+	font: var(--f-h6-medium);
+}
+
+.ds-container p {
+	margin: 0;
+}

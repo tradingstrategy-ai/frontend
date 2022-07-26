@@ -15,6 +15,7 @@ Display site-wide search box for use in top-nav.
 	import tradingEntitiesStore from './trading-entities';
 	import { Fade } from 'sveltestrap';
 	import TradingEntityHit from './TradingEntityHit.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 
 	const tradingEntities = tradingEntitiesStore($session.config.typesense);
 
@@ -53,10 +54,10 @@ Display site-wide search box for use in top-nav.
 </script>
 
 <div class="search">
-	<input
+	<TextInput
 		type="search"
 		data-cy="search"
-		placeholder="search"
+		placeholder="Search"
 		autocapitalize="none"
 		spellcheck="false"
 		bind:value={q}
@@ -86,35 +87,7 @@ Display site-wide search box for use in top-nav.
 <style>
 	.search {
 		position: relative;
-		width: 100%;
-		text-align: right;
-	}
-
-	.search * {
-		text-align: left;
-	}
-
-	input {
-		height: 32px;
-		width: 100%;
-		max-width: 250px;
-		margin-left: auto;
-		padding: 0 1ex 0 2em;
-		border: 2px solid #44476a;
-		border-radius: 16px;
-		outline: none;
-		background: rgba(255, 255, 255, 0.5) url('/images/search.svg') 1ex 55%/14px no-repeat;
-		font-size: 0.8rem;
-		color: #44476a;
-	}
-
-	input:focus {
-		background-color: rgba(255, 255, 255, 0.75);
-		box-shadow: 0 0 10px #44476a55;
-	}
-
-	input::placeholder {
-		color: #44476a80;
+		--text-input-width: 100%;
 	}
 
 	.card {
@@ -144,18 +117,11 @@ Display site-wide search box for use in top-nav.
 		filter: brightness(0.9);
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 576px) {
 		.search {
 			position: revert;
 		}
 
-		.card {
-			left: 50%;
-			transform: translate(-50%, 0);
-		}
-	}
-
-	@media (max-width: 450px) {
 		.card {
 			width: 100vw;
 			border-radius: 0;

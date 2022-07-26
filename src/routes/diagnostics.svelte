@@ -18,6 +18,6 @@ A test endpoint for the page to show debug data.
 	<div class="content">
 		<h1>Developer diagnostics page</h1>
 		<h2>Config</h2>
-		<pre>{ configStr }</pre>
+		<pre>{configStr}</pre>
 	</div>
 </div>

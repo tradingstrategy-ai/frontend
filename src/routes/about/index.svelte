@@ -5,8 +5,8 @@
 	import Partners from './_Partners.svelte';
 	import Platform from './_Platform.svelte';
 
-	import DiscordIcon from '$lib/assets/icons/discord.svg';
-	import EmailIcon from '$lib/assets/icons/email.svg';
+	import DiscordIcon from './icons/discord.svg';
+	import EmailIcon from './icons/email.svg';
 </script>
 
 <svelte:head>
