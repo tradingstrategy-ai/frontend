@@ -51,14 +51,6 @@
 		console.log('Wrapped table', el);
 	}
 
-	// Our blog posts contain links to /docs
-	// Svelte internal router will try to intercept links in the blog posts
-	// and gives 404 because docs are not Svelte pages.
-	// This fixes this - and makes all links on the blog post to behave external.
-	function fixLink(el) {
-		el.setAttribute('rel', 'external');
-	}
-
 	/**
 	 * Build table of content for the body text.
 	 *
@@ -112,10 +104,6 @@
 		// TODO: Run this on parsed HTML feed from Ghost.io, not on the live document
 		document.querySelectorAll('.body-text .table').forEach(function (elem) {
 			wrapResponsive(elem);
-		});
-
-		document.querySelectorAll('.body-text a').forEach(function (elem) {
-			fixLink(elem);
 		});
 
 		const bodyText = document.querySelector('.body-text');
