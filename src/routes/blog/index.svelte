@@ -106,6 +106,7 @@
 	header {
 		margin: 1.5rem 0;
 		align-items: center;
+		row-gap: 1.5rem;
 	}
 
 	header p {
@@ -115,8 +116,8 @@
 
 	.social-links {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
+		flex-wrap: nowrap;
+		justify-content: space-between;
 		gap: 1rem 2.5rem;
 	}
 
@@ -135,6 +136,7 @@
 	}
 
 	.posts {
+		margin: 2.5rem 0;
 		/** ensure featured post column gap matches the layout column gap */
 		--blog-post-tile--column-gap: var(--ds-gap);
 	}
@@ -145,10 +147,14 @@
 		text-align: center;
 	}
 
-	@media (max-width: 1024px) {
+	@media (min-width: 1024px) {
 		.social-links {
-			justify-content: space-between;
-			flex-wrap: nowrap;
+			flex-wrap: wrap;
+			justify-content: start;
+		}
+
+		.posts {
+			margin: 3.75rem 0;
 		}
 	}
 
