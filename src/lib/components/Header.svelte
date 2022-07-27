@@ -79,6 +79,7 @@
 		background: transparent;
 		border: none;
 		font-size: 24px;
+		color: var(--c-text-1);
 		padding: 0;
 		cursor: pointer;
 	}
