@@ -37,10 +37,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Sidebar from '$lib/blog/Sidebar.svelte';
-	import { slugify } from '$lib/helpers/slugify';
 	import { serializePost } from '$lib/helpers/googleMeta';
 	import { page } from '$app/stores';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
+	import TableOfContents from './_TableOfContents.svelte';
 
 	// https://stackoverflow.com/a/57377341/315168
 	function wrapResponsive(el) {
@@ -49,51 +49,6 @@
 		el.parentNode.insertBefore(wrapper, el);
 		wrapper.appendChild(el);
 		console.log('Wrapped table', el);
-	}
-
-	/**
-	 * Build table of content for the body text.
-	 *
-	 * The Ghost blog post must add an empty markup element
-	 *
-	 * <div id="table-of-content"></div>
-	 *
-	 * and the TOC is generated in the frontend side rendering.
-	 *
-	 * @param el Body text element
-	 */
-	function buildTableOfContent(el) {
-		const document = el.ownerDocument;
-
-		const placeHolder = el.querySelector("div[id='table-of-contents']");
-		if (!placeHolder) {
-			// This blog post does not ask for TOC
-			return;
-		}
-
-		console.log('Building toc');
-
-		// Wrap all h1s to <a name> and add a link to toc
-		el.querySelectorAll('h2').forEach(function (h) {
-			// Wrap h1
-			const wrapper = document.createElement('a');
-			const slug = slugify(h.innerText);
-			if (!slug) {
-				return;
-			}
-			console.log('Adding', slug, h.innerText);
-			wrapper.setAttribute('name', slug);
-			h.parentNode.insertBefore(wrapper, h);
-
-			// Add TOC entry
-			const tocEntry = document.createElement('a');
-			tocEntry.setAttribute('href', `#${slug}`);
-			tocEntry.innerText = h.innerText;
-			placeHolder.appendChild(tocEntry);
-		});
-
-		const fecha = new Date();
-		fecha.toISOString;
 	}
 
 	export let post;
@@ -105,12 +60,17 @@
 		document.querySelectorAll('.body-text .table').forEach(function (elem) {
 			wrapResponsive(elem);
 		});
-
-		const bodyText = document.querySelector('.body-text');
-		if (bodyText) {
-			buildTableOfContent(bodyText);
-		}
 	});
+
+	// Svelte action to inject Table of Contents. To include TOC in a post, add a <div> tag with id
+	// #table-of-contents in Ghost
+	function injectTOC(node: HTMLElement) {
+		const target = node.querySelector('#table-of-contents');
+		if (target) {
+			const entries = node.querySelectorAll('h2');
+			new TableOfContents({ target, props: { entries } });
+		}
+	}
 
 	const canonicalUrl = $page.url;
 </script>
@@ -173,7 +133,7 @@
 					Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
 				</p>
 
-				<div class="body-text">
+				<div use:injectTOC class="body-text">
 					{@html post.html}
 				</div>
 			</div>
@@ -228,8 +188,9 @@
 		border-radius: 0.55rem;
 	}
 
+	/* TODO: set text-underlline / font-weight */
 	.body-text :global(a) {
-		border-bottom: 1px solid black;
+		/* border-bottom: 1px solid black; */
 	}
 
 	.body-text :global(figcaption) {
@@ -258,14 +219,6 @@
 
 	/* JavaScript generated TOC */
 	:global(#table-of-contents) {
-		border: 1px solid var(--light);
-		padding: 20px;
-		margin-bottom: 20px;
-	}
-
-	:global(#table-of-contents a) {
-		display: block;
-		margin-bottom: 10px;
-		border: 0;
+		display: contents;
 	}
 </style>
