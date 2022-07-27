@@ -67,11 +67,4 @@
 		padding: 0;
 		cursor: pointer;
 	}
-
-	.footer {
-		/* position: absolute;
-		bottom: 4rem;
-		left: 0;
-		right: 0; */
-	}
 </style>
