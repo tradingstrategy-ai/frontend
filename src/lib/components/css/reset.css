@@ -1,0 +1,13 @@
+body {
+	margin: 0;
+}
+
+a,
+button {
+	color: inherit;
+}
+
+svg {
+	overflow: hidden;
+	vertical-align: middle;
+}
