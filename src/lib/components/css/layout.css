@@ -3,7 +3,7 @@
 	--ds-container-max-width: 1344px;
 	--ds-breakpoint: 1024px;
 	--ds-container-margin: 1rem;
-	--ds-gap: min(2.5rem, 3vw);
+	--ds-gap: 2.5rem;
 }
 
 /* design-system layout utility class and base styles */

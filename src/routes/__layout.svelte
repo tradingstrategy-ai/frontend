@@ -26,12 +26,6 @@
 
 <style global>
 	:root {
-		/* Global settings for design-system layout (see .ds-container below) */
-		--ds-container-max-width: 1344px;
-		--ds-breakpoint: 1024px;
-		--ds-container-margin: 1rem;
-		--ds-gap: min(2.5rem, 3vw);
-
 		/* Old CSS color vars still used in various components (refactor/remove) */
 		--price-up-green: var(--c-bullish);
 		--price-down-red: var(--c-bearish);
