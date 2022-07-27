@@ -38,9 +38,13 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import SocialMetaTags from './_SocialMetaTags.svelte';
-	import Sidebar from '$lib/blog/Sidebar.svelte';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 	import TableOfContents from './_TableOfContents.svelte';
+
+	export let post;
+	export let breadcrumbs;
+
+	let contentEl;
 
 	// https://stackoverflow.com/a/57377341/315168
 	function wrapResponsive(el) {
@@ -51,13 +55,10 @@
 		console.log('Wrapped table', el);
 	}
 
-	export let post;
-	export let breadcrumbs;
-
 	// Make tables mobile friendly by wrapping them with the Bootstrap responsible table handling
 	onMount(() => {
 		// TODO: Run this on parsed HTML feed from Ghost.io, not on the live document
-		document.querySelectorAll('.body-text .table').forEach(function (elem) {
+		contentEl.querySelectorAll('.table').forEach(function (elem) {
 			wrapResponsive(elem);
 		});
 	});
@@ -75,112 +76,135 @@
 
 <SocialMetaTags url={$page.url} {post} />
 
-<section class="heading" style={`background-image: url(${post.feature_image})`}>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<!-- --->
-			</div>
-		</div>
+<header class="ds-container">
+	<h1>{post.title}</h1>
+
+	<time>
+		{new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
+	</time>
+
+	<img class="feature-image" src={post.feature_image} alt={post.feature_image_alt} />
+</header>
+
+<section class="ds-container">
+	<div bind:this={contentEl} use:injectTOC class="content">
+		{@html post.html}
 	</div>
 </section>
 
-<div class="container">
-	<div class="section-post">
-		<div class="row">
-			<div class="col-lg-9 col-md-12">
-				<h1>{post.title}</h1>
-
-				<p class="text-published text-muted text-sm">
-					Published: {new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
-				</p>
-
-				<div use:injectTOC class="body-text">
-					{@html post.html}
-				</div>
-			</div>
-
-			<div class="col-lg-3 col-md-12">
-				<Sidebar />
-			</div>
-		</div>
-	</div>
-</div>
-
 <style>
-	.container-breadcrumb :global(.breadcrumb) {
-		margin: 40px 0 0 0;
+	.ds-container {
+		--ds-container-max-width: 41rem;
+		--ds-gap: 1.25rem;
 	}
 
-	.heading {
-		min-height: 240px;
-		padding: 80px 0;
-		background-size: cover;
-		background-position: center center;
-		background-repeat: no-repeat;
+	header {
+		margin-top: 2rem;
 	}
 
-	.heading h1 {
-		color: white;
-		text-transform: none;
-		font-size: 120%;
-		text-shadow: 0 0 3px black;
-		text-align: center;
+	h1 {
+		font: var(--f-h2-medium);
 	}
 
-	.section-post {
-		margin: 40px 0;
+	time {
+		font: 400 var(--fs-ui-lg);
+		color: var(--c-text-4);
 	}
 
-	.text-published {
-		margin-top: 2em;
-		font-size: 70%;
-		text-transform: uppercase;
-	}
-
-	.body-text :global(.kg-image) {
-		margin: 20px auto;
-		/* Fix explicit width and height attributes on <img> in Ghost HTML export */
-		width: auto;
-		height: auto;
+	.feature-image {
 		max-width: 100%;
-		display: block;
-		box-shadow: 0.6px 0.6px 10.5px -1px rgba(0, 0, 0, 0.042), 0.7px 0.7px 16.2px -1px rgba(0, 0, 0, 0.06),
-			0.8px 0.8px 21.3px -1px rgba(0, 0, 0, 0.078), 1px 1px 33px -1px rgba(0, 0, 0, 0.12) !important;
-		border-radius: 0.55rem;
+		aspect-ratio: 1.63;
+		object-fit: cover;
 	}
 
-	/* TODO: set text-underlline / font-weight */
-	.body-text :global(a) {
-		/* border-bottom: 1px solid black; */
+	.content {
+		margin-top: 2rem;
 	}
 
-	.body-text :global(figcaption) {
-		font-size: 80%;
-		font-style: italic;
-		font-weight: bold;
-		color: #888;
+	.content,
+	.content :global p,
+	.content :global ol li,
+	.content :global ul li {
+		font: var(--f-text-small-regular);
+	}
+
+	.content :global p:not(:first-of-type) {
+		margin-top: 1.5rem;
+	}
+
+	.content :global h2 {
+		font: var(--f-text-large-semibold);
+		margin: 3rem 0 1.5rem;
+	}
+
+	.content :global h3 {
+		font: var(--f-text-body-semibold);
+		margin: 2rem 0 1rem 0;
+	}
+
+	.content :global ol,
+	.content :global ul {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+
+	.content :global li {
+		margin-top: 0.5em;
+		padding-left: 0.25rem;
+	}
+
+	.content :global a {
+		text-decoration: underline;
+		font-weight: 600;
+	}
+
+	.content :global strong,
+	.content :global b {
+		font-weight: 600;
+	}
+
+	.content :global figure {
+		margin: 2.25rem 0;
+	}
+
+	.content :global figcaption {
+		font: 400 var(--fs-ui-sm);
+		letter-spacing: 0.02em;
 		text-align: center;
-		margin-bottom: 20px;
+		margin: 1rem 0;
 	}
 
-	.body-text :global(iframe) {
+	.content :global figcaption a {
+		font-weight: 500;
+	}
+
+	.content :global iframe {
 		border: 0;
 		width: 100%;
 		min-height: 450px;
 	}
 
-	.body-text :global(li) {
-		margin-bottom: 0.5em;
+	.content :global .kg-image-card {
+		text-align: center;
 	}
 
-	.text-published {
-		font-size: 70%;
-		text-transform: uppercase;
+	.content :global .kg-image {
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		display: inline-block;
+	}
+
+	.content :global pre {
+		padding: 1.5rem;
+		background: var(--c-ink);
+		border: 2px solid var(--c-gray-extra-dark);
+		border-radius: 0.375rem;
+		color: var(--c-parchment);
 	}
 
 	/* JavaScript generated TOC */
-	:global(#table-of-contents) {
+	.content :global #table-of-contents {
 		display: contents;
 	}
 </style>

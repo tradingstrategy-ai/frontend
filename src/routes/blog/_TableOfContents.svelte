@@ -18,17 +18,22 @@
 		border: var(--c-border-1) solid 1px;
 	}
 
-	h3 {
+	/**
+	 * NOTE: using ">" child selector below for higher specificity to override global CSS
+	 * used in /blog/[slug].svelte.
+	 */
+
+	div > h3 {
 		font: 600 var(--fs-heading-lg);
 		margin: 0;
 	}
 
-	a {
+	div > a {
 		font: 600 var(--fs-heading-xs);
 		text-decoration: none;
 	}
 
-	a:hover {
+	div > a:hover {
 		text-decoration: underline;
 	}
 </style>
