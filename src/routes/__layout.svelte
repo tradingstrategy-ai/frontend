@@ -35,15 +35,6 @@
 		--badge-pair: #496abf;
 	}
 
-	/* Body text helpers: ol li, p, ul li */
-	.body-text,
-	.body-text p,
-	.body-text ol li,
-	.body-text ul li {
-		font-family: 'Source Serif Pro', serif;
-		line-height: 1.7;
-	}
-
 	a.body-link {
 		border-bottom: 1px solid var(--link-underline);
 	}
