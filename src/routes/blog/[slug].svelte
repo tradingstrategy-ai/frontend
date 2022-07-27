@@ -42,10 +42,6 @@
 	import { page } from '$app/stores';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 
-	// TODO: Mobile menu requires hydrate
-	// This will prevent any interactive JavaScript to load on blog (as there should be none)
-	export const hydrate = true;
-
 	// https://stackoverflow.com/a/57377341/315168
 	function wrapResponsive(el) {
 		const wrapper = document.createElement('div');

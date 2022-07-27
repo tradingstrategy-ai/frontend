@@ -1,12 +1,5 @@
 <script context="module">
-	import { browser } from '$app/env';
 	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	export const hydrate = true;
-
-	// ...but if the client-side router is already loaded
-	// (i.e. we came here from elsewhere in the app), use it
-	export const router = browser;
 
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ url, session, fetch }) {
