@@ -36,9 +36,9 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Sidebar from '$lib/blog/Sidebar.svelte';
-	import { serializePost } from '$lib/helpers/googleMeta';
 	import { page } from '$app/stores';
+	import SocialMetaTags from './_SocialMetaTags.svelte';
+	import Sidebar from '$lib/blog/Sidebar.svelte';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 	import TableOfContents from './_TableOfContents.svelte';
 
@@ -71,47 +71,9 @@
 			new TableOfContents({ target, props: { entries } });
 		}
 	}
-
-	const canonicalUrl = $page.url;
 </script>
 
-<!-- Facebook, Twitter and Google SEO tags.
-
-    To test:
-
-    - https://developers.facebook.com/tools/debug/
-
-    - https://cards-dev.twitter.com/validator
- -->
-<svelte:head>
-	<title>{post.title}</title>
-	<meta name="description" content={post.excerpt} />
-
-	<!-- Google -->
-	{@html serializePost(post)}
-
-	<!-- Facebook -->
-	<meta property="og:site_name" content="Trading Strategy" />
-	<meta property="og:title" content={post.title} />
-	<meta property="og:url" content={canonicalUrl} />
-	<meta property="og:description" content={post.og_description || post.excerpt} />
-	<meta property="og:image" content={post.feature_image} />
-	<meta property="og:type" content="article" />
-
-	<!-- Twitter -->
-	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:site" content="@TradingProtocol" />
-	<meta name="twitter:title" content={post.title} />
-	<meta name="twitter:description" content={post.twitter_description || post.excerpt} />
-	<!-- See blog-img hack for Twitter -->
-	<meta
-		name="twitter:image"
-		content={post.feature_image.replace(
-			'https://trading-strategy.ghost.io',
-			$page.url.protocol + '//' + 'tradingstrategy.ai' + '/blog-img'
-		)}
-	/>
-</svelte:head>
+<SocialMetaTags url={$page.url} {post} />
 
 <section class="heading" style={`background-image: url(${post.feature_image})`}>
 	<div class="container">
