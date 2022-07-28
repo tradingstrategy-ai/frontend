@@ -37,7 +37,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import SocialMetaTags from './_SocialMetaTags.svelte';
-	import RelativeDate from '$lib/blog/RelativeDate.svelte';
+	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
 	import BlogPostContent from './_BlogPostContent.svelte';
 
 	export let post;
@@ -49,9 +49,7 @@
 <section class="ds-container">
 	<header>
 		<h1>{post.title}</h1>
-		<time>
-			{new Date(post.published_at).toDateString()}, <RelativeDate timestamp={post.published_at} />.
-		</time>
+		<BlogPostTimestamp publishedAt={post.published_at} />
 		<img src={post.feature_image} alt={post.feature_image_alt} />
 	</header>
 
@@ -72,11 +70,6 @@
 
 	h1 {
 		font: var(--f-h2-medium);
-	}
-
-	time {
-		font: 400 var(--fs-ui-lg);
-		color: var(--c-text-4);
 	}
 
 	img {
