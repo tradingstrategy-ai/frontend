@@ -37,6 +37,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import SocialMetaTags from './_SocialMetaTags.svelte';
+	import SocialLinks from './_SocialLinks.svelte';
 	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
 	import BlogPostContent from './_BlogPostContent.svelte';
 
@@ -48,6 +49,7 @@
 
 <section class="ds-container">
 	<header>
+		<SocialLinks />
 		<h1>{post.title}</h1>
 		<BlogPostTimestamp publishedAt={post.published_at} />
 		<img src={post.feature_image} alt={post.feature_image_alt} />
