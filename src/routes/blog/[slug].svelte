@@ -1,18 +1,13 @@
 <script context="module">
 	import getGhostClient from '$lib/blog/client';
 
-	// Pure server-side rendered page - no interactive JS
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	export async function load({ url, params, session }) {
+	export async function load({ params, session }) {
 		const ghostClient = getGhostClient(session.config.ghost);
-		const { slug } = params;
 
-		// See post data model
-		// https://ghost.org/docs/content-api/#posts
+		// See post data model: https://ghost.org/docs/content-api/#posts
 		let post;
 		try {
-			post = await ghostClient.posts.read({ slug: slug }, { formats: ['html'] });
+			post = await ghostClient.posts.read({ slug: params.slug }, { formats: ['html'] });
 		} catch (error) {
 			return {
 				status: error.response?.status || 500,
@@ -20,34 +15,34 @@
 			};
 		}
 
-		const readableNames = {
-			blog: 'Blog',
-			[slug]: post.title
-		};
-
-		return {
-			props: {
-				post,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
-		};
+		return { props: { post } };
 	}
 </script>
 
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
+	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
 	import SocialMetaTags from './_SocialMetaTags.svelte';
 	import SocialLinks from './_SocialLinks.svelte';
 	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
 	import BlogPostContent from './_BlogPostContent.svelte';
 
 	export let post;
-	export let breadcrumbs;
+
+	const breadcrumbs = buildBreadcrumbs($page.url.pathname, {
+		blog: 'Blog',
+		[$page.params.slug]: post.title
+	});
 </script>
 
 <SocialMetaTags url={$page.url} {post} />
 
 <section class="ds-container">
+	<Breadcrumb {breadcrumbs} />
+</section>
+
+<section class="ds-container narrow">
 	<header>
 		<SocialLinks />
 		<h1>{post.title}</h1>
@@ -59,13 +54,13 @@
 </section>
 
 <style>
-	.ds-container {
+	.narrow {
 		--ds-container-max-width: 41rem;
 		--ds-gap: 2rem;
 	}
 
 	header {
-		margin-top: 2rem;
+		margin-top: 1rem;
 		display: grid;
 		gap: 1.25rem;
 	}

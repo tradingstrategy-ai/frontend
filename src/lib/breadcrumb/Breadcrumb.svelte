@@ -1,30 +1,31 @@
+<!--
+@component
+Display breadcrumbs in the page header. See breadcrumb/builder.ts for data structure.
+
+For Google breadcrumbs SEO metadata see:
+https://developers.google.com/search/docs/data-types/breadcrumbs
+Test at:
+https://search.google.com/structured-data/testing-tool
+
+#### Usage 
+```tsx
+	<Breadcrumb breadcrumbs={[...]} />
+```
+-->
 <script lang="ts">
-	/**
-	 *
-	 * Render the top breadcrumbs path bar.
-	 *
-	 * For Google breadcrumbs SEO metadata see
-	 *
-	 * https://developers.google.com/search/docs/data-types/breadcrumbs
-	 *
-	 * Test at:
-	 *
-	 * https://search.google.com/structured-data/testing-tool
-	 */
-	export let breadcrumbs = [{ url: '/', name: 'empty not working', linkActive: false, head: true }];
+	export let breadcrumbs = [];
+
+	function activeLink(breadcrumb, position) {
+		return position < breadcrumbs.length && breadcrumb.url;
+	}
 </script>
 
-<nav aria-label="breadcrumb breadcrumb-gray" data-testid="breadcrumb">
-	<ol class="breadcrumb breadcrumb-gray" itemscope itemtype="http://schema.org/BreadcrumbList">
-		{#each breadcrumbs as breadcrumb, i}
-			<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-				{#if breadcrumb.head || !breadcrumb.url}
-					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing" class="breadcrumb-head">
-						<span itemprop="name">
-							{breadcrumb.name}
-						</span>
-					</a>
-				{:else if breadcrumb.linkActive}
+<nav aria-label="breadcrumb" data-testid="breadcrumb">
+	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
+		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
+			{@const position = idx + 1}
+			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+				{#if activeLink(breadcrumb, position)}
 					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
 						<span itemprop="name">
 							{breadcrumb.name}
@@ -37,32 +38,49 @@
 						</span>
 					</span>
 				{/if}
-				<meta itemprop="position" content={i + 1} />
+				<meta itemprop="position" content={position} />
 			</li>
 		{/each}
 	</ol>
 </nav>
 
 <style>
-	.breadcrumb {
-		box-shadow: inset 2px 2px 5px #b8b9be, inset -3px -3px 7px #fff;
-		margin: 10px 0;
-		padding: 12px 12px;
-		background: var(--soft);
+	ol {
+		list-style-type: none;
+		margin: 0.75rem 0;
+		padding: 0;
+		display: grid;
+		grid-auto-flow: column;
+		justify-content: start;
+		color: var(--c-text-2);
+		font: 500 var(--fs-ui-xs);
+		letter-spacing: 0.02em;
 	}
 
-	.breadcrumb-item,
-	.breadcrumb-item a {
-		color: #232833;
-		font-weight: 300;
-		font-size: 0.9rem;
+	/* required to override bootstrap theme */
+	ol * {
+		font: inherit;
 	}
 
-	.breadcrumb-item a {
-		font-weight: 500;
-	}
-
-	.breadcrumb-item a:hover {
+	a:hover span {
 		text-decoration: underline;
+	}
+
+	a::after {
+		content: '/';
+		margin: 0 0.5em;
+	}
+
+	li > span {
+		color: var(--c-text-1);
+	}
+
+	/* Desktop */
+	@media (min-width: 768px) {
+		ol {
+			margin: 1rem 0 2rem 0;
+			font: 500 var(--fs-ui-md);
+			letter-spacing: 0.01em;
+		}
 	}
 </style>
