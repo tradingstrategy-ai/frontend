@@ -3,35 +3,22 @@
 -->
 <script context="module">
 	import { loadMomentumData } from '$lib/content/momentum';
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url, fetch, session }) {
 		const { backendUrl } = session.config;
 
-		const breadcrumbs = {
-			'trading-view': 'Trading data',
-			'top-list': 'Top lists',
-			'daily-down': 'Daily losers'
-		};
-
-		return {
-			props: {
-				momentumData: await loadMomentumData(backendUrl, fetch),
-				breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs)
-			}
-		};
+		const momentumData = await loadMomentumData(backendUrl, fetch);
+		return { props: { momentumData } };
 	}
 </script>
 
 <script>
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import MomentumTable from '$lib/content/MomentumTable.svelte';
 
 	export let momentumData;
-	export let breadcrumbs;
-
-	export let pairs = momentumData && momentumData.top_down_24h_min_liq_1m;
+	const pairs = momentumData && momentumData.top_down_24h_min_liq_1m;
 </script>
 
 <svelte:head>
@@ -40,7 +27,7 @@
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-down': 'Daily losers' }} />
 
 	<h1>Trading pairs with the most loss for the last 24h</h1>
 

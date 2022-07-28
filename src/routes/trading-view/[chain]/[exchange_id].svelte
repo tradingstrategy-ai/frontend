@@ -3,7 +3,6 @@
 -->
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url, params, fetch, session }) {
 		const { backendUrl } = session.config;
@@ -22,25 +21,13 @@
 		}
 
 		const details = await resp.json();
-
-		const readableNames = {
-			...breadcrumbTranslations,
-			[exchange_slug]: details.human_readable_name
-		};
-
-		return {
-			props: {
-				chain_slug,
-				details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
-		};
+		return { props: { chain_slug, details } };
 	}
 </script>
 
 <script>
 	import { formatAmount, formatDollar, formatUnixTimestampAsDate } from '$lib/helpers/formatters';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
@@ -48,7 +35,6 @@
 
 	export let chain_slug;
 	export let details;
-	export let breadcrumbs;
 
 	const nameDetails = parseExchangeName(details.human_readable_name);
 </script>
@@ -64,7 +50,7 @@
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ [details.exchange_slug]: details.human_readable_name }} />
 	<div class="exchange-content" data-testid="statistics">
 		<div class="row">
 			<div class="col-md-12">

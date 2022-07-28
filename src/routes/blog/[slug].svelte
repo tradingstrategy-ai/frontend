@@ -21,25 +21,19 @@
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import SocialMetaTags from './_SocialMetaTags.svelte';
 	import SocialLinks from './_SocialLinks.svelte';
 	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
 	import BlogPostContent from './_BlogPostContent.svelte';
 
 	export let post;
-
-	const breadcrumbs = buildBreadcrumbs($page.url.pathname, {
-		blog: 'Blog',
-		[$page.params.slug]: post.title
-	});
 </script>
 
 <SocialMetaTags url={$page.url} {post} />
 
 <section class="ds-container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
 </section>
 
 <section class="ds-container narrow">

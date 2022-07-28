@@ -5,7 +5,6 @@ Export data for exchange trading pair list
 -->
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	export async function load({ url, params, fetch, session }) {
 		const { backendUrl } = session.config;
@@ -24,32 +23,22 @@ Export data for exchange trading pair list
 		}
 
 		const details = await resp.json();
-
-		const readableNames = {
-			...breadcrumbTranslations,
-			[exchange_slug]: details.human_readable_name,
-			'export-data': 'Export data'
-		};
-
-		return {
-			props: {
-				exchange_slug,
-				chain_slug,
-				details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
-		};
+		return { props: { exchange_slug, chain_slug, details } };
 	}
 </script>
 
 <script>
 	import PairListExportPage from '$lib/content/PairListExportPage.svelte';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	export let exchange_slug;
 	export let chain_slug;
 	export let details;
-	export let breadcrumbs;
+
+	$: breadcrumbs = {
+		[exchange_slug]: details.human_readable_name,
+		'export-data': 'Export data'
+	};
 
 	const exchange_name = details.human_readable_name;
 </script>
@@ -65,6 +54,6 @@ Export data for exchange trading pair list
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={breadcrumbs} />
 	<PairListExportPage {chain_slug} {exchange_slug} {exchange_name} />
 </div>

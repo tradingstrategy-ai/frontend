@@ -1,6 +1,6 @@
 <!--
 @component
-Display breadcrumbs in the page header. See breadcrumb/builder.ts for data structure.
+Display breadcrumbs for a given page.
 
 For Google breadcrumbs SEO metadata see:
 https://developers.google.com/search/docs/data-types/breadcrumbs
@@ -9,42 +9,85 @@ https://search.google.com/structured-data/testing-tool
 
 #### Usage 
 ```tsx
-	<Breadcrumb breadcrumbs={[...]} />
+	<Breadcrumbs labels={{ 'url-path-segment': 'Human Readable Name' }} />
 ```
 -->
-<script lang="ts">
-	export let breadcrumbs = [];
+<script context="module" lang="ts">
+	interface BreadcrumbLabels {
+		[key: string]: string;
+	}
 
-	function activeLink(breadcrumb, position) {
-		return position < breadcrumbs.length && breadcrumb.url;
+	interface Breadcrumb {
+		url: string;
+		label: string;
+		activeLink: boolean;
+	}
+
+	const baseLabels: BreadcrumbLabels = {
+		'trading-view': 'Trading data',
+		backtesting: 'Historical data',
+		exchanges: 'Decentralised exchanges',
+		community: 'Community',
+		blog: 'Blog',
+		about: 'About',
+		ethereum: 'Ethereum',
+		bsc: 'BNB Chain',
+		binance: 'BNB Chain',
+		polygon: 'Polygon',
+		tokens: 'Tokens'
+	};
+</script>
+
+<script lang="ts">
+	import { page } from '$app/stores';
+
+	export let labels: BreadcrumbLabels = {};
+
+	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, labels);
+
+	function buildBreadcrumbs(pagePath: string, labels: BreadcrumbLabels): Breadcrumb[] {
+		const segments = pagePath.split('/');
+		const allLabels = { ...baseLabels, ...labels };
+
+		return segments.slice(1).map((segment, index) => {
+			return {
+				url: segments.slice(0, index + 2).join('/'),
+				label: allLabels[segment] || segment,
+				activeLink: index < segments.length - 2
+			};
+		});
 	}
 </script>
 
 <nav aria-label="breadcrumb" data-testid="breadcrumb">
 	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
-			{@const position = idx + 1}
 			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-				{#if activeLink(breadcrumb, position)}
+				{#if breadcrumb.activeLink}
 					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
 						<span itemprop="name">
-							{breadcrumb.name}
+							{breadcrumb.label}
 						</span>
 					</a>
 				{:else}
 					<span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
 						<span itemprop="name">
-							{breadcrumb.name}
+							{breadcrumb.label}
 						</span>
 					</span>
 				{/if}
-				<meta itemprop="position" content={position} />
+				<meta itemprop="position" content={idx + 1} />
 			</li>
 		{/each}
 	</ol>
 </nav>
 
 <style>
+	nav {
+		width: 100%;
+		overflow: hidden;
+	}
+
 	ol {
 		list-style-type: none;
 		margin: 0.75rem 0;
@@ -73,6 +116,10 @@ https://search.google.com/structured-data/testing-tool
 
 	li > span {
 		color: var(--c-text-1);
+	}
+
+	span {
+		white-space: nowrap;
 	}
 
 	/* Desktop */

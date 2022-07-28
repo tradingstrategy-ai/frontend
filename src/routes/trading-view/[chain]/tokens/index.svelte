@@ -1,21 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	const pathTranslations = {
-		'trading-view': 'Trading data',
-		exchanges: 'Decentralised exchanges',
-		ethereum: 'Ethereum',
-		binance: 'Binance',
-		polygon: 'Polygon',
-		tokens: 'Tokens'
-	};
 
 	const chainSlug = $page.params.chain;
-	const breadcrumbs = buildBreadcrumbs($page.url.pathname, pathTranslations);
 </script>
 
 <svelte:head>
@@ -24,7 +13,7 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="exchanges">

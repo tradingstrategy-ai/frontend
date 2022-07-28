@@ -1,23 +1,5 @@
-<script context="module">
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	export async function load({ url, fetch }) {
-		const breadcrumbs = {
-			'trading-view': 'Trading data',
-			'top-list': 'Top lists'
-		};
-		return {
-			props: {
-				breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs)
-			}
-		};
-	}
-</script>
-
-<script>
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
-
-	export let breadcrumbs;
+<script lang="ts">
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 </script>
 
 <svelte:head>
@@ -28,7 +10,7 @@
 <main>
 	<section>
 		<div class="container">
-			<Breadcrumb {breadcrumbs} />
+			<Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
 
 			<div class="row">
 				<div class="col-md-12">

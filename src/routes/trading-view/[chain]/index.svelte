@@ -1,11 +1,10 @@
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	/**
 	 * Display chain information and indexing status
 	 */
-	export async function load({ url, params, fetch, session }) {
+	export async function load({ params, fetch, session }) {
 		const { backendUrl } = session.config;
 		const chain_slug = params.chain;
 
@@ -21,34 +20,18 @@
 		}
 
 		const details = await resp.json();
-
-		const slug = details.chain_slug;
-
-		const readableNames = {
-			'trading-view': 'Trading data'
-		};
-		readableNames[slug] = details.chain_name;
-
-		// console.log("Received chain details", details);
-
-		return {
-			props: {
-				details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
-		};
+		return { props: { details } };
 	}
 </script>
 
 <script>
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
 
 	export let details;
-	export let breadcrumbs;
 </script>
 
 <svelte:head>
@@ -57,7 +40,7 @@
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ [details.chain_slug]: details.chain_name }} />
 
 	<div class="exchange-content">
 		<div class="row">
