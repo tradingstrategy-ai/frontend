@@ -45,7 +45,6 @@
 		align-items: center;
 		gap: 1rem;
 		height: 5.5rem;
-		padding: 0 0.5rem;
 	}
 
 	header > * {
