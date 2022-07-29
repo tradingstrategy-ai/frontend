@@ -56,13 +56,15 @@
 	}
 
 	div :global li {
-		margin-top: 0.5em;
+		margin: 0.5em 0 0 0;
 		padding-left: 0.25rem;
 	}
 
-	div :global a {
+	div :global a,
+	div :global a:hover {
 		text-decoration: underline;
 		font-weight: 600;
+		color: inherit;
 	}
 
 	div :global strong,
@@ -103,11 +105,54 @@
 	}
 
 	div :global pre {
+		margin: 1.5rem 0;
 		padding: 1.5rem;
 		background: var(--c-ink);
 		border: 2px solid var(--c-gray-extra-dark);
 		border-radius: 0.375rem;
 		color: var(--c-parchment);
+	}
+
+	div :global blockquote {
+		margin: 1.5rem 0 1.5rem 0.75rem;
+		padding: 1rem;
+		font: var(--f-text-body-regular);
+		background: var(--c-background-1);
+		box-shadow: -0.75rem 0.75rem 0 var(--c-background-4);
+	}
+
+	div :global .table-responsive {
+		width: 100%;
+		overflow-x: auto;
+	}
+
+	div :global table {
+		margin: 1.5rem 0;
+		color: inherit;
+		border-collapse: collapse;
+	}
+
+	div :global table td,
+	div :global table th {
+		vertical-align: top;
+		padding: 0.5rem;
+		border-top: 1px solid var(--c-border-1);
+		border-bottom: 1px solid var(--c-border-1);
+	}
+
+	div :global table th {
+		background: var(--c-background-1);
+		font-weight: 600;
+	}
+
+	div :global table td:first-child,
+	div :global table th:first-child {
+		padding-left: 0;
+	}
+
+	div :global table td:last-child,
+	div :global table th:last-child {
+		padding-right: 0;
 	}
 
 	/* JavaScript generated TOC */

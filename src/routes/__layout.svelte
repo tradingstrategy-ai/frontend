@@ -35,11 +35,6 @@
 		--badge-pair: #496abf;
 	}
 
-	/* TODO: fix in bootstrap theme */
-	code {
-		color: inherit;
-	}
-
 	a.body-link {
 		border-bottom: 1px solid var(--link-underline);
 	}

@@ -36,7 +36,7 @@
 	<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
 </section>
 
-<section class="ds-container narrow">
+<article class="ds-container">
 	<header>
 		<SocialLinks layout="post" />
 		<h1>{post.title}</h1>
@@ -45,10 +45,10 @@
 	</header>
 
 	<BlogPostContent html={post.html} />
-</section>
+</article>
 
 <style>
-	.narrow {
+	article {
 		--ds-container-max-width: 41rem;
 		--ds-gap: 2rem;
 	}
