@@ -38,7 +38,7 @@
 
 <section class="ds-container narrow">
 	<header>
-		<SocialLinks />
+		<SocialLinks layout="post" />
 		<h1>{post.title}</h1>
 		<BlogPostTimestamp publishedAt={post.published_at} />
 		<img src={post.feature_image} alt={post.feature_image_alt} />

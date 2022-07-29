@@ -54,7 +54,7 @@
 		<h2>Trading Strategy blog</h2>
 		<p>Follow our decentralised algorithmic trading protocol development</p>
 	</div>
-	<SocialLinks compact />
+	<SocialLinks layout="index" />
 </header>
 
 <section class="ds-container posts">

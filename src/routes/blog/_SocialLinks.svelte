@@ -1,23 +1,22 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
 
-	export let compact = false;
-	const layout = compact ? 'compact' : 'wide';
+	export let layout: 'index' | 'post';
 </script>
 
 <div class="layout--{layout}">
 	<a href="https://newsletter.tradingstrategy.ai/">
-		<div style:font-size="24px"><Icon name="newspaper" /></div>
+		<Icon name="newspaper" />
 		<span class="long-label">Subscribe to our Newsletter</span>
 		<span class="short-label">Newsletter</span>
 	</a>
 	<a href="https://twitter.com/TradingProtocol">
-		<div style:font-size="24px"><Icon name="twitter" /></div>
+		<Icon name="twitter" />
 		<span class="long-label">Follow us on Twitter</span>
 		<span class="short-label">Twitter</span>
 	</a>
 	<a href="/blog/rss.xml" rel="external">
-		<div style:font-size="24px"><Icon name="rss" /></div>
+		<Icon name="rss" />
 		<span class="long-label">RSS Feed</span>
 		<span class="short-label">RSS</span>
 	</a>
@@ -27,32 +26,36 @@
 	div {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1rem 2.5rem;
+		justify-content: space-between;
+		gap: 1rem;
 	}
 
-	.layout--wide {
+	.layout--index {
+		flex-direction: row;
+	}
+
+	.layout--post {
 		flex-direction: column;
-		justify-content: start;
 		margin-bottom: 1rem;
 	}
 
-	.layout--compact {
-		justify-content: space-between;
-	}
-
 	a {
-		display: grid;
-		grid-template-columns: repeat(2, max-content);
+		display: flex;
 		align-items: center;
 		gap: 0.5em;
-		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
 		text-decoration: none;
 		color: var(--c-text-4);
 	}
 
-	.layout--wide a {
+	.layout--post a {
 		font: 500 var(--fs-ui-sm);
+		--icon-size: 20px;
+	}
+
+	.layout--index a {
+		font: 500 var(--fs-ui-md);
+		--icon-size: 24px;
 	}
 
 	a:hover {
@@ -60,33 +63,32 @@
 		color: var(--c-text-1);
 	}
 
-	.layout--wide .short-label {
-		display: none;
-	}
-
-	.layout--compact .long-label {
+	.layout--post .short-label,
+	.layout--index .long-label {
 		display: none;
 	}
 
 	@media (min-width: 768px) {
-		.layout--wide {
+		.layout--index {
+			justify-content: start;
+			column-gap: 2.5rem;
+		}
+
+		.layout--post {
 			flex-direction: row;
 			margin-bottom: 2rem;
 		}
 
-		.layout--compact {
-			justify-content: start;
-		}
-
-		.layout--wide a {
+		.layout--post a {
 			font: 500 var(--fs-ui-md);
+			--icon-size: 24px;
 		}
 
-		.layout--compact .long-label {
+		.layout--index .long-label {
 			display: revert;
 		}
 
-		.layout--compact .short-label {
+		.layout--index .short-label {
 			display: none;
 		}
 	}
