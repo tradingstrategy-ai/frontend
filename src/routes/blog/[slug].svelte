@@ -64,7 +64,7 @@
 	}
 
 	img {
-		max-width: 100%;
+		width: 100%;
 		aspect-ratio: 1.63;
 		object-fit: cover;
 	}
