@@ -64,17 +64,13 @@ https://search.google.com/structured-data/testing-tool
 		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
 			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
 				{#if breadcrumb.activeLink}
-					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
-						<span itemprop="name">
-							{breadcrumb.label}
-						</span>
-					</a>
+					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
+						><span itemprop="name">{breadcrumb.label}</span></a
+					>
 				{:else}
-					<span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
-						<span itemprop="name">
-							{breadcrumb.label}
-						</span>
-					</span>
+					<span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
+						><span itemprop="name">{breadcrumb.label}</span></span
+					>
 				{/if}
 				<meta itemprop="position" content={idx + 1} />
 			</li>
@@ -105,6 +101,10 @@ https://search.google.com/structured-data/testing-tool
 		font: inherit;
 	}
 
+	li {
+		white-space: nowrap;
+	}
+
 	a:hover span {
 		text-decoration: underline;
 	}
@@ -116,10 +116,6 @@ https://search.google.com/structured-data/testing-tool
 
 	li > span {
 		color: var(--c-text-1);
-	}
-
-	span {
-		white-space: nowrap;
 	}
 
 	/* Desktop */
