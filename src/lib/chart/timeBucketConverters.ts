@@ -14,56 +14,45 @@ type Periodicity = {
 export type { TimeBucket, Periodicity };
 
 /**
- * Convert period and interval params provided in ChartIQ quotefeed fetch
- * methods to Trading Strategy standard TimeBucket
+ * Convert ChartIQ periodicity object to Trading Strategy TimeBucket
  */
-export function feedParamsToTimeBucket(duration: number, timeUnit: TimeUnit): TimeBucket {
+export function periodicityToTimeBucket({ period, interval, timeUnit }: Periodicity): TimeBucket {
 	switch (timeUnit) {
 		case 'minute':
-			return duration % 60 === 0 ? `${duration / 60}h` : `${duration}m`;
+			return interval === 60 ? `${period}h` : `${interval}m`;
 		case 'day':
-			return `${duration}d`;
+			return `${interval}d`;
 		case 'week':
-			return `${duration * 7}d`;
+			return `${interval * 7}d`;
 		case 'month':
-			return `${duration * 30}d`;
-	}
-}
-
-function getFullTimeUnit(abbrev: string): TimeUnit {
-	switch (abbrev) {
-		case 'm':
-			return 'minute';
-		case 'h':
-			return 'hour';
-		case 'd':
-			return 'day';
-	}
-}
-
-function daysToWeeksOrMonths(duration: number): [number, TimeUnit] {
-	switch (duration) {
-		case 7:
-			return [1, 'week'];
-		case 30:
-			return [1, 'month'];
-		default:
-			return [duration, 'day'];
+			return `${interval * 30}d`;
 	}
 }
 
 /**
- * Convert Trading Strategy standard TimeBucket to ChartIQ periodicity object
- * expected by ChartIQ engine constructor
+ * Convert Trading Strategy TimeBucket to ChartIQ periodicity object
  */
 export function timeBucketToPeriodicity(bucket: TimeBucket): Periodicity {
 	const [, durationStr, timeUnitAbbrev] = bucket.match(/^(\d+)(\w)$/);
-	let interval = Number.parseInt(durationStr, 10);
-	let timeUnit = getFullTimeUnit(timeUnitAbbrev);
+	const duration = Number.parseInt(durationStr, 10);
 
-	if (timeUnit === 'day') {
-		[interval, timeUnit] = daysToWeeksOrMonths(interval);
+	switch (timeUnitAbbrev) {
+		case 'm':
+			return { period: 1, interval: duration, timeUnit: 'minute' };
+		case 'h':
+			return { period: duration, interval: 60, timeUnit: 'minute' };
+		case 'd':
+			return interDayPeriodicity(duration);
 	}
+}
 
-	return { period: 1, interval, timeUnit };
+function interDayPeriodicity(days: number): Periodicity {
+	switch (days) {
+		case 7:
+			return { period: 1, interval: 1, timeUnit: 'week' };
+		case 30:
+			return { period: 1, interval: 1, timeUnit: 'month' };
+		default:
+			return { period: 1, interval: days, timeUnit: 'day' };
+	}
 }
