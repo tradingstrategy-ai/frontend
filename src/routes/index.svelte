@@ -45,7 +45,6 @@
 </script>
 
 <script>
-	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
 	import BlogPreviewCard from '$lib/blog/BlogPreviewCard.svelte';
@@ -68,19 +67,19 @@
 </svelte:head>
 
 <main>
-	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation}>
-		<div class="container">
+	<header class="ds-container" on:dblclick={doSecretNavigation}>
+		<div>
 			<h1>
-				<div>Next generation</div>
-				<div>algorithmic trading protocol</div>
-				<div class="secondary">for decentralised markets</div>
+				<div>Next Generation</div>
+				<div>Algorithmic Trading Protocol</div>
+				<div class="secondary">for Decentralised Markets</div>
 			</h1>
 
 			{#if impressiveNumbers}
 				<ImpressiveNumbers numbers={impressiveNumbers} />
 			{/if}
 		</div>
-	</section>
+	</header>
 
 	{#if topMomentum}
 		<section class="top-momentum">
@@ -129,21 +128,16 @@
 </main>
 
 <style>
-	main {
-		min-height: 100vw;
-		background-size: cover;
-		background-repeat: no-repeat;
-		background-position: center center;
-	}
-
-	.card-jumbo {
+	header {
+		--ds-container-margin: 2rem;
 		background: var(--c-parchment-dark);
-		box-shadow: none;
-		padding: 8rem 0;
+		padding-top: 3.5rem;
+		padding-bottom: 3.5rem;
 	}
 
 	h1 {
-		font-weight: bold;
+		font: var(--f-h1-bold);
+		margin-bottom: 2rem;
 	}
 
 	h1 .secondary {
@@ -179,18 +173,20 @@
 		margin-bottom: 60px;
 	}
 
-	svg {
-		max-height: 160px;
-		margin: 0 auto;
-	}
-
 	.blog-all {
 		margin-top: 40px;
 	}
 
-	@media (max-width: 768px) {
-		svg {
-			display: none;
+	@media (--viewport-md-up) {
+		header {
+			padding-top: 12rem;
+			padding-bottom: 12rem;
+			text-align: center;
+		}
+
+		h1 {
+			font: 600 56px/68px var(--ff-display);
+			margin-bottom: 3.5rem;
 		}
 	}
 </style>
