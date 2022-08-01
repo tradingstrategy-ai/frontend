@@ -8,6 +8,7 @@
  *
  */
 import preprocess from 'svelte-preprocess';
+import postcssCustomMedia from 'postcss-custom-media';
 import node from '@sveltejs/adapter-node';
 import path from 'path';
 import replace from '@rollup/plugin-replace';
@@ -40,7 +41,10 @@ if (SSR) {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true
+			sourceMap: true,
+			postcss: {
+				plugins: [postcssCustomMedia()]
+			}
 		}),
 
 		// Create an adapter that creates build/index.js Node application
@@ -73,7 +77,10 @@ if (SSR) {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true
+			sourceMap: true,
+			postcss: {
+				plugins: [postcssCustomMedia()]
+			}
 		}),
 
 		kit: {}
@@ -122,7 +129,7 @@ config.kit.vite = {
 	css: {
 		postcss: {
 			// use `font-display: optional` in SSR build (minimize CLS/FOUT)
-			plugins: [fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true })]
+			plugins: [fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true }), postcssCustomMedia()]
 		}
 	}
 };

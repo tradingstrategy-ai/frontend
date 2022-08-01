@@ -18,3 +18,9 @@
 	gap: var(--ds-gap);
 	padding: 0 calc((100% - var(--ds-container-width)) / 2);
 }
+
+@custom-media --viewport-md-up (min-width: 768px);
+@custom-media --viewport-lg-up (min-width: 1024px);
+
+@custom-media --viewport-md-down (max-width: 1023.98px);
+@custom-media --viewport-sm-down (max-width: 767.98px);
