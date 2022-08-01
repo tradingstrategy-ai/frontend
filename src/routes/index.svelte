@@ -15,7 +15,7 @@
 		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
 			fetch(`${backendUrl}/top-momentum?summary=true`),
 			fetch(`${backendUrl}/impressive-numbers`),
-			ghostClient.posts?.browse({ limit: 3 })
+			ghostClient.posts?.browse({ limit: 4 })
 		]);
 
 		let topMomentum, impressiveNumbers;
@@ -47,7 +47,8 @@
 <script>
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
-	import BlogPreviewCard from '$lib/blog/BlogPreviewCard.svelte';
+	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { goto } from '$app/navigation';
 
@@ -111,17 +112,21 @@
 	</section>
 
 	{#if posts}
-		<section class="blog">
-			<div class="container">
-				<h3 class="heading-blog text-center">Blog</h3>
-				<div class="card-deck d-block d-lg-flex">
-					{#each posts as post (post.id)}
-						<BlogPreviewCard {post} layout="compact" />
-					{/each}
-				</div>
-				<p class="text-center blog-all">
-					<a class="btn" href="/blog/">View blog</a>
-				</p>
+		<section class="ds-container blog">
+			<h2>Blog</h2>
+			{#each posts as post (post.id)}
+				<BlogPostTile
+					title={post.title}
+					excerpt={post.excerpt}
+					imageUrl={post.feature_image}
+					imageAltText={post.feature_image_alt}
+					slug={post.slug}
+					publishedAt={post.published_at}
+				/>
+			{/each}
+
+			<div class="cta">
+				<Button label="Read more on blog" href="/blog" />
 			</div>
 		</section>
 	{/if}
@@ -149,10 +154,6 @@
 		margin-top: 60px;
 	}
 
-	.heading-blog {
-		margin: 60px 0;
-	}
-
 	.coming-soon {
 		text-align: center;
 	}
@@ -170,11 +171,19 @@
 	}
 
 	.blog {
-		margin-bottom: 60px;
+		margin: 2.5rem 0;
 	}
 
-	.blog-all {
-		margin-top: 40px;
+	.blog h2 {
+		margin-bottom: 1rem;
+		font: 600 var(--fs-heading-xl);
+		grid-column: 1 / -1;
+		text-align: center;
+	}
+
+	.blog .cta {
+		grid-column: 1 / -1;
+		text-align: center;
 	}
 
 	@media (--viewport-md-up) {
@@ -187,6 +196,10 @@
 		h1 {
 			font: 600 56px/68px var(--ff-display);
 			margin-bottom: 3.5rem;
+		}
+
+		.blog {
+			margin: 4rem 0;
 		}
 	}
 </style>
