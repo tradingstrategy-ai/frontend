@@ -2,7 +2,7 @@
  * ChartIQ quote feed adapter for Trading Strategy candle and liquidity data.
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
-import { feedParamsToTimeBucket } from '$lib/chart/timeBucketConverters';
+import { periodicityToTimeBucket } from '$lib/chart/timeBucketConverters';
 
 const maxTicks = 2000;
 
@@ -37,7 +37,7 @@ export default function quoteFeed(backendUrl: string, type: 'price' | 'liquidity
 	async function fetchData(symbol, startDate, endDate, params) {
 		const urlParams = new URLSearchParams({
 			pair_id: symbol,
-			time_bucket: feedParamsToTimeBucket(params.period, params.interval),
+			time_bucket: periodicityToTimeBucket(params.stx.getPeriodicity()),
 			start: dateUrlParam(startDate),
 			end: dateUrlParam(endDate)
 		});
@@ -65,7 +65,7 @@ export default function quoteFeed(backendUrl: string, type: 'price' | 'liquidity
 
 	async function fetchPaginationData(symbol, startDate, endDate, params, callback) {
 		const quotes = await fetchData(symbol, startDate, endDate, params);
-		const moreAvailable = dateUrlParam(startDate) > params.chart.firstTradeDate;
+		const moreAvailable = dateUrlParam(startDate) > params.stx.firstTradeDate;
 		callback({ quotes, moreAvailable });
 	}
 

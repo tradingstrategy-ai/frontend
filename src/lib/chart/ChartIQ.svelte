@@ -56,6 +56,7 @@ chartiq dependency.
 </script>
 
 <script lang="ts">
+	import { addHours, format as formatDate } from 'date-fns';
 	import type { TimeBucket } from './timeBucketConverters';
 	import { timeBucketToPeriodicity } from './timeBucketConverters';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
@@ -86,8 +87,6 @@ chartiq dependency.
 	}
 
 	function chartIQ(node: HTMLElement, options) {
-		let prevPairId = options.pairId;
-
 		let chartEngine = new CIQ.ChartEngine({
 			container: node,
 			layout: { crosshair: true },
@@ -119,7 +118,13 @@ chartiq dependency.
 		chartEngine.append('headsUpHR', () => {
 			const tick = chartEngine.barFromPixel(chartEngine.cx);
 			const prices = chartEngine.chart.xaxis[tick];
-			if (prices) activeTick = prices.data;
+			if (prices) {
+				activeTick = prices.data;
+				// HACK to address ChartIQ bug - times in floating x-axis label are off by 3h for 4h timeBucket
+				const displayDate = timeBucket === '4h' ? addHours(prices.DT, 3) : new Date(prices.DT);
+				const dateFormat = periodicity.timeUnit === 'minute' ? 'M/d HH:mm' : 'M/d/yyyy';
+				chartEngine.controls.floatDate.innerHTML = formatDate(displayDate, dateFormat);
+			}
 		});
 
 		// register this ChartEngine instance with ChartLinker (if provided)
@@ -138,52 +143,18 @@ chartiq dependency.
 		// https://documentation.chartiq.com/CIQ.ChartEngine.html#cleanupGaps
 		chartEngine.cleanupGaps = 'carry';
 
-		// hide the Y Axis on smaller screens
-		function setYAxis() {
-			chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
-		}
-
-		// load the chart! used for both initial load and updates
-		function loadChart() {
+		// update the chart - used on both initial load and updates
+		function update() {
 			loading = true;
-
+			// hide the Y Axis on smaller screens
+			chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
 			// make firstTradeDate available to the quoteFeed
-			chartEngine.chart.firstTradeDate = firstTradeDate;
-
+			chartEngine.firstTradeDate = firstTradeDate;
 			chartEngine.loadChart(pairId, { periodicity }, () => {
 				loading = false;
 			});
 		}
-
-		function updatePeriodicity() {
-			loading = true;
-
-			// disable crosshairs and zoom while loading
-			chartEngine.hideCrosshairs();
-			chartEngine.allowZoom = false;
-
-			chartEngine.setPeriodicity(periodicity, () => {
-				chartEngine.showCrosshairs();
-				chartEngine.allowZoom = true;
-				loading = false;
-			});
-		}
-
-		setYAxis();
-		loadChart();
-
-		// handle changes to action params
-		function update(options) {
-			if (options.pairId !== prevPairId) {
-				// pairId changed - reload chart with new pairId & firstTradeDate
-				loadChart();
-				prevPairId = options.pairId;
-			} else {
-				// otherwise, assume periodicity changed
-				updatePeriodicity();
-			}
-			setYAxis();
-		}
+		update();
 
 		function destroy() {
 			linker?.remove(chartEngine);
