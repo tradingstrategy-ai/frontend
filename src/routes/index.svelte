@@ -1,7 +1,7 @@
+<!--
+	Home page
+-->
 <script context="module">
-	/**
-	 * Frontpage renderer
-	 */
 	import getGhostClient from '$lib/blog/client';
 
 	// Load top momentum data to display on the front page
@@ -20,18 +20,14 @@
 
 		let topMomentum, impressiveNumbers;
 
+		// Gracefully degrade if API fails
 		if (momentumResp.ok) {
 			topMomentum = await momentumResp.json();
-		} else {
-			// Try render the frontpage even if the backend is down
-			topMomentum = null;
 		}
 
+		// Gracefully degrade if API fails
 		if (impressiveNumbersResp.ok) {
 			impressiveNumbers = await impressiveNumbersResp.json();
-		} else {
-			// Try render the frontpage even if the backend is down
-			impressiveNumbers = null;
 		}
 
 		return {
@@ -83,31 +79,29 @@
 	</header>
 
 	{#if topMomentum}
-		<section class="top-momentum">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<h3 class="heading-momentum text-center">Top trades</h3>
-						<TopMomentum momentumDetails={topMomentum} />
-					</div>
-				</div>
-			</div>
+		<section class="ds-container top-momentum">
+			<h2>Top trades</h2>
+			<TopMomentum
+				name="Most profitable 24h"
+				pairs={topMomentum.top_up_24h_min_liq_1m}
+				linkTarget="/trading-view/top-list/daily-up"
+				linkLabel="View all winning pairs"
+			/>
+			<TopMomentum
+				name="Worst performance 24h"
+				pairs={topMomentum.top_down_24h_min_liq_1m}
+				linkTarget="/trading-view/top-list/daily-down"
+				linkLabel="View all losing pairs"
+			/>
 		</section>
 	{/if}
 
-	<section class="pool-preview">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 strategy-cards">
-					<h3 class="heading-strategies text-center">Strategies</h3>
-
-					<p class="lead coming-soon">
-						<span class="badge text-uppercase">Coming soon</span>
-					</p>
-
-					<p class="lead coming-soon">Invest in non-custodial, active, trading strategies run by the oracle network.</p>
-				</div>
-			</div>
+	<section class="ds-container strategies">
+		<h2>Strategies</h2>
+		<div>
+			<div class="coming-soon">Coming soon</div>
+			<p>Sign up to be the first to know when strategies are live.</p>
+			<Button label="Sign up now" href="https://newsletter.tradingstrategy.ai/" />
 		</div>
 	</section>
 
@@ -145,40 +139,44 @@
 		margin-bottom: 2rem;
 	}
 
-	h1 .secondary {
+	.secondary {
 		color: var(--c-gray-dark);
 	}
 
-	.heading-strategies,
-	.heading-momentum {
-		margin-top: 60px;
+	section {
+		padding-top: 2.5rem;
+		padding-bottom: 2.5rem;
 	}
 
-	.coming-soon {
+	h2 {
+		grid-column: 1 / -1;
 		text-align: center;
 	}
 
-	.pool-preview :global(.card) {
-		margin: 60px 0;
+	.strategies > div {
+		grid-column: 1 / -1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
 	}
 
-	.heading-momentum {
-		margin-bottom: 60px;
+	.strategies .coming-soon {
+		font: 500 var(--fs-ui-md);
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		padding: 0.75rem 1.25rem;
+		border: 1px solid var(--c-border-2);
+		border-radius: 2rem;
 	}
 
-	.top-momentum :global(.card) {
-		margin: 20px 0;
-	}
-
-	.blog {
-		margin: 2.5rem 0;
+	.strategies p {
+		font: var(--f-h5-roman);
 	}
 
 	.blog h2 {
 		margin-bottom: 1rem;
 		font: 600 var(--fs-heading-xl);
-		grid-column: 1 / -1;
-		text-align: center;
 	}
 
 	.blog .cta {
@@ -198,8 +196,17 @@
 			margin-bottom: 3.5rem;
 		}
 
-		.blog {
-			margin: 4rem 0;
+		.top-momentum h2 {
+			margin-bottom: 2.5rem;
+		}
+
+		section {
+			padding-top: 4rem;
+			padding-bottom: 4rem;
+		}
+
+		.strategies > div {
+			gap: 4rem;
 		}
 	}
 </style>
