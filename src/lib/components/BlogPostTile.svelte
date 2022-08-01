@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDistanceToNow } from 'date-fns';
+	import BlogPostTimestamp from './BlogPostTimestamp.svelte';
 
 	export let featured = false;
 	export let slug: string;
@@ -8,8 +8,6 @@
 	export let imageUrl: string;
 	export let imageAltText: string;
 	export let publishedAt: string;
-
-	const publishedDate = new Date(publishedAt);
 </script>
 
 <a class:featured href={`/blog/${slug}`}>
@@ -17,12 +15,7 @@
 
 	<div class="info">
 		<h3>{title}</h3>
-
-		<time datetime={publishedAt}>
-			{publishedDate.toDateString()},
-			{formatDistanceToNow(publishedDate, { addSuffix: true })}
-		</time>
-
+		<BlogPostTimestamp {publishedAt} />
 		<p>{excerpt}</p>
 	</div>
 </a>
@@ -63,10 +56,6 @@
 		text-decoration-color: inherit;
 	}
 
-	time {
-		font: 400 var(--fs-ui-lg);
-	}
-
 	p {
 		font: var(--f-text-body-regular);
 	}
@@ -90,6 +79,7 @@
 			/* Set --blog-post-tile--column-gap to control the column gap */
 			column-gap: var(--blog-post-tile--column-gap, min(2.5rem, 3vw));
 			align-items: center;
+			--timestamp-font: 400 var(--fs-ui-xl);
 		}
 
 		.featured img {
@@ -102,10 +92,6 @@
 
 		.featured h3 {
 			font: var(--f-h1-medium);
-		}
-
-		.featured time {
-			font: 400 var(--fs-ui-xl);
 		}
 	}
 </style>

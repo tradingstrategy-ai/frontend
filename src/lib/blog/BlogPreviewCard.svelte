@@ -34,7 +34,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			<RelativeDate timestamp={post.published_at} />
 		</p>
 
-		<p class="card-text body-text">
+		<p class="card-text">
 			{post.excerpt}
 		</p>
 	</div>
@@ -63,6 +63,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	.compact .card-img-top {
 		aspect-ratio: calc(1920 / 820);
+	}
+
+	.card-text {
+		font: var(--f-text-small-regular);
 	}
 
 	@media (max-width: 992px) {

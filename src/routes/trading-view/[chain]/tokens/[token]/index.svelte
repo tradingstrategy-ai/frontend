@@ -3,10 +3,9 @@
 -->
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	// load core token data server-side
-	export async function load({ url, params, fetch, session }) {
+	export async function load({ params, fetch, session }) {
 		const { backendUrl } = session.config;
 		const chain_slug = params.chain;
 		const address = params.token;
@@ -23,22 +22,17 @@
 		const tokenDetails = await resp.json();
 		console.log('Token page > token details:', tokenDetails);
 
-		const breadcrumbs = buildBreadcrumbs(url.pathname, {
-			...breadcrumbTranslations,
-			[address]: tokenDetails.name
-		});
-
 		return {
 			// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
 			// pages are served really fast if they get popular, and also for speed test
 			maxage: 30 * 60, // 30 minutes,
-			props: { chain_slug, address, tokenDetails, breadcrumbs }
+			props: { chain_slug, address, tokenDetails }
 		};
 	}
 </script>
 
 <script lang="ts">
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenInfoTable from '$lib/content/TokeninfoTable.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
@@ -48,7 +42,6 @@
 	export let chain_slug;
 	export let address;
 	export let tokenDetails;
-	export let breadcrumbs;
 
 	$: tokenStandardName = getTokenStandardName(chain_slug);
 </script>
@@ -64,7 +57,7 @@
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ [address]: tokenDetails.name }} />
 
 	<div class="text-section">
 		<div class="row">

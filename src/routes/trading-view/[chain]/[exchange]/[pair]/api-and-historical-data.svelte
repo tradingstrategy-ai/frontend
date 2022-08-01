@@ -5,7 +5,6 @@ Real time examples for the API
 -->
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 
 	/**
 	 * On the server-side, we load only pair details.
@@ -34,10 +33,9 @@ Real time examples for the API
 		console.log('Summary', summary);
 		console.log('Details', details);
 
-		const readableNames = {
-			...breadcrumbTranslations,
+		const breadcrumbs = {
 			[exchange_slug]: details.exchange_name,
-			[pair_slug]: pairDetails.summary.pair_name,
+			[pair_slug]: summary.pair_name,
 			'api-and-historical-data': 'API and historical data'
 		};
 
@@ -46,20 +44,13 @@ Real time examples for the API
 			// so the pages are served really fast if they get popular,
 			// and also for speed test
 			maxage: 30 * 60, // 30 minutes,
-			props: {
-				exchange_slug,
-				chain_slug,
-				pair_slug,
-				summary,
-				details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-			}
+			props: { summary, details, breadcrumbs }
 		};
 	}
 </script>
 
 <script>
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
 
 	export let details;
@@ -74,7 +65,7 @@ Real time examples for the API
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={breadcrumbs} />
 
 	<h1>{summary.pair_symbol} API and historical data</h1>
 

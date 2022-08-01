@@ -2,8 +2,6 @@
 	Display chain information and indexing status
 -->
 <script context="module">
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
 	export async function load({ url, fetch, session }) {
 		// Load and render exchange details on the server side
 		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
@@ -21,27 +19,14 @@
 
 		const chains = await resp.json();
 
-		const breadcrumbs = {
-			'trading-view': 'Trading data',
-			blockchains: 'Blockchains'
-		};
-
-		// console.log("Received chains", chains);
-
-		return {
-			props: {
-				chains,
-				breadcrumbs: buildBreadcrumbs(url.pathname, breadcrumbs)
-			}
-		};
+		return { props: { chains } };
 	}
 </script>
 
 <script>
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	export let chains;
-	export let breadcrumbs;
 </script>
 
 <svelte:head>
@@ -50,7 +35,7 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
 
 	<div class="row">
 		<div class="col-md-12">

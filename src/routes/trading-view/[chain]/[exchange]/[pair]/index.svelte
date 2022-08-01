@@ -8,7 +8,6 @@ Render the pair trading page
 -->
 <script context="module">
 	import getApiError from '$lib/chain/getApiError';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 
 	// During SSR we only load only pair details; all trading data (price and
@@ -35,12 +34,6 @@ Render the pair trading page
 		console.log('Pair page, summary', summary);
 		console.log('Pair page, details', details);
 
-		const readableNames = {
-			...breadcrumbTranslations,
-			[exchange_slug]: details.exchange_name,
-			[pair_slug]: pairDetails.summary.pair_name
-		};
-
 		const tokenTax = getTokenTaxInformation(details);
 
 		return {
@@ -53,7 +46,6 @@ Render the pair trading page
 				chain_slug,
 				summary,
 				details,
-				breadcrumbs: buildBreadcrumbs(url.pathname, readableNames),
 				tokenTax
 			}
 		};
@@ -64,7 +56,7 @@ Render the pair trading page
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairInfoTable from '$lib/content/PairInfoTable.svelte';
 	import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
@@ -75,8 +67,12 @@ Render the pair trading page
 	export let chain_slug;
 	export let summary; // PairSummary OpenAPI
 	export let details; // PairAdditionalDetails OpenAPI
-	export let breadcrumbs;
 	export let tokenTax: TokenTax;
+
+	$: breadcrumbs = {
+		[exchange_slug]: details.exchange_name,
+		[summary.pair_slug]: summary.pair_name
+	};
 
 	// Ridiculous token price warning:
 	// It is common with scam tokens to price the token super low so that
@@ -100,7 +96,7 @@ Render the pair trading page
 </svelte:head>
 
 <div class="container">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs labels={breadcrumbs} />
 
 	<div class="text-section">
 		<div class="row">

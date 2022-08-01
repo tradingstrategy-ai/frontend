@@ -1,13 +1,4 @@
 <script context="module">
-	import { browser } from '$app/env';
-	import breadcrumbTranslations, { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	export const hydrate = true;
-
-	// ...but if the client-side router is already loaded
-	// (i.e. we came here from elsewhere in the app), use it
-	export const router = browser;
-
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
 	export async function load({ url, session, fetch }) {
 		const { backendUrl } = session.config;
@@ -30,18 +21,8 @@
 
 		const datasets = await res.json();
 
-		const readableNames = {
-			...breadcrumbTranslations
-		};
-
 		if (res.ok) {
-			return {
-				props: {
-					backendUrl,
-					datasets,
-					breadcrumbs: buildBreadcrumbs(url.pathname, readableNames)
-				}
-			};
+			return { props: { backendUrl, datasets } };
 		}
 
 		return {
@@ -53,12 +34,11 @@
 
 <script>
 	import Spinner from 'svelte-spinner';
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { formatTimeAgo } from '$lib/helpers/formatters';
 
 	export let backendUrl;
 	export let datasets;
-	export let breadcrumbs;
 
 	let submitting = false;
 	let validApiKey = null;
@@ -150,7 +130,7 @@
 </svelte:head>
 
 <div class="container container-main">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs />
 	<section class="md-12">
 		<div class="card">
 			<div class="card-body">

@@ -1,31 +1,10 @@
 <!--
 	Render listing of all available exchanges
 -->
-<script context="module" lang="typescript">
-	import { buildBreadcrumbs } from '$lib/breadcrumb/builder';
-
-	export async function load({ url }) {
-		const pathTranslations = {
-			'trading-view': 'Trading data',
-			exchanges: 'Decentralised exchanges'
-		};
-
-		const crumbs = buildBreadcrumbs(url.pathname, pathTranslations);
-
-		return {
-			props: {
-				breadcrumbs: crumbs
-			}
-		};
-	}
-</script>
-
-<script lang="typescript">
-	import Breadcrumb from '$lib/breadcrumb/Breadcrumb.svelte';
+<script lang="ts">
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
-
-	export let breadcrumbs;
 </script>
 
 <svelte:head>
@@ -34,7 +13,7 @@
 </svelte:head>
 
 <div class="container container-main exchanges">
-	<Breadcrumb {breadcrumbs} />
+	<Breadcrumbs />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="exchanges">
