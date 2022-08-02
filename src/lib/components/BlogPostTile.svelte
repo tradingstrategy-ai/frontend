@@ -1,3 +1,20 @@
+<!--
+@component
+Display a blog post preview card (e.g, on home page or blog index).
+
+#### Usage:
+```tsx
+	<BlogPostTile
+		featured={false}
+		slug="blog-post-slug"
+		title="Blog Post Title"
+		excerpt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+		imageUrl="https://some.image.url/abc123"
+		imageAltText="beautiful blog image"
+		publishedAt="2022-01-01T12:00:00Z"
+	/>
+```
+-->
 <script lang="ts">
 	import BlogPostTimestamp from './BlogPostTimestamp.svelte';
 
