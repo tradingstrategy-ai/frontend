@@ -73,6 +73,7 @@ Display best or worst performing trading pairs.
 
 	ul * {
 		font: 400 var(--fs-ui-md);
+		letter-spacing: 0.01em;
 	}
 
 	li {
@@ -124,6 +125,7 @@ Display best or worst performing trading pairs.
 
 		ul * {
 			font: 400 var(--fs-ui-xl);
+			letter-spacing: 0;
 		}
 
 		.cta {

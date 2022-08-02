@@ -20,7 +20,7 @@ https://tradingstrategy.ai/api/explorer/
 	Built upon powerful market data for <a href="/trading-view/blockchains">{numbers.blockchains}&nbsp;blockchains</a>,
 	<a href="/trading-view/exchanges">{formatAmount(numbers.exchanges)} decentralised exchanges</a
 	>, <a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a>
-	and <a href="/trading-view/search">{formatAmount(numbers.tokens)} tokens</a> with <a
+	and <a href="/search">{formatAmount(numbers.tokens)} tokens</a> with <a
 		href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a>.
 </div>
 <!-- prettier-ignore-end -->
