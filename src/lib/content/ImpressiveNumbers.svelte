@@ -14,7 +14,7 @@ https://tradingstrategy.ai/api/explorer/
 	export let numbers;
 </script>
 
-<!-- preserving text-wrapping on larger display -->
+<!-- preserving text-wrapping on larger displays - end lines below at preferred line-breaks -->
 <!-- prettier-ignore-start -->
 <div>
 	Built upon powerful market data for <a href="/trading-view/blockchains">{numbers.blockchains}&nbsp;blockchains</a>,
@@ -37,7 +37,8 @@ https://tradingstrategy.ai/api/explorer/
 
 	@media (min-width: 900px) {
 		div {
-			white-space: pre;
+			white-space: pre-line;
+			text-align: center;
 		}
 	}
 </style>
