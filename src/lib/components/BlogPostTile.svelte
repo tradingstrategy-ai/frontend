@@ -61,7 +61,7 @@
 	}
 
 	/* Desktop overrides */
-	@media (min-width: 1024px) {
+	@media (--viewport-lg-up) {
 		img {
 			aspect-ratio: 5 / 3;
 		}

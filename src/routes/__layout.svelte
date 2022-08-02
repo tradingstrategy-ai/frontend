@@ -29,10 +29,10 @@
 	 * Custom media declarations (via PostCSS Custom Media plugin) - enables `@media (--var-name) {}`
 	 * Must be declared in __layout to ensure proper CSS load order in SSR.
 	 */
-	@custom-media --viewport-md-up (min-width: 768px);
-	@custom-media --viewport-lg-up (min-width: 1024px);
-	@custom-media --viewport-md-down (max-width: 1023.98px);
-	@custom-media --viewport-sm-down (max-width: 767.98px);
+	@custom-media --viewport-md-up (width >= 768px);
+	@custom-media --viewport-lg-up (width >= 1024px);
+	@custom-media --viewport-md-down (width < 1024px);
+	@custom-media --viewport-sm-down (width < 768px);
 
 	:root {
 		/* Old CSS color vars still used in various components (refactor/remove) */

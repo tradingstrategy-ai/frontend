@@ -8,7 +8,7 @@
  *
  */
 import preprocess from 'svelte-preprocess';
-import postcssCustomMedia from 'postcss-custom-media';
+import postcssPresetEnv from 'postcss-preset-env';
 import node from '@sveltejs/adapter-node';
 import path from 'path';
 import replace from '@rollup/plugin-replace';
@@ -25,6 +25,8 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 console.log(`SSR: ${SSR}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
+
+const presetEnvConfig = postcssPresetEnv();
 
 if (SSR) {
 	console.log('Using SSR config');
@@ -43,7 +45,7 @@ if (SSR) {
 		preprocess: preprocess({
 			sourceMap: true,
 			postcss: {
-				plugins: [postcssCustomMedia()]
+				plugins: [presetEnvConfig]
 			}
 		}),
 
@@ -79,7 +81,7 @@ if (SSR) {
 		preprocess: preprocess({
 			sourceMap: true,
 			postcss: {
-				plugins: [postcssCustomMedia()]
+				plugins: [presetEnvConfig]
 			}
 		}),
 
@@ -129,7 +131,7 @@ config.kit.vite = {
 	css: {
 		postcss: {
 			// use `font-display: optional` in SSR build (minimize CLS/FOUT)
-			plugins: [fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true }), postcssCustomMedia()]
+			plugins: [presetEnvConfig, fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true })]
 		}
 	}
 };

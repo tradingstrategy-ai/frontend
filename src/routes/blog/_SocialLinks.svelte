@@ -68,7 +68,7 @@
 		display: none;
 	}
 
-	@media (min-width: 768px) {
+	@media (--viewport-md-up) {
 		.layout--index {
 			justify-content: start;
 			column-gap: 2.5rem;
