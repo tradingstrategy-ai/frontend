@@ -4,7 +4,7 @@ describe('Trading strategy Home', () => {
 	});
 
 	it('User should be able to render the home page with header and navigation', () => {
-		cy.contains('Next generation algorithmic trading protocol for decentralised markets').should('be.visible');
+		cy.contains(/Next generation algorithmic trading protocol for decentralised markets/i).should('be.visible');
 		cy.contains(/Coming soon/i).should('be.visible');
 		cy.get('header nav').find('li').should('have.length', 5);
 		cy.get('header .logo svg');
