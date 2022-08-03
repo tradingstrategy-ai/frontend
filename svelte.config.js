@@ -8,6 +8,7 @@
  *
  */
 import preprocess from 'svelte-preprocess';
+import postcssPresetEnv from 'postcss-preset-env';
 import node from '@sveltejs/adapter-node';
 import path from 'path';
 import replace from '@rollup/plugin-replace';
@@ -25,6 +26,8 @@ console.log(`SSR: ${SSR}`);
 console.log(`Frontend port: ${FRONTEND_PORT}`);
 console.log(`Frontend origin: ${FRONTEND_ORIGIN}`);
 
+const presetEnvConfig = postcssPresetEnv();
+
 if (SSR) {
 	console.log('Using SSR config');
 	// build server-side rendering
@@ -40,7 +43,10 @@ if (SSR) {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true
+			sourceMap: true,
+			postcss: {
+				plugins: [presetEnvConfig]
+			}
 		}),
 
 		// Create an adapter that creates build/index.js Node application
@@ -73,7 +79,10 @@ if (SSR) {
 		// Consult https://github.com/sveltejs/svelte-preprocess
 		// for more information about preprocessors
 		preprocess: preprocess({
-			sourceMap: true
+			sourceMap: true,
+			postcss: {
+				plugins: [presetEnvConfig]
+			}
 		}),
 
 		kit: {}
@@ -122,7 +131,7 @@ config.kit.vite = {
 	css: {
 		postcss: {
 			// use `font-display: optional` in SSR build (minimize CLS/FOUT)
-			plugins: [fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true })]
+			plugins: [presetEnvConfig, fontDisplay({ display: SSR ? 'optional' : 'swap', replace: true })]
 		}
 	}
 };

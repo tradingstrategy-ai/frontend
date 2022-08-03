@@ -47,7 +47,7 @@
 		opacity: 0.9;
 	}
 
-	@media (min-width: 768px) {
+	@media (--viewport-md-up) {
 		footer:not(.small) {
 			gap: 2.5rem;
 			padding: 5rem 0;

@@ -1,7 +1,7 @@
+<!--
+	Home page
+-->
 <script context="module">
-	/**
-	 * Frontpage renderer
-	 */
 	import getGhostClient from '$lib/blog/client';
 
 	// Load top momentum data to display on the front page
@@ -15,23 +15,19 @@
 		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
 			fetch(`${backendUrl}/top-momentum?summary=true`),
 			fetch(`${backendUrl}/impressive-numbers`),
-			ghostClient.posts?.browse({ limit: 3 })
+			ghostClient.posts?.browse({ limit: 4 })
 		]);
 
 		let topMomentum, impressiveNumbers;
 
+		// Gracefully degrade if API fails
 		if (momentumResp.ok) {
 			topMomentum = await momentumResp.json();
-		} else {
-			// Try render the frontpage even if the backend is down
-			topMomentum = null;
 		}
 
+		// Gracefully degrade if API fails
 		if (impressiveNumbersResp.ok) {
 			impressiveNumbers = await impressiveNumbersResp.json();
-		} else {
-			// Try render the frontpage even if the backend is down
-			impressiveNumbers = null;
 		}
 
 		return {
@@ -45,10 +41,10 @@
 </script>
 
 <script>
-	import PoolPreviewEthLisbon from '$lib/pool/PoolPreviewEthLisbon.svelte';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
-	import BlogPreviewCard from '$lib/blog/BlogPreviewCard.svelte';
+	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { goto } from '$app/navigation';
 
@@ -68,129 +64,150 @@
 </svelte:head>
 
 <main>
-	<section class="card-home card-jumbo" on:dblclick={doSecretNavigation}>
-		<div class="container">
+	<header class="ds-container" on:dblclick={doSecretNavigation}>
+		<div>
 			<h1>
-				<div>Next generation</div>
-				<div>algorithmic trading protocol</div>
-				<div class="secondary">for decentralised markets</div>
+				<div>Next Generation</div>
+				<div>Algorithmic Trading Protocol</div>
+				<div class="secondary">for Decentralised Markets</div>
 			</h1>
 
 			{#if impressiveNumbers}
 				<ImpressiveNumbers numbers={impressiveNumbers} />
 			{/if}
 		</div>
-	</section>
+	</header>
 
 	{#if topMomentum}
-		<section class="top-momentum">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<h3 class="heading-momentum text-center">Top trades</h3>
-						<TopMomentum momentumDetails={topMomentum} />
-					</div>
-				</div>
-			</div>
+		<section class="ds-container top-momentum">
+			<h2>Top trades</h2>
+			<TopMomentum
+				name="Most profitable 24h"
+				pairs={topMomentum.top_up_24h_min_liq_1m}
+				linkTarget="/trading-view/top-list/daily-up"
+				linkLabel="View all winning pairs"
+			/>
+			<TopMomentum
+				name="Worst performance 24h"
+				pairs={topMomentum.top_down_24h_min_liq_1m}
+				linkTarget="/trading-view/top-list/daily-down"
+				linkLabel="View all losing pairs"
+			/>
 		</section>
 	{/if}
 
-	<section class="pool-preview">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 strategy-cards">
-					<h3 class="heading-strategies text-center">Strategies</h3>
-
-					<p class="lead coming-soon">
-						<span class="badge text-uppercase">Coming soon</span>
-					</p>
-
-					<p class="lead coming-soon">Invest in non-custodial, active, trading strategies run by the oracle network.</p>
-				</div>
-			</div>
+	<section class="ds-container strategies">
+		<h2>Strategies</h2>
+		<div>
+			<div class="coming-soon">Coming soon</div>
+			<p>Sign up to be the first to know when strategies are live.</p>
+			<Button label="Sign up now" href="https://newsletter.tradingstrategy.ai/" />
 		</div>
 	</section>
 
 	{#if posts}
-		<section class="blog">
-			<div class="container">
-				<h3 class="heading-blog text-center">Blog</h3>
-				<div class="card-deck d-block d-lg-flex">
-					{#each posts as post (post.id)}
-						<BlogPreviewCard {post} layout="compact" />
-					{/each}
-				</div>
-				<p class="text-center blog-all">
-					<a class="btn" href="/blog/">View blog</a>
-				</p>
+		<section class="ds-container blog">
+			<h2>Blog</h2>
+			{#each posts as post (post.id)}
+				<BlogPostTile
+					title={post.title}
+					excerpt={post.excerpt}
+					imageUrl={post.feature_image}
+					imageAltText={post.feature_image_alt}
+					slug={post.slug}
+					publishedAt={post.published_at}
+				/>
+			{/each}
+
+			<div class="cta">
+				<Button label="Read more on blog" href="/blog" />
 			</div>
 		</section>
 	{/if}
 </main>
 
 <style>
-	main {
-		min-height: 100vw;
-		background-size: cover;
-		background-repeat: no-repeat;
-		background-position: center center;
-	}
-
-	.card-jumbo {
-		background: var(--c-parchment-dark);
-		box-shadow: none;
-		padding: 8rem 0;
+	header {
+		--ds-container-margin: 2rem;
+		background: var(--c-background-1);
+		padding-top: 3.5rem;
+		padding-bottom: 3.5rem;
 	}
 
 	h1 {
-		font-weight: bold;
+		font: var(--f-h1-bold);
+		margin-bottom: 2rem;
 	}
 
-	h1 .secondary {
-		color: var(--c-gray-dark);
+	.secondary {
+		color: var(--c-text-2);
 	}
 
-	.heading-strategies,
-	.heading-momentum {
-		margin-top: 60px;
+	section {
+		padding-top: 2.5rem;
+		padding-bottom: 2.5rem;
 	}
 
-	.heading-blog {
-		margin: 60px 0;
-	}
-
-	.coming-soon {
+	h2 {
+		grid-column: 1 / -1;
 		text-align: center;
 	}
 
-	.pool-preview :global(.card) {
-		margin: 60px 0;
+	.strategies > div {
+		grid-column: 1 / -1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 1.5rem;
 	}
 
-	.heading-momentum {
-		margin-bottom: 60px;
+	.strategies .coming-soon {
+		font: 500 var(--fs-ui-md);
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		padding: 0.75rem 1.25rem;
+		border: 1px solid var(--c-border-2);
+		border-radius: 2rem;
 	}
 
-	.top-momentum :global(.card) {
-		margin: 20px 0;
+	.strategies p {
+		font: var(--f-h5-roman);
 	}
 
-	.blog {
-		margin-bottom: 60px;
+	.blog h2 {
+		margin-bottom: 1rem;
+		font: 600 var(--fs-heading-xl);
 	}
 
-	svg {
-		max-height: 160px;
-		margin: 0 auto;
+	.blog .cta {
+		grid-column: 1 / -1;
+		text-align: center;
 	}
 
-	.blog-all {
-		margin-top: 40px;
-	}
+	@media (--viewport-md-up) {
+		header {
+			padding-top: 12rem;
+			padding-bottom: 12rem;
+			text-align: center;
+		}
 
-	@media (max-width: 768px) {
-		svg {
-			display: none;
+		h1 {
+			font: 600 56px/68px var(--ff-display);
+			margin-bottom: 3.5rem;
+		}
+
+		.top-momentum h2 {
+			margin-bottom: 2.5rem;
+		}
+
+		section {
+			padding-top: 4rem;
+			padding-bottom: 4rem;
+		}
+
+		.strategies > div {
+			gap: 4rem;
 		}
 	}
 </style>

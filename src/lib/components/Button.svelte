@@ -33,6 +33,7 @@
 		letter-spacing: 0.01em;
 		text-decoration: none;
 		text-transform: capitalize;
+		text-align: center;
 		cursor: pointer;
 	}
 

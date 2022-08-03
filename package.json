@@ -18,6 +18,10 @@
   "engines": {
     "node": "^16.15.0"
   },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
   "jest": {
     "transform": {
       "^.+\\.svelte$": [
@@ -75,6 +79,8 @@
     "jest-transform-stub": "^2.0.0",
     "jest-transform-svelte": "^2.1.1",
     "jquery": "^3.6.0",
+    "postcss-font-display": "^0.3.0",
+    "postcss-preset-env": "^7.7.2",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.46.0",
@@ -98,7 +104,6 @@
     "dotenv": "^16.0.1",
     "ethers": "^5.6.4",
     "gulp": "^4.0.2",
-    "postcss-font-display": "^0.3.0",
     "svelte-fsm": "^1.1.2",
     "svelte-inview": "^3.0.0",
     "svelte-spinner": "^2.0.2",

@@ -112,7 +112,7 @@
 		text-align: center;
 	}
 
-	@media (min-width: 1024px) {
+	@media (--viewport-lg-up) {
 		.posts {
 			margin: 3.75rem 0;
 		}

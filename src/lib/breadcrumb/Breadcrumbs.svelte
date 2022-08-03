@@ -119,7 +119,7 @@ https://search.google.com/structured-data/testing-tool
 	}
 
 	/* Desktop */
-	@media (min-width: 768px) {
+	@media (--viewport-md-up) {
 		ol {
 			margin: 1rem 0 2rem 0;
 			font: 500 var(--fs-ui-md);

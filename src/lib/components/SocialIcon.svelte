@@ -20,7 +20,7 @@
 		--icon-size: calc(var(--size) / 2);
 	}
 
-	@media (min-width: 768px) {
+	@media (--viewport-md-up) {
 		div {
 			--size: var(--social-icon-size, 64px);
 		}

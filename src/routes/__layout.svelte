@@ -25,6 +25,15 @@
 <SiteMode />
 
 <style global>
+	/**
+	 * Custom media declarations (via PostCSS Custom Media plugin) - enables `@media (--var-name) {}`
+	 * Must be declared in __layout to ensure proper CSS load order in SSR.
+	 */
+	@custom-media --viewport-md-up (width >= 768px);
+	@custom-media --viewport-lg-up (width >= 1024px);
+	@custom-media --viewport-md-down (width < 1024px);
+	@custom-media --viewport-sm-down (width < 768px);
+
 	:root {
 		/* Old CSS color vars still used in various components (refactor/remove) */
 		--price-up-green: var(--c-bullish);
