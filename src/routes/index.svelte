@@ -100,7 +100,7 @@
 		<h2>Strategies</h2>
 		<div>
 			<div class="coming-soon">Coming soon</div>
-			<p>Sign up to be the first to know when strategies are live.</p>
+			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
 			<Button label="Sign up now" href="https://newsletter.tradingstrategy.ai/" />
 		</div>
 	</section>
