@@ -11,8 +11,8 @@
 
 <main>
 	<Hero title="Community" image={SocialImage}>
-		Join our community of expert traders, strategy developersand quants. Learn more about the Trading Strategy protocol,
-		algorithmic trading and DeFi markets.
+		Join our community of expert traders, strategy developers and quants. Learn more about the Trading Strategy
+		protocol, algorithmic trading and DeFi markets.
 	</Hero>
 
 	<section class="ds-container">
