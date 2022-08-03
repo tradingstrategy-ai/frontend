@@ -17,11 +17,10 @@ https://tradingstrategy.ai/api/explorer/
 <!-- preserving text-wrapping on larger displays - end lines below at preferred line-breaks -->
 <!-- prettier-ignore-start -->
 <div>
-	Built upon powerful market data for <a href="/trading-view/blockchains">{numbers.blockchains}&nbsp;blockchains</a>,
-	<a href="/trading-view/exchanges">{formatAmount(numbers.exchanges)} decentralised exchanges</a
-	>, <a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a>
-	and <a href="/search">{formatAmount(numbers.tokens)} tokens</a> with <a
-		href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)} liquidity</a>.
+	Market data and trading strategy framework
+	for <a href="/trading-view/trading-pairs">{formatAmount(numbers.pairs)} trading pairs</a
+	> providing <a href="/trading-view/trading-pairs">{formatDollar(numbers.liquidity)}&nbsp;liquidity</a>
+	across <a href="/trading-view/blockchains">{numbers.blockchains}&nbsp;blockchains</a>
 </div>
 <!-- prettier-ignore-end -->
 
@@ -35,7 +34,8 @@ https://tradingstrategy.ai/api/explorer/
 		font-weight: 600;
 	}
 
-	@media (min-width: 900px) {
+	/* adjust width to toggle white-space setting when longest line no longer fits */
+	@media (width >= 800px) {
 		div {
 			white-space: pre-line;
 			text-align: center;
