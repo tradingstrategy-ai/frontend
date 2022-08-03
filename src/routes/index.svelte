@@ -129,7 +129,7 @@
 <style>
 	header {
 		--ds-container-margin: 2rem;
-		background: var(--c-parchment-dark);
+		background: var(--c-background-1);
 		padding-top: 3.5rem;
 		padding-bottom: 3.5rem;
 	}
@@ -140,7 +140,7 @@
 	}
 
 	.secondary {
-		color: var(--c-gray-dark);
+		color: var(--c-text-2);
 	}
 
 	section {
