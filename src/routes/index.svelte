@@ -67,9 +67,9 @@
 	<header class="ds-container" on:dblclick={doSecretNavigation}>
 		<div>
 			<h1>
-				<div>Next Generation</div>
-				<div>Algorithmic Trading Protocol</div>
-				<div class="secondary">for Decentralised Markets</div>
+				<div>Next generation</div>
+				<div>algorithmic trading protocol</div>
+				<div class="secondary">for decentralised markets</div>
 			</h1>
 
 			{#if impressiveNumbers}
