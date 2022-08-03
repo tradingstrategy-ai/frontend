@@ -89,7 +89,7 @@
 }
 
 /* Font Pairings - Desktop */
-@media (--viewport-md-up) {
+@media (width >= 768px) {
 	:root {
 		--f-h1-bold: 700 var(--fs-heading-xxl);
 		--f-h1-medium: 600 var(--fs-heading-xxl);

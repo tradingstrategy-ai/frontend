@@ -163,7 +163,7 @@
 	}
 
 	.strategies .coming-soon {
-		font: 500 var(--fs-ui-md);
+		font: 500 var(--fs-ui-sm);
 		letter-spacing: 0.02em;
 		text-transform: uppercase;
 		padding: 0.75rem 1.25rem;
@@ -208,6 +208,7 @@
 
 		.strategies > div {
 			gap: 4rem;
+			margin-top: 0.5rem;
 		}
 	}
 </style>
