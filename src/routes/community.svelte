@@ -35,14 +35,14 @@
 		<ContentTile
 			title="YouTube"
 			icon="youtube"
-			text="Read and subscribe to our blog. Gain insights in decentralised trading and algorithmic trading."
+			text="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
 			targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
 		/>
 
 		<ContentTile
 			title="LinkedIn"
 			icon="linkedin"
-			text="Read and subscribe to our blog. Gain insights in decentralised trading and algorithmic trading."
+			text="Follow us on LinkedIn and join our community of traders, developers and quant experts."
 			targetUrl="https://www.linkedin.com/company/trading-strategy/"
 		/>
 
