@@ -17,7 +17,7 @@ describe('Trading strategy Community', () => {
 		cy.contains(/Discuss .* develop/i);
 		cy.get('a[href="https://discord.gg/en8tW6MDtw"]').contains('Discord');
 		cy.get('a[href="https://github.com/tradingstrategy-ai/"]').contains('GitHub');
-		cy.get('a[href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"]').contains(
+		cy.get('a[href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"]').contains(
 			'Algorithm tutorials'
 		);
 	});

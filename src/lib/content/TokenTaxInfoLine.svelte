@@ -17,7 +17,11 @@ Links to the documentation.
 	export let longFormat = false;
 </script>
 
-<a rel="external" href="https://tradingstrategy.ai/docs/programming/token-tax.html" class="token-tax body-link">
+<a
+	rel="external"
+	href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html"
+	class="token-tax body-link"
+>
 	{#if tokenTax.missing}
 		Data not yet available
 	{:else if tokenTax.liquidityIssue}

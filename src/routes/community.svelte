@@ -82,7 +82,7 @@
 			title="Algorithm tutorials"
 			icon="book"
 			text="Learn how to write trading algorithms with our documentation and run backtests."
-			targetUrl="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"
+			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 		/>
 	</section>
 </main>

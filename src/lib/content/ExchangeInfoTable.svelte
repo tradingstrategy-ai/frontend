@@ -32,7 +32,10 @@
 
 	<tr>
 		<th>
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html#volume-calculations">
+			<a
+				rel="external"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
+			>
 				Volume 30d
 			</a>
 		</th>
@@ -41,7 +44,10 @@
 
 	<tr>
 		<th>
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html#volume-calculations">
+			<a
+				rel="external"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
+			>
 				Volume all-time
 			</a>
 		</th>
@@ -55,7 +61,9 @@
 
 	<tr>
 		<th>
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html"> Tracked trading pairs </a>
+			<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">
+				Tracked trading pairs
+			</a>
 		</th>
 		<td>{formatAmount(details.active_pair_count)}</td>
 	</tr>
@@ -90,7 +98,9 @@
 
 	<tr>
 		<th>
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/internal-id.html"> Internal id </a>
+			<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html">
+				Internal id
+			</a>
 		</th>
 		<td>
 			{details.exchange_id}

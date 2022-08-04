@@ -24,7 +24,7 @@
 			{#if learnLink}
 				<a
 					rel="external"
-					href="https://tradingstrategy.ai/docs/programming/algorithms/double-7.html"
+					href="https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html"
 					class="btn btn-primary"
 				>
 					Learn more

@@ -87,7 +87,7 @@
 								<p class="hint">
 									Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data
 									feeds generated for them.
-									<a rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html"
+									<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
 										>See the inclusion criteria.</a
 									>
 								</p>

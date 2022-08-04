@@ -179,7 +179,7 @@ Render the pair trading page
 					<a
 						rel="external"
 						class="body-link"
-						href="https://tradingstrategy.ai/docs/programming/token-tax.html#honeypots-and-other-rug-pull-risks"
+						href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
 					>
 						Read more about transfer fees being broken or malicious in the token tax documentation.
 					</a>. Error code <strong>{tokenTax.sellTax}<strong>. </strong></strong>

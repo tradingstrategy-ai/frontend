@@ -143,7 +143,7 @@
 
 				<p>
 					Read the documentation
-					<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"
+					<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 						>how to get started with Trading Strategy Python library for algorithmic trading</a
 					>.
 				</p>
@@ -247,7 +247,7 @@
 
 				<ul>
 					<li>
-						<a rel="external" href="https://tradingstrategy.ai/docs/programming/examples/getting-started.html"
+						<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 							>Getting started with Trading Strategy Python client</a
 						>
 					</li>

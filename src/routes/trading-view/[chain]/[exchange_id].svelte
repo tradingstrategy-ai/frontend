@@ -84,8 +84,10 @@
 					{details.human_readable_name} has <strong>{formatAmount(details.pair_count)}</strong>
 					token trading pairs of which
 					<strong>{formatAmount(details.active_pair_count)}</strong> are
-					<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html"
-						>actively tracked</a
+					<a
+						class="body-link"
+						rel="external"
+						href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">actively tracked</a
 					> by Trading Strategy.
 				</p>
 
@@ -131,7 +133,7 @@
 
 			<p class="tracking-criteria">
 				Not all trading pairs are being displayed or included in volume calculations.
-				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/tracking.html"
+				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
 					>See inclusion criteria</a
 				>.
 			</p>

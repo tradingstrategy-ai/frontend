@@ -118,7 +118,7 @@
 	<tr>
 		<th>Internal id</th>
 		<td>
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/internal-id.html">
+			<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html">
 				{summary.pair_id}
 			</a>
 		</td>

@@ -3,7 +3,7 @@
  *
  * Parse the server-side token tax information to something UI presentible.
  *
- * https://tradingstrategy.ai/docs/programming/token-tax.html
+ * https://tradingstrategy.ai/docs/programming/market-data/token-tax.html
  */
 
 /**
