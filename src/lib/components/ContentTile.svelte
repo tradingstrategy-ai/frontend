@@ -21,6 +21,7 @@
 		text-align: center;
 		border: 2px solid var(--c-border-1);
 		padding: 2.8rem 1.5rem;
+		--social-icon-size: 64px;
 	}
 
 	a h3 {
