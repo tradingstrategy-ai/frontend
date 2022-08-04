@@ -68,9 +68,7 @@ https://search.google.com/structured-data/testing-tool
 						><span itemprop="name">{breadcrumb.label}</span></a
 					>
 				{:else}
-					<span itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
-						><span itemprop="name">{breadcrumb.label}</span></span
-					>
+					<span itemprop="name">{breadcrumb.label}</span>
 				{/if}
 				<meta itemprop="position" content={idx + 1} />
 			</li>
@@ -81,7 +79,6 @@ https://search.google.com/structured-data/testing-tool
 <style>
 	nav {
 		width: 100%;
-		overflow: hidden;
 	}
 
 	ol {
@@ -91,6 +88,7 @@ https://search.google.com/structured-data/testing-tool
 		display: grid;
 		grid-auto-flow: column;
 		justify-content: start;
+		overflow: hidden;
 		color: var(--c-text-2);
 		font: 500 var(--fs-ui-xs);
 		letter-spacing: 0.02em;
@@ -103,6 +101,11 @@ https://search.google.com/structured-data/testing-tool
 
 	li {
 		white-space: nowrap;
+	}
+
+	li:last-child {
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	a:hover span {
