@@ -7,26 +7,23 @@
 		const impressiveNumbersResp = await fetch(`${backendUrl}/impressive-numbers`);
 		let impressiveNumbers;
 
+		// render the page even if the backend is down
 		if (impressiveNumbersResp.ok) {
 			impressiveNumbers = await impressiveNumbersResp.json();
 		} else {
-			// Try render the frontpage even if the backend is down
-			impressiveNumbers = null;
 			console.error('API error', impressiveNumbersResp);
 		}
 
 		return {
-			props: {
-				impressiveNumbers
-			}
+			props: { impressiveNumbers }
 		};
 	}
 </script>
 
 <script>
-	import PoolPreview from '$lib/pool/PoolPreview.svelte';
-
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
+	import Hero from '$lib/components/Hero.svelte';
+	import DataImage from '$lib/assets/milano/dev/data-cloud-1.svg?raw';
 
 	export let impressiveNumbers;
 </script>
@@ -37,16 +34,12 @@
 </svelte:head>
 
 <main>
+	<Hero title="Trading data" image={DataImage}>
+		Explore and download trading data from multiple blockchains and decentralised exchanges.
+	</Hero>
+
 	<section>
 		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<h1>Trading data</h1>
-
-					<p class="lead">Explore and download price charts from multiple blockchains and decentralised exchanges.</p>
-				</div>
-			</div>
-
 			<div class="row" data-testid="explore-title">
 				<div class="col-md-12">
 					<h2>Explore data</h2>
