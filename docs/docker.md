@@ -235,3 +235,9 @@ telnet host.docker.internal 3456
 ```
 
 For more information, see [host.docker.internal on Linux](https://stackoverflow.com/questions/48546124/what-is-linux-equivalent-of-host-docker-internal).
+
+### Building container locally
+
+```shell
+docker build --build-arg FONT_ZIP_DOWNLOAD_URL=${FONT_ZIP_DOWNLOAD_URL} .
+```

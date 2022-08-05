@@ -21,6 +21,6 @@ test-data.json
 examples/stubbing-spying__intercept/users5.json
 
 # Not redistribuable
-fonts/NeueHaasGroteskDisplay
-fonts/NeueHaasGroteskText
+static/fonts/NeueHaasGroteskDisplay
+static/fonts/NeueHaasGroteskText
 

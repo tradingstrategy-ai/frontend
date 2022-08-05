@@ -7,45 +7,17 @@
     import SiteMode from '$lib/header/SiteMode.svelte';
     import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
     import Footer from '$lib/components/Footer.svelte';
-    import { browser } from '$app/env';
     import { beforeNavigate } from "$app/navigation";
-
-    function checkFontsForPageLoad() {
-
-    }
-    const isTrading = window.location.pathname.includes("trading-view/");
-    const hasFontWarmup = window.localStorage.getItem("fontWarmup") === "true";
-
-    // Lazy font loading trick
-    // to optimise mobile and slow connection page experience
-    // https://github.com/tradingstrategy-ai/frontend/issues/140
-    let loadFonts;
-
-    // Font loading logic is relevant on the client side only
-    if(browser) {
-        if (isTrading) {
-            loadFonts = hasFontWarmup;
-        } else {
-            loadFonts = true;
-        }
-        // The next page load will trigger font load
-        window.localStorage.setItem("fontWarmup", "true");
-    }
-
-    if(loadFonts) {
-        // design-system-fonts is an optional dependency, so we use Vite's glob import
-        // feature to import / fail gracefully if not installed. Must assign the returned
-        // value or you get a syntax error.
-        const _ = import.meta.globEager('design-system-fonts/index.css');
-    }
-
+    import { browser } from "$app/env";
     import 'bootstrap-theme/css/neumorphism.css';
     import '$lib/components/css/index.css';
 
 
     /**
      * Lazily load fonts as per issue 9.
-     **
+     *
+     * See also app.html for <body> <script> handle.
+     *
      * - https://github.com/tradingstrategy-ai/design-system/issues/9
      * - https://kit.svelte.dev/docs/modules#$app-navigation-beforenavigation
      *
@@ -56,9 +28,12 @@
      * ```
      */
     function toggleFontLoad() {
-        if()
-        const _ = import.meta.globEager('design-system-fonts/index.css');
-        window.localStorage.setItem("fontWarmup", "true");
+        if(browser) {
+            const fontStylesheet = document.getElementById("font-stylesheet");
+            if(fontStylesheet) {
+                fontStylesheet.setAttribute("rel", "stylesheet");
+            }
+        }
     }
 
     beforeNavigate((navigation) => {
