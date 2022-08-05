@@ -89,7 +89,7 @@
 
 <style>
 	section {
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
 		gap: 2rem;
 		padding-top: 2rem;
 		padding-bottom: 2rem;
@@ -97,23 +97,13 @@
 
 	section h2 {
 		grid-column: 1 / -1;
-		font: var(--f-h3-medium);
-	}
-
-	@media (--viewport-md-up) {
-		section {
-			padding-top: 2.75rem;
-			padding-bottom: 2.75rem;
-		}
-
-		section h2 {
-			font: 600 var(--fs-heading-xl);
-		}
+		font: var(--f-h2-medium);
 	}
 
 	@media (--viewport-lg-up) {
-		section h2 {
-			font: 600 var(--fs-heading-xl);
+		section {
+			padding-top: 2.75rem;
+			padding-bottom: 2.75rem;
 		}
 	}
 </style>
