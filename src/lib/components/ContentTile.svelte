@@ -8,17 +8,10 @@
 	export let buttonLabel: string = undefined;
 	export let horizontal = false;
 
-	let button: HTMLElement;
-
-	// ignore clicks on the tile anchor when button is shown
-	function handleTileClick(event: MouseEvent) {
-		const buttonVisible = button.offsetParent !== null;
-		const buttonClicked = button.contains(<Node>event.target);
-		if (buttonVisible && !buttonClicked) event.preventDefault();
-	}
+	$: tag = buttonLabel ? 'div' : 'a';
 </script>
 
-<a class:horizontal href={targetUrl} on:click={handleTileClick}>
+<svelte:element this={tag} class="tile" class:horizontal href={tag === 'a' ? targetUrl : undefined}>
 	<div class="header">
 		<SocialIcon name={icon} />
 		<h3>{title}</h3>
@@ -27,17 +20,17 @@
 		<div class="text"><slot /></div>
 
 		{#if buttonLabel}
-			<div bind:this={button} class="button"><Button label={buttonLabel} href={targetUrl} /></div>
+			<div class="button"><Button label={buttonLabel} href={targetUrl} /></div>
 		{/if}
 	</div>
-</a>
+</svelte:element>
 
 <style>
-	a {
+	.tile {
 		display: grid;
 		gap: 2rem;
 		border: 2px solid var(--c-border-1);
-		padding: 2.8rem 1.5rem;
+		padding: 2.5rem 1.5rem;
 		text-align: center;
 		--social-icon-size: 64px;
 	}
@@ -47,12 +40,12 @@
 		justify-items: center;
 	}
 
-	a h3 {
+	.header h3 {
 		margin-top: 1rem;
 		padding: 0 4rem;
 	}
 
-	a:hover h3 {
+	.tile[href]:hover h3 {
 		text-decoration: underline;
 	}
 
@@ -72,7 +65,6 @@
 		.horizontal {
 			grid-template-columns: 1fr 1fr;
 			align-items: center;
-			cursor: default;
 		}
 
 		.horizontal .content {
@@ -82,10 +74,6 @@
 
 		.horizontal h3 {
 			padding: 0;
-		}
-
-		.horizontal:hover h3 {
-			text-decoration: none;
 		}
 	}
 </style>
