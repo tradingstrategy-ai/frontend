@@ -3,7 +3,7 @@ describe('Trading strategy Community', () => {
 		cy.visit('/community');
 	});
 
-	it('Should have a Follow Us section with 3 cards', () => {
+	it('Should have a Follow Us section with 6 cards', () => {
 		cy.contains(/Follow us/i);
 		cy.get('a[href="/blog"]').contains('Blog');
 		cy.get('a[href="https://twitter.com/TradingProtocol"]').contains('Twitter');

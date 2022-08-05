@@ -7,46 +7,18 @@ describe('Trading strategy Trading View', () => {
 		cy.contains(/Trading Data/i);
 	});
 
-	it('Should have a Explore Data section with 3 cards', () => {
-		cy.visit('/trading-view');
+	it('Should have a Explore Data section with 4 cards', () => {
 		cy.contains(/Explore Data/i);
-		cy.get('[data-testid=blockchains]');
-		cy.get('[data-testid=exchanges]');
-		cy.get('[data-testid=tradingpairs]');
+		cy.get('a[href="/trading-view/blockchains"]').contains(/View blockchains/i);
+		cy.get('a[href="/trading-view/exchanges"]').contains(/View exchanges/i);
+		cy.get('a[href="/trading-view/trading-pairs"]').contains(/View trading pairs/i);
+		cy.get('a[href="/search"]').contains(/Search tokens/i);
 	});
 
 	it('Should have a Programmatic Access section with 3 cards', () => {
-		cy.visit('/trading-view');
 		cy.contains(/Programmatic access/i);
-		cy.get('[data-testid=backtesting]');
-		cy.get('[data-testid=realtime]');
-		cy.get('[data-testid=doc-notebooks]');
-	});
-
-	it('Check links are defined', () => {
-		cy.get('a').each(($a) => {
-			const message = $a.text();
-			// skip check for 'Trading data' nav element (disabled since we're on that page)
-			if (message === 'Trading data') return;
-			expect($a, message).to.have.attr('href').not.contain('undefined');
-		});
-	});
-
-	it('Check links are correct', () => {
-		cy.get('[data-testid=link-blockchains]').invoke('attr', 'href').should('eq', '/trading-view/blockchains');
-
-		cy.get('[data-testid=link-exchanges ]').invoke('attr', 'href').should('eq', '/trading-view/exchanges');
-
-		cy.get('[data-testid=link-tradingpairs]').invoke('attr', 'href').should('eq', '/trading-view/trading-pairs');
-
-		cy.get('[data-testid=link-backtesting]').invoke('attr', 'href').should('eq', '/trading-view/backtesting');
-
-		cy.get('[data-testid=link-realtime]')
-			.invoke('attr', 'href')
-			.should('eq', 'https://tradingstrategy.ai/api/explorer/');
-
-		cy.get('[data-testid=link-notebooks]')
-			.invoke('attr', 'href')
-			.should('eq', 'https://tradingstrategy.ai/docs/programming/index.html');
+		cy.get('a[href="/trading-view/backtesting"]').contains(/Download datasets/i);
+		cy.get('a[href="https://tradingstrategy.ai/api/explorer/"]').contains(/Read API specification/i);
+		cy.get('a[href="https://tradingstrategy.ai/docs/programming/index.html"]').contains(/Read documentation/i);
 	});
 });
