@@ -24,7 +24,7 @@
 		<h3>{title}</h3>
 	</div>
 	<div class="content">
-		<slot />
+		<div class="text"><slot /></div>
 
 		{#if buttonLabel}
 			<div bind:this={button} class="button"><Button label={buttonLabel} href={targetUrl} /></div>
@@ -57,15 +57,15 @@
 	}
 
 	.content {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		gap: 2rem;
+	}
+
+	.text {
+		display: grid;
 		gap: 1rem;
 		font: 400 var(--fs-ui-md);
 		letter-spacing: 0.01em;
-	}
-
-	.button {
-		display: none;
 	}
 
 	@media (--viewport-md-up) {
@@ -76,7 +76,7 @@
 		}
 
 		.horizontal .content {
-			align-items: start;
+			gap: 1rem;
 			text-align: left;
 		}
 
@@ -86,10 +86,6 @@
 
 		.horizontal:hover h3 {
 			text-decoration: none;
-		}
-
-		.horizontal .button {
-			display: block;
 		}
 	}
 </style>
