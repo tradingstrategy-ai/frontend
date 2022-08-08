@@ -60,7 +60,6 @@
 		display: grid;
 		gap: 1rem;
 		font: 400 var(--fs-ui-lg);
-		line-height: 24px;
 	}
 
 	.text :global * {
