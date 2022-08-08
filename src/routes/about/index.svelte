@@ -1,7 +1,8 @@
 <script lang="ts">
 	import IntroHero from './_IntroHero.svelte';
 	import Audience from './_Audience.svelte';
-	import Inquiry from './_Inquiry.svelte';
+	import Banner from '$lib/components/Banner.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Partners from './_Partners.svelte';
 	import Platform from './_Platform.svelte';
 
@@ -18,9 +19,9 @@
 	<IntroHero />
 	<Audience />
 
-	<Inquiry
+	<Banner
 		title="Are you an institutional investor looking to create your own private strategies and deploy them on our protocol?"
-		--max-width="680px"
+		maxWidth="850px"
 	>
 		<p>We offer private solutions for you to access new decentralised markets and DeFi protocols:</p>
 		<ul>
@@ -29,13 +30,17 @@
 			<li><strong>Create and deploy private strategies</strong> or invest in existing strategies</li>
 			<li><strong>Host private strategies</strong> on your own private server(s)</li>
 		</ul>
-	</Inquiry>
+
+		<svelte:fragment slot="cta">
+			<Button label="Contact now" href="mailto:info@tradingstrategy.ai" />
+		</svelte:fragment>
+	</Banner>
 
 	<Partners />
 
 	<Platform />
 
-	<Inquiry title="Do you want to trade on decentralised markets?" --max-width="840px">
+	<Banner title="Do you want to trade on decentralised markets?">
 		<p>
 			You can leverage our decentralised market data for your market analytics, technical analysis, service or platform.
 		</p>
@@ -46,9 +51,14 @@
 			<li>Customer support with <strong>24 hour response time</strong> (business days)</li>
 			<li><strong>Flexible payment plans</strong> from upfront payment, 14-day net, quarterly invoice payment</li>
 		</ul>
-	</Inquiry>
 
-	<Inquiry secondary title="Get in touch">
+		<svelte:fragment slot="cta">
+			<Button label="Contact now" href="mailto:info@tradingstrategy.ai" />
+		</svelte:fragment>
+	</Banner>
+
+	<!--
+	<Banner secondary title="Get in touch">
 		<div class="get-in-touch-ctas" slot="cta">
 			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">
 				Send us an email
@@ -59,7 +69,8 @@
 				<img src={DiscordIcon} alt="discord" />
 			</a>
 		</div>
-	</Inquiry>
+	</Banner>
+-->
 </main>
 
 <style>
