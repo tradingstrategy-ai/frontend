@@ -18,78 +18,55 @@
 	<section class="ds-container">
 		<h2>Follow us</h2>
 
-		<ContentTile
-			title="Blog"
-			icon="newspaper"
-			text="Subscribe to our blog where we provide protocol updates, industry insights and algo trading tips."
-			targetUrl="/blog"
-		/>
+		<ContentTile title="Blog" icon="newspaper" targetUrl="/blog">
+			Subscribe to our blog where we provide protocol updates, industry insights and algo trading tips.
+		</ContentTile>
 
-		<ContentTile
-			title="Twitter"
-			icon="twitter"
-			text="Follow us on Twitter for trading alerts, DeFi insight and protocol news."
-			targetUrl="https://twitter.com/TradingProtocol"
-		/>
+		<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
+			Follow us on Twitter for trading alerts, DeFi insight and protocol news.
+		</ContentTile>
 
-		<ContentTile
-			title="YouTube"
-			icon="youtube"
-			text="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
-			targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-		/>
+		<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
+			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
+		</ContentTile>
 
-		<ContentTile
-			title="LinkedIn"
-			icon="linkedin"
-			text="Follow us on LinkedIn and join our community of traders, developers and quant experts."
-			targetUrl="https://www.linkedin.com/company/trading-strategy/"
-		/>
+		<ContentTile title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
+			Follow us on LinkedIn and join our community of traders, developers and quant experts.
+		</ContentTile>
 
-		<ContentTile
-			title="Telegram"
-			icon="telegram"
-			text="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
-			targetUrl="https://t.me/trading_protocol"
-		/>
+		<ContentTile title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
+			Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
+		</ContentTile>
 
-		<ContentTile
-			title="Newsletter"
-			icon="mail"
-			text="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
-			targetUrl="https://newsletter.tradingstrategy.ai/"
-		/>
+		<ContentTile title="Newsletter" icon="mail" targetUrl="https://newsletter.tradingstrategy.ai/">
+			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
+		</ContentTile>
 	</section>
 
 	<section class="ds-container">
 		<h2>Discuss & develop</h2>
 
-		<ContentTile
-			title="Discord chat"
-			icon="discord"
-			text="Join our expert community of traders, developers, and analysts and DeFi specialists."
-			targetUrl="https://discord.gg/en8tW6MDtw"
-		/>
+		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
+			Join our expert community of traders, developers, and analysts and DeFi specialists.
+		</ContentTile>
 
-		<ContentTile
-			title="GitHub"
-			icon="github"
-			text="Explore Trading Strategy open-source code on our GitHub repository."
-			targetUrl="https://github.com/tradingstrategy-ai/"
-		/>
+		<ContentTile title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
+			Explore Trading Strategy open-source code on our GitHub repository.
+		</ContentTile>
 
 		<ContentTile
 			title="Algorithm tutorials"
 			icon="book"
-			text="Learn how to write trading algorithms with our documentation and run backtests."
 			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-		/>
+		>
+			Learn how to write trading algorithms with our documentation and run backtests.
+		</ContentTile>
 	</section>
 </main>
 
 <style>
 	section {
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
 		gap: 2rem;
 		padding-top: 2rem;
 		padding-bottom: 2rem;
@@ -97,23 +74,13 @@
 
 	section h2 {
 		grid-column: 1 / -1;
-		font: var(--f-h3-medium);
-	}
-
-	@media (--viewport-md-up) {
-		section {
-			padding-top: 2.75rem;
-			padding-bottom: 2.75rem;
-		}
-
-		section h2 {
-			font: 600 var(--fs-heading-xl);
-		}
+		font: var(--f-h2-medium);
 	}
 
 	@media (--viewport-lg-up) {
-		section h2 {
-			font: 600 var(--fs-heading-xl);
+		section {
+			padding-top: 2.75rem;
+			padding-bottom: 2.75rem;
 		}
 	}
 </style>

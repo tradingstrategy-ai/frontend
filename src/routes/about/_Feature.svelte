@@ -55,7 +55,7 @@
 	}
 
 	.col-image img {
-		object-fit: scale-down;
+		object-fit: fill;
 		width: 65%;
 		margin: 2rem 0;
 	}
