@@ -26,12 +26,11 @@
 	}
 
 	section h1 {
-		font: var(--f-h2-medium);
 		margin-bottom: 0.75rem;
 	}
 
 	.content {
-		font: var(--f-h5-roman);
+		font: var(--f-h4-roman);
 	}
 
 	.media {
@@ -63,16 +62,6 @@
 
 		.media :global svg {
 			max-width: unset;
-		}
-	}
-
-	@media (--viewport-lg-up) {
-		section h1 {
-			font: 600 var(--fs-heading-xxl);
-		}
-
-		.content {
-			font: 500 var(--fs-heading-md);
 		}
 	}
 </style>

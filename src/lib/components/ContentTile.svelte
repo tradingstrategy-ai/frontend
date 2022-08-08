@@ -27,7 +27,8 @@
 
 <style>
 	.tile {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: 2rem;
 		border: 2px solid var(--c-border-1);
 		padding: 2.5rem 1.5rem;
@@ -57,14 +58,22 @@
 	.text {
 		display: grid;
 		gap: 1rem;
-		font: 400 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		font: 400 var(--fs-ui-lg);
+		line-height: 24px;
+	}
+
+	.text :global * {
+		font: inherit;
 	}
 
 	@media (--viewport-md-up) {
 		.horizontal {
-			grid-template-columns: 1fr 1fr;
+			flex-direction: row;
 			align-items: center;
+		}
+
+		.horizontal > * {
+			flex: 1;
 		}
 
 		.horizontal .content {
