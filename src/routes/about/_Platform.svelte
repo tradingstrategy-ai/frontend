@@ -2,17 +2,15 @@
 	import Feature from './_Feature.svelte';
 </script>
 
-<section class="container">
-	<div class="row">
-		<div class="col text-center">
-			<h2>The Trading Strategy protocol</h2>
-			<p>Trading Strategy is the first protocol replacing investment managers with code.</p>
-			<p>
-				<a href="https://tradingstrategy.ai/docs/protocol/comparison.html">Read how</a>
-				Trading Strategy protocol compares to yield farming and quantative hedge funds.
-			</p>
-		</div>
-	</div>
+<section class="ds-container">
+	<header>
+		<h2>The Trading Strategy protocol</h2>
+		<p>Trading Strategy is the first protocol replacing investment managers with code.</p>
+		<p>
+			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html">Read how</a>
+			Trading Strategy protocol compares to yield farming and quantative hedge funds.
+		</p>
+	</header>
 
 	<Feature title="Active on-chain trading" image="crypto/blockchain-as-train-blocks.svg">
 		<li>
@@ -74,17 +72,41 @@
 </section>
 
 <style>
-	h2 {
+	section {
+		grid-template-columns: auto;
+		gap: 5rem;
+		padding-top: 2rem;
+		padding-bottom: 4rem;
+	}
+
+	header {
+		grid-column: 1 / -1;
 		margin-bottom: 1.5rem;
 	}
 
-	p {
-		font-size: 1.125rem;
-		margin: 0;
+	header h2 {
+		margin-bottom: 1.5rem;
+		text-align: center;
+	}
+
+	header p {
+		font: var(--f-h5-roman);
 	}
 
 	a {
-		font-weight: bold;
-		text-decoration: underline;
+		font-weight: 600;
+		border-bottom: 1px solid currentColor;
+	}
+
+	@media (--viewport-md-up) {
+		section {
+			gap: 8rem;
+			padding-top: 3rem;
+			padding-bottom: 10rem;
+		}
+
+		header p {
+			text-align: center;
+		}
 	}
 </style>
