@@ -121,6 +121,7 @@
 			icon="24h"
 			targetUrl="https://tradingstrategy.ai/api/explorer/"
 			buttonLabel="Read API specification"
+            external={true}
 		>
 			<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
 			<p>Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed.</p>
