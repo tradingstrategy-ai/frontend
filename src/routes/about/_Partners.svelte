@@ -1,8 +1,12 @@
 <script lang="ts">
 	import AvalancheImage from '$lib/assets/partners/avalanche.svg?raw';
+	import BlizzardImage from '$lib/assets/partners/blizzard.svg?raw';
+	import ChartIqImage from '$lib/assets/partners/chartiq.svg?raw';
+	import InfinityVenturesImage from '$lib/assets/partners/infinity-ventures-crypto.svg?raw';
+	import MenthaPartnersImage from '$lib/assets/partners/mentha-partners.svg?raw';
 	import TypesenseImage from '$lib/assets/partners/typesense.svg?raw';
 	import TimescaleImage from '$lib/assets/partners/timescale.svg?raw';
-	import ChartIqImage from '$lib/assets/partners/chartiq.svg?raw';
+	import PetRockCapitalImage from '$lib/assets/partners/pet-rock-capital.svg?raw';
 	import RepublicCapitalImage from '$lib/assets/partners/republic-capital.svg?raw';
 </script>
 
@@ -14,20 +18,36 @@
 			{@html AvalancheImage}
 		</a>
 
-		<a href="https://typesense.org/" target="_blank" style:width="150px">
-			{@html TypesenseImage}
+		<a href="https://twitter.com/blizzardfund" target="_blank" style:width="180px">
+			{@html BlizzardImage}
 		</a>
 
-		<a href="https://www.timescale.com/" target="_blank" style:width="170px">
-			{@html TimescaleImage}
-		</a>
-
-		<a href="https://cosaic.io/chartiq/" target="_blank" style:width="127px">
+		<a href="https://cosaic.io/chartiq/" target="_blank" style:width="160px">
 			{@html ChartIqImage}
 		</a>
 
-		<a href="https://www.republiccapital.co/" target="_blank" style:width="60px">
+		<a href="https://www.ivcrypto.io/" target="_blank" style:width="170px" style:opacity="0.9">
+			{@html InfinityVenturesImage}
+		</a>
+
+		<a href="https://mentha.partners/" target="_blank" style:width="190px" style:opacity="0.8">
+			{@html MenthaPartnersImage}
+		</a>
+
+		<a href="https://www.petrock.capital/" target="_blank" style:width="250px">
+			{@html PetRockCapitalImage}
+		</a>
+
+		<a href="https://www.republiccapital.co/" target="_blank" style:width="85px">
 			{@html RepublicCapitalImage}
+		</a>
+
+		<a href="https://www.timescale.com/" target="_blank" style:width="220px">
+			{@html TimescaleImage}
+		</a>
+
+		<a href="https://typesense.org/" target="_blank" style:width="160px">
+			{@html TypesenseImage}
 		</a>
 	</div>
 </section>
@@ -37,8 +57,8 @@
 		grid-template-columns: auto;
 		justify-content: center;
 		gap: 4rem;
-		padding-top: 2.5rem;
-		padding-bottom: 2.5rem;
+		padding-top: 6rem;
+		padding-bottom: 4rem;
 	}
 
 	h2 {
@@ -46,7 +66,7 @@
 	}
 
 	div {
-		max-width: 800px;
+		max-width: 1200px;
 		display: flex;
 		flex-direction: column;
 		gap: 3rem 4rem;
@@ -60,9 +80,8 @@
 
 	@media (--viewport-md-up) {
 		section {
-			gap: 5rem;
-			padding-top: 5rem;
-			padding-bottom: 5rem;
+			padding-top: 10rem;
+			padding-bottom: 10rem;
 		}
 
 		div {
