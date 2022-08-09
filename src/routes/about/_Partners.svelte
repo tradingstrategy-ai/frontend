@@ -54,6 +54,10 @@
 		align-items: center;
 	}
 
+	a :global svg * {
+		fill: currentcolor;
+	}
+
 	@media (--viewport-md-up) {
 		section {
 			gap: 5rem;
