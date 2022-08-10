@@ -57,58 +57,10 @@
 		</svelte:fragment>
 	</Banner>
 
-	<!--
 	<Banner secondary title="Get in touch">
-		<div class="get-in-touch-ctas" slot="cta">
-			<a class="btn-cta" href="mailto:info@tradingstrategy.ai">
-				Send us an email
-				<img src={EmailIcon} alt="email" />
-			</a>
-			<a class="btn-cta" href="https://discord.gg/en8tW6MDtw" target="_blank">
-				Join our Discord server
-				<img src={DiscordIcon} alt="discord" />
-			</a>
-		</div>
+		<svelte:fragment slot="cta">
+			<Button label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
+			<Button label="Join our Discord server" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
+		</svelte:fragment>
 	</Banner>
--->
 </main>
-
-<style>
-	main :global(.btn-cta) {
-		display: inline-block;
-		padding: 0.75em 1.25em;
-		background: var(--c-ink);
-		color: var(--c-parchment);
-		font-size: 0.8rem;
-		font-weight: 500;
-		text-align: center;
-		text-transform: capitalize;
-	}
-
-	main :global(.btn-cta:hover) {
-		opacity: 0.8;
-	}
-
-	main :global(.btn-cta img) {
-		height: 16px;
-		margin-left: 0.25rem;
-		margin-bottom: 2px;
-	}
-
-	main :global(ul) {
-		padding-left: 1.5rem;
-	}
-
-	main :global(li) {
-		line-height: 1.2;
-		margin-bottom: 1em;
-	}
-
-	.get-in-touch-ctas {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, 13rem);
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-	}
-</style>
