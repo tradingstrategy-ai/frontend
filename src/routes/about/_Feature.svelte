@@ -1,18 +1,15 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { imageUrl } from '$lib/helpers/assets';
 
 	export let title: string;
 	export let image: string;
 	export let ctaUrl: string | undefined = undefined;
 	export let ctaTarget: string | undefined = undefined;
-
-	const imageAsset = imageUrl(`/milano/${image}`);
 </script>
 
 <div class="feature">
 	<div class="media">
-		<img src={imageAsset} alt={title} />
+		{@html image}
 	</div>
 
 	<div class="content">
@@ -66,8 +63,7 @@
 		justify-content: center;
 	}
 
-	.media img {
-		object-fit: fill;
+	.media :global svg {
 		width: 100%;
 		max-width: 480px;
 	}
@@ -99,7 +95,7 @@
 			align-self: start;
 		}
 
-		.media img {
+		.media :global svg {
 			width: 80%;
 		}
 	}

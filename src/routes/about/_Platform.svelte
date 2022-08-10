@@ -1,5 +1,12 @@
 <script lang="ts">
 	import Feature from './_Feature.svelte';
+
+	import BlockchainImage from '$lib/assets/milano/crypto/blockchain-as-train-blocks.svg?raw';
+	import Database1Image from '$lib/assets/milano/dev/database-1.svg?raw';
+	import SecurityImage from '$lib/assets/milano/cs-support/security-2.svg?raw';
+	import AnalyzeData3Image from '$lib/assets/milano/work/analyze-data-3.svg?raw';
+	import AnalyzeData1Image from '$lib/assets/milano/work/analyze-data-1.svg?raw';
+	import Database5Image from '$lib/assets/milano/dev/database-5.svg?raw';
 </script>
 
 <section class="ds-container">
@@ -12,7 +19,7 @@
 		</p>
 	</header>
 
-	<Feature title="Active on-chain trading" image="crypto/blockchain-as-train-blocks.svg">
+	<Feature title="Active on-chain trading" image={BlockchainImage}>
 		<li>
 			Protocol is fully compatible with 1M+ trading pairs on all major decentralised markets and blockchains such as
 			Uniswap, PancakeSwap on Ethereum, Polygon and Binance Smart Chain
@@ -25,7 +32,7 @@
 		<li>Multipair and portfolio rebalancing strategies are supported</li>
 	</Feature>
 
-	<Feature title="100% control of your funds" image="dev/database-1.svg">
+	<Feature title="100% control of your funds" image={Database1Image}>
 		<li>
 			Deposit and withdraw in real-time. As a non-custodial protocol, there is no counter-party risk with fund
 			management or trade execution
@@ -33,7 +40,7 @@
 		<li>Invest into and exit a strategy whenever you chose</li>
 	</Feature>
 
-	<Feature title="Protocol security" image="cs-support/security-2.svg">
+	<Feature title="Protocol security" image={SecurityImage}>
 		<li>Smart contracts allow fund transfer only into trades and withdrawals back to the investor’s own wallet</li>
 		<li>
 			Smart contract based fund management and Oracle consensus: No centralised parties that can enable insider fraud
@@ -44,7 +51,7 @@
 		<li>Audit partners to audit and verify smart contract code</li>
 	</Feature>
 
-	<Feature title="Market data" image="work/analyze-data-3.svg" ctaUrl="/trading-view">
+	<Feature title="Market data" image={AnalyzeData3Image} ctaUrl="/trading-view">
 		<li>
 			We collect raw market data for 1M+ trading pairs directly from decentralised exchanges on multiple integrated
 			blockchains
@@ -54,7 +61,7 @@
 
 	<Feature
 		title="Real-time API (REST)"
-		image="work/analyze-data-1.svg"
+		image={AnalyzeData1Image}
 		ctaUrl="https://tradingstrategy.ai/api/explorer/"
 		ctaTarget="_blank"
 	>
@@ -64,7 +71,7 @@
 		<li>OHLC candles for exchange liquidity</li>
 	</Feature>
 
-	<Feature title="Backtesting data" image="dev/database-5.svg" ctaUrl="/trading-view/backtesting">
+	<Feature title="Backtesting data" image={Database5Image} ctaUrl="/trading-view/backtesting">
 		<li>All historical price, volume and liquidity data for decentralised exchanges (DEX)</li>
 		<li>Parquet file format</li>
 		<li>Large files</li>
