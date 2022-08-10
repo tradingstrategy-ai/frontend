@@ -52,7 +52,6 @@
 	div :global ol,
 	div :global ul {
 		margin: 0;
-		padding-left: 1.25rem;
 	}
 
 	div :global li {

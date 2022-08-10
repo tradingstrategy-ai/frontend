@@ -46,12 +46,10 @@
 	.content ul {
 		display: grid;
 		gap: 1.5rem;
-		margin: 0;
 	}
 
 	.content :global li {
 		font: 400 var(--fs-ui-xl);
-		margin: 0;
 	}
 
 	.content .cta {

@@ -18,14 +18,12 @@
 	}
 
 	ul {
-		margin: 0;
 		flex: 1;
 		display: grid;
 		gap: 1rem;
 	}
 
 	.content-list-box :global li {
-		margin: 0;
 		font: 400 var(--fs-ui-md);
 		letter-spacing: 0.01em;
 	}

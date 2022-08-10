@@ -31,14 +31,6 @@
 		max-width: var(--max-width);
 	}
 
-	.content :global ul {
-		margin: 0;
-	}
-
-	.content :global li {
-		text-align: left;
-	}
-
 	.content :global p,
 	.content :global li {
 		font: 400 var(--fs-ui-xl);
