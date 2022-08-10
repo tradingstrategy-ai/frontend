@@ -108,8 +108,6 @@ body:not([data-color-mode='dark']) {
 	--c-text-5: var(--c-ink-light);
 	--c-text-6: var(--c-parchment);
 	--c-text-7: var(--c-gray);
-
-	--c-logotype: var(--c-ink);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -136,7 +134,5 @@ body:not([data-color-mode='dark']) {
 		--c-text-5: var(--c-gray-light);
 		--c-text-6: var(--c-ink-light);
 		--c-text-7: var(--c-gray-light);
-
-		--c-logotype: var(--c-parchment);
 	}
 }
