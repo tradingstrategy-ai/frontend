@@ -31,7 +31,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
-		border: 2px solid var(--c-border-1);
+		border: 2px solid var(--c-border-2);
 		padding: 2.5rem 1.5rem;
 		text-align: center;
 		--social-icon-size: 64px;

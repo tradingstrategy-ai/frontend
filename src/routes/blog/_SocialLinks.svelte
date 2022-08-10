@@ -43,9 +43,12 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
-		letter-spacing: 0.01em;
-		text-decoration: none;
+	}
+
+	a > span {
 		color: var(--c-text-4);
+		text-decoration: none;
+		letter-spacing: 0.01em;
 	}
 
 	.layout--post a {
@@ -58,7 +61,7 @@
 		--icon-size: 24px;
 	}
 
-	a:hover {
+	a:hover > span {
 		text-decoration: underline;
 		color: var(--c-text-1);
 	}

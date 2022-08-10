@@ -41,7 +41,7 @@
 		align-items: center;
 		height: 3.5rem;
 		padding: 0 1.5rem;
-		border: 1px solid var(--c-background-3);
+		border: 1px solid transparent;
 		border-radius: 0;
 		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
@@ -52,16 +52,18 @@
 
 	.primary {
 		background: var(--c-background-3);
-		color: var(--c-body);
+		color: var(--c-text-6);
+		border-color: var(--c-background-3);
 	}
 
 	.secondary {
-		background: var(--c-body);
-		color: var(--c-background-3);
+		background: var(--c-background-5);
+		color: var(--c-text-1);
+		border-color: var(--c-border-2);
 	}
 
 	:focus {
-		outline: 2px solid var(--c-border-2);
+		outline: 2px solid var(--c-background-4);
 	}
 
 	:hover {

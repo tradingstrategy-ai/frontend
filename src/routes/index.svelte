@@ -164,10 +164,11 @@
 
 	.strategies .coming-soon {
 		font: 500 var(--fs-ui-sm);
+		color: var(--c-text-2);
 		letter-spacing: 0.02em;
 		text-transform: uppercase;
 		padding: 0.75rem 1.25rem;
-		border: 1px solid var(--c-border-2);
+		border: 1px solid var(--c-parchment-super-dark);
 		border-radius: 2rem;
 	}
 

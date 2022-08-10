@@ -13,6 +13,6 @@
 <style>
 	time {
 		font: var(--timestamp-font, 400 var(--fs-ui-lg));
-		color: var(--c-text-4);
+		color: var(--c-text-2);
 	}
 </style>

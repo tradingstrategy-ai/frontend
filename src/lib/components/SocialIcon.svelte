@@ -16,7 +16,7 @@
 		width: var(--size);
 		border-radius: calc(var(--size) / 2);
 		background: var(--c-background-3);
-		color: var(--c-background-1);
+		color: var(--c-body);
 		--icon-size: calc(var(--size) / 2);
 	}
 

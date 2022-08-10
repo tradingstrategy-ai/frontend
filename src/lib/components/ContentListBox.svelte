@@ -10,7 +10,7 @@
 
 <style>
 	.content-list-box {
-		border: 2px solid var(--c-border-1);
+		border: 2px solid var(--c-border-2);
 		padding: 1.25rem;
 		display: flex;
 		flex-direction: column;

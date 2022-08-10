@@ -106,16 +106,17 @@
 	div :global pre {
 		margin: 1.5rem 0;
 		padding: 1.5rem;
-		background: var(--c-ink);
-		border: 2px solid var(--c-gray-extra-dark);
+		background: var(--c-background-7);
+		border: 2px solid var(--c-border-1);
 		border-radius: 0.375rem;
 		color: var(--c-parchment);
 	}
 
 	div :global blockquote {
 		margin: 1.5rem 0 1.5rem 0.75rem;
-		padding: 1rem;
+		padding: 1.5rem;
 		font: var(--f-text-body-regular);
+		color: var(--c-text-3);
 		background: var(--c-background-1);
 		box-shadow: -0.75rem 0.75rem 0 var(--c-background-4);
 	}
