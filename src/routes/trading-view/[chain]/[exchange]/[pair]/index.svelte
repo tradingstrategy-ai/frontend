@@ -103,8 +103,8 @@ Render the pair trading page
 			<div class="col-md-12">
 				<h1>
 					{summary.pair_symbol} token pair on
-					<a href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} </a>
-					on <a href="/trading-view/{chain_slug}">{details.chain_name}</a>
+					{details.exchange_name}
+					on {details.chain_name}
 				</h1>
 			</div>
 		</div>
