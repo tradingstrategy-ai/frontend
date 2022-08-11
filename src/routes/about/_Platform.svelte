@@ -14,8 +14,10 @@
 		<h2>The Trading Strategy protocol</h2>
 		<p>Trading Strategy is the first protocol replacing investment managers with code.</p>
 		<p>
-			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html">Read how</a>
-			Trading Strategy protocol compares to yield farming and quantative hedge funds.
+			Read how Trading Strategy protocol
+			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html"
+				>compares to yield farming and quantative hedge funds</a
+			>.
 		</p>
 	</header>
 
