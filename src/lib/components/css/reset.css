@@ -19,3 +19,9 @@ svg {
 	overflow: hidden;
 	vertical-align: middle;
 }
+
+ul {
+	margin: 0;
+	padding-left: 2.5ch;
+	list-style-type: square;
+}

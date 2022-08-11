@@ -7,7 +7,7 @@
 	export let targetUrl: string;
 	export let buttonLabel: string = undefined;
 	export let horizontal = false;
-    export let external = false;
+	export let external = false;
 
 	$: tag = buttonLabel ? 'div' : 'a';
 </script>
@@ -21,7 +21,7 @@
 		<div class="text"><slot /></div>
 
 		{#if buttonLabel}
-			<div class="button"><Button external={external} label={buttonLabel} href={targetUrl} /></div>
+			<div class="button"><Button {external} label={buttonLabel} href={targetUrl} /></div>
 		{/if}
 	</div>
 </svelte:element>
@@ -60,7 +60,6 @@
 		display: grid;
 		gap: 1rem;
 		font: 400 var(--fs-ui-lg);
-		line-height: 24px;
 	}
 
 	.text :global * {

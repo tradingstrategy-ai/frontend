@@ -1,77 +1,99 @@
 <script lang="ts">
-	import { imageUrl } from '$lib/helpers/assets';
+	import Button from '$lib/components/Button.svelte';
 
 	export let title: string;
 	export let image: string;
 	export let ctaUrl: string | undefined = undefined;
 	export let ctaTarget: string | undefined = undefined;
-
-	const imageAsset = imageUrl(`/milano/${image}`);
 </script>
 
-<div class="row">
-	<div class="col-md col-image">
-		<img src={imageAsset} alt={title} />
+<div class="feature">
+	<div class="media">
+		{@html image}
 	</div>
 
-	<div class="col-md col-text">
-		<h5>{title}</h5>
+	<div class="content">
+		<h3>{title}</h3>
 		<ul>
 			<slot />
 		</ul>
 		{#if ctaUrl}
-			<div class="cta"><a class="btn-cta" href={ctaUrl} target={ctaTarget}>See More</a></div>
+			<div class="cta">
+				<Button label="See more" href={ctaUrl} target={ctaTarget} />
+			</div>
 		{/if}
 	</div>
 </div>
 
 <style>
-	.row {
+	.feature {
 		display: flex;
-		margin-top: 4em;
+		flex-direction: column;
+		gap: 2rem 5rem;
 	}
 
-	.row:nth-child(even) {
-		flex-direction: row-reverse;
-	}
-
-	.col-text {
+	.content {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		gap: 1.5rem;
 	}
 
-	.col-text > * {
-		margin: 0 1rem;
+	.content h3 {
+		font: 600 var(--fs-heading-md);
 	}
 
-	.col-text h5 {
-		margin-bottom: 1rem;
+	.content ul {
+		display: grid;
+		gap: 1.5rem;
 	}
 
-	.col-image {
+	.content :global li {
+		font: 400 var(--fs-ui-xl);
+	}
+
+	.content .cta {
+		display: grid;
+	}
+
+	.media {
 		display: flex;
 		justify-content: center;
 	}
 
-	.col-image img {
-		object-fit: fill;
-		width: 65%;
-		margin: 2rem 0;
+	.media :global svg {
+		width: 100%;
+		max-width: 480px;
 	}
 
-	@media (max-width: 768px) {
-		.row {
-			margin-top: 2rem;
+	@media (--viewport-md-up) {
+		.content .cta {
+			align-self: center;
 		}
 	}
 
-	@media (max-width: 576px) {
-		.col-text .cta {
-			text-align: center;
+	@media (--viewport-lg-up) {
+		.feature {
+			flex-direction: row;
 		}
 
-		.col-image img {
+		.feature:nth-child(even) {
+			flex-direction: row-reverse;
+		}
+
+		.feature > * {
+			flex: 1;
+		}
+
+		.content {
+			gap: 2rem;
+		}
+
+		.content .cta {
+			align-self: start;
+		}
+
+		.media :global svg {
 			width: 80%;
 		}
 	}
