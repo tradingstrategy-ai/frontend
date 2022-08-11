@@ -1,6 +1,6 @@
 :root {
 	/* Global settings for design-system layout */
-	--ds-container-max-width: 1344px;
+	--ds-container-max-width: 1324px;
 	--ds-breakpoint: 1024px;
 	--ds-container-margin: 1.5rem;
 	--ds-gap: 2.5rem;
