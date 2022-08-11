@@ -17,7 +17,7 @@
 		border-radius: calc(var(--size) / 2);
 		background: var(--c-background-3);
 		color: var(--c-body);
-		--icon-size: calc(var(--size) / 2);
+		--icon-size: calc(var(--size) * var(--social-icon-scale, 0.5));
 	}
 
 	@media (--viewport-md-up) {

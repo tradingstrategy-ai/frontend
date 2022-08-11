@@ -144,14 +144,20 @@
 </main>
 
 <style>
-	section {
-		grid-template-columns: 1fr;
-		gap: 2rem;
-		padding-top: 2rem;
-		padding-bottom: 2rem;
+	main {
+		display: grid;
+		gap: 4.5rem;
 	}
 
-	section h2 {
-		font: var(--f-h3-medium);
+	section {
+		--ds-container-max-width: 1020px;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	@media (--viewport-md-up) {
+		main {
+			gap: 6.25rem;
+		}
 	}
 </style>
