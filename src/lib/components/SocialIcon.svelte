@@ -22,7 +22,7 @@
 
 	@media (--viewport-md-up) {
 		div {
-			--size: var(--social-icon-size, 64px);
+			--size: var(--social-icon-size, 48px);
 		}
 	}
 </style>
