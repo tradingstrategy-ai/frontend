@@ -45,20 +45,21 @@
 		gap: 0.5em;
 	}
 
-	a > span {
-		color: var(--c-text-4);
-		text-decoration: none;
-		letter-spacing: 0.01em;
-	}
-
 	.layout--post a {
 		font: 500 var(--fs-ui-sm);
+		letter-spacing: 0.02em;
 		--icon-size: 20px;
 	}
 
 	.layout--index a {
 		font: 500 var(--fs-ui-md);
+		letter-spacing: 0.01em;
 		--icon-size: 24px;
+	}
+
+	a > span {
+		text-decoration: none;
+		color: var(--c-text-4);
 	}
 
 	a:hover > span {
@@ -84,6 +85,7 @@
 
 		.layout--post a {
 			font: 500 var(--fs-ui-md);
+			letter-spacing: 0.01em;
 			--icon-size: 24px;
 		}
 

@@ -32,7 +32,7 @@
 	div :global p,
 	div :global ol li,
 	div :global ul li {
-		font: var(--f-text-small-regular);
+		font: var(--f-text-body-regular);
 	}
 
 	div :global p:not(:first-of-type) {
