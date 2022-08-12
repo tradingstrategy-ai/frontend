@@ -270,7 +270,6 @@
 	}
 
 	.card-body a {
-		color: var(--link-color);
 		text-decoration: none;
 		font-weight: bold;
 		transition: 0.3s;
@@ -278,7 +277,7 @@
 
 	.card-body a:hover {
 		text-decoration: underline;
-		color: var(--link-color);
+		color: var(--c-text-1);
 	}
 
 	.table-datasets :global(time) {

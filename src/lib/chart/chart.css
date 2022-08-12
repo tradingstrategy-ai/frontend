@@ -4,27 +4,27 @@
  */
 .stx_candle_up,
 .stx_candle_shadow_up {
-	color: var(--price-up-green);
-	border-left-color: var(--price-up-green);
+	color: var(--c-bullish);
+	border-left-color: var(--c-bullish);
 }
 
 .stx_candle_down,
 .stx_candle_shadow_down {
-	color: var(--price-down-red);
-	border-left-color: var(--price-down-red);
+	color: var(--c-bearish);
+	border-left-color: var(--c-bearish);
 }
 
 .stx_current_hr_up {
-	background-color: var(--price-up-green);
+	background-color: var(--c-bullish);
 }
 
 .stx_current_hr_down {
-	background-color: var(--price-down-red);
+	background-color: var(--c-bearish);
 }
 
 .stx_volume_underlay_up,
 .stx_volume_underlay_down {
-	border-left-color: var(--primary);
+	border-left-color: var(--c-body);
 	opacity: 0.3;
 }
 

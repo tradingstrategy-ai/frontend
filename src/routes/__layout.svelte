@@ -50,64 +50,25 @@
 
 <style global>
 	/**
-     * Custom media declarations (via PostCSS Custom Media plugin) - enables `@media (--var-name) {}`
-     * Must be declared in __layout to ensure proper CSS load order in SSR.
-     */
+	 * Custom media declarations (via PostCSS Custom Media plugin) - enables `@media (--var-name) {}`
+	 * Must be declared in __layout to ensure proper CSS load order in SSR.
+	 */
 	@custom-media --viewport-md-up (width >= 768px);
 	@custom-media --viewport-lg-up (width >= 1024px);
 	@custom-media --viewport-md-down (width < 1024px);
 	@custom-media --viewport-sm-down (width < 768px);
 
-	:root {
-		/* Old CSS color vars still used in various components (refactor/remove) */
-		--price-up-green: var(--c-bullish);
-		--price-down-red: var(--c-bearish);
-		--link-underline: var(--c-bullish-dark);
-		--badge-exchange: var(--c-bullish-dark);
-		--badge-token: #b99537;
-		--badge-pair: #496abf;
-	}
-
 	a.body-link {
-		border-bottom: 1px solid var(--link-underline);
-	}
-
-	a.body-link:hover {
-		color: var(--link-underline);
+		border-bottom: 1px solid currentColor;
+		font-weight: 500;
 	}
 
 	/* Price action and candle colors */
 	.price-change-green {
-		color: var(--c-bullish-dark);
+		color: var(--c-bullish);
 	}
 
 	.price-change-red {
-		color: var(--c-bearish-dark);
-	}
-
-	/* Entity badge colors */
-	.badge-exchange {
-		background-color: var(--badge-exchange);
-	}
-
-	.badge-token {
-		background-color: var(--badge-token);
-	}
-
-	.badge-pair {
-		background-color: var(--badge-pair);
-	}
-
-	/* Inline SVG icon set colors */
-	.icons-duotone-1 {
-		fill: var(--c-bullish);
-	}
-
-	.icons-duotone-2 {
-		fill: var(--c-bearish);
-	}
-
-	.icons-duotone-1-stroke {
-		stroke: var(--c-bullish);
+		color: var(--c-bearish);
 	}
 </style>

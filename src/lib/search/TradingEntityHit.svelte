@@ -213,6 +213,19 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		background: url('/images/quality-warning.svg') center no-repeat;
 	}
 
+	/* Entity badge colors */
+	.badge-exchange {
+		background-color: var(--c-bullish-dark);
+	}
+
+	.badge-token {
+		background-color: #b99537;
+	}
+
+	.badge-pair {
+		background-color: #496abf;
+	}
+
 	@media (max-width: 576px) {
 		.advanced {
 			margin: 0;

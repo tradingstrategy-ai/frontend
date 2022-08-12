@@ -192,16 +192,16 @@ Advanced Search page
 		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.1ex;
-		color: var(--link-underline);
+		color: var(--c-text-1);
 		cursor: pointer;
 	}
 
 	button.clear-filters:hover {
-		border-bottom: 1px solid var(--link-underline);
+		border-bottom: 1px solid currentColor;
 	}
 
 	button.clear-filters:disabled {
-		color: black;
+		color: var(--c-text-2);
 		font-weight: 400;
 		border-color: transparent;
 		text-decoration: none;
