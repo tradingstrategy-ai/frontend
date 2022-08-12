@@ -114,7 +114,6 @@ Display best or worst performing trading pairs.
 	@media (--viewport-lg-up) {
 		div > h3 {
 			text-align: left;
-			font: var(--f-h2-medium);
 		}
 	}
 
