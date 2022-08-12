@@ -66,6 +66,14 @@
 		max-width: 480px;
 	}
 
+	.media :global svg :not(.bg) {
+		fill: currentColor;
+	}
+
+	.media :global svg .bg {
+		fill: var(--c-body);
+	}
+
 	@media (--viewport-md-up) {
 		.content .cta {
 			align-self: center;
