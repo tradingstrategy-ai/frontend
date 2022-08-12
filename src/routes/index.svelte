@@ -108,16 +108,19 @@
 	{#if posts}
 		<section class="ds-container blog">
 			<h2>Blog</h2>
-			{#each posts as post (post.id)}
-				<BlogPostTile
-					title={post.title}
-					excerpt={post.excerpt}
-					imageUrl={post.feature_image}
-					imageAltText={post.feature_image_alt}
-					slug={post.slug}
-					publishedAt={post.published_at}
-				/>
-			{/each}
+
+			<div class="blog-posts">
+				{#each posts as post (post.id)}
+					<BlogPostTile
+						title={post.title}
+						excerpt={post.excerpt}
+						imageUrl={post.feature_image}
+						imageAltText={post.feature_image_alt}
+						slug={post.slug}
+						publishedAt={post.published_at}
+					/>
+				{/each}
+			</div>
 
 			<div class="cta">
 				<Button label="Read more on blog" href="/blog" />
@@ -130,8 +133,7 @@
 	header {
 		--ds-container-margin: 2rem;
 		background: var(--c-background-1);
-		padding-top: 3.5rem;
-		padding-bottom: 3.5rem;
+		padding-block: 3.5rem;
 	}
 
 	h1 {
@@ -144,13 +146,16 @@
 	}
 
 	section {
-		padding-top: 2.5rem;
-		padding-bottom: 2.5rem;
+		padding-block: 2.5rem;
 	}
 
 	h2 {
 		grid-column: 1 / -1;
 		text-align: center;
+	}
+
+	.top-momentum {
+		row-gap: 1.5rem;
 	}
 
 	.strategies > div {
@@ -159,7 +164,7 @@
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
-		gap: 1.5rem;
+		gap: 4rem;
 	}
 
 	.strategies .coming-soon {
@@ -176,20 +181,21 @@
 		font: var(--f-h5-roman);
 	}
 
-	.blog h2 {
-		margin-bottom: 1rem;
-		font: 600 var(--fs-heading-xl);
+	.blog {
+		grid-template-columns: auto;
+		justify-items: center;
+		padding-block: 4.5rem;
 	}
 
-	.blog .cta {
-		grid-column: 1 / -1;
-		text-align: center;
+	.blog-posts {
+		display: grid;
+		grid-template-columns: auto;
+		gap: var(--ds-gap);
 	}
 
 	@media (--viewport-md-up) {
 		header {
-			padding-top: 12rem;
-			padding-bottom: 12rem;
+			padding-block: 12rem;
 			text-align: center;
 		}
 
@@ -203,13 +209,25 @@
 		}
 
 		section {
-			padding-top: 4rem;
-			padding-bottom: 4rem;
+			padding-block: 4rem;
 		}
 
 		.strategies > div {
-			gap: 4rem;
 			margin-top: 0.5rem;
+		}
+
+		.blog-posts {
+			margin-top: 2rem;
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (width >= 1148px) {
+		.blog-posts {
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-auto-flow: column;
+			grid-auto-columns: 0;
+			overflow-x: hidden;
 		}
 	}
 </style>

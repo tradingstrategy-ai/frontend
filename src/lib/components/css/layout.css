@@ -16,5 +16,5 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(var(--ds-template-col-min), 1fr));
 	gap: var(--ds-gap);
-	padding: 0 calc((100% - var(--ds-container-width)) / 2);
+	padding-inline: calc((100% - var(--ds-container-width)) / 2);
 }

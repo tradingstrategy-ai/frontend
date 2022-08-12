@@ -49,7 +49,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	img {
 		width: 100%;
-		aspect-ratio: 7 / 4;
+		aspect-ratio: 9 / 5;
 		object-fit: cover;
 		transition: opacity var(--transition-duration);
 	}
@@ -81,7 +81,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 	/* Desktop overrides */
 	@media (--viewport-lg-up) {
 		img {
-			aspect-ratio: 5 / 3;
+			aspect-ratio: 8 / 5;
 		}
 
 		.info {
