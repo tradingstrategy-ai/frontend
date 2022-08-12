@@ -17,6 +17,6 @@
 	}
 
 	div :global(.logotype) {
-		fill: var(--c-logotype);
+		fill: currentColor;
 	}
 </style>

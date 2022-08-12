@@ -18,7 +18,7 @@
 	<section class="ds-container">
 		<h2>Follow us</h2>
 
-		<ContentTile title="Blog" icon="newspaper" targetUrl="/blog">
+		<ContentTile title="Blog" icon="reading" targetUrl="/blog">
 			Subscribe to our blog where we provide protocol updates, industry insights and algo trading tips.
 		</ContentTile>
 
@@ -38,7 +38,7 @@
 			Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
 		</ContentTile>
 
-		<ContentTile title="Newsletter" icon="mail" targetUrl="https://newsletter.tradingstrategy.ai/">
+		<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
 			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
 		</ContentTile>
 	</section>
@@ -56,7 +56,7 @@
 
 		<ContentTile
 			title="Algorithm tutorials"
-			icon="book"
+			icon="read-glasses"
 			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 		>
 			Learn how to write trading algorithms with our documentation and run backtests.
@@ -65,22 +65,23 @@
 </main>
 
 <style>
+	main {
+		display: grid;
+		gap: 4.5rem;
+	}
+
 	section {
 		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
 		gap: 2rem;
-		padding-top: 2rem;
-		padding-bottom: 2rem;
 	}
 
 	section h2 {
 		grid-column: 1 / -1;
-		font: var(--f-h2-medium);
 	}
 
-	@media (--viewport-lg-up) {
-		section {
-			padding-top: 2.75rem;
-			padding-bottom: 2.75rem;
+	@media (--viewport-md-up) {
+		main {
+			gap: 6.25rem;
 		}
 	}
 </style>

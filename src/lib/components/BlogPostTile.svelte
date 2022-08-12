@@ -49,7 +49,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	img {
 		width: 100%;
-		aspect-ratio: 7 / 4;
+		aspect-ratio: 9 / 5;
 		object-fit: cover;
 		transition: opacity var(--transition-duration);
 	}
@@ -74,13 +74,14 @@ Display a blog post preview card (e.g, on home page or blog index).
 	}
 
 	p {
-		font: var(--f-text-body-regular);
+		font: 400 var(--fs-text-sm);
+		color: var(--c-text-4);
 	}
 
 	/* Desktop overrides */
 	@media (--viewport-lg-up) {
 		img {
-			aspect-ratio: 5 / 3;
+			aspect-ratio: 8 / 5;
 		}
 
 		.info {
@@ -100,7 +101,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 		}
 
 		.featured img {
-			aspect-ratio: 7 / 6;
+			aspect-ratio: 8 / 7;
 		}
 
 		.featured .info {
@@ -109,6 +110,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 		.featured h3 {
 			font: var(--f-h1-medium);
+		}
+
+		p {
+			font: 400 var(--fs-text-md);
 		}
 	}
 </style>

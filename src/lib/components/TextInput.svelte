@@ -46,14 +46,14 @@
 		padding: 0 0.5rem;
 		height: 2.125rem;
 		border-radius: 0.375rem;
-		border: 2px solid var(--c-text-1);
+		border: 2px solid var(--c-border-2);
 		background: var(--c-body);
 		font: 500 14px/14px var(--ff-display);
 		color: var(--c-text-1);
 	}
 
 	input::placeholder {
-		color: var(--c-text-2);
+		color: var(--c-text-7);
 	}
 
 	input:disabled {
@@ -61,7 +61,7 @@
 	}
 
 	input:focus {
-		outline: var(--c-border-2) solid 2px;
+		outline: var(--c-background-4) solid 2px;
 		outline-offset: 0px;
 		box-shadow: 0 0 8px 2px var(--c-background-2);
 	}

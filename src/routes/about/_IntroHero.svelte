@@ -19,8 +19,7 @@
 	header {
 		grid-template-columns: 1fr;
 		gap: 1.5rem;
-		padding-top: 1.5rem;
-		padding-bottom: 1.5rem;
+		padding-block: 1.5rem;
 	}
 
 	p {
@@ -30,8 +29,7 @@
 	@media (--viewport-md-up) {
 		header {
 			gap: 2rem;
-			padding-top: 4rem;
-			padding-bottom: 4rem;
+			padding-block: 4rem;
 			text-align: center;
 			white-space: pre-line;
 		}

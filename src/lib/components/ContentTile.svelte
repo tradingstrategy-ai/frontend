@@ -28,23 +28,24 @@
 
 <style>
 	.tile {
+		--social-icon-size: 4rem;
+		--social-icon-scale: 0.6;
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
-		border: 2px solid var(--c-border-1);
+		border: 2px solid var(--c-border-2);
 		padding: 2.5rem 1.5rem;
 		text-align: center;
-		--social-icon-size: 64px;
 	}
 
 	.header {
 		display: grid;
+		gap: 1rem;
 		justify-items: center;
 	}
 
 	.header h3 {
-		margin-top: 1rem;
-		padding: 0 4rem;
+		padding-inline: 4rem;
 	}
 
 	.tile[href]:hover h3 {
@@ -58,7 +59,7 @@
 
 	.text {
 		display: grid;
-		gap: 1rem;
+		gap: 2rem;
 		font: 400 var(--fs-ui-lg);
 	}
 
@@ -67,7 +68,12 @@
 	}
 
 	@media (--viewport-md-up) {
+		.tile {
+			--social-icon-size: 4.75rem;
+		}
+
 		.horizontal {
+			--social-icon-size: 5rem;
 			flex-direction: row;
 			align-items: center;
 		}
@@ -77,12 +83,16 @@
 		}
 
 		.horizontal .content {
-			gap: 1rem;
+			gap: 2rem;
 			text-align: left;
 		}
 
+		.horizontal .text {
+			gap: 1.5rem;
+		}
+
 		.horizontal h3 {
-			padding: 0;
+			padding-inline: 2.5rem;
 		}
 	}
 </style>

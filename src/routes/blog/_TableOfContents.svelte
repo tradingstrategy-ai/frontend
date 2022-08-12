@@ -15,7 +15,7 @@
 		gap: 1.5rem;
 		margin: 1.25rem 0 2.25rem 0;
 		padding: 1.25rem;
-		border: var(--c-border-1) solid 1px;
+		border: var(--c-border-2) solid 1px;
 	}
 
 	/**

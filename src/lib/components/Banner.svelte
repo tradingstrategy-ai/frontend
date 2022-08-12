@@ -19,8 +19,7 @@
 		grid-template-columns: auto;
 		gap: 2rem;
 		justify-items: center;
-		padding-top: 2.5rem;
-		padding-bottom: 2.5rem;
+		padding-block: 2.5rem;
 	}
 
 	section:not(.secondary) {
@@ -51,8 +50,7 @@
 	@media (--viewport-md-up) {
 		section {
 			gap: 3rem;
-			padding-top: 5rem;
-			padding-bottom: 5rem;
+			padding-block: 5rem;
 		}
 
 		h3 {

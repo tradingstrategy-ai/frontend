@@ -5,9 +5,6 @@
 	import Button from '$lib/components/Button.svelte';
 	import Partners from './_Partners.svelte';
 	import Platform from './_Platform.svelte';
-
-	import DiscordIcon from './icons/discord.svg';
-	import EmailIcon from './icons/email.svg';
 </script>
 
 <svelte:head>
