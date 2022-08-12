@@ -74,7 +74,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 	}
 
 	p {
-		font: var(--f-text-body-regular);
+		font: 400 var(--fs-text-sm);
 		color: var(--c-text-4);
 	}
 
@@ -101,7 +101,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 		}
 
 		.featured img {
-			aspect-ratio: 7 / 6;
+			aspect-ratio: 8 / 7;
 		}
 
 		.featured .info {
@@ -110,6 +110,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 		.featured h3 {
 			font: var(--f-h1-medium);
+		}
+
+		p {
+			font: 400 var(--fs-text-md);
 		}
 	}
 </style>
