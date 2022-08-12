@@ -42,9 +42,8 @@
 
 <style>
 	section {
-		padding-top: 4rem;
-		padding-bottom: 4rem;
 		gap: 1.5rem 2.5rem;
+		padding-block: 4rem;
 	}
 
 	header {
@@ -64,8 +63,7 @@
 
 	@media (--viewport-md-up) {
 		section {
-			padding-top: 5rem;
-			padding-bottom: 5rem;
+			padding-block: 5rem;
 		}
 
 		header p {

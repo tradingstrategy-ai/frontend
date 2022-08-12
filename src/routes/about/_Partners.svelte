@@ -80,8 +80,7 @@
 
 	@media (--viewport-md-up) {
 		section {
-			padding-top: 10rem;
-			padding-bottom: 10rem;
+			padding-block: 10rem;
 		}
 
 		div {
