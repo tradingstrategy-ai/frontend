@@ -71,14 +71,9 @@
 /* 
  Color schemes
 */
-
-/**
- * This breaks some UI elements (see: https://github.com/tradingstrategy-ai/frontend/issues/165)
- * Disableing until dark-mode is fully implemented
 :root {
 	color-scheme: light dark;
 }
-*/
 
 body {
 	color: var(--c-text-1);
