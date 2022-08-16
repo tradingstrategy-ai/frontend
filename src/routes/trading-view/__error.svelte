@@ -18,11 +18,13 @@
 	}
 </script>
 
-<script>
-	export let title;
-	export let message;
-	export let maintenance;
-	export let chainName;
+<script lang="ts">
+	import Button from '$lib/components/Button.svelte';
+
+	export let title: string;
+	export let message: string;
+	export let maintenance: boolean;
+	export let chainName: string;
 </script>
 
 <svelte:head>
@@ -43,8 +45,8 @@
 		<pre>{message}</pre>
 	{/if}
 
-	<p class="text-center">
-		<a class="btn btn-primary" href="/">Continue to Trading Strategy front page</a>
+	<p class="cta">
+		<Button secondary label="Continue to Trading Strategy front page" href="/" />
 	</p>
 
 	<p class="text-center">
@@ -53,8 +55,9 @@
 </div>
 
 <style>
-	.btn {
-		margin: 60px 0;
+	.cta {
+		margin: 3.75rem 0;
+		text-align: center;
 	}
 
 	pre {

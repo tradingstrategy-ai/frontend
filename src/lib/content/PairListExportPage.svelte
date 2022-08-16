@@ -13,6 +13,8 @@ Render export page for a trading pair list.
 -->
 <script lang="ts">
 	import { session } from '$app/stores';
+	import Button from '$lib/components/Button.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 
 	const { backendUrl } = $session.config;
 
@@ -83,9 +85,13 @@ Render export page for a trading pair list.
 		</select>
 	</div>
 
-	<a class="btn btn-primary" href={link} download on:click={handleDownloadClick} disabled={downloadDisabled}
-		>Download trading pair data</a
-	>
+	<Button
+		label="Download trading pair data"
+		href={link}
+		download
+		disabled={downloadDisabled}
+		on:click={handleDownloadClick}
+	/>
 </form>
 
 <div class="foot-note">
@@ -107,9 +113,17 @@ Render export page for a trading pair list.
 		max-width: 600px;
 	}
 
-	select {
+	select,
+	input {
 		-webkit-appearance: none;
 		-moz-appearance: none;
+		background: inherit;
+		color: inherit;
+		border: 1px solid var(--c-border-1);
+	}
+
+	input[disabled] {
+		background: var(--c-background-2);
 	}
 
 	.foot-note {

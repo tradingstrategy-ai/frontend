@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 
-	type TextInputType = 'text' | 'search';
+	type TextInputType = 'email' | 'text' | 'search';
 	export let type: TextInputType = 'text';
 	export let disabled = false;
 	type TextInputSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -39,8 +39,9 @@
 <style>
 	.wrapper {
 		position: relative;
-		display: inline-block;
+		display: inline-grid;
 		width: var(--text-input-width, auto);
+		max-width: var(--text-input-max-width, auto);
 		font-weight: 400;
 	}
 
@@ -61,7 +62,6 @@
 	}
 
 	input {
-		width: var(--text-input-width, auto);
 		padding: 0 0.5em;
 		height: 2.125em;
 		border-radius: 0.375rem;

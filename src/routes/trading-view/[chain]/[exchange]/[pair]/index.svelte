@@ -62,6 +62,7 @@ Render the pair trading page
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 	import type { TokenTax } from '$lib/helpers/tokentax';
 	import ChartSection from './_ChartSection.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	export let exchange_slug;
 	export let chain_slug;
@@ -197,13 +198,14 @@ Render the pair trading page
 	<div class="row">
 		<div class="col-md-12">
 			<div class="trade-actions">
-				<a href={details.buy_link} class="btn btn-primary">Buy {summary.base_token_symbol_friendly}</a>
-				<a href={details.sell_link} class="btn btn-primary">Sell {summary.base_token_symbol_friendly}</a>
-				<a href={details.explorer_link} class="btn btn-primary">Blockchain explorer</a>
-				<a
+				<Button secondary label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
+				<Button secondary label="Sell {summary.base_token_symbol_friendly}" href={details.sell_link} />
+				<Button secondary label="Blockchain explorer" href={details.explorer_link} />
+				<Button
+					secondary
+					label="{summary.pair_symbol} API and historical data"
 					href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data"
-					class="btn btn-primary">{summary.pair_symbol} API and historical data</a
-				>
+				/>
 			</div>
 		</div>
 	</div>
@@ -266,7 +268,10 @@ Render the pair trading page
 		margin: 0 auto;
 	}
 
-	.trade-actions .btn {
-		margin: 20px 20px 20px 0;
+	.trade-actions {
+		margin-block: 1rem 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem;
 	}
 </style>

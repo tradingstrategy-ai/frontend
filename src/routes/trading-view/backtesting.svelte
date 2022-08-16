@@ -35,6 +35,8 @@
 <script>
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { formatTimeAgo } from '$lib/helpers/formatters';
 
 	export let backendUrl;
@@ -131,162 +133,143 @@
 
 <div class="container container-main">
 	<Breadcrumbs />
-	<section class="md-12">
-		<div class="card">
-			<div class="card-body">
-				<h1>Historical DEX trading data</h1>
+	<section>
+		<h1>Historical DEX trading data</h1>
 
-				<p>
-					The following datasets are available for historical DEX trading data.
-					<a href="/trading-view/api">Sign up for a free API key to download the data.</a>
-				</p>
+		<p>
+			The following datasets are available for historical DEX trading data.
+			<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
+		</p>
 
-				<p>
-					Read the documentation
-					<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-						>how to get started with Trading Strategy Python library for algorithmic trading</a
-					>.
-				</p>
+		<p>
+			Read the documentation
+			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+				>how to get started with Trading Strategy Python library for algorithmic trading</a
+			>.
+		</p>
 
-				<h2>Available datasets</h2>
+		<h2>Available datasets</h2>
 
-				{#if !validApiKey}
-					<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
-						<label for="apiKey">Enter API key to enable download</label>
+		{#if !validApiKey}
+			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
+				<label for="apiKey">Enter API key to enable download</label>
 
-						<!-- <div class="d-flex flex-row justify-content-center"> -->
-						<div id="form-group-api-key">
-							<input
-								class="form-control form-group-api-key-item"
-								id="apiKey"
-								placeholder="secret-token:tradingstrategy-"
-								type="text"
-							/>
+				<!-- <div class="d-flex flex-row justify-content-center"> -->
+				<div id="form-group-api-key">
+					<TextInput id="apiKey" placeholder="secret-token:tradingstrategy-" type="text" size="lg" />
 
-							<button type="submit" class="btn btn-primary form-group-api-key-item" disabled={submitting}>Enter</button>
+					<Button submit label="Enter" disabled={submitting} />
 
-							{#if submitting}
-								<Spinner />
-							{/if}
-						</div>
-					</form>
-				{/if}
-
-				{#if apiKeyError}
-					<div class="alert alert-danger shadow-soft" role="alert">
-						<span class="alert-inner--text">{apiKeyError}</span>
-					</div>
-				{/if}
-
-				{#if validApiKey}
-					<p>
-						Using API key <strong>{validApiKey}</strong>
-					</p>
-				{/if}
-
-				<div class="table-responsive">
-					<table class="table table-datasets">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Tag</th>
-								<th>Entry count (k)</th>
-								<th>Size (MBytes)</th>
-								<th>Format</th>
-								<th>Last updated</th>
-								<th>Links</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							{#each datasets as row}
-								<tr>
-									<td>{row.name}</td>
-									<td>{row.designation}</td>
-									<td>{formatNumber(row.entries)}</td>
-									<td>{formatSize(row.size)}</td>
-									<td>{row.format}</td>
-									<td>
-										{formatTimeAgo(row.last_updated_at)}
-									</td>
-
-									<td>
-										<a class="action-link" rel="external" href={row.documentation}> Documentation </a>
-
-										<a
-											class="action-link"
-											rel="external"
-											target={validApiKey ? `_blank` : undefined}
-											href={formatDownloadLink(validApiKey, row.download_link)}
-											disabled={validApiKey ? undefined : 'disabled'}
-										>
-											Download
-										</a>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
+					{#if submitting}
+						<Spinner />
+					{/if}
 				</div>
+			</form>
+		{/if}
 
-				<h2>Data logistics</h2>
-
-				<p>
-					Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
-					Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
-				</p>
-
-				<p>
-					Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably
-					larger when expanded to RAM. We expect you to download the dataset, cache the resulting file on a local disk
-					and perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute
-					candle data takes several gigabyte of memory.
-				</p>
-
-				<h2>Learn more</h2>
-
-				<ul>
-					<li>
-						<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-							>Getting started with Trading Strategy Python client</a
-						>
-					</li>
-					<li>
-						<a rel="external" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
-					</li>
-					<li>
-						<a href="https://github.com/tradingstrategy-ai/client">Github</a>
-					</li>
-				</ul>
+		{#if apiKeyError}
+			<div class="alert alert-danger shadow-soft" role="alert">
+				<span class="alert-inner--text">{apiKeyError}</span>
 			</div>
+		{/if}
+
+		{#if validApiKey}
+			<p>
+				Using API key <strong>{validApiKey}</strong>
+			</p>
+		{/if}
+
+		<div class="table-responsive">
+			<table class="table table-datasets">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Tag</th>
+						<th>Entry count (k)</th>
+						<th>Size (MBytes)</th>
+						<th>Format</th>
+						<th>Last updated</th>
+						<th>Links</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{#each datasets as row}
+						<tr>
+							<td>{row.name}</td>
+							<td>{row.designation}</td>
+							<td>{formatNumber(row.entries)}</td>
+							<td>{formatSize(row.size)}</td>
+							<td>{row.format}</td>
+							<td>
+								{formatTimeAgo(row.last_updated_at)}
+							</td>
+
+							<td>
+								<a class="action-link" href={row.documentation}>Documentation</a>
+
+								<a
+									class="action-link"
+									rel="external"
+									target={validApiKey ? `_blank` : undefined}
+									href={formatDownloadLink(validApiKey, row.download_link)}
+									disabled={validApiKey ? undefined : 'disabled'}
+								>
+									Download
+								</a>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
+
+		<h2>Data logistics</h2>
+
+		<p>
+			Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
+			Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
+		</p>
+
+		<p>
+			Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably
+			larger when expanded to RAM. We expect you to download the dataset, cache the resulting file on a local disk and
+			perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute candle
+			data takes several gigabyte of memory.
+		</p>
+
+		<h2>Learn more</h2>
+
+		<ul>
+			<li>
+				<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+					>Getting started with Trading Strategy Python client</a
+				>
+			</li>
+			<li>
+				<a rel="external" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
+			</li>
+			<li>
+				<a href="https://github.com/tradingstrategy-ai/client">Github</a>
+			</li>
+		</ul>
 	</section>
 </div>
 
 <style>
-	.card-body {
-		/* Align text left edge with logo */
-		padding: 0;
-	}
-
-	.card-body a {
-		text-decoration: none;
-		font-weight: bold;
-		transition: 0.3s;
-	}
-
-	.card-body a:hover {
-		text-decoration: underline;
-		color: var(--c-text-1);
-	}
-
 	.table-datasets :global(time) {
 		white-space: nowrap;
 	}
 
 	.action-link {
-		font-size: 80%;
 		text-transform: uppercase;
+		font-size: 0.8em;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+	}
+
+	.action-link:hover {
+		text-decoration: underline;
 	}
 
 	.action-link[disabled] {
@@ -296,10 +279,13 @@
 
 	#form-group-api-key {
 		display: flex;
+		gap: 1rem;
+		--text-input-width: 100%;
+		--text-input-max-width: 30rem;
+		--button-height: auto;
 	}
 
-	#form-group-api-key input {
-		max-width: 400px;
-		margin-right: 20px;
+	:global .svelte-spinner {
+		align-self: center;
 	}
 </style>
