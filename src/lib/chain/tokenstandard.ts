@@ -7,9 +7,9 @@ export const TOKEN_STANDARDS = {
 	ethereum: 'ERC-20',
 	binance: 'BEP-20',
 	polygon: 'ERC-20',
-    avalanche: 'ERC-20'
+	avalanche: 'ERC-20'
 };
 
 export function getTokenStandardName(chainSlug: string) {
-	return TOKEN_STANDARDS[chainSlug] || "ERC-20";
+	return TOKEN_STANDARDS[chainSlug] || 'ERC-20';
 }
