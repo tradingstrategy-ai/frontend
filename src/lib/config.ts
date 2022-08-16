@@ -154,6 +154,28 @@ configureEnvVar('chainsUnderMaintenance', 'CHAINS_UNDER_MAINTENANCE', (env: Env)
 	}
 });
 
+/**
+ * Specify chains the serve bad data currenetly as JSON string, e.g.:
+ * TS_PUBLIC_CHAINS_BAD_DATA='{ "polygon": "Polygon" }'
+ *
+ * Unlike maintenance, this will only display in page alert
+ * for trading pair pages that something might be off.
+ *
+ */
+interface ChainsBadData {
+	[key: string]: string;
+}
+
+configureEnvVar('chainsBadData', 'CHAINS_BAD_DATA', (env: Env) => {
+	const jsonStr = env.CHAINS_BAD_DATA || '{}';
+	try {
+		return JSON.parse(jsonStr) as ChainsUnderMaintenance;
+	} catch (e) {
+		console.warn('TS_PUBLIC_CHAINS_BAD_DATA is not valid JSON', jsonStr);
+		return {} as ChainsUnderMaintenance;
+	}
+});
+
 export interface Config {
 	siteMode: SiteMode;
 	backendUrl: string;
@@ -161,6 +183,7 @@ export interface Config {
 	ghost: GhostConfig;
 	typesense: TypesenseConfig;
 	chainsUnderMaintenance: ChainsUnderMaintenance;
+    chainsBadData: ChainsBadData;
 	frontendVersionTag: string;
 }
 
