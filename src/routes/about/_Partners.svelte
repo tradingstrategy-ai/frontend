@@ -1,61 +1,90 @@
 <script lang="ts">
-	import { imageUrl } from '$lib/helpers/assets';
+	import AvalancheImage from '$lib/assets/partners/avalanche.svg?raw';
+	import BlizzardImage from '$lib/assets/partners/blizzard.svg?raw';
+	import ChartIqImage from '$lib/assets/partners/chartiq.svg?raw';
+	import InfinityVenturesImage from '$lib/assets/partners/infinity-ventures-crypto.svg?raw';
+	import MenthaPartnersImage from '$lib/assets/partners/mentha-partners.svg?raw';
+	import TypesenseImage from '$lib/assets/partners/typesense.svg?raw';
+	import TimescaleImage from '$lib/assets/partners/timescale.svg?raw';
+	import PetRockCapitalImage from '$lib/assets/partners/pet-rock-capital.svg?raw';
+	import RepublicCapitalImage from '$lib/assets/partners/republic-capital.svg?raw';
 </script>
 
-<section class="jumbotron jumbotron-fluid">
+<section class="ds-container">
+	<h2>Our partners</h2>
+
 	<div>
-		<h2 class="text-center">Our partners</h2>
+		<a href="https://www.avax.network/" target="_blank" style:width="208px">
+			{@html AvalancheImage}
+		</a>
 
-		<div class="partner-logos">
-			<a href="https://www.avax.network/" target="_blank">
-				<img src={imageUrl('partners/avalanche.svg')} alt="Avalanche" style="width: 208px; height: 43px;" />
-			</a>
+		<a href="https://twitter.com/blizzardfund" target="_blank" style:width="180px">
+			{@html BlizzardImage}
+		</a>
 
-			<a href="https://typesense.org/" target="_blank">
-				<img src={imageUrl('partners/typesense.svg')} alt="Typesense" style="width: 150px; height: 33px;" />
-			</a>
+		<a href="https://cosaic.io/chartiq/" target="_blank" style:width="160px">
+			{@html ChartIqImage}
+		</a>
 
-			<a href="https://www.timescale.com/" target="_blank">
-				<img src={imageUrl('partners/timescale.svg')} alt="Timescale" style="width: 170px; height:45px;" />
-			</a>
+		<a href="https://www.ivcrypto.io/" target="_blank" style:width="170px" style:opacity="0.9">
+			{@html InfinityVenturesImage}
+		</a>
 
-			<a href="https://cosaic.io/chartiq/" target="_blank">
-				<img src={imageUrl('partners/chartiq.svg')} alt="ChartIQ" style="width: 127px; height: 47px;" />
-			</a>
+		<a href="https://mentha.partners/" target="_blank" style:width="190px" style:opacity="0.8">
+			{@html MenthaPartnersImage}
+		</a>
 
-			<a href="https://www.republiccapital.co/" target="_blank">
-				<img
-					src={imageUrl('partners/republic-capital.svg')}
-					alt="Republic Capital"
-					style="width: 60px; height: 60px;"
-				/>
-			</a>
-		</div>
+		<a href="https://www.petrock.capital/" target="_blank" style:width="250px">
+			{@html PetRockCapitalImage}
+		</a>
+
+		<a href="https://www.republiccapital.co/" target="_blank" style:width="85px">
+			{@html RepublicCapitalImage}
+		</a>
+
+		<a href="https://www.timescale.com/" target="_blank" style:width="220px">
+			{@html TimescaleImage}
+		</a>
+
+		<a href="https://typesense.org/" target="_blank" style:width="160px">
+			{@html TypesenseImage}
+		</a>
 	</div>
 </section>
 
 <style>
 	section {
-		background-color: var(--c-parchment);
+		grid-template-columns: auto;
+		justify-content: center;
+		gap: 4rem;
+		padding-top: 6rem;
+		padding-bottom: 4rem;
 	}
 
-	section > div {
-		margin: 0 auto;
-		max-width: 720px;
+	h2 {
+		text-align: center;
 	}
 
-	.partner-logos {
+	div {
+		max-width: 1200px;
 		display: flex;
-		flex-wrap: wrap;
+		flex-direction: column;
+		gap: 3rem 4rem;
 		justify-content: center;
 		align-items: center;
-		gap: 4rem;
-		margin: 5rem 0 1rem 0;
 	}
 
-	@media (max-width: 576px) {
-		.partner-logos {
-			flex-direction: column;
+	a :global svg * {
+		fill: currentcolor;
+	}
+
+	@media (--viewport-md-up) {
+		section {
+			padding-block: 10rem;
+		}
+
+		div {
+			flex-flow: row wrap;
 		}
 	}
 </style>

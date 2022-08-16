@@ -54,7 +54,7 @@ Display best or worst performing trading pairs.
 <style>
 	div {
 		display: grid;
-		border: 2px solid var(--c-border-1);
+		border: 2px solid var(--c-border-2);
 		padding: 1.5rem;
 	}
 
@@ -114,7 +114,6 @@ Display best or worst performing trading pairs.
 	@media (--viewport-lg-up) {
 		div > h3 {
 			text-align: left;
-			font: var(--f-h2-medium);
 		}
 	}
 

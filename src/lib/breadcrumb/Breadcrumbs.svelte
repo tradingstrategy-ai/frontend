@@ -89,7 +89,7 @@ https://search.google.com/structured-data/testing-tool
 		grid-auto-flow: column;
 		justify-content: start;
 		overflow: hidden;
-		color: var(--c-text-2);
+		color: var(--c-text-7);
 		font: 500 var(--fs-ui-xs);
 		letter-spacing: 0.02em;
 	}

@@ -21,7 +21,6 @@
 		grid-template-columns: auto;
 		gap: 0;
 		padding-top: 1rem;
-		padding-bottom: 1rem;
 		align-items: center;
 	}
 
@@ -34,7 +33,7 @@
 	}
 
 	.media {
-		padding: 2rem;
+		padding: 2rem 2rem 0 2rem;
 		display: flex;
 		justify-content: center;
 	}
@@ -50,18 +49,23 @@
 
 	@media (--viewport-md-up) {
 		section {
-			grid-template-columns: 5fr 1fr 4fr;
+			grid-template-columns: 5fr 4fr;
+			gap: 8vw;
 			padding-top: 3.5rem;
-			padding-bottom: 3.5rem;
 		}
 
 		.media {
-			grid-column: 3;
 			padding: 0;
 		}
 
 		.media :global svg {
 			max-width: unset;
+		}
+	}
+
+	@media (--viewport-lg-up) {
+		.content {
+			font: 500 var(--fs-heading-lg);
 		}
 	}
 </style>

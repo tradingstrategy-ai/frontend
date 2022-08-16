@@ -1,7 +1,10 @@
 <script lang="ts">
+	import Icon from './Icon.svelte';
+
 	export let disabled = false;
 	export let external = false;
 	export let href: string = undefined;
+	export let icon: string = undefined;
 	export let label: string;
 	export let secondary = false;
 	export let submit = false;
@@ -9,60 +12,69 @@
 	export let target: string = undefined;
 	export let title: string = undefined;
 
+	$: tag = href && !disabled ? 'a' : 'button';
 	$: kind = secondary ? 'secondary' : 'primary';
+	$: type = submit ? 'submit' : 'button';
 </script>
 
-{#if href && !disabled}
-	<a class="kind--{kind}" {href} rel={external ? 'external' : undefined} {tabindex} {target} {title} on:click>
-		{label}
-	</a>
-{:else}
-	<button class="kind--{kind}" {disabled} {tabindex} {title} type={submit ? 'submit' : 'button'} on:click>
-		{label}
-	</button>
-{/if}
+<svelte:element
+	this={tag}
+	class="button {kind}"
+	disabled={disabled || undefined}
+	{href}
+	rel={external ? 'external' : undefined}
+	{tabindex}
+	{target}
+	{title}
+	type={tag === 'button' ? type : undefined}
+	on:click
+>
+	{label}
+	{#if icon}<Icon name={icon} />{/if}
+</svelte:element>
 
 <style>
-	a,
-	button {
-		display: inline-block;
-		padding: 0.8rem 1.25rem 0.7rem;
-		border: 1px solid var(--c-background-3);
+	.button {
+		display: inline-flex;
+		gap: 0.5em;
+		justify-content: center;
+		align-items: center;
+		height: 3.5rem;
+		padding: 0 1.5rem;
+		border: 1px solid transparent;
 		border-radius: 0;
 		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
 		text-decoration: none;
 		text-transform: capitalize;
-		text-align: center;
 		cursor: pointer;
 	}
 
-	.kind--primary {
+	.primary {
 		background: var(--c-background-3);
-		color: var(--c-body);
+		color: var(--c-text-6);
+		border-color: var(--c-background-3);
 	}
 
-	.kind--secondary {
-		background: var(--c-body);
-		color: var(--c-background-3);
+	.secondary {
+		background: var(--c-background-5);
+		color: var(--c-text-1);
+		border-color: var(--c-border-2);
 	}
 
-	a:focus,
-	button:focus {
-		outline: 2px solid var(--c-border-2);
+	:focus {
+		outline: 2px solid var(--c-background-4);
 	}
 
-	a:hover,
-	button:hover {
+	:hover {
 		opacity: 0.8;
 	}
 
-	a:active,
-	button:active {
+	:active {
 		opacity: 0.9;
 	}
 
-	button[disabled] {
+	.button[disabled] {
 		opacity: 0.5;
 		cursor: not-allowed;
 	}

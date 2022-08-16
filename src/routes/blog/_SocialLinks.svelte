@@ -43,22 +43,26 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
-		letter-spacing: 0.01em;
-		text-decoration: none;
-		color: var(--c-text-4);
 	}
 
 	.layout--post a {
 		font: 500 var(--fs-ui-sm);
+		letter-spacing: 0.02em;
 		--icon-size: 20px;
 	}
 
 	.layout--index a {
 		font: 500 var(--fs-ui-md);
+		letter-spacing: 0.01em;
 		--icon-size: 24px;
 	}
 
-	a:hover {
+	a > span {
+		text-decoration: none;
+		color: var(--c-text-4);
+	}
+
+	a:hover > span {
 		text-decoration: underline;
 		color: var(--c-text-1);
 	}
@@ -81,6 +85,7 @@
 
 		.layout--post a {
 			font: 500 var(--fs-ui-md);
+			letter-spacing: 0.01em;
 			--icon-size: 24px;
 		}
 

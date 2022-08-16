@@ -49,7 +49,7 @@
 
 <style>
 	article {
-		--ds-container-max-width: 41rem;
+		--ds-container-max-width: 720px;
 		--ds-gap: 2rem;
 	}
 
@@ -63,9 +63,11 @@
 		font: var(--f-h2-medium);
 	}
 
-	img {
+	article img {
 		width: 100%;
-		aspect-ratio: 1.63;
+		aspect-ratio: 1.5;
+		min-height: 312px;
+		max-height: 400px;
 		object-fit: cover;
 	}
 </style>

@@ -1,6 +1,6 @@
 :root {
 	/* Global settings for design-system layout */
-	--ds-container-max-width: 1344px;
+	--ds-container-max-width: 1324px;
 	--ds-breakpoint: 1024px;
 	--ds-container-margin: 1.5rem;
 	--ds-gap: 2.5rem;
@@ -16,5 +16,5 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(var(--ds-template-col-min), 1fr));
 	gap: var(--ds-gap);
-	padding: 0 calc((100% - var(--ds-container-width)) / 2);
+	padding-inline: calc((100% - var(--ds-container-width)) / 2);
 }

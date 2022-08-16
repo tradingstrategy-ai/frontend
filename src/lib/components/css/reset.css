@@ -19,3 +19,16 @@ svg {
 	overflow: hidden;
 	vertical-align: middle;
 }
+
+ul {
+	margin: 0;
+	padding-left: 2.5ch;
+	list-style-type: square;
+}
+
+/* needed to override bootstrap theme styles */
+article a,
+article a:hover {
+	color: inherit;
+	text-decoration: inherit;
+}

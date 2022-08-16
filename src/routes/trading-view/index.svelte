@@ -121,7 +121,7 @@
 			icon="24h"
 			targetUrl="https://tradingstrategy.ai/api/explorer/"
 			buttonLabel="Read API specification"
-            external={true}
+			external={true}
 		>
 			<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
 			<p>Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed.</p>
@@ -144,14 +144,20 @@
 </main>
 
 <style>
-	section {
-		grid-template-columns: 1fr;
-		gap: 2rem;
-		padding-top: 2rem;
-		padding-bottom: 2rem;
+	main {
+		display: grid;
+		gap: 4.5rem;
 	}
 
-	section h2 {
-		font: var(--f-h3-medium);
+	section {
+		--ds-container-max-width: 1020px;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	@media (--viewport-md-up) {
+		main {
+			gap: 6.25rem;
+		}
 	}
 </style>
