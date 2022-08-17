@@ -41,7 +41,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Price & volume</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV"> OHLCV candles </a>
+			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+				OHLCV candles
+			</a>
 		</div>
 	</div>
 	<ChartIQ
@@ -59,7 +61,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Liquidity</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
 				USD value of one side of XY liquidity curve
 			</a>
 		</div>
@@ -112,26 +114,22 @@ for the same hovered date. Also displays a time-bucket selector.
 	}
 
 	.help {
+		color: var(--c-text-2);
 		font-size: 0.875rem;
 		text-align: right;
 	}
 
-	.help a {
-		font-weight: 500;
-		color: #525480;
-	}
-
 	.help a:hover {
-		text-decoration: underline;
+		color: var(--c-text-1);
 	}
 
 	.vol-added dd {
-		color: var(--c-bullish-dark);
+		color: var(--c-bullish);
 		min-width: 4.5em;
 	}
 
 	.vol-removed dd {
-		color: var(--c-bearish-dark);
+		color: var(--c-bearish);
 	}
 
 	@media (max-width: 576px) {
