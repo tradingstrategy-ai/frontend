@@ -31,7 +31,7 @@
 	<title>Error: {title}</title>
 </svelte:head>
 
-<div class="container">
+<section class="ds-container">
 	{#if maintenance}
 		<h1 class="text-center">{chainName} data under maintenance</h1>
 
@@ -46,30 +46,38 @@
 	{/if}
 
 	<p class="cta">
-		<Button secondary label="Continue to Trading Strategy front page" href="/" />
+		<Button label="Continue to home page" href="/" />
+		<Button
+			secondary
+			label="Join Discord for more information"
+			icon="discord"
+			href="https://discord.gg/en8tW6MDtw"
+			target="_blank"
+		/>
 	</p>
 
-	<p class="text-center">
-		<a class="body-link" href="https://discord.gg/en8tW6MDtw">Join Discord discussion for more information</a>
-	</p>
-</div>
+	<p class="text-center" />
+</section>
 
 <style>
-	.cta {
-		margin: 3.75rem 0;
-		text-align: center;
+	section {
+		grid-template-columns: 1fr;
+		--ds-container-max-width: 720px;
+		--ds-gap: 4rem;
 	}
 
 	pre {
-		margin: 20px;
-		padding: 20px;
-		border: 1px solid #888;
-		background: white;
+		padding: 1.25rem;
+		border: 1px solid var(--c-border-1);
+		background: var(--c-background-2);
+		color: var(--c-text-1);
+		white-space: pre-wrap;
 	}
 
-	/* Readbility */
-	.text-center {
-		margin: 0 auto;
-		max-width: 600px;
+	.cta {
+		display: grid;
+		gap: 1rem;
+		justify-content: center;
+		text-align: center;
 	}
 </style>

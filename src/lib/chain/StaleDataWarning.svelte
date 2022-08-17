@@ -24,6 +24,6 @@
 -->
 <style>
 	.alert-danger a {
-		color: #a91e2c;
+		color: var(--c-bearish);
 	}
 </style>
