@@ -138,10 +138,7 @@ Display site-wide search box for use in top-nav.
 		}
 
 		.results {
-			width: 100vw;
-			border-radius: 0;
-			border-left-width: 0;
-			border-right-width: 0;
+			width: 100%;
 		}
 	}
 </style>

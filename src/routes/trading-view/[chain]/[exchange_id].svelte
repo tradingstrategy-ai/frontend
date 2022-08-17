@@ -92,7 +92,7 @@
 					> by Trading Strategy.
 				</p>
 
-				<p>
+				<p class="smart-contract-address">
 					The factory smart contract address for {details.human_readable_name} is
 					<a class="body-link" href={details.blockchain_explorer_link}>{details.address}</a>.
 				</p>
@@ -147,6 +147,11 @@
 </div>
 
 <style>
+	.smart-contract-address {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	.trading-pairs {
 		margin-bottom: 60px;
 	}

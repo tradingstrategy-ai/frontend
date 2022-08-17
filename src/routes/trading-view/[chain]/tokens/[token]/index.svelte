@@ -94,7 +94,7 @@
 					</p>
 				{/if}
 
-				<p>
+				<p class="smart-contract-address">
 					The token smart contract address is
 					<a class="body-link" href={tokenDetails.explorer_link}> {tokenDetails.address}</a>.
 				</p>
@@ -150,6 +150,11 @@
 
 	.text-section {
 		margin-top: 20px;
+	}
+
+	.smart-contract-address {
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.pair-explorer-wrapper {

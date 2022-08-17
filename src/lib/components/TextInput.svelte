@@ -62,6 +62,7 @@
 	}
 
 	input {
+		width: inherit;
 		padding: 0 0.5em;
 		height: 2.125em;
 		border-radius: 0.375rem;

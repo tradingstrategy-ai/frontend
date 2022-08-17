@@ -162,7 +162,7 @@ Render the pair trading page
 				</p>
 
 				{#if details.pair_contract_address}
-					<p>
+					<p class="smart-contract-address">
 						The trading pair pool smart contract is at address <a href={details.pair_explorer_link} class="body-link"
 							>{details.pair_contract_address}</a
 						>.
@@ -262,6 +262,11 @@ Render the pair trading page
 
 	.text-section {
 		margin-top: 20px;
+	}
+
+	.smart-contract-address {
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.time-span-wrapper {
