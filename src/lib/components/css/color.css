@@ -71,22 +71,18 @@
 /* 
  Color schemes
 */
-
-/**
- * This breaks some UI elements (see: https://github.com/tradingstrategy-ai/frontend/issues/165)
- * Disableing until dark-mode is fully implemented
 :root {
 	color-scheme: light dark;
 }
-*/
 
 body {
 	color: var(--c-text-1);
 	background-color: var(--c-body);
 }
 
+/* light-mode color scheme (default) */
 body:not([data-color-mode='dark']) {
-	--c-accent-1: var(--c-gray);
+	--c-body: var(--c-parchment);
 
 	--c-background-1: var(--c-parchment-dark);
 	--c-background-2: var(--c-gray-extra-light);
@@ -96,11 +92,6 @@ body:not([data-color-mode='dark']) {
 	--c-background-6: var(--c-parchment-extra-dark);
 	--c-background-7: var(--c-ink-light);
 
-	--c-body: var(--c-parchment);
-
-	--c-border-1: var(--c-gray-dark);
-	--c-border-2: var(--c-ink);
-
 	--c-text-1: var(--c-ink);
 	--c-text-2: var(--c-gray-dark);
 	--c-text-3: var(--c-ink-light);
@@ -108,11 +99,17 @@ body:not([data-color-mode='dark']) {
 	--c-text-5: var(--c-ink-light);
 	--c-text-6: var(--c-parchment);
 	--c-text-7: var(--c-gray);
+
+	--c-border-1: var(--c-gray-dark);
+	--c-border-2: var(--c-ink);
+
+	--c-shadow-1: rgba(0, 0, 0, 0.12);
 }
 
+/* dark-mode color scheme (default) */
 @media (prefers-color-scheme: dark) {
 	body:not([data-color-mode='light']) {
-		--c-accent-1: var(--c-gray-extra-light);
+		--c-body: var(--c-ink-light);
 
 		--c-background-1: var(--c-ink);
 		--c-background-2: var(--c-gray-extra-dark);
@@ -122,11 +119,6 @@ body:not([data-color-mode='dark']) {
 		--c-background-6: var(--c-gray-extra-dark);
 		--c-background-7: var(--c-ink);
 
-		--c-body: var(--c-ink-light);
-
-		--c-border-1: var(--c-gray);
-		--c-border-2: var(--c-parchment);
-
 		--c-text-1: var(--c-parchment);
 		--c-text-2: var(--c-gray-extra-light);
 		--c-text-3: var(--c-gray-extra-light);
@@ -134,5 +126,10 @@ body:not([data-color-mode='dark']) {
 		--c-text-5: var(--c-gray-light);
 		--c-text-6: var(--c-ink-light);
 		--c-text-7: var(--c-gray-light);
+
+		--c-border-1: var(--c-gray);
+		--c-border-2: var(--c-parchment);
+
+		--c-shadow-1: rgba(255, 255, 255, 0.12);
 	}
 }

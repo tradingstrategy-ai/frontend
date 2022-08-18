@@ -71,6 +71,6 @@ Display filter options as checkboxes search queries.
 		font-size: 0.75rem;
 		line-height: 1.4;
 		font-weight: 400;
-		background-color: #99999988;
+		background-color: var(--c-background-2);
 	}
 </style>

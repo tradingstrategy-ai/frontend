@@ -82,6 +82,6 @@ Display a loading indicator during client-side routing. Invoked when a page
 
 	progress::-webkit-progress-value,
 	progress::-moz-progress-bar {
-		background: var(--price-up-green);
+		background: var(--c-bullish);
 	}
 </style>

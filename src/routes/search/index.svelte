@@ -8,6 +8,7 @@ Advanced Search page
 	import { page, session } from '$app/stores';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import tradingEntitiesStore from '$lib/search/trading-entities';
+	import TextInput from '$lib/components/TextInput.svelte';
 	import SortSelect, { sortOptions } from './_SortSelect.svelte';
 	import FacetFilter from './_FacetFilter.svelte';
 	import RangeFilter from './_RangeFilter.svelte';
@@ -58,10 +59,11 @@ Advanced Search page
 					<h1>Search</h1>
 				</div>
 				<div class="search-box col-md-9 d-flex align-items-center">
-					<input
+					<TextInput
+						size="xl"
 						type="search"
 						data-cy="search"
-						placeholder="search"
+						placeholder="Search"
 						autocapitalize="none"
 						spellcheck="false"
 						bind:value={q}
@@ -123,7 +125,7 @@ Advanced Search page
 				</div>
 				<div class="results col-md-9 col-sm-12">
 					{#if hasSearch}
-						<ul class="list-group">
+						<ul>
 							{#each $tradingEntities.hits as { document } (document.id)}
 								<TradingEntityHit {document} layout="advanced" />
 							{/each}
@@ -140,7 +142,8 @@ Advanced Search page
 <style>
 	.search-box {
 		gap: 1em;
-		max-width: 630px;
+		max-width: 830px;
+		--text-input-width: 100%;
 	}
 
 	h2 {
@@ -149,39 +152,17 @@ Advanced Search page
 		white-space: nowrap;
 	}
 
-	input {
-		flex: 1;
-		height: 40px;
-		width: 100%;
-		padding: 0 1ex 0 2em;
-		border: 2px solid #44476a;
-		border-radius: 20px;
-		outline: none;
-		background: rgba(255, 255, 255, 0.5) url('/images/search.svg') 1ex 55%/16px no-repeat;
-		font-size: 1rem;
-		color: #44476a;
-	}
-
-	input:focus {
-		background-color: rgba(255, 255, 255, 0.75);
-		box-shadow: 0 0 10px #44476a55;
-	}
-
-	input::placeholder {
-		color: #44476a80;
-	}
-
 	button.close-filters {
-		background-color: #44476a;
 		border: none;
-		border-radius: 1em;
+		border-radius: 0.5em;
 		height: 100%;
 		padding: 0 1em;
 		font-weight: 600;
 		font-size: 0.75rem;
-		color: white;
+		letter-spacing: 0.02em;
 		text-transform: uppercase;
-		opacity: 0.8;
+		background: var(--c-background-3);
+		color: var(--c-text-6);
 	}
 
 	button.clear-filters {
@@ -192,24 +173,26 @@ Advanced Search page
 		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.1ex;
-		color: var(--link-underline);
+		color: var(--c-text-1);
 		cursor: pointer;
 	}
 
 	button.clear-filters:hover {
-		border-bottom: 1px solid var(--link-underline);
+		border-bottom: 1px solid currentColor;
 	}
 
 	button.clear-filters:disabled {
-		color: black;
+		color: var(--c-text-2);
 		font-weight: 400;
 		border-color: transparent;
 		text-decoration: none;
 		cursor: default;
 	}
 
-	.results .list-group {
-		max-width: 600px;
+	.results ul {
+		display: grid;
+		padding: 1.5rem 0 0 0;
+		max-width: 800px;
 	}
 
 	@media (max-width: 768px) {
@@ -223,9 +206,9 @@ Advanced Search page
 		}
 	}
 
-	@media (max-width: 576px) {
-		.results {
-			padding: 0;
+	@media (--viewport-md-up) {
+		.results ul {
+			gap: 1.5rem;
 		}
 	}
 </style>

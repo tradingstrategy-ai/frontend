@@ -195,7 +195,7 @@
 	}
 
 	.hint {
-		color: var(--gray-800);
+		color: var(--c-text-2);
 		font-size: 75%;
 	}
 

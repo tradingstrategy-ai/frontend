@@ -124,20 +124,20 @@
 		/* On mobile, don't render headings too wide */
 		table th,
 		table td {
-			border-bottom: 1px solid var(--light);
+			border-bottom: 1px solid var(--c-border-1);
 		}
 	}
 
 	a {
-		border-bottom: 1px solid var(--link-underline);
+		font-weight: 500;
+		border-bottom: 1px solid currentColor;
 	}
 
 	th a {
 		font-weight: bold;
-		color: #44476a;
 	}
 
 	a:hover {
-		color: var(--link-underline);
+		color: var(--c-text-1);
 	}
 </style>

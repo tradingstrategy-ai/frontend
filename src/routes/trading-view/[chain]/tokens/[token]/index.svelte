@@ -94,7 +94,7 @@
 					</p>
 				{/if}
 
-				<p>
+				<p class="smart-contract-address">
 					The token smart contract address is
 					<a class="body-link" href={tokenDetails.explorer_link}> {tokenDetails.address}</a>.
 				</p>
@@ -152,22 +152,9 @@
 		margin-top: 20px;
 	}
 
-	.chart-wrapper {
-		margin: 20px 0;
-	}
-
-	.time-span-wrapper {
-		margin: 0 auto;
-	}
-
-	.chart-help-text {
-		text-align: center;
-		font-size: 80%;
-		color: #525480;
-	}
-
-	.trade-actions .btn {
-		margin: 20px 20px 20px 0;
+	.smart-contract-address {
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.pair-explorer-wrapper {
@@ -176,22 +163,5 @@
 
 	small {
 		opacity: 0.3;
-	}
-	/**
-     * Prevent CLS issues on desktop
-     *
-     * https://web.dev/cls/
-     */
-	@media (min-width: 992px) {
-		.chart-wrapper {
-			/*
-            min-height: 820px;
-            contain: size paint;
-             */
-		}
-
-		:global(.skeleton) {
-			height: 800px;
-		}
 	}
 </style>

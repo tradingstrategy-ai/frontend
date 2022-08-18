@@ -1,16 +1,18 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 
-	type TextInputType = 'text' | 'search';
+	type TextInputType = 'email' | 'text' | 'search';
 	export let type: TextInputType = 'text';
 	export let disabled = false;
+	type TextInputSize = 'sm' | 'md' | 'lg' | 'xl';
+	export let size: TextInputSize = 'md';
 	export let value = '';
 
 	const icon = type === 'search' ? 'search' : undefined;
 	const cancelButton = type === 'search';
 </script>
 
-<span class="wrapper" class:has-icon={icon} class:disabled>
+<span class="wrapper size-{size}" class:has-icon={icon} class:disabled>
 	<input
 		{value}
 		{type}
@@ -37,18 +39,36 @@
 <style>
 	.wrapper {
 		position: relative;
-		display: inline-block;
+		display: inline-grid;
 		width: var(--text-input-width, auto);
+		max-width: var(--text-input-max-width, auto);
+		font-weight: 400;
+	}
+
+	.size-sm {
+		font: var(--fs-ui-sm);
+	}
+
+	.size-md {
+		font: var(--fs-ui-md);
+	}
+
+	.size-lg {
+		font: var(--fs-ui-lg);
+	}
+
+	.size-xl {
+		font: var(--fs-ui-xl);
 	}
 
 	input {
-		width: var(--text-input-width, auto);
-		padding: 0 0.5rem;
-		height: 2.125rem;
+		width: inherit;
+		padding: 0 0.5em;
+		height: 2.125em;
 		border-radius: 0.375rem;
 		border: 2px solid var(--c-border-2);
 		background: var(--c-body);
-		font: 500 14px/14px var(--ff-display);
+		letter-spacing: 0.01em;
 		color: var(--c-text-1);
 	}
 
@@ -71,28 +91,33 @@
 	}
 
 	.has-icon input {
-		text-indent: 1rem;
+		text-indent: 1.125em;
 	}
 
 	.wrapper :global(svg) {
 		position: absolute;
-		top: 0.625rem;
-		left: 0.5rem;
-		font-size: 14px;
+		top: 0.75em;
+		left: 0.625em;
+		font-size: 0.875em;
 	}
 
 	input[type='search']::-webkit-search-cancel-button {
 		-webkit-appearance: none;
 	}
 
-	.wrapper:not(:focus-within) .cancel-btn {
+	.cancel-btn {
 		display: none;
+	}
+
+	.wrapper:focus-within .cancel-btn,
+	.wrapper:hover .cancel-btn {
+		display: inline;
 	}
 
 	.cancel-btn :global(svg) {
 		left: auto;
-		top: 0.75rem;
-		right: 0.5rem;
-		font-size: 10px;
+		font-size: 0.7em;
+		top: 1em;
+		right: 0.625em;
 	}
 </style>
