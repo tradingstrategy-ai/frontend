@@ -61,6 +61,7 @@
 
 	h1 {
 		font: var(--f-h2-medium);
+		text-transform: capitalize;
 	}
 
 	article img {
