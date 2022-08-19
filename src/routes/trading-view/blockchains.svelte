@@ -30,8 +30,8 @@
 </script>
 
 <svelte:head>
-	<title>Blockchain overview</title>
-	<meta name="description" content="Supported blockchains" />
+	<title>Trading data for blockchains</title>
+	<meta name="description" content="Explore trading pairs and exchanges" />
 </svelte:head>
 
 <div class="container container-main exchanges">
