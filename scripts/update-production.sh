@@ -8,7 +8,9 @@ set -e
 
 if [ -z "$TS_PUBLIC_FRONTEND_VERSION_TAG" ] ; then
     echo "Please set TS_PUBLIC_FRONTEND_VERSION_TAG"
+    echo "export TS_PUBLIC_FRONTEND_VERSION_TAG="
     echo "See https://github.com/tradingstrategy-ai/frontend/pkgs/container/frontend"
+    exit 1
 fi
 
 source ~/secrets.env
