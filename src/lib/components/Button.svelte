@@ -2,10 +2,11 @@
 	import Icon from './Icon.svelte';
 
 	export let disabled = false;
+	export let download: string | boolean = undefined;
 	export let external = false;
 	export let href: string = undefined;
 	export let icon: string = undefined;
-	export let label: string;
+	export let label: string = '';
 	export let secondary = false;
 	export let submit = false;
 	export let tabindex: number = undefined;
@@ -21,6 +22,7 @@
 	this={tag}
 	class="button {kind}"
 	disabled={disabled || undefined}
+	download={download === true ? '' : download}
 	{href}
 	rel={external ? 'external' : undefined}
 	{tabindex}
@@ -29,7 +31,7 @@
 	type={tag === 'button' ? type : undefined}
 	on:click
 >
-	{label}
+	<slot>{label}</slot>
 	{#if icon}<Icon name={icon} />{/if}
 </svelte:element>
 
@@ -39,7 +41,7 @@
 		gap: 0.5em;
 		justify-content: center;
 		align-items: center;
-		height: 3.5rem;
+		height: var(--button-height, 3.5rem);
 		padding: 0 1.5rem;
 		border: 1px solid transparent;
 		border-radius: 0;

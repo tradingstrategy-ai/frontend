@@ -30,7 +30,7 @@ https://tradingstrategy.ai/api/explorer/
 	}
 
 	a {
-		border-bottom: 2px solid var(--c-ink);
+		border-bottom: 2px solid currentColor;
 		font-weight: 600;
 	}
 

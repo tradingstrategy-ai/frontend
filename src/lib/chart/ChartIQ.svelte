@@ -177,7 +177,7 @@ chartiq dependency.
 		>
 			{#if loading}
 				<div class="loading" transition:fade={{ duration: 250 }}>
-					<Spinner size="60" />
+					<Spinner size="60" color="var(--c-text-1)" />
 				</div>
 			{/if}
 			{#if activeTick}
@@ -236,7 +236,7 @@ chartiq dependency.
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background-color: var(--c-parchment);
+		background-color: var(--c-body);
 		opacity: 0.75;
 	}
 
@@ -244,29 +244,29 @@ chartiq dependency.
 		position: absolute;
 		top: 4px;
 		left: 0;
-		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-		font-size: 0.875rem;
+		font: var(--f-ui-xsmall-roman);
+		letter-spacing: 0.02em;
 	}
 
 	.hud :global(.hud-row) {
 		display: flex;
+		gap: 0.5em;
 	}
 
 	.hud :global(dl) {
 		display: flex;
-		margin-bottom: 0;
+		gap: 0.25em;
+		align-items: center;
+		margin: 0;
 	}
 
 	.hud :global(dt) {
-		margin-right: 0.5ex;
-		color: rgba(0, 0, 0, 0.7);
-		font-weight: 500;
+		color: var(--c-text-3);
+		font-weight: inherit;
 	}
 
 	.hud :global(dd) {
-		margin-bottom: 0;
-		margin-right: 1ex;
-		font-weight: 400;
+		margin: 0;
 	}
 
 	@media (max-width: 768px) {
@@ -278,10 +278,6 @@ chartiq dependency.
 	@media (max-width: 576px) {
 		.chart-container {
 			aspect-ratio: 4/3;
-		}
-
-		.hud {
-			font-size: 0.75rem;
 		}
 	}
 </style>

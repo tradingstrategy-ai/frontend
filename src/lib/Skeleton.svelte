@@ -9,13 +9,7 @@ Modified for resizeablility and mobile friendliness.
 ```
 -->
 <script lang="ts">
-	import colors from '$lib/colors';
-
 	export let layout: 'full' | 'line';
-
-	// NOTE: do not use rgba() - not working in Safari on iOS 11
-	export let secondaryColor = colors.grayLight;
-	export let primaryColor = colors.parchment;
 
 	export let height = 200;
 	export let width = 400;
@@ -57,9 +51,9 @@ Modified for resizeablility and mobile friendliness.
 				/>
 			{/if}
 
-			<stop stop-color={primaryColor} offset="0%" />
-			<stop stop-color={secondaryColor} offset="50%" />
-			<stop stop-color={primaryColor} offset="100%" />
+			<stop offset="0%" />
+			<stop offset="50%" />
+			<stop offset="100%" />
 		</linearGradient>
 	</defs>
 </svg>
@@ -75,5 +69,13 @@ Modified for resizeablility and mobile friendliness.
 		min-width: 60px;
 		max-height: 1rem;
 		display: inline-block;
+	}
+
+	stop:nth-child(odd) {
+		stop-color: var(--c-body);
+	}
+
+	stop:nth-child(even) {
+		stop-color: var(--c-background-2);
 	}
 </style>

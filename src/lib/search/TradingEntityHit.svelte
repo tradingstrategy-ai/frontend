@@ -16,6 +16,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import Icon from '$lib/components/Icon.svelte';
 
 	// Any token with less than this liquidity
 	// is grayed out in the search results
@@ -45,15 +46,17 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	});
 </script>
 
-<li class="list-group-item {layout}" class:selected class:isLowQuality on:mouseenter>
-	<a class="d-flex align-items-center" href={document.url_path} on:mousedown|preventDefault>
+<li class={layout} class:selected class:isLowQuality on:mouseenter>
+	<a href={document.url_path} on:mousedown|preventDefault>
 		<div class="type badge-{document.type}">{label}</div>
-		<div class="flex-grow-1">
-			<div class="d-flex flex-grow-1">
-				<div class="desc flex-grow-1">{document.description}</div>
+		<div class="info">
+			<div class="primary">
+				<div class="desc">{document.description}</div>
 
 				{#if isBasicLayout && !isLowQuality && hasPriceChange}
 					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
+				{:else if isBasicLayout && isLowQuality}
+					<Icon name="exclamation" size="22px" />
 				{:else if isAdvancedLayout && hasValidPrice}
 					<div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
 				{/if}
@@ -67,7 +70,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 					</div>
 					<div class="liquidity">
 						<dt>liquidity:</dt>
-						<dd>{formatDollar(document.liquidity)}</dd>
+						<dd>
+							{formatDollar(document.liquidity)}
+							{#if isLowQuality}
+								<Icon name="exclamation" />
+							{/if}
+						</dd>
 					</div>
 					<div class="price-change">
 						<dd class={priceChangeClass}>
@@ -82,59 +90,63 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 <style>
 	li {
-		padding: 0;
+		display: grid;
+		list-style-type: none;
 	}
 
 	.basic {
-		background-color: var(--c-parchment);
-		border: none;
+		height: 3.75rem;
+		padding-inline: 0.625rem;
 	}
 
 	.advanced {
-		margin-bottom: 0.65em;
-		border: 1px solid var(--c-parchment-extra-dark);
-		border-radius: 8px;
-		background-color: rgba(255, 255, 255, 0.75);
-		background-clip: content-box;
+		gap: 1rem;
+		border: solid var(--c-border-2);
+		border-width: 1px 0 0 0;
+	}
+
+	.advanced:last-child {
+		border-bottom-width: 1px;
 	}
 
 	a {
+		display: grid;
+		grid-template-columns: auto 1fr;
 		gap: 1em;
-		font-weight: normal;
-		line-height: 1.25;
-		outline: none;
-	}
-
-	.basic a {
-		padding: 1rem;
-		font-size: 0.875rem;
+		align-items: center;
 	}
 
 	.advanced a {
-		padding: 20px 30px;
-		font-weight: normal;
+		padding: 0.75rem 0;
 	}
 
 	.selected {
-		filter: brightness(0.85);
+		background: var(--c-background-4);
 	}
 
 	.type {
-		flex: 0 0 4.6em;
-		border-radius: 6px;
-		color: white;
-		font-weight: 600;
+		display: grid;
+		align-content: center;
+		border-radius: 0.375rem;
+		height: 1.75rem;
+		width: 3.5rem;
+		font: 500 var(--fs-ui-sm);
+		letter-spacing: 0.02em;
+		text-transform: capitalize;
 		text-align: center;
+		color: var(--c-parchment);
 	}
 
-	.basic .type {
-		font-size: 0.75rem;
-		line-height: 1.75;
+	.info {
+		display: grid;
 	}
 
-	.advanced .type {
-		font-size: 0.8em;
-		line-height: 1.85;
+	.primary {
+		display: grid;
+		align-items: center;
+		grid-template-columns: 1fr auto;
+		font: 500 var(--fs-ui-md);
+		letter-spacing: 0.01em;
 	}
 
 	.desc {
@@ -144,14 +156,16 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		overflow: hidden;
 	}
 
-	.price-change {
+	.price-change,
+	.price {
 		text-align: right;
 		white-space: pre;
+		font-weight: 700;
 	}
 
 	.basic .price-change::after {
 		display: inline-block;
-		width: 1.25em;
+		width: 1em;
 	}
 
 	.basic .price-change-black::after {
@@ -168,70 +182,69 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.secondary {
 		justify-content: space-between;
-		margin-top: 1ex;
-		font-size: 0.75rem;
-	}
-
-	.secondary div {
-		width: 12em;
-	}
-
-	.secondary div.price-change {
-		width: 5em;
-		text-align: right;
+		font: var(--f-ui-xsmall-roman);
 	}
 
 	.secondary dt {
 		display: inline;
-		font-weight: 300;
-		color: #777777;
+		font-weight: 400;
 	}
 
 	.secondary dd {
 		display: inline;
-		font-weight: 500;
+		font-weight: 700;
 	}
 
 	.isLowQuality a {
 		opacity: 0.5;
 	}
 
-	.basic.isLowQuality a {
-		background: content-box url('/images/quality-warning.svg') right/16px no-repeat;
-	}
-
 	.advanced.isLowQuality div.liquidity {
 		position: relative;
 	}
 
-	.advanced.isLowQuality div.liquidity::before {
-		position: absolute;
-		content: '';
-		left: -1.35em;
-		width: 1em;
-		height: 100%;
-		background: url('/images/quality-warning.svg') center no-repeat;
+	/* Entity badge colors */
+	.badge-exchange {
+		background-color: var(--c-bullish-dark);
 	}
 
-	@media (max-width: 576px) {
-		.advanced {
-			margin: 0;
-			border-width: 1px 0 0 0;
-			border-radius: 0;
-		}
+	.badge-token {
+		background-color: #b99537;
+	}
 
-		.advanced:last-child {
-			border-bottom-width: 1px;
+	.badge-pair {
+		background-color: #496abf;
+	}
+
+	@media (--viewport-md-up) {
+		.advanced {
+			border-width: 1px;
+			border-radius: 0.625rem;
 		}
 
 		.advanced a {
-			padding: 15px;
-			font-size: 0.875rem;
+			padding: 1.25rem 1.5rem;
 		}
 
-		.secondary div,
+		.advanced .type {
+			width: 4.25rem;
+			height: 2.25rem;
+			font: 500 var(--fs-ui-md);
+			letter-spacing: 0;
+		}
+
+		.advanced .primary {
+			font: 500 var(--fs-ui-lg);
+			letter-spacing: 0;
+		}
+
+		.secondary div {
+			width: 12em;
+		}
+
 		.secondary div.price-change {
-			width: auto;
+			width: 5em;
+			text-align: right;
 		}
 	}
 </style>

@@ -21,3 +21,13 @@ A test endpoint for the page to show debug data.
 		<pre>{configStr}</pre>
 	</div>
 </div>
+
+<style>
+	pre {
+		padding: 1.5rem;
+		background: var(--c-background-7);
+		border: 2px solid var(--c-border-1);
+		border-radius: 0.375rem;
+		color: var(--c-parchment);
+	}
+</style>

@@ -167,6 +167,15 @@
 		margin: 20px auto;
 	}
 
+	/* Inline SVG icon fill colors */
+	.icons-duotone-1 {
+		fill: var(--c-bullish);
+	}
+
+	.icons-duotone-2 {
+		fill: var(--c-bearish);
+	}
+
 	.btn[disabled] {
 		cursor: not-allowed;
 	}

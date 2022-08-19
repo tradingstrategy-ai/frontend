@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { session } from '$app/stores';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Spinner from 'svelte-spinner';
 
 	const { backendUrl } = $session.config;
@@ -76,28 +78,21 @@
 
 						<form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
 							{#if error}
-								<div class="alert alert-danger">
+								<div class="alert error">
 									{error}
 								</div>
 							{:else if success}
-								<div class="alert alert-info">Check your email for futher instructions.</div>
+								<div class="alert">Check your email for futher instructions.</div>
 							{:else}
 								<div class="instructions" />
 							{/if}
 
 							<div id="form-group-registration">
-								<input
-									bind:value={email}
-									class="form-control form-group-registration-item mb-4"
-									type="email"
-									placeholder="email"
-									required
-									{disabled}
-								/>
+								<TextInput bind:value={email} size="lg" type="email" placeholder="email" required {disabled} />
 
-								<input
+								<TextInput
 									bind:value={firstName}
-									class="form-control form-group-registration-item mb-4"
+									size="lg"
 									type="text"
 									placeholder="first name"
 									spellcheck="false"
@@ -105,9 +100,9 @@
 									{disabled}
 								/>
 
-								<input
+								<TextInput
 									bind:value={lastName}
-									class="form-control form-group-registration-item mb-4"
+									size="lg"
 									type="text"
 									placeholder="last name"
 									spellcheck="false"
@@ -115,14 +110,14 @@
 									{disabled}
 								/>
 
-								<button type="submit" class="btn btn-primary form-group-api-key-item mb-4" class:submitting {disabled}>
+								<Button submit {disabled}>
 									{#if submitting}
 										Submitting
-										<Spinner />
+										<Spinner color="var(--c-text-6)" />
 									{:else}
 										Sign up
 									{/if}
-								</button>
+								</Button>
 							</div>
 						</form>
 					</div>
@@ -145,20 +140,16 @@
 		font-size: 0.875rem;
 	}
 
-	button[disabled] {
-		height: 2.8rem;
-		cursor: not-allowed;
-		background: #cccccc;
-		border: 2px solid #888888;
-		opacity: 0.25;
+	.alert {
+		border-color: var(--c-border-1);
 	}
 
-	button.submitting {
-		opacity: 0.5;
+	.error {
+		color: var(--c-bearish);
 	}
 
 	#form-group-registration {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		gap: 2rem;
 	}
 </style>

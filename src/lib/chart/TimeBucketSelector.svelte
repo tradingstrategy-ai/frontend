@@ -24,16 +24,16 @@ Used for selecting a time bucket for chart data feeds.default
 	div {
 		display: flex;
 		margin-bottom: 0.5em;
-		border: 1px solid var(--light);
-		border-radius: 0.55rem;
-		box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25), -3px -3px 6px rgba(0, 0, 0, 0.25);
+		border: 1px solid var(--c-border-1);
+		border-radius: 0.25rem;
 		font-size: 0.875rem;
 	}
 
 	a {
 		padding: 0.4em 1em;
+		border-left: 1px solid var(--c-border-1);
 		font-weight: 500;
-		border-left: 1px solid var(--light);
+		color: var(--c-text-3);
 	}
 
 	a:first-child {
@@ -46,13 +46,13 @@ Used for selecting a time bucket for chart data feeds.default
 	}
 
 	a:hover {
-		background-color: rgba(0, 0, 0, 0.25);
+		background: var(--c-background-1);
 	}
 
 	.active,
 	.active:hover {
-		background-color: rgba(0, 0, 0, 0.5);
-		color: white;
+		background: var(--c-background-4);
+		color: var(--c-text-1);
 		cursor: default;
 	}
 

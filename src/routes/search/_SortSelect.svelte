@@ -85,7 +85,8 @@ pre-defined set of sort options.
 
 	label {
 		font-weight: 500;
-		color: #44476a;
+		letter-spacing: 0.01em;
+		color: var(--c-text-2);
 		white-space: nowrap;
 	}
 

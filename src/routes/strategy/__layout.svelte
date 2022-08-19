@@ -8,26 +8,13 @@
 
 <slot />
 
-<!--
-
-    Styles that are applied to within any page of strategy section.
-
--->
-<style>
-	:global(:root) {
-		--profit-green: var(--c-bullish-dark);
-		--profit-red: var(--c-bearish-dark);
-		--profit-black: var(--c-ink);
+<style global>
+	/* Price action and candle colors */
+	.profit-green {
+		color: var(--c-bullish);
 	}
 
-	/**
-     * Price action and candle colors
-     */
-	:global(.profit-green) {
-		color: var(--profit-green);
-	}
-
-	:global(.profit-red) {
-		color: var(--profit-red);
+	.profit-red {
+		color: var(--c-bearish);
 	}
 </style>

@@ -31,6 +31,7 @@
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 
 	export let chain_slug;
@@ -91,7 +92,7 @@
 					> by Trading Strategy.
 				</p>
 
-				<p>
+				<p class="smart-contract-address">
 					The factory smart contract address for {details.human_readable_name} is
 					<a class="body-link" href={details.blockchain_explorer_link}>{details.address}</a>.
 				</p>
@@ -101,13 +102,17 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="exchange-actions">
-					<a href={details.homepage} class="btn btn-primary">Visit {nameDetails.name}</a>
-					<a href={details.blockchain_explorer_link} class="btn btn-primary"
-						>View {nameDetails.name} on blockchain explorer</a
-					>
-					<a href="/trading-view/{details.chain_slug}/{details.exchange_slug}/export-data" class="btn btn-primary"
-						>Download as Excel</a
-					>
+					<Button secondary label="Visit {nameDetails.name}" href={details.homepage} />
+					<Button
+						secondary
+						label="View {nameDetails.name} on blockchain explorer"
+						href={details.blockchain_explorer_link}
+					/>
+					<Button
+						secondary
+						label="Download as Excel"
+						href="/trading-view/{details.chain_slug}/{details.exchange_slug}/export-data"
+					/>
 				</div>
 			</div>
 		</div>
@@ -142,6 +147,11 @@
 </div>
 
 <style>
+	.smart-contract-address {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	.trading-pairs {
 		margin-bottom: 60px;
 	}
@@ -151,8 +161,11 @@
 		width: 17%; /* 1/6 */
 	}
 
-	.exchange-actions .btn {
-		margin: 20px 20px 20px 0;
+	.exchange-actions {
+		margin-block: 1rem 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem;
 	}
 
 	.tracking-criteria {

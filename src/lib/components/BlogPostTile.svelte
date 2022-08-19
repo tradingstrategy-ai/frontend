@@ -65,6 +65,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	h3 {
 		font: var(--f-h2-medium);
+		text-transform: capitalize;
 		text-decoration: underline transparent;
 		transition: text-decoration-color var(--transition-duration);
 	}
