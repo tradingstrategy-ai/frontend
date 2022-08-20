@@ -33,6 +33,7 @@ https://search.google.com/structured-data/testing-tool
 		ethereum: 'Ethereum',
 		bsc: 'BNB Chain',
 		binance: 'BNB Chain',
+        avalanche: 'Avalanche C-chain',
 		polygon: 'Polygon',
 		tokens: 'Tokens'
 	};
