@@ -12,39 +12,50 @@
 	<meta name="description" content="Top trading pairs and tokens" />
 </svelte:head>
 
-<div class="container container-main exchanges">
-	<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
-	<div class="row">
-		<div class="col-md-12">
-			<div class="trading-pairs">
-				<h1>Trading pairs</h1>
+<main>
+	<header class="ds-container">
+		<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
+		<h1>Trading pairs</h1>
+		<p>
+			Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
+		</p>
+	</header>
 
-				<p>
-					Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
-				</p>
+	<section class="ds-container">
+		<StaleDataWarning allChains={true} />
 
-				<StaleDataWarning allChains={true} />
-
-				<PairExplorer
-					enabledColumns={[
-						'pair_name',
-						'exchange_name',
-						'usd_price_latest',
-						'price_change_24h',
-						'usd_volume_30d',
-						'usd_liquidity_latest',
-						'liquidity_change_24h'
-					]}
-					orderColumnIndex={4}
-					pageLength={50}
-				/>
-			</div>
-		</div>
-	</div>
-</div>
+		<PairExplorer
+			enabledColumns={[
+				'pair_name',
+				'exchange_name',
+				'usd_price_latest',
+				'price_change_24h',
+				'usd_volume_30d',
+				'usd_liquidity_latest',
+				'liquidity_change_24h'
+			]}
+			orderColumnIndex={4}
+			pageLength={50}
+		/>
+	</section>
+</main>
 
 <style>
-	.trading-pairs :global(.col-exchange) {
+	.ds-container {
+		grid-template-columns: auto;
+		gap: 0;
+	}
+
+	header h1 {
+		font: var(--f-h2-medium);
+		margin-bottom: 0.5rem;
+	}
+
+	section {
+		margin-top: 1rem;
+	}
+
+	section :global(.col-exchange) {
 		white-space: nowrap;
 	}
 </style>
