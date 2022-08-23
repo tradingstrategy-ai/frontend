@@ -17,4 +17,5 @@
 	grid-template-columns: repeat(auto-fit, minmax(var(--ds-template-col-min), 1fr));
 	gap: var(--ds-gap);
 	padding-inline: calc((100% - var(--ds-container-width)) / 2);
+	overflow: auto;
 }
