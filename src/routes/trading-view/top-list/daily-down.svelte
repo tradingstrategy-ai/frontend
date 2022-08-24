@@ -26,18 +26,20 @@
 	<meta name="description" content="Trading pairs with most volatile losses for the last 24h" />
 </svelte:head>
 
-<div class="container">
-	<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-down': 'Daily losers' }} />
+<main>
+	<header class="ds-container">
+		<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-down': 'Daily losers' }} />
 
-	<h1>Trading pairs with the most loss for the last 24h</h1>
+		<h1>Trading pairs with the most loss for the last 24h</h1>
 
-	<p class="lead">
-		<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a> with the highest drawdown on
-		<a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a> today. Showing only the pairs with minimum
-		$1M liquidity. All trading pairs are benchmarked against the US Dollar.
-	</p>
+		<p class="lead">
+			<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a> with the highest drawdown on
+			<a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a> today. Showing only the pairs with
+			minimum $1M liquidity. All trading pairs are benchmarked against the US Dollar.
+		</p>
+	</header>
 
-	<div class="trading-pairs">
+	<section class="ds-container">
 		<StaleDataWarning allChains={true} />
 
 		{#if pairs}
@@ -45,10 +47,19 @@
 		{:else}
 			<div class="alert alert-danger">Daily volatility data is not available at the moment.</div>
 		{/if}
-	</div>
-</div>
+	</section>
+</main>
 
 <style>
+	.ds-container {
+		grid-template-columns: auto;
+		gap: 0rem;
+	}
+
+	header h1 {
+		font: var(--f-h2-medium);
+	}
+
 	.lead {
 		margin: 2rem 0;
 	}
