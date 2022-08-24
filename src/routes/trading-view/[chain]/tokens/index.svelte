@@ -12,8 +12,9 @@
 	<meta name="description" content="Top decentralised exchanges" />
 </svelte:head>
 
+<Breadcrumbs />
+
 <div class="container container-main exchanges">
-	<Breadcrumbs />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="exchanges">

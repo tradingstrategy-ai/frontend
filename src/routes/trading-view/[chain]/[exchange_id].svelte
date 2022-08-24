@@ -50,8 +50,9 @@
 	/>
 </svelte:head>
 
+<Breadcrumbs labels={{ [details.exchange_slug]: details.human_readable_name }} />
+
 <div class="container">
-	<Breadcrumbs labels={{ [details.exchange_slug]: details.human_readable_name }} />
 	<div class="exchange-content" data-testid="statistics">
 		<div class="row">
 			<div class="col-md-12">

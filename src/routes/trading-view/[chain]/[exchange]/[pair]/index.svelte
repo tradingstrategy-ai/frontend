@@ -96,9 +96,9 @@ Render the pair trading page
 	/>
 </svelte:head>
 
-<div class="container">
-	<Breadcrumbs labels={breadcrumbs} />
+<Breadcrumbs labels={breadcrumbs} />
 
+<div class="container">
 	<div class="text-section">
 		<div class="row">
 			<div class="col-md-12">

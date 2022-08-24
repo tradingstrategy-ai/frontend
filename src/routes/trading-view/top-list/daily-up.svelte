@@ -26,10 +26,10 @@
 	<meta name="description" content="Trading pairs with most profit for the last 24h" />
 </svelte:head>
 
+<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-up': 'Daily gainers' }} />
+
 <main>
 	<header class="ds-container">
-		<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-up': 'Daily gainers' }} />
-
 		<h1>Trading pairs with the most profit for the last 24h</h1>
 
 		<p class="lead">

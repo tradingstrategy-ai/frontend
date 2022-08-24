@@ -39,9 +39,9 @@
 	<meta name="description" content={`Top ${details.chain_name} tokens and prices`} />
 </svelte:head>
 
-<div class="container">
-	<Breadcrumbs labels={{ [details.chain_slug]: details.chain_name }} />
+<Breadcrumbs labels={{ [details.chain_slug]: details.chain_name }} />
 
+<div class="container">
 	<div class="exchange-content">
 		<div class="row">
 			<div class="col-md-12">

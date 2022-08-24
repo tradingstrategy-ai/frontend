@@ -34,9 +34,9 @@
 	<meta name="description" content="Explore trading pairs and exchanges" />
 </svelte:head>
 
-<div class="container container-main exchanges">
-	<Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
+<Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
 
+<div class="container container-main exchanges">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="exchanges-content">

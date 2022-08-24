@@ -26,10 +26,10 @@
 	<meta name="description" content="Trading pairs with most volatile losses for the last 24h" />
 </svelte:head>
 
+<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-down': 'Daily losers' }} />
+
 <main>
 	<header class="ds-container">
-		<Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-down': 'Daily losers' }} />
-
 		<h1>Trading pairs with the most loss for the last 24h</h1>
 
 		<p class="lead">

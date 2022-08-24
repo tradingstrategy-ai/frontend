@@ -53,7 +53,8 @@ Export data for exchange trading pair list
 	/>
 </svelte:head>
 
+<Breadcrumbs labels={breadcrumbs} />
+
 <div class="container">
-	<Breadcrumbs labels={breadcrumbs} />
 	<PairListExportPage {chain_slug} {exchange_slug} {exchange_name} />
 </div>

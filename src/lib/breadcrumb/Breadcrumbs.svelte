@@ -79,7 +79,9 @@ https://search.google.com/structured-data/testing-tool
 
 <style>
 	nav {
-		width: 100%;
+		width: calc(100% - var(--ds-container-margin) * 2);
+		max-width: var(--ds-container-max-width);
+		margin-inline: auto;
 	}
 
 	ol {

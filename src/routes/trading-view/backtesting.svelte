@@ -131,8 +131,9 @@
 	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
 </svelte:head>
 
+<Breadcrumbs />
+
 <div class="container container-main">
-	<Breadcrumbs />
 	<section>
 		<h1>Historical DEX trading data</h1>
 

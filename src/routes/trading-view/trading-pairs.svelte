@@ -12,9 +12,10 @@
 	<meta name="description" content="Top trading pairs and tokens" />
 </svelte:head>
 
+<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
+
 <main>
 	<header class="ds-container">
-		<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 		<h1>Trading pairs</h1>
 		<p>
 			Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.

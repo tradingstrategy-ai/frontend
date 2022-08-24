@@ -12,9 +12,10 @@
 	<meta name="description" content="Top decentralised exchanges" />
 </svelte:head>
 
+<Breadcrumbs />
+
 <main>
 	<header class="ds-container">
-		<Breadcrumbs />
 		<h1>Decentralised exchanges</h1>
 		<p>
 			Browse supported decentralised exchanges across all <a href="/trading-view/blockchains">blockchains</a> below.
