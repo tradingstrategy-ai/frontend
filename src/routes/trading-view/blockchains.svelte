@@ -36,50 +36,66 @@
 
 <Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
 
-<div class="container container-main exchanges">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="exchanges-content">
-				<h1>Blockchains</h1>
+<main>
+	<header class="ds-container">
+		<h1>Blockchains</h1>
+		<p>
+			List of currently active blockchains producing trading data. You can explore the blockchains for supported
+			decentralised exchanges, trading pairs and price charts.
+		</p>
+	</header>
 
-				<p>
-					List of currently active blockchains producing trading data. You can explore the blockchains for supported
-					decentralised exchanges, trading pairs and price charts.
-				</p>
+	<section class="ds-container">
+		<table class="table">
+			<thead>
+				<th>Blockchain</th>
+				<th>Exchanges</th>
+				<th><!-- actions --></th>
+			</thead>
 
-				<table class="table">
-					<thead>
-						<th>Blockchain</th>
-						<th>Exchanges</th>
-						<th><!-- actions --></th>
-					</thead>
+			{#each chains as chain}
+				<tr>
+					<td>
+						<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>
+							<img alt={`${chain.chain_name} logo`} class="chain-logo" src={chain.chain_logo} />
+						</a>
+						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
+							{chain.chain_name}
+						</a>
+					</td>
+					<td>
+						{chain.exchanges}
+					</td>
 
-					{#each chains as chain}
-						<tr>
-							<td>
-								<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>
-									<img alt={`${chain.chain_name} logo`} class="chain-logo" src={chain.chain_logo} />
-								</a>
-								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
-									{chain.chain_name}
-								</a>
-							</td>
-							<td>
-								{chain.exchanges}
-							</td>
-
-							<td>
-								<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}> Details </a>
-							</td>
-						</tr>
-					{/each}
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
+					<td>
+						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}> Details </a>
+					</td>
+				</tr>
+			{/each}
+		</table>
+	</section>
+</main>
 
 <style>
+	header {
+		grid-template-columns: auto;
+		gap: 0;
+	}
+
+	header h1 {
+		font: var(--f-h2-medium);
+	}
+
+	header p {
+		font: var(--f-ui-body-roman);
+		margin-block: 1rem;
+	}
+
+	th,
+	td {
+		white-space: nowrap;
+	}
+
 	.chain-logo {
 		max-width: 24px;
 		max-height: 24px;
