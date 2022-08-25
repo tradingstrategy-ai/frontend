@@ -224,9 +224,8 @@
 	@media (width >= 1148px) {
 		.blog-posts {
 			grid-template-columns: 1fr 1fr 1fr;
-			grid-auto-flow: column;
-			grid-auto-columns: 0;
-			overflow-x: hidden;
+			grid-template-rows: auto 0;
+			overflow: hidden;
 		}
 	}
 </style>
