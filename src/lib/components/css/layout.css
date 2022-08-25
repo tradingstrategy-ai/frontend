@@ -1,21 +1,23 @@
+/* Global settings for design-system layout */
 :root {
-	/* Global settings for design-system layout */
-	--ds-container-max-width: 1324px;
-	--ds-breakpoint: 1024px;
-	--ds-container-margin: 1.5rem;
-	--ds-gap: 2.5rem;
+	--container-max-width: 1324px;
+	--container-margin: 1.5rem;
 }
 
-/* design-system layout utility class and base styles */
+/* design-system layout utility classes */
 .ds-container {
-	--ds-container-width: min(calc(100% - (var(--ds-container-margin) * 2)), var(--ds-container-max-width));
-	--ds-column-min-width: calc((var(--ds-breakpoint) - 2 * var(--ds-container-margin) - var(--ds-gap)) / 2);
-	--ds-column-max-width: calc((var(--ds-container-width) - var(--ds-gap)) / 2);
-	--ds-template-col-min: min(var(--ds-container-width), max(var(--ds-column-min-width), var(--ds-column-max-width)));
-
+	--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(var(--ds-template-col-min), 1fr));
-	gap: var(--ds-gap);
-	padding-inline: calc((100% - var(--ds-container-width)) / 2);
+	padding-inline: calc((100% - var(--container-width)) / 2);
 	overflow: auto;
+}
+
+.ds-2-col {
+	--column-gap: 2.5rem;
+	--column-min: calc((1024px - 2 * var(--container-margin) - var(--column-gap)) / 2);
+	--column-max: calc((var(--container-width) - var(--column-gap)) / 2);
+	--template-min: min(var(--container-width), max(var(--column-min), var(--column-max)));
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--template-min), 1fr));
+	gap: 1.5rem var(--column-gap);
 }

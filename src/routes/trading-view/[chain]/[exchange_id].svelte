@@ -153,10 +153,6 @@
 		font: var(--f-h3-medium);
 	}
 
-	.exchange-info {
-		grid-template-columns: auto;
-	}
-
 	.text-summary {
 		align-self: start;
 		display: grid;
@@ -169,12 +165,11 @@
 	}
 
 	.trading-pairs {
-		grid-template-columns: auto;
 		gap: 0.5rem;
 	}
 
 	/* Make sure columns do not wiggle when resorting and the data in the cells change */
-	.trading-pairs :global(td) {
+	.trading-pairs :global td {
 		width: 17%; /* 1/6 */
 	}
 

@@ -163,7 +163,7 @@ Render the pair trading page
 		</div>
 	</section>
 
-	<section class="ds-container warnings">
+	<section class="ds-container">
 		{#if tokenTax.broken}
 			<div class="alert alert-danger">
 				⚠️ This token is unlikely to be tradeable.
@@ -196,7 +196,7 @@ Render the pair trading page
 		</div>
 	</section>
 
-	<section class="ds-container charts">
+	<section class="ds-container">
 		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
 	</section>
 
@@ -230,7 +230,7 @@ Render the pair trading page
 	}
 
 	.pair-info {
-		grid-template-columns: auto;
+		gap: 1.5rem 2.5rem;
 	}
 
 	.text-summary {
@@ -242,12 +242,6 @@ Render the pair trading page
 	.smart-contract-address {
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	.warnings,
-	.charts {
-		grid-template-columns: auto;
-		gap: 0;
 	}
 
 	.trade-actions {

@@ -47,8 +47,8 @@
 
 <style>
 	article {
-		--ds-container-max-width: 720px;
-		--ds-gap: 2rem;
+		--container-max-width: 720px;
+		gap: 2rem;
 	}
 
 	header {

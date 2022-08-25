@@ -39,7 +39,6 @@
 	}
 
 	.ds-container {
-		grid-template-columns: auto;
 		gap: 1rem;
 	}
 

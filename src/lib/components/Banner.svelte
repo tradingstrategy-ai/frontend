@@ -16,7 +16,6 @@
 
 <style>
 	section {
-		grid-template-columns: auto;
 		gap: 2rem;
 		justify-items: center;
 		padding-block: 2.5rem;

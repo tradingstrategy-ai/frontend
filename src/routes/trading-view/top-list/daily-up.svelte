@@ -32,7 +32,7 @@
 	<header class="ds-container">
 		<h1>Trading pairs with the most profit for the last 24h</h1>
 
-		<p class="lead">
+		<p>
 			<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a> with the highest profit on
 			<a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a> today. Showing only the pairs with
 			minimum $1M liquidity. All trading pairs are benchmarked against the US Dollar.
@@ -51,16 +51,20 @@
 </main>
 
 <style>
-	.ds-container {
-		grid-template-columns: auto;
-		gap: 0rem;
+	main {
+		display: grid;
+		gap: 2rem;
+	}
+
+	header {
+		gap: 2rem;
 	}
 
 	header h1 {
 		font: var(--f-h2-medium);
 	}
 
-	.lead {
-		margin: 2rem 0;
+	header p {
+		font: var(--f-ui-large-roman);
 	}
 </style>

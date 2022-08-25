@@ -101,7 +101,7 @@
 		</div>
 	</section>
 
-	<section class="ds-container trading-pairs">
+	<section class="ds-container" style:gap="0.5rem">
 		<h2>Trading pairs</h2>
 
 		<StaleDataWarning allChains={true} />
@@ -146,10 +146,6 @@
 		font: var(--f-h3-medium);
 	}
 
-	.token-info {
-		grid-template-columns: auto;
-	}
-
 	.text-summary {
 		align-self: start;
 		display: grid;
@@ -159,11 +155,6 @@
 	.smart-contract-address {
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	.trading-pairs {
-		grid-template-columns: auto;
-		gap: 0.5rem;
 	}
 
 	small {

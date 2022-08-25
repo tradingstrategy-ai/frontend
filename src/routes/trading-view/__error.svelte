@@ -61,9 +61,8 @@
 
 <style>
 	section {
-		grid-template-columns: 1fr;
-		--ds-container-max-width: 720px;
-		--ds-gap: 4rem;
+		--container-max-width: 720px;
+		gap: 4rem;
 	}
 
 	pre {

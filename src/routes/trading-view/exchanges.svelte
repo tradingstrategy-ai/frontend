@@ -34,18 +34,14 @@
 </main>
 
 <style>
-	.ds-container {
-		grid-template-columns: auto;
-		gap: 0;
+	main {
+		display: grid;
+		gap: 1rem;
 	}
 
 	header h1 {
 		font: var(--f-h2-medium);
 		margin-bottom: 0.5rem;
-	}
-
-	section {
-		margin-top: 1rem;
 	}
 
 	section :global .col-volume {

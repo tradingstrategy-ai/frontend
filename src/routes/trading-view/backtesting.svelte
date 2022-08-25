@@ -149,7 +149,7 @@
 		</p>
 	</header>
 
-	<section class="ds-container datasets">
+	<section class="ds-container">
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
@@ -227,7 +227,7 @@
 		</div>
 	</section>
 
-	<section class="ds-container">
+	<section class="ds-container ds-2-col">
 		<div>
 			<h2>Data logistics</h2>
 
@@ -268,12 +268,6 @@
 	main {
 		display: grid;
 		gap: 1.5rem;
-	}
-
-	header,
-	.datasets {
-		grid-template-columns: auto;
-		gap: 0;
 	}
 
 	header h1 {

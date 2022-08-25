@@ -54,7 +54,6 @@
 
 <style>
 	section {
-		grid-template-columns: auto;
 		justify-content: center;
 		gap: 4rem;
 		padding-top: 6rem;

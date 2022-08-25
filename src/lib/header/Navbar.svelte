@@ -8,7 +8,7 @@
 	$: showSearch = $page.url.pathname !== '/search';
 </script>
 
-<div>
+<div class="ds-container" style:overflow="visible">
 	<Header>
 		<svelte:fragment slot="menu">
 			<MenuItem label="Trading data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
@@ -23,11 +23,3 @@
 		</svelte:fragment>
 	</Header>
 </div>
-
-<style>
-	div {
-		width: calc(100% - var(--ds-container-margin) * 2);
-		max-width: var(--ds-container-max-width);
-		margin-inline: auto;
-	}
-</style>

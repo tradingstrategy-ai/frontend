@@ -77,11 +77,6 @@
 </main>
 
 <style>
-	header {
-		grid-template-columns: auto;
-		gap: 0;
-	}
-
 	header h1 {
 		font: var(--f-h2-medium);
 	}

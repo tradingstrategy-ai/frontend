@@ -18,8 +18,6 @@
 
 <style>
 	section {
-		grid-template-columns: auto;
-		gap: 0;
 		padding-top: 1rem;
 		align-items: center;
 	}

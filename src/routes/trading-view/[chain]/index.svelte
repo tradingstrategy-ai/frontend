@@ -49,7 +49,7 @@
 		</h1>
 	</header>
 
-	<section class="ds-container">
+	<section class="ds-container ds-2-col" style:align-items="start">
 		<table class="table">
 			<tbody>
 				<tr>
@@ -147,10 +147,6 @@
 		gap: 2.5rem;
 	}
 
-	section {
-		align-items: start;
-	}
-
 	header h1 {
 		font: var(--f-h2-medium);
 	}
@@ -165,7 +161,6 @@
 	}
 
 	.explorer-wrapper {
-		grid-template-columns: auto;
 		gap: 1rem;
 	}
 

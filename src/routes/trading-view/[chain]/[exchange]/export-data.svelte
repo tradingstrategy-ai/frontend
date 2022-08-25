@@ -152,15 +152,13 @@ Export data for exchange trading pair list
 
 <style>
 	main {
+		--container-max-width: 720px;
 		display: grid;
 		gap: 1.5rem;
 	}
 
-	header,
-	section {
-		grid-template-columns: auto;
+	.ds-container {
 		gap: 1rem;
-		--ds-container-max-width: 720px;
 	}
 
 	header h1 {
@@ -192,11 +190,6 @@ Export data for exchange trading pair list
 	.cta {
 		margin-top: 1rem;
 		display: grid;
-	}
-
-	.footnote {
-		grid-template-columns: auto;
-		gap: 1rem;
 	}
 
 	@media (--viewport-md-up) {
