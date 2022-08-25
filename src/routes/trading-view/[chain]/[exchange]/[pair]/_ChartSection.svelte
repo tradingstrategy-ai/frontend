@@ -98,6 +98,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	h2 {
 		flex: 1;
 		white-space: nowrap;
+		font: var(--f-h3-medium);
 	}
 
 	.chart-title {

@@ -175,44 +175,15 @@ backend API when scrolled into view.
 
 <style>
 	table {
-		margin: 0 auto;
-	}
-
-	th {
-		text-align: right;
-		padding-right: 5px;
+		width: 100%;
+		max-width: 18rem;
 	}
 
 	.data-row {
 		font-size: 80%;
 	}
 
-	td {
-		text-align: left;
-	}
-
 	.title {
-		text-align: center;
 		text-transform: capitalize;
-	}
-
-	/* --breakpoint-md */
-	@media (max-width: 992px) {
-		table {
-			margin-bottom: 40px;
-			width: 100%;
-		}
-
-		th {
-			text-align: left;
-		}
-
-		td {
-			width: 50%;
-		}
-
-		.title {
-			text-align: left;
-		}
 	}
 </style>
