@@ -58,7 +58,7 @@
 </script>
 
 <svelte:head>
-	<title>Trading Strategy - Algorithmic trading strategy protocol</title>
+	<title>Trading Strategy - Algorithmic Trading Protocol</title>
 	<meta name="description" content="DeFi market data and systematic trading" />
 	{@html sitelinksSearchBox()}
 </svelte:head>
