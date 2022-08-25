@@ -53,7 +53,7 @@ Advanced Search page
 
 <main>
 	<section>
-		<div class="container">
+		<div class="ds-container">
 			<div class="row my-3 my-md-0">
 				<div class="col-md-3 d-none d-md-block">
 					<h1>Search</h1>
@@ -144,6 +144,10 @@ Advanced Search page
 		gap: 1em;
 		max-width: 830px;
 		--text-input-width: 100%;
+	}
+
+	h1 {
+		font: var(--f-h2-medium);
 	}
 
 	h2 {
