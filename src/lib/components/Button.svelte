@@ -45,10 +45,10 @@
 		padding: 0 1.5rem;
 		border: 1px solid transparent;
 		border-radius: 0;
-		font: 500 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		font: 500 var(--fs-ui-lg);
 		text-decoration: none;
 		text-transform: capitalize;
+		text-align: center;
 		cursor: pointer;
 	}
 
