@@ -60,7 +60,7 @@ https://search.google.com/structured-data/testing-tool
 	}
 </script>
 
-<nav aria-label="breadcrumb" data-testid="breadcrumb">
+<nav class="ds-container" aria-label="breadcrumb" data-testid="breadcrumb">
 	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
 			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
@@ -78,10 +78,6 @@ https://search.google.com/structured-data/testing-tool
 </nav>
 
 <style>
-	nav {
-		width: 100%;
-	}
-
 	ol {
 		list-style-type: none;
 		margin: 0.75rem 0;

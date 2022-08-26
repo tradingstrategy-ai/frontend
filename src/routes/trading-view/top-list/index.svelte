@@ -7,11 +7,11 @@
 	<meta name="description" content="Most volatile trading pairs" />
 </svelte:head>
 
+<Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
+
 <main>
 	<section>
 		<div class="container">
-			<Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
-
 			<div class="row">
 				<div class="col-md-12">
 					<h1>Top lists</h1>

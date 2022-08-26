@@ -50,7 +50,7 @@
 </svelte:head>
 
 <main>
-	<header class="ds-container">
+	<header class="ds-container ds-2-col">
 		<div>
 			<h2>Trading Strategy blog</h2>
 			<p>Follow our decentralised algorithmic trading protocol development</p>
@@ -94,7 +94,7 @@
 	header {
 		margin-top: 1.5rem;
 		align-items: center;
-		row-gap: 1.5rem;
+		gap: 1.5rem 2.5rem;
 	}
 
 	h2 {
@@ -109,8 +109,9 @@
 	.posts {
 		padding-block: 2.5rem;
 		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));
+		gap: 2.5rem;
 		/** ensure featured post column gap matches the layout column gap */
-		--blog-post-tile--column-gap: var(--ds-gap);
+		--blog-post-tile--column-gap: 2.5rem;
 	}
 
 	.loading {

@@ -32,9 +32,7 @@
 
 <SocialMetaTags url={$page.url} {post} />
 
-<section class="ds-container">
-	<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
-</section>
+<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
 
 <article class="ds-container">
 	<header>
@@ -49,8 +47,8 @@
 
 <style>
 	article {
-		--ds-container-max-width: 720px;
-		--ds-gap: 2rem;
+		--container-max-width: 720px;
+		gap: 2rem;
 	}
 
 	header {

@@ -96,7 +96,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			grid-template-columns: 1fr 1fr;
 			grid-template-rows: auto;
 			/* Set --blog-post-tile--column-gap to control the column gap */
-			column-gap: var(--blog-post-tile--column-gap, min(2.5rem, 3vw));
+			column-gap: var(--blog-post-tile--column-gap, 2.5rem);
 			align-items: center;
 			--timestamp-font: 400 var(--fs-ui-xl);
 		}

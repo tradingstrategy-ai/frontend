@@ -150,8 +150,7 @@
 	}
 
 	section {
-		--ds-container-max-width: 1020px;
-		grid-template-columns: 1fr;
+		--container-max-width: 1020px;
 		gap: 2rem;
 	}
 

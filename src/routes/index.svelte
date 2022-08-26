@@ -79,20 +79,22 @@
 	</header>
 
 	{#if topMomentum}
-		<section class="ds-container top-momentum">
+		<section class="ds-container top-momentum" style:gap="1.5rem">
 			<h2>Top trades</h2>
-			<TopMomentum
-				name="Most profitable 24h"
-				pairs={topMomentum.top_up_24h_min_liq_1m}
-				linkTarget="/trading-view/top-list/daily-up"
-				linkLabel="View all winning pairs"
-			/>
-			<TopMomentum
-				name="Worst performance 24h"
-				pairs={topMomentum.top_down_24h_min_liq_1m}
-				linkTarget="/trading-view/top-list/daily-down"
-				linkLabel="View all losing pairs"
-			/>
+			<div class="ds-2-col">
+				<TopMomentum
+					name="Most profitable 24h"
+					pairs={topMomentum.top_up_24h_min_liq_1m}
+					linkTarget="/trading-view/top-list/daily-up"
+					linkLabel="View all winning pairs"
+				/>
+				<TopMomentum
+					name="Worst performance 24h"
+					pairs={topMomentum.top_down_24h_min_liq_1m}
+					linkTarget="/trading-view/top-list/daily-down"
+					linkLabel="View all losing pairs"
+				/>
+			</div>
 		</section>
 	{/if}
 
@@ -131,7 +133,7 @@
 
 <style>
 	header {
-		--ds-container-margin: 2rem;
+		--container-margin: 2rem;
 		background: var(--c-background-1);
 		padding-block: 3.5rem;
 	}
@@ -150,16 +152,14 @@
 	}
 
 	h2 {
-		grid-column: 1 / -1;
 		text-align: center;
 	}
 
-	.top-momentum {
-		row-gap: 1.5rem;
+	.strategies {
+		gap: 2.5rem;
 	}
 
 	.strategies > div {
-		grid-column: 1 / -1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -182,15 +182,14 @@
 	}
 
 	.blog {
-		grid-template-columns: auto;
+		gap: 2.5rem;
 		justify-items: center;
 		padding-block: 4.5rem;
 	}
 
 	.blog-posts {
 		display: grid;
-		grid-template-columns: auto;
-		gap: var(--ds-gap);
+		gap: 2.5rem;
 	}
 
 	@media (--viewport-md-up) {
@@ -225,9 +224,8 @@
 	@media (width >= 1148px) {
 		.blog-posts {
 			grid-template-columns: 1fr 1fr 1fr;
-			grid-auto-flow: column;
-			grid-auto-columns: 0;
-			overflow-x: hidden;
+			grid-template-rows: auto 0;
+			overflow: hidden;
 		}
 	}
 </style>

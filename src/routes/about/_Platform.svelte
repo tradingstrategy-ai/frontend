@@ -82,14 +82,12 @@
 
 <style>
 	section {
-		grid-template-columns: auto;
 		gap: 5rem;
 		padding-top: 2rem;
 		padding-bottom: 4rem;
 	}
 
 	header {
-		grid-column: 1 / -1;
 		margin-bottom: 1.5rem;
 	}
 

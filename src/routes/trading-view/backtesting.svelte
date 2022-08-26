@@ -131,11 +131,11 @@
 	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
 </svelte:head>
 
-<div class="container container-main">
-	<Breadcrumbs />
-	<section>
-		<h1>Historical DEX trading data</h1>
+<Breadcrumbs />
 
+<main>
+	<header class="ds-container">
+		<h1>Historical DEX trading data</h1>
 		<p>
 			The following datasets are available for historical DEX trading data.
 			<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
@@ -147,7 +147,9 @@
 				>how to get started with Trading Strategy Python library for algorithmic trading</a
 			>.
 		</p>
+	</header>
 
+	<section class="ds-container">
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
@@ -223,40 +225,69 @@
 				</tbody>
 			</table>
 		</div>
-
-		<h2>Data logistics</h2>
-
-		<p>
-			Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
-			Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
-		</p>
-
-		<p>
-			Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably
-			larger when expanded to RAM. We expect you to download the dataset, cache the resulting file on a local disk and
-			perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute candle
-			data takes several gigabyte of memory.
-		</p>
-
-		<h2>Learn more</h2>
-
-		<ul>
-			<li>
-				<a rel="external" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-					>Getting started with Trading Strategy Python client</a
-				>
-			</li>
-			<li>
-				<a rel="external" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
-			</li>
-			<li>
-				<a href="https://github.com/tradingstrategy-ai/client">Github</a>
-			</li>
-		</ul>
 	</section>
-</div>
+
+	<section class="ds-container ds-2-col">
+		<div>
+			<h2>Data logistics</h2>
+
+			<p>
+				Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
+				Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
+			</p>
+
+			<p>
+				Datasets are large. Datasets are compressed using Parquet built-in Snappy compression and may be considerably
+				larger when expanded to RAM. We expect you to download the dataset, cache the resulting file on a local disk and
+				perform your own strategy specific trading pair filtering before using the data. Uncompressed one minute candle
+				data takes several gigabyte of memory.
+			</p>
+		</div>
+
+		<div>
+			<h2>Learn more</h2>
+
+			<ul>
+				<li>
+					<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html">
+						Getting started with Trading Strategy Python client
+					</a>
+				</li>
+				<li>
+					<a class="body-link" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
+				</li>
+				<li>
+					<a class="body-link" href="https://github.com/tradingstrategy-ai/client">Github</a>
+				</li>
+			</ul>
+		</div>
+	</section>
+</main>
 
 <style>
+	main {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	header h1 {
+		font: var(--f-h2-medium);
+	}
+
+	h2 {
+		font: var(--f-h3-medium);
+	}
+
+	p,
+	li {
+		font: var(--f-ui-body-roman);
+		margin-top: 1em;
+	}
+
+	label {
+		font: var(--f-ui-body-medium);
+	}
+
 	.table-datasets :global(time) {
 		white-space: nowrap;
 	}

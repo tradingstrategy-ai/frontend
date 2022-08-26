@@ -8,7 +8,7 @@
 	$: showSearch = $page.url.pathname !== '/search';
 </script>
 
-<section class="ds-container">
+<div class="ds-container" style:overflow="visible">
 	<Header>
 		<svelte:fragment slot="menu">
 			<MenuItem label="Trading data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
@@ -22,4 +22,4 @@
 			{#if showSearch}<Search />{/if}
 		</svelte:fragment>
 	</Header>
-</section>
+</div>

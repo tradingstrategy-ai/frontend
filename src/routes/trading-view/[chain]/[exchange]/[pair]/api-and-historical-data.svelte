@@ -64,9 +64,9 @@ Real time examples for the API
 	</title>
 </svelte:head>
 
-<div class="container">
-	<Breadcrumbs labels={breadcrumbs} />
+<Breadcrumbs labels={breadcrumbs} />
 
+<div class="container">
 	<h1>{summary.pair_symbol} API and historical data</h1>
 
 	<p>

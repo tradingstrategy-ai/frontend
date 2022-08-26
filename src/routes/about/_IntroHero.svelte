@@ -17,7 +17,6 @@
 
 <style>
 	header {
-		grid-template-columns: 1fr;
 		gap: 1.5rem;
 		padding-block: 1.5rem;
 	}
