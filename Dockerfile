@@ -40,8 +40,8 @@ WORKDIR /app
 COPY --from=builder /app/package.json .
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/scripts/server.js ./scripts/
+COPY --from=builder /app/scripts/serverPlain.js ./scripts/
 
 EXPOSE 3000
 
-CMD ["node", "scripts/server.js"]
+CMD ["node", "scripts/server-plain.js"]

@@ -1,27 +1,42 @@
 /**
- * Wrapper service to check for malformed URIs before passing requests to
- * `node-adapter` handler.
- *
- * After running `SSR=true npm run build`, start this service with:
- * `node server.js`
+ * Polka based SvelteKit server-side renderer
+ * with web-top HTTP request tracking API installed.
  */
-import { createServer } from 'http';
+
+// Check your SvelteKit build/handler.js file
+// location based on your SvelteKit installation
 import { handler } from '../build/handler.js';
+import polka from 'polka';
+import { Tracker } from '@trading-strategy-ai/web-top-node';
 
-const port = process.env.FRONTEND_PORT || 3000;
+// Create Polka server
+// See https://github.com/lukeed/polka
+// for more information.
+// (Polka is the default for SvelteKit)
+const app = polka();
 
-const server = createServer((req, res) => {
-	try {
-		decodeURI(req.url);
-	} catch (e) {
-		const invalidUriPath = `/invalid${encodeURI(req.url)}`;
-		console.log(`URIError: can't decode ${req.url}; forwarding to ${invalidUriPath}`);
-		req.url = invalidUriPath;
-	} finally {
-		handler(req, res);
-	}
-});
+// Create HTTP request tracking middleware
+const tracker = new Tracker();
+const trackerMiddleware = createTrackerMiddleware(tracker);
+const trackerServer = new TrackerServer(tracker, apiKey);
 
-server.listen(port, () => {
-	console.log(`Listening on port: ${port}`);
+// Install HTTP request start/end hooks.
+// If no max completed request buffer size is not given,
+// read the max number from TOP_MAX_COMPLETED_TASKS
+// environment variable, or default to 256 requests
+// if not set.
+app.use(trackerMiddleware);
+
+// Install API endpoint.
+// If no API key is given read one from
+// TOP_WEB_API_KEY environment variable.
+const trackerPath = "/tracker";
+app.get(trackerPath, trackerServer.serve.bind(trackerServer))
+
+// Install SvelteKit server-side renderer
+app.use(handler);
+
+app.listen(3000, () => {
+  console.log('Listening on port 3000');
+  console.log(`HTTP active requests API at ${trackerPath}, API key starts as ${tracker.apiKey.slice(0, 4)}…`);
 });

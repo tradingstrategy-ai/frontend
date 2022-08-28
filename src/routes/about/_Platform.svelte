@@ -28,7 +28,7 @@
 		</li>
 		<li>
 			Market signal analysis and trade entries/exits are executed on the decentralised Trading Strategy Oracle network,
-			which is running off-chain and utilises high server capacity and provessing power not available on “pure” smart
+			which is running off-chain and utilises high serverPlain capacity and provessing power not available on “pure” smart
 			contracts
 		</li>
 		<li>Multipair and portfolio rebalancing strategies are supported</li>

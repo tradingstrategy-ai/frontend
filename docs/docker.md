@@ -81,9 +81,9 @@ TAG=v4 ; git tag $TAG ; git push origin $TAG
 - [Check that the build completes on Github Actions](https://github.com/tradingstrategy-ai/frontend/actions)
 - [Check container releases on org level](https://github.com/orgs/tradingstrategy-ai/packages)
 
-### Updating the production server
+### Updating the production serverPlain
 
-Sync `docker-compose.yml` to the server (only if yml updates needed):
+Sync `docker-compose.yml` to the serverPlain (only if yml updates needed):
 
 ```shell
 scp docker-compose.yml $PROD:./frontend
@@ -160,7 +160,7 @@ Then visit [http://localhost:3000/](http://localhost:3000/).
 
 ## Running the container on production
 
-You can run the latest frontend on the production server with:
+You can run the latest frontend on the production serverPlain with:
 
 ```shell
 docker login ghcr.io -u miohtama  # Password is your PAT, see above
