@@ -196,7 +196,7 @@ Render the pair trading page
 		</div>
 	</section>
 
-	<section class="ds-container">
+	<section class="ds-container charts">
 		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
 	</section>
 
@@ -249,6 +249,11 @@ Render the pair trading page
 		display: flex;
 		flex-wrap: wrap;
 		gap: 1.5rem;
+	}
+
+	.charts {
+		/* prevent chart-flicker bug when scrollbars are enabled */
+		overflow: visible;
 	}
 
 	.time-period-summaries {
