@@ -9,6 +9,9 @@
  * echo "API key is $TOP_WEB_API_KEY"
  * node scripts/server.js
  *
+ * See https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
+ * for details.
+ *
  */
 
 // Check your SvelteKit build/handler.js file
@@ -41,7 +44,7 @@ const trackerServer = new TrackerServer(tracker);
 
 // Under which path we install the tracker API endpoint
 const trackerPath = "/tracker";
-app.use(trackerPath, trackerServer.serve.bind(trackerServer))
+app.get(trackerPath, trackerServer.serve.bind(trackerServer))
 
 // Install SvelteKit server-side renderer
 app.use(handler);
