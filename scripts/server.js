@@ -2,12 +2,8 @@
  * Express.js based SvelteKit server-side renderer
  * with web-top HTTP request tracking API installed.
  *
- * To run this you need to set environment variable TOP_WEB_API_KEY
- * to a random string.
- *
- * export TOP_WEB_API_KEY=`node -e "console.log(crypto.randomBytes(20).toString('hex'));"`
- * echo "API key is $TOP_WEB_API_KEY"
- * node scripts/server.js
+ * You need to set environment variable TOP_WEB_API_KEY
+ * to an API key that is used by `web-top` command line application.
  *
  * See https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
  * for details.
