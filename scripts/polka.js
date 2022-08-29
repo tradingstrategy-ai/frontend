@@ -1,25 +1,24 @@
 /**
- * Express.js based SvelteKit server-side renderer
- * with web-top HTTP request tracking API installed.
+ * Polka example web server twith tracker.
+ *
  *
  * To run this you need to set environment variable TOP_WEB_API_KEY
  * to a random string.
  *
  * export TOP_WEB_API_KEY=`node -e "console.log(crypto.randomBytes(20).toString('hex'));"`
  * echo "API key is $TOP_WEB_API_KEY"
- * node scripts/server.js
+ * node scripts/polka.js
  *
  */
 
-// Check your SvelteKit build/handler.js file
-// location based on your SvelteKit installation
-import { handler } from '../build/handler.js';
-import express from 'express';
+import polka from 'polka';
 import { Tracker, TrackerServer, createTrackerMiddleware } from '@trading-strategy-ai/web-top-node';
 
-// Create Express server
-// Polka does not work https://github.com/sveltejs/kit/issues/6363
-const app = express();
+// Create Polka server
+// See https://github.com/lukeed/polka
+// for more information.
+// (Polka is the default for SvelteKit)
+const app = polka();
 
 // Create HTTP request tracker.
 // This will store active and completed HTTP requests
@@ -41,10 +40,12 @@ const trackerServer = new TrackerServer(tracker);
 
 // Under which path we install the tracker API endpoint
 const trackerPath = "/tracker";
-app.use(trackerPath, trackerServer.serve.bind(trackerServer))
+app.get(trackerPath, trackerServer.serve.bind(trackerServer))
 
-// Install SvelteKit server-side renderer
-app.use(handler);
+// Create Hello world landing page
+app.get('/', async (req, res) => {
+  res.end('Hello world');
+});
 
 // Start web server
 app.listen(3000, () => {
