@@ -28,6 +28,8 @@ services:
       - TS_PUBLIC_TYPESENSE_API_URL
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
       - TS_PUBLIC_FRONTEND_VERSION_TAG
+      # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
+      - TOP_WEB_API_KEY
       # TODO: make VITE_PUBLIC_STRATEGIES run-time configurable
     deploy:
       restart_policy:
