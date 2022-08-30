@@ -28,6 +28,10 @@
 </div>
 
 <style>
+	div {
+		overflow: auto;
+	}
+
 	div,
 	div :global p,
 	div :global ol li,
