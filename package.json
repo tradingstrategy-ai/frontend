@@ -98,7 +98,7 @@
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@tryghost/content-api": "^1.5.13",
+    "@tryghost/content-api": "^1.11.1",
     "cookie": "^0.4.1",
     "date-fns": "^2.29.1",
     "dotenv": "^16.0.1",

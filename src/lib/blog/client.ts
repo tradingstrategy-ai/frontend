@@ -6,6 +6,6 @@ export default function getGhostClient({ apiUrl, contentApiKey }) {
 	return new GhostContentAPI({
 		url: apiUrl,
 		key: contentApiKey,
-		version: 'v3'
+		version: 'v5.12'
 	});
 }
