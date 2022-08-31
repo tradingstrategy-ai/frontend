@@ -7,7 +7,7 @@ design system.
 - [Trading Strategy Design System](https://github.com/tradingstrategy-ai/design-system) (phasing-in)
 
 The Bootstrap theme is included as a submodule under `deps/theme`. You can start a
-dev serverPlain for the theme:
+dev server for the theme:
 
 ```shell
 ( cd deps/theme && npx gulp )

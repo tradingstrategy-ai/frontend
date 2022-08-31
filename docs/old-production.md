@@ -2,9 +2,9 @@
 
 Deprecated. See [Docker info](./docker.md) instead.
 
-This will run serverPlain-side generated (SSR) pages using node.js serverPlain.
+This will run server-side generated (SSR) pages using node.js server.
 
-The serverPlain default port is 3000.
+The server default port is 3000.
 
 ```shell
 tmux -CC -L web attach

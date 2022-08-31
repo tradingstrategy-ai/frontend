@@ -38,7 +38,7 @@
 			<li>Public open source or private strategies enabled</li>
 
 			<svelte:fragment slot="cta">
-				<Button label="Join our Discord serverPlain" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
+				<Button label="Join our Discord server" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
 			</svelte:fragment>
 		</ContentListBox>
 	</div>

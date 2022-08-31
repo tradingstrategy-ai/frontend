@@ -25,7 +25,7 @@
 			<li>Access or white-label our <strong>comprehensive market data sets</strong></li>
 			<li>Gain <strong>access to new markets and investors</strong> directly on-chain, no counter-party risk</li>
 			<li><strong>Create and deploy private strategies</strong> or invest in existing strategies</li>
-			<li><strong>Host private strategies</strong> on your own private serverPlain(s)</li>
+			<li><strong>Host private strategies</strong> on your own private server(s)</li>
 		</ul>
 
 		<svelte:fragment slot="cta">
@@ -57,7 +57,7 @@
 	<Banner secondary title="Get in touch">
 		<svelte:fragment slot="cta">
 			<Button label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
-			<Button label="Join our Discord serverPlain" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
+			<Button label="Join our Discord server" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
 		</svelte:fragment>
 	</Banner>
 </main>

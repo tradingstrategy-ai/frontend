@@ -6,7 +6,7 @@
 
 		// TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
 		const res = await fetch(apiUrl, {
-			// When we are doing serverPlain-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
+			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
 			// See hooks/index.ts for more information.
 			// However, in this case, the backend does not know our domain name. For this particular API call,
 			// The backend is using Pyramid request.route_url() function to generate download URLs.

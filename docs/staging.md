@@ -6,14 +6,14 @@ Staging environment is password protected to avoid search engine indexing.
 
 The credentials are pinky / angrybird.
 
-This will run serverPlain-side generated (SSR) pages using node.js serverPlain.
+This will run server-side generated (SSR) pages using node.js server.
 
-The serverPlain itself is run in a tmux session `staging`.
+The server itself is run in a tmux session `staging`.
 
-The staging serverPlain default port is 127.0.0.1:4000.
+The staging server default port is 127.0.0.1:4000.
 
 ```shell
-# Which frontend branch we want to demostrate on the staging serverPlain
+# Which frontend branch we want to demostrate on the staging server
 STAGING_BRANCH=add-search
 
 cd ~/staging/frontend
@@ -26,7 +26,7 @@ rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
 
 For reserve proxy details for the staging see:
 
-https://github.com/tradingstrategy-ai/proxy-serverPlain/blob/master/Caddyfile
+https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
 
 ## Environment example
 

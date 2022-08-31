@@ -12,7 +12,7 @@ const port = process.env.FRONTEND_PORT || 3000;
 
 debugger;
 
-const serverPlain = createServer((req, res) => {
+const server = createServer((req, res) => {
 	try {
 		decodeURI(req.url);
 	} catch (e) {
@@ -24,6 +24,6 @@ const serverPlain = createServer((req, res) => {
 	}
 });
 
-serverPlain.listen(port, () => {
+server.listen(port, () => {
 	console.log(`Listening on port: ${port}`);
 });
