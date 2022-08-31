@@ -39,14 +39,14 @@ app.use(trackerMiddleware);
 const trackerServer = new TrackerServer(tracker);
 
 // Under which path we install the tracker API endpoint
-const trackerPath = "/tracker";
-app.get(trackerPath, trackerServer.serve.bind(trackerServer))
+const trackerPath = '/tracker';
+app.get(trackerPath, trackerServer.serve.bind(trackerServer));
 
 // Install SvelteKit server-side renderer
 app.use(handler);
 
 // Start web server
 app.listen(3000, () => {
-  console.log('Listening on port 3000');
-  console.log(`HTTP active requests API at ${trackerPath}, API key starts as ${trackerServer.apiKey.slice(0, 4)}…`);
+	console.log('Listening on port 3000');
+	console.log(`HTTP active requests API at ${trackerPath}, API key starts as ${trackerServer.apiKey.slice(0, 4)}…`);
 });
