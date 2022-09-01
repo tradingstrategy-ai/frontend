@@ -18,5 +18,8 @@ Note that this will show only frontend SSR requests and responses;
 further page navigations using SvelteKit router will directly
 hit backend API endpoints and does not show up in the monitoring.
 
+## More information
+
+See [web-top-node](https://github.com/tradingstrategy-ai/web-top-node).
 
 
