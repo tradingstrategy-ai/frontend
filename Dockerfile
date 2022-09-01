@@ -44,4 +44,4 @@ COPY --from=builder /app/scripts/server.js ./scripts/
 
 EXPOSE 3000
 
-CMD ["node", "scripts/server-plain.js"]
+CMD ["node", "scripts/server.js"]
