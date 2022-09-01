@@ -2,7 +2,7 @@
 
 ## Monitoring  web-top
 
-[web-top] API endpoint is available at `tradingstrategy.ai/tracker`,
+[web-top](https://top-framework.readthedocs.io/en/latest/web-top/index.html) API endpoint is available at `tradingstrategy.ai/tracker`,
 as set in [scripts/server.js](../scripts/server.js).
 
 To show the active and complete requests:
