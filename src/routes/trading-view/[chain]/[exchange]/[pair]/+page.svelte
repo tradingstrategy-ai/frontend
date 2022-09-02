@@ -1,92 +1,42 @@
 <!--
 Render the pair trading page
-- Load core pair data during SSR
-- Detailed candle data loading is delayed to the client-side (though in theory
-  the first run could be done in SSR)
+- Core pair data loaded during SSR (see +page.ts)
+- Detailed candle data is delayed until client-side (though the first run could be done in SSR)
 - Selected time bucket (for charts) is carried over in URL fragment; this could
   be moved to SvelteKit routing query parameter
 -->
-<script context="module">
-	import config from '$lib/config';
-	import getApiError from '$lib/chain/getApiError';
-	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-
-	// During SSR we only load only pair details; all trading data (price and
-	// liquidity candles, trading summaries) are done client-side.
-	export async function load({ params, fetch }) {
-		const exchange_slug = params.exchange;
-		const chain_slug = params.chain;
-		const pair_slug = params.pair;
-		const encoded = new URLSearchParams({ exchange_slug, chain_slug, pair_slug });
-		const apiUrl = `${config.backendUrl}/pair-details?${encoded}`;
-
-		const resp = await fetch(apiUrl);
-
-		if (!resp.ok) {
-			return getApiError(resp, 'Trading pair', [chain_slug, exchange_slug, pair_slug]);
-		}
-
-		const pairDetails = await resp.json();
-
-		const summary = pairDetails.summary;
-		const details = pairDetails.additional_details;
-
-		console.log('Pair page, summary', summary);
-		console.log('Pair page, details', details);
-
-		const tokenTax = getTokenTaxInformation(details);
-
-		return {
-			// Cache the pair data pages for 30 minutes at the Cloudflare edge,
-			// so the pages are served really fast if they get popular,
-			// and also for speed test
-			cache: {
-				maxage: 30 * 60, // 30 minutes
-				private: false
-			},
-			props: {
-				exchange_slug,
-				chain_slug,
-				summary,
-				details,
-				tokenTax
-			}
-		};
-	}
-</script>
-
 <script lang="ts">
-	import { formatDollar } from '$lib/helpers/formatters';
-	import { formatPriceChange } from '$lib/helpers/formatters';
+	import type { PageData } from './$types';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairInfoTable from '$lib/content/PairInfoTable.svelte';
 	import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
-	import type { TokenTax } from '$lib/helpers/tokentax';
-	import ChartSection from './_ChartSection.svelte';
+	import ChartSection from './ChartSection.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	export let exchange_slug;
-	export let chain_slug;
-	export let summary; // PairSummary OpenAPI
-	export let details; // PairAdditionalDetails OpenAPI
-	export let tokenTax: TokenTax;
+	export let data: PageData;
 
-	$: breadcrumbs = {
-		[exchange_slug]: details.exchange_name,
-		[summary.pair_slug]: summary.pair_name
-	};
+	$: summary = data.summary;
+	$: details = data.additional_details;
 
-	// Ridiculous token price warning:
-	// It is common with scam tokens to price the token super low so that
-	// prices are not readable when converted to USD.
+	$: tokenTax = getTokenTaxInformation(details);
+
+	// Ridiculous token price warning: it is common with scam tokens to price the
+	// token super low so that prices are not readable when converted to USD.
 	$: ridiculousPrice = summary.usd_price_latest < 0.000001;
 
 	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
+
+	$: breadcrumbs = {
+		[summary.exchange_slug]: summary.exchange_name,
+		[summary.pair_slug]: summary.pair_name
+	};
 </script>
 
 <svelte:head>
@@ -130,9 +80,11 @@ Render the pair trading page
 				trades as the ticker
 
 				<strong>{summary.pair_symbol}</strong> on
-				<a class="body-link" href="/trading-view/{chain_slug}/{exchange_slug}">{details.exchange_name} exchange</a>
+				<a class="body-link" href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}"
+					>{summary.exchange_name} exchange</a
+				>
 				on
-				<a class="body-link" href="/trading-view/{chain_slug}">{details.chain_name} blockchain</a>.
+				<a class="body-link" href="/trading-view/{summary.chain_slug}">{summary.chain_name} blockchain</a>.
 			</p>
 
 			<p>

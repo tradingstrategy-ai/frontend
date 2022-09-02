@@ -9,13 +9,11 @@ backend API when scrolled into view.
 ```
 -->
 <script lang="ts">
-	import config from '$lib/config';
+	import { backendUrl } from '$lib/config';
 	import { inview } from 'svelte-inview';
 	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import Skeleton from '$lib/Skeleton.svelte';
-
-	const { backendUrl } = config;
 
 	export let pairId: number;
 	export let period: string;
