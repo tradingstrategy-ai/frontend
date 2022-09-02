@@ -1,50 +1,8 @@
 <!--
 	Home page
 -->
-<script context="module">
-	import config from '$lib/config';
-	import getGhostClient from '$lib/blog/client';
-
-	// Load top momentum data to display on the front page
-	// https://tradingstrategy.ai/api/explorer/#/Trading%20signal/web_top_momentum
-	export async function load({ fetch }) {
-		const { backendUrl } = config;
-		const ghostClient = getGhostClient(config.ghost);
-
-		// Load frontpage API calls in parallel to cut that 1 ms
-		// https://stackoverflow.com/q/59663929/315168
-		const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
-			fetch(`${backendUrl}/top-momentum?summary=true`),
-			fetch(`${backendUrl}/impressive-numbers`),
-			ghostClient.posts?.browse({ limit: 4 })
-		]);
-
-		let topMomentum, impressiveNumbers;
-
-		// Gracefully degrade if API fails
-		if (momentumResp.ok) {
-			topMomentum = await momentumResp.json();
-		}
-
-		// Gracefully degrade if API fails
-		if (impressiveNumbersResp.ok) {
-			impressiveNumbers = await impressiveNumbersResp.json();
-		}
-
-		return {
-			// Cache the landing data for 5 minutes at the Cloudflare edge,
-			// so the pages are served really fast if they get popular,
-			// and also for speed test
-			cache: {
-				maxage: 5 * 60, // 5 minutes
-				private: false
-			},
-			props: { topMomentum, impressiveNumbers, posts }
-		};
-	}
-</script>
-
-<script>
+<script lang="ts">
+	import type { PageData } from './$types';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
 	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
@@ -52,9 +10,9 @@
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { goto } from '$app/navigation';
 
-	export let topMomentum;
-	export let impressiveNumbers;
-	export let posts;
+	export let data: PageData;
+
+	const { topMomentum, impressiveNumbers, posts } = data;
 
 	function doSecretNavigation() {
 		goto('/strategy');

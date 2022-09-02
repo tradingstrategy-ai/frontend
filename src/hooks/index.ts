@@ -1,8 +1,5 @@
 import type { ExternalFetch } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
-
-const backendUrl = env.TS_PUBLIC_BACKEND_URL;
-const backendInternalUrl = env.TS_PUBLIC_BACKEND_INTERNAL_URL;
+import { backendUrl, backendInternalUrl } from '$lib/config';
 
 /**
  * Shortcut fetch() API requests in SSR; see:
