@@ -1,7 +1,9 @@
 <script context="module">
+	import config from '$lib/config';
+
 	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
-	export async function load({ url, session, fetch }) {
-		const { backendUrl } = session.config;
+	export async function load({ url, fetch }) {
+		const { backendUrl } = config;
 		const apiUrl = `${backendUrl}/datasets`;
 
 		const res = await fetch(apiUrl, {

@@ -1,28 +1,35 @@
 <!--
 A test endpoint for the page to show debug data.
 -->
-<script context="module" lang="ts">
-	export async function load({ session }) {
-		const config = session.config;
-		return { props: { config } };
-	}
-</script>
-
 <script lang="ts">
-	export let config: any;
-
-	$: configStr = JSON.stringify(config, null, 4);
+	import config from '$lib/config';
+	import { env as publicEnv } from '$env/dynamic/public';
 </script>
 
-<div class="container">
-	<div class="content">
-		<h1>Developer diagnostics page</h1>
-		<h2>Config</h2>
-		<pre>{configStr}</pre>
+<section class="ds-container">
+	<h1>Developer diagnostics page</h1>
+
+	<div>
+		<h2>Public environment variables</h2>
+		<pre>{JSON.stringify(publicEnv, null, 4)}</pre>
 	</div>
-</div>
+
+	<div>
+		<h2>Config</h2>
+		<pre>{JSON.stringify(config, null, 4)}</pre>
+	</div>
+</section>
 
 <style>
+	section {
+		--container-max-width: 1020px;
+		gap: 1.5rem;
+	}
+
+	h1 {
+		grid-column: 1 / -1;
+	}
+
 	pre {
 		padding: 1.5rem;
 		background: var(--c-background-7);

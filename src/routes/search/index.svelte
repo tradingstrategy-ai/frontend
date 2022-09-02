@@ -5,7 +5,8 @@ Advanced Search page
 - returns first 200 matching results (future: pagination or infinite scroll)
 -->
 <script lang="ts">
-	import { page, session } from '$app/stores';
+	import config from '$lib/config';
+	import { page } from '$app/stores';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import tradingEntitiesStore from '$lib/search/trading-entities';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -15,7 +16,7 @@ Advanced Search page
 	import NumericFilter from './_NumericFilter.svelte';
 	import TradingEntityHit from '$lib/search/TradingEntityHit.svelte';
 
-	const tradingEntities = tradingEntitiesStore($session.config.typesense);
+	const tradingEntities = tradingEntitiesStore(config.typesense);
 
 	let q = $page.url.searchParams.get('q') || '';
 

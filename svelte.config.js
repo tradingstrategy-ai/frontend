@@ -1,3 +1,7 @@
+/**
+ * SvelteKit configuration file. See:
+ * https://kit.svelte.dev/docs/configuration
+ */
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 import postcssPresetEnv from 'postcss-preset-env';
@@ -16,6 +20,10 @@ const config = {
 			'design-system-fonts': 'deps/fonts',
 			'bootstrap-theme': 'deps/theme/dist',
 			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib'
+		},
+
+		env: {
+			publicPrefix: 'TS_PUBLIC_'
 		}
 	},
 

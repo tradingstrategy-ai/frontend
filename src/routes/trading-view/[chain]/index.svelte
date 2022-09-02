@@ -1,17 +1,17 @@
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 
 	/**
 	 * Display chain information and indexing status
 	 */
-	export async function load({ params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
 		const chain_slug = params.chain;
 
 		// Load and render exchange details on the server side
 		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
 		const encoded = new URLSearchParams({ chain_slug });
-		const apiUrl = `${backendUrl}/chain-details?${encoded}`;
+		const apiUrl = `${config.backendUrl}/chain-details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 

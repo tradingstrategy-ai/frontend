@@ -2,17 +2,17 @@
 	Exchange info page with all of its trading pairs.
 -->
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 
-	export async function load({ url, params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
 		const exchange_slug = params.exchange_id;
 		const chain_slug = params.chain;
 
 		// Load and render exchange details on the server side
 		// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
 		const encoded = new URLSearchParams({ exchange_slug, chain_slug });
-		const apiUrl = `${backendUrl}/exchange-details?${encoded}`;
+		const apiUrl = `${config.backendUrl}/exchange-details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 

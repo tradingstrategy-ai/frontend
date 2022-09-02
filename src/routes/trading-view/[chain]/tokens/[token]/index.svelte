@@ -2,16 +2,16 @@
 	Render the token page
 -->
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 
 	// load core token data server-side
-	export async function load({ params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
 		const chain_slug = params.chain;
 		const address = params.token;
 
 		const encoded = new URLSearchParams({ chain_slug, address });
-		const apiUrl = `${backendUrl}/token/details?${encoded}`;
+		const apiUrl = `${config.backendUrl}/token/details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 

@@ -8,9 +8,9 @@ A helpful widget to identify non-production deployment and give some developer d
 ```
 -->
 <script lang="ts">
-	import { session } from '$app/stores';
+	import config from '$lib/config';
 
-	const { backendUrl, siteMode } = $session.config;
+	const { siteMode, backendUrl } = config;
 	const siteBar = siteMode !== 'production';
 </script>
 

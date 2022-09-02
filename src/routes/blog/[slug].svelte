@@ -1,8 +1,9 @@
 <script context="module">
+	import config from '$lib/config';
 	import getGhostClient from '$lib/blog/client';
 
-	export async function load({ params, session }) {
-		const ghostClient = getGhostClient(session.config.ghost);
+	export async function load({ params }) {
+		const ghostClient = getGhostClient(config.ghost);
 
 		// See post data model: https://ghost.org/docs/content-api/#posts
 		let post;

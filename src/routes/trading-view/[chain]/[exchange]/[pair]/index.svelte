@@ -7,18 +7,18 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 
 	// During SSR we only load only pair details; all trading data (price and
 	// liquidity candles, trading summaries) are done client-side.
-	export async function load({ url, params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
 		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
 		const pair_slug = params.pair;
 		const encoded = new URLSearchParams({ exchange_slug, chain_slug, pair_slug });
-		const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+		const apiUrl = `${config.backendUrl}/pair-details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 

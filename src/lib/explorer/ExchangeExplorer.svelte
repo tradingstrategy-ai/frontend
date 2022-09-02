@@ -15,11 +15,11 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 ```
 -->
 <script lang="ts">
-	import { session } from '$app/stores';
+	import config from '$lib/config';
 	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
-	const { backendUrl } = $session.config;
+	const { backendUrl } = config;
 
 	export let chainSlug = null;
 	// What columns we will show in the explorer; see allColumns for options.

@@ -14,7 +14,8 @@ for the same hovered date. Also displays a time-bucket selector.
 ```
 -->
 <script lang="ts">
-	import { page, session } from '$app/stores';
+	import config from '$lib/config';
+	import { page } from '$app/stores';
 	import type { TimeBucket } from '$lib/chart/timeBucketConverters';
 	import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
 	import ChartIQ from '$lib/chart/ChartIQ.svelte';
@@ -25,7 +26,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let pairId: number | string;
 	export let firstTradeDate: string;
 
-	const { backendUrl } = $session.config;
+	const { backendUrl } = config;
 	const chartLinker = new ChartLinker();
 
 	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;

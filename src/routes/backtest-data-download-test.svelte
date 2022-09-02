@@ -19,10 +19,10 @@
     ```
 -->
 <script lang="ts">
-	import { session } from '$app/stores';
+	import config from '$lib/config';
 	import { onMount } from 'svelte';
 
-	const { backendUrl } = $session.config;
+	const { backendUrl } = config;
 
 	// This will only work in local dev (and should only be used for local dev/testing)
 	let apiKey = import.meta.env.VITE_TRADING_STRATEGY_API_KEY;
