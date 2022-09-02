@@ -2,8 +2,8 @@
 A test endpoint for the page to show debug data.
 -->
 <script lang="ts">
-	import config from '$lib/config';
-	import { env as publicEnv } from '$env/dynamic/public';
+	import * as config from '$lib/config';
+	import { env } from '$env/dynamic/public';
 </script>
 
 <section class="ds-container">
@@ -11,7 +11,7 @@ A test endpoint for the page to show debug data.
 
 	<div>
 		<h2>Public environment variables</h2>
-		<pre>{JSON.stringify(publicEnv, null, 4)}</pre>
+		<pre>{JSON.stringify(env, null, 4)}</pre>
 	</div>
 
 	<div>
@@ -24,10 +24,6 @@ A test endpoint for the page to show debug data.
 	section {
 		--container-max-width: 1020px;
 		gap: 1.5rem;
-	}
-
-	h1 {
-		grid-column: 1 / -1;
 	}
 
 	pre {

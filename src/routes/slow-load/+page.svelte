@@ -2,16 +2,11 @@
 A test endpoint for the page load progress bar. Page load is delayed 2 seconds
 by default. Increment the `?page=n` param to delay by n * 2 seconds.
 -->
-<script context="module" lang="ts">
-	export async function load({ url }) {
-		const page = parseInt(url.searchParams.get('page')) || 1;
-		await new Promise((resolve) => setTimeout(resolve, page * 2000));
-		return { props: { page } };
-	}
-</script>
-
 <script lang="ts">
-	export let page: number;
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+	$: page = data.page;
 </script>
 
 <svelte:head>
