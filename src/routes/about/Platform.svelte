@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Feature from './_Feature.svelte';
+	import Feature from './Feature.svelte';
 
 	import BlockchainImage from '$lib/assets/milano/crypto/blockchain-as-train-blocks.svg?raw';
 	import Database1Image from '$lib/assets/milano/dev/database-1.svg?raw';

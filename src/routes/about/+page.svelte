@@ -1,10 +1,10 @@
 <script lang="ts">
-	import IntroHero from './_IntroHero.svelte';
-	import Audience from './_Audience.svelte';
 	import Banner from '$lib/components/Banner.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import Partners from './_Partners.svelte';
-	import Platform from './_Platform.svelte';
+	import IntroHero from './IntroHero.svelte';
+	import Audience from './Audience.svelte';
+	import Partners from './Partners.svelte';
+	import Platform from './Platform.svelte';
 </script>
 
 <svelte:head>
