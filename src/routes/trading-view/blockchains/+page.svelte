@@ -1,33 +1,11 @@
 <!--
 	Display chain information and indexing status
 -->
-<script context="module">
-	import config from '$lib/config';
-
-	export async function load({ fetch }) {
-		// Load and render exchange details on the server side
-		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-		const apiUrl = `${config.backendUrl}/chains`;
-
-		const resp = await fetch(apiUrl);
-
-		if (!resp.ok) {
-			return {
-				status: resp.status,
-				error: new Error(`Error loading ${apiUrl}: ${resp.statusText}`)
-			};
-		}
-
-		const chains = await resp.json();
-
-		return { props: { chains } };
-	}
-</script>
-
-<script>
+<script lang="ts">
+	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
-	export let chains;
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -54,7 +32,7 @@
 				<th><!-- actions --></th>
 			</thead>
 
-			{#each chains as chain}
+			{#each data.chains as chain}
 				<tr>
 					<td>
 						<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>

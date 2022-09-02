@@ -1,33 +1,14 @@
 <!--
 	Trading data splash page renderer
 -->
-<script context="module">
-	import config from '$lib/config';
-
-	export async function load({ fetch }) {
-		const impressiveNumbersResp = await fetch(`${config.backendUrl}/impressive-numbers`);
-		let impressiveNumbers;
-
-		// render the page even if the backend is down
-		if (impressiveNumbersResp.ok) {
-			impressiveNumbers = await impressiveNumbersResp.json();
-		} else {
-			console.error('API error', impressiveNumbersResp);
-		}
-
-		return {
-			props: { impressiveNumbers }
-		};
-	}
-</script>
-
-<script>
+<script lang="ts">
+	import type { PageData } from './$types';
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
 	import Hero from '$lib/components/Hero.svelte';
 	import DataImage from '$lib/assets/milano/dev/data-cloud-1.svg?raw';
 	import ContentTile from '$lib/components/ContentTile.svelte';
 
-	export let impressiveNumbers;
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -51,8 +32,8 @@
 			buttonLabel="View blockchains"
 		>
 			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
-			{#if impressiveNumbers}
-				<p>Currently indexing data from {impressiveNumbers.blockchains} blockchains.</p>
+			{#if data}
+				<p>Currently indexing data from {data.blockchains} blockchains.</p>
 			{/if}
 		</ContentTile>
 
@@ -67,8 +48,8 @@
 				Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain
 				trades, across multiple DEXs.
 			</p>
-			{#if impressiveNumbers}
-				<p>Currently indexing data from {formatAmount(impressiveNumbers.exchanges)} decentralised exchanges.</p>
+			{#if data}
+				<p>Currently indexing data from {formatAmount(data.exchanges)} decentralised exchanges.</p>
 			{/if}
 		</ContentTile>
 
@@ -83,8 +64,8 @@
 				Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and
 				current datasets here.
 			</p>
-			{#if impressiveNumbers}
-				<p>Currently indexing data from {formatAmount(impressiveNumbers.pairs)} trading pairs.</p>
+			{#if data}
+				<p>Currently indexing data from {formatAmount(data.pairs)} trading pairs.</p>
 			{/if}
 		</ContentTile>
 
@@ -111,8 +92,8 @@
 				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for
 				calculating past slippage. Datasets are served in Parquet file format.
 			</p>
-			{#if impressiveNumbers}
-				<p>Currently have {formatSizeGigabytes(impressiveNumbers.database_size)} GB worth of data available.</p>
+			{#if data}
+				<p>Currently have {formatSizeGigabytes(data.database_size)} GB worth of data available.</p>
 			{/if}
 		</ContentTile>
 

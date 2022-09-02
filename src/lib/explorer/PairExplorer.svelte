@@ -17,13 +17,11 @@ Explore trading pairs that match certain filter criteria.
 ```
 -->
 <script lang="ts">
-	import config from '$lib/config';
+	import { backendUrl } from '$lib/config';
 	import jQuery from 'jquery';
 	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { escapeHtml } from '$lib/helpers/html';
-
-	const { backendUrl } = config;
 
 	export let exchangeSlug = undefined;
 	export let chainSlug = undefined;

@@ -8,7 +8,7 @@ import { assert } from 'assert-ts';
  *
  * @param n
  */
-export function formatKilos(n): string {
+export function formatKilos(n: number): string {
 	if (n <= 1000) {
 		return (n / 1000).toLocaleString('en', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 	} else {
@@ -23,7 +23,7 @@ export function formatKilos(n): string {
  *
  * @param n
  */
-export function formatSizeMegabytes(n): string {
+export function formatSizeMegabytes(n: number): string {
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024)).toLocaleString('en', {
 			minimumFractionDigits: 3,
@@ -42,7 +42,7 @@ export function formatSizeMegabytes(n): string {
  *
  * @param n
  */
-export function formatSizeGigabytes(n): string {
+export function formatSizeGigabytes(n: number): string {
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024 * 1024)).toLocaleString('en', {
 			minimumFractionDigits: 3,
@@ -54,23 +54,6 @@ export function formatSizeGigabytes(n): string {
 			maximumFractionDigits: 0
 		});
 	}
-}
-
-/**
- * Format dataset download key and adds API link as a parameter
- *
- * @param validApiKey
- * @param key
- * @param link
- */
-export function formatDownloadLink(validApiKey, key, link) {
-	if (!validApiKey) {
-		return 'javascript:';
-	}
-
-	const url = new URL(link);
-	url.searchParams.set('api-key', key);
-	return url.toString();
 }
 
 /**

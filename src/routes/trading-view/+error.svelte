@@ -1,48 +1,30 @@
 <!--
 	Handle maintenance plus chain specific errors.
-	Often blockchain data is bad and we want to drop users away from the page. See:
-	https://kit.svelte.dev/docs/layouts#error-pages
+	Often blockchain data is bad and we want to drop users away from the page.
 -->
-<script context="module">
-	export function load({ error, status }) {
-		console.error('Ooops, reached trading data error handle, error is', error);
-		const maintenance = error.name === 'ChainInMaintenance';
-		return {
-			props: {
-				title: `${status}`,
-				message: error.message,
-				maintenance: maintenance,
-				chainName: error.chainName
-			}
-		};
-	}
-</script>
-
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Button from '$lib/components/Button.svelte';
 
-	export let title: string;
-	export let message: string;
-	export let maintenance: boolean;
-	export let chainName: string;
+	$: maintenance = $page.error.name === 'ChainInMaintenance';
 </script>
 
 <svelte:head>
-	<title>Error: {title}</title>
+	<title>Error: {$page.status}</title>
 </svelte:head>
 
 <section class="ds-container">
 	{#if maintenance}
-		<h1 class="text-center">{chainName} data under maintenance</h1>
+		<h1 class="text-center">{$page.error.chainName} data under maintenance</h1>
 
 		<p class="text-center">
-			We cannot currently display this page, because there is temporary maintenance ongoing related to {chainName} blockchain.
-			Data will be back soon.
+			This page is temporarily unavailable due to maintenance related to {$page.error.chainName} blockchain. Data will be
+			back soon.
 		</p>
 	{:else}
-		<h1 class="text-center">HTTP {title} error</h1>
+		<h1 class="text-center">HTTP {$page.status} error</h1>
 
-		<pre>{message}</pre>
+		<pre>{$page.error.message}</pre>
 	{/if}
 
 	<p class="cta">

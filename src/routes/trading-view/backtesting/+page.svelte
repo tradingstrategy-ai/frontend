@@ -1,119 +1,46 @@
-<script context="module">
-	import config from '$lib/config';
-
-	// https://gist.github.com/acoyfellow/a94f020245d4bfcd4c5d9ddc8f86a98a
-	export async function load({ url, fetch }) {
-		const { backendUrl } = config;
-		const apiUrl = `${backendUrl}/datasets`;
-
-		const res = await fetch(apiUrl, {
-			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
-			// See hooks/index.ts for more information.
-			// However, in this case, the backend does not know our domain name. For this particular API call,
-			// The backend is using Pyramid request.route_url() function to generate download URLs.
-			// This is different from hitting the API from the client side, because in that case these
-			// fields would be correct, and also overwritten by the web browser / Cloudflare.
-			headers: {
-				'X-Forwarded-Host': 'tradingstrategy.ai',
-				'X-Forwarded-Proto': 'https',
-				Host: 'tradingstrategy.ai'
-			}
-		});
-
-		const datasets = await res.json();
-
-		if (res.ok) {
-			return { props: { backendUrl, datasets } };
-		}
-
-		return {
-			status: res.status,
-			error: new Error(`Could not load ${url}`)
-		};
-	}
-</script>
-
-<script>
+<script lang="ts">
+	import type { PageData } from './$types';
+	import { backendUrl } from '$lib/config';
+	import { formatDistanceToNow } from 'date-fns';
+	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { formatTimeAgo } from '$lib/helpers/formatters';
 
-	export let backendUrl;
-	export let datasets;
+	export let data: PageData;
 
 	let submitting = false;
 	let validApiKey = null;
 	let apiKeyError = null;
 
-	function formatNumber(n) {
-		if (n <= 1000) {
-			return (n / 1000).toLocaleString('en', {
-				minimumFractionDigits: 3,
-				maximumFractionDigits: 3
-			});
-		} else {
-			return (n / 1000).toLocaleString('en', {
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 0
-			});
-		}
-	}
-
-	function formatSize(n) {
-		if (n <= 1024 * 1024) {
-			return (n / (1024 * 1024)).toLocaleString('en', {
-				minimumFractionDigits: 3,
-				maximumFractionDigits: 3
-			});
-		} else {
-			return (n / (1024 * 1024)).toLocaleString('en', {
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 0
-			});
-		}
-	}
-
-	function formatDownloadLink(key, link) {
-		// Cannot downlaod without API key
-		if (!validApiKey) {
-			return 'javascript:';
-		}
-
-		const url = new URL(link);
-		url.searchParams.set('api-key', key);
+	function getDownloadUrl(urlStr: string) {
+		const url = new URL(urlStr);
+		url.searchParams.set('api-key', validApiKey);
 		return url.toString();
 	}
 
 	async function handleSubmit(event) {
 		const url = `${backendUrl}/validate-api-key`;
-		let key = event.target.apiKey.value;
-
-		// Avoid whitespace issues
-		key = key.trim();
+		const key = event.target.apiKey.value.trim();
 
 		apiKeyError = null;
 		submitting = true;
 
 		try {
-			// https://stackoverflow.com/a/53189376/315168
-			//console.log("Posting to", url);
-			const res = await fetch(url, {
+			const resp = await fetch(url, {
 				method: 'POST',
 				body: new URLSearchParams({ key })
 			});
 
-			if (res.status != 200) {
-				apiKeyError = `Server failure: ${res.status} ${res.statusText}`;
+			if (resp.status !== 200) {
+				apiKeyError = `Server failure: ${resp.status} ${resp.statusText}`;
 				return;
 			}
 
-			const data = await res.json();
+			const respData = await resp.json();
 
-			// console.log("Got validation response", data);
-
-			if (!data.valid) {
+			if (!respData.valid) {
 				apiKeyError = 'The API key is not valid';
 				return;
 			}
@@ -157,7 +84,6 @@
 			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
 				<label for="apiKey">Enter API key to enable download</label>
 
-				<!-- <div class="d-flex flex-row justify-content-center"> -->
 				<div id="form-group-api-key">
 					<TextInput id="apiKey" placeholder="secret-token:tradingstrategy-" type="text" size="lg" />
 
@@ -197,29 +123,25 @@
 				</thead>
 
 				<tbody>
-					{#each datasets as row}
+					{#each data.datasets as row}
 						<tr>
 							<td>{row.name}</td>
 							<td>{row.designation}</td>
-							<td>{formatNumber(row.entries)}</td>
-							<td>{formatSize(row.size)}</td>
+							<td>{formatKilos(row.entries)}</td>
+							<td>{formatSizeMegabytes(row.size)}</td>
 							<td>{row.format}</td>
 							<td>
-								{formatTimeAgo(row.last_updated_at)}
+								{formatDistanceToNow(row.last_updated_at * 1000, { addSuffix: true })}
 							</td>
 
 							<td>
 								<a class="action-link" href={row.documentation}>Documentation</a>
 
-								<a
-									class="action-link"
-									rel="external"
-									target={validApiKey ? `_blank` : undefined}
-									href={formatDownloadLink(validApiKey, row.download_link)}
-									disabled={validApiKey ? undefined : 'disabled'}
-								>
-									Download
-								</a>
+								{#if validApiKey}
+									<a class="action-link" target="_blank" href={getDownloadUrl(row.download_link)}>Download</a>
+								{:else}
+									<span class="action-link">Download</span>
+								{/if}
 							</td>
 						</tr>
 					{/each}
@@ -300,11 +222,11 @@
 		letter-spacing: 0.02em;
 	}
 
-	.action-link:hover {
+	a.action-link:hover {
 		text-decoration: underline;
 	}
 
-	.action-link[disabled] {
+	span.action-link {
 		opacity: 0.5;
 		cursor: not-allowed;
 	}
