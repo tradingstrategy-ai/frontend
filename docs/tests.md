@@ -18,23 +18,34 @@ Run cypress in the browser.
 
 ![image](https://user-images.githubusercontent.com/3521485/136263427-8ade3dbe-d658-4502-80f8-02bccb4400f0.png)
 
+First, make sure you have an instance of the web server running on port 3000 (run from
+project root):
+
+```shell
+npm run dev -- --port=3000
+```
+
+Next, to run the full cypress test suite (run from `tests` directory):
+
 ```shell
 npm run cypress:open
 ```
 
+Replace `open` with `run` in the above command to run the tests headless. Or run individual tests with:
+
+```shell
+npx cypress run cypress/integration/about.spec.js
+```
+
 ### Cypress for continous integration
 
-Run cypress with the headless browser. Before running cypress tests the app should be running.
+Ensure that npm and submodule dependencies are installed, then run:
 
-```shell
-(cd tests && npm run cypress:run)
+```
+./script/run-cypress.bash
 ```
 
-You might also want to kill danling frontend servers:
-
-```shell
-kill -SIGKILL $(lsof -ti:3000)
-```
+This will install cypress dependencies, start a dev server on port 3000, run the tests, and kill the server on completion.
 
 ### Run unit tests made with svelte-testing-library
 
@@ -42,21 +53,4 @@ Still experimental we can run unit tests for components but not working with rou
 
 ```shell
 npm run test
-```
-
-## Before commit
-
-Test that everything compiles in the production build:
-
-```shell
-export SSR=true
-export VITE_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api
-rm -rf build && node_modules/.bin/svelte-kit build && node build/index.js
-```
-
-To render the blog roll you also ened
-
-```shell
-export VITE_PUBLIC_GHOST_API_URL=https://trading-strategy.ghost.io
-export VITE_PUBLIC_GHOST_CONTENT_API_KEY=...
 ```
