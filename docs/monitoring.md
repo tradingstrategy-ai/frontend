@@ -1,6 +1,6 @@
 # Monitoring
 
-## Monitoring  web-top
+## Monitoring web-top
 
 [web-top](https://top-framework.readthedocs.io/en/latest/web-top/index.html) API endpoint is available at `tradingstrategy.ai/tracker`,
 as set in [scripts/server.js](../scripts/server.js).
@@ -21,5 +21,3 @@ hit backend API endpoints and does not show up in the monitoring.
 ## More information
 
 See [web-top-node](https://github.com/tradingstrategy-ai/web-top-node).
-
-
