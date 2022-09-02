@@ -17,7 +17,7 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 -->
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Filter from './_Filter.svelte';
+	import Filter from './Filter.svelte';
 
 	export let fieldName: string;
 	export let selected: [number, number][] = [];

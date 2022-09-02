@@ -5,18 +5,15 @@ Advanced Search page
 - returns first 200 matching results (future: pagination or infinite scroll)
 -->
 <script lang="ts">
-	import config from '$lib/config';
 	import { page } from '$app/stores';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import tradingEntitiesStore from '$lib/search/trading-entities';
+	import tradingEntities from '$lib/search/trading-entities';
 	import TextInput from '$lib/components/TextInput.svelte';
-	import SortSelect, { sortOptions } from './_SortSelect.svelte';
-	import FacetFilter from './_FacetFilter.svelte';
-	import RangeFilter from './_RangeFilter.svelte';
-	import NumericFilter from './_NumericFilter.svelte';
+	import SortSelect, { sortOptions } from './SortSelect.svelte';
+	import FacetFilter from './FacetFilter.svelte';
+	import RangeFilter from './RangeFilter.svelte';
+	import NumericFilter from './NumericFilter.svelte';
 	import TradingEntityHit from '$lib/search/TradingEntityHit.svelte';
-
-	const tradingEntities = tradingEntitiesStore(config.typesense);
 
 	let q = $page.url.searchParams.get('q') || '';
 
