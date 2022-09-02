@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
@@ -55,7 +56,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@sveltejs/adapter-node": "^1.0.0-next.73",
-    "@sveltejs/kit": "1.0.0-next.335",
+    "@sveltejs/kit": "1.0.0-next.336",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
@@ -92,7 +93,6 @@
     "tslib": "^2.0.0",
     "typescript": "~4.6.2"
   },
-  "type": "module",
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
     "@lukeed/uuid": "^2.0.0",
@@ -111,6 +111,9 @@
     "ts-custom-error": "^3.2.0",
     "typesense": "^1.2.1",
     "web3": "^1.6.0"
+  },
+  "overrides": {
+    "@sveltejs/vite-plugin-svelte": ">=1.0.0-next.44 <1.0.0"
   },
   "optionalDependencies": {
     "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.7.0"
