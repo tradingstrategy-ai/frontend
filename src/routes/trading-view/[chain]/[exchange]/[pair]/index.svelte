@@ -40,7 +40,10 @@ Render the pair trading page
 			// Cache the pair data pages for 30 minutes at the Cloudflare edge,
 			// so the pages are served really fast if they get popular,
 			// and also for speed test
-			maxage: 30 * 60, // 30 minutes,
+			cache: {
+				maxage: 30 * 60, // 30 minutes
+				private: false
+			},
 			props: {
 				exchange_slug,
 				chain_slug,
