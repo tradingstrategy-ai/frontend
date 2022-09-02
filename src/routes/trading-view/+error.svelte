@@ -3,28 +3,39 @@
 	Often blockchain data is bad and we want to drop users away from the page.
 -->
 <script lang="ts">
+	import { chainsUnderMaintenance } from '$lib/config';
 	import { page } from '$app/stores';
 	import Button from '$lib/components/Button.svelte';
 
-	$: maintenance = $page.error.name === 'ChainInMaintenance';
+	let status: number;
+	let message: string;
+	let isMaintenanceError: boolean;
+	let chainName: string | undefined;
+
+	// NOTE: SvelteKit bug? $page.status does not match $page.error.status when navigating to
+	// an error page via internal routing. Using $page.error.status instead of $page.status for now.
+	$: {
+		({ status, message } = $page.error);
+		isMaintenanceError = status === 503 && /maintenance/i.test(message);
+		chainName = chainsUnderMaintenance[$page.params.chain];
+	}
 </script>
 
 <svelte:head>
-	<title>Error: {$page.status}</title>
+	<title>Error: {status}</title>
 </svelte:head>
 
 <section class="ds-container">
-	{#if maintenance}
-		<h1 class="text-center">{$page.error.chainName} data under maintenance</h1>
+	{#if isMaintenanceError}
+		<h1 class="text-center">{chainName} data under maintenance</h1>
 
 		<p class="text-center">
-			This page is temporarily unavailable due to maintenance related to {$page.error.chainName} blockchain. Data will be
-			back soon.
+			This page is temporarily unavailable due to maintenance related to {chainName} blockchain. Data will be back soon.
 		</p>
 	{:else}
-		<h1 class="text-center">HTTP {$page.status} error</h1>
+		<h1 class="text-center">HTTP {status} error</h1>
 
-		<pre>{$page.error.message}</pre>
+		<pre>{message}</pre>
 	{/if}
 
 	<p class="cta">

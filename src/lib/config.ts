@@ -86,8 +86,6 @@ export const typesenseConfig = config(
 /**
  * Specify chains under maintence as JSON string, e.g.:
  * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
- *
- * See: checkChainMaintenance
  */
 export const chainsUnderMaintenance = config((jsonStr: string) => {
 	try {

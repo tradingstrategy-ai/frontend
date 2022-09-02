@@ -1,51 +1,26 @@
-<script context="module">
-	import config from '$lib/config';
-	import getApiError from '$lib/chain/getApiError';
-
-	/**
-	 * Display chain information and indexing status
-	 */
-	export async function load({ params, fetch }) {
-		const chain_slug = params.chain;
-
-		// Load and render exchange details on the server side
-		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-		const encoded = new URLSearchParams({ chain_slug });
-		const apiUrl = `${config.backendUrl}/chain-details?${encoded}`;
-
-		const resp = await fetch(apiUrl);
-
-		if (!resp.ok) {
-			return getApiError(resp, 'Chain', [chain_slug]);
-		}
-
-		const details = await resp.json();
-		return { props: { details } };
-	}
-</script>
-
-<script>
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+<script lang="ts">
+	import type { PageData } from './$types';
 	import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
 
-	export let details;
+	export let data: PageData;
 </script>
 
 <svelte:head>
-	<title>{details.chain_name} decentralised exchanges and trading pairs</title>
-	<meta name="description" content={`Top ${details.chain_name} tokens and prices`} />
+	<title>{data.chain_name} decentralised exchanges and trading pairs</title>
+	<meta name="description" content={`Top ${data.chain_name} tokens and prices`} />
 </svelte:head>
 
-<Breadcrumbs labels={{ [details.chain_slug]: details.chain_name }} />
+<Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
 
 <main>
 	<header class="ds-container">
 		<h1>
-			<img alt={`${details.chain_name} logo`} class="chain-logo" src={details.chain_logo} />
-			{details.chain_name} blockchain
+			<img alt={`${data.chain_name} logo`} class="chain-logo" src={data.chain_logo} />
+			{data.chain_name} blockchain
 		</h1>
 	</header>
 
@@ -55,8 +30,8 @@
 				<tr>
 					<th>Homepage</th>
 					<td>
-						<a class="body-link" href={details.homepage}>
-							{formatUrlAsDomain(details.homepage)}
+						<a class="body-link" href={data.homepage}>
+							{formatUrlAsDomain(data.homepage)}
 						</a>
 					</td>
 				</tr>
@@ -66,7 +41,7 @@
 						Exchanges
 						<p class="hint">Decentralised exchanges with market data available on Trading Strategy</p>
 					</th>
-					<td>{details.exchanges}</td>
+					<td>{data.exchanges}</td>
 				</tr>
 
 				<tr>
@@ -74,7 +49,7 @@
 						Tracked trading pairs
 						<p class="hint">Total trading pairs on Trading Strategy for this blockchain.</p>
 					</th>
-					<td>{formatAmount(details.pairs)}</td>
+					<td>{formatAmount(data.pairs)}</td>
 				</tr>
 
 				<tr>
@@ -88,7 +63,7 @@
 							>
 						</p>
 					</th>
-					<td>{formatAmount(details.tracked_pairs)}</td>
+					<td>{formatAmount(data.tracked_pairs)}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -100,7 +75,7 @@
 						First indexed block
 						<p class="hint">Starting block when Trading Strategy started collect data</p>
 					</th>
-					<td>{formatAmount(details.start_block)}</td>
+					<td>{formatAmount(data.start_block)}</td>
 				</tr>
 
 				<tr>
@@ -108,33 +83,33 @@
 						Last indexed block
 						<p class="hint">Currently seen last block with available trading data</p>
 					</th>
-					<td>{formatAmount(details.end_block)}</td>
+					<td>{formatAmount(data.end_block)}</td>
 				</tr>
 			</tbody>
 		</table>
 	</section>
 
 	<section class="ds-container explorer-wrapper">
-		<h2>Exchanges on {details.chain_name}</h2>
+		<h2>Exchanges on {data.chain_name}</h2>
 
-		<StaleDataWarning chainSlugs={[details.chain_slug]} />
+		<StaleDataWarning chainSlugs={[data.chain_slug]} />
 
 		<p>Showing exchanges with trading activity in last 30 days.</p>
 
 		<ExchangeExplorer
-			chainSlug={details.chain_slug}
+			chainSlug={data.chain_slug}
 			enabledColumns={['human_readable_name', 'pair_count', 'usd_volume_30d']}
 			orderColumnIndex={2}
 		/>
 	</section>
 
 	<section class="ds-container explorer-wrapper">
-		<h2>Trading pairs on {details.chain_name}</h2>
+		<h2>Trading pairs on {data.chain_name}</h2>
 
-		<StaleDataWarning chainSlugs={[details.chain_slug]} />
+		<StaleDataWarning chainSlugs={[data.chain_slug]} />
 
 		<PairExplorer
-			chainSlug={details.chain_slug}
+			chainSlug={data.chain_slug}
 			enabledColumns={['pair_name', 'exchange_name', 'usd_price_latest', 'usd_volume_30d', 'usd_liquidity_latest']}
 			orderColumnIndex={3}
 		/>
