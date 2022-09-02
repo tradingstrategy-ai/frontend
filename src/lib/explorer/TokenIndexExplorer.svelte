@@ -14,11 +14,9 @@ Tokens Explorer
 ```
 -->
 <script lang="ts">
-	import config from '$lib/config';
+	import { backendUrl } from '$lib/config';
 	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
-
-	const { backendUrl } = config;
 
 	export let chainSlug = null;
 	export let enabledColumns = ['name', 'symbol', 'liquidity_latest', 'volume_24h'];
