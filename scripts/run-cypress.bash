@@ -6,12 +6,13 @@
 set -e
 set -x
 
-source .env
+echo "Using Cypress integration test suite using backend server $TS_PUBLIC_BACKEND_URL, Ghost API $TS_PUBLIC_GHOST_API_URL"
 
-echo "Using Cypress integration test suite using backend server $VITE_PUBLIC_BACKEND_URL, Ghost API $VITE_PUBLIC_GHOST_API_URL"
+# This should match the value in cypress.json baseUrl
+PORT=3000
 
 # Kill dangling SvelteKit servers
-kill -SIGKILL $(lsof -ti:3000) || true
+kill -SIGKILL $(lsof -ti:$PORT) || true
 
 # Kill the dev server when the bash script exits
 # https://stackoverflow.com/a/2173421/315168
@@ -20,21 +21,14 @@ kill -SIGKILL $(lsof -ti:3000) || true
 # Install Cypress
 (cd tests && npm ci)
 
-# Start dev server
-# See https://stackoverflow.com/questions/71984376/cypress-your-page-did-not-fire-its-load-event-within-60000ms-only-on-github
-# npm run dev &
-export SSR=true
-if [ -e build ] ; then
-  rm -rf build
-fi
-node_modules/.bin/svelte-kit build
-node build &
+# Start dev server on port PORT
+npm run dev -- --port=$PORT &>/dev/null &
 
 PID_SVELTE=$$
-echo "SvelteKit Vite server running at PID $PID_SVELTE"
+echo "SvelteKit Vite server running at on port $PORT with PID $PID_SVELTE"
 sleep 3
 
-URL=http://localhost:3000/about
+URL=http://localhost:$PORT/about
 
 # Smoke check
 # Abort early if the site does not come up, don't bother with Cypress tests
@@ -56,7 +50,7 @@ else
   (cd tests && npm run cypress:run)
 fi
 
-# Kill dev server
-# kill $PID_SVELTE || true
+# Kill the dev server
+kill -SIGKILL $(lsof -ti:$PORT) || true
 
 exit 0
