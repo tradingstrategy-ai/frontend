@@ -4,7 +4,6 @@
 		const { backendUrl } = session.config;
 		const apiUrl = `${backendUrl}/datasets`;
 
-		// TODO: We should be able to remove this now with new Node.js adapter and FRONTEND_ORIGIN
 		const res = await fetch(apiUrl, {
 			// When we are doing server-side rendering, we are shortcutting the public Internet and directly hitting the internal API.
 			// See hooks/index.ts for more information.

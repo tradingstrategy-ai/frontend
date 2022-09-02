@@ -3,18 +3,19 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
-    "preview": "svelte-kit preview",
+    "dev": "vite dev",
+    "build": "vite build",
+    "package": "svelte-kit package",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
+    "lint": "prettier --check --plugin-search-dir=. . && eslint .",
     "format": "prettier --write --plugin-search-dir=. .",
     "format:check": "prettier --check --plugin-search-dir=. .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "npm test -- --watch",
-    "ssr:node": "svelte-kit build",
-    "prepare": "svelte-kit sync"
+    "ssr:node": "vite build"
   },
   "engines": {
     "node": "^16.15.0"
@@ -55,24 +56,24 @@
     "@babel/preset-env": "^7.15.6",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^4.0.0",
-    "@sveltejs/adapter-node": "1.0.0-next.78",
-    "@sveltejs/kit": "1.0.0-next.358",
+    "@sveltejs/adapter-node": "1.0.0-next.79",
+    "@sveltejs/kit": "1.0.0-next.372",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
     "@types/jest": "^26.0.14",
-    "@typescript-eslint/eslint-plugin": "^4.19.0",
-    "@typescript-eslint/parser": "^4.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
     "assert-ts": "^0.3.4",
     "babel-jest": "^26.5.2",
     "datatables.net-dt": "^1.11.3",
     "datatables.net-responsive-bs4": "^2.2.9",
     "esbuild": "^0.13.4",
     "esbuild-jest": "^0.5.0",
-    "eslint": "^7.22.0",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-svelte3": "^3.2.0",
+    "eslint-plugin-svelte3": "^4.0.0",
     "gridjs": "^5.0.2",
     "gridjs-svelte": "^2.1.1",
     "jest": "^26.5.2",
@@ -84,14 +85,14 @@
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.49.0",
-    "svelte-check": "^2.0.0",
+    "svelte-check": "^2.7.1",
     "svelte-highlight": "^5.1.2",
     "svelte-jester": "^1.1.5",
-    "svelte-preprocess": "^4.9.4",
-    "svelte-time": "^0.4.0",
+    "svelte-preprocess": "^4.10.6",
     "ts-jest": "^26.4.1",
-    "tslib": "^2.0.0",
-    "typescript": "~4.6.2"
+    "tslib": "^2.3.1",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.15"
   },
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
@@ -111,9 +112,6 @@
     "ts-custom-error": "^3.2.0",
     "typesense": "^1.2.1",
     "web3": "^1.6.0"
-  },
-  "overrides": {
-    "@sveltejs/vite-plugin-svelte": ">=1.0.0-next.48 <1.0.0"
   },
   "optionalDependencies": {
     "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.7.0"
