@@ -43,7 +43,7 @@ const staticPages = [
  * @type {import('@sveltejs/kit').RequestHandler}
  *
  */
-export async function get({ url }) {
+export async function GET({ url }) {
 	console.log('Downloading sitemap for', url);
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/URL

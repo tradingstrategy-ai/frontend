@@ -1,7 +1,8 @@
 <script context="module">
+	import config from '$lib/config';
 	import getGhostClient from '$lib/blog/client';
 
-	let ghostClient = {};
+	const ghostClient = getGhostClient(config.ghost);
 	const limit = 5;
 
 	async function fetchPosts(page = { next: 1 }) {
@@ -13,9 +14,7 @@
 		};
 	}
 
-	export async function load({ session }) {
-		ghostClient = getGhostClient(session.config.ghost);
-
+	export async function load() {
 		return {
 			props: await fetchPosts()
 		};

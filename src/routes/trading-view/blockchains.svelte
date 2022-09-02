@@ -2,11 +2,12 @@
 	Display chain information and indexing status
 -->
 <script context="module">
-	export async function load({ url, fetch, session }) {
+	import config from '$lib/config';
+
+	export async function load({ fetch }) {
 		// Load and render exchange details on the server side
 		// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-		const { backendUrl } = session.config;
-		const apiUrl = `${backendUrl}/chains`;
+		const apiUrl = `${config.backendUrl}/chains`;
 
 		const resp = await fetch(apiUrl);
 

@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	// Must use relative glob path; must be a string literal (not variable or expression).
 	// See: https://v2.vitejs.dev/guide/features.html#glob-import
-	const icons = import.meta.glob('../assets/icons/*.svg', { as: 'raw' });
+	const icons = import.meta.glob('../assets/icons/*.svg', { as: 'raw', eager: true });
 
 	function rawSVG(name: string) {
 		// Path must match glob path above.

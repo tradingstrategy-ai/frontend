@@ -1,22 +1,20 @@
-import config from '$lib/config';
+import type { ExternalFetch } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
 
-/** @type {import('@sveltejs/kit').GetSession} */
-export function getSession(event) {
-	return { config };
-}
+const backendUrl = env.TS_PUBLIC_BACKEND_URL;
+const backendInternalUrl = env.TS_PUBLIC_BACKEND_INTERNAL_URL;
 
 /**
  * Shortcut fetch() API requests in SSR; see:
  * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
+ *
  */
-export async function externalFetch(request: Request): Promise<Response> {
-	const { backendUrl, backendInternalUrl } = config;
+export const externalFetch: ExternalFetch = async (request) => {
 	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
 			request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
 		}
 	}
-
 	return fetch(request);
-}
+};

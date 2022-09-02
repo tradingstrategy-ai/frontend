@@ -2,9 +2,10 @@
 	Trading data splash page renderer
 -->
 <script context="module">
-	export async function load({ fetch, session }) {
-		const { backendUrl } = session.config;
-		const impressiveNumbersResp = await fetch(`${backendUrl}/impressive-numbers`);
+	import config from '$lib/config';
+
+	export async function load({ fetch }) {
+		const impressiveNumbersResp = await fetch(`${config.backendUrl}/impressive-numbers`);
 		let impressiveNumbers;
 
 		// render the page even if the backend is down

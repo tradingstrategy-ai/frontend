@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { session } from '$app/stores';
+	import config from '$lib/config';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from 'svelte-spinner';
 
-	const { backendUrl } = $session.config;
+	const { backendUrl } = config;
 	const url = `${backendUrl}/register`;
 
 	let submitting = false;

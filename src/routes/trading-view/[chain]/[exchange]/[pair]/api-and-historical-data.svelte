@@ -4,6 +4,7 @@ Real time examples for the API
 
 -->
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 
 	/**
@@ -11,13 +12,12 @@ Real time examples for the API
 	 *
 	 * All charting data fetches are done on the client side.
 	 */
-	export async function load({ url, params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
 		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
 		const pair_slug = params.pair;
 		const encoded = new URLSearchParams({ exchange_slug, chain_slug, pair_slug });
-		const apiUrl = `${backendUrl}/pair-details?${encoded}`;
+		const apiUrl = `${config.backendUrl}/pair-details?${encoded}`;
 
 		const resp = await fetch(apiUrl);
 
@@ -43,7 +43,10 @@ Real time examples for the API
 			// Cache the pair data pages for 30 minutes at the Cloudflare edge,
 			// so the pages are served really fast if they get popular,
 			// and also for speed test
-			maxage: 30 * 60, // 30 minutes,
+			cache: {
+				maxage: 30 * 60, // 30 minutes
+				private: false
+			},
 			props: { summary, details, breadcrumbs }
 		};
 	}

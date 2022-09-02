@@ -1,5 +1,7 @@
 # Staging
 
+Deprecated. See [Docker info](./docker.md) for info on how to run a staging instance.
+
 The staging frontend is available at https://pinky.tradingstrategy.ai
 
 Staging environment is password protected to avoid search engine indexing.

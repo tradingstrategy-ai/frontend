@@ -10,15 +10,15 @@ Display site-wide search box for use in top-nav.
 ```
 -->
 <script lang="ts">
+	import config from '$lib/config';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { session } from '$app/stores';
 	import tradingEntitiesStore from './trading-entities';
 	import TradingEntityHit from './TradingEntityHit.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	const tradingEntities = tradingEntitiesStore($session.config.typesense);
+	const tradingEntities = tradingEntitiesStore(config.typesense);
 
 	let q = '';
 	let hasFocus = false;

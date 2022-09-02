@@ -4,10 +4,11 @@ Export data for exchange trading pair list
 
 -->
 <script context="module">
+	import config from '$lib/config';
 	import getApiError from '$lib/chain/getApiError';
 
-	export async function load({ url, params, fetch, session }) {
-		const { backendUrl } = session.config;
+	export async function load({ params, fetch }) {
+		const { backendUrl } = config;
 		const exchange_slug = params.exchange;
 		const chain_slug = params.chain;
 

@@ -21,13 +21,13 @@ page load. Only rendered during SSR, and only if `deps/fonts` submodule is insta
 	];
 
 	// get all design-system-font asset paths (optional module - may be empty)
-	const modules = import.meta.globEager('design-system-fonts/**/*.woff2');
+	const allFonts = import.meta.glob('design-system-fonts/**/*.woff2', { as: 'url', eager: true });
 
-	const fontPaths = [];
+	const fontPaths: string[] = [];
 
-	for (const path in modules) {
+	for (const path in allFonts) {
 		for (const font of fonts) {
-			if (path.includes(font)) fontPaths.push(modules[path].default);
+			if (path.includes(font)) fontPaths.push(allFonts[path]);
 		}
 	}
 </script>

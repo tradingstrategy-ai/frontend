@@ -28,7 +28,7 @@ COPY . .
 RUN scripts/fetch-fonts.sh
 
 # build app
-RUN SSR=true npm run build
+RUN npm run build
 
 #######################################
 # Serve stage

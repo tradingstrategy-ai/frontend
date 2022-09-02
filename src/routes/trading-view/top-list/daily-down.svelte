@@ -2,12 +2,11 @@
 	Daily losers page
 -->
 <script context="module">
+	import config from '$lib/config';
 	import { loadMomentumData } from '$lib/content/momentum';
 
-	export async function load({ url, fetch, session }) {
-		const { backendUrl } = session.config;
-
-		const momentumData = await loadMomentumData(backendUrl, fetch);
+	export async function load({ fetch }) {
+		const momentumData = await loadMomentumData(config.backendUrl, fetch);
 		return { props: { momentumData } };
 	}
 </script>
