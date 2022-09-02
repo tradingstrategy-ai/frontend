@@ -6,15 +6,13 @@
   - https://cards-dev.twitter.com/validator
  -->
 <script lang="ts">
+	import { ghostConfig } from '$lib/config';
 	import { serializePost } from '$lib/helpers/googleMeta';
 
-	export let post;
+	export let post: any;
 	export let url: URL;
 
-	const image = post.feature_image.replace(
-		'https://trading-strategy.ghost.io',
-		`${url.protocol}//tradingstrategy.ai/blog-img`
-	);
+	const imageUrl = post.feature_image.replace(ghostConfig.apiUrl, `${url.protocol}//tradingstrategy.ai/blog/image`);
 </script>
 
 <svelte:head>
@@ -37,6 +35,6 @@
 	<meta name="twitter:site" content="@TradingProtocol" />
 	<meta name="twitter:title" content={post.title} />
 	<meta name="twitter:description" content={post.twitter_description || post.excerpt} />
-	<!-- See blog-img hack for Twitter -->
-	<meta name="twitter:image" content={image} />
+	<!-- See blog/image hack for Twitter -->
+	<meta name="twitter:image" content={imageUrl} />
 </svelte:head>

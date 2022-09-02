@@ -1,34 +1,14 @@
-<script context="module">
-	import config from '$lib/config';
-	import getGhostClient from '$lib/blog/client';
-
-	const ghostClient = getGhostClient(config.ghost);
-	const limit = 5;
-
-	async function fetchPosts(page = { next: 1 }) {
-		if (!page.next) return { page, posts: [] };
-		const response = await ghostClient.posts?.browse({ limit, page: page.next });
-		return {
-			posts: [...response],
-			page: response.meta.pagination
-		};
-	}
-
-	export async function load() {
-		return {
-			props: await fetchPosts()
-		};
-	}
-</script>
-
-<script>
-	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
-	import SocialLinks from './_SocialLinks.svelte';
-	import Spinner from 'svelte-spinner';
+<script lang="ts">
+	import type { PageData } from './$types';
+	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
+	import Spinner from 'svelte-spinner';
+	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
+	import SocialLinks from './SocialLinks.svelte';
 
-	export let posts = [];
-	export let page = {};
+	export let data: PageData;
+
+	let { posts, page } = data;
 
 	async function fetchNextPage() {
 		page.loading = true;

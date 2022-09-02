@@ -1,49 +1,28 @@
-<script context="module">
-	import config from '$lib/config';
-	import getGhostClient from '$lib/blog/client';
-
-	export async function load({ params }) {
-		const ghostClient = getGhostClient(config.ghost);
-
-		// See post data model: https://ghost.org/docs/content-api/#posts
-		let post;
-		try {
-			post = await ghostClient.posts.read({ slug: params.slug }, { formats: ['html'] });
-		} catch (error) {
-			return {
-				status: error.response?.status || 500,
-				error: error.message
-			};
-		}
-
-		return { props: { post } };
-	}
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import SocialMetaTags from './_SocialMetaTags.svelte';
-	import SocialLinks from './_SocialLinks.svelte';
 	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
-	import BlogPostContent from './_BlogPostContent.svelte';
+	import SocialMetaTags from '../SocialMetaTags.svelte';
+	import SocialLinks from '../SocialLinks.svelte';
+	import BlogPostContent from '../BlogPostContent.svelte';
 
-	export let post;
+	export let data: PageData;
 </script>
 
-<SocialMetaTags url={$page.url} {post} />
+<SocialMetaTags url={$page.url} post={data} />
 
-<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
+<Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
 <article class="ds-container">
 	<header>
 		<SocialLinks layout="post" />
-		<h1>{post.title}</h1>
-		<BlogPostTimestamp publishedAt={post.published_at} />
-		<img src={post.feature_image} alt={post.feature_image_alt} />
+		<h1>{data.title}</h1>
+		<BlogPostTimestamp publishedAt={data.published_at} />
+		<img src={data.feature_image} alt={data.feature_image_alt} />
 	</header>
 
-	<BlogPostContent html={post.html} />
+	<BlogPostContent html={data.html} />
 </article>
 
 <style>

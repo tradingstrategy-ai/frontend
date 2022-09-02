@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TableOfContents from './_TableOfContents.svelte';
+	import TableOfContents from './TableOfContents.svelte';
 
 	export let html: string;
 
@@ -17,7 +17,7 @@
 		node.querySelectorAll('table').forEach((tableEl) => {
 			const wrapper = document.createElement('div');
 			wrapper.className = 'table-responsive';
-			tableEl.parentNode.insertBefore(wrapper, tableEl);
+			tableEl.parentNode?.insertBefore(wrapper, tableEl);
 			wrapper.appendChild(tableEl);
 		});
 	}
