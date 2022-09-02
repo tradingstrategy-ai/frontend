@@ -1,94 +1,57 @@
-<!--
-
-Export data for exchange trading pair list
-
--->
-<script context="module">
-	import config from '$lib/config';
-	import getApiError from '$lib/chain/getApiError';
-
-	export async function load({ params, fetch }) {
-		const { backendUrl } = config;
-		const exchange_slug = params.exchange;
-		const chain_slug = params.chain;
-
-		// Load and render exchange details on the server side
-		// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
-		const encoded = new URLSearchParams({ exchange_slug, chain_slug });
-		const apiUrl = `${backendUrl}/exchange-details?${encoded}`;
-
-		const resp = await fetch(apiUrl);
-
-		if (!resp.ok) {
-			return getApiError(resp, 'Exchange', [chain_slug, exchange_slug]);
-		}
-
-		const details = await resp.json();
-		return { props: { exchange_slug, chain_slug, details, backendUrl } };
-	}
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types';
+	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	export let exchange_slug: string;
-	export let chain_slug: string;
-	export let details: any;
-	export let backendUrl: string;
+	export let data: PageData;
 
-	$: breadcrumbs = {
-		[exchange_slug]: details.human_readable_name,
-		'export-data': 'Export data'
-	};
+	const exchangeName = data.human_readable_name;
+	const downloadUrl = `${backendUrl}/pairs`;
 
-	const exchange_name = details.human_readable_name;
-
-	// Download customization
+	// Download options
 	let selectedFormat = 'excel';
 	let selectedDataset = 'top_3000_rows';
 	let selectedSort = 'price_change_24h';
 	let selectedFilter = 'min_liquidity_1M';
-	let link: string;
 	let downloadDisabled = false;
 
-	function handleDownloadClick() {
-		downloadDisabled = true;
-	}
+	$: breadcrumbs = {
+		[data.exchange_slug]: exchangeName,
+		'export-data': 'Export data'
+	};
 
-	$: {
-		// See https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_pairs
-		console.log(selectedFormat);
-		console.log(selectedSort);
-		// TODO: Use URLSearchParams here
-		link = `${backendUrl}/pairs?export_format=${selectedFormat}&sort=${selectedSort}&direction=desc&chain_slugs=${chain_slug}&exchange_slugs=${exchange_slug}&filter=${selectedFilter}`;
-	}
+	$: downloadParams = new URLSearchParams({
+		chain_slugs: data.chain_slug,
+		exchange_slugs: data.exchange_slug,
+		export_format: selectedFormat,
+		filter: selectedFilter,
+		sort: selectedSort,
+		direction: 'desc'
+	});
 </script>
 
 <svelte:head>
 	<title>
-		Export {details.human_readable_name} on ${details.chain_name} data
+		Export {exchangeName} on ${data.chain_name} data
 	</title>
-	<meta
-		name="description"
-		content={`Download ${details.human_readable_name} on ${details.chain_name} trading pair data as Excel file`}
-	/>
+	<meta name="description" content={`Download ${exchangeName} on ${data.chain_name} trading pair data as Excel file`} />
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
 	<header class="ds-container">
-		<h1 data-testid="title">Export trading pair data for {exchange_name}</h1>
+		<h1 data-testid="title">Export trading pair data for {exchangeName}</h1>
 		<p>Download data as Microsoft Excel file for analysis.</p>
 	</header>
 
 	<section class="ds-container">
 		<form>
-			{#if exchange_slug}
+			{#if data.exchange_slug}
 				<div>
 					<label for="exampleFormControlInput1">Selected exchange</label>
-					<input type="text" class="form-control" id="exampleFormControlInput1" disabled value={exchange_name} />
+					<input type="text" class="form-control" id="exampleFormControlInput1" disabled value={exchangeName} />
 				</div>
 			{/if}
 
@@ -129,10 +92,10 @@ Export data for exchange trading pair list
 			<div class="cta">
 				<Button
 					label="Download trading pair data"
-					href={link}
+					href="{downloadUrl}?{downloadParams}"
 					download
 					disabled={downloadDisabled}
-					on:click={handleDownloadClick}
+					on:click={() => (downloadDisabled = true)}
 				/>
 			</div>
 		</form>
@@ -142,7 +105,7 @@ Export data for exchange trading pair list
 		<p>Exported data is useful e.g. for analysis of new tokens entering the market.</p>
 		<p>
 			This data export contains only data for
-			<a class="body-link" href="/trading-view/{chain_slug}/{exchange_slug}">{exchange_name}</a>. Read about
+			<a class="body-link" href="/trading-view/{data.chain_slug}/{data.exchange_slug}">{exchangeName}</a>. Read about
 			<a class="body-link" rel="external" href="https://tradingstrategy.ai/api/explorer/"
 				>the column format in PairSummary section of the API documentation.</a
 			>
