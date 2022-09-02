@@ -3,7 +3,7 @@ import getGhostClient from '$lib/blog/client';
 
 const ghostClient = getGhostClient(config.ghost);
 
-export const get = async () => {
+export const GET = async () => {
 	const posts = await ghostClient.posts.browse({ limit: 'all' });
 	const body = render(posts);
 	const headers = {
