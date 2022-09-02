@@ -56,7 +56,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@sveltejs/adapter-node": "1.0.0-next.86",
-    "@sveltejs/kit": "1.0.0-next.405",
+    "@sveltejs/kit": "1.0.0-next.418",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
