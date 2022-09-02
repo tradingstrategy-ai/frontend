@@ -55,8 +55,8 @@
     "@babel/preset-env": "^7.15.6",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^4.0.0",
-    "@sveltejs/adapter-node": "^1.0.0-next.73",
-    "@sveltejs/kit": "1.0.0-next.336",
+    "@sveltejs/adapter-node": "1.0.0-next.78",
+    "@sveltejs/kit": "1.0.0-next.358",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/svelte": "^3.0.0",
     "@types/cookie": "^0.4.0",
@@ -113,7 +113,7 @@
     "web3": "^1.6.0"
   },
   "overrides": {
-    "@sveltejs/vite-plugin-svelte": ">=1.0.0-next.44 <1.0.0"
+    "@sveltejs/vite-plugin-svelte": ">=1.0.0-next.48 <1.0.0"
   },
   "optionalDependencies": {
     "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.7.0"
