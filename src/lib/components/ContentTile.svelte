@@ -5,25 +5,23 @@
 	export let title: string;
 	export let icon: string;
 	export let targetUrl: string;
-	export let buttonLabel: string = undefined;
-	export let horizontal = false;
+	export let buttonLabel: string | undefined = undefined;
 	export let external = false;
 
 	$: tag = buttonLabel ? 'div' : 'a';
 </script>
 
-<svelte:element this={tag} class="tile" class:horizontal href={tag === 'a' ? targetUrl : undefined}>
+<svelte:element this={tag} class="tile" href={tag === 'a' ? targetUrl : undefined}>
 	<div class="header">
 		<SocialIcon name={icon} />
 		<h3>{title}</h3>
 	</div>
-	<div class="content">
-		<div class="text"><slot /></div>
 
-		{#if buttonLabel}
-			<div class="button"><Button {external} label={buttonLabel} href={targetUrl} /></div>
-		{/if}
-	</div>
+	<div class="text"><slot /></div>
+
+	{#if buttonLabel}
+		<div class="button"><Button {external} label={buttonLabel} href={targetUrl} /></div>
+	{/if}
 </svelte:element>
 
 <style>
@@ -45,22 +43,15 @@
 		justify-items: center;
 	}
 
-	.header h3 {
-		padding-inline: 4rem;
-	}
-
 	.tile[href]:hover h3 {
 		text-decoration: underline;
 	}
 
-	.content {
-		display: grid;
-		gap: 2rem;
-	}
-
 	.text {
+		flex: 1;
 		display: grid;
 		gap: 2rem;
+		align-content: start;
 		font: 400 var(--fs-ui-lg);
 	}
 
@@ -71,29 +62,6 @@
 	@media (--viewport-md-up) {
 		.tile {
 			--social-icon-size: 4.75rem;
-		}
-
-		.horizontal {
-			--social-icon-size: 5rem;
-			flex-direction: row;
-			align-items: center;
-		}
-
-		.horizontal > * {
-			flex: 1;
-		}
-
-		.horizontal .content {
-			gap: 2rem;
-			text-align: left;
-		}
-
-		.horizontal .text {
-			gap: 1.5rem;
-		}
-
-		.horizontal h3 {
-			padding-inline: 2.5rem;
 		}
 	}
 </style>

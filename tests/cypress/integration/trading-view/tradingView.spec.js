@@ -15,10 +15,13 @@ describe('Trading strategy Trading View', () => {
 		cy.get('a[href="/search"]').contains(/Search tokens/i);
 	});
 
-	it('Should have a Programmatic Access section with 3 cards', () => {
+	it('Should have a Programmatic Access section with 4 cards', () => {
 		cy.contains(/Programmatic access/i);
 		cy.get('a[href="/trading-view/backtesting"]').contains(/Download datasets/i);
 		cy.get('a[href="https://tradingstrategy.ai/api/explorer/"]').contains(/Read API specification/i);
-		cy.get('a[href="https://tradingstrategy.ai/docs/programming/index.html"]').contains(/Read documentation/i);
+		cy.get('a[href="https://tradingstrategy.ai/docs"]').contains(/Read documentation/i);
+		cy.get('a[href="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"]').contains(
+			/Go to notebooks/i
+		);
 	});
 });

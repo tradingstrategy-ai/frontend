@@ -25,7 +25,6 @@
 		<h2>Explore data</h2>
 
 		<ContentTile
-			horizontal
 			title="Blockchains"
 			icon="blockchain"
 			targetUrl="/trading-view/blockchains"
@@ -38,7 +37,6 @@
 		</ContentTile>
 
 		<ContentTile
-			horizontal
 			title="Decentralised exchanges"
 			icon="exchange"
 			targetUrl="/trading-view/exchanges"
@@ -54,7 +52,6 @@
 		</ContentTile>
 
 		<ContentTile
-			horizontal
 			title="Trading pairs"
 			icon="pair"
 			targetUrl="/trading-view/trading-pairs"
@@ -69,7 +66,7 @@
 			{/if}
 		</ContentTile>
 
-		<ContentTile horizontal title="Advanced token search" icon="search" targetUrl="/search" buttonLabel="Search tokens">
+		<ContentTile title="Advanced token search" icon="search" targetUrl="/search" buttonLabel="Search tokens">
 			<p>
 				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
 				change.
@@ -82,7 +79,6 @@
 		<h2>Programmatic access</h2>
 
 		<ContentTile
-			horizontal
 			title="Backtesting"
 			icon="backtesting"
 			targetUrl="/trading-view/backtesting"
@@ -98,7 +94,6 @@
 		</ContentTile>
 
 		<ContentTile
-			horizontal
 			title="Realtime API"
 			icon="24h"
 			targetUrl="https://tradingstrategy.ai/api/explorer/"
@@ -110,17 +105,27 @@
 		</ContentTile>
 
 		<ContentTile
-			horizontal
-			title="Documentation and notebooks"
-			icon="python"
-			targetUrl="https://tradingstrategy.ai/docs/programming/index.html"
+			title="Documentation"
+			icon="book"
+			targetUrl="https://tradingstrategy.ai/docs"
 			buttonLabel="Read documentation"
 		>
 			<p>
-				Trading Strategy supports popular quantitative finance toolkits for Python programming language. Use popular
-				Jupyter Notebooks, Pandas and other libraries to crunch through the data.
+				Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges.
+				Read API documentation and tutorials to learn how to create your own strategies.
 			</p>
-			<p>Documentation contains tutorials and examples for starting algorithmic trading.</p>
+		</ContentTile>
+
+		<ContentTile
+			title="Notebooks"
+			icon="python"
+			targetUrl="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
+			buttonLabel="Go to notebooks"
+		>
+			<p>
+				Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies.
+				View example notebooks to see how to use DeFi data in your notebooks.
+			</p>
 		</ContentTile>
 	</section>
 </main>
@@ -132,8 +137,12 @@
 	}
 
 	section {
-		--container-max-width: 1020px;
+		grid-template-columns: repeat(auto-fit, minmax(min(var(--container-width), 29.5rem), 1fr));
 		gap: 2rem;
+	}
+
+	section h2 {
+		grid-column: 1 / -1;
 	}
 
 	@media (--viewport-md-up) {

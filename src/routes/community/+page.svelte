@@ -71,7 +71,7 @@
 	}
 
 	section {
-		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(var(--container-width), 21.5rem), 1fr));
 		gap: 2rem;
 	}
 
