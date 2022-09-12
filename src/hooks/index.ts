@@ -11,6 +11,11 @@ export const externalFetch: ExternalFetch = async (request) => {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
 			request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
+			// set headers to enable backend to determine the original request origin
+			const url = new URL(backendUrl);
+			request.headers.set('Host', url.hostname);
+			request.headers.set('X-Forwarded-Host', url.hostname);
+			request.headers.set('X-Forwarded-Proto', url.protocol.slice(0, -1));
 		}
 	}
 	return fetch(request);
