@@ -7,8 +7,7 @@ on the conference rolls.
 <script lang="ts">
 	import Hero from '$lib/components/Hero.svelte';
 	import ContentTile from '$lib/components/ContentTile.svelte';
-	import SocialImage from '$lib/assets/milano/social-media/social-media-discussion-1.svg?raw';
-    import BrandMark from '$lib/assets/brand-mark.svg?raw';
+	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
 
 <svelte:head>
@@ -17,12 +16,9 @@ on the conference rolls.
 </svelte:head>
 
 <main>
-	<Hero title="Follow Trading Strategy" image={BrandMark}>
-        Join discussion or follow us on the social media.
-	</Hero>
+	<Hero title="Follow Trading Strategy" image={BrandMark}>Join discussion or follow us on the social media.</Hero>
 
 	<section class="ds-container">
-
 		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
 			Join our expert community of traders, developers, and analysts and DeFi specialists.
 		</ContentTile>
@@ -46,9 +42,7 @@ on the conference rolls.
 		<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
 			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
 		</ContentTile>
-
 	</section>
-
 </main>
 
 <style>
