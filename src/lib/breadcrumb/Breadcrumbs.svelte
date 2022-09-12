@@ -80,8 +80,8 @@ https://search.google.com/structured-data/testing-tool
 <style>
 	ol {
 		list-style-type: none;
-		margin: 0.75rem 0;
-		padding: 0;
+		margin-bottom: 0.75rem;
+		padding: 0.75rem 0;
 		display: grid;
 		grid-auto-flow: column;
 		justify-content: start;
@@ -121,7 +121,8 @@ https://search.google.com/structured-data/testing-tool
 	/* Desktop */
 	@media (--viewport-md-up) {
 		ol {
-			margin: 1rem 0 2rem 0;
+			margin-bottom: 1.25rem;
+			padding-block: 1rem;
 			font: 500 var(--fs-ui-md);
 			letter-spacing: 0.01em;
 		}
