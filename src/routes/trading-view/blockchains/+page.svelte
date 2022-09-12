@@ -1,0 +1,91 @@
+<!--
+	Display chain information and indexing status
+-->
+<script lang="ts">
+	import type { PageData } from './$types';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+
+	export let data: PageData;
+</script>
+
+<svelte:head>
+	<title>Trading data for blockchains</title>
+	<meta name="description" content="Explore trading pairs and exchanges" />
+</svelte:head>
+
+<Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
+
+<main>
+	<header class="ds-container">
+		<h1>Blockchains</h1>
+		<p>
+			List of currently active blockchains producing trading data. You can explore the blockchains for supported
+			decentralised exchanges, trading pairs and price charts.
+		</p>
+	</header>
+
+	<section class="ds-container">
+		<table class="table">
+			<thead>
+				<th>Blockchain</th>
+				<th>Exchanges</th>
+				<th><!-- actions --></th>
+			</thead>
+
+			{#each data.chains as chain}
+				<tr>
+					<td>
+						<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>
+							<img alt={`${chain.chain_name} logo`} class="chain-logo" src={chain.chain_logo} />
+						</a>
+						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
+							{chain.chain_name}
+						</a>
+					</td>
+					<td>
+						{chain.exchanges}
+					</td>
+
+					<td>
+						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}> Details </a>
+					</td>
+				</tr>
+			{/each}
+		</table>
+	</section>
+</main>
+
+<style>
+	header h1 {
+		font: var(--f-h2-medium);
+	}
+
+	header p {
+		font: var(--f-ui-body-roman);
+		margin-block: 1rem;
+	}
+
+	th,
+	td {
+		white-space: nowrap;
+	}
+
+	.chain-logo {
+		max-width: 24px;
+		max-height: 24px;
+	}
+
+	.chain-img-link {
+		min-width: 32px;
+		text-align: center;
+		display: inline-block;
+	}
+
+	.chain-link {
+		font-weight: 500;
+	}
+
+	.chain-link:hover {
+		text-decoration: underline;
+	}
+</style>

@@ -1,7 +1,9 @@
 /**
- * Return appropriate { status, error } object for chain entity API errors
+ * Return appropriate error object for chain entity API errors
  */
-export default function (response, type: string, chainParams: string[]) {
+import { error } from '@sveltejs/kit';
+
+export default function (response: Response, type: string, chainParams: string[]) {
 	let message: string;
 
 	if (response.status === 404) {
@@ -11,8 +13,5 @@ export default function (response, type: string, chainParams: string[]) {
 		message = `${response.statusText}; could not load data for URL: ${response.url}`;
 	}
 
-	return {
-		status: response.status,
-		error: new Error(message)
-	};
+	return error(response.status, message);
 }

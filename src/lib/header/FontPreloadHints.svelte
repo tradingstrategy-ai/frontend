@@ -11,7 +11,7 @@ page load. Only rendered during SSR, and only if `deps/fonts` submodule is insta
 ```
 -->
 <script lang="ts" context="module">
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 
 	const fonts = [
 		'NeueHaasGroteskDisplay/65.woff2',

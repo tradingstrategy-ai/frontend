@@ -8,9 +8,8 @@ A helpful widget to identify non-production deployment and give some developer d
 ```
 -->
 <script lang="ts">
-	import config from '$lib/config';
+	import { backendUrl, siteMode } from '$lib/config';
 
-	const { siteMode, backendUrl } = config;
 	const siteBar = siteMode !== 'production';
 </script>
 
