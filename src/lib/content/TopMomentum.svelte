@@ -55,6 +55,7 @@ Display best or worst performing trading pairs.
 	div {
 		display: grid;
 		border: 2px solid var(--c-border-2);
+		border-radius: 0.5rem;
 		padding: 1.5rem;
 	}
 

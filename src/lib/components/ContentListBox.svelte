@@ -11,6 +11,7 @@
 <style>
 	.content-list-box {
 		border: 2px solid var(--c-border-2);
+		border-radius: 0.5rem;
 		padding: 1.25rem;
 		display: flex;
 		flex-direction: column;

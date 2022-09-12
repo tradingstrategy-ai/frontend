@@ -65,7 +65,7 @@
 		width: inherit;
 		padding: 0 0.5em;
 		height: 2.125em;
-		border-radius: 0.375rem;
+		border-radius: 0.5rem;
 		border: 2px solid var(--c-border-2);
 		background: var(--c-body);
 		letter-spacing: 0.01em;

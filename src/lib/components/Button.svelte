@@ -2,16 +2,16 @@
 	import Icon from './Icon.svelte';
 
 	export let disabled = false;
-	export let download: string | boolean = undefined;
+	export let download: string | boolean | undefined = undefined;
 	export let external = false;
-	export let href: string = undefined;
-	export let icon: string = undefined;
+	export let href: string | undefined = undefined;
+	export let icon: string | undefined = undefined;
 	export let label: string = '';
 	export let secondary = false;
 	export let submit = false;
-	export let tabindex: number = undefined;
-	export let target: string = undefined;
-	export let title: string = undefined;
+	export let tabindex: number | undefined = undefined;
+	export let target: string | undefined = undefined;
+	export let title: string | undefined = undefined;
 
 	$: tag = href && !disabled ? 'a' : 'button';
 	$: kind = secondary ? 'secondary' : 'primary';
@@ -44,7 +44,7 @@
 		height: var(--button-height, 3.5rem);
 		padding: 0 1.5rem;
 		border: 1px solid transparent;
-		border-radius: 0;
+		border-radius: 0.5rem;
 		font: 500 var(--fs-ui-lg);
 		text-decoration: none;
 		text-transform: capitalize;
