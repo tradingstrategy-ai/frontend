@@ -16,7 +16,7 @@ on the conference rolls.
 </svelte:head>
 
 <main>
-	<Hero title="Follow Trading Strategy" image={BrandMark}>Join discussion or follow us on the social media.</Hero>
+	<Hero title="Follow Trading Strategy" image={BrandMark}>Follow us on our socials and join the discussion.</Hero>
 
 	<section class="ds-container">
 		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
@@ -51,13 +51,14 @@ on the conference rolls.
 		gap: 4.5rem;
 	}
 
+	main :global .media svg {
+		width: 75%;
+		max-width: 18rem;
+	}
+
 	section {
 		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
 		gap: 2rem;
-	}
-
-	section h2 {
-		grid-column: 1 / -1;
 	}
 
 	@media (--viewport-md-up) {
