@@ -1,29 +1,32 @@
 <script>
 	import SocialIcon from './SocialIcon.svelte';
 
+	export let skip = false;
 	export let small = false;
 </script>
 
 <footer class:small>
-	<a href="https://discord.gg/en8tW6MDtw">
-		<SocialIcon name="discord" />
-	</a>
+	{#if !skip}
+		<a href="https://discord.gg/en8tW6MDtw">
+			<SocialIcon name="discord" />
+		</a>
 
-	<a href="https://twitter.com/tradingprotocol">
-		<SocialIcon name="twitter" />
-	</a>
+		<a href="https://twitter.com/tradingprotocol">
+			<SocialIcon name="twitter" />
+		</a>
 
-	<a href="https://www.linkedin.com/company/trading-strategy/">
-		<SocialIcon name="linkedin" />
-	</a>
+		<a href="https://www.linkedin.com/company/trading-strategy/">
+			<SocialIcon name="linkedin" />
+		</a>
 
-	<a href="https://newsletter.tradingstrategy.ai/">
-		<SocialIcon name="newspaper" />
-	</a>
+		<a href="https://newsletter.tradingstrategy.ai/">
+			<SocialIcon name="newspaper" />
+		</a>
 
-	<a href="/blog/rss.xml" rel="external">
-		<SocialIcon name="rss" />
-	</a>
+		<a href="/blog/rss.xml" rel="external">
+			<SocialIcon name="rss" />
+		</a>
+	{/if}
 </footer>
 
 <style>

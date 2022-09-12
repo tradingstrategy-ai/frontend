@@ -9,6 +9,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import 'bootstrap-theme/css/neumorphism.css';
 	import '$lib/components/css/index.css';
 
@@ -45,7 +46,7 @@
 <PageLoadProgressBar />
 <Navbar />
 <slot />
-<Footer />
+<Footer skip={$page.data.skipFooter} />
 <SiteMode />
 
 <style global>
