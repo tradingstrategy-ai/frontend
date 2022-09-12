@@ -31,10 +31,6 @@ on the conference rolls.
 			Follow us on Twitter for trading alerts, DeFi insight and protocol news.
 		</ContentTile>
 
-		<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
-			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
-		</ContentTile>
-
 		<ContentTile title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
 			Follow us on LinkedIn and join our community of traders, developers and quant experts.
 		</ContentTile>
@@ -46,6 +42,11 @@ on the conference rolls.
 		<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
 			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
 		</ContentTile>
+
+		<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
+			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
+		</ContentTile>
+
 	</section>
 
 </main>
