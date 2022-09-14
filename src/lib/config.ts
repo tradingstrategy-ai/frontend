@@ -84,6 +84,16 @@ export const typesenseConfig = config(
 );
 
 /**
+ * Load URL for pyodide build (see: Notebook.svelte)
+ */
+export const pyodideUrl = config((url: string) => {
+	if (!url) {
+		console.warn('You need to confingure pyodide URL to enable embedded notebooks');
+	}
+	return url;
+}, 'PYODIDE_URL');
+
+/**
  * Specify chains under maintence as JSON string, e.g.:
  * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
  */

@@ -7,3 +7,6 @@
 [submodule "deps/fonts"]
 	path = deps/fonts
 	url = git@github.com:tradingstrategy-ai/fonts.git
+[submodule "deps/notebook-webcomponent"]
+	path = deps/notebook-webcomponent
+	url = git@github.com:tradingstrategy-ai/notebook-webcomponent.git

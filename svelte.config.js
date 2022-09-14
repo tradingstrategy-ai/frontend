@@ -19,7 +19,8 @@ const config = {
 		alias: {
 			'design-system-fonts': 'deps/fonts',
 			'bootstrap-theme': 'deps/theme/dist',
-			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib'
+			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib',
+			'notebook-webcomponent': 'deps/notebook-webcomponent/dist/notebook/build'
 		},
 
 		env: {
