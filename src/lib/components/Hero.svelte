@@ -18,8 +18,9 @@
 
 <style>
 	section {
-		padding-top: 1rem;
 		align-items: center;
+		row-gap: 1.5rem;
+		padding-block: 1rem;
 	}
 
 	section h1 {
@@ -31,7 +32,7 @@
 	}
 
 	.media {
-		padding: 2rem 2rem 0 2rem;
+		padding-inline: 2rem;
 		display: flex;
 		justify-content: center;
 	}
@@ -48,8 +49,8 @@
 	@media (--viewport-md-up) {
 		section {
 			grid-template-columns: 5fr 4fr;
-			gap: 8vw;
-			padding-top: 3.5rem;
+			column-gap: 8vw;
+			padding-block: 3.5rem;
 		}
 
 		.media {
