@@ -11,6 +11,8 @@ chartiq dependency.
 ```
 -->
 <script context="module" lang="ts">
+	import { browser } from '$app/environment';
+
 	let CIQ;
 
 	/**
@@ -26,7 +28,7 @@ chartiq dependency.
 	}
 
 	async function initialize() {
-		if (Object.keys(modules).length === 0) {
+		if (!browser || Object.keys(modules).length === 0) {
 			return false;
 		}
 		await Promise.all([importCss(), importJs()]);

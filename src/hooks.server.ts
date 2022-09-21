@@ -1,4 +1,4 @@
-import type { ExternalFetch } from '@sveltejs/kit';
+import type { Handle, HandleFetch } from '@sveltejs/kit';
 import { backendUrl, backendInternalUrl } from '$lib/config';
 
 /**
@@ -6,7 +6,7 @@ import { backendUrl, backendInternalUrl } from '$lib/config';
  * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
  *
  */
-export const externalFetch: ExternalFetch = async (request) => {
+export const handleFetch: HandleFetch = async ({ request }) => {
 	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
