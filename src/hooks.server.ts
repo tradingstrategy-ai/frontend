@@ -1,11 +1,18 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit';
 import { backendUrl, backendInternalUrl } from '$lib/config';
 
-/**
- * Shortcut fetch() API requests in SSR; see:
- * https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
- *
- */
+// Set `data-color-mode` body attribute during SSR to avoid FOUC (see app.html)
+export const handle: Handle = ({ event, resolve }) => {
+	const colorMode = event.cookies.get('color-mode') ?? '';
+	return resolve(event, {
+		transformPageChunk({ html }) {
+			return html.replace(/%ts:color-mode%/, colorMode);
+		}
+	});
+};
+
+// Shortcut fetch() API requests in SSR; see:
+// https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
 export const handleFetch: HandleFetch = async ({ request }) => {
 	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
