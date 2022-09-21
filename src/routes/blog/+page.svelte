@@ -3,7 +3,7 @@
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
-	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
+	import { BlogPostTile } from '$lib/components';
 	import SocialLinks from './SocialLinks.svelte';
 
 	export let data: PageData;

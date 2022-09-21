@@ -1,9 +1,5 @@
 <script lang="ts">
-	import Logo from '$lib/components/Logo.svelte';
-	import Icon from '$lib/components/Icon.svelte';
-	import Menu from '$lib/components/Menu.svelte';
-	import NavPanel from '$lib/components/NavPanel.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
+	import { Logo, Icon, Menu, NavPanel, TextInput } from '$lib/components';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	let panelOpen = false;

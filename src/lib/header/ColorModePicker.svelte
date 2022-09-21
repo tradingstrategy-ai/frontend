@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { addYears } from 'date-fns';
-	import Icon from '$lib/components/Icon.svelte';
 	import cookies from 'cookie';
+	import { addYears } from 'date-fns';
+	import { Icon } from '$lib/components';
 
 	let dialog: HTMLDialogElement;
 	let currentMode: string;

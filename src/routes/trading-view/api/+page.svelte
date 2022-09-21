@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import TextInput from '$lib/components/TextInput.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { TextInput, Button } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	const url = `${backendUrl}/register`;

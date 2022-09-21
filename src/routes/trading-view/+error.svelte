@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { chainsUnderMaintenance } from '$lib/config';
 	import { page } from '$app/stores';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components';
 
 	let status: number;
 	let message: string;

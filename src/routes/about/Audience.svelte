@@ -1,6 +1,5 @@
 <script lang="ts">
-	import ContentListBox from '$lib/components/ContentListBox.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { ContentListBox, Button } from '$lib/components';
 </script>
 
 <section class="ds-container">

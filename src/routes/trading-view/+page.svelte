@@ -4,9 +4,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
-	import Hero from '$lib/components/Hero.svelte';
+	import { Hero, ContentTile } from '$lib/components';
 	import HeroImage from '$lib/assets/illustrations/data-cloud-1.svg?raw';
-	import ContentTile from '$lib/components/ContentTile.svelte';
 
 	export let data: PageData;
 </script>

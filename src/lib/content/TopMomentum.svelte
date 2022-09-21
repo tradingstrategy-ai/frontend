@@ -14,7 +14,7 @@ Display best or worst performing trading pairs.
 -->
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components';
 
 	export let name: string;
 	export let pairs: [];

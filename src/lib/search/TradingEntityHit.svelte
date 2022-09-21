@@ -16,7 +16,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import Icon from '$lib/components/Icon.svelte';
+	import { Icon } from '$lib/components';
 
 	// Any token with less than this liquidity
 	// is grayed out in the search results

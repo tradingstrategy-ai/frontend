@@ -14,8 +14,7 @@ Display site-wide search box for use in top-nav.
 	import { goto } from '$app/navigation';
 	import tradingEntities from './trading-entities';
 	import TradingEntityHit from './TradingEntityHit.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { TextInput, Button } from '$lib/components';
 
 	let q = '';
 	let hasFocus = false;

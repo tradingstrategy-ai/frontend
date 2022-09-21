@@ -5,8 +5,7 @@
 	import type { PageData } from './$types';
 	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
-	import BlogPostTile from '$lib/components/BlogPostTile.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { BlogPostTile, Button } from '$lib/components';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { goto } from '$app/navigation';
 

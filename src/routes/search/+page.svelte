@@ -8,7 +8,7 @@ Advanced Search page
 	import { page } from '$app/stores';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import tradingEntities from '$lib/search/trading-entities';
-	import TextInput from '$lib/components/TextInput.svelte';
+	import { TextInput } from '$lib/components';
 	import SortSelect, { sortOptions } from './SortSelect.svelte';
 	import FacetFilter from './FacetFilter.svelte';
 	import RangeFilter from './RangeFilter.svelte';

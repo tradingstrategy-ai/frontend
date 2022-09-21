@@ -15,7 +15,7 @@ Render the pair trading page
 	import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
 	import ChartSection from './ChartSection.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components';
 
 	export let data: PageData;
 
