@@ -3,6 +3,8 @@
 	import { addYears } from 'date-fns';
 	import { Icon } from '$lib/components';
 
+	export let showLabel = false;
+
 	let dialog: HTMLDialogElement;
 	let currentMode: string;
 
@@ -28,8 +30,9 @@
 	}
 </script>
 
-<button on:click={openDialog}>
-	<Icon name="sun" />
+<button on:click={openDialog} class:showLabel>
+	<Icon name="sun" size="24px" />
+	<span>Select color mode</span>
 </button>
 
 <dialog bind:this={dialog}>
@@ -47,11 +50,22 @@
 <style>
 	button {
 		display: flex;
-		background: transparent;
+		gap: 0.5rem;
+		justify-content: center;
 		border: none;
-		font-size: 24px;
 		padding: 0;
+		background: transparent;
+		font: 500 var(--fs-ui-lg);
+		text-transform: capitalize;
 		cursor: pointer;
+	}
+
+	button.showLabel {
+		color: var(--c-text-4);
+	}
+
+	button:not(.showLabel) span {
+		display: none;
 	}
 
 	dialog {
@@ -69,7 +83,7 @@
 	}
 
 	heading h5 {
-		font: var(--f-ui-body-medium);
+		font: 500 var(--fs-ui-lg);
 	}
 
 	menu {
@@ -82,7 +96,7 @@
 	li {
 		border-radius: 0.5rem;
 		padding-block: 0.5rem;
-		font: var(--f-ui-body-medium);
+		font: 500 var(--fs-ui-lg);
 		color: var(--c-text-1);
 		text-align: center;
 		cursor: pointer;
