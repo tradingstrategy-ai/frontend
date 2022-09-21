@@ -1,9 +1,10 @@
 <script lang="ts">
-	import Logo from './Logo.svelte';
-	import Icon from './Icon.svelte';
-	import Menu from './Menu.svelte';
-	import NavPanel from './NavPanel.svelte';
-	import TextInput from './TextInput.svelte';
+	import Logo from '$lib/components/Logo.svelte';
+	import Icon from '$lib/components/Icon.svelte';
+	import Menu from '$lib/components/Menu.svelte';
+	import NavPanel from '$lib/components/NavPanel.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	let panelOpen = false;
 </script>
@@ -13,7 +14,7 @@
 		<a href="/"><Logo /></a>
 	</div>
 
-	<nav>
+	<nav class="desktop-only">
 		<Menu horizontal align="center">
 			<slot name="menu" />
 		</Menu>
@@ -25,12 +26,16 @@
 		</slot>
 	</div>
 
-	<button class="show-nav-panel" on:click={() => (panelOpen = true)}>
+	<div class="desktop-only">
+		<ColorModePicker />
+	</div>
+
+	<button class="show-nav-panel mobile-only" on:click={() => (panelOpen = true)}>
 		<Icon name="menu" />
 	</button>
 </header>
 
-<div class="nav-panel">
+<div class="nav-panel mobile-only">
 	<NavPanel bind:open={panelOpen}>
 		<slot name="menu" />
 	</NavPanel>
@@ -39,11 +44,16 @@
 <style>
 	header {
 		display: grid;
-		/* prettier-ignore */
-		grid-template-columns: [logo-start] 10.5rem [logo-end-sm search-start-sm] 2rem [logo-end-lg menu-start] 1fr [menu-end search-start-lg] minmax(auto, 14.75rem) [search-end];
+		grid-template-columns:
+			/* lg logo = 12.5rem = 10.5rem (sm logo) + 1.25rem (gap) + 0.75rem (delta) */
+			[logo-start] 10.5rem
+			[logo-end-sm search-start-sm] 0.75rem
+			[logo-end-lg menu-start] 1fr
+			[menu-end search-start-lg] minmax(auto, 12rem)
+			[search-end];
 		grid-auto-flow: column;
 		align-items: center;
-		gap: 1rem;
+		gap: 1.25rem;
 		height: 5.5rem;
 	}
 
@@ -73,8 +83,7 @@
 	}
 
 	.show-nav-panel {
-		/* hidden by default; display: flex in @media query below */
-		display: none;
+		display: flex;
 		background: transparent;
 		border: none;
 		font-size: 24px;
@@ -83,17 +92,16 @@
 	}
 
 	.nav-panel {
-		/* hidden by default; display: contents in @media query below */
-		display: none;
+		display: contents;
 	}
 
-	@media (max-width: 1150px) {
-		header {
-			height: 3.75rem;
+	@media (width < 1125px) {
+		.desktop-only {
+			display: none;
 		}
 
-		nav {
-			display: none;
+		header {
+			height: 3.75rem;
 		}
 
 		.logo {
@@ -104,13 +112,11 @@
 		.search {
 			grid-column-start: search-start-sm;
 		}
+	}
 
-		.show-nav-panel {
-			display: flex;
-		}
-
-		.nav-panel {
-			display: contents;
+	@media (width >= 1125px) {
+		.mobile-only {
+			display: none;
 		}
 	}
 </style>
