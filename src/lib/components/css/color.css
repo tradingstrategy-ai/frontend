@@ -97,8 +97,7 @@ body[data-color-mode='dark'] {
 
 /*
 	define color pairs based on --cm-light / --cm-dark values
-  see explanation here:
-	https://stackoverflow.com/questions/70845195/define-dark-mode-for-both-a-class-and-a-media-query-without-repeat-css-custom-p#answer-70934827
+  see: https://stackoverflow.com/questions/70845195#answer-70934827
 */
 body {
 	--c-body: var(--cm-light, var(--c-parchment)) var(--cm-dark, var(--c-ink-light));

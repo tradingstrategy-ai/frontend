@@ -38,7 +38,9 @@
 <dialog bind:this={dialog}>
 	<heading>
 		<h5>Color Mode</h5>
-		<Icon name="sun" size="24px" />
+		<button on:click={() => dialog.close()}>
+			<Icon name="cancel" size="16px" />
+		</button>
 	</heading>
 	<menu>
 		{#each Object.entries(modes) as [mode, label]}
@@ -76,9 +78,28 @@
 		width: 300px;
 	}
 
+	dialog::backdrop {
+		--cm-light-backdrop-color: black;
+		--cm-dark-backdrop-color: white;
+
+		background: var(--cm-light-backdrop-color);
+		opacity: 0.25;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(body:not([data-color-mode='light'])) dialog::backdrop {
+			background: var(--cm-dark-backdrop-color);
+		}
+	}
+
+	:global(body[data-color-mode='dark']) dialog::backdrop {
+		background: var(--cm-dark-backdrop-color);
+	}
+
 	heading {
 		display: grid;
 		grid-template-columns: auto min-content;
+		align-items: center;
 		color: var(--c-text-4);
 	}
 
