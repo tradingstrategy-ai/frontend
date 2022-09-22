@@ -4,6 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import BlockchainTile from './BlockchainTile.svelte';
 
 	export let data: PageData;
 </script>
@@ -18,74 +19,64 @@
 <main>
 	<header class="ds-container">
 		<h1>Blockchains</h1>
-		<p>
-			List of currently active blockchains producing trading data. You can explore the blockchains for supported
-			decentralised exchanges, trading pairs and price charts.
-		</p>
+		<p>List of currently active blockchains producing trading data.</p>
 	</header>
 
+	<aside class="ds-container">
+		You can explore the blockchains for supported decentralised exchanges, trading pairs and price charts.
+	</aside>
+
 	<section class="ds-container">
-		<table class="table">
-			<thead>
-				<th>Blockchain</th>
-				<th>Exchanges</th>
-				<th><!-- actions --></th>
-			</thead>
-
-			{#each data.chains as chain}
-				<tr>
-					<td>
-						<a class="chain-img-link" href={`/trading-view/${chain.chain_slug}`}>
-							<img alt={`${chain.chain_name} logo`} class="chain-logo" src={chain.chain_logo} />
-						</a>
-						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}>
-							{chain.chain_name}
-						</a>
-					</td>
-					<td>
-						{chain.exchanges}
-					</td>
-
-					<td>
-						<a class="chain-link" href={`/trading-view/${chain.chain_slug}`}> Details </a>
-					</td>
-				</tr>
-			{/each}
-		</table>
+		{#each data.chains as chain}
+			<BlockchainTile
+				name={chain.chain_name}
+				logo={chain.chain_logo}
+				exchanges={chain.exchanges}
+				slug={chain.chain_slug}
+			/>
+		{/each}
 	</section>
 </main>
 
 <style>
-	header h1 {
-		font: var(--f-h2-medium);
+	main {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
 	}
 
-	header p {
-		font: var(--f-ui-body-roman);
-		margin-block: 1rem;
+	header {
+		gap: 0.75rem;
 	}
 
-	th,
-	td {
-		white-space: nowrap;
+	header p,
+	aside {
+		font: var(--f-h4-roman);
 	}
 
-	.chain-logo {
-		max-width: 24px;
-		max-height: 24px;
+	section {
+		grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
+		gap: 2rem;
+		padding-block: 1.5rem;
 	}
 
-	.chain-img-link {
-		min-width: 32px;
-		text-align: center;
-		display: inline-block;
+	@media (--viewport-md-up) {
+		section {
+			grid-template-columns: repeat(2, 1fr);
+		}
 	}
 
-	.chain-link {
-		font-weight: 500;
-	}
+	@media (--viewport-lg-up) {
+		header p {
+			font: var(--f-h3-roman);
+		}
 
-	.chain-link:hover {
-		text-decoration: underline;
+		aside {
+			order: 3;
+		}
+
+		section {
+			grid-template-columns: repeat(4, 1fr);
+		}
 	}
 </style>
