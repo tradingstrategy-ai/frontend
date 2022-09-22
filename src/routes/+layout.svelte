@@ -6,7 +6,7 @@
 	import AppHead from '$lib/header/AppHead.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
-	import Footer from '$lib/components/Footer.svelte';
+	import { Footer } from '$lib/components';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';

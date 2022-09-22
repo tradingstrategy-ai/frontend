@@ -1,7 +1,6 @@
 <script lang="ts">
-	import Menu from './Menu.svelte';
-	import Icon from './Icon.svelte';
-	import Footer from './Footer.svelte';
+	import { Logo, Icon, Menu, Footer } from '$lib/components';
+	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	export let hidden = false;
 	export let open = false;
@@ -12,7 +11,7 @@
 {#if !hidden}
 	<nav class:open>
 		<header>
-			<h4>Menu</h4>
+			<a href="/" on:click={close}><Logo /></a>
 			<button on:click={close}>
 				<Icon name="cancel" />
 			</button>
@@ -21,6 +20,7 @@
 			<slot />
 		</Menu>
 		<Footer small />
+		<ColorModePicker showLabel />
 	</nav>
 {/if}
 
@@ -34,10 +34,10 @@
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 420px;
-		padding: 1rem 1rem max(1rem, 4vh) 1rem;
+		padding: 1rem;
 		display: grid;
-		gap: 2rem;
-		grid-template-rows: auto auto 1fr auto;
+		gap: 1rem;
+		grid-auto-rows: min-content;
 		align-items: end;
 		background: var(--c-body);
 		box-shadow: 0.25rem 0 2rem var(--c-border-1);
@@ -51,16 +51,15 @@
 
 	header {
 		display: grid;
-		grid-template-columns: 1fr auto;
+		grid-template-columns: min-content auto;
 		align-items: center;
-	}
-
-	h4 {
-		font: 600 var(--fs-heading-sm);
+		padding-bottom: 1rem;
+		--logo-height: 32px;
 	}
 
 	button {
 		display: flex;
+		justify-content: flex-end;
 		background: transparent;
 		border: none;
 		font-size: 16px;

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Banner from '$lib/components/Banner.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { Banner, Button } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';

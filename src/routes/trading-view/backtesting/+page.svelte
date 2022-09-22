@@ -5,8 +5,7 @@
 	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { Button, TextInput } from '$lib/components';
 
 	export let data: PageData;
 

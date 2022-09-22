@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Header from '$lib/components/Header.svelte';
-	import MenuItem from '$lib/components/MenuItem.svelte';
+	import { Header, MenuItem } from '$lib/components';
 	import Search from '$lib/search/Search.svelte';
 
 	$: currentPage = $page.url.pathname;

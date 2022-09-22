@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import BlogPostTimestamp from '$lib/components/BlogPostTimestamp.svelte';
+	import { BlogPostTimestamp } from '$lib/components';
 	import SocialMetaTags from '../SocialMetaTags.svelte';
 	import SocialLinks from '../SocialLinks.svelte';
 	import BlogPostContent from '../BlogPostContent.svelte';

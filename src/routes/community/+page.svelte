@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Hero from '$lib/components/Hero.svelte';
-	import ContentTile from '$lib/components/ContentTile.svelte';
+	import { Hero, ContentTile } from '$lib/components';
 	import HeroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 </script>
 

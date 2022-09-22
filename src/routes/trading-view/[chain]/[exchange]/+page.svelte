@@ -6,7 +6,7 @@
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components';
 
 	export let data: PageData;
 
