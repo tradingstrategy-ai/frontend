@@ -17,9 +17,7 @@
 <main>
 	<header class="ds-container">
 		<h1>Trading pairs</h1>
-		<p>
-			Browse trading pairs across all <a href="/trading-view/exchanges">decentralised exchanges</a> below.
-		</p>
+		<p>Browse trading pairs across all decentralised exchanges below.</p>
 	</header>
 
 	<section class="ds-container">
@@ -36,23 +34,26 @@
 				'liquidity_change_24h'
 			]}
 			orderColumnIndex={4}
-			pageLength={50}
+			pageLength={10}
 		/>
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
 		gap: 1rem;
 	}
 
-	header h1 {
-		font: var(--f-h2-medium);
-		margin-bottom: 0.5rem;
-	}
+	header {
+		gap: 0.75rem;
 
-	section :global(.col-exchange) {
-		white-space: nowrap;
+		& p {
+			font: var(--f-h4-roman);
+
+			@media (--viewport-lg-up) {
+				font: var(--f-h3-roman);
+			}
+		}
 	}
 </style>

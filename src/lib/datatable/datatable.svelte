@@ -124,20 +124,36 @@ npm install --save datatables.net-responsive-bs4
 			transform: translate(0px, -3px);
 		}
 
-		& .dataTables_info,
-		& .dataTables_paginate {
-			margin-top: 2rem;
+		& .dataTables_info {
+			margin-block: 2rem 0;
 			padding: 0;
 			font: 500 var(--fs-ui-sm);
 			color: var(--c-text-2);
 			letter-spacing: 0.02em;
 			text-align: left;
+
+			@media (--viewport-md-up) {
+				float: left;
+			}
+		}
+
+		& .dataTables_paginate {
+			margin-block: 1rem 2rem;
+			padding: 0;
+			font: 700 var(--fs-ui-sm);
+			letter-spacing: 0.02em;
+			text-align: left;
+
+			@media (--viewport-md-up) {
+				margin-block: 2rem 0;
+				text-align: right;
+			}
 		}
 
 		& .paginate_button {
 			border-bottom: none;
 			margin-inline: 0.25rem;
-			font-weight: 700;
+			font: inherit;
 			color: var(--c-text-1);
 
 			&.current,
@@ -160,16 +176,6 @@ npm install --save datatables.net-responsive-bs4
 
 			&.disabled {
 				color: var(--c-text-7);
-			}
-		}
-
-		@media (--viewport-md-up) {
-			& .dataTables_info {
-				float: left;
-			}
-
-			& .dataTables_paginate {
-				text-align: right;
 			}
 		}
 	}

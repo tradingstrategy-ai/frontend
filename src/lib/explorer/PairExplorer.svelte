@@ -18,9 +18,9 @@ Explore trading pairs that match certain filter criteria.
 -->
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import jQuery from 'jquery';
 	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { escapeHtml } from '$lib/helpers/html';
 
 	export let exchangeSlug = undefined;
@@ -32,7 +32,7 @@ Explore trading pairs that match certain filter criteria.
 	export let enabledColumns = ['pair_name', 'usd_price_latest'];
 	export let orderColumnIndex = 3;
 	export let orderColumnDirection = 'desc';
-	export let pageLength = 20;
+	export let pageLength = 10;
 
 	// Currently server-side supports the following sort options: volume, liquidity, price change
 	// https://tradingstrategy.ai/api/explorer/#/Pair/web_pairs
@@ -194,28 +194,11 @@ Explore trading pairs that match certain filter criteria.
 
 		// Add DataTable.createRow callback to style rows
 		// https://datatables.net/reference/option/createdRow
-		createdRow: function (row, data, dataIndex) {
-			const priceChange = data.price_change_24h;
-			let priceChangeClass = 'price-change-black';
-
-			if (priceChange > 0) {
-				priceChangeClass = 'price-change-green';
-			} else if (priceChange < 0) {
-				priceChangeClass = 'price-change-red';
-			}
-
-			jQuery(row).find('.col-price-change').addClass(priceChangeClass);
-
-			const liqChange = data.liquidity_change_24h;
-			let liqChangeClass = 'price-change-black';
-
-			if (liqChange > 0) {
-				liqChangeClass = 'price-change-green';
-			} else if (liqChange < 0) {
-				liqChangeClass = 'price-change-red';
-			}
-
-			jQuery(row).find('.col-liquidity-change').addClass(liqChangeClass);
+		createdRow: function (row: HTMLTableRowElement, data: any) {
+			const priceChangeClass = determinePriceChangeClass(data.price_change_24h);
+			row.querySelector('.col-price-change')?.classList.add(priceChangeClass);
+			const liqChangeClass = determinePriceChangeClass(data.liquidity_change_24h);
+			row.querySelector('.col-liquidity-change')?.classList.add(liqChangeClass);
 		},
 
 		/**
@@ -258,18 +241,15 @@ Explore trading pairs that match certain filter criteria.
 	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
-<style>
-	/* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
-	.trading-pairs :global(.datatables-wrapper) {
-		font-size: 0.8rem;
-	}
+<style lang="postcss">
+	.trading-pairs :global {
+		& .col-pair {
+			white-space: nowrap;
+		}
 
-	/* Fix sorting icon position after making the font smaller */
-	.trading-pairs :global(.sorting::before) {
-		bottom: 1.3em;
-	}
-
-	.trading-pairs :global(.sorting::after) {
-		bottom: 1.3em;
+		& th,
+		& td {
+			text-align: center;
+		}
 	}
 </style>
