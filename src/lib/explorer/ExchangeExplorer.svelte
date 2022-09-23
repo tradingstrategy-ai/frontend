@@ -145,18 +145,20 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
-<style>
-	/* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
-	.exchanges :global(.datatables-wrapper) {
-		font-size: 0.8rem;
-	}
+<style lang="postcss">
+	.exchanges :global {
+		& .col-exchange {
+			word-break: break-all;
+			min-width: 10rem;
 
-	/* Fix sorting icon position after making the font smaller */
-	.exchanges :global(.sorting::before) {
-		bottom: 1.3em;
-	}
+			& a {
+				font-weight: 500;
+			}
+		}
 
-	.exchanges :global(.sorting::after) {
-		bottom: 1.3em;
+		& .col-pair-count,
+		& .col-volume {
+			text-align: right;
+		}
 	}
 </style>

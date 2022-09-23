@@ -1,104 +1,75 @@
+<!--
+@component
+Render dynamic tables using server-side sorting and filtering using DataTables library.
+While the DataTables is settings up itself, serve a skeleton loader.
+
+https://datatables.net/manual/index
+
+The CSS files generated with the Datatables bundler:
+
+https://datatables.net/download/
+
+npm install --save datatables.net-bs4
+npm install --save datatables.net-responsive-bs4
+-->
 <script lang="ts">
-	/*
-
-		Render dynamic tables using server-side sorting and filtering using DataTables library.
-		While the DataTables is settings up itself, server a skeleton loader.
-
-		https://datatables.net/manual/index
-
-		The CSS files generated with the Datatables bundler:
-
-		https://datatables.net/download/
-
-		npm install --save datatables.net-bs4
-		npm install --save datatables.net-responsive-bs4
-
-	 */
-	// https://svelte.dev/repl/a4684fe5be9a4c63963bb128c4adf056?version=3.23.2
-	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
-	import jQuery from 'jquery';
 	import datatableModule from 'datatables.net-dt';
 	// DataTables CSS
 	import 'datatables.net-bs4/css/dataTables.bootstrap4.css';
 	import 'datatables.net-responsive-bs4/css/responsive.bootstrap4.css';
-
 	import Skeleton from '$lib/Skeleton.svelte';
 
 	// See https://datatables.net/reference/option/columns
-	export let columns;
+	export let columns: any[] = [];
 
 	// See https://datatables.net/reference/option/
-	export let options;
+	export let options = {};
 
-	// Make rows clickable.
-	// Use the first <a> tag within the row for the link target
+	// Make rows clickable; use the first <a> tag within the row for the link target
 	export let clickableRows = false;
-
-	// ???
-	export let dataCy = '';
 
 	// Is DataTables initialised
 	let loaded = false;
 
-	let el; // table element
-	let table; // table object (API)
-
-	let extraClass = clickableRows ? 'clickable' : '';
-
-	// jQuery, jQuery never fails
-	function installRowHandlers() {
-		if (!clickableRows) {
-			// Normal table, no clickable rows
-			return;
-		}
-
-		// Add jQuery event catcher
-		jQuery(el).on('click', 'tbody tr', function (e, e2) {
-			// Find the first <a> element as the click target
-			const row = jQuery(e.currentTarget);
-			const link = row.find('a');
-			const loc = link.attr('href');
-			// TODO: figure out why Svelte routing does not work
-			window.location.href = loc;
-			//goto(loc);
+	function handleRowClicks(node: HTMLTableSectionElement) {
+		if (!clickableRows) return;
+		node.addEventListener('click', (event: MouseEvent) => {
+			// if screenX === 0 this is a simulated click event (so abort)
+			if (event.screenX === 0) return;
+			event.preventDefault();
+			const row = (event.target as HTMLElement).closest('tr');
+			// simulate click on first anchor tag in the row
+			row?.querySelector('a')?.click();
 		});
 	}
 
-	onMount(async () => {
-		if (browser) {
-			const DataTable = datatableModule();
+	function dataTable(node: HTMLTableElement) {
+		const DataTable = datatableModule();
+		const table = new DataTable(node, { ...options, columns });
 
-			let _options = options || {};
-			_options['columns'] = columns;
+		// https://datatables.net/reference/event/draw
+		table.on('draw', function () {
+			console.log('Redraw occurred at: ' + new Date().getTime());
+			// Datatables fires not one but two redraw events; add some timeout before making the
+			// datatables visible to avoid page layout shifts on the second redraw event
+			setTimeout(() => {
+				loaded = true;
+			}, 250);
+		});
 
-			let table = new DataTable(el, _options);
-
-			// https://datatables.net/reference/event/draw
-			table.on('draw', function () {
-				console.log('Redraw occurred at: ' + new Date().getTime());
-				// Datatables fires not one but two redraw events
-				// Add some timeout  before making the datatables visible
-				// to avoid page layout shifts on the second redraw event
-				setTimeout(() => {
-					loaded = true;
-					installRowHandlers();
-				}, 250);
-			});
-
-			table.draw();
-			console.log('DataTable loaded');
-		}
-	});
+		table.draw();
+		console.log('DataTable loaded');
+	}
 </script>
 
 <div class="datatables-wrapper">
 	<div class="table-responsive">
 		<table
-			bind:this={el}
-			class={'table table-datatable ' + extraClass}
-			style={loaded ? 'display: table; width: 100%;' : 'display: none'}
-			data-cy={dataCy || 'exchange-table'}
+			use:dataTable
+			class="table"
+			class:clickable={clickableRows}
+			style:display={loaded ? 'table' : 'none'}
+			data-cy="datatables-table"
 		>
 			<thead>
 				<tr>
@@ -107,78 +78,99 @@
 					{/each}
 				</tr>
 			</thead>
-			<tbody />
+			<tbody use:handleRowClicks />
 		</table>
 	</div>
-	<div class="data-tables-skeleton" style={!loaded ? 'display: block' : 'display: none'}>
+	<div style:display={loaded ? 'none' : 'block'}>
 		<Skeleton layout="full" />
 	</div>
 </div>
 
-<style>
-	.table-datatable {
-		width: 100%;
-		margin-bottom: 20px;
+<style lang="postcss">
+	table {
+		width: 100% !important;
+		margin: 0 !important;
+
+		& :global th {
+			border-top: none;
+			border-bottom: 2px solid var(--c-border-1);
+			white-space: nowrap;
+			font: 500 var(--fs-ui-sm);
+			letter-spacing: 0.02em;
+		}
+
+		& :global td {
+			border-bottom: 1px solid var(--c-border-1);
+			padding-block: 1.75rem;
+			font: var(--f-ui-body-roman);
+		}
+
+		&.clickable :global tbody tr {
+			cursor: pointer;
+
+			&:hover {
+				background: var(--c-background-6);
+			}
+		}
 	}
 
-	.datatables-wrapper {
+	.datatables-wrapper :global {
 		contain: paint;
-	}
 
-	:global(.table-datatable thead th) {
-		border-top: 0;
-	}
-
-	.datatables-wrapper :global(.paginate_button) {
-		margin: 0 10px;
-		border-bottom: 1px solid black;
-	}
-
-	.datatables-wrapper :global(.dataTables_info) {
-		float: left;
-		padding-top: 0;
-	}
-
-	.datatables-wrapper :global(.dataTables_paginate) {
-		float: right;
-	}
-
-	@media (max-width: 960px) {
-		.datatables-wrapper :global(.dataTables_info) {
-			float: none;
-			text-align: center;
-			margin-bottom: 20px;
+		/* Fix sorting icon size & position */
+		& .sorting::before,
+		& .sorting::after {
+			font-size: 1.5rem;
+			transform: translate(0px, -3px);
 		}
 
-		.datatables-wrapper :global(.dataTables_paginate) {
-			float: none;
-			text-align: center;
+		& .dataTables_info,
+		& .dataTables_paginate {
+			margin-top: 2rem;
+			padding: 0;
+			font: 500 var(--fs-ui-sm);
+			color: var(--c-text-2);
+			letter-spacing: 0.02em;
+			text-align: left;
 		}
-	}
 
-	.datatables-wrapper :global(.paginate_button) {
-		font-weight: lighter;
-	}
+		& .paginate_button {
+			border-bottom: none;
+			margin-inline: 0.25rem;
+			font-weight: 700;
+			color: var(--c-text-1);
 
-	/* Don't break headings to two rows */
-	.datatables-wrapper :global(th) {
-		white-space: nowrap;
-	}
+			&.current,
+			&:hover {
+				border-bottom: 1px solid currentColor;
+				transition: none;
+			}
 
-	.datatables-wrapper :global(.paginate_button.current) {
-		font-weight: bold;
-	}
+			&.previous {
+				margin-left: 0;
+				margin-right: 0.375rem;
+				font-weight: 500;
+			}
 
-	.datatables-wrapper :global(.paginate_button.disabled) {
-		opacity: 0.3;
-	}
+			&.next {
+				margin-left: 0.375rem;
+				margin-right: 0;
+				font-weight: 500;
+			}
 
-	/* Clickable rows */
-	.clickable :global(tr) {
-		cursor: pointer;
-	}
+			&.disabled {
+				color: var(--c-text-7);
+			}
+		}
 
-	.clickable tbody :global(tr):hover {
-		background: var(--c-background-6);
+		@media (--viewport-md-up) {
+			& .dataTables_info {
+				float: left;
+			}
+
+			& .dataTables_paginate {
+				text-align: right;
+			}
+		}
 	}
 </style>
