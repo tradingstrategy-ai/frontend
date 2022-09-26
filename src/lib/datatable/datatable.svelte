@@ -105,6 +105,10 @@ npm install --save datatables.net-responsive-bs4
 			font: var(--f-ui-body-roman);
 		}
 
+		& :global .numeric {
+			text-align: right;
+		}
+
 		&.clickable :global tbody tr {
 			cursor: pointer;
 

@@ -76,7 +76,7 @@ Explore trading pairs that match certain filter criteria.
 			orderable: false,
 			data: 'usd_price_latest',
 			serverSideSortKey: null,
-			className: 'col-price',
+			className: 'col-price numeric',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
 				return formatDollar(data);
@@ -87,7 +87,7 @@ Explore trading pairs that match certain filter criteria.
 			name: 'Price 24h Δ',
 			data: 'price_change_24h',
 			serverSideSortKey: 'price_change_24h',
-			className: 'col-price-change',
+			className: 'col-price-change numeric',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
 				return formatPriceChange(data);
@@ -97,7 +97,7 @@ Explore trading pairs that match certain filter criteria.
 		usd_volume_24h: {
 			name: 'Volume 24h (USD)',
 			data: 'usd_volume_24h',
-			className: 'col-volume',
+			className: 'col-volume-24h numeric',
 			serverSideSortKey: 'volume_1d',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
@@ -108,7 +108,7 @@ Explore trading pairs that match certain filter criteria.
 		usd_volume_30d: {
 			name: 'Volume 30d (USD)',
 			data: 'usd_volume_30d',
-			className: 'col-volume',
+			className: 'col-volume-30d numeric',
 			serverSideSortKey: 'volume_30d',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
@@ -120,7 +120,7 @@ Explore trading pairs that match certain filter criteria.
 			name: 'Liquidity (USD)',
 			data: 'usd_liquidity_latest',
 			serverSideSortKey: 'liquidity',
-			className: 'col-liquidity',
+			className: 'col-liquidity numeric',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
 				return formatDollar(data);
@@ -131,7 +131,7 @@ Explore trading pairs that match certain filter criteria.
 			name: 'Liq 24h Δ',
 			orderable: false,
 			data: 'liquidity_change_24h',
-			className: 'col-liquidity-change',
+			className: 'col-liquidity-change numeric',
 			type: 'num', // https://datatables.net/reference/option/columns.type
 			render: function (data, type, row, meta) {
 				return formatPriceChange(data);
@@ -242,14 +242,7 @@ Explore trading pairs that match certain filter criteria.
 </div>
 
 <style lang="postcss">
-	.trading-pairs :global {
-		& .col-pair {
-			white-space: nowrap;
-		}
-
-		& th,
-		& td {
-			text-align: center;
-		}
+	.trading-pairs :global .col-pair {
+		white-space: nowrap;
 	}
 </style>
