@@ -17,9 +17,7 @@
 <main>
 	<header class="ds-container">
 		<h1>Decentralised exchanges</h1>
-		<p>
-			Browse supported decentralised exchanges across all <a href="/trading-view/blockchains">blockchains</a> below.
-		</p>
+		<p>Browse supported decentralised exchanges across all blockchains.</p>
 	</header>
 
 	<section class="ds-container">
@@ -33,22 +31,21 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
 		gap: 1rem;
 	}
 
-	header h1 {
-		font: var(--f-h2-medium);
-		margin-bottom: 0.5rem;
-	}
+	header {
+		gap: 0.75rem;
 
-	section :global .col-volume {
-		width: 10%;
-	}
+		& p {
+			font: var(--f-h4-roman);
 
-	section :global .col-chain-name {
-		width: 25%;
+			@media (--viewport-lg-up) {
+				font: var(--f-h3-roman);
+			}
+		}
 	}
 </style>

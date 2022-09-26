@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
 import ghostClient from '$lib/blog/client';
+import { escapeHtml } from '$lib/helpers/html';
 
 export const GET: RequestHandler = async () => {
 	const posts = await ghostClient.posts.browse({ limit: 'all' });
@@ -23,21 +24,8 @@ ${posts.map(renderItem).join('')}
 
 const renderItem = (post: any) => `<item>
 <guid>https://tradingstrategy.ai/blog/${post.slug}</guid>
-<title>${escape(post.title)}</title>
+<title>${escapeHtml(post.title)}</title>
 <link>https://tradingstrategy.ai/blog/${post.slug}</link>
-<description>${escape(post.custom_excerpt)}</description>
+<description>${escapeHtml(post.custom_excerpt)}</description>
 <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
 </item>`;
-
-const entities = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&apos;'
-};
-
-const escape = (xml: string) => {
-	// @ts-ignore
-	return xml.replace(/[&<>"']/g, (char) => entities[char]);
-};

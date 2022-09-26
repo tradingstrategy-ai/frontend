@@ -52,7 +52,7 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 		pair_count: {
 			name: 'Trading pairs',
 			data: 'pair_count',
-			className: 'col-pair-count',
+			className: 'col-pair-count numeric',
 			type: 'num-fmt',
 			render: function (data, type, row, meta) {
 				return formatAmount(data);
@@ -61,7 +61,7 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 		usd_volume_30d: {
 			name: 'Volume 30d (USD)',
 			data: 'usd_volume_30d',
-			className: 'col-volume',
+			className: 'col-volume numeric',
 			type: 'num-fmt',
 			render: function (data, type, row, meta) {
 				return formatDollar(data);
@@ -145,18 +145,13 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
-<style>
-	/* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
-	.exchanges :global(.datatables-wrapper) {
-		font-size: 0.8rem;
-	}
+<style lang="postcss">
+	.exchanges :global .col-exchange {
+		word-break: break-all;
+		min-width: 10rem;
 
-	/* Fix sorting icon position after making the font smaller */
-	.exchanges :global(.sorting::before) {
-		bottom: 1.3em;
-	}
-
-	.exchanges :global(.sorting::after) {
-		bottom: 1.3em;
+		& a {
+			font-weight: 500;
+		}
 	}
 </style>

@@ -30,7 +30,7 @@ const config = {
 	preprocess: preprocess({
 		sourceMap: true,
 		postcss: {
-			plugins: [postcssPresetEnv()]
+			plugins: [postcssPresetEnv({ features: { 'nesting-rules': true } })]
 		}
 	})
 };
