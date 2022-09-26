@@ -54,9 +54,8 @@ Render the pair trading page
 <main>
 	<header class="ds-container">
 		<h1>
-			{summary.pair_symbol} token pair on
-			{details.exchange_name}
-			on {details.chain_name}
+			{summary.pair_symbol}
+			<small>token pair on {details.exchange_name} on {details.chain_name}</small>
 		</h1>
 	</header>
 
@@ -179,9 +178,14 @@ Render the pair trading page
 		gap: 1rem;
 	}
 
-	h1,
-	h2 {
-		font: var(--f-h3-medium);
+	h1 {
+		font: var(--f-h1-bold);
+	}
+
+	h1 small {
+		display: block;
+		font: var(--f-h4-medium);
+		color: var(--c-text-2);
 	}
 
 	.pair-info {
