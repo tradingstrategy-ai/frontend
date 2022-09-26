@@ -52,12 +52,12 @@ Render the pair trading page
 		</h1>
 	</header>
 
-	<section class="ds-container ds-2-col">
-		<InfoTable {summary} {details} />
-		<InfoSummary {summary} {details} />
-	</section>
+	<section class="ds-container info">
+		<div class="ds-2-col">
+			<InfoTable {summary} {details} />
+			<InfoSummary {summary} {details} />
+		</div>
 
-	<section class="ds-container">
 		{#if tokenTax.broken}
 			<div class="alert alert-danger">
 				⚠️ This token is unlikely to be tradeable.
@@ -75,15 +75,12 @@ Render the pair trading page
 				⚠️ This trading pair is using low digit price units that may prevent displaying the price data properly.
 			</div>
 		{/if}
-	</section>
 
-	<section class="ds-container">
 		<div class="trade-actions">
-			<Button secondary label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
-			<Button secondary label="Sell {summary.base_token_symbol_friendly}" href={details.sell_link} />
-			<Button secondary label="Blockchain explorer" href={details.explorer_link} />
+			<Button label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
+			<Button label="Sell {summary.base_token_symbol_friendly}" href={details.sell_link} />
+			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
-				secondary
 				label="{summary.pair_symbol} API and historical data"
 				href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data"
 			/>
@@ -112,10 +109,14 @@ Render the pair trading page
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
-		gap: 1rem;
+		gap: 2.5rem;
+
+		@media (--viewport-lg-up) {
+			gap: 5rem;
+		}
 	}
 
 	h1 {
@@ -128,11 +129,25 @@ Render the pair trading page
 		color: var(--c-text-2);
 	}
 
+	.info {
+		gap: 2.5rem;
+
+		@media (--viewport-lg-up) {
+			gap: 3.5rem;
+		}
+	}
+
 	.trade-actions {
-		margin-bottom: 1rem;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1.5rem;
+		justify-content: center;
+		gap: 1.25rem 2rem;
+		padding-block: 1.5rem;
+
+		@media (width < 576px) {
+			flex-direction: column;
+			padding-block: 0;
+		}
 	}
 
 	.charts {
