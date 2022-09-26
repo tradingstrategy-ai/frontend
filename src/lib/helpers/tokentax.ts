@@ -52,7 +52,7 @@ export function formatTokenTaxPercent(n: number): string {
 /**
  * @param details As returned by /pairs endpoint.
  */
-export function getTokenTaxInformation(details): TokenTax {
+export function getTokenTaxInformation(details: any): TokenTax {
 	const missing = details.buy_tax === null || details.buy_tax === undefined;
 	const liquidityIssue = details.buy_tax == 999 || details.sell_tax == 999 || details.transfer_tax == 999;
 	const measurementIssue = details.buy_tax > 1 || details.sell_tax > 1 || details.transfer_tax > 1;
@@ -71,3 +71,28 @@ export function getTokenTaxInformation(details): TokenTax {
 		sellTax: details.sell_tax
 	};
 }
+
+// Return token tax as human-readable "buy tax / transfer tax / sell tax" tuple.
+export function getTokenTaxDescription(details: any, longFormat = false): string {
+	const tokenTax = getTokenTaxInformation(details);
+	if (tokenTax.missing) {
+		return 'Data not yet available';
+	} else if (tokenTax.liquidityIssue) {
+		return longFormat ? 'Not available (no trading liquidity to measure tax).' : 'N/A (no liquidity)';
+	} else if (tokenTax.routerIssue) {
+		return 'N/A (no routing)';
+	} else if (tokenTax.measurementIssue) {
+		return 'Token not tradeable';
+	} else if (tokenTax.maxTax > 0) {
+		return [
+			formatTokenTaxPercent(tokenTax.buyTax),
+			formatTokenTaxPercent(tokenTax.transferTax),
+			formatTokenTaxPercent(tokenTax.sellTax)
+		].join(' / ');
+	} else {
+		return 'No transfer fees';
+	}
+}
+
+// Link to token tax documentation
+export const tokenTaxDocsUrl = 'https://tradingstrategy.ai/docs/programming/market-data/token-tax.html';

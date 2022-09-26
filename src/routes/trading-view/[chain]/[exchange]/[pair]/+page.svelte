@@ -7,15 +7,13 @@ Render the pair trading page
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairInfoTable from '$lib/content/PairInfoTable.svelte';
-	import TimeSpanPerformance from '$lib/chart/TimeSpanPerformance.svelte';
-	import RelativeDate from '$lib/blog/RelativeDate.svelte';
-	import ChartSection from './ChartSection.svelte';
 	import { Button } from '$lib/components';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import InfoTable from './InfoTable.svelte';
+	import InfoSummary from './InfoSummary.svelte';
+	import ChartSection from './ChartSection.svelte';
+	import TimeSpanPerformance from './TimeSpanPerformance.svelte';
 
 	export let data: PageData;
 
@@ -27,11 +25,6 @@ Render the pair trading page
 	// Ridiculous token price warning: it is common with scam tokens to price the
 	// token super low so that prices are not readable when converted to USD.
 	$: ridiculousPrice = summary.usd_price_latest < 0.000001;
-
-	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
-
-	// TODO: Fix this in the data source
-	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
 
 	$: breadcrumbs = {
 		[summary.exchange_slug]: summary.exchange_name,
@@ -59,62 +52,9 @@ Render the pair trading page
 		</h1>
 	</header>
 
-	<section class="ds-container pair-info">
-		<PairInfoTable {summary} {details} {tokenTax} />
-
-		<div class="text-summary">
-			<p>
-				The token pair
-
-				<a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
-					{baseTokenName}
-				</a>
-
-				–
-
-				<a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
-					{quoteTokenName}
-				</a>
-
-				trades as the ticker
-
-				<strong>{summary.pair_symbol}</strong> on
-				<a class="body-link" href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}"
-					>{summary.exchange_name} exchange</a
-				>
-				on
-				<a class="body-link" href="/trading-view/{summary.chain_slug}">{summary.chain_name} blockchain</a>.
-			</p>
-
-			<p>
-				The price of <a class="body-link" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
-					{summary.base_token_symbol}
-				</a>
-				in <strong>{summary.pair_symbol}</strong> pair is
-				<strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong>
-				and is
-				<strong class={priceChangeColorClass}
-					>{formatPriceChange(summary.price_change_24h)}
-					{summary.price_change_24h > 0 ? 'up' : 'down'}</strong
-				> against US Dollar for the last 24h.
-			</p>
-
-			<p>
-				The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with
-				<strong>{formatDollar(summary.usd_liquidity_latest)}</strong>
-				liquidity available at the moment. The trading of {summary.pair_symbol} started at
-				<strong><RelativeDate timestamp={details.first_trade_at} /></strong>. The last trade was seen less than
-				<strong><RelativeDate hours timestamp={details.last_trade_at} /></strong>.
-			</p>
-
-			{#if details.pair_contract_address}
-				<p class="smart-contract-address">
-					The trading pair pool smart contract is at address <a href={details.pair_explorer_link} class="body-link"
-						>{details.pair_contract_address}</a
-					>.
-				</p>
-			{/if}
-		</div>
+	<section class="ds-container ds-2-col">
+		<InfoTable {summary} {details} />
+		<InfoSummary {summary} {details} />
 	</section>
 
 	<section class="ds-container">
@@ -188,21 +128,6 @@ Render the pair trading page
 		color: var(--c-text-2);
 	}
 
-	.pair-info {
-		gap: 1.5rem 2.5rem;
-	}
-
-	.text-summary {
-		align-self: start;
-		display: grid;
-		gap: 1rem;
-	}
-
-	.smart-contract-address {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
 	.trade-actions {
 		margin-bottom: 1rem;
 		display: flex;
@@ -232,10 +157,6 @@ Render the pair trading page
 	}
 
 	@media (--viewport-lg-up) {
-		.pair-info {
-			grid-template-columns: 4fr 5fr;
-		}
-
 		.time-span-wrapper {
 			grid-template-columns: repeat(4, 1fr);
 		}
