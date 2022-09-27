@@ -13,7 +13,7 @@ Render the pair trading page
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import ChartSection from './ChartSection.svelte';
-	import TimeSpanPerformance from './TimeSpanPerformance.svelte';
+	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 
 	export let data: PageData;
 
@@ -91,21 +91,16 @@ Render the pair trading page
 		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
 	</section>
 
-	<section class="ds-container time-period-summaries">
-		<h2>Time period summary</h2>
+	<section class="ds-container time-period-summary">
+		<header>
+			<h2>Time period summary</h2>
+			<p>
+				The price and liquidity of {summary.base_token_symbol_friendly} in this trading pair. The amounts are converted to
+				US dollar through {summary.quote_token_symbol_friendly}/USD.
+			</p>
+		</header>
 
-		<p>
-			The price and liquidity of <strong>{summary.base_token_symbol_friendly}</strong> in this trading pair. The amounts
-			are converted to US dollar through
-			<strong>{summary.quote_token_symbol_friendly}/USD</strong>.
-		</p>
-
-		<div class="time-span-wrapper">
-			<TimeSpanPerformance pairId={summary.pair_id} period="hourly" />
-			<TimeSpanPerformance pairId={summary.pair_id} period="daily" />
-			<TimeSpanPerformance pairId={summary.pair_id} period="weekly" />
-			<TimeSpanPerformance pairId={summary.pair_id} period="monthly" />
-		</div>
+		<TimePeriodSummaryTable pairId={summary.pair_id} />
 	</section>
 </main>
 
@@ -155,25 +150,21 @@ Render the pair trading page
 		overflow: visible;
 	}
 
-	.time-period-summaries {
-		grid-template-columns: auto;
-		gap: 1rem;
-	}
-
-	.time-span-wrapper {
+	.time-period-summary {
 		display: grid;
-		gap: 2rem 4rem;
-	}
+		gap: 4rem;
 
-	@media (--viewport-md-up) {
-		.time-span-wrapper {
-			grid-template-columns: repeat(2, 1fr);
+		& header {
+			display: grid;
+			gap: 0.75rem;
 		}
-	}
 
-	@media (--viewport-lg-up) {
-		.time-span-wrapper {
-			grid-template-columns: repeat(4, 1fr);
+		& h2 {
+			font: var(--f-h1-medium);
+		}
+
+		& p {
+			font: var(--f-h4-roman);
 		}
 	}
 </style>
