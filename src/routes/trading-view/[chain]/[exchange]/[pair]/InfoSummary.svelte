@@ -2,6 +2,7 @@
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import RelativeDate from '$lib/blog/RelativeDate.svelte';
+	import { SmartContractWidget } from '$lib/components';
 
 	export let summary: any;
 	export let details: any;
@@ -57,7 +58,7 @@
 	{#if details.pair_contract_address}
 		<p class="smart-contract-address">
 			The trading pair pool smart contract address is:
-			<a href={details.pair_explorer_link}>{details.pair_contract_address}</a>
+			<SmartContractWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
 		</p>
 	{/if}
 </div>
