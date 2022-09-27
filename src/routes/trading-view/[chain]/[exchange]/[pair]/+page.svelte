@@ -8,7 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { Button } from '$lib/components';
+	import { Button, Icon } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -58,22 +58,30 @@ Render the pair trading page
 			<InfoSummary {summary} {details} />
 		</div>
 
-		{#if tokenTax.broken}
-			<div class="alert alert-danger">
-				⚠️ This token is unlikely to be tradeable.
-				<a
-					rel="external"
-					class="body-link"
-					href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-					>Read more about transfer fees being broken or malicious in the token tax documentation.</a
-				>. Error code <strong>{tokenTax.sellTax}</strong>.
-			</div>
-		{/if}
+		{#if tokenTax.broken || ridiculousPrice}
+			<ul class="alerts">
+				{#if tokenTax.broken}
+					<li>
+						<span><Icon name="warning" /></span>
+						<span>
+							This token is unlikely to be tradeable.
+							<a
+								href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+								>Read more about transfer fees being broken or malicious in the token tax documentation</a
+							>. Error code <strong>{tokenTax.sellTax}</strong>.
+						</span>
+					</li>
+				{/if}
 
-		{#if ridiculousPrice}
-			<div class="alert alert-danger">
-				⚠️ This trading pair is using low digit price units that may prevent displaying the price data properly.
-			</div>
+				{#if ridiculousPrice}
+					<li>
+						<span><Icon name="warning" /></span>
+						<span
+							>This trading pair is using low digit price units that may prevent displaying the price data properly.</span
+						>
+					</li>
+				{/if}
+			</ul>
 		{/if}
 
 		<div class="trade-actions">
@@ -116,12 +124,12 @@ Render the pair trading page
 
 	h1 {
 		font: var(--f-h1-bold);
-	}
 
-	h1 small {
-		display: block;
-		font: var(--f-h4-medium);
-		color: var(--c-text-2);
+		& small {
+			display: block;
+			font: var(--f-h4-medium);
+			color: var(--c-text-2);
+		}
 	}
 
 	.info {
@@ -142,6 +150,33 @@ Render the pair trading page
 		@media (width < 576px) {
 			flex-direction: column;
 			padding-block: 0;
+		}
+	}
+
+	.alerts {
+		display: grid;
+		gap: 1.5rem;
+		max-width: 1020px;
+		margin-inline: auto;
+		padding: 1.25em;
+		border: 2px solid var(--c-bearish);
+		list-style: none;
+		font: var(--f-ui-large-roman);
+
+		& li {
+			display: flex;
+			gap: 0.75rem;
+			font: inherit;
+
+			& :global svg {
+				color: var(--c-bearish);
+				transform: translateY(-2px);
+			}
+
+			& a {
+				font-weight: 500;
+				text-decoration: underline;
+			}
 		}
 	}
 
