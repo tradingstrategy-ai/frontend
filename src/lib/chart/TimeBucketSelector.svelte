@@ -20,45 +20,35 @@ Used for selecting a time bucket for chart data feeds.default
 	{/each}
 </div>
 
-<style>
+<style lang="postcss">
 	div {
 		display: flex;
-		margin-bottom: 0.5em;
-		border: 1px solid var(--c-border-1);
-		border-radius: 0.25rem;
-		font-size: 0.875rem;
+		font: var(--f-ui-body-medium);
 	}
 
 	a {
-		padding: 0.4em 1em;
-		border-left: 1px solid var(--c-border-1);
+		flex: 1;
+		padding: 0.5rem min(1.5rem, 2vw);
+		border: 2px solid var(--c-border-2);
 		font-weight: 500;
 		color: var(--c-text-3);
-	}
+		text-align: center;
 
-	a:first-child {
-		border-left: none;
-		border-radius: 0.5rem 0 0 0.5rem;
-	}
+		@media (--viewport-md-up) {
+		}
 
-	a:last-child {
-		border-radius: 0 0.5rem 0.5rem 0;
-	}
+		&:not(:first-child) {
+			border-left-width: 1px;
+		}
 
-	a:hover {
-		background: var(--c-background-1);
-	}
+		&:not(:last-child) {
+			border-right-width: 1px;
+		}
 
-	.active,
-	.active:hover {
-		background: var(--c-background-4);
-		color: var(--c-text-1);
-		cursor: default;
-	}
-
-	@media (max-width: 576px) {
-		div {
-			font-size: 0.75rem;
+		&:hover,
+		&.active {
+			background: var(--c-background-3);
+			color: var(--c-text-6);
 		}
 	}
 </style>
