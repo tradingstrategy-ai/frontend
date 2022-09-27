@@ -152,7 +152,11 @@ Render the pair trading page
 
 	.time-period-summary {
 		display: grid;
-		gap: 4rem;
+		gap: 2.25rem;
+
+		@media (--viewport-lg-up) {
+			gap: 4rem;
+		}
 
 		& header {
 			display: grid;

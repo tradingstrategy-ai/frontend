@@ -1,12 +1,26 @@
+<!--
+@component
+Display summary performance table for various periods.
+
+#### Usage:
+```tsx
+	<TimePeriodSummaryTable pairId="1234" />
+```
+-->
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
+	import TimePeriodPicker from './TimePeriodPicker.svelte';
 
 	export let pairId: string;
 
-	let activeColumn = 'daily';
+	let selected = 'daily';
 </script>
 
-<div>
+<div class="time-period-picker">
+	<TimePeriodPicker bind:selected />
+</div>
+
+<div class="time-period-table">
 	<ul class="row-heading">
 		<li class="col-heading" />
 		<li>Change</li>
@@ -22,53 +36,74 @@
 	</ul>
 
 	{#each ['hourly', 'daily', 'weekly', 'monthly'] as period}
-		<TimePeriodSummaryColumn {pairId} {period} active={period === activeColumn} />
+		<TimePeriodSummaryColumn {pairId} {period} active={period === selected} />
 	{/each}
 </div>
 
 <style lang="postcss">
-	div {
+	.time-period-picker {
+		display: none;
+	}
+
+	.time-period-table :global {
 		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: 1fr;
+		grid-template-columns: repeat(5, 1fr);
 		gap: 1rem;
 		overflow: hidden;
 
-		@media (--viewport-sm-down) {
-			grid-template-columns: 3fr 2fr;
-			grid-auto-columns: 0;
+		& ul {
+			list-style-type: none;
+			padding: 0;
+			display: grid;
+			gap: 1rem;
+			grid-auto-rows: auto;
 		}
-	}
 
-	div :global ul {
-		list-style-type: none;
-		padding: 0;
-		display: grid;
-		gap: 1rem;
-		grid-auto-rows: auto;
-
-		& > li {
+		& li {
 			font: 400 var(--fs-ui-xl);
 			height: 1.4em;
 			white-space: nowrap;
 
 			&.col-heading {
 				font: var(--f-h4-medium);
-
-				@media (--viewport-sm-down) {
-					display: none;
-				}
+				text-transform: capitalize;
 			}
 		}
 
-		&.row-heading li {
+		& .row-heading li {
 			font-weight: 500;
 		}
 
-		@media (--viewport-sm-down) {
-			&:not(.active):not(.row-heading) {
-				display: none;
+		& .loading li {
+			&.col-heading {
+				color: var(--c-text-7);
 			}
+
+			&:not(.col-heading) {
+				width: var(--skeleton-width, 5ch);
+				background: var(--c-background-2);
+				background-clip: content-box;
+				padding-block: 0.1rem;
+				color: transparent;
+			}
+		}
+	}
+
+	@media (--viewport-md-down) {
+		.time-period-picker {
+			display: contents;
+		}
+
+		.time-period-table {
+			grid-template-columns: 3fr 2fr;
+		}
+
+		:global .col-heading {
+			display: none;
+		}
+
+		:global .time-period-col:not(.active) {
+			display: none;
 		}
 	}
 </style>
