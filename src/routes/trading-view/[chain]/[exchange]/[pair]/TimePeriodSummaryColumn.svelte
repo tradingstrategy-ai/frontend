@@ -30,6 +30,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 		tradeData = {};
 	}
 
+	$: skeleton = !loaded;
 	$: priceChangeClass = determinePriceChangeClass(getPriceChange(tradeData));
 
 	async function loadData() {
@@ -62,34 +63,34 @@ Display summary performance data for a given period; lazy-loads data when scroll
 		<li class="col-heading {priceChangeClass}">
 			{period}
 		</li>
-		<li class={priceChangeClass} style:--skeleton-width="5ch">
+		<li class={priceChangeClass} class:skeleton style:--skeleton-width="5ch">
 			{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
 		</li>
-		<li style:--skeleton-width="5ch">
+		<li class:skeleton style:--skeleton-width="5ch">
 			{formatDollar(tradeData.price_open)}
 		</li>
-		<li style:--skeleton-width="5ch">
+		<li class:skeleton style:--skeleton-width="5ch">
 			{formatDollar(tradeData.price_high)}
 		</li>
-		<li style:--skeleton-width="5ch">
+		<li class:skeleton style:--skeleton-width="5ch">
 			{formatDollar(tradeData.price_low)}
 		</li>
-		<li style:--skeleton-width="5ch">
+		<li class:skeleton style:--skeleton-width="5ch">
 			{formatDollar(tradeData.price_close)}
 		</li>
-		<li style:--skeleton-width="7ch">
+		<li class:skeleton style:--skeleton-width="7ch">
 			{formatDollar(tradeData.volume)}
 		</li>
-		<li style:--skeleton-width="7ch">
+		<li class:skeleton style:--skeleton-width="7ch">
 			{formatDollar(tradeData.liquidity_high)}
 		</li>
-		<li style:--skeleton-width="7ch">
+		<li class:skeleton style:--skeleton-width="7ch">
 			{formatDollar(tradeData.liquidity_low)}
 		</li>
-		<li style:--skeleton-width="3ch">
+		<li class:skeleton style:--skeleton-width="3ch">
 			{formatAmount(tradeData.buys)}
 		</li>
-		<li style:--skeleton-width="3ch">
+		<li class:skeleton style:--skeleton-width="3ch">
 			{formatAmount(tradeData.sells)}
 		</li>
 	</ul>

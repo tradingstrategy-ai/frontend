@@ -60,6 +60,7 @@ Display summary performance table for various periods.
 		}
 
 		& li {
+			--skeleton-padding: 2px;
 			font: 400 var(--fs-ui-xl);
 			height: 1.4em;
 			white-space: nowrap;
@@ -74,18 +75,8 @@ Display summary performance table for various periods.
 			font-weight: 500;
 		}
 
-		& .loading li {
-			&.col-heading {
-				color: var(--c-text-7);
-			}
-
-			&:not(.col-heading) {
-				width: var(--skeleton-width, 5ch);
-				background: var(--c-background-2);
-				background-clip: content-box;
-				padding-block: 0.1rem;
-				color: transparent;
-			}
+		& .loading li.col-heading {
+			color: var(--c-text-7);
 		}
 	}
 
