@@ -13,4 +13,6 @@ export { default as Menu } from './Menu.svelte';
 export { default as MenuItem } from './MenuItem.svelte';
 export { default as NavPanel } from './NavPanel.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
+export { default as SmartContractWidget } from './SmartContractWidget.svelte';
 export { default as TextInput } from './TextInput.svelte';
+export { default as TradingDataInfoRow } from './TradingDataInfoRow.svelte';

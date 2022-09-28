@@ -86,41 +86,62 @@ for the same hovered date. Also displays a time-bucket selector.
 	</ChartIQ>
 </div>
 
-<style>
+<style lang="postcss">
 	.chart-header {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+		gap: 1rem;
 		margin-bottom: 1em;
+
+		@media (--viewport-md-down) {
+			flex-direction: column;
+		}
+
+		& h2 {
+			flex: 1;
+			white-space: nowrap;
+		}
 	}
 
-	h2 {
-		flex: 1;
-		white-space: nowrap;
-		font: var(--f-h3-medium);
+	.chart-wrapper {
+		overflow: hidden;
 	}
 
 	.chart-title {
 		display: flex;
+		gap: 1rem;
 		align-items: baseline;
 		border-bottom: 1px solid #999;
-	}
 
-	h3 {
-		flex: 1;
-		font-size: 1.25rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-	}
+		& h3 {
+			flex: 1;
+			font-size: 1.25rem;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
 
-	.help {
-		color: var(--c-text-2);
-		font-size: 0.875rem;
-		text-align: right;
-	}
+			@media (width <= 576px) {
+				font-size: 1rem;
+			}
+		}
 
-	.help a:hover {
-		color: var(--c-text-1);
+		& .help {
+			font: var(--f-ui-small-roman);
+			color: var(--c-text-2);
+			text-align: right;
+
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			& a:hover {
+				color: var(--c-text-1);
+			}
+
+			& .prefix {
+				@media (width <= 576px) {
+					display: none;
+				}
+			}
+		}
 	}
 
 	.vol-added dd {
@@ -130,19 +151,5 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.vol-removed dd {
 		color: var(--c-bearish);
-	}
-
-	@media (max-width: 576px) {
-		h3 {
-			font-size: 1rem;
-		}
-
-		.help {
-			font-size: 0.8rem;
-		}
-
-		.help .prefix {
-			display: none;
-		}
 	}
 </style>
