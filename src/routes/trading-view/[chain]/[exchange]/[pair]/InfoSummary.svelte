@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import RelativeDate from '$lib/blog/RelativeDate.svelte';
+	import { formatDistanceToNowStrict } from 'date-fns';
 	import { SmartContractWidget } from '$lib/components';
 
 	export let summary: any;
 	export let details: any;
+
+	function formatTimeAgo(dateStr: string, options = {}) {
+		const date = Date.parse(`${dateStr}Z`);
+		return formatDistanceToNowStrict(date, { addSuffix: true, ...options });
+	}
 
 	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 
@@ -47,12 +52,11 @@
 	</p>
 
 	<p>
-		The pair has
-		<strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with
+		The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with
 		<strong>{formatDollar(summary.usd_liquidity_latest)}</strong>
 		liquidity available at the moment. The trading of {summary.pair_symbol} started at
-		<strong><RelativeDate timestamp={details.first_trade_at} /></strong>. The last trade was seen less than
-		<strong><RelativeDate hours timestamp={details.last_trade_at} /></strong>.
+		<strong>{formatTimeAgo(details.first_trade_at, { unit: 'day' })}</strong>. The last trade was seen less than
+		<strong>{formatTimeAgo(details.last_trade_at)}</strong>.
 	</p>
 
 	{#if details.pair_contract_address}
