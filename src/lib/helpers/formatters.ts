@@ -144,6 +144,7 @@ export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix = '$'):
 }
 
 export function formatPriceChange(n: number): string {
+	if (!Number.isFinite(n)) return '---';
 	return (
 		(n > 0 ? '▲' : '▼') +
 		(Math.abs(n) * 100).toLocaleString('en', {

@@ -5,7 +5,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 #### Usage:
 ```tsx
 	<TimePeriodSummaryColumn
-		pairId="1234"
+		pairId={1234}
 		period="hourly|daily|weekly|monthly"
 		active={true|false}
 	/>
@@ -17,7 +17,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let pairId: string;
+	export let pairId: number | string;
 	export let period: string;
 	export let active = false;
 

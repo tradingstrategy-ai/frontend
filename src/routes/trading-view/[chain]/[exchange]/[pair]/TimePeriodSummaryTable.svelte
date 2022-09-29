@@ -4,14 +4,14 @@ Display summary performance table for various periods.
 
 #### Usage:
 ```tsx
-	<TimePeriodSummaryTable pairId="1234" />
+	<TimePeriodSummaryTable pairId={1234} />
 ```
 -->
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
 	import TimePeriodPicker from './TimePeriodPicker.svelte';
 
-	export let pairId: string;
+	export let pairId: number | string;
 
 	let selected = 'daily';
 </script>
