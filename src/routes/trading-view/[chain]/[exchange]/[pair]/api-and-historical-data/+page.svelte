@@ -47,5 +47,5 @@ Real time examples for the API
 		documentation.
 	</p>
 
-	<TradingPairAPIExamples {summary} {details} />
+	<TradingPairAPIExamples {summary} />
 </div>

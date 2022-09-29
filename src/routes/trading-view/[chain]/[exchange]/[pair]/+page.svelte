@@ -90,7 +90,7 @@ Render the pair trading page
 			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
 				label="{summary.pair_symbol} API and historical data"
-				href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data"
+				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
 		</div>
 	</section>
