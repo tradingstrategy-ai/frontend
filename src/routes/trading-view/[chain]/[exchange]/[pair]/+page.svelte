@@ -96,7 +96,12 @@ Render the pair trading page
 	</section>
 
 	<section class="ds-container charts">
-		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
+		<ChartSection
+			pairId={summary.pair_id}
+			pairSymbol={summary.pair_symbol}
+			exchangeType={summary.exchange_type}
+			firstTradeDate={details.first_trade_at}
+		/>
 	</section>
 
 	<section class="ds-container time-period-summary">

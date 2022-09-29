@@ -8,8 +8,9 @@ for the same hovered date. Also displays a time-bucket selector.
 ```tsx
   <ChartSection
     pairId={12345}
-    pairSymbol={"ELON-ETH"}
-    firstTradeDate={"2020-01-02T00:00"}
+    pairSymbol="ELON-ETH"
+		exchangeType="uniswap_v2"
+    firstTradeDate="2020-01-02T00:00"
   />
 ```
 -->
@@ -21,8 +22,9 @@ for the same hovered date. Also displays a time-bucket selector.
 	import quoteFeed from '$lib/chart/quoteFeed';
 	import ChartLinker from '$lib/chart/ChartLinker';
 
-	export let pairSymbol: string;
 	export let pairId: number | string;
+	export let pairSymbol: string;
+	export let exchangeType: string;
 	export let firstTradeDate: string;
 
 	const chartLinker = new ChartLinker();
@@ -48,8 +50,9 @@ for the same hovered date. Also displays a time-bucket selector.
 	<ChartIQ
 		feed={quoteFeed('price')}
 		{pairId}
-		{timeBucket}
+		{exchangeType}
 		{firstTradeDate}
+		{timeBucket}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
 	/>
@@ -68,8 +71,9 @@ for the same hovered date. Also displays a time-bucket selector.
 	<ChartIQ
 		feed={quoteFeed('liquidity')}
 		{pairId}
-		{timeBucket}
+		{exchangeType}
 		{firstTradeDate}
+		{timeBucket}
 		studies={['Liquidity AR']}
 		linker={chartLinker}
 	>
