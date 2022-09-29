@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { formatAmount, formatDollar, formatUnixTimestampAsDate } from '$lib/helpers/formatters';
+	import { fromUnixTime } from 'date-fns';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
@@ -47,7 +48,13 @@
 				and all-time volume of
 				<strong>{formatDollar((data.buy_volume_all_time || 0) + (data.sell_volume_all_time || 0))}</strong>. The first
 				trade happened at
-				<strong>{formatUnixTimestampAsDate(data.first_trade_at)}</strong>.
+				<strong>
+					{#if data.first_trade_at}
+						{fromUnixTime(data.first_trade_at).toDateString()}
+					{:else}
+						(data unavailable)
+					{/if}
+				</strong>.
 			</p>
 
 			<p>

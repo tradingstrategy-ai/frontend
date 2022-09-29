@@ -1,9 +1,10 @@
+<!--
+@component
+Render exchange summary table on exchange page.
+-->
 <script>
-	/**
-	 * Render exchange summary table on exchange page.
-	 */
-
-	import { formatAmount, formatDollar, formatUnixTimestampAsMonth, formatUrlAsDomain } from '$lib/helpers/formatters';
+	import { fromUnixTime, format } from 'date-fns';
+	import { formatAmount, formatDollar, formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 
 	export let details;
@@ -72,7 +73,7 @@
 		<tr>
 			<th>Launched</th>
 			<td>
-				{formatUnixTimestampAsMonth(details.first_trade_at)}
+				{format(fromUnixTime(details.first_trade_at), 'MMM yyyy')}
 			</td>
 		</tr>
 	{/if}

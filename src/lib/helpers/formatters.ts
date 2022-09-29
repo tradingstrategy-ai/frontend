@@ -198,59 +198,6 @@ export function formatMillion2(n: number): string {
 }
 
 /**
- * Parses an ISO 8601 date format string and assumes UTC timezone.
- *
- * @param ts UNIX timestamp in seconds
- */
-export function parseUTCTime(s: string): number {
-	// This SHIT is called Javascript
-	// https://stackoverflow.com/a/37750412/315168
-	const d = new Date(s);
-	const utc = d.getTime() - d.getTimezoneOffset() * 60000;
-	return utc / 1000;
-}
-
-/**
- * Format UNIX timestamp
- * @param ts Timestamp in seconds
- */
-export function formatUnixTimestamp(ts: number): string {
-	if (!ts) {
-		return '---';
-	}
-
-	const d = new Date(ts * 1000);
-	return d.toUTCString();
-}
-
-/**
- * Format UNIX timestamp
- * @param ts Timestamp in seconds
- */
-export function formatUnixTimestampAsMonth(ts: number): string {
-	if (!ts) {
-		return '---';
-	}
-
-	const d = new Date(ts * 1000);
-	// https://stackoverflow.com/a/67699283/315168
-	return d.toLocaleString('en-us', { month: 'short', year: 'numeric' });
-}
-
-/**
- * Format UNIX timestamp
- * @param ts Timestamp in seconds
- */
-export function formatUnixTimestampAsDate(ts: number): string {
-	if (!ts) {
-		return '---';
-	}
-
-	const d = new Date(ts * 1000);
-	return d.toDateString();
-}
-
-/**
  * Grabs only the domain part from the URL
  */
 export function formatUrlAsDomain(u: string): string {
