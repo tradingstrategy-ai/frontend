@@ -8,6 +8,7 @@
 	export let details: any;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
+		if (!dateStr) return '(data unavailable)';
 		const date = Date.parse(`${dateStr}Z`);
 		return formatDistanceToNowStrict(date, { addSuffix: true, ...options });
 	}
