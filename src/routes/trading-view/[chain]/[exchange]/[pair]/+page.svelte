@@ -167,6 +167,7 @@ Render the pair trading page
 		border: 2px solid var(--c-bearish);
 		list-style: none;
 		font: var(--f-ui-large-roman);
+		color: var(--c-text-2);
 
 		& li {
 			display: flex;

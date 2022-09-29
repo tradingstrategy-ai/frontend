@@ -68,26 +68,30 @@ for the same hovered date. Also displays a time-bucket selector.
 			</a>
 		</div>
 	</div>
-	<ChartIQ
-		feed={quoteFeed('liquidity')}
-		{pairId}
-		{exchangeType}
-		{firstTradeDate}
-		{timeBucket}
-		studies={['Liquidity AR']}
-		linker={chartLinker}
-	>
-		<div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
-			<dl class="vol-added">
-				<dt>Vol Added</dt>
-				<dd>{formatForHud(activeTick.av)}</dd>
-			</dl>
-			<dl class="vol-removed">
-				<dt>Vol Removed</dt>
-				<dd>{formatForHud(activeTick.rv)}</dd>
-			</dl>
-		</div>
-	</ChartIQ>
+	{#if exchangeType === 'uniswap_v3'}
+		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
+	{:else}
+		<ChartIQ
+			feed={quoteFeed('liquidity')}
+			{pairId}
+			{exchangeType}
+			{firstTradeDate}
+			{timeBucket}
+			studies={['Liquidity AR']}
+			linker={chartLinker}
+		>
+			<div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
+				<dl class="vol-added">
+					<dt>Vol Added</dt>
+					<dd>{formatForHud(activeTick.av)}</dd>
+				</dl>
+				<dl class="vol-removed">
+					<dt>Vol Removed</dt>
+					<dd>{formatForHud(activeTick.rv)}</dd>
+				</dl>
+			</div>
+		</ChartIQ>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -148,12 +152,24 @@ for the same hovered date. Also displays a time-bucket selector.
 		}
 	}
 
-	.vol-added dd {
-		color: var(--c-bullish);
-		min-width: 4.5em;
+	.hud-row {
+		& .vol-added dd {
+			color: var(--c-bullish);
+			min-width: 4.5em;
+		}
+
+		& .vol-removed dd {
+			color: var(--c-bearish);
+		}
 	}
 
-	.vol-removed dd {
-		color: var(--c-bearish);
+	.not-available {
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		border-bottom: 1px solid #999;
+		padding-block: 2rem;
+		font: var(--f-ui-body-medium);
+		color: var(--c-text-7);
 	}
 </style>
