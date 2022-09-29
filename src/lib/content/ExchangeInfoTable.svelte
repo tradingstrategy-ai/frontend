@@ -86,7 +86,7 @@
 
 	<tr>
 		<th>Type</th>
-		<td>Uniswap v2 like</td>
+		<td>{details.exchange_type}</td>
 	</tr>
 
 	<tr>
