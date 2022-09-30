@@ -46,15 +46,10 @@
 				{data.human_readable_name} has 30 days trade volume of
 				<strong>{formatDollar((data.buy_volume_30d || 0) + (data.sell_volume_30d || 0))}</strong>
 				and all-time volume of
-				<strong>{formatDollar((data.buy_volume_all_time || 0) + (data.sell_volume_all_time || 0))}</strong>. The first
-				trade happened at
-				<strong>
-					{#if data.first_trade_at}
-						{fromUnixTime(data.first_trade_at).toDateString()}
-					{:else}
-						(data unavailable)
-					{/if}
-				</strong>.
+				<strong>{formatDollar((data.buy_volume_all_time || 0) + (data.sell_volume_all_time || 0))}</strong>.
+				{#if data.first_trade_at}
+					The first trade happened on <strong>{fromUnixTime(data.first_trade_at).toDateString()}</strong>.
+				{/if}
 			</p>
 
 			<p>
