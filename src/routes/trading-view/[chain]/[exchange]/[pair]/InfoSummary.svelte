@@ -67,7 +67,7 @@
 
 	{#if details.pair_contract_address}
 		<p class="smart-contract-address">
-			The trading pair pool smart contract address is:
+			The trading pair pool smart contract address is
 			<SmartContractWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
 		</p>
 	{/if}

@@ -1,17 +1,16 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { fromUnixTime } from 'date-fns';
-	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import { Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
-	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
+	import InfoTable from './InfoTable.svelte';
+	import InfoSummary from './InfoSummary.svelte';
 
 	export let data: PageData;
 
-	const nameDetails = parseExchangeName(data.human_readable_name);
+	$: nameDetails = parseExchangeName(data.human_readable_name);
 </script>
 
 <svelte:head>
@@ -29,38 +28,10 @@
 <main>
 	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
 
-	<section class="ds-container exchange-info" data-testid="statistics">
-		<ExchangeInfoTable details={data} />
-
-		<div class="text-summary">
-			<p>
-				<strong>{data.human_readable_name}</strong> is a decentralised exchange on
-				<a class="body-link" href="/trading-view/{data.chain_slug}">{data.chain_name} blockchain</a>.
-			</p>
-
-			<p>
-				{data.human_readable_name} has 30 days trade volume of
-				<strong>{formatDollar((data.buy_volume_30d || 0) + (data.sell_volume_30d || 0))}</strong>
-				and all-time volume of
-				<strong>{formatDollar((data.buy_volume_all_time || 0) + (data.sell_volume_all_time || 0))}</strong>.
-				{#if data.first_trade_at}
-					The first trade happened on <strong>{fromUnixTime(data.first_trade_at).toDateString()}</strong>.
-				{/if}
-			</p>
-
-			<p>
-				{data.human_readable_name} has <strong>{formatAmount(data.pair_count)}</strong>
-				token trading pairs of which
-				<strong>{formatAmount(data.active_pair_count)}</strong> are
-				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
-					>actively tracked</a
-				> by Trading Strategy.
-			</p>
-
-			<p class="smart-contract-address">
-				The factory smart contract address for {data.human_readable_name} is
-				<a class="body-link" href={data.blockchain_explorer_link}>{data.address}</a>.
-			</p>
+	<section class="ds-container info" data-testid="statistics">
+		<div class="ds-2-col">
+			<InfoTable details={data} {nameDetails} />
+			<InfoSummary details={data} />
 		</div>
 	</section>
 
@@ -109,22 +80,23 @@
 <style>
 	main {
 		display: grid;
-		gap: 1rem;
+		gap: 2.5rem;
+
+		@media (--viewport-lg-up) {
+			gap: 5rem;
+		}
+	}
+
+	.info {
+		gap: 2.5rem;
+
+		@media (--viewport-lg-up) {
+			gap: 3.5rem;
+		}
 	}
 
 	h2 {
 		font: var(--f-h3-medium);
-	}
-
-	.text-summary {
-		align-self: start;
-		display: grid;
-		gap: 1rem;
-	}
-
-	.smart-contract-address {
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.trading-pairs {
@@ -141,11 +113,5 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 1.5rem;
-	}
-
-	@media (--viewport-lg-up) {
-		.exchange-info {
-			grid-template-columns: 4fr 5fr;
-		}
 	}
 </style>
