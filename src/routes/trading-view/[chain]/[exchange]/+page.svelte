@@ -33,17 +33,11 @@
 			<InfoTable details={data} {nameDetails} />
 			<InfoSummary details={data} />
 		</div>
-	</section>
 
-	<section class="ds-container">
 		<div class="exchange-actions">
-			<Button secondary label="Visit {nameDetails.name}" href={data.homepage} />
-			<Button secondary label="View {nameDetails.name} on blockchain explorer" href={data.blockchain_explorer_link} />
-			<Button
-				secondary
-				label="Download as Excel"
-				href="/trading-view/{data.chain_slug}/{data.exchange_slug}/export-data"
-			/>
+			<Button label="Visit {nameDetails.name}" href={data.homepage} />
+			<Button label="View {nameDetails.name} on blockchain explorer" href={data.blockchain_explorer_link} />
+			<Button label="Download as Excel" href="/trading-view/{data.chain_slug}/{data.exchange_slug}/export-data" />
 		</div>
 	</section>
 
@@ -77,7 +71,7 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
 		gap: 2.5rem;
@@ -93,10 +87,23 @@
 		@media (--viewport-lg-up) {
 			gap: 3.5rem;
 		}
+
+		& .ds-2-col {
+			row-gap: 2rem;
+		}
 	}
 
-	h2 {
-		font: var(--f-h3-medium);
+	.exchange-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1.25rem 2rem;
+		padding-block: 1.5rem;
+
+		@media (width < 576px) {
+			flex-direction: column;
+			padding-block: 0;
+		}
 	}
 
 	.trading-pairs {
@@ -106,12 +113,5 @@
 	/* Make sure columns do not wiggle when resorting and the data in the cells change */
 	.trading-pairs :global td {
 		width: 17%; /* 1/6 */
-	}
-
-	.exchange-actions {
-		margin-bottom: 1rem;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1.5rem;
 	}
 </style>

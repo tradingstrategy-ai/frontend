@@ -128,6 +128,10 @@ Render the pair trading page
 		@media (--viewport-lg-up) {
 			gap: 3.5rem;
 		}
+
+		& .ds-2-col {
+			row-gap: 2rem;
+		}
 	}
 
 	.trade-actions {
