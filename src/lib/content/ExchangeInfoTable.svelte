@@ -5,7 +5,7 @@ Render exchange summary table on exchange page.
 <script>
 	import { fromUnixTime, format } from 'date-fns';
 	import { formatAmount, formatDollar, formatUrlAsDomain } from '$lib/helpers/formatters';
-	import { parseExchangeName } from '$lib/helpers/exchange';
+	import { parseExchangeName, exchangeTypeLabel } from '$lib/helpers/exchange';
 
 	export let details;
 
@@ -87,7 +87,7 @@ Render exchange summary table on exchange page.
 
 	<tr>
 		<th>Type</th>
-		<td>{details.exchange_type}</td>
+		<td>{exchangeTypeLabel(details.exchange_type)}</td>
 	</tr>
 
 	<tr>
