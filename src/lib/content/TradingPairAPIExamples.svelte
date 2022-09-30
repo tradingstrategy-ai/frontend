@@ -1,19 +1,12 @@
 <!--
 @compontent
-
-Trading pair API examples
-
-Add inline curl examples to the trading pair page.
+Trading pair API examples. Display inline curl examples for retreiving trading pair data.
 -->
 <script lang="ts">
-	// Pair details
-	export let details;
-
-	// Pair summary info
-	export let summary;
+	export let summary: any;
 
 	$: pairInfoUrl = `https://tradingstrategy.ai/api/pair-details?exchange_slug=${summary.exchange_slug}&chain_slug=${summary.chain_slug}&pair_slug=${summary.pair_slug}`;
-	$: candlesUrl = `https://tradingstrategy.ai/api/candles?pair_id=${summary.pair_id}&time_bucket=1d`;
+	$: candlesUrl = `https://tradingstrategy.ai/api/candles?pair_id=${summary.pair_id}&exchange_type=${summary.exchange_type}&time_bucket=1d`;
 </script>
 
 <h2>Trading pair info</h2>

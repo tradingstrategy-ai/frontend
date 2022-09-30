@@ -90,13 +90,18 @@ Render the pair trading page
 			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
 				label="{summary.pair_symbol} API and historical data"
-				href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data"
+				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
 		</div>
 	</section>
 
 	<section class="ds-container charts">
-		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
+		<ChartSection
+			pairId={summary.pair_id}
+			pairSymbol={summary.pair_symbol}
+			exchangeType={summary.exchange_type}
+			firstTradeDate={details.first_trade_at}
+		/>
 	</section>
 
 	<section class="ds-container time-period-summary">
@@ -162,6 +167,7 @@ Render the pair trading page
 		border: 2px solid var(--c-bearish);
 		list-style: none;
 		font: var(--f-ui-large-roman);
+		color: var(--c-text-2);
 
 		& li {
 			display: flex;
