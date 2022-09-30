@@ -3,11 +3,11 @@
 	import { fromUnixTime } from 'date-fns';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import { parseExchangeName } from '$lib/helpers/exchange';
+	import { Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeInfoTable from '$lib/content/ExchangeInfoTable.svelte';
-	import { Button } from '$lib/components';
 
 	export let data: PageData;
 
@@ -27,11 +27,7 @@
 <Breadcrumbs labels={{ [data.exchange_slug]: data.human_readable_name }} />
 
 <main>
-	<header class="ds-container">
-		<h1 data-testid="title">
-			{data.human_readable_name} exchange on {data.chain_name}
-		</h1>
-	</header>
+	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
 
 	<section class="ds-container exchange-info" data-testid="statistics">
 		<ExchangeInfoTable details={data} />
@@ -114,10 +110,6 @@
 	main {
 		display: grid;
 		gap: 1rem;
-	}
-
-	header h1 {
-		font: var(--f-h2-medium);
 	}
 
 	h2 {

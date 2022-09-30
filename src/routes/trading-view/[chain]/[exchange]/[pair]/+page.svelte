@@ -8,7 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { Button, Icon } from '$lib/components';
+	import { Button, Icon, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -45,12 +45,7 @@ Render the pair trading page
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<header class="ds-container">
-		<h1>
-			{summary.pair_symbol}
-			<small>token pair on {details.exchange_name} on {details.chain_name}</small>
-		</h1>
-	</header>
+	<PageHeader title={summary.pair_symbol} subtitle="token pair on {details.exchange_name} on {details.chain_name}" />
 
 	<section class="ds-container info">
 		<div class="ds-2-col">
@@ -124,16 +119,6 @@ Render the pair trading page
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
-		}
-	}
-
-	h1 {
-		font: var(--f-h1-bold);
-
-		& small {
-			display: block;
-			font: var(--f-h4-medium);
-			color: var(--c-text-2);
 		}
 	}
 
