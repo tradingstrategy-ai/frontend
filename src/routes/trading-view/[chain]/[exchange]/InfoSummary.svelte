@@ -29,10 +29,11 @@
 		by Trading Strategy.
 	</p>
 
-	<p class="smart-contract-address">
-		The factory smart contract address for {details.human_readable_name} is
-		<SmartContractWidget address={details.address} href={details.blockchain_explorer_link} />
-	</p>
+	<SmartContractWidget
+		label="The factory smart contract address for {details.human_readable_name} is"
+		address={details.address}
+		href={details.blockchain_explorer_link}
+	/>
 </div>
 
 <style lang="postcss">
@@ -54,10 +55,5 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
-	}
-
-	.smart-contract-address {
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 </style>

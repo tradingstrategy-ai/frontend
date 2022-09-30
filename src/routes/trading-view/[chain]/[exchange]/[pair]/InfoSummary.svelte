@@ -66,10 +66,11 @@
 	</p>
 
 	{#if details.pair_contract_address}
-		<p class="smart-contract-address">
-			The trading pair pool smart contract address is
-			<SmartContractWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
-		</p>
+		<SmartContractWidget
+			label="The trading pair pool smart contract address is"
+			address={details.pair_contract_address}
+			href={details.pair_explorer_link}
+		/>
 	{/if}
 </div>
 
@@ -92,10 +93,5 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
-	}
-
-	.smart-contract-address {
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 </style>
