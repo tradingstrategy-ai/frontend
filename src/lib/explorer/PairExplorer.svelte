@@ -237,12 +237,17 @@ Explore trading pairs that match certain filter criteria.
 	};
 </script>
 
-<div class="trading-pairs">
+<div class="trading-pairs" style:--columns={columns.length}>
 	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
 <style lang="postcss">
 	.trading-pairs :global .col-pair {
 		white-space: nowrap;
+	}
+
+	/* set columns to equal-widths to minimize resizing when paging/sorting */
+	.trading-pairs :global td {
+		width: calc(100% / var(--columns));
 	}
 </style>

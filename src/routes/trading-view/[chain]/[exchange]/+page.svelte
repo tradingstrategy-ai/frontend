@@ -61,14 +61,12 @@
 		/>
 	</section>
 
-	<section class="ds-container">
+	<aside class="ds-container">
 		<p>
 			Not all trading pairs are being displayed or included in volume calculations.
-			<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
-				>See inclusion criteria</a
-			>.
+			<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">See inclusion criteria</a>.
 		</p>
-	</section>
+	</aside>
 </main>
 
 <style lang="postcss">
@@ -107,11 +105,23 @@
 	}
 
 	.trading-pairs {
-		gap: 0.5rem;
+		margin-top: 1rem;
+		gap: 1rem;
+
+		@media (--viewport-lg-up) {
+			margin-top: 1.5rem;
+			gap: 1.5rem;
+		}
 	}
 
-	/* Make sure columns do not wiggle when resorting and the data in the cells change */
-	.trading-pairs :global td {
-		width: 17%; /* 1/6 */
+	aside p {
+		font: var(--f-ui-large-roman);
+		text-align: center;
+
+		& a {
+			font-weight: 700;
+			text-decoration: underline;
+			white-space: nowrap;
+		}
 	}
 </style>
