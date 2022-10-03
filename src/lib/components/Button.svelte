@@ -59,7 +59,7 @@
 	}
 
 	.secondary {
-		background: var(--c-background-5);
+		background: transparent;
 		color: var(--c-text-1);
 		border-color: var(--c-border-2);
 	}
