@@ -1,19 +1,33 @@
+<!--
+@component
+Display a single row of trading data (should be nested in a <table>)
+
+#### Usage
+```tsx
+	<TradingDataInfoRow
+		label="Row label"
+		labelHref="http://optional.label.href"
+		value="Row value"
+		valueHref="http://optional.value.href"
+		class="optional-css-class"
+	/>
+```
+-->
 <script lang="ts">
 	export let label: string;
-	export let value: string;
-	export let href: string = '';
+	export let labelHref: string = '';
+	export let value: string | number;
+	export let valueHref: string = '';
 	let className: string = '';
 	export { className as class };
 </script>
 
 <tr>
-	<th scope="row">{label}</th>
+	<th scope="row">
+		{#if labelHref}<a href={labelHref}>{label}</a>{:else}{label}{/if}
+	</th>
 	<td class={className}>
-		{#if href}
-			<a {href}>{value}</a>
-		{:else}
-			{value}
-		{/if}
+		{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
 	</td>
 </tr>
 
@@ -35,7 +49,7 @@
 			font: var(--f-ui-large-bold);
 		}
 
-		& :global a {
+		& a {
 			font: inherit;
 			text-decoration: underline;
 		}

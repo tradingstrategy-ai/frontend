@@ -4,7 +4,7 @@ describe('Trading strategy Exchanges Details', () => {
 	});
 
 	it('Should show correct title', () => {
-		cy.get('[data-testid=title]').contains('Uniswap v2 exchange on Ethereum');
+		cy.get('header h1').contains('Uniswap v2 exchange on Ethereum');
 	});
 
 	it('User can see navigation', () => {

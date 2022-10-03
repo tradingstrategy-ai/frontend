@@ -20,13 +20,13 @@
 	<TradingDataInfoRow
 		label="Token"
 		value={summary.base_token_symbol_friendly}
-		href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}"
+		valueHref="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}"
 	/>
 
 	<TradingDataInfoRow
 		label="Quoted in"
 		value={summary.quote_token_symbol_friendly}
-		href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}"
+		valueHref="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}"
 	/>
 
 	<TradingDataInfoRow
@@ -60,19 +60,19 @@
 		/>
 	{/if}
 
-	<TradingDataInfoRow label="Token tax" value={getTokenTaxDescription(details)} href={tokenTaxDocsUrl} />
+	<TradingDataInfoRow label="Token tax" labelHref={tokenTaxDocsUrl} value={getTokenTaxDescription(details)} />
 
 	<TradingDataInfoRow
 		label="Exchange"
 		value={details.exchange_name}
-		href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}"
+		valueHref="/trading-view/{summary.chain_slug}/{summary.exchange_slug}"
 	/>
 
-	<TradingDataInfoRow label="Blockchain" value={details.chain_name} href="/trading-view/{summary.chain_slug}" />
+	<TradingDataInfoRow label="Blockchain" value={details.chain_name} valueHref="/trading-view/{summary.chain_slug}" />
 
 	<TradingDataInfoRow
 		label="Internal id"
+		labelHref="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
 		value={summary.pair_id}
-		href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
 	/>
 </table>
