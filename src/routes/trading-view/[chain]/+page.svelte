@@ -2,7 +2,6 @@
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
 	import Header from './Header.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
@@ -55,7 +54,6 @@
 	<section id="exchanges" class="ds-container explorer-wrapper">
 		<header>
 			<h2>Exchanges on {data.chain_name}</h2>
-			<StaleDataWarning chainSlugs={[data.chain_slug]} />
 			<p>Showing exchanges with trading activity in last 30 days.</p>
 		</header>
 
@@ -69,7 +67,6 @@
 	<section id="trading-pairs" class="ds-container explorer-wrapper">
 		<header>
 			<h2>Trading pairs on {data.chain_name}</h2>
-			<StaleDataWarning chainSlugs={[data.chain_slug]} />
 		</header>
 		<PairExplorer
 			chainSlug={data.chain_slug}

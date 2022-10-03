@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
 
 	const chainSlug = $page.params.chain;
@@ -23,7 +22,6 @@
 	</header>
 
 	<section class="ds-container">
-		<StaleDataWarning allChains={true} />
 		<TokenIndexExplorer
 			enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
 			orderColumnIndex={2}

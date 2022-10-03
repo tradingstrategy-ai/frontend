@@ -3,7 +3,6 @@
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
 </script>
 
@@ -21,8 +20,6 @@
 	</header>
 
 	<section class="ds-container">
-		<StaleDataWarning allChains={true} />
-
 		<ExchangeExplorer
 			enabledColumns={['human_readable_name', 'chain_name', 'pair_count', 'usd_volume_30d']}
 			orderColumnIndex={3}

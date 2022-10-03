@@ -4,7 +4,6 @@
 	import { formatAmount } from '$lib/helpers/formatters';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenInfoTable from '$lib/content/TokeninfoTable.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 
 	export let data: PageData;
@@ -65,8 +64,6 @@
 
 	<section class="ds-container" style:gap="0.5rem">
 		<h2>Trading pairs</h2>
-
-		<StaleDataWarning allChains={true} />
 
 		<PairExplorer
 			enabledColumns={[
