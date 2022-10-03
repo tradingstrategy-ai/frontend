@@ -5,6 +5,7 @@
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
+	import Header from './Header.svelte';
 
 	export let data: PageData;
 </script>
@@ -17,12 +18,7 @@
 <Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
 
 <main>
-	<header class="ds-container">
-		<h1>
-			<img alt={`${data.chain_name} logo`} class="chain-logo" src={data.chain_logo} />
-			{data.chain_name} blockchain
-		</h1>
-	</header>
+	<Header name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
 
 	<section class="ds-container ds-2-col" style:align-items="start">
 		<table class="table">
@@ -116,14 +112,10 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
 		gap: 2.5rem;
-	}
-
-	header h1 {
-		font: var(--f-h2-medium);
 	}
 
 	h2 {
@@ -137,11 +129,6 @@
 
 	.explorer-wrapper {
 		gap: 1rem;
-	}
-
-	.chain-logo {
-		max-width: 48px;
-		max-height: 48px;
 	}
 
 	.hint {
