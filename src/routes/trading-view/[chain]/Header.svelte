@@ -23,6 +23,7 @@
 		@media (--viewport-md-down) {
 			--logo-height: 3.5rem;
 			flex-direction: column;
+			margin-block: 1.75rem;
 		}
 	}
 

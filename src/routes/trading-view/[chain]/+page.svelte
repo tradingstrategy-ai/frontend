@@ -53,11 +53,11 @@
 	</section>
 
 	<section id="exchanges" class="ds-container explorer-wrapper">
-		<h2>Exchanges on {data.chain_name}</h2>
-
-		<StaleDataWarning chainSlugs={[data.chain_slug]} />
-
-		<p>Showing exchanges with trading activity in last 30 days.</p>
+		<header>
+			<h2>Exchanges on {data.chain_name}</h2>
+			<StaleDataWarning chainSlugs={[data.chain_slug]} />
+			<p>Showing exchanges with trading activity in last 30 days.</p>
+		</header>
 
 		<ExchangeExplorer
 			chainSlug={data.chain_slug}
@@ -67,10 +67,10 @@
 	</section>
 
 	<section id="trading-pairs" class="ds-container explorer-wrapper">
-		<h2>Trading pairs on {data.chain_name}</h2>
-
-		<StaleDataWarning chainSlugs={[data.chain_slug]} />
-
+		<header>
+			<h2>Trading pairs on {data.chain_name}</h2>
+			<StaleDataWarning chainSlugs={[data.chain_slug]} />
+		</header>
 		<PairExplorer
 			chainSlug={data.chain_slug}
 			enabledColumns={['pair_name', 'exchange_name', 'usd_price_latest', 'usd_volume_30d', 'usd_liquidity_latest']}
@@ -82,7 +82,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: 2.25rem;
 	}
 
 	.summary-data {
@@ -109,5 +109,29 @@
 
 	.explorer-wrapper {
 		gap: 1rem;
+		margin-top: 1.75rem;
+
+		@media (--viewport-md-down) {
+			margin-top: 0;
+			gap: 0.75rem;
+		}
+
+		& header {
+			display: grid;
+			gap: 0.75rem;
+			margin-block: 1.5rem;
+
+			@media (--viewport-md-down) {
+				margin-block: 1rem;
+			}
+		}
+
+		& p {
+			font: var(--f-h4-roman);
+
+			@media (--viewport-md-down) {
+				font: var(--f-h5-roman);
+			}
+		}
 	}
 </style>
