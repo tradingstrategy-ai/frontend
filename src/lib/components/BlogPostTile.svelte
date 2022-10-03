@@ -16,7 +16,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 ```
 -->
 <script lang="ts">
-	import BlogPostTimestamp from './BlogPostTimestamp.svelte';
+	import { BlogPostTimestamp } from '$lib/components';
 
 	export let featured = false;
 	export let slug: string;

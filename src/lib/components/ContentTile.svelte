@@ -1,6 +1,5 @@
 <script lang="ts">
-	import SocialIcon from './SocialIcon.svelte';
-	import Button from './Button.svelte';
+	import { Button, SocialIcon } from '$lib/components';
 
 	export let title: string;
 	export let icon: string;

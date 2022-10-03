@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from './Icon.svelte';
+	import { Icon } from '$lib/components';
 
 	type TextInputType = 'email' | 'text' | 'search';
 	export let type: TextInputType = 'text';

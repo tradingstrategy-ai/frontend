@@ -1,5 +1,5 @@
 <script>
-	import SocialIcon from './SocialIcon.svelte';
+	import { SocialIcon } from '$lib/components';
 
 	export let skip = false;
 	export let small = false;
