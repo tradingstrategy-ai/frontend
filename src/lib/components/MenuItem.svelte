@@ -8,7 +8,7 @@
 
 <li><a {href} on:click>{label}</a></li>
 
-<style>
+<style lang="postcss">
 	li {
 		list-style-type: none;
 		justify-content: inherit;
@@ -19,21 +19,21 @@
 		justify-content: inherit;
 		align-items: center;
 		box-sizing: border-box;
-		font: 500 var(--fs-ui-lg);
+		font: 500 var(--fs-ui-xl);
 		color: inherit;
 		text-decoration: none;
 		white-space: nowrap;
 		/* default padding for vertical left/right aligned */
 		padding: 0.75rem 0rem;
 		background: var(--c-background-5);
-	}
 
-	a:not([href]) {
-		background: var(--c-background-4);
-	}
+		&:not([href]) {
+			background: var(--c-background-4);
+		}
 
-	a[href]:hover {
-		background: var(--c-background-1);
+		&[href]:hover {
+			background: var(--c-background-1);
+		}
 	}
 
 	/*
@@ -47,5 +47,6 @@
 	:global(.dir--horizontal) a {
 		padding: 0.5rem 1rem;
 		border-radius: 0.625rem;
+		font: 500 var(--fs-ui-lg);
 	}
 </style>

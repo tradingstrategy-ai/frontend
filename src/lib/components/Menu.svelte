@@ -11,31 +11,32 @@
 	<slot />
 </menu>
 
-<style>
+<style lang="postcss">
 	menu {
 		display: flex;
-		gap: var(--menu-gap, 2rem 0.5rem);
+		gap: var(--menu-gap, 1rem 0.5rem);
 		margin: 0;
 		padding: 0;
-	}
 
-	menu.dir--vertical {
-		flex-direction: column;
-	}
+		&.dir--vertical {
+			flex-direction: column;
+			padding-block: 0.5rem;
+		}
 
-	menu.dir--horizontal {
-		flex-direction: row;
-	}
+		&.dir--horizontal {
+			flex-direction: row;
+		}
 
-	menu.align--left {
-		justify-content: left;
-	}
+		&.align--left {
+			justify-content: left;
+		}
 
-	menu.align--center {
-		justify-content: space-evenly;
-	}
+		&.align--center {
+			justify-content: space-evenly;
+		}
 
-	menu.align--right {
-		justify-content: right;
+		&.align--right {
+			justify-content: right;
+		}
 	}
 </style>
