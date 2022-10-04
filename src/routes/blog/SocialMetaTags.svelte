@@ -27,7 +27,8 @@
 	<meta property="og:title" content={post.title} />
 	<meta property="og:url" content={url.toString()} />
 	<meta property="og:description" content={post.og_description || post.excerpt} />
-	<meta property="og:image" content={post.feature_image} />
+	<!-- Use proxied image (see /blog/image route) -->
+	<meta property="og:image" content={imageUrl} />
 	<meta property="og:type" content="article" />
 
 	<!-- Twitter -->
@@ -35,6 +36,6 @@
 	<meta name="twitter:site" content="@TradingProtocol" />
 	<meta name="twitter:title" content={post.title} />
 	<meta name="twitter:description" content={post.twitter_description || post.excerpt} />
-	<!-- See blog/image hack for Twitter -->
+	<!-- Use proxied image (see /blog/image route) -->
 	<meta name="twitter:image" content={imageUrl} />
 </svelte:head>
