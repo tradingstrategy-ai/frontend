@@ -242,12 +242,16 @@ Explore trading pairs that match certain filter criteria.
 </div>
 
 <style lang="postcss">
-	.trading-pairs :global .col-pair {
-		white-space: nowrap;
-	}
+	.trading-pairs :global {
+		/* set columns widths to equal % to minimize resizing when paging/sorting */
+		& td {
+			width: calc(100% / var(--columns));
+		}
 
-	/* set columns to equal-widths to minimize resizing when paging/sorting */
-	.trading-pairs :global td {
-		width: calc(100% / var(--columns));
+		/* prevent pair and exchange columns from wraping */
+		& .col-pair,
+		& .col-exchange {
+			white-space: nowrap;
+		}
 	}
 </style>
