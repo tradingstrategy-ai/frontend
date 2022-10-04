@@ -22,10 +22,6 @@
 		<p>List of currently active blockchains producing trading data.</p>
 	</header>
 
-	<aside class="ds-container">
-		You can explore the blockchains for supported decentralised exchanges, trading pairs and price charts.
-	</aside>
-
 	<section class="ds-container">
 		{#each data.chains as chain}
 			<BlockchainTile
@@ -36,9 +32,13 @@
 			/>
 		{/each}
 	</section>
+
+	<aside class="ds-container">
+		You can explore the blockchains for supported decentralised exchanges, trading pairs and price charts.
+	</aside>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: flex;
 		flex-direction: column;
@@ -47,36 +47,36 @@
 
 	header {
 		gap: 0.75rem;
+
+		& p {
+			font: var(--f-h3-roman);
+
+			@media (--viewport-md-down) {
+				font: var(--f-h4-roman);
+			}
+		}
 	}
 
-	header p,
 	aside {
 		font: var(--f-h4-roman);
+
+		@media (--viewport-sm-down) {
+			--container-margin: 2rem;
+		}
 	}
 
 	section {
-		grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
+		grid-template-columns: repeat(4, 1fr);
 		gap: 2rem;
 		padding-block: 1.5rem;
-	}
 
-	@media (--viewport-md-up) {
-		section {
+		@media (--viewport-md-down) {
 			grid-template-columns: repeat(2, 1fr);
 		}
-	}
 
-	@media (--viewport-lg-up) {
-		header p {
-			font: var(--f-h3-roman);
-		}
-
-		aside {
-			order: 3;
-		}
-
-		section {
-			grid-template-columns: repeat(4, 1fr);
+		@media (--viewport-sm-down) {
+			grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
+			--container-margin: 2rem;
 		}
 	}
 </style>
