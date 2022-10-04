@@ -47,7 +47,6 @@
 
 	.layout--post a {
 		font: 500 var(--fs-ui-sm);
-		letter-spacing: 0.02em;
 		--icon-size: 20px;
 	}
 

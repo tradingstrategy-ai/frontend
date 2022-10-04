@@ -81,7 +81,6 @@
 
 	div :global figcaption {
 		font: 400 var(--fs-ui-sm);
-		letter-spacing: 0.02em;
 		text-align: center;
 		margin: 1rem 0;
 	}

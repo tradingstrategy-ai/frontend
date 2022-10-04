@@ -131,7 +131,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		height: 1.75rem;
 		width: 3.5rem;
 		font: 500 var(--fs-ui-sm);
-		letter-spacing: 0.02em;
 		text-transform: capitalize;
 		text-align: center;
 		color: var(--c-parchment);
