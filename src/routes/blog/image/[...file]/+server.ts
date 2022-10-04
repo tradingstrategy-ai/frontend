@@ -1,9 +1,19 @@
 /**
- * A hack to get Twitter to share images from the private blog.
+ * Proxy Ghost images via a local route so social platforms
+ * render preview images correctly.
  */
 import type { RequestHandler } from './$types';
 import { ghostConfig } from '$lib/config';
 
-export const GET: RequestHandler = ({ params }) => {
-	return fetch(`${ghostConfig.apiUrl}/${params.file}`);
+export const GET: RequestHandler = async ({ params }) => {
+	const resp = await fetch(`${ghostConfig.apiUrl}/${params.file}`);
+	const image = await resp.arrayBuffer();
+
+	const headers = {
+		'content-type': resp.headers.get('content-type'),
+		'cache-control': resp.headers.get('cache-control'),
+		etag: resp.headers.get('etag')
+	};
+
+	return new Response(image, { headers });
 };
