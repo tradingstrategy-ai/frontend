@@ -25,42 +25,55 @@ Display a blog post preview card (e.g, on home page or blog index).
 	export let imageUrl: string;
 	export let imageAltText: string;
 	export let publishedAt: string;
+
+	// Prevent misclicks: cancel the click if the user clicked whitespace rather
+	// than a valid target like the image or text.
+	function checkTarget(event: MouseEvent) {
+		if (event.target === event.currentTarget) {
+			event.preventDefault();
+		}
+	}
 </script>
 
-<a class:featured href={`/blog/${slug}`}>
+<a class:featured href={`/blog/${slug}`} on:click={checkTarget}>
 	<img src={imageUrl} alt={imageAltText} />
 
-	<div class="info">
+	<div>
 		<h3>{title}</h3>
 		<BlogPostTimestamp {publishedAt} />
 		<p>{excerpt}</p>
 	</div>
 </a>
 
-<style>
+<style lang="postcss">
 	a {
 		display: grid;
 		grid-template-rows: auto 1fr;
 		row-gap: 1rem;
 		align-items: start;
 		text-decoration: none;
+		cursor: default;
 		--transition-duration: 0.25s;
 	}
 
 	img {
 		width: 100%;
-		aspect-ratio: 9 / 5;
+		aspect-ratio: 8 / 5;
 		object-fit: cover;
 		transition: opacity var(--transition-duration);
+
+		@media (--viewport-md-down) {
+			aspect-ratio: 9 / 5;
+		}
 	}
 
-	a:hover img {
-		opacity: 0.9;
-	}
-
-	.info {
+	div {
 		display: grid;
-		gap: 0.75rem;
+		gap: 1.25rem;
+
+		@media (--viewport-md-down) {
+			gap: 0.75rem;
+		}
 	}
 
 	h3 {
@@ -71,25 +84,30 @@ Display a blog post preview card (e.g, on home page or blog index).
 		transition: text-decoration-color var(--transition-duration);
 	}
 
-	a:hover h3 {
-		text-decoration-color: inherit;
-	}
-
 	p {
-		font: 400 var(--fs-text-sm);
+		font: var(--f-text-body-regular);
 		color: var(--c-text-4);
+
+		@media (--viewport-md-down) {
+			font: var(--f-text-small-regular);
+		}
 	}
 
-	/* Desktop overrides */
+	/* hover states - matches if any descendants are hovered */
+	a:has(:hover) {
+		cursor: pointer;
+
+		& img {
+			opacity: 0.9;
+		}
+
+		& h3 {
+			text-decoration-color: inherit;
+		}
+	}
+
+	/* Desktop featured post overrides */
 	@media (--viewport-lg-up) {
-		img {
-			aspect-ratio: 8 / 5;
-		}
-
-		.info {
-			gap: 1.25rem;
-		}
-
 		a.featured {
 			/* Span across container's columns */
 			grid-column: 1 / -1;
@@ -100,22 +118,18 @@ Display a blog post preview card (e.g, on home page or blog index).
 			column-gap: var(--blog-post-tile--column-gap, 2.5rem);
 			align-items: center;
 			--timestamp-font: 400 var(--fs-ui-xl);
-		}
 
-		.featured img {
-			aspect-ratio: 8 / 7;
-		}
+			& img {
+				aspect-ratio: 8 / 7;
+			}
 
-		.featured .info {
-			gap: 0.75rem;
-		}
+			& div {
+				gap: 0.75rem;
+			}
 
-		.featured h3 {
-			font: var(--f-h1-medium);
-		}
-
-		p {
-			font: 400 var(--fs-text-md);
+			& h3 {
+				font: var(--f-h1-medium);
+			}
 		}
 	}
 </style>
