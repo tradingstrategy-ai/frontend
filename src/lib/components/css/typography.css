@@ -3,6 +3,7 @@
 	--ff-display: 'Neue Haas Grotesk Display', system-ui, sans-serif;
 	--ff-ui: 'Neue Haas Grotesk Text', system-ui, sans-serif;
 	--ff-text: 'Source Serif Pro', serif;
+	--ff-mono: 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 
 	--fs-heading-xxl: 48px/56px var(--ff-display);
 	--fs-heading-xl: 38px/44px var(--ff-display);
@@ -20,6 +21,8 @@
 	--fs-text-lg: 26px/36px var(--ff-text);
 	--fs-text-md: 19px/32px var(--ff-text);
 	--fs-text-sm: 16px/28px var(--ff-text);
+
+	--fs-mono-md: 16px/28px var(--ff-mono);
 }
 
 /* Font Pairings - Mobile */
@@ -86,6 +89,8 @@
 	--f-text-small-bold: 700 var(--fs-text-sm);
 	--f-text-small-semibold: 600 var(--fs-text-sm);
 	--f-text-small-regular: 400 var(--fs-text-sm);
+
+	--f-mono-body-regular: 400 var(--fs-mono-md);
 }
 
 /* Font Pairings - Desktop */
@@ -141,7 +146,7 @@
 		--f-ui-xsmall-roman: 400 var(--fs-ui-sm);
 		--f-ui-xsmall-light: 300 var(--fs-ui-sm);
 
-		/* NOTE: no override needed for --f-text values */
+		/* NOTE: no override needed for --f-text or --f-mono values */
 	}
 }
 
@@ -187,6 +192,13 @@ body {
 	font: var(--f-h6-medium);
 }
 
-.ds-container p {
+.ds-container p,
+.ds-container pre {
 	margin: 0;
+}
+
+.ds-container pre,
+.ds-container code {
+	font: var(--f-mono-body-regular);
+	letter-spacing: -0.02em;
 }
