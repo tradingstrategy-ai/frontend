@@ -1,3 +1,18 @@
+<!--
+@component
+Display an alert callout box. This should only include AlertItem components
+as children. The alert box is only displayed if one or more items are displayed
+(based on their `displayWhen` prop).
+
+#### Usage:
+```tsx
+	<AlertList>
+		<AlertItem title="Optional title" displayWhen={boolean_defaults_to_true}>
+			Warning message – e.g., data on this page may be incomplete!
+		</AlertItem>
+	</AlertList>
+```
+-->
 <script lang="ts">
 	$: console.log($$slots);
 </script>

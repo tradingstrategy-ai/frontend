@@ -1,5 +1,13 @@
 <!--
+@component
+Display a single alert item (should always be nested within AlertList).
 
+#### Usage:
+```tsx
+	<AlertItem title="Optional title" displayWhen={boolean_defaults_to_true}>
+		Warning message – e.g., data on this page may be incomplete!
+	</AlertItem>
+```
 -->
 <script lang="ts">
 	import { Icon } from '$lib/components';
