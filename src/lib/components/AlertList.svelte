@@ -13,13 +13,7 @@ as children. The alert box is only displayed if one or more items are displayed
 	</AlertList>
 ```
 -->
-<script lang="ts">
-	$: console.log($$slots);
-</script>
-
-{#if $$slots.default}
-	<ul><slot /></ul>
-{/if}
+<ul><slot /></ul>
 
 <style lang="postcss">
 	ul {
