@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { Button, PageHeader } from '$lib/components';
+	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -32,6 +32,13 @@
 			<InfoTable details={data} {nameDetails} />
 			<InfoSummary details={data} />
 		</div>
+
+		<AlertList>
+			<AlertItem title="Uniswap V3 beta" displayWhen={data.exchange_type === 'uniswap_v3'}>
+				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
+				that the data for this exchange is currently incomplete.
+			</AlertItem>
+		</AlertList>
 
 		<div class="exchange-actions">
 			<Button label="Visit {nameDetails.name}" href={data.homepage} />
