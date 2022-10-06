@@ -57,5 +57,13 @@
 				display: none;
 			}
 		}
+
+		/* override secondary button hover/focus color (default matches tile background) */
+		& :global .secondary {
+			&:hover,
+			&:focus {
+				background: var(--cm-light, var(--c-parchment-extra-dark)) var(--cm-dark, var(--c-gray-extra-dark));
+			}
+		}
 	}
 </style>
