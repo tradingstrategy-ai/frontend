@@ -54,12 +54,9 @@ pre-defined set of sort options.
 
 <script lang="ts">
 	export let value = 'default';
-
-	let className = '';
-	export { className as class };
 </script>
 
-<div class="{className} {sortOptions[value].direction}">
+<div class={sortOptions[value].direction}>
 	<label for="sort-select">{sortOptions[value].shortLabel}</label>
 	<select id="sort-select" bind:value>
 		{#each Object.entries(sortOptions) as [key, option] (key)}
