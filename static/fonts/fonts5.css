@@ -219,3 +219,20 @@
 	font-weight: 700;
 	src: url("./SourceSerifPro/latin-700-italic.woff2") format("woff2");
 }
+
+/* Source Code Pro */
+
+@font-face {
+  font-display: swap;
+  font-family: 'Source Code Pro';
+  font-weight: 200 900;
+	src: url("./SourceCodePro/latin-normal.woff") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Source Code Pro';
+  font-style: italic;
+  font-weight: 200 900;
+	src: url("./SourceCodePro/latin-italic.woff ") format("woff2");
+}

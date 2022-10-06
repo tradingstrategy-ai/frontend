@@ -20,11 +20,13 @@
 			<slot />
 		</Menu>
 		<Footer small />
-		<ColorModePicker showLabel />
+		<div class="color-mode-picker">
+			<ColorModePicker showLabel />
+		</div>
 	</nav>
 {/if}
 
-<style>
+<style lang="postcss">
 	nav {
 		position: fixed;
 		z-index: 99;
@@ -43,10 +45,10 @@
 		box-shadow: 0.25rem 0 2rem var(--c-border-1);
 		transform: translateX(calc(100% + 2rem));
 		transition: transform 0.25s;
-	}
 
-	nav.open {
-		transform: translateX(0);
+		&.open {
+			transform: translateX(0);
+		}
 	}
 
 	header {
@@ -65,5 +67,10 @@
 		font-size: 16px;
 		padding: 0;
 		cursor: pointer;
+	}
+
+	.color-mode-picker {
+		margin-top: 2rem;
+		display: grid;
 	}
 </style>
