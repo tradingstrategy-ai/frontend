@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
+	import Header from './Header.svelte';
+	import SummaryDataTile from './SummaryDataTile.svelte';
+	import BlockInfoTile from './BlockInfoTile.svelte';
 
 	export let data: PageData;
 </script>
@@ -17,84 +18,44 @@
 <Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
 
 <main>
-	<header class="ds-container">
-		<h1>
-			<img alt={`${data.chain_name} logo`} class="chain-logo" src={data.chain_logo} />
-			{data.chain_name} blockchain
-		</h1>
-	</header>
+	<Header name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
 
-	<section class="ds-container ds-2-col" style:align-items="start">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>Homepage</th>
-					<td>
-						<a class="body-link" href={data.homepage}>
-							{formatUrlAsDomain(data.homepage)}
-						</a>
-					</td>
-				</tr>
+	<section class="ds-container summary-data">
+		<div class="block-info">
+			<BlockInfoTile title="Last indexed block" count={data.end_block} timestamp={data.last_swap_at} />
+			<BlockInfoTile title="First indexed block" count={data.start_block} timestamp={data.first_swap_at} />
+		</div>
 
-				<tr>
-					<th>
-						Exchanges
-						<p class="hint">Decentralised exchanges with market data available on Trading Strategy</p>
-					</th>
-					<td>{data.exchanges}</td>
-				</tr>
+		<SummaryDataTile
+			count={data.exchanges}
+			title="Exchanges"
+			description="Decentralised exchanges with market data available on Trading Strategy"
+			buttonLabel="See exchanges"
+			href="#exchanges"
+		/>
 
-				<tr>
-					<th>
-						Tracked trading pairs
-						<p class="hint">Total trading pairs on Trading Strategy for this blockchain.</p>
-					</th>
-					<td>{formatAmount(data.pairs)}</td>
-				</tr>
+		<SummaryDataTile
+			count={data.pairs}
+			title="Tracked trading pairs"
+			description="Total trading pairs on Trading Strategy for this blockchain."
+			buttonLabel="See trading pairs"
+			href="#trading-pairs"
+		/>
 
-				<tr>
-					<th>
-						Active trading pairs
-						<p class="hint">
-							Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data feeds
-							generated for them.
-							<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
-								>See the inclusion criteria.</a
-							>
-						</p>
-					</th>
-					<td>{formatAmount(data.tracked_pairs)}</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>
-						First indexed block
-						<p class="hint">Starting block when Trading Strategy started collect data</p>
-					</th>
-					<td>{formatAmount(data.start_block)}</td>
-				</tr>
-
-				<tr>
-					<th>
-						Last indexed block
-						<p class="hint">Currently seen last block with available trading data</p>
-					</th>
-					<td>{formatAmount(data.end_block)}</td>
-				</tr>
-			</tbody>
-		</table>
+		<SummaryDataTile
+			count={data.tracked_pairs}
+			title="Active trading pairs"
+			description="Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data feeds generated for them."
+			buttonLabel="See inclusion criteria"
+			href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+		/>
 	</section>
 
-	<section class="ds-container explorer-wrapper">
-		<h2>Exchanges on {data.chain_name}</h2>
-
-		<StaleDataWarning chainSlugs={[data.chain_slug]} />
-
-		<p>Showing exchanges with trading activity in last 30 days.</p>
+	<section id="exchanges" class="ds-container explorer-wrapper">
+		<header>
+			<h2>Exchanges on {data.chain_name}</h2>
+			<p>Showing exchanges with trading activity in last 30 days.</p>
+		</header>
 
 		<ExchangeExplorer
 			chainSlug={data.chain_slug}
@@ -103,11 +64,10 @@
 		/>
 	</section>
 
-	<section class="ds-container explorer-wrapper">
-		<h2>Trading pairs on {data.chain_name}</h2>
-
-		<StaleDataWarning chainSlugs={[data.chain_slug]} />
-
+	<section id="trading-pairs" class="ds-container explorer-wrapper">
+		<header>
+			<h2>Trading pairs on {data.chain_name}</h2>
+		</header>
 		<PairExplorer
 			chainSlug={data.chain_slug}
 			enabledColumns={['pair_name', 'exchange_name', 'usd_price_latest', 'usd_volume_30d', 'usd_liquidity_latest']}
@@ -116,36 +76,59 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: 2.25rem;
 	}
 
-	header h1 {
-		font: var(--f-h2-medium);
+	.summary-data {
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1.5rem;
+
+		@media (--viewport-md-down) {
+			grid-template-columns: 1fr;
+			gap: 0.75rem;
+		}
 	}
 
-	h2 {
-		font: var(--f-h3-medium);
-	}
+	.block-info {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-rows: 1fr 1fr;
 
-	tbody tr:first-child th,
-	tbody tr:first-child td {
-		border-top: 0;
+		@media (--viewport-md-down) {
+			grid-template-rows: 1fr;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.75rem;
+		}
 	}
 
 	.explorer-wrapper {
 		gap: 1rem;
-	}
+		margin-top: 1.75rem;
 
-	.chain-logo {
-		max-width: 48px;
-		max-height: 48px;
-	}
+		@media (--viewport-md-down) {
+			margin-top: 0;
+			gap: 0.75rem;
+		}
 
-	.hint {
-		color: var(--c-text-2);
-		font-size: 75%;
+		& header {
+			display: grid;
+			gap: 0.75rem;
+			margin-block: 1.5rem;
+
+			@media (--viewport-md-down) {
+				margin-block: 1rem;
+			}
+		}
+
+		& p {
+			font: var(--f-h4-roman);
+
+			@media (--viewport-md-down) {
+				font: var(--f-h5-roman);
+			}
+		}
 	}
 </style>

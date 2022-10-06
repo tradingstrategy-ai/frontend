@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from './Icon.svelte';
+	import { Icon } from '$lib/components';
 
 	export let disabled = false;
 	export let download: string | boolean | undefined = undefined;
@@ -59,7 +59,7 @@
 	}
 
 	.secondary {
-		background: var(--c-background-5);
+		background: transparent;
 		color: var(--c-text-1);
 		border-color: var(--c-border-2);
 	}

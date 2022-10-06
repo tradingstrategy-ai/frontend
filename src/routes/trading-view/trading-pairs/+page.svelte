@@ -3,7 +3,6 @@
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 </script>
 
@@ -21,8 +20,6 @@
 	</header>
 
 	<section class="ds-container">
-		<StaleDataWarning allChains={true} />
-
 		<PairExplorer
 			enabledColumns={[
 				'pair_name',

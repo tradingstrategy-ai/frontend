@@ -4,7 +4,6 @@
 	import { Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 
@@ -43,8 +42,6 @@
 
 	<section class="ds-container trading-pairs" data-testid="pairs">
 		<h2>Trading Pairs</h2>
-
-		<StaleDataWarning chainSlugs={[data.chain_slug]} />
 
 		<PairExplorer
 			chainSlug={data.chain_slug}

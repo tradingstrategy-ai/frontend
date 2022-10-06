@@ -3,7 +3,6 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import StaleDataWarning from '$lib/chain/StaleDataWarning.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import MomentumTable from '$lib/content/MomentumTable.svelte';
 
@@ -31,7 +30,6 @@
 	</header>
 
 	<section class="ds-container">
-		<StaleDataWarning allChains={true} />
 		<MomentumTable pairs={data.pairs} kind="price" />
 	</section>
 </main>
