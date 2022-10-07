@@ -46,7 +46,12 @@
 	.search-panel {
 		display: grid;
 		grid-template-rows: auto 1fr;
-		gap: 1rem;
+		align-items: start;
+		gap: 2.5rem;
+
+		@media (--viewport-sm-down) {
+			gap: 1.5rem;
+		}
 	}
 
 	.search-bar {
@@ -81,12 +86,11 @@
 
 	ul {
 		display: grid;
-		gap: 1.5rem;
-		padding: 1.5rem 0 0 0;
-		max-width: 800px;
+		gap: 2rem;
+		padding: 0;
 
 		@media (--viewport-sm-down) {
-			gap: 0;
+			gap: 1.25rem;
 		}
 	}
 </style>

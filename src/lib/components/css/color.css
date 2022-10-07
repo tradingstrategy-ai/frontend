@@ -31,6 +31,9 @@
 	--hsl-gray-extra-light: 239, 6%, 82%;
 	--hsl-gray-dark: 239, 6%, 36%;
 	--hsl-gray-extra-dark: 239, 6%, 28%;
+
+	/* Accent */
+	--hsl-wood: 36, 68%, 35%;
 }
 
 /*
@@ -66,6 +69,9 @@
 	--c-gray-extra-light: hsla(var(--hsl-gray-extra-light), 1);
 	--c-gray-dark: hsla(var(--hsl-gray-dark), 1);
 	--c-gray-extra-dark: hsla(var(--hsl-gray-extra-dark), 1);
+
+	/* Accent */
+	--c-wood: hsla(var(--hsl-wood), 1);
 }
 
 /*

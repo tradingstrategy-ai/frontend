@@ -116,6 +116,7 @@ Display site-wide search box for use in top-nav.
 
 	ul {
 		display: grid;
+		gap: 1rem;
 		padding: 0;
 	}
 
