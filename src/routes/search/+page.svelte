@@ -13,7 +13,7 @@ Advanced Search page
 
 	let q = $page.url.searchParams.get('q') || '';
 
-	let isOpen = true;
+	let filterPanelOpen = false;
 	let filterBy: string[] = [];
 	let sortOption = 'liquidity';
 
@@ -26,6 +26,10 @@ Advanced Search page
 		facet_by: ['type', 'blockchain', 'exchange'],
 		per_page: 200
 	});
+
+	function toggleFilterPanel() {
+		filterPanelOpen = !filterPanelOpen;
+	}
 </script>
 
 <svelte:head>
@@ -39,8 +43,16 @@ Advanced Search page
 	</header>
 
 	<section class="ds-container">
-		<FilterPanel bind:isOpen bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
-		<SearchPanel bind:isOpen bind:sortOption bind:q {hasSearch} hits={$tradingEntities.hits} />
+		<div class="filter-panel" class:open={filterPanelOpen}>
+			<FilterPanel bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
+		</div>
+		<SearchPanel
+			bind:sortOption
+			bind:q
+			{hasSearch}
+			hits={$tradingEntities.hits}
+			on:toggleFilterPanel={toggleFilterPanel}
+		/>
 	</section>
 </main>
 
@@ -65,9 +77,16 @@ Advanced Search page
 	section {
 		display: grid;
 		grid-template-columns: 20rem 1fr;
+		gap: 2.5rem;
 
-		@media (--viewport-sm-down) {
+		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (--viewport-md-down) {
+		.filter-panel:not(.open) {
+			display: none;
 		}
 	}
 </style>

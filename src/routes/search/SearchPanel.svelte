@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { TextInput } from '$lib/components';
+	import { createEventDispatcher } from 'svelte';
+	import { Icon, TextInput } from '$lib/components';
 	import TradingEntityHit from '$lib/search/TradingEntityHit.svelte';
 	import SortSelect from './SortSelect.svelte';
 
+	const dispatch = createEventDispatcher();
+
 	export let q: string;
-	export let isOpen: boolean;
 	export let sortOption: string;
 	export let hasSearch: boolean;
 	export let hits: [] = [];
@@ -20,10 +22,13 @@
 			autocapitalize="none"
 			spellcheck="false"
 			bind:value={q}
-			on:focus={() => (isOpen = true)}
 		/>
-		<SortSelect bind:value={sortOption} />
-		<!-- <button class:isOpen class="close-filters d-md-none" on:click={() => (isOpen = false)}>Done</button> -->
+		<div class="sort-select">
+			<SortSelect bind:value={sortOption} />
+		</div>
+		<button class="filter-toggle" on:click={() => dispatch('toggleFilterPanel')}>
+			<Icon name="filter" />
+		</button>
 	</div>
 
 	{#if hasSearch}
@@ -48,19 +53,30 @@
 		display: grid;
 		grid-template-columns: 1fr auto;
 		gap: 1em;
+
+		@media (--viewport-md-down) {
+			height: 3.5rem;
+			--text-input-height: 100%;
+		}
 	}
 
-	button.close-filters {
-		border: none;
+	.sort-select {
+		@media (--viewport-md-down) {
+			display: none;
+		}
+	}
+
+	.filter-toggle {
+		width: 3.5rem;
+		border: 2px solid var(--c-border-2);
 		border-radius: 0.5em;
-		height: 100%;
-		padding: 0 1em;
-		font-weight: 600;
-		font-size: 0.75rem;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		background: var(--c-background-3);
-		color: var(--c-text-6);
+		font-size: 1.25rem;
+		background: var(--c-body);
+		color: var(--c-text-1);
+
+		@media (--viewport-lg-up) {
+			display: none;
+		}
 	}
 
 	ul {
@@ -71,16 +87,6 @@
 
 		@media (--viewport-sm-down) {
 			gap: 0;
-		}
-	}
-
-	@media (--viewport-sm-down) {
-		.close-filters {
-			display: none;
-		}
-
-		.sort-control {
-			display: none;
 		}
 	}
 </style>

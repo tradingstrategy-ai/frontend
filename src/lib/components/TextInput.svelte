@@ -39,6 +39,7 @@
 		position: relative;
 		display: inline-grid;
 		width: var(--text-input-width, auto);
+		height: var(--text-input-height, var(--height));
 		max-width: var(--text-input-max-width, auto);
 		font-weight: 400;
 
@@ -60,23 +61,23 @@
 	}
 
 	.size-sm {
+		--height: 2rem;
 		font: var(--fs-ui-sm);
-		height: 2rem;
 	}
 
 	.size-md {
+		--height: 2.25rem;
 		font: var(--fs-ui-md);
-		height: 2.25rem;
 	}
 
 	.size-lg {
+		--height: 2.625rem;
 		font: var(--fs-ui-lg);
-		height: 2.625rem;
 	}
 
 	.size-xl {
+		--height: 3rem;
 		font: var(--fs-ui-xl);
-		height: 3rem;
 	}
 
 	input {

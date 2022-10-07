@@ -10,7 +10,6 @@
 	type Filter = Record<string, any[]>;
 	type Facet = { field_name: string; counts: any[] }; // improve me!
 
-	export let isOpen: boolean;
 	export let sortOption: string;
 	export let filterBy: string[] = [];
 	export let facets: Facet[] = [];
@@ -31,7 +30,7 @@
 	}
 </script>
 
-<div class:isOpen class="filters">
+<div class="filters">
 	<div class="sort-control">
 		<SortSelect bind:value={sortOption} />
 	</div>
@@ -97,19 +96,9 @@
 		}
 	}
 
-	@media (--viewport-md-up) {
+	@media (--viewport-lg-up) {
 		.sort-control {
 			display: none;
-		}
-	}
-
-	@media (--viewport-sm-down) {
-		.filters {
-			display: none;
-		}
-
-		.isOpen {
-			display: block;
 		}
 	}
 </style>
