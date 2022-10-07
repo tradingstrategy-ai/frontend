@@ -22,10 +22,8 @@
 			bind:value={q}
 			on:focus={() => (isOpen = true)}
 		/>
-		<div class="sort-control">
-			<SortSelect bind:value={sortOption} />
-		</div>
-		<button class:isOpen class="close-filters d-md-none" on:click={() => (isOpen = false)}>Done</button>
+		<SortSelect bind:value={sortOption} />
+		<!-- <button class:isOpen class="close-filters d-md-none" on:click={() => (isOpen = false)}>Done</button> -->
 	</div>
 
 	{#if hasSearch}
@@ -50,8 +48,6 @@
 		display: grid;
 		grid-template-columns: 1fr auto;
 		gap: 1em;
-		align-items: center;
-		--text-input-width: 100%;
 	}
 
 	button.close-filters {
