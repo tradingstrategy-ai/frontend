@@ -29,7 +29,7 @@ as children. The alert box is only displayed if one or more items are displayed
 			padding: 1rem;
 		}
 
-		&:not(:has(li)) {
+		&:empty {
 			display: none;
 		}
 	}

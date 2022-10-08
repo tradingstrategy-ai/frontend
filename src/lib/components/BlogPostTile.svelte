@@ -25,17 +25,9 @@ Display a blog post preview card (e.g, on home page or blog index).
 	export let imageUrl: string;
 	export let imageAltText: string;
 	export let publishedAt: string;
-
-	// Prevent misclicks: cancel the click if the user clicked whitespace rather
-	// than a valid target like the image or text.
-	function checkTarget(event: MouseEvent) {
-		if (event.target === event.currentTarget) {
-			event.preventDefault();
-		}
-	}
 </script>
 
-<a class:featured href={`/blog/${slug}`} on:click={checkTarget}>
+<a class:featured href={`/blog/${slug}`}>
 	<img src={imageUrl} alt={imageAltText} />
 
 	<div>
@@ -52,8 +44,12 @@ Display a blog post preview card (e.g, on home page or blog index).
 		row-gap: 1rem;
 		align-items: start;
 		text-decoration: none;
-		cursor: default;
+		pointer-events: none;
 		--transition-duration: 0.25s;
+	}
+
+	a > * {
+		pointer-events: all;
 	}
 
 	img {
@@ -64,6 +60,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 		@media (--viewport-md-down) {
 			aspect-ratio: 9 / 5;
+		}
+
+		@nest a:hover & {
+			opacity: 0.9;
 		}
 	}
 
@@ -82,6 +82,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 		text-decoration: underline;
 		text-decoration-color: transparent;
 		transition: text-decoration-color var(--transition-duration);
+
+		@nest a:hover & {
+			text-decoration-color: inherit;
+		}
 	}
 
 	p {
@@ -90,19 +94,6 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 		@media (--viewport-md-down) {
 			font: var(--f-text-small-regular);
-		}
-	}
-
-	/* hover states - matches if any descendants are hovered */
-	a:has(:hover) {
-		cursor: pointer;
-
-		& img {
-			opacity: 0.9;
-		}
-
-		& h3 {
-			text-decoration-color: inherit;
 		}
 	}
 
