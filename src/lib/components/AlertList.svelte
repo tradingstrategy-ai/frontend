@@ -29,7 +29,13 @@ as children. The alert box is only displayed if one or more items are displayed
 			padding: 1rem;
 		}
 
-		&:empty {
+		&:empty,
+		&:-moz-only-whitespace {
+			display: none;
+		}
+
+		/* For Chrome and Safari; don't combine with above selector */
+		&:not(:has(li)) {
 			display: none;
 		}
 	}
