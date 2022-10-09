@@ -19,7 +19,7 @@ const config = {
 		svelte({
 			experimental: {
 				inspector: {
-					toggleKeyCombo: 'meta-shift',
+					toggleKeyCombo: 'control-meta',
 					holdMode: true,
 					showToggleButton: 'never'
 				}
