@@ -38,7 +38,7 @@
 			{/each}
 		</ul>
 	{:else}
-		<div>Search exchanges, tokens and trading pairs.</div>
+		<div class="fallback">Search exchanges, tokens and trading pairs.</div>
 	{/if}
 </div>
 
@@ -92,5 +92,9 @@
 		@media (--viewport-sm-down) {
 			gap: 1.25rem;
 		}
+	}
+
+	.fallback {
+		font: var(--f-h4-roman);
 	}
 </style>
