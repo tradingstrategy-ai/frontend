@@ -26,10 +26,6 @@ Advanced Search page
 		facet_by: ['type', 'blockchain', 'exchange'],
 		per_page: 200
 	});
-
-	function toggleFilterPanel() {
-		filterPanelOpen = !filterPanelOpen;
-	}
 </script>
 
 <svelte:head>
@@ -43,15 +39,13 @@ Advanced Search page
 	</header>
 
 	<section class="ds-container">
-		<div class="filter-panel" class:open={filterPanelOpen}>
-			<FilterPanel bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
-		</div>
+		<FilterPanel bind:open={filterPanelOpen} bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
 		<SearchPanel
 			bind:sortOption
 			bind:q
 			{hasSearch}
 			hits={$tradingEntities.hits}
-			on:toggleFilterPanel={toggleFilterPanel}
+			on:showFilters={() => (filterPanelOpen = true)}
 		/>
 	</section>
 </main>
@@ -81,12 +75,6 @@ Advanced Search page
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
-		}
-	}
-
-	@media (--viewport-md-down) {
-		.filter-panel:not(.open) {
-			display: none;
 		}
 	}
 </style>

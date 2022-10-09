@@ -41,7 +41,7 @@
 		gap: 1rem;
 		grid-auto-rows: min-content;
 		background: var(--c-body);
-		box-shadow: 0.25rem 0 2rem var(--c-border-1);
+		box-shadow: -0.25rem 0 2rem var(--c-shadow-1);
 		transform: translateX(calc(100% + 2rem));
 		transition: transform 0.25s;
 

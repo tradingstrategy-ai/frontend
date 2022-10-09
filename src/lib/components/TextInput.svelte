@@ -41,7 +41,7 @@
 		width: var(--text-input-width, auto);
 		height: var(--text-input-height, var(--height));
 		max-width: var(--text-input-max-width, auto);
-		font-weight: 400;
+		font: var(--text-input-font, var(--font));
 
 		&.disabled {
 			opacity: 0.65;
@@ -62,22 +62,22 @@
 
 	.size-sm {
 		--height: 2rem;
-		font: var(--fs-ui-sm);
+		--font: 400 var(--fs-ui-sm);
 	}
 
 	.size-md {
 		--height: 2.25rem;
-		font: var(--fs-ui-md);
+		--font: 400 var(--fs-ui-md);
 	}
 
 	.size-lg {
 		--height: 2.625rem;
-		font: var(--fs-ui-lg);
+		--font: 400 var(--fs-ui-lg);
 	}
 
 	.size-xl {
 		--height: 3rem;
-		font: var(--fs-ui-xl);
+		--font: 400 var(--fs-ui-xl);
 	}
 
 	input {
@@ -86,6 +86,7 @@
 		border: 2px solid var(--c-border-2);
 		border-radius: 0.5rem;
 		background: var(--c-body);
+		font: inherit;
 		color: var(--c-text-1);
 
 		&::placeholder {

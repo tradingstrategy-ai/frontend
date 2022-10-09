@@ -127,7 +127,7 @@ body {
 	--c-border-1: var(--cm-light, var(--c-gray-dark)) var(--cm-dark, var(--c-gray));
 	--c-border-2: var(--cm-light, var(--c-ink)) var(--cm-dark, var(--c-parchment));
 
-	--c-shadow-1: var(--cm-light, rgba(0, 0, 0, 0.12)) var(--cm-dark, rgba(255, 255, 255, 0.12));
+	--c-shadow-1: var(--cm-light, rgba(0, 0, 0, 0.2)) var(--cm-dark, rgba(255, 255, 255, 0.2));
 }
 
 body {

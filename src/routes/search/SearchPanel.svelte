@@ -26,7 +26,7 @@
 		<div class="sort-select">
 			<SortSelect bind:value={sortOption} />
 		</div>
-		<button class="filter-toggle" on:click={() => dispatch('toggleFilterPanel')}>
+		<button class="filter-toggle" on:click={() => dispatch('showFilters')}>
 			<Icon name="filter" />
 		</button>
 	</div>
@@ -61,7 +61,13 @@
 
 		@media (--viewport-md-down) {
 			height: 3.5rem;
+			--text-input-width: 100%;
 			--text-input-height: 100%;
+			--text-input-font: var(--fs-ui-lg);
+		}
+
+		& :global input:not(:placeholder-shown) {
+			font-weight: 700;
 		}
 	}
 
@@ -73,6 +79,7 @@
 
 	.filter-toggle {
 		width: 3.5rem;
+		padding: 0;
 		border: 2px solid var(--c-border-2);
 		border-radius: 0.5em;
 		font-size: 1.25rem;
@@ -95,6 +102,7 @@
 	}
 
 	.fallback {
+		height: calc(100vh - 28rem);
 		font: var(--f-h4-roman);
 	}
 </style>
