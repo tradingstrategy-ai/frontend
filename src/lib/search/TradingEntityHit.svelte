@@ -5,12 +5,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 #### Usage:
 ```tsx
-  <TradingEntityHit
-    {document}
-    layout="basic|advanced"
-    selected={true}
-    on:mouseenter={handleMouseEnter}
-  />
+  <TradingEntityHit {document} layout="basic|advanced" />
 ```
 -->
 <script lang="ts">
@@ -28,7 +23,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	 */
 	export let document;
 	export let layout: 'basic' | 'advanced';
-	export let selected = false;
 
 	const isBasicLayout = layout === 'basic';
 	const isAdvancedLayout = layout === 'advanced';
@@ -44,8 +38,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	});
 </script>
 
-<li on:mouseenter>
-	<a href={document.url_path} class={layout} class:selected class:isLowQuality on:mousedown|preventDefault>
+<li>
+	<a href={document.url_path} class={layout} class:isLowQuality>
 		<div class="type type-{document.type}">{document.type}</div>
 		<div class="info">
 			<div class="primary">
@@ -109,6 +103,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		align-items: center;
 		border: 2px solid var(--c-border-2);
 		border-radius: 0.5rem;
+		outline: none;
 
 		&.basic {
 			border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
@@ -128,9 +123,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			opacity: 0.5;
 		}
 
-		&.selected,
 		&:hover {
 			background: var(--c-background-4);
+		}
+
+		&:focus {
+			background: var(--c-background-4);
+			border-color: var(--c-border-2);
 		}
 	}
 
