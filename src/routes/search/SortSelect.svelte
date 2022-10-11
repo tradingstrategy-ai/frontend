@@ -41,7 +41,7 @@ pre-defined set of sort options.
 	export let value: string;
 </script>
 
-<DropDown bind:value size="xl">
+<DropDown bind:value size="xl" --drop-down-width="100%">
 	{#each Object.entries(sortOptions) as [key, option] (key)}
 		<option value={key}>
 			{option.label}
