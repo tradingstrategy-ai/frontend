@@ -101,12 +101,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		grid-template-columns: auto 1fr;
 		gap: 1em;
 		align-items: center;
-		border: 2px solid var(--c-border-2);
-		border-radius: 0.5rem;
+		border: 2px solid;
+		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
+		border-radius: 0.625rem;
 		outline: none;
 
 		&.basic {
-			border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
 			padding: 0.875rem 0.75rem;
 		}
 
@@ -116,6 +116,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			@media (--viewport-md-up) {
 				gap: 1.75rem;
 				padding: 1.125rem 1.375rem;
+				border-color: var(--c-border-2);
 			}
 		}
 
