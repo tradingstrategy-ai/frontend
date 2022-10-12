@@ -6,6 +6,7 @@ export { default as BlogPostTimestamp } from './BlogPostTimestamp.svelte';
 export { default as Button } from './Button.svelte';
 export { default as ContentListBox } from './ContentListBox.svelte';
 export { default as ContentTile } from './ContentTile.svelte';
+export { default as DropDown } from './DropDown.svelte';
 export { default as Footer } from './Footer.svelte';
 export { default as Header } from './Header.svelte';
 export { default as Hero } from './Hero.svelte';

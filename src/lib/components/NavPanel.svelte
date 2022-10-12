@@ -33,16 +33,15 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-		box-sizing: border-box;
 		width: 100%;
 		max-width: 420px;
 		padding: 1rem;
+		overflow-y: auto;
 		display: grid;
 		gap: 1rem;
 		grid-auto-rows: min-content;
-		align-items: end;
 		background: var(--c-body);
-		box-shadow: 0.25rem 0 2rem var(--c-border-1);
+		box-shadow: -0.25rem 0 2rem var(--c-shadow-1);
 		transform: translateX(calc(100% + 2rem));
 		transition: transform 0.25s;
 

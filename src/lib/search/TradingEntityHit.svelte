@@ -5,12 +5,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 #### Usage:
 ```tsx
-  <TradingEntityHit
-    {document}
-    layout="basic|advanced"
-    selected={true}
-    on:mouseenter={handleMouseEnter}
-  />
+  <TradingEntityHit {document} layout="basic|advanced" />
 ```
 -->
 <script lang="ts">
@@ -28,9 +23,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	 */
 	export let document;
 	export let layout: 'basic' | 'advanced';
-	export let selected = false;
-
-	const label = document.type === 'exchange' ? 'DEX' : document.type;
 
 	const isBasicLayout = layout === 'basic';
 	const isAdvancedLayout = layout === 'advanced';
@@ -46,9 +38,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	});
 </script>
 
-<li class={layout} class:selected class:isLowQuality on:mouseenter>
-	<a href={document.url_path} on:mousedown|preventDefault>
-		<div class="type badge-{document.type}">{label}</div>
+<li>
+	<a href={document.url_path} class={layout} class:isLowQuality>
+		<div class="type type-{document.type}">{document.type}</div>
 		<div class="info">
 			<div class="primary">
 				<div class="desc">{document.description}</div>
@@ -63,24 +55,22 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			</div>
 
 			{#if isAdvancedLayout && hasTradingData}
-				<div class="secondary d-flex flex-grow-1">
+				<div class="secondary">
 					<div class="volume">
-						<dt>volume 24h:</dt>
-						<dd>{formatDollar(document.volume_24h)}</dd>
+						<dt>Volume 24h</dt>
+						<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
 					</div>
 					<div class="liquidity">
-						<dt>liquidity:</dt>
+						<dt>Liquidity</dt>
 						<dd>
-							{formatDollar(document.liquidity)}
+							{formatDollar(document.liquidity, 1, 1)}
 							{#if isLowQuality}
 								<Icon name="warning" />
 							{/if}
 						</dd>
 					</div>
-					<div class="price-change">
-						<dd class={priceChangeClass}>
-							{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
-						</dd>
+					<div class="price-change {priceChangeClass}">
+						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
 					</div>
 				</div>
 			{/if}
@@ -88,25 +78,22 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	</a>
 </li>
 
-<style>
+<style lang="postcss">
+	.type-exchange {
+		background-color: var(--c-wood);
+	}
+
+	.type-token {
+		background-color: var(--c-parchment-super-dark);
+	}
+
+	.type-pair {
+		background-color: var(--c-gray-extra-dark);
+	}
+
 	li {
 		display: grid;
 		list-style-type: none;
-	}
-
-	.basic {
-		height: 3.75rem;
-		padding-inline: 0.625rem;
-	}
-
-	.advanced {
-		gap: 1rem;
-		border: solid var(--c-border-2);
-		border-width: 1px 0 0 0;
-	}
-
-	.advanced:last-child {
-		border-bottom-width: 1px;
 	}
 
 	a {
@@ -114,136 +101,125 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		grid-template-columns: auto 1fr;
 		gap: 1em;
 		align-items: center;
-	}
+		border: 2px solid;
+		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
+		border-radius: 0.625rem;
+		outline: none;
 
-	.advanced a {
-		padding: 0.75rem 0;
-	}
+		&.basic {
+			padding: 0.875rem 0.75rem;
+		}
 
-	.selected {
-		background: var(--c-background-4);
+		&.advanced {
+			padding: 0.625rem 0.75rem;
+
+			@media (--viewport-md-up) {
+				gap: 1.75rem;
+				padding: 1.125rem 1.375rem;
+				border-color: var(--c-border-2);
+			}
+		}
+
+		&.isLowQuality {
+			opacity: 0.5;
+		}
+
+		&:hover {
+			background: var(--c-background-4);
+		}
+
+		&:focus {
+			background: var(--c-background-4);
+			border-color: var(--c-border-2);
+		}
 	}
 
 	.type {
 		display: grid;
 		align-content: center;
 		border-radius: 0.375rem;
-		height: 1.75rem;
-		width: 3.5rem;
+		padding: 0.25rem 0.625rem;
 		font: 500 var(--fs-ui-sm);
+		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
-		color: var(--c-parchment);
+
+		@media (--viewport-md-up) {
+			@nest .advanced & {
+				padding: 0.5rem 1.25rem;
+				font: 500 var(--fs-ui-lg);
+			}
+		}
 	}
 
 	.info {
 		display: grid;
+		gap: 0.25rem;
 	}
 
 	.primary {
 		display: grid;
-		align-items: center;
 		grid-template-columns: 1fr auto;
 		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
-	}
 
-	.desc {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
+		@media (--viewport-md-up) {
+			@nest .advanced & {
+				font: 600 var(--fs-heading-md);
+				letter-spacing: 0;
+			}
+		}
 
-	.price-change,
-	.price {
-		text-align: right;
-		white-space: pre;
-		font-weight: 700;
-	}
+		& .desc {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
 
-	.basic .price-change::after {
-		display: inline-block;
-		width: 1em;
-	}
+		& .price-change {
+			font-weight: 700;
+		}
 
-	.basic .price-change-black::after {
-		content: '-';
-	}
-
-	.basic .price-change-green::after {
-		content: '▲';
-	}
-
-	.basic .price-change-red::after {
-		content: '▼';
+		@media (--viewport-sm-down) {
+			& .price {
+				font-weight: 700;
+			}
+		}
 	}
 
 	.secondary {
-		justify-content: space-between;
-		font: var(--f-ui-xsmall-roman);
-	}
+		display: flex;
+		flex-direction: row;
+		gap: 0.625em;
+		font: 400 var(--fs-ui-md);
 
-	.secondary dt {
-		display: inline;
-		font-weight: 400;
-	}
-
-	.secondary dd {
-		display: inline;
-		font-weight: 700;
-	}
-
-	.isLowQuality a {
-		opacity: 0.5;
-	}
-
-	.advanced.isLowQuality div.liquidity {
-		position: relative;
-	}
-
-	/* Entity badge colors */
-	.badge-exchange {
-		background-color: var(--c-bullish-dark);
-	}
-
-	.badge-token {
-		background-color: #b99537;
-	}
-
-	.badge-pair {
-		background-color: #496abf;
-	}
-
-	@media (--viewport-md-up) {
-		.advanced {
-			border-width: 1px;
-			border-radius: 0.625rem;
+		@media (--viewport-sm-down) {
+			font: 400 var(--fs-ui-sm);
 		}
 
-		.advanced a {
-			padding: 1.25rem 1.5rem;
+		@media (width < 576px) {
+			font: 400 var(--fs-ui-xs);
 		}
 
-		.advanced .type {
-			width: 4.25rem;
-			height: 2.25rem;
-			font: 500 var(--fs-ui-md);
-			letter-spacing: 0;
+		& dt {
+			display: inline-block;
+			font-weight: 400;
 		}
 
-		.advanced .primary {
-			font: 500 var(--fs-ui-lg);
-			letter-spacing: 0;
+		& dd {
+			display: inline-block;
+			margin: 0;
+			font-weight: 700;
 		}
 
-		.secondary div {
-			width: 12em;
-		}
-
-		.secondary div.price-change {
-			width: 5em;
+		& .price-change {
 			text-align: right;
+			flex: 1;
+		}
+
+		& :global svg {
+			margin-top: -3px;
 		}
 	}
 </style>
