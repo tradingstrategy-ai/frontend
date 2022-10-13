@@ -73,6 +73,7 @@ chartiq dependency.
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { fade } from 'svelte/transition';
 	import Spinner from 'svelte-spinner';
+	import ChartActivityTracker from './ChartActivityTracker';
 
 	export let feed: object;
 	export let pairId: number | string;
@@ -97,7 +98,9 @@ chartiq dependency.
 		return formatDollar(value, 3, 3, '');
 	}
 
-	function chartIQ(node: HTMLElement, options) {
+	function chartIQ(node: HTMLElement, options: any) {
+		let chartTracker;
+
 		let chartEngine = new CIQ.ChartEngine({
 			container: node,
 			layout: { crosshair: true },
@@ -165,6 +168,7 @@ chartiq dependency.
 			// load the chart
 			chartEngine.loadChart(pairId, { periodicity }, () => {
 				loading = false;
+				chartTracker ??= new ChartActivityTracker(chartEngine);
 			});
 		}
 		update();
