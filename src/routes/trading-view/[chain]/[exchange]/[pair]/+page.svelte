@@ -8,7 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { AlertItem, AlertList, Button, Icon, PageHeader } from '$lib/components';
+	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -124,6 +124,7 @@ Render the pair trading page
 
 		& .ds-2-col {
 			row-gap: 2rem;
+			align-items: start;
 		}
 	}
 

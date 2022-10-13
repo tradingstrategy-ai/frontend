@@ -76,7 +76,6 @@
 
 <style lang="postcss">
 	.summary {
-		align-self: start;
 		display: grid;
 		font: var(--f-ui-large-roman);
 		gap: 1.4em;
