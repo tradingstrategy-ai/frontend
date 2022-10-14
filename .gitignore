@@ -6,6 +6,10 @@ node_modules
 .idea
 .vscode
 
+# Playwright testing
+/test-results
+/playwright-report
+
 # Not redistribuable
 static/fonts/NeueHaasGroteskDisplay
 static/fonts/NeueHaasGroteskText
