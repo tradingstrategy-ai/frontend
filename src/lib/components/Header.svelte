@@ -7,7 +7,7 @@
 
 <header>
 	<div class="logo">
-		<a href="/"><Logo /></a>
+		<a href="/" aria-label="Home"><Logo /></a>
 	</div>
 
 	<nav class="desktop-only">

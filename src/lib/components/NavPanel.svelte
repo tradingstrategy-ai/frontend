@@ -11,7 +11,7 @@
 {#if !hidden}
 	<nav class:open>
 		<header>
-			<a href="/" on:click={close}><Logo /></a>
+			<a href="/" aria-label="Home" on:click={close}><Logo /></a>
 			<button on:click={close}>
 				<Icon name="cancel" />
 			</button>
