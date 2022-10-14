@@ -45,10 +45,8 @@ jobs:
         run: npm ci
       - name: Setup submodules
         run: bash scripts/build-deps.sh
-      - name: Run Cypress
-        run: bash scripts/run-cypress.bash
-        env:
-          CYPRESS_KEY: ${{ secrets.CYPRESS_KEY }}
+      - name: Run Tests
+        run: npm run test
 
   build:
     runs-on: ubuntu-latest

@@ -38,7 +38,6 @@ Display site-wide search box for use in top-nav.
 	<TextInput
 		bind:value={q}
 		type="search"
-		data-cy="search"
 		placeholder="Search"
 		autocapitalize="none"
 		spellcheck="false"

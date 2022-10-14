@@ -42,7 +42,7 @@
 
 <main>
 	<header class="ds-container">
-		<h1 data-testid="title">Export trading pair data for {exchangeName}</h1>
+		<h1>Export trading pair data for {exchangeName}</h1>
 		<p>Download data as Microsoft Excel file for analysis.</p>
 	</header>
 

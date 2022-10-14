@@ -27,7 +27,7 @@
 <main>
 	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
 
-	<section class="ds-container info" data-testid="statistics">
+	<section class="ds-container info">
 		<div class="ds-2-col">
 			<InfoTable details={data} {nameDetails} />
 			<InfoSummary details={data} />
@@ -47,7 +47,7 @@
 		</div>
 	</section>
 
-	<section class="ds-container trading-pairs" data-testid="pairs">
+	<section class="ds-container trading-pairs">
 		<h2>Trading Pairs</h2>
 
 		<PairExplorer

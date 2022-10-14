@@ -187,11 +187,7 @@ chartiq dependency.
 
 {#await initialize() then success}
 	{#if success}
-		<div
-			class="chart-container"
-			use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate, exchangeType }}
-			data-testid="chartiq-widget"
-		>
+		<div class="chart-container" use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate, exchangeType }}>
 			{#if loading}
 				<div class="loading" transition:fade={{ duration: 250 }}>
 					<Spinner size="60" color="var(--c-text-1)" />
