@@ -56,18 +56,20 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 			{#if isAdvancedLayout && hasTradingData}
 				<div class="secondary">
-					<div class="volume">
-						<dt>Volume 24h</dt>
-						<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
-					</div>
-					<div class="liquidity">
-						<dt>Liquidity</dt>
-						<dd>
-							{formatDollar(document.liquidity, 1, 1)}
-							{#if isLowQuality}
-								<Icon name="warning" />
-							{/if}
-						</dd>
+					<div class="measures">
+						<div class="volume">
+							<dt>Volume 24h</dt>
+							<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
+						</div>
+						<div class="liquidity">
+							<dt>Liquidity</dt>
+							<dd>
+								{formatDollar(document.liquidity, 1, 1)}
+								{#if isLowQuality}
+									<Icon name="warning" />
+								{/if}
+							</dd>
+						</div>
 					</div>
 					<div class="price-change {priceChangeClass}">
 						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
@@ -157,9 +159,16 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		gap: 0.25rem;
 	}
 
+	.primary,
+	.secondary {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		overflow: hidden;
+	}
+
 	.primary {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		gap: 0.5rem;
 		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
 
@@ -177,6 +186,16 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			overflow: hidden;
 		}
 
+		& .price-change,
+		& .price {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			max-width: 50%;
+			overflow-wrap: break-word;
+			text-align: right;
+		}
+
 		& .price-change {
 			font-weight: 700;
 		}
@@ -189,8 +208,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.secondary {
-		display: flex;
-		flex-direction: row;
 		gap: 0.625em;
 		font: 400 var(--fs-ui-md);
 
@@ -202,9 +219,15 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			font: 400 var(--fs-ui-xs);
 		}
 
+		& .measures {
+			display: flex;
+			gap: inherit;
+		}
+
 		& dt {
 			display: inline-block;
 			font-weight: 400;
+			white-space: nowrap;
 		}
 
 		& dd {
@@ -214,8 +237,14 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		& .price-change {
-			text-align: right;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
 			flex: 1;
+			min-width: 5em;
+			max-width: 50%;
+			overflow-wrap: break-word;
+			text-align: right;
 		}
 
 		& :global svg {
