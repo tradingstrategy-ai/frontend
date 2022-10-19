@@ -46,10 +46,10 @@
 		gap: 0.75rem;
 
 		& p {
-			font: var(--f-h4-roman);
+			font: var(--f-h3-roman);
 
-			@media (--viewport-lg-up) {
-				font: var(--f-h3-roman);
+			@media (--viewport-md-down) {
+				font: var(--f-h4-roman);
 			}
 		}
 	}
