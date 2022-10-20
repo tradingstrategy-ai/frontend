@@ -27,7 +27,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 	export let publishedAt: string;
 </script>
 
-<a class:featured href={`/blog/${slug}`}>
+<a class:featured href={`/blog/${slug}`} data-testid="blog-post-tile">
 	<img src={imageUrl} alt={imageAltText} />
 
 	<div>
