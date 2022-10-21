@@ -7,9 +7,9 @@ test.describe('home page', () => {
 
 	test('should display impressive numbers', async ({ page }) => {
 		const impressiveSection = page.getByText(/Market data and trading strategy framework/);
-		await expect(impressiveSection.getByText(/[\d.,]+ trading pairs/)).toBeVisible();
-		await expect(impressiveSection.getByText(/\$[\d.,]+[kMB] liquidity/)).toBeVisible();
-		await expect(impressiveSection.getByText(/\d blockchains/)).toBeVisible();
+		await expect(impressiveSection).toHaveText(/[\d.,]+ trading pairs/);
+		await expect(impressiveSection).toHaveText(/\$[\d.,]+[kMB] liquidity/);
+		await expect(impressiveSection).toHaveText(/\d blockchains/);
 	});
 
 	test('should display best/worst performing trades', async ({ page }) => {
