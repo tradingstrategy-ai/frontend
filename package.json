@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "test:integration": "playwright test --config tests/integration",
     "test:e2e": "playwright test --config tests/e2e",
+    "test": "npm run test:integration && npm run test:e2e",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check --plugin-search-dir=. . && eslint .",
