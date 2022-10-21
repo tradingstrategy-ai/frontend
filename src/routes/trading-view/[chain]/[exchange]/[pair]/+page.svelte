@@ -47,7 +47,7 @@ Render the pair trading page
 <main>
 	<PageHeader title={summary.pair_symbol} subtitle="token pair on {details.exchange_name} on {details.chain_name}" />
 
-	<section class="ds-container info">
+	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
 			<InfoTable {summary} {details} />
 			<InfoSummary {summary} {details} />
