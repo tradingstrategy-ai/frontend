@@ -1,9 +1,10 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
+import { webServerCommand } from '../helpers.js';
 
 const config: PlaywrightTestConfig = {
 	testDir: '.',
 	webServer: {
-		command: 'npm run build && npm run preview',
+		command: webServerCommand(),
 		port: 4173
 	},
 	use: {
