@@ -8,6 +8,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
 import fontDisplay from 'postcss-font-display';
+import jsonServer from 'vite-plugin-simple-json-server';
 
 const kitPlugins = sveltekit();
 
@@ -35,6 +36,14 @@ const config = {
 		replace({
 			values: { 'sourceMappingURL=chartiq.css.map': '' },
 			preventAssignment: true
+		}),
+
+		// vite plugin to create a mock JSON api for integration tests
+		// only available when using `npm run dev` or `npm run preview`
+		// https://github.com/alextim/vite-plugin-simple-json-server/
+		jsonServer({
+			logLevel: 'silent',
+			mockDir: 'tests/fixtures'
 		})
 	],
 
@@ -67,6 +76,8 @@ const config = {
 		}
 	},
 
+	// vitest configuration for unit tests (`npm run test:units`)
+	// https://vitest.dev/config/
 	test: {
 		environment: 'happy-dom',
 		globals: true,

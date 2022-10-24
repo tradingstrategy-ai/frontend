@@ -9,3 +9,10 @@ export function webServerCommand() {
 	}
 	return 'npm run build && npm run preview';
 }
+
+export function webServerConfig(mode: string) {
+	return {
+		command: `${webServerCommand()} -- --mode=${mode}`,
+		port: 4173
+	};
+}
