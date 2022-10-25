@@ -9,6 +9,7 @@ import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
 import fontDisplay from 'postcss-font-display';
 import jsonServer from 'vite-plugin-simple-json-server';
+import GithubActionsReporter from 'vitest-github-actions-reporter';
 
 const kitPlugins = sveltekit();
 
@@ -82,6 +83,7 @@ const config = {
 		environment: 'happy-dom',
 		globals: true,
 		include: ['src/**/*.test.ts'],
+		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
 		setupFiles: 'test.config.ts'
 	}
 };

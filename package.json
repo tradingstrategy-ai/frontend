@@ -56,7 +56,8 @@
     "typescript": "^4.7.4",
     "vite": "^3.1.0",
     "vite-plugin-simple-json-server": "^0.6.1",
-    "vitest": "^0.24.3"
+    "vitest": "^0.24.3",
+    "vitest-github-actions-reporter": "^0.8.3"
   },
   "dependencies": {
     "@fontsource/fira-mono": "^4.2.2",
