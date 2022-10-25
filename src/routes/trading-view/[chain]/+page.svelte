@@ -3,7 +3,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
-	import Header from './Header.svelte';
+	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
 
@@ -18,7 +18,7 @@
 <Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
 
 <main>
-	<Header name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
+	<ChainHeader name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">
