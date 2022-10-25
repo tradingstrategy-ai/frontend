@@ -14,15 +14,7 @@
 
 <div class="search-panel">
 	<div class="search-bar">
-		<TextInput
-			size="xl"
-			type="search"
-			data-cy="search"
-			placeholder="Search"
-			autocapitalize="none"
-			spellcheck="false"
-			bind:value={q}
-		/>
+		<TextInput size="xl" type="search" placeholder="Search" autocapitalize="none" spellcheck="false" bind:value={q} />
 		<div class="sort-select">
 			<SortSelect bind:value={sortOption} />
 		</div>

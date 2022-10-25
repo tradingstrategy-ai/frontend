@@ -64,13 +64,7 @@ npm install --save datatables.net-responsive-bs4
 
 <div class="datatables-wrapper">
 	<div class="table-responsive">
-		<table
-			use:dataTable
-			class="table"
-			class:clickable={clickableRows}
-			style:display={loaded ? 'table' : 'none'}
-			data-cy="datatables-table"
-		>
+		<table use:dataTable class="table" class:clickable={clickableRows} style:display={loaded ? 'table' : 'none'}>
 			<thead>
 				<tr>
 					{#each columns as column}

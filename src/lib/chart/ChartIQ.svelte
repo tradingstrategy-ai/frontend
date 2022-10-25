@@ -190,7 +190,7 @@ chartiq dependency.
 		<div
 			class="chart-container"
 			use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate, exchangeType }}
-			data-testid="chartiq-widget"
+			data-testid="chartIQ"
 		>
 			{#if loading}
 				<div class="loading" transition:fade={{ duration: 250 }}>

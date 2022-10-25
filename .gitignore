@@ -6,18 +6,9 @@ node_modules
 .idea
 .vscode
 
-# cypress
-screenshots
-videos
-out.js
-examples/*/cypress/logs
-examples/*/cypress/downloads
-snapshots.js
-.nyc_output
-coverage
-dist
-test-data.json
-examples/stubbing-spying__intercept/users5.json
+# Playwright testing
+/test-results
+/playwright-report
 
 # Not redistribuable
 static/fonts/NeueHaasGroteskDisplay

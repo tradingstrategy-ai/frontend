@@ -1,0 +1,9 @@
+{
+	"oracles": 1,
+	"blockchains": 3,
+	"exchanges": 1000,
+	"pairs": 15000,
+	"tokens": 10000,
+	"database_size": 1000000000,
+	"liquidity": 1234567890.123
+}

@@ -20,7 +20,7 @@
 <main>
 	<Header name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
 
-	<section class="ds-container summary-data">
+	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">
 			<BlockInfoTile title="Last indexed block" count={data.end_block} timestamp={data.last_swap_at} />
 			<BlockInfoTile title="First indexed block" count={data.start_block} timestamp={data.first_swap_at} />
@@ -51,7 +51,7 @@
 		/>
 	</section>
 
-	<section id="exchanges" class="ds-container explorer-wrapper">
+	<section id="exchanges" class="ds-container explorer-wrapper" data-testid="exchanges">
 		<header>
 			<h2>Exchanges on {data.chain_name}</h2>
 			<p>Showing exchanges with trading activity in last 30 days.</p>
@@ -64,7 +64,7 @@
 		/>
 	</section>
 
-	<section id="trading-pairs" class="ds-container explorer-wrapper">
+	<section id="trading-pairs" class="ds-container explorer-wrapper" data-testid="trading-pairs">
 		<header>
 			<h2>Trading pairs on {data.chain_name}</h2>
 		</header>
