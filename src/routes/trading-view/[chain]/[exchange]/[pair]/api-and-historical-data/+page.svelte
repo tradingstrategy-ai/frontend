@@ -19,9 +19,15 @@ Real time examples for the API
 </script>
 
 <svelte:head>
+
 	<title>
-		{details.pair_symbol} API and historical data
+		{summary.pair_symbol} on {summary.exchange_name} API and data
 	</title>
+
+	<meta
+		name="description"
+		content={`Trading data for ${summary.pair_symbol} on ${summary.exchange_name} exchange on ${summary.chain_name} blockchain`}
+	/>
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
@@ -31,7 +37,7 @@ Real time examples for the API
 
 	<p>
 		Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on
-		<strong>{summary.exchange_name}</strong>.
+		<strong>{summary.exchange_name}</strong> on {summary.chain_name} blockchain.
 	</p>
 
 	<p>
