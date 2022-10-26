@@ -102,21 +102,14 @@ The run:
 ```shell
 ssh $PROD
 cd frontend
-# Check that prettier passes
+
+# Reads GHCR token and other secrets from this file
 source ~/secrets.env
 
-# Create a GHCR access keys if not available yet.
-# These will be permanently stored in
-# .docker/config.json
-# Password is your PAT with GHCR perms, see below.
-# docker login ghcr.io -u miohtama
-
-# Pass the currently acivated version tag to the docker
-# to pull the right image, but also to the
-# container itself to display the running version
-# (see /diagnostics)
-# Error "Error response from daemon: manifest unknown" means that the image build is not ready
+# Choose the version to run in the production
 export TS_PUBLIC_FRONTEND_VERSION_TAG=v48
+
+# Restart production with a new version
 docker-compose up -d
 ```
 
