@@ -2,6 +2,14 @@
 
 The SvelteKit is run in a docker container.
 
+### Creating a new release
+
+To build and tag a new Docker image jstjust run the shortcut script locally:
+
+```shell
+bash scripts/release.sh
+```
+
 ## Production
 
 ### Building the container
@@ -108,7 +116,7 @@ source ~/secrets.env
 # container itself to display the running version
 # (see /diagnostics)
 # Error "Error response from daemon: manifest unknown" means that the image build is not ready
-export TS_PUBLIC_FRONTEND_VERSION_TAG=v3
+export TS_PUBLIC_FRONTEND_VERSION_TAG=v48
 docker-compose up -d
 ```
 

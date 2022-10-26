@@ -9,7 +9,7 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 Node v16+ required.
 
 You will need Python 2 for some legacy Node build tools on the theme package.
-[Install Python 2 for new macOS from this link](https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg).  
+[Install Python 2 for new macOS from this link](https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg).
 
 ```shell
 npm install

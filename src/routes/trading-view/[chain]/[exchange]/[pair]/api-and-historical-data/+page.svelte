@@ -19,7 +19,6 @@ Real time examples for the API
 </script>
 
 <svelte:head>
-
 	<title>
 		{summary.pair_symbol} on {summary.exchange_name} API and data
 	</title>
