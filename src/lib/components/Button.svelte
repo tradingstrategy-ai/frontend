@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from './Icon.svelte';
+	import { Icon } from '$lib/components';
 
 	export let disabled = false;
 	export let download: string | boolean | undefined = undefined;
@@ -35,7 +35,7 @@
 	{#if icon}<Icon name={icon} />{/if}
 </svelte:element>
 
-<style>
+<style lang="postcss">
 	.button {
 		display: inline-flex;
 		gap: 0.5em;
@@ -56,24 +56,32 @@
 		background: var(--c-background-3);
 		color: var(--c-text-6);
 		border-color: var(--c-background-3);
+
+		&:hover,
+		&:focus {
+			background: var(--cm-light, var(--c-gray-extra-dark)) var(--cm-dark, var(--c-parchment-extra-dark));
+			border-color: var(--cm-light, var(--c-gray-extra-dark)) var(--cm-dark, var(--c-parchment-extra-dark));
+		}
 	}
 
 	.secondary {
-		background: var(--c-background-5);
+		background: transparent;
 		color: var(--c-text-1);
 		border-color: var(--c-border-2);
+
+		&:hover,
+		&:focus {
+			background: var(--cm-light, var(--c-parchment-dark)) var(--cm-dark, var(--c-gray-extra-dark));
+			border-color: var(--cm-light, inherit) var(--cm-dark, var(--c-gray-dark));
+		}
 	}
 
 	:focus {
-		outline: 2px solid var(--c-background-4);
-	}
-
-	:hover {
-		opacity: 0.8;
+		outline: none;
 	}
 
 	:active {
-		opacity: 0.9;
+		opacity: 0.8;
 	}
 
 	.button[disabled] {

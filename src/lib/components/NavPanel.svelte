@@ -11,7 +11,7 @@
 {#if !hidden}
 	<nav class:open>
 		<header>
-			<a href="/" on:click={close}><Logo /></a>
+			<a href="/" aria-label="Home" on:click={close}><Logo /></a>
 			<button on:click={close}>
 				<Icon name="cancel" />
 			</button>
@@ -20,33 +20,34 @@
 			<slot />
 		</Menu>
 		<Footer small />
-		<ColorModePicker showLabel />
+		<div class="color-mode-picker">
+			<ColorModePicker showLabel />
+		</div>
 	</nav>
 {/if}
 
-<style>
+<style lang="postcss">
 	nav {
 		position: fixed;
 		z-index: 99;
 		top: 0;
 		right: 0;
 		bottom: 0;
-		box-sizing: border-box;
 		width: 100%;
 		max-width: 420px;
 		padding: 1rem;
+		overflow-y: auto;
 		display: grid;
 		gap: 1rem;
 		grid-auto-rows: min-content;
-		align-items: end;
 		background: var(--c-body);
-		box-shadow: 0.25rem 0 2rem var(--c-border-1);
+		box-shadow: -0.25rem 0 2rem var(--c-shadow-1);
 		transform: translateX(calc(100% + 2rem));
 		transition: transform 0.25s;
-	}
 
-	nav.open {
-		transform: translateX(0);
+		&.open {
+			transform: translateX(0);
+		}
 	}
 
 	header {
@@ -65,5 +66,10 @@
 		font-size: 16px;
 		padding: 0;
 		cursor: pointer;
+	}
+
+	.color-mode-picker {
+		margin-top: 2rem;
+		display: grid;
 	}
 </style>

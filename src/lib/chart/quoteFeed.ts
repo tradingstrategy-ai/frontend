@@ -38,6 +38,7 @@ export default function quoteFeed(type: 'price' | 'liquidity') {
 	async function fetchData(symbol, startDate, endDate, params) {
 		const urlParams = new URLSearchParams({
 			pair_id: symbol,
+			exchange_type: params.stx.exchangeType,
 			time_bucket: periodicityToTimeBucket(params.stx.getPeriodicity()),
 			start: dateUrlParam(startDate),
 			end: dateUrlParam(endDate)

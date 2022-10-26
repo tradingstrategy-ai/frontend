@@ -8,6 +8,7 @@
 	export let details: any;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
+		if (!dateStr) return '(data unavailable)';
 		const date = Date.parse(`${dateStr}Z`);
 		return formatDistanceToNowStrict(date, { addSuffix: true, ...options });
 	}
@@ -54,22 +55,27 @@
 	<p>
 		The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong> 24h trading volume with
 		<strong>{formatDollar(summary.usd_liquidity_latest)}</strong>
-		liquidity available at the moment. The trading of {summary.pair_symbol} started at
-		<strong>{formatTimeAgo(details.first_trade_at, { unit: 'day' })}</strong>. The last trade was seen less than
-		<strong>{formatTimeAgo(details.last_trade_at)}</strong>.
+		liquidity available at the moment.
+		{#if details.first_trade_at}
+			The trading of {summary.pair_symbol} started at
+			<strong>{formatTimeAgo(details.first_trade_at, { unit: 'day' })}</strong>.
+		{/if}
+		{#if details.last_trade_at}
+			The last trade was seen less than <strong>{formatTimeAgo(details.last_trade_at)}</strong>.
+		{/if}
 	</p>
 
 	{#if details.pair_contract_address}
-		<p class="smart-contract-address">
-			The trading pair pool smart contract address is:
-			<SmartContractWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
-		</p>
+		<SmartContractWidget
+			label="The trading pair pool smart contract address is"
+			address={details.pair_contract_address}
+			href={details.pair_explorer_link}
+		/>
 	{/if}
 </div>
 
 <style lang="postcss">
 	.summary {
-		align-self: start;
 		display: grid;
 		font: var(--f-ui-large-roman);
 		gap: 1.4em;
@@ -86,10 +92,5 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
-	}
-
-	.smart-contract-address {
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 </style>

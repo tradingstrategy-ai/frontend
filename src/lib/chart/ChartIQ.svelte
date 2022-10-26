@@ -5,8 +5,16 @@ chartiq dependency.
 
 #### Usage:
 ```tsx
-  <ChartIQ feed={quotefeed} pairId={12345} timeBucket="4h">
-    Fallback content to display if chartiq not imported
+	<ChartIQ
+		feed={quoteFeed}
+		pairId={12345}
+		exchangeType="uniswap_v2"
+		firstTradeDate="2020-01-02T00:00"
+		timeBucket="4h"
+		studies={['Volume Underlay']}
+		linker={chartLinker}
+	>
+		Fallback content to display if chartiq not imported
   </ChartIQ>
 ```
 -->
@@ -65,11 +73,13 @@ chartiq dependency.
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { fade } from 'svelte/transition';
 	import Spinner from 'svelte-spinner';
+	import ChartActivityTracker from './ChartActivityTracker';
 
 	export let feed: object;
 	export let pairId: number | string;
-	export let timeBucket: TimeBucket;
+	export let exchangeType: string;
 	export let firstTradeDate: string;
+	export let timeBucket: TimeBucket;
 	export let studies = [];
 	export let linker = null;
 
@@ -88,7 +98,9 @@ chartiq dependency.
 		return formatDollar(value, 3, 3, '');
 	}
 
-	function chartIQ(node: HTMLElement, options) {
+	function chartIQ(node: HTMLElement, options: any) {
+		let chartTracker;
+
 		let chartEngine = new CIQ.ChartEngine({
 			container: node,
 			layout: { crosshair: true },
@@ -150,10 +162,13 @@ chartiq dependency.
 			loading = true;
 			// hide the Y Axis on smaller screens
 			chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
-			// make firstTradeDate available to the quoteFeed
+			// make exchangeType and firstTradeDate available to the quoteFeed
+			chartEngine.exchangeType = exchangeType;
 			chartEngine.firstTradeDate = firstTradeDate;
+			// load the chart
 			chartEngine.loadChart(pairId, { periodicity }, () => {
 				loading = false;
+				chartTracker ??= new ChartActivityTracker(chartEngine);
 			});
 		}
 		update();
@@ -174,8 +189,8 @@ chartiq dependency.
 	{#if success}
 		<div
 			class="chart-container"
-			use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate }}
-			data-testid="chartiq-widget"
+			use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate, exchangeType }}
+			data-testid="chartIQ"
 		>
 			{#if loading}
 				<div class="loading" transition:fade={{ duration: 250 }}>

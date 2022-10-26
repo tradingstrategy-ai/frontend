@@ -80,8 +80,8 @@
 
 		&::before {
 			width: var(--skeleton-width, 100%);
-			top: var(--skeleton-padding, 0);
-			bottom: var(--skeleton-padding, 0);
+			height: var(--skeleton-height, 100%);
+			top: calc((100% - var(--skeleton-height)) / 2);
 
 			content: '';
 			position: absolute;

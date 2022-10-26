@@ -18,8 +18,6 @@ Display site-wide search box for use in top-nav.
 
 	let q = '';
 	let hasFocus = false;
-	let selectedIndex = 0;
-	let resultCount = 0;
 
 	$: tradingEntities.search({
 		q,
@@ -29,42 +27,21 @@ Display site-wide search box for use in top-nav.
 
 	$: hits = q ? $tradingEntities.hits : [];
 
-	$: {
-		resultCount = hits.length;
-		selectedIndex = Math.min(selectedIndex, Math.max(resultCount - 1, 0));
-	}
-
-	function handleKeydown(event) {
-		switch (event.key) {
-			case 'ArrowDown':
-				selectedIndex = (selectedIndex + 1) % resultCount;
-				break;
-			case 'ArrowUp':
-				selectedIndex = (selectedIndex + resultCount - 1) % resultCount;
-				break;
-			case 'Enter':
-				goto($tradingEntities.hits[selectedIndex].document.url_path);
-				break;
-			default:
-				return;
+	function handleKeydown({ key }: { key: string }) {
+		if (key === 'Enter') {
+			goto(`/search?q=${q}`);
 		}
-		event.preventDefault();
 	}
 </script>
 
-<div
-	class="search"
-	on:focus|capture={() => (hasFocus = true)}
-	on:blur|capture={() => (hasFocus = false)}
-	on:keydown={handleKeydown}
->
+<div class="search" on:focus|capture={() => (hasFocus = true)} on:blur|capture={() => (hasFocus = false)}>
 	<TextInput
+		bind:value={q}
 		type="search"
-		data-cy="search"
 		placeholder="Search"
 		autocapitalize="none"
 		spellcheck="false"
-		bind:value={q}
+		on:keydown={handleKeydown}
 	/>
 
 	{#if hasFocus}
@@ -72,12 +49,7 @@ Display site-wide search box for use in top-nav.
 			{#if q}
 				<ul>
 					{#each hits as { document }, index (document.id)}
-						<TradingEntityHit
-							{document}
-							layout="basic"
-							selected={index === selectedIndex}
-							on:mouseenter={() => (selectedIndex = index)}
-						/>
+						<TradingEntityHit {document} layout="basic" />
 					{/each}
 				</ul>
 			{/if}
@@ -94,17 +66,20 @@ Display site-wide search box for use in top-nav.
 	{/if}
 </div>
 
-<style>
+<style lang="postcss">
 	.search {
-		position: relative;
 		--text-input-width: 100%;
+
+		@media (width >= 576px) {
+			position: relative;
+		}
 	}
 
 	.results {
 		position: absolute;
 		z-index: 1;
 		right: 0;
-		width: 450px;
+		width: 100%;
 		margin-top: 0.25rem;
 
 		display: grid;
@@ -112,10 +87,15 @@ Display site-wide search box for use in top-nav.
 		padding: 0.75rem 0.625rem;
 		background: var(--c-body);
 		box-shadow: 0 0 0 1px var(--c-shadow-1), 0 4px 20px var(--c-shadow-1);
+
+		@media (width >= 576px) {
+			width: 450px;
+		}
 	}
 
 	ul {
 		display: grid;
+		gap: 1rem;
 		padding: 0;
 	}
 
@@ -126,15 +106,5 @@ Display site-wide search box for use in top-nav.
 		letter-spacing: 0.01em;
 		color: var(--c-text-7);
 		text-align: center;
-	}
-
-	@media (max-width: 576px) {
-		.search {
-			position: revert;
-		}
-
-		.results {
-			width: 100%;
-		}
 	}
 </style>

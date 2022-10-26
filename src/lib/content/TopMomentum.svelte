@@ -31,7 +31,7 @@ Display best or worst performing trading pairs.
 	}
 </script>
 
-<div>
+<div data-testid="top-momentum">
 	<h3>{name}</h3>
 	<ul>
 		{#each topPairs as pair}

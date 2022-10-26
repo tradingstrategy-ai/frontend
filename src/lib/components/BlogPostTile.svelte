@@ -16,7 +16,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 ```
 -->
 <script lang="ts">
-	import BlogPostTimestamp from './BlogPostTimestamp.svelte';
+	import { BlogPostTimestamp } from '$lib/components';
 
 	export let featured = false;
 	export let slug: string;
@@ -27,40 +27,53 @@ Display a blog post preview card (e.g, on home page or blog index).
 	export let publishedAt: string;
 </script>
 
-<a class:featured href={`/blog/${slug}`}>
+<a class:featured href={`/blog/${slug}`} data-testid="blog-post-tile">
 	<img src={imageUrl} alt={imageAltText} />
 
-	<div class="info">
+	<div>
 		<h3>{title}</h3>
 		<BlogPostTimestamp {publishedAt} />
 		<p>{excerpt}</p>
 	</div>
 </a>
 
-<style>
+<style lang="postcss">
 	a {
 		display: grid;
 		grid-template-rows: auto 1fr;
 		row-gap: 1rem;
 		align-items: start;
 		text-decoration: none;
+		pointer-events: none;
 		--transition-duration: 0.25s;
+	}
+
+	a > * {
+		pointer-events: all;
 	}
 
 	img {
 		width: 100%;
-		aspect-ratio: 9 / 5;
+		aspect-ratio: 8 / 5;
 		object-fit: cover;
 		transition: opacity var(--transition-duration);
+
+		@media (--viewport-md-down) {
+			aspect-ratio: 9 / 5;
+		}
+
+		@nest a:hover & {
+			opacity: 0.9;
+		}
 	}
 
-	a:hover img {
-		opacity: 0.9;
-	}
-
-	.info {
+	div {
 		display: grid;
-		gap: 0.75rem;
+		gap: 1.25rem;
+
+		@media (--viewport-md-down) {
+			gap: 0.75rem;
+		}
 	}
 
 	h3 {
@@ -69,27 +82,23 @@ Display a blog post preview card (e.g, on home page or blog index).
 		text-decoration: underline;
 		text-decoration-color: transparent;
 		transition: text-decoration-color var(--transition-duration);
-	}
 
-	a:hover h3 {
-		text-decoration-color: inherit;
+		@nest a:hover & {
+			text-decoration-color: inherit;
+		}
 	}
 
 	p {
-		font: 400 var(--fs-text-sm);
+		font: var(--f-text-body-regular);
 		color: var(--c-text-4);
+
+		@media (--viewport-md-down) {
+			font: var(--f-text-small-regular);
+		}
 	}
 
-	/* Desktop overrides */
+	/* Desktop featured post overrides */
 	@media (--viewport-lg-up) {
-		img {
-			aspect-ratio: 8 / 5;
-		}
-
-		.info {
-			gap: 1.25rem;
-		}
-
 		a.featured {
 			/* Span across container's columns */
 			grid-column: 1 / -1;
@@ -100,22 +109,18 @@ Display a blog post preview card (e.g, on home page or blog index).
 			column-gap: var(--blog-post-tile--column-gap, 2.5rem);
 			align-items: center;
 			--timestamp-font: 400 var(--fs-ui-xl);
-		}
 
-		.featured img {
-			aspect-ratio: 8 / 7;
-		}
+			& img {
+				aspect-ratio: 8 / 7;
+			}
 
-		.featured .info {
-			gap: 0.75rem;
-		}
+			& div {
+				gap: 0.75rem;
+			}
 
-		.featured h3 {
-			font: var(--f-h1-medium);
-		}
-
-		p {
-			font: 400 var(--fs-text-md);
+			& h3 {
+				font: var(--f-h1-medium);
+			}
 		}
 	}
 </style>

@@ -1,56 +1,100 @@
-# How to Test
+# Tests
 
-We use Cypress as our main tool for testing, the scripts are following the cypress standard.
+This application includes three test suites:
 
-### Test package
+1. **Unit Tests:** for testing individual components (except `+page` components) and library
+   functions / classes in isolation.
+2. **Integration Tests:** for testing `+page` components (which require a full browser context and a
+   node server); uses a mock API server to provide deterministic test data.
+3. **End-to-end Tests:** for smoke-tests to validate the full application stack against live
+   production data.
 
-Tests are in a separate package because of conflict of TS module type for SvelteKit (`type: "module"`)
-and Cypress (`type: "node"`).
-
-```shell
-cd tests
-npm install
-```
-
-### Start interactive Cypress
-
-Run cypress in the browser.
-
-![image](https://user-images.githubusercontent.com/3521485/136263427-8ade3dbe-d658-4502-80f8-02bccb4400f0.png)
-
-First, make sure you have an instance of the web server running on port 3000 (run from
-project root):
+See below to run each suite separately, or run all test suites sequentially with:
 
 ```shell
-npm run dev -- --port=3000
+npm run test # use --skip-build flag to save time if you have already run `npm build`
 ```
 
-Next, to run the full cypress test suite (run from `tests` directory):
+## Running Tests
+
+### Unit Tests
+
+Run once:
 
 ```shell
-npm run cypress:open
+npm run test:units
 ```
 
-Replace `open` with `run` in the above command to run the tests headless. Or run individual tests with:
+Watch for file changes:
 
 ```shell
-npx cypress run cypress/integration/about.spec.js
+npm run test:units:watch
 ```
 
-### Cypress for continous integration
+#### Options:
 
-Ensure that npm and submodule dependencies are installed, then run:
+Pass additional options to `vitest` after `--` – e.g.,
 
-```
-./script/run-cypress.bash
-```
+- `npm run test:units -- Blog` to only run tests that match "Blog"
+- `npm run test:units -- --help` to see additional `vitest` options
 
-This will install cypress dependencies, start a dev server on port 3000, run the tests, and kill the server on completion.
+See [Unit test frameworks](#unit-test-frameworks) below for additional info.
 
-### Run unit tests made with svelte-testing-library
-
-Still experimental we can run unit tests for components but not working with routes yet. This
+### Integration tests
 
 ```shell
-npm run test
+npm run test:integration
 ```
+
+#### Options:
+
+- use `--skip-build` flag if you already have a current build (saves significant time)
+- pass additional options to `playwright` after `--` – e.g.,
+  - `npm run test:integration -- trading-view` to only run tests that match "trading-view"
+  - `npm run test:integration -- --help` to see additional `playwright` options
+
+#### This command does the following:
+
+- runs tests in `tests/integration` folder (headlessly) and reports results
+- automatically runs `npm build` and starts a node preview server with `npm preview`
+- uses mock API data found in `tests/fixtures`
+
+See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
+
+### End-to-end tests
+
+```shell
+npm run test:e2e
+```
+
+#### Options:
+
+- see `test:integration` options above (supports the same options)
+
+#### This command does the following:
+
+- runs tests in `tests/e2e` folder (headlessly) and reports results
+- automatically runs `npm build` and starts a node preview server with `npm preview`
+- uses real production backend API
+
+See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
+
+## Test Frameworks
+
+### Unit test frameworks
+
+- [Vitest](https://vitest.dev/) – overall testing framework; see
+  [guide](https://vitest.dev/guide/), [API](https://vitest.dev/api/) and
+  [config](https://vitest.dev/config/) docs for additional info.
+- [Testing Library](https://testing-library.com/) – provides interface for inspecting and
+  interacting with the DOM, using the
+  [Svelte Testing Library](https://github.com/testing-library/svelte-testing-library) adapter.
+- [jest-dom](https://github.com/testing-library/jest-dom) – extends Jest with DOM-specific matchers.
+
+### Integration and e2e test frameworks
+
+- [Playwright](https://playwright.dev/) – overall testing framework; see
+  [docs](https://playwright.dev/docs/intro) and
+  [API](https://playwright.dev/docs/api/class-playwright) reference for additional info.
+- [vite-plugin-simple-json-server](https://github.com/alextim/vite-plugin-simple-json-server/tree/main/packages/vite-plugin-simple-json-server)
+  – used when running `integration` tests to serving mock API data found in `tests/fixtures`.

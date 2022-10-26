@@ -27,3 +27,9 @@ fi
 #(cd deps/trade-executor-frontend && npm run build)
 (cd deps/trade-executor-frontend && npm install)
 
+
+# Copy fonts if the optional font submodule exists
+if [ -d deps/fonts/NeueHaasGroteskDisplay ]; then
+  cp -r deps/fonts/NeueHaasGroteskDisplay/ static/fonts/NeueHaasGroteskDisplay
+  cp -r deps/fonts/NeueHaasGroteskText/ static/fonts/NeueHaasGroteskText
+fi

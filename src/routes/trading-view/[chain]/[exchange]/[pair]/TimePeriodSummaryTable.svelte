@@ -4,14 +4,14 @@ Display summary performance table for various periods.
 
 #### Usage:
 ```tsx
-	<TimePeriodSummaryTable pairId="1234" />
+	<TimePeriodSummaryTable pairId={1234} />
 ```
 -->
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
 	import TimePeriodPicker from './TimePeriodPicker.svelte';
 
-	export let pairId: string;
+	export let pairId: number | string;
 
 	let selected = 'daily';
 </script>
@@ -42,59 +42,69 @@ Display summary performance table for various periods.
 
 <style lang="postcss">
 	.time-period-picker {
-		display: none;
+		@media (--viewport-lg-up) {
+			display: none;
+		}
 	}
 
 	.time-period-table :global {
 		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 1rem;
+		grid-template-columns: 3fr 2fr;
 		overflow: hidden;
+
+		@media (--viewport-lg-up) {
+			grid-template-columns: repeat(5, 1fr);
+		}
 
 		& ul {
 			list-style-type: none;
 			padding: 0;
 			display: grid;
-			gap: 1rem;
-			grid-auto-rows: auto;
 		}
 
 		& li {
-			--skeleton-padding: 2px;
+			--skeleton-width: 5ch;
+			--skeleton-height: 1.2em;
 			font: 400 var(--fs-ui-xl);
-			height: 1.4em;
 			white-space: nowrap;
+			padding-inline: 0.5rem;
 
 			&.col-heading {
+				height: 1.4em;
 				font: var(--f-h4-medium);
 				text-transform: capitalize;
+
+				@media (--viewport-md-down) {
+					display: none;
+				}
+			}
+
+			&:not(.col-heading) {
+				padding-block: 0.75rem;
+
+				@media (--viewport-md-up) {
+					padding-block: 1rem;
+
+					&:not(:last-child) {
+						border-bottom: 1px solid var(--c-border-1);
+					}
+				}
 			}
 		}
 
 		& .row-heading li {
 			font-weight: 500;
+			padding-inline: 0;
 		}
 
 		& .loading li.col-heading {
 			color: var(--c-text-7);
 		}
-	}
 
-	@media (--viewport-md-down) {
-		.time-period-picker {
-			display: contents;
-		}
-
-		.time-period-table {
-			grid-template-columns: 3fr 2fr;
-		}
-
-		:global .col-heading {
-			display: none;
-		}
-
-		:global .time-period-col:not(.active) {
-			display: none;
+		& .time-period-col:not(.active) {
+			@media (--viewport-md-down) {
+				display: none;
+			}
 		}
 	}
 </style>

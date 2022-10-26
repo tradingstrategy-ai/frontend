@@ -7,7 +7,7 @@
 	export let slug: string;
 </script>
 
-<div class="tile">
+<div class="tile" data-testid="blockchain-tile">
 	<img alt={`${name} logo`} src={logo} />
 	<div class="content">
 		<h2>{name}</h2>

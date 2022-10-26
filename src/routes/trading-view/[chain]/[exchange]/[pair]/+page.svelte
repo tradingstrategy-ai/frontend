@@ -8,7 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { Button, Icon } from '$lib/components';
+	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -45,44 +45,32 @@ Render the pair trading page
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<header class="ds-container">
-		<h1>
-			{summary.pair_symbol}
-			<small>token pair on {details.exchange_name} on {details.chain_name}</small>
-		</h1>
-	</header>
+	<PageHeader title={summary.pair_symbol} subtitle="token pair on {details.exchange_name} on {details.chain_name}" />
 
-	<section class="ds-container info">
+	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
 			<InfoTable {summary} {details} />
 			<InfoSummary {summary} {details} />
 		</div>
 
-		{#if tokenTax.broken || ridiculousPrice}
-			<ul class="alerts">
-				{#if tokenTax.broken}
-					<li>
-						<span><Icon name="warning" /></span>
-						<span>
-							This token is unlikely to be tradeable.
-							<a
-								href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-								>Read more about transfer fees being broken or malicious in the token tax documentation</a
-							>. Error code <strong>{tokenTax.sellTax}</strong>.
-						</span>
-					</li>
-				{/if}
+		<AlertList>
+			<AlertItem title="Uniswap V3 beta" displayWhen={summary.exchange_type === 'uniswap_v3'}>
+				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
+				that the data for this trading pair is currently incomplete.
+			</AlertItem>
 
-				{#if ridiculousPrice}
-					<li>
-						<span><Icon name="warning" /></span>
-						<span
-							>This trading pair is using low digit price units that may prevent displaying the price data properly.</span
-						>
-					</li>
-				{/if}
-			</ul>
-		{/if}
+			<AlertItem displayWhen={tokenTax.broken}>
+				This token is unlikely to be tradeable.
+				<a
+					href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+					>Read more about transfer fees being broken or malicious in the token tax documentation</a
+				>. Error code <strong>{tokenTax.sellTax}</strong>.
+			</AlertItem>
+
+			<AlertItem displayWhen={ridiculousPrice}>
+				This trading pair is using low digit price units that may prevent displaying the price data properly.
+			</AlertItem>
+		</AlertList>
 
 		<div class="trade-actions">
 			<Button label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
@@ -90,13 +78,18 @@ Render the pair trading page
 			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
 				label="{summary.pair_symbol} API and historical data"
-				href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}/{summary.pair_slug}/api-and-historical-data"
+				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
 		</div>
 	</section>
 
 	<section class="ds-container charts">
-		<ChartSection pairId={summary.pair_id} pairSymbol={summary.pair_symbol} firstTradeDate={details.first_trade_at} />
+		<ChartSection
+			pairId={summary.pair_id}
+			pairSymbol={summary.pair_symbol}
+			exchangeType={summary.exchange_type}
+			firstTradeDate={details.first_trade_at}
+		/>
 	</section>
 
 	<section class="ds-container time-period-summary">
@@ -122,21 +115,16 @@ Render the pair trading page
 		}
 	}
 
-	h1 {
-		font: var(--f-h1-bold);
-
-		& small {
-			display: block;
-			font: var(--f-h4-medium);
-			color: var(--c-text-2);
-		}
-	}
-
 	.info {
 		gap: 2.5rem;
 
 		@media (--viewport-lg-up) {
 			gap: 3.5rem;
+		}
+
+		& .ds-2-col {
+			row-gap: 2rem;
+			align-items: start;
 		}
 	}
 
@@ -150,33 +138,6 @@ Render the pair trading page
 		@media (width < 576px) {
 			flex-direction: column;
 			padding-block: 0;
-		}
-	}
-
-	.alerts {
-		display: grid;
-		gap: 1.5rem;
-		max-width: 1020px;
-		margin-inline: auto;
-		padding: 1.25em;
-		border: 2px solid var(--c-bearish);
-		list-style: none;
-		font: var(--f-ui-large-roman);
-
-		& li {
-			display: flex;
-			gap: 0.75rem;
-			font: inherit;
-
-			& :global svg {
-				color: var(--c-bearish);
-				transform: translateY(-2px);
-			}
-
-			& a {
-				font-weight: 500;
-				text-decoration: underline;
-			}
 		}
 	}
 

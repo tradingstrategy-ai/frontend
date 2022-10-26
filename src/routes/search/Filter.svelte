@@ -25,52 +25,103 @@ Display filter options as checkboxes search queries.
 	export let selected: string[] = [];
 </script>
 
-<h2>{fieldName.replace(/_/g, ' ')}</h2>
-<div class="option-group">
-	{#each options as { label, value, count } (value)}
-		{#if value}
-			<label>
-				<input type="checkbox" bind:group={selected} {value} />
-				<div class="label">{label || value}</div>
-				{#if count}
-					<div class="count">{count.toLocaleString('en')}</div>
-				{/if}
-			</label>
-		{/if}
-	{/each}
+<div>
+	<h4>{fieldName.replace(/_/g, ' ')}</h4>
+	<ul>
+		{#each options as { label, value, count } (value)}
+			{#if value}
+				<li>
+					<label>
+						<input type="checkbox" {value} bind:group={selected} />
+						<svg><path d="M1.61157 6.65438L6.19836 11.2412L14.3883 1.86491" /></svg>
+						{label || value}
+					</label>
+					{#if count}
+						<div class="count">{count.toLocaleString('en')}</div>
+					{/if}
+				</li>
+			{/if}
+		{/each}
+	</ul>
 </div>
 
-<style>
-	h2 {
-		font-size: 1rem;
+<style lang="postcss">
+	div {
+		display: grid;
+		gap: 1.25rem;
+	}
+
+	h4 {
 		text-transform: capitalize;
 	}
 
-	.option-group {
-		margin-bottom: 1.25em;
-		max-width: 200px;
+	ul {
+		display: grid;
+		gap: 0.5rem;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	li {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: 1rem;
+		margin-left: -0.5rem;
 	}
 
 	label {
-		display: flex;
-		justify-content: left;
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.75rem;
 		align-items: center;
-		gap: 1ex;
-		line-height: 1.2;
+		border-radius: 0.5rem;
+		margin: 0;
+		padding: 0.5rem;
+		border: none;
+		font: 500 var(--fs-ui-lg);
+		text-transform: capitalize;
+		cursor: pointer;
+
+		&:hover {
+			background: var(--c-background-4);
+		}
+
+		&:focus-within {
+			background: var(--c-background-4);
+			outline: 2px solid var(--cm-light, var(--c-parchment-super-dark)) var(--cm-dark, var(--c-gray));
+		}
 	}
 
-	.label {
-		flex: 1;
-		overflow: hidden;
-		text-transform: capitalize;
+	input {
+		appearance: none;
+		width: 20px;
+		height: 20px;
+		border: 2px solid var(--c-border-2);
+		border-radius: 0;
+		background: var(--c-body);
+		outline: none;
+	}
+
+	svg {
+		position: absolute;
+		left: 10px;
+		width: 16px;
+		height: 14px;
+		fill: none;
+		stroke: transparent;
+		stroke-width: 3;
+
+		@nest input:checked + & {
+			stroke: currentColor;
+		}
 	}
 
 	.count {
-		padding: 0px 4px;
-		border-radius: 4px;
-		font-size: 0.75rem;
-		line-height: 1.4;
-		font-weight: 400;
-		background-color: var(--c-background-2);
+		padding: 0.25rem;
+		border-radius: 0.25rem;
+		background-color: var(--c-background-4);
+		font: 500 var(--fs-ui-sm);
 	}
 </style>

@@ -1,0 +1,22 @@
+{
+	"name": "Wrapped Ether",
+	"symbol": "WETH",
+	"token_id": 2,
+	"chain_id": 1,
+	"chain_name": "Ethereum",
+	"chain_slug": "ethereum",
+	"address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+	"total_supply": "4005054",
+	"decimals": 18,
+	"chainscan_metadata": {},
+	"chainscan_metadata_last_updated": "2022-08-07T22:27:36.946054",
+	"liquidity_latest": 633081719.4531937,
+	"volume_24h": 829720210.6890125,
+	"liquidity_change_7d": 64307314267488930,
+	"liquidity_change_30d": 13921881448451084,
+	"liquidity_change_360d": 1031881992047522400,
+	"liquidity_all_time_high": null,
+	"liquidity_all_time_low": null,
+	"pair_count": 113055,
+	"explorer_link": "https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+}

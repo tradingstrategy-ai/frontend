@@ -37,7 +37,7 @@
 		<SocialLinks layout="index" />
 	</header>
 
-	<section class="ds-container posts">
+	<section class="ds-container posts" data-testid="blog-posts">
 		{#each posts as post, idx (post.id)}
 			<BlogPostTile
 				featured={idx === 0}

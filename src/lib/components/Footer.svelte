@@ -1,5 +1,5 @@
 <script>
-	import SocialIcon from './SocialIcon.svelte';
+	import { SocialIcon } from '$lib/components';
 
 	export let skip = false;
 	export let small = false;
@@ -29,31 +29,31 @@
 	{/if}
 </footer>
 
-<style>
+<style lang="postcss">
 	footer {
 		display: grid;
 		grid-auto-flow: column;
 		justify-content: center;
-		gap: 1.25rem;
-		padding: 2.5rem 1rem;
-	}
+		gap: 2.5rem;
+		padding: 5rem 0;
 
-	footer.small {
-		--social-icon-size: 44px;
+		@media (--viewport-sm-down) {
+			gap: 1.25rem;
+			padding: 2.5rem 1rem;
+		}
+
+		&.small {
+			--social-icon-size: 44px;
+			gap: 1.25rem;
+			padding: 0;
+		}
 	}
 
 	a {
 		transition: opacity 0.15s;
-	}
 
-	a:hover {
-		opacity: 0.9;
-	}
-
-	@media (--viewport-md-up) {
-		footer:not(.small) {
-			gap: 2.5rem;
-			padding: 5rem 0;
+		&:hover {
+			opacity: 0.9;
 		}
 	}
 </style>

@@ -3,48 +3,52 @@
 	import { fade } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 
+	export let label: string;
 	export let address: string;
 	export let href: string;
 
-	const clipboard = fsm('idle', {
+	const copier = fsm('idle', {
 		idle: {
-			copy: 'copying'
-		},
-
-		copying: {
-			_enter() {
-				navigator.clipboard.writeText(address).then(this.success).catch(this.error);
+			copy() {
+				navigator.clipboard.writeText(address).then(this.success);
 			},
-			success: 'copied',
-			error: 'idle'
+			success: 'copied'
 		},
 
 		copied: {
 			_enter() {
 				this.complete.debounce(2000);
 			},
-			complete: 'idle',
-			copy: 'copying'
+			complete: 'idle'
 		}
 	});
 </script>
 
 <div>
-	<a {href} target="_blank">{address}</a>
-	<button title="Copy to clipboard" on:click={clipboard.copy}>
-		<Icon name="copy" />
-		{#if $clipboard === 'copied'}
-			<span in:fade={{ duration: 100 }} out:fade={{ duration: 1000 }}>
-				<Icon name="copied" />
-			</span>
-		{/if}
-	</button>
+	{label}
+	<address>
+		<a {href} target="_blank">{address}</a>
+		<button title="Copy to clipboard" on:click={copier.copy}>
+			{#if $copier === 'idle'}
+				<span in:fade={{ duration: 250, delay: 250 }} out:fade={{ duration: 100 }}>
+					<Icon name="copy-to-clipboard" />
+				</span>
+			{:else}
+				<span in:fade={{ duration: 100 }} out:fade={{ duration: 500 }}>
+					<Icon name="check-square" />
+				</span>
+			{/if}
+		</button>
+	</address>
 </div>
 
 <style lang="postcss">
 	div {
+		overflow: hidden;
+	}
+
+	address {
 		display: flex;
-		max-width: max-content;
 		gap: 0.5rem;
 	}
 
@@ -58,14 +62,16 @@
 	button {
 		position: relative;
 		border: none;
+		min-width: 1em;
 		padding: 0;
 		background: none;
 		cursor: pointer;
 
 		& span {
 			position: absolute;
-			left: 0;
-			top: 0;
+			left: 0px;
+			top: 0px;
+			background: var(--c-body);
 		}
 	}
 </style>

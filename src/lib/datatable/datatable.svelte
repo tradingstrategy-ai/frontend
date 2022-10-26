@@ -64,13 +64,7 @@ npm install --save datatables.net-responsive-bs4
 
 <div class="datatables-wrapper">
 	<div class="table-responsive">
-		<table
-			use:dataTable
-			class="table"
-			class:clickable={clickableRows}
-			style:display={loaded ? 'table' : 'none'}
-			data-cy="datatables-table"
-		>
+		<table use:dataTable class="table" class:clickable={clickableRows} style:display={loaded ? 'table' : 'none'}>
 			<thead>
 				<tr>
 					{#each columns as column}
@@ -90,13 +84,13 @@ npm install --save datatables.net-responsive-bs4
 	table {
 		width: 100% !important;
 		margin: 0 !important;
+		font-variant-numeric: tabular-nums;
 
 		& :global th {
 			border-top: none;
 			border-bottom: 2px solid var(--c-border-1);
 			white-space: nowrap;
 			font: 500 var(--fs-ui-sm);
-			letter-spacing: 0.02em;
 		}
 
 		& :global td {
@@ -133,7 +127,6 @@ npm install --save datatables.net-responsive-bs4
 			padding: 0;
 			font: 500 var(--fs-ui-sm);
 			color: var(--c-text-2);
-			letter-spacing: 0.02em;
 			text-align: left;
 
 			@media (--viewport-md-up) {
@@ -145,7 +138,6 @@ npm install --save datatables.net-responsive-bs4
 			margin-block: 1rem 2rem;
 			padding: 0;
 			font: 700 var(--fs-ui-sm);
-			letter-spacing: 0.02em;
 			text-align: left;
 
 			@media (--viewport-md-up) {
