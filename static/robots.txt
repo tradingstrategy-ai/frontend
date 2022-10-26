@@ -1,3 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+
+# Make sure Google Bot is not hitting JSON API directly
+Disallow: /api/
+Allow: /api/explorer/
+
+
