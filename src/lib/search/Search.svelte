@@ -30,8 +30,14 @@ Display site-wide search box for use in top-nav.
 	}
 </script>
 
-<div class="search" class:hasFocus on:focus|capture={toggleFocus} on:blur|capture={toggleFocus}>
-	<label class="mobile-only" for="search-input-mobile">
+<div
+	class="search"
+	class:hasFocus
+	on:focus|capture={toggleFocus}
+	on:blur|capture={toggleFocus}
+	data-testid="nav-search"
+>
+	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
 		<Icon name="search" />
 	</label>
 
@@ -39,6 +45,7 @@ Display site-wide search box for use in top-nav.
 		<!-- prettier-ignore -->
 		<TextInput
 			bind:value={q}
+			aria-label="search-desktop"
 			name="q"
 			type="search"
 			placeholder="Search"

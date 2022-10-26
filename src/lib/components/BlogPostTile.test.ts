@@ -1,8 +1,7 @@
-import { describe, expect, test, vi } from 'vitest';
 import { render } from '@testing-library/svelte';
 import BlogPostTile from './BlogPostTile.svelte';
 
-describe('BlogPostTile', () => {
+describe('BlogPostTile component', () => {
 	const props = {
 		slug: 'amazing_blog_post',
 		title: 'Amazing Blog Post',

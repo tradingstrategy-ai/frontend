@@ -31,6 +31,7 @@
     "@sveltejs/kit": "1.0.0-next.499",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.2.2",
+    "@testing-library/user-event": "^14.4.3",
     "@types/cookie": "^0.4.0",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",

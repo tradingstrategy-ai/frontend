@@ -84,7 +84,8 @@ const config = {
 		globals: true,
 		include: ['src/**/*.test.ts'],
 		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
-		setupFiles: 'test.config.ts'
+		restoreMocks: true,
+		setupFiles: ['test.config.ts']
 	}
 };
 
