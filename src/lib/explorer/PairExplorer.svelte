@@ -67,7 +67,7 @@ Explore trading pairs that match certain filter criteria.
 				const chain = escapeHtml(row.chain_slug);
 				const exchange_slug = escapeHtml(row.exchange_slug);
 				const exchange_name = escapeHtml(row.exchange_name);
-				return `<a href="/trading-view/${chain}/${exchange_slug}/">${exchange_name}</a>`;
+				return `<a href="/trading-view/${chain}/${exchange_slug}">${exchange_name}</a>`;
 			}
 		},
 
