@@ -31,26 +31,38 @@ Real time examples for the API
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<div class="container">
-	<h1>{summary.pair_symbol} API and historical data</h1>
+<main>
+	<section class="ds-container" data-testid="api-info">
+		<h1>{summary.pair_symbol} API and historical data</h1>
 
-	<p>
-		Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on
-		<strong>{summary.exchange_name}</strong> on {summary.chain_name} blockchain.
-	</p>
+		<p>
+			Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on
+			<strong>{summary.exchange_name}</strong> on {summary.chain_name} blockchain.
+		</p>
 
-	<p>
-		Examples here do not cover the full API. Read the full
-		<a class="body-link" href="https://tradingstrategy.ai/api/explorer/"> real-time API </a>
+		<p>
+			Examples here do not cover the full API. Read the full
+			<a class="body-link" href="https://tradingstrategy.ai/api/explorer/"> real-time API </a>
 
-		or
+			or
 
-		<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
-			algorithmic trading programming
-		</a>
+			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
+				algorithmic trading programming
+			</a>
 
-		documentation.
-	</p>
+			documentation.
+		</p>
 
-	<TradingPairAPIExamples {summary} />
-</div>
+		<TradingPairAPIExamples {summary} />
+	</section>
+</main>
+
+<style lang="postcss">
+	h1 {
+		margin-bottom: 2rem;
+	}
+
+	.ds-container p {
+		margin-bottom: 1rem;
+	}
+</style>
