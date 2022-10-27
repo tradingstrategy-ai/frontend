@@ -3,8 +3,8 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import TopMomentum from '$lib/content/TopMomentum.svelte';
 	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
+	import TopMomentumTile from './TopMomentumTile.svelte';
 	import { BlogPostTile, Button } from '$lib/components';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { goto } from '$app/navigation';
@@ -43,13 +43,13 @@
 		<section class="ds-container top-momentum" style:gap="1.5rem">
 			<h2>Top trades</h2>
 			<div class="ds-2-col">
-				<TopMomentum
+				<TopMomentumTile
 					name="Most profitable 24h"
 					pairs={topMomentum.top_up_24h_min_liq_1m}
 					linkTarget="/trading-view/top-list/daily-up"
 					linkLabel="View all winning pairs"
 				/>
-				<TopMomentum
+				<TopMomentumTile
 					name="Worst performance 24h"
 					pairs={topMomentum.top_down_24h_min_liq_1m}
 					linkTarget="/trading-view/top-list/daily-down"

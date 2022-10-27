@@ -4,7 +4,7 @@ Display best or worst performing trading pairs.
 
 #### Usage
 ```tsx
-	<TopMomentum
+	<TopMomentumTile
 		name="Most profitable 24h"
 		pairs={[...]}
 		linkTarget="/trading-view/top-list/daily-up"
