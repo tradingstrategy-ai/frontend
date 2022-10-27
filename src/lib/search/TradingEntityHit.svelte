@@ -140,16 +140,18 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		display: grid;
 		align-content: center;
 		border-radius: 0.375rem;
-		padding: 0.25rem 0.625rem;
+		padding: 0.25rem 0;
 		font: 500 var(--fs-ui-sm);
 		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
+		width: 4rem;
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				padding: 0.5rem 1.25rem;
+				padding: 0.5rem 0;
 				font: 500 var(--fs-ui-lg);
+				width: 6rem;
 			}
 		}
 	}
