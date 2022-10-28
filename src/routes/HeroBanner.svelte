@@ -44,8 +44,8 @@ Home page hero banner.
 		{/if}
 
 		<div class="buttons">
-			<a href="/trading-view/trading-pairs">View trading pairs</a>
-			<a class="secondary" href="/trading-view/blockchains">View blockchains</a>
+			<a href="/trading-view">Explore DEX Data</a>
+			<a class="secondary" href="https://tradingstrategy.ai/docs">Read Documentation</a>
 		</div>
 	</div>
 </header>
