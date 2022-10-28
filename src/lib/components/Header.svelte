@@ -37,7 +37,9 @@
 	</NavPanel>
 </div>
 
-<style>
+<style lang="postcss">
+	@custom-media --nav-collapsed (width < 1125px);
+
 	header {
 		display: grid;
 		grid-template-columns:
@@ -91,7 +93,7 @@
 		display: contents;
 	}
 
-	@media (width < 1125px) {
+	@media (--nav-collapsed) {
 		.desktop-only {
 			display: none;
 		}
