@@ -30,6 +30,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
+	const typeLabel = document.type === 'exchange' ? 'DEX' : document.type;
 
 	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
 	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
@@ -40,7 +41,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 <li>
 	<a href={document.url_path} class={layout} class:isLowQuality>
-		<div class="type type-{document.type}">{document.type}</div>
+		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
 				<div class="desc">{document.description}</div>
@@ -140,18 +141,18 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		display: grid;
 		align-content: center;
 		border-radius: 0.375rem;
-		padding: 0.25rem 0;
+		padding-block: 0.25rem;
+		width: 3.5rem;
 		font: 500 var(--fs-ui-sm);
 		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
-		width: 4rem;
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				padding: 0.5rem 0;
+				padding-block: 0.5rem;
+				width: 5.5rem;
 				font: 500 var(--fs-ui-lg);
-				width: 6rem;
 			}
 		}
 	}
