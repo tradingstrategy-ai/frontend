@@ -31,6 +31,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
 	const typeLabel = document.type === 'exchange' ? 'DEX' : document.type;
+	const title = isLowQuality ? 'Warning: low liquidity' : null;
 
 	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
 	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
@@ -39,12 +40,17 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	});
 </script>
 
-<li>
+<li {title}>
 	<a href={document.url_path} class={layout} class:isLowQuality>
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
-				<div class="desc">{document.description}</div>
+				<div class="desc">
+					{document.description}
+					{#if isAdvancedLayout && isLowQuality}
+						<Icon name="warning" />
+					{/if}
+				</div>
 
 				{#if isBasicLayout && !isLowQuality && hasPriceChange}
 					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
@@ -64,12 +70,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 						</div>
 						<div class="liquidity">
 							<dt>Liquidity</dt>
-							<dd>
-								{formatDollar(document.liquidity, 1, 1)}
-								{#if isLowQuality}
-									<Icon name="warning" />
-								{/if}
-							</dd>
+							<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
 						</div>
 					</div>
 					<div class="price-change {priceChangeClass}">
@@ -124,7 +125,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		&.isLowQuality {
-			opacity: 0.5;
+			opacity: 0.35;
+			&:hover {
+				background: var(--c-background-2);
+			}
 		}
 
 		&:hover {
@@ -187,6 +191,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
 			overflow: hidden;
+
+			& :global svg {
+				margin: -0.25em 0 0 0.25em;
+			}
 		}
 
 		& .price-change,
@@ -248,10 +256,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			max-width: 50%;
 			overflow-wrap: break-word;
 			text-align: right;
-		}
-
-		& :global svg {
-			margin-top: -3px;
 		}
 	}
 </style>
