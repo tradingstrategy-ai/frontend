@@ -118,8 +118,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			padding: 0.625rem 0.75rem;
 
 			@media (--viewport-md-up) {
-				gap: 1.75rem;
-				padding: 1.125rem 1.375rem;
+				gap: 1.5rem;
+				padding: 0.75rem 1.25rem;
+				border-width: 1px;
 				border-color: var(--c-border-2);
 			}
 		}
@@ -154,9 +155,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				padding-block: 0.5rem;
-				width: 5.5rem;
-				font: 500 var(--fs-ui-lg);
+				width: 5rem;
+				font: 500 var(--fs-ui-md);
+				letter-spacing: 0.01em;
 			}
 		}
 	}
@@ -181,7 +182,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				font: 600 var(--fs-heading-md);
+				font: 600 var(--fs-heading-sm);
 				letter-spacing: 0;
 			}
 		}

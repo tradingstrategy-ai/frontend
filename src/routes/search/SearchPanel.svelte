@@ -85,12 +85,8 @@
 
 	ul {
 		display: grid;
-		gap: 2rem;
+		gap: 1rem;
 		padding: 0;
-
-		@media (--viewport-sm-down) {
-			gap: 1.25rem;
-		}
 	}
 
 	.fallback {
