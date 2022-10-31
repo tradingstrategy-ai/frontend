@@ -72,6 +72,7 @@ Home page hero banner.
 	.media {
 		width: 100%;
 		margin-block: 5rem;
+		aspect-ratio: 286 / 173;
 
 		@media (--hero-1-col) {
 			grid-row: 2 / 3;
