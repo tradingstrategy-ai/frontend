@@ -3,19 +3,14 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import TopMomentum from '$lib/content/TopMomentum.svelte';
-	import ImpressiveNumbers from '$lib/content/ImpressiveNumbers.svelte';
+	import HeroBanner from './HeroBanner.svelte';
+	import TopMomentumTile from './TopMomentumTile.svelte';
 	import { BlogPostTile, Button } from '$lib/components';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
-	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
-
-	function doSecretNavigation() {
-		goto('/strategy');
-	}
 </script>
 
 <svelte:head>
@@ -25,31 +20,19 @@
 </svelte:head>
 
 <main>
-	<header class="ds-container" on:dblclick={doSecretNavigation}>
-		<div>
-			<h1>
-				<div>Next generation</div>
-				<div>algorithmic trading protocol</div>
-				<div class="secondary">for decentralised markets</div>
-			</h1>
-
-			{#if impressiveNumbers}
-				<ImpressiveNumbers numbers={impressiveNumbers} />
-			{/if}
-		</div>
-	</header>
+	<HeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
 		<section class="ds-container top-momentum" style:gap="1.5rem">
 			<h2>Top trades</h2>
 			<div class="ds-2-col">
-				<TopMomentum
+				<TopMomentumTile
 					name="Most profitable 24h"
 					pairs={topMomentum.top_up_24h_min_liq_1m}
 					linkTarget="/trading-view/top-list/daily-up"
 					linkLabel="View all winning pairs"
 				/>
-				<TopMomentum
+				<TopMomentumTile
 					name="Worst performance 24h"
 					pairs={topMomentum.top_down_24h_min_liq_1m}
 					linkTarget="/trading-view/top-list/daily-down"
@@ -93,21 +76,6 @@
 </main>
 
 <style>
-	header {
-		--container-margin: 2rem;
-		background: var(--c-background-1);
-		padding-block: 3.5rem;
-	}
-
-	h1 {
-		font: var(--f-h1-bold);
-		margin-bottom: 2rem;
-	}
-
-	.secondary {
-		color: var(--c-text-2);
-	}
-
 	section {
 		padding-block: 2.5rem;
 	}
@@ -153,16 +121,6 @@
 	}
 
 	@media (--viewport-md-up) {
-		header {
-			padding-block: 12rem;
-			text-align: center;
-		}
-
-		h1 {
-			font: 600 56px/68px var(--ff-display);
-			margin-bottom: 3.5rem;
-		}
-
 		.top-momentum h2 {
 			margin-bottom: 2.5rem;
 		}
