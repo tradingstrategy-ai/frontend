@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components';
+	import ErrorPageInfo from './ErrorPageInfo.svelte';
 
+	let showLogs = false;
+
+	$: status = $page.status;
 	$: chainName = $page.error.chainName;
 </script>
 
@@ -9,51 +13,56 @@
 	<title>Error: {$page.status}</title>
 </svelte:head>
 
-<section class="ds-container">
-	{#if chainName}
-		<h1 class="text-center">{chainName} data under maintenance</h1>
-
-		<p class="text-center">
-			{$page.error.message}
-		</p>
+<main>
+	{#if status === 404}
+		<ErrorPageInfo {status} title="Page not found">
+			<Button label="Go to home page" href="/" />
+		</ErrorPageInfo>
+	{:else if status === 503 && chainName}
+		<ErrorPageInfo
+			{status}
+			title="{chainName} data under maintenance"
+			details="This page is temporarily unavailable due to maintenance related to {chainName} blockchain. Data will be back soon."
+		>
+			<Button label="Explore DEX data" href="/trading-view" />
+		</ErrorPageInfo>
 	{:else}
-		<h1 class="text-center">HTTP {$page.status} error</h1>
-
-		<pre>{$page.error.message}</pre>
+		<ErrorPageInfo {status} title={status === 503 ? 'Service is unavailable' : $page.error.message}>
+			<Button label="Show logs" on:click={() => (showLogs = true)} />
+		</ErrorPageInfo>
 	{/if}
 
-	<p class="cta">
-		<Button label="Continue to home page" href="/" />
-		<Button
-			secondary
-			label="Join Discord for more information"
-			icon="discord"
-			href="https://discord.gg/en8tW6MDtw"
-			target="_blank"
-		/>
-	</p>
+	<aside class="ds-container">
+		{#if showLogs}
+			<pre>{$page.error.message}</pre>
+		{/if}
+	</aside>
+</main>
 
-	<p class="text-center" />
-</section>
+<style lang="postcss">
+	main {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--c-body);
+		display: grid;
+		grid-template-rows: 1fr auto 1fr;
+		gap: 2.75rem;
+		--container-max-width: 1020px;
+	}
 
-<style>
-	section {
-		--container-max-width: 720px;
-		gap: 4rem;
+	aside {
+		grid-row: 3 / 4;
+		align-items: start;
 	}
 
 	pre {
-		padding: 1.25rem;
-		border: 1px solid var(--c-border-1);
-		background: var(--c-background-2);
-		color: var(--c-text-1);
-		white-space: pre-wrap;
-	}
-
-	.cta {
-		display: grid;
-		gap: 1rem;
-		justify-content: center;
-		text-align: center;
+		padding: 1.5rem;
+		background: var(--c-background-7);
+		border: 2px solid var(--c-border-1);
+		border-radius: 0.375rem;
+		color: var(--c-parchment);
 	}
 </style>
