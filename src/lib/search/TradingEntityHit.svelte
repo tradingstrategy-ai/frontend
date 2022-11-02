@@ -227,7 +227,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			font: 400 var(--fs-ui-sm);
 		}
 
-		@media (width < 576px) {
+		@media (--viewport-xs) {
 			font: 400 var(--fs-ui-xs);
 		}
 

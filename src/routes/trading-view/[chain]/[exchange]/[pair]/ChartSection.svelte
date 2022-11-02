@@ -126,7 +126,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			text-transform: uppercase;
 			letter-spacing: 0.06em;
 
-			@media (width <= 576px) {
+			@media (--viewport-xs) {
 				font-size: 1rem;
 			}
 		}
@@ -145,7 +145,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			}
 
 			& .prefix {
-				@media (width <= 576px) {
+				@media (--viewport-xs) {
 					display: none;
 				}
 			}

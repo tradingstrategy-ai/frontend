@@ -3,9 +3,9 @@ import { chainsUnderMaintenance } from '$lib/config';
 import { error } from '@sveltejs/kit';
 
 export const load: LayoutLoad = ({ params }) => {
-	// Check chain maintenance status; if under maintenance, trigger error (see +error.svelte)
-	const chainName = chainsUnderMaintenance[<string>params.chain];
+	// trigger error if chain is under maintenance
+	const chainName = chainsUnderMaintenance[params.chain];
 	if (chainName) {
-		throw error(503, `Chain under maintenance: ${chainName}`);
+		throw error(503, { chainName, message: `Chain under maintenance: ${chainName}` });
 	}
 };

@@ -12,7 +12,7 @@ export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
 	const resp = await fetch(`${apiUrl}?${encoded}`);
 
 	if (!resp.ok) {
-		throw getApiError(resp, 'token', [chain_slug, address]);
+		throw await getApiError(resp);
 	}
 
 	// Cache the pair data pages for 30 minutes at the Cloudflare edge so the

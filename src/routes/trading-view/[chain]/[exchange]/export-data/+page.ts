@@ -13,7 +13,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const resp = await fetch(`${apiUrl}?${encoded}`);
 
 	if (!resp.ok) {
-		throw getApiError(resp, 'Exchange', [chain_slug, exchange_slug]);
+		throw await getApiError(resp);
 	}
 
 	return resp.json();
