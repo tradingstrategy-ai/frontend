@@ -7,6 +7,7 @@
 
 	$: status = $page.status;
 	$: chainName = $page.error.chainName;
+	$: stack = $page.error.stack;
 </script>
 
 <svelte:head>
@@ -28,13 +29,17 @@
 		</ErrorPageInfo>
 	{:else}
 		<ErrorPageInfo {status} title={status === 503 ? 'Service is unavailable' : $page.error.message}>
-			<Button label="Show logs" on:click={() => (showLogs = true)} />
+			{#if stack}
+				<Button icon="console" on:click={() => (showLogs = !showLogs)}>
+					{showLogs ? 'Hide logs' : 'Show logs'}
+				</Button>
+			{/if}
 		</ErrorPageInfo>
 	{/if}
 
 	<aside class="ds-container">
-		{#if showLogs}
-			<pre>{$page.error.message}</pre>
+		{#if stack && showLogs}
+			<pre>{stack}</pre>
 		{/if}
 	</aside>
 </main>
@@ -64,5 +69,8 @@
 		border: 2px solid var(--c-border-1);
 		border-radius: 0.375rem;
 		color: var(--c-parchment);
+		white-space: pre-wrap;
+		overflow-wrap: break-word;
+		max-height: 10rem;
 	}
 </style>

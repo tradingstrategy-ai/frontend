@@ -3,15 +3,21 @@
  */
 import { error } from '@sveltejs/kit';
 
-export default function (response: Response, type: string, chainParams: string[]) {
-	let message: string;
-
+export default async function (response: Response) {
 	if (response.status === 404) {
-		const resource = chainParams.join('/');
-		message = `${type} not found: ${resource}`;
-	} else {
-		message = `${response.statusText}; could not load data for URL: ${response.url}`;
+		return error(response.status, {
+			message: response.statusText,
+			stack: `Server resource not found: ${response.url}`
+		});
 	}
 
-	return error(response.status, message);
+	const stack: string[] = [];
+	stack.push(`Error loading data from URL: ${response.url}`);
+	stack.push(`${response.status} ${response.statusText}`);
+	stack.push(await response.text());
+
+	return error(503, {
+		message: response.statusText,
+		stack: stack.join('\n')
+	});
 }
