@@ -135,7 +135,7 @@ Render the pair trading page
 		gap: 1.25rem 2rem;
 		padding-block: 1.5rem;
 
-		@media (width < 576px) {
+		@media (--viewport-xs) {
 			flex-direction: column;
 			padding-block: 0;
 		}

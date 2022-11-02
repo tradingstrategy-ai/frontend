@@ -237,10 +237,18 @@ chartiq dependency.
 	{/if}
 {/await}
 
-<style>
+<style lang="postcss">
 	.chart-container {
 		position: relative;
 		aspect-ratio: 16/9;
+
+		@media (--viewport-sm-down) {
+			aspect-ratio: 3/2;
+		}
+
+		@media (--viewport-xs) {
+			aspect-ratio: 4/3;
+		}
 	}
 
 	.loading {
@@ -257,44 +265,32 @@ chartiq dependency.
 		opacity: 0.75;
 	}
 
-	.hud {
+	.hud :global {
 		position: absolute;
 		top: 4px;
 		left: 0;
 		font: var(--f-ui-xsmall-roman);
 		letter-spacing: 0.02em;
-	}
 
-	.hud :global(.hud-row) {
-		display: flex;
-		gap: 0.5em;
-	}
-
-	.hud :global(dl) {
-		display: flex;
-		gap: 0.25em;
-		align-items: center;
-		margin: 0;
-	}
-
-	.hud :global(dt) {
-		color: var(--c-text-3);
-		font-weight: inherit;
-	}
-
-	.hud :global(dd) {
-		margin: 0;
-	}
-
-	@media (max-width: 768px) {
-		.chart-container {
-			aspect-ratio: 3/2;
+		& .hud-row {
+			display: flex;
+			gap: 0.5em;
 		}
-	}
 
-	@media (max-width: 576px) {
-		.chart-container {
-			aspect-ratio: 4/3;
+		& dl {
+			display: flex;
+			gap: 0.25em;
+			align-items: center;
+			margin: 0;
+		}
+
+		& dt {
+			color: var(--c-text-3);
+			font-weight: inherit;
+		}
+
+		& dd {
+			margin: 0;
 		}
 	}
 </style>

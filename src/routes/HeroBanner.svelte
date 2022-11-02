@@ -91,7 +91,7 @@ Home page hero banner.
 				white-space: pre-line;
 			}
 
-			@media (width <= 576px) {
+			@media (--viewport-xs) {
 				border-bottom-width: 2px;
 				font: var(--f-h3-medium);
 			}
@@ -101,7 +101,7 @@ Home page hero banner.
 	.impressive-numbers {
 		font: 400 var(--fs-ui-lg);
 
-		@media (width > 576px) {
+		@media (--viewport-sm-up) {
 			font: 400 var(--fs-ui-xl);
 		}
 
@@ -121,7 +121,7 @@ Home page hero banner.
 		gap: 0.75rem 1.25rem;
 		margin-top: 2.5rem;
 
-		@media (width <= 576px) {
+		@media (--viewport-xs) {
 			flex-direction: column;
 			margin-top: 2rem;
 		}
@@ -136,7 +136,7 @@ Home page hero banner.
 			background: var(--c-background-3);
 			color: var(--c-text-6);
 
-			@media (width <= 576px) {
+			@media (--viewport-xs) {
 				padding-block: 0.75rem;
 				border-radius: 1em;
 				font: 500 var(--fs-ui-md);
