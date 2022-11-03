@@ -12,25 +12,21 @@ pre-defined set of sort options.
 	export const sortOptions = {
 		liquidity: {
 			label: '▼ Liquidity',
-			direction: 'desc',
 			value: ['liquidity:desc', '_text_match:desc']
 		},
 
 		volume: {
 			label: '▼ Volume',
-			direction: 'desc',
 			value: ['volume_24h:desc', '_text_match:desc']
 		},
 
 		priceChangeDesc: {
 			label: '▼ Price change',
-			direction: 'desc',
 			value: ['price_change_24h:desc', '_text_match:desc']
 		},
 
 		priceChangeAsc: {
 			label: '▲ Price change',
-			direction: 'asc',
 			value: ['price_change_24h:asc', '_text_match:desc']
 		}
 	};
