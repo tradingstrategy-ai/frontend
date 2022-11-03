@@ -10,11 +10,25 @@
 	export let sortOption: string;
 	export let hasSearch: boolean;
 	export let hits: [] = [];
+
+	function handleKeydown({ key, target }: KeyboardEvent) {
+		if (key === 'Enter') {
+			(target as HTMLInputElement).blur();
+		}
+	}
 </script>
 
 <div class="search-panel">
 	<div class="search-bar">
-		<TextInput size="xl" type="search" placeholder="Search" autocapitalize="none" spellcheck="false" bind:value={q} />
+		<TextInput
+			bind:value={q}
+			type="search"
+			size="xl"
+			placeholder="Search"
+			autocapitalize="none"
+			spellcheck="false"
+			on:keydown={handleKeydown}
+		/>
 		<div class="sort-select">
 			<SortSelect bind:value={sortOption} />
 		</div>
@@ -23,12 +37,14 @@
 		</button>
 	</div>
 
-	{#if hasSearch}
+	{#if hasSearch && hits.length > 0}
 		<ul>
 			{#each hits as { document } (document.id)}
 				<TradingEntityHit {document} layout="advanced" />
 			{/each}
 		</ul>
+	{:else if hasSearch}
+		<div class="fallback">No results found &ndash; try modifying your search query or removing filters.</div>
 	{:else}
 		<div class="fallback">Search exchanges, tokens and trading pairs.</div>
 	{/if}
