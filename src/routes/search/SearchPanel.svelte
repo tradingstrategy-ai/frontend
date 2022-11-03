@@ -37,12 +37,14 @@
 		</button>
 	</div>
 
-	{#if hasSearch}
+	{#if hasSearch && hits.length > 0}
 		<ul>
 			{#each hits as { document } (document.id)}
 				<TradingEntityHit {document} layout="advanced" />
 			{/each}
 		</ul>
+	{:else if hasSearch}
+		<div class="fallback">No results found &ndash; try modifying your search query or removing filters.</div>
 	{:else}
 		<div class="fallback">Search exchanges, tokens and trading pairs.</div>
 	{/if}
