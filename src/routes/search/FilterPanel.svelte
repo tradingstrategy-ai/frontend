@@ -180,8 +180,14 @@
 		color: var(--c-text-1);
 		text-align: left;
 
+		@media (--viewport-lg-up) {
+			height: 3rem;
+		}
+
 		&:not(:disabled) {
 			cursor: pointer;
+			font-weight: 600;
+			text-decoration: underline;
 		}
 	}
 
