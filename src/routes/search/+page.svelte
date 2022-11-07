@@ -5,24 +5,32 @@ Advanced Search page
 - returns first 200 matching results (future: pagination or infinite scroll)
 -->
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import tradingEntities from '$lib/search/trading-entities';
 	import FilterPanel from './FilterPanel.svelte';
 	import SearchPanel from './SearchPanel.svelte';
-	import { sortOptions } from './SortSelect.svelte';
+	import { getSortParams } from './SortSelect.svelte';
 
-	let q = $page.url.searchParams.get('q') || '';
+	const params = $page.url.searchParams;
 
-	let filterPanelOpen = false;
+	let q = params.get('q') || '';
+	let sortBy = params.get('sortBy');
 	let filterBy: string[] = [];
-	let sortOption = 'liquidity';
+	let filterPanelOpen = false;
+
+	function updateUrl(params: Record<string, string>) {
+		browser && history.replaceState(null, '', '?' + new URLSearchParams(params));
+	}
 
 	$: hasSearch = filterBy.length > 0 || q.trim().length > 0;
+
+	$: updateUrl({ q, sortBy });
 
 	$: tradingEntities.search({
 		q,
 		filter_by: filterBy,
-		sort_by: sortOptions[sortOption].value,
+		sort_by: getSortParams(sortBy),
 		facet_by: ['type', 'blockchain', 'exchange'],
 		per_page: 200
 	});
@@ -39,9 +47,9 @@ Advanced Search page
 	</header>
 
 	<section class="ds-container">
-		<FilterPanel bind:open={filterPanelOpen} bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
+		<FilterPanel bind:open={filterPanelOpen} bind:sortBy bind:filterBy facets={$tradingEntities.facets} />
 		<SearchPanel
-			bind:sortOption
+			bind:sortBy
 			bind:q
 			{hasSearch}
 			hits={$tradingEntities.hits}

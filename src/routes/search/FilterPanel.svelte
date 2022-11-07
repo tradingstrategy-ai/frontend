@@ -12,7 +12,7 @@
 	type Facet = { field_name: string; counts: FacetCount[] };
 
 	export let open = false;
-	export let sortOption: string;
+	export let sortBy: string;
 	export let filterBy: string[] = [];
 	export let facets: Facet[] = [];
 
@@ -50,7 +50,7 @@
 
 	<section>
 		<div class="sort-control">
-			<SortSelect bind:value={sortOption} />
+			<SortSelect bind:sortBy />
 		</div>
 
 		<button class="clear-filters" disabled={!hasFilters} on:click={clearAllFilters}>

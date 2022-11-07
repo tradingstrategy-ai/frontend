@@ -4,7 +4,7 @@ import SearchPanel from './SearchPanel.svelte';
 
 const defaultProps = {
 	q: '',
-	sortOption: 'liquidity',
+	sortBy: 'liquidity',
 	hasSearch: false
 };
 

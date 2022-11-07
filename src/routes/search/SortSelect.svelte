@@ -9,36 +9,47 @@ pre-defined set of sort options.
 ```
 -->
 <script context="module" lang="ts">
-	export const sortOptions = {
-		liquidity: {
+	const options = {
+		'liquidity:desc': {
 			label: '▼ Liquidity',
-			value: ['liquidity:desc', '_text_match:desc']
+			params: ['liquidity:desc', '_text_match:desc']
 		},
 
-		volume: {
+		'volume:desc': {
 			label: '▼ Volume',
-			value: ['volume_24h:desc', '_text_match:desc']
+			params: ['volume_24h:desc', '_text_match:desc']
 		},
 
-		priceChangeDesc: {
+		'price_change:desc': {
 			label: '▼ Price change',
-			value: ['price_change_24h:desc', '_text_match:desc']
+			params: ['price_change_24h:desc', '_text_match:desc']
 		},
 
-		priceChangeAsc: {
+		'price_change:asc': {
 			label: '▲ Price change',
-			value: ['price_change_24h:asc', '_text_match:desc']
+			params: ['price_change_24h:asc', '_text_match:desc']
 		}
 	};
+
+	type SortKey = keyof typeof options;
+
+	export function getSortParams(key: SortKey): string[] {
+		const sortOption = options[key] || Object.values(options)[0];
+		return sortOption.params;
+	}
 </script>
 
 <script lang="ts">
 	import { DropDown } from '$lib/components';
-	export let value: string;
+	export let sortBy: string;
+
+	if (!(sortBy in options)) {
+		sortBy = Object.keys(options)[0];
+	}
 </script>
 
-<DropDown bind:value size="xl" --drop-down-width="100%">
-	{#each Object.entries(sortOptions) as [key, option] (key)}
+<DropDown bind:value={sortBy} size="xl" --drop-down-width="100%">
+	{#each Object.entries(options) as [key, option] (key)}
 		<option value={key}>
 			{option.label}
 		</option>
