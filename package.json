@@ -28,7 +28,7 @@
     "@playwright/test": "^1.25.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@sveltejs/adapter-node": "1.0.0-next.100",
-    "@sveltejs/kit": "1.0.0-next.531",
+    "@sveltejs/kit": "1.0.0-next.539",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.2.2",
     "@testing-library/user-event": "^14.4.3",
