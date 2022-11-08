@@ -36,13 +36,14 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 
 	const options = [];
 	for (let i = 0; i < breakpoints.length - 1; i++) {
-		const value = breakpoints.slice(i, i + 2);
-		const label = labels[i] || getLabel(value);
+		const range = breakpoints.slice(i, i + 2);
+		const value = range.join('-');
+		const label = labels[i] || getLabel(range);
 		options.push({ label, value });
 	}
 
-	function getLabel(range) {
-		const [min, max] = range.sort();
+	function getLabel(range: number[]) {
+		const [min, max] = [Math.min(...range), Math.max(...range)];
 		if (Number.isFinite(min) && Number.isFinite(max)) {
 			return `${formatter(min)} - ${formatter(max)}`;
 		} else if (Number.isFinite(min)) {
@@ -52,11 +53,10 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 		}
 	}
 
-	function getFilter(values) {
-		const allValues = values.flat();
+	function getFilter(values: string[]) {
+		const allValues = values.flatMap((v) => v.split('-')).map(Number);
 		if (allValues.length > 0) {
-			const min = Math.min(...allValues);
-			const max = Math.max(...allValues);
+			const [min, max] = [Math.min(...allValues), Math.max(...allValues)];
 			const filters = [];
 			if (Number.isFinite(min)) filters.push(`${fieldName}:>=${min}`);
 			if (Number.isFinite(max)) filters.push(`${fieldName}:<${max}`);

@@ -16,8 +16,22 @@ Advanced Search page
 
 	let q = params.get('q') || '';
 	let sortBy = params.get('sortBy');
+	let filters = initFilters(params.get('filters'));
 	let filterBy: string[] = [];
 	let filterPanelOpen = false;
+
+	function initFilters(filtersJSON: string) {
+		try {
+			const parsed = JSON.parse(filtersJSON);
+			if (Object.prototype.toString.call(parsed) === '[object Object]') {
+				return parsed;
+			} else {
+				return {};
+			}
+		} catch (e) {
+			return {};
+		}
+	}
 
 	function updateUrl(params: Record<string, string>) {
 		browser && history.replaceState(null, '', '?' + new URLSearchParams(params));
@@ -25,7 +39,7 @@ Advanced Search page
 
 	$: hasSearch = filterBy.length > 0 || q.trim().length > 0;
 
-	$: updateUrl({ q, sortBy });
+	$: updateUrl({ q, sortBy, filters: JSON.stringify(filters) });
 
 	$: tradingEntities.search({
 		q,
@@ -47,7 +61,7 @@ Advanced Search page
 	</header>
 
 	<section class="ds-container">
-		<FilterPanel bind:open={filterPanelOpen} bind:sortBy bind:filterBy facets={$tradingEntities.facets} />
+		<FilterPanel bind:open={filterPanelOpen} bind:sortBy bind:filters bind:filterBy facets={$tradingEntities.facets} />
 		<SearchPanel
 			bind:sortBy
 			bind:q

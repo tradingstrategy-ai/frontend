@@ -15,8 +15,8 @@
 	export let sortBy: string;
 	export let filterBy: string[] = [];
 	export let facets: Facet[] = [];
+	export let filters: Filter = {};
 
-	let filters: Filter = {};
 	let filterVals: FilterVal = {};
 	let panel: HTMLElement;
 
