@@ -1,12 +1,13 @@
 <!--
 Advanced Search page
 - uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
-- auto-populates search box with `q` query param if supplied
+- auto-populates search options from URL parameters (q, sortBy, filters)
 - returns first 200 matching results (future: pagination or infinite scroll)
 -->
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import tradingEntities from '$lib/search/trading-entities';
 	import FilterPanel from './FilterPanel.svelte';
 	import SearchPanel from './SearchPanel.svelte';
@@ -16,30 +17,36 @@ Advanced Search page
 
 	let q = params.get('q') || '';
 	let sortBy = params.get('sortBy');
-	let filters = initFilters(params.get('filters'));
+	let filters = parseFilters(params.get('filters'));
 	let filterBy: string[] = [];
 	let filterPanelOpen = false;
+	let debounceTimerId: number;
 
-	function initFilters(filtersJSON: string) {
+	// deserialize filters URL param
+	function parseFilters(filtersJSON: string) {
 		try {
 			const parsed = JSON.parse(filtersJSON);
-			if (Object.prototype.toString.call(parsed) === '[object Object]') {
-				return parsed;
-			} else {
-				return {};
-			}
+			return parsed.constructor === Object ? parsed : {};
 		} catch (e) {
 			return {};
 		}
 	}
 
-	function updateUrl(params: Record<string, string>) {
-		browser && history.replaceState(null, '', '?' + new URLSearchParams(params));
+	// serialize search params to URL; debounce invocations to minimize lag on mobile
+	function updateUrlParams(params: Record<string, string>) {
+		clearTimeout(debounceTimerId);
+		debounceTimerId = setTimeout(() => {
+			goto('?' + new URLSearchParams(params), {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
+		}, 500);
 	}
 
 	$: hasSearch = filterBy.length > 0 || q.trim().length > 0;
 
-	$: updateUrl({ q, sortBy, filters: JSON.stringify(filters) });
+	$: browser && updateUrlParams({ q, sortBy, filters: JSON.stringify(filters) });
 
 	$: tradingEntities.search({
 		q,
