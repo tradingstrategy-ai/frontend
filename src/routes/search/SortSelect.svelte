@@ -41,14 +41,14 @@ pre-defined set of sort options.
 
 <script lang="ts">
 	import { DropDown } from '$lib/components';
-	export let sortBy: string;
+	export let value: string;
 
-	if (!(sortBy in options)) {
-		sortBy = Object.keys(options)[0];
+	if (!(value in options)) {
+		value = Object.keys(options)[0];
 	}
 </script>
 
-<DropDown bind:value={sortBy} size="xl" --drop-down-width="100%">
+<DropDown bind:value size="xl" --drop-down-width="100%">
 	{#each Object.entries(options) as [key, option] (key)}
 		<option value={key}>
 			{option.label}

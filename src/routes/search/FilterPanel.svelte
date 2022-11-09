@@ -50,7 +50,7 @@
 
 	<section>
 		<div class="sort-control">
-			<SortSelect bind:sortBy />
+			<SortSelect bind:value={sortBy} />
 		</div>
 
 		<button class="clear-filters" disabled={!hasFilters} on:click={clearAllFilters}>

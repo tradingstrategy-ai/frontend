@@ -30,7 +30,7 @@
 			on:keydown={handleKeydown}
 		/>
 		<div class="sort-select">
-			<SortSelect bind:sortBy />
+			<SortSelect bind:value={sortBy} />
 		</div>
 		<button class="filter-toggle" on:click={() => dispatch('showFilters')}>
 			<Icon name="filter" />
