@@ -80,7 +80,7 @@ const config = {
 	// vitest configuration for unit tests (`npm run test:units`)
 	// https://vitest.dev/config/
 	test: {
-		environment: 'happy-dom',
+		environment: 'jsdom',
 		globals: true,
 		include: ['src/**/*.test.ts'],
 		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
