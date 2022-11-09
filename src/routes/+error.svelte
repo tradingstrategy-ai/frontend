@@ -20,6 +20,7 @@
 			<Logo />
 		</a>
 	</header>
+
 	{#if status === 404}
 		<ErrorPageInfo {status} title="Page not found">
 			<Button label="Go to home page" href="/" />
@@ -55,10 +56,11 @@
 		place-content: end center;
 		--logo-height: 4rem;
 
-		@media all and (max-width: 767px) {
+		@media (--viewport-sm-down) {
 			--logo-height: 3rem;
 		}
 	}
+
 	main {
 		position: absolute;
 		top: 0;
