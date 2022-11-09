@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button } from '$lib/components';
+	import { Button, Logo } from '$lib/components';
 	import ErrorPageInfo from './ErrorPageInfo.svelte';
 
 	let showLogs = false;
@@ -15,6 +15,11 @@
 </svelte:head>
 
 <main>
+	<header>
+		<a href="/" rel="homepage">
+			<Logo />
+		</a>
+	</header>
 	{#if status === 404}
 		<ErrorPageInfo {status} title="Page not found">
 			<Button label="Go to home page" href="/" />
@@ -45,6 +50,15 @@
 </main>
 
 <style lang="postcss">
+	header {
+		display: grid;
+		place-content: end center;
+		--logo-height: 4rem;
+
+		@media all and (max-width: 767px) {
+			--logo-height: 3rem;
+		}
+	}
 	main {
 		position: absolute;
 		top: 0;
