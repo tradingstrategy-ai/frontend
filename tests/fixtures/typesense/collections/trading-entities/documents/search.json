@@ -1,0 +1,34 @@
+{
+	"facet_counts": [
+		{
+			"field_name": "type",
+			"counts": [
+				{ "value": "exchange", "count": 100 },
+				{ "value": "token", "count": 1000 },
+				{ "value": "pair", "count": 2000 }
+			]
+		},
+		{
+			"field_name": "blockchain",
+			"counts": [
+				{ "value": "binance", "count": 2000 },
+				{ "value": "ethereum", "count": 500 },
+				{ "value": "polygon", "count": 400 },
+				{ "value": "avalanche", "count": 200 }
+			]
+		},
+		{
+			"field_name": "exchange",
+			"counts": [
+				{ "value": "PancakeSwap", "count": 1000 },
+				{ "value": "Uniswap v2", "count": 800 },
+				{ "value": "Quickswap", "count": 600 },
+				{ "value": "Uniswap v3", "count": 400 },
+				{ "value": "Sushi", "count": 200 }
+			]
+		}
+	],
+	"hits": [],
+	"found": 10,
+	"out_of": 3100
+}
