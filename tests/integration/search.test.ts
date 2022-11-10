@@ -7,6 +7,25 @@ function urlParamsMatch(expected: Record<string, any>) {
 	};
 }
 
+function searchParams({ filters = {}, ...restParams }: any = {}) {
+	const filterJSON = JSON.stringify({
+		price_change_24h: [],
+		liquidity: [],
+		volume_24h: [],
+		type: [],
+		blockchain: [],
+		exchange: [],
+		...filters
+	});
+
+	return {
+		q: '',
+		sortBy: 'liquidity:desc',
+		filters: filterJSON,
+		...restParams
+	};
+}
+
 test.describe('advanced search page', () => {
 	test('should pre-fill search based on q param', async ({ page }) => {
 		await page.goto('/search?q=eth');
@@ -25,7 +44,7 @@ test.describe('advanced search page', () => {
 			exchange: ['Uniswap v2'],
 			volume_24h: ['Infinity-1000000']
 		};
-		const params = new URLSearchParams({ filters: JSON.stringify(filters) });
+		const params = new URLSearchParams(searchParams({ filters }));
 		await page.goto(`/search?${params}`);
 
 		for (const name of ['Pair', 'Ethereum', 'Uniswap v2', '> $1M']) {
@@ -35,20 +54,7 @@ test.describe('advanced search page', () => {
 
 	test('should populate URL query params with default search options', async ({ page }) => {
 		await page.goto('/search');
-
-		const expected = {
-			q: '',
-			sortBy: 'liquidity:desc',
-			filters: JSON.stringify({
-				price_change_24h: [],
-				liquidity: [],
-				volume_24h: [],
-				type: [],
-				blockchain: [],
-				exchange: []
-			})
-		};
-
+		const expected = searchParams({});
 		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
 	});
 
@@ -56,24 +62,49 @@ test.describe('advanced search page', () => {
 		await page.goto('/search');
 
 		await page.getByRole('searchbox').focus();
-		await page.keyboard.type('foo');
+		await page.keyboard.type('eth');
 		await page.getByRole('combobox').selectOption('price_change:asc');
-		await page.getByText('Binance').click();
+		await page.getByText('binance', { exact: true }).click();
 		await page.getByText('Up > 5%').click();
 
-		const expected = {
-			q: 'foo',
+		const expected = searchParams({
+			q: 'eth',
 			sortBy: 'price_change:asc',
-			filters: JSON.stringify({
+			filters: {
 				price_change_24h: ['price_change_24h:>0.05'],
-				liquidity: [],
-				volume_24h: [],
-				type: [],
-				blockchain: ['binance'],
-				exchange: []
-			})
-		};
+				blockchain: ['binance']
+			}
+		});
 
 		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+	});
+
+	test('should retain selected search options when navigating to search result and back', async ({ page }) => {
+		await page.goto('/search');
+
+		// update some search options (search text, sort drop-down, filter)
+		await page.getByRole('searchbox').focus();
+		await page.keyboard.type('eth');
+		await page.getByRole('combobox').selectOption('volume:desc');
+		await page.getByText('ethereum', { exact: true }).click();
+
+		// wait for URL params to reflect the search selections (computer is faster than human)
+		const expected = searchParams({
+			q: 'eth',
+			sortBy: 'volume:desc',
+			filters: { blockchain: ['ethereum'] }
+		});
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+
+		// click on search result, wait for token page to load, click "back" button
+		await page.getByText('USDC on Ethereum').click();
+		await page.waitForURL(/ethereum\/tokens\/0xa0b8699/);
+		await page.goBack();
+
+		// wait until we're back on the search page; verify search options are retained
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+		await expect(page.getByRole('searchbox')).toHaveValue('eth');
+		await expect(page.getByRole('combobox')).toHaveValue('volume:desc');
+		await expect(page.getByRole('checkbox', { name: 'ethereum' })).toBeChecked();
 	});
 });

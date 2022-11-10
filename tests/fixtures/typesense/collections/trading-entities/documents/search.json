@@ -28,7 +28,26 @@
 			]
 		}
 	],
-	"hits": [],
+	"hits": [
+		{
+			"document": {
+				"blockchain": "ethereum",
+				"description": "USDC on Ethereum",
+				"exchange": "",
+				"id": "token_1",
+				"liquidity": 123456789.0,
+				"name": "USDC",
+				"price_usd_latest": 0,
+				"smart_contract_addresses": ["0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+				"token_names": ["USD Coin"],
+				"token_tickers": ["USDC"],
+				"type": "token",
+				"type_rank": 4,
+				"url_path": "/trading-view/ethereum/tokens/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+				"volume_24h": 2345678901.2
+			}
+		}
+	],
 	"found": 10,
 	"out_of": 3100
 }
