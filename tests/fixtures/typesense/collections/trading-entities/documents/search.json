@@ -1,0 +1,53 @@
+{
+	"facet_counts": [
+		{
+			"field_name": "type",
+			"counts": [
+				{ "value": "exchange", "count": 100 },
+				{ "value": "token", "count": 1000 },
+				{ "value": "pair", "count": 2000 }
+			]
+		},
+		{
+			"field_name": "blockchain",
+			"counts": [
+				{ "value": "binance", "count": 2000 },
+				{ "value": "ethereum", "count": 500 },
+				{ "value": "polygon", "count": 400 },
+				{ "value": "avalanche", "count": 200 }
+			]
+		},
+		{
+			"field_name": "exchange",
+			"counts": [
+				{ "value": "PancakeSwap", "count": 1000 },
+				{ "value": "Uniswap v2", "count": 800 },
+				{ "value": "Quickswap", "count": 600 },
+				{ "value": "Uniswap v3", "count": 400 },
+				{ "value": "Sushi", "count": 200 }
+			]
+		}
+	],
+	"hits": [
+		{
+			"document": {
+				"blockchain": "ethereum",
+				"description": "USDC on Ethereum",
+				"exchange": "",
+				"id": "token_1",
+				"liquidity": 123456789.0,
+				"name": "USDC",
+				"price_usd_latest": 0,
+				"smart_contract_addresses": ["0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+				"token_names": ["USD Coin"],
+				"token_tickers": ["USDC"],
+				"type": "token",
+				"type_rank": 4,
+				"url_path": "/trading-view/ethereum/tokens/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+				"volume_24h": 2345678901.2
+			}
+		}
+	],
+	"found": 10,
+	"out_of": 3100
+}

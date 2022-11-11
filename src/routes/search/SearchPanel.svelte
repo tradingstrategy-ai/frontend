@@ -7,7 +7,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let q: string;
-	export let sortOption: string;
+	export let sortBy: string;
 	export let hasSearch: boolean;
 	export let hits: [] = [];
 
@@ -30,7 +30,7 @@
 			on:keydown={handleKeydown}
 		/>
 		<div class="sort-select">
-			<SortSelect bind:value={sortOption} />
+			<SortSelect bind:value={sortBy} />
 		</div>
 		<button class="filter-toggle" on:click={() => dispatch('showFilters')}>
 			<Icon name="filter" />

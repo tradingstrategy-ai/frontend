@@ -1,28 +1,57 @@
 <!--
 Advanced Search page
 - uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
-- auto-populates search box with `q` query param if supplied
+- auto-populates search options from URL parameters (q, sortBy, filters)
 - returns first 200 matching results (future: pagination or infinite scroll)
 -->
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import tradingEntities from '$lib/search/trading-entities';
 	import FilterPanel from './FilterPanel.svelte';
 	import SearchPanel from './SearchPanel.svelte';
-	import { sortOptions } from './SortSelect.svelte';
+	import { getSortParams } from './SortSelect.svelte';
 
-	let q = $page.url.searchParams.get('q') || '';
+	const params = $page.url.searchParams;
 
-	let filterPanelOpen = false;
+	let q = params.get('q') || '';
+	let sortBy = params.get('sortBy');
+	let filters = parseFilters(params.get('filters'));
 	let filterBy: string[] = [];
-	let sortOption = 'liquidity';
+	let filterPanelOpen = false;
+	let debounceTimerId: number;
+
+	// deserialize filters URL param
+	function parseFilters(filtersJSON: string) {
+		try {
+			const parsed = JSON.parse(filtersJSON);
+			return parsed.constructor === Object ? parsed : {};
+		} catch (e) {
+			return {};
+		}
+	}
+
+	// serialize search params to URL; debounce invocations to minimize lag on mobile
+	function updateUrlParams(params: Record<string, string>) {
+		clearTimeout(debounceTimerId);
+		debounceTimerId = setTimeout(() => {
+			goto('?' + new URLSearchParams(params), {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
+		}, 500);
+	}
 
 	$: hasSearch = filterBy.length > 0 || q.trim().length > 0;
+
+	$: browser && updateUrlParams({ q, sortBy, filters: JSON.stringify(filters) });
 
 	$: tradingEntities.search({
 		q,
 		filter_by: filterBy,
-		sort_by: sortOptions[sortOption].value,
+		sort_by: getSortParams(sortBy),
 		facet_by: ['type', 'blockchain', 'exchange'],
 		per_page: 200
 	});
@@ -39,9 +68,9 @@ Advanced Search page
 	</header>
 
 	<section class="ds-container">
-		<FilterPanel bind:open={filterPanelOpen} bind:sortOption bind:filterBy facets={$tradingEntities.facets} />
+		<FilterPanel bind:open={filterPanelOpen} bind:sortBy bind:filters bind:filterBy facets={$tradingEntities.facets} />
 		<SearchPanel
-			bind:sortOption
+			bind:sortBy
 			bind:q
 			{hasSearch}
 			hits={$tradingEntities.hits}

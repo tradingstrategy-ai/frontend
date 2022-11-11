@@ -1,10 +1,10 @@
-import { render, waitFor } from '@testing-library/svelte';
+import { render } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import SearchPanel from './SearchPanel.svelte';
 
 const defaultProps = {
 	q: '',
-	sortOption: 'liquidity',
+	sortBy: 'liquidity',
 	hasSearch: false
 };
 
