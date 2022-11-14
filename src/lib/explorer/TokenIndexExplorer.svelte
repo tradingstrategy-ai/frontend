@@ -44,9 +44,9 @@ Tokens Explorer
 			}
 		},
 		liquidity_latest: {
-			name: 'Liq 24h Δ',
+			name: 'Liquidity (USD)',
 			data: 'liquidity_latest',
-			className: 'col-liquidity-change',
+			className: 'col-liquidity',
 			serverSideSortKey: 'liquidity_latest',
 			orderable: true,
 			type: 'num',

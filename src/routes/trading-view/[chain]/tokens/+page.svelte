@@ -4,11 +4,12 @@
 	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
 
 	const chainSlug = $page.params.chain;
+	const chainName = chainSlug[0].toUpperCase() + chainSlug.slice(1);
 </script>
 
 <svelte:head>
-	<title>Tokens</title>
-	<meta name="description" content="Top decentralised exchanges" />
+	<title>Tokens on {chainName}</title>
+	<meta name="description" content="Top tokens on {chainName} blockchain" />
 </svelte:head>
 
 <Breadcrumbs />
@@ -17,7 +18,8 @@
 	<header class="ds-container">
 		<h1>Tokens</h1>
 		<p>
-			Browse supported decentralised tokens across {chainSlug} <a href="/trading-view/blockchains">blockchain</a> below.
+			Browse supported decentralised tokens across
+			<a href="/trading-view/blockchains">{chainName} blockchain</a>
 		</p>
 	</header>
 
@@ -30,29 +32,40 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		display: grid;
 		gap: 1rem;
 	}
 
-	.ds-container {
-		gap: 1rem;
+	header {
+		gap: 0.75rem;
+
+		& p {
+			font: var(--f-h4-roman);
+
+			& a {
+				text-decoration: underline;
+				font-weight: 700;
+			}
+
+			@media (--viewport-lg-up) {
+				font: var(--f-h3-roman);
+			}
+		}
 	}
 
-	header h1 {
-		font: var(--f-h2-medium);
-	}
+	section :global {
+		& .col-exchange {
+			padding-left: 0;
+		}
 
-	section :global .col-exchange {
-		padding-left: 0;
-	}
+		& .col-volume {
+			width: 10%;
+		}
 
-	section :global .col-volume {
-		width: 10%;
-	}
-
-	section :global .col-chain-name {
-		width: 25%;
+		& .col-chain-name {
+			width: 25%;
+		}
 	}
 </style>
