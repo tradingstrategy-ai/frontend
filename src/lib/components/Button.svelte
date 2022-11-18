@@ -42,10 +42,10 @@
 		justify-content: center;
 		align-items: center;
 		height: var(--button-height, 3.5rem);
-		padding: 0 1.5rem;
+		padding: var(--button-padding, 0 1.5rem);
 		border: 1px solid transparent;
 		border-radius: 0.5rem;
-		font: 500 var(--fs-ui-lg);
+		font: var(--button-font, 500 var(--fs-ui-lg));
 		text-decoration: none;
 		text-transform: capitalize;
 		text-align: center;

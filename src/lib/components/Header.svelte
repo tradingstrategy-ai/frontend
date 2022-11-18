@@ -40,6 +40,14 @@
 <style lang="postcss">
 	@custom-media --nav-collapsed (width < 1125px);
 
+	:global :root {
+		--header-height: 5.5rem;
+
+		@media (--nav-collapsed) {
+			--header-height: 3.75rem;
+		}
+	}
+
 	header {
 		display: grid;
 		grid-template-columns:
@@ -52,7 +60,7 @@
 		grid-auto-flow: column;
 		align-items: center;
 		gap: 1.25rem;
-		height: 5.5rem;
+		height: var(--header-height);
 	}
 
 	header > * {
@@ -96,10 +104,6 @@
 	@media (--nav-collapsed) {
 		.desktop-only {
 			display: none;
-		}
-
-		header {
-			height: 3.75rem;
 		}
 
 		.logo {
