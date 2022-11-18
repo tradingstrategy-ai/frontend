@@ -10,7 +10,7 @@ Home page hero banner.
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
-	import mbp15Image from '$lib/assets/misc/mbp-15.png';
+	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
 
 	export let impressiveNumbers: any;
 </script>

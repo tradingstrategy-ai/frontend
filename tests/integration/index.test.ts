@@ -10,7 +10,7 @@ test.describe('home page', () => {
 	// deleting the old ones from `tests/integration/index.test.ts-snapshots` and running
 	// the folling commands (2nd one is needed for CI to pass correctly):
 	// $ npm run test:integration
-	// $ docker run -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.27.0-focal bash -c 'cd work && npm run test:integration --skip-build'
+	// $ docker run --rm -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.27.0-focal bash -c 'cd work && npm run test:integration --skip-build'
 	test('hero banner looks correct', async ({ page }) => {
 		const header = page.locator('main header');
 		await expect(header).toHaveScreenshot();
