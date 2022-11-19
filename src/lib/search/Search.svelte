@@ -27,8 +27,31 @@ Display site-wide search box for use in top-nav.
 
 	$: hits = hasQuery ? $tradingEntities.hits : [];
 
-	async function toggleFocus() {
+	// use event loop to allow click on result anchor tags to propogate before dialog closes
+	function toggleFocus() {
 		setTimeout(() => (hasFocus = !hasFocus));
+	}
+
+	/**
+	 * Mobile Safari does not correctly reflect viewport height with % or vh units when virtual
+	 * keyboard is open (grr!). It does, however, support the VisualViewport JS API for getting the
+	 * (real) visual viewport size. See:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API
+	 */
+	function setViewportHeight(node: HTMLElement) {
+		const { visualViewport } = window;
+		if (!visualViewport) return;
+
+		const setCssVar = () => {
+			node.style.setProperty('--viewport-height', `${visualViewport.height}px`);
+		};
+
+		setCssVar();
+		visualViewport.addEventListener('resize', setCssVar);
+
+		return {
+			destroy: () => visualViewport.removeEventListener('resize', setCssVar)
+		};
 	}
 </script>
 
@@ -36,9 +59,10 @@ Display site-wide search box for use in top-nav.
 	class="search"
 	class:hasFocus
 	class:hasQuery
+	data-testid="nav-search"
+	use:setViewportHeight
 	on:focus|capture={toggleFocus}
 	on:blur|capture={toggleFocus}
-	data-testid="nav-search"
 >
 	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
 		<Icon name="search" />
@@ -141,6 +165,7 @@ Display site-wide search box for use in top-nav.
 		transition: opacity 0.25s;
 		--text-input-height: 2.875rem;
 
+		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
 		@nest :not(.hasFocus) & {
 			opacity: 0;
 			pointer-events: none;
@@ -157,14 +182,16 @@ Display site-wide search box for use in top-nav.
 			top: 0;
 
 			@nest .hasQuery & {
-				height: 100vh;
+				height: var(--viewport-height, 100vh);
 				gap: 0.625rem;
 			}
 		}
 	}
 
-	/* Prevent body scrolling when search dialog is open and has results on mobile */
-	/* NOTE: using CSS ids as work-around for postcss-present-env :has pseudo-selector flakiness */
+	/**
+	 * Prevent body scrolling when search dialog is open and has results on mobile
+	 * NOTE: using CSS ids as work-around for :has pseudo-selector flakiness
+	 */
 	:global body:has(#search-input-mobile:focus):has(#search-results) {
 		overflow: hidden;
 	}
