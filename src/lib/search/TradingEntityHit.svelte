@@ -112,6 +112,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		&.basic {
 			padding: 0.875rem 0.75rem;
+			border: none;
+			background: var(--c-background-4);
+
+			@media (--viewport-sm-up) {
+				padding-block: 1rem;
+			}
 		}
 
 		&.advanced {

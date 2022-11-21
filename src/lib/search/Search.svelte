@@ -17,32 +17,58 @@ Display site-wide search box for use in top-nav.
 	let q = '';
 	let hasFocus = false;
 
+	$: hasQuery = q.trim() !== '';
+
 	$: tradingEntities.search({
 		q,
 		sort_by: ['type_rank:asc', 'liquidity:desc', '_text_match:desc'],
 		group_by: ['type']
 	});
 
-	$: hits = q ? $tradingEntities.hits : [];
+	$: hits = hasQuery ? $tradingEntities.hits : [];
 
-	async function toggleFocus() {
+	// use event loop to allow click on result anchor tags to propogate before dialog closes
+	function toggleFocus() {
 		setTimeout(() => (hasFocus = !hasFocus));
+	}
+
+	/**
+	 * Mobile Safari does not correctly reflect viewport height with % or vh units when virtual
+	 * keyboard is open (grr!). It does, however, support the VisualViewport JS API for getting the
+	 * (real) visual viewport size. See:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API
+	 */
+	function setViewportHeight(node: HTMLElement) {
+		const { visualViewport } = window;
+		if (!visualViewport) return;
+
+		const setCssVar = () => {
+			node.style.setProperty('--viewport-height', `${visualViewport.height}px`);
+		};
+
+		setCssVar();
+		visualViewport.addEventListener('resize', setCssVar);
+
+		return {
+			destroy: () => visualViewport.removeEventListener('resize', setCssVar)
+		};
 	}
 </script>
 
 <div
 	class="search"
 	class:hasFocus
+	class:hasQuery
+	data-testid="nav-search"
+	use:setViewportHeight
 	on:focus|capture={toggleFocus}
 	on:blur|capture={toggleFocus}
-	data-testid="nav-search"
 >
 	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
 		<Icon name="search" />
 	</label>
 
-	<form class="desktop-only" action="/search">
-		<!-- prettier-ignore -->
+	<form class="desktop-only" action="/search" role="search">
 		<TextInput
 			bind:value={q}
 			aria-label="search-desktop"
@@ -56,7 +82,7 @@ Display site-wide search box for use in top-nav.
 	</form>
 
 	<div class="results">
-		<form class="mobile-only" action="/search">
+		<form class="mobile-only" action="/search" role="search">
 			<TextInput
 				bind:value={q}
 				id="search-input-mobile"
@@ -70,8 +96,8 @@ Display site-wide search box for use in top-nav.
 			/>
 		</form>
 
-		{#if q}
-			<ul>
+		{#if hasQuery}
+			<ul id="search-results">
 				{#each hits as { document }, index (document.id)}
 					<TradingEntityHit {document} layout="basic" />
 				{/each}
@@ -79,7 +105,7 @@ Display site-wide search box for use in top-nav.
 		{/if}
 
 		<div class="buttons">
-			{#if q}
+			{#if hasQuery}
 				<Button label="Show all results" href="/search?q={q}" />
 			{:else}
 				Search exchanges, tokens and trading pairs.
@@ -130,42 +156,68 @@ Display site-wide search box for use in top-nav.
 		position: absolute;
 		z-index: 1;
 		right: 0;
-		display: grid;
-		gap: 1rem;
 		padding: 0.75rem 0.625rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 		background: var(--c-body);
 		box-shadow: 0 0 0 1px var(--c-shadow-1), 0 4px 20px var(--c-shadow-1);
 		transition: opacity 0.25s;
 		--text-input-height: 2.875rem;
 
+		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
+		@nest :not(.hasFocus) & {
+			opacity: 0;
+			pointer-events: none;
+		}
+
 		@media (--search-layout-desktop) {
 			width: 450px;
 			margin-top: 0.25rem;
+			max-height: calc(100vh - 1.75rem - var(--header-height, 5rem) / 2);
 		}
 
 		@media (--search-layout-mobile) {
 			left: 0;
 			top: 0;
-		}
 
-		@nest :not(.hasFocus) & {
-			opacity: 0;
-			pointer-events: none;
+			@nest .hasQuery & {
+				height: var(--viewport-height, 100vh);
+				gap: 0.625rem;
+			}
 		}
 	}
 
+	/**
+	 * Prevent body scrolling when search dialog is open and has results on mobile
+	 * NOTE: using CSS ids as work-around for :has pseudo-selector flakiness
+	 */
+	:global body:has(#search-input-mobile:focus):has(#search-results) {
+		overflow: hidden;
+	}
+
 	ul {
-		display: grid;
-		gap: 1rem;
 		padding: 0;
+		flex: 1;
+		display: grid;
+		gap: 0.5rem;
+		align-content: start;
+		overflow-y: auto;
 	}
 
 	.buttons {
 		display: grid;
-		gap: 0.75rem;
+		gap: 0.75rem 0.625rem;
 		font: 500 var(--fs-ui-md);
 		letter-spacing: 0.01em;
 		color: var(--c-text-7);
 		text-align: center;
+		--button-font: 500 var(--fs-ui-md);
+		--button-padding: 0;
+		--button-height: 2.5rem;
+
+		@nest .hasQuery & {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 </style>
