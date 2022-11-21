@@ -14,6 +14,26 @@
 		protocol, algorithmic trading and DeFi markets.
 	</Hero>
 
+	<section class="ds-container">
+		<h2>Discuss & develop</h2>
+
+		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
+			Join our expert community of traders, developers, and analysts and DeFi specialists.
+		</ContentTile>
+
+		<ContentTile title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
+			Explore Trading Strategy open-source code on our GitHub repository.
+		</ContentTile>
+
+		<ContentTile
+			title="Algorithm tutorials"
+			icon="read-glasses"
+			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+		>
+			Learn how to write trading algorithms with our documentation and run backtests.
+		</ContentTile>
+	</section>
+
 	<div class="section-wrapper">
 		<section class="ds-container">
 			<h2>Follow us</h2>
@@ -40,26 +60,6 @@
 
 			<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
 				Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
-			</ContentTile>
-		</section>
-
-		<section class="ds-container">
-			<h2>Discuss & develop</h2>
-
-			<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
-				Join our expert community of traders, developers, and analysts and DeFi specialists.
-			</ContentTile>
-
-			<ContentTile title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
-				Explore Trading Strategy open-source code on our GitHub repository.
-			</ContentTile>
-
-			<ContentTile
-				title="Algorithm tutorials"
-				icon="read-glasses"
-				targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-			>
-				Learn how to write trading algorithms with our documentation and run backtests.
 			</ContentTile>
 		</section>
 	</div>
