@@ -18,9 +18,9 @@ fi
 
 # Needed to correctly build the executor frontend.
 # On prod this comes from the pre-set env
-if [ -z "VITE_PUBLIC_STRATEGIES" ]; then
+if [ -z "TS_PUBLIC_STRATEGIES" ]; then
   source .env
-  export VITE_PUBLIC_STRATEGIES
+  export TS_PUBLIC_STRATEGIES
 fi
 
 # Package trade-executor-frontend for SvelteKit
