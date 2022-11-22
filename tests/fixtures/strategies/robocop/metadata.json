@@ -1,0 +1,7 @@
+{
+	"name": "Quickswap momentum",
+	"short_description": "A data collection test that trades on Polygon MATIC/USDC pairs.",
+	"long_description": "This strategy is a test strategy that does not aim to generated profit. The strategy trades on MATIC/USDC pairs on QuickSwap. The strategy rebalances every 16 hours to generate maximum amount of data. Based on 4h candles, the strategy calculates the momentum and picks highest gainers. The portfolio can hold 6 positions at once.",
+	"icon_url": "https://i0.wp.com/bloody-disgusting.com/wp-content/uploads/2022/01/watch-robocop-the-series.png?w=1270",
+	"started_at": 1669054552.644598
+}

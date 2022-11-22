@@ -20,17 +20,17 @@ services:
       # See config.ts
       # See .env - docker-compose reads .env file
       - TS_PUBLIC_SITE_MODE
+      - TS_PUBLIC_FRONTEND_VERSION_TAG
       - TS_PUBLIC_BACKEND_URL
       - TS_PUBLIC_BACKEND_INTERNAL_URL
       - TS_PUBLIC_GHOST_CONTENT_API_KEY
       - TS_PUBLIC_GHOST_API_URL
       - TS_PUBLIC_TYPESENSE_API_KEY
       - TS_PUBLIC_TYPESENSE_API_URL
+      - TS_PUBLIC_STRATEGIES
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
-      - TS_PUBLIC_FRONTEND_VERSION_TAG
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
-      # TODO: make VITE_PUBLIC_STRATEGIES run-time configurable
     deploy:
       restart_policy:
         condition: on-failure
