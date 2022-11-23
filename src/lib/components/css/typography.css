@@ -1,10 +1,111 @@
-/* Font Families and base font sizes */
 :root {
+	/* Font Families */
 	--ff-display: 'Neue Haas Grotesk Display', system-ui, sans-serif;
 	--ff-ui: 'Neue Haas Grotesk Text', system-ui, sans-serif;
 	--ff-text: 'Source Serif Pro', serif;
 	--ff-mono: 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 
+	/* Heading Fonts */
+	--f-heading-xs-light: 400 19px/24px var(--ff-display);
+	--f-heading-xs-roman: 500 19px/24px var(--ff-display);
+	--f-heading-xs-medium: 600 19px/24px var(--ff-display);
+	--f-heading-xs-bold: 700 19px/24px var(--ff-display);
+
+	--f-heading-sm-light: 400 22px/28px var(--ff-display);
+	--f-heading-sm-roman: 500 22px/28px var(--ff-display);
+	--f-heading-sm-medium: 600 22px/28px var(--ff-display);
+	--f-heading-sm-bold: 700 22px/28px var(--ff-display);
+
+	--f-heading-md-light: 400 26px/36px var(--ff-display);
+	--f-heading-md-roman: 500 26px/36px var(--ff-display);
+	--f-heading-md-medium: 600 26px/36px var(--ff-display);
+	--f-heading-md-bold: 700 26px/36px var(--ff-display);
+
+	--f-heading-lg-light: 400 32px/40px var(--ff-display);
+	--f-heading-lg-roman: 500 32px/40px var(--ff-display);
+	--f-heading-lg-medium: 600 32px/40px var(--ff-display);
+	--f-heading-lg-bold: 700 32px/40px var(--ff-display);
+
+	--f-heading-xl-light: 400 38px/44px var(--ff-display);
+	--f-heading-xl-roman: 500 38px/44px var(--ff-display);
+	--f-heading-xl-medium: 600 38px/44px var(--ff-display);
+	--f-heading-xl-bold: 700 38px/44px var(--ff-display);
+
+	--f-heading-xxl-light: 400 48px/56px var(--ff-display);
+	--f-heading-xxl-roman: 500 48px/56px var(--ff-display);
+	--f-heading-xxl-medium: 600 48px/56px var(--ff-display);
+	--f-heading-xxl-bold: 700 48px/56px var(--ff-display);
+
+	--f-heading-xxxl-light: 400 56px/64px var(--ff-display);
+	--f-heading-xxxl-roman: 500 56px/64px var(--ff-display);
+	--f-heading-xxxl-medium: 600 56px/64px var(--ff-display);
+	--f-heading-xxxl-bold: 700 56px/64px var(--ff-display);
+
+	--f-heading-xxxxl-spacing: -0.01em;
+	--f-heading-xxxxl-light: 400 72px/100px var(--ff-display);
+	--f-heading-xxxxl-roman: 500 72px/100px var(--ff-display);
+	--f-heading-xxxxl-medium: 600 72px/100px var(--ff-display);
+	--f-heading-xxxxl-bold: 700 72px/100px var(--ff-display);
+
+	--f-heading-xxxxxl-light: 400 112px/100px var(--ff-display);
+	--f-heading-xxxxxl-roman: 500 112px/100px var(--ff-display);
+	--f-heading-xxxxxl-medium: 600 112px/100px var(--ff-display);
+	--f-heading-xxxxxl-bold: 700 112px/100px var(--ff-display);
+
+	/* UI Fonts */
+	--f-ui-xs-spacing: 0.02em;
+	--f-ui-xs-roman: 400 12px/16px var(--ff-ui);
+	--f-ui-xs-medium: 500 12px/16px var(--ff-ui);
+	--f-ui-xs-bold: 700 12px/16px var(--ff-ui);
+
+	--f-ui-sm-roman: 400 13px/20px var(--ff-ui);
+	--f-ui-sm-medium: 500 13px/20px var(--ff-ui);
+	--f-ui-sm-bold: 700 13px/20px var(--ff-ui);
+
+	--f-ui-md-spacing: 0.01em;
+	--f-ui-md-roman: 400 16px/24px var(--ff-ui);
+	--f-ui-md-medium: 500 16px/24px var(--ff-ui);
+	--f-ui-md-bold: 700 16px/24px var(--ff-ui);
+
+	--f-ui-lg-roman: 400 18px/24px var(--ff-ui);
+	--f-ui-lg-medium: 500 18px/24px var(--ff-ui);
+	--f-ui-lg-bold: 700 18px/24px var(--ff-ui);
+
+	--f-ui-xl-spacing: -0.01em;
+	--f-ui-xl-roman: 400 20px/28px var(--ff-ui);
+	--f-ui-xl-medium: 500 20px/28px var(--ff-ui);
+	--f-ui-xl-bold: 700 20px/28px var(--ff-ui);
+
+	--f-ui-xxl-spacing: -0.01em;
+	--f-ui-xxl-roman: 400 26px/32px var(--ff-ui);
+	--f-ui-xxl-medium: 500 26px/32px var(--ff-ui);
+	--f-ui-xxl-bold: 700 26px/32px var(--ff-ui);
+
+	--f-ui-xxxl-spacing: -0.01em;
+	--f-ui-xxxl-roman: 400 36px/44px var(--ff-ui);
+	--f-ui-xxxl-medium: 500 36px/44px var(--ff-ui);
+	--f-ui-xxxl-bold: 700 36px/44px var(--ff-ui);
+
+	/* Text Fonts */
+	--f-text-md-regular: 400 16px/28px var(--ff-text);
+	--f-text-md-semibold: 600 16px/28px var(--ff-text);
+	--f-text-md-bold: 700 16px/28px var(--ff-text);
+
+	--f-text-lg-regular: 400 19px/32px var(--ff-text);
+	--f-text-lg-semibold: 600 19px/32px var(--ff-text);
+	--f-text-lg-bold: 700 19px/32px var(--ff-text);
+
+	--f-text-xl-regular: 400 26px/36px var(--ff-text);
+	--f-text-xl-semibold: 600 26px/36px var(--ff-text);
+	--f-text-xl-bold: 700 26px/36px var(--ff-text);
+
+	/* Mono (code) Fonts */
+	--f-mono-body-spacing: -0.02em;
+	--f-mono-body-regular: 400 16px/28px var(--ff-mono);
+}
+
+/* DEPRECATED: font size layer */
+:root {
 	--fs-heading-xxl: 48px/56px var(--ff-display);
 	--fs-heading-xl: 38px/44px var(--ff-display);
 	--fs-heading-lg: 32px/40px var(--ff-display);
@@ -22,11 +123,9 @@
 	--fs-text-lg: 26px/36px var(--ff-text);
 	--fs-text-md: 19px/32px var(--ff-text);
 	--fs-text-sm: 16px/28px var(--ff-text);
-
-	--fs-mono-md: 16px/28px var(--ff-mono);
 }
 
-/* Font Pairings - Mobile */
+/* DEPRECATED Font Pairings - Mobile */
 :root {
 	--f-h1-bold: 700 var(--fs-heading-xl);
 	--f-h1-medium: 600 var(--fs-heading-xl);
@@ -90,11 +189,9 @@
 	--f-text-small-bold: 700 var(--fs-text-sm);
 	--f-text-small-semibold: 600 var(--fs-text-sm);
 	--f-text-small-regular: 400 var(--fs-text-sm);
-
-	--f-mono-body-regular: 400 var(--fs-mono-md);
 }
 
-/* Font Pairings - Desktop */
+/* DEPRECATED Font Pairings - Desktop */
 @media (width >= 768px) {
 	:root {
 		--f-h1-bold: 700 var(--fs-heading-xxl);
@@ -146,8 +243,6 @@
 		--f-ui-xsmall-medium: 500 var(--fs-ui-sm);
 		--f-ui-xsmall-roman: 400 var(--fs-ui-sm);
 		--f-ui-xsmall-light: 300 var(--fs-ui-sm);
-
-		/* NOTE: no override needed for --f-text or --f-mono values */
 	}
 }
 
