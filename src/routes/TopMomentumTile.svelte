@@ -51,16 +51,22 @@ Display best or worst performing trading pairs.
 	</span>
 </div>
 
-<style>
+<style lang="postcss">
 	div {
 		display: grid;
 		border: 2px solid var(--c-border-2);
 		border-radius: 0.5rem;
 		padding: 1.5rem;
+
+		@media (--viewport-md-up) {
+			padding: 2rem;
+		}
 	}
 
 	h3 {
-		text-align: center;
+		@media (--viewport-md-down) {
+			text-align: center;
+		}
 	}
 
 	ul {
@@ -70,11 +76,16 @@ Display best or worst performing trading pairs.
 		margin: 2.5rem 0;
 		padding: 0;
 		list-style-type: none;
-	}
 
-	ul * {
-		font: 400 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		& * {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-roman, normal);
+
+			@media (--viewport-md-up) {
+				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-roman, normal);
+			}
+		}
 	}
 
 	li {
@@ -88,10 +99,10 @@ Display best or worst performing trading pairs.
 		flex: 1;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
 
-	a:hover {
-		text-decoration: underline;
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	.price-change {
@@ -103,6 +114,7 @@ Display best or worst performing trading pairs.
 		margin-right: 0.5ex;
 		content: '▲';
 	}
+
 	.price-change-red::before {
 		margin-right: 0.5ex;
 		content: '▼';
@@ -110,25 +122,8 @@ Display best or worst performing trading pairs.
 
 	.cta {
 		display: grid;
-	}
 
-	@media (--viewport-lg-up) {
-		div > h3 {
-			text-align: left;
-		}
-	}
-
-	@media (--viewport-md-up) {
-		div {
-			padding: 2rem;
-		}
-
-		ul * {
-			font: 400 var(--fs-ui-xl);
-			letter-spacing: 0;
-		}
-
-		.cta {
+		@media (--viewport-md-up) {
 			justify-content: center;
 		}
 	}

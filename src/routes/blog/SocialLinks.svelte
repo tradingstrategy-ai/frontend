@@ -46,13 +46,14 @@
 	}
 
 	.layout--post a {
-		font: 500 var(--fs-ui-sm);
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 		--icon-size: 20px;
 	}
 
 	.layout--index a {
-		font: 500 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		--icon-size: 24px;
 	}
 
@@ -83,8 +84,8 @@
 		}
 
 		.layout--post a {
-			font: 500 var(--fs-ui-md);
-			letter-spacing: 0.01em;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
 			--icon-size: 24px;
 		}
 

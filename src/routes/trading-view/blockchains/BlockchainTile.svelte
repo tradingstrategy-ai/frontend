@@ -16,7 +16,7 @@
 	<Button label="Details" href={`/trading-view/${slug}`} />
 </div>
 
-<style>
+<style lang="postcss">
 	.tile {
 		display: flex;
 		flex-direction: column;
@@ -34,14 +34,16 @@
 
 	.content {
 		flex: 1;
-	}
 
-	.content h2 {
-		font: 600 var(--fs-heading-md);
-	}
+		& h2 {
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
+		}
 
-	.content h3 {
-		font: 600 var(--fs-heading-sm);
-		color: var(--c-text-2);
+		& h3 {
+			font: var(--f-heading-sm-medium);
+			letter-spacing: var(--f-heading-sm-spacing, normal);
+			color: var(--c-text-2);
+		}
 	}
 </style>

@@ -65,7 +65,8 @@ Display summary performance table for various periods.
 		& li {
 			--skeleton-width: 5ch;
 			--skeleton-height: 1.2em;
-			font: 400 var(--fs-ui-xl);
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 			white-space: nowrap;
 			padding-inline: 0.5rem;
 

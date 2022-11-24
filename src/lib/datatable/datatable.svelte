@@ -90,7 +90,8 @@ npm install --save datatables.net-responsive-bs4
 			border-top: none;
 			border-bottom: 2px solid var(--c-border-1);
 			white-space: nowrap;
-			font: 500 var(--fs-ui-sm);
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 
 		& :global td {
@@ -125,7 +126,8 @@ npm install --save datatables.net-responsive-bs4
 		& .dataTables_info {
 			margin-block: 2rem 0;
 			padding: 0;
-			font: 500 var(--fs-ui-sm);
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: var(--c-text-2);
 			text-align: left;
 
@@ -137,7 +139,8 @@ npm install --save datatables.net-responsive-bs4
 		& .dataTables_paginate {
 			margin-block: 1rem 2rem;
 			padding: 0;
-			font: 700 var(--fs-ui-sm);
+			font: var(--f-ui-sm-bold);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: left;
 
 			@media (--viewport-md-up) {

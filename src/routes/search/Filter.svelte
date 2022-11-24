@@ -80,7 +80,8 @@ Display filter options as checkboxes search queries.
 		margin: 0;
 		padding: 0.5rem;
 		border: none;
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 		text-transform: capitalize;
 		cursor: pointer;
 
@@ -122,6 +123,7 @@ Display filter options as checkboxes search queries.
 		padding: 0.25rem;
 		border-radius: 0.25rem;
 		background-color: var(--c-background-4);
-		font: 500 var(--fs-ui-sm);
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 </style>

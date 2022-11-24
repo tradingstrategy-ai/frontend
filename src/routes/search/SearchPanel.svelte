@@ -71,7 +71,7 @@
 			height: 3.5rem;
 			--text-input-width: 100%;
 			--text-input-height: 100%;
-			--text-input-font: var(--fs-ui-lg);
+			--text-input-font: var(--f-ui-lg-bold);
 		}
 
 		& :global input:not(:placeholder-shown) {

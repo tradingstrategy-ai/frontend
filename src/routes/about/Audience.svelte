@@ -43,33 +43,32 @@
 	</div>
 </section>
 
-<style>
+<style lang="postcss">
 	section {
 		gap: 1.5rem;
 		padding-block: 4rem;
+
+		@media (--viewport-md-up) {
+			padding-block: 5rem;
+		}
 	}
 
 	header {
 		display: grid;
 		gap: 1.5rem;
 		margin-bottom: 1.5rem;
-	}
 
-	header h2 {
-		text-align: center;
-	}
-
-	header p {
-		font: 500 var(--fs-heading-sm);
-	}
-
-	@media (--viewport-md-up) {
-		section {
-			padding-block: 5rem;
+		& h2 {
+			text-align: center;
 		}
 
-		header p {
-			text-align: center;
+		& p {
+			font: var(--f-heading-sm-roman);
+			letter-spacing: var(--f-heading-sm-spacing, normal);
+
+			@media (--viewport-md-up) {
+				text-align: center;
+			}
 		}
 	}
 </style>

@@ -154,7 +154,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		border-radius: 0.375rem;
 		padding-block: 0.25rem;
 		width: 3.5rem;
-		font: 500 var(--fs-ui-sm);
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
@@ -162,8 +163,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		@media (--viewport-md-up) {
 			@nest .advanced & {
 				width: 5rem;
-				font: 500 var(--fs-ui-md);
-				letter-spacing: 0.01em;
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 		}
 	}
@@ -183,13 +184,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.primary {
 		gap: 0.5rem;
-		font: 500 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				font: 600 var(--fs-heading-sm);
-				letter-spacing: 0;
+				font: var(--f-heading-sm-medium);
 			}
 		}
 
@@ -227,14 +227,17 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.secondary {
 		gap: 0.625em;
-		font: 400 var(--fs-ui-md);
+		font: var(--f-ui-md-roman);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 
 		@media (--viewport-sm-down) {
-			font: 400 var(--fs-ui-sm);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 
 		@media (--viewport-xs) {
-			font: 400 var(--fs-ui-xs);
+			font: var(--f-ui-xs-roman);
+			letter-spacing: var(--f-ui-xs-spacing, normal);
 		}
 
 		& .measures {

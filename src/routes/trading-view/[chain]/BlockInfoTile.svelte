@@ -17,7 +17,7 @@
 	<div class="title">{title}</div>
 </div>
 
-<style>
+<style lang="postcss">
 	.tile {
 		display: grid;
 		align-content: center;
@@ -56,7 +56,8 @@
 	}
 
 	.title {
-		font: 400 var(--fs-ui-lg);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		@media (--viewport-md-down) {
 			font: var(--f-ui-small-medium);

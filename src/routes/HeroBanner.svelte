@@ -99,15 +99,17 @@ Home page hero banner.
 	}
 
 	.impressive-numbers {
-		font: 400 var(--fs-ui-lg);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		@media (--viewport-sm-up) {
-			font: 400 var(--fs-ui-xl);
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
 		@media (--viewport-md-up) {
-			font: 400 var(--fs-ui-xxl);
-			letter-spacing: -0.01em;
+			font: var(--f-ui-xxl-roman);
+			letter-spacing: var(--f-ui-xxl-spacing, normal);
 		}
 
 		& a {
@@ -128,7 +130,8 @@ Home page hero banner.
 
 		& a {
 			padding: 1rem;
-			font: 500 var(--fs-ui-lg);
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 			text-transform: capitalize;
 			text-align: center;
 			border: 2px solid var(--c-background-3);
@@ -139,8 +142,8 @@ Home page hero banner.
 			@media (--viewport-xs) {
 				padding-block: 0.75rem;
 				border-radius: 1em;
-				font: 500 var(--fs-ui-md);
-				letter-spacing: 0.01em;
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
 			&.secondary {

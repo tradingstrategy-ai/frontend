@@ -45,7 +45,7 @@
 		padding: var(--button-padding, 0 1.5rem);
 		border: 1px solid transparent;
 		border-radius: 0.5rem;
-		font: var(--button-font, 500 var(--fs-ui-lg));
+		font: var(--button-font, var(--f-ui-lg-medium));
 		text-decoration: none;
 		text-transform: capitalize;
 		text-align: center;

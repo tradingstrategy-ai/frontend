@@ -108,7 +108,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			/* Set --blog-post-tile--column-gap to control the column gap */
 			column-gap: var(--blog-post-tile--column-gap, 2.5rem);
 			align-items: center;
-			--timestamp-font: 400 var(--fs-ui-xl);
+			--timestamp-font: var(--f-ui-xl-roman);
 
 			& img {
 				aspect-ratio: 8 / 7;

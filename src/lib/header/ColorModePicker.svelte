@@ -57,7 +57,8 @@
 		border: none;
 		padding: 0;
 		background: transparent;
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 		text-transform: capitalize;
 		cursor: pointer;
 	}
@@ -104,7 +105,8 @@
 	}
 
 	heading h5 {
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 
 	menu {
@@ -117,7 +119,8 @@
 	li {
 		border-radius: 0.5rem;
 		padding-block: 0.5rem;
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text-1);
 		text-align: center;
 		cursor: pointer;

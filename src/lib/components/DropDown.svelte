@@ -43,22 +43,26 @@ TODO:
 	}
 
 	.size-sm {
-		font: var(--fs-ui-sm);
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 		height: 2rem;
 	}
 
 	.size-md {
-		font: var(--fs-ui-md);
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		height: 2.25rem;
 	}
 
 	.size-lg {
-		font: var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 		height: 2.625rem;
 	}
 
 	.size-xl {
-		font: var(--fs-ui-xl);
+		font: var(--f-ui-xl-medium);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 		height: 3rem;
 	}
 

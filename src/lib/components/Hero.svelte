@@ -64,7 +64,7 @@
 
 	@media (--viewport-lg-up) {
 		.content {
-			font: 500 var(--fs-heading-lg);
+			font: var(--f-heading-lg-roman);
 		}
 	}
 </style>

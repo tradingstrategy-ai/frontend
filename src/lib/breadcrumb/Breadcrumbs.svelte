@@ -77,7 +77,7 @@ https://search.google.com/structured-data/testing-tool
 	</ol>
 </nav>
 
-<style>
+<style lang="postcss">
 	ol {
 		list-style-type: none;
 		margin-bottom: 0.75rem;
@@ -87,44 +87,43 @@ https://search.google.com/structured-data/testing-tool
 		justify-content: start;
 		overflow: hidden;
 		color: var(--c-text-7);
-		font: 500 var(--fs-ui-xs);
-		letter-spacing: 0.02em;
-	}
+		font: var(--f-ui-xs-medium);
+		letter-spacing: var(--f-ui-xs-spacing, normal);
 
-	/* required to override bootstrap theme */
-	ol * {
-		font: inherit;
+		@media (--viewport-md-up) {
+			margin-bottom: 1.25rem;
+			padding-block: 1rem;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+		}
+
+		/* required to override bootstrap theme */
+		& * {
+			font: inherit;
+		}
 	}
 
 	li {
 		white-space: nowrap;
-	}
 
-	li:last-child {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+		&:last-child {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
-	a:hover span {
-		text-decoration: underline;
-	}
+		& a {
+			&:hover span {
+				text-decoration: underline;
+			}
 
-	a::after {
-		content: '/';
-		margin: 0 0.5em;
-	}
+			&::after {
+				content: '/';
+				margin: 0 0.5em;
+			}
+		}
 
-	li > span {
-		color: var(--c-text-1);
-	}
-
-	/* Desktop */
-	@media (--viewport-md-up) {
-		ol {
-			margin-bottom: 1.25rem;
-			padding-block: 1rem;
-			font: 500 var(--fs-ui-md);
-			letter-spacing: 0.01em;
+		& > span {
+			color: var(--c-text-1);
 		}
 	}
 </style>

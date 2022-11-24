@@ -35,8 +35,8 @@
 		& p,
 		& ol li,
 		& ul li {
-			font: var(--f-text-body-regular);
-			font: var(--f-text-body-regular);
+			font: var(--f-text-lg-regular);
+			letter-spacing: var(--f-text-lg-spacing, normal);
 		}
 
 		& p:not(:first-of-type) {
@@ -44,12 +44,14 @@
 		}
 
 		& h2 {
-			font: var(--f-text-large-semibold);
+			font: var(--f-text-xl-semibold);
+			letter-spacing: var(--f-text-xl-spacing, normal);
 			margin: 3rem 0 1.5rem;
 		}
 
 		& h3 {
-			font: var(--f-text-body-semibold);
+			font: var(--f-text-lg-semibold);
+			letter-spacing: var(--f-text-lg-spacing, normal);
 			margin: 2rem 0 1rem 0;
 		}
 
@@ -80,7 +82,8 @@
 		}
 
 		& figcaption {
-			font: 400 var(--fs-ui-sm);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: center;
 			margin: 1rem 0;
 

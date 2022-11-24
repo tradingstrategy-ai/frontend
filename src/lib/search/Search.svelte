@@ -208,11 +208,11 @@ Display site-wide search box for use in top-nav.
 	.buttons {
 		display: grid;
 		gap: 0.75rem 0.625rem;
-		font: 500 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-7);
 		text-align: center;
-		--button-font: 500 var(--fs-ui-md);
+		--button-font: var(--f-ui-md-medium);
 		--button-padding: 0;
 		--button-height: 2.5rem;
 

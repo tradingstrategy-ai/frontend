@@ -130,7 +130,8 @@
 		}
 
 		& h4 {
-			font: 500 var(--fs-ui-xl);
+			font: var(--f-ui-xl-medium);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
 		& button {
@@ -176,7 +177,8 @@
 		background-color: transparent;
 		padding: 0;
 		text-transform: uppercase;
-		font: 500 var(--fs-heading-sm);
+		font: var(--f-heading-sm-roman);
+		letter-spacing: var(--f-heading-sm-spacing, normal);
 		color: var(--c-text-1);
 		text-align: left;
 
@@ -186,7 +188,7 @@
 
 		&:not(:disabled) {
 			cursor: pointer;
-			font-weight: 600;
+			font: var(--f-heading-sm-medium);
 			text-decoration: underline;
 		}
 	}
