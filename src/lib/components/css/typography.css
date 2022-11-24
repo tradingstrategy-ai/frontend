@@ -119,10 +119,6 @@
 	--fs-ui-md: 16px/24px var(--ff-ui);
 	--fs-ui-sm: 13px/20px var(--ff-ui);
 	--fs-ui-xs: 12px/16px var(--ff-ui);
-
-	--fs-text-lg: 26px/36px var(--ff-text);
-	--fs-text-md: 19px/32px var(--ff-text);
-	--fs-text-sm: 16px/28px var(--ff-text);
 }
 
 /* DEPRECATED Font Pairings - Mobile */
@@ -177,18 +173,6 @@
 	--f-ui-xsmall-medium: 500 var(--fs-ui-xs);
 	--f-ui-xsmall-roman: 400 var(--fs-ui-xs);
 	--f-ui-xsmall-light: 300 var(--fs-ui-xs);
-
-	--f-text-large-bold: 700 var(--fs-text-lg);
-	--f-text-large-semibold: 600 var(--fs-text-lg);
-	--f-text-large-regular: 400 var(--fs-text-lg);
-
-	--f-text-body-bold: 700 var(--fs-text-md);
-	--f-text-body-semibold: 600 var(--fs-text-md);
-	--f-text-body-regular: 400 var(--fs-text-md);
-
-	--f-text-small-bold: 700 var(--fs-text-sm);
-	--f-text-small-semibold: 600 var(--fs-text-sm);
-	--f-text-small-regular: 400 var(--fs-text-sm);
 }
 
 /* DEPRECATED Font Pairings - Desktop */

@@ -89,11 +89,13 @@ Display a blog post preview card (e.g, on home page or blog index).
 	}
 
 	p {
-		font: var(--f-text-body-regular);
+		font: var(--f-text-lg-regular);
+		letter-spacing: var(--f-text-lg-spacing, normal);
 		color: var(--c-text-4);
 
 		@media (--viewport-md-down) {
-			font: var(--f-text-small-regular);
+			font: var(--f-text-md-regular);
+			letter-spacing: var(--f-text-md-spacing, normal);
 		}
 	}
 

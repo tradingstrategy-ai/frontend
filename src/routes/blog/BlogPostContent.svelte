@@ -121,7 +121,8 @@
 		& blockquote {
 			margin: 1.5rem 0 1.5rem 0.75rem;
 			padding: 1.5rem;
-			font: var(--f-text-body-regular);
+			font: var(--f-text-lg-regular);
+			letter-spacing: var(--f-text-lg-spacing, normal);
 			color: var(--c-text-3);
 			background: var(--c-background-1);
 			box-shadow: -0.75rem 0.75rem 0 var(--c-background-4);
