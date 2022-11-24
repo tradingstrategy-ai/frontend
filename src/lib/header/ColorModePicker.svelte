@@ -64,7 +64,7 @@
 	}
 
 	button.showLabel {
-		color: var(--c-text-4);
+		color: var(--c-text-4-v1);
 	}
 
 	button:not(.showLabel) span {
@@ -74,7 +74,7 @@
 	dialog {
 		border: none;
 		border-radius: 0.75rem;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		padding: 2rem;
 		width: 300px;
 	}
@@ -101,7 +101,7 @@
 		display: grid;
 		grid-template-columns: auto min-content;
 		align-items: center;
-		color: var(--c-text-4);
+		color: var(--c-text-4-v1);
 	}
 
 	heading h5 {
@@ -121,13 +121,13 @@
 		padding-block: 0.5rem;
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 		text-align: center;
 		cursor: pointer;
 	}
 
 	li.active {
-		background: var(--c-background-2);
+		background: var(--c-background-2-v1);
 	}
 
 	li.light:hover {

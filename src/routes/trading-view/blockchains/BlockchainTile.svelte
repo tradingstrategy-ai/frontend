@@ -22,7 +22,7 @@
 		flex-direction: column;
 		gap: 1.75rem;
 		padding: 2.5rem 2rem;
-		background: var(--c-background-1);
+		background: var(--c-background-1-v1);
 		border-radius: 0.5rem;
 		text-align: center;
 	}
@@ -43,7 +43,7 @@
 		& h3 {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--f-heading-sm-spacing, normal);
-			color: var(--c-text-2);
+			color: var(--c-text-2-v1);
 		}
 	}
 </style>

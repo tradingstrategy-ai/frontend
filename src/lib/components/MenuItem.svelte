@@ -26,14 +26,14 @@
 		white-space: nowrap;
 		/* default padding for vertical left/right aligned */
 		padding: 0.75rem 0rem;
-		background: var(--c-background-5);
+		background: var(--c-background-5-v1);
 
 		&:not([href]) {
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 		}
 
 		&[href]:hover {
-			background: var(--c-background-1);
+			background: var(--c-background-1-v1);
 		}
 	}
 

@@ -86,7 +86,7 @@ https://search.google.com/structured-data/testing-tool
 		grid-auto-flow: column;
 		justify-content: start;
 		overflow: hidden;
-		color: var(--c-text-7);
+		color: var(--c-text-7-v1);
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
@@ -123,7 +123,7 @@ https://search.google.com/structured-data/testing-tool
 		}
 
 		& > span {
-			color: var(--c-text-1);
+			color: var(--c-text-1-v1);
 		}
 	}
 </style>

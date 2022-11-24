@@ -112,7 +112,7 @@
 		& .coming-soon {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-2);
+			color: var(--c-text-2-v1);
 			text-transform: uppercase;
 			padding: 0.75rem 1.25rem;
 			border: 1px solid var(--c-parchment-super-dark);

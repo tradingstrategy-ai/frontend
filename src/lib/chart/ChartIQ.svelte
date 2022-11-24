@@ -194,7 +194,7 @@ chartiq dependency.
 		>
 			{#if loading}
 				<div class="loading" transition:fade={{ duration: 250 }}>
-					<Spinner size="60" color="var(--c-text-1)" />
+					<Spinner size="60" color="var(--c-text-1-v1)" />
 				</div>
 			{/if}
 			{#if activeTick}
@@ -261,7 +261,7 @@ chartiq dependency.
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background-color: var(--c-body);
+		background-color: var(--c-body-v1);
 		opacity: 0.75;
 	}
 
@@ -285,7 +285,7 @@ chartiq dependency.
 		}
 
 		& dt {
-			color: var(--c-text-3);
+			color: var(--c-text-3-v1);
 			font-weight: inherit;
 		}
 

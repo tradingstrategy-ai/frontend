@@ -160,8 +160,8 @@ Display site-wide search box for use in top-nav.
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		background: var(--c-body);
-		box-shadow: 0 0 0 1px var(--c-shadow-1), 0 4px 20px var(--c-shadow-1);
+		background: var(--c-body-v1);
+		box-shadow: 0 0 0 1px var(--c-shadow-1-v1), 0 4px 20px var(--c-shadow-1-v1);
 		transition: opacity 0.25s;
 		--text-input-height: 2.875rem;
 
@@ -210,7 +210,7 @@ Display site-wide search box for use in top-nav.
 		gap: 0.75rem 0.625rem;
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: var(--c-text-7);
+		color: var(--c-text-7-v1);
 		text-align: center;
 		--button-font: var(--f-ui-md-medium);
 		--button-padding: 0;

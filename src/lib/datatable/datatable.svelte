@@ -88,14 +88,14 @@ npm install --save datatables.net-responsive-bs4
 
 		& :global th {
 			border-top: none;
-			border-bottom: 2px solid var(--c-border-1);
+			border-bottom: 2px solid var(--c-border-1-v1);
 			white-space: nowrap;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 
 		& :global td {
-			border-bottom: 1px solid var(--c-border-1);
+			border-bottom: 1px solid var(--c-border-1-v1);
 			padding-block: 1.75rem;
 			font: var(--f-ui-body-roman);
 		}
@@ -108,7 +108,7 @@ npm install --save datatables.net-responsive-bs4
 			cursor: pointer;
 
 			&:hover {
-				background: var(--c-background-6);
+				background: var(--c-background-6-v1);
 			}
 		}
 	}
@@ -128,7 +128,7 @@ npm install --save datatables.net-responsive-bs4
 			padding: 0;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-2);
+			color: var(--c-text-2-v1);
 			text-align: left;
 
 			@media (--viewport-md-up) {
@@ -153,7 +153,7 @@ npm install --save datatables.net-responsive-bs4
 			border-bottom: none;
 			margin-inline: 0.25rem;
 			font: inherit;
-			color: var(--c-text-1);
+			color: var(--c-text-1-v1);
 
 			&.current,
 			&:hover {
@@ -174,7 +174,7 @@ npm install --save datatables.net-responsive-bs4
 			}
 
 			&.disabled {
-				color: var(--c-text-7);
+				color: var(--c-text-7-v1);
 			}
 		}
 	}

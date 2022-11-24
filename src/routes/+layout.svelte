@@ -88,7 +88,12 @@
 			content: '';
 			position: absolute;
 			border-radius: 2px;
-			background: linear-gradient(to right, var(--c-background-2) 0%, transparent 50%, var(--c-background-2) 100%);
+			background: linear-gradient(
+				to right,
+				var(--c-background-2-v1) 0%,
+				transparent 50%,
+				var(--c-background-2-v1) 100%
+			);
 			background-size: 200%;
 			animation: infinite 1.5s skeleton linear;
 		}

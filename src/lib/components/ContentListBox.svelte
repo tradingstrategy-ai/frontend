@@ -10,7 +10,7 @@
 
 <style lang="postcss">
 	.content-list-box {
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
 		padding: 1.25rem;
 		display: flex;

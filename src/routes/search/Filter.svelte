@@ -86,11 +86,11 @@ Display filter options as checkboxes search queries.
 		cursor: pointer;
 
 		&:hover {
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 		}
 
 		&:focus-within {
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 			outline: 2px solid var(--cm-light, var(--c-parchment-super-dark)) var(--cm-dark, var(--c-gray));
 		}
 	}
@@ -99,9 +99,9 @@ Display filter options as checkboxes search queries.
 		appearance: none;
 		width: 20px;
 		height: 20px;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		outline: none;
 	}
 
@@ -122,7 +122,7 @@ Display filter options as checkboxes search queries.
 	.count {
 		padding: 0.25rem;
 		border-radius: 0.25rem;
-		background-color: var(--c-background-4);
+		background-color: var(--c-background-4-v1);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}

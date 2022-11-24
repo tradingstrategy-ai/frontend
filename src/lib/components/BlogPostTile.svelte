@@ -91,7 +91,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 	p {
 		font: var(--f-text-lg-regular);
 		letter-spacing: var(--f-text-lg-spacing, normal);
-		color: var(--c-text-4);
+		color: var(--c-text-4-v1);
 
 		@media (--viewport-md-down) {
 			font: var(--f-text-md-regular);

@@ -53,9 +53,9 @@
 	}
 
 	.primary {
-		background: var(--c-background-3);
-		color: var(--c-text-6);
-		border-color: var(--c-background-3);
+		background: var(--c-background-3-v1);
+		color: var(--c-text-6-v1);
+		border-color: var(--c-background-3-v1);
 
 		&:hover,
 		&:focus {
@@ -66,8 +66,8 @@
 
 	.secondary {
 		background: transparent;
-		color: var(--c-text-1);
-		border-color: var(--c-border-2);
+		color: var(--c-text-1-v1);
+		border-color: var(--c-border-2-v1);
 
 		&:hover,
 		&:focus {

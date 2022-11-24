@@ -88,24 +88,24 @@
 	input {
 		width: inherit;
 		padding: 0 0.5em;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		font: inherit;
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 
 		&::placeholder {
-			color: var(--c-text-7);
+			color: var(--c-text-7-v1);
 		}
 
 		&:disabled {
-			background: var(--c-background-2);
+			background: var(--c-background-2-v1);
 		}
 
 		&:focus {
-			outline: var(--c-background-4) solid 2px;
+			outline: var(--c-background-4-v1) solid 2px;
 			outline-offset: 0px;
-			box-shadow: 0 0 8px 2px var(--c-background-2);
+			box-shadow: 0 0 8px 2px var(--c-background-2-v1);
 		}
 
 		&[type='search']::-webkit-search-cancel-button {

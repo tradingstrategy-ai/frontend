@@ -110,8 +110,8 @@
 			bottom: 0;
 			z-index: 10;
 			overflow-y: scroll;
-			background: var(--c-body);
-			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1);
+			background: var(--c-body-v1);
+			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 			transition: transform 0.35s;
 
 			&:not(.open) {
@@ -161,8 +161,8 @@
 		bottom: 0;
 		padding: 0.75rem;
 		display: grid;
-		background: var(--c-body);
-		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1);
+		background: var(--c-body-v1);
+		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 
 		@media (--viewport-lg-up) {
 			display: none;
@@ -179,7 +179,7 @@
 		text-transform: uppercase;
 		font: var(--f-heading-sm-roman);
 		letter-spacing: var(--f-heading-sm-spacing, normal);
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 		text-align: left;
 
 		@media (--viewport-lg-up) {

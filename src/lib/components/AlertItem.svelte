@@ -33,14 +33,14 @@ Display a single alert item (should always be nested within AlertList).
 		display: flex;
 		gap: 0.75rem;
 		font: var(--f-ui-large-roman);
-		color: var(--c-text-2);
+		color: var(--c-text-2-v1);
 
 		& a {
 			font-weight: 500;
 			text-decoration: underline;
 
 			&:hover {
-				color: var(--c-text-1);
+				color: var(--c-text-1-v1);
 			}
 		}
 	}
@@ -52,6 +52,6 @@ Display a single alert item (should always be nested within AlertList).
 
 	strong {
 		font-weight: 500;
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 	}
 </style>

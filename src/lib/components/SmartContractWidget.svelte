@@ -71,7 +71,7 @@
 			position: absolute;
 			left: 0px;
 			top: 0px;
-			background: var(--c-body);
+			background: var(--c-body-v1);
 		}
 	}
 </style>

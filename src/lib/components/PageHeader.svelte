@@ -27,6 +27,6 @@ Display single- or double-line page header
 	small {
 		display: block;
 		font: var(--f-h4-medium);
-		color: var(--c-text-2);
+		color: var(--c-text-2-v1);
 	}
 </style>

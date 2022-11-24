@@ -26,7 +26,7 @@
 		}
 
 		&:not(.secondary) {
-			background: var(--c-background-1);
+			background: var(--c-background-1-v1);
 		}
 
 		& > * {

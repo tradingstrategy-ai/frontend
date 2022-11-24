@@ -61,7 +61,7 @@ Home page hero banner.
 		gap: 2.75rem min(4.5vw, 6.25rem);
 		place-items: center;
 		padding-block: 4.625rem;
-		background: var(--c-background-1);
+		background: var(--c-background-1-v1);
 
 		@media (--hero-1-col) {
 			grid-template-columns: 1fr;
@@ -134,10 +134,10 @@ Home page hero banner.
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 			text-transform: capitalize;
 			text-align: center;
-			border: 2px solid var(--c-background-3);
+			border: 2px solid var(--c-background-3-v1);
 			border-radius: 1.25rem;
-			background: var(--c-background-3);
-			color: var(--c-text-6);
+			background: var(--c-background-3-v1);
+			color: var(--c-text-6-v1);
 
 			@media (--viewport-xs) {
 				padding-block: 0.75rem;
@@ -148,8 +148,8 @@ Home page hero banner.
 
 			&.secondary {
 				background: transparent;
-				color: var(--c-text-1);
-				border-color: var(--c-border-2);
+				color: var(--c-text-1-v1);
+				border-color: var(--c-border-2-v1);
 			}
 		}
 	}

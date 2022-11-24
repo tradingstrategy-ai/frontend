@@ -95,7 +95,7 @@
 			}
 
 			& .bg {
-				fill: var(--c-body);
+				fill: var(--c-body-v1);
 			}
 
 			& :not(.bg) {

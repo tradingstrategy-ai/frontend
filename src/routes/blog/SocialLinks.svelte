@@ -59,12 +59,12 @@
 
 	a > span {
 		text-decoration: none;
-		color: var(--c-text-4);
+		color: var(--c-text-4-v1);
 	}
 
 	a:hover > span {
 		text-decoration: underline;
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 	}
 
 	.layout--post .short-label,

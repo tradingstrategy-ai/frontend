@@ -24,7 +24,7 @@
 		justify-items: center;
 		border-radius: 0.5rem;
 		padding: 1.25rem;
-		background: var(--c-background-1);
+		background: var(--c-background-1-v1);
 
 		@media (--viewport-md-down) {
 			align-content: end;
@@ -35,13 +35,13 @@
 	time {
 		margin-bottom: 0.625rem;
 		font: var(--f-ui-large-medium);
-		color: var(--c-text-4);
+		color: var(--c-text-4-v1);
 
 		@media (--viewport-md-down) {
 			margin-bottom: 0.25rem;
 			font: var(--f-ui-body-medium);
 			letter-spacing: 0.01em;
-			color: var(--c-text-1);
+			color: var(--c-text-1-v1);
 		}
 	}
 
@@ -51,7 +51,7 @@
 
 		@media (--viewport-md-down) {
 			font: var(--f-h4-bold);
-			color: var(--c-text-2);
+			color: var(--c-text-2-v1);
 		}
 	}
 

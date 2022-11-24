@@ -113,7 +113,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		&.basic {
 			padding: 0.875rem 0.75rem;
 			border: none;
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 
 			@media (--viewport-sm-up) {
 				padding-block: 1rem;
@@ -127,24 +127,24 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 				gap: 1.5rem;
 				padding: 0.75rem 1.25rem;
 				border-width: 1px;
-				border-color: var(--c-border-2);
+				border-color: var(--c-border-2-v1);
 			}
 		}
 
 		&.isLowQuality {
 			opacity: 0.35;
 			&:hover {
-				background: var(--c-background-2);
+				background: var(--c-background-2-v1);
 			}
 		}
 
 		&:hover {
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 		}
 
 		&:focus {
-			background: var(--c-background-4);
-			border-color: var(--c-border-2);
+			background: var(--c-background-4-v1);
+			border-color: var(--c-border-2-v1);
 		}
 	}
 

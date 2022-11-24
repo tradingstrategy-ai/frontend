@@ -144,11 +144,11 @@
 		-moz-appearance: none;
 		background: inherit;
 		color: inherit;
-		border: 1px solid var(--c-border-1);
+		border: 1px solid var(--c-border-1-v1);
 	}
 
 	input[disabled] {
-		background: var(--c-background-2);
+		background: var(--c-background-2-v1);
 	}
 
 	.cta {

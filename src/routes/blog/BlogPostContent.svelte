@@ -112,8 +112,8 @@
 		& pre {
 			margin: 1.5rem 0;
 			padding: 1.5rem;
-			background: var(--c-background-7);
-			border: 2px solid var(--c-border-1);
+			background: var(--c-background-7-v1);
+			border: 2px solid var(--c-border-1-v1);
 			border-radius: 0.375rem;
 			color: var(--c-parchment);
 		}
@@ -123,9 +123,9 @@
 			padding: 1.5rem;
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
-			color: var(--c-text-3);
-			background: var(--c-background-1);
-			box-shadow: -0.75rem 0.75rem 0 var(--c-background-4);
+			color: var(--c-text-3-v1);
+			background: var(--c-background-1-v1);
+			box-shadow: -0.75rem 0.75rem 0 var(--c-background-4-v1);
 		}
 
 		& .table-responsive {
@@ -142,12 +142,12 @@
 			& th {
 				vertical-align: top;
 				padding: 0.5rem;
-				border-top: 1px solid var(--c-border-1);
-				border-bottom: 1px solid var(--c-border-1);
+				border-top: 1px solid var(--c-border-1-v1);
+				border-bottom: 1px solid var(--c-border-1-v1);
 			}
 
 			& th {
-				background: var(--c-background-1);
+				background: var(--c-background-1-v1);
 				font-weight: 600;
 			}
 
