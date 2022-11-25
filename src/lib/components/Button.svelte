@@ -50,7 +50,7 @@
 		align-items: center;
 		padding: var(--button-padding, 0.75rem 1rem);
 		border: 1px solid transparent;
-		border-radius: var(--button-border-radius, 1.25rem);
+		border-radius: var(--button-border-radius, var(--border-radius-md));
 		font: var(--button-font, var(--f-ui-lg-medium));
 		text-decoration: none;
 		text-transform: capitalize;
@@ -87,7 +87,7 @@
 	}
 
 	.xs {
-		--button-border-radius: 1.5rem;
+		--button-border-radius: var(--border-radius-lg);
 		--button-gap: 0.5rem;
 		--button-padding: 0.375rem 0.75rem;
 	}
