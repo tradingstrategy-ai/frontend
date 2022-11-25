@@ -25,3 +25,24 @@
 		<Button tertiary lg>View strategy details</Button>
 	</div>
 </li>
+
+<style>
+	.strategy-tile {
+		display: grid;
+		border-radius: var(--border-radius-md);
+		grid-template-columns: repeat(auto-fit, minmax(15rem, auto));
+		list-style: none;
+		max-height: 20rem;
+		overflow: hidden;
+	}
+
+	.strategy-tile__thumbnail {
+		display: grid;
+		place-content: center;
+		overflow: hidden;
+	}
+
+	.strategy-tile__info {
+		padding: 1.5rem;
+	}
+</style>
