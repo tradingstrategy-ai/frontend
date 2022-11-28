@@ -1,10 +1,17 @@
-<script>
-	import PageHeading from '$lib/components/PageHeading.svelte';
-	import StrategiesListing from '$lib/components/StrategiesListing.svelte';
+<script lang="ts">
+	import type { PageData } from './$types';
+	import { PageHeading, StrategiesListing } from '$lib/components';
+
+	export let data: PageData;
+	$: strategies = data.strategies;
 </script>
 
-<main class="strategies ds-container">
+<main class="ds-container">
 	<PageHeading title="<h1>Strategies</h1>" subtitle="<p>Currently available strategies</p>" />
 
-	<StrategiesListing />
+	{#if strategies.length}
+		<StrategiesListing {strategies} />
+	{:else}
+		<p>No strategies configured</p>
+	{/if}
 </main>

@@ -1,8 +1,13 @@
-<script>
-	import Button from '$lib/components/Button.svelte';
-	import ChartPlaceholder from '$lib/components/ChartPlaceholder.svelte';
+<script lang="ts">
+	import { Button, ChartPlaceholder } from '$lib/components';
+
+	export let id: string;
+	export let name: string | undefined;
+	export let description: string | undefined;
+	export let error: string | undefined = undefined;
+
 	export let isLossy = false;
-	export let isProfitable = false;
+	export let isProfitable = true;
 </script>
 
 <li class="strategy-tile" style={isProfitable ? '--profitable: initial;' : isLossy ? '--lossy: initial;' : ''}>
@@ -11,7 +16,7 @@
 	</div>
 	<div class="strategy-tile__info">
 		<div class="strategy-tile__details">
-			<h2 class="strategy-tile__title">Strategy name</h2>
+			<h2 class="strategy-tile__title">{name}</h2>
 			<div class="strategy-tile__indicators">
 				<div class="strategy-tile__indicator projected-profit">
 					<span class="strategy-tile__indicator-name"> Projected profit </span>
@@ -23,10 +28,10 @@
 				</div>
 			</div>
 			<div class="strategy-tile__description">
-				<p>Strategy description goes here. Try to be as descriptive and lean about it as possible.</p>
+				<p>{description}</p>
 			</div>
 		</div>
-		<Button href="/strategies/strategy-overview" tertiary lg>View strategy details</Button>
+		<Button href="/strategies/{id}" tertiary lg disabled={!!error}>View strategy details</Button>
 	</div>
 </li>
 
