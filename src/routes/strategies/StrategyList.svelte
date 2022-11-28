@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
-	import { StrategyTile } from '$lib/components';
+	import StrategyTile from './StrategyTile.svelte';
 
 	export let strategies: StrategyMetadata[];
 </script>

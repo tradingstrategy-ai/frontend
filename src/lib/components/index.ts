@@ -20,7 +20,5 @@ export { default as PageHeader } from './PageHeader.svelte';
 export { default as PageHeading } from './PageHeading.svelte';
 export { default as SmartContractWidget } from './SmartContractWidget.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
-export { default as StrategiesListing } from './StrategiesListing.svelte';
-export { default as StrategyTile } from './StrategyTile.svelte';
 export { default as TextInput } from './TextInput.svelte';
 export { default as TradingDataInfoRow } from './TradingDataInfoRow.svelte';
