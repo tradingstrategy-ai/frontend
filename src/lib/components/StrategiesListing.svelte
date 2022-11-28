@@ -6,8 +6,8 @@
 </script>
 
 <ul>
-	{#each strategies as { id, name, short_description, error } (id)}
-		<StrategyTile {id} {name} description={short_description} {error} />
+	{#each strategies as strategy (strategy.id)}
+		<StrategyTile {strategy} />
 	{/each}
 </ul>
 

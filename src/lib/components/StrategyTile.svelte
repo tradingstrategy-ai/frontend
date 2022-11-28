@@ -1,48 +1,53 @@
 <script lang="ts">
+	import type { StrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
 	import { Button, ChartPlaceholder } from '$lib/components';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let id: string;
-	export let name: string | undefined;
-	export let description: string | undefined;
-	export let error: string | undefined = undefined;
+	export let strategy: StrategyMetadata;
 
-	export let isLossy = false;
-	export let isProfitable = true;
+	const hasError = !!strategy.error;
+
+	// TODO: verify/update projected_profit field name (here and below)
+	const profitDirectionClass = determinePriceChangeClass(strategy.projected_profit);
 </script>
 
-<li style={isProfitable ? '--profitable: initial;' : isLossy ? '--lossy: initial;' : ''}>
+<li>
 	<div class="thumbnail">
 		<ChartPlaceholder />
 	</div>
 	<div class="info">
 		<div class="details">
-			<h2 class="title">{name}</h2>
+			<h2 class="title">{strategy.name}</h2>
 			<dl>
 				<div class="projected-profit">
 					<dt>Projected profit</dt>
-					<dd>▲ 52.3%</dd>
+					<dd class={profitDirectionClass}>{formatPriceChange(strategy.projected_profit)}</dd>
 				</div>
 				<div class="amount-of-assets">
 					<dt>Amount of assets</dt>
-					<dd>$11.2k / 100k</dd>
+					<dd>
+						<!-- TODO: verify/update fields below -->
+						{formatDollar(strategy.open_position_equity, 1, 1)}
+						/
+						{formatDollar(strategy.total_equity, 0, 1)}
+					</dd>
 				</div>
 			</dl>
 			<div class="description">
-				{#if !error}
-					<p>{description}</p>
+				{#if !hasError}
+					<p>{strategy.short_description}</p>
 				{:else}
 					<p>Strategy data not currently available.</p>
 				{/if}
 			</div>
 		</div>
-		<Button href="/strategies/{id}" tertiary lg disabled={!!error}>View strategy details</Button>
+		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary lg disabled={hasError} />
 	</div>
 </li>
 
 <style lang="postcss">
 	li {
-		--profitable: ;
-		--lossy: ;
 		display: grid;
 		background: var(--c-background-5);
 		border-radius: var(--strategy-tile-border-radius, var(--border-radius-md));
@@ -101,9 +106,5 @@
 		font: var(--f-ui-xl-medium);
 		letter-spacing: var(--f-ui-xl-spacing);
 		margin: 0;
-	}
-
-	.projected-profit dd {
-		color: var(--lossy, var(--c-bearish)) var(--profitable, var(--c-bullish));
 	}
 </style>
