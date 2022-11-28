@@ -4,7 +4,7 @@
 </script>
 
 <main class="strategies ds-container">
-	<PageHeading />
+	<PageHeading title="<h1>Strategies</h1>" subtitle="<p>Currently available strategies</p>" />
 
 	<StrategiesListing />
 </main>

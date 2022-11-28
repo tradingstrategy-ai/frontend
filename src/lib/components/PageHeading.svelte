@@ -1,20 +1,25 @@
-<header>
-	<h1>Strategies</h1>
-	<p>Currently available strategies</p>
+<script>
+	export let title = '';
+	export let subtitle = '';
+</script>
+
+<header class="page-heading">
+	{@html title}
+	{@html subtitle}
 </header>
 
 <style>
-	header {
+	.page-heading {
 		padding: 1.25rem 0 2rem;
 	}
 
-	header h1 {
+	.page-heading :global(h1) {
 		font: var(--fs-heading-xl);
 		font-weight: 600;
 		margin-bottom: 1rem;
 	}
 
-	header p {
+	.page-heading :global(p) {
 		font: var(--fs-ui-xl);
 	}
 </style>

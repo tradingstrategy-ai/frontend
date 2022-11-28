@@ -8,6 +8,7 @@
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
 	export let lg = false;
+	export let quarternary = false;
 	export let secondary = false;
 	export let sm = false;
 	export let tertiary = false;
@@ -20,7 +21,7 @@
 	export let xs = false;
 
 	$: tag = href && !disabled ? 'a' : 'button';
-	$: kind = secondary ? 'secondary' : tertiary ? 'tertiary' : 'primary';
+	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
 	$: size = xxl ? 'xxl' : xl ? 'xl' : lg ? 'lg' : sm ? 'sm' : xs ? 'xs' : 'md';
 	$: type = submit ? 'submit' : 'button';
 </script>
@@ -84,6 +85,10 @@
 
 	.tertiary {
 		background: var(--c-background-3);
+	}
+
+	.quarternary {
+		background: var(--c-background-4);
 	}
 
 	.xs {

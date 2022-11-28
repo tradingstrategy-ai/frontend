@@ -26,7 +26,7 @@
 				<p>Strategy description goes here. Try to be as descriptive and lean about it as possible.</p>
 			</div>
 		</div>
-		<Button tertiary lg>View strategy details</Button>
+		<Button href="/strategies/strategy-overview" tertiary lg>View strategy details</Button>
 	</div>
 </li>
 
