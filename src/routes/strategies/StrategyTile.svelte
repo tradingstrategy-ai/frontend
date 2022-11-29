@@ -8,11 +8,11 @@
 
 	const hasError = !!strategy.error;
 
-	// TODO: verify/update projected_profit field name (here and below)
-	const profitDirectionClass = determinePriceChangeClass(strategy.projected_profit);
+	// TODO: verify/update performance_90_day field name (here and below)
+	const performanceClass = determinePriceChangeClass(strategy.performance_90_day);
 </script>
 
-<li>
+<li class:hasError>
 	<div class="thumbnail">
 		<ChartPlaceholder />
 	</div>
@@ -20,14 +20,15 @@
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
 			<dl>
-				<div class="projected-profit">
-					<dt>Projected profit</dt>
-					<dd class={profitDirectionClass}>{formatPriceChange(strategy.projected_profit)}</dd>
+				<div>
+					<dt>Historic Performance</dt>
+					<!-- TODO: verify/update field name below -->
+					<dd class={performanceClass}>{formatPriceChange(strategy.performance_90_day)}</dd>
 				</div>
-				<div class="amount-of-assets">
+				<div>
 					<dt>Amount of assets</dt>
 					<dd>
-						<!-- TODO: verify/update fields below -->
+						<!-- TODO: verify/update field names below -->
 						{formatDollar(strategy.open_position_equity, 1, 1)}
 						/
 						{formatDollar(strategy.total_equity, 0, 1)}
@@ -92,6 +93,7 @@
 	dl {
 		display: grid;
 		grid-template-columns: auto auto;
+		gap: 0.5rem;
 		margin: 0;
 
 		& > div {
@@ -103,12 +105,17 @@
 	dt {
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing);
+		white-space: nowrap;
 	}
 
 	dd {
 		font: var(--f-ui-xl-medium);
 		letter-spacing: var(--f-ui-xl-spacing);
 		margin: 0;
+
+		@nest .hasError & {
+			color: var(--c-text-ultra-light);
+		}
 	}
 
 	.description {
