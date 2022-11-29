@@ -110,4 +110,11 @@
 		letter-spacing: var(--f-ui-xl-spacing);
 		margin: 0;
 	}
+
+	.description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
 </style>
