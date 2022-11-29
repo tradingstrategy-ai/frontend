@@ -2,6 +2,7 @@
 	import PageHeading from '$lib/components/PageHeading.svelte';
 	import StrategyOverviewSummary from './StrategyOverviewSummary.svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
+	import StrategyPositions from './StrategyPositions.svelte';
 
 	const tabs = [
 		{
@@ -10,7 +11,7 @@
 			title: 'Overview'
 		},
 		{
-			component: null,
+			component: StrategyPositions,
 			id: 'open-positions',
 			title: 'Open positions'
 		}
