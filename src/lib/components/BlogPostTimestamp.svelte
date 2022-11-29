@@ -12,7 +12,7 @@
 
 <style>
 	time {
-		font: var(--timestamp-font, 400 var(--fs-ui-lg));
-		color: var(--c-text-2);
+		font: var(--timestamp-font, var(--f-ui-lg-roman));
+		color: var(--c-text-2-v1);
 	}
 </style>

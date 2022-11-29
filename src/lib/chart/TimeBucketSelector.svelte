@@ -29,9 +29,9 @@ Used for selecting a time bucket for chart data feeds.default
 	a {
 		flex: 1;
 		padding: 0.5rem min(1.5rem, 2vw);
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		font-weight: 500;
-		color: var(--c-text-3);
+		color: var(--c-text-3-v1);
 		text-align: center;
 
 		@media (--viewport-md-up) {
@@ -47,8 +47,8 @@ Used for selecting a time bucket for chart data feeds.default
 
 		&:hover,
 		&.active {
-			background: var(--c-background-3);
-			color: var(--c-text-6);
+			background: var(--c-background-3-v1);
+			color: var(--c-text-6-v1);
 		}
 	}
 </style>

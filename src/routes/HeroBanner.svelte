@@ -15,7 +15,7 @@ Home page hero banner.
 	export let impressiveNumbers: any;
 </script>
 
-<header class="ds-container" on:dblclick={() => goto('/strategy')}>
+<header class="ds-container" on:dblclick={() => goto('/strategies')}>
 	<img class="media" src={mbp15Image} alt="Trading Data" />
 
 	<div class="content">
@@ -61,7 +61,7 @@ Home page hero banner.
 		gap: 2.75rem min(4.5vw, 6.25rem);
 		place-items: center;
 		padding-block: 4.625rem;
-		background: var(--c-background-1);
+		background: var(--c-background-1-v1);
 
 		@media (--hero-1-col) {
 			grid-template-columns: 1fr;
@@ -99,15 +99,17 @@ Home page hero banner.
 	}
 
 	.impressive-numbers {
-		font: 400 var(--fs-ui-lg);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		@media (--viewport-sm-up) {
-			font: 400 var(--fs-ui-xl);
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
 		@media (--viewport-md-up) {
-			font: 400 var(--fs-ui-xxl);
-			letter-spacing: -0.01em;
+			font: var(--f-ui-xxl-roman);
+			letter-spacing: var(--f-ui-xxl-spacing, normal);
 		}
 
 		& a {
@@ -128,25 +130,26 @@ Home page hero banner.
 
 		& a {
 			padding: 1rem;
-			font: 500 var(--fs-ui-lg);
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 			text-transform: capitalize;
 			text-align: center;
-			border: 2px solid var(--c-background-3);
+			border: 2px solid var(--c-background-3-v1);
 			border-radius: 1.25rem;
-			background: var(--c-background-3);
-			color: var(--c-text-6);
+			background: var(--c-background-3-v1);
+			color: var(--c-text-6-v1);
 
 			@media (--viewport-xs) {
 				padding-block: 0.75rem;
 				border-radius: 1em;
-				font: 500 var(--fs-ui-md);
-				letter-spacing: 0.01em;
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
 			&.secondary {
 				background: transparent;
-				color: var(--c-text-1);
-				border-color: var(--c-border-2);
+				color: var(--c-text-1-v1);
+				border-color: var(--c-border-2-v1);
 			}
 		}
 	}

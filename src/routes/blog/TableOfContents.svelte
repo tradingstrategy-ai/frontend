@@ -9,31 +9,27 @@
 	{/each}
 </div>
 
-<style>
+<style lang="postcss">
 	div {
 		display: grid;
 		gap: 1.5rem;
 		margin: 1.25rem 0 2.25rem 0;
 		padding: 1.25rem;
-		border: var(--c-border-2) solid 1px;
-	}
+		border: var(--c-border-2-v1) solid 1px;
 
-	/**
-	 * NOTE: using ">" child selector below for higher specificity to override global CSS
-	 * used in /blog/[slug].svelte.
-	 */
+		& h3 {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+			margin: 0;
+		}
 
-	div > h3 {
-		font: 600 var(--fs-heading-lg);
-		margin: 0;
-	}
+		& a {
+			font: var(--f-heading-xs-medium);
+			letter-spacing: var(--f-heading-xs-spacing, normal);
 
-	div > a {
-		font: 600 var(--fs-heading-xs);
-		text-decoration: none;
-	}
-
-	div > a:hover {
-		text-decoration: underline;
+			&:not(:hover) {
+				text-decoration: none;
+			}
+		}
 	}
 </style>

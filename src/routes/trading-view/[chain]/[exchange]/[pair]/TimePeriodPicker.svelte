@@ -30,7 +30,7 @@ Radio button options to select a time period.
 
 	label {
 		flex: 1;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		margin: 0;
 		padding-block: 1rem;
 		font: var(--f-ui-large-medium);
@@ -47,8 +47,8 @@ Radio button options to select a time period.
 		}
 
 		&.selected {
-			background: var(--c-background-3);
-			color: var(--c-text-6);
+			background: var(--c-background-3-v1);
+			color: var(--c-text-6-v1);
 		}
 	}
 

@@ -65,7 +65,8 @@ Display summary performance table for various periods.
 		& li {
 			--skeleton-width: 5ch;
 			--skeleton-height: 1.2em;
-			font: 400 var(--fs-ui-xl);
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 			white-space: nowrap;
 			padding-inline: 0.5rem;
 
@@ -86,7 +87,7 @@ Display summary performance table for various periods.
 					padding-block: 1rem;
 
 					&:not(:last-child) {
-						border-bottom: 1px solid var(--c-border-1);
+						border-bottom: 1px solid var(--c-border-1-v1);
 					}
 				}
 			}
@@ -98,7 +99,7 @@ Display summary performance table for various periods.
 		}
 
 		& .loading li.col-heading {
-			color: var(--c-text-7);
+			color: var(--c-text-7-v1);
 		}
 
 		& .time-period-col:not(.active) {

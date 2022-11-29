@@ -71,7 +71,7 @@
 			height: 3.5rem;
 			--text-input-width: 100%;
 			--text-input-height: 100%;
-			--text-input-font: var(--fs-ui-lg);
+			--text-input-font: var(--f-ui-lg-bold);
 		}
 
 		& :global input:not(:placeholder-shown) {
@@ -88,11 +88,11 @@
 	.filter-toggle {
 		width: 3.5rem;
 		padding: 0;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5em;
 		font-size: 1.25rem;
-		background: var(--c-body);
-		color: var(--c-text-1);
+		background: var(--c-body-v1);
+		color: var(--c-text-1-v1);
 
 		@media (--viewport-lg-up) {
 			display: none;

@@ -133,7 +133,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 		& .help {
 			font: var(--f-ui-small-roman);
-			color: var(--c-text-2);
+			color: var(--c-text-2-v1);
 			text-align: right;
 
 			white-space: nowrap;
@@ -141,7 +141,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			text-overflow: ellipsis;
 
 			& a:hover {
-				color: var(--c-text-1);
+				color: var(--c-text-1-v1);
 			}
 
 			& .prefix {
@@ -170,6 +170,6 @@ for the same hovered date. Also displays a time-bucket selector.
 		border-bottom: 1px solid #999;
 		padding-block: 2rem;
 		font: var(--f-ui-body-medium);
-		color: var(--c-text-7);
+		color: var(--c-text-7-v1);
 	}
 </style>

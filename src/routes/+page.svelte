@@ -75,38 +75,53 @@
 	{/if}
 </main>
 
-<style>
+<style lang="postcss">
 	section {
 		padding-block: 2.5rem;
+
+		@media (--viewport-md-up) {
+			padding-block: 4rem;
+		}
 	}
 
 	h2 {
 		text-align: center;
 	}
 
+	.top-momentum h2 {
+		@media (--viewport-md-up) {
+			margin-bottom: 2.5rem;
+		}
+	}
+
 	.strategies {
 		gap: 2.5rem;
-	}
 
-	.strategies > div {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 4rem;
-	}
+		& > div {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 4rem;
 
-	.strategies .coming-soon {
-		font: 500 var(--fs-ui-sm);
-		color: var(--c-text-2);
-		text-transform: uppercase;
-		padding: 0.75rem 1.25rem;
-		border: 1px solid var(--c-parchment-super-dark);
-		border-radius: 2rem;
-	}
+			@media (--viewport-md-up) {
+				margin-top: 0.5rem;
+			}
+		}
 
-	.strategies p {
-		font: var(--f-h5-roman);
+		& .coming-soon {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: var(--c-text-2-v1);
+			text-transform: uppercase;
+			padding: 0.75rem 1.25rem;
+			border: 1px solid var(--c-parchment-super-dark);
+			border-radius: 2rem;
+		}
+
+		& p {
+			font: var(--f-h5-roman);
+		}
 	}
 
 	.blog {
@@ -118,29 +133,13 @@
 	.blog-posts {
 		display: grid;
 		gap: 2.5rem;
-	}
 
-	@media (--viewport-md-up) {
-		.top-momentum h2 {
-			margin-bottom: 2.5rem;
-		}
-
-		section {
-			padding-block: 4rem;
-		}
-
-		.strategies > div {
-			margin-top: 0.5rem;
-		}
-
-		.blog-posts {
+		@media (--viewport-md-up) {
 			margin-top: 2rem;
 			grid-template-columns: 1fr 1fr;
 		}
-	}
 
-	@media (width >= 1148px) {
-		.blog-posts {
+		@media (width >= 1148px) {
 			grid-template-columns: 1fr 1fr 1fr;
 			grid-template-rows: auto 0;
 			overflow: hidden;

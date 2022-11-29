@@ -19,20 +19,21 @@
 		justify-content: inherit;
 		align-items: center;
 		box-sizing: border-box;
-		font: 500 var(--fs-ui-xl);
+		font: var(--f-ui-xl-medium);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 		color: inherit;
 		text-decoration: none;
 		white-space: nowrap;
 		/* default padding for vertical left/right aligned */
 		padding: 0.75rem 0rem;
-		background: var(--c-background-5);
+		background: var(--c-background-5-v1);
 
 		&:not([href]) {
-			background: var(--c-background-4);
+			background: var(--c-background-4-v1);
 		}
 
 		&[href]:hover {
-			background: var(--c-background-1);
+			background: var(--c-background-1-v1);
 		}
 	}
 
@@ -47,6 +48,7 @@
 	:global(.dir--horizontal) a {
 		padding: 0.5rem 1rem;
 		border-radius: 0.625rem;
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 </style>

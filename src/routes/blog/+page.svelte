@@ -69,20 +69,21 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	header {
 		margin-top: 1.5rem;
 		align-items: center;
 		gap: 1.5rem 2.5rem;
-	}
 
-	h2 {
-		font: 600 var(--fs-heading-xl);
-	}
+		& h2 {
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing, normal);
+		}
 
-	header p {
-		margin-top: 0.75rem;
-		font: var(--f-h4-roman);
+		& p {
+			margin-top: 0.75rem;
+			font: var(--f-h4-roman);
+		}
 	}
 
 	.posts {
@@ -91,16 +92,14 @@
 		gap: 2.5rem;
 		/** ensure featured post column gap matches the layout column gap */
 		--blog-post-tile--column-gap: 2.5rem;
+
+		@media (--viewport-lg-up) {
+			padding-block: 3.75rem;
+		}
 	}
 
 	.loading {
 		font: var(--f-ui-large-roman);
 		text-align: center;
-	}
-
-	@media (--viewport-lg-up) {
-		.posts {
-			padding-block: 3.75rem;
-		}
 	}
 </style>

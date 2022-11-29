@@ -24,7 +24,7 @@
 		grid-template-rows: 1fr auto;
 		gap: 1.5rem;
 		border-radius: 0.5rem;
-		background: var(--c-background-1);
+		background: var(--c-background-1-v1);
 		padding: calc(var(--container-width) * 0.15);
 
 		@media (--viewport-md-down) {
@@ -45,7 +45,7 @@
 			@media (--viewport-md-down) {
 				margin-block: 0;
 				font: var(--f-h5-medium);
-				color: var(--c-text-2);
+				color: var(--c-text-2-v1);
 			}
 		}
 

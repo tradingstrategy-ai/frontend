@@ -43,22 +43,26 @@ TODO:
 	}
 
 	.size-sm {
-		font: var(--fs-ui-sm);
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 		height: 2rem;
 	}
 
 	.size-md {
-		font: var(--fs-ui-md);
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		height: 2.25rem;
 	}
 
 	.size-lg {
-		font: var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 		height: 2.625rem;
 	}
 
 	.size-xl {
-		font: var(--fs-ui-xl);
+		font: var(--f-ui-xl-medium);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 		height: 3rem;
 	}
 
@@ -66,20 +70,20 @@ TODO:
 		appearance: none;
 		width: inherit;
 		padding: 0 2em 0 0.8em;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		font-weight: 500;
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 
 		&:disabled {
-			background: var(--c-background-2);
+			background: var(--c-background-2-v1);
 		}
 
 		&:focus {
-			outline: var(--c-background-4) solid 2px;
+			outline: var(--c-background-4-v1) solid 2px;
 			outline-offset: 0px;
-			box-shadow: 0 0 8px 2px var(--c-background-2);
+			box-shadow: 0 0 8px 2px var(--c-background-2-v1);
 		}
 	}
 </style>

@@ -52,7 +52,8 @@
 	}
 
 	div {
-		font: 500 var(--fs-ui-lg);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--f-ui-lg-medium, normal);
 	}
 
 	a {

@@ -89,11 +89,13 @@ Display a blog post preview card (e.g, on home page or blog index).
 	}
 
 	p {
-		font: var(--f-text-body-regular);
-		color: var(--c-text-4);
+		font: var(--f-text-lg-regular);
+		letter-spacing: var(--f-text-lg-spacing, normal);
+		color: var(--c-text-4-v1);
 
 		@media (--viewport-md-down) {
-			font: var(--f-text-small-regular);
+			font: var(--f-text-md-regular);
+			letter-spacing: var(--f-text-md-spacing, normal);
 		}
 	}
 
@@ -108,7 +110,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			/* Set --blog-post-tile--column-gap to control the column gap */
 			column-gap: var(--blog-post-tile--column-gap, 2.5rem);
 			align-items: center;
-			--timestamp-font: 400 var(--fs-ui-xl);
+			--timestamp-font: var(--f-ui-xl-roman);
 
 			& img {
 				aspect-ratio: 8 / 7;

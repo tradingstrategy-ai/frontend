@@ -67,7 +67,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		display: grid;
 		grid-template-rows: 1fr auto 1fr;
 		gap: 2.75rem;
@@ -81,8 +81,8 @@
 
 	pre {
 		padding: 1.5rem;
-		background: var(--c-background-7);
-		border: 2px solid var(--c-border-1);
+		background: var(--c-background-7-v1);
+		border: 2px solid var(--c-border-1-v1);
 		border-radius: 0.375rem;
 		color: var(--c-parchment);
 		white-space: pre-wrap;

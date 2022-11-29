@@ -110,8 +110,8 @@
 			bottom: 0;
 			z-index: 10;
 			overflow-y: scroll;
-			background: var(--c-body);
-			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1);
+			background: var(--c-body-v1);
+			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 			transition: transform 0.35s;
 
 			&:not(.open) {
@@ -130,7 +130,8 @@
 		}
 
 		& h4 {
-			font: 500 var(--fs-ui-xl);
+			font: var(--f-ui-xl-medium);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
 		& button {
@@ -160,8 +161,8 @@
 		bottom: 0;
 		padding: 0.75rem;
 		display: grid;
-		background: var(--c-body);
-		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1);
+		background: var(--c-body-v1);
+		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 
 		@media (--viewport-lg-up) {
 			display: none;
@@ -176,8 +177,9 @@
 		background-color: transparent;
 		padding: 0;
 		text-transform: uppercase;
-		font: 500 var(--fs-heading-sm);
-		color: var(--c-text-1);
+		font: var(--f-heading-sm-roman);
+		letter-spacing: var(--f-heading-sm-spacing, normal);
+		color: var(--c-text-1-v1);
 		text-align: left;
 
 		@media (--viewport-lg-up) {
@@ -186,7 +188,7 @@
 
 		&:not(:disabled) {
 			cursor: pointer;
-			font-weight: 600;
+			font: var(--f-heading-sm-medium);
 			text-decoration: underline;
 		}
 	}

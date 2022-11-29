@@ -42,6 +42,7 @@
 		height: var(--text-input-height, var(--height));
 		max-width: var(--text-input-max-width, auto);
 		font: var(--text-input-font, var(--font));
+		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
 
 		&.disabled {
 			opacity: 0.65;
@@ -62,45 +63,49 @@
 
 	.size-sm {
 		--height: 2rem;
-		--font: 400 var(--fs-ui-sm);
+		--font: var(--f-ui-sm-roman);
+		--letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
 	.size-md {
 		--height: 2.25rem;
-		--font: 400 var(--fs-ui-md);
+		--font: var(--f-ui-md-roman);
+		--letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 
 	.size-lg {
 		--height: 2.625rem;
-		--font: 400 var(--fs-ui-lg);
+		--font: var(--f-ui-lg-roman);
+		--letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 
 	.size-xl {
 		--height: 3rem;
-		--font: 400 var(--fs-ui-xl);
+		--font: var(--f-ui-xl-roman);
+		--letter-spacing: var(--f-ui-xl-spacing, normal);
 	}
 
 	input {
 		width: inherit;
 		padding: 0 0.5em;
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		background: var(--c-body);
+		background: var(--c-body-v1);
 		font: inherit;
-		color: var(--c-text-1);
+		color: var(--c-text-1-v1);
 
 		&::placeholder {
-			color: var(--c-text-7);
+			color: var(--c-text-7-v1);
 		}
 
 		&:disabled {
-			background: var(--c-background-2);
+			background: var(--c-background-2-v1);
 		}
 
 		&:focus {
-			outline: var(--c-background-4) solid 2px;
+			outline: var(--c-background-4-v1) solid 2px;
 			outline-offset: 0px;
-			box-shadow: 0 0 8px 2px var(--c-background-2);
+			box-shadow: 0 0 8px 2px var(--c-background-2-v1);
 		}
 
 		&[type='search']::-webkit-search-cancel-button {

@@ -8,47 +8,41 @@
 	<div class="cta"><slot name="cta" /></div>
 </div>
 
-<style>
+<style lang="postcss">
 	.content-list-box {
-		border: 2px solid var(--c-border-2);
+		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
 		padding: 1.25rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
+
+		@media (--viewport-md-up) {
+			padding: 2rem;
+			gap: 2rem;
+		}
 	}
 
-	ul {
+	ul :global {
 		flex: 1;
 		display: grid;
 		gap: 1rem;
-	}
 
-	.content-list-box :global li {
-		font: 400 var(--fs-ui-md);
-		letter-spacing: 0.01em;
+		& li {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+
+			@media (--viewport-md-up) {
+				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-spacing, normal);
+			}
+		}
 	}
 
 	.cta {
 		display: grid;
-	}
 
-	@media (--viewport-md-up) {
-		.content-list-box {
-			padding: 2rem;
-			gap: 2rem;
-		}
-
-		h3 {
-			text-align: left;
-		}
-
-		.content-list-box :global li {
-			font: 400 var(--fs-ui-xl);
-			letter-spacing: 0;
-		}
-
-		.cta {
+		@media (--viewport-md-up) {
 			justify-items: center;
 		}
 	}

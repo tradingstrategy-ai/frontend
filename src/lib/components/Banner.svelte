@@ -14,29 +14,43 @@
 	{/if}
 </section>
 
-<style>
+<style lang="postcss">
 	section {
 		gap: 2rem;
 		justify-items: center;
 		padding-block: 2.5rem;
+
+		@media (--viewport-md-up) {
+			gap: 3rem;
+			padding-block: 5rem;
+		}
+
+		&:not(.secondary) {
+			background: var(--c-background-1-v1);
+		}
+
+		& > * {
+			max-width: var(--max-width);
+		}
 	}
 
-	section:not(.secondary) {
-		background: var(--c-background-1);
+	h3 {
+		@media (--viewport-md-up) {
+			text-align: center;
+		}
 	}
 
-	section > * {
-		max-width: var(--max-width);
-	}
+	.content :global {
+		& p,
+		& li {
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
+		}
 
-	.content :global p,
-	.content :global li {
-		font: 400 var(--fs-ui-xl);
-	}
-
-	.content :global p:not(:first-child),
-	.content :global li {
-		margin-top: 1.3em;
+		& p:not(:first-child),
+		& li {
+			margin-top: 1.3em;
+		}
 	}
 
 	.cta {
@@ -44,16 +58,5 @@
 		flex-wrap: wrap;
 		gap: 2rem;
 		justify-content: center;
-	}
-
-	@media (--viewport-md-up) {
-		section {
-			gap: 3rem;
-			padding-block: 5rem;
-		}
-
-		h3 {
-			text-align: center;
-		}
 	}
 </style>

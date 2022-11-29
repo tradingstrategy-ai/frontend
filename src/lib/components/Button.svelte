@@ -7,20 +7,28 @@
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
+	export let lg = false;
+	export let quarternary = false;
 	export let secondary = false;
+	export let sm = false;
+	export let tertiary = false;
 	export let submit = false;
 	export let tabindex: number | undefined = undefined;
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
+	export let xxl = false;
+	export let xl = false;
+	export let xs = false;
 
 	$: tag = href && !disabled ? 'a' : 'button';
-	$: kind = secondary ? 'secondary' : 'primary';
+	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
+	$: size = xxl ? 'xxl' : xl ? 'xl' : lg ? 'lg' : sm ? 'sm' : xs ? 'xs' : 'md';
 	$: type = submit ? 'submit' : 'button';
 </script>
 
 <svelte:element
 	this={tag}
-	class="button {kind}"
+	class="button {kind} {size}"
 	disabled={disabled || undefined}
 	download={download === true ? '' : download}
 	{href}
@@ -38,14 +46,13 @@
 <style lang="postcss">
 	.button {
 		display: inline-flex;
-		gap: 0.5em;
+		gap: var(--button-gap, 0.625rem);
 		justify-content: center;
 		align-items: center;
-		height: var(--button-height, 3.5rem);
-		padding: var(--button-padding, 0 1.5rem);
+		padding: var(--button-padding, 0.75rem 1rem);
 		border: 1px solid transparent;
-		border-radius: 0.5rem;
-		font: var(--button-font, 500 var(--fs-ui-lg));
+		border-radius: var(--button-border-radius, var(--border-radius-md));
+		font: var(--button-font, var(--f-ui-lg-medium));
 		text-decoration: none;
 		text-transform: capitalize;
 		text-align: center;
@@ -53,9 +60,9 @@
 	}
 
 	.primary {
-		background: var(--c-background-3);
-		color: var(--c-text-6);
-		border-color: var(--c-background-3);
+		background: var(--c-background-3-v1);
+		color: var(--c-text-6-v1);
+		border-color: var(--c-background-3-v1);
 
 		&:hover,
 		&:focus {
@@ -66,14 +73,44 @@
 
 	.secondary {
 		background: transparent;
-		color: var(--c-text-1);
-		border-color: var(--c-border-2);
+		color: var(--c-text-1-v1);
+		border-color: var(--c-border-2-v1);
 
 		&:hover,
 		&:focus {
 			background: var(--cm-light, var(--c-parchment-dark)) var(--cm-dark, var(--c-gray-extra-dark));
 			border-color: var(--cm-light, inherit) var(--cm-dark, var(--c-gray-dark));
 		}
+	}
+
+	.tertiary {
+		background: var(--c-background-3);
+	}
+
+	.quarternary {
+		background: var(--c-background-4);
+	}
+
+	.xs {
+		--button-border-radius: var(--border-radius-lg);
+		--button-gap: 0.5rem;
+		--button-padding: 0.375rem 0.75rem;
+	}
+	.sm {
+		--button-padding: 0.5rem 0.75rem;
+		--button-gap: 0.5rem;
+	}
+	.lg {
+		--button-gap: 0.625rem;
+		--button-padding: 1rem;
+	}
+	.xl {
+		--button-gap: 0.75rem;
+		--button-padding: 1rem 1.25rem;
+	}
+	.xxl {
+		--button-gap: 0.75rem;
+		--button-padding: 1.25rem;
 	}
 
 	:focus {

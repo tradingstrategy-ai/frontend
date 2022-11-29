@@ -111,7 +111,7 @@
 								<Button submit {disabled}>
 									{#if submitting}
 										Submitting
-										<Spinner color="var(--c-text-6)" />
+										<Spinner color="var(--c-text-6-v1)" />
 									{:else}
 										Sign up
 									{/if}
@@ -139,7 +139,7 @@
 	}
 
 	.alert {
-		border-color: var(--c-border-1);
+		border-color: var(--c-border-1-v1);
 	}
 
 	.error {

@@ -72,10 +72,10 @@ Modified for resizeablility and mobile friendliness.
 	}
 
 	stop:nth-child(odd) {
-		stop-color: var(--c-body);
+		stop-color: var(--c-body-v1);
 	}
 
 	stop:nth-child(even) {
-		stop-color: var(--c-background-2);
+		stop-color: var(--c-background-2-v1);
 	}
 </style>
