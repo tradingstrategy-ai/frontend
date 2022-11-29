@@ -51,8 +51,9 @@
 		display: grid;
 		background: var(--c-background-5);
 		border-radius: var(--strategy-tile-border-radius, var(--border-radius-md));
-		grid-template-columns: repeat(auto-fit, minmax(18rem, auto));
-		grid-auto-rows: subgrid;
+		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		grid-template-rows: auto;
+		grid-auto-rows: 1fr;
 		list-style: none;
 		overflow: hidden;
 	}
@@ -72,6 +73,7 @@
 
 	.info {
 		display: grid;
+		grid-template-rows: 1fr auto;
 		gap: var(--strategy-tile-info-gap, 1.5rem);
 		padding: 1.5rem;
 	}
@@ -79,11 +81,12 @@
 	.details {
 		display: grid;
 		gap: var(--strategy-tile-details-gap, 1rem);
+		align-content: start;
 	}
 
 	.title {
-		font: var(--fs-ui-xxl);
-		font-weight: 500;
+		font: var(--f-ui-xxl-medium);
+		letter-spacing: var(--f-ui-xxl-spacing);
 	}
 
 	dl {
