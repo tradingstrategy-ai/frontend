@@ -30,10 +30,6 @@
 			<svelte:component this={tab.component} />
 		</div>
 	{/each}
-	<!-- <div class="tab" id="overview-tab">
-		<StrategyOverviewSummary />
-	</div>
-	<div class="tab" id="open-positions-tab">dh'd;kh;klsdnmjh</div> -->
 </section>
 
 <style>
