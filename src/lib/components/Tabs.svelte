@@ -1,20 +1,23 @@
-<script>
-	/**
-	 * @typedef {object} TabItem
-	 * @property  {any}  component
-	 * @property  {string}  id
-	 * @property {string} title
-	 */
-	/**
-	 * @typedef {TabItem[]} TabsItems
-	 * @property  details
-	 * @property {string} title
-	 */
+<!--
+@component
+Used to display tabs and associated component content panels
 
-	/**
-	 * @type {TabsItems}
-	 */
-	export let tabs = [];
+#### Usage
+```tsx
+	<Tabs tabs={[
+		{ id: 'overview', title: 'Overview', component: OverviewComponent },
+		{ id: 'details', title: 'Details', component: DetailsComponent }
+	]} />
+```
+-->
+<script lang="ts">
+	type TabItem = {
+		id: string;
+		title: string;
+		component: ConstructorOfATypedSvelteComponent;
+	};
+
+	export let tabs: TabItem[] = [];
 
 	$: tabsNameUID = `tabs-${(Math.random() + 1).toString(36).substring(7)}`;
 </script>
