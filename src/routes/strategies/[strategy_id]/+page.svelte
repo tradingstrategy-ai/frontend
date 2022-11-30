@@ -1,17 +1,18 @@
 <script>
 	import PageHeading from '$lib/components/PageHeading.svelte';
-	import StrategyOverviewSummary from './StrategyOverviewSummary.svelte';
+	import StrategyOverview from './StrategyOverview.svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
 	import StrategyPositions from './StrategyPositions.svelte';
 
 	const tabs = [
 		{
-			component: StrategyOverviewSummary,
+			component: StrategyOverview,
 			id: 'overview',
 			title: 'Overview'
 		},
 		{
 			component: StrategyPositions,
+			badge: '<span>1</span>',
 			id: 'open-positions',
 			title: 'Open positions'
 		}

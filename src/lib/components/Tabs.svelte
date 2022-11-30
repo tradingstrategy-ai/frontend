@@ -2,6 +2,7 @@
 	/**
 	 * @typedef {object} TabItem
 	 * @property  {any}  component
+	 * @property  {string}  badge
 	 * @property  {string}  id
 	 * @property {string} title
 	 */
@@ -22,7 +23,14 @@
 <section id={tabsNameUID}>
 	{#each tabs as tab, i}
 		<input id="{tab.id}-tab-trigger" type="radio" name={tabsNameUID} checked={i === 0 ? true : null} />
-		<label for="{tab.id}-tab-trigger"> {tab.title} </label>
+		<label for="{tab.id}-tab-trigger">
+			{tab.title}
+			{#if tab?.badge}
+				<span class="badge">
+					{@html tab.badge}
+				</span>
+			{/if}
+		</label>
 	{/each}
 
 	{#each tabs as tab}
@@ -34,6 +42,8 @@
 
 <style>
 	section {
+		display: flex;
+		flex-wrap: wrap;
 		padding: 1.25rem 0;
 	}
 
@@ -47,11 +57,19 @@
 	}
 
 	label {
+		align-items: center;
+		display: inline-flex;
 		border-radius: 1.25rem;
 		color: var(--c-text-extra-light);
 		cursor: pointer;
-		padding: 1rem;
+		padding: 0 1rem;
+		margin-right: 0.5rem;
+		min-height: 3.5rem;
 		font: var(--f-ui-lg-medium);
+	}
+
+	label:hover {
+		background: var(--c-background-5);
 	}
 
 	input:nth-of-type(1):checked ~ .tab:not(:nth-of-type(1)) {
@@ -60,5 +78,28 @@
 
 	input:nth-of-type(2):checked ~ .tab:not(:nth-of-type(2)) {
 		display: none !important;
+	}
+
+	.badge {
+		align-items: center;
+		background: var(--c-background-3);
+		border: none;
+		border-radius: 2rem;
+		color: var(--c-text-default);
+		display: inline-flex;
+		font: var(--f-ui-md-medium);
+		height: 1.75rem;
+		justify-content: center;
+		margin-left: 0.625rem;
+		width: 1.75rem;
+	}
+
+	input:checked + label .badge {
+		background: var(--c-background-1);
+		color: var(--c-text-inverted);
+	}
+
+	.tab {
+		width: 100%;
 	}
 </style>

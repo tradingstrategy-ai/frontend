@@ -10,7 +10,7 @@ thead {
 }
 
 th {
-	background-color: var(--c-body-v1);
+	background-color: var(--c-body);
 	color: var(--c-text-extra-light);
 	font: var(--f-ui-md-medium);
 }
@@ -20,7 +20,17 @@ thead th {
 }
 
 tr {
-	font: var(--f-ui-xl-medium);
+	font: var(--f-ui-lg-medium);
+}
+
+tr:hover td {
+	background: var(--c-background-4);
+}
+
+@media all and (max-width: 1260px) {
+	tr {
+		font: var(--f-ui-md-medium);
+	}
 }
 
 td,
@@ -33,7 +43,7 @@ th {
 }
 
 td {
-	background-color: var(--c-background-5);
+	background: var(--c-background-5);
 	padding: 0.75rem 1.5rem;
 }
 
@@ -47,4 +57,12 @@ td:nth-last-child(1) {
 
 td .button {
 	width: 100%;
+}
+
+@media all and (max-width: 767px) {
+	table {
+		max-width: calc(100vw - 2rem);
+		display: inline-block;
+		overflow-x: auto;
+	}
 }

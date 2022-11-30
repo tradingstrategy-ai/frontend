@@ -17,7 +17,7 @@
 
 	/** @type {StrategyOverviewSummaryItems}*/
 
-	import StrategyOverviewSummaryBox from './StrategyOverviewSummaryBox.svelte';
+	import StrategyOverviewBox from './StrategyOverviewBox.svelte';
 
 	export let items = [
 		{
@@ -59,7 +59,7 @@
 
 <div>
 	{#each items as item}
-		<StrategyOverviewSummaryBox details={item.details} title={item.title} />
+		<StrategyOverviewBox details={item.details} title={item.title} />
 	{/each}
 </div>
 
@@ -68,7 +68,7 @@
 		display: grid;
 		gap: 1.25rem;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, auto));
-		padding-top: 1.25rem;
+		padding-top: 1.5rem;
 	}
 
 	@media all and (max-width: 1024px) {
