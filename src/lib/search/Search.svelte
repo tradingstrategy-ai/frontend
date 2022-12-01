@@ -106,11 +106,11 @@ Display site-wide search box for use in top-nav.
 
 		<div class="buttons">
 			{#if hasQuery}
-				<Button label="Show all results" href="/search?q={q}" />
+				<Button sm label="Show all results" href="/search?q={q}" />
 			{:else}
 				Search exchanges, tokens and trading pairs.
 			{/if}
-			<Button secondary label="Advanced search" href="/search?q={q}" />
+			<Button sm secondary label="Advanced search" href="/search?q={q}" />
 		</div>
 	</div>
 </div>
@@ -212,9 +212,6 @@ Display site-wide search box for use in top-nav.
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-7-v1);
 		text-align: center;
-		--button-font: var(--f-ui-md-medium);
-		--button-padding: 0;
-		--button-height: 2.5rem;
 
 		@nest .hasQuery & {
 			grid-template-columns: 1fr 1fr;

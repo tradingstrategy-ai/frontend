@@ -29,20 +29,20 @@ as children. The alert box is only displayed if one or more items are displayed
 		margin-inline: auto;
 		padding: 2.5rem;
 		font: var(--f-ui-xl-roman);
-		letter-spacing: var(--f-ui-xl-spacing);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 
 		@media (--viewport-md-down) {
 			gap: 1.25rem;
 			padding: 2rem;
 			font: var(--f-ui-lg-roman);
-			letter-spacing: var(--f-ui-lg-spacing);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 		}
 
 		@media (--viewport-sm-down) {
 			gap: 1rem;
 			padding: 1.5rem;
 			font: var(--f-ui-md-roman);
-			letter-spacing: var(--f-ui-md-spacing);
+			letter-spacing: var(--f-ui-md-spacing, normal);
 		}
 
 		&:empty,

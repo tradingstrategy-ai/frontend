@@ -33,17 +33,17 @@ Uses together with SummaryBox to display a set of summary properties / statistic
 
 	.label {
 		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-light);
 	}
 
 	.value {
 		font: var(--f-ui-xxxl-medium);
-		letter-spacing: var(--f-ui-xxxl-spacing);
+		letter-spacing: var(--f-ui-xxxl-spacing, normal);
 
 		@media (--viewport-md-down) {
 			font: var(--f-ui-xl-medium);
-			letter-spacing: var(--f-ui-xl-spacing);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 	}
 </style>

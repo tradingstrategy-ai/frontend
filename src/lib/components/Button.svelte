@@ -52,7 +52,8 @@
 		padding: var(--button-padding, 0.75rem 1rem);
 		border: 1px solid transparent;
 		border-radius: var(--button-border-radius, var(--border-radius-md));
-		font: var(--button-font, var(--f-ui-lg-medium));
+		font: var(--button-font, var(--f-ui-md-medium));
+		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
 		text-decoration: none;
 		text-transform: capitalize;
 		text-align: center;
@@ -95,6 +96,8 @@
 		--button-border-radius: var(--border-radius-lg);
 		--button-gap: 0.5rem;
 		--button-padding: 0.375rem 0.75rem;
+		--button-font: var(--f-ui-sm-medium);
+		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
 		--button-padding: 0.5rem 0.75rem;
@@ -103,14 +106,20 @@
 	.lg {
 		--button-gap: 0.625rem;
 		--button-padding: 1rem;
+		--button-font: var(--f-ui-lg-medium);
+		--button-letter-spacing: var(--f-ui-lg-spacing);
 	}
 	.xl {
 		--button-gap: 0.75rem;
 		--button-padding: 1rem 1.25rem;
+		--button-font: var(--f-ui-xl-medium);
+		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}
 	.xxl {
 		--button-gap: 0.75rem;
 		--button-padding: 1.25rem;
+		--button-font: var(--f-ui-xl-medium);
+		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}
 
 	:focus {
