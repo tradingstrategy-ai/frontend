@@ -1,5 +1,9 @@
 // https://github.com/fram-x/assert-ts/issues/23
-import { assert } from 'assert-ts';
+
+import { getUnixTimestampUTC } from './time';
+import { relativeTimeFromElapsed } from './ago';
+
+export const notFilledMarker = '---';
 
 /**
  * Convert number to thousands.
@@ -69,7 +73,7 @@ export function formatSizeGigabytes(n: number): string {
 export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix = '$'): string {
 	if (n === undefined || n === null) {
 		// Plz avoid ending here
-		return '---';
+		return notFilledMarker;
 	}
 
 	if (n === 0) {
@@ -144,7 +148,7 @@ export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix = '$'):
 }
 
 export function formatPriceChange(n: number): string {
-	if (!Number.isFinite(n)) return '---';
+	if (!Number.isFinite(n)) return notFilledMarker;
 	return (
 		(n > 0 ? '▲' : '▼') +
 		(Math.abs(n) * 100).toLocaleString('en', {
@@ -161,7 +165,7 @@ export function formatPriceChange(n: number): string {
  */
 export function formatAmount(n: number): string {
 	if (!n) {
-		return '---';
+		return notFilledMarker;
 	}
 
 	return n.toLocaleString('en');
@@ -173,7 +177,7 @@ export function formatAmount(n: number): string {
  */
 export function formatMillion(n: number): string {
 	if (!n) {
-		return '---';
+		return notFilledMarker;
 	}
 
 	return (n / 1_000_000).toLocaleString('en', {
@@ -188,7 +192,7 @@ export function formatMillion(n: number): string {
  */
 export function formatMillion2(n: number): string {
 	if (!n) {
-		return '---';
+		return notFilledMarker;
 	}
 
 	return (n / 1_000_000).toLocaleString('en', {
@@ -212,8 +216,25 @@ export function formatUrlAsDomain(u: string): string {
  *
  */
 export function formatDatetime(d: Date): string {
+	if (!d) {
+		return '---';
+	}
+
 	const s = d.toLocaleString('en-GB', { timeZone: 'UTC' });
 	return s + ' UTC';
+}
+
+/**
+ * Format a UNIX timestamp as human readable date.
+ *
+ * @param d Seconds since epoch
+ */
+export function formatUnixTimestamp(d: number): string {
+	if (!d) {
+		return '---';
+	}
+
+	return formatDatetime(new Date(d * 1000));
 }
 
 /**
@@ -233,8 +254,23 @@ export function formatUSDCBalance(web3, b: string, decimals: number): string {
  */
 export function formatShortAddress(address: string): string {
 	if (!address) {
-		return '---';
+		return notFilledMarker;
 	}
 
 	return address.substring(0, 8) + '…';
+}
+
+/**
+ * Format since
+ *
+ * @param ts Unix timestamp
+ */
+export function formatSince(ts: number): string {
+	if (!ts) {
+		return notFilledMarker;
+	}
+
+	const seconds = ts - getUnixTimestampUTC();
+
+	return relativeTimeFromElapsed(seconds * 1000);
 }

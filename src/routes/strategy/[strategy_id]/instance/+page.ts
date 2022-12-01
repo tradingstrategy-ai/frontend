@@ -1,5 +1,5 @@
 /**
- * Fetch the server logs ont he page load.
+ * Fetch the instance status metadta.
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
@@ -12,16 +12,27 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	}
 	const webhookUrl = strategy.url;
 
-	const apiUrl = `${webhookUrl}/logs`;
-	const resp = await fetch(apiUrl);
+	const apiUrl = `${webhookUrl}/status`;
+	let resp = null;
+	try {
+		resp = await fetch(apiUrl);
+	} catch (e) {
+		// Be little more helpful for the developer
+		// because Svelte fetch() error messages lack any context
+		// CORS error: No 'Access-Control-Allow-Origin' header is present on the requested resource
+		console.error('fetch() error:', e);
+		throw e;
+	}
 
 	if (!resp.ok) {
 		throw error(500, `Error loading ${apiUrl}: ${resp.statusText}`);
 	}
 
-	const logs = await resp.json();
+	const runState = await resp.json();
+
+	console.log('Instance state', runState);
 
 	return {
-		logs: logs
+		runState: runState
 	};
 };

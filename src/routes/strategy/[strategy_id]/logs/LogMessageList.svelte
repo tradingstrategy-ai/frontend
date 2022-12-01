@@ -5,11 +5,9 @@ Display log messages as a scrollable panel
 
 -->
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
-
 	export let logs;
 
-    let logListElem;
+	let logListElem;
 
 	interface LogMessage {
 		timestamp: number;
@@ -29,16 +27,17 @@ Display log messages as a scrollable panel
 		return `${d.getUTCHours()}:${d.getUTCMinutes()}:${d.getSeconds()}`;
 	}
 
-    // https://stackoverflow.com/questions/73987081/scroll-to-bottom-of-element-in-sveltekit
-    const scrollToBottom = node => {
-        const scroll = () => node.scroll({
-            top: node.scrollHeight,
-            behavior: 'auto',
-        });
-        scroll();
+	// https://stackoverflow.com/questions/73987081/scroll-to-bottom-of-element-in-sveltekit
+	const scrollToBottom = (node) => {
+		const scroll = () =>
+			node.scroll({
+				top: node.scrollHeight,
+				behavior: 'auto'
+			});
+		scroll();
 
-        return { update: scroll }
-    };
+		return { update: scroll };
+	};
 </script>
 
 <div bind:this={logListElem} class="log-panel" use:scrollToBottom={logs}>
