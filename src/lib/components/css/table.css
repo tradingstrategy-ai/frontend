@@ -44,6 +44,7 @@ th {
 
 td {
 	background: var(--c-background-5);
+	height: min(4.5rem, 6rem);
 	padding: 0.75rem 1.5rem;
 }
 

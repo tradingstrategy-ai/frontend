@@ -16,7 +16,7 @@
 	.data-boxes {
 		display: grid;
 		gap: 1.5rem;
-		grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--container-margin))), 1fr));
 	}
 
 	@media all and (max-width: 767px) {

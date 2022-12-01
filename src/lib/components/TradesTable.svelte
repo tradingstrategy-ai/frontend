@@ -11,7 +11,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		},
 		{
 			ID: '#1: Buy',
@@ -19,7 +19,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		},
 		{
 			ID: '#1: Buy',
@@ -27,7 +27,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		},
 		{
 			ID: '#1: Buy',
@@ -35,7 +35,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		},
 		{
 			ID: '#1: Buy',
@@ -43,7 +43,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		},
 		{
 			ID: '#1: Buy',
@@ -51,7 +51,7 @@
 			Executed: '2022-10-12 10:00',
 			Value: '$0.69',
 			Quantity: 'SOL 1.4',
-			Details: '/strategies/quickswap-momentum/position-214/trade-1'
+			Details: '/strategies/quickswap-momentum/position-420/trade-1'
 		}
 	];
 </script>

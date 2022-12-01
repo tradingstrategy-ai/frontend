@@ -5,13 +5,13 @@
 	export let value: string | number = '';
 </script>
 
-<div class={classes ?? null}>
+<div class="data-box {classes ?? null}">
 	<span class="label">{label}</span>
 	<span class="value">{value}</span>
 </div>
 
 <style>
-	div {
+	.data-box {
 		background: var(--c-background-5);
 		border-radius: var(--border-radius-md);
 		display: grid;
@@ -26,5 +26,19 @@
 
 	.value {
 		font: var(--f-ui-xxl-medium);
+	}
+
+	@media all and (max-width: 767px) {
+		.data-box {
+			gap: 0.5rem;
+			padding: 1.25rem;
+		}
+		.label {
+			font: var(--f-ui-sm-medium);
+		}
+
+		.value {
+			font: var(--f-ui-xl-medium);
+		}
 	}
 </style>
