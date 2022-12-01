@@ -5,7 +5,7 @@
 </script>
 
 {#if data?.length}
-	<div>
+	<div class="data-table">
 		<table>
 			<thead>
 				<tr>
