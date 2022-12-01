@@ -12,6 +12,9 @@
 	 * @property {string} title
 	 */
 
+	let classes = '';
+	export { classes as class };
+
 	/**
 	 * @type {TabsItems}
 	 */
@@ -20,7 +23,7 @@
 	$: tabsNameUID = `tabs-${(Math.random() + 1).toString(36).substring(7)}`;
 </script>
 
-<section id={tabsNameUID}>
+<section id={tabsNameUID} class={classes ?? null}>
 	{#each tabs as tab, i}
 		<input id="{tab.id}-tab-trigger" type="radio" name={tabsNameUID} checked={i === 0 ? true : null} />
 		<label for="{tab.id}-tab-trigger">
@@ -59,7 +62,7 @@
 	label {
 		align-items: center;
 		display: inline-flex;
-		border-radius: 1.25rem;
+		border-radius: var(--border-radius-md);
 		color: var(--c-text-extra-light);
 		cursor: pointer;
 		padding: 0 1rem;

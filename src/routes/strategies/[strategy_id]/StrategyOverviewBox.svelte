@@ -24,7 +24,7 @@
 <style>
 	section {
 		background: var(--c-background-5);
-		border-radius: 1.25rem;
+		border-radius: var(--border-radius-md);
 		display: grid;
 		gap: 1.25rem;
 		padding: 1.5rem 1.25rem;
@@ -35,7 +35,7 @@
 	}
 
 	div {
-		border-radius: 1.25rem;
+		border-radius: var(--border-radius-md);
 		background: var(--c-background-4);
 		display: grid;
 		gap: 0.5rem;
