@@ -4,7 +4,7 @@
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
+	import { Menu, MenuItem, PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
 
 	export let data: PageData;
 
@@ -16,6 +16,13 @@
 
 <main class="ds-container">
 	<PageHeading title="<h1>{summary.name}</h1>" subtitle="<p>{summary.long_description}</p>" />
+
+	<nav>
+		<Menu horizontal>
+			<MenuItem label="Overview" targetUrl="/strategies/{summary.id}" active />
+			<MenuItem label="Open positions" targetUrl="/strategy/{summary.id}/open-positions" />
+		</Menu>
+	</nav>
 
 	<section>
 		<SummaryBox title="Current">
@@ -51,6 +58,14 @@
 <style lang="postcss">
 	main :global .page-heading p {
 		font: var(--f-ui-md-medium);
+	}
+
+	nav {
+		margin-block: 1.25rem 0.5rem;
+		--menu-item-padding: 1rem;
+		--menu-item-border-radius: var(--border-radius-md);
+		--menu-item-color: var(--c-text-extra-light);
+		--menu-item-active-color: var(--c-text);
 	}
 
 	section {

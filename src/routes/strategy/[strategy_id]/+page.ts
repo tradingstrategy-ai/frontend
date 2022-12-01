@@ -1,9 +1,6 @@
 import type { PageLoad } from './$types';
-import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
-import { getStrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
+import { redirect } from '@sveltejs/kit';
 
-// Load strategy specific metadata that is used in the overview
-export const load: PageLoad = ({ params, fetch }) => {
-	const strategy = getConfiguredStrategyById(params.strategy_id);
-	return getStrategyMetadata(strategy, fetch);
+export const load: PageLoad = ({ params }) => {
+	throw redirect(301, `/strategies/${params.strategy_id}`);
 };
