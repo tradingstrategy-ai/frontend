@@ -6,7 +6,7 @@ as children. The alert box is only displayed if one or more items are displayed
 
 #### Usage:
 ```tsx
-	<AlertList>
+	<AlertList status="warning">
 		<AlertItem title="Optional title" displayWhen={boolean_defaults_to_true}>
 			Warning message – e.g., data on this page may be incomplete!
 		</AlertItem>
@@ -17,10 +17,10 @@ as children. The alert box is only displayed if one or more items are displayed
 	export let status: 'error' | 'success' | 'warning' = 'error';
 </script>
 
-<ul class={status}><slot /></ul>
+<ul class="alert-list {status}"><slot /></ul>
 
 <style lang="postcss">
-	ul {
+	.alert-list {
 		border: 2px solid;
 		border-radius: var(--border-radius-sm);
 		display: grid;
@@ -28,9 +28,21 @@ as children. The alert box is only displayed if one or more items are displayed
 		list-style: none;
 		margin-inline: auto;
 		padding: 2.5rem;
+		font: var(--f-ui-xl-roman);
+		letter-spacing: var(--f-ui-xl-spacing);
 
 		@media (--viewport-md-down) {
+			gap: 1.25rem;
+			padding: 2rem;
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--f-ui-lg-spacing);
+		}
+
+		@media (--viewport-sm-down) {
+			gap: 1rem;
 			padding: 1.5rem;
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing);
 		}
 
 		&:empty,
@@ -55,7 +67,7 @@ as children. The alert box is only displayed if one or more items are displayed
 	}
 
 	.warning {
-		background: hsl(var(--hsl-success), 0.1);
-		border-color: hsl(var(--hsl-success), 1);
+		background: hsl(var(--hsl-warning), 0.1);
+		border-color: hsl(var(--hsl-warning), 1);
 	}
 </style>
