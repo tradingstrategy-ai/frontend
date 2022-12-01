@@ -5,7 +5,7 @@ declare namespace App {
 	interface Error {
 		message: string;
 		chainName?: string;
-		stack?: string;
+		stack?: string[];
 	}
 
 	// interface Locals {}

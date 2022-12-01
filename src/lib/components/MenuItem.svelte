@@ -18,36 +18,26 @@
 		display: flex;
 		justify-content: inherit;
 		align-items: center;
-		box-sizing: border-box;
 		font: var(--f-ui-xl-medium);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
-		color: inherit;
+		color: var(--menu-item-color, inherit);
 		text-decoration: none;
 		white-space: nowrap;
-		/* default padding for vertical left/right aligned */
-		padding: 0.75rem 0rem;
-		background: var(--c-background-5-v1);
+		padding: var(--menu-item-padding, 0.75rem 0rem);
+		border-radius: var(--menu-item-border-radius, 0.625rem);
 
-		&:not([href]) {
-			background: var(--c-background-4-v1);
-		}
-
-		&[href]:hover {
-			background: var(--c-background-1-v1);
+		&:not([href]):not([tabindex]) {
+			background: var(--c-background-4);
+			color: var(--menu-item-active-color, inherit);
 		}
 	}
 
 	/*
-		Set various properties based on Menu settings (see Menu.svelet CSS classes).
+		Set various properties based on Menu settings (see Menu.svelte CSS classes).
 		Some coupling here is acceptable b/c Menu and MenuItem should always be used in tandem.
 	*/
-	:global(.dir--vertical.align--center) a {
-		border-radius: 0.625rem;
-	}
-
 	:global(.dir--horizontal) a {
-		padding: 0.5rem 1rem;
-		border-radius: 0.625rem;
+		padding: var(--menu-item-padding, 0.5rem 1rem);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}

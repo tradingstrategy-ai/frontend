@@ -8,7 +8,10 @@
 </script>
 
 <main class="ds-container">
-	<PageHeading title="<h1>Strategies</h1>" subtitle="<p>Currently available strategies</p>" />
+	<PageHeading>
+		<h1>Strategies</h1>
+		<p>Currently available strategies</p>
+	</PageHeading>
 
 	{#if strategies.length}
 		<StrategyList {strategies} />
@@ -16,3 +19,9 @@
 		<p>No strategies configured</p>
 	{/if}
 </main>
+
+<style>
+	main h1 {
+		margin-top: 1.25rem;
+	}
+</style>

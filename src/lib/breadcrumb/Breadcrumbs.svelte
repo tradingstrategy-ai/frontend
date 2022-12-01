@@ -35,7 +35,8 @@ https://search.google.com/structured-data/testing-tool
 		binance: 'BNB Chain',
 		avalanche: 'Avalanche C-chain',
 		polygon: 'Polygon',
-		tokens: 'Tokens'
+		tokens: 'Tokens',
+		strategies: 'Trading strategies'
 	};
 </script>
 

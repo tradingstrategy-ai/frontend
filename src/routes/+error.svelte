@@ -6,8 +6,8 @@
 	let showLogs = false;
 
 	$: status = $page.status;
-	$: chainName = $page.error.chainName;
-	$: stack = $page.error.stack;
+	$: chainName = $page.error?.chainName;
+	$: stack = $page.error?.stack;
 </script>
 
 <svelte:head>
@@ -45,7 +45,7 @@
 
 	<aside class="ds-container">
 		{#if stack && showLogs}
-			<pre>{stack}</pre>
+			<pre>{stack.join('\n')}</pre>
 		{/if}
 	</aside>
 </main>
