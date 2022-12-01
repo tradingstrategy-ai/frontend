@@ -5,6 +5,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { Menu, MenuItem, PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	export let data: PageData;
 
@@ -14,8 +15,13 @@
 	$: totalProfit = portfolioStats?.unrealised_profit_usd + portfolioStats?.realised_profit_usd;
 </script>
 
+<Breadcrumbs labels={{ [summary.id]: summary.name }} />
+
 <main class="ds-container">
-	<PageHeading title="<h1>{summary.name}</h1>" subtitle="<p>{summary.long_description}</p>" />
+	<PageHeading>
+		<h1>{summary.name}</h1>
+		<p class="subtitle">{summary.long_description}</p>
+	</PageHeading>
 
 	<nav>
 		<Menu horizontal>
@@ -56,7 +62,7 @@
 </main>
 
 <style lang="postcss">
-	main :global .page-heading p {
+	.subtitle {
 		font: var(--f-ui-md-medium);
 	}
 
