@@ -17,7 +17,7 @@ Display a single alert item (should always be nested within AlertList).
 </script>
 
 {#if displayWhen}
-	<li>
+	<li class="alert-item">
 		<span class="icon"><Icon name="warning" /></span>
 		<span>
 			{#if title}
@@ -29,29 +29,22 @@ Display a single alert item (should always be nested within AlertList).
 {/if}
 
 <style lang="postcss">
-	li :global {
+	.alert-item :global {
 		display: flex;
-		gap: 0.75rem;
-		font: var(--f-ui-large-roman);
-		color: var(--c-text-2-v1);
+		gap: 0.625em;
+		font: inherit; /* see AlertList */
+
+		& .icon {
+			margin-top: -2px;
+		}
 
 		& a {
-			font-weight: 500;
+			font-weight: 700;
 			text-decoration: underline;
-
-			&:hover {
-				color: var(--c-text-1-v1);
-			}
 		}
-	}
 
-	.icon {
-		color: var(--c-bearish);
-		margin-top: -2px;
-	}
-
-	strong {
-		font-weight: 500;
-		color: var(--c-text-1-v1);
+		& strong {
+			font-weight: 700;
+		}
 	}
 </style>

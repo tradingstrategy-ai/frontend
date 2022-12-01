@@ -34,6 +34,11 @@
 
 	/* Accent */
 	--hsl-wood: 36, 68%, 35%;
+
+	/* Status */
+	--hsl-error: 358, 56%, 55%;
+	--hsl-success: 151, 69%, 44%;
+	--hsl-warning: 47, 77%, 57%;
 }
 
 /*
