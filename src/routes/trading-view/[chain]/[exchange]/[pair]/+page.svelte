@@ -53,7 +53,7 @@ Render the pair trading page
 			<InfoSummary {summary} {details} />
 		</div>
 
-		<AlertList>
+		<AlertList status="warning">
 			<AlertItem title="Uniswap V3 beta" displayWhen={summary.exchange_type === 'uniswap_v3'}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this trading pair is currently incomplete.
