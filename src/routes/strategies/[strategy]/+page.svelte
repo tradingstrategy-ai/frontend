@@ -4,15 +4,15 @@
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { Menu, MenuItem, PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
+	import { AlertList, AlertItem, Menu, MenuItem, PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	export let data: PageData;
 
 	$: summary = data.summary;
 	$: portfolioStats = getPortfolioLatestStats(data.state);
-	$: lastValuationDate = fromUnixTime(portfolioStats?.calculated_at);
-	$: totalProfit = portfolioStats?.unrealised_profit_usd + portfolioStats?.realised_profit_usd;
+	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
+	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
 </script>
 
 <Breadcrumbs labels={{ [summary.id]: summary.name }} />
@@ -31,33 +31,39 @@
 	</nav>
 
 	<section>
-		<SummaryBox title="Current">
-			<SummaryBoxItem label="Value in trading positions" value={formatDollar(portfolioStats.total_equity)} />
-			<SummaryBoxItem label="Cash" value={formatDollar(portfolioStats.free_cash)} />
-			<SummaryBoxItem label="Last valuation">
-				<time datetime={lastValuationDate.toISOString()} title={lastValuationDate.toISOString()}>
-					{formatDistanceToNow(lastValuationDate, { addSuffix: true })}
-				</time>
-			</SummaryBoxItem>
-		</SummaryBox>
+		{#if portfolioStats}
+			<SummaryBox title="Current">
+				<SummaryBoxItem label="Value in trading positions" value={formatDollar(portfolioStats.total_equity)} />
+				<SummaryBoxItem label="Cash" value={formatDollar(portfolioStats.free_cash)} />
+				<SummaryBoxItem label="Last valuation">
+					<time datetime={lastValuationDate?.toISOString()} title={lastValuationDate?.toISOString()}>
+						{formatDistanceToNow(lastValuationDate, { addSuffix: true })}
+					</time>
+				</SummaryBoxItem>
+			</SummaryBox>
 
-		<SummaryBox title="Performance">
-			<SummaryBoxItem
-				label="Current profit"
-				value={formatDollar(totalProfit)}
-				valueClass={determinePriceChangeClass(totalProfit)}
-			/>
-			<SummaryBoxItem
-				label="Unrealised profit"
-				value={formatDollar(portfolioStats.unrealised_profit_usd)}
-				valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
-			/>
-			<SummaryBoxItem
-				label="Realised profit"
-				value={formatDollar(portfolioStats.realised_profit_usd)}
-				valueClass={determinePriceChangeClass(portfolioStats.realised_profit_usd)}
-			/>
-		</SummaryBox>
+			<SummaryBox title="Performance">
+				<SummaryBoxItem
+					label="Current profit"
+					value={formatDollar(totalProfit)}
+					valueClass={determinePriceChangeClass(totalProfit)}
+				/>
+				<SummaryBoxItem
+					label="Unrealised profit"
+					value={formatDollar(portfolioStats.unrealised_profit_usd)}
+					valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
+				/>
+				<SummaryBoxItem
+					label="Realised profit"
+					value={formatDollar(portfolioStats.realised_profit_usd)}
+					valueClass={determinePriceChangeClass(portfolioStats.realised_profit_usd)}
+				/>
+			</SummaryBox>
+		{:else}
+			<AlertList>
+				<AlertItem>Strategy overview data not available.</AlertItem>
+			</AlertList>
+		{/if}
 	</section>
 </main>
 
@@ -82,6 +88,10 @@
 
 		@media (--viewport-md-down) {
 			gap: 1.5rem;
+		}
+
+		& p {
+			font: var(--f-ui-lg-roman);
 		}
 	}
 </style>
