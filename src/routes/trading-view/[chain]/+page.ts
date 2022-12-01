@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { backendUrl } from '$lib/config';
-import getApiError from '$lib/chain/getApiError';
+import { publicApiError } from '$lib/helpers/publicApiError';
 
 // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
 const apiUrl = `${backendUrl}/chain-details`;
@@ -10,7 +10,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const resp = await fetch(`${apiUrl}?${encoded}`);
 
 	if (!resp.ok) {
-		throw await getApiError(resp);
+		throw await publicApiError(resp);
 	}
 
 	return resp.json();
