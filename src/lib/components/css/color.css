@@ -119,16 +119,6 @@
 	--c-background-7-night: hsla(0 0% 0%);
 }
 
-/* Status colors */
-:root {
-	--c-error-100: hsla(var(--hsl-error), 1);
-	--c-error-10: hsla(var(--hsl-error), 0.1);
-	--c-success-100: hsla(var(--hsl-success), 1);
-	--c-success-10: hsla(var(--hsl-success), 0.1);
-	--c-warning-100: hsla(var(--hsl-warning), 1);
-	--c-warning-10: hsla(var(--hsl-warning), 0.1);
-}
-
 /*
  Color schemes
 */
