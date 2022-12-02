@@ -45,6 +45,8 @@ Display log messages as a scrollable panel
 		overflow-y: scroll;
 		font: var(--f-mono-body-regular);
 		letter-spacing: var(--f-mono-body-spacing);
+		font-size: 12px;
+		line-height: 1em;
 	}
 
 	.log {
