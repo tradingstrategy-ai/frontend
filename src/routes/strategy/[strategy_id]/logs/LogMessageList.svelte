@@ -54,6 +54,7 @@ Display log messages as a scrollable panel
 		border-block: 1px solid #666;
 		padding: 0.5rem 1rem;
 		background: black;
+		font-weight: bolder;
 	}
 
 	.log-info {
@@ -61,15 +62,15 @@ Display log messages as a scrollable panel
 	}
 
 	.log-trade {
-		color: green;
+		color: lightgreen;
 	}
 
 	.log-warning {
-		color: yellow;
+		color: lightyellow;
 	}
 
 	.log-error {
-		color: red;
+		color: lightcoral;
 	}
 
 	.log-critical {
@@ -80,7 +81,7 @@ Display log messages as a scrollable panel
 	time {
 		display: flex;
 		flex-direction: column;
-		color: #444;
+		color: #888;
 		text-align: right;
 	}
 
