@@ -27,6 +27,8 @@
 		<Menu horizontal>
 			<MenuItem label="Overview" targetUrl="/strategies/{summary.id}" active />
 			<MenuItem label="Open positions" targetUrl="/strategy/{summary.id}/open-positions" />
+			<MenuItem label="Instance status" targetUrl="/strategy/{summary.id}/instance" />
+			<MenuItem label="Logs" targetUrl="/strategy/{summary.id}/logs" />
 		</Menu>
 	</nav>
 
