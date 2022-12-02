@@ -45,31 +45,34 @@ Display log messages as a scrollable panel
 		overflow-y: scroll;
 		font: var(--f-mono-body-regular);
 		letter-spacing: var(--f-mono-body-spacing);
+		font-size: 12px;
+		line-height: 1em;
 	}
 
 	.log {
 		display: grid;
 		grid-template-columns: auto 1fr;
 		gap: 1.25rem;
-		border-block: 1px solid #666;
+		border-block: 1px solid #222;
 		padding: 0.5rem 1rem;
 		background: black;
+		font-weight: bolder;
 	}
 
 	.log-info {
-		color: grey;
+		color: lightgrey;
 	}
 
 	.log-trade {
-		color: green;
+		color: lightgreen;
 	}
 
 	.log-warning {
-		color: yellow;
+		color: lightyellow;
 	}
 
 	.log-error {
-		color: red;
+		color: lightcoral;
 	}
 
 	.log-critical {
@@ -80,7 +83,7 @@ Display log messages as a scrollable panel
 	time {
 		display: flex;
 		flex-direction: column;
-		color: #444;
+		color: #888;
 		text-align: right;
 	}
 
