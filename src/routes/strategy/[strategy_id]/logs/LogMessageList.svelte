@@ -60,7 +60,7 @@ Display log messages as a scrollable panel
 	}
 
 	.log-info {
-		color: grey;
+		color: lightgrey;
 	}
 
 	.log-trade {
