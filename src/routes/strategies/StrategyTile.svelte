@@ -43,7 +43,7 @@
 				{/if}
 			</div>
 		</div>
-		<Button label="View strategy details" href="/strategy/{strategy.id}" tertiary lg disabled={hasError} />
+		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary lg disabled={hasError} />
 	</div>
 </li>
 
@@ -87,7 +87,7 @@
 
 	.title {
 		font: var(--f-ui-xxl-medium);
-		letter-spacing: var(--f-ui-xxl-spacing);
+		letter-spacing: var(--f-ui-xxl-spacing, normal);
 	}
 
 	dl {
@@ -104,13 +104,13 @@
 
 	dt {
 		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 		white-space: nowrap;
 	}
 
 	dd {
 		font: var(--f-ui-xl-medium);
-		letter-spacing: var(--f-ui-xl-spacing);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 		margin: 0;
 
 		@nest .hasError & {

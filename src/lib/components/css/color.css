@@ -34,6 +34,11 @@
 
 	/* Accent */
 	--hsl-wood: 36, 68%, 35%;
+
+	/* Status */
+	--hsl-error: 358, 56%, 55%;
+	--hsl-success: 151, 69%, 44%;
+	--hsl-warning: 47, 77%, 57%;
 }
 
 /*
@@ -84,13 +89,13 @@
 	--c-body-night: hsla(36 1% 10%);
 
 	/* Text colors */
-	--c-text-default-day: hsla(60 9% 7%);
+	--c-text-day: hsla(60 9% 7%);
 	--c-text-light-day: hsla(240 4% 24%);
 	--c-text-extra-light-day: hsla(240 6% 40%);
 	--c-text-ultra-light-day: hsla(239 6% 68%);
 	--c-text-inverted-day: hsla(40 60% 99%);
 
-	--c-text-default-night: hsla(36 12% 99%);
+	--c-text-night: hsla(36 12% 99%);
 	--c-text-light-night: hsla(36 4% 88%);
 	--c-text-extra-light-night: hsla(36 3% 72%);
 	--c-text-ultra-light-night: hsla(40 3% 51%);
@@ -173,7 +178,7 @@ body {
 	/* Color pairs - Theme 0.2 */
 	--c-body: var(--cm-light, var(--c-body-day)) var(--cm-dark, var(--c-body-night));
 
-	--c-text-default: var(--cm-light, var(--c-text-default-day)) var(--cm-dark, var(--c-text-default-night));
+	--c-text: var(--cm-light, var(--c-text-day)) var(--cm-dark, var(--c-text-night));
 	--c-text-light: var(--cm-light, var(--c-text-light-day)) var(--cm-dark, var(--c-text-light-night));
 	--c-text-extra-light: var(--cm-light, var(--c-text-extra-light-day)) var(--cm-dark, var(--c-text-extra-light-night));
 	--c-text-ultra-light: var(--cm-light, var(--c-text-ultra-light-day)) var(--cm-dark, var(--c-text-ultra-light-night));

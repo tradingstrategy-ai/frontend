@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { backendUrl } from '$lib/config';
-import getApiError from '$lib/chain/getApiError';
+import { publicApiError } from '$lib/helpers/publicApiError';
 
 const apiUrl = `${backendUrl}/pair-details`;
 
@@ -15,7 +15,7 @@ export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
 	const resp = await fetch(`${apiUrl}?${encoded}`);
 
 	if (!resp.ok) {
-		throw await getApiError(resp);
+		throw await publicApiError(resp);
 	}
 
 	// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
