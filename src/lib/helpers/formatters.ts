@@ -1,13 +1,16 @@
 import { formatDistanceToNow } from 'date-fns';
 
+type MaybeType<Type> = Type | null | undefined;
+type MaybeNumber = MaybeType<number>;
+type MaybeDate = MaybeType<Date>;
+type MaybeString = MaybeType<string>;
+
 export const notFilledMarker = '---';
 
 /**
  * Convert number to thousands.
  *
- * No suffix added/
- *
- * @param n
+ * No suffix added.
  */
 export function formatKilos(n: number): string {
 	if (n <= 1000) {
@@ -21,8 +24,6 @@ export function formatKilos(n: number): string {
  * Format size in megabytes
  *
  * No suffix added.
- *
- * @param n
  */
 export function formatSizeMegabytes(n: number): string {
 	if (n <= 1024 * 1024) {
@@ -40,8 +41,6 @@ export function formatSizeMegabytes(n: number): string {
 
 /**
  * Format size in gigabyttes
- *
- * @param n
  */
 export function formatSizeGigabytes(n: number): string {
 	if (n <= 1024 * 1024) {
@@ -62,16 +61,10 @@ export function formatSizeGigabytes(n: number): string {
  *
  * Crypto prices can vary highly between $1B to $0.00000001.
  * Try to format everything gracefully.
- *
- * @param n
- * @param minFrag
- * @param maxFrag
  */
-export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix = '$'): string {
-	if (n === undefined || n === null) {
-		// Plz avoid ending here
-		return notFilledMarker;
-	}
+export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = '$'): string {
+	// Plz avoid ending here
+	if (!Number.isFinite(n)) return notFilledMarker;
 
 	if (n === 0) {
 		return `${prefix}0`;
@@ -144,7 +137,7 @@ export function formatDollar(n: number, minFrag = 2, maxFrag = 2, prefix = '$'):
 	}
 }
 
-export function formatPriceChange(n: number): string {
+export function formatPriceChange(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 	return (
 		(n > 0 ? '▲' : '▼') +
@@ -158,24 +151,18 @@ export function formatPriceChange(n: number): string {
 
 /**
  * Format number using an English thousand separation
- * @param n
  */
-export function formatAmount(n: number): string {
-	if (!n) {
-		return notFilledMarker;
-	}
+export function formatAmount(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
 
 	return n.toLocaleString('en');
 }
 
 /**
  * Format number using an English thousand separation
- * @param n
  */
-export function formatMillion(n: number): string {
-	if (!n) {
-		return notFilledMarker;
-	}
+export function formatMillion(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
 
 	return (n / 1_000_000).toLocaleString('en', {
 		minimumFractionDigits: 1,
@@ -185,12 +172,9 @@ export function formatMillion(n: number): string {
 
 /**
  * Format number using an English thousand separation
- * @param n
  */
-export function formatMillion2(n: number): string {
-	if (!n) {
-		return notFilledMarker;
-	}
+export function formatMillion2(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
 
 	return (n / 1_000_000).toLocaleString('en', {
 		minimumFractionDigits: 1,
@@ -210,12 +194,9 @@ export function formatUrlAsDomain(u: string): string {
  * Format a datetime string to human readable format.
  *
  * Mostly useful for formattiong ISO-8601 datetime strings coming from the backend.
- *
  */
-export function formatDatetime(d: Date): string {
-	if (!d) {
-		return '---';
-	}
+export function formatDatetime(d: MaybeDate): string {
+	if (!d) return '---';
 
 	const s = d.toLocaleString('en-GB', { timeZone: 'UTC' });
 	return s + ' UTC';
@@ -226,18 +207,14 @@ export function formatDatetime(d: Date): string {
  *
  * @param d Seconds since epoch
  */
-export function formatUnixTimestamp(d: number): string {
-	if (!d) {
-		return '---';
-	}
+export function formatUnixTimestamp(d: MaybeNumber): string {
+	if (!Number.isFinite(d)) return notFilledMarker;
 
 	return formatDatetime(new Date(d * 1000));
 }
 
 /**
  * Format a USDC balance as it comes out from the contract.
- *
- *
  */
 export function formatUSDCBalance(web3, b: string, decimals: number): string {
 	const n = parseFloat(b);
@@ -247,12 +224,9 @@ export function formatUSDCBalance(web3, b: string, decimals: number): string {
 
 /**
  * Shorten Ethereum address
- *
  */
-export function formatShortAddress(address: string): string {
-	if (!address) {
-		return notFilledMarker;
-	}
+export function formatShortAddress(address: MaybeString): string {
+	if (!address) return notFilledMarker;
 
 	return address.substring(0, 8) + '…';
 }
@@ -262,10 +236,8 @@ export function formatShortAddress(address: string): string {
  *
  * @param ts Unix timestamp
  */
-export function formatSince(ts: number): string {
-	if (!ts) {
-		return notFilledMarker;
-	}
+export function formatSince(ts: MaybeNumber): string {
+	if (!Number.isFinite(ts)) return notFilledMarker;
 
 	return formatDistanceToNow(ts * 1000, { addSuffix: true });
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
+	import type { StrategyMetadata, StrategySummaryStatistics } from 'trade-executor-frontend/strategy/metadata';
 	import { Button, ChartPlaceholder } from '$lib/components';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
@@ -7,9 +7,11 @@
 	export let strategy: StrategyMetadata;
 
 	const hasError = !!strategy.error;
+	const summaryStats = strategy.summary_statistics || {};
 
-	// TODO: verify/update performance_90_day field name (here and below)
-	const performanceClass = determinePriceChangeClass(strategy.performance_90_day);
+	function getPerformanceClass({ enough_data, profitability_90_days }: StrategySummaryStatistics) {
+		return determinePriceChangeClass(enough_data ? profitability_90_days : 0);
+	}
 </script>
 
 <li class:hasError>
@@ -21,17 +23,19 @@
 			<h2 class="title">{strategy.name}</h2>
 			<dl>
 				<div>
-					<dt>Historic Performance</dt>
-					<!-- TODO: verify/update field name below -->
-					<dd class={performanceClass}>{formatPriceChange(strategy.performance_90_day)}</dd>
+					<dt>Historic performance</dt>
+					<dd class={getPerformanceClass(summaryStats)}>
+						{#if summaryStats.enough_data}
+							{formatPriceChange(summaryStats.profitability_90_days)}
+						{:else}
+							---
+						{/if}
+					</dd>
 				</div>
 				<div>
 					<dt>Amount of assets</dt>
 					<dd>
-						<!-- TODO: verify/update field names below -->
-						{formatDollar(strategy.open_position_equity, 1, 1)}
-						/
-						{formatDollar(strategy.total_equity, 0, 1)}
+						{formatDollar(summaryStats.current_value)}
 					</dd>
 				</div>
 			</dl>
