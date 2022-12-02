@@ -3,6 +3,7 @@
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
+import { publicApiError } from '$lib/helpers/publicApiError';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 
 export const load: PageLoad = async ({ params, fetch }) => {
@@ -10,29 +11,21 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	if (!strategy) {
 		throw error(500, `Strategy not loaded: ${params.strategy_id}`);
 	}
-	const webhookUrl = strategy.url;
 
-	const apiUrl = `${webhookUrl}/status`;
+	const url = `${strategy.url}/status`;
 	let resp = null;
 	try {
-		resp = await fetch(apiUrl);
+		resp = await fetch(url);
 	} catch (e) {
-		// Be little more helpful for the developer
-		// because Svelte fetch() error messages lack any context
-		// CORS error: No 'Access-Control-Allow-Origin' header is present on the requested resource
-		console.error('fetch() error:', e);
-		throw e;
+		const stack = [`Error loading data from URL: ${url}`, e.message];
+		throw error(503, { message: 'Service Unavailable', stack });
 	}
 
 	if (!resp.ok) {
-		throw error(500, `Error loading ${apiUrl}: ${resp.statusText}`);
+		throw await publicApiError(resp);
 	}
 
-	const runState = await resp.json();
-
-	console.log('Instance state', runState);
-
 	return {
-		runState: runState
+		runState: resp.json()
 	};
 };

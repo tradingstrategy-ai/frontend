@@ -1,7 +1,4 @@
-// https://github.com/fram-x/assert-ts/issues/23
-
-import { getUnixTimestampUTC } from './time';
-import { relativeTimeFromElapsed } from './ago';
+import { formatDistanceToNow } from 'date-fns';
 
 export const notFilledMarker = '---';
 
@@ -270,7 +267,5 @@ export function formatSince(ts: number): string {
 		return notFilledMarker;
 	}
 
-	const seconds = ts - getUnixTimestampUTC();
-
-	return relativeTimeFromElapsed(seconds * 1000);
+	return formatDistanceToNow(ts * 1000, { addSuffix: true });
 }

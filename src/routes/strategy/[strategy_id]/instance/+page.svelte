@@ -7,13 +7,14 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { formatDatetime, formatSince, formatUnixTimestamp } from '$lib/helpers/formatters.js';
+	import { formatSince, formatUnixTimestamp } from '$lib/helpers/formatters.js';
 	import { currentStrategy } from 'trade-executor-frontend/state/store';
+	import { AlertList, AlertItem } from '$lib/components';
 
 	export let data: PageData;
 
 	// Current run state
-	let runState = data.runState;
+	$: runState = data.runState;
 
 	// The whole strategy state
 	$: state = $currentStrategy.state || {};
@@ -29,11 +30,11 @@
 	</div>
 
 	{#if runState.exception}
-		<AlertItem>The trade executor crashed with an exception</AlertItem>
+		<AlertList>
+			<AlertItem>The trade executor crashed with an exception</AlertItem>
+		</AlertList>
 
-		<pre>
-                {runState.exception.exception_message}
-            </pre>
+		<pre>{runState.exception.exception_message}</pre>
 	{/if}
 {/if}
 
