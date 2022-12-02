@@ -53,7 +53,7 @@ Display log messages as a scrollable panel
 		display: grid;
 		grid-template-columns: auto 1fr;
 		gap: 1.25rem;
-		border-block: 1px solid #666;
+		border-block: 1px solid #222;
 		padding: 0.5rem 1rem;
 		background: black;
 		font-weight: bolder;
