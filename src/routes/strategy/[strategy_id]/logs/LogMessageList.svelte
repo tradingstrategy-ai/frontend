@@ -1,81 +1,58 @@
 <!--
 @component
-
 Display log messages as a scrollable panel
-
 -->
 <script lang="ts">
-	export let logs;
+	import { fromUnixTime } from 'date-fns';
 
-	let logListElem;
-
-	interface LogMessage {
+	type LogMessage = {
 		timestamp: number;
 		level: string;
-		message: strnming;
-	}
+		message: string;
+	};
 
-	// Convert UNIX timestamp to UTC
-	function formatDay(ts) {
-		const d = new Date(ts * 1000);
-		return `${d.getFullYear()}-${d.getUTCMonth()}-${d.getUTCDay()}`;
-	}
-
-	// Convert UNIX timestamp to UTC
-	function formatTime(ts) {
-		const d = new Date(ts * 1000);
-		return `${d.getUTCHours()}:${d.getUTCMinutes()}:${d.getSeconds()}`;
-	}
+	export let logs: LogMessage[];
 
 	// https://stackoverflow.com/questions/73987081/scroll-to-bottom-of-element-in-sveltekit
-	const scrollToBottom = (node) => {
-		const scroll = () =>
-			node.scroll({
-				top: node.scrollHeight,
-				behavior: 'auto'
-			});
+	function scrollToBottom(node: HTMLElement) {
+		const scroll = () => node.scrollBy(0, node.scrollHeight);
 		scroll();
-
 		return { update: scroll };
-	};
+	}
 </script>
 
-<div bind:this={logListElem} class="log-panel" use:scrollToBottom={logs}>
+<div class="log-panel" use:scrollToBottom={logs}>
 	{#each logs as log}
-		<div class="log-outer">
-			<div class={`log log-${log.level}`}>
-				<span class="timestamp">
-					<span class="date">
-						{formatDay(log.timestamp)}
-					</span>
-					<br />
-					<span class="date">
-						{formatTime(log.timestamp)}
-					</span>
-				</span>
+		{@const isoDate = fromUnixTime(log.timestamp).toISOString()}
 
-				<span class="message">
-					{log.message}
-				</span>
-			</div>
+		<div class="log log-{log.level}">
+			<time datetime={isoDate}>
+				<span>{isoDate.slice(0, 10)}</span>
+				<span>{isoDate.slice(11, 19)}</span>
+			</time>
+
+			<span class="message">
+				{log.message}
+			</span>
 		</div>
 	{/each}
 </div>
 
 <style>
 	.log-panel {
-		width: 100%;
 		background: black;
 		max-height: 70vh;
 		overflow-y: scroll;
-	}
-
-	.log-outer {
-		background: #666;
-		padding-bottom: 2px;
+		font: var(--f-mono-body-regular);
+		letter-spacing: var(--f-mono-body-spacing);
 	}
 
 	.log {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 1.25rem;
+		border-block: 1px solid #666;
+		padding: 0.5rem 1rem;
 		background: black;
 	}
 
@@ -100,21 +77,14 @@ Display log messages as a scrollable panel
 		color: white;
 	}
 
-	.log {
+	time {
 		display: flex;
-	}
-
-	.log .timestamp {
-		flex-grow: 0;
-		flex-shrink: 0;
-		flex-basis: 100px;
-		margin-right: 10px;
+		flex-direction: column;
 		color: #444;
+		text-align: right;
 	}
 
-	.log .message {
-		flex-grow: 1;
+	.message {
 		white-space: pre-line;
-		font-family: monospace;
 	}
 </style>

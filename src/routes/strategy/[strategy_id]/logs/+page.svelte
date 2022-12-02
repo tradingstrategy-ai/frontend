@@ -13,15 +13,7 @@
 
 	// Filter logs to chosen level
 	function filterLogs(rawLogs, level) {
-		console.log('Filtering to', level);
-		return rawLogs.filter((entry) => {
-			if (level == 'trade') {
-				if (entry.level == 'info') {
-					return false;
-				}
-			}
-			return true;
-		});
+		return rawLogs.filter((entry) => !(level === 'trade' && entry.level === 'info'));
 	}
 
 	$: logs = filterLogs(data.logs, chosenLevel);
@@ -40,3 +32,10 @@
 </div>
 
 <LogMessageList {logs} />
+
+<style>
+	.log-level-choice {
+		display: flex;
+		gap: 1rem;
+	}
+</style>

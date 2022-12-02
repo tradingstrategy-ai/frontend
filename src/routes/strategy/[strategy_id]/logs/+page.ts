@@ -1,8 +1,9 @@
 /**
- * Fetch the server logs ont he page load.
+ * Fetch the server logs on the page load.
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
+import { publicApiError } from '$lib/helpers/publicApiError';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 
 export const load: PageLoad = async ({ params, fetch }) => {
@@ -10,18 +11,14 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	if (!strategy) {
 		throw error(500, `Strategy not loaded: ${params.strategy_id}`);
 	}
-	const webhookUrl = strategy.url;
 
-	const apiUrl = `${webhookUrl}/logs`;
-	const resp = await fetch(apiUrl);
+	const resp = await fetch(`${strategy.url}/logs`);
 
 	if (!resp.ok) {
-		throw error(500, `Error loading ${apiUrl}: ${resp.statusText}`);
+		throw await publicApiError(resp);
 	}
 
-	const logs = await resp.json();
-
 	return {
-		logs: logs
+		logs: resp.json()
 	};
 };
