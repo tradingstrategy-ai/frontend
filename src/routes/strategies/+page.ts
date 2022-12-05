@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
-import { getConfiguredStrategiesWithMetadata } from 'trade-executor-frontend/strategy/metadata';
+import { getConfiguredStrategiesWithRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 
 export const load: PageLoad = ({ fetch }) => {
 	return {
-		strategies: getConfiguredStrategiesWithMetadata(fetch)
+		strategies: getConfiguredStrategiesWithRuntimeState(fetch)
 	};
 };

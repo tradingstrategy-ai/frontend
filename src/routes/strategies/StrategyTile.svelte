@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { StrategyMetadata, StrategySummaryStatistics } from 'trade-executor-frontend/strategy/metadata';
+	import type { StrategyRuntimeState, StrategySummaryStatistics } from 'trade-executor-frontend/strategy/runtimeState';
 	import { Button, ChartPlaceholder } from '$lib/components';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let strategy: StrategyMetadata;
+	export let strategy: StrategyRuntimeState;
 
 	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
