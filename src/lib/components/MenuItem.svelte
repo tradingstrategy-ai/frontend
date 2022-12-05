@@ -2,11 +2,12 @@
 	export let active = false;
 	export let label: string;
 	export let targetUrl: string;
+	export let noScroll = false;
 
 	$: href = active ? undefined : targetUrl;
 </script>
 
-<li><a {href} on:click>{label}</a></li>
+<li><a {href} data-sveltekit-noscroll={noScroll ? '' : 'off'} on:click>{label}</a></li>
 
 <style lang="postcss">
 	li {

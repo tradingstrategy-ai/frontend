@@ -4,84 +4,52 @@
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { AlertList, AlertItem, Menu, MenuItem, PageHeading, SummaryBox, SummaryBoxItem } from '$lib/components';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import { AlertList, AlertItem, SummaryBox, SummaryBoxItem } from '$lib/components';
 
 	export let data: PageData;
 
-	$: summary = data.summary;
 	$: portfolioStats = getPortfolioLatestStats(data.state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
 </script>
 
-<Breadcrumbs labels={{ [summary.id]: summary.name }} />
+<section>
+	{#if portfolioStats}
+		<SummaryBox title="Current">
+			<SummaryBoxItem label="Value in trading positions" value={formatDollar(portfolioStats.total_equity)} />
+			<SummaryBoxItem label="Cash" value={formatDollar(portfolioStats.free_cash)} />
+			<SummaryBoxItem label="Last valuation">
+				<time datetime={lastValuationDate?.toISOString()} title={lastValuationDate?.toISOString()}>
+					{formatDistanceToNow(lastValuationDate, { addSuffix: true })}
+				</time>
+			</SummaryBoxItem>
+		</SummaryBox>
 
-<main class="ds-container">
-	<PageHeading>
-		<h1>{summary.name}</h1>
-		<p class="subtitle">{summary.long_description}</p>
-	</PageHeading>
-
-	<nav>
-		<Menu horizontal>
-			<MenuItem label="Overview" targetUrl="/strategies/{summary.id}" active />
-			<MenuItem label="Open positions" targetUrl="/strategy/{summary.id}/open-positions" />
-			<MenuItem label="Instance status" targetUrl="/strategy/{summary.id}/instance" />
-			<MenuItem label="Logs" targetUrl="/strategy/{summary.id}/logs" />
-		</Menu>
-	</nav>
-
-	<section>
-		{#if portfolioStats}
-			<SummaryBox title="Current">
-				<SummaryBoxItem label="Value in trading positions" value={formatDollar(portfolioStats.total_equity)} />
-				<SummaryBoxItem label="Cash" value={formatDollar(portfolioStats.free_cash)} />
-				<SummaryBoxItem label="Last valuation">
-					<time datetime={lastValuationDate?.toISOString()} title={lastValuationDate?.toISOString()}>
-						{formatDistanceToNow(lastValuationDate, { addSuffix: true })}
-					</time>
-				</SummaryBoxItem>
-			</SummaryBox>
-
-			<SummaryBox title="Performance">
-				<SummaryBoxItem
-					label="Current profit"
-					value={formatDollar(totalProfit)}
-					valueClass={determinePriceChangeClass(totalProfit)}
-				/>
-				<SummaryBoxItem
-					label="Unrealised profit"
-					value={formatDollar(portfolioStats.unrealised_profit_usd)}
-					valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
-				/>
-				<SummaryBoxItem
-					label="Realised profit"
-					value={formatDollar(portfolioStats.realised_profit_usd)}
-					valueClass={determinePriceChangeClass(portfolioStats.realised_profit_usd)}
-				/>
-			</SummaryBox>
-		{:else}
-			<AlertList>
-				<AlertItem>Strategy overview data not available.</AlertItem>
-			</AlertList>
-		{/if}
-	</section>
-</main>
+		<SummaryBox title="Performance">
+			<SummaryBoxItem
+				label="Current profit"
+				value={formatDollar(totalProfit)}
+				valueClass={determinePriceChangeClass(totalProfit)}
+			/>
+			<SummaryBoxItem
+				label="Unrealised profit"
+				value={formatDollar(portfolioStats.unrealised_profit_usd)}
+				valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
+			/>
+			<SummaryBoxItem
+				label="Realised profit"
+				value={formatDollar(portfolioStats.realised_profit_usd)}
+				valueClass={determinePriceChangeClass(portfolioStats.realised_profit_usd)}
+			/>
+		</SummaryBox>
+	{:else}
+		<AlertList>
+			<AlertItem>Strategy overview data not available.</AlertItem>
+		</AlertList>
+	{/if}
+</section>
 
 <style lang="postcss">
-	.subtitle {
-		font: var(--f-ui-md-medium);
-	}
-
-	nav {
-		margin-block: 1.25rem 0.5rem;
-		--menu-item-padding: 1rem;
-		--menu-item-border-radius: var(--border-radius-md);
-		--menu-item-color: var(--c-text-extra-light);
-		--menu-item-active-color: var(--c-text);
-	}
-
 	section {
 		display: grid;
 		gap: 1.25rem;
@@ -90,10 +58,6 @@
 
 		@media (--viewport-md-down) {
 			gap: 1.5rem;
-		}
-
-		& p {
-			font: var(--f-ui-lg-roman);
 		}
 	}
 </style>
