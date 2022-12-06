@@ -1,0 +1,75 @@
+/*
+ HSL Values - Theme 0.1
+*/
+
+:root {
+	/* Brand */
+	--hsl-ink: 239, 31%, 6%;
+	--hsl-ink-light: 239, 6%, 12%;
+
+	--hsl-parchment: 36, 72%, 97%;
+	--hsl-parchment-dark: 36, 78%, 91%;
+	--hsl-parchment-extra-dark: 36, 61%, 86%;
+	--hsl-parchment-super-dark: 36, 21%, 54%;
+
+	/* UI */
+	--hsl-bullish: 140, 68%, 42%;
+	--hsl-bullish-dark: 140, 68%, 36%;
+	--hsl-bullish-extra-dark: 140, 68%, 28%;
+	--hsl-bullish-light: 140, 68%, 52%;
+	--hsl-bullish-extra-light: 140, 68%, 72%;
+
+	--hsl-bearish: 360, 92%, 57%;
+	--hsl-bearish-dark: 360, 92%, 45%;
+	--hsl-bearish-extra-dark: 360, 92%, 37%;
+	--hsl-bearish-light: 360, 100%, 70%;
+	--hsl-bearish-extra-light: 360, 100%, 78%;
+
+	/* Grayscale */
+	--hsl-gray: 239, 6%, 49%;
+	--hsl-gray-light: 239, 6%, 68%;
+	--hsl-gray-extra-light: 239, 6%, 82%;
+	--hsl-gray-dark: 239, 6%, 36%;
+	--hsl-gray-extra-dark: 239, 6%, 28%;
+
+	/* Accent */
+	--hsl-wood: 36, 68%, 35%;
+}
+
+/*
+ Colors - Theme 0.1
+*/
+
+:root {
+	/* Brand */
+	--c-ink: hsla(var(--hsl-ink), 1);
+	--c-ink-light: hsla(var(--hsl-ink-light), 1);
+
+	--c-parchment: hsla(var(--hsl-parchment), 1);
+	--c-parchment-dark: hsla(var(--hsl-parchment-dark), 1);
+	--c-parchment-extra-dark: hsla(var(--hsl-parchment-extra-dark), 1);
+	--c-parchment-super-dark: hsla(var(--hsl-parchment-super-dark), 1);
+
+	/* UI */
+	--c-bullish: hsla(var(--hsl-bullish), 1);
+	--c-bullish-dark: hsla(var(--hsl-bullish-dark), 1);
+	--c-bullish-extra-dark: hsla(var(--hsl-bullish-extra-dark), 1);
+	--c-bullish-light: hsla(var(--hsl-bullish-light), 1);
+	--c-bullish-extra-light: hsla(var(--hsl-bullish-extra-light), 1);
+
+	--c-bearish: hsla(var(--hsl-bearish), 1);
+	--c-bearish-dark: hsla(var(--hsl-bearish-dark), 1);
+	--c-bearish-extra-dark: hsla(var(--hsl-bearish-extra-dark), 1);
+	--c-bearish-light: hsla(var(--hsl-bearish-light), 1);
+	--c-bearish-extra-light: hsla(var(--hsl-bearish-extra-light), 1);
+
+	/* Grayscale */
+	--c-gray: hsla(var(--hsl-gray), 1);
+	--c-gray-light: hsla(var(--hsl-gray-light), 1);
+	--c-gray-extra-light: hsla(var(--hsl-gray-extra-light), 1);
+	--c-gray-dark: hsla(var(--hsl-gray-dark), 1);
+	--c-gray-extra-dark: hsla(var(--hsl-gray-extra-dark), 1);
+
+	/* Accent */
+	--c-wood: hsla(var(--hsl-wood), 1);
+}
