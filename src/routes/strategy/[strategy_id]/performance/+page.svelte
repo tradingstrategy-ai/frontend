@@ -59,6 +59,6 @@
 	<PortfolioPerformance graph={performanceGraph} />
 {/if}
 
-<h2>Summmary statitics</h2>
+<h2>Performance summary</h2>
 
 <SummaryStatistics {latestStats} />
