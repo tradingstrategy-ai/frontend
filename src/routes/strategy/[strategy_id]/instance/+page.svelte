@@ -92,21 +92,19 @@
 <table>
 	<tr>
 		<th>Version</th>
-		<td>{ runState.version.tag}</td>
+		<td>{runState.version.tag}</td>
 	</tr>
 
 	<tr>
 		<th>Commit hash</th>
-		<td>{ runState.version.commit_hash}</td>
+		<td>{runState.version.commit_hash}</td>
 	</tr>
 
 	<tr>
 		<th>Last commit message</th>
-		<td>{ runState.version.commit_message }</td>
+		<td>{runState.version.commit_message}</td>
 	</tr>
-
 </table>
-
 
 <style>
 	.instance-status {
