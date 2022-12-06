@@ -15,14 +15,14 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		throw error(500, `Strategy not loaded: ${params.strategy_id}`);
 	}
 
-  const images: { [key: string]: Blob; } = {};
-  const size = "large";
+	const images: { [key: string]: Blob } = {};
+	const type = 'large';
 
-  for(let theme of ["light", "dark"]) {
-    const encoded = new URLSearchParams({ theme, size });
-    const url = `${strategy.url}/visualisation?${encoded}`;
-    images[theme] = url;
-  }
+	for (let theme of ['light', 'dark']) {
+		const encoded = new URLSearchParams({ theme, type });
+		const url = `${strategy.url}/visualisation?${encoded}`;
+		images[theme] = url;
+	}
 
 	return {
 		imageUrls: images
