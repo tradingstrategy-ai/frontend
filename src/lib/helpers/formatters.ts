@@ -241,3 +241,42 @@ export function formatSince(ts: MaybeNumber): string {
 
 	return formatDistanceToNow(ts * 1000, { addSuffix: true });
 }
+
+/**
+ * Format plain percents.
+ *
+ * Like average winning profit.
+ *
+ * @param n
+ */
+export function formatPercent(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+	return (
+		(Math.abs(n) * 100).toLocaleString('en', {
+			minimumFractionDigits: 1,
+			maximumFractionDigits: 1
+		}) + '%'
+	);
+}
+
+/**
+ * Formats the time duration string as
+ *
+ * Timedelta is received from the API as a duration in seconds.
+ *
+ * @param seconds
+ */
+export function formatDuration(seconds): string {
+	const total = seconds * 1000;
+
+	//const seconds = Math.floor((total / 1000) % 60);
+	const minutes = Math.floor((total / 1000 / 60) % 60);
+	const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+	const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+	if (days > 0) {
+		return `${days} days ${hours}h ${minutes}m`;
+	} else {
+		return `${hours}h ${minutes}m`;
+	}
+}

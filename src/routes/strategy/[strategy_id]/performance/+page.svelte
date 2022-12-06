@@ -9,14 +9,15 @@
 	import type { TimeSeries } from './interface';
 	import type { State } from 'trade-executor-frontend/state/interface';
 	import PortfolioPerformance from './PortfolioPerformanceChart.svelte';
+	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
+	import SummaryStatistics from './SummaryStatistics.svelte';
 
 	export let data: PageData;
 
-	// Current run state
-	$: runState = data.runState;
-
 	// The whole strategy state
 	$: performanceGraph = processPerformanceData($currentStrategy.state);
+
+	$: latestStats = getPortfolioLatestStats($currentStrategy.state);
 
 	/**
 	 * Read the portfolio performance from persistante state and its stats part.
@@ -26,7 +27,6 @@
 	 * @param state
 	 */
 	function processPerformanceData(state: State): TimeSeries | null {
-
 		// During the strategy initialisation,
 		// data may not be available
 		if (!state || !state.stats || !state.stats.portfolio) {
@@ -47,7 +47,7 @@
 
 		console.log('Performance graph contains', x.length, 'data points');
 
-		return { x, y, yLabel: "Portfolio Value USD", yRangeMode: "tozero" };
+		return { x, y, yLabel: 'Portfolio Value USD', yRangeMode: 'tozero' };
 	}
 </script>
 
@@ -58,3 +58,7 @@
 	<p>Cash and market valued tokens in the strategy.</p>
 	<PortfolioPerformance graph={performanceGraph} />
 {/if}
+
+<h2>Summmary statitics</h2>
+
+<SummaryStatistics {latestStats} />

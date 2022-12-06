@@ -9,8 +9,7 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 
 -->
 <script lang="ts">
-
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	// https://www.npmjs.com/package/plotly.js-finance-dist
 	import Plotly from 'plotly.js-finance-dist';
@@ -18,64 +17,61 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 	// Time series
 	import type { TimeSeries } from './interface';
 
-    // Input data
+	// Input data
 	export let graph: TimeSeries;
 
-    // Passed to Plotly renderer
+	// Passed to Plotly renderer
 	let elem = null;
 
 	function updateChart(graph: TimeSeries) {
+		if (!elem) {
+			console.log('elem unavailable');
+			return;
+		}
 
-        if(!elem) {
-            console.log("elem unavailable");
-            return;
-        }
+		if (!graph) {
+			console.log('data unavailable');
+			return;
+		}
 
-        if(!graph) {
-            console.log("data unavailable");
-            return;
-        }
-
-        // See
-        // https://plotly.com/javascript/time-series/
-        // https://plotly.com/javascript/axes/
+		// See
+		// https://plotly.com/javascript/time-series/
+		// https://plotly.com/javascript/axes/
 		const data = [
 			{
 				x: graph.x,
 				y: graph.y,
-				type: 'scatter',
+				type: 'scatter'
 			}
 		];
 
-        const layout = {
-            yaxis: {
-                title: graph.yLabel,
-            }
-        }
+		const layout = {
+			yaxis: {
+				title: graph.yLabel
+			}
+		};
 
-        if(graph.yRangeMode) {
-            layout.yaxis.rangemode = graph.yRangeMode;
-        }
+		if (graph.yRangeMode) {
+			layout.yaxis.rangemode = graph.yRangeMode;
+		}
 
 		Plotly.newPlot(elem, data, layout);
 	}
 
 	onMount(() => {
 		updateChart(graph);
-    });
+	});
 
 	$: {
 		updateChart(graph);
 	}
 </script>
 
-<div bind:this={elem} class="chart">
-</div>
-
+<div bind:this={elem} class="chart" />
 
 <style>
-    .chart {
-        width: 100%;
-        height: 400px;
-    }
+	.chart {
+		width: 100%;
+		height: 400px;
+	}
 </style>
