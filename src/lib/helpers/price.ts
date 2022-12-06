@@ -3,7 +3,7 @@
  *
  * @param priceChange Price change as percents
  */
-export function determinePriceChangeClass(priceChange: number): string {
+export function determinePriceChangeClass(priceChange?: number | null): string {
 	if (!priceChange) {
 		return 'price-change-black'; // Data not loaded
 	}

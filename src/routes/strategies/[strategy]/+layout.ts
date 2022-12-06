@@ -2,7 +2,7 @@ import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/publicApiError';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
-import { getStrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
+import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 
 export const load: LayoutLoad = async ({ params, fetch }) => {
 	const strategy = getConfiguredStrategyById(params.strategy);
@@ -22,7 +22,7 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
 	}
 
 	return {
-		summary: getStrategyMetadata(strategy, fetch),
+		summary: getStrategyRuntimeState(strategy, fetch),
 		state: resp.json()
 	};
 };

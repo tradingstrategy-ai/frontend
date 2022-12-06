@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { StrategyMetadata } from 'trade-executor-frontend/strategy/metadata';
+	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import StrategyTile from './StrategyTile.svelte';
 
-	export let strategies: StrategyMetadata[];
+	export let strategies: StrategyRuntimeState[];
 </script>
 
 <ul>
