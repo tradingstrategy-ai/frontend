@@ -9,7 +9,6 @@
 	--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
 	display: grid;
 	padding-inline: calc((100% - var(--container-width)) / 2);
-	overflow: auto;
 }
 
 .ds-2-col {

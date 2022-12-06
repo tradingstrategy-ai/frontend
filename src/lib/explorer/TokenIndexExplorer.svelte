@@ -136,18 +136,8 @@ Tokens Explorer
 	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
-<style>
-	/* It's getting narrow so let's make some room by decreasing font size from the default 1rem*/
-	.tokens :global(.datatables-wrapper) {
-		font-size: 0.8rem;
-	}
-
-	/* Fix sorting icon position after making the font smaller */
-	.tokens :global(.sorting::before) {
-		bottom: 1.3em;
-	}
-
-	.tokens :global(.sorting::after) {
-		bottom: 1.3em;
+<style lang="postcss">
+	.tokens {
+		overflow: auto;
 	}
 </style>

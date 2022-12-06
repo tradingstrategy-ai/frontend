@@ -146,12 +146,16 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 </div>
 
 <style lang="postcss">
-	.exchanges :global .col-exchange {
-		word-break: break-all;
-		min-width: 10rem;
+	.exchanges :global {
+		overflow: auto;
 
-		& a {
-			font-weight: 500;
+		& .col-exchange {
+			word-break: break-all;
+			min-width: 10rem;
+
+			& a {
+				font-weight: 500;
+			}
 		}
 	}
 </style>

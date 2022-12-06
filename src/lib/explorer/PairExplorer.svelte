@@ -243,6 +243,8 @@ Explore trading pairs that match certain filter criteria.
 
 <style lang="postcss">
 	.trading-pairs :global {
+		overflow: auto;
+
 		/* set columns widths to equal % to minimize resizing when paging/sorting */
 		& td {
 			width: calc(100% / var(--columns));
