@@ -49,6 +49,7 @@
 		gap: var(--button-gap, 0.625rem);
 		justify-content: center;
 		align-items: center;
+		width: var(--button-width, auto);
 		padding: var(--button-padding, 0.75rem 1rem);
 		border: 1px solid transparent;
 		border-radius: var(--button-border-radius, var(--border-radius-md));

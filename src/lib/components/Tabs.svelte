@@ -46,7 +46,7 @@ Used to display tabs and associated component content panels
 
 	input:checked + label {
 		background: var(--c-background-4);
-		color: var(--c-text);
+		color: var(--c-text-default);
 	}
 
 	label {
