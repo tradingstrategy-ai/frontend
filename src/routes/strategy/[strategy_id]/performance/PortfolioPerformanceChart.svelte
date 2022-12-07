@@ -1,6 +1,6 @@
 <!--
-
- Render the portfolio performance chart using Plotly.
+@component
+Render the portfolio performance chart using Plotly.
 
 - X-axis: time
 - Y-axis: portfolio value
@@ -9,8 +9,6 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 
 -->
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	// https://www.npmjs.com/package/plotly.js-finance-dist
 	import Plotly from 'plotly.js-finance-dist';
 
@@ -21,16 +19,10 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 	export let graph: TimeSeries;
 
 	// Passed to Plotly renderer
-	let elem = null;
+	let elem: HTMLElement | null = null;
 
-	function updateChart(graph: TimeSeries) {
-		if (!elem) {
-			console.log('elem unavailable');
-			return;
-		}
-
-		if (!graph) {
-			console.log('data unavailable');
+	function updateChart(node: HTMLElement | null, graph: TimeSeries) {
+		if (!node || !graph) {
 			return;
 		}
 
@@ -58,13 +50,7 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 		Plotly.newPlot(elem, data, layout);
 	}
 
-	onMount(() => {
-		updateChart(graph);
-	});
-
-	$: {
-		updateChart(graph);
-	}
+	$: updateChart(elem, graph);
 </script>
 
 <div bind:this={elem} class="chart" />

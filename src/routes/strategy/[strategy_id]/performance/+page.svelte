@@ -4,15 +4,13 @@
 
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { currentStrategy } from 'trade-executor-frontend/state/store';
 	import type { TimeSeries } from './interface';
 	import type { State } from 'trade-executor-frontend/state/interface';
 	import PortfolioPerformance from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
-
-	export let data: PageData;
+	import { fromUnixTime } from 'date-fns';
 
 	// The whole strategy state
 	$: performanceGraph = processPerformanceData($currentStrategy.state);
@@ -23,13 +21,11 @@
 	 * Read the portfolio performance from persistante state and its stats part.
 	 *
 	 * Mangle the input suitable for our Plotly.js widget.
-	 *
-	 * @param state
 	 */
 	function processPerformanceData(state: State): TimeSeries | null {
-		// During the strategy initialisation,
-		// data may not be available
-		if (!state || !state.stats || !state.stats.portfolio) {
+		// Data may not be available during the strategy initialisation
+		const portfolio = state?.stats?.portfolio;
+		if (!portfolio) {
 			return null;
 		}
 
@@ -38,8 +34,8 @@
 
 		// Convert internal stats to Plotly.js format
 		// TODO: See statistics.py for type definition
-		for (let s: any of state.stats.portfolio) {
-			const ts = new Date(s.calculated_at * 1000);
+		for (let s of portfolio) {
+			const ts = fromUnixTime(s.calculated_at);
 			const val = s.total_equity;
 			x.push(ts);
 			y.push(val);

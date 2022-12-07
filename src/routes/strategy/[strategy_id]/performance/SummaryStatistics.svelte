@@ -1,9 +1,6 @@
 <!--
-
-    Summary statistics widget.
-
-    Render the statistics from the portfolio server-side calculated state.
-
+@component
+Render the statistics from the portfolio server-side calculated state.
 -->
 <script lang="ts">
 	import { formatDollar, formatDuration, formatPercent } from '$lib/helpers/formatters';
@@ -14,19 +11,19 @@
 
 	// Translate raw variables from TradeSummary Python class
 	const summaryLabels = {
-		duration: ['Trade period', 'timedelta'],
-		realised_profit: ['Realised profit', 'usd'],
-		open_value: ['Open positions', 'usd'],
-		return_percent: ['Return %', 'percent'],
-		annualised_return_percent: ['Annualised Return %', 'percent'],
-		total_trades: ['Total trades', 'int'],
-		won: ['Trades won', 'int'],
-		lost: ['Trades lost', 'int'],
-		stop_losses: ['Stop losses triggered', 'int'],
-		zero_loss: ['Positions closed neutral', 'int'],
-		average_winning_trade_profit_pc: ['Average winning trade profit %', 'percent'],
-		biggest_winning_trade_pc: ['Biggest winning trade %', 'percent'],
-		biggest_losing_trade_pc: ['Biggest losing trade %', 'percent']
+		duration: ['Trade period', formatDuration],
+		realised_profit: ['Realised profit', formatDollar],
+		open_value: ['Open positions', formatDollar],
+		return_percent: ['Return %', formatPercent],
+		annualised_return_percent: ['Annualised Return %', formatPercent],
+		total_trades: ['Total trades'],
+		won: ['Trades won'],
+		lost: ['Trades lost'],
+		stop_losses: ['Stop losses triggered'],
+		zero_loss: ['Positions closed neutral'],
+		average_winning_trade_profit_pc: ['Average winning trade profit %', formatPercent],
+		biggest_winning_trade_pc: ['Biggest winning trade %', formatPercent],
+		biggest_losing_trade_pc: ['Biggest losing trade %', formatPercent]
 	};
 
 	function translateSummary(tradeSummary) {
@@ -38,20 +35,8 @@
 
 		for (let key in summaryLabels) {
 			const val = tradeSummary[key];
-			const label = summaryLabels[key][0];
-			const type = summaryLabels[key][1];
-
-			if (type == 'int') {
-				result[label] = val;
-			} else if (type == 'usd') {
-				result[label] = formatDollar(val);
-			} else if (type == 'percent') {
-				result[label] = formatPercent(val);
-			} else if (type == 'timedelta') {
-				result[label] = formatDuration(val);
-			} else {
-				result[label] = val;
-			}
+			const [label, formatter] = summaryLabels[key];
+			result[label] = formatter ? formatter(val) : val;
 		}
 
 		return result;
