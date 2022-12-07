@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+	import type { Stats, TradingPosition } from 'trade-executor-frontend/state/interface';
+	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import { formatUnixTimestampAsHours } from 'trade-executor-frontend/helpers/formatters';
@@ -9,9 +10,11 @@
 
 	export let strategyId: string;
 
-	export let positions: TradingPosition[] = [];
+	export let positions: TradingPosition[];
+	export let stats: Stats;
 
-	const table = createTable(readable(positions));
+	const combinedPositions = createCombinedPositionList(positions, stats);
+	const table = createTable(readable(combinedPositions));
 
 	const columns = table.createColumns([
 		table.column({

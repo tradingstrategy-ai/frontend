@@ -1,31 +1,23 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { AlertList, AlertItem } from '$lib/components';
 	import PositionTable from '../PositionTable.svelte';
 
 	export let data: PageData;
 
 	$: summary = data.summary;
-
-	const positions = [
-		{
-			position_id: 209,
-			ticker: 'ETH-SOL',
-			profitability: 0.0065,
-			value: 123.45,
-			opened_at: 1670032800
-		},
-		{
-			position_id: 222,
-			ticker: 'ETH-USDC',
-			profitability: -0.0123,
-			value: -67.89,
-			opened_at: 1670057543
-		}
-	];
+	$: state = data.state;
+	$: positions = Object.values(state?.portfolio?.open_positions || []);
 </script>
 
 <section>
-	<PositionTable strategyId={summary.id} {positions} />
+	{#if positions.length > 0}
+		<PositionTable strategyId={summary.id} {positions} stats={state?.stats} />
+	{:else}
+		<AlertList status="warning">
+			<AlertItem>This strategy currently has no open positions.</AlertItem>
+		</AlertList>
+	{/if}
 </section>
 
 <style lang="postcss">
