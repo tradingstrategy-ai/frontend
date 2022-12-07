@@ -3,7 +3,6 @@
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/publicApiError';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 
 /**
@@ -15,16 +14,14 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		throw error(500, `Strategy not loaded: ${params.strategy_id}`);
 	}
 
-	const images: { [key: string]: Blob } = {};
+	const imageUrls: Record<string, string> = {};
 	const type = 'large';
 
 	for (let theme of ['light', 'dark']) {
 		const encoded = new URLSearchParams({ theme, type });
 		const url = `${strategy.url}/visualisation?${encoded}`;
-		images[theme] = url;
+		imageUrls[theme] = url;
 	}
 
-	return {
-		imageUrls: images
-	};
+	return { imageUrls };
 };

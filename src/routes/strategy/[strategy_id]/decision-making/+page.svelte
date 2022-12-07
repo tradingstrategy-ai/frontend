@@ -9,43 +9,40 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import warning from '$lib/assets/icons/warning.svg';
-	import { writable } from 'svelte/store';
 	import { AlertItem, AlertList } from '$lib/components/index.js';
 
 	export let data: PageData;
 
-	const errored = writable(false);
-	const errorUrl = writable('');
+	let errored = false;
+	let errorUrl = '';
 
 	// The URLs for strategy thinking images
 	$: imageUrls = data.imageUrls;
 
 	// https://stackoverflow.com/questions/69020710/fall-back-image-with-sveltekit
 	const fallback = warning;
-	const handleError = (ev) => {
-		ev.target.src = fallback;
-		errorUrl.set(ev.srcElement.src);
-		errored.set(true);
-	};
+	function handleError(ev: Event) {
+		const target = ev.target as HTMLImageElement;
+		errorUrl = target.src;
+		errored = true;
+		target.src = fallback;
+	}
 </script>
 
-{#if $errored}
-	<AlertList status="warning">
-		<AlertItem>
-			Could not load strategy decision making data. If the trade executor instance has been restarted recently, this
-			data may not be available until the first strategy decision making cycle is completed. The URL is <b
-				>{$errorUrl}.</b
-			>
-		</AlertItem>
-	</AlertList>
-{/if}
+<AlertList status="warning">
+	<AlertItem displayWhen={errored}>
+		Could not load strategy decision making data. If the trade executor instance has been restarted recently, this data
+		may not be available until the first strategy decision making cycle is completed. The URL is
+		<strong>{errorUrl}.</strong>
+	</AlertItem>
+</AlertList>
 
-<img class="light" src={imageUrls.light} on:error={handleError} />
-<img class="dark" src={imageUrls.dark} on:error={handleError} />
+<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
+<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
 
 <style>
 	img {
-		margin: 20px 0;
+		margin: 1.5rem 0;
 		width: 100%;
 	}
 
