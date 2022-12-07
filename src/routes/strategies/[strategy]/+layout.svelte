@@ -2,13 +2,12 @@
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Menu, MenuItem, PageHeading } from '$lib/components';
+	import { PageHeading } from '$lib/components';
+	import StrategyNav from './StrategyNav.svelte';
 
 	export let data: LayoutData;
 
 	$: summary = data.summary;
-
-	$: path = $page.url.pathname;
 
 	$: breadcrumbs = {
 		[summary.id]: summary.name,
@@ -24,19 +23,7 @@
 		<p class="subtitle">{summary.long_description}</p>
 	</PageHeading>
 
-	<nav>
-		<Menu horizontal>
-			<MenuItem noScroll label="Overview" targetUrl="/strategies/{summary.id}" active={path.endsWith(summary.id)} />
-			<MenuItem
-				noScroll
-				label="Open positions"
-				targetUrl="/strategies/{summary.id}/open-positions"
-				active={path.endsWith('open-positions')}
-			/>
-			<MenuItem label="Instance status" targetUrl="/strategy/{summary.id}/instance" />
-			<MenuItem label="Logs" targetUrl="/strategy/{summary.id}/logs" />
-		</Menu>
-	</nav>
+	<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
 
 	<slot />
 </main>
@@ -44,13 +31,5 @@
 <style lang="postcss">
 	.subtitle {
 		font: var(--f-ui-md-medium);
-	}
-
-	nav {
-		margin-block: 1.25rem 0.5rem;
-		--menu-item-padding: 1rem;
-		--menu-item-border-radius: var(--border-radius-md);
-		--menu-item-color: var(--c-text-extra-light);
-		--menu-item-active-color: var(--c-text-default);
 	}
 </style>
