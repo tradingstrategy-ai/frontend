@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, intervalToDuration } from 'date-fns';
 
 type MaybeType<Type> = Type | null | undefined;
 type MaybeNumber = MaybeType<number>;
@@ -139,14 +139,7 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
 
 export function formatPriceChange(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
-	return (
-		(n > 0 ? '▲' : '▼') +
-		(Math.abs(n) * 100).toLocaleString('en', {
-			minimumFractionDigits: 1,
-			maximumFractionDigits: 1
-		}) +
-		'%'
-	);
+	return (n > 0 ? '▲' : '▼') + formatPercent(Math.abs(n));
 }
 
 /**
@@ -240,4 +233,29 @@ export function formatSince(ts: MaybeNumber): string {
 	if (!Number.isFinite(ts)) return notFilledMarker;
 
 	return formatDistanceToNow(ts * 1000, { addSuffix: true });
+}
+
+/**
+ * Format plain percents.
+ *
+ * Like average winning profit.
+ */
+export function formatPercent(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+	return n.toLocaleString('en', {
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1,
+		style: 'percent'
+	});
+}
+
+/**
+ * Formats the time duration string as
+ *
+ * Timedelta is received from the API as a duration in seconds.
+ */
+export function formatDuration(seconds: number): string {
+	const { days, hours, minutes } = intervalToDuration({ start: 0, end: seconds * 1000 });
+	const dayStr = days ? `${days} days ` : '';
+	return `${dayStr}${hours}h ${minutes}m`;
 }
