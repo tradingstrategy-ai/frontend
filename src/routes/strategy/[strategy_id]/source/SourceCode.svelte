@@ -1,19 +1,23 @@
 <!--
+@component
+Display the source code of the strategy.
+TODO: Add nice source code formatting widget
 
-    Page to display the source code of the strategy.
-
-    TODO: Add nice source code formatting widget
+#### Usage:
+```tsx
+	<SourceCode source={code} />
+```
 -->
 <script lang="ts">
-	export let source;
+	export let source: string;
 
 	// Currently loaded source code
 	$: sourceLines = source.split('\n');
 </script>
 
 <pre class="source">
-    {#each sourceLines as line}
-		<code>{line}</code><br />
+	{#each sourceLines as line}
+		<code>{line}</code>
 	{/each}
 </pre>
 
@@ -25,22 +29,24 @@
 		padding: 5px;
 		counter-reset: line;
 		width: 100%;
-
-		white-space: normal;
+		height: calc(100vh - 16rem);
+		display: grid;
 		overflow-x: scroll;
+		overscroll-behavior: none;
 	}
 
 	code {
 		counter-increment: line;
-		overflow-x: scroll;
-		white-space: pre;
+		display: grid;
+		grid-template-columns: 2rem 1fr;
+		gap: 1rem;
 	}
 
 	code:before {
 		display: inline-block;
 		content: counter(line);
 		user-select: none;
-		width: 40px;
+		text-align: right;
 		opacity: 0.5;
 	}
 </style>

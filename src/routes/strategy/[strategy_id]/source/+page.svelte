@@ -15,8 +15,7 @@
 	$: source = data.source;
 
 	// TODO: Hack for now, have metadata object to expose real strategy canocical source code URLs
-	$: githubUrl =
-		`http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/` + $currentStrategy.id + `.py`;
+	$: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${$currentStrategy.id}.py`;
 </script>
 
 <p>
