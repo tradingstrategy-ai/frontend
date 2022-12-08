@@ -97,7 +97,7 @@
 		width: 100%;
 
 		@media (--viewport-sm-down) {
-			max-width: calc(100vw - 2rem);
+			max-width: calc(100vw - 3rem);
 			display: inline-block;
 			overflow-x: auto;
 		}
@@ -121,8 +121,12 @@
 		font: var(--f-ui-lg-medium);
 		--button-width: 100%;
 
-		@media (max-width: 1260px) {
+		@media (--viewport-lg-down) {
 			font: var(--f-ui-md-medium);
+		}
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-sm-medium);
 		}
 
 		@nest tr:hover & {

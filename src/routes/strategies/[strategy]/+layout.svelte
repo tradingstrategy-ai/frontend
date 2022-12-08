@@ -35,7 +35,7 @@
 	}
 
 	.strategy-layout :global(.page-heading) {
-		@media (--viewport-sm-up) {
+		@media (--viewport-lg-up) {
 			grid-column: 1/3;
 		}
 	}
@@ -48,7 +48,7 @@
 		display: grid;
 		column-gap: 2rem;
 
-		@media (--viewport-sm-up) {
+		@media (--viewport-lg-up) {
 			column-gap: 3rem;
 			grid-template-columns: 14rem auto;
 		}

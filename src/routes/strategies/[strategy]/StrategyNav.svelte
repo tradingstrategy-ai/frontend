@@ -7,7 +7,7 @@
 
 	let detailsEl: HTMLDetailsElement;
 
-	$: tag = $windowInnerWidth <= 576 ? 'details' : 'aside';
+	$: tag = $windowInnerWidth <= 1024 ? 'details' : 'aside';
 
 	const closeDetails = () => {
 		detailsEl.open = false;
@@ -109,7 +109,7 @@
 		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--border-radius-md);
 		--menu-item-padding: 0.875rem 1rem;
-		@media (--viewport-sm-up) {
+		@media (--viewport-lg-down) {
 			--menu-item-padding: 0.75rem 1.125rem;
 		}
 		@media (--viewport-md-down) {
@@ -128,7 +128,7 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	@media (--viewport-sm-up) {
+	@media (--viewport-lg-up) {
 		summary {
 			display: none;
 		}
