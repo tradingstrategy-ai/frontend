@@ -23,13 +23,23 @@
 		<p class="subtitle">{summary.long_description}</p>
 	</PageHeading>
 
-	<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
-
-	<slot />
+	<div class="inner">
+		<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
+		<slot />
+	</div>
 </main>
 
 <style lang="postcss">
 	.subtitle {
 		font: var(--f-ui-md-medium);
+	}
+
+	.inner {
+		display: grid;
+		gap: 2rem;
+		@media (--viewport-lg-up) {
+			gap: 4rem;
+			grid-template-columns: 12.5rem auto;
+		}
 	}
 </style>

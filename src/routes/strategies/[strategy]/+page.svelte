@@ -53,8 +53,7 @@
 	section {
 		display: grid;
 		gap: 1.25rem;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, auto));
-		padding-top: 1.25rem;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 
 		@media (--viewport-md-down) {
 			gap: 1.5rem;

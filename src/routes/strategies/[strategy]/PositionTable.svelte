@@ -93,6 +93,7 @@
 	table {
 		border-collapse: separate;
 		border-spacing: 0 0.75rem;
+		margin-top: -0.75rem;
 		width: 100%;
 
 		@media (--viewport-sm-down) {
