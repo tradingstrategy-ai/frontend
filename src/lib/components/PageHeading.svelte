@@ -1,10 +1,10 @@
-<header>
+<header class="page-heading">
 	<slot />
 </header>
 
 <style lang="postcss">
 	header :global {
-		margin-bottom: 2rem;
+		margin-bottom: 3rem;
 
 		& h1 {
 			font: var(--fs-heading-xl);

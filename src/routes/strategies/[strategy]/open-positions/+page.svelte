@@ -19,9 +19,3 @@
 		</AlertList>
 	{/if}
 </section>
-
-<style lang="postcss">
-	section {
-		padding: 1rem 0 0;
-	}
-</style>
