@@ -17,7 +17,7 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main class="ds-container">
+<main class="strategy-layout ds-container">
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p class="subtitle">{summary.long_description}</p>
@@ -34,7 +34,7 @@
 		font: var(--f-ui-md-medium);
 	}
 
-	:global(.page-heading) {
+	.strategy-layout :global(.page-heading) {
 		@media (--viewport-sm-up) {
 			grid-column: 1/3;
 		}
@@ -50,7 +50,7 @@
 
 		@media (--viewport-sm-up) {
 			column-gap: 3rem;
-			grid-template-columns: 12.5rem auto;
+			grid-template-columns: 14rem auto;
 		}
 	}
 </style>
