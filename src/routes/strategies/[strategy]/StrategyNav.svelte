@@ -12,11 +12,33 @@
 	const closeDetails = () => {
 		detailsEl.open = false;
 	};
+
+	$: mobileToggleTitle = currentPath.endsWith(strategyId)
+		? 'Overview'
+		: currentPath.endsWith('open-positions')
+		? 'Open positions'
+		: currentPath.endsWith('closed-positions')
+		? 'Closed positions'
+		: currentPath.endsWith('instance')
+		? 'Instance status'
+		: currentPath.endsWith('logs')
+		? 'Logs'
+		: currentPath.endsWith('performance')
+		? 'Performance'
+		: currentPath.endsWith('decision-making')
+		? 'Decision making'
+		: currentPath.endsWith('source')
+		? 'Source code'
+		: currentPath.endsWith('logs')
+		? 'Logs'
+		: '';
 </script>
 
 <svelte:element this={tag} bind:this={detailsEl} class="strategy-nav">
 	<summary>
-		<Button icon="menu" quarternary />
+		<Button icon="chevron-down" quarternary>
+			{mobileToggleTitle}
+		</Button>
 	</summary>
 	<nav>
 		<Menu>
@@ -73,19 +95,24 @@
 
 	summary :global(button) {
 		pointer-events: none;
-
-		&::before {
-			content: 'Show menu';
-		}
 	}
 
 	:global {
-		& .strategy-nav[open] summary {
-			margin-bottom: 1.25rem;
-			opacity: 0.4;
+		& .strategy-nav button svg {
+			transition: all 0.25s ease-out;
 
-			& :global(button)::before {
-				content: 'Hide menu';
+			& path {
+				stroke-width: 3px !important;
+			}
+		}
+		& .strategy-nav[open] {
+			& summary {
+				margin-bottom: 1.25rem;
+				opacity: 0.4;
+			}
+
+			& button svg {
+				transform: rotate(180deg) !important;
 			}
 		}
 	}
