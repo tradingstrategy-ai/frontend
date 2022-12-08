@@ -7,7 +7,7 @@
 
 	let detailsEl: HTMLDetailsElement;
 
-	$: tag = $windowInnerWidth <= 1024 ? 'details' : 'aside';
+	$: tag = $windowInnerWidth <= 576 ? 'details' : 'aside';
 
 	const closeDetails = () => {
 		detailsEl.open = false;
@@ -67,9 +67,9 @@
 		--menu-item-active-color: var(--c-text-default);
 		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--border-radius-md);
-		--menu-item-padding: 0.75rem;
-		@media (--viewport-lg-up) {
-			--menu-item-padding: 1rem;
+		--menu-item-padding: 0.875rem 1rem;
+		@media (--viewport-sm-up) {
+			--menu-item-padding: 0.75rem 1.125rem;
 		}
 		@media (--viewport-md-down) {
 			--menu-item-font: var(--f-ui-md-medium);
@@ -87,7 +87,7 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	@media (--viewport-lg-up) {
+	@media (--viewport-sm-up) {
 		summary {
 			display: none;
 		}

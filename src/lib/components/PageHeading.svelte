@@ -1,4 +1,4 @@
-<header>
+<header class="page-heading">
 	<slot />
 </header>
 

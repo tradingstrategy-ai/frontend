@@ -23,8 +23,8 @@
 		<p class="subtitle">{summary.long_description}</p>
 	</PageHeading>
 
-	<div class="inner">
-		<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
+	<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
+	<div class="subpage">
 		<slot />
 	</div>
 </main>
@@ -34,11 +34,22 @@
 		font: var(--f-ui-md-medium);
 	}
 
-	.inner {
+	:global(.page-heading) {
+		@media (--viewport-sm-up) {
+			grid-column: 1/3;
+		}
+	}
+
+	:global(.strategy-nav) {
+		margin-bottom: 2rem;
+	}
+
+	main {
 		display: grid;
-		gap: 2rem;
-		@media (--viewport-lg-up) {
-			gap: 4rem;
+		column-gap: 2rem;
+
+		@media (--viewport-sm-up) {
+			column-gap: 3rem;
 			grid-template-columns: 12.5rem auto;
 		}
 	}
