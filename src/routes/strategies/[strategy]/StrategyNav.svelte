@@ -42,10 +42,16 @@
 
 <style lang="postcss">
 	nav {
-		--menu-item-padding: 1rem;
-		--menu-item-border-radius: var(--border-radius-md);
-		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-active-color: var(--c-text-default);
+		--menu-item-color: var(--c-text-extra-light);
+		--menu-item-border-radius: var(--border-radius-md);
+		--menu-item-padding: 0.75rem;
+		@media (--viewport-lg-up) {
+			--menu-item-padding: 1rem;
+		}
+		@media (--viewport-md-down) {
+			--menu-item-font: var(--f-ui-md-medium);
+		}
 	}
 
 	nav :global(menu) {
@@ -75,7 +81,7 @@
 
 	:global {
 		& .strategy-nav[open] summary {
-			margin-bottom: 1rem;
+			margin-bottom: 1.25rem;
 			opacity: 0.4;
 
 			& :global(button)::before {

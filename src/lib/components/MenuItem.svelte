@@ -19,7 +19,7 @@
 		display: flex;
 		justify-content: inherit;
 		align-items: center;
-		font: var(--f-ui-xl-medium);
+		font: var(--menu-item-font, var(--f-ui-xl-medium));
 		letter-spacing: var(--f-ui-xl-spacing, normal);
 		color: var(--menu-item-color, inherit);
 		text-decoration: none;
