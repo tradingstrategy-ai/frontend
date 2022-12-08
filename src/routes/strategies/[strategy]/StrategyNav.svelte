@@ -57,42 +57,36 @@
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Closed positions"
 				targetUrl="/strategy/{strategyId}/closed-positions"
 				active={currentPath.endsWith('closed-positions')}
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Performance"
 				targetUrl="/strategy/{strategyId}/performance"
 				active={currentPath.endsWith('performance')}
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Decision making"
 				targetUrl="/strategy/{strategyId}/decision-making"
 				active={currentPath.endsWith('decision-making')}
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Instance status"
 				targetUrl="/strategy/{strategyId}/instance"
 				active={currentPath.endsWith('instance')}
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Logs"
 				targetUrl="/strategy/{strategyId}/logs"
 				active={currentPath.endsWith('logs')}
 				on:click={closeDetails}
 			/>
 			<MenuItem
-				noScroll
 				label="Source"
 				targetUrl="/strategy/{strategyId}/source"
 				active={currentPath.endsWith('source')}
@@ -138,23 +132,24 @@
 		pointer-events: none;
 	}
 
-	:global {
-		& .strategy-nav button svg {
+	.strategy-nav :global {
+		& button svg {
 			transition: all 0.25s ease-out;
 
 			& path {
-				stroke-width: 3px !important;
+				stroke-width: 3px;
 			}
 		}
-		& .strategy-nav[open] {
-			& summary {
-				margin-bottom: 1.25rem;
-				opacity: 0.4;
-			}
+	}
 
-			& button svg {
-				transform: rotate(180deg) !important;
-			}
+	.strategy-nav:global([open]) {
+		& summary {
+			margin-bottom: 1.25rem;
+			opacity: 0.4;
+		}
+
+		& :global button svg {
+			transform: rotate(180deg);
 		}
 	}
 </style>

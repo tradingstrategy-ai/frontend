@@ -24,26 +24,13 @@
 	</PageHeading>
 
 	<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
+
 	<div class="subpage">
 		<slot />
 	</div>
 </main>
 
 <style lang="postcss">
-	.subtitle {
-		font: var(--f-ui-md-medium);
-	}
-
-	.strategy-layout :global(.page-heading) {
-		@media (--viewport-lg-up) {
-			grid-column: 1/3;
-		}
-	}
-
-	:global(.strategy-nav) {
-		margin-bottom: 2rem;
-	}
-
 	main {
 		display: grid;
 		column-gap: 2rem;
@@ -51,6 +38,22 @@
 		@media (--viewport-lg-up) {
 			column-gap: 3rem;
 			grid-template-columns: 14rem auto;
+		}
+	}
+
+	.subtitle {
+		font: var(--f-ui-md-medium);
+	}
+
+	.strategy-layout :global {
+		& .page-heading {
+			@media (--viewport-lg-up) {
+				grid-column: 1/3;
+			}
+		}
+
+		& .strategy-nav {
+			margin-bottom: 2rem;
 		}
 	}
 </style>
