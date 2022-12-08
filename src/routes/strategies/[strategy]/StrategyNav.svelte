@@ -56,14 +56,55 @@
 				active={currentPath.endsWith('open-positions')}
 				on:click={closeDetails}
 			/>
-			<MenuItem label="Instance status" targetUrl="/strategy/{strategyId}/instance" on:click={closeDetails} />
-			<MenuItem label="Logs" targetUrl="/strategy/{strategyId}/logs" on:click={closeDetails} />
+			<MenuItem
+				noScroll
+				label="Closed positions"
+				targetUrl="/strategy/{strategyId}/closed-positions"
+				active={currentPath.endsWith('closed-positions')}
+				on:click={closeDetails}
+			/>
+			<MenuItem
+				noScroll
+				label="Performance"
+				targetUrl="/strategy/{strategyId}/performance"
+				active={currentPath.endsWith('performance')}
+				on:click={closeDetails}
+			/>
+			<MenuItem
+				noScroll
+				label="Decision making"
+				targetUrl="/strategy/{strategyId}/decision-making"
+				active={currentPath.endsWith('decision-making')}
+				on:click={closeDetails}
+			/>
+			<MenuItem
+				noScroll
+				label="Instance status"
+				targetUrl="/strategy/{strategyId}/instance"
+				active={currentPath.endsWith('instance')}
+				on:click={closeDetails}
+			/>
+			<MenuItem
+				noScroll
+				label="Logs"
+				targetUrl="/strategy/{strategyId}/logs"
+				active={currentPath.endsWith('logs')}
+				on:click={closeDetails}
+			/>
+			<MenuItem
+				noScroll
+				label="Source"
+				targetUrl="/strategy/{strategyId}/source"
+				active={currentPath.endsWith('source')}
+				on:click={closeDetails}
+			/>
 		</Menu>
 	</nav>
 </svelte:element>
 
 <style lang="postcss">
 	nav {
+		--menu-gap: 0.75rem;
 		--menu-item-active-color: var(--c-text-default);
 		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--border-radius-md);
