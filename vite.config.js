@@ -3,7 +3,6 @@
  * https://kit.svelte.dev/docs/project-structure#project-files-vite-config-js
  * https://vitejs.dev/config/
  */
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
@@ -11,27 +10,10 @@ import fontDisplay from 'postcss-font-display';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
 
-const kitPlugins = sveltekit();
-
 /** @type {import('vite').UserConfig} */
 const config = {
 	plugins: [
-		// Enable experimental Svelte inspector; see:
-		// https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#inspector
-		svelte({
-			experimental: {
-				inspector: {
-					toggleKeyCombo: 'control-meta',
-					holdMode: true,
-					showToggleButton: 'never'
-				}
-			}
-		}),
-
-		// We are manually injecting svelte() plugins above with inspector enabled, so we only
-		// need the last plugin from the sveltekit() array of plugins; see:
-		// https://github.com/sveltejs/kit/blob/master/packages/kit/src/exports/vite/index.js
-		kitPlugins[kitPlugins.length - 1],
+		sveltekit(),
 
 		// Strip bogus sourcemap from chartiq.css
 		replace({
