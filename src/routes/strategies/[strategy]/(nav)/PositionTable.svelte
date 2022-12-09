@@ -8,8 +8,6 @@
 	import { Button } from '$lib/components';
 	import Profitability from './Profitability.svelte';
 
-	export let strategyId: string;
-
 	export let positions: TradingPosition[];
 	export let stats: Stats;
 
@@ -48,7 +46,7 @@
 				createRender(Button, {
 					tertiary: true,
 					label: 'Details',
-					href: `/strategy/${strategyId}/open-positions/${value}`
+					href: `./open-positions/${value}`
 				})
 		})
 	]);
