@@ -6,7 +6,7 @@
 	import { formatUnixTimestampAsHours } from 'trade-executor-frontend/helpers/formatters';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { Button } from '$lib/components';
-	import Profitability from './Profitability.svelte';
+	import Profitability from '../Profitability.svelte';
 
 	export let positions: TradingPosition[];
 	export let stats: Stats;
