@@ -15,35 +15,29 @@
 		<p>{summary.long_description}</p>
 	</PageHeading>
 
-	<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
-
 	<div class="subpage">
+		<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
 		<slot />
 	</div>
 </main>
 
 <style lang="postcss">
-	.strategy-layout :global {
+	.strategy-layout {
 		display: grid;
-		column-gap: 2rem;
+		gap: 1rem;
 
-		@media (--viewport-lg-up) {
-			column-gap: 3rem;
-			grid-template-columns: 14rem auto;
+		& .page-heading p {
+			font: var(--f-ui-md-medium);
 		}
 
-		& .page-heading {
+		& .subpage :global {
+			display: grid;
+			gap: 2rem;
+
 			@media (--viewport-lg-up) {
-				grid-column: 1/3;
+				gap: 3rem;
+				grid-template-columns: 14rem auto;
 			}
-
-			& p {
-				font: var(--f-ui-md-medium);
-			}
-		}
-
-		& .strategy-nav {
-			margin-bottom: 2rem;
 		}
 	}
 </style>
