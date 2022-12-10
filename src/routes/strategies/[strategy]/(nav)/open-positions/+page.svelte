@@ -9,7 +9,7 @@
 	$: positions = Object.values(state?.portfolio?.open_positions || []);
 </script>
 
-<section>
+<section style:overflow="auto">
 	{#if positions.length > 0}
 		<PositionTable {positions} stats={state?.stats} />
 	{:else}

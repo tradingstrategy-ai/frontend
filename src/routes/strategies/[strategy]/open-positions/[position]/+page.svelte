@@ -9,6 +9,7 @@
 	import { getValueAtPeak } from 'trade-executor-frontend/state/positionHelpers';
 	import { DataBox, DataBoxes, PageHeading } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
+	import TradeTable from './TradeTable.svelte';
 
 	export let data: PageData;
 
@@ -26,7 +27,7 @@
 	<DataBoxes>
 		<DataBox label="Pair">
 			<a href={position.pair.info_url}>
-				{position.pair.base.token_symbol} - {position.pair.quote.token_symbol}
+				{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
 			</a>
 		</DataBox>
 		<DataBox label="Profitability">
@@ -40,6 +41,8 @@
 		<DataBox label="Value now" value={formatDollar(currentStats.value)} />
 		<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
 	</DataBoxes>
+
+	<TradeTable trades={Object.values(position.trades)} />
 </main>
 
 <style lang="postcss">

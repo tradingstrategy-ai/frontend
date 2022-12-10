@@ -22,6 +22,7 @@ Display a set of DataBox elements in a responsive grid.
 
 		@media (--viewport-sm-down) {
 			gap: 1rem;
+			grid-template-columns: auto;
 		}
 	}
 </style>

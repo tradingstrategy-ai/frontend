@@ -3,10 +3,8 @@
 	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
-	import { formatUnixTimestampAsHours } from 'trade-executor-frontend/helpers/formatters';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { DataTable } from '$lib/components';
-	import { Button } from '$lib/components';
+	import { DataTable, Button, DateTime } from '$lib/components';
 	import Profitability from '../Profitability.svelte';
 
 	export let positions: TradingPosition[];
@@ -36,8 +34,8 @@
 		}),
 		table.column({
 			header: 'Opened',
-			id: 'opened',
-			accessor: ({ opened_at }) => formatUnixTimestampAsHours(opened_at)
+			accessor: 'opened_at',
+			cell: ({ value }) => createRender(DateTime, { epoch: value })
 		}),
 		table.column({
 			header: '',
@@ -46,6 +44,7 @@
 			cell: ({ value }) =>
 				createRender(Button, {
 					tertiary: true,
+					lg: true,
 					label: 'Details',
 					href: `./open-positions/${value}`
 				})
@@ -55,17 +54,21 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<div class="position-table-wrapper">
+<div class="position-table">
 	<DataTable {tableViewModel} />
 </div>
 
 <style lang="postcss">
-	.position-table-wrapper :global {
+	.position-table :global {
 		display: contents;
+
+		& .ticker {
+			white-space: pre;
+		}
 
 		& .profitability,
 		& .value,
-		& .opened {
+		& .opened_at {
 			text-align: right;
 		}
 	}

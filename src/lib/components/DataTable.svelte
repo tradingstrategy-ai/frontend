@@ -20,51 +20,51 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = tableViewModel;
 </script>
 
-<table class="data-table" {...$tableAttrs}>
-	<thead>
-		{#each $headerRows as headerRow (headerRow.id)}
-			<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
-				<tr {...rowAttrs}>
-					{#each headerRow.cells as cell (cell.id)}
-						<Subscribe attrs={cell.attrs()} let:attrs>
-							<th class={cell.id} {...attrs}>
-								<Render of={cell.render()} />
-							</th>
-						</Subscribe>
-					{/each}
-				</tr>
-			</Subscribe>
-		{/each}
-	</thead>
-	<tbody {...$tableBodyAttrs}>
-		{#each $rows as row (row.id)}
-			<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-				<tr {...rowAttrs}>
-					{#each row.cells as cell (cell.id)}
-						<Subscribe attrs={cell.attrs()} let:attrs>
-							<td class={cell.id} {...attrs}>
-								<Render of={cell.render()} />
-							</td>
-						</Subscribe>
-					{/each}
-				</tr>
-			</Subscribe>
-		{/each}
-	</tbody>
-</table>
+<div class="data-table">
+	<table {...$tableAttrs}>
+		<thead>
+			{#each $headerRows as headerRow (headerRow.id)}
+				<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
+					<tr {...rowAttrs}>
+						{#each headerRow.cells as cell (cell.id)}
+							<Subscribe attrs={cell.attrs()} let:attrs>
+								<th class={cell.id} {...attrs}>
+									<Render of={cell.render()} />
+								</th>
+							</Subscribe>
+						{/each}
+					</tr>
+				</Subscribe>
+			{/each}
+		</thead>
+		<tbody {...$tableBodyAttrs}>
+			{#each $rows as row (row.id)}
+				<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+					<tr {...rowAttrs}>
+						{#each row.cells as cell (cell.id)}
+							<Subscribe attrs={cell.attrs()} let:attrs>
+								<td class={cell.id} {...attrs}>
+									<Render of={cell.render()} />
+								</td>
+							</Subscribe>
+						{/each}
+					</tr>
+				</Subscribe>
+			{/each}
+		</tbody>
+	</table>
+</div>
 
 <style lang="postcss">
+	.data-table {
+		overflow: auto;
+	}
+
 	table {
 		border-collapse: separate;
 		border-spacing: 0 0.75rem;
 		margin-top: -0.75rem;
 		width: 100%;
-
-		@media (--viewport-sm-down) {
-			max-width: calc(100vw - 3rem);
-			display: inline-block;
-			overflow-x: auto;
-		}
 	}
 
 	thead {
