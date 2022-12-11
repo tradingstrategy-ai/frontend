@@ -38,7 +38,7 @@
 		padding: 1rem;
 		overflow-y: auto;
 		display: grid;
-		gap: 1rem;
+		gap: 1.5rem;
 		grid-auto-rows: min-content;
 		background: var(--c-body-v1);
 		box-shadow: -0.25rem 0 2rem var(--c-shadow-1-v1);
@@ -69,7 +69,7 @@
 	}
 
 	.color-mode-picker {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 		display: grid;
 	}
 </style>

@@ -20,7 +20,6 @@
 
 		&.dir--vertical {
 			flex-direction: column;
-			padding-block: 0.5rem;
 		}
 
 		&.dir--horizontal {

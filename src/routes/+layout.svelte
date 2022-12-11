@@ -12,7 +12,6 @@
 	import { page } from '$app/stores';
 	import 'bootstrap-theme/css/neumorphism.css';
 	import '$lib/components/css/index.css';
-	import windowInnerWidth from '$lib/window-inner-width';
 
 	/**
 	 * Lazily load fonts as per issue 9.
@@ -40,13 +39,7 @@
 	beforeNavigate((navigation) => {
 		toggleFontLoad();
 	});
-
-	$: if (browser && windowInnerWidth) {
-		document.body.dataset.windowInnerWidth = `${$windowInnerWidth}`;
-	}
 </script>
-
-<svelte:window bind:innerWidth={$windowInnerWidth} />
 
 <AppHead />
 
