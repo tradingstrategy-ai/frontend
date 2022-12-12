@@ -1,13 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
-	import {
-		formatDollar,
-		formatTokenAmount,
-		formatUnixTimestampAsHours
-	} from 'trade-executor-frontend/helpers/formatters';
+	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { getValueAtPeak } from 'trade-executor-frontend/state/positionHelpers';
-	import { DataBox, DataBoxes, PageHeading } from '$lib/components';
+	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import TradeTable from './TradeTable.svelte';
 
@@ -37,7 +33,9 @@
 			{formatTokenAmount(currentStats.quantity)}
 			{position.pair.base.token_symbol}
 		</DataBox>
-		<DataBox label="Opened" value={formatUnixTimestampAsHours(position.opened_at)} />
+		<DataBox label="Opened">
+			<DateTime epoch={position.opened_at} />
+		</DataBox>
 		<DataBox label="Value now" value={formatDollar(currentStats.value)} />
 		<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
 	</DataBoxes>
