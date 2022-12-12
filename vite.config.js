@@ -54,16 +54,6 @@ const config = {
 		}
 	},
 
-	// Disable 300kb vendor.js chunk generation
-	// https://rollupjs.org/guide/en/#big-list-of-options
-	// This will give us some 0.2 seconds on FCP and LCP
-	// https://stackoverflow.com/a/70499134/315168
-	build: {
-		rollupOptions: {
-			output: { manualChunks: undefined }
-		}
-	},
-
 	css: {
 		postcss: {
 			plugins: [
