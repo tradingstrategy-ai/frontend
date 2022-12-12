@@ -87,6 +87,6 @@ Our CI/CD pipeline runs the following chack on PRs or pushes to `master`:
 npm run format:check
 ```
 
-### SvelteKit and Svelte component installation issue
+### `dependencies` vs `devDependencies`
 
-[Any external Svelte components need to be installed as development dependency because of SSR](https://github.com/sveltejs/sapper-template#using-external-components).
+[`adapter-node` will bundle `devDependencies`](https://github.com/sveltejs/kit/tree/master/packages/adapter-node#deploying) whereas `dependencies` must be installed when deploying to production.
