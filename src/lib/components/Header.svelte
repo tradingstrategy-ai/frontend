@@ -26,7 +26,7 @@
 		<ColorModePicker />
 	</div>
 
-	<button class="show-nav-panel mobile-only" on:click={() => (panelOpen = true)}>
+	<button class="show-nav-panel mobile-only" title="Navigation menu" on:click={() => (panelOpen = true)}>
 		<Icon name="menu" />
 	</button>
 </header>
