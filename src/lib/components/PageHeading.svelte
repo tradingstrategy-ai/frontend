@@ -39,6 +39,10 @@
 
 			& a {
 				font: inherit;
+
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 
