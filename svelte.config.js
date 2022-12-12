@@ -32,7 +32,19 @@ const config = {
 		postcss: {
 			plugins: [postcssPresetEnv({ features: { 'nesting-rules': true } })]
 		}
-	})
+	}),
+
+	vitePlugin: {
+		experimental: {
+			// Enable experimental Svelte inspector; see:
+			// https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#inspector
+			inspector: {
+				toggleKeyCombo: 'control-meta',
+				holdMode: true,
+				showToggleButton: 'never'
+			}
+		}
+	}
 };
 
 export default config;
