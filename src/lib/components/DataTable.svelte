@@ -81,6 +81,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	td {
 		background: var(--c-background-5);
+		height: 4.5rem;
 		padding: 0.75rem 1.5rem;
 		font: var(--f-ui-lg-medium);
 		--button-width: 100%;

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
 	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
+	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
+	import TransactionTable from './TransactionTable.svelte';
 
 	export let data: PageData;
 
@@ -40,4 +41,16 @@
 		</DataBox>
 		<DataBox label="Gas fees" value="N/A" />
 	</DataBoxes>
+
+	<TransactionTable transactions={trade.blockchain_transactions} />
 </main>
+
+<style lang="postcss">
+	main :global .data-boxes {
+		margin-block: 1rem 3rem;
+
+		@media (--viewport-sm-down) {
+			margin-bottom: 2rem;
+		}
+	}
+</style>
