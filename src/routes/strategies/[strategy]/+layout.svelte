@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
+	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	export let data: LayoutData;
@@ -8,7 +9,8 @@
 
 	$: breadcrumbs = {
 		[summary.id]: summary.name,
-		'open-positions': 'Open positions'
+		'open-positions': 'Open positions',
+		...$page.data.breadcrumbs
 	};
 </script>
 
