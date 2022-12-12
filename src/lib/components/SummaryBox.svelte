@@ -1,11 +1,11 @@
 <!--
 @component
-Uses together with SummaryBoxItem to display a set of summary properties / statistics.
+Uses together with DataBox to display a set of summary properties / statistics.
 
 #### Usage
 ```tsx
 	<SummaryBox title="Fruits">
-		<SummaryBoxItem label="Banana" value="Minions favorite" />
+		<DataBox label="Banana" value="Minions favorite" />
 	</SummaryBox>
 ```
 -->
@@ -13,13 +13,13 @@ Uses together with SummaryBoxItem to display a set of summary properties / stati
 	export let title: string;
 </script>
 
-<section>
+<section class="summary-box">
 	<h3>{title}</h3>
 	<slot />
 </section>
 
 <style lang="postcss">
-	section {
+	.summary-box {
 		background: var(--c-background-5);
 		border-radius: 1.25rem;
 		display: grid;
@@ -32,6 +32,21 @@ Uses together with SummaryBoxItem to display a set of summary properties / stati
 
 		& h3 {
 			font: var(--f-ui-xl-medium);
+		}
+	}
+
+	.summary-box :global .data-box {
+		background: var(--c-background-4);
+		gap: 0.5rem;
+		padding: 1.25rem;
+
+		& .label {
+			color: var(--c-text-light);
+		}
+
+		& .value {
+			font: var(--f-ui-xxxl-medium);
+			letter-spacing: var(--f-ui-xxxl-spacing, normal);
 		}
 	}
 </style>
