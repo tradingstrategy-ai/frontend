@@ -21,7 +21,7 @@ date string. Alternatively, the `epoch` prop can be used for UNIX epoch timestam
 	const isoDate = dateTime.toISOString();
 </script>
 
-<time datetime={isoDate} title={relative ? isoDate : undefined}>
+<time class="date-time" datetime={isoDate} title={relative ? isoDate : undefined}>
 	{#if relative}
 		{formatDistanceToNow(dateTime, { addSuffix: true })};
 	{:else}

@@ -15,7 +15,7 @@
 		{ label: 'Performance', targetUrl: `/strategy/${strategyId}/performance` },
 		{ label: 'Decision making', targetUrl: `/strategy/${strategyId}/decision-making` },
 		{ label: 'Instance status', targetUrl: `/strategy/${strategyId}/instance` },
-		{ label: 'Logs', targetUrl: `/strategy/${strategyId}/logs` },
+		{ label: 'Logs', targetUrl: `/strategies/${strategyId}/logs` },
 		{ label: 'Source', targetUrl: `/strategy/${strategyId}/source` }
 	];
 

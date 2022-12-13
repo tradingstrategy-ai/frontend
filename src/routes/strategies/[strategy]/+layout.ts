@@ -22,6 +22,7 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
 	}
 
 	return {
+		strategy,
 		summary: getStrategyRuntimeState(strategy, fetch),
 		state: resp.json()
 	};
