@@ -1,8 +1,20 @@
 import type { PageLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
-// FIXME: remove this once the new trade detail page is in place
-// (temporary redirect to keep navigation working while migration is in-progress)
-export const load: PageLoad = ({ params }) => {
-	throw redirect(301, `/strategy/${params.strategy}/open-positions/${params.position}/trade-${params.trade}`);
+export const load: PageLoad = async ({ params, parent }) => {
+	const tradeId = params.trade;
+	const { breadcrumbs, position } = await parent();
+	const trade = position.trades[tradeId];
+
+	if (!trade) {
+		throw error(404, 'Not found');
+	}
+
+	return {
+		trade,
+		breadcrumbs: {
+			...breadcrumbs,
+			[`trade-${tradeId}`]: `Trade #${tradeId}`
+		}
+	};
 };

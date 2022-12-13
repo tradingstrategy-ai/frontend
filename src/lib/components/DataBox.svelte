@@ -29,19 +29,29 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		display: grid;
 		gap: 0.875rem;
 		padding: 1.5rem;
+
+		@media (--viewport-sm-down) {
+			gap: 0.5rem;
+			padding: 1.25rem;
+		}
 	}
 
 	.label {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-extra-light);
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+		}
 	}
 
 	.value {
 		font: var(--f-ui-xxl-medium);
 		letter-spacing: var(--f-ui-xxl-spacing, normal);
 
-		@media (--viewport-md-down) {
+		@media (--viewport-sm-down) {
 			font: var(--f-ui-xl-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
