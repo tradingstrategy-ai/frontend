@@ -1,9 +1,16 @@
 <!-- 
-TODO:
-- bind value
-- bubble events
-- test on mobile
-- documentation
+@component
+Display a theme-formatted drop-down (aka select) element.
+Size flags of `sm | md | lg | xl` are supported (defaults to `md`).
+Support (bubbles) `change`, `focus` and `blur` events.
+
+#### Usage:
+```tsx
+	<DropDown bind:value={selectValue} disabled={true|false}>
+		<option value="option 1 value">Open 1 label</option>
+		<option value="option 2 value">Open 2 label</option>
+	</DropDown>
+```
 -->
 <script lang="ts">
 	import { Icon } from '$lib/components';
