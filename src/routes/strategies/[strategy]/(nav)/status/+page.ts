@@ -22,7 +22,6 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	}
 
 	return {
-		runState: resp.json(),
-		breadcrumbs: { status: 'Instance status' }
+		runState: resp.json()
 	};
 };

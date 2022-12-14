@@ -4,7 +4,6 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/publicApiError';
-import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 
 export const load: PageLoad = async ({ params, parent, fetch }) => {
 	const { strategy } = await parent();
@@ -23,7 +22,6 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	}
 
 	return {
-		source: resp.text(),
-		breadcrumbs: { source: 'Source Code' }
+		source: resp.text()
 	};
 };

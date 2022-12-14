@@ -46,6 +46,7 @@
 	section {
 		display: grid;
 		gap: 4rem;
+		align-content: start;
 	}
 
 	section :global .alert-item a {

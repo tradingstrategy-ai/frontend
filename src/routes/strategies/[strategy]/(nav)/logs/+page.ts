@@ -14,7 +14,6 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	}
 
 	return {
-		logs: resp.json(),
-		breadcrumbs: { logs: 'Logs' }
+		logs: resp.json()
 	};
 };

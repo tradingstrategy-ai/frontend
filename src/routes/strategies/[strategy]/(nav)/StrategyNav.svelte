@@ -12,11 +12,11 @@
 		{ label: 'Overview', targetUrl: `/strategies/${strategyId}`, noScroll: true },
 		{ label: 'Open positions', targetUrl: `/strategies/${strategyId}/open-positions`, noScroll: true },
 		{ label: 'Closed positions', targetUrl: `/strategy/${strategyId}/closed-positions` },
-		{ label: 'Performance', targetUrl: `/strategy/${strategyId}/performance` },
-		{ label: 'Decision making', targetUrl: `/strategies/${strategyId}/decision-making` },
-		{ label: 'Instance status', targetUrl: `/strategies/${strategyId}/status` },
-		{ label: 'Logs', targetUrl: `/strategies/${strategyId}/logs` },
-		{ label: 'Source', targetUrl: `/strategies/${strategyId}/source` }
+		{ label: 'Performance', targetUrl: `/strategies/${strategyId}/performance`, noScroll: true },
+		{ label: 'Decision making', targetUrl: `/strategies/${strategyId}/decision-making`, noScroll: true },
+		{ label: 'Instance status', targetUrl: `/strategies/${strategyId}/status`, noScroll: true },
+		{ label: 'Logs', targetUrl: `/strategies/${strategyId}/logs`, noScroll: true },
+		{ label: 'Source Code', targetUrl: `/strategies/${strategyId}/source`, noScroll: true }
 	];
 
 	$: currentOption = menuOptions.find((option) => currentPath.endsWith(option.targetUrl));

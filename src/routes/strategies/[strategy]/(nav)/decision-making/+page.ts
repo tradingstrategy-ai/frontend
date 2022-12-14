@@ -2,7 +2,6 @@
  * Fetch the strategy decision making visualisation.
  */
 import type { PageLoad } from './$types';
-import { error } from '@sveltejs/kit';
 
 /**
  * Generate a variant of decision making status image URL for both color schemes.
@@ -19,8 +18,5 @@ export const load: PageLoad = async ({ params, parent }) => {
 		imageUrls[theme] = url;
 	}
 
-	return {
-		imageUrls,
-		breadcrumbs: { 'decision-making': 'Decision making' }
-	};
+	return { imageUrls };
 };
