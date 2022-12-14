@@ -4,16 +4,12 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/publicApiError';
-import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 
-export const load: PageLoad = async ({ params, fetch }) => {
-	const strategy = getConfiguredStrategyById(params.strategy_id);
-	if (!strategy) {
-		throw error(500, `Strategy not loaded: ${params.strategy_id}`);
-	}
+export const load: PageLoad = async ({ params, parent, fetch }) => {
+	const { strategy } = await parent();
 
 	const url = `${strategy.url}/status`;
-	let resp = null;
+	let resp;
 	try {
 		resp = await fetch(url);
 	} catch (e) {

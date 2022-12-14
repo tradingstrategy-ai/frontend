@@ -10,6 +10,11 @@
 	$: breadcrumbs = {
 		[summary.id]: summary.name,
 		'open-positions': 'Open positions',
+		performance: 'Performance',
+		'decision-making': 'Decision making',
+		status: 'Instance status',
+		logs: 'Logs',
+		source: 'Source Code',
 		...$page.data.breadcrumbs
 	};
 </script>

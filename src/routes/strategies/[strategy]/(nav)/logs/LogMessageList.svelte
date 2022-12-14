@@ -3,7 +3,7 @@
 Display log messages as a scrollable panel
 -->
 <script lang="ts">
-	import { fromUnixTime } from 'date-fns';
+	import { DateTime } from '$lib/components';
 
 	type LogMessage = {
 		timestamp: number;
@@ -23,14 +23,8 @@ Display log messages as a scrollable panel
 
 <div class="log-panel" use:scrollToBottom={logs}>
 	{#each logs as log}
-		{@const isoDate = fromUnixTime(log.timestamp).toISOString()}
-
-		<div class="log log-{log.level}">
-			<time datetime={isoDate}>
-				<span>{isoDate.slice(0, 10)}</span>
-				<span>{isoDate.slice(11, 19)}</span>
-			</time>
-
+		<div class="entry level--{log.level}">
+			<DateTime epoch={log.timestamp} withSeconds />
 			<span class="message">
 				{log.message}
 			</span>
@@ -38,18 +32,19 @@ Display log messages as a scrollable panel
 	{/each}
 </div>
 
-<style>
+<style lang="postcss">
 	.log-panel {
 		background: black;
 		max-height: 70vh;
 		overflow-y: scroll;
 		font: var(--f-mono-body-regular);
 		letter-spacing: var(--f-mono-body-spacing);
+		/* optimize for high information density */
 		font-size: 12px;
 		line-height: 1em;
 	}
 
-	.log {
+	.entry {
 		display: grid;
 		grid-template-columns: auto 1fr;
 		gap: 1.25rem;
@@ -57,37 +52,33 @@ Display log messages as a scrollable panel
 		padding: 0.5rem 1rem;
 		background: black;
 		font-weight: bolder;
+
+		& .message {
+			white-space: pre-line;
+		}
+
+		& :global .date-time {
+			display: flex;
+			flex-direction: column;
+			color: #888;
+			text-align: right;
+		}
 	}
 
-	.log-info {
+	.level--info {
 		color: lightgrey;
 	}
-
-	.log-trade {
+	.level--trade {
 		color: lightgreen;
 	}
-
-	.log-warning {
+	.level--warning {
 		color: lightyellow;
 	}
-
-	.log-error {
+	.level--error {
 		color: lightcoral;
 	}
-
-	.log-critical {
+	.level--critical {
 		background: red;
 		color: white;
-	}
-
-	time {
-		display: flex;
-		flex-direction: column;
-		color: #888;
-		text-align: right;
-	}
-
-	.message {
-		white-space: pre-line;
 	}
 </style>

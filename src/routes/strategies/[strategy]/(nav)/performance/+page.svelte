@@ -1,10 +1,8 @@
 <!--
-
-    Page to display the strategy performance.
-
+	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import { currentStrategy } from 'trade-executor-frontend/state/store';
+	import type { PageData } from './$types';
 	import type { TimeSeries } from './interface';
 	import type { State } from 'trade-executor-frontend/state/interface';
 	import PortfolioPerformance from './PortfolioPerformanceChart.svelte';
@@ -12,10 +10,10 @@
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import { fromUnixTime } from 'date-fns';
 
-	// The whole strategy state
-	$: performanceGraph = processPerformanceData($currentStrategy.state);
+	export let data: PageData;
 
-	$: latestStats = getPortfolioLatestStats($currentStrategy.state);
+	$: performanceGraph = processPerformanceData(data.state);
+	$: latestStats = getPortfolioLatestStats(data.state);
 
 	/**
 	 * Read the portfolio performance from persistante state and its stats part.
@@ -47,14 +45,16 @@
 	}
 </script>
 
-<p>The current performance of the strategy.</p>
+<section>
+	<p>The current performance of the strategy.</p>
 
-{#if performanceGraph}
-	<h2>Total equity</h2>
-	<p>Cash and market valued tokens in the strategy.</p>
-	<PortfolioPerformance graph={performanceGraph} />
-{/if}
+	{#if performanceGraph}
+		<h2>Total equity</h2>
+		<p>Cash and market valued tokens in the strategy.</p>
+		<PortfolioPerformance graph={performanceGraph} />
+	{/if}
 
-<h2>Performance summary</h2>
+	<h2>Performance summary</h2>
 
-<SummaryStatistics {latestStats} />
+	<SummaryStatistics {latestStats} />
+</section>
