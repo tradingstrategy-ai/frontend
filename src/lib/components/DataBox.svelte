@@ -13,11 +13,12 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 -->
 <script lang="ts">
 	export let label: string;
+	export let size: string = 'md';
 	export let value: string | undefined = undefined;
 	export let valueClass: string = '';
 </script>
 
-<div class="data-box">
+<div class="data-box {size}">
 	<span class="label">{label}</span>
 	<span class="value {valueClass}"><slot>{value}</slot></span>
 </div>
@@ -36,6 +37,12 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		}
 	}
 
+	.label,
+	.value {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	.label {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
@@ -48,12 +55,44 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 	}
 
 	.value {
-		font: var(--f-ui-xxl-medium);
-		letter-spacing: var(--f-ui-xxl-spacing, normal);
+		@nest .xs & {
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 
-		@media (--viewport-sm-down) {
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
+			}
+		}
+
+		@nest .sm & {
 			font: var(--f-ui-xl-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-lg-medium);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
+			}
+		}
+
+		@nest .md & {
+			font: var(--f-ui-xxl-medium);
+			letter-spacing: var(--f-ui-xxl-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-xl-medium);
+				letter-spacing: var(--f-ui-xl-spacing, normal);
+			}
+		}
+
+		@nest .lg & {
+			font: var(--f-ui-xxxl-medium);
+			letter-spacing: var(--f-ui-xxxl-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-xxl-medium);
+				letter-spacing: var(--f-ui-xxl-spacing, normal);
+			}
 		}
 
 		& :global a {

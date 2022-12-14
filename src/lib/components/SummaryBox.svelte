@@ -4,17 +4,23 @@ Uses together with DataBox to display a set of summary properties / statistics.
 
 #### Usage
 ```tsx
-	<SummaryBox title="Fruits">
+	<SummaryBox title="Fruits" subtitle="These are fruits that are worth trying">
 		<DataBox label="Banana" value="Minions favorite" />
 	</SummaryBox>
 ```
 -->
 <script lang="ts">
 	export let title: string;
+	export let subtitle: string = '';
 </script>
 
 <section class="summary-box">
-	<h3>{title}</h3>
+	<header>
+		<h3>{title}</h3>
+		{#if subtitle}
+			<p>{subtitle}</p>
+		{/if}
+	</header>
 	<slot />
 </section>
 
@@ -24,14 +30,28 @@ Uses together with DataBox to display a set of summary properties / statistics.
 		border-radius: 1.25rem;
 		display: grid;
 		gap: 1.25rem;
-		padding: 1.5rem 1.25rem;
+		padding: 1.5rem 1.5rem;
+		place-content: start stretch;
 
 		@media (--viewport-md-down) {
 			gap: 1rem;
+			padding: 1.25rem 1rem;
+		}
+
+		& header {
+			display: grid;
+			gap: 0.5rem;
+			margin-bottom: 0.125rem;
 		}
 
 		& h3 {
-			font: var(--f-ui-xl-medium);
+			font: var(--f-ui-xxl-medium);
+		}
+
+		& p {
+			color: var(--c-text-extra-light);
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing);
 		}
 	}
 
@@ -40,20 +60,20 @@ Uses together with DataBox to display a set of summary properties / statistics.
 		gap: 0.5rem;
 		padding: 1.25rem;
 
-		& .label {
+		/* & .label {
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			color: var(--c-text-light);
 		}
 
 		& .value {
-			font: var(--f-ui-xxxl-medium);
+			font: var(--f-ui-xxl-medium);
 			letter-spacing: var(--f-ui-xxxl-spacing, normal);
 
 			@media (--viewport-md-down) {
 				font: var(--f-ui-xl-medium);
 				letter-spacing: var(--f-ui-xl-spacing, normal);
 			}
-		}
+		} */
 	}
 </style>
