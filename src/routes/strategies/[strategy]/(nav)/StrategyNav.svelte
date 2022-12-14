@@ -16,7 +16,7 @@
 		{ label: 'Decision making', targetUrl: `/strategies/${strategyId}/decision-making` },
 		{ label: 'Instance status', targetUrl: `/strategies/${strategyId}/status` },
 		{ label: 'Logs', targetUrl: `/strategies/${strategyId}/logs` },
-		{ label: 'Source', targetUrl: `/strategy/${strategyId}/source` }
+		{ label: 'Source', targetUrl: `/strategies/${strategyId}/source` }
 	];
 
 	$: currentOption = menuOptions.find((option) => currentPath.endsWith(option.targetUrl));
