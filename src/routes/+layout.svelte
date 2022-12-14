@@ -56,7 +56,7 @@
 	 */
 	@custom-media --viewport-sm-up (width >= 576px);
 	@custom-media --viewport-md-up (width >= 768px);
-	@custom-media --viewport-lg-up (width >= 1024px);
+	@custom-media --viewport-lg-up (width >= 1025px);
 	@custom-media --viewport-md-down (width < 1024px);
 	@custom-media --viewport-sm-down (width < 768px);
 	@custom-media --viewport-xs (width < 576px);
