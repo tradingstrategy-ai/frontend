@@ -11,7 +11,7 @@
 	const menuOptions = [
 		{ label: 'Overview', targetUrl: `/strategies/${strategyId}`, noScroll: true },
 		{ label: 'Open positions', targetUrl: `/strategies/${strategyId}/open-positions`, noScroll: true },
-		{ label: 'Closed positions', targetUrl: `/strategy/${strategyId}/closed-positions` },
+		{ label: 'Closed positions', targetUrl: `/strategies/${strategyId}/closed-positions` },
 		{ label: 'Performance', targetUrl: `/strategies/${strategyId}/performance`, noScroll: true },
 		{ label: 'Decision making', targetUrl: `/strategies/${strategyId}/decision-making`, noScroll: true },
 		{ label: 'Instance status', targetUrl: `/strategies/${strategyId}/status`, noScroll: true },

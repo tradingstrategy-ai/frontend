@@ -9,6 +9,7 @@
 
 	export let positions: TradingPosition[];
 	export let stats: Stats;
+	export let positionType: string;
 
 	const combinedPositions = createCombinedPositionList(positions, stats);
 	const table = createTable(readable(combinedPositions));
@@ -46,7 +47,7 @@
 					tertiary: true,
 					lg: true,
 					label: 'Details',
-					href: `./open-positions/${value}`
+					href: `./${positionType}-positions/${value}`
 				})
 		})
 	]);
