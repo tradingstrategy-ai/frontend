@@ -15,6 +15,9 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 	// Time series
 	import type { TimeSeries } from './interface';
 
+	// UI
+	import { SummaryBox } from '$lib/components';
+
 	// Input data
 	export let graph: TimeSeries;
 
@@ -53,11 +56,20 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 	$: updateChart(elem, graph);
 </script>
 
-<div bind:this={elem} class="chart" />
+{#if graph}
+	<SummaryBox
+		class="portfolio-performance-chart"
+		title="Total equity"
+		subtitle="Cash and market valued tokens in the strategy"
+	>
+		<div bind:this={elem} class="chart" />
+	</SummaryBox>
+{/if}
 
 <style>
 	.chart {
 		width: 100%;
+		overflow-x: auto;
 		height: 400px;
 	}
 </style>
