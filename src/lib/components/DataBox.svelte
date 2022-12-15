@@ -13,7 +13,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 -->
 <script lang="ts">
 	export let label: string;
-	export let size: string = 'md';
+	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 	export let value: string | undefined = undefined;
 	export let valueClass: string = '';
 </script>

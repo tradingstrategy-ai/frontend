@@ -59,21 +59,5 @@ Uses together with DataBox to display a set of summary properties / statistics.
 		background: var(--c-background-4);
 		gap: 0.5rem;
 		padding: 1.25rem;
-
-		/* & .label {
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: var(--c-text-light);
-		}
-
-		& .value {
-			font: var(--f-ui-xxl-medium);
-			letter-spacing: var(--f-ui-xxxl-spacing, normal);
-
-			@media (--viewport-md-down) {
-				font: var(--f-ui-xl-medium);
-				letter-spacing: var(--f-ui-xl-spacing, normal);
-			}
-		} */
 	}
 </style>
