@@ -1,7 +1,5 @@
 <!--
 	Page to display the instance run-time status
-
-	TODO: Convert from tables to <SummaryBox> or <DataBoxes>?
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
@@ -26,15 +24,11 @@
 		{:else}
 			<AlertList status="error">
 				<AlertItem>Instance has stopped</AlertItem>
+				<AlertItem displayWhen={runState.exception}>
+					The trade executor crashed with an exception
+					<pre>{runState.exception.exception_message}</pre>
+				</AlertItem>
 			</AlertList>
-
-			{#if runState.exception}
-				<AlertList>
-					<AlertItem>The trade executor crashed with an exception</AlertItem>
-				</AlertList>
-
-				<pre>{runState.exception.exception_message}</pre>
-			{/if}
 		{/if}
 	</div>
 
@@ -75,24 +69,8 @@
 		}
 	}
 
-	.up-icon {
-		font-size: 150%;
-		margin: 10px;
-	}
-
-	.up-text {
-		font-weight: bold;
-	}
-
-	h2 {
-		margin-block: 2rem 1rem;
-	}
-
-	table {
-		margin: 20px 0;
-	}
-
-	td {
-		padding: 10px;
+	.status-box pre {
+		color: inherit;
+		white-space: pre-wrap;
 	}
 </style>
