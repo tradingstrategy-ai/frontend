@@ -22,6 +22,11 @@ TODO: Add nice source code formatting widget
 </pre>
 
 <style lang="postcss">
+	.source {
+		border-radius: var(--border-radius-md);
+		padding: 1.75rem 0.75rem;
+	}
+
 	pre {
 		display: grid;
 		padding: 5px;
@@ -36,13 +41,15 @@ TODO: Add nice source code formatting widget
 		gap: 1rem;
 		font-weight: 600 !important;
 		counter-increment: line;
+		padding-left: 1rem;
 	}
 
 	code:before {
 		display: inline-block;
 		content: counter(line);
+		margin-right: 1rem;
+		opacity: 0.5;
 		user-select: none;
 		text-align: right;
-		opacity: 0.5;
 	}
 </style>
