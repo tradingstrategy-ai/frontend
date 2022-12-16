@@ -9,24 +9,27 @@ TODO: Add nice source code formatting widget
 ```
 -->
 <script lang="ts">
-	import { HighlightSvelte } from 'svelte-highlight';
-	import github from 'svelte-highlight/src/styles/github-dark';
+	import { onMount } from 'svelte';
+	let highlightComponent: any;
+	let highlightStyles: any;
 
-	// $: code = `<button on:click={() => { console.log(0); }}>Increment {count}</button>`;
 	export let source: string;
 
-	// Currently loaded source code
-	$: sourceLines = source.split('\n').join();
+	onMount(async () => {
+		highlightComponent = (await import('svelte-highlight')).HighlightAuto;
+		highlightStyles = (await import('svelte-highlight/src/styles/github-dark')).default;
+	});
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href="https://unpkg.com/svelte-highlight/styles/github.css" />
-	{@html github}
+	{#if highlightStyles}
+		{@html highlightStyles}
+	{/if}
 </svelte:head>
 
-<pre class="source">
-	<HighlightSvelte code={source} />
-</pre>
+<div class="source">
+	<svelte:component this={highlightComponent} code={source} />
+</div>
 
 <style lang="postcss">
 	.source {
