@@ -8,9 +8,11 @@
 	import { DataTable, Button, DateTime } from '$lib/components';
 	import Profitability from '../Profitability.svelte';
 
+	export let hasSearch: boolean = false;
+	export let hasPagination: boolean = false;
 	export let positions: TradingPosition[];
-	export let stats: Stats;
 	export let positionType: string;
+	export let stats: Stats;
 
 	const combinedPositions = createCombinedPositionList(positions, stats);
 	const table = createTable(readable(combinedPositions), {
@@ -69,7 +71,7 @@
 </script>
 
 <div class="position-table">
-	<DataTable {tableViewModel} bind:searchInputValue={$filterValue} />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} bind:searchInputValue={$filterValue} />
 </div>
 
 <style lang="postcss">
