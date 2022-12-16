@@ -23,6 +23,7 @@ export { default as MenuItem } from './MenuItem.svelte';
 export { default as NavPanel } from './NavPanel.svelte';
 export { default as PageHeader } from './PageHeader.svelte';
 export { default as PageHeading } from './PageHeading.svelte';
+export { default as SearchInput } from './SearchInput.svelte';
 export { default as SmartContractWidget } from './SmartContractWidget.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
 export { default as SourceCode } from './SourceCode.svelte';

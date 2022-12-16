@@ -1,0 +1,13 @@
+.text-field {
+	--background-color: var(--c-background-5);
+	--active-color: var(--c-text-ultra-light);
+	background: var(--background-color);
+	border-radius: var(--border-radius-md);
+	border: 1px solid var(--background-color);
+	outline: none;
+	padding: 0.75rem;
+}
+
+.text-field:focus {
+	border-color: var(--active-color) !important;
+}
