@@ -3,6 +3,7 @@
 	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
+	import { addSortBy, addTableFilter } from 'svelte-headless-table/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, DateTime } from '$lib/components';
 	import Profitability from '../Profitability.svelte';
@@ -12,7 +13,10 @@
 	export let positionType: string;
 
 	const combinedPositions = createCombinedPositionList(positions, stats);
-	const table = createTable(readable(combinedPositions));
+	const table = createTable(readable(combinedPositions), {
+		tableFilter: addTableFilter(),
+		sort: addSortBy()
+	});
 
 	const columns = table.createColumns([
 		table.column({
@@ -48,15 +52,24 @@
 					lg: true,
 					label: 'Details',
 					href: `./${positionType}-positions/${value}`
-				})
+				}),
+			plugins: {
+				sort: {
+					disable: true
+				}
+			}
 		})
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
+
+	const { pluginStates } = tableViewModel;
+
+	const { filterValue } = pluginStates.tableFilter;
 </script>
 
 <div class="position-table">
-	<DataTable {tableViewModel} />
+	<DataTable {tableViewModel} bind:searchInputValue={$filterValue} />
 </div>
 
 <style lang="postcss">

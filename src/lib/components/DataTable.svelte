@@ -14,8 +14,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 <script lang="ts">
 	import type { TableViewModel } from 'svelte-headless-table';
 	import { Subscribe, Render } from 'svelte-headless-table';
+	import { SearchInput } from '$lib/components';
 
 	export let tableViewModel: TableViewModel<any, any>;
+	export let searchInputValue: string = '';
 
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = tableViewModel;
 </script>
@@ -27,15 +29,30 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 				<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
 					<tr {...rowAttrs}>
 						{#each headerRow.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs>
-								<th class={cell.id} {...attrs}>
+							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
+								<th {...attrs} class={cell.id} on:click={props.sort.toggle}>
 									<Render of={cell.render()} />
+									{#if props.sort.order === 'asc'}
+										▼
+									{:else if props.sort.order === 'desc'}
+										▲
+									{/if}
 								</th>
 							</Subscribe>
 						{/each}
 					</tr>
 				</Subscribe>
 			{/each}
+			<tr>
+				<th class="search-cell" colspan="6">
+					<SearchInput
+						id="position-table-search"
+						name="position-table-search"
+						placeholder="Find in the table"
+						bind:value={searchInputValue}
+					/>
+				</th>
+			</tr>
 		</thead>
 		<tbody {...$tableBodyAttrs}>
 			{#each $rows as row (row.id)}
@@ -73,10 +90,17 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	}
 
 	th {
-		padding: 1rem 1.25rem;
 		background-color: var(--c-body);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-md-medium);
+
+		&:not(.search-cell) {
+			padding: 1rem 1.25rem;
+		}
+
+		&.search-cell {
+			padding: 1rem 0;
+		}
 	}
 
 	td {
