@@ -11,20 +11,18 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 <script lang="ts">
 	// https://www.npmjs.com/package/plotly.js-finance-dist
 	import Plotly from 'plotly.js-finance-dist';
-
-	// Time series
 	import type { TimeSeries } from './interface';
-
-	// UI
 	import { SummaryBox } from '$lib/components';
 
+	type Nullable<Type> = Type | null;
+
 	// Input data
-	export let graph: TimeSeries;
+	export let graph: Nullable<TimeSeries>;
 
 	// Passed to Plotly renderer
-	let elem: HTMLElement | null = null;
+	let elem: Nullable<HTMLElement>;
 
-	function updateChart(node: HTMLElement | null, graph: TimeSeries) {
+	function updateChart(node: Nullable<HTMLElement>, graph: Nullable<TimeSeries>) {
 		if (!node || !graph) {
 			return;
 		}
@@ -50,7 +48,9 @@ SSR needs to be disabled - Plotly.js does not work in SSR.
 			layout.yaxis.rangemode = graph.yRangeMode;
 		}
 
-		Plotly.newPlot(elem, data, layout);
+		const config = { responsive: true };
+
+		Plotly.newPlot(elem, data, layout, config);
 	}
 
 	$: updateChart(elem, graph);

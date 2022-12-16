@@ -5,12 +5,10 @@ Render the statistics from the portfolio server-side calculated state.
 <script lang="ts">
 	import { formatDollar, formatDuration, formatPercent } from '$lib/helpers/formatters';
 	import { DataBox, SummaryBox } from '$lib/components';
-	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 
 	// TODO: Type define in some point
 	// See trade_analyzer.py TradeSummary class
 	export let latestStats: any;
-	export let performanceGraph: any;
 
 	// Translate raw variables from TradeSummary Python class
 	const summaryLabels = {

@@ -48,7 +48,7 @@
 <section class="performance">
 	<PortfolioPerformance graph={performanceGraph} />
 
-	<SummaryStatistics {performanceGraph} {latestStats} />
+	<SummaryStatistics {latestStats} />
 </section>
 
 <style>
