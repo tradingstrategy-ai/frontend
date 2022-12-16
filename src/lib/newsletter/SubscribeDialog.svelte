@@ -1,11 +1,21 @@
+<!--
+@component
+SubscribeDialog is intended to be used as a global singleton component (add to layout).
+The sibling `controller` file exports a `toggleSubscriptionDialog` function, which can
+be invoked from anywhere to open the global dialog component.
+
+#### Usage:
+```tsx
+   <SubscribeDialog />
+```
+-->
 <script lang="ts">
+	import { subscribeDialogOpen as open } from './controller';
 	import type { SubmitFunction } from '$app/forms';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
 	import { Dialog, TextInput, Button, AlertList, AlertItem } from '$lib/components';
 	import { tick } from 'svelte';
-
-	export let open = false;
 
 	let form: HTMLFormElement;
 	let title: string;
@@ -64,7 +74,7 @@
 	}
 </script>
 
-<Dialog {title} bind:open on:open={handleOpen} on:close={state.reset}>
+<Dialog {title} bind:open={$open} on:open={handleOpen} on:close={state.reset}>
 	<div class="dialog-inner {$state}">
 		{#if $state !== 'subscribed'}
 			<p>Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.</p>
