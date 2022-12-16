@@ -94,6 +94,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	thead {
 		position: sticky;
 		top: 0;
+
+		& :global(.search-input) {
+			max-width: calc(100vw - 3rem);
+		}
 	}
 
 	th {
