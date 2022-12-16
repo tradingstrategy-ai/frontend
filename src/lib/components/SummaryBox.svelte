@@ -31,6 +31,7 @@ Uses together with DataBox to display a set of summary properties / statistics.
 					tertiary={cta?.tertiary}
 					href={cta?.href}
 					icon={cta?.icon}
+					target={cta?.target}
 					on:click={cta?.onClick}
 				>
 					{cta?.label}
