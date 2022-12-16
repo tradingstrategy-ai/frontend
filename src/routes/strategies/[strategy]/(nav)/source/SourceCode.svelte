@@ -34,7 +34,12 @@ TODO: Add nice source code formatting widget
 		padding: 1.75rem 0.75rem;
 	}
 
-	pre {
+	.source :global(.hljs) {
+		background-color: transparent;
+	}
+
+	.source {
+		background-color: var(--c-ink) !important;
 		display: grid;
 		padding: 5px;
 		background: #1e1e1e;
