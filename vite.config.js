@@ -62,7 +62,7 @@ const config = {
 		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
 		restoreMocks: true,
 		setupFiles: ['test.config.ts']
-	}
+	},
 };
 
 export default config;
