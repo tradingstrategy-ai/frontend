@@ -90,6 +90,11 @@
 	}
 
 	.menu-wrapper {
+		@media (--viewport-lg-up) {
+			position: sticky;
+			top: 2rem;
+		}
+
 		@media (--viewport-md-down) {
 			overflow: hidden;
 			height: 0;

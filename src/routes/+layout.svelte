@@ -54,12 +54,12 @@
 	 * Custom media declarations (via PostCSS Custom Media plugin) - enables `@media (--var-name) {}`
 	 * Must be declared in __layout to ensure proper CSS load order in SSR.
 	 */
-	@custom-media --viewport-sm-up (width >= 576px);
-	@custom-media --viewport-md-up (width >= 768px);
-	@custom-media --viewport-lg-up (width >= 1024px);
-	@custom-media --viewport-md-down (width < 1024px);
-	@custom-media --viewport-sm-down (width < 768px);
-	@custom-media --viewport-xs (width < 576px);
+	@custom-media --viewport-sm-up (width > 576px);
+	@custom-media --viewport-md-up (width > 768px);
+	@custom-media --viewport-lg-up (width > 1024px);
+	@custom-media --viewport-md-down (width <= 1024px);
+	@custom-media --viewport-sm-down (width <= 768px);
+	@custom-media --viewport-xs (width <= 576px);
 
 	a.body-link {
 		border-bottom: 1px solid currentColor;
