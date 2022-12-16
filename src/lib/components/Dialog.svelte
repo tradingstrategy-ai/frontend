@@ -64,11 +64,13 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 <style lang="postcss">
 	dialog {
+		--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
+		max-width: min(var(--container-width), 500px);
+		min-width: 300px;
+		padding: 2rem;
 		border: none;
 		border-radius: 0.75rem;
 		background: var(--c-body-v1);
-		padding: 2rem;
-		width: 300px;
 	}
 
 	dialog::backdrop {
@@ -91,13 +93,16 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 	heading {
 		display: grid;
-		grid-template-columns: auto min-content;
+		grid-template-columns: 1fr auto;
+		gap: 0.5rem;
 		align-items: center;
+		margin-bottom: 0.5rem;
 		color: var(--c-text-4-v1);
 
 		& h5 {
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
+			margin: 0;
 		}
 
 		& button {

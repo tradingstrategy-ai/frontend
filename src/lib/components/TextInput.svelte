@@ -103,8 +103,7 @@
 		}
 
 		&:focus {
-			outline: var(--c-background-4-v1) solid 2px;
-			outline-offset: 0px;
+			outline: none;
 			box-shadow: 0 0 8px 2px var(--c-background-2-v1);
 		}
 

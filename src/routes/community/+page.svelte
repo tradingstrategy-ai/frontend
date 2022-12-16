@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { Hero, ContentTile } from '$lib/components';
+	import SubscribeDialog from '$lib/newsletter/SubscribeDialog.svelte';
 	import HeroImage from '$lib/assets/illustrations/communication-1.svg?raw';
+
+	let subscribeDialogOpen = false;
 </script>
 
 <svelte:head>
 	<title>Community</title>
 	<meta name="description" content="Blog, Discord and discussion" />
 </svelte:head>
+
+<SubscribeDialog bind:open={subscribeDialogOpen} />
 
 <main>
 	<Hero title="Community" image={HeroImage}>
@@ -58,7 +63,7 @@
 				Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
 			</ContentTile>
 
-			<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
+			<ContentTile title="Newsletter" icon="newspaper" on:click={() => (subscribeDialogOpen = true)}>
 				Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
 			</ContentTile>
 		</section>
