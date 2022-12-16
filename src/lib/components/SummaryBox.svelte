@@ -52,20 +52,22 @@ Supports optional "cta" slot to include a button CTA.
 
 			& h3 {
 				font: var(--f-ui-xxl-medium);
+				letter-spacing: var(--f-ui-xxl-spacing, normal);
 
 				@media (--viewport-md-down) {
 					font: var(--f-ui-xl-medium);
+					letter-spacing: var(--f-ui-xl-spacing, normal);
 				}
 			}
 
 			& p {
 				color: var(--c-text-extra-light);
 				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
 			&.has-cta {
-				grid-template-columns: auto 1fr;
+				grid-template-columns: 1fr auto;
 
 				& h3 {
 					grid-column: 1/2;
@@ -73,13 +75,9 @@ Supports optional "cta" slot to include a button CTA.
 				}
 
 				& p {
-					grid-column: 1/2;
+					grid-column: 1/3;
 					grid-row: 2/3;
 				}
-			}
-
-			& .cta {
-				place-self: start end;
 			}
 		}
 
