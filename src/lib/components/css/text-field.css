@@ -1,9 +1,9 @@
 .text-field {
 	--background-color: var(--c-background-5);
-	--active-color: var(--c-text-ultra-light);
+	--active-color: var(--c-text-extra-light);
 	background: var(--background-color);
 	border-radius: var(--border-radius-md);
-	border: 1px solid var(--background-color);
+	border: 2px solid var(--background-color);
 	outline: none;
 	padding: 0.75rem;
 }
