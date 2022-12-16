@@ -102,6 +102,8 @@
 	/* Mono (code) Fonts */
 	--f-mono-body-spacing: -0.02em;
 	--f-mono-body-regular: 400 16px/28px var(--ff-mono);
+	--f-mono-small-spacing: 0.01rem;
+	--f-mono-small-regular: 400 13px/22px var(--ff-mono);
 }
 
 /* DEPRECATED: font size layer */

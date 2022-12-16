@@ -39,17 +39,23 @@ Uses together with DataBox to display a set of summary properties / statistics.
 			</div>
 		{/if}
 	</header>
-	<slot />
+	<div class="inner">
+		<slot />
+	</div>
 </section>
 
 <style lang="postcss">
 	.summary-box {
 		background: var(--c-background-5);
 		border-radius: 1.25rem;
-		display: grid;
 		gap: 1.25rem;
 		padding: 1.5rem 1.5rem;
-		place-content: start stretch;
+
+		&,
+		& .inner {
+			display: grid;
+			place-content: start stretch;
+		}
 
 		@media (--viewport-md-down) {
 			gap: 1rem;
@@ -64,6 +70,11 @@ Uses together with DataBox to display a set of summary properties / statistics.
 			&.has-cta {
 				grid-template-columns: auto 1fr;
 			}
+		}
+
+		& .inner {
+			gap: var(--inner-gap, 1.25rem);
+			padding: var(--inner-padding);
 		}
 	}
 	h3 {
