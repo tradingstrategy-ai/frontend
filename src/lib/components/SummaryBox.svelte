@@ -10,21 +10,10 @@ Uses together with DataBox to display a set of summary properties / statistics.
 ```
 -->
 <script lang="ts">
+	import type { CTAButton } from './types';
 	import Button from './Button.svelte';
 
-	type CTAButton =
-		| undefined
-		| {
-				href: string;
-				icon: string;
-				label: string;
-				onClick?: () => void;
-				primary?: boolean;
-				secondaru?: boolean;
-				tertiary?: boolean;
-		  };
-
-	export let cta: CTAButton = undefined;
+	export let cta: CTAButton | undefined = undefined;
 	export let title: string;
 	export let subtitle: string = '';
 </script>
@@ -38,7 +27,6 @@ Uses together with DataBox to display a set of summary properties / statistics.
 		{#if cta}
 			<div class="cta">
 				<Button
-					primary={cta?.primary}
 					secondary={cta?.secondary}
 					tertiary={cta?.tertiary}
 					href={cta?.href}
