@@ -5,6 +5,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import SourceCode from './SourceCode.svelte';
+	import { SummaryBox } from '$lib/components';
 
 	export let data: PageData;
 
@@ -17,13 +18,14 @@
 	$: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
-<section style:overflow="auto">
-	<div>
-		<span>The source code of the {summary.name} strategy.</span>
-		<a target="_blank" href={githubUrl}>view on Github</a>
+<section class="source">
+	<SummaryBox
+		title="Source code"
+		subtitle="The source code of the {summary.name} strategy"
 	</div>
-
-	<SourceCode {source} />
+	>
+		<SourceCode {source} />
+	</SummaryBox>
 </section>
 
 <style lang="postcss">
