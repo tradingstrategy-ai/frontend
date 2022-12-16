@@ -27,19 +27,3 @@
 		<SourceCode {source} />
 	</SummaryBox>
 </section>
-
-<style lang="postcss">
-	div {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		align-items: end;
-		margin-bottom: 0.25rem;
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing);
-	}
-
-	a {
-		font-weight: 700;
-		text-decoration: underline;
-	}
-</style>

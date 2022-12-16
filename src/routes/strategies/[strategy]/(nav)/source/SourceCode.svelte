@@ -9,16 +9,23 @@ TODO: Add nice source code formatting widget
 ```
 -->
 <script lang="ts">
+	import { HighlightSvelte } from 'svelte-highlight';
+	import github from 'svelte-highlight/src/styles/github-dark';
+
+	// $: code = `<button on:click={() => { console.log(0); }}>Increment {count}</button>`;
 	export let source: string;
 
 	// Currently loaded source code
-	$: sourceLines = source.split('\n');
+	$: sourceLines = source.split('\n').join();
 </script>
 
+<svelte:head>
+	<link rel="stylesheet" href="https://unpkg.com/svelte-highlight/styles/github.css" />
+	{@html github}
+</svelte:head>
+
 <pre class="source">
-	{#each sourceLines as line}
-		<code>{line}</code>
-	{/each}
+	<HighlightSvelte code={source} />
 </pre>
 
 <style lang="postcss">
@@ -30,26 +37,8 @@ TODO: Add nice source code formatting widget
 	pre {
 		display: grid;
 		padding: 5px;
-		background: var(--cm-light, var(--c-parchment-dark)) var(--cm-dark, var(--c-ink));
+		background: #1e1e1e;
 		color: var(--cm-light, var(--c-text-1-v1)) var(--cm-dark, var(--c-text-1-v1));
 		counter-reset: line;
-	}
-
-	code {
-		display: grid;
-		grid-template-columns: 2rem 1fr;
-		gap: 1rem;
-		font-weight: 600 !important;
-		counter-increment: line;
-		padding-left: 1rem;
-	}
-
-	code:before {
-		display: inline-block;
-		content: counter(line);
-		margin-right: 1rem;
-		opacity: 0.5;
-		user-select: none;
-		text-align: right;
 	}
 </style>
