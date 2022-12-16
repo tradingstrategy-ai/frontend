@@ -1,41 +1,30 @@
 <!--
 @component
 Uses together with DataBox to display a set of summary properties / statistics.
+Supports optional "cta" slot to include a button CTA.
 
 #### Usage
 ```tsx
 	<SummaryBox title="Fruits" subtitle="These are fruits that are worth trying">
+		<Button slot="cta" label="Find More Fruit" href="http://example.org/fruit" />
 		<DataBox label="Banana" value="Minions favorite" />
 	</SummaryBox>
 ```
 -->
 <script lang="ts">
-	import type { CTAButton } from './types';
-	import Button from './Button.svelte';
-
-	export let cta: CTAButton | undefined = undefined;
 	export let title: string;
 	export let subtitle: string = '';
 </script>
 
 <section class="summary-box">
-	<header class:has-cta={cta}>
+	<header class:has-cta={$$slots.cta}>
 		<h3>{title}</h3>
 		{#if subtitle}
 			<p>{subtitle}</p>
 		{/if}
-		{#if cta}
+		{#if $$slots.cta}
 			<div class="cta">
-				<Button
-					secondary={cta?.secondary}
-					tertiary={cta?.tertiary}
-					href={cta?.href}
-					icon={cta?.icon}
-					target={cta?.target}
-					on:click={cta?.onClick}
-				>
-					{cta?.label}
-				</Button>
+				<slot name="cta" />
 			</div>
 		{/if}
 	</header>
@@ -66,6 +55,7 @@ Uses together with DataBox to display a set of summary properties / statistics.
 			}
 		}
 	}
+
 	h3 {
 		font: var(--f-ui-xxl-medium);
 
@@ -85,6 +75,7 @@ Uses together with DataBox to display a set of summary properties / statistics.
 			grid-row: 2/3;
 		}
 	}
+
 	.cta {
 		place-self: start end;
 	}

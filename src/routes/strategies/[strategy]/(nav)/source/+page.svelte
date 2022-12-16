@@ -5,7 +5,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import SourceCode from './SourceCode.svelte';
-	import { SummaryBox } from '$lib/components';
+	import { SummaryBox, Button } from '$lib/components';
 
 	export let data: PageData;
 
@@ -19,11 +19,8 @@
 </script>
 
 <section class="source">
-	<SummaryBox
-		title="Source code"
-		subtitle="The source code of the {summary.name} strategy"
-		cta={{ href: githubUrl, icon: 'github', tertiary: true, label: 'View on GitHub', target: '_blank' }}
-	>
+	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy">
+		<Button slot="cta" tertiary icon="github" href={githubUrl} label="View on GitHub" target="_blank" />
 		<SourceCode {source} />
 	</SummaryBox>
 </section>
