@@ -22,7 +22,7 @@
 	<SummaryBox
 		title="Source code"
 		subtitle="The source code of the {summary.name} strategy"
-	</div>
+		cta={{ href: githubUrl, icon: 'github', tertiary: true, label: 'View on GitHub' }}
 	>
 		<SourceCode {source} />
 	</SummaryBox>
