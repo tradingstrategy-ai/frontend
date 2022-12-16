@@ -11,7 +11,7 @@
 
 <section style:overflow="auto">
 	{#if positions.length > 0}
-		<PositionTable {positions} positionType="closed" stats={state?.stats} />
+		<PositionTable {positions} hasPagination hasSearch positionType="closed" stats={state?.stats} />
 	{:else}
 		<AlertList status="warning">
 			<AlertItem>This strategy currently has no closed positions.</AlertItem>

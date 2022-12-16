@@ -18,6 +18,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	export let tableViewModel: TableViewModel<any, any>;
 	export let searchInputValue: string = '';
+	export let hasSearch: boolean = false;
+	export let hasPagination: boolean = false;
 
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = tableViewModel;
 </script>
@@ -43,16 +45,18 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 					</tr>
 				</Subscribe>
 			{/each}
-			<tr>
-				<th class="search-cell" colspan="6">
-					<SearchInput
-						id="position-table-search"
-						name="position-table-search"
-						placeholder="Find in the table"
-						bind:value={searchInputValue}
-					/>
-				</th>
-			</tr>
+			{#if hasSearch}
+				<tr>
+					<th class="search-cell" colspan="6">
+						<SearchInput
+							id="position-table-search"
+							name="position-table-search"
+							placeholder="Find in the table"
+							bind:value={searchInputValue}
+						/>
+					</th>
+				</tr>
+			{/if}
 		</thead>
 		<tbody {...$tableBodyAttrs}>
 			{#each $rows as row (row.id)}
@@ -69,13 +73,15 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 				</Subscribe>
 			{/each}
 		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="6">
-					<DataTablePagination totalEntriesNumber={999} />
-				</td>
-			</tr>
-		</tfoot>
+		{#if hasPagination}
+			<tfoot>
+				<tr>
+					<td colspan="6">
+						<DataTablePagination totalEntriesNumber={999} />
+					</td>
+				</tr>
+			</tfoot>
+		{/if}
 	</table>
 </div>
 
