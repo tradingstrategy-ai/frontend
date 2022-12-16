@@ -28,12 +28,45 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		border-radius: var(--border-radius-md);
 		background: var(--c-background-5);
 		display: grid;
-		gap: 0.875rem;
-		padding: 1.5rem;
 
-		@media (--viewport-sm-down) {
+		&.xs {
 			gap: 0.5rem;
+			padding: 1.125rem 1.25rem;
+
+			@media (--viewport-sm-down) {
+				gap: 0.25rem;
+				padding: 0.875rem 1rem;
+			}
+		}
+
+		&.sm {
+			gap: 0.75rem;
 			padding: 1.25rem;
+
+			@media (--viewport-sm-down) {
+				gap: 0.375rem;
+				padding: 1rem;
+			}
+		}
+
+		&.md {
+			gap: 0.875rem;
+			padding: 1.5rem;
+
+			@media (--viewport-sm-down) {
+				gap: 0.5rem;
+				padding: 1.25rem;
+			}
+		}
+
+		&.lg {
+			gap: 1rem;
+			padding: 1.75rem;
+
+			@media (--viewport-sm-down) {
+				gap: 0.625rem;
+				padding: 1.375rem;
+			}
 		}
 	}
 
