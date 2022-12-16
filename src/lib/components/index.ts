@@ -10,6 +10,7 @@ export { default as ContentTile } from './ContentTile.svelte';
 export { default as DataBox } from './DataBox.svelte';
 export { default as DataBoxes } from './DataBoxes.svelte';
 export { default as DataTable } from './DataTable.svelte';
+export { default as DataTablePagination } from './DataTablePagination.svelte';
 export { default as DateTime } from './DateTime.svelte';
 export { default as Dialog } from './Dialog.svelte';
 export { default as DropDown } from './DropDown.svelte';

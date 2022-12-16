@@ -14,7 +14,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 <script lang="ts">
 	import type { TableViewModel } from 'svelte-headless-table';
 	import { Subscribe, Render } from 'svelte-headless-table';
-	import { SearchInput } from '$lib/components';
+	import { DataTablePagination, SearchInput } from '$lib/components';
 
 	export let tableViewModel: TableViewModel<any, any>;
 	export let searchInputValue: string = '';
@@ -30,12 +30,12 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 					<tr {...rowAttrs}>
 						{#each headerRow.cells as cell (cell.id)}
 							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-								<th {...attrs} class={cell.id} on:click={props.sort.toggle}>
+								<th {...attrs} class={cell.id} class:is-sorted={props.sort.order} on:click={props.sort.toggle}>
 									<Render of={cell.render()} />
 									{#if props.sort.order === 'asc'}
-										▼
+										<span class="sorting-indicator">▼</span>
 									{:else if props.sort.order === 'desc'}
-										▲
+										<span class="sorting-indicator">▲</span>
 									{/if}
 								</th>
 							</Subscribe>
@@ -69,6 +69,13 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 				</Subscribe>
 			{/each}
 		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="6">
+					<DataTablePagination totalEntriesNumber={999} />
+				</td>
+			</tr>
+		</tfoot>
 	</table>
 </div>
 
@@ -96,11 +103,20 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 		&:not(.search-cell) {
 			padding: 1rem 1.25rem;
+
+			&.is-sorted {
+				padding: 1rem 2rem 1rem 1.25rem;
+			}
 		}
 
 		&.search-cell {
-			padding: 1rem 0;
+			padding: 0.5rem 0;
 		}
+	}
+
+	.sorting-indicator {
+		position: absolute;
+		transform: translate(0.5rem);
 	}
 
 	td {
@@ -129,5 +145,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		&:last-child {
 			border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
 		}
+	}
+
+	tfoot td {
+		background: none !important;
+		padding: 0;
 	}
 </style>
