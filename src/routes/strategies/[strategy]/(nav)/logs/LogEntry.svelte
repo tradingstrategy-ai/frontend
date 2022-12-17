@@ -32,11 +32,12 @@
 			/* display: inline-flex; */
 			overflow-x: auto;
 			white-space: pre-line;
-			font: var(--f-mono-sm-regular);
+			font: var(--f-mono-xs-regular);
 		}
 
 		& :global .date-time {
 			display: flex;
+			font: var(--f-mono-sm-regular);
 			flex-direction: column;
 			color: var(--c-text-ultra-light);
 
