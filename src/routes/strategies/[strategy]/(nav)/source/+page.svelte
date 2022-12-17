@@ -4,24 +4,23 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SourceCode from './SourceCode.svelte';
-	import { SummaryBox } from '$lib/components';
+	import python from 'svelte-highlight/languages/python';
+	import { Button, SourceCode, SummaryBox } from '$lib/components';
 
 	export let data: PageData;
 
 	$: summary = data.summary;
 
 	// Currently loaded source code
-	$: source = data.source;
+	$: code = data.source;
 
 	// TODO: Hack for now, have metadata object to expose real strategy canocical source code URLs
 	$: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
-<SummaryBox
-	title="Source code"
-	subtitle="The source code of the {summary.name} strategy"
-	cta={{ href: githubUrl, icon: 'github', tertiary: true, label: 'View on GitHub', target: '_blank' }}
->
-	<SourceCode {source} />
-</SummaryBox>
+<section class="source">
+	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy">
+		<Button slot="cta" tertiary icon="github" href={githubUrl} label="View on GitHub" target="_blank" />
+		<SourceCode language={python} {code} />
+	</SummaryBox>
+</section>

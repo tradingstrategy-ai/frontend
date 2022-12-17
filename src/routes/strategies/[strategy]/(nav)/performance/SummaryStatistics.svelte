@@ -4,6 +4,7 @@ Render the statistics from the portfolio server-side calculated state.
 -->
 <script lang="ts">
 	import { formatDollar, formatDuration, formatPercent } from '$lib/helpers/formatters';
+	import { DataBox, SummaryBox } from '$lib/components';
 
 	// TODO: Type define in some point
 	// See trade_analyzer.py TradeSummary class
@@ -47,13 +48,15 @@ Render the statistics from the portfolio server-side calculated state.
 </script>
 
 {#if summary}
-	<!-- TODO: convert to SummaryBox -->
-	<table>
+	<SummaryBox class="summary-statistics" title="Performance summary">
 		{#each Object.entries(summary) as [label, value]}
-			<tr>
-				<th>{label}</th>
-				<td>{value}</td>
-			</tr>
+			<DataBox size="sm" {label} value={`${value}`} />
 		{/each}
-	</table>
+	</SummaryBox>
 {/if}
+
+<style global>
+	.summary-box.summary-statistics .inner {
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+	}
+</style>

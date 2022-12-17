@@ -45,16 +45,15 @@
 	}
 </script>
 
-<section>
-	<p>The current performance of the strategy.</p>
-
-	{#if performanceGraph}
-		<h2>Total equity</h2>
-		<p>Cash and market valued tokens in the strategy.</p>
-		<PortfolioPerformance graph={performanceGraph} />
-	{/if}
-
-	<h2>Performance summary</h2>
+<section class="performance">
+	<PortfolioPerformance graph={performanceGraph} />
 
 	<SummaryStatistics {latestStats} />
 </section>
+
+<style>
+	.performance {
+		display: grid;
+		gap: 1.5rem;
+	}
+</style>
