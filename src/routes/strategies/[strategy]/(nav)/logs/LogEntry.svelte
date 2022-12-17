@@ -32,7 +32,7 @@
 			/* display: inline-flex; */
 			overflow-x: auto;
 			white-space: pre-line;
-			font: var(--f-mono-small-regular);
+			font: var(--f-mono-sm-regular);
 		}
 
 		& :global .date-time {

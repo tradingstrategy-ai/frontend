@@ -18,8 +18,8 @@ Display log messages as a scrollable panel
 	.log-panel {
 		display: flex;
 		flex-direction: column-reverse;
-		font: var(--f-mono-small-regular);
-		letter-spacing: var(--f-mono-small-spacing);
+		font: var(--f-mono-sm-regular);
+		letter-spacing: var(--f-mono-sm-spacing);
 		max-height: calc(100vh - 18rem);
 		overflow-y: scroll;
 		overscroll-behavior: contain;

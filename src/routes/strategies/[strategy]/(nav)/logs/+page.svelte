@@ -9,7 +9,7 @@
 	export let data: PageData;
 </script>
 
-<section style:overflow="auto">
+<section class="logs">
 	<SummaryBox title="Strategy logs" subtitle="Choose logging level">
 		<Tabs
 			tabs={[
@@ -34,3 +34,10 @@
 		/>
 	</SummaryBox>
 </section>
+
+<style>
+	.logs :global(.summary-box) {
+		position: sticky;
+		top: 2rem;
+	}
+</style>

@@ -30,3 +30,13 @@ TODO: Add nice source code formatting widget
 <div class="source terminal-viewport">
 	<svelte:component this={highlightComponent} code={source} />
 </div>
+
+<style>
+	.source {
+		min-height: calc(100vh - 18rem);
+	}
+
+	.source :global(pre code.hljs) {
+		padding: 0 !important;
+	}
+</style>

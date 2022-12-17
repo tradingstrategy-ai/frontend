@@ -100,10 +100,12 @@
 	--f-text-xl-bold: 700 26px/36px var(--ff-text);
 
 	/* Mono (code) Fonts */
-	--f-mono-body-spacing: -0.02em;
-	--f-mono-body-regular: 400 16px/28px var(--ff-mono);
-	--f-mono-small-spacing: 0.01rem;
-	--f-mono-small-regular: 400 13px/22px var(--ff-mono);
+	--f-mono-md-spacing: -0.02em;
+	--f-mono-md-regular: 400 16px/26px var(--ff-mono);
+	--f-mono-sm-spacing: -0.01rem;
+	--f-mono-sm-regular: 500 14px/23px var(--ff-mono);
+	--f-mono-xs-spacing: -0.01rem;
+	--f-mono-xs-regular: 500 12px/20px var(--ff-mono);
 }
 
 /* DEPRECATED: font size layer */
@@ -277,10 +279,4 @@ body {
 .ds-container p,
 .ds-container pre {
 	margin: 0;
-}
-
-.ds-container pre,
-.ds-container code {
-	font: var(--f-mono-body-regular);
-	letter-spacing: -0.02em;
 }

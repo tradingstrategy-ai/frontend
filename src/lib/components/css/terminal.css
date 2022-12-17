@@ -8,3 +8,8 @@
 .terminal-viewport .hljs {
 	background-color: transparent;
 }
+
+.terminal-viewport code,
+.terminal-viewport code span {
+	font: var(--f-mono-sm-regular) !important;
+}

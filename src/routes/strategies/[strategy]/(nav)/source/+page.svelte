@@ -18,12 +18,10 @@
 	$: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
-<section class="source">
-	<SummaryBox
-		title="Source code"
-		subtitle="The source code of the {summary.name} strategy"
-		cta={{ href: githubUrl, icon: 'github', tertiary: true, label: 'View on GitHub', target: '_blank' }}
-	>
-		<SourceCode {source} />
-	</SummaryBox>
-</section>
+<SummaryBox
+	title="Source code"
+	subtitle="The source code of the {summary.name} strategy"
+	cta={{ href: githubUrl, icon: 'github', tertiary: true, label: 'View on GitHub', target: '_blank' }}
+>
+	<SourceCode {source} />
+</SummaryBox>
