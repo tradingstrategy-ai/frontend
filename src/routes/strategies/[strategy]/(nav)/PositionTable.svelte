@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { Stats, TradingPosition } from 'trade-executor-frontend/state/interface';
-	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
-	import { readable } from 'svelte/store';
+	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter } from 'svelte-headless-table/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
@@ -11,11 +10,13 @@
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
 	export let positions: TradingPosition[];
-	export let positionType: string;
-	export let stats: Stats;
+	export let status: string;
 
-	const combinedPositions = createCombinedPositionList(positions, stats);
-	const table = createTable(readable(combinedPositions), {
+	const positionsStore = writable([] as TradingPosition[]);
+
+	$: positionsStore.set(positions);
+
+	const table = createTable(positionsStore, {
 		tableFilter: addTableFilter(),
 		sort: addSortBy()
 	});
@@ -53,7 +54,7 @@
 					tertiary: true,
 					lg: true,
 					label: 'Details',
-					href: `./${positionType}-positions/${value}`
+					href: `./${status}-positions/${value}`
 				}),
 			plugins: {
 				sort: {
@@ -64,9 +65,7 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-
 	const { pluginStates } = tableViewModel;
-
 	const { filterValue } = pluginStates.tableFilter;
 </script>
 
