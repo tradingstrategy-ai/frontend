@@ -48,7 +48,7 @@
 	}
 
 	.level--info {
-		color: var(--c-text-light);
+		color: var(--c-text-light-night);
 	}
 	.level--trade {
 		color: palegreen;
