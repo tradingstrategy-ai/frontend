@@ -32,12 +32,17 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 					<tr {...rowAttrs}>
 						{#each headerRow.cells as cell (cell.id)}
 							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-								<th {...attrs} class={cell.id} class:is-sorted={props.sort.order} on:click={props.sort.toggle}>
+								<th
+									{...attrs}
+									class={cell.id}
+									class:is-sorted={props.sort?.order}
+									on:click={() => props.sort?.toggle?.()}
+								>
 									<Render of={cell.render()} />
-									{#if props.sort.order === 'asc'}
-										<span class="sorting-indicator">▼</span>
-									{:else if props.sort.order === 'desc'}
+									{#if props.sort?.order === 'asc'}
 										<span class="sorting-indicator">▲</span>
+									{:else if props.sort?.order === 'desc'}
+										<span class="sorting-indicator">▼</span>
 									{/if}
 								</th>
 							</Subscribe>
