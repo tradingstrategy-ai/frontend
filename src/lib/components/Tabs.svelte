@@ -15,7 +15,7 @@ Used to display tabs and associated component content panels
 		id: string;
 		title: string;
 		component: ConstructorOfATypedSvelteComponent;
-		props: any;
+		props?: Record<string, any>;
 	};
 
 	export let tabs: TabItem[] = [];
