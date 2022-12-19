@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { DateTime } from '$lib/components';
-	import type { LogMessage } from '$lib/components/types';
 
-	export let log: LogMessage;
+	export let timestamp: number;
+	export let level: 'info' | 'trade' | 'warning' | 'error' | 'critical';
+	export let message: string;
 </script>
 
-<div class="log-entry level--{log.level}">
-	<DateTime epoch={log.timestamp} withSeconds />
+<div class="log-entry level--{level}">
+	<DateTime epoch={timestamp} withSeconds />
 	<span class="message">
-		{log.message}
+		{message}
 	</span>
 </div>
 

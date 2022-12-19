@@ -3,14 +3,15 @@
 Display log messages as a scrollable panel
 -->
 <script lang="ts">
-	import type { LogMessage } from '$lib/components/types';
+	import type { ComponentProps } from 'svelte';
 	import LogEntry from './LogEntry.svelte';
-	export let logs: LogMessage[];
+
+	export let logs: ComponentProps<LogEntry>[];
 </script>
 
 <div class="log-panel terminal-viewport">
-	{#each logs.reverse() as log}
-		<LogEntry {log} />
+	{#each logs.reverse() as { timestamp, level, message }}
+		<LogEntry {timestamp} {level} {message} />
 	{/each}
 </div>
 
