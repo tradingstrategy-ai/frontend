@@ -9,7 +9,7 @@
 
 	export let data: PageData;
 
-	const { summary, state, position } = data;
+	const { summary, state, position, status } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 </script>
@@ -33,9 +33,15 @@
 			{formatTokenAmount(currentStats.quantity)}
 			{position.pair.base.token_symbol}
 		</DataBox>
-		<DataBox label="Closed">
-			<DateTime epoch={position.closed_at} />
-		</DataBox>
+		{#if status === 'open'}
+			<DataBox label="Opened">
+				<DateTime epoch={position.opened_at} />
+			</DataBox>
+		{:else if status === 'closed'}
+			<DataBox label="Closed">
+				<DateTime epoch={position.closed_at} />
+			</DataBox>
+		{/if}
 		<DataBox label="Value now" value={formatDollar(currentStats.value)} />
 		<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
 	</DataBoxes>
