@@ -3,33 +3,47 @@
 	import { Button, Menu, MenuItem } from '$lib/components';
 
 	export let strategyId: string;
+	export let portfolio: any;
 	export let currentPath: string;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = '';
 
+	const basePath = `/strategies/${strategyId}`;
+
 	const menuOptions = [
-		{ label: 'Overview', targetUrl: `/strategies/${strategyId}`, noScroll: true },
-		{ label: 'Open positions', targetUrl: `/strategies/${strategyId}/open-positions`, noScroll: true },
-		{ label: 'Closed positions', targetUrl: `/strategies/${strategyId}/closed-positions` },
-		{ label: 'Performance', targetUrl: `/strategies/${strategyId}/performance`, noScroll: true },
-		{ label: 'Decision making', targetUrl: `/strategies/${strategyId}/decision-making`, noScroll: true },
-		{ label: 'Instance status', targetUrl: `/strategies/${strategyId}/status`, noScroll: true },
-		{ label: 'Logs', targetUrl: `/strategies/${strategyId}/logs`, noScroll: true },
-		{ label: 'Source Code', targetUrl: `/strategies/${strategyId}/source`, noScroll: true }
+		{ label: 'Overview', targetUrl: basePath },
+		{ label: `Open positions`, targetUrl: `${basePath}/open-positions` },
+		{ label: `Closed positions`, targetUrl: `${basePath}/closed-positions` },
+		{ label: `Frozen positions`, targetUrl: `${basePath}/frozen-positions` },
+		{ label: `Performance`, targetUrl: `${basePath}/performance` },
+		{ label: `Decision making`, targetUrl: `${basePath}/decision-making` },
+		{ label: `Instance status`, targetUrl: `${basePath}/status` },
+		{ label: `Logs`, targetUrl: `${basePath}/logs` },
+		{ label: `Source Code`, targetUrl: `${basePath}/source` }
 	];
 
-	$: currentOption = menuOptions.find((option) => currentPath.endsWith(option.targetUrl));
+	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
 
-	const mobileMenu = fsm('closed', {
-		closed: { toggle: 'open' },
-		open: { toggle: 'closed', close: 'closed', _enter: setMenuHeight }
+	$: visibleOptions = menuOptions.filter((option) => {
+		const isFrozenPositionsOption = option.targetUrl.includes('frozen-positions');
+		const hasFrozenPositions = Object.values(portfolio.frozen_positions).length > 0;
+		return !isFrozenPositionsOption || hasFrozenPositions || currentOption === option;
 	});
 
-	function setMenuHeight() {
-		const clientHeight = menuWrapper.firstElementChild?.clientHeight;
-		menuHeight = clientHeight ? `${clientHeight}px` : 'auto';
-	}
+	const mobileMenu = fsm('closed', {
+		closed: {
+			toggle: 'open'
+		},
+		open: {
+			toggle: 'closed',
+			close: 'closed',
+			_enter() {
+				const clientHeight = menuWrapper.firstElementChild?.clientHeight;
+				menuHeight = clientHeight ? `${clientHeight}px` : 'auto';
+			}
+		}
+	});
 </script>
 
 <nav class="strategy-nav {$mobileMenu}" style:--menu-height={menuHeight}>
@@ -41,8 +55,8 @@
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
-			{#each menuOptions as option}
-				<MenuItem {...option} active={option === currentOption} />
+			{#each visibleOptions as option}
+				<MenuItem {...option} active={option === currentOption} noScroll />
 			{/each}
 		</Menu>
 	</div>

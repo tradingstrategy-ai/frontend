@@ -16,7 +16,7 @@
 	</PageHeading>
 
 	<div class="subpage">
-		<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
+		<StrategyNav strategyId={summary.id} portfolio={data.state.portfolio} currentPath={$page.url.pathname} />
 		<slot />
 	</div>
 </main>
