@@ -48,6 +48,10 @@ Supports optional "cta" slot to include a button CTA.
 			place-content: start stretch;
 		}
 
+		& :global .data-box {
+			background: var(--c-background-4);
+		}
+
 		@media (--viewport-md-down) {
 			padding: 1.25rem 1rem;
 		}
@@ -118,10 +122,6 @@ Supports optional "cta" slot to include a button CTA.
 			@media (--viewport-md-down) {
 				gap: 1rem;
 			}
-		}
-
-		& :global .data-box {
-			background: var(--c-background-4);
 		}
 	}
 </style>
