@@ -1,16 +1,31 @@
+<!--
+@component
+Display a content tile that links to additional content, such as those on
+Trading data or Community pages. The entire tile can be a targetable CTA, or
+(if `buttonLabel`) provided, the tile can display a button CTA.
+
+#### Usage:
+```tsx
+	<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
+		Follow us on Twitter for trading alerts, DeFi insight and protocol news.
+	</ContentTile>
+```
+-->
 <script lang="ts">
 	import { Button, SocialIcon } from '$lib/components';
 
 	export let title: string;
 	export let icon: string;
-	export let targetUrl: string;
+	export let targetUrl: string | undefined = undefined;
 	export let buttonLabel: string | undefined = undefined;
 	export let external = false;
 
-	$: tag = buttonLabel ? 'div' : 'a';
+	$: targetable = !buttonLabel;
+	$: tag = targetable && targetUrl ? 'a' : 'div';
+	$: href = tag === 'a' ? targetUrl : undefined;
 </script>
 
-<svelte:element this={tag} class="tile" href={tag === 'a' ? targetUrl : undefined}>
+<svelte:element this={tag} class="tile" class:targetable {href} on:click>
 	<div class="header">
 		<SocialIcon name={icon} />
 		<h3>{title}</h3>
@@ -46,8 +61,12 @@
 		justify-items: center;
 	}
 
-	.tile[href]:hover h3 {
-		text-decoration: underline;
+	.targetable:hover {
+		cursor: pointer;
+
+		& h3 {
+			text-decoration: underline;
+		}
 	}
 
 	.text :global {

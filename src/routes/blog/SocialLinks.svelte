@@ -1,28 +1,29 @@
 <script lang="ts">
 	import { Icon } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 
 	export let layout: 'index' | 'post';
 </script>
 
 <div class="layout--{layout}">
-	<a href="https://newsletter.tradingstrategy.ai/">
+	<button class="social-link" on:click={toggleSubscribeDialog}>
 		<Icon name="newspaper" />
 		<span class="long-label">Subscribe to our Newsletter</span>
 		<span class="short-label">Newsletter</span>
-	</a>
-	<a href="https://twitter.com/TradingProtocol">
+	</button>
+	<a class="social-link" href="https://twitter.com/TradingProtocol">
 		<Icon name="twitter" />
 		<span class="long-label">Follow us on Twitter</span>
 		<span class="short-label">Twitter</span>
 	</a>
-	<a href="/blog/rss.xml" rel="external">
+	<a class="social-link" href="/blog/rss.xml" rel="external">
 		<Icon name="rss" />
 		<span class="long-label">RSS Feed</span>
 		<span class="short-label">RSS</span>
 	</a>
 </div>
 
-<style>
+<style lang="postcss">
 	div {
 		display: flex;
 		flex-wrap: wrap;
@@ -39,32 +40,35 @@
 		margin-bottom: var(--space-md);
 	}
 
-	a {
+	.social-link {
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
-	}
+		border: none;
+		background: transparent;
+		padding: 0;
 
-	.layout--post a {
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
-		--icon-size: 20px;
-	}
+		@nest .layout--post & {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			--icon-size: 20px;
+		}
 
-	.layout--index a {
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-		--icon-size: 24px;
-	}
+		@nest .layout--index & {
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			--icon-size: 24px;
+		}
 
-	a > span {
-		text-decoration: none;
-		color: var(--c-text-4-v1);
-	}
+		& > span {
+			text-decoration: none;
+			color: var(--c-text-4-v1);
+		}
 
-	a:hover > span {
-		text-decoration: underline;
-		color: var(--c-text-1-v1);
+		&:hover > span {
+			text-decoration: underline;
+			color: var(--c-text-1-v1);
+		}
 	}
 
 	.layout--post .short-label,
@@ -83,7 +87,7 @@
 			margin-bottom: var(--space-xl);
 		}
 
-		.layout--post a {
+		.layout--post .social-link {
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			--icon-size: 24px;

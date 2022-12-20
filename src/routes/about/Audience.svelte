@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ContentListBox, Button } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 </script>
 
 <section class="ds-container">
@@ -20,7 +21,7 @@
 			<li>Direct trade execution on-chain without a counter-party risk</li>
 
 			<svelte:fragment slot="cta">
-				<Button label="Sign up to waitlist" href="https://newsletter.tradingstrategy.ai/" target="_blank" />
+				<Button label="Sign up to waitlist" on:click={toggleSubscribeDialog} />
 			</svelte:fragment>
 		</ContentListBox>
 

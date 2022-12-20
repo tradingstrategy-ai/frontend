@@ -6,6 +6,7 @@
 	import HeroBanner from './HeroBanner.svelte';
 	import TopMomentumTile from './TopMomentumTile.svelte';
 	import { BlogPostTile, Button } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let data: PageData;
@@ -47,7 +48,7 @@
 		<div>
 			<div class="coming-soon">Coming soon</div>
 			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
-			<Button label="Sign up now" href="https://newsletter.tradingstrategy.ai/" />
+			<Button label="Sign up now" on:click={toggleSubscribeDialog} />
 		</div>
 	</section>
 

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import cookies from 'cookie';
 	import { addYears } from 'date-fns';
-	import { Icon } from '$lib/components';
+	import { Icon, Dialog } from '$lib/components';
 
 	export let showLabel = false;
 
-	let dialog: HTMLDialogElement;
+	let open: boolean;
 	let currentMode: string;
 
 	const modes = {
@@ -16,7 +16,7 @@
 
 	function openDialog() {
 		currentMode = document.body.getAttribute('data-color-mode') ?? 'system';
-		dialog.showModal();
+		open = true;
 	}
 
 	function setMode(mode: string) {
@@ -26,7 +26,7 @@
 			path: '/',
 			expires: addYears(new Date(), 1)
 		});
-		dialog.close();
+		open = false;
 	}
 </script>
 
@@ -35,19 +35,13 @@
 	<span>Select color mode</span>
 </button>
 
-<dialog bind:this={dialog}>
-	<heading>
-		<h5>Color Mode</h5>
-		<button on:click={() => dialog.close()}>
-			<Icon name="cancel" size="16px" />
-		</button>
-	</heading>
+<Dialog title="Color Mode" bind:open>
 	<menu>
 		{#each Object.entries(modes) as [mode, label]}
 			<li class={mode} class:active={mode === currentMode} on:click={() => setMode(mode)}>{label}</li>
 		{/each}
 	</menu>
-</dialog>
+</Dialog>
 
 <style>
 	button {
@@ -69,44 +63,6 @@
 
 	button:not(.showLabel) span {
 		display: none;
-	}
-
-	dialog {
-		border: none;
-		border-radius: 0.75rem;
-		background: var(--c-body-v1);
-		padding: var(--space-xl);
-		width: 300px;
-	}
-
-	dialog::backdrop {
-		--cm-light-backdrop-color: black;
-		--cm-dark-backdrop-color: white;
-
-		background: var(--cm-light-backdrop-color);
-		opacity: 0.25;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(body:not([data-color-mode='light'])) dialog::backdrop {
-			background: var(--cm-dark-backdrop-color);
-		}
-	}
-
-	:global(body[data-color-mode='dark']) dialog::backdrop {
-		background: var(--cm-dark-backdrop-color);
-	}
-
-	heading {
-		display: grid;
-		grid-template-columns: auto min-content;
-		align-items: center;
-		color: var(--c-text-4-v1);
-	}
-
-	heading h5 {
-		font: var(--f-ui-lg-medium);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 
 	menu {

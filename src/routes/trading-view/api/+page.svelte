@@ -67,10 +67,9 @@
 
 						<div class="lead">
 							<p>
-								Sign up for
-								<a rel="ext" href="https://newsletter.tradingstrategy.ai">Trading Strategy newsletter</a>
-								to get a free API key to
-								<a href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a>
+								Sign up for Trading Strategy's newsletter to get a free API key to
+								<a class="body-link" href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a
+								>
 							</p>
 						</div>
 
