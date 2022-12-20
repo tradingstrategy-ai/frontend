@@ -20,10 +20,12 @@ Supports optional "cta" slot to include a button CTA.
 
 <section class="summary-box {classes}">
 	<header class:has-cta={$$slots.cta}>
-		<h3>{title}</h3>
-		{#if subtitle}
-			<p>{subtitle}</p>
-		{/if}
+		<div class="description">
+			<h3>{title}</h3>
+			{#if subtitle}
+				<p>{subtitle}</p>
+			{/if}
+		</div>
 		{#if $$slots.cta}
 			<div class="cta">
 				<slot name="cta" />
@@ -46,6 +48,11 @@ Supports optional "cta" slot to include a button CTA.
 		& .inner {
 			display: grid;
 			place-content: start stretch;
+		}
+
+		& .description {
+			display: grid;
+			gap: var(--space-sm);
 		}
 
 		& :global .data-box {
@@ -77,22 +84,16 @@ Supports optional "cta" slot to include a button CTA.
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
-			& .cta {
-				display: flex;
-			}
-
 			&.has-cta {
 				@media (--viewport-md-up) {
 					grid-template-columns: 1fr auto;
 
 					& h3 {
 						grid-column: 1/2;
-						grid-row: 1/2;
 					}
 
 					& p {
 						grid-column: 1/3;
-						grid-row: 2/3;
 					}
 				}
 
