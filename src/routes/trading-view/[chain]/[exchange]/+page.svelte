@@ -87,7 +87,7 @@
 		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
-			gap: 3.5rem;
+			gap: var(--space-xxxxxxl);
 		}
 
 		& .ds-2-col {
