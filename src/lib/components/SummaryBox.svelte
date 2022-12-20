@@ -39,7 +39,14 @@ Supports optional "cta" slot to include a button CTA.
 	.summary-box {
 		background: var(--c-background-5);
 		border-radius: 1.25rem;
+		gap: 1.25rem;
 		padding: 1.5rem 1.5rem;
+
+		&,
+		& .inner {
+			display: grid;
+			place-content: start stretch;
+		}
 
 		@media (--viewport-md-down) {
 			padding: 1.25rem 1rem;
@@ -66,20 +73,41 @@ Supports optional "cta" slot to include a button CTA.
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
-			&.has-cta {
-				grid-template-columns: 1fr auto;
+			& .cta {
+				display: flex;
+			}
 
-				& h3 {
-					grid-column: 1/2;
-					grid-row: 1/2;
+			&.has-cta {
+				@media (--viewport-md-up) {
+					grid-template-columns: 1fr auto;
+
+					& h3 {
+						grid-column: 1/2;
+						grid-row: 1/2;
+					}
+
+					& p {
+						grid-column: 1/3;
+						grid-row: 2/3;
+					}
 				}
 
-				& p {
-					grid-column: 1/3;
-					grid-row: 2/3;
+				@media (--viewport-md-down) {
+					& :global(.button) {
+						margin: 0.75rem 0 0;
+						width: 100%;
+					}
 				}
 			}
 		}
+
+		& .inner {
+			gap: var(--inner-gap, 1.25rem);
+			padding: var(--inner-padding);
+		}
+	}
+	h3 {
+		font: var(--f-ui-xxl-medium);
 
 		&,
 		& .inner {

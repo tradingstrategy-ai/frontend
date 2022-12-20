@@ -15,6 +15,7 @@ Used to display tabs and associated component content panels
 		id: string;
 		title: string;
 		component: ConstructorOfATypedSvelteComponent;
+		props?: Record<string, any>;
 	};
 
 	export let tabs: TabItem[] = [];
@@ -30,16 +31,12 @@ Used to display tabs and associated component content panels
 
 	{#each tabs as tab}
 		<div class="tab" id="{tab.id}-tab">
-			<svelte:component this={tab.component} />
+			<svelte:component this={tab.component} {...tab.props} />
 		</div>
 	{/each}
 </section>
 
 <style>
-	section {
-		padding: 1.25rem 0;
-	}
-
 	input {
 		display: none;
 	}
@@ -63,5 +60,9 @@ Used to display tabs and associated component content panels
 
 	input:nth-of-type(2):checked ~ .tab:not(:nth-of-type(2)) {
 		display: none !important;
+	}
+
+	.tab {
+		padding: var(--tab-padding);
 	}
 </style>

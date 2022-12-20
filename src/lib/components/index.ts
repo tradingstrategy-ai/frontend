@@ -26,5 +26,6 @@ export { default as SmartContractWidget } from './SmartContractWidget.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
 export { default as SourceCode } from './SourceCode.svelte';
 export { default as SummaryBox } from './SummaryBox.svelte';
+export { default as Tabs } from './Tabs.svelte';
 export { default as TextInput } from './TextInput.svelte';
 export { default as TradingDataInfoRow } from './TradingDataInfoRow.svelte';

@@ -1,0 +1,15 @@
+.terminal-viewport {
+	background-color: var(--c-ink) !important;
+	border-radius: var(--border-radius-md);
+	display: grid;
+	padding: 0.5rem 0.75rem;
+}
+
+.terminal-viewport .hljs {
+	background-color: transparent;
+}
+
+.terminal-viewport code,
+.terminal-viewport code span {
+	font: var(--f-mono-sm-regular) !important;
+}
