@@ -21,7 +21,10 @@
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
 		tableFilter: addTableFilter(),
-		sort: addSortBy()
+		sort: addSortBy({
+			initialSortKeys: [{ id: 'position_id', order: 'asc' }],
+			toggleOrder: ['asc', 'desc']
+		})
 	});
 
 	const tableColumns = table.createColumns([
@@ -51,21 +54,19 @@
 		}),
 		table.column({
 			header: 'Value',
-			id: 'value',
-			accessor: ({ value }) => formatDollar(value)
+			accessor: 'value',
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value (Open)',
-			id: 'value_at_open',
-			accessor: ({ value_at_open }) => formatDollar(value_at_open)
+			accessor: 'value_at_open',
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value',
 			id: 'frozen_value',
-			accessor: ({ trades }) => {
-				const lastTrade = Object.values(trades).at(-1);
-				return formatDollar(lastTrade?.planned_reserve);
-			}
+			accessor: ({ trades }) => Object.values(trades).at(-1)?.planned_reserve,
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Opened',
