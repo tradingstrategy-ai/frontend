@@ -108,7 +108,7 @@ Render the pair trading page
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
@@ -116,7 +116,7 @@ Render the pair trading page
 	}
 
 	.info {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			gap: 3.5rem;

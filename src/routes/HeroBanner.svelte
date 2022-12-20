@@ -121,7 +121,7 @@ Home page hero banner.
 	.buttons {
 		display: flex;
 		gap: var(--space-sl) var(--space-ls);
-		margin-top: 2.5rem;
+		margin-top: var(--space-xxxl);
 
 		@media (--viewport-xs) {
 			flex-direction: column;

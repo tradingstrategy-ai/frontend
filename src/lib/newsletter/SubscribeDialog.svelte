@@ -108,7 +108,7 @@ be invoked from anywhere to open the global dialog component.
 
 <style lang="postcss">
 	.dialog-inner p {
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 		font: var(--f-ui-lg-roman);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text-light);
@@ -120,22 +120,22 @@ be invoked from anywhere to open the global dialog component.
 	}
 
 	.dialog-error :global(.alert-list) {
-		margin-top: 1rem;
-		padding: 1rem;
+		margin-top: var(--space-md);
+		padding: var(--space-md);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 
 	form {
-		padding-block: 0.5rem;
+		padding-block: var(--space-ss);
 		display: grid;
 		grid-template-columns: 1fr 7.5rem;
-		gap: 0.75rem;
+		gap: var(--space-sl);
 		align-items: center;
 
 		@media (--viewport-xs) {
 			grid-template-columns: auto;
-			gap: 1rem;
+			gap: var(--space-md);
 		}
 	}
 

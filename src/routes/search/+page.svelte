@@ -100,7 +100,7 @@ Advanced Search page
 	section {
 		display: grid;
 		grid-template-columns: 20rem 1fr;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;

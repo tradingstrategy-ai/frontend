@@ -79,7 +79,7 @@
 	@media (--viewport-md-up) {
 		.layout--index {
 			justify-content: start;
-			column-gap: 2.5rem;
+			column-gap: var(--space-xxxl);
 		}
 
 		.layout--post {

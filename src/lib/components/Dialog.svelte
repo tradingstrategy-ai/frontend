@@ -67,7 +67,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
 		max-width: min(var(--container-width), 500px);
 		min-width: 300px;
-		padding: 2rem;
+		padding: var(--space-xl);
 		border: none;
 		border-radius: 0.75rem;
 		background: var(--c-body-v1);
@@ -94,9 +94,9 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	heading {
 		display: grid;
 		grid-template-columns: 1fr auto;
-		gap: 0.5rem;
+		gap: var(--space-ss);
 		align-items: center;
-		margin-bottom: 0.5rem;
+		margin-bottom: var(--space-ss);
 		color: var(--c-text-4-v1);
 
 		& h5 {
@@ -107,7 +107,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 		& button {
 			display: flex;
-			gap: 0.5rem;
+			gap: var(--space-ss);
 			justify-content: center;
 			border: none;
 			padding: 0;

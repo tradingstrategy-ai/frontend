@@ -21,7 +21,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-ll);
-		padding: 2.5rem var(--space-xl);
+		padding: var(--space-xxxl) var(--space-xl);
 		background: var(--c-background-1-v1);
 		border-radius: 0.5rem;
 		text-align: center;

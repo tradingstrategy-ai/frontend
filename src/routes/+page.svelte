@@ -78,7 +78,7 @@
 
 <style lang="postcss">
 	section {
-		padding-block: 2.5rem;
+		padding-block: var(--space-xxxl);
 
 		@media (--viewport-md-up) {
 			padding-block: 4rem;
@@ -91,12 +91,12 @@
 
 	.top-momentum h2 {
 		@media (--viewport-md-up) {
-			margin-bottom: 2.5rem;
+			margin-bottom: var(--space-xxxl);
 		}
 	}
 
 	.strategies {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		& > div {
 			display: flex;
@@ -126,14 +126,14 @@
 	}
 
 	.blog {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 		justify-items: center;
 		padding-block: 4.5rem;
 	}
 
 	.blog-posts {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-md-up) {
 			margin-top: var(--space-xl);
