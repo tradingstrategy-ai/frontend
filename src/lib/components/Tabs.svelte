@@ -47,7 +47,7 @@ Used to display tabs and associated component content panels
 	}
 
 	label {
-		border-radius: 1.25rem;
+		border-radius: var(--radius-md);
 		color: var(--c-text-extra-light);
 		cursor: pointer;
 		padding: var(--space-md);

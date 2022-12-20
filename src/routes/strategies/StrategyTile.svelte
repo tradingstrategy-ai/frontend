@@ -55,7 +55,7 @@
 	li {
 		display: grid;
 		background: var(--c-background-5);
-		border-radius: var(--strategy-tile-border-radius, var(--border-radius-md));
+		border-radius: var(--strategy-tile-border-radius, var(--radius-md));
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		grid-template-rows: auto;
 		grid-auto-rows: 1fr;

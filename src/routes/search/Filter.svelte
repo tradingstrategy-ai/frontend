@@ -76,7 +76,7 @@ Display filter options as checkboxes search queries.
 		grid-template-columns: auto 1fr;
 		gap: var(--space-sl);
 		align-items: center;
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		margin: 0;
 		padding: var(--space-ss);
 		border: none;
@@ -121,7 +121,7 @@ Display filter options as checkboxes search queries.
 
 	.count {
 		padding: var(--space-xxs);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-xxs);
 		background-color: var(--c-background-4-v1);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);

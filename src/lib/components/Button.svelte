@@ -52,7 +52,7 @@
 		width: var(--button-width, auto);
 		padding: var(--button-padding, var(--space-sl) var(--space-md));
 		border: 1px solid transparent;
-		border-radius: var(--button-border-radius, var(--border-radius-md));
+		border-radius: var(--button-border-radius, var(--radius-md));
 		font: var(--button-font, var(--f-ui-md-medium));
 		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
 		text-decoration: none;
@@ -94,7 +94,7 @@
 	}
 
 	.xs {
-		--button-border-radius: var(--border-radius-lg);
+		--button-border-radius: var(--radius-lg);
 		--button-gap: var(--space-ss);
 		--button-padding: var(--space-xs) var(--space-sl);
 		--button-font: var(--f-ui-sm-medium);

@@ -23,7 +23,7 @@
 		display: grid;
 		grid-template-rows: 1fr auto;
 		gap: var(--space-lg);
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		background: var(--c-background-1-v1);
 		padding: calc(var(--container-width) * 0.15);
 

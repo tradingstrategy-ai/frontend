@@ -25,7 +25,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 
 <style lang="postcss">
 	.data-box {
-		border-radius: var(--border-radius-md);
+		border-radius: var(--radius-md);
 		background: var(--c-background-5);
 		display: grid;
 

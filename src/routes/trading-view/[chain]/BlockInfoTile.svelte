@@ -22,7 +22,7 @@
 		display: grid;
 		align-content: center;
 		justify-items: center;
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		padding: var(--space-ls);
 		background: var(--c-background-1-v1);
 

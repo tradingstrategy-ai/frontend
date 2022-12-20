@@ -117,7 +117,7 @@
 			text-transform: uppercase;
 			padding: var(--space-sl) var(--space-ls);
 			border: 1px solid var(--c-parchment-super-dark);
-			border-radius: 2rem;
+			border-radius: var(--radius-xxl);
 		}
 
 		& p {

@@ -1,6 +1,6 @@
 .terminal-viewport {
 	background-color: var(--c-ink) !important;
-	border-radius: var(--border-radius-md);
+	border-radius: var(--radius-md);
 	display: grid;
 	padding: var(--space-ss) var(--space-sl);
 }

@@ -69,7 +69,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		min-width: 300px;
 		padding: var(--space-xl);
 		border: none;
-		border-radius: 0.75rem;
+		border-radius: var(--radius-xs);
 		background: var(--c-body-v1);
 	}
 

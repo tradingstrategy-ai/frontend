@@ -40,7 +40,7 @@ Supports optional "cta" slot to include a button CTA.
 <style lang="postcss">
 	.summary-box {
 		background: var(--c-background-5);
-		border-radius: 1.25rem;
+		border-radius: var(--radius-md);
 		gap: var(--space-ls);
 		padding: var(--space-lg) var(--space-lg);
 

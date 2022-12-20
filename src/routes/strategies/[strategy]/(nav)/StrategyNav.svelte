@@ -53,7 +53,7 @@
 		--menu-gap: var(--space-sl);
 		--menu-item-active-color: var(--c-text-default);
 		--menu-item-color: var(--c-text-extra-light);
-		--menu-item-border-radius: var(--border-radius-md);
+		--menu-item-border-radius: var(--radius-md);
 		--menu-item-padding: var(--space-ms) var(--space-md);
 
 		@media (--viewport-lg-down) {

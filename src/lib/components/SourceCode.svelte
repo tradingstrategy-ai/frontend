@@ -26,7 +26,7 @@ See: https://github.com/metonym/svelte-highlight
 	.source-code {
 		display: grid;
 		padding: var(--space-xxs);
-		border-radius: var(--border-radius-md);
+		border-radius: var(--radius-md);
 		background-color: var(--c-ink);
 
 		& :global(.hljs) {

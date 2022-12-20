@@ -11,7 +11,7 @@
 <style lang="postcss">
 	.content-list-box {
 		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		padding: var(--space-ls);
 		display: flex;
 		flex-direction: column;

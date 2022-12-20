@@ -73,7 +73,7 @@
 	}
 
 	li {
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		padding-block: var(--space-ss);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);

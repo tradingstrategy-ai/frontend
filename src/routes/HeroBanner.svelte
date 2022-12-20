@@ -135,7 +135,7 @@ Home page hero banner.
 			text-transform: capitalize;
 			text-align: center;
 			border: 2px solid var(--c-background-3-v1);
-			border-radius: 1.25rem;
+			border-radius: var(--radius-md);
 			background: var(--c-background-3-v1);
 			color: var(--c-text-6-v1);
 

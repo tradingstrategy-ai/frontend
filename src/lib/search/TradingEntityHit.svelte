@@ -107,7 +107,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		align-items: center;
 		border: 2px solid;
 		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
-		border-radius: 0.625rem;
+		border-radius: var(--radius-xs);
 		outline: none;
 
 		&.basic {
@@ -151,7 +151,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	.type {
 		display: grid;
 		align-content: center;
-		border-radius: 0.375rem;
+		border-radius: var(--radius-xxs);
 		padding-block: var(--space-xxs);
 		width: 3.5rem;
 		font: var(--f-ui-sm-medium);

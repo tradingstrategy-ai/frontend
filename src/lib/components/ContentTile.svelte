@@ -44,7 +44,7 @@ Trading data or Community pages. The entire tile can be a targetable CTA, or
 		flex-direction: column;
 		gap: var(--space-xl);
 		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		padding: 2.5rem var(--space-lg);
 		text-align: center;
 		--social-icon-size: 4rem;

@@ -25,7 +25,7 @@
 		text-decoration: none;
 		white-space: nowrap;
 		padding: var(--menu-item-padding, var(--space-sl) 0);
-		border-radius: var(--menu-item-border-radius, 0.625rem);
+		border-radius: var(--menu-item-border-radius, var(--radius-xs));
 
 		&:not([href]):not([tabindex]) {
 			background: var(--c-background-4);

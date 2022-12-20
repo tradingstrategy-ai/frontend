@@ -99,11 +99,11 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		}
 
 		&:first-child {
-			border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+			border-radius: var(--radius-md) 0 0 var(--radius-md);
 		}
 
 		&:last-child {
-			border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+			border-radius: 0 var(--radius-md) var(--radius-md) 0;
 		}
 	}
 </style>
