@@ -7,6 +7,7 @@
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
 	import { Footer } from '$lib/components';
+	import SubscribeDialog from '$lib/newsletter/SubscribeDialog.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -48,6 +49,8 @@
 <slot />
 <Footer skip={$page.data.skipFooter} />
 <SiteMode />
+
+<SubscribeDialog />
 
 <style global lang="postcss">
 	/**

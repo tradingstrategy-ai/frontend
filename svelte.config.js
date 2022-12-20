@@ -22,6 +22,13 @@ const config = {
 			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib'
 		},
 
+		// disable CSRF origin checking for now; see:
+		// - https://kit.svelte.dev/docs/configuration#csrf
+		// - https://github.com/sveltejs/kit/tree/master/packages/adapter-node#origin-protocol_header-and-host_header
+		csrf: {
+			checkOrigin: false
+		},
+
 		env: {
 			publicPrefix: 'TS_PUBLIC_'
 		}

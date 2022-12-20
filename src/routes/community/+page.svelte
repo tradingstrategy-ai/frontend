@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Hero, ContentTile } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import HeroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 </script>
 
@@ -58,7 +59,7 @@
 				Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
 			</ContentTile>
 
-			<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
+			<ContentTile title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
 				Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
 			</ContentTile>
 		</section>

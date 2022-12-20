@@ -1,5 +1,6 @@
 <script>
 	import { SocialIcon } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 
 	export let skip = false;
 	export let small = false;
@@ -19,9 +20,9 @@
 			<SocialIcon name="linkedin" />
 		</a>
 
-		<a href="https://newsletter.tradingstrategy.ai/" title="Newsletter">
+		<button title="Newsletter" on:click={toggleSubscribeDialog}>
 			<SocialIcon name="newspaper" />
-		</a>
+		</button>
 
 		<a href="/blog/rss.xml" rel="external" title="RSS">
 			<SocialIcon name="rss" />
@@ -49,11 +50,15 @@
 		}
 	}
 
-	a {
+	a,
+	button {
 		transition: opacity 0.15s;
+		border: none;
+		background: transparent;
 
 		&:hover {
 			opacity: 0.9;
+			cursor: pointer;
 		}
 	}
 </style>

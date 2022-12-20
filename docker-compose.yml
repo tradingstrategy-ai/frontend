@@ -29,6 +29,10 @@ services:
       - TS_PUBLIC_TYPESENSE_API_URL
       - TS_PUBLIC_STRATEGIES
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      # Private (secret) env vals - do not add to .env
+      - TS_PRIVATE_MAILERLITE_URL
+      - TS_PRIVATE_MAILERLITE_API_KEY
+      - TS_PRIVATE_MAILERLITE_GROUPS
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
     deploy:

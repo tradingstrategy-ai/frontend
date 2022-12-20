@@ -6,6 +6,7 @@ on the conference rolls.
 -->
 <script lang="ts">
 	import { Hero, ContentTile } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
 
@@ -34,7 +35,7 @@ on the conference rolls.
 			Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
 		</ContentTile>
 
-		<ContentTile title="Newsletter" icon="newspaper" targetUrl="https://newsletter.tradingstrategy.ai/">
+		<ContentTile title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
 			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
 		</ContentTile>
 
