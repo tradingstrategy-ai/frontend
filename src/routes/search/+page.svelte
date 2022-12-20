@@ -85,12 +85,12 @@ Advanced Search page
 		gap: var(--space-md);
 
 		@media (--viewport-md-down) {
-			gap: var(--space-2xs);
+			gap: var(--space-ss);
 		}
 	}
 
 	header {
-		padding-block: var(--space-xl);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-md-down) {
 			padding-block: var(--space-md);

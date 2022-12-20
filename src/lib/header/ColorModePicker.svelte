@@ -52,7 +52,7 @@
 <style>
 	button {
 		display: flex;
-		gap: var(--space-2xs);
+		gap: var(--space-ss);
 		justify-content: center;
 		border: none;
 		padding: 0;
@@ -75,7 +75,7 @@
 		border: none;
 		border-radius: 0.75rem;
 		background: var(--c-body-v1);
-		padding: var(--space-3xl);
+		padding: var(--space-xl);
 		width: 300px;
 	}
 
@@ -118,7 +118,7 @@
 
 	li {
 		border-radius: 0.5rem;
-		padding-block: var(--space-2xs);
+		padding-block: var(--space-ss);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text-1-v1);

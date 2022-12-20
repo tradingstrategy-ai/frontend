@@ -49,7 +49,7 @@
 
 	address {
 		display: flex;
-		gap: var(--space-2xs);
+		gap: var(--space-ss);
 	}
 
 	a {

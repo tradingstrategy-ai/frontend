@@ -38,11 +38,11 @@
 		padding: var(--space-md);
 		overflow-y: auto;
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 		grid-auto-rows: min-content;
 		background: var(--c-body-v1);
 		box-shadow: -0.25rem 0 2rem var(--c-shadow-1-v1);
-		transform: translateX(calc(100% + var(--space-3xl)));
+		transform: translateX(calc(100% + var(--space-xl)));
 		transition: transform 0.25s;
 
 		&.open {
@@ -69,7 +69,7 @@
 	}
 
 	.color-mode-picker {
-		margin-top: var(--space-xl);
+		margin-top: var(--space-lg);
 		display: grid;
 	}
 </style>

@@ -24,7 +24,7 @@
 		color: var(--menu-item-color, inherit);
 		text-decoration: none;
 		white-space: nowrap;
-		padding: var(--menu-item-padding, var(--space-sm) 0);
+		padding: var(--menu-item-padding, var(--space-sl) 0);
 		border-radius: var(--menu-item-border-radius, 0.625rem);
 
 		&:not([href]):not([tabindex]) {
@@ -38,7 +38,7 @@
 		Some coupling here is acceptable b/c Menu and MenuItem should always be used in tandem.
 	*/
 	:global(.dir--horizontal) a {
-		padding: var(--menu-item-padding, var(--space-2xs) var(--space-md));
+		padding: var(--menu-item-padding, var(--space-ss) var(--space-md));
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}

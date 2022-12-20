@@ -189,7 +189,7 @@
 <style>
 	main {
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 
 	header h1 {

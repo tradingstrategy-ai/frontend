@@ -38,13 +38,13 @@
 		padding: 5rem 0;
 
 		@media (--viewport-sm-down) {
-			gap: var(--space-lg);
+			gap: var(--space-ls);
 			padding: 2.5rem var(--space-md);
 		}
 
 		&.small {
 			--social-icon-size: 44px;
-			gap: var(--space-lg);
+			gap: var(--space-ls);
 			padding: 0;
 		}
 	}

@@ -23,7 +23,7 @@
 		@media (--viewport-md-down) {
 			--logo-height: 3.5rem;
 			flex-direction: column;
-			margin-block: var(--space-2xl);
+			margin-block: var(--space-ll);
 		}
 	}
 
@@ -42,7 +42,7 @@
 			display: flex;
 			align-items: center;
 			min-height: var(--logo-height);
-			padding-block: var(--space-2xs);
+			padding-block: var(--space-ss);
 			line-height: 1.2em;
 		}
 

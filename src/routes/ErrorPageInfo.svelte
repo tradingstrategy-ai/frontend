@@ -51,8 +51,8 @@
 	.buttons {
 		display: grid;
 		grid-auto-flow: column;
-		gap: var(--space-lg);
-		margin-top: var(--space-2xl);
+		gap: var(--space-ls);
+		margin-top: var(--space-ll);
 
 		@media (--viewport-xs) {
 			grid-auto-flow: row;

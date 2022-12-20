@@ -25,7 +25,7 @@ Radio button options to select a time period.
 <style lang="postcss">
 	form {
 		display: flex;
-		margin-top: var(--space-sm);
+		margin-top: var(--space-sl);
 	}
 
 	label {

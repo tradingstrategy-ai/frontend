@@ -34,11 +34,11 @@ Display a single row of trading data (should be nested in a <table>)
 <style lang="postcss">
 	tr {
 		&:not(:first-child) > * {
-			padding-top: var(--space-3xs);
+			padding-top: var(--space-xs);
 		}
 
 		&:not(:last-child) > * {
-			padding-bottom: var(--space-3xs);
+			padding-bottom: var(--space-xs);
 		}
 
 		& th {

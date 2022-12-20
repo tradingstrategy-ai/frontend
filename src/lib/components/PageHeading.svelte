@@ -8,7 +8,7 @@
 
 <style lang="postcss">
 	.page-heading {
-		padding-bottom: var(--space-3xl);
+		padding-bottom: var(--space-xl);
 	}
 
 	.level-1 :global {
@@ -29,12 +29,12 @@
 			color: var(--c-text-ultra-light);
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
-			margin-bottom: var(--space-2xs);
+			margin-bottom: var(--space-ss);
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-xs-medium);
 				letter-spacing: var(--f-heading-xs-spacing, normal);
-				margin: 0 0 var(--space-sm);
+				margin: 0 0 var(--space-sl);
 			}
 
 			& a {

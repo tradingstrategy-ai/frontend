@@ -12,14 +12,14 @@
 	.content-list-box {
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		padding: var(--space-lg);
+		padding: var(--space-ls);
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 
 		@media (--viewport-md-up) {
-			padding: var(--space-3xl);
-			gap: var(--space-3xl);
+			padding: var(--space-xl);
+			gap: var(--space-xl);
 		}
 	}
 

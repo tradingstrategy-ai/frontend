@@ -50,14 +50,14 @@
 
 <style lang="postcss">
 	.strategy-nav {
-		--menu-gap: var(--space-sm);
+		--menu-gap: var(--space-sl);
 		--menu-item-active-color: var(--c-text-default);
 		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--border-radius-md);
 		--menu-item-padding: var(--space-ms) var(--space-md);
 
 		@media (--viewport-lg-down) {
-			--menu-item-padding: var(--space-sm) var(--space-ml);
+			--menu-item-padding: var(--space-sl) var(--space-ml);
 		}
 
 		@media (--viewport-md-down) {
@@ -105,7 +105,7 @@
 			}
 
 			& :global menu {
-				padding-top: var(--space-lg);
+				padding-top: var(--space-ls);
 			}
 		}
 	}

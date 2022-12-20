@@ -47,10 +47,10 @@
 
 <style lang="postcss">
 	main :global .data-boxes {
-		margin-block: var(--space-md) var(--space-7xl);
+		margin-block: var(--space-md) var(--space-xxxxxl);
 
 		@media (--viewport-sm-down) {
-			margin-bottom: var(--space-3xl);
+			margin-bottom: var(--space-xl);
 		}
 	}
 </style>

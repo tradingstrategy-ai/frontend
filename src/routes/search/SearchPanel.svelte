@@ -58,7 +58,7 @@
 		gap: 2.5rem;
 
 		@media (--viewport-sm-down) {
-			gap: var(--space-xl);
+			gap: var(--space-lg);
 		}
 	}
 

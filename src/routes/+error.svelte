@@ -70,7 +70,7 @@
 		background: var(--c-body-v1);
 		display: grid;
 		grid-template-rows: 1fr auto 1fr;
-		gap: var(--space-6xl);
+		gap: var(--space-xxxxl);
 		--container-max-width: 1020px;
 	}
 
@@ -80,7 +80,7 @@
 	}
 
 	pre {
-		padding: var(--space-xl);
+		padding: var(--space-lg);
 		background: var(--c-background-7-v1);
 		border: 2px solid var(--c-border-1-v1);
 		border-radius: 0.375rem;

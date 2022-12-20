@@ -35,7 +35,7 @@
 	}
 
 	header {
-		gap: var(--space-sm);
+		gap: var(--space-sl);
 
 		& p {
 			font: var(--f-h4-roman);

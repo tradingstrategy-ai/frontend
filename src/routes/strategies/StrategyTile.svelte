@@ -79,8 +79,8 @@
 	.info {
 		display: grid;
 		grid-template-rows: 1fr auto;
-		gap: var(--strategy-tile-info-gap, var(--space-xl));
-		padding: var(--space-xl);
+		gap: var(--strategy-tile-info-gap, var(--space-lg));
+		padding: var(--space-lg);
 	}
 
 	.details {
@@ -97,12 +97,12 @@
 	dl {
 		display: grid;
 		grid-template-columns: auto auto;
-		gap: var(--space-2xs);
+		gap: var(--space-ss);
 		margin: 0;
 
 		& > div {
 			display: grid;
-			gap: var(--space-2xs);
+			gap: var(--space-ss);
 		}
 	}
 

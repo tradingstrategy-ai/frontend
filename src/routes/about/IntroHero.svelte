@@ -17,11 +17,11 @@
 
 <style lang="postcss">
 	header {
-		gap: var(--space-xl);
-		padding-block: var(--space-xl);
+		gap: var(--space-lg);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-md-up) {
-			gap: var(--space-3xl);
+			gap: var(--space-xl);
 			padding-block: 4rem;
 			text-align: center;
 			white-space: pre-line;

@@ -57,7 +57,7 @@ on the conference rolls.
 
 	section {
 		grid-template-columns: repeat(auto-fit, minmax(21.5rem, 1fr));
-		gap: var(--space-3xl);
+		gap: var(--space-xl);
 	}
 
 	@media (--viewport-md-up) {

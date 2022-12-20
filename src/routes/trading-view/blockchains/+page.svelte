@@ -42,11 +42,11 @@
 	main {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 
 	header {
-		gap: var(--space-sm);
+		gap: var(--space-sl);
 
 		& p {
 			font: var(--f-h3-roman);
@@ -61,14 +61,14 @@
 		font: var(--f-h4-roman);
 
 		@media (--viewport-sm-down) {
-			--container-margin: var(--space-3xl);
+			--container-margin: var(--space-xl);
 		}
 	}
 
 	section {
 		grid-template-columns: repeat(4, 1fr);
-		gap: var(--space-3xl);
-		padding-block: var(--space-xl);
+		gap: var(--space-xl);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: repeat(2, 1fr);
@@ -76,7 +76,7 @@
 
 		@media (--viewport-sm-down) {
 			grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
-			--container-margin: var(--space-3xl);
+			--container-margin: var(--space-xl);
 		}
 	}
 </style>

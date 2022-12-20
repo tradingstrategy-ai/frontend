@@ -83,16 +83,16 @@
 <style>
 	section {
 		gap: 5rem;
-		padding-top: var(--space-3xl);
+		padding-top: var(--space-xl);
 		padding-bottom: 4rem;
 	}
 
 	header {
-		margin-bottom: var(--space-xl);
+		margin-bottom: var(--space-lg);
 	}
 
 	header h2 {
-		margin-bottom: var(--space-xl);
+		margin-bottom: var(--space-lg);
 		text-align: center;
 	}
 
@@ -108,7 +108,7 @@
 	@media (--viewport-md-up) {
 		section {
 			gap: 8rem;
-			padding-top: var(--space-7xl);
+			padding-top: var(--space-xxxxxl);
 			padding-bottom: 10rem;
 		}
 

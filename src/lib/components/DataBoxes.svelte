@@ -17,7 +17,7 @@ Display a set of DataBox elements in a responsive grid.
 <style lang="postcss">
 	.data-boxes {
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 		grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
 
 		@media (--viewport-sm-down) {

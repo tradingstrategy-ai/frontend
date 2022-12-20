@@ -96,7 +96,7 @@ npm install --save datatables.net-responsive-bs4
 
 		& :global td {
 			border-bottom: 1px solid var(--c-border-1-v1);
-			padding-block: var(--space-2xl);
+			padding-block: var(--space-ll);
 			font: var(--f-ui-body-roman);
 		}
 
@@ -124,7 +124,7 @@ npm install --save datatables.net-responsive-bs4
 		}
 
 		& .dataTables_info {
-			margin-block: var(--space-3xl) 0;
+			margin-block: var(--space-xl) 0;
 			padding: 0;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -137,21 +137,21 @@ npm install --save datatables.net-responsive-bs4
 		}
 
 		& .dataTables_paginate {
-			margin-block: var(--space-md) var(--space-3xl);
+			margin-block: var(--space-md) var(--space-xl);
 			padding: 0;
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: left;
 
 			@media (--viewport-md-up) {
-				margin-block: var(--space-3xl) 0;
+				margin-block: var(--space-xl) 0;
 				text-align: right;
 			}
 		}
 
 		& .paginate_button {
 			border-bottom: none;
-			margin-inline: var(--space-4xs);
+			margin-inline: var(--space-xxs);
 			font: inherit;
 			color: var(--c-text-1-v1);
 
@@ -163,12 +163,12 @@ npm install --save datatables.net-responsive-bs4
 
 			&.previous {
 				margin-left: 0;
-				margin-right: var(--space-3xs);
+				margin-right: var(--space-xs);
 				font-weight: 500;
 			}
 
 			&.next {
-				margin-left: var(--space-3xs);
+				margin-left: var(--space-xs);
 				margin-right: 0;
 				font-weight: 500;
 			}

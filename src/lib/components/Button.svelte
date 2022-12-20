@@ -46,11 +46,11 @@
 <style lang="postcss">
 	.button {
 		display: inline-flex;
-		gap: var(--button-gap, var(--space-xs));
+		gap: var(--button-gap, var(--space-sm));
 		justify-content: center;
 		align-items: center;
 		width: var(--button-width, auto);
-		padding: var(--button-padding, var(--space-sm) var(--space-md));
+		padding: var(--button-padding, var(--space-sl) var(--space-md));
 		border: 1px solid transparent;
 		border-radius: var(--button-border-radius, var(--border-radius-md));
 		font: var(--button-font, var(--f-ui-md-medium));
@@ -95,29 +95,29 @@
 
 	.xs {
 		--button-border-radius: var(--border-radius-lg);
-		--button-gap: var(--space-2xs);
-		--button-padding: var(--space-3xs) var(--space-sm);
+		--button-gap: var(--space-ss);
+		--button-padding: var(--space-xs) var(--space-sl);
 		--button-font: var(--f-ui-sm-medium);
 		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
-		--button-padding: var(--space-2xs) var(--space-sm);
-		--button-gap: var(--space-2xs);
+		--button-padding: var(--space-ss) var(--space-sl);
+		--button-gap: var(--space-ss);
 	}
 	.lg {
-		--button-gap: var(--space-xs);
+		--button-gap: var(--space-sm);
 		--button-padding: var(--space-md);
 		--button-font: var(--f-ui-lg-medium);
 		--button-letter-spacing: var(--f-ui-lg-spacing);
 	}
 	.xl {
-		--button-gap: var(--space-sm);
+		--button-gap: var(--space-sl);
 		--button-padding: var(--space-md) var(--space-md);
 		--button-font: var(--f-ui-xl-medium);
 		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}
 	.xxl {
-		--button-gap: var(--space-sm);
+		--button-gap: var(--space-sl);
 		--button-padding: var(--space-md);
 		--button-font: var(--f-ui-xl-medium);
 		--button-letter-spacing: var(--f-ui-xl-spacing);

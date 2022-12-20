@@ -168,7 +168,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		justify-content: center;
 		text-align: center;
 		border-bottom: 1px solid #999;
-		padding-block: var(--space-3xl);
+		padding-block: var(--space-xl);
 		font: var(--f-ui-body-medium);
 		color: var(--c-text-7-v1);
 	}

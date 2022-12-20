@@ -148,6 +148,6 @@
 
 	#form-group-registration {
 		display: grid;
-		gap: var(--space-3xl);
+		gap: var(--space-xl);
 	}
 </style>

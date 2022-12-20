@@ -23,7 +23,7 @@
 		align-content: center;
 		justify-items: center;
 		border-radius: 0.5rem;
-		padding: var(--space-lg);
+		padding: var(--space-ls);
 		background: var(--c-background-1-v1);
 
 		@media (--viewport-md-down) {
@@ -33,12 +33,12 @@
 	}
 
 	time {
-		margin-bottom: var(--space-xs);
+		margin-bottom: var(--space-sm);
 		font: var(--f-ui-large-medium);
 		color: var(--c-text-4-v1);
 
 		@media (--viewport-md-down) {
-			margin-bottom: var(--space-4xs);
+			margin-bottom: var(--space-xxs);
 			font: var(--f-ui-body-medium);
 			letter-spacing: 0.01em;
 			color: var(--c-text-1-v1);
@@ -47,7 +47,7 @@
 
 	.tile h3 {
 		font: var(--f-h3-bold);
-		margin-bottom: var(--space-4xs);
+		margin-bottom: var(--space-xxs);
 
 		@media (--viewport-md-down) {
 			font: var(--f-h4-bold);

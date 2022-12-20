@@ -75,7 +75,7 @@
 	}
 
 	.trading-pairs {
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 
 	aside {

@@ -25,7 +25,7 @@ See: https://github.com/metonym/svelte-highlight
 <style lang="postcss">
 	.source-code {
 		display: grid;
-		padding: var(--space-4xs);
+		padding: var(--space-xxs);
 		border-radius: var(--border-radius-md);
 		background-color: var(--c-ink);
 

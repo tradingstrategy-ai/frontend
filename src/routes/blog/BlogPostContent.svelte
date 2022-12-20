@@ -40,19 +40,19 @@
 		}
 
 		& p:not(:first-of-type) {
-			margin-top: var(--space-xl);
+			margin-top: var(--space-lg);
 		}
 
 		& h2 {
 			font: var(--f-text-xl-semibold);
 			letter-spacing: var(--f-text-xl-spacing, normal);
-			margin: var(--space-7xl) 0 var(--space-xl);
+			margin: var(--space-xxxxxl) 0 var(--space-lg);
 		}
 
 		& h3 {
 			font: var(--f-text-lg-semibold);
 			letter-spacing: var(--f-text-lg-spacing, normal);
-			margin: var(--space-3xl) 0 var(--space-md) 0;
+			margin: var(--space-xl) 0 var(--space-md) 0;
 		}
 
 		& ol,
@@ -62,7 +62,7 @@
 
 		& li {
 			margin: 0.5em 0 0 0;
-			padding-left: var(--space-4xs);
+			padding-left: var(--space-xxs);
 		}
 
 		& a,
@@ -78,7 +78,7 @@
 		}
 
 		& figure {
-			margin: var(--space-4xl) 0;
+			margin: var(--space-xxl) 0;
 		}
 
 		& figcaption {
@@ -110,8 +110,8 @@
 		}
 
 		& pre {
-			margin: var(--space-xl) 0;
-			padding: var(--space-xl);
+			margin: var(--space-lg) 0;
+			padding: var(--space-lg);
 			background: var(--c-background-7-v1);
 			border: 2px solid var(--c-border-1-v1);
 			border-radius: 0.375rem;
@@ -119,8 +119,8 @@
 		}
 
 		& blockquote {
-			margin: var(--space-xl) 0 var(--space-xl) var(--space-sm);
-			padding: var(--space-xl);
+			margin: var(--space-lg) 0 var(--space-lg) var(--space-sl);
+			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 			color: var(--c-text-3-v1);
@@ -134,14 +134,14 @@
 		}
 
 		& table {
-			margin: var(--space-xl) 0;
+			margin: var(--space-lg) 0;
 			color: inherit;
 			border-collapse: collapse;
 
 			& td,
 			& th {
 				vertical-align: top;
-				padding: var(--space-2xs);
+				padding: var(--space-ss);
 				border-top: 1px solid var(--c-border-1-v1);
 				border-bottom: 1px solid var(--c-border-1-v1);
 			}

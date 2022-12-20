@@ -23,11 +23,11 @@ A test endpoint for the page to show debug data.
 <style>
 	section {
 		--container-max-width: 1020px;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 
 	pre {
-		padding: var(--space-xl);
+		padding: var(--space-lg);
 		background: var(--c-background-7-v1);
 		border: 2px solid var(--c-border-1-v1);
 		border-radius: 0.375rem;

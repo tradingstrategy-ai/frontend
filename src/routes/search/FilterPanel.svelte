@@ -115,7 +115,7 @@
 			transition: transform 0.35s;
 
 			&:not(.open) {
-				transform: translateY(calc(100vh + var(--space-3xl)));
+				transform: translateY(calc(100vh + var(--space-xl)));
 			}
 		}
 	}
@@ -143,23 +143,23 @@
 
 	section {
 		display: grid;
-		gap: var(--space-lg);
+		gap: var(--space-ls);
 
 		@media (--viewport-md-down) {
-			padding: var(--space-sm) var(--space-md) 6.25rem var(--space-md);
+			padding: var(--space-sl) var(--space-md) 6.25rem var(--space-md);
 		}
 	}
 
 	.filters {
 		display: grid;
-		gap: var(--space-4xl);
+		gap: var(--space-xxl);
 	}
 
 	footer {
 		position: fixed;
 		width: 100%;
 		bottom: 0;
-		padding: var(--space-sm);
+		padding: var(--space-sl);
 		display: grid;
 		background: var(--c-body-v1);
 		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);

@@ -69,10 +69,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	div {
 		display: grid;
-		gap: var(--space-lg);
+		gap: var(--space-ls);
 
 		@media (--viewport-md-down) {
-			gap: var(--space-sm);
+			gap: var(--space-sl);
 		}
 	}
 
@@ -117,7 +117,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			}
 
 			& div {
-				gap: var(--space-sm);
+				gap: var(--space-sl);
 			}
 
 			& h3 {

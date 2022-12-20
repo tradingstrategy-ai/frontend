@@ -45,7 +45,7 @@
 
 <style lang="postcss">
 	section {
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 		padding-block: 4rem;
 
 		@media (--viewport-md-up) {
@@ -55,8 +55,8 @@
 
 	header {
 		display: grid;
-		gap: var(--space-xl);
-		margin-bottom: var(--space-xl);
+		gap: var(--space-lg);
+		margin-bottom: var(--space-lg);
 
 		& h2 {
 			text-align: center;

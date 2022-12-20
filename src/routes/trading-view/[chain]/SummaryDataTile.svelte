@@ -22,13 +22,13 @@
 	.tile {
 		display: grid;
 		grid-template-rows: 1fr auto;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 		border-radius: 0.5rem;
 		background: var(--c-background-1-v1);
 		padding: calc(var(--container-width) * 0.15);
 
 		@media (--viewport-md-down) {
-			padding: var(--space-lg);
+			padding: var(--space-ls);
 		}
 
 		& h3 {
@@ -40,7 +40,7 @@
 		}
 
 		& h4 {
-			margin-block: var(--space-4xs) var(--space-xs);
+			margin-block: var(--space-xxs) var(--space-sm);
 
 			@media (--viewport-md-down) {
 				margin-block: 0;

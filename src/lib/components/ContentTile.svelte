@@ -27,10 +27,10 @@
 	.tile {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-3xl);
+		gap: var(--space-xl);
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		padding: 2.5rem var(--space-xl);
+		padding: 2.5rem var(--space-lg);
 		text-align: center;
 		--social-icon-size: 4rem;
 		--social-icon-scale: 0.6;
@@ -53,7 +53,7 @@
 	.text :global {
 		flex: 1;
 		display: grid;
-		gap: var(--space-3xl);
+		gap: var(--space-xl);
 		align-content: start;
 		font: var(--f-ui-lg-roman);
 		letter-spacing: var(--f-ui-lg-spacing, normal);

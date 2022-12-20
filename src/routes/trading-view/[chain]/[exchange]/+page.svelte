@@ -91,7 +91,7 @@
 		}
 
 		& .ds-2-col {
-			row-gap: var(--space-3xl);
+			row-gap: var(--space-xl);
 		}
 	}
 
@@ -99,8 +99,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: var(--space-lg) var(--space-3xl);
-		padding-block: var(--space-xl);
+		gap: var(--space-ls) var(--space-xl);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-xs) {
 			flex-direction: column;
@@ -113,8 +113,8 @@
 		gap: var(--space-md);
 
 		@media (--viewport-lg-up) {
-			margin-top: var(--space-xl);
-			gap: var(--space-xl);
+			margin-top: var(--space-lg);
+			gap: var(--space-lg);
 		}
 	}
 

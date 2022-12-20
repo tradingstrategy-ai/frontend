@@ -54,6 +54,6 @@
 <style>
 	.performance {
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 </style>

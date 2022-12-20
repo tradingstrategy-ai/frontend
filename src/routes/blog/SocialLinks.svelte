@@ -80,7 +80,7 @@
 
 		.layout--post {
 			flex-direction: row;
-			margin-bottom: var(--space-3xl);
+			margin-bottom: var(--space-xl);
 		}
 
 		.layout--post a {

@@ -28,7 +28,7 @@ Used for selecting a time bucket for chart data feeds.default
 
 	a {
 		flex: 1;
-		padding: var(--space-2xs) min(var(--space-xl), 2vw);
+		padding: var(--space-ss) min(var(--space-lg), 2vw);
 		border: 2px solid var(--c-border-2-v1);
 		font-weight: 500;
 		color: var(--c-text-3-v1);

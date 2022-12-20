@@ -32,10 +32,10 @@
 
 		& .subpage :global {
 			display: grid;
-			gap: var(--space-lg);
+			gap: var(--space-ls);
 
 			@media (--viewport-lg-up) {
-				gap: var(--space-7xl);
+				gap: var(--space-xxxxxl);
 				grid-template-columns: 14rem auto;
 			}
 		}

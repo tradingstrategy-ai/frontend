@@ -48,7 +48,7 @@ Display filter options as checkboxes search queries.
 <style lang="postcss">
 	div {
 		display: grid;
-		gap: var(--space-lg);
+		gap: var(--space-ls);
 	}
 
 	h4 {
@@ -57,7 +57,7 @@ Display filter options as checkboxes search queries.
 
 	ul {
 		display: grid;
-		gap: var(--space-2xs);
+		gap: var(--space-ss);
 		padding: 0;
 		list-style-type: none;
 	}
@@ -67,18 +67,18 @@ Display filter options as checkboxes search queries.
 		grid-template-columns: 1fr auto;
 		align-items: center;
 		gap: var(--space-md);
-		margin-left: -var(--space-2xs);
+		margin-left: -var(--space-ss);
 	}
 
 	label {
 		position: relative;
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: var(--space-sm);
+		gap: var(--space-sl);
 		align-items: center;
 		border-radius: 0.5rem;
 		margin: 0;
-		padding: var(--space-2xs);
+		padding: var(--space-ss);
 		border: none;
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
@@ -120,7 +120,7 @@ Display filter options as checkboxes search queries.
 	}
 
 	.count {
-		padding: var(--space-4xs);
+		padding: var(--space-xxs);
 		border-radius: 0.25rem;
 		background-color: var(--c-background-4-v1);
 		font: var(--f-ui-sm-medium);

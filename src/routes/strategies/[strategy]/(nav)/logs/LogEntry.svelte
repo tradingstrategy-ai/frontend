@@ -17,8 +17,8 @@
 	.log-entry {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: var(--space-xl);
-		padding: var(--space-md) var(--space-2xs);
+		gap: var(--space-lg);
+		padding: var(--space-md) var(--space-ss);
 		place-items: stretch;
 
 		@media (--viewport-sm-down) {

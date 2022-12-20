@@ -118,7 +118,7 @@
 	main {
 		--container-max-width: 720px;
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 	}
 
 	.ds-container {

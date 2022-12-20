@@ -68,7 +68,7 @@
 		max-width: 1200px;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-7xl) 4rem;
+		gap: var(--space-xxxxxl) 4rem;
 		justify-content: center;
 		align-items: center;
 	}

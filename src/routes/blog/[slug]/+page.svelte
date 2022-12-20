@@ -28,13 +28,13 @@
 <style>
 	article {
 		--container-max-width: 720px;
-		gap: var(--space-3xl);
+		gap: var(--space-xl);
 	}
 
 	header {
 		margin-top: var(--space-md);
 		display: grid;
-		gap: var(--space-lg);
+		gap: var(--space-ls);
 	}
 
 	h1 {

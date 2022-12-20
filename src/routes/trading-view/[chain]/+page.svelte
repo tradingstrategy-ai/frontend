@@ -79,44 +79,44 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-4xl);
+		gap: var(--space-xxl);
 	}
 
 	.summary-data {
 		grid-template-columns: repeat(4, 1fr);
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
-			gap: var(--space-sm);
+			gap: var(--space-sl);
 		}
 	}
 
 	.block-info {
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
 		grid-template-rows: 1fr 1fr;
 
 		@media (--viewport-md-down) {
 			grid-template-rows: 1fr;
 			grid-template-columns: 1fr 1fr;
-			gap: var(--space-sm);
+			gap: var(--space-sl);
 		}
 	}
 
 	.explorer-wrapper {
 		gap: var(--space-md);
-		margin-top: var(--space-2xl);
+		margin-top: var(--space-ll);
 
 		@media (--viewport-md-down) {
 			margin-top: 0;
-			gap: var(--space-sm);
+			gap: var(--space-sl);
 		}
 
 		& header {
 			display: grid;
-			gap: var(--space-sm);
-			margin-block: var(--space-xl);
+			gap: var(--space-sl);
+			margin-block: var(--space-lg);
 
 			@media (--viewport-md-down) {
 				margin-block: var(--space-md);

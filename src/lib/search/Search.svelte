@@ -148,7 +148,7 @@ Display site-wide search box for use in top-nav.
 		display: grid;
 		align-items: center;
 		height: 100%;
-		margin-right: -var(--space-2xs);
+		margin-right: -var(--space-ss);
 		font-size: 20px;
 	}
 
@@ -156,7 +156,7 @@ Display site-wide search box for use in top-nav.
 		position: absolute;
 		z-index: 1;
 		right: 0;
-		padding: var(--space-sm) var(--space-xs);
+		padding: var(--space-sl) var(--space-sm);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-md);
@@ -173,7 +173,7 @@ Display site-wide search box for use in top-nav.
 
 		@media (--search-layout-desktop) {
 			width: 450px;
-			margin-top: var(--space-4xs);
+			margin-top: var(--space-xxs);
 			max-height: calc(100vh - 1.75rem - var(--header-height, 5rem) / 2);
 		}
 
@@ -183,7 +183,7 @@ Display site-wide search box for use in top-nav.
 
 			@nest .hasQuery & {
 				height: var(--viewport-height, 100vh);
-				gap: var(--space-xs);
+				gap: var(--space-sm);
 			}
 		}
 	}
@@ -200,14 +200,14 @@ Display site-wide search box for use in top-nav.
 		padding: 0;
 		flex: 1;
 		display: grid;
-		gap: var(--space-2xs);
+		gap: var(--space-ss);
 		align-content: start;
 		overflow-y: auto;
 	}
 
 	.buttons {
 		display: grid;
-		gap: var(--space-sm) var(--space-xs);
+		gap: var(--space-sl) var(--space-sm);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-7-v1);
