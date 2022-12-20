@@ -7,7 +7,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import warning from '$lib/assets/icons/warning.svg';
-	import { AlertItem, AlertList } from '$lib/components/index.js';
+	import { AlertItem, AlertList, SummaryBox } from '$lib/components';
 
 	export let data: PageData;
 
@@ -36,10 +36,12 @@
 		</AlertItem>
 	</AlertList>
 
-	<div class="images">
-		<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
-		<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
-	</div>
+	<SummaryBox title="Decision making" subtitle="Here some neat subtitle would come handy">
+		<div class="images">
+			<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
+			<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
+		</div>
+	</SummaryBox>
 </section>
 
 <style lang="postcss">
