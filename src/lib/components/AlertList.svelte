@@ -21,6 +21,7 @@ as children. The alert box is only displayed if one or more items are displayed
 
 <style lang="postcss">
 	.alert-list {
+		width: 100%;
 		border: 2px solid;
 		border-radius: var(--border-radius-sm);
 		display: grid;
