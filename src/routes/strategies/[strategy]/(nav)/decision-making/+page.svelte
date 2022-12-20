@@ -36,7 +36,10 @@
 		</AlertItem>
 	</AlertList>
 
-	<SummaryBox title="Decision making" subtitle="Here some neat subtitle would come handy">
+	<SummaryBox
+		title="Decision making"
+		subtitle="The technical indicators and strategy decision making process for the last decision making cycle"
+	>
 		<div class="images">
 			<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
 			<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
