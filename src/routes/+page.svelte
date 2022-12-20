@@ -23,7 +23,7 @@
 	<HeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<section class="ds-container top-momentum" style:gap="1.5rem">
+		<section class="ds-container top-momentum" style:gap="var(--space-xl)">
 			<h2>Top trades</h2>
 			<div class="ds-2-col">
 				<TopMomentumTile
@@ -105,7 +105,7 @@
 			gap: 4rem;
 
 			@media (--viewport-md-up) {
-				margin-top: 0.5rem;
+				margin-top: var(--space-2xs);
 			}
 		}
 
@@ -114,7 +114,7 @@
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: var(--c-text-2-v1);
 			text-transform: uppercase;
-			padding: 0.75rem 1.25rem;
+			padding: var(--space-sm) var(--space-lg);
 			border: 1px solid var(--c-parchment-super-dark);
 			border-radius: 2rem;
 		}
@@ -135,7 +135,7 @@
 		gap: 2.5rem;
 
 		@media (--viewport-md-up) {
-			margin-top: 2rem;
+			margin-top: var(--space-3xl);
 			grid-template-columns: 1fr 1fr;
 		}
 

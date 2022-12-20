@@ -118,11 +118,11 @@
 	main {
 		--container-max-width: 720px;
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 	}
 
 	.ds-container {
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	header h1 {
@@ -131,7 +131,7 @@
 
 	form {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	label {
@@ -152,7 +152,7 @@
 	}
 
 	.cta {
-		margin-top: 1rem;
+		margin-top: var(--space-md);
 		display: grid;
 	}
 

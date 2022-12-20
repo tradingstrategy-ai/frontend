@@ -17,11 +17,11 @@ Display a set of DataBox elements in a responsive grid.
 <style lang="postcss">
 	.data-boxes {
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 		grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
 
 		@media (--viewport-sm-down) {
-			gap: 1rem;
+			gap: var(--space-md);
 			grid-template-columns: auto;
 		}
 	}

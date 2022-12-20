@@ -30,7 +30,7 @@
 					}
 				}
 			]}
-			--tab-padding="1rem 0 0"
+			--tab-padding="var(--space-md) 0 0"
 		/>
 	</SummaryBox>
 </section>

@@ -23,14 +23,14 @@
 		@media (--viewport-md-down) {
 			--logo-height: 3.5rem;
 			flex-direction: column;
-			margin-block: 1.75rem;
+			margin-block: var(--space-2xl);
 		}
 	}
 
 	header h1 {
 		flex: 1;
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-md);
 		align-items: center;
 		font: var(--f-h1-bold);
 
@@ -42,7 +42,7 @@
 			display: flex;
 			align-items: center;
 			min-height: var(--logo-height);
-			padding-block: 0.5rem;
+			padding-block: var(--space-2xs);
 			line-height: 1.2em;
 		}
 

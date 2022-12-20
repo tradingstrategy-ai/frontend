@@ -52,7 +52,7 @@
 <style>
 	button {
 		display: flex;
-		gap: 0.5rem;
+		gap: var(--space-2xs);
 		justify-content: center;
 		border: none;
 		padding: 0;
@@ -75,7 +75,7 @@
 		border: none;
 		border-radius: 0.75rem;
 		background: var(--c-body-v1);
-		padding: 2rem;
+		padding: var(--space-3xl);
 		width: 300px;
 	}
 
@@ -111,14 +111,14 @@
 
 	menu {
 		display: grid;
-		margin-block: 1rem 0;
+		margin-block: var(--space-md) 0;
 		padding: 0;
 		list-style-type: none;
 	}
 
 	li {
 		border-radius: 0.5rem;
-		padding-block: 0.5rem;
+		padding-block: var(--space-2xs);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text-1-v1);

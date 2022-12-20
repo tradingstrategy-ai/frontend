@@ -59,10 +59,10 @@ Real time examples for the API
 
 <style lang="postcss">
 	h1 {
-		margin-bottom: 2rem;
+		margin-bottom: var(--space-3xl);
 	}
 
 	.ds-container p {
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 	}
 </style>

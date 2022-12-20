@@ -63,7 +63,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	table {
 		border-collapse: separate;
 		border-spacing: 0 0.75rem;
-		margin-top: -0.75rem;
+		margin-top: -var(--space-sm);
 		width: 100%;
 	}
 
@@ -73,7 +73,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	}
 
 	th {
-		padding: 1rem 1.25rem;
+		padding: var(--space-md) var(--space-lg);
 		background-color: var(--c-body);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-md-medium);
@@ -82,7 +82,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	td {
 		background: var(--c-background-5);
 		height: 4.5rem;
-		padding: 0.75rem 1.5rem;
+		padding: var(--space-sm) var(--space-xl);
 		font: var(--f-ui-lg-medium);
 		--button-width: 100%;
 

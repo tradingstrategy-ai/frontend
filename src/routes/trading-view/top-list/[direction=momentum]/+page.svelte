@@ -37,11 +37,11 @@
 <style>
 	main {
 		display: grid;
-		gap: 2rem;
+		gap: var(--space-3xl);
 	}
 
 	header {
-		gap: 2rem;
+		gap: var(--space-3xl);
 	}
 
 	header h1 {

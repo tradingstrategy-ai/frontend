@@ -41,7 +41,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 	a {
 		display: grid;
 		grid-template-rows: auto 1fr;
-		row-gap: 1rem;
+		row-gap: var(--space-md);
 		align-items: start;
 		text-decoration: none;
 		pointer-events: none;
@@ -69,10 +69,10 @@ Display a blog post preview card (e.g, on home page or blog index).
 
 	div {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--space-lg);
 
 		@media (--viewport-md-down) {
-			gap: 0.75rem;
+			gap: var(--space-sm);
 		}
 	}
 
@@ -117,7 +117,7 @@ Display a blog post preview card (e.g, on home page or blog index).
 			}
 
 			& div {
-				gap: 0.75rem;
+				gap: var(--space-sm);
 			}
 
 			& h3 {

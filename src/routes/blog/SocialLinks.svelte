@@ -27,7 +27,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	.layout--index {
@@ -36,7 +36,7 @@
 
 	.layout--post {
 		flex-direction: column;
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 	}
 
 	a {
@@ -80,7 +80,7 @@
 
 		.layout--post {
 			flex-direction: row;
-			margin-bottom: 2rem;
+			margin-bottom: var(--space-3xl);
 		}
 
 		.layout--post a {

@@ -75,12 +75,12 @@
 	}
 
 	.trading-pairs {
-		gap: 1.5rem;
+		gap: var(--space-xl);
 	}
 
 	aside {
 		& p {
-			margin-top: 0rem;
+			margin-top: 0;
 			font: var(--f-ui-large-roman);
 		}
 

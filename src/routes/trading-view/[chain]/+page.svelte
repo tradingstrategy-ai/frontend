@@ -79,47 +79,47 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.25rem;
+		gap: var(--space-4xl);
 	}
 
 	.summary-data {
 		grid-template-columns: repeat(4, 1fr);
-		gap: 1.5rem;
+		gap: var(--space-xl);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
-			gap: 0.75rem;
+			gap: var(--space-sm);
 		}
 	}
 
 	.block-info {
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 		grid-template-rows: 1fr 1fr;
 
 		@media (--viewport-md-down) {
 			grid-template-rows: 1fr;
 			grid-template-columns: 1fr 1fr;
-			gap: 0.75rem;
+			gap: var(--space-sm);
 		}
 	}
 
 	.explorer-wrapper {
-		gap: 1rem;
-		margin-top: 1.75rem;
+		gap: var(--space-md);
+		margin-top: var(--space-2xl);
 
 		@media (--viewport-md-down) {
 			margin-top: 0;
-			gap: 0.75rem;
+			gap: var(--space-sm);
 		}
 
 		& header {
 			display: grid;
-			gap: 0.75rem;
-			margin-block: 1.5rem;
+			gap: var(--space-sm);
+			margin-block: var(--space-xl);
 
 			@media (--viewport-md-down) {
-				margin-block: 1rem;
+				margin-block: var(--space-md);
 			}
 		}
 

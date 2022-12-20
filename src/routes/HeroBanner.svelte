@@ -56,16 +56,16 @@ Home page hero banner.
 
 	header {
 		--container-max-width: 1960px;
-		--container-margin: max(4.5vw, 1.5rem);
+		--container-margin: max(4.5vw, var(--space-xl));
 		grid-template-columns: 1fr 1fr;
-		gap: 2.75rem min(4.5vw, 6.25rem);
+		gap: var(--space-6xl) min(4.5vw, 6.25rem);
 		place-items: center;
 		padding-block: 4.625rem;
 		background: var(--c-background-1-v1);
 
 		@media (--hero-1-col) {
 			grid-template-columns: 1fr;
-			padding-block: 2rem;
+			padding-block: var(--space-3xl);
 		}
 	}
 
@@ -77,7 +77,7 @@ Home page hero banner.
 		@media (--hero-1-col) {
 			grid-row: 2 / 3;
 			max-width: 40rem;
-			margin-block: 0 1rem;
+			margin-block: 0 var(--space-md);
 		}
 	}
 
@@ -120,16 +120,16 @@ Home page hero banner.
 
 	.buttons {
 		display: flex;
-		gap: 0.75rem 1.25rem;
+		gap: var(--space-sm) var(--space-lg);
 		margin-top: 2.5rem;
 
 		@media (--viewport-xs) {
 			flex-direction: column;
-			margin-top: 2rem;
+			margin-top: var(--space-3xl);
 		}
 
 		& a {
-			padding: 1rem;
+			padding: var(--space-md);
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 			text-transform: capitalize;
@@ -140,7 +140,7 @@ Home page hero banner.
 			color: var(--c-text-6-v1);
 
 			@media (--viewport-xs) {
-				padding-block: 0.75rem;
+				padding-block: var(--space-sm);
 				border-radius: 1em;
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--f-ui-md-spacing, normal);

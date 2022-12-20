@@ -123,7 +123,7 @@ Render the pair trading page
 		}
 
 		& .ds-2-col {
-			row-gap: 2rem;
+			row-gap: var(--space-3xl);
 			align-items: start;
 		}
 	}
@@ -132,8 +132,8 @@ Render the pair trading page
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 1.25rem 2rem;
-		padding-block: 1.5rem;
+		gap: var(--space-lg) var(--space-3xl);
+		padding-block: var(--space-xl);
 
 		@media (--viewport-xs) {
 			flex-direction: column;
@@ -148,7 +148,7 @@ Render the pair trading page
 
 	.time-period-summary {
 		display: grid;
-		gap: 2.25rem;
+		gap: var(--space-4xl);
 
 		@media (--viewport-lg-up) {
 			gap: 4rem;
@@ -156,7 +156,7 @@ Render the pair trading page
 
 		& header {
 			display: grid;
-			gap: 0.75rem;
+			gap: var(--space-sm);
 		}
 
 		& h2 {

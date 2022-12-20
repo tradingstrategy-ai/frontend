@@ -25,14 +25,14 @@ Radio button options to select a time period.
 <style lang="postcss">
 	form {
 		display: flex;
-		margin-top: 0.75rem;
+		margin-top: var(--space-sm);
 	}
 
 	label {
 		flex: 1;
 		border: 2px solid var(--c-border-2-v1);
 		margin: 0;
-		padding-block: 1rem;
+		padding-block: var(--space-md);
 		font: var(--f-ui-large-medium);
 		text-align: center;
 		text-transform: capitalize;

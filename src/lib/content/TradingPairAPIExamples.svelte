@@ -45,11 +45,11 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 
 <style>
 	.api-info h2 {
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 	}
 
 	.api-info p {
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 	}
 
 	.api-info pre {
@@ -57,7 +57,7 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 		border: 1px solid var(--c-border-1-v1);
 		border-radius: 0.375rem;
 		color: var(--c-parchment);
-		padding: 1rem;
-		margin-bottom: 1rem;
+		padding: var(--space-md);
+		margin-bottom: var(--space-md);
 	}
 </style>

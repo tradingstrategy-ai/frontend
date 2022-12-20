@@ -30,42 +30,42 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		display: grid;
 
 		&.xs {
-			gap: 0.5rem;
-			padding: 1.125rem 1.25rem;
+			gap: var(--space-2xs);
+			padding: var(--space-ml) var(--space-lg);
 
 			@media (--viewport-sm-down) {
-				gap: 0.25rem;
-				padding: 0.875rem 1rem;
+				gap: var(--space-4xs);
+				padding: var(--space-ms) var(--space-md);
 			}
 		}
 
 		&.sm {
-			gap: 0.75rem;
-			padding: 1.25rem;
+			gap: var(--space-sm);
+			padding: var(--space-lg);
 
 			@media (--viewport-sm-down) {
-				gap: 0.375rem;
-				padding: 1rem;
+				gap: var(--space-3xs);
+				padding: var(--space-md);
 			}
 		}
 
 		&.md {
-			gap: 0.875rem;
-			padding: 1.5rem;
+			gap: var(--space-ms);
+			padding: var(--space-xl);
 
 			@media (--viewport-sm-down) {
-				gap: 0.5rem;
-				padding: 1.25rem;
+				gap: var(--space-2xs);
+				padding: var(--space-lg);
 			}
 		}
 
 		&.lg {
-			gap: 1rem;
-			padding: 1.75rem;
+			gap: var(--space-md);
+			padding: var(--space-2xl);
 
 			@media (--viewport-sm-down) {
-				gap: 0.625rem;
-				padding: 1.375rem;
+				gap: var(--space-xs);
+				padding: var(--space-lg);
 			}
 		}
 	}

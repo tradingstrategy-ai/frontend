@@ -79,13 +79,13 @@
 	.info {
 		display: grid;
 		grid-template-rows: 1fr auto;
-		gap: var(--strategy-tile-info-gap, 1.5rem);
-		padding: 1.5rem;
+		gap: var(--strategy-tile-info-gap, var(--space-xl));
+		padding: var(--space-xl);
 	}
 
 	.details {
 		display: grid;
-		gap: var(--strategy-tile-details-gap, 1rem);
+		gap: var(--strategy-tile-details-gap, var(--space-md));
 		align-content: start;
 	}
 
@@ -97,12 +97,12 @@
 	dl {
 		display: grid;
 		grid-template-columns: auto auto;
-		gap: 0.5rem;
+		gap: var(--space-2xs);
 		margin: 0;
 
 		& > div {
 			display: grid;
-			gap: 0.5rem;
+			gap: var(--space-2xs);
 		}
 	}
 

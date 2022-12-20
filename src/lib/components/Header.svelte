@@ -59,7 +59,7 @@
 			[search-end];
 		grid-auto-flow: column;
 		align-items: center;
-		gap: 1.25rem;
+		gap: var(--space-lg);
 		height: var(--header-height);
 	}
 

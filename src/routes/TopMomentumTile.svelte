@@ -56,10 +56,10 @@ Display best or worst performing trading pairs.
 		display: grid;
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5rem;
-		padding: 1.5rem;
+		padding: var(--space-xl);
 
 		@media (--viewport-md-up) {
-			padding: 2rem;
+			padding: var(--space-3xl);
 		}
 	}
 
@@ -71,7 +71,7 @@ Display best or worst performing trading pairs.
 
 	ul {
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 		width: 100%;
 		margin: 2.5rem 0;
 		padding: 0;

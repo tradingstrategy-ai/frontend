@@ -42,11 +42,11 @@
 	main {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 	}
 
 	header {
-		gap: 0.75rem;
+		gap: var(--space-sm);
 
 		& p {
 			font: var(--f-h3-roman);
@@ -61,14 +61,14 @@
 		font: var(--f-h4-roman);
 
 		@media (--viewport-sm-down) {
-			--container-margin: 2rem;
+			--container-margin: var(--space-3xl);
 		}
 	}
 
 	section {
 		grid-template-columns: repeat(4, 1fr);
-		gap: 2rem;
-		padding-block: 1.5rem;
+		gap: var(--space-3xl);
+		padding-block: var(--space-xl);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: repeat(2, 1fr);
@@ -76,7 +76,7 @@
 
 		@media (--viewport-sm-down) {
 			grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
-			--container-margin: 2rem;
+			--container-margin: var(--space-3xl);
 		}
 	}
 </style>

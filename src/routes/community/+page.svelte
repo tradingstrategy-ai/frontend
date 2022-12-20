@@ -78,7 +78,7 @@
 
 	section {
 		grid-template-columns: repeat(auto-fit, minmax(min(var(--container-width), 21.5rem), 1fr));
-		gap: 2rem;
+		gap: var(--space-3xl);
 	}
 
 	section h2 {

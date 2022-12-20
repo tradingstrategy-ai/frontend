@@ -111,21 +111,21 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		outline: none;
 
 		&.basic {
-			padding: 0.875rem 0.75rem;
+			padding: var(--space-ms) var(--space-sm);
 			border: none;
 			background: var(--c-background-4-v1);
 
 			@media (--viewport-sm-up) {
-				padding-block: 1rem;
+				padding-block: var(--space-md);
 			}
 		}
 
 		&.advanced {
-			padding: 0.625rem 0.75rem;
+			padding: var(--space-xs) var(--space-sm);
 
 			@media (--viewport-md-up) {
-				gap: 1.5rem;
-				padding: 0.75rem 1.25rem;
+				gap: var(--space-xl);
+				padding: var(--space-sm) var(--space-lg);
 				border-width: 1px;
 				border-color: var(--c-border-2-v1);
 			}
@@ -152,7 +152,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		display: grid;
 		align-content: center;
 		border-radius: 0.375rem;
-		padding-block: 0.25rem;
+		padding-block: var(--space-4xs);
 		width: 3.5rem;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -171,7 +171,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.info {
 		display: grid;
-		gap: 0.25rem;
+		gap: var(--space-4xs);
 	}
 
 	.primary,
@@ -183,7 +183,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.primary {
-		gap: 0.5rem;
+		gap: var(--space-2xs);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 
@@ -200,7 +200,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			overflow: hidden;
 
 			& :global svg {
-				margin: -0.25em 0 0 0.25em;
+				margin: calc(-1 * var(--space-4xs)) 0 0 var(--space-4xs);
 			}
 		}
 

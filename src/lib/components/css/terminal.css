@@ -2,7 +2,7 @@
 	background-color: var(--c-ink) !important;
 	border-radius: var(--border-radius-md);
 	display: grid;
-	padding: 0.5rem 0.75rem;
+	padding: var(--space-2xs) var(--space-sm);
 }
 
 .terminal-viewport .hljs {

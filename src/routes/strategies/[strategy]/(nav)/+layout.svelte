@@ -24,7 +24,7 @@
 <style lang="postcss">
 	.strategy-layout {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 
 		& .page-heading p {
 			font: var(--f-ui-md-medium);
@@ -32,10 +32,10 @@
 
 		& .subpage :global {
 			display: grid;
-			gap: 2rem;
+			gap: var(--space-lg);
 
 			@media (--viewport-lg-up) {
-				gap: 3rem;
+				gap: var(--space-7xl);
 				grid-template-columns: 14rem auto;
 			}
 		}

@@ -19,12 +19,12 @@
 <style>
 	section {
 		align-items: center;
-		row-gap: 1.5rem;
-		padding-block: 1rem;
+		row-gap: var(--space-xl);
+		padding-block: var(--space-md);
 	}
 
 	section h1 {
-		margin-bottom: 0.75rem;
+		margin-bottom: var(--space-sm);
 	}
 
 	.content {
@@ -32,7 +32,7 @@
 	}
 
 	.media {
-		padding-inline: 2rem;
+		padding-inline: var(--space-3xl);
 		display: flex;
 		justify-content: center;
 	}

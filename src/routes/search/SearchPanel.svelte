@@ -58,7 +58,7 @@
 		gap: 2.5rem;
 
 		@media (--viewport-sm-down) {
-			gap: 1.5rem;
+			gap: var(--space-xl);
 		}
 	}
 
@@ -101,7 +101,7 @@
 
 	ul {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 		padding: 0;
 	}
 

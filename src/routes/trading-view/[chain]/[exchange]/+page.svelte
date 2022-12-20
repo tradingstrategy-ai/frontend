@@ -91,7 +91,7 @@
 		}
 
 		& .ds-2-col {
-			row-gap: 2rem;
+			row-gap: var(--space-3xl);
 		}
 	}
 
@@ -99,8 +99,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 1.25rem 2rem;
-		padding-block: 1.5rem;
+		gap: var(--space-lg) var(--space-3xl);
+		padding-block: var(--space-xl);
 
 		@media (--viewport-xs) {
 			flex-direction: column;
@@ -109,12 +109,12 @@
 	}
 
 	.trading-pairs {
-		margin-top: 1rem;
-		gap: 1rem;
+		margin-top: var(--space-md);
+		gap: var(--space-md);
 
 		@media (--viewport-lg-up) {
-			margin-top: 1.5rem;
-			gap: 1.5rem;
+			margin-top: var(--space-xl);
+			gap: var(--space-xl);
 		}
 	}
 

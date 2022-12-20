@@ -71,9 +71,9 @@
 
 <style lang="postcss">
 	header {
-		margin-top: 1.5rem;
+		margin-top: var(--space-xl);
 		align-items: center;
-		gap: 1.5rem 2.5rem;
+		gap: var(--space-xl) 2.5rem;
 
 		& h2 {
 			font: var(--f-heading-xl-medium);
@@ -81,7 +81,7 @@
 		}
 
 		& p {
-			margin-top: 0.75rem;
+			margin-top: var(--space-sm);
 			font: var(--f-h4-roman);
 		}
 	}

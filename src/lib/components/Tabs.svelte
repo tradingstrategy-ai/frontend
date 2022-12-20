@@ -50,7 +50,7 @@ Used to display tabs and associated component content panels
 		border-radius: 1.25rem;
 		color: var(--c-text-extra-light);
 		cursor: pointer;
-		padding: 1rem;
+		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);
 	}
 

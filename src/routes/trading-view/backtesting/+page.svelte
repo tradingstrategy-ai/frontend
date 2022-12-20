@@ -189,7 +189,7 @@
 <style>
 	main {
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 	}
 
 	header h1 {
@@ -232,7 +232,7 @@
 
 	#form-group-api-key {
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-md);
 		--text-input-width: 100%;
 		--text-input-max-width: 30rem;
 		--button-height: auto;

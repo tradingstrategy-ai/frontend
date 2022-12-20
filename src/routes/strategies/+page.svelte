@@ -22,6 +22,6 @@
 
 <style>
 	main h1 {
-		margin-top: 1.25rem;
+		margin-top: var(--space-lg);
 	}
 </style>

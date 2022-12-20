@@ -29,6 +29,6 @@ Display log messages as a scrollable panel
 
 	.log-panel :global(.log-entry:last-of-type) {
 		scroll-snap-align: end;
-		scroll-margin-block-end: 1rem;
+		scroll-margin-block-end: var(--space-md);
 	}
 </style>

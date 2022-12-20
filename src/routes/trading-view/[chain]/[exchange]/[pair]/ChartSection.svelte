@@ -97,7 +97,7 @@ for the same hovered date. Also displays a time-bucket selector.
 <style lang="postcss">
 	.chart-header {
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-md);
 		margin-bottom: 1em;
 
 		@media (--viewport-md-down) {
@@ -116,7 +116,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.chart-title {
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-md);
 		align-items: baseline;
 		border-bottom: 1px solid #999;
 
@@ -168,7 +168,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		justify-content: center;
 		text-align: center;
 		border-bottom: 1px solid #999;
-		padding-block: 2rem;
+		padding-block: var(--space-3xl);
 		font: var(--f-ui-body-medium);
 		color: var(--c-text-7-v1);
 	}

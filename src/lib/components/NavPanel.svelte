@@ -35,14 +35,14 @@
 		bottom: 0;
 		width: 100%;
 		max-width: 420px;
-		padding: 1rem;
+		padding: var(--space-md);
 		overflow-y: auto;
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--space-xl);
 		grid-auto-rows: min-content;
 		background: var(--c-body-v1);
 		box-shadow: -0.25rem 0 2rem var(--c-shadow-1-v1);
-		transform: translateX(calc(100% + 2rem));
+		transform: translateX(calc(100% + var(--space-3xl)));
 		transition: transform 0.25s;
 
 		&.open {
@@ -54,7 +54,7 @@
 		display: grid;
 		grid-template-columns: min-content auto;
 		align-items: center;
-		padding-bottom: 1rem;
+		padding-bottom: var(--space-md);
 		--logo-height: 32px;
 	}
 
@@ -69,7 +69,7 @@
 	}
 
 	.color-mode-picker {
-		margin-top: 1.5rem;
+		margin-top: var(--space-xl);
 		display: grid;
 	}
 </style>
