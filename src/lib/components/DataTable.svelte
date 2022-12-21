@@ -20,7 +20,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
 
-	const { headerRows, rows, tableAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
+	const { headerRows, rows, tableAttrs, tableBodyAttrs, pluginStates, visibleColumns } = tableViewModel;
 	const filterValue = pluginStates.tableFilter?.filterValue;
 </script>
 
@@ -35,7 +35,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 								<th
 									{...attrs}
 									class={cell.id}
-									class:is-sorted={props.sort?.order}
+									class:sortable={props.sort && !props.sort.disabled}
+									class:sorted={props.sort?.order}
 									on:click={() => props.sort?.toggle?.()}
 								>
 									<Render of={cell.render()} />
@@ -52,7 +53,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 			{/each}
 			{#if hasSearch}
 				<tr>
-					<th class="search-cell" colspan="6">
+					<th class="search-cell" colspan={$visibleColumns.length}>
 						<SearchInput
 							id="position-table-search"
 							name="position-table-search"
@@ -119,7 +120,11 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		&:not(.search-cell) {
 			padding: 1rem 1.25rem;
 
-			&.is-sorted {
+			&.sortable {
+				cursor: pointer;
+			}
+
+			&.sorted {
 				padding: 1rem 2rem 1rem 1.25rem;
 			}
 		}
