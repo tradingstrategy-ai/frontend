@@ -4,6 +4,7 @@
 	background: var(--background-color);
 	border-radius: var(--border-radius-md);
 	border: 2px solid var(--background-color);
+	color: inherit;
 	outline: none;
 	padding: 0.75rem;
 }
