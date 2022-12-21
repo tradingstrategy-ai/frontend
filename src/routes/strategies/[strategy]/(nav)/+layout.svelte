@@ -10,11 +10,6 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<AlertList status="warning">
-		<AlertItem title="Trade execution is currently in beta">
-			We are still finishing out the interface. Data and charts might be incorrect.
-		</AlertItem>
-	</AlertList>
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p>{summary.long_description}</p>
@@ -24,6 +19,11 @@
 		<StrategyNav strategyId={summary.id} currentPath={$page.url.pathname} />
 		<slot />
 	</div>
+	<AlertList status="warning">
+		<AlertItem title="Trade execution is currently in beta">
+			We are still finishing out the interface. Data and charts might be incorrect.
+		</AlertItem>
+	</AlertList>
 </main>
 
 <style lang="postcss">
@@ -31,9 +31,9 @@
 		display: grid;
 		gap: 1rem;
 
-		& :global(.alert-list) {
+		& :global(> .alert-list) {
 			width: 100%;
-			margin-bottom: 1.5rem;
+			margin-top: 1.5rem;
 		}
 
 		& .page-heading p {
