@@ -22,8 +22,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
 
-	const { headerRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
-
+	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
 	const filterValue = pluginStates.tableFilter?.filterValue;
 </script>
 
@@ -35,10 +34,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 			{/if}
 		</TableHeader>
 
-		<TableBody attrs={$tableBodyAttrs} rows={$rows} />
+		<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} />
 
 		{#if hasPagination}
-			<TableFooter totalEntriesNumber={999} />
+			<TableFooter page={pluginStates.page} totalRowCount={$rows.length} />
 		{/if}
 	</table>
 </div>

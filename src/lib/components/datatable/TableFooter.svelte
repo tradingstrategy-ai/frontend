@@ -1,9 +1,52 @@
 <script lang="ts">
-	export let currentPage: number = 1;
-	export let threshold: number = 10;
-	export let totalEntriesNumber: number;
+	import type { Readable, Writable } from 'svelte/store';
+	import PageButton from './PageButton.svelte';
 
-	$: totalPagesNumber = Math.round(totalEntriesNumber / threshold);
+	// type declaration not exported from svelte-headless-tables; see:
+	// https://github.com/bryanmylee/svelte-headless-table/blob/main/src/lib/plugins/addPagination.ts
+	interface PaginationState {
+		pageSize: Writable<number>;
+		pageIndex: Writable<number>;
+		pageCount: Readable<number>;
+		hasPreviousPage: Readable<boolean>;
+		hasNextPage: Readable<boolean>;
+	}
+
+	export let page: PaginationState;
+	export let totalRowCount: number;
+
+	const { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = page;
+
+	$: firstRowIndex = $pageIndex * $pageSize + 1;
+	$: lastRowIndex = Math.min(firstRowIndex + $pageSize - 1, totalRowCount);
+	$: visiblePageIndices = getVisibilePageIndices($pageCount, $pageIndex);
+
+	function handlePageButtonClick({ target }: { target: HTMLButtonElement }) {
+		const index = parseInt(target.value);
+		if (Number.isFinite(index)) {
+			$pageIndex = index;
+		}
+	}
+
+	function getVisibilePageIndices(length: number, index: number) {
+		const max = length - 1;
+		const startThreshold = 4;
+		const endThreshold = max - startThreshold;
+		return [...Array(length).keys()].filter((i) => {
+			if (length <= 7) return true;
+			if (i === 0 || i === max) return true;
+			if (i >= index - 1 && i <= index + 1) return true;
+			if (index < startThreshold && i <= startThreshold) return true;
+			if (index > endThreshold && i >= endThreshold) return true;
+			return false;
+		});
+	}
+
+	function hasPageIndexGap(current: number) {
+		const index = visiblePageIndices.indexOf(current);
+		const previous = visiblePageIndices[index - 1];
+		return Number.isFinite(previous) && current - previous !== 1;
+	}
 </script>
 
 <tfoot>
@@ -11,24 +54,20 @@
 		<td colspan="100">
 			<div class="data-table-pagination">
 				<div class="status">
-					<span>Showing</span>
-					<span class="first-page-entry-number">{currentPage}</span>
-					<span>to</span>
-					<span class="last-page-entry-number">{threshold + currentPage - 1}</span>
-					<span>of</span>
-					<span class="total-entries-number">{totalEntriesNumber}</span>
+					Showing {firstRowIndex} to {lastRowIndex} of {totalRowCount}
 				</div>
-				<nav>
-					<button disabled={currentPage === 1}>Previous</button>
-					<button>1</button>
-					<button>2</button>
-					<button>3</button>
-					<button>4</button>
-					<button>5</button>
-					<button disabled>...</button>
-					<span class="total-pages-number">{totalPagesNumber}</span>
-					<button disabled={currentPage === totalEntriesNumber}>Next</button>
-				</nav>
+				{#if $pageCount > 1}
+					<nav on:click={handlePageButtonClick}>
+						<PageButton label="Previous" value={$pageIndex - 1} disabled={!$hasPreviousPage} />
+						{#each visiblePageIndices as pageIdx}
+							{#if hasPageIndexGap(pageIdx)}
+								<span class="gap-indicator">…</span>
+							{/if}
+							<PageButton label={pageIdx + 1} value={pageIdx} disabled={$pageIndex === pageIdx} />
+						{/each}
+						<PageButton label="Next" value={$pageIndex + 1} disabled={!$hasNextPage} />
+					</nav>
+				{/if}
 			</div>
 		</td>
 	</tr>
@@ -47,31 +86,13 @@
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		justify-content: space-between;
 		width: 100%;
-	}
 
-	nav {
-		cursor: pointer;
-	}
+		& nav {
+			display: flex;
 
-	nav:hover button {
-		color: var(--c-text-ultra-light);
-	}
-
-	button {
-		background: none;
-		border: none;
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-		padding: none;
-		transition: color var(--time-xs) ease-out;
-
-		&[disabled] {
-			color: var(--c-text-ultra-light) !important;
-			cursor: not-allowed;
-		}
-
-		&:not([disabled]):hover {
-			color: var(--c-text) !important;
+			&:hover .gap-indicator {
+				color: var(--c-text-ultra-light);
+			}
 		}
 	}
 </style>

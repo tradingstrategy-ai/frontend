@@ -2,7 +2,7 @@
 	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
-	import { addSortBy, addTableFilter, addColumnOrder } from 'svelte-headless-table/plugins';
+	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, DateTime } from '$lib/components';
@@ -31,7 +31,8 @@
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'position_id', order: 'asc' }],
 			toggleOrder: ['asc', 'desc']
-		})
+		}),
+		page: addPagination()
 	});
 
 	const tableColumns = table.createColumns([
