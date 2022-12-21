@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
-	import { PageHeading } from '$lib/components';
+	import { AlertItem, AlertList, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
 
 	export let data: LayoutData;
@@ -10,6 +10,11 @@
 </script>
 
 <main class="strategy-layout ds-container">
+	<AlertList status="warning">
+		<AlertItem title="Trade execution is currently in beta">
+			We are still finishing out the interface. Data and charts might be incorrect.
+		</AlertItem>
+	</AlertList>
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p>{summary.long_description}</p>
@@ -25,6 +30,11 @@
 	.strategy-layout {
 		display: grid;
 		gap: 1rem;
+
+		& :global(.alert-list) {
+			width: 100%;
+			margin-bottom: 1.5rem;
+		}
 
 		& .page-heading p {
 			font: var(--f-ui-md-medium);
