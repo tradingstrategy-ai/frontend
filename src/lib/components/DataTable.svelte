@@ -17,11 +17,11 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	import { DataTablePagination, SearchInput } from '$lib/components';
 
 	export let tableViewModel: TableViewModel<any, any>;
-	export let searchInputValue: string = '';
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
 
-	const { headerRows, rows, tableAttrs, tableBodyAttrs } = tableViewModel;
+	const { headerRows, rows, tableAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
+	const filterValue = pluginStates.tableFilter?.filterValue;
 </script>
 
 <div class="data-table">
@@ -57,7 +57,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 							id="position-table-search"
 							name="position-table-search"
 							placeholder="Find in the table"
-							bind:value={searchInputValue}
+							bind:value={$filterValue}
 						/>
 					</th>
 				</tr>

@@ -4,6 +4,7 @@
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder } from 'svelte-headless-table/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, DateTime } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import FrozenOn from './FrozenOn.svelte';
@@ -18,9 +19,15 @@
 
 	$: positionsStore.set(positions);
 
+	function toISODate(epoch: number) {
+		return epoch && fromUnixTime(epoch).toISOString();
+	}
+
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
-		tableFilter: addTableFilter(),
+		tableFilter: addTableFilter({
+			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
+		}),
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'position_id', order: 'asc' }],
 			toggleOrder: ['asc', 'desc']
@@ -70,18 +77,21 @@
 		}),
 		table.column({
 			header: 'Opened',
-			accessor: 'opened_at',
-			cell: ({ value }) => createRender(DateTime, { epoch: value })
+			id: 'opened_at',
+			accessor: ({ opened_at }) => toISODate(opened_at),
+			cell: ({ value }) => createRender(DateTime, { date: value })
 		}),
 		table.column({
 			header: 'Closed',
-			accessor: 'closed_at',
-			cell: ({ value }) => createRender(DateTime, { epoch: value })
+			id: 'closed_at',
+			accessor: ({ closed_at }) => toISODate(closed_at),
+			cell: ({ value }) => createRender(DateTime, { date: value })
 		}),
 		table.column({
 			header: 'Frozen at',
-			accessor: 'frozen_at',
-			cell: ({ value }) => createRender(DateTime, { epoch: value })
+			id: 'frozen_at',
+			accessor: ({ frozen_at }) => toISODate(frozen_at),
+			cell: ({ value }) => createRender(DateTime, { date: value })
 		}),
 		table.column({
 			header: '',
@@ -101,13 +111,12 @@
 	const tableViewModel = table.createViewModel(tableColumns);
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
-	const { filterValue } = pluginStates.tableFilter;
 
 	$: $columnIdOrder = ['position_id', 'ticker'].concat(columns);
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} bind:searchInputValue={$filterValue} />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} />
 </div>
 
 <style lang="postcss">
