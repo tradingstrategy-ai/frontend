@@ -13,7 +13,7 @@
 	const statusColumns = {
 		open: ['profitability', 'value', 'opened_at', 'details_cta'],
 		closed: ['profitability', 'value_at_open', 'closed_at', 'details_cta'],
-		frozen: ['frozen_on', 'frozen_value', 'frozen_at', 'details_cta']
+		frozen: ['frozen_status', 'frozen_value', 'frozen_at', 'details_cta']
 	};
 </script>
 
@@ -47,7 +47,7 @@
 	.position-index {
 		display: grid;
 		gap: 1.5rem;
-		align-items: start;
+		align-content: start;
 		overflow: auto;
 	}
 </style>

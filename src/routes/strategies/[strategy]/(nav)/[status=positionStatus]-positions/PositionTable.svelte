@@ -7,7 +7,7 @@
 	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, DateTime } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
-	import FrozenOn from './FrozenOn.svelte';
+	import FrozenStatus from './FrozenStatus.svelte';
 
 	export let positions: TradingPosition[];
 	export let status: string;
@@ -35,6 +35,10 @@
 		page: addPagination()
 	});
 
+	function getLastTrade({ trades }) {
+		return Object.values(trades).at(-1);
+	}
+
 	const tableColumns = table.createColumns([
 		table.column({
 			header: 'Id',
@@ -51,14 +55,9 @@
 		}),
 		table.column({
 			header: 'Frozen on',
-			id: 'frozen_on',
-			accessor: ({ trades }) => {
-				const lastTrade = Object.values(trades).at(-1);
-				const quantity = lastTrade.planned_quantity;
-				if (!quantity) return '---';
-				return quantity > 0 ? 'buy' : 'sell';
-			},
-			cell: ({ value }) => createRender(FrozenOn, { value })
+			id: 'frozen_status',
+			accessor: (position) => getLastTrade(position)?.planned_quantity,
+			cell: ({ value }) => createRender(FrozenStatus, { lastTradeQuantity: value })
 		}),
 		table.column({
 			header: 'Value',
@@ -73,7 +72,7 @@
 		table.column({
 			header: 'Value',
 			id: 'frozen_value',
-			accessor: ({ trades }) => Object.values(trades).at(-1)?.planned_reserve,
+			accessor: (position) => getLastTrade(position)?.planned_reserve,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({

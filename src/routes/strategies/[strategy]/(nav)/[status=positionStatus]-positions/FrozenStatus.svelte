@@ -1,13 +1,14 @@
 <script lang="ts">
-	export let value: 'buy' | 'sell';
+	export let lastTradeQuantity: number;
+	$: status = lastTradeQuantity > 0 ? 'buy' : 'sell';
 </script>
 
-<span class="frozen-on {value}">
-	{value}
+<span class="frozen-status {status}">
+	{status}
 </span>
 
 <style lang="postcss">
-	.frozen-on {
+	.frozen-status {
 		display: inline-flex;
 		gap: 0.5ex;
 		text-transform: capitalize;
