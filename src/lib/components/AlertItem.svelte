@@ -21,7 +21,8 @@ Display a single alert item (should always be nested within AlertList).
 		<span class="icon"><Icon name="warning" /></span>
 		<span>
 			{#if title}
-				<strong>{title}:</strong>
+				<strong>{title}<span class="desktop">:</span></strong>
+				<br />
 			{/if}
 			<slot />
 		</span>
@@ -45,6 +46,20 @@ Display a single alert item (should always be nested within AlertList).
 
 		& strong {
 			font-weight: 700;
+		}
+
+		& br {
+			margin-bottom: 0.5rem;
+
+			@media (--viewport-lg-up) {
+				display: none;
+			}
+		}
+
+		& .desktop {
+			@media (--viewport-md-down) {
+				display: none;
+			}
 		}
 	}
 </style>
