@@ -14,10 +14,12 @@ as children. The alert box is only displayed if one or more items are displayed
 ```
 -->
 <script lang="ts">
+	let classes = '';
+	export { classes as class };
 	export let status: 'error' | 'success' | 'warning' = 'error';
 </script>
 
-<ul class="alert-list {status}"><slot /></ul>
+<ul class="alert-list {status} {classes}"><slot /></ul>
 
 <style lang="postcss">
 	.alert-list {
