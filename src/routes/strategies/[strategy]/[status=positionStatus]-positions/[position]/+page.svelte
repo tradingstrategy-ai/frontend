@@ -2,14 +2,15 @@
 	import type { PageData } from './$types';
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
-	import { getValueAtPeak } from 'trade-executor-frontend/state/positionHelpers';
+	import { formatDuration } from '$lib/helpers/formatters';
+	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
 	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import TradeTable from './TradeTable.svelte';
 
 	export let data: PageData;
 
-	const { summary, state, position, status } = data;
+	const { summary, state, position } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 </script>
@@ -26,23 +27,36 @@
 				{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
 			</a>
 		</DataBox>
-		<DataBox label="Profitability">
-			<Profitability value={currentStats.profitability} />
+
+		<DataBox label="Opened">
+			<DateTime epoch={position.opened_at} />
 		</DataBox>
-		<DataBox label="Quantity">
-			{formatTokenAmount(currentStats.quantity)}
-			{position.pair.base.token_symbol}
-		</DataBox>
-		{#if status === 'open'}
-			<DataBox label="Opened">
-				<DateTime epoch={position.opened_at} />
-			</DataBox>
-		{:else if status === 'closed'}
+
+		{#if position.closed_at}
 			<DataBox label="Closed">
 				<DateTime epoch={position.closed_at} />
 			</DataBox>
+			<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
 		{/if}
-		<DataBox label="Value now" value={formatDollar(currentStats.value)} />
+
+		<DataBox label="Profitability">
+			<Profitability value={currentStats.profitability} />
+		</DataBox>
+
+		{#if position.closed_at}
+			<DataBox label="Last revaluation">
+				<DateTime epoch={position.last_pricing_at} />
+			</DataBox>
+			<DataBox label="Value at open" value={formatDollar(getValueAtOpen(positionStats))} />
+			<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
+		{:else}
+			<DataBox label="Quantity">
+				{formatTokenAmount(currentStats.quantity)}
+				{position.pair.base.token_symbol}
+			</DataBox>
+			<DataBox label="Value now" value={formatDollar(currentStats.value)} />
+		{/if}
+
 		<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
 	</DataBoxes>
 
