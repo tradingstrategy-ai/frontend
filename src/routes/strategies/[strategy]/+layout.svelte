@@ -10,6 +10,8 @@
 	$: breadcrumbs = {
 		[summary.id]: summary.name,
 		'open-positions': 'Open positions',
+		'closed-positions': 'Closed positions',
+		'frozen-positions': 'Frozen positions',
 		performance: 'Performance',
 		'decision-making': 'Decision making',
 		status: 'Instance status',

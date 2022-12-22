@@ -1,0 +1,9 @@
+:root {
+	--time-xxs: 0.12s;
+	--time-xs: 0.16s;
+	--time-sm: 0.2s;
+	--time-md: 0.24s;
+	--time-lg: 0.32s;
+	--time-xl: 0.36s;
+	--time-xxl: 0.44s;
+}
