@@ -4,7 +4,7 @@
 	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { formatDuration } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
+	import { AlertList, AlertItem, DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import TradeTable from './TradeTable.svelte';
 
@@ -13,6 +13,8 @@
 	const { summary, state, position } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
+	const trades = Object.values(position.trades);
+	const hasFailedTrades = trades.some((trade) => trade.failed_at);
 </script>
 
 <main class="ds-container">
@@ -21,54 +23,64 @@
 		<h2>Position #{position.position_id}</h2>
 	</PageHeading>
 
-	<DataBoxes>
-		<DataBox label="Pair">
-			<a href={position.pair.info_url}>
-				{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
-			</a>
-		</DataBox>
-
-		<DataBox label="Opened">
-			<DateTime epoch={position.opened_at} />
-		</DataBox>
-
-		{#if position.closed_at}
-			<DataBox label="Closed">
-				<DateTime epoch={position.closed_at} />
+	<section>
+		<DataBoxes>
+			<DataBox label="Pair">
+				<a href={position.pair.info_url}>
+					{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
+				</a>
 			</DataBox>
-			<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
+
+			<DataBox label="Opened">
+				<DateTime epoch={position.opened_at} />
+			</DataBox>
+
+			{#if position.closed_at}
+				<DataBox label="Closed">
+					<DateTime epoch={position.closed_at} />
+				</DataBox>
+				<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
+			{/if}
+
+			<DataBox label="Profitability">
+				<Profitability value={currentStats.profitability} />
+			</DataBox>
+
+			{#if position.closed_at}
+				<DataBox label="Last revaluation">
+					<DateTime epoch={position.last_pricing_at} />
+				</DataBox>
+				<DataBox label="Value at open" value={formatDollar(getValueAtOpen(positionStats))} />
+				<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
+			{:else}
+				<DataBox label="Quantity">
+					{formatTokenAmount(currentStats.quantity)}
+					{position.pair.base.token_symbol}
+				</DataBox>
+				<DataBox label="Value now" value={formatDollar(currentStats.value)} />
+			{/if}
+
+			<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
+		</DataBoxes>
+
+		{#if hasFailedTrades}
+			<AlertList status="error">
+				<AlertItem title="Error">This position has one or more failed trades.</AlertItem>
+			</AlertList>
 		{/if}
 
-		<DataBox label="Profitability">
-			<Profitability value={currentStats.profitability} />
-		</DataBox>
-
-		{#if position.closed_at}
-			<DataBox label="Last revaluation">
-				<DateTime epoch={position.last_pricing_at} />
-			</DataBox>
-			<DataBox label="Value at open" value={formatDollar(getValueAtOpen(positionStats))} />
-			<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
-		{:else}
-			<DataBox label="Quantity">
-				{formatTokenAmount(currentStats.quantity)}
-				{position.pair.base.token_symbol}
-			</DataBox>
-			<DataBox label="Value now" value={formatDollar(currentStats.value)} />
-		{/if}
-
-		<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
-	</DataBoxes>
-
-	<TradeTable trades={Object.values(position.trades)} />
+		<TradeTable {trades} />
+	</section>
 </main>
 
 <style lang="postcss">
-	main :global .data-boxes {
-		margin-block: 1rem 3rem;
+	section {
+		margin-top: 1rem;
+		display: grid;
+		gap: 3rem;
 
 		@media (--viewport-sm-down) {
-			margin-bottom: 2rem;
+			gap: 2rem;
 		}
 	}
 </style>
