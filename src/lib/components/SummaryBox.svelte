@@ -20,10 +20,12 @@ Supports optional "cta" slot to include a button CTA.
 
 <section class="summary-box {classes}">
 	<header class:has-cta={$$slots.cta}>
-		<h3>{title}</h3>
-		{#if subtitle}
-			<p>{subtitle}</p>
-		{/if}
+		<div class="description">
+			<h3>{title}</h3>
+			{#if subtitle}
+				<p>{subtitle}</p>
+			{/if}
+		</div>
 		{#if $$slots.cta}
 			<div class="cta">
 				<slot name="cta" />
@@ -38,9 +40,9 @@ Supports optional "cta" slot to include a button CTA.
 <style lang="postcss">
 	.summary-box {
 		background: var(--c-background-5);
-		border-radius: 1.25rem;
-		gap: 1.25rem;
-		padding: 1.5rem 1.5rem;
+		border-radius: var(--radius-md);
+		gap: var(--space-ls);
+		padding: var(--space-lg) var(--space-lg);
 
 		&,
 		& .inner {
@@ -48,18 +50,23 @@ Supports optional "cta" slot to include a button CTA.
 			place-content: start stretch;
 		}
 
+		& .description {
+			display: grid;
+			gap: var(--space-sm);
+		}
+
 		& :global .data-box {
 			background: var(--c-background-4);
 		}
 
 		@media (--viewport-md-down) {
-			padding: 1.25rem 1rem;
+			padding: var(--space-ls) var(--space-md);
 		}
 
 		& header {
 			display: grid;
-			gap: 0.5rem;
-			margin-bottom: 0.125rem;
+			gap: var(--space-ss);
+			margin-bottom: var(--space-xxxs);
 
 			& h3 {
 				font: var(--f-ui-xxl-medium);
@@ -77,28 +84,22 @@ Supports optional "cta" slot to include a button CTA.
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
-			& .cta {
-				display: flex;
-			}
-
 			&.has-cta {
 				@media (--viewport-md-up) {
 					grid-template-columns: 1fr auto;
 
 					& h3 {
 						grid-column: 1/2;
-						grid-row: 1/2;
 					}
 
 					& p {
 						grid-column: 1/3;
-						grid-row: 2/3;
 					}
 				}
 
 				@media (--viewport-md-down) {
 					& :global(.button) {
-						margin: 0.75rem 0 0;
+						margin: var(--space-sl) 0 0;
 						width: 100%;
 					}
 				}
@@ -106,7 +107,7 @@ Supports optional "cta" slot to include a button CTA.
 		}
 
 		& .inner {
-			gap: var(--inner-gap, 1.25rem);
+			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
 		}
 	}
@@ -116,11 +117,11 @@ Supports optional "cta" slot to include a button CTA.
 		&,
 		& .inner {
 			display: grid;
-			gap: 1.25rem;
+			gap: var(--space-ls);
 			place-content: start stretch;
 
 			@media (--viewport-md-down) {
-				gap: 1rem;
+				gap: var(--space-md);
 			}
 		}
 	}

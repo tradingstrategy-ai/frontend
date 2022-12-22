@@ -16,12 +16,12 @@
 
 <style lang="postcss">
 	section {
-		gap: 2rem;
+		gap: var(--space-xl);
 		justify-items: center;
 		padding-block: 2.5rem;
 
 		@media (--viewport-md-up) {
-			gap: 3rem;
+			gap: var(--space-xxxxxl);
 			padding-block: 5rem;
 		}
 
@@ -56,7 +56,7 @@
 	.cta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 2rem;
+		gap: var(--space-xl);
 		justify-content: center;
 	}
 </style>

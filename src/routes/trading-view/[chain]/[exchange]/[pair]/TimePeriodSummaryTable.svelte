@@ -68,7 +68,7 @@ Display summary performance table for various periods.
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 			white-space: nowrap;
-			padding-inline: 0.5rem;
+			padding-inline: var(--space-ss);
 
 			&.col-heading {
 				height: 1.4em;
@@ -81,10 +81,10 @@ Display summary performance table for various periods.
 			}
 
 			&:not(.col-heading) {
-				padding-block: 0.75rem;
+				padding-block: var(--space-sl);
 
 				@media (--viewport-md-up) {
-					padding-block: 1rem;
+					padding-block: var(--space-md);
 
 					&:not(:last-child) {
 						border-bottom: 1px solid var(--c-border-1-v1);

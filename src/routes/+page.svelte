@@ -24,7 +24,7 @@
 	<HeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<section class="ds-container top-momentum" style:gap="1.5rem">
+		<section class="ds-container top-momentum" style:gap="var(--space-lg)">
 			<h2>Top trades</h2>
 			<div class="ds-2-col">
 				<TopMomentumTile
@@ -78,7 +78,7 @@
 
 <style lang="postcss">
 	section {
-		padding-block: 2.5rem;
+		padding-block: var(--space-xxxl);
 
 		@media (--viewport-md-up) {
 			padding-block: 4rem;
@@ -91,12 +91,12 @@
 
 	.top-momentum h2 {
 		@media (--viewport-md-up) {
-			margin-bottom: 2.5rem;
+			margin-bottom: var(--space-xxxl);
 		}
 	}
 
 	.strategies {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		& > div {
 			display: flex;
@@ -106,7 +106,7 @@
 			gap: 4rem;
 
 			@media (--viewport-md-up) {
-				margin-top: 0.5rem;
+				margin-top: var(--space-ss);
 			}
 		}
 
@@ -115,9 +115,9 @@
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: var(--c-text-2-v1);
 			text-transform: uppercase;
-			padding: 0.75rem 1.25rem;
+			padding: var(--space-sl) var(--space-ls);
 			border: 1px solid var(--c-parchment-super-dark);
-			border-radius: 2rem;
+			border-radius: var(--radius-xxl);
 		}
 
 		& p {
@@ -126,17 +126,17 @@
 	}
 
 	.blog {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 		justify-items: center;
 		padding-block: 4.5rem;
 	}
 
 	.blog-posts {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-md-up) {
-			margin-top: 2rem;
+			margin-top: var(--space-xl);
 			grid-template-columns: 1fr 1fr;
 		}
 

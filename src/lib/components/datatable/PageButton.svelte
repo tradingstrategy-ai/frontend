@@ -15,7 +15,7 @@
 	span {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		padding: 0 0.25rem;
+		padding: 0 var(--space-xxs);
 	}
 
 	button {

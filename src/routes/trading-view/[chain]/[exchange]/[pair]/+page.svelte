@@ -108,7 +108,7 @@ Render the pair trading page
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
@@ -116,14 +116,14 @@ Render the pair trading page
 	}
 
 	.info {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
-			gap: 3.5rem;
+			gap: var(--space-xxxxxxl);
 		}
 
 		& .ds-2-col {
-			row-gap: 2rem;
+			row-gap: var(--space-xl);
 			align-items: start;
 		}
 	}
@@ -132,8 +132,8 @@ Render the pair trading page
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 1.25rem 2rem;
-		padding-block: 1.5rem;
+		gap: var(--space-ls) var(--space-xl);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-xs) {
 			flex-direction: column;
@@ -148,7 +148,7 @@ Render the pair trading page
 
 	.time-period-summary {
 		display: grid;
-		gap: 2.25rem;
+		gap: var(--space-xxl);
 
 		@media (--viewport-lg-up) {
 			gap: 4rem;
@@ -156,7 +156,7 @@ Render the pair trading page
 
 		& header {
 			display: grid;
-			gap: 0.75rem;
+			gap: var(--space-sl);
 		}
 
 		& h2 {

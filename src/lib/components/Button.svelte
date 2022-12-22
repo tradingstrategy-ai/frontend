@@ -46,13 +46,13 @@
 <style lang="postcss">
 	.button {
 		display: inline-flex;
-		gap: var(--button-gap, 0.625rem);
+		gap: var(--button-gap, var(--space-sm));
 		justify-content: center;
 		align-items: center;
 		width: var(--button-width, auto);
-		padding: var(--button-padding, 0.75rem 1rem);
+		padding: var(--button-padding, var(--space-sl) var(--space-md));
 		border: 1px solid transparent;
-		border-radius: var(--button-border-radius, var(--border-radius-md));
+		border-radius: var(--button-border-radius, var(--radius-md));
 		font: var(--button-font, var(--f-ui-md-medium));
 		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
 		text-decoration: none;
@@ -94,31 +94,31 @@
 	}
 
 	.xs {
-		--button-border-radius: var(--border-radius-lg);
-		--button-gap: 0.5rem;
-		--button-padding: 0.375rem 0.75rem;
+		--button-border-radius: var(--radius-lg);
+		--button-gap: var(--space-ss);
+		--button-padding: var(--space-xs) var(--space-sl);
 		--button-font: var(--f-ui-sm-medium);
 		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
-		--button-padding: 0.5rem 0.75rem;
-		--button-gap: 0.5rem;
+		--button-padding: var(--space-ss) var(--space-sl);
+		--button-gap: var(--space-ss);
 	}
 	.lg {
-		--button-gap: 0.625rem;
-		--button-padding: 1rem;
+		--button-gap: var(--space-sm);
+		--button-padding: var(--space-md);
 		--button-font: var(--f-ui-lg-medium);
 		--button-letter-spacing: var(--f-ui-lg-spacing);
 	}
 	.xl {
-		--button-gap: 0.75rem;
-		--button-padding: 1rem 1.25rem;
+		--button-gap: var(--space-sl);
+		--button-padding: var(--space-md) var(--space-md);
 		--button-font: var(--f-ui-xl-medium);
 		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}
 	.xxl {
-		--button-gap: 0.75rem;
-		--button-padding: 1.25rem;
+		--button-gap: var(--space-sl);
+		--button-padding: var(--space-md);
 		--button-font: var(--f-ui-xl-medium);
 		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}

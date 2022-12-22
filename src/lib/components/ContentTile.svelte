@@ -42,10 +42,10 @@ Trading data or Community pages. The entire tile can be a targetable CTA, or
 	.tile {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: var(--space-xl);
 		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0.5rem;
-		padding: 2.5rem 1.5rem;
+		border-radius: var(--radius-xs);
+		padding: 2.5rem var(--space-lg);
 		text-align: center;
 		--social-icon-size: 4rem;
 		--social-icon-scale: 0.6;
@@ -57,7 +57,7 @@ Trading data or Community pages. The entire tile can be a targetable CTA, or
 
 	.header {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 		justify-items: center;
 	}
 
@@ -72,7 +72,7 @@ Trading data or Community pages. The entire tile can be a targetable CTA, or
 	.text :global {
 		flex: 1;
 		display: grid;
-		gap: 2rem;
+		gap: var(--space-xl);
 		align-content: start;
 		font: var(--f-ui-lg-roman);
 		letter-spacing: var(--f-ui-lg-spacing, normal);

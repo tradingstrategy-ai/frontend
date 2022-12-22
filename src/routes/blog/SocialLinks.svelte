@@ -28,7 +28,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	.layout--index {
@@ -37,7 +37,7 @@
 
 	.layout--post {
 		flex-direction: column;
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 	}
 
 	.social-link {
@@ -79,12 +79,12 @@
 	@media (--viewport-md-up) {
 		.layout--index {
 			justify-content: start;
-			column-gap: 2.5rem;
+			column-gap: var(--space-xxxl);
 		}
 
 		.layout--post {
 			flex-direction: row;
-			margin-bottom: 2rem;
+			margin-bottom: var(--space-xl);
 		}
 
 		.layout--post .social-link {

@@ -115,7 +115,7 @@
 			transition: transform 0.35s;
 
 			&:not(.open) {
-				transform: translateY(calc(100vh + 2rem));
+				transform: translateY(calc(100vh + var(--space-xl)));
 			}
 		}
 	}
@@ -123,7 +123,7 @@
 	header {
 		display: grid;
 		grid-template-columns: 1fr auto;
-		padding: 1rem;
+		padding: var(--space-md);
 
 		@media (--viewport-lg-up) {
 			display: none;
@@ -143,23 +143,23 @@
 
 	section {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--space-ls);
 
 		@media (--viewport-md-down) {
-			padding: 0.75rem 1rem 6.25rem 1rem;
+			padding: var(--space-sl) var(--space-md) 6.25rem var(--space-md);
 		}
 	}
 
 	.filters {
 		display: grid;
-		gap: 2.25rem;
+		gap: var(--space-xxl);
 	}
 
 	footer {
 		position: fixed;
 		width: 100%;
 		bottom: 0;
-		padding: 0.75rem;
+		padding: var(--space-sl);
 		display: grid;
 		background: var(--c-body-v1);
 		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);

@@ -14,7 +14,7 @@
 <style lang="postcss">
 	menu {
 		display: flex;
-		gap: var(--menu-gap, 1rem 0.5rem);
+		gap: var(--menu-gap, var(--space-md) var(--space-ss));
 		margin: 0;
 		padding: 0;
 

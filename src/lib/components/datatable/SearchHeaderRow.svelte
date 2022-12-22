@@ -12,7 +12,7 @@
 
 <style lang="postcss">
 	th {
-		padding: 0.5rem 0;
+		padding: var(--space-ss) 0;
 	}
 
 	div {

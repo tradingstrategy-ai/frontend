@@ -134,7 +134,7 @@
 <style>
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 	}
 
 	.section-wrapper {
@@ -144,7 +144,7 @@
 
 	section {
 		grid-template-columns: repeat(auto-fit, minmax(min(var(--container-width), 29.5rem), 1fr));
-		gap: 2rem;
+		gap: var(--space-xl);
 	}
 
 	section h2 {

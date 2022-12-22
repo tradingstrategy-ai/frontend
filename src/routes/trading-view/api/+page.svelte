@@ -131,8 +131,8 @@
 	}
 
 	.instructions {
-		padding: 1rem;
-		margin-bottom: 1rem;
+		padding: var(--space-md);
+		margin-bottom: var(--space-md);
 		border: 1px solid transparent;
 		font-size: 0.875rem;
 	}
@@ -147,6 +147,6 @@
 
 	#form-group-registration {
 		display: grid;
-		gap: 2rem;
+		gap: var(--space-xl);
 	}
 </style>

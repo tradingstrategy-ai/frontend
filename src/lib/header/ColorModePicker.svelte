@@ -46,7 +46,7 @@
 <style>
 	button {
 		display: flex;
-		gap: 0.5rem;
+		gap: var(--space-ss);
 		justify-content: center;
 		border: none;
 		padding: 0;
@@ -67,14 +67,14 @@
 
 	menu {
 		display: grid;
-		margin-block: 1rem 0;
+		margin-block: var(--space-md) 0;
 		padding: 0;
 		list-style-type: none;
 	}
 
 	li {
-		border-radius: 0.5rem;
-		padding-block: 0.5rem;
+		border-radius: var(--radius-xs);
+		padding-block: var(--space-ss);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text-1-v1);

@@ -25,47 +25,47 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 
 <style lang="postcss">
 	.data-box {
-		border-radius: var(--border-radius-md);
+		border-radius: var(--radius-md);
 		background: var(--c-background-5);
 		display: grid;
 
 		&.xs {
-			gap: 0.5rem;
-			padding: 1.125rem 1.25rem;
+			gap: var(--space-ss);
+			padding: var(--space-ml) var(--space-ls);
 
 			@media (--viewport-sm-down) {
-				gap: 0.25rem;
-				padding: 0.875rem 1rem;
+				gap: var(--space-xxs);
+				padding: var(--space-ms) var(--space-md);
 			}
 		}
 
 		&.sm {
-			gap: 0.75rem;
-			padding: 1.25rem;
+			gap: var(--space-sl);
+			padding: var(--space-ls);
 
 			@media (--viewport-sm-down) {
-				gap: 0.375rem;
-				padding: 1rem;
+				gap: var(--space-xs);
+				padding: var(--space-md);
 			}
 		}
 
 		&.md {
-			gap: 0.875rem;
-			padding: 1.5rem;
+			gap: var(--space-ms);
+			padding: var(--space-lg);
 
 			@media (--viewport-sm-down) {
-				gap: 0.5rem;
-				padding: 1.25rem;
+				gap: var(--space-ss);
+				padding: var(--space-ls);
 			}
 		}
 
 		&.lg {
-			gap: 1rem;
-			padding: 1.75rem;
+			gap: var(--space-md);
+			padding: var(--space-ll);
 
 			@media (--viewport-sm-down) {
-				gap: 0.625rem;
-				padding: 1.375rem;
+				gap: var(--space-sm);
+				padding: var(--space-ls);
 			}
 		}
 	}

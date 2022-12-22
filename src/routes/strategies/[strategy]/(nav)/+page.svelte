@@ -52,12 +52,12 @@
 <style lang="postcss">
 	section {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--space-ls);
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		place-items: start stretch;
 
 		@media (--viewport-md-down) {
-			gap: 1.5rem;
+			gap: var(--space-lg);
 		}
 	}
 </style>

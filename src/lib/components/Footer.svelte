@@ -39,13 +39,13 @@
 		padding: 5rem 0;
 
 		@media (--viewport-sm-down) {
-			gap: 1.25rem;
-			padding: 2.5rem 1rem;
+			gap: var(--space-ls);
+			padding: 2.5rem var(--space-md);
 		}
 
 		&.small {
 			--social-icon-size: 44px;
-			gap: 1.25rem;
+			gap: var(--space-ls);
 			padding: 0;
 		}
 	}

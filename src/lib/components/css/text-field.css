@@ -2,7 +2,7 @@
 	--background-color: var(--c-background-5);
 	--active-color: var(--c-text-extra-light);
 	background: var(--background-color);
-	border-radius: var(--border-radius-md);
+	border-radius: var(--radius-md);
 	border: 2px solid var(--background-color);
 	color: inherit;
 	outline: none;

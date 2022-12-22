@@ -81,8 +81,8 @@ https://search.google.com/structured-data/testing-tool
 <style lang="postcss">
 	ol {
 		list-style-type: none;
-		margin-bottom: 0.75rem;
-		padding: 0.75rem 0;
+		margin-bottom: var(--space-sl);
+		padding: var(--space-sl) 0;
 		display: grid;
 		grid-auto-flow: column;
 		justify-content: start;
@@ -92,8 +92,8 @@ https://search.google.com/structured-data/testing-tool
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
-			margin-bottom: 1.25rem;
-			padding-block: 1rem;
+			margin-bottom: var(--space-ls);
+			padding-block: var(--space-md);
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 		}

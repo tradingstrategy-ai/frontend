@@ -1,8 +1,8 @@
 .terminal-viewport {
 	background-color: var(--c-ink) !important;
-	border-radius: var(--border-radius-md);
+	border-radius: var(--radius-md);
 	display: grid;
-	padding: 0.5rem 0.75rem;
+	padding: var(--space-ss) var(--space-sl);
 }
 
 .terminal-viewport .hljs {

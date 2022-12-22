@@ -11,22 +11,22 @@
 <style lang="postcss">
 	.content-list-box {
 		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0.5rem;
-		padding: 1.25rem;
+		border-radius: var(--radius-xs);
+		padding: var(--space-ls);
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: var(--space-lg);
 
 		@media (--viewport-md-up) {
-			padding: 2rem;
-			gap: 2rem;
+			padding: var(--space-xl);
+			gap: var(--space-xl);
 		}
 	}
 
 	ul :global {
 		flex: 1;
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 
 		& li {
 			font: var(--f-ui-md-roman);

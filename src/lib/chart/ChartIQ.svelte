@@ -279,7 +279,7 @@ chartiq dependency.
 
 		& dl {
 			display: flex;
-			gap: 0.25em;
+			gap: var(--space-xxs);
 			align-items: center;
 			margin: 0;
 		}

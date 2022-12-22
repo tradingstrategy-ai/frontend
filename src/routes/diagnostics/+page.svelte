@@ -23,14 +23,14 @@ A test endpoint for the page to show debug data.
 <style>
 	section {
 		--container-max-width: 1020px;
-		gap: 1.5rem;
+		gap: var(--space-lg);
 	}
 
 	pre {
-		padding: 1.5rem;
+		padding: var(--space-lg);
 		background: var(--c-background-7-v1);
 		border: 2px solid var(--c-border-1-v1);
-		border-radius: 0.375rem;
+		border-radius: var(--radius-xxs);
 		color: var(--c-parchment);
 	}
 </style>

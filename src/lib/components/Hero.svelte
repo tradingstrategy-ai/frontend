@@ -19,12 +19,12 @@
 <style>
 	section {
 		align-items: center;
-		row-gap: 1.5rem;
-		padding-block: 1rem;
+		row-gap: var(--space-lg);
+		padding-block: var(--space-md);
 	}
 
 	section h1 {
-		margin-bottom: 0.75rem;
+		margin-bottom: var(--space-sl);
 	}
 
 	.content {
@@ -32,7 +32,7 @@
 	}
 
 	.media {
-		padding-inline: 2rem;
+		padding-inline: var(--space-xl);
 		display: flex;
 		justify-content: center;
 	}
@@ -50,7 +50,7 @@
 		section {
 			grid-template-columns: 5fr 4fr;
 			column-gap: 8vw;
-			padding-block: 3.5rem;
+			padding-block: var(--space-xxxxxxl);
 		}
 
 		.media {

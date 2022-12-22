@@ -42,7 +42,7 @@
 		}
 
 		& p {
-			margin-top: 1rem;
+			margin-top: var(--space-md);
 			max-width: 50ch;
 			font: var(--f-ui-large-roman);
 		}
@@ -51,8 +51,8 @@
 	.buttons {
 		display: grid;
 		grid-auto-flow: column;
-		gap: 1.25rem;
-		margin-top: 1.75rem;
+		gap: var(--space-ls);
+		margin-top: var(--space-ll);
 
 		@media (--viewport-xs) {
 			grid-auto-flow: row;

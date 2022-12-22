@@ -59,9 +59,13 @@
 		&,
 		& .inner {
 			display: grid;
-			gap: 1.5rem;
+			gap: var(--space-lg);
 			place-content: stretch;
 			place-items: stretch;
+
+			@media (--viewport-md-down) {
+				gap: var(--space-ls);
+			}
 		}
 
 		& .inner {

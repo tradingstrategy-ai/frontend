@@ -75,12 +75,12 @@
 
 <style lang="postcss">
 	section {
-		margin-top: 1rem;
+		margin-top: var(--space-md);
 		display: grid;
-		gap: 3rem;
+		gap: var(--space-xxxxxl);
 
 		@media (--viewport-sm-down) {
-			gap: 2rem;
+			gap: var(--space-xl);
 		}
 	}
 </style>

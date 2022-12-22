@@ -49,8 +49,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	table {
 		border-collapse: separate;
-		border-spacing: 0 0.75rem;
-		margin-top: -0.75rem;
+		border-spacing: 0 var(--space-sl);
+		margin-top: -var(--space-sl);
 		width: 100%;
 	}
 </style>

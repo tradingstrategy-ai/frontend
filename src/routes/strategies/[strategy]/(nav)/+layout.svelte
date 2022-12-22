@@ -29,7 +29,7 @@
 <style lang="postcss">
 	.strategy-layout {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 
 		& :global(> .alert-list) {
 			width: 100%;
@@ -42,10 +42,10 @@
 
 		& .subpage :global {
 			display: grid;
-			gap: 2rem;
+			gap: var(--space-ls);
 
 			@media (--viewport-lg-up) {
-				gap: 3rem;
+				gap: var(--space-xxxxxl);
 				grid-template-columns: 14rem auto;
 			}
 		}

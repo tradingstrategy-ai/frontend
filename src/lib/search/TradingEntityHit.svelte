@@ -107,25 +107,25 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		align-items: center;
 		border: 2px solid;
 		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
-		border-radius: 0.625rem;
+		border-radius: var(--radius-xs);
 		outline: none;
 
 		&.basic {
-			padding: 0.875rem 0.75rem;
+			padding: var(--space-ms) var(--space-sl);
 			border: none;
 			background: var(--c-background-4-v1);
 
 			@media (--viewport-sm-up) {
-				padding-block: 1rem;
+				padding-block: var(--space-md);
 			}
 		}
 
 		&.advanced {
-			padding: 0.625rem 0.75rem;
+			padding: var(--space-sm) var(--space-sl);
 
 			@media (--viewport-md-up) {
-				gap: 1.5rem;
-				padding: 0.75rem 1.25rem;
+				gap: var(--space-lg);
+				padding: var(--space-sl) var(--space-ls);
 				border-width: 1px;
 				border-color: var(--c-border-2-v1);
 			}
@@ -151,8 +151,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	.type {
 		display: grid;
 		align-content: center;
-		border-radius: 0.375rem;
-		padding-block: 0.25rem;
+		border-radius: var(--radius-xxs);
+		padding-block: var(--space-xxs);
 		width: 3.5rem;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -171,7 +171,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.info {
 		display: grid;
-		gap: 0.25rem;
+		gap: var(--space-xxs);
 	}
 
 	.primary,
@@ -183,7 +183,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.primary {
-		gap: 0.5rem;
+		gap: var(--space-ss);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 
@@ -200,7 +200,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			overflow: hidden;
 
 			& :global svg {
-				margin: -0.25em 0 0 0.25em;
+				margin: calc(-1 * var(--space-xxs)) 0 0 var(--space-xxs);
 			}
 		}
 

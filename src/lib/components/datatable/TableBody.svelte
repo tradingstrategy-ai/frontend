@@ -26,7 +26,7 @@
 	td {
 		background: var(--c-background-5);
 		height: 4.5rem;
-		padding: 0.75rem 1.5rem;
+		padding: var(--space-sl) var(--space-lg);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		--button-width: 100%;
@@ -46,11 +46,11 @@
 		}
 
 		&:first-child {
-			border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+			border-radius: var(--radius-md) 0 0 var(--radius-md);
 		}
 
 		&:last-child {
-			border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+			border-radius: 0 var(--radius-md) var(--radius-md) 0;
 		}
 	}
 </style>

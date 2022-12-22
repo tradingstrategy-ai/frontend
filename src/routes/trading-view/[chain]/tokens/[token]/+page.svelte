@@ -63,7 +63,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
@@ -75,12 +75,12 @@
 	}
 
 	.trading-pairs {
-		gap: 1.5rem;
+		gap: var(--space-lg);
 	}
 
 	aside {
 		& p {
-			margin-top: 0rem;
+			margin-top: 0;
 			font: var(--f-ui-large-roman);
 		}
 

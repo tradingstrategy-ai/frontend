@@ -66,7 +66,7 @@
 		overflow: auto;
 
 		& h2 {
-			margin-bottom: 1rem;
+			margin-bottom: var(--space-md);
 		}
 	}
 

@@ -41,7 +41,7 @@
 	}
 
 	th {
-		padding: 1rem 1.25rem;
+		padding: var(--space-md) var(--space-ls);
 		background-color: var(--c-body);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-md-medium);

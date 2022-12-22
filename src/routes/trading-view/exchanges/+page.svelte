@@ -31,11 +31,11 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	header {
-		gap: 0.75rem;
+		gap: var(--space-sl);
 
 		& p {
 			font: var(--f-h4-roman);

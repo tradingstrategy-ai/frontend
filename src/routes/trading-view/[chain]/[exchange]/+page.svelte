@@ -76,7 +76,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
@@ -84,14 +84,14 @@
 	}
 
 	.info {
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
-			gap: 3.5rem;
+			gap: var(--space-xxxxxxl);
 		}
 
 		& .ds-2-col {
-			row-gap: 2rem;
+			row-gap: var(--space-xl);
 		}
 	}
 
@@ -99,8 +99,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 1.25rem 2rem;
-		padding-block: 1.5rem;
+		gap: var(--space-ls) var(--space-xl);
+		padding-block: var(--space-lg);
 
 		@media (--viewport-xs) {
 			flex-direction: column;
@@ -109,12 +109,12 @@
 	}
 
 	.trading-pairs {
-		margin-top: 1rem;
-		gap: 1rem;
+		margin-top: var(--space-md);
+		gap: var(--space-md);
 
 		@media (--viewport-lg-up) {
-			margin-top: 1.5rem;
-			gap: 1.5rem;
+			margin-top: var(--space-lg);
+			gap: var(--space-lg);
 		}
 	}
 

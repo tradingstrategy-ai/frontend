@@ -15,7 +15,7 @@
 	ul {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(27.75rem, 90vw, var(--container-max-width)), 1fr));
-		gap: var(--strategies-listing-gap, 2rem);
+		gap: var(--strategies-listing-gap, var(--space-xl));
 		padding: 0;
 	}
 </style>

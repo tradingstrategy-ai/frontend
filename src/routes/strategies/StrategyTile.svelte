@@ -55,7 +55,7 @@
 	li {
 		display: grid;
 		background: var(--c-background-5);
-		border-radius: var(--strategy-tile-border-radius, var(--border-radius-md));
+		border-radius: var(--strategy-tile-border-radius, var(--radius-md));
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		grid-template-rows: auto;
 		grid-auto-rows: 1fr;
@@ -79,13 +79,13 @@
 	.info {
 		display: grid;
 		grid-template-rows: 1fr auto;
-		gap: var(--strategy-tile-info-gap, 1.5rem);
-		padding: 1.5rem;
+		gap: var(--strategy-tile-info-gap, var(--space-lg));
+		padding: var(--space-lg);
 	}
 
 	.details {
 		display: grid;
-		gap: var(--strategy-tile-details-gap, 1rem);
+		gap: var(--strategy-tile-details-gap, var(--space-md));
 		align-content: start;
 	}
 
@@ -97,12 +97,12 @@
 	dl {
 		display: grid;
 		grid-template-columns: auto auto;
-		gap: 0.5rem;
+		gap: var(--space-ss);
 		margin: 0;
 
 		& > div {
 			display: grid;
-			gap: 0.5rem;
+			gap: var(--space-ss);
 		}
 	}
 

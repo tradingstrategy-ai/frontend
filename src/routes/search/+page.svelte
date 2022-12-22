@@ -82,25 +82,25 @@ Advanced Search page
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 
 		@media (--viewport-md-down) {
-			gap: 0.5rem;
+			gap: var(--space-ss);
 		}
 	}
 
 	header {
-		padding-block: 1.5rem;
+		padding-block: var(--space-lg);
 
 		@media (--viewport-md-down) {
-			padding-block: 1rem;
+			padding-block: var(--space-md);
 		}
 	}
 
 	section {
 		display: grid;
 		grid-template-columns: 20rem 1fr;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;

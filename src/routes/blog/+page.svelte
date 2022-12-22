@@ -71,9 +71,9 @@
 
 <style lang="postcss">
 	header {
-		margin-top: 1.5rem;
+		margin-top: var(--space-lg);
 		align-items: center;
-		gap: 1.5rem 2.5rem;
+		gap: var(--space-lg) var(--space-xxxl);
 
 		& h2 {
 			font: var(--f-heading-xl-medium);
@@ -81,17 +81,17 @@
 		}
 
 		& p {
-			margin-top: 0.75rem;
+			margin-top: var(--space-sl);
 			font: var(--f-h4-roman);
 		}
 	}
 
 	.posts {
-		padding-block: 2.5rem;
+		padding-block: var(--space-xxxl);
 		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 		/** ensure featured post column gap matches the layout column gap */
-		--blog-post-tile--column-gap: 2.5rem;
+		--blog-post-tile--column-gap: var(--space-xxxl);
 
 		@media (--viewport-lg-up) {
 			padding-block: 3.75rem;

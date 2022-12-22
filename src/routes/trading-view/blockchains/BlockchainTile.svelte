@@ -20,10 +20,10 @@
 	.tile {
 		display: flex;
 		flex-direction: column;
-		gap: 1.75rem;
-		padding: 2.5rem 2rem;
+		gap: var(--space-ll);
+		padding: var(--space-xxxl) var(--space-xl);
 		background: var(--c-background-1-v1);
-		border-radius: 0.5rem;
+		border-radius: var(--radius-xs);
 		text-align: center;
 	}
 

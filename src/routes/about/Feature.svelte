@@ -29,7 +29,7 @@
 	.feature {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem 5rem;
+		gap: var(--space-xl) 5rem;
 
 		@media (--viewport-lg-up) {
 			flex-direction: row;
@@ -48,10 +48,10 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		gap: 1.5rem;
+		gap: var(--space-lg);
 
 		@media (--viewport-lg-up) {
-			gap: 2rem;
+			gap: var(--space-xl);
 		}
 
 		& h3 {
@@ -61,7 +61,7 @@
 
 		& ul {
 			display: grid;
-			gap: 1.5rem;
+			gap: var(--space-lg);
 		}
 
 		& :global li {

@@ -12,9 +12,9 @@
 <style lang="postcss">
 	div {
 		display: grid;
-		gap: 1.5rem;
-		margin: 1.25rem 0 2.25rem 0;
-		padding: 1.25rem;
+		gap: var(--space-lg);
+		margin: var(--space-ls) 0 var(--space-xxl) 0;
+		padding: var(--space-ls);
 		border: var(--c-border-2-v1) solid 1px;
 
 		& h3 {

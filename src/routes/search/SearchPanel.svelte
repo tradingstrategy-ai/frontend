@@ -55,10 +55,10 @@
 		display: grid;
 		grid-template-rows: auto 1fr;
 		align-items: start;
-		gap: 2.5rem;
+		gap: var(--space-xxxl);
 
 		@media (--viewport-sm-down) {
-			gap: 1.5rem;
+			gap: var(--space-lg);
 		}
 	}
 
@@ -101,7 +101,7 @@
 
 	ul {
 		display: grid;
-		gap: 1rem;
+		gap: var(--space-md);
 		padding: 0;
 	}
 
