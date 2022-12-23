@@ -9,6 +9,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 ```
 -->
 <script lang="ts">
+	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon } from '$lib/components';
@@ -21,12 +22,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	 * object returned by Typesense `tradingEntity` search hits; see:
 	 * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
 	 */
-	export let document;
+	export let document: DocumentSchema;
 	export let layout: 'basic' | 'advanced';
 
 	const isBasicLayout = layout === 'basic';
 	const isAdvancedLayout = layout === 'advanced';
-	const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
+	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
+	const isLowQuality = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
