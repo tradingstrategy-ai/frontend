@@ -24,11 +24,11 @@ describe('SortSelect component', () => {
 
 	describe('getSortParams module function', () => {
 		test('should return params for matching option', () => {
-			expect(getSortParams('volume:desc')).toStrictEqual(['volume_24h:desc', '_text_match:desc']);
+			expect(getSortParams('volume:desc')).toStrictEqual(['volume_24h:desc', 'pool_swap_fee:asc', '_text_match:desc']);
 		});
 
 		test('should return default params for non-matching option', () => {
-			expect(getSortParams('foo:bar')).toStrictEqual(['liquidity:desc', '_text_match:desc']);
+			expect(getSortParams('foo:bar')).toStrictEqual(['liquidity:desc', 'pool_swap_fee:asc', '_text_match:desc']);
 		});
 	});
 });
