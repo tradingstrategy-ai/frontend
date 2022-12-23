@@ -47,7 +47,7 @@
 <style lang="postcss">
 	section {
 		gap: var(--space-lg);
-		padding-block: 4rem;
+		padding-block: var(--space-7xl);
 
 		@media (--viewport-md-up) {
 			padding-block: 5rem;

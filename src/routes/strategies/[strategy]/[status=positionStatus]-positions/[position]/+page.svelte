@@ -77,7 +77,7 @@
 	section {
 		margin-top: var(--space-md);
 		display: grid;
-		gap: var(--space-xxxxxl);
+		gap: var(--space-5xl);
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);

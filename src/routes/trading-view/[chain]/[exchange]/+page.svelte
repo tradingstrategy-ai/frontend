@@ -76,7 +76,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
@@ -84,10 +84,10 @@
 	}
 
 	.info {
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-lg-up) {
-			gap: var(--space-xxxxxxl);
+			gap: var(--space-6xl);
 		}
 
 		& .ds-2-col {

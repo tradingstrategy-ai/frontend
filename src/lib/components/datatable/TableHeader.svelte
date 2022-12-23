@@ -53,7 +53,7 @@
 		}
 
 		&.sorted {
-			padding: 1rem 2rem 1rem 1.25rem;
+			padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-ls);
 		}
 	}
 

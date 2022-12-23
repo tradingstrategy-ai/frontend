@@ -152,7 +152,7 @@
 
 	.filters {
 		display: grid;
-		gap: var(--space-xxl);
+		gap: var(--space-2xl);
 	}
 
 	footer {

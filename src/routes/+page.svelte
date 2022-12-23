@@ -78,10 +78,10 @@
 
 <style lang="postcss">
 	section {
-		padding-block: var(--space-xxxl);
+		padding-block: var(--space-3xl);
 
 		@media (--viewport-md-up) {
-			padding-block: 4rem;
+			padding-block: var(--space-7xl);
 		}
 	}
 
@@ -91,19 +91,19 @@
 
 	.top-momentum h2 {
 		@media (--viewport-md-up) {
-			margin-bottom: var(--space-xxxl);
+			margin-bottom: var(--space-3xl);
 		}
 	}
 
 	.strategies {
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		& > div {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			text-align: center;
-			gap: 4rem;
+			gap: var(--space-7xl);
 
 			@media (--viewport-md-up) {
 				margin-top: var(--space-ss);
@@ -126,14 +126,14 @@
 	}
 
 	.blog {
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 		justify-items: center;
 		padding-block: 4.5rem;
 	}
 
 	.blog-posts {
 		display: grid;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-md-up) {
 			margin-top: var(--space-xl);

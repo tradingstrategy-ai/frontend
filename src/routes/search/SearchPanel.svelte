@@ -55,7 +55,7 @@
 		display: grid;
 		grid-template-rows: auto 1fr;
 		align-items: start;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-lg);

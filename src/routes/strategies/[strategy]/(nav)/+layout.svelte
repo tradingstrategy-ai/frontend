@@ -33,7 +33,7 @@
 
 		& :global(> .alert-list) {
 			width: 100%;
-			margin-top: 1.5rem;
+			margin-top: var(--space-lg);
 		}
 
 		& .page-heading p {
@@ -45,7 +45,7 @@
 			gap: var(--space-ls);
 
 			@media (--viewport-lg-up) {
-				gap: var(--space-xxxxxl);
+				gap: var(--space-5xl);
 				grid-template-columns: 14rem auto;
 			}
 		}

@@ -58,7 +58,7 @@ Home page hero banner.
 		--container-max-width: 1960px;
 		--container-margin: max(4.5vw, var(--space-lg));
 		grid-template-columns: 1fr 1fr;
-		gap: var(--space-xxxxl) min(4.5vw, 6.25rem);
+		gap: var(--space-4xl) min(4.5vw, 6.25rem);
 		place-items: center;
 		padding-block: 4.625rem;
 		background: var(--c-background-1-v1);
@@ -121,7 +121,7 @@ Home page hero banner.
 	.buttons {
 		display: flex;
 		gap: var(--space-sl) var(--space-ls);
-		margin-top: var(--space-xxxl);
+		margin-top: var(--space-3xl);
 
 		@media (--viewport-xs) {
 			flex-direction: column;

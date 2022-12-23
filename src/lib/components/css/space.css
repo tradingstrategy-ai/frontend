@@ -1,5 +1,5 @@
 /* 
- * Use with these properties: gap, margin, padding, transform
+ * Use with these properties: bottom, gap, left, margin, padding, right, top, transform
  */
 
 :root {
@@ -20,9 +20,11 @@
 	--space-ll: 1.75rem;
 
 	--space-xl: 2rem;
-	--space-xxl: 2.25rem;
-	--space-xxxl: 2.5rem;
-	--space-xxxxl: 2.75rem;
-	--space-xxxxxl: 3rem;
-	--space-xxxxxxl: 3.5rem;
+	--space-2xl: 2.25rem;
+	--space-3xl: 2.5rem;
+	--space-4xl: 2.75rem;
+	--space-5xl: 3rem;
+	--space-6xl: 3.5rem;
+	--space-7xl: 4rem;
+	--space-8xl: 5rem;
 }

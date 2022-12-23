@@ -70,7 +70,7 @@
 		background: var(--c-body-v1);
 		display: grid;
 		grid-template-rows: 1fr auto 1fr;
-		gap: var(--space-xxxxl);
+		gap: var(--space-4xl);
 		--container-max-width: 1020px;
 	}
 

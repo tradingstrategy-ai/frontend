@@ -69,7 +69,7 @@
 <style>
 	main {
 		display: grid;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 	}
 
 	.section-wrapper {

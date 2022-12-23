@@ -79,7 +79,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-xxl);
+		gap: var(--space-2xl);
 	}
 
 	.summary-data {

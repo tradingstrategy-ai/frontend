@@ -73,7 +73,7 @@ Display best or worst performing trading pairs.
 		display: grid;
 		gap: var(--space-lg);
 		width: 100%;
-		margin: var(--space-xxxl) 0;
+		margin: var(--space-3xl) 0;
 		padding: 0;
 		list-style-type: none;
 

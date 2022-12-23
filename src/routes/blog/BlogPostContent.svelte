@@ -46,7 +46,7 @@
 		& h2 {
 			font: var(--f-text-xl-semibold);
 			letter-spacing: var(--f-text-xl-spacing, normal);
-			margin: var(--space-xxxxxl) 0 var(--space-lg);
+			margin: var(--space-5xl) 0 var(--space-lg);
 		}
 
 		& h3 {
@@ -78,7 +78,7 @@
 		}
 
 		& figure {
-			margin: var(--space-xxl) 0;
+			margin: var(--space-2xl) 0;
 		}
 
 		& figcaption {

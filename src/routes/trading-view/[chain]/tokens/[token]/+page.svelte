@@ -63,7 +63,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;

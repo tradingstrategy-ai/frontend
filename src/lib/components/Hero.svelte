@@ -50,7 +50,7 @@
 		section {
 			grid-template-columns: 5fr 4fr;
 			column-gap: 8vw;
-			padding-block: var(--space-xxxxxxl);
+			padding-block: var(--space-6xl);
 		}
 
 		.media {

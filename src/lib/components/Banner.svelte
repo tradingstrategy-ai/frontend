@@ -21,7 +21,7 @@
 		padding-block: 2.5rem;
 
 		@media (--viewport-md-up) {
-			gap: var(--space-xxxxxl);
+			gap: var(--space-5xl);
 			padding-block: 5rem;
 		}
 
