@@ -11,7 +11,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatDollar, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPoolSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon } from '$lib/components';
 
 	// Any token with less than this liquidity
@@ -50,7 +50,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 				<div class="desc">
 					{document.description}
 					{#if document.pool_swap_fee}
-						<span class="pool-swap-fee">({formatPercent(document.pool_swap_fee)})</span>
+						<span class="pool-swap-fee">({formatPoolSwapFee(document.pool_swap_fee)})</span>
 					{/if}
 					{#if isAdvancedLayout && isLowQuality}
 						<Icon name="warning" />

@@ -8,6 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
+	import { formatPoolSwapFee } from '$lib/helpers/formatters';
 	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -45,7 +46,14 @@ Render the pair trading page
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={summary.pair_symbol} subtitle="token pair on {details.exchange_name} on {details.chain_name}" />
+	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
+		<svelte:fragment slot="title">
+			{summary.pair_symbol}
+			{#if summary.pool_swap_fee}
+				<span class="pool-swap-fee">{formatPoolSwapFee(summary.pool_swap_fee)}</span>
+			{/if}
+		</svelte:fragment>
+	</PageHeader>
 
 	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
@@ -113,6 +121,11 @@ Render the pair trading page
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	.pool-swap-fee {
+		margin-left: var(--space-xxs);
+		color: var(--c-text-2-v1);
 	}
 
 	.info {

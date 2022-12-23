@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPoolSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
 	import { TradingDataInfoRow } from '$lib/components';
 
-	export let summary;
-	export let details;
+	export let summary: Record<string, any>;
+	export let details: Record<string, any>;
 
 	// Reverse-calculate raw price using the US/quota token exchange rate
 	function calculateTokenPrice(exchangeRate: number, priceUsd: number) {
@@ -61,6 +61,10 @@
 	{/if}
 
 	<TradingDataInfoRow label="Token tax" labelHref={tokenTaxDocsUrl} value={getTokenTaxDescription(details)} />
+
+	{#if summary.pool_swap_fee}
+		<TradingDataInfoRow label="Pool swap fee" value={formatPoolSwapFee(summary.pool_swap_fee)} />
+	{/if}
 
 	<TradingDataInfoRow
 		label="Exchange"

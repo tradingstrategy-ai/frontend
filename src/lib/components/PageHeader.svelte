@@ -1,6 +1,7 @@
 <!--
 @component
-Display single- or double-line page header
+Display single- or double-line page header. The `title` and `subtitle` can be passed
+as props (simple strings) or named slots (for nested markup).
 
 #### Usage
 ```tsx
@@ -8,14 +9,18 @@ Display single- or double-line page header
 ```
 -->
 <script lang="ts">
-	export let title: string;
+	export let title: string = '';
 	export let subtitle: string = '';
 </script>
 
 <header class="ds-container">
 	<h1 class:multiline={subtitle}>
-		{title}
-		{#if subtitle}<small>{subtitle}</small>{/if}
+		<slot name="title">{title}</slot>
+		{#if $$slots.subtitle || subtitle}
+			<small>
+				<slot name="subtitle">{subtitle}</slot>
+			</small>
+		{/if}
 	</h1>
 </header>
 
