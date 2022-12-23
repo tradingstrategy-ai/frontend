@@ -11,7 +11,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon } from '$lib/components';
 
 	// Any token with less than this liquidity
@@ -49,6 +49,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			<div class="primary">
 				<div class="desc">
 					{document.description}
+					{#if document.pool_swap_fee}
+						<span class="pool-swap-fee">({formatPercent(document.pool_swap_fee)})</span>
+					{/if}
 					{#if isAdvancedLayout && isLowQuality}
 						<Icon name="warning" />
 					{/if}
@@ -188,10 +191,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		gap: var(--space-ss);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
+		--reduced-font-weight: 400;
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
 				font: var(--f-heading-sm-medium);
+				letter-spacing: var(--f-heading-sm-spacing, normal);
+				--reduced-font-weight: 500;
 			}
 		}
 
@@ -204,6 +210,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			& :global svg {
 				margin: calc(-1 * var(--space-xxs)) 0 0 var(--space-xxs);
 			}
+		}
+
+		& .pool-swap-fee {
+			font-weight: var(--reduced-font-weight);
+			opacity: 0.7;
 		}
 
 		& .price-change,
