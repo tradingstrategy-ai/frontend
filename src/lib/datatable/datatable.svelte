@@ -85,6 +85,7 @@ npm install --save datatables.net-responsive-bs4
 		width: 100% !important;
 		margin: 0 !important;
 		font-variant-numeric: tabular-nums;
+		color: inherit;
 
 		& :global th {
 			border-top: none;
