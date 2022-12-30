@@ -139,7 +139,7 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
 
 export function formatPriceChange(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
-	return (n > 0 ? '▲' : '▼') + formatPercent(Math.abs(n));
+	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n))}`;
 }
 
 /**

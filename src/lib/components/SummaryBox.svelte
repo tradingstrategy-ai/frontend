@@ -18,7 +18,7 @@ Supports optional "cta" slot to include a button CTA.
 	export let subtitle: string = '';
 </script>
 
-<section class="summary-box {classes}">
+<div class="summary-box {classes}">
 	<header class:has-cta={$$slots.cta}>
 		<div class="description">
 			<h3>{title}</h3>
@@ -35,11 +35,19 @@ Supports optional "cta" slot to include a button CTA.
 	<div class="inner">
 		<slot />
 	</div>
-</section>
+	{#if $$slots.cta || $$slots.footer}
+		<footer>
+			<slot name="footer" />
+			<div class="cta">
+				<slot name="cta" />
+			</div>
+		</footer>
+	{/if}
+</div>
 
 <style lang="postcss">
 	.summary-box {
-		background: var(--c-background-5);
+		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 		border-radius: var(--radius-md);
 		gap: var(--space-ls);
 		padding: var(--space-lg) var(--space-lg);
@@ -104,11 +112,29 @@ Supports optional "cta" slot to include a button CTA.
 					}
 				}
 			}
+
+			& .cta {
+				@media (--viewport-lg-down) {
+					display: none;
+				}
+			}
 		}
 
 		& .inner {
 			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
+		}
+
+		& footer {
+			& .cta :global {
+				@media (--viewport-xl-up) {
+					display: none;
+				}
+
+				& .button {
+					width: 100%;
+				}
+			}
 		}
 	}
 	h3 {

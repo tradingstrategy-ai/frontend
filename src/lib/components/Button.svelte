@@ -55,14 +55,14 @@
 		border-radius: var(--button-border-radius, var(--radius-md));
 		font: var(--button-font, var(--f-ui-md-medium));
 		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
+		transition: all var(--time-sm) ease-out;
 		text-decoration: none;
-		text-transform: capitalize;
 		text-align: center;
 		cursor: pointer;
 	}
 
 	.primary {
-		--c-accent: hsla(var(--hsl-v2-box), var(--a-v2-box-e));
+		--c-accent: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
 		background: var(--c-accent);
 		color: hsla(var(--hsl-v2-text));
 		outline-color: var(--c-accent);
