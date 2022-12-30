@@ -1,6 +1,6 @@
 /* Global settings for design-system layout */
 :root {
-	--container-max-width: 1384px;
+	--container-max-width: 94rem;
 	--container-margin: 1.5rem;
 }
 

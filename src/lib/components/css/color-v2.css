@@ -1,0 +1,46 @@
+:root {
+	--hsl-v2-body: 36, 1%, 10%;
+
+	--hsl-v2-text: 36, 12%, 99%;
+	--hsl-v2-text-light: 36, 4%, 88%;
+	--hsl-v2-text-extra-light: 36, 3%, 72%;
+	--hsl-v2-text-ultra-light: 36, 2%, 52%;
+	--hsl-v2-text-inverted: 36, 9%, 7%;
+
+	--hsl-v2-box: 36, 2%, 92%;
+	--a-v2-box-a: 0.04;
+	--a-v2-box-b: 0.08;
+	--a-v2-box-c: 0.14;
+	--a-v2-box-d: 0.2;
+	--a-v2-box-e: 0.28;
+
+	--hsla-v2-background-accent-1: 0, 0%, 0%, 0.2;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--hsl-v2-body: 36, 52%, 97%;
+
+		--hsl-v2-text: 36, 9%, 7%;
+		--hsl-v2-text-light: 36, 4%, 24%;
+		--hsl-v2-text-extra-light: 36, 6%, 44%;
+		--hsl-v2-text-ultra-light: 36, 1%, 68%;
+		--hsl-v2-text-inverted: 36, 12%, 99%;
+
+		--hsl-v2-box: 36, 32%, 72%;
+		--a-v2-box-a: 0.1;
+		--a-v2-box-b: 0.18;
+		--a-v2-box-c: 0.3;
+		--a-v2-box-d: 0.45;
+		--a-v2-box-e: 0.6;
+
+		--hsla-v2-background-accent-1: var(--hsl-v2-box), var(--a-v2-box-b);
+	}
+}
+
+body {
+	color: hsla(var(--hsl-v2-text), 1);
+	background-color: hsla(var(--hsl-v2-body), 1);
+	transition-property: background-color, color;
+	transition-duration: var(--time-md);
+}
