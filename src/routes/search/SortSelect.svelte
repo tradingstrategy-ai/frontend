@@ -12,22 +12,22 @@ pre-defined set of sort options.
 	const options = {
 		'liquidity:desc': {
 			label: '▼ Liquidity',
-			params: ['liquidity:desc', '_text_match:desc']
+			params: ['liquidity:desc', 'pool_swap_fee:asc', '_text_match:desc']
 		},
 
 		'volume:desc': {
 			label: '▼ Volume',
-			params: ['volume_24h:desc', '_text_match:desc']
+			params: ['volume_24h:desc', 'pool_swap_fee:asc', '_text_match:desc']
 		},
 
 		'price_change:desc': {
 			label: '▼ Price change',
-			params: ['price_change_24h:desc', '_text_match:desc']
+			params: ['price_change_24h:desc', 'pool_swap_fee:asc', '_text_match:desc']
 		},
 
 		'price_change:asc': {
 			label: '▲ Price change',
-			params: ['price_change_24h:asc', '_text_match:desc']
+			params: ['price_change_24h:asc', 'pool_swap_fee:asc', '_text_match:desc']
 		}
 	};
 

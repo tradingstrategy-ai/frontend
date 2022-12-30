@@ -250,6 +250,20 @@ export function formatPercent(n: MaybeNumber): string {
 }
 
 /**
+ * Custom percent formatter for pool swap fee (Uniswap V3)
+ *
+ * Uses `minimumSignificantDigits` instead of `minimumFractionDigits`
+ */
+export function formatPoolSwapFee(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return '';
+	return n.toLocaleString('en', {
+		minimumSignificantDigits: 1,
+		maximumSignificantDigits: 1,
+		style: 'percent'
+	});
+}
+
+/**
  * Formats the time duration string as
  *
  * Timedelta is received from the API as a duration in seconds.

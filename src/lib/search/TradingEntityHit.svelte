@@ -9,8 +9,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 ```
 -->
 <script lang="ts">
+	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPoolSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon } from '$lib/components';
 
 	// Any token with less than this liquidity
@@ -21,12 +22,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	 * object returned by Typesense `tradingEntity` search hits; see:
 	 * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
 	 */
-	export let document;
+	export let document: DocumentSchema;
 	export let layout: 'basic' | 'advanced';
 
 	const isBasicLayout = layout === 'basic';
 	const isAdvancedLayout = layout === 'advanced';
-	const isLowQuality = document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
+	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
+	const isLowQuality = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
@@ -47,6 +49,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			<div class="primary">
 				<div class="desc">
 					{document.description}
+					{#if document.pool_swap_fee}
+						<span class="pool-swap-fee">({formatPoolSwapFee(document.pool_swap_fee)})</span>
+					{/if}
 					{#if isAdvancedLayout && isLowQuality}
 						<Icon name="warning" />
 					{/if}
@@ -186,10 +191,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		gap: var(--space-ss);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
+		--reduced-font-weight: 400;
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
 				font: var(--f-heading-sm-medium);
+				letter-spacing: var(--f-heading-sm-spacing, normal);
+				--reduced-font-weight: 500;
 			}
 		}
 
@@ -202,6 +210,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			& :global svg {
 				margin: calc(-1 * var(--space-xxs)) 0 0 var(--space-xxs);
 			}
+		}
+
+		& .pool-swap-fee {
+			font-weight: var(--reduced-font-weight);
+			opacity: 0.7;
 		}
 
 		& .price-change,
