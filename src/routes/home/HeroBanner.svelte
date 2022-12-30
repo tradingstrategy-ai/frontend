@@ -1,0 +1,110 @@
+<!--
+@component
+Home page hero banner.
+
+#### Usage:
+```tsx
+<HeroBanner {impressiveNumbers} />
+```
+-->
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
+	import { Button } from '$lib/components';
+
+	export let impressiveNumbers: any;
+</script>
+
+<header class="home-hero-banner" on:dblclick={() => goto('/strategies')}>
+	<div class="inner ds-container">
+		<img class="media" src={mbp15Image} alt="Trading Data" />
+
+		<div class="content">
+			<!-- ensure line breaks at correct place on smaller screens -->
+			<!-- prettier-ignore -->
+			<h1>
+        Next generation <br />algorithmic trading protocol <br />for decentralised markets
+      </h1>
+
+			<hr />
+
+			{#if impressiveNumbers}
+				<p class="impressive-numbers">
+					Market data and trading strategy framework for
+					<a href="/trading-view/trading-pairs">
+						{formatAmount(impressiveNumbers.pairs)} trading pairs
+					</a>
+					providing
+					<a href="/trading-view/trading-pairs" style:white-space="nowrap">
+						{formatDollar(impressiveNumbers.liquidity)} liquidity
+					</a>
+					across
+					<a href="/trading-view/blockchains" style:white-space="nowrap">
+						{impressiveNumbers.blockchains} blockchains
+					</a>
+				</p>
+			{/if}
+
+			<div class="buttons">
+				<Button href="/trading-view">Explore DEX Data</Button>
+				<Button secondary href="https://tradingstrategy.ai/docs">Read Documentation</Button>
+			</div>
+		</div>
+	</div>
+</header>
+
+<style lang="postcss">
+	@custom-media --no-breaks (width <= 1440px);
+
+	.home-hero-banner {
+		background: hsla(var(--hsla-v2-background-accent-1));
+		padding: var(--space-xl) 0;
+		@media (--viewport-md-up) {
+			padding: var(--space-10xl) var(--space-3xl);
+		}
+	}
+
+	@media (--no-breaks) {
+		br {
+			display: none;
+		}
+	}
+
+	@media (--viewport-xs) {
+		h1 {
+			font: var(--f-heading-lg-medium);
+		}
+	}
+
+	p {
+		font: var(--f-ui-xl-roman);
+
+		& a {
+			font: var(--f-ui-xl-bold);
+			text-decoration: underline;
+		}
+	}
+
+	.home-hero-banner .inner {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
+		gap: min(var(--space-8xl), 10vw);
+		place-items: center;
+	}
+
+	.home-hero-banner .content {
+	}
+
+	.home-hero-banner .buttons {
+		display: grid;
+		gap: var(--space-ls);
+		grid-template-columns: repeat(auto-fit, minmax(12rem, auto));
+		/* place-content: center start; */
+		margin-top: var(--space-xl);
+	}
+
+	hr {
+		border: 0.125rem solid hsla(var(--hsl-v2-text));
+	}
+</style>

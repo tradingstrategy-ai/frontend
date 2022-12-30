@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import HeroBanner from './HeroBanner.svelte';
+	import HomeHeroBanner from './home/HeroBanner.svelte';
 	import TopMomentumTile from './TopMomentumTile.svelte';
 	import { BlogPostTile, Button } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
@@ -21,7 +21,7 @@
 </svelte:head>
 
 <main>
-	<HeroBanner {impressiveNumbers} />
+	<HomeHeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
 		<section class="ds-container top-momentum" style:gap="var(--space-lg)">
