@@ -126,11 +126,11 @@ Supports optional "cta" slot to include a button CTA.
 		}
 
 		& footer {
-			& .cta :global {
-				@media (--viewport-xl-up) {
-					display: none;
-				}
+			@media (--viewport-xl-up) {
+				display: none;
+			}
 
+			& .cta :global {
 				& .button {
 					width: 100%;
 				}
