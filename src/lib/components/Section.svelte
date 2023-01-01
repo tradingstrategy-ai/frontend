@@ -38,16 +38,19 @@
 
 <style lang="postcss">
 	section {
-		--section-padding-y: var(--space-7xl);
 		--section-padding-x: var(--space-xl);
+		--section-padding-y: var(--space-9xl);
+
 		@media (--viewport-lg-down) {
 			--section-padding-x: var(--space-xl);
 			--section-padding-y: var(--space-6xl);
 		}
+
 		@media (--viewport-md-down) {
 			--section-padding-x: var(--space-lg);
 			--section-padding-y: var(--space-4xl);
 		}
+
 		@media (--viewport-sm-down) {
 			--section-padding-x: var(--space-md);
 			--section-padding-y: var(--space-2xl);

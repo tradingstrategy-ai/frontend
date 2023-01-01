@@ -1,84 +1,85 @@
-<!--
-@component
-Display a content tile that links to additional content, such as those on
-Trading data or Community pages. The entire tile can be a targetable CTA, or
-(if `buttonLabel`) provided, the tile can display a button CTA.
-
-#### Usage:
-```tsx
-	<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
-		Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-	</ContentTile>
-```
--->
 <script lang="ts">
-	import { Button, SocialIcon } from '$lib/components';
+	import Timestamp from './Timestamp.svelte';
+	import Button from './Button.svelte';
 
-	export let title: string;
-	export let icon: string;
-	export let targetUrl: string | undefined = undefined;
-	export let buttonLabel: string | undefined = undefined;
-	export let external = false;
-
-	$: targetable = !buttonLabel;
-	$: tag = targetable && targetUrl ? 'a' : 'div';
-	$: href = tag === 'a' ? targetUrl : undefined;
+	export let ctaLabel = '';
+	export let datetime = new Date();
+	export let description = '';
+	export let href = '';
+	export let mediaSrc = '';
+	export let mediaAlt = '';
+	export let title = '';
 </script>
 
-<svelte:element this={tag} class="tile" class:targetable {href} on:click>
-	<div class="header">
-		<SocialIcon name={icon} />
-		<h3>{title}</h3>
+<div class="content-tile">
+	<div class="media">
+		<img src={mediaSrc} alt={mediaAlt} />
 	</div>
+	<div class="content">
+		{#if title || $$slots.title}
+			<slot name="title">
+				<h3 class="truncate lines-3">{title}</h3>
+			</slot>
+		{/if}
 
-	<div class="text"><slot /></div>
+		<Timestamp {datetime} showDistanceToNow />
 
-	{#if buttonLabel}
-		<div class="button"><Button {external} label={buttonLabel} href={targetUrl} /></div>
-	{/if}
-</svelte:element>
+		{#if description || $$slots.description}
+			<slot name="description">
+				<p class="description truncate lines-3">
+					{description}
+				</p>
+			</slot>
+		{/if}
+
+		{#if $$slots.cta || ctaLabel}
+			<div class="cta">
+				<slot name="cta">
+					<Button {href}>
+						{ctaLabel}
+					</Button>
+				</slot>
+			</div>
+		{/if}
+	</div>
+</div>
 
 <style lang="postcss">
-	.tile {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-xl);
-		border: 2px solid var(--c-border-2-v1);
-		border-radius: var(--radius-xs);
-		padding: 2.5rem var(--space-lg);
-		text-align: center;
-		--social-icon-size: 4rem;
-		--social-icon-scale: 0.6;
+	.content-tile {
+		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		border-radius: var(--radius-md);
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+		overflow: hidden;
+	}
 
-		@media (--viewport-md-up) {
-			--social-icon-size: 4.75rem;
+	.content-tile .media {
+		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		min-height: 20rem;
+
+		& img {
+			height: 100%;
+			object-fit: cover;
 		}
 	}
 
-	.header {
+	.content-tile .content {
 		display: grid;
 		gap: var(--space-md);
-		justify-items: center;
+		padding: var(--space-ll) var(--space-lg);
+		place-content: center;
 	}
 
-	.targetable:hover {
-		cursor: pointer;
-
-		& h3 {
-			text-decoration: underline;
-		}
+	.content-tile .description {
+		color: hsl(var(--hsl-v2-text-light));
+		font: var(--f-ui-md-roman);
 	}
 
-	.text :global {
-		flex: 1;
-		display: grid;
-		gap: var(--space-xl);
-		align-content: start;
-		font: var(--f-ui-lg-roman);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
+	.content-tile .cta {
+		margin-top: var(--space-sm);
 
-		& * {
-			font: inherit;
+		& :global(.button) {
+			width: 100%;
 		}
 	}
 </style>

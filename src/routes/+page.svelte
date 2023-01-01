@@ -4,8 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './home/HeroBanner.svelte';
-	import TopMomentumTile from './TopMomentumTile.svelte';
-	import { BlogPostTile, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
+	import { ContentTile, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
@@ -48,13 +47,14 @@
 	{#if posts}
 		<Section class="ds-container blog" gap="lg" layout="boxed" title="Blog" cols={2}>
 			{#each posts as post (post.id)}
-				<BlogPostTile
+				<ContentTile
+					ctaLabel="Read article"
+					href="/blog/{post.slug}"
+					mediaSrc={post.feature_image}
+					mediaAlt={post.feature_image_alt}
 					title={post.title}
-					excerpt={post.excerpt}
-					imageUrl={post.feature_image}
-					imageAltText={post.feature_image_alt}
-					slug={post.slug}
-					publishedAt={post.published_at}
+					datetime={new Date(post.published_at)}
+					description={post.excerpt}
 				/>
 			{/each}
 

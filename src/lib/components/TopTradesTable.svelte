@@ -32,10 +32,14 @@
 	</tbody>
 </table>
 
-<style>
+<style lang="postcss">
 	td {
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-md-medium);
+		}
+
+		&:last-child {
+			text-align: right;
 		}
 	}
 </style>
