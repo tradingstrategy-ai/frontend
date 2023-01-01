@@ -47,7 +47,7 @@ Supports optional "cta" slot to include a button CTA.
 
 <style lang="postcss">
 	.summary-box {
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
 		border-radius: var(--radius-md);
 		gap: var(--space-ls);
 		padding: var(--space-lg) var(--space-lg);
@@ -61,10 +61,6 @@ Supports optional "cta" slot to include a button CTA.
 		& .description {
 			display: grid;
 			gap: var(--space-sm);
-		}
-
-		& :global .data-box {
-			background: var(--c-background-4);
 		}
 
 		@media (--viewport-md-down) {

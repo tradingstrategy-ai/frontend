@@ -9,8 +9,8 @@
 
 	--hsl-v2-box: 36, 2%, 92%;
 	--a-v2-box-a: 0.04;
-	--a-v2-box-b: 0.08;
-	--a-v2-box-c: 0.14;
+	--a-v2-box-b: 0.1;
+	--a-v2-box-c: 0.16;
 	--a-v2-box-d: 0.2;
 	--a-v2-box-e: 0.28;
 
@@ -19,7 +19,7 @@
 
 @media (prefers-color-scheme: light) {
 	:root {
-		--hsl-v2-body: 36, 52%, 97%;
+		--hsl-v2-body: 36, 52%, 98%;
 
 		--hsl-v2-text: 36, 9%, 7%;
 		--hsl-v2-text-light: 36, 4%, 24%;
@@ -28,10 +28,10 @@
 		--hsl-v2-text-inverted: 36, 12%, 99%;
 
 		--hsl-v2-box: 36, 32%, 72%;
-		--a-v2-box-a: 0.1;
-		--a-v2-box-b: 0.18;
-		--a-v2-box-c: 0.3;
-		--a-v2-box-d: 0.45;
+		--a-v2-box-a: 0.12;
+		--a-v2-box-b: 0.24;
+		--a-v2-box-c: 0.32;
+		--a-v2-box-d: 0.48;
 		--a-v2-box-e: 0.6;
 
 		--hsla-v2-background-accent-1: var(--hsl-v2-box), var(--a-v2-box-b);
