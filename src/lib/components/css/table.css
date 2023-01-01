@@ -14,7 +14,7 @@ table {
 	}
 }
 
-thead {
+thead tr:first-child {
 	position: sticky;
 	top: 0;
 }

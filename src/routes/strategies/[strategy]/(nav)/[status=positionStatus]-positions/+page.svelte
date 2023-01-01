@@ -48,6 +48,6 @@
 		display: grid;
 		gap: 1.5rem;
 		align-content: start;
-		overflow: auto;
+		/* overflow: auto; */
 	}
 </style>

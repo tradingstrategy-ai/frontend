@@ -41,9 +41,3 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</table>
 </div>
-
-<style lang="postcss">
-	.data-table {
-		overflow: auto;
-	}
-</style>
