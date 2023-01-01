@@ -6,7 +6,7 @@ export { default as BlogPostTimestamp } from './BlogPostTimestamp.svelte';
 export { default as Button } from './Button.svelte';
 export { default as ChartPlaceholder } from './ChartPlaceholder.svelte';
 export { default as ContentListBox } from './ContentListBox.svelte';
-export { default as ContentTile } from './ContentTile.svelte';
+export { default as ContentTileOld } from './ContentTileOld.svelte';
 export { default as DataBox } from './DataBox.svelte';
 export { default as DataBoxes } from './DataBoxes.svelte';
 export { default as DataTable } from './datatable/DataTable.svelte';

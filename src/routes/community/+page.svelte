@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Hero, ContentTile } from '$lib/components';
+	import { Hero, ContentTileOld } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import HeroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 </script>
@@ -18,50 +18,54 @@
 	<section class="ds-container">
 		<h2>Discuss & develop</h2>
 
-		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
+		<ContentTileOld title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
 			Join our expert community of traders, developers, and analysts and DeFi specialists.
-		</ContentTile>
+		</ContentTileOld>
 
-		<ContentTile title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
+		<ContentTileOld title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
 			Explore Trading Strategy open-source code on our GitHub repository.
-		</ContentTile>
+		</ContentTileOld>
 
-		<ContentTile
+		<ContentTileOld
 			title="Algorithm tutorials"
 			icon="read-glasses"
 			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 		>
 			Learn how to write trading algorithms with our documentation and run backtests.
-		</ContentTile>
+		</ContentTileOld>
 	</section>
 
 	<div class="section-wrapper">
 		<section class="ds-container">
 			<h2>Follow us</h2>
 
-			<ContentTile title="Blog" icon="reading" targetUrl="/blog">
+			<ContentTileOld title="Blog" icon="reading" targetUrl="/blog">
 				Subscribe to our blog where we provide protocol updates, industry insights and algo trading tips.
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
+			<ContentTileOld title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
 				Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
+			<ContentTileOld
+				title="YouTube"
+				icon="youtube"
+				targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+			>
 				Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
+			<ContentTileOld title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
 				Follow us on LinkedIn and join our community of traders, developers and quant experts.
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
+			<ContentTileOld title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
 				Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
+			<ContentTileOld title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
 				Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
-			</ContentTile>
+			</ContentTileOld>
 		</section>
 	</div>
 </main>

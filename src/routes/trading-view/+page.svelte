@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
-	import { Hero, ContentTile } from '$lib/components';
+	import { Hero, ContentTileOld } from '$lib/components';
 	import HeroImage from '$lib/assets/illustrations/data-cloud-1.svg?raw';
 
 	export let data: PageData;
@@ -24,7 +24,7 @@
 		<section class="ds-container">
 			<h2>Explore data</h2>
 
-			<ContentTile
+			<ContentTileOld
 				title="Blockchains"
 				icon="blockchain"
 				targetUrl="/trading-view/blockchains"
@@ -34,9 +34,9 @@
 				{#if data}
 					<p>Currently indexing data from {data.blockchains} blockchains.</p>
 				{/if}
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile
+			<ContentTileOld
 				title="Decentralised exchanges"
 				icon="exchange"
 				targetUrl="/trading-view/exchanges"
@@ -49,9 +49,9 @@
 				{#if data}
 					<p>Currently indexing data from {formatAmount(data.exchanges)} decentralised exchanges.</p>
 				{/if}
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile
+			<ContentTileOld
 				title="Trading pairs"
 				icon="pair"
 				targetUrl="/trading-view/trading-pairs"
@@ -64,21 +64,21 @@
 				{#if data}
 					<p>Currently indexing data from {formatAmount(data.pairs)} trading pairs.</p>
 				{/if}
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile title="Advanced token search" icon="search" targetUrl="/search" buttonLabel="Search tokens">
+			<ContentTileOld title="Advanced token search" icon="search" targetUrl="/search" buttonLabel="Search tokens">
 				<p>
 					Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
 					change.
 				</p>
 				<p>Explore tokens using advanced token search.</p>
-			</ContentTile>
+			</ContentTileOld>
 		</section>
 
 		<section class="ds-container">
 			<h2>Programmatic access</h2>
 
-			<ContentTile
+			<ContentTileOld
 				title="Backtesting"
 				icon="backtesting"
 				targetUrl="/trading-view/backtesting"
@@ -91,9 +91,9 @@
 				{#if data}
 					<p>Currently have {formatSizeGigabytes(data.database_size)} GB worth of data available.</p>
 				{/if}
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile
+			<ContentTileOld
 				title="Realtime API"
 				icon="24h"
 				targetUrl="https://tradingstrategy.ai/api/explorer/"
@@ -102,9 +102,9 @@
 			>
 				<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
 				<p>Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed.</p>
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile
+			<ContentTileOld
 				title="Documentation"
 				icon="book"
 				targetUrl="https://tradingstrategy.ai/docs"
@@ -114,9 +114,9 @@
 					Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges.
 					Read API documentation and tutorials to learn how to create your own strategies.
 				</p>
-			</ContentTile>
+			</ContentTileOld>
 
-			<ContentTile
+			<ContentTileOld
 				title="Notebooks"
 				icon="python"
 				targetUrl="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
@@ -126,7 +126,7 @@
 					Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies.
 					View example notebooks to see how to use DeFi data in your notebooks.
 				</p>
-			</ContentTile>
+			</ContentTileOld>
 		</section>
 	</div>
 </main>
