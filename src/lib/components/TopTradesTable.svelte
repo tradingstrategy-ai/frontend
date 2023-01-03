@@ -35,6 +35,7 @@
 <style lang="postcss">
 	td {
 		@media (--viewport-sm-down) {
+			--cell-padding: var(--space-sm);
 			font: var(--f-ui-md-medium);
 		}
 

@@ -11,7 +11,7 @@
 	export let title = '';
 </script>
 
-<div class="content-tile">
+<div class="content-tile tile a">
 	<div class="media">
 		<img src={mediaSrc} alt={mediaAlt} />
 	</div>
@@ -46,8 +46,6 @@
 
 <style lang="postcss">
 	.content-tile {
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
-		border-radius: var(--radius-md);
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 		overflow: hidden;
@@ -61,6 +59,10 @@
 			height: 100%;
 			object-fit: cover;
 		}
+	}
+
+	:global h3 {
+		font: var(--f-heading-md-medium) !important;
 	}
 
 	.content-tile .content {

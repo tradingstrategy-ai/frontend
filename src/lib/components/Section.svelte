@@ -1,12 +1,13 @@
 <script lang="ts">
+	import type { SectionSizing } from '$lib/types';
 	import Grid from './Grid.svelte';
 
 	let classes: string = '';
 	export { classes as class };
 	export let cols = 1;
-	export let gap: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
-	export let layout: 'boxed' | 'fullwidth' | 'padded' = 'fullwidth';
-	export let size: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
+	export let gap: SectionSizing = '';
+	export let layout: 'boxed' | 'fullwidth' | 'padded' | '' = '';
+	export let size: SectionSizing = '';
 	export let subtitle: string = '';
 	export let title: string = '';
 </script>
@@ -14,10 +15,12 @@
 <section class="{classes} {size} {layout}">
 	{#if $$slots.header || title || subtitle}
 		<header>
-			{#if $$slots.header}
-				<slot name="header" />
-			{:else if title}
-				<h2 class="title">{title}</h2>
+			{#if $$slots.header || title}
+				<h2 class="title">
+					<slot name="header">
+						{title}
+					</slot>
+				</h2>
 				{#if subtitle}
 					<p class="subtitle">{subtitle}</p>
 				{/if}
@@ -39,7 +42,7 @@
 <style lang="postcss">
 	section {
 		--section-padding-x: var(--space-xl);
-		--section-padding-y: var(--space-9xl);
+		--section-padding-y: var(--space-8xl);
 
 		@media (--viewport-lg-down) {
 			--section-padding-x: var(--space-xl);
@@ -53,7 +56,27 @@
 
 		@media (--viewport-sm-down) {
 			--section-padding-x: var(--space-md);
-			--section-padding-y: var(--space-2xl);
+			--section-padding-y: var(--space-lg);
+		}
+	}
+
+	header {
+		text-align: center;
+
+		& h2 {
+			font: var(--f-heading-xl-medium);
+		}
+
+		@media (--viewport-sm-down) {
+			& h2 {
+				font: var(--f-heading-lg-medium);
+			}
+		}
+
+		@media (--viewport-md-down) {
+			& h2 {
+				font: var(--f-heading-xl-medium);
+			}
 		}
 	}
 
@@ -67,26 +90,6 @@
 
 		& footer {
 			padding: var(--section-padding-y) 0 0;
-		}
-	}
-
-	header {
-		text-align: center;
-
-		& h2 {
-			font: var(--f-heading-xxl-medium);
-		}
-
-		@media (--viewport-sm-down) {
-			& h2 {
-				font: var(--f-heading-lg-medium);
-			}
-		}
-
-		@media (--viewport-md-down) {
-			& h2 {
-				font: var(--f-heading-xl-medium);
-			}
 		}
 	}
 

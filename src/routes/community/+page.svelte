@@ -1,98 +1,17 @@
 <script lang="ts">
-	import { Hero, ContentTileOld } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
-	import HeroImage from '$lib/assets/illustrations/communication-1.svg?raw';
+	import type { PageData } from './$types';
+	import ContentCardsTemplate from '$lib/components/ContentCardsTemplate.svelte';
+	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
+
+	export let data: PageData;
 </script>
 
-<svelte:head>
-	<title>Community</title>
-	<meta name="description" content="Blog, Discord and discussion" />
-</svelte:head>
-
-<main>
-	<Hero title="Community" image={HeroImage}>
-		Join our community of expert traders, strategy developers and quants. Learn more about the Trading Strategy
-		protocol, algorithmic trading and DeFi markets.
-	</Hero>
-
-	<section class="ds-container">
-		<h2>Discuss & develop</h2>
-
-		<ContentTileOld title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
-			Join our expert community of traders, developers, and analysts and DeFi specialists.
-		</ContentTileOld>
-
-		<ContentTileOld title="GitHub" icon="github" targetUrl="https://github.com/tradingstrategy-ai/">
-			Explore Trading Strategy open-source code on our GitHub repository.
-		</ContentTileOld>
-
-		<ContentTileOld
-			title="Algorithm tutorials"
-			icon="read-glasses"
-			targetUrl="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-		>
-			Learn how to write trading algorithms with our documentation and run backtests.
-		</ContentTileOld>
-	</section>
-
-	<div class="section-wrapper">
-		<section class="ds-container">
-			<h2>Follow us</h2>
-
-			<ContentTileOld title="Blog" icon="reading" targetUrl="/blog">
-				Subscribe to our blog where we provide protocol updates, industry insights and algo trading tips.
-			</ContentTileOld>
-
-			<ContentTileOld title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
-				Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-			</ContentTileOld>
-
-			<ContentTileOld
-				title="YouTube"
-				icon="youtube"
-				targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-			>
-				Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
-			</ContentTileOld>
-
-			<ContentTileOld title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
-				Follow us on LinkedIn and join our community of traders, developers and quant experts.
-			</ContentTileOld>
-
-			<ContentTileOld title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
-				Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
-			</ContentTileOld>
-
-			<ContentTileOld title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
-				Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
-			</ContentTileOld>
-		</section>
-	</div>
-</main>
-
-<style>
-	main {
-		display: grid;
-		gap: var(--space-3xl);
-	}
-
-	.section-wrapper {
-		display: grid;
-		gap: 4.5rem;
-	}
-
-	section {
-		grid-template-columns: repeat(auto-fit, minmax(min(var(--container-width), 21.5rem), 1fr));
-		gap: var(--space-xl);
-	}
-
-	section h2 {
-		grid-column: 1 / -1;
-	}
-
-	@media (--viewport-md-up) {
-		.section-wrapper {
-			gap: 6.25rem;
-		}
-	}
-</style>
+<ContentCardsTemplate
+	cols={3}
+	contentCardsSections={data.contentCardsSections}
+	{heroImage}
+	heroTitle="Community"
+	heroSubtitle="Join our community of expert traders, strategy developers and quants.<br /> Learn more about the Trading Strategy protocol, algorithmic trading and DeFi markets."
+	pageTitle="Community"
+	pageDescription="Blog, Discord and discussion"
+/>

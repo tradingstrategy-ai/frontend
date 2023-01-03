@@ -32,7 +32,7 @@ th {
 td {
 	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 	height: 4rem;
-	font: var(--f-ui-lg-medium);
+	font: var(--f-ui-md-medium);
 	letter-spacing: var(--f-ui-lg-spacing, normal);
 	padding: var(--cell-padding);
 	transition: var(--table-transition);

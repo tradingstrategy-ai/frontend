@@ -1,0 +1,32 @@
+.tile {
+	border-radius: var(--radius-md);
+	transition: background var(--time-sm) ease-out;
+}
+
+.tile.a {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
+}
+.tile.a:hover,
+.tile:hover .tile.a {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b)) !important;
+}
+
+.tile.b {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+}
+.tile.b:hover,
+.tile:hover .tile.b {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d)) !important;
+}
+
+.tile.c {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-c));
+}
+.tile.c:hover,
+.tile:hover .tile.c {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d)) !important;
+}
+
+.tile.d {
+	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
+}
