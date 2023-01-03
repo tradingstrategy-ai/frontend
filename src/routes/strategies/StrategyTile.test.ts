@@ -29,7 +29,7 @@ describe('StrategyTile component', () => {
 		test('should display historic performance value', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲7.9%');
+			expect(performance).toHaveTextContent('▲ 7.9%');
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
