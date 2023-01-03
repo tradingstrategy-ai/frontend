@@ -13,22 +13,26 @@ date string. Alternatively, the `epoch` prop can be used for UNIX epoch timestam
 	import { fromUnixTime, formatDistanceToNow } from 'date-fns';
 
 	export let date: number | string | Date | undefined = undefined;
-	export let epoch: number = 0;
+	export let epoch: number | undefined = undefined;
 	export let relative = false;
 	export let withSeconds = false;
 
-	const dateTime = date ? new Date(date) : fromUnixTime(epoch);
-	const isoDate = dateTime.toISOString();
+	const dateTime = date ? new Date(date) : epoch ? fromUnixTime(epoch) : null;
 </script>
 
-<time class="date-time" datetime={isoDate} title={relative ? isoDate : undefined}>
-	{#if relative}
-		{formatDistanceToNow(dateTime, { addSuffix: true })};
-	{:else}
-		<span>{isoDate.slice(0, 10)}</span>
-		<span>{isoDate.slice(11, withSeconds ? 19 : 16)}</span>
-	{/if}
-</time>
+{#if dateTime?.valueOf()}
+	{@const isoDate = dateTime.toISOString()}
+	<time class="date-time" datetime={isoDate} title={relative ? isoDate : undefined}>
+		{#if relative}
+			{formatDistanceToNow(dateTime, { addSuffix: true })};
+		{:else}
+			<span>{isoDate.slice(0, 10)}</span>
+			<span>{isoDate.slice(11, withSeconds ? 19 : 16)}</span>
+		{/if}
+	</time>
+{:else}
+	---
+{/if}
 
 <style lang="postcss">
 	span {
