@@ -13,11 +13,10 @@
 
 	export let cards: ContentCard[];
 	export let cols = 2;
-	export let gap: SectionSizing = 'lg';
 	export let title: string;
 </script>
 
-<Section class="content-cards" {cols} {gap} layout="boxed" {title}>
+<Section class="content-cards" {cols} layout="boxed" {title}>
 	{#each cards as card}
 		<ContentCard
 			href={card.href}
@@ -32,12 +31,25 @@
 
 <style global lang="postcss">
 	section.content-cards {
-		--section-padding-y: var(--space-ls) !important;
+		--section-padding-y: var(--space-ml) !important;
+		@media (--viewport-xs) {
+			--section-padding-y: var(--space-ms) !important;
+		}
 		margin-bottom: var(--space-xl);
+
+		& .grid {
+			--gap: var(--space-ll) !important;
+			@media (--viewport-xs) {
+				--gap: var(--space-ls) !important;
+			}
+		}
 
 		& h2 {
 			font: var(--f-heading-md-medium) !important;
 			text-align: left;
+			@media (--viewport-xs) {
+				font: var(--f-heading-sm-medium) !important;
+			}
 		}
 	}
 </style>

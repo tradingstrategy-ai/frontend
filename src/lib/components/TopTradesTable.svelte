@@ -35,8 +35,11 @@
 <style lang="postcss">
 	td {
 		@media (--viewport-sm-down) {
-			--cell-padding: var(--space-sm);
+			--cell-padding: var(--space-sl);
 			font: var(--f-ui-md-medium);
+		}
+		@media (--viewport-xs) {
+			font: var(--f-ui-sm-medium) !important;
 		}
 
 		&:last-child {

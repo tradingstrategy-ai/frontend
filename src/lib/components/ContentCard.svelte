@@ -47,14 +47,32 @@
 <style lang="postcss">
 	.content-card {
 		display: grid;
-		gap: var(--space-lg);
+		gap: var(--space-md);
 		padding: var(--space-lg);
+		@media (--viewport-xs) {
+			padding: var(--space-ls);
+		}
+		@media (--viewport-sm-up) {
+			gap: var(--space-lg);
+		}
+
+		& h3,
+		& p {
+			margin-bottom: 0;
+		}
 	}
 
 	.content-card .icon {
 		border-radius: 100%;
 		padding: var(--space-ls);
-		justify-self: start;
+		margin-bottom: var(--space-md);
+		place-self: start;
+	}
+
+	.content-card .title {
+		@media (--viewport-sm-up) {
+			font: var(--f-heading-lg-medium) !important;
+		}
 	}
 
 	.content-card .summary {
@@ -67,7 +85,10 @@
 		}
 
 		& .value {
-			font: var(--f-ui-xxl-medium);
+			font: var(--f-ui-xl-medium);
+			@media (--viewport-sm-up) {
+				font: var(--f-ui-xxl-medium);
+			}
 		}
 	}
 </style>

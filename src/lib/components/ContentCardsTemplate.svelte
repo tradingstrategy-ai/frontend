@@ -18,7 +18,7 @@
 </svelte:head>
 
 <main>
-	<Section layout="boxed">
+	<Section class="hero" layout="boxed">
 		<HeroBanner image={heroImage} title={heroTitle} subtitle={heroSubtitle} />
 	</Section>
 
@@ -26,3 +26,9 @@
 		<ContentCardsSection {cards} {cols} {title} />
 	{/each}
 </main>
+
+<style global>
+	.hero {
+		--section-padding-y: 0 !important;
+	}
+</style>

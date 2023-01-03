@@ -48,15 +48,15 @@ td:last-child {
 	border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
-@media (width <= 768px) {
+@media (width <= 1024px) {
 	td {
-		font: var(--f-ui-md-medium) !important;
+		font: var(--f-ui-sm-medium) !important;
 	}
 }
 
 @media (width <= 576px) {
 	td {
-		font: var(--f-ui-sm-medium) !important;
+		font: var(--f-ui-sm-medium);
 	}
 }
 
