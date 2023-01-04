@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Banner, Button } from '$lib/components';
+	import { Banner, Button, HeroVideo } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';
@@ -13,6 +13,7 @@
 
 <main>
 	<IntroHero />
+	<HeroVideo youTubeId="iPXuqwYDv9U" title="Trading Strategy intro video" />
 	<Audience />
 
 	<Banner

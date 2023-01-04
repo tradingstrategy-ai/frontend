@@ -5,7 +5,7 @@
 	import type { PageData } from './$types';
 	import HeroBanner from './HeroBanner.svelte';
 	import TopMomentumTile from './TopMomentumTile.svelte';
-	import { BlogPostTile, Button } from '$lib/components';
+	import { BlogPostTile, Button, HeroVideo } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
@@ -42,6 +42,8 @@
 			</div>
 		</section>
 	{/if}
+
+	<HeroVideo youTubeId="iPXuqwYDv9U" title="Trading Strategy intro video" />
 
 	<section class="ds-container strategies">
 		<h2>Strategies</h2>
