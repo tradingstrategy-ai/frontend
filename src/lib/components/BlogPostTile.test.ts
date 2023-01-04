@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render } from '@testing-library/svelte';
 import BlogPostTile from './BlogPostTile.svelte';
 
