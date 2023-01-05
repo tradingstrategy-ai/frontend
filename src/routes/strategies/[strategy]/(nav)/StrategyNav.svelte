@@ -121,6 +121,7 @@
 
 	.label {
 		padding-block: var(--space-ms);
+		overflow: hidden;
 
 		@media (--viewport-md-down) {
 			padding-block: var(--space-sl);
