@@ -42,7 +42,7 @@
 
 <svelte:head>
 	<title>
-		Export {exchangeName} on ${data.chain_name} data
+		Export {exchangeName} data from {data.chain_name} blockchain
 	</title>
 	<meta name="description" content={`Download ${exchangeName} on ${data.chain_name} trading pair data as Excel file`} />
 </svelte:head>
