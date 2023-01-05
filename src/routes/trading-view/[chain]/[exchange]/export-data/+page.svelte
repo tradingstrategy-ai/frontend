@@ -97,12 +97,7 @@
 			</div>
 
 			<div class="cta">
-				<Button
-					label="Download Excel"
-					href="{downloadUrl}?{downloadParams}"
-					download
-					disabled={downloadDisabled}
-				/>
+				<Button label="Download Excel" href="{downloadUrl}?{downloadParams}" download disabled={downloadDisabled} />
 
 				<!--
                 Above downloadDisabled is untoggled for now as there is no way to reset
