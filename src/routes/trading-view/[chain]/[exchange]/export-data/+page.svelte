@@ -98,7 +98,7 @@
 
 			<div class="cta">
 				<Button
-					label="Download trading pair data"
+					label="Download Excel"
 					href="{downloadUrl}?{downloadParams}"
 					download
 					disabled={downloadDisabled}
