@@ -100,11 +100,11 @@
 				<Button label="Download Excel" href="{downloadUrl}?{downloadParams}" download disabled={downloadDisabled} />
 
 				<!--
-                Above downloadDisabled is untoggled for now as there is no way to reset
-                this outside refresh if the form values are changed
-                -->
+					Above downloadDisabled is untoggled for now as there is no way to reset
+					this outside refresh if the form values are changed
+				-->
 
-				<Button secondary="true" label="View full datasets" href="/trading-view/backtesting" />
+				<Button secondary label="View full datasets" href="/trading-view/backtesting" />
 			</div>
 		</form>
 	</section>
@@ -127,7 +127,7 @@
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		--container-max-width: 720px;
 		display: grid;
@@ -166,22 +166,14 @@
 
 	.cta {
 		margin-top: var(--space-md);
-
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: left;
-		gap: var(--space-ls) var(--space-xl);
 		padding-block: var(--space-lg);
+		display: flex;
+		gap: var(--space-xl);
 
 		@media (--viewport-xs) {
-			flex-direction: column;
 			padding-block: 0;
-		}
-	}
-
-	@media (--viewport-md-up) {
-		.cta {
-			justify-items: start;
+			flex-direction: column;
+			gap: var(--space-ls);
 		}
 	}
 </style>
