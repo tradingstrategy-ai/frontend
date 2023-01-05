@@ -17,8 +17,8 @@
 	<meta name="description" content={pageDescription} />
 </svelte:head>
 
-<main>
-	<Section class="hero" layout="boxed">
+<main class="content-cards-template">
+	<Section class="hero" layout="boxed" padding="md">
 		<HeroBanner image={heroImage} title={heroTitle} subtitle={heroSubtitle} />
 	</Section>
 
@@ -28,7 +28,7 @@
 </main>
 
 <style global>
-	.hero {
+	.content-cards-template .hero {
 		--section-padding-y: 0 !important;
 	}
 </style>

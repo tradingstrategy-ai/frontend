@@ -3,9 +3,9 @@
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
-	import { BlogPostTile } from '$lib/components';
+	import { BlogRoll, HeroBanner, Section } from '$lib/components';
+	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
 	import SocialLinks from './SocialLinks.svelte';
-
 	export let data: PageData;
 
 	let { posts, page } = data;
@@ -29,31 +29,21 @@
 </svelte:head>
 
 <main>
-	<header class="ds-container ds-2-col">
-		<div>
-			<h2>Trading Strategy blog</h2>
-			<p>Follow our decentralised algorithmic trading protocol development</p>
-		</div>
-		<SocialLinks layout="index" />
-	</header>
+	<Section class="hero" header layout="boxed" padding="md">
+		<HeroBanner
+			title="Trading Strategy Blog"
+			subtitle="Follow our decentralised algorithmic trading protocol development"
+			image={heroImage}
+		>
+			<SocialLinks layout="index" />
+		</HeroBanner>
+	</Section>
 
-	<section class="ds-container posts" data-testid="blog-posts">
-		{#each posts as post, idx (post.id)}
-			<BlogPostTile
-				featured={idx === 0}
-				title={post.title}
-				excerpt={post.excerpt}
-				imageUrl={post.feature_image}
-				imageAltText={post.feature_image_alt}
-				slug={post.slug}
-				publishedAt={post.published_at}
-			/>
-		{:else}
-			<p>No blog posts found (check if Ghost is properly configured)</p>
-		{/each}
-	</section>
+	<Section class="posts" layout="boxed" padding="md">
+		<BlogRoll {posts} />
+	</Section>
 
-	<section class="ds-container loading">
+	<section class="loading">
 		<div>
 			{#if page.loading}
 				<Spinner />
@@ -70,31 +60,39 @@
 </main>
 
 <style lang="postcss">
-	header {
-		margin-top: var(--space-lg);
-		align-items: center;
-		gap: var(--space-lg) var(--space-3xl);
+	/* :global {
+		& .blog-roll {
+			& .content-tile:first-of-type {
+				grid-column: 1 / -1;
 
-		& h2 {
-			font: var(--f-heading-xl-medium);
-			letter-spacing: var(--f-heading-xl-spacing, normal);
+				& .content {
+					padding: var(--space-xl);
+					place-content: center start;
+					place-items: start;
+				}
+
+				& .title {
+					font: var(--f-heading-lg-medium) !important;
+				}
+			}
 		}
+	} */
 
-		& p {
-			margin-top: var(--space-sl);
-			font: var(--f-h4-roman);
-		}
-	}
+	:global {
+		& .hero {
+			& .social-links {
+				margin-top: var(--space-sm);
 
-	.posts {
-		padding-block: var(--space-3xl);
-		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));
-		gap: var(--space-3xl);
-		/** ensure featured post column gap matches the layout column gap */
-		--blog-post-tile--column-gap: var(--space-3xl);
+				@media (--viewport-sm-down) {
+					margin: var(--space-md) 0;
+				}
+			}
 
-		@media (--viewport-lg-up) {
-			padding-block: 3.75rem;
+			@media (--viewport-sm-down) {
+				& .media {
+					display: none;
+				}
+			}
 		}
 	}
 

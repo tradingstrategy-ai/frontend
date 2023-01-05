@@ -2,7 +2,7 @@
 	import { Icon } from '$lib/components';
 	export let href = '';
 	export let iconName = '';
-	export let iconSize = '2rem';
+	export let iconSize = '1.75rem';
 	export let title = '';
 	export let subtitle = '';
 	export let summaryLabel = '';

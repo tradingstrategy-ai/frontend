@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './home/HeroBanner.svelte';
-	import { ContentTile, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
+	import { BlogRoll, ContentTile, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
@@ -24,7 +24,7 @@
 <main>
 	<HomeHeroBanner {impressiveNumbers} />
 
-	<Section class="top-trades" layout="boxed" title="Top trades" cols={2} gap="lg">
+	<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
 		<SummaryBox title="Most profitable 24h">
 			<Button sm slot="cta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
 			<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
@@ -36,7 +36,7 @@
 		</SummaryBox>
 	</Section>
 
-	<Section title="Strategies" class="strategies" layout="boxed">
+	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
 		<div class="inner">
 			<div class="coming-soon">Coming soon</div>
 			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
@@ -45,22 +45,9 @@
 	</Section>
 
 	{#if posts}
-		<Section class="ds-container blog" gap="lg" layout="boxed" title="Blog" cols={2}>
-			{#each posts as post (post.id)}
-				<ContentTile
-					ctaLabel="Read article"
-					href="/blog/{post.slug}"
-					mediaSrc={post.feature_image}
-					mediaAlt={post.feature_image_alt}
-					title={post.title}
-					datetime={new Date(post.published_at)}
-					description={post.excerpt}
-				/>
-			{/each}
-
-			<div class="cta" slot="footer">
-				<Button label="Read more on blog" href="/blog" />
-			</div>
+		<Section title="Blog" class="blog" layout="boxed" padding="md">
+			<BlogRoll {posts} limit={3} />
+			<Button label="Read more on Blog" href="/blog" slot="footer" />
 		</Section>
 	{/if}
 </main>
@@ -92,6 +79,12 @@
 
 		& p {
 			font: var(--f-h5-roman);
+		}
+	}
+
+	:global {
+		& .blog footer .button {
+			justify-self: center;
 		}
 	}
 </style>

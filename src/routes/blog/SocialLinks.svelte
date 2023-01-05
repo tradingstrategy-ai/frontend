@@ -5,7 +5,7 @@
 	export let layout: 'index' | 'post';
 </script>
 
-<div class="layout--{layout}">
+<div class="social-links layout--{layout}">
 	<button class="social-link" on:click={toggleSubscribeDialog}>
 		<Icon name="newspaper" />
 		<span class="long-label">Subscribe to our Newsletter</span>
@@ -24,7 +24,7 @@
 </div>
 
 <style lang="postcss">
-	div {
+	.social-links {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
@@ -55,19 +55,19 @@
 		}
 
 		@nest .layout--index & {
-			font: var(--f-ui-md-medium);
+			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			--icon-size: 24px;
 		}
 
 		& > span {
 			text-decoration: none;
-			color: var(--c-text-4-v1);
+			color: var(--c-text-light);
 		}
 
 		&:hover > span {
 			text-decoration: underline;
-			color: var(--c-text-1-v1);
+			color: var(--c-text-light);
 		}
 	}
 

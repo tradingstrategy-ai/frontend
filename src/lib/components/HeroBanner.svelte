@@ -8,6 +8,7 @@
 	<div class="content">
 		<h1>{@html title}</h1>
 		<p>{@html subtitle}</p>
+		<slot />
 	</div>
 
 	<div class="media">
@@ -23,7 +24,7 @@
 		place-content: center;
 		place-items: stretch;
 
-		@media (--viewport-xs) {
+		@media (--viewport-sm-down) {
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
 		}
