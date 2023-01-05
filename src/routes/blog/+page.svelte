@@ -29,7 +29,7 @@
 </svelte:head>
 
 <main>
-	<Section class="hero" header layout="boxed" padding="md">
+	<Section class="hero" header layout="boxed">
 		<HeroBanner
 			title="Trading Strategy Blog"
 			subtitle="Follow our decentralised algorithmic trading protocol development"

@@ -21,6 +21,7 @@
 		display: grid;
 		gap: var(--space-10xl);
 		grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
+		height: 40vh;
 		place-content: center;
 		place-items: stretch;
 

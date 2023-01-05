@@ -14,7 +14,7 @@
 
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
-<article class="ds-container">
+<article class="blog-article ds-container">
 	<header>
 		<SocialLinks layout="post" />
 		<h1>{data.title}</h1>
@@ -25,26 +25,25 @@
 	<BlogPostContent html={data.html} />
 </article>
 
-<style>
+<style lang="postcss">
 	article {
 		--container-max-width: 720px;
 		gap: var(--space-xl);
 	}
 
 	header {
-		margin-top: var(--space-md);
+		margin: var(--space-md) 0;
 		display: grid;
 		gap: var(--space-ls);
-	}
-
-	h1 {
-		font: var(--f-h2-medium);
-		text-transform: capitalize;
+		& h1 {
+			font: var(--f-heading-xxl-medium);
+		}
 	}
 
 	article img {
 		width: 100%;
 		aspect-ratio: 1.5;
+		margin-top: var(--space-md);
 		min-height: 312px;
 		max-height: 400px;
 		object-fit: cover;

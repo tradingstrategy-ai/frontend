@@ -252,7 +252,7 @@ body {
 }
 
 /* scoping base styles under .ds-container to avoid conflicting w/bootstrap */
-.ds-container h1 {
+/* .ds-container h1 {
 	font: var(--f-h1-medium);
 }
 
@@ -274,7 +274,7 @@ body {
 
 .ds-container h6 {
 	font: var(--f-h6-medium);
-}
+} */
 
 .ds-container p,
 .ds-container pre {

@@ -23,13 +23,19 @@
 	}
 </script>
 
-<div use:injectTOC use:wrapTables>
+<div class="blog-post-content" use:injectTOC use:wrapTables>
 	{@html html}
 </div>
 
 <style lang="postcss">
-	div :global {
+	.blog-post-content :global {
 		overflow: auto;
+
+		& h1 {
+			font: var(--f-heading-lg-medium);
+			margin: var(--space-2xl) 0 !important;
+			text-transform: capitalize;
+		}
 
 		&,
 		& p,
@@ -78,7 +84,13 @@
 		}
 
 		& figure {
-			margin: var(--space-2xl) 0;
+			display: grid;
+			margin: var(--space-3xl) 0 var(--space-5xl);
+
+			& img {
+				height: 100%;
+				width: 100%;
+			}
 		}
 
 		& figcaption {
@@ -103,7 +115,7 @@
 		}
 
 		& .kg-image {
-			width: auto;
+			width: 100%;
 			height: auto;
 			max-width: 100%;
 			display: inline-block;

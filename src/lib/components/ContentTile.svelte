@@ -41,13 +41,14 @@
 	</div>
 	<div class="content">
 		<div class="info">
+			{#if datetime}
+				<Timestamp {datetime} showDistanceToNow />
+			{/if}
 			{#if title || $$slots.title}
 				<slot name="title">
 					<h3 class="title truncate lines-3">{title}</h3>
 				</slot>
 			{/if}
-
-			<Timestamp {datetime} showDistanceToNow />
 
 			{#if description || $$slots.description}
 				<slot name="description">
@@ -100,7 +101,7 @@
 	}
 
 	.content-tile .content {
-		--content-gap: var(--space-lg);
+		--content-gap: var(--space-md);
 		--content-padding: var(--space-ll) var(--space-lg);
 		@media (--viewport-sm-down) {
 			--content-gap: var(--space-sm);
@@ -115,6 +116,15 @@
 	.content-tile .info {
 		display: grid;
 		gap: var(--content-gap);
+	}
+
+	.content-tile :global time {
+		color: hsl(var(--hsl-v2-text-extra-light));
+		font: var(--f-ui-sm-medium);
+	}
+
+	.content-tile .title {
+		margin: 0;
 	}
 
 	.content-tile .description {
