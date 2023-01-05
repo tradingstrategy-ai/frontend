@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button } from '$lib/components';
+	import { Button, AlertItem, AlertList } from '$lib/components';
 
 	export let data: PageData;
 
@@ -43,11 +43,18 @@
 <main>
 	<header class="ds-container">
 		<h1>Export trading pair data for {exchangeName}</h1>
-		<p>Download data as Microsoft Excel file for analysis.</p>
+
+		<p>
+			Download the exchange top trading pairs as Microsoft Excel file for analysis. This analysis is suitable for quick
+			market overview.
+			<a class="body-link" href="/trading-view/backtesting">
+				For comprehensive analysis use the full backtesting datasets
+			</a>.
+		</p>
 	</header>
 
 	<section class="ds-container">
-		<form>
+		<form on:change={() => (downloadDisabled = false)}>
 			{#if data.exchange_slug}
 				<div>
 					<label for="exampleFormControlInput1">Selected exchange</label>
@@ -72,10 +79,10 @@
 			<div>
 				<label for="export_dataset">Sorted by</label>
 				<select class="form-control" id="sorted_by" bind:value={selectedSort}>
-					<option value="liquidity_change_24h">Liquidity % change 24h</option>
-					<option value="usd_liquidity_change_24h">Liquidity USD change 24h</option>
-					<option value="usd_liquidity_latest">Liquidity available latest</option>
-					<option value="usd_volume_24h">Volume 24h</option>
+					<option value="liquidity_change_relative_24h">Liquidity % change 24h</option>
+					<option value="liquidity_change_abs_24h">Liquidity USD change 24h</option>
+					<option value="liquidity">Liquidity available latest</option>
+					<option value="volume_1d">Volume 24h</option>
 					<option value="price_change_24h">Price change 24h</option>
 				</select>
 			</div>
@@ -91,12 +98,14 @@
 
 			<div class="cta">
 				<Button
-					label="Download trading pair data"
+					label="Download Excel"
 					href="{downloadUrl}?{downloadParams}"
 					download
 					disabled={downloadDisabled}
 					on:click={() => (downloadDisabled = true)}
 				/>
+
+				<Button secondary label="View full datasets" href="/trading-view/backtesting" />
 			</div>
 		</form>
 	</section>
@@ -109,12 +118,17 @@
 			<a class="body-link" rel="external" href="https://tradingstrategy.ai/api/explorer/"
 				>the column format in PairSummary section of the API documentation.</a
 			>
-			For all datasets, see <a class="body-link" href="/trading-view/backtesting">Backtesting</a> page.
 		</p>
+
+		<AlertList status="warning">
+			<AlertItem title="Microsoft Excel export is currently in beta">
+				We are still finishing out data points. Some data might be incorrect or not available.
+			</AlertItem>
+		</AlertList>
 	</section>
 </main>
 
-<style>
+<style lang="postcss">
 	main {
 		--container-max-width: 720px;
 		display: grid;
@@ -153,12 +167,14 @@
 
 	.cta {
 		margin-top: var(--space-md);
-		display: grid;
-	}
+		padding-block: var(--space-lg);
+		display: flex;
+		gap: var(--space-xl);
 
-	@media (--viewport-md-up) {
-		.cta {
-			justify-items: start;
+		@media (--viewport-xs) {
+			padding-block: 0;
+			flex-direction: column;
+			gap: var(--space-ls);
 		}
 	}
 </style>
