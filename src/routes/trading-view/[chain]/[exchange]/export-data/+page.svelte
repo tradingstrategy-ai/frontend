@@ -14,14 +14,14 @@
 	let selectedDataset = 'top_3000_rows';
 	let selectedSort = 'price_change_24h';
 
-    let selectedFilter = 'min_liquidity_1M';
+	let selectedFilter = 'min_liquidity_1M';
 
-    // Uniswap v3 does not have liquidity data
-    // available in the same format and this
-    // cannot be used for filtering
-    if(data.exchange_slug == "uniswap-v3") {
-      selectedFilter = 'unfiltered';
-    }
+	// Uniswap v3 does not have liquidity data
+	// available in the same format and this
+	// cannot be used for filtering
+	if (data.exchange_slug == 'uniswap-v3') {
+		selectedFilter = 'unfiltered';
+	}
 
 	let downloadDisabled = false;
 
@@ -100,10 +100,11 @@
 				<label for="export_dataset">Filter</label>
 				<select class="form-control" id="filter" bind:value={selectedFilter}>
 					<option value="unfiltered">Unfiltered</option>
-                    {#if data.exchange_slug != "uniswap-v3" }
-    					<option value="min_liquidity_100k">Min. liquidity $100k</option>
-    					<option value="min_liquidity_1M">Min. liquidity $1M</option>
-                    {/if}
+                    <!-- Uniswap v3 hot fix until data is available -->
+					{#if data.exchange_slug != 'uniswap-v3'}
+						<option value="min_liquidity_100k">Min. liquidity $100k</option>
+						<option value="min_liquidity_1M">Min. liquidity $1M</option>
+					{/if}
 				</select>
 			</div>
 
