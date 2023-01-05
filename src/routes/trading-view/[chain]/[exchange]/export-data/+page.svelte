@@ -47,7 +47,7 @@
 		<p>
 			Download the exchange top trading pairs as Microsoft Excel file for analysis. This analysis is suitable for quick
 			market overview.
-			<a class="body-link" href="/trading-view/backtesing">
+			<a class="body-link" href="/trading-view/backtesting">
 				For comprehensive analysis use the full backtesting datasets
 			</a>.
 		</p>
