@@ -54,7 +54,7 @@
 	</header>
 
 	<section class="ds-container">
-		<form>
+		<form on:change={() => (downloadDisabled = false)}>
 			{#if data.exchange_slug}
 				<div>
 					<label for="exampleFormControlInput1">Selected exchange</label>
@@ -97,12 +97,13 @@
 			</div>
 
 			<div class="cta">
-				<Button label="Download Excel" href="{downloadUrl}?{downloadParams}" download disabled={downloadDisabled} />
-
-				<!--
-					Above downloadDisabled is untoggled for now as there is no way to reset
-					this outside refresh if the form values are changed
-				-->
+				<Button
+					label="Download Excel"
+					href="{downloadUrl}?{downloadParams}"
+					download
+					disabled={downloadDisabled}
+					on:click={() => (downloadDisabled = true)}
+				/>
 
 				<Button secondary label="View full datasets" href="/trading-view/backtesting" />
 			</div>
