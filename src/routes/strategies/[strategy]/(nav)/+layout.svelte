@@ -46,7 +46,7 @@
 
 			@media (--viewport-lg-up) {
 				gap: var(--space-xxxxxl);
-				grid-template-columns: 14rem auto;
+				grid-template-columns: 14.5rem auto;
 			}
 		}
 	}

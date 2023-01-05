@@ -12,24 +12,58 @@
 	const basePath = `/strategies/${strategyId}`;
 
 	const menuOptions = [
-		{ label: 'Overview', targetUrl: basePath },
-		{ label: `Open positions`, targetUrl: `${basePath}/open-positions` },
-		{ label: `Closed positions`, targetUrl: `${basePath}/closed-positions` },
-		{ label: `Frozen positions`, targetUrl: `${basePath}/frozen-positions` },
-		{ label: `Performance`, targetUrl: `${basePath}/performance` },
-		{ label: `Decision making`, targetUrl: `${basePath}/decision-making` },
-		{ label: `Instance status`, targetUrl: `${basePath}/status` },
-		{ label: `Logs`, targetUrl: `${basePath}/logs` },
-		{ label: `Source Code`, targetUrl: `${basePath}/source` }
+		{
+			label: 'Overview',
+			targetUrl: basePath
+		},
+		{
+			label: `Open positions`,
+			targetUrl: `${basePath}/open-positions`,
+			count: getCount(portfolio.open_positions)
+		},
+		{
+			label: `Closed positions`,
+			targetUrl: `${basePath}/closed-positions`,
+			count: getCount(portfolio.closed_positions)
+		},
+		{
+			label: `Frozen positions`,
+			targetUrl: `${basePath}/frozen-positions`,
+			count: getCount(portfolio.frozen_positions)
+		},
+		{
+			label: `Performance`,
+			targetUrl: `${basePath}/performance`
+		},
+		{
+			label: `Decision making`,
+			targetUrl: `${basePath}/decision-making`
+		},
+		{
+			label: `Instance status`,
+			targetUrl: `${basePath}/status`
+		},
+		{
+			label: `Logs`,
+			targetUrl: `${basePath}/logs`
+		},
+		{
+			label: `Source Code`,
+			targetUrl: `${basePath}/source`
+		}
 	];
 
 	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
 
 	$: visibleOptions = menuOptions.filter((option) => {
 		const isFrozenPositionsOption = option.targetUrl.includes('frozen-positions');
-		const hasFrozenPositions = Object.values(portfolio.frozen_positions).length > 0;
+		const hasFrozenPositions = getCount(portfolio.frozen_positions) > 0;
 		return !isFrozenPositionsOption || hasFrozenPositions || currentOption === option;
 	});
+
+	function getCount(positions: any = {}) {
+		return Object.keys(positions).length;
+	}
 
 	const mobileMenu = fsm('closed', {
 		closed: {
@@ -56,7 +90,12 @@
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
 			{#each visibleOptions as option}
-				<MenuItem {...option} active={option === currentOption} noScroll />
+				<MenuItem targetUrl={option.targetUrl} active={option === currentOption} noScroll>
+					<span class="label">{option.label}</span>
+					{#if typeof option.count === 'number'}
+						<span class="count">{option.count}</span>
+					{/if}
+				</MenuItem>
 			{/each}
 		</Menu>
 	</div>
@@ -68,14 +107,53 @@
 		--menu-item-active-color: var(--c-text-default);
 		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--radius-md);
-		--menu-item-padding: var(--space-ms) var(--space-md);
+		--menu-item-padding: 0 var(--space-md);
 
-		@media (--viewport-lg-down) {
-			--menu-item-padding: var(--space-sl) var(--space-ml);
+		@media (--viewport-md-down) {
+			--menu-item-padding: 0 var(--space-ml);
 		}
 
 		@media (--viewport-md-down) {
 			--menu-item-font: var(--f-ui-md-medium);
+			--menu-item-count-font: var(--f-ui-sm-bold);
+		}
+	}
+
+	.label {
+		padding-block: var(--space-ms);
+		overflow: hidden;
+
+		@media (--viewport-md-down) {
+			padding-block: var(--space-sl);
+		}
+	}
+
+	.count {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: var(--space-ll);
+		min-width: var(--space-ll);
+		margin-left: var(--space-sm);
+		padding-inline: var(--space-ss);
+		border-radius: var(--radius-lg);
+		font: var(--f-ui-md-bold);
+		letter-spacing: var(--f-ui-md-spacing, normal);
+		color: var(--c-text-default);
+		background: var(--c-background-3);
+
+		@nest :global(a:not([href]):not([tabindex])) & {
+			background: var(--c-background-1);
+			color: var(--c-text-inverted);
+		}
+
+		@media (--viewport-md-down) {
+			height: var(--space-lg);
+			min-width: var(--space-lg);
+			margin-left: var(--space-ss);
+			padding-inline: var(--space-xs);
+			font: var(--f-ui-sm-bold);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 	}
 
