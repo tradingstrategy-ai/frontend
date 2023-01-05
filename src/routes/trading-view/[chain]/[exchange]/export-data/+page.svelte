@@ -100,7 +100,7 @@
 				<label for="export_dataset">Filter</label>
 				<select class="form-control" id="filter" bind:value={selectedFilter}>
 					<option value="unfiltered">Unfiltered</option>
-                    <!-- Uniswap v3 hot fix until data is available -->
+					<!-- Uniswap v3 hot fix until data is available -->
 					{#if data.exchange_slug != 'uniswap-v3'}
 						<option value="min_liquidity_100k">Min. liquidity $100k</option>
 						<option value="min_liquidity_1M">Min. liquidity $1M</option>
