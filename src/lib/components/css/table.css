@@ -1,4 +1,4 @@
-table {
+table:not(.table) {
 	--border-spacing: var(--space-sl);
 	--cell-padding: var(--space-sl) var(--space-ls);
 	--table-transition: all var(--time-xs) ease-out;
@@ -9,17 +9,17 @@ table {
 }
 
 @media (width <= 768px) {
-	table {
+	table:not(.table) {
 		--cell-padding: 0 var(--space-ms);
 	}
 }
 
-thead tr:first-child {
+table:not(.table) thead tr:first-child {
 	position: sticky;
 	top: 0;
 }
 
-th {
+table:not(.table) th {
 	background-color: var(--c-body);
 	color: var(--c-text-extra-light);
 	font: var(--f-ui-md-medium);
@@ -29,7 +29,7 @@ th {
 	white-space: nowrap;
 }
 
-td {
+table:not(.table) td {
 	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 	height: 4rem;
 	font: var(--f-ui-md-medium);
@@ -40,30 +40,34 @@ td {
 	--button-width: 100%;
 }
 
-td:first-child {
+table:not(.table) td:first-child {
 	border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 
-td:last-child {
+table:not(.table) td:last-child {
 	border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 @media (width <= 1024px) {
-	td {
+	table:not(.table) td {
 		font: var(--f-ui-sm-medium) !important;
 	}
 }
 
 @media (width <= 576px) {
-	td {
+	table:not(.table) td {
 		font: var(--f-ui-sm-medium);
 	}
 }
 
-tr:hover td {
+table:not(.table) tr:hover td {
 	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
 }
 
-tfoot td {
+table:not(.table) tfoot td {
 	background: transparent;
+}
+
+.table {
+	color: inherit !important;
 }

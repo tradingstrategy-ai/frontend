@@ -16,7 +16,7 @@
 	export let title: string;
 </script>
 
-<Section class="content-cards" {cols} layout="boxed" {title}>
+<Section class="content-cards" {cols} layout="boxed" padding="lg" {title}>
 	{#each cards as card}
 		<ContentCard
 			href={card.href}
