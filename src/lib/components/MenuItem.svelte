@@ -1,16 +1,20 @@
 <script lang="ts">
 	export let active = false;
-	export let label: string;
+	export let label: string = '';
 	export let targetUrl: string;
 	export let noScroll = false;
 
 	$: href = active ? undefined : targetUrl;
 </script>
 
-<li><a {href} data-sveltekit-noscroll={noScroll ? '' : 'off'} on:click>{label}</a></li>
+<li class="menu-item">
+	<a {href} data-sveltekit-noscroll={noScroll ? '' : 'off'} on:click>
+		<slot>{label}</slot>
+	</a>
+</li>
 
 <style lang="postcss">
-	li {
+	.menu-item {
 		list-style-type: none;
 		justify-content: inherit;
 	}
