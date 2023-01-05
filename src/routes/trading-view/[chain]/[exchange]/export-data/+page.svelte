@@ -44,13 +44,13 @@
 	<header class="ds-container">
 		<h1>Export trading pair data for {exchangeName}</h1>
 
-        <p>
-            Download the exchange top trading pairs as Microsoft Excel file for analysis.
-            This analysis is suitable for quick market overview.
-            <a class="body-link" href="/trading-view/backtesing">
-                For comprehensive analysis use the full backtesting datasets
-            </a>.
-        </p>
+		<p>
+			Download the exchange top trading pairs as Microsoft Excel file for analysis. This analysis is suitable for quick
+			market overview.
+			<a class="body-link" href="/trading-view/backtesing">
+				For comprehensive analysis use the full backtesting datasets
+			</a>.
+		</p>
 	</header>
 
 	<section class="ds-container">
@@ -104,16 +104,12 @@
 					disabled={downloadDisabled}
 				/>
 
-                <!--
+				<!--
                 Above downloadDisabled is untoggled for now as there is no way to reset
                 this outside refresh if the form values are changed
                 -->
 
-                <Button
-                    secondary=true
-					label="View full datasets"
-					href="/trading-view/backtesting"
-				/>
+				<Button secondary="true" label="View full datasets" href="/trading-view/backtesting" />
 			</div>
 		</form>
 	</section>
@@ -128,14 +124,12 @@
 			>
 		</p>
 
-        <AlertList status="warning">
-            <AlertItem title="Microsoft Excel export is currently in beta">
-                We are still finishing out data points. Some data might be incorrect or not available.
-            </AlertItem>
-        </AlertList>
+		<AlertList status="warning">
+			<AlertItem title="Microsoft Excel export is currently in beta">
+				We are still finishing out data points. Some data might be incorrect or not available.
+			</AlertItem>
+		</AlertList>
 	</section>
-
-
 </main>
 
 <style>
@@ -188,7 +182,6 @@
 			flex-direction: column;
 			padding-block: 0;
 		}
-
 	}
 
 	@media (--viewport-md-up) {
