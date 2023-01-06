@@ -67,6 +67,7 @@
 	}
 
 	.content-card .symbol {
+		display: flex;
 		border-radius: 100%;
 		padding: var(--space-ls);
 		margin-bottom: var(--space-md);
