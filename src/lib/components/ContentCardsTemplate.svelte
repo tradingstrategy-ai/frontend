@@ -1,10 +1,6 @@
 <script lang="ts">
-	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 
-	export let heroImage: any;
-	export let heroTitle: string;
-	export let heroSubtitle: string;
 	export let pageTitle: string;
 	export let pageDescription: string;
 </script>
@@ -16,7 +12,7 @@
 
 <main class="content-cards-template">
 	<Section class="hero" layout="boxed" padding="md">
-		<HeroBanner image={heroImage} title={heroTitle} subtitle={heroSubtitle} />
+		<slot name="hero" />
 	</Section>
 	<slot />
 </main>

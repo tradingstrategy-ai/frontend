@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ContentCardsTemplate, ContentCardsSection } from '$lib/components';
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
+	import { ContentCardsTemplate, ContentCardsSection, HeroBanner } from '$lib/components';
 
 	const contentCardsSections = [
 		{
@@ -70,13 +70,14 @@
 	];
 </script>
 
-<ContentCardsTemplate
-	{heroImage}
-	heroTitle="Community"
-	heroSubtitle="Join our community of expert traders, strategy developers and quants.<br /> Learn more about the Trading Strategy protocol, algorithmic trading and DeFi markets."
-	pageTitle="Community"
-	pageDescription="Blog, Discord and discussion"
->
+<ContentCardsTemplate pageTitle="Community" pageDescription="Blog, Discord and discussion">
+	<HeroBanner
+		slot="hero"
+		image={heroImage}
+		title="Community"
+		subtitle="Join our community of expert traders, strategy developers and quants.<br /> Learn more about the Trading Strategy protocol, algorithmic trading and DeFi markets."
+	/>
+
 	{#each contentCardsSections as { cards, title }}
 		<ContentCardsSection cols={3} {cards} {title} />
 	{/each}
