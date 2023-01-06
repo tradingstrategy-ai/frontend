@@ -11,8 +11,6 @@
 	export let data: PageData;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
-
-	$: console.log('topMomentum', topMomentum);
 </script>
 
 <svelte:head>
