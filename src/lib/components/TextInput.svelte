@@ -38,11 +38,11 @@
 	.wrapper {
 		position: relative;
 		display: inline-grid;
-		width: var(--text-input-width, auto);
-		height: var(--text-input-height, var(--height));
-		max-width: var(--text-input-max-width, auto);
 		font: var(--text-input-font, var(--font));
+		height: var(--text-input-height, var(--height));
 		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
+		max-width: var(--text-input-max-width, auto);
+		width: var(--text-input-width, auto);
 
 		&.disabled {
 			opacity: 0.65;
@@ -62,24 +62,28 @@
 	}
 
 	.size-sm {
+		--border-radius: var(--radius-xs);
 		--height: 2rem;
 		--font: var(--f-ui-sm-roman);
 		--letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
 	.size-md {
+		--border-radius: var(--radius-xs);
 		--height: 2.25rem;
 		--font: var(--f-ui-md-roman);
 		--letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 
 	.size-lg {
+		--border-radius: var(--radius-sm);
 		--height: 2.625rem;
 		--font: var(--f-ui-lg-roman);
 		--letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 
 	.size-xl {
+		--border-radius: var(--radius-md);
 		--height: 3rem;
 		--font: var(--f-ui-xl-roman);
 		--letter-spacing: var(--f-ui-xl-spacing, normal);
@@ -89,14 +93,14 @@
 		width: inherit;
 		padding: 0 var(--space-sl);
 		border: 1px transparent solid;
-		border-radius: var(--radius-xs);
+		border-radius: var(--border-radius);
 		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 		font: inherit;
 		color: var(--c-text-1-v1);
 		transition: background var(--time-sm) ease-out;
 
 		&::placeholder {
-			color: var(--c-text-7-v1);
+			color: hsl(var(--hsl-text-extra-light));
 		}
 
 		&:disabled {

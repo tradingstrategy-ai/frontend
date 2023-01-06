@@ -191,7 +191,7 @@
 		margin-top: var(--space-md);
 	}
 
-	.section :global :is(p, li) {
+	.section :global .grid > :is(p, li) {
 		font: var(--f-ui-lg-roman);
 		margin-bottom: var(--space-lg);
 
