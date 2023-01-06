@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Icon } from '$lib/components';
 
+	let classes = '';
+	export { classes as class };
 	export let disabled = false;
 	export let download: string | boolean | undefined = undefined;
 	export let external = false;
@@ -28,7 +30,7 @@
 
 <svelte:element
 	this={tag}
-	class="button {kind} {size}"
+	class="button {kind} {size} {classes}"
 	disabled={disabled || undefined}
 	download={download === true ? '' : download}
 	{href}
@@ -39,7 +41,14 @@
 	type={tag === 'button' ? type : undefined}
 	on:click
 >
-	<slot>{label}</slot>
+	{#if $$slots.default || label}
+		<span>
+			<slot>
+				{label}
+			</slot>
+		</span>
+	{/if}
+	<!-- content here -->
 	{#if icon}<Icon name={icon} />{/if}
 </svelte:element>
 
@@ -59,6 +68,11 @@
 		text-decoration: none;
 		text-align: center;
 		cursor: pointer;
+		--icon-size: 1.5rem;
+	}
+
+	.button > span {
+		margin: 0 var(--space-xs) !important;
 	}
 
 	.primary {
@@ -94,7 +108,7 @@
 
 		&:hover,
 		&:focus {
-			background: hsla(var(--hsl-v2-box), 0.4);
+			background: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
 		}
 	}
 
@@ -105,12 +119,12 @@
 	.xs {
 		--button-border-radius: var(--radius-lg);
 		--button-gap: var(--space-ss);
-		--button-padding: var(--space-xs) var(--space-sl);
+		--button-padding: var(--space-xs) var(--space-xs);
 		--button-font: var(--f-ui-sm-medium);
 		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
-		--button-padding: var(--space-ss) var(--space-sl);
+		--button-padding: var(--space-ss) var(--space-ss);
 		--button-gap: var(--space-ss);
 	}
 	.lg {

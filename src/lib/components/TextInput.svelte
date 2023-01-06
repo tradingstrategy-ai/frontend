@@ -85,26 +85,32 @@
 		--letter-spacing: var(--f-ui-xl-spacing, normal);
 	}
 
-	input {
+	input:is([type='email'], [type='password'], [type='search'], [type='text']) {
 		width: inherit;
-		padding: 0 0.5em;
-		border: 2px solid var(--c-border-2-v1);
+		padding: 0 var(--space-sl);
+		border: 1px transparent solid;
 		border-radius: var(--radius-xs);
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 		font: inherit;
 		color: var(--c-text-1-v1);
+		transition: background var(--time-sm) ease-out;
 
 		&::placeholder {
 			color: var(--c-text-7-v1);
 		}
 
 		&:disabled {
-			background: var(--c-background-2-v1);
+			background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
+		}
+
+		&:focus,
+		&:hover {
+			background: hsla(var(--hsl-v2-box), var(--a-v2-box-c));
 		}
 
 		&:focus {
+			border-color: hsla(var(--hsl-v2-text-extra-light));
 			outline: none;
-			box-shadow: 0 0 8px 2px var(--c-background-2-v1);
 		}
 
 		&[type='search']::-webkit-search-cancel-button {

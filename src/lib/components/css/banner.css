@@ -1,0 +1,24 @@
+.banner {
+	background: hsla(var(--hsla-v2-background-accent-1));
+}
+
+.banner .title,
+.banner .grid {
+	width: min(48rem, calc(100vw - 2 * var(--section-padding-x)));
+	justify-self: center;
+	padding: 0 var(--space-md);
+	place-items: center;
+}
+
+@media all and (max-width: 767px) {
+	.banner .title {
+		font: var(--f-heading-md-medium) !important;
+	}
+}
+
+@media all and (min-width: 768px) {
+	.banner :is(p, ul li) {
+		font: var(--f-ui-xl-roman);
+		margin-bottom: var(--space-lg);
+	}
+}

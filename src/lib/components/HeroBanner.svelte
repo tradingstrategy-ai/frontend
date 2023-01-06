@@ -21,11 +21,12 @@
 		display: grid;
 		gap: var(--space-10xl);
 		grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
-		height: 40vh;
+		height: max(40vh, 32rem);
 		place-content: center;
 		place-items: stretch;
 
 		@media (--viewport-sm-down) {
+			height: min(44vh, 18rem);
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
 		}
@@ -33,6 +34,7 @@
 
 	.hero-banner .content {
 		display: grid;
+		gap: var(--space-sm);
 		place-content: center stretch;
 
 		& p {
@@ -46,9 +48,7 @@
 
 	.hero-banner .media :global svg {
 		max-height: min(28rem, 64vw);
-		@media (--viewport-xs) {
-			margin: auto;
-		}
+		margin: auto;
 
 		& * {
 			fill: currentColor;

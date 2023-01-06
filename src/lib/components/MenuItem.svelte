@@ -19,7 +19,7 @@
 		display: flex;
 		justify-content: inherit;
 		align-items: center;
-		font: var(--menu-item-font, var(--f-ui-lg-medium));
+		font: var(--menu-item-font, var(--f-ui-md-medium));
 		letter-spacing: var(--f-ui-xl-spacing, normal);
 		color: var(--menu-item-color, inherit);
 		text-decoration: none;
@@ -28,8 +28,12 @@
 		border-radius: var(--menu-item-border-radius, var(--radius-xs));
 
 		&:not([href]):not([tabindex]) {
-			background: var(--c-background-4);
+			background: hsla(var(--hsl-v2-box), var(--a-v2-box-c));
 			color: var(--menu-item-active-color, inherit);
+		}
+
+		&:hover {
+			background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
 		}
 	}
 
@@ -39,7 +43,7 @@
 	*/
 	:global(.dir--horizontal) a {
 		padding: var(--menu-item-padding, var(--space-ss) var(--space-md));
-		font: var(--f-ui-lg-medium);
+		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 </style>

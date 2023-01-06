@@ -19,28 +19,40 @@ Supports optional "cta" slot to include a button CTA.
 </script>
 
 <div class="summary-box {classes}">
-	<header class:has-cta={$$slots.cta}>
-		<div class="description">
-			<h3>{title}</h3>
-			{#if subtitle}
-				<p>{subtitle}</p>
-			{/if}
-		</div>
-		{#if $$slots.cta}
-			<div class="cta">
-				<slot name="cta" />
+	<div class="main">
+		<header class:has-cta={$$slots.headerCta || $$slots.cta}>
+			<div class="description">
+				<h3>{title}</h3>
+				{#if subtitle}
+					<p>{subtitle}</p>
+				{/if}
 			</div>
-		{/if}
-	</header>
-	<div class="inner">
-		<slot />
+			{#if $$slots.headerCta}
+				<div class="cta">
+					<slot name="headerCta" />
+				</div>
+			{:else if $$slots.cta}
+				<div class="cta">
+					<slot name="cta" />
+				</div>
+			{/if}
+		</header>
+		<div class="inner">
+			<slot />
+		</div>
 	</div>
-	{#if $$slots.cta || $$slots.footer}
+	{#if $$slots.footerCta || $$slots.cta || $$slots.footer}
 		<footer>
 			<slot name="footer" />
-			<div class="cta">
-				<slot name="cta" />
-			</div>
+			{#if $$slots.footerCta}
+				<div class="cta">
+					<slot name="footerCta" />
+				</div>
+			{:else if $$slots.cta}
+				<div class="cta">
+					<slot name="cta" />
+				</div>
+			{/if}
 		</footer>
 	{/if}
 </div>
@@ -49,13 +61,17 @@ Supports optional "cta" slot to include a button CTA.
 	.summary-box {
 		background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
 		border-radius: var(--radius-md);
-		gap: var(--space-ls);
 		padding: var(--space-lg) var(--space-lg);
 
+		& .main {
+			gap: var(--space-ls);
+		}
+
 		&,
+		& .main,
 		& .inner {
 			display: grid;
-			place-content: start stretch;
+			place-content: space-between stretch;
 		}
 
 		& .description {
@@ -73,11 +89,11 @@ Supports optional "cta" slot to include a button CTA.
 			margin-bottom: var(--space-xxxs);
 
 			& h3 {
-				font: var(--f-ui-xxl-medium);
+				font: var(--f-heading-lg-medium);
 				letter-spacing: var(--f-ui-xxl-spacing, normal);
 
 				@media (--viewport-md-down) {
-					font: var(--f-ui-xl-medium);
+					font: var(--f-heading-md-medium);
 					letter-spacing: var(--f-ui-xl-spacing, normal);
 				}
 			}
@@ -116,15 +132,22 @@ Supports optional "cta" slot to include a button CTA.
 			}
 		}
 
-		& .inner {
+		& .inner :global {
 			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
+
+			& p,
+			& li {
+				font: var(--f-ui-lg-roman);
+			}
+
+			& li {
+				margin-bottom: var(--space-md);
+			}
 		}
 
 		& footer {
-			@media (--viewport-xl-up) {
-				display: none;
-			}
+			margin-top: var(--space-md);
 
 			& .cta :global {
 				& .button {
@@ -135,16 +158,5 @@ Supports optional "cta" slot to include a button CTA.
 	}
 	h3 {
 		font: var(--f-ui-xxl-medium);
-
-		&,
-		& .inner {
-			display: grid;
-			gap: var(--space-ls);
-			place-content: start stretch;
-
-			@media (--viewport-md-down) {
-				gap: var(--space-md);
-			}
-		}
 	}
 </style>

@@ -13,21 +13,21 @@
 
 <svelte:element this={tag} {href} class="content-card tile b">
 	{#if iconName}
-		<div class="icon tile c" style="--icon-size: {iconSize}">
+		<div class="symbol tile c" style="--icon-size: {iconSize}">
 			<Icon size={iconSize} name={iconName} />
 		</div>
 	{/if}
 	{#if title || $$slots.title}
 		<h3 class="title">
 			<slot name="title">
-				{title}
+				{@html title}
 			</slot>
 		</h3>
 	{/if}
 	{#if subtitle || $$slots.subtitle}
 		<p class="subtitle">
 			<slot name="subtitle">
-				{subtitle}
+				{@html subtitle}
 			</slot>
 		</p>
 	{/if}
@@ -60,9 +60,13 @@
 		& p {
 			margin-bottom: 0;
 		}
+
+		& p {
+			font: var(--f-ui-md-roman);
+		}
 	}
 
-	.content-card .icon {
+	.content-card .symbol {
 		border-radius: 100%;
 		padding: var(--space-ls);
 		margin-bottom: var(--space-md);

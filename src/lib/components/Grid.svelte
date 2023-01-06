@@ -3,14 +3,14 @@
 	export let gap: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
 </script>
 
-<div class="grid cols-{cols}" style="--gap: var(--space-{gap});">
+<div class="grid cols-{cols}" style={gap ? '--grid-gap: var(--space-{gap});' : null}>
 	<slot />
 </div>
 
 <style lang="postcss">
 	.grid {
 		display: grid;
-		gap: var(--gap);
+		gap: var(--grid-gap);
 	}
 
 	.cols-2 {

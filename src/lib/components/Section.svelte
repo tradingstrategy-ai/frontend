@@ -46,7 +46,7 @@
 
 <style lang="postcss">
 	.section {
-		padding: var(--section-padding-y) var(--section-padding-x);
+		padding: var(--section-padding-y, 0) var(--section-padding-x, 0);
 
 		& header {
 			padding: 0 0 var(--section-padding-y);
@@ -56,15 +56,15 @@
 				font: var(--f-heading-xl-medium);
 			}
 
-			@media (--viewport-sm-down) {
-				& h2 {
-					font: var(--f-heading-lg-medium);
-				}
-			}
-
 			@media (--viewport-md-down) {
 				& h2 {
 					font: var(--f-heading-xl-medium);
+				}
+			}
+
+			@media (--viewport-sm-down) {
+				& h2 {
+					font: var(--f-heading-lg-medium);
 				}
 			}
 		}
@@ -79,102 +79,101 @@
 			place-items: center stretch;
 		}
 
-		&.padding-xs {
-			--section-padding-x: var(--space-md);
-			--section-padding-y: var(--space-lg);
-
+		&.boxed,
+		&.padding-xs,
+		&.padding-sm,
+		&.padding-md,
+		&.padding-lg,
+		&.padding-xl {
+			--section-padding-x: var(--space-xl);
 			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-xl);
-				--section-padding-y: var(--space-md);
+				--section-padding-x: var(--space-ll);
 			}
-
 			@media (--viewport-md-down) {
 				--section-padding-x: var(--space-lg);
-				--section-padding-y: var(--space-sm);
 			}
 
 			@media (--viewport-sm-down) {
 				--section-padding-x: var(--space-md);
-				--section-padding-y: var(--space-xs);
+			}
+		}
+
+		&.padding-xs {
+			--section-padding-y: var(--space-xl);
+
+			@media (--viewport-lg-down) {
+				--section-padding-y: var(--space-lg);
+			}
+
+			@media (--viewport-md-down) {
+				--section-padding-y: var(--space-ls);
+			}
+
+			@media (--viewport-sm-down) {
+				--section-padding-y: var(--space-ms);
 			}
 		}
 
 		&.padding-sm {
-			--section-padding-x: var(--space-xl);
-			--section-padding-y: var(--space-xl);
+			--section-padding-y: var(--space-3xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-xl);
 				--section-padding-y: var(--space-lg);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-x: var(--space-lg);
-				--section-padding-y: var(--space-md);
+				--section-padding-y: var(--space-ls);
 			}
 
 			@media (--viewport-sm-down) {
-				--section-padding-x: var(--space-md);
-				--section-padding-y: var(--space-sm);
+				--section-padding-y: var(--space-ml);
 			}
 		}
 
 		&.padding-md {
-			--section-padding-x: var(--space-xl);
-			--section-padding-y: var(--space-8xl);
+			--section-padding-y: var(--space-7xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-xl);
 				--section-padding-y: var(--space-6xl);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-x: var(--space-lg);
 				--section-padding-y: var(--space-4xl);
 			}
 
 			@media (--viewport-sm-down) {
-				--section-padding-x: var(--space-md);
-				--section-padding-y: var(--space-lg);
+				--section-padding-y: var(--space-xl);
 			}
 		}
 		&.padding-lg {
-			--section-padding-x: var(--space-xl);
 			--section-padding-y: var(--space-10xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-xl);
 				--section-padding-y: var(--space-6xl);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-x: var(--space-lg);
 				--section-padding-y: var(--space-4xl);
 			}
 
 			@media (--viewport-sm-down) {
-				--section-padding-x: var(--space-md);
-				--section-padding-y: var(--space-lg);
+				--section-padding-y: var(--space-xl);
 			}
 		}
 
 		&.padding-xl {
-			--section-padding-x: var(--space-xl);
 			--section-padding-y: var(--space-12xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-xl);
-				--section-padding-y: var(--space-6xl);
+				--section-padding-y: var(--space-9xl);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-x: var(--space-lg);
-				--section-padding-y: var(--space-4xl);
+				--section-padding-y: var(--space-8xl);
 			}
 
 			@media (--viewport-sm-down) {
-				--section-padding-x: var(--space-md);
-				--section-padding-y: var(--space-lg);
+				--section-padding-y: var(--space-6xl);
 			}
 		}
 	}
@@ -182,5 +181,18 @@
 	.boxed > :global(*) {
 		max-width: var(--container-max-width);
 		margin: auto;
+	}
+
+	.subtitle {
+		font: var(--f-ui-xl-roman);
+		@media (--viewport-xs) {
+			font: var(--f-ui-lg-roman);
+		}
+		margin-top: var(--space-md);
+	}
+
+	.section :global :is(p, li) {
+		font: var(--f-ui-md-roman);
+		margin-bottom: var(--space-lg);
 	}
 </style>

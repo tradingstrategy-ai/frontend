@@ -12,9 +12,17 @@
 </menu>
 
 <style lang="postcss">
+	@custom-media --bigger-gap (width > 1480px);
+	@custom-media --smaller-gap (width <= 1260px);
 	menu {
 		display: flex;
-		gap: var(--menu-gap, var(--space-md) var(--space-ss));
+		gap: var(--menu-gap, var(--space-lg));
+		@media (--bigger-gap) {
+			gap: var(--menu-gap, var(--space-xl));
+		}
+		@media (--smaller-gap) {
+			gap: var(--menu-gap, var(--space-sm));
+		}
 		margin: 0;
 		padding: 0;
 
@@ -31,7 +39,7 @@
 		}
 
 		&.align--center {
-			justify-content: space-evenly;
+			justify-content: center;
 		}
 
 		&.align--right {
