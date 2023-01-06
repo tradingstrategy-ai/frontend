@@ -3,6 +3,26 @@
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let strategies: StrategyRuntimeState[];
+
+	$: console.log(getMinMaxValues(strategies));
+	$: console.log(getDateRange());
+
+	function getMinMaxValues(strategies) {
+		const allValues = strategies.flatMap(({ summary_statistics }) => {
+			const ticks = summary_statistics?.performance_chart_90_days || [];
+			return ticks.map((t) => t[1]);
+		});
+
+		return [Math.min(...allValues), Math.max(...allValues)];
+	}
+
+	function getDateRange() {
+		const endDate = new Date();
+		endDate.setUTCHours(0, 0, 0, 0);
+		const startDate = new Date(endDate);
+		startDate.setUTCDate(endDate.getUTCDate() - 89);
+		return [startDate, endDate];
+	}
 </script>
 
 <ul>
