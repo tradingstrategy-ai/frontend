@@ -3,7 +3,7 @@
 	export let gap: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
 </script>
 
-<div class="grid cols-{cols}" style={gap ? '--grid-gap: var(--space-{gap});' : null}>
+<div class="grid cols-{cols}" style={gap ? `--grid-gap: var(--space-${gap});` : null}>
 	<slot />
 </div>
 
