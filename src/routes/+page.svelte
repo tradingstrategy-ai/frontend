@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './home/HeroBanner.svelte';
-	import { BlogRoll, ContentTile, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
+	import { BlogRoll, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
@@ -46,7 +46,7 @@
 
 	{#if posts}
 		<Section title="Blog" class="blog" layout="boxed" padding="md">
-			<BlogRoll {posts} limit={3} />
+			<BlogRoll {posts} />
 			<Button label="Read more on Blog" href="/blog" slot="footer" />
 		</Section>
 	{/if}

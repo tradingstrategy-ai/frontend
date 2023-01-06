@@ -1,15 +1,21 @@
+<!--
+@component
+Display a collection of blog posts is a responsive grid layout.
+
+#### Usage:
+```tsx
+	<BlogRoll posts={arrayOfPosts} />
+```
+-->
 <script lang="ts">
 	import type { Blog } from '$lib/types';
 	import { ContentTile } from '$lib/components';
 
-	export let limit: null | number = null;
-	export let posts: Array<Blog.BlogPost>;
-
-	$: listedPosts = limit ? posts.slice(0, limit) : posts;
+	export let posts: Blog.BlogPost[];
 </script>
 
 <div class="blog-roll" data-testid="blog-roll">
-	{#each listedPosts as post, idx (post.id)}
+	{#each posts as post (post.id)}
 		<ContentTile
 			ctaLabel="Read article"
 			href="/blog/{post.slug}"
@@ -24,7 +30,7 @@
 	{/each}
 </div>
 
-<style global lang="postcss">
+<style lang="postcss">
 	.blog-roll {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));
