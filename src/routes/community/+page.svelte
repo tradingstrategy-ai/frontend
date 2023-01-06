@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ContentCardsTemplate from '$lib/components/ContentCardsTemplate.svelte';
+	import { ContentCardsTemplate, ContentCardsSection } from '$lib/components';
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 
 	const contentCardsSections = [
@@ -71,11 +71,13 @@
 </script>
 
 <ContentCardsTemplate
-	cols={3}
-	{contentCardsSections}
 	{heroImage}
 	heroTitle="Community"
 	heroSubtitle="Join our community of expert traders, strategy developers and quants.<br /> Learn more about the Trading Strategy protocol, algorithmic trading and DeFi markets."
 	pageTitle="Community"
 	pageDescription="Blog, Discord and discussion"
-/>
+>
+	{#each contentCardsSections as { cards, title }}
+		<ContentCardsSection cols={3} {cards} {title} />
+	{/each}
+</ContentCardsTemplate>

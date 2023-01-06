@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ContentCard, Section } from '$lib/components';
-	import type { SectionSizing } from '$lib/types';
 
 	interface ContentCard {
 		href: string;

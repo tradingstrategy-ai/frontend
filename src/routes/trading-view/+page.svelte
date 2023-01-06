@@ -5,7 +5,7 @@
 	import type { PageData } from './$types';
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
 	import heroImage from '$lib/assets/illustrations/data-cloud-1.svg?raw';
-	import ContentCardsTemplate from '$lib/components/ContentCardsTemplate.svelte';
+	import { ContentCardsTemplate, ContentCardsSection } from '$lib/components';
 
 	export let data: PageData;
 	const { impressiveNumbers } = data;
@@ -101,10 +101,13 @@
 </svelte:head>
 
 <ContentCardsTemplate
-	{contentCardsSections}
 	{heroImage}
 	heroTitle="Trading data"
 	heroSubtitle="Explore and download trading data from multiple blockchains and decentralised exchanges."
 	pageTitle="DEX trading view"
 	pageDescription="DEX trading view"
-/>
+>
+	{#each contentCardsSections as { cards, title }}
+		<ContentCardsSection {cards} {title} />
+	{/each}
+</ContentCardsTemplate>

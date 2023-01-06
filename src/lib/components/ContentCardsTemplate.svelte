@@ -1,10 +1,7 @@
 <script lang="ts">
-	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 
-	export let cols = 2;
-	export let contentCardsSections: any = [];
 	export let heroImage: any;
 	export let heroTitle: string;
 	export let heroSubtitle: string;
@@ -21,10 +18,7 @@
 	<Section class="hero" layout="boxed" padding="md">
 		<HeroBanner image={heroImage} title={heroTitle} subtitle={heroSubtitle} />
 	</Section>
-
-	{#each contentCardsSections as { cards, title }}
-		<ContentCardsSection {cards} {cols} {title} />
-	{/each}
+	<slot />
 </main>
 
 <style global>
