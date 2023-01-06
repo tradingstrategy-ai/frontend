@@ -15,3 +15,10 @@
 		font: var(--f-heading-md-medium) !important;
 	}
 }
+
+@media all and (min-width: 768px) {
+	.banner :is(p, ul li) {
+		font: var(--f-ui-xl-roman);
+		margin-bottom: var(--space-lg);
+	}
+}
