@@ -106,11 +106,11 @@ Display site-wide search box for use in top-nav.
 
 		<div class="buttons">
 			{#if hasQuery}
-				<Button sm label="Show all results" href="/search?q={q}" />
+				<Button size="sm" label="Show all results" href="/search?q={q}" />
 			{:else}
 				Search exchanges, tokens and trading pairs.
 			{/if}
-			<Button sm secondary label="Advanced search" href="/search?q={q}" />
+			<Button size="sm" secondary label="Advanced search" href="/search?q={q}" />
 		</div>
 	</div>
 </div>

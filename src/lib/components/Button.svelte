@@ -1,3 +1,26 @@
+<!--
+@component
+Display a button. Adaptively uses correct HTML element (anchor or button)
+depending on supplied props. Button label may be included as a prop or the
+default slot (or ommitted for icon-only buttons). Supports four style variants
+using flags: primary (default), secondary, ternary, quarternary.
+
+#### Usage:
+```tsx
+	<Button
+		label="Click here!"
+		icon="link"
+		secondary
+		size="lg"
+		disabled
+		external
+		href="http://example.org"
+		target="_blank"
+		title="include for accessibility when label ommitted"
+		on:click={() => console.log('clicked!')}
+	/>
+```
+-->
 <script lang="ts">
 	import { Icon } from '$lib/components';
 
@@ -9,22 +32,17 @@
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
-	export let lg = false;
 	export let quarternary = false;
 	export let secondary = false;
-	export let sm = false;
 	export let tertiary = false;
+	export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' = 'md';
 	export let submit = false;
 	export let tabindex: number | undefined = undefined;
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
-	export let xxl = false;
-	export let xl = false;
-	export let xs = false;
 
 	$: tag = href && !disabled ? 'a' : 'button';
 	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
-	$: size = xxl ? 'xxl' : xl ? 'xl' : lg ? 'lg' : sm ? 'sm' : xs ? 'xs' : 'md';
 	$: type = submit ? 'submit' : 'button';
 </script>
 
@@ -43,12 +61,9 @@
 >
 	{#if $$slots.default || label}
 		<span>
-			<slot>
-				{label}
-			</slot>
+			<slot>{label}</slot>
 		</span>
 	{/if}
-	<!-- content here -->
 	{#if icon}<Icon name={icon} />{/if}
 </svelte:element>
 

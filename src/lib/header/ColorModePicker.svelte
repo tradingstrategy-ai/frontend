@@ -32,7 +32,7 @@
 	}
 </script>
 
-<Button tertiary sm icon="sun" label={buttonLabel} on:click={openDialog} />
+<Button tertiary size="sm" icon="sun" label={buttonLabel} on:click={openDialog} />
 
 <Dialog title="Color Mode" bind:open>
 	<menu>

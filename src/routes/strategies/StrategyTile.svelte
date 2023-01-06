@@ -47,7 +47,7 @@
 				{/if}
 			</div>
 		</div>
-		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary lg disabled={hasError} />
+		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
 	</div>
 </li>
 

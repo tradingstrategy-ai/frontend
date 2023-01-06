@@ -24,14 +24,14 @@
 
 	<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
 		<SummaryBox title="Most profitable 24h">
-			<Button sm slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-			<Button md slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+			<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+			<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
 			<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
 		</SummaryBox>
 
 		<SummaryBox title="Worst performance 24h">
-			<Button sm slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-			<Button md slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+			<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+			<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
 			<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
 		</SummaryBox>
 	</Section>
