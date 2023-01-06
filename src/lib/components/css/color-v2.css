@@ -1,4 +1,5 @@
-:root {
+body,
+body[data-color-mode='dark'] {
 	--hsl-v2-body: 36, 1%, 10%;
 
 	--hsl-v2-text: 36, 12%, 99%;
@@ -18,7 +19,7 @@
 }
 
 @media (prefers-color-scheme: light) {
-	:root {
+	body {
 		--hsl-v2-body: 36, 52%, 98%;
 
 		--hsl-v2-text: 36, 9%, 7%;
@@ -36,6 +37,25 @@
 
 		--hsla-v2-background-accent-1: var(--hsl-v2-box), var(--a-v2-box-b);
 	}
+}
+
+body[data-color-mode='light'] {
+	--hsl-v2-body: 36, 52%, 98%;
+
+	--hsl-v2-text: 36, 9%, 7%;
+	--hsl-v2-text-light: 36, 4%, 24%;
+	--hsl-v2-text-extra-light: 36, 6%, 44%;
+	--hsl-v2-text-ultra-light: 36, 1%, 68%;
+	--hsl-v2-text-inverted: 36, 12%, 99%;
+
+	--hsl-v2-box: 36, 32%, 72%;
+	--a-v2-box-a: 0.14;
+	--a-v2-box-b: 0.24;
+	--a-v2-box-c: 0.32;
+	--a-v2-box-d: 0.48;
+	--a-v2-box-e: 0.6;
+
+	--hsla-v2-background-accent-1: var(--hsl-v2-box), var(--a-v2-box-b);
 }
 
 body {
