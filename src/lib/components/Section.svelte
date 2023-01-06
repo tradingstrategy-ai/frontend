@@ -134,11 +134,11 @@
 			--section-padding-y: var(--space-7xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-6xl);
+				--section-padding-y: var(--space-4xl);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-4xl);
+				--section-padding-y: var(--space-2xl);
 			}
 
 			@media (--viewport-sm-down) {
@@ -146,14 +146,14 @@
 			}
 		}
 		&.padding-lg {
-			--section-padding-y: var(--space-10xl);
+			--section-padding-y: var(--space-8xl);
 
 			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-6xl);
+				--section-padding-y: var(--space-5xl);
 			}
 
 			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-4xl);
+				--section-padding-y: var(--space-3xl);
 			}
 
 			@media (--viewport-sm-down) {
@@ -192,7 +192,11 @@
 	}
 
 	.section :global :is(p, li) {
-		font: var(--f-ui-md-roman);
+		font: var(--f-ui-lg-roman);
 		margin-bottom: var(--space-lg);
+
+		@media (--viewport-xs) {
+			font: var(--f-ui-md-roman);
+		}
 	}
 </style>
