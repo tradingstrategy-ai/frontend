@@ -12,7 +12,5 @@ export const load: PageLoad = async ({ fetch }) => {
 		return {};
 	}
 
-	return {
-		impressiveNumbers: resp.json()
-	};
+	return resp.json();
 };

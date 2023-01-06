@@ -12,7 +12,9 @@ export const notFilledMarker = '---';
  *
  * No suffix added.
  */
-export function formatKilos(n: number): string {
+export function formatKilos(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+
 	if (n <= 1000) {
 		return (n / 1000).toLocaleString('en', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 	} else {
@@ -25,7 +27,9 @@ export function formatKilos(n: number): string {
  *
  * No suffix added.
  */
-export function formatSizeMegabytes(n: number): string {
+export function formatSizeMegabytes(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024)).toLocaleString('en', {
 			minimumFractionDigits: 3,
@@ -42,7 +46,9 @@ export function formatSizeMegabytes(n: number): string {
 /**
  * Format size in gigabyttes
  */
-export function formatSizeGigabytes(n: number): string {
+export function formatSizeGigabytes(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024 * 1024)).toLocaleString('en', {
 			minimumFractionDigits: 3,

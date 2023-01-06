@@ -8,7 +8,6 @@
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
 	export let data: PageData;
-	const { impressiveNumbers } = data;
 </script>
 
 <svelte:head>
@@ -31,7 +30,7 @@
 			title="Blockchains"
 			subtitle="Trading Strategy provides powerful market data sets for on-chain trading on several blockchains."
 			summaryLabel="Indexing data from"
-			summaryValue="{impressiveNumbers.blockchains} blockchains"
+			summaryValue="{data.blockchains ?? '---'} blockchains"
 		/>
 		<ContentCard
 			href="/trading-view/exchanges"
@@ -39,7 +38,7 @@
 			title="DEXes"
 			subtitle="Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain trades, across multiple DEXs."
 			summaryLabel="Indexing data from"
-			summaryValue="{formatAmount(impressiveNumbers.exchanges)} DEXes"
+			summaryValue="{formatAmount(data.exchanges)} DEXes"
 		/>
 		<ContentCard
 			href="/trading-view/trading-pairs"
@@ -47,7 +46,7 @@
 			title="Trading pairs"
 			subtitle="Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and current datasets here."
 			summaryLabel="Indexing data from"
-			summaryValue="{formatAmount(impressiveNumbers.pairs)} trading pairs"
+			summaryValue="{formatAmount(data.pairs)} trading pairs"
 		/>
 		<ContentCard
 			href="/trading-view/exchanges"
@@ -66,7 +65,7 @@
 			title="Backtesting"
 			subtitle="Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for calculating past slippage. Datasets are served in Parquet file format."
 			summaryLabel="You can download"
-			summaryValue="{formatSizeGigabytes(impressiveNumbers.database_size)} GB worth of data"
+			summaryValue="{formatSizeGigabytes(data.database_size)} GB worth of data"
 		/>
 		<ContentCard
 			href="https://tradingstrategy.ai/api/explorer/"
