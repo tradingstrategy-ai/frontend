@@ -17,8 +17,8 @@
 	<slot />
 </main>
 
-<style global>
-	.content-cards-template .hero {
+<style lang="postcss">
+	.content-cards-template :global .hero {
 		--section-padding-y: 0 !important;
 	}
 </style>
