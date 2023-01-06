@@ -1,31 +1,12 @@
 <script lang="ts">
-	import { ContentCard, Section } from '$lib/components';
+	import { Section } from '$lib/components';
 
-	interface ContentCard {
-		href: string;
-		iconName: string;
-		title: string;
-		subtitle: string;
-		summaryLabel: string;
-		summaryValue: string;
-	}
-
-	export let cards: ContentCard[];
 	export let cols = 2;
 	export let title: string;
 </script>
 
 <Section class="content-cards" {cols} layout="boxed" padding="lg" {title}>
-	{#each cards as card}
-		<ContentCard
-			href={card.href}
-			iconName={card.iconName}
-			title={card.title}
-			subtitle={card.subtitle}
-			summaryLabel={card.summaryLabel}
-			summaryValue={card.summaryValue}
-		/>
-	{/each}
+	<slot />
 </Section>
 
 <style global lang="postcss">
