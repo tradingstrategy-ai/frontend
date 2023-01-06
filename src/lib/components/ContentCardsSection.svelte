@@ -38,9 +38,9 @@
 		margin-bottom: var(--space-xl);
 
 		& .grid {
-			--gap: var(--space-ll) !important;
+			--grid-gap: var(--space-ll) !important;
 			@media (--viewport-xs) {
-				--gap: var(--space-ls) !important;
+				--grid-gap: var(--space-ls) !important;
 			}
 		}
 
