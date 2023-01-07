@@ -5,12 +5,14 @@
 	export let title: string;
 </script>
 
-<Section class="content-cards" {cols} layout="boxed" padding="lg" {title}>
-	<slot />
-</Section>
+<div class="content-cards">
+	<Section {cols} layout="boxed" padding="lg" {title}>
+		<slot />
+	</Section>
+</div>
 
-<style global lang="postcss">
-	section.content-cards {
+<style lang="postcss">
+	.content-cards :global .section {
 		--section-padding-y: var(--space-ml) !important;
 		@media (--viewport-xs) {
 			--section-padding-y: var(--space-ms) !important;
