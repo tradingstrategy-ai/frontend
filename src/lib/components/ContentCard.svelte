@@ -13,7 +13,7 @@
 
 <svelte:element this={tag} {href} class="content-card tile b">
 	{#if iconName}
-		<div class="symbol tile c" style="--icon-size: {iconSize}">
+		<div class="symbol tile c">
 			<Icon size={iconSize} name={iconName} />
 		</div>
 	{/if}
