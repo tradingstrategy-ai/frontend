@@ -26,7 +26,7 @@
 		place-items: stretch;
 
 		@media (--viewport-sm-down) {
-			height: min(44vh, 18rem);
+			height: min(32vh, 18rem);
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
 		}

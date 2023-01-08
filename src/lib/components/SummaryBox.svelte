@@ -96,13 +96,8 @@ Supports optional "cta" slot to include a button CTA.
 			margin-bottom: var(--space-xxxs);
 
 			& h3 {
-				font: var(--f-heading-lg-medium);
-				letter-spacing: var(--f-ui-xxl-spacing, normal);
-
-				@media (--viewport-md-down) {
-					font: var(--f-heading-md-medium);
-					letter-spacing: var(--f-ui-xl-spacing, normal);
-				}
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 
 			& p {

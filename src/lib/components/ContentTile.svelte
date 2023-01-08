@@ -101,10 +101,10 @@
 	}
 
 	.content-tile .content {
-		--content-gap: var(--space-md);
+		--content-gap: var(--space-sl);
 		--content-padding: var(--space-ll) var(--space-lg);
 		@media (--viewport-sm-down) {
-			--content-gap: var(--space-sm);
+			--content-gap: var(--space-ss);
 			--content-padding: var(--space-ls) var(--space-ml);
 		}
 		display: grid;
