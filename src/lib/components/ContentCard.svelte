@@ -1,3 +1,18 @@
+<!--
+@component
+Display a card with icon, title and additional elements. The entire card is an anchor if `href`
+prop is included. Typically used inside ContentCardsSection to show a responsive collection.
+
+### Usage:
+```tsx
+	<ContentCard
+		iconName="newspaper"
+		title="Content card 1"
+		subtitle="More information about the content card"
+		href="/destination/page"
+	/>
+```
+-->
 <script lang="ts">
 	import { Icon } from '$lib/components';
 	export let href = '';
