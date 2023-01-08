@@ -66,6 +66,8 @@
 	@custom-media --viewport-lg-down (width < 1260px);
 	@custom-media --viewport-xl-up (width >= 1260px);
 	@custom-media --viewport-xl-down (width < 1440px);
+	@custom-media --viewport-xxl-up (width < 1680px);
+	@custom-media --viewport-xxl-down (width >= 1440px);
 
 	a.body-link {
 		border-bottom: 1px solid currentColor;

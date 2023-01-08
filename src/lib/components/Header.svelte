@@ -43,7 +43,11 @@
 	@custom-media --nav-collapsed (width < 1125px);
 
 	:global :root {
-		--header-height: 6rem;
+		--header-height: 5.25rem;
+
+		@media (--viewport-xxl-down) {
+			--header-height: 4.75rem;
+		}
 
 		@media (--nav-collapsed) {
 			--header-height: 3.75rem;

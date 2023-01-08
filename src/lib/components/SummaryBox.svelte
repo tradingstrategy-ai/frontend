@@ -18,7 +18,7 @@ Supports optional "cta" slot to include a button CTA.
 	export let subtitle: string = '';
 </script>
 
-<div class="summary-box {classes}">
+<div class="summary-box {classes}" class:has-both-ctas={$$slots.footerCta && $$slots.headerCta}>
 	<div class="main">
 		<header class:has-cta={$$slots.headerCta || $$slots.cta}>
 			<div class="description">
@@ -62,6 +62,17 @@ Supports optional "cta" slot to include a button CTA.
 		background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
 		border-radius: var(--radius-md);
 		padding: var(--space-lg) var(--space-lg);
+		@media (--viewport-md-down) {
+			padding: var(--space-ls) var(--space-md);
+		}
+
+		&.has-both-ctas {
+			@media (--viewport-xl-up) {
+				& footer {
+					display: none;
+				}
+			}
+		}
 
 		& .main {
 			gap: var(--space-ls);
@@ -77,10 +88,6 @@ Supports optional "cta" slot to include a button CTA.
 		& .description {
 			display: grid;
 			gap: var(--space-sm);
-		}
-
-		@media (--viewport-md-down) {
-			padding: var(--space-ls) var(--space-md);
 		}
 
 		& header {
