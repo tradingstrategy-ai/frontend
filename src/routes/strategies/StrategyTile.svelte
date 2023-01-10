@@ -1,13 +1,18 @@
 <script lang="ts">
 	import type { StrategyRuntimeState, StrategySummaryStatistics } from 'trade-executor-frontend/strategy/runtimeState';
-	import { Button, ChartPlaceholder } from '$lib/components';
+	import { Button } from '$lib/components';
+	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { fromUnixTime } from 'date-fns';
 
 	export let strategy: StrategyRuntimeState;
+	export let scaleX: any;
+	export let scaleY: any;
 
 	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
+	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 
 	function getPerformanceClass({ enough_data, profitability_90_days }: StrategySummaryStatistics) {
 		return determinePriceChangeClass(enough_data ? profitability_90_days : 0);
@@ -16,7 +21,7 @@
 
 <li class:hasError>
 	<div class="thumbnail">
-		<ChartPlaceholder />
+		<ChartThumbnail {scaleX} {scaleY} data={chartData} />
 	</div>
 	<div class="info">
 		<div class="details">
@@ -61,19 +66,6 @@
 		grid-auto-rows: 1fr;
 		list-style: none;
 		overflow: hidden;
-	}
-
-	.thumbnail {
-		align-items: center;
-		display: flex;
-		justify-content: center;
-		overflow: hidden;
-
-		& :global .chart-placeholder {
-			object-fit: cover;
-			width: 100%;
-			height: min(32rem, 100%);
-		}
 	}
 
 	.info {
