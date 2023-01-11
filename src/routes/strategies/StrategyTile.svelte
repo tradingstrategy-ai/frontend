@@ -1,34 +1,36 @@
 <script lang="ts">
 	import type { StrategyRuntimeState, StrategySummaryStatistics } from 'trade-executor-frontend/strategy/runtimeState';
-	import { Button, ChartPlaceholder } from '$lib/components';
+	import { Button, Icon } from '$lib/components';
+	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { fromUnixTime } from 'date-fns';
 
 	export let strategy: StrategyRuntimeState;
+	export let scaleX: any;
+	export let scaleY: any;
 
 	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
-
-	function getPerformanceClass({ enough_data, profitability_90_days }: StrategySummaryStatistics) {
-		return determinePriceChangeClass(enough_data ? profitability_90_days : 0);
-	}
+	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 </script>
 
 <li class:hasError>
 	<div class="thumbnail">
-		<ChartPlaceholder />
+		<ChartThumbnail {scaleX} {scaleY} data={chartData} />
 	</div>
 	<div class="info">
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
 			<dl>
 				<div>
-					<dt>Historic performance</dt>
-					<dd class={getPerformanceClass(summaryStats)}>
-						{#if summaryStats.enough_data}
-							{formatPriceChange(summaryStats.profitability_90_days)}
-						{:else}
-							---
+					<dt title="90 day return (annualized)">Historic performance</dt>
+					<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
+						{formatPriceChange(summaryStats.profitability_90_days)}
+						{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
+							<span class="insufficient-data" title="This strategy has less than 90 days of performance data">
+								<Icon name="warning" />
+							</span>
 						{/if}
 					</dd>
 				</div>
@@ -61,19 +63,6 @@
 		grid-auto-rows: 1fr;
 		list-style: none;
 		overflow: hidden;
-	}
-
-	.thumbnail {
-		align-items: center;
-		display: flex;
-		justify-content: center;
-		overflow: hidden;
-
-		& :global .chart-placeholder {
-			object-fit: cover;
-			width: 100%;
-			height: min(32rem, 100%);
-		}
 	}
 
 	.info {
@@ -116,10 +105,16 @@
 		font: var(--f-ui-xl-medium);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
 		margin: 0;
+		display: flex;
+		gap: var(--space-ss);
 
 		@nest .hasError & {
 			color: var(--c-text-ultra-light);
 		}
+	}
+
+	.insufficient-data {
+		font-size: 18px;
 	}
 
 	.description {
