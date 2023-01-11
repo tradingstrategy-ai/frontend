@@ -1,23 +1,17 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import StrategyTile from './StrategyTile.svelte';
+	import { getUTCDateRange } from '$lib/helpers/date';
 	import { scaleLinear, scaleUtc } from 'd3-scale';
 
 	export let strategies: StrategyRuntimeState[];
 
-	const yMax = getMaxAbsValue(strategies);
-	const scaleX = scaleUtc().domain(getDateRange()).range([0, 450]);
-	const scaleY = scaleLinear().domain([-yMax, yMax]).range([285, 0]).nice();
+	const yMax = getMaxAbsPerformanceValue();
+	const scaleX = scaleUtc(getUTCDateRange(new Date(), -90), [0, 450]);
+	const scaleY = scaleLinear([-yMax, yMax], [285, 0]).nice();
 
-	function getDateRange() {
-		const endDate = new Date();
-		endDate.setUTCHours(0, 0, 0, 0);
-		const startDate = new Date(endDate);
-		startDate.setUTCDate(endDate.getUTCDate() - 90 + 1); // 90 days inclusive
-		return [startDate, endDate];
-	}
-
-	function getMaxAbsValue(strategies) {
+	// Find the maximum absolute performance data value across all strategies
+	function getMaxAbsPerformanceValue() {
 		let max = 0;
 		for (const { summary_statistics } of strategies) {
 			for (const tick of summary_statistics?.performance_chart_90_days || []) {
