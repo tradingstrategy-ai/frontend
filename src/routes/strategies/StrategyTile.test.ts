@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import { render } from '@testing-library/svelte';
 import StrategyTile from './StrategyTile.svelte';
 
@@ -11,12 +10,6 @@ const baseStrategy = {
 	started_at: 1669852800,
 	executor_running: true
 };
-
-// Fake scale functions - required StrategyTile props
-const scaleX = vi.fn();
-scaleX.range = vi.fn(() => [0, 450]);
-const scaleY = vi.fn();
-scaleY.range = vi.fn(() => [285, 0]);
 
 describe('StrategyTile component', () => {
 	describe('with complete summary statistics', () => {
@@ -34,20 +27,20 @@ describe('StrategyTile component', () => {
 		};
 
 		test('should display historic performance value with no warning', async () => {
-			const { getByText, queryByTitle } = render(StrategyTile, { strategy, scaleX, scaleY });
+			const { getByText, queryByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
 			expect(performance).toHaveTextContent('▲7.9%');
 			expect(queryByTitle(/less than 90 days of performance data/)).toBeNull;
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
-			const { getByText } = render(StrategyTile, { strategy, scaleX, scaleY });
+			const { getByText } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
 			expect(performance).toHaveClass('price-change-green');
 		});
 
 		test('should display assets value', async () => {
-			const { getByText } = render(StrategyTile, { strategy, scaleX, scaleY });
+			const { getByText } = render(StrategyTile, { strategy });
 			const assets = getByText('Amount of assets').nextElementSibling;
 			expect(assets).toHaveTextContent('$1.23k');
 		});
@@ -68,7 +61,7 @@ describe('StrategyTile component', () => {
 		};
 
 		test('should display historic performance value with insufficient data warning', async () => {
-			const { getByText, getByTitle } = render(StrategyTile, { strategy, scaleX, scaleY });
+			const { getByText, getByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
 			expect(performance).toHaveTextContent('▲7.9%');
 			getByTitle(/less than 90 days of performance data/);
@@ -82,7 +75,7 @@ describe('StrategyTile component', () => {
 		};
 
 		test('should display error message', async () => {
-			const { getByText } = render(StrategyTile, { strategy, scaleX, scaleY });
+			const { getByText } = render(StrategyTile, { strategy });
 			getByText('Strategy data not currently available.');
 		});
 	});

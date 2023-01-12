@@ -1,21 +1,12 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import type { ChartTick } from './ChartThumbnail.svelte';
 	import { Button, Icon } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-	import { formatDollar, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { fromUnixTime } from 'date-fns';
 
 	export let strategy: StrategyRuntimeState;
-	export let scaleX: any;
-	export let scaleY: any;
-
-	let activeTick: ChartTick;
-
-	function formatDate(date: Date) {
-		return new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(date);
-	}
 
 	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
@@ -23,15 +14,7 @@
 </script>
 
 <li class:hasError>
-	<div class="thumbnail">
-		<ChartThumbnail {scaleX} {scaleY} data={chartData} bind:active={activeTick} />
-		{#if activeTick}
-			<dl class="hud">
-				<dt>{formatDate(activeTick[0])}</dt>
-				<dd class={determinePriceChangeClass(activeTick[1])}>{formatPercent(activeTick[1])}</dd>
-			</dl>
-		{/if}
-	</div>
+	<ChartThumbnail data={chartData} />
 	<div class="info">
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
@@ -76,31 +59,6 @@
 		grid-auto-rows: 1fr;
 		list-style: none;
 		overflow: hidden;
-	}
-
-	.thumbnail {
-		position: relative;
-
-		& .hud {
-			position: absolute;
-			left: 1rem;
-			right: 1rem;
-			top: 0.75rem;
-			display: flex;
-			justify-content: space-between;
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: var(--c-text-extra-light-night);
-
-			& * {
-				font: inherit;
-				background: var(--c-background-7);
-			}
-		}
-
-		&:not(:hover) .hud {
-			display: none;
-		}
 	}
 
 	.info {
