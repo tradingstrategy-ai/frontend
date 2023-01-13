@@ -27,22 +27,30 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	const isBasicLayout = layout === 'basic';
 	const isAdvancedLayout = layout === 'advanced';
-	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
-	const isLowQuality = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
 	const typeLabel = document.type === 'exchange' ? 'DEX' : document.type;
-	const title = isLowQuality ? 'Warning: low liquidity' : null;
+
+	// flag low quality results
+	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
+	const hasLowLiquidity = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
+	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
+	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
 
 	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
 	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
 		style: 'percent',
 		minimumFractionDigits: 1
 	});
+
+	function getTitle() {
+		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
+		if (hasLowLiquidity) return 'Warning: low liquidity';
+	}
 </script>
 
-<li {title}>
+<li title={getTitle()}>
 	<a href={document.url_path} class={layout} class:isLowQuality>
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">

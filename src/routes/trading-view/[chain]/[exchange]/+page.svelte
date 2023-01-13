@@ -34,9 +34,14 @@
 		</div>
 
 		<AlertList status="warning">
-			<AlertItem title="Uniswap V3 beta" displayWhen={data.exchange_type === 'uniswap_v3'}>
+			<AlertItem title="Uniswap v3 beta" displayWhen={data.exchange_type === 'uniswap_v3'}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this exchange is currently incomplete.
+			</AlertItem>
+
+			<AlertItem title="Incompatible exchange" displayWhen={data.exchange_type === 'uniswap_v2_incompatible'}>
+				{data.human_readable_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+				this exchange may be inaccurate.
 			</AlertItem>
 		</AlertList>
 
