@@ -4,8 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './home/HeroBanner.svelte';
-	import { BlogRoll, Button, Section, SummaryBox, TopTradesTable } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
+	import { BlogRoll, Button, Section, SummaryBox, SubscribeForm, TopTradesTable } from '$lib/components';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let data: PageData;

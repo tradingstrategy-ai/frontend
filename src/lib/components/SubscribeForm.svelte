@@ -73,39 +73,6 @@ be invoked from anywhere to open the global dialog component.
 	}
 </script>
 
-<<<<<<< HEAD:src/lib/newsletter/SubscribeDialog.svelte
-<Dialog {title} bind:open={$open} on:open={handleOpen} on:close={state.reset}>
-	<div class="dialog-inner {$state}">
-		{#if $state !== 'subscribed'}
-			<p>Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.</p>
-			<form bind:this={form} method="POST" action="/newsletter" use:enhance={enhancedSubmit}>
-				<TextInput
-					bind:value={email}
-					size="lg"
-					type="email"
-					name="email"
-					placeholder="email@example.org"
-					autocomplete="off"
-					required
-					disabled={$state === 'submitting'}
-				/>
-				<Button size="sm" submit label="Subscribe" disabled={$state === 'submitting'} />
-			</form>
-		{:else}
-			<p>
-				You have successfully joined our newsletter list and will begin receiving the lastest updates and insights from
-				Trading Strategy.
-			</p>
-		{/if}
-
-		<div class="dialog-error">
-			<AlertList>
-				<AlertItem displayWhen={$state === 'failed'}>{errorMessage}</AlertItem>
-			</AlertList>
-		</div>
-	</div>
-</Dialog>
-=======
 {#if $state !== 'subscribed'}
 	<form bind:this={form} method="POST" action="/newsletter/subscribe" use:enhance={enhancedSubmit}>
 		<TextInput
@@ -129,7 +96,6 @@ be invoked from anywhere to open the global dialog component.
 		Trading Strategy.
 	</p>
 {/if}
->>>>>>> 6a1883b... feat: Create Newsletter page, create reusable pure Subscribe Form component:src/routes/newsletter/SubscribeForm.svelte
 
 <style lang="postcss">
 	form {
