@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Button, Section, SummaryBox } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
+	import { Button, Section, SubscribeForm, SummaryBox } from '$lib/components';
 </script>
 
 <Section class="audience ds-container" cols={2} layout="boxed" padding="xl">
@@ -20,9 +19,10 @@
 			<li>Direct trade execution on-chain without a counter-party risk</li>
 		</ul>
 
-		<svelte:fragment slot="footerCta">
-			<Button label="Sign up to waitlist" on:click={toggleSubscribeDialog} />
-		</svelte:fragment>
+		<div class="subscribe-cta" slot="footerCta">
+			<h5>Sign up to waitlist</h5>
+			<SubscribeForm />
+		</div>
 	</SummaryBox>
 
 	<SummaryBox title="Strategy developers and quants">
@@ -62,5 +62,10 @@
 		& p {
 			font: var(--f-ui-xl-roman);
 		}
+	}
+
+	.subscribe-cta {
+		display: grid;
+		gap: var(--space-sm);
 	}
 </style>

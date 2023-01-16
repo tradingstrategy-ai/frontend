@@ -46,14 +46,16 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 			</slot>
 		</p>
 	{/if}
-	<div class="summary">
-		<div class="label">
-			{summaryLabel}
+	{#if summaryLabel || summaryValue}
+		<div class="summary">
+			<div class="label">
+				{summaryLabel}
+			</div>
+			<div class="value">
+				{summaryValue}
+			</div>
 		</div>
-		<div class="value">
-			{summaryValue}
-		</div>
-	</div>
+	{/if}
 	{#if $$slots.cta}
 		<div class="cta"><slot name="cta" /></div>
 	{/if}

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Section } from '$lib/components';
-	import SubscribeForm from './SubscribeForm.svelte';
+	import { Section, SubscribeForm } from '$lib/components';
 </script>
 
 <Section

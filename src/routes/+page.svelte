@@ -40,7 +40,7 @@
 		<div class="inner">
 			<div class="coming-soon">Coming soon</div>
 			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
-			<Button label="Sign up now" on:click={toggleSubscribeDialog} />
+			<SubscribeForm />
 		</div>
 	</Section>
 

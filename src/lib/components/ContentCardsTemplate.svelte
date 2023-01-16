@@ -26,7 +26,7 @@ Should be used in conjunction with those two components.
 	<meta name="description" content={pageDescription} />
 </svelte:head>
 
-<main class="content-cards-template">
+<main class="content-cards-template" id={pageId}>
 	<Section class="hero" layout="boxed" padding="md">
 		<slot name="hero" />
 	</Section>
