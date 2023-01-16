@@ -3,10 +3,11 @@
 
 	export let id: string | null = null;
 	export let name: string | null = null;
+	export let value: string | Array<string>;
 </script>
 
 <div class="select-wrapper">
-	<select {name} {id}>
+	<select {name} {id} bind:value>
 		<slot />
 	</select>
 	<Icon name="chevron-down" --icon-size="1rem" />
