@@ -26,9 +26,9 @@ using flags: primary (default), secondary, ternary, quarternary.
 
 	let classes = '';
 	export { classes as class };
-	export let disabled = false;
+	export let disabled: boolean | null = null;
 	export let download: string | boolean | undefined = undefined;
-	export let external = false;
+	export let rel: string | null = null;
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
@@ -41,22 +41,28 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
 
-	$: tag = href && !disabled ? 'a' : 'button';
+	$: anchorProps = {
+		href: href ?? null,
+		rel: rel ?? null,
+		target: target ?? null
+	};
+	$: buttonProps = {
+		disabled: disabled ?? null,
+		download: download ? '' : null,
+		type: tag === 'button' ? type : null
+	};
 	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
+	$: tag = href && !disabled ? 'a' : 'button';
 	$: type = submit ? 'submit' : 'button';
 </script>
 
 <svelte:element
 	this={tag}
 	class="button {kind} {size} {classes}"
-	disabled={disabled || undefined}
-	download={download === true ? '' : download}
-	{href}
-	rel={external ? 'external' : undefined}
+	{...anchorProps}
+	{...buttonProps}
 	{tabindex}
-	{target}
 	{title}
-	type={tag === 'button' ? type : undefined}
 	on:click
 >
 	{#if $$slots.default || label}
