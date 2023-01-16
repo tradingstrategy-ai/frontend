@@ -13,7 +13,7 @@ Support (bubbles) `change`, `focus` and `blur` events.
 ```
 -->
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import { Icon, Select } from '$lib/components';
 
 	export let disabled = false;
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
@@ -23,9 +23,9 @@ Support (bubbles) `change`, `focus` and `blur` events.
 <span class="size-{size}" class:disabled>
 	<Icon name="chevron-down" />
 
-	<select bind:value {disabled} on:change on:focus on:blur>
+	<Select bind:value {disabled} on:change on:focus on:blur>
 		<slot />
-	</select>
+	</Select>
 </span>
 
 <style lang="postcss">
