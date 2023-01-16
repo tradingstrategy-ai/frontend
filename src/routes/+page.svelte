@@ -54,7 +54,7 @@
 
 <style lang="postcss">
 	:global(.strategies) :global {
-		background-color: hsla(var(--hsla-v2-background-accent-1));
+		background-color: hsla(var(--hsla-background-accent-1));
 		& .inner {
 			display: grid;
 			gap: var(--space-5xl);

@@ -100,7 +100,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		gap: var(--space-xs);
 
 		& .label {
-			color: hsl(var(--hsl-v2-text-extra-light));
+			color: hsl(var(--hsl-text-extra-light));
 			font: var(--f-ui-sm-medium);
 		}
 

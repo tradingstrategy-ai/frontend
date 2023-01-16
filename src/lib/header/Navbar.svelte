@@ -25,6 +25,6 @@
 
 <style>
 	.nav-bar {
-		background: hsl(var(--hsl-v2-body));
+		background: hsl(var(--hsl-body));
 	}
 </style>

@@ -1,7 +1,7 @@
 @import './reset.css';
-@import './color-v1.css';
-@import './color.css';
-@import './color-v2.css';
+/* @import './color-v1.css'; */
+/* @import './color.css'; */
+/* @import './color-v2.css'; */
 @import './banner.css';
 @import './layout.css';
 @import './radius.css';
@@ -9,6 +9,7 @@
 @import './table.css';
 @import './terminal.css';
 @import './text-field.css';
+@import './themes/index.css';
 @import './tile.css';
 @import './time.css';
 @import './truncate.css';

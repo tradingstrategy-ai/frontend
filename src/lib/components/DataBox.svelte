@@ -26,7 +26,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 <style lang="postcss">
 	.data-box {
 		border-radius: var(--radius-md);
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		background: hsla(var(--hsl-box), var(--a-box-b));
 		display: grid;
 
 		&.xs {
@@ -79,7 +79,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 	.label {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: var(--c-text-extra-light);
+		color: hsla(var(--hsl-text-extra-light));
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-medium);

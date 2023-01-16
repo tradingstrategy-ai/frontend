@@ -94,7 +94,7 @@
 		padding: 0 var(--space-sl);
 		border: 1px transparent solid;
 		border-radius: var(--border-radius);
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		background: hsla(var(--hsl-box), var(--a-box-b));
 		font: inherit;
 		color: var(--c-text-1-v1);
 		transition: background var(--time-sm) ease-out;
@@ -104,16 +104,16 @@
 		}
 
 		&:disabled {
-			background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
+			background: hsla(var(--hsl-box), var(--a-box-a));
 		}
 
 		&:focus,
 		&:hover {
-			background: hsla(var(--hsl-v2-box), var(--a-v2-box-c));
+			background: hsla(var(--hsl-box), var(--a-box-c));
 		}
 
 		&:focus {
-			border-color: hsla(var(--hsl-v2-text-extra-light));
+			border-color: hsla(var(--hsl-text-extra-light));
 			outline: none;
 		}
 

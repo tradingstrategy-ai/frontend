@@ -1,5 +1,5 @@
 .banner {
-	background: hsla(var(--hsla-v2-background-accent-1));
+	background: hsla(var(--hsla-background-accent-1));
 }
 
 .banner .title,

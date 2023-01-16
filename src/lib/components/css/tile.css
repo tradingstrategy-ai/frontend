@@ -4,29 +4,29 @@
 }
 
 .tile.a {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
+	background: hsla(var(--hsl-box), var(--a-box-a));
 }
 .tile.a:hover,
 .tile:hover .tile.a {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b)) !important;
+	background: hsla(var(--hsl-box), var(--a-box-b)) !important;
 }
 
 .tile.b {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+	background: hsla(var(--hsl-box), var(--a-box-b));
 }
 .tile.b:hover,
 .tile:hover .tile.b {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d)) !important;
+	background: hsla(var(--hsl-box), var(--a-box-d)) !important;
 }
 
 .tile.c {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-c));
+	background: hsla(var(--hsl-box), var(--a-box-c));
 }
 .tile.c:hover,
 .tile:hover .tile.c {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d)) !important;
+	background: hsla(var(--hsl-box), var(--a-box-d)) !important;
 }
 
 .tile.d {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
+	background: hsla(var(--hsl-box), var(--a-box-d));
 }

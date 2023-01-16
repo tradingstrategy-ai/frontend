@@ -81,7 +81,7 @@
 	}
 
 	.content-tile .media {
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+		background: hsla(var(--hsl-box), var(--a-box-b));
 		@media (--viewport-sm-up) {
 			min-height: 20rem;
 		}
@@ -119,7 +119,7 @@
 	}
 
 	.content-tile :global time {
-		color: hsl(var(--hsl-v2-text-extra-light));
+		color: hsl(var(--hsl-text-extra-light));
 		font: var(--f-ui-sm-medium);
 	}
 
@@ -128,7 +128,7 @@
 	}
 
 	.content-tile .description {
-		color: hsl(var(--hsl-v2-text-light));
+		color: hsl(var(--hsl-text-light));
 		font: var(--f-ui-md-roman);
 	}
 

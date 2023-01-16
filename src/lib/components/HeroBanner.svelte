@@ -26,7 +26,7 @@
 		place-items: stretch;
 
 		@media (--viewport-sm-down) {
-			height: min(32vh, 18rem);
+			height: max(28vh, 12rem);
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
 		}
@@ -46,12 +46,18 @@
 		}
 	}
 
-	.hero-banner .media :global svg {
-		max-height: min(28rem, 64vw);
-		margin: auto;
+	.hero-banner .media {
+		@media (--viewport-sm-down) {
+			display: none;
+		}
 
-		& * {
-			fill: currentColor;
+		& :global svg {
+			max-height: min(28rem, 64vw);
+			margin: auto;
+
+			& * {
+				fill: currentColor;
+			}
 		}
 	}
 </style>

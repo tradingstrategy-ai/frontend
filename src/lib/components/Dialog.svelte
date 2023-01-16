@@ -70,7 +70,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		padding: var(--space-xl);
 		border: none;
 		border-radius: var(--radius-xs);
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 	}
 
 	dialog::backdrop {

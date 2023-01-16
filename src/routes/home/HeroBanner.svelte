@@ -58,7 +58,7 @@ Home page hero banner.
 	@custom-media --no-breaks (width <= 1440px);
 
 	.home-hero-banner {
-		background: hsla(var(--hsla-v2-background-accent-1));
+		background: hsla(var(--hsla-background-accent-1));
 		padding: var(--space-xl) 0;
 		@media (--viewport-md-up) {
 			padding: var(--space-10xl) var(--space-3xl);
@@ -105,6 +105,6 @@ Home page hero banner.
 	}
 
 	hr {
-		border: 0.125rem solid hsla(var(--hsl-v2-text));
+		border: 0.125rem solid hsla(var(--hsl-text));
 	}
 </style>

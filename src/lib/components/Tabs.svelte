@@ -48,7 +48,7 @@ Used to display tabs and associated component content panels
 
 	label {
 		border-radius: var(--radius-md);
-		color: var(--c-text-extra-light);
+		color: hsla(var(--hsl-text-extra-light));
 		cursor: pointer;
 		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);

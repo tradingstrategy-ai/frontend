@@ -154,12 +154,12 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.hud-row {
 		& .vol-added dd {
-			color: var(--c-bullish);
+			color: hsla(var(--hsl-bullish));
 			min-width: 4.5em;
 		}
 
 		& .vol-removed dd {
-			color: var(--c-bearish);
+			color: hsla(var(--hsl-bearish));
 		}
 	}
 

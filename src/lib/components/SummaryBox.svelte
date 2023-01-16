@@ -59,7 +59,7 @@ Supports optional "cta" slot to include a button CTA.
 
 <style lang="postcss">
 	.summary-box {
-		background: hsla(var(--hsl-v2-box), var(--a-v2-box-a));
+		background: hsla(var(--hsl-box), var(--a-box-a));
 		border-radius: var(--radius-md);
 		padding: var(--space-lg) var(--space-lg);
 		@media (--viewport-md-down) {
@@ -101,7 +101,7 @@ Supports optional "cta" slot to include a button CTA.
 			}
 
 			& p {
-				color: var(--c-text-extra-light);
+				color: hsla(var(--hsl-text-extra-light));
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}

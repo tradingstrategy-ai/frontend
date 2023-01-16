@@ -20,8 +20,8 @@ table:not(.table) thead tr:first-child {
 }
 
 table:not(.table) th {
-	background-color: var(--c-body);
-	color: var(--c-text-extra-light);
+	background-color: hsla(var(--hsl-body));
+	color: hsla(var(--hsl-text-extra-light));
 	font: var(--f-ui-md-medium);
 	letter-spacing: var(--f-ui-md-medium, normal);
 	/* padding: var(--cell-padding); */
@@ -30,7 +30,7 @@ table:not(.table) th {
 }
 
 table:not(.table) td {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-b));
+	background: hsla(var(--hsl-box), var(--a-box-b));
 	height: 4rem;
 	font: var(--f-ui-md-medium);
 	letter-spacing: var(--f-ui-lg-spacing, normal);
@@ -61,7 +61,7 @@ table:not(.table) td:last-child {
 }
 
 table:not(.table) tr:hover td {
-	background: hsla(var(--hsl-v2-box), var(--a-v2-box-d));
+	background: hsla(var(--hsl-box), var(--a-box-d));
 }
 
 table:not(.table) tfoot td {

@@ -9,10 +9,10 @@
 
 <style>
 	.profit-green {
-		color: var(--c-bullish);
+		color: hsla(var(--hsl-bullish));
 	}
 
 	.profit-red {
-		color: var(--c-bearish);
+		color: hsla(var(--hsl-bearish));
 	}
 </style>

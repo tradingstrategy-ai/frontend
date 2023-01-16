@@ -261,7 +261,7 @@ chartiq dependency.
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background-color: var(--c-body-v1);
+		background-color: hsla(var(--hsl-body));
 		opacity: 0.75;
 	}
 

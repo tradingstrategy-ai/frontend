@@ -1,0 +1,13 @@
+@import './composables/hue';
+@import './theme-dark';
+@import './theme-light';
+
+body {
+	--hsl-bearish: var(--hue-bearish), 92%, 57%;
+	--hsl-bullish: var(--hue-bullish), 68%, 42%;
+	--hsl-black: 0, 0%, 0%;
+	color: hsla(var(--hsl-text));
+	background-color: hsla(var(--hsl-body));
+	transition-property: background-color, color;
+	transition-duration: var(--time-md);
+}

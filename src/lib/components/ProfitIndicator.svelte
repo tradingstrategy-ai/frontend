@@ -11,14 +11,14 @@
 	.bullish {
 		&,
 		& > :global(*) {
-			color: var(--c-bullish);
+			color: hsla(var(--hsl-bullish));
 		}
 	}
 
 	.bearish {
 		&,
 		& > :global(*) {
-			color: var(--c-bearish);
+			color: hsla(var(--hsl-bearish));
 		}
 	}
 </style>
