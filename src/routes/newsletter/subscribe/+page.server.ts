@@ -1,5 +1,5 @@
 import { invalid } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions } from '../$types';
 import type { Subscriber } from '$lib/newsletter/client';
 import { getClient } from '$lib/newsletter/client';
 

@@ -1,20 +1,19 @@
 <!--
 @component
-SubscribeDialog is intended to be used as a global singleton component (add to layout).
+Form is intended to be used as a global singleton component (add to layout).
 The sibling `controller` file exports a `toggleSubscriptionDialog` function, which can
 be invoked from anywhere to open the global dialog component.
 
 #### Usage:
 ```tsx
-   <SubscribeDialog />
+<Form />
 ```
 -->
 <script lang="ts">
-	import { subscribeDialogOpen as open } from './controller';
 	import type { SubmitFunction } from '$app/forms';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
-	import { Dialog, TextInput, Button, AlertList, AlertItem } from '$lib/components';
+	import { TextInput, Button, AlertList, AlertItem } from '$lib/components';
 	import { tick } from 'svelte';
 
 	let form: HTMLFormElement;
@@ -74,6 +73,7 @@ be invoked from anywhere to open the global dialog component.
 	}
 </script>
 
+<<<<<<< HEAD:src/lib/newsletter/SubscribeDialog.svelte
 <Dialog {title} bind:open={$open} on:open={handleOpen} on:close={state.reset}>
 	<div class="dialog-inner {$state}">
 		{#if $state !== 'subscribed'}
@@ -105,37 +105,47 @@ be invoked from anywhere to open the global dialog component.
 		</div>
 	</div>
 </Dialog>
+=======
+{#if $state !== 'subscribed'}
+	<form bind:this={form} method="POST" action="/newsletter/subscribe" use:enhance={enhancedSubmit}>
+		<TextInput
+			bind:value={email}
+			size="xl"
+			type="email"
+			name="email"
+			placeholder="email@example.org"
+			autocomplete="off"
+			required
+			disabled={$state === 'submitting'}
+		/>
+		<Button submit label="Subscribe" disabled={$state === 'submitting'} />
+		<AlertList>
+			<AlertItem displayWhen={$state === 'failed'}>{errorMessage}</AlertItem>
+		</AlertList>
+	</form>
+{:else}
+	<p>
+		You have successfully joined our newsletter list and will begin receiving the lastest updates and insights from
+		Trading Strategy.
+	</p>
+{/if}
+>>>>>>> 6a1883b... feat: Create Newsletter page, create reusable pure Subscribe Form component:src/routes/newsletter/SubscribeForm.svelte
 
 <style lang="postcss">
-	.dialog-inner p {
-		margin-bottom: var(--space-md);
-		font: var(--f-ui-lg-roman);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
-		color: var(--c-text-light);
-
-		@media (--viewport-xs) {
-			font: var(--f-ui-md-roman);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
-	}
-
-	.dialog-error :global(.alert-list) {
-		margin-top: var(--space-md);
-		padding: var(--space-md);
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-	}
-
 	form {
 		padding-block: var(--space-ss);
 		display: grid;
 		grid-template-columns: 1fr 7.5rem;
-		gap: var(--space-sl);
+		gap: var(--space-ml) var(--space-ms);
 		align-items: center;
 
 		@media (--viewport-xs) {
 			grid-template-columns: auto;
 			gap: var(--space-md);
+		}
+
+		& :global .alert-list {
+			grid-column: 1/-1;
 		}
 	}
 

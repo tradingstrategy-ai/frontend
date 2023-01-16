@@ -1,6 +1,5 @@
 <script>
 	import { SocialIcon } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 
 	export let skip = false;
 	export let small = false;
@@ -20,9 +19,9 @@
 			<SocialIcon name="linkedin" />
 		</a>
 
-		<button title="Newsletter" on:click={toggleSubscribeDialog}>
+		<a title="Newsletter" href="/newsletter">
 			<SocialIcon name="newspaper" />
-		</button>
+		</a>
 
 		<a href="/blog/rss.xml" rel="external" title="RSS">
 			<SocialIcon name="rss" />
@@ -31,12 +30,20 @@
 </footer>
 
 <style lang="postcss">
+	:global :root {
+		--footer-height: 12rem;
+
+		@media (--nav-collapsed) {
+			--footer-height: 6rem;
+		}
+	}
+
 	footer {
 		display: grid;
 		grid-auto-flow: column;
-		justify-content: center;
+		place-content: center;
 		gap: 2.5rem;
-		padding: 5rem 0;
+		height: var(--footer-height);
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-ls);
