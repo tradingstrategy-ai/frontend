@@ -5,7 +5,6 @@ export { default as BlogPostTile } from './BlogPostTile.svelte';
 export { default as BlogPostTimestamp } from './BlogPostTimestamp.svelte';
 export { default as BlogRoll } from './BlogRoll.svelte';
 export { default as Button } from './Button.svelte';
-export { default as ChartPlaceholder } from './ChartPlaceholder.svelte';
 export { default as ContentCard } from './ContentCard.svelte';
 export { default as ContentCardsSection } from './ContentCardsSection.svelte';
 export { default as ContentCardsTemplate } from './ContentCardsTemplate.svelte';

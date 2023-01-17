@@ -26,13 +26,13 @@ export function parseExchangeName(name: string): ExchangeNameInfo {
 	}
 }
 
+const exchangeLabels = {
+	uniswap_v2: 'Uniswap v2 like',
+	uniswap_v2_incompatible: 'Uniswap v2 (incompatible)',
+	uniswap_v3: 'Uniswap v3'
+};
+
 export function exchangeTypeLabel(type: string) {
-	switch (type) {
-		case 'uniswap_v2':
-			return 'Uniswap v2 like';
-		case 'uniswap_v3':
-			return 'Uniswap v3';
-		default:
-			return type;
-	}
+	// @ts-ignore
+	return exchangeLabels[type] || type;
 }
