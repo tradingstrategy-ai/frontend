@@ -24,12 +24,7 @@
 
 	<section class="ds-container">
 		{#each data.chains as chain}
-			<BlockchainTile
-				name={chain.chain_name}
-				logo={chain.chain_logo}
-				exchanges={chain.exchanges}
-				slug={chain.chain_slug}
-			/>
+			<BlockchainTile name={chain.chain_name} exchanges={chain.exchanges} slug={chain.chain_slug} />
 		{/each}
 	</section>
 

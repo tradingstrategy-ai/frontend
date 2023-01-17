@@ -26,10 +26,11 @@ describe('StrategyTile component', () => {
 			}
 		};
 
-		test('should display historic performance value', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
+		test('should display historic performance value with no warning', async () => {
+			const { getByText, queryByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲ 7.9%');
+			expect(performance).toHaveTextContent('▲7.9%');
+			expect(queryByTitle(/less than 90 days of performance data/)).toBeNull;
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
@@ -59,16 +60,11 @@ describe('StrategyTile component', () => {
 			}
 		};
 
-		test('should not display historic performance value', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
+		test('should display historic performance value with insufficient data warning', async () => {
+			const { getByText, getByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('---');
-		});
-
-		test('should not set historic performance bullish/bearish class', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
-			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).not.toHaveClass('price-change-green');
+			expect(performance).toHaveTextContent('▲7.9%');
+			getByTitle(/less than 90 days of performance data/);
 		});
 	});
 

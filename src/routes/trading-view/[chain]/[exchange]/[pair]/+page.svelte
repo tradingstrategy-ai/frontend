@@ -67,6 +67,11 @@ Render the pair trading page
 				that the data for this trading pair is currently incomplete.
 			</AlertItem>
 
+			<AlertItem title="Incompatible exchange" displayWhen={summary.exchange_type === 'uniswap_v2_incompatible'}>
+				{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for {summary.pair_symbol}
+				may be inaccurate.
+			</AlertItem>
+
 			<AlertItem displayWhen={tokenTax.broken}>
 				This token is unlikely to be tradeable.
 				<a
