@@ -7,7 +7,7 @@
 	export let slug: string;
 </script>
 
-<div class="tile" data-testid="blockchain-tile">
+<div class="tile b" data-testid="blockchain-tile">
 	<img alt={`${name} logo`} src={getLogoUrl(slug)} />
 	<div class="content">
 		<h2>{name}</h2>
@@ -22,7 +22,6 @@
 		flex-direction: column;
 		gap: var(--space-ll);
 		padding: var(--space-3xl) var(--space-xl);
-		background: var(--c-background-1-v1);
 		border-radius: var(--radius-xs);
 		text-align: center;
 	}

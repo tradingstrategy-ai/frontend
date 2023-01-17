@@ -8,12 +8,12 @@
 
 	export let strategy: StrategyRuntimeState;
 
-	const hasError = !!strategy.error;
+	const hasError = strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 </script>
 
-<li class:hasError>
+<li class="strategy tile tile b" class:hasError>
 	<ChartThumbnail data={chartData} />
 	<div class="info">
 		<div class="details">

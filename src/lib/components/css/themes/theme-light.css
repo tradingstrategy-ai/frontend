@@ -8,8 +8,8 @@ body[data-color-mode='light'] {
 	--hsl-text-inverted: var(--hue-1), 12%, 99%;
 
 	--hsl-box: var(--hue-1), 32%, 72%;
-	--a-box-a: 0.14;
-	--a-box-b: 0.24;
+	--a-box-a: 0.12;
+	--a-box-b: 0.26;
 	--a-box-c: 0.32;
 	--a-box-d: 0.48;
 	--a-box-e: 0.6;
@@ -19,7 +19,7 @@ body[data-color-mode='light'] {
 
 @media (prefers-color-scheme: light) {
 	body {
-		--hsl-body: var(--hue-1), 52%, 98%;
+		--hsl-body: var(--hue-1), 52%, 95%;
 
 		--hsl-text: var(--hue-1), 9%, 7%;
 		--hsl-text-light: var(--hue-1), 4%, 24%;
