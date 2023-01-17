@@ -45,6 +45,14 @@ Home page hero banner.
 		gap: var(--space-sm);
 		place-content: center stretch;
 
+		& h1 {
+			font: var(--f-heading-lg-medium);
+
+			@media (--viewport-md-up) {
+				font: var(--f-heading-xl-medium);
+			}
+		}
+
 		& p {
 			font: var(--f-ui-xl-roman);
 

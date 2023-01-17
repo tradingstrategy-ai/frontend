@@ -34,7 +34,7 @@ A section component to display a collection of ContentCards in a responsive grid
 		& .grid {
 			--grid-gap: var(--space-ll) !important;
 			@media (--viewport-xs) {
-				--grid-gap: var(--space-ls) !important;
+				--grid-gap: var(--space-lg) !important;
 			}
 		}
 
@@ -42,7 +42,7 @@ A section component to display a collection of ContentCards in a responsive grid
 			font: var(--f-heading-md-medium) !important;
 			text-align: left;
 			@media (--viewport-xs) {
-				font: var(--f-heading-sm-medium) !important;
+				font: var(--f-heading-md-medium) !important;
 			}
 		}
 	}

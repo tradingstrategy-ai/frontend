@@ -87,17 +87,29 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		padding: var(--space-ls);
 		margin-bottom: var(--space-md);
 		place-self: start;
+
+		@media (--viewport-sm-up) {
+			margin-bottom: var(--space-ml);
+		}
 	}
 
 	.content-card .title {
 		@media (--viewport-sm-up) {
 			font: var(--f-heading-lg-medium) !important;
 		}
+
+		@media (--viewport-xs) {
+			font: var(--f-heading-md-medium) !important;
+		}
 	}
 
 	.content-card .summary {
 		display: grid;
 		gap: var(--space-xs);
+
+		@media (--viewport-sm-up) {
+			gap: var(--space-xs);
+		}
 
 		& .label {
 			color: hsl(var(--hsl-text-extra-light));
