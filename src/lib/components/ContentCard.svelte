@@ -103,6 +103,12 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		}
 	}
 
+	.content-card .subtitle {
+		@media (--viewport-xs) {
+			font: var(--f-ui-sm-roman);
+		}
+	}
+
 	.content-card .summary {
 		display: grid;
 		gap: var(--space-xs);
