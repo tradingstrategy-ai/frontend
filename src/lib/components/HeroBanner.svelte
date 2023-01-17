@@ -1,3 +1,11 @@
+<!--
+@component
+Home page hero banner.
+#### Usage:
+```tsx
+<HeroBanner {image} {title} {subtitle} />
+```
+-->
 <script lang="ts">
 	export let image: string;
 	export let title: string;
