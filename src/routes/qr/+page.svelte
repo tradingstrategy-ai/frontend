@@ -5,7 +5,7 @@ on the conference rolls.
 
 -->
 <script lang="ts">
-	import { Hero, ContentTileOld } from '$lib/components';
+	import { Hero, ContentCard } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
@@ -19,29 +19,29 @@ on the conference rolls.
 	<Hero title="Follow Trading Strategy" image={BrandMark}>Follow us on our socials and join the discussion.</Hero>
 
 	<section class="ds-container">
-		<ContentTileOld title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
+		<ContentCard title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
 			Join our expert community of traders, developers, and analysts and DeFi specialists.
-		</ContentTileOld>
+		</ContentCard>
 
-		<ContentTileOld title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
+		<ContentCard title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
 			Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-		</ContentTileOld>
+		</ContentCard>
 
-		<ContentTileOld title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
+		<ContentCard title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
 			Follow us on LinkedIn and join our community of traders, developers and quant experts.
-		</ContentTileOld>
+		</ContentCard>
 
-		<ContentTileOld title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
+		<ContentCard title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
 			Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
-		</ContentTileOld>
+		</ContentCard>
 
-		<ContentTileOld title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
+		<ContentCard title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
 			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
-		</ContentTileOld>
+		</ContentCard>
 
-		<ContentTileOld title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
+		<ContentCard title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
 			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
-		</ContentTileOld>
+		</ContentCard>
 	</section>
 </main>
 

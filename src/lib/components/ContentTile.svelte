@@ -1,3 +1,22 @@
+<!-- 
+	@component
+Display a content tile that links to additional content, such as those on
+Trading data or Community pages. The entire tile can be a targetable CTA, or
+(if `buttonLabel`) provided, the tile can display a button CTA.
+
+#### Usage:
+```tsx
+	<ContentTile
+		ctaLabel="Read article"
+		href="/blog/{post.slug}"
+		mediaSrc={post.feature_image}
+		mediaAlt={post.feature_image_alt}
+		title={post.title}
+		datetime={new Date(post.published_at)}
+		description={post.excerpt}
+	/>
+```
+ -->
 <script lang="ts">
 	import Timestamp from './Timestamp.svelte';
 	import Button from './Button.svelte';
@@ -14,24 +33,28 @@
 
 	$: tag = href ? 'a' : 'div';
 
+	$: anchorProps = {
+		href: href ?? null
+	};
+
 	let cardEl: HTMLElement;
 
 	const handleHighlight = () => {
-		const ctaButton = cardEl.querySelector('.cta .button');
+		const ctaButton = cardEl.querySelector('.cta .button') as HTMLElement;
 		ctaButton?.focus();
 	};
 
 	const handleUnhighlight = () => {
-		const ctaButton = cardEl.querySelector('.cta .button');
+		const ctaButton = cardEl.querySelector('.cta .button') as HTMLElement;
 		ctaButton?.blur();
 	};
 </script>
 
 <svelte:element
 	this={tag}
-	bind:this={cardEl}
-	{href}
+	{...anchorProps}
 	class="content-tile tile a {classes}"
+	bind:this={cardEl}
 	on:mouseover={handleHighlight}
 	on:mouseleave={handleUnhighlight}
 	on:focus={handleHighlight}
