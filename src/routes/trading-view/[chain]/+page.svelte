@@ -18,7 +18,7 @@
 <Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
 
 <main>
-	<ChainHeader name={data.chain_name} logoUrl={data.chain_logo} homepage={data.homepage} />
+	<ChainHeader name={data.chain_name} slug={data.chain_slug} homepage={data.homepage} />
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">

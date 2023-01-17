@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { Button } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let name: string;
-	export let logo: string;
 	export let exchanges: number;
 	export let slug: string;
 </script>
 
 <div class="tile" data-testid="blockchain-tile">
-	<img alt={`${name} logo`} src={logo} />
+	<img alt={`${name} logo`} src={getLogoUrl(slug)} />
 	<div class="content">
 		<h2>{name}</h2>
 		<h3>{exchanges} exchanges</h3>

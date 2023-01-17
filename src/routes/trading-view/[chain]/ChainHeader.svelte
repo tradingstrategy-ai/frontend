@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let name: string;
-	export let logoUrl: string;
+	export let slug: string;
 	export let homepage: string;
 </script>
 
 <header class="ds-container">
 	<h1>
-		<img alt={`${name} logo`} src={logoUrl} />
+		<img alt={`${name} logo`} src={getLogoUrl(slug)} />
 		<span>{name} blockchain</span>
 	</h1>
 	<div>Visit <a href={homepage}>{formatUrlAsDomain(homepage)}</a></div>
