@@ -3,18 +3,19 @@
 	import { extent } from 'd3-array';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { getUTCDateRange, roundUTCDate } from '$lib/helpers/date';
+	import { addUTCDays, floorUTCDate, roundUTCDate } from '$lib/helpers/date';
 
 	type ChartTick = [Date, number | undefined];
 
 	export let data: ChartTick[] = [];
+	export let startDate: Date = addUTCDays(floorUTCDate(new Date()), -90);
 
 	let active: ChartTick;
 	let svgEl: SVGElement;
 
 	const width = 500;
 	const height = 300;
-	const scaleX = scaleUtc(getUTCDateRange(new Date(), -90), [0, width]);
+	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
 	const scaleY = scaleLinear(getValueRange(), [height, 0]);
 	const y0 = scaleY(0);
 
