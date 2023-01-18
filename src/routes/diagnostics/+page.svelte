@@ -32,5 +32,6 @@ A test endpoint for the page to show debug data.
 		border: 2px solid var(--c-border-1-v1);
 		border-radius: var(--radius-xxs);
 		color: var(--c-parchment);
+		white-space: pre-wrap;
 	}
 </style>
