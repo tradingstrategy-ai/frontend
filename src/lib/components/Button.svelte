@@ -26,9 +26,9 @@ using flags: primary (default), secondary, ternary, quarternary.
 
 	let classes = '';
 	export { classes as class };
-	export let disabled: boolean | null = null;
+	export let disabled: boolean | undefined = undefined;
 	export let download: string | boolean | undefined = undefined;
-	export let rel: string | null = null;
+	export let rel: string | undefined = undefined;
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
@@ -41,37 +41,27 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
 
-	$: anchorProps = {
-		href: href ?? null,
-		rel: rel ?? null,
-		target: target ?? null
-	};
-	$: buttonProps = {
-		disabled: disabled ?? null,
-		download: download ? '' : null,
-		type: tag === 'button' ? type : null
-	};
+	$: hasLabel = $$slots.default || label;
 	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
-	$: tag = href && !disabled ? 'a' : 'button';
-	$: type = submit ? 'submit' : 'button';
+	$: allClasses = `button ${kind} ${size} ${classes}`;
+	$: downloadAttr = typeof download === 'string' ? download : download ? '' : undefined;
 </script>
 
-<svelte:element
-	this={tag}
-	class="button {kind} {size} {classes}"
-	{...anchorProps}
-	{...buttonProps}
-	{tabindex}
-	{title}
-	on:click
->
-	{#if $$slots.default || label}
-		<span>
-			<slot>{label}</slot>
-		</span>
-	{/if}
-	{#if icon}<Icon name={icon} />{/if}
-</svelte:element>
+{#if href && !disabled}
+	<a class={allClasses} download={downloadAttr} {href} {rel} {tabindex} {target} {title} on:click>
+		{#if hasLabel}
+			<span><slot>{label}</slot></span>
+		{/if}
+		{#if icon}<Icon name={icon} />{/if}
+	</a>
+{:else}
+	<button class={allClasses} {disabled} {tabindex} {title} type={submit ? 'submit' : undefined} on:click>
+		{#if hasLabel}
+			<span><slot>{label}</slot></span>
+		{/if}
+		{#if icon}<Icon name={icon} />{/if}
+	</button>
+{/if}
 
 <style lang="postcss">
 	.button {
