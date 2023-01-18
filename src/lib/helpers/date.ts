@@ -5,8 +5,7 @@
  */
 export function getUTCDateRange(date: Date, days: number) {
 	const d1 = floorUTCDate(date);
-	const d2 = new Date(d1);
-	d2.setUTCDate(d2.getUTCDate() + days - Math.sign(days));
+	const d2 = addUTCDays(d1, days - Math.sign(days));
 	return days > 0 ? [d1, d2] : [d2, d1];
 }
 
@@ -17,6 +16,16 @@ export function floorUTCDate(date: Date) {
 	const floor = new Date(date);
 	floor.setUTCHours(0, 0, 0, 0);
 	return floor;
+}
+
+/**
+ * Return a new date with `days` added (may be negative to subtract days).
+ * Uses UTC date functions (which matters when crossing daylight-savings boundaries)
+ */
+export function addUTCDays(date: Date, days: number) {
+	const d2 = new Date(date);
+	d2.setUTCDate(d2.getUTCDate() + days);
+	return d2;
 }
 
 /**

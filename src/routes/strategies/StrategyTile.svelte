@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import { Button, Icon } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { fromUnixTime } from 'date-fns';
 
 	export let strategy: StrategyRuntimeState;
+	export let chartStartDate: Date | undefined = undefined;
 
 	const hasError = strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
@@ -14,7 +15,7 @@
 </script>
 
 <li class="strategy tile tile b" class:hasError>
-	<ChartThumbnail data={chartData} />
+	<ChartThumbnail data={chartData} startDate={chartStartDate} />
 	<div class="info">
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
