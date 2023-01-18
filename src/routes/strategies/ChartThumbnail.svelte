@@ -3,18 +3,19 @@
 	import { extent } from 'd3-array';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { getUTCDateRange, roundUTCDate } from '$lib/helpers/date';
+	import { addUTCDays, floorUTCDate, roundUTCDate } from '$lib/helpers/date';
 
 	type ChartTick = [Date, number | undefined];
 
 	export let data: ChartTick[] = [];
+	export let startDate: Date = addUTCDays(floorUTCDate(new Date()), -90);
 
 	let active: ChartTick;
 	let svgEl: SVGElement;
 
 	const width = 500;
 	const height = 300;
-	const scaleX = scaleUtc(getUTCDateRange(new Date(), -90), [0, width]);
+	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
 	const scaleY = scaleLinear(getValueRange(), [height, 0]);
 	const y0 = scaleY(0);
 
@@ -23,10 +24,13 @@
 		return range.every(Number.isFinite) ? range : [0, 0];
 	}
 
-	const commands = data.map(([date, val], idx) => {
-		const type = idx === 0 ? 'M' : 'L';
-		return `${type}${scaleX(date)},${scaleY(val)}`;
-	});
+	function getPathCommands() {
+		const commands = data.map(([date, val], idx) => {
+			return `L${scaleX(date)},${scaleY(val)}`;
+		});
+		commands.unshift(`M0,${y0}`);
+		return commands.join(' ');
+	}
 
 	function targetPoint({ clientX, clientY }: MouseEvent) {
 		const screenPoint = new DOMPointReadOnly(clientX, clientY);
@@ -48,8 +52,12 @@
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>
-		<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
-		<path class="data" d={commands.join(' ')} />
+		{#if data.length > 0}
+			<path class="data" d={getPathCommands()} />
+		{:else}
+			<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
+		{/if}
+
 		{#if active}
 			{@const x = scaleX(active[0])}
 			<line class="crosshair" x1={x} y1={-height} x2={x} y2={height * 2} />
