@@ -26,13 +26,15 @@ A section component to display a collection of ContentCards in a responsive grid
 <style lang="postcss">
 	.content-cards :global .section {
 		--section-padding-y: var(--space-ml) !important;
+		margin-bottom: var(--space-xl);
+
 		@media (--viewport-xs) {
 			--section-padding-y: var(--space-ms) !important;
 		}
-		margin-bottom: var(--space-xl);
 
 		& .grid {
 			--grid-gap: var(--space-ll) !important;
+
 			@media (--viewport-xs) {
 				--grid-gap: var(--space-lg) !important;
 			}
@@ -40,10 +42,8 @@ A section component to display a collection of ContentCards in a responsive grid
 
 		& h2 {
 			font: var(--f-heading-md-medium) !important;
+			letter-spacing: var(--f-heading-md-spacing, normal) !important;
 			text-align: left;
-			@media (--viewport-xs) {
-				font: var(--f-heading-md-medium) !important;
-			}
 		}
 	}
 </style>
