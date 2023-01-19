@@ -32,19 +32,9 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	export let title = '';
 
 	$: tag = href ? 'a' : 'div';
-
-	let ctaEl: HTMLElement;
-	$: buttonEl = ctaEl?.querySelector('.button') as HTMLElement;
 </script>
 
-<svelte:element
-	this={tag}
-	class="content-tile tile a {classes}"
-	{href}
-	on:mouseover={() => buttonEl?.focus()}
-	on:mouseleave={() => buttonEl?.blur()}
-	on:focus={() => buttonEl?.focus()}
->
+<svelte:element this={tag} class="content-tile tile a {classes}" {href}>
 	<img src={mediaSrc} alt={mediaAlt} />
 
 	<div class="content">
@@ -63,7 +53,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		</div>
 
 		{#if $$slots.cta || ctaLabel}
-			<div class="cta" bind:this={ctaEl}>
+			<div class="cta">
 				<slot name="cta">
 					<Button label={ctaLabel} {href} />
 				</slot>
@@ -136,5 +126,14 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	.cta {
 		margin-top: var(--space-sm);
 		display: grid;
+	}
+
+	/* display CTA button as hovered/focused when tile is hovered/focused */
+	.content-tile:hover,
+	.content-tile:focus {
+		& .cta :global .button {
+			--c-accent: var(--hsl-text), 1;
+			color: hsla(var(--hsl-text-inverted));
+		}
 	}
 </style>
