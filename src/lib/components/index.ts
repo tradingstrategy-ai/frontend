@@ -1,7 +1,6 @@
 export { default as AlertItem } from './AlertItem.svelte';
 export { default as AlertList } from './AlertList.svelte';
 export { default as Banner } from './Banner.svelte';
-export { default as BlogPostTile } from './BlogPostTile.svelte';
 export { default as BlogPostTimestamp } from './BlogPostTimestamp.svelte';
 export { default as BlogRoll } from './BlogRoll.svelte';
 export { default as Button } from './Button.svelte';
