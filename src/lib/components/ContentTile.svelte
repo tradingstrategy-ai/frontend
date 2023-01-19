@@ -45,9 +45,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	on:mouseleave={() => buttonEl?.blur()}
 	on:focus={() => buttonEl?.focus()}
 >
-	<div class="media">
-		<img src={mediaSrc} alt={mediaAlt} />
-	</div>
+	<img src={mediaSrc} alt={mediaAlt} />
 
 	<div class="content">
 		<div class="info">
@@ -83,21 +81,19 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		place-content: stretch;
 	}
 
-	.media {
+	img {
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
 		background: hsla(var(--hsl-box), var(--a-box-b));
 
 		@media (--viewport-sm-up) {
-			min-height: 20rem;
+			max-height: 20rem;
 		}
 
-		@media (--viewport-md-down) {
+		@media (--viewport-xs) {
 			height: min(16rem, 28vh);
-		}
-
-		& img {
-			height: 100%;
-			object-fit: cover;
-			width: 100%;
 		}
 	}
 
