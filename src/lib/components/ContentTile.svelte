@@ -7,24 +7,24 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 #### Usage:
 ```tsx
 	<ContentTile
-		ctaLabel="Read article"
+		title="Content title"
+		description="This is some amazing content!"
+		mediaSrc="https://example.com/image"
+		mediaAlt="image"
+		date="2023-01-01"
 		href="/blog/{post.slug}"
-		mediaSrc={post.feature_image}
-		mediaAlt={post.feature_image_alt}
-		title={post.title}
-		datetime={new Date(post.published_at)}
-		description={post.excerpt}
+		ctaLabel="Read article"
 	/>
 ```
  -->
 <script lang="ts">
-	import Timestamp from './Timestamp.svelte';
-	import Button from './Button.svelte';
+	import type { ComponentProps } from 'svelte';
+	import { Button, Timestamp } from '$lib/components';
 
 	let classes = '';
 	export { classes as class };
 	export let ctaLabel = '';
-	export let datetime = new Date();
+	export let date: ComponentProps<Timestamp>['date'];
 	export let description = '';
 	export let href: string | undefined = undefined;
 	export let mediaSrc = '';
@@ -39,8 +39,8 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 
 	<div class="content">
 		<div class="info">
-			{#if datetime}
-				<Timestamp {datetime} showDistanceToNow />
+			{#if date}
+				<Timestamp {date} withRelative />
 			{/if}
 
 			{#if title}

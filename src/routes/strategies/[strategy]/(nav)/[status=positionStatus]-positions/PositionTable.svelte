@@ -5,7 +5,7 @@
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { fromUnixTime } from 'date-fns';
-	import { DataTable, Button, DateTime } from '$lib/components';
+	import { DataTable, Button, Timestamp } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import FrozenStatus from './FrozenStatus.svelte';
 
@@ -79,19 +79,19 @@
 			header: 'Opened',
 			id: 'opened_at',
 			accessor: ({ opened_at }) => toISODate(opened_at),
-			cell: ({ value }) => createRender(DateTime, { date: value })
+			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
 		}),
 		table.column({
 			header: 'Closed',
 			id: 'closed_at',
 			accessor: ({ closed_at }) => toISODate(closed_at),
-			cell: ({ value }) => createRender(DateTime, { date: value })
+			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
 		}),
 		table.column({
 			header: 'Frozen at',
 			id: 'frozen_at',
 			accessor: ({ frozen_at }) => toISODate(frozen_at),
-			cell: ({ value }) => createRender(DateTime, { date: value })
+			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
 		}),
 		table.column({
 			header: '',

@@ -22,7 +22,7 @@ Display a collection of blog posts is a responsive grid layout.
 			mediaSrc={post.feature_image}
 			mediaAlt={post.feature_image_alt}
 			title={post.title}
-			datetime={new Date(post.published_at)}
+			date={post.published_at}
 			description={post.excerpt}
 		/>
 	{:else}

@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { BlogPostTimestamp } from '$lib/components';
+	import { Timestamp } from '$lib/components';
 	import SocialMetaTags from '../SocialMetaTags.svelte';
 	import SocialLinks from '../SocialLinks.svelte';
 	import BlogPostContent from '../BlogPostContent.svelte';
@@ -18,7 +18,7 @@
 	<header>
 		<SocialLinks layout="post" />
 		<h1>{data.title}</h1>
-		<BlogPostTimestamp publishedAt={data.published_at} />
+		<Timestamp date={data.published_at} withRelative />
 		<img src={data.feature_image} alt={data.feature_image_alt} />
 	</header>
 
@@ -26,26 +26,31 @@
 </article>
 
 <style lang="postcss">
-	article {
+	.blog-article {
 		--container-max-width: 720px;
 		gap: var(--space-xl);
-	}
 
-	header {
-		margin: var(--space-md) 0;
-		display: grid;
-		gap: var(--space-ls);
-		& h1 {
-			font: var(--f-heading-xxl-medium);
+		& header {
+			margin: var(--space-md) 0;
+			display: grid;
+			gap: var(--space-ls);
+			& h1 {
+				font: var(--f-heading-xxl-medium);
+			}
 		}
-	}
 
-	article img {
-		width: 100%;
-		aspect-ratio: 1.5;
-		margin-top: var(--space-md);
-		min-height: 312px;
-		max-height: 400px;
-		object-fit: cover;
+		& img {
+			width: 100%;
+			aspect-ratio: 1.5;
+			margin-top: var(--space-md);
+			min-height: 312px;
+			max-height: 400px;
+			object-fit: cover;
+		}
+
+		& :global time {
+			font: var(--timestamp-font, var(--f-ui-lg-roman));
+			color: var(--c-text-2-v1);
+		}
 	}
 </style>

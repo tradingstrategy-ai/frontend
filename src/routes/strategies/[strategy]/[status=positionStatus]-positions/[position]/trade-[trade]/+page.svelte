@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
-	import { DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
+	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 
 	export let data: PageData;
@@ -25,7 +25,7 @@
 			</a>
 		</DataBox>
 		<DataBox label="Executed at">
-			<DateTime epoch={trade.executed_at} />
+			<Timestamp date={trade.executed_at} format="iso" withTime />
 		</DataBox>
 		<DataBox label="Slippage tolerance" value="{formatBPS(trade.planned_max_slippage)} BPS" />
 		<DataBox label="Expected value" value={formatDollar(trade.planned_reserve)} />
