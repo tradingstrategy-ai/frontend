@@ -15,5 +15,5 @@ body[data-color-mode='dark'] {
 	--a-box-d: 0.2;
 	--a-box-e: 0.28;
 
-	--hsla-background-accent-1: 0.2;
+	--hsla-background-accent-1: 0, 0%, 0%, 0.2;
 }

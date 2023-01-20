@@ -4,8 +4,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './home/HeroBanner.svelte';
-	import { BlogRoll, Button, Section, SummaryBox, SubscribeForm, TopTradesTable } from '$lib/components';
+	import { BlogRoll, Button, Illustration, Section, SummaryBox, TopTradesTable } from '$lib/components';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
+	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
 
 	export let data: PageData;
 
@@ -35,12 +36,16 @@
 		</SummaryBox>
 	</Section>
 
-	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
-		<div class="inner">
-			<div class="coming-soon">Coming soon</div>
-			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
-			<SubscribeForm />
-		</div>
+	<Section title="Strategies" class="strategies" gap="lg" layout="boxed" padding="md">
+		<NewsletterOptInBanner>
+			<Illustration name="newsletter" slot="artwork" />
+			<h3 slot="title">Sign up to newsletter</h3>
+			<p slot="description">
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat nostrum explicabo fuga repellat. Cumque
+				molestias quibusdam numquam! Rerum consectetur dignissimos laboriosam, corporis praesentium itaque quae
+				accusamus, mollitia sed fugit eos.
+			</p>
+		</NewsletterOptInBanner>
 	</Section>
 
 	{#if posts}

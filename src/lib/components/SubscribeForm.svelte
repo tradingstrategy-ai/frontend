@@ -66,15 +66,16 @@ be invoked from anywhere to open the global dialog component.
 		// @ts-ignore
 		return ({ result }) => state[result.type](result);
 	};
-
-	async function handleOpen() {
-		await tick();
-		form?.email.focus();
-	}
 </script>
 
 {#if $state !== 'subscribed'}
-	<form bind:this={form} method="POST" action="/newsletter/subscribe" use:enhance={enhancedSubmit}>
+	<form
+		class="subscribe-form"
+		bind:this={form}
+		method="POST"
+		action="/newsletter/subscribe"
+		use:enhance={enhancedSubmit}
+	>
 		<TextInput
 			bind:value={email}
 			size="xl"
@@ -98,28 +99,19 @@ be invoked from anywhere to open the global dialog component.
 {/if}
 
 <style lang="postcss">
-	form {
+	.subscribe-form {
 		padding-block: var(--space-ss);
 		display: grid;
-		grid-template-columns: 1fr 7.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, auto));
 		gap: var(--space-ml) var(--space-ms);
 		align-items: center;
 
 		@media (--viewport-xs) {
-			grid-template-columns: auto;
 			gap: var(--space-md);
 		}
 
 		& :global .alert-list {
 			grid-column: 1/-1;
-		}
-	}
-
-	.submitting {
-		&,
-		& :global(input[disabled]),
-		& :global(button[disabled]) {
-			cursor: wait;
 		}
 	}
 </style>
