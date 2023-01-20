@@ -20,9 +20,7 @@
 			<li>Direct trade execution on-chain without a counter-party risk</li>
 		</ul>
 
-		<svelte:fragment slot="footerCta">
-			<Button label="Sign up to waitlist" on:click={toggleSubscribeDialog} />
-		</svelte:fragment>
+		<Button slot="footerCta" label="Sign up to waitlist" on:click={toggleSubscribeDialog} />
 	</SummaryBox>
 
 	<SummaryBox title="Strategy developers and quants">
@@ -39,9 +37,13 @@
 			<li>Public open source or private strategies enabled</li>
 		</ul>
 
-		<svelte:fragment slot="footerCta">
-			<Button label="Join our Discord server" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
-		</svelte:fragment>
+		<Button
+			slot="footerCta"
+			label="Join our Discord server"
+			icon="discord"
+			href="https://discord.gg/en8tW6MDtw"
+			target="_blank"
+		/>
 	</SummaryBox>
 </Section>
 
