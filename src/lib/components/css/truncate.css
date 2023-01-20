@@ -1,18 +1,17 @@
 /* 
- * Use this class to truncate text inside an HTMLElement
+ Use this class to truncate text inside an HTMLElement
 */
-
 .truncate {
 	-webkit-box-orient: vertical;
 	display: -webkit-box;
 	overflow: hidden;
 	text-overflow: ellipsis;
-}
 
-.truncate.lines-2 {
-	-webkit-line-clamp: 2;
-}
+	&.lines-2 {
+		-webkit-line-clamp: 2;
+	}
 
-.truncate.lines-3 {
-	-webkit-line-clamp: 3;
+	&.lines-3 {
+		-webkit-line-clamp: 3;
+	}
 }
