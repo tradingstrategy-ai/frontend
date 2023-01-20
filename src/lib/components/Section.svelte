@@ -1,3 +1,17 @@
+<!--
+@component
+Layout utility component for displaying a major site section with grid-based content.
+- use `header` or `footer` flags specificy HTML element (`section` by default)
+- supports optional `header` and `footer` slots in additional default content slot
+- supports `boxed` or `fullWidth` layouts
+
+### Usage:
+```tsx
+	<Section class="foo" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
+		Section content here
+	</Section>
+```
+-->
 <script lang="ts">
 	import type { SectionSizing } from '$lib/types';
 	import Grid from './Grid.svelte';
