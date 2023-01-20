@@ -21,11 +21,10 @@ Home page hero banner.
 		<img class="media" src={mbp15Image} alt="Trading Data" />
 
 		<div class="content">
-			<!-- ensure line breaks at correct place on smaller screens -->
-			<!-- prettier-ignore -->
 			<h1>
-        Next generation <br />algorithmic trading protocol <br />for decentralised markets
-      </h1>
+				<!-- ensure line breaks at correct place on larger screens -->
+				Next generation <br />algorithmic trading protocol <br />for decentralised markets
+			</h1>
 
 			<hr />
 
@@ -55,8 +54,6 @@ Home page hero banner.
 </header>
 
 <style lang="postcss">
-	@custom-media --no-breaks (width <= 1440px);
-
 	.home-hero-banner {
 		background: hsla(var(--hsla-background-accent-1));
 		padding: var(--space-xl) 0;
@@ -65,38 +62,38 @@ Home page hero banner.
 		}
 	}
 
-	@media (--no-breaks) {
-		br {
-			display: none;
-		}
-	}
-
-	@media (--viewport-xs) {
-		h1 {
+	h1 {
+		@media (--viewport-xs) {
 			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+		}
+
+		@media (--viewport-xl-down) {
+			& br {
+				display: none;
+			}
 		}
 	}
 
 	p {
 		font: var(--f-ui-xl-roman);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 
 		& a {
 			font: var(--f-ui-xl-bold);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 			text-decoration: underline;
 		}
 	}
 
-	.home-hero-banner .inner {
+	.inner {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
 		gap: min(var(--space-8xl), 10vw);
 		place-items: center;
 	}
 
-	.home-hero-banner .content {
-	}
-
-	.home-hero-banner .buttons {
+	.buttons {
 		display: grid;
 		gap: var(--space-ls);
 		grid-template-columns: repeat(auto-fit, minmax(12rem, auto));

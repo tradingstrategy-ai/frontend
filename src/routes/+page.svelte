@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import HomeHeroBanner from './home/HeroBanner.svelte';
+	import HomeHeroBanner from './HomeHeroBanner.svelte';
 	import { BlogRoll, Button, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
