@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DateTime } from '$lib/components';
+	import { Timestamp } from '$lib/components';
 
 	export let timestamp: number;
 	export let level: 'info' | 'trade' | 'warning' | 'error' | 'critical';
@@ -7,7 +7,7 @@
 </script>
 
 <div class="log-entry level--{level}">
-	<DateTime epoch={timestamp} withSeconds />
+	<Timestamp date={timestamp} format="iso" withSeconds />
 	<span class="message">
 		{message}
 	</span>
@@ -36,7 +36,7 @@
 			font: var(--f-mono-xs-regular);
 		}
 
-		& :global .date-time {
+		& :global time {
 			display: flex;
 			font: var(--f-mono-sm-regular);
 			flex-direction: column;

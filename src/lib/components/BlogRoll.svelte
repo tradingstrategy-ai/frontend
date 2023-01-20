@@ -22,7 +22,7 @@ Display a collection of blog posts is a responsive grid layout.
 			mediaSrc={post.feature_image}
 			mediaAlt={post.feature_image_alt}
 			title={post.title}
-			datetime={new Date(post.published_at)}
+			date={post.published_at}
 			description={post.excerpt}
 		/>
 	{:else}
@@ -35,7 +35,5 @@ Display a collection of blog posts is a responsive grid layout.
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));
 		gap: var(--space-xl);
-		/** ensure featured post column gap matches the layout column gap */
-		--blog-post-tile--column-gap: var(--space-3xl);
 	}
 </style>

@@ -1,9 +1,24 @@
+<!--
+@component
+Utility component for grid-based layouts
+
+#### Usage:
+```tsx
+	<Grid cols={3} gap="lg">
+		your nested grid elements here
+	</Grid>
+```
+-->
 <script lang="ts">
+	import type { SectionSizing } from '$lib/types';
+
 	export let cols = 1;
-	export let gap: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
+	export let gap: SectionSizing = '';
+
+	$: gridGap = gap ? `var(--space-${gap}, initial)` : null;
 </script>
 
-<div class="grid cols-{cols}" style={gap ? `--grid-gap: var(--space-${gap});` : null}>
+<div class="grid cols-{cols}" style:--grid-gap={gridGap}>
 	<slot />
 </div>
 

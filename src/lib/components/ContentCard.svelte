@@ -32,30 +32,16 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 			<Icon size={iconSize} name={iconName} />
 		</div>
 	{/if}
-	{#if title || $$slots.title}
-		<h3 class="title">
-			<slot name="title">
-				{@html title}
-			</slot>
-		</h3>
+	{#if title}
+		<h3>{@html title}</h3>
 	{/if}
-	{#if subtitle || $$slots.subtitle}
-		<p class="subtitle">
-			<slot name="subtitle">
-				{@html subtitle}
-			</slot>
-		</p>
+	{#if subtitle}
+		<p>{@html subtitle}</p>
 	{/if}
-	{#if summaryLabel || summaryValue}
-		<div class="summary">
-			<div class="label">
-				{summaryLabel}
-			</div>
-			<div class="value">
-				{summaryValue}
-			</div>
-		</div>
-	{/if}
+	<dl>
+		<dt>{summaryLabel}</dt>
+		<dd>{summaryValue}</dd>
+	</dl>
 	{#if $$slots.cta}
 		<div class="cta"><slot name="cta" /></div>
 	{/if}
@@ -66,50 +52,78 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		display: grid;
 		gap: var(--space-md);
 		padding: var(--space-lg);
+
 		@media (--viewport-xs) {
 			padding: var(--space-ls);
 		}
+
 		@media (--viewport-sm-up) {
 			gap: var(--space-lg);
 		}
 
-		& h3,
-		& p {
+		& * {
 			margin-bottom: 0;
 		}
 
+		& .symbol {
+			border-radius: 100%;
+			display: flex;
+			padding: var(--space-ls);
+			margin-bottom: var(--space-md);
+			place-self: start;
+
+			@media (--viewport-sm-up) {
+				margin-bottom: var(--space-ml);
+			}
+		}
+
+		/* title */
+		& h3 {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+
+			@media (--viewport-xs) {
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
+			}
+		}
+
+		/* subtitle */
 		& p {
 			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
 		}
-	}
 
-	.content-card .symbol {
-		border-radius: 100%;
-		display: flex;
-		padding: var(--space-ls);
-		margin-bottom: var(--space-md);
-		place-self: start;
-	}
+		/* summary label/value */
+		& dl {
+			display: grid;
+			gap: var(--space-xs);
 
-	.content-card .title {
-		@media (--viewport-sm-up) {
-			font: var(--f-heading-lg-medium) !important;
+			@media (--viewport-sm-up) {
+				gap: var(--space-xs);
+			}
 		}
-	}
 
-	.content-card .summary {
-		display: grid;
-		gap: var(--space-xs);
-
-		& .label {
+		/* summaryLabel */
+		& dt {
 			color: hsl(var(--hsl-text-extra-light));
 			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 
-		& .value {
+		/* summaryValue */
+		& dd {
 			font: var(--f-ui-xl-medium);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
+
 			@media (--viewport-sm-up) {
 				font: var(--f-ui-xxl-medium);
+				letter-spacing: var(--f-ui-xxl-spacing, normal);
 			}
 		}
 	}

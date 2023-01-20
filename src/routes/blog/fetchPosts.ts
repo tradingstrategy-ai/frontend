@@ -1,6 +1,6 @@
 import ghostClient from '$lib/blog/client';
 
-const limit = 5;
+const limit = 6;
 
 export default async function (page = { next: 1 }) {
 	if (!page.next) return { page, posts: [] };

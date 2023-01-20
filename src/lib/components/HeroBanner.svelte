@@ -1,9 +1,12 @@
 <!--
 @component
-Home page hero banner.
+Hero banner used as heading on various pages (Community, Trading data, Blog roll).
+
 #### Usage:
 ```tsx
-<HeroBanner {image} {title} {subtitle} />
+	<HeroBanner {image} {title} {subtitle}>
+		Optional slot content.
+	</HeroBanner>
 ```
 -->
 <script lang="ts">
@@ -40,21 +43,33 @@ Home page hero banner.
 		}
 	}
 
-	.hero-banner .content {
+	.content {
 		display: grid;
 		gap: var(--space-sm);
 		place-content: center stretch;
 
+		& h1 {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+
+			@media (--viewport-md-up) {
+				font: var(--f-heading-xl-medium);
+				letter-spacing: var(--f-heading-xl-spacing, normal);
+			}
+		}
+
 		& p {
 			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 
 			@media (--viewport-xs) {
 				font: var(--f-ui-lg-roman);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
 	}
 
-	.hero-banner .media {
+	.media {
 		@media (--viewport-sm-down) {
 			display: none;
 		}
