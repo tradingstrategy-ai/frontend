@@ -120,20 +120,16 @@
 </div>
 
 <style lang="postcss">
-	.position-table :global {
-		display: contents;
+	.position-table {
+		overflow: auto;
+	}
 
+	.position-table :global {
 		& .ticker {
 			white-space: pre;
 		}
 
-		& .profitability,
-		& .value,
-		& .value_at_open,
-		& .frozen_value,
-		& .opened_at,
-		& .closed_at,
-		& .frozen_at {
+		& :is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
 		}
 	}

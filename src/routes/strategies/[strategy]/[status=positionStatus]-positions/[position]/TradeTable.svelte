@@ -71,9 +71,7 @@
 	}
 
 	.trade-table :global {
-		& .executed_at,
-		& .value,
-		& .quantity {
+		& :is(.executed_at, .value, .quantity) {
 			text-align: right;
 		}
 	}
