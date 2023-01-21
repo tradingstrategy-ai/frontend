@@ -25,6 +25,7 @@ table:not(.table) {
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-medium, normal);
+		padding: var(--cell-padding);
 		transition: var(--table-transition);
 		white-space: nowrap;
 	}
