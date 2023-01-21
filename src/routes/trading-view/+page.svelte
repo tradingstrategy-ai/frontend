@@ -49,7 +49,7 @@
 			summaryValue="{formatAmount(data.pairs)} trading pairs"
 		/>
 		<ContentCard
-			href="/trading-view/exchanges"
+			href="/search"
 			iconName="search"
 			title="Advanced search"
 			subtitle="Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price change."
