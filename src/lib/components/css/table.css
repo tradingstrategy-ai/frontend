@@ -29,35 +29,33 @@ table:not(.table) {
 		white-space: nowrap;
 	}
 
-	& td {
-		background: hsla(var(--hsl-box), var(--a-box-b));
-		height: 4rem;
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-		padding: var(--cell-padding);
-		transition: var(--table-transition);
-		vertical-align: middle;
-		--button-width: 100%;
+	& > :not(thead):not(tfoot) tr {
+		& td {
+			background: hsla(var(--hsl-box), var(--a-box-b));
+			height: 4rem;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			padding: var(--cell-padding);
+			transition: var(--table-transition);
+			vertical-align: middle;
+			--button-width: 100%;
 
-		&:first-child {
-			border-radius: var(--radius-md) 0 0 var(--radius-md);
+			@media (width <= 1024px) {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
+
+			&:first-child {
+				border-radius: var(--radius-md) 0 0 var(--radius-md);
+			}
+
+			&:last-child {
+				border-radius: 0 var(--radius-md) var(--radius-md) 0;
+			}
 		}
 
-		&:last-child {
-			border-radius: 0 var(--radius-md) var(--radius-md) 0;
+		&:hover td {
+			background: hsla(var(--hsl-box), var(--a-box-d));
 		}
-
-		@media (width <= 1024px) {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
-	}
-
-	& tr:hover td {
-		background: hsla(var(--hsl-box), var(--a-box-d));
-	}
-
-	& tfoot td {
-		background: transparent;
 	}
 }
