@@ -4,8 +4,9 @@
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
 	import { BlogRoll, HeroBanner, Section } from '$lib/components';
-	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
 	import SocialLinks from './SocialLinks.svelte';
+	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
+
 	export let data: PageData;
 
 	let { posts, page } = data;
@@ -28,7 +29,7 @@
 	<meta name="description" content="Latest on algorithmic trading" />
 </svelte:head>
 
-<main>
+<main class="blog-index-page">
 	<Section class="hero" header layout="boxed">
 		<HeroBanner
 			title="Trading Strategy Blog"
@@ -60,25 +61,7 @@
 </main>
 
 <style lang="postcss">
-	/* :global {
-		& .blog-roll {
-			& .content-tile:first-of-type {
-				grid-column: 1 / -1;
-
-				& .content {
-					padding: var(--space-xl);
-					place-content: center start;
-					place-items: start;
-				}
-
-				& .title {
-					font: var(--f-heading-lg-medium) !important;
-				}
-			}
-		}
-	} */
-
-	:global {
+	.blog-index-page :global {
 		& .hero {
 			& .social-links {
 				margin-top: var(--space-sm);
