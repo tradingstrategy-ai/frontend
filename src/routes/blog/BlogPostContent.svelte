@@ -38,9 +38,7 @@
 		}
 
 		&,
-		& p,
-		& ol li,
-		& ul li {
+		& :is(p, li) {
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 		}
@@ -61,8 +59,7 @@
 			margin: var(--space-xl) 0 var(--space-md) 0;
 		}
 
-		& ol,
-		& ul {
+		& :is(ol, ul) {
 			margin: 0;
 		}
 
@@ -78,8 +75,7 @@
 			color: inherit;
 		}
 
-		& strong,
-		& b {
+		& :is(strong, b) {
 			font-weight: 600;
 		}
 
@@ -150,27 +146,24 @@
 			color: inherit;
 			border-collapse: collapse;
 
-			& td,
-			& th {
+			& :is(td, th) {
 				vertical-align: top;
 				padding: var(--space-ss);
 				border-top: 1px solid var(--c-border-1-v1);
 				border-bottom: 1px solid var(--c-border-1-v1);
+
+				&:first-child {
+					padding-left: 0;
+				}
+
+				&:last-child {
+					padding-right: 0;
+				}
 			}
 
 			& th {
 				background: var(--c-background-1-v1);
 				font-weight: 600;
-			}
-
-			& td:first-child,
-			& th:first-child {
-				padding-left: 0;
-			}
-
-			& td:last-child,
-			& th:last-child {
-				padding-right: 0;
 			}
 		}
 
