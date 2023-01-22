@@ -85,8 +85,19 @@
 			}
 		}
 
-		& .blog footer .button {
-			justify-self: center;
+		& .blog {
+			& .blog-roll {
+				/* limit to 3 posts on larger viewports (single row) */
+				@media (width >= 1140px) {
+					& > :nth-child(4) {
+						display: none;
+					}
+				}
+			}
+
+			& footer .button {
+				justify-self: center;
+			}
 		}
 	}
 </style>

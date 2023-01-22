@@ -8,7 +8,7 @@ export const load: PageLoad = async ({ fetch, setHeaders }) => {
 	const [momentumResp, impressiveNumbersResp, posts] = await Promise.all([
 		fetch(`${backendUrl}/top-momentum?summary=true`),
 		fetch(`${backendUrl}/impressive-numbers`),
-		ghostClient.posts?.browse({ limit: 3 })
+		ghostClient.posts?.browse({ limit: 4 })
 	]);
 
 	let topMomentum, impressiveNumbers;
