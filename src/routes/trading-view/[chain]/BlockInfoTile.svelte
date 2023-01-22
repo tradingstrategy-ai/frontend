@@ -45,7 +45,7 @@
 		}
 	}
 
-	.tile h3 {
+	h3 {
 		font: var(--f-h3-bold);
 		margin-bottom: var(--space-xxs);
 

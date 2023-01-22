@@ -113,6 +113,10 @@
 		}
 	}
 
+	h2 {
+		font: var(--f-h2-medium);
+	}
+
 	.trading-pairs {
 		margin-top: var(--space-md);
 		gap: var(--space-md);

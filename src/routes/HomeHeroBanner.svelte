@@ -63,7 +63,15 @@ Home page hero banner.
 	}
 
 	h1 {
-		@media (--viewport-xs) {
+		font: var(--f-heading-xxl-medium);
+		letter-spacing: var(--f-heading-xxl-spacing, normal);
+
+		@media (--viewport-xl-down) {
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing, normal);
+		}
+
+		@media (--viewport-sm-down) {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}

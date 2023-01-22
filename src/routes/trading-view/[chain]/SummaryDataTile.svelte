@@ -41,6 +41,7 @@
 
 		& h4 {
 			margin-block: var(--space-xxs) var(--space-sm);
+			font: var(--f-h4-medium);
 
 			@media (--viewport-md-down) {
 				margin-block: 0;

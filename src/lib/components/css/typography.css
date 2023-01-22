@@ -242,42 +242,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-.ds-container h1,
-.ds-container h2,
-.ds-container h3,
-.ds-container h4,
-.ds-container h5,
-.ds-container h6 {
-	margin: 0;
-}
-
-/* scoping base styles under .ds-container to avoid conflicting w/bootstrap */
-/* .ds-container h1 {
-	font: var(--f-h1-medium);
-}
-
-.ds-container h2 {
-	font: var(--f-h2-medium);
-}
-
-.ds-container h3 {
-	font: var(--f-h3-medium);
-}
-
-.ds-container h4 {
-	font: var(--f-h4-medium);
-}
-
-.ds-container h5 {
-	font: var(--f-h5-medium);
-}
-
-.ds-container h6 {
-	font: var(--f-h6-medium);
-} */
-
-.ds-container p,
-.ds-container pre {
+.ds-container :is(h1, h2, h3, h4, h5, h6, p, pre) {
 	margin: 0;
 }
 
