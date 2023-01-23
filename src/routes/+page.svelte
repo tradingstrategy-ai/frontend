@@ -37,16 +37,16 @@
 		</SummaryBox>
 	</Section>
 
-	<Section title="Strategies" class="strategies" gap="lg" layout="boxed" padding="md">
-		<NewsletterOptInBanner>
-			<Illustration name="newsletter" slot="artwork" />
-			<h3 slot="title">Sign up to newsletter</h3>
-			<p slot="description">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat nostrum explicabo fuga repellat. Cumque
-				molestias quibusdam numquam! Rerum consectetur dignissimos laboriosam, corporis praesentium itaque quae
-				accusamus, mollitia sed fugit eos.
-			</p>
-		</NewsletterOptInBanner>
+	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
+		<div class="inner">
+			<div class="coming-soon">Coming soon</div>
+			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
+			<Button label="Sign up now" href="/newsletter" />
+		</div>
+	</Section>
+
+	<Section class="newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
 	</Section>
 
 	{#if posts}
@@ -82,6 +82,10 @@
 				padding: var(--space-sl) var(--space-ls);
 				border: 1px solid var(--c-parchment-super-dark);
 				border-radius: var(--radius-xxl);
+			}
+
+			& p {
+				font: var(--f-ui-xl-roman);
 			}
 		}
 

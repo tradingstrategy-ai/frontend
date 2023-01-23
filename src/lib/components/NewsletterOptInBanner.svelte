@@ -3,17 +3,21 @@
 </script>
 
 <div class="newsletter-opt-in-banner">
-	<div class="artwork">
-		<slot name="artwork" />
-	</div>
-
+	{#if $$slots.artwork}
+		<div class="artwork">
+			<slot name="artwork" />
+		</div>
+	{/if}
 	<div class="form">
 		<div class="content">
 			<slot name="title">
-				<h2>Sign up to newsletter</h2>
+				<h2>Trading Strategy newsletter</h2>
 			</slot>
 			<slot name="description">
-				<p>Sign up to our newsletter</p>
+				<p>
+					Subscribe to our newsletter to join our waitlist and never miss any protocol updates, trading tips, news and
+					insights from us.
+				</p>
 			</slot>
 		</div>
 		<SubscribeForm />
@@ -22,11 +26,21 @@
 
 <style lang="postcss">
 	.newsletter-opt-in-banner {
+		--newsletter-banner-padding: var(--space-xl);
+		background-color: hsla(var(--hsl-box), var(--a-box-b));
+		border-radius: var(--radius-lg);
 		display: grid;
-		gap: var(--space-5xl);
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		gap: var(--space-8xl);
+		grid-template-columns: repeat(auto-fit, minmax(min(20rem, calc(100vw - 10rem)), 1fr));
+		padding: var(--newsletter-banner-padding);
 		place-items: center stretch;
 		place-content: center;
+
+		@media (--viewport-lg-up) {
+			--newsletter-banner-padding: var(--space-5xl) var(--space-4xl);
+			margin: auto;
+			max-width: 60rem;
+		}
 	}
 
 	.newsletter-opt-in-banner :global .subscribe-form {
