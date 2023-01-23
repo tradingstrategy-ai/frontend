@@ -2,7 +2,7 @@
 	import { formatDollar, formatPoolSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
-	import { TradingDataInfoRow } from '$lib/components';
+	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
 	export let summary: Record<string, any>;
 	export let details: Record<string, any>;
@@ -16,7 +16,7 @@
 	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 </script>
 
-<table>
+<TradingDataInfo>
 	<TradingDataInfoRow
 		label="Token"
 		value={summary.base_token_symbol_friendly}
@@ -79,4 +79,4 @@
 		labelHref="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
 		value={summary.pair_id}
 	/>
-</table>
+</TradingDataInfo>

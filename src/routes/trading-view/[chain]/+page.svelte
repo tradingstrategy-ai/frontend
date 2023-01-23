@@ -79,7 +79,7 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-xxl);
+		gap: var(--space-2xl);
 	}
 
 	.summary-data {
@@ -102,6 +102,10 @@
 			grid-template-columns: 1fr 1fr;
 			gap: var(--space-sl);
 		}
+	}
+
+	h2 {
+		font: var(--f-h2-medium);
 	}
 
 	.explorer-wrapper {

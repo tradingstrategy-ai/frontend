@@ -169,11 +169,11 @@
 
 	/* Inline SVG icon fill colors */
 	.icons-duotone-1 {
-		fill: var(--c-bullish);
+		fill: hsla(var(--hsl-bullish));
 	}
 
 	.icons-duotone-2 {
-		fill: var(--c-bearish);
+		fill: hsla(var(--hsl-bearish));
 	}
 
 	.btn[disabled] {

@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import MomentumTable from '$lib/content/MomentumTable.svelte';
+	import MomentumTable from '$lib/momentum/MomentumTable.svelte';
 
 	export let data: PageData;
 	$: up = data.direction === 'up';

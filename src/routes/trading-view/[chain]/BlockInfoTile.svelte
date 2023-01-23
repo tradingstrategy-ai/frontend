@@ -7,7 +7,7 @@
 	export let timestamp: string | undefined;
 </script>
 
-<div class="tile">
+<div class="block-info-tile">
 	{#if timestamp}
 		<time datetime={timestamp}>
 			{formatDistanceToNowStrict(Date.parse(`${timestamp}Z`), { addSuffix: true })}
@@ -18,7 +18,7 @@
 </div>
 
 <style lang="postcss">
-	.tile {
+	.block-info-tile {
 		display: grid;
 		align-content: center;
 		justify-items: center;
@@ -45,7 +45,7 @@
 		}
 	}
 
-	.tile h3 {
+	h3 {
 		font: var(--f-h3-bold);
 		margin-bottom: var(--space-xxs);
 

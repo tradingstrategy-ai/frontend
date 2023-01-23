@@ -4,27 +4,27 @@
  */
 .stx_candle_up,
 .stx_candle_shadow_up {
-	color: var(--c-bullish);
-	border-left-color: var(--c-bullish);
+	color: hsla(var(--hsl-bullish));
+	border-left-color: hsla(var(--hsl-bullish));
 }
 
 .stx_candle_down,
 .stx_candle_shadow_down {
-	color: var(--c-bearish);
-	border-left-color: var(--c-bearish);
+	color: hsla(var(--hsl-bearish));
+	border-left-color: hsla(var(--hsl-bearish));
 }
 
 .stx_current_hr_up {
-	background-color: var(--c-bullish);
+	background-color: hsla(var(--hsl-bullish));
 }
 
 .stx_current_hr_down {
-	background-color: var(--c-bearish);
+	background-color: hsla(var(--hsl-bearish));
 }
 
 .stx_volume_underlay_up,
 .stx_volume_underlay_down {
-	border-left-color: var(--c-body);
+	border-left-color: hsla(var(--hsl-body));
 	opacity: 0.3;
 }
 

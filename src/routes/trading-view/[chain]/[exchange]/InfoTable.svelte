@@ -7,13 +7,13 @@ Render exchange summary table on exchange page.
 	import { formatAmount, formatDollar, formatUrlAsDomain } from '$lib/helpers/formatters';
 	import type { ExchangeNameInfo } from '$lib/helpers/exchange';
 	import { exchangeTypeLabel } from '$lib/helpers/exchange';
-	import { TradingDataInfoRow } from '$lib/components';
+	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
 	export let details: any;
 	export let nameDetails: ExchangeNameInfo;
 </script>
 
-<table>
+<TradingDataInfo>
 	<TradingDataInfoRow label="Name" value={nameDetails.name} />
 
 	<TradingDataInfoRow
@@ -60,4 +60,4 @@ Render exchange summary table on exchange page.
 		value={details.exchange_id}
 		valueHref=""
 	/>
-</table>
+</TradingDataInfo>

@@ -54,32 +54,32 @@
 
 	/* UI Fonts */
 	--f-ui-xs-spacing: 0.02em;
-	--f-ui-xs-roman: 400 12px/16px var(--ff-ui);
-	--f-ui-xs-medium: 500 12px/16px var(--ff-ui);
-	--f-ui-xs-bold: 700 12px/16px var(--ff-ui);
+	--f-ui-xs-roman: 400 13px/16px var(--ff-ui);
+	--f-ui-xs-medium: 500 13px/16px var(--ff-ui);
+	--f-ui-xs-bold: 700 13px/16px var(--ff-ui);
 
-	--f-ui-sm-roman: 400 13px/20px var(--ff-ui);
-	--f-ui-sm-medium: 500 13px/20px var(--ff-ui);
-	--f-ui-sm-bold: 700 13px/20px var(--ff-ui);
+	--f-ui-sm-roman: 400 15px/20px var(--ff-ui);
+	--f-ui-sm-medium: 500 15px/20px var(--ff-ui);
+	--f-ui-sm-bold: 700 15px/20px var(--ff-ui);
 
 	--f-ui-md-spacing: 0.01em;
-	--f-ui-md-roman: 400 16px/24px var(--ff-ui);
-	--f-ui-md-medium: 500 16px/24px var(--ff-ui);
-	--f-ui-md-bold: 700 16px/24px var(--ff-ui);
+	--f-ui-md-roman: 400 17px/24px var(--ff-ui);
+	--f-ui-md-medium: 500 17px/24px var(--ff-ui);
+	--f-ui-md-bold: 700 17px/24px var(--ff-ui);
 
 	--f-ui-lg-roman: 400 18px/24px var(--ff-ui);
 	--f-ui-lg-medium: 500 18px/24px var(--ff-ui);
 	--f-ui-lg-bold: 700 18px/24px var(--ff-ui);
 
 	--f-ui-xl-spacing: -0.01em;
-	--f-ui-xl-roman: 400 20px/28px var(--ff-ui);
-	--f-ui-xl-medium: 500 20px/28px var(--ff-ui);
-	--f-ui-xl-bold: 700 20px/28px var(--ff-ui);
+	--f-ui-xl-roman: 400 20px/32px var(--ff-ui);
+	--f-ui-xl-medium: 500 20px/32px var(--ff-ui);
+	--f-ui-xl-bold: 700 20px/32px var(--ff-ui);
 
 	--f-ui-xxl-spacing: -0.01em;
-	--f-ui-xxl-roman: 400 26px/32px var(--ff-ui);
-	--f-ui-xxl-medium: 500 26px/32px var(--ff-ui);
-	--f-ui-xxl-bold: 700 26px/32px var(--ff-ui);
+	--f-ui-xxl-roman: 400 26px/36px var(--ff-ui);
+	--f-ui-xxl-medium: 500 26px/36px var(--ff-ui);
+	--f-ui-xxl-bold: 700 26px/36px var(--ff-ui);
 
 	--f-ui-xxxl-spacing: -0.01em;
 	--f-ui-xxxl-roman: 400 32px/44px var(--ff-ui);
@@ -242,42 +242,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-.ds-container h1,
-.ds-container h2,
-.ds-container h3,
-.ds-container h4,
-.ds-container h5,
-.ds-container h6 {
-	margin: 0;
-}
-
-/* scoping base styles under .ds-container to avoid conflicting w/bootstrap */
-.ds-container h1 {
-	font: var(--f-h1-medium);
-}
-
-.ds-container h2 {
-	font: var(--f-h2-medium);
-}
-
-.ds-container h3 {
-	font: var(--f-h3-medium);
-}
-
-.ds-container h4 {
-	font: var(--f-h4-medium);
-}
-
-.ds-container h5 {
-	font: var(--f-h5-medium);
-}
-
-.ds-container h6 {
-	font: var(--f-h6-medium);
-}
-
-.ds-container p,
-.ds-container pre {
+.ds-container :is(h1, h2, h3, h4, h5, h6, p, pre) {
 	margin: 0;
 }
 

@@ -89,7 +89,7 @@ be invoked from anywhere to open the global dialog component.
 					required
 					disabled={$state === 'submitting'}
 				/>
-				<Button sm submit label="Subscribe" disabled={$state === 'submitting'} />
+				<Button size="sm" submit label="Subscribe" disabled={$state === 'submitting'} />
 			</form>
 		{:else}
 			<p>

@@ -101,7 +101,7 @@ Display filter options as checkboxes search queries.
 		height: 20px;
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0;
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 		outline: none;
 	}
 

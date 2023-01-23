@@ -2,7 +2,7 @@
 	import type { TradeExecution } from 'trade-executor-frontend/state/interface';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
-	import { DataTable, Button, DateTime } from '$lib/components';
+	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 
 	export let trades: TradeExecution[];
@@ -21,12 +21,12 @@
 		table.column({
 			header: 'Started',
 			accessor: 'started_at',
-			cell: ({ value }) => createRender(DateTime, { epoch: value, withSeconds: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withSeconds: true })
 		}),
 		table.column({
 			header: 'Executed',
 			accessor: 'executed_at',
-			cell: ({ value }) => createRender(DateTime, { epoch: value, withSeconds: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withSeconds: true })
 		}),
 		table.column({
 			id: 'value',
@@ -71,9 +71,7 @@
 	}
 
 	.trade-table :global {
-		& .executed_at,
-		& .value,
-		& .quantity {
+		& :is(.executed_at, .value, .quantity) {
 			text-align: right;
 		}
 	}

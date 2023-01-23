@@ -1,84 +1,139 @@
 <!--
 @component
-Display a content tile that links to additional content, such as those on
-Trading data or Community pages. The entire tile can be a targetable CTA, or
-(if `buttonLabel`) provided, the tile can display a button CTA.
+Display a content tile that links to additional content, such as the blog tiles
+on the blog roll. If `href` is included, the entire tile is a targetable CTA.
+A `ctaLabel` or `cta` slot may also be provided to include an explicit button target.
 
 #### Usage:
 ```tsx
-	<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
-		Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-	</ContentTile>
+	<ContentTile
+		title="Content title"
+		description="This is some amazing content!"
+		mediaSrc="https://example.com/image"
+		mediaAlt="image"
+		date="2023-01-01"
+		href="/blog/{post.slug}"
+		ctaLabel="Read article"
+	/>
 ```
--->
+ -->
 <script lang="ts">
-	import { Button, SocialIcon } from '$lib/components';
+	import type { ComponentProps } from 'svelte';
+	import { Button, Timestamp } from '$lib/components';
 
-	export let title: string;
-	export let icon: string;
-	export let targetUrl: string | undefined = undefined;
-	export let buttonLabel: string | undefined = undefined;
-	export let external = false;
+	let classes = '';
+	export { classes as class };
+	export let ctaLabel = '';
+	export let date: ComponentProps<Timestamp>['date'];
+	export let description = '';
+	export let href: string | undefined = undefined;
+	export let mediaSrc = '';
+	export let mediaAlt = '';
+	export let title = '';
 
-	$: targetable = !buttonLabel;
-	$: tag = targetable && targetUrl ? 'a' : 'div';
-	$: href = tag === 'a' ? targetUrl : undefined;
+	$: tag = href ? 'a' : 'div';
 </script>
 
-<svelte:element this={tag} class="tile" class:targetable {href} on:click>
-	<div class="header">
-		<SocialIcon name={icon} />
-		<h3>{title}</h3>
+<svelte:element this={tag} class="content-tile tile a {classes}" {href}>
+	<img src={mediaSrc} alt={mediaAlt} />
+
+	<div class="content">
+		<div class="info">
+			{#if date}
+				<Timestamp {date} withRelative />
+			{/if}
+
+			{#if title}
+				<h3 class="truncate lines-3">{title}</h3>
+			{/if}
+
+			{#if description}
+				<p class="truncate lines-3">{description}</p>
+			{/if}
+		</div>
+
+		{#if $$slots.cta || ctaLabel}
+			<div class="cta">
+				<slot name="cta">
+					<Button label={ctaLabel} {href} />
+				</slot>
+			</div>
+		{/if}
 	</div>
-
-	<div class="text"><slot /></div>
-
-	{#if buttonLabel}
-		<div class="button"><Button {external} label={buttonLabel} href={targetUrl} /></div>
-	{/if}
 </svelte:element>
 
 <style lang="postcss">
-	.tile {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-xl);
-		border: 2px solid var(--c-border-2-v1);
-		border-radius: var(--radius-xs);
-		padding: 2.5rem var(--space-lg);
-		text-align: center;
-		--social-icon-size: 4rem;
-		--social-icon-scale: 0.6;
+	.content-tile {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+		grid-auto-rows: auto 1fr;
+		overflow: hidden;
+		place-content: stretch;
+	}
 
-		@media (--viewport-md-up) {
-			--social-icon-size: 4.75rem;
+	img {
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		background: hsla(var(--hsl-box), var(--a-box-b));
+
+		@media (--viewport-sm-up) {
+			max-height: 20rem;
+		}
+
+		@media (--viewport-xs) {
+			height: min(16rem, 28vh);
 		}
 	}
 
-	.header {
+	.content {
+		--content-gap: var(--space-sl);
+		--content-padding: var(--space-ll) var(--space-lg);
+		@media (--viewport-sm-down) {
+			--content-gap: var(--space-ss);
+			--content-padding: var(--space-ls) var(--space-ml);
+		}
 		display: grid;
-		gap: var(--space-md);
-		justify-items: center;
+		gap: var(--content-gap);
+		padding: var(--content-padding);
+		place-content: space-between center;
 	}
 
-	.targetable:hover {
-		cursor: pointer;
+	.info {
+		display: grid;
+		gap: var(--content-gap);
+
+		& :global time {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: hsl(var(--hsl-text-extra-light));
+		}
 
 		& h3 {
-			text-decoration: underline;
+			margin: 0;
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
+		}
+
+		& p {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: hsl(var(--hsl-text-light));
 		}
 	}
 
-	.text :global {
-		flex: 1;
+	.cta {
+		margin-top: var(--space-sm);
 		display: grid;
-		gap: var(--space-xl);
-		align-content: start;
-		font: var(--f-ui-lg-roman);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
+	}
 
-		& * {
-			font: inherit;
+	/* display CTA button as hovered/focused when tile is hovered/focused */
+	.content-tile:hover,
+	.content-tile:focus {
+		& .cta :global .button {
+			--c-accent: var(--hsl-text), 1;
+			color: hsla(var(--hsl-text-inverted));
 		}
 	}
 </style>

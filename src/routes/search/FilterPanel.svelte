@@ -110,7 +110,7 @@
 			bottom: 0;
 			z-index: 10;
 			overflow-y: scroll;
-			background: var(--c-body-v1);
+			background: hsla(var(--hsl-body));
 			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 			transition: transform 0.35s;
 
@@ -152,7 +152,7 @@
 
 	.filters {
 		display: grid;
-		gap: var(--space-xxl);
+		gap: var(--space-2xl);
 	}
 
 	footer {
@@ -161,7 +161,7 @@
 		bottom: 0;
 		padding: var(--space-sl);
 		display: grid;
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
 
 		@media (--viewport-lg-up) {

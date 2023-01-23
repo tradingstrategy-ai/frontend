@@ -1,47 +1,67 @@
+<!--
+@component
+Display a button. Adaptively uses correct HTML element (anchor or button)
+depending on supplied props. Button label may be included as a prop or the
+default slot (or ommitted for icon-only buttons). Supports four style variants
+using flags: primary (default), secondary, ternary, quarternary.
+
+#### Usage:
+```tsx
+	<Button
+		label="Click here!"
+		icon="link"
+		secondary
+		size="lg"
+		disabled
+		external
+		href="http://example.org"
+		target="_blank"
+		title="include for accessibility when label ommitted"
+		on:click={() => console.log('clicked!')}
+	/>
+```
+-->
 <script lang="ts">
 	import { Icon } from '$lib/components';
 
-	export let disabled = false;
+	let classes = '';
+	export { classes as class };
+	export let disabled: boolean | undefined = undefined;
 	export let download: string | boolean | undefined = undefined;
-	export let external = false;
+	export let rel: string | undefined = undefined;
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
-	export let lg = false;
 	export let quarternary = false;
 	export let secondary = false;
-	export let sm = false;
 	export let tertiary = false;
+	export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' = 'md';
 	export let submit = false;
 	export let tabindex: number | undefined = undefined;
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
-	export let xxl = false;
-	export let xl = false;
-	export let xs = false;
 
-	$: tag = href && !disabled ? 'a' : 'button';
+	$: hasLabel = $$slots.default || label;
 	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
-	$: size = xxl ? 'xxl' : xl ? 'xl' : lg ? 'lg' : sm ? 'sm' : xs ? 'xs' : 'md';
-	$: type = submit ? 'submit' : 'button';
+	$: allClasses = `button ${kind} ${size} ${classes}`;
+	$: downloadAttr = typeof download === 'string' ? download : download ? '' : undefined;
 </script>
 
-<svelte:element
-	this={tag}
-	class="button {kind} {size}"
-	disabled={disabled || undefined}
-	download={download === true ? '' : download}
-	{href}
-	rel={external ? 'external' : undefined}
-	{tabindex}
-	{target}
-	{title}
-	type={tag === 'button' ? type : undefined}
-	on:click
->
-	<slot>{label}</slot>
-	{#if icon}<Icon name={icon} />{/if}
-</svelte:element>
+{#if href && !disabled}
+	<a class={allClasses} download={downloadAttr} {href} {rel} {tabindex} {target} {title} on:click>
+		{#if hasLabel}
+			<span><slot>{label}</slot></span>
+		{/if}
+		{#if icon}<Icon name={icon} />{/if}
+	</a>
+{:else}
+	<button class={allClasses} {disabled} {tabindex} {title} type={submit ? 'submit' : undefined} on:click>
+		{#if hasLabel}
+			<span><slot>{label}</slot></span>
+		{/if}
+		{#if icon}<Icon name={icon} />{/if}
+	</button>
+{/if}
 
 <style lang="postcss">
 	.button {
@@ -55,38 +75,52 @@
 		border-radius: var(--button-border-radius, var(--radius-md));
 		font: var(--button-font, var(--f-ui-md-medium));
 		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
+		transition: all var(--time-sm) ease-out;
 		text-decoration: none;
-		text-transform: capitalize;
 		text-align: center;
 		cursor: pointer;
+		--icon-size: 1.5rem;
+	}
+
+	.button > span {
+		margin: 0 var(--space-xs) !important;
 	}
 
 	.primary {
-		background: var(--c-background-3-v1);
-		color: var(--c-text-6-v1);
-		border-color: var(--c-background-3-v1);
+		--c-accent: var(--hsl-box), var(--a-box-d);
+		background: hsla(var(--c-accent));
+		color: hsla(var(--hsl-text));
+		outline-color: var(--c-accent);
+		outline-offset: -1px;
 
 		&:hover,
 		&:focus {
-			background: var(--cm-light, var(--c-gray-extra-dark)) var(--cm-dark, var(--c-parchment-extra-dark));
-			border-color: var(--cm-light, var(--c-gray-extra-dark)) var(--cm-dark, var(--c-parchment-extra-dark));
+			--c-accent: var(--hsl-text), 1;
+			color: hsla(var(--hsl-text-inverted));
 		}
 	}
 
 	.secondary {
 		background: transparent;
-		color: var(--c-text-1-v1);
-		border-color: var(--c-border-2-v1);
+		color: hsla(var(--hsl-text));
+		border-color: hsla(var(--hsl-text));
 
 		&:hover,
 		&:focus {
-			background: var(--cm-light, var(--c-parchment-dark)) var(--cm-dark, var(--c-gray-extra-dark));
-			border-color: var(--cm-light, inherit) var(--cm-dark, var(--c-gray-dark));
+			background: hsla(var(--hsl-text));
+			color: hsla(var(--hsl-text-inverted));
 		}
 	}
 
 	.tertiary {
-		background: var(--c-background-3);
+		background: hsla(var(--hsl-box), var(--a-box-b));
+		color: hsla(var(--hsl-text));
+		border-color: transparent;
+
+		&:hover,
+		&:focus {
+			background: hsla(var(--hsl-box), var(--a-box-d));
+		}
 	}
 
 	.quarternary {
@@ -96,12 +130,12 @@
 	.xs {
 		--button-border-radius: var(--radius-lg);
 		--button-gap: var(--space-ss);
-		--button-padding: var(--space-xs) var(--space-sl);
+		--button-padding: var(--space-xs) var(--space-xs);
 		--button-font: var(--f-ui-sm-medium);
 		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
-		--button-padding: var(--space-ss) var(--space-sl);
+		--button-padding: var(--space-ss) var(--space-ss);
 		--button-gap: var(--space-ss);
 	}
 	.lg {

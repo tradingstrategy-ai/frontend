@@ -23,18 +23,22 @@
 	}
 </script>
 
-<div use:injectTOC use:wrapTables>
+<div class="blog-post-content" use:injectTOC use:wrapTables>
 	{@html html}
 </div>
 
 <style lang="postcss">
-	div :global {
+	.blog-post-content :global {
 		overflow: auto;
 
+		& h1 {
+			font: var(--f-heading-lg-medium);
+			margin: var(--space-2xl) 0 !important;
+			text-transform: capitalize;
+		}
+
 		&,
-		& p,
-		& ol li,
-		& ul li {
+		& :is(p, li) {
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 		}
@@ -46,7 +50,7 @@
 		& h2 {
 			font: var(--f-text-xl-semibold);
 			letter-spacing: var(--f-text-xl-spacing, normal);
-			margin: var(--space-xxxxxl) 0 var(--space-lg);
+			margin: var(--space-5xl) 0 var(--space-lg);
 		}
 
 		& h3 {
@@ -55,8 +59,7 @@
 			margin: var(--space-xl) 0 var(--space-md) 0;
 		}
 
-		& ol,
-		& ul {
+		& :is(ol, ul) {
 			margin: 0;
 		}
 
@@ -72,13 +75,18 @@
 			color: inherit;
 		}
 
-		& strong,
-		& b {
+		& :is(strong, b) {
 			font-weight: 600;
 		}
 
 		& figure {
-			margin: var(--space-xxl) 0;
+			display: grid;
+			margin: var(--space-3xl) 0 var(--space-5xl);
+
+			& img {
+				height: 100%;
+				width: 100%;
+			}
 		}
 
 		& figcaption {
@@ -103,7 +111,7 @@
 		}
 
 		& .kg-image {
-			width: auto;
+			width: 100%;
 			height: auto;
 			max-width: 100%;
 			display: inline-block;
@@ -138,27 +146,24 @@
 			color: inherit;
 			border-collapse: collapse;
 
-			& td,
-			& th {
+			& :is(td, th) {
 				vertical-align: top;
 				padding: var(--space-ss);
 				border-top: 1px solid var(--c-border-1-v1);
 				border-bottom: 1px solid var(--c-border-1-v1);
+
+				&:first-child {
+					padding-left: 0;
+				}
+
+				&:last-child {
+					padding-right: 0;
+				}
 			}
 
 			& th {
 				background: var(--c-background-1-v1);
 				font-weight: 600;
-			}
-
-			& td:first-child,
-			& th:first-child {
-				padding-left: 0;
-			}
-
-			& td:last-child,
-			& th:last-child {
-				padding-right: 0;
 			}
 		}
 

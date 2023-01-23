@@ -1,9 +1,11 @@
 <script lang="ts">
 	import cookies from 'cookie';
 	import { addYears } from 'date-fns';
-	import { Icon, Dialog } from '$lib/components';
+	import { Button, Dialog } from '$lib/components';
 
 	export let showLabel = false;
+
+	const buttonLabel = showLabel ? 'Select color mode' : '';
 
 	let open: boolean;
 	let currentMode: string;
@@ -30,10 +32,7 @@
 	}
 </script>
 
-<button on:click={openDialog} class:showLabel>
-	<Icon name="sun" size="24px" />
-	<span>Select color mode</span>
-</button>
+<Button tertiary size="sm" icon="sun" label={buttonLabel} on:click={openDialog} />
 
 <Dialog title="Color Mode" bind:open>
 	<menu>
@@ -43,28 +42,7 @@
 	</menu>
 </Dialog>
 
-<style>
-	button {
-		display: flex;
-		gap: var(--space-ss);
-		justify-content: center;
-		border: none;
-		padding: 0;
-		background: transparent;
-		font: var(--f-ui-lg-medium);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
-		text-transform: capitalize;
-		cursor: pointer;
-	}
-
-	button.showLabel {
-		color: var(--c-text-4-v1);
-	}
-
-	button:not(.showLabel) span {
-		display: none;
-	}
-
+<style lang="postcss">
 	menu {
 		display: grid;
 		margin-block: var(--space-md) 0;

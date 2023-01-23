@@ -84,7 +84,7 @@
 	section {
 		gap: 5rem;
 		padding-top: var(--space-xl);
-		padding-bottom: 4rem;
+		padding-bottom: var(--space-7xl);
 	}
 
 	header {
@@ -108,7 +108,7 @@
 	@media (--viewport-md-up) {
 		section {
 			gap: 8rem;
-			padding-top: var(--space-xxxxxl);
+			padding-top: var(--space-5xl);
 			padding-bottom: 10rem;
 		}
 

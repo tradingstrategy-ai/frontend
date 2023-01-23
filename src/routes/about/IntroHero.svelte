@@ -22,7 +22,7 @@
 
 		@media (--viewport-md-up) {
 			gap: var(--space-xl);
-			padding-block: 4rem;
+			padding-block: var(--space-7xl);
 			text-align: center;
 			white-space: pre-line;
 		}

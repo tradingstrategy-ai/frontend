@@ -5,7 +5,7 @@ on the conference rolls.
 
 -->
 <script lang="ts">
-	import { Hero, ContentTile } from '$lib/components';
+	import { Hero, ContentCard } from '$lib/components';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
@@ -19,29 +19,47 @@ on the conference rolls.
 	<Hero title="Follow Trading Strategy" image={BrandMark}>Follow us on our socials and join the discussion.</Hero>
 
 	<section class="ds-container">
-		<ContentTile title="Discord chat" icon="discord" targetUrl="https://discord.gg/en8tW6MDtw">
-			Join our expert community of traders, developers, and analysts and DeFi specialists.
-		</ContentTile>
+		<ContentCard
+			iconName="discord"
+			title="Discord chat"
+			subtitle="Join our expert community of traders, developers, and analysts and DeFi specialists."
+			href="https://discord.gg/en8tW6MDtw"
+		/>
 
-		<ContentTile title="Twitter" icon="twitter" targetUrl="https://twitter.com/TradingProtocol">
-			Follow us on Twitter for trading alerts, DeFi insight and protocol news.
-		</ContentTile>
+		<ContentCard
+			iconName="twitter"
+			title="Twitter"
+			subtitle="Follow us on Twitter for trading alerts, DeFi insight and protocol news."
+			href="https://twitter.com/TradingProtocol"
+		/>
 
-		<ContentTile title="LinkedIn" icon="linkedin" targetUrl="https://www.linkedin.com/company/trading-strategy/">
-			Follow us on LinkedIn and join our community of traders, developers and quant experts.
-		</ContentTile>
+		<ContentCard
+			iconName="linkedin"
+			title="LinkedIn"
+			subtitle="Follow us on LinkedIn and join our community of traders, developers and quant experts."
+			href="https://www.linkedin.com/company/trading-strategy/"
+		/>
 
-		<ContentTile title="Telegram" icon="telegram" targetUrl="https://t.me/trading_protocol">
-			Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news.
-		</ContentTile>
+		<ContentCard
+			iconName="telegram"
+			title="Telegram"
+			subtitle="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
+			href="https://t.me/trading_protocol"
+		/>
 
-		<ContentTile title="Newsletter" icon="newspaper" on:click={toggleSubscribeDialog}>
-			Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.
-		</ContentTile>
+		<ContentCard
+			iconName="newspaper"
+			title="Newsletter"
+			subtitle="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
+			on:click={toggleSubscribeDialog}
+		/>
 
-		<ContentTile title="YouTube" icon="youtube" targetUrl="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ">
-			Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.
-		</ContentTile>
+		<ContentCard
+			iconName="youtube"
+			title="YouTube"
+			subtitle="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
+			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+		/>
 	</section>
 </main>
 

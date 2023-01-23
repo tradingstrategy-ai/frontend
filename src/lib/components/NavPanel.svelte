@@ -40,7 +40,7 @@
 		display: grid;
 		gap: var(--space-lg);
 		grid-auto-rows: min-content;
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 		box-shadow: -0.25rem 0 2rem var(--c-shadow-1-v1);
 		transform: translateX(calc(100% + var(--space-xl)));
 		transition: transform 0.25s;

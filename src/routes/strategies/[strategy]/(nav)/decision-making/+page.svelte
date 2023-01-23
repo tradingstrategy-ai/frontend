@@ -50,7 +50,7 @@
 <style lang="postcss">
 	section {
 		display: grid;
-		gap: 4rem;
+		gap: var(--space-7xl);
 		align-content: start;
 	}
 

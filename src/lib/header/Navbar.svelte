@@ -7,7 +7,7 @@
 	$: showSearch = $page.url.pathname !== '/search';
 </script>
 
-<div class="ds-container" style:overflow="visible">
+<div class="nav-bar ds-container" style:overflow="visible">
 	<Header>
 		<svelte:fragment slot="menu">
 			<MenuItem label="Trading data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
@@ -22,3 +22,9 @@
 		</svelte:fragment>
 	</Header>
 </div>
+
+<style>
+	.nav-bar {
+		background: hsl(var(--hsl-body));
+	}
+</style>

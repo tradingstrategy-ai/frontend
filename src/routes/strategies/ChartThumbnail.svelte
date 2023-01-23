@@ -87,8 +87,8 @@
 			padding: var(--space-sl) var(--space-md);
 			display: flex;
 			justify-content: space-between;
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 			color: var(--c-text-extra-light-night);
 
 			& * {

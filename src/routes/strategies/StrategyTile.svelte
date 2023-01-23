@@ -14,7 +14,7 @@
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 </script>
 
-<li class:hasError>
+<li class="strategy tile tile b" class:hasError>
 	<ChartThumbnail data={chartData} startDate={chartStartDate} />
 	<div class="info">
 		<div class="details">
@@ -46,14 +46,13 @@
 				{/if}
 			</div>
 		</div>
-		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary lg disabled={hasError} />
+		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
 	</div>
 </li>
 
 <style lang="postcss">
 	li {
 		display: grid;
-		background: var(--c-background-5);
 		border-radius: var(--strategy-tile-border-radius, var(--radius-md));
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		grid-template-rows: auto;

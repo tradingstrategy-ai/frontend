@@ -4,7 +4,7 @@
 	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { formatDuration } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { AlertList, AlertItem, DataBox, DataBoxes, DateTime, PageHeading } from '$lib/components';
+	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import TradeTable from './TradeTable.svelte';
 
@@ -32,12 +32,12 @@
 			</DataBox>
 
 			<DataBox label="Opened">
-				<DateTime epoch={position.opened_at} />
+				<Timestamp date={position.opened_at} format="iso" withTime />
 			</DataBox>
 
 			{#if position.closed_at}
 				<DataBox label="Closed">
-					<DateTime epoch={position.closed_at} />
+					<Timestamp date={position.closed_at} format="iso" withTime />
 				</DataBox>
 				<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
 			{/if}
@@ -48,7 +48,7 @@
 
 			{#if position.closed_at}
 				<DataBox label="Last revaluation">
-					<DateTime epoch={position.last_pricing_at} />
+					<Timestamp date={position.last_pricing_at} format="iso" withTime />
 				</DataBox>
 				<DataBox label="Value at open" value={formatDollar(getValueAtOpen(positionStats))} />
 				<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
@@ -77,7 +77,7 @@
 	section {
 		margin-top: var(--space-md);
 		display: grid;
-		gap: var(--space-xxxxxl);
+		gap: var(--space-5xl);
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);

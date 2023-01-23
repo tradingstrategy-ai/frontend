@@ -35,26 +35,12 @@
 </thead>
 
 <style lang="postcss">
-	thead {
-		position: sticky;
-		top: 0;
+	th.sortable {
+		cursor: pointer;
 	}
 
-	th {
-		padding: var(--space-md) var(--space-ls);
-		background-color: var(--c-body);
-		color: var(--c-text-extra-light);
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-medium, normal);
-		white-space: nowrap;
-
-		&.sortable {
-			cursor: pointer;
-		}
-
-		&.sorted {
-			padding: 1rem 2rem 1rem 1.25rem;
-		}
+	th.sorted {
+		padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-ls);
 	}
 
 	.sorting-indicator {

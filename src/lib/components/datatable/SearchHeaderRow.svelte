@@ -2,7 +2,7 @@
 	export let value: string;
 </script>
 
-<tr>
+<tr class="search">
 	<th colspan="100">
 		<div>
 			<input bind:value class="text-field" type="search" placeholder="Find in the table" />
@@ -12,7 +12,7 @@
 
 <style lang="postcss">
 	th {
-		padding: var(--space-ss) 0;
+		padding: var(--space-sl) 0 !important;
 	}
 
 	div {
@@ -21,5 +21,10 @@
 
 	input {
 		width: 100%;
+	}
+
+	tr.search {
+		position: sticky;
+		top: 3rem;
 	}
 </style>
