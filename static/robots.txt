@@ -3,6 +3,7 @@ User-agent: *
 
 # Make sure Google Bot is not hitting JSON API directly
 Disallow: /api/
+Allow: /api/sitemap/
 Allow: /api/explorer/
 
 
