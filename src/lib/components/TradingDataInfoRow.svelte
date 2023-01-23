@@ -1,16 +1,18 @@
 <!--
 @component
-Display a single row of trading data (should be nested in a <table>)
+Display a single row of trading data (should be nested in <TradingDataInfo>)
 
 #### Usage
 ```tsx
-	<TradingDataInfoRow
-		label="Row label"
-		labelHref="http://optional.label.href"
-		value="Row value"
-		valueHref="http://optional.value.href"
-		class="optional-css-class"
-	/>
+	<TradingDataInfo>
+		<TradingDataInfoRow
+			label="Row label"
+			labelHref="http://optional.label.href"
+			value="Row value"
+			valueHref="http://optional.value.href"
+			class="optional-css-class"
+		/>
+	</TradingDataInfo>
 ```
 -->
 <script lang="ts">
@@ -22,36 +24,24 @@ Display a single row of trading data (should be nested in a <table>)
 	export { className as class };
 </script>
 
-<tr>
-	<th scope="row">
-		{#if labelHref}<a href={labelHref}>{label}</a>{:else}{label}{/if}
-	</th>
-	<td class={className}>
-		{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
-	</td>
-</tr>
+<dt>
+	{#if labelHref}<a href={labelHref}>{label}</a>{:else}{label}{/if}
+</dt>
+<dd class={className}>
+	{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
+</dd>
 
 <style lang="postcss">
-	tr {
-		&:not(:first-child) > * {
-			padding-top: var(--space-xs);
-		}
+	dt {
+		font: var(--f-ui-large-medium);
+	}
 
-		&:not(:last-child) > * {
-			padding-bottom: var(--space-xs);
-		}
+	dd {
+		font: var(--f-ui-large-bold);
+	}
 
-		& th {
-			font: var(--f-ui-large-medium);
-		}
-
-		& td {
-			font: var(--f-ui-large-bold);
-		}
-
-		& a {
-			font: inherit;
-			text-decoration: underline;
-		}
+	a {
+		font: inherit;
+		text-decoration: underline;
 	}
 </style>

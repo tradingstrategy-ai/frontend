@@ -70,6 +70,10 @@
 		}
 	}
 
+	h2 {
+		font: var(--f-h2-medium);
+	}
+
 	.info {
 		align-items: start;
 	}

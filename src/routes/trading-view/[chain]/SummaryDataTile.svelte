@@ -9,7 +9,7 @@
 	export let href: string;
 </script>
 
-<div class="tile">
+<div class="summary-data-tile">
 	<div>
 		<h3>{formatAmount(count)}</h3>
 		<h4>{title}</h4>
@@ -19,7 +19,7 @@
 </div>
 
 <style lang="postcss">
-	.tile {
+	.summary-data-tile {
 		display: grid;
 		grid-template-rows: 1fr auto;
 		gap: var(--space-lg);
@@ -41,6 +41,7 @@
 
 		& h4 {
 			margin-block: var(--space-xxs) var(--space-sm);
+			font: var(--f-h4-medium);
 
 			@media (--viewport-md-down) {
 				margin-block: 0;
@@ -55,14 +56,6 @@
 
 			@media (--viewport-md-down) {
 				display: none;
-			}
-		}
-
-		/* override secondary button hover/focus color (default matches tile background) */
-		& :global .secondary {
-			&:hover,
-			&:focus {
-				background: var(--cm-light, var(--c-parchment-extra-dark)) var(--cm-dark, var(--c-gray-extra-dark));
 			}
 		}
 	}

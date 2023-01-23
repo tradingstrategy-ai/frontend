@@ -238,7 +238,7 @@
 		--button-height: auto;
 	}
 
-	:global .svelte-spinner {
+	main :global .svelte-spinner {
 		align-self: center;
 	}
 </style>

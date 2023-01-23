@@ -5,6 +5,7 @@ Real time examples for the API
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
+	import { PageHeader } from '$lib/components';
 
 	export let data: PageData;
 
@@ -32,9 +33,9 @@ Real time examples for the API
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<section class="ds-container" data-testid="api-info">
-		<h1>{summary.pair_symbol} API and historical data</h1>
+	<PageHeader title="{summary.pair_symbol} API and historical data" />
 
+	<section class="ds-container" data-testid="api-info">
 		<p>
 			Here are some API quickstart examples for <strong>{summary.pair_symbol}</strong> on
 			<strong>{summary.exchange_name}</strong> on {summary.chain_name} blockchain.
@@ -58,8 +59,9 @@ Real time examples for the API
 </main>
 
 <style lang="postcss">
-	h1 {
-		margin-bottom: var(--space-xl);
+	main {
+		display: grid;
+		gap: var(--space-xl);
 	}
 
 	.ds-container p {

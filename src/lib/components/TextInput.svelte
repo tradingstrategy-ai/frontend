@@ -1,3 +1,13 @@
+<!--
+@component
+Display a text input component (email, text or search types currently supported). Passes
+unknown props through to HTML input element.
+
+#### Usage:
+```tsx
+	<TextInput bind:value type="email" size="lg" placeholder="email" required {disabled} />
+```
+-->
 <script lang="ts">
 	import { Icon } from '$lib/components';
 
@@ -10,7 +20,7 @@
 	const cancelButton = type === 'search';
 </script>
 
-<span class="wrapper size-{size}" class:has-icon={icon} class:disabled>
+<span class="text-input size-{size}" class:has-icon={icon} class:disabled>
 	<input
 		{value}
 		{type}
@@ -35,7 +45,7 @@
 </span>
 
 <style lang="postcss">
-	.wrapper {
+	.text-input {
 		position: relative;
 		display: inline-grid;
 		font: var(--text-input-font, var(--font));
@@ -59,83 +69,80 @@
 			left: 0.625em;
 			font-size: 0.875em;
 		}
-	}
 
-	.size-sm {
-		--border-radius: var(--radius-xs);
-		--height: 2rem;
-		--font: var(--f-ui-sm-roman);
-		--letter-spacing: var(--f-ui-sm-spacing, normal);
-	}
-
-	.size-md {
-		--border-radius: var(--radius-xs);
-		--height: 2.25rem;
-		--font: var(--f-ui-md-roman);
-		--letter-spacing: var(--f-ui-md-spacing, normal);
-	}
-
-	.size-lg {
-		--border-radius: var(--radius-sm);
-		--height: 2.625rem;
-		--font: var(--f-ui-lg-roman);
-		--letter-spacing: var(--f-ui-lg-spacing, normal);
-	}
-
-	.size-xl {
-		--border-radius: var(--radius-md);
-		--height: 3rem;
-		--font: var(--f-ui-xl-roman);
-		--letter-spacing: var(--f-ui-xl-spacing, normal);
-	}
-
-	input:is([type='email'], [type='password'], [type='search'], [type='text']) {
-		width: inherit;
-		padding: 0 var(--space-sl);
-		border: 1px transparent solid;
-		border-radius: var(--border-radius);
-		background: hsla(var(--hsl-box), var(--a-box-b));
-		font: inherit;
-		color: var(--c-text-1-v1);
-		transition: background var(--time-sm) ease-out;
-
-		&::placeholder {
-			color: hsl(var(--hsl-text-extra-light));
+		&.size-sm {
+			--border-radius: var(--radius-xs);
+			--height: 2rem;
+			--font: var(--f-ui-sm-roman);
+			--letter-spacing: var(--f-ui-sm-spacing, normal);
+		}
+		&.size-md {
+			--border-radius: var(--radius-xs);
+			--height: 2.25rem;
+			--font: var(--f-ui-md-roman);
+			--letter-spacing: var(--f-ui-md-spacing, normal);
+		}
+		&.size-lg {
+			--border-radius: var(--radius-sm);
+			--height: 2.625rem;
+			--font: var(--f-ui-lg-roman);
+			--letter-spacing: var(--f-ui-lg-spacing, normal);
+		}
+		&.size-xl {
+			--border-radius: var(--radius-md);
+			--height: 3rem;
+			--font: var(--f-ui-xl-roman);
+			--letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
-		&:disabled {
-			background: hsla(var(--hsl-box), var(--a-box-a));
+		& input {
+			width: inherit;
+			padding: 0 var(--space-sl);
+			border: 1px transparent solid;
+			border-radius: var(--border-radius);
+			background: hsla(var(--hsl-box), var(--a-box-b));
+			font: inherit;
+			color: var(--c-text-1-v1);
+			transition: background var(--time-sm) ease-out;
+
+			&::placeholder {
+				color: hsl(var(--hsl-text-extra-light));
+			}
+
+			&:disabled {
+				background: hsla(var(--hsl-box), var(--a-box-a));
+			}
+
+			&:focus,
+			&:hover {
+				background: hsla(var(--hsl-box), var(--a-box-c));
+			}
+
+			&:focus {
+				border-color: hsla(var(--hsl-text-extra-light));
+				outline: none;
+			}
+
+			&[type='search']::-webkit-search-cancel-button {
+				-webkit-appearance: none;
+			}
 		}
 
-		&:focus,
+		& .cancel-btn {
+			display: none;
+
+			& :global svg {
+				left: auto;
+				right: 0.625em;
+				font-size: 0.7em;
+			}
+		}
+
+		&:has(:focus),
 		&:hover {
-			background: hsla(var(--hsl-box), var(--a-box-c));
-		}
-
-		&:focus {
-			border-color: hsla(var(--hsl-text-extra-light));
-			outline: none;
-		}
-
-		&[type='search']::-webkit-search-cancel-button {
-			-webkit-appearance: none;
-		}
-	}
-
-	.cancel-btn {
-		display: none;
-
-		& :global svg {
-			left: auto;
-			right: 0.625em;
-			font-size: 0.7em;
-		}
-	}
-
-	.wrapper {
-		&:focus-within .cancel-btn,
-		&:hover .cancel-btn {
-			display: contents;
+			& .cancel-btn {
+				display: contents;
+			}
 		}
 	}
 </style>

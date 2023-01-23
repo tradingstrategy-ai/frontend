@@ -104,6 +104,10 @@
 		}
 	}
 
+	h2 {
+		font: var(--f-h2-medium);
+	}
+
 	.explorer-wrapper {
 		gap: var(--space-md);
 		margin-top: var(--space-ll);

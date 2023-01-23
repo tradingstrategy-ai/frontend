@@ -48,15 +48,21 @@ Render the statistics from the portfolio server-side calculated state.
 </script>
 
 {#if summary}
-	<SummaryBox class="summary-statistics" title="Performance summary">
-		{#each Object.entries(summary) as [label, value]}
-			<DataBox size="sm" {label} value={`${value}`} />
-		{/each}
-	</SummaryBox>
+	<div class="summary-statistics">
+		<SummaryBox class="summary-statistics" title="Performance summary">
+			{#each Object.entries(summary) as [label, value]}
+				<DataBox size="sm" {label} value={`${value}`} />
+			{/each}
+		</SummaryBox>
+	</div>
 {/if}
 
-<style global>
-	.summary-box.summary-statistics .inner {
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+<style lang="postcss">
+	.summary-statistics :global {
+		display: contents;
+
+		& .inner {
+			grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		}
 	}
 </style>

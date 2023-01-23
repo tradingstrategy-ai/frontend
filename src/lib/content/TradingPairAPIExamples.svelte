@@ -46,6 +46,7 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 <style>
 	.api-info h2 {
 		margin-bottom: var(--space-md);
+		font: var(--f-h2-medium);
 	}
 
 	.api-info p {

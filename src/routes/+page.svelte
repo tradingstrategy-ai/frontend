@@ -3,8 +3,10 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import HomeHeroBanner from './home/HeroBanner.svelte';
+	import HomeHeroBanner from './HomeHeroBanner.svelte';
 	import { BlogRoll, Button, Illustration, Section, SummaryBox, TopTradesTable } from '$lib/components';
+	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
 
@@ -19,7 +21,7 @@
 	{@html sitelinksSearchBox()}
 </svelte:head>
 
-<main>
+<main class="home-page">
 	<HomeHeroBanner {impressiveNumbers} />
 
 	<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
@@ -57,38 +59,50 @@
 </main>
 
 <style lang="postcss">
-	:global(.strategies) :global {
-		background-color: hsla(var(--hsla-background-accent-1));
-		& .inner {
-			display: grid;
-			gap: var(--space-5xl);
-			place-content: center;
-			place-items: center;
-			text-align: center;
+	.home-page :global {
+		& .strategies {
+			background-color: hsla(var(--hsla-background-accent-1));
 
-			@media (--viewport-md-up) {
-				margin-top: var(--space-ss);
+			& .inner {
+				display: grid;
+				gap: var(--space-5xl);
+				place-content: center;
+				place-items: center;
+				text-align: center;
+
+				@media (--viewport-md-up) {
+					margin-top: var(--space-ss);
+				}
+			}
+
+			& .coming-soon {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+				color: var(--c-text-2-v1);
+				text-transform: uppercase;
+				padding: var(--space-sl) var(--space-ls);
+				border: 1px solid var(--c-parchment-super-dark);
+				border-radius: var(--radius-xxl);
+			}
+
+			& p {
+				font: var(--f-h5-roman);
 			}
 		}
 
-		& .coming-soon {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-2-v1);
-			text-transform: uppercase;
-			padding: var(--space-sl) var(--space-ls);
-			border: 1px solid var(--c-parchment-super-dark);
-			border-radius: var(--radius-xxl);
-		}
+		& .blog {
+			& .blog-roll {
+				/* limit to 3 posts on larger viewports (single row) */
+				@media (width >= 1140px) {
+					& > :nth-child(4) {
+						display: none;
+					}
+				}
+			}
 
-		& p {
-			font: var(--f-h5-roman);
-		}
-	}
-
-	:global {
-		& .blog footer .button {
-			justify-self: center;
+			& footer .button {
+				justify-self: center;
+			}
 		}
 	}
 </style>

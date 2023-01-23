@@ -25,7 +25,7 @@
 			subtitle="Explore Trading Strategy open-source code on our GitHub repository."
 		/>
 		<ContentCard
-			href="https://discord.gg/en8tW6MDtw"
+			href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
 			iconName="read-glasses"
 			title="Algorithm tutorials"
 			subtitle="Learn how to write trading algorithms with our documentation and run backtests."

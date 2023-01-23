@@ -29,7 +29,7 @@ describe('StrategyTile component', () => {
 		test('should display historic performance value with no warning', async () => {
 			const { getByText, queryByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲7.9%');
+			expect(performance).toHaveTextContent('▲ 7.9%');
 			expect(queryByTitle(/less than 90 days of performance data/)).toBeNull;
 		});
 
@@ -63,7 +63,7 @@ describe('StrategyTile component', () => {
 		test('should display historic performance value with insufficient data warning', async () => {
 			const { getByText, getByTitle } = render(StrategyTile, { strategy });
 			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲7.9%');
+			expect(performance).toHaveTextContent('▲ 7.9%');
 			getByTitle(/less than 90 days of performance data/);
 		});
 	});

@@ -13,14 +13,14 @@ test.describe('home page', () => {
 	});
 
 	test('should display best/worst performing trades', async ({ page }) => {
-		const best = page.locator('[data-testid="top-momentum"]:has-text("Most profitable 24h")');
-		await expect(best.getByRole('listitem')).toHaveCount(5);
-		const worst = page.locator('[data-testid="top-momentum"]:has-text("Worst performance 24h")');
-		await expect(worst.getByRole('listitem')).toHaveCount(5);
+		const best = page.locator('.summary-box:has-text("Most profitable 24h")');
+		await expect(best.getByRole('row')).toHaveCount(5);
+		const worst = page.locator('.summary-box:has-text("Worst performance 24h")');
+		await expect(worst.getByRole('row')).toHaveCount(5);
 	});
 
 	test('should include blog roll', async ({ page }) => {
-		const blogItems = page.locator('[data-testid="blog-post-tile"]:visible');
-		await expect(blogItems).toHaveCount(3);
+		const blogRoll = page.locator('[data-testid="blog-roll"]:visible');
+		await expect(blogRoll.getByRole('link', { name: 'Read article' })).toHaveCount(3);
 	});
 });

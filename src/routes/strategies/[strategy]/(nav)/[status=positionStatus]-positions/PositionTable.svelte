@@ -120,20 +120,23 @@
 </div>
 
 <style lang="postcss">
-	.position-table :global {
-		display: contents;
+	.position-table {
+		/*
+			Setting overflow:auto breaks the sticky header, but is required to prevent the layout
+			from breaking on smaller viewports. Best compromise for now is to only set overflow
+			on smaller viewports.
+		 */
+		@media (--viewport-sm-down) {
+			overflow: auto;
+		}
+	}
 
+	.position-table :global {
 		& .ticker {
 			white-space: pre;
 		}
 
-		& .profitability,
-		& .value,
-		& .value_at_open,
-		& .frozen_value,
-		& .opened_at,
-		& .closed_at,
-		& .frozen_at {
+		& :is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
 		}
 	}
