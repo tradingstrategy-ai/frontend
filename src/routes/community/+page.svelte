@@ -1,6 +1,7 @@
 <script lang="ts">
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
+	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 </script>
 
 <ContentCardsTemplate pageTitle="Community" pageDescription="Blog, Discord and discussion">
@@ -63,11 +64,13 @@
 			title="Telegram"
 			subtitle="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
 		/>
-		<ContentCard
-			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-			iconName="newspaper"
-			title="Newsletter"
-			subtitle="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
-		/>
+		<div style:display="contents" style:cursor="pointer">
+			<ContentCard
+				iconName="newspaper"
+				title="Newsletter"
+				subtitle="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
+				on:click={toggleSubscribeDialog}
+			/>
+		</div>
 	</ContentCardsSection>
 </ContentCardsTemplate>
