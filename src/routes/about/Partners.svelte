@@ -55,9 +55,9 @@
 <style>
 	section {
 		justify-content: center;
-		gap: 4rem;
+		gap: var(--space-7xl);
 		padding-top: 6rem;
-		padding-bottom: 4rem;
+		padding-bottom: var(--space-7xl);
 	}
 
 	h2 {
@@ -68,7 +68,7 @@
 		max-width: 1200px;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-xxxxxl) 4rem;
+		gap: var(--space-5xl) var(--space-7xl);
 		justify-content: center;
 		align-items: center;
 	}

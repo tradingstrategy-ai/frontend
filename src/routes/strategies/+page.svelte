@@ -1,10 +1,19 @@
 <script lang="ts">
+	import { min } from 'd3-array';
+	import { fromUnixTime } from 'date-fns';
 	import type { PageData } from './$types';
 	import { PageHeading } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data: PageData;
 	$: strategies = data.strategies;
+
+	function minPerformanceDate() {
+		const timestamps = strategies.map(({ summary_statistics }) => {
+			return summary_statistics?.performance_chart_90_days?.[0][0];
+		});
+		return fromUnixTime(min(timestamps));
+	}
 </script>
 
 <main class="ds-container">
@@ -16,7 +25,7 @@
 	{#if strategies.length}
 		<ul>
 			{#each strategies as strategy (strategy.id)}
-				<StrategyTile {strategy} />
+				<StrategyTile {strategy} chartStartDate={minPerformanceDate()} />
 			{/each}
 		</ul>
 	{:else}

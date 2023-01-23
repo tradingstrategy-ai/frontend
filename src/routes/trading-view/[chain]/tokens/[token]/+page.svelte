@@ -63,11 +63,15 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	h2 {
+		font: var(--f-h2-medium);
 	}
 
 	.info {

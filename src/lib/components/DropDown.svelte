@@ -79,7 +79,7 @@ Support (bubbles) `change`, `focus` and `blur` events.
 		padding: 0 2em 0 0.8em;
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: var(--radius-xs);
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 		font-weight: 500;
 		color: var(--c-text-1-v1);
 

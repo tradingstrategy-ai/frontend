@@ -55,7 +55,7 @@
 		display: grid;
 		grid-template-rows: auto 1fr;
 		align-items: start;
-		gap: var(--space-xxxl);
+		gap: var(--space-3xl);
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-lg);
@@ -91,7 +91,7 @@
 		border: 2px solid var(--c-border-2-v1);
 		border-radius: 0.5em;
 		font-size: 1.25rem;
-		background: var(--c-body-v1);
+		background: hsla(var(--hsl-body));
 		color: var(--c-text-1-v1);
 
 		@media (--viewport-lg-up) {

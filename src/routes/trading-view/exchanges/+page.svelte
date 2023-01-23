@@ -4,6 +4,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
+	import { PageHeader } from '$lib/components';
 </script>
 
 <svelte:head>
@@ -14,10 +15,10 @@
 <Breadcrumbs />
 
 <main>
-	<header class="ds-container">
-		<h1>Decentralised exchanges</h1>
-		<p>Browse supported decentralised exchanges across all blockchains.</p>
-	</header>
+	<PageHeader
+		title="Decentralised exchanges"
+		description="Browse supported decentralised exchanges across all blockchains"
+	/>
 
 	<section class="ds-container">
 		<ExchangeExplorer
@@ -32,17 +33,5 @@
 	main {
 		display: grid;
 		gap: var(--space-md);
-	}
-
-	header {
-		gap: var(--space-sl);
-
-		& p {
-			font: var(--f-h4-roman);
-
-			@media (--viewport-lg-up) {
-				font: var(--f-h3-roman);
-			}
-		}
 	}
 </style>

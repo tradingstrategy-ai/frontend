@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
+	import { PageHeader } from '$lib/components';
 
 	const chainSlug = $page.params.chain;
 	const chainName = chainSlug[0].toUpperCase() + chainSlug.slice(1);
@@ -15,13 +16,10 @@
 <Breadcrumbs />
 
 <main>
-	<header class="ds-container">
-		<h1>Tokens</h1>
-		<p>
-			Browse supported decentralised tokens across
-			<a href="/trading-view/blockchains">{chainName} blockchain</a>
-		</p>
-	</header>
+	<PageHeader title="Tokens">
+		Browse supported decentralised tokens across
+		<a href="/trading-view/blockchains">{chainName} blockchain</a>
+	</PageHeader>
 
 	<section class="ds-container">
 		<TokenIndexExplorer
@@ -36,23 +34,6 @@
 	main {
 		display: grid;
 		gap: var(--space-md);
-	}
-
-	header {
-		gap: var(--space-sl);
-
-		& p {
-			font: var(--f-h4-roman);
-
-			& a {
-				text-decoration: underline;
-				font-weight: 700;
-			}
-
-			@media (--viewport-lg-up) {
-				font: var(--f-h3-roman);
-			}
-		}
 	}
 
 	section :global {

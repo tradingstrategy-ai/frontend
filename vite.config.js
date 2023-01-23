@@ -43,7 +43,7 @@ const config = {
 	css: {
 		postcss: {
 			plugins: [
-				postcssPresetEnv(),
+				postcssPresetEnv({ features: { 'nesting-rules': true } }),
 				// use `font-display: optional` in SSR build (minimize CLS/FOUT)
 				fontDisplay({
 					display: process.env.NODE_ENV === 'production' ? 'optional' : 'swap',

@@ -1,0 +1,32 @@
+/*
+ Tile CSS utility - used for creating layers of color shades.
+ Apply the .tile class along with one of the shade-layer classes: .a, .b, .c, .d
+*/
+.tile {
+	border-radius: var(--radius-md);
+	transition: background var(--time-sm) ease-out;
+
+	&.a {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		--background-hover: hsla(var(--hsl-box), var(--a-box-b));
+	}
+
+	&.b {
+		background: hsla(var(--hsl-box), var(--a-box-b));
+		--background-hover: hsla(var(--hsl-box), var(--a-box-d));
+	}
+
+	&.c {
+		background: hsla(var(--hsl-box), var(--a-box-c));
+		--background-hover: hsla(var(--hsl-box), var(--a-box-d));
+	}
+
+	&.d {
+		background: hsla(var(--hsl-box), var(--a-box-d));
+	}
+
+	&:hover,
+	&:hover .tile {
+		background: var(--background-hover) !important;
+	}
+}

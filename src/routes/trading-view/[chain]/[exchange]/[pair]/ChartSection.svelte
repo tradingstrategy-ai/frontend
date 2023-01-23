@@ -106,6 +106,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 		& h2 {
 			flex: 1;
+			font: var(--f-h2-medium);
 			white-space: nowrap;
 		}
 	}
@@ -122,12 +123,12 @@ for the same hovered date. Also displays a time-bucket selector.
 
 		& h3 {
 			flex: 1;
-			font-size: 1.25rem;
+			font: var(--f-h5-medium);
 			text-transform: uppercase;
 			letter-spacing: 0.06em;
 
 			@media (--viewport-xs) {
-				font-size: 1rem;
+				font: var(--f-h6-medium);
 			}
 		}
 
@@ -154,12 +155,12 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.hud-row {
 		& .vol-added dd {
-			color: var(--c-bullish);
+			color: hsla(var(--hsl-bullish));
 			min-width: 4.5em;
 		}
 
 		& .vol-removed dd {
-			color: var(--c-bearish);
+			color: hsla(var(--hsl-bearish));
 		}
 	}
 

@@ -12,7 +12,7 @@ test.describe('home page', () => {
 	// $ npm run test:integration
 	// $ docker run --rm -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.27.0-focal bash -c 'cd work && npm run test:integration --skip-build'
 	test('hero banner looks correct', async ({ page }) => {
-		const header = page.locator('main header');
+		const header = page.getByTestId('home-hero-banner');
 		await expect(header).toHaveScreenshot();
 	});
 

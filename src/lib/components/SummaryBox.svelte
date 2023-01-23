@@ -1,13 +1,14 @@
 <!--
 @component
-Uses together with DataBox to display a set of summary properties / statistics.
-Supports optional "cta" slot to include a button CTA.
+Displaying a summary content box with title, optional subtitle and and optional header/footer.
+CTA slots `headerCta` and `footerCta` may also be provided (if both, only one is displayed
+based on viewport size).
 
 #### Usage
 ```tsx
 	<SummaryBox title="Fruits" subtitle="These are fruits that are worth trying">
-		<Button slot="cta" label="Find More Fruit" href="http://example.org/fruit" />
 		<DataBox label="Banana" value="Minions favorite" />
+		<Button slot="footerCta" label="Find More Fruit" href="http://example.org/fruit" />
 	</SummaryBox>
 ```
 -->
@@ -18,49 +19,65 @@ Supports optional "cta" slot to include a button CTA.
 	export let subtitle: string = '';
 </script>
 
-<section class="summary-box {classes}">
-	<header class:has-cta={$$slots.cta}>
-		<div class="description">
-			<h3>{title}</h3>
-			{#if subtitle}
-				<p>{subtitle}</p>
-			{/if}
-		</div>
-		{#if $$slots.cta}
-			<div class="cta">
-				<slot name="cta" />
+<div
+	class="summary-box {classes}"
+	class:has-footer={$$slots.footer}
+	class:has-both-ctas={$$slots.footerCta && $$slots.headerCta}
+>
+	<div class="main">
+		<header class:has-cta={$$slots.headerCta}>
+			<div class="description">
+				<h3>{title}</h3>
+				{#if subtitle}
+					<p>{subtitle}</p>
+				{/if}
 			</div>
-		{/if}
-	</header>
-	<div class="inner">
-		<slot />
+			{#if $$slots.headerCta}
+				<div class="cta">
+					<slot name="headerCta" />
+				</div>
+			{/if}
+		</header>
+		<div class="inner">
+			<slot />
+		</div>
 	</div>
-</section>
+	{#if $$slots.footer || $$slots.footerCta}
+		<footer>
+			<slot name="footer" />
+			{#if $$slots.footerCta}
+				<div class="cta">
+					<slot name="footerCta" />
+				</div>
+			{/if}
+		</footer>
+	{/if}
+</div>
 
 <style lang="postcss">
 	.summary-box {
-		background: var(--c-background-5);
+		background: hsla(var(--hsl-box), var(--a-box-a));
 		border-radius: var(--radius-md);
-		gap: var(--space-ls);
 		padding: var(--space-lg) var(--space-lg);
 
+		@media (--viewport-md-down) {
+			padding: var(--space-ls) var(--space-md);
+		}
+
+		& .main {
+			gap: var(--space-ls);
+		}
+
 		&,
+		& .main,
 		& .inner {
 			display: grid;
-			place-content: start stretch;
+			place-content: space-between stretch;
 		}
 
 		& .description {
 			display: grid;
 			gap: var(--space-sm);
-		}
-
-		& :global .data-box {
-			background: var(--c-background-4);
-		}
-
-		@media (--viewport-md-down) {
-			padding: var(--space-ls) var(--space-md);
 		}
 
 		& header {
@@ -69,17 +86,12 @@ Supports optional "cta" slot to include a button CTA.
 			margin-bottom: var(--space-xxxs);
 
 			& h3 {
-				font: var(--f-ui-xxl-medium);
-				letter-spacing: var(--f-ui-xxl-spacing, normal);
-
-				@media (--viewport-md-down) {
-					font: var(--f-ui-xl-medium);
-					letter-spacing: var(--f-ui-xl-spacing, normal);
-				}
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 
 			& p {
-				color: var(--c-text-extra-light);
+				color: hsla(var(--hsl-text-extra-light));
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
@@ -104,24 +116,48 @@ Supports optional "cta" slot to include a button CTA.
 					}
 				}
 			}
+
+			& .cta {
+				@media (--viewport-lg-down) {
+					display: none;
+				}
+			}
 		}
 
-		& .inner {
+		& .inner :global {
 			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
+
+			& p,
+			& li {
+				font: var(--f-ui-lg-roman);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
+			}
+
+			& li {
+				margin-bottom: var(--space-md);
+			}
 		}
-	}
-	h3 {
-		font: var(--f-ui-xxl-medium);
 
-		&,
-		& .inner {
-			display: grid;
-			gap: var(--space-ls);
-			place-content: start stretch;
+		& footer {
+			margin-top: var(--space-md);
 
-			@media (--viewport-md-down) {
-				gap: var(--space-md);
+			& .cta :global .button {
+				width: 100%;
+			}
+		}
+
+		/*
+		  Hide footer CTA when header CTA is visible (i.e., on larger displays).
+			- hides the whole footer when there's no other footer content
+			- hides just the footer CTA when other footer content is present
+		 */
+		&.has-both-ctas {
+			&:not(.has-footer) footer,
+			&.has-footer footer .cta {
+				@media (--viewport-xl-up) {
+					display: none;
+				}
 			}
 		}
 	}

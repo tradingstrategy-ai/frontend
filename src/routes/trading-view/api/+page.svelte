@@ -142,7 +142,7 @@
 	}
 
 	.error {
-		color: var(--c-bearish);
+		color: hsla(var(--hsl-bearish));
 	}
 
 	#form-group-registration {

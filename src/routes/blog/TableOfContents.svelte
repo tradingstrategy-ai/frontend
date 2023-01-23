@@ -13,7 +13,7 @@
 	div {
 		display: grid;
 		gap: var(--space-lg);
-		margin: var(--space-ls) 0 var(--space-xxl) 0;
+		margin: var(--space-ls) 0 var(--space-2xl) 0;
 		padding: var(--space-ls);
 		border: var(--c-border-2-v1) solid 1px;
 

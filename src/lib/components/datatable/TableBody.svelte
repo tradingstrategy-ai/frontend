@@ -21,36 +21,3 @@
 		</Subscribe>
 	{/each}
 </tbody>
-
-<style lang="postcss">
-	td {
-		background: var(--c-background-5);
-		height: 4.5rem;
-		padding: var(--space-sl) var(--space-lg);
-		font: var(--f-ui-lg-medium);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
-		--button-width: 100%;
-
-		@media (--viewport-lg-down) {
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
-
-		@nest tr:hover & {
-			background: var(--c-background-4);
-		}
-
-		&:first-child {
-			border-radius: var(--radius-md) 0 0 var(--radius-md);
-		}
-
-		&:last-child {
-			border-radius: 0 var(--radius-md) var(--radius-md) 0;
-		}
-	}
-</style>

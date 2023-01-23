@@ -122,10 +122,3 @@ body {
 	--c-background-6: var(--cm-light, var(--c-background-6-day)) var(--cm-dark, var(--c-background-6-night));
 	--c-background-7: var(--cm-light, var(--c-background-7-day)) var(--cm-dark, var(--c-background-7-night));
 }
-
-body {
-	color: var(--c-text-default);
-	background-color: var(--c-body);
-	transition-property: background-color, color;
-	transition-duration: 0.25s;
-}

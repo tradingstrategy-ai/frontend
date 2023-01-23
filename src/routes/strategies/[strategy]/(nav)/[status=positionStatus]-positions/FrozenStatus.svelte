@@ -15,7 +15,7 @@
 	}
 
 	.buy {
-		color: var(--c-bullish);
+		color: hsla(var(--hsl-bullish));
 
 		&::before {
 			content: '▲';
@@ -23,7 +23,7 @@
 	}
 
 	.sell {
-		color: var(--c-bearish);
+		color: hsla(var(--hsl-bearish));
 
 		&::before {
 			content: '▼';

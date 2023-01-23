@@ -105,7 +105,7 @@
 	.strategy-nav {
 		--menu-gap: var(--space-sl);
 		--menu-item-active-color: var(--c-text-default);
-		--menu-item-color: var(--c-text-extra-light);
+		--menu-item-color: hsla(var(--hsl-text-extra-light));
 		--menu-item-border-radius: var(--radius-md);
 		--menu-item-padding: 0 var(--space-md);
 

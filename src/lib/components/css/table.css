@@ -1,0 +1,62 @@
+/*
+ Default table styling.
+ Excludes .table class for now to avoid conflicts with bootstrap stylesheet.
+*/
+table:not(.table) {
+	--border-spacing: var(--space-sl);
+	--cell-padding: var(--space-sl) var(--space-ls);
+	--table-transition: all var(--time-xs) ease-out;
+	border-collapse: separate;
+	border-spacing: 0 var(--border-spacing);
+	margin-top: calc(-1 * var(--border-spacing));
+	width: 100%;
+
+	@media (width <= 768px) {
+		--cell-padding: 0 var(--space-ms);
+	}
+
+	& thead tr:first-child {
+		position: sticky;
+		top: 0;
+	}
+
+	& th {
+		background-color: hsla(var(--hsl-body));
+		color: hsla(var(--hsl-text-extra-light));
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-medium, normal);
+		padding: var(--cell-padding);
+		transition: var(--table-transition);
+		white-space: nowrap;
+	}
+
+	& > :not(thead):not(tfoot) tr {
+		& td {
+			background: hsla(var(--hsl-box), var(--a-box-b));
+			height: 4rem;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			padding: var(--cell-padding);
+			transition: var(--table-transition);
+			vertical-align: middle;
+			--button-width: 100%;
+
+			@media (width <= 1024px) {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
+
+			&:first-child {
+				border-radius: var(--radius-md) 0 0 var(--radius-md);
+			}
+
+			&:last-child {
+				border-radius: 0 var(--radius-md) var(--radius-md) 0;
+			}
+		}
+
+		&:hover td {
+			background: hsla(var(--hsl-box), var(--a-box-d));
+		}
+	}
+}

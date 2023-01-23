@@ -3,9 +3,9 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import HeroBanner from './HeroBanner.svelte';
-	import TopMomentumTile from './TopMomentumTile.svelte';
-	import { BlogPostTile, Button } from '$lib/components';
+	import HomeHeroBanner from './HomeHeroBanner.svelte';
+	import { BlogRoll, Button, Section, SummaryBox } from '$lib/components';
+	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
@@ -20,130 +20,84 @@
 	{@html sitelinksSearchBox()}
 </svelte:head>
 
-<main>
-	<HeroBanner {impressiveNumbers} />
+<main class="home-page">
+	<HomeHeroBanner {impressiveNumbers} />
 
-	{#if topMomentum}
-		<section class="ds-container top-momentum" style:gap="var(--space-lg)">
-			<h2>Top trades</h2>
-			<div class="ds-2-col">
-				<TopMomentumTile
-					name="Most profitable 24h"
-					pairs={topMomentum.top_up_24h_min_liq_1m}
-					linkTarget="/trading-view/top-list/daily-up"
-					linkLabel="View all winning pairs"
-				/>
-				<TopMomentumTile
-					name="Worst performance 24h"
-					pairs={topMomentum.top_down_24h_min_liq_1m}
-					linkTarget="/trading-view/top-list/daily-down"
-					linkLabel="View all losing pairs"
-				/>
-			</div>
-		</section>
-	{/if}
+	<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
+		<SummaryBox title="Most profitable 24h">
+			<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+			<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+			<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
+		</SummaryBox>
 
-	<section class="ds-container strategies">
-		<h2>Strategies</h2>
-		<div>
+		<SummaryBox title="Worst performance 24h">
+			<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+			<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+			<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
+		</SummaryBox>
+	</Section>
+
+	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
+		<div class="inner">
 			<div class="coming-soon">Coming soon</div>
 			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
 			<Button label="Sign up now" on:click={toggleSubscribeDialog} />
 		</div>
-	</section>
+	</Section>
 
 	{#if posts}
-		<section class="ds-container blog">
-			<h2>Blog</h2>
-
-			<div class="blog-posts">
-				{#each posts as post (post.id)}
-					<BlogPostTile
-						title={post.title}
-						excerpt={post.excerpt}
-						imageUrl={post.feature_image}
-						imageAltText={post.feature_image_alt}
-						slug={post.slug}
-						publishedAt={post.published_at}
-					/>
-				{/each}
-			</div>
-
-			<div class="cta">
-				<Button label="Read more on blog" href="/blog" />
-			</div>
-		</section>
+		<Section title="Blog" class="blog" layout="boxed" padding="md">
+			<BlogRoll {posts} />
+			<Button label="Read more on Blog" href="/blog" slot="footer" />
+		</Section>
 	{/if}
 </main>
 
 <style lang="postcss">
-	section {
-		padding-block: var(--space-xxxl);
+	.home-page :global {
+		& .strategies {
+			background-color: hsla(var(--hsla-background-accent-1));
 
-		@media (--viewport-md-up) {
-			padding-block: 4rem;
-		}
-	}
+			& .inner {
+				display: grid;
+				gap: var(--space-5xl);
+				place-content: center;
+				place-items: center;
+				text-align: center;
 
-	h2 {
-		text-align: center;
-	}
+				@media (--viewport-md-up) {
+					margin-top: var(--space-ss);
+				}
+			}
 
-	.top-momentum h2 {
-		@media (--viewport-md-up) {
-			margin-bottom: var(--space-xxxl);
-		}
-	}
+			& .coming-soon {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+				color: var(--c-text-2-v1);
+				text-transform: uppercase;
+				padding: var(--space-sl) var(--space-ls);
+				border: 1px solid var(--c-parchment-super-dark);
+				border-radius: var(--radius-xxl);
+			}
 
-	.strategies {
-		gap: var(--space-xxxl);
-
-		& > div {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			text-align: center;
-			gap: 4rem;
-
-			@media (--viewport-md-up) {
-				margin-top: var(--space-ss);
+			& p {
+				font: var(--f-h5-roman);
 			}
 		}
 
-		& .coming-soon {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-2-v1);
-			text-transform: uppercase;
-			padding: var(--space-sl) var(--space-ls);
-			border: 1px solid var(--c-parchment-super-dark);
-			border-radius: var(--radius-xxl);
-		}
+		& .blog {
+			& .blog-roll {
+				/* limit to 3 posts on larger viewports (single row) */
+				@media (width >= 1140px) {
+					& > :nth-child(4) {
+						display: none;
+					}
+				}
+			}
 
-		& p {
-			font: var(--f-h5-roman);
-		}
-	}
-
-	.blog {
-		gap: var(--space-xxxl);
-		justify-items: center;
-		padding-block: 4.5rem;
-	}
-
-	.blog-posts {
-		display: grid;
-		gap: var(--space-xxxl);
-
-		@media (--viewport-md-up) {
-			margin-top: var(--space-xl);
-			grid-template-columns: 1fr 1fr;
-		}
-
-		@media (width >= 1148px) {
-			grid-template-columns: 1fr 1fr 1fr;
-			grid-template-rows: auto 0;
-			overflow: hidden;
+			& footer .button {
+				justify-self: center;
+			}
 		}
 	}
 </style>
