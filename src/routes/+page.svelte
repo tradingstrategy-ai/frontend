@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
@@ -37,16 +37,22 @@
 		</SummaryBox>
 	</Section>
 
-	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
+	<Section class="strategies" layout="boxed" padding="lg">
 		<div class="inner">
+			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>
 			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
-			<Button label="Sign up now" href="/newsletter" />
+			<div class="ctas">
+				<Button icon="newspaper" label="Subscribe to newsletter" href="#home-newsletter" />
+				<Button
+					icon="twitter"
+					label="Follow us on Twitter"
+					href="https://twitter.com/TradingProtocol"
+					target="_blank"
+				/>
+				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
+			</div>
 		</div>
-	</Section>
-
-	<Section class="newsletter" layout="boxed" padding="md">
-		<NewsletterOptInBanner />
 	</Section>
 
 	{#if posts}
@@ -55,6 +61,10 @@
 			<Button label="Read more on Blog" href="/blog" slot="footer" />
 		</Section>
 	{/if}
+
+	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
 </main>
 
 <style lang="postcss">
@@ -63,14 +73,23 @@
 			background-color: hsla(var(--hsla-background-accent-1));
 
 			& .inner {
+				background: hsla(var(--hsl-box), var(--a-box-b));
+				border-radius: var(--radius-xl);
 				display: grid;
-				gap: var(--space-5xl);
+				gap: var(--space-3xl);
+				max-width: 60rem;
+				margin: auto;
+				padding: var(--space-5xl);
 				place-content: center;
 				place-items: center;
 				text-align: center;
 
 				@media (--viewport-md-up) {
 					margin-top: var(--space-ss);
+
+					& h2 {
+						font: var(--f-heading-xl-medium);
+					}
 				}
 			}
 
@@ -87,6 +106,11 @@
 			& p {
 				font: var(--f-ui-xl-roman);
 			}
+		}
+
+		& :global .strategies .ctas {
+			display: flex;
+			gap: var(--space-lg);
 		}
 
 		& .blog {

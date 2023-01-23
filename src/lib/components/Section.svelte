@@ -7,7 +7,7 @@ Layout utility component for displaying a major site section with grid-based con
 
 ### Usage:
 ```tsx
-	<Section class="foo" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
+	<Section class="foo" id="bar" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
 		Section content here
 	</Section>
 ```
@@ -22,6 +22,7 @@ Layout utility component for displaying a major site section with grid-based con
 	export let footer = false;
 	export let gap: SectionSizing = '';
 	export let header = false;
+	export let id: string | undefined = undefined;
 	export let layout: 'boxed' | 'fullwidth' | '' = '';
 	export let padding: SectionSizing = '';
 	export let size: SectionSizing = '';
@@ -31,7 +32,7 @@ Layout utility component for displaying a major site section with grid-based con
 	$: tag = header ? 'header' : footer ? 'footer' : 'section';
 </script>
 
-<svelte:element this={tag} class="section {classes} {size} {layout} {padding ? `padding-${padding}` : ''}">
+<svelte:element this={tag} class="section {classes} {size} {layout} {padding ? `padding-${padding}` : ''}" {id}>
 	{#if $$slots.header || title || subtitle}
 		<header>
 			{#if $$slots.header || title}
