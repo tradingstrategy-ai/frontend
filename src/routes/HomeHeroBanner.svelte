@@ -16,7 +16,7 @@ Home page hero banner.
 	export let impressiveNumbers: any;
 </script>
 
-<header class="home-hero-banner" on:dblclick={() => goto('/strategies')}>
+<header class="home-hero-banner" data-testid="home-hero-banner" on:dblclick={() => goto('/strategies')}>
 	<div class="inner ds-container">
 		<img class="media" src={mbp15Image} alt="Trading Data" />
 

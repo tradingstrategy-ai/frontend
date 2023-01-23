@@ -25,7 +25,7 @@ test.describe('token details page', () => {
 		await page.waitForSelector(`${selector} .col-pair`);
 		const rows = page.locator(`${selector} tr`);
 		expect(await rows.count()).toBeGreaterThanOrEqual(10);
-		const rowData = ['ETH-USDC', 'Uniswap v3', '$1.50k', '▲11.2%', '$7.89B', '$0', '▼0.0%'];
+		const rowData = ['ETH-USDC', 'Uniswap v3', '$1.50k', '▲ 11.2%', '$7.89B', '$0', '▼ 0.0%'];
 		await expect(rows.first()).toHaveText(rowData.join(''));
 	});
 
