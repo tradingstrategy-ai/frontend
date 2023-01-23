@@ -4,9 +4,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Illustration, Section, SummaryBox, TopTradesTable } from '$lib/components';
+	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
 
@@ -83,10 +82,6 @@
 				padding: var(--space-sl) var(--space-ls);
 				border: 1px solid var(--c-parchment-super-dark);
 				border-radius: var(--radius-xxl);
-			}
-
-			& p {
-				font: var(--f-h5-roman);
 			}
 		}
 

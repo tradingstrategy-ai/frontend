@@ -42,8 +42,10 @@
 		}
 
 		& :global svg {
-			max-width: min(36vw, 24rem);
-			max-height: min(36vw, 24rem);
+			@media (--viewport-md-down) {
+				max-width: min(36vw, 24rem);
+				max-height: min(36vw, 24rem);
+			}
 			@media (--viewport-xs) {
 				max-width: min(64vw, 16rem);
 				max-height: min(64vw, 16rem);

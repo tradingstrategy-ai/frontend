@@ -64,7 +64,7 @@
 			subtitle="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
 		/>
 		<ContentCard
-			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+			href="/newsletter"
 			iconName="newspaper"
 			title="Newsletter"
 			subtitle="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
