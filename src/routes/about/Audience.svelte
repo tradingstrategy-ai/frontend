@@ -20,11 +20,11 @@
 				<li>Direct trade execution on-chain without a counter-party risk</li>
 			</ul>
 
-		<div class="subscribe-cta" slot="footerCta">
-			<h5>Sign up to waitlist</h5>
-			<SubscribeForm />
-		</div>
-	</SummaryBox>
+			<div class="subscribe-cta" slot="footerCta">
+				<h5>Sign up to waitlist</h5>
+				<SubscribeForm />
+			</div>
+		</SummaryBox>
 
 		<SummaryBox title="Strategy developers and quants">
 			<ul>
