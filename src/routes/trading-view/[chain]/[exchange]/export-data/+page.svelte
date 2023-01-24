@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, AlertItem, AlertList } from '$lib/components';
+	import { Button, AlertItem, AlertList, Select } from '$lib/components';
 
 	export let data: PageData;
 
@@ -73,39 +73,39 @@
 
 			<div>
 				<label for="export_format">Export format</label>
-				<select class="form-control" id="export_format" bind:value={selectedFormat}>
+				<Select class="form-control" id="export_format" bind:value={selectedFormat}>
 					<option value="excel">Microsoft Excel .xlsx</option>
-				</select>
+				</Select>
 			</div>
 
 			<div>
 				<label for="export_dataset">Dataset</label>
-				<select class="form-control" id="export_dataset" bind:value={selectedDataset}>
+				<Select class="form-control" id="export_dataset" bind:value={selectedDataset}>
 					<option value="top_3000_rows">Top 3000 pairs</option>
-				</select>
+				</Select>
 			</div>
 
 			<div>
 				<label for="export_dataset">Sorted by</label>
-				<select class="form-control" id="sorted_by" bind:value={selectedSort}>
+				<Select class="form-control" id="sorted_by" bind:value={selectedSort}>
 					<option value="liquidity_change_relative_24h">Liquidity % change 24h</option>
 					<option value="liquidity_change_abs_24h">Liquidity USD change 24h</option>
 					<option value="liquidity">Liquidity available latest</option>
 					<option value="volume_1d">Volume 24h</option>
 					<option value="price_change_24h">Price change 24h</option>
-				</select>
+				</Select>
 			</div>
 
 			<div>
 				<label for="export_dataset">Filter</label>
-				<select class="form-control" id="filter" bind:value={selectedFilter}>
+				<Select class="form-control" id="filter" bind:value={selectedFilter}>
 					<option value="unfiltered">Unfiltered</option>
 					<!-- Uniswap v3 hot fix until data is available -->
 					{#if data.exchange_slug != 'uniswap-v3'}
 						<option value="min_liquidity_100k">Min. liquidity $100k</option>
 						<option value="min_liquidity_1M">Min. liquidity $1M</option>
 					{/if}
-				</select>
+				</Select>
 			</div>
 
 			<div class="cta">
@@ -164,7 +164,6 @@
 		font: var(--f-ui-small-medium);
 	}
 
-	select,
 	input {
 		-webkit-appearance: none;
 		-moz-appearance: none;
