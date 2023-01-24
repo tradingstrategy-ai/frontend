@@ -2,10 +2,10 @@
 	import { Icon } from '$lib/components';
 
 	let classes = '';
-	export { classes as classes };
-	export let id: string | null = null;
-	export let name: string | null = null;
-	export let value: string | Array<string>;
+	export { classes as class };
+	export let id: string | undefined = undefined;
+	export let name: string | undefined = undefined;
+	export let value: string | undefined = undefined;
 </script>
 
 <div class="select-wrapper {classes}">
@@ -19,30 +19,30 @@
 	.select-wrapper {
 		--wrapper-padding: var(--space-sl);
 		align-items: center;
-		border: 1px solid transparent !important;
+		border: 1px solid transparent;
 		background: var(--c-background-2-v1);
-		border-radius: var(--radius-sm) !important;
+		border-radius: var(--radius-sm);
 		display: flex;
 		justify-content: space-between;
 		outline: none;
 		position: relative;
-	}
 
-	:global .select-wrapper:focus-within {
-		border: 1px solid hsla(var(--hsl-text-extra-light)) !important;
-		border-radius: var(--radius-sm) !important;
-		outline: none;
-	}
+		&:focus-within {
+			border-color: hsla(var(--hsl-text-extra-light));
+			outline: none;
+		}
 
-	.select-wrapper :global(svg) {
-		position: absolute;
-		right: var(--wrapper-padding);
+		& :global svg {
+			position: absolute;
+			right: var(--wrapper-padding);
+		}
 	}
 
 	select {
 		appearance: none;
 		background: none;
 		border: none;
+		color: inherit;
 		outline: none;
 		padding: var(--wrapper-padding);
 		width: 100%;
