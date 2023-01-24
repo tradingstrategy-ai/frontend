@@ -59,7 +59,7 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.9",
-    "@tryghost/content-api": "^1.5.13",
+    "@tryghost/content-api": "^1.11.5",
     "assert-ts": "^0.3.4",
     "cookie": "^0.5.0",
     "d3-array": "^3.2.1",
