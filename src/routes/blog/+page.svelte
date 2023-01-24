@@ -35,7 +35,7 @@
 			title="Trading Strategy Blog"
 			subtitle="Read our insights into on-chain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
 			image={heroImage}
-            hr={true}
+			hr={true}
 		>
 			<SocialLinks layout="index" />
 		</HeroBanner>
@@ -84,6 +84,4 @@
 		font: var(--f-ui-large-roman);
 		text-align: center;
 	}
-
-
 </style>
