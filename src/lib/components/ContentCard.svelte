@@ -58,7 +58,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		}
 
 		@media (--viewport-sm-up) {
-			gap: var(--space-lg);
+			gap: var(--space-ls);
 		}
 
 		& * {
@@ -80,17 +80,15 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		/* title */
 		& h3 {
 			font: var(--f-heading-lg-medium);
-			letter-spacing: var(--f-heading-lg-spacing, normal);
 
 			@media (--viewport-xs) {
 				font: var(--f-heading-md-medium);
-				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 		}
 
 		/* subtitle */
 		& p {
-			font: var(--f-ui-md-roman);
+			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 
 			@media (--viewport-xs) {
@@ -124,6 +122,23 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 			@media (--viewport-sm-up) {
 				font: var(--f-ui-xxl-medium);
 				letter-spacing: var(--f-ui-xxl-spacing, normal);
+			}
+		}
+
+		/* display CTA button as hovered/focused when tile is hovered/focused */
+		&:hover,
+		&:focus {
+			& .cta :global .button {
+				background: hsla(var(--hsl-text), 1) !important;
+				color: hsla(var(--hsl-text-inverted));
+			}
+		}
+
+		& .cta {
+			@media (--viewport-sm-down) {
+				& :global .button {
+					width: 100%;
+				}
 			}
 		}
 	}
