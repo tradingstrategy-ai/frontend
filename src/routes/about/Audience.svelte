@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Section, SubscribeForm, SummaryBox } from '$lib/components';
+	import { Button, Section, SummaryBox } from '$lib/components';
 </script>
 
 <div class="audience-wrapper">
