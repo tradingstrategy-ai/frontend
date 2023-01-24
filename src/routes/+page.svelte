@@ -70,6 +70,10 @@
 </main>
 
 <style lang="postcss">
+	:global(html) {
+		scroll-behavior: smooth;
+	}
+
 	.home-page :global {
 		& .strategies {
 			background-color: hsla(var(--hsla-background-accent-1));
