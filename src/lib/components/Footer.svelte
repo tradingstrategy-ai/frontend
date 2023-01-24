@@ -30,15 +30,13 @@
 </footer>
 
 <style lang="postcss">
-	:global :root {
+	footer {
 		--footer-height: 12rem;
 
 		@media (--nav-collapsed) {
 			--footer-height: 6rem;
 		}
-	}
 
-	footer {
 		display: grid;
 		grid-auto-flow: column;
 		place-content: center;
