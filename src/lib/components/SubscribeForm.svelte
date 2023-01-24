@@ -12,7 +12,6 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
 	import { TextInput, Button, AlertList, AlertItem } from '$lib/components';
-	import { tick } from 'svelte';
 
 	let form: HTMLFormElement;
 	let title: string;
