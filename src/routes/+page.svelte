@@ -13,6 +13,12 @@
 	export let data: PageData;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
+
+	function scrollToNewsletterOptIn() {
+		const el = document.querySelector('#home-newsletter input[type=email]');
+		el?.scrollIntoView({ behavior: 'smooth' });
+		el?.focus({ preventScroll: true });
+	}
 </script>
 
 <svelte:head>
@@ -45,7 +51,7 @@
 			<div class="coming-soon">Coming soon</div>
 			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
-				<Button icon="newspaper" label="Subscribe to newsletter" href="#home-newsletter" />
+				<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
 				<Button
 					icon="twitter"
 					label="Follow us on Twitter"
@@ -70,10 +76,6 @@
 </main>
 
 <style lang="postcss">
-	:global(html) {
-		scroll-behavior: smooth;
-	}
-
 	.home-page :global {
 		& .strategies {
 			background-color: hsla(var(--hsla-background-accent-1));
