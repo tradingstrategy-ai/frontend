@@ -1,12 +1,10 @@
 <!--
 @component
-Form is intended to be used as a global singleton component (add to layout).
-The sibling `controller` file exports a `toggleSubscriptionDialog` function, which can
-be invoked from anywhere to open the global dialog component.
+Embeddable <form> based component that allows subscribing to newsletter.
 
 #### Usage:
 ```tsx
-<Form />
+<SubscribeForm />
 ```
 -->
 <script lang="ts">
