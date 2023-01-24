@@ -35,6 +35,7 @@
 		& :global svg {
 			position: absolute;
 			right: var(--wrapper-padding);
+			pointer-events: none;
 		}
 	}
 
@@ -45,6 +46,7 @@
 		color: inherit;
 		outline: none;
 		padding: var(--wrapper-padding);
+		padding-right: calc(var(--wrapper-padding) + var(--space-lg));
 		width: 100%;
 	}
 </style>
