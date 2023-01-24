@@ -4,7 +4,7 @@ import type { Subscriber } from '$lib/newsletter/client';
 import { getClient } from '$lib/newsletter/client';
 
 export const actions: Actions = {
-	default: async ({ request, fetch }) => {
+	subscribe: async ({ request, fetch }) => {
 		const newsletter = getClient(fetch);
 
 		const data = await request.formData();

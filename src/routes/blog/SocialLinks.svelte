@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { Icon } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 
 	export let layout: 'index' | 'post';
 </script>
 
 <div class="social-links layout--{layout}">
-	<button class="social-link" on:click={toggleSubscribeDialog}>
+	<a class="social-link" href="/newsletter">
 		<Icon name="newspaper" />
 		<span class="long-label">Subscribe to our Newsletter</span>
 		<span class="short-label">Newsletter</span>
-	</button>
+	</a>
 	<a class="social-link" href="https://twitter.com/TradingProtocol">
 		<Icon name="twitter" />
 		<span class="long-label">Follow us on Twitter</span>
