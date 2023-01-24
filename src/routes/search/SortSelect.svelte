@@ -40,7 +40,7 @@ pre-defined set of sort options.
 </script>
 
 <script lang="ts">
-	import { DropDown } from '$lib/components';
+	import { Select } from '$lib/components';
 	export let value: string;
 
 	if (!(value in options)) {
@@ -48,10 +48,18 @@ pre-defined set of sort options.
 	}
 </script>
 
-<DropDown bind:value size="xl" --drop-down-width="100%">
-	{#each Object.entries(options) as [key, option] (key)}
-		<option value={key}>
-			{option.label}
-		</option>
-	{/each}
-</DropDown>
+<div class="sort-by-wrapper">
+	<Select bind:value>
+		{#each Object.entries(options) as [key, option] (key)}
+			<option value={key}>
+				{option.label}
+			</option>
+		{/each}
+	</Select>
+</div>
+
+<style>
+	.sort-by-wrapper {
+		min-width: 11rem;
+	}
+</style>
