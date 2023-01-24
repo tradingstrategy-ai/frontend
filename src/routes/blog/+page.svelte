@@ -33,8 +33,9 @@
 	<Section class="hero" header layout="boxed">
 		<HeroBanner
 			title="Trading Strategy Blog"
-			subtitle="Follow us for insights and research posts in trading. We cover trading and investing in decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies, blockchains and web3."
+			subtitle="Read our insights into on-chain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
 			image={heroImage}
+            hr={true}
 		>
 			<SocialLinks layout="index" />
 		</HeroBanner>
@@ -83,4 +84,6 @@
 		font: var(--f-ui-large-roman);
 		text-align: center;
 	}
+
+
 </style>
