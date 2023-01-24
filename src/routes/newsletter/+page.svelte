@@ -9,7 +9,7 @@
 </div>
 
 <style lang="postcss">
-	:global .newsletter-page .section {
+	.newsletter-page :global .section {
 		background: hsla(var(--hsla-background-accent-1));
 	}
 </style>
