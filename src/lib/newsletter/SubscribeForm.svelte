@@ -84,10 +84,12 @@ Embeddable <form> based component that allows subscribing to newsletter.
 			disabled={$state === 'submitting'}
 		/>
 		<Button submit label="Subscribe" disabled={$state === 'submitting'} />
-		<AlertList>
-			<AlertItem displayWhen={$state === 'failed'}>{errorMessage}</AlertItem>
-		</AlertList>
 	</form>
+	{#if $state === 'failed'}
+		<AlertList>
+			<AlertItem>{errorMessage}</AlertItem>
+		</AlertList>
+	{/if}
 {:else}
 	<p>
 		You have successfully joined our newsletter list and will begin receiving the lastest updates and insights from
