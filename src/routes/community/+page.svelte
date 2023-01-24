@@ -1,7 +1,6 @@
 <script lang="ts">
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 </script>
 
 <ContentCardsTemplate pageTitle="Community" pageDescription="Blog, Discord and discussion">

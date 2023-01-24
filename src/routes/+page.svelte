@@ -8,6 +8,7 @@
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
+	import Illustration from '$lib/components/Illustration.svelte';
 
 	export let data: PageData;
 
@@ -40,8 +41,9 @@
 	<Section class="strategies" layout="boxed" padding="lg">
 		<div class="inner">
 			<h2>Strategies</h2>
+			<Illustration name="bull-vs-bear" height="min(30vh, 20rem)" />
 			<div class="coming-soon">Coming soon</div>
-			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
+			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
 				<Button icon="newspaper" label="Subscribe to newsletter" href="#home-newsletter" />
 				<Button
@@ -79,17 +81,21 @@
 				gap: var(--space-3xl);
 				max-width: 60rem;
 				margin: auto;
-				padding: var(--space-5xl);
+				padding: var(--space-xl);
 				place-content: center;
 				place-items: center;
 				text-align: center;
 
-				@media (--viewport-md-up) {
-					margin-top: var(--space-ss);
-
-					& h2 {
+				& h2 {
+					font: var(--f-heading-lg-medium);
+					@media (--viewport-md-up) {
 						font: var(--f-heading-xl-medium);
 					}
+				}
+
+				@media (--viewport-md-up) {
+					margin-top: var(--space-ss);
+					padding: var(--space-5xl);
 				}
 			}
 
@@ -111,6 +117,19 @@
 		& :global .strategies .ctas {
 			display: flex;
 			gap: var(--space-lg);
+			width: 100%;
+
+			@media (--viewport-sm-down) {
+				flex-direction: column;
+
+				& .button {
+					width: 100%;
+				}
+			}
+		}
+
+		& :global .illustration {
+			display: none;
 		}
 
 		& .blog {

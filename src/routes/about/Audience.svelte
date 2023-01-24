@@ -21,10 +21,9 @@
 			</ul>
 
 			<div class="subscribe-cta" slot="footerCta">
-				<h5>Sign up to waitlist</h5>
-				<SubscribeForm />
-			</div>
-		</SummaryBox>
+				<Button href="/newsletter">Sign up to waitlist</Button>
+			</div></SummaryBox
+		>
 
 		<SummaryBox title="Strategy developers and quants">
 			<ul>

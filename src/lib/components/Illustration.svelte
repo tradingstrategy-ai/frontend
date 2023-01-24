@@ -12,11 +12,14 @@
 </script>
 
 <script lang="ts">
+	export let height: string | undefined = undefined;
 	export let name: string;
-	export let size: string | undefined = undefined;
+	export let width: string | undefined = undefined;
 </script>
 
-<div class="illustration" style:--size={size}>{@html rawSVG(name) || notFound}</div>
+<div class="illustration" style:--illustration-height={height} style:--illustration-width={width}>
+	{@html rawSVG(name) || notFound}
+</div>
 
 <style lang="postcss">
 	div {
@@ -25,8 +28,8 @@
 	}
 
 	div > :global svg {
-		height: var(--illustration-size);
-		width: var(--illustration-size);
+		height: var(--illustration-height);
+		width: var(--illustration-height);
 
 		& > * {
 			fill: currentColor;
