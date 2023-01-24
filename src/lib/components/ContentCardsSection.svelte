@@ -42,7 +42,7 @@ A section component to display a collection of ContentCards in a responsive grid
 
 		& h2 {
 			font: var(--f-heading-lg-medium) !important;
-			letter-spacing: var(--f-heading-md-spacing, normal) !important;
+			letter-spacing: var(--f-heading-lg-spacing, normal) !important;
 			margin: 0 0 var(--space-sm);
 			text-align: left;
 

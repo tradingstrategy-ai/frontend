@@ -89,7 +89,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		/* subtitle */
 		& p {
 			font: var(--f-ui-lg-roman);
-			letter-spacing: var(--f-ui-md-spacing, normal);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 
 			@media (--viewport-xs) {
 				font: var(--f-ui-sm-roman);
