@@ -70,7 +70,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		class="subscribe-form"
 		bind:this={form}
 		method="POST"
-		action="/newsletter/subscribe"
+		action="/newsletter?/subscribe"
 		use:enhance={enhancedSubmit}
 	>
 		<TextInput
