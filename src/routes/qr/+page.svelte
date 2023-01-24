@@ -9,19 +9,17 @@ on the conference rolls.
 	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
 
-<svelte:head>
-	<title>Follow Trading Strategy</title>
-	<meta name="description" content="Follow us on our socials and join the discussion." />
-</svelte:head>
-
-<ContentCardsTemplate>
+<ContentCardsTemplate
+	pageTitle="Follow Trading Strategy"
+	pageDescription="Follow us on our socials and join the discussion."
+>
 	<HeroBanner
 		title="Follow Trading Strategy"
 		image={BrandMark}
 		slot="hero"
 		subtitle="Follow us on our socials and join the discussion."
 	/>
-	<ContentCardsSection>
+	<ContentCardsSection cols={3} title="">
 		<ContentCard
 			iconName="discord"
 			title="Discord chat"
