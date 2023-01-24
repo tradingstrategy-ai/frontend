@@ -4,11 +4,10 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
-	import NewsletterOptInBanner from '$lib/components/NewsletterOptInBanner.svelte';
-	import Illustration from '$lib/components/Illustration.svelte';
 
 	export let data: PageData;
 

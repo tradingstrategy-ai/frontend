@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Section, NewsletterOptInBanner } from '$lib/components';
+	import { Section } from '$lib/components';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 </script>
 
 <div class="newsletter-page">
