@@ -26,7 +26,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 	$: tag = href ? 'a' : 'div';
 </script>
 
-<svelte:element this={tag} {href} class="content-card tile b">
+<svelte:element this={tag} {href} class="content-card tile b" on:click>
 	{#if iconName}
 		<div class="symbol tile c">
 			<Icon size={iconSize} name={iconName} />
