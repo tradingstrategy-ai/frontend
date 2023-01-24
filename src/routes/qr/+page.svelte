@@ -5,14 +5,23 @@ on the conference rolls.
 
 -->
 <script lang="ts">
-	import { Hero, ContentCard } from '$lib/components';
+	import { HeroBanner, ContentCard, ContentCardsSection, ContentCardsTemplate } from '$lib/components';
 	import BrandMark from '$lib/assets/brand-mark.svg?raw';
 </script>
 
-<main>
-	<Hero title="Follow Trading Strategy" image={BrandMark}>Follow us on our socials and join the discussion.</Hero>
+<svelte:head>
+	<title>Follow Trading Strategy</title>
+	<meta name="description" content="Follow us on our socials and join the discussion." />
+</svelte:head>
 
-	<section class="ds-container">
+<ContentCardsTemplate>
+	<HeroBanner
+		title="Follow Trading Strategy"
+		image={BrandMark}
+		slot="hero"
+		subtitle="Follow us on our socials and join the discussion."
+	/>
+	<ContentCardsSection>
 		<ContentCard
 			iconName="discord"
 			title="Discord chat"
@@ -54,12 +63,5 @@ on the conference rolls.
 			subtitle="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
 			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
 		/>
-	</section>
-</main>
-
-<style>
-	main {
-		display: grid;
-		gap: 4.5rem;
-	}
-</style>
+	</ContentCardsSection>
+</ContentCardsTemplate>
