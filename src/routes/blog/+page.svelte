@@ -4,6 +4,7 @@
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
 	import { BlogRoll, HeroBanner, Section } from '$lib/components';
+	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
 
@@ -44,20 +45,23 @@
 		<BlogRoll {posts} />
 	</Section>
 
-	<section class="loading">
-		<div>
-			{#if page.loading}
-				<Spinner />
-			{:else if page.error}
-				Error loading blog posts:
-				<pre class="font-weight-normal">{page.error}</pre>
-			{:else if page.next}
-				<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
-			{:else}
-				Congratulations – you've reached the end 🎉! Check back soon for new posts.
-			{/if}
-		</div>
-	</section>
+	<Section class="loading" layout="boxed">
+		{#if page.loading}
+			<Spinner />
+		{:else if page.error}
+			Error loading blog posts:
+			<pre class="font-weight-normal">{page.error}</pre>
+		{:else if page.next}
+			<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
+		{:else}
+			<OptInBanner>
+				<h3 slot="title">Congratulations – you've reached the end 🎉!</h3>
+				<p slot="description">
+					Want more? Subscribe to our newsletter and get fresh posts directly to your email inbox!
+				</p>
+			</OptInBanner>
+		{/if}
+	</Section>
 </main>
 
 <style lang="postcss">
@@ -76,6 +80,18 @@
 					display: none;
 				}
 			}
+		}
+	}
+
+	.blog-index-page :global .loading .grid {
+		place-items: center;
+	}
+
+	.blog-index-page :global .svelte-spinner {
+		height: 4rem;
+		width: 4rem;
+		& circle {
+			stroke: hsla(var(--hsl-text));
 		}
 	}
 
