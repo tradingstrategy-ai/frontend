@@ -24,6 +24,7 @@
 		border-radius: var(--radius-sm) !important;
 		display: flex;
 		justify-content: space-between;
+		outline: none;
 		position: relative;
 	}
 
