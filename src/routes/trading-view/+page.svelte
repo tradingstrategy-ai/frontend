@@ -47,8 +47,8 @@
 			iconName="pair"
 			title="Trading pairs"
 			subtitle="Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and current datasets here. <br /><br /> Currently indexing data from <strong>{formatAmount(
-				data.exchanges
-			)} DEXes</strong>"
+				data.pairs
+			)} trading pairs</strong>"
 		>
 			<Button slot="cta">Browse trading pairs</Button>
 		</ContentCard>
@@ -67,7 +67,9 @@
 			href="/trading-view/backtesting"
 			iconName="backtesting"
 			title="Backtesting"
-			subtitle="Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for calculating past slippage. Datasets are served in Parquet file format."
+			subtitle="Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for calculating past slippage. Datasets are served in Parquet file format.<br/><br/>Currently providing <strong>{formatSizeGigabytes(
+				data.database_size
+			)} GB worth of data</strong>"
 		>
 			<Button slot="cta">Download datasets</Button>
 		</ContentCard>
@@ -75,7 +77,7 @@
 			href="https://tradingstrategy.ai/api/explorer/"
 			iconName="24h"
 			title="Realtime API"
-			subtitle="Connect your trading algorithms for real-time market feeds for live trading.<br /> Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed."
+			subtitle="Connect your trading algorithms for real-time market feeds for live trading.<br /><br />Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed."
 		>
 			<Button slot="cta">Read API specification</Button>
 		</ContentCard>

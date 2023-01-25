@@ -6,22 +6,22 @@ test.describe('trading data overview', () => {
 	});
 
 	test('should include blockchain count in blockchain tile', async ({ page }) => {
-		const blockchains = page.getByText(/\d+ blockchains/);
+		const blockchains = page.getByText(/Currently indexing data from \d+ blockchains/);
 		await expect(blockchains).toBeVisible();
 	});
 
 	test('should include exchange count in exchanges tile', async ({ page }) => {
-		const exchanges = page.getByText(/[\d,]+ DEXes/);
+		const exchanges = page.getByText(/Currently indexing data from [\d,]+ DEXes/);
 		await expect(exchanges).toBeVisible();
 	});
 
 	test('should include pairs count in trading pairs tile', async ({ page }) => {
-		const pairs = page.getByText(/[\d,]+ trading pairs/);
+		const pairs = page.getByText(/Currently indexing data from [\d,]+ trading pairs/);
 		await expect(pairs).toBeVisible();
 	});
 
 	test('should include database size in backtesting tile', async ({ page }) => {
-		const database = page.getByText(/[\d.,] GB worth of data/);
+		const database = page.getByText(/Currently providing [\d.,]+ GB worth of data/);
 		await expect(database).toBeVisible();
 	});
 });
