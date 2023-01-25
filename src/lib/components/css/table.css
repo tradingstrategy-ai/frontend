@@ -7,23 +7,21 @@ table:not(.table) {
 	--cell-padding: var(--space-sl) var(--space-ls);
 	--table-transition: all var(--time-xs) ease-out;
 	--table-font: var(--f-ui-md-medium);
-	--table-letter-sspacing: var(--f-ui-md-spacing, normal);
+	--table-letter-spacing: var(--f-ui-md-spacing, normal);
 	border-collapse: separate;
 	border-spacing: 0 var(--border-spacing);
 	margin-top: calc(-1 * var(--border-spacing));
 	width: 100%;
 
-	@media (width <= 1024) {
-		--table-font: var(--f-ui-md-medium) !important;
-	}
-
 	@media (width <= 920px) {
 		--cell-padding: 0 var(--space-xs);
 		--table-font: var(--f-ui-sm-medium) !important;
+		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
 	@media (width <= 480px) {
 		--table-font: var(--f-ui-xs-medium) !important;
+		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
 
 	& thead tr:first-child {
@@ -35,7 +33,7 @@ table:not(.table) {
 		background-color: hsla(var(--hsl-body));
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
-		letter-spacing: var(--f-ui-md-medium, normal);
+		letter-spacing: var(--table-letter-spacing, normal);
 		padding: var(--cell-padding);
 		transition: var(--table-transition);
 		white-space: nowrap;
@@ -46,7 +44,7 @@ table:not(.table) {
 			background: hsla(var(--hsl-box), var(--a-box-b));
 			height: 4rem;
 			font: var(--table-font);
-			letter-spacing: var(--table-letter-spacing);
+			letter-spacing: var(--table-letter-spacing, normal);
 			padding: var(--cell-padding);
 			transition: var(--table-transition);
 			vertical-align: middle;
