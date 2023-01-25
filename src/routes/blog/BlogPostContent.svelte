@@ -71,7 +71,6 @@
 		& a,
 		& a:hover {
 			text-decoration: underline;
-			font-weight: 600;
 			color: inherit;
 		}
 
