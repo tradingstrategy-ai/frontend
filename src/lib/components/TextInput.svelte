@@ -73,26 +73,47 @@ unknown props through to HTML input element.
 		&.size-sm {
 			--border-radius: var(--radius-xs);
 			--height: 2rem;
-			--font: var(--f-ui-sm-roman);
+			--font: var(--f-mono-sm-regular);
+			--letter-spacing: var(--f-mono-sm-spacing);
+			font-weight: 600;
+
 			--letter-spacing: var(--f-ui-sm-spacing, normal);
+
+			& input::placeholder {
+				font: var(--f-ui-sm-roman);
+			}
 		}
 		&.size-md {
 			--border-radius: var(--radius-xs);
 			--height: 2.25rem;
-			--font: var(--f-ui-md-roman);
-			--letter-spacing: var(--f-ui-md-spacing, normal);
+			--font: var(--f-mono-md-regular);
+			--letter-spacing: var(--f-mono-md-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-md-roman);
+			}
 		}
 		&.size-lg {
 			--border-radius: var(--radius-sm);
 			--height: 2.625rem;
-			--font: var(--f-ui-lg-roman);
-			--letter-spacing: var(--f-ui-lg-spacing, normal);
+			--font: var(--f-mono-lg-regular);
+			--letter-spacing: var(--f-mono-lg-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-lg-roman);
+			}
 		}
 		&.size-xl {
 			--border-radius: var(--radius-md);
 			--height: 3rem;
-			--font: var(--f-ui-xl-roman);
+			--font: var(--f-mono-xl-roman);
 			--letter-spacing: var(--f-ui-xl-spacing, normal);
+
+			& input::placeholder {
+				font: var(--f-ui-xl-roman);
+			}
 		}
 
 		& input {
