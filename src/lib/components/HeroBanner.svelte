@@ -13,12 +13,16 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 	export let image: string;
 	export let title: string;
 	export let subtitle = '';
+	export let hr = false;
 </script>
 
 <div class="hero-banner">
 	<div class="content">
 		<h1>{@html title}</h1>
 		<p>{@html subtitle}</p>
+		{#if hr}
+			<hr />
+		{/if}
 		<slot />
 	</div>
 
@@ -82,5 +86,11 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 				fill: currentColor;
 			}
 		}
+	}
+
+	hr {
+		width: 100%;
+		border: 0.125rem solid currentColor;
+		color: currentColor;
 	}
 </style>
