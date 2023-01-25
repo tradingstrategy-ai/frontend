@@ -30,3 +30,9 @@ of pair records is based on the records returned by `top-momentum` API.
 		{/each}
 	</tbody>
 </table>
+
+<style lang="postcss">
+	td:last-child {
+		text-align: right;
+	}
+</style>
