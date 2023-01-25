@@ -6,7 +6,7 @@ body {
 	--hsl-bearish: var(--hue-bearish), 92%, 57%;
 	--hsl-bullish: var(--hue-bullish), 68%, 42%;
 	--hsl-black: 0, 0%, 0%;
-	--hsl-white: var(--hue-1), 100%, 99%;
+	--hsl-white: var(--hue-1), 100%, 100%;
 	--hsl-white-dark: var(--hue-1), 100%, 97%;
 	--c-text-1: hsla(var(--hsl-text)); /*  temp fix until there still is some legacy code from bootstrap theme */
 	color: hsla(var(--hsl-text));

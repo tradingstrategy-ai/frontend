@@ -98,7 +98,7 @@ unknown props through to HTML input element.
 		& input {
 			width: inherit;
 			padding: 0 var(--space-sl);
-			border: 1px transparent solid;
+			border: 1px hsla(var(--hsl-text-ultra-light)) solid;
 			border-radius: var(--border-radius);
 			background: hsla(var(--input-background));
 			color: var(--c-text-1-v1);
