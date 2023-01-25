@@ -112,5 +112,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		& :global .alert-list {
 			grid-column: 1/-1;
 		}
+
+		& :global input {
+			font: var(--f-mono-lg-regular);
+			letter-spacing: var(--f-mono-lg-spacing);
+		}
 	}
 </style>

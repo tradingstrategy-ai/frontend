@@ -43,11 +43,6 @@
 		}
 	}
 
-	.newsletter-opt-in-banner :global input {
-		font: var(--f-mono-lg-regular);
-		letter-spacing: var(--f-mono-lg-spacing);
-	}
-
 	.newsletter-opt-in-banner :global .subscribe-form {
 		grid-template-columns: repeat(auto-fit, minmax(17rem, auto));
 	}
