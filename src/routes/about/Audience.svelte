@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button, Section, SummaryBox } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 </script>
 
 <div class="audience-wrapper">
@@ -21,8 +20,10 @@
 				<li>Direct trade execution on-chain without a counter-party risk</li>
 			</ul>
 
-			<Button slot="footerCta" label="Sign up to waitlist" on:click={toggleSubscribeDialog} />
-		</SummaryBox>
+			<div class="subscribe-cta" slot="footerCta">
+				<Button href="/newsletter">Sign up to waitlist</Button>
+			</div></SummaryBox
+		>
 
 		<SummaryBox title="Strategy developers and quants">
 			<ul>
@@ -70,5 +71,10 @@
 				font: var(--f-ui-xl-roman);
 			}
 		}
+	}
+
+	.subscribe-cta {
+		display: grid;
+		gap: var(--space-sm);
 	}
 </style>

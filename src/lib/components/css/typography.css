@@ -72,9 +72,9 @@
 	--f-ui-lg-bold: 700 18px/24px var(--ff-ui);
 
 	--f-ui-xl-spacing: -0.01em;
-	--f-ui-xl-roman: 400 20px/32px var(--ff-ui);
-	--f-ui-xl-medium: 500 20px/32px var(--ff-ui);
-	--f-ui-xl-bold: 700 20px/32px var(--ff-ui);
+	--f-ui-xl-roman: 400 20px/30px var(--ff-ui);
+	--f-ui-xl-medium: 500 20px/30px var(--ff-ui);
+	--f-ui-xl-bold: 700 20px/30px var(--ff-ui);
 
 	--f-ui-xxl-spacing: -0.01em;
 	--f-ui-xxl-roman: 400 26px/36px var(--ff-ui);

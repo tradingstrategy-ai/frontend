@@ -1,7 +1,6 @@
 <script lang="ts">
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
 </script>
 
 <ContentCardsTemplate pageTitle="Community" pageDescription="Blog, Discord and discussion">
@@ -68,8 +67,8 @@
 			<ContentCard
 				icon="newspaper"
 				title="Newsletter"
+				href="/newsletter"
 				description="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
-				on:click={toggleSubscribeDialog}
 			/>
 		</div>
 	</ContentCardsSection>

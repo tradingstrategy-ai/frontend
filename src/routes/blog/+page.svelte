@@ -25,15 +25,15 @@
 </script>
 
 <svelte:head>
-	<title>Blog</title>
-	<meta name="description" content="Latest on algorithmic trading" />
+	<title>Trading Strategy Blog</title>
+	<meta name="description" content="Insights and research on DeFi and algorithmic trading." />
 </svelte:head>
 
 <main class="blog-index-page">
 	<Section class="hero" header layout="boxed">
 		<HeroBanner
 			title="Trading Strategy Blog"
-			subtitle="Follow our decentralised algorithmic trading protocol development"
+			subtitle="Follow us for insights and research posts in trading. We cover trading and investing in decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies, blockchains and web3."
 			image={heroImage}
 		>
 			<SocialLinks layout="index" />

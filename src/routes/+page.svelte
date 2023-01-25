@@ -4,14 +4,20 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
-	import { toggleSubscribeDialog } from '$lib/newsletter/controller';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let data: PageData;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
+
+	function scrollToNewsletterOptIn() {
+		const el = document.querySelector('#home-newsletter input[type=email]');
+		el?.scrollIntoView({ behavior: 'smooth' });
+		el?.focus({ preventScroll: true });
+	}
 </script>
 
 <svelte:head>
@@ -37,11 +43,22 @@
 		</SummaryBox>
 	</Section>
 
-	<Section title="Strategies" class="strategies" layout="boxed" padding="md">
+	<Section class="strategies" layout="boxed" padding="lg">
 		<div class="inner">
+			<h2>Strategies</h2>
+			<Illustration name="bull-vs-bear" height="min(30vh, 20rem)" />
 			<div class="coming-soon">Coming soon</div>
-			<p>Sign up to the Trading Strategy newsletter and be the first to know when strategies are live.</p>
-			<Button label="Sign up now" on:click={toggleSubscribeDialog} />
+			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
+			<div class="ctas">
+				<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
+				<Button
+					icon="twitter"
+					label="Follow us on Twitter"
+					href="https://twitter.com/TradingProtocol"
+					target="_blank"
+				/>
+				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
+			</div>
 		</div>
 	</Section>
 
@@ -51,6 +68,10 @@
 			<Button label="Read more on Blog" href="/blog" slot="footer" />
 		</Section>
 	{/if}
+
+	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
 </main>
 
 <style lang="postcss">
@@ -59,14 +80,27 @@
 			background-color: hsla(var(--hsla-background-accent-1));
 
 			& .inner {
+				background: hsla(var(--hsl-box), var(--a-box-b));
+				border-radius: var(--radius-xl);
 				display: grid;
-				gap: var(--space-5xl);
+				gap: var(--space-3xl);
+				max-width: 60rem;
+				margin: auto;
+				padding: var(--space-xl);
 				place-content: center;
 				place-items: center;
 				text-align: center;
 
+				& h2 {
+					font: var(--f-heading-lg-medium);
+					@media (--viewport-md-up) {
+						font: var(--f-heading-xl-medium);
+					}
+				}
+
 				@media (--viewport-md-up) {
 					margin-top: var(--space-ss);
+					padding: var(--space-5xl);
 				}
 			}
 
@@ -81,8 +115,26 @@
 			}
 
 			& p {
-				font: var(--f-h5-roman);
+				font: var(--f-ui-xl-roman);
 			}
+		}
+
+		& :global .strategies .ctas {
+			display: flex;
+			gap: var(--space-lg);
+			width: 100%;
+
+			@media (--viewport-sm-down) {
+				flex-direction: column;
+
+				& .button {
+					width: 100%;
+				}
+			}
+		}
+
+		& :global .illustration {
+			display: none;
 		}
 
 		& .blog {
