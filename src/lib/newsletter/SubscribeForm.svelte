@@ -115,6 +115,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		& :global input {
 			font: var(--f-mono-lg-regular);
+			font-weight: 600;
 			letter-spacing: var(--f-mono-lg-spacing);
 		}
 	}
