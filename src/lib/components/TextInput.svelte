@@ -100,8 +100,7 @@ unknown props through to HTML input element.
 			padding: 0 var(--space-sl);
 			border: 1px transparent solid;
 			border-radius: var(--border-radius);
-			background: hsla(var(--hsl-box), var(--a-box-b));
-			font: inherit;
+			background: hsla(var(--input-background));
 			color: var(--c-text-1-v1);
 			transition: background var(--time-sm) ease-out;
 
@@ -115,7 +114,7 @@ unknown props through to HTML input element.
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--hsl-box), var(--a-box-c));
+				background: hsla(var(--input-background-active));
 			}
 
 			&:focus {

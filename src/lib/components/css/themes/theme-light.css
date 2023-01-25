@@ -15,6 +15,9 @@ body[data-color-mode='light'] {
 	--a-box-e: 0.6;
 
 	--hsla-background-accent-1: var(--hsl-box), var(--a-box-a);
+
+	--input-background: var(--hsl-white-dark);
+	--input-background-active: var(--hsl-white);
 }
 
 @media (prefers-color-scheme: light) {
@@ -35,5 +38,8 @@ body[data-color-mode='light'] {
 		--a-box-e: 0.6;
 
 		--hsla-background-accent-1: var(--hsl-box), var(--a-box-b);
+
+		--input-background: var(--hsl-white-dark);
+		--input-background-active: var(--hsl-white);
 	}
 }
