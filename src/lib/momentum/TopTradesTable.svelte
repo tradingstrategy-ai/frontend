@@ -32,19 +32,7 @@ of pair records is based on the records returned by `top-momentum` API.
 </table>
 
 <style lang="postcss">
-	td {
-		@media (--viewport-sm-down) {
-			--cell-padding: var(--space-md);
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
-		@media (--viewport-xs) {
-			font: var(--f-ui-sm-medium) !important;
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
-
-		&:last-child {
-			text-align: right;
-		}
+	td:last-child {
+		text-align: right;
 	}
 </style>

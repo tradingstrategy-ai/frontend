@@ -61,11 +61,15 @@ based on viewport size).
 		padding: var(--space-lg) var(--space-lg);
 
 		@media (--viewport-md-down) {
-			padding: var(--space-ls) var(--space-md);
+			padding: var(--space-md);
 		}
 
 		& .main {
 			gap: var(--space-ls);
+
+			@media (--viewport-md-down) {
+				gap: var(--space-sm);
+			}
 		}
 
 		&,
@@ -141,6 +145,9 @@ based on viewport size).
 
 		& footer {
 			margin-top: var(--space-md);
+			@media (--viewport-md-down) {
+				margin-top: var(--space-sm);
+			}
 
 			& .cta :global .button {
 				width: 100%;
