@@ -1,49 +1,51 @@
 <!--
 @component
-Display a card with icon, title and additional elements. The entire card is an anchor if `href`
-prop is included. Typically used inside ContentCardsSection to show a responsive collection.
+Display a card with icon, title, description and an optional CTA button. The entire card acts as an
+anchor if `href` is provided. Use default `slot` instead of `description` when addional markup or
+logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button options are required.
 
 ### Usage:
 ```tsx
 	<ContentCard
-		iconName="newspaper"
 		title="Content card 1"
-		subtitle="More information about the content card"
+		icon="newspaper"
+		ctaLabel="Click here"
 		href="/destination/page"
-	/>
+		description="More information about the content card"
+	>
+		<p>Optional slot content overrides description prop</p>
+	</ContentCard>
 ```
 -->
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import { Button, Icon } from '$lib/components';
+
+	export let title: string;
+	export let icon: string;
 	export let href = '';
-	export let iconName = '';
-	export let iconSize = '1.75rem';
-	export let title = '';
-	export let subtitle = '';
-	export let summaryLabel = '';
-	export let summaryValue = '';
+	export let ctaLabel = '';
+	export let description = '';
 
 	$: tag = href ? 'a' : 'div';
 </script>
 
 <svelte:element this={tag} {href} class="content-card tile b" on:click>
-	{#if iconName}
-		<div class="symbol tile c">
-			<Icon size={iconSize} name={iconName} />
+	<div class="icon symbol tile c">
+		<Icon name={icon} />
+	</div>
+
+	<h3>{title}</h3>
+
+	<div class="description">
+		<slot>{description}</slot>
+	</div>
+
+	{#if $$slots.cta || ctaLabel}
+		<div class="cta">
+			<slot name="cta">
+				<Button label={ctaLabel} />
+			</slot>
 		</div>
-	{/if}
-	{#if title}
-		<h3>{@html title}</h3>
-	{/if}
-	{#if subtitle}
-		<p>{@html subtitle}</p>
-	{/if}
-	<dl>
-		<dt>{summaryLabel}</dt>
-		<dd>{summaryValue}</dd>
-	</dl>
-	{#if $$slots.cta}
-		<div class="cta"><slot name="cta" /></div>
 	{/if}
 </svelte:element>
 
@@ -66,6 +68,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 		}
 
 		& .symbol {
+			--icon-size: var(--content-tile-icon-size, 1.75rem);
 			border-radius: 100%;
 			display: flex;
 			padding: var(--space-ls);
@@ -77,7 +80,6 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 			}
 		}
 
-		/* title */
 		& h3 {
 			font: var(--f-heading-lg-medium);
 
@@ -86,8 +88,7 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 			}
 		}
 
-		/* subtitle */
-		& p {
+		& .description {
 			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 
@@ -95,33 +96,15 @@ prop is included. Typically used inside ContentCardsSection to show a responsive
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
-		}
 
-		/* summary label/value */
-		& dl {
-			display: grid;
-			gap: var(--space-xs);
+			& :global(p) {
+				margin-bottom: 1.25em;
+				font: inherit;
+				letter-spacing: inherit;
 
-			@media (--viewport-sm-up) {
-				gap: var(--space-xs);
-			}
-		}
-
-		/* summaryLabel */
-		& dt {
-			color: hsl(var(--hsl-text-extra-light));
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
-
-		/* summaryValue */
-		& dd {
-			font: var(--f-ui-xl-medium);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
-
-			@media (--viewport-sm-up) {
-				font: var(--f-ui-xxl-medium);
-				letter-spacing: var(--f-ui-xxl-spacing, normal);
+				&:last-child {
+					margin-bottom: 0;
+				}
 			}
 		}
 

@@ -14,61 +14,61 @@
 
 	<ContentCardsSection cols={3} title="Discuss & develop">
 		<ContentCard
-			href="https://discord.gg/en8tW6MDtw"
-			iconName="discord"
+			icon="discord"
 			title="Discord chat"
-			subtitle="Join our expert community of traders, developers, and analysts and DeFi specialists."
+			href="https://discord.gg/en8tW6MDtw"
+			description="Join our expert community of traders, developers, and analysts and DeFi specialists."
 		/>
 		<ContentCard
-			href="https://github.com/tradingstrategy-ai/"
-			iconName="github"
+			icon="github"
 			title="GitHub"
-			subtitle="Explore Trading Strategy open-source code on our GitHub repository."
+			href="https://github.com/tradingstrategy-ai/"
+			description="Explore Trading Strategy open-source code on our GitHub repository."
 		/>
 		<ContentCard
-			href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-			iconName="read-glasses"
+			icon="read-glasses"
 			title="Algorithm tutorials"
-			subtitle="Learn how to write trading algorithms with our documentation and run backtests."
+			href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+			description="Learn how to write trading algorithms with our documentation and run backtests."
 		/>
 	</ContentCardsSection>
 
 	<ContentCardsSection cols={3} title="Follow us">
 		<ContentCard
-			href="/blog"
-			iconName="reading"
+			icon="reading"
 			title="Blog"
-			subtitle="Join our expert community of traders, developers, and analysts and DeFi specialists."
+			href="/blog"
+			description="Join our expert community of traders, developers, and analysts and DeFi specialists."
 		/>
 		<ContentCard
-			href="https://twitter.com/TradingProtocol"
-			iconName="twitter"
+			icon="twitter"
 			title="Twitter"
-			subtitle="Follow us on Twitter for trading alerts, DeFi insight and protocol news."
+			href="https://twitter.com/TradingProtocol"
+			description="Follow us on Twitter for trading alerts, DeFi insight and protocol news."
 		/>
 		<ContentCard
-			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-			iconName="youtube"
+			icon="youtube"
 			title="YouTube"
-			subtitle="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
+			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+			description="Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading."
 		/>
 		<ContentCard
-			href="https://www.linkedin.com/company/trading-strategy/"
-			iconName="linkedin"
+			icon="linkedin"
 			title="LinkedIn"
-			subtitle="Follow us on LinkedIn and join our community of traders, developers and quant experts."
+			href="https://www.linkedin.com/company/trading-strategy/"
+			description="Follow us on LinkedIn and join our community of traders, developers and quant experts."
 		/>
 		<ContentCard
-			href="https://t.me/trading_protocol"
-			iconName="telegram"
+			icon="telegram"
 			title="Telegram"
-			subtitle="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
+			href="https://t.me/trading_protocol"
+			description="Subscribe to our Telegram channel for trading alerts, DeFi insight and protocol news."
 		/>
 		<div style:display="contents" style:cursor="pointer">
 			<ContentCard
-				iconName="newspaper"
+				icon="newspaper"
 				title="Newsletter"
-				subtitle="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
+				description="Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights."
 				on:click={toggleSubscribeDialog}
 			/>
 		</div>
