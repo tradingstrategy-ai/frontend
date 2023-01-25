@@ -24,72 +24,79 @@
 	/>
 
 	<ContentCardsSection title="Explore data">
-		<ContentCard
-			href="/trading-view/blockchains"
-			iconName="blockchain"
-			title="Blockchains"
-			subtitle="Trading Strategy provides powerful market data sets for on-chain trading on several blockchains."
-			summaryLabel="Indexing data from"
-			summaryValue="{data.blockchains ?? '---'} blockchains"
-		/>
-		<ContentCard
-			href="/trading-view/exchanges"
-			iconName="exchange"
-			title="DEXes"
-			subtitle="Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain trades, across multiple DEXs."
-			summaryLabel="Indexing data from"
-			summaryValue="{formatAmount(data.exchanges)} DEXes"
-		/>
-		<ContentCard
-			href="/trading-view/trading-pairs"
-			iconName="pair"
-			title="Trading pairs"
-			subtitle="Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and current datasets here."
-			summaryLabel="Indexing data from"
-			summaryValue="{formatAmount(data.pairs)} trading pairs"
-		/>
-		<ContentCard
-			href="/search"
-			iconName="search"
-			title="Advanced search"
-			subtitle="Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price change."
-			summaryLabel="Browse data and customise results"
-			summaryValue="32 filters"
-		/>
+		<ContentCard icon="blockchain" title="Blockchains" ctaLabel="Explore blockchains" href="/trading-view/blockchains">
+			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
+			{#if data}
+				<p>Currently indexing data from <strong>4 blockchains</strong></p>
+			{/if}
+		</ContentCard>
+
+		<ContentCard icon="exchange" title="DEXes" ctaLabel="Browse DEXes" href="/trading-view/exchanges">
+			<p>
+				Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain
+				trades, across multiple DEXs.
+			</p>
+			{#if data}
+				<p>Currently indexing data from <strong>{formatAmount(data.exchanges)} DEXes</strong></p>
+			{/if}
+		</ContentCard>
+
+		<ContentCard icon="pair" title="Trading pairs" ctaLabel="Browse trading pairs" href="/trading-view/trading-pairs">
+			<p>
+				Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and
+				current datasets here.
+			</p>
+			{#if data}
+				<p>Currently indexing data from <strong>{formatAmount(data.pairs)} trading pairs</strong></p>
+			{/if}
+		</ContentCard>
+
+		<ContentCard icon="search" title="Advanced search" ctaLabel="Search tokens" href="/search">
+			<p>
+				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
+				change.
+			</p>
+			{#if data}
+				<p>Explore tokens using advanced token search.</p>
+			{/if}
+		</ContentCard>
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">
+		<ContentCard icon="backtesting" title="Backtesting" ctaLabel="Download datasets" href="/trading-view/backtesting">
+			<p>
+				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for
+				calculating past slippage. Datasets are served in Parquet file format.
+			</p>
+			{#if data}
+				<p>Currently providing <strong>{formatSizeGigabytes(data.database_size)} GB worth of data</strong></p>
+			{/if}
+		</ContentCard>
+
 		<ContentCard
-			href="/trading-view/backtesting"
-			iconName="backtesting"
-			title="Backtesting"
-			subtitle="Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for calculating past slippage. Datasets are served in Parquet file format."
-			summaryLabel="You can download"
-			summaryValue="{formatSizeGigabytes(data.database_size)} GB worth of data"
-		/>
-		<ContentCard
-			href="https://tradingstrategy.ai/api/explorer/"
-			iconName="24h"
+			icon="24h"
 			title="Realtime API"
-			subtitle="Connect your trading algorithms for real-time market feeds for live trading.<br /> Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed."
-			summaryLabel="Available format"
-			summaryValue="OpenAPI v3"
-		/>
+			ctaLabel="Read API specification"
+			href="https://tradingstrategy.ai/api/explorer/"
+		>
+			<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
+			<p>Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed.</p>
+		</ContentCard>
+
 		<ContentCard
-			href="https://tradingstrategy.ai/docs"
-			iconName="book"
+			icon="book"
 			title="Documentation"
-			subtitle="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
-			summaryLabel="Technical documentation"
-			summaryValue="For strategy developers"
+			ctaLabel="Read documentation"
+			href="https://tradingstrategy.ai/docs"
+			description="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
 		/>
+
 		<ContentCard
-			href="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
-			iconName="python"
+			icon="python"
 			title="Notebooks"
-			subtitle="Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies. View example notebooks to see how to use DeFi data in your notebooks."
-			summaryLabel="Available examples for"
-			summaryValue="Jupyter Notebook, Pandas"
+			ctaLabel="Go to notebooks"
+			href="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
+			description="Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies. View example notebooks to see how to use DeFi data in your notebooks."
 		/>
 	</ContentCardsSection>
 </ContentCardsTemplate>

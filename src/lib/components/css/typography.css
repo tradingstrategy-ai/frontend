@@ -21,25 +21,25 @@
 	--f-heading-md-medium: 600 26px/36px var(--ff-display);
 	--f-heading-md-bold: 700 26px/36px var(--ff-display);
 
-	--f-heading-lg-light: 400 32px/40px var(--ff-display);
-	--f-heading-lg-roman: 500 32px/40px var(--ff-display);
-	--f-heading-lg-medium: 600 32px/40px var(--ff-display);
-	--f-heading-lg-bold: 700 32px/40px var(--ff-display);
+	--f-heading-lg-light: 400 30px/40px var(--ff-display);
+	--f-heading-lg-roman: 500 30px/40px var(--ff-display);
+	--f-heading-lg-medium: 600 30px/40px var(--ff-display);
+	--f-heading-lg-bold: 700 30px/40px var(--ff-display);
 
 	--f-heading-xl-light: 400 38px/44px var(--ff-display);
 	--f-heading-xl-roman: 500 38px/44px var(--ff-display);
 	--f-heading-xl-medium: 600 38px/44px var(--ff-display);
 	--f-heading-xl-bold: 700 38px/44px var(--ff-display);
 
-	--f-heading-xxl-light: 400 48px/56px var(--ff-display);
-	--f-heading-xxl-roman: 500 48px/56px var(--ff-display);
-	--f-heading-xxl-medium: 600 48px/56px var(--ff-display);
-	--f-heading-xxl-bold: 700 48px/56px var(--ff-display);
+	--f-heading-xxl-light: 400 44px/56px var(--ff-display);
+	--f-heading-xxl-roman: 500 44px/56px var(--ff-display);
+	--f-heading-xxl-medium: 600 44px/56px var(--ff-display);
+	--f-heading-xxl-bold: 700 44px/56px var(--ff-display);
 
-	--f-heading-xxxl-light: 400 56px/64px var(--ff-display);
-	--f-heading-xxxl-roman: 500 56px/64px var(--ff-display);
-	--f-heading-xxxl-medium: 600 56px/64px var(--ff-display);
-	--f-heading-xxxl-bold: 700 56px/64px var(--ff-display);
+	--f-heading-xxxl-light: 400 50px/64px var(--ff-display);
+	--f-heading-xxxl-roman: 500 50px/64px var(--ff-display);
+	--f-heading-xxxl-medium: 600 50px/64px var(--ff-display);
+	--f-heading-xxxl-bold: 700 50px/64px var(--ff-display);
 
 	--f-heading-xxxxl-spacing: -0.01em;
 	--f-heading-xxxxl-light: 400 72px/100px var(--ff-display);

@@ -36,14 +36,20 @@ A section component to display a collection of ContentCards in a responsive grid
 			--grid-gap: var(--space-ll) !important;
 
 			@media (--viewport-xs) {
-				--grid-gap: var(--space-lg) !important;
+				--grid-gap: var(--space-ls) !important;
 			}
 		}
 
 		& h2 {
-			font: var(--f-heading-md-medium) !important;
-			letter-spacing: var(--f-heading-md-spacing, normal) !important;
+			font: var(--f-heading-lg-medium) !important;
+			letter-spacing: var(--f-heading-lg-spacing, normal) !important;
+			margin: 0 0 var(--space-sm);
 			text-align: left;
+
+			@media (--viewport-xs) {
+				font: var(--f-heading-md-medium) !important;
+				margin: 0 0 var(--space-xxs);
+			}
 		}
 	}
 </style>
