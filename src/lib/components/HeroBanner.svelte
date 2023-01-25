@@ -89,7 +89,8 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 	}
 
 	hr {
-		border: 0.125rem solid hsla(var(--hsl-text));
 		width: 100%;
+		border: 0.125rem solid currentColor;
+		color: currentColor;
 	}
 </style>
