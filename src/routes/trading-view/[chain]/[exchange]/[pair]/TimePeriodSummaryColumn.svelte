@@ -69,26 +69,27 @@ Display summary performance data for a given period; lazy-loads data when scroll
 			{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_open)}
+			<!-- coercing 0 values to null in order to render "---" fallback -->
+			{formatDollar(tradeData.price_open || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_high)}
+			{formatDollar(tradeData.price_high || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_low)}
+			{formatDollar(tradeData.price_low || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_close)}
+			{formatDollar(tradeData.price_close || null)}
 		</li>
 		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.volume)}
+			{formatDollar(tradeData.volume || null)}
 		</li>
 		{#if !hideLiquidityAndTrades}
 			<li class:skeleton style:--skeleton-width="7ch">
-				{formatDollar(tradeData.liquidity_high)}
+				{formatDollar(tradeData.liquidity_high || null)}
 			</li>
 			<li class:skeleton style:--skeleton-width="7ch">
-				{formatDollar(tradeData.liquidity_low)}
+				{formatDollar(tradeData.liquidity_low || null)}
 			</li>
 			<li class:skeleton>
 				{formatAmount(tradeData.buys)}
