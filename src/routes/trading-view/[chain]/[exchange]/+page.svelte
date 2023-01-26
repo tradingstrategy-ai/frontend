@@ -10,6 +10,17 @@
 	export let data: PageData;
 
 	$: nameDetails = parseExchangeName(data.human_readable_name);
+
+	function pairTableColumns(exchangeType: string) {
+		const cols = ['pair_name', 'pair_swap_fee', 'usd_price_latest', 'price_change_24h', 'usd_volume_30d'];
+		// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
+		// but this is not currently available from `exchange-details` endpoint.
+		// See: https://github.com/tradingstrategy-ai/backend/issues/110
+		if (exchangeType !== 'uniswap_v3') {
+			cols.push('usd_liquidity_latest', 'liquidity_change_24h');
+		}
+		return cols;
+	}
 </script>
 
 <svelte:head>
@@ -58,15 +69,8 @@
 		<PairExplorer
 			chainSlug={data.chain_slug}
 			exchangeSlug={data.exchange_slug}
-			enabledColumns={[
-				'pair_name',
-				'usd_price_latest',
-				'price_change_24h',
-				'usd_volume_30d',
-				'usd_liquidity_latest',
-				'liquidity_change_24h'
-			]}
-			orderColumnIndex={3}
+			enabledColumns={pairTableColumns(data.exchange_type)}
+			orderColumnIndex={4}
 		/>
 	</section>
 

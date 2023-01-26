@@ -70,8 +70,15 @@
 		</header>
 		<PairExplorer
 			chainSlug={data.chain_slug}
-			enabledColumns={['pair_name', 'exchange_name', 'usd_price_latest', 'usd_volume_30d', 'usd_liquidity_latest']}
-			orderColumnIndex={3}
+			enabledColumns={[
+				'pair_name',
+				'exchange_name',
+				'pair_swap_fee',
+				'usd_price_latest',
+				'usd_volume_30d',
+				'usd_liquidity_latest'
+			]}
+			orderColumnIndex={4}
 		/>
 	</section>
 </main>

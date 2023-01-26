@@ -37,13 +37,14 @@
 			enabledColumns={[
 				'pair_name',
 				'exchange_name',
+				'pair_swap_fee',
 				'usd_price_latest',
 				'price_change_24h',
 				'usd_volume_30d',
 				'usd_liquidity_latest',
 				'liquidity_change_24h'
 			]}
-			orderColumnIndex={4}
+			orderColumnIndex={5}
 			pageLength={10}
 			tokenSymbol={data.symbol}
 			tokenAddress={data.address}
