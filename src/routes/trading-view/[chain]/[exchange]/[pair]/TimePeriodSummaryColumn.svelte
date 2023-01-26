@@ -6,6 +6,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 ```tsx
 	<TimePeriodSummaryColumn
 		pairId={1234}
+		hideLiquidityAndTrades={true|false}
 		period="hourly|daily|weekly|monthly"
 		active={true|false}
 	/>
@@ -18,6 +19,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
 	export let pairId: number | string;
+	export let hideLiquidityAndTrades = false;
 	export let period: string;
 	export let active = false;
 
@@ -81,18 +83,20 @@ Display summary performance data for a given period; lazy-loads data when scroll
 		<li class:skeleton style:--skeleton-width="7ch">
 			{formatDollar(tradeData.volume)}
 		</li>
-		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.liquidity_high)}
-		</li>
-		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.liquidity_low)}
-		</li>
-		<li class:skeleton>
-			{formatAmount(tradeData.buys)}
-		</li>
-		<li class:skeleton>
-			{formatAmount(tradeData.sells)}
-		</li>
+		{#if !hideLiquidityAndTrades}
+			<li class:skeleton style:--skeleton-width="7ch">
+				{formatDollar(tradeData.liquidity_high)}
+			</li>
+			<li class:skeleton style:--skeleton-width="7ch">
+				{formatDollar(tradeData.liquidity_low)}
+			</li>
+			<li class:skeleton>
+				{formatAmount(tradeData.buys)}
+			</li>
+			<li class:skeleton>
+				{formatAmount(tradeData.sells)}
+			</li>
+		{/if}
 	</ul>
 </div>
 

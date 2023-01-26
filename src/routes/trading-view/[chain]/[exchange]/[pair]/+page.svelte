@@ -113,12 +113,12 @@ Render the pair trading page
 		<header>
 			<h2>Time period summary</h2>
 			<p>
-				The price and liquidity of {summary.base_token_symbol_friendly} in this trading pair. The amounts are converted to
-				US dollar through {summary.quote_token_symbol_friendly}/USD.
+				The price {isUniswapV3 ? 'and volume' : 'and liquidity'} of {summary.base_token_symbol_friendly} in this trading
+				pair. The amounts are converted to US dollar through {summary.quote_token_symbol_friendly}/USD.
 			</p>
 		</header>
 
-		<TimePeriodSummaryTable pairId={summary.pair_id} />
+		<TimePeriodSummaryTable pairId={summary.pair_id} hideLiquidityAndTrades={isUniswapV3} />
 	</section>
 </main>
 
