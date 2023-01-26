@@ -100,6 +100,10 @@
 	--f-text-xl-bold: 700 26px/36px var(--ff-text);
 
 	/* Mono (code) Fonts */
+	--f-mono-xl-spacing: -0.01em;
+	--f-mono-xl-regular: 400 20px/26px var(--ff-mono);
+	--f-mono-lg-spacing: -0.01em;
+	--f-mono-lg-regular: 400 18px/26px var(--ff-mono);
 	--f-mono-md-spacing: -0.02em;
 	--f-mono-md-regular: 400 16px/26px var(--ff-mono);
 	--f-mono-sm-spacing: -0.01rem;

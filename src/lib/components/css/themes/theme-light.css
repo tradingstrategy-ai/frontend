@@ -1,5 +1,5 @@
 body[data-color-mode='light'] {
-	--hsl-body: var(--hue-1), 96%, 95%;
+	--hsl-body: var(--hue-1), 98%, 96%;
 
 	--hsl-text: var(--hue-1), 9%, 7%;
 	--hsl-text-light: var(--hue-1), 4%, 24%;
@@ -15,11 +15,14 @@ body[data-color-mode='light'] {
 	--a-box-e: 0.6;
 
 	--hsla-background-accent-1: var(--hsl-box), var(--a-box-a);
+
+	--input-background: var(--hsl-white);
+	--input-background-active: var(--hsl-white);
 }
 
 @media (prefers-color-scheme: light) {
 	body {
-		--hsl-body: var(--hue-1), 96%, 95%;
+		--hsl-body: var(--hue-1), 98%, 96%;
 
 		--hsl-text: var(--hue-1), 9%, 7%;
 		--hsl-text-light: var(--hue-1), 4%, 24%;
@@ -35,5 +38,8 @@ body[data-color-mode='light'] {
 		--a-box-e: 0.6;
 
 		--hsla-background-accent-1: var(--hsl-box), var(--a-box-b);
+
+		--input-background: var(--hsl-white);
+		--input-background-active: var(--hsl-white);
 	}
 }
