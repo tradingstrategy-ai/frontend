@@ -77,10 +77,9 @@ unknown props through to HTML input element.
 			--letter-spacing: var(--f-mono-sm-spacing);
 			font-weight: 600;
 
-			--letter-spacing: var(--f-ui-sm-spacing, normal);
-
 			& input::placeholder {
 				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
 		}
 		&.size-md {
@@ -92,6 +91,7 @@ unknown props through to HTML input element.
 
 			& input::placeholder {
 				font: var(--f-ui-md-roman);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 		}
 		&.size-lg {
@@ -103,16 +103,19 @@ unknown props through to HTML input element.
 
 			& input::placeholder {
 				font: var(--f-ui-lg-roman);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
 		&.size-xl {
 			--border-radius: var(--radius-md);
 			--height: 3rem;
-			--font: var(--f-mono-xl-roman);
-			--letter-spacing: var(--f-ui-xl-spacing, normal);
+			--font: var(--f-mono-xl-regular);
+			--letter-spacing: var(--f-mono-xl-spacing);
+			font-weight: 600;
 
 			& input::placeholder {
 				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-roman, normal);
 			}
 		}
 
@@ -122,6 +125,8 @@ unknown props through to HTML input element.
 			border: 1px hsla(var(--hsl-text-ultra-light)) solid;
 			border-radius: var(--border-radius);
 			background: hsla(var(--input-background));
+			font: inherit;
+			letter-spacing: inherit;
 			color: var(--c-text-1-v1);
 			transition: background var(--time-sm) ease-out;
 
