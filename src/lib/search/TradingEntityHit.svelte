@@ -51,7 +51,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 </script>
 
 <li title={getTitle()}>
-	<a href={document.url_path} class={layout} class:isLowQuality>
+	<a class="tile b {priceChangeClass} {layout}" class:isLowQuality href={document.url_path}>
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
@@ -116,17 +116,31 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	a {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: 1em;
+		gap: var(--space-md);
 		align-items: center;
-		border: 2px solid;
-		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
-		border-radius: var(--radius-xs);
+		border-radius: var(--radius-sm);
 		outline: none;
+		transition: all var(--time-sm) ease-out;
+
+		&.price-change-green {
+			background: hsla(var(--hsl-bullish), 0.12);
+
+			&:hover {
+				background: hsla(var(--hsl-bullish), 0.28) !important;
+			}
+		}
+
+		&.price-change-red {
+			background: hsla(var(--hsl-bearish), 0.12);
+
+			&:hover {
+				background: hsla(var(--hsl-bearish), 0.28) !important;
+			}
+		}
 
 		&.basic {
 			padding: var(--space-ms) var(--space-sl);
 			border: none;
-			background: var(--c-background-4-v1);
 
 			@media (--viewport-sm-up) {
 				padding-block: var(--space-md);

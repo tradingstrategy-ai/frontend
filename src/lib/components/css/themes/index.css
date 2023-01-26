@@ -3,7 +3,9 @@
 @import './theme-light';
 
 body {
-	--hsl-bearish: var(--hue-bearish), 92%, 57%;
+	--hs-bearish: var(--hue-bearish), 92%;
+	--hs-bullish: var(--hue-bullish), 68%;
+	--hsl-bearish: var(--hue-bearish), 92%, 54%;
 	--hsl-bullish: var(--hue-bullish), 68%, 42%;
 	--hsl-black: 0, 0%, 0%;
 	--c-text-1: hsla(var(--hsl-text)); /*  temp fix until there still is some legacy code from bootstrap theme */
