@@ -1,5 +1,4 @@
 .text-field {
-	/* --background-color: ; */
 	--active-color: hsla(var(--hsl-text-extra-light));
 	background: hsla(var(--background-color));
 	border-radius: var(--radius-md);
