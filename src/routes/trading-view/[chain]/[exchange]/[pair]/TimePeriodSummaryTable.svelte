@@ -4,7 +4,7 @@ Display summary performance table for various periods.
 
 #### Usage:
 ```tsx
-	<TimePeriodSummaryTable pairId={1234} />
+	<TimePeriodSummaryTable pairId={1234} exchangeType="uniswap_v2" />
 ```
 -->
 <script lang="ts">
@@ -12,6 +12,7 @@ Display summary performance table for various periods.
 	import TimePeriodPicker from './TimePeriodPicker.svelte';
 
 	export let pairId: number | string;
+	export let hideLiquidityAndTrades = false;
 
 	let selected = 'daily';
 </script>
@@ -29,14 +30,16 @@ Display summary performance table for various periods.
 		<li>Lowest</li>
 		<li>Close</li>
 		<li>Volume</li>
-		<li>Highest liquidity</li>
-		<li>Lowest liquidity</li>
-		<li>Buying trades</li>
-		<li>Selling trades</li>
+		{#if !hideLiquidityAndTrades}
+			<li>Highest liquidity</li>
+			<li>Lowest liquidity</li>
+			<li>Buying trades</li>
+			<li>Selling trades</li>
+		{/if}
 	</ul>
 
 	{#each ['hourly', 'daily', 'weekly', 'monthly'] as period}
-		<TimePeriodSummaryColumn {pairId} {period} active={period === selected} />
+		<TimePeriodSummaryColumn {pairId} {hideLiquidityAndTrades} {period} active={period === selected} />
 	{/each}
 </div>
 

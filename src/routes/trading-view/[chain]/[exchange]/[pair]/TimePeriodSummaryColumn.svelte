@@ -6,6 +6,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 ```tsx
 	<TimePeriodSummaryColumn
 		pairId={1234}
+		hideLiquidityAndTrades={true|false}
 		period="hourly|daily|weekly|monthly"
 		active={true|false}
 	/>
@@ -18,6 +19,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
 	export let pairId: number | string;
+	export let hideLiquidityAndTrades = false;
 	export let period: string;
 	export let active = false;
 
@@ -67,32 +69,35 @@ Display summary performance data for a given period; lazy-loads data when scroll
 			{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_open)}
+			<!-- coercing 0 values to null in order to render "---" fallback -->
+			{formatDollar(tradeData.price_open || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_high)}
+			{formatDollar(tradeData.price_high || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_low)}
+			{formatDollar(tradeData.price_low || null)}
 		</li>
 		<li class:skeleton>
-			{formatDollar(tradeData.price_close)}
+			{formatDollar(tradeData.price_close || null)}
 		</li>
 		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.volume)}
+			{formatDollar(tradeData.volume || null)}
 		</li>
-		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.liquidity_high)}
-		</li>
-		<li class:skeleton style:--skeleton-width="7ch">
-			{formatDollar(tradeData.liquidity_low)}
-		</li>
-		<li class:skeleton>
-			{formatAmount(tradeData.buys)}
-		</li>
-		<li class:skeleton>
-			{formatAmount(tradeData.sells)}
-		</li>
+		{#if !hideLiquidityAndTrades}
+			<li class:skeleton style:--skeleton-width="7ch">
+				{formatDollar(tradeData.liquidity_high || null)}
+			</li>
+			<li class:skeleton style:--skeleton-width="7ch">
+				{formatDollar(tradeData.liquidity_low || null)}
+			</li>
+			<li class:skeleton>
+				{formatAmount(tradeData.buys)}
+			</li>
+			<li class:skeleton>
+				{formatAmount(tradeData.sells)}
+			</li>
+		{/if}
 	</ul>
 </div>
 
