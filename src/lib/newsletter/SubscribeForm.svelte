@@ -99,6 +99,8 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 <style lang="postcss">
 	.subscribe-form {
+		--text-input-font: var(--f-mono-lg-regular);
+		--text-input-letter-spacing: var(--f-mono-lg-spacing);
 		padding-block: var(--space-ss);
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(8rem, auto));
@@ -107,20 +109,6 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		@media (--viewport-xs) {
 			gap: var(--space-md);
-		}
-
-		& :global .alert-list {
-			grid-column: 1/-1;
-		}
-
-		& :global input {
-			font: var(--f-mono-lg-regular);
-			font-weight: 600;
-			letter-spacing: var(--f-mono-lg-spacing);
-
-			&::placeholder {
-				font: var(--f-ui-xl-roman);
-			}
 		}
 	}
 </style>
