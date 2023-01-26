@@ -146,7 +146,7 @@ based on viewport size).
 		& footer {
 			margin-top: var(--space-md);
 			@media (--viewport-md-down) {
-				margin-top: var(--space-sm);
+				margin-top: var(--space-ms);
 			}
 
 			& .cta :global .button {
