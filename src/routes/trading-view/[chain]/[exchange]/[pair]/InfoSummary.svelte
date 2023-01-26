@@ -53,8 +53,13 @@
 	</p>
 
 	<p>
-		The pair has <strong>{formatDollar(summary.usd_volume_24h || null)}</strong> 24h trading volume with
-		<strong>{formatDollar(summary.usd_liquidity_latest || null)}</strong> liquidity available at the moment.
+		The pair has <strong>{formatDollar(summary.usd_volume_24h || null)}</strong>
+		{#if summary.liquidity_type === 'xyliquidity'}
+			24h trading volume with
+			<strong>{formatDollar(summary.usd_liquidity_latest || null)}</strong> liquidity available at the moment.
+		{:else}
+			24h trading volume.
+		{/if}
 		{#if details.first_trade_at}
 			The trading of {summary.pair_symbol} started at
 			<strong>{formatTimeAgo(details.first_trade_at, { unit: 'day' })}</strong>.

@@ -51,7 +51,9 @@
 
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h || null)} />
 
-	<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest || null)} />
+	{#if summary.liquidity_type === 'xyliquidity'}
+		<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest || null)} />
+	{/if}
 
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow
