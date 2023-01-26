@@ -45,13 +45,13 @@
 
 	<TradingDataInfoRow
 		label="Change 24h"
-		value={formatPriceChange(summary.price_change_24h)}
+		value={formatPriceChange(summary.price_change_24h || null)}
 		class={priceChangeColorClass}
 	/>
 
-	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h)} />
+	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h || null)} />
 
-	<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest)} />
+	<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest || null)} />
 
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow
