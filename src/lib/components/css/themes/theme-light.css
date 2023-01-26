@@ -16,7 +16,7 @@ body[data-color-mode='light'] {
 
 	--hsla-background-accent-1: var(--hsl-box), var(--a-box-a);
 
-	--input-background: var(--hsl-white-dark);
+	--input-background: var(--hsl-white);
 	--input-background-active: var(--hsl-white);
 }
 
