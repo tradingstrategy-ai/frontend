@@ -20,21 +20,26 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 <script lang="ts">
 	import { Button, Icon } from '$lib/components';
 
-	export let title: string;
-	export let icon: string;
-	export let href = '';
 	export let ctaLabel = '';
+	export let ctaFullWidth = false;
 	export let description = '';
+	export let icon: string | undefined = undefined;
+	export let href = '';
+	export let title: string | undefined = undefined;
 
 	$: tag = href ? 'a' : 'div';
 </script>
 
-<svelte:element this={tag} {href} class="content-card tile b" on:click>
+<svelte:element this={tag} {href} class="content-card tile b" class:ctaFullWidth on:click>
 	<div class="icon symbol tile c">
-		<Icon name={icon} />
+		<slot name="icon">
+			<Icon name={icon} />
+		</slot>
 	</div>
 
-	<h3>{title}</h3>
+	<slot name="title">
+		<h3>{title}</h3>
+	</slot>
 
 	<div class="description">
 		<slot>{description}</slot>
@@ -60,7 +65,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 		}
 
 		@media (--viewport-sm-up) {
-			gap: var(--space-ls);
+			gap: var(--space-ml);
 		}
 
 		& * {
@@ -116,13 +121,22 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 				color: hsla(var(--hsl-text-inverted));
 			}
 		}
-
-		& .cta {
+	}
+	.cta {
+		@nest .content-card & {
 			@media (--viewport-sm-down) {
 				& :global .button {
 					width: 100%;
 				}
 			}
+
+			@media (--viewport-md-up) {
+				margin-top: var(--space-sm);
+			}
+		}
+
+		@nest .content-card.ctaFullWidth & :global .button {
+			width: 100%;
 		}
 	}
 </style>

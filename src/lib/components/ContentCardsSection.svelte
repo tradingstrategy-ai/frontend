@@ -14,7 +14,7 @@ A section component to display a collection of ContentCards in a responsive grid
 	import { Section } from '$lib/components';
 
 	export let cols = 2;
-	export let title: string;
+	export let title: string | undefined = undefined;
 </script>
 
 <div class="content-cards">
