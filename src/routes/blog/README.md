@@ -12,7 +12,7 @@ Optimised to work with server-side rendering and `adapter-node`
 - [RSS](./rss.xml/+server.ts)
 - Sitemap for Google Search Console
 - SEO with HTML meta tags
-- [Social media tags for Facebook, Twitter](./SocialMetaTags.svelte) 
+- [Social media tags for Facebook, Twitter](./SocialMetaTags.svelte)
 - [Special HTML manipulation techniques to clean up Ghost HTML output](./BlogPostContent.svelte)
 - [Automaticalyl add table of contents listing based on headings](./BlogPostContent.svelte)
 - [Proxy images locally](./image/server.ts) to make Twitter card preview images work correctly
