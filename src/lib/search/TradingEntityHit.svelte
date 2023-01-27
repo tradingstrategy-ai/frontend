@@ -64,14 +64,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 						<Icon name="warning" />
 					{/if}
 				</div>
-
-				<!-- {#if isBasicLayout && !isLowQuality && hasPriceChange}
-					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
-				{:else if isBasicLayout && isLowQuality}
-					<Icon name="warning" size="22px" />
-				{:else if isAdvancedLayout && hasValidPrice}
-					<div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
-				{/if} -->
 			</div>
 
 			{#if isAdvancedLayout && hasTradingData}
