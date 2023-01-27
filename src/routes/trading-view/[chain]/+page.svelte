@@ -85,17 +85,23 @@
 
 <style lang="postcss">
 	main {
+		--layout-gap: var(--space-lg);
+
+		@media (--viewport-md-down) {
+			--layout-gap: var(--space-md);
+			--grid-gap: var(--layout-gap);
+		}
+
 		display: grid;
-		gap: var(--space-2xl);
+		gap: var(--layout-gap);
 	}
 
 	.summary-data {
 		grid-template-columns: repeat(4, 1fr);
-		gap: var(--space-lg);
+		gap: var(--layout-gap);
 
 		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
-			gap: var(--space-sl);
 		}
 	}
 
@@ -107,7 +113,7 @@
 		@media (--viewport-md-down) {
 			grid-template-rows: 1fr;
 			grid-template-columns: 1fr 1fr;
-			gap: var(--space-sl);
+			gap: var(--space-md);
 		}
 	}
 
