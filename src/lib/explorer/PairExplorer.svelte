@@ -19,7 +19,7 @@ Explore trading pairs that match certain filter criteria.
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import Datatable from '$lib/datatable/datatable.svelte';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { escapeHtml } from '$lib/helpers/html';
 
@@ -69,6 +69,15 @@ Explore trading pairs that match certain filter criteria.
 				const exchange_name = escapeHtml(row.exchange_name);
 				return `<a href="/trading-view/${chain}/${exchange_slug}">${exchange_name}</a>`;
 			}
+		},
+
+		pair_swap_fee: {
+			name: 'Swap Fee',
+			data: 'pair_swap_fee',
+			className: 'col-swap-fee numeric',
+			orderable: false,
+			type: 'num', // https://datatables.net/reference/option/columns.type
+			render: formatSwapFee
 		},
 
 		usd_price_latest: {

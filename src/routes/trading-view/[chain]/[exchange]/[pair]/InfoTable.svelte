@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDollar, formatPoolSwapFee, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
 	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
@@ -45,13 +45,15 @@
 
 	<TradingDataInfoRow
 		label="Change 24h"
-		value={formatPriceChange(summary.price_change_24h)}
+		value={formatPriceChange(summary.price_change_24h || null)}
 		class={priceChangeColorClass}
 	/>
 
-	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h)} />
+	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h || null)} />
 
-	<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest)} />
+	{#if summary.liquidity_type === 'xyliquidity'}
+		<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest || null)} />
+	{/if}
 
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow
@@ -63,7 +65,7 @@
 	<TradingDataInfoRow label="Token tax" labelHref={tokenTaxDocsUrl} value={getTokenTaxDescription(details)} />
 
 	{#if summary.pool_swap_fee}
-		<TradingDataInfoRow label="Pool swap fee" value={formatPoolSwapFee(summary.pool_swap_fee)} />
+		<TradingDataInfoRow label="Swap fee" value={formatSwapFee(summary.pool_swap_fee)} />
 	{/if}
 
 	<TradingDataInfoRow

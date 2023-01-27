@@ -44,4 +44,9 @@ COPY --from=builder /app/scripts/server.js ./scripts/
 
 EXPOSE 3000
 
+# See if increase libuv thread pool size makes performance better
+# The default value 4
+# http://docs.libuv.org/en/v1.x/threadpool.html
+ENV UV_THREADPOOL_SIZE=32
+
 CMD ["node", "scripts/server.js"]

@@ -8,7 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { formatPoolSwapFee } from '$lib/helpers/formatters';
+	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -22,6 +22,8 @@ Render the pair trading page
 	$: details = data.additional_details;
 
 	$: tokenTax = getTokenTaxInformation(details);
+	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
+	$: swapFee = formatSwapFee(summary.pool_swap_fee);
 
 	// Ridiculous token price warning: it is common with scam tokens to price the
 	// token super low so that prices are not readable when converted to USD.
@@ -35,11 +37,13 @@ Render the pair trading page
 
 <svelte:head>
 	<title>
-		{summary.pair_symbol} token price on {details.exchange_name}
+		{summary.pair_symbol}
+		{isUniswapV3 ? `${swapFee} pool` : 'token price'}
+		on {details.exchange_name}
 	</title>
 	<meta
 		name="description"
-		content={`Price and liquidity for ${summary.pair_symbol} on ${details.exchange_name} on ${details.chain_name}`}
+		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
 	/>
 </svelte:head>
 
@@ -49,8 +53,8 @@ Render the pair trading page
 	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
 		<svelte:fragment slot="title">
 			{summary.pair_symbol}
-			{#if summary.pool_swap_fee}
-				<span class="pool-swap-fee">{formatPoolSwapFee(summary.pool_swap_fee)}</span>
+			{#if isUniswapV3}
+				<span class="pool-swap-fee">{swapFee}</span>
 			{/if}
 		</svelte:fragment>
 	</PageHeader>
@@ -62,7 +66,7 @@ Render the pair trading page
 		</div>
 
 		<AlertList status="warning">
-			<AlertItem title="Uniswap V3 beta" displayWhen={summary.exchange_type === 'uniswap_v3'}>
+			<AlertItem title="Uniswap V3 beta" displayWhen={isUniswapV3}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this trading pair is currently incomplete.
 			</AlertItem>
@@ -109,12 +113,12 @@ Render the pair trading page
 		<header>
 			<h2>Time period summary</h2>
 			<p>
-				The price and liquidity of {summary.base_token_symbol_friendly} in this trading pair. The amounts are converted to
-				US dollar through {summary.quote_token_symbol_friendly}/USD.
+				The price {isUniswapV3 ? 'and volume' : 'and liquidity'} of {summary.base_token_symbol_friendly} in this trading
+				pair. The amounts are converted to US dollar through {summary.quote_token_symbol_friendly}/USD.
 			</p>
 		</header>
 
-		<TimePeriodSummaryTable pairId={summary.pair_id} />
+		<TimePeriodSummaryTable pairId={summary.pair_id} hideLiquidityAndTrades={isUniswapV3} />
 	</section>
 </main>
 

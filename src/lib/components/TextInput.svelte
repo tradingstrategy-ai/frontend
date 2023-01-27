@@ -73,35 +73,60 @@ unknown props through to HTML input element.
 		&.size-sm {
 			--border-radius: var(--radius-xs);
 			--height: 2rem;
-			--font: var(--f-ui-sm-roman);
-			--letter-spacing: var(--f-ui-sm-spacing, normal);
+			--font: var(--f-mono-sm-regular);
+			--letter-spacing: var(--f-mono-sm-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
 		}
 		&.size-md {
 			--border-radius: var(--radius-xs);
 			--height: 2.25rem;
-			--font: var(--f-ui-md-roman);
-			--letter-spacing: var(--f-ui-md-spacing, normal);
+			--font: var(--f-mono-md-regular);
+			--letter-spacing: var(--f-mono-md-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-md-roman);
+				letter-spacing: var(--f-ui-md-spacing, normal);
+			}
 		}
 		&.size-lg {
 			--border-radius: var(--radius-sm);
 			--height: 2.625rem;
-			--font: var(--f-ui-lg-roman);
-			--letter-spacing: var(--f-ui-lg-spacing, normal);
+			--font: var(--f-mono-lg-regular);
+			--letter-spacing: var(--f-mono-lg-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-lg-roman);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
+			}
 		}
 		&.size-xl {
 			--border-radius: var(--radius-md);
 			--height: 3rem;
-			--font: var(--f-ui-xl-roman);
-			--letter-spacing: var(--f-ui-xl-spacing, normal);
+			--font: var(--f-mono-xl-regular);
+			--letter-spacing: var(--f-mono-xl-spacing);
+			font-weight: 600;
+
+			& input::placeholder {
+				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-roman, normal);
+			}
 		}
 
 		& input {
 			width: inherit;
 			padding: 0 var(--space-sl);
-			border: 1px transparent solid;
+			border: 1px hsla(var(--hsl-text-ultra-light)) solid;
 			border-radius: var(--border-radius);
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsla(var(--input-background));
 			font: inherit;
+			letter-spacing: inherit;
 			color: var(--c-text-1-v1);
 			transition: background var(--time-sm) ease-out;
 
@@ -115,7 +140,7 @@ unknown props through to HTML input element.
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--hsl-box), var(--a-box-c));
+				background: hsla(var(--input-background-active));
 			}
 
 			&:focus {

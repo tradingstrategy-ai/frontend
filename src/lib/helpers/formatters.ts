@@ -260,7 +260,7 @@ export function formatPercent(n: MaybeNumber): string {
  *
  * Uses `minimumSignificantDigits` instead of `minimumFractionDigits`
  */
-export function formatPoolSwapFee(n: MaybeNumber): string {
+export function formatSwapFee(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return '';
 	return n.toLocaleString('en', {
 		minimumSignificantDigits: 1,
