@@ -12,7 +12,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
-	import { Icon } from '$lib/components';
+	import { Icon, UpDownIndicator } from '$lib/components';
 
 	// Any token with less than this liquidity
 	// is grayed out in the search results
@@ -51,7 +51,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 </script>
 
 <li title={getTitle()}>
-	<a class="tile b {priceChangeClass} {layout}" class:isLowQuality href={document.url_path}>
+	<a class="trading-entity-hit tile b {layout}" class:isLowQuality href={document.url_path}>
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
@@ -65,13 +65,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 					{/if}
 				</div>
 
-				{#if isBasicLayout && !isLowQuality && hasPriceChange}
+				<!-- {#if isBasicLayout && !isLowQuality && hasPriceChange}
 					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
 				{:else if isBasicLayout && isLowQuality}
 					<Icon name="warning" size="22px" />
 				{:else if isAdvancedLayout && hasValidPrice}
 					<div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
-				{/if}
+				{/if} -->
 			</div>
 
 			{#if isAdvancedLayout && hasTradingData}
@@ -86,12 +86,25 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 							<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
 						</div>
 					</div>
-					<div class="price-change {priceChangeClass}">
-						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
-					</div>
 				</div>
 			{/if}
 		</div>
+
+		<!-- todo — refactor this using UpDownIndicator -->
+		{#if hasPriceChange || hasValidPrice}
+			<UpDownIndicator value={document.price_change_24h}>
+				{#if isBasicLayout && !isLowQuality && hasPriceChange}
+					<span class="price-change {priceChangeClass}">{priceChangePct}</span>
+				{:else if isAdvancedLayout && hasValidPrice}
+					<span class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</span>
+				{/if}
+				{#if isAdvancedLayout && hasTradingData}
+					<span class="price-change {priceChangeClass}">
+						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
+					</span>
+				{/if}
+			</UpDownIndicator>
+		{/if}
 	</a>
 </li>
 
@@ -115,28 +128,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	a {
 		display: grid;
-		grid-template-columns: auto 1fr;
 		gap: var(--space-md);
-		align-items: center;
-		border-radius: var(--radius-sm);
+		grid-template-columns: auto 1fr auto;
+		place-content: center stretch;
+		place-items: center stretch;
+		border-radius: var(--radius-md);
 		outline: none;
 		transition: all var(--time-sm) ease-out;
-
-		&.price-change-green {
-			background: hsla(var(--hsl-bullish), 0.12);
-
-			&:hover {
-				background: hsla(var(--hsl-bullish), 0.28) !important;
-			}
-		}
-
-		&.price-change-red {
-			background: hsla(var(--hsl-bearish), 0.12);
-
-			&:hover {
-				background: hsla(var(--hsl-bearish), 0.28) !important;
-			}
-		}
 
 		&.basic {
 			padding: var(--space-ms) var(--space-sl);
@@ -152,7 +150,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 			@media (--viewport-md-up) {
 				gap: var(--space-lg);
-				padding: var(--space-sl) var(--space-ls);
+				padding: var(--space-sl) var(--space-ml);
 				border-width: 1px;
 				border-color: var(--c-border-2-v1);
 			}
@@ -166,7 +164,15 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		&:hover {
-			background: var(--c-background-4-v1);
+			& :global .up-down-indicator {
+				&.bearish {
+					background: hsla(var(--hsl-bearish), 0.24) !important;
+				}
+
+				&.bullish {
+					background: hsla(var(--hsl-bullish), 0.24) !important;
+				}
+			}
 		}
 
 		&:focus {
@@ -199,6 +205,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	.info {
 		display: grid;
 		gap: var(--space-xxs);
+		width: 100%;
 	}
 
 	.primary,

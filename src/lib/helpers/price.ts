@@ -5,12 +5,12 @@
  */
 export function determinePriceChangeClass(priceChange?: number | null): string {
 	if (!priceChange) {
-		return 'price-change-black'; // Data not loaded
+		return ''; // Data not loaded
 	}
 
 	if (priceChange > 0) {
-		return 'price-change-green';
+		return 'bullish';
 	} else {
-		return 'price-change-red';
+		return 'bearish';
 	}
 }
