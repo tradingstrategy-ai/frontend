@@ -25,12 +25,12 @@ Display filter options as checkboxes search queries.
 	export let selected: string[] = [];
 </script>
 
-<div>
+<div class="filter">
 	<h4>{fieldName.replace(/_/g, ' ')}</h4>
 	<ul>
 		{#each options as { label, value, count } (value)}
 			{#if value}
-				<li>
+				<li class="filter-option">
 					<label>
 						<input type="checkbox" {value} bind:group={selected} />
 						<svg><path d="M1.61157 6.65438L6.19836 11.2412L14.3883 1.86491" /></svg>
@@ -46,7 +46,7 @@ Display filter options as checkboxes search queries.
 </div>
 
 <style lang="postcss">
-	div {
+	.filter {
 		display: grid;
 		gap: var(--space-ls);
 	}
@@ -57,16 +57,16 @@ Display filter options as checkboxes search queries.
 
 	ul {
 		display: grid;
-		gap: var(--space-ss);
+		gap: var(--space-ml);
 		padding: 0;
 		list-style-type: none;
 	}
 
-	li {
+	.filter-option {
 		display: grid;
 		grid-template-columns: 1fr auto;
 		align-items: center;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 		margin-left: -var(--space-ss);
 	}
 
@@ -76,38 +76,48 @@ Display filter options as checkboxes search queries.
 		grid-template-columns: auto 1fr;
 		gap: var(--space-sl);
 		align-items: center;
-		border-radius: var(--radius-xs);
 		margin: 0;
-		padding: var(--space-ss);
 		border: none;
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		text-transform: capitalize;
 		cursor: pointer;
+		position: relative;
 
-		&:hover {
-			background: var(--c-background-4-v1);
+		&:is(:hover, :focus-within)::before {
+			--offset: calc(-1 * var(--space-sm));
+			background: hsla(var(--hsl-box), var(--a-box-c));
+			border-radius: var(--radius-sm);
+			bottom: var(--offset);
+			content: '';
+			position: absolute;
+			left: var(--offset);
+			right: var(--offset);
+			top: var(--offset);
 		}
 
-		&:focus-within {
-			background: var(--c-background-4-v1);
+		&:is(:focus-within)::before {
 			outline: 2px solid var(--cm-light, var(--c-parchment-super-dark)) var(--cm-dark, var(--c-gray));
 		}
+
+		/* &:focus-within {
+			background: hsla(var(--hsl-box), var(--a-box-b));
+		} */
 	}
 
 	input {
 		appearance: none;
-		width: 20px;
-		height: 20px;
+		width: 1.5rem;
+		height: 1.5rem;
 		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0;
+		border-radius: var(--radius-xxs);
 		background: hsla(var(--hsl-body));
 		outline: none;
 	}
 
 	svg {
 		position: absolute;
-		left: 10px;
+		left: 0.25rem;
 		width: 16px;
 		height: 14px;
 		fill: none;
@@ -122,7 +132,7 @@ Display filter options as checkboxes search queries.
 	.count {
 		padding: var(--space-xxs);
 		border-radius: var(--radius-xxs);
-		background-color: var(--c-background-4-v1);
+		background-color: hsla(var(--hsl-box), var(--a-box-b));
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
