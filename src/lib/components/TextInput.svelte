@@ -158,14 +158,14 @@ unknown props through to HTML input element.
 
 			& :global svg {
 				left: auto;
-				right: 0.625em;
-				font-size: 0.7em;
+				right: var(--space-md);
+				font-size: 1rem;
 			}
 		}
 
 		&:has(:focus),
 		&:hover {
-			& .cancel-btn {
+			& :global .cancel-btn {
 				display: contents;
 			}
 		}

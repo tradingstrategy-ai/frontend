@@ -112,15 +112,6 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 				}
 			}
 		}
-
-		/* display CTA button as hovered/focused when tile is hovered/focused */
-		&:hover,
-		&:focus {
-			& .cta :global .button {
-				background: hsla(var(--hsl-text), 1) !important;
-				color: hsla(var(--hsl-text-inverted));
-			}
-		}
 	}
 	.cta {
 		@nest .content-card & {
