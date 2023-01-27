@@ -1,8 +1,10 @@
-# Ghost integration with SvelteKit
+# Ghost blog integration with SvelteKit
 
 Optimised to work with server-side rendering and `adapter-node`
 
 [See the live site](https://tradingstrategy.ai/blog).
+
+## Features
 
 - Designed so that your Ghost hosted instance can be password protected and not picked up by search engine
 - Blog roll page
@@ -12,6 +14,7 @@ Optimised to work with server-side rendering and `adapter-node`
 - SEO with HTML meta tags
 - [Social media tags for Facebook, Twitter](./SocialMetaTags.svelte) 
 - [Special HTML manipulation techniques to clean up Ghost HTML output](./BlogPostContent.svelte)
+- [Automaticalyl add table of contents listing based on headings](./BlogPostContent.svelte)
 - [Proxy images locally](./image/server.ts) to make Twitter card preview images work correctly
 
 ## Ghost Content API based
