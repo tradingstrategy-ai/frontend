@@ -5,7 +5,7 @@
  */
 export function determinePriceChangeClass(priceChange?: number | null): string {
 	if (!priceChange) {
-		return ''; // Data not loaded
+		return 'normal'; // Data not loaded
 	}
 
 	if (priceChange > 0) {
