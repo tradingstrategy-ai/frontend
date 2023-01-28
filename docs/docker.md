@@ -151,7 +151,7 @@ Run it with your environment variables:
 ```shell
 # Assume locally run backend, see backend/docs/local-staging.md
 export TS_PUBLIC_SITE_MODE=production
-    export TS_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
+export TS_PUBLIC_BACKEND_INTERNAL_URL=http://host.docker.internal:3456/api
 # On an M1/M2 mac, add `--platform linux/amd64` option to below command
 docker run --env-file .env -e TS_PUBLIC_SITE_MODE -e TS_PUBLIC_BACKEND_INTERNAL_URL \
   -p 3000:3000 ghcr.io/tradingstrategy-ai/frontend:pr-58
