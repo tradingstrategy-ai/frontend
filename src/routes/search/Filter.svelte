@@ -96,13 +96,9 @@ Display filter options as checkboxes search queries.
 			top: var(--offset);
 		}
 
-		&:is(:focus-within)::before {
+		&:focus-within::before {
 			outline: 2px solid var(--cm-light, var(--c-parchment-super-dark)) var(--cm-dark, var(--c-gray));
 		}
-
-		/* &:focus-within {
-			background: hsla(var(--hsl-box), var(--a-box-b));
-		} */
 	}
 
 	input {
