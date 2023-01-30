@@ -10,7 +10,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 -->
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon, UpDownIndicator } from '$lib/components';
 
@@ -35,7 +34,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
 	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
 
-	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
 	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
 		style: 'percent',
 		minimumFractionDigits: 1
@@ -84,7 +82,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			<Icon name="warning" size="20px" />
 		{:else if isBasicLayout && hasPriceChange}
 			<UpDownIndicator value={document.price_change_24h}>
-				<span class="price-change {priceChangeClass}">{priceChangePct}</span>
+				<span class="price-change">{priceChangePct}</span>
 			</UpDownIndicator>
 		{/if}
 
@@ -92,10 +90,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
 			<UpDownIndicator value={document.price_change_24h}>
 				{#if hasValidPrice}
-					<span class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</span>
+					<span class="price">{formatDollar(document.price_usd_latest)}</span>
 				{/if}
 				{#if hasPriceChange}
-					<span class="price-change {priceChangeClass}">{formatPriceChange(document.price_change_24h)}</span>
+					<span class="price-change">{formatPriceChange(document.price_change_24h)}</span>
 				{/if}
 			</UpDownIndicator>
 		{/if}
