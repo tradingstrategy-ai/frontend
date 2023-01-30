@@ -54,9 +54,9 @@
 	>
 		{#if data.length > 0}
 			<path class="data" d={getPathCommands()} />
-		{:else}
-			<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
 		{/if}
+
+		<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
 
 		{#if active}
 			{@const x = scaleX(active[0])}
