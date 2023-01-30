@@ -54,11 +54,4 @@ Utility component for displaying a value with red/green value color.
 			}
 		}
 	}
-
-	.bullish {
-		&,
-		& > :global(*) {
-			color: hsla(var(--hsl-bullish));
-		}
-	}
 </style>
