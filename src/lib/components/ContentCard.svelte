@@ -113,20 +113,19 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			}
 		}
 	}
-	.cta {
-		@nest .content-card & {
-			@media (--viewport-sm-down) {
-				& :global .button {
-					width: 100%;
-				}
-			}
 
-			@media (--viewport-md-up) {
-				margin-top: var(--space-sm);
+	.cta {
+		@media (--viewport-sm-down) {
+			& :global .button {
+				width: 100%;
 			}
 		}
 
-		@nest .content-card.ctaFullWidth & :global .button {
+		@media (--viewport-md-up) {
+			margin-top: var(--space-sm);
+		}
+
+		@nest .ctaFullWidth & :global .button {
 			width: 100%;
 		}
 	}
