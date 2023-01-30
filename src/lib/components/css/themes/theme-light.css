@@ -1,5 +1,5 @@
 body[data-color-mode='light'] {
-	--hsl-body: var(--hue-1), 98%, 96%;
+	--hsl-body: var(--hue-1), 100%, 96%;
 
 	--hsl-text: var(--hue-1), 9%, 7%;
 	--hsl-text-light: var(--hue-1), 4%, 24%;
@@ -22,7 +22,7 @@ body[data-color-mode='light'] {
 
 @media (prefers-color-scheme: light) {
 	body {
-		--hsl-body: var(--hue-1), 98%, 96%;
+		--hsl-body: var(--hue-1), 100%, 96%;
 
 		--hsl-text: var(--hue-1), 9%, 7%;
 		--hsl-text-light: var(--hue-1), 4%, 24%;
