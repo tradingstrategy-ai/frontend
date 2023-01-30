@@ -131,11 +131,11 @@
 			stroke-width: 3;
 			stroke-linejoin: round;
 
-			&.price-change-green {
+			&.bullish {
 				stroke: hsla(var(--hsl-bullish));
 			}
 
-			&.price-change-red {
+			&.bearish {
 				stroke: hsla(var(--hsl-bearish));
 			}
 		}
