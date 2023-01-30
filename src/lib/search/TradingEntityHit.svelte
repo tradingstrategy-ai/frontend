@@ -14,14 +14,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon, UpDownIndicator } from '$lib/components';
 
-	// Any token with less than this liquidity
-	// is grayed out in the search results
+	// Any token with less than this liquidity is grayed out in the search results
 	const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
 
-	/**
-	 * object returned by Typesense `tradingEntity` search hits; see:
-	 * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
-	 */
+	// object returned by Typesense `tradingEntity` search hits; see:
+	// https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
 	export let document: DocumentSchema;
 	export let layout: 'basic' | 'advanced';
 
@@ -82,18 +79,23 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			{/if}
 		</div>
 
-		<!-- todo — refactor this using UpDownIndicator -->
-		{#if hasPriceChange || hasValidPrice}
+		<!-- Basic layout - warning indicator OR price change % -->
+		{#if isBasicLayout && isLowQuality}
+			<Icon name="warning" size="20px" />
+		{:else if isBasicLayout && hasPriceChange}
 			<UpDownIndicator value={document.price_change_24h}>
-				{#if isBasicLayout && !isLowQuality && hasPriceChange}
-					<span class="price-change {priceChangeClass}">{priceChangePct}</span>
-				{:else if isAdvancedLayout && hasValidPrice}
+				<span class="price-change {priceChangeClass}">{priceChangePct}</span>
+			</UpDownIndicator>
+		{/if}
+
+		<!-- Advanced layout - current price & price change % -->
+		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
+			<UpDownIndicator value={document.price_change_24h}>
+				{#if hasValidPrice}
 					<span class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</span>
 				{/if}
-				{#if isAdvancedLayout && hasTradingData}
-					<span class="price-change {priceChangeClass}">
-						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
-					</span>
+				{#if hasPriceChange}
+					<span class="price-change {priceChangeClass}">{formatPriceChange(document.price_change_24h)}</span>
 				{/if}
 			</UpDownIndicator>
 		{/if}
