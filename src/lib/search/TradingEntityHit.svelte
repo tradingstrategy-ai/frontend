@@ -10,7 +10,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 -->
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
-	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
 	import { Icon, UpDownIndicator } from '$lib/components';
 
 	// Any token with less than this liquidity is grayed out in the search results
@@ -33,11 +33,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasLowLiquidity = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
 	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
-
-	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
-		style: 'percent',
-		minimumFractionDigits: 1
-	});
 
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
@@ -82,7 +77,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			<Icon name="warning" size="20px" />
 		{:else if isBasicLayout && hasPriceChange}
 			<UpDownIndicator value={document.price_change_24h}>
-				<span class="price-change">{priceChangePct}</span>
+				<span class="price-change">{formatPercent(Math.abs(document.price_change_24h))}</span>
 			</UpDownIndicator>
 		{/if}
 
