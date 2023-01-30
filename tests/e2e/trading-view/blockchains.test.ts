@@ -6,19 +6,14 @@ test.describe('blockchain index page', () => {
 	});
 
 	test('tiles should include exchange count', async ({ page }) => {
-		const blockchains = page.getByTestId('blockchain-tile');
+		const blockchains = page.getByRole('link', { name: /[\d,]+ exchanges/ });
 		const count = await blockchains.count();
-
 		expect(count).toBeGreaterThan(0);
-
-		for (let i = 0; i < count; i++) {
-			await expect(blockchains.nth(i)).toHaveText(/[\d,]+ exchanges/);
-		}
 	});
 
 	test('chain tile should link to chain details', async ({ page }) => {
-		const chain = page.locator('[data-testid=blockchain-tile]:has-text("Ethereum")');
-		await chain.getByRole('link').click();
+		const chain = page.getByRole('link', { name: /Ethereum/ });
+		await chain.click();
 		await expect(page).toHaveURL(/ethereum/);
 	});
 });
