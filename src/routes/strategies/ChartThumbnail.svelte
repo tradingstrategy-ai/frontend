@@ -19,6 +19,8 @@
 	const scaleY = scaleLinear(getValueRange(), [height, 0]);
 	const y0 = scaleY(0);
 
+	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
+
 	function getValueRange() {
 		const range = extent(data, (tick: ChartTick) => tick[1]);
 		return range.every(Number.isFinite) ? range : [0, 0];
@@ -53,10 +55,10 @@
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		{#if data.length > 0}
-			<path class="data" d={getPathCommands()} />
-		{:else}
-			<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
+			<path class="data {profitClass}" d={getPathCommands()} />
 		{/if}
+
+		<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
 
 		{#if active}
 			{@const x = scaleX(active[0])}
@@ -128,6 +130,14 @@
 			stroke: var(--c-text-light-night);
 			stroke-width: 3;
 			stroke-linejoin: round;
+
+			&.price-change-green {
+				stroke: hsla(var(--hsl-bullish));
+			}
+
+			&.price-change-red {
+				stroke: hsla(var(--hsl-bearish));
+			}
 		}
 	}
 </style>
