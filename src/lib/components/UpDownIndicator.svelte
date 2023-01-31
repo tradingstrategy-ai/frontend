@@ -13,22 +13,45 @@ Utility component for displaying a value with red/green value color.
 	export let formatter: Function | undefined = undefined;
 </script>
 
-<span class="profit-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
+<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
 	<slot>{formatter ? formatter(value) : value}</slot>
 </span>
 
 <style lang="postcss">
-	.bullish {
-		&,
-		& > :global(*) {
-			color: hsla(var(--hsl-bullish));
-		}
-	}
+	.up-down-indicator {
+		background: hsla(var(--hsl-box), var(--a-box-b));
+		border-radius: var(--radius-sm);
+		color: hsla(var(--hsl-text-light));
+		display: grid;
+		gap: var(--space-xxs);
+		padding: var(--space-ss) var(--space-ms) !important;
+		text-align: right;
+		transition: all var(--time-sm) ease-out;
 
-	.bearish {
-		&,
-		& > :global(*) {
-			color: hsla(var(--hsl-bearish));
+		& :global > * {
+			font: var(--f-ui-sm-medium);
+		}
+
+		&.bullish {
+			& {
+				background: hsla(var(--hsl-bullish), 0.12);
+				color: hsla(var(--hsl-bullish));
+			}
+
+			&:hover {
+				background: hsla(var(--hsl-bullish), 0.24) !important;
+			}
+		}
+
+		&.bearish {
+			& {
+				background: hsla(var(--hsl-bearish), 0.12);
+				color: hsla(var(--hsl-bearish));
+			}
+
+			&:hover {
+				background: hsla(var(--hsl-bearish), 0.24) !important;
+			}
 		}
 	}
 </style>

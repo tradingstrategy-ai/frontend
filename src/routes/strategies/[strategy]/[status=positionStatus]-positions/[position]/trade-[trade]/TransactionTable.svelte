@@ -40,7 +40,8 @@
 
 <style lang="postcss">
 	.transaction-table {
-		overflow: auto;
+		overflow-x: auto;
+		overflow-y: hidden;
 
 		& h2 {
 			margin-bottom: var(--space-md);

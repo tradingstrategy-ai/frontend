@@ -10,11 +10,6 @@
 	export let data: PageData;
 </script>
 
-<svelte:head>
-	<title>DEX trading view</title>
-	<meta name="description" content="DEX trading view" />
-</svelte:head>
-
 <ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">
 	<HeroBanner
 		slot="hero"

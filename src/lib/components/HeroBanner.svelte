@@ -10,13 +10,13 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 ```
 -->
 <script lang="ts">
-	export let image: string;
+	export let image: string | undefined = undefined;
 	export let title: string;
 	export let subtitle = '';
 	export let hr = false;
 </script>
 
-<div class="hero-banner">
+<div class="hero-banner" class:has-image={image}>
 	<div class="content">
 		<h1>{@html title}</h1>
 		<p>{@html subtitle}</p>
@@ -26,9 +26,11 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 		<slot />
 	</div>
 
-	<div class="media">
-		{@html image}
-	</div>
+	{#if image}
+		<div class="media">
+			{@html image}
+		</div>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -36,7 +38,6 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 		display: grid;
 		gap: var(--space-10xl);
 		grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
-		min-height: max(40vh, 32rem);
 		padding: var(--space-md) 0;
 		place-content: center;
 		place-items: stretch;
@@ -45,6 +46,13 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 			min-height: max(28vh, 12rem);
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
+		}
+
+		&.has-image {
+			min-height: max(40vh, 32rem);
+			@media (--viewport-sm-down) {
+				min-height: max(28vh, 12rem);
+			}
 		}
 	}
 

@@ -82,35 +82,37 @@ Display site-wide search box for use in top-nav.
 	</form>
 
 	<div class="results">
-		<form class="mobile-only" action="/search" role="search">
-			<TextInput
-				bind:value={q}
-				id="search-input-mobile"
-				name="q"
-				size="lg"
-				type="search"
-				placeholder="Search"
-				autocomplete="off"
-				autocapitalize="none"
-				spellcheck="false"
-			/>
-		</form>
+		<div class="inner">
+			<form class="mobile-only" action="/search" role="search">
+				<TextInput
+					bind:value={q}
+					id="search-input-mobile"
+					name="q"
+					size="lg"
+					type="search"
+					placeholder="Search"
+					autocomplete="off"
+					autocapitalize="none"
+					spellcheck="false"
+				/>
+			</form>
 
-		{#if hasQuery}
-			<ul id="search-results">
-				{#each hits as { document }, index (document.id)}
-					<TradingEntityHit {document} layout="basic" />
-				{/each}
-			</ul>
-		{/if}
-
-		<div class="buttons">
 			{#if hasQuery}
-				<Button size="sm" label="Show all results" href="/search?q={q}" />
-			{:else}
-				Search exchanges, tokens and trading pairs.
+				<ul id="search-results">
+					{#each hits as { document }, index (document.id)}
+						<TradingEntityHit {document} layout="basic" />
+					{/each}
+				</ul>
 			{/if}
-			<Button size="sm" secondary label="Advanced search" href="/search?q={q}" />
+
+			<div class="buttons">
+				{#if hasQuery}
+					<Button size="sm" label="Show all results" href="/search?q={q}" />
+				{:else}
+					Search exchanges, tokens and trading pairs.
+				{/if}
+				<Button size="sm" label="Advanced search" href="/search?q={q}" />
+			</div>
 		</div>
 	</div>
 </div>
@@ -153,17 +155,15 @@ Display site-wide search box for use in top-nav.
 	}
 
 	.results {
-		position: absolute;
-		z-index: 1;
-		right: 0;
-		padding: var(--space-sl) var(--space-sm);
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-md);
-		background: hsla(var(--hsl-body));
-		box-shadow: 0 0 0 1px var(--c-shadow-1-v1), 0 4px 20px var(--c-shadow-1-v1);
-		transition: opacity 0.25s;
 		--text-input-height: 2.875rem;
+
+		background: hsla(var(--hsl-body));
+		overflow: hidden;
+		position: absolute;
+		right: 0;
+		top: var(--space-4xl);
+		z-index: 999;
+		transition: opacity 0.25s;
 
 		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
 		@nest :not(.hasFocus) & {
@@ -172,9 +172,10 @@ Display site-wide search box for use in top-nav.
 		}
 
 		@media (--search-layout-desktop) {
-			width: 450px;
+			border-radius: var(--radius-md);
 			margin-top: var(--space-xxs);
 			max-height: calc(100vh - 1.75rem - var(--header-height, 5rem) / 2);
+			width: 450px;
 		}
 
 		@media (--search-layout-mobile) {
@@ -184,7 +185,17 @@ Display site-wide search box for use in top-nav.
 			@nest .hasQuery & {
 				height: var(--viewport-height, 100vh);
 				gap: var(--space-sm);
+				overflow-y: scroll;
 			}
+		}
+
+		& .inner {
+			background: hsla(var(--hsl-box), var(--a-box-a));
+			box-shadow: var(--shadow-sm);
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-md);
+			padding: var(--space-md);
 		}
 	}
 
@@ -200,7 +211,7 @@ Display site-wide search box for use in top-nav.
 		padding: 0;
 		flex: 1;
 		display: grid;
-		gap: var(--space-ss);
+		gap: var(--space-sm);
 		align-content: start;
 		overflow-y: auto;
 	}

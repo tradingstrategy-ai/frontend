@@ -20,21 +20,26 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 <script lang="ts">
 	import { Button, Icon } from '$lib/components';
 
-	export let title: string;
-	export let icon: string;
-	export let href = '';
 	export let ctaLabel = '';
+	export let ctaFullWidth = false;
 	export let description = '';
+	export let icon: string | undefined = undefined;
+	export let href = '';
+	export let title: string | undefined = undefined;
 
 	$: tag = href ? 'a' : 'div';
 </script>
 
-<svelte:element this={tag} {href} class="content-card tile b" on:click>
+<svelte:element this={tag} {href} class="content-card tile b" class:ctaFullWidth on:click>
 	<div class="icon symbol tile c">
-		<Icon name={icon} />
+		<slot name="icon">
+			<Icon name={icon} />
+		</slot>
 	</div>
 
-	<h3>{title}</h3>
+	<slot name="title">
+		<h3>{title}</h3>
+	</slot>
 
 	<div class="description">
 		<slot>{description}</slot>
@@ -60,7 +65,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 		}
 
 		@media (--viewport-sm-up) {
-			gap: var(--space-ls);
+			gap: var(--space-ml);
 		}
 
 		& * {
@@ -107,22 +112,21 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 				}
 			}
 		}
+	}
 
-		/* display CTA button as hovered/focused when tile is hovered/focused */
-		&:hover,
-		&:focus {
-			& .cta :global .button {
-				background: hsla(var(--hsl-text), 1) !important;
-				color: hsla(var(--hsl-text-inverted));
+	.cta {
+		@media (--viewport-sm-down) {
+			& :global .button {
+				width: 100%;
 			}
 		}
 
-		& .cta {
-			@media (--viewport-sm-down) {
-				& :global .button {
-					width: 100%;
-				}
-			}
+		@media (--viewport-md-up) {
+			margin-top: var(--space-sm);
+		}
+
+		@nest .ctaFullWidth & :global .button {
+			width: 100%;
 		}
 	}
 </style>

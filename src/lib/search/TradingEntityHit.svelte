@@ -10,18 +10,14 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 -->
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
-	import { Icon } from '$lib/components';
+	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import { Icon, UpDownIndicator } from '$lib/components';
 
-	// Any token with less than this liquidity
-	// is grayed out in the search results
+	// Any token with less than this liquidity is grayed out in the search results
 	const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
 
-	/**
-	 * object returned by Typesense `tradingEntity` search hits; see:
-	 * https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
-	 */
+	// object returned by Typesense `tradingEntity` search hits; see:
+	// https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
 	export let document: DocumentSchema;
 	export let layout: 'basic' | 'advanced';
 
@@ -38,12 +34,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
 	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
 
-	const priceChangeClass = determinePriceChangeClass(document.price_change_24h);
-	const priceChangePct = Math.abs(document.price_change_24h).toLocaleString('en-US', {
-		style: 'percent',
-		minimumFractionDigits: 1
-	});
-
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
 		if (hasLowLiquidity) return 'Warning: low liquidity';
@@ -51,11 +41,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 </script>
 
 <li title={getTitle()}>
-	<a href={document.url_path} class={layout} class:isLowQuality>
+	<a class="trading-entity-hit tile b {layout}" class:isLowQuality href={document.url_path}>
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
-				<div class="desc">
+				<div class="desc truncate lines-2">
 					{document.description}
 					{#if document.pool_swap_fee}
 						<span class="pool-swap-fee">({formatSwapFee(document.pool_swap_fee)})</span>
@@ -64,14 +54,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 						<Icon name="warning" />
 					{/if}
 				</div>
-
-				{#if isBasicLayout && !isLowQuality && hasPriceChange}
-					<div class="price-change {priceChangeClass}">{priceChangePct}</div>
-				{:else if isBasicLayout && isLowQuality}
-					<Icon name="warning" size="22px" />
-				{:else if isAdvancedLayout && hasValidPrice}
-					<div class="price {priceChangeClass}">{formatDollar(document.price_usd_latest)}</div>
-				{/if}
 			</div>
 
 			{#if isAdvancedLayout && hasTradingData}
@@ -86,12 +68,30 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 							<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
 						</div>
 					</div>
-					<div class="price-change {priceChangeClass}">
-						{hasPriceChange ? formatPriceChange(document.price_change_24h) : ''}
-					</div>
 				</div>
 			{/if}
 		</div>
+
+		<!-- Basic layout - warning indicator OR price change % -->
+		{#if isBasicLayout && isLowQuality}
+			<Icon name="warning" size="20px" />
+		{:else if isBasicLayout && hasPriceChange}
+			<UpDownIndicator value={document.price_change_24h}>
+				<span>{formatPercent(Math.abs(document.price_change_24h))}</span>
+			</UpDownIndicator>
+		{/if}
+
+		<!-- Advanced layout - current price & price change % -->
+		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
+			<UpDownIndicator value={document.price_change_24h}>
+				{#if hasValidPrice}
+					<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
+				{/if}
+				{#if hasPriceChange}
+					<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
+				{/if}
+			</UpDownIndicator>
+		{/if}
 	</a>
 </li>
 
@@ -113,20 +113,19 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		list-style-type: none;
 	}
 
-	a {
+	.trading-entity-hit {
 		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 1em;
-		align-items: center;
-		border: 2px solid;
-		border-color: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-parchment-extra-dark));
-		border-radius: var(--radius-xs);
+		gap: var(--space-md);
+		grid-template-columns: auto 1fr auto;
+		place-content: center stretch;
+		place-items: center stretch;
+		border-radius: var(--radius-md);
 		outline: none;
+		transition: all var(--time-sm) ease-out;
 
 		&.basic {
 			padding: var(--space-ms) var(--space-sl);
 			border: none;
-			background: var(--c-background-4-v1);
 
 			@media (--viewport-sm-up) {
 				padding-block: var(--space-md);
@@ -138,7 +137,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 			@media (--viewport-md-up) {
 				gap: var(--space-lg);
-				padding: var(--space-sl) var(--space-ls);
+				padding: var(--space-sl) var(--space-ml);
 				border-width: 1px;
 				border-color: var(--c-border-2-v1);
 			}
@@ -152,7 +151,15 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		&:hover {
-			background: var(--c-background-4-v1);
+			& :global .up-down-indicator {
+				&.bearish {
+					background: hsla(var(--hsl-bearish), 0.24) !important;
+				}
+
+				&.bullish {
+					background: hsla(var(--hsl-bullish), 0.24) !important;
+				}
+			}
 		}
 
 		&:focus {
@@ -182,17 +189,21 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 	}
 
+	:global .up-down-indicator {
+		max-width: min(30vw, 12rem);
+	}
+
 	.info {
 		display: grid;
 		gap: var(--space-xxs);
+		width: 100%;
 	}
 
 	.primary,
 	.secondary {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		overflow: hidden;
+		display: grid;
+		gap: inherit;
+		width: 100%;
 	}
 
 	.primary {
@@ -203,9 +214,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				font: var(--f-heading-sm-medium);
-				letter-spacing: var(--f-heading-sm-spacing, normal);
-				--reduced-font-weight: 500;
+				font: var(--f-ui-lg-medium);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
 
@@ -224,37 +234,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			font-weight: var(--reduced-font-weight);
 			opacity: 0.7;
 		}
-
-		& .price-change,
-		& .price {
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			max-width: 50%;
-			overflow-wrap: break-word;
-			text-align: right;
-		}
-
-		& .price-change {
-			font-weight: 700;
-		}
-
-		@media (--viewport-sm-down) {
-			& .price {
-				font-weight: 700;
-			}
-		}
 	}
 
 	.secondary {
 		gap: 0.625em;
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
+		font: var(--f-ui-sm-roman);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 
 		@media (--viewport-xs) {
 			font: var(--f-ui-xs-roman);
@@ -262,8 +247,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		& .measures {
-			display: flex;
-			gap: inherit;
+			display: grid;
+			gap: var(--space-xs);
+			grid-template-columns: repeat(auto-fit, minmax(5rem, auto));
+			place-content: start;
+			width: 100%;
 		}
 
 		& dt {
@@ -276,17 +264,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			display: inline-block;
 			margin: 0;
 			font-weight: 700;
-		}
-
-		& .price-change {
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			flex: 1;
-			min-width: 5em;
-			max-width: 50%;
-			overflow-wrap: break-word;
-			text-align: right;
 		}
 	}
 </style>

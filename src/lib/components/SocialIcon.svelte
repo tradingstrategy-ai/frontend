@@ -15,7 +15,7 @@
 		height: var(--size);
 		width: var(--size);
 		border-radius: calc(var(--size) / 2);
-		background: var(--c-background-3-v1);
+		background: hsla(var(--hsl-text));
 		color: hsla(var(--hsl-body));
 		--icon-size: calc(var(--size) * var(--social-icon-scale, 0.5));
 	}

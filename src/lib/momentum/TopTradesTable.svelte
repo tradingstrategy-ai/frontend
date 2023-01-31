@@ -32,7 +32,25 @@ of pair records is based on the records returned by `top-momentum` API.
 </table>
 
 <style lang="postcss">
-	td:last-child {
-		text-align: right;
+	td {
+		&:last-child {
+			text-align: right;
+			display: flex;
+			place-content: end;
+			place-items: center;
+		}
+	}
+
+	tr {
+		&:hover {
+			& :global .up-down-indicator {
+				&.bearish {
+					background: hsla(var(--hsl-bearish), 0.24) !important;
+				}
+				&.bullish {
+					background: hsla(var(--hsl-bullish), 0.24) !important;
+				}
+			}
+		}
 	}
 </style>

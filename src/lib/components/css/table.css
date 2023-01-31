@@ -10,7 +10,7 @@ table:not(.table) {
 	--table-letter-spacing: var(--f-ui-md-spacing, normal);
 	border-collapse: separate;
 	border-spacing: 0 var(--border-spacing);
-	margin-top: calc(-1 * var(--border-spacing));
+	margin: calc(-1 * var(--border-spacing)) 0;
 	width: 100%;
 
 	@media (width <= 920px) {
@@ -42,7 +42,7 @@ table:not(.table) {
 	& > :not(thead):not(tfoot) tr {
 		& td {
 			background: hsla(var(--hsl-box), var(--a-box-b));
-			height: 4rem;
+			height: 3.25rem;
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
 			padding: var(--cell-padding);
@@ -50,13 +50,17 @@ table:not(.table) {
 			vertical-align: middle;
 			--button-width: 100%;
 
+			@media (width >= 1024px) {
+				height: 3.825rem !important;
+			}
+
 			&:first-child {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-sl);
+				--cell-padding: 0 var(--space-xs) 0 var(--space-md);
 				border-radius: var(--radius-md) 0 0 var(--radius-md);
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-sl) 0 var(--space-xs);
+				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
 			}
 		}

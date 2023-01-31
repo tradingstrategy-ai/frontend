@@ -4,8 +4,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import BlockchainTile from './BlockchainTile.svelte';
-	import { PageHeader } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
+	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
 	export let data: PageData;
 </script>
@@ -17,47 +17,33 @@
 
 <Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
 
-<main>
-	<PageHeader title="Blockchains" description="List of currently active blockchains producing trading data." />
+<ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">
+	<HeroBanner slot="hero" title="Blockchains" subtitle="List of currently active blockchains producing trading data." />
 
-	<section class="ds-container">
+	<ContentCardsSection cols={4}>
 		{#each data.chains as chain}
-			<BlockchainTile name={chain.chain_name} exchanges={chain.exchanges} slug={chain.chain_slug} />
+			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
+				<div class="blockchain-logo" slot="icon">
+					<img alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
+				</div>
+				<h3 slot="title">{chain.chain_name}</h3>
+				<p>{chain.exchanges} exchanges</p>
+			</ContentCard>
 		{/each}
-	</section>
-
-	<aside class="ds-container">
-		You can explore the blockchains for supported decentralised exchanges, trading pairs and price charts.
-	</aside>
-</main>
+	</ContentCardsSection>
+</ContentCardsTemplate>
 
 <style lang="postcss">
-	main {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-lg);
-	}
+	.blockchain-logo {
+		--size: 3rem;
 
-	section {
-		grid-template-columns: repeat(4, 1fr);
-		gap: var(--space-xl);
-		padding-block: var(--space-lg);
-
-		@media (--viewport-md-down) {
-			grid-template-columns: repeat(2, 1fr);
-		}
-
-		@media (--viewport-sm-down) {
-			grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr));
-			--container-margin: var(--space-xl);
+		& img {
+			height: var(--size);
+			width: var(--size);
 		}
 	}
 
-	aside {
-		font: var(--f-h4-roman);
-
-		@media (--viewport-sm-down) {
-			--container-margin: var(--space-xl);
-		}
+	h3 {
+		font: var(--f-heading-md-medium);
 	}
 </style>

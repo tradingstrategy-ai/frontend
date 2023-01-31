@@ -1,42 +1,56 @@
 <script lang="ts">
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { Button, Section } from '$lib/components';
 
 	export let name: string;
 	export let slug: string;
 	export let homepage: string;
 </script>
 
-<header class="ds-container">
-	<h1>
-		<img alt={`${name} logo`} src={getLogoUrl(slug)} />
-		<span>{name} blockchain</span>
-	</h1>
-	<div>Visit <a href={homepage}>{formatUrlAsDomain(homepage)}</a></div>
-</header>
+<Section header layout="boxed">
+	<a class="inner tile a" href={homepage}>
+		<h1>
+			<img alt={`${name} logo`} src={getLogoUrl(slug)} />
+			<span>{name} blockchain</span>
+		</h1>
+		<Button>Visit {formatUrlAsDomain(homepage)}</Button>
+	</a>
+</Section>
 
 <style lang="postcss">
-	header {
+	.inner {
 		--logo-height: 5rem;
-		display: flex;
 		align-items: center;
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-xl);
+		display: flex;
+		gap: var(--space-md);
+		justify-content: space-between;
+		padding: var(--space-2xl);
+		text-decoration: none;
 
 		@media (--viewport-md-down) {
 			--logo-height: 3.5rem;
+			padding: var(--space-xl);
 			flex-direction: column;
-			margin-block: var(--space-ll);
+			margin-top: var(--space-ms);
+
+			& :global .button {
+				width: 100%;
+			}
 		}
 	}
 
-	header h1 {
+	.inner h1 {
 		flex: 1;
 		display: flex;
-		gap: var(--space-md);
+		gap: var(--space-xl);
 		align-items: center;
-		font: var(--f-h1-bold);
+		font: var(--f-heading-xl-medium);
 
 		@media (--viewport-md-down) {
-			font: var(--f-h3-bold);
+			font: var(--f-heading-md-medium);
 		}
 
 		& span {
@@ -50,11 +64,6 @@
 		& img {
 			height: var(--logo-height);
 		}
-	}
-
-	div {
-		font: var(--f-ui-lg-medium);
-		letter-spacing: var(--f-ui-lg-medium, normal);
 	}
 
 	a {

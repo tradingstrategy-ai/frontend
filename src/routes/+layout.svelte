@@ -71,11 +71,11 @@
 	}
 
 	/* Price action and candle colors */
-	.price-change-green {
+	.bullish {
 		color: hsla(var(--hsl-bullish));
 	}
 
-	.price-change-red {
+	.bearish {
 		color: hsla(var(--hsl-bearish));
 	}
 

@@ -3,15 +3,16 @@
 */
 .truncate {
 	-webkit-box-orient: vertical;
-	display: -webkit-box;
 	overflow: hidden;
 	text-overflow: ellipsis;
 
 	&.lines-2 {
+		display: -webkit-box;
 		-webkit-line-clamp: 2;
 	}
 
 	&.lines-3 {
+		display: -webkit-box;
 		-webkit-line-clamp: 3;
 	}
 }
