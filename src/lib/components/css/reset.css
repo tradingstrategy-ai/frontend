@@ -1,34 +1,99 @@
-body {
+:where(html) {
+	line-height: 1.5;
+	text-size-adjust: 100%;
+	tab-size: 4;
+}
+
+:where(body) {
 	margin: 0;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-a,
-a:hover,
-button,
-code {
-	color: inherit;
+/* set default box-sizing to border-box */
+:where(*, *::before, *::after) {
+	box-sizing: border-box;
 }
 
-svg {
+/* remove default margins */
+:where(blockquote, dl, dd, h1, h2, h3, h4, h5, h6, figure, ol, p, pre, ul) {
+	margin: 0;
+}
+
+/* set default paragraph bottom margin to match old bootstrap theme for now */
+/* FIXME: remove this (defaults to 0 above); fix anywhere this impacts spacing */
+/* TODO: consider adding a `p + p` rule to add spacing between paragraphs */
+:where(p) {
+	margin-bottom: 1rem;
+}
+
+/* set default heading bottom margin to match old bootstrap theme for now */
+/* FIXME: remove this (defaults to 0 above); fix anywhere this impacts spacing */
+:where(h1, h2, h3, h4, h5, h6) {
+	margin-bottom: 0.5rem;
+}
+
+/* remove base heading styles */
+:where(h1, h2, h3, h4, h5, h6) {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+/* normalize form elements */
+:where(button, input, optgroup, select, textarea) {
+	font-family: inherit;
+	font-size: 100%;
+	line-height: inherit;
+	margin: 0;
+}
+
+/* correct the inability to style buttons in iOS and Safari. */
+:where(button, input:is([type='button'], [type='reset'], [type='submit'])) {
+	-webkit-appearance: button;
+}
+
+/** remove inheritance of text transform in Edge and Firefox */
+:where(button, select) {
+	text-transform: none;
+}
+
+/* remove default link style */
+:where(a, a:hover) {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+:where(img, video) {
+	max-width: 100%;
+	height: auto;
+}
+
+:where(svg) {
 	overflow: hidden;
 	vertical-align: middle;
 }
 
-ul {
-	margin: 0;
-	padding-left: 2.5ch;
-	list-style-type: square;
+/* normalize HR */
+:where(hr) {
+	box-sizing: content-box;
+	color: inherit;
+	height: 0;
 }
 
-/* needed to override bootstrap theme styles */
-article a,
-article a:hover {
-	color: inherit;
-	text-decoration: inherit;
+/* normalize address */
+:where(address) {
+	font-style: inherit;
+}
+
+:where(pre) {
+	overflow: auto;
+}
+
+/* normalize progress bar vertical alignment */
+:where(progress) {
+	vertical-align: baseline;
+}
+
+/* set default bullet style */
+:where(ul) {
+	padding-left: 2.5ch;
+	list-style-type: square;
 }
