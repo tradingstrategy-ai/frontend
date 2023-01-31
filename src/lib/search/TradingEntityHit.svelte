@@ -45,7 +45,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		<div class="type type-{document.type}">{typeLabel}</div>
 		<div class="info">
 			<div class="primary">
-				<div class="desc">
+				<div class="desc truncate lines-2">
 					{document.description}
 					{#if document.pool_swap_fee}
 						<span class="pool-swap-fee">({formatSwapFee(document.pool_swap_fee)})</span>
@@ -85,10 +85,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
 			<UpDownIndicator value={document.price_change_24h}>
 				{#if hasValidPrice}
-					<span class="price">{formatDollar(document.price_usd_latest)}</span>
+					<span class="price truncate">{formatDollar(document.price_usd_latest)}</span>
 				{/if}
 				{#if hasPriceChange}
-					<span class="price-change">{formatPriceChange(document.price_change_24h)}</span>
+					<span class="price-change truncate">{formatPriceChange(document.price_change_24h)}</span>
 				{/if}
 			</UpDownIndicator>
 		{/if}
@@ -113,7 +113,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		list-style-type: none;
 	}
 
-	a {
+	.trading-entity-hit {
 		display: grid;
 		gap: var(--space-md);
 		grid-template-columns: auto 1fr auto;
@@ -189,6 +189,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 	}
 
+	:global .up-down-indicator {
+		max-width: min(30vw, 12rem);
+	}
+
 	.info {
 		display: grid;
 		gap: var(--space-xxs);
@@ -197,10 +201,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.primary,
 	.secondary {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		overflow: hidden;
+		display: grid;
+		gap: inherit;
+		width: 100%;
 	}
 
 	.primary {
@@ -211,9 +214,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				font: var(--f-heading-sm-medium);
-				letter-spacing: var(--f-heading-sm-spacing, normal);
-				--reduced-font-weight: 500;
+				font: var(--f-ui-lg-medium);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
 
@@ -233,16 +235,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			opacity: 0.7;
 		}
 
-		& .price-change,
-		& .price {
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			max-width: 50%;
-			overflow-wrap: break-word;
-			text-align: right;
-		}
-
 		& .price-change {
 			font-weight: 700;
 		}
@@ -256,13 +248,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 	.secondary {
 		gap: 0.625em;
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
+		font: var(--f-ui-sm-roman);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 
 		@media (--viewport-xs) {
 			font: var(--f-ui-xs-roman);
@@ -270,8 +257,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		& .measures {
-			display: flex;
-			gap: inherit;
+			display: grid;
+			gap: var(--space-xs);
+			grid-template-columns: repeat(auto-fit, minmax(5rem, auto));
+			place-content: start;
+			width: 100%;
 		}
 
 		& dt {
