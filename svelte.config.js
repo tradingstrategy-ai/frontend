@@ -18,7 +18,6 @@ const config = {
 
 		alias: {
 			'design-system-fonts': 'deps/fonts',
-			'bootstrap-theme': 'deps/theme/dist',
 			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib'
 		},
 
