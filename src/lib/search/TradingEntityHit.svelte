@@ -77,7 +77,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			<Icon name="warning" size="20px" />
 		{:else if isBasicLayout && hasPriceChange}
 			<UpDownIndicator value={document.price_change_24h}>
-				<span class="price-change">{formatPercent(Math.abs(document.price_change_24h))}</span>
+				<span>{formatPercent(Math.abs(document.price_change_24h))}</span>
 			</UpDownIndicator>
 		{/if}
 
@@ -85,10 +85,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
 			<UpDownIndicator value={document.price_change_24h}>
 				{#if hasValidPrice}
-					<span class="price truncate">{formatDollar(document.price_usd_latest)}</span>
+					<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
 				{/if}
 				{#if hasPriceChange}
-					<span class="price-change truncate">{formatPriceChange(document.price_change_24h)}</span>
+					<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
 				{/if}
 			</UpDownIndicator>
 		{/if}
@@ -234,16 +234,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			font-weight: var(--reduced-font-weight);
 			opacity: 0.7;
 		}
-
-		& .price-change {
-			font-weight: 700;
-		}
-
-		@media (--viewport-sm-down) {
-			& .price {
-				font-weight: 700;
-			}
-		}
 	}
 
 	.secondary {
@@ -274,17 +264,6 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 			display: inline-block;
 			margin: 0;
 			font-weight: 700;
-		}
-
-		& .price-change {
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			flex: 1;
-			min-width: 5em;
-			max-width: 50%;
-			overflow-wrap: break-word;
-			text-align: right;
 		}
 	}
 </style>
