@@ -2,12 +2,14 @@
 	import { Button, Section, SummaryBox } from '$lib/components';
 </script>
 
-<div class="audience-wrapper">
-	<Section class="audience ds-container" cols={2} layout="boxed" padding="xl">
-		<header>
-			<h2>Audience</h2>
-			<p>The Trading Strategy protocol creates value for all participants within the DeFi ecosystem.</p>
-		</header>
+<div class="audience">
+	<Section
+		cols={2}
+		gap="xl"
+		layout="boxed"
+		title="Audience"
+		subtitle="The Trading Strategy protocol creates value for all participants within the DeFi ecosystem."
+	>
 		<SummaryBox title="Traders and investors">
 			<ul>
 				<li>Access automated trading strategies created by skilled strategy developers and quants</li>
@@ -53,28 +55,23 @@
 </div>
 
 <style lang="postcss">
-	.audience-wrapper {
-		& :global .audience {
-			--grid-gap: var(--space-xl);
-			@media (--viewport-xs) {
-				--grid-gap: var(--space-lg);
-			}
+	.audience {
+		margin-block: var(--space-8xl);
+		--section-padding-y: var(--space-md);
+
+		@media (--viewport-md-down) {
+			margin-block: var(--space-6xl);
+		}
+		@media (--viewport-sm-down) {
+			margin-block: var(--space-xl);
 		}
 
-		& header {
-			display: grid;
-			gap: var(--space-lg);
-			grid-column: 1/-1;
-			place-items: center;
-
-			& p {
+		& :global .subtitle {
+			@media (--viewport-sm-down) {
 				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-spacing);
+				text-align: left;
 			}
 		}
-	}
-
-	.subscribe-cta {
-		display: grid;
-		gap: var(--space-sm);
 	}
 </style>
