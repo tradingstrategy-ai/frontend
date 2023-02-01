@@ -46,7 +46,7 @@ const config = {
 			// Enable experimental Svelte inspector; see:
 			// https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#inspector
 			inspector: {
-				toggleKeyCombo: 'control-meta',
+				toggleKeyCombo: 'alt-meta',
 				holdMode: true,
 				showToggleButton: 'never'
 			}
