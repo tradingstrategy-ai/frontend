@@ -60,13 +60,25 @@ table:not(.table) {
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
+				--cell-padding: 0 var(--space-xs);
+				&:not(:has(.button)) {
+					--cell-padding: 0 var(--space-md) 0 var(--space-xs);
+				}
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
 			}
 		}
 
-		&:hover td {
-			background: hsla(var(--hsl-box), var(--a-box-d));
+		&:hover,
+		&:focus,
+		&:focus-within {
+			& td {
+				background: hsla(var(--hsl-box), var(--a-box-d));
+			}
+
+			& .button {
+				--c-accent: var(--hsl-text);
+				color: hsla(var(--hsl-text-inverted));
+			}
 		}
 	}
 }

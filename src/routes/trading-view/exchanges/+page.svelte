@@ -3,8 +3,11 @@
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
-	import { PageHeader } from '$lib/components';
+	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
+	import { PageHeader, Section } from '$lib/components';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -20,13 +23,9 @@
 		description="Browse supported decentralised exchanges across all blockchains"
 	/>
 
-	<section class="ds-container">
-		<ExchangeExplorer
-			enabledColumns={['human_readable_name', 'chain_name', 'pair_count', 'usd_volume_30d']}
-			orderColumnIndex={3}
-			filterJunk={false}
-		/>
-	</section>
+	<Section layout="boxed" padding="md">
+		<ExchangesTable exchanges={data.exchanges} />
+	</Section>
 </main>
 
 <style lang="postcss">
