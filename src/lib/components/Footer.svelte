@@ -55,8 +55,7 @@
 		}
 	}
 
-	a,
-	button {
+	a {
 		transition: opacity 0.15s;
 		border: none;
 		background: transparent;
