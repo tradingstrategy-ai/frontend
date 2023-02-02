@@ -4,7 +4,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
-	import { PageHeader, Section } from '$lib/components';
+	import { HeroBanner, Section } from '$lib/components';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -18,19 +18,14 @@
 <Breadcrumbs />
 
 <main>
-	<PageHeader
-		title="Decentralised exchanges"
-		description="Browse supported decentralised exchanges across all blockchains"
-	/>
+	<Section layout="boxed">
+		<HeroBanner
+			title="Decentralised exchanges"
+			subtitle="Browse supported decentralised exchanges across all blockchains"
+		/>
+	</Section>
 
 	<Section layout="boxed" padding="sm">
 		<ExchangesTable exchanges={data.exchanges.slice(0, 10)} />
 	</Section>
 </main>
-
-<style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-md);
-	}
-</style>
