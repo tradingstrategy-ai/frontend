@@ -1,86 +1,14 @@
 import type { PageLoad } from "../$types";
+import { backendUrl } from '$lib/config';
 
 export const load = (async () => {
 
+  const exchangesReq = await fetch(`${backendUrl}/exchanges`);
+  const { exchanges } = await exchangesReq.json();
+
+	
+
   return {
-    exchanges: [
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-      {
-        exchange: 'Test DEX name',
-        blockchain: 'Test blockchain name',
-        trading_pairs: 12345,
-        volume_30d: 123456789,
-        exchange_slug: "exchange-slug"
-      },
-    ]
+    exchanges,
   }
 }) satisfies PageLoad;

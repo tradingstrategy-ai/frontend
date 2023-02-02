@@ -14,34 +14,36 @@
 		table.column({
 			id: 'exchange',
 			header: 'Exchange',
-			accessor: ({ exchange }) => exchange
+			accessor: ({ human_readable_name }) => human_readable_name
 		}),
 		table.column({
 			id: 'blockchain',
 			header: 'Blockchain',
-			accessor: ({ blockchain }) => blockchain
+			accessor: ({ chain_name }) => chain_name
 		}),
 		table.column({
 			id: 'trading_pairs',
 			header: 'Trading pairs',
-			accessor: ({ trading_pairs }) => trading_pairs
+			accessor: ({ pair_count }) => pair_count
 		}),
 		table.column({
 			id: 'volume_30d',
 			header: 'Volume 30d (USD)',
-			accessor: ({ volume_30d }) => volume_30d
+			accessor: ({ usd_volume_30d }) => usd_volume_30d
 		}),
 		table.column({
 			id: 'cta',
 			header: '',
-			accessor: ({ exchange_slug }) => exchange_slug,
-			cell: ({ value }) => createRender(Button, { label: 'View exchange', href: value.exchange_slug })
+			accessor: ({ chain_slug, exchange_slug }) => ({ chain_slug, exchange_slug }),
+			cell: ({ value }) =>
+				createRender(Button, {
+					label: 'View exchange',
+					href: `/trading-view/${value.chain_slug}/${value.exchange_slug}`
+				})
 		})
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<section class="exchanges-table">
-	<DataTable {tableViewModel} />
-</section>
+<DataTable {tableViewModel} />
