@@ -115,11 +115,6 @@ npm install --save datatables.net-responsive-bs4
 		}
 	}
 
-	.table-responsive {
-		overflow-x: auto;
-		overflow-y: hidden;
-	}
-
 	.datatables-wrapper :global {
 		contain: paint;
 
