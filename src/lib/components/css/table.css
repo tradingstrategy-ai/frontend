@@ -37,6 +37,7 @@ table:not(.table) {
 		padding: var(--cell-padding);
 		transition: var(--table-transition);
 		white-space: nowrap;
+		text-align: left;
 	}
 
 	& > :not(thead):not(tfoot) tr {
