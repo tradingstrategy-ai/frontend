@@ -9,6 +9,7 @@ Advanced Search page
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import tradingEntities from '$lib/search/trading-entities';
+	import { PageHeader } from '$lib/components';
 	import FilterPanel from './FilterPanel.svelte';
 	import SearchPanel from './SearchPanel.svelte';
 	import { getSortParams } from './SortSelect.svelte';
@@ -63,9 +64,7 @@ Advanced Search page
 </svelte:head>
 
 <main>
-	<header class="ds-container">
-		<h1>Search</h1>
-	</header>
+	<PageHeader title="Search" />
 
 	<section class="ds-container">
 		<FilterPanel bind:open={filterPanelOpen} bind:sortBy bind:filters bind:filterBy facets={$tradingEntities.facets} />
@@ -87,13 +86,13 @@ Advanced Search page
 		@media (--viewport-md-down) {
 			gap: var(--space-ss);
 		}
-	}
 
-	header {
-		padding-block: var(--space-lg);
+		& :global .page-header {
+			padding-block: var(--space-lg);
 
-		@media (--viewport-md-down) {
-			padding-block: var(--space-md);
+			@media (--viewport-md-down) {
+				padding-block: var(--space-md);
+			}
 		}
 	}
 
