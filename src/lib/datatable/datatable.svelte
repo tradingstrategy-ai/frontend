@@ -90,6 +90,7 @@ npm install --save datatables.net-responsive-bs4
 		& :global th {
 			border-top: none;
 			border-bottom: 2px solid var(--c-border-1-v1);
+			padding: var(--space-md);
 			white-space: nowrap;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -97,7 +98,7 @@ npm install --save datatables.net-responsive-bs4
 
 		& :global td {
 			border-bottom: 1px solid var(--c-border-1-v1);
-			padding-block: var(--space-ll);
+			padding: var(--space-ll) var(--space-md);
 			font: var(--f-ui-body-roman);
 		}
 
@@ -112,6 +113,11 @@ npm install --save datatables.net-responsive-bs4
 				background: var(--c-background-6-v1);
 			}
 		}
+	}
+
+	.table-responsive {
+		overflow-x: auto;
+		overflow-y: hidden;
 	}
 
 	.datatables-wrapper :global {
