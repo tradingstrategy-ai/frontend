@@ -23,8 +23,8 @@
 		description="Browse supported decentralised exchanges across all blockchains"
 	/>
 
-	<Section layout="boxed" padding="md">
-		<ExchangesTable exchanges={data.exchanges} />
+	<Section layout="boxed" padding="sm">
+		<ExchangesTable exchanges={data.exchanges.slice(0, 10)} />
 	</Section>
 </main>
 
