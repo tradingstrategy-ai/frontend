@@ -21,13 +21,14 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let tableViewModel: TableViewModel<any, any>;
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
+	export let isResponsive = false;
 
 	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
 	const filterValue = pluginStates.tableFilter?.filterValue;
 </script>
 
 <div class="data-table">
-	<table {...$tableAttrs}>
+	<table {...$tableAttrs} class:responsive={isResponsive}>
 		<TableHeader attrs={$tableHeadAttrs} rows={$headerRows}>
 			{#if hasSearch}
 				<SearchHeaderRow bind:value={$filterValue} />

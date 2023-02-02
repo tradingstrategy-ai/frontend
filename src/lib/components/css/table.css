@@ -2,6 +2,7 @@
  Default table styling.
  Excludes .table class for now to avoid conflicts with bootstrap stylesheet.
 */
+
 table:not(.table) {
 	--border-spacing: var(--space-sl);
 	--cell-padding: var(--space-sl) var(--space-ls);
@@ -19,7 +20,7 @@ table:not(.table) {
 		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
-	@media (width <= 480px) {
+	@media (width <= 767px) {
 		--table-font: var(--f-ui-xs-medium) !important;
 		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
@@ -78,6 +79,46 @@ table:not(.table) {
 			& .button {
 				--c-accent: var(--hsl-text);
 				color: hsla(var(--hsl-text-inverted));
+			}
+		}
+	}
+
+	&.responsive {
+		@media (width <= 767px) {
+			--table-font: var(--f-ui-md-medium) !important;
+			--table-letter-spacing: var(--f-ui-xs-spacing, normal);
+
+			border-collapse: separate;
+			border-spacing: 0 var(--border-spacing);
+			margin: calc(-1 * var(--border-spacing)) 0;
+			width: 100%;
+
+			&,
+			& tbody {
+				display: grid;
+				gap: var(--space-md);
+			}
+
+			& thead {
+				display: none;
+			}
+
+			& > :not(thead):not(tfoot) tr {
+				display: grid;
+
+				& td {
+					display: grid;
+					height: auto;
+					padding: var(--space-md);
+
+					&:first-child {
+						border-radius: var(--radius-md) var(--radius-md) 0 0;
+					}
+
+					&:last-child {
+						border-radius: 0 0 var(--radius-md) var(--radius-md);
+					}
+				}
 			}
 		}
 	}

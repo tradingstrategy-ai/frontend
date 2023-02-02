@@ -46,4 +46,4 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<DataTable {tableViewModel} />
+<DataTable isResponsive {tableViewModel} />
