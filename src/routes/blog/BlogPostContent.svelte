@@ -7,7 +7,7 @@
 	function injectTOC(node: HTMLElement) {
 		const target = node.querySelector('#table-of-contents');
 		if (target) {
-			const entries = node.querySelectorAll('h2');
+			const entries = node.querySelectorAll('h2, h3');
 			new TableOfContents({ target, props: { entries } });
 		}
 	}
