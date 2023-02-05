@@ -55,10 +55,13 @@ export async function fetchAndParseGlossary(baseUrl: string) : Promise<GlossaryM
 
     for(const dt of dts) {
       let $dt = $(dt);
+      // There is embedded <a>#</a> anchor in dt we need to remove
+      $dt.find("a").remove();
+
       const name = $dt.text();
       const slug = name.toLowerCase().replace(" ", "-");
       const html = fixGlossaryElemHtml($, dt.next, baseUrl);
-      glossary[slug] = { html, name };
+      glossary[slug] = { html, name, slug };
     }
 
     return glossary;
