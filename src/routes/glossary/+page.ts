@@ -3,12 +3,11 @@
  */
 
 /** @type {import('./$types').PageLoad} */
-export async function load({fetch, url}) {
+export async function load({ fetch, url }) {
+	const resp = await fetch('/glossary/api');
+	const glossary = await resp.json();
 
-  const resp = await fetch("/glossary/api");
-  const glossary = await resp.json()
-
-  return {
-    glossary
-  }
+	return {
+		glossary
+	};
 }
