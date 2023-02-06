@@ -1,11 +1,12 @@
 <script lang="ts">
 	export let value: string;
+	import { TextInput } from '$lib/components';
 </script>
 
 <tr class="search">
 	<th colspan="100">
 		<div>
-			<input bind:value class="text-field" type="search" placeholder="Find in the table" />
+			<TextInput bind:value class="text-field" placeholder="Find in the table" size="lg" type="search" />
 		</div>
 	</th>
 </tr>
@@ -19,8 +20,8 @@
 		max-width: calc(100vw - 3rem);
 	}
 
-	input {
-		width: 100%;
+	.search :global .text-input {
+		width: 100% !important;
 	}
 
 	tr.search {

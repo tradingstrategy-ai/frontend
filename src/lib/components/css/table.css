@@ -99,26 +99,52 @@ table:not(.table) {
 				gap: var(--space-md);
 			}
 
-			& thead {
-				display: none;
+			& thead tr {
+				display: grid;
+				min-height: 2rem;
 			}
 
 			& > :not(thead):not(tfoot) tr {
+				background: hsla(var(--hsl-box), var(--a-box-b));
+				border-radius: var(--radius-md);
 				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(max(25%, 16rem), 1fr));
+				overflow: hidden;
+				padding: var(--space-xs) 0;
 
 				& td {
+					background: transparent;
+					border-radius: 0;
 					display: grid;
+					font: var(--f-ui-xl-medium);
+					gap: var(--space-xxs);
 					height: auto;
-					padding: var(--space-md);
+					padding: var(--space-sm) var(--space-ml);
 
-					&:first-child {
-						border-radius: var(--radius-md) var(--radius-md) 0 0;
+					&:not(:last-child)::before {
+						content: attr(class);
+						font: var(--f-ui-xs-roman);
 					}
 
 					&:last-child {
-						border-radius: 0 0 var(--radius-md) var(--radius-md);
+						padding-bottom: var(--space-ml);
+						grid-column: 1/-1;
 					}
 				}
+			}
+		}
+	}
+
+	@media all and (min-width: 768px) {
+		& td,
+		& th {
+			&.right {
+				text-align: right;
+			}
+
+			&.cta {
+				max-width: 8rem;
+				padding-left: 1rem;
 			}
 		}
 	}
