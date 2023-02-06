@@ -1,14 +1,20 @@
 <script lang="ts">
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
+	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
 	import { DataTable } from '$lib/components';
+	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
 	import Button from '$lib/components/Button.svelte';
 
 	export let exchanges: any[];
 
-	$: console.log(exchanges);
-
-	const table = createTable(readable(exchanges));
+	const table = createTable(readable(exchanges), {
+		sort: addSortBy({
+			initialSortKeys: [{ id: 'trading_pairs right', order: 'desc' }],
+			toggleOrder: ['asc', 'desc']
+		}),
+		page: addPagination()
+	});
 
 	const columns = table.createColumns([
 		table.column({
@@ -22,14 +28,14 @@
 			accessor: ({ chain_name }) => chain_name
 		}),
 		table.column({
-			id: 'trading_pairs',
+			id: 'trading_pairs right',
 			header: 'Trading pairs',
 			accessor: ({ pair_count }) => pair_count
 		}),
 		table.column({
-			id: 'volume_30d',
+			id: 'volume_30d right',
 			header: 'Volume 30d (USD)',
-			accessor: ({ usd_volume_30d }) => usd_volume_30d
+			accessor: ({ usd_volume_30d }) => formatDollar(usd_volume_30d)
 		}),
 		table.column({
 			id: 'cta',

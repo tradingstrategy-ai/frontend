@@ -8,8 +8,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
-	$: console.log(data.exchanges.slice(0, 10));
 </script>
 
 <svelte:head>
@@ -19,7 +17,7 @@
 
 <Breadcrumbs />
 
-<main>
+<main class="dexes">
 	<Section layout="boxed">
 		<HeroBanner
 			title="Decentralised exchanges"
@@ -31,3 +29,16 @@
 		<ExchangesTable exchanges={data.exchanges.slice(0, 10)} />
 	</Section>
 </main>
+
+<style lang="postcss">
+	@media (--viewport-md) {
+		.dexes :global table .right {
+			text-align: right;
+		}
+
+		.dexes :global table .cta {
+			max-width: 8rem;
+			padding-left: 1rem;
+		}
+	}
+</style>

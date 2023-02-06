@@ -6,8 +6,6 @@ export const load = (async () => {
   const exchangesReq = await fetch(`${backendUrl}/exchanges`);
   const { exchanges } = await exchangesReq.json();
 
-	
-
   return {
     exchanges,
   }
