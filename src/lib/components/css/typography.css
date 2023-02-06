@@ -91,13 +91,17 @@
 	--f-text-md-semibold: 600 16px/28px var(--ff-text);
 	--f-text-md-bold: 700 16px/28px var(--ff-text);
 
-	--f-text-lg-regular: 400 19px/32px var(--ff-text);
-	--f-text-lg-semibold: 600 19px/32px var(--ff-text);
-	--f-text-lg-bold: 700 19px/32px var(--ff-text);
+	--f-text-lg-regular: 400 20px/32px var(--ff-text);
+	--f-text-lg-semibold: 600 20px/32px var(--ff-text);
+	--f-text-lg-bold: 700 20px/32px var(--ff-text);
 
 	--f-text-xl-regular: 400 26px/36px var(--ff-text);
 	--f-text-xl-semibold: 600 26px/36px var(--ff-text);
 	--f-text-xl-bold: 700 26px/36px var(--ff-text);
+
+	--f-text-xxl-regular: 400 30px/36px var(--ff-text);
+	--f-text-xxl-semibold: 600 30px/36px var(--ff-text);
+	--f-text-xxl-bold: 700 30px/36px var(--ff-text);
 
 	/* Mono (code) Fonts */
 	--f-mono-xl-spacing: -0.01em;
@@ -246,6 +250,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
+/* TODO: remove this once heading and paragraph margins are removed in reset.css */
 .ds-container :is(h1, h2, h3, h4, h5, h6, p, pre) {
 	margin: 0;
 }

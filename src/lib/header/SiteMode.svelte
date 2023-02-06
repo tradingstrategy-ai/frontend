@@ -9,31 +9,28 @@ A helpful widget to identify non-production deployment and give some developer d
 -->
 <script lang="ts">
 	import { backendUrl, siteMode } from '$lib/config';
-
-	const siteBar = siteMode !== 'production';
 </script>
 
-{#if siteBar}
-	<div class="site-mode text-center">
+{#if siteMode !== 'production'}
+	<section class="site-mode ds-container">
 		<p>
 			Frontend running in <strong>{siteMode}</strong> mode, backend is
 			<strong>{backendUrl}</strong>.
 		</p>
 
 		<p>
-			<a href="/slow-load">Go to slow page</a> | <a href="/diagnostics">Go to diagnostics page</a>
+			<a class="body-link" href="/slow-load">Go to slow page</a> |
+			<a class="body-link" href="/diagnostics">Go to diagnostics page</a>
 		</p>
-	</div>
+	</section>
 {/if}
 
-<style>
+<style lang="postcss">
 	.site-mode {
-		padding: 10px;
+		padding-block: var(--space-md);
+		gap: var(--space-md);
 		background: blue;
 		color: white;
-	}
-
-	.site-mode a {
-		color: white;
+		text-align: center;
 	}
 </style>

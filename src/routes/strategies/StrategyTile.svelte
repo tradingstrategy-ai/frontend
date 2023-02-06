@@ -94,7 +94,6 @@
 	dt {
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
-		white-space: nowrap;
 	}
 
 	dd {

@@ -47,6 +47,7 @@ Used to display tabs and associated component content panels
 	}
 
 	label {
+		display: inline-block;
 		border-radius: var(--radius-md);
 		color: hsla(var(--hsl-text-extra-light));
 		cursor: pointer;

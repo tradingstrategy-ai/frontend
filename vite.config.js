@@ -6,7 +6,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
-import fontDisplay from 'postcss-font-display';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
 
@@ -42,14 +41,7 @@ const config = {
 
 	css: {
 		postcss: {
-			plugins: [
-				postcssPresetEnv({ features: { 'nesting-rules': true } }),
-				// use `font-display: optional` in SSR build (minimize CLS/FOUT)
-				fontDisplay({
-					display: process.env.NODE_ENV === 'production' ? 'optional' : 'swap',
-					replace: true
-				})
-			]
+			plugins: [postcssPresetEnv({ features: { 'nesting-rules': true } })]
 		}
 	},
 

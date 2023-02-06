@@ -1,6 +1,6 @@
 /*
  Default table styling.
- Excludes .table class for now to avoid conflicts with bootstrap stylesheet.
+ Excludes .table class for now to avoid conflicts with old table style (see table-old.css).
 */
 
 table:not(.table) {
@@ -47,6 +47,7 @@ table:not(.table) {
 		position: relative;
 		transition: var(--table-transition);
 		white-space: nowrap;
+		text-align: left;
 
 		&:hover,
 		&:focus {

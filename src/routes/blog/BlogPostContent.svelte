@@ -7,7 +7,7 @@
 	function injectTOC(node: HTMLElement) {
 		const target = node.querySelector('#table-of-contents');
 		if (target) {
-			const entries = node.querySelectorAll('h2');
+			const entries = node.querySelectorAll('h2, h3');
 			new TableOfContents({ target, props: { entries } });
 		}
 	}
@@ -48,13 +48,13 @@
 		}
 
 		& h2 {
-			font: var(--f-text-xl-semibold);
+			font: var(--f-text-xxl-semibold);
 			letter-spacing: var(--f-text-xl-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
 		}
 
 		& h3 {
-			font: var(--f-text-lg-semibold);
+			font: var(--f-text-xl-semibold);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
 		}

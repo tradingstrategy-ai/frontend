@@ -21,6 +21,30 @@ A test endpoint for the page to show debug data.
 </section>
 
 <style>
+	h1 {
+		padding-block: var(--space-md);
+		font: var(--f-heading-xxl-medium);
+		letter-spacing: var(--f-heading-xxl-spacing, normal);
+
+		@media (--viewport-sm-down) {
+			padding-block: var(--space-sm);
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+		}
+	}
+
+	h2 {
+		padding-block: var(--space-sm);
+		font: var(--f-heading-md-medium);
+		letter-spacing: var(--f-heading-md-spacing, normal);
+
+		@media (--viewport-sm-down) {
+			padding-block: var(--space-xs);
+			font: var(--f-heading-sm-medium);
+			letter-spacing: var(--f-heading-sm-spacing, normal);
+		}
+	}
+
 	section {
 		--container-max-width: 1020px;
 		gap: var(--space-lg);
@@ -28,10 +52,10 @@ A test endpoint for the page to show debug data.
 
 	pre {
 		padding: var(--space-lg);
-		background: var(--c-background-7-v1);
-		border: 2px solid var(--c-border-1-v1);
-		border-radius: var(--radius-xxs);
-		color: var(--c-parchment);
+		background: var(--c-background-7);
+		border-radius: var(--radius-md);
+		color: var(--c-text-default-night);
 		white-space: pre-wrap;
+		word-break: break-all;
 	}
 </style>

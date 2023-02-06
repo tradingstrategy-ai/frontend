@@ -6,10 +6,7 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install NPM dependencies
 
-Node v16+ required.
-
-You will need Python 2 for some legacy Node build tools on the theme package.
-[Install Python 2 for new macOS from this link](https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg).
+Node >=16.14 required.
 
 ```shell
 npm install
@@ -17,11 +14,10 @@ npm install
 
 ## Install submodules
 
-`frontend` has several submodule dependencies installed under `deps`, including:
+`frontend` has two submodule dependencies installed under `deps`:
 
-- `theme` - Bootstrap v4 theme (being phased out)
 - `trade-executor-frontend` - frontend to `trade-executor` (beta UI for active trading strategies)
-- `fonts` - optional licensed fonts used by `theme` and our new `design-system`
+- `fonts` - optional licensed fonts (see `static/fonts5.css` and `src/lib/components/css/typography.css`)
 
 ### Install all submodules (including private `fonts`)
 
@@ -36,14 +32,13 @@ git submodule update --init --recursive
 If you don't have access to `fonts`, install only the public submodules:
 
 ```shell
-git submodule update --init --recursive -- deps/theme deps/trade-executor-frontend
+git submodule update --init --recursive -- deps/trade-executor-frontend
 ```
 
 ### Building submodule dependencies
 
 Once the submodules have been installed, their own install/build steps need to be run in order
-to have a fully working environment. The following script runs `npm build` on submodules and
-generates old Bootstrap v4 theme bundle:
+to have a fully working environment. The following script runs `npm build` on submodules:
 
 ```shell
 bash scripts/build-deps.sh
@@ -62,9 +57,8 @@ npm run dev
 
 ## Documentation
 
-- [How to develop and integrate the Bootstrap theme](./docs/theme.md)
 - [Testing](./docs/tests.md)
-- [Running in production](./docs/old-production.md)
+- [Running in production](./docs/docker.md)
 - [Doing page speed tests](./docs/speed.md)
 
 ## Notes
