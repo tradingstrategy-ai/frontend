@@ -136,10 +136,16 @@ table:not(.table) {
 	}
 
 	@media all and (min-width: 768px) {
-		& td,
-		& th {
-			&.right {
-				text-align: right;
+		& tr {
+			& td,
+			& th {
+				&.right {
+					text-align: right;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					max-width: 6rem;
+				}
 			}
 
 			&.cta {
