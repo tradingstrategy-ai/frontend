@@ -8,6 +8,8 @@
 
 	export let pairs: any[];
 
+	console.log(pairs);
+
 	const table = createTable(readable(pairs), {
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'usd_volume_30d right', order: 'desc' }],
@@ -18,9 +20,9 @@
 
 	const columns = table.createColumns([
 		table.column({
-			id: 'pair_name',
+			id: 'pair_symbol',
 			header: 'Trading pair',
-			accessor: ({ pair_name }) => pair_name
+			accessor: ({ pair_symbol }) => pair_symbol
 		}),
 		table.column({
 			id: 'exchange_name',
