@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { HeaderRow } from 'svelte-headless-table';
 	import { Subscribe, Render } from 'svelte-headless-table';
+	import Select from '../Select.svelte';
 
 	export let attrs: svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['thead']>;
 	export let rows: HeaderRow<any, any>[];
@@ -16,6 +17,15 @@
 
 <svelte:window on:scroll={() => (tableHeadRect = tableHead.getBoundingClientRect())} />
 
+<div class="mobile-sorting">
+	<Select>
+		{#each rows as headerRow (headerRow.id)}
+			{#each headerRow.cells as cell (cell.id)}
+				<option value={cell.id}>{cell.label}</option>
+			{/each}
+		{/each}
+	</Select>
+</div>
 <thead {...attrs} bind:this={tableHead} class:sticky={tableHeadY <= 0}>
 	{#each rows as headerRow (headerRow.id)}
 		<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>

@@ -153,6 +153,22 @@ table:not(.table) {
 				}
 			}
 		}
+
+		& .mobile-sorting {
+			background: hsla(var(--hsl-body));
+			padding: var(--space-md) 0;
+			position: sticky;
+			top: 0;
+			@media (width > 767px) {
+				display: none;
+			}
+		}
+
+		& thead {
+			@media (width <= 767px) {
+				display: none !important;
+			}
+		}
 	}
 
 	@media all and (min-width: 768px) {
