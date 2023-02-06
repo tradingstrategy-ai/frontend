@@ -87,6 +87,17 @@
 		justify-content: space-between;
 		width: 100%;
 
+		@media (--viewport-sm-down) {
+			display: grid;
+			gap: var(--space-md);
+			left: 0;
+			place-items: center;
+			place-content: center;
+			padding: var(--space-xl) var(--space-sm);
+			position: sticky;
+			max-width: calc(100vw - 3 * var(--space-md));
+		}
+
 		& nav {
 			display: flex;
 
