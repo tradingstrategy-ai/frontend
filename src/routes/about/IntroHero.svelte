@@ -1,19 +1,16 @@
-<!-- preserving text-wrapping on larger displays - end lines below at preferred line-breaks -->
-<!-- prettier-ignore-start -->
 <header class="ds-container">
 	<h1>
-		Next generation
-		algorithmic trading protocol
-		for decentralised markets
+		Next generation<br />
+		algorithmic trading protocol<br />
+		for decentralised markets<br />
 	</h1>
 	<p>
-		Create or invest in algorithmic trading strategies on decentralised
-		markets. The Trading Strategy protocol facilitates automated
-		cryptocurrency trading built on a safe and secure non-custodial
+		Create or invest in algorithmic trading strategies on decentralised<br />
+		markets. The Trading Strategy protocol facilitates automated<br />
+		cryptocurrency trading built on a safe and secure non-custodial<br />
 		framework.
 	</p>
 </header>
-<!-- prettier-ignore-end -->
 
 <style lang="postcss">
 	header {
@@ -24,7 +21,25 @@
 			gap: var(--space-xl);
 			padding-block: var(--space-7xl);
 			text-align: center;
-			white-space: pre-line;
+		}
+	}
+
+	br {
+		@media (--viewport-sm-down) {
+			display: none;
+		}
+	}
+
+	h1 {
+		font: var(--f-heading-xxl-medium);
+		letter-spacing: var(--f-heading-xxl-spacing, normal);
+		@media (--viewport-md-down) {
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing, normal);
+		}
+		@media (--viewport-xs) {
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 	}
 

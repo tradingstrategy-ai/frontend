@@ -10,11 +10,6 @@ docs/
 Dockerfile
 docker-compose.yml
 
-# deps/theme
-deps/theme/dist/
-deps/theme/html?css/
-deps/theme/.temp/
-
 # deps/trade-executor-frontend
 deps/trade-executor-frontend/build/
 deps/trade-executor-frontend/package/

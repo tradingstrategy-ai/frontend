@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import { TextInput, Button } from '$lib/components';
+	import { AlertList, AlertItem, Button, TextInput } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	const url = `${backendUrl}/register`;
 
 	let submitting = false;
 	let success = false;
-	let error = null;
+	let error: string | undefined = undefined;
 
 	let email = '';
 	let firstName = '';
@@ -17,7 +17,7 @@
 
 	async function handleSubmit() {
 		submitting = true;
-		error = null;
+		error = undefined;
 
 		// Avoid whitespace issues
 		const params = new URLSearchParams({
@@ -58,94 +58,86 @@
 </svelte:head>
 
 <main>
-	<section>
-		<div class="container">
-			<div class="row  mt-5">
-				<div class="col-md-12">
-					<div class="form-wrapper">
-						<h1>Sign up for free DEX data API key</h1>
+	<header class="ds-container">
+		<h1>Sign up for free DEX data API key</h1>
+		<p>
+			Sign up for Trading Strategy's newsletter to get a free API key to
+			<a class="body-link" href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a>
+		</p>
+	</header>
 
-						<div class="lead">
-							<p>
-								Sign up for Trading Strategy's newsletter to get a free API key to
-								<a class="body-link" href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a
-								>
-							</p>
-						</div>
+	<section class="ds-container">
+		<form on:submit|preventDefault={handleSubmit}>
+			{#if error}
+				<AlertList status="error">
+					<AlertItem>{error}</AlertItem>
+				</AlertList>
+			{:else if success}
+				<AlertList status="success">
+					<AlertItem>Check your email for futher instructions.</AlertItem>
+				</AlertList>
+			{/if}
 
-						<form id="form-registration" class="form-group" on:submit|preventDefault={handleSubmit}>
-							{#if error}
-								<div class="alert error">
-									{error}
-								</div>
-							{:else if success}
-								<div class="alert">Check your email for futher instructions.</div>
-							{:else}
-								<div class="instructions" />
-							{/if}
+			<TextInput bind:value={email} size="lg" type="email" placeholder="email" required {disabled} />
 
-							<div id="form-group-registration">
-								<TextInput bind:value={email} size="lg" type="email" placeholder="email" required {disabled} />
+			<TextInput
+				bind:value={firstName}
+				size="lg"
+				type="text"
+				placeholder="first name"
+				spellcheck="false"
+				required
+				{disabled}
+			/>
 
-								<TextInput
-									bind:value={firstName}
-									size="lg"
-									type="text"
-									placeholder="first name"
-									spellcheck="false"
-									required
-									{disabled}
-								/>
+			<TextInput
+				bind:value={lastName}
+				size="lg"
+				type="text"
+				placeholder="last name"
+				spellcheck="false"
+				required
+				{disabled}
+			/>
 
-								<TextInput
-									bind:value={lastName}
-									size="lg"
-									type="text"
-									placeholder="last name"
-									spellcheck="false"
-									required
-									{disabled}
-								/>
-
-								<Button submit {disabled}>
-									{#if submitting}
-										Submitting
-										<Spinner color="var(--c-text-6-v1)" />
-									{:else}
-										Sign up
-									{/if}
-								</Button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
+			<Button submit {disabled}>
+				{#if submitting}
+					Submitting
+					<Spinner color="var(--c-text-6-v1)" />
+				{:else}
+					Sign up
+				{/if}
+			</Button>
+		</form>
 	</section>
 </main>
 
-<style>
-	.form-wrapper {
-		margin: 0 auto;
-		max-width: 600px;
+<style lang="postcss">
+	main {
+		--container-max-width: 600px;
+		display: grid;
+		gap: var(--space-5xl);
 	}
 
-	.instructions {
-		padding: var(--space-md);
-		margin-bottom: var(--space-md);
-		border: 1px solid transparent;
-		font-size: 0.875rem;
+	header {
+		& h1 {
+			margin-block: var(--space-5xl) var(--space-md);
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-heading-lg-medium);
+				letter-spacing: var(--f-heading-lg-spacing, normal);
+			}
+		}
+
+		& p {
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
+		}
 	}
 
-	.alert {
-		border-color: var(--c-border-1-v1);
-	}
-
-	.error {
-		color: hsla(var(--hsl-bearish));
-	}
-
-	#form-group-registration {
+	form {
 		display: grid;
 		gap: var(--space-xl);
 	}

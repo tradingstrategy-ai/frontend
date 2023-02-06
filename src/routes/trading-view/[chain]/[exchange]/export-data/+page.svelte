@@ -67,7 +67,7 @@
 			{#if data.exchange_slug}
 				<div>
 					<label for="exampleFormControlInput1">Selected exchange</label>
-					<input type="text" class="form-control" id="exampleFormControlInput1" disabled value={exchangeName} />
+					<input type="text" class="text-field" id="exampleFormControlInput1" disabled value={exchangeName} />
 				</div>
 			{/if}
 
@@ -167,6 +167,7 @@
 	input {
 		-webkit-appearance: none;
 		-moz-appearance: none;
+		width: 100%;
 		background: inherit;
 		color: inherit;
 		border: 1px solid var(--c-border-1-v1);

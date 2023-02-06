@@ -12,8 +12,8 @@
 <section class="ds-container">
 	<header>
 		<h2>The Trading Strategy protocol</h2>
-		<p>Trading Strategy is the first protocol replacing investment managers with code.</p>
 		<p>
+			Trading Strategy is the first protocol replacing investment managers with code.<br />
 			Read how Trading Strategy protocol
 			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html"
 				>compares to yield farming and quantative hedge funds</a
@@ -80,40 +80,53 @@
 	</Feature>
 </section>
 
-<style>
+<style lang="postcss">
 	section {
-		gap: 5rem;
-		padding-top: var(--space-xl);
-		padding-bottom: var(--space-7xl);
+		gap: 8rem;
+		padding-top: var(--space-5xl);
+		padding-bottom: 10rem;
+
+		@media (--viewport-sm-down) {
+			gap: 5rem;
+			padding-top: var(--space-xl);
+			padding-bottom: var(--space-7xl);
+		}
 	}
 
 	header {
 		margin-bottom: var(--space-lg);
 	}
 
-	header h2 {
+	h2 {
 		margin-bottom: var(--space-lg);
+		font: var(--f-heading-xl-medium);
+		letter-spacing: var(--f-heading-xl-spacing, normal);
 		text-align: center;
+
+		@media (--viewport-sm-down) {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+		}
 	}
 
-	header p {
-		font: var(--f-h5-roman);
-	}
+	p {
+		font: var(--f-heading-sm-roman);
+		letter-spacing: var(--f-heading-sm-spacing);
+		text-align: center;
 
-	a {
-		font-weight: 600;
-		border-bottom: 1px solid currentColor;
-	}
+		@media (--viewport-sm-down) {
+			font: var(--f-heading-xs-roman);
+			letter-spacing: var(--f-heading-xs-spacing);
+			text-align: left;
 
-	@media (--viewport-md-up) {
-		section {
-			gap: 8rem;
-			padding-top: var(--space-5xl);
-			padding-bottom: 10rem;
+			& br {
+				display: none;
+			}
 		}
 
-		header p {
-			text-align: center;
+		& a {
+			font-weight: 600;
+			text-decoration: underline;
 		}
 	}
 </style>

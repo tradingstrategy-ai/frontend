@@ -36,7 +36,8 @@ Display a single alert item (should always be nested within AlertList).
 		font: inherit; /* see AlertList */
 
 		& .icon {
-			margin-top: -2px;
+			display: block;
+			margin-top: -0.1em;
 		}
 
 		& a {

@@ -8,15 +8,11 @@ ENV FONT_ZIP_DOWNLOAD_URL=$FONT_ZIP_DOWNLOAD_URL
 
 WORKDIR /app
 
-# install theme (cache first)
-COPY deps/theme ./deps/theme
-RUN (cd deps/theme && npm ci && npx gulp build:dist)
-
-# install trade-executor-frontend (cache second)
+# install trade-executor-frontend (cache first)
 COPY deps/trade-executor-frontend ./deps/trade-executor-frontend
 RUN (cd deps/trade-executor-frontend && npm ci)
 
-# install npm dependencies (cache third)
+# install npm dependencies (cache second)
 COPY package*.json ./
 RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 RUN --mount=type=ssh npm ci

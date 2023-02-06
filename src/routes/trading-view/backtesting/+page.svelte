@@ -206,6 +206,10 @@
 		margin-top: 1em;
 	}
 
+	form {
+		margin-bottom: var(--space-lg);
+	}
+
 	label {
 		font: var(--f-ui-body-medium);
 	}

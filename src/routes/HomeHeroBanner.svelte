@@ -111,5 +111,6 @@ Home page hero banner.
 
 	hr {
 		border: 0.125rem solid hsla(var(--hsl-text));
+		margin-block: var(--space-lg);
 	}
 </style>

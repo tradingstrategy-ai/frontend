@@ -61,7 +61,14 @@
 	}
 
 	h2 {
+		font: var(--f-heading-xl-medium);
+		letter-spacing: var(--f-heading-xl-spacing, normal);
 		text-align: center;
+
+		@media (--viewport-sm-down) {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+		}
 	}
 
 	div {

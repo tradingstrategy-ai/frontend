@@ -4,6 +4,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
+	import { PageHeader } from '$lib/components';
 </script>
 
 <svelte:head>
@@ -14,10 +15,7 @@
 <Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
 <main>
-	<header class="ds-container">
-		<h1>Trading pairs</h1>
-		<p>Browse trading pairs across all decentralised exchanges below.</p>
-	</header>
+	<PageHeader title="Trading pairs" description="Browse trading pairs across all decentralised exchanges below." />
 
 	<section class="ds-container">
 		<PairExplorer
@@ -41,17 +39,5 @@
 	main {
 		display: grid;
 		gap: var(--space-md);
-	}
-
-	header {
-		gap: var(--space-sl);
-
-		& p {
-			font: var(--f-h3-roman);
-
-			@media (--viewport-md-down) {
-				font: var(--f-h4-roman);
-			}
-		}
 	}
 </style>

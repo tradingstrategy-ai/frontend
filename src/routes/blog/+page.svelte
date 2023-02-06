@@ -56,7 +56,7 @@
 			<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
 		{:else}
 			<OptInBanner>
-				<h3 slot="title">Congratulations – you've reached the end 🎉!</h3>
+				<h2 slot="title">Congratulations – you've reached the end 🎉!</h2>
 				<p slot="description">
 					Want more? Subscribe to our newsletter and get fresh posts directly to your email inbox!
 				</p>
@@ -82,22 +82,21 @@
 				}
 			}
 		}
-	}
 
-	.blog-index-page :global .loading .grid {
-		place-items: center;
-	}
+		& .loading {
+			font: var(--f-ui-large-roman);
 
-	.blog-index-page :global .svelte-spinner {
-		height: 4rem;
-		width: 4rem;
-		& circle {
-			stroke: hsla(var(--hsl-text));
+			& .grid {
+				place-items: center;
+			}
 		}
-	}
 
-	.loading {
-		font: var(--f-ui-large-roman);
-		text-align: center;
+		& .svelte-spinner {
+			height: 4rem;
+			width: 4rem;
+			& circle {
+				stroke: hsla(var(--hsl-text));
+			}
+		}
 	}
 </style>
