@@ -1,57 +1,43 @@
 <!--
-	Render list of all trading pairs
+	Render listing of all available Pairs
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import { HeroBanner, Section } from '$lib/components';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
+	$: console.log(data.pairs.results);
 </script>
 
 <svelte:head>
-	<title>Trading pairs on decentralised exchanges</title>
-	<meta name="description" content="Top trading pairs and tokens" />
+	<title>Trading Pairs</title>
+	<meta name="description" content="Top decentralised Pairs" />
 </svelte:head>
 
-<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
+<Breadcrumbs />
 
-<main>
-	<header class="ds-container">
-		<h1>Trading pairs</h1>
-		<p>Browse trading pairs across all decentralised exchanges below.</p>
-	</header>
+<main class="pairs">
+	<Section layout="boxed">
+		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
+	</Section>
 
-	<section class="ds-container">
-		<PairExplorer
-			enabledColumns={[
-				'pair_name',
-				'exchange_name',
-				'pair_swap_fee',
-				'usd_price_latest',
-				'price_change_24h',
-				'usd_volume_30d',
-				'usd_liquidity_latest',
-				'liquidity_change_24h'
-			]}
-			orderColumnIndex={5}
-			pageLength={10}
-		/>
-	</section>
+	<Section layout="boxed" padding="sm">
+		<PairsTable pairs={data.pairs.results} />
+	</Section>
 </main>
 
 <style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-md);
-	}
+	@media (--viewport-md) {
+		.pairs :global table .right {
+			text-align: right;
+		}
 
-	header {
-		gap: var(--space-sl);
-
-		& p {
-			font: var(--f-h3-roman);
-
-			@media (--viewport-md-down) {
-				font: var(--f-h4-roman);
-			}
+		.pairs :global table .cta {
+			max-width: 8rem;
+			padding-left: 1rem;
 		}
 	}
 </style>
