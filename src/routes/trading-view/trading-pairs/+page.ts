@@ -1,13 +1,18 @@
-import type { PageLoad } from "../$types";
+import type { PageLoad } from '../$types';
 import { backendUrl } from '$lib/config';
+import { publicApiError } from '$lib/helpers/publicApiError';
 
-export const load = (async () => {
+// https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_pairs
+const apiUrl = `${backendUrl}/pairs`;
 
-  const pairsReq = await fetch(`${backendUrl}/pairs`);
-  
-  const pairs = await pairsReq.json();
+export const load: PageLoad = async () => {
+	const resp = await fetch(apiUrl);
 
-  return {
-    pairs,
-  }
-}) satisfies PageLoad;
+	if (!resp.ok) {
+		throw await publicApiError(resp);
+	}
+
+	return {
+		pairs: resp.json()
+	};
+};

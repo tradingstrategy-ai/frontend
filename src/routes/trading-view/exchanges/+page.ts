@@ -1,12 +1,16 @@
-import type { PageLoad } from "../$types";
+import type { PageLoad } from '../$types';
 import { backendUrl } from '$lib/config';
+import { publicApiError } from '$lib/helpers/publicApiError';
 
-export const load = (async () => {
+// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchanges
+const apiUrl = `${backendUrl}/exchanges`;
 
-  const exchangesReq = await fetch(`${backendUrl}/exchanges`);
-  const { exchanges } = await exchangesReq.json();
+export const load: PageLoad = async () => {
+	const resp = await fetch(apiUrl);
 
-  return {
-    exchanges,
-  }
-}) satisfies PageLoad;
+	if (!resp.ok) {
+		throw await publicApiError(resp);
+	}
+
+	return resp.json();
+};
