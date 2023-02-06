@@ -26,18 +26,38 @@ table:not(.table) {
 	}
 
 	& thead tr:first-child {
+		background-color: hsla(var(--hsl-body));
 		position: sticky;
 		top: 0;
+		z-index: 1;
+	}
+
+	& thead.sticky th {
+		border-radius: 0;
 	}
 
 	& th {
 		background-color: hsla(var(--hsl-body));
+		border-radius: var(--radius-md);
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
 		padding: var(--cell-padding);
+		padding-right: var(--space-3xl);
+		position: relative;
 		transition: var(--table-transition);
 		white-space: nowrap;
+
+		&:hover,
+		&:focus {
+			color: hsla(var(--hsl-text-light));
+			background: hsla(var(--hsl-box), var(--a-box-a));
+		}
+
+		&.sorted {
+			background: hsla(var(--hsl-box), var(--a-box-b));
+			color: hsla(var(--hsl-text));
+		}
 	}
 
 	& > :not(thead):not(tfoot) tr {
@@ -146,6 +166,10 @@ table:not(.table) {
 					text-overflow: ellipsis;
 					max-width: 6rem;
 				}
+			}
+			&:hover td {
+				position: relative;
+				overflow: visible;
 			}
 
 			&.cta {

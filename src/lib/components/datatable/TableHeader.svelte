@@ -1,12 +1,22 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { HeaderRow } from 'svelte-headless-table';
 	import { Subscribe, Render } from 'svelte-headless-table';
 
 	export let attrs: svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['thead']>;
 	export let rows: HeaderRow<any, any>[];
+
+	let tableHead: any;
+	let tableHeadRect: any;
+
+	$: tableHeadY = tableHeadRect?.y;
+
+	$: console.log(tableHeadY);
 </script>
 
-<thead {...attrs}>
+<svelte:window on:scroll={() => (tableHeadRect = tableHead.getBoundingClientRect())} />
+
+<thead {...attrs} bind:this={tableHead} class:sticky={tableHeadY <= 0}>
 	{#each rows as headerRow (headerRow.id)}
 		<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
 			<tr {...rowAttrs}>
@@ -45,6 +55,6 @@
 
 	.sorting-indicator {
 		position: absolute;
-		transform: translate(0.5rem);
+		right: var(--space-md);
 	}
 </style>
