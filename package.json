@@ -78,6 +78,6 @@
     "web3": "^1.6.0"
   },
   "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.7.0"
+    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.8.4"
   }
 }
