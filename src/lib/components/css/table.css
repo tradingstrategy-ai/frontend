@@ -170,27 +170,7 @@ table:not(.table) {
 		}
 	}
 
-	@media (width > 768px) {
-		& tr {
-			& td,
-			& th {
-				&.right {
-					text-align: right;
-					-webkit-box-orient: vertical;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					max-width: 6rem;
-				}
-			}
-			&:hover td {
-				position: relative;
-				overflow: visible;
-			}
-
-			&.cta {
-				max-width: 8rem;
-				padding-left: 1rem;
-			}
-		}
+	& .button {
+		white-space: nowrap;
 	}
 }
