@@ -45,7 +45,7 @@
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.49.0",
     "svelte-check": "^2.7.1",
-    "svelte-headless-table": "^0.15.3",
+    "svelte-headless-table": "^0.17.2",
     "svelte-highlight": "^6.2.1",
     "svelte-preprocess": "^4.10.6",
     "tslib": "^2.3.1",
