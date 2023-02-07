@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { DataTable } from '$lib/components';
-	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import Button from '$lib/components/Button.svelte';
 
 	export let exchanges: any[];
 
 	const table = createTable(readable(exchanges), {
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'trading_pairs right', order: 'desc' }],
+			initialSortKeys: [{ id: 'usd_volume_30d', order: 'desc' }],
 			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination()
@@ -18,24 +18,22 @@
 
 	const columns = table.createColumns([
 		table.column({
-			id: 'exchange',
 			header: 'Exchange',
-			accessor: ({ human_readable_name }) => human_readable_name
+			accessor: 'human_readable_name'
 		}),
 		table.column({
-			id: 'blockchain',
 			header: 'Blockchain',
-			accessor: ({ chain_name }) => chain_name
+			accessor: 'chain_name'
 		}),
 		table.column({
-			id: 'trading_pairs right',
 			header: 'Trading pairs',
-			accessor: ({ pair_count }) => pair_count
+			accessor: 'pair_count',
+			cell: ({ value }) => formatAmount(value)
 		}),
 		table.column({
-			id: 'volume_30d right',
 			header: 'Volume 30d (USD)',
-			accessor: ({ usd_volume_30d }) => formatDollar(usd_volume_30d)
+			accessor: 'usd_volume_30d',
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			id: 'cta',
@@ -45,11 +43,24 @@
 				createRender(Button, {
 					label: 'View exchange',
 					href: `/trading-view/${value.chain_slug}/${value.exchange_slug}`
-				})
+				}),
+			plugins: { sort: { disable: true } }
 		})
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<DataTable isResponsive {tableViewModel} />
+<div class="exchange-table">
+	<DataTable isResponsive {tableViewModel} />
+</div>
+
+<style lang="postcss">
+	.exchange-table :global {
+		@media (--viewport-md-up) {
+			& :is(.pair_count, .usd_volume_30d) {
+				text-align: right;
+			}
+		}
+	}
+</style>
