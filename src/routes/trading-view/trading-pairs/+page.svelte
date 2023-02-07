@@ -15,7 +15,7 @@
 	<meta name="description" content="Top decentralised Pairs" />
 </svelte:head>
 
-<Breadcrumbs />
+<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
 <main class="pairs">
 	<Section layout="boxed">
