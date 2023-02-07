@@ -20,7 +20,7 @@ table:not(.table) {
 		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
-	@media (width <= 767px) {
+	@media (width <= 768px) {
 		--table-font: var(--f-ui-xs-medium) !important;
 		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
@@ -52,11 +52,9 @@ table:not(.table) {
 		&:hover,
 		&:focus {
 			color: hsla(var(--hsl-text-light));
-			background: hsla(var(--hsl-box), var(--a-box-a));
 		}
 
 		&.sorted {
-			background: hsla(var(--hsl-box), var(--a-box-b));
 			color: hsla(var(--hsl-text));
 		}
 	}
@@ -72,7 +70,7 @@ table:not(.table) {
 			vertical-align: middle;
 			--button-width: 100%;
 
-			@media (width >= 1024px) {
+			@media (width > 1024px) {
 				height: 3.825rem !important;
 			}
 
@@ -105,7 +103,7 @@ table:not(.table) {
 	}
 
 	&.responsive {
-		@media (width <= 767px) {
+		@media (width <= 768px) {
 			--table-font: var(--f-ui-md-medium) !important;
 			--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 
@@ -160,19 +158,19 @@ table:not(.table) {
 			padding: var(--space-md) 0;
 			position: sticky;
 			top: 0;
-			@media (width > 767px) {
+			@media (width > 768px) {
 				display: none;
 			}
 		}
 
 		& thead {
-			@media (width <= 767px) {
+			@media (width <= 768px) {
 				display: none !important;
 			}
 		}
 	}
 
-	@media all and (min-width: 768px) {
+	@media (width > 768px) {
 		& tr {
 			& td,
 			& th {
