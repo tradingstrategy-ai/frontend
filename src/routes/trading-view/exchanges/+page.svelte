@@ -26,7 +26,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<ExchangesTable exchanges={data.exchanges.slice(0, 10)} />
+		<ExchangesTable exchanges={data.exchanges} />
 	</Section>
 </main>
 

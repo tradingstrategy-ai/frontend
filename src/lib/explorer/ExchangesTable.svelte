@@ -52,7 +52,7 @@
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive {tableViewModel} />
+	<DataTable isResponsive hasPagination={true} {tableViewModel} />
 </div>
 
 <style lang="postcss">
