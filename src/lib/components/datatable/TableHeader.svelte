@@ -1,18 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { HeaderRow } from 'svelte-headless-table';
-	import { Subscribe, Render } from 'svelte-headless-table';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { Subscribe, Render, type HeaderRow } from 'svelte-headless-table';
 	import Select from '../Select.svelte';
 
-	export let attrs: svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['thead']>;
+	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: HeaderRow<any, any>[];
 
-	let tableHead: any;
-	let tableHeadRect: any;
+	let tableHead: HTMLTableSectionElement;
+	let tableHeadRect: DOMRect;
 
 	$: tableHeadY = tableHeadRect?.y;
-
-	$: console.log(tableHeadY);
 </script>
 
 <svelte:window on:scroll={() => (tableHeadRect = tableHead.getBoundingClientRect())} />

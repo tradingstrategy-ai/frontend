@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { BodyRow } from 'svelte-headless-table';
-	import { Subscribe, Render } from 'svelte-headless-table';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { Subscribe, Render, type BodyRow } from 'svelte-headless-table';
 
-	export let attrs: svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['tbody']>;
+	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: BodyRow<any, any>[];
 </script>
 
