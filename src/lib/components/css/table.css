@@ -136,9 +136,8 @@ table:not(.table) {
 				gap: var(--space-md);
 			}
 
-			& thead tr {
-				display: grid;
-				min-height: 2rem;
+			& thead {
+				display: none !important;
 			}
 
 			& > :not(thead):not(tfoot) tr {
@@ -150,6 +149,7 @@ table:not(.table) {
 				padding: var(--space-xs) 0;
 
 				& td {
+					align-content: start;
 					background: transparent;
 					border-radius: 0;
 					display: grid;
@@ -157,13 +157,14 @@ table:not(.table) {
 					gap: var(--space-xxs);
 					height: auto;
 					padding: var(--space-sm) var(--space-ml);
+					word-break: break-all;
 
-					&:not(:last-child)::before {
+					&:not(.cta)::before {
 						content: attr(data-label);
 						font: var(--f-ui-xs-roman);
 					}
 
-					&:last-child {
+					&.cta {
 						padding-bottom: var(--space-ml);
 						grid-column: 1/-1;
 					}
@@ -178,12 +179,6 @@ table:not(.table) {
 			top: 0;
 			@media (width > 768px) {
 				display: none;
-			}
-		}
-
-		& thead {
-			@media (width <= 768px) {
-				display: none !important;
 			}
 		}
 	}
