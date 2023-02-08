@@ -9,7 +9,7 @@
 </script>
 
 <div class="select {classes}">
-	<select {name} {id} bind:value>
+	<select {name} {id} bind:value on:change>
 		<slot />
 	</select>
 	<Icon name="chevron-down" --icon-size="1rem" />

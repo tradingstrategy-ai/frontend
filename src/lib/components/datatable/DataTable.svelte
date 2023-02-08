@@ -17,6 +17,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	import TableBody from './TableBody.svelte';
 	import TableFooter from './TableFooter.svelte';
 	import SearchHeaderRow from './SearchHeaderRow.svelte';
+	import MobileSortSelect from './MobileSortSelect.svelte';
 
 	export let tableViewModel: TableViewModel<any, any>;
 	export let hasSearch: boolean = false;
@@ -25,10 +26,15 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
 	const filterValue = pluginStates.tableFilter?.filterValue;
+	const sortKeys = pluginStates.sort?.sortKeys;
 </script>
 
 <div class="data-table">
 	<table {...$tableAttrs} class:responsive={isResponsive}>
+		{#if isResponsive}
+			<MobileSortSelect rows={$headerRows} {sortKeys} />
+		{/if}
+
 		<TableHeader attrs={$tableHeadAttrs} rows={$headerRows}>
 			{#if hasSearch}
 				<SearchHeaderRow bind:value={$filterValue} />
