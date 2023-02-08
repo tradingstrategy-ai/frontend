@@ -25,6 +25,7 @@
 		const index = parseInt(target.value);
 		if (Number.isFinite(index)) {
 			$pageIndex = index;
+			target.closest('table')?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
 
