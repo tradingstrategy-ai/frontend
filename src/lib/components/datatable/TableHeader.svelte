@@ -41,21 +41,3 @@
 	{/each}
 	<slot />
 </thead>
-
-<style lang="postcss">
-	th.sortable {
-		cursor: pointer;
-		position: relative;
-		user-select: none;
-	}
-
-	th :global .icon svg {
-		position: absolute;
-		right: var(--space-ls);
-		top: var(--space-ls);
-
-		& path {
-			stroke-width: 0.1875rem;
-		}
-	}
-</style>

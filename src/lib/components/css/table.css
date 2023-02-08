@@ -42,20 +42,38 @@ table:not(.table) {
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
+		overflow: hidden;
 		padding: var(--space-md) var(--space-ls);
-		padding-right: var(--space-5xl);
 		position: relative;
 		transition: var(--table-transition);
 		white-space: nowrap;
 		text-align: left;
+		text-overflow: ellipsis;
 
-		&.sortable:hover {
-			background: hsla(var(--hsl-box), var(--a-box-a));
-			color: hsla(var(--hsl-text-light));
+		&.sortable {
+			cursor: pointer;
+			position: relative;
+			user-select: none;
+
+			&:hover {
+				background: hsla(var(--hsl-box), var(--a-box-a));
+				color: hsla(var(--hsl-text-light));
+			}
+
+			& .icon svg {
+				position: absolute;
+				right: var(--space-ls);
+				top: var(--space-ls);
+
+				& path {
+					stroke-width: 0.1875rem;
+				}
+			}
 		}
 
 		&.sorted {
 			color: hsla(var(--hsl-text));
+			padding-right: var(--space-4xl);
 		}
 	}
 
