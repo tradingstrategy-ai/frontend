@@ -57,6 +57,7 @@
 					Showing {firstRowIndex} to {lastRowIndex} of {totalRowCount}
 				</div>
 				{#if $pageCount > 1}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<nav on:click={handlePageButtonClick}>
 						<PageButton label="Previous" value={$pageIndex - 1} disabled={!$hasPreviousPage} />
 						{#each visiblePageIndices as pageIdx}

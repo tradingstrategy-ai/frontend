@@ -170,6 +170,11 @@ table:not(.table) {
 					}
 				}
 			}
+
+			& tfoot,
+			& tfoot tr {
+				display: grid;
+			}
 		}
 
 		& .mobile-sorting {
