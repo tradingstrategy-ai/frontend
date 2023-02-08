@@ -9,7 +9,7 @@
 <tr {...attrs}>
 	{#each cells as cell (cell.id)}
 		<Subscribe cellAttrs={cell.attrs()} let:cellAttrs>
-			<td class={cell.id} {...cellAttrs}>
+			<td class={cell.id} {...cellAttrs} data-label={cell.column.header}>
 				<Render of={cell.render()} />
 			</td>
 		</Subscribe>

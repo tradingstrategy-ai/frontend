@@ -141,7 +141,7 @@ table:not(.table) {
 					padding: var(--space-sm) var(--space-ml);
 
 					&:not(:last-child)::before {
-						content: attr(class);
+						content: attr(data-label);
 						font: var(--f-ui-xs-roman);
 					}
 
