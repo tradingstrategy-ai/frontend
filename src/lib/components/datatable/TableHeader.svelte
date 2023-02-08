@@ -2,6 +2,7 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { Subscribe, Render, type HeaderRow } from 'svelte-headless-table';
 	import Select from '../Select.svelte';
+	import Icon from '../Icon.svelte';
 
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: HeaderRow<any, any>[];
@@ -38,9 +39,9 @@
 						>
 							<Render of={cell.render()} />
 							{#if props.sort?.order === 'asc'}
-								<span class="sorting-indicator">▲</span>
+								<Icon name="chevron-up" --icon-size="1rem" />
 							{:else if props.sort?.order === 'desc'}
-								<span class="sorting-indicator">▼</span>
+								<Icon name="chevron-down" />
 							{/if}
 						</th>
 					</Subscribe>
@@ -54,14 +55,17 @@
 <style lang="postcss">
 	th.sortable {
 		cursor: pointer;
+		position: relative;
+		user-select: none;
 	}
 
-	th.sorted {
-		padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-ls);
-	}
-
-	.sorting-indicator {
+	th :global .icon svg {
 		position: absolute;
-		right: var(--space-md);
+		right: var(--space-ls);
+		top: var(--space-ls);
+
+		& path {
+			stroke-width: 0.1875rem;
+		}
 	}
 </style>

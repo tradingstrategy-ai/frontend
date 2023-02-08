@@ -42,8 +42,8 @@ table:not(.table) {
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
-		padding: var(--cell-padding);
-		padding-right: var(--space-3xl);
+		padding: var(--space-md) var(--space-ls);
+		padding-right: var(--space-5xl);
 		position: relative;
 		transition: var(--table-transition);
 		white-space: nowrap;
@@ -51,6 +51,7 @@ table:not(.table) {
 
 		&:hover,
 		&:focus {
+			background: hsla(var(--hsl-box), var(--a-box-a));
 			color: hsla(var(--hsl-text-light));
 		}
 
