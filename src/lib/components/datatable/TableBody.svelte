@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { Subscribe, Render, type BodyRow } from 'svelte-headless-table';
+	import { Subscribe, type BodyRow } from 'svelte-headless-table';
+	import TableRow from './TableRow.svelte';
 
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: BodyRow<any, any>[];
@@ -8,16 +9,14 @@
 
 <tbody {...attrs}>
 	{#each rows as row (row.id)}
-		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-			<tr {...rowAttrs}>
-				{#each row.cells as cell (cell.id)}
-					<Subscribe attrs={cell.attrs()} let:attrs>
-						<td class={cell.id} {...attrs}>
-							<Render of={cell.render()} />
-						</td>
-					</Subscribe>
-				{/each}
-			</tr>
+		<Subscribe rowAttrs={row.attrs()} let:rowAttrs rowProps={row.props()} let:rowProps>
+			{#if rowProps.clickable}
+				<a href={rowProps.clickable.href} style:display="contents">
+					<TableRow attrs={rowAttrs} cells={row.cells} />
+				</a>
+			{:else}
+				<TableRow attrs={rowAttrs} cells={row.cells} />
+			{/if}
 		</Subscribe>
 	{/each}
 </tbody>

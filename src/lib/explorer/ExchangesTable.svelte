@@ -3,17 +3,23 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { DataTable } from '$lib/components';
+	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import Button from '$lib/components/Button.svelte';
 
 	export let exchanges: any[];
+
+	function getExchangeUrl({ chain_slug, exchange_slug }: Record<string, string>) {
+		return `/trading-view/${chain_slug}/${exchange_slug}`;
+	}
 
 	const table = createTable(readable(exchanges), {
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'usd_volume_30d', order: 'desc' }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination()
+		page: addPagination(),
+		clickable: addClickableRows({ href: getExchangeUrl })
 	});
 
 	const columns = table.createColumns([
@@ -35,16 +41,10 @@
 			accessor: 'usd_volume_30d',
 			cell: ({ value }) => formatDollar(value)
 		}),
-		table.column({
+		table.display({
 			id: 'cta',
 			header: '',
-			accessor: ({ chain_slug, exchange_slug }) => ({ chain_slug, exchange_slug }),
-			cell: ({ value }) =>
-				createRender(Button, {
-					label: 'View exchange',
-					href: `/trading-view/${value.chain_slug}/${value.exchange_slug}`
-				}),
-			plugins: { sort: { disable: true } }
+			cell: () => createRender(Button, { label: 'View exchange' })
 		})
 	]);
 
