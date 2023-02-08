@@ -15,9 +15,8 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 ```
 -->
 <script lang="ts">
-	import type { TableViewModel } from 'svelte-headless-table';
 	import { backendUrl } from '$lib/config';
-	import { DataTable } from '$lib/components';
+	import Datatable from '$lib/datatable/datatable.svelte';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
 	export let chainSlug = null;
@@ -26,8 +25,12 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 	export let orderColumnIndex = 2;
 	export let orderColumnDirection = 'desc';
 	export let filterJunk = true;
-	// https://tradingstrategy.ai/api/explorer/
 
+	// https://tradingstrategy.ai/api/explorer/
+	// See
+	// https://datatables.net/reference/option/columns
+	// https://datatables.net/reference/option/columns.render
+	// https://datatables.net/reference/option/columns.type
 	const availableColumns = {
 		human_readable_name: {
 			name: 'Exchange',
@@ -139,8 +142,7 @@ Sorting, etc. is done on the client side, as the number of exchanges should be <
 </script>
 
 <div class="exchanges">
-	<!-- <Datatable {columns} {options} clickableRows={true} /> -->
-	<!-- <DataTable {tableViewModel} /> -->
+	<Datatable {columns} {options} clickableRows={true} />
 </div>
 
 <style lang="postcss">
