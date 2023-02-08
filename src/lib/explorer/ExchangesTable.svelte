@@ -44,7 +44,8 @@
 		table.display({
 			id: 'cta',
 			header: '',
-			cell: () => createRender(Button, { label: 'View exchange' })
+			cell: () => createRender(Button, { label: 'View exchange' }),
+			plugins: { sort: { disable: true } }
 		})
 	]);
 
@@ -58,7 +59,33 @@
 <style lang="postcss">
 	.exchange-table :global {
 		@media (--viewport-md-up) {
-			& :is(.pair_count, .usd_volume_30d) {
+			& table {
+				table-layout: fixed;
+			}
+
+			& .human_readable_name {
+				width: 30%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			& .chain_name {
+				width: 20%;
+			}
+
+			& .pair_count {
+				width: 18%;
+				text-align: right;
+			}
+
+			& .usd_volume_30d {
+				width: 18%;
+				text-align: right;
+			}
+
+			& .cta {
+				width: 12em;
 				text-align: right;
 			}
 		}
