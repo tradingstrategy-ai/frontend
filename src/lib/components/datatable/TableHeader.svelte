@@ -29,7 +29,7 @@
 						>
 							<Render of={cell.render()} />
 							{#if props.sort?.order === 'asc'}
-								<Icon name="chevron-up" --icon-size="1rem" />
+								<Icon name="chevron-up" size="1rem" />
 							{:else if props.sort?.order === 'desc'}
 								<Icon name="chevron-down" />
 							{/if}

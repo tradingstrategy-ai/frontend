@@ -49,8 +49,7 @@ table:not(.table) {
 		white-space: nowrap;
 		text-align: left;
 
-		&:hover,
-		&:focus {
+		&.sortable:hover {
 			background: hsla(var(--hsl-box), var(--a-box-a));
 			color: hsla(var(--hsl-text-light));
 		}
