@@ -7,16 +7,16 @@
 
 <footer class:small>
 	{#if !skip}
+		<a href="https://github.com/tradingstrategy-ai" title="GitHub">
+			<SocialIcon name="github" />
+		</a>
+
 		<a href="https://discord.gg/en8tW6MDtw" title="Discord">
 			<SocialIcon name="discord" />
 		</a>
 
 		<a href="https://twitter.com/tradingprotocol" title="Twitter">
 			<SocialIcon name="twitter" />
-		</a>
-
-		<a href="https://github.com/tradingstrategy-ai" title="GitHub">
-			<SocialIcon name="github" />
 		</a>
 
 		<a href="https://www.linkedin.com/company/trading-strategy/" title="LinkedIn">
