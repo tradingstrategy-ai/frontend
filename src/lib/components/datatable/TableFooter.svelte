@@ -25,7 +25,10 @@
 		const index = parseInt(target.value);
 		if (Number.isFinite(index)) {
 			$pageIndex = index;
-			target.closest('table')?.scrollIntoView({ behavior: 'smooth' });
+			const table = target.closest('table');
+			if (table && table.getBoundingClientRect().y < 0) {
+				table.scrollIntoView({ behavior: 'smooth' });
+			}
 		}
 	}
 
