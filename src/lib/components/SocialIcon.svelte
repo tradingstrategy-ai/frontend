@@ -8,7 +8,7 @@
 
 <style>
 	div {
-		--size: var(--social-icon-size, 44px);
+		--size: var(--social-icon-size, 2.5rem);
 		display: flex;
 		justify-content: center;
 		align-items: center;
