@@ -15,6 +15,10 @@
 			<SocialIcon name="twitter" />
 		</a>
 
+		<a href="https://github.com/tradingstrategy-ai" title="GitHub">
+			<SocialIcon name="github" />
+		</a>
+
 		<a href="https://www.linkedin.com/company/trading-strategy/" title="LinkedIn">
 			<SocialIcon name="linkedin" />
 		</a>
@@ -38,18 +42,22 @@
 		}
 
 		display: grid;
-		grid-auto-flow: column;
 		place-content: center;
-		gap: 2.5rem;
-		height: var(--footer-height);
+		gap: var(--space-2xl);
+		grid-auto-flow: column;
+		min-height: var(--footer-height);
 
 		@media (--viewport-sm-down) {
-			gap: var(--space-ls);
-			padding: 2.5rem var(--space-md);
+			gap: min(5vw, var(--space-ll));
+			padding: var(--space-lg) var(--space-md);
+			place-items: center;
+
+			& :global .icon {
+				--icon-size: 1.125rem !important;
+			}
 		}
 
 		&.small {
-			--social-icon-size: 44px;
 			gap: var(--space-ls);
 			padding: 0;
 		}
