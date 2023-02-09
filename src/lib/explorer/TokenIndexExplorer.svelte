@@ -118,7 +118,8 @@ Tokens Explorer
 				callback({
 					recordsTotal: result.total,
 					recordsFiltered: result.total,
-					data: result.result
+					// TODO: remove fallback `result.result` once API is updated to use `results`
+					data: result.results || result.result
 				});
 			} else {
 				settings.oLanguage.sEmptyTable = await decodeAjaxError(response);
