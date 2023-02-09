@@ -176,16 +176,6 @@ table:not(.table) {
 				display: grid;
 			}
 		}
-
-		& .mobile-sorting {
-			background: hsla(var(--hsl-body));
-			padding: var(--space-md) 0;
-			position: sticky;
-			top: 0;
-			@media (width > 768px) {
-				display: none;
-			}
-		}
 	}
 
 	& .button {
