@@ -2,20 +2,21 @@
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
-	import { DataTable } from '$lib/components';
+	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
-	import Button from '$lib/components/Button.svelte';
+	import { Button, DataTable } from '$lib/components';
 
 	export let pairs: any[];
-
-	console.log(pairs);
 
 	const table = createTable(readable(pairs), {
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'usd_volume_30d', order: 'desc' }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination()
+		page: addPagination(),
+		clickable: addClickableRows({
+			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`
+		})
 	});
 
 	const columns = table.createColumns([
@@ -57,15 +58,10 @@
 			accessor: 'liquidity_change_24h',
 			cell: ({ value }) => formatPriceChange(value)
 		}),
-		table.column({
+		table.display({
 			id: 'cta',
 			header: '',
-			accessor: ({ chain_slug, exchange_slug, pair_slug }) => ({ chain_slug, exchange_slug, pair_slug }),
-			cell: ({ value }) =>
-				createRender(Button, {
-					label: 'View pair',
-					href: `/trading-view/${value.chain_slug}/${value.exchange_slug}/${value.pair_slug}`
-				}),
+			cell: () => createRender(Button, { label: 'View pair' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -74,7 +70,7 @@
 </script>
 
 <div class="pairs-table">
-	<DataTable isResponsive {tableViewModel} />
+	<DataTable isResponsive hasPagination {tableViewModel} />
 </div>
 
 <style lang="postcss">

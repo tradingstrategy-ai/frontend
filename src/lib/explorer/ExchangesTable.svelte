@@ -2,16 +2,11 @@
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
-	import { DataTable } from '$lib/components';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
-	import Button from '$lib/components/Button.svelte';
+	import { Button, DataTable } from '$lib/components';
 
 	export let exchanges: any[];
-
-	function getExchangeUrl({ chain_slug, exchange_slug }: Record<string, string>) {
-		return `/trading-view/${chain_slug}/${exchange_slug}`;
-	}
 
 	const table = createTable(readable(exchanges), {
 		sort: addSortBy({
@@ -19,7 +14,9 @@
 			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination(),
-		clickable: addClickableRows({ href: getExchangeUrl })
+		clickable: addClickableRows({
+			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`
+		})
 	});
 
 	const columns = table.createColumns([
@@ -53,7 +50,7 @@
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination={true} {tableViewModel} />
+	<DataTable isResponsive hasPagination {tableViewModel} />
 </div>
 
 <style lang="postcss">
