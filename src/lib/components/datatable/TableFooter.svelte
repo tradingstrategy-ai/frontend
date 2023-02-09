@@ -1,23 +1,15 @@
 <script lang="ts">
-	import type { Readable, Writable } from 'svelte/store';
+	import type { PaginationState } from 'svelte-headless-table/lib/plugins/addPagination';
+	import { formatAmount } from '$lib/helpers/formatters';
 	import PageButton from './PageButton.svelte';
 
-	// type declaration not exported from svelte-headless-tables; see:
-	// https://github.com/bryanmylee/svelte-headless-table/blob/main/src/lib/plugins/addPagination.ts
-	interface PaginationState {
-		pageSize: Writable<number>;
-		pageIndex: Writable<number>;
-		pageCount: Readable<number>;
-		hasPreviousPage: Readable<boolean>;
-		hasNextPage: Readable<boolean>;
-	}
-
 	export let page: PaginationState;
-	export let totalRowCount: number;
+	export let rowCount: number;
 
-	const { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = page;
+	const { pageSize, pageIndex, pageCount, serverItemCount, hasPreviousPage, hasNextPage } = page;
 
 	$: firstRowIndex = $pageIndex * $pageSize + 1;
+	$: totalRowCount = Math.max(rowCount, $serverItemCount);
 	$: lastRowIndex = Math.min(firstRowIndex + $pageSize - 1, totalRowCount);
 	$: visiblePageIndices = getVisibilePageIndices($pageCount, $pageIndex);
 
@@ -58,7 +50,7 @@
 		<td colspan="100">
 			<div class="data-table-pagination">
 				<div class="status">
-					Showing {firstRowIndex} to {lastRowIndex} of {totalRowCount}
+					Showing {formatAmount(firstRowIndex)} to {formatAmount(lastRowIndex)} of {formatAmount(totalRowCount)}
 				</div>
 				{#if $pageCount > 1}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -68,7 +60,7 @@
 							{#if hasPageIndexGap(pageIdx)}
 								<span class="gap-indicator">…</span>
 							{/if}
-							<PageButton label={pageIdx + 1} value={pageIdx} disabled={$pageIndex === pageIdx} />
+							<PageButton label={formatAmount(pageIdx + 1)} value={pageIdx} disabled={$pageIndex === pageIdx} />
 						{/each}
 						<PageButton label="Next" value={$pageIndex + 1} disabled={!$hasNextPage} />
 					</nav>

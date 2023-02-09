@@ -44,7 +44,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} />
 
 		{#if hasPagination}
-			<TableFooter page={pluginStates.page} totalRowCount={$rows.length} />
+			<TableFooter page={pluginStates.page} rowCount={$rows.length} />
 		{/if}
 	</table>
 </div>

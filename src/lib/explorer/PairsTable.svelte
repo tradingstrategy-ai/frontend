@@ -1,19 +1,29 @@
 <script lang="ts">
-	import { readable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte';
+	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
-	export let pairs: any[];
+	export let rows: Record<string, any>[];
+	export let totalRowCount: number;
+	export let page: number;
+	export let sort: string;
+	export let direction: 'asc' | 'desc';
 
-	const table = createTable(readable(pairs), {
+	const dispatch = createEventDispatcher();
+
+	const rowStore: Writable<typeof rows> = writable([]);
+	$: $rowStore = rows;
+
+	const table = createTable(rowStore, {
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'usd_volume_30d', order: 'desc' }],
-			toggleOrder: ['asc', 'desc']
+			serverSide: true,
+			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination(),
+		page: addPagination({ serverSide: true }),
 		clickable: addClickableRows({
 			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`
 		})
@@ -21,42 +31,49 @@
 
 	const columns = table.createColumns([
 		table.column({
+			accessor: 'pair_symbol',
 			header: 'Trading pair',
-			accessor: 'pair_symbol'
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
+			accessor: 'exchange_name',
 			header: 'Exchange',
-			accessor: 'exchange_name'
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			header: 'Fee',
 			accessor: 'pair_swap_fee',
-			cell: ({ value }) => formatSwapFee(value)
+			header: 'Fee',
+			cell: ({ value }) => formatSwapFee(value),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			header: 'Price USD',
 			accessor: 'usd_price_latest',
-			cell: ({ value }) => formatDollar(value)
+			header: 'Price USD',
+			cell: ({ value }) => formatDollar(value),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
+			accessor: 'price_change_24h', // must match sort key
 			header: 'Price Δ 24h',
-			accessor: 'price_change_24h',
 			cell: ({ value }) => formatPriceChange(value)
 		}),
 		table.column({
-			header: 'Vol 30d USD',
+			id: 'volume_30d', // must match sort key
 			accessor: 'usd_volume_30d',
+			header: 'Vol 30d USD',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
-			header: 'Liq USD',
+			id: 'liquidity', // must match sort key
 			accessor: 'usd_liquidity_latest',
+			header: 'Liq USD',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
-			header: 'Liq Δ 24h',
 			accessor: 'liquidity_change_24h',
-			cell: ({ value }) => formatPriceChange(value)
+			header: 'Liq Δ 24h',
+			cell: ({ value }) => formatPriceChange(value),
+			plugins: { sort: { disable: true } }
 		}),
 		table.display({
 			id: 'cta',
@@ -67,6 +84,19 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
+	const { pluginStates } = tableViewModel;
+	const { pageIndex, serverItemCount } = pluginStates.page;
+	const { sortKeys } = pluginStates.sort;
+
+	$: $pageIndex = page;
+	$: $serverItemCount = totalRowCount;
+	$: $sortKeys = [{ id: sort, order: direction }];
+
+	$: dispatch('change', {
+		page: $pageIndex,
+		sort: $sortKeys[0].id,
+		direction: $sortKeys[0].order
+	});
 </script>
 
 <div class="pairs-table">
@@ -99,7 +129,7 @@
 			& .price_change_24h {
 				max-width: 9rem;
 			}
-			& .usd_volume_30d {
+			& .volume_30d {
 				max-width: 9rem;
 			}
 			& .usd_liquidity_latest {

@@ -2,12 +2,19 @@
 	Render listing of all available Pairs
 -->
 <script lang="ts">
+	import type { PageData } from './$types';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
-	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	function handleChange({ detail }) {
+		goto('?' + new URLSearchParams(detail));
+	}
+
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
@@ -23,7 +30,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<PairsTable pairs={data.pairs.results} />
+		<PairsTable {...data} on:change={handleChange} />
 	</Section>
 </main>
 
