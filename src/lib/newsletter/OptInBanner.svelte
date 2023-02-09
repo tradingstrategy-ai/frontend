@@ -11,12 +11,12 @@
 	<div class="form">
 		<div class="content">
 			<slot name="title">
-				<h2>Trading Strategy newsletter</h2>
+				<h2>Do you want to become an expert on decentralised technology?</h2>
 			</slot>
 			<slot name="description">
 				<p>
-					Subscribe to our newsletter to join our waitlist and never miss any protocol updates, trading tips, news and
-					insights from us.
+					Subscribe to Trading Strategy newsletter to find insights about DeFi markets and learn automated trading and
+					blockchain development.
 				</p>
 			</slot>
 		</div>
