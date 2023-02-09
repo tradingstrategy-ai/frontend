@@ -67,7 +67,7 @@
 	{#if posts}
 		<Section title="Blog" class="blog" layout="boxed" padding="md">
 			<BlogRoll {posts} />
-			<Button label="Read more on Blog" href="/blog" slot="footer" />
+			<Button label="Read all posts" href="/blog" slot="footer" />
 		</Section>
 	{/if}
 
