@@ -11,7 +11,7 @@
 	<div class="form">
 		<div class="content">
 			<slot name="title">
-				<h2>Trading Strategy newsletter</h2>
+				<h2>Do you want to become an expert on decentralised technology?</h2>
 			</slot>
 			<slot name="description">
 				<p>
