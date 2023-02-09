@@ -15,8 +15,8 @@
 			</slot>
 			<slot name="description">
 				<p>
-					Subscribe to Trading Strategy newsletter to find insights about DeFi markets
-					and learn automated trading and blockchain development.
+					Subscribe to Trading Strategy newsletter to find insights about DeFi markets and learn automated trading and
+					blockchain development.
 				</p>
 			</slot>
 		</div>
