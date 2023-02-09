@@ -33,14 +33,16 @@ Render the pair trading page
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
 	};
+
+	$: pageTitle = [
+		summary.pair_symbol,
+		isUniswapV3 ? `${swapFee} pool` : 'token price',
+		`on ${details.exchange_name}`
+	].join(' ');
 </script>
 
 <svelte:head>
-	<title>
-		{summary.pair_symbol}
-		{isUniswapV3 ? `${swapFee} pool` : 'token price'}
-		on {details.exchange_name}
-	</title>
+	<title>{pageTitle}</title>
 	<meta
 		name="description"
 		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
