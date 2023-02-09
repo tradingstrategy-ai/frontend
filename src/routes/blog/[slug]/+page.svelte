@@ -6,6 +6,8 @@
 	import SocialMetaTags from '../SocialMetaTags.svelte';
 	import SocialLinks from '../SocialLinks.svelte';
 	import BlogPostContent from '../BlogPostContent.svelte';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
+	import { Section } from '$lib/components';
 
 	export let data: PageData;
 </script>
@@ -24,6 +26,10 @@
 
 	<BlogPostContent html={data.html} />
 </article>
+
+<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+	<NewsletterOptInBanner />
+</Section>
 
 <style lang="postcss">
 	.blog-article {
