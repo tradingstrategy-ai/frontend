@@ -53,20 +53,29 @@
 <svelte:head>
 	<title>What is {term.name}?</title>
 	<meta name="description" content={term.shortDescription} />
-</svelte:head>s
+</svelte:head>
 
 <Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-<article class="blog-article ds-container">
-	<h1>What Is {term.name}?</h1>
+<article>
+	<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
 	<div class="answer">
 		{@html term.html}
 	</div>
 </article>
 
 <style lang="postcss">
-	h1 {
 
+	article {
+		max-width: var(--container-max-width);
+		margin: auto;
+
+	}
+
+	h1 {
+		font: var(--f-h1-medium);
+		margin-bottom: var(--space-2xl);
+		text-transform: capitalize;
 	}
 
 	.answer :global {

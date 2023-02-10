@@ -37,7 +37,7 @@ https://search.google.com/structured-data/testing-tool
 		polygon: 'Polygon',
 		tokens: 'Tokens',
 		strategies: 'Trading strategies',
-		glossary: 'Trading terminology'
+		glossary: 'Trading and DeFi terminology'
 	};
 </script>
 

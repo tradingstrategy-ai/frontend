@@ -34,14 +34,14 @@
 	<section>
 		<h1>Technical trading and decentralised finance glossary</h1>
 
-		<p>Explanations for technical trading and decentralised finance terms.</p>
+		<p class="description">Explanations for technical trading and decentralised finance terms.</p>
 
 		{#each Object.entries(index) as [letter, terms]}
 			<div class="index-letter">
 				<h2>{letter.toUpperCase()}</h2>
 				<hr />
 				{#each terms as term}
-					<a class="term" href={`/glossary/${term.slug}`}>
+					<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
 						{term.name}
 					</a>
 				{/each}
@@ -55,12 +55,30 @@
 		margin: var(--space-md);
 	}
 
+	h1 {
+		font: var(--f-h1-medium);
+		margin: var(--space-2xl) 0 !important;
+		text-transform: capitalize;
+	}
+
+	h2 {
+		font: var(--f-h2-medium);
+		@media (--viewport-md-up) {
+			font: var(--f-heading-xl-medium);
+		}
+	}
+
+	p {
+		font: var(--f-ui-xl-roman);
+	}
+
 	section {
 		max-width: var(--container-max-width);
 		margin: auto;
 	}
 
 	.index-letter {
+
 		width: 300px;
 		display: inline-block;
 		padding: 0 var(--space-md) var(--space-md) 0;
