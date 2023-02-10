@@ -1,23 +1,38 @@
-<script>
+<script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPriceChange } from '$lib/helpers/formatters';
+	import { UpDownIndicator } from '$lib/components';
+
+	interface MomentumPair {
+		chain_name: string;
+		chain_slug: string;
+		exchange_name: string;
+		exchange_slug: string;
+		liquidity_change_24h: number;
+		pair_slug: string;
+		pair_symbol: string;
+		price_change_24h: number;
+	}
+	[];
+
+	$: console.log(pairs);
 
 	// Trading pairs to render in this momentum table
-	export let pairs;
+	export let pairs: MomentumPair[];
 
 	// Either "liquidity" or "price"
-	export let kind;
+	export let kind: string;
 </script>
 
-<div class="table-responsive">
-	<table class="table">
+<div>
+	<table>
 		<thead>
 			<tr>
 				<th />
 				<th>Trading pair</th>
 				<th class="exchange">Exchange</th>
 				<th class="blockchain">Blockchain</th>
-				<th>Price change</th>
+				<th class="right">Price change</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -50,8 +65,8 @@
 							{formatPriceChange(pair.liquidity_change_24h)}
 						</td>
 					{:else}
-						<td class={determinePriceChangeClass(pair.price_change_24h)}>
-							{formatPriceChange(pair.price_change_24h)}
+						<td class="right">
+							<UpDownIndicator value={pair.price_change_24h} formatter={formatPriceChange} />
 						</td>
 					{/if}
 				</tr>

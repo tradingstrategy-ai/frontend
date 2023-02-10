@@ -22,7 +22,7 @@ of pair records is based on the records returned by `top-momentum` API.
 				<tr>
 					<td>{pair.pair_symbol}</td>
 					<td>{pair.exchange_name}</td>
-					<td>
+					<td class="right">
 						<UpDownIndicator value={pair.price_change_24h} formatter={formatPriceChange} />
 					</td>
 				</tr>
@@ -32,15 +32,6 @@ of pair records is based on the records returned by `top-momentum` API.
 </table>
 
 <style lang="postcss">
-	td {
-		&:last-child {
-			text-align: right;
-			display: flex;
-			place-content: end;
-			place-items: center;
-		}
-	}
-
 	tr {
 		&:hover {
 			& :global .up-down-indicator {
