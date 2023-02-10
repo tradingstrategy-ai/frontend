@@ -6,10 +6,8 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
-/** @type {import('./$types').PageLoad} */
-export const load: PageLoad = async ({ params, fetch }) => {
-	const resp = await fetch('/glossary/api');
-	const glossary = await resp.json();
+export const load: PageLoad = async ({ params, parent }) => {
+	const { glossary } = await parent();
 
 	const term = glossary[params.slug];
 
