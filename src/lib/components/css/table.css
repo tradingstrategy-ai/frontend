@@ -99,11 +99,12 @@ table:not(.table) {
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-xs);
-				&:not(:has(.button)) {
-					--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-				}
+				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
+
+				& .button {
+					margin-right: calc(-1 * var(--space-sm));
+				}
 			}
 		}
 
