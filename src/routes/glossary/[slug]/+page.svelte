@@ -9,7 +9,7 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { serializeSchema } from './jsonld';
+	import { serializeSchema } from '$lib/helpers/googleMeta';
 	import type { GlossaryEntry } from '../api/types';
 
 	export let data: PageData;
