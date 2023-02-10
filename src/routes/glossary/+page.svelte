@@ -2,13 +2,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 
-	import Section from '$lib/components/Section.svelte';
-
 	export let data: PageData;
 
 	let { glossary } = data;
-
-	console.log(glossary);
 
 	function buildIndex(glossary) {
 		let index: Record<string, string[]> = {};
@@ -26,8 +22,8 @@
 </script>
 
 <svelte:head>
-	<title>Technical trading term glossary</title>
-	<meta name="description" content="What do technical trading terms mean?" />
+	<title>Trading and DeFi terminology</title>
+	<meta name="description" content="What do different technical trading terms mean?" />
 </svelte:head>
 
 <main>
