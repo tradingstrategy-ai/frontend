@@ -2,12 +2,27 @@
 	Render listing of all available exchanges
 -->
 <script lang="ts">
+	import type { PageData } from './$types';
+	import { page } from '$app/stores';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
-	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	$: q = $page.url.searchParams;
+	$: options = {
+		page: Number(q.get('page')) || 0,
+		sort: q.get('sort') || 'volume_30d',
+		direction: q.get('direction') || 'desc'
+	};
+
+	function handleChange({ detail }) {
+		goto('?' + new URLSearchParams(detail));
+	}
+
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
@@ -26,7 +41,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<ExchangesTable exchanges={data.exchanges} />
+		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
 	</Section>
 </main>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
@@ -6,14 +7,19 @@
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
-	export let exchanges: any[];
+	export let rows: Record<string, any>[];
+	export let page: number;
+	export let sort: string;
+	export let direction: 'asc' | 'desc';
 
-	const table = createTable(readable(exchanges), {
+	const dispatch = createEventDispatcher();
+
+	const table = createTable(readable(rows), {
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'usd_volume_30d', order: 'desc' }],
-			toggleOrder: ['asc', 'desc']
+			initialSortKeys: [{ id: sort, order: direction }],
+			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination(),
+		page: addPagination({ initialPageIndex: page }),
 		clickable: addClickableRows({
 			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`
 		})
@@ -21,21 +27,23 @@
 
 	const columns = table.createColumns([
 		table.column({
-			header: 'Exchange',
-			accessor: 'human_readable_name'
+			id: 'exchange_name',
+			accessor: 'human_readable_name',
+			header: 'Exchange'
 		}),
 		table.column({
-			header: 'Blockchain',
-			accessor: 'chain_name'
+			accessor: 'chain_name',
+			header: 'Blockchain'
 		}),
 		table.column({
-			header: 'Trading pairs',
 			accessor: 'pair_count',
+			header: 'Trading pairs',
 			cell: ({ value }) => formatAmount(value)
 		}),
 		table.column({
-			header: 'Volume 30d (USD)',
+			id: 'volume_30d',
 			accessor: 'usd_volume_30d',
+			header: 'Volume 30d (USD)',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.display({
@@ -47,6 +55,14 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
+	const { pageIndex } = tableViewModel.pluginStates.page;
+	const { sortKeys } = tableViewModel.pluginStates.sort;
+
+	$: dispatch('change', {
+		page: $pageIndex,
+		sort: $sortKeys[0].id,
+		direction: $sortKeys[0].order
+	});
 </script>
 
 <div class="exchange-table">
@@ -60,7 +76,7 @@
 				table-layout: fixed;
 			}
 
-			& .human_readable_name {
+			& .exchange_name {
 				width: 30%;
 				white-space: nowrap;
 				overflow: hidden;
@@ -76,7 +92,7 @@
 				text-align: right;
 			}
 
-			& .usd_volume_30d {
+			& .volume_30d {
 				width: 18%;
 				text-align: right;
 			}

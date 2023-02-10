@@ -84,9 +84,8 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pluginStates } = tableViewModel;
-	const { pageIndex, serverItemCount } = pluginStates.page;
-	const { sortKeys } = pluginStates.sort;
+	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
+	const { sortKeys } = tableViewModel.pluginStates.sort;
 
 	$: $pageIndex = page;
 	$: $serverItemCount = totalRowCount;
