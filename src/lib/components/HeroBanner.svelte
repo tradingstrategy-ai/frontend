@@ -43,15 +43,14 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 		place-items: stretch;
 
 		@media (--viewport-sm-down) {
-			min-height: max(28vh, 12rem);
+			min-height: max(22vh, 12rem);
 			gap: var(--space-lg);
 			grid-template-columns: 1fr;
 		}
 
 		&.has-image {
-			min-height: max(40vh, 32rem);
-			@media (--viewport-sm-down) {
-				min-height: max(28vh, 12rem);
+			@media (--viewport-md) {
+				min-height: max(40vh, 32rem);
 			}
 		}
 	}

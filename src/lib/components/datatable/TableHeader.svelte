@@ -1,12 +1,20 @@
 <script lang="ts">
-	import type { HeaderRow } from 'svelte-headless-table';
-	import { Subscribe, Render } from 'svelte-headless-table';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { Subscribe, Render, type HeaderRow } from 'svelte-headless-table';
+	import Icon from '../Icon.svelte';
 
-	export let attrs: svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['thead']>;
+	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: HeaderRow<any, any>[];
+
+	let tableHead: HTMLTableSectionElement;
+	let tableHeadRect: DOMRect;
+
+	$: tableHeadY = tableHeadRect?.y;
 </script>
 
-<thead {...attrs}>
+<svelte:window on:scroll={() => (tableHeadRect = tableHead.getBoundingClientRect())} />
+
+<thead {...attrs} bind:this={tableHead} class:sticky={tableHeadY <= 0}>
 	{#each rows as headerRow (headerRow.id)}
 		<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
 			<tr {...rowAttrs}>
@@ -21,9 +29,9 @@
 						>
 							<Render of={cell.render()} />
 							{#if props.sort?.order === 'asc'}
-								<span class="sorting-indicator">▲</span>
+								<Icon name="chevron-up" size="1rem" />
 							{:else if props.sort?.order === 'desc'}
-								<span class="sorting-indicator">▼</span>
+								<Icon name="chevron-down" />
 							{/if}
 						</th>
 					</Subscribe>
@@ -33,18 +41,3 @@
 	{/each}
 	<slot />
 </thead>
-
-<style lang="postcss">
-	th.sortable {
-		cursor: pointer;
-	}
-
-	th.sorted {
-		padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-ls);
-	}
-
-	.sorting-indicator {
-		position: absolute;
-		transform: translate(0.5rem);
-	}
-</style>

@@ -1,43 +1,48 @@
 <!--
-	Render list of all trading pairs
+	Render listing of all available Pairs
 -->
 <script lang="ts">
+	import type { PageData } from './$types';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
-	import { PageHeader } from '$lib/components';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import { HeroBanner, Section } from '$lib/components';
+
+	export let data: PageData;
+
+	function handleChange({ detail }) {
+		goto('?' + new URLSearchParams(detail));
+	}
+
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
-	<title>Trading pairs on decentralised exchanges</title>
-	<meta name="description" content="Top trading pairs and tokens" />
+	<title>Trading Pairs</title>
+	<meta name="description" content="Top decentralised Pairs" />
 </svelte:head>
 
 <Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
-<main>
-	<PageHeader title="Trading pairs" description="Browse trading pairs across all decentralised exchanges below." />
+<main class="pairs">
+	<Section layout="boxed">
+		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
+	</Section>
 
-	<section class="ds-container">
-		<PairExplorer
-			enabledColumns={[
-				'pair_name',
-				'exchange_name',
-				'pair_swap_fee',
-				'usd_price_latest',
-				'price_change_24h',
-				'usd_volume_30d',
-				'usd_liquidity_latest',
-				'liquidity_change_24h'
-			]}
-			orderColumnIndex={5}
-			pageLength={10}
-		/>
-	</section>
+	<Section layout="boxed" padding="sm">
+		<PairsTable {...data} on:change={handleChange} />
+	</Section>
 </main>
 
 <style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-md);
+	@media (--viewport-md) {
+		.pairs :global table .right {
+			text-align: right;
+		}
+
+		.pairs :global table .cta {
+			max-width: 8rem;
+			padding-left: 1rem;
+		}
 	}
 </style>

@@ -8,19 +8,19 @@
 	export let value: string | undefined = undefined;
 </script>
 
-<div class="select-wrapper {classes}">
-	<select {name} {id} bind:value>
+<div class="select {classes}">
+	<select {name} {id} bind:value on:change>
 		<slot />
 	</select>
 	<Icon name="chevron-down" --icon-size="1rem" />
 </div>
 
 <style lang="postcss">
-	.select-wrapper {
+	.select {
 		--wrapper-padding: var(--space-sl);
 		align-items: center;
-		border: 1px solid transparent;
-		background: var(--c-background-2-v1);
+		border: 1px hsla(var(--hsl-text-ultra-light)) solid;
+		background: hsla(var(--input-background));
 		border-radius: var(--radius-sm);
 		display: flex;
 		justify-content: space-between;

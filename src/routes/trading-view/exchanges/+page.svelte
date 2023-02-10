@@ -2,9 +2,27 @@
 	Render listing of all available exchanges
 -->
 <script lang="ts">
+	import type { PageData } from './$types';
+	import { page } from '$app/stores';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
-	import { PageHeader } from '$lib/components';
+	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
+	import { HeroBanner, Section } from '$lib/components';
+
+	export let data: PageData;
+
+	$: q = $page.url.searchParams;
+	$: options = {
+		page: Number(q.get('page')) || 0,
+		sort: q.get('sort') || 'volume_30d',
+		direction: q.get('direction') || 'desc'
+	};
+
+	function handleChange({ detail }) {
+		goto('?' + new URLSearchParams(detail));
+	}
+
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
@@ -14,24 +32,28 @@
 
 <Breadcrumbs />
 
-<main>
-	<PageHeader
-		title="Decentralised exchanges"
-		description="Browse supported decentralised exchanges across all blockchains"
-	/>
-
-	<section class="ds-container">
-		<ExchangeExplorer
-			enabledColumns={['human_readable_name', 'chain_name', 'pair_count', 'usd_volume_30d']}
-			orderColumnIndex={3}
-			filterJunk={false}
+<main class="dexes">
+	<Section layout="boxed">
+		<HeroBanner
+			title="Decentralised exchanges"
+			subtitle="Browse supported decentralised exchanges across all blockchains"
 		/>
-	</section>
+	</Section>
+
+	<Section layout="boxed" padding="sm">
+		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
+	</Section>
 </main>
 
 <style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-md);
+	@media (--viewport-md) {
+		.dexes :global table .right {
+			text-align: right;
+		}
+
+		.dexes :global table .cta {
+			max-width: 8rem;
+			padding-left: 1rem;
+		}
 	}
 </style>
