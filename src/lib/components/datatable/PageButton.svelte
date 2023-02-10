@@ -1,11 +1,14 @@
 <script lang="ts">
+	export let active = false;
+	export let disabled = false;
 	export let label: string | number;
 	export let value: number;
-	export let disabled = false;
 </script>
 
 {#if disabled}
-	<span>{label}</span>
+	<span class="disabled">{label}</span>
+{:else if active}
+	<span class="active">{label}</span>
 {:else}
 	<button {value}>{label}</button>
 {/if}
@@ -20,21 +23,29 @@
 
 	button {
 		background: none;
+		color: hsla(var(--hsl-text-extra-light));
 		border: none;
 		cursor: pointer;
 		transition: color var(--time-xs) ease-out;
 
 		&:hover {
-			color: var(--c-text);
+			color: hsla(var(--hsl-text));
 		}
 
 		@nest :global(nav:hover) &:not(:hover) {
-			color: var(--c-text-ultra-light);
+			color: var(--c-text-extra-light);
 		}
 	}
 
 	span {
-		color: var(--c-text-ultra-light);
 		cursor: not-allowed;
+
+		&.active {
+			color: hsla(var(--hsl-text));
+		}
+
+		&.disabled {
+			color: hsla(var(--hsl-text-extra-light));
+		}
 	}
 </style>

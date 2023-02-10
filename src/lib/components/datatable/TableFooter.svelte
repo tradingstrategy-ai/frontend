@@ -60,7 +60,7 @@
 							{#if hasPageIndexGap(pageIdx)}
 								<span class="gap-indicator">…</span>
 							{/if}
-							<PageButton label={formatAmount(pageIdx + 1)} value={pageIdx} disabled={$pageIndex === pageIdx} />
+							<PageButton active={$pageIndex === pageIdx} label={formatAmount(pageIdx + 1)} value={pageIdx} />
 						{/each}
 						<PageButton label="Next" value={$pageIndex + 1} disabled={!$hasNextPage} />
 					</nav>
@@ -77,7 +77,7 @@
 	}
 
 	.data-table-pagination {
-		color: var(--c-text-light);
+		color: hsla(var(--hsl-text-extra-light));
 		display: flex;
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
@@ -99,7 +99,7 @@
 			display: flex;
 
 			&:hover .gap-indicator {
-				color: var(--c-text-ultra-light);
+				color: hsla(var(--hsl-text-extra-light));
 			}
 		}
 	}
