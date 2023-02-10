@@ -158,6 +158,7 @@ Display site-wide search box for use in top-nav.
 		--text-input-height: 2.875rem;
 
 		background: hsla(var(--hsl-body));
+		border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
 		overflow: hidden;
 		position: absolute;
 		right: 0;
