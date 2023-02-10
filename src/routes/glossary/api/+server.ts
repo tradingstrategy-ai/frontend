@@ -15,7 +15,7 @@ import { dev } from '$app/environment';
 // We use node-cache https://www.npmjs.com/package/node-cache
 import NodeCache from 'node-cache';
 
-import { fetchAndParseGlossary } from './glossaryKit';
+import { fetchAndParseGlossary } from './glossary';
 
 const cache = new NodeCache();
 const cacheTimeSeconds = dev ? 1 : 120;

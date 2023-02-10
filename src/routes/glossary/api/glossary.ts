@@ -29,7 +29,7 @@ function fixGlossaryElemHtml($, dd, baseUrl: string) {
 		if (href.startsWith('#')) {
 			href = href.replace('#term-', baseUrl).toLowerCase();
 		}
-		return $this.attr('href', href);
+		return $this.attr('href', href).attr("rel", "external");
 	});
 
 	return $dd.html();
@@ -72,7 +72,7 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		const text = $dt.text();
 		const name = toTitleCase(text);
 		const shortDescription = getFirstSentence(text);
-		const slug = name.toLowerCase().replace(' ', '-');
+		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
 		glossary[slug] = { html, name, slug, shortDescription };
 	}
