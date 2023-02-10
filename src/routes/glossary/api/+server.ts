@@ -17,6 +17,7 @@ import NodeCache from 'node-cache';
 
 import { fetchAndParseGlossary } from './glossary';
 
+// Create NodeCache in-process instance and set cache timeout very low when on a dev server
 const cache = new NodeCache();
 const cacheTimeSeconds = dev ? 1 : 120;
 const cacheKey = 'glossary';
