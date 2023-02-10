@@ -11,6 +11,7 @@
 	export let page: number;
 	export let sort: string;
 	export let direction: 'asc' | 'desc';
+	export let loading = true;
 
 	const dispatch = createEventDispatcher();
 
@@ -66,7 +67,7 @@
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination {tableViewModel} />
+	<DataTable isResponsive hasPagination {loading} {tableViewModel} />
 </div>
 
 <style lang="postcss">
