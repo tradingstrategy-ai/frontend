@@ -104,6 +104,9 @@
 
 <style lang="postcss">
 	.pairs-table :global {
+		overflow-x: auto;
+		overflow-y: hidden;
+
 		@media (--viewport-md-up) {
 			&
 				:is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .usd_volume_30d, .usd_liquidity_latest, .liquidity_change_24h) {
