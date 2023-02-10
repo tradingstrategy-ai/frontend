@@ -10,7 +10,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Timestamp } from '$lib/components';
-	import type {GlossaryEntry} from "../api/types";
+	import type { GlossaryEntry } from '../api/types';
 
 	export let data: PageData;
 	let term: GlossaryEntry = data.term;
@@ -49,7 +49,6 @@
     }
 -->
 
-
 <svelte:head>
 	<title>What is {term.name}?</title>
 	<meta name="description" content={term.shortDescription} />
@@ -65,11 +64,9 @@
 </article>
 
 <style lang="postcss">
-
 	article {
 		max-width: var(--container-max-width);
 		margin: auto;
-
 	}
 
 	h1 {
@@ -79,7 +76,6 @@
 	}
 
 	.answer :global {
-
 		/* Format tags in HTML output */
 		& p:not(:first-of-type) {
 			margin-top: var(--space-lg);
@@ -90,6 +86,5 @@
 			text-decoration: underline;
 			color: inherit;
 		}
-
 	}
 </style>

@@ -4,7 +4,7 @@
  * The glossary data is cached on CloudFlare is frequently accessed.
  */
 import type { PageLoad } from './$types';
-import {error} from "@sveltejs/kit";
+import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageLoad} */
 export const load: PageLoad = async ({ params, fetch }) => {
@@ -13,7 +13,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
 	const term = glossary[params.slug];
 
-	if(!term) {
+	if (!term) {
 		throw error(404, `Term not found: ${params.slug}`);
 	}
 

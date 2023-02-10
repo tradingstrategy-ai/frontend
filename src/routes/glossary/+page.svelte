@@ -78,7 +78,6 @@
 	}
 
 	.index-letter {
-
 		width: 300px;
 		display: inline-block;
 		padding: 0 var(--space-md) var(--space-md) 0;

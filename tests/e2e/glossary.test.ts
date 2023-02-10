@@ -11,7 +11,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('glossary tests', () => {
-
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/glossary');
 	});

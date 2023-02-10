@@ -37,16 +37,13 @@ function fixGlossaryElemHtml($, dd, baseUrl: string) {
 
 // https://stackoverflow.com/a/196991/315168
 function toTitleCase(str: string): string {
-  return str.replace(
-    /\w\S*/g,
-    function(txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    }
-  );
+	return str.replace(/\w\S*/g, function (txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
 }
 
 function getFirstSentence(str: string): string {
-	var t = str.split('. ', 1)[0]
+	var t = str.split('. ', 1)[0];
 	return t;
 }
 

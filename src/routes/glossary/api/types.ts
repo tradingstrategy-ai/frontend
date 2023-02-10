@@ -13,7 +13,6 @@ export interface GlossaryEntry {
 
 	/** First sentence of the answer */
 	shortDescription: string;
-
 }
 
 // Slug -> glossary entry mappings

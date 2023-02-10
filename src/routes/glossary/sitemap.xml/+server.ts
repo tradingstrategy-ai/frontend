@@ -5,7 +5,6 @@
  */
 import type { RequestHandler } from './$types';
 
-
 /**
  * Add the default XML headers around sitemap bodh
  *
@@ -16,7 +15,7 @@ function renderSitemapHeaders(body: string): string {
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 		${body}
-		</urlset>`
+		</urlset>`;
 }
 
 /**
@@ -25,18 +24,19 @@ function renderSitemapHeaders(body: string): string {
  * @type RequestHandler
  */
 export async function GET({ fetch }) {
-
 	// Get URL slugs for all glossary terms
 	const resp = await fetch('/glossary/api');
 	const glossary = await resp.json();
 	const slugs = Object.keys(glossary);
 
 	// Build sitemap XML
-	const baseUrl = "https://tradingstrategy.ai/glossary";
-	const sitemapXmlBody = slugs.map((slug) => {
-		const fullUrl = `${baseUrl}/${slug}`;
-		return `<url><loc>${fullUrl}</loc><priority>1.0</priority></url>`;
-	}).join('')
+	const baseUrl = 'https://tradingstrategy.ai/glossary';
+	const sitemapXmlBody = slugs
+		.map((slug) => {
+			const fullUrl = `${baseUrl}/${slug}`;
+			return `<url><loc>${fullUrl}</loc><priority>1.0</priority></url>`;
+		})
+		.join('');
 
 	const sitemapXml = renderSitemapHeaders(sitemapXmlBody);
 
@@ -45,4 +45,4 @@ export async function GET({ fetch }) {
 		'cache-control': 'public, max-age=3600'
 	};
 	return new Response(sitemapXml, { headers });
-};
+}
