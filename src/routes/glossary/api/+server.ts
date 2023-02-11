@@ -10,6 +10,7 @@
  * We cache any result for 2 minutes on the server-side and client-side (hydrated).
  */
 
+import type { RequestHandler } from './$types';
 import { dev } from '$app/environment';
 
 // We use node-cache https://www.npmjs.com/package/node-cache
@@ -22,8 +23,7 @@ const cache = new NodeCache();
 const cacheTimeSeconds = dev ? 1 : 120;
 const cacheKey = 'glossary';
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url }) {
+export const GET: RequestHandler = async ({ url }) => {
 	// Check if we have a cached result in in-process memory
 	let cacheValue: string | undefined = cache.get(cacheKey);
 
@@ -47,4 +47,4 @@ export async function GET({ url }) {
 			'Cache-control': `public; max-age=${cacheTimeSeconds}`
 		}
 	});
-}
+};

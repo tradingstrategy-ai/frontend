@@ -21,9 +21,8 @@ function renderSitemapHeaders(body: string): string {
 /**
  * Handle sitemap.xml generation
  *
- * @type RequestHandler
  */
-export async function GET({ fetch }) {
+export const GET: RequestHandler = async ({ fetch }) => {
 	// Get URL slugs for all glossary terms
 	const resp = await fetch('/glossary/api');
 	const glossary = await resp.json();
@@ -45,4 +44,4 @@ export async function GET({ fetch }) {
 		'cache-control': 'public, max-age=3600'
 	};
 	return new Response(sitemapXml, { headers });
-}
+};

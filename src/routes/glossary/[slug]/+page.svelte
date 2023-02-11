@@ -13,7 +13,7 @@
 	import type { GlossaryEntry } from '../api/types';
 
 	export let data: PageData;
-	let term: GlossaryEntry = data.term;
+	const term: GlossaryEntry = data.term;
 
 	/**
 	 * Generate LD JSON markup
@@ -47,7 +47,7 @@
 
 <Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-<article>
+<article class="ds-container">
 	<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
 	<div class="answer">
 		{@html term.html}
@@ -56,26 +56,26 @@
 
 <style lang="postcss">
 	article {
-		max-width: var(--container-max-width);
-		margin: auto;
+		gap: var(--space-2xl);
 	}
 
 	h1 {
 		font: var(--f-h1-medium);
-		margin-bottom: var(--space-2xl);
 		text-transform: capitalize;
 	}
 
 	.answer :global {
-		/* Format tags in HTML output */
-		& p:not(:first-of-type) {
-			margin-top: var(--space-lg);
-		}
+		display: grid;
+		gap: var(--space-lg);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 
+		/* Format tags in HTML output */
 		& a,
 		& a:hover {
-			text-decoration: underline;
 			color: inherit;
+			font-weight: 700;
+			text-decoration: underline;
 		}
 	}
 </style>

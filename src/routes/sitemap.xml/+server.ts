@@ -71,7 +71,6 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 ${renderFragments(baseUrl).join('')}
 </urlset>`;
 
-
 // Priority 0.8 = static page indexing preferred over token data
 const renderFragments = (baseUrl: string) => {
 	return staticPages.map((path) => {

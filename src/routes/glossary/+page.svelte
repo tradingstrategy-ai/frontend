@@ -1,18 +1,17 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { GlossaryEntry, GlossaryMap } from './api/types';
 
 	export let data: PageData;
 
-	let { glossary } = data;
+	const { glossary } = data;
 
-	function buildIndex(glossary) {
-		let index: Record<string, string[]> = {};
+	function buildIndex(glossary: GlossaryMap) {
+		let index: Record<string, GlossaryEntry[]> = {};
 		for (const [key, value] of Object.entries(glossary)) {
 			const firstLetter = key[0];
-			if (!index[firstLetter]) {
-				index[firstLetter] = [];
-			}
+			index[firstLetter] ||= [];
 			index[firstLetter].push(value);
 		}
 		return index;
@@ -27,20 +26,23 @@
 </svelte:head>
 
 <main>
-	<section>
+	<header class="ds-container">
 		<h1>Technical trading and decentralised finance glossary</h1>
-
 		<p class="description">Explanations for technical trading and decentralised finance terms.</p>
+	</header>
 
+	<section class="ds-container">
 		{#each Object.entries(index) as [letter, terms]}
 			<div class="index-letter">
 				<h2>{letter.toUpperCase()}</h2>
 				<hr />
-				{#each terms as term}
-					<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
-						{term.name}
-					</a>
-				{/each}
+				<div class="terms">
+					{#each terms as term}
+						<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
+							{term.name}
+						</a>
+					{/each}
+				</div>
 			</div>
 		{/each}
 	</section>
@@ -48,12 +50,13 @@
 
 <style lang="postcss">
 	main {
-		margin: var(--space-md);
+		display: grid;
+		gap: var(--space-md);
 	}
 
 	h1 {
 		font: var(--f-h1-medium);
-		margin: var(--space-2xl) 0 !important;
+		padding-block: var(--space-2xl);
 		text-transform: capitalize;
 	}
 
@@ -69,27 +72,22 @@
 	}
 
 	section {
-		max-width: var(--container-max-width);
-		margin: auto;
+		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		gap: var(--space-lg);
 	}
 
-	.index-letter {
-		width: 300px;
-		display: inline-block;
-		padding: 0 var(--space-md) var(--space-md) 0;
-		vertical-align: top;
-
-		@media (--viewport-sm-down) {
-			width: 100%;
-		}
+	.terms {
+		display: grid;
+		gap: var(--space-xxxs);
+		font: var(--f-ui-md-roman);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 
-	.term {
-		display: block;
+	.term:hover {
+		text-decoration: underline;
 	}
 
 	hr {
-		width: 100%;
 		margin: var(--space-lg) 0;
 		border: 0.125rem solid hsla(var(--hsl-text));
 
