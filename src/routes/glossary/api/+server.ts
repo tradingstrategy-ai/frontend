@@ -23,7 +23,7 @@ const cache = new NodeCache();
 const cacheTimeSeconds = dev ? 1 : 120;
 const cacheKey = 'glossary';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async () => {
 	// Check if we have a cached result in in-process memory
 	let cacheValue: string | undefined = cache.get(cacheKey);
 
@@ -31,8 +31,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	// We store stringified JSON in the cache,
 	// so we can pipe the result to the client easily
 	if (!cacheValue) {
-		const baseUrl = url.origin + '/glossary/';
-		const glossary = await fetchAndParseGlossary(baseUrl);
+		const glossary = await fetchAndParseGlossary('/glossary/');
 		cacheValue = JSON.stringify(glossary);
 		cache.set(cacheKey, cacheValue, cacheTimeSeconds);
 	}

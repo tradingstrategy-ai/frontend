@@ -29,7 +29,7 @@ function fixGlossaryElemHtml($, dd, baseUrl: string) {
 		if (href.startsWith('#')) {
 			href = href.replace('#term-', baseUrl).toLowerCase();
 		}
-		return $this.attr('href', href).attr('rel', 'external');
+		return $this.attr('href', href);
 	});
 
 	return $dd.html();

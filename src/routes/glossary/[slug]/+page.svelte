@@ -13,7 +13,7 @@
 	import type { GlossaryEntry } from '../api/types';
 
 	export let data: PageData;
-	const term: GlossaryEntry = data.term;
+	$: term = data.term;
 
 	/**
 	 * Generate LD JSON markup
