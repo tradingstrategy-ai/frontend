@@ -62,10 +62,10 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 
 <style lang="postcss">
 	.content-card {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-md);
 		padding: var(--space-lg);
-		place-content: start stretch;
 
 		@media (--viewport-xs) {
 			padding: var(--space-ls);
@@ -101,6 +101,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 		}
 
 		& .description {
+			flex: 1;
 			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 
