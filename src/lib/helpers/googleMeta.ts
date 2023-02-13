@@ -4,7 +4,8 @@
  */
 
 // Utility function for generating metadata script tag
-function generateScriptTag(metadata) {
+// See https://navillus.dev/blog/json-ld-in-sveltekit
+export function serializeSchema(metadata: any) {
 	return `<script type="application/ld+json">${JSON.stringify(metadata)}</script>`;
 }
 
@@ -35,7 +36,7 @@ export function serializePost(postData: Post) {
 		dateModified: postData.updated_at
 	};
 
-	return generateScriptTag(metadata);
+	return serializeSchema(metadata);
 }
 
 /**
@@ -62,5 +63,5 @@ export function sitelinksSearchBox() {
 		}
 	};
 
-	return generateScriptTag(metadata);
+	return serializeSchema(metadata);
 }

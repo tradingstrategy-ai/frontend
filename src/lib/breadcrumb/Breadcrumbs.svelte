@@ -36,7 +36,8 @@ https://search.google.com/structured-data/testing-tool
 		avalanche: 'Avalanche C-chain',
 		polygon: 'Polygon',
 		tokens: 'Tokens',
-		strategies: 'Trading strategies'
+		strategies: 'Trading strategies',
+		glossary: 'Trading and DeFi terminology'
 	};
 </script>
 
