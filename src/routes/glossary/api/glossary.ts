@@ -11,18 +11,16 @@ import type { GlossaryMap } from './types';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 
-
 /**
  * Could not scrape glossary entries correctly
  */
 export class GlossaryDataReadFailed extends Error {
-
 	// https://stackoverflow.com/a/41429145/315168
-    constructor(msg: string) {
-        super(msg);
-        // Set the prototype explicitly.
-        Object.setPrototypeOf(this, GlossaryDataReadFailed.prototype);
-    }
+	constructor(msg: string) {
+		super(msg);
+		// Set the prototype explicitly.
+		Object.setPrototypeOf(this, GlossaryDataReadFailed.prototype);
+	}
 }
 
 /**
@@ -69,7 +67,10 @@ function getFirstSentence(str: string): string {
  * @param baseUrl
  *  The base URL for the glossary for the rewritten links
  *
- *  @throws
+ *  @throws GlossaryDataReadFailed
+ *  	In the case the source Sphinx HTML is badly formatted due
+ *  	to broken manual edits.
+ *
  *
  */
 export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMap> {
@@ -94,14 +95,13 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
 
-		if(!name || !slug) {
+		if (!name || !slug) {
 			throw new GlossaryDataReadFailed(`Could not read glossary term: ${text}, previous term is ${previousTerm}`);
 		}
 
-		if(slug in glossary) {
+		if (slug in glossary) {
 			throw new GlossaryDataReadFailed(`Duplicate glossary slug: ${slug}`);
 		}
-
 
 		glossary[slug] = { html, name, slug, shortDescription };
 
