@@ -89,8 +89,9 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		// There is embedded <a>#</a> anchor in dt we need to remove
 		$dt.find('a').remove();
 
+		// We have dt and dd elements, the term is in dt followed by body in dd
 		const text = $dt.text();
-		const name = toTitleCase(text);
+		const name = text;
 		const shortDescription = getFirstSentence(text);
 		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
