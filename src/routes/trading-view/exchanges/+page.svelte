@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
-	import { goto, afterNavigate, disableScrollHandling, beforeNavigate } from '$app/navigation';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
@@ -17,19 +17,12 @@
 		sort: q.get('sort') || 'volume_30d',
 		direction: q.get('direction') || 'desc'
 	};
-	$: loading = false;
 
 	function handleChange({ detail }) {
 		goto('?' + new URLSearchParams(detail));
 	}
 
-	beforeNavigate(() => {
-		loading = true;
-	});
-	afterNavigate(() => {
-		disableScrollHandling();
-		loading = false;
-	});
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
@@ -48,7 +41,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<ExchangesTable {loading} rows={data.exchanges} {...options} on:change={handleChange} />
+		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
 	</Section>
 </main>
 
