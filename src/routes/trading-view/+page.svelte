@@ -55,6 +55,10 @@
 				<p>Explore tokens using advanced token search.</p>
 			{/if}
 		</ContentCard>
+
+		<ContentCard icon="dictionary" title="DeFi Dictionary" ctaLabel="View dictionary" href="/glossary">
+			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
+		</ContentCard>
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">

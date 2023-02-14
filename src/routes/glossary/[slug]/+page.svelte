@@ -10,6 +10,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
+	import { Section } from '$lib/components';
 	import type { GlossaryEntry } from '../api/types';
 
 	export let data: PageData;
@@ -47,12 +48,14 @@
 
 <Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-<article class="ds-container">
-	<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
-	<div class="answer">
-		{@html term.html}
-	</div>
-</article>
+<Section layout="boxed">
+	<article>
+		<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
+		<div class="answer">
+			{@html term.html}
+		</div>
+	</article>
+</Section>
 
 <style lang="postcss">
 	article {
@@ -61,6 +64,7 @@
 
 	h1 {
 		font: var(--f-h1-medium);
+		margin-bottom: var(--space-xl);
 		text-transform: capitalize;
 	}
 
