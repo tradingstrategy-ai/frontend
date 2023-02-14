@@ -31,7 +31,7 @@
 	</Section>
 
 	<Section layout="boxed">
-		<MomentumTable pairs={data.pairs} kind="price" />
+		<MomentumTable pairs={data.pairs} />
 	</Section>
 </main>
 
