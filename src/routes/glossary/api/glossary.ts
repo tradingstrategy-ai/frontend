@@ -11,6 +11,20 @@ import type { GlossaryMap } from './types';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 
+
+/**
+ * Could not scrape glossary entries correctly
+ */
+export class GlossaryDataReadFailed extends Error {
+
+	// https://stackoverflow.com/a/41429145/315168
+    constructor(msg: string) {
+        super(msg);
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, GlossaryDataReadFailed.prototype);
+    }
+}
+
 /**
  * Mutate glossary dd node and fix any links in it back to glossary itself.
  *
@@ -54,6 +68,9 @@ function getFirstSentence(str: string): string {
  *
  * @param baseUrl
  *  The base URL for the glossary for the rewritten links
+ *
+ *  @throws
+ *
  */
 export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMap> {
 	const resp = await fetch(glossaryBaseUrl);
@@ -63,6 +80,8 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 	const glossary: GlossaryMap = {};
 
 	const dts = $('dt');
+
+	let previousTerm = null;
 
 	for (const dt of dts) {
 		let $dt = $(dt);
@@ -74,7 +93,19 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		const shortDescription = getFirstSentence(text);
 		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
+
+		if(!name || !slug) {
+			throw new GlossaryDataReadFailed(`Could not read glossary term: ${text}, previous term is ${previousTerm}`);
+		}
+
+		if(slug in glossary) {
+			throw new GlossaryDataReadFailed(`Duplicate glossary slug: ${slug}`);
+		}
+
+
 		glossary[slug] = { html, name, slug, shortDescription };
+
+		previousTerm = text;
 	}
 
 	return glossary;
