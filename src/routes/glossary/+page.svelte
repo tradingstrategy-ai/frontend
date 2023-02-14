@@ -1,6 +1,7 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { HeroBanner, Section } from '$lib/components';
 	import type { GlossaryEntry, GlossaryMap } from './api/types';
 
 	export let data: PageData;
@@ -26,12 +27,14 @@
 </svelte:head>
 
 <main>
-	<header class="ds-container">
-		<h1>Technical trading and decentralised finance glossary</h1>
-		<p class="description">Explanations for technical trading and decentralised finance terms.</p>
-	</header>
+	<Section header layout="boxed" padding="md">
+		<HeroBanner
+			title="Technical trading and decentralised finance glossary"
+			subtitle="Explanations for technical trading and decentralised finance terms."
+		/>
+	</Section>
 
-	<section class="ds-container">
+	<Section layout="boxed" padding="sm">
 		{#each Object.entries(index) as [letter, terms]}
 			<div class="index-letter">
 				<h2>{letter.toUpperCase()}</h2>
@@ -45,19 +48,13 @@
 				</div>
 			</div>
 		{/each}
-	</section>
+	</Section>
 </main>
 
 <style lang="postcss">
 	main {
 		display: grid;
 		gap: var(--space-md);
-	}
-
-	h1 {
-		font: var(--f-h1-medium);
-		padding-block: var(--space-2xl);
-		text-transform: capitalize;
 	}
 
 	h2 {
@@ -67,13 +64,9 @@
 		}
 	}
 
-	p {
-		font: var(--f-ui-xl-roman);
-	}
-
-	section {
+	main :global .grid {
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: var(--space-lg);
+		gap: var(--space-3xl) var(--space-2xl);
 	}
 
 	.terms {
