@@ -12,7 +12,7 @@
 
 <main>
 	<Section header layout="boxed">
-		<HeroBanner title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
+		<HeroBanner contentFullWidth title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
 	</Section>
 
 	<ContentCardsSection>
@@ -47,62 +47,5 @@
 	main {
 		display: grid;
 		gap: var(--space-xl);
-	}
-
-	header {
-		& h1 {
-			font: var(--f-heading-xl-medium);
-			margin-bottom: var(--space-sm);
-		}
-
-		& p {
-			font: var(--f-heading-md-roman);
-			@media (--viewport-sm-down) {
-				font: var(--f-heading-sm-roman);
-			}
-		}
-	}
-
-	section {
-		gap: var(--space-xl);
-		grid-template-columns: repeat(auto-fit, minmax(min(30rem, calc(100vw - 10rem)), 1fr));
-	}
-
-	.card {
-		padding: var(--space-xl);
-		display: grid;
-		grid-template-columns: 1fr 3fr;
-		gap: var(--space-md);
-	}
-
-	.media {
-		display: flex;
-		justify-content: center;
-	}
-
-	svg {
-		width: 90%;
-		max-width: 8rem;
-
-		& .icons-duotone-1 {
-			fill: hsla(var(--hsl-bullish));
-		}
-
-		& .icons-duotone-2 {
-			fill: hsla(var(--hsl-bearish));
-		}
-	}
-
-	.content {
-		display: grid;
-		gap: var(--space-md);
-
-		& h3 {
-			font: var(--f-heading-md-medium);
-		}
-
-		& p {
-			font: var(--f-ui-md-roman);
-		}
 	}
 </style>
