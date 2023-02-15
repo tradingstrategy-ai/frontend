@@ -29,6 +29,7 @@
 <main>
 	<Section header layout="boxed" padding="md">
 		<HeroBanner
+			contentFullWidth
 			title="Technical trading and decentralised finance glossary"
 			subtitle="Explanations for technical trading and decentralised finance terms."
 		/>
