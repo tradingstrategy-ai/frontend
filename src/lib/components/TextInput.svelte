@@ -13,14 +13,22 @@ unknown props through to HTML input element.
 
 	export let type: 'email' | 'text' | 'search' = 'text';
 	export let disabled = false;
+	export let label = '';
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 	export let value = '';
 
 	const icon = type === 'search' ? 'search' : undefined;
 	const cancelButton = type === 'search';
+
+	$: tag = $$slots.label || label ? 'label' : 'span';
 </script>
 
-<span class="text-input size-{size}" class:has-icon={icon} class:disabled>
+<svelte:element this={tag} class="text-input size-{size}" class:has-icon={icon} class:disabled>
+	{#if $$slots.label || label}
+		<slot name="label">
+			<span class="label">{label}</span>
+		</slot>
+	{/if}
 	<input
 		{value}
 		{type}
@@ -42,17 +50,27 @@ unknown props through to HTML input element.
 			<Icon name="cancel" />
 		</span>
 	{/if}
-</span>
+</svelte:element>
 
 <style lang="postcss">
 	.text-input {
 		position: relative;
 		display: inline-grid;
-		font: var(--text-input-font, var(--font));
-		height: var(--text-input-height, var(--height));
-		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
+		gap: var(--space-xs);
+
 		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
+
+		& input {
+			font: var(--text-input-font, var(--font));
+			height: var(--text-input-height, var(--height));
+			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
+		}
+
+		& .label,
+		& [slot='label'] {
+			font-weight: 500;
+		}
 
 		&.disabled {
 			opacity: 0.65;

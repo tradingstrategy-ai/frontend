@@ -32,13 +32,9 @@ of pair records is based on the records returned by `top-momentum` API.
 </table>
 
 <style lang="postcss">
-	td {
-		&:last-child {
-			text-align: right;
-			display: flex;
-			place-content: end;
-			place-items: center;
-		}
+	td :global(.up-down-indicator) {
+		float: right;
+		white-space: nowrap;
 	}
 
 	tr {

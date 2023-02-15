@@ -28,14 +28,20 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	export let title: string | undefined = undefined;
 
 	$: tag = href ? 'a' : 'div';
+
+	$: anchorProps = {
+		href
+	};
 </script>
 
-<svelte:element this={tag} {href} class="content-card tile b" class:ctaFullWidth on:click>
-	<div class="icon symbol tile c">
-		<slot name="icon">
-			<Icon name={icon} />
-		</slot>
-	</div>
+<svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth on:click>
+	{#if icon || $$slots.icon}
+		<div class="icon symbol tile c">
+			<slot name="icon">
+				<Icon name={`${icon}`} />
+			</slot>
+		</div>
+	{/if}
 
 	<slot name="title">
 		<h3>{title}</h3>
@@ -56,7 +62,8 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 
 <style lang="postcss">
 	.content-card {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-md);
 		padding: var(--space-lg);
 
@@ -85,7 +92,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			}
 		}
 
-		& h3 {
+		& :global h3 {
 			font: var(--f-heading-lg-medium);
 
 			@media (--viewport-xs) {
@@ -94,6 +101,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 		}
 
 		& .description {
+			flex: 1;
 			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 
