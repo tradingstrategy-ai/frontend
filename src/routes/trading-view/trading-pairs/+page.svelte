@@ -3,12 +3,21 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { Navigation } from '@sveltejs/kit';
 	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data: PageData;
+
+	$: loading = isNavigatingWithinPage($navigating);
+
+	function isNavigatingWithinPage(nav: Navigation | null) {
+		if (!nav) return false;
+		return nav.from?.route.id === nav.to?.route.id;
+	}
 
 	function handleChange({ detail }) {
 		goto('?' + new URLSearchParams(detail));
@@ -30,7 +39,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<PairsTable {...data} on:change={handleChange} />
+		<PairsTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>
 
