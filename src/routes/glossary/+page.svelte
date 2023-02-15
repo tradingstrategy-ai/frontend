@@ -34,7 +34,7 @@
 		/>
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section class="content" layout="boxed" padding="sm">
 		{#each Object.entries(index) as [letter, terms]}
 			<div class="index-letter">
 				<h2>{letter.toUpperCase()}</h2>
@@ -64,7 +64,7 @@
 		}
 	}
 
-	main :global .grid {
+	main :global .content .grid {
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		gap: var(--space-3xl) var(--space-2xl);
 	}
