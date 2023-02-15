@@ -25,6 +25,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
 	export let isResponsive = false;
+	export let loading = false;
 
 	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
 	const filterValue = pluginStates.tableFilter?.filterValue;
@@ -45,7 +46,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 </script>
 
 <div class="data-table">
-	<table {...$tableAttrs} class:responsive={isResponsive}>
+	<table {...$tableAttrs} class:responsive={isResponsive} class:loading>
 		{#if isResponsive}
 			<MobileSortSelect rows={$headerRows} {sortKeys} />
 		{/if}
