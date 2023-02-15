@@ -7,10 +7,12 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { GlossaryEntry } from '../api/types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
-	import type { GlossaryEntry } from '../api/types';
+	import { Section } from '$lib/components';
 
 	export let data: PageData;
 	$: term = data.term;
@@ -45,22 +47,49 @@
 	{@html serializeSchema(getGoogleFAQPageSchema(term))}
 </svelte:head>
 
-<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
+<main>
+	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-<article class="ds-container">
-	<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
-	<div class="answer">
-		{@html term.html}
-	</div>
-</article>
+	<Section layout="boxed">
+		<article>
+			<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
+			<div class="answer">
+				{@html term.html}
+			</div>
+		</article>
+	</Section>
+
+	<ContentCardsSection>
+		<ContentCard icon="dictionary" title="DeFi Dictionary" ctaLabel="View dictionary" href="/glossary">
+			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
+		</ContentCard>
+		<ContentCard
+			icon="book"
+			title="Documentation"
+			ctaLabel="Read documentation"
+			href="https://tradingstrategy.ai/docs"
+			description="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
+		/>
+	</ContentCardsSection>
+</main>
 
 <style lang="postcss">
+	main {
+		display: grid;
+		gap: var(--space-lg);
+
+		@media (--viewport-sm-down) {
+			gap: var(--space-ms);
+		}
+	}
+
 	article {
 		gap: var(--space-2xl);
 	}
 
 	h1 {
 		font: var(--f-h1-medium);
+		margin-bottom: var(--space-xl);
 		text-transform: capitalize;
 	}
 
