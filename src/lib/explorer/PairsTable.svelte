@@ -108,8 +108,7 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			&
-				:is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .usd_volume_30d, .usd_liquidity_latest, .liquidity_change_24h) {
+			& :is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h) {
 				text-align: right;
 				&:is(td) {
 					overflow: hidden;
@@ -134,7 +133,7 @@
 			& .volume_30d {
 				max-width: 9rem;
 			}
-			& .usd_liquidity_latest {
+			& .liquidity {
 				max-width: 7rem;
 			}
 			& .liquidity_change_24h {
