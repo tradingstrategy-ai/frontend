@@ -12,8 +12,8 @@
 	export let data: PageData;
 
 	let submitting = false;
-	let validApiKey = null;
-	let apiKeyError = null;
+	let validApiKey = '';
+	let apiKeyError = '';
 
 	function getDownloadUrl(urlStr: string) {
 		const url = new URL(urlStr);
@@ -25,7 +25,7 @@
 		const url = `${backendUrl}/validate-api-key`;
 		const key = event.target.apiKey.value.trim();
 
-		apiKeyError = null;
+		apiKeyError = '';
 		submitting = true;
 
 		try {
@@ -64,20 +64,20 @@
 
 <main>
 	<Section header layout="boxed">
-		<HeroBanner
-			contentFullWidth
-			title="Historical DEX trading data"
-			subtitle={`<p>
-			The following datasets are available for historical DEX trading data.
-			<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
-		</p>
-		<p>
-			Read the documentation
-			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-				>how to get started with Trading Strategy Python library for algorithmic trading</a
-			>.
-		</p>`}
-		/>
+		<HeroBanner contentFullWidth title="Historical DEX trading data">
+			<svelte:fragment slot="subtitle">
+				<p>
+					The following datasets are available for historical DEX trading data.
+					<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
+				</p>
+				<p>
+					Read the documentation
+					<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html">
+						how to get started with Trading Strategy Python library for algorithmic trading
+					</a>.
+				</p>
+			</svelte:fragment>
+		</HeroBanner>
 	</Section>
 
 	<Section layout="boxed">
