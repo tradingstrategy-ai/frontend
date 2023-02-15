@@ -20,7 +20,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 <div class="hero-banner" class:has-image={image} class:has-fullwidth-content={contentFullWidth}>
 	<div class="content">
 		<h1>{@html title}</h1>
-		<p>{@html subtitle}</p>
+		<p><slot name="subtitle">{@html subtitle}</slot></p>
 		{#if hr}
 			<hr />
 		{/if}

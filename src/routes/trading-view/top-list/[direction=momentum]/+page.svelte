@@ -20,14 +20,14 @@
 
 <main>
 	<Section header layout="boxed">
-		<HeroBanner
-			contentFullWidth
-			title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h"
-			subtitle={`<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a>
-			with the highest ${up ? 'profit' : 'drawdown'} on
-			<a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a>
-			today. Showing only the pairs with minimum $1M liquidity. All trading pairs are benchmarked against the US Dollar.`}
-		/>
+		<HeroBanner contentFullWidth title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h">
+			<svelte:fragment slot="subtitle">
+				<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a>
+				with the highest ${up ? 'profit' : 'drawdown'} on
+				<a class="body-link" href="/trading-view/exchanges">decentralised exchanges</a>
+				today. Showing only the pairs with minimum $1M liquidity. All trading pairs are benchmarked against the US Dollar.
+			</svelte:fragment>
+		</HeroBanner>
 	</Section>
 
 	<Section layout="boxed">
