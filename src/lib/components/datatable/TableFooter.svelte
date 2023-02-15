@@ -77,7 +77,6 @@
 	}
 
 	.data-table-pagination {
-		color: hsla(var(--hsl-text-extra-light));
 		display: flex;
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);

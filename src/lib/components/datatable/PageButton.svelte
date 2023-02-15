@@ -21,8 +21,8 @@
 
 	button {
 		background: none;
-		color: hsla(var(--hsl-text-extra-light));
 		border: none;
+		color: hsla(var(--hsl-text-extra-light));
 		cursor: pointer;
 		transition: color var(--time-xs) ease-out;
 
@@ -31,7 +31,7 @@
 		}
 
 		@nest :global(nav:hover) &:not(:hover) {
-			color: var(--c-text-extra-light);
+			color: hsla(var(--hsl-text-extra-light));
 		}
 	}
 
