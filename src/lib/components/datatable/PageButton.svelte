@@ -5,10 +5,8 @@
 	export let value: number;
 </script>
 
-{#if disabled}
-	<span class="disabled">{label}</span>
-{:else if active}
-	<span class="active">{label}</span>
+{#if active || disabled}
+	<span class:active class:disabled>{label}</span>
 {:else}
 	<button {value}>{label}</button>
 {/if}

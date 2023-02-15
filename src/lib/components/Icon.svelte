@@ -18,22 +18,22 @@
 
 <div class="icon" style:--size={size}>{@html rawSVG(name) || notFound}</div>
 
-<style>
-	div {
+<style lang="postcss">
+	.icon {
 		display: contents;
 		font-size: var(--icon-size, var(--size, auto));
-	}
 
-	div > :global(svg) {
-		width: 1em;
-		height: 1em;
-	}
+		& :global svg {
+			height: 1em;
+			width: 1em;
+			& path {
+				stroke: var(--icon-color, currentcolor);
 
-	div :global(.fill) {
-		fill: currentcolor;
-	}
-
-	div :global(.stroke) {
-		stroke: currentcolor;
+				&.fill {
+					stroke: none;
+					fill: var(--icon-color, currentcolor);
+				}
+			}
+		}
 	}
 </style>

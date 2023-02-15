@@ -23,10 +23,8 @@
 	<ContentCardsSection cols={4}>
 		{#each data.chains as chain}
 			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
-				<div class="blockchain-logo" slot="icon">
-					<img alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
-				</div>
-				<h3 slot="title">{chain.chain_name}</h3>
+				<img class="blockchain-logo" slot="icon" alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
+				<h3 class="blockchain-title" slot="title">{chain.chain_name}</h3>
 				<p>{chain.exchanges} exchanges</p>
 			</ContentCard>
 		{/each}
@@ -36,14 +34,11 @@
 <style lang="postcss">
 	.blockchain-logo {
 		--size: 3rem;
-
-		& img {
-			height: var(--size);
-			width: var(--size);
-		}
+		height: var(--size);
+		width: var(--size);
 	}
 
-	h3 {
+	h3.blockchain-title {
 		font: var(--f-heading-md-medium);
 	}
 </style>

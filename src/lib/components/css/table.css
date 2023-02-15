@@ -73,7 +73,7 @@ table:not(.table) {
 
 		&.sorted {
 			color: hsla(var(--hsl-text));
-			padding-right: var(--space-4xl);
+			padding-right: var(--space-5xl);
 		}
 	}
 
@@ -84,6 +84,7 @@ table:not(.table) {
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
 			padding: var(--cell-padding);
+			position: relative;
 			transition: var(--table-transition);
 			vertical-align: middle;
 			--button-width: 100%;
@@ -98,11 +99,12 @@ table:not(.table) {
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-xs);
-				&:not(:has(.button)) {
-					--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-				}
+				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
+
+				& .button {
+					margin-right: calc(-1 * var(--space-sm));
+				}
 			}
 		}
 
@@ -118,6 +120,29 @@ table:not(.table) {
 				color: hsla(var(--hsl-text-inverted));
 			}
 		}
+
+		& a {
+			position: relative;
+
+			&::before {
+				bottom: calc(-1 * var(--space-sm));
+				border-radius: var(--radius-sm);
+				content: '';
+				left: calc(-1 * var(--space-sm));
+				position: absolute;
+				right: calc(-1 * var(--space-sm));
+				top: calc(-1 * var(--space-sm));
+				transition: background var(--time-sm) ease-out;
+			}
+
+			&:hover::before {
+				background: hsla(var(--hsl-box), var(--a-box-c));
+			}
+		}
+	}
+
+	& :is(th, td).right {
+		text-align: right;
 	}
 
 	&.responsive {
@@ -180,5 +205,47 @@ table:not(.table) {
 
 	& .button {
 		white-space: nowrap;
+	}
+}
+
+table.loading {
+	& :not(thead, tfoot) tr td {
+		color: transparent;
+
+		&:has(.button) {
+			display: none;
+		}
+
+		&::before {
+			animation: pulse-opacity 1s infinite ease-out;
+			background: hsla(var(--hsl-box), var(--a-box-c));
+			bottom: var(--space-sm);
+			border-radius: var(--radius-sm);
+			content: '';
+			left: var(--space-sm);
+			position: absolute;
+			right: var(--space-sm);
+			top: var(--space-sm);
+		}
+	}
+
+	& .button {
+		cursor: loading;
+
+		& span {
+			color: transparent;
+
+			&::before {
+				animation: pulse-opacity 1s infinite ease-out;
+				background: hsla(var(--hsl-box), var(--a-box-c));
+				bottom: var(--space-lg);
+				border-radius: var(--radius-sm);
+				content: '';
+				left: var(--space-lg);
+				position: absolute;
+				right: var(--space-lg);
+				top: var(--space-lg);
+			}
+		}
 	}
 }
