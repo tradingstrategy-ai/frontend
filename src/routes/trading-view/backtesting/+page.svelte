@@ -3,10 +3,9 @@
 	import { backendUrl } from '$lib/config';
 	import { formatDistanceToNow } from 'date-fns';
 	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
-	import { HeroBanner, Section } from '$lib/components';
+	import { AlertList, AlertItem, Button, ContentCard, HeroBanner, Section, TextInput } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, ContentCard, TextInput } from '$lib/components';
 	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
 
 	export let data: PageData;
@@ -104,9 +103,9 @@
 		{/if}
 
 		{#if apiKeyError}
-			<div class="alert alert-danger shadow-soft" role="alert">
-				<span class="alert-inner--text">{apiKeyError}</span>
-			</div>
+			<AlertList>
+				<AlertItem>{apiKeyError}</AlertItem>
+			</AlertList>
 		{/if}
 
 		{#if validApiKey}
@@ -121,8 +120,8 @@
 					<tr>
 						<th>Name</th>
 						<th>Tag</th>
-						<th>Entry count (k)</th>
-						<th>Size (MBytes)</th>
+						<th class="right">Entry count (k)</th>
+						<th class="right">Size (MBytes)</th>
 						<th>Format</th>
 						<th>Last updated</th>
 						<th>Links</th>
@@ -134,8 +133,8 @@
 						<tr>
 							<td>{row.name}</td>
 							<td>{row.designation}</td>
-							<td>{formatKilos(row.entries)}</td>
-							<td>{formatSizeMegabytes(row.size)}</td>
+							<td class="right">{formatKilos(row.entries)}</td>
+							<td class="right">{formatSizeMegabytes(row.size)}</td>
 							<td>{row.format}</td>
 							<td>
 								{formatDistanceToNow(row.last_updated_at * 1000, { addSuffix: true })}

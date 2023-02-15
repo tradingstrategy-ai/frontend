@@ -53,7 +53,7 @@
 						</a>
 					</td>
 
-					<td class="price-change right">
+					<td class="price-change">
 						<UpDownIndicator value={pair.price_change_24h} formatter={formatPriceChange} />
 					</td>
 				</tr>
@@ -63,6 +63,10 @@
 </div>
 
 <style>
+	td :global(.up-down-indicator) {
+		float: right;
+	}
+
 	/* Remove less relevant columns on mobile */
 	@media (--viewport-sm-down) {
 		:is(.exchange, .blockchain) {

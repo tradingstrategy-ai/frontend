@@ -142,10 +142,7 @@ table:not(.table) {
 	}
 
 	& :is(th, td).right {
-		align-items: center;
 		text-align: right;
-		display: flex;
-		justify-content: end;
 	}
 
 	&.responsive {
