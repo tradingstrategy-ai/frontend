@@ -1,13 +1,32 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
+	import { fetchPairs, type PairIndexResponse } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
 
 	export let data: PageData;
+
+	let pairsData: PairIndexResponse;
+	let loading = true;
+
+	$: updatePairsData($page.url.searchParams);
+
+	async function updatePairsData(searchParams: URLSearchParams) {
+		loading = true;
+
+		pairsData = await fetchPairs(fetch, {
+			chain_slugs: data.chain_slug,
+			token_addresses: data.address,
+			...Object.fromEntries(searchParams.entries())
+		});
+
+		loading = false;
+	}
 </script>
 
 <svelte:head>
@@ -33,22 +52,7 @@
 	<section class="ds-container trading-pairs" data-testid="trading-pairs">
 		<h2>Trading pairs</h2>
 
-		<PairExplorer
-			enabledColumns={[
-				'pair_name',
-				'exchange_name',
-				'pair_swap_fee',
-				'usd_price_latest',
-				'price_change_24h',
-				'usd_volume_30d',
-				'usd_liquidity_latest',
-				'liquidity_change_24h'
-			]}
-			orderColumnIndex={5}
-			pageLength={10}
-			tokenSymbol={data.symbol}
-			tokenAddress={data.address}
-		/>
+		<PairsTable data={pairsData} {loading} />
 	</section>
 
 	<aside class="ds-container">

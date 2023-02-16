@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PairIndexResponse } from './pair-client';
 	import { createEventDispatcher } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
@@ -7,18 +8,18 @@
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
-	export let rows: Record<string, any>[];
-	export let totalRowCount: number;
-	export let page: number;
-	export let sort: string;
-	export let direction: 'asc' | 'desc';
+	export let data: PairIndexResponse | undefined = undefined;
+	export let loading = false;
 
 	const dispatch = createEventDispatcher();
 
-	const rowStore: Writable<typeof rows> = writable([]);
-	$: $rowStore = rows;
+	const rows: Writable<PairIndexResponse['rows']> = writable([]);
+	$: $rows = data ? data.rows : loading ? new Array(10).fill({}) : [];
 
-	const table = createTable(rowStore, {
+	$: sort = data?.sort || 'volume_30d';
+	$: direction = data?.direction || 'desc';
+
+	const table = createTable(rows, {
 		sort: addSortBy({
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
@@ -27,15 +28,19 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
+	const valueOrFallback = ({ value }: any) => value || '---';
+
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'pair_symbol',
 			header: 'Trading pair',
+			cell: valueOrFallback,
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'exchange_name',
 			header: 'Exchange',
+			cell: valueOrFallback,
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -86,8 +91,8 @@
 	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
 
-	$: $pageIndex = page;
-	$: $serverItemCount = totalRowCount;
+	$: $pageIndex = data?.page || 0;
+	$: $serverItemCount = data?.totalRowCount || 0;
 	$: $sortKeys = [{ id: sort, order: direction }];
 
 	$: dispatch('change', {
