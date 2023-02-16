@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { fetchPairs, type PairIndexResponse } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
-	import { PageHeader } from '$lib/components';
+	import { AlertItem, AlertList, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -12,20 +12,26 @@
 	export let data: PageData;
 
 	let pairsData: PairIndexResponse;
-	let loading = true;
+	let pairsLoading = true;
+	let pairsError = false;
 
 	$: updatePairsData($page.url.searchParams);
 
 	async function updatePairsData(searchParams: URLSearchParams) {
-		loading = true;
+		pairsLoading = true;
 
-		pairsData = await fetchPairs(fetch, {
-			chain_slugs: data.chain_slug,
-			token_addresses: data.address,
-			...Object.fromEntries(searchParams.entries())
-		});
+		try {
+			pairsData = await fetchPairs(fetch, {
+				chain_slugs: data.chain_slug,
+				token_addresses: data.address,
+				...Object.fromEntries(searchParams.entries())
+			});
+		} catch (e) {
+			pairsError = true;
+			console.log(e);
+		}
 
-		loading = false;
+		pairsLoading = false;
 	}
 </script>
 
@@ -52,7 +58,15 @@
 	<section class="ds-container trading-pairs" data-testid="trading-pairs">
 		<h2>Trading pairs</h2>
 
-		<PairsTable data={pairsData} {loading} />
+		{#if !pairsError}
+			<PairsTable data={pairsData} loading={pairsLoading} />
+		{:else}
+			<AlertList>
+				<AlertItem>
+					An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
+				</AlertItem>
+			</AlertList>
+		{/if}
 	</section>
 
 	<aside class="ds-container">
