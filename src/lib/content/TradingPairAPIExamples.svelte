@@ -16,10 +16,6 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 
 	<pre>curl "{pairInfoUrl}"</pre>
 
-	<p>
-		<a class="body-link" href={pairInfoUrl}> Click here to test. </a>
-	</p>
-
 	<h2>Daily OHLCV data</h2>
 
 	<p>
@@ -28,10 +24,6 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 	</p>
 
 	<pre>curl "{candlesUrl}"</pre>
-
-	<p>
-		<a class="body-link" href={candlesUrl}> Click here to test. </a>
-	</p>
 
 	<h2>Backtesting datasets</h2>
 

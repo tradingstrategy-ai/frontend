@@ -60,15 +60,16 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard icon="dictionary" title="DeFi Dictionary" ctaLabel="View dictionary" href="/glossary">
-			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
+		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
+			<p>Browse Trading Strategy's DeFi and trading terminology database.</p>
 		</ContentCard>
+
 		<ContentCard
 			icon="book"
-			title="Documentation"
-			ctaLabel="Read documentation"
-			href="https://tradingstrategy.ai/docs"
-			description="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
+			title="Learn algorithmic trading"
+			ctaLabel="Show tutorials and videos"
+			href="https://tradingstrategy.ai/docs/learn/index.html"
+			description="Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources collection."
 		/>
 	</ContentCardsSection>
 </main>
