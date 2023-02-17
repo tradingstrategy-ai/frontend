@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
+	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
 	import { fetchPairs, type PairIndexResponse } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { AlertItem, AlertList, PageHeader } from '$lib/components';
@@ -33,6 +34,12 @@
 
 		pairsLoading = false;
 	}
+
+	function handlePairsChange({ detail }) {
+		goto('?' + new URLSearchParams(detail));
+	}
+
+	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>
@@ -59,7 +66,7 @@
 		<h2>Trading pairs</h2>
 
 		{#if !pairsError}
-			<PairsTable data={pairsData} loading={pairsLoading} />
+			<PairsTable data={pairsData} loading={pairsLoading} on:change={handlePairsChange} />
 		{:else}
 			<AlertList>
 				<AlertItem>
