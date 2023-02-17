@@ -24,9 +24,7 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ serverSide: true }),
-		clickable: addClickableRows({
-			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`
-		})
+		clickable: addClickableRows({ id: 'cta' })
 	});
 
 	const columns = table.createColumns([
@@ -75,10 +73,11 @@
 			cell: ({ value }) => formatPriceChange(value),
 			plugins: { sort: { disable: true } }
 		}),
-		table.display({
+		table.column({
 			id: 'cta',
+			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`,
 			header: '',
-			cell: () => createRender(Button, { label: 'View pair' }),
+			cell: ({ value }) => createRender(Button, { label: 'View pair', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -98,7 +97,7 @@
 	});
 </script>
 
-<div class="pairs-table">
+<div class="pairs-table" data-testid="pairs-table">
 	<DataTable isResponsive hasPagination {tableViewModel} />
 </div>
 
