@@ -12,14 +12,15 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 ```
 -->
 <script lang="ts">
+	import { derived, writable, type Writable } from 'svelte/store';
 	import type { TableViewModel } from 'svelte-headless-table';
-	import type { SortKey } from 'svelte-headless-table/lib/plugins/addSortBy';
+	import type { WritableSortKeys } from 'svelte-headless-table/lib/plugins/addSortBy';
+	import { createEventDispatcher } from 'svelte';
 	import TableHeader from './TableHeader.svelte';
 	import TableBody from './TableBody.svelte';
 	import TableFooter from './TableFooter.svelte';
 	import SearchHeaderRow from './SearchHeaderRow.svelte';
 	import MobileSortSelect from './MobileSortSelect.svelte';
-	import { onMount } from 'svelte';
 
 	export let tableViewModel: TableViewModel<any, any>;
 	export let hasSearch: boolean = false;
@@ -27,22 +28,43 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let isResponsive = false;
 	export let loading = false;
 
-	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
-	const filterValue = pluginStates.tableFilter?.filterValue;
-	const sortKeys = pluginStates.sort?.sortKeys;
-	const pageIndex = pluginStates.page?.pageIndex;
+	const dispatch = createEventDispatcher();
 
-	// reset pagination when user changes sort key
-	onMount(() => {
-		if (!(sortKeys || pageIndex || hasPagination)) return;
-		let lastSortKey = $sortKeys[0];
-		return sortKeys.subscribe(([sortKey]: [SortKey]) => {
-			if (sortKey.id !== lastSortKey.id || sortKey.order !== lastSortKey.order) {
+	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
+
+	const filterValue = pluginStates.tableFilter?.filterValue;
+
+	// set sortKeys to real plugin store or dummy store if sort not enabled (see watchPageAndSort)
+	const sortKeys: WritableSortKeys = pluginStates.sort?.sortKeys || writable([{}]);
+
+	// set pageIndex to real plugin store or dummy store if pagination not enabled (see watchPageAndSort)
+	const pageIndex: Writable<number> = pluginStates.page?.pageIndex || writable(0);
+
+	/**
+	 * Use a derived store to detect changes to page and sort stores
+	 * - `set` argument (never used) is required in callback signature to support returning a function
+	 * - see: https://svelte.dev/docs#run-time-svelte-store-derived
+	 */
+	const watchPageAndSort = derived([pageIndex, sortKeys], ([page, sort], set) => {
+		// within the callback, page and sort will be the values prior to the invocation
+		return () => {
+			// if sort changed and not on first page, reset page to 0 and abort
+			// prevents redundant dispatch - callback will be re-invoked due to page change
+			const sortChanged = sort[0].id !== $sortKeys[0].id || sort[0].order !== $sortKeys[0].order;
+			if (sortChanged && page > 0) {
 				$pageIndex = 0;
-				lastSortKey = sortKey;
+				return;
 			}
-		});
+
+			dispatch('change', {
+				page: $pageIndex,
+				sort: $sortKeys[0].id,
+				direction: $sortKeys[0].order
+			});
+		};
 	});
+	// auto subscribe/unsubscribe
+	$watchPageAndSort;
 </script>
 
 <div class="data-table">

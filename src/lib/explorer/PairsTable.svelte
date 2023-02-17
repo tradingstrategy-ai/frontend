@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PairIndexResponse } from './pair-client';
-	import { createEventDispatcher } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
@@ -10,8 +9,6 @@
 
 	export let data: PairIndexResponse | undefined = undefined;
 	export let loading = false;
-
-	const dispatch = createEventDispatcher();
 
 	const rows: Writable<PairIndexResponse['rows']> = writable([]);
 	$: $rows = data ? data.rows : loading ? new Array(10).fill({}) : [];
@@ -94,16 +91,10 @@
 	$: $pageIndex = data?.page || 0;
 	$: $serverItemCount = data?.totalRowCount || 0;
 	$: $sortKeys = [{ id: sort, order: direction }];
-
-	$: dispatch('change', {
-		page: $pageIndex,
-		sort: $sortKeys[0].id,
-		direction: $sortKeys[0].order
-	});
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination {tableViewModel} />
+	<DataTable isResponsive hasPagination {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">
