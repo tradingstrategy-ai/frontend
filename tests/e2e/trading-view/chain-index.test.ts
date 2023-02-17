@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('blockchain index page', () => {
+test.describe('chain index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/trading-view/blockchains');
 	});

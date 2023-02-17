@@ -98,7 +98,7 @@
 	});
 </script>
 
-<div class="pairs-table">
+<div class="pairs-table" data-testid="pairs-table">
 	<DataTable isResponsive hasPagination {tableViewModel} />
 </div>
 
