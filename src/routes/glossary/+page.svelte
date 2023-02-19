@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-	<title>Trading and DeFi terminology</title>
+	<title>DeFi and trading dictionary</title>
 	<meta name="description" content="What do different technical trading terms mean?" />
 </svelte:head>
 
@@ -30,8 +30,8 @@
 	<Section header layout="boxed" padding="md">
 		<HeroBanner
 			contentFullWidth
-			title="Technical trading and decentralised finance glossary"
-			subtitle="Explanations for technical trading and decentralised finance terms."
+			title="DeFi and trading dictionary"
+			subtitle="Browser explanations for different technical trading and decentralised finance (DeFi) terms."
 		/>
 	</Section>
 
