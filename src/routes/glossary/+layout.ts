@@ -2,7 +2,6 @@
  * Data loader for all /glossary routes
  */
 import type { LayoutLoad } from './$types';
-import {publicApiError} from "$lib/helpers/publicApiError";
 
 export const load: LayoutLoad = async ({ fetch }) => {
 	const resp = await fetch('/glossary/api');
