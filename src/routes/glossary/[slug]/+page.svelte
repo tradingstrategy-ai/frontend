@@ -107,5 +107,9 @@
 			font-weight: 700;
 			text-decoration: underline;
 		}
+
+		& p {
+			margin-bottom: 0.5rem;
+		}
 	}
 </style>
