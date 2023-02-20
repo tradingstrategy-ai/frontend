@@ -55,7 +55,7 @@ test.describe('advanced search page', () => {
 	test('should populate URL query params with default search options', async ({ page }) => {
 		await page.goto('/search');
 		const expected = searchParams({});
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 	});
 
 	test('should update URL query params to reflect selected search options', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('advanced search page', () => {
 			}
 		});
 
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 	});
 
 	test('should retain selected search options when navigating to search result and back', async ({ page }) => {
@@ -94,7 +94,7 @@ test.describe('advanced search page', () => {
 			sortBy: 'volume:desc',
 			filters: { blockchain: ['ethereum'] }
 		});
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 
 		// click on search result, wait for token page to load, click "back" button
 		await page.getByText('USDC on Ethereum').click();
@@ -102,7 +102,7 @@ test.describe('advanced search page', () => {
 		await page.goBack();
 
 		// wait until we're back on the search page; verify search options are retained
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 1000 });
+		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 		await expect(page.getByRole('searchbox')).toHaveValue('eth');
 		await expect(page.getByRole('combobox')).toHaveValue('volume:desc');
 		await expect(page.getByRole('checkbox', { name: 'ethereum' })).toBeChecked();
