@@ -37,8 +37,6 @@ table:not(.table) {
 	}
 
 	& th {
-		/* background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-a)), hsla(var(--hsl-box), var(--a-box-a))),
-			linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body))); */
 		background: hsla(var(--hsl-body));
 		border-radius: var(--radius-md);
 		color: hsla(var(--hsl-text-extra-light));
