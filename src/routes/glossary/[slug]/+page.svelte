@@ -13,6 +13,7 @@
 	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
 	import { Section } from '$lib/components';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
 	$: term = data.term;
@@ -60,17 +61,25 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard icon="dictionary" title="DeFi Dictionary" ctaLabel="View dictionary" href="/glossary">
-			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
+		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
+			<p>
+				You are currently browing Trading Strategy's DeFi, Web3 and trading terminology database. See the full
+				dictionary for more terms.
+			</p>
 		</ContentCard>
+
 		<ContentCard
 			icon="book"
-			title="Documentation"
-			ctaLabel="Read documentation"
-			href="https://tradingstrategy.ai/docs"
-			description="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
+			title="Learn algorithmic trading"
+			ctaLabel="Show tutorials and videos"
+			href="https://tradingstrategy.ai/docs/learn/index.html"
+			description="Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources collection."
 		/>
 	</ContentCardsSection>
+
+	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
 </main>
 
 <style lang="postcss">
@@ -105,6 +114,10 @@
 			color: inherit;
 			font-weight: 700;
 			text-decoration: underline;
+		}
+
+		& p {
+			margin-bottom: 0.5rem;
 		}
 	}
 </style>

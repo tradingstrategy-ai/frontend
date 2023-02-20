@@ -21,6 +21,6 @@ test.describe('home page', () => {
 
 	test('should include blog roll', async ({ page }) => {
 		const blogRoll = page.locator('[data-testid="blog-roll"]:visible');
-		await expect(blogRoll.getByRole('link', { name: 'Read article' })).toHaveCount(3);
+		await expect(blogRoll.getByRole('link', { name: 'Read article' })).toHaveCount(6);
 	});
 });
