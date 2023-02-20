@@ -71,6 +71,10 @@
 		gap: var(--space-md);
 	}
 
+	main :global .section {
+		overflow: auto;
+	}
+
 	h2 {
 		font: var(--f-h2-medium);
 		@media (--viewport-md-up) {

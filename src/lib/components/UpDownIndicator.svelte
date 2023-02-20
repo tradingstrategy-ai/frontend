@@ -13,11 +13,21 @@ Utility component for displaying a value with red/green value color.
 	export let formatter: Function | undefined = undefined;
 </script>
 
-<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
-	<slot>{formatter ? formatter(value) : value}</slot>
-</span>
+<div class="up-down-indicator-wrapper">
+	<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
+		<slot>
+			<span class="truncate">
+				{formatter ? formatter(value) : value}
+			</span>
+		</slot>
+	</span>
+</div>
 
 <style lang="postcss">
+	.up-down-indicator-wrapper {
+		display: flex;
+		justify-content: flex-end;
+	}
 	.up-down-indicator {
 		background: hsla(var(--hsl-box), var(--a-box-b));
 		border-radius: var(--radius-sm);
