@@ -30,7 +30,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<PairsTable {data} on:change={handleChange} />
+		<PairsTable {...data} on:change={handleChange} />
 	</Section>
 </main>
 

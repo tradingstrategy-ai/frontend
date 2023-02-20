@@ -13,21 +13,31 @@
 
 	export let data: PageData;
 
-	let pairsData: PairIndexResponse;
 	let pairsLoading = true;
 	let pairsError = false;
+	let pairData: PairIndexResponse;
+	let pageIdx: number;
+	let sort: string;
+	let direction: 'asc' | 'desc';
 
 	$: updatePairsData($page.url.searchParams);
 
 	async function updatePairsData(searchParams: URLSearchParams) {
 		pairsLoading = true;
 
+		pageIdx = Number(searchParams.get('page'));
+		sort = searchParams.get('sort') || 'volume_30d';
+		direction = searchParams.get('direction') || 'desc';
+
 		try {
-			pairsData = await fetchPairs(fetch, {
+			const resp = await fetchPairs(fetch, {
 				chain_slugs: data.chain_slug,
 				token_addresses: data.address,
-				...Object.fromEntries(searchParams.entries())
+				page: pageIdx,
+				sort,
+				direction
 			});
+			if (resp) pairData = resp;
 		} catch (e) {
 			pairsError = true;
 			console.log(e);
@@ -66,7 +76,14 @@
 		<h2>Trading pairs</h2>
 
 		{#if !pairsError}
-			<PairsTable data={pairsData} loading={pairsLoading} on:change={handlePairsChange} />
+			<PairsTable
+				loading={pairsLoading}
+				page={pageIdx}
+				{sort}
+				{direction}
+				{...pairData}
+				on:change={handlePairsChange}
+			/>
 		{:else}
 			<AlertList>
 				<AlertItem>

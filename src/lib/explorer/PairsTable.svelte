@@ -7,16 +7,17 @@
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
-	export let data: PairIndexResponse | undefined = undefined;
 	export let loading = false;
+	export let rows: PairIndexResponse['rows'] | undefined = undefined;
+	export let totalRowCount = 0;
+	export let page = 0;
+	export let sort = 'volume_30d';
+	export let direction: 'asc' | 'desc' = 'desc';
 
-	const rows: Writable<PairIndexResponse['rows']> = writable([]);
-	$: $rows = data ? data.rows : loading ? new Array(10).fill({}) : [];
+	const tableRows: Writable<PairIndexResponse['rows']> = writable([]);
+	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
 
-	$: sort = data?.sort || 'volume_30d';
-	$: direction = data?.direction || 'desc';
-
-	const table = createTable(rows, {
+	const table = createTable(tableRows, {
 		sort: addSortBy({
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
@@ -88,8 +89,8 @@
 	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
 
-	$: $pageIndex = data?.page || 0;
-	$: $serverItemCount = data?.totalRowCount || 0;
+	$: $pageIndex = page;
+	$: $serverItemCount = totalRowCount;
 	$: $sortKeys = [{ id: sort, order: direction }];
 </script>
 

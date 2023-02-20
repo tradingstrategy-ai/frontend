@@ -17,9 +17,6 @@ type PairSearchKey = keyof PairIndexParams;
 export type PairIndexResponse = {
 	rows: Record<string, any>[];
 	totalRowCount: number;
-	page: number;
-	sort: string;
-	direction: 'asc' | 'desc';
 };
 
 const defaultParams: PairIndexParams = {
@@ -62,9 +59,6 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 
 	return {
 		rows: data.results,
-		totalRowCount: data.total,
-		page: Number(apiParams.get('page')),
-		sort: apiParams.get('sort'),
-		direction: apiParams.get('direction')
+		totalRowCount: data.total
 	} as PairIndexResponse;
 }
