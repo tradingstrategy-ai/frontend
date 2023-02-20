@@ -13,6 +13,7 @@
 	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
 	import { Section } from '$lib/components';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
 	$: term = data.term;
@@ -61,7 +62,10 @@
 
 	<ContentCardsSection>
 		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
-			<p>Browse Trading Strategy's DeFi and trading terminology database.</p>
+			<p>
+				You are currently browing Trading Strategy's DeFi, Web3 and trading terminology database. See the full
+				dictionary for more terms.
+			</p>
 		</ContentCard>
 
 		<ContentCard
@@ -72,6 +76,10 @@
 			description="Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources collection."
 		/>
 	</ContentCardsSection>
+
+	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
 </main>
 
 <style lang="postcss">
