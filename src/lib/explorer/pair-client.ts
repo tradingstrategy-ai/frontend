@@ -31,10 +31,12 @@ const defaultParams: PairIndexParams = {
 
 const allKeys: PairSearchKey[] = ['page_size', 'page', 'sort', 'direction', 'chain_slugs', 'token_addresses'];
 
-// https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_pairs
-const apiUrl = `${backendUrl}/pairs`;
+let controller: AbortController | null = null;
 
 export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
+	// abort previous uncompleted request to prevent race condition
+	controller?.abort();
+
 	const apiParams = new URLSearchParams();
 
 	for (const key of allKeys) {
@@ -42,10 +44,18 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 		value && apiParams.set(key, String(value));
 	}
 
-	const resp = await fetch(`${apiUrl}?${apiParams}`);
+	controller = new AbortController();
+	const signal = controller.signal;
+	let resp: Response;
 
-	if (!resp.ok) {
-		throw await publicApiError(resp);
+	try {
+		resp = await fetch(`${backendUrl}/pairs?${apiParams}`);
+		if (!resp.ok) throw await publicApiError(resp);
+	} catch (e) {
+		if (e.name !== 'AbortError') throw e;
+	} finally {
+		controller = null;
+		if (signal.aborted) return;
 	}
 
 	const data = await resp.json();
