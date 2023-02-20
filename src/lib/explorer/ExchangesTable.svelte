@@ -20,9 +20,7 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({
-			href: (row: any) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`
-		})
+		clickable: addClickableRows({ id: 'cta' })
 	});
 
 	const columns = table.createColumns([
@@ -46,10 +44,11 @@
 			header: 'Volume 30d (USD)',
 			cell: ({ value }) => formatDollar(value)
 		}),
-		table.display({
+		table.column({
 			id: 'cta',
 			header: '',
-			cell: () => createRender(Button, { label: 'View exchange' }),
+			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`,
+			cell: ({ value }) => createRender(Button, { label: 'View exchange', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);

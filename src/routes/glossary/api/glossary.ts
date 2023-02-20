@@ -32,18 +32,16 @@ export class GlossaryDataReadFailed extends Error {
  */
 function fixGlossaryElemHtml($, dd, baseUrl: string) {
 	const $dd = $(dd);
-	$dd.find('a').replaceWith(function () {
+
+	$dd.find('a').each(function () {
 		const $this = $(this);
-
 		let href = $this.attr('href');
-
 		// Glossary.html in-page link
 		if (href.startsWith('#')) {
 			href = href.replace('#term-', baseUrl).toLowerCase();
 		}
-		return $this.attr('href', href);
+		$this.attr('href', href);
 	});
-
 	return $dd.html();
 }
 
@@ -84,8 +82,10 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 
 	let previousTerm = null;
 
+	// Go through every element on glosssary.html source
 	for (const dt of dts) {
 		let $dt = $(dt);
+
 		// There is embedded <a>#</a> anchor in dt we need to remove
 		$dt.find('a').remove();
 

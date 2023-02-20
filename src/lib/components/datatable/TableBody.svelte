@@ -11,7 +11,7 @@
 	{#each rows as row (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs rowProps={row.props()} let:rowProps>
 			{#if rowProps.clickable}
-				<a href={rowProps.clickable.href} style:display="contents">
+				<a href={row.cellForId[rowProps.clickable.id].value} style:display="contents">
 					<TableRow attrs={rowAttrs} cells={row.cells} />
 				</a>
 			{:else}

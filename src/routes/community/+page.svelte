@@ -26,9 +26,9 @@
 		/>
 		<ContentCard
 			icon="read-glasses"
-			title="Algorithm tutorials"
-			href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
-			description="Learn how to write trading algorithms with our documentation and run backtests."
+			title="Learn algorithmic trading"
+			href="https://tradingstrategy.ai/docs/learn/index.html"
+			description="Learn how to write trading algorithms with our learning resources collection."
 		/>
 	</ContentCardsSection>
 
