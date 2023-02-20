@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import { HeroBanner, Section } from '$lib/components';
 	import type { GlossaryEntry, GlossaryMap } from './api/types';
+	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
 
@@ -22,17 +23,25 @@
 </script>
 
 <svelte:head>
-	<title>Trading and DeFi terminology</title>
+	<title>DeFi and trading dictionary</title>
 	<meta name="description" content="What do different technical trading terms mean?" />
 </svelte:head>
 
-<main>
+<main class="glossary-main">
 	<Section header layout="boxed" padding="md">
-		<HeroBanner
-			contentFullWidth
-			title="Technical trading and decentralised finance glossary"
-			subtitle="Explanations for technical trading and decentralised finance terms."
-		/>
+		<HeroBanner contentFullWidth title="DeFi and trading dictionary">
+			<div slot="subtitle">
+				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
+
+				<p class="glossary-introduction">
+					This dictionary has been compiled to help newcomers to get quickly familiar with
+					<a class="body-link" href="/glossary/decentralised-finance">decentralised finance</a>,
+					<a class="body-link" href="/glossary/decentralised-exchange">decentralised exchanges</a>,
+					<a class="body-link" href="/glossary/trading-strategy">trading strategies</a> and
+					<a class="body-link" href="/glossary/algorithmic-trading">algorithmic trading</a>.
+				</p>
+			</div>
+		</HeroBanner>
 	</Section>
 
 	<Section class="content" layout="boxed" padding="sm">
@@ -49,6 +58,10 @@
 				</div>
 			</div>
 		{/each}
+	</Section>
+
+	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
 	</Section>
 </main>
 

@@ -32,18 +32,16 @@ export class GlossaryDataReadFailed extends Error {
  */
 function fixGlossaryElemHtml($, dd, baseUrl: string) {
 	const $dd = $(dd);
-	$dd.find('a').replaceWith(function () {
+
+	$dd.find('a').each(function () {
 		const $this = $(this);
-
 		let href = $this.attr('href');
-
 		// Glossary.html in-page link
 		if (href.startsWith('#')) {
 			href = href.replace('#term-', baseUrl).toLowerCase();
 		}
-		return $this.attr('href', href);
+		$this.attr('href', href);
 	});
-
 	return $dd.html();
 }
 
@@ -55,7 +53,7 @@ function toTitleCase(str: string): string {
 }
 
 function getFirstSentence(str: string): string {
-	var t = str.split('. ', 1)[0];
+	var t = str.split('.', 1)[0];
 	return t;
 }
 
@@ -84,17 +82,21 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 
 	let previousTerm = null;
 
+	// Go through every element on glosssary.html source
 	for (const dt of dts) {
 		let $dt = $(dt);
+
 		// There is embedded <a>#</a> anchor in dt we need to remove
 		$dt.find('a').remove();
 
 		// We have dt and dd elements, the term is in dt followed by body in dd
 		const text = $dt.text();
 		const name = text;
-		const shortDescription = getFirstSentence(text);
 		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
+
+		const bodyText = $(html).text();
+		const shortDescription = getFirstSentence(bodyText);
 
 		if (!name || !slug) {
 			throw new GlossaryDataReadFailed(`Could not read glossary term: ${text}, previous term is ${previousTerm}`);

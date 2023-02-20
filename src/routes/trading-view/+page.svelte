@@ -56,7 +56,7 @@
 			{/if}
 		</ContentCard>
 
-		<ContentCard icon="dictionary" title="DeFi Dictionary" ctaLabel="View dictionary" href="/glossary">
+		<ContentCard icon="dictionary" title="DeFi and Trading Dictionary" ctaLabel="View dictionary" href="/glossary">
 			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
 		</ContentCard>
 	</ContentCardsSection>

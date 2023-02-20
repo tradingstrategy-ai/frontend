@@ -34,7 +34,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	$: tag = href ? 'a' : 'div';
 </script>
 
-<svelte:element this={tag} class="content-tile tile a {classes}" {href}>
+<svelte:element this={tag} class="content-tile tile a {classes}" {href} role={href ? 'link' : undefined}>
 	<img src={mediaSrc} alt={mediaAlt} />
 
 	<div class="content">
