@@ -78,9 +78,13 @@
 		}
 	}
 
-	main :global .content .grid {
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: var(--space-3xl) var(--space-2xl);
+	main :global .content {
+		overflow: auto;
+
+		& .grid {
+			grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+			gap: var(--space-3xl) var(--space-2xl);
+		}
 	}
 
 	.terms {

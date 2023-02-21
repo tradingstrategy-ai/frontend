@@ -13,7 +13,7 @@
 
 <style lang="postcss">
 	th {
-		padding: var(--space-sl) 0 !important;
+		padding: 0 0 var(--space-sl) !important;
 	}
 
 	div {
@@ -26,6 +26,7 @@
 
 	tr.search {
 		position: sticky;
-		top: 3rem;
+		top: 3.5rem;
+		z-index: 1;
 	}
 </style>

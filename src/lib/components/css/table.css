@@ -37,7 +37,7 @@ table:not(.table) {
 	}
 
 	& th {
-		background-color: hsla(var(--hsl-body));
+		background: hsla(var(--hsl-body));
 		border-radius: var(--radius-md);
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
@@ -211,10 +211,6 @@ table:not(.table) {
 table.loading {
 	& :not(thead, tfoot) tr td {
 		color: transparent;
-
-		&:has(.button) {
-			display: none;
-		}
 
 		&::before {
 			animation: pulse-opacity 1s infinite ease-out;

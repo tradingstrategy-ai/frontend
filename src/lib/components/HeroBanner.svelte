@@ -55,7 +55,9 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 
 		&:not(.has-fullwidth-content) {
 			place-content: center;
-			grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
+			@media (--viewport-md-up) {
+				grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
+			}
 		}
 	}
 

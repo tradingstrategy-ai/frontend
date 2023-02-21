@@ -12,6 +12,7 @@
 	export let page: number;
 	export let sort: string;
 	export let direction: 'asc' | 'desc';
+	export let loading = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -98,13 +99,15 @@
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination {tableViewModel} />
+	<DataTable isResponsive hasPagination {loading} {tableViewModel} />
 </div>
 
 <style lang="postcss">
 	.pairs-table :global {
-		overflow-x: auto;
-		overflow-y: hidden;
+		@media (min-width: 1025px) and (max-width: 1200px) {
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
 
 		@media (--viewport-md-up) {
 			& :is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h) {
