@@ -20,20 +20,20 @@ test.describe('token details page', () => {
 	});
 
 	test('should include trading pairs data table', async ({ page }) => {
-		const selector = '[data-testid="trading-pairs"] tbody';
-		// wait for datatables to load data (client-side)
-		await page.waitForSelector(`${selector} .col-pair`);
+		const selector = '[data-testid="pairs-table"] :not(.loading) tbody';
+		// wait for data to load client-side
+		await page.waitForSelector(`${selector} .pair_symbol`);
 		const rows = page.locator(`${selector} tr`);
-		expect(await rows.count()).toBeGreaterThanOrEqual(10);
-		const rowData = ['ETH-USDC', 'Uniswap v3', '$1.50k', '▲ 11.2%', '$7.89B', '$0', '▼ 0.0%'];
-		await expect(rows.first()).toHaveText(rowData.join(''));
+		expect(await rows.count()).toBe(10);
+		const rowData = ['ETH-USDC', 'Uniswap v3', '\\$1.50k', '▲ 11.2%', '\\$7.89B', '\\$0', '▼ 0.0%'];
+		await expect(rows.first()).toHaveText(new RegExp(rowData.join('.*')));
 	});
 
 	test('clicking trading pair should navagate to pair details page', async ({ page }) => {
-		const selector = '[data-testid="trading-pairs"] tbody .col-pair';
+		const selector = '[data-testid="pairs-table"] :not(.loading) tbody tr';
 		// wait for datatables to load data (client-side)
-		const tableCell = await page.waitForSelector(selector);
-		await tableCell.click();
+		const tableRow = await page.waitForSelector(selector);
+		await tableRow.click();
 		await expect(page).toHaveURL('trading-view/ethereum/uniswap-v3/eth-usdc-fee-5');
 	});
 });

@@ -47,7 +47,7 @@
 		<InfoSummary {data} />
 	</section>
 
-	<section class="ds-container trading-pairs" data-testid="trading-pairs">
+	<section class="ds-container trading-pairs">
 		<h2>Trading pairs</h2>
 
 		{#if !$pairsClient.error}

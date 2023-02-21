@@ -79,7 +79,7 @@
 		</div>
 	</section>
 
-	<section class="ds-container trading-pairs" data-testid="trading-pairs">
+	<section class="ds-container trading-pairs">
 		<h2>Trading Pairs</h2>
 
 		{#if !$pairsClient.error}
