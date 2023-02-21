@@ -1,9 +1,13 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 
@@ -11,15 +15,27 @@
 
 	$: nameDetails = parseExchangeName(data.human_readable_name);
 
-	function pairTableColumns(exchangeType: string) {
-		const cols = ['pair_name', 'pair_swap_fee', 'usd_price_latest', 'price_change_24h', 'usd_volume_30d'];
-		// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
-		// but this is not currently available from `exchange-details` endpoint.
-		// See: https://github.com/tradingstrategy-ai/backend/issues/110
-		if (exchangeType !== 'uniswap_v3') {
-			cols.push('usd_liquidity_latest', 'liquidity_change_24h');
-		}
-		return cols;
+	// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
+	// but this is not currently available from `exchange-details` endpoint.
+	// See: https://github.com/tradingstrategy-ai/backend/issues/110
+	let hiddenColumns: string[];
+	$: if (data.exchange_type === 'uniswap_v3') {
+		hiddenColumns = ['exchange_name', 'liquidity', 'liquidity_change_24h'];
+	} else {
+		hiddenColumns = ['exchange_name'];
+	}
+
+	const pairsClient = getPairsClient(fetch);
+
+	$: pairsClient.update({
+		chain_slugs: data.chain_slug,
+		exchange_slugs: data.exchange_slug,
+		...Object.fromEntries($page.url.searchParams.entries())
+	});
+
+	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		detail.scrollToTop();
 	}
 </script>
 
@@ -66,12 +82,15 @@
 	<section class="ds-container trading-pairs" data-testid="trading-pairs">
 		<h2>Trading Pairs</h2>
 
-		<PairExplorer
-			chainSlug={data.chain_slug}
-			exchangeSlug={data.exchange_slug}
-			enabledColumns={pairTableColumns(data.exchange_type)}
-			orderColumnIndex={4}
-		/>
+		{#if !$pairsClient.error}
+			<PairsTable {...$pairsClient} {hiddenColumns} on:change={handlePairsChange} />
+		{:else}
+			<AlertList>
+				<AlertItem>
+					An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
+				</AlertItem>
+			</AlertList>
+		{/if}
 	</section>
 
 	<aside class="ds-container">

@@ -6,6 +6,7 @@ type Fetch = typeof fetch;
 
 export type PairIndexParams = Partial<{
 	chain_slugs: string;
+	exchange_slugs: string;
 	token_addresses: string;
 	page_size: number | string;
 	page: number | string | null;
@@ -27,7 +28,15 @@ const defaultParams: PairIndexParams = {
 	direction: 'desc'
 };
 
-const allKeys: PairSearchKey[] = ['page_size', 'page', 'sort', 'direction', 'chain_slugs', 'token_addresses'];
+const allKeys: PairSearchKey[] = [
+	'page_size',
+	'page',
+	'sort',
+	'direction',
+	'chain_slugs',
+	'exchange_slugs',
+	'token_addresses'
+];
 
 let controller: AbortController | null = null;
 

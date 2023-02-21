@@ -2,7 +2,7 @@
 	import type { PairIndexResponse } from './pair-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
@@ -13,6 +13,7 @@
 	export let page = 0;
 	export let sort = 'volume_30d';
 	export let direction: 'asc' | 'desc' = 'desc';
+	export let hiddenColumns: string[] = [];
 
 	const tableRows: Writable<PairIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
@@ -23,7 +24,8 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ serverSide: true }),
-		clickable: addClickableRows({ id: 'cta' })
+		clickable: addClickableRows({ id: 'cta' }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
 	const valueOrFallback = ({ value }: any) => value || '---';
@@ -88,10 +90,12 @@
 	const tableViewModel = table.createViewModel(columns);
 	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
+	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
 	$: $pageIndex = page;
 	$: $serverItemCount = totalRowCount;
 	$: $sortKeys = [{ id: sort, order: direction }];
+	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
@@ -100,10 +104,8 @@
 
 <style lang="postcss">
 	.pairs-table :global {
-		@media (min-width: 1025px) and (max-width: 1200px) {
-			overflow-x: auto;
-			overflow-y: hidden;
-		}
+		overflow-x: auto;
+		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
 			& :is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h) {
