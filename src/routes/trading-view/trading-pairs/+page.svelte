@@ -11,8 +11,12 @@
 
 	export let data: PageData;
 
+	let loading = false;
+
 	async function handleChange({ detail }: ComponentEvents<PairsTable>['change']) {
+		loading = true;
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		loading = false;
 		detail.scrollToTop();
 	}
 </script>
@@ -30,7 +34,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<PairsTable {...data} on:change={handleChange} />
+		<PairsTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>
 

@@ -15,6 +15,10 @@
 			<SocialIcon name="discord" />
 		</a>
 
+		<a href="https://t.me/trading_protocol" title="Telegram">
+			<SocialIcon name="telegram" />
+		</a>
+
 		<a href="https://twitter.com/tradingprotocol" title="Twitter">
 			<SocialIcon name="twitter" />
 		</a>
@@ -25,6 +29,10 @@
 
 		<a title="Newsletter" href="/newsletter">
 			<SocialIcon name="newspaper" />
+		</a>
+
+		<a title="Newsletter" href="/blog">
+			<SocialIcon name="reading" />
 		</a>
 
 		<a href="/blog/rss.xml" rel="external" title="RSS">
@@ -44,12 +52,16 @@
 		display: grid;
 		place-content: center;
 		gap: var(--space-2xl);
-		grid-auto-flow: column;
 		min-height: var(--footer-height);
 
+		@media (--viewport-sm-up) {
+			grid-auto-flow: column;
+		}
+
 		@media (--viewport-sm-down) {
-			gap: min(5vw, var(--space-ll));
-			padding: var(--space-lg) var(--space-md);
+			grid-template-columns: repeat(4, auto);
+			padding: var(--space-5xl) var(--space-md);
+			place-content: center;
 			place-items: center;
 
 			& :global .icon {

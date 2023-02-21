@@ -62,7 +62,6 @@ Layout utility component for displaying a major site section with grid-based con
 <style lang="postcss">
 	.section {
 		padding: var(--section-padding-y, 0) var(--section-padding-x, 0);
-		overflow: auto;
 
 		& header {
 			padding: 0 0 var(--section-padding-y);
