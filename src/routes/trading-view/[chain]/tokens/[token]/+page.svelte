@@ -3,7 +3,7 @@
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { fetchPairs, type PairIndexResponse } from '$lib/explorer/pair-client';
+	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { AlertItem, AlertList, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -13,38 +13,13 @@
 
 	export let data: PageData;
 
-	let pairsLoading = true;
-	let pairsError = false;
-	let pairData: PairIndexResponse;
-	let pageIdx: number;
-	let sort: string;
-	let direction: 'asc' | 'desc';
+	const pairsClient = getPairsClient(fetch);
 
-	$: updatePairsData($page.url.searchParams);
-
-	async function updatePairsData(searchParams: URLSearchParams) {
-		pairsLoading = true;
-
-		pageIdx = Number(searchParams.get('page'));
-		sort = searchParams.get('sort') || 'volume_30d';
-		direction = searchParams.get('direction') || 'desc';
-
-		try {
-			const resp = await fetchPairs(fetch, {
-				chain_slugs: data.chain_slug,
-				token_addresses: data.address,
-				page: pageIdx,
-				sort,
-				direction
-			});
-			if (resp) pairData = resp;
-		} catch (e) {
-			pairsError = true;
-			console.log(e);
-		}
-
-		pairsLoading = false;
-	}
+	$: pairsClient.update({
+		chain_slugs: data.chain_slug,
+		token_addresses: data.address,
+		...Object.fromEntries($page.url.searchParams.entries())
+	});
 
 	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
@@ -75,15 +50,8 @@
 	<section class="ds-container trading-pairs" data-testid="trading-pairs">
 		<h2>Trading pairs</h2>
 
-		{#if !pairsError}
-			<PairsTable
-				loading={pairsLoading}
-				page={pageIdx}
-				{sort}
-				{direction}
-				{...pairData}
-				on:change={handlePairsChange}
-			/>
+		{#if !$pairsClient.error}
+			<PairsTable {...$pairsClient} on:change={handlePairsChange} />
 		{:else}
 			<AlertList>
 				<AlertItem>
