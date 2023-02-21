@@ -212,10 +212,6 @@ table.loading {
 	& :not(thead, tfoot) tr td {
 		color: transparent;
 
-		&:has(.button) {
-			display: none;
-		}
-
 		&::before {
 			animation: pulse-opacity 1s infinite ease-out;
 			background: hsla(var(--hsl-box), var(--a-box-c));
