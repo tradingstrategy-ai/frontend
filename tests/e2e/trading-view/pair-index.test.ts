@@ -39,7 +39,7 @@ test.describe('pair index page', () => {
 		await nextButton.click();
 		await page.waitForURL(/page=1/);
 
-		const firstRow = pairsTable.locator('tbody tr').nth(1);
+		const firstRow = pairsTable.locator(':not(.loading) tbody tr').nth(1);
 		const pairSymbol = await firstRow.locator('.pair_symbol').innerText();
 
 		await firstRow.click();
