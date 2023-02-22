@@ -1,16 +1,16 @@
 /**
- * Vite 3 configuration file. See:
+ * Vite 4 configuration file. See:
  * https://kit.svelte.dev/docs/project-structure#project-files-vite-config-js
  * https://vitejs.dev/config/
  */
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
 
-/** @type {import('vite').UserConfig} */
-const config = {
+export default defineConfig({
 	plugins: [
 		sveltekit(),
 
@@ -50,11 +50,9 @@ const config = {
 	test: {
 		environment: 'jsdom',
 		globals: true,
-		include: ['src/**/*.test.ts'],
+		include: ['src/**/*.{test,spec}.{js,ts}'],
 		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
 		restoreMocks: true,
 		setupFiles: ['test.config.ts']
 	}
-};
-
-export default config;
+});
