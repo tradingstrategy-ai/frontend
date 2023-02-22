@@ -15,7 +15,7 @@ test.describe('exchange details page', () => {
 	});
 
 	test('should include trading pairs table with data', async ({ page }) => {
-		const selector = '[data-testid="trading-pairs"] tbody .col-pair';
+		const selector = '[data-testid="pairs-table"] :not(.loading) tbody tr';
 		// wait for datatables to load data (client-side)
 		await page.waitForSelector(selector);
 		const rows = page.locator(selector);
