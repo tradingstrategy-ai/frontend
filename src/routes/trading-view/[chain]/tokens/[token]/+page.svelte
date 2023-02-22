@@ -15,11 +15,12 @@
 
 	const pairsClient = getPairsClient(fetch);
 
-	$: pairsClient.update({
-		chain_slugs: data.chain_slug,
-		token_addresses: data.address,
-		...Object.fromEntries($page.url.searchParams.entries())
-	});
+	$: $page.route.id?.endsWith('[token]') &&
+		pairsClient.update({
+			chain_slugs: data.chain_slug,
+			token_addresses: data.address,
+			...Object.fromEntries($page.url.searchParams.entries())
+		});
 
 	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });

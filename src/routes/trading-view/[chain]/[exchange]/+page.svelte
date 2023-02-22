@@ -27,11 +27,12 @@
 
 	const pairsClient = getPairsClient(fetch);
 
-	$: pairsClient.update({
-		chain_slugs: data.chain_slug,
-		exchange_slugs: data.exchange_slug,
-		...Object.fromEntries($page.url.searchParams.entries())
-	});
+	$: $page.route.id?.endsWith('[exchange]') &&
+		pairsClient.update({
+			chain_slugs: data.chain_slug,
+			exchange_slugs: data.exchange_slug,
+			...Object.fromEntries($page.url.searchParams.entries())
+		});
 
 	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
