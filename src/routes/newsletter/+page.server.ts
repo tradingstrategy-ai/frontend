@@ -1,9 +1,9 @@
-import { invalid } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { Subscriber } from '$lib/newsletter/client';
 import { getClient } from '$lib/newsletter/client';
 
-export const actions: Actions = {
+export const actions = {
 	subscribe: async ({ request, fetch }) => {
 		const newsletter = getClient(fetch);
 
@@ -12,7 +12,7 @@ export const actions: Actions = {
 		const email = data.get('email');
 
 		if (!email) {
-			return invalid(400, { message: 'email is required' });
+			return fail(400, { message: 'email is required' });
 		}
 
 		// include IP address and IP country from Cloudflare headers if available:
@@ -28,9 +28,9 @@ export const actions: Actions = {
 		const resp = await newsletter.subscribe(subscriber);
 
 		if (!resp.ok) {
-			return invalid(resp.status, resp.payload);
+			return fail(resp.status, resp.payload);
 		}
 
 		return { success: true };
 	}
-};
+} satisfies Actions;
