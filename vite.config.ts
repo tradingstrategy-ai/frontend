@@ -5,7 +5,6 @@
  */
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-import postcssPresetEnv from 'postcss-preset-env';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
 
@@ -25,12 +24,6 @@ export default defineConfig({
 	server: {
 		fs: {
 			allow: [process.cwd()]
-		}
-	},
-
-	css: {
-		postcss: {
-			plugins: [postcssPresetEnv({ features: { 'nesting-rules': true } })]
 		}
 	},
 
