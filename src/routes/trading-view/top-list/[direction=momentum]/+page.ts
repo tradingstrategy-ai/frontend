@@ -4,7 +4,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 
 const apiUrl = `${backendUrl}/top-momentum`;
 
-export const load: PageLoad = async ({ params, fetch }) => {
+export const load = (async ({ params, fetch }) => {
 	const direction: 'up' | 'down' = params.direction === 'daily-up' ? 'up' : 'down';
 
 	const resp = await fetch(apiUrl);
@@ -19,4 +19,4 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		direction,
 		pairs: data[`top_${direction}_24h_min_liq_1m`]
 	};
-};
+}) satisfies PageLoad;

@@ -4,7 +4,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 
 const apiUrl = `${backendUrl}/pair-details`;
 
-export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
+export const load = (async ({ params, fetch, setHeaders }) => {
 	const chain_slug = params.chain;
 	const exchange_slug = params.exchange;
 	const pair_slug = params.pair;
@@ -23,4 +23,4 @@ export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
 	});
 
 	return resp.json();
-};
+}) satisfies PageLoad;

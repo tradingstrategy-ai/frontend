@@ -6,7 +6,7 @@ const apiUrl = `${backendUrl}/pair-details`;
 
 // During SSR we only load only pair details; all trading data (price and
 // liquidity candles, trading summaries) are done client-side.
-export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
+export const load = (async ({ params, fetch, setHeaders }) => {
 	const chain_slug = params.chain;
 	const exchange_slug = params.exchange;
 	const pair_slug = params.pair;
@@ -25,4 +25,4 @@ export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
 	});
 
 	return resp.json();
-};
+}) satisfies PageLoad;

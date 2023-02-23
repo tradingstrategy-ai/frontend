@@ -3,7 +3,7 @@ import { backendUrl } from '$lib/config';
 
 const apiUrl = `${backendUrl}/impressive-numbers`;
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load = (async ({ fetch }) => {
 	const resp = await fetch(apiUrl);
 
 	// render the page even if the backend is down
@@ -13,4 +13,4 @@ export const load: PageLoad = async ({ fetch }) => {
 	}
 
 	return resp.json();
-};
+}) satisfies PageLoad;

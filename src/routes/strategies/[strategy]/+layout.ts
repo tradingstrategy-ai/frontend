@@ -4,7 +4,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 
-export const load: LayoutLoad = async ({ params, fetch }) => {
+export const load = (async ({ params, fetch }) => {
 	const strategy = getConfiguredStrategyById(params.strategy);
 	if (!strategy) throw error(404, 'Not found');
 
@@ -26,4 +26,4 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
 		summary: getStrategyRuntimeState(strategy, fetch),
 		state: resp.json()
 	};
-};
+}) satisfies LayoutLoad;
