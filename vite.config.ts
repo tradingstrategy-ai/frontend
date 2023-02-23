@@ -22,10 +22,6 @@ export default defineConfig({
 		})
 	],
 
-	optimizeDeps: {
-		include: ['highlight.js', 'highlight.js/lib/core']
-	},
-
 	server: {
 		fs: {
 			allow: [process.cwd()]
