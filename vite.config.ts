@@ -5,7 +5,6 @@
  */
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-import replace from '@rollup/plugin-replace';
 import postcssPresetEnv from 'postcss-preset-env';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
@@ -13,12 +12,6 @@ import GithubActionsReporter from 'vitest-github-actions-reporter';
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-
-		// Strip bogus sourcemap from chartiq.css
-		replace({
-			values: { 'sourceMappingURL=chartiq.css.map': '' },
-			preventAssignment: true
-		}),
 
 		// vite plugin to create a mock JSON api for integration tests
 		// only available when using `npm run dev` or `npm run preview`
