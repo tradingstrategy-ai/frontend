@@ -27,7 +27,7 @@ export default defineConfig({
 		}
 	},
 
-	// vitest configuration for unit tests (`npm run test:units`)
+	// vitest configuration for unit tests (`npm run test:unit`)
 	// https://vitest.dev/config/
 	test: {
 		environment: 'jsdom',
