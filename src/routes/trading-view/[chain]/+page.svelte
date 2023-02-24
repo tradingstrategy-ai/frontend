@@ -1,16 +1,34 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { getPairsClient } from '$lib/explorer/pair-client';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { Tabs } from '$lib/components';
+	import { AlertItem, AlertList, Tabs } from '$lib/components';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
 
 	export let data: PageData;
 	const { chain } = data;
 
 	let selected: string;
+
+	const pairsClient = getPairsClient(fetch);
+
+	$: $page.route.id?.endsWith('[chain]') &&
+		pairsClient.update({
+			chain_slugs: chain.chain_slug,
+			...Object.fromEntries($page.url.searchParams.entries())
+		});
+
+	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		detail.scrollToTop();
+	}
 </script>
 
 <svelte:head>
@@ -73,7 +91,17 @@
 					</AlertList>
 				{/await}
 			{:else if selected === 'pairs'}
-				<h2>Showing XYZ indexed trading pairs on {chain.chain_name}</h2>
+				<h2>Showing {$pairsClient.totalRowCount || ''} indexed trading pairs on {chain.chain_name}.</h2>
+
+				{#if !$pairsClient.error}
+					<PairsTable {...$pairsClient} on:change={handlePairsChange} />
+				{:else}
+					<AlertList>
+						<AlertItem>
+							An error occurred loading trading pairs. Check the URL parameters for errors and try reloading the page.
+						</AlertItem>
+					</AlertList>
+				{/if}
 			{/if}
 		</Tabs>
 	</section>
@@ -114,6 +142,7 @@
 	}
 
 	.explorer-wrapper {
+		overflow: auto;
 		margin-top: var(--space-ll);
 
 		& h2 {
