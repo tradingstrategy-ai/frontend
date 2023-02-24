@@ -1,6 +1,6 @@
 import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { publicApiError } from '$lib/helpers/public-api';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 

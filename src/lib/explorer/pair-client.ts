@@ -1,5 +1,4 @@
-import { backendUrl } from '$lib/config';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 import { writable } from 'svelte/store';
 
 type Fetch = typeof fetch;
@@ -44,28 +43,25 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 	// abort previous uncompleted request to prevent race condition
 	controller?.abort();
 
-	const apiParams = new URLSearchParams();
+	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
 		const value = params[key] || defaultParams[key];
-		value && apiParams.set(key, String(value));
+		if (value) apiParams[key] = String(value);
 	}
 
 	controller = new AbortController();
 	const signal = controller.signal;
-	let resp: Response;
+	let data;
 
 	try {
-		resp = await fetch(`${backendUrl}/pairs?${apiParams}`);
-		if (!resp.ok) throw await publicApiError(resp);
+		data = await fetchPublicApi(fetch, 'pairs', apiParams);
 	} catch (e) {
 		if (e.name !== 'AbortError') throw e;
 	} finally {
 		controller = null;
 		if (signal.aborted) return;
 	}
-
-	const data = await resp.json();
 
 	return {
 		rows: data.results,

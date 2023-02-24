@@ -3,7 +3,7 @@
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { publicApiError } from '$lib/helpers/public-api';
 
 export const load = (async ({ parent, fetch }) => {
 	const { strategy } = await parent();
