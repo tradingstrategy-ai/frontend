@@ -1,49 +1,41 @@
 <!--
 @component
-Used to display tabs and associated component content panels
+Display tabs and associated content panels. Optional `selected` prop defaults to first tab key. Use
+`let:selected` to access state inside the component, or `bind:selected={someVar}` to access outside.
 
 #### Usage
 ```tsx
-	<Tabs tabs={[
-		{ id: 'overview', title: 'Overview', component: OverviewComponent },
-		{ id: 'details', title: 'Details', component: DetailsComponent }
-	]} />
+	<Tabs items={overview: 'Overview', details: 'Details' } let:selected>
+		{#if selected === 'overview'}
+			<OverviewComponent />
+		{:else if selected === 'details'}
+			<DetailsComponent />
+		{/if}
+	</Tabs>
 ```
 -->
 <script lang="ts">
-	type TabItem = {
-		id: string;
-		title: string;
-		component: ConstructorOfATypedSvelteComponent;
-		props?: Record<string, any>;
-	};
+	export let items: Record<string, string>;
+	export let selected: string = Object.keys(items)[0];
 
-	export let tabs: TabItem[] = [];
-
-	$: tabsNameUID = `tabs-${(Math.random() + 1).toString(36).substring(7)}`;
+	const uid = crypto.randomUUID().slice(0, 8);
 </script>
 
-<section id={tabsNameUID}>
-	{#each tabs as tab, i}
-		<input id="{tab.id}-tab-trigger" type="radio" name={tabsNameUID} checked={i === 0 ? true : null} />
-		<label for="{tab.id}-tab-trigger"> {tab.title} </label>
+<section class="tabs">
+	{#each Object.entries(items) as [key, value]}
+		{@const id = `${uid}-${key}`}
+		<input {id} type="radio" name={uid} bind:group={selected} value={key} />
+		<label for={id}>{value}</label>
 	{/each}
 
-	{#each tabs as tab}
-		<div class="tab" id="{tab.id}-tab">
-			<svelte:component this={tab.component} {...tab.props} />
-		</div>
-	{/each}
+	<div class="content">
+		<slot {selected} />
+	</div>
 </section>
 
-<style>
+<style lang="postcss">
 	input {
 		display: none;
-	}
-
-	input:checked + label {
-		background: var(--c-background-4);
-		color: var(--c-text-default);
 	}
 
 	label {
@@ -53,17 +45,15 @@ Used to display tabs and associated component content panels
 		cursor: pointer;
 		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);
+
+		@nest input:checked + & {
+			background: var(--c-background-4);
+			color: var(--c-text-default);
+			cursor: auto;
+		}
 	}
 
-	input:nth-of-type(1):checked ~ .tab:not(:nth-of-type(1)) {
-		display: none !important;
-	}
-
-	input:nth-of-type(2):checked ~ .tab:not(:nth-of-type(2)) {
-		display: none !important;
-	}
-
-	.tab {
+	.content {
 		padding: var(--tab-padding);
 	}
 </style>
