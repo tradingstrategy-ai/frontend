@@ -17,6 +17,8 @@ Layout utility component for displaying a major site section with grid-based con
 	import Grid from './Grid.svelte';
 
 	let classes: string = '';
+	export let ariaLabel = '';
+	export let article = false;
 	export { classes as class };
 	export let cols = 1;
 	export let footer = false;
@@ -24,15 +26,21 @@ Layout utility component for displaying a major site section with grid-based con
 	export let header = false;
 	export let id: string | undefined = undefined;
 	export let layout: 'boxed' | 'fullwidth' | '' = '';
+	export let nav = false;
 	export let padding: SectionSizing = '';
 	export let size: SectionSizing = '';
 	export let subtitle: string = '';
 	export let title: string = '';
 
-	$: tag = header ? 'header' : footer ? 'footer' : 'section';
+	$: tag = header ? 'header' : footer ? 'footer' : article ? 'article' : nav ? 'nav' : 'section';
 </script>
 
-<svelte:element this={tag} class="section {classes} {size} {layout} {padding ? `padding-${padding}` : ''}" {id}>
+<svelte:element
+	this={tag}
+	aria-label={ariaLabel ?? undefined}
+	class="section {classes} {size ? `size-${size}` : ''} {layout} {padding ? `padding-${padding}` : ''}"
+	{id}
+>
 	{#if $$slots.header || title || subtitle}
 		<header>
 			{#if $$slots.header || title}
@@ -213,5 +221,15 @@ Layout utility component for displaying a major site section with grid-based con
 		@media (--viewport-xs) {
 			font: var(--f-ui-md-roman);
 		}
+	}
+
+	.size-xs {
+		max-width: 40rem !important;
+		margin: auto;
+	}
+
+	.size-sm {
+		max-width: 48rem !important;
+		margin: auto;
 	}
 </style>
