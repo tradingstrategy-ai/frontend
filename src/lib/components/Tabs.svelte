@@ -5,7 +5,7 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 
 #### Usage
 ```tsx
-	<Tabs items={overview: 'Overview', details: 'Details' } let:selected>
+	<Tabs items={overview: 'Overview', details: 'Details' } let:selected on:change={handleChange}>
 		{#if selected === 'overview'}
 			<OverviewComponent />
 		{:else if selected === 'details'}
@@ -15,16 +15,24 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 ```
 -->
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+
 	export let items: Record<string, string>;
 	export let selected: string = Object.keys(items)[0];
 
 	const uid = crypto.randomUUID().slice(0, 8);
+
+	const dispatch = createEventDispatcher();
+
+	function dispatchChange() {
+		dispatch('change', { value: selected });
+	}
 </script>
 
 <section class="tabs">
 	{#each Object.entries(items) as [key, value]}
 		{@const id = `${uid}-${key}`}
-		<input {id} type="radio" name={uid} bind:group={selected} value={key} />
+		<input {id} type="radio" name={uid} bind:group={selected} value={key} on:change={dispatchChange} />
 		<label for={id}>{value}</label>
 	{/each}
 

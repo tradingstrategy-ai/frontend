@@ -8,25 +8,46 @@
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { AlertItem, AlertList, Tabs } from '$lib/components';
+	import { AlertItem, AlertList, Tabs, type DataTable } from '$lib/components';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data: PageData;
 	const { chain } = data;
 
-	let selected: string;
-
 	const pairsClient = getPairsClient(fetch);
 
-	$: $page.route.id?.endsWith('[chain]') &&
-		pairsClient.update({
-			chain_slugs: chain.chain_slug,
-			...Object.fromEntries($page.url.searchParams.entries())
-		});
+	let activeTab: string;
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+	let tableOptions: {
+		page: number;
+		sort: string;
+		direction: 'asc' | 'desc';
+	};
+
+	$: updateTableParams($page.url);
+
+	function updateTableParams({ searchParams }: URL) {
+		activeTab = searchParams.get('tab') || 'exchanges';
+		tableOptions = {
+			page: Number(searchParams.get('page')) || 0,
+			sort: searchParams.get('sort') || 'volume_30d',
+			direction: searchParams.get('direction') === 'asc' ? 'asc' : 'desc'
+		};
+
+		if (activeTab === 'pairs') {
+			pairsClient.update({ ...tableOptions, chain_slugs: chain.chain_slug });
+		}
+	}
+
+	function handleTabChange({ detail }: ComponentEvents<Tabs>['change']) {
+		goto('?' + new URLSearchParams({ tab: detail.value }), { noScroll: true });
+	}
+
+	async function handleDatatableChange({ detail }: ComponentEvents<DataTable>['change']) {
+		const params = new URLSearchParams({ tab: activeTab, ...detail.params });
+		await goto(`?${params}`, { noScroll: true });
 		detail.scrollToTop();
 	}
 </script>
@@ -73,8 +94,8 @@
 	</section>
 
 	<section class="ds-container explorer-wrapper">
-		<Tabs items={{ exchanges: 'Exchanges', pairs: 'Trading Pairs' }} bind:selected>
-			{#if selected === 'exchanges'}
+		<Tabs items={{ exchanges: 'Exchanges', pairs: 'Trading Pairs' }} selected={activeTab} on:change={handleTabChange}>
+			{#if activeTab === 'exchanges'}
 				{@const hiddenColumns = ['chain_name']}
 
 				<h2>Showing exchanges on {chain.chain_name} with trading activity in last 30 days.</h2>
@@ -82,7 +103,7 @@
 				{#await data.streamed.exchanges}
 					<ExchangesTable loading {hiddenColumns} />
 				{:then rows}
-					<ExchangesTable {rows} page={0} sort="volume_30d" direction="desc" {hiddenColumns} />
+					<ExchangesTable {rows} {...tableOptions} {hiddenColumns} on:change={handleDatatableChange} />
 				{:catch}
 					<AlertList>
 						<AlertItem>
@@ -90,11 +111,11 @@
 						</AlertItem>
 					</AlertList>
 				{/await}
-			{:else if selected === 'pairs'}
-				<h2>Showing {$pairsClient.totalRowCount || ''} indexed trading pairs on {chain.chain_name}.</h2>
+			{:else if activeTab === 'pairs'}
+				<h2>Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.</h2>
 
 				{#if !$pairsClient.error}
-					<PairsTable {...$pairsClient} on:change={handlePairsChange} />
+					<PairsTable {...$pairsClient} on:change={handleDatatableChange} />
 				{:else}
 					<AlertList>
 						<AlertItem>
