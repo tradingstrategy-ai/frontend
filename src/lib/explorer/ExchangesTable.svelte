@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
@@ -11,8 +10,6 @@
 	export let page: number;
 	export let sort: string;
 	export let direction: 'asc' | 'desc';
-
-	const dispatch = createEventDispatcher();
 
 	const table = createTable(readable(rows), {
 		sort: addSortBy({
@@ -54,18 +51,10 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex } = tableViewModel.pluginStates.page;
-	const { sortKeys } = tableViewModel.pluginStates.sort;
-
-	$: dispatch('change', {
-		page: $pageIndex,
-		sort: $sortKeys[0].id,
-		direction: $sortKeys[0].order
-	});
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination {tableViewModel} />
+	<DataTable isResponsive hasPagination {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">

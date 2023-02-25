@@ -42,6 +42,7 @@
 		padding: var(--space-md) 0;
 		position: sticky;
 		top: 0;
+		z-index: 1;
 
 		@media (--viewport-md-up) {
 			display: none;

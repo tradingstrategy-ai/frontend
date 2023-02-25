@@ -1,41 +1,46 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import type { PairIndexResponse } from './pair-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
 	import { Button, DataTable, UpDownIndicator } from '$lib/components';
 
-	export let rows: Record<string, any>[];
-	export let totalRowCount: number;
-	export let page: number;
-	export let sort: string;
-	export let direction: 'asc' | 'desc';
+	export let loading = false;
+	export let rows: PairIndexResponse['rows'] | undefined = undefined;
+	export let totalRowCount = 0;
+	export let page = 0;
+	export let sort = 'volume_30d';
+	export let direction: 'asc' | 'desc' = 'desc';
+	export let hiddenColumns: string[] = [];
 
-	const dispatch = createEventDispatcher();
+	const tableRows: Writable<PairIndexResponse['rows']> = writable([]);
+	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
 
-	const rowStore: Writable<typeof rows> = writable([]);
-	$: $rowStore = rows;
-
-	const table = createTable(rowStore, {
+	const table = createTable(tableRows, {
 		sort: addSortBy({
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ serverSide: true }),
-		clickable: addClickableRows({ id: 'cta' })
+		clickable: addClickableRows({ id: 'cta' }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
+
+	const valueOrFallback = ({ value }: any) => value || '---';
 
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'pair_symbol',
 			header: 'Trading pair',
+			cell: valueOrFallback,
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'exchange_name',
 			header: 'Exchange',
+			cell: valueOrFallback,
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -85,20 +90,16 @@
 	const tableViewModel = table.createViewModel(columns);
 	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
+	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
 	$: $pageIndex = page;
 	$: $serverItemCount = totalRowCount;
 	$: $sortKeys = [{ id: sort, order: direction }];
-
-	$: dispatch('change', {
-		page: $pageIndex,
-		sort: $sortKeys[0].id,
-		direction: $sortKeys[0].order
-	});
+	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination {tableViewModel} />
+	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">

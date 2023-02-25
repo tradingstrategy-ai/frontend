@@ -3,8 +3,9 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
-	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
@@ -18,11 +19,10 @@
 		direction: q.get('direction') || 'desc'
 	};
 
-	function handleChange({ detail }) {
-		goto('?' + new URLSearchParams(detail));
+	async function handleChange({ detail }: ComponentEvents<ExchangesTable>['change']) {
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		detail.scrollToTop();
 	}
-
-	afterNavigate(disableScrollHandling);
 </script>
 
 <svelte:head>

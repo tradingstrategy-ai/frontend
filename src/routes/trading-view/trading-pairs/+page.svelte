@@ -3,18 +3,22 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { goto, afterNavigate, disableScrollHandling } from '$app/navigation';
+	import type { ComponentEvents } from 'svelte';
+	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data: PageData;
 
-	function handleChange({ detail }) {
-		goto('?' + new URLSearchParams(detail));
-	}
+	let loading = false;
 
-	afterNavigate(disableScrollHandling);
+	async function handleChange({ detail }: ComponentEvents<PairsTable>['change']) {
+		loading = true;
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		loading = false;
+		detail.scrollToTop();
+	}
 </script>
 
 <svelte:head>
@@ -30,7 +34,7 @@
 	</Section>
 
 	<Section layout="boxed" padding="sm">
-		<PairsTable {...data} on:change={handleChange} />
+		<PairsTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>
 
