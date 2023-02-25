@@ -1,5 +1,6 @@
-import { fetchPublicApi } from '$lib/helpers/public-api';
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 type Fetch = typeof fetch;
 
@@ -95,6 +96,9 @@ export function getPairsClient(fetch: Fetch) {
 	}
 
 	async function updatePairs(params: PairIndexParams) {
+		// abort if called during SSR
+		if (!browser) return;
+
 		merge({
 			loading: true,
 			page: Number(params.page) || defaultParams.page,
