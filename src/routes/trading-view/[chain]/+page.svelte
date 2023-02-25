@@ -115,7 +115,9 @@
 				<h2>Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.</h2>
 
 				{#if !$pairsClient.error}
-					<PairsTable {...$pairsClient} on:change={handleDatatableChange} />
+					<div class="pairs-table">
+						<PairsTable {...$pairsClient} on:change={handleDatatableChange} />
+					</div>
 				{:else}
 					<AlertList>
 						<AlertItem>
@@ -163,12 +165,16 @@
 	}
 
 	.explorer-wrapper {
-		overflow: auto;
 		margin-top: var(--space-ll);
 
 		& h2 {
 			font: var(--f-heading-sm-roman);
 			margin-block: var(--space-lg);
 		}
+	}
+
+	.pairs-table {
+		display: grid;
+		overflow: auto;
 	}
 </style>
