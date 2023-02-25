@@ -43,8 +43,11 @@ https://search.google.com/structured-data/testing-tool
 
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Section from '$lib/components/Section.svelte';
+	import type { SectionSizing } from '$lib/types';
 
 	export let labels: BreadcrumbLabels = {};
+	export let size: SectionSizing = '';
 
 	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, labels);
 
@@ -62,37 +65,64 @@ https://search.google.com/structured-data/testing-tool
 	}
 </script>
 
-<nav class="ds-container" aria-label="breadcrumb">
+<Section ariaLabel="breadcrumb" class="breadcrumbs" layout="boxed" {size} nav>
 	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
-			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<li
+				class={breadcrumb.activeLink ? '' : 'truncate'}
+				itemprop="itemListElement"
+				itemscope
+				itemtype="http://schema.org/ListItem"
+			>
 				{#if breadcrumb.activeLink}
-					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
+					<a class="tile a" itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
 						><span itemprop="name">{breadcrumb.label}</span></a
 					>
 				{:else}
-					<span itemprop="name">{breadcrumb.label}</span>
+					<span itemprop="name">
+						<span>
+							{breadcrumb.label}
+						</span>
+					</span>
 				{/if}
 				<meta itemprop="position" content={idx + 1} />
 			</li>
+			{#if breadcrumb.activeLink}
+				<span class="separator">/</span>
+			{/if}
 		{/each}
 	</ol>
-</nav>
+</Section>
 
 <style lang="postcss">
+	:global .breadcrumbs {
+		display: flex;
+		margin-bottom: var(--space-sl);
+
+		& .grid {
+			display: flex;
+			width: 100%;
+
+			& nav {
+				width: 100%;
+			}
+		}
+	}
+
 	ol {
 		list-style-type: none;
-		margin-bottom: var(--space-sl);
 		padding: var(--space-sl) 0;
-		display: grid;
-		grid-auto-flow: column;
+		display: flex;
 		justify-content: start;
+		margin-left: calc(-1 * var(--space-sm));
 		overflow: hidden;
 		color: var(--c-text-7-v1);
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
+			gap: var(--space-xxs);
+			margin-left: calc(-1 * var(--space-sl));
 			margin-bottom: var(--space-ls);
 			padding-block: var(--space-md);
 			font: var(--f-ui-md-medium);
@@ -108,24 +138,20 @@ https://search.google.com/structured-data/testing-tool
 	li {
 		white-space: nowrap;
 
-		&:last-child {
-			overflow: hidden;
-			text-overflow: ellipsis;
+		& > :is(a, span:not(.separator)) {
+			padding: var(--space-ss) var(--space-sm);
+
+			&:not(:hover) {
+				background: transparent;
+			}
 		}
 
 		& a {
-			&:hover span {
-				text-decoration: underline;
-			}
-
-			&::after {
-				content: '/';
-				margin: 0 0.5em;
-			}
+			color: hsla(var(--hsl-text-extra-light));
 		}
 
 		& > span {
-			color: var(--c-text-1-v1);
+			color: hsla(var(--hsl-text));
 		}
 	}
 </style>

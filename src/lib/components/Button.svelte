@@ -135,8 +135,8 @@ using flags: primary (default), secondary, ternary, quarternary.
 		--button-letter-spacing: var(--f-ui-sm-spacing);
 	}
 	.sm {
-		--button-padding: var(--space-ss) var(--space-ss);
-		--button-gap: var(--space-ss);
+		--button-gap: var(--space-xs);
+		--button-padding: var(--space-ss) var(--space-sl);
 	}
 	.lg {
 		--button-gap: var(--space-sm);

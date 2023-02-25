@@ -5,7 +5,7 @@
 	let panelOpen = false;
 </script>
 
-<header>
+<div class="header-bar">
 	<div class="logo">
 		<a href="/" aria-label="Home">
 			<Logo />
@@ -31,7 +31,7 @@
 	<button class="show-nav-panel mobile-only" title="Navigation menu" on:click={() => (panelOpen = true)}>
 		<Icon name="menu" />
 	</button>
-</header>
+</div>
 
 <div class="nav-panel mobile-only">
 	<NavPanel bind:open={panelOpen}>
@@ -54,7 +54,7 @@
 		}
 	}
 
-	header {
+	.header-bar {
 		display: grid;
 		grid-template-columns:
 			/* lg logo = 12.5rem = 10.5rem (sm logo) + 1.25rem (gap) + 0.75rem (delta) */
@@ -69,7 +69,7 @@
 		height: var(--header-height);
 	}
 
-	header > * {
+	.header-bar > * {
 		grid-row: 1;
 	}
 
