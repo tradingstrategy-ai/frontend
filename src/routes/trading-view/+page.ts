@@ -1,10 +1,8 @@
 import type { PageLoad } from './$types';
 import { backendUrl } from '$lib/config';
 
-const apiUrl = `${backendUrl}/impressive-numbers`;
-
 export const load = (async ({ fetch }) => {
-	const resp = await fetch(apiUrl);
+	const resp = await fetch(`${backendUrl}/impressive-numbers`);
 
 	// render the page even if the backend is down
 	if (!resp.ok) {

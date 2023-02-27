@@ -5,6 +5,21 @@
  * in error message or stacktrace.
  */
 import { error } from '@sveltejs/kit';
+import { backendUrl } from '$lib/config';
+
+type Fetch = typeof fetch;
+type Params = Record<string, string>;
+
+export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Params = {}) {
+	const searchParams = new URLSearchParams(params);
+	const resp = await fetch(`${backendUrl}/${endpoint}?${searchParams}`);
+
+	if (!resp.ok) {
+		throw await publicApiError(resp);
+	}
+
+	return resp.json();
+}
 
 export async function publicApiError(response: Response) {
 	if (response.status === 404) {

@@ -1,17 +1,17 @@
 import type { PageLoad } from './$types';
-import { backendUrl } from '$lib/config';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-const apiUrl = `${backendUrl}/chain-details`;
-
 export const load = (async ({ params, fetch }) => {
-	const encoded = new URLSearchParams({ chain_slug: params.chain });
-	const resp = await fetch(`${apiUrl}?${encoded}`);
+	const chain_slug = params.chain;
 
-	if (!resp.ok) {
-		throw await publicApiError(resp);
-	}
+	const chain = fetchPublicApi(fetch, 'chain-details', { chain_slug });
+	const exchanges = fetchPublicApi(fetch, 'exchanges', { chain_slug, filter_zero_volume: 'true' }).then(
+		(resp) => resp.exchanges // flatten the response
+	);
 
-	return resp.json();
+	return {
+		chain, // top-level promise is automatically awaited and unwrapped
+		streamed: { exchanges } // second-level promise is streamed
+	};
 }) satisfies PageLoad;

@@ -61,8 +61,6 @@
     "cookie": "^0.5.0",
     "d3-array": "^3.2.1",
     "d3-scale": "^4.0.2",
-    "datatables.net-dt": "^1.11.3",
-    "datatables.net-responsive-bs4": "^2.2.9",
     "date-fns": "^2.29.1",
     "dd-trace": "^3.12.1",
     "node-cache": "^5.1.2",
