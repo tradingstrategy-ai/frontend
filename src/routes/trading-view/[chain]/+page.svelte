@@ -73,7 +73,7 @@
 			title="Exchanges"
 			description="Decentralised exchanges with market data available on Trading Strategy"
 			buttonLabel="See exchanges"
-			href="#exchanges"
+			href="?tab=exchanges#exchanges"
 		/>
 
 		<SummaryDataTile
@@ -81,7 +81,7 @@
 			title="Tracked trading pairs"
 			description="Total trading pairs on Trading Strategy for this blockchain."
 			buttonLabel="See trading pairs"
-			href="#trading-pairs"
+			href="?tab=pairs#pairs"
 		/>
 
 		<SummaryDataTile
@@ -98,7 +98,9 @@
 			{#if activeTab === 'exchanges'}
 				{@const hiddenColumns = ['chain_name']}
 
-				<h2>Showing exchanges on {chain.chain_name} with trading activity in last 30 days.</h2>
+				<h2 id="exchanges">
+					Showing exchanges on {chain.chain_name} with trading activity in last 30 days.
+				</h2>
 
 				{#await data.streamed.exchanges}
 					<ExchangesTable loading {hiddenColumns} />
@@ -112,7 +114,9 @@
 					</AlertList>
 				{/await}
 			{:else if activeTab === 'pairs'}
-				<h2>Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.</h2>
+				<h2 id="pairs">
+					Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.
+				</h2>
 
 				{#if !$pairsClient.error}
 					<div class="pairs-table">
