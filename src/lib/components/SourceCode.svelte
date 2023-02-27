@@ -10,11 +10,11 @@ See: https://github.com/metonym/svelte-highlight
 ```
 -->
 <script lang="ts">
-	import type { Language } from 'svelte-highlight';
+	import type { LanguageType } from 'svelte-highlight/languages';
 	import Highlight from 'svelte-highlight';
 	import 'svelte-highlight/styles/github-dark.css';
 
-	export let language: Language;
+	export let language: LanguageType<string>;
 	export let code: string;
 </script>
 

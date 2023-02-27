@@ -4,7 +4,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 
 const apiUrl = `${backendUrl}/datasets`;
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load = (async ({ fetch }) => {
 	const resp = await fetch(apiUrl);
 
 	if (!resp.ok) {
@@ -14,4 +14,4 @@ export const load: PageLoad = async ({ fetch }) => {
 	return {
 		datasets: await resp.json()
 	};
-};
+}) satisfies PageLoad;

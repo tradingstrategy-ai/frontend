@@ -4,7 +4,7 @@
  */
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
-import postcssPresetEnv from 'postcss-preset-env';
+import postcssConfig from './postcss.config.js';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -35,9 +35,7 @@ const config = {
 
 	preprocess: preprocess({
 		sourceMap: true,
-		postcss: {
-			plugins: [postcssPresetEnv({ features: { 'nesting-rules': true } })]
-		}
+		postcss: postcssConfig
 	}),
 
 	vitePlugin: {

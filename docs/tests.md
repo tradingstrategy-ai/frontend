@@ -22,21 +22,21 @@ npm run test # use --skip-build flag to save time if you have already run `npm b
 Run once:
 
 ```shell
-npm run test:units
+npm run test:unit
 ```
 
 Watch for file changes:
 
 ```shell
-npm run test:units:watch
+npm run test:unit:watch
 ```
 
 #### Options:
 
 Pass additional options to `vitest` after `--` – e.g.,
 
-- `npm run test:units -- Blog` to only run tests that match "Blog"
-- `npm run test:units -- --help` to see additional `vitest` options
+- `npm run test:unit -- Blog` to only run tests that match "Blog"
+- `npm run test:unit -- --help` to see additional `vitest` options
 
 See [Unit test frameworks](#unit-test-frameworks) below for additional info.
 

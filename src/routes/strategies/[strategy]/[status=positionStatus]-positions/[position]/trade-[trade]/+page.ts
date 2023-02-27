@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ params, parent }) => {
+export const load = (async ({ params, parent }) => {
 	const tradeId = params.trade;
 	const { breadcrumbs, position } = await parent();
 	const trade = position.trades[tradeId];
@@ -17,4 +17,4 @@ export const load: PageLoad = async ({ params, parent }) => {
 			[`trade-${tradeId}`]: `Trade #${tradeId}`
 		}
 	};
-};
+}) satisfies PageLoad;

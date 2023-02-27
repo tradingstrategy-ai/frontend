@@ -31,7 +31,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		submitting: {
 			success: 'subscribed',
-			invalid: 'failed',
+			failure: 'failed',
 			error: 'failed'
 		},
 

@@ -5,7 +5,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
 const apiUrl = `${backendUrl}/chain-details`;
 
-export const load: PageLoad = async ({ params, fetch }) => {
+export const load = (async ({ params, fetch }) => {
 	const encoded = new URLSearchParams({ chain_slug: params.chain });
 	const resp = await fetch(`${apiUrl}?${encoded}`);
 
@@ -14,4 +14,4 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	}
 
 	return resp.json();
-};
+}) satisfies PageLoad;

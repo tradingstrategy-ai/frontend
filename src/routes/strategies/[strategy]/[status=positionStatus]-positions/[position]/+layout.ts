@@ -1,7 +1,7 @@
 import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
-export const load: LayoutLoad = async ({ params, parent }) => {
+export const load = (async ({ params, parent }) => {
 	const { position: id, status } = params;
 	const { state } = await parent();
 
@@ -17,4 +17,4 @@ export const load: LayoutLoad = async ({ params, parent }) => {
 		status,
 		breadcrumbs: { [id]: `Position #${id}` }
 	};
-};
+}) satisfies LayoutLoad;

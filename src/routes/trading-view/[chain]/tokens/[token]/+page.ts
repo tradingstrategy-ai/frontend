@@ -4,7 +4,7 @@ import { publicApiError } from '$lib/helpers/publicApiError';
 
 const apiUrl = `${backendUrl}/token/details`;
 
-export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
+export const load = (async ({ params, fetch, setHeaders }) => {
 	const chain_slug = params.chain;
 	const address = params.token;
 
@@ -22,4 +22,4 @@ export const load: PageLoad = async ({ params, fetch, setHeaders }) => {
 	});
 
 	return resp.json();
-};
+}) satisfies PageLoad;

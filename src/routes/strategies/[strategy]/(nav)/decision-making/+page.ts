@@ -6,7 +6,7 @@ import type { PageLoad } from './$types';
 /**
  * Generate a variant of decision making status image URL for both color schemes.
  */
-export const load: PageLoad = async ({ params, parent }) => {
+export const load = (async ({ parent }) => {
 	const { strategy } = await parent();
 
 	const imageUrls: Record<string, string> = {};
@@ -19,4 +19,4 @@ export const load: PageLoad = async ({ params, parent }) => {
 	}
 
 	return { imageUrls };
-};
+}) satisfies PageLoad;

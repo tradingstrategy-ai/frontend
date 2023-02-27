@@ -4,7 +4,7 @@
 import type { PageLoad } from './$types';
 import { publicApiError } from '$lib/helpers/publicApiError';
 
-export const load: PageLoad = async ({ params, parent, fetch }) => {
+export const load = (async ({ parent, fetch }) => {
 	const { strategy } = await parent();
 
 	const resp = await fetch(`${strategy.url}/logs`);
@@ -16,4 +16,4 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	return {
 		logs: resp.json()
 	};
-};
+}) satisfies PageLoad;

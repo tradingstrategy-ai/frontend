@@ -20,7 +20,7 @@ async function fetchBlogPosts(options = {}) {
 	}
 }
 
-export const load: PageLoad = async ({ fetch, setHeaders }) => {
+export const load = (async ({ fetch, setHeaders }) => {
 	// Cache the landing data for 5 minutes at the Cloudflare so pages are
 	// served really fast if they get popular, and also for speed test
 	setHeaders({
@@ -33,4 +33,4 @@ export const load: PageLoad = async ({ fetch, setHeaders }) => {
 		impressiveNumbers: getRespJson(fetch(`${backendUrl}/impressive-numbers`)),
 		posts: fetchBlogPosts({ limit: 4 })
 	};
-};
+}) satisfies PageLoad;

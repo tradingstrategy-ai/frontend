@@ -6,19 +6,11 @@
 import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 
-// warn early if MailerLite URL / API key not defined
 const mailerLiteConfig = ((apiUrl, apiKey, groupsStr) => {
-	let groups: string[] = [];
-
-	if (!apiUrl || !apiKey) {
-		console.warn('MailerLite URL and/or API key not defined');
-		return;
-	}
+	if (!apiUrl || !apiKey) return;
 
 	// one or more groups (comma-separated)
-	if (groupsStr) {
-		groups = groupsStr.split(/\s*,\s*/);
-	}
+	const groups = groupsStr ? groupsStr.split(/\s*,\s*/) : [];
 
 	return { apiUrl, apiKey, groups };
 })(env.TS_PRIVATE_MAILERLITE_URL, env.TS_PRIVATE_MAILERLITE_API_KEY, env.TS_PRIVATE_MAILERLITE_GROUPS);
@@ -37,7 +29,9 @@ export type Subscriber = {
 	fields: Nullable<SubscriberFields>;
 };
 
-export function getClient(fetch: Function) {
+type Fetch = typeof fetch;
+
+export function getClient(fetch: Fetch) {
 	async function subscribe(subscriber: Subscriber) {
 		if (!mailerLiteConfig) {
 			throw error(401, { message: 'MailerLite URL and/or API key not defined.' });
