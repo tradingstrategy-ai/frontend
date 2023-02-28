@@ -1,11 +1,25 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import TokenIndexExplorer from '$lib/explorer/TokenIndexExplorer.svelte';
-	import { PageHeader } from '$lib/components';
+	import TokenTable from '$lib/explorer/TokenTable.svelte';
+	import { HeroBanner, Section } from '$lib/components';
+
+	export let data: PageData;
 
 	const chainSlug = $page.params.chain;
 	const chainName = chainSlug[0].toUpperCase() + chainSlug.slice(1);
+
+	let loading = false;
+
+	async function handleChange({ detail }: ComponentEvents<TokenTable>['change']) {
+		loading = true;
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		loading = false;
+		detail.scrollToTop();
+	}
 </script>
 
 <svelte:head>
@@ -16,18 +30,18 @@
 <Breadcrumbs />
 
 <main>
-	<PageHeader title="Tokens">
-		Browse supported decentralised tokens across
-		<a href="/trading-view/blockchains">{chainName} blockchain</a>
-	</PageHeader>
+	<Section layout="boxed">
+		<HeroBanner contentFullWidth title="Tokens">
+			<svelte:fragment slot="subtitle">
+				Browse supported decentralised tokens across
+				<a class="body-link" href="/trading-view/{chainSlug}">{chainName} blockchain</a>
+			</svelte:fragment>
+		</HeroBanner>
+	</Section>
 
-	<section class="ds-container">
-		<TokenIndexExplorer
-			enabledColumns={['name', 'symbol', 'liquidity_latest', 'volume_24h']}
-			orderColumnIndex={2}
-			{chainSlug}
-		/>
-	</section>
+	<Section layout="boxed" padding="sm">
+		<TokenTable {...data} {loading} on:change={handleChange} />
+	</Section>
 </main>
 
 <style lang="postcss">

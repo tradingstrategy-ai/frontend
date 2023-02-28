@@ -45,7 +45,7 @@ jobs:
       - name: Setup submodules
         run: bash scripts/build-deps.sh
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --with-deps
       - name: Run Tests
         run: npm run test
 

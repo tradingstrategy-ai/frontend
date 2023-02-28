@@ -1,49 +1,91 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { getPairsClient } from '$lib/explorer/pair-client';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairExplorer from '$lib/explorer/PairExplorer.svelte';
-	import ExchangeExplorer from '$lib/explorer/ExchangeExplorer.svelte';
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
+	import { AlertItem, AlertList, Tabs, type DataTable } from '$lib/components';
+	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
+	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data: PageData;
+	const { chain } = data;
+
+	const pairsClient = getPairsClient(fetch);
+
+	let activeTab: string;
+
+	let tableOptions: {
+		page: number;
+		sort: string;
+		direction: 'asc' | 'desc';
+	};
+
+	$: updateTableParams($page.url);
+
+	function updateTableParams({ searchParams }: URL) {
+		activeTab = searchParams.get('tab') || 'exchanges';
+		tableOptions = {
+			page: Number(searchParams.get('page')) || 0,
+			sort: searchParams.get('sort') || 'volume_30d',
+			direction: searchParams.get('direction') === 'asc' ? 'asc' : 'desc'
+		};
+
+		if (activeTab === 'pairs') {
+			pairsClient.update({ ...tableOptions, chain_slugs: chain.chain_slug });
+		}
+	}
+
+	function handleTabChange({ detail }: ComponentEvents<Tabs>['change']) {
+		goto('?' + new URLSearchParams({ tab: detail.value }), { noScroll: true });
+	}
+
+	async function handleDatatableChange({ detail }: ComponentEvents<DataTable>['change']) {
+		const params = new URLSearchParams({ tab: activeTab, ...detail.params });
+		await goto(`?${params}`, { noScroll: true });
+		detail.scrollToTop();
+	}
 </script>
 
 <svelte:head>
-	<title>{data.chain_name} decentralised exchanges and trading pairs</title>
-	<meta name="description" content={`Top ${data.chain_name} tokens and prices`} />
+	<title>{chain.chain_name} decentralised exchanges and trading pairs</title>
+	<meta name="description" content={`Top ${chain.chain_name} tokens and prices`} />
 </svelte:head>
 
-<Breadcrumbs labels={{ [data.chain_slug]: data.chain_name }} />
+<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
 
 <main>
-	<ChainHeader name={data.chain_name} slug={data.chain_slug} homepage={data.homepage} />
+	<ChainHeader name={chain.chain_name} slug={chain.chain_slug} homepage={chain.homepage} />
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">
-			<BlockInfoTile title="Last indexed block" count={data.end_block} timestamp={data.last_swap_at} />
-			<BlockInfoTile title="First indexed block" count={data.start_block} timestamp={data.first_swap_at} />
+			<BlockInfoTile title="Last indexed block" count={chain.end_block} timestamp={chain.last_swap_at} />
+			<BlockInfoTile title="First indexed block" count={chain.start_block} timestamp={chain.first_swap_at} />
 		</div>
 
 		<SummaryDataTile
-			count={data.exchanges}
+			count={chain.exchanges}
 			title="Exchanges"
 			description="Decentralised exchanges with market data available on Trading Strategy"
 			buttonLabel="See exchanges"
-			href="#exchanges"
+			href="?tab=exchanges#exchanges"
 		/>
 
 		<SummaryDataTile
-			count={data.pairs}
+			count={chain.pairs}
 			title="Tracked trading pairs"
 			description="Total trading pairs on Trading Strategy for this blockchain."
 			buttonLabel="See trading pairs"
-			href="#trading-pairs"
+			href="?tab=pairs#pairs"
 		/>
 
 		<SummaryDataTile
-			count={data.tracked_pairs}
+			count={chain.tracked_pairs}
 			title="Active trading pairs"
 			description="Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data feeds generated for them."
 			buttonLabel="See inclusion criteria"
@@ -51,35 +93,44 @@
 		/>
 	</section>
 
-	<section id="exchanges" class="ds-container explorer-wrapper" data-testid="exchanges">
-		<header>
-			<h2>Exchanges on {data.chain_name}</h2>
-			<p>Showing exchanges with trading activity in last 30 days.</p>
-		</header>
+	<section class="ds-container explorer-wrapper">
+		<Tabs items={{ exchanges: 'Exchanges', pairs: 'Trading Pairs' }} selected={activeTab} on:change={handleTabChange}>
+			{#if activeTab === 'exchanges'}
+				{@const hiddenColumns = ['chain_name']}
 
-		<ExchangeExplorer
-			chainSlug={data.chain_slug}
-			enabledColumns={['human_readable_name', 'pair_count', 'usd_volume_30d']}
-			orderColumnIndex={2}
-		/>
-	</section>
+				<h2 id="exchanges">
+					Showing exchanges on {chain.chain_name} with trading activity in last 30 days.
+				</h2>
 
-	<section id="trading-pairs" class="ds-container explorer-wrapper" data-testid="trading-pairs">
-		<header>
-			<h2>Trading pairs on {data.chain_name}</h2>
-		</header>
-		<PairExplorer
-			chainSlug={data.chain_slug}
-			enabledColumns={[
-				'pair_name',
-				'exchange_name',
-				'pair_swap_fee',
-				'usd_price_latest',
-				'usd_volume_30d',
-				'usd_liquidity_latest'
-			]}
-			orderColumnIndex={4}
-		/>
+				{#await data.streamed.exchanges}
+					<ExchangesTable loading {hiddenColumns} />
+				{:then rows}
+					<ExchangesTable {rows} {...tableOptions} {hiddenColumns} on:change={handleDatatableChange} />
+				{:catch}
+					<AlertList>
+						<AlertItem>
+							An error occurred loading exchanges. Check the URL parameters for errors and try reloading the page.
+						</AlertItem>
+					</AlertList>
+				{/await}
+			{:else if activeTab === 'pairs'}
+				<h2 id="pairs">
+					Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.
+				</h2>
+
+				{#if !$pairsClient.error}
+					<div class="pairs-table">
+						<PairsTable {...$pairsClient} on:change={handleDatatableChange} />
+					</div>
+				{:else}
+					<AlertList>
+						<AlertItem>
+							An error occurred loading trading pairs. Check the URL parameters for errors and try reloading the page.
+						</AlertItem>
+					</AlertList>
+				{/if}
+			{/if}
+		</Tabs>
 	</section>
 </main>
 
@@ -117,35 +168,17 @@
 		}
 	}
 
-	h2 {
-		font: var(--f-h2-medium);
-	}
-
 	.explorer-wrapper {
-		gap: var(--space-md);
 		margin-top: var(--space-ll);
 
-		@media (--viewport-md-down) {
-			margin-top: 0;
-			gap: var(--space-sl);
-		}
-
-		& header {
-			display: grid;
-			gap: var(--space-sl);
+		& h2 {
+			font: var(--f-heading-sm-roman);
 			margin-block: var(--space-lg);
-
-			@media (--viewport-md-down) {
-				margin-block: var(--space-md);
-			}
 		}
+	}
 
-		& p {
-			font: var(--f-h4-roman);
-
-			@media (--viewport-md-down) {
-				font: var(--f-h5-roman);
-			}
-		}
+	.pairs-table {
+		display: grid;
+		overflow: auto;
 	}
 </style>

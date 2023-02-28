@@ -1,18 +1,9 @@
 import type { PageLoad } from './$types';
-import { backendUrl } from '$lib/config';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 // https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
-const apiUrl = `${backendUrl}/chains`;
-
-export const load: PageLoad = async ({ fetch }) => {
-	const resp = await fetch(apiUrl);
-
-	if (!resp.ok) {
-		throw await publicApiError(resp);
-	}
-
+export const load = (async ({ fetch }) => {
 	return {
-		chains: await resp.json()
+		chains: fetchPublicApi(fetch, 'chains')
 	};
-};
+}) satisfies PageLoad;

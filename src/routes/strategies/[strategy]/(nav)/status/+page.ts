@@ -3,9 +3,9 @@
  */
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { publicApiError } from '$lib/helpers/public-api';
 
-export const load: PageLoad = async ({ params, parent, fetch }) => {
+export const load = (async ({ parent, fetch }) => {
 	const { strategy } = await parent();
 
 	const url = `${strategy.url}/status`;
@@ -24,4 +24,4 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	return {
 		runState: resp.json()
 	};
-};
+}) satisfies PageLoad;

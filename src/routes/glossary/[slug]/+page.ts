@@ -6,7 +6,7 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ params, parent }) => {
+export const load = (async ({ params, parent }) => {
 	const { glossary } = await parent();
 
 	const term = glossary[params.slug];
@@ -18,4 +18,4 @@ export const load: PageLoad = async ({ params, parent }) => {
 	return {
 		term
 	};
-};
+}) satisfies PageLoad;

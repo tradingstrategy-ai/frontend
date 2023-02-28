@@ -1,22 +1,13 @@
 import type { PageLoad } from './$types';
-import { backendUrl } from '$lib/config';
-import { publicApiError } from '$lib/helpers/publicApiError';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
-const apiUrl = `${backendUrl}/top-momentum`;
-
-export const load: PageLoad = async ({ params, fetch }) => {
+export const load = (async ({ params, fetch }) => {
 	const direction: 'up' | 'down' = params.direction === 'daily-up' ? 'up' : 'down';
 
-	const resp = await fetch(apiUrl);
-
-	if (!resp.ok) {
-		throw await publicApiError(resp);
-	}
-
-	const data = await resp.json();
+	const data = await fetchPublicApi(fetch, 'top-momentum');
 
 	return {
 		direction,
 		pairs: data[`top_${direction}_24h_min_liq_1m`]
 	};
-};
+}) satisfies PageLoad;

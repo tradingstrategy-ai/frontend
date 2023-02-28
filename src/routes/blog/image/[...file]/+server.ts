@@ -5,7 +5,7 @@
 import type { RequestHandler } from './$types';
 import { ghostConfig } from '$lib/config';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET = (async ({ params }) => {
 	const resp = await fetch(`${ghostConfig.apiUrl}/${params.file}`);
 	const image = await resp.arrayBuffer();
 
@@ -16,4 +16,4 @@ export const GET: RequestHandler = async ({ params }) => {
 	};
 
 	return new Response(image, { headers });
-};
+}) satisfies RequestHandler;

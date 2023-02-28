@@ -20,8 +20,8 @@ chartiq dependency.
 -->
 <script context="module" lang="ts">
 	import { browser } from '$app/environment';
-
-	let CIQ;
+	import * as studyModules from './studies';
+	import './chart.css';
 
 	/**
 	 * NOTE: normal dynamic import doesn't work for optional dependency due to
@@ -29,39 +29,30 @@ chartiq dependency.
 	 * instead.
 	 * See: https://github.com/vitejs/vite/issues/6007#issuecomment-1110330733
 	 */
-	const modules = import.meta.glob('/node_modules/chartiq/{js,css}/*.{js,css}');
+	import.meta.glob('/node_modules/chartiq/css/stx-chart.css', { eager: true });
+	const modules = import.meta.glob('/node_modules/chartiq/js/*.js');
 
-	function importMod(path) {
-		return modules[`/node_modules/chartiq/${path}`]();
-	}
+	let CIQ;
 
 	async function initialize() {
 		if (!browser || Object.keys(modules).length === 0) {
 			return false;
 		}
-		await Promise.all([importCss(), importJs()]);
-		return true;
-	}
 
-	async function importCss() {
-		await importMod('css/stx-chart.css');
-		await import('./chart.css');
-	}
-
-	async function importJs() {
-		const [chartiqJs, standardJs, studies] = await Promise.all([
-			importMod('js/chartiq.js'),
-			importMod('js/standard.js'),
-			import('./studies')
+		const [chartiqJs, standardJs] = await Promise.all([
+			modules[`/node_modules/chartiq/js/chartiq.js`](),
+			modules[`/node_modules/chartiq/js/standard.js`]()
 		]);
 
 		CIQ = chartiqJs.CIQ;
 		CIQ.activateImports(standardJs.quoteFeed);
 
-		for (const key in studies) {
-			const study = studies[key](CIQ);
+		for (const mod of Object.values(studyModules)) {
+			const study = mod(CIQ);
 			CIQ.Studies.studyLibrary[study.name] = study;
 		}
+
+		return true;
 	}
 </script>
 

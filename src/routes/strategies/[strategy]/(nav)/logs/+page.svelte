@@ -3,35 +3,22 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { SummaryBox, Tabs } from '$lib/components';
+	import type { ComponentProps } from 'svelte';
+	import type LogEntry from './LogEntry.svelte';
 	import LogEntriesList from './LogEntriesList.svelte';
+	import { SummaryBox, Tabs } from '$lib/components';
 
 	export let data: PageData;
+
+	let selected: string;
+	$: logs = data.logs.filter(({ level }: ComponentProps<LogEntry>) => level === selected);
 </script>
 
 <section class="logs">
 	<SummaryBox title="Strategy logs" subtitle="Choose logging level">
-		<Tabs
-			tabs={[
-				{
-					id: 'trade',
-					title: 'Trade',
-					component: LogEntriesList,
-					props: {
-						logs: data.logs.filter((entry) => entry.level === 'trade')
-					}
-				},
-				{
-					id: 'info',
-					title: 'Info',
-					component: LogEntriesList,
-					props: {
-						logs: data.logs.filter((entry) => entry.level === 'info')
-					}
-				}
-			]}
-			--tab-padding="var(--space-lg) 0 0"
-		/>
+		<Tabs items={{ trade: 'Trade', info: 'Info' }} bind:selected --tab-padding="var(--space-lg) 0 0">
+			<LogEntriesList {logs} />
+		</Tabs>
 	</SummaryBox>
 </section>
 

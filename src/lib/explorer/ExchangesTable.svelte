@@ -1,23 +1,28 @@
 <script lang="ts">
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
-	export let rows: Record<string, any>[];
-	export let page: number;
-	export let sort: string;
-	export let direction: 'asc' | 'desc';
+	export let loading = false;
+	export let rows: Record<string, any>[] | undefined = undefined;
+	export let page = 0;
+	export let sort = 'volume_30d';
+	export let direction: 'asc' | 'desc' = 'desc';
+	export let hiddenColumns: string[] = [];
 
-	const table = createTable(readable(rows), {
+	const tableRows = loading ? new Array(10).fill({}) : rows || [];
+
+	const table = createTable(readable(tableRows), {
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' })
+		clickable: addClickableRows({ id: 'cta' }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
 	const columns = table.createColumns([
@@ -51,10 +56,13 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
+	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
+
+	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">
@@ -64,24 +72,28 @@
 				table-layout: fixed;
 			}
 
+			/**
+			 * NOTE: column widths below are relative (except .cta column). They are intionally
+			 * set larger than needed so they still add to > 100% when some columns are hidden.
+			 */
 			& .exchange_name {
-				width: 30%;
+				width: 50%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
 			& .chain_name {
-				width: 20%;
+				width: 35%;
 			}
 
 			& .pair_count {
-				width: 18%;
+				width: 30%;
 				text-align: right;
 			}
 
 			& .volume_30d {
-				width: 18%;
+				width: 30%;
 				text-align: right;
 			}
 

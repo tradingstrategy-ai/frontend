@@ -3,7 +3,7 @@
  */
 import type { LayoutLoad } from './$types';
 
-export const load: LayoutLoad = async ({ fetch }) => {
+export const load = (async ({ fetch }) => {
 	const resp = await fetch('/glossary/api');
 
 	if (!resp.ok) {
@@ -14,4 +14,4 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	return {
 		glossary: resp.json()
 	};
-};
+}) satisfies LayoutLoad;
