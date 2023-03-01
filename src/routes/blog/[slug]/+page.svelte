@@ -16,38 +16,40 @@
 
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
-<Section article class="blog-article" layout="boxed" size="sm">
-	<header>
-		<SocialLinks layout="post" />
-		<h1>{data.title}</h1>
-		<Timestamp date={data.published_at} withRelative />
-		<img src={data.feature_image} alt={data.feature_image_alt} />
-	</header>
+<main class="blog-details-page">
+	<Section article layout="boxed" size="sm">
+		<header>
+			<SocialLinks layout="post" />
+			<h1>{data.title}</h1>
+			<Timestamp date={data.published_at} withRelative />
+			<img src={data.feature_image} alt={data.feature_image_alt} />
+		</header>
 
-	<BlogPostContent html={data.html} />
-</Section>
+		<BlogPostContent html={data.html} />
+	</Section>
 
-<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
-	<NewsletterOptInBanner />
-</Section>
+	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
+</main>
 
 <style lang="postcss">
-	:global .blog-article {
-		& time {
-			font: var(--timestamp-font, var(--f-ui-md-roman));
-			color: var(--c-text-2-v1);
-		}
-	}
 	header {
 		margin: var(--space-md) 0;
 		display: grid;
 		gap: var(--space-ls);
+
 		& h1 {
 			font: var(--f-heading-lg-medium);
 
 			@media (--viewport-sm-up) {
 				font: var(--f-heading-xl-medium);
 			}
+		}
+
+		& :global(time) {
+			font: var(--timestamp-font, var(--f-ui-md-roman));
+			color: var(--c-text-2-v1);
 		}
 	}
 
