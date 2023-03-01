@@ -2,12 +2,15 @@
 	import type { TradeExecution } from 'trade-executor-frontend/state/interface';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
+	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 
 	export let trades: TradeExecution[];
 
-	const table = createTable(readable(trades));
+	const table = createTable(readable(trades), {
+		clickable: addClickableRows({ id: 'cta' })
+	});
 
 	const columns = table.createColumns([
 		table.column({
@@ -41,15 +44,9 @@
 		}),
 		table.column({
 			header: '',
-			id: 'button',
-			accessor: ({ position_id, trade_id }) => ({ position_id, trade_id }),
-			cell: ({ value }) =>
-				createRender(Button, {
-					tertiary: true,
-					lg: true,
-					label: 'Details',
-					href: `./${value.position_id}/trade-${value.trade_id}`
-				})
+			id: 'cta',
+			accessor: ({ position_id, trade_id }) => `./${position_id}/trade-${trade_id}`,
+			cell: ({ value }) => createRender(Button, { label: 'Details', href: value })
 		})
 	]);
 

@@ -3,6 +3,7 @@
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
+	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, Timestamp } from '$lib/components';
@@ -32,7 +33,8 @@
 			initialSortKeys: [{ id: 'position_id', order: 'asc' }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination()
+		page: addPagination(),
+		clickable: addClickableRows({ id: 'cta' })
 	});
 
 	function getLastTrade({ trades }) {
@@ -95,15 +97,9 @@
 		}),
 		table.column({
 			header: '',
-			id: 'details_cta',
-			accessor: 'position_id',
-			cell: ({ value }) =>
-				createRender(Button, {
-					tertiary: true,
-					lg: true,
-					label: 'Details',
-					href: `./${status}-positions/${value}`
-				}),
+			id: 'cta',
+			accessor: ({ position_id }) => `./${status}-positions/${position_id}`,
+			cell: ({ value }) => createRender(Button, { label: 'Details', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
