@@ -217,7 +217,7 @@ table:not(.table) {
 				display: grid;
 			}
 
-			& .up-down-indicator-wrapper {
+			& .up-down-cell {
 				justify-content: flex-start;
 				margin-top: var(--space-sm);
 			}

@@ -10,7 +10,7 @@ of pair records is based on the records returned by `top-momentum` API.
 -->
 <script lang="ts">
 	import { formatPriceChange } from '$lib/helpers/formatters';
-	import { UpDownIndicator } from '$lib/components';
+	import { UpDownCell } from '$lib/components';
 
 	export let pairs: Record<string, string | number>[];
 </script>
@@ -23,7 +23,7 @@ of pair records is based on the records returned by `top-momentum` API.
 					<td>{pair.pair_symbol}</td>
 					<td>{pair.exchange_name}</td>
 					<td>
-						<UpDownIndicator value={pair.price_change_24h} formatter={formatPriceChange} />
+						<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
 					</td>
 				</tr>
 			</a>

@@ -1,6 +1,7 @@
 <!--
 @component
-Utility component for displaying a value with red/green value color.
+Utility component for displaying a value with red/green value color. Use in inline contexts where
+a lightweight visual representation is needed. See `UpDownCell.svelte` for a more stylized variant.
 
 #### Usage:
 ```tsx
@@ -10,58 +11,27 @@ Utility component for displaying a value with red/green value color.
 -->
 <script lang="ts">
 	export let value: number | string | undefined | null;
-	export let formatter: Function | undefined = undefined;
+
+	type Formatter = (value: any) => string;
+	export let formatter: Formatter | undefined = undefined;
+
+	$: formatted = formatter ? formatter(value) : value;
 </script>
 
-<div class="up-down-indicator-wrapper">
-	<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
-		<slot>
-			<span class="truncate">
-				{formatter ? formatter(value) : value}
-			</span>
-		</slot>
-	</span>
-</div>
+<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
+	<slot {formatted}>{formatted}</slot>
+</span>
 
 <style lang="postcss">
-	.up-down-indicator-wrapper {
-		display: flex;
-		justify-content: flex-end;
-	}
 	.up-down-indicator {
-		background: hsla(var(--hsl-box), var(--a-box-b));
-		border-radius: var(--radius-sm);
 		color: hsla(var(--hsl-text-light));
-		display: grid;
-		gap: var(--space-xxs);
-		padding: var(--space-ss) var(--space-ms) !important;
-		text-align: right;
-		transition: all var(--time-sm) ease-out;
-
-		& :global > * {
-			font: var(--f-ui-sm-medium);
-		}
 
 		&.bullish {
-			& {
-				background: hsla(var(--hsl-bullish), 0.12);
-				color: hsla(var(--hsl-bullish));
-			}
-
-			&:hover {
-				background: hsla(var(--hsl-bullish), 0.24) !important;
-			}
+			color: hsla(var(--hsl-bullish));
 		}
 
 		&.bearish {
-			& {
-				background: hsla(var(--hsl-bearish), 0.12);
-				color: hsla(var(--hsl-bearish));
-			}
-
-			&:hover {
-				background: hsla(var(--hsl-bearish), 0.24) !important;
-			}
+			color: hsla(var(--hsl-bearish));
 		}
 	}
 </style>
