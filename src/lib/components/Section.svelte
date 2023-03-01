@@ -13,12 +13,13 @@ Layout utility component for displaying a major site section with grid-based con
 ```
 -->
 <script lang="ts">
+	import type { HTMLAttributes } from 'svelte/elements';
 	import type { SectionSizing } from '$lib/types';
 	import Grid from './Grid.svelte';
 
-	let classes: string = '';
-	export let ariaLabel = '';
 	export let article = false;
+	export let attrs: HTMLAttributes = {};
+	let classes: string = '';
 	export { classes as class };
 	export let cols = 1;
 	export let footer = false;
@@ -33,14 +34,10 @@ Layout utility component for displaying a major site section with grid-based con
 	export let title: string = '';
 
 	$: tag = header ? 'header' : footer ? 'footer' : article ? 'article' : nav ? 'nav' : 'section';
+	$: allClasses = ['section', classes, layout, size && `size-${size}`, padding && `padding-${padding}`];
 </script>
 
-<svelte:element
-	this={tag}
-	aria-label={ariaLabel ?? undefined}
-	class="section {classes} {size ? `size-${size}` : ''} {layout} {padding ? `padding-${padding}` : ''}"
-	{id}
->
+<svelte:element this={tag} {id} {...attrs} class={allClasses.join(' ')}>
 	{#if $$slots.header || title || subtitle}
 		<header>
 			{#if $$slots.header || title}

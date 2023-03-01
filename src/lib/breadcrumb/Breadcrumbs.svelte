@@ -13,14 +13,11 @@ https://search.google.com/structured-data/testing-tool
 ```
 -->
 <script context="module" lang="ts">
-	interface BreadcrumbLabels {
-		[key: string]: string;
-	}
+	type BreadcrumbLabels = Record<string, string>;
 
 	interface Breadcrumb {
 		url: string;
 		label: string;
-		activeLink: boolean;
 	}
 
 	const baseLabels: BreadcrumbLabels = {
@@ -44,10 +41,8 @@ https://search.google.com/structured-data/testing-tool
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Section from '$lib/components/Section.svelte';
-	import type { SectionSizing } from '$lib/types';
 
 	export let labels: BreadcrumbLabels = {};
-	export let size: SectionSizing = '';
 
 	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, labels);
 
@@ -58,87 +53,59 @@ https://search.google.com/structured-data/testing-tool
 		return segments.slice(1).map((segment, index) => {
 			return {
 				url: segments.slice(0, index + 2).join('/'),
-				label: allLabels[segment] || segment,
-				activeLink: index < segments.length - 2
+				label: allLabels[segment] || segment
 			};
 		});
 	}
 </script>
 
-<Section ariaLabel="breadcrumb" class="breadcrumbs" layout="boxed" {size} nav>
-	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
-		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
-			<li
-				class={breadcrumb.activeLink ? '' : 'truncate'}
-				itemprop="itemListElement"
-				itemscope
-				itemtype="http://schema.org/ListItem"
-			>
-				{#if breadcrumb.activeLink}
-					<a class="tile a" itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
-						><span itemprop="name">{breadcrumb.label}</span></a
-					>
+<Section nav layout="boxed" attrs={{ 'aria-label': 'breadcrumb' }}>
+	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
+		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
+			{@const active = breadcrumb !== breadcrumbs.at(-1)}
+			<li class:truncate={!active} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+				{#if active}
+					<a class="tile a" itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+						<span itemprop="name">{breadcrumb.label}</span>
+					</a>
 				{:else}
-					<span itemprop="name">
-						<span>
-							{breadcrumb.label}
-						</span>
+					<span>
+						<span itemprop="name">{breadcrumb.label}</span>
 					</span>
 				{/if}
-				<meta itemprop="position" content={idx + 1} />
+				<meta itemprop="position" content={index + 1} />
 			</li>
-			{#if breadcrumb.activeLink}
-				<span class="separator">/</span>
-			{/if}
 		{/each}
 	</ol>
 </Section>
 
 <style lang="postcss">
-	:global .breadcrumbs {
-		display: flex;
-		margin-bottom: var(--space-sl);
-
-		& .grid {
-			display: flex;
-			width: 100%;
-
-			& nav {
-				width: 100%;
-			}
-		}
-	}
-
 	ol {
 		list-style-type: none;
 		padding: var(--space-sl) 0;
 		display: flex;
 		justify-content: start;
+		margin-bottom: var(--space-sl);
 		margin-left: calc(-1 * var(--space-sm));
 		overflow: hidden;
-		color: var(--c-text-7-v1);
+		color: hsla(var(--hsl-text-extra-light));
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
 			gap: var(--space-xxs);
 			margin-left: calc(-1 * var(--space-sl));
-			margin-bottom: var(--space-ls);
+			margin-bottom: var(--space-xl);
 			padding-block: var(--space-md);
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
-
-		/* required to override bootstrap theme */
-		& * {
-			font: inherit;
 		}
 	}
 
 	li {
 		white-space: nowrap;
 
-		& > :is(a, span:not(.separator)) {
+		& > * {
 			padding: var(--space-ss) var(--space-sm);
 
 			&:not(:hover) {
@@ -146,12 +113,12 @@ https://search.google.com/structured-data/testing-tool
 			}
 		}
 
-		& a {
-			color: hsla(var(--hsl-text-extra-light));
-		}
-
 		& > span {
 			color: hsla(var(--hsl-text));
+		}
+
+		&:not(:last-child)::after {
+			content: '/';
 		}
 	}
 </style>
