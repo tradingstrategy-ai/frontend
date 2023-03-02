@@ -78,7 +78,7 @@ table:not(.table) {
 	}
 
 	& > :not(thead):not(tfoot) tr {
-		& :is(td, th[scope='row']) {
+		& td {
 			background: hsla(var(--hsl-box), var(--a-box-b));
 			height: 3.25rem;
 			font: var(--table-font);
@@ -105,17 +105,6 @@ table:not(.table) {
 				& .button {
 					margin-right: calc(-1 * var(--space-sm));
 				}
-			}
-		}
-
-		& th[scope='row'] {
-			background: transparent;
-		}
-
-		& th {
-			& + td {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-md);
-				border-radius: var(--radius-md) 0 0 var(--radius-md);
 			}
 		}
 

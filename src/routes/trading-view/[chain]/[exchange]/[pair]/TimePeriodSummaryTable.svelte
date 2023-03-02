@@ -10,8 +10,6 @@ Display summary performance table for various periods.
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
 	import TimePeriodPicker from './TimePeriodPicker.svelte';
-	import { UpDownIndicator } from '$lib/components';
-	import { formatPriceChange } from '$lib/helpers/formatters';
 
 	export let pairId: number | string;
 	export let hideLiquidityAndTrades = false;
@@ -19,155 +17,37 @@ Display summary performance table for various periods.
 	let selected = 'daily';
 </script>
 
-<div class="time-period-summary-table">
-	<div class="time-period-picker">
-		<TimePeriodPicker bind:selected />
-	</div>
+<div class="time-period-picker">
+	<TimePeriodPicker bind:selected />
+</div>
 
-	<div class="table-wrapper">
-		<table>
-			<colgroup>
-				<col class="labels" />
-				<col />
-				<col />
-				<col />
-				<col />
-			</colgroup>
+<div class="time-period-table">
+	<ul class="row-heading">
+		<li class="col-heading" />
+		<li>Change</li>
+		<li>Open</li>
+		<li>Highest</li>
+		<li>Lowest</li>
+		<li>Close</li>
+		<li>Volume</li>
+		{#if !hideLiquidityAndTrades}
+			<li>Highest liquidity</li>
+			<li>Lowest liquidity</li>
+			<li>Buying trades</li>
+			<li>Selling trades</li>
+		{/if}
+	</ul>
 
-			<thead>
-				<tr>
-					<th />
-					<th class="right" scope="col">Hourly</th>
-					<th class="right" scope="col">Daily</th>
-					<th class="right" scope="col">Weekly</th>
-					<th class="right" scope="col">Monthly</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
-					<th scope="row">Change</th>
-					<td class="right">
-						<span>
-							<UpDownIndicator formatter={formatPriceChange} value={-0.02} />
-						</span>
-					</td>
-					<td class="right">
-						<span>
-							<UpDownIndicator formatter={formatPriceChange} value={0.124} />
-						</span>
-					</td>
-					<td class="right">
-						<span>
-							<UpDownIndicator formatter={formatPriceChange} value={0.124} />
-						</span>
-					</td>
-					<td class="right">
-						<span>
-							<UpDownIndicator formatter={formatPriceChange} value={5.07} />
-						</span>
-					</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Open </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Highest </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Lowest </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Close </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Volume </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Highest liquidity </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Lowest liquidity </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Buying trades </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-
-				<tr>
-					<th scope="row"> Selling trades </th>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.05</td>
-					<td class="right">$0.00863</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	{#each ['hourly', 'daily', 'weekly', 'monthly'] as period}
+		<TimePeriodSummaryColumn {pairId} {hideLiquidityAndTrades} {period} active={period === selected} />
+	{/each}
 </div>
 
 <style lang="postcss">
 	.time-period-picker {
-		position: sticky;
-		left: 0;
-		top: 0;
-
 		@media (--viewport-lg-up) {
 			display: none;
 		}
-	}
-
-	.time-period-summary-table {
-		overflow-x: auto;
-		overflow-y: hidden;
-	}
-
-	td span {
-		display: grid;
-		justify-items: end;
-	}
-
-	tbody th {
-		max-width: 6rem;
 	}
 
 	.time-period-table :global {
