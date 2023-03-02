@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
-	import { formatDollar, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
+	import { formatDollar, formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
+	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
 	import { formatDuration } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
-	import Profitability from '../../Profitability.svelte';
+	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
+	import StopLossIndicator from './StopLossIndicator.svelte';
 
 	export let data: PageData;
 
@@ -43,7 +44,16 @@
 			{/if}
 
 			<DataBox label="Profitability">
-				<Profitability value={currentStats.profitability} />
+				<div class="profitability">
+					<UpDownIndicator
+						value={currentStats.profitability}
+						formatter={formatProfitability}
+						compareFn={determineProfitability}
+					/>
+					{#if trades.some((t) => t.trade_type === 'stop_loss')}
+						<StopLossIndicator />
+					{/if}
+				</div>
 			</DataBox>
 
 			{#if position.closed_at}
@@ -60,7 +70,7 @@
 				<DataBox label="Value now" value={formatDollar(currentStats.value)} />
 			{/if}
 
-			<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
+			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
 		</DataBoxes>
 
 		{#if hasFailedTrades}
@@ -82,5 +92,10 @@
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);
 		}
+	}
+
+	.profitability {
+		display: flex;
+		justify-content: space-between;
 	}
 </style>
