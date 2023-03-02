@@ -4,10 +4,11 @@
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
+	import { formatProfitability } from 'trade-executor-frontend/helpers/formatters';
+	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { fromUnixTime } from 'date-fns';
-	import { DataTable, Button, Timestamp } from '$lib/components';
-	import Profitability from '../../Profitability.svelte';
+	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
 	import FrozenStatus from './FrozenStatus.svelte';
 
 	export let positions: TradingPosition[];
@@ -53,7 +54,8 @@
 		table.column({
 			header: 'Profitability',
 			accessor: 'profitability',
-			cell: ({ value }) => createRender(Profitability, { value })
+			cell: ({ value }) =>
+				createRender(UpDownCell, { value, formatter: formatProfitability, compareFn: determineProfitability })
 		}),
 		table.column({
 			header: 'Frozen on',
@@ -134,6 +136,11 @@
 
 		& :is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
+		}
+
+		@media (--viewport-sm-down) {
+			--up-down-font: var(--f-ui-xs-medium);
+			--up-down-spacing: var(--f-ui-xs-spacing);
 		}
 	}
 </style>

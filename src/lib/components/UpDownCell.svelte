@@ -16,12 +16,13 @@ or other contexts where a stronger visual representation is desired.
 
 	export let value: ComponentProps<UpDownIndicator>['value'];
 	export let formatter: ComponentProps<UpDownIndicator>['formatter'] = undefined;
+	export let compareFn: ComponentProps<UpDownIndicator>['compareFn'] = undefined;
 </script>
 
 <div class="up-down-cell">
-	<UpDownIndicator {value} {formatter} let:formatted>
+	<UpDownIndicator {value} {formatter} {compareFn} let:direction let:formatted>
 		{#if $$slots.default}
-			<slot {formatted} />
+			<slot {direction} {formatted} />
 		{:else}
 			<span class="truncate">{formatted}</span>
 		{/if}
@@ -38,6 +39,7 @@ or other contexts where a stronger visual representation is desired.
 			border-radius: var(--radius-sm);
 			display: grid;
 			font: var(--up-down-font, var(--f-ui-sm-medium));
+			letter-spacing: var(--up-down-letter-spacing, var(--f-ui-sm-spacing, normal));
 			gap: var(--space-xxs);
 			padding: var(--space-ss) var(--space-ms);
 			text-align: right;

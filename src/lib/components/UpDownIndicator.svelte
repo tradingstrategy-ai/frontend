@@ -10,16 +10,23 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 ```
 -->
 <script lang="ts">
-	export let value: number | string | undefined | null;
+	type Value = number | string | undefined | null;
+	export let value: Value;
 
-	type Formatter = (value: any) => string;
+	type Formatter = (value: Value) => string;
 	export let formatter: Formatter | undefined = undefined;
 
+	type CompareFn = (value: Value) => number;
+	export let compareFn: CompareFn | undefined;
+
+	const compare: CompareFn = (value) => (value ? Math.sign(Number(value)) : 0);
+
+	$: direction = compareFn?.(value) ?? compare(value);
 	$: formatted = formatter ? formatter(value) : value;
 </script>
 
-<span class="up-down-indicator" class:bullish={Number(value) > 0} class:bearish={Number(value) < 0}>
-	<slot {formatted}>{formatted}</slot>
+<span class="up-down-indicator" class:bullish={direction > 0} class:bearish={direction < 0}>
+	<slot {direction} {formatted}>{formatted}</slot>
 </span>
 
 <style lang="postcss">
