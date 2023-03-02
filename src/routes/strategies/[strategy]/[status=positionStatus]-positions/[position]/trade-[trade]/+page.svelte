@@ -2,20 +2,24 @@
 	import type { PageData } from './$types';
 	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
 
 	export let data: PageData;
 
-	const { summary, position, trade } = data;
+	const { position, trade } = data;
 </script>
 
 <main class="ds-container">
 	<PageHeading level={2}>
-		<h1>
-			<a href=".">Position #{position.position_id}</a> in
-			<a href="/strategies/{summary.id}/">{summary.name}</a>
-		</h1>
-		<h2>Trade #{trade.trade_id}</h2>
+		<h1>Trade #{trade.trade_id}</h1>
+		<h2>
+			{trade.planned_quantity > 0 ? 'Buy' : 'Sell'}
+			{trade.pair.base.token_symbol}
+			{#if trade.trade_type === 'stop_loss'}
+				<StopLossIndicator lg />
+			{/if}
+		</h2>
 	</PageHeading>
 
 	<DataBoxes>
@@ -46,6 +50,12 @@
 </main>
 
 <style lang="postcss">
+	h2 {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+	}
+
 	main :global .data-boxes {
 		margin-block: var(--space-md) var(--space-5xl);
 

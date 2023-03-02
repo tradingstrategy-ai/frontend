@@ -7,6 +7,7 @@
 	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import Profitability from '../../Profitability.svelte';
 	import TradeTable from './TradeTable.svelte';
+	import StopLossIndicator from './StopLossIndicator.svelte';
 
 	export let data: PageData;
 
@@ -46,7 +47,7 @@
 				<div class="profitability">
 					<Profitability value={currentStats.profitability} />
 					{#if trades.some((t) => t.trade_type === 'stop_loss')}
-						<span class="stop-loss">stop loss</span>
+						<StopLossIndicator />
 					{/if}
 				</div>
 			</DataBox>
@@ -92,21 +93,5 @@
 	.profitability {
 		display: flex;
 		justify-content: space-between;
-	}
-
-	.stop-loss {
-		display: flex;
-		align-items: center;
-		padding-inline: 1em;
-		color: hsla(var(--hsl-bearish));
-		background: hsla(var(--hsl-bearish), 0.12);
-		border-radius: var(--space-sm);
-		font: var(--f-ui-sm-bold);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
-		text-transform: uppercase;
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-xs-bold);
-			letter-spacing: var(--f-ui-xs-spacing, normal);
-		}
 	}
 </style>
