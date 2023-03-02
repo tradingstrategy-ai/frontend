@@ -106,7 +106,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 	hr {
 		width: 100%;
 		margin: var(--space-lg) 0;
-		border: 0.125rem solid hsla(var(--hsl-text));
+		border: 1px solid hsla(var(--hsl-text));
 
 		@media (--viewport-lg-down) {
 			margin: var(--space-md) 0;

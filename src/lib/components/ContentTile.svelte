@@ -32,9 +32,10 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	export let title = '';
 
 	$: tag = href ? 'a' : 'div';
+	$: anchorProps = { href };
 </script>
 
-<svelte:element this={tag} class="content-tile tile a {classes}" {href} role={href ? 'link' : undefined}>
+<svelte:element this={tag} class="content-tile tile a {classes}" {...anchorProps}>
 	<img src={mediaSrc} alt={mediaAlt} />
 
 	<div class="content">

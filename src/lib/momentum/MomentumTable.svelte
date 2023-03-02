@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatPriceChange } from '$lib/helpers/formatters';
-	import { UpDownIndicator } from '$lib/components';
+	import { UpDownCell } from '$lib/components';
 
 	interface MomentumPair {
 		chain_name: string;
@@ -54,7 +54,7 @@
 					</td>
 
 					<td class="price-change">
-						<UpDownIndicator value={pair.price_change_24h} formatter={formatPriceChange} />
+						<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
 					</td>
 				</tr>
 			{/each}

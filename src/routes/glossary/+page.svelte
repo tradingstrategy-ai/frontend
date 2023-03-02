@@ -71,6 +71,10 @@
 		gap: var(--space-md);
 	}
 
+	main :global .section {
+		overflow: auto;
+	}
+
 	h2 {
 		font: var(--f-h2-medium);
 		@media (--viewport-md-up) {
@@ -100,7 +104,7 @@
 
 	hr {
 		margin: var(--space-lg) 0;
-		border: 0.125rem solid hsla(var(--hsl-text));
+		border: 1px solid hsla(var(--hsl-text));
 
 		@media (--viewport-lg-down) {
 			margin: var(--space-md) 0;

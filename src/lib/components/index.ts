@@ -34,4 +34,5 @@ export { default as TextInput } from './TextInput.svelte';
 export { default as Timestamp } from './Timestamp.svelte';
 export { default as TradingDataInfo } from './TradingDataInfo.svelte';
 export { default as TradingDataInfoRow } from './TradingDataInfoRow.svelte';
+export { default as UpDownCell } from './UpDownCell.svelte';
 export { default as UpDownIndicator } from './UpDownIndicator.svelte';

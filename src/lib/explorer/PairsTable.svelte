@@ -5,7 +5,7 @@
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
-	import { Button, DataTable } from '$lib/components';
+	import { Button, DataTable, UpDownCell } from '$lib/components';
 
 	export let loading = false;
 	export let rows: PairIndexResponse['rows'] | undefined = undefined;
@@ -58,7 +58,7 @@
 		table.column({
 			accessor: 'price_change_24h', // must match sort key
 			header: 'Price Δ 24h',
-			cell: ({ value }) => formatPriceChange(value)
+			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatPriceChange })
 		}),
 		table.column({
 			id: 'volume_30d', // must match sort key
@@ -75,7 +75,7 @@
 		table.column({
 			accessor: 'liquidity_change_24h',
 			header: 'Liq Δ 24h',
-			cell: ({ value }) => formatPriceChange(value),
+			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatPriceChange }),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({

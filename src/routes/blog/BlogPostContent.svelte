@@ -39,21 +39,25 @@
 
 		&,
 		& :is(p, li) {
-			font: var(--f-text-lg-regular);
+			font: var(--f-text-md-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
+
+			@media (--viewport-sm-up) {
+				font: var(--f-text-lg-regular);
+			}
 		}
 
 		& p:not(:first-of-type) {
 			margin-top: var(--space-lg);
 		}
 
-		& h2 {
+		& > h2 {
 			font: var(--f-text-xxl-semibold);
 			letter-spacing: var(--f-text-xl-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
 		}
 
-		& h3 {
+		& > h3 {
 			font: var(--f-text-xl-semibold);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;

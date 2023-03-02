@@ -11,7 +11,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
-	import { Icon, UpDownIndicator } from '$lib/components';
+	import { Icon, UpDownCell } from '$lib/components';
 
 	// Any token with less than this liquidity is grayed out in the search results
 	const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
@@ -76,21 +76,19 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		{#if isBasicLayout && isLowQuality}
 			<Icon name="warning" size="20px" />
 		{:else if isBasicLayout && hasPriceChange}
-			<UpDownIndicator value={document.price_change_24h}>
-				<span>{formatPercent(Math.abs(document.price_change_24h))}</span>
-			</UpDownIndicator>
+			<UpDownCell value={document.price_change_24h} formatter={(val) => formatPercent(Math.abs(val))} />
 		{/if}
 
 		<!-- Advanced layout - current price & price change % -->
 		{#if isAdvancedLayout && (hasPriceChange || hasValidPrice)}
-			<UpDownIndicator value={document.price_change_24h}>
+			<UpDownCell value={document.price_change_24h}>
 				{#if hasValidPrice}
 					<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
 				{/if}
 				{#if hasPriceChange}
 					<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
 				{/if}
-			</UpDownIndicator>
+			</UpDownCell>
 		{/if}
 	</a>
 </li>

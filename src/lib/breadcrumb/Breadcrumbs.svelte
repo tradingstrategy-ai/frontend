@@ -13,14 +13,11 @@ https://search.google.com/structured-data/testing-tool
 ```
 -->
 <script context="module" lang="ts">
-	interface BreadcrumbLabels {
-		[key: string]: string;
-	}
+	type BreadcrumbLabels = Record<string, string>;
 
 	interface Breadcrumb {
 		url: string;
 		label: string;
-		activeLink: boolean;
 	}
 
 	const baseLabels: BreadcrumbLabels = {
@@ -43,6 +40,7 @@ https://search.google.com/structured-data/testing-tool
 
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Section from '$lib/components/Section.svelte';
 
 	export let labels: BreadcrumbLabels = {};
 
@@ -55,77 +53,72 @@ https://search.google.com/structured-data/testing-tool
 		return segments.slice(1).map((segment, index) => {
 			return {
 				url: segments.slice(0, index + 2).join('/'),
-				label: allLabels[segment] || segment,
-				activeLink: index < segments.length - 2
+				label: allLabels[segment] || segment
 			};
 		});
 	}
 </script>
 
-<nav class="ds-container" aria-label="breadcrumb">
-	<ol itemscope itemtype="http://schema.org/BreadcrumbList">
-		{#each breadcrumbs as breadcrumb, idx (breadcrumb.url)}
-			<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-				{#if breadcrumb.activeLink}
-					<a itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing"
-						><span itemprop="name">{breadcrumb.label}</span></a
-					>
+<Section nav layout="boxed" attrs={{ 'aria-label': 'breadcrumb' }}>
+	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
+		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
+			{@const active = breadcrumb !== breadcrumbs.at(-1)}
+			<li class:truncate={!active} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+				{#if active}
+					<a class="tile a" itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
+						<span itemprop="name">{breadcrumb.label}</span>
+					</a>
 				{:else}
-					<span itemprop="name">{breadcrumb.label}</span>
+					<span>
+						<span itemprop="name">{breadcrumb.label}</span>
+					</span>
 				{/if}
-				<meta itemprop="position" content={idx + 1} />
+				<meta itemprop="position" content={index + 1} />
 			</li>
 		{/each}
 	</ol>
-</nav>
+</Section>
 
 <style lang="postcss">
 	ol {
 		list-style-type: none;
-		margin-bottom: var(--space-sl);
 		padding: var(--space-sl) 0;
-		display: grid;
-		grid-auto-flow: column;
+		display: flex;
 		justify-content: start;
+		margin-bottom: var(--space-sl);
+		margin-left: calc(-1 * var(--space-sm));
 		overflow: hidden;
-		color: var(--c-text-7-v1);
+		color: hsla(var(--hsl-text-extra-light));
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
-			margin-bottom: var(--space-ls);
+			gap: var(--space-xxs);
+			margin-left: calc(-1 * var(--space-sl));
+			margin-bottom: var(--space-xl);
 			padding-block: var(--space-md);
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
-
-		/* required to override bootstrap theme */
-		& * {
-			font: inherit;
 		}
 	}
 
 	li {
 		white-space: nowrap;
 
-		&:last-child {
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+		& > * {
+			padding: var(--space-ss) var(--space-sm);
 
-		& a {
-			&:hover span {
-				text-decoration: underline;
-			}
-
-			&::after {
-				content: '/';
-				margin: 0 0.5em;
+			&:not(:hover) {
+				background: transparent;
 			}
 		}
 
 		& > span {
-			color: var(--c-text-1-v1);
+			color: hsla(var(--hsl-text));
+		}
+
+		&:not(:last-child)::after {
+			content: '/';
 		}
 	}
 </style>

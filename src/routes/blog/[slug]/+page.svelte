@@ -16,47 +16,52 @@
 
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
-<article class="blog-article ds-container">
-	<header>
-		<SocialLinks layout="post" />
-		<h1>{data.title}</h1>
-		<Timestamp date={data.published_at} withRelative />
-		<img src={data.feature_image} alt={data.feature_image_alt} />
-	</header>
+<main class="blog-details-page">
+	<Section article layout="boxed" size="sm">
+		<header>
+			<SocialLinks --justify-content="space-between" />
+			<h1>{data.title}</h1>
+			<Timestamp date={data.published_at} withRelative />
+			<img src={data.feature_image} alt={data.feature_image_alt} />
+		</header>
 
-	<BlogPostContent html={data.html} />
-</article>
+		<BlogPostContent html={data.html} />
+	</Section>
 
-<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
-	<NewsletterOptInBanner />
-</Section>
+	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+		<NewsletterOptInBanner />
+	</Section>
+</main>
 
 <style lang="postcss">
-	.blog-article {
-		--container-max-width: 720px;
-		gap: var(--space-xl);
+	header {
+		margin: var(--space-md) 0;
+		display: grid;
+		gap: var(--space-ls);
 
-		& header {
-			margin: var(--space-md) 0;
-			display: grid;
-			gap: var(--space-ls);
-			& h1 {
-				font: var(--f-heading-xxl-medium);
+		& h1 {
+			font: var(--f-heading-xl-medium);
+			margin-top: var(--space-xl);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-heading-lg-medium);
+				margin-top: var(--space-md);
 			}
 		}
 
-		& img {
-			width: 100%;
-			aspect-ratio: 1.5;
-			margin-top: var(--space-md);
-			min-height: 312px;
-			max-height: 400px;
-			object-fit: cover;
-		}
-
-		& :global time {
-			font: var(--timestamp-font, var(--f-ui-lg-roman));
+		& :global(time) {
+			font: var(--timestamp-font, var(--f-ui-md-roman));
 			color: var(--c-text-2-v1);
 		}
+	}
+
+	img {
+		border-radius: var(--radius-sm);
+		width: 100%;
+		aspect-ratio: 1.5;
+		margin-top: var(--space-md);
+		min-height: 312px;
+		max-height: 400px;
+		object-fit: cover;
 	}
 </style>
