@@ -32,7 +32,7 @@
 					</dd>
 				</div>
 				<div>
-					<dt>Amount of assets</dt>
+					<dt title="Assets under management">AUM</dt>
 					<dd>
 						{formatDollar(summaryStats.current_value)}
 					</dd>
