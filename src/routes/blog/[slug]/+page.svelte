@@ -19,7 +19,7 @@
 <main class="blog-details-page">
 	<Section article layout="boxed" size="sm">
 		<header>
-			<SocialLinks layout="post" />
+			<SocialLinks --justify-content="space-between" />
 			<h1>{data.title}</h1>
 			<Timestamp date={data.published_at} withRelative />
 			<img src={data.feature_image} alt={data.feature_image_alt} />
@@ -40,10 +40,12 @@
 		gap: var(--space-ls);
 
 		& h1 {
-			font: var(--f-heading-lg-medium);
+			font: var(--f-heading-xl-medium);
+			margin-top: var(--space-xl);
 
-			@media (--viewport-sm-up) {
-				font: var(--f-heading-xl-medium);
+			@media (--viewport-sm-down) {
+				font: var(--f-heading-lg-medium);
+				margin-top: var(--space-md);
 			}
 		}
 

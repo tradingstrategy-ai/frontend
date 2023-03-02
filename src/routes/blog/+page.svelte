@@ -38,7 +38,7 @@
 			image={heroImage}
 			hr={true}
 		>
-			<SocialLinks layout="index" />
+			<SocialLinks />
 		</HeroBanner>
 	</Section>
 

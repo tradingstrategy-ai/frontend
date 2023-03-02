@@ -1,71 +1,28 @@
 <script lang="ts">
-	import { Button, Icon } from '$lib/components';
-
-	export let layout: 'index' | 'post';
+	import { Button } from '$lib/components';
 </script>
 
-<div class="social-links layout--{layout}">
-	<Button icon="newspaper" href="/newsletter" size="sm">
-		<span class="long-label">Subscribe to our Newsletter</span>
-		<span class="short-label">Newsletter</span>
-	</Button>
-	<Button icon="twitter" href="https://twitter.com/TradingProtocol" size="sm">
-		<span class="long-label">Follow us on Twitter</span>
-		<span class="short-label">Twitter</span>
-	</Button>
-	<Button icon="rss" href="/blog/rss.xml" rel="external" size="sm">
-		<span class="long-label">RSS Feed</span>
-		<span class="short-label">RSS</span>
-	</Button>
+<div class="social-links">
+	<Button icon="newspaper" label="Subscribe to our Newsletter" href="/newsletter" size="sm" />
+	<Button icon="twitter" label="Follow us on Twitter" href="https://twitter.com/TradingProtocol" size="sm" />
+	<Button icon="rss" label="RSS Feed" href="/blog/rss.xml" rel="external" size="sm" />
 </div>
 
 <style lang="postcss">
 	.social-links {
+		column-gap: var(--space-md);
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: var(--space-md);
-
-		& :global .button {
-			--icon-size: 1.125rem !important;
-		}
-	}
-
-	.layout--index {
 		flex-direction: row;
+		justify-content: var(--justify-content, start);
+		gap: var(--space-md);
 
 		@media (--viewport-sm-down) {
 			flex-direction: column;
 		}
-	}
 
-	.layout--post {
-		flex-direction: column;
-		margin-bottom: var(--space-md);
-	}
-
-	.layout--post .short-label,
-	.layout--index .long-label {
-		display: none;
-	}
-
-	@media (--viewport-md-up) {
-		.layout--index {
-			justify-content: start;
-			column-gap: var(--space-md);
-		}
-
-		.layout--post {
-			flex-direction: row;
-			margin-bottom: var(--space-xl);
-		}
-
-		.layout--index .long-label {
-			display: revert;
-		}
-
-		.layout--index .short-label {
-			display: none;
+		& :global .button {
+			--icon-size: 1.125rem !important;
 		}
 	}
 </style>
