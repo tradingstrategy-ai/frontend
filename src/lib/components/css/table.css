@@ -119,6 +119,15 @@ table:not(.table) {
 				--c-accent: var(--hsl-text);
 				color: hsla(var(--hsl-text-inverted));
 			}
+
+			& .up-down-cell .up-down-indicator {
+				&.bearish {
+					background: hsla(var(--hsl-bearish), 0.24) !important;
+				}
+				&.bullish {
+					background: hsla(var(--hsl-bullish), 0.24) !important;
+				}
+			}
 		}
 
 		& a {
@@ -232,6 +241,11 @@ table.loading {
 			position: absolute;
 			right: var(--space-sm);
 			top: var(--space-sm);
+		}
+
+		& * {
+			color: transparent;
+			background: transparent !important;
 		}
 	}
 

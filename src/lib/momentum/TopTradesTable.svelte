@@ -36,17 +36,4 @@ of pair records is based on the records returned by `top-momentum` API.
 		float: right;
 		white-space: nowrap;
 	}
-
-	tr {
-		&:hover {
-			& :global .up-down-indicator {
-				&.bearish {
-					background: hsla(var(--hsl-bearish), 0.24) !important;
-				}
-				&.bullish {
-					background: hsla(var(--hsl-bullish), 0.24) !important;
-				}
-			}
-		}
-	}
 </style>

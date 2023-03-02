@@ -13,6 +13,7 @@
 
 <style lang="postcss">
 	th {
+		border-radius: 0 !important;
 		padding: 0 0 var(--space-sl) !important;
 	}
 
