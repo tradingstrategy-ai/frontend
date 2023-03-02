@@ -30,7 +30,7 @@
 			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
 		}),
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'position_id', order: 'asc' }],
+			initialSortKeys: [{ id: 'position_id', order: 'desc' }],
 			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination(),
