@@ -43,7 +43,12 @@
 			{/if}
 
 			<DataBox label="Profitability">
-				<Profitability value={currentStats.profitability} />
+				<div class="profitability">
+					<Profitability value={currentStats.profitability} />
+					{#if trades.some((t) => t.trade_type === 'stop_loss')}
+						<span class="stop-loss">stop loss</span>
+					{/if}
+				</div>
 			</DataBox>
 
 			{#if position.closed_at}
@@ -60,7 +65,7 @@
 				<DataBox label="Value now" value={formatDollar(currentStats.value)} />
 			{/if}
 
-			<DataBox label="Value (highest)" value={formatDollar(getValueAtPeak(positionStats))} />
+			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
 		</DataBoxes>
 
 		{#if hasFailedTrades}
@@ -81,6 +86,27 @@
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);
+		}
+	}
+
+	.profitability {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.stop-loss {
+		display: flex;
+		align-items: center;
+		padding-inline: 1em;
+		color: hsla(var(--hsl-bearish));
+		background: hsla(var(--hsl-bearish), 0.12);
+		border-radius: var(--space-sm);
+		font: var(--f-ui-sm-bold);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+		text-transform: uppercase;
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-xs-bold);
+			letter-spacing: var(--f-ui-xs-spacing, normal);
 		}
 	}
 </style>
