@@ -37,11 +37,11 @@
 		<DataBox label="Liquidity provider fees" value="N/A" />
 		<DataBox label="Expected quantity">
 			{formatAmount(Number(trade.planned_quantity))}
-			{trade.pair.quote.token_symbol}
+			{trade.pair.base.token_symbol}
 		</DataBox>
 		<DataBox label="Realized quantity">
 			{formatAmount(Number(trade.executed_quantity))}
-			{trade.pair.quote.token_symbol}
+			{trade.pair.base.token_symbol}
 		</DataBox>
 		<DataBox label="Gas fees" value="N/A" />
 	</DataBoxes>
