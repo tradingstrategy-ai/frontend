@@ -14,6 +14,10 @@
 	export let positions: TradingPosition[];
 	export let status: string;
 	export let columns: string[];
+	export let page = 0;
+	export let sort = 'position_id';
+	export let filter = '';
+	export let direction: 'asc' | 'desc' = 'desc';
 	export let hasSearch = false;
 	export let hasPagination = false;
 
@@ -28,13 +32,14 @@
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
 		tableFilter: addTableFilter({
+			initialFilterValue: filter,
 			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
 		}),
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'position_id', order: 'desc' }],
+			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination(),
+		page: addPagination({ initialPageIndex: page }),
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
@@ -114,7 +119,7 @@
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">

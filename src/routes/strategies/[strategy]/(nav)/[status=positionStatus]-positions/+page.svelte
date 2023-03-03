@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
 	import { AlertList, AlertItem } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
@@ -9,6 +12,20 @@
 	$: status = data.status;
 	$: combinedPositionList = createCombinedPositionList(data.positions, data.state.stats);
 	$: isClosed = status === 'closed';
+
+	$: q = $page.url.searchParams;
+	$: options = {
+		page: Number(q.get('page')) || 0,
+		sort: q.get('sort') || 'position_id',
+		direction: q.get('direction') || 'desc'
+	};
+
+	async function handleChange({ detail }: ComponentEvents<PositionTable>['change']) {
+		// skip URL updates when user navigates to different positions status page
+		if (!$page.url.pathname.includes(status)) return;
+		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		detail.scrollToTop();
+	}
 
 	const statusColumns = {
 		open: ['profitability', 'value', 'opened_at', 'details_cta'],
@@ -32,9 +49,11 @@
 		<PositionTable
 			positions={combinedPositionList}
 			{status}
+			{...options}
 			columns={statusColumns[status]}
 			hasPagination={isClosed}
 			hasSearch={isClosed}
+			on:change={handleChange}
 		/>
 	{:else}
 		<AlertList status="success">
