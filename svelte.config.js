@@ -13,8 +13,7 @@ const config = {
 
 	kit: {
 		adapter: node({
-			envPrefix: 'FRONTEND_',
-			polyfill: false
+			envPrefix: 'FRONTEND_'
 		}),
 
 		alias: {
