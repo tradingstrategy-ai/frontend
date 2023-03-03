@@ -23,7 +23,9 @@ of pair records is based on the records returned by `top-momentum` API.
 					<td>{pair.pair_symbol}</td>
 					<td>{pair.exchange_name}</td>
 					<td>
-						<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
+						<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} let:formatted>
+							<span style:white-space="nowrap">{formatted}</span>
+						</UpDownCell>
 					</td>
 				</tr>
 			</a>
@@ -32,8 +34,10 @@ of pair records is based on the records returned by `top-momentum` API.
 </table>
 
 <style lang="postcss">
-	td :global(.up-down-indicator) {
-		float: right;
-		white-space: nowrap;
+	.top-trades-table {
+		@media (--viewport-sm-down) {
+			--up-down-font: var(--f-ui-xs-medium);
+			--up-down-spacing: var(--f-ui-xs-spacing);
+		}
 	}
 </style>
