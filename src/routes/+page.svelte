@@ -52,7 +52,9 @@
 			<div class="coming-soon">Coming soon</div>
 			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
-				<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
+				<div class="newsletter-cta">
+					<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
+				</div>
 				<Button
 					icon="twitter"
 					label="Follow us on Twitter"
@@ -119,18 +121,24 @@
 			& p {
 				font: var(--f-ui-xl-roman);
 			}
-		}
 
-		& :global .strategies .ctas {
-			display: flex;
-			gap: var(--space-lg);
-			width: 100%;
+			& .ctas {
+				display: flex;
+				gap: var(--space-lg);
+				width: 100%;
 
-			@media (--viewport-sm-down) {
-				flex-direction: column;
+				@media (--viewport-sm-down) {
+					flex-direction: column;
 
-				& .button {
-					width: 100%;
+					& .button {
+						width: 100%;
+					}
+				}
+			}
+
+			& .newsletter-cta {
+				@media (width < 390px) {
+					display: none;
 				}
 			}
 		}
