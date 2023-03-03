@@ -1,13 +1,19 @@
 <script lang="ts">
-	import { getBlockchainExplorerLink } from 'trade-executor-frontend/helpers/chain-explorer';
+	import { getChainExplorerLink } from 'trade-executor-frontend/helpers/chain-explorer';
 
 	export let chain_id: number;
 	export let tx_hash: string;
+
+	$: href = getChainExplorerLink(chain_id, tx_hash);
 </script>
 
-<a target="_blank" href={getBlockchainExplorerLink(chain_id, tx_hash)}>
+{#if href}
+	<a target="_blank" rel="noreferrer" {href}>
+		{tx_hash}
+	</a>
+{:else}
 	{tx_hash}
-</a>
+{/if}
 
 <style lang="postcss">
 	a {
