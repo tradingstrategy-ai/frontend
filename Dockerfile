@@ -1,7 +1,7 @@
 #######################################
 # Build stage
 #######################################
-FROM node:16.15 as builder
+FROM node:18.14 as builder
 
 ARG FONT_ZIP_DOWNLOAD_URL
 ENV FONT_ZIP_DOWNLOAD_URL=$FONT_ZIP_DOWNLOAD_URL
@@ -29,7 +29,7 @@ RUN npm run build
 #######################################
 # Serve stage
 #######################################
-FROM node:16.15-slim
+FROM node:18.14-slim
 
 WORKDIR /app
 
