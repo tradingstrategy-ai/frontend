@@ -14,7 +14,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: row;
-		justify-content: var(--justify-content, start);
+		justify-content: var(--justify-content, flex-start);
 		gap: var(--space-md);
 
 		@media (--viewport-sm-down) {
