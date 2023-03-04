@@ -46,7 +46,7 @@
 			<DataBox label="Profitability">
 				<div class="profitability">
 					<UpDownIndicator
-						value={currentStats.profitability}
+						value={currentStats?.profitability}
 						formatter={formatProfitability}
 						compareFn={determineProfitability}
 					/>
@@ -64,10 +64,10 @@
 				<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
 			{:else}
 				<DataBox label="Quantity">
-					{formatTokenAmount(currentStats.quantity)}
+					{formatTokenAmount(currentStats?.quantity)}
 					{position.pair.base.token_symbol}
 				</DataBox>
-				<DataBox label="Value now" value={formatDollar(currentStats.value)} />
+				<DataBox label="Value now" value={formatDollar(currentStats?.value)} />
 			{/if}
 
 			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />

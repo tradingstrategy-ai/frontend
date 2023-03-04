@@ -11,7 +11,6 @@
 
 	$: status = data.status;
 	$: combinedPositionList = createCombinedPositionList(data.positions, data.state.stats);
-	$: isClosed = status === 'closed';
 
 	$: q = $page.url.searchParams;
 	$: options = {
@@ -40,7 +39,7 @@
 			<AlertList status="error">
 				<AlertItem>
 					The frozen positions could not be automatically open or closed, usually due to a problem with related tokens
-					or blockchains. The profitabitility cannot be established for the same reason. Manual intervention maybe
+					or blockchains. The profitability cannot be established for the same reason. Manual intervention may be
 					needed.
 				</AlertItem>
 			</AlertList>
@@ -51,8 +50,8 @@
 			{status}
 			{...options}
 			columns={statusColumns[status]}
-			hasPagination={isClosed}
-			hasSearch={isClosed}
+			hasPagination={status === 'closed'}
+			hasSearch={status === 'closed'}
 			on:change={handleChange}
 		/>
 	{:else}
