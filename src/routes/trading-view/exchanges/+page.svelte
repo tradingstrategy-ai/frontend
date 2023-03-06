@@ -33,14 +33,14 @@
 <Breadcrumbs />
 
 <main class="dexes">
-	<Section layout="boxed">
+	<Section>
 		<HeroBanner
 			title="Decentralised exchanges"
 			subtitle="Browse supported decentralised exchanges across all blockchains"
 		/>
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
 	</Section>
 </main>

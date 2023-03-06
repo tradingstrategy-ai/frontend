@@ -62,7 +62,7 @@
 <Breadcrumbs />
 
 <main>
-	<Section header layout="boxed">
+	<Section header>
 		<HeroBanner contentFullWidth title="Historical DEX trading data">
 			<svelte:fragment slot="subtitle">
 				<p>
@@ -79,7 +79,7 @@
 		</HeroBanner>
 	</Section>
 
-	<Section layout="boxed">
+	<Section>
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}

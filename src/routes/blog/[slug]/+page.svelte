@@ -17,7 +17,7 @@
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
 <main class="blog-details-page">
-	<Section article layout="boxed" size="sm">
+	<Section article size="sm">
 		<header>
 			<SocialLinks --justify-content="space-between" />
 			<h1>{data.title}</h1>
@@ -28,7 +28,7 @@
 		<BlogPostContent html={data.html} />
 	</Section>
 
-	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+	<Section class="newsletter" id="home-newsletter" padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>

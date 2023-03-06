@@ -8,7 +8,7 @@
 	$: showSearch = $page.url.pathname !== '/search';
 </script>
 
-<Section header layout="boxed">
+<Section header>
 	<div class="nav-bar" style:overflow="visible">
 		<Header>
 			<svelte:fragment slot="menu">

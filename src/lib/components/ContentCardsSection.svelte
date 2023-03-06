@@ -18,7 +18,7 @@ A section component to display a collection of ContentCards in a responsive grid
 </script>
 
 <div class="content-cards">
-	<Section {cols} layout="boxed" padding="lg" {title}>
+	<Section {cols} padding="lg" {title}>
 		<slot />
 	</Section>
 </div>

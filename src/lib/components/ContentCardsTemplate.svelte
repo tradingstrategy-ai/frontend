@@ -27,7 +27,7 @@ Should be used in conjunction with those two components.
 </svelte:head>
 
 <main class="content-cards-template">
-	<Section class="hero" layout="boxed" padding="md">
+	<Section class="hero" padding="md">
 		<slot name="hero" />
 	</Section>
 	<slot />

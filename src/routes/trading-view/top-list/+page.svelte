@@ -11,7 +11,7 @@
 <Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
 
 <main>
-	<Section header layout="boxed">
+	<Section header>
 		<HeroBanner contentFullWidth title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
 	</Section>
 

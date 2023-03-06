@@ -59,7 +59,7 @@ https://search.google.com/structured-data/testing-tool
 	}
 </script>
 
-<Section nav layout="boxed" attrs={{ 'aria-label': 'breadcrumb' }}>
+<Section nav attrs={{ 'aria-label': 'breadcrumb' }}>
 	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
 			{@const active = breadcrumb !== breadcrumbs.at(-1)}

@@ -29,11 +29,11 @@
 <Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
 <main class="pairs">
-	<Section layout="boxed">
+	<Section>
 		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<PairsTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>

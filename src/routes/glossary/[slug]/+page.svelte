@@ -51,7 +51,7 @@
 <main>
 	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-	<Section layout="boxed">
+	<Section>
 		<article>
 			<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
 			<div class="answer">
@@ -77,7 +77,7 @@
 		/>
 	</ContentCardsSection>
 
-	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+	<Section class="newsletter" id="glossary-newsletter" padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>

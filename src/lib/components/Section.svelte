@@ -3,11 +3,10 @@
 Layout utility component for displaying a major site section with grid-based content.
 - use `header` or `footer` flags specificy HTML element (`section` by default)
 - supports optional `header` and `footer` slots in additional default content slot
-- supports `boxed` or `fullWidth` layouts
 
 ### Usage:
 ```tsx
-	<Section class="foo" id="bar" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
+	<Section class="foo" id="bar" padding="md" title="Top trades" cols={2} gap="lg">
 		Section content here
 	</Section>
 ```
@@ -26,7 +25,6 @@ Layout utility component for displaying a major site section with grid-based con
 	export let gap: SectionSizing = '';
 	export let header = false;
 	export let id: string | undefined = undefined;
-	export let layout: 'boxed' | 'fullwidth' | '' = '';
 	export let nav = false;
 	export let padding: SectionSizing = '';
 	export let size: SectionSizing = '';
@@ -34,7 +32,7 @@ Layout utility component for displaying a major site section with grid-based con
 	export let title: string = '';
 
 	$: tag = header ? 'header' : footer ? 'footer' : article ? 'article' : nav ? 'nav' : 'section';
-	$: allClasses = ['section', classes, layout, size && `size-${size}`, padding && `padding-${padding}`];
+	$: allClasses = ['section', classes, size && `size-${size}`, padding && `padding-${padding}`];
 </script>
 
 <svelte:element this={tag} {id} {...attrs} class={allClasses.join(' ')}>
@@ -68,6 +66,23 @@ Layout utility component for displaying a major site section with grid-based con
 	.section {
 		padding: var(--section-padding-y, 0) var(--section-padding-x, 0);
 
+		--section-padding-x: var(--space-xl);
+		@media (--viewport-lg-down) {
+			--section-padding-x: var(--space-ll);
+		}
+		@media (--viewport-md-down) {
+			--section-padding-x: var(--space-lg);
+		}
+
+		@media (--viewport-sm-down) {
+			--section-padding-x: var(--space-md);
+		}
+
+		& > :global(*) {
+			max-width: var(--container-max-width);
+			margin: auto;
+		}
+
 		& header {
 			padding: 0 0 var(--section-padding-y);
 			text-align: center;
@@ -97,25 +112,6 @@ Layout utility component for displaying a major site section with grid-based con
 		& header {
 			display: grid;
 			place-items: center stretch;
-		}
-
-		&.boxed,
-		&.padding-xs,
-		&.padding-sm,
-		&.padding-md,
-		&.padding-lg,
-		&.padding-xl {
-			--section-padding-x: var(--space-xl);
-			@media (--viewport-lg-down) {
-				--section-padding-x: var(--space-ll);
-			}
-			@media (--viewport-md-down) {
-				--section-padding-x: var(--space-lg);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-x: var(--space-md);
-			}
 		}
 
 		&.padding-xs {
@@ -196,11 +192,6 @@ Layout utility component for displaying a major site section with grid-based con
 				--section-padding-y: var(--space-6xl);
 			}
 		}
-	}
-
-	.boxed > :global(*) {
-		max-width: var(--container-max-width);
-		margin: auto;
 	}
 
 	.subtitle {

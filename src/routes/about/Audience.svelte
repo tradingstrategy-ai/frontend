@@ -6,7 +6,6 @@
 	<Section
 		cols={2}
 		gap="xl"
-		layout="boxed"
 		title="Audience"
 		subtitle="The Trading Strategy protocol creates value for all participants within the DeFi ecosystem."
 	>

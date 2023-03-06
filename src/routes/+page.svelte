@@ -30,7 +30,7 @@
 	<HomeHeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
+		<Section class="top-trades" padding="md" title="Top trades" cols={2} gap="lg">
 			<SummaryBox title="Most profitable 24h">
 				<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
 				<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
@@ -45,7 +45,7 @@
 		</Section>
 	{/if}
 
-	<Section class="strategies" layout="boxed" padding="lg">
+	<Section class="strategies" padding="lg">
 		<div class="inner">
 			<h2>Strategies</h2>
 			<Illustration name="bull-vs-bear" height="min(30vh, 20rem)" />
@@ -67,13 +67,13 @@
 	</Section>
 
 	{#if posts}
-		<Section title="Blog" class="blog" layout="boxed" padding="md">
+		<Section title="Blog" class="blog" padding="md">
 			<BlogRoll {posts} />
 			<Button label="Read all posts" href="/blog" slot="footer" />
 		</Section>
 	{/if}
 
-	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+	<Section class="newsletter" id="home-newsletter" padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>

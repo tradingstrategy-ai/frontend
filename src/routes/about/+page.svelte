@@ -20,7 +20,6 @@
 		title="Are you an institutional investor looking to create your own private strategies and deploy them on our protocol?"
 		class="banner"
 		gap="4xl"
-		layout="boxed"
 		padding="lg"
 	>
 		<div>
@@ -40,7 +39,7 @@
 
 	<Platform />
 
-	<Section gap="3xl" title="Do you want to trade on decentralised markets?" class="banner" layout="boxed" padding="md">
+	<Section gap="3xl" title="Do you want to trade on decentralised markets?" class="banner" padding="md">
 		<div>
 			<p>
 				You can leverage our decentralised market data for your market analytics, technical analysis, service or
@@ -58,7 +57,7 @@
 		<Button label="Contact now" href="mailto:info@tradingstrategy.ai" />
 	</Section>
 
-	<Section title="Get in touch" gap="lg" layout="boxed" padding="md">
+	<Section title="Get in touch" gap="lg" padding="md">
 		<div class="contact-cta">
 			<Button secondary label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
 			<Button

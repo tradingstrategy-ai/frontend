@@ -4,7 +4,7 @@
 </script>
 
 <div class="newsletter-page">
-	<Section gap="lg" layout="boxed" padding="md">
+	<Section gap="lg" padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </div>

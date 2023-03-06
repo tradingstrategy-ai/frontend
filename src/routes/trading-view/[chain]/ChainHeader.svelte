@@ -8,7 +8,7 @@
 	export let homepage: string;
 </script>
 
-<Section header layout="boxed">
+<Section header>
 	<a class="inner tile a" href={homepage}>
 		<h1>
 			<img alt={`${name} logo`} src={getLogoUrl(slug)} />

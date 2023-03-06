@@ -17,7 +17,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 </svelte:head>
 
 <main class="slow-load">
-	<Section layout="boxed" padding="sm" title="You're on Page {page}">
+	<Section padding="sm" title="You're on Page {page}">
 		<p>
 			In this page's <code>load</code> function, we waited for {page * 2}
 			seconds to mimick a real-world API call before rendering. You can go back to the home page, which should load instantaneously

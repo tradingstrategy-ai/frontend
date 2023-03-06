@@ -30,7 +30,7 @@
 <Breadcrumbs />
 
 <main>
-	<Section layout="boxed">
+	<Section>
 		<HeroBanner contentFullWidth title="Tokens">
 			<svelte:fragment slot="subtitle">
 				Browse supported decentralised tokens across
@@ -39,7 +39,7 @@
 		</HeroBanner>
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<TokenTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>

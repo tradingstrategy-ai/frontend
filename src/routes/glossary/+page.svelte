@@ -28,7 +28,7 @@
 </svelte:head>
 
 <main class="glossary-main">
-	<Section header layout="boxed" padding="md">
+	<Section header padding="md">
 		<HeroBanner contentFullWidth title="DeFi and trading dictionary">
 			<div slot="subtitle">
 				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
@@ -44,7 +44,7 @@
 		</HeroBanner>
 	</Section>
 
-	<Section class="content" layout="boxed" padding="sm">
+	<Section class="content" padding="sm">
 		{#each Object.entries(index) as [letter, terms]}
 			<div class="index-letter">
 				<h2>{letter.toUpperCase()}</h2>
@@ -60,7 +60,7 @@
 		{/each}
 	</Section>
 
-	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+	<Section class="newsletter" id="glossary-newsletter" padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>
