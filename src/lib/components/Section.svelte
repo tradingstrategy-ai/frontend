@@ -36,13 +36,11 @@ Layout utility component for displaying a major site section with grid-based con
 </script>
 
 <svelte:element this={tag} {id} {...attrs} class={allClasses.join(' ')}>
-	{#if $$slots.header || title || subtitle}
+	{#if title || subtitle}
 		<header>
-			{#if $$slots.header || title}
+			{#if title}
 				<h2 class="title">
-					<slot name="header">
-						{title}
-					</slot>
+					{title}
 				</h2>
 				{#if subtitle}
 					<p class="subtitle">{subtitle}</p>
