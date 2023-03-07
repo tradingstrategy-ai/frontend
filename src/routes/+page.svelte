@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Illustration, Section, NewSection, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
@@ -67,10 +67,13 @@
 	</Section>
 
 	{#if posts}
-		<Section title="Blog" class="blog" padding="md">
+		<NewSection padding="md" gap="md">
+			<h2 style:text-align="center">Blog</h2>
 			<BlogRoll {posts} />
-			<Button label="Read all posts" href="/blog" slot="footer" />
-		</Section>
+			<div style:text-align="center">
+				<Button label="Read all posts" href="/blog" />
+			</div>
+		</NewSection>
 	{/if}
 
 	<Section class="newsletter" id="home-newsletter" padding="md">
@@ -147,18 +150,12 @@
 			display: none;
 		}
 
-		& .blog {
-			& .blog-roll {
-				/* limit to 3 posts on larger viewports (single row) */
-				@media (width >= 1140px) {
-					& > :nth-child(4) {
-						display: none;
-					}
+		& .blog-roll {
+			/* limit to 3 posts on larger viewports (single row) */
+			@media (width >= 1140px) {
+				& > :nth-child(4) {
+					display: none;
 				}
-			}
-
-			& footer .button {
-				justify-self: center;
 			}
 		}
 	}
