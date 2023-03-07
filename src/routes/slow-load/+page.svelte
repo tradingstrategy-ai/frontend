@@ -4,7 +4,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Button, Section } from '$lib/components';
+	import { Button, NewSection } from '$lib/components';
 
 	export let data: PageData;
 	$: page = data.page;
@@ -17,25 +17,23 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 </svelte:head>
 
 <main class="slow-load">
-	<Section padding="sm" title="You're on Page {page}">
+	<NewSection padding="sm" gap="sm">
+		<h2>You're on Page {page}</h2>
+
 		<p>
-			In this page's <code>load</code> function, we waited for {page * 2}
-			seconds to mimick a real-world API call before rendering. You can go back to the home page, which should load instantaneously
-			because it doesn't do much server side. Page {nextPage} will have a longer delay of {nextPage * 2} seconds.
+			In this page's <code>load</code> function, we waited for {page * 2} seconds to mimick a real-world API call before
+			rendering. You can go back to the home page, which should load instantaneously because it doesn't do much server side.
+			Page {nextPage} will have a longer delay of {nextPage * 2} seconds.
 		</p>
 
-		<div slot="footer" class="ctas">
+		<div class="ctas">
 			<Button label="Home" href="/" />
 			<Button secondary label="Page {nextPage}" href="?page={nextPage}" />
 		</div>
-	</Section>
+	</NewSection>
 </main>
 
 <style lang="postcss">
-	.slow-load :global .section header {
-		text-align: left;
-	}
-
 	.ctas {
 		display: flex;
 		gap: var(--space-md);

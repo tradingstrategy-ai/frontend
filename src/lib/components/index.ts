@@ -21,6 +21,7 @@ export { default as Logo } from './Logo.svelte';
 export { default as Menu } from './Menu.svelte';
 export { default as MenuItem } from './MenuItem.svelte';
 export { default as NavPanel } from './NavPanel.svelte';
+export { default as NewSection } from './NewSection.svelte';
 export { default as PageHeader } from './PageHeader.svelte';
 export { default as PageHeading } from './PageHeading.svelte';
 export { default as Select } from './Select.svelte';
