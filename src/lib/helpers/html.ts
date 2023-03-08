@@ -6,7 +6,7 @@ const entities = {
 	"'": '&apos;'
 };
 
-export function escapeHtml(unsafe: string) {
+export function escapeHtml(unsafe: string | null | undefined) {
 	// @ts-ignore
-	return unsafe.replace(/[&<>"']/g, (char) => entities[char]);
+	return unsafe ? unsafe.replace(/[&<>"']/g, (char) => entities[char]) : '';
 }

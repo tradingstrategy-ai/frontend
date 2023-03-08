@@ -28,6 +28,6 @@ const renderItem = (post: Post) => `<item>
 <guid>https://tradingstrategy.ai/blog/${post.slug}</guid>
 <title>${escapeHtml(post.title)}</title>
 <link>https://tradingstrategy.ai/blog/${post.slug}</link>
-<description>${escapeHtml(post.custom_excerpt)}</description>
+<description>${escapeHtml(post.excerpt)}</description>
 <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
 </item>`;
