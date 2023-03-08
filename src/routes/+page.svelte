@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Grid, Illustration, Section, NewSection, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, Section, NewSection, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
@@ -52,7 +52,6 @@
 	<Section class="strategies" padding="lg">
 		<div class="inner">
 			<h2>Strategies</h2>
-			<Illustration name="bull-vs-bear" height="min(30vh, 20rem)" />
 			<div class="coming-soon">Coming soon</div>
 			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
@@ -152,10 +151,6 @@
 					display: none;
 				}
 			}
-		}
-
-		& :global .illustration {
-			display: none;
 		}
 
 		& .blog-roll {
