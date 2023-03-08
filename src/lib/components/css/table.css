@@ -210,6 +210,33 @@ table:not(.table) {
 				}
 			}
 
+			& tbody {
+				counter-reset: table-elements-counter;
+
+				& > a {
+					/* &::before {
+						counter-increment: table-elements-counter;
+						content: '#' counter(table-elements-counter);
+						font: var(--f-ui-xl-bold);
+					} */
+
+					& tr {
+						padding-top: var(--space-5xl);
+						position: relative;
+
+						&::before {
+							counter-increment: table-elements-counter;
+							content: '#' counter(table-elements-counter);
+							font: var(--f-ui-xl-bold);
+							font: var(--f-ui-xl-bold);
+							left: var(--space-ml);
+							position: absolute;
+							top: var(--space-ms);
+						}
+					}
+				}
+			}
+
 			& tfoot,
 			& tfoot tr {
 				display: grid;
