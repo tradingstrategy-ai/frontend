@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Illustration, Section, NewSection, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, Illustration, Section, NewSection, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
@@ -30,19 +30,23 @@
 	<HomeHeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<Section class="top-trades" padding="md" title="Top trades" cols={2} gap="lg">
-			<SummaryBox title="Most profitable 24h">
-				<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-				<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-				<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
-			</SummaryBox>
+		<NewSection padding="md" gap="md">
+			<h2>Top trades</h2>
 
-			<SummaryBox title="Worst performance 24h">
-				<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-				<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-				<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
-			</SummaryBox>
-		</Section>
+			<Grid cols={2} gap="lg">
+				<SummaryBox title="Most profitable 24h">
+					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+					<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
+				</SummaryBox>
+
+				<SummaryBox title="Worst performance 24h">
+					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+					<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
+				</SummaryBox>
+			</Grid>
+		</NewSection>
 	{/if}
 
 	<Section class="strategies" padding="lg">
@@ -83,6 +87,10 @@
 
 <style lang="postcss">
 	.home-page :global {
+		& h2 {
+			text-align: center;
+		}
+
 		& .strategies {
 			background-color: hsla(var(--hsla-background-accent-1));
 
