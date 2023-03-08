@@ -238,7 +238,7 @@ chartiq dependency.
 		}
 
 		@media (--viewport-xs) {
-			aspect-ratio: 4/3;
+			aspect-ratio: 4/6;
 		}
 	}
 
