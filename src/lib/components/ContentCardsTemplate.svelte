@@ -15,7 +15,7 @@ Should be used in conjunction with those two components.
 ```
 -->
 <script lang="ts">
-	import Section from '$lib/components/Section.svelte';
+	import { NewSection } from '$lib/components';
 
 	export let pageTitle: string;
 	export let pageDescription: string;
@@ -27,14 +27,8 @@ Should be used in conjunction with those two components.
 </svelte:head>
 
 <main class="content-cards-template">
-	<Section class="hero" padding="md">
+	<NewSection>
 		<slot name="hero" />
-	</Section>
+	</NewSection>
 	<slot />
 </main>
-
-<style lang="postcss">
-	.content-cards-template :global .hero {
-		--section-padding-y: 0 !important;
-	}
-</style>

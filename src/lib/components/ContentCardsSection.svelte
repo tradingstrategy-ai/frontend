@@ -11,44 +11,43 @@ A section component to display a collection of ContentCards in a responsive grid
 ```
 -->
 <script lang="ts">
-	import { Section } from '$lib/components';
+	import { Grid, NewSection } from '$lib/components';
 
 	export let cols = 2;
 	export let title: string | undefined = undefined;
 </script>
 
-<div class="content-cards">
-	<Section {cols} padding="lg" {title}>
-		<slot />
-	</Section>
+<div class="content-cards-section">
+	<NewSection>
+		{#if title}
+			<h2>{title}</h2>
+		{/if}
+		<Grid {cols}>
+			<slot />
+		</Grid>
+	</NewSection>
 </div>
 
 <style lang="postcss">
-	.content-cards :global .section {
-		--section-padding-y: var(--space-ml) !important;
+	.content-cards-section {
 		margin-bottom: var(--space-xl);
+		--section-padding: var(--space-ml);
+		--section-gap: var(--space-ls);
+		--grid-gap: var(--space-ll);
 
 		@media (--viewport-xs) {
-			--section-padding-y: var(--space-ms) !important;
-		}
-
-		& .grid {
-			--grid-gap: var(--space-ll) !important;
-
-			@media (--viewport-xs) {
-				--grid-gap: var(--space-ls) !important;
-			}
+			--section-padding: var(--space-ms);
+			--section-gap: var(--space-sm);
+			--grid-gap: var(--space-ls);
 		}
 
 		& h2 {
-			font: var(--f-heading-lg-medium) !important;
-			letter-spacing: var(--f-heading-lg-spacing, normal) !important;
-			margin: 0 0 var(--space-sm);
-			text-align: left;
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
 
 			@media (--viewport-xs) {
-				font: var(--f-heading-md-medium) !important;
-				margin: 0 0 var(--space-xxs);
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 		}
 	}
