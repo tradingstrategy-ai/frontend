@@ -4,11 +4,12 @@
 	export let gap: SectionSizing = 'none';
 	export let padding: SectionSizing = 'none';
 	export let size: 'xs' | 'sm' | undefined = undefined;
+	export let tag: 'header' | 'footer' | 'article' | 'nav' | 'section' = 'section';
 </script>
 
-<section class="section padding-{padding} gap-{gap} {size ? `size-${size}` : ''}">
+<svelte:element this={tag} class="section padding-{padding} gap-{gap} {size ? `size-${size}` : ''}">
 	<slot />
-</section>
+</svelte:element>
 
 <style lang="postcss">
 	.section {
@@ -105,7 +106,8 @@
 
 	/* TODO: move font settings somewhere else */
 	.section :global {
-		& :where(h2) {
+		& > h2,
+		& > header > h2 {
 			font: var(--f-heading-xl-medium);
 
 			@media (--viewport-sm-down) {
@@ -113,7 +115,8 @@
 			}
 		}
 
-		& :where(p) {
+		& > p,
+		& > header > p {
 			font: var(--f-ui-lg-roman);
 
 			@media (--viewport-xs) {
