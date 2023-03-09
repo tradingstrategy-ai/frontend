@@ -10,7 +10,10 @@
 
 	function minPerformanceDate() {
 		const timestamps = strategies.map(({ summary_statistics }) => {
-			return summary_statistics?.performance_chart_90_days?.[0][0];
+			// return timestamp from first tick (each tick is tuple of [ ts, value ])
+			const ticks = summary_statistics?.performance_chart_90_days;
+			if (!ticks || ticks.length === 0) return;
+			return ticks[0]?.[0];
 		});
 		return fromUnixTime(min(timestamps));
 	}
