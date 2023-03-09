@@ -1,0 +1,52 @@
+<script lang="ts">
+	import type { ComponentProps } from 'svelte';
+	import { NewSection } from '$lib/components';
+
+	export let title: string;
+	export let padding: ComponentProps<NewSection>['padding'];
+	export let gap: ComponentProps<NewSection>['gap'];
+</script>
+
+<div class="banner">
+	<NewSection {padding} {gap} size="sm">
+		<h2>{title}</h2>
+		<div class="content">
+			<slot />
+		</div>
+		{#if $$slots.cta}
+			<footer>
+				<slot name="cta" />
+			</footer>
+		{/if}
+	</NewSection>
+</div>
+
+<style lang="postcss">
+	.banner {
+		display: contents;
+		--section-background: hsla(var(--hsla-background-accent-1));
+
+		& :is(h2, footer) {
+			text-align: center;
+		}
+
+		& :is(h2, footer, .content) {
+			padding-inline: var(--space-md);
+		}
+
+		@media (--viewport-sm-down) {
+			& h2 {
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
+			}
+		}
+
+		@media (--viewport-md-up) {
+			& .content :global(:where(p, li)) {
+				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--f-ui-xl-spacing, normal);
+				margin-bottom: var(--space-lg);
+			}
+		}
+	}
+</style>

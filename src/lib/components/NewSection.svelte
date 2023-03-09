@@ -3,19 +3,22 @@
 
 	export let gap: SectionSizing = 'none';
 	export let padding: SectionSizing = 'none';
+	export let size: 'xs' | 'sm' | undefined = undefined;
 </script>
 
-<section class="section padding-{padding} gap-{gap}">
+<section class="section padding-{padding} gap-{gap} {size ? `size-${size}` : ''}">
 	<slot />
 </section>
 
 <style lang="postcss">
 	.section {
 		--private-width: min(calc(100% - (var(--private-padding-x) * 2)), var(--container-max-width));
-		padding-inline: calc((100% - var(--private-width)) / 2);
-		padding-block: var(--section-padding, var(--private-padding-y));
+
+		background: var(--section-background, inherit);
 		display: grid;
 		gap: var(--section-gap, var(--private-gap));
+		padding-block: var(--section-padding, var(--private-padding-y));
+		padding-inline: calc((100% - var(--private-width)) / 2);
 
 		/* Shared spacing layer (used for padding and gap) */
 		--private-padding-x: var(--space-xl);
@@ -91,6 +94,13 @@
 	}
 	.gap-xl {
 		--private-gap: var(--private-spacing-xl);
+	}
+
+	.size-xs {
+		--container-max-width: 40rem;
+	}
+	.size-sm {
+		--container-max-width: 48rem;
 	}
 
 	/* TODO: move font settings somewhere else */
