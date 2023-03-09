@@ -17,6 +17,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	let title: string;
 	let email: string;
 	let errorMessage: string;
+	let emailField: TextInput;
 
 	// finite state machine to manage form states/transitions
 	// see: https://github.com/kenkunz/svelte-fsm/wiki
@@ -63,6 +64,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		// @ts-ignore
 		return ({ result }) => state[result.type](result);
 	};
+
+	export function focus(options = {}) {
+		emailField.focus(options);
+	}
 </script>
 
 {#if $state !== 'subscribed'}
@@ -74,6 +79,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		use:enhance={enhancedSubmit}
 	>
 		<TextInput
+			bind:this={emailField}
 			bind:value={email}
 			size="xl"
 			type="email"

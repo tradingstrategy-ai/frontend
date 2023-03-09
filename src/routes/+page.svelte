@@ -4,20 +4,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Grid, Section, NewSection, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, NewSection, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let data: PageData;
+	let newsletterBanner: NewsletterOptInBanner;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
-
-	function scrollToNewsletterOptIn() {
-		const el = document.querySelector('#home-newsletter input[type=email]');
-		el?.scrollIntoView({ behavior: 'smooth' });
-		el?.focus({ preventScroll: true });
-	}
 </script>
 
 <svelte:head>
@@ -49,14 +44,14 @@
 		</NewSection>
 	{/if}
 
-	<Section class="strategies" padding="lg">
-		<div class="inner">
+	<NewSection padding="lg" --section-background="hsla(var(--hsla-background-accent-1))">
+		<div class="strategies">
 			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>
 			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
 				<div class="newsletter-cta">
-					<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
+					<Button icon="newspaper" label="Subscribe to newsletter" on:click={newsletterBanner.scrollIntoView} />
 				</div>
 				<Button
 					icon="twitter"
@@ -67,7 +62,7 @@
 				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
 			</div>
 		</div>
-	</Section>
+	</NewSection>
 
 	{#if posts}
 		<NewSection padding="md" gap="md">
@@ -79,87 +74,80 @@
 		</NewSection>
 	{/if}
 
-	<Section class="newsletter" id="home-newsletter" padding="md">
-		<NewsletterOptInBanner />
-	</Section>
+	<NewSection padding="md">
+		<NewsletterOptInBanner bind:this={newsletterBanner} />
+	</NewSection>
 </main>
 
 <style lang="postcss">
-	.home-page :global {
+	h2 {
+		text-align: center;
+	}
+
+	.strategies {
+		background: hsla(var(--hsl-box), var(--a-box-b));
+		border-radius: var(--radius-xl);
+		display: grid;
+		gap: var(--space-3xl);
+		justify-self: center;
+		max-width: 60rem;
+		padding: var(--space-xl);
+		place-items: center;
+		text-align: center;
+
+		@media (--viewport-md-up) {
+			margin-top: var(--space-ss);
+			padding: var(--space-5xl);
+		}
+
 		& h2 {
-			text-align: center;
-		}
-
-		& .strategies {
-			background-color: hsla(var(--hsla-background-accent-1));
-
-			& .inner {
-				background: hsla(var(--hsl-box), var(--a-box-b));
-				border-radius: var(--radius-xl);
-				display: grid;
-				gap: var(--space-3xl);
-				max-width: 60rem;
-				margin: auto;
-				padding: var(--space-xl);
-				place-content: center;
-				place-items: center;
-				text-align: center;
-
-				& h2 {
-					font: var(--f-heading-lg-medium);
-					@media (--viewport-md-up) {
-						font: var(--f-heading-xl-medium);
-					}
-				}
-
-				@media (--viewport-md-up) {
-					margin-top: var(--space-ss);
-					padding: var(--space-5xl);
-				}
-			}
-
-			& .coming-soon {
-				font: var(--f-ui-sm-medium);
-				letter-spacing: var(--f-ui-sm-spacing, normal);
-				color: var(--c-text-2-v1);
-				text-transform: uppercase;
-				padding: var(--space-sl) var(--space-ls);
-				border: 1px solid var(--c-parchment-super-dark);
-				border-radius: var(--radius-xxl);
-			}
-
-			& p {
-				font: var(--f-ui-xl-roman);
-			}
-
-			& .ctas {
-				display: flex;
-				gap: var(--space-lg);
-				width: 100%;
-
-				@media (--viewport-sm-down) {
-					flex-direction: column;
-
-					& .button {
-						width: 100%;
-					}
-				}
-			}
-
-			& .newsletter-cta {
-				@media (width < 390px) {
-					display: none;
-				}
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+			@media (--viewport-md-up) {
+				font: var(--f-heading-xl-medium);
+				letter-spacing: var(--f-heading-xl-spacing, normal);
 			}
 		}
 
-		& .blog-roll {
-			/* limit to 3 posts on larger viewports (single row) */
-			@media (width >= 1140px) {
-				& > :nth-child(4) {
-					display: none;
-				}
+		& .coming-soon {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: var(--c-text-2-v1);
+			text-transform: uppercase;
+			padding: var(--space-sl) var(--space-ls);
+			border: 1px solid var(--c-parchment-super-dark);
+			border-radius: var(--radius-xxl);
+		}
+
+		& p {
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
+		}
+
+		& .ctas {
+			display: flex;
+			gap: var(--space-lg);
+			width: 100%;
+
+			@media (--viewport-sm-down) {
+				flex-direction: column;
 			}
+		}
+
+		/* hide on small displays due to label wrapping */
+		& .newsletter-cta {
+			display: grid;
+
+			@media (width < 390px) {
+				display: none;
+			}
+		}
+	}
+
+	/* limit to 3 posts on larger viewports (single row) */
+	.home-page :global .blog-roll > :nth-child(4) {
+		@media (width >= 1140px) {
+			display: none;
 		}
 	}
 </style>
