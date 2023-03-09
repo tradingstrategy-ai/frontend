@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Banner, Button, HeroVideo, Section } from '$lib/components';
+	import { Banner, Button, HeroVideo, NewSection } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';
@@ -51,7 +51,8 @@
 		<Button slot="cta" label="Contact now" href="mailto:info@tradingstrategy.ai" />
 	</Banner>
 
-	<Section title="Get in touch" gap="lg" padding="md">
+	<NewSection gap="md" padding="md">
+		<h2 style:text-align="center">Get in touch</h2>
 		<div class="contact-cta">
 			<Button secondary label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
 			<Button
@@ -62,14 +63,14 @@
 				target="_blank"
 			/>
 		</div>
-	</Section>
+	</NewSection>
 </main>
 
 <style>
 	.contact-cta {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(14rem, auto));
-		gap: var(--space-ls) !important;
+		gap: var(--space-ls);
 		justify-self: center;
 		justify-content: center;
 		width: min(90vw, 40rem);
