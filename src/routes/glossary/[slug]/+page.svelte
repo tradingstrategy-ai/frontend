@@ -12,7 +12,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
-	import { Section } from '$lib/components';
+	import { NewSection } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
@@ -51,14 +51,12 @@
 <main>
 	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-	<Section>
-		<article>
-			<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
-			<div class="answer">
-				{@html term.html}
-			</div>
-		</article>
-	</Section>
+	<NewSection tag="article" padding="sm" gap="sm">
+		<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
+		<div class="answer">
+			{@html term.html}
+		</div>
+	</NewSection>
 
 	<ContentCardsSection>
 		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
@@ -77,28 +75,14 @@
 		/>
 	</ContentCardsSection>
 
-	<Section class="newsletter" id="glossary-newsletter" padding="md">
+	<NewSection padding="md">
 		<NewsletterOptInBanner />
-	</Section>
+	</NewSection>
 </main>
 
 <style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-lg);
-
-		@media (--viewport-sm-down) {
-			gap: var(--space-ms);
-		}
-	}
-
-	article {
-		gap: var(--space-2xl);
-	}
-
 	h1 {
 		font: var(--f-h1-medium);
-		margin-bottom: var(--space-xl);
 		text-transform: capitalize;
 	}
 
