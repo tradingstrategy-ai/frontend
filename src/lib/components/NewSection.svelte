@@ -1,13 +1,17 @@
 <script lang="ts">
 	import type { SectionSizing } from '$lib/types';
+	import type { AriaAttributes } from 'svelte/elements';
 
+	export let ariaAttrs: AriaAttributes = {};
 	export let gap: SectionSizing = 'none';
 	export let padding: SectionSizing = 'none';
 	export let size: 'xs' | 'sm' | undefined = undefined;
 	export let tag: 'header' | 'footer' | 'article' | 'nav' | 'section' = 'section';
+
+	$: classNames = `section padding-${padding} gap-${gap} ${size ? `size-${size}` : ''}`;
 </script>
 
-<svelte:element this={tag} class="section padding-{padding} gap-{gap} {size ? `size-${size}` : ''}">
+<svelte:element this={tag} class={classNames} {...ariaAttrs}>
 	<slot />
 </svelte:element>
 
