@@ -5,7 +5,7 @@
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import MomentumTable from '$lib/momentum/MomentumTable.svelte';
-	import { HeroBanner, Section } from '$lib/components';
+	import { HeroBanner, NewSection } from '$lib/components';
 
 	export let data: PageData;
 	$: up = data.direction === 'up';
@@ -19,7 +19,7 @@
 <Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-up': 'Daily gainers', 'daily-down': 'Daily losers' }} />
 
 <main>
-	<Section header>
+	<NewSection tag="header">
 		<HeroBanner contentFullWidth title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h">
 			<svelte:fragment slot="subtitle">
 				<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a>
@@ -28,11 +28,11 @@
 				today. Showing only the pairs with minimum $1M liquidity. All trading pairs are benchmarked against the US Dollar.
 			</svelte:fragment>
 		</HeroBanner>
-	</Section>
+	</NewSection>
 
-	<Section>
+	<NewSection>
 		<MomentumTable pairs={data.pairs} />
-	</Section>
+	</NewSection>
 </main>
 
 <style>

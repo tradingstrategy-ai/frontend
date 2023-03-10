@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
-	import { HeroBanner, Section } from '$lib/components';
+	import { HeroBanner, NewSection } from '$lib/components';
 
 	export let data: PageData;
 
@@ -28,25 +28,12 @@
 
 <Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
-<main class="pairs">
-	<Section>
+<main class="pair-index-page">
+	<NewSection tag="header">
 		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
-	</Section>
+	</NewSection>
 
-	<Section padding="sm">
+	<NewSection padding="sm">
 		<PairsTable {...data} {loading} on:change={handleChange} />
-	</Section>
+	</NewSection>
 </main>
-
-<style lang="postcss">
-	@media (--viewport-md) {
-		.pairs :global table .right {
-			text-align: right;
-		}
-
-		.pairs :global table .cta {
-			max-width: 8rem;
-			padding-left: 1rem;
-		}
-	}
-</style>

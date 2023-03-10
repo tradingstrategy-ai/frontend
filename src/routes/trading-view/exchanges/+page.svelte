@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
-	import { HeroBanner, Section } from '$lib/components';
+	import { HeroBanner, NewSection } from '$lib/components';
 
 	export let data: PageData;
 
@@ -32,28 +32,15 @@
 
 <Breadcrumbs />
 
-<main class="dexes">
-	<Section>
+<main class="exchange-index-page">
+	<NewSection tag="header">
 		<HeroBanner
 			title="Decentralised exchanges"
 			subtitle="Browse supported decentralised exchanges across all blockchains"
 		/>
-	</Section>
+	</NewSection>
 
-	<Section padding="sm">
+	<NewSection padding="sm">
 		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
-	</Section>
+	</NewSection>
 </main>
-
-<style lang="postcss">
-	@media (--viewport-md) {
-		.dexes :global table .right {
-			text-align: right;
-		}
-
-		.dexes :global table .cta {
-			max-width: 8rem;
-			padding-left: 1rem;
-		}
-	}
-</style>
