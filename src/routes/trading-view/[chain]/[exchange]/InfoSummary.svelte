@@ -41,11 +41,13 @@
 		align-self: start;
 		display: grid;
 		font: var(--f-ui-large-roman);
-		gap: 1.4em;
 	}
 
 	p {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-md);
 		font: inherit;
+		padding: var(--space-md);
 	}
 
 	strong {

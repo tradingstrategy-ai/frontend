@@ -23,7 +23,7 @@
 		display: grid;
 		grid-template-rows: 1fr auto;
 		gap: var(--space-lg);
-		padding: calc(var(--container-width) * 0.15);
+		padding: var(--space-4xl);
 
 		@media (--viewport-md-down) {
 			padding: var(--space-ls);

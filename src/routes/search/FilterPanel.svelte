@@ -177,7 +177,7 @@
 		background-color: transparent;
 		padding: 0;
 		text-transform: uppercase;
-		font: var(--f-heading-sm-roman);
+		font: var(--f-ui-lg-roman);
 		letter-spacing: var(--f-heading-sm-spacing, normal);
 		color: var(--c-text-1-v1);
 		text-align: left;

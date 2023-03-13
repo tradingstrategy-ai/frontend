@@ -5,13 +5,21 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { AlertItem, AlertList, Tabs, type DataTable } from '$lib/components';
+	import {
+		AlertItem,
+		AlertList,
+		Button,
+		EntityPageHeader,
+		Tabs,
+		Section,
+		SummaryBox,
+		type DataTable
+	} from '$lib/components';
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
-	import { formatAmount } from '$lib/helpers/formatters';
+	import { formatAmount, formatUrlAsDomain } from '$lib/helpers/formatters';
 
 	export let data: PageData;
 	const { chain } = data;
@@ -59,10 +67,13 @@
 
 <Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
 
-<main>
-	<ChainHeader name={chain.chain_name} slug={chain.chain_slug} homepage={chain.homepage} />
+<main class="blockchain">
+	<EntityPageHeader name={chain.chain_name} slug={chain.chain_slug} homepage={chain.homepage}>
+		<svelte:fragment slot="subtitle">Blockchain</svelte:fragment>
+		<Button slot="actions">Visit {formatUrlAsDomain(chain.homepage)}</Button>
+	</EntityPageHeader>
 
-	<section class="ds-container summary-data" data-testid="chain-summary">
+	<Section class="summary-data" cols={4} testId="chain-summary" layout="boxed">
 		<div class="block-info">
 			<BlockInfoTile title="Last indexed block" count={chain.end_block} timestamp={chain.last_swap_at} />
 			<BlockInfoTile title="First indexed block" count={chain.start_block} timestamp={chain.first_swap_at} />
@@ -91,9 +102,9 @@
 			buttonLabel="See inclusion criteria"
 			href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
 		/>
-	</section>
+	</Section>
 
-	<section class="ds-container explorer-wrapper">
+	<Section class="explorer-wrapper" layout="boxed">
 		<Tabs items={{ exchanges: 'Exchanges', pairs: 'Trading Pairs' }} selected={activeTab} on:change={handleTabChange}>
 			{#if activeTab === 'exchanges'}
 				{@const hiddenColumns = ['chain_name']}
@@ -131,7 +142,7 @@
 				{/if}
 			{/if}
 		</Tabs>
-	</section>
+	</Section>
 </main>
 
 <style lang="postcss">
@@ -147,8 +158,7 @@
 		gap: var(--layout-gap);
 	}
 
-	.summary-data {
-		grid-template-columns: repeat(4, 1fr);
+	.blockchain :global .summary-data > .grid {
 		gap: var(--layout-gap);
 
 		@media (--viewport-md-down) {
@@ -168,11 +178,11 @@
 		}
 	}
 
-	.explorer-wrapper {
+	.blockchain :global .explorer-wrapper {
 		margin-top: var(--space-ll);
 
 		& h2 {
-			font: var(--f-heading-sm-roman);
+			font: var(--f-ui-lg-roman);
 			margin-block: var(--space-lg);
 		}
 	}

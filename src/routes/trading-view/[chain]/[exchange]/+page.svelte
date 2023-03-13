@@ -5,7 +5,8 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
+	import { formatUrlAsDomain } from '$lib/helpers/formatters';
+	import { AlertItem, AlertList, Button, EntityPageHeader, SummaryBox } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -53,14 +54,75 @@
 <Breadcrumbs labels={{ [data.exchange_slug]: data.human_readable_name }} />
 
 <main>
-	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
+	<EntityPageHeader name={data.human_readable_name} slug={data.exchange_slug} homepage={data.homepage}>
+		<span slot="subtitle">on {data.chain_name}</span>
+		<Button slot="actions">Visit {formatUrlAsDomain(data.homepage)}</Button>
+		<svelte:fragment slot="details-left">
+			<SummaryBox title="Blockchain details">
+				<table>
+					<tbody>
+						<colgroup>
+							<col />
+						</colgroup>
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Volume 30d</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Volume all-time</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Trading pairs</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Tracked trading pairs</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Version</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Type</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+						{#if data.homepage}
+							<tr>
+								<th scope="row">Internal ID</th>
+								<td>Needs data</td>
+							</tr>
+						{/if}
+					</tbody>
+				</table>
+			</SummaryBox>
+		</svelte:fragment>
+
+		<SummaryBox slot="details-right" title="Description">
+			<InfoSummary details={data} />
+		</SummaryBox>
+
+		<SummaryBox class="actions-box" slot="bottom" title="Actions">
+			<Button label="Visit {nameDetails.name}" href={data.homepage} />
+			<Button label="View {nameDetails.name} on blockchain explorer" href={data.blockchain_explorer_link} />
+			<Button label="Download as Excel" href="/trading-view/{data.chain_slug}/{data.exchange_slug}/export-data" />
+		</SummaryBox>
+	</EntityPageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">
-		<div class="ds-2-col">
-			<InfoTable details={data} {nameDetails} />
-			<InfoSummary details={data} />
-		</div>
-
 		<AlertList status="warning">
 			<AlertItem title="Uniswap v3 beta" displayWhen={data.exchange_type === 'uniswap_v3'}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
@@ -72,12 +134,6 @@
 				this exchange may be inaccurate.
 			</AlertItem>
 		</AlertList>
-
-		<div class="exchange-actions">
-			<Button label="Visit {nameDetails.name}" href={data.homepage} />
-			<Button label="View {nameDetails.name} on blockchain explorer" href={data.blockchain_explorer_link} />
-			<Button label="Download as Excel" href="/trading-view/{data.chain_slug}/{data.exchange_slug}/export-data" />
-		</div>
 	</section>
 
 	<section class="ds-container trading-pairs">
@@ -105,10 +161,10 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-3xl);
+		gap: var(--space-md);
 
 		@media (--viewport-lg-up) {
-			gap: 5rem;
+			gap: var(--space-xl);
 		}
 	}
 
@@ -118,22 +174,13 @@
 		@media (--viewport-lg-up) {
 			gap: var(--space-6xl);
 		}
-
-		& .ds-2-col {
-			row-gap: var(--space-xl);
-		}
 	}
 
-	.exchange-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-ls) var(--space-xl);
-		padding-block: var(--space-lg);
+	main :global .actions-box .inner {
+		place-content: start;
 
-		@media (--viewport-xs) {
-			flex-direction: column;
-			padding-block: 0;
+		@media (--viewport-md-up) {
+			grid-auto-flow: column;
 		}
 	}
 

@@ -24,7 +24,7 @@
 	});
 </script>
 
-<div>
+<div class="smart-contract-widget">
 	{label}
 	<address>
 		<a {href} target="_blank">{address}</a>
@@ -43,8 +43,12 @@
 </div>
 
 <style lang="postcss">
-	div {
+	.smart-contract-widget {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-md);
+		font: inherit;
 		overflow: hidden;
+		padding: var(--space-md);
 	}
 
 	address {

@@ -22,6 +22,7 @@ Layout utility component for displaying a major site section with grid-based con
 	let classes: string = '';
 	export { classes as class };
 	export let cols = 1;
+	export let testId = '';
 	export let footer = false;
 	export let gap: SectionSizing = '';
 	export let header = false;
@@ -37,7 +38,7 @@ Layout utility component for displaying a major site section with grid-based con
 	$: allClasses = ['section', classes, layout, size && `size-${size}`, padding && `padding-${padding}`];
 </script>
 
-<svelte:element this={tag} {id} {...attrs} class={allClasses.join(' ')}>
+<svelte:element this={tag} data-testid={testId} {id} {...attrs} class={allClasses.join(' ')}>
 	{#if $$slots.header || title || subtitle}
 		<header>
 			{#if $$slots.header || title}
