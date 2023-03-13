@@ -1,3 +1,18 @@
+<!--
+@component
+Responsive layout utility for delineating a horizontal page section with appropriate margins. Use
+with a nested `Grid` component to create multi-column layouts.
+
+#### Usage:
+```tsx
+	<Section padding="md" gap="sm">
+		<h2>Section heading</h2>
+		<Grid cols={3} gap="lg">
+			your nested grid elements here
+		</Grid>
+	</Section>
+```
+-->
 <script lang="ts">
 	import type { AriaAttributes } from 'svelte/elements';
 
