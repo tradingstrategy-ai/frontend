@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Logo, Icon, Menu, Footer } from '$lib/components';
+	import { Logo, Icon, Menu } from '$lib/components';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	export let hidden = false;
@@ -19,7 +19,6 @@
 		<Menu align="center" on:click={close}>
 			<slot />
 		</Menu>
-		<Footer small />
 		<div class="color-mode-picker">
 			<ColorModePicker showLabel />
 		</div>
