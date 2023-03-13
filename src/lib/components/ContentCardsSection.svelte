@@ -11,21 +11,21 @@ A section component to display a collection of ContentCards in a responsive grid
 ```
 -->
 <script lang="ts">
-	import { Grid, NewSection } from '$lib/components';
+	import { Grid, Section } from '$lib/components';
 
 	export let cols = 2;
 	export let title: string | undefined = undefined;
 </script>
 
 <div class="content-cards-section">
-	<NewSection>
+	<Section>
 		{#if title}
 			<h2>{title}</h2>
 		{/if}
 		<Grid {cols}>
 			<slot />
 		</Grid>
-	</NewSection>
+	</Section>
 </div>
 
 <style lang="postcss">

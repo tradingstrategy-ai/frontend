@@ -15,7 +15,7 @@ Should be used in conjunction with those two components.
 ```
 -->
 <script lang="ts">
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 
 	export let pageTitle: string;
 	export let pageDescription: string;
@@ -27,8 +27,8 @@ Should be used in conjunction with those two components.
 </svelte:head>
 
 <main class="content-cards-template">
-	<NewSection>
+	<Section>
 		<slot name="hero" />
-	</NewSection>
+	</Section>
 	<slot />
 </main>

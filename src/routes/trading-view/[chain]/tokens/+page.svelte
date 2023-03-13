@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenTable from '$lib/explorer/TokenTable.svelte';
-	import { HeroBanner, NewSection } from '$lib/components';
+	import { HeroBanner, Section } from '$lib/components';
 
 	export let data: PageData;
 
@@ -30,16 +30,16 @@
 <Breadcrumbs />
 
 <main class="token-index-page">
-	<NewSection tag="header">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Tokens">
 			<svelte:fragment slot="subtitle">
 				Browse supported decentralised tokens across
 				<a class="body-link" href="/trading-view/{chainSlug}">{chainName} blockchain</a>
 			</svelte:fragment>
 		</HeroBanner>
-	</NewSection>
+	</Section>
 
-	<NewSection padding="sm">
+	<Section padding="sm">
 		<TokenTable {...data} {loading} on:change={handleChange} />
-	</NewSection>
+	</Section>
 </main>

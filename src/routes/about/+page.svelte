@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Banner, Button, HeroVideo, NewSection } from '$lib/components';
+	import { Banner, Button, HeroVideo, Section } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';
@@ -51,7 +51,7 @@
 		<Button slot="cta" label="Contact now" href="mailto:info@tradingstrategy.ai" />
 	</Banner>
 
-	<NewSection gap="md" padding="md">
+	<Section gap="md" padding="md">
 		<h2 style:text-align="center">Get in touch</h2>
 		<div class="contact-cta">
 			<Button secondary label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
@@ -63,7 +63,7 @@
 				target="_blank"
 			/>
 		</div>
-	</NewSection>
+	</Section>
 </main>
 
 <style>

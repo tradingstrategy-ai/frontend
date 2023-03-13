@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Button, Grid, NewSection, SummaryBox } from '$lib/components';
+	import { Button, Grid, Section, SummaryBox } from '$lib/components';
 </script>
 
 <div class="audience">
-	<NewSection>
+	<Section>
 		<header>
 			<h2>Audience</h2>
 			<p>The Trading Strategy protocol creates value for all participants within the DeFi ecosystem.</p>
@@ -51,7 +51,7 @@
 				/>
 			</SummaryBox>
 		</Grid>
-	</NewSection>
+	</Section>
 </div>
 
 <style lang="postcss">

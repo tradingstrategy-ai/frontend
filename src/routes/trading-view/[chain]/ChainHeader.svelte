@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Button, NewSection } from '$lib/components';
+	import { Button, Section } from '$lib/components';
 
 	export let name: string;
 	export let slug: string;
 	export let homepage: string;
 </script>
 
-<NewSection tag="header">
+<Section tag="header">
 	<a class="inner tile a" href={homepage}>
 		<h1>
 			<img alt={`${name} logo`} src={getLogoUrl(slug)} />
@@ -16,7 +16,7 @@
 		</h1>
 		<Button>Visit {formatUrlAsDomain(homepage)}</Button>
 	</a>
-</NewSection>
+</Section>
 
 <style lang="postcss">
 	.inner {

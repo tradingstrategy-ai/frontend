@@ -8,7 +8,7 @@
 		Button,
 		ContentCard,
 		HeroBanner,
-		NewSection,
+		Section,
 		TextInput,
 		Timestamp
 	} from '$lib/components';
@@ -70,7 +70,7 @@
 <Breadcrumbs />
 
 <main class="backtesting-page">
-	<NewSection tag="header">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Historical DEX trading data">
 			<svelte:fragment slot="subtitle">
 				<p>
@@ -85,9 +85,9 @@
 				</p>
 			</svelte:fragment>
 		</HeroBanner>
-	</NewSection>
+	</Section>
 
-	<NewSection>
+	<Section>
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
@@ -158,7 +158,7 @@
 				</tbody>
 			</table>
 		</div>
-	</NewSection>
+	</Section>
 
 	<ContentCardsSection>
 		<ContentCard title="Data logistics" icon="book">

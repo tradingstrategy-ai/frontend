@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Header, MenuItem, NewSection } from '$lib/components';
+	import { Header, MenuItem, Section } from '$lib/components';
 	import Search from '$lib/search/Search.svelte';
 
 	$: currentPage = $page.url.pathname;
 	$: showSearch = $page.url.pathname !== '/search';
 </script>
 
-<NewSection tag="header">
+<Section tag="header">
 	<div class="nav-bar" style:overflow="visible">
 		<Header>
 			<svelte:fragment slot="menu">
@@ -23,7 +23,7 @@
 			</svelte:fragment>
 		</Header>
 	</div>
-</NewSection>
+</Section>
 
 <style>
 	.nav-bar {

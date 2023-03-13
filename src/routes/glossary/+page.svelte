@@ -2,7 +2,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import type { GlossaryEntry, GlossaryMap } from './api/types';
-	import { HeroBanner, NewSection } from '$lib/components';
+	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
@@ -28,7 +28,7 @@
 </svelte:head>
 
 <main class="glossary-main">
-	<NewSection tag="header" padding="md">
+	<Section tag="header" padding="md">
 		<HeroBanner contentFullWidth title="DeFi and trading dictionary">
 			<div slot="subtitle">
 				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
@@ -42,9 +42,9 @@
 				</p>
 			</div>
 		</HeroBanner>
-	</NewSection>
+	</Section>
 
-	<NewSection padding="sm">
+	<Section padding="sm">
 		<div class="content">
 			{#each Object.entries(index) as [letter, terms]}
 				<div class="index-letter">
@@ -60,11 +60,11 @@
 				</div>
 			{/each}
 		</div>
-	</NewSection>
+	</Section>
 
-	<NewSection padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

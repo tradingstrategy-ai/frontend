@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Grid, NewSection, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
@@ -25,7 +25,7 @@
 	<HomeHeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<NewSection padding="md" gap="md">
+		<Section padding="md" gap="md">
 			<h2>Top trades</h2>
 
 			<Grid cols={2} gap="lg">
@@ -41,10 +41,10 @@
 					<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
 				</SummaryBox>
 			</Grid>
-		</NewSection>
+		</Section>
 	{/if}
 
-	<NewSection padding="lg" --section-background="hsla(var(--hsla-background-accent-1))">
+	<Section padding="lg" --section-background="hsla(var(--hsla-background-accent-1))">
 		<div class="strategies">
 			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>
@@ -62,21 +62,21 @@
 				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
 			</div>
 		</div>
-	</NewSection>
+	</Section>
 
 	{#if posts}
-		<NewSection padding="md" gap="md">
+		<Section padding="md" gap="md">
 			<h2 style:text-align="center">Blog</h2>
 			<BlogRoll {posts} />
 			<div style:text-align="center">
 				<Button label="Read all posts" href="/blog" />
 			</div>
-		</NewSection>
+		</Section>
 	{/if}
 
-	<NewSection padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner bind:this={newsletterBanner} />
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

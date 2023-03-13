@@ -12,7 +12,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/googleMeta';
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
@@ -51,12 +51,12 @@
 <main>
 	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-	<NewSection tag="article" padding="sm" gap="sm">
+	<Section tag="article" padding="sm" gap="sm">
 		<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
 		<div class="answer">
 			{@html term.html}
 		</div>
-	</NewSection>
+	</Section>
 
 	<ContentCardsSection>
 		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
@@ -75,9 +75,9 @@
 		/>
 	</ContentCardsSection>
 
-	<NewSection padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

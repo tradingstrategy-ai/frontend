@@ -1,221 +1,94 @@
-<!--
-@component
-Layout utility component for displaying a major site section with grid-based content.
-- use `header` or `footer` flags specificy HTML element (`section` by default)
-- supports optional `header` and `footer` slots in additional default content slot
-
-### Usage:
-```tsx
-	<Section class="foo" id="bar" padding="md" title="Top trades" cols={2} gap="lg">
-		Section content here
-	</Section>
-```
--->
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
-	import type { SectionSizing } from '$lib/types';
-	import Grid from './Grid.svelte';
+	import type { AriaAttributes } from 'svelte/elements';
 
-	export let article = false;
-	export let attrs: HTMLAttributes = {};
-	let classes: string = '';
-	export { classes as class };
-	export let cols = 1;
-	export let footer = false;
-	export let gap: SectionSizing = '';
-	export let header = false;
-	export let id: string | undefined = undefined;
-	export let nav = false;
-	export let padding: SectionSizing = '';
-	export let size: SectionSizing = '';
-	export let subtitle: string = '';
-	export let title: string = '';
+	type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
-	$: tag = header ? 'header' : footer ? 'footer' : article ? 'article' : nav ? 'nav' : 'section';
-	$: allClasses = ['section', classes, size && `size-${size}`, padding && `padding-${padding}`];
+	export let ariaAttrs: AriaAttributes = {};
+	export let gap: Size | undefined = undefined;
+	export let padding: Size | undefined = undefined;
+	export let maxWidth: Size = 'xl';
+	export let tag: 'header' | 'footer' | 'article' | 'nav' | 'section' = 'section';
+
+	const styles = [
+		`--padding-y: var(--spacing-${padding})`,
+		`--gap: var(--spacing-${gap})`,
+		`--size: var(--size-${maxWidth})`
+	];
 </script>
 
-<svelte:element this={tag} {id} {...attrs} class={allClasses.join(' ')}>
-	{#if title || subtitle}
-		<header>
-			{#if title}
-				<h2 class="title">
-					{title}
-				</h2>
-				{#if subtitle}
-					<p class="subtitle">{subtitle}</p>
-				{/if}
-			{/if}
-		</header>
-	{/if}
-
-	<Grid {cols} {gap}>
-		<slot />
-	</Grid>
-
-	{#if $$slots.footer}
-		<footer>
-			<slot name="footer" />
-		</footer>
-	{/if}
+<svelte:element this={tag} {...ariaAttrs} class="section" style={styles.join(';')}>
+	<slot />
 </svelte:element>
 
 <style lang="postcss">
 	.section {
-		padding: var(--section-padding-y, 0) var(--section-padding-x, 0);
+		background: var(--section-background, inherit);
+		display: grid;
+		gap: var(--section-gap, var(--gap));
+		padding-block: var(--section-padding, var(--padding-y));
+		padding-inline: calc((100% - var(--width)) / 2);
+		--width: min(calc(100% - (var(--padding-x) * 2)), var(--size));
+		--padding-x: var(--space-xl);
 
-		--section-padding-x: var(--space-xl);
+		--size-xs: 40rem;
+		--size-sm: 48rem;
+		--size-md: 64rem;
+		--size-lg: 80rem;
+		--size-xl: 86rem;
+
+		/* Shared spacing variables (used for padding and gap) */
+		--spacing-xs: var(--space-xl);
+		--spacing-sm: var(--space-3xl);
+		--spacing-md: var(--space-7xl);
+		--spacing-lg: var(--space-8xl);
+		--spacing-xl: var(--space-12xl);
+
 		@media (--viewport-lg-down) {
-			--section-padding-x: var(--space-ll);
+			--padding-x: var(--space-ll);
+			--spacing-xs: var(--space-lg);
+			--spacing-sm: var(--space-lg);
+			--spacing-md: var(--space-4xl);
+			--spacing-lg: var(--space-5xl);
+			--spacing-xl: var(--space-9xl);
 		}
+
 		@media (--viewport-md-down) {
-			--section-padding-x: var(--space-lg);
+			--padding-x: var(--space-lg);
+			--spacing-xs: var(--space-ls);
+			--spacing-sm: var(--space-ls);
+			--spacing-md: var(--space-2xl);
+			--spacing-lg: var(--space-3xl);
+			--spacing-xl: var(--space-8xl);
 		}
 
 		@media (--viewport-sm-down) {
-			--section-padding-x: var(--space-md);
-		}
-
-		& > :global(*) {
-			max-width: var(--container-max-width);
-			margin: auto;
-		}
-
-		& header {
-			padding: 0 0 var(--section-padding-y);
-			text-align: center;
-
-			& h2 {
-				font: var(--f-heading-xl-medium);
-			}
-
-			@media (--viewport-md-down) {
-				& h2 {
-					font: var(--f-heading-xl-medium);
-				}
-			}
-
-			@media (--viewport-sm-down) {
-				& h2 {
-					font: var(--f-heading-lg-medium);
-				}
-			}
-		}
-
-		& footer {
-			padding: var(--section-padding-y) 0 0;
-		}
-
-		& footer,
-		& header {
-			display: grid;
-			place-items: center stretch;
-		}
-
-		&.padding-xs {
-			--section-padding-y: var(--space-xl);
-
-			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-lg);
-			}
-
-			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-ls);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-y: var(--space-ms);
-			}
-		}
-
-		&.padding-sm {
-			--section-padding-y: var(--space-3xl);
-
-			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-lg);
-			}
-
-			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-ls);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-y: var(--space-ml);
-			}
-		}
-
-		&.padding-md {
-			--section-padding-y: var(--space-7xl);
-
-			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-4xl);
-			}
-
-			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-2xl);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-y: var(--space-xl);
-			}
-		}
-		&.padding-lg {
-			--section-padding-y: var(--space-8xl);
-
-			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-5xl);
-			}
-
-			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-3xl);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-y: var(--space-xl);
-			}
-		}
-
-		&.padding-xl {
-			--section-padding-y: var(--space-12xl);
-
-			@media (--viewport-lg-down) {
-				--section-padding-y: var(--space-9xl);
-			}
-
-			@media (--viewport-md-down) {
-				--section-padding-y: var(--space-8xl);
-			}
-
-			@media (--viewport-sm-down) {
-				--section-padding-y: var(--space-6xl);
-			}
+			--padding-x: var(--space-md);
+			--spacing-xs: var(--space-ms);
+			--spacing-sm: var(--space-ml);
+			--spacing-md: var(--space-xl);
+			--spacing-lg: var(--space-xl);
+			--spacing-xl: var(--space-6xl);
 		}
 	}
 
-	.subtitle {
-		font: var(--f-ui-xl-roman);
-		@media (--viewport-xs) {
+	/* TODO: move font settings somewhere else */
+	.section :global {
+		& > h2,
+		& > header > h2 {
+			font: var(--f-heading-xl-medium);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-heading-lg-medium);
+			}
+		}
+
+		& > p,
+		& > header > p {
 			font: var(--f-ui-lg-roman);
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-md-roman);
+			}
 		}
-		margin-top: var(--space-md);
-	}
-
-	.section :global .grid > :is(p, li) {
-		font: var(--f-ui-lg-roman);
-		margin-bottom: var(--space-lg);
-
-		@media (--viewport-xs) {
-			font: var(--f-ui-md-roman);
-		}
-	}
-
-	.size-xs {
-		max-width: 40rem !important;
-		margin: auto;
-	}
-
-	.size-sm {
-		max-width: 48rem !important;
-		margin: auto;
 	}
 </style>

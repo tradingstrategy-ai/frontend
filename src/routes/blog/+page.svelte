@@ -3,7 +3,7 @@
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
-	import { AlertItem, AlertList, BlogRoll, HeroBanner, NewSection } from '$lib/components';
+	import { AlertItem, AlertList, BlogRoll, HeroBanner, Section } from '$lib/components';
 	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
@@ -31,7 +31,7 @@
 </svelte:head>
 
 <main class="blog-index-page">
-	<NewSection tag="header">
+	<Section tag="header">
 		<HeroBanner
 			title="Trading Strategy Blog"
 			subtitle="Read our insights into on-chain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
@@ -42,13 +42,13 @@
 				<SocialLinks />
 			</div>
 		</HeroBanner>
-	</NewSection>
+	</Section>
 
-	<NewSection padding="md">
+	<Section padding="md">
 		<BlogRoll {posts} />
-	</NewSection>
+	</Section>
 
-	<NewSection>
+	<Section>
 		{#if page.loading}
 			<div style:text-align="center">
 				<Spinner size="4rem" color="hsla(var(--hsl-text))" />
@@ -69,7 +69,7 @@
 				</p>
 			</OptInBanner>
 		{/if}
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

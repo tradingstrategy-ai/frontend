@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 
 	export let title: string;
-	export let padding: ComponentProps<NewSection>['padding'];
-	export let gap: ComponentProps<NewSection>['gap'];
+	export let padding: ComponentProps<Section>['padding'];
+	export let gap: ComponentProps<Section>['gap'];
 </script>
 
 <div class="banner">
-	<NewSection {padding} {gap} maxWidth="sm">
+	<Section {padding} {gap} maxWidth="sm">
 		<h2>{title}</h2>
 		<div class="content">
 			<slot />
@@ -18,7 +18,7 @@
 				<slot name="cta" />
 			</footer>
 		{/if}
-	</NewSection>
+	</Section>
 </div>
 
 <style lang="postcss">

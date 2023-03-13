@@ -4,7 +4,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Button, NewSection } from '$lib/components';
+	import { Button, Section } from '$lib/components';
 
 	export let data: PageData;
 	$: page = data.page;
@@ -17,7 +17,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 </svelte:head>
 
 <main class="slow-load">
-	<NewSection padding="sm" gap="sm">
+	<Section padding="sm" gap="sm">
 		<h2>You're on Page {page}</h2>
 
 		<p>
@@ -30,7 +30,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 			<Button label="Home" href="/" />
 			<Button secondary label="Page {nextPage}" href="?page={nextPage}" />
 		</div>
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

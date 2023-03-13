@@ -40,7 +40,7 @@ https://search.google.com/structured-data/testing-tool
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 
 	export let labels: BreadcrumbLabels = {};
 
@@ -59,7 +59,7 @@ https://search.google.com/structured-data/testing-tool
 	}
 </script>
 
-<NewSection tag="nav" ariaAttrs={{ 'aria-label': 'breadcrumb' }}>
+<Section tag="nav" ariaAttrs={{ 'aria-label': 'breadcrumb' }}>
 	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
 			{@const active = breadcrumb !== breadcrumbs.at(-1)}
@@ -77,7 +77,7 @@ https://search.google.com/structured-data/testing-tool
 			</li>
 		{/each}
 	</ol>
-</NewSection>
+</Section>
 
 <style lang="postcss">
 	ol {

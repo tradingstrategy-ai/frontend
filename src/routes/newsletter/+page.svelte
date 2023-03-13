@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 </script>
 
 <main class="newsletter-page">
-	<NewSection padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">

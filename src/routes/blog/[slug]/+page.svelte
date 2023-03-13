@@ -7,7 +7,7 @@
 	import SocialLinks from '../SocialLinks.svelte';
 	import BlogPostContent from '../BlogPostContent.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
-	import { NewSection } from '$lib/components';
+	import { Section } from '$lib/components';
 
 	export let data: PageData;
 </script>
@@ -17,7 +17,7 @@
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
 <main class="blog-details-page">
-	<NewSection tag="article" maxWidth="sm">
+	<Section tag="article" maxWidth="sm">
 		<header>
 			<SocialLinks --justify-content="space-between" />
 			<h1>{data.title}</h1>
@@ -26,11 +26,11 @@
 		</header>
 
 		<BlogPostContent html={data.html} />
-	</NewSection>
+	</Section>
 
-	<NewSection padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
-	</NewSection>
+	</Section>
 </main>
 
 <style lang="postcss">
