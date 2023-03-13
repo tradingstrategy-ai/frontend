@@ -53,6 +53,10 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 		cursor: pointer;
 		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);
+		@media (--viewport-md-down) {
+			padding: var(--space-sm) var(--space-sl);
+			font: var(--f-ui-md-medium);
+		}
 
 		@nest input:checked + & {
 			background: var(--c-background-4);
