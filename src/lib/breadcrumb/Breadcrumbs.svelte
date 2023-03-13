@@ -92,7 +92,7 @@ https://search.google.com/structured-data/testing-tool
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
-			gap: var(--space-xxs);
+			gap: var(--space-xs);
 			margin-left: calc(-1 * var(--space-sl));
 			margin-bottom: var(--space-xl);
 			padding-block: var(--space-md);
