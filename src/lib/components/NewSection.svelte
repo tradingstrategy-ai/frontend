@@ -1,111 +1,74 @@
 <script lang="ts">
-	import type { SectionSizing } from '$lib/types';
 	import type { AriaAttributes } from 'svelte/elements';
 
+	type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 	export let ariaAttrs: AriaAttributes = {};
-	export let gap: SectionSizing = 'none';
-	export let padding: SectionSizing = 'none';
-	export let size: 'xs' | 'sm' | undefined = undefined;
+	export let gap: Size | undefined = undefined;
+	export let padding: Size | undefined = undefined;
+	export let maxWidth: Size = 'xl';
 	export let tag: 'header' | 'footer' | 'article' | 'nav' | 'section' = 'section';
 
-	$: classNames = `section padding-${padding} gap-${gap} ${size ? `size-${size}` : ''}`;
+	const styles = [
+		`--padding-y: var(--spacing-${padding})`,
+		`--gap: var(--spacing-${gap})`,
+		`--size: var(--size-${maxWidth})`
+	];
 </script>
 
-<svelte:element this={tag} class={classNames} {...ariaAttrs}>
+<svelte:element this={tag} {...ariaAttrs} class="section" style={styles.join(';')}>
 	<slot />
 </svelte:element>
 
 <style lang="postcss">
 	.section {
-		--private-width: min(calc(100% - (var(--private-padding-x) * 2)), var(--container-max-width));
-
 		background: var(--section-background, inherit);
 		display: grid;
-		gap: var(--section-gap, var(--private-gap));
-		padding-block: var(--section-padding, var(--private-padding-y));
-		padding-inline: calc((100% - var(--private-width)) / 2);
+		gap: var(--section-gap, var(--gap));
+		padding-block: var(--section-padding, var(--padding-y));
+		padding-inline: calc((100% - var(--width)) / 2);
+		--width: min(calc(100% - (var(--padding-x) * 2)), var(--size));
+		--padding-x: var(--space-xl);
 
-		/* Shared spacing layer (used for padding and gap) */
-		--private-padding-x: var(--space-xl);
-		--private-spacing-xs: var(--space-xl);
-		--private-spacing-sm: var(--space-3xl);
-		--private-spacing-md: var(--space-7xl);
-		--private-spacing-lg: var(--space-8xl);
-		--private-spacing-xl: var(--space-12xl);
+		--size-xs: 40rem;
+		--size-sm: 48rem;
+		--size-md: 64rem;
+		--size-lg: 80rem;
+		--size-xl: 86rem;
+
+		/* Shared spacing variables (used for padding and gap) */
+		--spacing-xs: var(--space-xl);
+		--spacing-sm: var(--space-3xl);
+		--spacing-md: var(--space-7xl);
+		--spacing-lg: var(--space-8xl);
+		--spacing-xl: var(--space-12xl);
 
 		@media (--viewport-lg-down) {
-			--private-padding-x: var(--space-ll);
-			--private-spacing-xs: var(--space-lg);
-			--private-spacing-sm: var(--space-lg);
-			--private-spacing-md: var(--space-4xl);
-			--private-spacing-lg: var(--space-5xl);
-			--private-spacing-xl: var(--space-9xl);
+			--padding-x: var(--space-ll);
+			--spacing-xs: var(--space-lg);
+			--spacing-sm: var(--space-lg);
+			--spacing-md: var(--space-4xl);
+			--spacing-lg: var(--space-5xl);
+			--spacing-xl: var(--space-9xl);
 		}
 
 		@media (--viewport-md-down) {
-			--private-padding-x: var(--space-lg);
-			--private-spacing-xs: var(--space-ls);
-			--private-spacing-sm: var(--space-ls);
-			--private-spacing-md: var(--space-2xl);
-			--private-spacing-lg: var(--space-3xl);
-			--private-spacing-xl: var(--space-8xl);
+			--padding-x: var(--space-lg);
+			--spacing-xs: var(--space-ls);
+			--spacing-sm: var(--space-ls);
+			--spacing-md: var(--space-2xl);
+			--spacing-lg: var(--space-3xl);
+			--spacing-xl: var(--space-8xl);
 		}
 
 		@media (--viewport-sm-down) {
-			--private-padding-x: var(--space-md);
-			--private-spacing-xs: var(--space-ms);
-			--private-spacing-sm: var(--space-ml);
-			--private-spacing-md: var(--space-xl);
-			--private-spacing-lg: var(--space-xl);
-			--private-spacing-xl: var(--space-6xl);
+			--padding-x: var(--space-md);
+			--spacing-xs: var(--space-ms);
+			--spacing-sm: var(--space-ml);
+			--spacing-md: var(--space-xl);
+			--spacing-lg: var(--space-xl);
+			--spacing-xl: var(--space-6xl);
 		}
-	}
-
-	/* Padding levels */
-	.padding-none {
-		--private-padding-y: 0;
-	}
-	.padding-xs {
-		--private-padding-y: var(--private-spacing-xs);
-	}
-	.padding-sm {
-		--private-padding-y: var(--private-spacing-sm);
-	}
-	.padding-md {
-		--private-padding-y: var(--private-spacing-md);
-	}
-	.padding-lg {
-		--private-padding-y: var(--private-spacing-lg);
-	}
-	.padding-xl {
-		--private-padding-y: var(--private-spacing-xl);
-	}
-
-	/* Gap levels */
-	.gap-none {
-		--private-gap: 0;
-	}
-	.gap-xs {
-		--private-gap: var(--private-spacing-xs);
-	}
-	.gap-sm {
-		--private-gap: var(--private-spacing-sm);
-	}
-	.gap-md {
-		--private-gap: var(--private-spacing-md);
-	}
-	.gap-lg {
-		--private-gap: var(--private-spacing-lg);
-	}
-	.gap-xl {
-		--private-gap: var(--private-spacing-xl);
-	}
-
-	.size-xs {
-		--container-max-width: 40rem;
-	}
-	.size-sm {
-		--container-max-width: 48rem;
 	}
 
 	/* TODO: move font settings somewhere else */

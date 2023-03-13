@@ -1,6 +1,5 @@
 export type SectionSizing =
 	| ''
-	| 'none'
 	| 'xs'
 	| 'sm'
 	| 'md'

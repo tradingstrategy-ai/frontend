@@ -8,7 +8,7 @@
 </script>
 
 <div class="banner">
-	<NewSection {padding} {gap} size="sm">
+	<NewSection {padding} {gap} maxWidth="sm">
 		<h2>{title}</h2>
 		<div class="content">
 			<slot />

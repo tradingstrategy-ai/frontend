@@ -17,7 +17,7 @@
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
 <main class="blog-details-page">
-	<NewSection tag="article" size="sm">
+	<NewSection tag="article" maxWidth="sm">
 		<header>
 			<SocialLinks --justify-content="space-between" />
 			<h1>{data.title}</h1>
