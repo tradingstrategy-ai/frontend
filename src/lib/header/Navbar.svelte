@@ -24,9 +24,3 @@
 		</Header>
 	</div>
 </Section>
-
-<style>
-	.nav-bar {
-		background: hsl(var(--hsl-body));
-	}
-</style>
