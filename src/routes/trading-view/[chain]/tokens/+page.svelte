@@ -29,8 +29,8 @@
 
 <Breadcrumbs />
 
-<main>
-	<Section layout="boxed">
+<main class="token-index-page">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Tokens">
 			<svelte:fragment slot="subtitle">
 				Browse supported decentralised tokens across
@@ -39,28 +39,7 @@
 		</HeroBanner>
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<TokenTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>
-
-<style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-md);
-	}
-
-	section :global {
-		& .col-exchange {
-			padding-left: 0;
-		}
-
-		& .col-volume {
-			width: 10%;
-		}
-
-		& .col-chain-name {
-			width: 25%;
-		}
-	}
-</style>

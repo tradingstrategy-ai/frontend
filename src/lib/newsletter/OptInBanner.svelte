@@ -1,8 +1,16 @@
 <script lang="ts">
 	import SubscribeForm from './SubscribeForm.svelte';
+
+	let banner: HTMLElement;
+	let form: SubscribeForm;
+
+	export function scrollIntoView() {
+		banner.scrollIntoView({ behavior: 'smooth' });
+		form.focus({ preventScroll: true });
+	}
 </script>
 
-<div class="newsletter-opt-in-banner">
+<div bind:this={banner} class="newsletter-opt-in-banner">
 	{#if $$slots.artwork}
 		<div class="artwork">
 			<slot name="artwork" />
@@ -20,7 +28,7 @@
 				</p>
 			</slot>
 		</div>
-		<SubscribeForm />
+		<SubscribeForm bind:this={form} />
 	</div>
 </div>
 

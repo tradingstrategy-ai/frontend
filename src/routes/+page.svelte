@@ -4,20 +4,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Illustration, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, Section, SummaryBox } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 
 	export let data: PageData;
+	let newsletterBanner: NewsletterOptInBanner;
 
 	const { topMomentum, impressiveNumbers, posts } = data;
-
-	function scrollToNewsletterOptIn() {
-		const el = document.querySelector('#home-newsletter input[type=email]');
-		el?.scrollIntoView({ behavior: 'smooth' });
-		el?.focus({ preventScroll: true });
-	}
 </script>
 
 <svelte:head>
@@ -30,30 +25,33 @@
 	<HomeHeroBanner {impressiveNumbers} />
 
 	{#if topMomentum}
-		<Section class="top-trades" layout="boxed" padding="md" title="Top trades" cols={2} gap="lg">
-			<SummaryBox title="Most profitable 24h">
-				<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-				<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-				<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
-			</SummaryBox>
+		<Section padding="md" gap="md">
+			<h2>Top trades</h2>
 
-			<SummaryBox title="Worst performance 24h">
-				<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-				<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-				<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
-			</SummaryBox>
+			<Grid cols={2} gap="lg">
+				<SummaryBox title="Most profitable 24h">
+					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+					<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
+				</SummaryBox>
+
+				<SummaryBox title="Worst performance 24h">
+					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+					<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
+				</SummaryBox>
+			</Grid>
 		</Section>
 	{/if}
 
-	<Section class="strategies" layout="boxed" padding="lg">
-		<div class="inner">
+	<Section padding="lg" --section-background="hsla(var(--hsla-background-accent-1))">
+		<div class="strategies">
 			<h2>Strategies</h2>
-			<Illustration name="bull-vs-bear" height="min(30vh, 20rem)" />
 			<div class="coming-soon">Coming soon</div>
 			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
 			<div class="ctas">
 				<div class="newsletter-cta">
-					<Button icon="newspaper" label="Subscribe to newsletter" on:click={scrollToNewsletterOptIn} />
+					<Button icon="newspaper" label="Subscribe to newsletter" on:click={newsletterBanner.scrollIntoView} />
 				</div>
 				<Button
 					icon="twitter"
@@ -67,99 +65,89 @@
 	</Section>
 
 	{#if posts}
-		<Section title="Blog" class="blog" layout="boxed" padding="md">
+		<Section padding="md" gap="md">
+			<h2 style:text-align="center">Blog</h2>
 			<BlogRoll {posts} />
-			<Button label="Read all posts" href="/blog" slot="footer" />
+			<div style:text-align="center">
+				<Button label="Read all posts" href="/blog" />
+			</div>
 		</Section>
 	{/if}
 
-	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
-		<NewsletterOptInBanner />
+	<Section padding="md">
+		<NewsletterOptInBanner bind:this={newsletterBanner} />
 	</Section>
 </main>
 
 <style lang="postcss">
-	.home-page :global {
-		& .strategies {
-			background-color: hsla(var(--hsla-background-accent-1));
+	h2 {
+		text-align: center;
+	}
 
-			& .inner {
-				background: hsla(var(--hsl-box), var(--a-box-b));
-				border-radius: var(--radius-xl);
-				display: grid;
-				gap: var(--space-3xl);
-				max-width: 60rem;
-				margin: auto;
-				padding: var(--space-xl);
-				place-content: center;
-				place-items: center;
-				text-align: center;
+	.strategies {
+		background: hsla(var(--hsl-box), var(--a-box-b));
+		border-radius: var(--radius-xl);
+		display: grid;
+		gap: var(--space-3xl);
+		justify-self: center;
+		max-width: 60rem;
+		padding: var(--space-xl);
+		place-items: center;
+		text-align: center;
 
-				& h2 {
-					font: var(--f-heading-lg-medium);
-					@media (--viewport-md-up) {
-						font: var(--f-heading-xl-medium);
-					}
-				}
+		@media (--viewport-md-up) {
+			margin-top: var(--space-ss);
+			padding: var(--space-5xl);
+		}
 
-				@media (--viewport-md-up) {
-					margin-top: var(--space-ss);
-					padding: var(--space-5xl);
-				}
-			}
-
-			& .coming-soon {
-				font: var(--f-ui-sm-medium);
-				letter-spacing: var(--f-ui-sm-spacing, normal);
-				color: var(--c-text-2-v1);
-				text-transform: uppercase;
-				padding: var(--space-sl) var(--space-ls);
-				border: 1px solid var(--c-parchment-super-dark);
-				border-radius: var(--radius-xxl);
-			}
-
-			& p {
-				font: var(--f-ui-xl-roman);
-			}
-
-			& .ctas {
-				display: flex;
-				gap: var(--space-lg);
-				width: 100%;
-
-				@media (--viewport-sm-down) {
-					flex-direction: column;
-
-					& .button {
-						width: 100%;
-					}
-				}
-			}
-
-			& .newsletter-cta {
-				@media (width < 390px) {
-					display: none;
-				}
+		& h2 {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+			@media (--viewport-md-up) {
+				font: var(--f-heading-xl-medium);
+				letter-spacing: var(--f-heading-xl-spacing, normal);
 			}
 		}
 
-		& :global .illustration {
+		& .coming-soon {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: var(--c-text-2-v1);
+			text-transform: uppercase;
+			padding: var(--space-sl) var(--space-ls);
+			border: 1px solid var(--c-parchment-super-dark);
+			border-radius: var(--radius-xxl);
+		}
+
+		& p {
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
+		}
+
+		& .ctas {
+			display: flex;
+			gap: var(--space-lg);
+			width: 100%;
+
+			@media (--viewport-sm-down) {
+				flex-direction: column;
+			}
+		}
+
+		/* hide on small displays due to label wrapping */
+		& .newsletter-cta {
+			display: grid;
+
+			@media (width < 390px) {
+				display: none;
+			}
+		}
+	}
+
+	/* limit to 3 posts on larger viewports (single row) */
+	.home-page :global .blog-roll > :nth-child(4) {
+		@media (width >= 1140px) {
 			display: none;
-		}
-
-		& .blog {
-			& .blog-roll {
-				/* limit to 3 posts on larger viewports (single row) */
-				@media (width >= 1140px) {
-					& > :nth-child(4) {
-						display: none;
-					}
-				}
-			}
-
-			& footer .button {
-				justify-self: center;
-			}
 		}
 	}
 </style>

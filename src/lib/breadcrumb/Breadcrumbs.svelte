@@ -40,7 +40,7 @@ https://search.google.com/structured-data/testing-tool
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Section from '$lib/components/Section.svelte';
+	import { Section } from '$lib/components';
 
 	export let labels: BreadcrumbLabels = {};
 
@@ -59,7 +59,7 @@ https://search.google.com/structured-data/testing-tool
 	}
 </script>
 
-<Section nav layout="boxed" attrs={{ 'aria-label': 'breadcrumb' }}>
+<Section tag="nav" ariaAttrs={{ 'aria-label': 'breadcrumb' }}>
 	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
 		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
 			{@const active = breadcrumb !== breadcrumbs.at(-1)}

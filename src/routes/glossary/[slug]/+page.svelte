@@ -51,13 +51,11 @@
 <main>
 	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
 
-	<Section layout="boxed">
-		<article>
-			<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
-			<div class="answer">
-				{@html term.html}
-			</div>
-		</article>
+	<Section tag="article" padding="sm" gap="sm">
+		<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
+		<div class="answer">
+			{@html term.html}
+		</div>
 	</Section>
 
 	<ContentCardsSection>
@@ -77,28 +75,14 @@
 		/>
 	</ContentCardsSection>
 
-	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>
 
 <style lang="postcss">
-	main {
-		display: grid;
-		gap: var(--space-lg);
-
-		@media (--viewport-sm-down) {
-			gap: var(--space-ms);
-		}
-	}
-
-	article {
-		gap: var(--space-2xl);
-	}
-
 	h1 {
 		font: var(--f-h1-medium);
-		margin-bottom: var(--space-xl);
 		text-transform: capitalize;
 	}
 

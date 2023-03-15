@@ -3,14 +3,14 @@
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 </script>
 
-<div class="newsletter-page">
-	<Section gap="lg" layout="boxed" padding="md">
+<main class="newsletter-page">
+	<Section padding="md">
 		<NewsletterOptInBanner />
 	</Section>
-</div>
+</main>
 
 <style lang="postcss">
-	.newsletter-page :global .section {
-		background: hsla(var(--hsla-background-accent-1));
+	.newsletter-page {
+		--section-background: hsla(var(--hsla-background-accent-1));
 	}
 </style>

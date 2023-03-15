@@ -20,7 +20,13 @@ unknown props through to HTML input element.
 	const icon = type === 'search' ? 'search' : undefined;
 	const cancelButton = type === 'search';
 
+	let inputEl: HTMLInputElement;
+
 	$: tag = $$slots.label || label ? 'label' : 'span';
+
+	export function focus(options = {}) {
+		inputEl.focus(options);
+	}
 </script>
 
 <svelte:element this={tag} class="text-input size-{size}" class:has-icon={icon} class:disabled>
@@ -30,6 +36,7 @@ unknown props through to HTML input element.
 		</slot>
 	{/if}
 	<input
+		bind:this={inputEl}
 		{value}
 		{type}
 		{disabled}

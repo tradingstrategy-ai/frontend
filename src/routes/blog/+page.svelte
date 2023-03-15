@@ -3,7 +3,7 @@
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
-	import { BlogRoll, HeroBanner, Section } from '$lib/components';
+	import { AlertItem, AlertList, BlogRoll, HeroBanner, Section } from '$lib/components';
 	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
@@ -31,27 +31,34 @@
 </svelte:head>
 
 <main class="blog-index-page">
-	<Section class="hero" header layout="boxed">
+	<Section tag="header">
 		<HeroBanner
 			title="Trading Strategy Blog"
 			subtitle="Read our insights into on-chain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
 			image={heroImage}
-			hr={true}
+			hr
 		>
-			<SocialLinks />
+			<div class="social-links-wrapper">
+				<SocialLinks />
+			</div>
 		</HeroBanner>
 	</Section>
 
-	<Section class="posts" layout="boxed" padding="md">
+	<Section padding="md">
 		<BlogRoll {posts} />
 	</Section>
 
-	<Section class="loading" layout="boxed">
+	<Section>
 		{#if page.loading}
-			<Spinner />
+			<div style:text-align="center">
+				<Spinner size="4rem" color="hsla(var(--hsl-text))" />
+			</div>
 		{:else if page.error}
-			Error loading blog posts:
-			<pre class="font-weight-normal">{page.error}</pre>
+			<AlertList>
+				<AlertItem title="Error loading blog posts">
+					<pre>{page.error}</pre>
+				</AlertItem>
+			</AlertList>
 		{:else if page.next}
 			<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
 		{:else}
@@ -66,37 +73,11 @@
 </main>
 
 <style lang="postcss">
-	.blog-index-page :global {
-		& .hero {
-			& .social-links {
-				margin-top: var(--space-sm);
+	.social-links-wrapper {
+		margin-top: var(--space-sm);
 
-				@media (--viewport-sm-down) {
-					margin: var(--space-md) 0;
-				}
-			}
-
-			@media (--viewport-sm-down) {
-				& .media {
-					display: none;
-				}
-			}
-		}
-
-		& .loading {
-			font: var(--f-ui-large-roman);
-
-			& .grid {
-				place-items: center;
-			}
-		}
-
-		& .svelte-spinner {
-			height: 4rem;
-			width: 4rem;
-			& circle {
-				stroke: hsla(var(--hsl-text));
-			}
+		@media (--viewport-sm-down) {
+			margin: var(--space-md) 0;
 		}
 	}
 </style>

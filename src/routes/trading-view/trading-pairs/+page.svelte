@@ -28,25 +28,12 @@
 
 <Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
 
-<main class="pairs">
-	<Section layout="boxed">
+<main class="pair-index-page">
+	<Section tag="header">
 		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<PairsTable {...data} {loading} on:change={handleChange} />
 	</Section>
 </main>
-
-<style lang="postcss">
-	@media (--viewport-md) {
-		.pairs :global table .right {
-			text-align: right;
-		}
-
-		.pairs :global table .cta {
-			max-width: 8rem;
-			padding-left: 1rem;
-		}
-	}
-</style>

@@ -1,9 +1,17 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { backendUrl } from '$lib/config';
-	import { formatDistanceToNow } from 'date-fns';
 	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
-	import { AlertList, AlertItem, Button, ContentCard, HeroBanner, Section, TextInput } from '$lib/components';
+	import {
+		AlertList,
+		AlertItem,
+		Button,
+		ContentCard,
+		HeroBanner,
+		Section,
+		TextInput,
+		Timestamp
+	} from '$lib/components';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
@@ -61,8 +69,8 @@
 
 <Breadcrumbs />
 
-<main>
-	<Section header layout="boxed">
+<main class="backtesting-page">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Historical DEX trading data">
 			<svelte:fragment slot="subtitle">
 				<p>
@@ -79,26 +87,24 @@
 		</HeroBanner>
 	</Section>
 
-	<Section layout="boxed">
+	<Section>
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
 			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
-				<div id="form-group-api-key">
-					<TextInput
-						id="apiKey"
-						label="Enter API key to enable download"
-						placeholder="secret-token:tradingstrategy-"
-						type="text"
-						size="lg"
-					/>
+				<TextInput
+					id="apiKey"
+					label="Enter API key to enable download"
+					placeholder="secret-token:tradingstrategy-"
+					type="text"
+					size="lg"
+				/>
 
-					<Button submit label="Enter" size="sm" disabled={submitting} />
+				<Button submit label="Enter" size="sm" disabled={submitting} />
 
-					{#if submitting}
-						<Spinner />
-					{/if}
-				</div>
+				{#if submitting}
+					<Spinner />
+				{/if}
 			</form>
 		{/if}
 
@@ -136,15 +142,13 @@
 							<td class="right">{formatKilos(row.entries)}</td>
 							<td class="right">{formatSizeMegabytes(row.size)}</td>
 							<td>{row.format}</td>
-							<td>
-								{formatDistanceToNow(row.last_updated_at * 1000, { addSuffix: true })}
-							</td>
-
+							<td><Timestamp date={row.last_updated_at} format="relative" /></td>
 							<td>
 								<a class="action-link" href={row.documentation}>Documentation</a>
-
 								{#if validApiKey}
-									<a class="action-link" target="_blank" href={getDownloadUrl(row.download_link)}>Download</a>
+									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.download_link)}>
+										Download
+									</a>
 								{:else}
 									<span class="action-link">Download</span>
 								{/if}
@@ -188,57 +192,49 @@
 	</ContentCardsSection>
 </main>
 
-<style>
-	main {
+<style lang="postcss">
+	.backtesting-page {
 		display: grid;
 		gap: var(--space-lg);
-	}
 
-	h2 {
-		font: var(--f-heading-lg-medium);
-		margin-bottom: var(--space-xl);
-	}
+		& h2 {
+			font: var(--f-heading-lg-medium);
+			margin-bottom: var(--space-xl);
+		}
 
-	p,
-	li {
-		font: var(--f-ui-body-roman);
-		margin-top: 1em;
-	}
+		& :is(p, li) {
+			margin-bottom: 1em;
+		}
 
-	form {
-		margin-bottom: var(--space-lg);
-	}
+		& form {
+			margin-bottom: var(--space-lg);
+			display: flex;
+			align-items: flex-end;
+			gap: var(--space-md);
+			--text-input-width: 100%;
+			--text-input-max-width: 30rem;
+			--button-height: auto;
+		}
 
-	.table-datasets :global(time) {
-		white-space: nowrap;
-	}
+		& :global .svelte-spinner {
+			align-self: center;
+		}
 
-	.action-link {
-		text-transform: uppercase;
-		font-size: 0.8em;
-		font-weight: 500;
-		letter-spacing: 0.02em;
-	}
+		& .action-link {
+			display: inline-block;
+			text-transform: uppercase;
+			font-size: 0.8em;
+			font-weight: 500;
+			letter-spacing: 0.02em;
 
-	a.action-link:hover {
-		text-decoration: underline;
-	}
+			&:hover {
+				text-decoration: underline;
+			}
 
-	span.action-link {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	#form-group-api-key {
-		display: flex;
-		align-items: flex-end;
-		gap: var(--space-md);
-		--text-input-width: 100%;
-		--text-input-max-width: 30rem;
-		--button-height: auto;
-	}
-
-	main :global .svelte-spinner {
-		align-self: center;
+			&:is(span) {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+		}
 	}
 </style>

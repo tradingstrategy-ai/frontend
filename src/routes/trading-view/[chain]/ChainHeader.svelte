@@ -8,7 +8,7 @@
 	export let homepage: string;
 </script>
 
-<Section header layout="boxed">
+<Section tag="header">
 	<a class="inner tile a" href={homepage}>
 		<h1>
 			<img alt={`${name} logo`} src={getLogoUrl(slug)} />
@@ -64,10 +64,5 @@
 		& img {
 			height: var(--logo-height);
 		}
-	}
-
-	a {
-		font: inherit;
-		text-decoration: underline;
 	}
 </style>

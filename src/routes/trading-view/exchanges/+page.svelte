@@ -32,28 +32,15 @@
 
 <Breadcrumbs />
 
-<main class="dexes">
-	<Section layout="boxed">
+<main class="exchange-index-page">
+	<Section tag="header">
 		<HeroBanner
 			title="Decentralised exchanges"
 			subtitle="Browse supported decentralised exchanges across all blockchains"
 		/>
 	</Section>
 
-	<Section layout="boxed" padding="sm">
+	<Section padding="sm">
 		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
 	</Section>
 </main>
-
-<style lang="postcss">
-	@media (--viewport-md) {
-		.dexes :global table .right {
-			text-align: right;
-		}
-
-		.dexes :global table .cta {
-			max-width: 8rem;
-			padding-left: 1rem;
-		}
-	}
-</style>

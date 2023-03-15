@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, ContentCard, ContentCardsSection, HeroBanner, Section } from '$lib/components';
+	import { ContentCard, ContentCardsSection, HeroBanner, Section } from '$lib/components';
 </script>
 
 <svelte:head>
@@ -11,7 +11,7 @@
 <Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
 
 <main>
-	<Section header layout="boxed">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
 	</Section>
 

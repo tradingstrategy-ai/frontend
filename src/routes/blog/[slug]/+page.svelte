@@ -17,7 +17,7 @@
 <Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
 
 <main class="blog-details-page">
-	<Section article layout="boxed" size="sm">
+	<Section tag="article" maxWidth="sm">
 		<header>
 			<SocialLinks --justify-content="space-between" />
 			<h1>{data.title}</h1>
@@ -28,23 +28,25 @@
 		<BlogPostContent html={data.html} />
 	</Section>
 
-	<Section class="newsletter" id="home-newsletter" layout="boxed" padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>
 
 <style lang="postcss">
 	header {
-		margin: var(--space-md) 0;
+		margin-block: var(--space-md);
 		display: grid;
 		gap: var(--space-ls);
 
 		& h1 {
 			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing, normal);
 			margin-top: var(--space-xl);
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-lg-medium);
+				letter-spacing: var(--f-heading-lg-spacing, normal);
 				margin-top: var(--space-md);
 			}
 		}

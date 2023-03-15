@@ -1,8 +1,8 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { HeroBanner, Section } from '$lib/components';
 	import type { GlossaryEntry, GlossaryMap } from './api/types';
+	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data: PageData;
@@ -28,7 +28,7 @@
 </svelte:head>
 
 <main class="glossary-main">
-	<Section header layout="boxed" padding="md">
+	<Section tag="header" padding="md">
 		<HeroBanner contentFullWidth title="DeFi and trading dictionary">
 			<div slot="subtitle">
 				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
@@ -44,23 +44,25 @@
 		</HeroBanner>
 	</Section>
 
-	<Section class="content" layout="boxed" padding="sm">
-		{#each Object.entries(index) as [letter, terms]}
-			<div class="index-letter">
-				<h2>{letter.toUpperCase()}</h2>
-				<hr />
-				<div class="terms">
-					{#each terms as term}
-						<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
-							{term.name}
-						</a>
-					{/each}
+	<Section padding="sm">
+		<div class="content">
+			{#each Object.entries(index) as [letter, terms]}
+				<div class="index-letter">
+					<h2>{letter.toUpperCase()}</h2>
+					<hr />
+					<div class="terms">
+						{#each terms as term}
+							<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
+								{term.name}
+							</a>
+						{/each}
+					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</Section>
 
-	<Section class="newsletter" id="glossary-newsletter" layout="boxed" padding="md">
+	<Section padding="md">
 		<NewsletterOptInBanner />
 	</Section>
 </main>
@@ -71,23 +73,20 @@
 		gap: var(--space-md);
 	}
 
-	main :global .section {
-		overflow: auto;
-	}
-
-	h2 {
-		font: var(--f-h2-medium);
-		@media (--viewport-md-up) {
-			font: var(--f-heading-xl-medium);
-		}
-	}
-
-	main :global .content {
+	.content {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		gap: var(--space-3xl) var(--space-2xl);
 		overflow: auto;
 
-		& .grid {
-			grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-			gap: var(--space-3xl) var(--space-2xl);
+		& h2 {
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
+
+			@media (--viewport-md-up) {
+				font: var(--f-heading-xl-medium);
+				letter-spacing: var(--f-heading-xl-spacing, normal);
+			}
 		}
 	}
 

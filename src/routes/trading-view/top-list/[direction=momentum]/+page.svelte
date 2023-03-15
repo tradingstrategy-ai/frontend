@@ -19,7 +19,7 @@
 <Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-up': 'Daily gainers', 'daily-down': 'Daily losers' }} />
 
 <main>
-	<Section header layout="boxed">
+	<Section tag="header">
 		<HeroBanner contentFullWidth title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h">
 			<svelte:fragment slot="subtitle">
 				<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a>
@@ -30,7 +30,7 @@
 		</HeroBanner>
 	</Section>
 
-	<Section layout="boxed">
+	<Section>
 		<MomentumTable pairs={data.pairs} />
 	</Section>
 </main>

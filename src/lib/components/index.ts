@@ -1,5 +1,6 @@
 export { default as AlertItem } from './AlertItem.svelte';
 export { default as AlertList } from './AlertList.svelte';
+export { default as Banner } from './Banner.svelte';
 export { default as BlogRoll } from './BlogRoll.svelte';
 export { default as Button } from './Button.svelte';
 export { default as ContentCard } from './ContentCard.svelte';
@@ -11,6 +12,7 @@ export { default as DataBoxes } from './DataBoxes.svelte';
 export { default as DataTable } from './datatable/DataTable.svelte';
 export { default as Dialog } from './Dialog.svelte';
 export { default as Footer } from './Footer.svelte';
+export { default as Grid } from './Grid.svelte';
 export { default as Header } from './Header.svelte';
 export { default as Hero } from './Hero.svelte';
 export { default as HeroBanner } from './HeroBanner.svelte';
