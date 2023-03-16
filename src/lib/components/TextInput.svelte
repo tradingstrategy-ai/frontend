@@ -173,6 +173,7 @@ unknown props through to HTML input element.
 				outline: none;
 			}
 
+			&[type='search'],
 			&[type='search']::-webkit-search-cancel-button {
 				-webkit-appearance: none;
 			}
