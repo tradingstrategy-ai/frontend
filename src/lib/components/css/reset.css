@@ -45,9 +45,11 @@
 	margin: 0;
 }
 
-/* correct the inability to style buttons in iOS and Safari. */
 :where(button, input:is([type='button'], [type='reset'], [type='submit'])) {
+	/* correct the inability to style buttons in iOS and Safari. */
 	-webkit-appearance: button;
+	/* set default color to inherit to correct iOS and dark-mode icon color issues */
+	color: inherit;
 }
 
 /** remove inheritance of text transform in Edge and Firefox */
