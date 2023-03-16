@@ -105,14 +105,14 @@ Display site-wide search box for use in top-nav.
 				</ul>
 			{/if}
 
-			<div class="buttons">
+			<footer>
 				{#if hasQuery}
 					<Button size="sm" label="Show all results" href="/search?q={q}" />
 				{:else}
 					Search exchanges, tokens and trading pairs.
 				{/if}
 				<Button size="sm" label="Advanced search" href="/search?q={q}" />
-			</div>
+			</footer>
 		</div>
 	</div>
 </div>
@@ -134,6 +134,8 @@ Display site-wide search box for use in top-nav.
 	}
 
 	.search {
+		/* default --viewport-height; overriden by setViewportHeight action */
+		--viewport-height: 100vh;
 		--text-input-width: 100%;
 
 		@media (--search-layout-mobile) {
@@ -175,18 +177,20 @@ Display site-wide search box for use in top-nav.
 		@media (--search-layout-desktop) {
 			border-radius: var(--radius-md);
 			margin-top: var(--space-xxs);
-			max-height: calc(100vh - 1.75rem - var(--header-height, 5rem) / 2);
 			width: 450px;
+
+			& .inner {
+				max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
+			}
 		}
 
 		@media (--search-layout-mobile) {
 			left: 0;
 			top: 0;
 
-			@nest .hasQuery & {
-				height: var(--viewport-height, 100vh);
+			@nest .hasQuery & .inner {
+				height: var(--viewport-height);
 				gap: var(--space-sm);
-				overflow-y: scroll;
 			}
 		}
 
@@ -217,13 +221,18 @@ Display site-wide search box for use in top-nav.
 		overflow-y: auto;
 	}
 
-	.buttons {
+	footer {
 		display: grid;
 		gap: var(--space-sl) var(--space-sm);
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text-7-v1);
 		text-align: center;
+
+		@media (--search-layout-mobile) {
+			font: var(--f-ui-sm-medium);
+			--button-font: var(--f-ui-sm-medium);
+		}
 
 		@nest .hasQuery & {
 			grid-template-columns: 1fr 1fr;
