@@ -1,20 +1,20 @@
 <!--
 @component
-Used for loading ChartIQ candle (ohlc+v) chart. Dyamically imports optional
-chartiq dependency.
+Dynamically ChartIQ modules (if available) and render chart element.
 
-#### Usage:
+#### Usage
 ```tsx
-	<ChartIQ
-		feed={quoteFeed}
-		pairId={12345}
-		exchangeType="uniswap_v2"
-		firstTradeDate="2020-01-02T00:00"
-		timeBucket="4h"
-		studies={['Volume Underlay']}
-		linker={chartLinker}
-	>
-		Fallback content to display if chartiq not imported
+  <ChartIQ
+    options={{ controls: { chartControls: null } }}
+    init={ (chartEngine) => { chartEngine.doStuff() } }
+    studies={['Some study']}
+    linker={chartLinker}
+    {quoteFeed}
+    invalidate={[dep1, dep2]}
+  >
+    <div let:activeTick>
+      Additional content to display within chart container (e.g., custom HUD)
+    </div>
   </ChartIQ>
 ```
 -->
@@ -24,22 +24,23 @@ chartiq dependency.
 	import './chart.css';
 
 	/**
-	 * NOTE: normal dynamic import doesn't work for optional dependency due to
-	 * Vite's pre-bundling import analysis; using Vite's custom import.meta.glob
-	 * instead.
+	 * NOTE: normal dynamic import doesn't work for optional dependency due to Vite's
+	 * pre-bundling import analysis; using Vite's custom import.meta.glob instead.
 	 * See: https://github.com/vitejs/vite/issues/6007#issuecomment-1110330733
 	 */
 	import.meta.glob('/node_modules/chartiq/css/stx-chart.css', { eager: true });
 	const modules = import.meta.glob('/node_modules/chartiq/js/*.js');
 
-	let CIQ;
+	// NOTE: requested TypeScript defs from ChartIQ.
+	// See: https://documentation.chartiq.com/tutorial-SDK%20API%20Reference.html#toc18__anchor
+	let CIQ: any;
 
 	async function initialize() {
 		if (!browser || Object.keys(modules).length === 0) {
-			return false;
+			throw new Error('chartiq module not available');
 		}
 
-		const [chartiqJs, standardJs] = await Promise.all([
+		const [chartiqJs, standardJs]: [any, any] = await Promise.all([
 			modules[`/node_modules/chartiq/js/chartiq.js`](),
 			modules[`/node_modules/chartiq/js/standard.js`]()
 		]);
@@ -51,53 +52,32 @@ chartiq dependency.
 			const study = mod(CIQ);
 			CIQ.Studies.studyLibrary[study.name] = study;
 		}
-
-		return true;
 	}
 </script>
 
 <script lang="ts">
-	import { addHours, format as formatDate } from 'date-fns';
-	import type { TimeBucket } from './timeBucketConverters';
-	import { timeBucketToPeriodicity } from './timeBucketConverters';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import type ChartLinker from './ChartLinker';
 	import { fade } from 'svelte/transition';
-	import Spinner from 'svelte-spinner';
+	import { format as formatDate } from 'date-fns';
 	import ChartActivityTracker from './ChartActivityTracker';
+	import Spinner from 'svelte-spinner';
+	import { AlertItem, AlertList } from '$lib/components';
 
-	export let feed: object;
-	export let pairId: number | string;
-	export let exchangeType: string;
-	export let firstTradeDate: string;
-	export let timeBucket: TimeBucket;
-	export let studies = [];
-	export let linker = null;
+	export let options: any = {};
+	export let init: Function | undefined = undefined;
+	export let studies: any[] = [];
+	export let linker: ChartLinker | undefined = undefined;
+	export let quoteFeed: any = undefined;
+	export let invalidate: any = undefined;
 
 	let loading = false;
 
-	$: periodicity = timeBucketToPeriodicity(timeBucket);
+	// NOTE: requested TypeScript defs from ChartIQ.
+	let activeTick: any;
 
-	let activeTick;
-	$: priceChangeAmt = activeTick && activeTick.Close - activeTick.Open;
-	$: priceChangePct = activeTick && priceChangeAmt / activeTick.Open;
-
-	let ww;
-	$: showYAxis = ww >= 576;
-
-	function formatForHud(value: number) {
-		return formatDollar(value, 3, 3, '');
-	}
-
-	function chartIQ(node: HTMLElement, options: any) {
+	function chartIQ(node: HTMLElement, deps: any) {
 		let chartTracker;
-
-		let chartEngine = new CIQ.ChartEngine({
-			container: node,
-			layout: { crosshair: true },
-			controls: { chartControls: null },
-			dontRoll: true
-		});
+		let chartEngine = new CIQ.ChartEngine({ container: node, ...options });
 
 		// display X-Axis time markers in UTC
 		chartEngine.setTimeZone(null, 'UTC');
@@ -107,27 +87,22 @@ chartiq dependency.
 			CIQ.Studies.addStudy(chartEngine, study);
 		}
 
-		// match the current price label precision to other yAxis labels
-		chartEngine.addEventListener('symbolChange', () => {
-			chartEngine.chart.yAxis.maxDecimalPlaces = chartEngine.chart.yAxis.printDecimalPlaces;
-		});
-
-		// cancel mouseWheel zoom unless a modifier key is pressed
-		chartEngine.prepend('mouseWheel', (event) => {
-			const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
-			const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
-			return !modifierPressed && verticalScroll;
-		});
-
-		// update active tick data based on crosshair position
 		chartEngine.append('headsUpHR', () => {
 			const tick = chartEngine.barFromPixel(chartEngine.cx);
 			const prices = chartEngine.chart.xaxis[tick];
 			if (prices) {
+				// update active tick data based on crosshair position
 				activeTick = prices.data;
+
 				// HACK to address ChartIQ bug - times in floating x-axis label are off by 3h for 4h timeBucket
-				const displayDate = timeBucket === '4h' ? addHours(prices.DT, 3) : new Date(prices.DT);
-				const dateFormat = periodicity.timeUnit === 'minute' ? 'M/d HH:mm' : 'M/d/yyyy';
+				const { period, interval, timeUnit } = chartEngine.getPeriodicity();
+				const displayDate = new Date(prices.DT);
+				if (period === 4 && interval === 60 && timeUnit === 'minute') {
+					displayDate.setUTCHours(displayDate.getUTCHours() + 3);
+				}
+
+				// Set appropriate date format for timeUnit
+				const dateFormat = timeUnit === 'minute' ? 'M/d HH:mm' : 'M/d/yyyy';
 				chartEngine.controls.floatDate.innerHTML = formatDate(displayDate, dateFormat);
 			}
 		});
@@ -137,108 +112,74 @@ chartiq dependency.
 
 		// ignore mouse/touch movements if chart is in loading state;
 		// this must come _after_ linker registration (above)
-		chartEngine.prepend('mousemoveinner', () => {
-			return loading;
-		});
+		chartEngine.prepend('mousemoveinner', () => loading);
 
 		// attach the provided quote feed (API data adapter)
-		chartEngine.attachQuoteFeed(feed, {});
+		chartEngine.attachQuoteFeed(quoteFeed, {});
 
 		// fill gaps in data (closing price carried forward); see:
 		// https://documentation.chartiq.com/CIQ.ChartEngine.html#cleanupGaps
 		chartEngine.cleanupGaps = 'carry';
 
-		// update the chart - used on both initial load and updates
-		function update() {
-			loading = true;
-			// hide the Y Axis on smaller screens
-			chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
-			// make exchangeType and firstTradeDate available to the quoteFeed
-			chartEngine.exchangeType = exchangeType;
-			chartEngine.firstTradeDate = firstTradeDate;
-			// load the chart
-			chartEngine.loadChart(pairId, { periodicity }, () => {
+		// call init callback if provided
+		const resp = init?.(chartEngine);
+
+		// wrap loadChart method to inject callback
+		const originalLoadChart = chartEngine.loadChart.bind(chartEngine);
+		chartEngine.loadChart = (symbol: string, parameters: any, callback: Function | undefined) => {
+			originalLoadChart(symbol, parameters, () => {
 				loading = false;
 				chartTracker ??= new ChartActivityTracker(chartEngine);
+				callback?.();
 			});
-		}
-		update();
+		};
 
 		function destroy() {
 			linker?.remove(chartEngine);
+			resp?.destroy?.();
 			chartEngine.destroy();
 			chartEngine = null;
 		}
 
-		return { update, destroy };
+		function update(...args: any) {
+			loading = true;
+			resp?.update?.(...args);
+		}
+		update(deps);
+
+		return { destroy, update };
 	}
 </script>
 
-<svelte:window bind:innerWidth={ww} />
-
-{#await initialize() then success}
-	{#if success}
-		<div
-			class="chart-container"
-			use:chartIQ={{ pairId, periodicity, showYAxis, firstTradeDate, exchangeType }}
-			data-testid="chartIQ"
-		>
-			{#if loading}
-				<div class="loading" transition:fade={{ duration: 250 }}>
-					<Spinner size="60" color="var(--c-text-1-v1)" />
-				</div>
-			{/if}
-			{#if activeTick}
-				<div class="hud">
-					<slot name="hud-row-1" {activeTick} {formatForHud}>
-						<div class="hud-row {determinePriceChangeClass(priceChangeAmt)}">
-							<dl>
-								<dt>O</dt>
-								<dd>{formatForHud(activeTick.Open)}</dd>
-							</dl>
-							<dl>
-								<dt>H</dt>
-								<dd>{formatForHud(activeTick.High)}</dd>
-							</dl>
-							<dl>
-								<dt>L</dt>
-								<dd>{formatForHud(activeTick.Low)}</dd>
-							</dl>
-							<dl>
-								<dt>C</dt>
-								<dd>{formatForHud(activeTick.Close)}</dd>
-							</dl>
-							<dl><dd>{formatForHud(priceChangeAmt)}</dd></dl>
-							<dl><dd>{formatPriceChange(priceChangePct)}</dd></dl>
-						</div>
-					</slot>
-					<slot name="hud-row-2" {activeTick} {formatForHud}>
-						<div class="hud-row">
-							<dl>
-								<dt>Vol</dt>
-								<dd>{formatForHud(activeTick.Volume)}</dd>
-							</dl>
-						</div>
-					</slot>
-				</div>
-			{/if}
-		</div>
-	{:else}
-		ChartIQ not available
-	{/if}
+{#await initialize() then}
+	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
+		{#if loading}
+			<div class="loading" transition:fade={{ duration: 250 }}>
+				<Spinner size="60" color="var(--c-text-1-v1)" />
+			</div>
+		{/if}
+		<slot {activeTick} />
+	</div>
+{:catch}
+	<AlertList status="warning">
+		<AlertItem>
+			ChartIQ charting library notavailable. ChartIQ is an optional proprietary dependency that requires a license.
+		</AlertItem>
+	</AlertList>
 {/await}
 
 <style lang="postcss">
 	.chart-container {
+		--CHART-aspect-ratio: 16/9;
 		position: relative;
-		aspect-ratio: 16/9;
+		aspect-ratio: var(--chart-aspect-ratio, var(--CHART-aspect-ratio));
 
 		@media (--viewport-sm-down) {
-			aspect-ratio: 3/2;
+			--CHART-aspect-ratio: 3/2;
 		}
 
 		@media (--viewport-xs) {
-			aspect-ratio: 4/6;
+			--CHART-aspect-ratio: 4/6;
 		}
 	}
 
@@ -254,34 +195,5 @@ chartiq dependency.
 		align-items: center;
 		background-color: hsla(var(--hsl-body));
 		opacity: 0.75;
-	}
-
-	.hud :global {
-		position: absolute;
-		top: 4px;
-		left: 0;
-		font: var(--f-ui-xsmall-roman);
-		letter-spacing: 0.02em;
-
-		& .hud-row {
-			display: flex;
-			gap: 0.5em;
-		}
-
-		& dl {
-			display: flex;
-			gap: var(--space-xxs);
-			align-items: center;
-			margin: 0;
-		}
-
-		& dt {
-			color: var(--c-text-3-v1);
-			font-weight: inherit;
-		}
-
-		& dd {
-			margin: 0;
-		}
 	}
 </style>

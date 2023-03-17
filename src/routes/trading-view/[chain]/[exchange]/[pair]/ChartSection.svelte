@@ -18,7 +18,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	import { page } from '$app/stores';
 	import type { TimeBucket } from '$lib/chart/timeBucketConverters';
 	import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-	import ChartIQ from '$lib/chart/ChartIQ.svelte';
+	import PairCandleChart from '$lib/chart/PairCandleChart.svelte';
 	import quoteFeed from '$lib/chart/quoteFeed';
 	import ChartLinker from '$lib/chart/ChartLinker';
 
@@ -47,8 +47,8 @@ for the same hovered date. Also displays a time-bucket selector.
 			</a>
 		</div>
 	</div>
-	<ChartIQ
-		feed={quoteFeed('price')}
+	<PairCandleChart
+		quoteFeed={quoteFeed('price')}
 		{pairId}
 		{exchangeType}
 		{firstTradeDate}
@@ -71,8 +71,8 @@ for the same hovered date. Also displays a time-bucket selector.
 	{#if exchangeType === 'uniswap_v3'}
 		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
 	{:else}
-		<ChartIQ
-			feed={quoteFeed('liquidity')}
+		<PairCandleChart
+			quoteFeed={quoteFeed('liquidity')}
 			{pairId}
 			{exchangeType}
 			{firstTradeDate}
@@ -90,7 +90,7 @@ for the same hovered date. Also displays a time-bucket selector.
 					<dd>{formatForHud(activeTick.rv)}</dd>
 				</dl>
 			</div>
-		</ChartIQ>
+		</PairCandleChart>
 	{/if}
 </div>
 
