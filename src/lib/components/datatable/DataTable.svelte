@@ -35,10 +35,9 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	const filterValue = pluginStates.tableFilter?.filterValue;
 
-	// set sortKeys to real plugin store or dummy store if sort not enabled (see watchPageAndSort)
+	// assign real plugin stores or fallback/dummy stores if sort/pagination not enabled
+	// see dispatchChange derived store below
 	const sortKeys: WritableSortKeys = pluginStates.sort?.sortKeys || writable([{}]);
-
-	// set pageIndex to real plugin store or dummy store if pagination not enabled (see watchPageAndSort)
 	const pageIndex: Writable<number> = pluginStates.page?.pageIndex || writable(0);
 
 	function scrollToTop() {
@@ -95,7 +94,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} />
+	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} />
 
 	{#if hasPagination}
 		<TableFooter page={pluginStates.page} rowCount={$rows.length} />

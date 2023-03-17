@@ -77,7 +77,7 @@ table:not(.table) {
 		}
 	}
 
-	& > :not(thead):not(tfoot) tr {
+	& tbody tr {
 		& td {
 			background: hsla(var(--hsl-box), var(--a-box-b));
 			height: 3.25rem;
@@ -174,7 +174,7 @@ table:not(.table) {
 				display: none !important;
 			}
 
-			& > :not(thead):not(tfoot) tr {
+			& tbody tr {
 				background: hsla(var(--hsl-box), var(--a-box-b));
 				border-radius: var(--radius-md);
 				display: grid;
@@ -184,6 +184,20 @@ table:not(.table) {
 
 				@media (min-width: 512px) {
 					grid-template-columns: repeat(auto-fit, minmax(max(25%, 15.5rem), 1fr)) !important;
+				}
+
+				/* Display row # if tr includes data-row-index attribute */
+				&[data-row-index] {
+					padding-top: var(--space-5xl);
+					position: relative;
+
+					&::before {
+						position: absolute;
+						top: var(--space-ms);
+						left: var(--space-ml);
+						font: var(--f-ui-xl-bold);
+						content: '#' attr(data-row-index);
+					}
 				}
 
 				& td {
@@ -206,33 +220,6 @@ table:not(.table) {
 						padding-bottom: var(--space-ms);
 						padding-top: var(--space-ms);
 						grid-column: 1/-1;
-					}
-				}
-			}
-
-			& tbody {
-				counter-reset: table-elements-counter;
-
-				& > a {
-					/* &::before {
-						counter-increment: table-elements-counter;
-						content: '#' counter(table-elements-counter);
-						font: var(--f-ui-xl-bold);
-					} */
-
-					& tr {
-						padding-top: var(--space-5xl);
-						position: relative;
-
-						&::before {
-							counter-increment: table-elements-counter;
-							content: '#' counter(table-elements-counter);
-							font: var(--f-ui-xl-bold);
-							font: var(--f-ui-xl-bold);
-							left: var(--space-ml);
-							position: absolute;
-							top: var(--space-ms);
-						}
 					}
 				}
 			}
