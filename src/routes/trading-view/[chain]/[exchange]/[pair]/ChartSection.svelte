@@ -42,7 +42,12 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Price & volume</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+			<a
+				class="body-link"
+				target="_blank"
+				rel="noreferrer"
+				href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV"
+			>
 				OHLCV candles
 			</a>
 		</div>
@@ -63,7 +68,12 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Liquidity</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+			<a
+				class="body-link"
+				target="_blank"
+				rel="noreferrer"
+				href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model"
+			>
 				USD value of one side of XY liquidity curve
 			</a>
 		</div>
