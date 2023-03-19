@@ -92,3 +92,8 @@
 .mSticky {
 	display: none !important;
 }
+
+.stx_line_chart {
+	width: 2px;
+	color: hsla(var(--hsl-text-extra-light));
+}

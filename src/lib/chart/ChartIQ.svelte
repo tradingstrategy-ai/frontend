@@ -114,8 +114,10 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// this must come _after_ linker registration (above)
 		chartEngine.prepend('mousemoveinner', () => loading);
 
-		// attach the provided quote feed (API data adapter)
-		chartEngine.attachQuoteFeed(quoteFeed, {});
+		// attach quoteFeed if provided (API data adapter)
+		if (quoteFeed) {
+			chartEngine.attachQuoteFeed(quoteFeed, {});
+		}
 
 		// fill gaps in data (closing price carried forward); see:
 		// https://documentation.chartiq.com/CIQ.ChartEngine.html#cleanupGaps
@@ -155,7 +157,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
 		{#if loading}
 			<div class="loading" transition:fade={{ duration: 250 }}>
-				<Spinner size="60" color="var(--c-text-1-v1)" />
+				<Spinner size="60" color="hsla(var(--hsl-text))" />
 			</div>
 		{/if}
 		<slot {activeTick} />

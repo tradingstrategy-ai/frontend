@@ -1,75 +1,71 @@
 <!--
 @component
-Render the portfolio performance chart using Plotly.
-
+Render the portfolio performance chart using ChartIQ.
 - X-axis: time
 - Y-axis: portfolio value
-
-SSR needs to be disabled - Plotly.js does not work in SSR.
-
 -->
 <script lang="ts">
-	// https://www.npmjs.com/package/plotly.js-finance-dist
-	import Plotly from 'plotly.js-finance-dist';
-	import type { TimeSeries } from './interface';
 	import { SummaryBox } from '$lib/components';
+	import ChartIQ from '$lib/chart/ChartIQ.svelte';
 
-	type Nullable<Type> = Type | null;
+	export let name: string;
+	export let portfolio;
 
-	// Input data
-	export let graph: Nullable<TimeSeries>;
-
-	// Passed to Plotly renderer
-	let elem: Nullable<HTMLElement>;
-
-	function updateChart(node: Nullable<HTMLElement>, graph: Nullable<TimeSeries>) {
-		if (!node || !graph) {
-			return;
+	const options = {
+		layout: {
+			chartType: 'line',
+			crosshair: true
+		},
+		controls: {
+			chartControls: null
 		}
+	};
 
-		// See
-		// https://plotly.com/javascript/time-series/
-		// https://plotly.com/javascript/axes/
-		const data = [
-			{
-				x: graph.x,
-				y: graph.y,
-				type: 'scatter'
-			}
-		];
-
-		const layout = {
-			yaxis: {
-				title: graph.yLabel
-			}
-		};
-
-		if (graph.yRangeMode) {
-			layout.yaxis.rangemode = graph.yRangeMode;
-		}
-
-		const config = { responsive: true };
-
-		Plotly.newPlot(elem, data, layout, config);
+	function getChartData(portfolio) {
+		if (!portfolio) return [];
+		return portfolio.map((tick) => {
+			return {
+				DT: tick.calculated_at * 1000,
+				Value: tick.total_equity
+			};
+		});
 	}
 
-	$: updateChart(elem, graph);
+	function init(chartEngine: any) {
+		chartEngine.chart.yAxis.position = 'left';
+		chartEngine.chart.yAxis.decimalPlaces = 2;
+		chartEngine.chart.yAxis.maxDecimalPlaces = 2;
+
+		return {
+			update() {
+				chartEngine.loadChart(name, {
+					periodicity: { period: 24, interval: 1, timeUnit: 'hour' },
+					span: { base: 'day', multiplier: 90 },
+					masterData: getChartData(portfolio)
+				});
+			}
+		};
+	}
 </script>
 
-{#if graph}
-	<SummaryBox
-		class="portfolio-performance-chart"
-		title="Total equity"
-		subtitle="Cash and market valued tokens in the strategy"
-	>
-		<div bind:this={elem} class="chart" />
+{#if portfolio}
+	<SummaryBox title="Total equity" subtitle="Cash and market valued tokens in the strategy (USD)">
+		<div class="portfolio-performance-chart">
+			<ChartIQ {init} {options} />
+		</div>
 	</SummaryBox>
 {/if}
 
 <style>
-	.chart {
-		width: 100%;
-		overflow-x: auto;
-		height: 400px;
+	.portfolio-performance-chart {
+		--chart-aspect-ratio: 2;
+
+		@media (--viewport-sm-down) {
+			--chart-aspect-ratio: 1.75;
+		}
+
+		@media (--viewport-xs) {
+			--chart-aspect-ratio: 1.25;
+		}
 	}
 </style>
