@@ -21,6 +21,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	import PairCandleChart from '$lib/chart/PairCandleChart.svelte';
 	import quoteFeed from '$lib/chart/quoteFeed';
 	import ChartLinker from '$lib/chart/ChartLinker';
+	import { ChartHudRow, ChartHudMetric } from '$lib/components';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -60,7 +61,11 @@ for the same hovered date. Also displays a time-bucket selector.
 		{timeBucket}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
-	/>
+	>
+		<ChartHudRow slot="hud-row-volume" let:activeTick let:formatter>
+			<ChartHudMetric label="Vol" value={formatter(activeTick.Volume)} />
+		</ChartHudRow>
+	</PairCandleChart>
 </div>
 
 <div class="chart-wrapper">
@@ -90,16 +95,12 @@ for the same hovered date. Also displays a time-bucket selector.
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
-			<div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
-				<dl class="vol-added">
-					<dt>Vol Added</dt>
-					<dd>{formatForHud(activeTick.av)}</dd>
-				</dl>
-				<dl class="vol-removed">
-					<dt>Vol Removed</dt>
-					<dd>{formatForHud(activeTick.rv)}</dd>
-				</dl>
-			</div>
+			<ChartHudRow slot="hud-row-volume" let:activeTick let:formatter>
+				<ChartHudMetric label="Vol Added" value={formatter(activeTick.av)} direction={1}>
+					<span class="vol-added">{formatter(activeTick.av)}</span>
+				</ChartHudMetric>
+				<ChartHudMetric label="Vol Removed" value={formatter(activeTick.rv)} direction={-1} />
+			</ChartHudRow>
 		</PairCandleChart>
 	{/if}
 </div>
@@ -163,15 +164,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		}
 	}
 
-	.hud-row {
-		& .vol-added dd {
-			color: hsla(var(--hsl-bullish));
-			min-width: 4.5em;
-		}
-
-		& .vol-removed dd {
-			color: hsla(var(--hsl-bearish));
-		}
+	.vol-added {
+		display: inline-block;
+		min-width: 4.5em;
 	}
 
 	.not-available {

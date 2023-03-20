@@ -23,7 +23,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	import type ChartLinker from './ChartLinker';
 	import { timeBucketToPeriodicity } from './timeBucketConverters';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { ChartHudRow, ChartHudMetric } from '$lib/components';
 	import ChartIQ from './ChartIQ.svelte';
 
 	export let quoteFeed: any;
@@ -84,69 +84,17 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{#if activeTick}
 		{@const priceChangeAmt = activeTick.Close - activeTick.Open}
 		{@const priceChangePct = priceChangeAmt / activeTick.Open}
+		{@const direction = Math.sign(priceChangeAmt)}
 
-		<div class="hud">
-			<slot name="hud-row-1" {activeTick} {formatForHud}>
-				<div class="hud-row {determinePriceChangeClass(priceChangeAmt)}">
-					<dl>
-						<dt>O</dt>
-						<dd>{formatForHud(activeTick.Open)}</dd>
-					</dl>
-					<dl>
-						<dt>H</dt>
-						<dd>{formatForHud(activeTick.High)}</dd>
-					</dl>
-					<dl>
-						<dt>L</dt>
-						<dd>{formatForHud(activeTick.Low)}</dd>
-					</dl>
-					<dl>
-						<dt>C</dt>
-						<dd>{formatForHud(activeTick.Close)}</dd>
-					</dl>
-					<dl><dd>{formatForHud(priceChangeAmt)}</dd></dl>
-					<dl><dd>{formatPriceChange(priceChangePct)}</dd></dl>
-				</div>
-			</slot>
-			<slot name="hud-row-2" {activeTick} {formatForHud}>
-				<div class="hud-row">
-					<dl>
-						<dt>Vol</dt>
-						<dd>{formatForHud(activeTick.Volume)}</dd>
-					</dl>
-				</div>
-			</slot>
-		</div>
+		<ChartHudRow>
+			<ChartHudMetric label="O" value={formatForHud(activeTick.Open)} {direction} />
+			<ChartHudMetric label="H" value={formatForHud(activeTick.High)} {direction} />
+			<ChartHudMetric label="L" value={formatForHud(activeTick.Low)} {direction} />
+			<ChartHudMetric label="C" value={formatForHud(activeTick.Close)} {direction} />
+			<ChartHudMetric value={formatForHud(priceChangeAmt)} {direction} />
+			<ChartHudMetric value={formatPriceChange(priceChangePct)} {direction} />
+		</ChartHudRow>
+
+		<slot name="hud-row-volume" {activeTick} formatter={formatForHud} />
 	{/if}
 </ChartIQ>
-
-<style lang="postcss">
-	.hud :global {
-		position: absolute;
-		top: 4px;
-		left: 0;
-		font: var(--f-ui-xsmall-roman);
-		letter-spacing: 0.02em;
-
-		& .hud-row {
-			display: flex;
-			gap: 0.5em;
-		}
-
-		& dl {
-			display: flex;
-			gap: var(--space-xxs);
-			align-items: center;
-			margin: 0;
-		}
-
-		& dt {
-			color: var(--c-text-3-v1);
-			font-weight: inherit;
-		}
-
-		& dd {
-			margin: 0;
-		}
-	}
-</style>

@@ -12,9 +12,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
     {quoteFeed}
     invalidate={[dep1, dep2]}
   >
-    <div let:activeTick>
-      Additional content to display within chart container (e.g., custom HUD)
-    </div>
+		<ChartHudRow>...</ChartHudRow>
   </ChartIQ>
 ```
 -->
@@ -163,12 +161,14 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 {#await initialize() then}
 	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
+		<div class="inner">
+			<slot {activeTick} />
+		</div>
 		{#if loading}
 			<div class="loading" transition:fade={{ duration: 250 }}>
 				<Spinner size="60" color="hsla(var(--hsl-text))" />
 			</div>
 		{/if}
-		<slot {activeTick} />
 	</div>
 {:catch}
 	<AlertList status="warning">
@@ -191,19 +191,25 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		@media (--viewport-xs) {
 			--CHART-aspect-ratio: 4/6;
 		}
-	}
 
-	.loading {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: hsla(var(--hsl-body));
-		opacity: 0.75;
+		& :is(.loading, .inner) {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
+		& .inner {
+			z-index: 99;
+		}
+
+		& .loading {
+			z-index: 100;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: hsla(var(--hsl-body), 0.75);
+		}
 	}
 </style>

@@ -16,8 +16,8 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 ```
 -->
 <script context="module" lang="ts">
-	type Formatter = (n: number) => string;
-	const defaultFormatter: Formatter = (n) => n.toLocaleString('en');
+	import type { Formatter } from '$lib/helpers/formatters';
+	const defaultFormatter: Formatter<number> = (n) => n.toLocaleString('en');
 
 	export function generateOptions(breakpoints: number[], labels: string[] = [], formatter = defaultFormatter) {
 		const options = [];
@@ -64,7 +64,7 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 	export let breakpoints: number[];
 
 	/** formats values in auto-generated labels; default: `toLocaleString("en")` */
-	export let formatter: Formatter | undefined = undefined;
+	export let formatter: Formatter<number> | undefined = undefined;
 
 	/** override auto-generated labels */
 	export let labels: string[] = [];
