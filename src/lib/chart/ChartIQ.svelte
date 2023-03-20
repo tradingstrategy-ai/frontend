@@ -102,7 +102,8 @@ Dynamically ChartIQ modules (if available) and render chart element.
 				}
 
 				// Set appropriate date format for timeUnit
-				const dateFormat = timeUnit === 'minute' ? 'M/d HH:mm' : 'M/d/yyyy';
+				const hasSubDayUnits = timeUnit === 'minute' && !(interval === 60 && period === 24);
+				const dateFormat = hasSubDayUnits ? 'M/d HH:mm' : 'M/d/yyyy';
 				chartEngine.controls.floatDate.innerHTML = formatDate(displayDate, dateFormat);
 			}
 		});
