@@ -114,6 +114,13 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// this must come _after_ linker registration (above)
 		chartEngine.prepend('mousemoveinner', () => loading);
 
+		// cancel mouseWheel zoom unless a modifier key is pressed
+		chartEngine.prepend('mouseWheel', (event) => {
+			const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
+			const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+			return !modifierPressed && verticalScroll;
+		});
+
 		// attach quoteFeed if provided (API data adapter)
 		if (quoteFeed) {
 			chartEngine.attachQuoteFeed(quoteFeed, {});

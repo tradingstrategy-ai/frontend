@@ -55,13 +55,6 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			chartEngine.chart.yAxis.maxDecimalPlaces = chartEngine.chart.yAxis.printDecimalPlaces;
 		});
 
-		// cancel mouseWheel zoom unless a modifier key is pressed
-		chartEngine.prepend('mouseWheel', (event) => {
-			const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
-			const verticalScroll = Math.abs(event.deltaY) > Math.abs(event.deltaX);
-			return !modifierPressed && verticalScroll;
-		});
-
 		// update the chart - used on both initial load and updates
 		function update() {
 			// hide the Y Axis on smaller screens
