@@ -52,14 +52,19 @@
 		}
 
 		& > h2 {
-			font: var(--f-text-xxl-semibold);
-			letter-spacing: var(--f-text-xl-spacing, normal);
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
 		}
 
 		& > h3 {
-			font: var(--f-text-xl-semibold);
-			letter-spacing: var(--f-text-lg-spacing, normal);
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
+			margin: var(--space-xl) 0 var(--space-md) 0;
+		}
+		& > h4 {
+			font: var(--f-heading-sm-medium);
+			letter-spacing: var(--f-heading-sm-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
 		}
 
