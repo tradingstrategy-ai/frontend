@@ -37,7 +37,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	$: periodicity = timeBucketToPeriodicity(timeBucket);
 
 	let viewportWidth: number;
-	$: showYAxis = viewportWidth >= 576;
+	$: hideYAxis = viewportWidth <= 576;
 
 	function formatForHud(value: number) {
 		return formatDollar(value, 3, 3, '');
@@ -58,7 +58,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 		// update the chart - used on both initial load and updates
 		function update() {
 			// hide the Y Axis on smaller screens
-			chartEngine.chart.yAxis.position = showYAxis ? 'right' : 'none';
+			chartEngine.chart.yAxis.position = hideYAxis ? 'none' : 'right';
 			// make exchangeType and firstTradeDate available to the quoteFeed
 			chartEngine.exchangeType = exchangeType;
 			chartEngine.firstTradeDate = firstTradeDate;
@@ -78,7 +78,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{studies}
 	{linker}
 	{quoteFeed}
-	invalidate={[pairId, periodicity, showYAxis, firstTradeDate, exchangeType]}
+	invalidate={[pairId, periodicity, hideYAxis, firstTradeDate, exchangeType]}
 	let:activeTick
 >
 	{#if activeTick}
