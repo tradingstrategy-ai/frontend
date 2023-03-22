@@ -12,12 +12,11 @@ Render the portfolio performance chart using ChartIQ.
 	export let portfolio;
 
 	const options = {
-		layout: {
-			chartType: 'line',
-			crosshair: true
-		},
-		controls: {
-			chartControls: null
+		layout: { chartType: 'line' },
+		controls: { chartControls: null },
+		chart: {
+			xAxis: { displayGridLines: false },
+			yAxis: { displayGridLines: false }
 		}
 	};
 
@@ -32,14 +31,10 @@ Render the portfolio performance chart using ChartIQ.
 	}
 
 	function init(chartEngine: any) {
-		chartEngine.chart.yAxis.position = 'left';
-		chartEngine.chart.yAxis.decimalPlaces = 2;
-		chartEngine.chart.yAxis.maxDecimalPlaces = 2;
-
 		return {
 			update() {
 				chartEngine.loadChart(name, {
-					periodicity: { period: 24, interval: 1, timeUnit: 'hour' },
+					periodicity: { period: 24, interval: 60, timeUnit: 'minute' },
 					span: { base: 'day', multiplier: 90 },
 					masterData: getChartData(portfolio)
 				});
