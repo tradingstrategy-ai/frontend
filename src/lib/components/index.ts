@@ -27,6 +27,7 @@ export { default as PageHeader } from './PageHeader.svelte';
 export { default as PageHeading } from './PageHeading.svelte';
 export { default as Select } from './Select.svelte';
 export { default as Section } from './Section.svelte';
+export { default as SegmentedControl } from './SegmentedControl.svelte';
 export { default as SmartContractWidget } from './SmartContractWidget.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
 export { default as SourceCode } from './SourceCode.svelte';
