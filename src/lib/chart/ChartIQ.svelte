@@ -56,8 +56,8 @@ Dynamically ChartIQ modules (if available) and render chart element.
 <script lang="ts">
 	import type ChartLinker from './ChartLinker';
 	import { fade } from 'svelte/transition';
-	import { format as formatDate } from 'date-fns';
 	import ChartActivityTracker from './ChartActivityTracker';
+	import { lightFormat as formatDate } from 'date-fns';
 	import Spinner from 'svelte-spinner';
 	import { AlertItem, AlertList } from '$lib/components';
 
@@ -85,24 +85,20 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			CIQ.Studies.addStudy(chartEngine, study);
 		}
 
+		// set default formatter for x-axis crosshair date label
+		chartEngine.chart.xAxis.formatter = function (labelDate: Date) {
+			const { period, interval, timeUnit } = chartEngine.getPeriodicity();
+			const subDay = timeUnit === 'minute' && period * interval < 24 * 60;
+			const format = subDay ? 'M/d HH:mm' : 'M/d/yyyy';
+			return formatDate(labelDate, format);
+		};
+
+		// update active tick data based on crosshair position
 		chartEngine.append('headsUpHR', () => {
 			const tick = chartEngine.barFromPixel(chartEngine.cx);
 			const prices = chartEngine.chart.xaxis[tick];
 			if (prices) {
-				// update active tick data based on crosshair position
 				activeTick = prices.data;
-
-				// HACK to address ChartIQ bug - times in floating x-axis label are off by 3h for 4h timeBucket
-				const { period, interval, timeUnit } = chartEngine.getPeriodicity();
-				const displayDate = new Date(prices.DT);
-				if (period === 4 && interval === 60 && timeUnit === 'minute') {
-					displayDate.setUTCHours(displayDate.getUTCHours() + 3);
-				}
-
-				// Set appropriate date format for timeUnit
-				const hasSubDayUnits = timeUnit === 'minute' && !(interval === 60 && period === 24);
-				const dateFormat = hasSubDayUnits ? 'M/d HH:mm' : 'M/d/yyyy';
-				chartEngine.controls.floatDate.innerHTML = formatDate(displayDate, dateFormat);
 			}
 		});
 

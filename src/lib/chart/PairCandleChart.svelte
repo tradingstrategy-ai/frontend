@@ -55,6 +55,16 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			chartEngine.chart.yAxis.maxDecimalPlaces = chartEngine.chart.yAxis.printDecimalPlaces;
 		});
 
+		// HACK to address ChartIQ bug - times in floating x-axis label are off by 3h for 4h timeBucket
+		const originalFormatter = chartEngine.chart.xAxis.formatter;
+		chartEngine.chart.xAxis.formatter = function (labelDate: Date) {
+			const adjustedDate = new Date(labelDate);
+			if (timeBucket === '4h') {
+				adjustedDate.setUTCHours(adjustedDate.getUTCHours() + 3);
+			}
+			return originalFormatter(adjustedDate);
+		};
+
 		// update the chart - used on both initial load and updates
 		function update() {
 			// hide the Y Axis on smaller screens
