@@ -6,7 +6,7 @@ Render the portfolio performance chart using ChartIQ.
 -->
 <script lang="ts">
 	import { SummaryBox } from '$lib/components';
-	import ChartIQ from '$lib/chart/ChartIQ.svelte';
+	import { ChartIQ } from '$lib/chart';
 
 	export let name: string;
 	export let portfolio;

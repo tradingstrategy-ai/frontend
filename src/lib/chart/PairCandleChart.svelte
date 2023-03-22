@@ -19,12 +19,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 ```
 -->
 <script lang="ts">
-	import type { TimeBucket } from './timeBucketConverters';
-	import type ChartLinker from './ChartLinker';
-	import { timeBucketToPeriodicity } from './timeBucketConverters';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { ChartHudRow, ChartHudMetric } from '$lib/components';
-	import ChartIQ from './ChartIQ.svelte';
+	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+	import { type ChartLinker, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 
 	export let quoteFeed: any;
 	export let pairId: number | string;
@@ -96,14 +93,14 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 		{@const priceChangePct = priceChangeAmt / activeTick.Open}
 		{@const direction = Math.sign(priceChangeAmt)}
 
-		<ChartHudRow>
-			<ChartHudMetric label="O" value={formatForHud(activeTick.Open)} {direction} />
-			<ChartHudMetric label="H" value={formatForHud(activeTick.High)} {direction} />
-			<ChartHudMetric label="L" value={formatForHud(activeTick.Low)} {direction} />
-			<ChartHudMetric label="C" value={formatForHud(activeTick.Close)} {direction} />
-			<ChartHudMetric value={formatForHud(priceChangeAmt)} {direction} />
-			<ChartHudMetric value={formatPriceChange(priceChangePct)} {direction} />
-		</ChartHudRow>
+		<HudRow>
+			<HudMetric label="O" value={formatForHud(activeTick.Open)} {direction} />
+			<HudMetric label="H" value={formatForHud(activeTick.High)} {direction} />
+			<HudMetric label="L" value={formatForHud(activeTick.Low)} {direction} />
+			<HudMetric label="C" value={formatForHud(activeTick.Close)} {direction} />
+			<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
+			<HudMetric value={formatPriceChange(priceChangePct)} {direction} />
+		</HudRow>
 
 		<slot name="hud-row-volume" {activeTick} formatter={formatForHud} />
 	{/if}

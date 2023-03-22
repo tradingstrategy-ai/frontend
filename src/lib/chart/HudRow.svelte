@@ -1,28 +1,28 @@
 <!--
 @component
-Use in conjunction with ChartHudMetric to display chart HUD (heads-up-display) data.
+Use in conjunction with HudMetric to display chart HUD (heads-up-display) data.
 
 #### Usage:
 ```tsx
-  <ChartHudRow>
-    <ChartHudMetric ... />
-  </ChartHudRow>
+  <HudRow>
+    <HudMetric ... />
+  </HudRow>
 ```
 -->
 <script lang="ts">
 	export let align: 'left' | 'right' = 'left';
 </script>
 
-<dl class="chart-hud-row {align}">
+<dl class="hud-row {align}">
 	<slot />
 </dl>
 
 <style lang="postcss">
-	.chart-hud-row {
+	.hud-row {
 		display: flex;
 		gap: var(--space-ss);
-		font: var(--chart-hud-font, var(--f-ui-xs-roman));
-		letter-spacing: var(--chart-hud-letter-spacing, var(--f-ui-xs-spacing, normal));
+		font: var(--hud-font, var(--f-ui-xs-roman));
+		letter-spacing: var(--hud-letter-spacing, var(--f-ui-xs-spacing, normal));
 		padding-block: var(--space-xxxs);
 		white-space: nowrap;
 

@@ -12,7 +12,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
     {quoteFeed}
     invalidate={[dep1, dep2]}
   >
-		<ChartHudRow>...</ChartHudRow>
+		<HudRow>...</HudRow>
   </ChartIQ>
 ```
 -->
@@ -54,12 +54,11 @@ Dynamically ChartIQ modules (if available) and render chart element.
 </script>
 
 <script lang="ts">
-	import type ChartLinker from './ChartLinker';
 	import { fade } from 'svelte/transition';
-	import ChartActivityTracker from './ChartActivityTracker';
 	import { lightFormat as formatDate } from 'date-fns';
-	import Spinner from 'svelte-spinner';
+	import { type ChartLinker, ChartActivityTracker } from '$lib/chart';
 	import { AlertItem, AlertList } from '$lib/components';
+	import Spinner from 'svelte-spinner';
 
 	export let options: any = {};
 	export let init: Function | undefined = undefined;
