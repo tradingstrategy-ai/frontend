@@ -5,9 +5,11 @@
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { formatAmount } from '$lib/helpers/formatters';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
 	export let data: PageData;
+	console.log(data);
 </script>
 
 <svelte:head>
@@ -25,7 +27,7 @@
 			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
 				<img class="blockchain-logo" slot="icon" alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
 				<h3 class="blockchain-title" slot="title">{chain.chain_name}</h3>
-				<p>{chain.exchanges} exchanges</p>
+				<p>{formatAmount(chain.exchanges)} exchanges</p>
 			</ContentCard>
 		{/each}
 	</ContentCardsSection>
