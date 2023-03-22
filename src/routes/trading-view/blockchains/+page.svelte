@@ -9,7 +9,6 @@
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
 	export let data: PageData;
-	console.log(data);
 </script>
 
 <svelte:head>
