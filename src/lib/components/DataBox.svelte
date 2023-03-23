@@ -20,7 +20,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 
 <div class="data-box {size}">
 	<span class="label">{label}</span>
-	<span class="value {valueClass}"><slot>{value}</slot></span>
+	<span class="value {valueClass}"><slot>{value || '---'}</slot></span>
 </div>
 
 <style lang="postcss">

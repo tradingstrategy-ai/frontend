@@ -6,53 +6,35 @@ Render the statistics from the portfolio server-side calculated state.
 	import { formatDollar, formatDuration, formatPercent } from '$lib/helpers/formatters';
 	import { DataBox, SummaryBox } from '$lib/components';
 
-	// TODO: Type define in some point
 	// See trade_analyzer.py TradeSummary class
 	export let latestStats: any;
 
-	// Translate raw variables from TradeSummary Python class
-	const summaryLabels = {
-		duration: ['Trade period', formatDuration],
-		realised_profit: ['Realised profit', formatDollar],
-		open_value: ['Open positions', formatDollar],
-		return_percent: ['Return %', formatPercent],
-		annualised_return_percent: ['Annualised Return %', formatPercent],
-		total_trades: ['Total trades'],
-		won: ['Trades won'],
-		lost: ['Trades lost'],
-		stop_losses: ['Stop losses triggered'],
-		zero_loss: ['Positions closed neutral'],
-		average_winning_trade_profit_pc: ['Average winning trade profit %', formatPercent],
-		biggest_winning_trade_pc: ['Biggest winning trade %', formatPercent],
-		biggest_losing_trade_pc: ['Biggest losing trade %', formatPercent]
-	};
+	$: summary = latestStats?.summary || {};
 
-	function translateSummary(tradeSummary) {
-		const result = {};
-
-		if (!tradeSummary) {
-			return result;
-		}
-
-		for (let key in summaryLabels) {
-			const val = tradeSummary[key];
-			const [label, formatter] = summaryLabels[key];
-			result[label] = formatter ? formatter(val) : val;
-		}
-
-		return result;
-	}
-
-	// See TradeSummary in trade_summary.py
-	$: summary = translateSummary(latestStats?.summary);
+	// compatibility layer for old property name in TradeSummary (remove after 01.04.2023)
+	$: summary.total_positions ??= summary.total_trades;
 </script>
 
 {#if summary}
 	<div class="summary-statistics">
 		<SummaryBox class="summary-statistics" title="Performance summary">
-			{#each Object.entries(summary) as [label, value]}
-				<DataBox size="sm" {label} value={`${value}`} />
-			{/each}
+			<DataBox size="sm" label="Trade period" value={formatDuration(summary.duration)} />
+			<DataBox size="sm" label="Realised profit" value={formatDollar(summary.realised_profit)} />
+			<DataBox size="sm" label="Open positions" value={formatDollar(summary.open_value)} />
+			<DataBox size="sm" label="Return %" value={formatPercent(summary.return_percent)} />
+			<DataBox size="sm" label="Annualised Return %" value={formatPercent(summary.annualised_return_percent)} />
+			<DataBox size="sm" label="Total positions" value={summary.total_positions} />
+			<DataBox size="sm" label="Trades won" value={summary.won} />
+			<DataBox size="sm" label="Trades lost" value={summary.lost} />
+			<DataBox size="sm" label="Stop losses triggered" value={summary.stop_losses} />
+			<DataBox size="sm" label="Positions closed neutral" value={summary.zero_loss} />
+			<DataBox
+				size="sm"
+				label="Average winning trade profit %"
+				value={formatPercent(summary.average_winning_trade_profit_pc)}
+			/>
+			<DataBox size="sm" label="Biggest winning trade %" value={formatPercent(summary.biggest_winning_trade_pc)} />
+			<DataBox size="sm" label="Biggest losing trade %" value={formatPercent(summary.biggest_losing_trade_pc)} />
 		</SummaryBox>
 	</div>
 {/if}
