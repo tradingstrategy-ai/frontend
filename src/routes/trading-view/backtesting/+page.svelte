@@ -93,6 +93,7 @@
 		{#if !validApiKey}
 			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
 				<TextInput
+					autocomplete="off"
 					id="apiKey"
 					label="Enter API key to enable download"
 					placeholder="secret-token:tradingstrategy-"
