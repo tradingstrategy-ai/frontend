@@ -24,12 +24,13 @@
 			pageIndex={page?.pageIndex} let:pageIndex
 			pageSize={page?.pageSize} let:pageSize
 		>
+			{@const index = getRowIndex(pageIndex, pageSize, pageRowIndex)}
 			{#if rowProps.clickable}
 				<a href={row.cellForId[rowProps.clickable.id].value} style:display="contents">
-					<TableRow attrs={rowAttrs} cells={row.cells} index={getRowIndex(pageIndex, pageSize, pageRowIndex)} />
+					<TableRow attrs={rowAttrs} cells={row.cells} {index} />
 				</a>
 			{:else}
-				<TableRow attrs={rowAttrs} cells={row.cells} />
+				<TableRow attrs={rowAttrs} cells={row.cells} {index} />
 			{/if}
 		</Subscribe>
 	{/each}
