@@ -10,9 +10,17 @@
 	export let data: PageData;
 
 	const chainSlug = $page.params.chain;
-	const chainName = chainSlug[0].toUpperCase() + chainSlug.slice(1);
+	const chainName = getChainName();
 
 	let loading = false;
+
+	function getChainName() {
+		const firstToken = data.rows?.[0];
+		if (firstToken) {
+			return firstToken.chain_name;
+		}
+		return chainSlug[0].toUpperCase() + chainSlug.slice(1);
+	}
 
 	async function handleChange({ detail }: ComponentEvents<TokenTable>['change']) {
 		loading = true;
@@ -27,7 +35,7 @@
 	<meta name="description" content="Top tokens on {chainName} blockchain" />
 </svelte:head>
 
-<Breadcrumbs />
+<Breadcrumbs labels={{ [chainSlug]: chainName }} />
 
 <main class="token-index-page">
 	<Section tag="header">

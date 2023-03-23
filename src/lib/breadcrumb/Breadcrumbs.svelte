@@ -21,20 +21,15 @@ https://search.google.com/structured-data/testing-tool
 	}
 
 	const baseLabels: BreadcrumbLabels = {
-		'trading-view': 'Trading data',
-		backtesting: 'Historical data',
-		exchanges: 'Decentralised exchanges',
-		community: 'Community',
-		blog: 'Blog',
 		about: 'About',
-		ethereum: 'Ethereum',
-		bsc: 'BNB Chain',
-		binance: 'BNB Chain',
-		avalanche: 'Avalanche C-chain',
-		polygon: 'Polygon',
-		tokens: 'Tokens',
+		backtesting: 'Historical data',
+		blog: 'Blog',
+		community: 'Community',
+		exchanges: 'Decentralised exchanges',
+		glossary: 'Trading and DeFi terminology',
 		strategies: 'Trading strategies',
-		glossary: 'Trading and DeFi terminology'
+		tokens: 'Tokens',
+		'trading-view': 'Trading data'
 	};
 </script>
 

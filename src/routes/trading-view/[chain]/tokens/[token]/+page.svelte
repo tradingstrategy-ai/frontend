@@ -13,6 +13,11 @@
 
 	export let data: PageData;
 
+	$: breadcrumbs = {
+		[data.chain_slug]: data.chain_name,
+		[data.address]: data.name
+	};
+
 	const pairsClient = getPairsClient(fetch);
 
 	$: $page.route.id?.endsWith('[token]') &&
@@ -38,7 +43,7 @@
 	/>
 </svelte:head>
 
-<Breadcrumbs labels={{ [data.address]: data.name }} />
+<Breadcrumbs labels={breadcrumbs} />
 
 <main>
 	<PageHeader title={data.name} subtitle="token trading as {data.symbol} on {data.chain_name}" />

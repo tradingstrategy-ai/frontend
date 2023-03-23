@@ -26,6 +26,7 @@
 	let downloadDisabled = false;
 
 	$: breadcrumbs = {
+		[data.chain_slug]: data.chain_name,
 		[data.exchange_slug]: exchangeName,
 		'export-data': 'Export data'
 	};

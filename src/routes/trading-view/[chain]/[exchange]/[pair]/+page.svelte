@@ -30,6 +30,7 @@ Render the pair trading page
 	$: ridiculousPrice = summary.usd_price_latest < 0.000001;
 
 	$: breadcrumbs = {
+		[summary.chain_slug]: summary.chain_name,
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
 	};

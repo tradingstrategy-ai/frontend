@@ -15,6 +15,11 @@
 
 	$: nameDetails = parseExchangeName(data.human_readable_name);
 
+	$: breadcrumbs = {
+		[data.chain_slug]: data.chain_name,
+		[data.exchange_slug]: data.human_readable_name
+	};
+
 	// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
 	// but this is not currently available from `exchange-details` endpoint.
 	// See: https://github.com/tradingstrategy-ai/backend/issues/110
@@ -50,7 +55,7 @@
 	/>
 </svelte:head>
 
-<Breadcrumbs labels={{ [data.exchange_slug]: data.human_readable_name }} />
+<Breadcrumbs labels={breadcrumbs} />
 
 <main>
 	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
