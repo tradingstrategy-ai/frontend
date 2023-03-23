@@ -8,7 +8,6 @@
 	export let data: PageData;
 
 	const { chain, position, trade } = data;
-	console.log(chain);
 </script>
 
 <main class="ds-container">
