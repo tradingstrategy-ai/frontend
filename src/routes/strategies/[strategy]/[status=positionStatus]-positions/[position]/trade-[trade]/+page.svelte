@@ -7,7 +7,8 @@
 
 	export let data: PageData;
 
-	const { position, trade } = data;
+	const { chain, position, trade } = data;
+	console.log(chain);
 </script>
 
 <main class="ds-container">
@@ -46,7 +47,7 @@
 		<DataBox label="Gas fees" value="N/A" />
 	</DataBoxes>
 
-	<TransactionTable transactions={trade.blockchain_transactions} />
+	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
 </main>
 
 <style lang="postcss">

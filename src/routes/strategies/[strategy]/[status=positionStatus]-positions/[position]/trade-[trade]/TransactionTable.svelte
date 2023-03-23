@@ -1,26 +1,26 @@
 <script lang="ts">
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
-	import { getChainName } from 'trade-executor-frontend/helpers/chain-explorer';
 	import { DataTable } from '$lib/components';
 	import BlockchainExplorerLink from './BlockchainExplorerLink.svelte';
 	import TransactionStatus from './TransactionStatus.svelte';
 
+	export let chain: Record<string, any> | undefined;
 	export let transactions: Record<string, any>[] = [];
 
 	const table = createTable(readable(transactions));
 
 	const columns = table.createColumns([
 		table.column({
-			id: 'chain_id',
+			id: 'chain',
 			header: 'Chain',
-			accessor: ({ chain_id }) => getChainName(chain_id)
+			accessor: ({ chain_id }) => chain?.chain_name || chain_id
 		}),
 		table.column({
 			id: 'transaction_hash',
 			header: 'Transaction hash',
-			accessor: ({ chain_id, tx_hash }) => ({ chain_id, tx_hash }),
-			cell: ({ value }) => createRender(BlockchainExplorerLink, value)
+			accessor: ({ tx_hash }) => ({ tx_hash }),
+			cell: ({ value }) => createRender(BlockchainExplorerLink, { ...value, baseUrl: chain?.chain_explorer })
 		}),
 		table.column({
 			id: 'status',

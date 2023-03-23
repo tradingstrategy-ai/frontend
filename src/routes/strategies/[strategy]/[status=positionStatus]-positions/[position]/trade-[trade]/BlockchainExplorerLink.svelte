@@ -1,10 +1,16 @@
 <script lang="ts">
-	import { getChainExplorerLink } from 'trade-executor-frontend/helpers/chain-explorer';
-
-	export let chain_id: number;
+	export let baseUrl: string | undefined;
 	export let tx_hash: string;
 
-	$: href = getChainExplorerLink(chain_id, tx_hash);
+	$: href = getHref(baseUrl, tx_hash);
+
+	function getHref(baseUrl: string | undefined, tx_hash: string) {
+		try {
+			return new URL(`tx/${tx_hash}`, baseUrl).toString();
+		} catch {
+			console.error(`Error - invalid baseURL: ${baseUrl}`);
+		}
+	}
 </script>
 
 {#if href}
