@@ -22,7 +22,7 @@
 		<ContentCard icon="blockchain" title="Blockchains" ctaLabel="Explore blockchains" href="/trading-view/blockchains">
 			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
 			{#if data}
-				<p>Currently indexing data from <strong>4 blockchains</strong></p>
+				<p>Currently indexing data from <strong>{formatAmount(data.blockchains)} blockchains</strong></p>
 			{/if}
 		</ContentCard>
 
