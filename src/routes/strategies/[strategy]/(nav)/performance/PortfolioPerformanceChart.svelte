@@ -5,8 +5,10 @@ Render the portfolio performance chart using ChartIQ.
 - Y-axis: portfolio value
 -->
 <script lang="ts">
-	import { SummaryBox } from '$lib/components';
-	import { ChartIQ } from '$lib/chart';
+	import { lightFormat as formatDate } from 'date-fns';
+	import { formatDollar } from '$lib/helpers/formatters';
+	import { SummaryBox, UpDownCell } from '$lib/components';
+	import { ChartIQ, Marker } from '$lib/chart';
 
 	export let name: string;
 	export let portfolio;
@@ -46,12 +48,23 @@ Render the portfolio performance chart using ChartIQ.
 {#if portfolio}
 	<SummaryBox title="Total equity" subtitle="Cash and market valued tokens in the strategy (USD)">
 		<div class="portfolio-performance-chart">
-			<ChartIQ {init} {options} />
+			<ChartIQ {init} {options} let:cursor>
+				{@const { position, data } = cursor}
+				{#if data}
+					<Marker x={position.DateX} y={position.CloseY} --marker-color="hsla(var(--hsl-text-light))" />
+					<div class="info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
+						<UpDownCell value={data.Close - data.iqPrevClose}>
+							<div class="date">{formatDate(data.displayDate, 'M/d/yyyy')}</div>
+							<div class="value">{formatDollar(data.Close)}</div>
+						</UpDownCell>
+					</div>
+				{/if}
+			</ChartIQ>
 		</div>
 	</SummaryBox>
 {/if}
 
-<style>
+<style lang="postcss">
 	.portfolio-performance-chart {
 		--chart-aspect-ratio: 2;
 
@@ -61,6 +74,26 @@ Render the portfolio performance chart using ChartIQ.
 
 		@media (--viewport-xs) {
 			--chart-aspect-ratio: 1.25;
+		}
+	}
+
+	.info {
+		position: absolute;
+		left: var(--x);
+		top: var(--y);
+		background: hsla(var(--hsl-body), 0.8);
+		border-radius: var(--radius-sm);
+		transform: translate(-50%, calc(-100% - var(--space-md)));
+
+		& .date {
+			font: var(--f-ui-xs-bold);
+			letter-spacing: var(--f-ui-xs-spacing);
+			color: hsla(var(--hsl-text), 0.4);
+		}
+
+		& .value {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing);
 		}
 	}
 </style>

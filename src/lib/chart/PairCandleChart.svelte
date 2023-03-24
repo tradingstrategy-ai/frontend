@@ -86,22 +86,22 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{linker}
 	{quoteFeed}
 	invalidate={[pairId, periodicity, hideYAxis, firstTradeDate, exchangeType]}
-	let:activeTick
+	let:cursor
 >
-	{#if activeTick}
-		{@const priceChangeAmt = activeTick.Close - activeTick.Open}
-		{@const priceChangePct = priceChangeAmt / activeTick.Open}
+	{#if cursor.data}
+		{@const priceChangeAmt = cursor.data.Close - cursor.data.Open}
+		{@const priceChangePct = priceChangeAmt / cursor.data.Open}
 		{@const direction = Math.sign(priceChangeAmt)}
 
 		<HudRow>
-			<HudMetric label="O" value={formatForHud(activeTick.Open)} {direction} />
-			<HudMetric label="H" value={formatForHud(activeTick.High)} {direction} />
-			<HudMetric label="L" value={formatForHud(activeTick.Low)} {direction} />
-			<HudMetric label="C" value={formatForHud(activeTick.Close)} {direction} />
+			<HudMetric label="O" value={formatForHud(cursor.data.Open)} {direction} />
+			<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
+			<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
+			<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
 			<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
 			<HudMetric value={formatPriceChange(priceChangePct)} {direction} />
 		</HudRow>
 
-		<slot name="hud-row-volume" {activeTick} formatter={formatForHud} />
+		<slot name="hud-row-volume" {cursor} formatter={formatForHud} />
 	{/if}
 </ChartIQ>

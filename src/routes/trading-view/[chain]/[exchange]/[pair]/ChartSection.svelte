@@ -58,8 +58,8 @@ for the same hovered date. Also displays a time-bucket selector.
 		studies={['Volume Underlay']}
 		linker={chartLinker}
 	>
-		<HudRow slot="hud-row-volume" let:activeTick let:formatter>
-			<HudMetric label="Vol" value={formatter(activeTick.Volume)} />
+		<HudRow slot="hud-row-volume" let:cursor let:formatter>
+			<HudMetric label="Vol" value={formatter(cursor.data.Volume)} />
 		</HudRow>
 	</PairCandleChart>
 </div>
@@ -91,11 +91,11 @@ for the same hovered date. Also displays a time-bucket selector.
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
-			<HudRow slot="hud-row-volume" let:activeTick let:formatter>
-				<HudMetric label="Vol Added" value={formatter(activeTick.av)} direction={1}>
-					<span class="vol-added">{formatter(activeTick.av)}</span>
+			<HudRow slot="hud-row-volume" let:cursor let:formatter>
+				<HudMetric label="Vol Added" value={formatter(cursor.data.av)} direction={1}>
+					<span class="vol-added">{formatter(cursor.data.av)}</span>
 				</HudMetric>
-				<HudMetric label="Vol Removed" value={formatter(activeTick.rv)} direction={-1} />
+				<HudMetric label="Vol Removed" value={formatter(cursor.data.rv)} direction={-1} />
 			</HudRow>
 		</PairCandleChart>
 	{/if}

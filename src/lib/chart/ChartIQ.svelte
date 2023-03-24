@@ -69,8 +69,17 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 	let loading = false;
 
-	// NOTE: requested TypeScript defs from ChartIQ.
-	let activeTick: any;
+	interface ChartCursor {
+		position: {
+			cx?: number;
+			cy?: number;
+			DateX?: number;
+			CloseY?: number;
+		};
+		data?: any;
+	}
+
+	let cursor: ChartCursor = { position: {} };
 
 	function chartIQ(node: HTMLElement, deps: any) {
 		let chartTracker;
@@ -92,13 +101,22 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			return formatDate(labelDate, format);
 		};
 
-		// update active tick data based on crosshair position
+		// update cursor / tick data based on pointer position
 		chartEngine.append('headsUpHR', () => {
-			const tick = chartEngine.barFromPixel(chartEngine.cx);
-			const prices = chartEngine.chart.xaxis[tick];
-			if (prices) {
-				activeTick = prices.data;
-			}
+			const tick = chartEngine.tickFromPixel(chartEngine.cx);
+			const data = chartEngine.chart.dataSet[tick];
+			const position = {
+				cx: chartEngine.cx,
+				cy: chartEngine.cy,
+				DateX: data && chartEngine.pixelFromDate(data.DT),
+				CloseY: data && chartEngine.pixelFromPrice(data.Close)
+			};
+			cursor = { position, data };
+		});
+
+		// clear cursor when pointer exits chart area
+		chartEngine.append('handleMouseOut', () => {
+			cursor = { position: {} };
 		});
 
 		// register this ChartEngine instance with ChartLinker (if provided)
@@ -157,7 +175,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 {#await initialize() then}
 	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
 		<div class="inner">
-			<slot {activeTick} />
+			<slot {cursor} />
 		</div>
 		{#if loading}
 			<div class="loading" transition:fade={{ duration: 250 }}>
