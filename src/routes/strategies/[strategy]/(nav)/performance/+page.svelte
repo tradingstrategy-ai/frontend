@@ -3,18 +3,21 @@
 -->
 <script lang="ts">
 	import type { PageData } from './$types';
-	import PortfolioPerformance from './PortfolioPerformanceChart.svelte';
+	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 
 	export let data: PageData;
 	$: ({ state, summary } = data);
 
+	$: portfolio = state?.stats?.portfolio;
 	$: latestStats = getPortfolioLatestStats(state);
 </script>
 
 <section class="performance">
-	<PortfolioPerformance name={summary.name} portfolio={state?.stats?.portfolio} />
+	{#if portfolio}
+		<PortfolioPerformanceChart name={summary.name} {portfolio} />
+	{/if}
 
 	<SummaryStatistics {latestStats} />
 </section>
