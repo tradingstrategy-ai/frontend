@@ -7,13 +7,14 @@ Render the portfolio performance chart using ChartIQ.
 <script lang="ts">
 	import { lightFormat as formatDate } from 'date-fns';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { SegmentedControl, UpDownCell } from '$lib/components';
 	import { ChartIQ, Marker } from '$lib/chart';
 
 	export let name: string;
 	export let portfolio: any;
 
-	$: direction = Math.sign(portfolio?.at(-1)?.total_equity - portfolio[0]?.total_equity);
+	let chartWrapper: HTMLElement;
 
 	let timeSpan = '3M';
 
@@ -45,6 +46,20 @@ Render the portfolio performance chart using ChartIQ.
 	}
 
 	function init(chartEngine: any) {
+		// update chart colors based on change in value (+/-) for visible data set
+		chartEngine.append('createDataSegment', () => {
+			const dataSegment = chartEngine.getDataSegment();
+			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
+			const className = determinePriceChangeClass(last?.Close - first?.Close);
+			// NOTE: setting class name directly on HTML element rather than declaratively via
+			// Svelte template; needed to prevent race condition / ensure colors update correctly.
+			if (chartWrapper.className !== className) {
+				chartWrapper.className = className;
+				chartEngine.clearStyles();
+			}
+		});
+
 		return {
 			update() {
 				chartEngine.loadChart(name, {
@@ -63,7 +78,7 @@ Render the portfolio performance chart using ChartIQ.
 		<SegmentedControl options={Object.keys(timeSpanOptions)} bind:selected={timeSpan} />
 	</header>
 	<p>Cash and market valued tokens in the strategy (USD)</p>
-	<div class:bullish={direction > 0} class:bearish={direction < 0}>
+	<div bind:this={chartWrapper}>
 		<ChartIQ {init} {options} invalidate={[timeSpan]} let:cursor>
 			{@const { position, data } = cursor}
 			{#if data}
