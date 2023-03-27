@@ -31,7 +31,11 @@ Render the portfolio performance chart using ChartIQ.
 		controls: { chartControls: null },
 		chart: {
 			xAxis: { displayGridLines: false },
-			yAxis: { displayGridLines: false }
+			yAxis: {
+				displayGridLines: false,
+				decimalPlaces: 2,
+				maxDecimalPlaces: 2
+			}
 		}
 	};
 
