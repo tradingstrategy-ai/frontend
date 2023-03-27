@@ -30,8 +30,7 @@
 
 .stx_grid,
 .stx_grid_dark {
-	color: var(--c-gray);
-	opacity: 0.2;
+	color: hsla(var(--hsl-box), var(--a-box-c));
 	border-style: solid;
 }
 
@@ -39,23 +38,23 @@
 .stx_xaxis,
 .stx-float-date,
 .stx-float-price {
-	font: 400 var(--fs-ui-xs);
-	letter-spacing: 0.02em;
+	font: var(--f-ui-xs-roman);
+	letter-spacing: var(--f-ui-xs-spacing, normal);
 }
 
 .stx_yaxis,
 .stx_xaxis {
-	color: var(--c-text-3);
+	color: hsla(var(--hsl-text-light));
 }
 
 .stx_xaxis_dark {
-	color: var(--c-text-1);
+	color: hsla(var(--hsl-text));
 }
 
 .stx-float-date,
 .stx-float-price {
-	color: var(--c-text-6);
-	background: var(--c-text-3);
+	color: hsla(var(--hsl-text));
+	background: var(--c-background-3); /* this needs to be a solid bg (no transparency) */
 }
 
 .stx-float-date {
@@ -68,27 +67,31 @@
 }
 
 .stx_jump_today {
-	background: var(--c-background-2);
-	opacity: 0.75;
+	background: hsla(var(--hsl-box), var(--a-box-b));
 }
 
 .crossY,
 .stx_crosshair_y {
 	height: 0px;
-	border-bottom: dashed var(--c-text-1) 1px;
+	border-bottom: dashed hsl(var(--hsl-text)) 1px;
 	background-color: transparent;
-	margin-top: -1px !important; /* since we're using border-top to draw the actual line */
+	margin-top: 1px !important; /* since we're using border-bottom to draw the actual line */
 	opacity: 0.5;
 }
 
 .crossX,
 .stx_crosshair_x {
 	width: 0px;
-	border-left: dashed var(--c-text-1) 1px;
+	border-left: dashed hsl(var(--hsl-text)) 1px;
 	background-color: transparent;
 	opacity: 0.5;
 }
 
 .mSticky {
 	display: none !important;
+}
+
+.stx_line_chart {
+	width: 2px;
+	color: hsla(var(--hsl-text-extra-light));
 }

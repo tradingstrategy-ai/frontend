@@ -10,13 +10,12 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 ```
 -->
 <script lang="ts">
-	type Value = number | string | undefined | null;
-	export let value: Value;
+	import type { MaybeNumberOrString, Formatter } from '$lib/helpers/formatters';
 
-	type Formatter = (value: Value) => string;
-	export let formatter: Formatter | undefined = undefined;
+	export let value: MaybeNumberOrString;
+	export let formatter: Formatter<MaybeNumberOrString> | undefined = undefined;
 
-	type CompareFn = (value: Value) => number;
+	type CompareFn = (value: MaybeNumberOrString) => number;
 	export let compareFn: CompareFn | undefined;
 
 	const compare: CompareFn = (value) => (value ? Math.sign(Number(value)) : 0);

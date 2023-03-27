@@ -17,10 +17,7 @@ for the same hovered date. Also displays a time-bucket selector.
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { TimeBucket } from '$lib/chart/timeBucketConverters';
-	import TimeBucketSelector from '$lib/chart/TimeBucketSelector.svelte';
-	import ChartIQ from '$lib/chart/ChartIQ.svelte';
-	import quoteFeed from '$lib/chart/quoteFeed';
-	import ChartLinker from '$lib/chart/ChartLinker';
+	import { quoteFeed, ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -42,20 +39,29 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Price & volume</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">
+			<a
+				class="body-link"
+				target="_blank"
+				rel="noreferrer"
+				href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV"
+			>
 				OHLCV candles
 			</a>
 		</div>
 	</div>
-	<ChartIQ
-		feed={quoteFeed('price')}
+	<PairCandleChart
+		quoteFeed={quoteFeed('price')}
 		{pairId}
 		{exchangeType}
 		{firstTradeDate}
 		{timeBucket}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
-	/>
+	>
+		<HudRow slot="hud-row-volume" let:cursor let:formatter>
+			<HudMetric label="Vol" value={formatter(cursor.data.Volume)} />
+		</HudRow>
+	</PairCandleChart>
 </div>
 
 <div class="chart-wrapper">
@@ -63,7 +69,12 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Liquidity</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a class="body-link" target="_blank" href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model">
+			<a
+				class="body-link"
+				target="_blank"
+				rel="noreferrer"
+				href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model"
+			>
 				USD value of one side of XY liquidity curve
 			</a>
 		</div>
@@ -71,8 +82,8 @@ for the same hovered date. Also displays a time-bucket selector.
 	{#if exchangeType === 'uniswap_v3'}
 		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
 	{:else}
-		<ChartIQ
-			feed={quoteFeed('liquidity')}
+		<PairCandleChart
+			quoteFeed={quoteFeed('liquidity')}
 			{pairId}
 			{exchangeType}
 			{firstTradeDate}
@@ -80,17 +91,13 @@ for the same hovered date. Also displays a time-bucket selector.
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
-			<div slot="hud-row-2" class="hud-row" let:activeTick let:formatForHud>
-				<dl class="vol-added">
-					<dt>Vol Added</dt>
-					<dd>{formatForHud(activeTick.av)}</dd>
-				</dl>
-				<dl class="vol-removed">
-					<dt>Vol Removed</dt>
-					<dd>{formatForHud(activeTick.rv)}</dd>
-				</dl>
-			</div>
-		</ChartIQ>
+			<HudRow slot="hud-row-volume" let:cursor let:formatter>
+				<HudMetric label="Vol Added" value={formatter(cursor.data.av)} direction={1}>
+					<span class="vol-added">{formatter(cursor.data.av)}</span>
+				</HudMetric>
+				<HudMetric label="Vol Removed" value={formatter(cursor.data.rv)} direction={-1} />
+			</HudRow>
+		</PairCandleChart>
 	{/if}
 </div>
 
@@ -153,15 +160,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		}
 	}
 
-	.hud-row {
-		& .vol-added dd {
-			color: hsla(var(--hsl-bullish));
-			min-width: 4.5em;
-		}
-
-		& .vol-removed dd {
-			color: hsla(var(--hsl-bearish));
-		}
+	.vol-added {
+		display: inline-block;
+		min-width: 4.5em;
 	}
 
 	.not-available {
