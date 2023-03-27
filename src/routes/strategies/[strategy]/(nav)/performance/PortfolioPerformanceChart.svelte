@@ -136,6 +136,7 @@ Render the portfolio performance chart using ChartIQ.
 			font: var(--f-ui-xs-bold);
 			letter-spacing: var(--f-ui-xs-spacing);
 			color: hsla(var(--hsl-text), 0.4);
+			white-space: nowrap;
 		}
 
 		& .value {
