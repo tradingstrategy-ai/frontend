@@ -215,6 +215,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		& .inner {
 			z-index: 99;
+			pointer-events: none;
 		}
 
 		& .loading {
