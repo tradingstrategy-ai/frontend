@@ -91,7 +91,38 @@
 	display: none !important;
 }
 
+/* default line chart styles */
 .stx_line_chart {
+	--hsl-chart-line: var(--hsl-text-extra-light);
+	color: hsla(var(--hsl-chart-line));
 	width: 2px;
-	color: hsla(var(--hsl-text-extra-light));
+}
+
+/* bullish line chart styles */
+.bullish .stx_line_chart {
+	--hsl-chart-line: var(--hsl-bullish);
+}
+
+/* bearish line chart styles */
+.bearish .stx_line_chart {
+	--hsl-chart-line: var(--hsl-bearish);
+}
+
+/* default mountain chart styles */
+.stx_mountain_chart {
+	--hsl-chart-mountain: var(--hsl-text-extra-light);
+	border: hsla(var(--hsl-chart-mountain)); /* line */
+	background-color: hsla(var(--hsl-chart-mountain), 0.25); /* gradient dark */
+	color: hsla(var(--hsl-chart-mountain), 0.05); /* gradient light */
+	width: 2px;
+}
+
+/* bullish mountain chart styles */
+.bullish .stx_mountain_chart {
+	--hsl-chart-mountain: var(--hsl-bullish);
+}
+
+/* bearish mountain chart styles */
+.bearish .stx_mountain_chart {
+	--hsl-chart-mountain: var(--hsl-bearish);
 }

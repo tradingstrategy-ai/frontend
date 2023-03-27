@@ -13,6 +13,8 @@ Render the portfolio performance chart using ChartIQ.
 	export let name: string;
 	export let portfolio: any;
 
+	$: direction = Math.sign(portfolio?.at(-1)?.total_equity - portfolio[0]?.total_equity);
+
 	let timeSpan = '3M';
 
 	const timeSpanOptions = {
@@ -24,7 +26,7 @@ Render the portfolio performance chart using ChartIQ.
 	$: ({ hours, spanDays, dateFormat } = timeSpanOptions[timeSpan]);
 
 	const options = {
-		layout: { chartType: 'line' },
+		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
 		chart: {
 			xAxis: { displayGridLines: false },
@@ -61,18 +63,20 @@ Render the portfolio performance chart using ChartIQ.
 		<SegmentedControl options={Object.keys(timeSpanOptions)} bind:selected={timeSpan} />
 	</header>
 	<p>Cash and market valued tokens in the strategy (USD)</p>
-	<ChartIQ {init} {options} invalidate={[timeSpan]} let:cursor>
-		{@const { position, data } = cursor}
-		{#if data}
-			<Marker x={position.DateX} y={position.CloseY} --marker-color="hsla(var(--hsl-text-light))" />
-			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
-				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<div class="date">{formatDate(data.displayDate, dateFormat)}</div>
-					<div class="value">{formatDollar(data.Close)}</div>
-				</UpDownCell>
-			</div>
-		{/if}
-	</ChartIQ>
+	<div class:bullish={direction > 0} class:bearish={direction < 0}>
+		<ChartIQ {init} {options} invalidate={[timeSpan]} let:cursor>
+			{@const { position, data } = cursor}
+			{#if data}
+				<Marker x={position.DateX} y={position.CloseY} size={4.5} />
+				<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
+					<UpDownCell value={data.Close - data.iqPrevClose}>
+						<div class="date">{formatDate(data.displayDate, dateFormat)}</div>
+						<div class="value">{formatDollar(data.Close)}</div>
+					</UpDownCell>
+				</div>
+			{/if}
+		</ChartIQ>
+	</div>
 </div>
 
 <style lang="postcss">
