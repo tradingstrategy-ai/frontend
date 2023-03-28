@@ -44,19 +44,19 @@
 
 <style lang="postcss">
 	.smart-contract-widget {
+		align-items: flex-start;
 		display: flex;
 		flex-direction: column;
 		font: var(--f-ui-lg-medium);
 		gap: var(--space-md);
 		overflow: hidden;
-		place-items: start;
 	}
 
 	address {
 		display: flex;
 		gap: var(--space-ss);
 		padding: var(--space-sm) var(--space-sl);
-		width: 100%;
+		max-width: 100%;
 	}
 
 	a {

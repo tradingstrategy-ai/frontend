@@ -5,7 +5,7 @@
 
 table:not(.table) {
 	--border-spacing: var(--space-sl);
-	--cell-padding: var(--space-sl) var(--space-ls);
+	--cell-padding: var(--space-sl) var(--space-ml);
 	--table-transition: all var(--time-xs) ease-out;
 	--table-font: var(--f-ui-md-medium);
 	--table-letter-spacing: var(--f-ui-md-spacing, normal);
@@ -99,12 +99,8 @@ table:not(.table) {
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
+				--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
-
-				& .button {
-					margin-right: calc(-1 * var(--space-sm));
-				}
 			}
 		}
 
@@ -133,7 +129,7 @@ table:not(.table) {
 		& a {
 			position: relative;
 
-			&::before {
+			&:not(.button)::before {
 				bottom: calc(-1 * var(--space-sm));
 				border-radius: var(--radius-sm);
 				content: '';
@@ -144,7 +140,7 @@ table:not(.table) {
 				transition: background var(--time-sm) ease-out;
 			}
 
-			&:hover::before {
+			&:not(.button):hover::before {
 				background: hsla(var(--hsl-box), var(--a-box-c));
 			}
 		}
