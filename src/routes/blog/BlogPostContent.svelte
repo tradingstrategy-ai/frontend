@@ -55,17 +55,26 @@
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
+			@media (--viewport-xs) {
+				font: var(--f-heading-md-medium);
+			}
 		}
 
 		& > h3 {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
+			@media (--viewport-xs) {
+				font: var(--f-heading-sm-medium);
+			}
 		}
 		& > h4 {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--f-heading-sm-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
+			@media (--viewport-xs) {
+				font: var(--f-heading-xs-medium);
+			}
 		}
 
 		& :is(ol, ul) {
