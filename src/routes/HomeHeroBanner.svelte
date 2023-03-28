@@ -30,7 +30,8 @@ Home page hero banner.
 
 			{#if impressiveNumbers}
 				<p class="impressive-numbers">
-					Market data and trading strategy framework for
+					Access or develop sophisticated algorithmic trading strategies for DeFi with market data and trading strategy
+					framework for
 					<a href="/trading-view/trading-pairs">
 						{formatAmount(impressiveNumbers.pairs)} trading pairs
 					</a>
