@@ -26,7 +26,7 @@
 
 <div>
 	{label}
-	<address>
+	<address class="tile b">
 		<a {href} target="_blank">{address}</a>
 		<button title="Copy to clipboard" on:click={copier.copy}>
 			{#if $copier === 'idle'}
@@ -43,13 +43,21 @@
 </div>
 
 <style lang="postcss">
-	div {
+	.smart-contract-widget {
+		/* background: hsla(var(--hsl-box), var(--a-box-a)); */
+		/* border-radius: var(--radius-md); */
+		display: grid;
+		font: var(--f-ui-lg-medium);
+		gap: var(--space-md);
 		overflow: hidden;
+		place-items: start;
+		/* padding: var(--space-md); */
 	}
 
 	address {
 		display: flex;
 		gap: var(--space-ss);
+		padding: var(--space-sm) var(--space-sl);
 	}
 
 	a {
@@ -71,7 +79,6 @@
 			position: absolute;
 			left: 0px;
 			top: 0px;
-			background: hsla(var(--hsl-body));
 		}
 	}
 </style>
