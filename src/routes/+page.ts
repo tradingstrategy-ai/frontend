@@ -1,23 +1,11 @@
 import type { PageLoad } from './$types';
-import { backendUrl } from '$lib/config';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 import ghostClient from '$lib/blog/client';
 
-// await API response and return JSON; fail gracefully if there's an error
-async function getRespJson(req: Promise<Response>) {
-	const resp = await req;
-	if (resp.ok) {
-		return resp.json();
-	}
-	console.error(`Backend API ${resp.url} failed; rendering home page without data`);
-}
-
-// fetch blog posts; fail gracefully if there's an error
-async function fetchBlogPosts(options = {}) {
-	try {
-		return await ghostClient.posts?.browse(options);
-	} catch (e) {
-		console.error('Ghost API request failed; rendering home page without blog roll');
-	}
+// handle API fetch errors gracefully (see `catch` below)
+function logError(err: Error) {
+	console.error('Request failed; rendering page without data.');
+	console.error(err);
 }
 
 export const load = (async ({ fetch, setHeaders }) => {
@@ -29,8 +17,8 @@ export const load = (async ({ fetch, setHeaders }) => {
 
 	// SvelteKit handles these in parallel and automatically unwraps top-level promises
 	return {
-		topMomentum: getRespJson(fetch(`${backendUrl}/top-momentum?summary=true`)),
-		impressiveNumbers: getRespJson(fetch(`${backendUrl}/impressive-numbers`)),
-		posts: fetchBlogPosts({ limit: 4 })
+		topMomentum: fetchPublicApi(fetch, 'top-momentum', { summary: 'true' }).catch(logError),
+		impressiveNumbers: fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
+		posts: ghostClient.posts?.browse({ limit: 4 }).catch(logError)
 	};
 }) satisfies PageLoad;
