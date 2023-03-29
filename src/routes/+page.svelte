@@ -26,7 +26,7 @@
 	<HomeHeroBanner />
 
 	{#if impressiveNumbers}
-		<Section gap="md" padding="md">
+		<Section gap="md" padding="md" testId="impressive-numbers">
 			<h2 style="text-align: center;">Market data and trading strategy framework for</h2>
 			<Grid cols={3} gap="lg">
 				<UspTile

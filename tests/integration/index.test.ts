@@ -17,15 +17,16 @@ test.describe('home page', () => {
 	});
 
 	test('home page has impressive numbers', async ({ page }) => {
-		const section = page.getByText(/Market data and trading strategy framework/);
+		// NOTE: getByRole does not work for <a> tag with display:contents
+		const tiles = page.getByTestId('impressive-numbers').locator('a[href]');
 
-		const pairs = section.getByText('15,000 trading pairs');
+		const pairs = tiles.filter({ hasText: '15,000 trading pairs' });
 		await expect(pairs).toHaveAttribute('href', '/trading-view/trading-pairs');
 
-		const liquidity = section.getByText('$1.23B liquidity');
+		const liquidity = tiles.filter({ hasText: '$1.23B liquidity' });
 		await expect(liquidity).toHaveAttribute('href', '/trading-view/trading-pairs');
 
-		const blockchains = section.getByText(/3 blockchains/);
+		const blockchains = tiles.filter({ hasText: '3 blockchains' });
 		await expect(blockchains).toHaveAttribute('href', '/trading-view/blockchains');
 	});
 });
