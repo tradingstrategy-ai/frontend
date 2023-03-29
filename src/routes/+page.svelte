@@ -4,10 +4,11 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Grid, Section, SummaryBox } from '$lib/components';
+	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
 	export let data: PageData;
 	let newsletterBanner: NewsletterOptInBanner;
@@ -22,7 +23,26 @@
 </svelte:head>
 
 <main class="home-page">
-	<HomeHeroBanner {impressiveNumbers} />
+	<HomeHeroBanner />
+
+	{#if impressiveNumbers}
+		<Section gap="md" padding="md">
+			<h2 style="text-align: center;">Market data and trading strategy framework for</h2>
+			<Grid cols={3} gap="lg">
+				<UspTile
+					title={formatAmount(impressiveNumbers.pairs)}
+					subtitle="trading pairs"
+					href="/trading-view/trading-pairs"
+				/>
+				<UspTile
+					title={formatDollar(impressiveNumbers.liquidity)}
+					subtitle="liquidity"
+					href="/trading-view/trading-pairs"
+				/>
+				<UspTile title={impressiveNumbers.blockchains} subtitle="blockchains" href="/trading-view/blockchains" />
+			</Grid>
+		</Section>
+	{/if}
 
 	{#if topMomentum}
 		<Section padding="md" gap="md">

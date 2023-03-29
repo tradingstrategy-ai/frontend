@@ -4,18 +4,13 @@ Home page hero banner.
 
 #### Usage:
 ```tsx
-<HeroBanner {impressiveNumbers} />
+<HeroBanner />
 ```
 -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
-	import { Button, Section } from '$lib/components';
-	import UspTile from '$lib/components/UspTile.svelte';
-	import Grid from '$lib/components/Grid.svelte';
-
-	export let impressiveNumbers: any;
+	import { Button } from '$lib/components';
 </script>
 
 <header class="home-hero-banner" data-testid="home-hero-banner" on:dblclick={() => goto('/strategies')}>
@@ -30,9 +25,7 @@ Home page hero banner.
 
 			<hr />
 
-			{#if impressiveNumbers}
-				<p class="impressive-numbers">Access or develop sophisticated algorithmic trading strategies for DeFi.</p>
-			{/if}
+			<p>Access or develop sophisticated algorithmic trading strategies for DeFi.</p>
 
 			<div class="buttons">
 				<Button href="/trading-view">Explore DEX Data</Button>
@@ -42,32 +35,6 @@ Home page hero banner.
 	</div>
 </header>
 
-<Section class="impressive-numbers" gap="md" padding="md">
-	<h2 style="text-align: center;">Market data and trading strategy framework for</h2>
-	<Grid cols={3} gap="lg">
-		<UspTile href="/trading-view/trading-pairs">
-			<svelte:fragment slot="title">
-				{formatAmount(impressiveNumbers.pairs)}
-			</svelte:fragment>
-			<svelte:fragment slot="subtitle">trading pairs</svelte:fragment>
-		</UspTile>
-
-		<UspTile href="/trading-view/trading-pairs">
-			<svelte:fragment slot="title">
-				{formatDollar(impressiveNumbers.liquidity)}
-			</svelte:fragment>
-			<svelte:fragment slot="subtitle">liquidity</svelte:fragment>
-		</UspTile>
-
-		<UspTile href="/trading-view/blockchains">
-			<svelte:fragment slot="title">
-				{impressiveNumbers.blockchains}
-			</svelte:fragment>
-			<svelte:fragment slot="subtitle">blockchains</svelte:fragment>
-		</UspTile>
-	</Grid>
-</Section>
-
 <style lang="postcss">
 	.home-hero-banner {
 		background: hsla(var(--hsla-background-accent-1));
@@ -75,6 +42,13 @@ Home page hero banner.
 		@media (--viewport-md-up) {
 			padding: var(--space-10xl) var(--space-3xl);
 		}
+	}
+
+	.inner {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
+		gap: min(var(--space-8xl), 10vw);
+		place-items: center;
 	}
 
 	h1 {
@@ -101,26 +75,12 @@ Home page hero banner.
 	p {
 		font: var(--f-ui-xl-roman);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
-
-		& a {
-			font: var(--f-ui-xl-bold);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
-			text-decoration: underline;
-		}
-	}
-
-	.inner {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
-		gap: min(var(--space-8xl), 10vw);
-		place-items: center;
 	}
 
 	.buttons {
 		display: grid;
 		gap: var(--space-ls);
 		grid-template-columns: repeat(auto-fit, minmax(12rem, auto));
-		/* place-content: center start; */
 		margin-top: var(--space-xl);
 	}
 

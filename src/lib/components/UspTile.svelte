@@ -1,20 +1,19 @@
 <script lang="ts">
-	export let href = '';
+	export let title: string;
+	export let subtitle: string;
+	export let href: string | undefined = undefined;
 
-	$: tag = href?.length ? 'a' : 'div';
-
-	$: anchorProps = {
-		href: href ?? undefined
-	};
+	$: tag = href ? 'a' : 'div';
+	$: anchorProps = { href };
 </script>
 
 <svelte:element this={tag} {...anchorProps} style="display: contents;">
 	<li class="usp-tile tile b">
 		<strong>
-			<slot name="title">Title</slot>
+			{title}
 		</strong>
 		<span>
-			<slot name="subtitle">Title</slot>
+			{subtitle}
 		</span>
 	</li>
 </svelte:element>
