@@ -11,7 +11,9 @@ Home page hero banner.
 	import { goto } from '$app/navigation';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
-	import { Button } from '$lib/components';
+	import { Button, Section } from '$lib/components';
+	import UspTile from '$lib/components/UspTile.svelte';
+	import Grid from '$lib/components/Grid.svelte';
 
 	export let impressiveNumbers: any;
 </script>
@@ -29,21 +31,7 @@ Home page hero banner.
 			<hr />
 
 			{#if impressiveNumbers}
-				<p class="impressive-numbers">
-					Access or develop sophisticated algorithmic trading strategies for DeFi with market data and trading strategy
-					framework for
-					<a href="/trading-view/trading-pairs">
-						{formatAmount(impressiveNumbers.pairs)} trading pairs
-					</a>
-					providing
-					<a href="/trading-view/trading-pairs" style:white-space="nowrap">
-						{formatDollar(impressiveNumbers.liquidity)} liquidity
-					</a>
-					across
-					<a href="/trading-view/blockchains" style:white-space="nowrap">
-						{impressiveNumbers.blockchains} blockchains
-					</a>
-				</p>
+				<p class="impressive-numbers">Access or develop sophisticated algorithmic trading strategies for DeFi.</p>
 			{/if}
 
 			<div class="buttons">
@@ -53,6 +41,32 @@ Home page hero banner.
 		</div>
 	</div>
 </header>
+
+<Section class="impressive-numbers" gap="md" padding="md">
+	<h2 style="text-align: center;">Market data and trading strategy framework for</h2>
+	<Grid cols={3} gap="lg">
+		<UspTile href="/trading-view/trading-pairs">
+			<svelte:fragment slot="title">
+				{formatAmount(impressiveNumbers.pairs)}
+			</svelte:fragment>
+			<svelte:fragment slot="subtitle">trading pairs</svelte:fragment>
+		</UspTile>
+
+		<UspTile href="/trading-view/trading-pairs">
+			<svelte:fragment slot="title">
+				{formatDollar(impressiveNumbers.liquidity)}
+			</svelte:fragment>
+			<svelte:fragment slot="subtitle">liquidity</svelte:fragment>
+		</UspTile>
+
+		<UspTile href="/trading-view/blockchains">
+			<svelte:fragment slot="title">
+				{impressiveNumbers.blockchains}
+			</svelte:fragment>
+			<svelte:fragment slot="subtitle">blockchains</svelte:fragment>
+		</UspTile>
+	</Grid>
+</Section>
 
 <style lang="postcss">
 	.home-hero-banner {
