@@ -6,7 +6,7 @@ test.describe('home page', () => {
 	});
 
 	test('should display impressive numbers', async ({ page }) => {
-		const impressiveSection = page.getByText(/Market data and trading strategy framework/);
+		const impressiveSection = page.getByTestId('impressive-numbers');
 		await expect(impressiveSection).toHaveText(/[\d.,]+ trading pairs/);
 		await expect(impressiveSection).toHaveText(/\$[\d.,]+[kMB] liquidity/);
 		await expect(impressiveSection).toHaveText(/\d blockchains/);
