@@ -24,10 +24,10 @@
 	});
 </script>
 
-<div>
+<div class="smart-contract-widget">
 	{label}
-	<address>
-		<a {href} target="_blank">{address}</a>
+	<address class="tile b">
+		<a {href} rel="noreferrer" target="_blank">{address}</a>
 		<button title="Copy to clipboard" on:click={copier.copy}>
 			{#if $copier === 'idle'}
 				<span in:fade={{ duration: 250, delay: 250 }} out:fade={{ duration: 100 }}>
@@ -43,13 +43,20 @@
 </div>
 
 <style lang="postcss">
-	div {
+	.smart-contract-widget {
+		align-items: flex-start;
+		display: flex;
+		flex-direction: column;
+		font: var(--f-ui-lg-medium);
+		gap: var(--space-md);
 		overflow: hidden;
 	}
 
 	address {
 		display: flex;
 		gap: var(--space-ss);
+		padding: var(--space-sm) var(--space-sl);
+		max-width: 100%;
 	}
 
 	a {
@@ -71,7 +78,6 @@
 			position: absolute;
 			left: 0px;
 			top: 0px;
-			background: hsla(var(--hsl-body));
 		}
 	}
 </style>

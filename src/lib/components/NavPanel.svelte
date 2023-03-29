@@ -19,10 +19,10 @@
 		<Menu align="center" on:click={close}>
 			<slot />
 		</Menu>
-		<Footer small />
 		<div class="color-mode-picker">
 			<ColorModePicker showLabel />
 		</div>
+		<Footer small />
 	</nav>
 {/if}
 

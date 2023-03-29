@@ -25,6 +25,7 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 	export let padding: Size | undefined = undefined;
 	export let maxWidth: Size = 'xl';
 	export let tag: 'header' | 'footer' | 'article' | 'nav' | 'section' = 'section';
+	export let testId: string | undefined = undefined;
 
 	const styles = [
 		`--SECTION-padding-y: var(--SECTION-spacing-${padding})`,
@@ -33,7 +34,7 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 	];
 </script>
 
-<svelte:element this={tag} {...ariaAttrs} class="section" style={styles.join(';')}>
+<svelte:element this={tag} {...ariaAttrs} class="section" style={styles.join(';')} data-testid={testId}>
 	<slot />
 </svelte:element>
 

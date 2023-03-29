@@ -172,7 +172,7 @@
 		margin-top: var(--space-ll);
 
 		& h2 {
-			font: var(--f-heading-sm-roman);
+			font: var(--f-ui-lg-roman);
 			margin-block: var(--space-lg);
 		}
 	}

@@ -17,7 +17,7 @@
 
 <style lang="postcss">
 	.social-icon {
-		--social-icon-size: 3rem;
+		--social-icon-size: 2.75rem;
 		--icon-size: 1.5rem;
 		display: flex;
 		justify-content: center;

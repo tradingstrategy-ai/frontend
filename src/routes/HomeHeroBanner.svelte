@@ -4,16 +4,13 @@ Home page hero banner.
 
 #### Usage:
 ```tsx
-<HeroBanner {impressiveNumbers} />
+<HeroBanner />
 ```
 -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
 	import { Button } from '$lib/components';
-
-	export let impressiveNumbers: any;
 </script>
 
 <header class="home-hero-banner" data-testid="home-hero-banner" on:dblclick={() => goto('/strategies')}>
@@ -28,22 +25,7 @@ Home page hero banner.
 
 			<hr />
 
-			{#if impressiveNumbers}
-				<p class="impressive-numbers">
-					Market data and trading strategy framework for
-					<a href="/trading-view/trading-pairs">
-						{formatAmount(impressiveNumbers.pairs)} trading pairs
-					</a>
-					providing
-					<a href="/trading-view/trading-pairs" style:white-space="nowrap">
-						{formatDollar(impressiveNumbers.liquidity)} liquidity
-					</a>
-					across
-					<a href="/trading-view/blockchains" style:white-space="nowrap">
-						{impressiveNumbers.blockchains} blockchains
-					</a>
-				</p>
-			{/if}
+			<p>Access or develop sophisticated algorithmic trading strategies for DeFi.</p>
 
 			<div class="buttons">
 				<Button href="/trading-view">Explore DEX Data</Button>
@@ -60,6 +42,13 @@ Home page hero banner.
 		@media (--viewport-md-up) {
 			padding: var(--space-10xl) var(--space-3xl);
 		}
+	}
+
+	.inner {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
+		gap: min(var(--space-8xl), 10vw);
+		place-items: center;
 	}
 
 	h1 {
@@ -86,26 +75,12 @@ Home page hero banner.
 	p {
 		font: var(--f-ui-xl-roman);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
-
-		& a {
-			font: var(--f-ui-xl-bold);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
-			text-decoration: underline;
-		}
-	}
-
-	.inner {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
-		gap: min(var(--space-8xl), 10vw);
-		place-items: center;
 	}
 
 	.buttons {
 		display: grid;
 		gap: var(--space-ls);
 		grid-template-columns: repeat(auto-fit, minmax(12rem, auto));
-		/* place-content: center start; */
 		margin-top: var(--space-xl);
 	}
 
