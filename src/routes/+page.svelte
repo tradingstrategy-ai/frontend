@@ -18,7 +18,7 @@
 
 <svelte:head>
 	<title>Trading Strategy - Algorithmic Trading Protocol</title>
-	<meta name="description" content="DeFi market data and systematic trading" />
+	<meta name="description" content="Automated trading for DEXes and DeFi protocols" />
 	{@html sitelinksSearchBox()}
 </svelte:head>
 
@@ -27,7 +27,7 @@
 
 	{#if impressiveNumbers}
 		<Section gap="md" padding="md" testId="impressive-numbers">
-			<h2 style="text-align: center;">Market data and trading strategy framework for</h2>
+			<h2 style="text-align: center;">Automated trading and research on</h2>
 			<Grid cols={3} gap="lg">
 				<UspTile
 					title={formatAmount(impressiveNumbers.pairs)}

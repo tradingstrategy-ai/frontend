@@ -25,7 +25,7 @@ Home page hero banner.
 
 			<hr />
 
-			<p>Access or develop sophisticated algorithmic trading strategies for DeFi.</p>
+			<p>Develop trading strategies, automate trade execution and research market data.</p>
 
 			<div class="buttons">
 				<Button href="/trading-view">Explore DEX Data</Button>
