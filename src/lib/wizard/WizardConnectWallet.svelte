@@ -92,10 +92,6 @@
 		place-items: start;
 	}
 
-	td {
-		height: 3.5rem !important;
-	}
-
 	.wallet-data {
 		align-items: center;
 		display: flex;

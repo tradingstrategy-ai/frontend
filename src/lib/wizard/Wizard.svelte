@@ -37,6 +37,10 @@
 		margin-bottom: var(--space-lg);
 	}
 
+	.wizard :global td {
+		height: 3.5rem !important;
+	}
+
 	.wizard :is(nav, main) {
 		display: grid;
 		gap: var(--space-md);
