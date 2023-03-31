@@ -6,7 +6,7 @@
 	export let canNavigateTo = false;
 </script>
 
-<a href={canNavigateTo ? href : undefined} style="display: contents;" on:click>
+<a data-sveltekit-noscroll href={canNavigateTo ? href : undefined} style="display: contents;" on:click>
 	<li class="wizard-nav-item {state}">
 		<Icon name={state === 'completed' ? 'success' : 'empty'} />
 		<slot />

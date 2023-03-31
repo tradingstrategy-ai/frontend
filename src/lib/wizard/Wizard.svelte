@@ -27,7 +27,7 @@
 		display: grid;
 		background: hsla(var(--hsl-box), var(--a-box-a));
 		border-radius: var(--radius-md);
-		grid-template-columns: minmax(12rem, 20rem) auto;
+		grid-template-columns: 18rem auto;
 		min-height: 32rem;
 		overflow: hidden;
 	}
@@ -66,6 +66,7 @@
 		display: grid;
 		grid-auto-flow: column;
 		gap: var(--space-md);
+		margin-top: var(--space-lg);
 		place-content: end;
 	}
 </style>
