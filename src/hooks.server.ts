@@ -1,5 +1,7 @@
-import type { Handle, HandleFetch } from '@sveltejs/kit';
-import { backendUrl, backendInternalUrl } from '$lib/config';
+import type { Handle, HandleFetch, HandleServerError } from '@sveltejs/kit';
+import { init as initSentry, captureException } from '@sentry/node';
+import { backendUrl, backendInternalUrl, siteMode, version } from '$lib/config';
+import { env } from '$env/dynamic/private';
 import { addYears } from 'date-fns';
 
 // Set `data-color-mode` body attribute during SSR to avoid FOUC
@@ -38,3 +40,28 @@ export const handleFetch = (async ({ request }) => {
 	}
 	return fetch(request);
 }) satisfies HandleFetch;
+
+// Sentry error logging; see:
+// - https://kit.svelte.dev/docs/hooks#shared-hooks-handleerror
+// - https://sentry.io/for/sveltekit/
+initSentry({
+	dsn: env.TS_PRIVATE_SENTRY_DSN,
+	environment: siteMode,
+	release: version
+});
+
+export const handleError = (({ error, event }) => {
+	const eventData = {
+		isDataRequest: event.isDataRequest,
+		url: event.url.toString(),
+		route: event.route.id,
+		params: JSON.stringify(event.params)
+	};
+
+	const eventId = captureException(error, { contexts: { sveltekit: { event: eventData } } });
+
+	return {
+		message: 'Internal Server Error',
+		eventId
+	};
+}) satisfies HandleServerError;

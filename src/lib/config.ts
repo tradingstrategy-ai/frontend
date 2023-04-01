@@ -34,6 +34,11 @@ export const siteMode = config((mode = 'local') => {
 }, 'SITE_MODE');
 
 /**
+ * Load version tag
+ */
+export const version = config((version: string) => version, 'FRONTEND_VERSION_TAG');
+
+/**
  * Load backend URL and fail loudly if not set
  */
 export const backendUrl = config((url: string) => {

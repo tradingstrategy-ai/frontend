@@ -33,14 +33,20 @@
 		>
 			<Button label="Explore DEX data" href="/trading-view" />
 		</ErrorPageInfo>
-	{:else}
-		<ErrorPageInfo {status} title={status === 503 ? 'Service is unavailable' : $page.error.message}>
+	{:else if status === 503}
+		<ErrorPageInfo {status} title={'Service is unavailable'}>
 			{#if stack}
 				<Button icon="console" on:click={() => (showLogs = !showLogs)}>
 					{showLogs ? 'Hide logs' : 'Show logs'}
 				</Button>
 			{/if}
 		</ErrorPageInfo>
+	{:else}
+		<ErrorPageInfo
+			{status}
+			title={$page.error?.message ?? 'Internal Error'}
+			details={$page.error?.eventId ? `Event ID: ${$page.error.eventId}` : ''}
+		/>
 	{/if}
 
 	<aside class="ds-container">

@@ -33,6 +33,7 @@ services:
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
+      - TS_PRIVATE_SENTRY_DSN
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
       # Datadog APM env vars
