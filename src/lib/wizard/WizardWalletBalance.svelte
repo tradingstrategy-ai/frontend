@@ -1,18 +1,5 @@
 <script lang="ts">
-	import WalletTile from '$lib/components/WalletTile.svelte';
-	import MetaMaskLogo from '$lib/assets/logos/metamask.svg';
-	import WalletConnectLogo from '$lib/assets/logos/walletconnect.svg';
-	import { Button } from '$lib/components';
-
-	$: chosenWallet = '';
-
-	function chooseWallet(name: string) {
-		chosenWallet = name;
-	}
-
-	function resetWallet() {
-		chosenWallet = '';
-	}
+	import { SmartContractWidget } from '$lib/components';
 </script>
 
 <div class="wizard-connect-wallet">
@@ -24,7 +11,7 @@
 		<tbody>
 			<tr>
 				<td>Account</td>
-				<td>Account</td>
+				<td><SmartContractWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" /></td>
 			</tr>
 			<tr>
 				<td>MATIC</td>

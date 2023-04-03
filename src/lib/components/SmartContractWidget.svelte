@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 
-	export let label: string;
+	export let label = '';
 	export let address: string;
 	export let href: string;
 
@@ -25,7 +25,9 @@
 </script>
 
 <div class="smart-contract-widget">
-	{label}
+	{#if label}
+		{label}
+	{/if}
 	<address class="tile b">
 		<a {href} rel="noreferrer" target="_blank">{address}</a>
 		<button title="Copy to clipboard" on:click={copier.copy}>

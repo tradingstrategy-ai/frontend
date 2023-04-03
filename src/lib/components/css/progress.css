@@ -1,0 +1,12 @@
+progress {
+	appearance: none;
+	background: hsla(var(--hsl-box), var(--a-box-a));
+	border: none;
+	border-radius: var(--radius-xs);
+	height: 0.75rem;
+
+	&::-moz-progress-bar {
+		background-color: hsla(var(--hsl-success), 1);
+		border: none;
+	}
+}
