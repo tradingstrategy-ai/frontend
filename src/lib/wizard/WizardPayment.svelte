@@ -1,15 +1,13 @@
 <script>
-	import { goto } from '$app/navigation';
 	import { Button, AlertItem, AlertList, SmartContractWidget } from '$lib/components';
 
+	export let paymentProgress = 0;
+
 	$: status = 'start';
-	$: paymentProgress = 0;
 
 	$: if (status === 'processing' && paymentProgress < 1000) {
 		setTimeout(() => paymentProgress++, 0);
 	}
-
-	$: if (paymentProgress === 1000) goto('/wizard/deposit/finish', { noScroll: true });
 </script>
 
 <div class="wizard-payment">

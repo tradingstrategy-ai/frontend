@@ -25,7 +25,7 @@
 	</header>
 	{#if chosenWallet}
 		<div class="connected-wallet">
-			<table>
+			<table class="responsive">
 				<tbody>
 					<tr>
 						<td> Wallet </td>

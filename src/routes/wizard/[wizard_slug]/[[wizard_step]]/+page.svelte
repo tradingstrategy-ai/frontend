@@ -14,6 +14,23 @@
 
 	export let data: PageData;
 
+	$: paymentProgress = 0;
+
+	$: if (paymentProgress === 1000) {
+		completedSteps = [
+			...new Set([
+				...completedSteps,
+				{
+					title: 'Payment',
+					slug: 'payment',
+					component: WizardPayment,
+					index: 3
+				}
+			])
+		];
+		goto('/wizard/deposit/finish', { noScroll: true });
+	}
+
 	interface WizardStepData {
 		title: string;
 		slug: string;
@@ -130,15 +147,15 @@
 			</svelte:fragment>
 			<svelte:fragment slot="stepContent">
 				{#if completedSteps.length < steps.length}
-					<svelte:component this={currentStep?.component} />
+					<svelte:component this={currentStep?.component} bind:paymentProgress />
 				{:else}
 					<h2>Finished!</h2>
 				{/if}
 			</svelte:fragment>
 			<svelte:fragment slot="step-actions">
-				<Button ghost>Cancel</Button>
-				<Button disabled={prevStepHref?.length <= 0} secondary on:click={handleClickPrev}>Prev</Button>
 				{#if currentStep?.index + 1 < steps.length}
+					<Button ghost>Cancel</Button>
+					<Button disabled={prevStepHref?.length <= 0} secondary on:click={handleClickPrev}>Prev</Button>
 					<Button disabled={nextStepHref?.length <= 0} on:click={handleClickNext}>Next</Button>
 				{:else}
 					<Button>Finish</Button>
