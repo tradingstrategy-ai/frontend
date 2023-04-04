@@ -58,6 +58,5 @@ Render exchange summary table on exchange page.
 		label="Internal id"
 		labelHref="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
 		value={details.exchange_id}
-		valueHref=""
 	/>
 </TradingDataInfo>
