@@ -18,6 +18,10 @@
 	const tableRows: Writable<ReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
 
+	const protocols: Record<string, string> = {
+		aave_v3: 'Aave v3'
+	};
+
 	const table = createTable(tableRows, {
 		sort: addSortBy({
 			serverSide: true,
@@ -38,16 +42,17 @@
 			header: 'Symbol',
 			cell: ({ value }) => formatValue(value)
 		}),
-		table.display({
+		table.column({
 			id: 'protocol',
+			accessor: 'protocol_slug',
 			header: 'Protocol',
-			cell: () => 'Aave v3',
+			cell: ({ value }) => formatValue(protocols[value] ?? value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'chain_slug',
 			header: 'Blockchain',
-			cell: ({ value }) => chains[value] ?? value ?? '---',
+			cell: ({ value }) => formatValue(chains[value] ?? value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
