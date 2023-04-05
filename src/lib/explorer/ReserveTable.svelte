@@ -5,6 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
+	import { formatValue } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: ReserveIndexResponse['rows'] | undefined = undefined;
@@ -26,18 +27,16 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
-	const valueOrFallback = ({ value }: any) => value || '---';
-
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
 			header: 'Reserve name',
-			cell: valueOrFallback
+			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
 			accessor: 'asset_symbol',
 			header: 'Symbol',
-			cell: valueOrFallback
+			cell: ({ value }) => formatValue(value)
 		}),
 		table.display({
 			id: 'protocol',

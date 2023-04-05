@@ -282,3 +282,10 @@ export function formatDuration(seconds: number): string {
 	const dayStr = days ? `${days} days ` : '';
 	return `${dayStr}${hours}h ${minutes}m`;
 }
+
+/**
+ * Formats arbitrary value with fallback string if undefined/null
+ */
+export function formatValue(value: any): string {
+	return value?.toString() ?? notFilledMarker;
+}

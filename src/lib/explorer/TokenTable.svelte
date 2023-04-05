@@ -4,7 +4,7 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatValue } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
 
 	export let loading = false;
@@ -26,19 +26,17 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
-	const valueOrFallback = ({ value }: any) => value || '---';
-
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'name',
 			header: 'Name',
-			cell: valueOrFallback,
+			cell: ({ value }) => formatValue(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'symbol',
 			header: 'Symbol',
-			cell: valueOrFallback,
+			cell: ({ value }) => formatValue(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
