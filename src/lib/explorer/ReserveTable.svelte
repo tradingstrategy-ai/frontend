@@ -71,3 +71,36 @@
 <div class="reserve-table" data-testid="reserve-table">
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
+
+<style lang="postcss">
+	.reserve-table :global {
+		@media (--viewport-md-up) {
+			& table {
+				table-layout: fixed;
+			}
+
+			& .asset_name {
+				width: 40%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			& .asset_symbol {
+				width: 15%;
+			}
+
+			& .protocol {
+				width: 15%;
+			}
+
+			& .chain_slug {
+				width: 20%;
+			}
+
+			& .cta {
+				width: 12rem;
+			}
+		}
+	}
+</style>
