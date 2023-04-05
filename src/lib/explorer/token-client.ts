@@ -17,7 +17,7 @@ export type TokenIndexResponse = {
 	totalRowCount: number;
 };
 
-const defaultParams: PairIndexParams = {
+const defaultParams: TokenIndexParams = {
 	page_size: 10,
 	page: 0,
 	sort: 'volume_24h',
@@ -26,12 +26,7 @@ const defaultParams: PairIndexParams = {
 
 const allKeys: TokenSearchKey[] = ['page_size', 'page', 'sort', 'direction', 'chain_slug'];
 
-let controller: AbortController | null = null;
-
 export async function fetchTokens(fetch: Fetch, params: TokenIndexParams) {
-	// abort previous uncompleted request to prevent race condition
-	controller?.abort();
-
 	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
@@ -39,18 +34,9 @@ export async function fetchTokens(fetch: Fetch, params: TokenIndexParams) {
 		if (value) apiParams[key] = String(value);
 	}
 
-	controller = new AbortController();
-	const signal = controller.signal;
-	let data;
+	const data = await fetchPublicApi(fetch, 'tokens', apiParams, true);
 
-	try {
-		data = await fetchPublicApi(fetch, 'tokens', apiParams);
-	} catch (e) {
-		if (e.name !== 'AbortError') throw e;
-	} finally {
-		controller = null;
-		if (signal.aborted) return;
-	}
+	if (!data) return;
 
 	return {
 		rows: data.results,
