@@ -7,7 +7,8 @@ export const load = (async ({ fetch, url }) => {
 	const sort = searchParams.get('sort') || 'asset_name';
 	const direction = searchParams.get('direction') || 'asc';
 
-	const data = await fetchReserves(fetch, { page, sort, direction });
-
-	return { ...data, page, sort, direction };
+	return {
+		reserves: fetchReserves(fetch, { page, sort, direction }),
+		options: { page, sort, direction }
+	};
 }) satisfies PageLoad;

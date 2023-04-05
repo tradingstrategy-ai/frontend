@@ -10,6 +10,13 @@
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data: PageData;
+	$: ({ reserves, options } = data);
+
+	const chains: Record<string, string> = {};
+
+	for (const { chain_slug, chain_name } of data.chains) {
+		chains[chain_slug] = chain_name;
+	}
 
 	let loading = false;
 
@@ -37,6 +44,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<ReserveTable {...data} {loading} on:change={handleChange} />
+		<ReserveTable {...reserves} {...options} {chains} {loading} on:change={handleChange} />
 	</Section>
 </main>
