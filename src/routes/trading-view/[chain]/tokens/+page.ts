@@ -1,4 +1,4 @@
-import type { PageLoad } from '../$types';
+import type { PageLoad } from './$types';
 import { fetchTokens } from '$lib/explorer/token-client';
 
 export const load = (async ({ fetch, params, url }) => {
