@@ -29,8 +29,6 @@ export type Subscriber = {
 	fields: Nullable<SubscriberFields>;
 };
 
-type Fetch = typeof fetch;
-
 export function getClient(fetch: Fetch) {
 	async function subscribe(subscriber: Subscriber) {
 		if (!mailerLiteConfig) {

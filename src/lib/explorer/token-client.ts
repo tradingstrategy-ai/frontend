@@ -1,7 +1,5 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-type Fetch = typeof fetch;
-
 export type TokenIndexParams = Partial<{
 	chain_slug: string;
 	page_size: number | string;

@@ -1,7 +1,5 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-type Fetch = typeof fetch;
-
 export type ReserveIndexParams = Partial<{
 	protocol_slug: string;
 	chain_slug: string;

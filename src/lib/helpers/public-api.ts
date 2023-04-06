@@ -7,7 +7,6 @@
 import { error } from '@sveltejs/kit';
 import { backendUrl } from '$lib/config';
 
-type Fetch = typeof fetch;
 type Params = Record<string, string>;
 
 const controllers: Record<string, AbortController> = {};

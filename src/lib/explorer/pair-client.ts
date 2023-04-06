@@ -2,8 +2,6 @@ import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-type Fetch = typeof fetch;
-
 export type PairIndexParams = Partial<{
 	chain_slugs: string;
 	exchange_slugs: string;

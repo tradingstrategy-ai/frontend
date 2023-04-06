@@ -1,13 +1,5 @@
 import { formatDistanceToNow, intervalToDuration } from 'date-fns';
 
-type MaybeType<T> = T | null | undefined;
-export type MaybeNumber = MaybeType<number>;
-export type MaybeString = MaybeType<string>;
-export type MaybeNumberOrString = MaybeType<number | string>;
-export type MaybeDate = MaybeType<Date>;
-
-export type Formatter<T> = (value: T) => string;
-
 export const notFilledMarker = '---';
 
 /**

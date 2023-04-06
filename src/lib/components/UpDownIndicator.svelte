@@ -10,10 +10,9 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 ```
 -->
 <script lang="ts">
-	import type { MaybeNumberOrString, Formatter } from '$lib/helpers/formatters';
-
 	export let value: MaybeNumberOrString;
-	export let formatter: Formatter<MaybeNumberOrString> | undefined = undefined;
+	type ValueFormatter = Formatter<MaybeNumberOrString>;
+	export let formatter: Maybe<ValueFormatter> = undefined;
 
 	type CompareFn = (value: MaybeNumberOrString) => number;
 	export let compareFn: CompareFn | undefined;

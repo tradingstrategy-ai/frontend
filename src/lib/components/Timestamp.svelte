@@ -13,8 +13,8 @@ by JS Date) or a Date object.
 <script lang="ts">
 	import { formatDistanceToNow } from 'date-fns';
 
-	type MaybeDate = Date | string | number | undefined | null;
-	export let date: MaybeDate;
+	type MaybeParsableDate = Maybe<Date | string | number>;
+	export let date: MaybeParsableDate;
 	export let format: 'default' | 'relative' | 'iso' | 'ISO' = 'default';
 	export let withRelative = false;
 	export let withTime = false;
@@ -23,7 +23,7 @@ by JS Date) or a Date object.
 	$: parsedDate = parse(date);
 	$: isoString = parsedDate?.toISOString();
 
-	function parse(value: MaybeDate) {
+	function parse(value: MaybeParsableDate) {
 		if (value instanceof Date) return value;
 		if (value === null || value === undefined) return undefined;
 
