@@ -1,12 +1,8 @@
-<script lang="ts">
-	import Button from '$lib/components/Button.svelte';
-</script>
-
 <div class="wizard">
 	<nav>
-		<h2>
+		<h1>
 			<slot name="wizard-title">Wizard title</slot>
-		</h2>
+		</h1>
 		<menu>
 			<slot name="navigation" />
 		</menu>
@@ -25,17 +21,17 @@
 <style lang="postcss">
 	.wizard {
 		display: grid;
-		background: hsla(var(--hsl-box), var(--a-box-a));
-		border-radius: var(--radius-md);
-		min-height: 32rem;
+		background: hsla(var(--hsl-body));
+		/* background: hsla(var(--hsl-box), var(--a-box-a)); */
+		min-height: 100vh;
 		overflow: hidden;
 		@media (--viewport-sm-up) {
 			grid-template-columns: 18rem auto;
 		}
 	}
 
-	.wizard :global h2 {
-		font: var(--f-ui-xl-medium);
+	.wizard :global :is(h1, h2) {
+		font: var(--f-heading-md-medium);
 		margin-bottom: var(--space-lg);
 	}
 
@@ -51,17 +47,13 @@
 		}
 	}
 
-	.wizard :global td {
-		/* height: 3.5rem !important; */
-	}
-
 	.wizard :is(nav, main) {
 		display: grid;
 		gap: var(--space-lg);
 		padding: var(--space-md);
 		@media (--viewport-sm-up) {
 			gap: var(--space-md);
-			padding: var(--space-ls);
+			padding: var(--space-lg);
 		}
 	}
 
@@ -76,7 +68,7 @@
 
 		& menu {
 			display: grid;
-			gap: var(--space-sl);
+			gap: var(--space-ms);
 			padding: 0;
 		}
 

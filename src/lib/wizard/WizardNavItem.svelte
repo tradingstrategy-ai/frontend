@@ -37,7 +37,7 @@
 	}
 
 	.completed {
-		background: hsla(var(--hsl-success), 0.2);
+		background: hsla(var(--hsl-success), 0.16);
 		color: hsla(var(--hsl-success));
 	}
 </style>

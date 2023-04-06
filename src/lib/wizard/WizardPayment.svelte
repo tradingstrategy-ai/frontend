@@ -1,5 +1,5 @@
 <script>
-	import { Button, AlertItem, AlertList, SmartContractWidget } from '$lib/components';
+	import { Button, AlertItem, AlertList, SmartContractWidget, MoneyInput } from '$lib/components';
 
 	export let paymentProgress = 0;
 
@@ -15,9 +15,23 @@
 		<h2>Payment</h2>
 	</header>
 	{#if status === 'start'}
-		<p>What do we want to have here?</p>
+		<form action="" class="payment-form">
+			<div class="inner">
+				<MoneyInput
+					currentBalance={20.01241512}
+					label="Amount to deposit"
+					size="xl"
+					fiatUnit="$"
+					tokenUnit="USDC"
+					maxAmount={20}
+				/>
+			</div>
 
-		<Button on:click={() => (status = 'confirmation')}>Make payment</Button>
+			<AlertList size="sm" status="warning">
+				<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
+			</AlertList>
+			<Button on:click={() => (status = 'confirmation')}>Make payment</Button>
+		</form>
 	{:else if status === 'confirmation'}
 		<div
 			class="confirmation"
@@ -45,9 +59,8 @@
 </div>
 
 <style lang="postcss">
-	.wizard-payment {
+	:is(.wizard-payment, .payment-form, .payment-form .inner) {
 		display: grid;
-		place-items: start;
 		gap: var(--space-md);
 	}
 
@@ -57,5 +70,17 @@
 
 	progress {
 		justify-self: stretch;
+	}
+
+	.payment-form {
+		gap: var(--space-xl) !important;
+		place-items: start;
+		& .inner {
+			place-items: start;
+		}
+
+		& :global .alert-list {
+			justify-self: stretch;
+		}
 	}
 </style>

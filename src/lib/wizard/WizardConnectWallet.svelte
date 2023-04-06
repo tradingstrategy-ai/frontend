@@ -2,9 +2,10 @@
 	import WalletTile from '$lib/components/WalletTile.svelte';
 	import MetaMaskLogo from '$lib/assets/logos/metamask.svg';
 	import WalletConnectLogo from '$lib/assets/logos/walletconnect.svg';
-	import { Button } from '$lib/components';
+	import { AlertItem, AlertList, Button } from '$lib/components';
 
 	$: chosenWallet = '';
+	$: wrongNetwork = true;
 
 	function chooseWallet(name: string) {
 		chosenWallet = name;
@@ -23,7 +24,13 @@
 			exercitation cillum cupidatat. Dolore officia et commodo cillum ex ut aliquip sunt.
 		</p>
 	</header>
-	{#if chosenWallet}
+	{#if wrongNetwork}
+		<div style="display: contents;" on:click={() => (wrongNetwork = false)} on:keydown={() => (wrongNetwork = false)}>
+			<AlertList size="sm" status="error">
+				<AlertItem>Wrong network! Please change network to NETWORK_NAME_HERE</AlertItem>
+			</AlertList>
+		</div>
+	{:else if chosenWallet}
 		<div class="connected-wallet">
 			<table class="responsive">
 				<tbody>
