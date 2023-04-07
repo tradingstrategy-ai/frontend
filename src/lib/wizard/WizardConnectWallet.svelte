@@ -2,7 +2,7 @@
 	import WalletTile from '$lib/components/WalletTile.svelte';
 	import MetaMaskLogo from '$lib/assets/logos/metamask.svg';
 	import WalletConnectLogo from '$lib/assets/logos/walletconnect.svg';
-	import { AlertItem, AlertList, Button } from '$lib/components';
+	import { AlertItem, AlertList, Button, EntitySymbol, WalletAddressWidget } from '$lib/components';
 
 	$: chosenWallet = '';
 	$: wrongNetwork = true;
@@ -24,13 +24,7 @@
 			exercitation cillum cupidatat. Dolore officia et commodo cillum ex ut aliquip sunt.
 		</p>
 	</header>
-	{#if wrongNetwork}
-		<div style="display: contents;" on:click={() => (wrongNetwork = false)} on:keydown={() => (wrongNetwork = false)}>
-			<AlertList size="sm" status="error">
-				<AlertItem>Wrong network! Please change network to NETWORK_NAME_HERE</AlertItem>
-			</AlertList>
-		</div>
-	{:else if chosenWallet}
+	{#if chosenWallet}
 		<div class="connected-wallet">
 			<table class="responsive">
 				<tbody>
@@ -47,11 +41,25 @@
 					</tr>
 					<tr>
 						<td> Account </td>
-						<td> 0x6C0836c82d629EF21b9192D88b043e65f4fD7237 </td>
+						<td> <WalletAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" /> </td>
 					</tr>
 					<tr>
 						<td> Blockchain </td>
-						<td> Polygon Mainnet </td>
+						<td>
+							{#if wrongNetwork}
+								<div
+									style="display: contents;"
+									on:click={() => (wrongNetwork = false)}
+									on:keydown={() => (wrongNetwork = false)}
+								>
+									<AlertList size="xs" status="error">
+										<AlertItem>Wrong network! Please change network to NETWORK_NAME_HERE</AlertItem>
+									</AlertList>
+								</div>
+							{:else}
+								<EntitySymbol name="Polygon" type="blockchain" />
+							{/if}
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -97,6 +105,11 @@
 		display: grid;
 		gap: var(--space-ls);
 		place-items: start;
+
+		& :global .alert-list {
+			width: auto;
+			margin: 0;
+		}
 	}
 
 	.wallet-data {

@@ -1,0 +1,41 @@
+.hash-widget {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	font: var(--f-ui-lg-medium);
+	gap: var(--space-md);
+	overflow: hidden;
+
+	& address {
+		display: flex;
+		gap: var(--space-ss);
+		padding: var(--space-sm) var(--space-sl);
+		max-width: 100%;
+	}
+
+	& a {
+		font-weight: 700;
+		text-decoration: underline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		&::before {
+			background: transparent !important;
+		}
+	}
+
+	& button {
+		align-items: center;
+		display: flex;
+		position: relative;
+		border: none;
+		min-width: 1em;
+		padding: 0;
+		background: none;
+		cursor: pointer;
+
+		& span {
+			display: contents;
+		}
+	}
+}

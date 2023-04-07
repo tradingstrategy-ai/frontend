@@ -31,15 +31,11 @@
 	<address class="tile b">
 		<a {href} rel="noreferrer" target="_blank">{address}</a>
 		<button title="Copy to clipboard" on:click={copier.copy}>
-			{#if $copier === 'idle'}
+			{#key $copier}
 				<span in:fade={{ duration: 250, delay: 250 }} out:fade={{ duration: 100 }}>
-					<Icon name="copy-to-clipboard" />
+					<Icon name={$copier === 'idle' ? 'copy-to-clipboard' : 'check-square'} />
 				</span>
-			{:else}
-				<span in:fade={{ duration: 100 }} out:fade={{ duration: 500 }}>
-					<Icon name="check-square" />
-				</span>
-			{/if}
+			{/key}
 		</button>
 	</address>
 </div>

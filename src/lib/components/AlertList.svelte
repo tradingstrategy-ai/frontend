@@ -16,7 +16,7 @@ as children. The alert box is only displayed if one or more items are displayed
 <script lang="ts">
 	let classes = '';
 	export { classes as class };
-	export let size: 'sm' | 'md' | 'lg' = 'lg';
+	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'lg';
 	export let status: 'error' | 'success' | 'warning' | 'info' = 'error';
 </script>
 
@@ -109,5 +109,12 @@ as children. The alert box is only displayed if one or more items are displayed
 			font: var(--f-ui-sm-roman);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
+	}
+
+	.xs {
+		gap: var(--space-ss);
+		padding: var(--space-ss) var(--space-sm);
+		font: var(--f-ui-sm-roman);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 </style>

@@ -9,9 +9,7 @@ unknown props through to HTML input element.
 ```
 -->
 <script lang="ts">
-	import usdcLogo from '../../../node_modules/cryptocurrency-icons/svg/color/usdc.svg';
-	import { AlertItem, AlertList } from '$lib/components';
-	import TokenLogo from './TokenLogo.svelte';
+	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
 
 	export let currentBalance = 0;
 	export let type: 'email' | 'text' | 'search' = 'text';
@@ -61,8 +59,7 @@ unknown props through to HTML input element.
 		<div class="symbols">
 			{#if tokenUnit}
 				<span class="unit">
-					<TokenLogo name={tokenUnit.toLowerCase()} />
-					{tokenUnit.toUpperCase()}
+					<EntitySymbol name={tokenUnit} type="token" />
 				</span>
 			{/if}
 		</div>
@@ -77,7 +74,7 @@ unknown props through to HTML input element.
 	</AlertList>
 {/if}
 
-<style lang="postcss">
+<!-- <style lang="postcss">
 	.money-input {
 		position: relative;
 		display: inline-grid;
@@ -209,4 +206,4 @@ unknown props through to HTML input element.
 			}
 		}
 	}
-</style>
+</style> -->
