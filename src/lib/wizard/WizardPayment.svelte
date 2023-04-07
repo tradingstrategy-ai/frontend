@@ -21,12 +21,12 @@
 		<table>
 			<tbody>
 				<tr>
-					<td><EntitySymbol name="USDC" type="token" /></td>
-					<td>20.01242</td>
+					<td><EntitySymbol name="MATIC" size="1.5rem" type="token" /></td>
+					<td>682.2362</td>
 				</tr>
 				<tr>
-					<td>ETH</td>
-					<td>1.2 ETH</td>
+					<td><EntitySymbol name="USDC" size="1.5rem" type="token" /></td>
+					<td>1200.18</td>
 				</tr>
 			</tbody>
 		</table>
@@ -37,16 +37,7 @@
 			<h3>Enter amount to pay</h3>
 
 			<form action="" class="payment-form">
-				<div class="inner">
-					<MoneyInput
-						currentBalance={20.01241512}
-						label="Amount to deposit"
-						size="xl"
-						fiatUnit="$"
-						tokenUnit="USDC"
-						maxAmount={20}
-					/>
-				</div>
+				<MoneyInput currentBalance={1200.18} label="Amount to deposit" size="xl" fiatUnit="$" tokenUnit="USDC" />
 
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
@@ -81,19 +72,23 @@
 </div>
 
 <style lang="postcss">
-	:is(.wizard-payment, .payment-form, .payment-form .inner) {
+	:is(section, .payment-form, .payment-form .inner) {
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-3xl);
 	}
 
 	section {
-		display: grid;
-		gap: var(--space-md);
+		margin-bottom: var(--space-3xl);
 	}
 
 	h3 {
 		color: hsla(var(--hsl-text-light));
 		font: var(--f-ui-lg-medium);
+	}
+
+	tr td:last-child {
+		--cell-padding: 0 var(--space-md) 0 var(--space-xs);
+		text-align: right;
 	}
 
 	progress {
@@ -102,10 +97,6 @@
 
 	.payment-form {
 		gap: var(--space-xl) !important;
-		place-items: start;
-		& .inner {
-			place-items: start;
-		}
 
 		& :global .alert-list {
 			justify-self: stretch;

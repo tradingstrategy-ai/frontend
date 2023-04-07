@@ -19,7 +19,8 @@ unknown props through to HTML input element.
 	export let fiatUnit: string;
 	export let tokenUnit: string;
 	export let value: number | null = null;
-	export let maxAmount = 0;
+	export let showBalance = false;
+	export let showMaxButton = false;
 
 	const icon = type === 'search' ? 'search' : undefined;
 	const cancelButton = type === 'search';
@@ -33,22 +34,17 @@ unknown props through to HTML input element.
 	}
 
 	function applyMaxValue() {
-		value = maxAmount;
+		value = currentBalance.toFixed();
 	}
 </script>
 
 <svelte:element this={tag} class="money-input size-{size}" class:has-icon={icon} class:disabled>
-	{#if currentBalance > 0}
-		<span class="current-balance">
-			Balance: {currentBalance.toFixed(5)}
-		</span>
-	{/if}
-
 	<div class="inner">
 		<input
 			bind:this={inputEl}
 			bind:value
 			type="number"
+			placeholder="0.00"
 			{disabled}
 			{...$$restProps}
 			on:input
@@ -65,16 +61,24 @@ unknown props through to HTML input element.
 		</div>
 	</div>
 
-	<button class="tile c" on:click={applyMaxValue}>Max</button>
+	{#if showBalance && currentBalance > 0}
+		<span class="current-balance">
+			Balance: {currentBalance.toFixed(5)}
+		</span>
+	{/if}
+
+	{#if showMaxButton}
+		<button class="tile c" on:click={applyMaxValue}>Max</button>
+	{/if}
 </svelte:element>
 
-{#if value > maxAmount}
+{#if value && value > currentBalance}
 	<AlertList size="sm" status="error">
 		<AlertItem>There is not enough tokens in your wallet to deposit this amount</AlertItem>
 	</AlertList>
 {/if}
 
-<!-- <style lang="postcss">
+<style lang="postcss">
 	.money-input {
 		position: relative;
 		display: inline-grid;
@@ -85,11 +89,10 @@ unknown props through to HTML input element.
 
 		& .inner {
 			display: flex;
-			/* background: hsla(var(--hsl-box), var(--a-box-a)); */
 			background: hsla(var(--input-background));
 			border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
 			border-radius: var(--radius-sm);
-			height: 5rem;
+			height: 4.25rem;
 			overflow: hidden;
 		}
 
@@ -113,13 +116,10 @@ unknown props through to HTML input element.
 			font: var(--f-ui-sm-medium);
 			margin-left: var(--space-xxxs);
 			padding: var(--space-xxxs) var(--space-sl);
-			position: absolute;
-			right: 0;
-			top: 0;
 		}
 
 		& .unit {
-			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-e)), hsla(var(--hsl-box), var(--a-box-e))),
+			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-b)), hsla(var(--hsl-box), var(--a-box-b))),
 				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
 			display: grid;
 			font: var(--f-ui-lg-bold);
@@ -127,9 +127,6 @@ unknown props through to HTML input element.
 			place-items: center;
 			padding: 0 var(--space-md);
 			text-align: center;
-		}
-
-		& input {
 		}
 
 		& .label,
@@ -141,18 +138,6 @@ unknown props through to HTML input element.
 			opacity: 0.65;
 		}
 
-		&.has-icon input {
-			text-indent: 1.125em;
-		}
-
-		& :global svg {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			left: 0.625em;
-			font-size: 0.875em;
-		}
-
 		& input {
 			background: transparent;
 			border: none;
@@ -160,10 +145,10 @@ unknown props through to HTML input element.
 			font: var(--f-ui-xxxl-medium);
 			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
-			max-width: 12rem;
 			padding: 0 var(--space-sl);
 			text-align: right;
 			transition: background var(--time-sm) ease-out;
+			width: 100%;
 
 			&::placeholder {
 				color: hsl(var(--hsl-text-extra-light));
@@ -182,28 +167,6 @@ unknown props through to HTML input element.
 				border-color: hsla(var(--hsl-text-extra-light));
 				outline: none;
 			}
-
-			&[type='search'],
-			&[type='search']::-webkit-search-cancel-button {
-				-webkit-appearance: none;
-			}
-		}
-
-		& .cancel-btn {
-			display: none;
-
-			& :global svg {
-				left: auto;
-				right: var(--space-md);
-				font-size: 1rem;
-			}
-		}
-
-		&:has(:focus),
-		&:hover {
-			& :global .cancel-btn {
-				display: contents;
-			}
 		}
 	}
-</style> -->
+</style>

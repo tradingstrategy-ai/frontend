@@ -12,7 +12,7 @@
 		</menu>
 	</nav>
 	<main>
-		<Section maxWidth="sm">
+		<Section maxWidth="xs">
 			<div class="step-content">
 				<slot name="stepContent" />
 			</div>
