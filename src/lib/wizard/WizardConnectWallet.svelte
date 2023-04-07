@@ -100,8 +100,12 @@
 
 	.connected-wallet {
 		display: grid;
-		gap: var(--space-xl);
 		place-items: start;
+		gap: var(--space-ls);
+
+		@media (--viewport-sm-down) {
+			gap: var(--space-xl);
+		}
 
 		& :global .alert-list {
 			width: auto;
