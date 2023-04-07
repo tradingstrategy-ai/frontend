@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
 	import { Button, AlertItem, AlertList, EntitySymbol, SmartContractWidget, MoneyInput } from '$lib/components';
 
 	export let paymentProgress = 0;
+	export let paymentValue: number | null = null;
 
 	$: status = 'start';
 
 	$: if (status === 'processing' && paymentProgress < 1000) {
 		setTimeout(() => paymentProgress++, 0);
 	}
+
+	$: paymentValue = null;
 </script>
 
 <div class="wizard-payment">
@@ -18,7 +21,7 @@
 	<section>
 		<h3>Your current balance</h3>
 
-		<table>
+		<table class="responsive">
 			<tbody>
 				<tr>
 					<td><EntitySymbol name="MATIC" size="1.5rem" type="token" /></td>
@@ -37,12 +40,19 @@
 			<h3>Enter amount to pay</h3>
 
 			<form action="" class="payment-form">
-				<MoneyInput currentBalance={1200.18} label="Amount to deposit" size="xl" fiatUnit="$" tokenUnit="USDC" />
+				<MoneyInput
+					currentBalance={1200.18}
+					label="Amount to deposit"
+					size="xl"
+					fiatUnit="$"
+					tokenUnit="USDC"
+					bind:value={paymentValue}
+				/>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
 				</AlertList>
-				<Button on:click={() => (status = 'confirmation')}>Make payment</Button>
+				<Button disabled={!paymentValue} on:click={() => (status = 'confirmation')}>Make payment</Button>
 			</form>
 		{:else if status === 'confirmation'}
 			<div
@@ -72,13 +82,15 @@
 </div>
 
 <style lang="postcss">
-	:is(section, .payment-form, .payment-form .inner) {
+	section,
+	.payment-form,
+	.payment-form .inner {
 		display: grid;
-		gap: var(--space-3xl);
 	}
 
 	section {
 		margin-bottom: var(--space-3xl);
+		gap: var(--space-ls);
 	}
 
 	h3 {

@@ -9,6 +9,7 @@
 
 	function chooseWallet(name: string) {
 		chosenWallet = name;
+		window.scroll(0, 0);
 	}
 
 	function resetWallet() {
@@ -19,10 +20,6 @@
 <div class="wizard-connect-wallet">
 	<header>
 		<h2>Connect your wallet</h2>
-		<p>
-			Irure anim esse non reprehenderit eiusmod minim aliqua ea. Mollit et ex ea elit commodo pariatur id culpa aute
-			exercitation cillum cupidatat. Dolore officia et commodo cillum ex ut aliquip sunt.
-		</p>
 	</header>
 	{#if chosenWallet}
 		<div class="connected-wallet">
@@ -48,12 +45,12 @@
 						<td>
 							{#if wrongNetwork}
 								<div
-									style="display: contents;"
+									class="wrong-network-alert"
 									on:click={() => (wrongNetwork = false)}
 									on:keydown={() => (wrongNetwork = false)}
 								>
 									<AlertList size="xs" status="error">
-										<AlertItem>Wrong network! Please change network to NETWORK_NAME_HERE</AlertItem>
+										<AlertItem>Wrong network! Please connect to Polygon</AlertItem>
 									</AlertList>
 								</div>
 							{:else}
@@ -93,8 +90,8 @@
 <style lang="postcss">
 	.wizard-connect-wallet {
 		display: grid;
-		gap: var(--space-lg);
 	}
+
 	.wallet-choices {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
@@ -103,7 +100,7 @@
 
 	.connected-wallet {
 		display: grid;
-		gap: var(--space-ls);
+		gap: var(--space-xl);
 		place-items: start;
 
 		& :global .alert-list {
@@ -116,6 +113,14 @@
 		align-items: center;
 		display: flex;
 		gap: var(--space-sm);
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-sm-medium);
+
+			& img {
+				width: 1.75rem;
+			}
+		}
 	}
 
 	.status {
@@ -136,5 +141,14 @@
 			height: 0.625rem;
 			width: 0.625rem;
 		}
+	}
+
+	.wrong-network-alert {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+	.wizard-connect-wallet :global table.responsive tbody tr {
+		grid-template-columns: repeat(auto-fit, minmax(max(25%, 14rem), 1fr)) !important;
 	}
 </style>

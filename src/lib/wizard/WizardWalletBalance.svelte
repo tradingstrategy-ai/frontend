@@ -6,7 +6,7 @@
 	<header>
 		<h2>Wallet balance</h2>
 	</header>
-	<table>
+	<table class="responsive">
 		<tbody>
 			<tr>
 				<td>Account</td>
@@ -26,11 +26,15 @@
 
 <style>
 	td:first-child {
-		width: 12rem;
+		@media (--viewport-md-up) {
+			width: 16rem;
+		}
 	}
 
-	tr:not(:first-child) td:last-child {
+	tr td:last-child {
 		--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-		text-align: right;
+		@media (--viewport-md-up) {
+			text-align: right;
+		}
 	}
 </style>

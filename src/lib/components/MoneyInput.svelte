@@ -142,7 +142,7 @@ unknown props through to HTML input element.
 			background: transparent;
 			border: none;
 			color: var(--c-text-1-v1);
-			font: var(--f-ui-xxxl-medium);
+			font: var(--f-ui-xxl-medium);
 			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
 			padding: 0 var(--space-sl);
