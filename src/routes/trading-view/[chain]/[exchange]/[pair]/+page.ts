@@ -14,5 +14,7 @@ export const load = (async ({ params, fetch, setHeaders }) => {
 		'cache-control': 'public, max-age=1800' // 30 minutes: 30 * 60 = 1800
 	});
 
-	return fetchPublicApi(fetch, 'pair-details', { chain_slug, exchange_slug, pair_slug });
+	return {
+		pair: fetchPublicApi(fetch, 'pair-details', { chain_slug, exchange_slug, pair_slug })
+	};
 }) satisfies PageLoad;

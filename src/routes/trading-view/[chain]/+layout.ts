@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import { chainsUnderMaintenance } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (({ params }) => {
+export const load = (({ fetch, params }) => {
 	const chain_slug = params.chain;
 
 	// trigger error if chain is under maintenance

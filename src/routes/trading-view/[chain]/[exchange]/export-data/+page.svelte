@@ -5,8 +5,10 @@
 	import { Button, AlertItem, AlertList, Select } from '$lib/components';
 
 	export let data: PageData;
+	const { exchange } = data;
 
-	const exchangeName = data.human_readable_name;
+	const isUniswapV3 = exchange.exchange_type === 'uniswap_v3';
+	const exchangeName = exchange.human_readable_name;
 	const downloadUrl = `${backendUrl}/pairs`;
 
 	// Download options
@@ -14,26 +16,21 @@
 	let selectedDataset = 'top_3000_rows';
 	let selectedSort = 'price_change_24h';
 
-	let selectedFilter = 'min_liquidity_1M';
-
-	// Uniswap v3 does not have liquidity data
-	// available in the same format and this
-	// cannot be used for filtering
-	if (data.exchange_slug == 'uniswap-v3') {
-		selectedFilter = 'unfiltered';
-	}
+	// Uniswap v3 does not have liquidity data available in
+	// the same format, so this cannot be used for filtering
+	let selectedFilter = isUniswapV3 ? 'unfiltered' : 'min_liquidity_1M';
 
 	let downloadDisabled = false;
 
 	$: breadcrumbs = {
-		[data.chain_slug]: data.chain_name,
-		[data.exchange_slug]: exchangeName,
+		[exchange.chain_slug]: exchange.chain_name,
+		[exchange.exchange_slug]: exchangeName,
 		'export-data': 'Export data'
 	};
 
 	$: downloadParams = new URLSearchParams({
-		chain_slugs: data.chain_slug,
-		exchange_slugs: data.exchange_slug,
+		chain_slugs: exchange.chain_slug,
+		exchange_slugs: exchange.exchange_slug,
 		export_format: selectedFormat,
 		filter: selectedFilter,
 		sort: selectedSort,
@@ -43,9 +40,9 @@
 
 <svelte:head>
 	<title>
-		Export {exchangeName} data from {data.chain_name} blockchain
+		Export {exchangeName} data from {exchange.chain_name} blockchain
 	</title>
-	<meta name="description" content={`Download ${exchangeName} on ${data.chain_name} trading pair data as Excel file`} />
+	<meta name="description" content="Download {exchangeName} on {exchange.chain_name} trading pair data as Excel file" />
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
@@ -65,12 +62,10 @@
 
 	<section class="ds-container">
 		<form on:change={() => (downloadDisabled = false)}>
-			{#if data.exchange_slug}
-				<div>
-					<label for="exampleFormControlInput1">Selected exchange</label>
-					<input type="text" class="text-field" id="exampleFormControlInput1" disabled value={exchangeName} />
-				</div>
-			{/if}
+			<div>
+				<label for="exchange_name">Selected exchange</label>
+				<input type="text" class="text-field" id="exchange_name" disabled value={exchangeName} />
+			</div>
 
 			<div>
 				<label for="export_format">Export format</label>
@@ -102,7 +97,7 @@
 				<Select class="form-control" id="filter" bind:value={selectedFilter}>
 					<option value="unfiltered">Unfiltered</option>
 					<!-- Uniswap v3 hot fix until data is available -->
-					{#if data.exchange_slug != 'uniswap-v3'}
+					{#if !isUniswapV3}
 						<option value="min_liquidity_100k">Min. liquidity $100k</option>
 						<option value="min_liquidity_1M">Min. liquidity $1M</option>
 					{/if}
@@ -127,7 +122,8 @@
 		<p>Exported data is useful e.g. for analysis of new tokens entering the market.</p>
 		<p>
 			This data export contains only data for
-			<a class="body-link" href="/trading-view/{data.chain_slug}/{data.exchange_slug}">{exchangeName}</a>. Read about
+			<a class="body-link" href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}">{exchangeName}</a>. Read
+			about
 			<a class="body-link" rel="external" href="https://tradingstrategy.ai/api/explorer/"
 				>the column format in PairSummary section of the API documentation.</a
 			>

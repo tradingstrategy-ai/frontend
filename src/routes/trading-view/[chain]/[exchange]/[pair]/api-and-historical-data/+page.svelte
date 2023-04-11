@@ -9,7 +9,7 @@ Real time examples for the API
 
 	export let data: PageData;
 
-	$: summary = data.summary;
+	$: summary = data.pair.summary;
 
 	$: breadcrumbs = {
 		[summary.chain_slug]: summary.chain_name,

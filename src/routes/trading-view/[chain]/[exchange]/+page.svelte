@@ -12,19 +12,20 @@
 	import InfoSummary from './InfoSummary.svelte';
 
 	export let data: PageData;
+	$: ({ exchange } = data);
 
-	$: nameDetails = parseExchangeName(data.human_readable_name);
+	$: nameDetails = parseExchangeName(exchange.human_readable_name);
 
 	$: breadcrumbs = {
-		[data.chain_slug]: data.chain_name,
-		[data.exchange_slug]: data.human_readable_name
+		[exchange.chain_slug]: exchange.chain_name,
+		[exchange.exchange_slug]: exchange.human_readable_name
 	};
 
 	// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
 	// but this is not currently available from `exchange-details` endpoint.
 	// See: https://github.com/tradingstrategy-ai/backend/issues/110
 	let hiddenColumns: string[];
-	$: if (data.exchange_type === 'uniswap_v3') {
+	$: if (exchange.exchange_type === 'uniswap_v3') {
 		hiddenColumns = ['exchange_name', 'liquidity', 'liquidity_change_24h'];
 	} else {
 		hiddenColumns = ['exchange_name'];
@@ -34,8 +35,8 @@
 
 	$: $page.route.id?.endsWith('[exchange]') &&
 		pairsClient.update({
-			chain_slugs: data.chain_slug,
-			exchange_slugs: data.exchange_slug,
+			chain_slugs: exchange.chain_slug,
+			exchange_slugs: exchange.exchange_slug,
 			...Object.fromEntries($page.url.searchParams.entries())
 		});
 
@@ -47,41 +48,44 @@
 
 <svelte:head>
 	<title>
-		{data.human_readable_name} on {data.chain_name}
+		{exchange.human_readable_name} on {exchange.chain_name}
 	</title>
 	<meta
 		name="description"
-		content={`Decentralise exchange ${data.human_readable_name} on ${data.chain_name} blockchain`}
+		content={`Decentralise exchange ${exchange.human_readable_name} on ${exchange.chain_name} blockchain`}
 	/>
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title="{data.human_readable_name} exchange" subtitle="on {data.chain_name}" />
+	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}" />
 
 	<section class="ds-container info" data-testid="exchange-info">
 		<div class="ds-2-col">
-			<InfoTable details={data} {nameDetails} />
-			<InfoSummary details={data} />
+			<InfoTable details={exchange} {nameDetails} />
+			<InfoSummary details={exchange} />
 		</div>
 
 		<AlertList status="warning">
-			<AlertItem title="Uniswap v3 beta" displayWhen={data.exchange_type === 'uniswap_v3'}>
+			<AlertItem title="Uniswap v3 beta" displayWhen={exchange.exchange_type === 'uniswap_v3'}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this exchange is currently incomplete.
 			</AlertItem>
 
-			<AlertItem title="Incompatible exchange" displayWhen={data.exchange_type === 'uniswap_v2_incompatible'}>
-				{data.human_readable_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-				this exchange may be inaccurate.
+			<AlertItem title="Incompatible exchange" displayWhen={exchange.exchange_type === 'uniswap_v2_incompatible'}>
+				{exchange.human_readable_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data
+				for this exchange may be inaccurate.
 			</AlertItem>
 		</AlertList>
 
 		<div class="exchange-actions">
-			<Button label="Visit {nameDetails.name}" href={data.homepage} />
-			<Button label="View {nameDetails.name} on blockchain explorer" href={data.blockchain_explorer_link} />
-			<Button label="Download as Excel" href="/trading-view/{data.chain_slug}/{data.exchange_slug}/export-data" />
+			<Button label="Visit {nameDetails.name}" href={exchange.homepage} />
+			<Button label="View {nameDetails.name} on blockchain explorer" href={exchange.blockchain_explorer_link} />
+			<Button
+				label="Download as Excel"
+				href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}/export-data"
+			/>
 		</div>
 	</section>
 

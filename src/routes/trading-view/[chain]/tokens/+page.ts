@@ -9,5 +9,7 @@ export const load = (async ({ fetch, params, url }) => {
 
 	const data = await fetchTokens(fetch, { chain_slug: params.chain, page, sort, direction });
 
-	return { ...data, page, sort, direction };
+	return {
+		tokens: { ...data, page, sort, direction }
+	};
 }) satisfies PageLoad;
