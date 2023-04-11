@@ -1,4 +1,4 @@
-import type { PageLoad } from '../$types';
+import type { PageLoad } from './$types';
 import { fetchPairs } from '$lib/explorer/pair-client';
 
 export const load = (async ({ fetch, url }) => {

@@ -1,26 +1,28 @@
 <script lang="ts">
-	import type { TokenIndexResponse } from './token-client';
+	import type { ReserveIndexResponse } from './reserve-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar, formatValue } from '$lib/helpers/formatters';
 	import { Button, DataTable } from '$lib/components';
+	import { formatValue } from '$lib/helpers/formatters';
+	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let loading = false;
-	export let rows: TokenIndexResponse['rows'] | undefined = undefined;
+	export let rows: ReserveIndexResponse['rows'] | undefined = undefined;
 	export let totalRowCount = 0;
 	export let page = 0;
-	export let sort = 'volume_30d';
-	export let direction: 'asc' | 'desc' = 'desc';
+	export let sort = 'asset_name';
+	export let direction: 'asc' | 'desc' = 'asc';
+	export let chains: Record<string, string>;
 
-	const tableRows: Writable<TokenIndexResponse['rows']> = writable([]);
+	const tableRows: Writable<ReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
 			serverSide: true,
-			toggleOrder: ['desc', 'asc']
+			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination({ serverSide: true }),
 		clickable: addClickableRows({ id: 'cta' })
@@ -28,32 +30,33 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: 'name',
-			header: 'Name',
-			cell: ({ value }) => formatValue(value),
-			plugins: { sort: { disable: true } }
+			accessor: 'asset_name',
+			header: 'Reserve name',
+			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
-			accessor: 'symbol',
+			accessor: 'asset_symbol',
 			header: 'Symbol',
-			cell: ({ value }) => formatValue(value),
+			cell: ({ value }) => formatValue(value)
+		}),
+		table.column({
+			id: 'protocol',
+			accessor: 'protocol_slug',
+			header: 'Protocol',
+			cell: ({ value }) => formatValue(getProtocolName(value)),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			accessor: 'volume_24h',
-			header: 'Volume 24h (USD)',
-			cell: ({ value }) => formatDollar(value)
-		}),
-		table.column({
-			accessor: 'liquidity_latest',
-			header: 'Liquidity (USD)',
-			cell: ({ value }) => formatDollar(value)
+			accessor: 'chain_slug',
+			header: 'Blockchain',
+			cell: ({ value }) => formatValue(chains[value] ?? value),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'cta',
-			accessor: (row) => `/trading-view/${row.chain_slug}/tokens/${row.address}`,
+			accessor: (row) => `/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View token', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -67,41 +70,38 @@
 	$: $sortKeys = [{ id: sort, order: direction }];
 </script>
 
-<div class="token-table" data-testid="token-table">
+<div class="reserve-table" data-testid="reserve-table">
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
 <style lang="postcss">
-	.token-table :global {
+	.reserve-table :global {
 		@media (--viewport-md-up) {
 			& table {
 				table-layout: fixed;
 			}
 
-			& .name {
-				width: 35%;
+			& .asset_name {
+				width: 40%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			& .symbol {
+			& .asset_symbol {
 				width: 15%;
 			}
 
-			& .volume_24h {
-				width: 25%;
-				text-align: right;
+			& .protocol {
+				width: 15%;
 			}
 
-			& .liquidity_latest {
-				width: 25%;
-				text-align: right;
+			& .chain_slug {
+				width: 20%;
 			}
 
 			& .cta {
 				width: 12rem;
-				padding-left: 1rem;
 			}
 		}
 	}

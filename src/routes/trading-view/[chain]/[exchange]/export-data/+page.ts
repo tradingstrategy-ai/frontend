@@ -6,5 +6,7 @@ export const load = (async ({ params, fetch }) => {
 	const exchange_slug = params.exchange;
 	const chain_slug = params.chain;
 
-	return fetchPublicApi(fetch, 'exchange-details', { exchange_slug, chain_slug });
+	return {
+		exchange: fetchPublicApi(fetch, 'exchange-details', { exchange_slug, chain_slug })
+	};
 }) satisfies PageLoad;

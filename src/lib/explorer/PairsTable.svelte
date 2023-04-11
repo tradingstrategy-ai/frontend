@@ -4,7 +4,7 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar, formatPriceChange, formatSwapFee } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange, formatSwapFee, formatValue } from '$lib/helpers/formatters';
 	import { Button, DataTable, UpDownCell } from '$lib/components';
 
 	export let loading = false;
@@ -28,19 +28,17 @@
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
-	const valueOrFallback = ({ value }: any) => value || '---';
-
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'pair_symbol',
 			header: 'Trading pair',
-			cell: valueOrFallback,
+			cell: ({ value }) => formatValue(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'exchange_name',
 			header: 'Exchange',
-			cell: valueOrFallback,
+			cell: ({ value }) => formatValue(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({

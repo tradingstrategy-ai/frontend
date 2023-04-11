@@ -2,8 +2,6 @@ import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-type Fetch = typeof fetch;
-
 export type PairIndexParams = Partial<{
 	chain_slugs: string;
 	exchange_slugs: string;
@@ -38,12 +36,7 @@ const allKeys: PairSearchKey[] = [
 	'token_addresses'
 ];
 
-let controller: AbortController | null = null;
-
 export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
-	// abort previous uncompleted request to prevent race condition
-	controller?.abort();
-
 	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
@@ -51,18 +44,9 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 		if (value) apiParams[key] = String(value);
 	}
 
-	controller = new AbortController();
-	const signal = controller.signal;
-	let data;
+	const data = await fetchPublicApi(fetch, 'pairs', apiParams, true);
 
-	try {
-		data = await fetchPublicApi(fetch, 'pairs', apiParams);
-	} catch (e) {
-		if (e.name !== 'AbortError') throw e;
-	} finally {
-		controller = null;
-		if (signal.aborted) return;
-	}
+	if (!data) return;
 
 	return {
 		rows: data.results,

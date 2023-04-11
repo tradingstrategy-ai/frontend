@@ -12,18 +12,19 @@
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 
 	export let data: PageData;
+	$: ({ token } = data);
 
 	$: breadcrumbs = {
-		[data.chain_slug]: data.chain_name,
-		[data.address]: data.name
+		[token.chain_slug]: token.chain_name,
+		[token.address]: token.name
 	};
 
 	const pairsClient = getPairsClient(fetch);
 
 	$: $page.route.id?.endsWith('[token]') &&
 		pairsClient.update({
-			chain_slugs: data.chain_slug,
-			token_addresses: data.address,
+			chain_slugs: token.chain_slug,
+			token_addresses: token.address,
 			...Object.fromEntries($page.url.searchParams.entries())
 		});
 
@@ -35,22 +36,22 @@
 
 <svelte:head>
 	<title>
-		{data.symbol} on {data.chain_name}
+		{token.symbol} on {token.chain_name}
 	</title>
 	<meta
 		name="description"
-		content={`${data.name} (${data.symbol} ${getTokenStandardName(data.chain_slug)} on ${data.chain_name}`}
+		content={`${token.name} (${token.symbol} ${getTokenStandardName(token.chain_slug)} on ${token.chain_name}`}
 	/>
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={data.name} subtitle="token trading as {data.symbol} on {data.chain_name}" />
+	<PageHeader title={token.name} subtitle="token trading as {token.symbol} on {token.chain_name}" />
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
-		<InfoTable {data} />
-		<InfoSummary {data} />
+		<InfoTable data={token} />
+		<InfoSummary data={token} />
 	</section>
 
 	<section class="ds-container trading-pairs">

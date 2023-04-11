@@ -14,4 +14,9 @@
 	<TradingDataInfoRow label="Available liquidity" value={formatDollar(data.liquidity_latest)} />
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(data.volume_24h)} />
 	<TradingDataInfoRow label="Blockchain" value={data.chain_name} valueHref="/trading-view/{data.chain_slug}" />
+	<TradingDataInfoRow
+		label="Internal id"
+		labelHref="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
+		value={data.token_id}
+	/>
 </TradingDataInfo>

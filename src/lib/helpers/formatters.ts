@@ -1,13 +1,5 @@
 import { formatDistanceToNow, intervalToDuration } from 'date-fns';
 
-type MaybeType<T> = T | null | undefined;
-export type MaybeNumber = MaybeType<number>;
-export type MaybeString = MaybeType<string>;
-export type MaybeNumberOrString = MaybeType<number | string>;
-export type MaybeDate = MaybeType<Date>;
-
-export type Formatter<T> = (value: T) => string;
-
 export const notFilledMarker = '---';
 
 /**
@@ -281,4 +273,11 @@ export function formatDuration(seconds: number): string {
 	const { days, hours, minutes } = intervalToDuration({ start: 0, end: seconds * 1000 });
 	const dayStr = days ? `${days} days ` : '';
 	return `${dayStr}${hours}h ${minutes}m`;
+}
+
+/**
+ * Formats arbitrary value with fallback string if undefined/null
+ */
+export function formatValue(value: any): string {
+	return value?.toString() ?? notFilledMarker;
 }

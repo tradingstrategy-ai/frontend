@@ -7,18 +7,31 @@
 import { error } from '@sveltejs/kit';
 import { backendUrl } from '$lib/config';
 
-type Fetch = typeof fetch;
 type Params = Record<string, string>;
 
-export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Params = {}) {
-	const searchParams = new URLSearchParams(params);
-	const resp = await fetch(`${backendUrl}/${endpoint}?${searchParams}`);
+const controllers: Record<string, AbortController> = {};
 
-	if (!resp.ok) {
-		throw await publicApiError(resp);
+export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Params = {}, abortPrevious = false) {
+	let signal: AbortSignal | undefined = undefined;
+
+	if (abortPrevious) {
+		controllers[endpoint]?.abort();
+		controllers[endpoint] = new AbortController();
+		signal = controllers[endpoint].signal;
 	}
 
-	return resp.json();
+	const searchParams = new URLSearchParams(params);
+
+	try {
+		const resp = await fetch(`${backendUrl}/${endpoint}?${searchParams}`, { signal });
+		if (!resp.ok) throw await publicApiError(resp);
+		return resp.json();
+	} catch (e) {
+		if (e.name === 'AbortError') return;
+		throw e;
+	} finally {
+		if (!signal?.aborted) delete controllers[endpoint];
+	}
 }
 
 export async function publicApiError(response: Response) {

@@ -8,19 +8,9 @@
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data: PageData;
-
-	const chainSlug = $page.params.chain;
-	const chainName = getChainName();
+	$: ({ chain, tokens } = data);
 
 	let loading = false;
-
-	function getChainName() {
-		const firstToken = data.rows?.[0];
-		if (firstToken) {
-			return firstToken.chain_name;
-		}
-		return chainSlug[0].toUpperCase() + chainSlug.slice(1);
-	}
 
 	async function handleChange({ detail }: ComponentEvents<TokenTable>['change']) {
 		loading = true;
@@ -31,23 +21,23 @@
 </script>
 
 <svelte:head>
-	<title>Tokens on {chainName}</title>
-	<meta name="description" content="Top tokens on {chainName} blockchain" />
+	<title>Tokens on {chain.chain_name}</title>
+	<meta name="description" content="Top tokens on {chain.chain_name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chainSlug]: chainName }} />
+<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
 
 <main class="token-index-page">
 	<Section tag="header">
 		<HeroBanner contentFullWidth title="Tokens">
 			<svelte:fragment slot="subtitle">
 				Browse supported decentralised tokens across
-				<a class="body-link" href="/trading-view/{chainSlug}">{chainName} blockchain</a>
+				<a class="body-link" href="/trading-view/{chain.chain_slug}">{chain.chain_name} blockchain</a>
 			</svelte:fragment>
 		</HeroBanner>
 	</Section>
 
 	<Section padding="sm">
-		<TokenTable {...data} {loading} on:change={handleChange} />
+		<TokenTable {...tokens} {loading} on:change={handleChange} />
 	</Section>
 </main>

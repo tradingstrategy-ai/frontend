@@ -18,8 +18,8 @@ Render the pair trading page
 
 	export let data: PageData;
 
-	$: summary = data.summary;
-	$: details = data.additional_details;
+	$: summary = data.pair.summary;
+	$: details = data.pair.additional_details;
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';

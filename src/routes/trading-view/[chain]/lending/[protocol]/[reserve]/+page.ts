@@ -1,12 +1,12 @@
 import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-// https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchange_details
 export const load = (async ({ params, fetch }) => {
-	const exchange_slug = params.exchange;
 	const chain_slug = params.chain;
+	const protocol_slug = params.protocol;
+	const reserve_slug = params.reserve;
 
 	return {
-		exchange: fetchPublicApi(fetch, 'exchange-details', { exchange_slug, chain_slug })
+		reserve: fetchPublicApi(fetch, 'reserve/details', { chain_slug, protocol_slug, reserve_slug })
 	};
 }) satisfies PageLoad;

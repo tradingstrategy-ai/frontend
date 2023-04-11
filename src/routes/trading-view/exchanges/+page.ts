@@ -1,4 +1,4 @@
-import type { PageLoad } from '../$types';
+import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 // https://tradingstrategy.ai/api/explorer/#/Exchange/web_exchanges
