@@ -6,5 +6,7 @@ export const load = (async ({ params, fetch }) => {
 	const protocol_slug = params.protocol;
 	const reserve_slug = params.reserve;
 
-	return fetchPublicApi(fetch, 'reserve/details', { chain_slug, protocol_slug, reserve_slug });
+	return {
+		reserve: fetchPublicApi(fetch, 'reserve/details', { chain_slug, protocol_slug, reserve_slug })
+	};
 }) satisfies PageLoad;

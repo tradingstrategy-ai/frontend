@@ -1,0 +1,16 @@
+{
+	"chain_name": "Ethereum",
+	"chain_slug": "ethereum",
+	"chain_id": 1,
+	"chain_logo": "https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg",
+	"chain_explorer": "https://etherscan.io",
+	"homepage": "https://ethereum.org",
+	"exchanges": 425,
+	"pairs": 178932,
+	"tracked_pairs": 26722,
+	"tokens": 160382,
+	"minute_candles": 425660896,
+	"start_block": 9900000,
+	"end_block": 17021615,
+	"last_swap_at": "2023-04-11T01:27:35"
+}
