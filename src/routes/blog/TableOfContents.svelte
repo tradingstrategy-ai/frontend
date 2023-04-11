@@ -4,7 +4,7 @@
 </script>
 
 <!-- Have different CSS class for TOC entries whether they are H2 or H3 based -->
-<div class="table-of-contents ">
+<div class="table-of-contents">
 	<SummaryBox title="Table of Contents">
 		{#each entries as { id, innerText, tagName } (id)}
 			<a class="tile b {`toc-entry-${tagName.toLowerCase()}`}" href="#{id}">{innerText}</a>
