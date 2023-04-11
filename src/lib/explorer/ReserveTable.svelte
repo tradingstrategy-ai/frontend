@@ -6,6 +6,7 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
 	import { formatValue } from '$lib/helpers/formatters';
+	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let loading = false;
 	export let rows: ReserveIndexResponse['rows'] | undefined = undefined;
@@ -17,10 +18,6 @@
 
 	const tableRows: Writable<ReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
-
-	const protocols: Record<string, string> = {
-		aave_v3: 'Aave v3'
-	};
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
@@ -46,7 +43,7 @@
 			id: 'protocol',
 			accessor: 'protocol_slug',
 			header: 'Protocol',
-			cell: ({ value }) => formatValue(protocols[value] ?? value),
+			cell: ({ value }) => formatValue(getProtocolName(value)),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
