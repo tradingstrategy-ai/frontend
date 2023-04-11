@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section, PageHeader } from '$lib/components';
+	import InfoTable from './InfoTable.svelte';
 	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let data: PageData;
@@ -29,14 +30,34 @@
 
 <main>
 	<PageHeader title={reserve.asset_name} subtitle="{protocolName} reserve on {chain.chain_name}" />
+
+	<section class="ds-container info" data-testid="reserve-info">
+		<div class="ds-2-col">
+			<InfoTable {protocolName} {chain} {reserve} />
+			<div />
+		</div>
+	</section>
 </main>
 
 <Section padding="md">
-	<h2>Reserve details page (coming soon)</h2>
-	<pre>{JSON.stringify(data, null, 4)}</pre>
+	<h3>Reserve details API payload</h3>
+	<pre>{JSON.stringify(reserve, null, 4)}</pre>
 </Section>
 
 <style lang="postcss">
+	main {
+		display: grid;
+		gap: var(--space-3xl);
+
+		@media (--viewport-lg-up) {
+			gap: 5rem;
+		}
+	}
+
+	h3 {
+		font: var(--f-heading-md-medium);
+	}
+
 	pre {
 		padding: var(--space-lg);
 		background: var(--c-background-7);
