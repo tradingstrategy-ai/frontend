@@ -10,22 +10,23 @@
 	import { Section } from '$lib/components';
 
 	export let data: PageData;
+	const { post } = data;
 </script>
 
-<SocialMetaTags url={$page.url} post={data} />
+<SocialMetaTags url={$page.url} {post} />
 
-<Breadcrumbs labels={{ [$page.params.slug]: data.title }} />
+<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
 
 <main class="blog-details-page">
 	<Section tag="article" maxWidth="sm">
 		<header>
 			<SocialLinks --justify-content="space-between" />
-			<h1>{data.title}</h1>
-			<Timestamp date={data.published_at} withRelative />
-			<img src={data.feature_image} alt={data.feature_image_alt} />
+			<h1>{post.title}</h1>
+			<Timestamp date={post.published_at} withRelative />
+			<img src={post.feature_image} alt={post.feature_image_alt} />
 		</header>
 
-		<BlogPostContent html={data.html} />
+		<BlogPostContent html={post.html} />
 	</Section>
 
 	<Section padding="md">

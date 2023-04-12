@@ -8,6 +8,7 @@
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
 	export let data: PageData;
+	const { impressiveNumbers } = data;
 </script>
 
 <ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">
@@ -21,8 +22,8 @@
 	<ContentCardsSection title="Explore data">
 		<ContentCard icon="blockchain" title="Blockchains" ctaLabel="Explore blockchains" href="/trading-view/blockchains">
 			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
-			{#if data}
-				<p>Currently indexing data from <strong>{formatAmount(data.blockchains)} blockchains</strong></p>
+			{#if impressiveNumbers}
+				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.blockchains)} blockchains</strong></p>
 			{/if}
 		</ContentCard>
 
@@ -31,8 +32,8 @@
 				Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain
 				trades, across multiple DEXs.
 			</p>
-			{#if data}
-				<p>Currently indexing data from <strong>{formatAmount(data.exchanges)} DEXes</strong></p>
+			{#if impressiveNumbers}
+				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.exchanges)} DEXes</strong></p>
 			{/if}
 		</ContentCard>
 
@@ -41,8 +42,8 @@
 				Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and
 				current datasets here.
 			</p>
-			{#if data}
-				<p>Currently indexing data from <strong>{formatAmount(data.pairs)} trading pairs</strong></p>
+			{#if impressiveNumbers}
+				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.pairs)} trading pairs</strong></p>
 			{/if}
 		</ContentCard>
 
@@ -51,7 +52,7 @@
 				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
 				change.
 			</p>
-			{#if data}
+			{#if impressiveNumbers}
 				<p>Explore tokens using advanced token search.</p>
 			{/if}
 		</ContentCard>
@@ -67,8 +68,10 @@
 				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for
 				calculating past slippage. Datasets are served in Parquet file format.
 			</p>
-			{#if data}
-				<p>Currently providing <strong>{formatSizeGigabytes(data.database_size)} GB worth of data</strong></p>
+			{#if impressiveNumbers}
+				<p>
+					Currently providing <strong>{formatSizeGigabytes(impressiveNumbers.database_size)} GB worth of data</strong>
+				</p>
 			{/if}
 		</ContentCard>
 
