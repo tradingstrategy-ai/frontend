@@ -12,11 +12,15 @@
 
 	const equityTicks: ChartTick[] = equityData.map(([d, v]) => [fromUnixTime(d), v]);
 
-	const width = 500;
-	const height = 300;
+	const width = 1200;
+	const height = 600;
+
 	const scaleX = scaleUtc([equityTicks[0][0], equityTicks.at(-1)[0]], [0, width]);
-	const scaleY = scaleLinear(getValueRange(equityTicks), [height, 0]);
+	const scaleY = scaleLinear(getValueRange(equityTicks), [height, 0]).nice();
 	const y0 = scaleY(0);
+
+	const xFormat = scaleX.tickFormat();
+	const yFormat = scaleY.tickFormat(null, '$,f');
 
 	const profitClass = determinePriceChangeClass(equityData.at(-1)?.[1]);
 
@@ -34,40 +38,59 @@
 	}
 </script>
 
-<div class="chart-thumbnail">
-	<svg viewBox="0 0 {width} {height}" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-		{#if showLine}
-			<path class="data {profitClass}" d={getPathCommands(equityTicks)} in:draw={{ duration: 5000 }} />
-		{/if}
+<svg
+	class="chart"
+	viewBox="0 0 {width + 100} {height + 40}"
+	preserveAspectRatio="none"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	{#if showLine}
+		<path class="data {profitClass}" d={getPathCommands(equityTicks)} in:draw={{ duration: 5000 }} />
+	{/if}
 
-		<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
-	</svg>
-</div>
+	<!-- x axis line and labels -->
+	<line class="axis" x1="0" y1={height} x2={width} y2={height} />
+	{#each scaleX.ticks() as tick}
+		{@const x = scaleX(tick)}
+		<line class="grid" x1={x} x2={x} y1={0} y2={height} />
+		<text {x} y={height + 25} text-anchor="middle">{xFormat(tick)}</text>
+	{/each}
+
+	<!-- y axis line and labels -->
+	<line class="axis" x1={0} x2={1} y1={0} y2={height} />
+	<line class="axis" x1={width} x2={width} y1={0} y2={height} />
+	{#each scaleY.ticks() as tick}
+		{@const y = scaleY(tick)}
+		<line class="grid" x1={0} x2={width} y1={y} y2={y} />
+		<text x={width + 10} y={y + 2} text-anchor="start">{yFormat(tick)}</text>
+	{/each}
+</svg>
 
 <style lang="postcss">
-	.chart-thumbnail {
-		height: 100%;
-		overflow: hidden;
-		display: grid;
-		grid-template-rows: 3rem 1fr 3rem;
+	.chart {
 		background: var(--c-background-7);
 		user-select: none;
 
-		& svg {
-			grid-row: 2;
-			width: 100%;
-			height: 100%;
-			overflow: visible;
-		}
-
-		& .x-axis {
+		& .axis {
 			stroke: var(--c-text-ultra-light-night);
 			stroke-width: 0.5;
 		}
 
+		& .grid {
+			stroke: var(--c-text-ultra-light-night);
+			stroke-width: 0.25;
+			opacity: 0.5;
+		}
+
+		& text {
+			font: var(--f-ui-xs-roman);
+			fill: var(--c-text-light-night);
+		}
+
 		& .data {
 			stroke: var(--c-text-light-night);
-			stroke-width: 1;
+			stroke-width: 2;
 			stroke-linejoin: round;
 
 			&.bullish {
