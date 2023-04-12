@@ -1,8 +1,7 @@
-import type { PageLoad } from './$types';
 import ghostClient from '$lib/blog/client';
 import { error } from '@sveltejs/kit';
 
-export const load = (async ({ params }) => {
+export async function load({ params }) {
 	try {
 		// See post data model: https://ghost.org/docs/content-api/#posts
 		return await ghostClient.posts.read({ slug: params.slug }, { formats: ['html'] });
@@ -14,4 +13,4 @@ export const load = (async ({ params }) => {
 			throw error(status, e.message);
 		}
 	}
-}) satisfies PageLoad;
+}

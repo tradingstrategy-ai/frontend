@@ -1,8 +1,7 @@
-import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (async ({ fetch, params, parent }) => {
+export async function load({ fetch, params, parent }) {
 	const { position: id, status } = params;
 	const { state } = await parent();
 
@@ -28,4 +27,4 @@ export const load = (async ({ fetch, params, parent }) => {
 		position,
 		status
 	};
-}) satisfies LayoutLoad;
+}

@@ -1,7 +1,6 @@
-import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (async ({ params, fetch, setHeaders }) => {
+export async function load({ params, fetch, setHeaders }) {
 	const chain_slug = params.chain;
 	const address = params.token;
 
@@ -14,4 +13,4 @@ export const load = (async ({ params, fetch, setHeaders }) => {
 	return {
 		token: fetchPublicApi(fetch, 'token/details', { chain_slug, address })
 	};
-}) satisfies PageLoad;
+}

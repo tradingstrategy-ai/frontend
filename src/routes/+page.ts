@@ -1,4 +1,3 @@
-import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import ghostClient from '$lib/blog/client';
 
@@ -8,7 +7,7 @@ function logError(err: Error) {
 	console.error(err);
 }
 
-export const load = (async ({ fetch, setHeaders }) => {
+export async function load({ fetch, setHeaders }) {
 	// Cache the landing data for 5 minutes at the Cloudflare so pages are
 	// served really fast if they get popular, and also for speed test
 	setHeaders({
@@ -21,4 +20,4 @@ export const load = (async ({ fetch, setHeaders }) => {
 		impressiveNumbers: fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
 		posts: ghostClient.posts?.browse({ limit: 4 }).catch(logError)
 	};
-}) satisfies PageLoad;
+}

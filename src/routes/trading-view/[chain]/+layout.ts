@@ -1,9 +1,8 @@
-import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { chainsUnderMaintenance } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (({ fetch, params }) => {
+export async function load({ fetch, params }) {
 	const chain_slug = params.chain;
 
 	// trigger error if chain is under maintenance
@@ -15,4 +14,4 @@ export const load = (({ fetch, params }) => {
 	return {
 		chain: fetchPublicApi(fetch, 'chain-details', { chain_slug })
 	};
-}) satisfies LayoutLoad;
+}

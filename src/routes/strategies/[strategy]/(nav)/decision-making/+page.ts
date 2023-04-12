@@ -1,12 +1,9 @@
 /**
  * Fetch the strategy decision making visualisation.
- */
-import type { PageLoad } from './$types';
-
-/**
+ *
  * Generate a variant of decision making status image URL for both color schemes.
  */
-export const load = (async ({ parent }) => {
+export async function load({ parent }) {
 	const { strategy } = await parent();
 
 	const imageUrls: Record<string, string> = {};
@@ -19,4 +16,4 @@ export const load = (async ({ parent }) => {
 	}
 
 	return { imageUrls };
-}) satisfies PageLoad;
+}
