@@ -30,10 +30,9 @@
 	}
 
 	function getPathCommands(data: ChartTick[]) {
-		const commands = data.map(([date, val]) => {
-			return `L${scaleX(date)},${scaleY(val)}`;
+		const commands = data.map(([date, val], idx) => {
+			return `${idx ? 'L' : 'M'}${scaleX(date)},${scaleY(val)}`;
 		});
-		commands.unshift(`M0,${y0}`);
 		return commands.join(' ');
 	}
 </script>
