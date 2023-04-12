@@ -1,7 +1,6 @@
-import type { PageLoad } from './$types';
 import type { TradingPosition } from 'trade-executor-frontend/state/interface';
 
-export const load = (async ({ params, parent }) => {
+export async function load({ params, parent }) {
 	const { status } = params;
 	const { state } = await parent();
 
@@ -12,4 +11,4 @@ export const load = (async ({ params, parent }) => {
 		status,
 		positions: Object.values(positions) satisfies TradingPosition[]
 	};
-}) satisfies PageLoad;
+}

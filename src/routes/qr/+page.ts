@@ -1,5 +1,3 @@
-import type { PageLoad } from './$types';
-
-export const load = (() => {
+export async function load() {
 	return { skipFooter: true };
-}) satisfies PageLoad;
+}

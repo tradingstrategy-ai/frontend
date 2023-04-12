@@ -32,7 +32,7 @@ describe('RangeFilter component', () => {
 
 		const expected = { fieldName: 'age', filter: 'age:>=0 && age:<18' };
 		expect(handleChange).toHaveBeenCalledOnce();
-		expect(handleChange.calls[0][0]).toHaveProperty('detail', expected);
+		expect(handleChange.mock.calls[0][0]).toHaveProperty('detail', expected);
 	});
 
 	describe('generateOptions module function', () => {

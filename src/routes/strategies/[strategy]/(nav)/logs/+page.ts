@@ -1,10 +1,9 @@
 /**
  * Fetch the server logs on the page load.
  */
-import type { PageLoad } from './$types';
 import { publicApiError } from '$lib/helpers/public-api';
 
-export const load = (async ({ parent, fetch }) => {
+export async function load({ parent, fetch }) {
 	const { strategy } = await parent();
 
 	const resp = await fetch(`${strategy.url}/logs`);
@@ -16,4 +15,4 @@ export const load = (async ({ parent, fetch }) => {
 	return {
 		logs: resp.json()
 	};
-}) satisfies PageLoad;
+}

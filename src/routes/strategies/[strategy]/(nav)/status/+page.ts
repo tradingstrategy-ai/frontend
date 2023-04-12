@@ -1,11 +1,10 @@
 /**
  * Fetch the instance status metadta.
  */
-import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
 
-export const load = (async ({ parent, fetch }) => {
+export async function load({ parent, fetch }) {
 	const { strategy } = await parent();
 
 	const url = `${strategy.url}/status`;
@@ -24,4 +23,4 @@ export const load = (async ({ parent, fetch }) => {
 	return {
 		runState: resp.json()
 	};
-}) satisfies PageLoad;
+}

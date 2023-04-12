@@ -1,7 +1,6 @@
-import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (async ({ params, fetch }) => {
+export async function load({ params, fetch }) {
 	const direction: 'up' | 'down' = params.direction === 'daily-up' ? 'up' : 'down';
 
 	const data = await fetchPublicApi(fetch, 'top-momentum');
@@ -10,4 +9,4 @@ export const load = (async ({ params, fetch }) => {
 		direction,
 		pairs: data[`top_${direction}_24h_min_liq_1m`]
 	};
-}) satisfies PageLoad;
+}

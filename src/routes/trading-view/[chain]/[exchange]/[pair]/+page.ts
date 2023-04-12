@@ -1,9 +1,8 @@
-import type { PageLoad } from './$types';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 // During SSR we only load only pair details; all trading data (price and
 // liquidity candles, trading summaries) are done client-side.
-export const load = (async ({ params, fetch, setHeaders }) => {
+export async function load({ params, fetch, setHeaders }) {
 	const chain_slug = params.chain;
 	const exchange_slug = params.exchange;
 	const pair_slug = params.pair;
@@ -17,4 +16,4 @@ export const load = (async ({ params, fetch, setHeaders }) => {
 	return {
 		pair: fetchPublicApi(fetch, 'pair-details', { chain_slug, exchange_slug, pair_slug })
 	};
-}) satisfies PageLoad;
+}

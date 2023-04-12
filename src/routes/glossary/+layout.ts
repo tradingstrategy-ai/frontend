@@ -1,9 +1,7 @@
 /**
  * Data loader for all /glossary routes
  */
-import type { LayoutLoad } from './$types';
-
-export const load = (async ({ fetch }) => {
+export async function load({ fetch }) {
 	const resp = await fetch('/glossary/api');
 
 	if (!resp.ok) {
@@ -14,4 +12,4 @@ export const load = (async ({ fetch }) => {
 	return {
 		glossary: resp.json()
 	};
-}) satisfies LayoutLoad;
+}

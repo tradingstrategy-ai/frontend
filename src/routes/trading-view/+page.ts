@@ -1,14 +1,10 @@
-import type { PageLoad } from './$types';
-import { backendUrl } from '$lib/config';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export const load = (async ({ fetch }) => {
-	const resp = await fetch(`${backendUrl}/impressive-numbers`);
-
+export async function load({ fetch }) {
 	// render the page even if the backend is down
-	if (!resp.ok) {
-		console.error(`API error: ${resp.status} ${resp.statusText}`);
-		return {};
-	}
-
-	return resp.json();
-}) satisfies PageLoad;
+	const impressiveNumbers = fetchPublicApi(fetch, 'impressive-numbers').catch((err) => {
+		console.error('Request failed; rendering page without data.');
+		console.error(err);
+	});
+	return { impressiveNumbers };
+}

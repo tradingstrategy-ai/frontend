@@ -1,7 +1,6 @@
-import type { PageLoad } from './$types';
 import { fetchTokens } from '$lib/explorer/token-client';
 
-export const load = (async ({ fetch, params, url }) => {
+export async function load({ fetch, params, url }) {
 	const { searchParams } = url;
 	const page = Number(searchParams.get('page')) || 0;
 	const sort = searchParams.get('sort') || 'volume_24h';
@@ -12,4 +11,4 @@ export const load = (async ({ fetch, params, url }) => {
 	return {
 		tokens: { ...data, page, sort, direction }
 	};
-}) satisfies PageLoad;
+}
