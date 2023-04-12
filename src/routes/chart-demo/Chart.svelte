@@ -5,18 +5,21 @@
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { draw } from 'svelte/transition';
 
+	type ChartData = [number, number];
 	type ChartTick = [Date, number];
 
-	export let equityData: [number, number][] = [];
-	export let showLine = false;
+	export let equityData: ChartData[];
+	export let buyHoldData: ChartData[];
+	export let showLines = false;
 
 	const equityTicks: ChartTick[] = equityData.map(([d, v]) => [fromUnixTime(d), v]);
+	const buyHoldTicks: ChartTick[] = buyHoldData.map(([d, v]) => [fromUnixTime(d), v]);
 
 	const width = 1200;
 	const height = 600;
 
 	const scaleX = scaleUtc([equityTicks[0][0], equityTicks.at(-1)[0]], [0, width]);
-	const scaleY = scaleLinear(getValueRange(equityTicks), [height, 0]).nice();
+	const scaleY = scaleLinear(getValueRange([...equityData, ...buyHoldData]), [height, 0]).nice();
 	const y0 = scaleY(0);
 
 	const xFormat = scaleX.tickFormat();
@@ -24,9 +27,8 @@
 
 	const profitClass = determinePriceChangeClass(equityData.at(-1)?.[1]);
 
-	function getValueRange(data: ChartTick[]) {
-		const range = extent(data, (tick: ChartTick) => tick[1]);
-		return range.every(Number.isFinite) ? range : [0, 0];
+	function getValueRange(data: ChartData[]) {
+		return extent(data, (item: ChartData) => item[1]);
 	}
 
 	function getPathCommands(data: ChartTick[]) {
@@ -44,8 +46,9 @@
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
 >
-	{#if showLine}
-		<path class="data {profitClass}" d={getPathCommands(equityTicks)} in:draw={{ duration: 5000 }} />
+	{#if showLines}
+		<path class="data equity" d={getPathCommands(equityTicks)} in:draw={{ duration: 5000 }} />
+		<path class="data buyHold" d={getPathCommands(buyHoldTicks)} in:draw={{ duration: 5000 }} />
 	{/if}
 
 	<!-- x axis line and labels -->
@@ -91,12 +94,12 @@
 			stroke-width: 2;
 			stroke-linejoin: round;
 
-			&.bullish {
+			&.equity {
 				stroke: hsla(var(--hsl-bullish));
 			}
 
-			&.bearish {
-				stroke: hsla(var(--hsl-bearish));
+			&.buyHold {
+				stroke: hsla(var(--hsl-text-ultra-light));
 			}
 		}
 	}
