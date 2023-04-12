@@ -69,27 +69,26 @@
 
 <style lang="postcss">
 	.chart {
-		background: var(--c-background-7);
 		user-select: none;
+		overflow: visible;
 
 		& .axis {
-			stroke: var(--c-text-ultra-light-night);
-			stroke-width: 0.5;
+			stroke: hsla(var(--hsl-box), var(--a-box-e));
+			stroke-width: 1;
 		}
 
 		& .grid {
-			stroke: var(--c-text-ultra-light-night);
-			stroke-width: 0.25;
-			opacity: 0.5;
+			stroke: hsla(var(--hsl-box), var(--a-box-b));
+			stroke-width: 0.5;
 		}
 
 		& text {
 			font: var(--f-ui-xs-roman);
-			fill: var(--c-text-light-night);
+			fill: currentColor;
 		}
 
 		& .data {
-			stroke: var(--c-text-light-night);
+			stroke: hsla(var(--hsl-text-extra-light));
 			stroke-width: 2;
 			stroke-linejoin: round;
 
