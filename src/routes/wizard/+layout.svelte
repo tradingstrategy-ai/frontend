@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Section } from '$lib/components';
+	import { Section, WizardNavItem } from '$lib/components';
 
 	interface Step {
 		slug: string;
@@ -18,10 +18,14 @@
 			<h1>Connect wallet</h1>
 
 			<menu>
-				{#each steps as { slug, label }}
-					<li>
-						<a href={slug}>{label}</a>
-					</li>
+				{#each steps as { slug, label }, idx}
+					<WizardNavItem
+						{slug}
+						{label}
+						active={idx === stepIndex}
+						completed={idx < stepIndex}
+						disabled={idx > stepIndex}
+					/>
 				{/each}
 			</menu>
 
@@ -81,6 +85,11 @@
 		}
 
 		& menu {
+			display: grid;
+			gap: var(--space-ms);
+			margin: 0;
+			padding: 0;
+
 			@media (--viewport-sm-down) {
 				display: none;
 			}
