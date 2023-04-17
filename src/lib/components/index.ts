@@ -43,4 +43,5 @@ export { default as UpDownCell } from './UpDownCell.svelte';
 export { default as UpDownIndicator } from './UpDownIndicator.svelte';
 export { default as UspTile } from './UspTile.svelte';
 export { default as WalletAddressWidget } from './WalletAddressWidget.svelte';
+export { default as WizardActions } from './WizardActions.svelte';
 export { default as WizardNavItem } from './WizardNavItem.svelte';
