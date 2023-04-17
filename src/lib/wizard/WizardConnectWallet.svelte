@@ -65,23 +65,13 @@
 		</div>
 	{:else}
 		<div class="wallet-choices">
-			<WalletTile active={chosenWallet === 'MetaMask'} on:click={() => chooseWallet('MetaMask')}>
-				<svelte:fragment slot="logo">
-					<img alt="MetaMask" src={MetaMaskLogo} width="120" />
-				</svelte:fragment>
-				<svelte:fragment slot="name">MetaMask</svelte:fragment>
-				<svelte:fragment slot="description">
-					Connect to your <br />MetaMask Wallet
-				</svelte:fragment>
+			<WalletTile name="MetaMask" slug="metamask" on:click={() => chooseWallet('MetaMask')}>
+				Connect to your<br />
+				MetaMask Wallet
 			</WalletTile>
-			<WalletTile active={chosenWallet === 'WalletConnect'} on:click={() => chooseWallet('WalletConnect')}>
-				<svelte:fragment slot="logo">
-					<img alt="WalletConnect" src={WalletConnectLogo} width="120" />
-				</svelte:fragment>
-				<svelte:fragment slot="name">WalletConnect</svelte:fragment>
-				<svelte:fragment slot="description">
-					Scan a QR code <br />with your mobile wallet
-				</svelte:fragment>
+			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => chooseWallet('WalletConnect')}>
+				Scan a QR code<br />
+				with your mobile wallet
 			</WalletTile>
 		</div>
 	{/if}

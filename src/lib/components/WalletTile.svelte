@@ -1,34 +1,43 @@
 <script lang="ts">
-	export let active = false;
+	import { getLogoUrl } from '$lib/helpers/assets';
+
+	export let name: string;
+	export let slug: string;
 </script>
 
-<div class="wallet-tile tile {active ? 'c' : 'a'}" on:click on:keydown>
-	<slot name="logo" />
+<button class="wallet-tile tile a" on:click>
+	<img alt={name} src={getLogoUrl(slug)} />
 	<div class="text">
-		<h3>
-			<slot name="name" />
-		</h3>
-		<p>
-			<slot name="description" />
-		</p>
+		<h3>{name}</h3>
+		<p><slot /></p>
 	</div>
-</div>
+</button>
 
-<style>
+<style lang="postcss">
 	.wallet-tile {
 		border: 2px hsla(var(--hsl-box), var(--a-box-a)) solid;
 		border-radius: var(--radius-sm);
 		cursor: pointer;
 		display: grid;
 		gap: var(--space-lg);
-		place-items: center;
-		place-content: center;
+		grid-template-rows: 7.5rem 1fr;
+		justify-items: center;
+		align-items: flex-start;
 		padding: var(--space-ls) var(--space-md);
+		outline: none;
+
+		&:focus {
+			background: hsla(var(--hsl-box), var(--a-box-c));
+			--background-hover: hsla(var(--hsl-box), var(--a-box-d));
+		}
+	}
+
+	img {
+		height: 100%;
 	}
 
 	.text {
 		display: grid;
-		place-items: center;
 		text-align: center;
 	}
 
