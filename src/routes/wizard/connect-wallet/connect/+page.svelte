@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { Button, WizardActions } from '$lib/components';
+	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 </script>
 
-<div class="wallet-connect-connect">
-	<p>Wallet connection UI here.</p>
-</div>
+<ConnectWallet />
 
 <WizardActions>
 	<Button ghost>Cancel</Button>

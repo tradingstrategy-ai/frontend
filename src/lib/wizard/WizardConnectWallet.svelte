@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WalletTile from '$lib/components/WalletTile.svelte';
+	import WalletTile from '$lib/wallet/WalletTile.svelte';
 	import MetaMaskLogo from '$lib/assets/logos/metamask.svg';
 	import WalletConnectLogo from '$lib/assets/logos/walletconnect.svg';
 	import { AlertItem, AlertList, Button, EntitySymbol, WalletAddressWidget } from '$lib/components';
