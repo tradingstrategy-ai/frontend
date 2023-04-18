@@ -2,11 +2,11 @@
 	import { Button, WizardActions } from '$lib/components';
 </script>
 
-<div class="connect-wallet-introduction">
+<div class="deposit-introduction">
 	<p>
-		Officia duis culpa anim officia non magna adipisicing in nostrud fugiat enim. Duis non Lorem ad occaecat excepteur
-		sunt ipsum sint amet laboris veniam quis labore. Fugiat excepteur qui eu laboris aute eu Lorem. Labore eiusmod sint
-		tempor officia duis proident. Minim magna est adipisicing cillum ad.
+		Ready to invest in <strong>ETH-USD SMA on Pancake</strong>? Deposit USDC to add this strategy to your DeFi trading
+		portfolio. Connect your wallet, review your balances, enter your desired investment amount, and make your payment.
+		Let's get started!
 	</p>
 </div>
 
