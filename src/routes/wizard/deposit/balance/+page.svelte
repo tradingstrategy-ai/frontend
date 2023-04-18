@@ -8,5 +8,5 @@
 <WizardActions>
 	<Button ghost>Cancel</Button>
 	<Button secondary href="connect">Back</Button>
-	<Button href="success">Next</Button>
+	<Button href="payment">Next</Button>
 </WizardActions>

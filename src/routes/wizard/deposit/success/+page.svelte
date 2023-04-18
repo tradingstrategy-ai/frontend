@@ -11,6 +11,6 @@
 </div>
 
 <WizardActions>
-	<Button secondary href="balance">Back</Button>
+	<Button secondary href="payment">Back</Button>
 	<Button>Done</Button>
 </WizardActions>
