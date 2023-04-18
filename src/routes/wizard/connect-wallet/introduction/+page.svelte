@@ -4,9 +4,8 @@
 
 <div class="connect-wallet-introduction">
 	<p>
-		Officia duis culpa anim officia non magna adipisicing in nostrud fugiat enim. Duis non Lorem ad occaecat excepteur
-		sunt ipsum sint amet laboris veniam quis labore. Fugiat excepteur qui eu laboris aute eu Lorem. Labore eiusmod sint
-		tempor officia duis proident. Minim magna est adipisicing cillum ad.
+		Connect your crypto wallet to Trading Strategy in just a few clicks! Choose between MetaMask or WalletConnect,
+		connect your wallet, and view your current crypto balances. Let's get started!
 	</p>
 </div>
 

@@ -22,7 +22,7 @@
 <WizardActions>
 	<Button ghost>Cancel</Button>
 	<Button secondary href="connect">Back</Button>
-	<Button href="finish">Next</Button>
+	<Button href="success">Next</Button>
 </WizardActions>
 
 <style lang="postcss">
