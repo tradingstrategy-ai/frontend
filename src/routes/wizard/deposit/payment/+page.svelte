@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Button, WizardActions } from '$lib/components';
+	import WalletDeposit from '$lib/wallet/WalletDeposit.svelte';
 </script>
 
-<p>Wallet payment step goes here!</p>
+<WalletDeposit />
 
 <WizardActions>
 	<Button ghost>Cancel</Button>

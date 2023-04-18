@@ -13,11 +13,7 @@
 	$: paymentValue = null;
 </script>
 
-<div class="wizard-payment">
-	<header>
-		<h2>Payment</h2>
-	</header>
-
+<div class="wallet-deposit">
 	<section>
 		<h3>Your current balance</h3>
 
@@ -82,35 +78,53 @@
 </div>
 
 <style lang="postcss">
-	section,
-	.payment-form,
-	.payment-form .inner {
+	.wallet-deposit {
 		display: grid;
-	}
+		gap: var(--space-3xl);
 
-	section {
-		margin-bottom: var(--space-3xl);
-		gap: var(--space-ls);
-	}
+		& section {
+			display: grid;
+			gap: var(--space-ls);
+		}
 
-	h3 {
-		color: hsla(var(--hsl-text-light));
-		font: var(--f-ui-lg-medium);
-	}
+		& h3 {
+			color: hsla(var(--hsl-text-light));
+			font: var(--f-ui-lg-medium);
+		}
 
-	tr td:last-child {
-		--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-		text-align: right;
-	}
+		& table {
+			margin: 0;
 
-	progress {
-		justify-self: stretch;
-	}
+			/* FIXME: remove `!important` */
+			@media (--viewport-sm-up) {
+				--table-font: var(--f-ui-lg-medium) !important;
+			}
 
-	.payment-form {
-		gap: var(--space-xl) !important;
+			& td {
+				padding: var(--space-xs) var(--space-ml);
+				align-content: center;
 
-		& :global .alert-list {
+				&:first-child {
+					font: var(--f-ui-md-medium);
+				}
+
+				&:last-child {
+					--cell-padding: 0 var(--space-md) 0 var(--space-xs);
+					text-align: right;
+				}
+			}
+		}
+
+		& .payment-form {
+			display: grid;
+			gap: var(--space-xl) !important;
+
+			& :global .alert-list {
+				justify-self: stretch;
+			}
+		}
+
+		& progress {
 			justify-self: stretch;
 		}
 	}
