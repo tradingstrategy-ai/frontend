@@ -3,7 +3,7 @@ body[data-color-mode='dark'] {
 	--hsl-body: var(--hue-1), 1%, 10%;
 
 	--hsl-text: var(--hue-1), 12%, 99%;
-	--hsl-text-light: var(--hue-1), 4%, 88%;
+	--hsl-text-light: var(--hue-1), 4%, 86%;
 	--hsl-text-extra-light: var(--hue-1), 3%, 72%;
 	--hsl-text-ultra-light: var(--hue-1), 2%, 52%;
 	--hsl-text-inverted: var(--hue-1), 9%, 7%;

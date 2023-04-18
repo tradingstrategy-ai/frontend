@@ -2,10 +2,10 @@
 	Root layout
 -->
 <script lang="ts">
-	import Navbar from '$lib/header/Navbar.svelte';
 	import AppHead from '$lib/header/AppHead.svelte';
-	import SiteMode from '$lib/header/SiteMode.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
+	import Navbar from '$lib/header/Navbar.svelte';
+	import SiteMode from '$lib/header/SiteMode.svelte';
 	import { Footer } from '$lib/components';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
@@ -41,11 +41,14 @@
 </script>
 
 <AppHead />
-
 <PageLoadProgressBar />
-<Navbar />
+{#if !$page.data.skipNavbar}
+	<Navbar />
+{/if}
 <slot />
-<Footer skip={$page.data.skipFooter} />
+{#if !$page.data.skipFooter}
+	<Footer />
+{/if}
 <SiteMode />
 
 <style global lang="postcss">

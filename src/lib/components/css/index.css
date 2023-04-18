@@ -2,7 +2,10 @@
 @import './reset.css';
 @import './color-v1.css';
 @import './color.css';
+@import './hash-widget.css';
+@import './input.css';
 @import './layout.css';
+@import './progress.css';
 @import './radius.css';
 @import './space.css';
 @import './table.css';

@@ -32,6 +32,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let href: string | undefined = undefined;
 	export let icon: string | undefined = undefined;
 	export let label: string = '';
+	export let ghost = false;
 	export let quarternary = false;
 	export let secondary = false;
 	export let tertiary = false;
@@ -42,7 +43,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let title: string | undefined = undefined;
 
 	$: hasLabel = $$slots.default || label;
-	$: kind = quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
+	$: kind = ghost ? 'ghost' : quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
 	$: allClasses = `button ${kind} ${size} ${classes}`;
 	$: downloadAttr = typeof download === 'string' ? download : download ? '' : undefined;
 </script>
@@ -125,6 +126,12 @@ using flags: primary (default), secondary, ternary, quarternary.
 
 	.quarternary {
 		background: var(--c-background-4);
+	}
+
+	.ghost {
+		background: transparent;
+		text-decoration: underline;
+		--button-padding: 0 var(--space-xxs) !important;
 	}
 
 	.xs {
