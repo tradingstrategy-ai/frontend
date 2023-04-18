@@ -1,16 +1,27 @@
 <script lang="ts">
+	import fsm from 'svelte-fsm';
+	import { tweened } from 'svelte/motion';
 	import { Button, AlertItem, AlertList, EntitySymbol, SmartContractWidget, MoneyInput } from '$lib/components';
 
-	export let paymentProgress = 0;
-	export let paymentValue: number | null = null;
+	let paymentValue: number;
 
-	$: status = 'start';
+	const paymentProgress = tweened(0, { duration: 2000 });
 
-	$: if (status === 'processing' && paymentProgress < 1000) {
-		setTimeout(() => paymentProgress++, 0);
-	}
-
-	$: paymentValue = null;
+	const payment = fsm('initial', {
+		initial: {
+			confirm: 'confirming'
+		},
+		confirming: {
+			process: 'processing'
+		},
+		processing: {
+			_enter() {
+				paymentProgress.set(100).then(payment.finish);
+			},
+			finish: 'done'
+		},
+		done: {}
+	});
 </script>
 
 <div class="wallet-deposit">
@@ -32,7 +43,7 @@
 	</section>
 
 	<section>
-		{#if status === 'start'}
+		{#if $payment === 'initial'}
 			<h3>Enter amount to pay</h3>
 
 			<form action="" class="payment-form">
@@ -48,31 +59,24 @@
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
 				</AlertList>
-				<Button disabled={!paymentValue} on:click={() => (status = 'confirmation')}>Make payment</Button>
+				<Button disabled={!paymentValue} on:click={payment.confirm}>Make payment</Button>
 			</form>
-		{:else if status === 'confirmation'}
-			<div
-				class="confirmation"
-				style="display: contents;"
-				on:click={() => (status = 'processing')}
-				on:keydown={() => (status = 'processing')}
-			>
+		{:else if $payment === 'confirming'}
+			<div class="confirmation" style="display: contents;" on:click={payment.process} on:keydown={payment.process}>
 				<h3>Confirm transaction in your wallet.</h3>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
 				</AlertList>
 			</div>
-		{:else if status === 'processing'}
+		{:else if $payment === 'processing'}
 			<h3>Confirming transaction...</h3>
-			<progress max="1000" value={paymentProgress}>
-				{paymentProgress / 10}
-			</progress>
+			<progress max="100" value={$paymentProgress} />
 			<p class="disclaimer">
 				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
 			</p>
+		{:else if $payment === 'done'}
 			<SmartContractWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" label="Transaction ID" />
-			<div class="transaction-id" />
 		{/if}
 	</section>
 </div>
@@ -117,15 +121,11 @@
 
 		& .payment-form {
 			display: grid;
-			gap: var(--space-xl) !important;
-
-			& :global .alert-list {
-				justify-self: stretch;
-			}
+			gap: var(--space-xl);
 		}
 
 		& progress {
-			justify-self: stretch;
+			width: 100%;
 		}
 	}
 </style>
