@@ -15,7 +15,7 @@
 <div class="wizard-layout">
 	<Section tag="nav" maxWidth="xs" padding="sm" --section-background="hsla(var(--hsl-box), var(--a-box-a))">
 		<div class="nav-inner">
-			<h1>Connect wallet</h1>
+			<h1>{$page.data.title}</h1>
 
 			<menu>
 				{#each steps as { slug, label }, idx}
