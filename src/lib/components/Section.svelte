@@ -21,6 +21,8 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 	type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 	export let ariaAttrs: AriaAttributes = {};
+	let classes = '';
+	export { classes as class };
 	export let gap: Size | undefined = undefined;
 	export let padding: Size | undefined = undefined;
 	export let maxWidth: Size = 'xl';
@@ -34,7 +36,7 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 	];
 </script>
 
-<svelte:element this={tag} {...ariaAttrs} class="section" style={styles.join(';')} data-testid={testId}>
+<svelte:element this={tag} {...ariaAttrs} class="section {classes}" style={styles.join(';')} data-testid={testId}>
 	<slot />
 </svelte:element>
 

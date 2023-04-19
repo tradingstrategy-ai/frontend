@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Section, WizardNavItem } from '$lib/components';
+	import Button from '$lib/components/Button.svelte';
+	import WizardHeader from '$lib/components/WizardHeader.svelte';
 
 	interface Step {
 		slug: string;
@@ -12,8 +14,9 @@
 	$: stepIndex = steps.findIndex(({ slug }: Step) => slug === currentStep);
 </script>
 
-<div class="wizard-layout">
-	<Section tag="nav" maxWidth="xs" padding="sm" --section-background="hsla(var(--hsl-box), var(--a-box-a))">
+<Section class="wizard" maxWidth="xl">
+	<WizardHeader />
+	<div class="wizard-layout">
 		<div class="nav-inner">
 			<h1>{$page.data.title}</h1>
 
@@ -35,22 +38,27 @@
 				<span>{steps.length}</span>
 			</div>
 		</div>
-	</Section>
 
-	<main>
-		<Section maxWidth="xs" padding="sm">
-			<h2>{steps[stepIndex].label}</h2>
-			<slot />
-		</Section>
-	</main>
-</div>
+		<main>
+			<Section maxWidth="xs" padding="sm">
+				<h2>{steps[stepIndex].label}</h2>
+				<slot />
+			</Section>
+		</main>
+	</div>
+</Section>
 
 <style lang="postcss">
+	:global section.wizard .wizard-header {
+		margin-bottom: var(--space-md);
+	}
 	.wizard-layout {
 		display: grid;
 		background: hsla(var(--hsl-body));
-		min-height: 100vh;
+		min-height: calc(100vh - var(--header-height));
+		padding-bottom: var(--space-4xl);
 		overflow: hidden;
+		gap: var(--space-3xl);
 
 		@media (--viewport-md-up) {
 			grid-template-columns: 22rem auto;
@@ -65,11 +73,37 @@
 			font: var(--f-heading-md-medium);
 			margin-bottom: var(--space-2xl);
 		}
+
+		& :global .header-bar {
+			--header-height: auto !important;
+			padding: var(--space-xxs) 0;
+			margin-bottom: var(--space-4xl);
+
+			@media (--viewport-sm-down) {
+				display: none;
+			}
+		}
+
+		& :global nav.section {
+			@media (--viewport-lg-up) {
+				padding-inline: var(--space-6xl);
+			}
+		}
 	}
 
 	.nav-inner {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-md);
 		display: grid;
 		align-content: start;
+		padding: var(--space-xl);
+		@media (--viewport-sm-down) {
+			padding: var(--space-md);
+		}
+		/* @media (--viewport-lg-up) {
+			justify-self: end;
+			min-width: 20rem;
+		} */
 
 		@media (--viewport-sm-down) {
 			align-items: center;
@@ -100,5 +134,21 @@
 				display: none;
 			}
 		}
+	}
+
+	main {
+		/* background: hsla(var(--hsl-box), var(--a-box-a)); */
+	}
+	main :global .section {
+		background: transparent;
+		padding-block: var(--space-xl);
+		/* @media (--viewport-lg-up) {
+			max-width: 20rem;
+		} */
+	}
+	:global footer.section,
+	footer {
+		display: grid;
+		place-content: end stretch;
 	}
 </style>
