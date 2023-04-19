@@ -1,7 +1,7 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
-	import { Button, AlertItem, AlertList, EntitySymbol, SmartContractWidget, MoneyInput } from '$lib/components';
+	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
 	let paymentValue: number;
 
@@ -76,7 +76,10 @@
 				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
 			</p>
 		{:else if $payment === 'done'}
-			<SmartContractWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" label="Transaction ID" />
+			<div class="transaction-id">
+				<h3>Transaction ID</h3>
+				<CryptoAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
+			</div>
 		{/if}
 	</section>
 </div>
@@ -126,6 +129,11 @@
 
 		& progress {
 			width: 100%;
+		}
+
+		& .transaction-id {
+			display: grid;
+			gap: var(--space-md);
 		}
 	}
 </style>

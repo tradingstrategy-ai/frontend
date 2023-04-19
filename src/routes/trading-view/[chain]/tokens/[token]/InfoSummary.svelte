@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
-	import { SmartContractWidget } from '$lib/components';
+	import { CryptoAddressWidget } from '$lib/components';
 
 	export let data: any;
 </script>
@@ -21,7 +21,10 @@
 		{/if}
 	</p>
 
-	<SmartContractWidget label="The token smart contract address is" address={data.address} href={data.explorer_link} />
+	<p class="smart-contract">
+		The token smart contract address is
+		<CryptoAddressWidget address={data.address} href={data.explorer_link} />
+	</p>
 
 	<p>
 		The information on this page is for <a href="/trading-view/{data.chain_slug}">{data.chain_name}</a>.
@@ -47,5 +50,10 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
+	}
+
+	.smart-contract {
+		display: grid;
+		gap: var(--space-md);
 	}
 </style>

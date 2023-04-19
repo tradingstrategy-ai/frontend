@@ -238,4 +238,23 @@
 			}
 		}
 	}
+
+	.table-datasets td a {
+		position: relative;
+
+		&:not(.button)::before {
+			bottom: calc(-1 * var(--space-sm));
+			border-radius: var(--radius-sm);
+			content: '';
+			left: calc(-1 * var(--space-sm));
+			position: absolute;
+			right: calc(-1 * var(--space-sm));
+			top: calc(-1 * var(--space-sm));
+			transition: background var(--time-sm) ease-out;
+		}
+
+		&:not(.button):hover::before {
+			background: hsla(var(--hsl-box), var(--a-box-c));
+		}
+	}
 </style>
