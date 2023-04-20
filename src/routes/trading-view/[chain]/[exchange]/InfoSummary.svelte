@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fromUnixTime } from 'date-fns';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
-	import { SmartContractWidget } from '$lib/components';
+	import { CryptoAddressWidget } from '$lib/components';
 
 	export let details: any;
 </script>
@@ -29,11 +29,10 @@
 		by Trading Strategy.
 	</p>
 
-	<SmartContractWidget
-		label="The factory smart contract address for {details.human_readable_name} is"
-		address={details.address}
-		href={details.blockchain_explorer_link}
-	/>
+	<p class="smart-contract">
+		The factory smart contract address for {details.human_readable_name} is
+		<CryptoAddressWidget address={details.address} href={details.blockchain_explorer_link} />
+	</p>
 </div>
 
 <style lang="postcss">
@@ -55,5 +54,10 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
+	}
+
+	.smart-contract {
+		display: grid;
+		gap: var(--space-md);
 	}
 </style>

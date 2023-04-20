@@ -2,7 +2,7 @@
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDistanceToNowStrict } from 'date-fns';
-	import { SmartContractWidget } from '$lib/components';
+	import { CryptoAddressWidget } from '$lib/components';
 
 	export let summary: any;
 	export let details: any;
@@ -69,13 +69,10 @@
 		{/if}
 	</p>
 
-	{#if details.pair_contract_address}
-		<SmartContractWidget
-			label="The trading pair pool smart contract address is"
-			address={details.pair_contract_address}
-			href={details.pair_explorer_link}
-		/>
-	{/if}
+	<p class="smart-contract">
+		The trading pair pool smart contract address is
+		<CryptoAddressWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
+	</p>
 </div>
 
 <style lang="postcss">
@@ -96,5 +93,10 @@
 	a {
 		font-weight: 700;
 		text-decoration: underline;
+	}
+
+	.smart-contract {
+		display: grid;
+		gap: var(--space-md);
 	}
 </style>

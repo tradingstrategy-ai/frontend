@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { Button, WizardActions } from '$lib/components';
-	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
+	import WalletDeposit from '$lib/wallet/WalletDeposit.svelte';
 </script>
 
-<WalletBalance />
+<WalletDeposit />
 
 <WizardActions>
 	<Button ghost>Cancel</Button>
-	<Button secondary href="connect">Back</Button>
+	<Button secondary href="balance">Back</Button>
 	<Button href="success">Next</Button>
 </WizardActions>

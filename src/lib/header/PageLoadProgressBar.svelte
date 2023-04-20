@@ -55,33 +55,21 @@ Display a loading indicator during client-side routing. Invoked when a page
 
 <progress class={$state} value={$progress} />
 
-<style>
+<style lang="postcss">
+	/* see progress.css */
 	progress {
-		appearance: none;
-		-webkit-appearance: none;
-		-moz-appearance: none;
+		--progress-border-radius: 0;
 		position: fixed;
 		top: 0;
 		left: 0;
 		width: 100vw;
 		height: 0.5rem;
 		z-index: 100;
-		border: none;
-		background: transparent;
 		opacity: 0;
 		transition: opacity 0.5s;
-	}
 
-	progress.loading {
-		opacity: 1;
-	}
-
-	progress::-webkit-progress-bar {
-		background: transparent;
-	}
-
-	progress::-webkit-progress-value,
-	progress::-moz-progress-bar {
-		background: hsla(var(--hsl-bullish));
+		&.loading {
+			opacity: 1;
+		}
 	}
 </style>

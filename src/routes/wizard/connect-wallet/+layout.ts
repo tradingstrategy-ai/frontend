@@ -4,7 +4,7 @@ export async function load() {
 		{ slug: 'introduction', label: 'Introduction' },
 		{ slug: 'connect', label: 'Connect your wallet' },
 		{ slug: 'balance', label: 'Wallet balance' },
-		{ slug: 'finish', label: 'Finish' }
+		{ slug: 'success', label: 'Success' }
 	];
 	return { title, steps };
 }

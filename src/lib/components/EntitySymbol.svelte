@@ -1,25 +1,36 @@
 <script lang="ts">
-	import BlockchainLogo from '../assets/logos/BlockchainLogo.svelte';
-	import TokenLogo from '../assets/logos/TokenLogo.svelte';
+	import { getLogoUrl, getCryptoIconUrl } from '$lib/helpers/assets';
 
-	export let name: string;
+	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
+	export let slug: string;
+	export let label: MaybeString = undefined;
 	export let size = '1.5rem';
-	export let type: 'blockchain' | 'dex' | 'token' | 'wallet';
+
+	$: src = type === 'blockchain' ? getLogoUrl(slug) : type === 'token' ? getCryptoIconUrl(slug) : undefined;
 </script>
 
-<div class="entity-symbol">
-	{#if type === 'blockchain'}
-		<BlockchainLogo {name} {size} />
-	{:else if type === 'token'}
-		<TokenLogo {name} {size} />
+<div class="entity-symbol" style:--image-size={size}>
+	{#if src}
+		<div class="icon">
+			<img alt={label} {src} />
+		</div>
 	{/if}
-	{name}
+	{label}
 </div>
 
-<style>
+<style lang="postcss">
 	.entity-symbol {
 		display: flex;
 		gap: var(--space-sm);
 		align-items: center;
+
+		& .icon {
+			display: grid;
+			width: var(--image-size);
+
+			& img {
+				width: 100%;
+			}
+		}
 	}
 </style>
