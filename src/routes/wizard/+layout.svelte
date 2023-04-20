@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Section, WizardNavItem } from '$lib/components';
+	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
 
 	interface Step {
 		slug: string;
@@ -13,46 +13,57 @@
 </script>
 
 <div class="wizard-layout">
-	<Section tag="nav" maxWidth="xs" padding="sm" --section-background="hsla(var(--hsl-box), var(--a-box-a))">
-		<div class="nav-inner">
-			<h1>{$page.data.title}</h1>
+	<WizardHeader />
 
-			<menu>
-				{#each steps as { slug, label }, idx}
-					<WizardNavItem
-						{slug}
-						{label}
-						active={idx === stepIndex}
-						completed={idx < stepIndex}
-						disabled={idx > stepIndex}
-					/>
-				{/each}
-			</menu>
+	<Section>
+		<div class="inner">
+			<nav>
+				<h1>{$page.data.title}</h1>
 
-			<div class="pagination">
-				<span>{stepIndex + 1}</span>
-				/
-				<span>{steps.length}</span>
-			</div>
+				<menu>
+					{#each steps as { slug, label }, idx}
+						<WizardNavItem
+							{slug}
+							{label}
+							active={idx === stepIndex}
+							completed={idx < stepIndex}
+							disabled={idx > stepIndex}
+						/>
+					{/each}
+				</menu>
+
+				<div class="pagination">
+					<span>{stepIndex + 1}</span>
+					/
+					<span>{steps.length}</span>
+				</div>
+			</nav>
+
+			<main>
+				<Section maxWidth="xs">
+					<h2>{steps[stepIndex].label}</h2>
+					<slot />
+				</Section>
+			</main>
 		</div>
 	</Section>
-
-	<main>
-		<Section maxWidth="xs" padding="sm">
-			<h2>{steps[stepIndex].label}</h2>
-			<slot />
-		</Section>
-	</main>
 </div>
 
 <style lang="postcss">
 	.wizard-layout {
 		display: grid;
-		background: hsla(var(--hsl-body));
+		grid-template-rows: auto 1fr;
+		gap: var(--space-md);
 		min-height: 100vh;
+	}
+
+	.inner {
+		display: grid;
+		padding-bottom: var(--space-4xl);
 		overflow: hidden;
 
 		@media (--viewport-md-up) {
+			gap: var(--space-3xl);
 			grid-template-columns: 22rem auto;
 		}
 
@@ -67,9 +78,16 @@
 		}
 	}
 
-	.nav-inner {
+	.inner nav {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-md);
 		display: grid;
 		align-content: start;
+		padding: var(--space-xl);
+
+		@media (--viewport-sm-down) {
+			padding: var(--space-md);
+		}
 
 		@media (--viewport-sm-down) {
 			align-items: center;
@@ -99,6 +117,14 @@
 			@media (--viewport-md-up) {
 				display: none;
 			}
+		}
+	}
+
+	main {
+		--section-padding: var(--space-xl);
+
+		@media (--viewport-sm-down) {
+			--section-padding: var(--space-md);
 		}
 	}
 </style>
