@@ -3,7 +3,6 @@
  *
  * - All glossary terms are boosted to crawling priority 1.0
  */
-import type { RequestHandler } from './$types';
 
 /**
  * Add the default XML headers around sitemap bodh
@@ -22,7 +21,7 @@ function renderSitemapHeaders(body: string): string {
  * Handle sitemap.xml generation
  *
  */
-export const GET = (async ({ fetch }) => {
+export async function GET({ fetch }) {
 	// Get URL slugs for all glossary terms
 	const resp = await fetch('/glossary/api');
 	const glossary = await resp.json();
@@ -44,4 +43,4 @@ export const GET = (async ({ fetch }) => {
 		'cache-control': 'public, max-age=3600'
 	};
 	return new Response(sitemapXml, { headers });
-}) satisfies RequestHandler;
+}

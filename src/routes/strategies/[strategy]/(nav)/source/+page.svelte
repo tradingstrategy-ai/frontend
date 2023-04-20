@@ -3,11 +3,10 @@
 	TODO: Add nice source code formatting widget
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import python from 'svelte-highlight/languages/python';
 	import { Button, SourceCode, SummaryBox } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	$: summary = data.summary;
 

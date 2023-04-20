@@ -2,12 +2,11 @@
 Real time examples for the API
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
 	import { PageHeader } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	$: summary = data.pair.summary;
 

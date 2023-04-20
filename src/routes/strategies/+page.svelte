@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { min } from 'd3-array';
 	import { fromUnixTime } from 'date-fns';
-	import type { PageData } from './$types';
 	import { PageHeading } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 
-	export let data: PageData;
+	export let data;
 	$: strategies = data.strategies;
 
 	function minPerformanceDate() {

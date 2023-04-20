@@ -6,7 +6,6 @@
 
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { GlossaryEntry } from '../api/types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -15,7 +14,7 @@
 	import { Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
-	export let data: PageData;
+	export let data;
 	$: term = data.term;
 
 	/**

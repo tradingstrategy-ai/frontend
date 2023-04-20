@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -7,7 +6,7 @@
 	import { AlertList, AlertItem } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	$: status = data.status;
 	$: combinedPositionList = createCombinedPositionList(data.positions, data.state.stats);

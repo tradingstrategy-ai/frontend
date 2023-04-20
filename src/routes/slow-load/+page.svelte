@@ -3,10 +3,9 @@ A test endpoint for the page load progress bar. Page load is delayed 2 seconds
 by default. Increment the `?page=n` param to delay by n * 2 seconds.
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { Button, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	$: page = data.page;
 	$: nextPage = page + 1;
 </script>

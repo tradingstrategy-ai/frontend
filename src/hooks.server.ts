@@ -1,4 +1,3 @@
-import type { Handle, HandleFetch, HandleServerError } from '@sveltejs/kit';
 import { init as initSentry, captureException } from '@sentry/node';
 import { backendUrl, backendInternalUrl, siteMode, version } from '$lib/config';
 import { env } from '$env/dynamic/private';
@@ -6,7 +5,7 @@ import { addYears } from 'date-fns';
 
 // Set `data-color-mode` body attribute during SSR to avoid FOUC
 // see app.html and ColorModePicker.svelte
-export const handle = (({ event, resolve }) => {
+export async function handle({ event, resolve }) {
 	const colorMode = event.cookies.get('color-mode') || 'system';
 
 	// update the cookie (in case not set and to update expiration)
@@ -22,11 +21,11 @@ export const handle = (({ event, resolve }) => {
 			return html.replace(/%ts:color-mode%/, colorMode);
 		}
 	});
-}) satisfies Handle;
+}
 
 // Shortcut fetch() API requests in SSR; see:
 // https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
-export const handleFetch = (async ({ request }) => {
+export async function handleFetch({ request }) {
 	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
@@ -39,7 +38,7 @@ export const handleFetch = (async ({ request }) => {
 		}
 	}
 	return fetch(request);
-}) satisfies HandleFetch;
+}
 
 // Sentry error logging; see:
 // - https://kit.svelte.dev/docs/hooks#shared-hooks-handleerror
@@ -50,7 +49,7 @@ initSentry({
 	release: version
 });
 
-export const handleError = (({ error, event }) => {
+export async function handleError({ error, event }) {
 	const eventData = {
 		isDataRequest: event.isDataRequest,
 		url: event.url.toString(),
@@ -64,4 +63,4 @@ export const handleError = (({ error, event }) => {
 		message: 'Internal Server Error',
 		eventId
 	};
-}) satisfies HandleServerError;
+}

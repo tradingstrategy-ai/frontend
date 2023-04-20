@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	const { chain, position, trade } = data;
 </script>

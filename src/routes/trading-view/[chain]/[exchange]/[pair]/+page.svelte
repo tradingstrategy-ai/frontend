@@ -6,7 +6,6 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
@@ -16,7 +15,7 @@ Render the pair trading page
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	$: summary = data.pair.summary;
 	$: details = data.pair.additional_details;

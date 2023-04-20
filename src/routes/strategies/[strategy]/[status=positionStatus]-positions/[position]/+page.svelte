@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar, formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
@@ -9,7 +8,7 @@
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	const { summary, state, position } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);

@@ -2,12 +2,11 @@
 	Trading data splash page renderer
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
 	import heroImage from '$lib/assets/illustrations/data-cloud-1.svg?raw';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	const { impressiveNumbers } = data;
 </script>
 

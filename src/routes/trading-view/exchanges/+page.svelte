@@ -2,7 +2,6 @@
 	Render listing of all available exchanges
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -10,7 +9,7 @@
 	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	$: q = $page.url.searchParams;
 	$: options = {

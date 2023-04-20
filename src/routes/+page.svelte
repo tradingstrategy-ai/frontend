@@ -2,7 +2,6 @@
 	Home page
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
 	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
@@ -10,7 +9,7 @@
 	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
-	export let data: PageData;
+	export let data;
 	let newsletterBanner: NewsletterOptInBanner;
 
 	const { topMomentum, impressiveNumbers, posts } = data;

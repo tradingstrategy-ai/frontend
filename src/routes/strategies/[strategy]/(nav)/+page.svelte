@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { fromUnixTime, formatDistanceToNow } from 'date-fns';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, SummaryBox, DataBox } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	$: portfolioStats = getPortfolioLatestStats(data.state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;

@@ -2,13 +2,12 @@
 	Page to display trade exeuctor logs with log level filter.
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentProps } from 'svelte';
 	import type LogEntry from './LogEntry.svelte';
 	import LogEntriesList from './LogEntriesList.svelte';
 	import { SummaryBox, Tabs } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	let selected: string;
 	$: logs = data.logs.filter(({ level }: ComponentProps<LogEntry>) => level === selected);

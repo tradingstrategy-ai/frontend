@@ -1,5 +1,4 @@
 import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
 import type { Subscriber } from '$lib/newsletter/client';
 import { getClient } from '$lib/newsletter/client';
 
@@ -33,4 +32,4 @@ export const actions = {
 
 		return { success: true };
 	}
-} satisfies Actions;
+};

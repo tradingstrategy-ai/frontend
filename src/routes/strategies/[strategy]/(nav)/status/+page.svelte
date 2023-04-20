@@ -2,11 +2,10 @@
 	Page to display the instance run-time status
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { formatSince, formatUnixTimestamp } from '$lib/helpers/formatters.js';
 	import { AlertList, AlertItem, DataBox, SummaryBox } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	// Current run state
 	$: runState = data.runState;

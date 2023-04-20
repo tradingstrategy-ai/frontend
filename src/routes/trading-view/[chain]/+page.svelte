@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -13,7 +12,7 @@
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
 
-	export let data: PageData;
+	export let data;
 	const { chain } = data;
 
 	const pairsClient = getPairsClient(fetch);

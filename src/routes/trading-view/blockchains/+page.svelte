@@ -2,13 +2,12 @@
 	Display chain information and indexing status
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 </script>
 
 <svelte:head>

@@ -2,12 +2,11 @@
 	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 
-	export let data: PageData;
+	export let data;
 	$: ({ state, summary } = data);
 
 	$: portfolio = state?.stats?.portfolio;

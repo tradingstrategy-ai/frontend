@@ -1,9 +1,7 @@
 /**
  * Generate a sitemap for static pages and other sitemaps
  */
-import type { RequestHandler } from './$types';
-
-export const GET = (({ url }) => {
+export async function GET({ url }) {
 	let { protocol, host } = url;
 
 	// TODO: configure adapter-node to use correct Cloudflare X-Forwarded- headers
@@ -21,7 +19,7 @@ export const GET = (({ url }) => {
 	};
 
 	return new Response(render(baseUrl), { headers });
-}) satisfies RequestHandler;
+}
 
 // This sitemap is manually maintained and page paths included here one by one
 const staticPages = [

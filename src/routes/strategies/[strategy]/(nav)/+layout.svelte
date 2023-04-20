@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import { AlertItem, AlertList, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
 
-	export let data: LayoutData;
+	export let data;
 
 	$: summary = data.summary;
 </script>

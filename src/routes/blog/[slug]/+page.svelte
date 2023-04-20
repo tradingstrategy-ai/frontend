@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Timestamp } from '$lib/components';
@@ -9,7 +8,7 @@
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	const { post } = data;
 </script>
 

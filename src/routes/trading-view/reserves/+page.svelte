@@ -2,14 +2,13 @@
 	Render listing of all available Reserves
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ReserveTable from '$lib/explorer/ReserveTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	$: ({ reserves, options } = data);
 
 	const chains: Record<string, string> = {};

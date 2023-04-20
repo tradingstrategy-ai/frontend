@@ -2,12 +2,11 @@
 	Daily winners and losers pages
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import MomentumTable from '$lib/momentum/MomentumTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	$: up = data.direction === 'up';
 </script>
 

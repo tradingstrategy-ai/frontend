@@ -5,11 +5,10 @@
 	be replacead with Plotly JS charts and this is only MVP.
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import warning from '$lib/assets/icons/warning.svg';
 	import { AlertItem, AlertList, SummaryBox } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	// The URLs for strategy thinking images
 	$: imageUrls = data.imageUrls;

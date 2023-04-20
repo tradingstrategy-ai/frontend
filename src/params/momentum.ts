@@ -1,5 +1,3 @@
-import type { ParamMatcher } from '@sveltejs/kit';
-
-export const match = ((param) => {
+export function match(param) {
 	return ['daily-up', 'daily-down'].includes(param);
-}) satisfies ParamMatcher;
+}

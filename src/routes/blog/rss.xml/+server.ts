@@ -1,15 +1,14 @@
-import type { RequestHandler } from './$types';
 import ghostClient from '$lib/blog/client';
 import { escapeHtml } from '$lib/helpers/html';
 
-export const GET = (async () => {
+export async function GET() {
 	const posts = await ghostClient.posts.browse({ limit: 'all' });
 	const headers = {
 		'content-type': 'application/rss+xml; charset=utf-8',
 		'cache-control': 'public, max-age=600'
 	};
 	return new Response(render(posts), { headers });
-}) satisfies RequestHandler;
+}
 
 type Post = Record<string, string>;
 

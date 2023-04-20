@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Button, AlertItem, AlertList, Select } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	const { exchange } = data;
 
 	const isUniswapV3 = exchange.exchange_type === 'uniswap_v3';

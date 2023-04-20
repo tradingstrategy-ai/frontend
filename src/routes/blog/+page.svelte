@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
@@ -8,7 +7,7 @@
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
 
-	export let data: PageData;
+	export let data;
 
 	let { posts, page } = data;
 

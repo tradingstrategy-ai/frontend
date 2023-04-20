@@ -2,14 +2,13 @@
 	Render listing of all available Pairs
 -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 
 	let loading = false;
 

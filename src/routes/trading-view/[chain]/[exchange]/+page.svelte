@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -11,7 +10,7 @@
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 
-	export let data: PageData;
+	export let data;
 	$: ({ exchange } = data);
 
 	$: nameDetails = parseExchangeName(exchange.human_readable_name);

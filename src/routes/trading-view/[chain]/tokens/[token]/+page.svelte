@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -11,7 +10,7 @@
 	import InfoSummary from './InfoSummary.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 
-	export let data: PageData;
+	export let data;
 	$: ({ token } = data);
 
 	$: breadcrumbs = {

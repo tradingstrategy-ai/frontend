@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -7,7 +6,7 @@
 	import TokenTable from '$lib/explorer/TokenTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data: PageData;
+	export let data;
 	$: ({ chain, tokens } = data);
 
 	let loading = false;

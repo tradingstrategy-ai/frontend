@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
-	export let data: LayoutData;
+	export let data;
 
 	$: summary = data.summary;
 

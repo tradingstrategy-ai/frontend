@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { backendUrl } from '$lib/config';
 	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
 	import {
@@ -16,7 +15,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	let submitting = false;
 	let validApiKey = '';

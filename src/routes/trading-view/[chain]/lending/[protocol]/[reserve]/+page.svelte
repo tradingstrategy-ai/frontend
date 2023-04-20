@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section, PageHeader } from '$lib/components';
 	import InfoTable from './InfoTable.svelte';
 	import { getProtocolName } from '$lib/helpers/lending';
 
-	export let data: PageData;
+	export let data;
 	$: ({ chain, reserve } = data);
 
 	$: protocolName = getProtocolName(reserve.protocol_slug);

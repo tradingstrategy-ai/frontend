@@ -1,11 +1,10 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
-	import type { PageData } from './$types';
 	import type { GlossaryEntry, GlossaryMap } from './api/types';
 	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
-	export let data: PageData;
+	export let data;
 
 	const { glossary } = data;
 
