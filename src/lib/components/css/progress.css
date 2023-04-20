@@ -1,12 +1,27 @@
 progress {
+	--background-color: hsla(var(--hsl-box), var(--a-box-a));
+	--progress-color: hsla(var(--hsl-success), 1);
+	--border-radius: var(--progress-border-radius, var(--radius-xs));
 	appearance: none;
-	background: hsla(var(--hsl-box), var(--a-box-a));
+	background: var(--background-color);
 	border: none;
-	border-radius: var(--radius-xs);
+	border-radius: var(--border-radius);
 	height: 0.75rem;
 
+	/* WebKit styles - do not merge with Mozilla styles (breaks) */
+	&::-webkit-progress-bar {
+		background: var(--background-color);
+		border-radius: var(--border-radius);
+	}
+
+	&::-webkit-progress-value {
+		background-color: var(--progress-color);
+		border-radius: var(--border-radius) 0 0 var(--border-radius);
+	}
+
+	/* Mozilla styles - do not merge with WebKit styles (breaks) */
 	&::-moz-progress-bar {
-		background-color: hsla(var(--hsl-success), 1);
+		background: var(--progress-color);
 		border: none;
 	}
 }
