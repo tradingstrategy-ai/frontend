@@ -31,11 +31,11 @@
 		<table class="responsive">
 			<tbody>
 				<tr>
-					<td><EntitySymbol name="MATIC" size="1.5rem" type="token" /></td>
+					<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
 					<td>682.2362</td>
 				</tr>
 				<tr>
-					<td><EntitySymbol name="USDC" size="1.5rem" type="token" /></td>
+					<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
 					<td>1200.18</td>
 				</tr>
 			</tbody>

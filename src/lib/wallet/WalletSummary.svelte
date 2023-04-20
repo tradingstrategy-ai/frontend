@@ -41,7 +41,7 @@
 						</AlertList>
 					</div>
 				{:else}
-					<EntitySymbol name="Polygon" type="blockchain" />
+					<EntitySymbol type="blockchain" label="Polygon" slug="polygon" />
 				{/if}
 			</td>
 		</tr>

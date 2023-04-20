@@ -9,11 +9,11 @@
 			<td><CryptoAddressWidget size="sm" address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" /></td>
 		</tr>
 		<tr>
-			<td><EntitySymbol name="MATIC" size="1.5rem" type="token" /></td>
+			<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
 			<td>682.2362</td>
 		</tr>
 		<tr>
-			<td><EntitySymbol name="USDC" size="1.5rem" type="token" /></td>
+			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
 			<td>1200.18</td>
 		</tr>
 	</tbody>

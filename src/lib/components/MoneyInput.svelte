@@ -55,7 +55,7 @@ unknown props through to HTML input element.
 		<div class="symbols">
 			{#if tokenUnit}
 				<span class="unit">
-					<EntitySymbol name={tokenUnit} type="token" />
+					<EntitySymbol type="token" label={tokenUnit} slug={tokenUnit.toLowerCase()} />
 				</span>
 			{/if}
 		</div>
