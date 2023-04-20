@@ -1,50 +1,37 @@
 <!--
 @component
-Display a text input component (email, text or search types currently supported). Passes
-unknown props through to HTML input element.
+Display a numeric input field with currency unit indicator. Passes unknown
+props through to HTML input element.
 
 #### Usage:
 ```tsx
-<TextInput bind:value type="email" size="lg" placeholder="email" required {disabled} />
+<MoneyInput bind:value size="lg" tokenUnit="USDC" />
 ```
 -->
 <script lang="ts">
-	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
+	import { EntitySymbol } from '$lib/components';
 
-	export let currentBalance = 0;
-	export let type: 'email' | 'text' | 'search' = 'text';
 	export let disabled = false;
-	export let label = '';
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
-	export let fiatUnit: string;
+	export let step: number | 'any' = 'any';
 	export let tokenUnit: string;
 	export let value: number | null = null;
-	export let showBalance = false;
-	export let showMaxButton = false;
-
-	const icon = type === 'search' ? 'search' : undefined;
-	const cancelButton = type === 'search';
 
 	let inputEl: HTMLInputElement;
-
-	$: tag = $$slots.label || label ? 'label' : 'span';
 
 	export function focus(options = {}) {
 		inputEl.focus(options);
 	}
-
-	function applyMaxValue() {
-		value = currentBalance.toFixed();
-	}
 </script>
 
-<svelte:element this={tag} class="money-input size-{size}" class:has-icon={icon} class:disabled>
+<span class="money-input size-{size}" class:disabled>
 	<div class="inner">
 		<input
 			bind:this={inputEl}
 			bind:value
 			type="number"
 			placeholder="0.00"
+			{step}
 			{disabled}
 			{...$$restProps}
 			on:input
@@ -60,23 +47,7 @@ unknown props through to HTML input element.
 			{/if}
 		</div>
 	</div>
-
-	{#if showBalance && currentBalance > 0}
-		<span class="current-balance">
-			Balance: {currentBalance.toFixed(5)}
-		</span>
-	{/if}
-
-	{#if showMaxButton}
-		<button class="tile c" on:click={applyMaxValue}>Max</button>
-	{/if}
-</svelte:element>
-
-{#if value && value > currentBalance}
-	<AlertList size="sm" status="error">
-		<AlertItem>There is not enough tokens in your wallet to deposit this amount</AlertItem>
-	</AlertList>
-{/if}
+</span>
 
 <style lang="postcss">
 	.money-input {
@@ -96,28 +67,6 @@ unknown props through to HTML input element.
 			overflow: hidden;
 		}
 
-		& .fiat-value {
-			font: var(--f-ui-lg-roman);
-		}
-
-		& .current-balance {
-			color: hsla(var(--hsl-text-extra-light)) !important;
-			font: var(--f-ui-sm-roman);
-		}
-
-		& :is(.current-balance, .fiat-value) {
-			color: hsla(var(--hsl-text-light));
-			font-weight: 400;
-		}
-
-		& button {
-			border: none;
-			cursor: pointer;
-			font: var(--f-ui-sm-medium);
-			margin-left: var(--space-xxxs);
-			padding: var(--space-xxxs) var(--space-sl);
-		}
-
 		& .unit {
 			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-b)), hsla(var(--hsl-box), var(--a-box-b))),
 				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
@@ -127,11 +76,6 @@ unknown props through to HTML input element.
 			place-items: center;
 			padding: 0 var(--space-md);
 			text-align: center;
-		}
-
-		& .label,
-		& [slot='label'] {
-			font-weight: 500;
 		}
 
 		&.disabled {

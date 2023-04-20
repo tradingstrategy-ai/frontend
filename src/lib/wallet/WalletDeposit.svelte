@@ -47,14 +47,7 @@
 			<h3>Enter amount to pay</h3>
 
 			<form action="" class="payment-form">
-				<MoneyInput
-					currentBalance={1200.18}
-					label="Amount to deposit"
-					size="xl"
-					fiatUnit="$"
-					tokenUnit="USDC"
-					bind:value={paymentValue}
-				/>
+				<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
 
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
