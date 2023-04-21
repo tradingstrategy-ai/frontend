@@ -65,6 +65,7 @@
     "d3-scale": "^4.0.2",
     "date-fns": "^2.29.3",
     "dd-trace": "^3.17.1",
+    "ethers-svelte": "^3.1.2",
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
     "svelte-fsm": "^1.2.0",

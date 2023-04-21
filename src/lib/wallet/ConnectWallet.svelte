@@ -1,34 +1,33 @@
 <script lang="ts">
+	import { connected, defaultEvmStores } from 'ethers-svelte';
 	import { Button } from '$lib/components';
 	import WalletTile from './WalletTile.svelte';
 	import WalletSummary from './WalletSummary.svelte';
-
-	let connectedWallet: 'metamask' | 'walletconnect' | undefined;
 
 	const walletNames = {
 		metamask: 'MetaMask',
 		walletconnect: 'WalletConnect'
 	};
 
-	// TODO: implement real MetaMask connection
 	function connectMetaMask() {
-		connectedWallet = 'metamask';
+		defaultEvmStores.setProvider();
 	}
 
-	// TODO: implement real WalletConnect connection
 	function connectWalletConnect() {
-		connectedWallet = 'walletconnect';
+		// TODO: implement real WalletConnect connection
 	}
 
 	function disconnectWallet() {
-		connectedWallet = undefined;
+		defaultEvmStores.disconnect();
 	}
 </script>
 
 <div class="connect-wallet">
-	{#if connectedWallet}
+	{#if $connected}
+		<!-- hard-coding `metamask` for now; TODO: determine which wallet is connected -->
+		{@const wallet = 'metamask'}
 		<div class="connected-wallet">
-			<WalletSummary slug={connectedWallet} name={walletNames[connectedWallet]} />
+			<WalletSummary slug={wallet} name={walletNames[wallet]} />
 			<Button size="sm" label="Change wallet" on:click={disconnectWallet} />
 		</div>
 	{:else}
