@@ -26,10 +26,11 @@
 
 		& .icon {
 			display: grid;
+			justify-items: center;
 			width: var(--image-size);
 
 			& img {
-				width: 100%;
+				height: var(--image-size);
 			}
 		}
 	}
