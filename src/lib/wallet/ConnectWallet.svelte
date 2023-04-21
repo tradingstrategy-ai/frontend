@@ -1,6 +1,6 @@
 <script lang="ts">
+	import type { Chain } from '$lib/helpers/chain';
 	import { connected, chainData, defaultEvmStores, signerAddress } from 'ethers-svelte';
-	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { Button } from '$lib/components';
 	import WalletTile from './WalletTile.svelte';
 	import WalletSummary from './WalletSummary.svelte';
@@ -34,8 +34,8 @@
 				walletSlug={wallet}
 				walletName={walletNames[wallet]}
 				address={$signerAddress}
-				chainName={$chainData.name}
-				chainSlug={getChainSlug(chains, $chainData.chainId)}
+				network={$chainData}
+				{chains}
 			/>
 			<Button size="sm" label="Change wallet" on:click={disconnectWallet} />
 		</div>
