@@ -29,11 +29,11 @@
 	<button title="Copy to clipboard" on:click={copier.copy}>
 		<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
 		{#if $copier === 'idle'}
-			<span in:fade={{ duration: 250, delay: 250 }} out:fade={{ duration: 100 }}>
+			<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
 				<Icon name="copy-to-clipboard" />
 			</span>
 		{:else}
-			<span in:fade={{ duration: 100 }} out:fade={{ duration: 500 }}>
+			<span in:fade|local={{ duration: 100 }} out:fade|local={{ duration: 500 }}>
 				<Icon name="check-square" />
 			</span>
 		{/if}
