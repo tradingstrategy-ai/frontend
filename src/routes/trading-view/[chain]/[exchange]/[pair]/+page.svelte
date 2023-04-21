@@ -105,6 +105,9 @@ Render the pair trading page
 				label="Copy python identifier"
 				on:click={() => {
 					navigator.clipboard.writeText(`(ChainId.${summary.chain_slug}, \"${summary.exchange_slug}\", \"${summary.base_token_symbol}\", \"${summary.quote_token_symbol}\", ${summary.pool_swap_fee * 10000}), # ${summary.pair_name} ${$page.url}`);
+
+					// e.g. 
+					// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 5), # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
 				}}
 			/>
 		</div>
