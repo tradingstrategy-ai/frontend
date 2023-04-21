@@ -104,8 +104,7 @@ Render the pair trading page
 			<Button
 				label="Copy python identifier"
 				on:click={() => {
-					console.log(summary)
-					navigator.clipboard.writeText(`(ChainId.${summary.chain_slug}, \"${summary.exchange_slug}\", \"${summary.base_token_symbol}\", \"${summary.quote_token_symbol}\", ${summary.pool_swap_fee}), # ${summary.pair_name} ${$page.url}`);
+					navigator.clipboard.writeText(`(ChainId.${summary.chain_slug}, \"${summary.exchange_slug}\", \"${summary.base_token_symbol}\", \"${summary.quote_token_symbol}\", ${summary.pool_swap_fee * 10000}), # ${summary.pair_name} ${$page.url}`);
 				}}
 			/>
 		</div>
