@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { connected, defaultEvmStores } from 'ethers-svelte';
+	import { connected, chainData, defaultEvmStores, signerAddress } from 'ethers-svelte';
+	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { Button } from '$lib/components';
 	import WalletTile from './WalletTile.svelte';
 	import WalletSummary from './WalletSummary.svelte';
+
+	export let chains: Chain[];
 
 	const walletNames = {
 		metamask: 'MetaMask',
@@ -27,7 +30,13 @@
 		<!-- hard-coding `metamask` for now; TODO: determine which wallet is connected -->
 		{@const wallet = 'metamask'}
 		<div class="connected-wallet">
-			<WalletSummary slug={wallet} name={walletNames[wallet]} />
+			<WalletSummary
+				walletSlug={wallet}
+				walletName={walletNames[wallet]}
+				address={$signerAddress}
+				chainName={$chainData.name}
+				chainSlug={getChainSlug(chains, $chainData.chainId)}
+			/>
 			<Button size="sm" label="Change wallet" on:click={disconnectWallet} />
 		</div>
 	{:else}

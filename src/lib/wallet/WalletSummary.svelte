@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { signerAddress, chainData } from 'ethers-svelte';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let slug: string;
-	export let name: string;
+	export let walletSlug: string;
+	export let walletName: string;
+	export let address: string;
+	export let chainName: string;
+	export let chainSlug: MaybeString;
 
 	let wrongNetwork = false;
 </script>
@@ -14,8 +16,8 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={name} src={getLogoUrl(slug)} />
-				{name}
+				<img alt={walletName} src={getLogoUrl(walletSlug)} />
+				{walletName}
 				<span class="status">
 					<div class="dot" />
 					Connected
@@ -25,11 +27,11 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" address={$signerAddress} href="#" />
+				<CryptoAddressWidget size="sm" {address} href="#" />
 			</td>
 		</tr>
 		<tr>
-			<td>Blockchain</td>
+			<td>Network</td>
 			<td>
 				{#if wrongNetwork}
 					<div
@@ -42,7 +44,7 @@
 						</AlertList>
 					</div>
 				{:else}
-					<EntitySymbol type="blockchain" label={$chainData.name} slug={$chainData.icon} />
+					<EntitySymbol type="blockchain" label={chainName} slug={chainSlug} />
 				{/if}
 			</td>
 		</tr>
