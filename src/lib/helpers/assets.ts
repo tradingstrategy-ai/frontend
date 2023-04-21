@@ -1,4 +1,5 @@
 const logos = import.meta.glob('../assets/logos/*.svg', { as: 'url', eager: true });
+const cryptoIcons = import.meta.glob('/node_modules/cryptocurrency-icons/svg/color/*.svg', { as: 'url', eager: true });
 
 // returns URL for logo images found in `lib/assets/logos`
 export function getLogoUrl(name: string) {
@@ -7,5 +8,5 @@ export function getLogoUrl(name: string) {
 
 // returns URL for icon images found from `cryptocurrency-icons` npm module
 export function getCryptoIconUrl(name: string) {
-	return `/node_modules/cryptocurrency-icons/svg/color/${name}.svg`;
+	return cryptoIcons[`/node_modules/cryptocurrency-icons/svg/color/${name}.svg`];
 }
