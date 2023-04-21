@@ -15,6 +15,7 @@ Render the pair trading page
 	import InfoSummary from './InfoSummary.svelte';
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
+	import {page} from '$app/stores';
 
 	export let data: PageData;
 
@@ -99,6 +100,12 @@ Render the pair trading page
 			<Button
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
+			/>
+			<Button
+				label="Copy python identifier"
+				on:click={() => {
+					navigator.clipboard.writeText(`(ChainId.${summary.chain_slug}, \"${summary.exchange_slug}\", \"${summary.base_token_sumbol_friendly}\", \"${summary.quote_token_symbol_friendly}\", ${summary.pool_swap_fee}), # ${summary.pair_name} ${$page.url}`);
+				}}
 			/>
 		</div>
 	</section>
