@@ -2,11 +2,17 @@
 	import { getLogoUrl, getCryptoIconUrl } from '$lib/helpers/assets';
 
 	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
-	export let slug: string;
-	export let label: MaybeString = undefined;
+	export let slug: MaybeString;
+	export let label: MaybeString;
 	export let size = '1.5rem';
 
-	$: src = type === 'blockchain' ? getLogoUrl(slug) : type === 'token' ? getCryptoIconUrl(slug) : undefined;
+	$: src = getSrc(type, slug);
+
+	function getSrc(type: string, slug: MaybeString) {
+		if (!slug) return;
+		if (type === 'blockchain') return getLogoUrl(slug);
+		if (type === 'token') return getCryptoIconUrl(slug);
+	}
 </script>
 
 <div class="entity-symbol" style:--image-size={size}>
@@ -26,10 +32,11 @@
 
 		& .icon {
 			display: grid;
+			justify-items: center;
 			width: var(--image-size);
 
 			& img {
-				width: 100%;
+				height: var(--image-size);
 			}
 		}
 	}

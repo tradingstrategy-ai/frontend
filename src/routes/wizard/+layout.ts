@@ -1,6 +1,13 @@
-export async function load() {
+import { fetchPublicApi } from '$lib/helpers/public-api';
+
+export async function load({ fetch }) {
+	const chains = fetchPublicApi(fetch, 'chains').catch((e) => {
+		console.error(`Error fetching chains: ${e}`);
+	});
+
 	return {
 		skipNavbar: true,
-		skipFooter: true
+		skipFooter: true,
+		chains
 	};
 }

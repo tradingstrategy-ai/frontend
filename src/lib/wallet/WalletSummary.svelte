@@ -1,11 +1,20 @@
 <script lang="ts">
-	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
-	export let slug: string;
-	export let name: string;
+	export let walletSlug: string;
+	export let walletName: string;
+	export let address: string;
+	export let network: Record<string, any>;
+	export let chains: Chain[];
 
-	let wrongNetwork = true;
+	function getExplorerUrl(network: any, address: string) {
+		const baseUrl = network.explorers[0]?.url ?? 'https://blockscan.com';
+		return `${baseUrl}/address/${address}`;
+	}
+
+	let wrongNetwork = false;
 </script>
 
 <table class="wallet-summary responsive">
@@ -13,8 +22,8 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={name} src={getLogoUrl(slug)} />
-				{name}
+				<img alt={walletName} src={getLogoUrl(walletSlug)} />
+				{walletName}
 				<span class="status">
 					<div class="dot" />
 					Connected
@@ -24,11 +33,11 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
+				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(network, address)} />
 			</td>
 		</tr>
 		<tr>
-			<td>Blockchain</td>
+			<td>Network</td>
 			<td>
 				{#if wrongNetwork}
 					<div
@@ -41,7 +50,7 @@
 						</AlertList>
 					</div>
 				{:else}
-					<EntitySymbol type="blockchain" label="Polygon" slug="polygon" />
+					<EntitySymbol type="blockchain" label={network.name} slug={getChainSlug(chains, network.chainId)} />
 				{/if}
 			</td>
 		</tr>
