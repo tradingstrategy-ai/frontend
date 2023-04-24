@@ -14,6 +14,7 @@ Render the pair trading page
 	import InfoSummary from './InfoSummary.svelte';
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
+	import { page } from '$app/stores';
 
 	export let data;
 
@@ -39,6 +40,20 @@ Render the pair trading page
 		isUniswapV3 ? `${swapFee} pool` : 'token price',
 		`on ${details.exchange_name}`
 	].join(' ');
+
+	// e.g.
+	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 5), # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
+	function copyPythonIdentifier() {
+		const parts = [
+			`ChainId.${summary.chain_slug}`,
+			`"${summary.exchange_slug}"`,
+			`"${summary.base_token_symbol}"`,
+			`"${summary.quote_token_symbol}"`,
+			summary.pool_swap_fee * 10000
+		];
+		const text = `(${parts.join(', ')}), # ${summary.pair_name} ${$page.url}`;
+		navigator.clipboard.writeText(text);
+	}
 </script>
 
 <svelte:head>
@@ -99,6 +114,7 @@ Render the pair trading page
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
+			<Button label="Copy Python identifier" on:click={copyPythonIdentifier} />
 		</div>
 	</section>
 
