@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { initWalletClient } from '$lib/wallet/client';
 	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
+
+	initWalletClient();
 
 	interface Step {
 		slug: string;
