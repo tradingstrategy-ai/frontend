@@ -41,7 +41,7 @@ describe('StrategyTile component', () => {
 
 		test('should display assets value', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
-			const assets = getByText('AUM').nextElementSibling;
+			const assets = getByText('Total assets').nextElementSibling;
 			expect(assets).toHaveTextContent('$1.23k');
 		});
 	});
