@@ -108,6 +108,9 @@
 		--menu-item-color: hsla(var(--hsl-text-extra-light));
 		--menu-item-border-radius: var(--radius-md);
 		--menu-item-padding: 0 var(--space-md);
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-lg);
+		padding: var(--space-ml);
 
 		@media (--viewport-md-down) {
 			--menu-item-padding: 0 var(--space-ml);
@@ -117,6 +120,10 @@
 			--menu-item-font: var(--f-ui-md-medium);
 			--menu-item-count-font: var(--f-ui-sm-bold);
 		}
+	}
+
+	.strategy-nav :global .menu-item a {
+		justify-content: space-between;
 	}
 
 	.label {
@@ -170,6 +177,8 @@
 
 		& button svg {
 			transition: transform 0.25s ease-out;
+			height: 1.125rem;
+			width: 1.125rem;
 
 			@nest .open & {
 				transform: rotate(180deg);

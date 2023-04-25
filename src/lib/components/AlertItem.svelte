@@ -34,6 +34,7 @@ Display a single alert item (should always be nested within AlertList).
 		display: flex;
 		gap: 0.625em;
 		font: inherit; /* see AlertList */
+		margin: 0 !important;
 
 		& .icon {
 			display: block;

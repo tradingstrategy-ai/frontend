@@ -4,6 +4,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, SummaryBox, DataBox } from '$lib/components';
+	import DepositStatus from './DepositStatus.svelte';
 
 	export let data;
 
@@ -13,6 +14,8 @@
 </script>
 
 <section>
+	<DepositStatus />
+
 	{#if portfolioStats}
 		<SummaryBox title="Current">
 			<DataBox label="Assets under management" value={formatDollar(portfolioStats.total_equity)} />
@@ -52,11 +55,29 @@
 	section {
 		display: grid;
 		gap: var(--space-ls);
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		place-items: start stretch;
 
-		@media (--viewport-md-down) {
+		@media (--viewport-sm-up) {
+			grid-template-columns: repeat(2, 1fr);
 			gap: var(--space-lg);
+		}
+	}
+
+	section :global .summary-box:nth-child(1) {
+		--inner-space: var(--space-ml);
+		@media (--viewport-sm-up) {
+			--inner-space: var(--space-lg);
+			grid-column: 1/3;
+		}
+
+		& .content {
+			padding: 0 0 var(--space-sm);
+		}
+
+		& .actions {
+			display: grid;
+			gap: var(--inner-space);
+			grid-template-columns: repeat(auto-fit, minmax(min(20rem, 80vw), 1fr));
 		}
 	}
 </style>
