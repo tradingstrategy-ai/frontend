@@ -15,7 +15,7 @@
 <section>
 	{#if portfolioStats}
 		<SummaryBox title="Current">
-			<DataBox label="Assets under management" value={formatDollar(portfolioStats.total_equity)} />
+			<DataBox label="Total assets" value={formatDollar(portfolioStats.total_equity)} />
 			<DataBox label="Cash" value={formatDollar(portfolioStats.free_cash)} />
 			<DataBox label="Last valuation">
 				<time datetime={lastValuationDate?.toISOString()} title={lastValuationDate?.toISOString()}>
