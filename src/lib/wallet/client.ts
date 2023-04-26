@@ -1,6 +1,7 @@
 import { walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import type { Address, Chain, Connector } from '@wagmi/core';
 import {
 	createClient,
 	configureChains,
@@ -17,15 +18,22 @@ import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
 
-// TODO: type defs for connector, address, chain
-// TODO: improve type constraints for connected status (require name, address, etc.)
-export interface Wallet {
-	status: 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
-	name?: 'MetaMask' | 'WalletConnect';
-	address?: string;
-	chain?: any;
-	connector?: any;
-}
+type CommonWallet = {
+	name: 'MetaMask' | 'WalletConnect';
+	address: Address;
+	chain: Chain;
+	connector: Connector;
+};
+
+export type ConnectedWallet = CommonWallet & {
+	status: 'connected';
+};
+
+export type UnConnectedWallet = Partial<CommonWallet> & {
+	status: 'disconnected' | 'connecting' | 'reconnecting';
+};
+
+export type Wallet = ConnectedWallet | UnConnectedWallet;
 
 const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' });
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Wallet } from '$lib/wallet/client';
+	import type { ConnectedWallet } from '$lib/wallet/client';
 	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
-	export let wallet: Wallet;
+	export let wallet: ConnectedWallet;
 	export let chains: Chain[];
 
 	$: ({ name, address, chain } = wallet);
