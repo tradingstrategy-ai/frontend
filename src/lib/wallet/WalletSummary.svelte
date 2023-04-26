@@ -3,7 +3,6 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
-	export let walletSlug: string;
 	export let walletName: string;
 	export let address: string;
 	export let chain: Chain;
@@ -21,7 +20,7 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={walletName} src={getLogoUrl(walletSlug)} />
+				<img alt={walletName} src={getLogoUrl(walletName.toLowerCase())} />
 				{walletName}
 				<span class="status">
 					<div class="dot" />

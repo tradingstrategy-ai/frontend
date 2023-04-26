@@ -6,7 +6,7 @@ import {
 	configureChains,
 	connect,
 	disconnect,
-	getNetwork,
+	watchAccount,
 	watchNetwork,
 	InjectedConnector
 } from '@wagmi/core';
@@ -18,17 +18,16 @@ import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 const { projectId } = walletConnectConfig;
 
 // TODO: type defs for connector, account, chain
+// TODO: improve type constraints for connected status (require name, account, etc.)
 interface Wallet {
-	connected: boolean;
+	status: 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 	name?: 'MetaMask' | 'WalletConnect';
-	slug?: 'metamask' | 'walletconnect';
 	account?: string;
 	chain?: any;
 	connector?: any;
 }
 
-const disconnectedWallet = { connected: false };
-const { subscribe, set, update }: Writable<Wallet> = writable(disconnectedWallet);
+const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' });
 
 let initialized = false;
 
@@ -41,7 +40,7 @@ export function initWalletClient() {
 	);
 
 	createClient({
-		// autoConnect: true,
+		autoConnect: true,
 		connectors: w3mConnectors({ projectId, version: 1, chains }),
 		provider,
 		webSocketProvider
@@ -52,53 +51,35 @@ export function initWalletClient() {
 		update((wallet) => ({ ...wallet, chain: network?.chain }));
 	});
 
+	// TODO: watch on first subscription; stop watching on last unsub
+	watchAccount(({ address: account, status, connector }) => {
+		console.log(connector);
+		update(({ chain }) => {
+			return {
+				status,
+				account,
+				name: connector?.name,
+				connector,
+				chain: status === 'connected' ? chain : undefined
+			};
+		});
+	});
+
 	initialized = true;
 }
 
-async function connectMetaMask() {
-	const { account, connector } = await connect({
+function connectMetaMask() {
+	connect({
 		connector: new InjectedConnector()
-	});
-
-	const { chain } = getNetwork();
-
-	set({
-		connected: true,
-		name: 'MetaMask',
-		slug: 'metamask',
-		account,
-		chain,
-		connector
 	});
 }
 
-async function connectWalletConnect() {
-	const { account, connector } = await connect({
+function connectWalletConnect() {
+	connect({
 		connector: new WalletConnectConnector({
 			options: { projectId }
 		})
 	});
-
-	const { chain } = getNetwork();
-
-	set({
-		connected: true,
-		name: 'WalletConnect',
-		slug: 'walletconnect',
-		account,
-		chain,
-		connector
-	});
 }
 
-function disconnectWallet() {
-	set(disconnectedWallet);
-	disconnect();
-}
-
-export const wallet = {
-	subscribe,
-	connectMetaMask,
-	connectWalletConnect,
-	disconnect: disconnectWallet
-};
+export const wallet = { subscribe, connectMetaMask, connectWalletConnect, disconnect };

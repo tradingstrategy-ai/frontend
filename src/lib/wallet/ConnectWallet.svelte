@@ -9,14 +9,9 @@
 </script>
 
 <div class="connect-wallet">
-	{#if $wallet.connected}
+	{#if $wallet.status === 'connected'}
 		<div class="connected-wallet">
-			<WalletSummary
-				walletSlug={$wallet.slug}
-				walletName={$wallet.name}
-				address={$wallet.account}
-				chain={getChain(chains, $wallet.chain.id)}
-			/>
+			<WalletSummary walletName={$wallet.name} address={$wallet.account} chain={getChain(chains, $wallet.chain.id)} />
 			<Button size="sm" label="Change wallet" on:click={wallet.disconnect} />
 		</div>
 	{:else}
