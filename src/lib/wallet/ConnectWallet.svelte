@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Chain, getChain } from '$lib/helpers/chain';
+	import type { Chain } from '$lib/helpers/chain';
 	import { wallet } from '$lib/wallet/client';
 	import { Button } from '$lib/components';
 	import WalletTile from './WalletTile.svelte';
@@ -11,7 +11,7 @@
 <div class="connect-wallet">
 	{#if $wallet.status === 'connected'}
 		<div class="connected-wallet">
-			<WalletSummary walletName={$wallet.name} address={$wallet.account} chain={getChain(chains, $wallet.chain.id)} />
+			<WalletSummary wallet={$wallet} {chains} />
 			<Button size="sm" label="Change wallet" on:click={wallet.disconnect} />
 		</div>
 	{:else}

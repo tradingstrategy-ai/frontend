@@ -17,12 +17,12 @@ import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
 
-// TODO: type defs for connector, account, chain
-// TODO: improve type constraints for connected status (require name, account, etc.)
-interface Wallet {
+// TODO: type defs for connector, address, chain
+// TODO: improve type constraints for connected status (require name, address, etc.)
+export interface Wallet {
 	status: 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 	name?: 'MetaMask' | 'WalletConnect';
-	account?: string;
+	address?: string;
 	chain?: any;
 	connector?: any;
 }
@@ -52,12 +52,11 @@ export function initWalletClient() {
 	});
 
 	// TODO: watch on first subscription; stop watching on last unsub
-	watchAccount(({ address: account, status, connector }) => {
-		console.log(connector);
+	watchAccount(({ address, status, connector }) => {
 		update(({ chain }) => {
 			return {
 				status,
-				account,
+				address,
 				name: connector?.name,
 				connector,
 				chain: status === 'connected' ? chain : undefined

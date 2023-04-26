@@ -1,14 +1,16 @@
 <script lang="ts">
-	import type { Chain } from '$lib/helpers/chain';
+	import type { Wallet } from '$lib/wallet/client';
+	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
-	export let walletName: string;
-	export let address: string;
-	export let chain: Chain;
+	export let wallet: Wallet;
+	export let chains: Chain[];
 
-	function getExplorerUrl(network: any, address: string) {
-		const baseUrl = network.explorers?.[0]?.url ?? 'https://blockscan.com';
+	$: ({ name, address, chain } = wallet);
+
+	function getExplorerUrl(chain: any, address: string) {
+		const baseUrl = chain?.blockExplorers?.default?.url ?? 'https://blockscan.com';
 		return `${baseUrl}/address/${address}`;
 	}
 
@@ -20,8 +22,8 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={walletName} src={getLogoUrl(walletName.toLowerCase())} />
-				{walletName}
+				<img alt={name} src={getLogoUrl(name.toLowerCase())} />
+				{name}
 				<span class="status">
 					<div class="dot" />
 					Connected
@@ -31,7 +33,7 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" {address} href="#" />
+				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
 			</td>
 		</tr>
 		<tr>
@@ -48,7 +50,7 @@
 						</AlertList>
 					</div>
 				{:else}
-					<EntitySymbol type="blockchain" label={chain.chain_name} slug={chain.chain_slug} />
+					<EntitySymbol type="blockchain" label={chain.name} slug={getChainSlug(chains, chain.id)} />
 				{/if}
 			</td>
 		</tr>
