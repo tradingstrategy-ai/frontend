@@ -1,3 +1,4 @@
+import { walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import {
@@ -11,6 +12,10 @@ import {
 } from '@wagmi/core';
 import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
+import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+
+const { projectId } = walletConnectConfig;
 
 // TODO: type defs for connector, account, chain
 interface Wallet {
@@ -30,15 +35,14 @@ let initialized = false;
 export function initWalletClient() {
 	if (!browser || initialized) return;
 
-	// { chains } also available
-	const { provider, webSocketProvider } = configureChains(
+	const { chains, provider, webSocketProvider } = configureChains(
 		[arbitrum, avalanche, bsc, mainnet, polygon],
-		[publicProvider()]
+		[w3mProvider({ projectId }), publicProvider()]
 	);
 
 	createClient({
 		// autoConnect: true,
-		// connectors: [ new InjectedConnector({ chains })],
+		connectors: w3mConnectors({ projectId, version: 1, chains }),
 		provider,
 		webSocketProvider
 	});
@@ -68,10 +72,11 @@ async function connectMetaMask() {
 	});
 }
 
-// STUB WalletConnect for now
 async function connectWalletConnect() {
 	const { account, connector } = await connect({
-		connector: new InjectedConnector()
+		connector: new WalletConnectConnector({
+			options: { projectId }
+		})
 	});
 
 	const { chain } = getNetwork();
