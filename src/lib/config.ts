@@ -89,6 +89,16 @@ export const typesenseConfig = config(
 );
 
 /**
+ * Load WalletConnect projectId and warn if not available.
+ */
+export const walletConnectConfig = config((projectId: string) => {
+	if (!projectId) {
+		console.warn('You need configure WalletConnect projectId to enable WalletConnect');
+	}
+	return { projectId };
+}, 'WALLET_CONNECT_PROJECT_ID');
+
+/**
  * Specify chains under maintence as JSON string, e.g.:
  * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
  */
