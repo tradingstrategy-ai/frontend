@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ConnectedWallet } from '$lib/wallet/client';
+	import { getExplorerUrl } from '$lib/wallet/utils';
 	import { type Chain, getChainSlug } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
@@ -9,11 +10,6 @@
 
 	$: ({ name, address, chain } = wallet);
 	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
-
-	function getExplorerUrl(chain: any, address: string) {
-		const baseUrl = chain?.blockExplorers?.default?.url ?? 'https://blockscan.com';
-		return `${baseUrl}/address/${address}`;
-	}
 
 	let wrongNetwork = false;
 </script>

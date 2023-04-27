@@ -1,20 +1,49 @@
 <script lang="ts">
+	import { type Address, type Chain, fetchBalance } from '@wagmi/core';
+	import { wallet } from '$lib/wallet/client';
+	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
 	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';
+
+	$: ({ address, chain } = $wallet);
+	$: chainCurrency = chain?.nativeCurrency.symbol;
+	$: balances = getBalances(chain, address);
+
+	// TODO: refactor to derived store?
+	async function getBalances(chain: Chain, address: Address) {
+		if (!(chain && address)) return {};
+		const token = getUsdcAddress(chain.id);
+		const promises = [fetchBalance({ address })];
+		token && promises.push(fetchBalance({ address, token }));
+		const [native, usdc] = await Promise.all(promises);
+		return { native, usdc };
+	}
 </script>
 
 <table class="wallet-balance responsive">
 	<tbody>
 		<tr>
 			<td>Account</td>
-			<td><CryptoAddressWidget size="sm" address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" /></td>
+			<td><CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} /></td>
 		</tr>
 		<tr>
-			<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
-			<td>682.2362</td>
+			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
+			<td>
+				{#await balances}
+					---
+				{:then { native }}
+					{native?.formatted ?? '---'}
+				{/await}
+			</td>
 		</tr>
 		<tr>
 			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-			<td>1200.18</td>
+			<td>
+				{#await balances}
+					---
+				{:then { usdc }}
+					{usdc?.formatted ?? '---'}
+				{/await}
+			</td>
 		</tr>
 	</tbody>
 </table>
