@@ -19,7 +19,7 @@ import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 const { projectId } = walletConnectConfig;
 
 type CommonWallet = {
-	name: 'MetaMask' | 'WalletConnect';
+	name: string;
 	address: Address;
 	chain: Chain;
 	connector: Connector;

@@ -8,6 +8,7 @@
 	export let chains: Chain[];
 
 	$: ({ name, address, chain } = wallet);
+	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
 
 	function getExplorerUrl(chain: any, address: string) {
 		const baseUrl = chain?.blockExplorers?.default?.url ?? 'https://blockscan.com';
@@ -22,7 +23,9 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={name} src={getLogoUrl(name.toLowerCase())} />
+				{#if walletLogoUrl}
+					<img alt={name} src={walletLogoUrl} />
+				{/if}
 				{name}
 				<span class="status">
 					<div class="dot" />
