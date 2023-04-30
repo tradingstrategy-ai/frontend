@@ -1,6 +1,8 @@
 <script lang="ts">
 	import wizard from '../../wizardState';
 	import { Button, WizardActions } from '$lib/components';
+
+	$wizard?.completed.add('introduction');
 </script>
 
 <div class="connect-wallet-introduction">
@@ -11,6 +13,6 @@
 </div>
 
 <WizardActions>
-	<Button ghost href={$wizard?.returnTo}>Cancel</Button>
-	<Button href="connect">Next</Button>
+	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button label="Next" href="connect" on:click={() => wizard.complete('introduction')} />
 </WizardActions>

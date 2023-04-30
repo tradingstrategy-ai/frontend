@@ -6,7 +6,7 @@ export type Wizard = {
 	data: Record<string, any>;
 };
 
-const { set, subscribe }: Writable<Wizard | undefined> = writable(undefined);
+const { set, update, subscribe }: Writable<Wizard | undefined> = writable(undefined);
 
 export default {
 	initializing: false,
@@ -18,6 +18,13 @@ export default {
 			returnTo,
 			completed: new Set(),
 			data
+		});
+	},
+
+	complete(step) {
+		update((wizard) => {
+			wizard?.completed.add(step);
+			return wizard;
 		});
 	},
 

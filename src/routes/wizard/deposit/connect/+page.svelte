@@ -1,5 +1,6 @@
 <script lang="ts">
 	import wizard from '../../wizardState';
+	import { wallet } from '$lib/wallet/client';
 	import { Button, WizardActions } from '$lib/components';
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
@@ -9,7 +10,12 @@
 <ConnectWallet chains={data.chains} />
 
 <WizardActions>
-	<Button ghost href={$wizard?.returnTo}>Cancel</Button>
-	<Button secondary href="introduction">Back</Button>
-	<Button href="balance">Next</Button>
+	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button secondary label="Back" href="introduction" />
+	<Button
+		label="Next"
+		href="balance"
+		disabled={$wallet.status !== 'connected'}
+		on:click={() => wizard.complete('connect')}
+	/>
 </WizardActions>

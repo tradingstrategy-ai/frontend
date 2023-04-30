@@ -11,6 +11,6 @@
 </div>
 
 <WizardActions>
-	<Button secondary href="balance">Back</Button>
-	<Button href={$wizard?.returnTo}>Done</Button>
+	<Button secondary label="Back" href="balance" />
+	<Button label="Done" href={$wizard?.returnTo} />
 </WizardActions>

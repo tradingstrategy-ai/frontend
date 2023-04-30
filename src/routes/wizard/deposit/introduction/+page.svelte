@@ -12,6 +12,6 @@
 </div>
 
 <WizardActions>
-	<Button ghost href={$wizard?.returnTo}>Cancel</Button>
-	<Button href="connect">Next</Button>
+	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button label="Next" href="connect" on:click={() => wizard.complete('introduction')} />
 </WizardActions>
