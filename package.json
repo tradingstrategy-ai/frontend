@@ -76,6 +76,6 @@
     "typesense": "^1.5.3"
   },
   "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.8.4"
+    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.9.1"
   }
 }
