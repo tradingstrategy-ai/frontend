@@ -1,17 +1,17 @@
 <script lang="ts">
 	import type { ConnectedWallet } from '$lib/wallet/client';
+	import { switchNetwork } from '@wagmi/core';
 	import { getExplorerUrl } from '$lib/wallet/utils';
-	import { type Chain, getChainSlug } from '$lib/helpers/chain';
+	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
+	export let requestedChainId: MaybeNumber;
 	export let chains: Chain[];
 
 	$: ({ name, address, chain } = wallet);
 	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
-
-	let wrongNetwork = false;
 </script>
 
 <table class="wallet-summary responsive">
@@ -38,14 +38,11 @@
 		<tr>
 			<td>Network</td>
 			<td>
-				{#if wrongNetwork}
-					<div
-						class="wrong-network-alert"
-						on:click={() => (wrongNetwork = false)}
-						on:keydown={() => (wrongNetwork = false)}
-					>
+				{#if requestedChainId && requestedChainId !== chain.id}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: requestedChainId })}>
 						<AlertList size="xs" status="error">
-							<AlertItem>Wrong network! Please connect to Polygon</AlertItem>
+							<AlertItem>Wrong network! Please connect to {getChainName(chains, requestedChainId)}</AlertItem>
 						</AlertList>
 					</div>
 				{:else}
@@ -121,5 +118,6 @@
 	.wrong-network-alert {
 		display: inline-flex;
 		word-break: normal;
+		cursor: pointer;
 	}
 </style>

@@ -7,7 +7,7 @@
 	export let data;
 </script>
 
-<ConnectWallet chains={data.chains} />
+<ConnectWallet requestedChainId={$wizard?.data.requestedChainId} chains={data.chains} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />

@@ -5,22 +5,27 @@
 	import WalletTile from './WalletTile.svelte';
 	import WalletSummary from './WalletSummary.svelte';
 
+	export let requestedChainId: MaybeNumber;
 	export let chains: Chain[];
 </script>
 
 <div class="connect-wallet">
 	{#if $wallet.status === 'connected'}
 		<div class="connected-wallet">
-			<WalletSummary wallet={$wallet} {chains} />
+			<WalletSummary wallet={$wallet} {requestedChainId} {chains} />
 			<Button size="sm" label="Change wallet" on:click={wallet.disconnect} />
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="MetaMask" slug="metamask" on:click={wallet.connectMetaMask}>
+			<WalletTile name="MetaMask" slug="metamask" on:click={() => wallet.connectMetaMask(requestedChainId)}>
 				Connect to your<br />
 				MetaMask Wallet
 			</WalletTile>
-			<WalletTile name="WalletConnect" slug="walletconnect" on:click={wallet.connectWalletConnect}>
+			<WalletTile
+				name="WalletConnect"
+				slug="walletconnect"
+				on:click={() => wallet.connectWalletConnect(requestedChainId)}
+			>
 				Scan a QR code<br />
 				with your mobile wallet
 			</WalletTile>

@@ -10,12 +10,21 @@
 	$: portfolioStats = getPortfolioLatestStats(data.state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
+
+	// FIXME: temporary hack; remove once `chainId` has been added to `metadata`
+	function getChainId({ portfolio }: any) {
+		const position = Object.values(portfolio?.closed_positions)[0];
+		return position?.reserve_currency?.chain_id;
+	}
 </script>
 
 <div class="strategy-overview-page">
 	<SummaryBox title="Invest">
 		<div class="investor-actions">
-			<Button label="Connect wallet" href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}" />
+			<Button
+				label="Connect wallet"
+				href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+			/>
 			<Button label="Deposit" disabled />
 			<Button label="Redeem" disabled />
 		</div>
