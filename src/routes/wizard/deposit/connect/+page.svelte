@@ -15,7 +15,7 @@
 	<Button
 		label="Next"
 		href="balance"
-		disabled={$wallet.status !== 'connected'}
+		disabled={$wallet.chain?.id !== $wizard?.data.requestedChainId}
 		on:click={() => wizard.complete('connect')}
 	/>
 </WizardActions>
