@@ -2,6 +2,7 @@
 	import { Icon } from '$lib/components';
 	import { fade } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
+	import HashAddress from './HashAddress.svelte';
 
 	export let address: string;
 	export let href: string;
@@ -25,7 +26,15 @@
 </script>
 
 <address class="crypto-address-widget size-{size} tile b">
-	<a {href} rel="noreferrer" target="_blank">{address}</a>
+	<a {href} rel="noreferrer" target="_blank">
+		<HashAddress {address} />
+		<!-- <span class="hash-address">
+			<span class="start">{address}</span>
+			<span class="end">
+				{address.slice(address.length / 2 + 1, address.length)}
+			</span>
+		</span> -->
+	</a>
 	<button title="Copy to clipboard" on:click={copier.copy}>
 		<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
 		{#if $copier === 'idle'}
@@ -73,10 +82,9 @@
 	}
 
 	a {
-		text-decoration: underline;
+		display: flex;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		width: 100%;
 	}
 
 	button {
