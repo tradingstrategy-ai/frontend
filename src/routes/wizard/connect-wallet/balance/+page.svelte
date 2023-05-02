@@ -1,4 +1,5 @@
 <script lang="ts">
+	import wizard from '../../wizardState';
 	import { Button, WizardActions } from '$lib/components';
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 </script>
@@ -6,7 +7,7 @@
 <WalletBalance />
 
 <WizardActions>
-	<Button ghost>Cancel</Button>
-	<Button secondary href="connect">Back</Button>
-	<Button href="success">Next</Button>
+	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button secondary label="Back" href="connect" />
+	<Button label="Next" href="success" on:click={() => wizard.complete('balance')} />
 </WizardActions>

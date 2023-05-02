@@ -75,14 +75,16 @@ export function initWalletClient() {
 	initialized = true;
 }
 
-function connectMetaMask() {
+function connectMetaMask(chainId: MaybeNumber) {
 	connect({
+		chainId,
 		connector: new InjectedConnector()
 	});
 }
 
-function connectWalletConnect() {
+function connectWalletConnect(chainId: MaybeNumber) {
 	connect({
+		chainId,
 		connector: new WalletConnectConnector({
 			options: { projectId }
 		})
