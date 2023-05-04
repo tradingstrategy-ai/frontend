@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { AlertItem, AlertList, PageHeading } from '$lib/components';
+	import WalletWidget from '$lib/components/WalletWidget.svelte';
 	import StrategyNav from './StrategyNav.svelte';
 
 	export let data;
@@ -12,6 +13,11 @@
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p>{summary.long_description}</p>
+
+		<div class="connected-wallet">
+			<span>Connected wallet</span>
+			<WalletWidget address="0x12312312312312313131241" chain="polygon" />
+		</div>
 	</PageHeading>
 
 	<div class="subpage">
@@ -26,6 +32,11 @@
 </main>
 
 <style lang="postcss">
+	.connected-wallet {
+		display: grid;
+		gap: var(--space-md);
+		justify-content: flex-end;
+	}
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);

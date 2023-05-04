@@ -26,14 +26,9 @@
 </script>
 
 <address class="crypto-address-widget size-{size} tile b">
+	<slot />
 	<a {href} rel="noreferrer" target="_blank">
-		<HashAddress {address} />
-		<!-- <span class="hash-address">
-			<span class="start">{address}</span>
-			<span class="end">
-				{address.slice(address.length / 2 + 1, address.length)}
-			</span>
-		</span> -->
+		<HashAddress {address} endChars={7} />
 	</a>
 	<button title="Copy to clipboard" on:click={copier.copy}>
 		<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
@@ -53,7 +48,7 @@
 	.crypto-address-widget {
 		display: grid;
 		grid-auto-flow: column;
-		gap: var(--space-ss);
+		gap: var(--space-sm);
 		justify-self: flex-start;
 	}
 

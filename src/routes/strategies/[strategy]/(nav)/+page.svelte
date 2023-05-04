@@ -4,6 +4,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, Button, SummaryBox, DataBox } from '$lib/components';
+	import WalletWidget from '$lib/components/WalletWidget.svelte';
 
 	export let data;
 
@@ -19,7 +20,7 @@
 </script>
 
 <div class="strategy-overview-page">
-	<SummaryBox title="Invest">
+	<SummaryBox class="invest-box" title="Invest">
 		<div class="investor-actions">
 			<Button
 				label="Connect wallet"

@@ -3,6 +3,7 @@
 	import { wallet } from '$lib/wallet/client';
 	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
 	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import WalletWidget from '$lib/components/WalletWidget.svelte';
 
 	$: ({ address, chain } = $wallet);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
@@ -23,7 +24,9 @@
 	<tbody>
 		<tr>
 			<td>Account</td>
-			<td><CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} /></td>
+			<td>
+				<WalletWidget {address} />
+			</td>
 		</tr>
 		<tr>
 			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
