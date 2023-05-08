@@ -31,7 +31,7 @@ Typesense filter on:change.
 	});
 
 	const dispatch = createEventDispatcher();
-	$: dispatch('change', { fieldName, filter: selected.join(' && ') });
+	$: dispatch('change', { fieldName, filter: selected.join(' || ') });
 </script>
 
 <Filter bind:selected {fieldName} {options} />
