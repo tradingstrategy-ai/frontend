@@ -37,11 +37,11 @@ export type Wallet = ConnectedWallet | UnConnectedWallet;
 
 const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' });
 
+// initialize on first client-side load
 let initialized = false;
+if (browser && !initialized) initWalletClient();
 
 export function initWalletClient() {
-	if (!browser || initialized) return;
-
 	const { chains, provider, webSocketProvider } = configureChains(
 		[arbitrum, avalanche, bsc, mainnet, polygon],
 		[w3mProvider({ projectId }), publicProvider()]
