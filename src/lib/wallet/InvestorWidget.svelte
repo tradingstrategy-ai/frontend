@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { wallet } from '$lib/wallet/client';
 	import { Button, SummaryBox } from '$lib/components';
 
 	export let strategyId: string;
@@ -7,7 +8,9 @@
 
 <SummaryBox title="Invest">
 	<div class="investor-actions">
-		<Button label="Connect wallet" href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chainId}" />
+		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chainId}">
+			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
+		</Button>
 		<Button label="Deposit" disabled />
 		<Button label="Redeem" disabled />
 	</div>
