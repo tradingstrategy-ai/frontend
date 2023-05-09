@@ -21,8 +21,8 @@
 		</a>
 	</header>
 
-	{#if status === 404}
-		<ErrorPageInfo {status} title="Page not found">
+	{#if status < 500}
+		<ErrorPageInfo {status} title={$page.error?.message || 'Client request error'}>
 			<Button label="Go to home page" href="/" />
 		</ErrorPageInfo>
 	{:else if status === 503 && chainName}

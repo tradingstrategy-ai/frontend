@@ -9,6 +9,7 @@ function urlParamsMatch(expected: Record<string, any>) {
 
 function searchParams({ filters = {}, ...restParams }: any = {}) {
 	const filterJSON = JSON.stringify({
+		pool_swap_fee: [],
 		price_change_24h: [],
 		liquidity: [],
 		volume_24h: [],

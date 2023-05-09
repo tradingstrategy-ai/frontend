@@ -35,15 +35,12 @@ export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Par
 }
 
 export async function publicApiError(response: Response) {
-	if (response.status === 404) {
-		const stack = [`Server resource not found: ${response.url}`];
-		return error(response.status, { message: response.statusText, stack });
-	}
+	const status = response.status < 500 ? response.status : 503;
 
 	const stack: string[] = [];
 	stack.push(`Error loading data from URL: ${response.url}`);
 	stack.push(`${response.status} ${response.statusText}`);
 	stack.push(await response.text());
 
-	return error(503, { message: response.statusText, stack });
+	return error(status, { message: response.statusText, stack });
 }
