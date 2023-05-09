@@ -5,11 +5,16 @@
 
 	export let strategyId: string;
 	export let chainId: number;
+	export let vaultAddress: Maybe<Address>;
 </script>
 
 <SummaryBox title="Deposit status">
 	<div class="content">
-		{#if $wallet.status !== 'connected'}
+		{#if !vaultAddress}
+			<AlertList status="info" size="md">
+				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
+			</AlertList>
+		{:else if $wallet.status !== 'connected'}
 			<AlertList status="warning" size="md">
 				<AlertItem title="Wallet not connected">Please connect wallet to see your deposit status</AlertItem>
 			</AlertList>
