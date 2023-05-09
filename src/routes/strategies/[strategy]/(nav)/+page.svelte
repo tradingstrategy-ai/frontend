@@ -12,15 +12,12 @@
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
 
-	// FIXME: temporary hack; remove once `chainId` has been added to `metadata`
-	function getChainId({ portfolio }: any) {
-		const position = Object.values(portfolio?.closed_positions)[0];
-		return position?.reserve_currency?.chain_id;
-	}
+	// NOTE: temporary hack until vault_address is added to `metadata`
+	$: vaultAddress = data.strategy.vault_address;
 </script>
 
 <div class="strategy-overview-page">
-	<InvestorWidget strategyId={data.summary.id} chainId={getChainId(data.state)} />
+	<InvestorWidget strategyId={data.summary.id} chain={data.chain} {vaultAddress} />
 
 	<section class="summary-stats">
 		{#if portfolioStats}

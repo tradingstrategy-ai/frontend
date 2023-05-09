@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Address } from '@wagmi/core';
+	import type { Chain } from '$lib/helpers/chain';
 	import { wallet } from '$lib/wallet/client';
 	import { AlertList, AlertItem, Button, DataBox, EntitySymbol, Grid, SummaryBox } from '$lib/components';
 
 	export let strategyId: string;
-	export let chainId: number;
+	export let chain: Chain;
 	export let vaultAddress: Maybe<Address>;
 </script>
 
@@ -18,6 +19,10 @@
 			<AlertList status="warning" size="md">
 				<AlertItem title="Wallet not connected">Please connect wallet to see your deposit status</AlertItem>
 			</AlertList>
+		{:else if $wallet.chain.id !== chain.chain_id}
+			<AlertList status="error" size="md">
+				<AlertItem title="Wrong network">Please connnect to {chain.chain_name}</AlertItem>
+			</AlertList>
 		{:else}
 			<Grid cols={2} gap="lg">
 				<DataBox label="Deposit status">
@@ -30,7 +35,7 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chainId}">
+		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}">
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
 		<Button label="Deposit" disabled />
