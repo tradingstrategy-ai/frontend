@@ -1,17 +1,42 @@
 <script lang="ts">
 	import type { Address } from '@wagmi/core';
 	import type { Chain } from '$lib/helpers/chain';
+	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
+	import { ethers } from 'ethers';
 	import { wallet } from '$lib/wallet/client';
-	import { AlertList, AlertItem, Button, DataBox, EntitySymbol, Grid, SummaryBox } from '$lib/components';
+	import { getFundValueCalculatorAddress } from '$lib/wallet/utils';
+	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
+	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
+	import TokenBalance from './TokenBalance.svelte';
 
 	export let strategyId: string;
 	export let chain: Chain;
 	export let vaultAddress: Maybe<Address>;
+
+	$: fundValueCalculatorAddress = getFundValueCalculatorAddress(chain.chain_id);
+
+	async function getAccountNetValue(vaultAddr: Address, calcAddr: Address, account: Address) {
+		const calculator = getContract({
+			address: calcAddr,
+			abi: fundValueCalculatorAbi,
+			signerOrProvider: getProvider()
+		});
+
+		const value = await calculator.callStatic.calcNetValueForSharesHolder(vaultAddr, account);
+		const token = await fetchToken({ address: value.denominationAsset_ });
+
+		return {
+			decimals: token.decimals,
+			formatted: ethers.utils.formatUnits(value.netValue_, token.decimals),
+			symbol: token.symbol,
+			value: value.netValue_
+		};
+	}
 </script>
 
 <SummaryBox title="Deposit status">
 	<div class="content">
-		{#if !vaultAddress}
+		{#if !(vaultAddress && fundValueCalculatorAddress)}
 			<AlertList status="info" size="md">
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
@@ -26,10 +51,10 @@
 		{:else}
 			<Grid cols={2} gap="lg">
 				<DataBox label="Deposit status">
-					<EntitySymbol slug="usdc" type="token">1000.25 USDC</EntitySymbol>
+					<TokenBalance data={getAccountNetValue(vaultAddress, fundValueCalculatorAddress, $wallet.address)} />
 				</DataBox>
 				<DataBox label="Strategy shares">
-					<EntitySymbol slug="uni" type="token">123.45 SHR</EntitySymbol>
+					<TokenBalance data={fetchBalance({ token: vaultAddress, address: $wallet.address })} />
 				</DataBox>
 			</Grid>
 		{/if}
