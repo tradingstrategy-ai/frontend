@@ -5,8 +5,9 @@
 	import HashAddress from './HashAddress.svelte';
 
 	export let address: string;
+	export let disableCopyToClipboard = false;
 	export let href: string;
-	export let size: 'md' | 'sm' = 'md';
+	export let size: 'sm' | 'md' | 'lg' = 'md';
 
 	const copier = fsm('idle', {
 		idle: {
@@ -30,18 +31,20 @@
 	<a {href} rel="noreferrer" target="_blank">
 		<HashAddress {address} endChars={7} />
 	</a>
-	<button title="Copy to clipboard" on:click={copier.copy}>
-		<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
-		{#if $copier === 'idle'}
-			<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
-				<Icon name="copy-to-clipboard" />
-			</span>
-		{:else}
-			<span in:fade|local={{ duration: 100 }} out:fade|local={{ duration: 500 }}>
-				<Icon name="check-square" />
-			</span>
-		{/if}
-	</button>
+	{#if !disableCopyToClipboard}
+		<button title="Copy to clipboard" on:click={copier.copy}>
+			<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
+			{#if $copier === 'idle'}
+				<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
+					<Icon name="copy-to-clipboard" />
+				</span>
+			{:else}
+				<span in:fade|local={{ duration: 100 }} out:fade|local={{ duration: 500 }}>
+					<Icon name="check-square" />
+				</span>
+			{/if}
+		</button>
+	{/if}
 </address>
 
 <style lang="postcss">
@@ -50,18 +53,6 @@
 		grid-auto-flow: column;
 		gap: var(--space-sm);
 		justify-self: flex-start;
-	}
-
-	.size-md {
-		padding: var(--space-sm) var(--space-sl);
-		font: var(--f-ui-lg-bold);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
-
-		@media (--viewport-sm-down) {
-			padding: var(--space-ss) var(--space-sl);
-			font: var(--f-ui-md-bold);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-		}
 	}
 
 	.size-sm {
@@ -74,6 +65,24 @@
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
+	}
+
+	.size-md {
+		padding: var(--space-sm) var(--space-md);
+		font: var(--f-ui-lg-bold);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
+
+		@media (--viewport-sm-down) {
+			padding: var(--space-ss) var(--space-sl);
+			font: var(--f-ui-md-bold);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+		}
+	}
+
+	.size-lg {
+		padding: var(--space-sl) var(--space-md);
+		font: var(--f-ui-md-bold);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 
 	a {

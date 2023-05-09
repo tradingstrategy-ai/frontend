@@ -7,6 +7,7 @@
 	import WalletWidget from '$lib/components/WalletWidget.svelte';
 
 	export let data;
+	export let isWalletConnected = true;
 
 	$: portfolioStats = getPortfolioLatestStats(data.state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
@@ -22,10 +23,20 @@
 <div class="strategy-overview-page">
 	<SummaryBox class="invest-box" title="Invest">
 		<div class="investor-actions">
-			<Button
-				label="Connect wallet"
-				href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
-			/>
+			{#if isWalletConnected}
+				<div class="wallet-connect">
+					<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" />
+					<Button
+						label="Change wallet"
+						href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+					/>
+				</div>
+			{:else}
+				<Button
+					label="Connect wallet"
+					href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+				/>
+			{/if}
 			<Button label="Deposit" disabled />
 			<Button label="Redeem" disabled />
 		</div>
@@ -78,10 +89,29 @@
 		}
 	}
 
+	.wallet-connect {
+		display: grid;
+		gap: var(--space-md);
+
+		& :global .button {
+			width: 100%;
+		}
+
+		@media (--viewport-sm-up) {
+			&:not(:hover) :global .button {
+				display: none;
+			}
+			&:hover :global .wallet-widget {
+				display: none;
+			}
+		}
+	}
+
 	.investor-actions {
 		display: grid;
 		gap: var(--space-ml);
 		grid-template-columns: repeat(3, 1fr);
+		min-height: 3.25rem;
 		@media (--viewport-sm-down) {
 			grid-template-columns: 1fr;
 		}

@@ -4,11 +4,12 @@
 	import CryptoAddressWidget from './CryptoAddressWidget.svelte';
 
 	export let address: Address;
-	export let chain: Chain;
+	export let chain: string | Chain;
+	export let size = 'lg';
 </script>
 
-<a href="#" class="wallet-widget">
-	<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)}>
+<a href="#" class="wallet-widget {size}">
+	<CryptoAddressWidget disableCopyToClipboard {size} {address} href={getExplorerUrl(chain, address)}>
 		<img src="https://ph-files.imgix.net/3e6585ab-2e74-4223-a291-254a7df3cd6c.gif?auto=format" alt="" />
 	</CryptoAddressWidget>
 </a>
@@ -16,6 +17,7 @@
 <style>
 	.wallet-widget :global .crypto-address-widget {
 		align-items: center;
+		justify-content: flex-start;
 	}
 	img {
 		border: none;

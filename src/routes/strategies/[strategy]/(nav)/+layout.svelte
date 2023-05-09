@@ -11,13 +11,15 @@
 
 <main class="strategy-layout ds-container">
 	<PageHeading>
-		<h1>{summary.name}</h1>
-		<p>{summary.long_description}</p>
-
-		<div class="connected-wallet">
-			<span>Connected wallet</span>
-			<WalletWidget address="0x12312312312312313131241" chain="polygon" />
-		</div>
+		<span class="description">
+			<div class="thumbnail">
+				<img src="" alt="" />
+			</div>
+			<div class="text">
+				<h1>{summary.name}</h1>
+				<p>{summary.long_description}</p>
+			</div>
+		</span>
 	</PageHeading>
 
 	<div class="subpage">
@@ -32,18 +34,55 @@
 </main>
 
 <style lang="postcss">
-	.connected-wallet {
-		display: grid;
-		gap: var(--space-md);
-		justify-content: flex-end;
-	}
 	.strategy-layout {
 		display: grid;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 
 		& :global(> .alert-list) {
 			width: 100%;
 			margin-top: var(--space-lg);
+		}
+
+		& :global .page-heading {
+			align-items: center;
+			border-radius: var(--radius-lg);
+			display: flex;
+			justify-content: space-between;
+			gap: var(--space-xl);
+
+			& .description {
+				display: grid;
+				align-items: center;
+				@media (--viewport-sm-down) {
+					gap: var(--space-md);
+					place-items: center;
+				}
+				@media (--viewport-sm-up) {
+					gap: var(--space-xl);
+					grid-auto-flow: column;
+				}
+
+				& img {
+					background: hsla(var(--hsl-box), var(--a-box-c));
+					border: none;
+					border-radius: 100%;
+					height: 6rem;
+					width: 6rem;
+				}
+
+				& h1 {
+					margin-bottom: var(--space-sm);
+					@media (--viewport-sm-down) {
+						font: var(--f-heading-md-medium);
+					}
+				}
+
+				& p {
+					@media (--viewport-sm-down) {
+						font: var(--f-ui-sm-roman) !important;
+					}
+				}
+			}
 		}
 
 		& .page-heading p {

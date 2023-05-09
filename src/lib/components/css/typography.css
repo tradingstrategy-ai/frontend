@@ -54,9 +54,9 @@
 
 	/* UI Fonts */
 	--f-ui-xs-spacing: 0.02em;
-	--f-ui-xs-roman: 400 13px/16px var(--ff-ui);
-	--f-ui-xs-medium: 500 13px/16px var(--ff-ui);
-	--f-ui-xs-bold: 700 13px/16px var(--ff-ui);
+	--f-ui-xs-roman: 400 14px/16px var(--ff-ui);
+	--f-ui-xs-medium: 500 14px/16px var(--ff-ui);
+	--f-ui-xs-bold: 700 14px/16px var(--ff-ui);
 
 	--f-ui-sm-roman: 400 15px/20px var(--ff-ui);
 	--f-ui-sm-medium: 500 15px/20px var(--ff-ui);

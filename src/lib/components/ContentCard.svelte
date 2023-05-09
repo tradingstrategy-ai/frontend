@@ -23,6 +23,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	export let ctaLabel = '';
 	export let ctaFullWidth = false;
 	export let description = '';
+	export let disabled: undefined | boolean = undefined;
 	export let icon: string | undefined = undefined;
 	export let href = '';
 	export let title: string | undefined = undefined;
@@ -34,30 +35,41 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	};
 </script>
 
-<svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth on:click>
-	{#if icon || $$slots.icon}
-		<div class="icon symbol tile c">
-			<slot name="icon">
-				<Icon name={`${icon}`} />
-			</slot>
+<svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth class:disabled on:click>
+	{#if $$slots.media}
+		<div class="media">
+			<slot name="media" />
 		</div>
 	{/if}
+	<div class="content" style:display={!$$slots.media ? 'contents' : undefined}>
+		{#if icon || $$slots.icon}
+			<div class="icon symbol tile c">
+				<slot name="icon">
+					<Icon name={`${icon}`} />
+				</slot>
+			</div>
+		{/if}
 
-	<slot name="title">
-		<h3>{title}</h3>
-	</slot>
+		{#if $$slots.title}
+			<div class="title">
+				<slot name="title">
+					<h3>{title}</h3>
+				</slot>
+			</div>
+		{/if}
 
-	<div class="description">
-		<slot>{description}</slot>
+		<div class="description">
+			<slot>{description}</slot>
+		</div>
+
+		{#if $$slots.cta || ctaLabel}
+			<div class="cta">
+				<slot name="cta">
+					<Button label={ctaLabel} />
+				</slot>
+			</div>
+		{/if}
 	</div>
-
-	{#if $$slots.cta || ctaLabel}
-		<div class="cta">
-			<slot name="cta">
-				<Button label={ctaLabel} />
-			</slot>
-		</div>
-	{/if}
 </svelte:element>
 
 <style lang="postcss">
@@ -66,6 +78,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 		flex-direction: column;
 		gap: var(--space-md);
 		padding: var(--space-lg);
+		overflow: hidden;
 
 		@media (--viewport-xs) {
 			padding: var(--space-ls);
@@ -98,6 +111,13 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			@media (--viewport-xs) {
 				font: var(--f-heading-md-medium);
 			}
+		}
+
+		& .title {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+			gap: var(--space-md);
+			margin-bottom: var(--space-sm);
 		}
 
 		& .description {

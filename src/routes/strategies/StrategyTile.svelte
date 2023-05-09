@@ -5,6 +5,8 @@
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import ContentCard from '$lib/components/ContentCard.svelte';
+	import WalletWidget from '$lib/components/WalletWidget.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
@@ -14,51 +16,79 @@
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 </script>
 
-<li class="strategy tile tile b" class:hasError>
-	<ChartThumbnail data={chartData} startDate={chartStartDate} />
-	<div class="info">
-		<div class="details">
+<div class="strategy-tile">
+	<ContentCard disabled={hasError} href="/strategies/{strategy.id}">
+		<ChartThumbnail data={chartData} slot="media" startDate={chartStartDate} />
+
+		<svelte:fragment slot="title">
 			<h2 class="title">{strategy.name}</h2>
-			<dl>
-				<div>
-					<dt title="90 day return (annualized)">Historic performance</dt>
-					<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
-						{formatPriceChange(summaryStats.profitability_90_days)}
-						{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
-							<span class="insufficient-data" title="This strategy has less than 90 days of performance data">
-								<Icon name="warning" />
-							</span>
-						{/if}
-					</dd>
-				</div>
-				<div>
-					<dt>Total assets</dt>
-					<dd>
-						{formatDollar(summaryStats.current_value)}
-					</dd>
-				</div>
-			</dl>
-			<div class="description">
-				{#if !hasError}
-					<p>{strategy.short_description}</p>
-				{:else}
-					<p>Strategy data not currently available.</p>
-				{/if}
+		</svelte:fragment>
+
+		<dl>
+			<div>
+				<dt title="90 day return (annualized)">Historic performance</dt>
+				<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
+					{formatPriceChange(summaryStats.profitability_90_days)}
+					{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
+						<span class="insufficient-data" title="This strategy has less than 90 days of performance data">
+							<Icon name="warning" />
+						</span>
+					{/if}
+				</dd>
 			</div>
+			<div>
+				<dt>Total assets</dt>
+				<dd>
+					{formatDollar(summaryStats.current_value)}
+				</dd>
+			</div>
+		</dl>
+		<div class="description">
+			{#if !hasError}
+				<p>{strategy.short_description}</p>
+			{:else}
+				<p>Strategy data not currently available.</p>
+			{/if}
 		</div>
-		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
-	</div>
-</li>
+
+		<svelte:fragment slot="cta">
+			<Button label="View strategy details" href="/strategies/{strategy.id}" size="lg" disabled={hasError} />
+		</svelte:fragment>
+	</ContentCard>
+</div>
 
 <style lang="postcss">
-	li {
-		display: grid;
-		border-radius: var(--strategy-tile-border-radius, var(--radius-md));
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		grid-template-rows: auto;
-		grid-auto-rows: 1fr;
-		list-style: none;
-		overflow: hidden;
+	.strategy-tile :global {
+		& .content-card {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(min(calc(100vw - var(--space-xl)), 20rem), 1fr));
+			gap: 0;
+			padding: 0 !important;
+
+			& .content {
+				display: grid;
+				gap: var(--space-md);
+				padding: var(--space-lg);
+			}
+			& .button {
+				width: 100%;
+			}
+
+			& .cta {
+				margin: 0;
+			}
+
+			& .media {
+			}
+		}
+
+		& .chart-thumbnail {
+			height: 100%;
+			max-height: 28rem;
+			@media (--viewport-md-down) {
+				max-height: 28vh;
+			}
+		}
 	}
 
 	.info {
@@ -92,7 +122,7 @@
 	}
 
 	dt {
-		font: var(--f-ui-sm-medium);
+		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
@@ -117,5 +147,8 @@
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
 		overflow: hidden;
+		/* color: hsla(var(--hsl-text-light)); */
+		font: var(--f-ui-md-roman);
+		padding-block: var(--space-md);
 	}
 </style>
