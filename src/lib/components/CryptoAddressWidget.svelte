@@ -45,6 +45,7 @@
 			{/if}
 		</button>
 	{/if}
+	<slot name="error" />
 </address>
 
 <style lang="postcss">
