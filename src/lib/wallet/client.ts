@@ -1,7 +1,7 @@
 import { walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { Address, Chain, Connector } from '@wagmi/core';
+import type { Chain, Connector } from '@wagmi/core';
 import {
 	createClient,
 	configureChains,

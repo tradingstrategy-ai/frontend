@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Address, type Chain, fetchBalance } from '@wagmi/core';
+	import { fetchBalance } from '@wagmi/core';
 	import { wallet } from '$lib/wallet/client';
 	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
 	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';

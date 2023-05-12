@@ -7,15 +7,15 @@
 	import InvestorWidget from '$lib/wallet/InvestorWidget.svelte';
 
 	export let data;
+	$: ({ chain, summary, state } = data);
 
-	$: portfolioStats = getPortfolioLatestStats(data.state);
+	$: portfolioStats = getPortfolioLatestStats(state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
-	$: vaultAddress = data.state?.sync?.deployment?.address;
 </script>
 
 <div class="strategy-overview-page">
-	<InvestorWidget strategyId={data.summary.id} chain={data.chain} {vaultAddress} />
+	<InvestorWidget strategyId={summary.id} {chain} contracts={summary.on_chain_data.smart_contracts} />
 
 	<section class="summary-stats">
 		{#if portfolioStats}
