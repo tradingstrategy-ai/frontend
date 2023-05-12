@@ -11,9 +11,7 @@
 	$: portfolioStats = getPortfolioLatestStats(data.state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
-
-	// NOTE: temporary hack until vault_address is added to `metadata`
-	$: vaultAddress = data.strategy.vault_address;
+	$: vaultAddress = data.state?.sync?.deployment?.address;
 </script>
 
 <div class="strategy-overview-page">

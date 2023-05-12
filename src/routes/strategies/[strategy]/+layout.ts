@@ -3,12 +3,6 @@ import { fetchPublicApi, publicApiError } from '$lib/helpers/public-api';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 
-// FIXME: temporary hack; remove once `chainId` has been added to `metadata`
-function getChainId({ portfolio }: any) {
-	const position = Object.values(portfolio?.closed_positions)[0];
-	return position?.reserve_currency?.chain_id;
-}
-
 export async function load({ params, fetch }) {
 	const strategy = getConfiguredStrategyById(params.strategy);
 	if (!strategy) throw error(404, 'Not found');
@@ -26,9 +20,8 @@ export async function load({ params, fetch }) {
 		throw await publicApiError(resp);
 	}
 
-	// FIXME: temporary hack; remove once `chainId` has been added to `metadata`
 	const state = await resp.json();
-	const chain_id = getChainId(state);
+	const chain_id = state?.sync?.deployment?.chain_id;
 
 	return {
 		chain: chain_id && fetchPublicApi(fetch, 'chain-details', { chain_id }),
