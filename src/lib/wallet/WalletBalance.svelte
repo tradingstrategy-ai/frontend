@@ -3,20 +3,10 @@
 	import { wallet } from '$lib/wallet/client';
 	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
 	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import Spinner from 'svelte-spinner';
 
 	$: ({ address, chain } = $wallet);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
-	$: balances = getBalances(chain, address);
-
-	// TODO: refactor to derived store?
-	async function getBalances(chain: Chain, address: Address) {
-		if (!(chain && address)) return {};
-		const token = getUsdcAddress(chain.id);
-		const promises = [fetchBalance({ address })];
-		token && promises.push(fetchBalance({ address, token }));
-		const [native, usdc] = await Promise.all(promises);
-		return { native, usdc };
-	}
 </script>
 
 <table class="wallet-balance responsive">
@@ -28,20 +18,22 @@
 		<tr>
 			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
 			<td>
-				{#await balances}
-					---
-				{:then { native }}
-					{native?.formatted ?? '---'}
+				{#await fetchBalance({ address })}
+					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+				{:then balance}
+					{balance.formatted ?? '---'}
 				{/await}
 			</td>
 		</tr>
 		<tr>
 			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
 			<td>
-				{#await balances}
+				{#await fetchBalance({ address, token: getUsdcAddress(chain.id) })}
+					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+				{:then balance}
+					{balance.formatted ?? '---'}
+				{:catch}
 					---
-				{:then { usdc }}
-					{usdc?.formatted ?? '---'}
 				{/await}
 			</td>
 		</tr>

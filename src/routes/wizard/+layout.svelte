@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import wizard from './wizardState';
-	import { initWalletClient } from '$lib/wallet/client';
 	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
 
 	if (!wizard?.initializing) {
@@ -11,7 +10,6 @@
 	}
 
 	wizard.initializing = false;
-	initWalletClient();
 
 	interface Step {
 		slug: string;

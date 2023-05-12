@@ -128,18 +128,13 @@ based on viewport size).
 			}
 		}
 
-		& .inner :global {
+		& .inner {
 			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
 
-			& p,
-			& li {
+			& :global(p) {
 				font: var(--f-ui-lg-roman);
 				letter-spacing: var(--f-ui-lg-spacing, normal);
-			}
-
-			& li {
-				margin-bottom: var(--space-md);
 			}
 		}
 

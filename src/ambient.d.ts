@@ -6,6 +6,7 @@ declare global {
 	type MaybeString = MaybeType<string>;
 	type MaybeNumberOrString = MaybeType<number | string>;
 	type MaybeDate = MaybeType<Date>;
+	type MaybePromise<T> = T | Promise<T>;
 
 	type Formatter<T> = (value: T) => string;
 

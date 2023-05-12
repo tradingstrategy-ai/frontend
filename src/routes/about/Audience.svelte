@@ -81,4 +81,10 @@
 			}
 		}
 	}
+
+	li {
+		margin-bottom: var(--space-md);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
+	}
 </style>

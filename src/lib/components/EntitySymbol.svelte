@@ -3,7 +3,7 @@
 
 	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
 	export let slug: MaybeString;
-	export let label: MaybeString;
+	export let label = '';
 	export let size = '1.5rem';
 
 	$: src = getSrc(type, slug);
@@ -21,7 +21,7 @@
 			<img alt={label} {src} />
 		</div>
 	{/if}
-	{label}
+	<slot>{label}</slot>
 </div>
 
 <style lang="postcss">

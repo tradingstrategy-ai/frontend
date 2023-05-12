@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/public-api';
+import { fetchPublicApi, publicApiError } from '$lib/helpers/public-api';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
 import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 
@@ -20,9 +20,13 @@ export async function load({ params, fetch }) {
 		throw await publicApiError(resp);
 	}
 
+	const state = await resp.json();
+	const chain_id = state?.sync?.deployment?.chain_id;
+
 	return {
+		chain: chain_id && fetchPublicApi(fetch, 'chain-details', { chain_id }),
 		strategy,
 		summary: getStrategyRuntimeState(strategy, fetch),
-		state: resp.json()
+		state
 	};
 }
