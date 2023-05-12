@@ -22,23 +22,30 @@
 
 <div class="strategy-overview-page">
 	<SummaryBox class="invest-box" title="Invest">
+		<svelte:fragment slot="headerCta">
+			{#if isWalletConnected}
+				<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" size="sm">
+					<span class="connected-wallet-label" slot="label"> Connected wallet </span>
+					<AlertList size="xs" slot="alerts">
+						<AlertItem>Change network to <strong>Polygon Mainnet</strong></AlertItem>
+					</AlertList>
+				</WalletWidget>
+			{/if}
+		</svelte:fragment>
 		<div class="investor-actions">
 			{#if isWalletConnected}
-				<div class="wallet-connect">
-					<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" />
-					<Button
-						label="Change wallet"
-						href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
-					/>
-				</div>
+				<Button
+					label="Change wallet"
+					href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+				/>
 			{:else}
 				<Button
 					label="Connect wallet"
 					href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
 				/>
 			{/if}
-			<Button label="Deposit" disabled />
-			<Button label="Redeem" disabled />
+			<Button label="Deposit" disabled={!isWalletConnected} />
+			<Button label="Redeem" disabled={!isWalletConnected} />
 		</div>
 	</SummaryBox>
 
@@ -89,24 +96,6 @@
 		}
 	}
 
-	.wallet-connect {
-		display: grid;
-		gap: var(--space-md);
-
-		& :global .button {
-			width: 100%;
-		}
-
-		@media (--viewport-sm-up) {
-			&:not(:hover) :global .button {
-				display: none;
-			}
-			&:hover :global .wallet-widget {
-				display: none;
-			}
-		}
-	}
-
 	.investor-actions {
 		display: grid;
 		gap: var(--space-ml);
@@ -122,5 +111,27 @@
 		gap: inherit;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		place-items: start stretch;
+	}
+
+	.strategy-overview-page :global .invest-box {
+		& header .cta {
+			display: unset !important;
+		}
+
+		& .wallet-widget {
+			width: 100%;
+
+			@media (--viewport-md-down) {
+				margin: var(--space-sm) 0;
+			}
+
+			@media (--viewport-md-up) {
+				max-width: 24rem;
+			}
+		}
+	}
+
+	.connected-wallet-label {
+		font: var(--f-ui-sm-medium);
 	}
 </style>

@@ -5,33 +5,31 @@
 	import Icon from './Icon.svelte';
 
 	export let address: Address;
-	export let chain: string | Chain;
-	export let size = 'lg';
+	export let chain: Chain;
+	export let size: 'sm' | 'md' | 'lg' = 'md';
 	export let networkError = true;
 </script>
 
 <a href="#" class="wallet-widget {size}">
+	<slot name="label" />
 	<CryptoAddressWidget disableCopyToClipboard {size} {address} href={getExplorerUrl(chain, address)}>
-		<img src="https://ph-files.imgix.net/3e6585ab-2e74-4223-a291-254a7df3cd6c.gif?auto=format" alt="" />
-		<svelte:fragment slot="error">
-			{#if networkError}
-				<Icon name="error" --icon-size="1.25rem" --icon-color="hsla(var(--hsl-warning))" />
-			{/if}
-		</svelte:fragment>
+		<Icon name="wallet" --icon-size="1.25rem" />
 	</CryptoAddressWidget>
+	<slot name="alerts" />
 </a>
 
 <style>
+	.wallet-widget {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		border-radius: var(--radius-md);
+		border: 2px solid hsla(var(--hsl-box), var(--a-box-c));
+		padding: var(--space-ms);
+		display: grid;
+		gap: var(--space-sm);
+	}
+
 	.wallet-widget :global .crypto-address-widget {
 		align-items: center;
 		justify-content: flex-start;
-	}
-	img {
-		border: none;
-		border-radius: var(--radius-lg);
-		background: hsla(var(--hsl-box), var(--a-box-c));
-		margin-right: var(--space-xxxs);
-		height: 1.75rem;
-		width: 1.75rem;
 	}
 </style>
