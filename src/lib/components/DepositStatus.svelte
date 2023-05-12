@@ -15,18 +15,18 @@
 		{:else}
 			<Grid cols={2} gap="lg">
 				<DataBox>
-					<svelte:fragment slot="label">Deposit status</svelte:fragment>
-					<svelte:fragment>
-						<EntitySymbol slug="usdc" type="token">1000.25 USDC</EntitySymbol>
-					</svelte:fragment>
-				</DataBox>
-				<DataBox>
 					<svelte:fragment slot="label">Strategy shares</svelte:fragment>
 					<svelte:fragment>
 						<EntitySymbol slug="uni" type="token">123.45 SHR</EntitySymbol>
 					</svelte:fragment>
-				</DataBox></Grid
-			>
+				</DataBox>
+				<DataBox>
+					<svelte:fragment slot="label">These shares are worth</svelte:fragment>
+					<svelte:fragment>
+						<EntitySymbol slug="usdc" type="token">1000.25 USDC</EntitySymbol>
+					</svelte:fragment>
+				</DataBox>
+			</Grid>
 		{/if}
 	</div>
 </SummaryBox>

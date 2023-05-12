@@ -1,9 +1,10 @@
 <script>
 	import wizard from '../../wizardState';
 	import { Button, WizardActions } from '$lib/components';
+	import WalletTokenRedemption from '$lib/wallet/WalletTokenRedemption.svelte';
 </script>
 
-<div class="shares-redemption">Shares redemption</div>
+<WalletTokenRedemption />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />

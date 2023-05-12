@@ -3,7 +3,8 @@
 	import { Button, WizardActions } from '$lib/components';
 </script>
 
-<div class="deposit-success">
+<div class="redemption-success">
+	<h2>Redemption success</h2>
 	<p>
 		Congratulations! You've successfully invested in <strong>ETH-USD SMA on Pancake</strong>. Keep an eye on your
 		progress and returns. Please note that investing in crypto / DeFi trading strategies carries significant risk. Click

@@ -52,7 +52,7 @@
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
 				</AlertList>
-				<Button disabled={!paymentValue} on:click={payment.confirm}>Make payment</Button>
+				<Button disabled={!paymentValue} size="lg" on:click={payment.confirm}>Make payment</Button>
 			</form>
 		{:else if $payment === 'confirming'}
 			<div class="confirmation" style="display: contents;" on:click={payment.process} on:keydown={payment.process}>

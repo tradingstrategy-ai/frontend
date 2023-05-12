@@ -1,11 +1,10 @@
 <script>
 	import wizard from '../../wizardState';
-	import { Button, DepositStatus, WizardActions } from '$lib/components';
+	import { Button, WizardActions } from '$lib/components';
+	import DepositStatus from '$lib/redeem/DepositStatus.svelte';
 </script>
 
-<div class="deposit-status">
-	<DepositStatus />
-</div>
+<DepositStatus />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />
