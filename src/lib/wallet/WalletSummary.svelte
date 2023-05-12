@@ -32,7 +32,9 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
+				<span class="address-container">
+					<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
+				</span>
 			</td>
 		</tr>
 		<tr>
@@ -119,5 +121,9 @@
 		display: inline-flex;
 		word-break: normal;
 		cursor: pointer;
+	}
+
+	.address-container {
+		display: flex;
 	}
 </style>

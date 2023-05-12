@@ -3,10 +3,9 @@
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { AlertList, AlertItem, Button, SummaryBox, DataBox } from '$lib/components';
+	import { AlertList, AlertItem, Button, DepositStatus, SummaryBox, DataBox } from '$lib/components';
 	import WalletWidget from '$lib/components/WalletWidget.svelte';
 	import ConnectedWallet from './ConnectedWallet.svelte';
-	import DepositStatus from './DepositStatus.svelte';
 
 	export let data;
 	export let isWalletConnected = true;
