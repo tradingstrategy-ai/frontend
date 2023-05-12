@@ -50,11 +50,11 @@
 			</AlertList>
 		{:else}
 			<Grid cols={2} gap="lg">
-				<DataBox label="Deposit status">
-					<TokenBalance data={getAccountNetValue(vaultAddress, fundValueCalculatorAddress, $wallet.address)} />
-				</DataBox>
-				<DataBox label="Strategy shares">
+				<DataBox label="Number of shares">
 					<TokenBalance data={fetchBalance({ token: vaultAddress, address: $wallet.address })} />
+				</DataBox>
+				<DataBox label="Value of shares">
+					<TokenBalance data={getAccountNetValue(vaultAddress, fundValueCalculatorAddress, $wallet.address)} />
 				</DataBox>
 			</Grid>
 		{/if}
