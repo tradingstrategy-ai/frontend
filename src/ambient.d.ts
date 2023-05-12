@@ -11,6 +11,9 @@ declare global {
 	type Formatter<T> = (value: T) => string;
 
 	type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+
+	type Address = `0x${string}`;
+	type Contracts = Record<string, Address>;
 }
 
 export {};

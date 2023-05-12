@@ -1,28 +1,24 @@
 <script lang="ts">
-	import type { Address } from '@wagmi/core';
 	import type { Chain } from '$lib/helpers/chain';
 	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
 	import { ethers } from 'ethers';
 	import { wallet } from '$lib/wallet/client';
-	import { getFundValueCalculatorAddress } from '$lib/wallet/utils';
 	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 
 	export let strategyId: string;
 	export let chain: Chain;
-	export let vaultAddress: Maybe<Address>;
+	export let contracts: Contracts;
 
-	$: fundValueCalculatorAddress = getFundValueCalculatorAddress(chain.chain_id);
-
-	async function getAccountNetValue(vaultAddr: Address, calcAddr: Address, account: Address) {
+	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
 		const calculator = getContract({
-			address: calcAddr,
+			address: fund_value_calculator,
 			abi: fundValueCalculatorAbi,
 			signerOrProvider: getProvider()
 		});
 
-		const value = await calculator.callStatic.calcNetValueForSharesHolder(vaultAddr, account);
+		const value = await calculator.callStatic.calcNetValueForSharesHolder(vault, account);
 		const token = await fetchToken({ address: value.denominationAsset_ });
 
 		return {
@@ -36,7 +32,7 @@
 
 <SummaryBox title="Deposit status">
 	<div class="content">
-		{#if !(vaultAddress && fundValueCalculatorAddress)}
+		{#if !(contracts.vault && contracts.fund_value_calculator)}
 			<AlertList status="info" size="md">
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
@@ -51,10 +47,10 @@
 		{:else}
 			<Grid cols={2} gap="lg">
 				<DataBox label="Number of shares">
-					<TokenBalance data={fetchBalance({ token: vaultAddress, address: $wallet.address })} />
+					<TokenBalance data={fetchBalance({ token: contracts.vault, address: $wallet.address })} />
 				</DataBox>
 				<DataBox label="Value of shares">
-					<TokenBalance data={getAccountNetValue(vaultAddress, fundValueCalculatorAddress, $wallet.address)} />
+					<TokenBalance data={getAccountNetValue(contracts, $wallet.address)} />
 				</DataBox>
 			</Grid>
 		{/if}
