@@ -12,14 +12,18 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 ```
 -->
 <script lang="ts">
-	export let label: string;
+	export let label = '';
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 	export let value: string | undefined = undefined;
 	export let valueClass: string = '';
 </script>
 
 <div class="data-box {size}">
-	<span class="label">{label}</span>
+	{#if $$slots.label || label}
+		<span class="label">
+			<slot name="label">{label}</slot>
+		</span>
+	{/if}
 	<span class="value {valueClass}"><slot>{value || '---'}</slot></span>
 </div>
 

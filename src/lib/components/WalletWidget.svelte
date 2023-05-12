@@ -15,19 +15,9 @@
 	<CryptoAddressWidget disableCopyToClipboard {size} {address} href={getExplorerUrl(chain, address)}>
 		<Icon name="wallet" --icon-size="1.25rem" />
 	</CryptoAddressWidget>
-	<slot name="alerts" />
 </a>
 
 <style>
-	.wallet-widget {
-		background: hsla(var(--hsl-box), var(--a-box-a));
-		border-radius: var(--radius-md);
-		border: 2px solid hsla(var(--hsl-box), var(--a-box-c));
-		padding: var(--space-ms);
-		display: grid;
-		gap: var(--space-sm);
-	}
-
 	.wallet-widget :global .crypto-address-widget {
 		align-items: center;
 		justify-content: flex-start;

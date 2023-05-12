@@ -58,19 +58,18 @@
 
 	.size-sm {
 		padding: var(--space-ss) var(--space-sl);
-		font: var(--f-ui-md-bold);
+		font: var(--f-ui-sm-bold);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 
 		@media (--viewport-sm-down) {
 			padding: var(--space-xs) var(--space-sl);
-			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 		}
 	}
 
 	.size-md {
 		padding: var(--space-sm) var(--space-md);
-		font: var(--f-ui-lg-bold);
+		font: var(--f-ui-md-bold);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		@media (--viewport-sm-down) {
@@ -82,7 +81,7 @@
 
 	.size-lg {
 		padding: var(--space-sl) var(--space-md);
-		font: var(--f-ui-md-bold);
+		font: var(--f-ui-lg-bold);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 	}
 

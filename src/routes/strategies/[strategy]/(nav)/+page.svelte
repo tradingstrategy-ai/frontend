@@ -5,6 +5,8 @@
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, Button, SummaryBox, DataBox } from '$lib/components';
 	import WalletWidget from '$lib/components/WalletWidget.svelte';
+	import ConnectedWallet from './ConnectedWallet.svelte';
+	import DepositStatus from './DepositStatus.svelte';
 
 	export let data;
 	export let isWalletConnected = true;
@@ -22,30 +24,28 @@
 
 <div class="strategy-overview-page">
 	<SummaryBox class="invest-box" title="Invest">
-		<svelte:fragment slot="headerCta">
-			{#if isWalletConnected}
-				<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" size="sm">
-					<span class="connected-wallet-label" slot="label"> Connected wallet </span>
-					<AlertList size="xs" slot="alerts">
-						<AlertItem>Change network to <strong>Polygon Mainnet</strong></AlertItem>
-					</AlertList>
-				</WalletWidget>
-			{/if}
-		</svelte:fragment>
+		{#if isWalletConnected}
+			<div class="widgets">
+				<ConnectedWallet />
+				<DepositStatus />
+			</div>
+		{/if}
 		<div class="investor-actions">
-			{#if isWalletConnected}
-				<Button
-					label="Change wallet"
-					href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
-				/>
-			{:else}
-				<Button
-					label="Connect wallet"
-					href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
-				/>
-			{/if}
-			<Button label="Deposit" disabled={!isWalletConnected} />
-			<Button label="Redeem" disabled={!isWalletConnected} />
+			<Button
+				href="/wizard/connect-wallet?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+				label="Change wallet"
+				disabled={!isWalletConnected}
+			/>
+			<Button
+				href="/wizard/deposit?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+				label="Deposit"
+				disabled={!isWalletConnected}
+			/>
+			<Button
+				href="/wizard/redeem?returnTo=/strategies/{data.summary.id}&chainId={getChainId(data.state)}"
+				label="Redeem"
+				disabled={!isWalletConnected}
+			/>
 		</div>
 	</SummaryBox>
 
@@ -106,6 +106,31 @@
 		}
 	}
 
+	.strategy-overview-page :global .invest-box {
+		& > .main > header {
+			margin-bottom: var(--space-sm);
+		}
+
+		& .grid {
+			@media (--viewport-md-down) {
+				--grid-gap: var(--space-sl) !important;
+			}
+		}
+
+		& .summary-box .inner {
+			gap: var(--space-sl);
+		}
+	}
+
+	.widgets {
+		display: grid;
+		gap: var(--space-lg);
+
+		@media (--viewport-md-up) {
+			grid-template-columns: 1fr 2fr;
+		}
+	}
+
 	.summary-stats {
 		display: grid;
 		gap: inherit;
@@ -121,17 +146,13 @@
 		& .wallet-widget {
 			width: 100%;
 
-			@media (--viewport-md-down) {
+			/* @media (--viewport-md-down) {
 				margin: var(--space-sm) 0;
-			}
+			} */
 
 			@media (--viewport-md-up) {
 				max-width: 24rem;
 			}
 		}
-	}
-
-	.connected-wallet-label {
-		font: var(--f-ui-sm-medium);
 	}
 </style>

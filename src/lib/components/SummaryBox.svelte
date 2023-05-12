@@ -89,9 +89,22 @@ based on viewport size).
 			gap: var(--space-ss);
 			margin-bottom: var(--space-xxxs);
 
+			@nest .summary-box & {
+				@media (--viewport-sm-down) {
+					margin-bottom: var(--space-xs);
+				}
+			}
+
 			& h3 {
 				font: var(--f-heading-md-medium);
 				letter-spacing: var(--f-heading-md-spacing, normal);
+
+				@nest .summary-box & {
+					font: var(--f-heading-sm-medium);
+					@media (--viewport-sm-down) {
+						font: var(--f-heading-xs-medium);
+					}
+				}
 			}
 
 			& p {
@@ -132,8 +145,8 @@ based on viewport size).
 			gap: var(--inner-gap, var(--space-ls));
 			padding: var(--inner-padding);
 
-			& p,
-			& li {
+			& > p,
+			& > li {
 				font: var(--f-ui-lg-roman);
 				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}

@@ -35,6 +35,10 @@ Display a single alert item (should always be nested within AlertList).
 		gap: 0.625em;
 		font: inherit; /* see AlertList */
 
+		margin-bottom: 0 !important;
+		&:is(:last-child, :last-of-type) {
+		}
+
 		& .icon {
 			display: block;
 			margin-top: -0.1em;
