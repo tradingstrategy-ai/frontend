@@ -66,6 +66,7 @@
 			padding: 0 !important;
 
 			& .content {
+				align-content: start;
 				display: grid;
 				gap: var(--space-md);
 				padding: var(--space-lg);
