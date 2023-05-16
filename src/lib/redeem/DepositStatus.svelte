@@ -24,13 +24,13 @@
 		<DataBox>
 			<svelte:fragment slot="label">Number of shares</svelte:fragment>
 			<svelte:fragment>
-				<EntitySymbol slug="uni" type="token">123.45 SHR</EntitySymbol>
+				<EntitySymbol label="SHR" slug="uni" type="token">123.45 SHR</EntitySymbol>
 			</svelte:fragment>
 		</DataBox>
 		<DataBox>
 			<svelte:fragment slot="label">Value of shares</svelte:fragment>
 			<svelte:fragment>
-				<EntitySymbol slug="usdc" type="token">1234.5 USDC</EntitySymbol>
+				<EntitySymbol label="USDC" slug="usdc" type="token">1234.5 USDC</EntitySymbol>
 			</svelte:fragment>
 		</DataBox>
 	</Grid>

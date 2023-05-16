@@ -25,7 +25,7 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<WalletWidget {address} />
+				<WalletWidget {address} size="sm" />
 			</td>
 		</tr>
 		<tr>

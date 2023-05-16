@@ -5,7 +5,7 @@
 	// import MoneyInput from '$lib/components/MoneyInput.svelte';
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
-	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, Grid, MoneyInput } from '$lib/components';
 
 	let redemptionValue: number;
 
@@ -32,26 +32,21 @@
 	<section>
 		<h3>Your current balance</h3>
 
-		<table>
-			<tbody>
-				<tr>
-					<td><EntitySymbol type="token" label="SHR" slug="uni" /></td>
-					<td>123.45</td>
-				</tr>
-			</tbody>
-		</table>
+		<DataBox>
+			<svelte:fragment slot="label">Number of shares</svelte:fragment>
+			<svelte:fragment>
+				<EntitySymbol label="SHR" slug="uni" type="token">123.45 SHR</EntitySymbol>
+			</svelte:fragment>
+		</DataBox>
 	</section>
 
 	<section>
 		{#if $redemption === 'initial'}
-			<h3>Enter amount to redeem</h3>
+			<h3>Enter amount of shares to redeem</h3>
 
 			<form action="" class="redemption-form">
 				<MoneyInput conversionRatio={10} showConversionLabel size="xl" tokenUnit="SHR" bind:value={redemptionValue} />
 
-				<!-- <AlertList size="sm" status="warning">
-					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
-				</AlertList> -->
 				<Button disabled={!redemptionValue} size="lg" on:click={redemption.confirm}>Redeem</Button>
 			</form>
 		{:else if $redemption === 'confirming'}
@@ -108,5 +103,10 @@
 	.redemption-form {
 		display: grid;
 		gap: var(--space-xl);
+	}
+
+	.transaction-id {
+		display: grid;
+		gap: var(--space-ss);
 	}
 </style>

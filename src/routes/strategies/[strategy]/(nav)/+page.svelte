@@ -5,7 +5,6 @@
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, Button, DepositStatus, SummaryBox, DataBox } from '$lib/components';
 	import WalletWidget from '$lib/components/WalletWidget.svelte';
-	import ConnectedWallet from './ConnectedWallet.svelte';
 
 	export let data;
 	export let isWalletConnected = true;
@@ -23,9 +22,9 @@
 
 <div class="strategy-overview-page">
 	<SummaryBox class="invest-box" title="Invest">
+		<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" size="md" slot="headerCta" />
 		{#if isWalletConnected}
 			<div class="widgets">
-				<ConnectedWallet />
 				<DepositStatus />
 			</div>
 		{/if}
@@ -116,6 +115,11 @@
 			}
 		}
 
+		& .summary-box {
+			background: transparent;
+			padding: 0;
+		}
+
 		& .summary-box .inner {
 			gap: var(--space-sl);
 		}
@@ -124,10 +128,6 @@
 	.widgets {
 		display: grid;
 		gap: var(--space-lg);
-
-		@media (--viewport-md-up) {
-			grid-template-columns: 1fr 2fr;
-		}
 	}
 
 	.summary-stats {

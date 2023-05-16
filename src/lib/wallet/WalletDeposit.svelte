@@ -47,7 +47,14 @@
 			<h3>Enter amount to pay</h3>
 
 			<form action="" class="payment-form">
-				<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
+				<MoneyInput
+					conversionTokenUnit="SHR"
+					conversionRatio={0.1}
+					showConversionLabel
+					size="xl"
+					tokenUnit="USDC"
+					bind:value={paymentValue}
+				/>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
@@ -126,7 +133,7 @@
 
 		& .transaction-id {
 			display: grid;
-			gap: var(--space-md);
+			gap: var(--space-ss);
 		}
 	}
 </style>
