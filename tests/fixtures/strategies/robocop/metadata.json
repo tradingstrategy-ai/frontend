@@ -5,6 +5,15 @@
 	"icon_url": "https://i0.wp.com/bloody-disgusting.com/wp-content/uploads/2022/01/watch-robocop-the-series.png?w=1270",
 	"started_at": 1667260800,
 	"executor_running": true,
+	"on_chain_data": {
+		"chain_id": 137,
+		"asset_management_mode": "enzyme",
+		"smart_contracts": {
+			"fund_value_calculator": "0xcdf038Dd3b66506d2e5378aee185b2f0084B7A33",
+			"vault": "0x6E321256BE0ABd2726A234E8dBFc4d3caf255AE0",
+			"comptroller": "0x0fC476e8050a9eDe4D24E2f01d8775249bDf310e"
+		}
+	},
 	"summary_statistics": {
 		"calculated_at": 1669852800,
 		"first_trade_at": 1667264400,
