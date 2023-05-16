@@ -5,6 +5,7 @@
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import WalletWidget from '$lib/components/WalletWidget.svelte';
 
 	export let wallet: ConnectedWallet;
 	export let requestedChainId: MaybeNumber;
@@ -32,7 +33,7 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
+				<WalletWidget {address} {chain} size="sm" />
 			</td>
 		</tr>
 		<tr>
@@ -119,5 +120,9 @@
 		display: inline-flex;
 		word-break: normal;
 		cursor: pointer;
+	}
+
+	.address-container {
+		display: flex;
 	}
 </style>

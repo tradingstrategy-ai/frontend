@@ -12,10 +12,5 @@
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />
 	<Button secondary label="Back" href="introduction" />
-	<Button
-		label="Next"
-		href="balance"
-		disabled={$wallet.chain?.id !== $wizard?.data.requestedChainId}
-		on:click={() => wizard.complete('connect')}
-	/>
+	<Button label="Next" href="deposit-status" on:click={() => wizard.complete('connect')} />
 </WizardActions>

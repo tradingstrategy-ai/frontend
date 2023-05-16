@@ -29,10 +29,6 @@
 			>
 		{/if}
 	</div>
-	<!-- <div class="actions">
-		<Button href="/wizard/deposit" label="Deposit" disabled={!isWalletConnected} />
-		<Button href="/wizard/redeem" label="Redeem" disabled={!isWalletConnected} />
-	</div> -->
 </SummaryBox>
 
 <style>

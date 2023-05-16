@@ -10,10 +10,4 @@
 
 <SummaryBox title="Connected wallet">
 	<WalletWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" chain="polygon" size="md" />
-
-	{#if isWalletConnected}
-		<AlertList size="xs" status="success">
-			<AlertItem t>Your wallet is connected to this strategy</AlertItem>
-		</AlertList>
-	{:else}{/if}
 </SummaryBox>
