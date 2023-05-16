@@ -2,7 +2,7 @@
  * ChartIQ quote feed adapter for Trading Strategy candle and liquidity data.
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
-import { backendUrl } from '$lib/config';
+import { backendUrl, chartWickThreshold } from '$lib/config';
 import { periodicityToTimeBucket } from '$lib/chart/timeBucketConverters';
 
 const maxTicks = 2000;
@@ -17,6 +17,12 @@ function dateUrlParam(date: Date): string {
 }
 
 function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
+	// Prevent long candle wicks from exploding the yAxis scale.
+	// see: ChartIQ#chartIQ action initialization
+	// see: https://documentation.chartiq.com/CIQ.ChartEngine.html#determineMinMax
+	const wickMin = Math.max(l, Math.min(o, c) * (1 - chartWickThreshold));
+	const wickMax = Math.min(h, Math.max(o, c) * (1 + chartWickThreshold));
+
 	return {
 		DT: `${ts}Z`,
 		Open: o,
@@ -24,6 +30,8 @@ function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
 		Low: l,
 		Close: c,
 		Volume: v,
+		wickMin,
+		wickMax,
 		...restParams
 	};
 }
@@ -31,8 +39,8 @@ function fieldMapper({ ts, o, h, l, c, v, ...restParams }) {
 export default function quoteFeed(type: 'price' | 'liquidity') {
 	const baseUrl = `${backendUrl}/${endpoints[type]}`;
 	const lastRequest = {
-		price: null,
-		liquidity: null
+		price: '',
+		liquidity: ''
 	};
 
 	async function fetchData(symbol, startDate, endDate, params) {
