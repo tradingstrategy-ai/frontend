@@ -91,9 +91,12 @@
 
 	.terms {
 		display: grid;
-		gap: var(--space-xxxs);
+		gap: var(--space-xs);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-md-spacing, normal);
+		@media (--viewport-sm-down) {
+			gap: var(--space-md);
+		}
 	}
 
 	.term:hover {
@@ -105,7 +108,7 @@
 		border: 1px solid hsla(var(--hsl-text));
 
 		@media (--viewport-lg-down) {
-			margin: var(--space-md) 0;
+			margin: var(--space-lg) 0 var(--space-xl);
 		}
 	}
 </style>
