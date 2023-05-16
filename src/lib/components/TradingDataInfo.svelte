@@ -20,11 +20,11 @@ Container for displaying a set of trading data key/value pairs. Use with <Tradin
 		grid-template-columns: auto auto;
 		gap: var(--space-sl);
 		margin: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
 
 		& :global > * {
 			margin: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 </style>

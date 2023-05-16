@@ -87,6 +87,11 @@
 		}
 	}
 
+	main :global h1 {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	h2 {
 		font: var(--f-h2-medium);
 	}
