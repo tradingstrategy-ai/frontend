@@ -1,14 +1,13 @@
 <!--
 @component
-Displaying a summary content box with title, optional subtitle and and optional header/footer.
-CTA slots `headerCta` and `footerCta` may also be provided (if both, only one is displayed
-based on viewport size).
+Display a summary content box with title, optional subtitle and and optional CTA (using `cta` slot).
+Possible `ctaPosition` values include: top, bottom, toggle (default).
 
 #### Usage
 ```tsx
 	<SummaryBox title="Fruits" subtitle="These are fruits that are worth trying">
+		<Button slot="cta" label="Find More Fruit" href="http://example.org/fruit" />
 		<DataBox label="Banana" value="Minions favorite" />
-		<Button slot="footerCta" label="Find More Fruit" href="http://example.org/fruit" />
 	</SummaryBox>
 ```
 -->
@@ -16,46 +15,41 @@ based on viewport size).
 	let classes: string = '';
 	export { classes as class };
 	export let title: string;
-	export let subtitle: string = '';
+	export let subtitle: MaybeString = undefined;
+	export let ctaPosition: 'top' | 'bottom' | 'toggle' = 'toggle';
 </script>
 
-<div
-	class="summary-box {classes}"
-	class:has-footer={$$slots.footer}
-	class:has-both-ctas={$$slots.footerCta && $$slots.headerCta}
->
-	<div class="main">
-		<header class:has-cta={$$slots.headerCta}>
-			<div class="description">
-				<h3>{title}</h3>
-				{#if subtitle}
-					<p>{subtitle}</p>
-				{/if}
+<div class="summary-box cta-{ctaPosition} {classes}">
+	<header>
+		<h3>{title}</h3>
+		{#if subtitle}
+			<p>{subtitle}</p>
+		{/if}
+		{#if $$slots.cta}
+			<div class="cta">
+				<slot name="cta" position="header" />
 			</div>
-			{#if $$slots.headerCta}
-				<div class="cta">
-					<slot name="headerCta" />
-				</div>
-			{/if}
-		</header>
-		<div class="inner">
-			<slot />
-		</div>
+		{/if}
+	</header>
+
+	<div class="main">
+		<slot />
 	</div>
-	{#if $$slots.footer || $$slots.footerCta}
-		<footer>
-			<slot name="footer" />
-			{#if $$slots.footerCta}
-				<div class="cta">
-					<slot name="footerCta" />
-				</div>
-			{/if}
-		</footer>
-	{/if}
+
+	<footer>
+		{#if $$slots.cta}
+			<div class="cta">
+				<slot name="cta" position="footer" />
+			</div>
+		{/if}
+	</footer>
 </div>
 
 <style lang="postcss">
 	.summary-box {
+		container-type: inline-size;
+		display: grid;
+		grid-template-rows: auto 1fr auto;
 		background: hsla(var(--hsl-box), var(--a-box-a));
 		border-radius: var(--radius-md);
 		padding: var(--space-lg) var(--space-lg);
@@ -65,102 +59,91 @@ based on viewport size).
 		}
 
 		& .main {
+			display: grid;
+			align-content: flex-start;
 			gap: var(--space-ls);
-
-			@media (--viewport-md-down) {
-				gap: var(--space-sm);
-			}
-		}
-
-		&,
-		& .main,
-		& .inner {
-			display: grid;
-			place-content: space-between stretch;
-		}
-
-		& .description {
-			display: grid;
-			gap: var(--space-sm);
-		}
-
-		& header {
-			display: grid;
-			gap: var(--space-ss);
-			margin-bottom: var(--space-xxxs);
-
-			& h3 {
-				font: var(--f-heading-md-medium);
-				letter-spacing: var(--f-heading-md-spacing, normal);
-			}
-
-			& p {
-				color: hsla(var(--hsl-text-extra-light));
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing, normal);
-			}
-
-			&.has-cta {
-				@media (--viewport-md-up) {
-					grid-template-columns: 1fr auto;
-
-					& h3 {
-						grid-column: 1/2;
-					}
-
-					& p {
-						grid-column: 1/3;
-					}
-				}
-
-				@media (--viewport-md-down) {
-					& :global(.button) {
-						margin: var(--space-sl) 0 0;
-						width: 100%;
-					}
-				}
-			}
-
-			& .cta {
-				@media (--viewport-lg-down) {
-					display: none;
-				}
-			}
-		}
-
-		& .inner {
-			gap: var(--inner-gap, var(--space-ls));
-			padding: var(--inner-padding);
 
 			& :global(p) {
 				font: var(--f-ui-lg-roman);
 				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
+	}
 
-		& footer {
-			margin-top: var(--space-md);
-			@media (--viewport-md-down) {
-				margin-top: var(--space-ms);
-			}
+	header {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: var(--space-sm) var(--space-ss);
+		padding-bottom: var(--space-xxxs);
+		margin-bottom: var(--space-ls);
 
-			& .cta :global .button {
-				width: 100%;
-			}
+		@media (--viewport-md-down) {
+			margin-bottom: var(--space-sm);
 		}
 
-		/*
-		  Hide footer CTA when header CTA is visible (i.e., on larger displays).
-			- hides the whole footer when there's no other footer content
-			- hides just the footer CTA when other footer content is present
-		 */
-		&.has-both-ctas {
-			&:not(.has-footer) footer,
-			&.has-footer footer .cta {
-				@media (--viewport-xl-up) {
-					display: none;
-				}
-			}
+		& h3 {
+			align-self: center;
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
+		}
+
+		& p {
+			/* grid-area: 2 / 1 / auto / span 2; */
+			grid-column: 1 / span 2;
+			color: hsla(var(--hsl-text-extra-light));
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+		}
+	}
+
+	/*
+		CTA styles based on ctaPosition (top, bottom, toggle)
+	*/
+
+	/* default footer CTA */
+	footer .cta {
+		display: grid;
+		margin-top: var(--space-md);
+
+		@container (width <= 500px) {
+			margin-top: var(--space-ms);
+		}
+	}
+
+	/* default header CTA */
+	header .cta {
+		grid-column: 1 / span 2;
+		display: grid;
+		margin-top: var(--space-sl);
+	}
+
+	/* hide header cta when position=bottom / footer cta when position=top  */
+	.cta-bottom header .cta,
+	.cta-top footer .cta {
+		display: none;
+	}
+
+	/* container query for wide summary box */
+	@container (width > 500px) {
+		/* position CTA in header first row */
+		:is(.cta-toggle, .cta-top) header .cta {
+			grid-area: 1 / 2;
+			align-items: flex-start;
+			display: flex;
+			margin: 0;
+		}
+
+		/* hide footer CTA for position=toggle */
+		.cta-toggle footer .cta {
+			display: none;
+		}
+	}
+
+	/* container query for narrow summary boxe */
+	@container (width <= 500px) {
+		/* hide header CTA when position=toggle (footer shown instead) */
+		.cta-toggle header .cta {
+			display: none;
 		}
 	}
 </style>

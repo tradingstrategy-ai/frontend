@@ -49,14 +49,24 @@
 
 			<Grid cols={2} gap="lg">
 				<SummaryBox title="Most profitable 24h">
-					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
-					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-up">View all winning pairs</Button>
+					<Button
+						slot="cta"
+						let:position
+						size={position === 'header' ? 'sm' : 'md'}
+						label="View all winning pairs"
+						href="/trading-view/top-list/daily-up"
+					/>
 					<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
 				</SummaryBox>
 
 				<SummaryBox title="Worst performance 24h">
-					<Button size="sm" slot="headerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
-					<Button size="md" slot="footerCta" href="/trading-view/top-list/daily-down">View all losing pairs</Button>
+					<Button
+						slot="cta"
+						let:position
+						size={position === 'header' ? 'sm' : 'md'}
+						label="View all losing pairs"
+						href="/trading-view/top-list/daily-down"
+					/>
 					<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
 				</SummaryBox>
 			</Grid>
