@@ -18,9 +18,17 @@
 </script>
 
 <section class="source">
-	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy">
-		<Button slot="headerCta" tertiary icon="github" href={githubUrl} label="View on GitHub" target="_blank" />
+	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy" ctaPosition="top">
+		<Button
+			slot="cta"
+			let:position
+			size={position === 'header' ? 'sm' : 'md'}
+			tertiary
+			icon="github"
+			href={githubUrl}
+			label="View on GitHub"
+			target="_blank"
+		/>
 		<SourceCode language={python} {code} />
-		<Button slot="footerCta" tertiary icon="github" href={githubUrl} label="View on GitHub" target="_blank" />
 	</SummaryBox>
 </section>

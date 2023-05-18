@@ -59,5 +59,6 @@
 	.smart-contract {
 		display: grid;
 		gap: var(--space-md);
+		justify-content: flex-start;
 	}
 </style>
