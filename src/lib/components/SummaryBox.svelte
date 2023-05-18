@@ -73,7 +73,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 	header {
 		display: grid;
 		grid-template-columns: 1fr auto;
-		gap: var(--space-sm) var(--space-ss);
+		gap: var(--space-sm) var(--space-lg);
 		padding-bottom: var(--space-xxxs);
 		margin-bottom: var(--space-ls);
 
@@ -105,7 +105,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 		display: grid;
 		margin-top: var(--space-md);
 
-		@container (width <= 500px) {
+		@container (width <= 576px) {
 			margin-top: var(--space-ms);
 		}
 	}
@@ -124,7 +124,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 	}
 
 	/* container query for wide summary box */
-	@container (width > 500px) {
+	@container (width > 576px) {
 		/* position CTA in header first row */
 		:is(.cta-toggle, .cta-top) header .cta {
 			grid-area: 1 / 2;
@@ -140,7 +140,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 	}
 
 	/* container query for narrow summary boxe */
-	@container (width <= 500px) {
+	@container (width <= 576px) {
 		/* hide header CTA when position=toggle (footer shown instead) */
 		.cta-toggle header .cta {
 			display: none;

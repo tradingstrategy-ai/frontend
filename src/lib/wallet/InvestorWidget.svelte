@@ -3,8 +3,9 @@
 	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
 	import { ethers } from 'ethers';
 	import { wallet } from '$lib/wallet/client';
+	import { getExplorerUrl } from './utils';
 	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
-	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
+	import { AlertList, AlertItem, Button, CryptoAddressWidget, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 
 	export let strategyId: string;
@@ -30,7 +31,18 @@
 	}
 </script>
 
-<SummaryBox title="Deposit status">
+<SummaryBox title="Invest" ctaPosition="top">
+	<svelte:fragment slot="cta">
+		{#if $wallet.status === 'connected'}
+			<CryptoAddressWidget
+				size="md"
+				icon="wallet"
+				clipboardCopier={false}
+				address={$wallet.address}
+				href={getExplorerUrl($wallet.chain, $wallet.address)}
+			/>
+		{/if}
+	</svelte:fragment>
 	<div class="content">
 		{#if !(contracts.vault && contracts.fund_value_calculator)}
 			<AlertList status="info" size="md">
