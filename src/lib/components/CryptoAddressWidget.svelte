@@ -1,43 +1,15 @@
 <script lang="ts">
-	import { Icon } from '$lib/components';
-	import { fade } from 'svelte/transition';
-	import fsm from 'svelte-fsm';
+	import { Copier } from '$lib/components';
 
 	export let address: string;
 	export let href: string;
 	export let size: 'md' | 'sm' = 'md';
 
-	const copier = fsm('idle', {
-		idle: {
-			copy() {
-				navigator.clipboard.writeText(address).then(this.success);
-			},
-			success: 'copied'
-		},
-
-		copied: {
-			_enter() {
-				this.complete.debounce(2000);
-			},
-			complete: 'idle'
-		}
-	});
 </script>
 
 <address class="crypto-address-widget size-{size} tile b">
 	<a {href} rel="noreferrer" target="_blank">{address}</a>
-	<button title="Copy to clipboard" on:click={copier.copy}>
-		<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
-		{#if $copier === 'idle'}
-			<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
-				<Icon name="copy-to-clipboard" />
-			</span>
-		{:else}
-			<span in:fade|local={{ duration: 100 }} out:fade|local={{ duration: 500 }}>
-				<Icon name="check-square" />
-			</span>
-		{/if}
-	</button>
+	<Copier copyText={address}/>
 </address>
 
 <style lang="postcss">
@@ -79,16 +51,4 @@
 		white-space: nowrap;
 	}
 
-	button {
-		display: grid;
-		border: none;
-		min-width: 1em;
-		padding: 0;
-		background: none;
-		cursor: pointer;
-
-		& span {
-			grid-area: 1 / 1;
-		}
-	}
 </style>
