@@ -9,12 +9,14 @@ Render the pair trading page
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
+	import { Copier } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { page } from '$app/stores';
+	import { python } from 'svelte-highlight/languages';
 
 	export let data;
 
@@ -42,17 +44,16 @@ Render the pair trading page
 	].join(' ');
 
 	// e.g.
-	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 5), # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
-	function copyPythonIdentifier() {
+	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
+	function getPythonIdentifier() {
 		const parts = [
 			`ChainId.${summary.chain_slug}`,
 			`"${summary.exchange_slug}"`,
 			`"${summary.base_token_symbol}"`,
 			`"${summary.quote_token_symbol}"`,
-			summary.pool_swap_fee * 10000
+			summary.pool_swap_fee
 		];
-		const text = `(${parts.join(', ')}), # ${summary.pair_name} ${$page.url}`;
-		navigator.clipboard.writeText(text);
+		return `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
 	}
 </script>
 
@@ -114,7 +115,12 @@ Render the pair trading page
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
-			<Button label="Copy Python identifier" on:click={copyPythonIdentifier} />
+			<Button label="Copy Python identifier">
+				<div class="python-identifier-container">
+					<span class="python-identifier">Copy Python Identifier</span>
+					<span class="python-identifier"><Copier copyText={getPythonIdentifier()}/></span>
+				</div>
+			</Button>
 		</div>
 	</section>
 
@@ -207,4 +213,12 @@ Render the pair trading page
 			font: var(--f-h4-roman);
 		}
 	}
+
+	.python-identifier-container {
+		display: grid;
+		grid-auto-flow: column;
+		gap: var(--space-ss);
+		justify-self: flex-start;
+	}
+
 </style>
