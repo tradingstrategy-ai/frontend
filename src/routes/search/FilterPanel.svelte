@@ -92,6 +92,13 @@
 				labels={['▲ Up > 5%', '△ Up', '▽ Down', '▼ Down > 5%']}
 				on:change={handleFilterChange}
 			/>
+			<NumericFilter
+				bind:selected={filters['pool_swap_fee']}
+				fieldName="pool_swap_fee"
+				filters={['0.0001', '0.0005', '0.003', '0.01']}
+				labels={['0.01%', '0.05%', '0.3%', '1.0%']}
+				on:change={handleFilterChange}
+			/>
 		</div>
 	</section>
 

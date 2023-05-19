@@ -68,7 +68,7 @@
 		}
 
 		& .inner {
-			grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		}
 	}
 

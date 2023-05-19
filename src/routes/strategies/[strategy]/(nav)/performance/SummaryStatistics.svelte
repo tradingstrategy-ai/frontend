@@ -16,8 +16,8 @@ Render the statistics from the portfolio server-side calculated state.
 </script>
 
 {#if summary}
-	<div class="summary-statistics">
-		<SummaryBox class="summary-statistics" title="Performance summary">
+	<SummaryBox title="Performance summary">
+		<div class="summary-statistics">
 			<DataBox size="sm" label="Trade period" value={formatDuration(summary.duration)} />
 			<DataBox size="sm" label="Realised profit" value={formatDollar(summary.realised_profit)} />
 			<DataBox size="sm" label="Open positions" value={formatDollar(summary.open_value)} />
@@ -35,16 +35,14 @@ Render the statistics from the portfolio server-side calculated state.
 			/>
 			<DataBox size="sm" label="Biggest winning trade %" value={formatPercent(summary.biggest_winning_trade_pc)} />
 			<DataBox size="sm" label="Biggest losing trade %" value={formatPercent(summary.biggest_losing_trade_pc)} />
-		</SummaryBox>
-	</div>
+		</div>
+	</SummaryBox>
 {/if}
 
 <style lang="postcss">
-	.summary-statistics :global {
-		display: contents;
-
-		& .inner {
-			grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		}
+	.summary-statistics {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: inherit;
 	}
 </style>

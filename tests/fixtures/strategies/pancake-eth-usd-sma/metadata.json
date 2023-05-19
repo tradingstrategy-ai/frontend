@@ -5,6 +5,11 @@
 	"icon_url": "https://1397868517-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MHREX7DHcljbY5IkjgJ%2F-MJfSAPkP4Jn7cikZadQ%2F-MJgOYsqqIJgTs9DVtHu%2Ficon-square-512.png?alt=media&token=5aa29acf-4d4f-4c78-8e8b-39665a0bf8db",
 	"started_at": 1670433586.0,
 	"executor_running": true,
+	"on_chain_data": {
+		"chain_id": 56,
+		"asset_management_mode": "hot_wallet",
+		"smart_contracts": {}
+	},
 	"summary_statistics": {
 		"calculated_at": 1670522899.89681,
 		"first_trade_at": 1670033302.878544,

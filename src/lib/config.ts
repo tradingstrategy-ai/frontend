@@ -89,6 +89,28 @@ export const typesenseConfig = config(
 );
 
 /**
+ * Load WalletConnect projectId and warn if not available.
+ */
+export const walletConnectConfig = config((projectId: string) => {
+	if (!projectId) {
+		console.warn('You need configure WalletConnect projectId to enable WalletConnect');
+	}
+	return { projectId };
+}, 'WALLET_CONNECT_PROJECT_ID');
+
+/**
+ * Load chart wick threshold
+ *
+ * Specified as % above/below the candle body that the wick may extend when calculating
+ * the yAxis scale in candle charts (prevents long wick from destroying the scale).
+ *
+ * Defaults to 33%
+ */
+export const chartWickThreshold = config((threshold: string) => {
+	return Number.parseFloat(threshold) || 1 / 3;
+}, 'CHART_WICK_THRESHOLD');
+
+/**
  * Specify chains under maintence as JSON string, e.g.:
  * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
  */

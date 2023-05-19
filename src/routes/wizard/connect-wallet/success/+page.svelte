@@ -1,4 +1,5 @@
 <script lang="ts">
+	import wizard from '../../wizardState';
 	import { Button, WizardActions } from '$lib/components';
 </script>
 
@@ -10,6 +11,6 @@
 </div>
 
 <WizardActions>
-	<Button secondary href="balance">Back</Button>
-	<Button>Done</Button>
+	<Button secondary label="Back" href="balance" />
+	<Button label="Done" href={$wizard?.returnTo} />
 </WizardActions>

@@ -1,20 +1,17 @@
 <script lang="ts">
-	import { type Chain, getChainSlug } from '$lib/helpers/chain';
+	import type { ConnectedWallet } from '$lib/wallet/client';
+	import { switchNetwork } from '@wagmi/core';
+	import { getExplorerUrl } from '$lib/wallet/utils';
+	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
 
-	export let walletSlug: string;
-	export let walletName: string;
-	export let address: string;
-	export let network: Record<string, any>;
+	export let wallet: ConnectedWallet;
+	export let requestedChainId: MaybeNumber;
 	export let chains: Chain[];
 
-	function getExplorerUrl(network: any, address: string) {
-		const baseUrl = network.explorers[0]?.url ?? 'https://blockscan.com';
-		return `${baseUrl}/address/${address}`;
-	}
-
-	let wrongNetwork = false;
+	$: ({ name, address, chain } = wallet);
+	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
 </script>
 
 <table class="wallet-summary responsive">
@@ -22,8 +19,10 @@
 		<tr>
 			<td>Wallet</td>
 			<td class="wallet-data">
-				<img alt={walletName} src={getLogoUrl(walletSlug)} />
-				{walletName}
+				{#if walletLogoUrl}
+					<img alt={name} src={walletLogoUrl} />
+				{/if}
+				{name}
 				<span class="status">
 					<div class="dot" />
 					Connected
@@ -33,24 +32,21 @@
 		<tr>
 			<td>Account</td>
 			<td>
-				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(network, address)} />
+				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
 			</td>
 		</tr>
 		<tr>
 			<td>Network</td>
 			<td>
-				{#if wrongNetwork}
-					<div
-						class="wrong-network-alert"
-						on:click={() => (wrongNetwork = false)}
-						on:keydown={() => (wrongNetwork = false)}
-					>
+				{#if requestedChainId && requestedChainId !== chain.id}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: requestedChainId })}>
 						<AlertList size="xs" status="error">
-							<AlertItem>Wrong network! Please connect to Polygon</AlertItem>
+							<AlertItem>Wrong network! Please connect to {getChainName(chains, requestedChainId)}</AlertItem>
 						</AlertList>
 					</div>
 				{:else}
-					<EntitySymbol type="blockchain" label={network.name} slug={getChainSlug(chains, network.chainId)} />
+					<EntitySymbol type="blockchain" label={chain.name} slug={getChainSlug(chains, chain.id)} />
 				{/if}
 			</td>
 		</tr>
@@ -122,5 +118,6 @@
 	.wrong-network-alert {
 		display: inline-flex;
 		word-break: normal;
+		cursor: pointer;
 	}
 </style>

@@ -118,7 +118,7 @@ Render the pair trading page
 			<Button label="Copy Python identifier">
 				<div class="python-identifier-container">
 					<span class="python-identifier">Copy Python Identifier</span>
-					<span class="python-identifier"><Copier copyText={getPythonIdentifier()}/></span>
+					<span class="python-identifier"><Copier copyText={getPythonIdentifier()} /></span>
 				</div>
 			</Button>
 		</div>
@@ -220,5 +220,4 @@ Render the pair trading page
 		gap: var(--space-ss);
 		justify-self: flex-start;
 	}
-
 </style>

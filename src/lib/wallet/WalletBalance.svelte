@@ -1,20 +1,41 @@
 <script lang="ts">
+	import { fetchBalance } from '@wagmi/core';
+	import { wallet } from '$lib/wallet/client';
+	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
 	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import Spinner from 'svelte-spinner';
+
+	$: ({ address, chain } = $wallet);
+	$: chainCurrency = chain?.nativeCurrency.symbol;
 </script>
 
 <table class="wallet-balance responsive">
 	<tbody>
 		<tr>
 			<td>Account</td>
-			<td><CryptoAddressWidget size="sm" address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" /></td>
+			<td><CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} /></td>
 		</tr>
 		<tr>
-			<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
-			<td>682.2362</td>
+			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
+			<td>
+				{#await fetchBalance({ address })}
+					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+				{:then balance}
+					{balance.formatted ?? '---'}
+				{/await}
+			</td>
 		</tr>
 		<tr>
 			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-			<td>1200.18</td>
+			<td>
+				{#await fetchBalance({ address, token: getUsdcAddress(chain.id) })}
+					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+				{:then balance}
+					{balance.formatted ?? '---'}
+				{:catch}
+					---
+				{/await}
+			</td>
 		</tr>
 	</tbody>
 </table>

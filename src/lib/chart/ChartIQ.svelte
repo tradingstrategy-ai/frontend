@@ -85,6 +85,18 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		let chartTracker;
 		let chartEngine = new CIQ.ChartEngine({ container: node, ...options });
 
+		// Prevent long candle wicks from exploding the yAxis scale.
+		// see: quoteFeed#fieldMapper
+		// see: https://documentation.chartiq.com/CIQ.ChartEngine.html#determineMinMax
+		chartEngine.origDetermineMinMax = chartEngine.determineMinMax;
+		// @ts-ignore
+		chartEngine.determineMinMax = function (_q, fields, _s, _b, _l, _c, _p, axis, _f) {
+			if (axis.name === 'chart') {
+				fields = ['Close', 'Open', 'wickMin', 'wickMax'];
+			}
+			return chartEngine.origDetermineMinMax(_q, fields, _s, _b, _l, _c, _p, axis, _f);
+		};
+
 		// display X-Axis time markers in UTC
 		chartEngine.setTimeZone(null, 'UTC');
 

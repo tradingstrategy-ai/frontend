@@ -23,6 +23,8 @@ Container for displaying a set of trading data key/value pairs. Use with <Tradin
 
 		& :global > * {
 			margin: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 </style>

@@ -17,3 +17,10 @@ export function getChain(chains: Chain[], chain: string | number) {
 export function getChainSlug(chains: Chain[], id: number) {
 	return getChain(chains, id)?.chain_slug;
 }
+
+/**
+ * Return chain name from an id or slug (if exists)
+ */
+export function getChainName(chains: Chain[], chain: string | number) {
+	return getChain(chains, chain)?.chain_name;
+}

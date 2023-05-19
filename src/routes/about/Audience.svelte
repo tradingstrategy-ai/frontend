@@ -9,7 +9,7 @@
 			<p>The Trading Strategy protocol creates value for all participants within the DeFi ecosystem.</p>
 		</header>
 		<Grid cols={2} gap="xl">
-			<SummaryBox title="Traders and investors">
+			<SummaryBox title="Traders and investors" ctaPosition="bottom">
 				<ul>
 					<li>Access automated trading strategies created by skilled strategy developers and quants</li>
 					<li>
@@ -21,12 +21,10 @@
 					<li>Direct trade execution on-chain without a counter-party risk</li>
 				</ul>
 
-				<div class="subscribe-cta" slot="footerCta">
-					<Button href="/newsletter">Sign up to waitlist</Button>
-				</div></SummaryBox
-			>
+				<Button slot="cta" label="Sign up to waitlist" href="/newsletter" />
+			</SummaryBox>
 
-			<SummaryBox title="Strategy developers and quants">
+			<SummaryBox title="Strategy developers and quants" ctaPosition="bottom">
 				<ul>
 					<li>Create and easily deploy trading algorithms for decentralised markets</li>
 					<li>Access decentralised markets without needing technical knowledge of blockchains or smart contracts</li>
@@ -43,7 +41,7 @@
 				</ul>
 
 				<Button
-					slot="footerCta"
+					slot="cta"
 					label="Join our Discord server"
 					icon="discord"
 					href="https://discord.gg/en8tW6MDtw"
@@ -80,5 +78,11 @@
 				text-align: left;
 			}
 		}
+	}
+
+	li {
+		margin-bottom: var(--space-md);
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 </style>
