@@ -19,8 +19,8 @@
 		<HashAddress {address} endChars={7} />
 	</a>
 	{#if clipboardCopier}
-		<button title="Copy to clipboard" on:click={() => copier?.copy()}>
-			<CopyWidget text={address} bind:copier />
+		<button title="Copy to clipboard" on:click={() => copier?.copy(address)}>
+			<CopyWidget bind:copier />
 		</button>
 	{/if}
 </address>

@@ -6,8 +6,8 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 
 #### Usage:
 ```tsx
-	<button title="copy to clipboard" on:click={() => copier.copy()}>
-		<CopyWidget bind:copier text="This will be copied to clipboard" />
+	<button title="copy to clipboard" on:click={() => copier.copy("This will be copied to clipboard")}>
+		<CopyWidget bind:copier />
 	</button>
 ```
 -->
@@ -16,11 +16,9 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 	import { Icon } from '$lib/components';
 	import { fade } from 'svelte/transition';
 
-	export let text: string;
-
 	export const copier = fsm('idle', {
 		idle: {
-			copy() {
+			copy(text: string) {
 				navigator.clipboard.writeText(text).then(this.success);
 			},
 			success: 'copied'

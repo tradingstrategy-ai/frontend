@@ -44,9 +44,9 @@ Render the pair trading page
 		`on ${details.exchange_name}`
 	].join(' ');
 
-	// e.g.
+	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
 	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
-	function getPythonIdentifier() {
+	function copyPythonIdentifier(this: HTMLButtonElement) {
 		const parts = [
 			`ChainId.${summary.chain_slug}`,
 			`"${summary.exchange_slug}"`,
@@ -54,7 +54,9 @@ Render the pair trading page
 			`"${summary.quote_token_symbol}"`,
 			summary.pool_swap_fee
 		];
-		return `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
+		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
+		copier?.copy(identifier);
+		this.blur();
 	}
 </script>
 
@@ -116,8 +118,8 @@ Render the pair trading page
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
-			<Button label="Copy Python identifier" on:click={() => copier?.copy()}>
-				<CopyWidget slot="icon" bind:copier text={getPythonIdentifier()} --icon-size="1rem" />
+			<Button label="Copy Python identifier" on:click={copyPythonIdentifier}>
+				<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
 			</Button>
 		</div>
 	</section>
