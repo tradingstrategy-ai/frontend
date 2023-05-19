@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Copier, HashAddress, Icon } from '$lib/components';
+	import { CopyWidget, HashAddress, Icon } from '$lib/components';
 
 	export let address: string;
 	export let clipboardCopier = true;
@@ -16,7 +16,7 @@
 		<HashAddress {address} endChars={7} />
 	</a>
 	{#if clipboardCopier}
-		<Copier copyText={address} />
+		<CopyWidget copyText={address} />
 	{/if}
 </address>
 

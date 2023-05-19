@@ -4,10 +4,10 @@ Display a copy icon that copies the provided text to the clipboard when clicked.
 
 #### Usage:
 ```tsx
-<Copier
-copyText="This text will be copied to the clipboard when the icon is clicked."
-hoverText="This text will be displayed when the icon is hovered over."
-/>
+	<CopyWidget
+		copyText="This text will be copied to the clipboard when the icon is clicked."
+		hoverText="This text will be displayed when the icon is hovered over."
+	/>
 ```
 -->
 <script lang="ts">

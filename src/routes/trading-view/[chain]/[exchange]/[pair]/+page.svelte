@@ -8,8 +8,7 @@ Render the pair trading page
 <script lang="ts">
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
-	import { Copier } from '$lib/components';
+	import { AlertItem, AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -118,7 +117,7 @@ Render the pair trading page
 			<Button label="Copy Python identifier">
 				<div class="python-identifier-container">
 					<span class="python-identifier">Copy Python Identifier</span>
-					<span class="python-identifier"><Copier copyText={getPythonIdentifier()} /></span>
+					<span class="python-identifier"><CopyWidget copyText={getPythonIdentifier()} /></span>
 				</div>
 			</Button>
 		</div>
