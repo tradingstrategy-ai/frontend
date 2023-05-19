@@ -45,3 +45,4 @@ export { default as UspTile } from './UspTile.svelte';
 export { default as WizardActions } from './WizardActions.svelte';
 export { default as WizardHeader } from './WizardHeader.svelte';
 export { default as WizardNavItem } from './WizardNavItem.svelte';
+export { default as Copier } from './Copier.svelte';
