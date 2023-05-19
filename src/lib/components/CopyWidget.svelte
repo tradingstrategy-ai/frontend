@@ -1,13 +1,14 @@
 <!--
 @component
-Display a copy icon that copies the provided text to the clipboard when clicked.
+Display a copy icon that copies the provided text to the clipboard. The component exports
+a `copier` store with a `copy` method – bind this to a variable and call `copier.copy()`
+(from a button, for instance).
 
 #### Usage:
 ```tsx
-	<CopyWidget
-		copyText="This text will be copied to the clipboard when the icon is clicked."
-		hoverText="This text will be displayed when the icon is hovered over."
-	/>
+	<button title="copy to clipboard" on:click={() => copier.copy()}>
+		<CopyWidget bind:copier text="This will be copied to clipboard" />
+	</button>
 ```
 -->
 <script lang="ts">
@@ -15,13 +16,12 @@ Display a copy icon that copies the provided text to the clipboard when clicked.
 	import { Icon } from '$lib/components';
 	import { fade } from 'svelte/transition';
 
-	export let copyText: string;
-	export let hoverText: string = 'Copy to clipboard';
+	export let text: string;
 
-	const copier = fsm('idle', {
+	export const copier = fsm('idle', {
 		idle: {
 			copy() {
-				navigator.clipboard.writeText(copyText).then(this.success);
+				navigator.clipboard.writeText(text).then(this.success);
 			},
 			success: 'copied'
 		},
@@ -35,7 +35,7 @@ Display a copy icon that copies the provided text to the clipboard when clicked.
 	});
 </script>
 
-<button title={hoverText} on:click={copier.copy}>
+<div class="copy-widget">
 	<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
 	{#if $copier === 'idle'}
 		<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
@@ -46,19 +46,14 @@ Display a copy icon that copies the provided text to the clipboard when clicked.
 			<Icon name="check-square" />
 		</span>
 	{/if}
-</button>
+</div>
 
-<style>
-	button {
+<style lang="postcss">
+	.copy-widget {
 		display: grid;
-		border: none;
-		min-width: 1em;
-		padding: 0;
-		background: none;
-		cursor: pointer;
 
 		& span {
-			grid-area: 1 / 1;
+			grid-area: 1 / -1;
 		}
 	}
 </style>

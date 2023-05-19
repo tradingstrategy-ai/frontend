@@ -6,6 +6,7 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { AlertItem, AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
@@ -15,9 +16,10 @@ Render the pair trading page
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { page } from '$app/stores';
-	import { python } from 'svelte-highlight/languages';
 
 	export let data;
+
+	let copier: ComponentProps<CopyWidget>['copier'];
 
 	$: summary = data.pair.summary;
 	$: details = data.pair.additional_details;
@@ -114,11 +116,8 @@ Render the pair trading page
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
-			<Button label="Copy Python identifier">
-				<div class="python-identifier-container">
-					<span class="python-identifier">Copy Python Identifier</span>
-					<span class="python-identifier"><CopyWidget copyText={getPythonIdentifier()} /></span>
-				</div>
+			<Button label="Copy Python identifier" on:click={() => copier?.copy()}>
+				<CopyWidget slot="icon" bind:copier text={getPythonIdentifier()} --icon-size="1rem" />
 			</Button>
 		</div>
 	</section>
@@ -211,12 +210,5 @@ Render the pair trading page
 		& p {
 			font: var(--f-h4-roman);
 		}
-	}
-
-	.python-identifier-container {
-		display: grid;
-		grid-auto-flow: column;
-		gap: var(--space-ss);
-		justify-self: flex-start;
 	}
 </style>
