@@ -6,9 +6,10 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
+	import { AlertItem, AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -17,6 +18,8 @@ Render the pair trading page
 	import { page } from '$app/stores';
 
 	export let data;
+
+	let copier: ComponentProps<CopyWidget>['copier'];
 
 	$: summary = data.pair.summary;
 	$: details = data.pair.additional_details;
@@ -41,18 +44,19 @@ Render the pair trading page
 		`on ${details.exchange_name}`
 	].join(' ');
 
-	// e.g.
-	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 5), # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
-	function copyPythonIdentifier() {
+	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
+	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
+	function copyPythonIdentifier(this: HTMLButtonElement) {
 		const parts = [
 			`ChainId.${summary.chain_slug}`,
 			`"${summary.exchange_slug}"`,
 			`"${summary.base_token_symbol}"`,
 			`"${summary.quote_token_symbol}"`,
-			summary.pool_swap_fee * 10000
+			summary.pool_swap_fee
 		];
-		const text = `(${parts.join(', ')}), # ${summary.pair_name} ${$page.url}`;
-		navigator.clipboard.writeText(text);
+		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
+		copier?.copy(identifier);
+		this.blur();
 	}
 </script>
 
@@ -114,7 +118,9 @@ Render the pair trading page
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
 			/>
-			<Button label="Copy Python identifier" on:click={copyPythonIdentifier} />
+			<Button label="Copy Python identifier" on:click={copyPythonIdentifier}>
+				<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
+			</Button>
 		</div>
 	</section>
 

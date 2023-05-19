@@ -7,6 +7,7 @@ export { default as ContentCard } from './ContentCard.svelte';
 export { default as ContentCardsSection } from './ContentCardsSection.svelte';
 export { default as ContentCardsTemplate } from './ContentCardsTemplate.svelte';
 export { default as ContentTile } from './ContentTile.svelte';
+export { default as CopyWidget } from './CopyWidget.svelte';
 export { default as CryptoAddressWidget } from './CryptoAddressWidget.svelte';
 export { default as DataBox } from './DataBox.svelte';
 export { default as DataBoxes } from './DataBoxes.svelte';

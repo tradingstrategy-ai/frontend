@@ -42,27 +42,34 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let target: string | undefined = undefined;
 	export let title: string | undefined = undefined;
 
+	$: tag = href && !disabled ? 'a' : 'button';
 	$: hasLabel = $$slots.default || label;
 	$: kind = ghost ? 'ghost' : quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
 	$: allClasses = `button ${kind} ${size} ${classes}`;
-	$: downloadAttr = typeof download === 'string' ? download : download ? '' : undefined;
+
+	$: linkAttrs = {
+		href,
+		rel,
+		target,
+		download: typeof download === 'string' ? download : download ? '' : undefined
+	};
+
+	$: buttonAttrs = {
+		disabled,
+		type: submit ? 'submit' : undefined
+	};
+
+	$: attrs = tag === 'a' ? linkAttrs : buttonAttrs;
 </script>
 
-{#if href && !disabled}
-	<a class={allClasses} download={downloadAttr} {href} {rel} {tabindex} {target} {title} on:click>
-		{#if hasLabel}
-			<span><slot>{label}</slot></span>
-		{/if}
+<svelte:element this={tag} {...attrs} class={allClasses} {tabindex} {title} on:click>
+	{#if hasLabel}
+		<span><slot>{label}</slot></span>
+	{/if}
+	<slot name="icon">
 		{#if icon}<Icon name={icon} />{/if}
-	</a>
-{:else}
-	<button class={allClasses} {disabled} {tabindex} {title} type={submit ? 'submit' : undefined} on:click>
-		{#if hasLabel}
-			<span><slot>{label}</slot></span>
-		{/if}
-		{#if icon}<Icon name={icon} />{/if}
-	</button>
-{/if}
+	</slot>
+</svelte:element>
 
 <style lang="postcss">
 	.button {
