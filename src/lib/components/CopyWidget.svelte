@@ -36,16 +36,11 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 </script>
 
 <div class="copy-widget">
-	<!-- NOTE: {#key} block causes choppy animation flicker; using {#if…else} to achieve smooth cross-fade -->
-	{#if $copier === 'idle'}
-		<span in:fade|local={{ duration: 250, delay: 250 }} out:fade|local={{ duration: 100 }}>
-			<Icon name="copy-to-clipboard" />
+	{#key $copier}
+		<span transition:fade|local={{ duration: 100 }}>
+			<Icon name={$copier === 'idle' ? 'copy-to-clipboard' : 'check-square'} />
 		</span>
-	{:else}
-		<span in:fade|local={{ duration: 100 }} out:fade|local={{ duration: 500 }}>
-			<Icon name="check-square" />
-		</span>
-	{/if}
+	{/key}
 </div>
 
 <style lang="postcss">
