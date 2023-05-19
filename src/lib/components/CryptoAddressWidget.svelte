@@ -18,7 +18,6 @@
 	{#if clipboardCopier}
 		<Copier copyText={address} />
 	{/if}
-	<slot name="error" />
 </address>
 
 <style lang="postcss">
