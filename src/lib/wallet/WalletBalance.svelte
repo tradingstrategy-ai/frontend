@@ -3,7 +3,7 @@
 	import { fetchBalance, readContract } from '@wagmi/core';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { wallet } from '$lib/wallet/client';
-	import { AlertList, AlertItem, Button, EntitySymbol } from '$lib/components';
+	import { EntitySymbol } from '$lib/components';
 	import WalletAddress from './WalletAddress.svelte';
 	import Spinner from 'svelte-spinner';
 

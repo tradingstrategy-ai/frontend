@@ -7,6 +7,7 @@
 	import { getAccountNetValue } from '$lib/eth-defi/enzyme';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
+	import redeemWizard from 'wizard/redeem/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 	import WalletAddress from './WalletAddress.svelte';
@@ -63,7 +64,7 @@
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
 		<Button label="Deposit" disabled={!depositEnabled} on:click={() => launchWizard(depositWizard)} />
-		<Button label="Redeem" disabled />
+		<Button label="Redeem" disabled={!depositEnabled} on:click={() => launchWizard(redeemWizard)} />
 	</div>
 </SummaryBox>
 

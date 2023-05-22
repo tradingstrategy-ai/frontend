@@ -18,5 +18,5 @@
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard.returnTo} />
 	<Button secondary label="Back" href="introduction" />
-	<Button label="Next" href="balance" disabled={!$wizard.completed.has('connect')} />
+	<Button label="Next" href="deposit-status" disabled={!$wizard.completed.has('connect')} />
 </WizardActions>

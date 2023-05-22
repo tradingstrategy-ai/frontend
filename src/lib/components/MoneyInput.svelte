@@ -16,6 +16,9 @@ props through to HTML input element.
 	export let step: number | 'any' = 'any';
 	export let tokenUnit: string;
 	export let value: number | null = null;
+	export let showConversionLabel = false;
+	export let conversionRatio = 1;
+	export let conversionTokenUnit = 'USDC';
 
 	let inputEl: HTMLInputElement;
 
@@ -48,6 +51,16 @@ props through to HTML input element.
 			{/if}
 		</div>
 	</div>
+
+	{#if showConversionLabel && value}
+		<span class="conversion-label">
+			This redemption is worth of
+			<EntitySymbol label={conversionTokenUnit} slug={conversionTokenUnit.toLowerCase()} type="token">
+				{value * conversionRatio}
+				{conversionTokenUnit}
+			</EntitySymbol>
+		</span>
+	{/if}
 </span>
 
 <style lang="postcss">
@@ -81,6 +94,13 @@ props through to HTML input element.
 
 		&.disabled {
 			opacity: 0.65;
+		}
+
+		& .conversion-label {
+			display: flex;
+			justify-content: flex-end;
+			text-align: right;
+			gap: var(--space-md);
 		}
 
 		& input {
