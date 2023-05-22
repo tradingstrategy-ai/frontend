@@ -97,9 +97,17 @@ props through to HTML input element.
 
 		& .conversion-label {
 			display: flex;
-			justify-content: flex-end;
+			/* justify-content: flex-end; */
 			text-align: right;
 			gap: var(--space-md);
+
+			@nest :is(&, & :global .entity-symbol) {
+				justify-content: flex-end;
+			}
+
+			@media (--viewport-sm-down) {
+				flex-direction: column;
+			}
 		}
 
 		& input {

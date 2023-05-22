@@ -19,6 +19,7 @@
 
 		& :is(.start, .end) {
 			text-decoration: underline;
+			white-space: nowrap;
 		}
 		& :is(.start) {
 			overflow: hidden;
