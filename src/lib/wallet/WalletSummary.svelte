@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ConnectedWallet } from '$lib/wallet/client';
 	import { switchNetwork } from '@wagmi/core';
-	import { getExplorerUrl } from '$lib/wallet/utils';
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { AlertItem, AlertList, CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
+	import WalletAddress from './WalletAddress.svelte';
 
 	export let wallet: ConnectedWallet;
 	export let requestedChainId: MaybeNumber;
@@ -31,9 +31,7 @@
 		</tr>
 		<tr>
 			<td>Account</td>
-			<td>
-				<CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} />
-			</td>
+			<td><WalletAddress size="sm" {wallet} /></td>
 		</tr>
 		<tr>
 			<td>Network</td>

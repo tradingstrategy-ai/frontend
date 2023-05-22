@@ -27,7 +27,7 @@
 
 <style lang="postcss">
 	.crypto-address-widget {
-		display: grid;
+		display: inline-grid;
 		grid-auto-flow: column;
 		gap: var(--space-sm);
 		justify-content: center;

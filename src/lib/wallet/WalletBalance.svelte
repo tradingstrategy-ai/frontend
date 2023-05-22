@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { fetchBalance } from '@wagmi/core';
 	import { wallet } from '$lib/wallet/client';
-	import { getExplorerUrl, getUsdcAddress } from '$lib/wallet/utils';
-	import { CryptoAddressWidget, EntitySymbol } from '$lib/components';
+	import { getUsdcAddress } from '$lib/wallet/utils';
+	import { EntitySymbol } from '$lib/components';
+	import WalletAddress from './WalletAddress.svelte';
 	import Spinner from 'svelte-spinner';
 
 	$: ({ address, chain } = $wallet);
@@ -13,7 +14,7 @@
 	<tbody>
 		<tr>
 			<td>Account</td>
-			<td><CryptoAddressWidget size="sm" {address} href={getExplorerUrl(chain, address)} /></td>
+			<td><WalletAddress size="sm" wallet={$wallet} /></td>
 		</tr>
 		<tr>
 			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
