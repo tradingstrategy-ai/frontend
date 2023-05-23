@@ -1,4 +1,4 @@
-import wizard from './wizardState';
+import wizard from '$lib/wizard/store';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 export const ssr = false;

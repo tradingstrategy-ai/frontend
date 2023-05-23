@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../../wizardState';
+	import wizard from '$lib/wizard/store';
 	import { Button, WizardActions } from '$lib/components';
 	import WalletDeposit from '$lib/wallet/WalletDeposit.svelte';
 </script>

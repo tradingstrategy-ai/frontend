@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import wizard from '../wizardState';
+import wizard from '$lib/wizard/store';
 
 export async function load({ parent, url }) {
 	await parent();
