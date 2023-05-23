@@ -9,11 +9,7 @@ export type Wizard = {
 const { set, update, subscribe }: Writable<Wizard | undefined> = writable(undefined);
 
 export default {
-	initializing: false,
-
 	initialize(returnTo: string, data: any = {}) {
-		this.initializing = true;
-
 		set({
 			returnTo,
 			completed: new Set(),

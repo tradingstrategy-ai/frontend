@@ -1,15 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import wizard from '$lib/wizard/store';
 	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
-
-	if (!wizard?.initializing) {
-		const match = $page.route.id?.match(/(\/wizard\/[^/]+)/);
-		goto(match[0]);
-	}
-
-	wizard.initializing = false;
 
 	interface Step {
 		slug: string;

@@ -1,11 +1,8 @@
-import wizard from '$lib/wizard/store';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 export const ssr = false;
 
 export async function load({ fetch }) {
-	if (!wizard.initializing) wizard.reset();
-
 	const chains = fetchPublicApi(fetch, 'chains').catch((e) => {
 		console.error(`Error fetching chains: ${e}`);
 	});

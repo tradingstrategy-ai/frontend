@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
+	import { goto } from '$app/navigation';
 	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
 	import { ethers } from 'ethers';
 	import { wallet } from '$lib/wallet/client';
 	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
+	import wizard from '$lib/wizard/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 	import WalletAddress from './WalletAddress.svelte';
@@ -11,6 +13,13 @@
 	export let strategyId: string;
 	export let chain: Chain;
 	export let contracts: Contracts;
+
+	function handleConnectWallet() {
+		wizard.initialize(`/strategies/${strategyId}`, {
+			requestedChainId: chain.chain_id
+		});
+		goto('/wizard/connect-wallet');
+	}
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
 		const calculator = getContract({
@@ -62,7 +71,7 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}">
+		<Button on:click={handleConnectWallet}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
 		<Button label="Deposit" disabled />
