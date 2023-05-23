@@ -1,15 +1,11 @@
 <script lang="ts">
+	import type { Step } from 'wizard/store';
 	import { page } from '$app/stores';
 	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
 
-	interface Step {
-		slug: string;
-		label: string;
-	}
-
-	$: steps = $page.data.steps;
+	$: wizard = $page.data.wizard;
 	$: currentStep = $page.route.id?.split('/').at(-1);
-	$: stepIndex = steps.findIndex(({ slug }: Step) => slug === currentStep);
+	$: stepIndex = wizard.steps.findIndex(({ slug }: Step) => slug === currentStep);
 </script>
 
 <div class="wizard-layout">
@@ -18,10 +14,10 @@
 	<Section>
 		<div class="inner">
 			<nav>
-				<h1>{$page.data.title}</h1>
+				<h1>{wizard.title}</h1>
 
 				<menu>
-					{#each steps as { slug, label }, idx}
+					{#each wizard.steps as { slug, label }, idx}
 						<WizardNavItem
 							{slug}
 							{label}
@@ -35,13 +31,13 @@
 				<div class="pagination">
 					<span>{stepIndex + 1}</span>
 					/
-					<span>{steps.length}</span>
+					<span>{wizard.steps.length}</span>
 				</div>
 			</nav>
 
 			<main>
 				<Section maxWidth="xs">
-					<h2>{steps[stepIndex].label}</h2>
+					<h2>{wizard.steps[stepIndex].label}</h2>
 					<slot />
 				</Section>
 			</main>

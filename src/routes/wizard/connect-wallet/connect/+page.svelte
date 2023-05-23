@@ -1,13 +1,14 @@
 <script lang="ts">
-	import wizard from '$lib/wizard/store';
+	import wizard from '../store';
 	import { wallet } from '$lib/wallet/client';
 	import { Button, WizardActions } from '$lib/components';
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
 	export let data;
+	$: chains = data.chains;
 </script>
 
-<ConnectWallet requestedChainId={$wizard?.data.requestedChainId} chains={data.chains} />
+<ConnectWallet requestedChainId={$wizard?.data.requestedChainId} {chains} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />
