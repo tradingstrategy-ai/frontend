@@ -5,10 +5,12 @@
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
 	export let data;
+
 	$: chains = data.chains;
+	$: chainId = $wizard?.data.chainId;
 </script>
 
-<ConnectWallet requestedChainId={$wizard?.data.requestedChainId} {chains} />
+<ConnectWallet {chainId} {chains} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />
@@ -16,7 +18,7 @@
 	<Button
 		label="Next"
 		href="balance"
-		disabled={$wallet.chain?.id !== $wizard?.data.requestedChainId}
+		disabled={chainId && chainId !== $wallet.chain?.id}
 		on:click={() => wizard.complete('connect')}
 	/>
 </WizardActions>

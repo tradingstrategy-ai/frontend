@@ -7,10 +7,10 @@
 	import WalletAddress from './WalletAddress.svelte';
 
 	export let wallet: ConnectedWallet;
-	export let requestedChainId: MaybeNumber;
+	export let chainId: MaybeNumber;
 	export let chains: Chain[];
 
-	$: ({ name, address, chain } = wallet);
+	$: ({ name, chain } = wallet);
 	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
 </script>
 
@@ -36,11 +36,11 @@
 		<tr>
 			<td>Network</td>
 			<td>
-				{#if requestedChainId && requestedChainId !== chain.id}
+				{#if chainId && chainId !== chain.id}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: requestedChainId })}>
+					<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: chainId })}>
 						<AlertList size="xs" status="error">
-							<AlertItem>Wrong network! Please connect to {getChainName(chains, requestedChainId)}</AlertItem>
+							<AlertItem>Wrong network! Please connect to {getChainName(chains, chainId)}</AlertItem>
 						</AlertList>
 					</div>
 				{:else}

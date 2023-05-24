@@ -63,7 +63,7 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button on:click={() => connectWizard.init(`/strategies/${strategyId}`, { requestedChainId: chain.chain_id })}>
+		<Button on:click={() => connectWizard.init(`/strategies/${strategyId}`, { chainId: chain.chain_id })}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
 		<Button label="Deposit" disabled />
