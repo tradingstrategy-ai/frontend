@@ -1,17 +1,24 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
+	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
 	import { ethers } from 'ethers';
 	import { wallet } from '$lib/wallet/client';
 	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
 	import connectWizard from 'wizard/connect-wallet/store';
+	import depositWizard from 'wizard/deposit/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 	import WalletAddress from './WalletAddress.svelte';
 
-	export let strategyId: string;
+	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
-	export let contracts: Contracts;
+
+	// FIXME: remove vault_usdc_payment_forwarder from TS_PUBLIC_STRATEGIES once it's added to on_chain_data
+	$: contracts = {
+		...strategy.on_chain_data.smart_contracts,
+		vault_usdc_payment_forwarder: strategy.config.vault_usdc_payment_forwarder
+	};
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
 		const calculator = getContract({
@@ -29,6 +36,14 @@
 			symbol: token.symbol,
 			value: value.netValue_
 		};
+	}
+
+	function handleDepositClick() {
+		depositWizard.init(`/strategies/${strategy.id}`, {
+			chainId: chain.chain_id,
+			strategyName: strategy.name,
+			contracts
+		});
 	}
 </script>
 
@@ -63,10 +78,10 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button on:click={() => connectWizard.init(`/strategies/${strategyId}`, { chainId: chain.chain_id })}>
+		<Button on:click={() => connectWizard.init(`/strategies/${strategy.id}`, { chainId: chain.chain_id })}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
-		<Button label="Deposit" disabled />
+		<Button label="Deposit" on:click={handleDepositClick} />
 		<Button label="Redeem" disabled />
 	</div>
 </SummaryBox>
