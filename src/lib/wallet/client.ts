@@ -3,7 +3,7 @@ import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Chain, Connector } from '@wagmi/core';
 import {
-	createClient,
+	createConfig,
 	configureChains,
 	connect,
 	disconnect,
@@ -42,16 +42,16 @@ let initialized = false;
 if (browser && !initialized) initWalletClient();
 
 export function initWalletClient() {
-	const { chains, provider, webSocketProvider } = configureChains(
+	const { chains, publicClient, webSocketPublicClient } = configureChains(
 		[arbitrum, avalanche, bsc, mainnet, polygon],
 		[w3mProvider({ projectId }), publicProvider()]
 	);
 
-	createClient({
+	createConfig({
 		autoConnect: true,
 		connectors: w3mConnectors({ projectId, version: 1, chains }),
-		provider,
-		webSocketProvider
+		publicClient,
+		webSocketPublicClient
 	});
 
 	// TODO: watch on first subscription; stop watching on last unsub

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
-	import { ethers } from 'ethers';
+	import { fetchBalance, fetchToken, getContract } from '@wagmi/core';
+	import { formatUnits } from 'viem';
 	import { wallet } from '$lib/wallet/client';
 	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
 	import connectWizard from 'wizard/connect-wallet/store';
@@ -21,21 +21,13 @@
 	};
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-		const calculator = getContract({
-			address: fund_value_calculator,
-			abi: fundValueCalculatorAbi,
-			signerOrProvider: getProvider()
-		});
+		const calculator = getContract({ address: fund_value_calculator, abi: fundValueCalculatorAbi });
 
-		const value = await calculator.callStatic.calcNetValueForSharesHolder(vault, account);
-		const token = await fetchToken({ address: value.denominationAsset_ });
+		const { result } = await calculator.simulate.calcNetValueForSharesHolder([vault, account]);
+		const [address, value] = result as [Address, bigint];
+		const { decimals, symbol } = await fetchToken({ address });
 
-		return {
-			decimals: token.decimals,
-			formatted: ethers.utils.formatUnits(value.netValue_, token.decimals),
-			symbol: token.symbol,
-			value: value.netValue_
-		};
+		return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
 	}
 
 	function handleDepositClick() {
