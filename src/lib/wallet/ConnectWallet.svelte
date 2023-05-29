@@ -13,6 +13,7 @@
 	{#if $wallet.status === 'connected'}
 		<div class="connected-wallet">
 			<WalletSummary wallet={$wallet} {requestedChainId} {chains} />
+
 			<Button size="sm" label="Change wallet" on:click={wallet.disconnect} />
 		</div>
 	{:else}
@@ -41,6 +42,10 @@
 
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);
+
+			& :global .button {
+				width: 100%;
+			}
 		}
 	}
 

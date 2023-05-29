@@ -62,11 +62,11 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}">
+		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}" size="lg">
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
-		<Button label="Deposit" disabled />
-		<Button label="Redeem" disabled />
+		<Button href="/wizard/deposit?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}" size="lg">Deposit</Button>
+		<Button href="/wizard/redeem?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}" size="lg">Redeem</Button>
 	</div>
 </SummaryBox>
 

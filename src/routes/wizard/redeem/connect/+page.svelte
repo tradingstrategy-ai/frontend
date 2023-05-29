@@ -10,7 +10,7 @@
 <ConnectWallet requestedChainId={$wizard?.data.requestedChainId} chains={data.chains} />
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button ghost label="Cancel" href={$wizard?.returnTo} slot="cancel" />
 	<Button secondary label="Back" href="introduction" />
 	<Button label="Next" href="deposit-status" on:click={() => wizard.complete('connect')} />
 </WizardActions>

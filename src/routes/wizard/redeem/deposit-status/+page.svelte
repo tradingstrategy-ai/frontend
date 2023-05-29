@@ -7,7 +7,7 @@
 <DepositStatus />
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button ghost label="Cancel" href={$wizard?.returnTo} slot="cancel" />
 	<Button secondary label="Back" href="connect" />
 	<Button label="Next" href="shares-redemption" on:click={() => wizard.complete('deposit-status')} />
 </WizardActions>

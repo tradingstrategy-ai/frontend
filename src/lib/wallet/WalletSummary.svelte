@@ -60,11 +60,6 @@
 			--table-font: var(--f-ui-lg-medium) !important;
 		}
 
-		/* FIXME: remove `!important` (check 527 < viewport < 511) */
-		& tr {
-			grid-template-columns: repeat(auto-fit, minmax(max(25%, 14rem), 1fr)) !important;
-		}
-
 		& td {
 			padding: var(--space-xs) var(--space-ml);
 			align-content: center;

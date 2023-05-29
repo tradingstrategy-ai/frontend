@@ -19,25 +19,49 @@ Display a single alert item (should always be nested within AlertList).
 {#if displayWhen}
 	<li class="alert-item">
 		<Icon name="warning" />
-		<span>
+		<span class="content">
 			{#if title}
 				<strong>{title}<span class="desktop">:</span></strong>
 				<br />
 			{/if}
 			<slot />
+			<slot name="action" />
 		</span>
 	</li>
 {/if}
 
 <style lang="postcss">
 	.alert-item :global {
+		align-items: flex-start;
 		display: flex;
-		gap: 0.625em;
+		justify-content: space-between;
+		gap: var(--space-md) var(--space-sm);
 		font: inherit; /* see AlertList */
+		/* @media (--viewport-xs) {
+			flex-wrap: wrap;
+		} */
 
 		& .icon {
 			display: block;
 			margin-top: -0.1em;
+		}
+
+		& .button {
+			@media (--viewport-sm-up) {
+				width: auto !important;
+			}
+
+			& > span {
+				white-space: normal;
+			}
+		}
+
+		& .content {
+			align-items: flex-start;
+			display: inline-flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: var(--space-sl);
 		}
 
 		& a {

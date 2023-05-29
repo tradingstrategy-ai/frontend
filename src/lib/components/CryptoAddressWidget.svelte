@@ -30,7 +30,7 @@
 		display: inline-grid;
 		grid-auto-flow: column;
 		gap: var(--space-sm);
-		justify-content: center;
+		justify-content: start;
 		align-items: center;
 	}
 

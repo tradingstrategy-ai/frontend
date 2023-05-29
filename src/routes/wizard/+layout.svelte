@@ -62,7 +62,7 @@
 	.wizard-layout {
 		display: grid;
 		grid-template-rows: auto 1fr;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 		min-height: 100vh;
 	}
 

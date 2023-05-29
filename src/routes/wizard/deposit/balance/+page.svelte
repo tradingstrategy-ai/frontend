@@ -7,7 +7,7 @@
 <WalletBalance />
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button ghost label="Cancel" href={$wizard?.returnTo} slot="cancel" />
 	<Button secondary label="Back" href="connect" />
 	<Button label="Next" href="payment" on:click={() => wizard.complete('balance')} />
 </WizardActions>
