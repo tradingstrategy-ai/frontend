@@ -4,7 +4,7 @@
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 </script>
 
-<WalletBalance />
+<WalletBalance hasBuyCtas />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} slot="cancel" />

@@ -11,6 +11,8 @@
 
 	$: ({ address, chain } = $wallet);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
+
+	export let hasBuyCtas = false;
 </script>
 
 <table class="wallet-balance responsive">
@@ -54,7 +56,12 @@
 								<AlertItem>
 									You don't have USDC in your wallet. You need to have USDC to deposit to this strategy.
 									<div class="swap-cta" slot="action">
-										<Button size="sm">Buy USDC on Uniswap</Button>
+										<Button
+											href="https://app.uniswap.org/#/tokens/polygon/0x2791bca1f2de4661ed88a30c99a7a9449aa84174"
+											rel="noreferrer"
+											target="_blank"
+											size="sm">Buy USDC on Uniswap</Button
+										>
 									</div>
 								</AlertItem>
 							</AlertList>
@@ -117,6 +124,7 @@
 
 			& .alert-item {
 				text-align: left;
+				justify-content: space-between;
 				@media (--viewport-sm-down) {
 					justify-content: center;
 				}

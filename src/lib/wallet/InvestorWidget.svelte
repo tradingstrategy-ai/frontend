@@ -43,8 +43,8 @@
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
 		{:else if $wallet.status !== 'connected'}
-			<AlertList status="warning" size="md">
-				<AlertItem title="Wallet not connected">Please connect wallet to see your deposit status</AlertItem>
+			<AlertList status="ghost" size="md">
+				<AlertItem icon="" title="Wallet not connected">Please connect wallet to see your deposit status</AlertItem>
 			</AlertList>
 		{:else if $wallet.chain.id !== chain.chain_id}
 			<AlertList status="error" size="md">

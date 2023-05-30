@@ -27,6 +27,7 @@
 
 <style lang="postcss">
 	.strategy-layout {
+		align-items: start;
 		display: grid;
 		gap: var(--space-md);
 

@@ -14,15 +14,17 @@ Display a single alert item (should always be nested within AlertList).
 
 	export let title = '';
 	export let displayWhen = true;
+	export let icon = 'warning';
 </script>
 
 {#if displayWhen}
 	<li class="alert-item">
-		<Icon name="warning" />
+		{#if icon}
+			<Icon name={icon} />
+		{/if}
 		<span class="content">
 			{#if title}
 				<strong>{title}<span class="desktop">:</span></strong>
-				<br />
 			{/if}
 			<slot />
 			<slot name="action" />
@@ -34,12 +36,8 @@ Display a single alert item (should always be nested within AlertList).
 	.alert-item :global {
 		align-items: flex-start;
 		display: flex;
-		justify-content: space-between;
 		gap: var(--space-md) var(--space-sm);
 		font: inherit; /* see AlertList */
-		/* @media (--viewport-xs) {
-			flex-wrap: wrap;
-		} */
 
 		& .icon {
 			display: block;
@@ -71,14 +69,6 @@ Display a single alert item (should always be nested within AlertList).
 
 		& strong {
 			font-weight: 700;
-		}
-
-		& br {
-			margin-bottom: 0.5rem;
-
-			@media (--viewport-lg-up) {
-				display: none;
-			}
 		}
 
 		& .desktop {

@@ -59,7 +59,13 @@ as children. The alert box is only displayed if one or more items are displayed
 
 	.info {
 		background: hsl(var(--hsl-box), var(--a-box-a));
-		border-color: hsl(var(--hsl-box), var(--a-box-c));
+		border-color: transparent;
+	}
+
+	.ghost {
+		background: transparent;
+		border-color: transparent;
+		padding: var(--space-sm) 0 !important;
 	}
 
 	.lg {

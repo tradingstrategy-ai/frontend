@@ -12,5 +12,11 @@
 <style lang="postcss">
 	.newsletter-page {
 		--section-background: hsla(var(--hsla-background-accent-1));
+
+		& :global .section {
+			@media (--viewport-md-up) {
+				min-height: calc(100vh - 22.5rem);
+			}
+		}
 	}
 </style>

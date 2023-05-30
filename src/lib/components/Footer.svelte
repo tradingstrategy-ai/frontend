@@ -26,9 +26,9 @@
 		flex-wrap: wrap;
 		place-content: center;
 		gap: var(--space-2xl);
-		margin-top: var(--space-6xl);
+		/* margin-top: var(--space-6xl); */
 		padding-inline: var(--space-lg);
-		padding-block: var(--space-7xl);
+		padding-block: var(--space-10xl);
 
 		@media (--nav-collapsed) {
 			padding-block: var(--space-lg);
