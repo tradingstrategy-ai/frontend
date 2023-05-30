@@ -1,25 +1,66 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
+	import { fetchToken, prepareWriteContract, writeContract } from '@wagmi/core';
+	import { parseUnits } from 'viem';
+	import { wallet } from './client';
+	import { getUsdcAddress } from './utils';
+	import { getSignedArguments } from './receiveWithAuthorization';
+	import { abi as paymentForwarderABI } from '$lib/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+
+	export let chainId: number;
+	export let contracts: Contracts;
 
 	let paymentValue: number;
 
 	const paymentProgress = tweened(0, { duration: 2000 });
 
+	async function submitPayment() {
+		const token = await fetchToken({ address: getUsdcAddress(chainId) });
+		const value = parseUnits(`${paymentValue}`, token.decimals);
+
+		const signedArgs = await getSignedArguments(chainId, token, $wallet.address, contracts.payment_forwarder, value);
+
+		const { request } = await prepareWriteContract({
+			address: contracts.payment_forwarder,
+			abi: paymentForwarderABI,
+			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
+			args: [...signedArgs, 1]
+		});
+
+		return writeContract(request);
+	}
+
 	const payment = fsm('initial', {
 		initial: {
-			confirm: 'confirming'
+			confirm() {
+				submitPayment().then(this.process).catch(this.reject);
+				return 'confirming';
+			}
 		},
+
 		confirming: {
-			process: 'processing'
+			process(result) {
+				console.log('paymentForwarder result:', result);
+				return 'processing';
+			},
+
+			reject(err) {
+				console.error('REJECTED:', err);
+				return 'rejected';
+			}
 		},
+
 		processing: {
 			_enter() {
 				paymentProgress.set(100).then(payment.finish);
 			},
 			finish: 'done'
 		},
+
+		rejected: {},
+
 		done: {}
 	});
 </script>
@@ -55,15 +96,12 @@
 				<Button disabled={!paymentValue} on:click={payment.confirm}>Make payment</Button>
 			</form>
 		{:else if $payment === 'confirming'}
-			<div class="confirmation" style="display: contents;" on:click={payment.process} on:keydown={payment.process}>
-				<h3>Confirm transaction in your wallet.</h3>
-
-				<AlertList size="sm" status="warning">
-					<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
-				</AlertList>
-			</div>
+			<h3>Confirm transaction in your wallet.</h3>
+			<AlertList size="sm" status="warning">
+				<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
+			</AlertList>
 		{:else if $payment === 'processing'}
-			<h3>Confirming transaction...</h3>
+			<h3>Processing transaction...</h3>
 			<progress max="100" value={$paymentProgress} />
 			<p class="disclaimer">
 				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
@@ -73,6 +111,10 @@
 				<h3>Transaction ID</h3>
 				<CryptoAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
 			</div>
+		{:else if $payment === 'rejected'}
+			<AlertList size="sm" status="error">
+				<AlertItem>Transaction rejected in wallet.</AlertItem>
+			</AlertList>
 		{/if}
 	</section>
 </div>

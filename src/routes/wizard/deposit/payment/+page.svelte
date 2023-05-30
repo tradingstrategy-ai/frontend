@@ -4,7 +4,7 @@
 	import WalletDeposit from '$lib/wallet/WalletDeposit.svelte';
 </script>
 
-<WalletDeposit />
+<WalletDeposit chainId={$wizard?.data.chainId} contracts={$wizard?.data.contracts} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard?.returnTo} />

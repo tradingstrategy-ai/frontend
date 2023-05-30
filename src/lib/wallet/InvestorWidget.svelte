@@ -14,10 +14,10 @@
 	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
 
-	// FIXME: remove vault_usdc_payment_forwarder from TS_PUBLIC_STRATEGIES once it's added to on_chain_data
+	// FIXME: remove payment_forwarder from TS_PUBLIC_STRATEGIES once it's added to on_chain_data
 	$: contracts = {
 		...strategy.on_chain_data.smart_contracts,
-		vault_usdc_payment_forwarder: strategy.config.vault_usdc_payment_forwarder
+		payment_forwarder: strategy.config.payment_forwarder
 	};
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
