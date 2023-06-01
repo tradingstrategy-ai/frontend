@@ -1,11 +1,11 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
-	import { fetchToken, prepareWriteContract, writeContract } from '@wagmi/core';
+	import { prepareWriteContract, writeContract } from '@wagmi/core';
 	import { parseUnits } from 'viem';
 	import { wallet } from './client';
 	import { getUsdcAddress } from './utils';
-	import { getSignedArguments } from './receiveWithAuthorization';
+	import { fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
@@ -17,10 +17,17 @@
 	const paymentProgress = tweened(0, { duration: 2000 });
 
 	async function submitPayment() {
-		const token = await fetchToken({ address: getUsdcAddress(chainId) });
-		const value = parseUnits(`${paymentValue}`, token.decimals);
+		const tokenInfo = await fetchTokenInfo(getUsdcAddress(chainId));
+		const value = parseUnits(`${paymentValue}`, tokenInfo.decimals);
 
-		const signedArgs = await getSignedArguments(chainId, token, $wallet.address, contracts.payment_forwarder, value);
+		const signedArgs = await getSignedArguments(
+			'TransferWithAuthorization',
+			chainId,
+			tokenInfo,
+			$wallet.address,
+			contracts.payment_forwarder,
+			value
+		);
 
 		const { request } = await prepareWriteContract({
 			address: contracts.payment_forwarder,
