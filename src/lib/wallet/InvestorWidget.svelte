@@ -4,7 +4,7 @@
 	import { fetchBalance, fetchToken, getContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
 	import { wallet } from '$lib/wallet/client';
-	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
+	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
@@ -21,7 +21,7 @@
 	};
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-		const calculator = getContract({ address: fund_value_calculator, abi: fundValueCalculatorAbi });
+		const calculator = getContract({ address: fund_value_calculator, abi: fundValueCalculatorABI });
 
 		const { result } = await calculator.simulate.calcNetValueForSharesHolder([vault, account]);
 		const [address, value] = result as [Address, bigint];

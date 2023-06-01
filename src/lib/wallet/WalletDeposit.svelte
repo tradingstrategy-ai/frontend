@@ -6,7 +6,7 @@
 	import { wallet } from './client';
 	import { getUsdcAddress } from './utils';
 	import { getSignedArguments } from './receiveWithAuthorization';
-	import { abi as paymentForwarderABI } from '$lib/abi/VaultUSDCPaymentForwarder.json';
+	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
 	export let chainId: number;
