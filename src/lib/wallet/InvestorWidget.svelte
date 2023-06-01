@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { fetchBalance, fetchToken, getContract } from '@wagmi/core';
+	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
 	import { wallet } from '$lib/wallet/client';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
@@ -21,9 +21,13 @@
 	};
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-		const calculator = getContract({ address: fund_value_calculator, abi: fundValueCalculatorABI });
+		const { result } = await prepareWriteContract({
+			address: fund_value_calculator,
+			abi: fundValueCalculatorABI,
+			functionName: 'calcNetValueForSharesHolder',
+			args: [vault, account]
+		});
 
-		const { result } = await calculator.simulate.calcNetValueForSharesHolder([vault, account]);
 		const [address, value] = result as [Address, bigint];
 		const { decimals, symbol } = await fetchToken({ address });
 
