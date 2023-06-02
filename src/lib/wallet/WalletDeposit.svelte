@@ -2,7 +2,8 @@
 	import type { Wizard } from 'wizard/store';
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
-	import { prepareWriteContract, writeContract } from '@wagmi/core';
+	import { cubicOut } from 'svelte/easing';
+	import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { parseUnits } from 'viem';
 	import { wallet } from './client';
 	import { type EIP3009SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
@@ -15,8 +16,9 @@
 
 	let paymentValue: number;
 	let transactionId: Address;
+	let errorMessage: string;
 
-	const paymentProgress = tweened(0, { duration: 10000 });
+	const progressBar = tweened(0, { easing: cubicOut });
 
 	async function authorizeTransfer() {
 		const tokenInfo = await fetchTokenInfo(denominationToken.address);
@@ -46,43 +48,70 @@
 	const payment = fsm('initial', {
 		initial: {
 			authorize() {
-				authorizeTransfer().then(payment.confirm).catch(payment.reject);
+				authorizeTransfer().then(payment.confirm).catch(payment.fail);
 				return 'authorizing';
 			}
 		},
 
 		authorizing: {
 			confirm(signedArgs) {
-				confirmPayment(signedArgs).then(payment.process).catch(payment.reject);
+				confirmPayment(signedArgs).then(payment.process).catch(payment.fail);
 				return 'confirming';
 			},
 
-			reject(err) {
-				console.error('authorization rejected:', err);
-				return 'rejected';
+			fail(err) {
+				console.error('authorizeTransfer error:', err);
+				errorMessage = `Authorization to transfer ${denominationToken.symbol} tokens from your wallet account failed.`;
+				return 'failed';
 			}
 		},
 
 		confirming: {
-			process(result) {
-				transactionId = result.hash;
-				paymentProgress.set(100).then(payment.finish);
+			process({ hash }) {
+				transactionId = hash;
+				waitForTransaction({ hash }).then(payment.finish).catch(payment.fail);
 				return 'processing';
 			},
 
-			reject(err) {
-				console.error('confirmation rejected:', err);
-				return 'rejected';
+			fail(err) {
+				console.error('confirmPayment error:', err);
+				errorMessage = 'Payment transaction confirmation from wallet account failed.';
+				return 'failed';
 			}
 		},
 
 		processing: {
-			finish: 'done'
+			_enter() {
+				progressBar.set(90, { duration: 10_000 });
+			},
+
+			_exit() {
+				progressBar.set(100, { duration: 100 });
+			},
+
+			finish(receipt) {
+				if (receipt.status !== 'success') {
+					console.error('waitForTransaction reverted:', receipt);
+					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					return 'failed';
+				}
+				return 'completed';
+			},
+
+			fail(err) {
+				console.error('waitForTransaction error:', err);
+				if (err.name === 'CallExecutionError') {
+					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+				} else {
+					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+				}
+				return 'failed';
+			}
 		},
 
-		rejected: {},
+		failed: {},
 
-		done: {}
+		completed: {}
 	});
 </script>
 
@@ -127,7 +156,7 @@
 			{#if $payment === 'authorizing'}
 				<AlertList size="sm" status="warning">
 					<AlertItem title="Authorize transfer">
-						Please authorize the transfer of {denominationToken.symbol} tokens from your account in your wallet.
+						Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
 					</AlertItem>
 				</AlertList>
 			{/if}
@@ -146,7 +175,7 @@
 					<CryptoAddressWidget address={transactionId} href="#" />
 				</div>
 
-				<progress max="100" value={$paymentProgress} />
+				<progress max="100" value={$progressBar} />
 			{/if}
 
 			{#if $payment === 'processing'}
@@ -158,14 +187,13 @@
 				</AlertList>
 			{/if}
 
-			{#if $payment === 'rejected'}
-				<!-- TODO: handle different types of errors / display wallet error message details -->
+			{#if $payment === 'failed'}
 				<AlertList size="sm" status="error">
-					<AlertItem title="Error">Transaction was rejected or failed to process successfully.</AlertItem>
+					<AlertItem title="Error">{errorMessage}</AlertItem>
 				</AlertList>
 			{/if}
 
-			{#if $payment === 'done'}
+			{#if $payment === 'completed'}
 				<AlertList size="sm" status="success">
 					<AlertItem title="Payment completed">
 						Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
