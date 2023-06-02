@@ -16,6 +16,9 @@
 	export let chain: Chain;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
+	$: depositEnabled = ['vault', 'comptroller', 'payment_forwarder', 'fund_value_calculator'].every(
+		(c: string) => c in contracts
+	);
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
 		const { result } = await prepareWriteContract({
@@ -47,7 +50,7 @@
 		{/if}
 	</svelte:fragment>
 	<div class="content">
-		{#if !(contracts.vault && contracts.fund_value_calculator)}
+		{#if !depositEnabled}
 			<AlertList status="info" size="md">
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
@@ -74,7 +77,7 @@
 		<Button on:click={() => launchWizard(connectWizard)}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
-		<Button label="Deposit" on:click={() => launchWizard(depositWizard)} />
+		<Button label="Deposit" disabled={!depositEnabled} on:click={() => launchWizard(depositWizard)} />
 		<Button label="Redeem" disabled />
 	</div>
 </SummaryBox>
