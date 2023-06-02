@@ -1,23 +1,24 @@
 <script lang="ts">
+	import type { Wizard } from 'wizard/store';
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
 	import { prepareWriteContract, writeContract } from '@wagmi/core';
 	import { parseUnits } from 'viem';
 	import { wallet } from './client';
-	import { getUsdcAddress } from './utils';
 	import { fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
-	export let chainId: number;
-	export let contracts: Contracts;
+	export let wizard: Wizard;
+
+	$: ({ chainId, contracts, denominationToken, nativeBalance } = $wizard.data);
 
 	let paymentValue: number;
 
 	const paymentProgress = tweened(0, { duration: 2000 });
 
 	async function submitPayment() {
-		const tokenInfo = await fetchTokenInfo(getUsdcAddress(chainId));
+		const tokenInfo = await fetchTokenInfo(denominationToken.address);
 		const value = parseUnits(`${paymentValue}`, tokenInfo.decimals);
 
 		const signedArgs = await getSignedArguments(
@@ -79,12 +80,16 @@
 		<table class="responsive">
 			<tbody>
 				<tr>
-					<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
-					<td>682.2362</td>
+					<td>
+						<EntitySymbol type="token" label={nativeBalance.symbol} slug={nativeBalance.symbol.toLowerCase()} />
+					</td>
+					<td>{nativeBalance.formatted}</td>
 				</tr>
 				<tr>
-					<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-					<td>1200.18</td>
+					<td>
+						<EntitySymbol type="token" label={denominationToken.symbol} slug={denominationToken.symbol.toLowerCase()} />
+					</td>
+					<td>{denominationToken.formatted}</td>
 				</tr>
 			</tbody>
 		</table>
