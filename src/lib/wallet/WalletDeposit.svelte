@@ -82,7 +82,7 @@
 
 		processing: {
 			_enter() {
-				progressBar.set(90, { duration: 10_000 });
+				progressBar.set(100, { duration: 20_000 });
 			},
 
 			_exit() {
