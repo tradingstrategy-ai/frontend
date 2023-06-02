@@ -8,9 +8,9 @@ import { writable, type Writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 
 export type WizardValue = {
-	returnTo: string;
-	completed: Set<string>;
+	returnTo: string | undefined;
 	data: Record<string, any>;
+	completed: Set<string>;
 };
 
 export type Step = {
@@ -18,25 +18,35 @@ export type Step = {
 	label: string;
 };
 
-export default function (slug: string, title: string, steps: Step[]) {
-	const { set, update, subscribe }: Writable<WizardValue | undefined> = writable(undefined);
+function wizardFactory(slug: string, title: string, steps: Step[]) {
+	const { set, update, subscribe }: Writable<WizardValue> = writable({
+		returnTo: undefined,
+		data: {},
+		completed: new Set()
+	});
 
 	function init(returnTo: string, data: any = {}) {
-		set({
-			returnTo,
-			completed: new Set(),
-			data
-		});
+		set({ returnTo, data, completed: new Set() });
 
 		goto(`/wizard/${slug}/${steps[0].slug}`);
 	}
 
 	function complete(step: string) {
 		update((wizard) => {
-			wizard?.completed.add(step);
+			wizard.completed.add(step);
 			return wizard;
 		});
 	}
 
-	return { init, complete, subscribe, title, steps };
+	function updateData(data: any) {
+		update((wizard: WizardValue) => {
+			wizard.data = { ...wizard.data, ...data };
+			return wizard;
+		});
+	}
+
+	return { init, complete, updateData, subscribe, title, steps };
 }
+
+export default wizardFactory;
+export type Wizard = ReturnType<typeof wizardFactory>;

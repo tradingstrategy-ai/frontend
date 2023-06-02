@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
+	import type { Wizard } from 'wizard/store';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
@@ -34,8 +35,8 @@
 		return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
 	}
 
-	function handleDepositClick() {
-		depositWizard.init(`/strategies/${strategy.id}`, {
+	function launchWizard(wizard: Wizard) {
+		wizard.init(`/strategies/${strategy.id}`, {
 			chainId: chain.chain_id,
 			strategyName: strategy.name,
 			contracts
@@ -74,10 +75,10 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button on:click={() => connectWizard.init(`/strategies/${strategy.id}`, { chainId: chain.chain_id })}>
+		<Button on:click={() => launchWizard(connectWizard)}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
-		<Button label="Deposit" on:click={handleDepositClick} />
+		<Button label="Deposit" on:click={() => launchWizard(depositWizard)} />
 		<Button label="Redeem" disabled />
 	</div>
 </SummaryBox>
