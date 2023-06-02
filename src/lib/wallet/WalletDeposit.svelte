@@ -5,7 +5,7 @@
 	import { prepareWriteContract, writeContract } from '@wagmi/core';
 	import { parseUnits } from 'viem';
 	import { wallet } from './client';
-	import { fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
+	import { type EIP3009SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
@@ -14,14 +14,15 @@
 	$: ({ chainId, contracts, denominationToken, nativeBalance } = $wizard.data);
 
 	let paymentValue: number;
+	let transactionId: Address;
 
-	const paymentProgress = tweened(0, { duration: 2000 });
+	const paymentProgress = tweened(0, { duration: 10000 });
 
-	async function submitPayment() {
+	async function authorizeTransfer() {
 		const tokenInfo = await fetchTokenInfo(denominationToken.address);
 		const value = parseUnits(`${paymentValue}`, tokenInfo.decimals);
 
-		const signedArgs = await getSignedArguments(
+		return getSignedArguments(
 			'TransferWithAuthorization',
 			chainId,
 			tokenInfo,
@@ -29,7 +30,9 @@
 			contracts.payment_forwarder,
 			value
 		);
+	}
 
+	async function confirmPayment(signedArgs: EIP3009SignedArguments) {
 		const { request } = await prepareWriteContract({
 			address: contracts.payment_forwarder,
 			abi: paymentForwarderABI,
@@ -42,28 +45,38 @@
 
 	const payment = fsm('initial', {
 		initial: {
-			confirm() {
-				submitPayment().then(this.process).catch(this.reject);
+			authorize() {
+				authorizeTransfer().then(payment.confirm).catch(payment.reject);
+				return 'authorizing';
+			}
+		},
+
+		authorizing: {
+			confirm(signedArgs) {
+				confirmPayment(signedArgs).then(payment.process).catch(payment.reject);
 				return 'confirming';
+			},
+
+			reject(err) {
+				console.error('authorization rejected:', err);
+				return 'rejected';
 			}
 		},
 
 		confirming: {
 			process(result) {
-				console.log('paymentForwarder result:', result);
+				transactionId = result.hash;
+				paymentProgress.set(100).then(payment.finish);
 				return 'processing';
 			},
 
 			reject(err) {
-				console.error('REJECTED:', err);
+				console.error('confirmation rejected:', err);
 				return 'rejected';
 			}
 		},
 
 		processing: {
-			_enter() {
-				paymentProgress.set(100).then(payment.finish);
-			},
 			finish: 'done'
 		},
 
@@ -96,38 +109,71 @@
 	</section>
 
 	<section>
-		{#if $payment === 'initial'}
-			<h3>Enter amount to pay</h3>
+		<h3>Enter amount to deposit</h3>
+		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
+			<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
 
-			<form action="" class="payment-form">
-				<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
+			{#if $payment === 'initial'}
+				<Button submit disabled={!paymentValue}>Make payment</Button>
 
 				<AlertList size="sm" status="warning">
-					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
+					<AlertItem title="Notice">
+						Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
+						Only invest funds you are willing to lose.
+					</AlertItem>
 				</AlertList>
-				<Button disabled={!paymentValue} on:click={payment.confirm}>Make payment</Button>
-			</form>
-		{:else if $payment === 'confirming'}
-			<h3>Confirm transaction in your wallet.</h3>
-			<AlertList size="sm" status="warning">
-				<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
-			</AlertList>
-		{:else if $payment === 'processing'}
-			<h3>Processing transaction...</h3>
-			<progress max="100" value={$paymentProgress} />
-			<p class="disclaimer">
-				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
-			</p>
-		{:else if $payment === 'done'}
-			<div class="transaction-id">
-				<h3>Transaction ID</h3>
-				<CryptoAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
-			</div>
-		{:else if $payment === 'rejected'}
-			<AlertList size="sm" status="error">
-				<AlertItem>Transaction rejected in wallet.</AlertItem>
-			</AlertList>
-		{/if}
+			{/if}
+
+			{#if $payment === 'authorizing'}
+				<AlertList size="sm" status="warning">
+					<AlertItem title="Authorize transfer">
+						Please authorize the transfer of {denominationToken.symbol} tokens from your account in your wallet.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'confirming'}
+				<AlertList size="sm" status="warning">
+					<AlertItem title="Confirm transaction">
+						Please confirm the transaction in your wallet in order submit your payment.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if transactionId}
+				<div class="transaction-id">
+					<h3>Transaction ID</h3>
+					<CryptoAddressWidget address={transactionId} href="#" />
+				</div>
+
+				<progress max="100" value={$paymentProgress} />
+			{/if}
+
+			{#if $payment === 'processing'}
+				<AlertList size="sm" status="info">
+					<AlertItem title="Payment processing">
+						The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
+						the transaction ID above to view the status in the blockchain explorer.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'rejected'}
+				<!-- TODO: handle different types of errors / display wallet error message details -->
+				<AlertList size="sm" status="error">
+					<AlertItem title="Error">Transaction was rejected or failed to process successfully.</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'done'}
+				<AlertList size="sm" status="success">
+					<AlertItem title="Payment completed">
+						Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
+						review your share balance.
+					</AlertItem>
+				</AlertList>
+			{/if}
+		</form>
 	</section>
 </div>
 
@@ -181,6 +227,7 @@
 		& .transaction-id {
 			display: grid;
 			gap: var(--space-md);
+			justify-content: start;
 		}
 	}
 </style>
