@@ -75,11 +75,14 @@ export function initWalletClient() {
 	initialized = true;
 }
 
-function connectMetaMask(chainId: MaybeNumber) {
-	connect({
+async function connectMetaMask(chainId: MaybeNumber) {
+	await connect({
 		chainId,
 		connector: new InjectedConnector()
 	});
+	// NOTE: wagmi 1.x (as of 1.0.7) fails to reconnect injected wallet unless this localStorage
+	// value is manually set.
+	localStorage.setItem('wagmi.injected.shimDisconnect', 'true');
 }
 
 function connectWalletConnect(chainId: MaybeNumber) {
