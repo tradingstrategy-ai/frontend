@@ -9,6 +9,7 @@
 	import { type EIP3009SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import { getExplorerUrl } from './utils';
 
 	export let wizard: Wizard;
 
@@ -172,7 +173,7 @@
 			{#if transactionId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={transactionId} href="#" />
+					<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
 				</div>
 
 				<progress max="100" value={$progressBar} />
