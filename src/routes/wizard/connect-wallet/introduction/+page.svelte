@@ -1,8 +1,8 @@
 <script lang="ts">
-	import wizard from '../../wizardState';
+	import wizard from '../store';
 	import { Button, WizardActions } from '$lib/components';
 
-	$wizard?.completed.add('introduction');
+	wizard.complete('introduction');
 </script>
 
 <div class="connect-wallet-introduction">
@@ -13,6 +13,6 @@
 </div>
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
-	<Button label="Next" href="connect" on:click={() => wizard.complete('introduction')} />
+	<Button ghost label="Cancel" href={$wizard.returnTo} />
+	<Button label="Next" href="connect" disabled={!$wizard.completed.has('introduction')} />
 </WizardActions>

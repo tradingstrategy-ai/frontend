@@ -7,6 +7,7 @@ progress {
 	border: none;
 	border-radius: var(--border-radius);
 	height: 0.75rem;
+	overflow: hidden;
 
 	/* WebKit styles - do not merge with Mozilla styles (breaks) */
 	&::-webkit-progress-bar {

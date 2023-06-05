@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../../wizardState';
+	import wizard from '../store';
 	import { Button, WizardActions } from '$lib/components';
 </script>
 
@@ -12,5 +12,5 @@
 
 <WizardActions>
 	<Button secondary label="Back" href="balance" />
-	<Button label="Done" href={$wizard?.returnTo} />
+	<Button label="Done" href={$wizard.returnTo} />
 </WizardActions>

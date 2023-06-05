@@ -1,33 +1,45 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import { fetchBalance, fetchToken, getContract, getProvider } from '@wagmi/core';
-	import { ethers } from 'ethers';
+	import type { Wizard } from 'wizard/store';
+	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
+	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
+	import { formatUnits } from 'viem';
 	import { wallet } from '$lib/wallet/client';
-	import { abi as fundValueCalculatorAbi } from '$lib/abi/enzyme/FundValueCalculator.json';
+	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
+	import connectWizard from 'wizard/connect-wallet/store';
+	import depositWizard from 'wizard/deposit/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
 	import TokenBalance from './TokenBalance.svelte';
 	import WalletAddress from './WalletAddress.svelte';
 
-	export let strategyId: string;
+	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
-	export let contracts: Contracts;
+
+	$: contracts = strategy.on_chain_data.smart_contracts;
+	$: depositEnabled = ['vault', 'comptroller', 'payment_forwarder', 'fund_value_calculator'].every(
+		(c: string) => c in contracts
+	);
 
 	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-		const calculator = getContract({
+		const { result } = await prepareWriteContract({
 			address: fund_value_calculator,
-			abi: fundValueCalculatorAbi,
-			signerOrProvider: getProvider()
+			abi: fundValueCalculatorABI,
+			functionName: 'calcNetValueForSharesHolder',
+			args: [vault, account]
 		});
 
-		const value = await calculator.callStatic.calcNetValueForSharesHolder(vault, account);
-		const token = await fetchToken({ address: value.denominationAsset_ });
+		const [address, value] = result as [Address, bigint];
+		const { decimals, symbol } = await fetchToken({ address });
 
-		return {
-			decimals: token.decimals,
-			formatted: ethers.utils.formatUnits(value.netValue_, token.decimals),
-			symbol: token.symbol,
-			value: value.netValue_
-		};
+		return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
+	}
+
+	function launchWizard(wizard: Wizard) {
+		wizard.init(`/strategies/${strategy.id}`, {
+			chainId: chain.chain_id,
+			strategyName: strategy.name,
+			contracts
+		});
 	}
 </script>
 
@@ -38,7 +50,7 @@
 		{/if}
 	</svelte:fragment>
 	<div class="content">
-		{#if !(contracts.vault && contracts.fund_value_calculator)}
+		{#if !depositEnabled}
 			<AlertList status="info" size="md">
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
@@ -62,10 +74,10 @@
 		{/if}
 	</div>
 	<div class="actions">
-		<Button href="/wizard/connect-wallet?returnTo=/strategies/{strategyId}&chainId={chain.chain_id}">
+		<Button on:click={() => launchWizard(connectWizard)}>
 			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 		</Button>
-		<Button label="Deposit" disabled />
+		<Button label="Deposit" disabled={!depositEnabled} on:click={() => launchWizard(depositWizard)} />
 		<Button label="Redeem" disabled />
 	</div>
 </SummaryBox>

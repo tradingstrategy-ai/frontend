@@ -1,26 +1,122 @@
 <script lang="ts">
+	import type { Wizard } from 'wizard/store';
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+	import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
+	import { parseUnits } from 'viem';
+	import { wallet } from './client';
+	import { type EIP3009SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
+	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import { getExplorerUrl } from './utils';
+
+	export let wizard: Wizard;
+
+	$: ({ chainId, contracts, denominationToken, nativeCurrency } = $wizard.data);
 
 	let paymentValue: number;
+	let transactionId: Address;
+	let errorMessage: string;
 
-	const paymentProgress = tweened(0, { duration: 2000 });
+	const progressBar = tweened(0, { easing: cubicOut });
+
+	async function authorizeTransfer() {
+		const tokenInfo = await fetchTokenInfo(denominationToken.address);
+		const value = parseUnits(`${paymentValue}`, tokenInfo.decimals);
+
+		return getSignedArguments(
+			'TransferWithAuthorization',
+			chainId,
+			tokenInfo,
+			$wallet.address,
+			contracts.payment_forwarder,
+			value
+		);
+	}
+
+	async function confirmPayment(signedArgs: EIP3009SignedArguments) {
+		const { request } = await prepareWriteContract({
+			address: contracts.payment_forwarder,
+			abi: paymentForwarderABI,
+			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
+			args: [...signedArgs, 1]
+		});
+
+		return writeContract(request);
+	}
 
 	const payment = fsm('initial', {
 		initial: {
-			confirm: 'confirming'
+			authorize() {
+				authorizeTransfer().then(payment.confirm).catch(payment.fail);
+				return 'authorizing';
+			}
 		},
+
+		authorizing: {
+			confirm(signedArgs) {
+				confirmPayment(signedArgs).then(payment.process).catch(payment.fail);
+				return 'confirming';
+			},
+
+			fail(err) {
+				console.error('authorizeTransfer error:', err);
+				errorMessage = `Authorization to transfer ${denominationToken.symbol} tokens from your wallet account failed.`;
+				return 'failed';
+			}
+		},
+
 		confirming: {
-			process: 'processing'
+			process({ hash }) {
+				transactionId = hash;
+				waitForTransaction({ hash }).then(payment.finish).catch(payment.fail);
+				return 'processing';
+			},
+
+			fail(err) {
+				console.error('confirmPayment error:', err);
+				errorMessage = 'Payment transaction confirmation from wallet account failed.';
+				return 'failed';
+			}
 		},
+
 		processing: {
 			_enter() {
-				paymentProgress.set(100).then(payment.finish);
+				progressBar.set(100, { duration: 20_000 });
 			},
-			finish: 'done'
+
+			_exit() {
+				progressBar.set(100, { duration: 100 });
+			},
+
+			finish(receipt) {
+				if (receipt.status !== 'success') {
+					console.error('waitForTransaction reverted:', receipt);
+					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					return 'failed';
+				}
+				return 'completed';
+			},
+
+			fail(err) {
+				console.error('waitForTransaction error:', err);
+				if (err.name === 'CallExecutionError') {
+					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+				} else {
+					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+				}
+				return 'failed';
+			}
 		},
-		done: {}
+
+		failed: {},
+
+		completed: {
+			_enter() {
+				wizard.complete('payment');
+			}
+		}
 	});
 </script>
 
@@ -31,49 +127,91 @@
 		<table class="responsive">
 			<tbody>
 				<tr>
-					<td><EntitySymbol type="token" label="MATIC" slug="matic" /></td>
-					<td>682.2362</td>
+					<td>
+						<EntitySymbol type="token" label={nativeCurrency.symbol} slug={nativeCurrency.symbol.toLowerCase()} />
+					</td>
+					<td>{nativeCurrency.formatted}</td>
 				</tr>
 				<tr>
-					<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-					<td>1200.18</td>
+					<td>
+						<EntitySymbol type="token" label={denominationToken.symbol} slug={denominationToken.symbol.toLowerCase()} />
+					</td>
+					<td>{denominationToken.formatted}</td>
 				</tr>
 			</tbody>
 		</table>
 	</section>
 
 	<section>
-		{#if $payment === 'initial'}
-			<h3>Enter amount to pay</h3>
+		<h3>Enter amount to deposit</h3>
+		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
+			<MoneyInput
+				bind:value={paymentValue}
+				size="xl"
+				tokenUnit={denominationToken.symbol}
+				disabled={$payment !== 'initial'}
+			/>
 
-			<form action="" class="payment-form">
-				<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
-
-				<AlertList size="sm" status="warning">
-					<AlertItem>Some disclaimer about risk or sth else can go here.</AlertItem>
-				</AlertList>
-				<Button disabled={!paymentValue} on:click={payment.confirm}>Make payment</Button>
-			</form>
-		{:else if $payment === 'confirming'}
-			<div class="confirmation" style="display: contents;" on:click={payment.process} on:keydown={payment.process}>
-				<h3>Confirm transaction in your wallet.</h3>
+			{#if $payment === 'initial'}
+				<Button submit disabled={!paymentValue}>Make payment</Button>
 
 				<AlertList size="sm" status="warning">
-					<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
+					<AlertItem title="Notice">
+						Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
+						Only invest funds you are willing to lose.
+					</AlertItem>
 				</AlertList>
-			</div>
-		{:else if $payment === 'processing'}
-			<h3>Confirming transaction...</h3>
-			<progress max="100" value={$paymentProgress} />
-			<p class="disclaimer">
-				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
-			</p>
-		{:else if $payment === 'done'}
-			<div class="transaction-id">
-				<h3>Transaction ID</h3>
-				<CryptoAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
-			</div>
-		{/if}
+			{/if}
+
+			{#if $payment === 'authorizing'}
+				<AlertList size="sm" status="warning">
+					<AlertItem title="Authorize transfer">
+						Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'confirming'}
+				<AlertList size="sm" status="warning">
+					<AlertItem title="Confirm transaction">
+						Please confirm the transaction in your wallet in order submit your payment.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if transactionId}
+				<div class="transaction-id">
+					<h3>Transaction ID</h3>
+					<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+				</div>
+
+				<progress max="100" value={$progressBar} />
+			{/if}
+
+			{#if $payment === 'processing'}
+				<AlertList size="sm" status="info">
+					<AlertItem title="Payment processing">
+						The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
+						the transaction ID above to view the status in the blockchain explorer.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'failed'}
+				<AlertList size="sm" status="error">
+					<AlertItem title="Error">{errorMessage}</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $payment === 'completed'}
+				<AlertList size="sm" status="success">
+					<AlertItem title="Payment completed">
+						Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
+						review your share balance.
+					</AlertItem>
+				</AlertList>
+			{/if}
+		</form>
 	</section>
 </div>
 
@@ -127,6 +265,7 @@
 		& .transaction-id {
 			display: grid;
 			gap: var(--space-md);
+			justify-content: start;
 		}
 	}
 </style>

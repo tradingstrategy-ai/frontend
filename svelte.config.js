@@ -18,7 +18,8 @@ const config = {
 
 		alias: {
 			'design-system-fonts': 'deps/fonts',
-			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib'
+			'trade-executor-frontend': 'deps/trade-executor-frontend/src/lib',
+			wizard: 'src/routes/wizard'
 		},
 
 		// disable CSRF origin checking for now; see:

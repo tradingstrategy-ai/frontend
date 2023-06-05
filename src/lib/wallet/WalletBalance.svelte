@@ -1,13 +1,36 @@
 <script lang="ts">
-	import { fetchBalance } from '@wagmi/core';
+	import type { Wizard } from 'wizard/store';
+	import { fetchBalance, readContract } from '@wagmi/core';
+	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { wallet } from '$lib/wallet/client';
-	import { getUsdcAddress } from '$lib/wallet/utils';
 	import { EntitySymbol } from '$lib/components';
 	import WalletAddress from './WalletAddress.svelte';
 	import Spinner from 'svelte-spinner';
 
+	export let wizard: Wizard;
+
+	$: ({ contracts } = $wizard.data);
 	$: ({ address, chain } = $wallet);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
+
+	async function getNativeCurrency(address: Address) {
+		const nativeCurrency = await fetchBalance({ address });
+		wizard.updateData({ nativeCurrency });
+		return nativeCurrency;
+	}
+
+	async function getDenominationToken(address: Address) {
+		const token = (await readContract({
+			address: contracts.comptroller,
+			abi: comptrollerABI,
+			functionName: 'getDenominationAsset'
+		})) as Address;
+		const balance = await fetchBalance({ address, token });
+		wizard.updateData({
+			denominationToken: { address: token, ...balance }
+		});
+		return balance;
+	}
 </script>
 
 <table class="wallet-balance responsive">
@@ -19,7 +42,7 @@
 		<tr>
 			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
 			<td>
-				{#await fetchBalance({ address })}
+				{#await getNativeCurrency(address)}
 					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 				{:then balance}
 					{balance.formatted ?? '---'}
@@ -29,7 +52,7 @@
 		<tr>
 			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
 			<td>
-				{#await fetchBalance({ address, token: getUsdcAddress(chain.id) })}
+				{#await getDenominationToken(address)}
 					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 				{:then balance}
 					{balance.formatted ?? '---'}

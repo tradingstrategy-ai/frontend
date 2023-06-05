@@ -15,7 +15,7 @@
 </script>
 
 <div class="strategy-overview-page">
-	<InvestorWidget strategyId={summary.id} {chain} contracts={summary.on_chain_data.smart_contracts} />
+	<InvestorWidget strategy={summary} {chain} />
 
 	<section class="summary-stats">
 		{#if portfolioStats}
