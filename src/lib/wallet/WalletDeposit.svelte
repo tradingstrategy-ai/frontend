@@ -145,7 +145,12 @@
 	<section>
 		<h3>Enter amount to deposit</h3>
 		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
-			<MoneyInput size="xl" tokenUnit="USDC" bind:value={paymentValue} />
+			<MoneyInput
+				bind:value={paymentValue}
+				size="xl"
+				tokenUnit={denominationToken.symbol}
+				disabled={$payment !== 'initial'}
+			/>
 
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
