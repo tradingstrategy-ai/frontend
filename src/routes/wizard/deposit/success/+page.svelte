@@ -13,5 +13,5 @@
 
 <WizardActions>
 	<Button secondary label="Back" href="payment" />
-	<Button label="Done" href={$wizard?.returnTo} />
+	<Button label="Done" href={$wizard.returnTo} />
 </WizardActions>

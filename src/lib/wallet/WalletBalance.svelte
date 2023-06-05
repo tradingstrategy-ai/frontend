@@ -14,9 +14,9 @@
 	$: chainCurrency = chain?.nativeCurrency.symbol;
 
 	async function getNativeCurrency(address: Address) {
-		const nativeBalance = await fetchBalance({ address });
-		wizard.updateData({ nativeBalance });
-		return nativeBalance;
+		const nativeCurrency = await fetchBalance({ address });
+		wizard.updateData({ nativeCurrency });
+		return nativeCurrency;
 	}
 
 	async function getDenominationToken(address: Address) {

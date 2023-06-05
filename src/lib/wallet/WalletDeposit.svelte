@@ -13,7 +13,7 @@
 
 	export let wizard: Wizard;
 
-	$: ({ chainId, contracts, denominationToken, nativeBalance } = $wizard.data);
+	$: ({ chainId, contracts, denominationToken, nativeCurrency } = $wizard.data);
 
 	let paymentValue: number;
 	let transactionId: Address;
@@ -112,7 +112,11 @@
 
 		failed: {},
 
-		completed: {}
+		completed: {
+			_enter() {
+				wizard.complete('payment');
+			}
+		}
 	});
 </script>
 
@@ -124,9 +128,9 @@
 			<tbody>
 				<tr>
 					<td>
-						<EntitySymbol type="token" label={nativeBalance.symbol} slug={nativeBalance.symbol.toLowerCase()} />
+						<EntitySymbol type="token" label={nativeCurrency.symbol} slug={nativeCurrency.symbol.toLowerCase()} />
 					</td>
-					<td>{nativeBalance.formatted}</td>
+					<td>{nativeCurrency.formatted}</td>
 				</tr>
 				<tr>
 					<td>

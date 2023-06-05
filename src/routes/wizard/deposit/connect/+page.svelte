@@ -8,17 +8,16 @@
 
 	$: chains = data.chains;
 	$: chainId = $wizard?.data.chainId;
+
+	$: if ($wallet.status === 'connected' && $wallet.chain?.id === chainId) {
+		wizard.complete('connect');
+	}
 </script>
 
 <ConnectWallet {chainId} {chains} />
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button ghost label="Cancel" href={$wizard.returnTo} />
 	<Button secondary label="Back" href="introduction" />
-	<Button
-		label="Next"
-		href="balance"
-		disabled={chainId && chainId !== $wallet.chain?.id}
-		on:click={() => wizard.complete('connect')}
-	/>
+	<Button label="Next" href="balance" disabled={!$wizard.completed.has('connect')} />
 </WizardActions>
