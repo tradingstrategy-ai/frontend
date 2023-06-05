@@ -197,17 +197,6 @@ export function formatDatetime(d: MaybeDate): string {
 }
 
 /**
- * Format a UNIX timestamp as human readable date.
- *
- * @param d Seconds since epoch
- */
-export function formatUnixTimestamp(d: MaybeNumber): string {
-	if (!Number.isFinite(d)) return notFilledMarker;
-
-	return formatDatetime(new Date(d * 1000));
-}
-
-/**
  * Format a USDC balance as it comes out from the contract.
  */
 export function formatUSDCBalance(web3, b: string, decimals: number): string {
@@ -223,17 +212,6 @@ export function formatShortAddress(address: MaybeString): string {
 	if (!address) return notFilledMarker;
 
 	return address.substring(0, 8) + '…';
-}
-
-/**
- * Format since
- *
- * @param ts Unix timestamp
- */
-export function formatSince(ts: MaybeNumber): string {
-	if (!Number.isFinite(ts)) return notFilledMarker;
-
-	return formatDistanceToNow(ts * 1000, { addSuffix: true });
 }
 
 /**

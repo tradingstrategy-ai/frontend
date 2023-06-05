@@ -2,16 +2,10 @@
 	Page to display the instance run-time status
 -->
 <script lang="ts">
-	import { formatSince, formatUnixTimestamp } from '$lib/helpers/formatters.js';
-	import { AlertList, AlertItem, DataBox, SummaryBox } from '$lib/components';
+	import { AlertList, AlertItem, DataBox, SummaryBox, Timestamp } from '$lib/components';
 
 	export let data;
-
-	// Current run state
-	$: runState = data.runState;
-
-	// The whole strategy state
-	$: state = data.state;
+	$: ({ runState, state } = data);
 </script>
 
 <section class="instance-status">
@@ -33,16 +27,22 @@
 
 	<div class="inner">
 		<SummaryBox title="Current session" subtitle="Statistics since the trade executor instance was restarted">
-			<DataBox label="Restarted" value={formatSince(runState.started_at)} size="xs" />
-			<DataBox label="Status last updated" value={formatSince(runState.last_refreshed_at)} size="xs" />
-			<DataBox label="Trading cycles" value={formatSince(runState.cycles)} size="xs" />
-			<DataBox label="Take profit/stop loss checks" value={formatSince(runState.position_trigger_checks)} size="xs" />
-			<DataBox label="Position revaluations" value={formatSince(runState.position_revaluations)} size="xs" />
+			<DataBox label="Restarted" size="xs">
+				<Timestamp date={runState.started_at} format="relative" />
+			</DataBox>
+			<DataBox label="Status last updated" size="xs">
+				<Timestamp date={runState.last_refreshed_at} format="relative" />
+			</DataBox>
+			<DataBox label="Trading cycles" value={runState.cycles} size="xs" />
+			<DataBox label="Take profit/stop loss checks" value={runState.position_trigger_checks} size="xs" />
+			<DataBox label="Position revaluations" value={runState.position_revaluations} size="xs" />
 		</SummaryBox>
 
 		<SummaryBox title="Lifetime" subtitle="Overall execution metrics">
 			<DataBox label="Completed trading cycles" value={`${(state.cycle || 0) - 1}`} size="xs" />
-			<DataBox label="First started" value={formatUnixTimestamp(state.created_at)} size="xs" />
+			<DataBox label="First started" size="xs">
+				<Timestamp date={state.created_at} format="iso" withTime />
+			</DataBox>
 		</SummaryBox>
 	</div>
 
