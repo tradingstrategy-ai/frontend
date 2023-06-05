@@ -37,19 +37,7 @@ const config = {
 	preprocess: preprocess({
 		sourceMap: true,
 		postcss: postcssConfig
-	}),
-
-	vitePlugin: {
-		experimental: {
-			// Enable experimental Svelte inspector; see:
-			// https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#inspector
-			inspector: {
-				toggleKeyCombo: 'alt-meta',
-				holdMode: true,
-				showToggleButton: 'never'
-			}
-		}
-	}
+	})
 };
 
 export default config;
