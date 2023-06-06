@@ -5,12 +5,21 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 <script lang="ts">
 	export let summary: any;
 
+	$: jsonlUrl = `https://tradingstrategy.ai/api/candles-jsonl?exchange_slug=${summary.exchange_slug}&chain_slug=${summary.chain_slug}&pair_slug=${summary.pair_slug}&format=jsonl`;
 	$: pairInfoUrl = `https://tradingstrategy.ai/api/pair-details?exchange_slug=${summary.exchange_slug}&chain_slug=${summary.chain_slug}&pair_slug=${summary.pair_slug}`;
 	$: candlesUrl = `https://tradingstrategy.ai/api/candles?pair_id=${summary.pair_id}&exchange_type=${summary.exchange_type}&time_bucket=1d`;
 </script>
 
 <div class="api-info">
 	<h2>Trading pair info</h2>
+
+	<h3>JSONL</h3>
+
+	<p>Get trading pair overview as JSONL over HTTP GET. This is preferred method for getting large amounts of OHLCV data. <a class="body-link" href="https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_candles_jsonl">Click here</a> for more information on how to stream JSONL data. </p>
+
+	<pre>curl "{jsonlUrl}"</pre>
+
+	<h3>JSON</h3>
 
 	<p>Get trading pair overview as JSON over HTTP GET.</p>
 
@@ -39,6 +48,11 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 	.api-info h2 {
 		margin-bottom: var(--space-md);
 		font: var(--f-h2-medium);
+	}
+
+	.api-info h3 {
+		margin-bottom: var(--space-md);
+		font: var(--f-h3-medium);
 	}
 
 	.api-info p {
