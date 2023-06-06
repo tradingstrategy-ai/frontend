@@ -13,12 +13,19 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 <div class="api-info">
 	<h2>Trading pair info</h2>
 
+	<p>Get trading pair overview as JSON over HTTP GET.</p>
+
+	<pre>curl "{pairInfoUrl}"</pre>
+
+	<h2>Daily OHLCV data</h2>
+
 	<h3>JSONL</h3>
 
 	<p>
-		Get trading pair overview as <a class="body-link" href="https://tradingstrategy.ai/glossary/jsonl">JSONL</a> over
-		HTTP GET. This is preferred method for getting large amounts of OHLCV data. Find more information about streaming
-		JSONL data line-by-line in our
+		Download daily as <a class="body-link" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">OHLCV</a>
+		candles as <a class="body-link" href="https://tradingstrategy.ai/glossary/jsonl">JSONL</a> over HTTP GET. This is
+		preferred method for getting large amounts of OHLCV data. Find more information about streaming JSONL data
+		line-by-line in our
 		<a class="body-link" href="https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_candles_jsonl"
 			>API specification</a
 		>.
@@ -28,15 +35,9 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 
 	<h3>JSON</h3>
 
-	<p>Get trading pair overview as JSON over HTTP GET.</p>
-
-	<pre>curl "{pairInfoUrl}"</pre>
-
-	<h2>Daily OHLCV data</h2>
-
 	<p>
-		Download daily <a class="body-link" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">OHLCV</a> candles
-		as JSON over HTTP GET.
+		Download daily <a class="body-link" href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV">OHLCV</a>
+		candles as <a class="body-link" href="https://tradingstrategy.ai/glossary/json">JSON</a> over HTTP GET.
 	</p>
 
 	<pre>curl "{candlesUrl}"</pre>
