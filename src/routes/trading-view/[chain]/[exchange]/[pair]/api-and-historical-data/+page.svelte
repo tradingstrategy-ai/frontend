@@ -3,7 +3,7 @@ Real time examples for the API
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import TradingPairAPIExamples from '$lib/content/TradingPairAPIExamples.svelte';
+	import APIExamples from './APIExamples.svelte';
 	import { PageHeader } from '$lib/components';
 
 	export let data;
@@ -41,19 +41,17 @@ Real time examples for the API
 		</p>
 
 		<p>
-			Examples here do not cover the full API. Read the full
-			<a class="body-link" href="https://tradingstrategy.ai/api/explorer/"> real-time API </a>
-
+			Examples here do not cover the full API. Read the full <a
+				class="body-link"
+				href="https://tradingstrategy.ai/api/explorer/">real-time API</a
+			>
 			or
-
-			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html">
-				algorithmic trading programming
-			</a>
-
-			documentation.
+			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html"
+				>algorithmic trading programming</a
+			> documentation.
 		</p>
 
-		<TradingPairAPIExamples {summary} />
+		<APIExamples {summary} />
 	</section>
 </main>
 
