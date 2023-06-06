@@ -16,10 +16,12 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 	<h3>JSONL</h3>
 
 	<p>
-		Get trading pair overview as JSONL over HTTP GET. This is preferred method for getting large amounts of OHLCV data. <a
-			class="body-link"
-			href="https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_candles_jsonl">Click here</a
-		> for more information on how to stream JSONL data.
+		Get trading pair overview as <a class="body-link" href="https://tradingstrategy.ai/glossary/jsonl">JSONL</a> over
+		HTTP GET. This is preferred method for getting large amounts of OHLCV data. Find more information about streaming
+		JSONL data line-by-line in our
+		<a class="body-link" href="https://tradingstrategy.ai/api/explorer/#/Trading%20pair/web_candles_jsonl"
+			>API specification</a
+		>.
 	</p>
 
 	<pre>curl "{jsonlUrl}"</pre>
