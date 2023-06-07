@@ -110,7 +110,9 @@
 			}
 		},
 
-		failed: {},
+		failed: {
+			retry: 'initial'
+		},
 
 		completed: {
 			_enter() {
@@ -199,7 +201,10 @@
 
 			{#if $payment === 'failed'}
 				<AlertList size="sm" status="error">
-					<AlertItem title="Error">{errorMessage}</AlertItem>
+					<AlertItem title="Error">
+						{errorMessage}
+						<Button slot="cta" size="sm" label="Try again" on:click={payment.retry} />
+					</AlertItem>
 				</AlertList>
 			{/if}
 
