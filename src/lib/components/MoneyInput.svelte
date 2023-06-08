@@ -38,6 +38,7 @@ props through to HTML input element.
 			on:focus
 			on:blur
 			on:keydown
+			on:change
 		/>
 		<div class="symbols">
 			{#if tokenUnit}

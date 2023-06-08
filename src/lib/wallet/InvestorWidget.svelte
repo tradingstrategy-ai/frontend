@@ -2,10 +2,9 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { Wizard } from 'wizard/store';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
-	import { formatUnits } from 'viem';
+	import { fetchBalance } from '@wagmi/core';
 	import { wallet } from '$lib/wallet/client';
-	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
+	import { getAccountNetValue } from '$lib/eth-defi/enzyme';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
@@ -19,20 +18,6 @@
 	$: depositEnabled = ['vault', 'comptroller', 'payment_forwarder', 'fund_value_calculator'].every(
 		(c: string) => c in contracts
 	);
-
-	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-		const { result } = await prepareWriteContract({
-			address: fund_value_calculator,
-			abi: fundValueCalculatorABI,
-			functionName: 'calcNetValueForSharesHolder',
-			args: [vault, account]
-		});
-
-		const [address, value] = result as [Address, bigint];
-		const { decimals, symbol } = await fetchToken({ address });
-
-		return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
-	}
 
 	function launchWizard(wizard: Wizard) {
 		wizard.init(`/strategies/${strategy.id}`, {

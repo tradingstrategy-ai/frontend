@@ -3,21 +3,24 @@
 	import fsm from 'svelte-fsm';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
+	import type { FetchBalanceResult } from '@wagmi/core';
+	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { parseUnits } from 'viem';
 	import { wallet } from './client';
-	import { type EIP3009SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
+	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getExplorerUrl } from './utils';
 
 	export let wizard: Wizard;
 
-	$: ({ chainId, contracts, denominationToken, nativeCurrency } = $wizard.data);
+	const contracts: Contracts = $wizard.data.contracts;
+	const denominationToken: FetchBalanceResult = $wizard.data.denominationToken;
+	const nativeCurrency: FetchBalanceResult = $wizard.data.nativeCurrency;
 
-	let paymentValue: number;
-	let transactionId: Address;
-	let errorMessage: string;
+	let paymentValue: MaybeNumber;
+	let errorMessage: MaybeString;
+	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
@@ -27,15 +30,15 @@
 
 		return getSignedArguments(
 			'TransferWithAuthorization',
-			chainId,
+			$wizard.data.chainId,
 			tokenInfo,
-			$wallet.address,
+			$wallet.address!,
 			contracts.payment_forwarder,
 			value
 		);
 	}
 
-	async function confirmPayment(signedArgs: EIP3009SignedArguments) {
+	async function confirmPayment(signedArgs: SignedArguments) {
 		const { request } = await prepareWriteContract({
 			address: contracts.payment_forwarder,
 			abi: paymentForwarderABI,
@@ -48,6 +51,17 @@
 
 	const payment = fsm('initial', {
 		initial: {
+			// restore state on wizard back/next navigation
+			restore(state) {
+				({ errorMessage, transactionId, paymentValue } = $wizard.data);
+				if (state === 'authorizing' || state === 'confirming') {
+					errorMessage = `Wallet request state lost due to window navigation;
+						please cancel wallet request and try again.`;
+					return 'failed';
+				}
+				return state;
+			},
+
 			authorize() {
 				authorizeTransfer().then(payment.confirm).catch(payment.fail);
 				return 'authorizing';
@@ -70,7 +84,7 @@
 		confirming: {
 			process({ hash }) {
 				transactionId = hash;
-				waitForTransaction({ hash }).then(payment.finish).catch(payment.fail);
+				wizard.updateData({ transactionId });
 				return 'processing';
 			},
 
@@ -82,8 +96,23 @@
 		},
 
 		processing: {
-			_enter() {
-				progressBar.set(100, { duration: 20_000 });
+			_enter({ event }) {
+				const hash = transactionId!;
+				let duration = 20_000;
+
+				if (event === 'restore') {
+					// try fetching receipt in case transaction already completed
+					getPublicClient()
+						.getTransactionReceipt({ hash })
+						.then(payment.finish)
+						.catch(() => {});
+					progressBar.set(50, { duration: 0 });
+					duration *= 0.5;
+				}
+
+				// wait for pending transaction
+				waitForTransaction({ hash }).then(payment.finish).catch(payment.fail);
+				progressBar.set(100, { duration });
 			},
 
 			_exit() {
@@ -110,14 +139,28 @@
 			}
 		},
 
-		failed: {},
+		failed: {
+			_enter() {
+				wizard.updateData({ errorMessage });
+			},
+
+			retry() {
+				return transactionId ? 'processing' : 'initial';
+			}
+		},
 
 		completed: {
-			_enter() {
+			_enter({ event }) {
+				if (event === 'restore') {
+					progressBar.set(100, { duration: 0 });
+				}
 				wizard.complete('payment');
 			}
 		}
 	});
+
+	payment.restore($wizard.data.paymentState);
+	$: wizard.updateData({ paymentState: $payment });
 </script>
 
 <div class="wallet-deposit">
@@ -150,6 +193,7 @@
 				size="xl"
 				tokenUnit={denominationToken.symbol}
 				disabled={$payment !== 'initial'}
+				on:change={() => wizard.updateData({ paymentValue })}
 			/>
 
 			{#if $payment === 'initial'}
@@ -199,7 +243,10 @@
 
 			{#if $payment === 'failed'}
 				<AlertList size="sm" status="error">
-					<AlertItem title="Error">{errorMessage}</AlertItem>
+					<AlertItem title="Error">
+						{errorMessage}
+						<Button slot="cta" size="sm" label="Try again" on:click={payment.retry} />
+					</AlertItem>
 				</AlertList>
 			{/if}
 

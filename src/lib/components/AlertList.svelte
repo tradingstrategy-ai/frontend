@@ -99,7 +99,7 @@ as children. The alert box is only displayed if one or more items are displayed
 
 	.sm {
 		gap: var(--space-md);
-		padding: var(--space-md);
+		padding: var(--space-sl);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 
@@ -113,7 +113,7 @@ as children. The alert box is only displayed if one or more items are displayed
 
 	.xs {
 		gap: var(--space-ss);
-		padding: var(--space-ss) var(--space-sm);
+		padding: var(--space-sm);
 		font: var(--f-ui-sm-roman);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
