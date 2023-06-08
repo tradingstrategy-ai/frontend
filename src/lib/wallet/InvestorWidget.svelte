@@ -40,9 +40,9 @@
 				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
 			</AlertList>
 		{:else if $wallet.status !== 'connected'}
-			<AlertList status="warning" size="md">
-				<AlertItem title="Wallet not connected">Please connect wallet to see your deposit status</AlertItem>
-			</AlertList>
+			<div class="not-connected">
+				<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
+			</div>
 		{:else if $wallet.chain.id !== chain.chain_id}
 			<AlertList status="error" size="md">
 				<AlertItem title="Wrong network">Please connnect to {chain.chain_name}</AlertItem>
@@ -68,6 +68,17 @@
 </SummaryBox>
 
 <style lang="postcss">
+	.not-connected {
+		padding: var(--space-sm) 0;
+		font: var(--f-ui-md-roman);
+		letter-spacing: var(--f-ui-md-spacing, normal);
+
+		@media (--viewport-lg-up) {
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
+		}
+	}
+
 	.actions {
 		display: grid;
 		gap: var(--space-ml);
