@@ -139,3 +139,5 @@ export async function getSignedArguments(
 	const { v, r, s } = await getSignature(types, domain, message, transferMethod);
 	return [...Object.values(message), v, r, s];
 }
+
+export type SignedArguments = Awaited<ReturnType<typeof getSignedArguments>>;
