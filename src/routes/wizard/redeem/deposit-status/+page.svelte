@@ -1,12 +1,46 @@
-<script>
+<script lang="ts">
 	import wizard from '../store';
-	import { Button, WizardActions } from '$lib/components';
-	import DepositStatus from '$lib/redeem/DepositStatus.svelte';
+	import { fetchBalance } from '@wagmi/core';
+	import { wallet } from '$lib/wallet/client';
+	import { Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import Spinner from 'svelte-spinner';
 
+	// TODO: require > 0 shares
 	wizard.complete('deposit-status');
+
+	$: ({ address, chain } = $wallet);
+	$: ({ contracts } = $wizard.data);
+	$: chainCurrency = chain?.nativeCurrency.symbol;
+
+	async function getNativeCurrency(address: Address) {
+		const nativeCurrency = await fetchBalance({ address });
+		wizard.updateData({ nativeCurrency });
+		return nativeCurrency;
+	}
 </script>
 
-<DepositStatus {wizard} />
+<Grid gap="lg">
+	<VaultBalance {contracts} {address} />
+
+	<div class="gas-fees-balance">
+		<h3>Balance for gas fees</h3>
+		<table>
+			<tbody>
+				<tr>
+					<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
+					<td>
+						{#await getNativeCurrency(address)}
+							<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+						{:then balance}
+							{balance.formatted ?? '---'}
+						{/await}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</Grid>
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard.returnTo} />

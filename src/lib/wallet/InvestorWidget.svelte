@@ -2,22 +2,23 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { Wizard } from 'wizard/store';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { fetchBalance } from '@wagmi/core';
 	import { wallet } from '$lib/wallet/client';
-	import { getAccountNetValue } from '$lib/eth-defi/enzyme';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import redeemWizard from 'wizard/redeem/store';
-	import { AlertList, AlertItem, Button, DataBox, Grid, SummaryBox } from '$lib/components';
-	import TokenBalance from './TokenBalance.svelte';
+	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
+	import VaultBalance from './VaultBalance.svelte';
 	import WalletAddress from './WalletAddress.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
-	$: depositEnabled = ['vault', 'comptroller', 'payment_forwarder', 'fund_value_calculator'].every(
-		(c: string) => c in contracts
+	$: depositEnabled = !!(
+		contracts.vault &&
+		contracts.comptroller &&
+		contracts.payment_forwarder &&
+		contracts.fund_value_calculator
 	);
 
 	function launchWizard(wizard: Wizard) {
@@ -49,14 +50,7 @@
 				<AlertItem title="Wrong network">Please connnect to {chain.chain_name}</AlertItem>
 			</AlertList>
 		{:else}
-			<Grid cols={2} gap="lg">
-				<DataBox label="Number of shares">
-					<TokenBalance data={fetchBalance({ token: contracts.vault, address: $wallet.address })} />
-				</DataBox>
-				<DataBox label="Value of shares">
-					<TokenBalance data={getAccountNetValue(contracts, $wallet.address)} />
-				</DataBox>
-			</Grid>
+			<VaultBalance {contracts} address={$wallet.address} />
 		{/if}
 	</div>
 	<div class="actions">
