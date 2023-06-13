@@ -1,12 +1,9 @@
 <script lang="ts">
-	import type { ConnectedWallet } from '$lib/wallet/client';
 	import { switchNetwork } from '@wagmi/core';
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
-	import WalletAddress from './WalletAddress.svelte';
-	import WalletInfo from './WalletInfo.svelte';
-	import WalletInfoItem from './WalletInfoItem.svelte';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;

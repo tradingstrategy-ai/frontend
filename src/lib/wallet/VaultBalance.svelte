@@ -3,7 +3,7 @@
 	import { formatUnits } from 'viem';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 	import { DataBox, Grid } from '$lib/components';
-	import TokenBalance from './TokenBalance.svelte';
+	import { TokenBalance } from '$lib/wallet';
 
 	export let address: Address;
 	export let contracts: Contracts;

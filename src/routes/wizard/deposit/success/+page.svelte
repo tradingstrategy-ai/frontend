@@ -1,8 +1,7 @@
 <script lang="ts">
 	import wizard from '../store';
-	import { wallet } from '$lib/wallet/client';
+	import { wallet, VaultBalance } from '$lib/wallet';
 	import { Button, Grid, WizardActions } from '$lib/components';
-	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 
 	$: ({ contracts, strategyName } = $wizard.data);
 	$: address = $wallet.address!;

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import wizard from '../store';
 	import { fetchBalance } from '@wagmi/core';
-	import { wallet } from '$lib/wallet/client';
+	import { wallet, VaultBalance } from '$lib/wallet';
 	import { Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
-	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 	import Spinner from 'svelte-spinner';
 
 	// TODO: require > 0 shares

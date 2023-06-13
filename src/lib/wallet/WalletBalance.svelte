@@ -2,12 +2,8 @@
 	import type { Wizard } from 'wizard/store';
 	import { fetchBalance, readContract } from '@wagmi/core';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { wallet } from '$lib/wallet/client';
+	import { wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
-	import WalletAddress from './WalletAddress.svelte';
-	import WalletInfo from './WalletInfo.svelte';
-	import WalletInfoItem from './WalletInfoItem.svelte';
-
 	import Spinner from 'svelte-spinner';
 
 	export let wizard: Wizard;

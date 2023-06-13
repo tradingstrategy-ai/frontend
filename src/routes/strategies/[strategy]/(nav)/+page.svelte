@@ -4,7 +4,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { AlertList, AlertItem, SummaryBox, DataBox } from '$lib/components';
-	import InvestorWidget from '$lib/wallet/InvestorWidget.svelte';
+	import { InvestorWidget } from '$lib/wallet';
 
 	export let data;
 	$: ({ chain, summary, state } = data);

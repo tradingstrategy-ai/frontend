@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { FetchBalanceResult } from '@wagmi/core';
-	import Spinner from 'svelte-spinner';
 	import { AlertList, AlertItem, EntitySymbol } from '$lib/components';
+	import Spinner from 'svelte-spinner';
 
 	export let data: MaybePromise<FetchBalanceResult>;
 	export let maxDigits = 2;

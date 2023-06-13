@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/utils';
 	import { getChainSlug } from '$lib/helpers/chain.js';
+	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
 	import { AlertItem, AlertList, Button, WizardActions } from '$lib/components';
-	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 
 	export let data;
 

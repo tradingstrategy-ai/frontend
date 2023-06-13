@@ -1,7 +1,7 @@
 <script lang="ts">
 	import wizard from '../store';
 	import { Button, WizardActions } from '$lib/components';
-	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
+	import { WalletBalance } from '$lib/wallet';
 
 	wizard.complete('balance');
 </script>

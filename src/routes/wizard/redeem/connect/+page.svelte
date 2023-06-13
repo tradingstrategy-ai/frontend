@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { wallet } from '$lib/wallet/client';
+	import { wallet, ConnectWallet } from '$lib/wallet';
 	import { Button, WizardActions } from '$lib/components';
-	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
 	export let data;
 

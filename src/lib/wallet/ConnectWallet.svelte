@@ -1,9 +1,7 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import { wallet } from '$lib/wallet/client';
 	import { Button } from '$lib/components';
-	import WalletTile from './WalletTile.svelte';
-	import WalletSummary from './WalletSummary.svelte';
+	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
 	export let chains: Chain[];

@@ -2,13 +2,11 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { Wizard } from 'wizard/store';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { wallet } from '$lib/wallet/client';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import redeemWizard from 'wizard/redeem/store';
+	import { wallet, VaultBalance, WalletAddress } from '$lib/wallet';
 	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
-	import VaultBalance from './VaultBalance.svelte';
-	import WalletAddress from './WalletAddress.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;

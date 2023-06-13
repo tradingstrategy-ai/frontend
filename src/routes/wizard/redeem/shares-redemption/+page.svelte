@@ -1,7 +1,7 @@
 <script>
 	import wizard from '../store';
 	import { Button, WizardActions } from '$lib/components';
-	import WalletTokenRedemption from '$lib/wallet/WalletTokenRedemption.svelte';
+	import { WalletTokenRedemption } from '$lib/wallet';
 
 	wizard.complete('shares-redemption');
 </script>
