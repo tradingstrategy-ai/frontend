@@ -16,6 +16,7 @@
 	} from '$lib/components';
 
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
+	const vaultNetValue: FetchBalanceResult = $wizard.data.vaultNetValue;
 
 	let redemptionValue: MaybeNumber;
 
@@ -54,7 +55,16 @@
 			<h3>Enter amount of shares to redeem</h3>
 
 			<form action="" class="redemption-form">
-				<MoneyInput conversionRatio={10} showConversionLabel size="xl" tokenUnit={vaultShares.symbol} bind:value={redemptionValue} />
+				<MoneyInput
+					bind:value={redemptionValue}
+					size="xl"
+					tokenUnit={vaultShares.symbol}
+					conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
+					conversionUnit={vaultNetValue.symbol}
+					conversionLabel="This redemption is worth"
+					disabled={$redemption !== 'initial'}
+					on:change={() => wizard.updateData({ redemptionValue })}
+				/>
 
 				<Button disabled={!redemptionValue} size="lg" on:click={redemption.confirm}>Redeem</Button>
 			</form>

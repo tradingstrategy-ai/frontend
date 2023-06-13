@@ -16,11 +16,19 @@ props through to HTML input element.
 	export let step: number | 'any' = 'any';
 	export let tokenUnit: string;
 	export let value: number | null = null;
-	export let showConversionLabel = false;
-	export let conversionRatio = 1;
-	export let conversionTokenUnit = 'USDC';
+	export let conversionLabel: string | undefined = undefined;
+	export let conversionRatio: number | undefined = undefined;
+	export let conversionUnit: string | undefined = undefined;
 
 	let inputEl: HTMLInputElement;
+
+	function getConvertedValue(value: MaybeNumber, ratio: number) {
+		const converted = (value || 0) * ratio;
+		return converted.toLocaleString('en', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+	}
 
 	export function focus(options = {}) {
 		inputEl.focus(options);
@@ -52,12 +60,12 @@ props through to HTML input element.
 		</div>
 	</div>
 
-	{#if showConversionLabel && value}
+	{#if conversionUnit && conversionRatio}
 		<span class="conversion-label">
-			This redemption is worth of
-			<EntitySymbol label={conversionTokenUnit} slug={conversionTokenUnit.toLowerCase()} type="token">
-				{value * conversionRatio}
-				{conversionTokenUnit}
+			{conversionLabel}
+			<EntitySymbol label={conversionUnit} slug={conversionUnit.toLowerCase()} type="token">
+				{getConvertedValue(value, conversionRatio)}
+				{conversionUnit}
 			</EntitySymbol>
 		</span>
 	{/if}
