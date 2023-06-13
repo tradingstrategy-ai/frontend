@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
@@ -8,27 +9,37 @@
 	export let address: Address;
 	export let contracts: Contracts;
 
-	async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
+	const dispatch = createEventDispatcher();
+
+	async function fetchVaultShares(address: Address) {
+		const vaultShares = await fetchBalance({ token: contracts.vault, address });
+		dispatch('balanceFetch', { vaultShares });
+		return vaultShares;
+	}
+
+	async function fetchVaultNetValue(account: Address) {
 		const { result } = await prepareWriteContract({
-			address: fund_value_calculator,
+			address: contracts.fund_value_calculator,
 			abi: fundValueCalculatorABI,
 			functionName: 'calcNetValueForSharesHolder',
-			args: [vault, account]
+			args: [contracts.vault, account]
 		});
 
 		const [address, value] = result as [Address, bigint];
 		const { decimals, symbol } = await fetchToken({ address });
 
-		return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
+		const vaultNetValue = { decimals, symbol, value, formatted: formatUnits(value, decimals) };
+		dispatch('balanceFetch', { vaultNetValue });
+		return vaultNetValue;
 	}
 </script>
 
 <Grid cols={2} gap="lg">
 	<DataBox label="Number of shares">
-		<TokenBalance data={fetchBalance({ token: contracts.vault, address })} />
+		<TokenBalance data={fetchVaultShares(address)} />
 	</DataBox>
 	<DataBox label="Value of shares">
-		<TokenBalance data={getAccountNetValue(contracts, address)} />
+		<TokenBalance data={fetchVaultNetValue(address)} />
 	</DataBox>
 </Grid>
 

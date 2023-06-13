@@ -5,12 +5,13 @@
 	import { Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
-	// TODO: require > 0 shares
-	wizard.complete('deposit-status');
-
 	$: ({ address, chain } = $wallet);
-	$: ({ contracts } = $wizard.data);
+	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
+
+	$: if (nativeCurrency?.value > 0n && vaultShares?.value > 0n) {
+		wizard.complete('deposit-status');
+	}
 
 	async function getNativeCurrency(address: Address) {
 		const nativeCurrency = await fetchBalance({ address });
@@ -20,7 +21,7 @@
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {contracts} {address} />
+	<VaultBalance {contracts} {address} on:balanceFetch={({ detail }) => wizard.updateData(detail)} />
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>
