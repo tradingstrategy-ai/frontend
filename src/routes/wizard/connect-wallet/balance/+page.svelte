@@ -6,7 +6,7 @@
 	wizard.complete('balance');
 </script>
 
-<WalletBalance {wizard} />
+<WalletBalance contracts={$wizard.data.contracts} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard.returnTo} />

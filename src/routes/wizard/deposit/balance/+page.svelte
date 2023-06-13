@@ -7,15 +7,16 @@
 	export let data;
 
 	$: ({ chains, wizard } = data);
-	$: ({ chainId, nativeCurrency, denominationToken } = $wizard.data);
+	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
 	$: chainSlug = getChainSlug(chains, chainId);
+
 	$: if (nativeCurrency?.value > 0n && denominationToken?.value > 0n) {
 		wizard.complete('balance');
 	}
 </script>
 
 <div class="deposit-balance-page">
-	<WalletBalance {wizard} />
+	<WalletBalance {contracts} on:balanceFetch={({ detail }) => wizard.updateData(detail)} />
 
 	{#if nativeCurrency?.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}
