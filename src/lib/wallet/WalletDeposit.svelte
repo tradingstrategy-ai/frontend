@@ -6,7 +6,7 @@
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { parseUnits } from 'viem';
-	import { wallet, getExplorerUrl } from '$lib/wallet';
+	import { wallet, getExplorerUrl, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, AlertItem, AlertList, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
@@ -166,22 +166,27 @@
 	<section>
 		<h3>Your current balance</h3>
 
-		<table class="responsive">
-			<tbody>
-				<tr>
-					<td>
-						<EntitySymbol type="token" label={nativeCurrency.symbol} slug={nativeCurrency.symbol.toLowerCase()} />
-					</td>
-					<td>{nativeCurrency.formatted}</td>
-				</tr>
-				<tr>
-					<td>
-						<EntitySymbol type="token" label={denominationToken.symbol} slug={denominationToken.symbol.toLowerCase()} />
-					</td>
-					<td>{denominationToken.formatted}</td>
-				</tr>
-			</tbody>
-		</table>
+		<WalletInfo alignValues="right">
+			<WalletInfoItem>
+				<EntitySymbol
+					slot="label"
+					type="token"
+					label={nativeCurrency.symbol}
+					slug={nativeCurrency.symbol.toLowerCase()}
+				/>
+				{nativeCurrency.formatted}
+			</WalletInfoItem>
+
+			<WalletInfoItem>
+				<EntitySymbol
+					slot="label"
+					type="token"
+					label={denominationToken.symbol}
+					slug={denominationToken.symbol.toLowerCase()}
+				/>
+				{denominationToken.formatted}
+			</WalletInfoItem>
+		</WalletInfo>
 	</section>
 
 	<section>
@@ -274,29 +279,6 @@
 		& h3 {
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-lg-medium);
-		}
-
-		& table {
-			margin: 0;
-
-			/* FIXME: remove `!important` */
-			@media (--viewport-sm-up) {
-				--table-font: var(--f-ui-lg-medium) !important;
-			}
-
-			& td {
-				padding: var(--space-xs) var(--space-ml);
-				align-content: center;
-
-				&:first-child {
-					font: var(--f-ui-md-medium);
-				}
-
-				&:last-child {
-					--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-					text-align: right;
-				}
-			}
 		}
 
 		& .payment-form {

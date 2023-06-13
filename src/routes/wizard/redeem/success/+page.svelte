@@ -1,19 +1,18 @@
 <script lang="ts">
 	import wizard from '../store';
+	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, EntitySymbol, WizardActions } from '$lib/components';
 </script>
 
 <div class="redemption-success">
 	<h3>The following tokens have been added to your wallet</h3>
 
-	<table class="responsive">
-		<tbody>
-			<tr>
-				<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-				<td>1200</td>
-			</tr>
-		</tbody>
-	</table>
+	<WalletInfo alignValues="right">
+		<WalletInfoItem>
+			<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
+			1200
+		</WalletInfoItem>
+	</WalletInfo>
 </div>
 
 <WizardActions>
@@ -26,6 +25,7 @@
 		display: grid;
 		gap: var(--space-md);
 	}
+
 	h3 {
 		color: hsla(var(--hsl-text-light));
 		font: var(--f-ui-lg-medium);
