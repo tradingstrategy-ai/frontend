@@ -5,6 +5,9 @@
 	import { wallet } from '$lib/wallet/client';
 	import { EntitySymbol } from '$lib/components';
 	import WalletAddress from './WalletAddress.svelte';
+	import WalletInfo from './WalletInfo.svelte';
+	import WalletInfoItem from './WalletInfoItem.svelte';
+
 	import Spinner from 'svelte-spinner';
 
 	export let wizard: Wizard;
@@ -33,61 +36,28 @@
 	}
 </script>
 
-<table class="wallet-balance responsive">
-	<tbody>
-		<tr>
-			<td>Account</td>
-			<td><WalletAddress size="sm" wallet={$wallet} /></td>
-		</tr>
-		<tr>
-			<td><EntitySymbol type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} /></td>
-			<td>
-				{#await getNativeCurrency(address)}
-					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
-				{:then balance}
-					{balance.formatted ?? '---'}
-				{/await}
-			</td>
-		</tr>
-		<tr>
-			<td><EntitySymbol type="token" label="USDC" slug="usdc" /></td>
-			<td>
-				{#await getDenominationToken(address)}
-					<Spinner size="30" color="hsla(var(--hsl-text-light))" />
-				{:then balance}
-					{balance.formatted ?? '---'}
-				{:catch}
-					---
-				{/await}
-			</td>
-		</tr>
-	</tbody>
-</table>
+<WalletInfo alignValues="right">
+	<WalletInfoItem label="Account">
+		<WalletAddress size="sm" wallet={$wallet} />
+	</WalletInfoItem>
 
-<style lang="postcss">
-	.wallet-balance {
-		margin: 0;
+	<WalletInfoItem>
+		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} />
+		{#await getNativeCurrency(address)}
+			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+		{:then balance}
+			{balance.formatted ?? '---'}
+		{/await}
+	</WalletInfoItem>
 
-		/* FIXME: remove `!important` */
-		@media (--viewport-sm-up) {
-			--table-font: var(--f-ui-lg-medium) !important;
-		}
-
-		& td {
-			padding: var(--space-xs) var(--space-ml);
-			align-content: center;
-
-			&:first-child {
-				font: var(--f-ui-md-medium);
-			}
-
-			&:last-child {
-				--cell-padding: 0 var(--space-md) 0 var(--space-xs);
-
-				@media (--viewport-md-up) {
-					text-align: right;
-				}
-			}
-		}
-	}
-</style>
+	<WalletInfoItem>
+		<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
+		{#await getDenominationToken(address)}
+			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+		{:then balance}
+			{balance.formatted ?? '---'}
+		{:catch}
+			---
+		{/await}
+	</WalletInfoItem>
+</WalletInfo>
