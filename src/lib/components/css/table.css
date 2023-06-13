@@ -155,12 +155,12 @@ table:not(.table) {
 				background: hsla(var(--hsl-box), var(--a-box-b));
 				border-radius: var(--radius-md);
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(max(25%, 10rem), 1fr));
+				grid-template-columns: 1fr 1fr;
 				overflow: hidden;
 				padding: var(--space-sm) 0;
 
-				@media (min-width: 512px) {
-					grid-template-columns: repeat(auto-fit, minmax(max(25%, 15.5rem), 1fr)) !important;
+				@media (width < 390px) {
+					grid-template-columns: 1fr;
 				}
 
 				/* Display row # if tr includes data-row-index attribute */
