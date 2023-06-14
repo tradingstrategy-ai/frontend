@@ -4,7 +4,10 @@
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import type { FetchBalanceResult } from '@wagmi/core';
-	import { TokenBalance } from '$lib/wallet';
+	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
+	import { parseUnits } from 'viem';
+	import { wallet, getExplorerUrl, TokenBalance } from '$lib/wallet';
+	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import {
 		AlertItem,
 		AlertList,
@@ -15,30 +18,117 @@
 		WizardActions
 	} from '$lib/components';
 
+	const contracts: Contracts = $wizard.data.contracts;
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
 	const vaultNetValue: FetchBalanceResult = $wizard.data.vaultNetValue;
 
 	let redemptionValue: MaybeNumber;
+	let errorMessage: MaybeString;
+	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
+	async function confirmRedemption() {
+		const sharesQuantity = parseUnits(`${redemptionValue}`, vaultShares.decimals);
+
+		const { request } = await prepareWriteContract({
+			address: contracts.comptroller,
+			abi: comptrollerABI,
+			functionName: 'redeemSharesInKind',
+			args: [$wallet.address, sharesQuantity, [], []]
+		});
+
+		return writeContract(request);
+	}
+
 	const redemption = fsm('initial', {
 		initial: {
-			confirm: 'confirming'
-		},
-		confirming: {
-			process: 'processing'
-		},
-		processing: {
-			_enter() {
-				progressBar.set(100, { duration: 2000 }).then(redemption.finish);
-			},
-			finish: 'done'
-		},
-		done: {}
-	});
+			// TODO: implement restore action
+			restore() {},
 
-	wizard.complete('shares-redemption');
+			confirm() {
+				confirmRedemption().then(redemption.process).catch(redemption.fail);
+				return 'confirming';
+			}
+		},
+
+		confirming: {
+			process({ hash }) {
+				transactionId = hash;
+				wizard.updateData({ transactionId });
+				return 'processing';
+			},
+
+			fail(err) {
+				console.error('confirmRedemption error:', err);
+				errorMessage = 'Redemption confirmation from wallet account failed.';
+				return 'failed';
+			}
+		},
+
+		processing: {
+			_enter({ event }) {
+				const hash = transactionId!;
+				let duration = 20_000;
+
+				if (event === 'restore') {
+					// try fetching receipt in case transaction already completed
+					getPublicClient()
+						.getTransactionReceipt({ hash })
+						.then(redemption.finish)
+						.catch(() => {});
+					progressBar.set(50, { duration: 0 });
+					duration *= 0.5;
+				}
+
+				// wait for pending transaction
+				waitForTransaction({ hash }).then(redemption.finish).catch(redemption.fail);
+				progressBar.set(100, { duration });
+			},
+
+			_exit() {
+				progressBar.set(100, { duration: 100 });
+			},
+
+			finish(receipt) {
+				if (receipt.status !== 'success') {
+					console.error('waitForTransaction reverted:', receipt);
+					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					return 'failed';
+				}
+				return 'completed';
+			},
+
+			fail(err) {
+				console.error('waitForTransaction error:', err);
+				if (err.name === 'CallExecutionError') {
+					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+				} else {
+					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+				}
+				return 'failed';
+			}
+		},
+
+		failed: {
+			_enter() {
+				wizard.updateData({ errorMessage });
+			},
+
+			retry() {
+				return transactionId ? 'processing' : 'initial';
+			}
+		},
+
+		completed: {
+			_enter({ event }) {
+				if (event === 'restore') {
+					progressBar.set(100, { duration: 0 });
+				}
+				wizard.complete('shares-redemption');
+			}
+		}
+	});
 </script>
 
 <div class="shares-redemption">
@@ -51,55 +141,75 @@
 	</section>
 
 	<section>
-		{#if $redemption === 'initial'}
-			<h3>Enter amount of shares to redeem</h3>
+		<h3>Enter amount of shares to redeem</h3>
 
-			<form action="" class="redemption-form">
-				<MoneyInput
-					bind:value={redemptionValue}
-					size="xl"
-					tokenUnit={vaultShares.symbol}
-					conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
-					conversionUnit={vaultNetValue.symbol}
-					conversionLabel="This redemption is worth"
-					disabled={$redemption !== 'initial'}
-					on:change={() => wizard.updateData({ redemptionValue })}
-				/>
+		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
+			<MoneyInput
+				bind:value={redemptionValue}
+				size="xl"
+				tokenUnit={vaultShares.symbol}
+				conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
+				conversionUnit={vaultNetValue.symbol}
+				conversionLabel="This redemption is worth"
+				disabled={$redemption !== 'initial'}
+				on:change={() => wizard.updateData({ redemptionValue })}
+			/>
 
+			{#if $redemption === 'initial'}
 				<Button disabled={!redemptionValue} size="lg" on:click={redemption.confirm}>Redeem</Button>
-			</form>
-		{:else if $redemption === 'confirming'}
-			<div
-				class="confirmation"
-				style="display: contents;"
-				on:click={redemption.process}
-				on:keydown={redemption.process}
-			>
-				<h3>Confirm transaction in your wallet.</h3>
+			{/if}
 
+			{#if $redemption === 'confirming'}
 				<AlertList size="sm" status="warning">
-					<AlertItem>Open MetaMask browser extension to confirm the transaction .</AlertItem>
+					<AlertItem title="Confirm transaction">
+						Please confirm the transaction in your wallet in order process your redemption.
+					</AlertItem>
 				</AlertList>
-			</div>
-		{:else if $redemption === 'processing'}
-			<h3>Confirming transaction...</h3>
-			<progress max="100" value={$progressBar} />
-			<p class="disclaimer">
-				Ullamco esse adipisicing ut reprehenderit Lorem elit occaecat eiusmod tempor nulla aliquip.
-			</p>
-		{:else if $redemption === 'done'}
-			<div class="transaction-id">
-				<h3>Transaction ID</h3>
-				<CryptoAddressWidget address="0x6C0836c82d629EF21b9192D88b043e65f4fD7237" href="#" />
-			</div>
-		{/if}
+			{/if}
+
+			{#if transactionId}
+				<div class="transaction-id">
+					<h3>Transaction ID</h3>
+					<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+				</div>
+
+				<progress max="100" value={$progressBar} />
+			{/if}
+
+			{#if $redemption === 'processing'}
+				<AlertList size="sm" status="info">
+					<AlertItem title="Redemption processing">
+						The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
+						the transaction ID above to view the status in the blockchain explorer.
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $redemption === 'failed'}
+				<AlertList size="sm" status="error">
+					<AlertItem title="Error">
+						{errorMessage}
+						<Button slot="cta" size="sm" label="Try again" on:click={redemption.retry} />
+					</AlertItem>
+				</AlertList>
+			{/if}
+
+			{#if $redemption === 'completed'}
+				<AlertList size="sm" status="success">
+					<AlertItem title="Redemption completed">
+						Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
+						below to review your token balances.
+					</AlertItem>
+				</AlertList>
+			{/if}
+		</form>
 	</section>
 </div>
 
 <WizardActions>
-	<Button ghost label="Cancel" href={$wizard?.returnTo} />
+	<Button ghost label="Cancel" href={$wizard.returnTo} disabled={$wizard.completed.has('shares-redemption')} />
 	<Button secondary label="Back" href="deposit-status" />
-	<Button label="Next" href="success" disabled={!$wizard.completed.has('deposit-status')} />
+	<Button label="Next" href="success" disabled={!$wizard.completed.has('shares-redemption')} />
 </WizardActions>
 
 <style>
@@ -116,16 +226,20 @@
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-lg-medium);
 		}
-	}
 
-	.redemption-form {
-		display: grid;
-		gap: var(--space-xl);
-	}
+		& .redemption-form {
+			display: grid;
+			gap: var(--space-xl);
+		}
 
-	.transaction-id {
-		display: grid;
-		gap: var(--space-ss);
-		justify-content: flex-start;
+		& progress {
+			width: 100%;
+		}
+
+		& .transaction-id {
+			display: grid;
+			gap: var(--space-ss);
+			justify-content: flex-start;
+		}
 	}
 </style>

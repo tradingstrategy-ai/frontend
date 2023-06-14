@@ -95,7 +95,7 @@
 
 			fail(err) {
 				console.error('confirmPayment error:', err);
-				errorMessage = 'Payment transaction confirmation from wallet account failed.';
+				errorMessage = 'Payment confirmation from wallet account failed.';
 				return 'failed';
 			}
 		},
@@ -197,6 +197,7 @@
 
 	<section>
 		<h3>Enter amount to deposit</h3>
+
 		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
 			<MoneyInput
 				bind:value={paymentValue}
@@ -304,8 +305,8 @@
 
 		& .transaction-id {
 			display: grid;
-			gap: var(--space-md);
-			justify-content: start;
+			gap: var(--space-ss);
+			justify-content: flex-start;
 		}
 	}
 </style>
