@@ -43,8 +43,16 @@
 
 	const redemption = fsm('initial', {
 		initial: {
-			// TODO: implement restore action
-			restore() {},
+			// restore state on wizard back/next navigation
+			restore(state) {
+				({ errorMessage, transactionId, redemptionValue } = $wizard.data);
+				if (state === 'confirming') {
+					errorMessage = `Wallet request state lost due to window navigation;
+						please cancel wallet request and try again.`;
+					return 'failed';
+				}
+				return state;
+			},
 
 			confirm() {
 				confirmRedemption().then(redemption.process).catch(redemption.fail);
@@ -129,6 +137,9 @@
 			}
 		}
 	});
+
+	redemption.restore($wizard.data.redemptionState);
+	$: wizard.updateData({ redemptionState: $redemption });
 </script>
 
 <div class="shares-redemption">
