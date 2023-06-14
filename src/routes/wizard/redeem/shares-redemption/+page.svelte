@@ -161,13 +161,20 @@
 				tokenUnit={vaultShares.symbol}
 				conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
 				conversionUnit={vaultNetValue.symbol}
-				conversionLabel="This redemption is worth"
+				conversionLabel="Estimated value"
 				disabled={$redemption !== 'initial'}
 				on:change={() => wizard.updateData({ shares })}
 			/>
 
 			{#if $redemption === 'initial'}
 				<Button disabled={!shares} size="lg" on:click={redemption.confirm}>Redeem</Button>
+
+				<AlertList size="sm" status="warning">
+					<AlertItem title="Shares redeemed in-kind">
+						You will receive a portion of all tokens held by this strategy, in proportion to the number of shares you
+						are redeeming relative to the total strategy assets.
+					</AlertItem>
+				</AlertList>
 			{/if}
 
 			{#if $redemption === 'confirming'}
@@ -209,7 +216,7 @@
 				<AlertList size="sm" status="success">
 					<AlertItem title="Redemption completed">
 						Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
-						below to review your token balances.
+						below to review your redeemed token values.
 					</AlertItem>
 				</AlertList>
 			{/if}
