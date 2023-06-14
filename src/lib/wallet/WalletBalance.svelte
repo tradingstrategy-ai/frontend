@@ -15,7 +15,7 @@
 
 	async function fetchNativeCurrency(address: Address) {
 		const nativeCurrency = await fetchBalance({ address });
-		dispatch('balanceFetch', { nativeCurrency });
+		dispatch('dataFetch', { nativeCurrency });
 		return nativeCurrency;
 	}
 
@@ -28,7 +28,7 @@
 
 		const balance = await fetchBalance({ address, token });
 
-		dispatch('balanceFetch', {
+		dispatch('dataFetch', {
 			denominationToken: { address: token, ...balance }
 		});
 

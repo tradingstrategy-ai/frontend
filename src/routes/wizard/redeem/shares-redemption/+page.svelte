@@ -22,14 +22,14 @@
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
 	const vaultNetValue: FetchBalanceResult = $wizard.data.vaultNetValue;
 
-	let redemptionValue: MaybeNumber;
+	let shares: MaybeNumber;
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
 	async function confirmRedemption() {
-		const sharesQuantity = parseUnits(`${redemptionValue}`, vaultShares.decimals);
+		const sharesQuantity = parseUnits(`${shares}`, vaultShares.decimals);
 
 		const { request } = await prepareWriteContract({
 			address: contracts.comptroller,
@@ -45,7 +45,7 @@
 		initial: {
 			// restore state on wizard back/next navigation
 			restore(state) {
-				({ errorMessage, transactionId, redemptionValue } = $wizard.data);
+				({ errorMessage, transactionId, shares } = $wizard.data);
 				if (state === 'confirming') {
 					errorMessage = `Wallet request state lost due to window navigation;
 						please cancel wallet request and try again.`;
@@ -156,18 +156,18 @@
 
 		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
 			<MoneyInput
-				bind:value={redemptionValue}
+				bind:value={shares}
 				size="xl"
 				tokenUnit={vaultShares.symbol}
 				conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
 				conversionUnit={vaultNetValue.symbol}
 				conversionLabel="This redemption is worth"
 				disabled={$redemption !== 'initial'}
-				on:change={() => wizard.updateData({ redemptionValue })}
+				on:change={() => wizard.updateData({ shares })}
 			/>
 
 			{#if $redemption === 'initial'}
-				<Button disabled={!redemptionValue} size="lg" on:click={redemption.confirm}>Redeem</Button>
+				<Button disabled={!shares} size="lg" on:click={redemption.confirm}>Redeem</Button>
 			{/if}
 
 			{#if $redemption === 'confirming'}

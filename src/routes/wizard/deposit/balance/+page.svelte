@@ -16,7 +16,7 @@
 </script>
 
 <div class="deposit-balance-page">
-	<WalletBalance {contracts} on:balanceFetch={({ detail }) => wizard.updateData(detail)} />
+	<WalletBalance {contracts} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
 
 	{#if nativeCurrency?.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}

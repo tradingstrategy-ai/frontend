@@ -22,7 +22,7 @@
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {contracts} {address} on:balanceFetch={({ detail }) => wizard.updateData(detail)} />
+	<VaultBalance {contracts} {address} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>

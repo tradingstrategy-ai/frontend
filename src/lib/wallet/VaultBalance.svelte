@@ -13,7 +13,7 @@
 
 	async function fetchVaultShares(address: Address) {
 		const vaultShares = await fetchBalance({ token: contracts.vault, address });
-		dispatch('balanceFetch', { vaultShares });
+		dispatch('dataFetch', { vaultShares });
 		return vaultShares;
 	}
 
@@ -26,10 +26,11 @@
 		});
 
 		const [address, value] = result as [Address, bigint];
-		const { decimals, symbol } = await fetchToken({ address });
+		const denominationToken = await fetchToken({ address });
+		const { decimals, symbol } = denominationToken;
 
 		const vaultNetValue = { decimals, symbol, value, formatted: formatUnits(value, decimals) };
-		dispatch('balanceFetch', { vaultNetValue });
+		dispatch('dataFetch', { denominationToken, vaultNetValue });
 		return vaultNetValue;
 	}
 </script>
