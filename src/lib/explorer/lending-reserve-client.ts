@@ -16,12 +16,7 @@ export type LendingReserveIndexResponse = {
 	totalRowCount: number;
 };
 
-/**
- * NOTE: hard-coding aave_v3 for now since `protocol_slug` is required by `reserves`
- * endpoint and this is the only protocol currently supported
- */
 const defaultParams: LendingReserveIndexParams = {
-	protocol_slug: 'aave_v3',
 	page_size: 10,
 	page: 0,
 	sort: 'asset_name',
