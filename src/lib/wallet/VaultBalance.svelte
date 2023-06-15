@@ -35,14 +35,23 @@
 	}
 </script>
 
-<Grid cols={2} gap="lg">
+<div class="vault-balance">
 	<DataBox label="Number of shares">
 		<TokenBalance data={fetchVaultShares(address)} />
 	</DataBox>
 	<DataBox label="Value of shares">
 		<TokenBalance data={fetchVaultNetValue(address)} />
 	</DataBox>
-</Grid>
+</div>
 
 <style lang="postcss">
+	.vault-balance {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, auto));
+		gap: var(--space-md) var(--space-lg);
+
+		@media (--viewport-sm-down) {
+			gap: var(--space-md);
+		}
+	}
 </style>
