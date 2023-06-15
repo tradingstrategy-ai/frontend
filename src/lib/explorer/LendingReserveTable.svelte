@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ReserveIndexResponse } from './reserve-client';
+	import type { LendingReserveIndexResponse } from './lending-reserve-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
@@ -9,14 +9,14 @@
 	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let loading = false;
-	export let rows: ReserveIndexResponse['rows'] | undefined = undefined;
+	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
 	export let totalRowCount = 0;
 	export let page = 0;
 	export let sort = 'asset_name';
 	export let direction: 'asc' | 'desc' = 'asc';
 	export let chains: Record<string, string>;
 
-	const tableRows: Writable<ReserveIndexResponse['rows']> = writable([]);
+	const tableRows: Writable<LendingReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
 
 	const table = createTable(tableRows, {
