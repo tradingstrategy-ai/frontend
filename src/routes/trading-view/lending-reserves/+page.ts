@@ -1,4 +1,4 @@
-import { fetchReserves } from '$lib/explorer/reserve-client';
+import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 
 export async function load({ fetch, url }) {
 	const { searchParams } = url;
@@ -7,7 +7,7 @@ export async function load({ fetch, url }) {
 	const direction = searchParams.get('direction') || 'asc';
 
 	return {
-		reserves: fetchReserves(fetch, { page, sort, direction }),
+		reserves: fetchLendingReserves(fetch, { page, sort, direction }),
 		options: { page, sort, direction }
 	};
 }

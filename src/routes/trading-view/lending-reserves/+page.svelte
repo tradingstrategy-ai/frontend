@@ -5,7 +5,7 @@
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ReserveTable from '$lib/explorer/ReserveTable.svelte';
+	import LendingReserveTable from '$lib/explorer/LendingReserveTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data;
@@ -19,7 +19,7 @@
 
 	let loading = false;
 
-	async function handleChange({ detail }: ComponentEvents<ReserveTable>['change']) {
+	async function handleChange({ detail }: ComponentEvents<LendingReserveTable>['change']) {
 		loading = true;
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		loading = false;
@@ -43,6 +43,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<ReserveTable {...reserves} {...options} {chains} {loading} on:change={handleChange} />
+		<LendingReserveTable {...reserves} {...options} {chains} {loading} on:change={handleChange} />
 	</Section>
 </main>
