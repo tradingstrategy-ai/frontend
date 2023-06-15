@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { ConnectedWallet } from '$lib/wallet/client';
 	import { switchNetwork } from '@wagmi/core';
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
-	import WalletAddress from './WalletAddress.svelte';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;
@@ -14,95 +13,60 @@
 	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
 </script>
 
-<table class="wallet-summary responsive">
-	<tbody>
-		<tr>
-			<td>Wallet</td>
-			<td class="wallet-data">
-				{#if walletLogoUrl}
-					<img alt={name} src={walletLogoUrl} />
-				{/if}
-				{name}
-				<span class="status">
-					<div class="dot" />
-					Connected
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td>Account</td>
-			<td><WalletAddress size="sm" {wallet} /></td>
-		</tr>
-		<tr>
-			<td>Network</td>
-			<td>
-				{#if chainId && chainId !== chain.id}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: chainId })}>
-						<AlertList size="xs" status="error">
-							<AlertItem>Wrong network! Please connect to {getChainName(chains, chainId)}</AlertItem>
-						</AlertList>
-					</div>
-				{:else}
-					<EntitySymbol type="blockchain" label={chain.name} slug={getChainSlug(chains, chain.id)} />
-				{/if}
-			</td>
-		</tr>
-	</tbody>
-</table>
+<WalletInfo --wallet-info-label-width="6.5rem">
+	<WalletInfoItem label="Wallet">
+		<div class="connected-wallet">
+			{#if walletLogoUrl}
+				<img alt={name} src={walletLogoUrl} />
+			{/if}
+			{name}
+			<span class="status">
+				<div class="dot" />
+				Connected
+			</span>
+		</div>
+	</WalletInfoItem>
+
+	<WalletInfoItem label="Account">
+		<WalletAddress size="sm" {wallet} />
+	</WalletInfoItem>
+
+	<WalletInfoItem label="Network">
+		{#if chainId && chainId !== chain.id}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: chainId })}>
+				<AlertList size="xs" status="error">
+					<AlertItem>Wrong network! Please connect to {getChainName(chains, chainId)}</AlertItem>
+				</AlertList>
+			</div>
+		{:else}
+			<EntitySymbol type="blockchain" label={chain.name} slug={getChainSlug(chains, chain.id)} />
+		{/if}
+	</WalletInfoItem>
+</WalletInfo>
 
 <style lang="postcss">
-	.wallet-summary {
-		margin: 0;
-
-		/* FIXME: remove `!important` */
-		@media (--viewport-sm-up) {
-			--table-font: var(--f-ui-lg-medium) !important;
-		}
-
-		/* FIXME: remove `!important` (check 527 < viewport < 511) */
-		& tr {
-			grid-template-columns: repeat(auto-fit, minmax(max(25%, 14rem), 1fr)) !important;
-		}
-
-		& td {
-			padding: var(--space-xs) var(--space-ml);
-			align-content: center;
-
-			&:first-child {
-				font: var(--f-ui-md-medium);
-			}
-		}
-	}
-
-	.wallet-data {
-		align-items: center;
+	.connected-wallet {
 		display: flex;
+		flex-wrap: wrap;
 		gap: var(--space-sm);
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-medium);
-		}
+		align-items: center;
 
 		& img {
-			width: 2rem;
-
-			@media (--viewport-sm-down) {
-				width: 1.75rem;
-			}
+			width: 1.75rem;
 		}
 	}
 
 	.status {
-		align-items: center;
-		background: hsla(var(--hsl-success), 0.2);
-		border-radius: var(--space-md);
-		color: hsla(var(--hsl-success));
 		display: flex;
-		font: var(--f-ui-sm-medium);
 		gap: var(--space-ss);
+		align-items: center;
 		margin-left: var(--space-sm);
 		padding: var(--space-xs) var(--space-sl);
+		border-radius: var(--space-md);
+		background: hsla(var(--hsl-success), 0.2);
+		font: var(--f-ui-sm-medium);
+		color: hsla(var(--hsl-success));
 
 		& .dot {
 			animation: pulse-opacity 1.5s ease-out infinite;

@@ -16,8 +16,19 @@ props through to HTML input element.
 	export let step: number | 'any' = 'any';
 	export let tokenUnit: string;
 	export let value: number | null = null;
+	export let conversionLabel: string | undefined = undefined;
+	export let conversionRatio: number | undefined = undefined;
+	export let conversionUnit: string | undefined = undefined;
 
 	let inputEl: HTMLInputElement;
+
+	function getConvertedValue(value: MaybeNumber, ratio: number) {
+		const converted = (value || 0) * ratio;
+		return converted.toLocaleString('en', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+	}
 
 	export function focus(options = {}) {
 		inputEl.focus(options);
@@ -48,6 +59,16 @@ props through to HTML input element.
 			{/if}
 		</div>
 	</div>
+
+	{#if conversionUnit && conversionRatio}
+		<span class="conversion-label">
+			{conversionLabel}
+			<EntitySymbol label={conversionUnit} slug={conversionUnit.toLowerCase()} type="token">
+				{getConvertedValue(value, conversionRatio)}
+				{conversionUnit}
+			</EntitySymbol>
+		</span>
+	{/if}
 </span>
 
 <style lang="postcss">
@@ -81,6 +102,13 @@ props through to HTML input element.
 
 		&.disabled {
 			opacity: 0.65;
+		}
+
+		& .conversion-label {
+			display: flex;
+			justify-content: flex-end;
+			text-align: right;
+			gap: var(--space-md);
 		}
 
 		& input {

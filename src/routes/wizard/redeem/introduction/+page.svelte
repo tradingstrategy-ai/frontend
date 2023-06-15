@@ -7,9 +7,9 @@
 
 <div class="deposit-introduction">
 	<p>
-		Ready to invest in <strong>{$wizard.data.strategyName}</strong>? Deposit USDC to add this strategy to your DeFi
-		trading portfolio. Connect your wallet, review your balances, enter your desired investment amount, and make your
-		payment. Let's get started!
+		Ready to redeem shares of <strong>{$wizard.data.strategyName}</strong>? Upon redemption, you'll receive USDC and any
+		tokens the strategy is currently invested in. Connect your wallet, review your share balance, enter your desired
+		redemption amount, and complete your transaction. Let's get started!
 	</p>
 </div>
 

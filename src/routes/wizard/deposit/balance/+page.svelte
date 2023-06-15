@@ -1,23 +1,22 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { wallet } from '$lib/wallet/client';
-	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/utils';
 	import { getChainSlug } from '$lib/helpers/chain.js';
+	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
 	import { AlertItem, AlertList, Button, WizardActions } from '$lib/components';
-	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 
 	export let data;
 
 	$: ({ chains, wizard } = data);
-	$: ({ chainId, nativeCurrency, denominationToken } = $wizard.data);
+	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
 	$: chainSlug = getChainSlug(chains, chainId);
+
 	$: if (nativeCurrency?.value > 0n && denominationToken?.value > 0n) {
 		wizard.complete('balance');
 	}
 </script>
 
 <div class="deposit-balance-page">
-	<WalletBalance {wizard} />
+	<WalletBalance {contracts} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
 
 	{#if nativeCurrency?.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}

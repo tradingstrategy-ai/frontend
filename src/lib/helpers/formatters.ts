@@ -197,15 +197,6 @@ export function formatDatetime(d: MaybeDate): string {
 }
 
 /**
- * Format a USDC balance as it comes out from the contract.
- */
-export function formatUSDCBalance(web3, b: string, decimals: number): string {
-	const n = parseFloat(b);
-	const val = n / Math.pow(10, decimals);
-	return val.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-/**
  * Shorten Ethereum address
  */
 export function formatShortAddress(address: MaybeString): string {

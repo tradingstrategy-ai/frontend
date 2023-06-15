@@ -1,18 +1,18 @@
-// NOTE: wagmi functions below depend on '$lib/wallet/client' initialization
-import { fetchToken, prepareWriteContract } from '@wagmi/core';
-import { formatUnits } from 'viem';
-import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
+import { formatUnits, isAddressEqual } from 'viem';
+import { type FetchTokenResult, type FetchBalanceResult, fetchToken } from '@wagmi/core';
 
-export async function getAccountNetValue({ vault, fund_value_calculator }: Contracts, account: Address) {
-	const { result } = await prepareWriteContract({
-		address: fund_value_calculator,
-		abi: fundValueCalculatorABI,
-		functionName: 'calcNetValueForSharesHolder',
-		args: [vault, account]
-	});
+export interface AssetWithdrawl {
+	asset: Address;
+	amount: bigint;
+}
 
-	const [address, value] = result as [Address, bigint];
-	const { decimals, symbol } = await fetchToken({ address });
-
-	return { decimals, symbol, value, formatted: formatUnits(value, decimals) };
+/**
+ * Get token data for a given AssetWithdrawl and return merged asset/token data.
+ */
+export async function getRedemption(withdrawl: AssetWithdrawl, denominationToken: FetchTokenResult, chainId: number) {
+	const { asset: address, amount: value } = withdrawl;
+	const { decimals, symbol } = isAddressEqual(address, denominationToken.address)
+		? denominationToken
+		: await fetchToken({ address, chainId });
+	return { decimals, symbol, value, formatted: formatUnits(value, decimals) } as FetchBalanceResult;
 }
