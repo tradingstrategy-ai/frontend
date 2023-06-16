@@ -11,10 +11,10 @@ import {
 	watchNetwork,
 	InjectedConnector
 } from '@wagmi/core';
-import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
+import { mainnet, polygon } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
 
@@ -39,17 +39,21 @@ const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' 
 
 // initialize on first client-side load
 let initialized = false;
-if (browser && !initialized) initWalletClient();
+const connectors: Connector[] = [];
+if (browser && !initialized) initWalletClient(connectors);
 
-export function initWalletClient() {
+export function initWalletClient(connectors: Connector[]) {
 	const { chains, publicClient, webSocketPublicClient } = configureChains(
-		[arbitrum, avalanche, bsc, mainnet, polygon],
+		[mainnet, polygon],
 		[w3mProvider({ projectId }), publicProvider()]
 	);
 
+	connectors.push(new InjectedConnector());
+	connectors.push(new WalletConnectConnector({ chains, options: { projectId } }));
+
 	createConfig({
 		autoConnect: true,
-		connectors: w3mConnectors({ projectId, version: 1, chains }),
+		connectors,
 		publicClient,
 		webSocketPublicClient
 	});
@@ -78,19 +82,14 @@ export function initWalletClient() {
 async function connectMetaMask(chainId: MaybeNumber) {
 	await connect({
 		chainId,
-		connector: new InjectedConnector()
+		connector: connectors.find((c) => c instanceof InjectedConnector)!
 	});
-	// NOTE: wagmi 1.x (as of 1.0.7) fails to reconnect injected wallet unless this localStorage
-	// value is manually set.
-	localStorage.setItem('wagmi.injected.shimDisconnect', 'true');
 }
 
 function connectWalletConnect(chainId: MaybeNumber) {
 	connect({
 		chainId,
-		connector: new WalletConnectConnector({
-			options: { projectId }
-		})
+		connector: connectors.find((c) => c instanceof WalletConnectConnector)!
 	});
 }
 
