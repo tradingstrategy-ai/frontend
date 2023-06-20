@@ -42,7 +42,7 @@ let initialized = false;
 const connectors: Connector[] = [];
 if (browser && !initialized) initWalletClient(connectors);
 
-export function initWalletClient(connectors: Connector[]) {
+function initWalletClient(connectors: Connector[]) {
 	const { chains, publicClient, webSocketPublicClient } = configureChains(
 		[mainnet, polygon],
 		[w3mProvider({ projectId }), publicProvider()]
