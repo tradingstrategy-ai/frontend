@@ -4,9 +4,15 @@
 	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
 
 	$: wizard = $page.data.wizard;
-	$: currentStep = $page.route.id?.split('/').at(-1);
-	$: stepIndex = wizard.steps.findIndex(({ slug }: Step) => slug === currentStep);
+	$: stepSlug = $page.route.id?.split('/').at(-1);
+	$: stepIndex = wizard.steps.findIndex(({ slug }: Step) => slug === stepSlug);
+	$: currentStep = wizard.steps[stepIndex];
 </script>
+
+<svelte:head>
+	<title>{wizard.title} - {currentStep.slug} | Trading Strategy</title>
+	<meta name="description" content="{wizard.title} wizard - step {stepIndex + 1}: {currentStep.label}" />
+</svelte:head>
 
 <div class="wizard-layout">
 	<WizardHeader />
@@ -37,7 +43,7 @@
 
 			<main>
 				<Section maxWidth="xs">
-					<h2>{wizard.steps[stepIndex].label}</h2>
+					<h2>{currentStep.label}</h2>
 					<slot />
 				</Section>
 			</main>

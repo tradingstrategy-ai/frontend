@@ -14,6 +14,11 @@
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
 </script>
 
+<svelte:head>
+	<title>{summary.name} | Trading Strategy</title>
+	<meta name="description" content={summary.long_description} />
+</svelte:head>
+
 <div class="strategy-overview-page">
 	<InvestorWidget strategy={summary} {chain} />
 

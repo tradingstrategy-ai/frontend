@@ -18,6 +18,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Automated DeFi Strategies | Trading Strategy</title>
+	<meta name="description" content="Browse currently available automated DeFi trading strategies" />
+</svelte:head>
+
 <main class="ds-container">
 	<PageHeading>
 		<h1>Strategies</h1>
