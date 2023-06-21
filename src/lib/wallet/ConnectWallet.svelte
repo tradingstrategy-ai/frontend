@@ -1,10 +1,22 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import type { Chain } from '$lib/helpers/chain';
-	import { Button } from '$lib/components';
+	import { AlertList, AlertItem, Button } from '$lib/components';
 	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
 	export let chains: Chain[];
+
+	let error: any;
+
+	$: if ($wallet.status === 'connected') {
+		error = undefined;
+	}
+
+	function handleConnectMetaMask() {
+		error = undefined;
+		wallet.connectMetaMask(chainId).catch((e) => (error = e));
+	}
 </script>
 
 <div class="connect-wallet">
@@ -15,7 +27,7 @@
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="MetaMask" slug="metamask" on:click={() => wallet.connectMetaMask(chainId)}>
+			<WalletTile name="MetaMask" slug="metamask" on:click={handleConnectMetaMask}>
 				Connect to your<br />
 				MetaMask Wallet
 			</WalletTile>
@@ -25,9 +37,42 @@
 			</WalletTile>
 		</div>
 	{/if}
+
+	{#if error}
+		<div transition:fade|local>
+			<AlertList status="error" size="sm">
+				{#if error.name === 'ConnectorNotFoundError'}
+					<AlertItem title="Not found">
+						Wallet browser extension not found. Please confirm you have MetaMask or another browser wallet extension
+						installed and enabled, or use WalletConnect to connect a desktop or mobile app-based wallet.
+					</AlertItem>
+				{:else if error.name === 'UserRejectedRequestError'}
+					<AlertItem title="Connection refused">
+						The request to connect to your wallet browser extension was refused. Please try again and authorize the
+						connection for one or more accounts to continue.
+					</AlertItem>
+				{:else if error.name === 'ResourceUnavailableRpcError'}
+					<AlertItem title="Wallet busy">
+						Your wallet browser extension prevented connection because it is busy with another operation (such as
+						signing in or importing an account). Open your wallet extension to complete or cancel this operation and try
+						again.
+					</AlertItem>
+				{:else}
+					<AlertItem title={error.name}>
+						{error.message}
+					</AlertItem>
+				{/if}
+			</AlertList>
+		</div>
+	{/if}
 </div>
 
 <style lang="postcss">
+	.connect-wallet {
+		display: grid;
+		gap: var(--space-xl);
+	}
+
 	.connected-wallet {
 		display: grid;
 		place-items: start;
