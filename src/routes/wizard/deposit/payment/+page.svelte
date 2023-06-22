@@ -81,7 +81,22 @@
 
 			fail(err) {
 				console.error('authorizeTransfer error:', err);
-				errorMessage = `Authorization to transfer ${denominationToken.symbol} tokens from your wallet account failed.`;
+				if (err.name === 'UnknownRpcError' && err.details.includes('eth_signTypedData_v4')) {
+					errorMessage = `
+						Authorization failed because your wallet does not support typed data signatures.
+						Consider using TrustWallet, Rainbow or a browser extension wallet like MetaMask.
+					`;
+				} else if (err.name === 'InvalidInputRpcError' && err.details.includes('User cancelled')) {
+					errorMessage = `
+						Authorization to transfer ${denominationToken.symbol} tokens from your wallet was refused.
+						To proceed with share purchase, please try again and accept the signature request.
+					`;
+				} else {
+					errorMessage = `
+						Authorization to transfer ${denominationToken.symbol} tokens from your wallet account
+						failed for an unknown reason.
+					`;
+				}
 				return 'failed';
 			}
 		},

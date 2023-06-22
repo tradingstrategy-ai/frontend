@@ -79,7 +79,10 @@
 
 	.wrong-network-alert {
 		display: inline-flex;
-		word-break: normal;
 		cursor: pointer;
+
+		& :global(.alert-item) {
+			container-type: normal;
+		}
 	}
 </style>
