@@ -11,7 +11,7 @@ import {
 	watchNetwork,
 	InjectedConnector
 } from '@wagmi/core';
-import { mainnet, polygon } from '@wagmi/core/chains';
+import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 import { w3mProvider } from '@web3modal/ethereum';
@@ -44,7 +44,7 @@ if (browser && !initialized) initWalletClient(connectors);
 
 function initWalletClient(connectors: Connector[]) {
 	const { chains, publicClient, webSocketPublicClient } = configureChains(
-		[mainnet, polygon],
+		[arbitrum, avalanche, bsc, mainnet, polygon],
 		[w3mProvider({ projectId }), publicProvider()]
 	);
 
