@@ -99,6 +99,19 @@ export const walletConnectConfig = config((projectId: string) => {
 }, 'WALLET_CONNECT_PROJECT_ID');
 
 /**
+ * Specify blockchain RPC URLs by chain ID, e.g.:
+ * TS_PUBLIC_RPC_URLS='{"1":"https://eth-mainnet.url/xyz123","137":"https://polygon-mainnet.url/xyz123"}'
+ */
+export const rpcUrls = config((jsonStr: string) => {
+	try {
+		return JSON.parse(jsonStr || '{}');
+	} catch (e) {
+		console.warn(`${prefix}RPC_URLS is not valid JSON`, jsonStr);
+		return {};
+	}
+}, 'RPC_URLS');
+
+/**
  * Load chart wick threshold
  *
  * Specified as % above/below the candle body that the wick may extend when calculating

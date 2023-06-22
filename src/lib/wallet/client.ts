@@ -1,4 +1,4 @@
-import { walletConnectConfig } from '$lib/config';
+import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Chain, Connector } from '@wagmi/core';
@@ -13,10 +13,17 @@ import {
 } from '@wagmi/core';
 import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 import { w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
+
+// helper function to retrive configured RPC URL by chain ID
+function getRpcUrl({ id }: Chain) {
+	const http = rpcUrls[id];
+	if (http) return { http };
+}
 
 type CommonWallet = {
 	name: string;
@@ -45,7 +52,7 @@ if (browser && !initialized) initWalletClient(connectors);
 function initWalletClient(connectors: Connector[]) {
 	const { chains, publicClient, webSocketPublicClient } = configureChains(
 		[arbitrum, avalanche, bsc, mainnet, polygon],
-		[w3mProvider({ projectId }), publicProvider()]
+		[jsonRpcProvider({ rpc: getRpcUrl }), w3mProvider({ projectId }), publicProvider()]
 	);
 
 	connectors.push(new InjectedConnector());
