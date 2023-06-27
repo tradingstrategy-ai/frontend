@@ -71,11 +71,11 @@
 
 			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
 
-			{#if position.closed_at}
-				<DataBox label="Buy price">
-					{formatDollar(trades[0].executed_price)}
-				</DataBox>
+			<DataBox label="Buy price">
+				{formatDollar(trades[0].executed_price)}
+			</DataBox>
 
+			{#if position.closed_at}
 				<DataBox label="Sell price">
 					{formatDollar(trades.at(-1).executed_price)}
 				</DataBox>
