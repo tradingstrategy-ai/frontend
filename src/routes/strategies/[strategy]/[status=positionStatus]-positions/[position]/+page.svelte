@@ -5,6 +5,7 @@
 	import { formatDuration } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
 	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { tradeType } from '$lib/helpers/trade';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
 
@@ -17,11 +18,6 @@
 	const firstTrade = trades[0];
 	const lastTrade = trades.at(-1);
 	const hasFailedTrades = trades.some((trade) => trade.failed_at);
-
-	function tradeType(trade) {
-		return trade.planned_quantity > 0 ? 'Buy' : 'Sell';
-	}
-
 </script>
 
 <main class="ds-container">
@@ -77,7 +73,7 @@
 			{/if}
 
 			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
-			
+
 			<DataBox label="{tradeType(firstTrade)} price">
 				{formatDollar(firstTrade.executed_price)}
 			</DataBox>

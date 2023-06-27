@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import { tradeType } from '$lib/helpers/trade';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
 
@@ -13,7 +14,7 @@
 	<PageHeading level={2}>
 		<h1>Trade #{trade.trade_id}</h1>
 		<h2>
-			{trade.planned_quantity > 0 ? 'Buy' : 'Sell'}
+			{tradeType(trade)}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
 				<StopLossIndicator lg />
@@ -43,6 +44,7 @@
 			{trade.pair.base.token_symbol}
 		</DataBox>
 		<DataBox label="Gas fees" value="N/A" />
+		<DataBox label="Price" value={formatDollar(trade.executed_price)} />
 	</DataBoxes>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
