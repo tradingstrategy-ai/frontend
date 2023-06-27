@@ -70,6 +70,15 @@
 			{/if}
 
 			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
+			
+			<DataBox label="Buy price">
+				{formatDollar(trades[0].executed_price)}
+			</DataBox>	
+
+			<DataBox label="Sell price">
+				{formatDollar(trades.at(-1).executed_price)}
+			</DataBox>
+			
 		</DataBoxes>
 
 		{#if hasFailedTrades}
