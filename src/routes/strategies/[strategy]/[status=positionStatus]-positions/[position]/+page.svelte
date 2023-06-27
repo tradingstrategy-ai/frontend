@@ -14,7 +14,14 @@
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
+	const firstTrade = trades[0];
+	const lastTrade = trades.at(-1);
 	const hasFailedTrades = trades.some((trade) => trade.failed_at);
+
+	function tradeType(trade) {
+		return trade.planned_quantity > 0 ? 'Buy' : 'Sell';
+	}
+
 </script>
 
 <main class="ds-container">
@@ -70,14 +77,14 @@
 			{/if}
 
 			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
-
-			<DataBox label="Buy price">
-				{formatDollar(trades[0].executed_price)}
+			
+			<DataBox label="{tradeType(firstTrade)} price">
+				{formatDollar(firstTrade.executed_price)}
 			</DataBox>
 
 			{#if position.closed_at}
-				<DataBox label="Sell price">
-					{formatDollar(trades.at(-1).executed_price)}
+				<DataBox label="{tradeType(lastTrade)} price">
+					{formatDollar(lastTrade.executed_price)}
 				</DataBox>
 			{/if}
 		</DataBoxes>
