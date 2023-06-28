@@ -3,7 +3,7 @@
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { AlertItem, AlertList, EntitySymbol } from '$lib/components';
+	import { AlertItem, AlertList, Button, EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;
@@ -33,10 +33,12 @@
 
 	<WalletInfoItem label="Network">
 		{#if chainId && chainId !== chain.id}
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<div class="wrong-network-alert" on:click={() => switchNetwork({ chainId: chainId })}>
+			<div class="wrong-network-alert">
 				<AlertList size="xs" status="error">
-					<AlertItem>Wrong network! Please connect to {getChainName(chains, chainId)}</AlertItem>
+					<AlertItem>
+						Wrong network! Please connect to {getChainName(chains, chainId)}
+						<Button slot="cta" size="xs" label="Switch network" on:click={() => switchNetwork({ chainId: chainId })} />
+					</AlertItem>
 				</AlertList>
 			</div>
 		{:else}
@@ -77,12 +79,7 @@
 		}
 	}
 
-	.wrong-network-alert {
-		display: inline-flex;
-		cursor: pointer;
-
-		& :global(.alert-item) {
-			container-type: normal;
-		}
+	.wrong-network-alert :global(.alert-item) {
+		container-type: normal;
 	}
 </style>
