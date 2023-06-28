@@ -5,7 +5,7 @@
 	import fsm from 'svelte-fsm';
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
-	import { parseUnits } from 'viem';
+	import { formatUnits, parseUnits } from 'viem';
 	import { wallet, getExplorerUrl, TokenBalance } from '$lib/wallet';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import {
@@ -163,11 +163,13 @@
 				conversionUnit={vaultNetValue.symbol}
 				conversionLabel="Estimated value"
 				disabled={$redemption !== 'initial'}
+				min={formatUnits(1n, vaultShares.decimals)}
+				max={vaultShares.formatted}
 				on:change={() => wizard.updateData({ shares })}
 			/>
 
 			{#if $redemption === 'initial'}
-				<Button disabled={!shares} size="lg" on:click={redemption.confirm}>Redeem</Button>
+				<Button submit disabled={shares == null}>Redeem</Button>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem title="Shares redeemed in-kind">
