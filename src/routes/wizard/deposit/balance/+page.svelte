@@ -24,13 +24,22 @@
 			<AlertList status="warning" size="md">
 				<AlertItem>
 					<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
-					<Button slot="cta" size="sm" label="Buy {nativeCurrency.symbol}" disabled={!href} {href} />
+					<Button
+						slot="cta"
+						size="sm"
+						label="Buy {nativeCurrency.symbol}"
+						disabled={!href}
+						{href}
+						target="_blank"
+						rel="noreferrer"
+					/>
 				</AlertItem>
 			</AlertList>
 		</div>
 	{/if}
 
 	{#if denominationToken?.value === 0n}
+		{@const href = chainSlug && buyTokenUrl(chainSlug, denominationToken.address)}
 		<div in:fade>
 			<AlertList status="warning" size="md">
 				<AlertItem>
@@ -39,8 +48,10 @@
 						slot="cta"
 						size="sm"
 						label="Buy {denominationToken.symbol}"
-						disabled={!chainSlug}
-						href={chainSlug && buyTokenUrl(chainSlug, denominationToken.address)}
+						disabled={!href}
+						{href}
+						target="_blank"
+						rel="noreferrer"
 					/>
 				</AlertItem>
 			</AlertList>
