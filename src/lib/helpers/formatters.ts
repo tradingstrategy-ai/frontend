@@ -138,6 +138,23 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
 	}
 }
 
+/**
+ * Format price with '$' prefix, thousands separator, and useful
+ * number of fraction digits.
+ */
+export function formatPrice(n: MaybeNumber) {
+	if (!Number.isFinite(n)) return notFilledMarker;
+
+	const digits = n < 10 ? 4 : 2;
+
+	return n.toLocaleString('en', {
+		style: 'currency',
+		currency: 'USD',
+		minimumFractionDigits: digits,
+		maximumFractionDigits: digits
+	});
+}
+
 export function formatPriceChange(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n))}`;

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { formatDollar, formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
+	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
+	import { formatPrice } from '$lib/helpers/formatters';
 	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import { tradeType } from '$lib/helpers/trade';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
@@ -32,8 +33,8 @@
 			<Timestamp date={trade.executed_at} format="iso" withTime />
 		</DataBox>
 		<DataBox label="Slippage tolerance" value="{formatBPS(trade.planned_max_slippage)} BPS" />
-		<DataBox label="Expected value" value={formatDollar(trade.planned_reserve)} />
-		<DataBox label="Realized value" value={formatDollar(trade.executed_reserve)} />
+		<DataBox label="Expected value" value={formatPrice(trade.planned_reserve)} />
+		<DataBox label="Realized value" value={formatPrice(trade.executed_reserve)} />
 		<DataBox label="Liquidity provider fees" value="N/A" />
 		<DataBox label="Expected quantity">
 			{formatAmount(Number(trade.planned_quantity))}
@@ -44,7 +45,7 @@
 			{trade.pair.base.token_symbol}
 		</DataBox>
 		<DataBox label="Gas fees" value="N/A" />
-		<DataBox label="Price" value={formatDollar(trade.executed_price)} />
+		<DataBox label="Price" value={formatPrice(trade.executed_price)} />
 	</DataBoxes>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
