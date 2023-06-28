@@ -5,7 +5,7 @@
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import redeemWizard from 'wizard/redeem/store';
-	import { wallet, VaultBalance, WalletAddress } from '$lib/wallet';
+	import { wallet, VaultBalance, WalletAddress, WrongNetwork } from '$lib/wallet';
 	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
@@ -44,9 +44,7 @@
 				<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
 			</div>
 		{:else if $wallet.chain.id !== chain.chain_id}
-			<AlertList status="error" size="md">
-				<AlertItem title="Wrong network">Please connnect to {chain.chain_name}</AlertItem>
-			</AlertList>
+			<WrongNetwork chainId={chain.chain_id} chainName={chain.chain_name} />
 		{:else}
 			<VaultBalance {contracts} address={$wallet.address} />
 		{/if}

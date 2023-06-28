@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { switchNetwork } from '@wagmi/core';
 	import { type Chain, getChainSlug, getChainName } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { AlertItem, AlertList, Button, EntitySymbol } from '$lib/components';
+	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem, WrongNetwork } from '$lib/wallet';
+	import { EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;
@@ -33,14 +32,7 @@
 
 	<WalletInfoItem label="Network">
 		{#if chainId && chainId !== chain.id}
-			<div class="wrong-network-alert">
-				<AlertList size="xs" status="error">
-					<AlertItem>
-						Wrong network! Please connect to {getChainName(chains, chainId)}
-						<Button slot="cta" size="xs" label="Switch network" on:click={() => switchNetwork({ chainId: chainId })} />
-					</AlertItem>
-				</AlertList>
-			</div>
+			<WrongNetwork size="xs" {chainId} chainName={getChainName(chains, chainId)} />
 		{:else}
 			<EntitySymbol type="blockchain" label={chain.name} slug={getChainSlug(chains, chain.id)} />
 		{/if}
@@ -77,9 +69,5 @@
 			height: 0.625rem;
 			width: 0.625rem;
 		}
-	}
-
-	.wrong-network-alert :global(.alert-item) {
-		container-type: normal;
 	}
 </style>
