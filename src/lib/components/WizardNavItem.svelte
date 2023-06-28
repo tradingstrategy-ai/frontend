@@ -13,7 +13,7 @@
 </script>
 
 <li class="wizard-nav-item">
-	<svelte:element this={tag} class="inner" class:active class:completed {href}>
+	<svelte:element this={tag} class="inner" class:active class:completed class:disabled {href}>
 		<Icon name={completed ? 'success' : 'empty'} />
 		{label}
 	</svelte:element>
@@ -36,8 +36,9 @@
 				background: hsla(var(--hsl-box), var(--a-box-d));
 			}
 
-			&:is(span):not(.active) {
+			&.disabled {
 				color: hsla(var(--hsl-text-extra-light));
+				cursor: not-allowed;
 				&:hover {
 					background: hsla(var(--hsl-box), var(--a-box-b));
 				}
