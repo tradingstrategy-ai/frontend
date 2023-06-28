@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
-	import { formatDollar, formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
+	import { formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
-	import { formatDuration } from '$lib/helpers/formatters';
+	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
 	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { tradeType } from '$lib/helpers/trade';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
 
@@ -31,17 +32,6 @@
 				</a>
 			</DataBox>
 
-			<DataBox label="Opened">
-				<Timestamp date={position.opened_at} format="iso" withTime />
-			</DataBox>
-
-			{#if position.closed_at}
-				<DataBox label="Closed">
-					<Timestamp date={position.closed_at} format="iso" withTime />
-				</DataBox>
-				<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
-			{/if}
-
 			<DataBox label="Profitability">
 				<div class="profitability">
 					<UpDownIndicator
@@ -55,21 +45,43 @@
 				</div>
 			</DataBox>
 
+			<DataBox label="Opened">
+				<Timestamp date={position.opened_at} format="iso" withTime />
+			</DataBox>
+
 			{#if position.closed_at}
+				<DataBox label="Closed">
+					<Timestamp date={position.closed_at} format="iso" withTime />
+				</DataBox>
+			{/if}
+
+			<DataBox label="{tradeType(trades[0])} price">
+				{formatPrice(trades[0].executed_price)}
+			</DataBox>
+
+			{#if position.closed_at}
+				{@const lastTrade = trades.at(-1)}
+				<DataBox label="{tradeType(lastTrade)} price">
+					{formatPrice(lastTrade.executed_price)}
+				</DataBox>
+			{/if}
+
+			{#if position.closed_at}
+				<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
 				<DataBox label="Last revaluation">
 					<Timestamp date={position.last_pricing_at} format="iso" withTime />
 				</DataBox>
-				<DataBox label="Value at open" value={formatDollar(getValueAtOpen(positionStats))} />
-				<DataBox label="Value before close" value={formatDollar(getValueAtClose(positionStats))} />
+				<DataBox label="Value at open" value={formatPrice(getValueAtOpen(positionStats))} />
+				<DataBox label="Value before close" value={formatPrice(getValueAtClose(positionStats))} />
 			{:else}
 				<DataBox label="Quantity">
 					{formatTokenAmount(currentStats?.quantity)}
 					{position.pair.base.token_symbol}
 				</DataBox>
-				<DataBox label="Value now" value={formatDollar(currentStats?.value)} />
+				<DataBox label="Value now" value={formatPrice(currentStats?.value)} />
 			{/if}
 
-			<DataBox label="Highest value" value={formatDollar(getValueAtPeak(positionStats))} />
+			<DataBox label="Highest value" value={formatPrice(getValueAtPeak(positionStats))} />
 		</DataBoxes>
 
 		{#if hasFailedTrades}
