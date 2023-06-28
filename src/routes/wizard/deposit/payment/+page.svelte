@@ -5,7 +5,7 @@
 	import fsm from 'svelte-fsm';
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
-	import { parseUnits } from 'viem';
+	import { formatUnits, parseUnits } from 'viem';
 	import { wallet, getExplorerUrl, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
@@ -219,11 +219,13 @@
 				size="xl"
 				tokenUnit={denominationToken.symbol}
 				disabled={$payment !== 'initial'}
+				min={formatUnits(1n, denominationToken.decimals)}
+				max={denominationToken.formatted}
 				on:change={() => wizard.updateData({ paymentValue })}
 			/>
 
 			{#if $payment === 'initial'}
-				<Button submit disabled={!paymentValue}>Make payment</Button>
+				<Button submit disabled={paymentValue == null}>Make payment</Button>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem title="Notice">

@@ -53,7 +53,15 @@
 			<AlertList status="warning" size="md">
 				<AlertItem>
 					<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
-					<Button slot="cta" size="sm" label="Buy {nativeCurrency.symbol}" disabled={!href} {href} />
+					<Button
+						slot="cta"
+						size="sm"
+						label="Buy {nativeCurrency.symbol}"
+						disabled={!href}
+						{href}
+						target="_blank"
+						rel="noreferrer"
+					/>
 				</AlertItem>
 			</AlertList>
 		</div>
