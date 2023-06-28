@@ -4,7 +4,6 @@
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
-	import { formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
 	import { tradeType } from '$lib/helpers/trade';
 
@@ -23,30 +22,20 @@
 			}
 		}),
 		table.column({
-			header: 'Started',
-			accessor: 'started_at',
-			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withSeconds: true })
-		}),
-		table.column({
 			header: 'Executed',
 			accessor: 'executed_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withSeconds: true })
 		}),
 		table.column({
-			id: 'quantity',
-			header: 'Quantity',
-			accessor: ({ executed_quantity, planned_quantity }) =>
-				formatTokenAmount(parseFloat(executed_quantity || planned_quantity))
-		}),
-		table.column({
 			id: 'price',
 			header: 'Price',
-			accessor: ({ executed_price, planned_price }) => formatPrice(parseFloat(executed_price || planned_price))
+			accessor: ({ executed_price, planned_price }) => formatPrice(parseFloat(executed_price || planned_price), 5)
 		}),
 		table.column({
 			id: 'value',
 			header: 'Value',
-			accessor: ({ executed_reserve, planned_reserve }) => formatPrice(parseFloat(executed_reserve || planned_reserve))
+			accessor: ({ executed_reserve, planned_reserve }) =>
+				formatPrice(parseFloat(executed_reserve || planned_reserve), 5)
 		}),
 		table.column({
 			header: '',
@@ -82,7 +71,7 @@
 	}
 
 	.trade-table :global {
-		& :is(.executed_at, .quantity, .price, .value) {
+		& :is(, .quantity, .price, .value) {
 			text-align: right;
 		}
 	}
