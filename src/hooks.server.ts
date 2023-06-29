@@ -50,6 +50,8 @@ initSentry({
 });
 
 export async function handleError({ error, event }) {
+	if (!env.TS_PRIVATE_SENTRY_DSN) console.error(error);
+
 	const eventData = {
 		isDataRequest: event.isDataRequest,
 		url: event.url.toString(),
