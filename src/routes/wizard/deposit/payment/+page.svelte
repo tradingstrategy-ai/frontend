@@ -23,7 +23,7 @@
 	const denominationToken: FetchBalanceResult = $wizard.data.denominationToken;
 	const nativeCurrency: FetchBalanceResult = $wizard.data.nativeCurrency;
 
-	let paymentValue: MaybeNumber;
+	let paymentValue: MaybeString;
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 
@@ -31,7 +31,7 @@
 
 	async function authorizeTransfer() {
 		const tokenInfo = await fetchTokenInfo(denominationToken.address);
-		const value = parseUnits(`${paymentValue}`, tokenInfo.decimals);
+		const value = parseUnits(paymentValue, tokenInfo.decimals);
 
 		return getSignedArguments(
 			'TransferWithAuthorization',
@@ -225,7 +225,7 @@
 			/>
 
 			{#if $payment === 'initial'}
-				<Button submit disabled={paymentValue == null}>Make payment</Button>
+				<Button submit disabled={!paymentValue}>Make payment</Button>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem title="Notice">

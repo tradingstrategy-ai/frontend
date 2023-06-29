@@ -3,6 +3,10 @@
 Display a numeric input field with currency unit indicator. Passes unknown
 props through to HTML input element.
 
+**NOTE:** unlike `<input type="number" ...>` elements in Svelte, this component
+does _not_ coerce the `value` prop to a `number`. The raw `string` value is
+retained to avoid rounding errors and allow for conversion to `BigInt`.
+
 #### Usage:
 ```tsx
 <MoneyInput bind:value size="lg" tokenUnit="USDC" />
@@ -15,15 +19,22 @@ props through to HTML input element.
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 	export let step: number | 'any' = 'any';
 	export let tokenUnit: string;
-	export let value: number | null = null;
+	export let value = '';
 	export let conversionLabel: string | undefined = undefined;
 	export let conversionRatio: number | undefined = undefined;
 	export let conversionUnit: string | undefined = undefined;
 
 	let inputEl: HTMLInputElement;
 
+	// ensure value matches inputEl.value on mount (also see on:input below)
+	$: inputEl && setValue();
+
+	function setValue() {
+		value = inputEl.value;
+	}
+
 	function getConvertedValue(value: MaybeNumber, ratio: number) {
-		const converted = (value || 0) * ratio;
+		const converted = (Number(value) || 0) * ratio;
 		return converted.toLocaleString('en', {
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2
@@ -37,14 +48,16 @@ props through to HTML input element.
 
 <span class="money-input size-{size}" class:disabled>
 	<div class="inner">
+		<!-- NOTE: don't use bind:value b/c it coerces numeric inputs to number -->
 		<input
 			bind:this={inputEl}
-			bind:value
+			{value}
 			type="number"
 			placeholder="0.00"
 			{step}
 			{disabled}
 			{...$$restProps}
+			on:input={setValue}
 			on:input
 			on:focus
 			on:blur
