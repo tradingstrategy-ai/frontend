@@ -222,7 +222,7 @@ export function formatDatetime(d: MaybeDate): string {
  */
 export function formatUnixTimestampAsISODate(ts: number): string {
 	if (!ts) return '---';
-  const d = new Date(ts * 1000);
+	const d = new Date(ts * 1000);
 	return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}`;
 }
 
@@ -249,7 +249,6 @@ export function formatPercent(n: MaybeNumber): string {
 	});
 }
 
-
 /**
  * Format strategy key metric float numbers like Sharpe and Sortino
  *
@@ -259,7 +258,7 @@ export function formatKeyMetricNumber(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 	return n.toLocaleString('en', {
 		minimumFractionDigits: 2,
-		maximumFractionDigits: 2,
+		maximumFractionDigits: 2
 	});
 }
 
@@ -294,8 +293,8 @@ export function formatDuration(seconds: number): string {
  * Timedelta is received from the API as a duration in seconds.
  */
 export function formatDurationDays(seconds: number): string {
-  if (!Number.isFinite(seconds)) return notFilledMarker;
-	const { days} = intervalToDuration({ start: 0, end: seconds * 1000 });
+	if (!Number.isFinite(seconds)) return notFilledMarker;
+	const { days } = intervalToDuration({ start: 0, end: seconds * 1000 });
 	const dayStr = days ? `${days} days ` : 'Less than a day';
 	return dayStr;
 }
@@ -305,12 +304,11 @@ export function formatDurationDays(seconds: number): string {
  *
  */
 export function formatAge(unixTime: number): string {
-  if (!Number.isFinite(unixTime)) return notFilledMarker;
-  const utcNow = Math.floor((new Date()).getTime() / 1000);
-  const duration = utcNow - unixTime;
+	if (!Number.isFinite(unixTime)) return notFilledMarker;
+	const utcNow = Math.floor(new Date().getTime() / 1000);
+	const duration = utcNow - unixTime;
 	return formatDuration(duration);
 }
-
 
 /**
  * Formats arbitrary value with fallback string if undefined/null

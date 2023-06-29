@@ -3,14 +3,15 @@
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import { Button, Icon } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-    import KeyMetric from './KeyMetric.svelte';
-    import {
-      formatAge,
-      formatDollar, formatDurationDays,
-      formatKeyMetricNumber,
-      formatPercent,
-      formatPriceChange
-    } from '$lib/helpers/formatters';
+	import KeyMetric from './KeyMetric.svelte';
+	import {
+		formatAge,
+		formatDollar,
+		formatDurationDays,
+		formatKeyMetricNumber,
+		formatPercent,
+		formatPriceChange
+	} from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
 	export let strategy: StrategyRuntimeState;
@@ -20,7 +21,7 @@
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 
-    console.log(summaryStats);
+	console.log(summaryStats);
 </script>
 
 <li class="strategy tile tile b" class:hasError>
@@ -38,13 +39,12 @@
 			</div>
 
 			<dl>
-
-                <KeyMetric
-                    name="Performance"
-                    metric={summaryStats.key_metrics.profitability}
-                    formatter={formatPercent}
-                    colouredPercent
-                />
+				<KeyMetric
+					name="Performance"
+					metric={summaryStats.key_metrics.profitability}
+					formatter={formatPercent}
+					colouredPercent
+				/>
 
 				<div>
 					<dt>Total assets</dt>
@@ -54,20 +54,17 @@
 				</div>
 			</dl>
 
-            <dl>
-                <KeyMetric
-                        name="Age"
-                        metric={summaryStats.key_metrics.started_at}
-                        formatter={formatDurationDays}/>
+			<dl>
+				<KeyMetric name="Age" metric={summaryStats.key_metrics.started_at} formatter={formatDurationDays} />
 
-                <KeyMetric name="Max drawdown" metric={summaryStats.key_metrics.max_drawdown} formatter={formatPercent}/>
-            </dl>
+				<KeyMetric name="Max drawdown" metric={summaryStats.key_metrics.max_drawdown} formatter={formatPercent} />
+			</dl>
 
-            <dl>
-                <KeyMetric name="Sharpe" metric={summaryStats.key_metrics.sharpe} formatter={formatKeyMetricNumber}/>
+			<dl>
+				<KeyMetric name="Sharpe" metric={summaryStats.key_metrics.sharpe} formatter={formatKeyMetricNumber} />
 
-                <KeyMetric name="Sortino" metric={summaryStats.key_metrics.sortino} formatter={formatKeyMetricNumber}/>
-            </dl>
+				<KeyMetric name="Sortino" metric={summaryStats.key_metrics.sortino} formatter={formatKeyMetricNumber} />
+			</dl>
 
 			<dl>
 				<div>
@@ -82,8 +79,6 @@
 					</dd>
 				</div>
 			</dl>
-
-
 		</div>
 		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
 	</div>
@@ -124,7 +119,7 @@
 		gap: var(--space-ss);
 		margin: 0;
 
-        /*
+		/*
 		& > div {
 			display: grid;
 			gap: var(--space-ss);
