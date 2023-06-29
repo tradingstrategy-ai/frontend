@@ -22,14 +22,14 @@
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
 	const vaultNetValue: FetchBalanceResult = $wizard.data.vaultNetValue;
 
-	let shares: MaybeNumber;
+	let shares: MaybeString;
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
 	async function confirmRedemption() {
-		const sharesQuantity = parseUnits(`${shares}`, vaultShares.decimals);
+		const sharesQuantity = parseUnits(shares, vaultShares.decimals);
 
 		const { request } = await prepareWriteContract({
 			address: contracts.comptroller,
@@ -169,7 +169,7 @@
 			/>
 
 			{#if $redemption === 'initial'}
-				<Button submit disabled={shares == null}>Redeem</Button>
+				<Button submit disabled={!shares}>Redeem</Button>
 
 				<AlertList size="sm" status="warning">
 					<AlertItem title="Shares redeemed in-kind">
