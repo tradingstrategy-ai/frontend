@@ -3,7 +3,14 @@
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import { Button, Icon } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+    import KeyMetric from './KeyMetric.svelte';
+    import {
+      formatAge,
+      formatDollar, formatDurationDays,
+      formatKeyMetricNumber,
+      formatPercent,
+      formatPriceChange
+    } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
 	export let strategy: StrategyRuntimeState;
@@ -12,6 +19,8 @@
 	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
+
+    console.log(summaryStats);
 </script>
 
 <li class="strategy tile tile b" class:hasError>
@@ -19,9 +28,49 @@
 	<div class="info">
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
+
+			<div class="description">
+				{#if !hasError}
+					<p>{strategy.short_description}</p>
+				{:else}
+					<p>Strategy data not currently available.</p>
+				{/if}
+			</div>
+
+			<dl>
+
+                <KeyMetric
+                    name="Performance"
+                    metric={summaryStats.key_metrics.profitability}
+                    formatter={formatPercent}
+                />
+
+				<div>
+					<dt>Total assets</dt>
+					<dd>
+						{formatDollar(summaryStats.current_value)}
+					</dd>
+				</div>
+			</dl>
+
+            <dl>
+                <KeyMetric
+                        name="Age"
+                        metric={summaryStats.key_metrics.started_at}
+                        formatter={formatDurationDays}/>
+
+                <KeyMetric name="Max drawdown" metric={summaryStats.key_metrics.max_drawdown} formatter={formatPercent}/>
+            </dl>
+
+            <dl>
+                <KeyMetric name="Sharpe" metric={summaryStats.key_metrics.sharpe} formatter={formatKeyMetricNumber}/>
+
+                <KeyMetric name="Sortino" metric={summaryStats.key_metrics.sortino} formatter={formatKeyMetricNumber}/>
+            </dl>
+
 			<dl>
 				<div>
-					<dt title="90 day return (annualized)">Historic performance</dt>
+					<dt>Historic performance</dt>
 					<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
 						{formatPriceChange(summaryStats.profitability_90_days)}
 						{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
@@ -31,20 +80,9 @@
 						{/if}
 					</dd>
 				</div>
-				<div>
-					<dt>Total assets</dt>
-					<dd>
-						{formatDollar(summaryStats.current_value)}
-					</dd>
-				</div>
 			</dl>
-			<div class="description">
-				{#if !hasError}
-					<p>{strategy.short_description}</p>
-				{:else}
-					<p>Strategy data not currently available.</p>
-				{/if}
-			</div>
+
+
 		</div>
 		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
 	</div>

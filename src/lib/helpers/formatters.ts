@@ -238,6 +238,20 @@ export function formatPercent(n: MaybeNumber): string {
 	});
 }
 
+
+/**
+ * Format strategy key metric float numbers like Sharpe and Sortino
+ *
+ * Like average winning profit.
+ */
+export function formatKeyMetricNumber(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+	return n.toLocaleString('en', {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	});
+}
+
 /**
  * Custom percent formatter for pool swap fee (Uniswap V3)
  *
@@ -262,6 +276,30 @@ export function formatDuration(seconds: number): string {
 	const dayStr = days ? `${days} days ` : '';
 	return `${dayStr}${hours}h ${minutes}m`;
 }
+
+/**
+ * Formats the time duration string in day granularity.
+ *
+ * Timedelta is received from the API as a duration in seconds.
+ */
+export function formatDurationDays(seconds: number): string {
+  if (!Number.isFinite(seconds)) return notFilledMarker;
+	const { days} = intervalToDuration({ start: 0, end: seconds * 1000 });
+	const dayStr = days ? `${days} days ` : 'Less than a day';
+	return dayStr;
+}
+
+/**
+ * Formats the relative age since UNIX epoch.
+ *
+ */
+export function formatAge(unixTime: number): string {
+  if (!Number.isFinite(unixTime)) return notFilledMarker;
+  const utcNow = Math.floor((new Date()).getTime() / 1000);
+  const duration = utcNow - unixTime;
+	return formatDuration(duration);
+}
+
 
 /**
  * Formats arbitrary value with fallback string if undefined/null
