@@ -23,7 +23,7 @@
 	const formattedValue = formatter ? formatter(value) : value;
 </script>
 
-<div>
+<div class="key-metric">
 	<dt>
 		{name}
 	</dt>
@@ -35,28 +35,34 @@
 		{/if}
 
 		{#if metric?.source == 'backtesting'}
-			<KeyMetricTooltip title="(bt)">
+			<KeyMetricTooltip icon="warning" iconClass="icon-warning">
 				<p>
-					The strategy does not have enough live trading data to display the key metric based on the live execution.
+					This strategy has not been running long enough to display <a target="_blank" href={metric?.help_link}>{name} </a> based on the live trade execution data.
+					Instead, a <a href="https://tradingstrategy.ai/glossary/backtest" target="_blank">backtested</a> estimation is displayed.
 				</p>
 
 				<p>
-					The backtest period used for the calculation is
-					{formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—i{formatUnixTimestampAsISODate(
+					The period used for the backtest simulation is
+					{formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—{formatUnixTimestampAsISODate(
 						metric.calculation_window_end_at
 					)}.
 				</p>
 
-				<p>Past performance is no guarantee of future results.</p>
-
 				<p>
-					See <a target="_blank" href={metric?.help_link}>{name} in Defi and Trading glossary</a>
+					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary
 					on more information what this metric means and how it is calculated.
 				</p>
+
+				<p>Past performance is no guarantee of future results.</p>
 			</KeyMetricTooltip>
 		{:else}
-			<KeyMetricTooltip title="(?)">
+			<KeyMetricTooltip icon="search">
 				<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
+
+				<p>
+					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary
+					on more information what this metric means and how it is calculated.
+				</p>
 
 				<p>Past performance is no guarantee of future results.</p>
 			</KeyMetricTooltip>
@@ -65,13 +71,20 @@
 </div>
 
 <style lang="postcss">
+
+	.key-metric {
+		display: grid;
+		gap: var(--space-ss);
+
+	}
+
 	dt {
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
 	dd {
-		font: var(--f-ui-xl-medium);
+		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
 		margin: 0;
 		display: flex;

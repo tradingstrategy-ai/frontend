@@ -46,12 +46,12 @@
 					colouredPercent
 				/>
 
-				<div>
-					<dt>Total assets</dt>
-					<dd>
-						{formatDollar(summaryStats.current_value)}
-					</dd>
-				</div>
+				<KeyMetric
+					name="Total assets"
+					metric={summaryStats.key_metrics.total_equity}
+					formatter={formatDollar}
+				/>
+
 			</dl>
 
 			<dl>
@@ -66,21 +66,9 @@
 				<KeyMetric name="Sortino" metric={summaryStats.key_metrics.sortino} formatter={formatKeyMetricNumber} />
 			</dl>
 
-			<dl>
-				<div>
-					<dt>Historic performance</dt>
-					<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
-						{formatPriceChange(summaryStats.profitability_90_days)}
-						{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
-							<span class="insufficient-data" title="This strategy has less than 90 days of performance data">
-								<Icon name="warning" />
-							</span>
-						{/if}
-					</dd>
-				</div>
-			</dl>
 		</div>
-		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
+
+		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
 	</div>
 </li>
 
@@ -109,7 +97,7 @@
 	}
 
 	.title {
-		font: var(--f-ui-xxl-medium);
+		font: var(--f-ui-large-medium);
 		letter-spacing: var(--f-ui-xxl-spacing, normal);
 	}
 
@@ -124,27 +112,6 @@
 			display: grid;
 			gap: var(--space-ss);
 		}*/
-	}
-
-	dt {
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
-	}
-
-	dd {
-		font: var(--f-ui-xl-medium);
-		letter-spacing: var(--f-ui-xl-spacing, normal);
-		margin: 0;
-		display: flex;
-		gap: var(--space-ss);
-
-		@nest .hasError & {
-			color: var(--c-text-ultra-light);
-		}
-	}
-
-	.insufficient-data {
-		font-size: 18px;
 	}
 
 	.description {
