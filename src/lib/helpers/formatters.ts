@@ -216,6 +216,17 @@ export function formatDatetime(d: MaybeDate): string {
 }
 
 /**
+ * Format a UNXI datestamp as ISO date.
+ *
+ * Mostly useful for formattiong ISO-8601 datetime strings coming from the backend.
+ */
+export function formatUnixTimestampAsISODate(ts: number): string {
+	if (!ts) return '---';
+  const d = new Date(ts * 1000);
+	return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}`;
+}
+
+/**
  * Shorten Ethereum address
  */
 export function formatShortAddress(address: MaybeString): string {

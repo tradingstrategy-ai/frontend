@@ -43,6 +43,7 @@
                     name="Performance"
                     metric={summaryStats.key_metrics.profitability}
                     formatter={formatPercent}
+                    colouredPercent
                 />
 
 				<div>
@@ -123,10 +124,11 @@
 		gap: var(--space-ss);
 		margin: 0;
 
+        /*
 		& > div {
 			display: grid;
 			gap: var(--space-ss);
-		}
+		}*/
 	}
 
 	dt {

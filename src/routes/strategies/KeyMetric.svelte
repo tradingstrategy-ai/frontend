@@ -11,7 +11,7 @@
 <script lang="ts">
 
   import {determinePriceChangeClass} from "$lib/helpers/price";
-  import {formatDatetime, formatPriceChange} from "$lib/helpers/formatters";
+  import {formatDatetime, formatPriceChange, formatUnixTimestampAsISODate} from "$lib/helpers/formatters";
   import KeyMetricTooltip from './KeyMetricTooltip.svelte';
 
   export let metric;
@@ -45,9 +45,7 @@
 
                     <p>
                         The backtest period used for the calculation is
-                        {formatDatetime(metric.calculation_window_start_at)}
-                        —
-                        {formatDatetime(metric.calculation_window_end_at)}.
+                        {formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—i{formatUnixTimestampAsISODate(metric.calculation_window_end_at)}.
                     </p>
 
                     <p>
@@ -55,7 +53,7 @@
                     </p>
 
                     <p>
-                        See <a target="_blank" href={metric?.help_link}>{title} in Defi and Trading glossary</a>
+                        See <a target="_blank" href={metric?.help_link}>{name} in Defi and Trading glossary</a>
                         on more information what this metric means and how it is calculated.
                     </p>
                 </KeyMetricTooltip>
