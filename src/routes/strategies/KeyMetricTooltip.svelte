@@ -51,6 +51,9 @@ See
 		outline-offset: -1px;
 
 		font: var(--f-ui-small-light);
+
+		/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
+		z-index: 10000;
 	}
 
 	.key-metric-tooltip :global(a) {

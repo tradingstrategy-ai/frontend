@@ -26,7 +26,9 @@
 			<h2 class="title">{strategy.name}</h2>
 
 			<div class="description">
-				<p>{strategy.short_description}</p>
+				{#if strategy.short_description}
+					<p>{strategy.short_description}</p>
+				{/if}
 			</div>
 
 			<dl>
@@ -54,7 +56,7 @@
 		</div>
 
 		{#if errorHtml}
-			<AlertList status="warning" size="sm">
+			<AlertList status="warning" size="xs">
 				<AlertItem title="On-going execution issues">
 					{@html errorHtml}
 				</AlertItem>
@@ -96,15 +98,14 @@
 
 	dl {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: 50% 50%;
 		gap: var(--space-ss);
 		margin: 0;
 
-		/*
 		& > div {
 			display: grid;
 			gap: var(--space-ss);
-		}*/
+		}
 	}
 
 	.description {

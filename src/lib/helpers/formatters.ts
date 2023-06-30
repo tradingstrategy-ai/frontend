@@ -223,7 +223,12 @@ export function formatDatetime(d: MaybeDate): string {
 export function formatUnixTimestampAsISODate(ts: number): string {
 	if (!ts) return '---';
 	const d = new Date(ts * 1000);
-	return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}`;
+
+	const day = d.toLocaleDateString('en-us', { day: '2-digit' });
+	const month = d.toLocaleDateString('en-us', { month: '2-digit' });
+	const year = d.toLocaleDateString('en-us', { year: 'numeric' });
+
+	return `${year}-${month}-${day}`;
 }
 
 /**

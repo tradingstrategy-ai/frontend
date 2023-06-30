@@ -34,41 +34,45 @@
 			{formattedValue}
 		{/if}
 
-		{#if metric?.source == 'backtesting'}
-			<KeyMetricTooltip icon="warning" iconClass="icon-warning">
-				<p>
-					This strategy has not been running long enough to display <a target="_blank" href={metric?.help_link}
-						>{name}
-					</a>
-					based on the live trade execution data. Instead, a
-					<a href="https://tradingstrategy.ai/glossary/backtest" target="_blank">backtested</a> estimation is displayed.
-				</p>
+		{#if metric?.value}
+			{#if metric?.source == 'backtesting'}
+				<KeyMetricTooltip icon="history" iconClass="icon-warning">
+					<p>
+						This strategy has not been running long enough to display <a target="_blank" href={metric?.help_link}
+							>{name}
+						</a>
+						based on the live trade execution data. Instead, a
+						<a href="https://tradingstrategy.ai/glossary/backtest" target="_blank">backtested</a> estimation is displayed.
+					</p>
 
-				<p>
-					The period used for the backtest simulation is
-					{formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—{formatUnixTimestampAsISODate(
-						metric.calculation_window_end_at
-					)}.
-				</p>
+					<p>
+						The period used for the backtest simulation is
+						<span class="timespan">
+							{formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—{formatUnixTimestampAsISODate(
+								metric.calculation_window_end_at
+							)}</span
+						>.
+					</p>
 
-				<p>
-					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric means
-					and how it is calculated.
-				</p>
+					<p>
+						See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
+						means and how it is calculated.
+					</p>
 
-				<p>Past performance is no guarantee of future results.</p>
-			</KeyMetricTooltip>
-		{:else}
-			<KeyMetricTooltip icon="search">
-				<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
+					<p>Past performance is no guarantee of future results.</p>
+				</KeyMetricTooltip>
+			{:else}
+				<KeyMetricTooltip icon="question-circle">
+					<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
 
-				<p>
-					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric means
-					and how it is calculated.
-				</p>
+					<p>
+						See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
+						means and how it is calculated.
+					</p>
 
-				<p>Past performance is no guarantee of future results.</p>
-			</KeyMetricTooltip>
+					<p>Past performance is no guarantee of future results.</p>
+				</KeyMetricTooltip>
+			{/if}
 		{/if}
 	</dd>
 </div>
@@ -90,9 +94,9 @@
 		margin: 0;
 		display: flex;
 		gap: var(--space-ss);
+	}
 
-		@nest .hasError & {
-			color: var(--c-text-ultra-light);
-		}
+	.timespan {
+		white-space: nowrap;
 	}
 </style>
