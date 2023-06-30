@@ -56,10 +56,12 @@
 						>.
 					</p>
 
-					<p>
-						See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
-						means and how it is calculated.
-					</p>
+					{#if metric?.help_link}
+						<p>
+							See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
+							means and how it is calculated.
+						</p>
+					{/if}
 
 					<p>Past performance is no guarantee of future results.</p>
 				</KeyMetricTooltip>
@@ -67,10 +69,12 @@
 				<KeyMetricTooltip icon="question-circle">
 					<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
 
-					<p>
-						See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
-						means and how it is calculated.
-					</p>
+					{#if metric?.help_link}
+						<p>
+							See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric
+							means and how it is calculated.
+						</p>
+					{/if}
 
 					<p>Past performance is no guarantee of future results.</p>
 				</KeyMetricTooltip>

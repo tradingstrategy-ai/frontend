@@ -256,8 +256,6 @@ export function formatPercent(n: MaybeNumber): string {
 
 /**
  * Format strategy key metric float numbers like Sharpe and Sortino
- *
- * Like average winning profit.
  */
 export function formatKeyMetricNumber(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
