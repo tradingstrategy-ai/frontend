@@ -23,16 +23,18 @@
 	const formattedValue = formatter ? formatter(value) : value;
 </script>
 
-<div class="key-metric">
+<div class="key-metric" data-testid={`key-metric-${metric?.kind}`}>
 	<dt>
 		{name}
 	</dt>
 	<dd class={colouredPercent ? determinePriceChangeClass(value) : null}>
-		{#if colouredPercent}
-			{formatPriceChange(value)}
-		{:else}
-			{formattedValue}
-		{/if}
+		<span data-testid={`key-metric-${metric?.kind}-value`}>
+			{#if colouredPercent}
+				{formatPriceChange(value)}
+			{:else}
+				{formattedValue}
+			{/if}
+		</span>
 
 		{#if metric?.value}
 			{#if metric?.source == 'backtesting'}

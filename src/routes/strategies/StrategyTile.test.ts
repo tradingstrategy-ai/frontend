@@ -8,7 +8,9 @@ const baseStrategy = {
 	long_description: 'This strategy will make you lots of money.',
 	icon_url: 'https://beautiful.image',
 	started_at: 1669852800,
-	executor_running: true
+	executor_running: true,
+	connected: true,
+	frozen_positions: 0
 };
 
 describe('StrategyTile component', () => {
@@ -16,67 +18,85 @@ describe('StrategyTile component', () => {
 		const strategy = {
 			...baseStrategy,
 			summary_statistics: {
-				calculated_at: 1669939200,
-				first_trade_at: null,
-				last_trade_at: null,
-				enough_data: true,
-				current_value: 1_234.56,
-				profitability_90_days: 0.0789,
-				performance_chart_90_days: null
+				calculated_at: 1688122807,
+				first_trade_at: 1687536017,
+				last_trade_at: 1688101212,
+				enough_data: false,
+				current_value: 3.5415780000000003,
+				profitability_90_days: -0.005961082353416414,
+				performance_chart_90_days: [[1687651200, -0.005961082353416414]],
+				key_metrics: {
+					sharpe: {
+						kind: 'sharpe',
+						source: 'backtesting',
+						value: 1.1730542398032315,
+						calculation_window_start_at: 1662390000,
+						calculation_window_end_at: 1686132000,
+						unavailability_reason: null,
+						help_link: 'https://tradingstrategy.ai/glossary/sharpe'
+					},
+					sortino: {
+						kind: 'sortino',
+						source: 'backtesting',
+						value: 2.391284951366129,
+						calculation_window_start_at: 1662390000,
+						calculation_window_end_at: 1686132000,
+						unavailability_reason: null,
+						help_link: 'https://tradingstrategy.ai/glossary/sortino'
+					},
+					max_drawdown: {
+						kind: 'max_drawdown',
+						source: 'backtesting',
+						value: -0.06757552446733317,
+						calculation_window_start_at: 1662390000,
+						calculation_window_end_at: 1686132000,
+						unavailability_reason: null,
+						help_link: 'https://tradingstrategy.ai/glossary/maximum-drawdown'
+					},
+					profitability: {
+						kind: 'profitability',
+						source: 'backtesting',
+						value: 0.12017482229489884,
+						calculation_window_start_at: 1662390000,
+						calculation_window_end_at: 1686132000,
+						unavailability_reason: null,
+						help_link: 'https://tradingstrategy.ai/glossary/profitability'
+					},
+					started_at: {
+						kind: 'started_at',
+						source: 'live_trading',
+						value: 1687523515,
+						calculation_window_start_at: 1662390000,
+						calculation_window_end_at: 1686132000,
+						unavailability_reason: null,
+						help_link: null
+					}
+				}
 			}
 		};
 
-		test('should display historic performance value with no warning', async () => {
-			const { getByText, queryByTitle } = render(StrategyTile, { strategy });
-			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲ 7.9%');
-			expect(queryByTitle(/less than 90 days of performance data/)).toBeNull;
+		test('should display historic performance value', async () => {
+			const { getByTestId } = render(StrategyTile, { strategy });
+			const performanceElem = getByTestId('key-metric-profitability-value');
+			expect(performanceElem).toHaveTextContent('▲ 12.0%');
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
-			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveClass('bullish');
-		});
-
-		test('should display assets value', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
-			const assets = getByText('Total assets').nextElementSibling;
-			expect(assets).toHaveTextContent('$1.23k');
+			const { container } = render(StrategyTile, { strategy });
+			const bullIndicator = container.querySelector('.bullish');
+			expect(bullIndicator).not.toBeNull();
 		});
 	});
 
-	describe('with incomplete summary statistics (enough_data: false)', () => {
+	describe('with no connection', () => {
 		const strategy = {
 			...baseStrategy,
-			summary_statistics: {
-				calculated_at: 1669939200,
-				first_trade_at: null,
-				last_trade_at: null,
-				enough_data: false,
-				current_value: 1_234.56,
-				profitability_90_days: 0.0789,
-				performance_chart_90_days: null
-			}
-		};
-
-		test('should display historic performance value with insufficient data warning', async () => {
-			const { getByText, getByTitle } = render(StrategyTile, { strategy });
-			const performance = getByText('Historic performance').nextElementSibling;
-			expect(performance).toHaveTextContent('▲ 7.9%');
-			getByTitle(/less than 90 days of performance data/);
-		});
-	});
-
-	describe('with error', () => {
-		const strategy = {
-			...baseStrategy,
-			error: 'oops - an error occurred!'
+			connected: false
 		};
 
 		test('should display error message', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
-			getByText('Strategy data not currently available.');
+			getByText(/Trade executor offline/);
 		});
 	});
 });

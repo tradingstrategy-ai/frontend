@@ -11,15 +11,16 @@
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
 
-	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
+
+	console.log(summaryStats);
 </script>
 
-<li class="strategy tile tile b" class:hasError>
+<li class="strategy tile tile b">
 	<ChartThumbnail data={chartData} startDate={chartStartDate} />
 	<div class="info">
 		<div class="details">
