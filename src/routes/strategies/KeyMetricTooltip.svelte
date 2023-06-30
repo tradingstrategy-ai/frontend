@@ -8,7 +8,7 @@ See
 -->
 
 <script lang="ts">
-	import {Icon} from "$lib/components";
+	import { Icon } from '$lib/components';
 
 	export let title = '';
 	export let icon = null;
@@ -51,7 +51,6 @@ See
 		outline-offset: -1px;
 
 		font: var(--f-ui-small-light);
-
 	}
 
 	.key-metric-tooltip :global(a) {

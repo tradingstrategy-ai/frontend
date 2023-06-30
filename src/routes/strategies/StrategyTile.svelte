@@ -1,18 +1,12 @@
 <script lang="ts">
 	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { Button, Icon } from '$lib/components';
+	import { AlertItem, AlertList, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';
-	import {
-		formatAge,
-		formatDollar,
-		formatDurationDays,
-		formatKeyMetricNumber,
-		formatPercent,
-		formatPriceChange
-	} from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { formatDollar, formatDurationDays, formatKeyMetricNumber, formatPercent } from '$lib/helpers/formatters';
+
+	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
@@ -21,7 +15,8 @@
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 
-	console.log(summaryStats);
+	// Get the error message HTML
+	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 </script>
 
 <li class="strategy tile tile b" class:hasError>
@@ -31,44 +26,42 @@
 			<h2 class="title">{strategy.name}</h2>
 
 			<div class="description">
-				{#if !hasError}
-					<p>{strategy.short_description}</p>
-				{:else}
-					<p>Strategy data not currently available.</p>
-				{/if}
+				<p>{strategy.short_description}</p>
 			</div>
 
 			<dl>
 				<KeyMetric
 					name="Performance"
-					metric={summaryStats.key_metrics.profitability}
+					metric={summaryStats?.key_metrics?.profitability}
 					formatter={formatPercent}
 					colouredPercent
 				/>
 
-				<KeyMetric
-					name="Total assets"
-					metric={summaryStats.key_metrics.total_equity}
-					formatter={formatDollar}
-				/>
-
+				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} />
 			</dl>
 
 			<dl>
-				<KeyMetric name="Age" metric={summaryStats.key_metrics.started_at} formatter={formatDurationDays} />
+				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDurationDays} />
 
-				<KeyMetric name="Max drawdown" metric={summaryStats.key_metrics.max_drawdown} formatter={formatPercent} />
+				<KeyMetric name="Max drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
 			</dl>
 
 			<dl>
-				<KeyMetric name="Sharpe" metric={summaryStats.key_metrics.sharpe} formatter={formatKeyMetricNumber} />
+				<KeyMetric name="Sharpe" metric={summaryStats?.key_metrics?.sharpe} formatter={formatKeyMetricNumber} />
 
-				<KeyMetric name="Sortino" metric={summaryStats.key_metrics.sortino} formatter={formatKeyMetricNumber} />
+				<KeyMetric name="Sortino" metric={summaryStats?.key_metrics?.sortino} formatter={formatKeyMetricNumber} />
 			</dl>
-
 		</div>
 
-		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
+		{#if errorHtml}
+			<AlertList status="warning" size="sm">
+				<AlertItem title="On-going execution issues">
+					{@html errorHtml}
+				</AlertItem>
+			</AlertList>
+		{/if}
+
+		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={!strategy.connected} />
 	</div>
 </li>
 

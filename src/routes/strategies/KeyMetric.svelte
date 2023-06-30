@@ -37,8 +37,11 @@
 		{#if metric?.source == 'backtesting'}
 			<KeyMetricTooltip icon="warning" iconClass="icon-warning">
 				<p>
-					This strategy has not been running long enough to display <a target="_blank" href={metric?.help_link}>{name} </a> based on the live trade execution data.
-					Instead, a <a href="https://tradingstrategy.ai/glossary/backtest" target="_blank">backtested</a> estimation is displayed.
+					This strategy has not been running long enough to display <a target="_blank" href={metric?.help_link}
+						>{name}
+					</a>
+					based on the live trade execution data. Instead, a
+					<a href="https://tradingstrategy.ai/glossary/backtest" target="_blank">backtested</a> estimation is displayed.
 				</p>
 
 				<p>
@@ -49,8 +52,8 @@
 				</p>
 
 				<p>
-					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary
-					on more information what this metric means and how it is calculated.
+					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric means
+					and how it is calculated.
 				</p>
 
 				<p>Past performance is no guarantee of future results.</p>
@@ -60,8 +63,8 @@
 				<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
 
 				<p>
-					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary
-					on more information what this metric means and how it is calculated.
+					See <a target="_blank" href={metric?.help_link}>{name} </a> in glossary on more information what this metric means
+					and how it is calculated.
 				</p>
 
 				<p>Past performance is no guarantee of future results.</p>
@@ -71,11 +74,9 @@
 </div>
 
 <style lang="postcss">
-
 	.key-metric {
 		display: grid;
 		gap: var(--space-ss);
-
 	}
 
 	dt {
