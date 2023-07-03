@@ -9,18 +9,14 @@
    See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/summary.py for data structures
  -->
 <script lang="ts">
-	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatPriceChange } from '$lib/helpers/formatters';
 	import { Timestamp } from '$lib/components';
 	import KeyMetricTooltip from './KeyMetricTooltip.svelte';
 
 	export let metric: Record<string, any>;
 	export let name: string;
 	export let formatter: Formatter<any> | undefined = undefined;
-	export let colouredPercent = false;
 
 	const value = metric?.value;
-
 	const formattedValue = formatter ? formatter(value) : value;
 </script>
 
@@ -28,13 +24,9 @@
 	<dt>
 		{name}
 	</dt>
-	<dd class={colouredPercent ? determinePriceChangeClass(value) : null}>
+	<dd>
 		<span data-testid={`key-metric-${metric?.kind}-value`}>
-			{#if colouredPercent}
-				{formatPriceChange(value)}
-			{:else}
-				{formattedValue}
-			{/if}
+			<slot {value}>{formattedValue}</slot>
 		</span>
 
 		{#if metric?.value}

@@ -4,7 +4,14 @@
 	import { AlertItem, AlertList, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';
-	import { formatDollar, formatDaysAgo, formatKeyMetricNumber, formatPercent } from '$lib/helpers/formatters';
+	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import {
+		formatDollar,
+		formatDaysAgo,
+		formatKeyMetricNumber,
+		formatPercent,
+		formatPriceChange
+	} from '$lib/helpers/formatters';
 
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
@@ -31,12 +38,9 @@
 			</div>
 
 			<dl>
-				<KeyMetric
-					name="Performance"
-					metric={summaryStats?.key_metrics?.profitability}
-					formatter={formatPercent}
-					colouredPercent
-				/>
+				<KeyMetric name="Performance" metric={summaryStats?.key_metrics?.profitability} let:value>
+					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
+				</KeyMetric>
 
 				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} />
 			</dl>
