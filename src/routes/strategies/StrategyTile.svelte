@@ -4,7 +4,7 @@
 	import { AlertItem, AlertList, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';
-	import { formatDollar, formatDurationDays, formatKeyMetricNumber, formatPercent } from '$lib/helpers/formatters';
+	import { formatDollar, formatDaysAgo, formatKeyMetricNumber, formatPercent } from '$lib/helpers/formatters';
 
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
@@ -16,8 +16,6 @@
 
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
-
-	console.log(summaryStats);
 </script>
 
 <li class="strategy tile tile b">
@@ -44,7 +42,7 @@
 			</dl>
 
 			<dl>
-				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDurationDays} />
+				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} />
 
 				<KeyMetric name="Max drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
 			</dl>
