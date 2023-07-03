@@ -60,7 +60,7 @@
 
 		{#if errorHtml}
 			<AlertList status="warning" size="xs">
-				<AlertItem title="On-going execution issues">
+				<AlertItem title="Ongoing execution issues">
 					{@html errorHtml}
 				</AlertItem>
 			</AlertList>

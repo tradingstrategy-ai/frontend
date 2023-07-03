@@ -20,7 +20,7 @@
 		{#if errorHtml}
 			<div class="error-wrapper">
 				<AlertList status="warning" size="sm">
-					<AlertItem title="On-going execution issues">
+					<AlertItem title="Ongoing execution issues">
 						{@html errorHtml}
 					</AlertItem>
 				</AlertList>
