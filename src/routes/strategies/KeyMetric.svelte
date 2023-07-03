@@ -10,12 +10,13 @@
  -->
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { formatDatetime, formatPriceChange, formatUnixTimestampAsISODate } from '$lib/helpers/formatters';
+	import { formatPriceChange } from '$lib/helpers/formatters';
+	import { Timestamp } from '$lib/components';
 	import KeyMetricTooltip from './KeyMetricTooltip.svelte';
 
-	export let metric;
+	export let metric: Record<string, any>;
 	export let name: string;
-	export let formatter: (val: any) => string = null;
+	export let formatter: Formatter<any> | undefined = undefined;
 	export let colouredPercent = false;
 
 	const value = metric?.value;
@@ -50,9 +51,10 @@
 					<p>
 						The period used for the backtest simulation is
 						<span class="timespan">
-							{formatUnixTimestampAsISODate(metric.calculation_window_start_at)}—{formatUnixTimestampAsISODate(
-								metric.calculation_window_end_at
-							)}</span
+							<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+								date={metric.calculation_window_end_at}
+								format="iso"
+							/></span
 						>.
 					</p>
 

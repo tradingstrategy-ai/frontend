@@ -219,22 +219,6 @@ export function formatDatetime(d: MaybeDate): string {
 }
 
 /**
- * Format a UNXI datestamp as ISO date.
- *
- * Mostly useful for formattiong ISO-8601 datetime strings coming from the backend.
- */
-export function formatUnixTimestampAsISODate(ts: number): string {
-	if (!ts) return '---';
-	const d = new Date(ts * 1000);
-
-	const day = d.toLocaleDateString('en-us', { day: '2-digit' });
-	const month = d.toLocaleDateString('en-us', { month: '2-digit' });
-	const year = d.toLocaleDateString('en-us', { year: 'numeric' });
-
-	return `${year}-${month}-${day}`;
-}
-
-/**
  * Shorten Ethereum address
  */
 export function formatShortAddress(address: MaybeString): string {
@@ -308,17 +292,6 @@ export function formatDaysAgo(unixTimestamp: number): string {
 	const seconds = Date.now() / 1000 - unixTimestamp;
 	const days = Math.floor(seconds / DAY);
 	return days < 1 ? 'Less than a day' : days === 1 ? '1 day' : `${days} days`;
-}
-
-/**
- * Formats the relative age since UNIX epoch.
- *
- */
-export function formatAge(unixTime: number): string {
-	if (!Number.isFinite(unixTime)) return notFilledMarker;
-	const utcNow = Math.floor(new Date().getTime() / 1000);
-	const duration = utcNow - unixTime;
-	return formatDuration(duration);
 }
 
 /**
