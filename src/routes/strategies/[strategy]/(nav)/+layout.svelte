@@ -30,12 +30,13 @@
 
 	<div class="subpage">
 		<StrategyNav strategyId={summary.id} portfolio={data.state.portfolio} currentPath={$page.url.pathname} />
-		<slot />
+		<div>
+			<slot />
+			<p class="beta-notice">
+				<strong>Beta notice</strong>: Trade execution is currently in beta. Execution may contain issues.
+			</p>
+		</div>
 	</div>
-
-	<p class="beta-notice">
-		<strong>Beta notice</strong>: Trade execution is currently in beta. Execution may contain issues.
-	</p>
 </main>
 
 <style lang="postcss">
@@ -64,11 +65,11 @@
 	}
 
 	.beta-notice {
-		text-align: center;
-		color: #888;
+		margin: var(--space-xl) 0;
+		color: hsla(var(--hsl-text-extra-light));
 	}
 
 	.error-wrapper {
-		margin: 1em 0;
+		margin-top: var(--space-md);
 	}
 </style>

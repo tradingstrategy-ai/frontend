@@ -101,14 +101,9 @@
 
 	dl {
 		display: grid;
-		grid-template-columns: 50% 50%;
+		grid-template-columns: 1fr 1fr;
 		gap: var(--space-ss);
 		margin: 0;
-
-		& > div {
-			display: grid;
-			gap: var(--space-ss);
-		}
 	}
 
 	.description {
