@@ -50,8 +50,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		</div>
 	</div>
 	<PairCandleChart
-		quoteFeed={quoteFeed('price')}
+		quoteFeed={quoteFeed('candles')}
 		{pairId}
+		{pairSymbol}
 		{exchangeType}
 		{firstTradeDate}
 		{timeBucket}
@@ -83,8 +84,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
 	{:else}
 		<PairCandleChart
-			quoteFeed={quoteFeed('liquidity')}
+			quoteFeed={quoteFeed('xyliquidity')}
 			{pairId}
+			{pairSymbol}
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}

@@ -7,6 +7,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	<PairCandleChart
 		quoteFeed={quoteFeed}
 		pairId={12345}
+		pairSymbol="ETH-USDC"
 		exchangeType="uniswap_v2"
 		firstTradeDate="2020-01-02T00:00"
 		timeBucket="4h"
@@ -25,8 +26,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 
 	export let quoteFeed: any;
 	export let pairId: number | string;
+	export let pairSymbol: string;
 	export let exchangeType: string;
-	export let firstTradeDate: string;
+	export let firstTradeDate: MaybeString;
 	export let timeBucket: TimeBucket;
 	export let studies: any[] = [];
 	export let linker: ChartLinker | undefined = undefined;
@@ -66,11 +68,14 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 		function update() {
 			// hide the Y Axis on smaller screens
 			chartEngine.chart.yAxis.position = hideYAxis ? 'none' : 'right';
-			// make exchangeType and firstTradeDate available to the quoteFeed
-			chartEngine.exchangeType = exchangeType;
-			chartEngine.firstTradeDate = firstTradeDate;
+			// pass required data to quoteFeed
+			const symbol = {
+				symbol: pairSymbol,
+				urlParams: { pair_id: pairId, exchange_type: exchangeType },
+				firstQuoteDate: firstTradeDate && new Date(firstTradeDate)
+			};
 			// load the chart
-			chartEngine.loadChart(pairId, { periodicity });
+			chartEngine.loadChart(symbol, { periodicity });
 		}
 
 		return { update };

@@ -159,7 +159,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		// wrap loadChart method to inject callback
 		const originalLoadChart = chartEngine.loadChart.bind(chartEngine);
-		chartEngine.loadChart = (symbol: string, parameters: any, callback: Function | undefined) => {
+		chartEngine.loadChart = (symbol: any, parameters: any, callback: Function | undefined) => {
 			originalLoadChart(symbol, parameters, () => {
 				loading = false;
 				chartTracker ??= new ChartActivityTracker(chartEngine);
