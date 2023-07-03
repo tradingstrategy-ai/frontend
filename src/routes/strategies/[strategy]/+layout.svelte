@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
 	export let data;
-
-	console.log(data);
 
 	$: summary = data.summary;
 
