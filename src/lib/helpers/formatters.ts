@@ -1,6 +1,9 @@
-import { formatDistanceToNow, intervalToDuration } from 'date-fns';
-
 export const notFilledMarker = '---';
+
+// number of seconds per minute/hour/day; used duration formatters
+const MINUTE = 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
 
 /**
  * Convert number to thousands.
@@ -239,6 +242,17 @@ export function formatPercent(n: MaybeNumber): string {
 }
 
 /**
+ * Format strategy key metric float numbers like Sharpe and Sortino
+ */
+export function formatKeyMetricNumber(n: MaybeNumber): string {
+	if (!Number.isFinite(n)) return notFilledMarker;
+	return n.toLocaleString('en', {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	});
+}
+
+/**
  * Custom percent formatter for pool swap fee (Uniswap V3)
  *
  * Uses `minimumSignificantDigits` instead of `minimumFractionDigits`
@@ -253,14 +267,31 @@ export function formatSwapFee(n: MaybeNumber): string {
 }
 
 /**
- * Formats the time duration string as
+ * Formats the time duration string in format '5 days 10h 15m'
  *
  * Timedelta is received from the API as a duration in seconds.
  */
 export function formatDuration(seconds: number): string {
-	const { days, hours, minutes } = intervalToDuration({ start: 0, end: seconds * 1000 });
-	const dayStr = days ? `${days} days ` : '';
+	const days = Math.floor(seconds / DAY);
+	seconds %= DAY;
+	const hours = Math.floor(seconds / HOUR);
+	seconds %= HOUR;
+	const minutes = Math.floor(seconds / MINUTE);
+
+	const dayStr = days < 1 ? '' : days === 1 ? '1 day ' : `${days} days `;
 	return `${dayStr}${hours}h ${minutes}m`;
+}
+
+/**
+ * Formats the time duration string in day granularity.
+ *
+ * unixTimestamp is received from API as unix seconds since epoch
+ */
+export function formatDaysAgo(unixTimestamp: number): string {
+	if (!Number.isFinite(unixTimestamp)) return notFilledMarker;
+	const seconds = Date.now() / 1000 - unixTimestamp;
+	const days = Math.floor(seconds / DAY);
+	return days < 1 ? 'Less than a day' : days === 1 ? '1 day' : `${days} days`;
 }
 
 /**

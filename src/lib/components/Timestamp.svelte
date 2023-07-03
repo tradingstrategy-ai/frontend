@@ -15,13 +15,19 @@ by JS Date) or a Date object.
 
 	type MaybeParsableDate = Maybe<Date | string | number>;
 	export let date: MaybeParsableDate;
-	export let format: 'default' | 'relative' | 'iso' | 'ISO' = 'default';
+	export let format: 'default' | 'relative' | 'iso' = 'default';
 	export let withRelative = false;
 	export let withTime = false;
 	export let withSeconds = false;
 
 	$: parsedDate = parse(date);
 	$: isoString = parsedDate?.toISOString();
+
+	const formatters = {
+		default: getDefaultDateString,
+		relative: getRelativeDateString,
+		iso: getISODateString
+	};
 
 	function parse(value: MaybeParsableDate) {
 		if (value instanceof Date) return value;
@@ -47,7 +53,7 @@ by JS Date) or a Date object.
 		return Number.isFinite(parsedDate.valueOf()) ? parsedDate : undefined;
 	}
 
-	function getDefaultDateString(d: Date, withRelative = false) {
+	function getDefaultDateString(d: Date) {
 		const parts = [d.toDateString()];
 		if (withRelative) parts.push(getRelativeDateString(d));
 		return parts.join(', ');
@@ -57,34 +63,24 @@ by JS Date) or a Date object.
 		return formatDistanceToNow(d, { addSuffix: true });
 	}
 
-	function getISODateString(isoStr: string = '') {
-		return isoStr.slice(0, 10);
-	}
-
-	function getISOTimeString(isoStr: string = '', withSec = false) {
-		return isoStr.slice(11, withSec ? 19 : 16);
+	function getISODateString(d: Date) {
+		const isoStr = d.toISOString();
+		let dateStr = `<span>${isoStr.slice(0, 10)}</span>`;
+		if (withTime || withSeconds) {
+			dateStr += `<span>${isoStr.slice(11, withSeconds ? 19 : 16)}</span>`;
+		}
+		return dateStr;
 	}
 </script>
 
 {#if parsedDate}
-	<time datetime={isoString}>
-		{#if format === 'default'}
-			{getDefaultDateString(parsedDate, withRelative)}
-		{:else if format === 'relative'}
-			{getRelativeDateString(parsedDate)}
-		{:else if format.toLowerCase() === 'iso'}
-			<span>{getISODateString(isoString)}</span>
-			{#if withTime || withSeconds}
-				<span>{getISOTimeString(isoString, withSeconds)}</span>
-			{/if}
-		{/if}
-	</time>
+	<time class="timestamp" datetime={isoString}>{@html formatters[format](parsedDate)}</time>
 {:else}
 	<slot>---</slot>
 {/if}
 
 <style lang="postcss">
-	span {
-		white-space: pre;
+	.timestamp :global(span) {
+		white-space: nowrap;
 	}
 </style>

@@ -32,7 +32,7 @@ describe('Timestamp component', () => {
 	});
 
 	test('should render iso date with time', () => {
-		const { getByText } = render(Timestamp, { date, format: 'ISO', withTime: true });
+		const { getByText } = render(Timestamp, { date, format: 'iso', withTime: true });
 		getByText('2023-01-01');
 		getByText('12:00');
 	});

@@ -1,52 +1,72 @@
 <script lang="ts">
 	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { Button, Icon } from '$lib/components';
+	import { AlertItem, AlertList, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import KeyMetric from './KeyMetric.svelte';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import {
+		formatDollar,
+		formatDaysAgo,
+		formatKeyMetricNumber,
+		formatPercent,
+		formatPriceChange
+	} from '$lib/helpers/formatters';
+
+	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
 
-	const hasError = !!strategy.error;
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
+
+	// Get the error message HTML
+	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 </script>
 
-<li class="strategy tile tile b" class:hasError>
+<li class="strategy tile tile b">
 	<ChartThumbnail data={chartData} startDate={chartStartDate} />
 	<div class="info">
 		<div class="details">
 			<h2 class="title">{strategy.name}</h2>
-			<dl>
-				<div>
-					<dt title="90 day return (annualized)">Historic performance</dt>
-					<dd class={determinePriceChangeClass(summaryStats.profitability_90_days)}>
-						{formatPriceChange(summaryStats.profitability_90_days)}
-						{#if summaryStats.profitability_90_days && !summaryStats.enough_data}
-							<span class="insufficient-data" title="This strategy has less than 90 days of performance data">
-								<Icon name="warning" />
-							</span>
-						{/if}
-					</dd>
-				</div>
-				<div>
-					<dt>Total assets</dt>
-					<dd>
-						{formatDollar(summaryStats.current_value)}
-					</dd>
-				</div>
-			</dl>
+
 			<div class="description">
-				{#if !hasError}
+				{#if strategy.short_description}
 					<p>{strategy.short_description}</p>
-				{:else}
-					<p>Strategy data not currently available.</p>
 				{/if}
 			</div>
+
+			<dl>
+				<KeyMetric name="Performance" metric={summaryStats?.key_metrics?.profitability} let:value>
+					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
+				</KeyMetric>
+
+				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} />
+			</dl>
+
+			<dl>
+				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} />
+
+				<KeyMetric name="Max drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
+			</dl>
+
+			<dl>
+				<KeyMetric name="Sharpe" metric={summaryStats?.key_metrics?.sharpe} formatter={formatKeyMetricNumber} />
+
+				<KeyMetric name="Sortino" metric={summaryStats?.key_metrics?.sortino} formatter={formatKeyMetricNumber} />
+			</dl>
 		</div>
-		<Button label="View strategy details" href="/strategies/{strategy.id}" tertiary size="lg" disabled={hasError} />
+
+		{#if errorHtml}
+			<AlertList status="warning" size="xs">
+				<AlertItem title="Ongoing execution issues">
+					{@html errorHtml}
+				</AlertItem>
+			</AlertList>
+		{/if}
+
+		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={!strategy.connected} />
 	</div>
 </li>
 
@@ -75,41 +95,15 @@
 	}
 
 	.title {
-		font: var(--f-ui-xxl-medium);
+		font: var(--f-ui-large-medium);
 		letter-spacing: var(--f-ui-xxl-spacing, normal);
 	}
 
 	dl {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: 1fr 1fr;
 		gap: var(--space-ss);
 		margin: 0;
-
-		& > div {
-			display: grid;
-			gap: var(--space-ss);
-		}
-	}
-
-	dt {
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
-	}
-
-	dd {
-		font: var(--f-ui-xl-medium);
-		letter-spacing: var(--f-ui-xl-spacing, normal);
-		margin: 0;
-		display: flex;
-		gap: var(--space-ss);
-
-		@nest .hasError & {
-			color: var(--c-text-ultra-light);
-		}
-	}
-
-	.insufficient-data {
-		font-size: 18px;
 	}
 
 	.description {
