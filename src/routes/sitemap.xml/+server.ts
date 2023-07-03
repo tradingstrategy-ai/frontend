@@ -52,7 +52,7 @@ const staticPages = [
 
 	// refer to other sitemaps
 	'blog/rss.xml',
-	'docs/sitemap.xml',
+	'docs/sitemap-docs.xml',
 	'api/sitemap/pairs/paged/0.xml',
 	'api/sitemap/pairs/paged/1.xml',
 	'api/sitemap/pairs/paged/2.xml',
