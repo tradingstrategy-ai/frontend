@@ -15,15 +15,18 @@
 
 	const width = 500;
 	const height = 300;
+	const yScaleMin = 0.2; // see getValueDomain()
 	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
-	const scaleY = scaleLinear(getValueRange(), [height, 0]);
+	const scaleY = scaleLinear(getValueDomain(), [height, 0]);
 	const y0 = scaleY(0);
 
 	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
 
-	function getValueRange() {
-		const range = extent(data, (tick: ChartTick) => tick[1]);
-		return range.every(Number.isFinite) ? range : [0, 0];
+	// Try to smooth out, so small changes do not look irrationally large
+	// by bumping up the y-Axis domain -20%/20% if the strategy has moved less
+	function getValueDomain() {
+		const domain = extent(data, (tick: ChartTick) => tick[1]);
+		return extent([...domain, -yScaleMin, yScaleMin]);
 	}
 
 	function getPathCommands() {
