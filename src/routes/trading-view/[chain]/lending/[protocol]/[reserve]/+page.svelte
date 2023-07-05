@@ -2,37 +2,34 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section, PageHeader } from '$lib/components';
 	import InfoTable from './InfoTable.svelte';
-	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let data;
 	$: ({ chain, reserve } = data);
 
-	$: protocolName = getProtocolName(reserve.protocol_slug);
-
 	$: breadcrumbs = {
 		[chain.chain_slug]: chain.chain_name,
 		lending: 'Lending',
-		[reserve.protocol_slug]: protocolName,
+		[reserve.protocol_slug]: reserve.protocol_name,
 		[reserve.reserve_slug]: reserve.asset_symbol
 	};
 </script>
 
 <svelte:head>
-	<title>{reserve.asset_symbol} {protocolName} reserve on {chain.chain_name}</title>
+	<title>{reserve.asset_symbol} {reserve.protocol_name} reserve on {chain.chain_name}</title>
 	<meta
 		name="description"
-		content="{reserve.asset_name} lending reserve on {protocolName} protocol on {chain.chain_name}"
+		content="{reserve.asset_name} lending reserve on {reserve.protocol_name} protocol on {chain.chain_name}"
 	/>
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={reserve.asset_name} subtitle="{protocolName} reserve on {chain.chain_name}" />
+	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {chain.chain_name}" />
 
 	<section class="ds-container info" data-testid="reserve-info">
 		<div class="ds-2-col">
-			<InfoTable {protocolName} {chain} {reserve} />
+			<InfoTable {chain} {reserve} />
 			<div />
 		</div>
 	</section>

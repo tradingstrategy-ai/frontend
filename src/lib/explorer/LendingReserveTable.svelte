@@ -6,7 +6,6 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
 	import { formatValue } from '$lib/helpers/formatters';
-	import { getProtocolName } from '$lib/helpers/lending';
 
 	export let loading = false;
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
@@ -40,10 +39,8 @@
 			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
-			id: 'protocol',
-			accessor: 'protocol_slug',
+			accessor: 'protocol_name',
 			header: 'Protocol',
-			cell: ({ value }) => formatValue(getProtocolName(value)),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -92,7 +89,7 @@
 				width: 15%;
 			}
 
-			& .protocol {
+			& .protocol_name {
 				width: 15%;
 			}
 

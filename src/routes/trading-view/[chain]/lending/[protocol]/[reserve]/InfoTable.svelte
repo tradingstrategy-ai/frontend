@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
-	export let protocolName: string;
 	export let chain: Record<string, any>;
 	export let reserve: Record<string, any>;
 </script>
 
 <TradingDataInfo>
-	<TradingDataInfoRow label="Protocol" value={protocolName} />
+	<TradingDataInfoRow label="Protocol" value={reserve.protocol_name} />
 	<TradingDataInfoRow label="Symbol" value={reserve.asset_symbol} />
 	<TradingDataInfoRow
 		label="aToken"
