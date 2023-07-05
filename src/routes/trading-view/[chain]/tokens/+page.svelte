@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenTable from '$lib/explorer/TokenTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';

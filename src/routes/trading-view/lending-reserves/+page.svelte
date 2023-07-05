@@ -11,12 +11,6 @@
 	export let data;
 	$: ({ reserves, options } = data);
 
-	const chains: Record<string, string> = {};
-
-	for (const { chain_slug, chain_name } of data.chains) {
-		chains[chain_slug] = chain_name;
-	}
-
 	let loading = false;
 
 	async function handleChange({ detail }: ComponentEvents<LendingReserveTable>['change']) {
@@ -43,6 +37,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<LendingReserveTable {...reserves} {...options} {chains} {loading} on:change={handleChange} />
+		<LendingReserveTable {...reserves} {...options} {loading} on:change={handleChange} />
 	</Section>
 </main>

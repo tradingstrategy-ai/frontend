@@ -13,7 +13,6 @@
 	export let page = 0;
 	export let sort = 'asset_name';
 	export let direction: 'asc' | 'desc' = 'asc';
-	export let chains: Record<string, string>;
 
 	const tableRows: Writable<LendingReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
@@ -44,9 +43,8 @@
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			accessor: 'chain_slug',
+			accessor: 'chain_name',
 			header: 'Blockchain',
-			cell: ({ value }) => formatValue(chains[value] ?? value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -93,7 +91,7 @@
 				width: 15%;
 			}
 
-			& .chain_slug {
+			& .chain_name {
 				width: 20%;
 			}
 

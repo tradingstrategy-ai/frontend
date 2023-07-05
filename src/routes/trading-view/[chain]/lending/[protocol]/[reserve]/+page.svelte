@@ -4,10 +4,10 @@
 	import InfoTable from './InfoTable.svelte';
 
 	export let data;
-	$: ({ chain, reserve } = data);
+	$: ({ reserve } = data);
 
 	$: breadcrumbs = {
-		[chain.chain_slug]: chain.chain_name,
+		[reserve.chain_slug]: reserve.chain_name,
 		lending: 'Lending',
 		[reserve.protocol_slug]: reserve.protocol_name,
 		[reserve.reserve_slug]: reserve.asset_symbol
@@ -15,21 +15,21 @@
 </script>
 
 <svelte:head>
-	<title>{reserve.asset_symbol} {reserve.protocol_name} reserve on {chain.chain_name}</title>
+	<title>{reserve.asset_symbol} {reserve.protocol_name} reserve on {reserve.chain_name}</title>
 	<meta
 		name="description"
-		content="{reserve.asset_name} lending reserve on {reserve.protocol_name} protocol on {chain.chain_name}"
+		content="{reserve.asset_name} lending reserve on {reserve.protocol_name} protocol on {reserve.chain_name}"
 	/>
 </svelte:head>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {chain.chain_name}" />
+	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}" />
 
 	<section class="ds-container info" data-testid="reserve-info">
 		<div class="ds-2-col">
-			<InfoTable {chain} {reserve} />
+			<InfoTable {reserve} />
 			<div />
 		</div>
 	</section>
