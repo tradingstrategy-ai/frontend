@@ -14,7 +14,7 @@ Display one key metric in a strategy tile.
 <script lang="ts">
 	import { Timestamp } from '$lib/components';
 	import KeyMetricTooltip from './KeyMetricTooltip.svelte';
-	import Badge from "./Badge.svelte";
+	import Badge from './Badge.svelte';
 
 	export let metric: Record<string, any>;
 	export let name: string;
@@ -22,7 +22,6 @@ Display one key metric in a strategy tile.
 
 	const value = metric?.value;
 	const formattedValue = formatter ? formatter(value) : value;
-
 </script>
 
 <div class="key-metric" data-testid={`key-metric-${metric?.kind}`}>
@@ -31,7 +30,6 @@ Display one key metric in a strategy tile.
 	</dt>
 	<dd>
 		{#if metric?.value !== undefined}
-
 			<KeyMetricTooltip>
 				<span slot="tooltip-trigger">
 					<span class="tooltip-trigger-content">
@@ -40,15 +38,14 @@ Display one key metric in a strategy tile.
 						</span>
 
 						{#if metric?.source == 'backtesting'}
-							<Badge text="backtested"/>
+							<Badge text="backtested" />
 						{:else}
-							<Badge text="live"/>
+							<Badge text="live" />
 						{/if}
 					</span>
 				</span>
 
 				<div slot="tooltip-popup">
-
 					<h4>{name}</h4>
 
 					<ul>
@@ -79,22 +76,19 @@ Display one key metric in a strategy tile.
 									/></span
 								>.
 							</li>
+						{:else if metric?.calculation_method == 'historical_data'}
+							<li>
+								The calculation period for live trading is
+								<span class="timespan">
+									<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+										date={metric.calculation_window_end_at}
+										format="iso"
+									/></span
+								>.
+							</li>
 						{:else}
-							{#if metric?.calculation_method == "historical_data"}
-								<li>
-									The calculation period for live trading is
-									<span class="timespan">
-										<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
-											date={metric.calculation_window_end_at}
-											format="iso"
-										/></span
-									>.
-								</li>
-							{:else}
-								<li>This is the latest real-time value from the live trade execution</li>
-							{/if}
+							<li>This is the latest real-time value from the live trade execution</li>
 						{/if}
-
 					</ul>
 
 					<p class="disclaimer">Past performance is no guarantee of future results.</p>
@@ -149,7 +143,6 @@ Display one key metric in a strategy tile.
 			& li {
 				margin: var(--space-ss) 0;
 			}
-
 		}
 
 		& .disclaimer {

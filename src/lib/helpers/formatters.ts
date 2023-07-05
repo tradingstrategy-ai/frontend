@@ -238,7 +238,7 @@ export function formatPercent(n: MaybeNumber): string {
 	// Negative zero hot fix
 	// Don't format -0 %
 	// https://stackoverflow.com/a/7223395/315168
-	if(Object.is(-0, n)) {
+	if (Object.is(-0, n)) {
 		n = 0;
 	}
 
