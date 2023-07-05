@@ -40,8 +40,14 @@
 			</div>
 
 			<dl>
+				<!--
+					TODO: Not sure what is going here because could not pass `value` as is.
+					This bit might need some refactoring.
+				-->
 				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} let:value>
-					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
+					<span class={determinePriceChangeClass(summaryStats?.key_metrics?.profitability?.value)}>
+						{formatPriceChange(summaryStats?.key_metrics?.profitability?.value)}
+					</span>
 				</KeyMetric>
 
 				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} />

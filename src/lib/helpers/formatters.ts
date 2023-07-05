@@ -234,6 +234,14 @@ export function formatShortAddress(address: MaybeString): string {
  */
 export function formatPercent(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
+
+	// Negative zero hot fix
+	// Don't format -0 %
+	// https://stackoverflow.com/a/7223395/315168
+	if(Object.is(-0, n)) {
+		n = 0;
+	}
+
 	return n.toLocaleString('en', {
 		minimumFractionDigits: 1,
 		maximumFractionDigits: 1,

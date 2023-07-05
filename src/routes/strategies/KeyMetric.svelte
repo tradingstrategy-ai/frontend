@@ -30,7 +30,7 @@ Display one key metric in a strategy tile.
 		{name}
 	</dt>
 	<dd>
-		{#if metric?.value}
+		{#if metric?.value !== undefined}
 
 			<KeyMetricTooltip>
 				<span slot="tooltip-trigger">
@@ -67,7 +67,7 @@ Display one key metric in a strategy tile.
 
 							<li>
 								Instead, a <a target="_blank" href="https://tradingstrategy.ai/glossary/backtest">backtested</a>
-								estimation is displayed. See <a href="https://tradingstrategy.ai/glossary/backtest">backtest results</a>.
+								estimation is displayed.
 							</li>
 
 							<li>
@@ -82,7 +82,7 @@ Display one key metric in a strategy tile.
 						{:else}
 							{#if metric?.calculation_method == "historical_data"}
 								<li>
-									The period for live trading is
+									The calculation period for live trading is
 									<span class="timespan">
 										<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
 											date={metric.calculation_window_end_at}
@@ -91,7 +91,7 @@ Display one key metric in a strategy tile.
 									>.
 								</li>
 							{:else}
-								<li>This value is the real-time</li>
+								<li>This is the latest real-time value from the live trade execution</li>
 							{/if}
 						{/if}
 
@@ -131,7 +131,7 @@ Display one key metric in a strategy tile.
 		}
 
 		& .value {
-			border-bottom: 1px dotted black;
+			border-bottom: 1px dotted hsla(var(--hsl-text));
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 			margin: 0;

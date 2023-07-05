@@ -12,7 +12,6 @@ See:
 
 <dfn class="key-metric-tooltip">
 	<slot name="tooltip-trigger" class="tooltip-trigger">
-		---
 	</slot>
 	<button>
 		<slot name="tooltip-popup"/>
