@@ -5,10 +5,10 @@
 	export let text = '';
 
 	// Colour scheme
-	export let colourScheme = 'grey';
+	export let colourScheme = 'transparent';
 </script>
 
-<span class="badge" class:grey={colourScheme === 'grey'} class:orange={colourScheme === 'orange'}>
+<span class="badge" class:transparent={colourScheme === 'transparent'} class:orange={colourScheme === 'orange'}>
 	{text}
 </span>
 
@@ -21,8 +21,7 @@
 		vertical-align: middle;
 	}
 
-	.grey {
-		//background: var(--c-background-1);
+	.transparent {
 		color: var(--c-text-light);
 	}
 
