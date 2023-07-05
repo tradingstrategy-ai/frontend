@@ -16,7 +16,17 @@
 	const width = 500;
 	const height = 300;
 	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
-	const scaleY = scaleLinear(getValueRange(), [height, 0]);
+	const valRange = getValueRange();
+
+	// Try to smooth out small changes look big changes linear scaling
+	if(valRange[0] > -0.2) {
+		valRange[0] = -0.2; // Set bottom chart to -20%
+	}
+	if(valRange[1] < 0.2) {
+		valRange[1] = 0.2; // Set top bottom chart to +20% profit
+	}
+
+	const scaleY = scaleLinear(valRange, [height, 0]);
 	const y0 = scaleY(0);
 
 	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
