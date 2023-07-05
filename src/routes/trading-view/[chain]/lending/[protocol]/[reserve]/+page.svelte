@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section, PageHeader } from '$lib/components';
+	import { ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
 
 	export let data;
@@ -34,6 +35,11 @@
 		</div>
 	</section>
 </main>
+
+<Section padding="md">
+	<h3>Interest rate</h3>
+	<ReserveInterestChart {reserve} timeBucket="1d" rateType="supply_apr" />
+</Section>
 
 <Section padding="md">
 	<h3>Reserve details API payload</h3>

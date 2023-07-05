@@ -39,7 +39,7 @@ function hasMoreAvailable(startDate: Date, firstQuoteDate: MaybeDate) {
 	return firstQuoteDate ? startDate > firstQuoteDate : true;
 }
 
-export default function quoteFeed(endpoint: string) {
+export default function quoteFeed(endpoint: string, accessor: MaybeString = undefined) {
 	let lastRequest = {};
 
 	async function fetchData(_: string, startDate: Date, endDate: Date, params: any, callback: Function) {
@@ -65,7 +65,7 @@ export default function quoteFeed(endpoint: string) {
 		const quotes = await fetchPublicApi(fetch, endpoint, urlParams);
 
 		callback({
-			quotes: mapQuotes(quotes),
+			quotes: mapQuotes(accessor ? quotes[accessor] : quotes),
 			moreAvailable: hasMoreAvailable(startDate, symbolObject.firstQuoteDate)
 		});
 	}
