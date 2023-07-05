@@ -31,40 +31,58 @@ Display one key metric in a strategy tile.
 	</dt>
 	<dd>
 		{#if metric?.value}
-			{#if metric?.source == 'backtesting'}
-				<KeyMetricTooltip>
-					<span slot="tooltip-trigger">
-						<span class="tooltip-trigger-content">
-							<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
-								<slot>{formattedValue}</slot>
-							</span>
-							<Badge text="backtested"/>
+
+			<KeyMetricTooltip>
+				<span slot="tooltip-trigger">
+					<span class="tooltip-trigger-content">
+						<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
+							<slot>{formattedValue}</slot>
 						</span>
+
+						{#if metric?.source == 'backtesting'}
+							<Badge text="backtested"/>
+						{:else}
+							<Badge text="live"/>
+						{/if}
 					</span>
+				</span>
 
-					<div slot="tooltip-popup">
+				<div slot="tooltip-popup">
 
-						<h4>{name}</h4>
+					<h4>{name}</h4>
 
-						<ul>
-							{#if metric?.help_link}
+					<ul>
+						{#if metric?.help_link}
+							<li>
+								See the glossary for the definition of <a target="_blank" href={metric?.help_link}>{name}</a>
+								and how it is calculated.
+							</li>
+						{/if}
+
+						{#if metric?.source == 'backtesting'}
+							<li>
+								This strategy has not been trading long enough to reliable calculate
+								<a target="_blank" href={metric?.help_link}>{name}</a> based on the live trading data.
+							</li>
+
+							<li>
+								Instead, a <a target="_blank" href="https://tradingstrategy.ai/glossary/backtest">backtested</a>
+								estimation is displayed. See <a href="https://tradingstrategy.ai/glossary/backtest">backtest results</a>.
+							</li>
+
+							<li>
+								The period used for the backtest simulation is
+								<span class="timespan">
+									<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+										date={metric.calculation_window_end_at}
+										format="iso"
+									/></span
+								>.
+							</li>
+						{:else}
+							{#if metric?.calculation_method == "historical_data"}
 								<li>
-									See the glossary for the definition of <a target="_blank" href={metric?.help_link}>{name}</a>
-									and how it is calculated.
-								</li>
-
-								<li>
-									This strategy has not been trading long enough to reliable calculate
-									<a target="_blank" href={metric?.help_link}>{name}</a> based on the live trading data.
-								</li>
-
-								<li>
-									Instead, a <a target="_blank" href="https://tradingstrategy.ai/glossary/backtest">backtested</a>
-									estimation is displayed. See <a href="https://tradingstrategy.ai/glossary/backtest">backtest results</a>.
-								</li>
-
-								<li>
-									The period used for the backtest simulation is
+									The period for live trading is
 									<span class="timespan">
 										<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
 											date={metric.calculation_window_end_at}
@@ -72,27 +90,16 @@ Display one key metric in a strategy tile.
 										/></span
 									>.
 								</li>
+							{:else}
+								<li>This value is the real-time</li>
 							{/if}
+						{/if}
 
-						</ul>
+					</ul>
 
-						<p class="disclaimer">Past performance is no guarantee of future results.</p>
-					</div>
-				</KeyMetricTooltip>
-			{:else}
-				<KeyMetricTooltip text="live" colourScheme="grey">
-					<p>This metric is based on the live trade execution for the duration the strategy had been running.</p>
-
-					{#if metric?.help_link}
-						<p>
-							See <a target="_blank" href={metric?.help_link}>{name}</a>
-							in glossary on more information what this metric means and how it is calculated.
-						</p>
-					{/if}
-
-					<p>Past performance is no guarantee of future results.</p>
-				</KeyMetricTooltip>
-			{/if}
+					<p class="disclaimer">Past performance is no guarantee of future results.</p>
+				</div>
+			</KeyMetricTooltip>
 		{/if}
 	</dd>
 </div>
@@ -138,6 +145,11 @@ Display one key metric in a strategy tile.
 
 		& ul {
 			margin: var(--space-ss) 0;
+
+			& li {
+				margin: var(--space-ss) 0;
+			}
+
 		}
 
 		& .disclaimer {

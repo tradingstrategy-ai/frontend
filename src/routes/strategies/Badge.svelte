@@ -20,14 +20,13 @@
         display: inline-block;
         font: 700 10px/12px var(--ff-ui);
         text-transform: uppercase;
-        padding: 2px 4px;
-        border-radius: 4px;
+        padding: 3px 4px;
         vertical-align: middle;
     }
 
     .grey {
-        background: var(--c-background-1);
-        color: var(--c-text-inverted);
+        //background: var(--c-background-1);
+        color: var(--c-text-light);
     }
 
     .orange {

@@ -8,8 +8,6 @@ See:
 - https://svelte.dev/tutorial/named-slots
 -->
 <script lang="ts">
-	export let text = '';
-	export let colourScheme = "grey";
 </script>
 
 <dfn class="key-metric-tooltip">
@@ -50,6 +48,8 @@ See:
 
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
+
+			padding: var(--space-sl);
 		}
 
 		& :global(a) {
