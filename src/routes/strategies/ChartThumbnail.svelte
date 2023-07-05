@@ -18,11 +18,12 @@
 	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
 	const valRange = getValueRange();
 
-	// Try to smooth out small changes look big changes linear scaling
-	if(valRange[0] > -0.2) {
+	// Try to smooth out, so small changes do not look irrationally large
+	// by bumping up the range to -20%/20% if the strategy has moved less
+	if (valRange[0] > -0.2) {
 		valRange[0] = -0.2; // Set bottom chart to -20%
 	}
-	if(valRange[1] < 0.2) {
+	if (valRange[1] < 0.2) {
 		valRange[1] = 0.2; // Set top bottom chart to +20% profit
 	}
 
