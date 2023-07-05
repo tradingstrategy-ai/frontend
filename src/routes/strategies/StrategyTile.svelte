@@ -23,7 +23,6 @@
 
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
-
 </script>
 
 <li class="strategy tile tile b">
