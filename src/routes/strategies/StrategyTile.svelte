@@ -38,7 +38,7 @@
 			</div>
 
 			<dl>
-				<KeyMetric name="Performance" metric={summaryStats?.key_metrics?.profitability} let:value>
+				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} let:value>
 					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
 				</KeyMetric>
 
@@ -48,7 +48,7 @@
 			<dl>
 				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} />
 
-				<KeyMetric name="Max drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
+				<KeyMetric name="Maximum drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
 			</dl>
 
 			<dl>
