@@ -1,10 +1,23 @@
+<!-- Trade executor status
+
+- Left side nav
+
+- Collapse to dropdown on mobile
+
+-->
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
+	import type {StrategySummaryStatistics} from "trade-executor-frontend/strategy/runtimeState";
 
 	export let strategyId: string;
 	export let portfolio: any;
 	export let currentPath: string;
+	export let backtestAvailable: boolean;
+
+	// We can find out from the summary if certain menu items
+	// should be enabled or not
+	export let summary: StrategySummaryStatistics;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = '';
@@ -38,7 +51,18 @@
 		{
 			label: `Decision making`,
 			targetUrl: `${basePath}/decision-making`
-		},
+		}
+	];
+
+	if(backtestAvailable) {
+		menuOptions.push(
+		{
+			label: `Backtest result`,
+			targetUrl: `${basePath}/backtest`
+		});
+	}
+
+	menuOptions.concat([
 		{
 			label: `Instance status`,
 			targetUrl: `${basePath}/status`
@@ -51,7 +75,7 @@
 			label: `Source Code`,
 			targetUrl: `${basePath}/source`
 		}
-	];
+	]);
 
 	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
 

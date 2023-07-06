@@ -4,19 +4,28 @@
 	import StrategyNav from './StrategyNav.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
+	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
+
 	export let data;
 
+	let summary: StrategyRuntimeState;
 	$: summary = data.summary;
 
+	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
+
+
 </script>
 
 <main class="strategy-layout ds-container">
+
+
+
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p>{summary.long_description}</p>
-
+	{{ summary }} sss
 		{#if errorHtml}
 			<div class="error-wrapper">
 				<AlertList status="warning" size="sm">
@@ -29,7 +38,7 @@
 	</PageHeading>
 
 	<div class="subpage">
-		<StrategyNav strategyId={summary.id} portfolio={data.state.portfolio} currentPath={$page.url.pathname} />
+		<StrategyNav strategyId={summary.id} portfolio={data.state.portfolio} currentPath={$page.url.pathname} {backtestAvailable} />
 		<div>
 			<slot />
 			<p class="beta-notice">
