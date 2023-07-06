@@ -16,6 +16,7 @@
 		status: 'Instance status',
 		logs: 'Logs',
 		source: 'Source Code',
+        backtest: 'Backtest results',
 		...$page.data.breadcrumbs
 	};
 </script>

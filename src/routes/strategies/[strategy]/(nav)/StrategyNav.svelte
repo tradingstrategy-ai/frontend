@@ -54,10 +54,10 @@
 		}
 	];
 
-	if(backtestAvailable) {
+	if(backtestAvailable || true) {
 		menuOptions.push(
 		{
-			label: `Backtest result`,
+			label: `Backtest results`,
 			targetUrl: `${basePath}/backtest`
 		});
 	}

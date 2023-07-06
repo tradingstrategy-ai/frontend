@@ -20,12 +20,10 @@
 
 <main class="strategy-layout ds-container">
 
-
-
 	<PageHeading>
 		<h1>{summary.name}</h1>
 		<p>{summary.long_description}</p>
-	{{ summary }} sss
+
 		{#if errorHtml}
 			<div class="error-wrapper">
 				<AlertList status="warning" size="sm">
