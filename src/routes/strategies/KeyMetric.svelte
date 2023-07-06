@@ -30,15 +30,15 @@ Display one key metric in a strategy tile.
 	<dd>
 		{#if value !== undefined}
 			<KeyMetricTooltip>
-				<span slot="tooltip-trigger">
+				<svelte:fragment slot="tooltip-trigger">
 					<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
 						<slot {value}>{formattedValue}</slot>
 					</span>
 
 					<Badge text={metric?.source === 'backtesting' ? 'backtested' : 'live'} />
-				</span>
+				</svelte:fragment>
 
-				<div slot="tooltip-popup">
+				<svelte:fragment slot="tooltip-popup">
 					<h4>{name}</h4>
 
 					<ul>
@@ -85,7 +85,7 @@ Display one key metric in a strategy tile.
 					</ul>
 
 					<p class="disclaimer">Past performance is no guarantee of future results.</p>
-				</div>
+				</svelte:fragment>
 			</KeyMetricTooltip>
 		{/if}
 	</dd>
