@@ -12,16 +12,15 @@ Display one key metric in a strategy tile.
 ```
 -->
 <script lang="ts">
-	import { Timestamp } from '$lib/components';
+	import { Badge, Timestamp } from '$lib/components';
 	import KeyMetricTooltip from './KeyMetricTooltip.svelte';
-	import Badge from './Badge.svelte';
 
 	export let metric: Record<string, any>;
 	export let name: string;
 	export let formatter: Formatter<any> | undefined = undefined;
 
-	const value = metric?.value;
-	const formattedValue = formatter ? formatter(value) : value;
+	$: value = metric?.value;
+	$: formattedValue = formatter ? formatter(value) : value;
 </script>
 
 <div class="key-metric" data-testid={`key-metric-${metric?.kind}`}>
@@ -29,20 +28,14 @@ Display one key metric in a strategy tile.
 		{name}
 	</dt>
 	<dd>
-		{#if metric?.value !== undefined}
+		{#if value !== undefined}
 			<KeyMetricTooltip>
 				<span slot="tooltip-trigger">
-					<span class="tooltip-trigger-content">
-						<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
-							<slot>{formattedValue}</slot>
-						</span>
-
-						{#if metric?.source == 'backtesting'}
-							<Badge text="backtested" />
-						{:else}
-							<Badge text="live" />
-						{/if}
+					<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
+						<slot {value}>{formattedValue}</slot>
 					</span>
+
+					<Badge text={metric?.source === 'backtesting' ? 'backtested' : 'live'} />
 				</span>
 
 				<div slot="tooltip-popup">
@@ -118,10 +111,6 @@ Display one key metric in a strategy tile.
 
 		& .timespan {
 			white-space: nowrap;
-		}
-
-		& .tooltip-trigger-content {
-			cursor: pointer;
 		}
 
 		& .value {

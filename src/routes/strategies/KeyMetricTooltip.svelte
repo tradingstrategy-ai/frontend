@@ -11,7 +11,9 @@ See:
 </script>
 
 <dfn class="key-metric-tooltip">
-	<slot name="tooltip-trigger" class="tooltip-trigger" />
+	<span class="tooltip-trigger">
+		<slot name="tooltip-trigger" />
+	</span>
 	<button>
 		<slot name="tooltip-popup" />
 	</button>
@@ -19,9 +21,8 @@ See:
 
 <style lang="postcss">
 	.key-metric-tooltip {
-		&::before {
-			content: attr(title);
-			padding: 0 0 1em;
+		& .tooltip-trigger {
+			cursor: pointer;
 		}
 
 		& button {

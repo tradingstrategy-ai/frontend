@@ -1,14 +1,20 @@
-<!-- Badge component used for key metrics in strategy tiles -->
+<!--
+@component
+Badge component used for inline text labels.
 
+#### Usage:
+```tsx
+	<Badge secondary text="foo" />
+```
+-->
 <script lang="ts">
-	// Text on the badge
 	export let text = '';
+	export let secondary = false;
 
-	// Colour scheme
-	export let colourScheme = 'transparent';
+	$: kind = secondary ? 'secondary' : 'primary';
 </script>
 
-<span class="badge" class:transparent={colourScheme === 'transparent'} class:orange={colourScheme === 'orange'}>
+<span class="badge {kind}">
 	{text}
 </span>
 
@@ -16,16 +22,17 @@
 	.badge {
 		display: inline-block;
 		font: 700 10px/12px var(--ff-ui);
+		letter-spacing: 0.02em;
 		text-transform: uppercase;
 		padding: 3px 4px;
 		vertical-align: middle;
 	}
 
-	.transparent {
+	.primary {
 		color: var(--c-text-light);
 	}
 
-	.orange {
+	.secondary {
 		background: orange;
 		color: white;
 	}
