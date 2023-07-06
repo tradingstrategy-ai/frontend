@@ -71,7 +71,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			// pass required data to quoteFeed
 			const symbol = {
 				symbol: pairSymbol,
-				urlParams: { pair_id: pairId, exchange_type: exchangeType },
+				urlParams: { pair_id: pairId, exchange_type: exchangeType, time_bucket: timeBucket },
 				firstQuoteDate: firstTradeDate && new Date(firstTradeDate)
 			};
 			// load the chart

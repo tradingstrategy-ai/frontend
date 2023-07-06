@@ -38,7 +38,7 @@
 			// pass required data to quoteFeed
 			const symbolObject = {
 				symbol,
-				urlParams: { chain_slug, protocol_slug, reserve_slug, candle_types: rateType }
+				urlParams: { chain_slug, protocol_slug, reserve_slug, candle_types: rateType, time_bucket: timeBucket }
 			};
 			// load the chart
 			chartEngine.loadChart(symbolObject, { periodicity });

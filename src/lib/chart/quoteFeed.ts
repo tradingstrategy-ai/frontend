@@ -5,7 +5,6 @@
 import equal from 'fast-deep-equal';
 import { chartWickThreshold } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { periodicityToTimeBucket } from '$lib/chart/timeBucketConverters';
 
 const maxTicks = 2000;
 
@@ -44,11 +43,9 @@ export default function quoteFeed(endpoint: string, accessor: MaybeString = unde
 
 	async function fetchData(_: string, startDate: Date, endDate: Date, params: any, callback: Function) {
 		const { symbolObject } = params.stx.chart;
-		const periodicity = params.stx.getPeriodicity();
 
 		const urlParams = {
 			...symbolObject.urlParams,
-			time_bucket: periodicityToTimeBucket(periodicity),
 			start: dateUrlParam(startDate),
 			end: dateUrlParam(endDate)
 		};
