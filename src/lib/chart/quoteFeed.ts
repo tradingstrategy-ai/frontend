@@ -6,15 +6,16 @@ import equal from 'fast-deep-equal';
 import { chartWickThreshold } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-export type Candle = Record<string, any> & {
+export type Candle = {
 	o: number;
 	h: number;
 	l: number;
 	c: number;
 	v?: number;
+	[key: string]: any;
 };
 
-export type Quote = Record<string, any> & {
+export type Quote = {
 	Open: number;
 	High: number;
 	Low: number;
@@ -22,6 +23,7 @@ export type Quote = Record<string, any> & {
 	ClippedHigh?: number;
 	ClippedLow?: number;
 	Volume?: number;
+	[key: string]: any;
 };
 
 export type DataToQuotes = (data: any) => Quote[];
@@ -36,14 +38,19 @@ function dateUrlParam(date: Date): string {
 
 // Maps a single Trading Strategy candle to ChartIQ quote, with clipped
 // High/Low values appended
-export function candleToQuote({ ts, o, h, l, c, v, ...restParams }: Candle) {
-	return {
+export function candleToQuote({ ts, o, h, l, c, v, ...restParams }: Candle): Quote {
+	const quote: Quote = {
 		DT: `${ts}Z`,
 		Open: o,
 		High: h,
 		Low: l,
-		Close: c,
-		Volume: v,
+		Close: c
+	};
+
+	if (v !== undefined) quote.Volume = v;
+
+	return {
+		...quote,
 		...clippedValues({ o, h, l, c }),
 		...restParams
 	};

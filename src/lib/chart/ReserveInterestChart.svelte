@@ -1,17 +1,25 @@
 <script lang="ts">
-	import { candleToQuote, quoteFeed, ChartIQ } from '$lib/chart';
+	import { type Candle, candleToQuote, quoteFeed, ChartIQ } from '$lib/chart';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+
+	const rateTypes = ['supply_apr', 'stable_borrow_apr', 'variable_borrow_apr'] as const;
 
 	export let reserve: any;
 	export let timeBucket: TimeBucket;
-	export let rateType: string;
+	export let rateType: (typeof rateTypes)[number];
 
 	$: ({ chain_slug, protocol_slug, reserve_slug } = reserve);
 	$: symbol = `${chain_slug}-${protocol_slug}-${reserve_slug}`.toUpperCase();
 	$: periodicity = timeBucketToPeriodicity(timeBucket);
 
 	const feed = quoteFeed('lending-reserve/candles', (data: any) => {
-		return data[rateType].map(candleToQuote);
+		return data[rateType].map((candle: Candle, idx: number) => {
+			const quote = candleToQuote(candle);
+			for (const type of rateTypes) {
+				quote[type] = data[type]?.[idx]?.c;
+			}
+			return quote;
+		});
 	});
 
 	const options = {
@@ -40,7 +48,7 @@
 			// pass required data to quoteFeed
 			const symbolObject = {
 				symbol,
-				urlParams: { chain_slug, protocol_slug, reserve_slug, candle_types: rateType, time_bucket: timeBucket }
+				urlParams: { chain_slug, protocol_slug, reserve_slug, candle_types: 'all', time_bucket: timeBucket }
 			};
 			// load the chart
 			chartEngine.loadChart(symbolObject, { periodicity });
