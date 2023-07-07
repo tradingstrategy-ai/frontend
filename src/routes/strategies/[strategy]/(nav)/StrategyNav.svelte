@@ -8,7 +8,7 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
-	import type {StrategySummaryStatistics} from "trade-executor-frontend/strategy/runtimeState";
+	import type { StrategySummaryStatistics } from 'trade-executor-frontend/strategy/runtimeState';
 
 	export let strategyId: string;
 	export let portfolio: any;
@@ -54,9 +54,8 @@
 		}
 	];
 
-	if(backtestAvailable) {
-		menuOptions.push(
-		{
+	if (backtestAvailable) {
+		menuOptions.push({
 			label: `Backtest results`,
 			targetUrl: `${basePath}/backtest`
 		});

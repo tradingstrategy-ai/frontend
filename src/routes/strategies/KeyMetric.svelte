@@ -36,7 +36,9 @@ Display one key metric in a strategy tile.
 						<slot {value}>{formattedValue}</slot>
 					</span>
 
-					<Badge text={metric?.source === 'backtesting' ? 'backtested' : 'live'} />
+					{#if metric?.source === 'backtesting'}
+						<Badge text="backtested" />
+					{/if}
 				</svelte:fragment>
 
 				<svelte:fragment slot="tooltip-popup">
@@ -63,7 +65,6 @@ Display one key metric in a strategy tile.
 							<li>
 								<a href={backtestLink}>Read the backtest report</a>.
 							</li>
-
 
 							<li>
 								The period used for the backtest simulation is
