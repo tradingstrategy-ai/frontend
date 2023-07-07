@@ -18,6 +18,7 @@ Display one key metric in a strategy tile.
 	export let metric: Record<string, any>;
 	export let name: string;
 	export let formatter: Formatter<any> | undefined = undefined;
+	export let backtestLink;
 
 	$: value = metric?.value;
 	$: formattedValue = formatter ? formatter(value) : value;
@@ -56,9 +57,13 @@ Display one key metric in a strategy tile.
 							</li>
 
 							<li>
-								Instead, a <a target="_blank" href="https://tradingstrategy.ai/glossary/backtest">backtested</a>
-								estimation is displayed.
+								Instead, a <a href={backtestLink}>backtested</a> estimation is displayed.
 							</li>
+
+							<li>
+								<a href={backtestLink}>Read the backtest report</a>.
+							</li>
+
 
 							<li>
 								The period used for the backtest simulation is

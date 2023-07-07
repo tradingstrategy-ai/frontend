@@ -23,6 +23,7 @@
 
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
+	$: backtestLink = `/strategies/${strategy.id}/backtest`;
 </script>
 
 <li class="strategy tile tile b">
@@ -38,23 +39,23 @@
 			</div>
 
 			<dl>
-				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} let:value>
+				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} let:value {backtestLink}>
 					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
 				</KeyMetric>
 
-				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} />
+				<KeyMetric name="Total assets" metric={summaryStats?.key_metrics?.total_equity} formatter={formatDollar} {backtestLink}/>
 			</dl>
 
 			<dl>
-				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} />
+				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} {backtestLink}/>
 
-				<KeyMetric name="Maximum drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} />
+				<KeyMetric name="Maximum drawdown" metric={summaryStats?.key_metrics?.max_drawdown} formatter={formatPercent} {backtestLink}/>
 			</dl>
 
 			<dl>
-				<KeyMetric name="Sharpe" metric={summaryStats?.key_metrics?.sharpe} formatter={formatKeyMetricNumber} />
+				<KeyMetric name="Sharpe" metric={summaryStats?.key_metrics?.sharpe} formatter={formatKeyMetricNumber} {backtestLink}/>
 
-				<KeyMetric name="Sortino" metric={summaryStats?.key_metrics?.sortino} formatter={formatKeyMetricNumber} />
+				<KeyMetric name="Sortino" metric={summaryStats?.key_metrics?.sortino} formatter={formatKeyMetricNumber} {backtestLink}/>
 			</dl>
 		</div>
 
