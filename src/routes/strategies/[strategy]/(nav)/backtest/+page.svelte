@@ -3,33 +3,62 @@
 -->
 <script lang="ts">
 
-	import {wallet} from "$lib/wallet";
-    import connectWizard from "wizard/connect-wallet/store";
-    import depositWizard from "wizard/deposit/store";
-    import redeemWizard from "wizard/redeem/store";
     import {Button, SummaryBox} from "$lib/components";
+    import { onMount } from 'svelte';
+    import type {StrategyRuntimeState} from "trade-executor-frontend/strategy/runtimeState";
 
-    export let data;
+    export let data: StrategyRuntimeState;
+
+
+    export let iframeSrc;
+    export let wantedHeight=100;
+
+    console.log(data);
+
+    $: strategy = data?.strategy;
+    $: baseUrl = strategy?.url;
+    $: iframeUrl = baseUrl ? `${baseUrl}/file?type=html` : null;
+    $: notebookUrl = baseUrl ? `${baseUrl}/file?type=notebook` : null;
+    $: notebookName = `${strategy?.id}.ipynb`;
+
+    function onLoad(evt) {
+        console.log("loaded", evt);
+        const desiredHeight = this.contentWindow.document.documentElement.scrollHeight;
+        //el.style.height =  + 'px';]
+        console.log("Height", desiredHeight);
+        wantedHeight = desiredHeight;
+    }
+
+	onMount(() => {
+		iframeSrc = iframeUrl;
+	});
 
 </script>
 
 <section class="backtest">
     <SummaryBox title="Backtest data" ctaPosition="top">
         <div class="content">
-            View the backtest results below or downlaod the notebook used to test the strategy.
+            View the backtest results below or download the notebook repeat the backtests yourself.
         </div>
         <div class="actions">
-            <Button label="Download notebook"  />
+            <!-- TODO: <a download> does not seem to work here, but always causes the page load instead of downlaod -->
+            <Button label="Download notebook" download={notebookName} disabled={notebookUrl == null} href={notebookUrl} />
             <!-- TODO: The webhook endpoint missing -->
             <Button label="Download raw backtest data" disabled />
         </div>
     </SummaryBox>
 
+    {#if iframeSrc}
+        <iframe on:load={onLoad} src={iframeSrc} bind:clientHeight={wantedHeight}>
+
+        </iframe>
+    {/if}
+
 </section>
 
 <style>
-	.performance {
-		display: grid;
-		gap: var(--space-lg);
-	}
+    iframe {
+        width: 100%;
+        border: 0;
+    }
 </style>

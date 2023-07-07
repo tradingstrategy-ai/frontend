@@ -54,7 +54,7 @@
 		}
 	];
 
-	if(backtestAvailable || true) {
+	if(backtestAvailable) {
 		menuOptions.push(
 		{
 			label: `Backtest results`,
