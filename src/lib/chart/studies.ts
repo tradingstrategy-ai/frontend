@@ -46,3 +46,12 @@ export function liquidityStudy(CIQ) {
 		underlay: true
 	};
 }
+
+export function interestRateStudy(CIQ) {
+	return {
+		name: 'Interest Rates',
+		outputs: { supply_apr: 'blue', stable_borrow_apr: 'orange' },
+		overlay: true,
+		isHighlighted: false
+	};
+}

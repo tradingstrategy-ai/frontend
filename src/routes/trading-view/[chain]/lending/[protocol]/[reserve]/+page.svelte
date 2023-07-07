@@ -37,8 +37,8 @@
 </main>
 
 <Section padding="md">
-	<h3>Interest rate</h3>
-	<ReserveInterestChart {reserve} timeBucket="1d" rateType="supply_apr" />
+	<h3>Interest rates</h3>
+	<ReserveInterestChart {reserve} timeBucket="1d" rateType="variable_borrow_apr" />
 </Section>
 
 <Section padding="md">

@@ -92,7 +92,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// @ts-ignore
 		chartEngine.determineMinMax = function (_q, fields, _s, _b, _l, _c, _p, axis, _f) {
 			if (axis.name === 'chart') {
-				fields = ['Close', 'Open', 'ClippedLow', 'ClippedHigh'];
+				fields = fields.map((field: string) => field.replace(/^(High|Low)$/, 'Clipped$1'));
 			}
 			return chartEngine.origDetermineMinMax(_q, fields, _s, _b, _l, _c, _p, axis, _f);
 		};

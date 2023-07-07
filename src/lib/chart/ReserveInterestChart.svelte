@@ -23,9 +23,12 @@
 	});
 
 	const options = {
+		layout: { crosshair: true },
 		controls: { chartControls: null },
+		preferences: { labels: false },
 		chart: {
 			yAxis: {
+				drawCurrentPriceLabel: false,
 				decimalPlaces: 2,
 				maxDecimalPlaces: 4
 			}
@@ -58,4 +61,10 @@
 	}
 </script>
 
-<ChartIQ {init} {options} {feed} invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]} />
+<ChartIQ
+	{init}
+	{options}
+	{feed}
+	studies={['Interest Rates']}
+	invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]}
+/>
