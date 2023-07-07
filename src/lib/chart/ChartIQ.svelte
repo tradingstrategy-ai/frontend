@@ -9,7 +9,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
     init={ (chartEngine) => { chartEngine.doStuff() } }
     studies={['Some study']}
     linker={chartLinker}
-    {quoteFeed}
+    feed={quoteFeed(…)}
     invalidate={[dep1, dep2]}
   >
 		<HudRow>...</HudRow>
@@ -56,7 +56,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { lightFormat as formatDate } from 'date-fns';
-	import { type ChartLinker, ChartActivityTracker } from '$lib/chart';
+	import { type ChartLinker, type QuoteFeed, ChartActivityTracker } from '$lib/chart';
 	import { AlertItem, AlertList } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
@@ -64,7 +64,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	export let init: Function | undefined = undefined;
 	export let studies: any[] = [];
 	export let linker: ChartLinker | undefined = undefined;
-	export let quoteFeed: any = undefined;
+	export let feed: QuoteFeed | undefined = undefined;
 	export let invalidate: any = undefined;
 
 	let loading = false;
@@ -86,13 +86,13 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		let chartEngine = new CIQ.ChartEngine({ container: node, ...options });
 
 		// Prevent long candle wicks from exploding the yAxis scale.
-		// see: quoteFeed#fieldMapper
+		// see: quoteFeed#clippedValues
 		// see: https://documentation.chartiq.com/CIQ.ChartEngine.html#determineMinMax
 		chartEngine.origDetermineMinMax = chartEngine.determineMinMax;
 		// @ts-ignore
 		chartEngine.determineMinMax = function (_q, fields, _s, _b, _l, _c, _p, axis, _f) {
 			if (axis.name === 'chart') {
-				fields = ['Close', 'Open', 'wickMin', 'wickMax'];
+				fields = ['Close', 'Open', 'ClippedLow', 'ClippedHigh'];
 			}
 			return chartEngine.origDetermineMinMax(_q, fields, _s, _b, _l, _c, _p, axis, _f);
 		};
@@ -146,8 +146,8 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		});
 
 		// attach quoteFeed if provided (API data adapter)
-		if (quoteFeed) {
-			chartEngine.attachQuoteFeed(quoteFeed, {});
+		if (feed) {
+			chartEngine.attachQuoteFeed(feed, {});
 		}
 
 		// fill gaps in data (closing price carried forward); see:

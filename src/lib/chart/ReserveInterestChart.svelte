@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { quoteFeed, ChartIQ } from '$lib/chart';
+	import { candleToQuote, quoteFeed, ChartIQ } from '$lib/chart';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
 
 	export let reserve: any;
@@ -10,7 +10,9 @@
 	$: symbol = `${chain_slug}-${protocol_slug}-${reserve_slug}`.toUpperCase();
 	$: periodicity = timeBucketToPeriodicity(timeBucket);
 
-	const reserveQuoteFeed = quoteFeed('lending-reserve/candles', rateType);
+	const feed = quoteFeed('lending-reserve/candles', (data: any) => {
+		return data[rateType].map(candleToQuote);
+	});
 
 	const options = {
 		controls: { chartControls: null },
@@ -48,9 +50,4 @@
 	}
 </script>
 
-<ChartIQ
-	{init}
-	{options}
-	quoteFeed={reserveQuoteFeed}
-	invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]}
-/>
+<ChartIQ {init} {options} {feed} invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]} />

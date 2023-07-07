@@ -5,7 +5,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 #### Usage:
 ```tsx
 	<PairCandleChart
-		quoteFeed={quoteFeed}
+		feed={quoteFeed(…)}
 		pairId={12345}
 		pairSymbol="ETH-USDC"
 		exchangeType="uniswap_v2"
@@ -22,9 +22,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 <script lang="ts">
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
-	import { type ChartLinker, ChartIQ, HudRow, HudMetric } from '$lib/chart';
+	import { type ChartLinker, type QuoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 
-	export let quoteFeed: any;
+	export let feed: QuoteFeed;
 	export let pairId: number | string;
 	export let pairSymbol: string;
 	export let exchangeType: string;
@@ -89,7 +89,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{options}
 	{studies}
 	{linker}
-	{quoteFeed}
+	{feed}
 	invalidate={[pairId, periodicity, hideYAxis, firstTradeDate, exchangeType]}
 	let:cursor
 >
