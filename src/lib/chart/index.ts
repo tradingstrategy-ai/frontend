@@ -1,4 +1,5 @@
 export * from './quoteFeed';
+export * from './timeBucketConverters';
 export { default as ChartActivityTracker } from './ChartActivityTracker';
 export { default as ChartIQ } from './ChartIQ.svelte';
 export { default as ChartLinker } from './ChartLinker';
