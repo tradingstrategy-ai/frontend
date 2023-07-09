@@ -13,18 +13,18 @@
     import type {WebChartData} from "../../chart";
     import WebChart from "../../WebChart.svelte";
 
-    let data;
-    let netflow: WebChartData;
-    let tvl: WebChartData;
+    export let data;
+    let netflowChart: WebChartData;
+    let tvlChart: WebChartData;
 
-    $: tvl = data?.tvl;
-    $: netflow = data?.netflow;
+    $: tvlChart = data?.tvlChart;
+    $: netflowChart = data?.netflowChart;
 
 </script>
 
 <section class="netflow">
-    <WebChart name="Total value locked" webChart={tvl} />
-    <WebChart name="Netflow" webChart={netflow} />
+    <WebChart name="Total value locked" webChart={tvlChart} />
+    <WebChart name="Netflow" webChart={netflowChart} />
 </section>
 
 <style>

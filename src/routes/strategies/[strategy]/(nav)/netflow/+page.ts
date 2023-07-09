@@ -13,8 +13,6 @@ export async function load({ parent, fetch, params }) {
 
 	let tvlChart, netflowChart;
 
-	return {};
-
 	// Netflow page can only display statistics relevant for live trading
 	const source = "live_trading";
 
@@ -27,8 +25,10 @@ export async function load({ parent, fetch, params }) {
 		throw error(503, { message: 'Service Unavailable', stack });
 	}
 
+	console.log(tvlChart);
+
 	return {
-		tvl: tvlChart,
-		netflow: netflowChart,
+		tvlChart,
+		netflowChart,
 	};
 }
