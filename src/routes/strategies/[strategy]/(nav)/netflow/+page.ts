@@ -4,10 +4,16 @@
 import { error } from '@sveltejs/kit';
 import {getChartData} from "../../chart";
 
+// Plotly.js cannot be loaded on the server-side
+export const ssr = false;
+
 export async function load({ parent, fetch, params }) {
 	const { strategy } = await parent();
 	const url = strategy.url;
+
 	let tvlChart, netflowChart;
+
+	return {};
 
 	// Netflow page can only display statistics relevant for live trading
 	const source = "live_trading";

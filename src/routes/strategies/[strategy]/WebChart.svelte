@@ -8,23 +8,33 @@ Render various charts from web_chart API endpoint
 Cannot be used with SSR.
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import Plotly from 'plotly.js-finance-dist';
 
-	import * as Plotly from 'plotly.js';
 
 	export let elem;
 	export let name: string;
 	export let webChart: WebChart;
 
 	$: {
-		const data: Plotly.BarData[] = [
-		  {
-			x: ['giraffes', 'orangutans', 'monkeys'],
-			y: [20, 14, 23],
-			type: 'bar'
-		  }
-		];
-		Plotly.newPlot(elem, data);
+
+		if(!elem) {
+			console.log("elem not yet available");
+		} else {
+			console.log("Rendering with plotly");
+
+			const headerText = 'On Mount Called !';
+			const data: Plotly.BarData[] = [
+			  {
+				x: ['giraffes', 'orangutans', 'monkeys'],
+				y: [20, 14, 23],
+				type: 'bar'
+			  }
+			];
+			let Plot = new Plotly.newPlot(elem, data, {}, {showSendToCloud:true});
+		}
 	}
+
 
 </script>
 
@@ -33,15 +43,15 @@ Cannot be used with SSR.
 	<header>
 		<h2>{name}</h2>
 		<p>
-			<a href={webChart.help_link}>
+			<a href={webChart?.help_link}>
 				Learn more about {name}
 			</a>
 		</p>
 	</header>
 
-	{JSON.stringify(webChart.data)}
+	{JSON.stringify(webChart?.data)}
 
-	<div class="plotly" bind:elem={this}></div>
+	<div class="plotly" bind:this={elem}></div>
 
 </div>
 

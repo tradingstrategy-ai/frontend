@@ -17,8 +17,8 @@
     let netflow: WebChartData;
     let tvl: WebChartData;
 
-    $: tvl = data.tvl;
-    $: netflow = data.netflow;
+    $: tvl = data?.tvl;
+    $: netflow = data?.netflow;
 
 </script>
 
