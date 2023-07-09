@@ -10,11 +10,12 @@
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
 	import AlertList from '$lib/components/AlertList.svelte';
 	import Spinner from 'svelte-spinner';
-    import type {WebChart} from "../../chart";
+    import type {WebChartData} from "../../chart";
+    import WebChart from "../../WebChart.svelte";
 
     let data;
-    let netflow: WebChart;
-    let tvl: WebChart;
+    let netflow: WebChartData;
+    let tvl: WebChartData;
 
     $: tvl = data.tvl;
     $: netflow = data.netflow;
@@ -22,7 +23,8 @@
 </script>
 
 <section class="netflow">
-    {JSON.stringify(netflow)}
+    <WebChart name="Total value locked" webChart={tvl} />
+    <WebChart name="Netflow" webChart={netflow} />
 </section>
 
 <style>

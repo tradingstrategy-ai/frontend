@@ -1,10 +1,9 @@
 /**
- * Chart fetching functions.
+ * Chart data fetching functions.
  *
- * Calls web_chart API endpoint.
+ * Calls to web_chart API endpoint.
  */
 import {publicApiError} from "$lib/helpers/public-api";
-
 
 type Pair<T,K> = [T,K];
 type Pairs<T,K> = Pair<T,K>[];
@@ -18,7 +17,7 @@ type USDollar = number;
  *
  * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py
  */
-export interface WebChart {
+export interface WebChartData {
     data: Pairs<UnixTimestamp, Percent | USDollar>;
     title: string;
     help_link: string;
@@ -43,12 +42,12 @@ export interface WebChart {
  */
 export async function getChartData(
     executorUrl: string,
-    chartType: string,
+    type: string,
     source: string,
 	fetch
-): Promise<WebChart> {
+): Promise<WebChartData> {
     let resp;
-    resp = await fetch(`${executorUrl}/chart?` + new URLSearchParams({type: chartType}));
+    resp = await fetch(`${executorUrl}/chart?` + new URLSearchParams({type, source}));
 
 	if (!resp.ok) {
 		throw await publicApiError(resp);
