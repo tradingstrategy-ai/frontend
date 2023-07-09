@@ -8,7 +8,9 @@ import {getChartData} from "../../chart";
 export const ssr = false;
 
 export async function load({ parent, fetch, params }) {
-	const { strategy } = await parent();
+
+	// See layout.ts load()
+	const { strategy, summary } = await parent();
 	const url = strategy.url;
 
 	let tvlChart, netflowChart;
@@ -25,10 +27,11 @@ export async function load({ parent, fetch, params }) {
 		throw error(503, { message: 'Service Unavailable', stack });
 	}
 
-	console.log(tvlChart);
-
+	console.log("Summary", summary);
+	const startedAt = summary?.summary_statistics?.key_metrics?.started_at?.value;
 	return {
 		tvlChart,
 		netflowChart,
+		startedAt,
 	};
 }

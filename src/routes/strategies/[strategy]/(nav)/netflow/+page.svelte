@@ -12,6 +12,7 @@
 	import Spinner from 'svelte-spinner';
     import type {WebChartData} from "../../chart";
     import WebChart from "../../WebChart.svelte";
+    import {formatDaysAgo} from "$lib/helpers/formatters";
 
     export let data;
     let netflowChart: WebChartData;
@@ -19,12 +20,14 @@
 
     $: tvlChart = data?.tvlChart;
     $: netflowChart = data?.netflowChart;
+    $: startedAt = data?.startedAt;
 
 </script>
 
 <section class="netflow">
+    <p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong> days.</p>
     <WebChart name="Total value locked" webChart={tvlChart} />
-    <WebChart name="Netflow" webChart={netflowChart} />
+    <WebChart name="Netflow" webChart={netflowChart} charType="bar" />
 </section>
 
 <style>

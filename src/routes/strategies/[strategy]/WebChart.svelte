@@ -13,12 +13,16 @@ For Plotly inputs see
 -->
 <script lang="ts">
 	import {newPlot} from 'plotly.js-finance-dist';
-	import type {Data, PlotData} from "plotly.js";
+	import type {Data, LayoutAxis, PlotData} from "plotly.js";
 	import type {WebChartData} from "./chart";
 
 	export let elem;
 	export let name: string;
 	export let webChart: WebChartData;
+	export let xAxisTitle = "Date";
+	export let yAxisTitle = "US Dollar";
+	export let yRangeMode = "tozero";
+	export let fontFamily = "Neue Haas Grotesk Text";
 
 	// See possible types
 	// https://plotly.com/javascript/
@@ -32,13 +36,9 @@ For Plotly inputs see
 			if(webChart.data) {
 				console.log("Rendering with plotly", webChart.data.length, "entries");
 
-				const headerText = 'On Mount Called !';
 				// Convert UNIX timestamp index to Dates
 				const x = webChart.data.map((tuple) => { return new Date(tuple[0] * 1000) });
 				const y = webChart.data.map((tuple) => { return tuple[1] });
-
-				console.log(x);
-				console.log(y);
 
 				const plotData: Data  = {
 					x,
@@ -46,14 +46,38 @@ For Plotly inputs see
 					type: charType,
 				  };
 
-				/*
-				const data: PlotData = {
-					x: ['giraffes', 'orangutans', 'monkeys'],
-					y: [20, 14, 23],
-					type: 'bar'
-				  }*/
+				const xaxis: LayoutAxis = {
+					title: xAxisTitle,
+					font: {
+						"family": fontFamily,
+					},
+					tickfont: {
+						"family": fontFamily,
+					}
 
-				let Plot = newPlot(elem, [plotData], {}, {showSendToCloud:true});
+				};
+
+				const yaxis: LayoutAxis = {
+					title: xAxisTitle,
+					font: {
+						"family": fontFamily,
+					},
+					rangemode: yRangeMode,
+					tickfont: {
+						"family": fontFamily,
+					}
+				};
+
+				const layout = {
+					xaxis,
+					yaxis,
+					 margin: {
+						l: 50,
+						pad: 4
+					  }
+				}
+
+				let Plot = newPlot(elem, [plotData], layout);
 			} else {
 				console.log("WebChartData data missing", webChart);
 			}
@@ -72,7 +96,7 @@ For Plotly inputs see
 				Learn about
 				<a class="help-link" href={webChart?.help_link}>
 					{name}
-				</a>.
+				</a> metric and how it is calculated.
 			</p>
 		{/if}
 	</header>
