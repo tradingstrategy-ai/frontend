@@ -48,10 +48,12 @@
 			label: `Performance`,
 			targetUrl: `${basePath}/performance`
 		},
+
 		{
-			label: `Decision making`,
-			targetUrl: `${basePath}/decision-making`
-		}
+			label: `TVL and netflow`,
+			targetUrl: `${basePath}/netflow`
+		},
+
 	];
 
 	if (backtestAvailable) {
@@ -62,6 +64,10 @@
 	}
 
 	menuOptions.concat([
+		{
+			label: `Decision making`,
+			targetUrl: `${basePath}/decision-making`
+		},
 		{
 			label: `Instance status`,
 			targetUrl: `${basePath}/status`
