@@ -50,7 +50,7 @@ export function liquidityStudy(CIQ) {
 export function interestRateStudy(CIQ) {
 	return {
 		name: 'Interest Rates',
-		outputs: { supply_apr: 'blue', stable_borrow_apr: 'orange' },
+		outputs: { supply_apr: 'slateblue', stable_borrow_apr: 'darkorange' },
 		overlay: true,
 		isHighlighted: false
 	};

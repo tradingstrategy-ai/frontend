@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Candle, candleToQuote, quoteFeed, ChartIQ } from '$lib/chart';
+	import { type Candle, candleToQuote, quoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
 
 	const rateTypes = ['supply_apr', 'stable_borrow_apr', 'variable_borrow_apr'] as const;
@@ -27,8 +27,10 @@
 		controls: { chartControls: null },
 		preferences: { labels: false },
 		chart: {
+			yaxisMarginMultiplier: 1,
 			yAxis: {
 				drawCurrentPriceLabel: false,
+				initialMarginTop: 75,
 				decimalPlaces: 2,
 				maxDecimalPlaces: 4
 			}
@@ -59,6 +61,16 @@
 
 		return { update };
 	}
+
+	function formatForHud(value: number) {
+		if (!Number.isFinite(value)) return '---';
+		return (
+			value.toLocaleString('en', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}) + '%'
+		);
+	}
 </script>
 
 <ChartIQ
@@ -67,4 +79,52 @@
 	{feed}
 	studies={['Interest Rates']}
 	invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]}
-/>
+	let:cursor
+>
+	{#if cursor.data}
+		{@const direction = Math.sign(cursor.data.Close - cursor.data.Open)}
+		<div class="reserve-interest-rate-hud">
+			<HudRow>
+				<h3>Variable Borrow APR:</h3>
+				<HudMetric label="O" value={formatForHud(cursor.data.Open)} {direction} />
+				<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
+				<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
+				<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
+			</HudRow>
+			<HudRow>
+				<HudMetric
+					class="stable-borrow-apr"
+					label="Stable Borrow APR:"
+					value={formatForHud(cursor.data.stable_borrow_apr)}
+					{direction}
+				/>
+				<HudMetric class="lending-apr" label="Lending APR:" value={formatForHud(cursor.data.supply_apr)} {direction} />
+			</HudRow>
+			<HudRow />
+		</div>
+	{/if}
+</ChartIQ>
+
+<style lang="postcss">
+	.reserve-interest-rate-hud {
+		background: hsla(var(--hsl-box), var(--a-box-a));
+		max-width: 27rem;
+		padding: var(--space-xs) var(--space-sl);
+
+		& h3 {
+			margin: 0;
+			font-weight: 500;
+		}
+
+		& :global .stable-borrow-apr dt {
+			font-weight: 500;
+			color: darkorange;
+		}
+
+		& :global .lending-apr dt {
+			margin-left: var(--space-md);
+			font-weight: 500;
+			color: slateblue;
+		}
+	}
+</style>
