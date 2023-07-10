@@ -5,7 +5,7 @@
 	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
-	import WebChart from "../../WebChart.svelte";
+	import WebChart from '../../WebChart.svelte';
 
 	export let data;
 	$: ({ state, summary, profitabilityChart } = data);

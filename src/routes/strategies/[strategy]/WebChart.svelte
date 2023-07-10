@@ -16,28 +16,28 @@ For line chart options see
 - https://plotly.com/javascript/line-charts/
 -->
 <script lang="ts">
-	import {newPlot} from 'plotly.js-finance-dist';
-	import type {Data, Layout, LayoutAxis, PlotData} from "plotly.js";
-	import type {WebChartData} from "./chart";
-	import {onMount} from "svelte";
-	import {readCSSThemeVars} from "$lib/helpers/themes";
+	import { newPlot } from 'plotly.js-finance-dist';
+	import type { Data, Layout, LayoutAxis, PlotData } from 'plotly.js';
+	import type { WebChartData } from './chart';
+	import { onMount } from 'svelte';
+	import { readCSSThemeVars } from '$lib/helpers/themes';
 
 	//
 	// Chart styling props
 	//
 	export let name: string;
-	export let description;  // Few words about us
+	export let description; // Few words about us
 	export let webChart: WebChartData; // Incoming data
-	export let xAxisTitle = "Date";
-	export let yAxisTitle = "US Dollar";
-	export let yRangeMode = "tozero";
-	export let yType = "dollar"; // "dollar" or "percent" for now
-	export let fontFamily = "Neue Haas Grotesk Text";
+	export let xAxisTitle = 'Date';
+	export let yAxisTitle = 'US Dollar';
+	export let yRangeMode = 'tozero';
+	export let yType = 'dollar'; // "dollar" or "percent" for now
+	export let fontFamily = 'Neue Haas Grotesk Text';
 	//export let fontFamily = "Arial Extra Bold";
-	export let charType: string = "scatter"; // See possible types https://plotly.com/javascript/
-	export let lineColorName = "--hsl-bullish";  // CSS var name for the line chart line colour
-	export let barWidth = 24*3600*1000;  // Bar chart bar width in seconds
-	export let fillMode = "tozeroy"; // Fill mode for line charts. Set null to disable.
+	export let charType: string = 'scatter'; // See possible types https://plotly.com/javascript/
+	export let lineColorName = '--hsl-bullish'; // CSS var name for the line chart line colour
+	export let barWidth = 24 * 3600 * 1000; // Bar chart bar width in seconds
+	export let fillMode = 'tozeroy'; // Fill mode for line charts. Set null to disable.
 
 	// Read in onMount()
 	export let cssVars: Map<string, string>;
@@ -51,7 +51,6 @@ For line chart options see
 	});
 
 	$: {
-
 		//
 		// When we have data and theme available,
 		// construct Plotly series data and layout objects.
@@ -59,50 +58,56 @@ For line chart options see
 		// from Plotly.js newPlot()
 		//
 
-		if(!elem) {
-			console.log("elem not yet available");
+		if (!elem) {
+			console.log('elem not yet available');
 		} else {
-			if(webChart.data && cssVars) {
-				console.log("Rendering with plotly", webChart.data.length, "entries");
+			if (webChart.data && cssVars) {
+				console.log('Rendering with plotly', webChart.data.length, 'entries');
 
 				// Convert UNIX timestamp index to Dates
-				const x = webChart.data.map((tuple) => { return new Date(tuple[0] * 1000) });
+				const x = webChart.data.map((tuple) => {
+					return new Date(tuple[0] * 1000);
+				});
 				let y;
 
-				if(yType == "dollar") {
-					y = webChart.data.map((tuple) => { return tuple[1] });
-				} else if(yType == "percent") {
-					y = webChart.data.map((tuple) => { return tuple[1] * 100 });
+				if (yType == 'dollar') {
+					y = webChart.data.map((tuple) => {
+						return tuple[1];
+					});
+				} else if (yType == 'percent') {
+					y = webChart.data.map((tuple) => {
+						return tuple[1] * 100;
+					});
 				} else {
-					throw new Error("Not implemented");
+					throw new Error('Not implemented');
 				}
 
-				const color = `hsl(${cssVars.get("--hsl-text")})`;
+				const color = `hsl(${cssVars.get('--hsl-text')})`;
 				const family = fontFamily; // TODO: Unconfirmed if SVG actually sets the font correctly
-				const background = `hsl(${cssVars.get("--hsl-body")})`;
+				const background = `hsl(${cssVars.get('--hsl-body')})`;
 				const lineColor = `hsl(${cssVars.get(lineColorName)})`;
-				const gridcolor = `hsl(${cssVars.get("--c-background-4")})`;
+				const gridcolor = `hsl(${cssVars.get('--c-background-4')})`;
 
-				const plotData: Partial<Data>  = {
+				const plotData: Partial<Data> = {
 					x,
 					y,
-					type: charType,
-				  };
+					type: charType
+				};
 
 				// Set bar widths to one day
-				if(charType == "bar") {
-					plotData["width"] = barWidth;
+				if (charType == 'bar') {
+					plotData['width'] = barWidth;
 				}
 
 				// Style line charts
-				if(charType == "scatter") {
-					plotData["line"] = {
+				if (charType == 'scatter') {
+					plotData['line'] = {
 						color: lineColor,
-						width: 2,
-					}
+						width: 2
+					};
 
-					if(fillMode) {
-						plotData["fill"] = fillMode;
+					if (fillMode) {
+						plotData['fill'] = fillMode;
 					}
 				}
 
@@ -110,11 +115,11 @@ For line chart options see
 					title: `<b>${xAxisTitle}</b>`,
 					titlefont: {
 						family,
-						color,
+						color
 					},
 					tickfont: {
 						family,
-						color,
+						color
 					},
 					gridcolor
 				};
@@ -122,24 +127,24 @@ For line chart options see
 				const yaxis: Partial<LayoutAxis> = {
 					title: {
 						text: `<b>${yAxisTitle}</b>`,
-						standoff: 20,
+						standoff: 20
 					},
 					titlefont: {
 						family,
-						color,
+						color
 					},
 					rangemode: yRangeMode,
 					tickfont: {
 						family,
-						color,
+						color
 					},
-					tickformat: ".2f",
+					tickformat: '.2f',
 					gridcolor,
-					automargin: true,
+					automargin: true
 				};
 
-				if(yType == "percent") {
-					yaxis["ticksuffix"] = "%";
+				if (yType == 'percent') {
+					yaxis['ticksuffix'] = '%';
 				}
 
 				// TODO: Style tooltips
@@ -152,23 +157,20 @@ For line chart options see
 						pad: 4
 					},
 					paper_bgcolor: background,
-					plot_bgcolor: background,
-				}
+					plot_bgcolor: background
+				};
 
-				console.log("Rendering Plotly chart", layout);
+				console.log('Rendering Plotly chart', layout);
 
 				let Plot = newPlot(elem, [plotData], layout);
 			} else {
-				console.log("WebChartData data missing", webChart);
+				console.log('WebChartData data missing', webChart);
 			}
 		}
 	}
-
-
 </script>
 
 <div class="web-chart">
-
 	<header>
 		<h2>{name}</h2>
 		{#if webChart?.help_link}
@@ -184,12 +186,10 @@ For line chart options see
 		{/if}
 	</header>
 
-	<div class="plotly" bind:this={elem}></div>
-
+	<div class="plotly" bind:this={elem} />
 </div>
 
 <style lang="postcss">
-
 	.web-chart {
 		margin: var(--space-lg) 0;
 	}

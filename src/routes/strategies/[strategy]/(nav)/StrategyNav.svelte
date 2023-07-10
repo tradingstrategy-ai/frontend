@@ -52,8 +52,7 @@
 		{
 			label: `TVL and netflow`,
 			targetUrl: `${basePath}/netflow`
-		},
-
+		}
 	];
 
 	if (backtestAvailable) {

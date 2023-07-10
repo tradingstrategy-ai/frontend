@@ -3,10 +3,10 @@
  *
  * Calls to web_chart API endpoint.
  */
-import {publicApiError} from "$lib/helpers/public-api";
+import { publicApiError } from '$lib/helpers/public-api';
 
-type Pair<T,K> = [T,K];
-type Pairs<T,K> = Pair<T,K>[];
+type Pair<T, K> = [T, K];
+type Pairs<T, K> = Pair<T, K>[];
 
 type UnixTimestamp = number;
 type Percent = number;
@@ -18,15 +18,14 @@ type USDollar = number;
  * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py
  */
 export interface WebChartData {
-    data: Pairs<UnixTimestamp, Percent | USDollar>;
-    title: string;
-    help_link: string;
-    // "live_trading" or "backtest"
-    source: string;
-    // "all"
-    time_window: string;
+	data: Pairs<UnixTimestamp, Percent | USDollar>;
+	title: string;
+	help_link: string;
+	// "live_trading" or "backtest"
+	source: string;
+	// "all"
+	time_window: string;
 }
-
 
 /**
  * Get the chart data for a named chart
@@ -40,18 +39,13 @@ export interface WebChartData {
  * @param fetch SvelteKit's fetch function
  *
  */
-export async function getChartData(
-    executorUrl: string,
-    type: string,
-    source: string,
-	fetch
-): Promise<WebChartData> {
-    let resp;
-    resp = await fetch(`${executorUrl}/chart?` + new URLSearchParams({type, source}));
+export async function getChartData(executorUrl: string, type: string, source: string, fetch): Promise<WebChartData> {
+	let resp;
+	resp = await fetch(`${executorUrl}/chart?` + new URLSearchParams({ type, source }));
 
 	if (!resp.ok) {
 		throw await publicApiError(resp);
 	}
 
-    return resp.json();
+	return resp.json();
 }
