@@ -5,17 +5,26 @@
 	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
+	import WebChart from "../../WebChart.svelte";
 
 	export let data;
-	$: ({ state, summary } = data);
+	$: ({ state, summary, profitabilityChart } = data);
 
 	$: portfolio = state?.stats?.portfolio;
 	$: latestStats = getPortfolioLatestStats(state);
 </script>
 
 <section class="performance">
-	{#if portfolio}
-		<PortfolioPerformanceChart name={summary.name} {portfolio} />
+	{#if profitabilityChart}
+		<WebChart
+			name="Profitability"
+			description="Compounded profitability of realised trading positions."
+			webChart={profitabilityChart}
+			lineColorName="--hsl-bullish"
+			yType="percent"
+			yAxisTitle="Realised profit"
+			fillMode={null}
+		/>
 	{/if}
 
 	<SummaryStatistics {latestStats} />
