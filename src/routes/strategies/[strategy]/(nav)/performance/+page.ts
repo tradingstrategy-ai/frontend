@@ -8,7 +8,6 @@ import { getChartData } from '../../chart';
 export const ssr = false;
 
 export async function load({ parent, fetch, params }) {
-
 	// See layout.ts load()
 	const { strategy, summary, state } = await parent();
 	const url = strategy.url;
