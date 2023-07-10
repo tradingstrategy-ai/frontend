@@ -24,7 +24,7 @@
 
 	const basePath = `/strategies/${strategyId}`;
 
-	const menuOptions = [
+	let menuOptions = [
 		{
 			label: 'Overview',
 			targetUrl: basePath
@@ -62,7 +62,7 @@
 		});
 	}
 
-	menuOptions.concat([
+	menuOptions = menuOptions.concat([
 		{
 			label: `Decision making`,
 			targetUrl: `${basePath}/decision-making`

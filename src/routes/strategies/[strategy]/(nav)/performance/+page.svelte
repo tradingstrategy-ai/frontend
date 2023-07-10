@@ -11,7 +11,10 @@
 	$: ({ state, summary, profitabilityChart } = data);
 
 	$: portfolio = state?.stats?.portfolio;
-	$: latestStats = getPortfolioLatestStats(state);
+	// Old path - read stats from the state
+	$: oldLatestStats = getPortfolioLatestStats(state);
+	// New path - use server precalculated stats
+	$: summaryStatistics = summary?.summary_statistics;
 </script>
 
 <section class="performance">
@@ -28,7 +31,7 @@
 		/>
 	{/if}
 
-	<SummaryStatistics {latestStats} />
+	<SummaryStatistics {oldLatestStats} {summaryStatistics} />
 </section>
 
 <style>

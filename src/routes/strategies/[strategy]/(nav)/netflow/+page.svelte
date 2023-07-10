@@ -24,7 +24,7 @@
 </script>
 
 <section class="netflow">
-	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong> days.</p>
+	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 	<WebChart name="Total value locked" webChart={tvlChart} lineColorName="--hsl-bullish" />
 	<WebChart name="Netflow" webChart={netflowChart} charType="bar" />
 </section>

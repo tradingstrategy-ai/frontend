@@ -17,7 +17,7 @@ For line chart options see
 -->
 <script lang="ts">
 	import { newPlot } from 'plotly.js-finance-dist';
-	import type {Data, HoverLabel, Layout, LayoutAxis, PlotData} from 'plotly.js';
+	import type { Data, HoverLabel, Layout, LayoutAxis, PlotData } from 'plotly.js';
 	import type { WebChartData } from './chart';
 	import { onMount } from 'svelte';
 	import { readCSSThemeVars } from '$lib/helpers/themes';
@@ -63,11 +63,9 @@ For line chart options see
 		//
 
 		if (!elem) {
-			console.log('elem not yet available');
+			// console.log('elem not yet available');
 		} else {
 			if (webChart.data && cssVars) {
-				console.log('Rendering with plotly', webChart.data.length, 'entries');
-
 				// Convert UNIX timestamp index to Dates
 				const x = webChart.data.map((tuple) => {
 					return new Date(tuple[0] * 1000);
@@ -139,7 +137,7 @@ For line chart options see
 						font: {
 							family,
 							color
-						},
+						}
 					},
 					rangemode: yRangeMode,
 					tickfont: {
@@ -161,9 +159,9 @@ For line chart options see
 					font: {
 						color,
 						family,
-						size: 16,
+						size: 16
 					}
-				}
+				};
 
 				// TODO: Style tooltips
 
