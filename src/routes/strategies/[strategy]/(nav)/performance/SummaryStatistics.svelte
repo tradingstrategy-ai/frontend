@@ -24,8 +24,8 @@ Render the statistics from the portfolio server-side calculated state.
 			<DataBox size="sm" label="Trade period" value={formatDuration(summary.duration)} />
 			<DataBox size="sm" label="Realised profit" value={formatDollar(summary.realised_profit)} />
 			<DataBox size="sm" label="Open positions" value={formatDollar(summary.open_value)} />
-			<DataBox size="sm" label="Return %" value={formatPercent(summary.return_percent)} />
-			<DataBox size="sm" label="Annualised Return %" value={formatPercent(summary.annualised_return_percent)} />
+			<DataBox size="sm" label="Return %" value={formatPercent(latestStats?.return_all_time)} />
+			<DataBox size="sm" label="Annualised Return %" value={formatPercent(latestStats?.return_annualised)} />
 			<DataBox size="sm" label="Total positions" value={summary.total_positions} />
 			<DataBox size="sm" label="Trades won" value={summary.won} />
 			<DataBox size="sm" label="Trades lost" value={summary.lost} />
