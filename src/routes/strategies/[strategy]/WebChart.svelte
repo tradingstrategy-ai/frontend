@@ -154,6 +154,7 @@ For line chart options see
 					yaxis,
 					margin: {
 						l: 50,
+						t: 0,
 						pad: 4
 					},
 					paper_bgcolor: background,
@@ -172,7 +173,7 @@ For line chart options see
 
 <div class="web-chart">
 	<header>
-		<h2>{name}</h2>
+		<h2 class="heading-chart">{name}</h2>
 		{#if webChart?.help_link}
 			<p>
 				{#if description}
@@ -194,7 +195,7 @@ For line chart options see
 		margin: var(--space-lg) 0;
 	}
 
-	h2 {
+	.heading-chart {
 		font: var(--f-heading-xl-medium);
 		letter-spacing: var(--f-heading-l-spacing, normal);
 		margin-bottom: var(--space-md);
@@ -202,5 +203,9 @@ For line chart options see
 
 	.help-link {
 		text-decoration: underline;
+	}
+
+	.plotly {
+		margin-top: var(--space-lg);
 	}
 </style>
