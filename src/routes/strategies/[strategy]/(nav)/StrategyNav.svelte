@@ -1,3 +1,10 @@
+<!-- Trade executor status
+
+- Left side nav
+
+- Collapse to dropdown on mobile
+
+-->
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
@@ -5,6 +12,7 @@
 	export let strategyId: string;
 	export let portfolio: any;
 	export let currentPath: string;
+	export let backtestAvailable: boolean;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = '';
@@ -40,6 +48,10 @@
 			targetUrl: `${basePath}/decision-making`
 		},
 		{
+			label: `Backtest results`,
+			targetUrl: `${basePath}/backtest`
+		},
+		{
 			label: `Instance status`,
 			targetUrl: `${basePath}/status`
 		},
@@ -56,9 +68,21 @@
 	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
 
 	$: visibleOptions = menuOptions.filter((option) => {
-		const isFrozenPositionsOption = option.targetUrl.includes('frozen-positions');
-		const hasFrozenPositions = getCount(portfolio.frozen_positions) > 0;
-		return !isFrozenPositionsOption || hasFrozenPositions || currentOption === option;
+		// always show current nav option
+		if (option === currentOption) return true;
+
+		// only show frozen positions if there are any
+		if (option.targetUrl.includes('frozen-positions')) {
+			return getCount(portfolio.frozen_positions) > 0;
+		}
+
+		// only show backtest if available
+		if (option.targetUrl.includes('backtest')) {
+			return backtestAvailable;
+		}
+
+		// show all other options
+		return true;
 	});
 
 	function getCount(positions: any = {}) {

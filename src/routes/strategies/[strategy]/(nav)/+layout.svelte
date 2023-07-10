@@ -6,8 +6,9 @@
 
 	export let data;
 
-	$: summary = data.summary;
+	$: ({ summary } = data);
 
+	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
 </script>
@@ -29,7 +30,12 @@
 	</PageHeading>
 
 	<div class="subpage">
-		<StrategyNav strategyId={summary.id} portfolio={data.state.portfolio} currentPath={$page.url.pathname} />
+		<StrategyNav
+			strategyId={summary.id}
+			portfolio={data.state.portfolio}
+			currentPath={$page.url.pathname}
+			{backtestAvailable}
+		/>
 		<div>
 			<slot />
 			<p class="beta-notice">
