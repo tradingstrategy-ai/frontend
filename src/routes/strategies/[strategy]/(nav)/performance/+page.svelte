@@ -16,6 +16,7 @@
 
 <section class="performance">
 	{#if profitabilityChart}
+		<!-- We cannot do fill here, because protability chart goes below zero -->
 		<WebChart
 			name="Profitability"
 			description="Compounded profitability of realised trading positions."
