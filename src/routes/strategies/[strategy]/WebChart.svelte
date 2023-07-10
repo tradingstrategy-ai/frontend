@@ -17,7 +17,7 @@ For line chart options see
 -->
 <script lang="ts">
 	import { newPlot } from 'plotly.js-finance-dist';
-	import type { Data, Layout, LayoutAxis, PlotData } from 'plotly.js';
+	import type {Data, HoverLabel, Layout, LayoutAxis, PlotData} from 'plotly.js';
 	import type { WebChartData } from './chart';
 	import { onMount } from 'svelte';
 	import { readCSSThemeVars } from '$lib/helpers/themes';
@@ -118,10 +118,12 @@ For line chart options see
 				}
 
 				const xaxis: Partial<LayoutAxis> = {
-					title: `<b>${xAxisTitle}</b>`,
-					titlefont: {
-						family,
-						color
+					title: {
+						text: `<b>${xAxisTitle}</b>`,
+						font: {
+							family,
+							color
+						}
 					},
 					tickfont: {
 						family,
@@ -133,11 +135,11 @@ For line chart options see
 				const yaxis: Partial<LayoutAxis> = {
 					title: {
 						text: `<b>${yAxisTitle}</b>`,
-						standoff: 20
-					},
-					titlefont: {
-						family,
-						color
+						standoff: 20,
+						font: {
+							family,
+							color
+						},
 					},
 					rangemode: yRangeMode,
 					tickfont: {
@@ -153,7 +155,7 @@ For line chart options see
 					yaxis['ticksuffix'] = '%';
 				}
 
-				const hoverlabel = {
+				const hoverlabel: Partial<HoverLabel> = {
 					bgcolor: background2,
 					bordercolor: background3,
 					font: {
