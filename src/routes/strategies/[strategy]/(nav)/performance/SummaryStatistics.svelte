@@ -13,6 +13,9 @@ Render the statistics from the portfolio server-side calculated state.
 
 	// compatibility layer for old property name in TradeSummary (remove after 01.04.2023)
 	$: summary.total_positions ??= summary.total_trades;
+
+	console.log(latestStats);
+
 </script>
 
 {#if summary}

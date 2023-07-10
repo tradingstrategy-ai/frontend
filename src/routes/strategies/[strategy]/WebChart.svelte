@@ -46,6 +46,10 @@ For line chart options see
 	export let elem;
 
 	// TODO: move reading these vars to a store?
+	//
+	// For now we do not care as the user is very unlikely
+	// to switch the page theme
+	//
 	onMount(() => {
 		cssVars = readCSSThemeVars();
 	});
@@ -85,6 +89,8 @@ For line chart options see
 				const color = `hsl(${cssVars.get('--hsl-text')})`;
 				const family = fontFamily; // TODO: Unconfirmed if SVG actually sets the font correctly
 				const background = `hsl(${cssVars.get('--hsl-body')})`;
+				const background2 = `hsl(${cssVars.get('--c-background-2')})`;
+				const background3 = `hsl(${cssVars.get('--c-background-3')})`;
 				const lineColor = `hsl(${cssVars.get(lineColorName)})`;
 				const gridcolor = `hsl(${cssVars.get('--c-background-4')})`;
 
@@ -147,6 +153,16 @@ For line chart options see
 					yaxis['ticksuffix'] = '%';
 				}
 
+				const hoverlabel = {
+					bgcolor: background2,
+					bordercolor: background3,
+					font: {
+						color,
+						family,
+						size: 16,
+					}
+				}
+
 				// TODO: Style tooltips
 
 				const layout: Partial<Layout> = {
@@ -157,15 +173,16 @@ For line chart options see
 						t: 0,
 						pad: 4
 					},
+					hoverlabel,
 					paper_bgcolor: background,
 					plot_bgcolor: background
 				};
 
-				console.log('Rendering Plotly chart', layout);
+				// console.log('Rendering Plotly chart', layout);
 
 				let Plot = newPlot(elem, [plotData], layout);
 			} else {
-				console.log('WebChartData data missing', webChart);
+				// console.log('WebChartData data missing', webChart);
 			}
 		}
 	}
