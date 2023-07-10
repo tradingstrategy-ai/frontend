@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type Candle, candleToQuote, quoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	const rateTypes = ['supply_apr', 'stable_borrow_apr', 'variable_borrow_apr'] as const;
 
@@ -61,16 +62,6 @@
 
 		return { update };
 	}
-
-	function formatForHud(value: number) {
-		if (!Number.isFinite(value)) return '---';
-		return (
-			value.toLocaleString('en', {
-				minimumFractionDigits: 2,
-				maximumFractionDigits: 2
-			}) + '%'
-		);
-	}
 </script>
 
 <ChartIQ
@@ -86,19 +77,24 @@
 		<div class="reserve-interest-rate-hud">
 			<HudRow>
 				<h3>Variable Borrow APR:</h3>
-				<HudMetric label="O" value={formatForHud(cursor.data.Open)} {direction} />
-				<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
-				<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
-				<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
+				<HudMetric label="O" value={formatInterestRate(cursor.data.Open)} {direction} />
+				<HudMetric label="H" value={formatInterestRate(cursor.data.High)} {direction} />
+				<HudMetric label="L" value={formatInterestRate(cursor.data.Low)} {direction} />
+				<HudMetric label="C" value={formatInterestRate(cursor.data.Close)} {direction} />
 			</HudRow>
 			<HudRow>
 				<HudMetric
 					class="stable-borrow-apr"
 					label="Stable Borrow APR:"
-					value={formatForHud(cursor.data.stable_borrow_apr)}
+					value={formatInterestRate(cursor.data.stable_borrow_apr)}
 					{direction}
 				/>
-				<HudMetric class="lending-apr" label="Lending APR:" value={formatForHud(cursor.data.supply_apr)} {direction} />
+				<HudMetric
+					class="supply-apr"
+					label="Supply APR:"
+					value={formatInterestRate(cursor.data.supply_apr)}
+					{direction}
+				/>
 			</HudRow>
 			<HudRow />
 		</div>
@@ -121,7 +117,7 @@
 			color: darkorange;
 		}
 
-		& :global .lending-apr dt {
+		& :global .supply-apr dt {
 			margin-left: var(--space-md);
 			font-weight: 500;
 			color: slateblue;
