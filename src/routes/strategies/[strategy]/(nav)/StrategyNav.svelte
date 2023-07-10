@@ -8,23 +8,18 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
-	import type { StrategySummaryStatistics } from 'trade-executor-frontend/strategy/runtimeState';
 
 	export let strategyId: string;
 	export let portfolio: any;
 	export let currentPath: string;
 	export let backtestAvailable: boolean;
 
-	// We can find out from the summary if certain menu items
-	// should be enabled or not
-	export let summary: StrategySummaryStatistics;
-
 	let menuWrapper: HTMLElement;
 	let menuHeight = '';
 
 	const basePath = `/strategies/${strategyId}`;
 
-	let menuOptions = [
+	const menuOptions = [
 		{
 			label: 'Overview',
 			targetUrl: basePath
@@ -48,21 +43,14 @@
 			label: `Performance`,
 			targetUrl: `${basePath}/performance`
 		},
-
 		{
 			label: `TVL and netflow`,
 			targetUrl: `${basePath}/netflow`
-		}
-	];
-
-	if (backtestAvailable) {
-		menuOptions.push({
+		},
+		{
 			label: `Backtest results`,
 			targetUrl: `${basePath}/backtest`
-		});
-	}
-
-	menuOptions = menuOptions.concat([
+		},
 		{
 			label: `Decision making`,
 			targetUrl: `${basePath}/decision-making`
@@ -79,14 +67,26 @@
 			label: `Source Code`,
 			targetUrl: `${basePath}/source`
 		}
-	]);
+	];
 
 	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
 
 	$: visibleOptions = menuOptions.filter((option) => {
-		const isFrozenPositionsOption = option.targetUrl.includes('frozen-positions');
-		const hasFrozenPositions = getCount(portfolio.frozen_positions) > 0;
-		return !isFrozenPositionsOption || hasFrozenPositions || currentOption === option;
+		// always show current nav option
+		if (option === currentOption) return true;
+
+		// only show frozen positions if there are any
+		if (option.targetUrl.includes('frozen-positions')) {
+			return getCount(portfolio.frozen_positions) > 0;
+		}
+
+		// only show backtest if available
+		if (option.targetUrl.includes('backtest')) {
+			return backtestAvailable;
+		}
+
+		// show all other options
+		return true;
 	});
 
 	function getCount(positions: any = {}) {

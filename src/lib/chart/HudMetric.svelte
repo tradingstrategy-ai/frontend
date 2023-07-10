@@ -10,13 +10,14 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 ```
 -->
 <script lang="ts">
+	let className: string = '';
+	export { className as class };
 	export let label: string = '';
 	export let value: number | string = '';
-
 	export let direction: number = 0;
 </script>
 
-<div class="hud-metric">
+<div class="hud-metric {className}">
 	{#if label}
 		<dt>{label}</dt>
 	{/if}

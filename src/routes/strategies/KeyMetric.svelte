@@ -18,7 +18,7 @@ Display one key metric in a strategy tile.
 	export let metric: Record<string, any>;
 	export let name: string;
 	export let formatter: Formatter<any> | undefined = undefined;
-	export let backtestLink;
+	export let backtestLink: string;
 
 	$: value = metric?.value;
 	$: formattedValue = formatter ? formatter(value) : value;

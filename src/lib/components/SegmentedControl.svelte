@@ -26,7 +26,6 @@ button-like control with a segement for each possible value.
 	.segmented-control {
 		display: flex;
 		gap: 1px;
-		border-radius: var(--radius-md);
 		overflow: hidden;
 	}
 
@@ -44,12 +43,20 @@ button-like control with a segement for each possible value.
 			letter-spacing: var(--f-ui-xs-spacing, normal);
 		}
 
-		&:first-child span {
-			padding-left: var(--space-xxs);
+		&:first-child {
+			border-radius: var(--radius-md) 0 0 var(--radius-md);
+
+			& span {
+				padding-left: var(--space-xxs);
+			}
 		}
 
-		&:last-child span {
-			padding-right: var(--space-xxs);
+		&:last-child {
+			border-radius: 0 var(--radius-md) var(--radius-md) 0;
+
+			& span {
+				padding-right: var(--space-xxs);
+			}
 		}
 
 		&:not(.selected) {

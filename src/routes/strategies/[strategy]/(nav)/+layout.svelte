@@ -4,12 +4,9 @@
 	import StrategyNav from './StrategyNav.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
-	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-
 	export let data;
 
-	let summary: StrategyRuntimeState;
-	$: summary = data.summary;
+	$: ({ summary } = data);
 
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML

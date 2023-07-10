@@ -39,7 +39,7 @@
 			</div>
 
 			<dl>
-				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} let:value {backtestLink}>
+				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} {backtestLink} let:value>
 					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
 				</KeyMetric>
 

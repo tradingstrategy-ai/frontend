@@ -5,8 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
-	import { formatValue } from '$lib/helpers/formatters';
-	import { getProtocolName } from '$lib/helpers/lending';
+	import { formatValue, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
@@ -14,7 +13,6 @@
 	export let page = 0;
 	export let sort = 'asset_name';
 	export let direction: 'asc' | 'desc' = 'asc';
-	export let chains: Record<string, string>;
 
 	const tableRows: Writable<LendingReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
@@ -31,7 +29,7 @@
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
-			header: 'Reserve name',
+			header: 'Asset name',
 			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
@@ -40,16 +38,20 @@
 			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
-			id: 'protocol',
-			accessor: 'protocol_slug',
+			accessor: 'protocol_name',
 			header: 'Protocol',
-			cell: ({ value }) => formatValue(getProtocolName(value)),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			accessor: 'chain_slug',
+			accessor: 'chain_name',
 			header: 'Blockchain',
-			cell: ({ value }) => formatValue(chains[value] ?? value),
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			id: 'variable_borrow_apr',
+			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
+			header: 'Borrow APR',
+			cell: ({ value }) => formatInterestRate(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -82,7 +84,7 @@
 			}
 
 			& .asset_name {
-				width: 40%;
+				width: 30%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -92,12 +94,17 @@
 				width: 15%;
 			}
 
-			& .protocol {
+			& .protocol_name {
 				width: 15%;
 			}
 
-			& .chain_slug {
+			& .chain_name {
 				width: 20%;
+			}
+
+			& .variable_borrow_apr {
+				width: 15%;
+				text-align: right;
 			}
 
 			& .cta {
