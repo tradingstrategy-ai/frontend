@@ -26,7 +26,7 @@
 	<meta name="description" content="Top deccentralised lending reserves" />
 </svelte:head>
 
-<Breadcrumbs labels={{ reserves: 'All lending reserves' }} />
+<Breadcrumbs labels={{ 'lending-reserves': 'All lending reserves' }} />
 
 <main class="reserves-index-page">
 	<Section tag="header">
