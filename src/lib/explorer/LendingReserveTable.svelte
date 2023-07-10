@@ -5,7 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
-	import { formatValue } from '$lib/helpers/formatters';
+	import { formatValue, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
@@ -29,7 +29,7 @@
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
-			header: 'Reserve name',
+			header: 'Asset name',
 			cell: ({ value }) => formatValue(value)
 		}),
 		table.column({
@@ -45,6 +45,13 @@
 		table.column({
 			accessor: 'chain_name',
 			header: 'Blockchain',
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			id: 'variable_borrow_apr',
+			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
+			header: 'Borrow APR',
+			cell: ({ value }) => formatInterestRate(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -77,7 +84,7 @@
 			}
 
 			& .asset_name {
-				width: 40%;
+				width: 30%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -93,6 +100,11 @@
 
 			& .chain_name {
 				width: 20%;
+			}
+
+			& .variable_borrow_apr {
+				width: 15%;
+				text-align: right;
 			}
 
 			& .cta {
