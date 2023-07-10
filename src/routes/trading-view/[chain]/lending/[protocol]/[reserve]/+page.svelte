@@ -3,6 +3,7 @@
 	import { PageHeader, Section, SegmentedControl } from '$lib/components';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
+	import InfoSummary from './InfoSummary.svelte';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -33,7 +34,7 @@
 	<section class="ds-container info" data-testid="reserve-info">
 		<div class="ds-2-col">
 			<InfoTable {reserve} />
-			<div />
+			<InfoSummary {reserve} />
 		</div>
 	</section>
 </main>
