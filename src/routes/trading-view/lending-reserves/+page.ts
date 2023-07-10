@@ -6,8 +6,12 @@ export async function load({ fetch, url }) {
 	const sort = searchParams.get('sort') || 'asset_name';
 	const direction = searchParams.get('direction') || 'asc';
 
+	const reserves = fetchLendingReserves(fetch, { page, sort, direction }).catch((e) => {
+		console.error('Error fetching lending reserves:', e);
+	});
+
 	return {
-		reserves: fetchLendingReserves(fetch, { page, sort, direction }),
+		reserves,
 		options: { page, sort, direction }
 	};
 }

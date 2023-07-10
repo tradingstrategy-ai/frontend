@@ -250,6 +250,19 @@ export function formatPercent(n: MaybeNumber): string {
 }
 
 /**
+ * Format interest rate value given as percent-form value
+ */
+export function formatInterestRate(n: number) {
+	if (!Number.isFinite(n)) return notFilledMarker;
+	return (
+		n.toLocaleString('en', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}) + '%'
+	);
+}
+
+/**
  * Format strategy key metric float numbers like Sharpe and Sortino
  */
 export function formatKeyMetricNumber(n: MaybeNumber): string {

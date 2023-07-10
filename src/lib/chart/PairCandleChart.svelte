@@ -5,8 +5,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 #### Usage:
 ```tsx
 	<PairCandleChart
-		quoteFeed={quoteFeed}
+		feed={quoteFeed(…)}
 		pairId={12345}
+		pairSymbol="ETH-USDC"
 		exchangeType="uniswap_v2"
 		firstTradeDate="2020-01-02T00:00"
 		timeBucket="4h"
@@ -21,12 +22,13 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 <script lang="ts">
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
-	import { type ChartLinker, ChartIQ, HudRow, HudMetric } from '$lib/chart';
+	import { type ChartLinker, type QuoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 
-	export let quoteFeed: any;
+	export let feed: QuoteFeed;
 	export let pairId: number | string;
+	export let pairSymbol: string;
 	export let exchangeType: string;
-	export let firstTradeDate: string;
+	export let firstTradeDate: MaybeString;
 	export let timeBucket: TimeBucket;
 	export let studies: any[] = [];
 	export let linker: ChartLinker | undefined = undefined;
@@ -66,11 +68,14 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 		function update() {
 			// hide the Y Axis on smaller screens
 			chartEngine.chart.yAxis.position = hideYAxis ? 'none' : 'right';
-			// make exchangeType and firstTradeDate available to the quoteFeed
-			chartEngine.exchangeType = exchangeType;
-			chartEngine.firstTradeDate = firstTradeDate;
+			// pass required data to quoteFeed
+			const symbol = {
+				symbol: pairSymbol,
+				urlParams: { pair_id: pairId, exchange_type: exchangeType, time_bucket: timeBucket },
+				firstQuoteDate: firstTradeDate && new Date(firstTradeDate)
+			};
 			// load the chart
-			chartEngine.loadChart(pairId, { periodicity });
+			chartEngine.loadChart(symbol, { periodicity });
 		}
 
 		return { update };
@@ -84,7 +89,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{options}
 	{studies}
 	{linker}
-	{quoteFeed}
+	{feed}
 	invalidate={[pairId, periodicity, hideYAxis, firstTradeDate, exchangeType]}
 	let:cursor
 >
