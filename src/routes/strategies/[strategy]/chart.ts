@@ -12,6 +12,15 @@ type UnixTimestamp = number;
 type Percent = number;
 type USDollar = number;
 
+type ChartSource = 'live_trading' | 'backtest';
+// See WebChartType https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py#L14
+type ChartType = 'compounding_realised_profitability' | 'total_equity' | 'netflow';
+
+export type ChartRequestParams = {
+	type: ChartType;
+	source: ChartSource;
+};
+
 /**
  * Describe chart data
  *
@@ -21,8 +30,7 @@ export interface WebChartData {
 	data: Pairs<UnixTimestamp, Percent | USDollar>;
 	title: string;
 	help_link: string;
-	// "live_trading" or "backtest"
-	source: string;
+	source: ChartSource;
 	// "all"
 	time_window: string;
 }
@@ -30,18 +38,16 @@ export interface WebChartData {
 /**
  * Get the chart data for a named chart
  *
- * @param executorUrl The webhook API URL for the strategy executor
- *
- * @param chartType See WebChartType https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py#L14
- *
- * @param source "live_trading" or "backtest"
- *
  * @param fetch SvelteKit's fetch function
- *
+ * @param executorUrl The webhook API URL for the strategy executor
+ * @param params Object with `type` and `source` params
  */
-export async function getChartData(executorUrl: string, type: string, source: string, fetch): Promise<WebChartData> {
-	let resp;
-	resp = await fetch(`${executorUrl}/chart?` + new URLSearchParams({ type, source }));
+export async function fetchChartData(
+	fetch: Fetch,
+	executorUrl: string,
+	params: ChartRequestParams
+): Promise<WebChartData> {
+	const resp = await fetch(`${executorUrl}/chart?${new URLSearchParams(params)}`);
 
 	if (!resp.ok) {
 		throw await publicApiError(resp);

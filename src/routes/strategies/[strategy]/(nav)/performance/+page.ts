@@ -2,33 +2,26 @@
  * Fetch the chart sources
  */
 import { error } from '@sveltejs/kit';
-import { getChartData } from '../../chart';
+import { fetchChartData } from '../../chart';
 
 // Plotly.js cannot be loaded on the server-side
 export const ssr = false;
 
-export async function load({ parent, fetch, params }) {
+export async function load({ parent, fetch }) {
 	// See layout.ts load()
-	const { strategy, summary, state } = await parent();
-	const url = strategy.url;
+	const { strategy } = await parent();
+	const { url } = strategy;
 
-	let profitabilityChart = null;
+	// TODO: use backtest data when insufficient trading data?
+	const chartParams = {
+		type: 'compounding_realised_profitability',
+		source: 'live_trading'
+	} as const;
 
-	// Netflow page can only display statistics relevant for live trading
-	const source = 'live_trading';
-
-	try {
-		// Small data, no benefit to put parallel
-		profitabilityChart = await getChartData(url, 'compounding_realised_profitability', source, fetch);
-	} catch (e) {
+	const profitabilityChart = fetchChartData(fetch, url, chartParams).catch((e) => {
 		const stack = [`Error loading data from URL: ${url}`, e.message];
 		throw error(503, { message: 'Service Unavailable', stack });
-	}
+	});
 
-	return {
-		profitabilityChart,
-		strategy,
-		state,
-		summary
-	};
+	return { profitabilityChart };
 }
