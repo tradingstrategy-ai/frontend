@@ -16,175 +16,107 @@ For line chart options see
 - https://plotly.com/javascript/line-charts/
 -->
 <script lang="ts">
+	import { fromUnixTime } from 'date-fns';
 	import { newPlot } from 'plotly.js-finance-dist';
-	import type { Data, HoverLabel, Layout, LayoutAxis, PlotData } from 'plotly.js';
+	import type { Data, HoverLabel, Layout, LayoutAxis, PlotData, PlotType } from 'plotly.js';
 	import type { WebChartData } from './chart';
-	import { onMount } from 'svelte';
-	import { readCSSThemeVars } from '$lib/helpers/themes';
 
 	//
 	// Chart styling props
 	//
 	export let name: string;
-	export let description; // Few words about us
+	export let description: string = ''; // Few words about us
 	export let webChart: WebChartData; // Incoming data
+	export let yType: 'dollar' | 'percent' = 'dollar';
+	export let yAxisTitle = yType === 'dollar' ? 'US Dollar' : 'Percent';
 	export let xAxisTitle = 'Date';
-	export let yAxisTitle = 'US Dollar';
-	export let yRangeMode = 'tozero';
-	export let yType = 'dollar'; // "dollar" or "percent" for now
-	export let fontFamily = 'Neue Haas Grotesk Text';
-	//export let fontFamily = "Arial Extra Bold";
-	export let charType: string = 'scatter'; // See possible types https://plotly.com/javascript/
-	export let lineColorName = '--hsl-bullish'; // CSS var name for the line chart line colour
+	export let yRangeMode: LayoutAxis['rangemode'] = 'tozero';
+	export let charType: PlotType = 'scatter'; // See possible types https://plotly.com/javascript/
 	export let barWidth = 24 * 3600 * 1000; // Bar chart bar width in seconds
-	export let fillMode = 'tozeroy'; // Fill mode for line charts. Set null to disable.
+	export let fillMode: PlotData['fill'] = 'tozeroy'; // Fill mode for line charts. Set to "none" to disable.
 
-	// Read in onMount()
-	export let cssVars: Map<string, string>;
+	// Svelte action to construct Plotly series data and layout objects, then fill
+	// the action's node with the interactive SVG output from Plotly.js newPlot()
+	function drawChart(node: HTMLDivElement, data: WebChartData['data']) {
+		// Convert UNIX timestamp index to Dates
+		const x = data.map(([ts]) => fromUnixTime(ts));
+		// Convert values based on yType
+		const y = data.map(([_, value]) => (yType === 'percent' ? value * 1000 : value));
 
-	// Bound for Plotly.js
-	export let elem;
+		// Get theme colors and other styles from computed CSS style
+		const style = getComputedStyle(node);
+		const font = {
+			color: style.color,
+			family: style.fontFamily
+		};
+		const background = style.background;
+		const hoverBackground = style.getPropertyValue('--c-background-2');
+		const hoverBorder = style.getPropertyValue('--c-background-3');
+		// See CSS below: override default lineColor by setting `--chart-line-color` CSS variable
+		const lineColor = style.getPropertyValue('--c-stroke');
+		const gridcolor = style.getPropertyValue('--c-background-4');
 
-	// TODO: move reading these vars to a store?
-	//
-	// For now we do not care as the user is very unlikely
-	// to switch the page theme
-	//
-	onMount(() => {
-		cssVars = readCSSThemeVars();
-	});
+		const plotData: Data = { x, y, type: charType };
 
-	$: {
-		//
-		// When we have data and theme available,
-		// construct Plotly series data and layout objects.
-		// Then fill the resulting element with the interactive SVG output
-		// from Plotly.js newPlot()
-		//
+		// Set bar widths to one day
+		if (charType == 'bar') {
+			plotData['width'] = barWidth;
+		}
 
-		if (!elem) {
-			// console.log('elem not yet available');
-		} else {
-			if (webChart.data && cssVars) {
-				// Convert UNIX timestamp index to Dates
-				const x = webChart.data.map((tuple) => {
-					return new Date(tuple[0] * 1000);
-				});
-				let y;
+		// Style line charts
+		if (charType == 'scatter') {
+			plotData['line'] = {
+				color: lineColor,
+				width: 2
+			};
 
-				if (yType == 'dollar') {
-					y = webChart.data.map((tuple) => {
-						return tuple[1];
-					});
-				} else if (yType == 'percent') {
-					y = webChart.data.map((tuple) => {
-						return tuple[1] * 100;
-					});
-				} else {
-					throw new Error('Not implemented');
-				}
-
-				const color = `hsl(${cssVars.get('--hsl-text')})`;
-				const family = fontFamily; // TODO: Unconfirmed if SVG actually sets the font correctly
-				const background = `hsl(${cssVars.get('--hsl-body')})`;
-				const background2 = `hsl(${cssVars.get('--c-background-2')})`;
-				const background3 = `hsl(${cssVars.get('--c-background-3')})`;
-				const lineColor = `hsl(${cssVars.get(lineColorName)})`;
-				const gridcolor = `hsl(${cssVars.get('--c-background-4')})`;
-
-				const plotData: Partial<Data> = {
-					x,
-					y,
-					type: charType
-				};
-
-				// Set bar widths to one day
-				if (charType == 'bar') {
-					plotData['width'] = barWidth;
-				}
-
-				// Style line charts
-				if (charType == 'scatter') {
-					plotData['line'] = {
-						color: lineColor,
-						width: 2
-					};
-
-					if (fillMode) {
-						plotData['fill'] = fillMode;
-					}
-				}
-
-				const xaxis: Partial<LayoutAxis> = {
-					title: {
-						text: `<b>${xAxisTitle}</b>`,
-						font: {
-							family,
-							color
-						}
-					},
-					tickfont: {
-						family,
-						color
-					},
-					gridcolor
-				};
-
-				const yaxis: Partial<LayoutAxis> = {
-					title: {
-						text: `<b>${yAxisTitle}</b>`,
-						standoff: 20,
-						font: {
-							family,
-							color
-						}
-					},
-					rangemode: yRangeMode,
-					tickfont: {
-						family,
-						color
-					},
-					tickformat: '.2f',
-					gridcolor,
-					automargin: true
-				};
-
-				if (yType == 'percent') {
-					yaxis['ticksuffix'] = '%';
-				}
-
-				const hoverlabel: Partial<HoverLabel> = {
-					bgcolor: background2,
-					bordercolor: background3,
-					font: {
-						color,
-						family,
-						size: 16
-					}
-				};
-
-				// TODO: Style tooltips
-
-				const layout: Partial<Layout> = {
-					xaxis,
-					yaxis,
-					margin: {
-						l: 50,
-						t: 0,
-						pad: 4
-					},
-					hoverlabel,
-					paper_bgcolor: background,
-					plot_bgcolor: background
-				};
-
-				// console.log('Rendering Plotly chart', layout);
-
-				let Plot = newPlot(elem, [plotData], layout);
-			} else {
-				// console.log('WebChartData data missing', webChart);
+			if (fillMode) {
+				plotData['fill'] = fillMode;
 			}
 		}
+
+		const xaxis: Partial<LayoutAxis> = {
+			title: {
+				text: `<b>${xAxisTitle}</b>`,
+				font
+			},
+			tickfont: font,
+			gridcolor
+		};
+
+		const yaxis: Partial<LayoutAxis> = {
+			title: {
+				text: `<b>${yAxisTitle}</b>`,
+				standoff: 20,
+				font
+			},
+			rangemode: yRangeMode,
+			tickfont: font,
+			tickformat: '.2f',
+			gridcolor,
+			automargin: true
+		};
+
+		if (yType == 'percent') {
+			yaxis['ticksuffix'] = '%';
+		}
+
+		const hoverlabel: Partial<HoverLabel> = {
+			bgcolor: hoverBackground,
+			bordercolor: hoverBorder,
+			font: { ...font, size: 16 }
+		};
+
+		const layout: Partial<Layout> = {
+			xaxis,
+			yaxis,
+			margin: { l: 50, t: 0, pad: 4 },
+			hoverlabel,
+			paper_bgcolor: background,
+			plot_bgcolor: background
+		};
+
+		newPlot(node, [plotData], layout);
 	}
 </script>
 
@@ -193,33 +125,30 @@ For line chart options see
 		<h2 class="heading-chart">{name}</h2>
 		{#if webChart?.help_link}
 			<p>
-				{#if description}
-					{description}
-				{/if}
+				{description}
 				Learn about
-				<a class="help-link" href={webChart?.help_link}>
+				<a class="body-link" href={webChart?.help_link}>
 					{name}
 				</a> metric and how it is calculated.
 			</p>
 		{/if}
 	</header>
 
-	<div class="plotly" bind:this={elem} />
+	<div class="plotly" use:drawChart={webChart.data} />
 </div>
 
 <style lang="postcss">
 	.web-chart {
+		/* override default line color */
+		--c-stroke: var(--chart-line-color, hsl(var(--hsl-bullish)));
+
 		margin: var(--space-lg) 0;
 	}
 
 	.heading-chart {
 		font: var(--f-heading-xl-medium);
-		letter-spacing: var(--f-heading-l-spacing, normal);
+		letter-spacing: var(--f-heading-xl-spacing, normal);
 		margin-bottom: var(--space-md);
-	}
-
-	.help-link {
-		text-decoration: underline;
 	}
 
 	.plotly {

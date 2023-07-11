@@ -2,7 +2,6 @@
 	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import WebChart from '../../WebChart.svelte';
@@ -24,10 +23,9 @@
 			name="Profitability"
 			description="Compounded profitability of realised trading positions."
 			webChart={profitabilityChart}
-			lineColorName="--hsl-bullish"
 			yType="percent"
 			yAxisTitle="Realised profit"
-			fillMode={null}
+			fillMode="none"
 		/>
 	{/if}
 
