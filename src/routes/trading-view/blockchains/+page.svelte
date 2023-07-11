@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { getLogoUrl } from '$lib/helpers/assets';
+	import { getBlockchainLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
@@ -23,7 +23,12 @@
 	<ContentCardsSection cols={4}>
 		{#each data.chains as chain}
 			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
-				<img class="blockchain-logo" slot="icon" alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
+				<img
+					class="blockchain-logo"
+					slot="icon"
+					alt={`${chain.chain_name} logo`}
+					src={getBlockchainLogoUrl(chain.chain_slug)}
+				/>
 				<h3 class="blockchain-title" slot="title">{chain.chain_name}</h3>
 				<p>{formatAmount(chain.exchanges)} exchanges</p>
 			</ContentCard>
