@@ -1,6 +1,5 @@
 <!--
 	Page to display the source code of the strategy.
-
 -->
 <script lang="ts">
 	import python from 'svelte-highlight/languages/python';
@@ -8,10 +7,7 @@
 
 	export let data;
 
-	$: summary = data.summary;
-
-	// Currently loaded source code
-	$: code = data.source;
+	$: ({ summary, code } = data);
 
 	// Github links disabled as for now they no longer host the canonical source
 	// $: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
