@@ -46,8 +46,12 @@ jobs:
         run: bash scripts/build-deps.sh
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
+      # use separate build step to avoid playwright timeout issue
+      - name: Build SvelteKit vite app
+        run: npm run build
+      # skip build in test step
       - name: Run Tests
-        run: npm run test
+        run: npm run test --skip-build
 
   build:
     runs-on: ubuntu-latest
