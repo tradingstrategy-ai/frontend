@@ -1,24 +1,21 @@
 <!--
 	Page to display the source code of the strategy.
-	TODO: Add nice source code formatting widget
 -->
 <script lang="ts">
 	import python from 'svelte-highlight/languages/python';
-	import { Button, SourceCode, SummaryBox } from '$lib/components';
+	import { SourceCode, SummaryBox } from '$lib/components';
 
 	export let data;
 
-	$: summary = data.summary;
+	$: ({ summary, code } = data);
 
-	// Currently loaded source code
-	$: code = data.source;
-
-	// TODO: Hack for now, have metadata object to expose real strategy canocical source code URLs
-	$: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
+	// Github links disabled as for now they no longer host the canonical source
+	// $: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
 <section class="source">
 	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy" ctaPosition="top">
+		<!--
 		<Button
 			slot="cta"
 			let:position
@@ -28,7 +25,7 @@
 			href={githubUrl}
 			label="View on GitHub"
 			target="_blank"
-		/>
+		-->
 		<SourceCode language={python} {code} />
 	</SummaryBox>
 </section>

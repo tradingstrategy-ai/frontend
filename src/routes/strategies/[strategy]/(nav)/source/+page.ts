@@ -21,6 +21,6 @@ export async function load({ parent, fetch }) {
 	}
 
 	return {
-		source: resp.text()
+		code: resp.text()
 	};
 }
