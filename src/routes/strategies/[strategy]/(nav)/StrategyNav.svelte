@@ -44,12 +44,16 @@
 			targetUrl: `${basePath}/performance`
 		},
 		{
-			label: `Decision making`,
-			targetUrl: `${basePath}/decision-making`
+			label: `TVL and netflow`,
+			targetUrl: `${basePath}/netflow`
 		},
 		{
 			label: `Backtest results`,
 			targetUrl: `${basePath}/backtest`
+		},
+		{
+			label: `Decision making`,
+			targetUrl: `${basePath}/decision-making`
 		},
 		{
 			label: `Instance status`,

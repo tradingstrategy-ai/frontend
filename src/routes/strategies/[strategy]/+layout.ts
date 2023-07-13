@@ -1,3 +1,7 @@
+/**
+ * Fetch data needed to render the strategy frame and all subpages.
+ */
+
 import { error } from '@sveltejs/kit';
 import { fetchPublicApi, publicApiError } from '$lib/helpers/public-api';
 import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
