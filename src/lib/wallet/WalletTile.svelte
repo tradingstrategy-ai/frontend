@@ -6,7 +6,7 @@
 </script>
 
 <button class="wallet-tile tile a" on:click>
-	<img alt={name} src={getLogoUrl(slug)} />
+	<img alt={name} src={getLogoUrl('wallet', slug)} />
 	<div class="text">
 		<h3>{name}</h3>
 		<p><slot /></p>

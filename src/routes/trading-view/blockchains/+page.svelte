@@ -23,7 +23,12 @@
 	<ContentCardsSection cols={4}>
 		{#each data.chains as chain}
 			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
-				<img class="blockchain-logo" slot="icon" alt={`${chain.chain_name} logo`} src={getLogoUrl(chain.chain_slug)} />
+				<img
+					class="blockchain-logo"
+					slot="icon"
+					alt={`${chain.chain_name} logo`}
+					src={getLogoUrl('blockchain', chain.chain_slug)}
+				/>
 				<h3 class="blockchain-title" slot="title">{chain.chain_name}</h3>
 				<p>{formatAmount(chain.exchanges)} exchanges</p>
 			</ContentCard>

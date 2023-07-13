@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { getLogoUrl, getCryptoIconUrl } from '$lib/helpers/assets';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
 	export let slug: MaybeString;
 	export let label = '';
 	export let size = '1.5rem';
 
-	$: src = getSrc(type, slug);
-
-	function getSrc(type: string, slug: MaybeString) {
-		if (!slug) return;
-		if (type === 'blockchain') return getLogoUrl(slug);
-		if (type === 'token') return getCryptoIconUrl(slug);
-	}
+	$: src = getLogoUrl(type, slug);
 </script>
 
 <div class="entity-symbol" style:--image-size={size}>
