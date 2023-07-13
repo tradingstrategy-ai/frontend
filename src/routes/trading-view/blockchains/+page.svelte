@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { getBlockchainLogoUrl } from '$lib/helpers/assets';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
@@ -27,7 +27,7 @@
 					class="blockchain-logo"
 					slot="icon"
 					alt={`${chain.chain_name} logo`}
-					src={getBlockchainLogoUrl(chain.chain_slug)}
+					src={getLogoUrl('blockchain', chain.chain_slug)}
 				/>
 				<h3 class="blockchain-title" slot="title">{chain.chain_name}</h3>
 				<p>{formatAmount(chain.exchanges)} exchanges</p>

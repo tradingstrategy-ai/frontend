@@ -9,7 +9,7 @@
 	export let chains: Chain[];
 
 	$: ({ name, chain } = wallet);
-	$: walletLogoUrl = getLogoUrl(name.toLowerCase());
+	$: walletLogoUrl = getLogoUrl('wallet', name.toLowerCase());
 </script>
 
 <WalletInfo --wallet-info-label-width="6.5rem">

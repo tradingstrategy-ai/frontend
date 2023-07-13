@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
-	import { getBlockchainLogoUrl } from '$lib/helpers/assets';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Button, Section } from '$lib/components';
 
 	export let name: string;
@@ -11,7 +11,7 @@
 <Section tag="header">
 	<a class="inner tile a" href={homepage}>
 		<h1>
-			<img alt={`${name} logo`} src={getBlockchainLogoUrl(slug)} />
+			<img alt={`${name} logo`} src={getLogoUrl('blockchain', slug)} />
 			<span>{name} blockchain</span>
 		</h1>
 		<Button>Visit {formatUrlAsDomain(homepage)}</Button>
