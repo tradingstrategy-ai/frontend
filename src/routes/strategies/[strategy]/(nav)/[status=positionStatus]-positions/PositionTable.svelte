@@ -53,6 +53,10 @@
 			accessor: 'position_id'
 		}),
 		table.column({
+			header: 'Id',
+			accessor: 'position_id'
+		}),
+		table.column({
 			header: 'Ticker',
 			accessor: 'ticker'
 		}),
