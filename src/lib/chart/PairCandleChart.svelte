@@ -21,8 +21,8 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 -->
 <script lang="ts">
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
-	import { type ChartLinker, type QuoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
+	import type { ChartLinker, QuoteFeed, TimeBucket } from '$lib/chart';
+	import { timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 
 	export let feed: QuoteFeed;
 	export let pairId: number | string;

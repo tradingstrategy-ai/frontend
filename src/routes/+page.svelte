@@ -6,7 +6,7 @@
 	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
-	import { sitelinksSearchBox } from '$lib/helpers/googleMeta';
+	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
