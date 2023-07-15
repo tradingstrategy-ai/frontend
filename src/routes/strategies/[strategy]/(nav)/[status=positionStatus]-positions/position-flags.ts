@@ -1,10 +1,10 @@
 /**
  * Position status flag.
  */
-import {TradingPosition} from "trade-executor-frontend/state/interface";
+import type {TradingPosition} from "trade-executor-frontend/state/interface";
 
 
-enum PositionStatusFlag {
+export enum PositionStatusFlag {
     stopLoss,
     takeProfit,
     executionFailed,
@@ -23,18 +23,33 @@ enum PositionStatusFlag {
  *
  * - Stop loss hit
  */
-interface PositionStatusFlagInformation {
-    level: string; // info or error
+export interface PositionStatusFlagInformation {
+    flag: PositionStatusFlag;
+    level: "info" | "error";
     abbreviation: string;
     name: string;
     helpTextHTML: string;
 
     // Link to the trade raising this flag
     tradeLink: string;
+
+    // Trade ids this flag affects.
+    // A position can have multiple trades with the same flag.
+    // Any help text links point to the latest trade.
+    tradeIds: number[];
 }
 
 
-type PositionFlagMap = Map<PositionStatusFlag, PositionStatusFlagInformation>;
+export type PositionFlagMap = Map<PositionStatusFlag, PositionStatusFlagInformation>;
+
+
+function addFlag(flags: PositionFlagMap, f: PositionStatusFlagInformation) {
+    const existingFlag = flags.get(f.flag);
+    // include this trade in trade ids
+    f.tradeIds = existingFlag ? existingFlag.tradeIds.concat(f.tradeIds) : f.tradeIds;
+    flags.set(f.flag, f);
+}
+
 
 /**
  * Analyse a trading position.
@@ -46,38 +61,44 @@ type PositionFlagMap = Map<PositionStatusFlag, PositionStatusFlagInformation>;
  *
  * - Check if the trade raises any flags
  *
- * @param position
+ * Flags could be on
+ *
+ * @param position Trading position for which we generate flags
+ *
+ * @param baseUrl Where to route help text text links
+ *
  */
-export function getPositionFlags(position: TradingPosition, strategyId: string, positionCategory: string): PositionFlagMap {
+export function getPositionFlags(position: TradingPosition, baseUrl: string): PositionFlagMap {
 
     // https://stackoverflow.com/a/38040218/315168
     const flags: PositionFlagMap = new Map();
 
     for(const [tradeId, trade] of Object.entries(position.trades)) {
 
-        const tradeLink = `/strategy/${strategyId}/${positionCategory}/${tradeId}`;
+        const tradeLink = `{$baseUrl}/${tradeId}`;
 
         if(trade.trade_type == "stop_loss") {
-            const stopLossFlag = {
+            addFlag(flags,{
+                flag: PositionStatusFlag.stopLoss,
                 level: "info",
                 abbreviation: "SL",
                 name: "Stop loss",
-                helpTextHTML: "",
+                helpTextHTML: "The position was used with a stop loss.",
                 tradeLink,
-            }
-            flags.set(PositionStatusFlag.stopLoss, stopLossFlag);
+                tradeIds: [tradeId as unknown as number],
+            });
         }
 
-
         if(trade.failed_at) {
-            const failedTradesFlag = {
+            addFlag( flags,{
+                flag: PositionStatusFlag.executionFailed,
                 level: "error",
                 abbreviation: "F",
                 name: "Failed trades",
-                helpTextHTML: "",
+                helpTextHTML: "Here is ",
                 tradeLink,
-            }
-            flags.set(PositionStatusFlag.executionFailed, failedTradesFlag);
+                tradeIds: [tradeId as unknown as number],
+            });
         }
     }
 
