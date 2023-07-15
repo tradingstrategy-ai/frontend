@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { formatInterestRate } from '$lib/helpers/formatters';
-	import { lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
+	import { SECONDS_PER_DAY, lendingReserveUrl, compoundInterest } from '$lib/helpers/lending-reserve';
 
 	export let reserve: any;
 
 	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
+	$: details = reserve.additional_details;
+
+	$: examplePrincipal = 5000;
+	$: exampleInterest = compoundInterest(examplePrincipal, details.variable_borrow_apr_latest / 100, SECONDS_PER_DAY);
 </script>
 
 <div class="summary">
@@ -18,9 +22,16 @@
 
 	<p>
 		The <strong>variable borrow APR</strong> is currently
-		<strong>{formatInterestRate(reserve.additional_details.variable_borrow_apr_latest)}</strong>
+		<strong>{formatInterestRate(details.variable_borrow_apr_latest)}</strong>
 		and the <strong>supply APR</strong> is currently
-		<strong>{formatInterestRate(reserve.additional_details.supply_apr_latest)}</strong>.
+		<strong>{formatInterestRate(details.supply_apr_latest)}</strong>.
+	</p>
+
+	<p>
+		At the current variable borrow rate, the cost of borrowing
+		<strong>${examplePrincipal.toLocaleString('en')} USD</strong> worth of
+		<strong>{reserve.asset_symbol}</strong> is approximately
+		<strong>{formatDollar(exampleInterest)} / 24h</strong>.
 	</p>
 
 	<p>
