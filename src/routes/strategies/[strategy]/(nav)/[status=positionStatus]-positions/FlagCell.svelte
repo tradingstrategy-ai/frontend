@@ -9,14 +9,17 @@
 </script>
 
 <div class="flags">
-    {#each [...flags] as [key, flag]}
+    {#each [...flags] as [key, flag], idx}
+        {#if idx > 0},{/if}
         <Tooltip>
             <span slot="tooltip-trigger">
-                {flag.abbreviation}
+                <span class="flag">
+                    {flag.abbreviation}
+                </span>
             </span>
 
-            <div slot="tooltip-popup">
-                Hello there
+            <div slot="tooltip-popup" class="tooltip-content">
+                {@html flag.helpTextHTML}
             </div>
         </Tooltip>
     {/each}
@@ -26,5 +29,21 @@
 <style>
     .flags {
         white-space: nowrap;
+        display: flex;
+    }
+
+    .flag {
+        border-bottom: 1px dotted hsla(var(--hsl-text));
+
+        font: var(--f-ui-xsmall-light);
+        font-style: normal;
+        color: var(--c-text-light);
+
+    }
+
+    /* Style help texts generated in position-flags */
+    .tooltip-content :global(h4) {
+        font: var(--f-ui-large-medium);
+        letter-spacing: var(--f-ui-xxl-spacing, normal);
     }
 </style>

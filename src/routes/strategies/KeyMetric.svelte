@@ -120,7 +120,7 @@ Display one key metric in a strategy tile.
 		}
 
 		& .value {
-			border-bottom: 1px dotted hsla(var(--hsl-text));
+			]
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 			margin: 0;

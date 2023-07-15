@@ -75,15 +75,30 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
 
     for(const [tradeId, trade] of Object.entries(position.trades)) {
 
-        const tradeLink = `{$baseUrl}/${tradeId}`;
+        const tradeLink = `${baseUrl}/trade-${tradeId}`;
 
         if(trade.trade_type == "stop_loss") {
+
+            const msg = `
+                <h4>Stop loss triggered</h4>                
+                
+                <p>This position was closed with a stop loss</p>
+                
+                <p>Position can still have a profitable close if a trailing or dynamic stop loss was used.</p>
+                
+                <p>See more</p>
+                <ul>
+                    <li><a href="${tradeLink}">View the closing trade</li>
+                    <li><a href="/glossary/stop-loss">What is a stop loss</li>
+                </ul>
+            `;
+
             addFlag(flags,{
                 flag: PositionStatusFlag.stopLoss,
                 level: "info",
                 abbreviation: "SL",
                 name: "Stop loss",
-                helpTextHTML: "The position was used with a stop loss.",
+                helpTextHTML: msg,
                 tradeLink,
                 tradeIds: [tradeId as unknown as number],
             });
@@ -104,3 +119,5 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
 
     return flags;
 }
+
+
