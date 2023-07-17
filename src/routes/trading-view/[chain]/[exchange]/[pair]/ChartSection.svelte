@@ -16,7 +16,7 @@ for the same hovered date. Also displays a time-bucket selector.
 -->
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { TimeBucket } from '$lib/chart/timeBucketConverters';
+	import type { TimeBucket } from '$lib/chart';
 	import { quoteFeed, ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
 
 	export let pairId: number | string;

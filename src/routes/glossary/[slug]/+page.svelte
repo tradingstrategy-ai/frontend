@@ -10,7 +10,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { ContentCardsSection, ContentCard } from '$lib/components';
-	import { serializeSchema } from '$lib/helpers/googleMeta';
+	import { serializeSchema } from '$lib/helpers/google-meta';
 	import { Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 

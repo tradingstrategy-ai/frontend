@@ -31,11 +31,9 @@
 <main>
 	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}" />
 
-	<section class="ds-container info" data-testid="reserve-info">
-		<div class="ds-2-col">
-			<InfoTable {reserve} />
-			<InfoSummary {reserve} />
-		</div>
+	<section class="ds-container ds-2-col info" data-testid="reserve-info">
+		<InfoTable {reserve} />
+		<InfoSummary {reserve} />
 	</section>
 </main>
 
@@ -55,6 +53,10 @@
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	.info {
+		align-items: flex-start;
 	}
 
 	.chart-header {
@@ -77,14 +79,5 @@
 				font: var(--f-h6-medium);
 			}
 		}
-	}
-
-	pre {
-		padding: var(--space-lg);
-		background: var(--c-background-7);
-		border-radius: var(--radius-md);
-		color: var(--c-text-default-night);
-		font: var(--f-mono-md-regular);
-		letter-spacing: var(--f-mono-md-spacing, normal);
 	}
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { type Candle, candleToQuote, quoteFeed, ChartIQ, HudRow, HudMetric } from '$lib/chart';
-	import { type TimeBucket, timeBucketToPeriodicity } from '$lib/chart/timeBucketConverters';
+	import type { Candle, TimeBucket } from '$lib/chart';
+	import { candleToQuote, quoteFeed, timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	const rateTypes = ['supply_apr', 'stable_borrow_apr', 'variable_borrow_apr'] as const;

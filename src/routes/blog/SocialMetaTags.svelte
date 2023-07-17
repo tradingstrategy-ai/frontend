@@ -7,7 +7,7 @@
  -->
 <script lang="ts">
 	import { ghostConfig } from '$lib/config';
-	import { serializePost } from '$lib/helpers/googleMeta';
+	import { serializePost } from '$lib/helpers/google-meta';
 
 	export let post: any;
 	export let url: URL;
