@@ -27,9 +27,9 @@
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="MetaMask" slug="metamask" on:click={handleConnectMetaMask}>
+			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={handleConnectMetaMask}>
 				Connect to your<br />
-				MetaMask Wallet
+				browser-based wallet
 			</WalletTile>
 			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => wallet.connectWalletConnect(chainId)}>
 				Scan a QR code<br />
