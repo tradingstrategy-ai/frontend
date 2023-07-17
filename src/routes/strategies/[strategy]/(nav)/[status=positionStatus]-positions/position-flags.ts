@@ -105,12 +105,37 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
         }
 
         if(trade.failed_at) {
+
+            const msg = `
+                <h4>Failed trades</h4>                
+                
+                <p>This position contains failed trades.</p>
+                
+                <p>Trades may fail for various reasons</p>
+                <ul>
+                    <li>Blockchain transaction execution fails due to <a href="https://tradingstrategy.ai/glossary/gas-fee">gas fees spiking</a></li>
+                    <li>The market was moving too fast and trade failed due to <a href="https://tradingstrategy.ai/glossary/slippage">slippage tolerance exceeded</a> during the trade execution</li>
+                    <li>Blockchain nodes or blockchain network malfunctioning</li>
+                    <li>Internal technical issues</li>
+                </ul>                
+                
+                <p>
+                    Depending on the failure condition, the trade may or may not need manual intervention.
+                    Each failed trade has a corresponding repair trade marked with <i>R</i> flag.
+                </p>
+                
+                <p>See more</p>
+                <ul>
+                    <li><a href="${tradeLink}">View the last failed trade</li>
+                </ul>
+            `;
+
             addFlag( flags,{
                 flag: PositionStatusFlag.executionFailed,
                 level: "error",
                 abbreviation: "F",
                 name: "Failed trades",
-                helpTextHTML: "Here is ",
+                helpTextHTML: msg,
                 tradeLink,
                 tradeIds: [tradeId as unknown as number],
             });

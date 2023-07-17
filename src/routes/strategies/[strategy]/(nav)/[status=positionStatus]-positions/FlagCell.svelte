@@ -26,7 +26,7 @@
 </div>
 
 
-<style>
+<style lang="postcss">
     .flags {
         white-space: nowrap;
         display: flex;
@@ -45,5 +45,14 @@
     .tooltip-content :global(h4) {
         font: var(--f-ui-large-medium);
         letter-spacing: var(--f-ui-xxl-spacing, normal);
+    }
+
+    /* Style help texts generated in position-flags */
+    .tooltip-content :global(ul) {
+        margin: var(--space-ss) 0;
+    }
+
+    .tooltip-content :global(li) {
+        margin: var(--space-ss) 0;
     }
 </style>
