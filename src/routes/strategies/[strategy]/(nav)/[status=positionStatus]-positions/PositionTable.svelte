@@ -135,6 +135,20 @@
 	}
 
 	.position-table :global {
+		& :is(td, th) {
+			font-size: 14px !important;
+			height: auto !important;
+			padding: var(--space-ss) var(--space-ss);
+		}
+
+		& .sortable .icon svg {
+			top: var(--space-sl);
+		}
+
+		& .button {
+			height: 2.5rem;
+		}
+
 		& .ticker {
 			white-space: pre;
 		}
