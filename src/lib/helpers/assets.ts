@@ -7,7 +7,8 @@ const logoTypes = {
 	token: 'tokens',
 	exchange: 'exchanges',
 	dex: 'exchanges',
-	wallet: 'wallets'
+	wallet: 'wallets',
+	partners: 'partners'
 } as const;
 
 type LogoType = keyof typeof logoTypes;

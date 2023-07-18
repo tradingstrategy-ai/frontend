@@ -8,13 +8,9 @@
 	- Polygon
 -->
 <script lang="ts">
-	import { formatDaysAgo, formatDollar, formatDuration, formatPercent } from '$lib/helpers/formatters';
 	import { Button, DataBox, SummaryBox } from '$lib/components';
 	import type { OnChainData } from 'trade-executor-frontend/strategy/runtimeState';
-	import connectWizard from 'wizard/connect-wallet/store';
-	import { wallet } from '$lib/wallet';
-	import depositWizard from 'wizard/deposit/store';
-	import redeemWizard from 'wizard/redeem/store';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	export let onChainData: OnChainData = data.onChainData;
@@ -31,7 +27,7 @@
 
 		<div class="vault-info">
 			<DataBox size="sm" label="Vault type">
-				<p>Enzyme</p>
+				<img alt="Enzyme" src={getLogoUrl('partners', 'enzyme')} />
 			</DataBox>
 
 			<DataBox size="sm" label="Blockchain">
