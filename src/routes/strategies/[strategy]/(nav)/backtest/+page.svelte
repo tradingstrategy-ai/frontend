@@ -51,11 +51,17 @@ Page to display the strategy backtest results.
 				</ul>
 			</div>
 
-			<div class="actions">
+			<div class="actions" slot="cta">
 				<!-- TODO: <a download> does not seem to work here, but always causes the page load instead of downlaod -->
-				<Button label="Download notebook" download={notebookName} disabled={notebookUrl == null} href={notebookUrl} />
+				<Button
+					size="sm"
+					label="Download notebook"
+					download={notebookName}
+					disabled={notebookUrl == null}
+					href={notebookUrl}
+				/>
 				<!-- TODO: The webhook endpoint missing -->
-				<Button label="Download raw backtest data" disabled />
+				<Button size="sm" label="Download raw backtest data" disabled />
 			</div>
 		</SummaryBox>
 
@@ -84,5 +90,16 @@ Page to display the strategy backtest results.
 	.spinner-wrapper {
 		margin: var(--space-lg) 0;
 		text-align: center;
+	}
+
+	.actions {
+		display: flex;
+		gap: var(--space-md);
+
+		@media (--viewport-sm-down) {
+			flex-direction: column;
+			gap: var(--space-sm);
+			margin-bottom: var(--space-md);
+		}
 	}
 </style>
