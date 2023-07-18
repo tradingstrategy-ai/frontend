@@ -9,6 +9,6 @@ export async function load({ parent, fetch }) {
 	const { summary } = await parent();
 
 	return {
-    onChainData: summary.on_chain_data
-  };
+		onChainData: summary.on_chain_data
+	};
 }

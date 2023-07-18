@@ -12,7 +12,7 @@
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
 
-    console.log(data);
+	console.log(data);
 </script>
 
 <main class="strategy-layout ds-container">
@@ -35,7 +35,7 @@
 		<StrategyNav
 			strategyId={summary.id}
 			portfolio={data.state.portfolio}
-            onChainData={summary.on_chain_data}
+			onChainData={summary.on_chain_data}
 			currentPath={$page.url.pathname}
 			{backtestAvailable}
 		/>
