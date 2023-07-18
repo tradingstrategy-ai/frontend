@@ -1,15 +1,14 @@
 /**
- * Fetch the chart sources
+ * Fetch the vault data points
  */
 import { error } from '@sveltejs/kit';
 import { fetchChartData } from '../../chart';
 
-// Plotly.js cannot be loaded on the server-side
-export const ssr = false;
-
 export async function load({ parent, fetch }) {
 	// See layout.ts load()
-	const { strategy, summary } = await parent();
+	const { summary } = await parent();
 
-	return { strategy, summary };
+	return {
+    onChainData: summary.on_chain_data
+  };
 }
