@@ -13,7 +13,7 @@ Display one key metric in a strategy tile.
 -->
 <script lang="ts">
 	import { Badge, Timestamp } from '$lib/components';
-	import KeyMetricTooltip from './KeyMetricTooltip.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	export let metric: Record<string, any>;
 	export let name: string;
@@ -30,7 +30,7 @@ Display one key metric in a strategy tile.
 	</dt>
 	<dd>
 		{#if value !== undefined}
-			<KeyMetricTooltip>
+			<Tooltip>
 				<svelte:fragment slot="tooltip-trigger">
 					<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
 						<slot {value}>{formattedValue}</slot>
@@ -92,7 +92,7 @@ Display one key metric in a strategy tile.
 
 					<p class="disclaimer">Past performance is no guarantee of future results.</p>
 				</svelte:fragment>
-			</KeyMetricTooltip>
+			</Tooltip>
 		{/if}
 	</dd>
 </div>
@@ -120,7 +120,6 @@ Display one key metric in a strategy tile.
 		}
 
 		& .value {
-			]
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 			margin: 0;
