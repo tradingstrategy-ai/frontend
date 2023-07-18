@@ -14,6 +14,7 @@
 	} from '$lib/helpers/formatters';
 
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
+    import {getLogoUrl} from "$lib/helpers/assets";
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
@@ -77,7 +78,17 @@
 					{backtestLink}
 				/>
 			</dl>
+
+            <!-- TODO: make part of strategy configuration -->
+            <div class="logos">
+                <img alt="This strategy uses Enzyme vault" src={getLogoUrl('tokens', 'enzyme')} />
+                <img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('tokens', 'matic')} />
+                <img alt="This strategy trades ETH" src={getLogoUrl('tokens', 'eth')} />
+                <img alt="This strategy trades USDC" src={getLogoUrl('tokens', 'usdc')} />
+            </div>
 		</div>
+
+
 
 		{#if errorHtml}
 			<AlertList status="warning" size="xs">
@@ -133,4 +144,9 @@
 		-webkit-line-clamp: 3;
 		overflow: hidden;
 	}
+
+    .logos img {
+        width: 32px;
+        height: 32px;
+    }
 </style>
