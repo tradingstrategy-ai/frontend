@@ -8,10 +8,15 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
+    import type {OnChainData} from "trade-executor-frontend/strategy/runtimeState";
 
 	export let strategyId: string;
-	export let portfolio: any;
-	export let currentPath: string;
+
+    export let portfolio: any;
+
+    export let onChainData: OnChainData;
+
+    export let currentPath: string;
 	export let backtestAvailable: boolean;
 
 	let menuWrapper: HTMLElement;
@@ -42,6 +47,10 @@
 		{
 			label: `Performance`,
 			targetUrl: `${basePath}/performance`
+		},
+		{
+			label: `Vault information`,
+			targetUrl: `${basePath}/vault`
 		},
 		{
 			label: `TVL and netflow`,
@@ -78,6 +87,11 @@
 		// only show frozen positions if there are any
 		if (option.targetUrl.includes('frozen-positions')) {
 			return getCount(portfolio.frozen_positions) > 0;
+		}
+
+        // only show for Enzyme vault based strategies
+		if (option.targetUrl.includes('vault')) {
+			return onChainData.asset_management_mode == "enzyme";
 		}
 
 		// only show backtest if available

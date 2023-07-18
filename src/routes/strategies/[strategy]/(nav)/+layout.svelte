@@ -11,6 +11,8 @@
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
+
+    console.log(data);
 </script>
 
 <main class="strategy-layout ds-container">
@@ -33,6 +35,7 @@
 		<StrategyNav
 			strategyId={summary.id}
 			portfolio={data.state.portfolio}
+            onChainData={summary.on_chain_data}
 			currentPath={$page.url.pathname}
 			{backtestAvailable}
 		/>
