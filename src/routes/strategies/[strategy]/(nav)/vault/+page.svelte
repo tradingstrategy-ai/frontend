@@ -1,5 +1,11 @@
 <!--
 	Page to display Enzyme vault information.
+
+	Currently supports only
+
+	- Enzyme
+
+	- Polygon
 -->
 <script lang="ts">
   import {formatDaysAgo, formatDollar, formatDuration, formatPercent} from '$lib/helpers/formatters';
@@ -21,8 +27,8 @@
     <SummaryBox title="Vault information">
 
         <div class="actions">
-            <Button label="View on Enzyme"  />
-            <Button label="View on Polygonscan"  />
+            <Button label="View on Enzyme" href={`https://app.enzyme.finance/vault/${address}?network=polygon`} />
+            <Button label="View on Polygonscan" href={`https://polygonscan.com/address/${address}`} />
         </div>
 
         <div class="vault-info">
@@ -36,7 +42,7 @@
 
             <DataBox size="sm" label="Address">
                 <!-- TODO: add more chains -->
-                <a href={`https://polygoscan.com/address/${address}`}>
+                <a class="address-link" href={`https://polygonscan.com/address/${address}`}>
                     {address}
                 </a>
             </DataBox>
@@ -53,6 +59,10 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		gap: inherit;
+
+        & .address-link {
+            font: var(--f-ui-xs-medium);
+        }
 	}
 
 	.actions {
@@ -63,4 +73,6 @@
 			grid-template-columns: 1fr;
 		}
 	}
+
+
 </style>
