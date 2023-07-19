@@ -15,6 +15,7 @@
 
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
@@ -105,12 +106,32 @@
 
 			<!-- TODO: make part of strategy configuration -->
 			<div class="logos">
-				<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+				<Tooltip>
+					<span slot="tooltip-trigger">
+						<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+					</span>
 
-				<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('token', 'matic')} />
+					<span slot="tooltip-popup"> This strategy uses Enzyme vault </span>
+				</Tooltip>
+
+				<Tooltip>
+					<span slot="tooltip-trigger">
+						<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('token', 'matic')} />
+					</span>
+
+					<span slot="tooltip-popup"> This strategy runs on Polygon blockchain </span>
+				</Tooltip>
 
 				{#each tokenLogos as logo}
-					<img alt={logo.tooltip} src={getLogoUrl('token', logo.token)} />
+					<Tooltip>
+						<span slot="tooltip-trigger">
+							<img class="token-logo" alt={logo.tooltip} src={getLogoUrl('token', logo.token)} />
+						</span>
+
+						<span slot="tooltip-popup">
+							{logo.tooltip}
+						</span>
+					</Tooltip>
 				{/each}
 			</div>
 		</div>
@@ -178,6 +199,10 @@
 			height: 32px;
 			display: inline-block;
 			margin-right: 5px;
+		}
+
+		& .tooltip-content {
+			display: inline-block;
 		}
 	}
 </style>
