@@ -105,10 +105,10 @@
 
 			<!-- TODO: make part of strategy configuration -->
 			<div class="logos">
-                <!--
-				<img alt="This strategy uses Enzyme vault" src={getLogoUrl('tokens', 'enzyme')} />
-				-->
-				<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('tokens', 'matic')} />
+
+				<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+
+				<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('token', 'matic')} />
 
                 {#each tokenLogos as logo}
                     <img alt={logo.tooltip} src={getLogoUrl("token", logo.token)} />
