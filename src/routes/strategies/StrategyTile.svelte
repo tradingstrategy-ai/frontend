@@ -22,9 +22,33 @@
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 
+    interface StrategyLogoConfig {
+      token: string;
+      tooltip: string;
+    }
+
+    // TODO: Now a temp placeholder here -
+    // in the future this will come from the configuration
+    function getTokenLogos(strategy): StrategyLogoConfig[] {
+        if(strategy.id.includes("multipair")) {
+          return [{token: "usdc", "tooltip": "This strategy trades USDC"}];
+        } else if(strategy.id.includes("matic")) {
+          return [
+              {token: "matic", "tooltip": "This strategy trades MATIC"},
+              {token: "usdc", "tooltip": "This strategy trades USDC"}
+          ];
+        } else {
+          return [
+              {token: "eth", "tooltip": "This strategy trades ETH"},
+              {token: "usdc", "tooltip": "This strategy trades USDC"}
+          ];
+        }
+    }
+
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 	$: backtestLink = `/strategies/${strategy.id}/backtest`;
+    $: tokenLogos = getTokenLogos(strategy);
 </script>
 
 <li class="strategy tile tile b">
@@ -81,10 +105,14 @@
 
 			<!-- TODO: make part of strategy configuration -->
 			<div class="logos">
+                <!--
 				<img alt="This strategy uses Enzyme vault" src={getLogoUrl('tokens', 'enzyme')} />
+				-->
 				<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('tokens', 'matic')} />
-				<img alt="This strategy trades ETH" src={getLogoUrl('tokens', 'eth')} />
-				<img alt="This strategy trades USDC" src={getLogoUrl('tokens', 'usdc')} />
+
+                {#each tokenLogos as logo}
+                    <img alt={logo.tooltip} src={getLogoUrl("token", logo.token)} />
+                {/each}
 			</div>
 		</div>
 
@@ -143,8 +171,15 @@
 		overflow: hidden;
 	}
 
-	.logos img {
-		width: 32px;
-		height: 32px;
-	}
+	.logos {
+
+        display: flex;
+
+        & img {
+            width: 32px;
+            height: 32px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    }
 </style>
