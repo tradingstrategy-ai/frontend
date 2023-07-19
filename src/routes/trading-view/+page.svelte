@@ -46,6 +46,18 @@
 			{/if}
 		</ContentCard>
 
+		<ContentCard
+			icon="lending-reserve"
+			title="Lending reserves"
+			ctaLabel="Browse reserves "
+			href="/trading-view/reservesnpm"
+		>
+			<p>Some desccription is needed here</p>
+			{#if impressiveNumbers}
+				<p>Currently indexing data from <strong>X lending reserves</strong></p>
+			{/if}
+		</ContentCard>
+
 		<ContentCard icon="search" title="Advanced search" ctaLabel="Search tokens" href="/search">
 			<p>
 				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
