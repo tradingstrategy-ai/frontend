@@ -46,6 +46,17 @@
 			{/if}
 		</ContentCard>
 
+		<ContentCard
+			icon="lending-reserve"
+			title="Lending reserves"
+			ctaLabel="Browse reserves "
+			href="/trading-view/lending-reserves"
+		>
+			<p>
+				View current and historical interest rate data for common Aave v3 lending reserves across multiple blockchains.
+			</p>
+		</ContentCard>
+
 		<ContentCard icon="search" title="Advanced search" ctaLabel="Search tokens" href="/search">
 			<p>
 				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
