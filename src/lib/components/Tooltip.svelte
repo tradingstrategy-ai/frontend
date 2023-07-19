@@ -2,7 +2,23 @@
 @component
 A tooltip component used with key metrics
 
-See:
+Example:
+
+    <Tooltip>
+        <span slot="tooltip-trigger">
+            a piece of text with underline
+        </span>
+
+        <div slot="tooltip-popup">
+            Hello there
+        </div>
+    </Tooltip>
+
+
+The `tooltip-trigger` underline etc. styling must
+be done in the parent compnoent because slots are used.
+
+For more information see:
 - https://codepen.io/GemmaCroad/pen/LYpbdom
 - https://stackoverflow.com/a/40628352/315168
 - https://svelte.dev/tutorial/named-slots
