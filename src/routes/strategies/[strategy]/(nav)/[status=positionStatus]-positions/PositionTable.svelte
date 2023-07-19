@@ -10,8 +10,8 @@
 	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
 	import FrozenStatus from './FrozenStatus.svelte';
-	import FlagCell from "./FlagCell.svelte";
-	import {getPositionFlags} from "./position-flags";
+	import FlagCell from './FlagCell.svelte';
+	import { getPositionFlags } from './position-flags';
 
 	export let positions: TradingPosition[];
 	export let status: string;
@@ -52,15 +52,15 @@
 	const tableColumns = table.createColumns([
 		table.column({
 			id: 'flags',
-			header: "",
+			header: '',
 			accessor: (item) => item,
-			cell: ({value}) => {
-				console.log("Value", value);
+			cell: ({ value }) => {
+				console.log('Value', value);
 				const position: TradingPosition = value;
 				const position_id = position.position_id;
 				return createRender(FlagCell, {
-					flags: getPositionFlags(value, `./${status}-positions/${position_id}`),
-				})
+					flags: getPositionFlags(value, `./${status}-positions/${position_id}`)
+				});
 			}
 			//cell: ({value}) => "xxx"
 		}),

@@ -1,58 +1,54 @@
 <script lang="ts">
-	import type {TradingPosition} from "trade-executor-frontend/state/interface";
-    import type {PositionFlagMap} from "./position-flags";
-    import Tooltip from "$lib/components/Tooltip.svelte";
+	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+	import type { PositionFlagMap } from './position-flags';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
-    // input as getPositionFlags(position)
-    export let flags: PositionFlagMap;
-
+	// input as getPositionFlags(position)
+	export let flags: PositionFlagMap;
 </script>
 
 <div class="flags">
-    {#each [...flags] as [key, flag], idx}
-        {#if idx > 0},{/if}
-        <Tooltip>
-            <span slot="tooltip-trigger">
-                <span class="flag">
-                    {flag.abbreviation}
-                </span>
-            </span>
+	{#each [...flags] as [key, flag], idx}
+		{#if idx > 0},{/if}
+		<Tooltip>
+			<span slot="tooltip-trigger">
+				<span class="flag">
+					{flag.abbreviation}
+				</span>
+			</span>
 
-            <div slot="tooltip-popup" class="tooltip-content">
-                {@html flag.helpTextHTML}
-            </div>
-        </Tooltip>
-    {/each}
+			<div slot="tooltip-popup" class="tooltip-content">
+				{@html flag.helpTextHTML}
+			</div>
+		</Tooltip>
+	{/each}
 </div>
 
-
 <style lang="postcss">
-    .flags {
-        white-space: nowrap;
-        display: flex;
-    }
+	.flags {
+		white-space: nowrap;
+		display: flex;
+		justify-content: center;
+	}
 
-    .flag {
-        border-bottom: 1px dotted hsla(var(--hsl-text));
+	.flag {
+		border-bottom: 1px dotted hsla(var(--hsl-text));
+		font-style: normal;
+		color: var(--c-text-light);
+	}
 
-        font: var(--f-ui-xsmall-light);
-        font-style: normal;
-        color: var(--c-text-light);
+	/* Style help texts generated in position-flags */
+	.tooltip-content :global(h4) {
+		font: var(--f-ui-large-medium);
+		letter-spacing: var(--f-ui-xxl-spacing, normal);
+	}
 
-    }
+	/* Style help texts generated in position-flags */
+	.tooltip-content :global(ul) {
+		margin: var(--space-ss) 0;
+	}
 
-    /* Style help texts generated in position-flags */
-    .tooltip-content :global(h4) {
-        font: var(--f-ui-large-medium);
-        letter-spacing: var(--f-ui-xxl-spacing, normal);
-    }
-
-    /* Style help texts generated in position-flags */
-    .tooltip-content :global(ul) {
-        margin: var(--space-ss) 0;
-    }
-
-    .tooltip-content :global(li) {
-        margin: var(--space-ss) 0;
-    }
+	.tooltip-content :global(li) {
+		margin: var(--space-ss) 0;
+	}
 </style>

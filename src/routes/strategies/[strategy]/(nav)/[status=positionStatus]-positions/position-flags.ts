@@ -1,15 +1,14 @@
 /**
  * Position status flag.
  */
-import type {TradingPosition} from "trade-executor-frontend/state/interface";
-
+import type { TradingPosition } from 'trade-executor-frontend/state/interface';
 
 export enum PositionStatusFlag {
-    stopLoss,
-    takeProfit,
-    executionFailed,
-    repair,
-    accountingCorrected,
+	stopLoss,
+	takeProfit,
+	executionFailed,
+	repair,
+	accountingCorrected
 }
 
 /**
@@ -24,32 +23,29 @@ export enum PositionStatusFlag {
  * - Stop loss hit
  */
 export interface PositionStatusFlagInformation {
-    flag: PositionStatusFlag;
-    level: "info" | "error";
-    abbreviation: string;
-    name: string;
-    helpTextHTML: string;
+	flag: PositionStatusFlag;
+	level: 'info' | 'error';
+	abbreviation: string;
+	name: string;
+	helpTextHTML: string;
 
-    // Link to the trade raising this flag
-    tradeLink: string;
+	// Link to the trade raising this flag
+	tradeLink: string;
 
-    // Trade ids this flag affects.
-    // A position can have multiple trades with the same flag.
-    // Any help text links point to the latest trade.
-    tradeIds: number[];
+	// Trade ids this flag affects.
+	// A position can have multiple trades with the same flag.
+	// Any help text links point to the latest trade.
+	tradeIds: number[];
 }
-
 
 export type PositionFlagMap = Map<PositionStatusFlag, PositionStatusFlagInformation>;
 
-
 function addFlag(flags: PositionFlagMap, f: PositionStatusFlagInformation) {
-    const existingFlag = flags.get(f.flag);
-    // include this trade in trade ids
-    f.tradeIds = existingFlag ? existingFlag.tradeIds.concat(f.tradeIds) : f.tradeIds;
-    flags.set(f.flag, f);
+	const existingFlag = flags.get(f.flag);
+	// include this trade in trade ids
+	f.tradeIds = existingFlag ? existingFlag.tradeIds.concat(f.tradeIds) : f.tradeIds;
+	flags.set(f.flag, f);
 }
-
 
 /**
  * Analyse a trading position.
@@ -69,17 +65,14 @@ function addFlag(flags: PositionFlagMap, f: PositionStatusFlagInformation) {
  *
  */
 export function getPositionFlags(position: TradingPosition, baseUrl: string): PositionFlagMap {
+	// https://stackoverflow.com/a/38040218/315168
+	const flags: PositionFlagMap = new Map();
 
-    // https://stackoverflow.com/a/38040218/315168
-    const flags: PositionFlagMap = new Map();
+	for (const [tradeId, trade] of Object.entries(position.trades)) {
+		const tradeLink = `${baseUrl}/trade-${tradeId}`;
 
-    for(const [tradeId, trade] of Object.entries(position.trades)) {
-
-        const tradeLink = `${baseUrl}/trade-${tradeId}`;
-
-        if(trade.trade_type == "stop_loss") {
-
-            const msg = `
+		if (trade.trade_type == 'stop_loss') {
+			const msg = `
                 <h4>Stop loss triggered</h4>                
                 
                 <p>This position was closed with a stop loss</p>
@@ -93,20 +86,19 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
                 </ul>
             `;
 
-            addFlag(flags,{
-                flag: PositionStatusFlag.stopLoss,
-                level: "info",
-                abbreviation: "SL",
-                name: "Stop loss",
-                helpTextHTML: msg,
-                tradeLink,
-                tradeIds: [tradeId as unknown as number],
-            });
-        }
+			addFlag(flags, {
+				flag: PositionStatusFlag.stopLoss,
+				level: 'info',
+				abbreviation: 'SL',
+				name: 'Stop loss',
+				helpTextHTML: msg,
+				tradeLink,
+				tradeIds: [tradeId as unknown as number]
+			});
+		}
 
-        if(trade.failed_at) {
-
-            const msg = `
+		if (trade.failed_at) {
+			const msg = `
                 <h4>Failed trades</h4>                
                 
                 <p>This position contains failed trades.</p>
@@ -130,19 +122,17 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
                 </ul>
             `;
 
-            addFlag( flags,{
-                flag: PositionStatusFlag.executionFailed,
-                level: "error",
-                abbreviation: "F",
-                name: "Failed trades",
-                helpTextHTML: msg,
-                tradeLink,
-                tradeIds: [tradeId as unknown as number],
-            });
-        }
-    }
+			addFlag(flags, {
+				flag: PositionStatusFlag.executionFailed,
+				level: 'error',
+				abbreviation: 'F',
+				name: 'Failed trades',
+				helpTextHTML: msg,
+				tradeLink,
+				tradeIds: [tradeId as unknown as number]
+			});
+		}
+	}
 
-    return flags;
+	return flags;
 }
-
-
