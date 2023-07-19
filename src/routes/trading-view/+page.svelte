@@ -50,12 +50,11 @@
 			icon="lending-reserve"
 			title="Lending reserves"
 			ctaLabel="Browse reserves "
-			href="/trading-view/reservesnpm"
+			href="/trading-view/lending-reserves"
 		>
-			<p>Some desccription is needed here</p>
-			{#if impressiveNumbers}
-				<p>Currently indexing data from <strong>X lending reserves</strong></p>
-			{/if}
+			<p>
+				View current and historical interest rate data for common Aave v3 lending reserves across multiple blockchains.
+			</p>
 		</ContentCard>
 
 		<ContentCard icon="search" title="Advanced search" ctaLabel="Search tokens" href="/search">
