@@ -9,7 +9,6 @@
 	export let data;
 	$: ({ state, summary, profitabilityChart } = data);
 
-	$: portfolio = state?.stats?.portfolio;
 	// Old path - read stats from the state
 	$: oldLatestStats = getPortfolioLatestStats(state);
 	// New path - use server precalculated stats

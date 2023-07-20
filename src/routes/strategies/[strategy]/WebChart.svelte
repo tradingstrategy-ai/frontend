@@ -41,7 +41,7 @@ For line chart options see
 		// Convert UNIX timestamp index to Dates
 		const x = data.map(([ts]) => fromUnixTime(ts));
 		// Convert values based on yType
-		const y = data.map(([_, value]) => (yType === 'percent' ? value * 1000 : value));
+		const y = data.map(([_, value]) => (yType === 'percent' ? value * 100 : value));
 
 		// Get theme colors and other styles from computed CSS style
 		const style = getComputedStyle(node);
