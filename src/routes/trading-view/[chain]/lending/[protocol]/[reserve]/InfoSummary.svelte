@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
-	import { SECONDS_PER_DAY, lendingReserveUrl, compoundInterest } from '$lib/helpers/lending-reserve';
+	import { SECONDS_PER_DAY, compoundInterest } from '$lib/helpers/lending-reserve';
 
 	export let reserve: any;
 
-	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 	$: details = reserve.additional_details;
 
 	$: examplePrincipal = 5000;
@@ -32,12 +31,6 @@
 		<strong>${examplePrincipal.toLocaleString('en')} USD</strong> worth of
 		<strong>{reserve.asset_symbol}</strong> is approximately
 		<strong>{formatDollar(exampleInterest)} / 24h</strong>.
-	</p>
-
-	<p>
-		Additional information is available on the
-		<a href={reserveUrl} target="_blank" rel="noreferrer">{reserve.protocol_name} – {reserve.asset_name}</a>
-		lending reserve page.
 	</p>
 </div>
 

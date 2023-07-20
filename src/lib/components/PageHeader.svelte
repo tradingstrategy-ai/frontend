@@ -9,9 +9,8 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 ```
 -->
 <script lang="ts">
-	export let title: string = '';
-	export let subtitle: string = '';
-	export let description: string = '';
+	export let title = '';
+	export let subtitle = '';
 </script>
 
 <header class="page-header ds-container">
@@ -23,42 +22,32 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 			</small>
 		{/if}
 	</h1>
-	{#if $$slots.default || description}
-		<p>
-			<slot>{description}</slot>
-		</p>
-	{/if}
+	<slot name="cta" />
 </header>
 
 <style lang="postcss">
 	.page-header {
-		gap: var(--page-header-gap, var(--space-sl));
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-ms);
+		align-items: center;
+
+		@media (--viewport-md-up) {
+			grid-auto-flow: column;
+		}
 
 		& h1 {
 			font: var(--f-h1-medium);
 		}
 
 		& .multiline {
+			display: grid;
 			font-weight: 700;
 		}
 
 		& small {
-			display: block;
 			font: var(--f-h4-medium);
 			color: var(--c-text-2-v1);
-		}
-
-		& p {
-			font: var(--f-h3-roman);
-
-			@media (--viewport-md-down) {
-				font: var(--f-h4-roman);
-			}
-
-			& :global a {
-				text-decoration: underline;
-				font-weight: 700;
-			}
 		}
 	}
 </style>

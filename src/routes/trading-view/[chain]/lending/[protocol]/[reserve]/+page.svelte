@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { PageHeader, Section, SegmentedControl } from '$lib/components';
+	import { Button, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
+	import { lendingReserveUrl } from '$lib/helpers/lending-reserve';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -14,6 +15,8 @@
 		[reserve.protocol_slug]: reserve.protocol_name,
 		[reserve.reserve_slug]: reserve.asset_symbol
 	};
+
+	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 
 	let timeBucket: TimeBucket = '1d';
 </script>
@@ -29,7 +32,15 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}" />
+	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}">
+		<svelte:fragment slot="cta">
+			{#if reserveUrl}
+				<Button href={reserveUrl} target="_blank" rel="noreferrer">
+					View on {new URL(reserveUrl).host}
+				</Button>
+			{/if}
+		</svelte:fragment>
+	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="reserve-info">
 		<InfoTable {reserve} />
