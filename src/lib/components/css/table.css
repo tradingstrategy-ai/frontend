@@ -6,7 +6,7 @@
 table:not(.table) {
 	--border-spacing: var(--space-sl);
 	--cell-padding: var(--space-sl) var(--space-ml);
-	--table-transition: all var(--time-xs) ease-out;
+	--table-transition: all var(--time-xs) ease-out, color 0ms;
 	--table-font: var(--f-ui-md-medium);
 	--table-letter-spacing: var(--f-ui-md-spacing, normal);
 	border-collapse: separate;

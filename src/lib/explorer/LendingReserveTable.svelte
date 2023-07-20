@@ -29,30 +29,25 @@
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
-			header: 'Asset name',
-			cell: ({ value }) => formatValue(value)
+			header: 'Asset name'
 		}),
 		table.column({
 			accessor: 'asset_symbol',
-			header: 'Symbol',
-			cell: ({ value }) => formatValue(value)
+			header: 'Symbol'
 		}),
 		table.column({
 			accessor: 'protocol_name',
-			header: 'Protocol',
-			plugins: { sort: { disable: true } }
+			header: 'Protocol'
 		}),
 		table.column({
 			accessor: 'chain_name',
-			header: 'Blockchain',
-			plugins: { sort: { disable: true } }
+			header: 'Blockchain'
 		}),
 		table.column({
-			id: 'variable_borrow_apr',
+			id: 'variable_borrow_apr_latest',
 			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
 			header: 'Borrow APR',
-			cell: ({ value }) => formatInterestRate(value),
-			plugins: { sort: { disable: true } }
+			cell: ({ value }) => formatInterestRate(value)
 		}),
 		table.column({
 			id: 'cta',
@@ -102,7 +97,7 @@
 				width: 20%;
 			}
 
-			& .variable_borrow_apr {
+			& .variable_borrow_apr_latest {
 				width: 15%;
 				text-align: right;
 			}
