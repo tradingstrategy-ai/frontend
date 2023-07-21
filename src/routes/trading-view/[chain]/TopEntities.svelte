@@ -8,6 +8,8 @@
 	export let chain: Chain;
 	export let data: Promise<Record<string, any>[]>;
 	export let tableComponent: ComponentType;
+
+	$: label = type.replaceAll('-', ' ');
 </script>
 
 <SummaryBox {title} ctaPosition="bottom">
@@ -17,12 +19,12 @@
 		<svelte:component this={tableComponent} {rows} />
 	{:catch}
 		<AlertList>
-			<AlertItem>An error occurred loading {type}. Try reloading the page.</AlertItem>
+			<AlertItem>An error occurred loading {label}. Try reloading the page.</AlertItem>
 		</AlertList>
 	{/await}
 
 	<Button slot="cta" href="/trading-view/{chain.chain_slug}/{type}">
 		View all {chain.chain_name}
-		{type}
+		{label}
 	</Button>
 </SummaryBox>

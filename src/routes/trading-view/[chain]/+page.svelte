@@ -7,6 +7,7 @@
 	import TopEntities from './TopEntities.svelte';
 	import TopExchanges from './TopExchanges.svelte';
 	import TopTokens from './TopTokens.svelte';
+	import TopPairs from './TopPairs.svelte';
 
 	export let data;
 	const { chain, streamed } = data;
@@ -62,6 +63,14 @@
 				{chain}
 				data={streamed.exchanges}
 				tableComponent={TopExchanges}
+			/>
+
+			<TopEntities
+				type="trading-pairs"
+				title="Highest volume pairs"
+				{chain}
+				data={streamed.pairs}
+				tableComponent={TopPairs}
 			/>
 
 			<TopEntities
