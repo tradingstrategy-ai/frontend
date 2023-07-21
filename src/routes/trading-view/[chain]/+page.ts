@@ -1,6 +1,7 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { fetchTokens } from '$lib/explorer/token-client.js';
 import { fetchPairs } from '$lib/explorer/pair-client.js';
+import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client.js';
 
 export async function load({ params, fetch }) {
 	const chain_slug = params.chain;
@@ -9,7 +10,8 @@ export async function load({ params, fetch }) {
 		streamed: {
 			exchanges: fetchTopExchanges(fetch, chain_slug),
 			tokens: fetchTopTokens(fetch, chain_slug),
-			pairs: fetchTopPairs(fetch, chain_slug)
+			pairs: fetchTopPairs(fetch, chain_slug),
+			reserves: fetchTopReserves(fetch, chain_slug)
 		}
 	};
 }
@@ -37,6 +39,15 @@ async function fetchTopTokens(fetch: Fetch, chain_slug: string) {
 async function fetchTopPairs(fetch: Fetch, chain_slugs: string) {
 	const data = await fetchPairs(fetch, {
 		chain_slugs,
+		page_size: 5
+	});
+	return data?.rows ?? [];
+}
+
+async function fetchTopReserves(fetch: Fetch, chain_slug: string) {
+	const data = await fetchLendingReserves(fetch, {
+		chain_slug,
+		sort: 'reserve_slug',
 		page_size: 5
 	});
 	return data?.rows ?? [];

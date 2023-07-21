@@ -6,8 +6,9 @@
 	import { Grid } from '$lib/components';
 	import TopEntities from './TopEntities.svelte';
 	import TopExchanges from './TopExchanges.svelte';
-	import TopTokens from './TopTokens.svelte';
 	import TopPairs from './TopPairs.svelte';
+	import TopTokens from './TopTokens.svelte';
+	import TopReserves from './TopReserves.svelte';
 
 	export let data;
 	const { chain, streamed } = data;
@@ -79,6 +80,14 @@
 				{chain}
 				data={streamed.tokens}
 				tableComponent={TopTokens}
+			/>
+
+			<TopEntities
+				type="lending-reserves"
+				title="Lending reserves"
+				{chain}
+				data={streamed.reserves}
+				tableComponent={TopReserves}
 			/>
 		</Grid>
 	</section>

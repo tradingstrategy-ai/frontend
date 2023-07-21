@@ -5,7 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
-	import { formatValue, formatInterestRate } from '$lib/helpers/formatters';
+	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
