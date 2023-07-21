@@ -32,15 +32,17 @@ describe('Timestamp component', () => {
 	});
 
 	test('should render iso date with time', () => {
-		const { getByText } = render(Timestamp, { date, format: 'iso', withTime: true });
-		getByText('2023-01-01');
-		getByText('12:00');
+		const { container } = render(Timestamp, { date, format: 'iso', withTime: true });
+		const timeEl = container.querySelector('time');
+		// getByText does not search across inline HTML tags; use toHaveTextContent instead
+		expect(timeEl).toHaveTextContent('2023-01-01 12:00');
 	});
 
 	test('should render iso date with time including seconds', () => {
-		const { getByText } = render(Timestamp, { date, format: 'iso', withSeconds: true });
-		getByText('2023-01-01');
-		getByText('12:00:00');
+		const { container } = render(Timestamp, { date, format: 'iso', withSeconds: true });
+		const timeEl = container.querySelector('time');
+		// getByText does not search across inline HTML tags; use toHaveTextContent instead
+		expect(timeEl).toHaveTextContent('2023-01-01 12:00:00');
 	});
 
 	test('should render relative date string', () => {

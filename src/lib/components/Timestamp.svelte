@@ -67,7 +67,7 @@ by JS Date) or a Date object.
 		const isoStr = d.toISOString();
 		let dateStr = `<span>${isoStr.slice(0, 10)}</span>`;
 		if (withTime || withSeconds) {
-			dateStr += `<span>${isoStr.slice(11, withSeconds ? 19 : 16)}</span>`;
+			dateStr += ` <span>${isoStr.slice(11, withSeconds ? 19 : 16)}</span>`;
 		}
 		return dateStr;
 	}
