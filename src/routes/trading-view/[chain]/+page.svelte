@@ -5,6 +5,7 @@
 	import BlockInfoTile from './BlockInfoTile.svelte';
 	import { AlertItem, AlertList, Button, Grid, SummaryBox } from '$lib/components';
 	import TopExchanges from './TopExchanges.svelte';
+	import TopTokens from './TopTokens.svelte';
 
 	export let data;
 	const { chain } = data;
@@ -65,8 +66,24 @@
 					</AlertList>
 				{/await}
 
-				<Button slot="cta" href="/trading-view/${chain.chain_slug}/exchanges">
+				<Button slot="cta" href="/trading-view/{chain.chain_slug}/exchanges">
 					View all {chain.chain_name} DEXes
+				</Button>
+			</SummaryBox>
+
+			<SummaryBox title="Highest liquidity tokens" ctaPosition="bottom">
+				{#await data.streamed.tokens}
+					<TopTokens loading />
+				{:then rows}
+					<TopTokens {rows} />
+				{:catch}
+					<AlertList>
+						<AlertItem>An error occurred loading tokens. Try reloading the page.</AlertItem>
+					</AlertList>
+				{/await}
+
+				<Button slot="cta" href="/trading-view/{chain.chain_slug}/tokens">
+					View all {chain.chain_name} tokens
 				</Button>
 			</SummaryBox>
 		</Grid>
