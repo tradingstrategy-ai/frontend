@@ -1,12 +1,15 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-// https://tradingstrategy.ai/api/explorer/#/default/web_chain_details
 export async function load({ params, fetch }) {
-	const chain_slug = params.chain;
+	const resp = fetchPublicApi(fetch, 'exchanges', {
+		chain_slug: params.chain,
+		sort: 'usd_volume_30d',
+		direction: 'desc',
+		filter_zero_volume: 'true'
+	});
 
-	const exchanges = fetchPublicApi(fetch, 'exchanges', { chain_slug, filter_zero_volume: 'true' }).then(
-		(resp) => resp.exchanges // flatten the response
-	);
+	// return the top 5
+	const exchanges = resp.then((data) => data.exchanges.slice(0, 5));
 
 	return { streamed: { exchanges } };
 }

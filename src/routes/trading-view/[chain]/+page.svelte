@@ -1,54 +1,13 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { getPairsClient } from '$lib/explorer/pair-client';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { AlertItem, AlertList, Tabs, type DataTable } from '$lib/components';
-	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
-	import PairsTable from '$lib/explorer/PairsTable.svelte';
-	import { formatAmount } from '$lib/helpers/formatters';
+	import { AlertItem, AlertList, Button, Grid, SummaryBox } from '$lib/components';
+	import TopExchanges from './TopExchanges.svelte';
 
 	export let data;
 	const { chain } = data;
-
-	const pairsClient = getPairsClient(fetch);
-
-	let activeTab: string;
-
-	let tableOptions: {
-		page: number;
-		sort: string;
-		direction: 'asc' | 'desc';
-	};
-
-	$: updateTableParams($page.url);
-
-	function updateTableParams({ searchParams }: URL) {
-		activeTab = searchParams.get('tab') || 'exchanges';
-		tableOptions = {
-			page: Number(searchParams.get('page')) || 0,
-			sort: searchParams.get('sort') || 'volume_30d',
-			direction: searchParams.get('direction') === 'asc' ? 'asc' : 'desc'
-		};
-
-		if (activeTab === 'pairs') {
-			pairsClient.update({ ...tableOptions, chain_slugs: chain.chain_slug });
-		}
-	}
-
-	function handleTabChange({ detail }: ComponentEvents<Tabs>['change']) {
-		goto('?' + new URLSearchParams({ tab: detail.value }), { noScroll: true });
-	}
-
-	async function handleDatatableChange({ detail }: ComponentEvents<DataTable>['change']) {
-		const params = new URLSearchParams({ tab: activeTab, ...detail.params });
-		await goto(`?${params}`, { noScroll: true });
-		detail.scrollToTop();
-	}
 </script>
 
 <svelte:head>
@@ -92,44 +51,25 @@
 		/>
 	</section>
 
-	<section class="ds-container explorer-wrapper">
-		<Tabs items={{ exchanges: 'Exchanges', pairs: 'Trading Pairs' }} selected={activeTab} on:change={handleTabChange}>
-			{#if activeTab === 'exchanges'}
-				{@const hiddenColumns = ['chain_name']}
-
-				<h2 id="exchanges">
-					Showing exchanges on {chain.chain_name} with trading activity in last 30 days.
-				</h2>
-
+	<section class="ds-container trading-entities">
+		<h2>{chain.chain_name} trading entities</h2>
+		<Grid cols={2} gap="lg">
+			<SummaryBox title="Highest volume exchanges" ctaPosition="bottom">
 				{#await data.streamed.exchanges}
-					<ExchangesTable loading {hiddenColumns} />
+					<TopExchanges loading />
 				{:then rows}
-					<ExchangesTable {rows} {...tableOptions} {hiddenColumns} on:change={handleDatatableChange} />
+					<TopExchanges {rows} />
 				{:catch}
 					<AlertList>
-						<AlertItem>
-							An error occurred loading exchanges. Check the URL parameters for errors and try reloading the page.
-						</AlertItem>
+						<AlertItem>An error occurred loading exchanges. Try reloading the page.</AlertItem>
 					</AlertList>
 				{/await}
-			{:else if activeTab === 'pairs'}
-				<h2 id="pairs">
-					Showing {formatAmount($pairsClient.totalRowCount)} indexed trading pairs on {chain.chain_name}.
-				</h2>
 
-				{#if !$pairsClient.error}
-					<div class="pairs-table">
-						<PairsTable {...$pairsClient} on:change={handleDatatableChange} />
-					</div>
-				{:else}
-					<AlertList>
-						<AlertItem>
-							An error occurred loading trading pairs. Check the URL parameters for errors and try reloading the page.
-						</AlertItem>
-					</AlertList>
-				{/if}
-			{/if}
-		</Tabs>
+				<Button slot="cta" href="/trading-view/${chain.chain_slug}/exchanges">
+					View all {chain.chain_name} DEXes
+				</Button>
+			</SummaryBox>
+		</Grid>
 	</section>
 </main>
 
@@ -167,17 +107,11 @@
 		}
 	}
 
-	.explorer-wrapper {
-		margin-top: var(--space-ll);
-
+	.trading-entities {
 		& h2 {
-			font: var(--f-ui-lg-roman);
 			margin-block: var(--space-lg);
+			font: var(--f-heading-lg-medium);
+			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}
-	}
-
-	.pairs-table {
-		display: grid;
-		overflow: auto;
 	}
 </style>
