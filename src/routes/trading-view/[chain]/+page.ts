@@ -29,5 +29,5 @@ async function fetchTopTokens(fetch: Fetch, chain_slug: string) {
 		sort: 'liquidity_latest',
 		page_size: 20
 	});
-	return data?.rows.slice(0, 5);
+	return data?.rows.slice(0, 5) ?? [];
 }

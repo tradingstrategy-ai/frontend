@@ -3,12 +3,13 @@
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { AlertItem, AlertList, Button, Grid, SummaryBox } from '$lib/components';
+	import { Grid } from '$lib/components';
+	import TopEntities from './TopEntities.svelte';
 	import TopExchanges from './TopExchanges.svelte';
 	import TopTokens from './TopTokens.svelte';
 
 	export let data;
-	const { chain } = data;
+	const { chain, streamed } = data;
 </script>
 
 <svelte:head>
@@ -55,37 +56,21 @@
 	<section class="ds-container trading-entities">
 		<h2>{chain.chain_name} trading entities</h2>
 		<Grid cols={2} gap="lg">
-			<SummaryBox title="Highest volume exchanges" ctaPosition="bottom">
-				{#await data.streamed.exchanges}
-					<TopExchanges loading />
-				{:then rows}
-					<TopExchanges {rows} />
-				{:catch}
-					<AlertList>
-						<AlertItem>An error occurred loading exchanges. Try reloading the page.</AlertItem>
-					</AlertList>
-				{/await}
+			<TopEntities
+				type="exchanges"
+				title="Highest volume exchanges"
+				{chain}
+				data={streamed.exchanges}
+				tableComponent={TopExchanges}
+			/>
 
-				<Button slot="cta" href="/trading-view/{chain.chain_slug}/exchanges">
-					View all {chain.chain_name} DEXes
-				</Button>
-			</SummaryBox>
-
-			<SummaryBox title="Highest liquidity tokens" ctaPosition="bottom">
-				{#await data.streamed.tokens}
-					<TopTokens loading />
-				{:then rows}
-					<TopTokens {rows} />
-				{:catch}
-					<AlertList>
-						<AlertItem>An error occurred loading tokens. Try reloading the page.</AlertItem>
-					</AlertList>
-				{/await}
-
-				<Button slot="cta" href="/trading-view/{chain.chain_slug}/tokens">
-					View all {chain.chain_name} tokens
-				</Button>
-			</SummaryBox>
+			<TopEntities
+				type="tokens"
+				title="Highest liquidity tokens"
+				{chain}
+				data={streamed.tokens}
+				tableComponent={TopTokens}
+			/>
 		</Grid>
 	</section>
 </main>
