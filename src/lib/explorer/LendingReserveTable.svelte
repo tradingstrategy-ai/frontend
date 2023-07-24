@@ -2,7 +2,7 @@
 	import type { LendingReserveIndexResponse } from './lending-reserve-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
 	import { formatInterestRate } from '$lib/helpers/formatters';
@@ -13,6 +13,7 @@
 	export let page = 0;
 	export let sort = 'asset_name';
 	export let direction: 'asc' | 'desc' = 'asc';
+	export let hiddenColumns: string[] = [];
 
 	const tableRows: Writable<LendingReserveIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
@@ -23,7 +24,8 @@
 			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination({ serverSide: true }),
-		clickable: addClickableRows({ id: 'cta' })
+		clickable: addClickableRows({ id: 'cta' }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
 	const columns = table.createColumns([
@@ -61,10 +63,12 @@
 	const tableViewModel = table.createViewModel(columns);
 	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
+	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
 	$: $pageIndex = page;
 	$: $serverItemCount = totalRowCount;
 	$: $sortKeys = [{ id: sort, order: direction }];
+	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="reserve-table" data-testid="reserve-table">
@@ -79,26 +83,26 @@
 			}
 
 			& .asset_name {
-				width: 30%;
+				width: 40%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
 			& .asset_symbol {
-				width: 15%;
-			}
-
-			& .protocol_name {
-				width: 15%;
-			}
-
-			& .chain_name {
 				width: 20%;
 			}
 
+			& .protocol_name {
+				width: 20%;
+			}
+
+			& .chain_name {
+				width: 25%;
+			}
+
 			& .variable_borrow_apr_latest {
-				width: 15%;
+				width: 20%;
 				text-align: right;
 			}
 

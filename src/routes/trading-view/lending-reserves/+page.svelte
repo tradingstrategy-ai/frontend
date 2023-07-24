@@ -23,7 +23,7 @@
 
 <svelte:head>
 	<title>Lending Reserves</title>
-	<meta name="description" content="Top deccentralised lending reserves" />
+	<meta name="description" content="Top decentralised lending reserves" />
 </svelte:head>
 
 <Breadcrumbs labels={{ 'lending-reserves': 'All lending reserves' }} />

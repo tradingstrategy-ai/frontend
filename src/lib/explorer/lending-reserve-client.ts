@@ -33,7 +33,18 @@ export async function fetchLendingReserves(fetch: Fetch, params: LendingReserveI
 		if (value) apiParams[key] = String(value);
 	}
 
-	const data = await fetchPublicApi(fetch, 'lending-reserves', apiParams, true);
+	let data;
+	try {
+		data = await fetchPublicApi(fetch, 'lending-reserves', apiParams, true);
+	} catch (e) {
+		// see: https://github.com/tradingstrategy-ai/backend/issues/188
+		/* @ts-ignore */
+		if (e?.status === 404) {
+			data = { results: [], total: 0 };
+		} else {
+			throw e;
+		}
+	}
 
 	if (!data) return;
 
