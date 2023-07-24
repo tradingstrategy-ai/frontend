@@ -14,7 +14,7 @@
 
 <SummaryBox {title} ctaPosition="bottom">
 	{#await data}
-		<svelte:component this={tableComponent} loading />
+		<svelte:component this={tableComponent} loading rows={Array(5).fill({})} />
 	{:then rows}
 		<svelte:component this={tableComponent} {rows} />
 	{:catch}
