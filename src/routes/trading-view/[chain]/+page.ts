@@ -49,7 +49,6 @@ async function fetchTopPairs(fetch: Fetch, chain_slugs: string) {
 async function fetchTopReserves(fetch: Fetch, chain_slug: string) {
 	const data = await fetchLendingReserves(fetch, {
 		chain_slug,
-		sort: 'reserve_slug',
 		page_size: 5
 	});
 	return data?.rows ?? [];

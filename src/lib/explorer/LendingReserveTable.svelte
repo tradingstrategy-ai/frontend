@@ -11,7 +11,7 @@
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
 	export let totalRowCount = 0;
 	export let page = 0;
-	export let sort = 'asset_name';
+	export let sort = 'variable_borrow_apr_latest';
 	export let direction: 'asc' | 'desc' = 'asc';
 	export let hiddenColumns: string[] = [];
 
@@ -44,6 +44,12 @@
 		table.column({
 			accessor: 'chain_name',
 			header: 'Blockchain'
+		}),
+		table.column({
+			id: 'supply_apr_latest',
+			accessor: (row) => row?.additional_details?.supply_apr_latest,
+			header: 'Supply APR',
+			cell: ({ value }) => formatInterestRate(value)
 		}),
 		table.column({
 			id: 'variable_borrow_apr_latest',
@@ -101,7 +107,7 @@
 				width: 25%;
 			}
 
-			& .variable_borrow_apr_latest {
+			& :is(.supply_apr_latest, .variable_borrow_apr_latest) {
 				width: 20%;
 				text-align: right;
 			}

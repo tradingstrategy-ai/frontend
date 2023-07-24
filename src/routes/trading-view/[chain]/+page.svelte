@@ -89,7 +89,7 @@
 			<TopEntities
 				type="lending-reserves"
 				label="reserves"
-				title="Lending reserves"
+				title="Lowest APR lending reserves"
 				{chain}
 				data={streamed.reserves}
 				tableComponent={TopReserves}

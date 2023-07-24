@@ -19,7 +19,7 @@ export type LendingReserveIndexResponse = {
 const defaultParams: LendingReserveIndexParams = {
 	page_size: 10,
 	page: 0,
-	sort: 'asset_name',
+	sort: 'variable_borrow_apr_latest',
 	direction: 'asc'
 };
 
