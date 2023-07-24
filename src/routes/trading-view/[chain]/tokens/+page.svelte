@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-	<title>Tokens on {chain.chain_name}</title>
+	<title>{chain.chain_name} Tokens | Trading Strategy</title>
 	<meta name="description" content="Top tokens on {chain.chain_name} blockchain" />
 </svelte:head>
 

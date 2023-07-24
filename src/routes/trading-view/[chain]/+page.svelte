@@ -43,7 +43,7 @@
 			title="Tracked trading pairs"
 			description="Total trading pairs on Trading Strategy for this blockchain."
 			buttonLabel="See trading pairs"
-			href="?tab=pairs#pairs"
+			href="{chain.chain_slug}/trading-pairs"
 		/>
 
 		<SummaryDataTile
@@ -70,7 +70,7 @@
 			<TopEntities
 				type="trading-pairs"
 				label="pairs"
-				title="Highest volume pairs"
+				title="Highest volume trading pairs"
 				{chain}
 				data={streamed.pairs}
 				tableComponent={TopPairs}

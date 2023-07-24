@@ -1,5 +1,5 @@
 <!--
-	Render listing of all available Pairs
+	Render listing of all available Pairs for specific chain
 -->
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
@@ -7,9 +7,10 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
+	import { formatAmount } from '$lib/helpers/formatters.js';
 
 	export let data;
-	$: ({ pairs, options } = data);
+	$: ({ chain, pairs, options } = data);
 
 	let loading = false;
 
@@ -22,15 +23,20 @@
 </script>
 
 <svelte:head>
-	<title>Trading Pairs</title>
-	<meta name="description" content="Top decentralised Pairs" />
+	<title>{chain.chain_name} Trading Pairs | Trading Strategy</title>
+	<meta name="description" content="Top trading pairs on {chain.chain_name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ 'trading-pairs': 'All trading pairs' }} />
+<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name, 'trading-pairs': 'Trading pairs' }} />
 
 <main class="pair-index-page">
 	<Section tag="header">
-		<HeroBanner title="Trading pairs" subtitle="Browse trading pairs across all decentralised exchanges below" />
+		<HeroBanner contentFullWidth title="{chain.chain_name} trading pairs">
+			<svelte:fragment slot="subtitle">
+				Browse {formatAmount(pairs.totalRowCount)} trading pairs on
+				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
+			</svelte:fragment>
+		</HeroBanner>
 	</Section>
 
 	<Section padding="sm">
