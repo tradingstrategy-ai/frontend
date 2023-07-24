@@ -35,7 +35,7 @@
 			title="Exchanges"
 			description="Decentralised exchanges with market data available on Trading Strategy"
 			buttonLabel="See exchanges"
-			href="?tab=exchanges#exchanges"
+			href="{chain.chain_slug}/exchanges"
 		/>
 
 		<SummaryDataTile
