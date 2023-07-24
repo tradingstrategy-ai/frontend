@@ -8,14 +8,8 @@
 	const getHref = (row: Record<string, any>) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`;
 </script>
 
-<TradingEntitiesTable {loading} {rows} {getHref} let:row>
-	<td width="40%">
-		{row.pair_symbol ?? '---'}
-	</td>
-	<td width="35%">
-		{row.exchange_name ?? '---'}
-	</td>
-	<td width="25%">
-		{formatDollar(row.usd_volume_30d)}
-	</td>
+<TradingEntitiesTable {loading} {rows} {getHref} let:row let:format>
+	<td width="40%">{format(row.pair_symbol)}</td>
+	<td width="35%">{format(row.exchange_name)}</td>
+	<td>{formatDollar(row.usd_volume_30d)}</td>
 </TradingEntitiesTable>
