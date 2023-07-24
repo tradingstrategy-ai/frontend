@@ -10,13 +10,19 @@
 	export let data: Promise<Record<string, any>[]>;
 	export let tableComponent: ComponentType;
 	export let rightColHeader = '';
+
+	let hasData = true;
+	$: data.then((rows) => (hasData = rows.length > 0));
 </script>
 
 <SummaryBox {title} ctaPosition="bottom">
 	<header slot="header">
 		<h3>{title}</h3>
-		<h4>{rightColHeader}</h4>
+		{#if hasData}
+			<h4>{rightColHeader}</h4>
+		{/if}
 	</header>
+
 	{#await data}
 		<svelte:component this={tableComponent} loading rows={Array(5).fill({})} />
 	{:then rows}
@@ -27,7 +33,11 @@
 		</AlertList>
 	{/await}
 
-	<Button slot="cta" href="/trading-view/{chain.chain_slug}/{type}">
+	{#if !hasData}
+		<p>No {label} available for {chain.chain_name}</p>
+	{/if}
+
+	<Button slot="cta" href="/trading-view/{chain.chain_slug}/{type}" disabled={!hasData}>
 		View all {chain.chain_name}
 		{label}
 	</Button>

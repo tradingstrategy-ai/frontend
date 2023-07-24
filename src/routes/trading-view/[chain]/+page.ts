@@ -28,6 +28,8 @@ async function fetchTopExchanges(fetch: Fetch, chain_slug: string) {
 }
 
 async function fetchTopTokens(fetch: Fetch, chain_slug: string) {
+	// Using larger page_size due to but in tokens endpoint
+	// see: https://github.com/tradingstrategy-ai/backend/issues/189
 	const data = await fetchTokens(fetch, {
 		chain_slug,
 		sort: 'liquidity_latest',
@@ -45,10 +47,17 @@ async function fetchTopPairs(fetch: Fetch, chain_slugs: string) {
 }
 
 async function fetchTopReserves(fetch: Fetch, chain_slug: string) {
-	const data = await fetchLendingReserves(fetch, {
-		chain_slug,
-		sort: 'reserve_slug',
-		page_size: 5
-	});
-	return data?.rows ?? [];
+	try {
+		const data = await fetchLendingReserves(fetch, {
+			chain_slug,
+			sort: 'reserve_slug',
+			page_size: 5
+		});
+		return data?.rows ?? [];
+	} catch (e) {
+		// see: https://github.com/tradingstrategy-ai/backend/issues/188
+		/* @ts-ignore */
+		if (e?.status === 404) return [];
+		throw e;
+	}
 }
