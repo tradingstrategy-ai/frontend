@@ -4,15 +4,19 @@
 	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
 
 	export let type: string;
+	export let label = type.replaceAll('-', ' ');
 	export let title: string;
 	export let chain: Chain;
 	export let data: Promise<Record<string, any>[]>;
 	export let tableComponent: ComponentType;
-
-	$: label = type.replaceAll('-', ' ');
+	export let rightColHeader = '';
 </script>
 
 <SummaryBox {title} ctaPosition="bottom">
+	<header slot="header">
+		<h3>{title}</h3>
+		<h4>{rightColHeader}</h4>
+	</header>
 	{#await data}
 		<svelte:component this={tableComponent} loading rows={Array(5).fill({})} />
 	{:then rows}
@@ -28,3 +32,22 @@
 		{label}
 	</Button>
 </SummaryBox>
+
+<style lang="postcss">
+	header[slot='header'] {
+		gap: var(--space-md);
+		align-items: flex-end;
+
+		& h4 {
+			padding: 0 var(--space-md) var(--space-xxs) 0;
+			font: var(--f-ui-md-bold);
+			letter-spacing: var(--f-ui-md-spacing);
+			color: hsla(var(--hsl-text-light));
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-sm-bold);
+				letter-spacing: var(--f-ui-sm-spacing);
+			}
+		}
+	}
+</style>

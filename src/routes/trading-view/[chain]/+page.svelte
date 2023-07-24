@@ -64,14 +64,17 @@
 				{chain}
 				data={streamed.exchanges}
 				tableComponent={TopExchanges}
+				rightColHeader="Vol 30d"
 			/>
 
 			<TopEntities
 				type="trading-pairs"
+				label="pairs"
 				title="Highest volume pairs"
 				{chain}
 				data={streamed.pairs}
 				tableComponent={TopPairs}
+				rightColHeader="Vol 30d"
 			/>
 
 			<TopEntities
@@ -80,14 +83,17 @@
 				{chain}
 				data={streamed.tokens}
 				tableComponent={TopTokens}
+				rightColHeader="Liquidity"
 			/>
 
 			<TopEntities
 				type="lending-reserves"
+				label="reserves"
 				title="Lending reserves"
 				{chain}
 				data={streamed.reserves}
 				tableComponent={TopReserves}
+				rightColHeader="Borrow APR"
 			/>
 		</Grid>
 	</section>
