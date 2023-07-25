@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import { AlertList, AlertItem, Button, TextInput } from '$lib/components';
+	import { Alert, Button, TextInput } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	const url = `${backendUrl}/register`;
@@ -69,13 +69,9 @@
 	<section class="ds-container">
 		<form on:submit|preventDefault={handleSubmit}>
 			{#if error}
-				<AlertList status="error">
-					<AlertItem>{error}</AlertItem>
-				</AlertList>
+				<Alert status="error">{error}</Alert>
 			{:else if success}
-				<AlertList status="success">
-					<AlertItem>Check your email for futher instructions.</AlertItem>
-				</AlertList>
+				<Alert status="success">Check your email for futher instructions.</Alert>
 			{/if}
 
 			<TextInput bind:value={email} size="lg" type="email" placeholder="email" required {disabled} />

@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
-	import { AlertList, AlertItem } from '$lib/components';
+	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
 
 	export let data;
@@ -35,13 +35,10 @@
 <section class="position-index">
 	{#if combinedPositionList.length > 0}
 		{#if status === 'frozen'}
-			<AlertList status="error">
-				<AlertItem>
-					The frozen positions could not be automatically open or closed, usually due to a problem with related tokens
-					or blockchains. The profitability cannot be established for the same reason. Manual intervention may be
-					needed.
-				</AlertItem>
-			</AlertList>
+			<Alert status="error">
+				The frozen positions could not be automatically open or closed, usually due to a problem with related tokens or
+				blockchains. The profitability cannot be established for the same reason. Manual intervention may be needed.
+			</Alert>
 		{/if}
 
 		<PositionTable
@@ -54,9 +51,9 @@
 			on:change={handleChange}
 		/>
 	{:else}
-		<AlertList status="success">
-			<AlertItem>This strategy currently has no {status} positions.</AlertItem>
-		</AlertList>
+		<Alert status="info">
+			This strategy currently has no {status} positions.
+		</Alert>
 	{/if}
 </section>
 

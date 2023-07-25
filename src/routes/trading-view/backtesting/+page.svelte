@@ -1,16 +1,7 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
-	import {
-		AlertList,
-		AlertItem,
-		Button,
-		ContentCard,
-		HeroBanner,
-		Section,
-		TextInput,
-		Timestamp
-	} from '$lib/components';
+	import { Alert, Button, ContentCard, HeroBanner, Section, TextInput, Timestamp } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
@@ -109,9 +100,7 @@
 		{/if}
 
 		{#if apiKeyError}
-			<AlertList>
-				<AlertItem>{apiKeyError}</AlertItem>
-			</AlertList>
+			<Alert>{apiKeyError}</Alert>
 		{/if}
 
 		{#if validApiKey}

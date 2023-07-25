@@ -2,7 +2,7 @@
 	Page to display the instance run-time status
 -->
 <script lang="ts">
-	import { AlertList, AlertItem, DataBox, SummaryBox, Timestamp } from '$lib/components';
+	import { Alert, AlertList, DataBox, SummaryBox, Timestamp } from '$lib/components';
 
 	export let data;
 	$: ({ runState, state } = data);
@@ -11,16 +11,16 @@
 <section class="instance-status">
 	<div class="status-box">
 		{#if runState.executor_running}
-			<AlertList status="success">
-				<AlertItem>Instance is running</AlertItem>
-			</AlertList>
+			<Alert status="success">Instance is running</Alert>
 		{:else}
-			<AlertList status="error">
+			<AlertList status="error" let:AlertItem>
 				<AlertItem>Instance has stopped</AlertItem>
-				<AlertItem displayWhen={runState.exception}>
-					The trade executor crashed with an exception
-					<pre>{runState.exception.exception_message}</pre>
-				</AlertItem>
+				{#if runState.exception}
+					<AlertItem>
+						The trade executor crashed with an exception
+						<pre>{runState.exception.exception_message}</pre>
+					</AlertItem>
+				{/if}
 			</AlertList>
 		{/if}
 	</div>

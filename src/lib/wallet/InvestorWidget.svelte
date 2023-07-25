@@ -6,7 +6,7 @@
 	import depositWizard from 'wizard/deposit/store';
 	import redeemWizard from 'wizard/redeem/store';
 	import { wallet, VaultBalance, WalletAddress, WrongNetwork } from '$lib/wallet';
-	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
+	import { Alert, Button, SummaryBox } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
@@ -36,9 +36,7 @@
 	</svelte:fragment>
 	<div class="content">
 		{#if !depositEnabled}
-			<AlertList status="info" size="md">
-				<AlertItem>Depositing is not currently available for this strategy.</AlertItem>
-			</AlertList>
+			<Alert status="info" size="md">Depositing is not currently available for this strategy.</Alert>
 		{:else if $wallet.status !== 'connected'}
 			<div class="not-connected">
 				<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.

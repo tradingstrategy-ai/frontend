@@ -3,7 +3,7 @@
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { AlertList, AlertItem, SummaryBox, DataBox } from '$lib/components';
+	import { Alert, SummaryBox, DataBox } from '$lib/components';
 	import { InvestorWidget } from '$lib/wallet';
 
 	export let data;
@@ -52,9 +52,7 @@
 				/>
 			</SummaryBox>
 		{:else}
-			<AlertList>
-				<AlertItem>Strategy overview data not available.</AlertItem>
-			</AlertList>
+			<Alert>Strategy overview data not available.</Alert>
 		{/if}
 	</section>
 </div>

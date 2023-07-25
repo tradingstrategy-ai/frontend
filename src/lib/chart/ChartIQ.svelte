@@ -57,7 +57,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	import { fade } from 'svelte/transition';
 	import { lightFormat as formatDate } from 'date-fns';
 	import { type ChartLinker, type QuoteFeed, ChartActivityTracker } from '$lib/chart';
-	import { AlertItem, AlertList } from '$lib/components';
+	import { Alert } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	export let options: any = {};
@@ -196,11 +196,9 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		{/if}
 	</div>
 {:catch}
-	<AlertList status="warning">
-		<AlertItem>
-			ChartIQ charting library notavailable. ChartIQ is an optional proprietary dependency that requires a license.
-		</AlertItem>
-	</AlertList>
+	<Alert status="warning">
+		ChartIQ charting library notavailable. ChartIQ is an optional proprietary dependency that requires a license.
+	</Alert>
 {/await}
 
 <style lang="postcss">

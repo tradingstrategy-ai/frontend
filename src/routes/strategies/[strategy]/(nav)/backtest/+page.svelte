@@ -10,7 +10,7 @@ Page to display the strategy backtest results.
 
 -->
 <script lang="ts">
-	import { AlertItem, AlertList, Button, SummaryBox } from '$lib/components';
+	import { Alert, Button, SummaryBox } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	export let data;
@@ -73,9 +73,7 @@ Page to display the strategy backtest results.
 
 		<iframe bind:this={iframeElem} src={iframeUrl} title="Backtest report" />
 	{:else}
-		<AlertList>
-			<AlertItem>Backtest report not available for this strategy.</AlertItem>
-		</AlertList>
+		<Alert>Backtest report not available for this strategy.</Alert>
 	{/if}
 </section>
 

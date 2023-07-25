@@ -4,7 +4,7 @@
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { AlertList, AlertItem, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import { tradeType } from '$lib/helpers/trade';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
@@ -85,9 +85,7 @@
 		</DataBoxes>
 
 		{#if hasFailedTrades}
-			<AlertList status="error">
-				<AlertItem title="Error">This position has one or more failed trades.</AlertItem>
-			</AlertList>
+			<Alert status="error" title="Error">This position has one or more failed trades.</Alert>
 		{/if}
 
 		<TradeTable {trades} />

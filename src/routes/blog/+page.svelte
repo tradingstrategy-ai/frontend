@@ -2,7 +2,7 @@
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
 	import Spinner from 'svelte-spinner';
-	import { AlertItem, AlertList, BlogRoll, HeroBanner, Section } from '$lib/components';
+	import { Alert, BlogRoll, HeroBanner, Section } from '$lib/components';
 	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
@@ -53,11 +53,9 @@
 				<Spinner size="4rem" color="hsla(var(--hsl-text))" />
 			</div>
 		{:else if page.error}
-			<AlertList>
-				<AlertItem title="Error loading blog posts">
-					<pre>{page.error}</pre>
-				</AlertItem>
-			</AlertList>
+			<Alert title="Error loading blog posts">
+				<pre>{page.error}</pre>
+			</Alert>
 		{:else if page.next}
 			<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
 		{:else}

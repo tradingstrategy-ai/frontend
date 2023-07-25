@@ -9,15 +9,7 @@
 	import { wallet, getExplorerUrl, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
-	import {
-		Button,
-		AlertItem,
-		AlertList,
-		CryptoAddressWidget,
-		EntitySymbol,
-		MoneyInput,
-		WizardActions
-	} from '$lib/components';
+	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput, WizardActions } from '$lib/components';
 
 	const contracts: Contracts = $wizard.data.contracts;
 	const denominationToken: FetchBalanceResult = $wizard.data.denominationToken;
@@ -227,28 +219,22 @@
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
-				<AlertList size="sm" status="warning">
-					<AlertItem title="Notice">
-						Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
-						Only invest funds you are willing to lose.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="warning" title="Notice">
+					Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
+					Only invest funds you are willing to lose.
+				</Alert>
 			{/if}
 
 			{#if $payment === 'authorizing'}
-				<AlertList size="sm" status="warning">
-					<AlertItem title="Authorize transfer">
-						Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="warning" title="Authorize transfer">
+					Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
+				</Alert>
 			{/if}
 
 			{#if $payment === 'confirming'}
-				<AlertList size="sm" status="warning">
-					<AlertItem title="Confirm transaction">
-						Please confirm the transaction in your wallet in order submit your payment.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="warning" title="Confirm transaction">
+					Please confirm the transaction in your wallet in order submit your payment.
+				</Alert>
 			{/if}
 
 			{#if transactionId}
@@ -261,30 +247,24 @@
 			{/if}
 
 			{#if $payment === 'processing'}
-				<AlertList size="sm" status="info">
-					<AlertItem title="Payment processing">
-						The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
-						the transaction ID above to view the status in the blockchain explorer.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="info" title="Payment processing">
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
+					the transaction ID above to view the status in the blockchain explorer.
+				</Alert>
 			{/if}
 
 			{#if $payment === 'failed'}
-				<AlertList size="sm" status="error">
-					<AlertItem title="Error">
-						{errorMessage}
-						<Button slot="cta" size="sm" label="Try again" on:click={payment.retry} />
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="error" title="Error">
+					{errorMessage}
+					<Button slot="cta" size="sm" label="Try again" on:click={payment.retry} />
+				</Alert>
 			{/if}
 
 			{#if $payment === 'completed'}
-				<AlertList size="sm" status="success">
-					<AlertItem title="Payment completed">
-						Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
-						review your share balance.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="success" title="Payment completed">
+					Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
+					review your share balance.
+				</Alert>
 			{/if}
 		</form>
 	</section>

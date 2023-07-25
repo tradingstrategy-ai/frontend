@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
 	import warning from '$lib/assets/icons/warning.svg';
-	import { AlertItem, AlertList, SummaryBox } from '$lib/components';
+	import { Alert, SummaryBox } from '$lib/components';
 
 	export let data;
 
@@ -27,13 +27,13 @@
 </script>
 
 <section class:hasError>
-	<AlertList status="warning">
-		<AlertItem displayWhen={hasError}>
+	{#if hasError}
+		<Alert status="warning">
 			Could not load strategy decision making data. If the trade executor instance has been restarted recently, this
 			data may not be available until the first strategy decision making cycle is completed. The URL is:<br />
 			<a target="_blank" href={errorUrl}>{errorUrl}</a>
-		</AlertItem>
-	</AlertList>
+		</Alert>
+	{/if}
 
 	<SummaryBox
 		title="Decision making"
