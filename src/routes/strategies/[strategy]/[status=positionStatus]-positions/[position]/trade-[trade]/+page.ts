@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
 	const tradeId = params.trade;
-	const { breadcrumbs, position, chain } = await parent();
+	const { breadcrumbs, position } = await parent();
 	const trade = position.trades[tradeId];
 
 	if (!trade) {
@@ -11,7 +11,6 @@ export async function load({ params, parent }) {
 
 	return {
 		trade,
-		chain,
 		breadcrumbs: {
 			...breadcrumbs,
 			[`trade-${tradeId}`]: `Trade #${tradeId}`
