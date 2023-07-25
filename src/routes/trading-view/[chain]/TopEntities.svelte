@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
-	import { AlertList, AlertItem, Button, SummaryBox } from '$lib/components';
+	import { Alert, Button, SummaryBox } from '$lib/components';
 
 	export let type: string;
 	export let label = type.replaceAll('-', ' ');
@@ -28,9 +28,7 @@
 	{:then rows}
 		<svelte:component this={tableComponent} {rows} />
 	{:catch}
-		<AlertList>
-			<AlertItem>An error occurred loading {label}. Try reloading the page.</AlertItem>
-		</AlertList>
+		<Alert>An error occurred loading {label}. Try reloading the page.</Alert>
 	{/await}
 
 	{#if !hasData}

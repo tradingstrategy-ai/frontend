@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { getChainSlug } from '$lib/helpers/chain.js';
 	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
-	import { AlertItem, AlertList, Button, WizardActions } from '$lib/components';
+	import { Alert, Button, WizardActions } from '$lib/components';
 
 	export let data;
 
@@ -21,40 +21,36 @@
 	{#if nativeCurrency?.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}
 		<div in:fade>
-			<AlertList status="warning" size="md">
-				<AlertItem>
-					<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
-					<Button
-						slot="cta"
-						size="sm"
-						label="Buy {nativeCurrency.symbol}"
-						disabled={!href}
-						{href}
-						target="_blank"
-						rel="noreferrer"
-					/>
-				</AlertItem>
-			</AlertList>
+			<Alert status="warning" size="md">
+				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
+				<Button
+					slot="cta"
+					size="sm"
+					label="Buy {nativeCurrency.symbol}"
+					disabled={!href}
+					{href}
+					target="_blank"
+					rel="noreferrer"
+				/>
+			</Alert>
 		</div>
 	{/if}
 
 	{#if denominationToken?.value === 0n}
 		{@const href = chainSlug && buyTokenUrl(chainSlug, denominationToken.address)}
 		<div in:fade>
-			<AlertList status="warning" size="md">
-				<AlertItem>
-					<strong>{denominationToken.symbol}</strong> is required in order to make a deposit into this strategy.
-					<Button
-						slot="cta"
-						size="sm"
-						label="Buy {denominationToken.symbol}"
-						disabled={!href}
-						{href}
-						target="_blank"
-						rel="noreferrer"
-					/>
-				</AlertItem>
-			</AlertList>
+			<Alert status="warning" size="md">
+				<strong>{denominationToken.symbol}</strong> is required in order to make a deposit into this strategy.
+				<Button
+					slot="cta"
+					size="sm"
+					label="Buy {denominationToken.symbol}"
+					disabled={!href}
+					{href}
+					target="_blank"
+					rel="noreferrer"
+				/>
+			</Alert>
 		</div>
 	{/if}
 </div>

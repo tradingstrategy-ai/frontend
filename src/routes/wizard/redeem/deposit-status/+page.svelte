@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { fetchBalance } from '@wagmi/core';
 	import { buyNativeCurrencyUrl, wallet, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { AlertList, AlertItem, Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
+	import { Alert, Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	$: ({ address, chain } = $wallet);
@@ -41,29 +41,25 @@
 
 	{#if vaultShares?.value === 0n}
 		<div in:fade>
-			<AlertList status="error" size="md">
-				<AlertItem>
-					You do not currently have any shares of <strong>{vaultShares.symbol}</strong> to redeem.
-				</AlertItem>
-			</AlertList>
+			<Alert status="error" size="md">
+				You do not currently have any shares of <strong>{vaultShares.symbol}</strong> to redeem.
+			</Alert>
 		</div>
 	{:else if nativeCurrency?.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}
 		<div in:fade>
-			<AlertList status="warning" size="md">
-				<AlertItem>
-					<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
-					<Button
-						slot="cta"
-						size="sm"
-						label="Buy {nativeCurrency.symbol}"
-						disabled={!href}
-						{href}
-						target="_blank"
-						rel="noreferrer"
-					/>
-				</AlertItem>
-			</AlertList>
+			<Alert status="warning" size="md">
+				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
+				<Button
+					slot="cta"
+					size="sm"
+					label="Buy {nativeCurrency.symbol}"
+					disabled={!href}
+					{href}
+					target="_blank"
+					rel="noreferrer"
+				/>
+			</Alert>
 		</div>
 	{/if}
 </Grid>

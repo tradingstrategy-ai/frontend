@@ -8,15 +8,7 @@
 	import { formatUnits, parseUnits } from 'viem';
 	import { wallet, getExplorerUrl, TokenBalance } from '$lib/wallet';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import {
-		AlertItem,
-		AlertList,
-		Button,
-		CryptoAddressWidget,
-		DataBox,
-		MoneyInput,
-		WizardActions
-	} from '$lib/components';
+	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput, WizardActions } from '$lib/components';
 
 	const contracts: Contracts = $wizard.data.contracts;
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
@@ -171,20 +163,16 @@
 			{#if $redemption === 'initial'}
 				<Button submit disabled={!shares}>Redeem</Button>
 
-				<AlertList size="sm" status="warning">
-					<AlertItem title="Shares redeemed in-kind">
-						You will receive a portion of all tokens held by this strategy, in proportion to the number of shares you
-						are redeeming relative to the total strategy assets.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="warning" title="Shares redeemed in-kind">
+					You will receive a portion of all tokens held by this strategy, in proportion to the number of shares you are
+					redeeming relative to the total strategy assets.
+				</Alert>
 			{/if}
 
 			{#if $redemption === 'confirming'}
-				<AlertList size="sm" status="warning">
-					<AlertItem title="Confirm transaction">
-						Please confirm the transaction in your wallet in order process your redemption.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="warning" title="Confirm transaction">
+					Please confirm the transaction in your wallet in order process your redemption.
+				</Alert>
 			{/if}
 
 			{#if transactionId}
@@ -197,30 +185,24 @@
 			{/if}
 
 			{#if $redemption === 'processing'}
-				<AlertList size="sm" status="info">
-					<AlertItem title="Redemption processing">
-						The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
-						the transaction ID above to view the status in the blockchain explorer.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="info" title="Redemption processing">
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
+					the transaction ID above to view the status in the blockchain explorer.
+				</Alert>
 			{/if}
 
 			{#if $redemption === 'failed'}
-				<AlertList size="sm" status="error">
-					<AlertItem title="Error">
-						{errorMessage}
-						<Button slot="cta" size="sm" label="Try again" on:click={redemption.retry} />
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="error" title="Error">
+					{errorMessage}
+					<Button slot="cta" size="sm" label="Try again" on:click={redemption.retry} />
+				</Alert>
 			{/if}
 
 			{#if $redemption === 'completed'}
-				<AlertList size="sm" status="success">
-					<AlertItem title="Redemption completed">
-						Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
-						below to review your redeemed token values.
-					</AlertItem>
-				</AlertList>
+				<Alert size="sm" status="success" title="Redemption completed">
+					Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
+					below to review your redeemed token values.
+				</Alert>
 			{/if}
 		</form>
 	</section>

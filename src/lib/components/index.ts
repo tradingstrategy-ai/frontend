@@ -1,3 +1,4 @@
+export { default as Alert } from './Alert.svelte';
 export { default as AlertItem } from './AlertItem.svelte';
 export { default as AlertList } from './AlertList.svelte';
 export { default as Badge } from './Badge.svelte';

@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
-	import { AlertItem, AlertList, PageHeader } from '$lib/components';
+	import { Alert, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -59,11 +59,9 @@
 		{#if !$pairsClient.error}
 			<PairsTable {...$pairsClient} on:change={handlePairsChange} />
 		{:else}
-			<AlertList>
-				<AlertItem>
-					An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
-				</AlertItem>
-			</AlertList>
+			<Alert>
+				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
+			</Alert>
 		{/if}
 	</section>
 

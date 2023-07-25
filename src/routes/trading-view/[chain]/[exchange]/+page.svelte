@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { AlertItem, AlertList, Button, PageHeader } from '$lib/components';
+	import { Alert, AlertList, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -66,7 +66,7 @@
 			<InfoSummary details={exchange} />
 		</div>
 
-		<AlertList status="warning">
+		<AlertList status="warning" let:AlertItem>
 			<AlertItem title="Uniswap v3 beta" displayWhen={exchange.exchange_type === 'uniswap_v3'}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this exchange is currently incomplete.
@@ -94,11 +94,9 @@
 		{#if !$pairsClient.error}
 			<PairsTable {...$pairsClient} {hiddenColumns} on:change={handlePairsChange} />
 		{:else}
-			<AlertList>
-				<AlertItem>
-					An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
-				</AlertItem>
-			</AlertList>
+			<Alert>
+				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
+			</Alert>
 		{/if}
 	</section>
 

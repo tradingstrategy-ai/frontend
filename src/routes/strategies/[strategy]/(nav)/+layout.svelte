@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { AlertItem, AlertList, PageHeading } from '$lib/components';
+	import { Alert, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 
@@ -22,11 +22,9 @@
 
 		{#if errorHtml}
 			<div class="error-wrapper">
-				<AlertList status="warning" size="sm">
-					<AlertItem title="Ongoing execution issues">
-						{@html errorHtml}
-					</AlertItem>
-				</AlertList>
+				<Alert status="warning" size="sm" title="Ongoing execution issues">
+					{@html errorHtml}
+				</Alert>
 			</div>
 		{/if}
 	</PageHeading>

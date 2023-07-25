@@ -6,7 +6,7 @@ as children. The alert box is only displayed if one or more items are displayed
 
 #### Usage:
 ```tsx
-	<AlertList status="warning">
+	<AlertList status="warning" let:AlertItem>
 		<AlertItem title="Optional title" displayWhen={boolean_defaults_to_true}>
 			Warning message – e.g., data on this page may be incomplete!
 		</AlertItem>
@@ -14,13 +14,13 @@ as children. The alert box is only displayed if one or more items are displayed
 ```
 -->
 <script lang="ts">
-	let classes = '';
-	export { classes as class };
+	import { AlertItem } from '$lib/components';
+
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'lg';
 	export let status: 'error' | 'success' | 'warning' | 'info' = 'error';
 </script>
 
-<ul class="alert-list {size} {status} {classes}"><slot /></ul>
+<ul class="alert-list {size} {status}"><slot {AlertItem} /></ul>
 
 <style lang="postcss">
 	.alert-list {

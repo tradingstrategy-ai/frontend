@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { switchNetwork } from '@wagmi/core';
-	import { AlertItem, AlertList, Button } from '$lib/components';
+	import { Alert, Button } from '$lib/components';
 
 	// NOTE: don't move this to inline handler (prevent vite build warning)
 	function handleClick() {
@@ -20,12 +20,10 @@
 </script>
 
 <div class="wrong-network">
-	<AlertList {size} status="error">
-		<AlertItem title="Wrong network">
-			Please connect to {chainName}
-			<Button slot="cta" size={buttonSize[size]} label="Switch network" on:click={handleClick} />
-		</AlertItem>
-	</AlertList>
+	<Alert {size} status="error" title="Wrong network">
+		Please connect to {chainName}
+		<Button slot="cta" size={buttonSize[size]} label="Switch network" on:click={handleClick} />
+	</Alert>
 </div>
 
 <style lang="postcss">

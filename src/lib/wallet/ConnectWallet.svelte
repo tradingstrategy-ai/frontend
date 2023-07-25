@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import type { Chain } from '$lib/helpers/chain';
-	import { AlertList, AlertItem, Button } from '$lib/components';
+	import { AlertList, Button } from '$lib/components';
 	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
@@ -40,7 +40,7 @@
 
 	{#if error}
 		<div transition:fade|local>
-			<AlertList status="error" size="sm">
+			<AlertList status="error" size="sm" let:AlertItem>
 				{#if error.name === 'ConnectorNotFoundError'}
 					<AlertItem title="Not found">
 						Wallet browser extension not found. Please confirm you have MetaMask or another browser wallet extension

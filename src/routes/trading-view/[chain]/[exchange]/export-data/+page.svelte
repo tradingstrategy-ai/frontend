@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, AlertItem, AlertList, Select } from '$lib/components';
+	import { Button, Alert, Select } from '$lib/components';
 
 	export let data;
 	const { exchange } = data;
@@ -128,11 +128,9 @@
 			>
 		</p>
 
-		<AlertList status="warning">
-			<AlertItem title="Microsoft Excel export is currently in beta">
-				We are still finishing out data points. Some data might be incorrect or not available.
-			</AlertItem>
-		</AlertList>
+		<Alert status="warning" title="Microsoft Excel export is currently in beta">
+			We are still finishing out data points. Some data might be incorrect or not available.
+		</Alert>
 	</section>
 </main>
 

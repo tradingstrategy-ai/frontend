@@ -11,7 +11,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	import type { SubmitFunction } from '$app/forms';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
-	import { TextInput, Button, AlertList, AlertItem } from '$lib/components';
+	import { TextInput, Button, Alert } from '$lib/components';
 
 	let form: HTMLFormElement;
 	let title: string;
@@ -92,9 +92,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		<Button submit label="Subscribe" disabled={$state === 'submitting'} />
 	</form>
 	{#if $state === 'failed'}
-		<AlertList>
-			<AlertItem>{errorMessage}</AlertItem>
-		</AlertList>
+		<Alert>{errorMessage}</Alert>
 	{/if}
 {:else}
 	<p>

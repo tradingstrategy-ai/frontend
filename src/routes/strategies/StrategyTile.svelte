@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
-	import { AlertItem, AlertList, Button } from '$lib/components';
+	import { Alert, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
@@ -137,11 +137,9 @@
 		</div>
 
 		{#if errorHtml}
-			<AlertList status="warning" size="xs">
-				<AlertItem title="Ongoing execution issues">
-					{@html errorHtml}
-				</AlertItem>
-			</AlertList>
+			<Alert status="warning" size="xs" title="Ongoing execution issues">
+				{@html errorHtml}
+			</Alert>
 		{/if}
 
 		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={!strategy.connected} />

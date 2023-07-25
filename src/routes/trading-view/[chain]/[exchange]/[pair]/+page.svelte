@@ -9,7 +9,7 @@ Render the pair trading page
 	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertItem, AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
+	import { AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -86,7 +86,7 @@ Render the pair trading page
 			<InfoSummary {summary} {details} />
 		</div>
 
-		<AlertList status="warning">
+		<AlertList status="warning" let:AlertItem>
 			<AlertItem title="Uniswap V3 beta" displayWhen={isUniswapV3}>
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this trading pair is currently incomplete.
