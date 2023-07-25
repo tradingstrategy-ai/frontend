@@ -11,7 +11,7 @@
 	} from 'trade-executor-frontend/state/position-helpers';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
-	import { tradeType } from '$lib/helpers/trade';
+	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
 	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
@@ -84,13 +84,13 @@
 				</DataBox>
 			{/if}
 
-			<DataBox label="{tradeType(trades[0])} price">
+			<DataBox label="{tradeDirection(trades[0])} price">
 				{formatPrice(trades[0].executed_price)}
 			</DataBox>
 
 			{#if position.closed_at}
 				{@const lastTrade = trades.at(-1)}
-				<DataBox label="{tradeType(lastTrade)} price">
+				<DataBox label="{tradeDirection(lastTrade)} price">
 					{formatPrice(lastTrade.executed_price)}
 				</DataBox>
 			{/if}

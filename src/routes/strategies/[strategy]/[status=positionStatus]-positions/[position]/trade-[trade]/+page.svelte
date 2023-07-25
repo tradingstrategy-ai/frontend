@@ -3,7 +3,7 @@
 	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
-	import { tradeType } from '$lib/helpers/trade';
+	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
@@ -22,7 +22,7 @@
 	<PageHeading level={2}>
 		<h1>Trade #{trade.trade_id}</h1>
 		<h2>
-			{tradeType(trade)}
+			{tradeDirection(trade)}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
 				<StopLossIndicator lg />
