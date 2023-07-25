@@ -18,6 +18,10 @@
 
 	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 
+	// Hide chart for Aave v3 GHO token
+	// see: https://docs-gho.vercel.app/concepts/overview
+	$: isGhoToken = reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO';
+
 	let timeBucket: TimeBucket = '1d';
 </script>
 
@@ -48,13 +52,15 @@
 	</section>
 </main>
 
-<Section padding="md">
-	<div class="chart-header">
-		<h3>Interest rates</h3>
-		<SegmentedControl options={['1h', '4h', '1d', '7d', '30d']} bind:selected={timeBucket} />
-	</div>
-	<ReserveInterestChart {reserve} {timeBucket} rateType="variable_borrow_apr" />
-</Section>
+{#if !isGhoToken}
+	<Section padding="md">
+		<div class="chart-header">
+			<h3>Interest rates</h3>
+			<SegmentedControl options={['1h', '4h', '1d', '7d', '30d']} bind:selected={timeBucket} />
+		</div>
+		<ReserveInterestChart {reserve} {timeBucket} rateType="variable_borrow_apr" />
+	</Section>
+{/if}
 
 <style lang="postcss">
 	main {
