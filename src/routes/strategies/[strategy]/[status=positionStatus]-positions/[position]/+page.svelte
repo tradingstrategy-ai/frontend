@@ -2,10 +2,11 @@
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
-	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
+	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeType } from '$lib/helpers/trade';
+	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
 	import { getPositionFreezeReason, isPositionInError } from './position-helpers';
@@ -18,7 +19,6 @@
 	const trades = Object.values(position.trades);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
-	const errorExplorerUrl = positionErrorInfo && `${chain.chain_explorer}/tx/${positionErrorInfo.txHash}`;
 </script>
 
 <main class="ds-container">
@@ -38,7 +38,7 @@
 						>
 					</li>
 					<li>
-						<a href={errorExplorerUrl} target="_blank" rel="noreferrer">
+						<a href={getExplorerUrl(chain, positionErrorInfo.txHash)} target="_blank" rel="noreferrer">
 							View transaction
 							<span class="hash-wrapper">
 								<HashAddress address={positionErrorInfo.txHash} />
