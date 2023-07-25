@@ -8,7 +8,7 @@
 		getValueAtClose,
 		getPositionFreezeReason,
 		isPositionInError
-	} from 'trade-executor-frontend/state/positionHelpers';
+	} from 'trade-executor-frontend/state/position-helpers';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeType } from '$lib/helpers/trade';
