@@ -4,7 +4,7 @@
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import { tradeType } from '$lib/helpers/trade';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
@@ -18,7 +18,7 @@
 	const trades = Object.values(position.trades);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
-	const errorExplorerUrl = positionErrorInfo && `${chain.chain_explorer}/tx/${positionErrorInfo?.txHash}`;
+	const errorExplorerUrl = positionErrorInfo && `${chain.chain_explorer}/tx/${positionErrorInfo.txHash}`;
 </script>
 
 <main class="ds-container">
@@ -28,16 +28,23 @@
 	</PageHeading>
 
 	<section>
-		{#if positionFailed}
+		{#if positionErrorInfo}
 			<Alert size="md" status="error" title="This position is currently in an error state">
 				<ul class="error-details">
 					<li>Failure reason: <i>{positionErrorInfo.revertReason}</i></li>
 					<li>
-						<a href={`./${positionErrorInfo.positionId}/trade-${positionErrorInfo?.tradeId}`}
-							>View failed trade #{positionErrorInfo?.tradeId}</a
+						<a href={`./${position.position_id}/trade-${positionErrorInfo.tradeId}`}
+							>View failed trade #{positionErrorInfo.tradeId}</a
 						>
 					</li>
-					<li><a href={errorExplorerUrl}>View transaction {positionErrorInfo?.txHash}</a></li>
+					<li>
+						<a href={errorExplorerUrl} target="_blank" rel="noreferrer">
+							View transaction
+							<span class="hash-wrapper">
+								<HashAddress address={positionErrorInfo.txHash} />
+							</span>
+						</a>
+					</li>
 				</ul>
 			</Alert>
 		{/if}
@@ -122,6 +129,10 @@
 	}
 
 	.error-details a {
-		font: var(--f-ui-md-medium);
+		font-weight: 500;
+
+		& .hash-wrapper {
+			display: inline-grid;
+		}
 	}
 </style>

@@ -1,11 +1,12 @@
 <script lang="ts">
+	import type { BlockchainTransaction } from 'trade-executor-frontend/state/interface';
 	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import { tradeType } from '$lib/helpers/trade';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
-	import type { TradeExecution } from 'trade-executor-frontend/state/interface';
+	import HashAddress from '$lib/components/HashAddress.svelte';
 
 	export let data;
 
@@ -14,8 +15,7 @@
 	const tradeFailed = trade.failed_at !== null;
 
 	// Trade should have only one failed transactions and it is the first one that reverted
-	const failedTx = trade.blockchain_transactions.find((tx) => tx.revert_reason !== null);
-	const revertReason = failedTx?.revert_reason;
+	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
 	const errorExplorerUrl = failedTx && `${chain.chain_explorer}/tx/${failedTx?.tx_hash}`;
 </script>
 
@@ -34,8 +34,13 @@
 	{#if tradeFailed}
 		<Alert size="md" status="error" title="Trade execution failed">
 			<ul class="error-details">
-				<li>Failure reason: <i>{revertReason}</i></li>
-				<li><a href={errorExplorerUrl}>View transaction {failedTx?.tx_hash}</a></li>
+				<li>Failure reason: <i>{failedTx.revert_reason}</i></li>
+				<li>
+					<a href={errorExplorerUrl} target="_blank" rel="noreferrer">
+						View transaction
+						<span class="hash-wrapper"><HashAddress address={failedTx.tx_hash} /></span>
+					</a>
+				</li>
 			</ul>
 		</Alert>
 	{/if}
@@ -80,6 +85,14 @@
 
 		@media (--viewport-sm-down) {
 			margin-bottom: var(--space-xl);
+		}
+	}
+
+	.error-details a {
+		font-weight: 500;
+
+		& .hash-wrapper {
+			display: inline-grid;
 		}
 	}
 </style>
