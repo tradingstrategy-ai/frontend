@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 export async function load({ fetch, params, parent }) {
 	const { position: id, status } = params;
-	const { state } = await parent();
+	const { state, chain } = await parent();
 
 	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
 	const position = state.portfolio[`${status}_positions`][id];
@@ -14,6 +14,7 @@ export async function load({ fetch, params, parent }) {
 	return {
 		breadcrumbs: { [id]: `Position #${id}` },
 		position,
-		status
+		status,
+		chain
 	};
 }

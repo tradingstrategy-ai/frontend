@@ -8,14 +8,17 @@
 	import { tradeType } from '$lib/helpers/trade';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
+	import { getPositionFreezeReason, isPositionInError } from './position-helpers';
 
 	export let data;
 
-	const { summary, state, position } = data;
+	const { summary, state, position, chain } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
-	const hasFailedTrades = trades.some((trade) => trade.failed_at);
+	const positionFailed = isPositionInError(position);
+	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
+	const errorExplorerUrl = positionErrorInfo && `${chain.chain_explorer}/tx/${positionErrorInfo?.txHash}`;
 </script>
 
 <main class="ds-container">
@@ -25,6 +28,20 @@
 	</PageHeading>
 
 	<section>
+		{#if positionFailed}
+			<Alert size="md" status="error" title="This position is currently in an error state">
+				<ul class="error-details">
+					<li>Failure reason: <i>{positionErrorInfo.revertReason}</i></li>
+					<li>
+						<a href={`./${positionErrorInfo.positionId}/trade-${positionErrorInfo?.tradeId}`}
+							>View failed trade #{positionErrorInfo?.tradeId}</a
+						>
+					</li>
+					<li><a href={errorExplorerUrl}>View transaction {positionErrorInfo?.txHash}</a></li>
+				</ul>
+			</Alert>
+		{/if}
+
 		<DataBoxes>
 			<DataBox label="Pair">
 				<a href={position.pair.info_url}>
@@ -84,10 +101,6 @@
 			<DataBox label="Highest value" value={formatPrice(getValueAtPeak(positionStats))} />
 		</DataBoxes>
 
-		{#if hasFailedTrades}
-			<Alert status="error" title="Error">This position has one or more failed trades.</Alert>
-		{/if}
-
 		<TradeTable {trades} />
 	</section>
 </main>
@@ -106,5 +119,9 @@
 	.profitability {
 		display: flex;
 		justify-content: space-between;
+	}
+
+	.error-details a {
+		font: var(--f-ui-md-medium);
 	}
 </style>

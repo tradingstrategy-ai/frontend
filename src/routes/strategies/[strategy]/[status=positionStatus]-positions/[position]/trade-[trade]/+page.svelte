@@ -1,14 +1,22 @@
 <script lang="ts">
 	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
-	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import { tradeType } from '$lib/helpers/trade';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
+	import type { TradeExecution } from 'trade-executor-frontend/state/interface';
 
 	export let data;
 
 	const { chain, position, trade } = data;
+
+	const tradeFailed = trade.failed_at !== null;
+
+	// Trade should have only one failed transactions and it is the first one that reverted
+	const failedTx = trade.blockchain_transactions.find((tx) => tx.revert_reason !== null);
+	const revertReason = failedTx?.revert_reason;
+	const errorExplorerUrl = failedTx && `${chain.chain_explorer}/tx/${failedTx?.tx_hash}`;
 </script>
 
 <main class="ds-container">
@@ -22,6 +30,15 @@
 			{/if}
 		</h2>
 	</PageHeading>
+
+	{#if tradeFailed}
+		<Alert size="md" status="error" title="Trade execution failed">
+			<ul class="error-details">
+				<li>Failure reason: <i>{revertReason}</i></li>
+				<li><a href={errorExplorerUrl}>View transaction {failedTx?.tx_hash}</a></li>
+			</ul>
+		</Alert>
+	{/if}
 
 	<DataBoxes>
 		<DataBox label="Pair">
