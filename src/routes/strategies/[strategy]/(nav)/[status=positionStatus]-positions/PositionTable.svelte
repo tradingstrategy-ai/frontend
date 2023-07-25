@@ -53,16 +53,8 @@
 		table.column({
 			id: 'flags',
 			header: '',
-			accessor: (item) => item,
-			cell: ({ value }) => {
-				console.log('Value', value);
-				const position: TradingPosition = value;
-				const position_id = position.position_id;
-				return createRender(FlagCell, {
-					flags: getPositionFlags(value, `./${status}-positions/${position_id}`)
-				});
-			}
-			//cell: ({value}) => "xxx"
+			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
+			cell: ({ value }) => createRender(FlagCell, { flags: value })
 		}),
 		table.column({
 			header: 'Id',

@@ -14,23 +14,25 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 <script lang="ts">
 	let classes: string = '';
 	export { classes as class };
-	export let title: string;
-	export let subtitle: MaybeString = undefined;
+	export let title = '';
+	export let subtitle = '';
 	export let ctaPosition: 'top' | 'bottom' | 'toggle' = 'toggle';
 </script>
 
 <div class="summary-box cta-{ctaPosition} {classes}">
-	<header>
-		<h3>{title}</h3>
-		{#if subtitle}
-			<p>{subtitle}</p>
-		{/if}
-		{#if $$slots.cta}
-			<div class="cta">
-				<slot name="cta" position="header" />
-			</div>
-		{/if}
-	</header>
+	<slot name="header">
+		<header>
+			<h3>{title}</h3>
+			{#if subtitle}
+				<p>{subtitle}</p>
+			{/if}
+			{#if $$slots.cta}
+				<div class="cta">
+					<slot name="cta" position="header" />
+				</div>
+			{/if}
+		</header>
+	</slot>
 
 	<div class="main">
 		<slot />
@@ -68,31 +70,31 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
-	}
 
-	header {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		gap: var(--space-sm) var(--space-lg);
-		padding-bottom: var(--space-xxxs);
-		margin-bottom: var(--space-ls);
+		& :global header {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: var(--space-sm) var(--space-lg);
+			padding-bottom: var(--space-xxxs);
+			margin-bottom: var(--space-ls);
 
-		@media (--viewport-md-down) {
-			margin-bottom: var(--space-sm);
-		}
+			@media (--viewport-md-down) {
+				margin-bottom: var(--space-sm);
+			}
 
-		& h3 {
-			align-self: center;
-			font: var(--f-heading-md-medium);
-			letter-spacing: var(--f-heading-md-spacing, normal);
-		}
+			& h3 {
+				align-self: center;
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
+			}
 
-		& p {
-			/* grid-area: 2 / 1 / auto / span 2; */
-			grid-column: 1 / span 2;
-			color: hsla(var(--hsl-text-extra-light));
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
+			& p {
+				/* grid-area: 2 / 1 / auto / span 2; */
+				grid-column: 1 / span 2;
+				color: hsla(var(--hsl-text-extra-light));
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
+			}
 		}
 	}
 

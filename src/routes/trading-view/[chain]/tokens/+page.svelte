@@ -4,6 +4,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenTable from '$lib/explorer/TokenTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
+	import { formatAmount } from '$lib/helpers/formatters.js';
 
 	export let data;
 	$: ({ chain, tokens } = data);
@@ -19,7 +20,7 @@
 </script>
 
 <svelte:head>
-	<title>Tokens on {chain.chain_name}</title>
+	<title>{chain.chain_name} Tokens | Trading Strategy</title>
 	<meta name="description" content="Top tokens on {chain.chain_name} blockchain" />
 </svelte:head>
 
@@ -27,10 +28,10 @@
 
 <main class="token-index-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="Tokens">
+		<HeroBanner contentFullWidth title="{chain.chain_name} tokens">
 			<svelte:fragment slot="subtitle">
-				Browse supported decentralised tokens across
-				<a class="body-link" href="/trading-view/{chain.chain_slug}">{chain.chain_name} blockchain</a>
+				Browse {formatAmount(tokens.totalRowCount)} tokens on
+				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
 			</svelte:fragment>
 		</HeroBanner>
 	</Section>
