@@ -5,7 +5,7 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
-	import { tradeType } from '$lib/helpers/trade';
+	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
 
 	export let trades: TradeExecution[];
 
@@ -18,7 +18,7 @@
 			id: 'trade_id',
 			header: 'Id',
 			accessor: (trade) => {
-				return `#${trade.trade_id}: ${tradeType(trade)}`;
+				return `#${trade.trade_id}: ${tradeDirection(trade)}`;
 			}
 		}),
 		table.column({

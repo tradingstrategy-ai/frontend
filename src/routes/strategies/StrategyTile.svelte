@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fromUnixTime } from 'date-fns';
-	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
+	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
 	import { Alert, Button } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';

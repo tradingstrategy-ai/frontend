@@ -1,4 +1,4 @@
-import { getConfiguredStrategiesWithRuntimeState } from 'trade-executor-frontend/strategy/runtimeState';
+import { getConfiguredStrategiesWithRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
 
 export async function load({ fetch }) {
 	return {

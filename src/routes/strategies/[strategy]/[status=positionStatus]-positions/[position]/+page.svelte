@@ -2,20 +2,28 @@
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
+	import {
+		getValueAtOpen,
+		getValueAtPeak,
+		getValueAtClose,
+		getPositionFreezeReason,
+		isPositionInError
+	} from 'trade-executor-frontend/state/position-helpers';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
-	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
-	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
-	import { tradeType } from '$lib/helpers/trade';
+	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
+	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
 
 	export let data;
 
-	const { summary, state, position } = data;
+	const { summary, state, position, chain } = data;
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
-	const hasFailedTrades = trades.some((trade) => trade.failed_at);
+	const positionFailed = isPositionInError(position);
+	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
 </script>
 
 <main class="ds-container">
@@ -25,6 +33,27 @@
 	</PageHeading>
 
 	<section>
+		{#if positionErrorInfo}
+			<Alert size="md" status="error" title="This position is currently in an error state">
+				<ul class="error-details">
+					<li>Failure reason: <i>{positionErrorInfo.revertReason}</i></li>
+					<li>
+						<a href={`./${position.position_id}/trade-${positionErrorInfo.tradeId}`}
+							>View failed trade #{positionErrorInfo.tradeId}</a
+						>
+					</li>
+					<li>
+						<a href={getExplorerUrl(chain, positionErrorInfo.txHash)} target="_blank" rel="noreferrer">
+							View transaction
+							<span class="hash-wrapper">
+								<HashAddress address={positionErrorInfo.txHash} />
+							</span>
+						</a>
+					</li>
+				</ul>
+			</Alert>
+		{/if}
+
 		<DataBoxes>
 			<DataBox label="Pair">
 				<a href={position.pair.info_url}>
@@ -55,13 +84,13 @@
 				</DataBox>
 			{/if}
 
-			<DataBox label="{tradeType(trades[0])} price">
+			<DataBox label="{tradeDirection(trades[0])} price">
 				{formatPrice(trades[0].executed_price)}
 			</DataBox>
 
 			{#if position.closed_at}
 				{@const lastTrade = trades.at(-1)}
-				<DataBox label="{tradeType(lastTrade)} price">
+				<DataBox label="{tradeDirection(lastTrade)} price">
 					{formatPrice(lastTrade.executed_price)}
 				</DataBox>
 			{/if}
@@ -84,10 +113,6 @@
 			<DataBox label="Highest value" value={formatPrice(getValueAtPeak(positionStats))} />
 		</DataBoxes>
 
-		{#if hasFailedTrades}
-			<Alert status="error" title="Error">This position has one or more failed trades.</Alert>
-		{/if}
-
 		<TradeTable {trades} />
 	</section>
 </main>
@@ -106,5 +131,13 @@
 	.profitability {
 		display: flex;
 		justify-content: space-between;
+	}
+
+	.error-details a {
+		font-weight: 500;
+
+		& .hash-wrapper {
+			display: inline-grid;
+		}
 	}
 </style>

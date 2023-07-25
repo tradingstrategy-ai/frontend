@@ -9,7 +9,7 @@
 -->
 <script lang="ts">
 	import { Button, CryptoAddressWidget, DataBox, SummaryBox } from '$lib/components';
-	import type { OnChainData } from 'trade-executor-frontend/strategy/runtimeState';
+	import type { OnChainData } from 'trade-executor-frontend/strategy/runtime-state';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;

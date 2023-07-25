@@ -6,7 +6,8 @@
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { wallet, getExplorerUrl, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput, WizardActions } from '$lib/components';

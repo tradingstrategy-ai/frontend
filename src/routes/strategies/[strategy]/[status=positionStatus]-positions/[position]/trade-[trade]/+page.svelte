@@ -1,27 +1,48 @@
 <script lang="ts">
+	import type { BlockchainTransaction } from 'trade-executor-frontend/state/interface';
 	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
-	import { DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
-	import { tradeType } from '$lib/helpers/trade';
+	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
+	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
+	import HashAddress from '$lib/components/HashAddress.svelte';
 
 	export let data;
 
 	const { chain, position, trade } = data;
+
+	const tradeFailed = trade.failed_at !== null;
+	// Trade should have only one failed transactions and it is the first one that reverted
+	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
 </script>
 
 <main class="ds-container">
 	<PageHeading level={2}>
 		<h1>Trade #{trade.trade_id}</h1>
 		<h2>
-			{tradeType(trade)}
+			{tradeDirection(trade)}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
 				<StopLossIndicator lg />
 			{/if}
 		</h2>
 	</PageHeading>
+
+	{#if tradeFailed}
+		<Alert size="md" status="error" title="Trade execution failed">
+			<ul class="error-details">
+				<li>Failure reason: <i>{failedTx.revert_reason}</i></li>
+				<li>
+					<a href={getExplorerUrl(chain, failedTx.tx_hash)} target="_blank" rel="noreferrer">
+						View transaction
+						<span class="hash-wrapper"><HashAddress address={failedTx.tx_hash} /></span>
+					</a>
+				</li>
+			</ul>
+		</Alert>
+	{/if}
 
 	<DataBoxes>
 		<DataBox label="Pair">
@@ -63,6 +84,14 @@
 
 		@media (--viewport-sm-down) {
 			margin-bottom: var(--space-xl);
+		}
+	}
+
+	.error-details a {
+		font-weight: 500;
+
+		& .hash-wrapper {
+			display: inline-grid;
 		}
 	}
 </style>
