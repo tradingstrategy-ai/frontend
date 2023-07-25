@@ -2,14 +2,19 @@
 	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
-	import { getValueAtOpen, getValueAtPeak, getValueAtClose } from 'trade-executor-frontend/state/positionHelpers';
+	import {
+		getValueAtOpen,
+		getValueAtPeak,
+		getValueAtClose,
+		getPositionFreezeReason,
+		isPositionInError
+	} from 'trade-executor-frontend/state/positionHelpers';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeType } from '$lib/helpers/trade';
 	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
-	import { getPositionFreezeReason, isPositionInError } from './position-helpers';
 
 	export let data;
 
