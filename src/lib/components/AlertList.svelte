@@ -1,13 +1,13 @@
 <!--
 @component
-Display an alert callout box. This should only include AlertItem components
-as children. The alert box is only displayed if one or more items are displayed
-(based on their `displayWhen` prop).
+Display an alert callout box. This should only include `AlertItem` components
+as children. If you only need to display a single `AlertItem`, try the `Alert`
+component instead.
 
 #### Usage:
 ```tsx
 	<AlertList status="warning" let:AlertItem>
-		<AlertItem title="Optional title" displayWhen={boolean_defaults_to_true}>
+		<AlertItem title="Optional title">
 			Warning message – e.g., data on this page may be incomplete!
 		</AlertItem>
 	</AlertList>
@@ -30,16 +30,6 @@ as children. The alert box is only displayed if one or more items are displayed
 		display: grid;
 		list-style: none;
 		margin-inline: auto;
-
-		&:empty,
-		&:-moz-only-whitespace {
-			display: none;
-		}
-
-		/* For Chrome and Safari; don't combine with above selector */
-		&:not(:has(li)) {
-			display: none;
-		}
 	}
 
 	.error {

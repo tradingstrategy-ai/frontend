@@ -15,10 +15,12 @@
 		{:else}
 			<AlertList status="error" let:AlertItem>
 				<AlertItem>Instance has stopped</AlertItem>
-				<AlertItem displayWhen={runState.exception}>
-					The trade executor crashed with an exception
-					<pre>{runState.exception.exception_message}</pre>
-				</AlertItem>
+				{#if runState.exception}
+					<AlertItem>
+						The trade executor crashed with an exception
+						<pre>{runState.exception.exception_message}</pre>
+					</AlertItem>
+				{/if}
 			</AlertList>
 		{/if}
 	</div>

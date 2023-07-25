@@ -21,11 +21,10 @@ of a single alert item.
 	export let size: AlertListProps['size'] = 'lg';
 	export let status: AlertListProps['status'] = 'error';
 	export let title = '';
-	export let displayWhen = true;
 </script>
 
 <AlertList {size} {status} let:AlertItem>
-	<AlertItem {title} {displayWhen}>
+	<AlertItem {title}>
 		<slot />
 		<slot slot="cta" name="cta" />
 	</AlertItem>

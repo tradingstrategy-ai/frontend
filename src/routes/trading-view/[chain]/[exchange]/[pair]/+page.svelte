@@ -26,6 +26,7 @@ Render the pair trading page
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
+	$: isUniswapIncompatible = summary.exchange_type === 'uniswap_v2_incompatible';
 	$: swapFee = formatSwapFee(summary.pool_swap_fee);
 
 	// Ridiculous token price warning: it is common with scam tokens to price the
@@ -86,29 +87,40 @@ Render the pair trading page
 			<InfoSummary {summary} {details} />
 		</div>
 
-		<AlertList status="warning" let:AlertItem>
-			<AlertItem title="Uniswap V3 beta" displayWhen={isUniswapV3}>
-				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
-				that the data for this trading pair is currently incomplete.
-			</AlertItem>
+		{#if isUniswapV3 || isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
+			<AlertList status="warning" let:AlertItem>
+				{#if isUniswapV3}
+					<AlertItem title="Uniswap V3 beta">
+						We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please
+						note that the data for this trading pair is currently incomplete.
+					</AlertItem>
+				{/if}
 
-			<AlertItem title="Incompatible exchange" displayWhen={summary.exchange_type === 'uniswap_v2_incompatible'}>
-				{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for {summary.pair_symbol}
-				may be inaccurate.
-			</AlertItem>
+				{#if isUniswapIncompatible}
+					<AlertItem title="Incompatible exchange">
+						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+						{summary.pair_symbol}
+						may be inaccurate.
+					</AlertItem>
+				{/if}
 
-			<AlertItem displayWhen={tokenTax.broken}>
-				This token is unlikely to be tradeable.
-				<a
-					href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-					>Read more about transfer fees being broken or malicious in the token tax documentation</a
-				>. Error code <strong>{tokenTax.sellTax}</strong>.
-			</AlertItem>
+				{#if tokenTax.broken}
+					<AlertItem>
+						This token is unlikely to be tradeable.
+						<a
+							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+							>Read more about transfer fees being broken or malicious in the token tax documentation</a
+						>. Error code <strong>{tokenTax.sellTax}</strong>.
+					</AlertItem>
+				{/if}
 
-			<AlertItem displayWhen={ridiculousPrice}>
-				This trading pair is using low digit price units that may prevent displaying the price data properly.
-			</AlertItem>
-		</AlertList>
+				{#if ridiculousPrice}
+					<AlertItem>
+						This trading pair is using low digit price units that may prevent displaying the price data properly.
+					</AlertItem>
+				{/if}
+			</AlertList>
+		{/if}
 
 		<div class="trade-actions">
 			<Button label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />

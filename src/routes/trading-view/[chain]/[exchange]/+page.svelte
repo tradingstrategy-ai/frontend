@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { Alert, AlertList, Button, PageHeader } from '$lib/components';
+	import { Alert, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairsTable from '$lib/explorer/PairsTable.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -66,17 +66,17 @@
 			<InfoSummary details={exchange} />
 		</div>
 
-		<AlertList status="warning" let:AlertItem>
-			<AlertItem title="Uniswap v3 beta" displayWhen={exchange.exchange_type === 'uniswap_v3'}>
+		{#if exchange.exchange_type === 'uniswap_v3'}
+			<Alert status="warning" title="Uniswap v3 beta">
 				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
 				that the data for this exchange is currently incomplete.
-			</AlertItem>
-
-			<AlertItem title="Incompatible exchange" displayWhen={exchange.exchange_type === 'uniswap_v2_incompatible'}>
+			</Alert>
+		{:else if exchange.exchange_type === 'uniswap_v2_incompatible'}
+			<Alert status="warning" title="Incompatible exchange">
 				{exchange.human_readable_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data
 				for this exchange may be inaccurate.
-			</AlertItem>
-		</AlertList>
+			</Alert>
+		{/if}
 
 		<div class="exchange-actions">
 			<Button label="Visit {nameDetails.name}" href={exchange.homepage} />

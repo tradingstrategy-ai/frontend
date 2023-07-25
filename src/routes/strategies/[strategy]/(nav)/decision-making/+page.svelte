@@ -27,11 +27,13 @@
 </script>
 
 <section class:hasError>
-	<Alert status="warning" displayWhen={hasError}>
-		Could not load strategy decision making data. If the trade executor instance has been restarted recently, this data
-		may not be available until the first strategy decision making cycle is completed. The URL is:<br />
-		<a target="_blank" href={errorUrl}>{errorUrl}</a>
-	</Alert>
+	{#if hasError}
+		<Alert status="warning">
+			Could not load strategy decision making data. If the trade executor instance has been restarted recently, this
+			data may not be available until the first strategy decision making cycle is completed. The URL is:<br />
+			<a target="_blank" href={errorUrl}>{errorUrl}</a>
+		</Alert>
+	{/if}
 
 	<SummaryBox
 		title="Decision making"
