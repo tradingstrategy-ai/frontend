@@ -108,15 +108,23 @@
 			<div class="logos">
 				<Tooltip>
 					<span slot="tooltip-trigger">
-						<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						{#if strategy.on_chain_data.asset_management_mode === 'enzyme'}
+							<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						{:else if strategy.on_chain_data.asset_management_mode === 'hot_wallet'}
+							<img alt="This strategy uses Enzyme vault" src={getLogoUrl('wallet', 'metamask')} />
+						{/if}
 					</span>
 
-					<span slot="tooltip-popup"> This strategy uses Enzyme vault </span>
+					<span slot="tooltip-popup">
+						This strategy uses {strategy.on_chain_data.asset_management_mode === 'hot_wallet'
+							? 'hot wallet'
+							: 'Enzyme vault'}
+					</span>
 				</Tooltip>
 
 				<Tooltip>
 					<span slot="tooltip-trigger">
-						<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('token', 'matic')} />
+						<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('blockchain', 'polygon')} />
 					</span>
 
 					<span slot="tooltip-popup"> This strategy runs on Polygon blockchain </span>
