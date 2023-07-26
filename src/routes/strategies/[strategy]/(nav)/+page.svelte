@@ -37,12 +37,12 @@
 
 			<SummaryBox title="Performance">
 				<DataBox
-					label="Lifetime realised profit and losses"
+					label="Lifetime realised profit and loss"
 					value={formatPercent(returnAllTime)}
 					valueClass={determinePriceChangeClass(returnAllTime)}
 				/>
 				<DataBox
-					label="Current unrealised profit and losses"
+					label="Current unrealised profit and loss"
 					value={formatDollar(portfolioStats.unrealised_profit_usd)}
 					valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
 				/>
