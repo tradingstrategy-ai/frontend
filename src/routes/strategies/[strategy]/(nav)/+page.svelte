@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fromUnixTime, formatDistanceToNow } from 'date-fns';
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
@@ -10,14 +9,10 @@
 
 	$: ({ chain, summary, state } = data);
 
-	$: console.log(state);
-
 	$: portfolioStats = getPortfolioLatestStats(state);
-	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
-	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
 	$: returnAllTime = summary?.summary_statistics?.return_all_time;
 	$: age = summary?.summary_statistics?.key_metrics?.started_at?.value;
-	$: cashSymbol = state?.portfolio?.reserves && Object.values(state.portfolio.reserves)[0].asset.token_symbol;
+	$: cashSymbol = Object.values(state?.portfolio?.reserves ?? {})[0]?.asset?.token_symbol;
 </script>
 
 <svelte:head>
