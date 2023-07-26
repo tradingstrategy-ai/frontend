@@ -10,11 +10,14 @@
 
 	$: ({ chain, summary, state } = data);
 
+	$: console.log(state);
+
 	$: portfolioStats = getPortfolioLatestStats(state);
 	$: lastValuationDate = portfolioStats ? fromUnixTime(portfolioStats.calculated_at) : null;
 	$: totalProfit = portfolioStats ? portfolioStats.unrealised_profit_usd + portfolioStats.realised_profit_usd : null;
-	$: returnAllTime = data?.summary?.summary_statistics?.return_all_time;
-	$: age = data?.summary?.summary_statistics?.key_metrics?.started_at?.value;
+	$: returnAllTime = summary?.summary_statistics?.return_all_time;
+	$: age = summary?.summary_statistics?.key_metrics?.started_at?.value;
+	$: cashSymbol = state?.portfolio?.reserves && Object.values(state.portfolio.reserves)[0].asset.token_symbol;
 </script>
 
 <svelte:head>
@@ -29,7 +32,7 @@
 		{#if portfolioStats}
 			<SummaryBox title="Assets">
 				<DataBox label="Total assets" value={formatDollar(portfolioStats.total_equity)} />
-				<DataBox label="Cash" value={formatDollar(portfolioStats.free_cash)} />
+				<DataBox label={`Cash (${cashSymbol})`} value={formatDollar(portfolioStats.free_cash)} />
 			</SummaryBox>
 
 			<SummaryBox title="Performance">
