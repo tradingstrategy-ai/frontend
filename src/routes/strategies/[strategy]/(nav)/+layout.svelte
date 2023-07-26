@@ -11,14 +11,12 @@
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
-
-	console.log(data);
 </script>
 
 <main class="strategy-layout ds-container">
 	<PageHeading>
 		<h1>{summary.name}</h1>
-		<p>{summary.long_description}</p>
+		<p class="long-description">{summary.long_description}</p>
 
 		{#if errorHtml}
 			<div class="error-wrapper">
@@ -57,7 +55,7 @@
 		}
 
 		& .page-heading p {
-			font: var(--f-ui-md-medium);
+			font: var(--f-ui-md-light);
 		}
 
 		& .subpage :global {
