@@ -11,8 +11,6 @@
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(summary);
-
-	console.log(data);
 </script>
 
 <main class="strategy-layout ds-container">
@@ -57,7 +55,7 @@
 		}
 
 		& .page-heading p {
-			font: var(--f-ui-md-medium);
+			font: var(--f-ui-md-roman);
 		}
 
 		& .subpage :global {
