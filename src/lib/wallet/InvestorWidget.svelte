@@ -36,7 +36,7 @@
 			{/if}
 		</svelte:fragment>
 		<div class="content">
-			{#if !depositEnabled}{:else if $wallet.status !== 'connected'}
+			{#if $wallet.status !== 'connected'}
 				<div class="not-connected">
 					<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
 				</div>
