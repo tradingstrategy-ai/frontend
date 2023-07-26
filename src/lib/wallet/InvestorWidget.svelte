@@ -28,33 +28,37 @@
 	}
 </script>
 
-<SummaryBox title="Invest" ctaPosition="top">
-	<svelte:fragment slot="cta">
-		{#if $wallet.status === 'connected'}
-			<WalletAddress wallet={$wallet} />
-		{/if}
-	</svelte:fragment>
-	<div class="content">
-		{#if !depositEnabled}
-			<Alert status="info" size="md">Depositing is not currently available for this strategy.</Alert>
-		{:else if $wallet.status !== 'connected'}
-			<div class="not-connected">
-				<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
-			</div>
-		{:else if $wallet.chain.id !== chain.chain_id}
-			<WrongNetwork chainId={chain.chain_id} chainName={chain.chain_name} />
-		{:else}
-			<VaultBalance {contracts} address={$wallet.address} />
-		{/if}
-	</div>
-	<div class="actions">
-		<Button on:click={() => launchWizard(connectWizard)}>
-			{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
-		</Button>
-		<Button label="Deposit" disabled={!depositEnabled} on:click={() => launchWizard(depositWizard)} />
-		<Button label="Redeem" disabled={!depositEnabled} on:click={() => launchWizard(redeemWizard)} />
-	</div>
-</SummaryBox>
+{#if depositEnabled}
+	<SummaryBox title="Invest" ctaPosition="top">
+		<svelte:fragment slot="cta">
+			{#if $wallet.status === 'connected'}
+				<WalletAddress wallet={$wallet} />
+			{/if}
+		</svelte:fragment>
+		<div class="content">
+			{#if !depositEnabled}{:else if $wallet.status !== 'connected'}
+				<div class="not-connected">
+					<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
+				</div>
+			{:else if $wallet.chain.id !== chain.chain_id}
+				<WrongNetwork chainId={chain.chain_id} chainName={chain.chain_name} />
+			{:else}
+				<VaultBalance {contracts} address={$wallet.address} />
+			{/if}
+		</div>
+		<div class="actions">
+			<Button on:click={() => launchWizard(connectWizard)}>
+				{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
+			</Button>
+			<Button label="Deposit" on:click={() => launchWizard(depositWizard)} />
+			<Button label="Redeem" on:click={() => launchWizard(redeemWizard)} />
+		</div>
+	</SummaryBox>
+{:else}
+	<Alert status="info" size="md" title="Deposits not available">
+		This strategy is not using smart contract-based capital management and is not accepting external investments.
+	</Alert>
+{/if}
 
 <style lang="postcss">
 	.not-connected {
