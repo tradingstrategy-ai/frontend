@@ -46,10 +46,10 @@
 		}
 	}
 
-	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 	$: backtestLink = `/strategies/${strategy.id}/backtest`;
 	$: tokenLogos = getTokenLogos(strategy);
+	$: assetManagementMode = strategy.on_chain_data.asset_management_mode;
 </script>
 
 <li class="strategy tile tile b">
@@ -108,17 +108,16 @@
 			<div class="logos">
 				<Tooltip>
 					<span slot="tooltip-trigger">
-						{#if strategy.on_chain_data.asset_management_mode === 'enzyme'}
-							<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-						{:else if strategy.on_chain_data.asset_management_mode === 'hot_wallet'}
-							<img alt="This strategy uses Enzyme vault" src={getLogoUrl('wallet', 'metamask')} />
+						{#if assetManagementMode === 'enzyme'}
+							<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						{:else if assetManagementMode === 'hot_wallet'}
+							<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
 						{/if}
 					</span>
 
 					<span slot="tooltip-popup">
-						This strategy uses {strategy.on_chain_data.asset_management_mode === 'hot_wallet'
-							? 'hot wallet'
-							: 'Enzyme vault'}
+						This strategy uses
+						{assetManagementMode === 'hot_wallet' ? 'hot wallet' : 'Enzyme vault'}
 					</span>
 				</Tooltip>
 
