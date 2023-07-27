@@ -1,17 +1,9 @@
 <script lang="ts">
-	import { getPositionLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatProfitability, formatTokenAmount } from 'trade-executor-frontend/helpers/formatters';
 	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
-	import {
-		getValueAtOpen,
-		getValueAtPeak,
-		getValueAtClose,
-		getPositionFreezeReason,
-		isPositionInError
-	} from 'trade-executor-frontend/state/position-helpers';
+	import { getPositionFreezeReason, isPositionInError } from 'trade-executor-frontend/state/position-helpers';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
-	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
 	import {
 		Alert,
 		Badge,
@@ -20,27 +12,23 @@
 		HashAddress,
 		PageHeading,
 		Timestamp,
+		Tooltip,
 		UpDownIndicator
 	} from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import PositionDataIndicator from './PositionDataIndicator.svelte';
 	import type { TradingPositionInfo } from './position-data';
-	import type { State, TradingPosition } from 'trade-executor-frontend/state/interface';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
 	import { positionInfoDescription } from './position-data';
 
-	/** @type {import('./$types').PageData} */
 	export let data;
 
 	// TODO: Is there any way to make IDE to pick these types smartly?
 	let summary = data.summary;
-	let state: State = data.state;
 	let position: TradingPosition = data.position;
-	let chain = data.state;
+	let chain = data.chain;
 	let positionInfo: TradingPositionInfo = data.positionInfo;
 
-	const currentStats = getPositionLatestStats(position.position_id, state.stats);
-	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
@@ -110,9 +98,9 @@
 
 				{#if positionInfo.stopLossTriggered}
 					<Tooltip>
-						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span slot="tooltip-trigger" style:display="inline-block">
 							<PositionDataIndicator text="stop loss" />
-						</p>
+						</span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.stopLossTriggered}
 						</span>
@@ -237,11 +225,11 @@
 
 					{#if positionInfo.trailingStopLossPercent}
 						<Tooltip>
-							<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<span slot="tooltip-trigger" style:display="inline-block">
 								<PositionDataIndicator
 									text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
 								/>
-							</p>
+							</span>
 							<span slot="tooltip-popup">
 								{positionInfoDescription.trailingStopLossPercent}
 							</span>
@@ -316,24 +304,8 @@
 		}
 	}
 
-	.tooltip-trigger-value {
-		display: block;
-	}
-
-	/* Give user hint the value is clickable / hoverable
-     *
-     */
-	.tooltip-trigger-value :global(*) {
-		border-bottom: 1px dotted black;
-	}
-
-	.tooltip-trigger-value :global(.position-data-indicator) {
-		display: inline-block;
-		border-bottom: none;
-	}
-
-	.tooltip-trigger-value:after {
-		content: '\A';
-		white-space: pre;
+	/* Give user hint the value is clickable / hoverable */
+	.tooltip-trigger-value > :global(*) {
+		border-bottom: 1px dotted;
 	}
 </style>
