@@ -26,6 +26,7 @@ export interface TradingPositionInfo {
 
   // See Python get_value_at_open()
   valueAtOpen?: USDollarValue;
+  quantityAtOpen?: TokenUnits;
 
   portfolioWeightAtOpen: Percent;
 
@@ -44,13 +45,19 @@ export interface TradingPositionInfo {
   // The realised or unrealised profitability of the position
   unrealisedProfitability?: Percent;
 
+  // Realised if closed, unrealised if open
+  profitability?: Percent;
 
   estimatedMaximumRisk?: Percent;
 
   marketMidPriceAtOpen: USDollarPrice,
 
+  // Is stop loss used with this position
+  stopLossable: boolean;
+
   stopLossPrice?: USDollarValue;
   stopLossPercent?: Percent;
+  stopLossTriggered: boolean;
 
 }
 
@@ -58,10 +65,10 @@ export interface TradingPositionInfo {
 /**
  * English tooltips for the datapoints
  */
-export const PositionInfoDescription = {
-  "openedAt": "Position open trade executed at.",
-  "closedAt": "Position closing trade executed.",
-  "durationSeconds": "How long this position was or has been open.",
+export const positionInfoDescription = {
+  "openedAt": "The strategy cycle decision time when the strategy decided to open this trade.",
+  "closedAt": "The block timestamp when the closing trade of this position executed. This can be outside normal strategy decision making cycles when stop loss or take profit signals are triggered.",
+  "durationSeconds": "How long this position was or has been open. The duration is calcualated from the open decision time to the closing trade execution time.",
   "stillOpen": "Is the position currently open.",
   "candleTimeBucket": "Which candles we use to visualise the history of this position.",
   "openPrice": "The execution price of the opening trade.",
@@ -70,10 +77,12 @@ export const PositionInfoDescription = {
   "realisedProfitability": "The realised profitability of the position. BETA WARNING: Currently calculation may not be correct for multitrade positions.",
   "unrealisedProfitability": "The current estimated profitability of the position if closed now. BETA WARNING: Currently calculation may not be correct for multitrade positions.",
   "portfolioWeightAtOpen": "What was the position size in the terms of % total portfolio when the position was opened.",
-  "valueAtOpen": "What was the position value when the position was opened. Not available if the first trade execution failed and position was not opened.",
+  "valueAtOpen": "What was the position value when the position was opened.",
+  "quantityAtOpen": "What was the position size in tokens when the position was opened.",
   "estimatedMaximumRisk": "How much % of the portfolio is at the risk if this position is completely lost.",
   "stopLossPercent": "Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. Calculated relative to the open price, not the current price.",
   "stopLossPrice": "Stop loss price for this position. Position is attempted closed as soon as possible if the market mid-price crosses this level.",
+  "stopLossTriggered": "Stop loss was triggered for this position. Stop loss can still close at profit if a trailing stop loss or other form of dynamic stop loss was used.",
   "marketMidPriceAtOpen": "What was the market mid-price when this position was opened."
 }
 
@@ -107,6 +116,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
   const stillOpen = position.closed_at === null && position.frozen_at === null;
   const openPrice = firstTrade?.executed_price;
   const valueAtOpen =  calculateTradeValue(firstTrade);
+  const quantityAtOpen =  firstTrade.executed_quantity;
   const portfolioWeightAtOpen = valueAtOpen / position.portfolio_value_at_open;
 
   let realisedProfitability = undefined;
@@ -114,11 +124,13 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
   let closePrice = undefined;
   let currentPrice = undefined;
   let durationSeconds;
-  const currentTimestampUTC = new Date() * 1000;
+  const currentTimestampUTC = new Date() / 1000;
 
   const marketMidPriceAtOpen = firstTrade.price_structure.mid_price;
+  const stopLossable = position.stop_loss !== null;
   const stopLossPrice = position.stop_loss;
   const stopLossPercent = (stopLossPrice - marketMidPriceAtOpen) / marketMidPriceAtOpen;
+  let stopLossTriggered = false;
 
   if(stillOpen) {
     durationSeconds = currentTimestampUTC - openedAt;
@@ -126,11 +138,14 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
     unrealisedProfitability = (currentPrice - openPrice) / openPrice;
   } else {
     durationSeconds = closedAt - openedAt;
-    closePrice = lastTrade.executed_at;
+    closePrice = lastTrade.executed_price;
     // TODO: Needs to be changed avg sell - avg buy
     realisedProfitability = (closePrice - openPrice) / openPrice;
+
+    stopLossTriggered = tradeList.some((t) => t.trade_type === 'stop_loss')
   }
 
+  const profitability = realisedProfitability || unrealisedProfitability;
   const candleTimeBucket = durationSeconds > 7*24*3600 ? "1d" : "1h";
 
   return {
@@ -144,10 +159,14 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
     currentPrice,
     realisedProfitability,
     unrealisedProfitability,
+    profitability,
     valueAtOpen,
+    quantityAtOpen,
     portfolioWeightAtOpen,
+    stopLossable,
     stopLossPrice,
     stopLossPercent,
+    stopLossTriggered,
     marketMidPriceAtOpen,
   }
 }

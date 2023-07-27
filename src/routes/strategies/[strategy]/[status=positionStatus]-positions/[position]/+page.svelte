@@ -9,14 +9,25 @@
 		getPositionFreezeReason,
 		isPositionInError
 	} from 'trade-executor-frontend/state/position-helpers';
-	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
+    import {formatDuration, formatPercent, formatPrice} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
-	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+    import {
+      Alert,
+      Badge,
+      DataBox,
+      DataBoxes,
+      HashAddress,
+      PageHeading,
+      Timestamp,
+      UpDownIndicator
+    } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
     import type {TradingPositionInfo} from "./position-data";
     import type {State, TradingPosition} from "trade-executor-frontend/state/interface";
+    import Tooltip from "$lib/components/Tooltip.svelte";
+    import {positionInfoDescription} from "./position-data";
 
     /** @type {import('./$types').PageData} */
 	export let data;
@@ -73,61 +84,158 @@
 			</DataBox>
 
 			<DataBox label="Profitability">
-				<div class="profitability">
-					<UpDownIndicator
-						value={currentStats?.profitability}
-						formatter={formatProfitability}
-						compareFn={determineProfitability}
-					/>
-					{#if trades.some((t) => t.trade_type === 'stop_loss')}
-						<StopLossIndicator />
-					{/if}
-				</div>
-			</DataBox>
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <UpDownIndicator
+                            value={positionInfo.profitability}
+                            formatter={formatProfitability}
+                            compareFn={determineProfitability}
+                        />
+                    </p>
+                    <span slot="tooltip-popup">
+                        {#if positionInfo.stillOpen}
+                            {positionInfoDescription.unrealisedProfitability}
+                        {:else}
+                            {positionInfoDescription.realisedProfitability}
+                        {/if}
+                    </span>
+                </Tooltip>
 
-			<DataBox label="Time">
-                {#if positionInfo.stillOpen}
-				    <Timestamp date={position.opened_at} format="iso" withTime />
-                {:else}
-                    <Timestamp date={position.opened_at} format="iso" withTime /> -
-                    <br>
-                    <Timestamp date={position.closed_at} format="iso" withTime />
+                {#if positionInfo.stopLossTriggered}
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <StopLossIndicator />
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.stopLossTriggered}
+                        </span>
+                    </Tooltip>
                 {/if}
 			</DataBox>
 
-			{#if position.closed_at}
-				<DataBox label="Closed">
-					<Timestamp date={position.closed_at} format="iso" withTime />
-				</DataBox>
-			{/if}
+			<DataBox label="Time">
 
-			<DataBox label="{tradeDirection(trades[0])} price">
-				{formatPrice(trades[0].executed_price)}
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <Timestamp date={positionInfo.openedAt} format="iso" withTime />
+                            {#if !positionInfo.stillOpen}
+                                —
+                            {/if}
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.openedAt}
+                        </span>
+                    </Tooltip>
+
+                    {#if !positionInfo.stillOpen}
+                        <Tooltip>
+                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                                <Timestamp date={positionInfo.closedAt} format="iso" withTime />
+                            </p>
+                            <span slot="tooltip-popup">
+                                {positionInfoDescription.closedAt}
+                            </span>
+                        </Tooltip>
+                    {/if}
+
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <span>{formatDuration(positionInfo.durationSeconds)}</span>
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.durationSeconds}
+                        </span>
+                    </Tooltip>
+
+                    {#if positionInfo.stillOpen}
+                        <Badge text="Currently open" />
+                    {/if}
 			</DataBox>
 
-			{#if position.closed_at}
-				{@const lastTrade = trades.at(-1)}
-				<DataBox label="{tradeDirection(lastTrade)} price">
-					{formatPrice(lastTrade.executed_price)}
-				</DataBox>
-			{/if}
+            <DataBox label="Price">
 
-			{#if position.closed_at}
-				<DataBox label="Duration" value={formatDuration(position.closed_at - position.opened_at)} />
-				<DataBox label="Last revaluation">
-					<Timestamp date={position.last_pricing_at} format="iso" withTime />
-				</DataBox>
-				<DataBox label="Value at open" value={formatPrice(getValueAtOpen(positionStats))} />
-				<DataBox label="Value before close" value={formatPrice(getValueAtClose(positionStats))} />
-			{:else}
-				<DataBox label="Quantity">
-					{formatTokenAmount(currentStats?.quantity)}
-					{position.pair.base.token_symbol}
-				</DataBox>
-				<DataBox label="Value now" value={formatPrice(currentStats?.value)} />
-			{/if}
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <span>{formatPrice(positionInfo.openPrice)}</span>
+                            —
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.openPrice}
+                        </span>
+                    </Tooltip>
 
-			<DataBox label="Highest value" value={formatPrice(getValueAtPeak(positionStats))} />
+                    {#if positionInfo.stillOpen}
+                        <Tooltip>
+                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                                <span>{formatPrice(positionInfo.currentPrice)}</span>
+                            </p>
+                            <span slot="tooltip-popup">
+                                {positionInfoDescription.currentPrice}
+                            </span>
+                        </Tooltip>
+                    {:else}
+                        <Tooltip>
+                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                                <span>{formatPrice(positionInfo.closePrice)}</span>
+                            </p>
+                            <span slot="tooltip-popup">
+                                {positionInfoDescription.closePrice}
+                            </span>
+                        </Tooltip>
+                    {/if}
+			</DataBox>
+
+            <DataBox label="Size">
+
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>{formatPrice(positionInfo.valueAtOpen)}</span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.valueAtOpen}
+                    </span>
+                </Tooltip>
+
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>
+                            {formatTokenAmount(positionInfo.quantityAtOpen)}
+                            {position.pair.base.token_symbol}
+                        </span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.quantityAtOpen}
+                    </span>
+                </Tooltip>
+
+			</DataBox>
+
+            {#if positionInfo.stopLossable }
+                <DataBox label="Stop loss">
+
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <span>{formatPrice(positionInfo.stopLossPrice)}</span>
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.stopLossPrice}
+                        </span>
+                    </Tooltip>
+
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <span>
+                                {formatPercent(positionInfo.stopLossPercent)}
+                            </span>
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.stopLossPercent}
+                        </span>
+                    </Tooltip>
+
+                </DataBox>
+            {/if}
+
 		</DataBoxes>
 
 		<TradeTable {trades} />
@@ -157,4 +265,26 @@
 			display: inline-grid;
 		}
 	}
+
+    .tooltip-trigger-value {
+        display: block;
+    }
+
+    /* Give user hint the value is clickable / hoverable
+     *
+     */
+    .tooltip-trigger-value :global(*) {
+        border-bottom: 1px dotted black;
+    }
+
+    .tooltip-trigger-value :global(.stop-loss) {
+        display: inline-block;
+        border-bottom: none;
+    }
+
+
+    .tooltip-trigger-value:after {
+        content: '\A';
+        white-space:pre;
+    }
 </style>
