@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
-	import { Alert, Button } from '$lib/components';
-	import ChartThumbnail from './ChartThumbnail.svelte';
-	import KeyMetric from './KeyMetric.svelte';
+	import { fromUnixTime } from 'date-fns';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import {
 		formatDollar,
@@ -12,10 +9,11 @@
 		formatPercent,
 		formatPriceChange
 	} from '$lib/helpers/formatters';
-
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { Alert, Button, Tooltip } from '$lib/components';
+	import ChartThumbnail from './ChartThumbnail.svelte';
+	import KeyMetric from './KeyMetric.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
