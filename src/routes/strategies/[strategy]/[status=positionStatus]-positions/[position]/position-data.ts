@@ -55,10 +55,17 @@ export interface TradingPositionInfo {
   // Is stop loss used with this position
   stopLossable: boolean;
 
-  stopLossPrice?: USDollarValue;
+  stopLossPercentOpen?: USDollarValue;
+  stopLossPriceLast?: USDollarValue;
   stopLossPercent?: Percent;
   stopLossTriggered: boolean;
+  trailingStopLossPercent?: Percent;
 
+  portfolioRiskPercent: Percent;
+
+  volume: USDollarValue;
+  tradingFees: USDollarValue;
+  tradingFeesPercent: Percent;
 }
 
 
@@ -80,17 +87,28 @@ export const positionInfoDescription = {
   "valueAtOpen": "What was the position value when the position was opened.",
   "quantityAtOpen": "What was the position size in tokens when the position was opened.",
   "estimatedMaximumRisk": "How much % of the portfolio is at the risk if this position is completely lost.",
-  "stopLossPercent": "Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. Calculated relative to the open price, not the current price.",
+  "stopLossPercentOpen": "Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. BETA WARNING: Currently calculated relative to the open price, not the current price.",
   "stopLossPrice": "Stop loss price for this position. Position is attempted closed as soon as possible if the market mid-price crosses this level.",
   "stopLossTriggered": "Stop loss was triggered for this position. Stop loss can still close at profit if a trailing stop loss or other form of dynamic stop loss was used.",
-  "marketMidPriceAtOpen": "What was the market mid-price when this position was opened."
+  "marketMidPriceAtOpen": "What was the market mid-price when this position was opened.",
+  "trailingStopLossPercent": "If trailing stop loss was turned on, what was its value relative to the position value.",
+  "portfolioRiskPercent": "Maximum portfolio % value at a risk when the position was opened. This risk assumes any stop losses can be executed without significant price impact or slippage.",
+
+  "volume": "How much trading volume trades of this position have generated",
+  "tradingFees": "How much trading fees were total. This includes protocol fees and liquidity provider fees",
+  "tradingFeesPercent": "How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees",
 }
 
 
 /**
- * Return the executed value of the trade.
+ * Trade value.
  *
  * Trade can fail or in-progress in the case this function returns undefined.
+ *
+ * @return
+ *  Return the executed value of the trade.
+ *  Negative number for decreasing the size i.e. selling tokens.
+ *  Undefined if the trade failed to execute.
  *
  */
 export function calculateTradeValue(trade: TradeExecution): USDollarValue | undefined {
@@ -100,6 +118,62 @@ export function calculateTradeValue(trade: TradeExecution): USDollarValue | unde
   return undefined;
 }
 
+
+/**
+ * Gets the first stop loss price.
+ *
+ * - When the stop loss was first enabled, use that price
+ */
+export function getFirstStopLossPrice(position: TradingPosition): USDollarPrice | undefined {
+
+  for (const tu of position.trigger_updates) {
+    if(tu.stop_loss_before) {
+      return tu.stop_loss_before;
+    }
+  }
+
+  if(position.stop_loss) {
+    return position.stop_loss;
+  }
+
+  return undefined;
+}
+
+
+/**
+ * Calculate volume and fees the position has generated.
+ *
+ */
+export function calculateVolumeAndFees(position: TradingPosition) {
+
+  const trades: TradeExecution[] = Object.values(position.trades);
+  let volume =  0;
+  let lpFees = 0;
+
+  for (const t of trades) {
+    volume += Math.abs(calculateTradeValue(t) || 0);
+    lpFees += t.lp_fees_paid || 0;
+  }
+
+  let lpFeesPercent = 0;
+
+  if(volume) {
+    lpFeesPercent = lpFees / volume;
+  }
+
+  return {
+    volume,
+    lpFees,
+    lpFeesPercent
+  }
+}
+
+
+/**
+ * Calculate various frontend metrics and features about a specific trading position.
+ *
+ * @param position Trading position we want to analyse.
+ */
 export function extractPositionInfo(position: TradingPosition): TradingPositionInfo {
 
   const tradeList: TradeExecution[] = Object.values(position.trades);
@@ -128,8 +202,17 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 
   const marketMidPriceAtOpen = firstTrade.price_structure.mid_price;
   const stopLossable = position.stop_loss !== null;
-  const stopLossPrice = position.stop_loss;
-  const stopLossPercent = (stopLossPrice - marketMidPriceAtOpen) / marketMidPriceAtOpen;
+
+  const stopLossPriceCurrent = position.stop_loss;
+  const stopLossPriceOpen = getFirstStopLossPrice(position);
+  const trailingStopLossPercent = position.trailing_stop_loss_pct;
+
+  let stopLossPercentOpen = undefined;
+
+  if(stopLossPriceOpen) {
+    stopLossPercentOpen = stopLossPriceOpen / marketMidPriceAtOpen;
+  }
+
   let stopLossTriggered = false;
 
   if(stillOpen) {
@@ -148,6 +231,16 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
   const profitability = realisedProfitability || unrealisedProfitability;
   const candleTimeBucket = durationSeconds > 7*24*3600 ? "1d" : "1h";
 
+  let portfolioRiskPercent;
+
+  if(stopLossPercentOpen) {
+    portfolioRiskPercent = (1 - stopLossPercentOpen) * portfolioWeightAtOpen;
+  } else {
+    portfolioRiskPercent = 1;
+  }
+
+  const { volume, lpFees, lpFeesPercent } = calculateVolumeAndFees(position);
+
   return {
     openedAt,  //
     closedAt,
@@ -164,9 +257,13 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
     quantityAtOpen,
     portfolioWeightAtOpen,
     stopLossable,
-    stopLossPrice,
-    stopLossPercent,
+    trailingStopLossPercent,
+    stopLossPercentOpen,
     stopLossTriggered,
     marketMidPriceAtOpen,
+    portfolioRiskPercent,
+    volume,
+    tradingFees: lpFees,
+    tradingFeesPercent: lpFeesPercent,
   }
 }

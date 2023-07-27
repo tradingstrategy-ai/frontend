@@ -16,9 +16,13 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 	export let value: string | undefined = undefined;
 	export let valueClass: string = '';
+
+    // How do we behave if the same data box list have
+    // rows from multiple different height boxes
+    export let tightness: "equal-rows" | "tight" = "equal-rows";
 </script>
 
-<div class="data-box {size}">
+<div class="data-box {size} {tightness}">
 	<span class="label">{label}</span>
 	<span class="value {valueClass}"><slot>{value || '---'}</slot></span>
 </div>
@@ -28,6 +32,11 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		border-radius: var(--radius-md);
 		background: hsla(var(--hsl-box), var(--a-box-b));
 		display: grid;
+
+        &.tight {
+            display: flex;
+            flex-direction: column;
+        }
 
 		&.xs {
 			gap: var(--space-ss);

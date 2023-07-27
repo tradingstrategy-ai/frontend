@@ -9,7 +9,7 @@
 		getPositionFreezeReason,
 		isPositionInError
 	} from 'trade-executor-frontend/state/position-helpers';
-    import {formatDuration, formatPercent, formatPrice} from '$lib/helpers/formatters';
+    import {formatDollar, formatDuration, formatPercent, formatPrice} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
     import {
@@ -23,7 +23,7 @@
       UpDownIndicator
     } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
-	import StopLossIndicator from './StopLossIndicator.svelte';
+	import PositionDataIndicator from './PositionDataIndicator.svelte';
     import type {TradingPositionInfo} from "./position-data";
     import type {State, TradingPosition} from "trade-executor-frontend/state/interface";
     import Tooltip from "$lib/components/Tooltip.svelte";
@@ -77,13 +77,13 @@
 		{/if}
 
 		<DataBoxes>
-			<DataBox label="Pair">
+			<DataBox label="Pair" size="sm" tightness="tight">
 				<a href={position.pair.info_url}>
 					{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
 				</a>
 			</DataBox>
 
-			<DataBox label="Profitability">
+			<DataBox label="Profitability" size="sm" tightness="tight">
                 <Tooltip>
                     <p slot="tooltip-trigger" class="tooltip-trigger-value">
                         <UpDownIndicator
@@ -104,7 +104,7 @@
                 {#if positionInfo.stopLossTriggered}
                     <Tooltip>
                         <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <StopLossIndicator />
+                            <PositionDataIndicator text="stop loss"/>
                         </p>
                         <span slot="tooltip-popup">
                             {positionInfoDescription.stopLossTriggered}
@@ -113,7 +113,7 @@
                 {/if}
 			</DataBox>
 
-			<DataBox label="Time">
+			<DataBox label="Time" size="sm" tightness="tight">
 
                     <Tooltip>
                         <p slot="tooltip-trigger" class="tooltip-trigger-value">
@@ -152,7 +152,7 @@
                     {/if}
 			</DataBox>
 
-            <DataBox label="Price">
+            <DataBox label="Price" size="sm" tightness="tight">
 
                     <Tooltip>
                         <p slot="tooltip-trigger" class="tooltip-trigger-value">
@@ -185,7 +185,7 @@
                     {/if}
 			</DataBox>
 
-            <DataBox label="Size">
+            <DataBox label="Size" size="sm" tightness="tight">
 
                 <Tooltip>
                     <p slot="tooltip-trigger" class="tooltip-trigger-value">
@@ -208,33 +208,92 @@
                     </span>
                 </Tooltip>
 
+               <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>
+                            {formatPercent(positionInfo.portfolioWeightAtOpen)}
+                        </span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.portfolioWeightAtOpen}
+                    </span>
+                </Tooltip>
+
 			</DataBox>
 
             {#if positionInfo.stopLossable }
-                <DataBox label="Stop loss">
+                <DataBox label="Stop loss" size="sm" tightness="tight">
 
                     <Tooltip>
                         <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>{formatPrice(positionInfo.stopLossPrice)}</span>
+                            <span>{formatPercent(positionInfo.stopLossPercentOpen)}</span>
                         </p>
                         <span slot="tooltip-popup">
-                            {positionInfoDescription.stopLossPrice}
+                            {positionInfoDescription.stopLossPercentOpen}
                         </span>
                     </Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>
-                                {formatPercent(positionInfo.stopLossPercent)}
+                    {#if positionInfo.trailingStopLossPercent}
+                        <Tooltip>
+                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                                <PositionDataIndicator text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}/>
+                            </p>
+                            <span slot="tooltip-popup">
+                                {positionInfoDescription.trailingStopLossPercent}
                             </span>
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.stopLossPercent}
-                        </span>
-                    </Tooltip>
+                        </Tooltip>
+                    {/if}
 
                 </DataBox>
             {/if}
+
+            <DataBox label="Risk" size="sm" tightness="tight">
+
+                    <Tooltip>
+                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                            <span>{formatPercent(positionInfo.portfolioRiskPercent)}</span>
+                        </p>
+                        <span slot="tooltip-popup">
+                            {positionInfoDescription.portfolioRiskPercent}
+                        </span>
+                    </Tooltip>
+
+            </DataBox>
+
+            <DataBox label="Volume" size="sm" tightness="tight">
+
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>{formatDollar(positionInfo.volume)}</span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.volume}
+                    </span>
+                </Tooltip>
+
+            </DataBox>
+
+            <DataBox label="Fees" size="sm" tightness="tight">
+
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>{formatDollar(positionInfo.tradingFees)}</span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.tradingFees}
+                    </span>
+                </Tooltip>
+
+                <Tooltip>
+                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
+                        <span>{formatPercent(positionInfo.tradingFeesPercent)}</span>
+                    </p>
+                    <span slot="tooltip-popup">
+                        {positionInfoDescription.tradingFeesPercent}
+                    </span>
+                </Tooltip>
+
+            </DataBox>
 
 		</DataBoxes>
 
@@ -251,11 +310,6 @@
 		@media (--viewport-sm-down) {
 			gap: var(--space-xl);
 		}
-	}
-
-	.profitability {
-		display: flex;
-		justify-content: space-between;
 	}
 
 	.error-details a {
@@ -277,7 +331,7 @@
         border-bottom: 1px dotted black;
     }
 
-    .tooltip-trigger-value :global(.stop-loss) {
+    .tooltip-trigger-value :global(.position-data-indicator) {
         display: inline-block;
         border-bottom: none;
     }
