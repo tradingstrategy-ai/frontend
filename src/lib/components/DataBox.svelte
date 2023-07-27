@@ -14,17 +14,14 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 <script lang="ts">
 	export let label: string;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
-	export let value: string | undefined = undefined;
-	export let valueClass: string = '';
-
-	// How do we behave if the same data box list have
-	// rows from multiple different height boxes
-	export let tightness: 'equal-rows' | 'tight' = 'equal-rows';
+	export let value: MaybeNumberOrString = undefined;
 </script>
 
-<div class="data-box {size} {tightness}">
+<div class="data-box {size}">
 	<span class="label">{label}</span>
-	<span class="value {valueClass}"><slot>{value || '---'}</slot></span>
+	<span class="value">
+		<slot {value}>{value ?? '---'}</slot>
+	</span>
 </div>
 
 <style lang="postcss">
@@ -32,11 +29,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		border-radius: var(--radius-md);
 		background: hsla(var(--hsl-box), var(--a-box-b));
 		display: grid;
-
-		&.tight {
-			display: flex;
-			flex-direction: column;
-		}
+		align-content: var(--data-box-align-content, normal);
 
 		&.xs {
 			gap: var(--space-ss);

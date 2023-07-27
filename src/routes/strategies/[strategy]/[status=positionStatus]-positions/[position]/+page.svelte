@@ -66,13 +66,13 @@
 		{/if}
 
 		<DataBoxes>
-			<DataBox label="Pair" size="sm" tightness="tight">
+			<DataBox label="Pair" size="sm">
 				<a href={position.pair.info_url}>
 					{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
 				</a>
 			</DataBox>
 
-			<DataBox label="Profitability" size="sm" tightness="tight">
+			<DataBox label="Profitability" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<UpDownIndicator
@@ -100,7 +100,7 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Time" size="sm" tightness="tight">
+			<DataBox label="Time" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<Timestamp date={positionInfo.openedAt} format="iso" withTime />
@@ -138,7 +138,7 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Price" size="sm" tightness="tight">
+			<DataBox label="Price" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<span>{formatPrice(positionInfo.openPrice)}</span>
@@ -170,7 +170,7 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Size" size="sm" tightness="tight">
+			<DataBox label="Size" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
@@ -205,7 +205,7 @@
 			</DataBox>
 
 			{#if positionInfo.stopLossable}
-				<DataBox label="Stop loss" size="sm" tightness="tight">
+				<DataBox label="Stop loss" size="sm">
 					<Tooltip>
 						<p slot="tooltip-trigger" class="tooltip-trigger-value">
 							<span>{formatPercent(positionInfo.stopLossPercentOpen)}</span>
@@ -229,7 +229,7 @@
 				</DataBox>
 			{/if}
 
-			<DataBox label="Risk" size="sm" tightness="tight">
+			<DataBox label="Risk" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<span>{formatPercent(positionInfo.portfolioRiskPercent)}</span>
@@ -240,7 +240,7 @@
 				</Tooltip>
 			</DataBox>
 
-			<DataBox label="Volume" size="sm" tightness="tight">
+			<DataBox label="Volume" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<span>{formatDollar(positionInfo.volume)}</span>
@@ -251,7 +251,7 @@
 				</Tooltip>
 			</DataBox>
 
-			<DataBox label="Fees" size="sm" tightness="tight">
+			<DataBox label="Fees" size="sm">
 				<Tooltip>
 					<p slot="tooltip-trigger" class="tooltip-trigger-value">
 						<span>{formatDollar(positionInfo.tradingFees)}</span>
@@ -278,6 +278,8 @@
 
 <style lang="postcss">
 	section {
+		--data-box-align-content: flex-start;
+
 		margin-top: var(--space-md);
 		display: grid;
 		gap: var(--space-5xl);
