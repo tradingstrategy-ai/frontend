@@ -41,6 +41,7 @@ export { default as SummaryBox } from './SummaryBox.svelte';
 export { default as Tabs } from './Tabs.svelte';
 export { default as TextInput } from './TextInput.svelte';
 export { default as Timestamp } from './Timestamp.svelte';
+export { default as Tooltip } from './Tooltip.svelte';
 export { default as TradingDataInfo } from './TradingDataInfo.svelte';
 export { default as TradingDataInfoRow } from './TradingDataInfoRow.svelte';
 export { default as UpDownCell } from './UpDownCell.svelte';
