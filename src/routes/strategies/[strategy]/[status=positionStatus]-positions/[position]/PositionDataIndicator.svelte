@@ -9,9 +9,9 @@
 
 <style lang="postcss">
 	.position-data-indicator {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
-		background: var(--c-background-2);
+		background: hsla(var(--hsl-box), var(--a-box-c));
 		border-radius: var(--space-sm);
 		text-align: center;
 		text-transform: uppercase;

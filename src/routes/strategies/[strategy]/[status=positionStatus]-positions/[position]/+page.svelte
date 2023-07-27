@@ -92,9 +92,7 @@
 
 				{#if positionInfo.stopLossTriggered}
 					<Tooltip>
-						<span slot="tooltip-trigger" style:display="inline-block">
-							<PositionDataIndicator text="stop loss" />
-						</span>
+						<PositionDataIndicator slot="tooltip-trigger" text="stop loss" />
 						<span slot="tooltip-popup">
 							{positionInfoDescription.stopLossTriggered}
 						</span>
@@ -219,11 +217,10 @@
 
 					{#if positionInfo.trailingStopLossPercent}
 						<Tooltip>
-							<span slot="tooltip-trigger" style:display="inline-block">
-								<PositionDataIndicator
-									text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
-								/>
-							</span>
+							<PositionDataIndicator
+								slot="tooltip-trigger"
+								text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
+							/>
 							<span slot="tooltip-popup">
 								{positionInfoDescription.trailingStopLossPercent}
 							</span>
