@@ -9,43 +9,41 @@
 		getPositionFreezeReason,
 		isPositionInError
 	} from 'trade-executor-frontend/state/position-helpers';
-    import {formatDollar, formatDuration, formatPercent, formatPrice} from '$lib/helpers/formatters';
+	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
-    import {
-      Alert,
-      Badge,
-      DataBox,
-      DataBoxes,
-      HashAddress,
-      PageHeading,
-      Timestamp,
-      UpDownIndicator
-    } from '$lib/components';
+	import {
+		Alert,
+		Badge,
+		DataBox,
+		DataBoxes,
+		HashAddress,
+		PageHeading,
+		Timestamp,
+		UpDownIndicator
+	} from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import PositionDataIndicator from './PositionDataIndicator.svelte';
-    import type {TradingPositionInfo} from "./position-data";
-    import type {State, TradingPosition} from "trade-executor-frontend/state/interface";
-    import Tooltip from "$lib/components/Tooltip.svelte";
-    import {positionInfoDescription} from "./position-data";
+	import type { TradingPositionInfo } from './position-data';
+	import type { State, TradingPosition } from 'trade-executor-frontend/state/interface';
+	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { positionInfoDescription } from './position-data';
 
-    /** @type {import('./$types').PageData} */
+	/** @type {import('./$types').PageData} */
 	export let data;
 
-    // TODO: Is there any way to make IDE to pick these types smartly?
-    let summary = data.summary;
-    let state: State = data.state;
-    let position: TradingPosition = data.position;
-    let chain = data.state;
-    let positionInfo: TradingPositionInfo = data.positionInfo;
+	// TODO: Is there any way to make IDE to pick these types smartly?
+	let summary = data.summary;
+	let state: State = data.state;
+	let position: TradingPosition = data.position;
+	let chain = data.state;
+	let positionInfo: TradingPositionInfo = data.positionInfo;
 
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
-
-
 </script>
 
 <main class="ds-container">
@@ -84,217 +82,206 @@
 			</DataBox>
 
 			<DataBox label="Profitability" size="sm" tightness="tight">
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <UpDownIndicator
-                            value={positionInfo.profitability}
-                            formatter={formatProfitability}
-                            compareFn={determineProfitability}
-                        />
-                    </p>
-                    <span slot="tooltip-popup">
-                        {#if positionInfo.stillOpen}
-                            {positionInfoDescription.unrealisedProfitability}
-                        {:else}
-                            {positionInfoDescription.realisedProfitability}
-                        {/if}
-                    </span>
-                </Tooltip>
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<UpDownIndicator
+							value={positionInfo.profitability}
+							formatter={formatProfitability}
+							compareFn={determineProfitability}
+						/>
+					</p>
+					<span slot="tooltip-popup">
+						{#if positionInfo.stillOpen}
+							{positionInfoDescription.unrealisedProfitability}
+						{:else}
+							{positionInfoDescription.realisedProfitability}
+						{/if}
+					</span>
+				</Tooltip>
 
-                {#if positionInfo.stopLossTriggered}
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <PositionDataIndicator text="stop loss"/>
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.stopLossTriggered}
-                        </span>
-                    </Tooltip>
-                {/if}
+				{#if positionInfo.stopLossTriggered}
+					<Tooltip>
+						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<PositionDataIndicator text="stop loss" />
+						</p>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.stopLossTriggered}
+						</span>
+					</Tooltip>
+				{/if}
 			</DataBox>
 
 			<DataBox label="Time" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<Timestamp date={positionInfo.openedAt} format="iso" withTime />
+						{#if !positionInfo.stillOpen}
+							—
+						{/if}
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.openedAt}
+					</span>
+				</Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <Timestamp date={positionInfo.openedAt} format="iso" withTime />
-                            {#if !positionInfo.stillOpen}
-                                —
-                            {/if}
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.openedAt}
-                        </span>
-                    </Tooltip>
+				{#if !positionInfo.stillOpen}
+					<Tooltip>
+						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<Timestamp date={positionInfo.closedAt} format="iso" withTime />
+						</p>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.closedAt}
+						</span>
+					</Tooltip>
+				{/if}
 
-                    {#if !positionInfo.stillOpen}
-                        <Tooltip>
-                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                                <Timestamp date={positionInfo.closedAt} format="iso" withTime />
-                            </p>
-                            <span slot="tooltip-popup">
-                                {positionInfoDescription.closedAt}
-                            </span>
-                        </Tooltip>
-                    {/if}
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatDuration(positionInfo.durationSeconds)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.durationSeconds}
+					</span>
+				</Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>{formatDuration(positionInfo.durationSeconds)}</span>
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.durationSeconds}
-                        </span>
-                    </Tooltip>
-
-                    {#if positionInfo.stillOpen}
-                        <Badge text="Currently open" />
-                    {/if}
+				{#if positionInfo.stillOpen}
+					<Badge text="Currently open" />
+				{/if}
 			</DataBox>
 
-            <DataBox label="Price" size="sm" tightness="tight">
+			<DataBox label="Price" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatPrice(positionInfo.openPrice)}</span>
+						—
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.openPrice}
+					</span>
+				</Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>{formatPrice(positionInfo.openPrice)}</span>
-                            —
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.openPrice}
-                        </span>
-                    </Tooltip>
-
-                    {#if positionInfo.stillOpen}
-                        <Tooltip>
-                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                                <span>{formatPrice(positionInfo.currentPrice)}</span>
-                            </p>
-                            <span slot="tooltip-popup">
-                                {positionInfoDescription.currentPrice}
-                            </span>
-                        </Tooltip>
-                    {:else}
-                        <Tooltip>
-                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                                <span>{formatPrice(positionInfo.closePrice)}</span>
-                            </p>
-                            <span slot="tooltip-popup">
-                                {positionInfoDescription.closePrice}
-                            </span>
-                        </Tooltip>
-                    {/if}
+				{#if positionInfo.stillOpen}
+					<Tooltip>
+						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<span>{formatPrice(positionInfo.currentPrice)}</span>
+						</p>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.currentPrice}
+						</span>
+					</Tooltip>
+				{:else}
+					<Tooltip>
+						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<span>{formatPrice(positionInfo.closePrice)}</span>
+						</p>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.closePrice}
+						</span>
+					</Tooltip>
+				{/if}
 			</DataBox>
 
-            <DataBox label="Size" size="sm" tightness="tight">
+			<DataBox label="Size" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.valueAtOpen}
+					</span>
+				</Tooltip>
 
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>{formatPrice(positionInfo.valueAtOpen)}</span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.valueAtOpen}
-                    </span>
-                </Tooltip>
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>
+							{formatTokenAmount(positionInfo.quantityAtOpen)}
+							{position.pair.base.token_symbol}
+						</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.quantityAtOpen}
+					</span>
+				</Tooltip>
 
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>
-                            {formatTokenAmount(positionInfo.quantityAtOpen)}
-                            {position.pair.base.token_symbol}
-                        </span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.quantityAtOpen}
-                    </span>
-                </Tooltip>
-
-               <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>
-                            {formatPercent(positionInfo.portfolioWeightAtOpen)}
-                        </span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.portfolioWeightAtOpen}
-                    </span>
-                </Tooltip>
-
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>
+							{formatPercent(positionInfo.portfolioWeightAtOpen)}
+						</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.portfolioWeightAtOpen}
+					</span>
+				</Tooltip>
 			</DataBox>
 
-            {#if positionInfo.stopLossable }
-                <DataBox label="Stop loss" size="sm" tightness="tight">
+			{#if positionInfo.stopLossable}
+				<DataBox label="Stop loss" size="sm" tightness="tight">
+					<Tooltip>
+						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+							<span>{formatPercent(positionInfo.stopLossPercentOpen)}</span>
+						</p>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.stopLossPercentOpen}
+						</span>
+					</Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>{formatPercent(positionInfo.stopLossPercentOpen)}</span>
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.stopLossPercentOpen}
-                        </span>
-                    </Tooltip>
+					{#if positionInfo.trailingStopLossPercent}
+						<Tooltip>
+							<p slot="tooltip-trigger" class="tooltip-trigger-value">
+								<PositionDataIndicator
+									text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
+								/>
+							</p>
+							<span slot="tooltip-popup">
+								{positionInfoDescription.trailingStopLossPercent}
+							</span>
+						</Tooltip>
+					{/if}
+				</DataBox>
+			{/if}
 
-                    {#if positionInfo.trailingStopLossPercent}
-                        <Tooltip>
-                            <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                                <PositionDataIndicator text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}/>
-                            </p>
-                            <span slot="tooltip-popup">
-                                {positionInfoDescription.trailingStopLossPercent}
-                            </span>
-                        </Tooltip>
-                    {/if}
+			<DataBox label="Risk" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatPercent(positionInfo.portfolioRiskPercent)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.portfolioRiskPercent}
+					</span>
+				</Tooltip>
+			</DataBox>
 
-                </DataBox>
-            {/if}
+			<DataBox label="Volume" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatDollar(positionInfo.volume)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.volume}
+					</span>
+				</Tooltip>
+			</DataBox>
 
-            <DataBox label="Risk" size="sm" tightness="tight">
+			<DataBox label="Fees" size="sm" tightness="tight">
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatDollar(positionInfo.tradingFees)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.tradingFees}
+					</span>
+				</Tooltip>
 
-                    <Tooltip>
-                        <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                            <span>{formatPercent(positionInfo.portfolioRiskPercent)}</span>
-                        </p>
-                        <span slot="tooltip-popup">
-                            {positionInfoDescription.portfolioRiskPercent}
-                        </span>
-                    </Tooltip>
-
-            </DataBox>
-
-            <DataBox label="Volume" size="sm" tightness="tight">
-
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>{formatDollar(positionInfo.volume)}</span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.volume}
-                    </span>
-                </Tooltip>
-
-            </DataBox>
-
-            <DataBox label="Fees" size="sm" tightness="tight">
-
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>{formatDollar(positionInfo.tradingFees)}</span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.tradingFees}
-                    </span>
-                </Tooltip>
-
-                <Tooltip>
-                    <p slot="tooltip-trigger" class="tooltip-trigger-value">
-                        <span>{formatPercent(positionInfo.tradingFeesPercent)}</span>
-                    </p>
-                    <span slot="tooltip-popup">
-                        {positionInfoDescription.tradingFeesPercent}
-                    </span>
-                </Tooltip>
-
-            </DataBox>
-
+				<Tooltip>
+					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span>{formatPercent(positionInfo.tradingFeesPercent)}</span>
+					</p>
+					<span slot="tooltip-popup">
+						{positionInfoDescription.tradingFeesPercent}
+					</span>
+				</Tooltip>
+			</DataBox>
 		</DataBoxes>
 
 		<TradeTable {trades} />
@@ -320,25 +307,24 @@
 		}
 	}
 
-    .tooltip-trigger-value {
-        display: block;
-    }
+	.tooltip-trigger-value {
+		display: block;
+	}
 
-    /* Give user hint the value is clickable / hoverable
+	/* Give user hint the value is clickable / hoverable
      *
      */
-    .tooltip-trigger-value :global(*) {
-        border-bottom: 1px dotted black;
-    }
+	.tooltip-trigger-value :global(*) {
+		border-bottom: 1px dotted black;
+	}
 
-    .tooltip-trigger-value :global(.position-data-indicator) {
-        display: inline-block;
-        border-bottom: none;
-    }
+	.tooltip-trigger-value :global(.position-data-indicator) {
+		display: inline-block;
+		border-bottom: none;
+	}
 
-
-    .tooltip-trigger-value:after {
-        content: '\A';
-        white-space:pre;
-    }
+	.tooltip-trigger-value:after {
+		content: '\A';
+		white-space: pre;
+	}
 </style>

@@ -39,8 +39,8 @@ For more information see:
 	.key-metric-tooltip {
 		& .tooltip-trigger {
 			cursor: pointer;
-            /* Undo base CSS abbr font style */
-            font-style: normal;
+			/* Undo base CSS abbr font style */
+			font-style: normal;
 		}
 
 		& button {

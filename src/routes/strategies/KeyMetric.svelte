@@ -125,8 +125,8 @@ Display one key metric in a strategy tile.
 			margin: 0;
 			gap: var(--space-ss);
 
-            /* Give user hint the value is clickable / hoverable */
-            border-bottom: 1px dotted var(--c-text-light);
+			/* Give user hint the value is clickable / hoverable */
+			border-bottom: 1px dotted var(--c-text-light);
 		}
 
 		& h4 {

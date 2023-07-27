@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let lg = false;
-    export let text = "";
+	export let text = '';
 
 	$: size = lg ? 'lg' : 'md';
 </script>
