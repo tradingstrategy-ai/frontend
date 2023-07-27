@@ -53,6 +53,15 @@
 	</PageHeading>
 
 	<section>
+		{#if positionInfo.failedOpen}
+			<Alert size="md" status="error" title="Failed entry">
+				<p>
+					The first trade opening this position failed to execute correctly. There is no correct or meaningful data
+					available for this position. The position was discarded.
+				</p>
+			</Alert>
+		{/if}
+
 		{#if positionErrorInfo}
 			<Alert size="md" status="error" title="This position is currently in an error state">
 				<ul class="error-details">

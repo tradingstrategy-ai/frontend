@@ -13,6 +13,11 @@ import type { TimeBucket } from '$lib/chart';
  * Deducted data about the position to be displayed in the frontend.
  */
 export interface TradingPositionInfo {
+	// This position failed to open correctly and any of the metrics
+	// cannot be thus calculated. This happens if the first executed
+	// trade fails to execute correctly.
+	failedOpen: boolean;
+
 	//
 	openedAt: UnixTimestamp;
 
@@ -185,6 +190,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 
 	const firstTrade: TradeExecution = tradeList[0];
 	const lastTrade: TradeExecution = tradeList.at(-1);
+	const failedOpen = firstTrade.failed_at !== null;
 
 	const openedAt = position.opened_at;
 	const closedAt = position.closed_at;
@@ -243,6 +249,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	const { volume, lpFees, lpFeesPercent } = calculateVolumeAndFees(position);
 
 	return {
+		failedOpen,
 		openedAt, //
 		closedAt,
 		stillOpen,

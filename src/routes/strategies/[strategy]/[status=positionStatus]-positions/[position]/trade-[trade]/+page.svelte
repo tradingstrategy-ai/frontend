@@ -5,9 +5,9 @@
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
-	import StopLossIndicator from '../StopLossIndicator.svelte';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
+	import PositionDataIndicator from '../PositionDataIndicator.svelte';
 
 	export let data;
 
@@ -25,7 +25,7 @@
 			{tradeDirection(trade)}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
-				<StopLossIndicator lg />
+				<PositionDataIndicator lg text="stop-loss" />
 			{/if}
 		</h2>
 	</PageHeading>
