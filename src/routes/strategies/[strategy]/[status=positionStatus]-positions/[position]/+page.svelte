@@ -4,6 +4,7 @@
 	import { getPositionFreezeReason, isPositionInError } from 'trade-executor-frontend/state/position-helpers';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { extractPositionInfo, positionInfoDescription } from './position-data';
 	import {
 		Alert,
 		Badge,
@@ -17,21 +18,14 @@
 	} from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import PositionDataIndicator from './PositionDataIndicator.svelte';
-	import type { TradingPositionInfo } from './position-data';
-	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
-	import { positionInfoDescription } from './position-data';
 
 	export let data;
+	const { summary, position, chain } = data;
 
-	// TODO: Is there any way to make IDE to pick these types smartly?
-	let summary = data.summary;
-	let position: TradingPosition = data.position;
-	let chain = data.chain;
-	let positionInfo: TradingPositionInfo = data.positionInfo;
-
-	const trades = Object.values(position.trades);
+	const positionInfo = extractPositionInfo(position);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
+	const trades = Object.values(position.trades);
 </script>
 
 <main class="ds-container">
