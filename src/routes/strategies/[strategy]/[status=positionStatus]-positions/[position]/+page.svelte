@@ -24,6 +24,8 @@
 	const trades = Object.values(position.trades);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
+
+
 </script>
 
 <main class="ds-container">
