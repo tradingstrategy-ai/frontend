@@ -7,12 +7,11 @@ import type {
   USDollarPrice, USDollarValue
 } from "trade-executor-frontend/state/interface";
 import type {TimeBucket} from "$lib/chart";
-import {duration} from "../../../../../../../trade-executor/deps/web3-ethereum-defi/contracts/sushiswap/test/utilities";
 
 /**
- * Deducted data about the position to be displayed in the frontend;
+ * Deducted data about the position to be displayed in the frontend.
  */
-export interface PositionInfo {
+export interface TradingPositionInfo {
 
   //
   openedAt: UnixTimestamp;
@@ -92,7 +91,7 @@ export function calculateTradeValue(trade: TradeExecution): USDollarValue | unde
   return undefined;
 }
 
-export function extractPositionInfo(position: TradingPosition): PositionInfo {
+export function extractPositionInfo(position: TradingPosition): TradingPositionInfo {
 
   const tradeList: TradeExecution[] = Object.values(position.trades);
 
@@ -106,7 +105,6 @@ export function extractPositionInfo(position: TradingPosition): PositionInfo {
   const openedAt = position.opened_at;
   const closedAt = position.closed_at ;
   const stillOpen = position.closed_at === null && position.frozen_at === null;
-  const candleTimeBucket = durationSeconds > 7*24*3600 ? "1d" : "1h";
   const openPrice = firstTrade?.executed_price;
   const valueAtOpen =  calculateTradeValue(firstTrade);
   const portfolioWeightAtOpen = valueAtOpen / position.portfolio_value_at_open;
@@ -132,6 +130,8 @@ export function extractPositionInfo(position: TradingPosition): PositionInfo {
     // TODO: Needs to be changed avg sell - avg buy
     realisedProfitability = (closePrice - openPrice) / openPrice;
   }
+
+  const candleTimeBucket = durationSeconds > 7*24*3600 ? "1d" : "1h";
 
   return {
     openedAt,  //

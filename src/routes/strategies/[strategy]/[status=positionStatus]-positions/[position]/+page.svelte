@@ -15,10 +15,19 @@
 	import { Alert, DataBox, DataBoxes, HashAddress, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import StopLossIndicator from './StopLossIndicator.svelte';
+    import type {TradingPositionInfo} from "./position-data";
+    import type {State, TradingPosition} from "trade-executor-frontend/state/interface";
 
+    /** @type {import('./$types').PageData} */
 	export let data;
 
-	const { summary, state, position, chain } = data;
+    // TODO: Is there any way to make IDE to pick these types smartly?
+    let summary = data.summary;
+    let state: State = data.state;
+    let position: TradingPosition = data.position;
+    let chain = data.state;
+    let positionInfo: TradingPositionInfo = data.positionInfo;
+
 	const currentStats = getPositionLatestStats(position.position_id, state.stats);
 	const positionStats = state.stats.positions[position.position_id];
 	const trades = Object.values(position.trades);
@@ -76,8 +85,14 @@
 				</div>
 			</DataBox>
 
-			<DataBox label="Opened">
-				<Timestamp date={position.opened_at} format="iso" withTime />
+			<DataBox label="Time">
+                {#if positionInfo.stillOpen}
+				    <Timestamp date={position.opened_at} format="iso" withTime />
+                {:else}
+                    <Timestamp date={position.opened_at} format="iso" withTime /> -
+                    <br>
+                    <Timestamp date={position.closed_at} format="iso" withTime />
+                {/if}
 			</DataBox>
 
 			{#if position.closed_at}
