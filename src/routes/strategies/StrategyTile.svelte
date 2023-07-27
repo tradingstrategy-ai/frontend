@@ -25,13 +25,25 @@
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const assetManagementMode = strategy.on_chain_data.asset_management_mode;
+	const chainSlug = getChainSlug(strategy);
 
-	// FIXME: hack to infer list of tokens based on strategy ID for now;
+	// FIXME: hack to get chain slug from chain ID;
+	// This should either come from strategy metadata or `chains` API
+	function getChainSlug({ on_chain_data }: StrategyRuntimeState) {
+		switch (on_chain_data.chain_id) {
+			case 1:
+				return 'ethereum';
+			case 137:
+				return 'polygon';
+		}
+	}
+
+	// FIXME: hack to infer list of tokens based on strategy ID;
 	// In the future this will come from the strategy configuration.
-	function getStrategyTokens() {
-		if (strategy.id.includes('multipair')) {
+	function getStrategyTokens({ id }: StrategyRuntimeState) {
+		if (id.includes('multipair')) {
 			return ['usdc'];
-		} else if (strategy.id.includes('matic')) {
+		} else if (id.includes('matic')) {
 			return ['matic', 'usdc'];
 		} else {
 			return ['eth', 'usdc'];
@@ -105,12 +117,15 @@
 					</Tooltip>
 				{/if}
 
-				<Tooltip>
-					<img slot="tooltip-trigger" alt="Polygon blockchain" src={getLogoUrl('blockchain', 'polygon')} />
-					<span slot="tooltip-popup">This strategy runs on Polygon blockchain</span>
-				</Tooltip>
+				{#if chainSlug}
+					{@const chainName = `${chainSlug.charAt(0).toUpperCase()}${chainSlug.slice(1)}`}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt={chainName} src={getLogoUrl('blockchain', chainSlug)} />
+						<span slot="tooltip-popup">This strategy runs on {chainName} blockchain</span>
+					</Tooltip>
+				{/if}
 
-				{#each getStrategyTokens() as token}
+				{#each getStrategyTokens(strategy) as token}
 					{@const symbol = token.toUpperCase()}
 					<Tooltip>
 						<img slot="tooltip-trigger" alt={symbol} src={getLogoUrl('token', token)} />
