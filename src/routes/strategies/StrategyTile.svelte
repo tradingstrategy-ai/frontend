@@ -22,34 +22,21 @@
 
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
+	const errorHtml = getTradeExecutorErrorHtml(strategy);
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
+	const assetManagementMode = strategy.on_chain_data.asset_management_mode;
 
-	interface StrategyLogoConfig {
-		token: string;
-		tooltip: string;
-	}
-
-	// TODO: Now a temp placeholder here -
-	// in the future this will come from the configuration
-	function getTokenLogos(strategy): StrategyLogoConfig[] {
+	// FIXME: hack to infer list of tokens based on strategy ID for now;
+	// In the future this will come from the strategy configuration.
+	function getStrategyTokens() {
 		if (strategy.id.includes('multipair')) {
-			return [{ token: 'usdc', tooltip: 'This strategy trades USDC' }];
+			return ['usdc'];
 		} else if (strategy.id.includes('matic')) {
-			return [
-				{ token: 'matic', tooltip: 'This strategy trades MATIC' },
-				{ token: 'usdc', tooltip: 'This strategy trades USDC' }
-			];
+			return ['matic', 'usdc'];
 		} else {
-			return [
-				{ token: 'eth', tooltip: 'This strategy trades ETH' },
-				{ token: 'usdc', tooltip: 'This strategy trades USDC' }
-			];
+			return ['eth', 'usdc'];
 		}
 	}
-
-	$: errorHtml = getTradeExecutorErrorHtml(strategy);
-	$: backtestLink = `/strategies/${strategy.id}/backtest`;
-	$: tokenLogos = getTokenLogos(strategy);
-	$: assetManagementMode = strategy.on_chain_data.asset_management_mode;
 </script>
 
 <li class="strategy tile tile b">
@@ -123,10 +110,11 @@
 					<span slot="tooltip-popup">This strategy runs on Polygon blockchain</span>
 				</Tooltip>
 
-				{#each tokenLogos as { token, tooltip }}
+				{#each getStrategyTokens() as token}
+					{@const symbol = token.toUpperCase()}
 					<Tooltip>
-						<img slot="tooltip-trigger" alt={token.toUpperCase()} src={getLogoUrl('token', token)} />
-						<span slot="tooltip-popup">{tooltip}</span>
+						<img slot="tooltip-trigger" alt={symbol} src={getLogoUrl('token', token)} />
+						<span slot="tooltip-popup">This strategy trades {symbol}</span>
 					</Tooltip>
 				{/each}
 			</div>
