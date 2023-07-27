@@ -106,38 +106,27 @@
 
 			<!-- TODO: make part of strategy configuration -->
 			<div class="logos">
-				<Tooltip>
-					<span slot="tooltip-trigger">
-						{#if assetManagementMode === 'enzyme'}
-							<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-						{:else if assetManagementMode === 'hot_wallet'}
-							<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
-						{/if}
-					</span>
-
-					<span slot="tooltip-popup">
-						This strategy uses
-						{assetManagementMode === 'hot_wallet' ? 'hot wallet' : 'Enzyme vault'}
-					</span>
-				</Tooltip>
-
-				<Tooltip>
-					<span slot="tooltip-trigger">
-						<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('blockchain', 'polygon')} />
-					</span>
-
-					<span slot="tooltip-popup"> This strategy runs on Polygon blockchain </span>
-				</Tooltip>
-
-				{#each tokenLogos as logo}
+				{#if assetManagementMode === 'enzyme'}
 					<Tooltip>
-						<span slot="tooltip-trigger">
-							<img class="token-logo" alt={logo.tooltip} src={getLogoUrl('token', logo.token)} />
-						</span>
+						<img slot="tooltip-trigger" alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						<span slot="tooltip-popup">This strategy's assets are managed using an Enzyme vault</span>
+					</Tooltip>
+				{:else if assetManagementMode === 'hot_wallet'}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
+						<span slot="tooltip-popup">This strategy's assets are managed using a hot wallet</span>
+					</Tooltip>
+				{/if}
 
-						<span slot="tooltip-popup">
-							{logo.tooltip}
-						</span>
+				<Tooltip>
+					<img slot="tooltip-trigger" alt="Polygon blockchain" src={getLogoUrl('blockchain', 'polygon')} />
+					<span slot="tooltip-popup">This strategy runs on Polygon blockchain</span>
+				</Tooltip>
+
+				{#each tokenLogos as { token, tooltip }}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt={token.toUpperCase()} src={getLogoUrl('token', token)} />
+						<span slot="tooltip-popup">{tooltip}</span>
 					</Tooltip>
 				{/each}
 			</div>
@@ -198,16 +187,11 @@
 
 	.logos {
 		display: flex;
+		gap: var(--space-xs);
 
 		& img {
-			width: 32px;
-			height: 32px;
-			display: inline-block;
-			margin-right: 5px;
-		}
-
-		& .tooltip-content {
-			display: inline-block;
+			width: 2rem;
+			aspect-ratio: 1;
 		}
 	}
 </style>
