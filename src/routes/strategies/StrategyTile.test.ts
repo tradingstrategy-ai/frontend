@@ -10,7 +10,10 @@ const baseStrategy = {
 	started_at: 1669852800,
 	executor_running: true,
 	connected: true,
-	frozen_positions: 0
+	frozen_positions: 0,
+	on_chain_data: {
+		asset_management_mode: 'enzyme'
+	}
 };
 
 describe('StrategyTile component', () => {

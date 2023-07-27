@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { fromUnixTime } from 'date-fns';
 	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
-	import { Alert, Button } from '$lib/components';
-	import ChartThumbnail from './ChartThumbnail.svelte';
-	import KeyMetric from './KeyMetric.svelte';
+	import { fromUnixTime } from 'date-fns';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import {
 		formatDollar,
@@ -12,44 +9,44 @@
 		formatPercent,
 		formatPriceChange
 	} from '$lib/helpers/formatters';
-
 	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { Alert, Button, Tooltip } from '$lib/components';
+	import ChartThumbnail from './ChartThumbnail.svelte';
+	import KeyMetric from './KeyMetric.svelte';
 
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
 
 	const summaryStats = strategy.summary_statistics || {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
+	const errorHtml = getTradeExecutorErrorHtml(strategy);
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
+	const assetManagementMode = strategy.on_chain_data.asset_management_mode;
+	const chainSlug = getChainSlug(strategy);
 
-	interface StrategyLogoConfig {
-		token: string;
-		tooltip: string;
-	}
-
-	// TODO: Now a temp placeholder here -
-	// in the future this will come from the configuration
-	function getTokenLogos(strategy): StrategyLogoConfig[] {
-		if (strategy.id.includes('multipair')) {
-			return [{ token: 'usdc', tooltip: 'This strategy trades USDC' }];
-		} else if (strategy.id.includes('matic')) {
-			return [
-				{ token: 'matic', tooltip: 'This strategy trades MATIC' },
-				{ token: 'usdc', tooltip: 'This strategy trades USDC' }
-			];
-		} else {
-			return [
-				{ token: 'eth', tooltip: 'This strategy trades ETH' },
-				{ token: 'usdc', tooltip: 'This strategy trades USDC' }
-			];
+	// FIXME: hack to get chain slug from chain ID;
+	// This should either come from strategy metadata or `chains` API
+	function getChainSlug({ on_chain_data }: StrategyRuntimeState) {
+		switch (on_chain_data.chain_id) {
+			case 1:
+				return 'ethereum';
+			case 137:
+				return 'polygon';
 		}
 	}
 
-	// Get the error message HTML
-	$: errorHtml = getTradeExecutorErrorHtml(strategy);
-	$: backtestLink = `/strategies/${strategy.id}/backtest`;
-	$: tokenLogos = getTokenLogos(strategy);
+	// FIXME: hack to infer list of tokens based on strategy ID;
+	// In the future this will come from the strategy configuration.
+	function getStrategyTokens({ id }: StrategyRuntimeState) {
+		if (id.includes('multipair')) {
+			return ['usdc'];
+		} else if (id.includes('matic')) {
+			return ['matic', 'usdc'];
+		} else {
+			return ['eth', 'usdc'];
+		}
+	}
 </script>
 
 <li class="strategy tile tile b">
@@ -106,31 +103,31 @@
 
 			<!-- TODO: make part of strategy configuration -->
 			<div class="logos">
-				<Tooltip>
-					<span slot="tooltip-trigger">
-						<img alt="This strategy uses Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-					</span>
-
-					<span slot="tooltip-popup"> This strategy uses Enzyme vault </span>
-				</Tooltip>
-
-				<Tooltip>
-					<span slot="tooltip-trigger">
-						<img alt="This strategy runs on Polygon blockchain" src={getLogoUrl('token', 'matic')} />
-					</span>
-
-					<span slot="tooltip-popup"> This strategy runs on Polygon blockchain </span>
-				</Tooltip>
-
-				{#each tokenLogos as logo}
+				{#if assetManagementMode === 'enzyme'}
 					<Tooltip>
-						<span slot="tooltip-trigger">
-							<img class="token-logo" alt={logo.tooltip} src={getLogoUrl('token', logo.token)} />
-						</span>
+						<img slot="tooltip-trigger" alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						<span slot="tooltip-popup">This strategy's assets are managed using an Enzyme vault</span>
+					</Tooltip>
+				{:else if assetManagementMode === 'hot_wallet'}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
+						<span slot="tooltip-popup">This strategy's assets are managed using a hot wallet</span>
+					</Tooltip>
+				{/if}
 
-						<span slot="tooltip-popup">
-							{logo.tooltip}
-						</span>
+				{#if chainSlug}
+					{@const chainName = `${chainSlug.charAt(0).toUpperCase()}${chainSlug.slice(1)}`}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt={chainName} src={getLogoUrl('blockchain', chainSlug)} />
+						<span slot="tooltip-popup">This strategy runs on {chainName} blockchain</span>
+					</Tooltip>
+				{/if}
+
+				{#each getStrategyTokens(strategy) as token}
+					{@const symbol = token.toUpperCase()}
+					<Tooltip>
+						<img slot="tooltip-trigger" alt={symbol} src={getLogoUrl('token', token)} />
+						<span slot="tooltip-popup">This strategy trades {symbol}</span>
 					</Tooltip>
 				{/each}
 			</div>
@@ -191,16 +188,11 @@
 
 	.logos {
 		display: flex;
+		gap: var(--space-xs);
 
 		& img {
-			width: 32px;
-			height: 32px;
-			display: inline-block;
-			margin-right: 5px;
-		}
-
-		& .tooltip-content {
-			display: inline-block;
+			width: 2rem;
+			aspect-ratio: 1;
 		}
 	}
 </style>
