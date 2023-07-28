@@ -4,8 +4,8 @@
 
 import { error } from '@sveltejs/kit';
 import { fetchPublicApi, publicApiError } from '$lib/helpers/public-api';
-import { getConfiguredStrategyById } from 'trade-executor-frontend/strategy/configuration';
-import { getStrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
+import { getConfiguredStrategyById } from 'trade-executor/strategy/configuration';
+import { getStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 
 async function fetchStrategyState(fetch: Fetch, strategyUrl: string) {
 	const url = `${strategyUrl}/state`;

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+	import type { TradingPosition } from 'trade-executor/state/interface';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatProfitability } from 'trade-executor-frontend/helpers/formatters';
-	import { determineProfitability } from 'trade-executor-frontend/helpers/profit';
+	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';

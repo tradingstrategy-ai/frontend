@@ -6,39 +6,30 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install NPM dependencies
 
-Node >=16.14 required.
+Node >=18.14 required.
 
 ```shell
 npm install
 ```
 
-## Install submodules
+## Install and build submodules
 
-`frontend` has two submodule dependencies installed under `deps`:
+`frontend` has one submodule dependency installed under `deps`:
 
-- `trade-executor-frontend` - frontend to `trade-executor` (beta UI for active trading strategies)
 - `fonts` - optional licensed fonts (see `static/fonts5.css` and `src/lib/components/css/typography.css`)
 
-### Install all submodules (including private `fonts`)
+### Install submodules
 
-If you have access to the private `tradingstrategy-ai/fonts`, initialize and install all submodules:
+If you have access to the private `tradingstrategy-ai/fonts`, initialize and install submodules:
 
 ```shell
 git submodule update --init --recursive
 ```
 
-### Install only public submodules
-
-If you don't have access to `fonts`, install only the public submodules:
-
-```shell
-git submodule update --init --recursive -- deps/trade-executor-frontend
-```
-
 ### Building submodule dependencies
 
-Once the submodules have been installed, their own install/build steps need to be run in order
-to have a fully working environment. The following script runs `npm build` on submodules:
+Once the submodule has been installed, a build step needs to be run in order to have a fully
+working environment. Run the following script:
 
 ```shell
 bash scripts/build-deps.sh

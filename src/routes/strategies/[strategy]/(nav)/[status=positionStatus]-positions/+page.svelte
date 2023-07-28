@@ -2,7 +2,7 @@
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { createCombinedPositionList } from 'trade-executor-frontend/state/stats';
+	import { createCombinedPositionList } from 'trade-executor/state/stats';
 	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
 

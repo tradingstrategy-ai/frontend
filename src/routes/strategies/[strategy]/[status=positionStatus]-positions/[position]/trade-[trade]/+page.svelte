@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { BlockchainTransaction } from 'trade-executor-frontend/state/interface';
-	import { formatAmount, formatBPS } from 'trade-executor-frontend/helpers/formatters';
+	import type { BlockchainTransaction } from 'trade-executor/state/interface';
+	import { formatAmount, formatBPS } from 'trade-executor/helpers/formatters';
 	import { formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
-	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
+	import { tradeDirection } from 'trade-executor/helpers/trade';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';

@@ -2,7 +2,7 @@
 	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
+	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import WebChart from '../../WebChart.svelte';
 
