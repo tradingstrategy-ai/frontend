@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
 	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { Alert, SummaryBox, DataBox } from '$lib/components';
+	import { Alert, SummaryBox, DataBox, UpDownIndicator } from '$lib/components';
 	import { InvestorWidget } from '$lib/wallet';
 
 	export let data;
@@ -31,17 +30,12 @@
 			</SummaryBox>
 
 			<SummaryBox title="Performance">
-				<DataBox
-					label="Lifetime realised profit and loss"
-					value={formatPercent(returnAllTime)}
-					valueClass={determinePriceChangeClass(returnAllTime)}
-				/>
-				<DataBox
-					label="Current unrealised profit and loss"
-					value={formatDollar(portfolioStats.unrealised_profit_usd)}
-					valueClass={determinePriceChangeClass(portfolioStats.unrealised_profit_usd)}
-				/>
-
+				<DataBox label="Lifetime realised profit and loss" value={returnAllTime} let:value>
+					<UpDownIndicator {value} formatter={formatPercent} />
+				</DataBox>
+				<DataBox label="Current unrealised profit and loss" value={portfolioStats.unrealised_profit_usd} let:value>
+					<UpDownIndicator {value} formatter={formatDollar} />
+				</DataBox>
 				<DataBox label="Live trading" value={formatDaysAgo(age)} />
 			</SummaryBox>
 		{:else}

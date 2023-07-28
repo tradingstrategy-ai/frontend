@@ -11,15 +11,15 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 -->
 <script lang="ts">
 	export let value: MaybeNumberOrString;
+
 	type ValueFormatter = Formatter<MaybeNumberOrString>;
 	export let formatter: Maybe<ValueFormatter> = undefined;
 
 	type CompareFn = (value: MaybeNumberOrString) => number;
-	export let compareFn: CompareFn | undefined;
+	const defaultCompare: CompareFn = (value) => (value ? Math.sign(Number(value)) : 0);
+	export let compareFn: CompareFn = defaultCompare;
 
-	const compare: CompareFn = (value) => (value ? Math.sign(Number(value)) : 0);
-
-	$: direction = compareFn?.(value) ?? compare(value);
+	$: direction = compareFn(value);
 	$: formatted = formatter ? formatter(value) : value;
 </script>
 

@@ -32,7 +32,7 @@ Display one key metric in a strategy tile.
 		{#if value !== undefined}
 			<Tooltip>
 				<svelte:fragment slot="tooltip-trigger">
-					<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
+					<span class="value underline" data-testid={`key-metric-${metric?.kind}-value`}>
 						<slot {value}>{formattedValue}</slot>
 					</span>
 

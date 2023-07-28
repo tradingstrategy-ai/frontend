@@ -1,14 +1,14 @@
-/**
- * Fetch the vault data points
- */
 import { error } from '@sveltejs/kit';
-import { fetchChartData } from '../../chart';
+import type { OnChainData } from 'trade-executor-frontend/strategy/runtime-state.js';
 
-export async function load({ parent, fetch }) {
-	// See layout.ts load()
+export async function load({ parent }) {
 	const { summary } = await parent();
 
-	return {
-		onChainData: summary.on_chain_data
-	};
+	const onChainData: OnChainData = summary.on_chain_data;
+
+	if (onChainData?.asset_management_mode !== 'enzyme') {
+		throw error(404, 'Not found');
+	}
+
+	return { onChainData };
 }

@@ -1,17 +1,17 @@
 <script lang="ts">
 	export let lg = false;
+	export let text = '';
 
 	$: size = lg ? 'lg' : 'md';
 </script>
 
-<span class="stop-loss size-{size}">stop loss</span>
+<span class="position-data-indicator size-{size}">{text}</span>
 
 <style lang="postcss">
-	.stop-loss {
-		display: flex;
+	.position-data-indicator {
+		display: inline-flex;
 		align-items: center;
-		color: hsla(var(--hsl-bearish));
-		background: hsla(var(--hsl-bearish), 0.12);
+		background: hsla(var(--hsl-box), var(--a-box-c));
 		border-radius: var(--space-sm);
 		text-align: center;
 		text-transform: uppercase;

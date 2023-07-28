@@ -1,3 +1,4 @@
+import type { TradingPosition } from 'trade-executor-frontend/state/interface';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
@@ -5,7 +6,7 @@ export async function load({ params, parent }) {
 	const { state } = await parent();
 
 	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
-	const position = state.portfolio[`${status}_positions`][id];
+	const position: TradingPosition = state.portfolio[`${status}_positions`][id];
 
 	if (!position) {
 		throw error(404, 'Not found');
