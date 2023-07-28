@@ -8,11 +8,7 @@ ENV FONT_ZIP_DOWNLOAD_URL=$FONT_ZIP_DOWNLOAD_URL
 
 WORKDIR /app
 
-# install trade-executor-frontend (cache first)
-COPY deps/trade-executor-frontend ./deps/trade-executor-frontend
-RUN (cd deps/trade-executor-frontend && npm ci)
-
-# install npm dependencies (cache second)
+# install npm dependencies (cache first)
 COPY package*.json ./
 RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 RUN --mount=type=ssh npm ci
