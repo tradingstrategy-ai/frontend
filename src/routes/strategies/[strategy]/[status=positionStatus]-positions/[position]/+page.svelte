@@ -302,7 +302,6 @@
 		& .value {
 			display: grid;
 			gap: var(--space-sm);
-			justify-items: flex-start;
 		}
 	}
 </style>
