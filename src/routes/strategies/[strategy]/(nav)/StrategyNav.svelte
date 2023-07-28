@@ -91,7 +91,7 @@
 
 		// only show for Enzyme vault based strategies
 		if (option.targetUrl.includes('vault')) {
-			return onChainData.asset_management_mode == 'enzyme';
+			return onChainData.asset_management_mode === 'enzyme';
 		}
 
 		// only show backtest if available
