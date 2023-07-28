@@ -184,46 +184,39 @@ export function calculateVolumeAndFees(position: TradingPosition) {
 export function extractPositionInfo(position: TradingPosition): TradingPositionInfo {
 	const tradeList: TradeExecution[] = Object.values(position.trades);
 
-	if (tradeList.length == 0) {
+	if (tradeList.length === 0) {
 		throw new Error('Invalid position data without any trades');
 	}
 
 	const firstTrade: TradeExecution = tradeList[0];
-	const lastTrade: TradeExecution = tradeList.at(-1);
+	const lastTrade: TradeExecution = tradeList.at(-1)!;
 	const failedOpen = firstTrade.failed_at !== null;
 
 	const openedAt = position.opened_at;
 	const closedAt = position.closed_at;
 	const stillOpen = position.closed_at === null && position.frozen_at === null;
-	const openPrice = firstTrade?.executed_price;
+	const openPrice = firstTrade.executed_price;
 	const valueAtOpen = calculateTradeValue(firstTrade);
 	const quantityAtOpen = firstTrade.executed_quantity;
-	const portfolioWeightAtOpen = valueAtOpen / position.portfolio_value_at_open;
+	const portfolioWeightAtOpen = valueAtOpen && valueAtOpen / position.portfolio_value_at_open;
 
-	let realisedProfitability = undefined;
-	let unrealisedProfitability = undefined;
-	let closePrice = undefined;
-	let currentPrice = undefined;
-	let durationSeconds;
-	const currentTimestampUTC = new Date() / 1000;
+	let realisedProfitability: Percent | undefined = undefined;
+	let unrealisedProfitability: Percent | undefined = undefined;
+	let closePrice: USDollarPrice | undefined = undefined;
+	let currentPrice: USDollarPrice | undefined = undefined;
+	let durationSeconds: UnixTimestamp;
 
 	const marketMidPriceAtOpen = firstTrade.price_structure.mid_price;
 	const stopLossable = position.stop_loss !== null;
 
-	const stopLossPriceCurrent = position.stop_loss;
 	const stopLossPriceOpen = getFirstStopLossPrice(position);
 	const trailingStopLossPercent = position.trailing_stop_loss_pct;
-
-	let stopLossPercentOpen = undefined;
-
-	if (stopLossPriceOpen) {
-		stopLossPercentOpen = stopLossPriceOpen / marketMidPriceAtOpen;
-	}
+	const stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
 
 	let stopLossTriggered = false;
 
 	if (stillOpen) {
-		durationSeconds = currentTimestampUTC - openedAt;
+		durationSeconds = Date.now() / 1000 - openedAt;
 		currentPrice = position.last_token_price;
 		unrealisedProfitability = (currentPrice - openPrice) / openPrice;
 	} else {
@@ -231,7 +224,6 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 		closePrice = lastTrade.executed_price;
 		// TODO: Needs to be changed avg sell - avg buy
 		realisedProfitability = (closePrice - openPrice) / openPrice;
-
 		stopLossTriggered = tradeList.some((t) => t.trade_type === 'stop_loss');
 	}
 
@@ -250,7 +242,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 
 	return {
 		failedOpen,
-		openedAt, //
+		openedAt,
 		closedAt,
 		stillOpen,
 		durationSeconds,
