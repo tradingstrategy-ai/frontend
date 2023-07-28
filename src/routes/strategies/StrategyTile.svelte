@@ -18,17 +18,18 @@
 	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
 
-	const summaryStats = strategy.summary_statistics || {};
+	const summaryStats = strategy.summary_statistics ?? {};
 	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
-	const assetManagementMode = strategy.on_chain_data.asset_management_mode;
-	const chainSlug = getChainSlug(strategy);
+	const onChainData = strategy.on_chain_data ?? {};
+	const assetManagementMode = onChainData.asset_management_mode;
+	const chainSlug = getChainSlug(onChainData);
 
 	// FIXME: hack to get chain slug from chain ID;
 	// This should either come from strategy metadata or `chains` API
-	function getChainSlug({ on_chain_data }: StrategyRuntimeState) {
-		switch (on_chain_data.chain_id) {
+	function getChainSlug({ chain_id }: Record<string, any>) {
+		switch (chain_id) {
 			case 1:
 				return 'ethereum';
 			case 137:
