@@ -6,7 +6,7 @@ import type {
 	UnixTimestamp,
 	USDollarPrice,
 	USDollarValue
-} from 'trade-executor-frontend/state/interface';
+} from 'trade-executor/state/interface';
 import type { TimeBucket } from '$lib/chart';
 
 /**

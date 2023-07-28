@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+	import type { TradingPosition } from 'trade-executor/state/interface';
 	import type { PositionFlagMap } from './position-flags';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 

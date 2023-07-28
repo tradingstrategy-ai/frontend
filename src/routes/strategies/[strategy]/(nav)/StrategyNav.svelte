@@ -8,7 +8,7 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
-	import type { OnChainData } from 'trade-executor-frontend/strategy/runtime-state';
+	import type { OnChainData } from 'trade-executor/strategy/runtime-state';
 
 	export let strategyId: string;
 

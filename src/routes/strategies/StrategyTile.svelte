@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
+	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { fromUnixTime } from 'date-fns';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import {
@@ -9,7 +9,7 @@
 		formatPercent,
 		formatPriceChange
 	} from '$lib/helpers/formatters';
-	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
+	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Alert, Button, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';

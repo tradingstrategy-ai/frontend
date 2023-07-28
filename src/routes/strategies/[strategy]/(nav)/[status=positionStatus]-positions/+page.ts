@@ -1,4 +1,4 @@
-import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+import type { TradingPosition } from 'trade-executor/state/interface';
 
 export async function load({ params, parent }) {
 	const { status } = params;

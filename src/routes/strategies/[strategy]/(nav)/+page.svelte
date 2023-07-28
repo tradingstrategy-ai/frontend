@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getPortfolioLatestStats } from 'trade-executor-frontend/state/stats';
+	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { Alert, SummaryBox, DataBox, UpDownIndicator } from '$lib/components';
 	import { InvestorWidget } from '$lib/wallet';

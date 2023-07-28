@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { Alert, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
-	import { getTradeExecutorErrorHtml } from 'trade-executor-frontend/strategy/error';
+	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let data;
 

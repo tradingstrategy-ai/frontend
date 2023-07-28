@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { OnChainData } from 'trade-executor-frontend/strategy/runtime-state.js';
+import type { OnChainData } from 'trade-executor/strategy/runtime-state.js';
 
 export async function load({ parent }) {
 	const { summary } = await parent();

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { Wizard } from 'wizard/store';
-	import type { StrategyRuntimeState } from 'trade-executor-frontend/strategy/runtime-state';
+	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import connectWizard from 'wizard/connect-wallet/store';
 	import depositWizard from 'wizard/deposit/store';
 	import redeemWizard from 'wizard/redeem/store';

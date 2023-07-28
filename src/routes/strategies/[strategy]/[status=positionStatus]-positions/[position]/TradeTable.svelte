@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { TradeExecution } from 'trade-executor-frontend/state/interface';
+	import type { TradeExecution } from 'trade-executor/state/interface';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
-	import { tradeDirection } from 'trade-executor-frontend/helpers/trade';
+	import { tradeDirection } from 'trade-executor/helpers/trade';
 
 	export let trades: TradeExecution[];
 

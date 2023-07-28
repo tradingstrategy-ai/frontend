@@ -1,4 +1,4 @@
-import type { TradingPosition } from 'trade-executor-frontend/state/interface';
+import type { TradingPosition } from 'trade-executor/state/interface';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
