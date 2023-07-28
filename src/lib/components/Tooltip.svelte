@@ -41,6 +41,11 @@ For more information see:
 			cursor: pointer;
 			/* Undo base CSS abbr font style */
 			font-style: normal;
+
+			/* Give user hint the value is clickable / hoverable */
+			& :global(.underline) {
+				border-bottom: 1px dotted hsla(var(--hsl-text-light));
+			}
 		}
 
 		& button {

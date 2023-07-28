@@ -74,13 +74,16 @@
 
 			<DataBox label="Profitability" size="sm">
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<svelte:fragment slot="tooltip-trigger">
 						<UpDownIndicator
 							value={positionInfo.profitability}
 							formatter={formatProfitability}
 							compareFn={determineProfitability}
-						/>
-					</span>
+							let:formatted
+						>
+							<span class="underline">{formatted}</span>
+						</UpDownIndicator>
+					</svelte:fragment>
 					<span slot="tooltip-popup">
 						{#if positionInfo.stillOpen}
 							{positionInfoDescription.unrealisedProfitability}
@@ -103,7 +106,7 @@
 			<DataBox label="Time" size="sm">
 				<div>
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							<Timestamp date={positionInfo.openedAt} format="iso" withTime />
 						</span>
 						<span slot="tooltip-popup">
@@ -115,7 +118,7 @@
 
 				{#if !positionInfo.stillOpen}
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							<Timestamp date={positionInfo.closedAt} format="iso" withTime />
 						</span>
 						<span slot="tooltip-popup">
@@ -125,7 +128,7 @@
 				{/if}
 
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatDuration(positionInfo.durationSeconds)}
 					</span>
 					<span slot="tooltip-popup">
@@ -141,7 +144,7 @@
 			<DataBox label="Price" size="sm">
 				<div>
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							{formatPrice(positionInfo.openPrice)}
 						</span>
 						<span slot="tooltip-popup">
@@ -153,7 +156,7 @@
 
 				{#if positionInfo.stillOpen}
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							{formatPrice(positionInfo.currentPrice)}
 						</span>
 						<span slot="tooltip-popup">
@@ -162,7 +165,7 @@
 					</Tooltip>
 				{:else}
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							{formatPrice(positionInfo.closePrice)}
 						</span>
 						<span slot="tooltip-popup">
@@ -174,7 +177,7 @@
 
 			<DataBox label="Size" size="sm">
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
 					</span>
 					<span slot="tooltip-popup">
@@ -183,7 +186,7 @@
 				</Tooltip>
 
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatTokenAmount(positionInfo.quantityAtOpen)}
 						{position.pair.base.token_symbol}
 					</span>
@@ -193,7 +196,7 @@
 				</Tooltip>
 
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatPercent(positionInfo.portfolioWeightAtOpen)}
 					</span>
 					<span slot="tooltip-popup">
@@ -205,7 +208,7 @@
 			{#if positionInfo.stopLossable}
 				<DataBox label="Stop loss" size="sm">
 					<Tooltip>
-						<span slot="tooltip-trigger">
+						<span slot="tooltip-trigger" class="underline">
 							{formatPercent(positionInfo.stopLossPercentOpen)}
 						</span>
 						<span slot="tooltip-popup">
@@ -229,7 +232,7 @@
 
 			<DataBox label="Risk" size="sm">
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatPercent(positionInfo.portfolioRiskPercent)}
 					</span>
 					<span slot="tooltip-popup">
@@ -240,7 +243,7 @@
 
 			<DataBox label="Volume" size="sm">
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatDollar(positionInfo.volume)}
 					</span>
 					<span slot="tooltip-popup">
@@ -251,7 +254,7 @@
 
 			<DataBox label="Fees" size="sm">
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatDollar(positionInfo.tradingFees)}
 					</span>
 					<span slot="tooltip-popup">
@@ -260,7 +263,7 @@
 				</Tooltip>
 
 				<Tooltip>
-					<span slot="tooltip-trigger">
+					<span slot="tooltip-trigger" class="underline">
 						{formatPercent(positionInfo.tradingFeesPercent)}
 					</span>
 					<span slot="tooltip-popup">
@@ -300,11 +303,6 @@
 			display: grid;
 			gap: var(--space-sm);
 			justify-items: flex-start;
-		}
-
-		/* Give user hint the value is clickable / hoverable */
-		& [slot='tooltip-trigger'] {
-			border-bottom: 1px dotted;
 		}
 	}
 </style>

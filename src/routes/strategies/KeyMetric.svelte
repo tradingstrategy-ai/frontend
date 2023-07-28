@@ -32,7 +32,7 @@ Display one key metric in a strategy tile.
 		{#if value !== undefined}
 			<Tooltip>
 				<svelte:fragment slot="tooltip-trigger">
-					<span class="value" data-testid={`key-metric-${metric?.kind}-value`}>
+					<span class="value underline" data-testid={`key-metric-${metric?.kind}-value`}>
 						<slot {value}>{formattedValue}</slot>
 					</span>
 
@@ -124,9 +124,6 @@ Display one key metric in a strategy tile.
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 			margin: 0;
 			gap: var(--space-ss);
-
-			/* Give user hint the value is clickable / hoverable */
-			border-bottom: 1px dotted var(--c-text-light);
 		}
 
 		& h4 {
