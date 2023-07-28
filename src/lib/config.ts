@@ -89,6 +89,22 @@ export const typesenseConfig = config(
 );
 
 /**
+ * Load configured strategies.
+ *
+ * Strategies are configured at runtime via the TS_PUBLIC_STRATEGIES environment variable.
+ *
+ * The environment variable contains JSON configuration of strategies, as per configuration.ts.
+ */
+export const strategyConfig = config((jsonStr: string) => {
+	try {
+		return JSON.parse(jsonStr);
+	} catch (e) {
+		console.warn(`Could not parse TS_PUBLIC_STRATEGIES env JSON; content is ${jsonStr}`);
+		return {};
+	}
+}, 'STRATEGIES');
+
+/**
  * Load WalletConnect projectId and warn if not available.
  */
 export const walletConnectConfig = config((projectId: string) => {
