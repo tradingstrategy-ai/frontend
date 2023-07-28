@@ -2,9 +2,9 @@
 	import { formatProfitability, formatTokenAmount } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { getPositionFreezeReason, isPositionInError } from 'trade-executor/state/position-helpers';
+	import { extractPositionInfo, positionInfoDescription } from 'trade-executor/state/position-data';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
-	import { extractPositionInfo, positionInfoDescription } from './position-data';
 	import {
 		Alert,
 		Badge,
