@@ -28,7 +28,7 @@
 	const trades = Object.values(position.trades);
 </script>
 
-<main class="ds-container">
+<main class="ds-container position-page">
 	<PageHeading level={2}>
 		<h1><a href="/strategies/{summary.id}">{summary.name}</a></h1>
 		<h2>Position #{position.position_id}</h2>
@@ -74,13 +74,13 @@
 
 			<DataBox label="Profitability" size="sm">
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+					<span slot="tooltip-trigger">
 						<UpDownIndicator
 							value={positionInfo.profitability}
 							formatter={formatProfitability}
 							compareFn={determineProfitability}
 						/>
-					</p>
+					</span>
 					<span slot="tooltip-popup">
 						{#if positionInfo.stillOpen}
 							{positionInfoDescription.unrealisedProfitability}
@@ -101,23 +101,23 @@
 			</DataBox>
 
 			<DataBox label="Time" size="sm">
-				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<Timestamp date={positionInfo.openedAt} format="iso" withTime />
-						{#if !positionInfo.stillOpen}
-							—
-						{/if}
-					</p>
-					<span slot="tooltip-popup">
-						{positionInfoDescription.openedAt}
-					</span>
-				</Tooltip>
+				<div>
+					<Tooltip>
+						<span slot="tooltip-trigger">
+							<Timestamp date={positionInfo.openedAt} format="iso" withTime />
+						</span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.openedAt}
+						</span>
+					</Tooltip>
+					{positionInfo.stillOpen ? '' : '—'}
+				</div>
 
 				{#if !positionInfo.stillOpen}
 					<Tooltip>
-						<p slot="tooltip-trigger" class="tooltip-trigger-value">
+						<span slot="tooltip-trigger">
 							<Timestamp date={positionInfo.closedAt} format="iso" withTime />
-						</p>
+						</span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.closedAt}
 						</span>
@@ -125,9 +125,9 @@
 				{/if}
 
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatDuration(positionInfo.durationSeconds)}</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatDuration(positionInfo.durationSeconds)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.durationSeconds}
 					</span>
@@ -139,30 +139,32 @@
 			</DataBox>
 
 			<DataBox label="Price" size="sm">
-				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatPrice(positionInfo.openPrice)}</span>
-						—
-					</p>
-					<span slot="tooltip-popup">
-						{positionInfoDescription.openPrice}
-					</span>
-				</Tooltip>
+				<div>
+					<Tooltip>
+						<span slot="tooltip-trigger">
+							{formatPrice(positionInfo.openPrice)}
+						</span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.openPrice}
+						</span>
+					</Tooltip>
+					—
+				</div>
 
 				{#if positionInfo.stillOpen}
 					<Tooltip>
-						<p slot="tooltip-trigger" class="tooltip-trigger-value">
-							<span>{formatPrice(positionInfo.currentPrice)}</span>
-						</p>
+						<span slot="tooltip-trigger">
+							{formatPrice(positionInfo.currentPrice)}
+						</span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.currentPrice}
 						</span>
 					</Tooltip>
 				{:else}
 					<Tooltip>
-						<p slot="tooltip-trigger" class="tooltip-trigger-value">
-							<span>{formatPrice(positionInfo.closePrice)}</span>
-						</p>
+						<span slot="tooltip-trigger">
+							{formatPrice(positionInfo.closePrice)}
+						</span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.closePrice}
 						</span>
@@ -172,32 +174,28 @@
 
 			<DataBox label="Size" size="sm">
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
+					<span slot="tooltip-trigger">
 						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
-					</p>
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.valueAtOpen}
 					</span>
 				</Tooltip>
 
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>
-							{formatTokenAmount(positionInfo.quantityAtOpen)}
-							{position.pair.base.token_symbol}
-						</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatTokenAmount(positionInfo.quantityAtOpen)}
+						{position.pair.base.token_symbol}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.quantityAtOpen}
 					</span>
 				</Tooltip>
 
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>
-							{formatPercent(positionInfo.portfolioWeightAtOpen)}
-						</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatPercent(positionInfo.portfolioWeightAtOpen)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.portfolioWeightAtOpen}
 					</span>
@@ -207,9 +205,9 @@
 			{#if positionInfo.stopLossable}
 				<DataBox label="Stop loss" size="sm">
 					<Tooltip>
-						<p slot="tooltip-trigger" class="tooltip-trigger-value">
-							<span>{formatPercent(positionInfo.stopLossPercentOpen)}</span>
-						</p>
+						<span slot="tooltip-trigger">
+							{formatPercent(positionInfo.stopLossPercentOpen)}
+						</span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.stopLossPercentOpen}
 						</span>
@@ -231,9 +229,9 @@
 
 			<DataBox label="Risk" size="sm">
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatPercent(positionInfo.portfolioRiskPercent)}</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatPercent(positionInfo.portfolioRiskPercent)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.portfolioRiskPercent}
 					</span>
@@ -242,9 +240,9 @@
 
 			<DataBox label="Volume" size="sm">
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatDollar(positionInfo.volume)}</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatDollar(positionInfo.volume)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.volume}
 					</span>
@@ -253,18 +251,18 @@
 
 			<DataBox label="Fees" size="sm">
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatDollar(positionInfo.tradingFees)}</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatDollar(positionInfo.tradingFees)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.tradingFees}
 					</span>
 				</Tooltip>
 
 				<Tooltip>
-					<p slot="tooltip-trigger" class="tooltip-trigger-value">
-						<span>{formatPercent(positionInfo.tradingFeesPercent)}</span>
-					</p>
+					<span slot="tooltip-trigger">
+						{formatPercent(positionInfo.tradingFeesPercent)}
+					</span>
 					<span slot="tooltip-popup">
 						{positionInfoDescription.tradingFeesPercent}
 					</span>
@@ -278,8 +276,6 @@
 
 <style lang="postcss">
 	section {
-		--data-box-align-content: flex-start;
-
 		margin-top: var(--space-md);
 		display: grid;
 		gap: var(--space-5xl);
@@ -297,8 +293,18 @@
 		}
 	}
 
-	/* Give user hint the value is clickable / hoverable */
-	.tooltip-trigger-value > :global(*) {
-		border-bottom: 1px dotted;
+	.position-page :global .data-box {
+		align-content: flex-start;
+
+		& .value {
+			display: grid;
+			gap: var(--space-sm);
+			justify-items: flex-start;
+		}
+
+		/* Give user hint the value is clickable / hoverable */
+		& [slot='tooltip-trigger'] {
+			border-bottom: 1px dotted;
+		}
 	}
 </style>

@@ -29,7 +29,6 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 		border-radius: var(--radius-md);
 		background: hsla(var(--hsl-box), var(--a-box-b));
 		display: grid;
-		align-content: var(--data-box-align-content, normal);
 
 		&.xs {
 			gap: var(--space-ss);
