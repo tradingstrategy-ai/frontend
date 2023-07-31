@@ -123,7 +123,8 @@
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
 
-	$: $columnIdOrder = ['flags', 'position_id', 'ticker'].concat(columns);
+	//$: $columnIdOrder = ['flags', 'position_id', 'ticker'].concat(columns);
+	$: $columnIdOrder = columns;
 </script>
 
 <div class="position-table">

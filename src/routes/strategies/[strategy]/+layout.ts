@@ -29,7 +29,7 @@ export async function load({ params, fetch }) {
 	if (!strategy) throw error(404, 'Not found');
 
 	const summary = await getStrategyRuntimeState(strategy, fetch);
-	const chain_id = summary.on_chain_data.chain_id;
+	const chain_id = summary?.on_chain_data?.chain_id;
 	const chain = fetchPublicApi(fetch, 'chain-details', { chain_id });
 	const state = fetchStrategyState(fetch, strategy.url);
 
