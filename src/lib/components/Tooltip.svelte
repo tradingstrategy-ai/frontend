@@ -2,42 +2,38 @@
 @component
 A tooltip component used with key metrics
 
-Example:
-
-    <Tooltip>
-        <span slot="tooltip-trigger">
-            a piece of text with underline
-        </span>
-
-        <div slot="tooltip-popup">
-            Hello there
-        </div>
-    </Tooltip>
-
-
-The `tooltip-trigger` underline etc. styling must
-be done in the parent compnoent because slots are used.
+The component includes an `underline` utility CSS class that
+can be used in the `trigger` slot element if desired.
 
 For more information see:
 - https://codepen.io/GemmaCroad/pen/LYpbdom
 - https://stackoverflow.com/a/40628352/315168
 - https://svelte.dev/tutorial/named-slots
--->
-<script lang="ts">
-</script>
 
-<dfn class="key-metric-tooltip">
-	<span class="tooltip-trigger">
-		<slot name="tooltip-trigger" />
+#### Usage
+```tsx
+<Tooltip>
+	<span slot="trigger">
+		a piece of text with underline
+	</span>
+	<div slot="popup">
+		Hello there
+	</div>
+</Tooltip>
+```
+-->
+<dfn class="tooltip">
+	<span class="trigger">
+		<slot name="trigger" />
 	</span>
 	<button>
-		<slot name="tooltip-popup" />
+		<slot name="popup" />
 	</button>
 </dfn>
 
 <style lang="postcss">
-	.key-metric-tooltip {
-		& .tooltip-trigger {
+	.tooltip {
+		& .trigger {
 			cursor: pointer;
 			/* Undo base CSS abbr font style */
 			font-style: normal;

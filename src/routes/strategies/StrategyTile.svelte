@@ -106,29 +106,29 @@
 			<div class="logos">
 				{#if assetManagementMode === 'enzyme'}
 					<Tooltip>
-						<img slot="tooltip-trigger" alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-						<span slot="tooltip-popup">This strategy's assets are managed using an Enzyme vault</span>
+						<img slot="trigger" alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+						<span slot="popup">This strategy's assets are managed using an Enzyme vault</span>
 					</Tooltip>
 				{:else if assetManagementMode === 'hot_wallet'}
 					<Tooltip>
-						<img slot="tooltip-trigger" alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
-						<span slot="tooltip-popup">This strategy's assets are managed using a hot wallet</span>
+						<img slot="trigger" alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
+						<span slot="popup">This strategy's assets are managed using a hot wallet</span>
 					</Tooltip>
 				{/if}
 
 				{#if chainSlug}
 					{@const chainName = `${chainSlug.charAt(0).toUpperCase()}${chainSlug.slice(1)}`}
 					<Tooltip>
-						<img slot="tooltip-trigger" alt={chainName} src={getLogoUrl('blockchain', chainSlug)} />
-						<span slot="tooltip-popup">This strategy runs on {chainName} blockchain</span>
+						<img slot="trigger" alt={chainName} src={getLogoUrl('blockchain', chainSlug)} />
+						<span slot="popup">This strategy runs on {chainName} blockchain</span>
 					</Tooltip>
 				{/if}
 
 				{#each getStrategyTokens(strategy) as token}
 					{@const symbol = token.toUpperCase()}
 					<Tooltip>
-						<img slot="tooltip-trigger" alt={symbol} src={getLogoUrl('token', token)} />
-						<span slot="tooltip-popup">This strategy trades {symbol}</span>
+						<img slot="trigger" alt={symbol} src={getLogoUrl('token', token)} />
+						<span slot="popup">This strategy trades {symbol}</span>
 					</Tooltip>
 				{/each}
 			</div>

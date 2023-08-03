@@ -31,7 +31,7 @@ Display one key metric in a strategy tile.
 	<dd>
 		{#if value !== undefined}
 			<Tooltip>
-				<svelte:fragment slot="tooltip-trigger">
+				<svelte:fragment slot="trigger">
 					<span class="value underline" data-testid={`key-metric-${metric?.kind}-value`}>
 						<slot {value}>{formattedValue}</slot>
 					</span>
@@ -41,7 +41,7 @@ Display one key metric in a strategy tile.
 					{/if}
 				</svelte:fragment>
 
-				<svelte:fragment slot="tooltip-popup">
+				<svelte:fragment slot="popup">
 					<h4>{name}</h4>
 
 					<ul>
