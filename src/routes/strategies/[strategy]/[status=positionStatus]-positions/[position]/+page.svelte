@@ -274,17 +274,15 @@
 				</Tooltip>
 			</DataBox>
 
-			{#if position.tradingFees === undefined}
-				<DataBox label="Fees" size="sm">
+			<DataBox label="Fees" size="sm">
+				{#if positionInfo.tradingFees === undefined}
 					<Tooltip>
 						<span slot="tooltip-trigger" class="underline"> N/A </span>
 						<span slot="tooltip-popup">
 							{positionInfoDescription.tradingFeesMissing}
 						</span>
 					</Tooltip>
-				</DataBox>
-			{:else}
-				<DataBox label="Fees" size="sm">
+				{:else}
 					<Tooltip>
 						<span slot="tooltip-trigger" class="underline">
 							{formatDollar(positionInfo.tradingFees, 4)}
@@ -302,8 +300,8 @@
 							{positionInfoDescription.tradingFeesPercent}
 						</span>
 					</Tooltip>
-				</DataBox>
-			{/if}
+				{/if}
+			</DataBox>
 		</DataBoxes>
 
 		<TradeTable {trades} />

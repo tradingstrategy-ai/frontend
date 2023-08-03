@@ -232,7 +232,7 @@ export function formatShortAddress(address: MaybeString): string {
  *
  * Like average winning profit.
  */
-export function formatPercent(n: MaybeNumber): string {
+export function formatPercent(n: MaybeNumber, digits = 1): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 
 	// Negative zero hot fix
@@ -243,8 +243,8 @@ export function formatPercent(n: MaybeNumber): string {
 	}
 
 	return n.toLocaleString('en', {
-		minimumFractionDigits: 1,
-		maximumFractionDigits: 1,
+		minimumFractionDigits: digits,
+		maximumFractionDigits: digits,
 		style: 'percent'
 	});
 }
