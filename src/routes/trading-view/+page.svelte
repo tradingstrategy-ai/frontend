@@ -55,6 +55,12 @@
 			<p>
 				View current and historical interest rate data for common Aave v3 lending reserves across multiple blockchains.
 			</p>
+			{#if impressiveNumbers}
+				<p>
+					Currently indexing data from
+					<strong>{formatAmount(impressiveNumbers.lending_reserves)} lending reserves</strong>
+				</p>
+			{/if}
 		</ContentCard>
 
 		<ContentCard icon="search" title="Advanced search" ctaLabel="Search tokens" href="/search">
