@@ -66,7 +66,7 @@ export interface TradingPositionInfo {
 	stopLossTriggered: boolean;
 	trailingStopLossPercent?: Percent;
 
-	portfolioRiskPercent: Percent;
+	portfolioRiskPercent?: Percent;
 
 	volume: USDollarValue;
 	tradingFees: USDollarValue;
@@ -97,6 +97,8 @@ export const positionInfoDescription = {
 	estimatedMaximumRisk: 'How much % of the portfolio is at the risk if this position is completely lost.',
 	stopLossPercentOpen:
 		'Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. BETA WARNING: Currently calculated relative to the open price, not the current price.',
+	stopLossPercentOpenMissing: 'Stop loss not used at the position open or the value was not recorded',
+
 	stopLossPrice:
 		'Stop loss price for this position. Position is attempted closed as soon as possible if the market mid-price crosses this level.',
 	stopLossTriggered:
@@ -106,8 +108,11 @@ export const positionInfoDescription = {
 	portfolioRiskPercent:
 		'Maximum portfolio % value at a risk when the position was opened. This risk assumes any stop losses can be executed without significant price impact or slippage.',
 
+	portfolioRiskPercentMissing: 'Stop loss data not recorded or stop loss was not used and cannot calculate this value.',
+
 	volume: 'How much trading volume trades of this position have generated',
 	tradingFees: 'How much trading fees were total. This includes protocol fees and liquidity provider fees',
+	tradingFeesMissing: 'Trading fee data was not recorded for this position',
 	tradingFeesPercent:
 		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
 };
@@ -211,7 +216,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 
 	const stopLossPriceOpen = getFirstStopLossPrice(position);
 	const trailingStopLossPercent = position.trailing_stop_loss_pct;
-	const stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
+	let stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
 
 	let stopLossTriggered = false;
 
@@ -230,15 +235,22 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	const profitability = realisedProfitability || unrealisedProfitability;
 	const candleTimeBucket = durationSeconds > 7 * 24 * 3600 ? '1d' : '1h';
 
-	let portfolioRiskPercent;
+	let portfolioRiskPercent: Percent | undefined;
 
-	if (stopLossPercentOpen) {
+	if (stopLossPercentOpen && portfolioWeightAtOpen) {
 		portfolioRiskPercent = (1 - stopLossPercentOpen) * portfolioWeightAtOpen;
-	} else {
-		portfolioRiskPercent = 1;
+
+		// Cannot be negative; stopLessPercentOpen likely missing
+		if (portfolioRiskPercent < 0) {
+			portfolioRiskPercent = undefined;
+		}
 	}
 
 	const { volume, lpFees, lpFeesPercent } = calculateVolumeAndFees(position);
+
+	if (Number(stopLossPercentOpen) >= 1) {
+		stopLossPercentOpen = undefined;
+	}
 
 	return {
 		failedOpen,

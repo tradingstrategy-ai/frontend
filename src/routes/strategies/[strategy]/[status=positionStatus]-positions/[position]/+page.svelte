@@ -207,14 +207,27 @@
 
 			{#if positionInfo.stopLossable}
 				<DataBox label="Stop loss" size="sm">
-					<Tooltip>
-						<span slot="tooltip-trigger" class="underline">
-							{formatPercent(positionInfo.stopLossPercentOpen)}
-						</span>
-						<span slot="tooltip-popup">
-							{positionInfoDescription.stopLossPercentOpen}
-						</span>
-					</Tooltip>
+					{#if positionInfo.stopLossPercentOpen === undefined}
+						<Tooltip>
+							<span slot="tooltip-trigger" class="underline"> N/A </span>
+							<span slot="tooltip-popup">
+								{positionInfoDescription.stopLossPercentOpenMissing}
+							</span>
+						</Tooltip>
+					{:else}
+						<Tooltip>
+							<span slot="tooltip-trigger" class="underline">
+								<!--
+								Stop loss is usually expressed percent of the total position, but
+								internally we use the flipped definition as it makes calculations simpler
+								-->
+								{formatPercent(1 - positionInfo.stopLossPercentOpen)}
+							</span>
+							<span slot="tooltip-popup">
+								{positionInfoDescription.stopLossPercentOpen}
+							</span>
+						</Tooltip>
+					{/if}
 
 					{#if positionInfo.trailingStopLossPercent}
 						<Tooltip>
@@ -231,14 +244,23 @@
 			{/if}
 
 			<DataBox label="Risk" size="sm">
-				<Tooltip>
-					<span slot="tooltip-trigger" class="underline">
-						{formatPercent(positionInfo.portfolioRiskPercent)}
-					</span>
-					<span slot="tooltip-popup">
-						{positionInfoDescription.portfolioRiskPercent}
-					</span>
-				</Tooltip>
+				{#if positionInfo.portfolioRiskPercent === undefined}
+					<Tooltip>
+						<span slot="tooltip-trigger" class="underline"> N/A </span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.portfolioRiskPercentMissing}
+						</span>
+					</Tooltip>
+				{:else}
+					<Tooltip>
+						<span slot="tooltip-trigger" class="underline">
+							{formatPercent(positionInfo.portfolioRiskPercent)}
+						</span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.portfolioRiskPercent}
+						</span>
+					</Tooltip>
+				{/if}
 			</DataBox>
 
 			<DataBox label="Volume" size="sm">
@@ -253,23 +275,32 @@
 			</DataBox>
 
 			<DataBox label="Fees" size="sm">
-				<Tooltip>
-					<span slot="tooltip-trigger" class="underline">
-						{formatDollar(positionInfo.tradingFees)}
-					</span>
-					<span slot="tooltip-popup">
-						{positionInfoDescription.tradingFees}
-					</span>
-				</Tooltip>
+				{#if positionInfo.tradingFees === undefined}
+					<Tooltip>
+						<span slot="tooltip-trigger" class="underline"> N/A </span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.tradingFeesMissing}
+						</span>
+					</Tooltip>
+				{:else}
+					<Tooltip>
+						<span slot="tooltip-trigger" class="underline">
+							{formatDollar(positionInfo.tradingFees, 4)}
+						</span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.tradingFees}
+						</span>
+					</Tooltip>
 
-				<Tooltip>
-					<span slot="tooltip-trigger" class="underline">
-						{formatPercent(positionInfo.tradingFeesPercent)}
-					</span>
-					<span slot="tooltip-popup">
-						{positionInfoDescription.tradingFeesPercent}
-					</span>
-				</Tooltip>
+					<Tooltip>
+						<span slot="tooltip-trigger" class="underline">
+							{formatPercent(positionInfo.tradingFeesPercent, 4)}
+						</span>
+						<span slot="tooltip-popup">
+							{positionInfoDescription.tradingFeesPercent}
+						</span>
+					</Tooltip>
+				{/if}
 			</DataBox>
 		</DataBoxes>
 
