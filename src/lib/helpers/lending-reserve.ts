@@ -1,3 +1,29 @@
+export interface Reserve {
+	reserve_id: number;
+	reserve_slug: string;
+	protocol_slug: string;
+	protocol_name: string;
+	chain_id: number;
+	chain_slug: string;
+	chain_name: string;
+	asset_id: number;
+	asset_name: string;
+	asset_symbol: string;
+	asset_address: Address;
+	atoken_id: number;
+	atoken_address: Address;
+	stable_debt_token_id: number;
+	stable_debt_token_address: Address;
+	variable_debt_token_id: number;
+	variable_debt_token_address: Address;
+	interest_rate_strategy_address: Address;
+	additional_details: {
+		supply_apr_latest: number;
+		stable_borrow_apr_latest: number;
+		variable_borrow_apr_latest: number;
+	};
+}
+
 /**
  * Return URL for a lending reserve on a given chain and lending protocol
  */
@@ -11,6 +37,15 @@ export function lendingReserveUrl(chain: string, protocol: string, underlyingAss
 		marketName: `proto_${marketSlug}_v3`
 	});
 	return `https://app.aave.com/reserve-overview/?${params}`;
+}
+
+/**
+ * Determine if reserve is borrowable.
+ * Current: inferred from non-zero Variable Borrow APR
+ * Future: may have a flag on API entity based on smart-contract value
+ */
+export function isBorrowable({ additional_details }: Reserve) {
+	return additional_details.variable_borrow_apr_latest > 0;
 }
 
 /***

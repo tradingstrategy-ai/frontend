@@ -4,7 +4,7 @@
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import { lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -18,9 +18,10 @@
 
 	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 
-	// Hide chart for Aave v3 GHO token
+	// Hide chart for Aave v3 GHO token as well as non-borrowable reserves
 	// see: https://docs-gho.vercel.app/concepts/overview
 	$: isGhoToken = reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO';
+	$: showChart = !isGhoToken && isBorrowable(reserve);
 
 	let timeBucket: TimeBucket = '1d';
 </script>
@@ -52,7 +53,7 @@
 	</section>
 </main>
 
-{#if !isGhoToken}
+{#if showChart}
 	<Section padding="md">
 		<div class="chart-header">
 			<h3>Interest rates</h3>
