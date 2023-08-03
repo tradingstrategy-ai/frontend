@@ -240,7 +240,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	if (stopLossPercentOpen) {
 		portfolioRiskPercent = (1 - stopLossPercentOpen) * portfolioWeightAtOpen;
 
-		// Cannot be negativem stopLessPercentOpen likely missing
+		// Cannot be negative; stopLessPercentOpen likely missing
 		if (portfolioRiskPercent < 0) {
 			portfolioRiskPercent = undefined;
 		}

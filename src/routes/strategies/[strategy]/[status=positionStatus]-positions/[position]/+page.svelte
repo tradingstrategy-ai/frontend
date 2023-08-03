@@ -217,9 +217,10 @@
 					{:else}
 						<Tooltip>
 							<span slot="tooltip-trigger" class="underline">
-								<!-- Stop loss is usually expressed percent of the total position,
-                                    but internally we use the flipped definition as it makes
-                                    calculations simpler -->
+								<!--
+								Stop loss is usually expressed percent of the total position, but
+								internally we use the flipped definition as it makes calculations simpler
+								-->
 								{formatPercent(1 - positionInfo.stopLossPercentOpen)}
 							</span>
 							<span slot="tooltip-popup">
