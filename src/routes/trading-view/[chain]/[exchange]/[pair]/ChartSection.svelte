@@ -17,7 +17,8 @@ for the same hovered date. Also displays a time-bucket selector.
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { TimeBucket } from '$lib/chart';
-	import { quoteFeed, ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
+	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
+	import { ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -25,6 +26,13 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let firstTradeDate: string;
 
 	const chartLinker = new ChartLinker();
+
+	// Compatibility layer for old/new `xyliquidity` and `candles` payloads; simplify expected
+	// `data` to `Record<string, Candle[]>` after backend#192 and backend#196 are deployed
+	function dataToQuotes(data: Candle[] | Record<string, Candle[]>) {
+		const candles = data instanceof Array ? data : data[pairId];
+		return candles.map(candleToQuote);
+	}
 
 	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
 </script>
@@ -55,7 +63,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		{exchangeType}
 		{firstTradeDate}
 		{timeBucket}
-		feed={quoteFeed('candles')}
+		feed={quoteFeed('candles', dataToQuotes)}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
 	>
@@ -89,7 +97,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}
-			feed={quoteFeed('xyliquidity')}
+			feed={quoteFeed('xyliquidity', dataToQuotes)}
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
