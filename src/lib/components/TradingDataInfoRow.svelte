@@ -17,10 +17,10 @@ Display a single row of trading data (should be nested in <TradingDataInfo>)
 -->
 <script lang="ts">
 	export let label: string;
-	export let labelHref: string = '';
-	export let value: string | number;
-	export let valueHref: string = '';
-	let className: string = '';
+	export let labelHref = '';
+	export let value: string | number = '';
+	export let valueHref = '';
+	let className = '';
 	export { className as class };
 </script>
 
@@ -28,7 +28,9 @@ Display a single row of trading data (should be nested in <TradingDataInfo>)
 	{#if labelHref}<a href={labelHref}>{label}</a>{:else}{label}{/if}
 </dt>
 <dd class={className}>
-	{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
+	<slot>
+		{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
+	</slot>
 </dd>
 
 <style lang="postcss">

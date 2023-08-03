@@ -21,7 +21,8 @@
 	// Hide chart for Aave v3 GHO token as well as non-borrowable reserves
 	// see: https://docs-gho.vercel.app/concepts/overview
 	$: isGhoToken = reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO';
-	$: showChart = !isGhoToken && isBorrowable(reserve);
+	$: borrowable = isBorrowable(reserve);
+	$: showChart = borrowable && !isGhoToken;
 
 	let timeBucket: TimeBucket = '1d';
 </script>
@@ -48,8 +49,8 @@
 	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="reserve-info">
-		<InfoTable {reserve} />
-		<InfoSummary {reserve} />
+		<InfoTable {reserve} {borrowable} />
+		<InfoSummary {reserve} {borrowable} />
 	</section>
 </main>
 
