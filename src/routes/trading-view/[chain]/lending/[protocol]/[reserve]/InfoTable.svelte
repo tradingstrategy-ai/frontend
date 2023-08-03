@@ -10,28 +10,32 @@
 </script>
 
 <TradingDataInfo>
-	<TradingDataInfoRow label="Supply rate">
-		{formatInterestRate(details.supply_apr_latest)} APR
-	</TradingDataInfoRow>
+	<TradingDataInfoRow label="Supply rate" value="{formatInterestRate(details.supply_apr_latest)} APR" />
 	<TradingDataInfoRow label="Borrow rate – variable">
-		{#if borrowable}
-			{formatInterestRate(details.variable_borrow_apr_latest)} APR
-		{:else}
-			N/A
-		{/if}
+		<svelte:fragment slot="value">
+			{#if borrowable}
+				{formatInterestRate(details.variable_borrow_apr_latest)} APR
+			{:else}
+				N/A
+			{/if}
+		</svelte:fragment>
 	</TradingDataInfoRow>
 	<TradingDataInfoRow label="Borrow rate – stable">
-		{#if borrowable}
-			{formatInterestRate(details.stable_borrow_apr_latest)} APR
-		{:else}
-			N/A
-		{/if}
+		<svelte:fragment slot="value">
+			{#if borrowable}
+				{formatInterestRate(details.stable_borrow_apr_latest)} APR
+			{:else}
+				N/A
+			{/if}
+		</svelte:fragment>
 	</TradingDataInfoRow>
 	<TradingDataInfoRow label="Protocol" value={reserve.protocol_name} />
-	<TradingDataInfoRow
-		label="Asset Token"
-		value={reserve.asset_name}
-		valueHref="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}"
-	/>
-	<TradingDataInfoRow label="Blockchain" value={reserve.chain_name} valueHref="/trading-view/{reserve.chain_slug}" />
+	<TradingDataInfoRow label="Asset Token">
+		<a slot="value" href="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}">
+			{reserve.asset_name}
+		</a>
+	</TradingDataInfoRow>
+	<TradingDataInfoRow label="Blockchain">
+		<a slot="value" href="/trading-view/{reserve.chain_slug}">{reserve.chain_name}</a>
+	</TradingDataInfoRow>
 </TradingDataInfo>
