@@ -66,7 +66,7 @@ export interface TradingPositionInfo {
 	stopLossTriggered: boolean;
 	trailingStopLossPercent?: Percent;
 
-	portfolioRiskPercent: Percent;
+	portfolioRiskPercent?: Percent;
 
 	volume: USDollarValue;
 	tradingFees: USDollarValue;
@@ -235,22 +235,20 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	const profitability = realisedProfitability || unrealisedProfitability;
 	const candleTimeBucket = durationSeconds > 7 * 24 * 3600 ? '1d' : '1h';
 
-	let portfolioRiskPercent;
+	let portfolioRiskPercent: Percent | undefined;
 
-	if (stopLossPercentOpen) {
+	if (stopLossPercentOpen && portfolioWeightAtOpen) {
 		portfolioRiskPercent = (1 - stopLossPercentOpen) * portfolioWeightAtOpen;
 
 		// Cannot be negative; stopLessPercentOpen likely missing
 		if (portfolioRiskPercent < 0) {
 			portfolioRiskPercent = undefined;
 		}
-	} else {
-		portfolioRiskPercent = undefined;
 	}
 
 	const { volume, lpFees, lpFeesPercent } = calculateVolumeAndFees(position);
 
-	if (stopLossPercentOpen >= 1) {
+	if (Number(stopLossPercentOpen) >= 1) {
 		stopLossPercentOpen = undefined;
 	}
 
