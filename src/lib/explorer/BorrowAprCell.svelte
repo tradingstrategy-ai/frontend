@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { type Reserve, isBorrowable } from '$lib/helpers/lending-reserve';
+	import type { LendingReserve } from './lending-reserve-client';
+	import { isBorrowable } from '$lib/helpers/lending-reserve';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 	import { Tooltip } from '$lib/components';
 
 	export let apr: number;
-	export let reserve: Reserve | Record<string, any>;
+	export let reserve: LendingReserve;
 </script>
 
 {#if !reserve.additional_details}

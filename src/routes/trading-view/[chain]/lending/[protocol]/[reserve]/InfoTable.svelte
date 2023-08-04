@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
-	import type { Reserve } from '$lib/helpers/lending-reserve';
+	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
-	export let reserve: Reserve;
+	export let reserve: LendingReserve;
 	export let borrowable: boolean;
 
 	$: details = reserve.additional_details;

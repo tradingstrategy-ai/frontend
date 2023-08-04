@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LendingReserveIndexResponse } from './lending-reserve-client';
+	import type { LendingReserve } from './lending-reserve-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
@@ -9,15 +9,15 @@
 	import BorrowAprCell from './BorrowAprCell.svelte';
 
 	export let loading = false;
-	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
+	export let rows: LendingReserve[] | undefined = undefined;
 	export let totalRowCount = 0;
 	export let page = 0;
 	export let sort = 'variable_borrow_apr_latest';
 	export let direction: 'asc' | 'desc' = 'asc';
 	export let hiddenColumns: string[] = [];
 
-	const tableRows: Writable<LendingReserveIndexResponse['rows']> = writable([]);
-	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
+	const tableRows: Writable<LendingReserve[]> = writable([]);
+	$: $tableRows = loading ? new Array(10).fill({}) : rows ?? [];
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
