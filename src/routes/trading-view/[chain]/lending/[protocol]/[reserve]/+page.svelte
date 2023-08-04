@@ -4,7 +4,8 @@
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import { lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -18,9 +19,11 @@
 
 	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 
-	// Hide chart for Aave v3 GHO token
+	// Hide chart for Aave v3 GHO token as well as non-borrowable reserves
 	// see: https://docs-gho.vercel.app/concepts/overview
 	$: isGhoToken = reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO';
+	$: borrowable = isBorrowable(reserve);
+	$: showChart = borrowable && !isGhoToken;
 
 	let timeBucket: TimeBucket = '1d';
 </script>
@@ -40,19 +43,19 @@
 		<svelte:fragment slot="cta">
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
-					View on {new URL(reserveUrl).host}
+					View on {formatUrlAsDomain(reserveUrl)}
 				</Button>
 			{/if}
 		</svelte:fragment>
 	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="reserve-info">
-		<InfoTable {reserve} />
-		<InfoSummary {reserve} />
+		<InfoTable {reserve} {borrowable} />
+		<InfoSummary {reserve} {borrowable} />
 	</section>
 </main>
 
-{#if !isGhoToken}
+{#if showChart}
 	<Section padding="md">
 		<div class="chart-header">
 			<h3>Interest rates</h3>

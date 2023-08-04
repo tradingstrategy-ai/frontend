@@ -1,3 +1,5 @@
+import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
+
 /**
  * Return URL for a lending reserve on a given chain and lending protocol
  */
@@ -11,6 +13,15 @@ export function lendingReserveUrl(chain: string, protocol: string, underlyingAss
 		marketName: `proto_${marketSlug}_v3`
 	});
 	return `https://app.aave.com/reserve-overview/?${params}`;
+}
+
+/**
+ * Determine if reserve is borrowable.
+ * Current: inferred from non-zero Variable Borrow APR
+ * Future: may have a flag on API entity based on smart-contract value
+ */
+export function isBorrowable({ additional_details }: LendingReserve) {
+	return additional_details.variable_borrow_apr_latest > 0;
 }
 
 /***

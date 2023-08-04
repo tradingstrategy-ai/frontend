@@ -1,5 +1,31 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
+export type LendingReserve = {
+	reserve_id: number;
+	reserve_slug: string;
+	protocol_slug: string;
+	protocol_name: string;
+	chain_id: number;
+	chain_slug: string;
+	chain_name: string;
+	asset_id: number;
+	asset_name: string;
+	asset_symbol: string;
+	asset_address: Address;
+	atoken_id: number;
+	atoken_address: Address;
+	stable_debt_token_id: number;
+	stable_debt_token_address: Address;
+	variable_debt_token_id: number;
+	variable_debt_token_address: Address;
+	interest_rate_strategy_address: Address;
+	additional_details: {
+		supply_apr_latest: number;
+		stable_borrow_apr_latest: number;
+		variable_borrow_apr_latest: number;
+	};
+};
+
 export type LendingReserveIndexParams = Partial<{
 	protocol_slug: string;
 	chain_slug: string;
@@ -12,7 +38,7 @@ export type LendingReserveIndexParams = Partial<{
 type LendingReserveSearchKey = keyof LendingReserveIndexParams;
 
 export type LendingReserveIndexResponse = {
-	rows: Record<string, any>[];
+	rows: LendingReserve[];
 	totalRowCount: number;
 };
 

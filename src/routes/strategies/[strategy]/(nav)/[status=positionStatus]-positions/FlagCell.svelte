@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor/state/interface';
 	import type { PositionFlagMap } from './position-flags';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { Tooltip } from '$lib/components';
 
 	// input as getPositionFlags(position)
 	export let flags: PositionFlagMap;
@@ -11,13 +10,13 @@
 	{#each [...flags] as [key, flag], idx}
 		{#if idx > 0},{/if}
 		<Tooltip>
-			<span slot="tooltip-trigger">
+			<span slot="trigger">
 				<span class="flag">
 					{flag.abbreviation}
 				</span>
 			</span>
 
-			<div slot="tooltip-popup" class="tooltip-content">
+			<div slot="popup" class="tooltip-content">
 				{@html flag.helpTextHTML}
 			</div>
 		</Tooltip>

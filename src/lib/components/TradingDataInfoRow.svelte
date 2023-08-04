@@ -1,34 +1,31 @@
 <!--
 @component
-Display a single row of trading data (should be nested in <TradingDataInfo>)
+Display a single row of trading data (should be nested in <TradingDataInfo>). Accepts
+`label` and `value` as a prop or named slot (e.g., to add additional styling or an
+anchor tag).
 
 #### Usage
 ```tsx
 	<TradingDataInfo>
-		<TradingDataInfoRow
-			label="Row label"
-			labelHref="http://optional.label.href"
-			value="Row value"
-			valueHref="http://optional.value.href"
-			class="optional-css-class"
-		/>
+		<TradingDataInfoRow label="Row label" value="Row value"	/>
+		<TradingDataInfoRow label="Row label">
+			<a slot="value" href="http://example.com">
+				Linked row value
+			</a>
+		</TradingDataInfoRow>
 	</TradingDataInfo>
 ```
 -->
 <script lang="ts">
-	export let label: string;
-	export let labelHref: string = '';
-	export let value: string | number;
-	export let valueHref: string = '';
-	let className: string = '';
-	export { className as class };
+	export let label = '';
+	export let value: string | number = '';
 </script>
 
 <dt>
-	{#if labelHref}<a href={labelHref}>{label}</a>{:else}{label}{/if}
+	<slot name="label">{label}</slot>
 </dt>
-<dd class={className}>
-	{#if valueHref}<a href={valueHref}>{value}</a>{:else}{value}{/if}
+<dd>
+	<slot name="value">{value}</slot>
 </dd>
 
 <style lang="postcss">
@@ -40,7 +37,7 @@ Display a single row of trading data (should be nested in <TradingDataInfo>)
 		font: var(--f-ui-large-bold);
 	}
 
-	a {
+	:is(dt, dd) :global(a) {
 		font: inherit;
 		text-decoration: underline;
 	}

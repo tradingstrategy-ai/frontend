@@ -352,14 +352,6 @@ export function formatUnixTimestampAsHours(ts: number, newlined = false, seconds
 }
 
 /**
- * Grabs only the domain part from the URL
- */
-export function formatUrlAsDomain(u: string): string {
-	const url = new URL(u);
-	return url.hostname;
-}
-
-/**
  * Format a datetime string to human readable format.
  *
  * Mostly useful for formattiong ISO-8601 datetime strings coming from the backend.

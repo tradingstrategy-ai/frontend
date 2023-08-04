@@ -201,9 +201,8 @@ export function formatMillion2(n: MaybeNumber): string {
 /**
  * Grabs only the domain part from the URL
  */
-export function formatUrlAsDomain(u: string): string {
-	const url = new URL(u);
-	return url.hostname;
+export function formatUrlAsDomain(url: string): string {
+	return new URL(url).hostname;
 }
 
 /**

@@ -16,31 +16,41 @@ Render exchange summary table on exchange page.
 <TradingDataInfo>
 	<TradingDataInfoRow label="Name" value={nameDetails.name} />
 
-	<TradingDataInfoRow
-		label="Homepage"
-		value={details.homepage ? formatUrlAsDomain(details.homepage) : 'Not available'}
-		valueHref={details.homepage}
-	/>
+	<TradingDataInfoRow label="Homepage">
+		<svelte:fragment slot="value">
+			{#if details.homepage}
+				<a href={details.homepage}>{formatUrlAsDomain(details.homepage)}</a>
+			{:else}
+				Not available
+			{/if}
+		</svelte:fragment>
+	</TradingDataInfoRow>
 
-	<TradingDataInfoRow
-		label="Volume 30d"
-		labelHref="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
-		value={formatDollar((details.buy_volume_30d || 0) + (details.sell_volume_30d || 0))}
-	/>
+	<TradingDataInfoRow>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations">
+			Volume 30d
+		</a>
+		<svelte:fragment slot="value">
+			{formatDollar((details.buy_volume_30d ?? 0) + (details.sell_volume_30d ?? 0))}
+		</svelte:fragment>
+	</TradingDataInfoRow>
 
-	<TradingDataInfoRow
-		label="Volume all-time"
-		labelHref="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
-		value={formatDollar((details.buy_volume_all_time || 0) + (details.sell_volume_all_time || 0))}
-	/>
+	<TradingDataInfoRow>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations">
+			Volume all-time
+		</a>
+		<svelte:fragment slot="value">
+			{formatDollar((details.buy_volume_all_time ?? 0) + (details.sell_volume_all_time ?? 0))}
+		</svelte:fragment>
+	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Trading pairs" value={formatAmount(details.pair_count)} />
 
-	<TradingDataInfoRow
-		label="Tracked trading pairs"
-		labelHref="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
-		value={formatAmount(details.active_pair_count)}
-	/>
+	<TradingDataInfoRow value={formatAmount(details.active_pair_count)}>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">
+			Tracked trading pairs
+		</a>
+	</TradingDataInfoRow>
 
 	{#if details.first_trade_at}
 		<TradingDataInfoRow label="Launched" value={format(fromUnixTime(details.first_trade_at), 'MMM yyyy')} />
@@ -52,11 +62,11 @@ Render exchange summary table on exchange page.
 
 	<TradingDataInfoRow label="Type" value={exchangeTypeLabel(details.exchange_type)} />
 
-	<TradingDataInfoRow label="Blockchain" value={details.chain_name} valueHref="/trading-view/{details.chain_slug}" />
+	<TradingDataInfoRow label="Blockchain">
+		<a slot="value" href="/trading-view/{details.chain_slug}">{details.chain_name}</a>
+	</TradingDataInfoRow>
 
-	<TradingDataInfoRow
-		label="Internal id"
-		labelHref="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html"
-		value={details.exchange_id}
-	/>
+	<TradingDataInfoRow value={details.exchange_id}>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html">Internal id</a>
+	</TradingDataInfoRow>
 </TradingDataInfo>
