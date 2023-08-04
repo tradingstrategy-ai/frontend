@@ -5,6 +5,7 @@
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import { isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -42,7 +43,7 @@
 		<svelte:fragment slot="cta">
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
-					View on {new URL(reserveUrl).host}
+					View on {formatUrlAsDomain(reserveUrl)}
 				</Button>
 			{/if}
 		</svelte:fragment>
