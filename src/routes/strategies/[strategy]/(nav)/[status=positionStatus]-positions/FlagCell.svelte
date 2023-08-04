@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PositionFlagMap } from './position-flags';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { Tooltip } from '$lib/components';
 
 	// input as getPositionFlags(position)
 	export let flags: PositionFlagMap;

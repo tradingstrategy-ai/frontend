@@ -6,6 +6,7 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
 	import { formatInterestRate } from '$lib/helpers/formatters';
+	import BorrowAprCell from './BorrowAprCell.svelte';
 
 	export let loading = false;
 	export let rows: LendingReserveIndexResponse['rows'] | undefined = undefined;
@@ -55,7 +56,7 @@
 			id: 'variable_borrow_apr_latest',
 			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
 			header: 'Borrow APR',
-			cell: ({ value }) => formatInterestRate(value)
+			cell: ({ value, row }) => createRender(BorrowAprCell, { apr: value, reserve: row.original })
 		}),
 		table.column({
 			id: 'cta',
