@@ -142,21 +142,62 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
 }
 
 /**
- * Format price with '$' prefix, thousands separator, and useful
- * number of fraction digits.
+ * Format a number with appropriate number of digits based on its magnitude.
+ * - larger numbers display `minDigits` after the decimal point
+ * - smaller numbers display from `minDigits` up to `maxDigits`
+ *   significant digits (to retain precision)
+ *
+ * @example
+ * With min and maxDigits = 2 (the default):
+ *    12      -> 12.00
+ *     1.234  ->  1.23
+ *     0.1    ->  0.10
+ *     0.123  ->  0.12
+ *     0.0123 ->  0.012
+ *
+ * @param n - number to format
+ * @param minDigits - minimum number of digits to display (default = 2)
+ * @param maxDigits - maximum number of significant digits (default = minDigits)
+ * @param options - additional options to pass through to `toLocaleString()`
  */
-export function formatPrice(n: MaybeNumber, digits: MaybeNumber = undefined) {
+export function formatNumber(n: MaybeNumber, minDigits = 2, maxDigits = minDigits, options = {}) {
+	if (minDigits < 1) throw new RangeError('minDigits must be >= 1');
+	if (maxDigits < minDigits) throw new RangeError('maxDigits must be >= minDigits');
+
 	if (!Number.isFinite(n)) return notFilledMarker;
 
-	if (digits === undefined) {
-		digits = n < 10 ? 4 : 2;
-	}
+	// Don't format -0.00
+	// https://stackoverflow.com/a/7223395/315168
+	if (Object.is(-0, n)) n = 0;
 
-	return n.toLocaleString('en', {
+	// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
+	// In theory, we should be able to use `roundingPriority: 'morePrecision'` to achieve
+	// the same result, but this is inconsistent across JavaScript implementations.
+	const v1 = n.toLocaleString('en-US', {
+		minimumFractionDigits: minDigits,
+		maximumFractionDigits: minDigits,
+		...options
+	});
+
+	const v2 = n.toLocaleString('en-US', {
+		minimumSignificantDigits: minDigits,
+		maximumSignificantDigits: maxDigits,
+		...options
+	});
+
+	// return the formatted value with greatest precision
+	return v2.length > v1.length ? v2 : v1;
+}
+
+/**
+ * Format price with '$' prefix, thousands separator, and useful
+ * number of digits.
+ */
+export function formatPrice(n: MaybeNumber, minDigits = 2, maxDigits = 4) {
+	maxDigits = Math.max(minDigits, maxDigits);
+	return formatNumber(n, minDigits, maxDigits, {
 		style: 'currency',
-		currency: 'USD',
-		minimumFractionDigits: digits,
-		maximumFractionDigits: digits
+		currency: 'USD'
 	});
 }
 
@@ -178,18 +219,6 @@ export function formatAmount(n: MaybeNumber): string {
  * Format number using an English thousand separation
  */
 export function formatMillion(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
-
-	return (n / 1_000_000).toLocaleString('en', {
-		minimumFractionDigits: 1,
-		maximumFractionDigits: 1
-	});
-}
-
-/**
- * Format number using an English thousand separation
- */
-export function formatMillion2(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 
 	return (n / 1_000_000).toLocaleString('en', {
@@ -231,19 +260,8 @@ export function formatShortAddress(address: MaybeString): string {
  *
  * Like average winning profit.
  */
-export function formatPercent(n: MaybeNumber, digits = 1): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
-
-	// Negative zero hot fix
-	// Don't format -0 %
-	// https://stackoverflow.com/a/7223395/315168
-	if (Object.is(-0, n)) {
-		n = 0;
-	}
-
-	return n.toLocaleString('en', {
-		minimumFractionDigits: digits,
-		maximumFractionDigits: digits,
+export function formatPercent(n: MaybeNumber, minDigits = 1, maxDigits = minDigits) {
+	return formatNumber(n, minDigits, maxDigits, {
 		style: 'percent'
 	});
 }
@@ -251,14 +269,8 @@ export function formatPercent(n: MaybeNumber, digits = 1): string {
 /**
  * Format interest rate value given as percent-form value
  */
-export function formatInterestRate(n: number) {
-	if (!Number.isFinite(n)) return notFilledMarker;
-	return (
-		n.toLocaleString('en', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		}) + '%'
-	);
+export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxDigits = minDigits) {
+	return formatPercent(n / 100, minDigits, maxDigits);
 }
 
 /**
