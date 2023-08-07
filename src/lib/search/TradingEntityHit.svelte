@@ -10,7 +10,13 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 -->
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
-	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import {
+		formatDollar,
+		formatSwapFee,
+		formatPercent,
+		formatPriceChange,
+		formatInterestRate
+	} from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Icon, UpDownCell } from '$lib/components';
 
@@ -27,6 +33,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
+	const isLendingReserve = document.type === 'lending_reserve';
 
 	// flag low quality results
 	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
@@ -67,17 +74,29 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 				</div>
 			</div>
 
-			{#if isAdvancedLayout && hasTradingData}
+			{#if isAdvancedLayout && (hasTradingData || isLendingReserve)}
 				<div class="secondary">
 					<div class="measures">
-						<div class="volume">
-							<dt>Volume 24h</dt>
-							<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
-						</div>
-						<div class="liquidity">
-							<dt>Liquidity</dt>
-							<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
-						</div>
+						{#if hasTradingData}
+							<div>
+								<dt>Volume 24h</dt>
+								<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
+							</div>
+							<div>
+								<dt>Liquidity</dt>
+								<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
+							</div>
+						{:else if isLendingReserve}
+							{@const variableBorrowApr = document.variable_borrow_apr}
+							<div>
+								<dt>Supply APR</dt>
+								<dd>{formatInterestRate(document.supply_apr)}</dd>
+							</div>
+							<div>
+								<dt>Variable Borrow APR</dt>
+								<dd>{variableBorrowApr > 0 ? formatInterestRate(variableBorrowApr) : 'N/A'}</dd>
+							</div>
+						{/if}
 					</div>
 				</div>
 			{/if}
@@ -281,10 +300,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		& .measures {
-			display: grid;
+			display: flex;
+			flex-wrap: wrap;
 			gap: var(--space-xs);
-			grid-template-columns: repeat(auto-fit, minmax(5rem, auto));
-			place-content: start;
 			width: 100%;
 		}
 
