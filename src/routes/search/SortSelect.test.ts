@@ -4,7 +4,7 @@ import SortSelect, { getSortParams } from './SortSelect.svelte';
 describe('SortSelect component', () => {
 	test('should render a drop-down with sort options', () => {
 		const { getAllByRole } = render(SortSelect);
-		expect(getAllByRole('option')).toHaveLength(4);
+		expect(getAllByRole('option')).toHaveLength(6);
 	});
 
 	test('should select first option by default', () => {
