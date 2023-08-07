@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, EntitySymbol, WizardActions } from '$lib/components';
 
@@ -19,7 +20,7 @@
 		{#each receivedAssets as { symbol, formatted }}
 			<WalletInfoItem>
 				<EntitySymbol slot="label" type="token" label={symbol} slug={symbol.toLowerCase()} />
-				{formatted}
+				{formatNumber(Number(formatted), 2, 4)}
 			</WalletInfoItem>
 		{/each}
 	</WalletInfo>
