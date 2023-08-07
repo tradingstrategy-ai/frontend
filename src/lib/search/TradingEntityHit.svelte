@@ -26,13 +26,18 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
-	const typeLabel = document.type === 'exchange' ? 'DEX' : document.type;
 
 	// flag low quality results
 	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
 	const hasLowLiquidity = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
 	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
+
+	const labels: Record<string, string> = {
+		exchange: 'DEX',
+		lending_reserve: 'Reserve'
+	};
+	const typeLabel = labels[document.type] ?? document.type;
 
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
@@ -106,6 +111,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		background-color: var(--c-gray-extra-dark);
 	}
 
+	.type-lending_reserve {
+		background-color: #7a5c7f;
+	}
+
 	li {
 		display: grid;
 		list-style-type: none;
@@ -170,10 +179,10 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		display: grid;
 		align-content: center;
 		border-radius: var(--radius-xxs);
-		padding-block: var(--space-xxs);
-		width: 3.5rem;
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
+		padding-block: var(--space-xs);
+		width: 4.5rem;
+		font: var(--f-ui-xs-medium);
+		letter-spacing: var(--f-ui-xs-spacing, normal);
 		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
@@ -181,8 +190,8 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		@media (--viewport-md-up) {
 			@nest .advanced & {
 				width: 5rem;
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing, normal);
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
 		}
 	}
