@@ -11,7 +11,7 @@ import { writable } from 'svelte/store';
 import searchClient from './client';
 
 const defaultOptions = {
-	query_by: ['description', 'token_tickers', 'token_names', 'smart_contract_addresses'],
+	query_by: ['description', 'token_tickers', 'token_names', 'smart_contract_addresses', 'internal_id'],
 	sort_by: [],
 	highlight_full_fields: 'description',
 	highlight_start_tag: '<em>',
