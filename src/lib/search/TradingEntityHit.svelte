@@ -11,6 +11,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
 	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Icon, UpDownCell } from '$lib/components';
 
 	// Any token with less than this liquidity is grayed out in the search results
@@ -47,7 +48,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 <li title={getTitle()}>
 	<a class="trading-entity-hit tile b {layout}" class:isLowQuality href={document.url_path}>
-		<div class="type type-{document.type}">{typeLabel}</div>
+		<div class="type type-{document.type}">
+			{typeLabel}
+			<div class="chain-icon">
+				<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
+			</div>
+		</div>
 		<div class="info">
 			<div class="primary">
 				<div class="desc truncate lines-2">
@@ -108,7 +114,7 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.type-pair {
-		background-color: var(--c-gray-extra-dark);
+		background-color: var(--c-gray-dark);
 	}
 
 	.type-lending_reserve {
@@ -176,11 +182,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.type {
+		position: relative;
 		display: grid;
 		align-content: center;
 		border-radius: var(--radius-xxs);
 		padding-block: var(--space-xs);
-		width: 4.5rem;
+		width: 5rem;
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 		color: var(--c-parchment);
@@ -189,9 +196,29 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				width: 5rem;
+				width: 5.25rem;
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
+		}
+
+		& .chain-icon {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			display: grid;
+			width: 1.35rem;
+			padding: 2px;
+			border-radius: 1rem;
+			transform: translate(50%, 50%);
+			background: hsla(var(--hsl-text-inverted));
+			box-shadow: 0 0 1px 1px var(--c-shadow-1-v1);
+
+			@media (--viewport-md-up) {
+				@nest .advanced & {
+					width: 1.5rem;
+					padding: 3px;
+				}
 			}
 		}
 	}
