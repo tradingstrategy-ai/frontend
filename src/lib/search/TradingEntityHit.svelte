@@ -10,7 +10,14 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 -->
 <script lang="ts">
 	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
-	import { formatDollar, formatSwapFee, formatPercent, formatPriceChange } from '$lib/helpers/formatters';
+	import {
+		formatDollar,
+		formatSwapFee,
+		formatPercent,
+		formatPriceChange,
+		formatInterestRate
+	} from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Icon, UpDownCell } from '$lib/components';
 
 	// Any token with less than this liquidity is grayed out in the search results
@@ -26,13 +33,19 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
 	const hasValidPrice = document.price_usd_latest > 0;
 	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
-	const typeLabel = document.type === 'exchange' ? 'DEX' : document.type;
+	const isLendingReserve = document.type === 'lending_reserve';
 
 	// flag low quality results
 	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
 	const hasLowLiquidity = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
 	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
+
+	const labels: Record<string, string> = {
+		exchange: 'DEX',
+		lending_reserve: 'Reserve'
+	};
+	const typeLabel = labels[document.type] ?? document.type;
 
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
@@ -42,7 +55,12 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 
 <li title={getTitle()}>
 	<a class="trading-entity-hit tile b {layout}" class:isLowQuality href={document.url_path}>
-		<div class="type type-{document.type}">{typeLabel}</div>
+		<div class="type type-{document.type}">
+			{typeLabel}
+			<div class="chain-icon">
+				<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
+			</div>
+		</div>
 		<div class="info">
 			<div class="primary">
 				<div class="desc truncate lines-2">
@@ -56,17 +74,29 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 				</div>
 			</div>
 
-			{#if isAdvancedLayout && hasTradingData}
+			{#if isAdvancedLayout && (hasTradingData || isLendingReserve)}
 				<div class="secondary">
 					<div class="measures">
-						<div class="volume">
-							<dt>Volume 24h</dt>
-							<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
-						</div>
-						<div class="liquidity">
-							<dt>Liquidity</dt>
-							<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
-						</div>
+						{#if hasTradingData}
+							<div>
+								<dt>Volume 24h</dt>
+								<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
+							</div>
+							<div>
+								<dt>Liquidity</dt>
+								<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
+							</div>
+						{:else if isLendingReserve}
+							{@const variableBorrowApr = document.variable_borrow_apr}
+							<div>
+								<dt>Supply APR</dt>
+								<dd>{formatInterestRate(document.supply_apr)}</dd>
+							</div>
+							<div>
+								<dt>Variable Borrow APR</dt>
+								<dd>{variableBorrowApr > 0 ? formatInterestRate(variableBorrowApr) : 'N/A'}</dd>
+							</div>
+						{/if}
 					</div>
 				</div>
 			{/if}
@@ -103,7 +133,11 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.type-pair {
-		background-color: var(--c-gray-extra-dark);
+		background-color: var(--c-gray-dark);
+	}
+
+	.type-lending_reserve {
+		background-color: #7a5c7f;
 	}
 
 	li {
@@ -167,22 +201,43 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 	}
 
 	.type {
+		position: relative;
 		display: grid;
 		align-content: center;
 		border-radius: var(--radius-xxs);
-		padding-block: var(--space-xxs);
-		width: 3.5rem;
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
+		padding-block: var(--space-xs);
+		width: 5rem;
+		font: var(--f-ui-xs-medium);
+		letter-spacing: var(--f-ui-xs-spacing, normal);
 		color: var(--c-parchment);
 		text-transform: capitalize;
 		text-align: center;
 
 		@media (--viewport-md-up) {
 			@nest .advanced & {
-				width: 5rem;
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing, normal);
+				width: 5.25rem;
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
+		}
+
+		& .chain-icon {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			display: grid;
+			width: 1.35rem;
+			padding: 2px;
+			border-radius: 1rem;
+			transform: translate(50%, 50%);
+			background: hsla(var(--hsl-text-inverted));
+			box-shadow: 0 0 1px 1px var(--c-shadow-1-v1);
+
+			@media (--viewport-md-up) {
+				@nest .advanced & {
+					width: 1.5rem;
+					padding: 3px;
+				}
 			}
 		}
 	}
@@ -245,10 +300,9 @@ line item; supports basic (top-nav) and advanced (/search page) layouts.
 		}
 
 		& .measures {
-			display: grid;
+			display: flex;
+			flex-wrap: wrap;
 			gap: var(--space-xs);
-			grid-template-columns: repeat(auto-fit, minmax(5rem, auto));
-			place-content: start;
 			width: 100%;
 		}
 

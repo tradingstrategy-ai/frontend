@@ -25,7 +25,12 @@ filter on:change.
 	const dispatch = createEventDispatcher();
 	$: dispatch('change', { fieldName, filter: getFilter(selected) });
 
-	function getFilter(values) {
+	// humanize facet option labels
+	$: for (const option of options) {
+		option.label = option.value.replaceAll('_', ' ');
+	}
+
+	function getFilter(values: string[]) {
 		return values.length ? `${fieldName}:=[${values}]` : null;
 	}
 </script>

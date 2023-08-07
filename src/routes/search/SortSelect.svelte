@@ -28,6 +28,16 @@ pre-defined set of sort options.
 		'price_change:asc': {
 			label: '▲ Price change',
 			params: ['price_change_24h:asc', 'pool_swap_fee:asc', '_text_match:desc']
+		},
+
+		'variable_borrow_apr:asc': {
+			label: '▲ Borrow APR',
+			params: ['_eval(variable_borrow_apr:>0):desc', 'variable_borrow_apr:asc', '_text_match:desc']
+		},
+
+		'supply_apr:desc': {
+			label: '▼ Supply APR',
+			params: ['supply_apr:desc', '_text_match:desc']
 		}
 	};
 
