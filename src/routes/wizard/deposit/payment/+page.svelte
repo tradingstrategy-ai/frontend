@@ -6,6 +6,7 @@
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
+	import { formatNumber } from '$lib/helpers/formatters';
 	import { wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
@@ -188,7 +189,7 @@
 					label={nativeCurrency.symbol}
 					slug={nativeCurrency.symbol.toLowerCase()}
 				/>
-				{nativeCurrency.formatted}
+				{formatNumber(Number(nativeCurrency.formatted), 2, 4)}
 			</WalletInfoItem>
 
 			<WalletInfoItem>
@@ -198,7 +199,7 @@
 					label={denominationToken.symbol}
 					slug={denominationToken.symbol.toLowerCase()}
 				/>
-				{denominationToken.formatted}
+				{formatNumber(Number(denominationToken.formatted), 2, 4)}
 			</WalletInfoItem>
 		</WalletInfo>
 	</section>

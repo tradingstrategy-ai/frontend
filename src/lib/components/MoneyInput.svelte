@@ -13,6 +13,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 ```
 -->
 <script lang="ts">
+	import { formatNumber } from '$lib/helpers/formatters';
 	import { EntitySymbol } from '$lib/components';
 
 	export let disabled = false;
@@ -35,10 +36,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 	function getConvertedValue(value: MaybeNumber, ratio: number) {
 		const converted = (Number(value) || 0) * ratio;
-		return converted.toLocaleString('en', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		});
+		return formatNumber(converted, 2, 4);
 	}
 
 	export function focus(options = {}) {

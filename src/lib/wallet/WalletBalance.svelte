@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { formatNumber } from '$lib/helpers/formatters';
 	import { fetchBalance, readContract } from '@wagmi/core';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
@@ -46,7 +47,7 @@
 		{#await fetchNativeCurrency(address)}
 			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 		{:then balance}
-			{balance.formatted ?? '---'}
+			{formatNumber(Number(balance.formatted), 2, 4)}
 		{/await}
 	</WalletInfoItem>
 
@@ -55,7 +56,7 @@
 		{#await fetchDenominationToken(address)}
 			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 		{:then balance}
-			{balance.formatted ?? '---'}
+			{formatNumber(Number(balance.formatted), 2, 4)}
 		{:catch}
 			---
 		{/await}
