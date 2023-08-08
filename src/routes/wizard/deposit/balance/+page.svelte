@@ -10,9 +10,7 @@
 	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
 	$: chainSlug = getChainSlug(chains, chainId);
 
-	$: if (nativeCurrency?.value > 0n && denominationToken?.value > 0n) {
-		wizard.toggleComplete('balance');
-	}
+	$: wizard.toggleComplete('balance', nativeCurrency?.value > 0n && denominationToken?.value > 0n);
 </script>
 
 <div class="deposit-balance-page">
