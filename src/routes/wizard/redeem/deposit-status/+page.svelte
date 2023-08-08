@@ -11,9 +11,13 @@
 	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
 
-	$: if (nativeCurrency?.value > 0n && vaultShares?.value > 0n) {
-		wizard.toggleComplete('deposit-status');
-	}
+	$: depositStatusComplete =
+		'denominationToken' in $wizard.data &&
+		'vaultNetValue' in $wizard.data &&
+		nativeCurrency?.value > 0n &&
+		vaultShares?.value > 0n;
+
+	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
 
 	async function getNativeCurrency(address: Address) {
 		const nativeCurrency = await fetchBalance({ address });
