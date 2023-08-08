@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { getChainSlug } from '$lib/helpers/chain.js';
 	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
-	import { Alert, Button, WizardActions } from '$lib/components';
+	import { Alert, Button } from '$lib/components';
 
 	export let data;
 
@@ -10,9 +10,7 @@
 	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
 	$: chainSlug = getChainSlug(chains, chainId);
 
-	$: if (nativeCurrency?.value > 0n && denominationToken?.value > 0n) {
-		wizard.complete('balance');
-	}
+	$: wizard.toggleComplete('balance', nativeCurrency?.value > 0n && denominationToken?.value > 0n);
 </script>
 
 <div class="deposit-balance-page">
@@ -54,12 +52,6 @@
 		</div>
 	{/if}
 </div>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} />
-	<Button secondary label="Back" href="connect" />
-	<Button label="Next" href="payment" disabled={!$wizard.completed.has('balance')} />
-</WizardActions>
 
 <style lang="postcss">
 	.deposit-balance-page {

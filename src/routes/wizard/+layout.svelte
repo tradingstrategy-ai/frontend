@@ -1,7 +1,10 @@
 <script lang="ts">
 	import type { Step } from 'wizard/store';
 	import { page } from '$app/stores';
-	import { Section, WizardHeader, WizardNavItem } from '$lib/components';
+	import { Section } from '$lib/components';
+	import WizardHeader from './WizardHeader.svelte';
+	import WizardNavItem from './WizardNavItem.svelte';
+	import WizardActions from './WizardActions.svelte';
 
 	$: wizard = $page.data.wizard;
 	$: stepSlug = $page.route.id?.split('/').at(-1);
@@ -45,6 +48,8 @@
 				<Section maxWidth="xs">
 					<h2>{currentStep.label}</h2>
 					<slot />
+
+					<WizardActions {wizard} {currentStep} />
 				</Section>
 			</main>
 		</div>

@@ -4,16 +4,20 @@
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { fetchBalance } from '@wagmi/core';
 	import { buyNativeCurrencyUrl, wallet, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { Alert, Button, Grid, EntitySymbol, WizardActions } from '$lib/components';
+	import { Alert, Button, Grid, EntitySymbol } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	$: ({ address, chain } = $wallet);
 	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
 
-	$: if (nativeCurrency?.value > 0n && vaultShares?.value > 0n) {
-		wizard.complete('deposit-status');
-	}
+	$: depositStatusComplete =
+		'denominationToken' in $wizard.data &&
+		'vaultNetValue' in $wizard.data &&
+		nativeCurrency?.value > 0n &&
+		vaultShares?.value > 0n;
+
+	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
 
 	async function getNativeCurrency(address: Address) {
 		const nativeCurrency = await fetchBalance({ address });
@@ -64,12 +68,6 @@
 		</div>
 	{/if}
 </Grid>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} />
-	<Button secondary label="Back" href="connect" />
-	<Button label="Next" href="shares-redemption" disabled={!$wizard.completed.has('deposit-status')} />
-</WizardActions>
 
 <style lang="postcss">
 	h3 {

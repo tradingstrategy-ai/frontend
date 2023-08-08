@@ -11,7 +11,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
-	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput, WizardActions } from '$lib/components';
+	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
 	const contracts: Contracts = $wizard.data.contracts;
 	const denominationToken: FetchBalanceResult = $wizard.data.denominationToken;
@@ -22,6 +22,9 @@
 	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
+
+	// Disable the "Cancel" button once a transaction has been initiated
+	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
 	async function authorizeTransfer() {
 		const tokenInfo = await fetchTokenInfo(denominationToken.address);
@@ -168,7 +171,7 @@
 				if (event === 'restore') {
 					progressBar.set(100, { duration: 0 });
 				}
-				wizard.complete('payment');
+				wizard.toggleComplete('payment');
 			}
 		}
 	});
@@ -271,12 +274,6 @@
 		</form>
 	</section>
 </div>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} disabled={$wizard.completed.has('payment')} />
-	<Button secondary label="Back" href="balance" />
-	<Button label="Next" href="success" disabled={!$wizard.completed.has('payment')} />
-</WizardActions>
 
 <style lang="postcss">
 	.wallet-deposit {

@@ -9,7 +9,7 @@
 	import { wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput, WizardActions } from '$lib/components';
+	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput } from '$lib/components';
 
 	const contracts: Contracts = $wizard.data.contracts;
 	const vaultShares: FetchBalanceResult = $wizard.data.vaultShares;
@@ -20,6 +20,9 @@
 	let transactionId: Maybe<Address>;
 
 	const progressBar = tweened(0, { easing: cubicOut });
+
+	// Disable the "Cancel" button once a transaction has been initiated
+	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
 	async function confirmRedemption() {
 		const sharesQuantity = parseUnits(shares, vaultShares.decimals);
@@ -126,7 +129,7 @@
 				if (event === 'restore') {
 					progressBar.set(100, { duration: 0 });
 				}
-				wizard.complete('shares-redemption');
+				wizard.toggleComplete('shares-redemption');
 			}
 		}
 	});
@@ -208,12 +211,6 @@
 		</form>
 	</section>
 </div>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} disabled={$wizard.completed.has('shares-redemption')} />
-	<Button secondary label="Back" href="deposit-status" />
-	<Button label="Next" href="success" disabled={!$wizard.completed.has('shares-redemption')} />
-</WizardActions>
 
 <style>
 	.shares-redemption {

@@ -31,9 +31,10 @@ function wizardFactory(slug: string, title: string, steps: Step[]) {
 		goto(`/wizard/${slug}/${steps[0].slug}`);
 	}
 
-	function complete(step: string) {
+	function toggleComplete(step: string, completed = true) {
+		const action = completed ? 'add' : 'delete';
 		update((wizard) => {
-			wizard.completed.add(step);
+			wizard.completed[action](step);
 			return wizard;
 		});
 	}
@@ -45,7 +46,7 @@ function wizardFactory(slug: string, title: string, steps: Step[]) {
 		});
 	}
 
-	return { init, complete, updateData, subscribe, title, steps };
+	return { init, toggleComplete: toggleComplete, updateData, subscribe, title, steps };
 }
 
 export default wizardFactory;

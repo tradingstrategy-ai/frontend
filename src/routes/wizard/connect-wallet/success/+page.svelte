@@ -1,16 +1,11 @@
 <script lang="ts">
 	import wizard from '../store';
-	import { Button, WizardActions } from '$lib/components';
 </script>
 
 <div class="connect-wallet-success">
 	<p>
-		Congratulations! Your crypto wallet is now connected to Trading Strategy. You can start investing in token trading
-		strategies right away. Click "Done" to return to where you were before connecting your wallet. Happy trading!
+		Congratulations! You have successfully connected your wallet to Trading Strategy. You can now begin investing in
+		<strong>{$wizard.data.strategyName}</strong> and other strategies. Click "Done" to return to the strategy overview. Happy
+		trading!
 	</p>
 </div>
-
-<WizardActions>
-	<Button secondary label="Back" href="balance" />
-	<Button label="Done" href={$wizard.returnTo} />
-</WizardActions>

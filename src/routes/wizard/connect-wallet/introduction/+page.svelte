@@ -1,8 +1,7 @@
 <script lang="ts">
 	import wizard from '../store';
-	import { Button, WizardActions } from '$lib/components';
 
-	wizard.complete('introduction');
+	wizard.toggleComplete('introduction');
 </script>
 
 <div class="connect-wallet-introduction">
@@ -11,8 +10,3 @@
 		connect your wallet, and view your current crypto balances. Let's get started!
 	</p>
 </div>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} />
-	<Button label="Next" href="connect" disabled={!$wizard.completed.has('introduction')} />
-</WizardActions>

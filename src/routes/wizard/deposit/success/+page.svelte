@@ -1,7 +1,7 @@
 <script lang="ts">
 	import wizard from '../store';
 	import { wallet, VaultBalance } from '$lib/wallet';
-	import { Button, Grid, WizardActions } from '$lib/components';
+	import { Grid } from '$lib/components';
 
 	$: ({ contracts, strategyName } = $wizard.data);
 	$: address = $wallet.address!;
@@ -16,8 +16,3 @@
 		to return to the strategy.
 	</p>
 </Grid>
-
-<WizardActions>
-	<Button secondary label="Back" href="payment" />
-	<Button label="Done" href={$wizard.returnTo} />
-</WizardActions>
