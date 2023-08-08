@@ -3,10 +3,12 @@
 	import { Button, WizardActions } from '$lib/components';
 	import { WalletBalance } from '$lib/wallet';
 
-	wizard.toggleComplete('balance');
+	let retrievedBalanceCount = 0;
+
+	$: wizard.toggleComplete('balance', retrievedBalanceCount === 2);
 </script>
 
-<WalletBalance contracts={$wizard.data.contracts} />
+<WalletBalance contracts={$wizard.data.contracts} on:dataFetch={() => retrievedBalanceCount++} />
 
 <WizardActions>
 	<Button ghost label="Cancel" href={$wizard.returnTo} />

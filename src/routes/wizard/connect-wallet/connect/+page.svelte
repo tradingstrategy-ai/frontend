@@ -8,9 +8,7 @@
 	$: chains = data.chains;
 	$: chainId = $wizard?.data.chainId;
 
-	$: if ($wallet.status === 'connected' && (!chainId || chainId === $wallet.chain?.id)) {
-		wizard.toggleComplete('connect');
-	}
+	$: wizard.toggleComplete('connect', $wallet.status === 'connected' && $wallet.chain?.id === chainId);
 </script>
 
 <ConnectWallet {chainId} {chains} />
