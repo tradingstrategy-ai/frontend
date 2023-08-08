@@ -11,7 +11,7 @@
 	$: chainSlug = getChainSlug(chains, chainId);
 
 	$: if (nativeCurrency?.value > 0n && denominationToken?.value > 0n) {
-		wizard.complete('balance');
+		wizard.toggleComplete('balance');
 	}
 </script>
 

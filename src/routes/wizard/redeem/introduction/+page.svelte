@@ -2,7 +2,7 @@
 	import wizard from '../store';
 	import { Button, WizardActions } from '$lib/components';
 
-	wizard.complete('introduction');
+	wizard.toggleComplete('introduction');
 </script>
 
 <div class="deposit-introduction">

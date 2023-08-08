@@ -12,7 +12,7 @@
 	$: chainCurrency = chain?.nativeCurrency.symbol;
 
 	$: if (nativeCurrency?.value > 0n && vaultShares?.value > 0n) {
-		wizard.complete('deposit-status');
+		wizard.toggleComplete('deposit-status');
 	}
 
 	async function getNativeCurrency(address: Address) {

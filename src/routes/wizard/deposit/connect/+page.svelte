@@ -8,7 +8,7 @@
 	$: chainId = $wizard?.data.chainId;
 
 	$: if ($wallet.status === 'connected' && $wallet.chain?.id === chainId) {
-		wizard.complete('connect');
+		wizard.toggleComplete('connect');
 	}
 </script>
 

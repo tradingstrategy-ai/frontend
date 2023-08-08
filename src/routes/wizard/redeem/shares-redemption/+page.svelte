@@ -126,7 +126,7 @@
 				if (event === 'restore') {
 					progressBar.set(100, { duration: 0 });
 				}
-				wizard.complete('shares-redemption');
+				wizard.toggleComplete('shares-redemption');
 			}
 		}
 	});

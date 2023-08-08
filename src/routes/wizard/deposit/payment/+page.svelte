@@ -168,7 +168,7 @@
 				if (event === 'restore') {
 					progressBar.set(100, { duration: 0 });
 				}
-				wizard.complete('payment');
+				wizard.toggleComplete('payment');
 			}
 		}
 	});

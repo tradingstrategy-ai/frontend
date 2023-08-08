@@ -3,7 +3,7 @@
 	import { Button, WizardActions } from '$lib/components';
 	import { WalletBalance } from '$lib/wallet';
 
-	wizard.complete('balance');
+	wizard.toggleComplete('balance');
 </script>
 
 <WalletBalance contracts={$wizard.data.contracts} />
