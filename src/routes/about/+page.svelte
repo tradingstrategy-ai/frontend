@@ -13,7 +13,7 @@
 
 <main>
 	<IntroHero />
-	<HeroVideo youTubeId="iPXuqwYDv9U" title="Trading Strategy intro video" />
+	<HeroVideo youTubeId="KhOtk7xlLrw" title="Introducing TradingStrategy.ai" />
 	<Audience />
 
 	<Banner
