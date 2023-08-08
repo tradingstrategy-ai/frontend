@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { Button, EntitySymbol, WizardActions } from '$lib/components';
+	import { EntitySymbol } from '$lib/components';
 
 	export let data;
 	const { receivedAssets, wizard } = data;
@@ -30,11 +30,6 @@
 		<strong>{strategyName}</strong>. Click "Done" to return to the strategy.
 	</p>
 </div>
-
-<WizardActions>
-	<Button secondary label="Back" href="shares-redemption" />
-	<Button label="Done" href={$wizard.returnTo} />
-</WizardActions>
 
 <style>
 	.redemption-success {

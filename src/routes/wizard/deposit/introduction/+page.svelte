@@ -1,6 +1,5 @@
 <script lang="ts">
 	import wizard from '../store';
-	import { Button, WizardActions } from '$lib/components';
 
 	wizard.toggleComplete('introduction');
 </script>
@@ -12,8 +11,3 @@
 		payment. Let's get started!
 	</p>
 </div>
-
-<WizardActions>
-	<Button ghost label="Cancel" href={$wizard.returnTo} />
-	<Button label="Next" href="connect" disabled={!$wizard.completed.has('introduction')} />
-</WizardActions>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import wizard from '../store';
-	import { Button, WizardActions } from '$lib/components';
 </script>
 
 <div class="connect-wallet-success">
@@ -10,8 +9,3 @@
 		trading!
 	</p>
 </div>
-
-<WizardActions>
-	<Button secondary label="Back" href="balance" />
-	<Button label="Done" href={$wizard.returnTo} />
-</WizardActions>
