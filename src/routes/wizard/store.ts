@@ -18,7 +18,7 @@ export type Step = {
 	label: string;
 };
 
-function wizardFactory(slug: string, title: string, steps: Step[]) {
+export function createWizardStore(slug: string, title: string, steps: Step[]) {
 	const { set, update, subscribe }: Writable<WizardValue> = writable({
 		returnTo: undefined,
 		data: {},
@@ -49,5 +49,4 @@ function wizardFactory(slug: string, title: string, steps: Step[]) {
 	return { init, toggleComplete: toggleComplete, updateData, subscribe, title, steps };
 }
 
-export default wizardFactory;
-export type Wizard = ReturnType<typeof wizardFactory>;
+export type Wizard = ReturnType<typeof createWizardStore>;

@@ -1,6 +1,6 @@
-import wizardStore from 'wizard/store';
+import { createWizardStore } from 'wizard/store';
 
-export default wizardStore('deposit', 'Deposit tokens', [
+export default createWizardStore('deposit', 'Deposit tokens', [
 	{ slug: 'introduction', label: 'Introduction' },
 	{ slug: 'connect', label: 'Connect your wallet' },
 	{ slug: 'balance', label: 'Wallet balance' },
