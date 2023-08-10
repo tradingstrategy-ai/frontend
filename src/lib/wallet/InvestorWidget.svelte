@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import type { Wizard } from 'wizard/store';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import connectWizard from 'wizard/connect-wallet/store';
-	import depositWizard from 'wizard/deposit/store';
-	import redeemWizard from 'wizard/redeem/store';
+	import { wizard } from 'wizard/store';
 	import { wallet, VaultBalance, WalletAddress, WrongNetwork } from '$lib/wallet';
 	import { Alert, Button, SummaryBox } from '$lib/components';
+	import { goto } from '$app/navigation';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: Chain;
@@ -19,12 +17,13 @@
 		contracts.fund_value_calculator
 	);
 
-	function launchWizard(wizard: Wizard) {
-		wizard.init(`/strategies/${strategy.id}`, {
+	function launchWizard(slug: string) {
+		wizard.init(slug, `/strategies/${strategy.id}`, {
 			chainId: chain.chain_id,
 			strategyName: strategy.name,
 			contracts
 		});
+		goto(`/wizard/${slug}/introduction`);
 	}
 </script>
 
@@ -47,11 +46,11 @@
 			{/if}
 		</div>
 		<div class="actions">
-			<Button on:click={() => launchWizard(connectWizard)}>
+			<Button on:click={() => launchWizard('connect-wallet')}>
 				{$wallet.status === 'connected' ? 'Change wallet' : 'Connect wallet'}
 			</Button>
-			<Button label="Deposit" on:click={() => launchWizard(depositWizard)} />
-			<Button label="Redeem" on:click={() => launchWizard(redeemWizard)} />
+			<Button label="Deposit" on:click={() => launchWizard('deposit')} />
+			<Button label="Redeem" on:click={() => launchWizard('redeem')} />
 		</div>
 	</SummaryBox>
 {:else}

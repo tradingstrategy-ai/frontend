@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { Wizard, Step } from './store';
+	import { type Step, wizard } from './store';
 	import { Button } from '$lib/components';
 
-	export let wizard: Wizard;
+	export let steps: Step[];
 	export let currentStep: Step;
 
-	$: stepIndex = wizard.steps.indexOf(currentStep);
-	$: previousStep = wizard.steps[stepIndex - 1];
-	$: nextStep = wizard.steps[stepIndex + 1];
+	$: stepIndex = steps.indexOf(currentStep);
+	$: previousStep = steps[stepIndex - 1];
+	$: nextStep = steps[stepIndex + 1];
 </script>
 
 <footer class="wizard-actions">

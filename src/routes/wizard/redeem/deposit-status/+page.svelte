@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../store';
+	import { wizard } from 'wizard/store';
 	import { fade } from 'svelte/transition';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { fetchBalance } from '@wagmi/core';

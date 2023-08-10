@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { wizard } from 'wizard/store';
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
 
 	export let data;
-	const { receivedAssets, wizard } = data;
+	const { receivedAssets } = data;
 	const { strategyName, shares } = $wizard.data;
 
 	function sharesWithLabel(value: number) {

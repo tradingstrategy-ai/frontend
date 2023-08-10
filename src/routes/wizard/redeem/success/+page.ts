@@ -1,4 +1,4 @@
-import wizard from '../store';
+import { wizard } from 'wizard/store';
 import { get } from 'svelte/store';
 import { getPublicClient } from '@wagmi/core';
 import type { Abi } from 'viem';
