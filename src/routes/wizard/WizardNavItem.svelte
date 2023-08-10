@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Icon } from '$lib/components';
 
 	export let slug: string;
@@ -6,34 +7,34 @@
 	export let active = false;
 	export let completed = false;
 	export let disabled = false;
-
-	let tag: 'a' | 'span';
-	$: tag = active || disabled ? 'span' : 'a';
-	$: href = tag === 'a' ? slug : undefined;
 </script>
 
 <li class="wizard-nav-item">
-	<svelte:element this={tag} class="inner" class:active class:completed class:disabled {href}>
+	<button disabled={disabled || active} class:active class:completed class:disabled on:click={() => goto(slug)}>
 		<Icon name={completed ? 'success' : 'empty'} />
 		{label}
-	</svelte:element>
+	</button>
 </li>
 
 <style lang="postcss">
 	.wizard-nav-item {
 		display: contents;
 
-		& .inner {
-			border-radius: var(--radius-lg);
+		& button {
 			display: flex;
 			align-items: center;
 			gap: var(--space-sm);
-			font: var(--f-ui-md-medium);
+			border: none;
+			border-radius: var(--radius-lg);
 			padding: var(--space-sm) var(--space-md);
+			background: transparent;
+			font: var(--f-ui-md-medium);
+			cursor: pointer;
 			transition: all var(--time-sm) ease-out;
 
 			&.active {
 				background: hsla(var(--hsl-box), var(--a-box-d));
+				cursor: default;
 			}
 
 			&.disabled {

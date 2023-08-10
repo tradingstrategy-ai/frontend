@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type Step, wizard } from './store';
 	import { Button } from '$lib/components';
+	import { goto } from '$app/navigation';
 
 	export let steps: Step[];
 	export let currentStep: Step;
@@ -15,10 +16,10 @@
 		<Button ghost label="Cancel" href={$wizard.returnTo} disabled={$wizard.completed.has('meta:no-return')} />
 	{/if}
 	{#if previousStep}
-		<Button secondary label="Back" href={previousStep.slug} />
+		<Button secondary label="Back" on:click={() => goto(previousStep.slug)} />
 	{/if}
 	{#if nextStep}
-		<Button label="Next" href={nextStep.slug} disabled={!$wizard.completed.has(currentStep.slug)} />
+		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!$wizard.completed.has(currentStep.slug)} />
 	{:else}
 		<Button label="Done" href={$wizard.returnTo} />
 	{/if}
