@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Step, wizard } from 'wizard/store';
+	import type { Step } from 'wizard/store';
 	import { page } from '$app/stores';
 	import { Section } from '$lib/components';
 	import WizardHeader from './WizardHeader.svelte';
