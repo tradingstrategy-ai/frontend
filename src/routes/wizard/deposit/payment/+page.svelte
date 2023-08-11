@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../store';
+	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';

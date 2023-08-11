@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../store';
+	import { wizard } from 'wizard/store';
 	import { wallet, VaultBalance } from '$lib/wallet';
 	import { Grid } from '$lib/components';
 

@@ -6,15 +6,15 @@
 	import WizardNavItem from './WizardNavItem.svelte';
 	import WizardActions from './WizardActions.svelte';
 
-	$: wizard = $page.data.wizard;
+	$: ({ steps, title } = $page.data);
 	$: stepSlug = $page.route.id?.split('/').at(-1);
-	$: stepIndex = wizard.steps.findIndex(({ slug }: Step) => slug === stepSlug);
-	$: currentStep = wizard.steps[stepIndex];
+	$: stepIndex = steps.findIndex(({ slug }: Step) => slug === stepSlug);
+	$: currentStep = steps[stepIndex];
 </script>
 
 <svelte:head>
-	<title>{wizard.title} - {currentStep.slug} | Trading Strategy</title>
-	<meta name="description" content="{wizard.title} wizard - step {stepIndex + 1}: {currentStep.label}" />
+	<title>{title} - {currentStep.slug} | Trading Strategy</title>
+	<meta name="description" content="{title} wizard - step {stepIndex + 1}: {currentStep.label}" />
 </svelte:head>
 
 <div class="wizard-layout">
@@ -23,10 +23,10 @@
 	<Section>
 		<div class="inner">
 			<nav>
-				<h1>{wizard.title}</h1>
+				<h1>{title}</h1>
 
 				<menu>
-					{#each wizard.steps as { slug, label }, idx}
+					{#each steps as { slug, label }, idx}
 						<WizardNavItem
 							{slug}
 							{label}
@@ -40,7 +40,7 @@
 				<div class="pagination">
 					<span>{stepIndex + 1}</span>
 					/
-					<span>{wizard.steps.length}</span>
+					<span>{steps.length}</span>
 				</div>
 			</nav>
 
@@ -49,7 +49,7 @@
 					<h2>{currentStep.label}</h2>
 					<slot />
 
-					<WizardActions {wizard} {currentStep} />
+					<WizardActions {steps} {currentStep} />
 				</Section>
 			</main>
 		</div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import wizard from '../store';
+	import { wizard } from 'wizard/store';
 	import { wallet, ConnectWallet } from '$lib/wallet';
 
 	export let data;
