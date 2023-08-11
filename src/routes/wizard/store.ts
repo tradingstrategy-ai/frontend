@@ -17,10 +17,10 @@ import { derived, writable, type Writable } from 'svelte/store';
 import { stringify, parse } from 'devalue';
 
 export type WizardValue = {
-	slug: string | undefined;
-	returnTo: string | undefined;
-	data: Record<string, any>;
-	completed: Set<string>;
+	slug?: string;
+	returnTo?: string;
+	data?: Record<string, any>;
+	completed?: Set<string>;
 };
 
 export type Step = {
@@ -34,7 +34,7 @@ const storageKey = 'ts:wizard';
 function getSession() {
 	try {
 		const serialized = storage?.getItem(storageKey);
-		return serialized ? parse(serialized) : undefined;
+		return serialized ? parse(serialized) : {};
 	} catch (e) {
 		console.error('Error deserializing wizard data from sessionStorage.');
 		console.error(e);
@@ -45,20 +45,18 @@ function setSession(data: WizardValue) {
 	storage?.setItem(storageKey, stringify(data));
 }
 
-const { set, update, ...baseStore }: Writable<WizardValue | undefined> = writable(getSession(), (set) => {
-	// clear store when last subscriber unsubscribes
-	return () => set(undefined);
-});
+const { set, update, ...baseStore }: Writable<WizardValue> = writable(getSession());
 
 function init(slug: string, returnTo: string, data: any = {}) {
 	const completed: Set<string> = new Set();
 	set({ slug, returnTo, data, completed });
+	console.log({ slug, returnTo, data, completed });
 }
 
 function toggleComplete(step: string, completed = true) {
 	const action = completed ? 'add' : 'delete';
 	update(($wizard) => {
-		if (!$wizard) throw Error('wizard not initialized');
+		if (!$wizard.completed) throw Error('wizard not initialized');
 		$wizard.completed[action](step);
 		return $wizard;
 	});
@@ -66,27 +64,16 @@ function toggleComplete(step: string, completed = true) {
 
 function updateData(data: any) {
 	update(($wizard) => {
-		if (!$wizard) throw Error('wizard not initialized');
+		if (!$wizard.data) throw Error('wizard not initialized');
 		$wizard.data = { ...$wizard.data, ...data };
 		return $wizard;
 	});
 }
 
-let deferred: any;
-
-// using derived store to update sessionStorage whenever baseStore changes
-const { subscribe } = derived(baseStore, ($wizard, set) => {
-	// set the derived store value to match the base store
-	set($wizard);
-	// persist the store value in sessionStorage
-	$wizard && setSession($wizard);
-	// cancel deferred action on event loop (see below)
-	clearTimeout(deferred);
-	return () => {
-		// clear the sessionStorage when the last subscriber unsubscribes;
-		// deferred to event loop so it can be canceled in the main callback above
-		deferred = setTimeout(() => storage?.removeItem(storageKey));
-	};
+// use derived store to update sessionStorage whenever baseStore changes
+const { subscribe } = derived(baseStore, ($wizard) => {
+	setSession($wizard);
+	return $wizard;
 });
 
 export const wizard = { init, toggleComplete, updateData, subscribe };
