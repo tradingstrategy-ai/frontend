@@ -50,7 +50,6 @@ const { set, update, ...baseStore }: Writable<WizardValue> = writable(getSession
 function init(slug: string, returnTo: string, data: any = {}) {
 	const completed: Set<string> = new Set();
 	set({ slug, returnTo, data, completed });
-	console.log({ slug, returnTo, data, completed });
 }
 
 function toggleComplete(step: string, completed = true) {
@@ -70,10 +69,16 @@ function updateData(data: any) {
 	});
 }
 
+// Clear the store and sessionStorage data
+function reset() {
+	set({});
+	storage?.removeItem(storageKey);
+}
+
 // use derived store to update sessionStorage whenever baseStore changes
 const { subscribe } = derived(baseStore, ($wizard) => {
 	setSession($wizard);
 	return $wizard;
 });
 
-export const wizard = { init, toggleComplete, updateData, subscribe };
+export const wizard = { init, toggleComplete, updateData, reset, subscribe };

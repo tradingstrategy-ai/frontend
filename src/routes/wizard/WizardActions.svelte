@@ -6,6 +6,11 @@
 	export let steps: Step[];
 	export let currentStep: Step;
 
+	async function exitWizard() {
+		await goto($wizard.returnTo!);
+		wizard.reset();
+	}
+
 	$: stepIndex = steps.indexOf(currentStep);
 	$: previousStep = steps[stepIndex - 1];
 	$: nextStep = steps[stepIndex + 1];
@@ -13,15 +18,15 @@
 
 <footer class="wizard-actions">
 	{#if nextStep}
-		<Button ghost label="Cancel" href={$wizard.returnTo} disabled={$wizard.completed.has('meta:no-return')} />
+		<Button ghost label="Cancel" disabled={$wizard.completed?.has('meta:no-return')} on:click={exitWizard} />
 	{/if}
 	{#if previousStep}
 		<Button secondary label="Back" on:click={() => goto(previousStep.slug)} />
 	{/if}
 	{#if nextStep}
-		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!$wizard.completed.has(currentStep.slug)} />
+		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!$wizard.completed?.has(currentStep.slug)} />
 	{:else}
-		<Button label="Done" href={$wizard.returnTo} />
+		<Button label="Done" on:click={exitWizard} />
 	{/if}
 </footer>
 
