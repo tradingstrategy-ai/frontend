@@ -18,6 +18,7 @@
 	let shares: MaybeString;
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
+	let sharesInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
@@ -148,10 +149,23 @@
 	</section>
 
 	<section>
-		<h3>Enter amount of shares to redeem</h3>
+		<header class="redeem-header">
+			<h3 class="wide">Enter amount of shares to redeem</h3>
+			<h3 class="narrow">Shares to redeem</h3>
+			<Button
+				secondary
+				size="xs"
+				on:click={() => (shares = vaultShares.formatted)}
+				disabled={shares === vaultShares.formatted}
+			>
+				Redeem all
+				<span class="wide">{vaultShares.symbol}</span>
+			</Button>
+		</header>
 
 		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
 			<MoneyInput
+				bind:this={sharesInput}
 				bind:value={shares}
 				size="xl"
 				tokenUnit={vaultShares.symbol}
@@ -212,7 +226,18 @@
 	</section>
 </div>
 
-<style>
+<style lang="postcss">
+	@container section (width < 420px) {
+		.wide {
+			display: none;
+		}
+	}
+	@container section (width >= 420px) {
+		.narrow {
+			display: none;
+		}
+	}
+
 	.shares-redemption {
 		display: grid;
 		gap: var(--space-xl);
@@ -225,6 +250,13 @@
 		& h3 {
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-lg-medium);
+			margin: 0;
+		}
+
+		& .redeem-header {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			align-items: center;
 		}
 
 		& .redemption-form {
