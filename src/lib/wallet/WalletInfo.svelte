@@ -8,7 +8,6 @@
 
 <style lang="postcss">
 	.wallet-info {
-		container-type: inline-size;
 		width: 100%;
 		overflow: hidden;
 
@@ -17,7 +16,7 @@
 			gap: var(--space-md);
 			padding: 0;
 
-			@container (width >= 420px) {
+			@container section (width >= 420px) {
 				gap: var(--space-sl);
 				padding: var(--space-sl) 0;
 			}
