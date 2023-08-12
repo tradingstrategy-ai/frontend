@@ -42,6 +42,7 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 
 <style lang="postcss">
 	.section {
+		container: section / inline-size;
 		background: var(--section-background, inherit);
 		display: grid;
 		gap: var(--section-gap, var(--SECTION-gap));

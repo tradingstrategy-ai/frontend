@@ -20,6 +20,7 @@
 	let paymentValue: MaybeString;
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
+	let paymentInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 
@@ -208,10 +209,23 @@
 	</section>
 
 	<section>
-		<h3>Enter amount to deposit</h3>
+		<header class="deposit-header">
+			<h3 class="wide">Enter amount to deposit</h3>
+			<h3 class="narrow">Deposit amount</h3>
+			<Button
+				secondary
+				size="xs"
+				on:click={() => (paymentValue = denominationToken.formatted)}
+				disabled={paymentValue === denominationToken.formatted}
+			>
+				Deposit all
+				<span class="wide">{denominationToken.symbol}</span>
+			</Button>
+		</header>
 
 		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
 			<MoneyInput
+				bind:this={paymentInput}
 				bind:value={paymentValue}
 				size="xl"
 				tokenUnit={denominationToken.symbol}
@@ -276,6 +290,17 @@
 </div>
 
 <style lang="postcss">
+	@container section (width < 420px) {
+		.wide {
+			display: none;
+		}
+	}
+	@container section (width >= 420px) {
+		.narrow {
+			display: none;
+		}
+	}
+
 	.wallet-deposit {
 		display: grid;
 		gap: var(--space-3xl);
@@ -288,6 +313,13 @@
 		& h3 {
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-lg-medium);
+			margin: 0;
+		}
+
+		& .deposit-header {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			align-items: center;
 		}
 
 		& .payment-form {
