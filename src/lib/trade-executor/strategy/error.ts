@@ -12,7 +12,7 @@
  */
 
 import type { StrategyRuntimeState } from './runtime-state';
-import {formatDatetime, formatDuration} from "$lib/helpers/formatters";
+import { formatDatetime, formatDuration } from '$lib/helpers/formatters';
 
 /**
  * Get the HTML error message and help link in the case a trade executor is facing an issue.
@@ -23,15 +23,16 @@ export function getTradeExecutorErrorHtml(state: StrategyRuntimeState): string |
 	if (!state.connected) {
 		return `Trade executor offline. Cannot display the strategy statistics.`;
 	} else if (!state.executor_running) {
-
-    // Add a timestamp and relative timestamp for quick diagnostics
-    let crashedAtMsg;
-    if(state.crashed_at) {
-      const diffSeconds = Date.now() / 1000 - state.crashed_at;
-      crashedAtMsg = `Strategy executor halted ${formatDatetime(state.crashed_at)}, ${formatDuration(diffSeconds)} ago.`;
-    } else {
-      crashedAtMsg = "";
-    }
+		// Add a timestamp and relative timestamp for quick diagnostics
+		let crashedAtMsg;
+		if (state.crashed_at) {
+			const diffSeconds = Date.now() / 1000 - state.crashed_at;
+			crashedAtMsg = `Strategy executor halted ${formatDatetime(state.crashed_at)}, ${formatDuration(
+				diffSeconds
+			)} ago.`;
+		} else {
+			crashedAtMsg = '';
+		}
 
 		return `Strategy execution is currently paused due to an error. The trade execution engine is waiting for a manual action. 
                 <a href="/strategies/${tradeExecutorId}/status">See instance status page for more information</a>. ${crashedAtMsg}`;

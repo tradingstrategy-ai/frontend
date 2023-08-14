@@ -7,7 +7,7 @@ import type { StrategyConfiguration } from './configuration';
 // https://github.com/fram-x/assert-ts/issues/23
 import { assert } from 'assert-ts';
 import loadError from '../assets/load-error.jpg';
-import type {UnixTimestamp} from "trade-executor/state/interface";
+import type { UnixTimestamp } from 'trade-executor/state/interface';
 
 type Nullable<Type> = Type | null;
 type PerformanceTuple = [number, number];
@@ -180,7 +180,7 @@ export async function getStrategiesWithRuntimeState(
 				error,
 				frozen_positions: payload.frozen_positions,
 				backtest_available: payload.backtest_available,
-        crashed_at: payload.crashed_at
+				crashed_at: payload.crashed_at
 			};
 		})
 	);
