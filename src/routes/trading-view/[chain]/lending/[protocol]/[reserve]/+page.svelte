@@ -10,6 +10,8 @@
 	export let data;
 	$: ({ reserve } = data);
 
+	$: console.log(reserve.additional_details.raw_snapshot);
+
 	$: breadcrumbs = {
 		[reserve.chain_slug]: reserve.chain_name,
 		lending: 'Lending',
