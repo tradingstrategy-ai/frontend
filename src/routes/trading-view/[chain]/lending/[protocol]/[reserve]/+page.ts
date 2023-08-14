@@ -14,6 +14,7 @@ export async function load({ params, fetch }) {
 	const assetAddress = getAddress(reserve.asset_address);
 	const snapshot = reserve.additional_details.raw_reserves_snapshot;
 	snapshot.reserve = snapshot.reserves[assetAddress];
+	snapshot.reserve.decimals = Number(snapshot.reserve.decimals);
 	delete snapshot.reserves;
 	delete reserve.additional_details.raw_reserves_snapshot;
 	reserve.additional_details.raw_snapshot = snapshot;
