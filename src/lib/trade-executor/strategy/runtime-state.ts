@@ -7,6 +7,7 @@ import type { StrategyConfiguration } from './configuration';
 // https://github.com/fram-x/assert-ts/issues/23
 import { assert } from 'assert-ts';
 import loadError from '../assets/load-error.jpg';
+import type {UnixTimestamp} from "trade-executor/state/interface";
 
 type Nullable<Type> = Type | null;
 type PerformanceTuple = [number, number];
@@ -111,6 +112,8 @@ export interface StrategyRuntimeState {
 	// Backtest files are available on the server.
 	// Display Backtest menu entry.
 	backtest_available: boolean;
+	// UNIX timestamp when the executor main loop crashed with an exception
+	crashed_at: Nullable<UnixTimestamp>;
 }
 
 export async function getStrategiesWithRuntimeState(
@@ -176,7 +179,8 @@ export async function getStrategiesWithRuntimeState(
 				link: `/strategy/${strat.id}`,
 				error,
 				frozen_positions: payload.frozen_positions,
-				backtest_available: payload.backtest_available
+				backtest_available: payload.backtest_available,
+        crashed_at: payload.crashed_at
 			};
 		})
 	);
