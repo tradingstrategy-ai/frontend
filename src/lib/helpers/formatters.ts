@@ -131,6 +131,13 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
 			'k'
 		);
 	} else {
+
+    // Make sure we do not exception out
+    // when requesting more accuracy for US dollar prices
+    if(maxFrag < minFrag) {
+      maxFrag = minFrag;
+    }
+
 		return (
 			prefix +
 			n.toLocaleString('en', {
