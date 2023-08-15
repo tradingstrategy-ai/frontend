@@ -28,13 +28,33 @@
 
 	let timeBucket: TimeBucket = '1d';
 
-	$: console.log(getAaveData(reserve.additional_details.raw_snapshot));
+	$: console.log(getAaveData(reserve.additional_details));
 
-	function getAaveData({ reserve, base_currency_info: baseCurrency }) {
+	function getAaveData({ aggregated_reserve_data: reserveData, base_currency_info: baseCurrency }) {
+		const numberProps = [
+			'decimals',
+			'stableDebtLastUpdateTimestamp',
+			'lastUpdateTimestamp',
+			'eModeCategoryId',
+			'debtCeilingDecimals',
+			'eModeLtv',
+			'eModeLiquidationThreshold',
+			'eModeLiquidationBonus'
+		];
+		if (reserveData) {
+			for (const key of numberProps) {
+				reserveData[key] &&= Number(reserveData[key]);
+			}
+		}
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		const marketReferencePriceInUsd = baseCurrency.marketReferenceCurrencyPriceInUsd;
 		const marketReferenceCurrencyDecimals = Math.log10(baseCurrency.marketReferenceCurrencyUnit);
-		return formatReserveUSD({ reserve, currentTimestamp, marketReferencePriceInUsd, marketReferenceCurrencyDecimals });
+		return formatReserveUSD({
+			reserve: reserveData,
+			currentTimestamp,
+			marketReferencePriceInUsd,
+			marketReferenceCurrencyDecimals
+		});
 	}
 </script>
 
