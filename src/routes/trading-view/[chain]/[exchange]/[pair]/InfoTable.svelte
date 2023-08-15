@@ -31,14 +31,14 @@
 
 	<TradingDataInfoRow label="Price">
 		<span slot="value" class={priceChangeColorClass}>
-			{formatDollar(summary.usd_price_latest, 3, 3, '')} USD
+			{formatDollar(summary.usd_price_latest, 3, 3, false)} USD
 		</span>
 	</TradingDataInfoRow>
 
 	{#if tokenPrice}
 		<TradingDataInfoRow label="Token price">
 			<span slot="value" class={priceChangeColorClass}>
-				{formatDollar(tokenPrice, 3, 3, '')}
+				{formatDollar(tokenPrice, 3, 3, false)}
 				{summary.quote_token_symbol_friendly}
 			</span>
 		</TradingDataInfoRow>
@@ -63,7 +63,7 @@
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow label="Dollar exchange rate">
 			<svelte:fragment slot="value">
-				{formatDollar(summary.exchange_rate, 3, 3, '')} USD /
+				{formatDollar(summary.exchange_rate, 3, 3, false)} USD /
 				{summary.quote_token_symbol_friendly}
 			</svelte:fragment>
 		</TradingDataInfoRow>

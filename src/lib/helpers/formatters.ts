@@ -64,87 +64,18 @@ export function formatSizeGigabytes(n: MaybeNumber): string {
  * Format large money amounts in human friendly manner.
  *
  * Crypto prices can vary highly between $1B to $0.00000001.
- * Try to format everything gracefully.
+ * Use Intl.NumberFormat "compact" notation to format everything gracefully.
+ * see: https://mdn.io/NumberFormat+constructor
+ *
+ * @param n - number to format
+ * @param minDigits - minimum number of digits to display (default = 2)
+ * @param maxPrecision - maximum number of significant digits (default = minDigits)
+ * @param showPrefix - whether to show "$" prefix (default = true)
  */
-export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = '$'): string {
-	// Plz avoid ending here
-	if (!Number.isFinite(n)) return notFilledMarker;
-
-	if (n === 0) {
-		return `${prefix}0`;
-	}
-
-	const absN = Math.abs(n);
-
-	if (absN < 0.000001) {
-		return (
-			prefix +
-			n.toLocaleString('en', {
-				minimumFractionDigits: 10,
-				maximumFractionDigits: 10
-			})
-		);
-	} else if (absN < 0.0001) {
-		return (
-			prefix +
-			n.toLocaleString('en', {
-				minimumFractionDigits: 7,
-				maximumFractionDigits: 7
-			})
-		);
-	} else if (absN < 0.01) {
-		// Format funny tokens
-		return (
-			prefix +
-			n.toLocaleString('en', {
-				minimumFractionDigits: 5,
-				maximumFractionDigits: 5
-			})
-		);
-	}
-
-	if (absN >= 1000 * 1000 * 1000) {
-		return (
-			prefix +
-			(n / (1000 * 1000 * 1000)).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'B'
-		);
-	} else if (absN >= 1000 * 1000) {
-		return (
-			prefix +
-			(n / (1000 * 1000)).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'M'
-		);
-	} else if (absN >= 1000) {
-		return (
-			prefix +
-			(n / 1000).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'k'
-		);
-	} else {
-		// Make sure we do not exception out
-		// when requesting more accuracy for US dollar prices
-		if (maxFrag < minFrag) {
-			maxFrag = minFrag;
-		}
-
-		return (
-			prefix +
-			n.toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			})
-		);
-	}
+export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, showPrefix = true): string {
+	const style = showPrefix ? 'currency' : 'decimal';
+	const options = { style, currency: 'USD', notation: 'compact', compactDisplay: 'short' };
+	return formatNumber(n, minDigits, maxPrecision, options);
 }
 
 /**
@@ -163,12 +94,12 @@ export function formatDollar(n: MaybeNumber, minFrag = 2, maxFrag = 2, prefix = 
  *
  * @param n - number to format
  * @param minDigits - minimum number of digits to display (default = 2)
- * @param maxDigits - maximum number of significant digits (default = minDigits)
+ * @param maxPrecision - maximum number of significant digits (default = minDigits)
  * @param options - additional options to pass through to `toLocaleString()`
  */
-export function formatNumber(n: MaybeNumber, minDigits = 2, maxDigits = minDigits, options = {}) {
+export function formatNumber(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, options = {}) {
 	if (minDigits < 1) throw new RangeError('minDigits must be >= 1');
-	if (maxDigits < minDigits) throw new RangeError('maxDigits must be >= minDigits');
+	if (maxPrecision < minDigits) throw new RangeError('maxDigits must be >= minDigits');
 
 	if (!Number.isFinite(n)) return notFilledMarker;
 
@@ -187,7 +118,7 @@ export function formatNumber(n: MaybeNumber, minDigits = 2, maxDigits = minDigit
 
 	const v2 = n.toLocaleString('en-US', {
 		minimumSignificantDigits: minDigits,
-		maximumSignificantDigits: maxDigits,
+		maximumSignificantDigits: maxPrecision,
 		...options
 	});
 
