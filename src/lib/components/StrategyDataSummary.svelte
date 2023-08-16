@@ -29,8 +29,10 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd />
-			<DataBadge bullish size={badgeSize}
-				>{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
+			<DataBadge
+				bearish={strategy?.summary_statistics?.key_metrics?.profitability.value < 0}
+				bullish={strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
+				size={badgeSize}>{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
 			>
 		</svelte:fragment>
 		<svelte:fragment slot="popup">
