@@ -49,9 +49,8 @@ For more information see:
 		& .popup {
 			display: none;
 			position: absolute;
-			width: min(90vw, 24rem);
+			width: min(90vw, 32rem, auto);
 			translate: 0 0.5rem;
-			/* z-index: 1; */
 
 			@media (--viewport-sm-down) {
 				bottom: 1rem;

@@ -5,6 +5,8 @@
 	import { formatDaysAgo, formatDollar, formatPercent } from '../helpers/formatters';
 	import StrategyDataDescription from './StrategyDataDescription.svelte';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import EntitySymbol from './EntitySymbol.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let backtestLink: string;
 	export let strategy: StrategyRuntimeState;
@@ -13,6 +15,8 @@
 	let innerWidth: number;
 
 	$: badgeSize = innerWidth >= 768 ? 'md' : 'sm';
+
+	$: console.log(strategy);
 </script>
 
 <svelte:window bind:innerWidth />
@@ -137,6 +141,31 @@
 			/>
 		</svelte:fragment>
 	</Tooltip>
+
+	<Tooltip>
+		<svelte:fragment slot="trigger">
+			<dt class="label">
+				<span>Assets management</span>
+				<Icon name="question-circle" />
+			</dt>
+			<dd>
+				<DataBadge size={badgeSize}>
+					{#if strategy?.on_chain_data?.asset_management_mode === 'enzyme'}
+						<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} height="20" width="20" />
+						<span>Enzyme vault</span>
+					{:else}
+						<img alt="Enzyme vault" src={getLogoUrl('wallet', 'metamask')} height="20" width="20" />
+						<span>Hot wallet</span>
+					{/if}
+				</DataBadge>
+			</dd>
+		</svelte:fragment>
+		<svelte:fragment slot="popup">
+			This strategy's assets are managed using <strong
+				>{strategy?.on_chain_data?.asset_management_mode === 'enzyme' ? 'Enzyme vault' : 'Hot Wallet'}</strong
+			>
+		</svelte:fragment>
+	</Tooltip>
 </dl>
 
 <style lang="postcss">
@@ -153,8 +182,12 @@
 		}
 	}
 
+	strong {
+		font-weight: 700;
+	}
+
 	:global(.strategy-data-summary .tooltip) {
-		& span {
+		& dt span {
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-sm-medium);
 		}

@@ -43,6 +43,12 @@
 		display: inline-grid;
 		transition: var(--transition-1);
 
+		& span {
+			align-items: center;
+			display: flex;
+			gap: 0.375rem;
+		}
+
 		&.align-right span {
 			text-align: right;
 		}

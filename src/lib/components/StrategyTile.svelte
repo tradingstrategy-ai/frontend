@@ -67,7 +67,7 @@
 							<EntitySymbol type="token" size="2.5rem" {slug} />
 						</svelte:fragment>
 
-						<span slot="popup">This strategy trades {symbol}</span>
+						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
 			</div>
@@ -113,7 +113,14 @@
 			<div class="avatar">
 				<img src={strategy.icon_url} alt={strategy.name} />
 				<div class="chain-icon">
-					<EntitySymbol slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
+					<Tooltip>
+						<svelte:fragment slot="trigger">
+							<EntitySymbol slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
+						</svelte:fragment>
+						<span slot="popup">
+							This strategy runs on <strong>{getChainSlug(strategy?.on_chain_data?.chain_id)}</strong> blockchain
+						</span>
+					</Tooltip>
 				</div>
 			</div>
 			<div class="description">
@@ -146,6 +153,10 @@
 		display: grid;
 		overflow: hidden;
 		transition: var(--transition-1);
+
+		& strong {
+			font-weight: 700;
+		}
 
 		& .visuals {
 			padding-top: 2rem;
@@ -210,6 +221,10 @@
 					position: relative;
 					width: var(--avatar-size);
 
+					& :global(.tooltip .popup) {
+						min-width: 20rem;
+					}
+
 					& img {
 						border-radius: 100%;
 						height: 100%;
@@ -229,6 +244,10 @@
 						padding: 0.25rem;
 						position: absolute;
 						right: -0.5rem;
+
+						& strong {
+							text-transform: capitalize;
+						}
 					}
 				}
 
