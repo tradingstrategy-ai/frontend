@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import { formatInterestRate } from '$lib/helpers/formatters';
+	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+	import { formatDollar, formatPercent, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let reserve: LendingReserve;
 	export let borrowable: boolean;
 
 	$: details = reserve.additional_details;
+	$: formattedReserveUSD = getFormattedReserveUSD(reserve);
 </script>
 
 <TradingDataInfo>
@@ -16,6 +18,7 @@
 			<div slot="popup">APR earned when supplying this token as collateral</div>
 		</Tooltip>
 	</TradingDataInfoRow>
+
 	<TradingDataInfoRow>
 		<Tooltip slot="label">
 			<span slot="trigger" class="underline">Borrow rate – variable</span>
@@ -25,7 +28,6 @@
 				market conditions.
 			</div>
 		</Tooltip>
-
 		<svelte:fragment slot="value">
 			{#if borrowable}
 				{formatInterestRate(details.variable_borrow_apr_latest)} APR
@@ -37,6 +39,7 @@
 			{/if}
 		</svelte:fragment>
 	</TradingDataInfoRow>
+
 	<TradingDataInfoRow>
 		<Tooltip slot="label">
 			<span slot="trigger" class="underline">Borrow rate – stable</span>
@@ -45,7 +48,6 @@
 				the short-term, but can be re-balanced in the long-term in response to changes in market conditions.
 			</div>
 		</Tooltip>
-
 		<svelte:fragment slot="value">
 			{#if borrowable}
 				{formatInterestRate(details.stable_borrow_apr_latest)} APR
@@ -57,17 +59,41 @@
 			{/if}
 		</svelte:fragment>
 	</TradingDataInfoRow>
+
+	{#if formattedReserveUSD}
+		<TradingDataInfoRow label="Total supplied">
+			<svelte:fragment slot="value">
+				{formatDollar(Number(formattedReserveUSD.totalLiquidityUSD))} of
+				{formatDollar(Number(formattedReserveUSD.supplyCapUSD))}
+			</svelte:fragment>
+		</TradingDataInfoRow>
+
+		<TradingDataInfoRow label="Total borrowed">
+			<svelte:fragment slot="value">
+				{formatDollar(Number(formattedReserveUSD.totalDebtUSD))} of
+				{formatDollar(Number(formattedReserveUSD.borrowCapUSD))}
+			</svelte:fragment>
+		</TradingDataInfoRow>
+
+		<TradingDataInfoRow label="Utilization Rate">
+			<svelte:fragment slot="value">
+				{formatPercent(Number(formattedReserveUSD.supplyUsageRatio))}
+			</svelte:fragment>
+		</TradingDataInfoRow>
+	{/if}
+
 	<TradingDataInfoRow label="Protocol" value={reserve.protocol_name} />
+
 	<TradingDataInfoRow>
 		<Tooltip slot="label">
 			<span slot="trigger" class="underline">Asset Token</span>
 			<div slot="popup">Underlying asset token to be supplied as collateral and/or borrowed.</div>
 		</Tooltip>
-
 		<a slot="value" href="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}">
 			{reserve.asset_name}
 		</a>
 	</TradingDataInfoRow>
+
 	<TradingDataInfoRow label="Blockchain">
 		<a slot="value" href="/trading-view/{reserve.chain_slug}">{reserve.chain_name}</a>
 	</TradingDataInfoRow>

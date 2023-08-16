@@ -6,7 +6,6 @@
 	import InfoSummary from './InfoSummary.svelte';
 	import { isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
-	import { formatReserveUSD } from '@aave/math-utils';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -27,35 +26,6 @@
 	$: showChart = borrowable && !isGhoToken;
 
 	let timeBucket: TimeBucket = '1d';
-
-	$: console.log(getAaveData(reserve.additional_details));
-
-	function getAaveData({ aggregated_reserve_data: reserveData, base_currency_info: baseCurrency }) {
-		const numberProps = [
-			'decimals',
-			'stableDebtLastUpdateTimestamp',
-			'lastUpdateTimestamp',
-			'eModeCategoryId',
-			'debtCeilingDecimals',
-			'eModeLtv',
-			'eModeLiquidationThreshold',
-			'eModeLiquidationBonus'
-		];
-		if (reserveData) {
-			for (const key of numberProps) {
-				reserveData[key] &&= Number(reserveData[key]);
-			}
-		}
-		const currentTimestamp = Math.floor(Date.now() / 1000);
-		const marketReferencePriceInUsd = baseCurrency.marketReferenceCurrencyPriceInUsd;
-		const marketReferenceCurrencyDecimals = Math.log10(baseCurrency.marketReferenceCurrencyUnit);
-		return formatReserveUSD({
-			reserve: reserveData,
-			currentTimestamp,
-			marketReferencePriceInUsd,
-			marketReferenceCurrencyDecimals
-		});
-	}
 </script>
 
 <svelte:head>
