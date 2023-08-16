@@ -28,12 +28,13 @@
 				<span>Profitability</span>
 				<Icon name="question-circle" />
 			</dt>
-			<dd />
-			<DataBadge
-				bearish={strategy?.summary_statistics?.key_metrics?.profitability.value < 0}
-				bullish={strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
-				size={badgeSize}>{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
-			>
+			<dd>
+				<DataBadge
+					bearish={strategy?.summary_statistics?.key_metrics?.profitability.value < 0}
+					bullish={strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
+					size={badgeSize}>{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
+				>
+			</dd>
 		</svelte:fragment>
 		<svelte:fragment slot="popup">
 			<StrategyDataDescription
@@ -171,20 +172,45 @@
 </dl>
 
 <style lang="postcss">
-	@import './css/radius-new.css';
-
 	.strategy-data-summary {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(2, auto);
 		gap: 1.125rem;
 		list-style: none;
 		padding: 0;
 		@media (--viewport-sm-down) {
 			gap: 0.75rem;
 		}
+
+		@container (width > 336px) {
+			grid-template-columns: repeat(3, auto);
+		}
+
+		@container (width > 492px) {
+			grid-template-columns: repeat(4, auto);
+
+			& :global(.tooltip:is(:nth-of-type(1), :nth-of-type(5)) .popup) {
+				left: 0;
+				right: 12.5%;
+			}
+
+			& :global(.tooltip:nth-of-type(3) .popup) {
+				left: 12.5% !important;
+				right: 0 !important;
+			}
+
+			& :global(.tooltip:nth-of-type(4) .popup) {
+				left: 12.5% !important;
+				right: 0 !important;
+			}
+		}
 	}
 
-	strong {
+	& dd {
+		margin: 0;
+	}
+
+	& strong {
 		font-weight: 700;
 	}
 
@@ -200,6 +226,12 @@
 			gap: 0.375rem;
 			margin-bottom: 0.375rem;
 
+			& span {
+				white-space: nowrap;
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+			}
+
 			@media (--viewport-sm-down) {
 				margin-bottom: 0.25rem;
 				& span {
@@ -212,13 +244,10 @@
 			}
 		}
 
-		&:hover {
-			& :global(.data-badge) {
-				background: hsla(var(--hsla-box-4));
-			}
-			& :global(.data-badge.bullish) {
-				background: hsla(var(--hsl-bullish), 0.4);
-			}
+		& :global(.popup) {
+			left: 0;
+			right: 0;
+			translate: 0 0.25rem !important;
 		}
 	}
 </style>

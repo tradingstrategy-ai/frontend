@@ -32,15 +32,15 @@ For more information see:
 </dfn>
 
 <style lang="postcss">
-	@import './css/radius-new.css';
-
 	.tooltip {
+		&,
+		& :global(span) {
+			font-style: normal;
+		}
+
 		& .trigger {
 			cursor: pointer;
-			/* Undo base CSS abbr font style */
-			font-style: normal;
 
-			/* Give user hint the value is clickable / hoverable */
 			& :global(.underline) {
 				border-bottom: 1px dotted hsla(var(--hsl-text-light));
 			}
@@ -50,7 +50,6 @@ For more information see:
 			display: none;
 			position: absolute;
 			width: min(90vw, 32rem, auto);
-			translate: 0 0.5rem;
 
 			@media (--viewport-sm-down) {
 				bottom: 1rem;
@@ -61,27 +60,22 @@ For more information see:
 			}
 		}
 
-		/* Pop-up content */
 		&:is(:hover, :focus) .popup {
 			display: block;
 			text-align: left;
 
-			--c-accent: var(--hsl-box);
-			background: linear-gradient(hsla(var(--hsla-box-1)), hsla(var(--hsla-box-1))),
-				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
+			background: hsla(var(--hsl-text-inverted));
 			border: 1px solid hsla(var(--hsla-box-3));
-			border-radius: var(--radius-xs);
-			box-shadow: var(--shadow-1);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow-3);
 			color: hsla(var(--hsl-text));
-			outline-color: var(--c-accent);
-			outline-offset: -1px;
 
 			font: var(--f-ui-small-light);
 
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
 
-			padding: 0.875rem;
+			padding: 1.125rem;
 		}
 
 		& :global(a) {

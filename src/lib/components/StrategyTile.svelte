@@ -14,7 +14,7 @@
 	let innerWidth: number;
 
 	$: isBacktested = strategy?.summary_statistics?.key_metrics
-		? Object.values(strategy.summary_statistics.key_metrics).some((metric) => metric?.source === 'backtesting')
+		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
 		: false;
 
 	function blur() {
@@ -145,17 +145,18 @@
 	@import './css/radius-new.css';
 
 	.strategy-tile {
-		background: hsla(var(--hsla-box-2));
+		background: hsla(var(--hsla-box-1));
 		border: 1px hsla(var(--hsla-box-3)) solid;
 		border-radius: var(--radius-lg);
 		color: hsla(var(--hsl-text));
 		text-decoration: none;
 		display: grid;
-		overflow: hidden;
+		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));
 		transition: var(--transition-1);
 
-		& strong {
-			font-weight: 700;
+		&:hover {
+			background: hsla(var(--hsla-box-2));
+			z-index: 9999999;
 		}
 
 		& .visuals {
@@ -186,6 +187,7 @@
 			}
 
 			& .chart {
+				z-index: -1;
 				& svg {
 					width: 100%;
 					height: 100%;
@@ -194,6 +196,7 @@
 		}
 
 		& .content {
+			container-type: inline-size;
 			display: grid;
 			gap: 0.75rem;
 			padding: 1.5rem;
@@ -208,7 +211,7 @@
 				}
 				align-items: center;
 				display: grid;
-				grid-template-columns: var(--avatar-size) auto;
+				grid-template-columns: 6rem auto;
 				gap: 1.5rem;
 
 				& .avatar {
@@ -264,19 +267,24 @@
 
 				& h3 {
 					font: var(--f-ui-xxl-medium);
-					@media (--viewport-sm-down) {
+
+					@container (width <= 420px) {
 						font: var(--f-ui-xl-medium);
+					}
+
+					@container (width <= 332px) {
+						font: var(--f-ui-lg-medium);
 					}
 				}
 
 				& p {
 					font: var(--f-ui-md-medium);
 					color: hsla(var(--hsl-text-extra-light));
-					@media (--viewport-sm-down) {
-						font: var(--f-ui-sm-medium);
-						margin-top: 0.125rem !important;
-					}
 				}
+			}
+
+			& .data {
+				position: relative;
 			}
 
 			& .backtest-data-badge {
