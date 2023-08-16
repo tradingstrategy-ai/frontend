@@ -8,6 +8,7 @@ import type { StrategyConfiguration } from './configuration';
 import { assert } from 'assert-ts';
 import loadError from '../assets/load-error.jpg';
 import type { UnixTimestamp } from 'trade-executor/state/interface';
+import type { Timestamp } from '$lib/components';
 
 type Nullable<Type> = Type | null;
 type PerformanceTuple = [number, number];
@@ -28,6 +29,40 @@ export interface StrategySummaryStatistics {
 	performance_chart_90_days: Nullable<PerformanceTuple[]>;
 	return_all_time: Nullable<number>;
 	return_annualised: Nullable<number>;
+	key_metrics: {
+		max_drawdown: {
+			kind: string;
+			source: 'backtesting' | 'live_trading';
+			value: number;
+		};
+		profitability: {
+			calculation_method: string;
+			calculation_window_end_at: Timestamp;
+			calculation_window_start_at: Timestamp;
+			kind: string;
+			source: 'backtesting' | 'live_trading';
+			unavailability_reason: string;
+			value: number;
+		};
+		sharpe: {
+			kind: string;
+			source: 'backtesting' | 'live_trading';
+			value: number;
+		};
+		sortino: {
+			kind: string;
+			source: 'backtesting' | 'live_trading';
+			value: number;
+		};
+		started_at: {
+			kind: string;
+			value: number;
+		};
+		total_equity: {
+			kind: string;
+			value: number;
+		};
+	};
 }
 
 /**

@@ -11,7 +11,7 @@
 	} from '$lib/helpers/formatters';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Alert, Button, Tooltip } from '$lib/components';
+	import { Alert, Button, DataBadge, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import KeyMetric from './KeyMetric.svelte';
 
@@ -64,7 +64,9 @@
 
 			<dl>
 				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} {backtestLink} let:value>
-					<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
+					<DataBadge>
+						<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
+					</DataBadge>
 				</KeyMetric>
 
 				<KeyMetric

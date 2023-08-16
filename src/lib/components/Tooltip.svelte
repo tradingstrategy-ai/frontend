@@ -26,12 +26,14 @@ For more information see:
 	<span class="trigger">
 		<slot name="trigger" />
 	</span>
-	<button>
+	<span class="popup">
 		<slot name="popup" />
-	</button>
+	</span>
 </dfn>
 
 <style lang="postcss">
+	@import './css/radius-new.css';
+
 	.tooltip {
 		& .trigger {
 			cursor: pointer;
@@ -44,18 +46,33 @@ For more information see:
 			}
 		}
 
-		& button {
+		& .popup {
 			display: none;
 			position: absolute;
+			width: min(90vw, 24rem);
+			translate: 0 0.5rem;
+			/* z-index: 1; */
+
+			@media (--viewport-sm-down) {
+				bottom: 1rem;
+				position: fixed;
+				left: 0.5rem;
+				right: 0.5rem;
+				width: calc(100% - 1rem);
+			}
 		}
 
 		/* Pop-up content */
-		&:is(:hover, :focus) button {
+		&:is(:hover, :focus) .popup {
 			display: block;
 			text-align: left;
 
 			--c-accent: var(--hsl-box);
-			background: var(--c-background-4);
+			background: linear-gradient(hsla(var(--hsla-box-1)), hsla(var(--hsla-box-1))),
+				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
+			border: 1px solid hsla(var(--hsla-box-3));
+			border-radius: var(--radius-xs);
+			box-shadow: var(--shadow-1);
 			color: hsla(var(--hsl-text));
 			outline-color: var(--c-accent);
 			outline-offset: -1px;
@@ -65,7 +82,7 @@ For more information see:
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
 
-			padding: var(--space-sl);
+			padding: 0.875rem;
 		}
 
 		& :global(a) {
