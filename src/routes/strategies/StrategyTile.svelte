@@ -114,7 +114,9 @@
 </a>
 
 <style lang="postcss">
-	@import '../../lib/components/css/radius-new.css';
+	@import '$lib/components/css/radius-new.css';
+	@import '$lib/components/css/colors-new.css';
+	@import '$lib/components/css/typography-new.css';
 
 	.strategy-tile {
 		background: hsla(var(--hsla-box-1));
