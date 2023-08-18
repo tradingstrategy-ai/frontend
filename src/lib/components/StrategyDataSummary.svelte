@@ -5,7 +5,6 @@
 	import { formatDaysAgo, formatDollar, formatPercent } from '../helpers/formatters';
 	import StrategyDataDescription from './StrategyDataDescription.svelte';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import EntitySymbol from './EntitySymbol.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let backtestLink: string;
@@ -173,8 +172,8 @@
 
 <style lang="postcss">
 	.strategy-data-summary {
-		display: grid;
-		grid-template-columns: repeat(2, auto);
+		display: flex;
+		flex-wrap: wrap;
 		gap: 1.125rem;
 		list-style: none;
 		padding: 0;
@@ -182,24 +181,20 @@
 			gap: 0.75rem;
 		}
 
-		@container (width > 336px) {
+		@container (width > 440px) {
+			display: grid;
 			grid-template-columns: repeat(3, auto);
 		}
 
-		@container (width > 492px) {
+		@container (width > 512px) {
 			grid-template-columns: repeat(4, auto);
 
-			& :global(.tooltip:is(:nth-of-type(1), :nth-of-type(5)) .popup) {
+			& :global(.tooltip:is(:nth-of-type(4n + 1), :nth-of-type(4n + 2)) .popup) {
 				left: 0;
 				right: 12.5%;
 			}
 
-			& :global(.tooltip:nth-of-type(3) .popup) {
-				left: 12.5% !important;
-				right: 0 !important;
-			}
-
-			& :global(.tooltip:nth-of-type(4) .popup) {
+			& :global(.tooltip:is(:nth-of-type(4n + 3), :nth-of-type(4n + 4)) .popup) {
 				left: 12.5% !important;
 				right: 0 !important;
 			}

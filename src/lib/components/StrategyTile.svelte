@@ -71,7 +71,7 @@
 					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
 						<svelte:fragment slot="trigger">
-							<EntitySymbol type="token" size="2.5rem" {slug} />
+							<EntitySymbol type="token" size="var(--token-size)" {slug} />
 						</svelte:fragment>
 
 						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
@@ -126,7 +126,7 @@
 		color: hsla(var(--hsl-text));
 		text-decoration: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
 		transition: var(--transition-1);
 
 		&:hover {
@@ -135,9 +135,12 @@
 		}
 
 		& .visuals {
-			padding-top: 4rem;
+			padding-top: 2rem;
 			display: grid;
 			position: relative;
+			@media (--viewport-md-up) {
+				padding-top: 4rem;
+			}
 
 			& .top {
 				align-items: flex-start;
@@ -153,6 +156,10 @@
 				& .tokens {
 					display: flex;
 					gap: 0.5rem;
+					--token-size: 2.5rem;
+					@media (--viewport-sm-down) {
+						--token-size: 2rem;
+					}
 
 					& :global(.entity-symbol) {
 						border-radius: 100%;
@@ -177,13 +184,14 @@
 
 			& header {
 				--avatar-size: 6rem;
-				@media (--viewport-sm-down) {
-					--avatar-size: 4.75rem;
-				}
 				align-items: center;
 				display: grid;
 				grid-template-columns: 6rem auto;
 				gap: 1.5rem;
+				@media (--viewport-sm-down) {
+					--avatar-size: 4.75rem;
+					gap: 0.5rem;
+				}
 
 				& .avatar {
 					background: hsla(var(--hsla-box-3));
@@ -239,11 +247,11 @@
 				& h3 {
 					font: var(--f-ui-xxl-medium);
 
-					@container (width <= 420px) {
+					@container (width <= 520px) {
 						font: var(--f-ui-xl-medium);
 					}
 
-					@container (width <= 332px) {
+					@container (width <= 400px) {
 						font: var(--f-ui-lg-medium);
 					}
 				}
