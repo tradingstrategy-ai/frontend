@@ -13,9 +13,9 @@
 	let active: ChartTick;
 	let svgEl: SVGElement;
 
-	const width = 500;
-	const height = 300;
-	const yScaleMin = 0.2; // see getValueDomain()
+	const width = 680;
+	const height = 160;
+	const yScaleMin = 0.025; // see getValueDomain()
 	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
 	const scaleY = scaleLinear(getValueDomain(), [height, 0]);
 	const y0 = scaleY(0);
@@ -83,7 +83,6 @@
 		overflow: hidden;
 		display: grid;
 		grid-template-rows: 3rem 1fr 3rem;
-		background: var(--c-background-7);
 		user-select: none;
 
 		& .hud {
@@ -94,12 +93,11 @@
 			justify-content: space-between;
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
-			color: var(--c-text-extra-light-night);
+			color: var(--c-text-extra-light);
 
 			& * {
 				margin: 0;
 				font: inherit;
-				background: var(--c-background-7);
 			}
 		}
 

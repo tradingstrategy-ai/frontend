@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { min } from 'd3-array';
 	import { fromUnixTime } from 'date-fns';
-	import { PageHeading, StrategyTile } from '$lib/components';
+	import { PageHeading } from '$lib/components';
 	import { formatDaysAgo } from '$lib/helpers/formatters.js';
+	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
 	$: strategies = data.strategies;

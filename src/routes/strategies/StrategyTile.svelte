@@ -1,34 +1,37 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { fromUnixTime } from 'date-fns';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import {
-		formatDollar,
-		formatDaysAgo,
-		formatKeyMetricNumber,
-		formatPercent,
-		formatPriceChange
-	} from '$lib/helpers/formatters';
-	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
-	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Alert, Button, DataBadge, Tooltip } from '$lib/components';
+	import { ButtonNew as Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-	import KeyMetric from './KeyMetric.svelte';
+	import isInViewport from '$lib/helpers/is-in-viewport';
+	import { fromUnixTime } from 'date-fns';
 
-	export let strategy: StrategyRuntimeState;
 	export let chartStartDate: Date | undefined = undefined;
+	export let strategy: StrategyRuntimeState;
 
-	const summaryStats = strategy.summary_statistics ?? {};
-	const chartData = summaryStats.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
-	const errorHtml = getTradeExecutorErrorHtml(strategy);
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
-	const onChainData = strategy.on_chain_data ?? {};
-	const assetManagementMode = onChainData.asset_management_mode;
-	const chainSlug = getChainSlug(onChainData);
+	const chartData = strategy?.summary_statistics?.performance_chart_90_days?.map(([ts, val]) => [
+		fromUnixTime(ts),
+		val
+	]);
 
-	// FIXME: hack to get chain slug from chain ID;
-	// This should either come from strategy metadata or `chains` API
-	function getChainSlug({ chain_id }: Record<string, any>) {
+	let ctaButton: HTMLButtonElement;
+	let innerWidth: number;
+
+	$: isBacktested = strategy?.summary_statistics?.key_metrics
+		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
+		: false;
+
+	function blur() {
+		if (!isInViewport(ctaButton)) return;
+		ctaButton.blur();
+	}
+
+	function focus() {
+		if (!isInViewport(ctaButton)) return;
+		ctaButton.focus();
+	}
+
+	function getChainSlug(chain_id: number) {
 		switch (chain_id) {
 			case 1:
 				return 'ethereum';
@@ -37,8 +40,6 @@
 		}
 	}
 
-	// FIXME: hack to infer list of tokens based on strategy ID;
-	// In the future this will come from the strategy configuration.
 	function getStrategyTokens({ id }: StrategyRuntimeState) {
 		if (id.includes('multipair')) {
 			return ['usdc'];
@@ -50,152 +51,240 @@
 	}
 </script>
 
-<li class="strategy tile tile b">
-	<ChartThumbnail data={chartData} startDate={chartStartDate} />
-	<div class="info">
-		<div class="details">
-			<h2 class="title">{strategy.name}</h2>
+<svelte:window bind:innerWidth />
 
-			<div class="description">
-				{#if strategy.short_description}
-					<p>{strategy.short_description}</p>
-				{/if}
-			</div>
-
-			<dl>
-				<KeyMetric name="Profitability" metric={summaryStats?.key_metrics?.profitability} {backtestLink} let:value>
-					<DataBadge>
-						<span class={determinePriceChangeClass(value)}>{formatPriceChange(value)}</span>
-					</DataBadge>
-				</KeyMetric>
-
-				<KeyMetric
-					name="Total assets"
-					metric={summaryStats?.key_metrics?.total_equity}
-					formatter={formatDollar}
-					{backtestLink}
-				/>
-			</dl>
-
-			<dl>
-				<KeyMetric name="Age" metric={summaryStats?.key_metrics?.started_at} formatter={formatDaysAgo} {backtestLink} />
-
-				<KeyMetric
-					name="Maximum drawdown"
-					metric={summaryStats?.key_metrics?.max_drawdown}
-					formatter={formatPercent}
-					{backtestLink}
-				/>
-			</dl>
-
-			<dl>
-				<KeyMetric
-					name="Sharpe"
-					metric={summaryStats?.key_metrics?.sharpe}
-					formatter={formatKeyMetricNumber}
-					{backtestLink}
-				/>
-
-				<KeyMetric
-					name="Sortino"
-					metric={summaryStats?.key_metrics?.sortino}
-					formatter={formatKeyMetricNumber}
-					{backtestLink}
-				/>
-			</dl>
-
-			<!-- TODO: make part of strategy configuration -->
-			<div class="logos">
-				{#if assetManagementMode === 'enzyme'}
+<a
+	class="strategy-tile"
+	href={`/strategies/${strategy.link.replace('/strategy/', '')}`}
+	on:focus={focus}
+	on:mouseover={focus}
+	on:blur={blur}
+	on:mouseleave={blur}
+>
+	<div class="visuals">
+		<div class="top">
+			<div class="tokens">
+				{#each getStrategyTokens(strategy) as slug}
+					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
-						<img slot="trigger" alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-						<span slot="popup">This strategy's assets are managed using an Enzyme vault</span>
-					</Tooltip>
-				{:else if assetManagementMode === 'hot_wallet'}
-					<Tooltip>
-						<img slot="trigger" alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
-						<span slot="popup">This strategy's assets are managed using a hot wallet</span>
-					</Tooltip>
-				{/if}
+						<svelte:fragment slot="trigger">
+							<EntitySymbol type="token" size="var(--token-size)" {slug} />
+						</svelte:fragment>
 
-				{#if chainSlug}
-					{@const chainName = `${chainSlug.charAt(0).toUpperCase()}${chainSlug.slice(1)}`}
-					<Tooltip>
-						<img slot="trigger" alt={chainName} src={getLogoUrl('blockchain', chainSlug)} />
-						<span slot="popup">This strategy runs on {chainName} blockchain</span>
-					</Tooltip>
-				{/if}
-
-				{#each getStrategyTokens(strategy) as token}
-					{@const symbol = token.toUpperCase()}
-					<Tooltip>
-						<img slot="trigger" alt={symbol} src={getLogoUrl('token', token)} />
-						<span slot="popup">This strategy trades {symbol}</span>
+						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
 			</div>
 		</div>
-
-		{#if errorHtml}
-			<Alert status="warning" size="xs" title="Ongoing execution issues">
-				{@html errorHtml}
-			</Alert>
-		{/if}
-
-		<Button label="View strategy" href="/strategies/{strategy.id}" tertiary size="lg" disabled={!strategy.connected} />
+		<div class="chart">
+			<ChartThumbnail data={chartData} startDate={chartStartDate} />
+		</div>
 	</div>
-</li>
+	<div class="content">
+		<header>
+			<div class="avatar">
+				<img src={strategy.icon_url} alt={strategy.name} />
+				<div class="chain-icon">
+					<Tooltip>
+						<svelte:fragment slot="trigger">
+							<EntitySymbol slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
+						</svelte:fragment>
+						<span slot="popup">
+							This strategy runs on <strong>{getChainSlug(strategy?.on_chain_data?.chain_id)}</strong> blockchain
+						</span>
+					</Tooltip>
+				</div>
+			</div>
+			<div class="description">
+				<h3>{strategy.name}</h3>
+				<p>{strategy.short_description}</p>
+			</div>
+		</header>
+		<div class="data">
+			<StrategyDataSummary {backtestLink} {strategy} />
+
+			{#if isBacktested}
+				<span class="backtest-data-badge">Backtested Metrics*</span>
+			{/if}
+		</div>
+		<div class="actions">
+			<Button size="lg" bind:thisButton={ctaButton}>View strategy</Button>
+		</div>
+	</div>
+</a>
 
 <style lang="postcss">
-	li {
+	@import '../../lib/components/css/radius-new.css';
+
+	.strategy-tile {
+		background: hsla(var(--hsla-box-1));
+		border: 1px hsla(var(--hsla-box-3)) solid;
+		border-radius: var(--radius-lg);
+		color: hsla(var(--hsl-text));
+		text-decoration: none;
 		display: grid;
-		border-radius: var(--strategy-tile-border-radius, var(--radius-md));
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		grid-template-rows: auto;
-		grid-auto-rows: 1fr;
-		list-style: none;
-		overflow: hidden;
-	}
+		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
+		transition: var(--transition-1);
 
-	.info {
-		display: grid;
-		grid-template-rows: 1fr auto;
-		gap: var(--strategy-tile-info-gap, var(--space-lg));
-		padding: var(--space-lg);
-	}
+		&:hover {
+			background: hsla(var(--hsla-box-2));
+			z-index: 9999999;
+		}
 
-	.details {
-		display: grid;
-		gap: var(--strategy-tile-details-gap, var(--space-md));
-		align-content: start;
-	}
+		& .visuals {
+			padding-top: 2rem;
+			display: grid;
+			position: relative;
+			@media (--viewport-md-up) {
+				padding-top: 4rem;
+			}
 
-	.title {
-		font: var(--f-ui-large-medium);
-		letter-spacing: var(--f-ui-xxl-spacing, normal);
-	}
+			& .top {
+				align-items: flex-start;
+				display: flex;
+				gap: 1rem;
+				justify-content: space-between;
+				padding: 1rem;
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
 
-	dl {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--space-ss);
-		margin: 0;
-	}
+				& .tokens {
+					display: flex;
+					gap: 0.5rem;
+					--token-size: 2.5rem;
+					@media (--viewport-sm-down) {
+						--token-size: 2rem;
+					}
 
-	.description {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 3;
-		overflow: hidden;
-	}
+					& :global(.entity-symbol) {
+						border-radius: 100%;
+						box-shadow: var(--shadow-1);
+					}
+				}
+			}
 
-	.logos {
-		display: flex;
-		gap: var(--space-xs);
+			&:not(:hover) .chart {
+				z-index: -1;
+			}
+		}
 
-		& img {
-			width: 2rem;
-			aspect-ratio: 1;
+		& .content {
+			container-type: inline-size;
+			display: grid;
+			gap: 0.75rem;
+			padding: 1.5rem;
+			@media (--viewport-sm-down) {
+				padding: 1rem;
+			}
+
+			& header {
+				--avatar-size: 6rem;
+				align-items: center;
+				display: grid;
+				grid-template-columns: 6rem auto;
+				gap: 1.5rem;
+				@media (--viewport-sm-down) {
+					--avatar-size: 4.75rem;
+					gap: 0.5rem;
+				}
+
+				& .avatar {
+					background: hsla(var(--hsla-box-3));
+					border-radius: 100%;
+					font: var(--f-ui-sm-roman);
+					text-align: center;
+					display: grid;
+					height: var(--avatar-size);
+					position: relative;
+					width: var(--avatar-size);
+
+					& :global(.tooltip .popup) {
+						min-width: 20rem;
+					}
+
+					& img {
+						border-radius: 100%;
+						height: 100%;
+						object-fit: cover;
+						overflow: hidden;
+						width: 100%;
+						display: grid;
+						place-items: center;
+					}
+
+					& .chain-icon {
+						border-radius: 100%;
+						bottom: -0.5rem;
+						box-shadow: var(--shadow-1);
+						background: hsla(var(--hsl-white));
+						display: flex;
+						padding: 0.25rem;
+						position: absolute;
+						right: -0.5rem;
+
+						& strong {
+							text-transform: capitalize;
+						}
+					}
+				}
+
+				& .description {
+					align-items: center;
+					justify-items: start;
+					display: grid;
+					gap: 0.25rem;
+
+					& :where(h3, p) {
+						margin: 0;
+					}
+				}
+
+				& h3 {
+					font: var(--f-ui-xxl-medium);
+
+					@container (width <= 520px) {
+						font: var(--f-ui-xl-medium);
+					}
+
+					@container (width <= 400px) {
+						font: var(--f-ui-lg-medium);
+					}
+				}
+
+				& p {
+					font: var(--f-ui-md-medium);
+					color: hsla(var(--hsl-text-extra-light));
+				}
+			}
+
+			& .data {
+				position: relative;
+			}
+
+			& .backtest-data-badge {
+				align-items: center;
+				border-radius: var(--radius-sl);
+				color: hsla(var(--hsl-text-extra-light));
+				display: inline-flex;
+				font: var(--f-ui-xs-bold);
+				gap: 0.625rem;
+				justify-content: center;
+				margin-block: 0.25rem 0.75rem;
+				text-transform: uppercase;
+			}
+
+			& .actions {
+				display: grid;
+			}
+		}
+
+		& :global(.strategy-data-summary) {
+			margin-block: 1.25rem;
+			@media (--viewport-sm-down) {
+				margin-block: 0.75rem;
+			}
 		}
 	}
 </style>

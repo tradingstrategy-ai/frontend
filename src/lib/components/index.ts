@@ -40,7 +40,6 @@ export { default as SegmentedControl } from './SegmentedControl.svelte';
 export { default as SocialIcon } from './SocialIcon.svelte';
 export { default as SourceCode } from './SourceCode.svelte';
 export { default as StrategyDataSummary } from './StrategyDataSummary.svelte';
-export { default as StrategyTile } from './StrategyTile.svelte';
 export { default as SummaryBox } from './SummaryBox.svelte';
 export { default as Tabs } from './Tabs.svelte';
 export { default as TextInput } from './TextInput.svelte';
