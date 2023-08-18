@@ -5,7 +5,6 @@ export { default as Badge } from './Badge.svelte';
 export { default as Banner } from './Banner.svelte';
 export { default as BlogRoll } from './BlogRoll.svelte';
 export { default as Button } from './Button.svelte';
-export { default as ButtonNew } from './ButtonNew.svelte';
 export { default as ContentCard } from './ContentCard.svelte';
 export { default as ContentCardsSection } from './ContentCardsSection.svelte';
 export { default as ContentCardsTemplate } from './ContentCardsTemplate.svelte';

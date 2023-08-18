@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { ButtonNew as Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
+	import { Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
-	import isInViewport from '$lib/helpers/is-in-viewport';
 	import { fromUnixTime } from 'date-fns';
 
 	export let chartStartDate: Date | undefined = undefined;
@@ -14,22 +13,11 @@
 		val
 	]);
 
-	let ctaButton: HTMLButtonElement;
 	let innerWidth: number;
 
 	$: isBacktested = strategy?.summary_statistics?.key_metrics
 		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
 		: false;
-
-	function blur() {
-		if (!isInViewport(ctaButton)) return;
-		ctaButton.blur();
-	}
-
-	function focus() {
-		if (!isInViewport(ctaButton)) return;
-		ctaButton.focus();
-	}
 
 	function getChainSlug(chain_id: number) {
 		switch (chain_id) {
@@ -108,7 +96,7 @@
 			{/if}
 		</div>
 		<div class="actions">
-			<Button size="lg" bind:thisButton={ctaButton}>View strategy</Button>
+			<Button size="md">View strategy</Button>
 		</div>
 	</div>
 </a>
@@ -276,6 +264,11 @@
 			& .actions {
 				display: grid;
 			}
+		}
+
+		&:is(:hover, :focus) .actions :global(.button) {
+			background: hsla(var(--hsl-text), 1);
+			color: hsla(var(--hsl-text-inverted));
 		}
 
 		& :global(.strategy-data-summary) {
