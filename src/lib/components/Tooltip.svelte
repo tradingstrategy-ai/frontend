@@ -22,7 +22,7 @@ For more information see:
 </Tooltip>
 ```
 -->
-<dfn class="tooltip">
+<dfn class="tooltip ds-3">
 	<span class="trigger">
 		<slot name="trigger" />
 	</span>

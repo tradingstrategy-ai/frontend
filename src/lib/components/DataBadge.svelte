@@ -24,7 +24,7 @@
 	$: classes = `${size} ${kind} ${alignRight ? 'align-right' : ''}`;
 </script>
 
-<span class="data-badge {classes}">
+<span class="data-badge {classes} ds-3">
 	<span>
 		<slot />
 	</span>
@@ -36,8 +36,6 @@
 </span>
 
 <style lang="postcss">
-	@import './css/radius-new.css';
-
 	.data-badge {
 		background: hsla(var(--hsla-box-2));
 		display: inline-grid;

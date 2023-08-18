@@ -20,7 +20,7 @@
 
 <svelte:window bind:innerWidth />
 
-<dl class="strategy-data-summary">
+<dl class="strategy-data-summary ds-3">
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			<dt class="label">

@@ -74,7 +74,7 @@ on:click={() => console.log('clicked!')}
 		: secondary
 		? 'secondary'
 		: 'primary';
-	$: allClasses = `button ${kind} ${size} ${classes} icon-${iconPlacement}`;
+	$: allClasses = `button ${kind} ${size} ${classes} icon-${iconPlacement} ds-3`;
 
 	$: linkAttrs = {
 		href,
@@ -114,8 +114,6 @@ on:click={() => console.log('clicked!')}
 </svelte:element>
 
 <style lang="postcss">
-	@import './css/radius-new.css';
-
 	.button {
 		align-items: center;
 		border-radius: var(--radius-md);

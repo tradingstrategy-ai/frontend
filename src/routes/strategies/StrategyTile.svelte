@@ -54,7 +54,7 @@
 <svelte:window bind:innerWidth />
 
 <a
-	class="strategy-tile"
+	class="strategy-tile ds-3"
 	href={`/strategies/${strategy.link.replace('/strategy/', '')}`}
 	on:focus={focus}
 	on:mouseover={focus}
@@ -114,10 +114,6 @@
 </a>
 
 <style lang="postcss">
-	@import '$lib/components/css/radius-new.css';
-	@import '$lib/components/css/colors-new.css';
-	@import '$lib/components/css/typography-new.css';
-
 	.strategy-tile {
 		background: hsla(var(--hsla-box-1));
 		border: 1px hsla(var(--hsla-box-3)) solid;

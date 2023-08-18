@@ -6,7 +6,7 @@
 	export let metric: any;
 </script>
 
-<div class="strategy-data-description">
+<div class="strategy-data-description ds-3">
 	<h3>{title}</h3>
 
 	<ul>

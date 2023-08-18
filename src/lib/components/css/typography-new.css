@@ -1,4 +1,4 @@
-:root {
+.ds-3 {
 	--ff-article: 'Source Serif Pro', serif;
 	--ff-heading: 'Neue Haas Grotesk Display', system-ui, sans-serif;
 	--ff-mono: 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
@@ -6,7 +6,7 @@
 	--ff-ui: 'Neue Haas Grotesk Text', system-ui, sans-serif;
 }
 
-:root {
+.ds-3 {
 	--lh-article: 175%;
 	--lh-display: 125%;
 	--lh-mono: 175%;
@@ -14,7 +14,7 @@
 	--lh-ui: 125%;
 }
 
-:root {
+.ds-3 {
 	--ls-article-md: -0.01rem;
 
 	--ls-paragraph-md: -0.01rem;
@@ -30,11 +30,11 @@
 	--ls-ui-xxxl: -0.01625rem;
 }
 
-:root {
+.ds-3 {
 	--f-article-md-regular: 400 1rem/175% var(--ff-article);
 }
 
-:root {
+.ds-3 {
 	--f-code-xs-regular: 400 0.75rem / var(--lh-mono) var(--ff-mono);
 	--f-code-xs-medium: 500 0.75rem / var(--lh-mono) var(--ff-mono);
 	--f-code-xs-bold: 700 0.75rem / var(--lh-mono) var(--ff-mono);
@@ -48,7 +48,7 @@
 	--f-code-md-bold: 700 1rem / var(--lh-mono) var(--ff-mono);
 }
 
-:root {
+.ds-3 {
 	--f-heading-xs-roman: 500 1.1875rem / var(--lh-display) var(--ff-heading);
 	--f-heading-xs-medium: 600 1.1875rem / var(--lh-display) var(--ff-heading);
 	--f-heading-xs-bold: 700 1.1875rem / var(--lh-display) var(--ff-heading);
@@ -74,7 +74,7 @@
 	--f-heading-xxl-bold: 700 2.375rem / var(--lh-display) var(--ff-heading);
 }
 
-:root {
+.ds-3 {
 	--f-paragraph-xs-roman: 400 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
 	--f-paragraph-xs-medium: 500 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
 	--f-paragraph-xs-bold: 700 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
@@ -92,7 +92,7 @@
 	--f-paragraph-lg-bold: 700 1.125rem / var(--lh-paragraph) var(--ff-paragraph);
 }
 
-:root {
+.ds-3 {
 	--f-ui-xxxs-roman: 400 0.5rem / var(--lh-ui) var(--ff-ui);
 	--f-ui-xxxs-medium: 500 0.5rem / var(--lh-ui) var(--ff-ui);
 	--f-ui-xxxs-bold: 700 0.5rem / var(--lh-ui) var(--ff-ui);

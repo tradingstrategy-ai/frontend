@@ -49,7 +49,7 @@
 	}
 </script>
 
-<div class="chart-thumbnail" on:pointermove={targetPoint} on:pointerdown={targetPoint}>
+<div class="chart-thumbnail ds-3" on:pointermove={targetPoint} on:pointerdown={targetPoint}>
 	<svg
 		bind:this={svgEl}
 		viewBox="0 0 {width} {height}"
