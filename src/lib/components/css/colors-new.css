@@ -6,23 +6,11 @@
 	--hsl-console: 120, 93%, 79%;
 
 	--hsl-bullish: 140, 68%, 42%;
-	--hsl-bullish-gradient: linear-gradient(
-		180deg,
-		hsla(var(--hsl-bullish), 0.4) 0%,
-		hsla(var(--hsl-bullish), 0) 100%
-	);
+	--hsl-bullish-gradient: linear-gradient(180deg, hsla(var(--hsl-bullish), 0.4) 0%, hsla(var(--hsl-bullish), 0) 100%);
 	--hsl-bearish: 0, 92%, 57%;
-	--hsl-bearish-gradient: linear-gradient(
-		180deg,
-		hsla(var(--hsl-bearish), 0.4) 0%,
-		hsla(var(--hsl-bearish), 0) 100%
-	);
+	--hsl-bearish-gradient: linear-gradient(180deg, hsla(var(--hsl-bearish), 0.4) 0%, hsla(var(--hsl-bearish), 0) 100%);
 	--hsl-warning: 43, 92%, 50%;
-	--hsl-warning-gradient: linear-gradient(
-		180deg,
-		hsla(var(--hsl-warning), 0.4) 0%,
-		hsla(var(--hsl-warning), 0) 100%
-	);
+	--hsl-warning-gradient: linear-gradient(180deg, hsla(var(--hsl-warning), 0.4) 0%, hsla(var(--hsl-warning), 0) 100%);
 }
 
 body,
