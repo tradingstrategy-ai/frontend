@@ -135,7 +135,7 @@
 		}
 
 		& .visuals {
-			padding-top: 2rem;
+			padding-top: 4rem;
 			display: grid;
 			position: relative;
 
@@ -161,12 +161,8 @@
 				}
 			}
 
-			& .chart {
+			&:not(:hover) .chart {
 				z-index: -1;
-				& svg {
-					width: 100%;
-					height: 100%;
-				}
 			}
 		}
 

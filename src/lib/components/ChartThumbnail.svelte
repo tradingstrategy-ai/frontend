@@ -93,12 +93,11 @@
 			justify-content: space-between;
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
-			color: var(--c-text-extra-light-night);
+			color: var(--c-text-extra-light);
 
 			& * {
 				margin: 0;
 				font: inherit;
-				background: var(--c-background-7);
 			}
 		}
 
