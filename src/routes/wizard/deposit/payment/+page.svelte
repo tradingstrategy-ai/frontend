@@ -290,12 +290,12 @@
 </div>
 
 <style lang="postcss">
-	@container section (width < 420px) {
+	@container (width < 420px) {
 		.wide {
 			display: none;
 		}
 	}
-	@container section (width >= 420px) {
+	@container (width >= 420px) {
 		.narrow {
 			display: none;
 		}
@@ -317,6 +317,7 @@
 		}
 
 		& .deposit-header {
+			container-type: inline-size;
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;

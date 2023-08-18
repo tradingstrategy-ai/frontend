@@ -227,18 +227,19 @@
 </div>
 
 <style lang="postcss">
-	@container section (width < 420px) {
+	@container (width < 420px) {
 		.wide {
 			display: none;
 		}
 	}
-	@container section (width >= 420px) {
+	@container (width >= 420px) {
 		.narrow {
 			display: none;
 		}
 	}
 
 	.shares-redemption {
+		container-type: inline-size;
 		display: grid;
 		gap: var(--space-xl);
 
