@@ -55,6 +55,7 @@
     "vitest-github-actions-reporter": "^0.10.0"
   },
   "dependencies": {
+    "@aave/math-utils": "^1.18.2",
     "@sentry/node": "^7.47.0",
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.9",
     "@tryghost/content-api": "^1.11.8",
@@ -62,6 +63,7 @@
     "@walletconnect/modal": "^2.4.7",
     "@web3modal/ethereum": "^2.4.7",
     "assert-ts": "^0.3.4",
+    "bignumber.js": "^9.1.1",
     "cheerio": "^1.0.0-rc.12",
     "cookie": "^0.5.0",
     "d3-array": "^3.2.3",

@@ -1,4 +1,5 @@
 import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
+import { formatReserveUSD } from '@aave/math-utils';
 
 /**
  * Return URL for a lending reserve on a given chain and lending protocol
@@ -16,12 +17,46 @@ export function lendingReserveUrl(chain: string, protocol: string, underlyingAss
 }
 
 /**
- * Determine if reserve is borrowable.
- * Current: inferred from non-zero Variable Borrow APR
- * Future: may have a flag on API entity based on smart-contract value
+ * Determine if reserve is borrowable based on non-zero Variable Borrow APR
  */
 export function isBorrowable({ additional_details }: LendingReserve) {
 	return additional_details.variable_borrow_apr_latest > 0;
+}
+
+/**
+ * Use Aave Utilities to format and convert (USD) raw Aave reserve data
+ *
+ * See: docs/aave-utilities.md
+ */
+export function getFormattedReserveUSD({ additional_details }: LendingReserve) {
+	const { aggregated_reserve_data: reserveData, base_currency_info: baseCurrency } = additional_details;
+	if (!(reserveData && baseCurrency)) return;
+
+	// These properties need to be converted from strings to numbers
+	// See: https://github.com/aave/aave-utilities/blob/master/packages/math-utils/src/formatters/reserve/index.ts#L52-L85
+	const numberProps = [
+		'decimals',
+		'stableDebtLastUpdateTimestamp',
+		'lastUpdateTimestamp',
+		'eModeCategoryId',
+		'debtCeilingDecimals',
+		'eModeLtv',
+		'eModeLiquidationThreshold',
+		'eModeLiquidationBonus'
+	];
+
+	numberProps.forEach((key) => (reserveData[key] &&= Number(reserveData[key])));
+
+	const marketReferencePriceInUsd = baseCurrency.marketReferenceCurrencyPriceInUsd.toString();
+	// convert currency unit to number of decimals – e.g., 100_000_000 -> 8
+	const marketReferenceCurrencyDecimals = Math.log10(baseCurrency.marketReferenceCurrencyUnit);
+
+	return formatReserveUSD({
+		reserve: reserveData,
+		currentTimestamp: Date.now() / 1000,
+		marketReferencePriceInUsd,
+		marketReferenceCurrencyDecimals
+	});
 }
 
 /***

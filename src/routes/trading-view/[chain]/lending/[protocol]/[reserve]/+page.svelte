@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import { Alert, Button, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import { isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { getFormattedReserveUSD, isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 
 	export let data;
@@ -16,6 +16,8 @@
 		[reserve.protocol_slug]: reserve.protocol_name,
 		[reserve.reserve_slug]: reserve.asset_symbol
 	};
+
+	$: formattedReserveUSD = getFormattedReserveUSD(reserve);
 
 	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
 
@@ -49,9 +51,18 @@
 		</svelte:fragment>
 	</PageHeader>
 
-	<section class="ds-container ds-2-col info" data-testid="reserve-info">
-		<InfoTable {reserve} {borrowable} />
-		<InfoSummary {reserve} {borrowable} />
+	<section class="ds-container info" data-testid="reserve-info">
+		<div class="ds-2-col">
+			<InfoTable {reserve} {borrowable} />
+			<InfoSummary {reserve} {borrowable} />
+		</div>
+
+		{#if borrowable && formattedReserveUSD?.borrowingEnabled === false}
+			<Alert status="error">
+				Borrowing is disabled due to an Aave community decision.
+				<a href="https://app.aave.com/governance/" target="_blank" rel="external">More details</a>
+			</Alert>
+		{/if}
 	</section>
 </main>
 
@@ -76,7 +87,16 @@
 	}
 
 	.info {
-		align-items: flex-start;
+		gap: var(--space-3xl);
+
+		@media (--viewport-lg-up) {
+			gap: var(--space-6xl);
+		}
+
+		& .ds-2-col {
+			row-gap: var(--space-xl);
+			align-items: start;
+		}
 	}
 
 	.chart-header {

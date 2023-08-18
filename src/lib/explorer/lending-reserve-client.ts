@@ -23,6 +23,8 @@ export type LendingReserve = {
 		supply_apr_latest: number;
 		stable_borrow_apr_latest: number;
 		variable_borrow_apr_latest: number;
+		aggregated_reserve_data?: Record<string, string | number>;
+		base_currency_info?: Record<string, number>;
 	};
 };
 
