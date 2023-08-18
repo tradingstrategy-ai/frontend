@@ -14,8 +14,6 @@
 	let innerWidth: number;
 
 	$: badgeSize = innerWidth >= 768 ? 'md' : 'sm';
-
-	$: console.log(strategy);
 </script>
 
 <svelte:window bind:innerWidth />

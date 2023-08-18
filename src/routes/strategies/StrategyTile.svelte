@@ -43,7 +43,7 @@
 
 <a
 	class="strategy-tile ds-3"
-	href={`/strategies/${strategy.link.replace('/strategy/', '')}`}
+	href={`/strategies/${strategy.id}`}
 	on:focus={focus}
 	on:mouseover={focus}
 	on:blur={blur}
