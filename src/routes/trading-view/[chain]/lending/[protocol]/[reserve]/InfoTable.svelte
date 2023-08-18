@@ -15,7 +15,7 @@
 	<TradingDataInfoRow value="{formatInterestRate(details.supply_apr_latest)} APR">
 		<Tooltip slot="label">
 			<span slot="trigger" class="underline">Supply rate</span>
-			<div slot="popup">APR earned when supplying this token as collateral</div>
+			<div slot="popup">APR earned when depositing tokens to this reserve for lending.</div>
 		</Tooltip>
 	</TradingDataInfoRow>
 
@@ -34,7 +34,7 @@
 			{:else}
 				<Tooltip>
 					<span slot="trigger" class="underline">N/A</span>
-					<div slot="popup">This reserve is not currently borrowable.</div>
+					<div slot="popup">This reserve is not borrowable.</div>
 				</Tooltip>
 			{/if}
 		</svelte:fragment>
@@ -49,35 +49,72 @@
 			</div>
 		</Tooltip>
 		<svelte:fragment slot="value">
-			{#if borrowable}
-				{formatInterestRate(details.stable_borrow_apr_latest)} APR
-			{:else}
+			{#if !borrowable}
 				<Tooltip>
 					<span slot="trigger" class="underline">N/A</span>
-					<div slot="popup">This reserve is not currently borrowable.</div>
+					<div slot="popup">This reserve is not borrowable.</div>
 				</Tooltip>
+			{:else if formattedReserveUSD?.stableBorrowRateEnabled === false}
+				<Tooltip>
+					<span slot="trigger" class="underline">N/A</span>
+					<div slot="popup">Stable borrow rate is not enabled for this reserve.</div>
+				</Tooltip>
+			{:else}
+				{formatInterestRate(details.stable_borrow_apr_latest)} APR
 			{/if}
 		</svelte:fragment>
 	</TradingDataInfoRow>
 
 	{#if formattedReserveUSD}
-		<TradingDataInfoRow label="Total supplied">
+		<TradingDataInfoRow>
+			<Tooltip slot="label">
+				<span slot="trigger" class="underline">Total supplied</span>
+				<div slot="popup">
+					Value of tokens currently deposited compared to the supply cap (maximum amount that can be supplied).
+				</div>
+			</Tooltip>
 			<svelte:fragment slot="value">
-				{formatDollar(Number(formattedReserveUSD.totalLiquidityUSD))} of
+				{formatDollar(Number(formattedReserveUSD.totalLiquidityUSD))}
+				<span class="light">of</span>
 				{formatDollar(Number(formattedReserveUSD.supplyCapUSD))}
 			</svelte:fragment>
 		</TradingDataInfoRow>
 
-		<TradingDataInfoRow label="Total borrowed">
+		<TradingDataInfoRow>
+			<Tooltip slot="label">
+				<span slot="trigger" class="underline">Total borrowed</span>
+				<div slot="popup">
+					Value of tokens currently borrowed compared to the borrow cap (maximum amount that can be borrowed).
+				</div>
+			</Tooltip>
 			<svelte:fragment slot="value">
-				{formatDollar(Number(formattedReserveUSD.totalDebtUSD))} of
-				{formatDollar(Number(formattedReserveUSD.borrowCapUSD))}
+				{#if borrowable}
+					{formatDollar(Number(formattedReserveUSD.totalDebtUSD))}
+					<span class="light">of</span>
+					{formatDollar(Number(formattedReserveUSD.borrowCapUSD))}
+				{:else}
+					<Tooltip>
+						<span slot="trigger" class="underline">N/A</span>
+						<div slot="popup">This reserve is not borrowable.</div>
+					</Tooltip>
+				{/if}
 			</svelte:fragment>
 		</TradingDataInfoRow>
 
-		<TradingDataInfoRow label="Utilization Rate">
+		<TradingDataInfoRow>
+			<Tooltip slot="label">
+				<span slot="trigger" class="underline">Utilization Rate</span>
+				<div slot="popup">Portion of reserve's supply that is currently being utilized by borrowers.</div>
+			</Tooltip>
 			<svelte:fragment slot="value">
-				{formatPercent(Number(formattedReserveUSD.supplyUsageRatio))}
+				{#if borrowable}
+					{formatPercent(Number(formattedReserveUSD.supplyUsageRatio))}
+				{:else}
+					<Tooltip>
+						<span slot="trigger" class="underline">N/A</span>
+						<div slot="popup">This reserve is not borrowable.</div>
+					</Tooltip>
+				{/if}
 			</svelte:fragment>
 		</TradingDataInfoRow>
 	{/if}
@@ -87,7 +124,7 @@
 	<TradingDataInfoRow>
 		<Tooltip slot="label">
 			<span slot="trigger" class="underline">Asset Token</span>
-			<div slot="popup">Underlying asset token to be supplied as collateral and/or borrowed.</div>
+			<div slot="popup">Underlying asset token to be supplied or borrowed.</div>
 		</Tooltip>
 		<a slot="value" href="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}">
 			{reserve.asset_name}
@@ -102,5 +139,9 @@
 <style lang="postcss">
 	div[slot='popup'] {
 		max-width: 25rem;
+	}
+
+	.light {
+		font-weight: 400;
 	}
 </style>
