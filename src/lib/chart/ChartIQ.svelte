@@ -27,6 +27,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	 * See: https://github.com/vitejs/vite/issues/6007#issuecomment-1110330733
 	 */
 	import.meta.glob('/node_modules/chartiq/css/stx-chart.css', { eager: true });
+	const keyFile = import.meta.glob('/node_modules/chartiq/key.js', { import: 'default' });
 	const modules = import.meta.glob('/node_modules/chartiq/js/*.js');
 
 	// NOTE: requested TypeScript defs from ChartIQ.
@@ -38,12 +39,14 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			throw new Error('chartiq module not available');
 		}
 
-		const [chartiqJs, standardJs]: [any, any] = await Promise.all([
-			modules[`/node_modules/chartiq/js/chartiq.js`](),
-			modules[`/node_modules/chartiq/js/standard.js`]()
+		const [getLicenseKey, chartiqJs, standardJs]: [any, any, any] = await Promise.all([
+			keyFile['/node_modules/chartiq/key.js'](),
+			modules['/node_modules/chartiq/js/chartiq.js'](),
+			modules['/node_modules/chartiq/js/standard.js']()
 		]);
 
 		CIQ = chartiqJs.CIQ;
+		getLicenseKey(CIQ);
 		CIQ.activateImports(standardJs.quoteFeed);
 
 		for (const mod of Object.values(studyModules)) {
