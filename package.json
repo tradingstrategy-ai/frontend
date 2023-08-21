@@ -82,6 +82,6 @@
     "viem": "^1.1.4"
   },
   "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v8.9.1"
+    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.0.0"
   }
 }
