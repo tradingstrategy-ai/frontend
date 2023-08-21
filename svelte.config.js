@@ -19,7 +19,9 @@ const config = {
 		alias: {
 			'design-system-fonts': 'deps/fonts',
 			'trade-executor': 'src/lib/trade-executor',
-			wizard: 'src/routes/wizard'
+			wizard: 'src/routes/wizard',
+			// use @aave/math-utils cjs build instead of esm to silence sourcemap warnings
+			'@aave/math-utils': 'node_modules/@aave/math-utils/dist/cjs'
 		},
 
 		// disable CSRF origin checking for now; see:
