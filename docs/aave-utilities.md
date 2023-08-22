@@ -42,8 +42,8 @@ const reserveData = details.aggregated_reserve_data;
 reserveData.decimals &&= Number(reserveData.decimals);
 
 const baseCurrency = details.base_currency_info;
-// convert currency unit to decimals - e.g., 1_000_000 -> 8 decimals
 const marketReferencePriceInUsd = baseCurrency.marketReferenceCurrencyPriceInUsd;
+// convert currency unit to decimals - e.g., 1_000_000 -> 8 decimals
 const marketReferenceCurrencyDecimals = Math.log10(baseCurrency.marketReferenceCurrencyUnit);
 
 const formattedData = formatReserveUSD({
@@ -82,7 +82,7 @@ Many of these properties are available in two variants:
 | Supply&nbsp;Cap                               | `supplyCap`<br/>`supplyCapUSD`                            | Maximum value that can be supplied to the reserve               |
 | Borrow&nbsp;Cap                               | `borrowCap`<br/>`borrowCapUSD`                            | Maximum value that can be borrowed from the reserve             |
 | Asset&nbsp;Token&nbsp;Price                   | `priceInUSD`                                              | Current price of asset token in USD                             |
-| Borrowing&nbsp;Enabled                        | borrowingEnabled                                          | Flag indicating if borrowing disabled due to community decision |
-| Stable&nbsp;Borrow&nbsp;Rate&nbsp;Enabled     | stableBorrowRateEnabled                                   | Flag indicating if stable borrow rate can be used               |
-| Usage&nbsp;as&nbsp;Collateral&nbsp;Enabled    | usageAsCollateralEnabled                                  | Flag indicating if reserve asset can be used as collateral      |
-| Flash&nbsp;Loan&nbsp;Enabled                  | flashLoanEnabled                                          | Flag indicating if flash loans are enabled                      |
+| Borrowing&nbsp;Enabled                        | `borrowingEnabled`                                        | Flag indicating if borrowing disabled due to community decision |
+| Stable&nbsp;Borrow&nbsp;Rate&nbsp;Enabled     | `stableBorrowRateEnabled`                                 | Flag indicating if stable borrow rate can be used               |
+| Usage&nbsp;as&nbsp;Collateral&nbsp;Enabled    | `usageAsCollateralEnabled`                                | Flag indicating if reserve asset can be used as collateral      |
+| Flash&nbsp;Loan&nbsp;Enabled                  | `flashLoanEnabled`                                        | Flag indicating if flash loans are enabled                      |
