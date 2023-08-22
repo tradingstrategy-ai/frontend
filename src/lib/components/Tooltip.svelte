@@ -64,8 +64,8 @@ For more information see:
 			display: block;
 			text-align: left;
 
-			background: hsla(var(--hsl-tooltip-bg));
-			border: 1px solid hsla(var(--hsl-tooltip-border));
+			background: hsla(var(--hsl-text-inverted));
+			border: 1px solid hsla(var(--hsl-box-3));
 			border-radius: var(--radius-md);
 			box-shadow: var(--shadow-3);
 			color: hsla(var(--hsl-text));
