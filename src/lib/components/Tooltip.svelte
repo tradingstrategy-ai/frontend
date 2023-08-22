@@ -22,7 +22,11 @@ For more information see:
 </Tooltip>
 ```
 -->
-<dfn class="tooltip ds-3">
+<script lang="ts">
+	export let type: 'info' | 'error' | 'success' = 'info';
+</script>
+
+<dfn class="tooltip ds-3 {type}">
 	<span class="trigger">
 		<slot name="trigger" />
 	</span>
@@ -64,8 +68,8 @@ For more information see:
 			display: block;
 			text-align: left;
 
-			background: hsla(var(--hsl-text-inverted));
-			border: 1px solid hsla(var(--hsla-box-3));
+			background: hsla(var(--hsl-tooltip-bg));
+			border: 1px solid hsla(var(--hsl-tooltip-border));
 			border-radius: var(--radius-md);
 			box-shadow: var(--shadow-3);
 			color: hsla(var(--hsl-text));
@@ -85,5 +89,15 @@ For more information see:
 		& :global(p) {
 			margin-bottom: 0.5em;
 		}
+	}
+
+	.info {
+		--hsl-tooltip-bg: var(--hsl-text-inverted);
+		--hsl-tooltip-border: var(--hsla-box-3);
+	}
+
+	.error {
+		--hsl-tooltip-bg: var(--hsl-text-inverted);
+		--hsl-tooltip-border: var(--hsla-box-3);
 	}
 </style>

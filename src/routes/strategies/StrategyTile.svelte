@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
+	import { Alert, Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { fromUnixTime } from 'date-fns';
+	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
@@ -12,6 +13,7 @@
 		fromUnixTime(ts),
 		val
 	]);
+	const errorHtml = getTradeExecutorErrorHtml(strategy);
 
 	let innerWidth: number;
 
@@ -63,6 +65,19 @@
 					</Tooltip>
 				{/each}
 			</div>
+
+			{#if errorHtml}
+				<div class="errors">
+					<Tooltip>
+						<svelte:fragment slot="trigger">
+							<Alert size="xs">Error occurred</Alert>
+						</svelte:fragment>
+						<svelte:fragment slot="popup">
+							{@html errorHtml}
+						</svelte:fragment>
+					</Tooltip>
+				</div>
+			{/if}
 		</div>
 		<div class="chart">
 			<ChartThumbnail data={chartData} startDate={chartStartDate} />
@@ -94,6 +109,14 @@
 			{#if isBacktested}
 				<span class="backtest-data-badge">Backtested Metrics*</span>
 			{/if}
+
+			<!-- <div class="errors">
+				{#if errorHtml}
+					<Alert size="sm">
+						{@html errorHtml}
+					</Alert>
+				{/if}
+			</div> -->
 		</div>
 		<div class="actions">
 			<Button size="md">View strategy</Button>
@@ -115,6 +138,25 @@
 		&:hover {
 			background: hsla(var(--hsla-box-2));
 			z-index: 9999999;
+		}
+
+		& .errors {
+			margin-block: 0.625rem;
+			position: relative;
+
+			& :global(.tooltip .popup) {
+				width: 22rem;
+				right: 0;
+				top: calc(100% + 0.25rem);
+			}
+
+			& :global(.alert-item) {
+				container-type: unset;
+			}
+
+			& :global(.alert-item .cta) {
+				display: none;
+			}
 		}
 
 		& .visuals {
