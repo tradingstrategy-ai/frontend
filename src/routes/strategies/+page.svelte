@@ -2,7 +2,6 @@
 	import { min } from 'd3-array';
 	import { fromUnixTime } from 'date-fns';
 	import { PageHeading } from '$lib/components';
-	import { formatDaysAgo } from '$lib/helpers/formatters.js';
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;

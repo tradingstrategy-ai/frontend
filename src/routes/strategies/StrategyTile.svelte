@@ -15,8 +15,6 @@
 	]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 
-	let innerWidth: number;
-
 	$: isBacktested = strategy?.summary_statistics?.key_metrics
 		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
 		: false;
@@ -39,9 +37,9 @@
 			return ['eth', 'usdc'];
 		}
 	}
-</script>
 
-<svelte:window bind:innerWidth />
+	$: console.log(strategy?.summary_statistics?.key_metrics);
+</script>
 
 <a
 	class="strategy-tile ds-3"
@@ -109,14 +107,6 @@
 			{#if isBacktested}
 				<span class="backtest-data-badge">Backtested Metrics*</span>
 			{/if}
-
-			<!-- <div class="errors">
-				{#if errorHtml}
-					<Alert size="sm">
-						{@html errorHtml}
-					</Alert>
-				{/if}
-			</div> -->
 		</div>
 		<div class="actions">
 			<Button size="md">View strategy</Button>
