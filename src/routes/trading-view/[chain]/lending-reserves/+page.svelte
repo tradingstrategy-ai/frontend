@@ -40,6 +40,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<LendingReserveTable {...reserves} {...options} {loading} on:change={handleChange} />
+		<LendingReserveTable hideChainIcon {...reserves} {...options} {loading} on:change={handleChange} />
 	</Section>
 </main>

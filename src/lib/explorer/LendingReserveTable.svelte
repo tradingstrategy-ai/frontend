@@ -4,7 +4,7 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable } from '$lib/components';
+	import { Button, DataTable, EntitySymbol } from '$lib/components';
 	import BorrowAprCell from './BorrowAprCell.svelte';
 	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
@@ -16,6 +16,7 @@
 	export let sort = 'variable_borrow_apr_latest';
 	export let direction: 'asc' | 'desc' = 'asc';
 	export let hiddenColumns: string[] = [];
+	export let hideChainIcon = false;
 
 	const tableRows: Writable<LendingReserve[]> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows ?? [];
@@ -33,7 +34,14 @@
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
-			header: 'Asset name'
+			header: 'Reserve',
+			cell: ({ value, row: { original } }) =>
+				createRender(EntitySymbol, {
+					type: 'blockchain',
+					slug: hideChainIcon ? undefined : original.chain_slug,
+					label: original.chain_name,
+					size: '1.25em'
+				}).slot(value)
 		}),
 		table.column({
 			accessor: 'asset_symbol',
