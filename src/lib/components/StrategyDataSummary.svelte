@@ -25,11 +25,18 @@
 				<span>Profitability</span>
 				<Icon name="question-circle" />
 			</dt>
-			<dd>
+			<dd data-testid="key-metric-profitability-value">
 				<DataBadge
 					bearish={strategy?.summary_statistics?.key_metrics?.profitability.value < 0}
 					bullish={strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
-					size={badgeSize}>{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
+					size={badgeSize}
+				>
+					{#if strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
+						▲
+					{:else}
+						▼
+					{/if}
+					{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
 				>
 			</dd>
 		</svelte:fragment>
