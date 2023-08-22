@@ -10,10 +10,10 @@
 	export let backtestLink: string;
 	export let strategy: StrategyRuntimeState;
 
-	let badgeSize: 'md' | 'sm';
+	let badgeSize: 'md' | 'sm' = 'md';
 	let innerWidth: number;
 
-	$: badgeSize = innerWidth >= 768 ? 'md' : 'sm';
+	$: badgeSize = innerWidth < 768 ? 'sm' : 'md';
 </script>
 
 <svelte:window bind:innerWidth />

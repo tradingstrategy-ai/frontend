@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import Timestamp from './Timestamp.svelte';
 
 	export let backtestLink: string;
@@ -9,51 +10,56 @@
 <div class="strategy-data-description ds-3">
 	<h3>{title}</h3>
 
-	<ul>
-		{#if metric?.help_link}
-			<li>
-				See the glossary for the definition of <a target="_blank" href={metric?.help_link}><strong>{title}</strong></a>
-				and how it is calculated.
-			</li>
-		{/if}
+	{#if browser}
+		<ul>
+			{#if metric.help_link}
+				<li>
+					See the glossary for the definition of
+					<a target="_blank" href={metric.help_link}>
+						<strong>{title}</strong>
+					</a>
+					and how it is calculated.
+				</li>
+			{/if}
 
-		{#if metric?.source == 'backtesting'}
-			<li>
-				This strategy has not been trading long enough to reliable calculate
-				<a target="_blank" href={metric?.help_link}>{title}</a> based on the live trading data.
-			</li>
+			{#if metric?.source == 'backtesting'}
+				<li>
+					This strategy has not been trading long enough to reliable calculate
+					<a target="_blank" href={metric.help_link}>{title}</a> based on the live trading data.
+				</li>
 
-			<li>
-				Instead, a <a href={backtestLink}>backtested</a> estimation is displayed.
-			</li>
+				<li>
+					Instead, a <a href={backtestLink}>backtested</a> estimation is displayed.
+				</li>
 
-			<li>
-				<a href={backtestLink}>Read the backtest report</a>.
-			</li>
+				<li>
+					<a href={backtestLink}>Read the backtest report</a>.
+				</li>
 
-			<li>
-				The period used for the backtest simulation is
-				<span class="timespan">
-					<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
-						date={metric.calculation_window_end_at}
-						format="iso"
-					/></span
-				>.
-			</li>
-		{:else if metric?.calculation_method == 'historical_data'}
-			<li>
-				The calculation period for live trading is
-				<span class="timespan">
-					<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
-						date={metric.calculation_window_end_at}
-						format="iso"
-					/></span
-				>.
-			</li>
-		{:else}
-			<li>This is the latest real-time value from the live trade execution</li>
-		{/if}
-	</ul>
+				<li>
+					The period used for the backtest simulation is
+					<span class="timespan">
+						<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+							date={metric.calculation_window_end_at}
+							format="iso"
+						/></span
+					>.
+				</li>
+			{:else if metric?.calculation_method == 'historical_data'}
+				<li>
+					The calculation period for live trading is
+					<span class="timespan">
+						<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+							date={metric.calculation_window_end_at}
+							format="iso"
+						/></span
+					>.
+				</li>
+			{:else}
+				<li>This is the latest real-time value from the live trade execution</li>
+			{/if}
+		</ul>
+	{/if}
 
 	<p class="disclaimer">Past performance is no guarantee of future results.</p>
 </div>
