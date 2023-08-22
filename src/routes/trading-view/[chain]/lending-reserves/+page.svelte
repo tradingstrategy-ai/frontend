@@ -40,6 +40,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<LendingReserveTable {...reserves} {...options} {loading} hiddenColumns={['chain_name']} on:change={handleChange} />
+		<LendingReserveTable {...reserves} {...options} {loading} on:change={handleChange} />
 	</Section>
 </main>

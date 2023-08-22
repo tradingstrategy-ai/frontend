@@ -39,14 +39,6 @@
 			header: 'Symbol'
 		}),
 		table.column({
-			accessor: 'protocol_name',
-			header: 'Protocol'
-		}),
-		table.column({
-			accessor: 'chain_name',
-			header: 'Blockchain'
-		}),
-		table.column({
 			id: 'supply_apr_latest',
 			accessor: (row) => row?.additional_details?.supply_apr_latest,
 			header: 'Supply APR',
@@ -98,14 +90,6 @@
 
 			& .asset_symbol {
 				width: 20%;
-			}
-
-			& .protocol_name {
-				width: 20%;
-			}
-
-			& .chain_name {
-				width: 25%;
 			}
 
 			& :is(.supply_apr_latest, .variable_borrow_apr_latest) {
