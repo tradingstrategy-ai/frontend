@@ -5,8 +5,9 @@
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable } from '$lib/components';
-	import { formatInterestRate } from '$lib/helpers/formatters';
 	import BorrowAprCell from './BorrowAprCell.svelte';
+	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: LendingReserve[] | undefined = undefined;
@@ -39,14 +40,24 @@
 			header: 'Symbol'
 		}),
 		table.column({
+			id: 'tvl',
+			accessor: (row) => {
+				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
+				return tvl && Number(tvl);
+			},
+			header: 'TVL',
+			cell: ({ value }) => formatDollar(value),
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
 			id: 'supply_apr_latest',
-			accessor: (row) => row?.additional_details?.supply_apr_latest,
+			accessor: (row) => row.additional_details?.supply_apr_latest,
 			header: 'Supply APR',
 			cell: ({ value }) => formatInterestRate(value)
 		}),
 		table.column({
 			id: 'variable_borrow_apr_latest',
-			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
+			accessor: (row) => row.additional_details?.variable_borrow_apr_latest,
 			header: 'Borrow APR',
 			cell: ({ value, row }) => createRender(BorrowAprCell, { apr: value, reserve: row.original })
 		}),
@@ -92,7 +103,7 @@
 				width: 20%;
 			}
 
-			& :is(.supply_apr_latest, .variable_borrow_apr_latest) {
+			& :is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
 				width: 20%;
 				text-align: right;
 			}

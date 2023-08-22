@@ -29,6 +29,7 @@ export function isBorrowable({ additional_details }: LendingReserve) {
  * See: docs/aave-utilities.md
  */
 export function getFormattedReserveUSD({ additional_details }: LendingReserve) {
+	if (!additional_details) return;
 	const { aggregated_reserve_data: reserveData, base_currency_info: baseCurrency } = additional_details;
 	if (!(reserveData && baseCurrency)) return;
 
