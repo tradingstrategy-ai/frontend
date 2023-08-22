@@ -3,20 +3,24 @@
 -->
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import LendingReserveTable from '$lib/explorer/LendingReserveTable.svelte';
-	import { HeroBanner, Section } from '$lib/components';
+	import { Alert, HeroBanner, Section } from '$lib/components';
 
 	export let data;
-	$: ({ reserves, options } = data);
+	$: ({ rows, totalRowCount } = data);
 
-	let loading = false;
+	$: q = $page.url.searchParams;
+	$: options = {
+		page: Number(q.get('page')) || 0,
+		sort: q.get('sort') || 'tvl',
+		direction: q.get('direction') || 'desc'
+	};
 
 	async function handleChange({ detail }: ComponentEvents<LendingReserveTable>['change']) {
-		loading = true;
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		loading = false;
 		detail.scrollToTop();
 	}
 </script>
@@ -36,7 +40,16 @@
 		/>
 	</Section>
 
+	{#if rows && totalRowCount && rows.length < totalRowCount}
+		<Section>
+			<Alert size="md" status="warning" title="Max rows exceeded">
+				{rows.length} out of {totalRowCount} total lending reserves were loaded. A max of 1,000 lending reserves can be fetched
+				in a single API request. This limitation can be removed by switching to server-side pagination and sorting.
+			</Alert>
+		</Section>
+	{/if}
+
 	<Section padding="sm">
-		<LendingReserveTable {...reserves} {...options} {loading} on:change={handleChange} />
+		<LendingReserveTable {rows} {...options} on:change={handleChange} />
 	</Section>
 </main>

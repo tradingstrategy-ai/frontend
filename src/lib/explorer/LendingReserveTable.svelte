@@ -11,10 +11,9 @@
 
 	export let loading = false;
 	export let rows: LendingReserve[] | undefined = undefined;
-	export let totalRowCount = 0;
 	export let page = 0;
-	export let sort = 'variable_borrow_apr_latest';
-	export let direction: 'asc' | 'desc' = 'asc';
+	export let sort = 'tvl';
+	export let direction: 'asc' | 'desc' = 'desc';
 	export let hiddenColumns: string[] = [];
 	export let hideChainIcon = false;
 
@@ -23,10 +22,10 @@
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
-			serverSide: true,
+			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination({ serverSide: true }),
+		page: addPagination({ initialPageIndex: page }),
 		clickable: addClickableRows({ id: 'cta' }),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
@@ -54,8 +53,7 @@
 				return tvl && Number(tvl);
 			},
 			header: 'TVL',
-			cell: ({ value }) => formatDollar(value),
-			plugins: { sort: { disable: true } }
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			id: 'supply_apr_latest',
@@ -79,13 +77,8 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
-	const { sortKeys } = tableViewModel.pluginStates.sort;
 	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
-	$: $pageIndex = page;
-	$: $serverItemCount = totalRowCount;
-	$: $sortKeys = [{ id: sort, order: direction }];
 	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
