@@ -7,12 +7,12 @@
 	export let metric: any;
 </script>
 
-<div class="strategy-data-description ds-3">
-	<h3>{title}</h3>
+{#if browser}
+	<div class="strategy-data-description ds-3">
+		<h3>{title}</h3>
 
-	{#if browser}
 		<ul>
-			{#if metric.help_link}
+			{#if metric?.help_link}
 				<li>
 					See the glossary for the definition of
 					<a target="_blank" href={metric.help_link}>
@@ -59,10 +59,10 @@
 				<li>This is the latest real-time value from the live trade execution</li>
 			{/if}
 		</ul>
-	{/if}
 
-	<p class="disclaimer">Past performance is no guarantee of future results.</p>
-</div>
+		<p class="disclaimer">Past performance is no guarantee of future results.</p>
+	</div>
+{/if}
 
 <style lang="postcss">
 	h3 {

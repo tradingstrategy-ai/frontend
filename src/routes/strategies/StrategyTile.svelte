@@ -4,6 +4,7 @@
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { fromUnixTime } from 'date-fns';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
+	import { browser } from '$app/environment';
 
 	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
@@ -71,7 +72,9 @@
 							<Alert size="xs">Error occurred</Alert>
 						</svelte:fragment>
 						<svelte:fragment slot="popup">
-							{@html errorHtml}
+							{#if browser}
+								{@html errorHtml}
+							{/if}
 						</svelte:fragment>
 					</Tooltip>
 				</div>
