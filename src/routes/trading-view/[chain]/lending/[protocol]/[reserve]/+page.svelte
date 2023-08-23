@@ -1,7 +1,9 @@
 <script lang="ts">
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Alert, Button, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
+	import type { RateType } from '$lib/chart/ReserveInterestChart.svelte';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
+	import { Alert, Button, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import { getFormattedReserveUSD, isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
@@ -28,6 +30,14 @@
 	$: showChart = borrowable && !isGhoToken;
 
 	let timeBucket: TimeBucket = '1d';
+
+	function getSecondaryRates({ additional_details: details }: LendingReserve) {
+		const rates: RateType[] = ['supply_apr'];
+		if (details.aggregated_reserve_data?.stableBorrowRateEnabled) {
+			rates.push('stable_borrow_apr');
+		}
+		return rates;
+	}
 </script>
 
 <svelte:head>
@@ -72,7 +82,12 @@
 			<h3>Interest rates</h3>
 			<SegmentedControl options={['1h', '4h', '1d', '7d', '30d']} bind:selected={timeBucket} />
 		</div>
-		<ReserveInterestChart {reserve} {timeBucket} rateType="variable_borrow_apr" />
+		<ReserveInterestChart
+			{reserve}
+			{timeBucket}
+			primaryRate="variable_borrow_apr"
+			secondaryRates={getSecondaryRates(reserve)}
+		/>
 	</Section>
 {/if}
 

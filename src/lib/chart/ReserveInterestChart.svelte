@@ -1,22 +1,33 @@
+<script lang="ts" context="module">
+	const rateTypes = {
+		supply_apr: 'Supply APR',
+		stable_borrow_apr: 'Stable Borrow APR',
+		variable_borrow_apr: 'Variable Borrow APR'
+	} as const;
+
+	export type RateType = keyof typeof rateTypes;
+</script>
+
 <script lang="ts">
 	import type { Candle, TimeBucket } from '$lib/chart';
+	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import { candleToQuote, quoteFeed, timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
-	const rateTypes = ['supply_apr', 'stable_borrow_apr', 'variable_borrow_apr'] as const;
-
-	export let reserve: any;
+	export let reserve: LendingReserve;
 	export let timeBucket: TimeBucket;
-	export let rateType: (typeof rateTypes)[number];
+	export let primaryRate: RateType;
+	export let secondaryRates: RateType[] = [];
 
 	$: ({ chain_slug, protocol_slug, reserve_slug } = reserve);
 	$: symbol = `${chain_slug}-${protocol_slug}-${reserve_slug}`.toUpperCase();
 	$: periodicity = timeBucketToPeriodicity(timeBucket);
+	$: studies = secondaryRates.map((rate) => rateTypes[rate]);
 
 	const feed = quoteFeed('lending-reserve/candles', (data: any) => {
-		return data[rateType].map((candle: Candle, idx: number) => {
+		return data[primaryRate].map((candle: Candle, idx: number) => {
 			const quote = candleToQuote(candle);
-			for (const type of rateTypes) {
+			for (const type in rateTypes) {
 				quote[type] = data[type]?.[idx]?.c;
 			}
 			return quote;
@@ -68,7 +79,7 @@
 	{init}
 	{options}
 	{feed}
-	studies={['Interest Rates']}
+	{studies}
 	invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]}
 	let:cursor
 >
@@ -76,27 +87,22 @@
 		{@const direction = Math.sign(cursor.data.Close - cursor.data.Open)}
 		<div class="reserve-interest-rate-hud">
 			<HudRow>
-				<h3>Variable Borrow APR:</h3>
+				<h3>{rateTypes[primaryRate]}:</h3>
 				<HudMetric label="O" value={formatInterestRate(cursor.data.Open)} {direction} />
 				<HudMetric label="H" value={formatInterestRate(cursor.data.High)} {direction} />
 				<HudMetric label="L" value={formatInterestRate(cursor.data.Low)} {direction} />
 				<HudMetric label="C" value={formatInterestRate(cursor.data.Close)} {direction} />
 			</HudRow>
 			<HudRow>
-				<HudMetric
-					class="stable-borrow-apr"
-					label="Stable Borrow APR:"
-					value={formatInterestRate(cursor.data.stable_borrow_apr)}
-					{direction}
-				/>
-				<HudMetric
-					class="supply-apr"
-					label="Supply APR:"
-					value={formatInterestRate(cursor.data.supply_apr)}
-					{direction}
-				/>
+				{#each secondaryRates as rate}
+					<HudMetric
+						class="secondary {rate}"
+						label="{rateTypes[rate]}:"
+						value={formatInterestRate(cursor.data[rate])}
+						{direction}
+					/>
+				{/each}
 			</HudRow>
-			<HudRow />
 		</div>
 	{/if}
 </ChartIQ>
@@ -112,14 +118,23 @@
 			font-weight: 500;
 		}
 
-		& :global .stable-borrow-apr dt {
+		& :global .secondary:not(:first-child) {
+			margin-left: var(--space-md);
+		}
+
+		& :global .secondary dt {
 			font-weight: 500;
+		}
+
+		& :global .variable_borrow_apr dt {
+			color: var(--c-bullish);
+		}
+
+		& :global .stable_borrow_apr dt {
 			color: darkorange;
 		}
 
-		& :global .supply-apr dt {
-			margin-left: var(--space-md);
-			font-weight: 500;
+		& :global .supply_apr dt {
 			color: slateblue;
 		}
 	}
