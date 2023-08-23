@@ -46,21 +46,3 @@ export function liquidityStudy(CIQ) {
 		underlay: true
 	};
 }
-
-export function supplyApr(CIQ) {
-	return {
-		name: 'Supply APR',
-		outputs: { supply_apr: 'slateblue' },
-		overlay: true,
-		isHighlighted: false
-	};
-}
-
-export function stableBorrowApr(CIQ) {
-	return {
-		name: 'Stable Borrow APR',
-		outputs: { stable_borrow_apr: 'darkorange' },
-		overlay: true,
-		isHighlighted: false
-	};
-}
