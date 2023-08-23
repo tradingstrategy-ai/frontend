@@ -1,6 +1,6 @@
-import { redirect } from '@sveltejs/kit';
+import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 
-// redirect to global lending-reserves index for now
-export async function load() {
-	throw redirect(307, '/trading-view/lending-reserves');
+export async function load({ fetch, params }) {
+	// Fetching all reserves and using client-side pagination/sort for now
+	return fetchLendingReserves(fetch, { chain_slug: params.chain, page_size: 1000 });
 }
