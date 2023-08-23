@@ -87,7 +87,7 @@
 			/>
 
 			<TopEntities
-				type="lending-reserves"
+				type="lending"
 				label="reserves"
 				title="Lowest APR lending reserves"
 				{chain}

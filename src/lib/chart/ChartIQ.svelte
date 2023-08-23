@@ -103,11 +103,6 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// display X-Axis time markers in UTC
 		chartEngine.setTimeZone(null, 'UTC');
 
-		// attach custom studies - e.g., volume, liquidity bar charts
-		for (const study of studies) {
-			CIQ.Studies.addStudy(chartEngine, study);
-		}
-
 		// set default formatter for x-axis crosshair date label
 		chartEngine.chart.xAxis.formatter = function (labelDate: Date) {
 			const { period, interval, timeUnit } = chartEngine.getPeriodicity();
@@ -179,6 +174,16 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		function update(...args: any) {
 			loading = true;
+
+			// clear attached studies
+			chartEngine.clear();
+
+			// attach custom studies - e.g., volume, liquidity bar charts
+			for (const study of studies) {
+				CIQ.Studies.addStudy(chartEngine, study);
+			}
+
+			// invoke update function returned from init callback (if provided)
 			resp?.update?.(...args);
 		}
 		update(deps);

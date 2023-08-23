@@ -20,9 +20,11 @@
 
 <style lang="postcss">
 	.entity-symbol {
-		display: flex;
+		display: grid;
+		grid-auto-flow: column;
 		gap: var(--space-sm);
 		align-items: center;
+		justify-content: flex-start;
 
 		& .icon {
 			display: grid;

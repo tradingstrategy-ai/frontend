@@ -4,27 +4,28 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable } from '$lib/components';
-	import { formatInterestRate } from '$lib/helpers/formatters';
+	import { Button, DataTable, EntitySymbol } from '$lib/components';
 	import BorrowAprCell from './BorrowAprCell.svelte';
+	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: LendingReserve[] | undefined = undefined;
-	export let totalRowCount = 0;
 	export let page = 0;
-	export let sort = 'variable_borrow_apr_latest';
-	export let direction: 'asc' | 'desc' = 'asc';
+	export let sort = 'tvl';
+	export let direction: 'asc' | 'desc' = 'desc';
 	export let hiddenColumns: string[] = [];
+	export let hideChainIcon = false;
 
 	const tableRows: Writable<LendingReserve[]> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows ?? [];
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
-			serverSide: true,
+			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination({ serverSide: true }),
+		page: addPagination({ initialPageIndex: page }),
 		clickable: addClickableRows({ id: 'cta' }),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
@@ -32,29 +33,37 @@
 	const columns = table.createColumns([
 		table.column({
 			accessor: 'asset_name',
-			header: 'Asset name'
+			header: 'Reserve',
+			cell: ({ value, row: { original } }) =>
+				createRender(EntitySymbol, {
+					type: 'blockchain',
+					slug: hideChainIcon ? undefined : original.chain_slug,
+					label: original.chain_name,
+					size: '1.25em'
+				}).slot(value)
 		}),
 		table.column({
 			accessor: 'asset_symbol',
 			header: 'Symbol'
 		}),
 		table.column({
-			accessor: 'protocol_name',
-			header: 'Protocol'
-		}),
-		table.column({
-			accessor: 'chain_name',
-			header: 'Blockchain'
+			id: 'tvl',
+			accessor: (row) => {
+				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
+				return tvl && Number(tvl);
+			},
+			header: 'TVL',
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			id: 'supply_apr_latest',
-			accessor: (row) => row?.additional_details?.supply_apr_latest,
+			accessor: (row) => row.additional_details?.supply_apr_latest,
 			header: 'Supply APR',
 			cell: ({ value }) => formatInterestRate(value)
 		}),
 		table.column({
 			id: 'variable_borrow_apr_latest',
-			accessor: (row) => row?.additional_details?.variable_borrow_apr_latest,
+			accessor: (row) => row.additional_details?.variable_borrow_apr_latest,
 			header: 'Borrow APR',
 			cell: ({ value, row }) => createRender(BorrowAprCell, { apr: value, reserve: row.original })
 		}),
@@ -68,13 +77,8 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
-	const { sortKeys } = tableViewModel.pluginStates.sort;
 	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
-	$: $pageIndex = page;
-	$: $serverItemCount = totalRowCount;
-	$: $sortKeys = [{ id: sort, order: direction }];
 	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
@@ -100,15 +104,7 @@
 				width: 20%;
 			}
 
-			& .protocol_name {
-				width: 20%;
-			}
-
-			& .chain_name {
-				width: 25%;
-			}
-
-			& :is(.supply_apr_latest, .variable_borrow_apr_latest) {
+			& :is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
 				width: 20%;
 				text-align: right;
 			}

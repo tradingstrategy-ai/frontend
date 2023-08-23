@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
-// redirect to global lending-reserves index for now
-export async function load() {
-	throw redirect(307, '/trading-view/lending-reserves');
+// redirect to chain/lending index for now
+export async function load({ params }) {
+	throw redirect(307, `/trading-view/${params.chain}/lending`);
 }
