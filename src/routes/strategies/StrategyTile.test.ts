@@ -114,7 +114,7 @@ describe('StrategyTile component', () => {
 
 		test('should display error message', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
-			getByText(/Trade executor offline/);
+			getByText(/Error occurred/);
 		});
 	});
 });

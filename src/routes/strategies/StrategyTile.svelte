@@ -38,8 +38,6 @@
 			return ['eth', 'usdc'];
 		}
 	}
-
-	$: console.log(strategy?.summary_statistics?.key_metrics);
 </script>
 
 <a
