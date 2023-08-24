@@ -13,12 +13,12 @@ For more information see:
 #### Usage
 ```tsx
 <Tooltip>
-	<span slot="trigger">
+	<span slot="trigger" class="underline">
 		a piece of text with underline
 	</span>
-	<div slot="popup">
+	<svelte:fragment slot="popup">
 		Hello there
-	</div>
+	</svelte:fragment>
 </Tooltip>
 ```
 -->
@@ -26,21 +26,19 @@ For more information see:
 	<span class="trigger">
 		<slot name="trigger" />
 	</span>
-	<span class="popup">
+	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
+	<button class="popup" disabled>
 		<slot name="popup" />
-	</span>
+	</button>
 </dfn>
 
 <style lang="postcss">
 	.tooltip {
-		&,
-		& :global(span) {
-			font-style: normal;
-		}
-
 		& .trigger {
+			font-style: normal;
 			cursor: pointer;
 
+			/* Utility class to provide affordance that the trigger is interactive */
 			& :global(.underline) {
 				border-bottom: 1px dotted hsla(var(--hsl-text-light));
 			}

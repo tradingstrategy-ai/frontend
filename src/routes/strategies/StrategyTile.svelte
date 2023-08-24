@@ -1,14 +1,15 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import { goto } from '$app/navigation';
 	import { Alert, Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import { fromUnixTime } from 'date-fns';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
-	import { browser } from '$app/environment';
 
 	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
 
+	const href = `/strategies/${strategy.id}`;
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const chartData = strategy?.summary_statistics?.performance_chart_90_days?.map(([ts, val]) => [
 		fromUnixTime(ts),
@@ -16,7 +17,7 @@
 	]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 
-	$: isBacktested = strategy?.summary_statistics?.key_metrics
+	const isBacktested = strategy?.summary_statistics?.key_metrics
 		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
 		: false;
 
@@ -40,14 +41,9 @@
 	}
 </script>
 
-<a
-	class="strategy-tile ds-3"
-	href={`/strategies/${strategy.id}`}
-	on:focus={focus}
-	on:mouseover={focus}
-	on:blur={blur}
-	on:mouseleave={blur}
->
+<!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="strategy-tile ds-3" on:click={() => goto(href)}>
 	<div class="visuals">
 		<div class="top">
 			<div class="tokens">
@@ -70,9 +66,7 @@
 							<Alert size="xs">Error occurred</Alert>
 						</svelte:fragment>
 						<svelte:fragment slot="popup">
-							{#if browser}
-								{@html errorHtml}
-							{/if}
+							{@html errorHtml}
 						</svelte:fragment>
 					</Tooltip>
 				</div>
@@ -109,21 +103,21 @@
 				<span class="backtest-data-badge">Backtested Metrics*</span>
 			{/if}
 		</div>
-		<div class="actions">
-			<Button size="md">View strategy</Button>
+		<div class="actions" on:click|stopPropagation>
+			<Button size="md" {href}>View strategy</Button>
 		</div>
 	</div>
-</a>
+</div>
 
 <style lang="postcss">
 	.strategy-tile {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
 		background: hsla(var(--hsla-box-1));
 		border: 1px hsla(var(--hsla-box-3)) solid;
 		border-radius: var(--radius-lg);
 		color: hsla(var(--hsl-text));
-		text-decoration: none;
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
+		cursor: pointer;
 		transition: var(--transition-1);
 
 		&:hover {

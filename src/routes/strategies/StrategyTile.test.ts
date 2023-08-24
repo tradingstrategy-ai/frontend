@@ -17,6 +17,20 @@ const baseStrategy = {
 };
 
 describe('StrategyTile component', () => {
+	// This test is intentionally checking for very specific markup:
+	// The strategy tile container element MUST NOT be an anchor tag.
+	// Otherwise, you end up with illegal element nesting with Tooltips
+	// that include anchor tags in the popup content. The illegal nesting
+	// leads to page jank (popup content is not hidden on initial page render).
+	test('should not be an anchor element', () => {
+		const { container } = render(StrategyTile, { strategy: baseStrategy });
+		const el = container.querySelector('.strategy-tile');
+		expect(el?.tagName).not.toBe('A');
+		// check for nested anchors just to be sure!
+		const nestedAnchors = container.querySelectorAll('a[href] a[href]');
+		expect(nestedAnchors).toHaveLength(0);
+	});
+
 	describe('with complete summary statistics', () => {
 		const strategy = {
 			...baseStrategy,
@@ -114,7 +128,10 @@ describe('StrategyTile component', () => {
 
 		test('should display error message', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
+			// check for tooltip trigger
 			getByText(/Error occurred/);
+			// check for tooltip popup content
+			const popup = getByText(/Trade executor offline/);
 		});
 	});
 });
