@@ -28,7 +28,9 @@ For more information see:
 	</span>
 	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
 	<button class="popup" disabled>
-		<slot name="popup" />
+		<div class="inner">
+			<slot name="popup" />
+		</div>
 	</button>
 </dfn>
 
@@ -49,14 +51,9 @@ For more information see:
 			position: absolute;
 			contain: content;
 			width: min(90vw, 32rem, auto);
-			padding: 1.125rem;
-			border: 1px solid hsla(var(--hsl-box-3));
-			border-radius: var(--radius-md);
-			background: hsla(var(--hsl-text-inverted));
-			box-shadow: var(--shadow-3);
-			font: var(--f-ui-small-light);
-			color: hsla(var(--hsl-text));
-			text-align: left;
+			padding: 0.25rem 0 0 0;
+			border: none;
+			background: transparent;
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
 
@@ -66,6 +63,18 @@ For more information see:
 				left: 0.5rem;
 				right: 0.5rem;
 				width: calc(100% - 1rem);
+				padding: 0;
+			}
+
+			& .inner {
+				padding: 1.125rem;
+				border: 1px solid hsla(var(--hsl-box-3));
+				border-radius: var(--radius-md);
+				background: hsla(var(--hsl-text-inverted));
+				box-shadow: var(--shadow-3);
+				font: var(--f-ui-small-light);
+				color: hsla(var(--hsl-text));
+				text-align: left;
 			}
 
 			& :global(a) {
