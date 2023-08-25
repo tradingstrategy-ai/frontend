@@ -24,7 +24,8 @@
 	<KeyMetric name="Profitability" metric={metrics.profitability} {backtestLink} {badgeSize}>
 		<svelte:fragment slot="value" let:value>
 			<UpDownIndicator {value} formatter={formatProfitability} let:direction let:formatted>
-				<DataBadge bearish={direction < 0} bullish={direction > 0} size={badgeSize}>
+				{@const status = direction > 0 ? 'bullish' : direction < 0 ? 'bearish' : 'default'}
+				<DataBadge size={badgeSize} {status}>
 					{formatted}
 				</DataBadge>
 			</UpDownIndicator>

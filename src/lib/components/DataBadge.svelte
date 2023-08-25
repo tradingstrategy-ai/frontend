@@ -1,30 +1,10 @@
 <script lang="ts">
-	export let alignRight: boolean | undefined = undefined;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'sm';
-	export let bullish: boolean | undefined = undefined;
-	export let bearish: boolean | undefined = undefined;
-	export let error: boolean | undefined = undefined;
-	export let success: boolean | undefined = undefined;
-	export let warning: boolean | undefined = undefined;
-
-	$: kind = bullish
-		? 'bullish'
-		: bearish
-		? 'bearish'
-		: error
-		? 'error'
-		: success
-		? 'success'
-		: warning
-		? 'warning'
-		: '';
-
-	let classes: string;
-
-	$: classes = `${size} ${kind} ${alignRight ? 'align-right' : ''}`;
+	export let status: 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default' = 'default';
+	export let align: 'center' | 'left' | 'right' = 'left';
 </script>
 
-<span class="data-badge {classes} ds-3">
+<span class="data-badge ds-3 {size} {status}" style:text-align={align}>
 	<span>
 		<slot />
 	</span>
@@ -45,10 +25,6 @@
 			align-items: center;
 			display: flex;
 			gap: 0.375rem;
-		}
-
-		&.align-right span {
-			text-align: right;
 		}
 
 		& .additional-value {
