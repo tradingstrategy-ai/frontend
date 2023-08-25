@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { DataBadge, Icon, Tooltip } from '$lib/components';
+	import { DataBadge, Icon, Tooltip, UpDownIndicator } from '$lib/components';
 	import StrategyDataDescription from './StrategyDataDescription.svelte';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -28,14 +28,12 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd data-testid="key-metric-profitability-value">
-				<DataBadge
-					bearish={metrics.profitability?.value < 0}
-					bullish={metrics.profitability?.value > 0}
-					size={badgeSize}
-				>
-					{metrics.profitability?.value > 0 ? '▲' : '▼'}
-					{formatPercent(metrics.profitability?.value)}
-				</DataBadge>
+				<UpDownIndicator value={metrics.profitability?.value} formatter={formatPercent} let:direction let:formatted>
+					<DataBadge bearish={direction < 0} bullish={direction > 0} size={badgeSize}>
+						{direction > 0 ? '▲' : direction < 0 ? '▼' : ''}
+						{formatted}
+					</DataBadge>
+				</UpDownIndicator>
 			</dd>
 		</svelte:fragment>
 		<StrategyDataDescription slot="popup" title="Profitability" metric={metrics.profitability} {backtestLink} />
