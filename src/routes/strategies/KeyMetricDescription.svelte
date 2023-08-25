@@ -4,7 +4,7 @@
 
 	export let backtestLink: string;
 	export let title: string;
-	export let metric: KeyMetric;
+	export let metric: KeyMetric | undefined;
 </script>
 
 <div class="strategy-data-description ds-3">
