@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Timestamp from './Timestamp.svelte';
+	import { Timestamp } from '$lib/components';
 
 	export let backtestLink: string;
 	export let title: string;

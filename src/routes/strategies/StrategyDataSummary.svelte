@@ -1,10 +1,8 @@
 <script lang="ts">
-	import DataBadge from './DataBadge.svelte';
-	import Icon from './Icon.svelte';
-	import Tooltip from './Tooltip.svelte';
-	import { formatDaysAgo, formatDollar, formatPercent } from '../helpers/formatters';
-	import StrategyDataDescription from './StrategyDataDescription.svelte';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import { DataBadge, Icon, Tooltip } from '$lib/components';
+	import StrategyDataDescription from './StrategyDataDescription.svelte';
+	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let backtestLink: string;

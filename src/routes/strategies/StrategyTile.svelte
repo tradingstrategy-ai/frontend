@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
-	import { Alert, Button, EntitySymbol, StrategyDataSummary, Tooltip } from '$lib/components';
+	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
+	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { fromUnixTime } from 'date-fns';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
