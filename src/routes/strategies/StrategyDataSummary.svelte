@@ -39,13 +39,12 @@
 				>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.profitability}
-				title="Profitability"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Profitability"
+			metric={strategy?.summary_statistics?.key_metrics?.profitability}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -60,13 +59,12 @@
 				>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.total_equity}
-				title="Total assets"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Total assets"
+			metric={strategy?.summary_statistics?.key_metrics?.total_equity}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -81,13 +79,12 @@
 				>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.max_drawdown}
-				title="Maximum drawdown"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Maximum drawdown"
+			metric={strategy?.summary_statistics?.key_metrics?.max_drawdown}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -101,13 +98,12 @@
 				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.started_at}
-				title="Age"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Age"
+			metric={strategy?.summary_statistics?.key_metrics?.started_at}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -120,13 +116,12 @@
 				<DataBadge size={badgeSize}>{strategy?.summary_statistics?.key_metrics?.sharpe.value?.toFixed(2)}</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.sharpe}
-				title="Sharpe"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Sharpe"
+			metric={strategy?.summary_statistics?.key_metrics?.sharpe}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -139,13 +134,12 @@
 				<DataBadge size={badgeSize}>{strategy?.summary_statistics?.key_metrics?.sortino.value?.toFixed(2)}</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<svelte:fragment slot="popup">
-			<StrategyDataDescription
-				{backtestLink}
-				metric={strategy?.summary_statistics?.key_metrics?.sortino}
-				title="Sortino"
-			/>
-		</svelte:fragment>
+		<StrategyDataDescription
+			slot="popup"
+			title="Sortino"
+			metric={strategy?.summary_statistics?.key_metrics?.sortino}
+			{backtestLink}
+		/>
 	</Tooltip>
 
 	<Tooltip>
@@ -167,9 +161,8 @@
 			</dd>
 		</svelte:fragment>
 		<svelte:fragment slot="popup">
-			This strategy's assets are managed using <strong
-				>{strategy?.on_chain_data?.asset_management_mode === 'enzyme' ? 'Enzyme vault' : 'Hot Wallet'}</strong
-			>
+			This strategy's assets are managed using
+			<strong>{strategy?.on_chain_data?.asset_management_mode === 'enzyme' ? 'Enzyme vault' : 'Hot Wallet'}</strong>
 		</svelte:fragment>
 	</Tooltip>
 </dl>

@@ -50,10 +50,7 @@
 				{#each getStrategyTokens(strategy) as slug}
 					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
-						<svelte:fragment slot="trigger">
-							<EntitySymbol type="token" size="var(--token-size)" {slug} />
-						</svelte:fragment>
-
+						<EntitySymbol slot="trigger" type="token" size="var(--token-size)" {slug} />
 						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
@@ -62,12 +59,8 @@
 			{#if errorHtml}
 				<div class="errors">
 					<Tooltip>
-						<svelte:fragment slot="trigger">
-							<Alert size="xs">Error occurred</Alert>
-						</svelte:fragment>
-						<svelte:fragment slot="popup">
-							{@html errorHtml}
-						</svelte:fragment>
+						<Alert slot="trigger" size="xs">Error occurred</Alert>
+						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
 				</div>
 			{/if}
@@ -82,9 +75,7 @@
 				<img src={strategy.icon_url} alt={strategy.name} />
 				<div class="chain-icon">
 					<Tooltip>
-						<svelte:fragment slot="trigger">
-							<EntitySymbol slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
-						</svelte:fragment>
+						<EntitySymbol slot="trigger" slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
 						<span slot="popup">
 							This strategy runs on <strong>{getChainSlug(strategy?.on_chain_data?.chain_id)}</strong> blockchain
 						</span>
