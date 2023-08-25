@@ -11,7 +11,6 @@
 	export let strategy: StrategyRuntimeState;
 
 	const href = `/strategies/${strategy.id}`;
-	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const summaryStatistics = strategy.summary_statistics || {};
 	const chartData = summaryStatistics.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
@@ -98,7 +97,7 @@
 			</div>
 		</header>
 		<div class="data">
-			<StrategyDataSummary {backtestLink} {strategy} />
+			<StrategyDataSummary {strategy} />
 
 			{#if isBacktested}
 				<span class="backtest-data-badge">Backtested Metrics*</span>

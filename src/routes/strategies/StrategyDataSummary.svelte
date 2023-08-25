@@ -5,8 +5,9 @@
 	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let backtestLink: string;
 	export let strategy: StrategyRuntimeState;
+
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
 
 	let badgeSize: 'md' | 'sm' = 'md';
 	let innerWidth: number;
