@@ -23,7 +23,7 @@
 <dl class="strategy-data-summary ds-3">
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Profitability</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -41,7 +41,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Total assets</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -56,7 +56,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Maximum drawdown</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -71,7 +71,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Age</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -86,7 +86,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Sharpe</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -101,7 +101,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Sortino</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -116,7 +116,7 @@
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
-			<dt class="label">
+			<dt>
 				<span>Assets management</span>
 				<Icon name="question-circle" />
 			</dt>
@@ -144,6 +144,7 @@
 		gap: 1.125rem;
 		list-style: none;
 		padding: 0;
+
 		@media (--viewport-sm-down) {
 			gap: 0.75rem;
 		}
@@ -156,60 +157,38 @@
 		@container (width > 512px) {
 			grid-template-columns: repeat(4, auto);
 
+			/* 1st and 2nd of 4 columns */
 			& :global(.tooltip:is(:nth-of-type(4n + 1), :nth-of-type(4n + 2)) .popup) {
-				left: 0;
 				right: 12.5%;
 			}
 
+			/* 3rd and 4th of 4 columns */
 			& :global(.tooltip:is(:nth-of-type(4n + 3), :nth-of-type(4n + 4)) .popup) {
-				left: 12.5% !important;
-				right: 0 !important;
+				left: 12.5%;
 			}
 		}
-	}
 
-	& dd {
-		margin: 0;
-	}
-
-	& strong {
-		font-weight: 700;
-	}
-
-	:global(.strategy-data-summary .tooltip) {
-		& dt span {
-			color: hsla(var(--hsl-text-light));
-			font: var(--f-ui-sm-medium);
-		}
-
-		& .label {
-			align-items: center;
+		& dt {
 			display: flex;
+			align-items: center;
 			gap: 0.375rem;
 			margin-bottom: 0.375rem;
-
-			& span {
-				white-space: nowrap;
-				overflow-x: hidden;
-				text-overflow: ellipsis;
-			}
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
+			color: hsla(var(--hsl-text-light));
+			--icon-size: 1.25em;
 
 			@media (--viewport-sm-down) {
+				gap: 0.25rem;
 				margin-bottom: 0.25rem;
-				& span {
-					font: var(--f-ui-xs-medium);
-				}
-
-				& :global(.icon) {
-					--size: 0.75rem !important;
-				}
+				font: var(--f-ui-xs-medium);
+				letter-spacing: var(--f-ui-xs-spacing);
 			}
 		}
 
 		& :global(.popup) {
 			left: 0;
 			right: 0;
-			translate: 0 0.25rem !important;
 		}
 	}
 </style>

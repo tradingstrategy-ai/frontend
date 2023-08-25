@@ -62,7 +62,6 @@ For more information see:
 				position: fixed;
 				left: 0.5rem;
 				right: 0.5rem;
-				width: calc(100% - 1rem);
 				padding: 0;
 			}
 
