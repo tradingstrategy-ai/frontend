@@ -23,9 +23,22 @@ of a single alert item.
 	export let title = '';
 </script>
 
-<AlertList {size} {status} let:AlertItem>
-	<AlertItem {title}>
-		<slot />
-		<slot slot="cta" name="cta" />
-	</AlertItem>
-</AlertList>
+<div class="alert" class:has-cta={$$slots.cta}>
+	<AlertList {size} {status} let:AlertItem>
+		<AlertItem {title}>
+			<slot />
+			<slot slot="cta" name="cta" />
+		</AlertItem>
+	</AlertList>
+</div>
+
+<style lang="postcss">
+	.alert {
+		display: contents;
+
+		/* can't conditionally include slot, so hide cta in child if not included */
+		&:not(.has-cta) :global(.alert-item .cta) {
+			display: none;
+		}
+	}
+</style>

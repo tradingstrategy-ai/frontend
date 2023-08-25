@@ -68,9 +68,11 @@
 		flex-wrap: wrap;
 		gap: 1.125rem;
 		list-style: none;
+		margin-block: 1.25rem;
 		padding: 0;
 
 		@media (--viewport-sm-down) {
+			margin-block: 0.75rem;
 			gap: 0.75rem;
 		}
 

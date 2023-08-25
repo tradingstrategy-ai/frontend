@@ -123,15 +123,10 @@
 			& :global(.tooltip .popup) {
 				width: 22rem;
 				right: 0;
-				top: calc(100% + 0.25rem);
 			}
 
 			& :global(.alert-item) {
 				container-type: unset;
-			}
-
-			& :global(.alert-item .cta) {
-				display: none;
 			}
 		}
 
@@ -287,13 +282,6 @@
 		&:is(:hover, :focus) .actions :global(.button) {
 			background: hsla(var(--hsl-text), 1);
 			color: hsla(var(--hsl-text-inverted));
-		}
-
-		& :global(.strategy-data-summary) {
-			margin-block: 1.25rem;
-			@media (--viewport-sm-down) {
-				margin-block: 0.75rem;
-			}
 		}
 	}
 </style>
