@@ -47,7 +47,18 @@ For more information see:
 		& .popup {
 			display: none;
 			position: absolute;
+			contain: content;
 			width: min(90vw, 32rem, auto);
+			padding: 1.125rem;
+			border: 1px solid hsla(var(--hsl-box-3));
+			border-radius: var(--radius-md);
+			background: hsla(var(--hsl-text-inverted));
+			box-shadow: var(--shadow-3);
+			font: var(--f-ui-small-light);
+			color: hsla(var(--hsl-text));
+			text-align: left;
+			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
+			z-index: 10000;
 
 			@media (--viewport-sm-down) {
 				bottom: 1rem;
@@ -56,32 +67,18 @@ For more information see:
 				right: 0.5rem;
 				width: calc(100% - 1rem);
 			}
+
+			& :global(a) {
+				text-decoration: underline;
+			}
+
+			& :global(p) {
+				margin-bottom: 0.5em;
+			}
 		}
 
 		&:is(:hover, :focus) .popup {
 			display: block;
-			text-align: left;
-
-			background: hsla(var(--hsl-text-inverted));
-			border: 1px solid hsla(var(--hsl-box-3));
-			border-radius: var(--radius-md);
-			box-shadow: var(--shadow-3);
-			color: hsla(var(--hsl-text));
-
-			font: var(--f-ui-small-light);
-
-			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
-			z-index: 10000;
-
-			padding: 1.125rem;
-		}
-
-		& :global(a) {
-			text-decoration: underline;
-		}
-
-		& :global(p) {
-			margin-bottom: 0.5em;
 		}
 	}
 </style>
