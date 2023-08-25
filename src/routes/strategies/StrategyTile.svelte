@@ -11,16 +11,14 @@
 
 	const href = `/strategies/${strategy.id}`;
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
-	const chartData = strategy?.summary_statistics?.performance_chart_90_days?.map(([ts, val]) => [
-		fromUnixTime(ts),
-		val
-	]);
+	const summaryStatistics = strategy.summary_statistics || {};
+	const chartData = summaryStatistics.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
+	const keyMetrics = summaryStatistics.key_metrics || {};
+	const isBacktested = Object.values(keyMetrics).some(({ source }) => source === 'backtesting');
 
-	const isBacktested = strategy?.summary_statistics?.key_metrics
-		? Object.values(strategy.summary_statistics.key_metrics).some((metric: any) => metric?.source === 'backtesting')
-		: false;
-
+	// FIXME: hack to get chain slug from chain ID;
+	// This should either come from strategy metadata or `chains` API
 	function getChainSlug(chain_id: number) {
 		switch (chain_id) {
 			case 1:
@@ -30,6 +28,8 @@
 		}
 	}
 
+	// FIXME: hack to infer list of tokens based on strategy ID;
+	// In the future this will come from the strategy configuration.
 	function getStrategyTokens({ id }: StrategyRuntimeState) {
 		if (id.includes('multipair')) {
 			return ['usdc'];
