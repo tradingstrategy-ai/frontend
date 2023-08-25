@@ -2,12 +2,15 @@
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { DataBadge, Icon, Tooltip } from '$lib/components';
 	import StrategyDataDescription from './StrategyDataDescription.svelte';
-	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let strategy: StrategyRuntimeState;
 
+	const metrics = strategy.summary_statistics?.key_metrics ?? {};
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
+	const hasEnzymeVault = strategy.on_chain_data?.asset_management_mode === 'enzyme';
+	const assetManagementLabel = hasEnzymeVault ? 'Enzyme vault' : 'Hot wallet';
 
 	let badgeSize: 'md' | 'sm' = 'md';
 	let innerWidth: number;
@@ -26,25 +29,16 @@
 			</dt>
 			<dd data-testid="key-metric-profitability-value">
 				<DataBadge
-					bearish={strategy?.summary_statistics?.key_metrics?.profitability.value < 0}
-					bullish={strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
+					bearish={metrics.profitability?.value < 0}
+					bullish={metrics.profitability?.value > 0}
 					size={badgeSize}
 				>
-					{#if strategy?.summary_statistics?.key_metrics?.profitability.value > 0}
-						▲
-					{:else}
-						▼
-					{/if}
-					{formatPercent(strategy?.summary_statistics?.key_metrics?.profitability.value)}</DataBadge
-				>
+					{metrics.profitability?.value > 0 ? '▲' : '▼'}
+					{formatPercent(metrics.profitability?.value)}
+				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Profitability"
-			metric={strategy?.summary_statistics?.key_metrics?.profitability}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Profitability" metric={metrics.profitability} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
@@ -54,17 +48,12 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd>
-				<DataBadge size={badgeSize}
-					>{formatDollar(strategy?.summary_statistics?.key_metrics?.total_equity.value)}</DataBadge
-				>
+				<DataBadge size={badgeSize}>
+					{formatDollar(metrics.total_equity?.value)}
+				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Total assets"
-			metric={strategy?.summary_statistics?.key_metrics?.total_equity}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Total assets" metric={metrics.total_equity} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
@@ -74,36 +63,27 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd>
-				<DataBadge size={badgeSize}
-					>{formatPercent(strategy?.summary_statistics?.key_metrics?.max_drawdown.value)}</DataBadge
-				>
+				<DataBadge size={badgeSize}>
+					{formatPercent(metrics.max_drawdown?.value)}
+				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Maximum drawdown"
-			metric={strategy?.summary_statistics?.key_metrics?.max_drawdown}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Maximum drawdown" metric={metrics.max_drawdown} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			<dt class="label">
 				<span>Age</span>
+				<Icon name="question-circle" />
 			</dt>
 			<dd>
 				<DataBadge size={badgeSize}>
-					{formatDaysAgo(strategy?.summary_statistics?.key_metrics?.started_at.value)}
+					{formatDaysAgo(metrics.started_at?.value)}
 				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Age"
-			metric={strategy?.summary_statistics?.key_metrics?.started_at}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Age" metric={metrics.started_at} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
@@ -113,15 +93,12 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd>
-				<DataBadge size={badgeSize}>{strategy?.summary_statistics?.key_metrics?.sharpe.value?.toFixed(2)}</DataBadge>
+				<DataBadge size={badgeSize}>
+					{formatNumber(metrics.sharpe?.value)}
+				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Sharpe"
-			metric={strategy?.summary_statistics?.key_metrics?.sharpe}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Sharpe" metric={metrics.sharpe} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
@@ -131,15 +108,12 @@
 				<Icon name="question-circle" />
 			</dt>
 			<dd>
-				<DataBadge size={badgeSize}>{strategy?.summary_statistics?.key_metrics?.sortino.value?.toFixed(2)}</DataBadge>
+				<DataBadge size={badgeSize}>
+					{formatNumber(metrics.sortino?.value)}
+				</DataBadge>
 			</dd>
 		</svelte:fragment>
-		<StrategyDataDescription
-			slot="popup"
-			title="Sortino"
-			metric={strategy?.summary_statistics?.key_metrics?.sortino}
-			{backtestLink}
-		/>
+		<StrategyDataDescription slot="popup" title="Sortino" metric={metrics.sortino} {backtestLink} />
 	</Tooltip>
 
 	<Tooltip>
@@ -150,19 +124,17 @@
 			</dt>
 			<dd>
 				<DataBadge size={badgeSize}>
-					{#if strategy?.on_chain_data?.asset_management_mode === 'enzyme'}
-						<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} height="20" width="20" />
-						<span>Enzyme vault</span>
+					{#if hasEnzymeVault}
+						<img alt={assetManagementLabel} src={getLogoUrl('token', 'enzyme')} height="20" width="20" />
 					{:else}
-						<img alt="Enzyme vault" src={getLogoUrl('wallet', 'metamask')} height="20" width="20" />
-						<span>Hot wallet</span>
+						<img alt={assetManagementLabel} src={getLogoUrl('wallet', 'metamask')} height="20" width="20" />
 					{/if}
+					<span>{assetManagementLabel}</span>
 				</DataBadge>
 			</dd>
 		</svelte:fragment>
 		<svelte:fragment slot="popup">
-			This strategy's assets are managed using
-			<strong>{strategy?.on_chain_data?.asset_management_mode === 'enzyme' ? 'Enzyme vault' : 'Hot Wallet'}</strong>
+			This strategy's assets are managed using <strong>{assetManagementLabel}</strong>
 		</svelte:fragment>
 	</Tooltip>
 </dl>

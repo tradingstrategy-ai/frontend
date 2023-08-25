@@ -1,9 +1,10 @@
 <script lang="ts">
+	import type { KeyMetric } from 'trade-executor/strategy/runtime-state';
 	import { Timestamp } from '$lib/components';
 
 	export let backtestLink: string;
 	export let title: string;
-	export let metric: any;
+	export let metric: KeyMetric;
 </script>
 
 <div class="strategy-data-description ds-3">
