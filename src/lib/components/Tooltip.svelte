@@ -13,67 +13,80 @@ For more information see:
 #### Usage
 ```tsx
 <Tooltip>
-	<span slot="trigger">
+	<span slot="trigger" class="underline">
 		a piece of text with underline
 	</span>
-	<div slot="popup">
+	<svelte:fragment slot="popup">
 		Hello there
-	</div>
+	</svelte:fragment>
 </Tooltip>
 ```
 -->
-<dfn class="tooltip">
+<dfn class="tooltip ds-3">
 	<span class="trigger">
 		<slot name="trigger" />
 	</span>
-	<button>
-		<slot name="popup" />
+	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
+	<button class="popup" disabled>
+		<div class="inner">
+			<slot name="popup" />
+		</div>
 	</button>
 </dfn>
 
 <style lang="postcss">
 	.tooltip {
 		& .trigger {
-			cursor: pointer;
-			/* Undo base CSS abbr font style */
 			font-style: normal;
+			cursor: pointer;
 
-			/* Give user hint the value is clickable / hoverable */
+			/* Utility class to provide affordance that the trigger is interactive */
 			& :global(.underline) {
 				border-bottom: 1px dotted hsla(var(--hsl-text-light));
 			}
 		}
 
-		& button {
+		& .popup {
 			display: none;
 			position: absolute;
-		}
-
-		/* Pop-up content */
-		&:is(:hover, :focus) button {
-			display: block;
-			text-align: left;
-
-			--c-accent: var(--hsl-box);
-			background: var(--c-background-4);
-			color: hsla(var(--hsl-text));
-			outline-color: var(--c-accent);
-			outline-offset: -1px;
-
-			font: var(--f-ui-small-light);
-
+			contain: content;
+			width: min(90vw, 32rem, auto);
+			padding: 0.25rem 0 0 0;
+			border: none;
+			background: transparent;
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
 
-			padding: var(--space-sl);
+			@media (--viewport-sm-down) {
+				bottom: 1rem;
+				position: fixed;
+				left: 0.5rem;
+				right: 0.5rem;
+				padding: 0;
+			}
+
+			& .inner {
+				padding: 1.125rem;
+				border: 1px solid hsla(var(--hsl-box-3));
+				border-radius: var(--radius-md);
+				background: hsla(var(--hsl-text-inverted));
+				box-shadow: var(--shadow-3);
+				font: var(--f-ui-small-light);
+				color: hsla(var(--hsl-text));
+				text-align: left;
+			}
+
+			& :global(a) {
+				text-decoration: underline;
+			}
+
+			& :global(p) {
+				margin-bottom: 0.5em;
+			}
 		}
 
-		& :global(a) {
-			text-decoration: underline;
-		}
-
-		& :global(p) {
-			margin-bottom: 0.5em;
+		&:is(:hover, :focus) .popup {
+			display: block;
 		}
 	}
 </style>

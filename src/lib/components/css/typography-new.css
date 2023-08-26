@@ -1,0 +1,131 @@
+.ds-3 {
+	--ff-article: 'Source Serif Pro', serif;
+	--ff-heading: 'Neue Haas Grotesk Display', system-ui, sans-serif;
+	--ff-mono: 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
+	--ff-paragraph: 'Neue Haas Grotesk Text', system-ui, sans-serif;
+	--ff-ui: 'Neue Haas Grotesk Text', system-ui, sans-serif;
+}
+
+.ds-3 {
+	--lh-article: 175%;
+	--lh-display: 125%;
+	--lh-mono: 175%;
+	--lh-paragraph: 150%;
+	--lh-ui: 125%;
+}
+
+.ds-3 {
+	--ls-article-md: -0.01rem;
+
+	--ls-paragraph-md: -0.01rem;
+	--ls-paragraph-lg: -0.01125rem;
+
+	--ls-ui-xxxs: 0.005rem;
+	--ls-ui-xxs: 0.00625rem;
+	--ls-ui-sm: 0.0125rem;
+	--ls-ui-md: -0.01rem;
+	--ls-ui-lg: -0.01125rem;
+	--ls-ui-xl: -0.01313rem;
+	--ls-ui-xxl: -0.015rem;
+	--ls-ui-xxxl: -0.01625rem;
+}
+
+.ds-3 {
+	--f-article-md-regular: 400 1rem/175% var(--ff-article);
+}
+
+.ds-3 {
+	--f-code-xs-regular: 400 0.75rem / var(--lh-mono) var(--ff-mono);
+	--f-code-xs-medium: 500 0.75rem / var(--lh-mono) var(--ff-mono);
+	--f-code-xs-bold: 700 0.75rem / var(--lh-mono) var(--ff-mono);
+
+	--f-code-sm-regular: 400 0.875rem / var(--lh-mono) var(--ff-mono);
+	--f-code-sm-medium: 500 0.875rem / var(--lh-mono) var(--ff-mono);
+	--f-code-sm-bold: 700 0.875rem / var(--lh-mono) var(--ff-mono);
+
+	--f-code-md-regular: 400 1rem / var(--lh-mono) var(--ff-mono);
+	--f-code-md-medium: 500 1rem / var(--lh-mono) var(--ff-mono);
+	--f-code-md-bold: 700 1rem / var(--lh-mono) var(--ff-mono);
+}
+
+.ds-3 {
+	--f-heading-xs-roman: 500 1.1875rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xs-medium: 600 1.1875rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xs-bold: 700 1.1875rem / var(--lh-display) var(--ff-heading);
+
+	--f-heading-sm-roman: 500 1.3125rem / var(--lh-display) var(--ff-heading);
+	--f-heading-sm-medium: 600 1.3125rem / var(--lh-display) var(--ff-heading);
+	--f-heading-sm-bold: 700 1.3125rem / var(--lh-display) var(--ff-heading);
+
+	--f-heading-md-roman: 500 1.4375rem / var(--lh-display) var(--ff-heading);
+	--f-heading-md-medium: 600 1.4375rem / var(--lh-display) var(--ff-heading);
+	--f-heading-md-bold: 700 1.4375rem / var(--lh-display) var(--ff-heading);
+
+	--f-heading-lg-roman: 500 1.625rem / var(--lh-display) var(--ff-heading);
+	--f-heading-lg-medium: 600 1.625rem / var(--lh-display) var(--ff-heading);
+	--f-heading-lg-bold: 700 1.625rem / var(--lh-display) var(--ff-heading);
+
+	--f-heading-xl-roman: 500 2rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xl-medium: 600 2rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xl-bold: 700 2rem / var(--lh-display) var(--ff-heading);
+
+	--f-heading-xxl-roman: 500 2.375rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xxl-medium: 600 2.375rem / var(--lh-display) var(--ff-heading);
+	--f-heading-xxl-bold: 700 2.375rem / var(--lh-display) var(--ff-heading);
+}
+
+.ds-3 {
+	--f-paragraph-xs-roman: 400 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-xs-medium: 500 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-xs-bold: 700 0.6875rem / var(--lh-paragraph) var(--ff-paragraph);
+
+	--f-paragraph-sm-roman: 400 0.8125rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-sm-medium: 500 0.8125rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-sm-bold: 700 0.8125rem / var(--lh-paragraph) var(--ff-paragraph);
+
+	--f-paragraph-md-roman: 400 1rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-md-medium: 500 1rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-md-bold: 700 1rem / var(--lh-paragraph) var(--ff-paragraph);
+
+	--f-paragraph-lg-roman: 400 1.125rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-lg-medium: 500 1.125rem / var(--lh-paragraph) var(--ff-paragraph);
+	--f-paragraph-lg-bold: 700 1.125rem / var(--lh-paragraph) var(--ff-paragraph);
+}
+
+.ds-3 {
+	--f-ui-xxxs-roman: 400 0.5rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxxs-medium: 500 0.5rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxxs-bold: 700 0.5rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-xxs-roman: 400 0.625rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxs-medium: 500 0.625rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxs-bold: 700 0.625rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-xs-roman: 400 0.6875rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xs-medium: 500 0.6875rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xs-bold: 700 0.6875rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-sm-roman: 400 0.8125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-sm-medium: 500 0.8125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-sm-bold: 700 0.8125rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-md-roman: 400 1rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-md-medium: 500 1rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-md-bold: 700 1rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-lg-roman: 400 1.125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-lg-medium: 500 1.125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-lg-bold: 700 1.125rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-xl-roman: 400 1.3125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xl-medium: 500 1.3125rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xl-bold: 700 1.3125rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-xxl-roman: 400 1.5rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxl-medium: 500 1.5rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxl-bold: 700 1.5rem / var(--lh-ui) var(--ff-ui);
+
+	--f-ui-xxxl-roman: 400 1.625rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxxl-medium: 500 1.625rem / var(--lh-ui) var(--ff-ui);
+	--f-ui-xxxl-bold: 700 1.625rem / var(--lh-ui) var(--ff-ui);
+}

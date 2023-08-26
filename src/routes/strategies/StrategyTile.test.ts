@@ -17,6 +17,20 @@ const baseStrategy = {
 };
 
 describe('StrategyTile component', () => {
+	// This test is intentionally checking for very specific markup:
+	// The strategy tile container element MUST NOT be an anchor tag.
+	// Otherwise, you end up with illegal element nesting with Tooltips
+	// that include anchor tags in the popup content. The illegal nesting
+	// leads to page jank (popup content is not hidden on initial page render).
+	test('should not be an anchor element', () => {
+		const { container } = render(StrategyTile, { strategy: baseStrategy });
+		const el = container.querySelector('.strategy-tile');
+		expect(el?.tagName).not.toBe('A');
+		// check for nested anchors just to be sure!
+		const nestedAnchors = container.querySelectorAll('a[href] a[href]');
+		expect(nestedAnchors).toHaveLength(0);
+	});
+
 	describe('with complete summary statistics', () => {
 		const strategy = {
 			...baseStrategy,
@@ -32,47 +46,62 @@ describe('StrategyTile component', () => {
 					sharpe: {
 						kind: 'sharpe',
 						source: 'backtesting',
-						value: 1.1730542398032315,
-						calculation_window_start_at: 1662390000,
-						calculation_window_end_at: 1686132000,
+						value: 3.9684764214657933,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'historical_data',
 						unavailability_reason: null,
 						help_link: 'https://tradingstrategy.ai/glossary/sharpe'
 					},
 					sortino: {
 						kind: 'sortino',
 						source: 'backtesting',
-						value: 2.391284951366129,
-						calculation_window_start_at: 1662390000,
-						calculation_window_end_at: 1686132000,
+						value: 14.67799033842019,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'historical_data',
 						unavailability_reason: null,
 						help_link: 'https://tradingstrategy.ai/glossary/sortino'
 					},
 					max_drawdown: {
 						kind: 'max_drawdown',
 						source: 'backtesting',
-						value: -0.06757552446733317,
-						calculation_window_start_at: 1662390000,
-						calculation_window_end_at: 1686132000,
+						value: 0.021535892651893596,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'historical_data',
 						unavailability_reason: null,
 						help_link: 'https://tradingstrategy.ai/glossary/maximum-drawdown'
 					},
 					profitability: {
 						kind: 'profitability',
 						source: 'backtesting',
-						value: 0.12017482229489884,
-						calculation_window_start_at: 1662390000,
-						calculation_window_end_at: 1686132000,
+						value: 0.12,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'historical_data',
 						unavailability_reason: null,
 						help_link: 'https://tradingstrategy.ai/glossary/profitability'
+					},
+					total_equity: {
+						kind: 'total_equity',
+						source: 'live_trading',
+						value: 2.328766,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'latest_value',
+						unavailability_reason: null,
+						help_link: 'https://tradingstrategy.ai/glossary/total-equity'
 					},
 					started_at: {
 						kind: 'started_at',
 						source: 'live_trading',
-						value: 1687523515,
-						calculation_window_start_at: 1662390000,
-						calculation_window_end_at: 1686132000,
+						value: 1687525301,
+						calculation_window_start_at: 1657296000,
+						calculation_window_end_at: 1672527600,
+						calculation_method: 'latest_value',
 						unavailability_reason: null,
-						help_link: null
+						help_link: 'https://tradingstrategy.ai/glossary/strategy-age'
 					}
 				}
 			}
@@ -99,7 +128,10 @@ describe('StrategyTile component', () => {
 
 		test('should display error message', async () => {
 			const { getByText } = render(StrategyTile, { strategy });
-			getByText(/Trade executor offline/);
+			// check for tooltip trigger
+			getByText(/Error occurred/);
+			// check for tooltip popup content
+			const popup = getByText(/Trade executor offline/);
 		});
 	});
 });

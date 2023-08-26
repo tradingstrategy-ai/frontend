@@ -14,6 +14,23 @@ type PerformanceTuple = [number, number];
 type Address = `0x${string}`;
 
 /**
+ * KeyMetric describes metadata attributes of key strategy performance metrics
+ *
+ * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/summary.py
+ */
+type KeyMetricKind = 'sharpe' | 'sortino' | 'max_drawdown' | 'profitability' | 'total_equity' | 'started_at';
+export interface KeyMetric {
+	kind: KeyMetricKind;
+	source: 'backtesting' | 'live_trading' | 'missing';
+	value: Nullable<number>;
+	calculation_window_start_at: Nullable<UnixTimestamp>;
+	calculation_window_end_at: Nullable<UnixTimestamp>;
+	calculation_method: 'historical_data' | 'latest_value' | null;
+	unavailability_reason: Nullable<string>;
+	help_link: Nullable<string>;
+}
+
+/**
  * StrategySummaryStatistics describes summary-level performance metrics for a strategy.
  *
  * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/summary.py
@@ -28,6 +45,7 @@ export interface StrategySummaryStatistics {
 	performance_chart_90_days: Nullable<PerformanceTuple[]>;
 	return_all_time: Nullable<number>;
 	return_annualised: Nullable<number>;
+	key_metrics: Record<KeyMetricKind, KeyMetric>;
 }
 
 /**

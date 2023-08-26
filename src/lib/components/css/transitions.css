@@ -1,0 +1,3 @@
+:root {
+	--transition-1: all var(--time-xs) ease-out;
+}
