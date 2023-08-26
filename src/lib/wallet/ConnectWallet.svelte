@@ -39,7 +39,7 @@
 	{/if}
 
 	{#if error}
-		<div transition:fade|local>
+		<div transition:fade>
 			<AlertList status="error" size="sm" let:AlertItem>
 				{#if error.name === 'ConnectorNotFoundError'}
 					<AlertItem title="Not found">
