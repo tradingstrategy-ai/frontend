@@ -35,7 +35,7 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 
 <div class="copy-widget">
 	{#key $copier}
-		<span transition:fade|local={{ duration: 100 }}>
+		<span transition:fade={{ duration: 100 }}>
 			<Icon name={$copier === 'idle' ? 'copy-to-clipboard' : 'check-square'} />
 		</span>
 	{/key}
