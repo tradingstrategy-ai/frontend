@@ -8,23 +8,19 @@
 	export let rows: BodyRow<any, any>[];
 	export let page: PaginationState | undefined;
 
-	function getRowIndex(pageIndex: number | undefined, pageSize: number | undefined, pageRowIndex: number) {
-		if (pageIndex !== undefined && pageSize !== undefined) {
-			return pageIndex * pageSize + pageRowIndex + 1;
+	const { pageIndex, pageSize } = page ?? {};
+
+	function getRowIndex(pageRowIndex: number) {
+		if ($pageIndex !== undefined && $pageSize !== undefined) {
+			return $pageIndex * $pageSize + pageRowIndex + 1;
 		}
 	}
 </script>
 
 <tbody {...attrs}>
 	{#each rows as row, pageRowIndex (row.id)}
-		<!-- prettier-ignore -->
-		<Subscribe
-			rowAttrs={row.attrs()} let:rowAttrs
-			rowProps={row.props()} let:rowProps
-			pageIndex={page?.pageIndex} let:pageIndex
-			pageSize={page?.pageSize} let:pageSize
-		>
-			{@const index = getRowIndex(pageIndex, pageSize, pageRowIndex)}
+		<Subscribe rowAttrs={row.attrs()} let:rowAttrs rowProps={row.props()} let:rowProps>
+			{@const index = getRowIndex(pageRowIndex)}
 			{#if rowProps.clickable}
 				<a href={row.cellForId[rowProps.clickable.id].value} style:display="contents">
 					<TableRow attrs={rowAttrs} cells={row.cells} {index} />
