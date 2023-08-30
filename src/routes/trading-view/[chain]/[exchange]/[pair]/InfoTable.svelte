@@ -56,6 +56,10 @@
 		<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest)} />
 	{/if}
 
+	{#if Number.isFinite(summary.pair_tvl)}
+		<TradingDataInfoRow label="TVL" value={formatDollar(summary.pair_tvl)} />
+	{/if}
+
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow label="Dollar exchange rate">
 			<svelte:fragment slot="value">
