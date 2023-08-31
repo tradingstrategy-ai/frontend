@@ -57,7 +57,12 @@
 		<h2>Trading pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} on:change={handlePairsChange} />
+			<PairTable
+				{...$pairsClient}
+				hideChainIcon
+				hiddenColumns={['liquidity_change_24h']}
+				on:change={handlePairsChange}
+			/>
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

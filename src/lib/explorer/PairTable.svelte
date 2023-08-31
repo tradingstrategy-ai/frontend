@@ -4,8 +4,9 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar, formatPriceChange, formatSwapFee, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange, formatValue } from '$lib/helpers/formatters';
 	import { Button, DataTable, UpDownCell } from '$lib/components';
+	import PairSymbolCell from './PairSymbolCell.svelte';
 
 	export let loading = false;
 	export let rows: PairIndexResponse['rows'] | undefined = undefined;
@@ -14,6 +15,7 @@
 	export let sort = 'volume_30d';
 	export let direction: 'asc' | 'desc' = 'desc';
 	export let hiddenColumns: string[] = [];
+	export let hideChainIcon = false;
 
 	const tableRows: Writable<PairIndexResponse['rows']> = writable([]);
 	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
@@ -30,21 +32,22 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: 'pair_symbol',
+			id: 'pair_symbol',
+			accessor: (row) => row,
 			header: 'Trading pair',
-			cell: ({ value }) => formatValue(value),
+			cell: ({ value: row }: { value: any }) =>
+				createRender(PairSymbolCell, {
+					chainSlug: hideChainIcon ? undefined : row.chain_slug,
+					chainName: row.chain_name,
+					symbol: row.pair_symbol,
+					swapFee: row.pair_swap_fee
+				}),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'exchange_name',
 			header: 'Exchange',
 			cell: ({ value }) => formatValue(value),
-			plugins: { sort: { disable: true } }
-		}),
-		table.column({
-			accessor: 'pair_swap_fee',
-			header: 'Fee',
-			cell: ({ value }) => formatSwapFee(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -61,19 +64,26 @@
 		table.column({
 			id: 'volume_30d', // must match sort key
 			accessor: 'usd_volume_30d',
-			header: 'Vol 30d USD',
+			header: 'Vol 30d',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			id: 'liquidity', // must match sort key
 			accessor: 'usd_liquidity_latest',
-			header: 'Liq USD',
+			header: 'Liquidity',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			accessor: 'liquidity_change_24h',
 			header: 'Liq Δ 24h',
 			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatPriceChange }),
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			id: 'tvl',
+			accessor: 'pair_tvl',
+			header: 'TVL',
+			cell: ({ value }) => formatDollar(value),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -106,36 +116,25 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			& :is(.pair_swap_fee, .usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h) {
-				text-align: right;
-				&:is(td) {
-					overflow: hidden;
-					text-overflow: ellipsis;
-				}
-			}
-
 			& tr:hover td {
 				position: relative;
 				overflow: visible;
 			}
 
-			& .pair_swap_fee {
-				max-width: 6rem;
+			& :is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
+				max-width: 12ch;
+				text-align: right;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
-			& .usd_price_latest {
-				max-width: 8.5rem;
+
+			& .pair_symbol {
+				min-width: 12rem;
 			}
-			& .price_change_24h {
-				max-width: 9rem;
-			}
-			& .volume_30d {
-				max-width: 9rem;
-			}
-			& .liquidity {
-				max-width: 7rem;
-			}
-			& .liquidity_change_24h {
-				max-width: 8rem;
+
+			& .exchange_name {
+				min-width: 6rem;
+				white-space: nowrap;
 			}
 		}
 	}
