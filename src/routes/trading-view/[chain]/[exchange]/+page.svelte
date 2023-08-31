@@ -6,7 +6,7 @@
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import { Alert, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import PairTable from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 
@@ -39,7 +39,7 @@
 			...Object.fromEntries($page.url.searchParams.entries())
 		});
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
+	async function handlePairsChange({ detail }: ComponentEvents<PairTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		detail.scrollToTop();
 	}
@@ -92,7 +92,7 @@
 		<h2>Trading Pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairsTable {...$pairsClient} {hiddenColumns} on:change={handlePairsChange} />
+			<PairTable {...$pairsClient} {hiddenColumns} on:change={handlePairsChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

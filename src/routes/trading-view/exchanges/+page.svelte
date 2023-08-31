@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ExchangesTable from '$lib/explorer/ExchangesTable.svelte';
+	import ExchangeTable from '$lib/explorer/ExchangeTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
 	export let data;
@@ -18,7 +18,7 @@
 		direction: q.get('direction') || 'desc'
 	};
 
-	async function handleChange({ detail }: ComponentEvents<ExchangesTable>['change']) {
+	async function handleChange({ detail }: ComponentEvents<ExchangeTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		detail.scrollToTop();
 	}
@@ -40,6 +40,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<ExchangesTable rows={data.exchanges} {...options} on:change={handleChange} />
+		<ExchangeTable rows={data.exchanges} {...options} on:change={handleChange} />
 	</Section>
 </main>
