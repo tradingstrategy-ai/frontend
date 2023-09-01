@@ -5,7 +5,7 @@
 	import type { ComponentEvents } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import PairTable from '$lib/explorer/PairTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 	import { formatAmount } from '$lib/helpers/formatters.js';
 
@@ -14,7 +14,7 @@
 
 	let loading = false;
 
-	async function handleChange({ detail }: ComponentEvents<PairsTable>['change']) {
+	async function handleChange({ detail }: ComponentEvents<PairTable>['change']) {
 		loading = true;
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		loading = false;
@@ -40,6 +40,13 @@
 	</Section>
 
 	<Section padding="sm">
-		<PairsTable {...pairs} {...options} {loading} on:change={handleChange} />
+		<PairTable
+			{...pairs}
+			{...options}
+			{loading}
+			hideChainIcon
+			hiddenColumns={'liquidity_change_24h'}
+			on:change={handleChange}
+		/>
 	</Section>
 </main>

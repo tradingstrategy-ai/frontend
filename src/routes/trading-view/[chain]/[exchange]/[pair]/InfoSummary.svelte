@@ -46,17 +46,20 @@
 		<strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong>
 		and is
 		<strong class={priceChangeColorClass}>
-			{formatPriceChange(summary.price_change_24h || null)}
+			{formatPriceChange(summary.price_change_24h)}
 			{summary.price_change_24h > 0 ? 'up' : summary.price_change_24h < 0 ? 'down' : ''}
 		</strong>
 		against US Dollar for the last 24h.
 	</p>
 
 	<p>
-		The pair has <strong>{formatDollar(summary.usd_volume_24h || null)}</strong>
+		The pair has <strong>{formatDollar(summary.usd_volume_24h)}</strong>
 		{#if summary.liquidity_type === 'xyliquidity'}
 			24h trading volume with
-			<strong>{formatDollar(summary.usd_liquidity_latest || null)}</strong> liquidity available at the moment.
+			<strong>{formatDollar(summary.usd_liquidity_latest)}</strong> liquidity available at the moment.
+		{:else if Number.isFinite(summary.pair_tvl)}
+			24h trading volume with
+			<strong>{formatDollar(summary.pair_tvl)}</strong> total value currently locked in the pool.
 		{:else}
 			24h trading volume.
 		{/if}

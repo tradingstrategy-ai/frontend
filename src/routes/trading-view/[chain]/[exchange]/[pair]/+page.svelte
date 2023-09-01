@@ -73,12 +73,12 @@ Render the pair trading page
 
 <main>
 	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
-		<svelte:fragment slot="title">
+		<span slot="title">
 			{summary.pair_symbol}
 			{#if isUniswapV3}
 				<span class="pool-swap-fee">{swapFee}</span>
 			{/if}
-		</svelte:fragment>
+		</span>
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="pair-info">

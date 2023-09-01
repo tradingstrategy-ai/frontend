@@ -2,6 +2,10 @@ import { render } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import SearchPanel from './SearchPanel.svelte';
 
+// use mock tradingEntities store so it doesn't try to make real search requests
+// see: src/lib/search/__mocks__/trading-entities.ts
+vi.mock('$lib/search/trading-entities');
+
 const defaultProps = {
 	q: '',
 	sortBy: 'liquidity',

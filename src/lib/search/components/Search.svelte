@@ -10,8 +10,8 @@ Display site-wide search box for use in top-nav.
 ```
 -->
 <script lang="ts">
-	import tradingEntities from './trading-entities';
-	import TradingEntityHit from './TradingEntityHit.svelte';
+	import tradingEntities from '../trading-entities';
+	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, TextInput } from '$lib/components';
 
 	let q = '';
@@ -99,8 +99,8 @@ Display site-wide search box for use in top-nav.
 
 			{#if hasQuery}
 				<ul id="search-results">
-					{#each hits as { document }, index (document.id)}
-						<TradingEntityHit {document} layout="basic" />
+					{#each hits as { document } (document.id)}
+						<SearchHit {document} />
 					{/each}
 				</ul>
 			{/if}

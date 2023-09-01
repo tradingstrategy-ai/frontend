@@ -6,7 +6,7 @@
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import { Alert, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairsTable from '$lib/explorer/PairsTable.svelte';
+	import PairTable from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 
@@ -20,14 +20,11 @@
 		[exchange.exchange_slug]: exchange.human_readable_name
 	};
 
-	// FIXME: it is preferable to use `liquidity_type === 'xyliquidity'` for below conditional,
-	// but this is not currently available from `exchange-details` endpoint.
-	// See: https://github.com/tradingstrategy-ai/backend/issues/110
 	let hiddenColumns: string[];
-	$: if (exchange.exchange_type === 'uniswap_v3') {
-		hiddenColumns = ['exchange_name', 'liquidity', 'liquidity_change_24h'];
+	$: if (exchange.liquidity_type === 'xyliquidity') {
+		hiddenColumns = ['exchange_name', 'tvl'];
 	} else {
-		hiddenColumns = ['exchange_name'];
+		hiddenColumns = ['exchange_name', 'liquidity', 'liquidity_change_24h'];
 	}
 
 	const pairsClient = getPairsClient(fetch);
@@ -39,7 +36,7 @@
 			...Object.fromEntries($page.url.searchParams.entries())
 		});
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairsTable>['change']) {
+	async function handlePairsChange({ detail }: ComponentEvents<PairTable>['change']) {
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		detail.scrollToTop();
 	}
@@ -92,7 +89,7 @@
 		<h2>Trading Pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairsTable {...$pairsClient} {hiddenColumns} on:change={handlePairsChange} />
+			<PairTable {...$pairsClient} {hiddenColumns} hideChainIcon on:change={handlePairsChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
