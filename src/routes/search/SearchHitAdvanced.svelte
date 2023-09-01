@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { SearchHit, SearchHitDescription } from '$lib/search';
+	import { SearchHit, SearchHitDescription } from '$lib/search/components';
 	import { UpDownCell } from '$lib/components';
 	import { formatDollar, formatPriceChange, formatInterestRate } from '$lib/helpers/formatters';
 

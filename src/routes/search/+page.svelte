@@ -8,7 +8,7 @@ Advanced Search page
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { tradingEntities } from '$lib/search';
+	import tradingEntities from '$lib/search/trading-entities';
 	import { PageHeader } from '$lib/components';
 	import FilterPanel from './FilterPanel.svelte';
 	import SearchPanel from './SearchPanel.svelte';
