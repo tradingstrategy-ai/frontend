@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { Icon, TextInput } from '$lib/components';
-	import TradingEntityHit from '$lib/search/TradingEntityHit.svelte';
+	import SearchHitAdvanced from './SearchHitAdvanced.svelte';
 	import SortSelect from './SortSelect.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -40,7 +40,7 @@
 	{#if hasSearch && hits.length > 0}
 		<ul>
 			{#each hits as { document } (document.id)}
-				<TradingEntityHit {document} layout="advanced" />
+				<SearchHitAdvanced {document} />
 			{/each}
 		</ul>
 	{:else if hasSearch}

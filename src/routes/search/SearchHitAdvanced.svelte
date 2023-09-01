@@ -1,0 +1,100 @@
+<script lang="ts">
+	import type { ComponentProps } from 'svelte';
+	import { SearchHit, SearchHitDescription } from '$lib/search';
+	import { UpDownCell } from '$lib/components';
+	import { formatDollar, formatPriceChange, formatInterestRate } from '$lib/helpers/formatters';
+
+	export let document: ComponentProps<SearchHit>['document'];
+
+	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
+	const isLendingReserve = document.type === 'lending_reserve';
+</script>
+
+<div class="search-hit-advanced">
+	<SearchHit {document} let:isLowQuality>
+		<SearchHitDescription {document} {isLowQuality} showWarningIcon />
+
+		{#if hasTradingData}
+			<div class="secondary">
+				<div>
+					<dt>Volume 24h</dt>
+					<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
+				</div>
+				<div>
+					<dt>Liquidity</dt>
+					<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
+				</div>
+			</div>
+		{:else if isLendingReserve}
+			{@const variableBorrowApr = document.variable_borrow_apr}
+			<div class="secondary">
+				<div>
+					<dt>Supply APR</dt>
+					<dd>{formatInterestRate(document.supply_apr)}</dd>
+				</div>
+				<div>
+					<dt>Variable Borrow APR</dt>
+					<dd>{variableBorrowApr > 0 ? formatInterestRate(variableBorrowApr) : 'N/A'}</dd>
+				</div>
+			</div>
+		{/if}
+
+		<svelte:fragment slot="price-info" let:hasPrice let:hasPriceChange>
+			{#if hasPrice || hasPriceChange}
+				<UpDownCell value={document.price_change_24h}>
+					{#if hasPrice}
+						<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
+					{/if}
+					{#if hasPriceChange}
+						<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
+					{/if}
+				</UpDownCell>
+			{/if}
+		</svelte:fragment>
+	</SearchHit>
+</div>
+
+<style>
+	.search-hit-advanced {
+		display: contents;
+		--search-hit-padding: var(--space-sm) var(--space-sl);
+
+		@media (--viewport-md-up) {
+			--search-hit-gap: var(--space-lg);
+			--search-hit-padding: var(--space-sl) var(--space-ml);
+			--search-hit-badge-font: var(--f-ui-sm-medium);
+			--search-hit-badge-spacing: var(--f-ui-sm-spacing, normal);
+			--search-hit-description-font: var(--f-ui-lg-medium);
+			--search-hit-description-spacing: var(--f-ui-lg-spacing, normal);
+		}
+
+		& .truncate {
+			white-space: nowrap;
+		}
+
+		& .secondary {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--space-xs);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-xs-roman);
+				letter-spacing: var(--f-ui-xs-spacing, normal);
+			}
+
+			& dt {
+				display: inline-block;
+				font-weight: 400;
+				white-space: nowrap;
+			}
+
+			& dd {
+				display: inline-block;
+				margin: 0;
+				font-weight: 700;
+			}
+		}
+	}
+</style>
