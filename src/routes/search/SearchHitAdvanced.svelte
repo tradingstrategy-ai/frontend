@@ -6,7 +6,7 @@
 
 	export let document: ComponentProps<SearchHit>['document'];
 
-	const hasTradingData = [document.liquidity, document.volume_24h, document.price_change_24h].some(Number.isFinite);
+	const hasTradingMetrics = [document.liquidity, document.tvl, document.volume_24h].some(Number.isFinite);
 	const isLendingReserve = document.type === 'lending_reserve';
 </script>
 
@@ -14,16 +14,23 @@
 	<SearchHit {document} let:isLowQuality>
 		<SearchHitDescription {document} {isLowQuality} showWarningIcon />
 
-		{#if hasTradingData}
+		{#if hasTradingMetrics}
 			<div class="secondary">
 				<div>
 					<dt>Volume 24h</dt>
 					<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
 				</div>
-				<div>
-					<dt>Liquidity</dt>
-					<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
-				</div>
+				{#if Number.isFinite(document.tvl)}
+					<div>
+						<dt>TVL</dt>
+						<dd>{formatDollar(document.tvl, 1, 1)}</dd>
+					</div>
+				{:else if document.liquidity}
+					<div>
+						<dt>Liquidity</dt>
+						<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
+					</div>
+				{/if}
 			</div>
 		{:else if isLendingReserve}
 			{@const variableBorrowApr = document.variable_borrow_apr}

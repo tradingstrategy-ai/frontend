@@ -16,18 +16,27 @@ props.
 	import { Icon, UpDownCell } from '$lib/components';
 	import SearchHitDescription from './SearchHitDescription.svelte';
 
-	// Any token with less than this liquidity is grayed out in the search results
-	const LIQUIDITY_QUALITY_THRESHOLD = 50_000;
-
 	// object returned by Typesense `tradingEntity` search hits; see:
 	// https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
 	export let document: DocumentSchema;
 
+	// Pairs below quality threshold are grayed out in the search results.
+	// TVL is typically approximately 2 x liquidity, so we double the quality threshold.
+	const QUALITY_THRESHOLD: Record<string, number> = {
+		liquidity: 50_000,
+		tvl: 100_000
+	};
+
+	const belowQualityThreshold = document.quality_factors?.some((factor: string) => {
+		const value = document[factor];
+		const threshold = QUALITY_THRESHOLD[factor];
+		return Number.isFinite(value) && Number.isFinite(threshold) && value < threshold;
+	});
+
 	// flag low quality results
-	const hasLiquidityFactor = document.quality_factors?.includes('liquidity');
-	const hasLowLiquidity = hasLiquidityFactor && document.liquidity < LIQUIDITY_QUALITY_THRESHOLD;
 	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
-	const isLowQuality = hasLowLiquidity || isIncompatibleExchange;
+
+	const isLowQuality = belowQualityThreshold || isIncompatibleExchange;
 
 	const hasPrice = Number.isFinite(document.price_change_24h);
 	const hasPriceChange = Number.isFinite(document.price_change_24h);
@@ -40,7 +49,7 @@ props.
 
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
-		if (hasLowLiquidity) return 'Warning: low liquidity';
+		if (belowQualityThreshold) return 'Warning: low TVL or liquidity';
 	}
 </script>
 
