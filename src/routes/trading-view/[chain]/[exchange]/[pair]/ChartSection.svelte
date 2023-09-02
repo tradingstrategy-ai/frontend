@@ -24,14 +24,13 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let pairSymbol: string;
 	export let exchangeType: string;
 	export let firstTradeDate: string;
+	export let hasTvlData = false;
 
 	const chartLinker = new ChartLinker();
 
-	// Compatibility layer for old/new `xyliquidity` and `candles` payloads; simplify expected
-	// `data` to `Record<string, Candle[]>` after backend#192 and backend#196 are deployed
-	function dataToQuotes(data: Candle[] | Record<string, Candle[]>) {
-		const candles = data instanceof Array ? data : data[pairId];
-		return candles.map(candleToQuote);
+	function dataToQuotes(data: Record<string, Candle[]>) {
+		const candles = data[pairId];
+		return candles ? candles.map(candleToQuote) : [];
 	}
 
 	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
@@ -63,7 +62,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		{exchangeType}
 		{firstTradeDate}
 		{timeBucket}
-		feed={quoteFeed('candles', dataToQuotes)}
+		feed={quoteFeed('candles', { candle_type: 'price' }, dataToQuotes)}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
 	>
@@ -73,31 +72,49 @@ for the same hovered date. Also displays a time-bucket selector.
 	</PairCandleChart>
 </div>
 
-<div class="chart-wrapper">
-	<div class="chart-title">
-		<h3>Liquidity</h3>
-		<div class="help">
-			<span class="prefix">expressed as</span>
-			<a
-				class="body-link"
-				target="_blank"
-				rel="noreferrer"
-				href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model"
-			>
-				USD value of one side of XY liquidity curve
-			</a>
+{#if exchangeType === 'uniswap_v3'}
+	<div class="chart-wrapper">
+		<div class="chart-title">
+			<h3>TVL</h3>
+			<div class="help">Some help text about TVL here.</div>
 		</div>
+		{#if hasTvlData}
+			<PairCandleChart
+				{pairId}
+				{pairSymbol}
+				{exchangeType}
+				{firstTradeDate}
+				{timeBucket}
+				feed={quoteFeed('candles', { candle_type: 'tvl' }, dataToQuotes)}
+				linker={chartLinker}
+			/>
+		{:else}
+			<div class="not-available">TVL chart is not currently available for {pairSymbol}.</div>
+		{/if}
 	</div>
-	{#if exchangeType === 'uniswap_v3'}
-		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
-	{:else}
+{:else}
+	<div class="chart-wrapper">
+		<div class="chart-title">
+			<h3>Liquidity</h3>
+			<div class="help">
+				<span class="prefix">expressed as</span>
+				<a
+					class="body-link"
+					target="_blank"
+					rel="noreferrer"
+					href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model"
+				>
+					USD value of one side of XY liquidity curve
+				</a>
+			</div>
+		</div>
 		<PairCandleChart
 			{pairId}
 			{pairSymbol}
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}
-			feed={quoteFeed('xyliquidity', dataToQuotes)}
+			feed={quoteFeed('xyliquidity', null, dataToQuotes)}
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
@@ -108,8 +125,8 @@ for the same hovered date. Also displays a time-bucket selector.
 				<HudMetric label="Vol Removed" value={formatter(cursor.data.rv)} direction={-1} />
 			</HudRow>
 		</PairCandleChart>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style lang="postcss">
 	.chart-header {
