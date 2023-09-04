@@ -141,6 +141,7 @@ Render the pair trading page
 			pairId={summary.pair_id}
 			pairSymbol={summary.pair_symbol}
 			exchangeType={summary.exchange_type}
+			hasTvlData={Number.isFinite(summary.pair_tvl)}
 			firstTradeDate={details.first_trade_at}
 		/>
 	</section>

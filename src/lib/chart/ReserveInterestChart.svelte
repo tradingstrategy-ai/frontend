@@ -23,7 +23,7 @@
 	$: symbol = `${chain_slug}-${protocol_slug}-${reserve_slug}`.toUpperCase();
 	$: periodicity = timeBucketToPeriodicity(timeBucket);
 
-	const feed = quoteFeed('lending-reserve/candles', (data: any) => {
+	const feed = quoteFeed('lending-reserve/candles', null, (data: any) => {
 		return data[primaryRate].map((candle: Candle, idx: number) => {
 			const quote = candleToQuote(candle);
 			for (const type in rateTypes) {

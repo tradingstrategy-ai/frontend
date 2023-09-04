@@ -77,13 +77,18 @@ function hasMoreAvailable(startDate: Date, firstQuoteDate: MaybeDate) {
 	return firstQuoteDate ? startDate > firstQuoteDate : true;
 }
 
-export function quoteFeed(endpoint: string, responseDataToQuotes: DataToQuotes = candlesToQuotes) {
+export function quoteFeed(
+	endpoint: string,
+	feedParams: Maybe<Record<string, string>> = {},
+	responseDataToQuotes: DataToQuotes = candlesToQuotes
+) {
 	let lastRequest = {};
 
 	async function fetchData(_: string, startDate: Date, endDate: Date, params: any, callback: Function) {
 		const { symbolObject } = params.stx.chart;
 
 		const urlParams = {
+			...feedParams,
 			...symbolObject.urlParams,
 			start: dateUrlParam(startDate),
 			end: dateUrlParam(endDate)

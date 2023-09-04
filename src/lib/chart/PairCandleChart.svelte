@@ -20,9 +20,10 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 ```
 -->
 <script lang="ts">
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import type { ChartLinker, QuoteFeed, TimeBucket } from '$lib/chart';
 	import { timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
+	import { Alert } from '$lib/components';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 
 	export let feed: QuoteFeed;
 	export let pairId: number | string;
@@ -37,6 +38,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
+
+	// assume chart has data until we determine otherwise (see `loadChart` below)
+	let hasData = true;
 
 	function formatForHud(value: number) {
 		return formatDollar(value, 3, 3, '');
@@ -75,7 +79,9 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 				firstQuoteDate: firstTradeDate && new Date(firstTradeDate)
 			};
 			// load the chart
-			chartEngine.loadChart(symbol, { periodicity });
+			chartEngine.loadChart(symbol, { periodicity }, () => {
+				hasData = Boolean(chartEngine.chart.masterData.length);
+			});
 		}
 
 		return { update };
@@ -109,4 +115,25 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 
 		<slot name="hud-row-volume" {cursor} formatter={formatForHud} />
 	{/if}
+
+	{#if !hasData}
+		<div class="no-chart-data">
+			<Alert size="md" status="warning" title="No data available">
+				No chart data available for <strong>{pairSymbol}</strong> at <strong>{timeBucket}</strong> time bucket. Try
+				switching to a candle length of <strong>1d</strong> or greater.
+			</Alert>
+		</div>
+	{/if}
 </ChartIQ>
+
+<style lang="postcss">
+	.no-chart-data {
+		max-width: min(65ch, 90vw);
+		margin-top: 2rem;
+		margin-inline: auto;
+
+		@media (--viewport-sm-up) {
+			padding-right: 3.75rem;
+		}
+	}
+</style>

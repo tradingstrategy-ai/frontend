@@ -19,19 +19,19 @@ for the same hovered date. Also displays a time-bucket selector.
 	import type { TimeBucket } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
 	import { ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
+	import { Alert } from '$lib/components';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
 	export let exchangeType: string;
 	export let firstTradeDate: string;
+	export let hasTvlData = false;
 
 	const chartLinker = new ChartLinker();
 
-	// Compatibility layer for old/new `xyliquidity` and `candles` payloads; simplify expected
-	// `data` to `Record<string, Candle[]>` after backend#192 and backend#196 are deployed
-	function dataToQuotes(data: Candle[] | Record<string, Candle[]>) {
-		const candles = data instanceof Array ? data : data[pairId];
-		return candles.map(candleToQuote);
+	function dataToQuotes(data: Record<string, Candle[]>) {
+		const candles = data[pairId];
+		return candles ? candles.map(candleToQuote) : [];
 	}
 
 	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
@@ -47,14 +47,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		<h3>Price & volume</h3>
 		<div class="help">
 			<span class="prefix">expressed as</span>
-			<a
-				class="body-link"
-				target="_blank"
-				rel="noreferrer"
-				href="https://tradingstrategy.ai/docs/glossary.html#term-OHLCV"
-			>
-				OHLCV candles
-			</a>
+			<a class="body-link" target="_blank" href="/glossary/ohlcv">OHLCV candles</a>
 		</div>
 	</div>
 	<PairCandleChart
@@ -63,7 +56,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		{exchangeType}
 		{firstTradeDate}
 		{timeBucket}
-		feed={quoteFeed('candles', dataToQuotes)}
+		feed={quoteFeed('candles', { candle_type: 'price' }, dataToQuotes)}
 		studies={['Volume Underlay']}
 		linker={chartLinker}
 	>
@@ -73,31 +66,51 @@ for the same hovered date. Also displays a time-bucket selector.
 	</PairCandleChart>
 </div>
 
-<div class="chart-wrapper">
-	<div class="chart-title">
-		<h3>Liquidity</h3>
-		<div class="help">
-			<span class="prefix">expressed as</span>
-			<a
-				class="body-link"
-				target="_blank"
-				rel="noreferrer"
-				href="https://tradingstrategy.ai/docs/glossary.html#term-XY-liquidity-model"
-			>
-				USD value of one side of XY liquidity curve
-			</a>
+{#if exchangeType === 'uniswap_v3'}
+	<div class="chart-wrapper">
+		<div class="chart-title">
+			<h3>TVL</h3>
+			<div class="help">
+				<span class="prefix">expressed as</span>
+				<a class="body-link" target="_blank" href="/glossary/total-value-locked">USD value of total value locked</a>
+			</div>
 		</div>
+		{#if hasTvlData}
+			<PairCandleChart
+				{pairId}
+				{pairSymbol}
+				{exchangeType}
+				{firstTradeDate}
+				{timeBucket}
+				feed={quoteFeed('candles', { candle_type: 'tvl' }, dataToQuotes)}
+				linker={chartLinker}
+			/>
+		{:else}
+			<div class="no-chart-data">
+				<Alert size="md" status="warning" title="No data available">
+					TVL chart data not currently available for <strong>{pairSymbol}</strong>
+				</Alert>
+			</div>
+		{/if}
 	</div>
-	{#if exchangeType === 'uniswap_v3'}
-		<div class="not-available">Liquidity chart is not currently available for Uniswap V3 trading pairs.</div>
-	{:else}
+{:else}
+	<div class="chart-wrapper">
+		<div class="chart-title">
+			<h3>Liquidity</h3>
+			<div class="help">
+				<span class="prefix">expressed as</span>
+				<a class="body-link" target="_blank" href="/glossary/xy-liquidity-model">
+					USD value of one side of XY liquidity curve
+				</a>
+			</div>
+		</div>
 		<PairCandleChart
 			{pairId}
 			{pairSymbol}
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}
-			feed={quoteFeed('xyliquidity', dataToQuotes)}
+			feed={quoteFeed('xyliquidity', null, dataToQuotes)}
 			studies={['Liquidity AR']}
 			linker={chartLinker}
 		>
@@ -108,8 +121,8 @@ for the same hovered date. Also displays a time-bucket selector.
 				<HudMetric label="Vol Removed" value={formatter(cursor.data.rv)} direction={-1} />
 			</HudRow>
 		</PairCandleChart>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style lang="postcss">
 	.chart-header {
@@ -175,13 +188,9 @@ for the same hovered date. Also displays a time-bucket selector.
 		min-width: 4.5em;
 	}
 
-	.not-available {
-		display: flex;
-		justify-content: center;
-		text-align: center;
+	.no-chart-data {
+		padding-block: 2rem;
+		padding-inline: calc((100vw - min(70ch, 90vw)) / 2);
 		border-bottom: 1px solid #999;
-		padding-block: var(--space-xl);
-		font: var(--f-ui-body-medium);
-		color: var(--c-text-7-v1);
 	}
 </style>
