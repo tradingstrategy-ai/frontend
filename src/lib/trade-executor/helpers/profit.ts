@@ -1,5 +1,5 @@
-// we need move needle 0.25% before calling it moving
-export const PROFITABILITY_THRESHOLD = 0.0025;
+// we need move needle 1 basis point (0.01%) before calling it moving
+export const PROFITABILITY_THRESHOLD = 0.0001;
 
 /**
  * Determine profitability above/below threshold

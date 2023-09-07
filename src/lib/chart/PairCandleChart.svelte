@@ -43,7 +43,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	let hasData = true;
 
 	function formatForHud(value: number) {
-		return formatDollar(value, 3, 3, '');
+		return formatDollar(value, 3, 3, false);
 	}
 
 	const options = {
