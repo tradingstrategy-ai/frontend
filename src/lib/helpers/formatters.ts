@@ -98,7 +98,7 @@ export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDi
  * @param options - additional options to pass through to `toLocaleString()`
  */
 export function formatNumber(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, options = {}) {
-	if (minDigits < 1) throw new RangeError('minDigits must be >= 1');
+	if (minDigits < 0) throw new RangeError('minDigits must be >= 0');
 	if (maxPrecision < minDigits) throw new RangeError('maxDigits must be >= minDigits');
 
 	if (!Number.isFinite(n)) return notFilledMarker;
@@ -116,8 +116,10 @@ export function formatNumber(n: MaybeNumber, minDigits = 2, maxPrecision = minDi
 		...options
 	});
 
+	if (minDigits === 0 && maxPrecision === 0) return v1;
+
 	const v2 = n.toLocaleString('en-US', {
-		minimumSignificantDigits: minDigits,
+		minimumSignificantDigits: minDigits || 1,
 		maximumSignificantDigits: maxPrecision,
 		...options
 	});

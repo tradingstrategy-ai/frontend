@@ -3,7 +3,7 @@
  *
  * (see $lib/helpers/formatters for other general-use formatters)
  */
-import { formatDollar, formatNumber, notFilledMarker } from '$lib/helpers/formatters';
+import { formatDollar, formatNumber } from '$lib/helpers/formatters';
 import { PROFITABILITY_THRESHOLD } from './profit';
 
 /**
@@ -23,7 +23,7 @@ export function formatTokenAmount(n: MaybeNumberOrString, minDigits = 2, maxPrec
 
 /**
  * Format how much profit a position has made.
- * @param n
+ * @param n - number to format
  */
 export function formatProfitability(n: number): string {
 	const absN = Math.abs(n);
@@ -37,15 +37,8 @@ export function formatProfitability(n: number): string {
  *
  * No unit suffix added.
  *
- * @param n
+ * @param n - decimal value to format as basis points
  */
-export function formatBPS(n: number): string {
-	if (!n) {
-		return notFilledMarker;
-	}
-
-	return (Math.abs(n) * 10000).toLocaleString('en', {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0
-	});
+export function formatBPS(n: MaybeNumber) {
+	return formatNumber(n * 10_000, 0);
 }
