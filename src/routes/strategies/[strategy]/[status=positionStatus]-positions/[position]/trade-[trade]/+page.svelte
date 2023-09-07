@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { BlockchainTransaction } from 'trade-executor/state/interface';
-	import { formatAmount, formatBPS } from 'trade-executor/helpers/formatters';
-	import { formatPrice } from '$lib/helpers/formatters';
+	import { formatBPS } from 'trade-executor/helpers/formatters';
+	import { formatAmount, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
