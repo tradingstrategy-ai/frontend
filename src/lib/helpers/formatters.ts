@@ -72,7 +72,7 @@ export function formatSizeGigabytes(n: MaybeNumber): string {
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
  * @param showPrefix - whether to show "$" prefix (default = true)
  */
-export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, showPrefix = true): string {
+export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, showPrefix = true) {
 	const style = showPrefix ? 'currency' : 'decimal';
 	const options = { style, currency: 'USD', notation: 'compact', compactDisplay: 'short' };
 	return formatNumber(n, minDigits, maxPrecision, options);

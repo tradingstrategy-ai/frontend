@@ -3,7 +3,7 @@
  *
  * (see $lib/helpers/formatters for other general-use formatters)
  */
-import { formatNumber, notFilledMarker } from '$lib/helpers/formatters';
+import { formatDollar, formatNumber, notFilledMarker } from '$lib/helpers/formatters';
 import { PROFITABILITY_THRESHOLD } from './profit';
 
 /**
@@ -11,91 +11,14 @@ import { PROFITABILITY_THRESHOLD } from './profit';
  *
  * Useful to display token amounts.
  *
- * @param n
- * @param minFrag
- * @param maxFrag
+ * @param n - number to format
+ * @param minDigits - minimum number of digits to display (default = 2)
+ * @param maxPrecision - maximum number of significant digits (default = minDigits)
  */
-export function formatTokenAmount(x: MaybeNumberOrString, minFrag = 2, maxFrag = 2, prefix = ''): string {
-	// Token quantities come from the API as strings,
-	// because JavaScript float 64 bit cannot present quantities accurately.
-	// Because we are presenting this number to the user,
-	// the accuracy can be lost here.
-	if (typeof x == 'string') {
-		x = parseFloat(x);
-	}
-
-	// Plz avoid ending here
-	if (!Number.isFinite(x)) return notFilledMarker;
-
-	// Consider negative quantities
-	const n = Math.abs(x);
-
-	if (n === 0) {
-		return `${prefix}0`;
-	}
-
-	if (n < 0.000001) {
-		return (
-			prefix +
-			x.toLocaleString('en', {
-				minimumFractionDigits: 10,
-				maximumFractionDigits: 10
-			})
-		);
-	} else if (n < 0.0001) {
-		return (
-			prefix +
-			x.toLocaleString('en', {
-				minimumFractionDigits: 7,
-				maximumFractionDigits: 7
-			})
-		);
-	} else if (n < 1) {
-		// Format funny tokens
-		const res =
-			prefix +
-			x.toLocaleString('en', {
-				maximumFractionDigits: 5
-			});
-		return res;
-	}
-
-	if (n >= 1000 * 1000 * 1000) {
-		return (
-			prefix +
-			(x / (1000 * 1000 * 1000)).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'B'
-		);
-	} else if (n >= 1000 * 1000) {
-		return (
-			prefix +
-			(x / (1000 * 1000)).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'M'
-		);
-	} else if (n >= 1000) {
-		return (
-			prefix +
-			(x / 1000).toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			}) +
-			'k'
-		);
-	} else {
-		return (
-			prefix +
-			x.toLocaleString('en', {
-				minimumFractionDigits: minFrag,
-				maximumFractionDigits: maxFrag
-			})
-		);
-	}
+export function formatTokenAmount(n: MaybeNumberOrString, minDigits = 2, maxPrecision = minDigits) {
+	// Token quantities come from the API as strings. Because JavaScript numbers (IEEE 754 floats)
+	// cannot represent quantities accurately, some precision may be lost in the conversion.
+	return formatDollar(parseFloat(n), minDigits, maxPrecision, false);
 }
 
 /**
