@@ -3,11 +3,8 @@
  *
  * (see $lib/helpers/formatters for other general-use formatters)
  */
-
+import { formatNumber, notFilledMarker } from '$lib/helpers/formatters';
 import { PROFITABILITY_THRESHOLD } from './profit';
-
-type MaybeNumber = number | null | undefined;
-const notFilledMarker = '---';
 
 /**
  * Format extreme large or small amounts human friendly manner.
@@ -18,7 +15,7 @@ const notFilledMarker = '---';
  * @param minFrag
  * @param maxFrag
  */
-export function formatTokenAmount(x: MaybeNumber | string, minFrag = 2, maxFrag = 2, prefix = ''): string {
+export function formatTokenAmount(x: MaybeNumberOrString, minFrag = 2, maxFrag = 2, prefix = ''): string {
 	// Token quantities come from the API as strings,
 	// because JavaScript float 64 bit cannot present quantities accurately.
 	// Because we are presenting this number to the user,
@@ -106,27 +103,10 @@ export function formatTokenAmount(x: MaybeNumber | string, minFrag = 2, maxFrag 
  * @param n
  */
 export function formatProfitability(n: number): string {
-	if (n === undefined || n === null) {
-		return notFilledMarker;
-	}
-
-	let symbol;
-	if (Math.abs(n) < PROFITABILITY_THRESHOLD) {
-		symbol = '▪️ ';
-	} else if (n > 0) {
-		symbol = '▲ ';
-	} else {
-		symbol = '▼ ';
-	}
-
-	return (
-		symbol +
-		(Math.abs(n) * 100).toLocaleString('en', {
-			minimumFractionDigits: 1,
-			maximumFractionDigits: 1
-		}) +
-		'%'
-	);
+	const absN = Math.abs(n);
+	const symbol = absN < PROFITABILITY_THRESHOLD ? '▪️' : n > 0 ? '▲' : '▼';
+	const percentStr = formatNumber(absN, 1, 1, { style: 'percent' });
+	return `${symbol} ${percentStr}`;
 }
 
 /**
