@@ -15,9 +15,11 @@
 			<img alt={label} {src} />
 		</div>
 	{/if}
-	<div class="label">
-		<slot>{label}</slot>
-	</div>
+	{#if label || $$slots.default}
+		<div class="label">
+			<slot>{label}</slot>
+		</div>
+	{/if}
 </div>
 
 <style lang="postcss">
