@@ -9,14 +9,27 @@
 
 	export let data;
 
-	let selected: string;
-	$: logs = data.logs.filter(({ level }: ComponentProps<LogEntry>) => level === selected);
+	const levels = {
+		trade: { label: 'Trade', number: 21 },
+		info: { label: 'Info', number: 20 }
+	} as const;
+
+	let selected: keyof typeof levels = 'trade';
+
+	type LogItem = ComponentProps<LogEntry> & { level_number: number };
+
+	$: logs = data.logs.filter(({ level, level_number }: LogItem) => {
+		return level === selected || level_number >= levels[selected]?.number;
+	});
 </script>
 
 <section class="logs">
 	<SummaryBox title="Strategy logs" subtitle="Choose logging level">
-		<Tabs items={{ trade: 'Trade', info: 'Info' }} bind:selected --tab-padding="var(--space-lg) 0 0">
-			<LogEntriesList {logs} />
+		<Tabs items={levels} bind:selected --tab-padding="var(--space-lg) 0 0">
+			<!-- key block is needed to reset scroll position -->
+			{#key selected}
+				<LogEntriesList {logs} />
+			{/key}
 		</Tabs>
 	</SummaryBox>
 </section>

@@ -10,7 +10,8 @@ Display log messages as a scrollable panel
 </script>
 
 <div class="log-panel terminal-viewport">
-	{#each logs.reverse() as { timestamp, level, message }}
+	<!-- reverse mutates the array, so we need to call it on a copy -->
+	{#each [...logs].reverse() as { timestamp, level, message }}
 		<LogEntry {timestamp} {level} {message} />
 	{/each}
 </div>
