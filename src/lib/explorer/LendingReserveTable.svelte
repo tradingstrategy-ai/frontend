@@ -2,7 +2,7 @@
 	import type { LendingReserve } from './lending-reserve-client';
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable, EntitySymbol } from '$lib/components';
 	import BorrowAprCell from './BorrowAprCell.svelte';
@@ -14,7 +14,6 @@
 	export let page = 0;
 	export let sort = 'tvl';
 	export let direction: 'asc' | 'desc' = 'desc';
-	export let hiddenColumns: string[] = [];
 	export let hideChainIcon = false;
 
 	const tableRows: Writable<LendingReserve[]> = writable([]);
@@ -26,8 +25,7 @@
 			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' }),
-		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
+		clickable: addClickableRows({ id: 'cta' })
 	});
 
 	const columns = table.createColumns([
@@ -77,9 +75,6 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
-
-	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="reserve-table" data-testid="reserve-table">

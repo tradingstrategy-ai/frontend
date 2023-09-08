@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
-	import { Button, DataTable } from '$lib/components';
+	import { Button, DataTable, EntitySymbol } from '$lib/components';
 
 	export let loading = false;
 	export let rows: Record<string, any>[] | undefined = undefined;
 	export let page = 0;
 	export let sort = 'volume_30d';
 	export let direction: 'asc' | 'desc' = 'desc';
-	export let hiddenColumns: string[] = [];
+	export let hideChainIcon = false;
 
 	const tableRows = loading ? new Array(10).fill({}) : rows || [];
 
@@ -21,19 +21,21 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' }),
-		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
+		clickable: addClickableRows({ id: 'cta' })
 	});
 
 	const columns = table.createColumns([
 		table.column({
 			id: 'exchange_name',
 			accessor: 'human_readable_name',
-			header: 'Exchange'
-		}),
-		table.column({
-			accessor: 'chain_name',
-			header: 'Blockchain'
+			header: 'Exchange',
+			cell: ({ value, row: { original } }) =>
+				createRender(EntitySymbol, {
+					type: 'blockchain',
+					slug: hideChainIcon ? undefined : original.chain_slug,
+					label: original.chain_name,
+					size: '1.25em'
+				}).slot(value)
 		}),
 		table.column({
 			accessor: 'pair_count',
@@ -56,9 +58,6 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
-
-	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="exchange-table">
@@ -72,23 +71,18 @@
 				table-layout: fixed;
 			}
 
-			/**
-			 * NOTE: column widths below are relative (except .cta column). They are intionally
-			 * set larger than needed so they still add to > 100% when some columns are hidden.
-			 */
 			& .exchange_name {
-				width: 50%;
+				width: 45%;
 				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
 
-			& .chain_name {
-				width: 35%;
+				& :global * {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 
 			& .pair_count {
-				width: 30%;
+				width: 25%;
 				text-align: right;
 			}
 
@@ -98,8 +92,8 @@
 			}
 
 			& .cta {
-				width: 12em;
-				text-align: right;
+				width: 15rem;
+				padding-left: 2em;
 			}
 		}
 	}

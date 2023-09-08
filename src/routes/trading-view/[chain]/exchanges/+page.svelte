@@ -43,6 +43,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<ExchangeTable rows={exchanges} {...options} hiddenColumns={['chain_name']} on:change={handleChange} />
+		<ExchangeTable rows={exchanges} {...options} hideChainIcon on:change={handleChange} />
 	</Section>
 </main>
