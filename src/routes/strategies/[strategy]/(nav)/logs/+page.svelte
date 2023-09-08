@@ -26,7 +26,10 @@
 <section class="logs">
 	<SummaryBox title="Strategy logs" subtitle="Choose logging level">
 		<Tabs items={levels} bind:selected --tab-padding="var(--space-lg) 0 0">
-			<LogEntriesList {logs} />
+			<!-- key block is needed to reset scroll position -->
+			{#key selected}
+				<LogEntriesList {logs} />
+			{/key}
 		</Tabs>
 	</SummaryBox>
 </section>
