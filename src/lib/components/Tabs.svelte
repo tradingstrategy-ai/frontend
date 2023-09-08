@@ -17,7 +17,8 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	export let items: Record<string, string>;
+	type Item = string | { label: string };
+	export let items: Record<string, Item>;
 	export let selected: string = Object.keys(items)[0];
 
 	const uid = crypto.randomUUID().slice(0, 8);
@@ -32,8 +33,9 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 <section class="tabs">
 	{#each Object.entries(items) as [key, value]}
 		{@const id = `${uid}-${key}`}
+		{@const label = typeof value === 'string' ? value : value.label}
 		<input {id} type="radio" name={uid} bind:group={selected} value={key} on:change={dispatchChange} />
-		<label for={id}>{value}</label>
+		<label for={id}>{label}</label>
 	{/each}
 
 	<div class="content">
