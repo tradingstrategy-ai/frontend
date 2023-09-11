@@ -10,8 +10,6 @@
 	export let data: ChartTick[] = [];
 	export let startDate: Date = addUTCDays(floorUTCDate(new Date()), -90);
 
-	let chartWrapper: HTMLElement;
-
 	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
 
 	const options = {
@@ -51,7 +49,7 @@
 	}
 </script>
 
-<div bind:this={chartWrapper} class="chart-thumbnail ds-3 {profitClass}">
+<div class="chart-thumbnail ds-3 {profitClass}">
 	<ChartIQ {init} {options} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
