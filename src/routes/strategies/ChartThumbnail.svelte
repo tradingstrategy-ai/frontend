@@ -72,6 +72,10 @@
 	.chart-thumbnail {
 		height: 14rem;
 
+		@media (--viewport-xs) {
+			height: 11rem;
+		}
+
 		& :global(.chart-container) {
 			transform: scale(1.015, 1);
 			width: 100%;
