@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { addUTCDays, floorUTCDate } from '$lib/helpers/date';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { ChartIQ } from '$lib/chart';
+	import { formatPercent } from '$lib/helpers/formatters';
+	import { ChartIQ, Marker } from '$lib/chart';
+	import { UpDownCell, Timestamp } from '$lib/components';
 
 	type ChartTick = [Date, number | undefined];
 
@@ -16,7 +18,6 @@
 		layout: { chartType: 'mountain' },
 		allowScroll: false,
 		allowZoom: false,
-		extendLastTick: true,
 		xaxisHeight: 0,
 
 		chart: {
@@ -43,18 +44,46 @@
 </script>
 
 <div bind:this={chartWrapper} class="chart-thumbnail ds-3 {profitClass}">
-	<ChartIQ {init} {options} />
+	<ChartIQ {init} {options} let:cursor>
+		{@const { position, data } = cursor}
+		{#if data}
+			<Marker x={position.DateX} y={position.CloseY} size={4} />
+			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
+				<UpDownCell value={data.Close - data.iqPrevClose}>
+					<div class="date">
+						<Timestamp date={data.DT} format="iso" />
+					</div>
+					<div class="value">{formatPercent(data.Close)}</div>
+				</UpDownCell>
+			</div>
+		{/if}
+	</ChartIQ>
 </div>
 
 <style lang="postcss">
 	.chart-thumbnail {
 		height: 14rem;
-		overflow: hidden;
 
 		& :global(.chart-container) {
 			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
+		}
+	}
+
+	.chart-hover-info {
+		position: absolute;
+		left: var(--x);
+		top: var(--y);
+		transform: translate(-50%, calc(-100% - var(--space-md)));
+
+		& .date {
+			font: var(--f-ui-sm-medium);
+			color: hsla(var(--hsl-text-extra-light));
+		}
+
+		& .value {
+			font: var(--f-ui-md-medium);
 		}
 	}
 </style>
