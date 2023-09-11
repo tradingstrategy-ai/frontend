@@ -189,8 +189,7 @@ unknown props through to HTML input element.
 			}
 		}
 
-		&:has(:focus),
-		&:hover {
+		&:is(:hover, :focus-within) {
 			& :global .cancel-btn {
 				display: contents;
 			}

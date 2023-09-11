@@ -98,7 +98,7 @@ Display site-wide search box for use in top-nav.
 			</form>
 
 			{#if hasQuery}
-				<ul id="search-results">
+				<ul>
 					{#each hits as { document } (document.id)}
 						<SearchHit {document} />
 					{/each}
@@ -204,14 +204,6 @@ Display site-wide search box for use in top-nav.
 		}
 	}
 
-	/**
-	 * Prevent body scrolling when search dialog is open and has results on mobile
-	 * NOTE: using CSS ids as work-around for :has pseudo-selector flakiness
-	 */
-	:global body:has(#search-input-mobile:focus):has(#search-results) {
-		overflow: hidden;
-	}
-
 	ul {
 		padding: 0;
 		flex: 1;
@@ -219,6 +211,7 @@ Display site-wide search box for use in top-nav.
 		gap: var(--space-sm);
 		align-content: start;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 	}
 
 	footer {
