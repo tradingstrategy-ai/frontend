@@ -28,12 +28,20 @@
 	};
 
 	function init(chartEngine: any) {
+		chartEngine.addSeries('Baseline', {
+			color: 'gray',
+			opacity: 0.25,
+			width: 1,
+			shareYAxis: true
+		});
+
 		return {
 			update() {
 				chartEngine.loadChart('strategy-thumbnail', {
-					masterData: data.map(([DT, Value]) => ({ DT, Value })),
+					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 })),
 					range: { dtLeft: startDate, dtRight: data.at(-1)?.[0] }
 				});
+
 				const { yAxis } = chartEngine.chart;
 				const domain = yAxis.high - yAxis.low;
 				yAxis.zoom = (1 - domain) * 150;
