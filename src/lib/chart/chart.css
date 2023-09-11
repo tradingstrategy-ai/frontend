@@ -113,7 +113,7 @@
 	--hsl-chart-mountain: var(--hsl-text-extra-light);
 	border: hsla(var(--hsl-chart-mountain)); /* line */
 	background-color: hsla(var(--hsl-chart-mountain), 0.25); /* gradient dark */
-	color: hsla(var(--hsl-chart-mountain), 0.05); /* gradient light */
+	color: hsla(var(--hsl-chart-mountain), 0); /* gradient light */
 	width: 2px;
 }
 

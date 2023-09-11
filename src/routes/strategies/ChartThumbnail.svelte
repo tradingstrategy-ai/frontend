@@ -17,7 +17,6 @@
 		allowScroll: false,
 		allowZoom: false,
 		extendLastTick: true,
-		preferences: { whitespace: 0 },
 		xaxisHeight: 0,
 
 		chart: {
@@ -34,6 +33,10 @@
 					masterData: data.map(([DT, Value]) => ({ DT, Value })),
 					range: { dtLeft: startDate, dtRight: data.at(-1)?.[0] }
 				});
+				const { yAxis } = chartEngine.chart;
+				const domain = yAxis.high - yAxis.low;
+				yAxis.zoom = (1 - domain) * 150;
+				chartEngine.draw();
 			}
 		};
 	}
@@ -42,3 +45,16 @@
 <div bind:this={chartWrapper} class="chart-thumbnail ds-3 {profitClass}">
 	<ChartIQ {init} {options} />
 </div>
+
+<style lang="postcss">
+	.chart-thumbnail {
+		height: 14rem;
+		overflow: hidden;
+
+		& :global(.chart-container) {
+			transform: scale(1.015, 1);
+			width: 100%;
+			height: 100%;
+		}
+	}
+</style>
