@@ -42,7 +42,7 @@
 </script>
 
 <!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
 <div class="strategy-tile ds-3" on:click={() => goto(href)}>
 	<div class="visuals">
 		<div class="top">

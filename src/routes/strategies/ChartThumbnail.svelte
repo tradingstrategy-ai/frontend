@@ -1,144 +1,99 @@
 <script lang="ts">
-	import { scaleLinear, scaleUtc } from 'd3-scale';
-	import { extent } from 'd3-array';
-	import { formatPercent } from '$lib/helpers/formatters';
+	import { addUTCDays, floorUTCDate } from '$lib/helpers/date';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { addUTCDays, floorUTCDate, roundUTCDate } from '$lib/helpers/date';
+	import { formatPercent } from '$lib/helpers/formatters';
+	import { ChartIQ, Marker } from '$lib/chart';
+	import { UpDownCell, Timestamp } from '$lib/components';
 
 	type ChartTick = [Date, number | undefined];
 
 	export let data: ChartTick[] = [];
 	export let startDate: Date = addUTCDays(floorUTCDate(new Date()), -90);
 
-	let active: ChartTick;
-	let svgEl: SVGElement;
-
-	const width = 680;
-	const height = 160;
-	const yScaleMin = 0.025; // see getValueDomain()
-	const scaleX = scaleUtc([startDate, floorUTCDate(new Date())], [0, width]);
-	const scaleY = scaleLinear(getValueDomain(), [height, 0]);
-	const y0 = scaleY(0);
-
 	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
 
-	// Try to smooth out, so small changes do not look irrationally large
-	// by bumping up the y-Axis domain -20%/20% if the strategy has moved less
-	function getValueDomain() {
-		const domain = extent(data, (tick: ChartTick) => tick[1]);
-		return extent([...domain, -yScaleMin, yScaleMin]);
-	}
+	const options = {
+		layout: { chartType: 'mountain' },
+		allowScroll: false,
+		allowZoom: false,
+		xaxisHeight: 0,
 
-	function getPathCommands() {
-		const commands = data.map(([date, val], idx) => {
-			return `L${scaleX(date)},${scaleY(val)}`;
+		chart: {
+			tension: 1,
+			xAxis: { noDraw: true },
+			yAxis: { noDraw: true }
+		}
+	};
+
+	function init(chartEngine: any) {
+		chartEngine.addSeries('Baseline', {
+			color: 'gray',
+			opacity: 0.25,
+			width: 1,
+			shareYAxis: true
 		});
-		commands.unshift(`M0,${y0}`);
-		return commands.join(' ');
-	}
 
-	function targetPoint({ clientX, clientY }: MouseEvent) {
-		const screenPoint = new DOMPointReadOnly(clientX, clientY);
-		const svgPoint = screenPoint.matrixTransform(svgEl.getScreenCTM().inverse());
-		const date = roundUTCDate(scaleX.invert(svgPoint.x));
-		active = data.find(([d]) => d.valueOf() === date.valueOf()) || [date, undefined];
-	}
+		return {
+			update() {
+				chartEngine.loadChart('strategy-thumbnail', {
+					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 })),
+					range: { dtLeft: startDate, dtRight: data.at(-1)?.[0] }
+				});
 
-	function formatDate(date: Date) {
-		return new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(date);
+				const { yAxis } = chartEngine.chart;
+				const domain = yAxis.high - yAxis.low;
+				yAxis.zoom = (1 - domain) * 150;
+				chartEngine.draw();
+			}
+		};
 	}
 </script>
 
-<div class="chart-thumbnail ds-3" on:pointermove={targetPoint} on:pointerdown={targetPoint}>
-	<svg
-		bind:this={svgEl}
-		viewBox="0 0 {width} {height}"
-		preserveAspectRatio="none"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-	>
-		{#if data.length > 0}
-			<path class="data {profitClass}" d={getPathCommands()} />
+<div class="chart-thumbnail ds-3 {profitClass}">
+	<ChartIQ {init} {options} let:cursor>
+		{@const { position, data } = cursor}
+		{#if data}
+			<Marker x={position.DateX} y={position.CloseY} size={4} />
+			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
+				<UpDownCell value={data.Close - data.iqPrevClose}>
+					<div class="date">
+						<Timestamp date={data.DT} format="iso" />
+					</div>
+					<div class="value">{formatPercent(data.Close)}</div>
+				</UpDownCell>
+			</div>
 		{/if}
-
-		<line class="x-axis" x1="0" y1={y0} x2={width} y2={y0} />
-
-		{#if active}
-			{@const x = scaleX(active[0])}
-			<line class="crosshair" x1={x} y1={-height} x2={x} y2={height * 2} />
-		{/if}
-	</svg>
-
-	{#if active}
-		<dl class="hud">
-			<dt>{formatDate(active[0])}</dt>
-			<dd class={determinePriceChangeClass(active[1])}>{formatPercent(active[1])}</dd>
-		</dl>
-	{/if}
+	</ChartIQ>
 </div>
 
 <style lang="postcss">
 	.chart-thumbnail {
-		height: 100%;
-		overflow: hidden;
-		display: grid;
-		grid-template-rows: 3rem 1fr 3rem;
-		user-select: none;
+		height: 14rem;
 
-		& .hud {
-			grid-row: 1;
-			margin: 0;
-			padding: var(--space-sl) var(--space-md);
-			display: flex;
-			justify-content: space-between;
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--f-ui-lg-spacing, normal);
-			color: var(--c-text-extra-light);
-
-			& * {
-				margin: 0;
-				font: inherit;
-			}
+		@media (--viewport-xs) {
+			height: 11rem;
 		}
 
-		&:not(:hover) .hud {
-			display: none;
-		}
-
-		& svg {
-			grid-row: 2;
+		& :global(.chart-container) {
+			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
-			overflow: visible;
+		}
+	}
+
+	.chart-hover-info {
+		position: absolute;
+		left: var(--x);
+		top: var(--y);
+		transform: translate(-50%, calc(-100% - var(--space-md)));
+
+		& .date {
+			font: var(--f-ui-sm-medium);
+			color: hsla(var(--hsl-text-extra-light));
 		}
 
-		& .x-axis {
-			stroke: var(--c-text-ultra-light-night);
-			stroke-width: 0.5;
-		}
-
-		& .crosshair {
-			stroke: var(--c-text-ultra-light-night);
-			stroke-width: 1;
-			stroke-dasharray: 6;
-		}
-
-		&:not(:hover) .crosshair {
-			display: none;
-		}
-
-		& .data {
-			stroke: var(--c-text-light-night);
-			stroke-width: 3;
-			stroke-linejoin: round;
-
-			&.bullish {
-				stroke: hsla(var(--hsl-bullish));
-			}
-
-			&.bearish {
-				stroke: hsla(var(--hsl-bearish));
-			}
+		& .value {
+			font: var(--f-ui-md-medium);
 		}
 	}
 </style>
