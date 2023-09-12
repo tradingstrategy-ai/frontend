@@ -188,7 +188,7 @@
 }
 
 /* DEPRECATED Font Pairings - Desktop */
-@media (width >= 768px) {
+@media (--viewport-md-up) {
 	:root {
 		--f-h1-bold: 700 var(--fs-heading-xxl);
 		--f-h1-medium: 600 var(--fs-heading-xxl);

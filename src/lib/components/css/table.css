@@ -20,7 +20,7 @@ table:not(.table) {
 		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
-	@media (width <= 768px) {
+	@media (--viewport-sm-down) {
 		--table-font: var(--f-ui-xs-medium) !important;
 		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
@@ -89,7 +89,7 @@ table:not(.table) {
 			vertical-align: middle;
 			--button-width: 100%;
 
-			@media (width > 1024px) {
+			@media (--viewport-lg-up) {
 				height: 3.825rem !important;
 			}
 
@@ -130,7 +130,7 @@ table:not(.table) {
 	}
 
 	&.responsive {
-		@media (width <= 768px) {
+		@media (--viewport-sm-down) {
 			--table-font: var(--f-ui-md-medium) !important;
 			--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 
