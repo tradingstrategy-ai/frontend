@@ -30,7 +30,7 @@
 			color: hsla(var(--hsl-text));
 		}
 
-		@nest :global(nav:hover) &:not(:hover) {
+		:global(nav:hover) &:not(:hover) {
 			color: hsla(var(--hsl-text-extra-light));
 		}
 	}

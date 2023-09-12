@@ -34,6 +34,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	};
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth on:click>
 	{#if icon || $$slots.icon}
 		<div class="icon symbol tile c">
@@ -133,7 +134,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			margin-top: var(--space-sm);
 		}
 
-		@nest .ctaFullWidth & :global .button {
+		.ctaFullWidth & :global .button {
 			width: 100%;
 		}
 	}

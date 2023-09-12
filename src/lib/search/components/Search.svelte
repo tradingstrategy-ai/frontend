@@ -169,7 +169,7 @@ Display site-wide search box for use in top-nav.
 		transition: opacity 0.25s;
 
 		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
-		@nest :not(.hasFocus) & {
+		:not(.hasFocus) & {
 			opacity: 0;
 			pointer-events: none;
 		}
@@ -188,7 +188,7 @@ Display site-wide search box for use in top-nav.
 			left: 0;
 			top: 0;
 
-			@nest .hasQuery & .inner {
+			.hasQuery & .inner {
 				height: var(--viewport-height);
 				gap: var(--space-sm);
 			}
@@ -227,7 +227,7 @@ Display site-wide search box for use in top-nav.
 			--button-font: var(--f-ui-sm-medium);
 		}
 
-		@nest .hasQuery & {
+		.hasQuery & {
 			grid-template-columns: 1fr 1fr;
 		}
 	}

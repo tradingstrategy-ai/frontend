@@ -184,7 +184,7 @@
 		color: var(--c-text-default);
 		background: var(--c-background-3);
 
-		@nest :global(a:not([href]):not([tabindex])) & {
+		:global(a:not([href]):not([tabindex])) & {
 			background: var(--c-background-1);
 			color: var(--c-text-inverted);
 		}
@@ -206,14 +206,14 @@
 			display: none;
 		}
 
-		@nest .open & {
+		.open & {
 			opacity: 0.4;
 		}
 
 		button svg {
 			transition: transform 0.25s ease-out;
 
-			@nest .open & {
+			.open & {
 				transform: rotate(180deg);
 			}
 
@@ -234,7 +234,7 @@
 			height: 0;
 			transition: height 0.25s ease-out;
 
-			@nest .open & {
+			.open & {
 				height: var(--menu-height);
 			}
 
