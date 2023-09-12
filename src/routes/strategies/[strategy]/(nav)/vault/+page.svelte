@@ -78,7 +78,7 @@
 			flex-direction: column;
 		}
 
-		& img {
+		img {
 			width: 1.5rem;
 		}
 	}

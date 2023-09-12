@@ -119,12 +119,12 @@
 			letter-spacing: var(--f-heading-xs-spacing);
 			text-align: left;
 
-			& br {
+			br {
 				display: none;
 			}
 		}
 
-		& a {
+		a {
 			font-weight: 600;
 			text-decoration: underline;
 		}

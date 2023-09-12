@@ -34,7 +34,7 @@ or other contexts where a stronger visual representation is desired.
 		display: flex;
 		justify-content: flex-end;
 
-		& :global(.up-down-indicator) {
+		:global(.up-down-indicator) {
 			background: hsla(var(--hsl-box), var(--a-box-b));
 			border-radius: var(--radius-sm);
 			display: grid;
@@ -46,7 +46,7 @@ or other contexts where a stronger visual representation is desired.
 			transition: all var(--time-sm) ease-out;
 		}
 
-		& :global(.bullish) {
+		:global(.bullish) {
 			background: hsla(var(--hsl-bullish), 0.12);
 
 			&:hover {
@@ -54,7 +54,7 @@ or other contexts where a stronger visual representation is desired.
 			}
 		}
 
-		& :global(.bearish) {
+		:global(.bearish) {
 			background: hsla(var(--hsl-bearish), 0.12);
 
 			&:hover {

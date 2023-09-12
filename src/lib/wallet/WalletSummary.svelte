@@ -46,7 +46,7 @@
 		gap: var(--space-sm);
 		align-items: center;
 
-		& img {
+		img {
 			width: 1.75rem;
 		}
 	}
@@ -62,7 +62,7 @@
 		font: var(--f-ui-sm-medium);
 		color: hsla(var(--hsl-success));
 
-		& .dot {
+		.dot {
 			animation: pulse-opacity 1.5s ease-out infinite;
 			background: hsla(var(--hsl-success));
 			border-radius: 100%;

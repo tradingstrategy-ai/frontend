@@ -29,14 +29,14 @@
 			border-block: 1px solid var(--c-ink-light);
 		}
 
-		& .message {
+		.message {
 			/* display: inline-flex; */
 			overflow-x: auto;
 			white-space: pre-line;
 			font: var(--f-mono-xs-regular);
 		}
 
-		& :global time {
+		:global time {
 			display: flex;
 			font: var(--f-mono-sm-regular);
 			flex-direction: column;

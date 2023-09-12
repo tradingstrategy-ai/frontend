@@ -39,7 +39,7 @@
 		display: grid;
 		gap: var(--space-ls);
 
-		& h1 {
+		h1 {
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
 			margin-top: var(--space-xl);
@@ -51,7 +51,7 @@
 			}
 		}
 
-		& :global(time) {
+		:global(time) {
 			font: var(--timestamp-font, var(--f-ui-md-roman));
 			color: var(--c-text-2-v1);
 		}

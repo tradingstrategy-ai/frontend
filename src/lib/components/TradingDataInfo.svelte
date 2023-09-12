@@ -21,7 +21,7 @@ Container for displaying a set of trading data key/value pairs. Use with <Tradin
 		gap: var(--space-sl);
 		margin: 0;
 
-		& :global > * {
+		:global > * {
 			margin: 0;
 			overflow: hidden;
 			text-overflow: ellipsis;

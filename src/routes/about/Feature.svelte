@@ -38,7 +38,7 @@
 				flex-direction: row-reverse;
 			}
 
-			& > * {
+			> * {
 				flex: 1;
 			}
 		}
@@ -54,22 +54,22 @@
 			gap: var(--space-xl);
 		}
 
-		& h3 {
+		h3 {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
-		& ul {
+		ul {
 			display: grid;
 			gap: var(--space-lg);
 		}
 
-		& :global li {
+		:global li {
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
-		& .cta {
+		.cta {
 			display: grid;
 
 			@media (--viewport-md-up) {
@@ -86,7 +86,7 @@
 		display: flex;
 		justify-content: center;
 
-		& svg {
+		svg {
 			width: 100%;
 			max-width: 480px;
 
@@ -94,11 +94,11 @@
 				width: 80%;
 			}
 
-			& .bg {
+			.bg {
 				fill: hsla(var(--hsl-body));
 			}
 
-			& :not(.bg) {
+			:not(.bg) {
 				fill: currentColor;
 			}
 		}

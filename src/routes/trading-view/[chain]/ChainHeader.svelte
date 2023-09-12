@@ -36,7 +36,7 @@
 			flex-direction: column;
 			margin-top: var(--space-ms);
 
-			& :global .button {
+			:global .button {
 				width: 100%;
 			}
 		}
@@ -53,7 +53,7 @@
 			font: var(--f-heading-md-medium);
 		}
 
-		& span {
+		span {
 			display: flex;
 			align-items: center;
 			min-height: var(--logo-height);
@@ -61,7 +61,7 @@
 			line-height: 1.2em;
 		}
 
-		& img {
+		img {
 			height: var(--logo-height);
 		}
 	}

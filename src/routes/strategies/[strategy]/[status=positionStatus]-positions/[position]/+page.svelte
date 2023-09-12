@@ -322,7 +322,7 @@
 	.error-details a {
 		font-weight: 500;
 
-		& .hash-wrapper {
+		.hash-wrapper {
 			display: inline-grid;
 		}
 	}
@@ -330,7 +330,7 @@
 	.position-page :global .data-box {
 		align-content: flex-start;
 
-		& .value {
+		.value {
 			display: grid;
 			gap: var(--space-sm);
 		}

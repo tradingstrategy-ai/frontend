@@ -36,16 +36,16 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 			grid-auto-flow: column;
 		}
 
-		& h1 {
+		h1 {
 			font: var(--f-h1-medium);
 		}
 
-		& .multiline {
+		.multiline {
 			display: grid;
 			font-weight: 700;
 		}
 
-		& small {
+		small {
 			font: var(--f-h4-medium);
 			color: var(--c-text-2-v1);
 		}

@@ -30,11 +30,11 @@
 		font: var(--search-hit-description-font, var(--f-ui-md-medium));
 		letter-spacing: var(--search-hit-description-spacing, var(--f-ui-md-spacing, normal));
 
-		& .swap-fee {
+		.swap-fee {
 			color: var(--c-text-extra-light);
 		}
 
-		& .warning-icon {
+		.warning-icon {
 			display: inline-block;
 			transform: translate(0.25em, -0.1em);
 		}

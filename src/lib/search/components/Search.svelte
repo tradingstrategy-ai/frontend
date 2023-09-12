@@ -179,7 +179,7 @@ Display site-wide search box for use in top-nav.
 			margin-top: var(--space-xxs);
 			width: 450px;
 
-			& .inner {
+			.inner {
 				max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
 			}
 		}
@@ -194,7 +194,7 @@ Display site-wide search box for use in top-nav.
 			}
 		}
 
-		& .inner {
+		.inner {
 			background: hsla(var(--hsl-box), var(--a-box-a));
 			box-shadow: var(--shadow-sm);
 			display: flex;

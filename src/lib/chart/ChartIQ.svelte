@@ -223,7 +223,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			--CHART-aspect-ratio: 4/6;
 		}
 
-		& :is(.loading, .inner) {
+		:is(.loading, .inner) {
 			position: absolute;
 			top: 0;
 			bottom: 0;
@@ -231,12 +231,12 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			right: 0;
 		}
 
-		& .inner {
+		.inner {
 			z-index: 99;
 			pointer-events: none;
 		}
 
-		& .loading {
+		.loading {
 			z-index: 100;
 			display: flex;
 			justify-content: center;

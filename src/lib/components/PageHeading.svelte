@@ -12,20 +12,20 @@
 	}
 
 	.level-1 :global {
-		& h1 {
+		h1 {
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
 			margin-bottom: var(--space-md);
 		}
 
-		& p {
+		p {
 			font: var(--fs-ui-xl-medium);
 			letter-spacing: var(--fs-ui-xl-spacing, normal);
 		}
 	}
 
 	.level-2 :global {
-		& h1 {
+		h1 {
 			color: var(--c-text-ultra-light);
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
@@ -37,7 +37,7 @@
 				margin: 0 0 var(--space-sl);
 			}
 
-			& a {
+			a {
 				font: inherit;
 
 				&:hover {
@@ -46,7 +46,7 @@
 			}
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-xxxl-medium);
 			letter-spacing: var(--f-heading-xxxl-spacing, normal);
 			margin: 0;

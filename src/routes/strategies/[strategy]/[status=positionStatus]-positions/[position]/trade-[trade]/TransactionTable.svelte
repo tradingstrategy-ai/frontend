@@ -43,7 +43,7 @@
 		overflow-x: auto;
 		overflow-y: hidden;
 
-		& h2 {
+		h2 {
 			margin-bottom: var(--space-md);
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
@@ -56,7 +56,7 @@
 	}
 
 	.transaction-table :global {
-		& .status {
+		.status {
 			text-align: right;
 		}
 	}

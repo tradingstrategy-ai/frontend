@@ -243,33 +243,33 @@
 		display: grid;
 		gap: var(--space-xl);
 
-		& section {
+		section {
 			display: grid;
 			gap: var(--space-ls);
 		}
 
-		& h3 {
+		h3 {
 			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-lg-medium);
 			margin: 0;
 		}
 
-		& .redeem-header {
+		.redeem-header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
 		}
 
-		& .redemption-form {
+		.redemption-form {
 			display: grid;
 			gap: var(--space-xl);
 		}
 
-		& progress {
+		progress {
 			width: 100%;
 		}
 
-		& .transaction-id {
+		.transaction-id {
 			display: grid;
 			gap: var(--space-ss);
 			justify-content: flex-start;

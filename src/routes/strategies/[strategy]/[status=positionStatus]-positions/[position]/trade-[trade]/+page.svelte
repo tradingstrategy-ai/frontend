@@ -90,7 +90,7 @@
 	.error-details a {
 		font-weight: 500;
 
-		& .hash-wrapper {
+		.hash-wrapper {
 			display: inline-grid;
 		}
 	}

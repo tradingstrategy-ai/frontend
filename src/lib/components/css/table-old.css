@@ -6,14 +6,14 @@ table.table {
 	width: 100%;
 	margin-bottom: 1rem;
 
-	& :is(th, td) {
+	:is(th, td) {
 		padding: 1rem;
 		border-block: 1px solid #a9a9b2;
 		vertical-align: top;
 		text-align: left;
 	}
 
-	& th {
+	th {
 		border-bottom-width: 2px;
 	}
 }

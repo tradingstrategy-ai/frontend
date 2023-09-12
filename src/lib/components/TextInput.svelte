@@ -68,14 +68,14 @@ unknown props through to HTML input element.
 		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
 
-		& input {
+		input {
 			font: var(--text-input-font, var(--font));
 			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
 		}
 
-		& .label,
-		& [slot='label'] {
+		.label,
+		[slot='label'] {
 			font-weight: 500;
 		}
 
@@ -87,7 +87,7 @@ unknown props through to HTML input element.
 			text-indent: 1.125em;
 		}
 
-		& :global svg {
+		:global svg {
 			position: absolute;
 			top: 50%;
 			transform: translateY(-50%);
@@ -102,7 +102,7 @@ unknown props through to HTML input element.
 			--letter-spacing: var(--f-mono-sm-spacing);
 			font-weight: 600;
 
-			& input::placeholder {
+			input::placeholder {
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
@@ -114,7 +114,7 @@ unknown props through to HTML input element.
 			--letter-spacing: var(--f-mono-md-spacing);
 			font-weight: 600;
 
-			& input::placeholder {
+			input::placeholder {
 				font: var(--f-ui-md-roman);
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
@@ -126,7 +126,7 @@ unknown props through to HTML input element.
 			--letter-spacing: var(--f-mono-lg-spacing);
 			font-weight: 600;
 
-			& input::placeholder {
+			input::placeholder {
 				font: var(--f-ui-lg-roman);
 				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
@@ -138,13 +138,13 @@ unknown props through to HTML input element.
 			--letter-spacing: var(--f-mono-xl-spacing);
 			font-weight: 600;
 
-			& input::placeholder {
+			input::placeholder {
 				font: var(--f-ui-xl-roman);
 				letter-spacing: var(--f-ui-xl-roman, normal);
 			}
 		}
 
-		& input {
+		input {
 			width: inherit;
 			padding: 0 var(--space-sl);
 			border: 1px hsla(var(--hsl-text-ultra-light)) solid;
@@ -179,10 +179,10 @@ unknown props through to HTML input element.
 			}
 		}
 
-		& .cancel-btn {
+		.cancel-btn {
 			display: none;
 
-			& :global svg {
+			:global svg {
 				left: auto;
 				right: var(--space-md);
 				font-size: 1rem;
@@ -190,7 +190,7 @@ unknown props through to HTML input element.
 		}
 
 		&:is(:hover, :focus-within) {
-			& :global .cancel-btn {
+			:global .cancel-btn {
 				display: contents;
 			}
 		}

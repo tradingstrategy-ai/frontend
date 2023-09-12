@@ -91,7 +91,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
 
-		& .inner {
+		.inner {
 			display: flex;
 			background: hsla(var(--input-background));
 			border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
@@ -100,7 +100,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			overflow: hidden;
 		}
 
-		& .unit {
+		.unit {
 			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-b)), hsla(var(--hsl-box), var(--a-box-b))),
 				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
 			display: grid;
@@ -115,14 +115,14 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			opacity: 0.65;
 		}
 
-		& .conversion-label {
+		.conversion-label {
 			display: flex;
 			justify-content: flex-end;
 			text-align: right;
 			gap: var(--space-md);
 		}
 
-		& input {
+		input {
 			background: transparent;
 			border: none;
 			color: var(--c-text-1-v1);

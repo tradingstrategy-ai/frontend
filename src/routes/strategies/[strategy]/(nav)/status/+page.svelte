@@ -56,7 +56,7 @@
 <style lang="postcss">
 	.instance-status {
 		&,
-		& .inner {
+		.inner {
 			display: grid;
 			gap: var(--space-lg);
 			place-content: stretch;
@@ -67,7 +67,7 @@
 			}
 		}
 
-		& .inner {
+		.inner {
 			grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 		}
 	}

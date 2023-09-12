@@ -87,7 +87,7 @@ Advanced Search page
 			gap: var(--space-ss);
 		}
 
-		& :global .page-header {
+		:global .page-header {
 			padding-block: var(--space-lg);
 
 			@media (--viewport-md-down) {

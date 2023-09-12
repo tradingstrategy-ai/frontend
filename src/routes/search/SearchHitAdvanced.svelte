@@ -75,11 +75,11 @@
 			--search-hit-description-spacing: var(--f-ui-lg-spacing, normal);
 		}
 
-		& .truncate {
+		.truncate {
 			white-space: nowrap;
 		}
 
-		& .secondary {
+		.secondary {
 			display: flex;
 			flex-wrap: wrap;
 			gap: var(--space-xs);
@@ -91,13 +91,13 @@
 				letter-spacing: var(--f-ui-xs-spacing, normal);
 			}
 
-			& dt {
+			dt {
 				display: inline-block;
 				font-weight: 400;
 				white-space: nowrap;
 			}
 
-			& dd {
+			dd {
 				display: inline-block;
 				margin: 0;
 				font-weight: 700;

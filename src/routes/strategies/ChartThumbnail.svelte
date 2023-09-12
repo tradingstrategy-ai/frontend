@@ -74,7 +74,7 @@
 			height: 11rem;
 		}
 
-		& :global(.chart-container) {
+		:global(.chart-container) {
 			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
@@ -87,12 +87,12 @@
 		top: var(--y);
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
-		& .date {
+		.date {
 			font: var(--f-ui-sm-medium);
 			color: hsla(var(--hsl-text-extra-light));
 		}
 
-		& .value {
+		.value {
 			font: var(--f-ui-md-medium);
 		}
 	}

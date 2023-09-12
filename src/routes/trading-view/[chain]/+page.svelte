@@ -134,7 +134,7 @@
 	}
 
 	.trading-entities {
-		& h2 {
+		h2 {
 			margin-block: var(--space-lg);
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);

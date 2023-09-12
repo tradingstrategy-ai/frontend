@@ -210,14 +210,14 @@
 			opacity: 0.4;
 		}
 
-		& button svg {
+		button svg {
 			transition: transform 0.25s ease-out;
 
 			@nest .open & {
 				transform: rotate(180deg);
 			}
 
-			& path {
+			path {
 				stroke-width: 3px;
 			}
 		}
@@ -238,7 +238,7 @@
 				height: var(--menu-height);
 			}
 
-			& :global menu {
+			:global menu {
 				padding-top: var(--space-ls);
 			}
 		}

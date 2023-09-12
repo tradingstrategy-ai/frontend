@@ -99,13 +99,13 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		margin-bottom: var(--space-ss);
 		color: var(--c-text-4-v1);
 
-		& h5 {
+		h5 {
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 			margin: 0;
 		}
 
-		& button {
+		button {
 			display: flex;
 			gap: var(--space-ss);
 			justify-content: center;

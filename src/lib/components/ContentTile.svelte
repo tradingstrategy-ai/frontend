@@ -91,10 +91,12 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	.content {
 		--content-gap: var(--space-sl);
 		--content-padding: var(--space-ll) var(--space-lg);
+
 		@media (--viewport-sm-down) {
 			--content-gap: var(--space-ss);
 			--content-padding: var(--space-ls) var(--space-ml);
 		}
+
 		display: grid;
 		gap: var(--content-gap);
 		padding: var(--content-padding);
@@ -105,19 +107,19 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		display: grid;
 		gap: var(--content-gap);
 
-		& :global time {
+		:global time {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: hsl(var(--hsl-text-extra-light));
 		}
 
-		& h3 {
+		h3 {
 			margin: 0;
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
-		& p {
+		p {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			color: hsl(var(--hsl-text-light));
@@ -127,14 +129,5 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	.cta {
 		margin-top: var(--space-sm);
 		display: grid;
-	}
-
-	/* display CTA button as hovered/focused when tile is hovered/focused */
-	.content-tile:hover,
-	.content-tile:focus {
-		& .cta :global .button {
-			--c-accent: var(--hsl-text), 1;
-			color: hsla(var(--hsl-text-inverted));
-		}
 	}
 </style>

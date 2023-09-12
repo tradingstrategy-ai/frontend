@@ -108,7 +108,7 @@
 			gap: var(--space-6xl);
 		}
 
-		& .ds-2-col {
+		.ds-2-col {
 			row-gap: var(--space-xl);
 			align-items: start;
 		}
@@ -122,7 +122,7 @@
 		border-bottom: 1px solid #999;
 		padding-bottom: 0.5rem;
 
-		& h3 {
+		h3 {
 			flex: 1;
 			font: var(--f-h5-medium);
 			margin: 0;

@@ -79,7 +79,7 @@
 			grid-auto-rows: auto 1fr;
 		}
 
-		& :is(h1, h2) {
+		:is(h1, h2) {
 			font: var(--f-heading-md-medium);
 			margin-bottom: var(--space-2xl);
 		}
@@ -102,14 +102,14 @@
 			justify-content: space-between;
 		}
 
-		& h1 {
+		h1 {
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-xs-medium);
 				margin: 0;
 			}
 		}
 
-		& menu {
+		menu {
 			display: grid;
 			gap: var(--space-ms);
 			margin: 0;
@@ -120,7 +120,7 @@
 			}
 		}
 
-		& .pagination {
+		.pagination {
 			@media (--viewport-md-up) {
 				display: none;
 			}

@@ -29,7 +29,7 @@
 			padding: var(--space-ls);
 		}
 
-		& h3 {
+		h3 {
 			font: var(--f-h2-bold);
 
 			@media (--viewport-md-down) {
@@ -37,7 +37,7 @@
 			}
 		}
 
-		& h4 {
+		h4 {
 			margin-block: var(--space-xxs) var(--space-sm);
 			font: var(--f-h4-medium);
 
@@ -48,7 +48,7 @@
 			}
 		}
 
-		& p {
+		p {
 			font: var(--f-ui-small-roman);
 			letter-spacing: 0.01em;
 

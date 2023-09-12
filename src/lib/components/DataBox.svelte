@@ -129,7 +129,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 			}
 		}
 
-		& :global a {
+		:global a {
 			font: inherit;
 			text-decoration: underline;
 		}

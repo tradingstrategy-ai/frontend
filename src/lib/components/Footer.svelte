@@ -43,7 +43,7 @@
 			padding-block: 0;
 		}
 
-		& .icon-group {
+		.icon-group {
 			display: flex;
 			gap: inherit;
 		}

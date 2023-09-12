@@ -31,7 +31,7 @@
 		height: var(--illustration-height);
 		width: var(--illustration-height);
 
-		& > * {
+		> * {
 			fill: currentColor;
 		}
 	}

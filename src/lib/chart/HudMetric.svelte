@@ -33,7 +33,7 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 		align-items: center;
 		margin: 0;
 
-		& dt {
+		dt {
 			color: hsla(var(--hsl-text-light));
 		}
 	}

@@ -23,10 +23,10 @@
 		display: contents;
 		font-size: var(--icon-size, var(--size, auto));
 
-		& :global svg {
+		:global svg {
 			height: 1em;
 			width: 1em;
-			& path {
+			path {
 				stroke: var(--icon-color, currentcolor);
 
 				&.fill {

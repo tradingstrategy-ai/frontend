@@ -38,17 +38,17 @@ Display a single alert item (should always be nested within AlertList).
 		gap: var(--space-md) var(--space-sm);
 		font: inherit; /* see AlertList */
 
-		& :global .icon {
+		:global .icon {
 			display: block;
 			margin-top: -0.1em;
 		}
 
-		& :global a {
+		:global a {
 			font-weight: 700;
 			text-decoration: underline;
 		}
 
-		& strong {
+		strong {
 			font-weight: 700;
 
 			@media (--viewport-lg-up) {
@@ -62,7 +62,7 @@ Display a single alert item (should always be nested within AlertList).
 			}
 		}
 
-		& .inner {
+		.inner {
 			display: grid;
 			grid-template-columns: 1fr;
 			gap: var(--space-md);
@@ -72,7 +72,7 @@ Display a single alert item (should always be nested within AlertList).
 			}
 		}
 
-		& .cta {
+		.cta {
 			display: grid;
 			align-content: start;
 		}

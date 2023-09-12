@@ -36,17 +36,17 @@ For more information see:
 
 <style lang="postcss">
 	.tooltip {
-		& .trigger {
+		.trigger {
 			font-style: normal;
 			cursor: pointer;
 
 			/* Utility class to provide affordance that the trigger is interactive */
-			& :global(.underline) {
+			:global(.underline) {
 				border-bottom: 1px dotted hsla(var(--hsl-text-light));
 			}
 		}
 
-		& .popup {
+		.popup {
 			display: none;
 			position: absolute;
 			contain: content;
@@ -65,7 +65,7 @@ For more information see:
 				padding: 0;
 			}
 
-			& .inner {
+			.inner {
 				padding: 1.125rem;
 				border: 1px solid hsla(var(--hsl-box-3));
 				border-radius: var(--radius-md);
@@ -76,11 +76,11 @@ For more information see:
 				text-align: left;
 			}
 
-			& :global(a) {
+			:global(a) {
 				text-decoration: underline;
 			}
 
-			& :global(p) {
+			:global(p) {
 				margin-bottom: 0.5em;
 			}
 		}

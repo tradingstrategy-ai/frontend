@@ -108,12 +108,12 @@
 	}
 
 	aside {
-		& p {
+		p {
 			margin-top: 0;
 			font: var(--f-ui-large-roman);
 		}
 
-		& a {
+		a {
 			font-weight: 700;
 			text-decoration: underline;
 		}

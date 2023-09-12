@@ -49,16 +49,16 @@
 		display: grid;
 		gap: var(--space-md);
 
-		& :global(> .alert-list) {
+		:global(> .alert-list) {
 			width: 100%;
 			margin-top: var(--space-lg);
 		}
 
-		& .page-heading p {
+		.page-heading p {
 			font: var(--f-ui-md-roman);
 		}
 
-		& .subpage :global {
+		.subpage :global {
 			display: grid;
 			gap: var(--space-ls);
 

@@ -74,32 +74,32 @@
 <style lang="postcss">
 	.token-table :global {
 		@media (--viewport-md-up) {
-			& table {
+			table {
 				table-layout: fixed;
 			}
 
-			& .name {
+			.name {
 				width: 35%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			& .symbol {
+			.symbol {
 				width: 15%;
 			}
 
-			& .volume_24h {
+			.volume_24h {
 				width: 25%;
 				text-align: right;
 			}
 
-			& .liquidity_latest {
+			.liquidity_latest {
 				width: 25%;
 				text-align: right;
 			}
 
-			& .cta {
+			.cta {
 				width: 12rem;
 				padding-left: 1rem;
 			}
