@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { RateType } from '$lib/chart/ReserveInterestChart.svelte';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
@@ -29,7 +31,7 @@
 	$: borrowable = isBorrowable(reserve);
 	$: showChart = borrowable && !isGhoToken;
 
-	let timeBucket: TimeBucket = '1d';
+	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
 
 	function getSecondaryRates({ additional_details: details }: LendingReserve) {
 		const rates: RateType[] = ['supply_apr'];
@@ -80,7 +82,11 @@
 	<Section padding="md">
 		<div class="chart-header">
 			<h3>Interest rates</h3>
-			<SegmentedControl options={['1h', '4h', '1d', '7d', '30d']} bind:selected={timeBucket} />
+			<SegmentedControl
+				options={['1h', '4h', '1d', '7d', '30d']}
+				selected={timeBucket}
+				on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+			/>
 		</div>
 		<ReserveInterestChart
 			{reserve}

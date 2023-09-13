@@ -16,10 +16,11 @@ for the same hovered date. Also displays a time-bucket selector.
 -->
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import type { TimeBucket } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
-	import { ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
-	import { Alert } from '$lib/components';
+	import { ChartLinker, HudRow, HudMetric, PairCandleChart } from '$lib/chart';
+	import { Alert, SegmentedControl } from '$lib/components';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -39,7 +40,11 @@ for the same hovered date. Also displays a time-bucket selector.
 
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
-	<TimeBucketSelector active={timeBucket} />
+	<SegmentedControl
+		options={['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d']}
+		selected={timeBucket}
+		on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+	/>
 </div>
 
 <div class="chart-wrapper">
@@ -127,12 +132,10 @@ for the same hovered date. Also displays a time-bucket selector.
 <style lang="postcss">
 	.chart-header {
 		display: flex;
-		gap: var(--space-md);
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-sm) var(--space-lg);
 		margin-bottom: 1em;
-
-		@media (--viewport-md-down) {
-			flex-direction: column;
-		}
 
 		h2 {
 			flex: 1;
