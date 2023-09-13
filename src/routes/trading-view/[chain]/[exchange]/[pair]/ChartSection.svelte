@@ -34,7 +34,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		return candles ? candles.map(candleToQuote) : [];
 	}
 
-	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
+	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
 </script>
 
 <div class="chart-header">
