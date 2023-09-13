@@ -21,13 +21,13 @@
 		display: inline-grid;
 		transition: var(--transition-1);
 
-		& span {
+		span {
 			align-items: center;
 			display: flex;
 			gap: 0.375rem;
 		}
 
-		& .additional-value {
+		.additional-value {
 			margin-top: var(--badge-gap);
 		}
 

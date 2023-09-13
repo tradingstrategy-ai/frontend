@@ -31,14 +31,14 @@
 	.blog-post-content :global {
 		overflow: auto;
 
-		& h1 {
+		h1 {
 			font: var(--f-heading-lg-medium);
 			margin: var(--space-2xl) 0 !important;
 			text-transform: capitalize;
 		}
 
 		&,
-		& :is(p, li) {
+		:is(p, li) {
 			font: var(--f-text-md-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 
@@ -47,11 +47,11 @@
 			}
 		}
 
-		& p:not(:first-of-type) {
+		p:not(:first-of-type) {
 			margin-top: var(--space-lg);
 		}
 
-		& > h2 {
+		> h2 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
@@ -60,7 +60,7 @@
 			}
 		}
 
-		& > h3 {
+		> h3 {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
@@ -68,7 +68,7 @@
 				font: var(--f-heading-sm-medium);
 			}
 		}
-		& > h4 {
+		> h4 {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--f-heading-sm-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
@@ -77,64 +77,64 @@
 			}
 		}
 
-		& :is(ol, ul) {
+		:is(ol, ul) {
 			margin: 0;
 		}
 
-		& li {
+		li {
 			margin: 0.5em 0 0 0;
 			padding-left: var(--space-xxs);
 		}
 
-		& a,
-		& a:hover {
+		a,
+		a:hover {
 			text-decoration: underline;
 			color: inherit;
 		}
 
-		& :is(strong, b) {
+		:is(strong, b) {
 			font-weight: 600;
 		}
 
-		& figure {
+		figure {
 			display: grid;
 			margin: var(--space-3xl) 0 var(--space-5xl);
 
-			& img {
+			img {
 				height: 100%;
 				width: 100%;
 			}
 		}
 
-		& figcaption {
+		figcaption {
 			font: var(--f-ui-sm-roman);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: center;
 			margin: var(--space-md) 0;
 
-			& a {
+			a {
 				font-weight: 500;
 			}
 		}
 
-		& iframe {
+		iframe {
 			border: 0;
 			width: 100%;
 			min-height: 450px;
 		}
 
-		& .kg-image-card {
+		.kg-image-card {
 			text-align: center;
 		}
 
-		& .kg-image {
+		.kg-image {
 			width: 100%;
 			height: auto;
 			max-width: 100%;
 			display: inline-block;
 		}
 
-		& pre {
+		pre {
 			margin: var(--space-lg) 0;
 			padding: var(--space-lg);
 			background: var(--c-background-7-v1);
@@ -143,7 +143,7 @@
 			color: var(--c-parchment);
 		}
 
-		& blockquote {
+		blockquote {
 			margin: var(--space-lg) 0 var(--space-lg) var(--space-sl);
 			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
@@ -153,17 +153,17 @@
 			box-shadow: -0.75rem 0.75rem 0 var(--c-background-4-v1);
 		}
 
-		& .table-responsive {
+		.table-responsive {
 			width: 100%;
 			overflow-x: auto;
 		}
 
-		& table {
+		table {
 			margin: var(--space-lg) 0;
 			color: inherit;
 			border-collapse: collapse;
 
-			& :is(td, th) {
+			:is(td, th) {
 				vertical-align: top;
 				padding: var(--space-ss);
 				border-top: 1px solid var(--c-border-1-v1);
@@ -178,14 +178,14 @@
 				}
 			}
 
-			& th {
+			th {
 				background: var(--c-background-1-v1);
 				font-weight: 600;
 			}
 		}
 
 		/* JavaScript generated TOC */
-		& #table-of-contents {
+		#table-of-contents {
 			display: contents;
 		}
 	}

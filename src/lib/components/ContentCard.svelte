@@ -34,6 +34,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	};
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth on:click>
 	{#if icon || $$slots.icon}
 		<div class="icon symbol tile c">
@@ -75,11 +76,11 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			gap: var(--space-ml);
 		}
 
-		& * {
+		* {
 			margin-bottom: 0;
 		}
 
-		& .symbol {
+		.symbol {
 			--icon-size: var(--content-tile-icon-size, 1.75rem);
 			border-radius: 100%;
 			display: flex;
@@ -92,7 +93,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			}
 		}
 
-		& :global h3 {
+		:global h3 {
 			font: var(--f-heading-lg-medium);
 
 			@media (--viewport-xs) {
@@ -100,7 +101,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			}
 		}
 
-		& .description {
+		.description {
 			flex: 1;
 			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
@@ -110,7 +111,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
 
-			& :global(p) {
+			:global(p) {
 				margin-bottom: 1.25em;
 				font: inherit;
 				letter-spacing: inherit;
@@ -124,7 +125,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 
 	.cta {
 		@media (--viewport-sm-down) {
-			& :global .button {
+			:global .button {
 				width: 100%;
 			}
 		}
@@ -133,7 +134,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			margin-top: var(--space-sm);
 		}
 
-		@nest .ctaFullWidth & :global .button {
+		.ctaFullWidth & :global .button {
 			width: 100%;
 		}
 	}

@@ -78,7 +78,7 @@
 		gap: var(--space-3xl) var(--space-2xl);
 		overflow: auto;
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 

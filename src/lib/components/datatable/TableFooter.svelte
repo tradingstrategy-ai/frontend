@@ -90,7 +90,7 @@
 			max-width: calc(100vw - 3 * var(--space-md));
 		}
 
-		& nav {
+		nav {
 			display: flex;
 
 			&:hover .gap-indicator {

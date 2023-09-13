@@ -67,31 +67,31 @@
 <style lang="postcss">
 	.exchange-table :global {
 		@media (--viewport-md-up) {
-			& table {
+			table {
 				table-layout: fixed;
 			}
 
-			& .exchange_name {
+			.exchange_name {
 				width: 45%;
 				white-space: nowrap;
 
-				& :global * {
+				:global * {
 					overflow: hidden;
 					text-overflow: ellipsis;
 				}
 			}
 
-			& .pair_count {
+			.pair_count {
 				width: 25%;
 				text-align: right;
 			}
 
-			& .volume_30d {
+			.volume_30d {
 				width: 30%;
 				text-align: right;
 			}
 
-			& .cta {
+			.cta {
 				width: 15rem;
 				padding-left: 2em;
 			}

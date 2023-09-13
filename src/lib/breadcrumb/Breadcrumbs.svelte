@@ -99,7 +99,7 @@ https://search.google.com/structured-data/testing-tool
 	li {
 		white-space: nowrap;
 
-		& > * {
+		> * {
 			padding: var(--space-ss) var(--space-sm);
 
 			&:not(:hover) {
@@ -107,7 +107,7 @@ https://search.google.com/structured-data/testing-tool
 			}
 		}
 
-		& > span {
+		> span {
 			color: hsla(var(--hsl-text));
 		}
 

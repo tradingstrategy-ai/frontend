@@ -144,25 +144,25 @@
 	}
 
 	.position-table :global {
-		& :is(td, th) {
+		:is(td, th) {
 			font-size: 14px !important;
 			height: auto !important;
 			padding: var(--space-ss) var(--space-ss);
 		}
 
-		& .sortable .icon svg {
+		.sortable .icon svg {
 			top: var(--space-sl);
 		}
 
-		& .button {
+		.button {
 			height: 2.5rem;
 		}
 
-		& .ticker {
+		.ticker {
 			white-space: pre;
 		}
 
-		& :is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
+		:is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
 		}
 

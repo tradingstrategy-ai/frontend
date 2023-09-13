@@ -56,7 +56,7 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);
 
-		@nest input:checked + & {
+		input:checked + & {
 			background: var(--c-background-4);
 			color: var(--c-text-default);
 			cursor: auto;

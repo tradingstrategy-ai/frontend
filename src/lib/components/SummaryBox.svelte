@@ -60,18 +60,18 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 			padding: var(--space-md);
 		}
 
-		& .main {
+		.main {
 			display: grid;
 			align-content: flex-start;
 			gap: var(--space-ls);
 
-			& :global(p) {
+			:global(p) {
 				font: var(--f-ui-lg-roman);
 				letter-spacing: var(--f-ui-lg-spacing, normal);
 			}
 		}
 
-		& :global header {
+		:global header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			gap: var(--space-sm) var(--space-lg);
@@ -82,13 +82,13 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 				margin-bottom: var(--space-sm);
 			}
 
-			& h3 {
+			h3 {
 				align-self: center;
 				font: var(--f-heading-md-medium);
 				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 
-			& p {
+			p {
 				/* grid-area: 2 / 1 / auto / span 2; */
 				grid-column: 1 / span 2;
 				color: hsla(var(--hsl-text-extra-light));

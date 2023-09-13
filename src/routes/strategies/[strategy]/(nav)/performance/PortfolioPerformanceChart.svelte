@@ -119,13 +119,13 @@ Render the portfolio performance chart using ChartIQ.
 			--chart-aspect-ratio: 1.25;
 		}
 
-		& header {
+		header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 
@@ -135,7 +135,7 @@ Render the portfolio performance chart using ChartIQ.
 			}
 		}
 
-		& p {
+		p {
 			color: hsla(var(--hsl-text-extra-light));
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
@@ -155,14 +155,14 @@ Render the portfolio performance chart using ChartIQ.
 		border-radius: var(--radius-sm);
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
-		& .date {
+		.date {
 			font: var(--f-ui-xs-bold);
 			letter-spacing: var(--f-ui-xs-spacing);
 			color: hsla(var(--hsl-text), 0.4);
 			white-space: nowrap;
 		}
 
-		& .value {
+		.value {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing);
 		}

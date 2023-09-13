@@ -32,7 +32,7 @@
 			outline: none;
 		}
 
-		& :global svg {
+		:global svg {
 			position: absolute;
 			right: var(--wrapper-padding);
 			pointer-events: none;

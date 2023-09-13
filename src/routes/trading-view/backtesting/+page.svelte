@@ -186,16 +186,16 @@
 		display: grid;
 		gap: var(--space-lg);
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-lg-medium);
 			margin-bottom: var(--space-xl);
 		}
 
-		& :is(p, li) {
+		:is(p, li) {
 			margin-bottom: 1em;
 		}
 
-		& form {
+		form {
 			margin-bottom: var(--space-lg);
 			display: flex;
 			align-items: flex-end;
@@ -205,11 +205,11 @@
 			--button-height: auto;
 		}
 
-		& :global .svelte-spinner {
+		:global .svelte-spinner {
 			align-self: center;
 		}
 
-		& .action-link {
+		.action-link {
 			display: inline-block;
 			text-transform: uppercase;
 			font-size: 0.8em;

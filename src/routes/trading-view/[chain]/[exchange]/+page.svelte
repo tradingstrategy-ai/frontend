@@ -122,7 +122,7 @@
 			gap: var(--space-6xl);
 		}
 
-		& .ds-2-col {
+		.ds-2-col {
 			row-gap: var(--space-xl);
 		}
 	}
@@ -158,7 +158,7 @@
 		font: var(--f-ui-large-roman);
 		text-align: center;
 
-		& a {
+		a {
 			font-weight: 700;
 			text-decoration: underline;
 			white-space: nowrap;

@@ -41,7 +41,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 			flex-direction: column;
 		}
 
-		& :global .button {
+		:global .button {
 			min-width: 10rem;
 		}
 	}

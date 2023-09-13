@@ -98,7 +98,7 @@ Display site-wide search box for use in top-nav.
 			</form>
 
 			{#if hasQuery}
-				<ul id="search-results">
+				<ul>
 					{#each hits as { document } (document.id)}
 						<SearchHit {document} />
 					{/each}
@@ -169,7 +169,7 @@ Display site-wide search box for use in top-nav.
 		transition: opacity 0.25s;
 
 		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
-		@nest :not(.hasFocus) & {
+		:not(.hasFocus) & {
 			opacity: 0;
 			pointer-events: none;
 		}
@@ -179,7 +179,7 @@ Display site-wide search box for use in top-nav.
 			margin-top: var(--space-xxs);
 			width: 450px;
 
-			& .inner {
+			.inner {
 				max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
 			}
 		}
@@ -188,13 +188,13 @@ Display site-wide search box for use in top-nav.
 			left: 0;
 			top: 0;
 
-			@nest .hasQuery & .inner {
+			.hasQuery & .inner {
 				height: var(--viewport-height);
 				gap: var(--space-sm);
 			}
 		}
 
-		& .inner {
+		.inner {
 			background: hsla(var(--hsl-box), var(--a-box-a));
 			box-shadow: var(--shadow-sm);
 			display: flex;
@@ -204,14 +204,6 @@ Display site-wide search box for use in top-nav.
 		}
 	}
 
-	/**
-	 * Prevent body scrolling when search dialog is open and has results on mobile
-	 * NOTE: using CSS ids as work-around for :has pseudo-selector flakiness
-	 */
-	:global body:has(#search-input-mobile:focus):has(#search-results) {
-		overflow: hidden;
-	}
-
 	ul {
 		padding: 0;
 		flex: 1;
@@ -219,6 +211,7 @@ Display site-wide search box for use in top-nav.
 		gap: var(--space-sm);
 		align-content: start;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 	}
 
 	footer {
@@ -234,7 +227,7 @@ Display site-wide search box for use in top-nav.
 			--button-font: var(--f-ui-sm-medium);
 		}
 
-		@nest .hasQuery & {
+		.hasQuery & {
 			grid-template-columns: 1fr 1fr;
 		}
 	}

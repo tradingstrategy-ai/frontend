@@ -136,12 +136,12 @@
 			display: none;
 		}
 
-		& h4 {
+		h4 {
 			font: var(--f-ui-xl-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
-		& button {
+		button {
 			border: none;
 			background: transparent;
 			padding: 0;

@@ -12,7 +12,7 @@
 		width: 100%;
 		overflow: hidden;
 
-		& ul {
+		ul {
 			display: grid;
 			gap: var(--space-md);
 			padding: 0;

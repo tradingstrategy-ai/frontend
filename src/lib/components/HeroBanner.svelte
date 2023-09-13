@@ -66,7 +66,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 		gap: var(--space-sm);
 		place-content: center stretch;
 
-		& h1 {
+		h1 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 
@@ -76,7 +76,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 			}
 		}
 
-		& p {
+		p {
 			margin: 0;
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
@@ -93,11 +93,11 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 			display: none;
 		}
 
-		& :global svg {
+		:global svg {
 			max-height: min(28rem, 64vw);
 			margin: auto;
 
-			& * {
+			* {
 				fill: currentColor;
 			}
 		}

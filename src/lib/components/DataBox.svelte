@@ -89,7 +89,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 	}
 
 	.value {
-		@nest .xs & {
+		.xs & {
 			font: var(--f-ui-lg-medium);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 
@@ -99,7 +99,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 			}
 		}
 
-		@nest .sm & {
+		.sm & {
 			font: var(--f-ui-xl-medium);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 
@@ -109,7 +109,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 			}
 		}
 
-		@nest .md & {
+		.md & {
 			font: var(--f-ui-xxl-medium);
 			letter-spacing: var(--f-ui-xxl-spacing, normal);
 
@@ -119,7 +119,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 			}
 		}
 
-		@nest .lg & {
+		.lg & {
 			font: var(--f-ui-xxxl-medium);
 			letter-spacing: var(--f-ui-xxxl-spacing, normal);
 
@@ -129,7 +129,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 			}
 		}
 
-		& :global a {
+		:global a {
 			font: inherit;
 			text-decoration: underline;
 		}

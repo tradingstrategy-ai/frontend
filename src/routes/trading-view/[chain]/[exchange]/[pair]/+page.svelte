@@ -181,7 +181,7 @@ Render the pair trading page
 			gap: var(--space-6xl);
 		}
 
-		& .ds-2-col {
+		.ds-2-col {
 			row-gap: var(--space-xl);
 			align-items: start;
 		}
@@ -213,16 +213,16 @@ Render the pair trading page
 			gap: var(--space-7xl);
 		}
 
-		& header {
+		header {
 			display: grid;
 			gap: var(--space-sl);
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-h1-medium);
 		}
 
-		& p {
+		p {
 			font: var(--f-h4-roman);
 		}
 	}

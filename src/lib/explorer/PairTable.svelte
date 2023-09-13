@@ -116,23 +116,23 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			& tr:hover td {
+			tr:hover td {
 				position: relative;
 				overflow: visible;
 			}
 
-			& :is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
+			:is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
 				max-width: 12ch;
 				text-align: right;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			& .pair_symbol {
+			.pair_symbol {
 				min-width: 12rem;
 			}
 
-			& .exchange_name {
+			.exchange_name {
 				min-width: 6rem;
 				white-space: nowrap;
 			}

@@ -98,7 +98,7 @@ props.
 		display: grid;
 		list-style-type: none;
 
-		& a {
+		a {
 			display: grid;
 			gap: var(--search-hit-gap, var(--space-md));
 			grid-template-columns: auto 1fr auto;
@@ -120,7 +120,7 @@ props.
 			}
 
 			&:hover {
-				& :global .up-down-indicator {
+				:global .up-down-indicator {
 					&.bearish {
 						background: hsla(var(--hsl-bearish), 0.24) !important;
 					}
@@ -135,12 +135,12 @@ props.
 				background: var(--background-hover); /* see tile.css */
 			}
 
-			& :global .up-down-cell {
+			:global .up-down-cell {
 				max-width: min(20vw, 12rem);
 			}
 		}
 
-		& .badge {
+		.badge {
 			position: relative;
 			display: grid;
 			align-content: center;
@@ -154,7 +154,7 @@ props.
 			text-align: center;
 		}
 
-		& .chain-icon {
+		.chain-icon {
 			position: absolute;
 			right: 0;
 			bottom: 0;
@@ -167,7 +167,7 @@ props.
 			box-shadow: 0 0 1px 1px var(--c-shadow-1-v1);
 		}
 
-		& .info {
+		.info {
 			display: grid;
 			gap: var(--space-xxs);
 			width: 100%;

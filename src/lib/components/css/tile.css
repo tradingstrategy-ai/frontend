@@ -25,16 +25,13 @@
 		background: hsla(var(--hsl-box), var(--a-box-d));
 	}
 
-	&:hover {
-		&,
-		& .tile {
-			background: var(--background-hover) !important;
-		}
+	&:hover,
+	&:hover & {
+		background: var(--background-hover) !important;
 	}
 
-	&:hover,
-	&:focus {
-		& .button {
+	&:is(:hover, :focus) {
+		.button {
 			background: hsla(var(--hsl-text), 1) !important;
 			color: hsla(var(--hsl-text-inverted)) !important;
 		}

@@ -41,7 +41,7 @@ A section component to display a collection of ContentCards in a responsive grid
 			--grid-gap: var(--space-ls);
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 

@@ -120,7 +120,7 @@ Display filter options as checkboxes search queries.
 		stroke: transparent;
 		stroke-width: 3;
 
-		@nest input:checked + & {
+		input:checked + & {
 			stroke: currentColor;
 		}
 	}

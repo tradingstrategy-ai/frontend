@@ -92,14 +92,14 @@
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		/* Format tags in HTML output */
-		& a,
-		& a:hover {
+		a,
+		a:hover {
 			color: inherit;
 			font-weight: 700;
 			text-decoration: underline;
 		}
 
-		& p {
+		p {
 			margin-bottom: 0.5rem;
 		}
 	}

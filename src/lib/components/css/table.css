@@ -20,23 +20,23 @@ table:not(.table) {
 		--table-letter-spacing: var(--f-ui-sm-spacing, normal);
 	}
 
-	@media (width <= 768px) {
+	@media (--viewport-sm-down) {
 		--table-font: var(--f-ui-xs-medium) !important;
 		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
 
-	& thead tr:first-child {
+	thead tr:first-child {
 		background-color: hsla(var(--hsl-body));
 		position: sticky;
 		top: 0;
 		z-index: 1;
 	}
 
-	& thead.sticky th {
+	thead.sticky th {
 		border-radius: 0;
 	}
 
-	& th {
+	th {
 		background: hsla(var(--hsl-body));
 		border-radius: var(--radius-md);
 		color: hsla(var(--hsl-text-extra-light));
@@ -60,12 +60,12 @@ table:not(.table) {
 				color: hsla(var(--hsl-text-light));
 			}
 
-			& .icon svg {
+			.icon svg {
 				position: absolute;
 				right: var(--space-ls);
 				top: var(--space-ls);
 
-				& path {
+				path {
 					stroke-width: 0.1875rem;
 				}
 			}
@@ -77,8 +77,8 @@ table:not(.table) {
 		}
 	}
 
-	& tbody tr {
-		& td {
+	tbody tr {
+		td {
 			background: hsla(var(--hsl-box), var(--a-box-b));
 			height: 3.25rem;
 			font: var(--table-font);
@@ -89,7 +89,7 @@ table:not(.table) {
 			vertical-align: middle;
 			--button-width: 100%;
 
-			@media (width > 1024px) {
+			@media (--viewport-lg-up) {
 				height: 3.825rem !important;
 			}
 
@@ -105,16 +105,16 @@ table:not(.table) {
 		}
 
 		&:is(:hover, :focus, :focus-within) {
-			& td {
+			td {
 				background: hsla(var(--hsl-box), var(--a-box-d));
 			}
 
-			& .button {
+			.button {
 				--c-accent: var(--hsl-text);
 				color: hsla(var(--hsl-text-inverted));
 			}
 
-			& .up-down-cell .up-down-indicator {
+			.up-down-cell .up-down-indicator {
 				&.bearish {
 					background: hsla(var(--hsl-bearish), 0.24) !important;
 				}
@@ -125,12 +125,12 @@ table:not(.table) {
 		}
 	}
 
-	& :is(th, td).right {
+	:is(th, td).right {
 		text-align: right;
 	}
 
 	&.responsive {
-		@media (width <= 768px) {
+		@media (--viewport-sm-down) {
 			--table-font: var(--f-ui-md-medium) !important;
 			--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 
@@ -140,16 +140,16 @@ table:not(.table) {
 			width: 100%;
 
 			&,
-			& tbody {
+			tbody {
 				display: grid;
 				gap: var(--space-md);
 			}
 
-			& thead {
+			thead {
 				display: none !important;
 			}
 
-			& tbody tr {
+			tbody tr {
 				background: hsla(var(--hsl-box), var(--a-box-b));
 				border-radius: var(--radius-md);
 				display: grid;
@@ -175,7 +175,7 @@ table:not(.table) {
 					}
 				}
 
-				& td {
+				td {
 					align-content: start;
 					background: transparent;
 					border-radius: 0;
@@ -199,25 +199,25 @@ table:not(.table) {
 				}
 			}
 
-			& tfoot,
-			& tfoot tr {
+			tfoot,
+			tfoot tr {
 				display: grid;
 			}
 
-			& .up-down-cell {
+			.up-down-cell {
 				justify-content: flex-start;
 				margin-top: var(--space-sm);
 			}
 		}
 	}
 
-	& .button {
+	.button {
 		white-space: nowrap;
 	}
 }
 
 table.loading {
-	& :not(thead, tfoot) tr td {
+	:not(thead, tfoot) tr td {
 		color: transparent;
 
 		&::before {
@@ -232,16 +232,16 @@ table.loading {
 			top: var(--space-sm);
 		}
 
-		& * {
+		* {
 			color: transparent;
 			background: transparent !important;
 		}
 	}
 
-	& .button {
+	.button {
 		cursor: loading;
 
-		& span {
+		span {
 			color: transparent;
 
 			&::before {

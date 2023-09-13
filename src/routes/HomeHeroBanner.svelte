@@ -66,7 +66,7 @@ Home page hero banner.
 		}
 
 		@media (--viewport-xl-down) {
-			& br {
+			br {
 				display: none;
 			}
 		}

@@ -46,7 +46,7 @@ button-like control with a segement for each possible value.
 		&:first-child {
 			border-radius: var(--radius-md) 0 0 var(--radius-md);
 
-			& span {
+			span {
 				padding-left: var(--space-xxs);
 			}
 		}
@@ -54,7 +54,7 @@ button-like control with a segement for each possible value.
 		&:last-child {
 			border-radius: 0 var(--radius-md) var(--radius-md) 0;
 
-			& span {
+			span {
 				padding-right: var(--space-xxs);
 			}
 		}

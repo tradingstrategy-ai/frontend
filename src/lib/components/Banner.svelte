@@ -26,23 +26,23 @@
 		display: contents;
 		--section-background: hsla(var(--hsla-background-accent-1));
 
-		& :is(h2, footer) {
+		:is(h2, footer) {
 			text-align: center;
 		}
 
-		& :is(h2, footer, .content) {
+		:is(h2, footer, .content) {
 			padding-inline: var(--space-md);
 		}
 
 		@media (--viewport-sm-down) {
-			& h2 {
+			h2 {
 				font: var(--f-heading-md-medium);
 				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 		}
 
 		@media (--viewport-md-up) {
-			& .content :global(:where(p, li)) {
+			.content :global(:where(p, li)) {
 				font: var(--f-ui-xl-roman);
 				letter-spacing: var(--f-ui-xl-spacing, normal);
 				margin-bottom: var(--space-lg);

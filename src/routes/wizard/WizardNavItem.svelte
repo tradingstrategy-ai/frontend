@@ -20,7 +20,7 @@
 	.wizard-nav-item {
 		display: contents;
 
-		& button {
+		button {
 			display: flex;
 			align-items: center;
 			gap: var(--space-sm);

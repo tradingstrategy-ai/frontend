@@ -25,7 +25,7 @@
 	.trading-entities-table {
 		table-layout: fixed;
 
-		& :global(td) {
+		:global(td) {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;

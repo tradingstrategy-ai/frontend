@@ -50,11 +50,11 @@
 			max-width: 60rem;
 		}
 
-		& :global .subscribe-form {
+		:global .subscribe-form {
 			grid-template-columns: repeat(auto-fit, minmax(17rem, auto));
 		}
 
-		& .artwork {
+		.artwork {
 			display: grid;
 			place-items: center;
 
@@ -62,7 +62,7 @@
 				padding: 2rem;
 			}
 
-			& :global svg {
+			:global svg {
 				@media (--viewport-md-down) {
 					max-width: min(36vw, 24rem);
 					max-height: min(36vw, 24rem);
@@ -74,17 +74,17 @@
 			}
 		}
 
-		& .form {
+		.form {
 			display: grid;
 			gap: var(--space-sm);
 		}
 
-		& :global [slot='title'],
-		& h2 {
+		:global [slot='title'],
+		h2 {
 			margin-bottom: var(--space-lg);
 		}
 
-		& :global h2 {
+		:global h2 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 
@@ -99,7 +99,7 @@
 			}
 		}
 
-		& :global p {
+		:global p {
 			font: var(--f-ui-xl-roman);
 
 			@media (--viewport-xs) {

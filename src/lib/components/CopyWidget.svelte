@@ -45,7 +45,7 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 	.copy-widget {
 		display: grid;
 
-		& span {
+		span {
 			grid-area: 1 / -1;
 		}
 	}

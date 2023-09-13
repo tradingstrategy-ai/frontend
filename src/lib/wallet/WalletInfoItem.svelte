@@ -34,13 +34,13 @@
 			--value-spacing: var(--f-ui-lg-spacing);
 		}
 
-		& > span {
+		> span {
 			@container (width >= 420px) {
 				padding: 0;
 			}
 		}
 
-		& .label {
+		.label {
 			margin-top: var(--space-xxs);
 			font: var(--label-font);
 			letter-spacing: var(--label-spacing);
@@ -50,7 +50,7 @@
 			}
 		}
 
-		& .value {
+		.value {
 			font: var(--value-font);
 			letter-spacing: var(--value-spacing);
 

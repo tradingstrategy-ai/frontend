@@ -58,7 +58,7 @@
 		overflow-x: auto;
 		overflow-y: hidden;
 
-		& h2 {
+		h2 {
 			margin-bottom: var(--space-md);
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
@@ -71,7 +71,7 @@
 	}
 
 	.trade-table :global {
-		& :is(, .quantity, .price, .value) {
+		:is(, .quantity, .price, .value) {
 			text-align: right;
 		}
 	}

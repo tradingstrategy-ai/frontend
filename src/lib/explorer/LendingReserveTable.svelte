@@ -84,27 +84,27 @@
 <style lang="postcss">
 	.reserve-table :global {
 		@media (--viewport-md-up) {
-			& table {
+			table {
 				table-layout: fixed;
 			}
 
-			& .asset_name {
+			.asset_name {
 				width: 40%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			& .asset_symbol {
+			.asset_symbol {
 				width: 20%;
 			}
 
-			& :is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
+			:is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
 				width: 20%;
 				text-align: right;
 			}
 
-			& .cta {
+			.cta {
 				width: 12rem;
 			}
 		}

@@ -64,7 +64,7 @@
 	img {
 		width: 100%;
 
-		@nest .hasError & {
+		.hasError & {
 			max-width: 20rem;
 		}
 	}

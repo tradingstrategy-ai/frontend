@@ -30,12 +30,12 @@
 		align-items: center;
 		justify-content: flex-start;
 
-		& .icon {
+		.icon {
 			display: grid;
 			justify-items: center;
 			width: var(--image-size);
 
-			& img {
+			img {
 				height: var(--image-size);
 			}
 		}

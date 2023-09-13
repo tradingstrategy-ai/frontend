@@ -129,7 +129,7 @@
 			padding: var(--space-5xl);
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 			@media (--viewport-md-up) {
@@ -138,7 +138,7 @@
 			}
 		}
 
-		& .coming-soon {
+		.coming-soon {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: var(--c-text-2-v1);
@@ -148,12 +148,12 @@
 			border-radius: var(--radius-xxl);
 		}
 
-		& p {
+		p {
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
-		& .ctas {
+		.ctas {
 			display: flex;
 			gap: var(--space-lg);
 			width: 100%;
@@ -164,7 +164,7 @@
 		}
 
 		/* hide on small displays due to label wrapping */
-		& .newsletter-cta {
+		.newsletter-cta {
 			display: grid;
 
 			@media (width < 390px) {

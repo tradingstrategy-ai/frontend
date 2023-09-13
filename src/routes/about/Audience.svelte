@@ -69,7 +69,7 @@
 	header {
 		text-align: center;
 
-		& p {
+		p {
 			margin: 1rem 0;
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing);

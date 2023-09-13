@@ -29,7 +29,7 @@
 		overflow-y: auto;
 		text-align: center;
 
-		& h1 {
+		h1 {
 			font: 900 160px var(--ff-display);
 
 			@media (--viewport-sm-down) {
@@ -37,11 +37,11 @@
 			}
 		}
 
-		& h2 {
+		h2 {
 			font: var(--f-h3-roman);
 		}
 
-		& p {
+		p {
 			margin-top: var(--space-md);
 			max-width: 50ch;
 			font: var(--f-ui-large-roman);

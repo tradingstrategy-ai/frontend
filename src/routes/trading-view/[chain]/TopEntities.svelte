@@ -46,7 +46,7 @@
 		gap: var(--space-md);
 		align-items: flex-end;
 
-		& h4 {
+		h4 {
 			padding: 0 var(--space-md) var(--space-xxs) 0;
 			font: var(--f-ui-md-bold);
 			letter-spacing: var(--f-ui-md-spacing);

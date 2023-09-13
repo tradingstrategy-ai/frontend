@@ -116,21 +116,21 @@
 			z-index: 9999999;
 		}
 
-		& .errors {
+		.errors {
 			margin-block: 0.625rem;
 			position: relative;
 
-			& :global(.tooltip .popup) {
+			:global(.tooltip .popup) {
 				width: 22rem;
 				right: 0;
 			}
 
-			& :global(.alert-item) {
+			:global(.alert-item) {
 				container-type: unset;
 			}
 		}
 
-		& .visuals {
+		.visuals {
 			padding-top: 2rem;
 			display: grid;
 			position: relative;
@@ -138,7 +138,7 @@
 				padding-top: 4rem;
 			}
 
-			& .top {
+			.top {
 				align-items: flex-start;
 				display: flex;
 				gap: 1rem;
@@ -149,7 +149,7 @@
 				right: 0;
 				top: 0;
 
-				& .tokens {
+				.tokens {
 					display: flex;
 					gap: 0.5rem;
 					--token-size: 2.5rem;
@@ -157,7 +157,7 @@
 						--token-size: 2rem;
 					}
 
-					& :global(.entity-symbol) {
+					:global(.entity-symbol) {
 						border-radius: 100%;
 						box-shadow: var(--shadow-1);
 					}
@@ -169,7 +169,7 @@
 			}
 		}
 
-		& .content {
+		.content {
 			container-type: inline-size;
 			display: grid;
 			gap: 0.75rem;
@@ -178,7 +178,7 @@
 				padding: 1rem;
 			}
 
-			& header {
+			header {
 				--avatar-size: 6rem;
 				align-items: center;
 				display: grid;
@@ -189,7 +189,7 @@
 					gap: 0.5rem;
 				}
 
-				& .avatar {
+				.avatar {
 					background: hsla(var(--hsla-box-3));
 					border-radius: 100%;
 					font: var(--f-ui-sm-roman);
@@ -199,11 +199,11 @@
 					position: relative;
 					width: var(--avatar-size);
 
-					& :global(.tooltip .popup) {
+					:global(.tooltip .popup) {
 						min-width: 20rem;
 					}
 
-					& img {
+					img {
 						border-radius: 100%;
 						height: 100%;
 						object-fit: cover;
@@ -213,7 +213,7 @@
 						place-items: center;
 					}
 
-					& .chain-icon {
+					.chain-icon {
 						border-radius: 100%;
 						bottom: -0.5rem;
 						box-shadow: var(--shadow-1);
@@ -223,24 +223,24 @@
 						position: absolute;
 						right: -0.5rem;
 
-						& strong {
+						strong {
 							text-transform: capitalize;
 						}
 					}
 				}
 
-				& .description {
+				.description {
 					align-items: center;
 					justify-items: start;
 					display: grid;
 					gap: 0.25rem;
 
-					& :where(h3, p) {
+					:where(h3, p) {
 						margin: 0;
 					}
 				}
 
-				& h3 {
+				h3 {
 					font: var(--f-ui-xxl-medium);
 
 					@container (width <= 520px) {
@@ -252,17 +252,17 @@
 					}
 				}
 
-				& p {
+				p {
 					font: var(--f-ui-md-medium);
 					color: hsla(var(--hsl-text-extra-light));
 				}
 			}
 
-			& .data {
+			.data {
 				position: relative;
 			}
 
-			& .backtest-data-badge {
+			.backtest-data-badge {
 				align-items: center;
 				border-radius: var(--radius-sl);
 				color: hsla(var(--hsl-text-extra-light));
@@ -274,7 +274,7 @@
 				text-transform: uppercase;
 			}
 
-			& .actions {
+			.actions {
 				display: grid;
 			}
 		}

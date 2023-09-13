@@ -116,7 +116,7 @@
 	}
 
 	header {
-		& h1 {
+		h1 {
 			margin-block: var(--space-5xl) var(--space-md);
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
@@ -127,7 +127,7 @@
 			}
 		}
 
-		& p {
+		p {
 			font: var(--f-ui-lg-roman);
 			letter-spacing: var(--f-ui-lg-spacing, normal);
 		}

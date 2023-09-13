@@ -59,13 +59,13 @@ Display summary performance table for various periods.
 			grid-template-columns: repeat(5, 1fr);
 		}
 
-		& ul {
+		ul {
 			list-style-type: none;
 			padding: 0;
 			display: grid;
 		}
 
-		& li {
+		li {
 			--skeleton-width: 5ch;
 			--skeleton-height: 1.2em;
 			font: var(--f-ui-xl-roman);
@@ -96,16 +96,16 @@ Display summary performance table for various periods.
 			}
 		}
 
-		& .row-heading li {
+		.row-heading li {
 			font-weight: 500;
 			padding-inline: 0;
 		}
 
-		& .loading li.col-heading {
+		.loading li.col-heading {
 			color: var(--c-text-7-v1);
 		}
 
-		& .time-period-col:not(.active) {
+		.time-period-col:not(.active) {
 			@media (--viewport-md-down) {
 				display: none;
 			}

@@ -134,7 +134,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			flex-direction: column;
 		}
 
-		& h2 {
+		h2 {
 			flex: 1;
 			font: var(--f-h2-medium);
 			white-space: nowrap;
@@ -151,7 +151,7 @@ for the same hovered date. Also displays a time-bucket selector.
 		align-items: baseline;
 		border-bottom: 1px solid #999;
 
-		& h3 {
+		h3 {
 			flex: 1;
 			font: var(--f-h5-medium);
 			text-transform: uppercase;
@@ -162,7 +162,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			}
 		}
 
-		& .help {
+		.help {
 			font: var(--f-ui-small-roman);
 			color: var(--c-text-2-v1);
 			text-align: right;
@@ -171,11 +171,11 @@ for the same hovered date. Also displays a time-bucket selector.
 			overflow: hidden;
 			text-overflow: ellipsis;
 
-			& a:hover {
+			a:hover {
 				color: var(--c-text-1-v1);
 			}
 
-			& .prefix {
+			.prefix {
 				@media (--viewport-xs) {
 					display: none;
 				}

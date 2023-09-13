@@ -58,17 +58,17 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 		display: grid;
 		gap: var(--space-md);
 
-		& h2 {
+		h2 {
 			margin-top: var(--space-lg);
 			font: var(--f-h2-medium);
 		}
 
-		& h3 {
+		h3 {
 			margin-top: var(--space-sm);
 			font: var(--f-h4-medium);
 		}
 
-		& pre {
+		pre {
 			background: var(--c-background-7-v1);
 			border: 1px solid var(--c-border-1-v1);
 			border-radius: var(--radius-xxs);

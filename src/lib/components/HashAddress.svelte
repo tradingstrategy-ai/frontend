@@ -15,7 +15,7 @@
 		overflow: hidden;
 		white-space: nowrap;
 
-		& span {
+		span {
 			text-decoration: underline;
 
 			&:first-child {

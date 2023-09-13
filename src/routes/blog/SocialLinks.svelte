@@ -21,7 +21,7 @@
 			flex-direction: column;
 		}
 
-		& :global .button {
+		:global .button {
 			--icon-size: 1.125rem !important;
 		}
 	}

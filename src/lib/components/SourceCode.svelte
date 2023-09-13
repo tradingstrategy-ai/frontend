@@ -29,7 +29,7 @@ See: https://github.com/metonym/svelte-highlight
 		border-radius: var(--radius-md);
 		background-color: var(--c-ink);
 
-		& :global(.hljs) {
+		:global(.hljs) {
 			background-color: transparent;
 		}
 	}

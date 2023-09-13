@@ -122,16 +122,16 @@
 		display: inline-block;
 		padding: var(--space-xs) var(--space-sl);
 
-		& h3 {
+		h3 {
 			margin: 0;
 			font-weight: 500;
 		}
 
-		& :global dl .secondary:not(.idx-0) {
+		:global dl .secondary:not(.idx-0) {
 			margin-left: var(--space-md);
 		}
 
-		& :global .secondary dt {
+		:global .secondary dt {
 			font-weight: 500;
 			color: var(--label-color);
 

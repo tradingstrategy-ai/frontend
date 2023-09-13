@@ -93,8 +93,8 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 
 	/* TODO: move font settings somewhere else */
 	.section :global {
-		& > h2,
-		& > header > h2 {
+		> h2,
+		> header > h2 {
 			font: var(--f-heading-xl-medium);
 
 			@media (--viewport-sm-down) {
@@ -102,8 +102,8 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 			}
 		}
 
-		& > p,
-		& > header > p {
+		> p,
+		> header > p {
 			font: var(--f-ui-lg-roman);
 
 			@media (--viewport-xs) {

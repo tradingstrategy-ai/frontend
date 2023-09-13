@@ -14,14 +14,14 @@
 
 <style lang="postcss">
 	.table-of-contents {
-		& a {
+		a {
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--f-heading-xs-spacing, normal);
 			padding: var(--space-sm) var(--space-md);
 			text-decoration: none !important;
 		}
 
-		& .toc-entry-h3 {
+		.toc-entry-h3 {
 			margin-left: 1em;
 		}
 	}
