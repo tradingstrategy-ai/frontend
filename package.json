@@ -75,7 +75,7 @@
     "svelte-highlight": "^7.3.0",
     "svelte-inview": "^4.0.1",
     "svelte-spinner": "^2.0.2",
-    "typesense": "^1.5.3",
+    "typesense": "^1.7.1",
     "viem": "^1.1.4"
   },
   "optionalDependencies": {
