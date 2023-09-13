@@ -190,7 +190,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.no-chart-data {
 		padding-block: 2rem;
-		padding-inline: calc((100vw - min(70ch, 90vw)) / 2);
+		padding-inline: calc((100% - 70ch) / 2);
 		border-bottom: 1px solid #999;
 	}
 </style>
