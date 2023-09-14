@@ -107,7 +107,7 @@
 				<div>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							<Timestamp date={positionInfo.openedAt} format="iso" withTime />
+							<Timestamp date={positionInfo.openedAt} withTime />
 						</span>
 						<span slot="popup">
 							{positionInfoDescription.openedAt}
@@ -119,7 +119,7 @@
 				{#if !positionInfo.stillOpen}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							<Timestamp date={positionInfo.closedAt} format="iso" withTime />
+							<Timestamp date={positionInfo.closedAt} withTime />
 						</span>
 						<span slot="popup">
 							{positionInfoDescription.closedAt}

@@ -96,19 +96,19 @@
 			header: 'Opened',
 			id: 'opened_at',
 			accessor: ({ opened_at }) => toISODate(opened_at),
-			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Closed',
 			id: 'closed_at',
 			accessor: ({ closed_at }) => toISODate(closed_at),
-			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Frozen at',
 			id: 'frozen_at',
 			accessor: ({ frozen_at }) => toISODate(frozen_at),
-			cell: ({ value }) => createRender(Timestamp, { date: value, format: 'iso', withTime: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: '',

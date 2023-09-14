@@ -1,3 +1,35 @@
+export type MaybeParsableDate = Maybe<Date | string | number>;
+
+/**
+ * Try to parse a value as a date. Gracefully handles string values,
+ * Unix epoch values (no ms), JS style numeric values (with ms),
+ * and ISO-like date strings missing tz offset (e.g. "2023-01-01T12:00")
+ */
+export function parseDate(value: MaybeParsableDate) {
+	if (value instanceof Date) return value;
+	if (value === null || value === undefined) return undefined;
+
+	// numeric values (may come from server as string type)
+	let numVal = Number(value);
+	if (Number.isFinite(numVal)) {
+		// heuristic to determine is this is a Unix epoch value (no ms)
+		if (numVal < 10_000_000_000) numVal *= 1000;
+		return new Date(numVal);
+	}
+
+	// string values
+	if (typeof value === 'string') {
+		// check for ISO-like date strings missing tz offset, e.g. "2023-01-01T12:00:00"
+		// Append "Z" to ensure JS Date parser treats these as UTC
+		if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/.test(value)) {
+			value += 'Z';
+		}
+		const parsedDate = new Date(value);
+		// only return valid parsed dates
+		return Number.isFinite(parsedDate.valueOf()) ? parsedDate : undefined;
+	}
+}
+
 /**
  * Return a date range (as two-date array) from a initial date and number of days.
  * The time component is stripped from the original `date`. `days` may be positive

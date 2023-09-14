@@ -28,10 +28,10 @@
 	<div class="inner">
 		<SummaryBox title="Current session" subtitle="Statistics since the trade executor instance was restarted">
 			<DataBox label="Restarted" size="xs">
-				<Timestamp date={runState.started_at} format="relative" />
+				<Timestamp date={runState.started_at} relative />
 			</DataBox>
 			<DataBox label="Status last updated" size="xs">
-				<Timestamp date={runState.last_refreshed_at} format="relative" />
+				<Timestamp date={runState.last_refreshed_at} relative />
 			</DataBox>
 			<DataBox label="Trading cycles" value={runState.cycles} size="xs" />
 			<DataBox label="Take profit/stop loss checks" value={runState.position_trigger_checks} size="xs" />
@@ -41,7 +41,7 @@
 		<SummaryBox title="Lifetime" subtitle="Overall execution metrics">
 			<DataBox label="Completed trading cycles" value={`${(state.cycle || 0) - 1}`} size="xs" />
 			<DataBox label="First started" size="xs">
-				<Timestamp date={state.created_at} format="iso" withTime />
+				<Timestamp date={state.created_at} withTime />
 			</DataBox>
 		</SummaryBox>
 	</div>

@@ -7,7 +7,7 @@
 </script>
 
 <div class="log-entry level--{level}">
-	<Timestamp date={timestamp} format="iso" withSeconds />
+	<Timestamp date={timestamp} withSeconds />
 	<span class="message">
 		{message}
 	</span>
