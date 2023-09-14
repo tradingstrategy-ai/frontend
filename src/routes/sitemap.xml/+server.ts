@@ -1,4 +1,4 @@
-import { getChain, type Chain } from '$lib/helpers/chain.js';
+import type { Chain } from '$lib/helpers/chain.js';
 import { fetchPublicApi } from '$lib/helpers/public-api.js';
 
 /**
