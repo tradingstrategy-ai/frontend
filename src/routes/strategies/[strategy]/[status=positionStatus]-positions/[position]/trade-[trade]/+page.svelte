@@ -51,7 +51,7 @@
 			</a>
 		</DataBox>
 		<DataBox label="Executed at">
-			<Timestamp date={trade.executed_at} format="iso" withTime />
+			<Timestamp date={trade.executed_at} withTime />
 		</DataBox>
 		<DataBox label="Slippage tolerance" value="{formatBPS(trade.planned_max_slippage)} BPS" />
 		<DataBox label="Expected value" value={formatPrice(trade.planned_reserve)} />

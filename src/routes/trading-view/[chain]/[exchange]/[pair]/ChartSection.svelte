@@ -16,10 +16,11 @@ for the same hovered date. Also displays a time-bucket selector.
 -->
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import type { TimeBucket } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
-	import { ChartLinker, HudRow, HudMetric, PairCandleChart, TimeBucketSelector } from '$lib/chart';
-	import { Alert } from '$lib/components';
+	import { ChartLinker, HudRow, HudMetric, PairCandleChart } from '$lib/chart';
+	import { Alert, SegmentedControl } from '$lib/components';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -34,12 +35,16 @@ for the same hovered date. Also displays a time-bucket selector.
 		return candles ? candles.map(candleToQuote) : [];
 	}
 
-	$: timeBucket = ($page.url.hash.slice(1) || '4h') as TimeBucket;
+	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
 </script>
 
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
-	<TimeBucketSelector active={timeBucket} />
+	<SegmentedControl
+		options={['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d']}
+		selected={timeBucket}
+		on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+	/>
 </div>
 
 <div class="chart-wrapper">
@@ -127,12 +132,10 @@ for the same hovered date. Also displays a time-bucket selector.
 <style lang="postcss">
 	.chart-header {
 		display: flex;
-		gap: var(--space-md);
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-sm) var(--space-lg);
 		margin-bottom: 1em;
-
-		@media (--viewport-md-down) {
-			flex-direction: column;
-		}
 
 		h2 {
 			flex: 1;
@@ -190,7 +193,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 	.no-chart-data {
 		padding-block: 2rem;
-		padding-inline: calc((100vw - min(70ch, 90vw)) / 2);
+		padding-inline: calc((100% - 70ch) / 2);
 		border-bottom: 1px solid #999;
 	}
 </style>

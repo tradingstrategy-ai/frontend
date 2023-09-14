@@ -2,7 +2,7 @@
 	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
-	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
+	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
 	export let summary: Record<string, any>;
 	export let details: Record<string, any>;
@@ -57,7 +57,20 @@
 	{/if}
 
 	{#if Number.isFinite(summary.pair_tvl)}
-		<TradingDataInfoRow label="TVL" value={formatDollar(summary.pair_tvl)} />
+		<TradingDataInfoRow label="TVL">
+			<Tooltip slot="value">
+				<span slot="trigger" class="underline">
+					{formatDollar(summary.pair_tvl)}
+				</span>
+				<svelte:fragment slot="popup">
+					<Timestamp date={summary.pair_tvl_last_updated} let:dateStr let:timeStr let:relative>
+						Updated {relative}<br />
+						{dateStr}
+						{timeStr} UTC
+					</Timestamp>
+				</svelte:fragment>
+			</Tooltip>
+		</TradingDataInfoRow>
 	{/if}
 
 	{#if summary.exchange_rate}

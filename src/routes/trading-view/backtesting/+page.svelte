@@ -131,7 +131,7 @@
 							<td class="right">{formatKilos(row.entries)}</td>
 							<td class="right">{formatSizeMegabytes(row.size)}</td>
 							<td>{row.format}</td>
-							<td><Timestamp date={row.last_updated_at} format="relative" /></td>
+							<td><Timestamp date={row.last_updated_at} relative /></td>
 							<td>
 								<a class="action-link" href={row.documentation}>Documentation</a>
 								{#if validApiKey}

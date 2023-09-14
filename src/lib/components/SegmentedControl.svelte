@@ -17,7 +17,7 @@ button-like control with a segement for each possible value.
 	{#each options as option}
 		<label class:selected={option === selected}>
 			<span>{option}</span>
-			<input type="radio" bind:group={selected} value={option} />
+			<input type="radio" bind:group={selected} value={option} on:change />
 		</label>
 	{/each}
 </div>

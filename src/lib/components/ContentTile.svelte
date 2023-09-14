@@ -41,7 +41,9 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	<div class="content">
 		<div class="info">
 			{#if date}
-				<Timestamp {date} withRelative />
+				<Timestamp {date} let:parsedDate let:relative>
+					{parsedDate?.toDateString()}, {relative}
+				</Timestamp>
 			{/if}
 
 			{#if title}

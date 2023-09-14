@@ -57,7 +57,7 @@
 			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 				<UpDownCell value={data.Close - data.iqPrevClose}>
 					<div class="date">
-						<Timestamp date={data.DT} format="iso" />
+						<Timestamp date={data.DT} />
 					</div>
 					<div class="value">{formatPercent(data.Close)}</div>
 				</UpDownCell>

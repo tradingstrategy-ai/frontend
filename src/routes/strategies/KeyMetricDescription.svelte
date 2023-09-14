@@ -36,9 +36,8 @@
 			<li>
 				The period used for the backtest simulation is
 				<span class="timespan">
-					<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+					<Timestamp date={metric.calculation_window_start_at} />—<Timestamp
 						date={metric.calculation_window_end_at}
-						format="iso"
 					/></span
 				>.
 			</li>
@@ -46,9 +45,8 @@
 			<li>
 				The calculation period for live trading is
 				<span class="timespan">
-					<Timestamp date={metric.calculation_window_start_at} format="iso" />—<Timestamp
+					<Timestamp date={metric.calculation_window_start_at} />—<Timestamp
 						date={metric.calculation_window_end_at}
-						format="iso"
 					/></span
 				>.
 			</li>

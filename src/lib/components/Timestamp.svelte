@@ -6,81 +6,60 @@ by JS Date) or a Date object.
 
 #### Usage:
 ```tsx
-	<Timestamp date={1672531200} format="iso" withTime />
-	<Timestamp date="2023-01-01T00:00Z" withRelative />
+	<Timestamp date={1672531200} withTime />
+	<Timestamp date="2023-01-01T00:00" relative />
+	<Timestamp date={someDate} let:parsedDate let:dateStr let:timeStr let:relative>
+		{dateStr} at {timmeStr}, {relative}
+	</Timestamp>
 ```
 -->
 <script lang="ts">
 	import { formatDistanceToNow } from 'date-fns';
+	import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 
-	type MaybeParsableDate = Maybe<Date | string | number>;
 	export let date: MaybeParsableDate;
-	export let format: 'default' | 'relative' | 'iso' = 'default';
-	export let withRelative = false;
-	export let withTime = false;
+	export let relative = false;
 	export let withSeconds = false;
+	export let withTime = withSeconds;
 
-	$: parsedDate = parse(date);
-	$: isoString = parsedDate?.toISOString();
+	let isoStr: string, relativeStr: string, dateStr: string, timeStr: string;
 
-	const formatters = {
-		default: getDefaultDateString,
-		relative: getRelativeDateString,
-		iso: getISODateString
-	};
+	$: parsedDate = parseDate(date);
 
-	function parse(value: MaybeParsableDate) {
-		if (value instanceof Date) return value;
-		if (value === null || value === undefined) return undefined;
-
-		// numeric values (may come from server as string type)
-		let numVal = Number(value);
-		if (Number.isFinite(numVal)) return parseNumeric(numVal);
-
-		// string values
-		if (typeof value === 'string') return parseString(value);
-	}
-
-	function parseNumeric(value: number) {
-		// heuristic to determine is this is a Unix epoch value (no ms)
-		if (value < 10_000_000_000) value *= 1000;
-		return new Date(value);
-	}
-
-	function parseString(value: string) {
-		// only return valid parsed dates
-		const parsedDate = new Date(value);
-		return Number.isFinite(parsedDate.valueOf()) ? parsedDate : undefined;
-	}
-
-	function getDefaultDateString(d: Date) {
-		const parts = [d.toDateString()];
-		if (withRelative) parts.push(getRelativeDateString(d));
-		return parts.join(', ');
-	}
-
-	function getRelativeDateString(d: Date) {
-		return formatDistanceToNow(d, { addSuffix: true });
-	}
-
-	function getISODateString(d: Date) {
-		const isoStr = d.toISOString();
-		let dateStr = `<span>${isoStr.slice(0, 10)}</span>`;
-		if (withTime || withSeconds) {
-			dateStr += ` <span>${isoStr.slice(11, withSeconds ? 19 : 16)}</span>`;
-		}
-		return dateStr;
+	$: if (parsedDate) {
+		isoStr = parsedDate.toISOString();
+		dateStr = isoStr.slice(0, 10);
+		timeStr = isoStr.slice(11, withSeconds ? 19 : 16);
+		relativeStr = formatDistanceToNow(parsedDate, { addSuffix: true });
 	}
 </script>
 
-{#if parsedDate}
-	<time class="timestamp" datetime={isoString}>{@html formatters[format](parsedDate)}</time>
-{:else}
-	<slot>---</slot>
-{/if}
+<time class="timestamp" datetime={isoStr}>
+	<slot {parsedDate} {dateStr} {timeStr} relative={relativeStr}>
+		{#if parsedDate}
+			{#if relative}
+				<span>{relativeStr}</span>
+			{:else}
+				<!-- ensure no whitespace between span and #if block! -->
+				<span>{dateStr}</span>{#if withTime}<span>{timeStr}</span>{/if}
+			{/if}
+		{:else}
+			---
+		{/if}
+	</slot>
+</time>
 
 <style lang="postcss">
-	.timestamp :global(span) {
-		white-space: nowrap;
+	.timestamp {
+		:global(span) {
+			white-space: nowrap;
+		}
+	}
+
+	/* re-inject space between sibling spans */
+	span + span {
+		&::before {
+			content: ' ';
+		}
 	}
 </style>
