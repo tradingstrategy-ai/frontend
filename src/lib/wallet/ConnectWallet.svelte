@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import type { Chain } from '$lib/helpers/chain';
 	import { AlertList, Button } from '$lib/components';
 	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
-	export let chains: Chain[];
+	export let chainInfo: Record<string, ChainInfo>;
 
 	let error: any;
 
@@ -22,7 +21,7 @@
 <div class="connect-wallet">
 	{#if $wallet.status === 'connected'}
 		<div class="connected-wallet">
-			<WalletSummary wallet={$wallet} {chainId} {chains} />
+			<WalletSummary wallet={$wallet} {chainId} {chainInfo} />
 			<Button size="sm" label="Change wallet" on:click={wallet.disconnect} />
 		</div>
 	{:else}

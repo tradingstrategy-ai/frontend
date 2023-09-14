@@ -4,9 +4,9 @@
 
 	export let data;
 
-	$: chainId = $wizard?.data.chainId;
+	$: chainId = $wizard?.data?.chainId;
 
 	$: wizard.toggleComplete('connect', $wallet.status === 'connected' && $wallet.chain?.id === chainId);
 </script>
 
-<ConnectWallet {chainId} chains={data.chains} />
+<ConnectWallet {chainId} chainInfo={data.chainInfo} />
