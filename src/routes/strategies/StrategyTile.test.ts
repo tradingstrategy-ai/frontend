@@ -15,8 +15,15 @@ const baseStrategy = {
 	connected: true,
 	frozen_positions: 0,
 	on_chain_data: {
+		chain_id: 1,
 		asset_management_mode: 'enzyme'
 	}
+};
+
+const chain = {
+	id: 1,
+	slug: 'ethereum',
+	name: 'Ethereum'
 };
 
 describe('StrategyTile component', () => {
@@ -26,7 +33,7 @@ describe('StrategyTile component', () => {
 	// that include anchor tags in the popup content. The illegal nesting
 	// leads to page jank (popup content is not hidden on initial page render).
 	test('should not be an anchor element', () => {
-		const { container } = render(StrategyTile, { strategy: baseStrategy });
+		const { container } = render(StrategyTile, { strategy: baseStrategy, chain });
 		const el = container.querySelector('.strategy-tile');
 		expect(el?.tagName).not.toBe('A');
 		// check for nested anchors just to be sure!
@@ -111,13 +118,13 @@ describe('StrategyTile component', () => {
 		};
 
 		test('should display historic performance value', async () => {
-			const { getByTestId } = render(StrategyTile, { strategy });
+			const { getByTestId } = render(StrategyTile, { strategy, chain });
 			const performanceElem = getByTestId('key-metric-profitability-value');
 			expect(performanceElem).toHaveTextContent('▲ 12.0%');
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
-			const { container } = render(StrategyTile, { strategy });
+			const { container } = render(StrategyTile, { strategy, chain });
 			const bullIndicator = container.querySelector('.bullish');
 			expect(bullIndicator).not.toBeNull();
 		});
@@ -130,7 +137,7 @@ describe('StrategyTile component', () => {
 		};
 
 		test('should display error message', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
+			const { getByText } = render(StrategyTile, { strategy, chain });
 			// check for tooltip trigger
 			getByText(/Error occurred/);
 			// check for tooltip popup content
