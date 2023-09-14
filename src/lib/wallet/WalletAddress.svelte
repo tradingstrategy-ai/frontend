@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ConnectedWallet } from '$lib/wallet';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { CryptoAddressWidget } from '$lib/components';
 
 	export let wallet: ConnectedWallet;

@@ -10,7 +10,7 @@
 <script lang="ts">
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;

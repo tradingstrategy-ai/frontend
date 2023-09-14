@@ -2,7 +2,7 @@
 	import type { BlockchainTransaction } from 'trade-executor/state/interface';
 	import { formatBPS } from 'trade-executor/helpers/formatters';
 	import { formatAmount, formatPrice } from '$lib/helpers/formatters';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
 	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';

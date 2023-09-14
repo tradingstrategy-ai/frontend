@@ -8,7 +8,7 @@
 	import { formatUnits, parseUnits } from 'viem';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
