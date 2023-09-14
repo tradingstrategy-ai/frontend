@@ -14,11 +14,12 @@ export async function GET({ fetch }) {
 	// Fetch chains from API
 	const apiChains = (await fetchPublicApi(fetch, 'chains')) as ApiChain[];
 
-	// Convert to simplified ChainInfo objects (see ambient.d.ts)
-	const chains: ChainInfo[] = apiChains.map((c) => ({
-		id: c.chain_id,
-		slug: c.chain_slug,
-		name: c.chain_name
+	// limit prerendered chain properties to: chain_id, chain_slug, and chain_name
+	const chains: ApiChain[] = apiChains.map((chain) => ({
+		chain_id: chain.chain_id,
+		chain_slug: chain.chain_slug,
+		chain_name: chain.chain_name
 	}));
+
 	return json(chains);
 }

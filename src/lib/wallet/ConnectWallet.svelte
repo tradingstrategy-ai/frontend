@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { AlertList, Button } from '$lib/components';
 	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
-	export let chainInfo: Record<string, ChainInfo>;
+	export let chainInfo: Record<string, ApiChain>;
 
 	let error: any;
 

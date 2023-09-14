@@ -1,11 +1,12 @@
 <script lang="ts">
+	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem, WrongNetwork } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;
-	export let chainInfo: Record<string, ChainInfo>;
+	export let chainInfo: Record<string, ApiChain>;
 
 	$: ({ name, chain } = wallet);
 	$: walletLogoUrl = getLogoUrl('wallet', name.toLowerCase());
@@ -31,9 +32,9 @@
 
 	<WalletInfoItem label="Network">
 		{#if chainId && chainId !== chain.id}
-			<WrongNetwork size="xs" {chainId} chainName={chainInfo[chainId].name} />
+			<WrongNetwork size="xs" {chainId} chainName={chainInfo[chainId].chain_name} />
 		{:else}
-			<EntitySymbol type="blockchain" label={chain.name} slug={chainInfo[chainId].slug} />
+			<EntitySymbol type="blockchain" label={chain.name} slug={chainInfo[chainId].chain_slug} />
 		{/if}
 	</WalletInfoItem>
 </WalletInfo>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ApiChain } from '$lib/helpers/chain.js';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
@@ -9,7 +10,7 @@
 
 	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
-	export let chain: ChainInfo;
+	export let chain: ApiChain;
 
 	const href = `/strategies/${strategy.id}`;
 	const summaryStatistics = strategy.summary_statistics ?? {};
@@ -65,9 +66,9 @@
 				<img src={strategy.icon_url} alt={strategy.name} />
 				<div class="chain-icon">
 					<Tooltip>
-						<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" />
+						<EntitySymbol slot="trigger" slug={chain.chain_slug} type="blockchain" />
 						<span slot="popup">
-							This strategy runs on <strong>{chain.slug}</strong> blockchain
+							This strategy runs on <strong>{chain.chain_slug}</strong> blockchain
 						</span>
 					</Tooltip>
 				</div>

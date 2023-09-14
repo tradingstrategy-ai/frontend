@@ -14,12 +14,6 @@ declare global {
 
 	type Address = `0x${string}`;
 	type Contracts = Record<string, Address>;
-
-	type ChainInfo = {
-		id: number;
-		slug: string;
-		name: string;
-	};
 }
 
 export {};

@@ -21,9 +21,9 @@ const baseStrategy = {
 };
 
 const chain = {
-	id: 1,
-	slug: 'ethereum',
-	name: 'Ethereum'
+	chain_id: 1,
+	chain_slug: 'ethereum',
+	chain_name: 'Ethereum'
 };
 
 describe('StrategyTile component', () => {
