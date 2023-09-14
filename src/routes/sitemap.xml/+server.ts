@@ -1,5 +1,5 @@
-import type { Chain } from '$lib/helpers/chain.js';
-import { fetchPublicApi } from '$lib/helpers/public-api.js';
+import type { ApiChain } from '$lib/helpers/chain';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 /**
  * Generate a sitemap for static pages and other sitemaps
@@ -16,7 +16,7 @@ export async function GET({ url, fetch }) {
 
 	const baseUrl = `${protocol}//${host}`;
 
-	const chains = (await fetchPublicApi(fetch, 'chains')) as Chain[];
+	const chains = (await fetchPublicApi(fetch, 'chains')) as ApiChain[];
 
 	const headers = {
 		'content-type': 'application/xml',
@@ -55,7 +55,7 @@ const staticPages = [
 ];
 
 // See https://en.wikipedia.org/wiki/Sitemaps
-function render(baseUrl: string, chains: Chain[]) {
+function render(baseUrl: string, chains: ApiChain[]) {
 	return `<?xml version="1.0" encoding="utf-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -65,14 +65,14 @@ function render(baseUrl: string, chains: Chain[]) {
 }
 
 // Priority 0.8 = static page indexing preferred over token data
-function renderFragments(baseUrl: string, chains: Chain[]) {
+function renderFragments(baseUrl: string, chains: ApiChain[]) {
 	return [...staticPages, ...chainPages(chains), ...tradingPairSitemaps()].map((path) => {
 		const fullUrl = `${baseUrl}/${path}`;
 		return `<url><loc>${fullUrl}</loc><priority>0.8</priority></url>`;
 	});
 }
 
-function chainPages(chains: Chain[]) {
+function chainPages(chains: ApiChain[]) {
 	// prettier-ignore
 	return chains.flatMap(({ chain_slug }) => [
 		`trading-view/${chain_slug}`,

@@ -6,7 +6,7 @@
  */
 
 import { json } from '@sveltejs/kit';
-import type { Chain } from '$lib/helpers/chain.js';
+import type { ApiChain } from '$lib/helpers/chain';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 // Fetch at build-time
@@ -14,7 +14,7 @@ export const prerender = true;
 
 export async function GET({ fetch }) {
 	// Fetch chains from API
-	const apiChains = (await fetchPublicApi(fetch, 'chains')) as Chain[];
+	const apiChains = (await fetchPublicApi(fetch, 'chains')) as ApiChain[];
 	// Convert to simplified ChainInfo objects
 	const chains: ChainInfo[] = apiChains.map((c) => ({
 		id: c.chain_id,
