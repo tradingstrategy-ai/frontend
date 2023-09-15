@@ -1,0 +1,27 @@
+[
+	{
+		"chain_id": 1,
+		"chain_slug": "ethereum",
+		"chain_name": "Ethereum"
+	},
+	{
+		"chain_id": 56,
+		"chain_slug": "binance",
+		"chain_name": "BNB Smart Chain"
+	},
+	{
+		"chain_id": 137,
+		"chain_slug": "polygon",
+		"chain_name": "Polygon"
+	},
+	{
+		"chain_id": 43114,
+		"chain_slug": "avalanche",
+		"chain_name": "Avalanche C-chain"
+	},
+	{
+		"chain_id": 42161,
+		"chain_slug": "arbitrum",
+		"chain_name": "Arbitrum One"
+	}
+]

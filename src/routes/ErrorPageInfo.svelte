@@ -22,7 +22,6 @@
 
 <style lang="postcss">
 	section {
-		grid-row: 3 / 4;
 		display: grid;
 		justify-items: center;
 		align-content: center;

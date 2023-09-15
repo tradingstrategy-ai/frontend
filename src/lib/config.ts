@@ -140,6 +140,14 @@ export const chartWickThreshold = config((threshold: string) => {
 }, 'CHART_WICK_THRESHOLD');
 
 /**
+ * Specify site-wide maintenance notice. May include HTML tags.
+ * TS_PUBLIC_MAINTENANCE_NOTICE='We are currently migrating Trading Strategy database…'
+ */
+export const maintenanceNotice = config((value: string) => {
+	return value;
+}, 'MAINTENANCE_NOTICE');
+
+/**
  * Specify chains under maintence as JSON string, e.g.:
  * TS_PUBLIC_CHAINS_UNDER_MAINTENANCE='{ "binance": "BNB Chain" }'
  */

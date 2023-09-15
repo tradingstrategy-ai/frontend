@@ -6,7 +6,8 @@
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
 	import Navbar from '$lib/header/Navbar.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
-	import { Alert, Footer, Section } from '$lib/components';
+	import MaintenanceNotice from './MaintenanceNotice.svelte';
+	import { Footer, Section } from '$lib/components';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -45,14 +46,7 @@
 {#if !$page.data.skipNavbar}
 	<Navbar />
 {/if}
-<Section padding="sm">
-	<Alert status="warning">
-		We are currently migrating Trading Strategy database. Data might be unavailable for a while. Please
-		<a href="https://discord.gg/en8tW6MDtw" target="_blank" rel="noreferrer">join Discord</a>
-		for updates.
-	</Alert>
-</Section>
-
+<MaintenanceNotice />
 <slot />
 {#if !$page.data.skipFooter}
 	<Footer />
