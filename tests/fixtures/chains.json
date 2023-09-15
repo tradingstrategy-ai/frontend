@@ -1,37 +1,37 @@
 [
-  {
-    "chain_id": 1,
-    "chain_slug": "ethereum",
-    "chain_name": "Ethereum",
-    "chain_logo": "https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg",
-    "exchanges": 473
-  },
-  {
-    "chain_id": 56,
-    "chain_slug": "binance",
-    "chain_name": "BNB Smart Chain",
-    "chain_logo": "https://hv4gxzchk24cqfezebn3ujjz6oy2kbtztv5vghn6kpbkjc3vg4rq.arweave.net/fgp9wHyH92hION8E6CuPtUNbmiTlqsl23QbQlwA8cZQ",
-    "exchanges": 2977
-  },
-  {
-    "chain_id": 137,
-    "chain_slug": "polygon",
-    "chain_name": "Polygon",
-    "chain_logo": "https://hv4gxzchk24cqfezebn3ujjz6oy2kbtztv5vghn6kpbkjc3vg4rq.arweave.net/nLW0IfMZnhhaqdN1AbzC4d1NLZSpBlIMEHhXq-KcOws",
-    "exchanges": 874
-  },
-  {
-    "chain_id": 43114,
-    "chain_slug": "avalanche",
-    "chain_name": "Avalanche C-chain",
-    "chain_logo": "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
-    "exchanges": 158
-  },
-  {
-    "chain_id": 42161,
-    "chain_slug": "arbitrum",
-    "chain_name": "Arbitrum One",
-    "chain_logo": "https://offchainlabs.com/wp-content/themes/offchain/images/home/arbitrum/arbirtum_logo.svg",
-    "exchanges": 302
-  }
+	{
+		"chain_id": 1,
+		"chain_slug": "ethereum",
+		"chain_name": "Ethereum",
+		"chain_logo": "https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg",
+		"exchanges": 473
+	},
+	{
+		"chain_id": 56,
+		"chain_slug": "binance",
+		"chain_name": "BNB Smart Chain",
+		"chain_logo": "https://hv4gxzchk24cqfezebn3ujjz6oy2kbtztv5vghn6kpbkjc3vg4rq.arweave.net/fgp9wHyH92hION8E6CuPtUNbmiTlqsl23QbQlwA8cZQ",
+		"exchanges": 2977
+	},
+	{
+		"chain_id": 137,
+		"chain_slug": "polygon",
+		"chain_name": "Polygon",
+		"chain_logo": "https://hv4gxzchk24cqfezebn3ujjz6oy2kbtztv5vghn6kpbkjc3vg4rq.arweave.net/nLW0IfMZnhhaqdN1AbzC4d1NLZSpBlIMEHhXq-KcOws",
+		"exchanges": 874
+	},
+	{
+		"chain_id": 43114,
+		"chain_slug": "avalanche",
+		"chain_name": "Avalanche C-chain",
+		"chain_logo": "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
+		"exchanges": 158
+	},
+	{
+		"chain_id": 42161,
+		"chain_slug": "arbitrum",
+		"chain_name": "Arbitrum One",
+		"chain_logo": "https://offchainlabs.com/wp-content/themes/offchain/images/home/arbitrum/arbirtum_logo.svg",
+		"exchanges": 302
+	}
 ]

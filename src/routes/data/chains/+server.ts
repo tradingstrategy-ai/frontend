@@ -7,12 +7,19 @@ import { json } from '@sveltejs/kit';
 import type { ApiChain } from '$lib/helpers/chain';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-// Fetch at build-time
+// fetch and render at build-time
 export const prerender = true;
 
 export async function GET({ fetch }) {
-	// Fetch chains from API
-	const apiChains = (await fetchPublicApi(fetch, 'chains')) as ApiChain[];
+	let apiChains: ApiChain[];
+
+	try {
+		// fetch chains from API
+		apiChains = (await fetchPublicApi(fetch, 'chains')) as ApiChain[];
+	} catch (e) {
+		// fallback to local chain cache if API is unavailable at build time
+		apiChains = (await import('./cache.json')).default;
+	}
 
 	// limit prerendered chain properties to: chain_id, chain_slug, and chain_name
 	const chains: ApiChain[] = apiChains.map((chain) => ({
