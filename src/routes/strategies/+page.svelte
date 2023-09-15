@@ -34,7 +34,7 @@
 			{#each strategies as strategy (strategy.id)}
 				<StrategyTile
 					{strategy}
-					chain={chainInfo[strategy.on_chain_data.chain_id]}
+					chain={chainInfo[strategy.on_chain_data?.chain_id]}
 					chartStartDate={minPerformanceDate()}
 				/>
 			{/each}

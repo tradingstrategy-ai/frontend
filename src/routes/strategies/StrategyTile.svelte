@@ -64,18 +64,20 @@
 		<header>
 			<div class="avatar">
 				<img src={strategy.icon_url} alt={strategy.name} />
-				<div class="chain-icon">
-					<Tooltip>
-						<EntitySymbol slot="trigger" slug={chain.chain_slug} type="blockchain" />
-						<span slot="popup">
-							This strategy runs on <strong>{chain.chain_slug}</strong> blockchain
-						</span>
-					</Tooltip>
-				</div>
+				{#if chain}
+					<div class="chain-icon">
+						<Tooltip>
+							<EntitySymbol slot="trigger" slug={chain.chain_slug} type="blockchain" />
+							<span slot="popup">
+								This strategy runs on <strong>{chain.chain_slug}</strong> blockchain
+							</span>
+						</Tooltip>
+					</div>
+				{/if}
 			</div>
 			<div class="description">
 				<h3>{strategy.name}</h3>
-				<p>{strategy.short_description}</p>
+				<p>{strategy.short_description ?? '---'}</p>
 			</div>
 		</header>
 		<div class="data">
