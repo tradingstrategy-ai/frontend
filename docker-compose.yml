@@ -31,6 +31,7 @@ services:
       - TS_PUBLIC_WALLET_CONNECT_PROJECT_ID
       - TS_PUBLIC_RPC_URLS
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
+      - TS_PUBLIC_MAINTENANCE_NOTICE
       # Private (secret) env vars - do not add to .env
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
