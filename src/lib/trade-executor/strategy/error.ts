@@ -12,6 +12,7 @@
  */
 
 import type { StrategyRuntimeState } from './runtime-state';
+import { fromUnixTime } from 'date-fns';
 import { formatDatetime, formatDuration } from '$lib/helpers/formatters';
 
 /**
@@ -27,7 +28,7 @@ export function getTradeExecutorErrorHtml(state: StrategyRuntimeState): string |
 		let crashedAtMsg;
 		if (state.crashed_at) {
 			const diffSeconds = Date.now() / 1000 - state.crashed_at;
-			crashedAtMsg = `Strategy executor halted ${formatDatetime(state.crashed_at)}, ${formatDuration(
+			crashedAtMsg = `Strategy executor halted ${formatDatetime(fromUnixTime(state.crashed_at))}, ${formatDuration(
 				diffSeconds
 			)} ago.`;
 		} else {
