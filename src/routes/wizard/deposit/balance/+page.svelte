@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
 	import { fade } from 'svelte/transition';
-	import { getChainSlug } from '$lib/helpers/chain.js';
 	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
 	import { Alert, Button } from '$lib/components';
 
 	export let data;
 
 	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
-	$: chainSlug = getChainSlug(data.chains, chainId);
+	$: chainSlug = data.chainInfo[chainId]?.chain_slug;
 
 	$: wizard.toggleComplete('balance', nativeCurrency?.value > 0n && denominationToken?.value > 0n);
 </script>

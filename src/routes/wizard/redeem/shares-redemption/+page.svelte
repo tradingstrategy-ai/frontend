@@ -7,7 +7,7 @@
 	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { wallet, TokenBalance } from '$lib/wallet';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput } from '$lib/components';
 

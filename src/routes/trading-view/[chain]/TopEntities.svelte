@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
-	import type { Chain } from '$lib/helpers/chain';
+	import type { ApiChain } from '$lib/helpers/chain';
 	import { Alert, Button, SummaryBox } from '$lib/components';
 
 	export let type: string;
 	export let label = type.replaceAll('-', ' ');
 	export let title: string;
-	export let chain: Chain;
+	export let chain: ApiChain;
 	export let data: Promise<Record<string, any>[]>;
 	export let tableComponent: ComponentType;
 	export let rightColHeader = '';

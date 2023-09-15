@@ -1,26 +1,27 @@
-export interface Chain {
+import type { Chain as WalletChain } from '@wagmi/core';
+
+export type ApiChain = {
 	chain_id: number;
 	chain_slug: string;
 	chain_name: string;
-}
+	chain_explorer?: string;
+};
+
+type WalletOrApiChain = Record<string, any> & (WalletChain | ApiChain);
+
+const fallbackExplorer = 'https://blockscan.com';
 
 /**
- * Find a chain by id or slug
+ * Extract explorer URL from either wagmi or API Chain object and append address or transaction path
  */
-export function getChain(chains: Chain[], chain: string | number) {
-	return chains.find((c) => chain === c.chain_id || chain === c.chain_slug);
-}
+export function getExplorerUrl(chain: WalletOrApiChain, hash: Address) {
+	const baseUrl = chain.chain_explorer ?? chain.blockExplorers?.default?.url ?? fallbackExplorer;
 
-/**
- * Return chain slug from an id (if exists)
- */
-export function getChainSlug(chains: Chain[], id: number) {
-	return getChain(chains, id)?.chain_slug;
-}
-
-/**
- * Return chain name from an id or slug (if exists)
- */
-export function getChainName(chains: Chain[], chain: string | number) {
-	return getChain(chains, chain)?.chain_name;
+	let path = '';
+	if (hash.length === 42) {
+		path = `/address/${hash}`;
+	} else if (hash.length === 66) {
+		path = `/tx/${hash}`;
+	}
+	return `${baseUrl}${path}`;
 }

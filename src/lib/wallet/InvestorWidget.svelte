@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Chain } from '$lib/helpers/chain';
+	import type { ApiChain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { wizard } from 'wizard/store';
 	import { wallet, VaultBalance, WalletAddress, WrongNetwork } from '$lib/wallet';
@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 
 	export let strategy: StrategyRuntimeState;
-	export let chain: Chain;
+	export let chain: ApiChain;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 	$: depositEnabled = !!(

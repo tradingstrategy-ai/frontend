@@ -4,7 +4,7 @@
 	import { getPositionFreezeReason, isPositionInError } from 'trade-executor/state/position-helpers';
 	import { extractPositionInfo, positionInfoDescription } from 'trade-executor/state/position-data';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { getExplorerUrl } from '$lib/helpers/chain-explorer';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import {
 		Alert,
 		Badge,

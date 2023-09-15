@@ -5,7 +5,7 @@
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
-	$: strategies = data.strategies;
+	$: ({ strategies, chainInfo } = data);
 
 	function minPerformanceDate() {
 		const timestamps = strategies.map(({ summary_statistics }) => {
@@ -32,7 +32,11 @@
 	{#if strategies.length}
 		<ul>
 			{#each strategies as strategy (strategy.id)}
-				<StrategyTile {strategy} chartStartDate={minPerformanceDate()} />
+				<StrategyTile
+					{strategy}
+					chain={chainInfo[strategy.on_chain_data.chain_id]}
+					chartStartDate={minPerformanceDate()}
+				/>
 			{/each}
 		</ul>
 	{:else}

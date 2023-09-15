@@ -8,4 +8,4 @@
 	$: wizard.toggleComplete('connect', $wallet.status === 'connected' && $wallet.chain?.id === chainId);
 </script>
 
-<ConnectWallet {chainId} chains={data.chains} />
+<ConnectWallet {chainId} chainInfo={data.chainInfo} />

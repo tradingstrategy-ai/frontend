@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ApiChain } from '$lib/helpers/chain.js';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
@@ -9,6 +10,7 @@
 
 	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
+	export let chain: ApiChain;
 
 	const href = `/strategies/${strategy.id}`;
 	const summaryStatistics = strategy.summary_statistics ?? {};
@@ -16,17 +18,6 @@
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 	const keyMetrics = summaryStatistics.key_metrics ?? {};
 	const isBacktested = Object.values(keyMetrics).some(({ source }) => source === 'backtesting');
-
-	// FIXME: hack to get chain slug from chain ID;
-	// This should either come from strategy metadata or `chains` API
-	function getChainSlug(chain_id: number) {
-		switch (chain_id) {
-			case 1:
-				return 'ethereum';
-			case 137:
-				return 'polygon';
-		}
-	}
 
 	// FIXME: hack to infer list of tokens based on strategy ID;
 	// In the future this will come from the strategy configuration.
@@ -75,9 +66,9 @@
 				<img src={strategy.icon_url} alt={strategy.name} />
 				<div class="chain-icon">
 					<Tooltip>
-						<EntitySymbol slot="trigger" slug={getChainSlug(strategy?.on_chain_data?.chain_id)} type="blockchain" />
+						<EntitySymbol slot="trigger" slug={chain.chain_slug} type="blockchain" />
 						<span slot="popup">
-							This strategy runs on <strong>{getChainSlug(strategy?.on_chain_data?.chain_id)}</strong> blockchain
+							This strategy runs on <strong>{chain.chain_slug}</strong> blockchain
 						</span>
 					</Tooltip>
 				</div>
