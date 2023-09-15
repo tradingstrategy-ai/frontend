@@ -47,7 +47,10 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 		gap: var(--section-gap, var(--SECTION-gap));
 		padding-block: var(--section-padding, var(--SECTION-padding-y));
 		padding-inline: calc((100% - var(--SECTION-width)) / 2);
-		--SECTION-width: min(calc(100% - (var(--SECTION-padding-x) * 2)), var(--SECTION-max-width));
+		--SECTION-width: min(
+			calc(100% - (var(--SECTION-padding-x) * 2)),
+			var(--section-max-width, var(--SECTION-max-width))
+		);
 		--SECTION-padding-x: var(--space-xl);
 
 		--SECTION-max-width-xs: 40rem;
