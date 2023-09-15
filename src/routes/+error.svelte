@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, Logo } from '$lib/components';
+	import { Button, Logo, Alert } from '$lib/components';
 	import ErrorPageInfo from './ErrorPageInfo.svelte';
 
 	let showLogs = false;
@@ -20,6 +20,13 @@
 			<Logo />
 		</a>
 	</header>
+	<section class="ds-container">
+		<Alert status="warning">
+			We are currently migrating Trading Strategy database. Data might be unavailable for a while. Please
+			<a href="https://discord.gg/en8tW6MDtw" target="_blank" rel="noreferrer">join Discord</a>
+			for updates.
+		</Alert>
+	</section>
 
 	{#if status < 500}
 		<ErrorPageInfo {status} title={$page.error?.message || 'Client request error'}>
@@ -75,13 +82,13 @@
 		right: 0;
 		background: hsla(var(--hsl-body));
 		display: grid;
-		grid-template-rows: 1fr auto 1fr;
+		grid-template-rows: 1fr auto auto 1fr;
 		gap: var(--space-4xl);
 		--container-max-width: 1020px;
 	}
 
 	aside {
-		grid-row: 3 / 4;
+		grid-row: 4 / 5;
 		align-items: start;
 	}
 
