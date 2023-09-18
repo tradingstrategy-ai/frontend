@@ -106,16 +106,19 @@
 
 		&:hover {
 			background: hsla(var(--hsla-box-2));
-			z-index: 9999999;
+			z-index: 2;
 		}
 
 		.errors {
-			margin-block: 0.625rem;
 			position: relative;
+			z-index: 1;
 
 			:global(.tooltip .popup) {
+				position: absolute;
 				width: 22rem;
 				right: 0;
+				left: auto;
+				bottom: auto;
 			}
 
 			:global(.alert-item) {
