@@ -66,7 +66,7 @@
 
 <style lang="postcss">
 	.exchange-table :global {
-		.exchange_name :global * {
+		.exchange_name * {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
