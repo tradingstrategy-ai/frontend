@@ -66,6 +66,18 @@
 
 <style lang="postcss">
 	.exchange-table :global {
+		.exchange_name :global * {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		@media (--viewport-sm-down) {
+			.exchange_name {
+				grid-column: 1/-1;
+			}
+		}
+
 		@media (--viewport-md-up) {
 			table {
 				table-layout: fixed;
@@ -73,12 +85,6 @@
 
 			.exchange_name {
 				width: 45%;
-				white-space: nowrap;
-
-				:global * {
-					overflow: hidden;
-					text-overflow: ellipsis;
-				}
 			}
 
 			.pair_count {
