@@ -4,13 +4,23 @@
 	export let timestamp: number;
 	export let level: 'info' | 'trade' | 'warning' | 'error' | 'critical';
 	export let message: string;
+	export let formatted_data: Maybe<string[]> = undefined;
 </script>
 
 <div class="log-entry level--{level}">
 	<Timestamp date={timestamp} withSeconds />
-	<span class="message">
+	<div class="message">
 		{message}
-	</span>
+		{#if formatted_data?.length}
+			<details class="traceback">
+				<summary>
+					{formatted_data[0].trimEnd()}
+					<span class="num-lines">({formatted_data.length - 1} lines)</span>
+				</summary>
+				{formatted_data.slice(1).join('')}
+			</details>
+		{/if}
+	</div>
 </div>
 
 <style lang="postcss">
@@ -30,15 +40,34 @@
 		}
 
 		.message {
-			/* display: inline-flex; */
-			overflow-x: auto;
-			white-space: pre-line;
 			font: var(--f-mono-xs-regular);
+			letter-spacing: var(--f-mono-xs-spacing, normal);
+			white-space: pre-wrap;
+
+			details {
+				margin-top: 1em;
+
+				> summary {
+					font-weight: bold;
+					cursor: pointer;
+
+					.num-lines {
+						font-weight: normal;
+					}
+				}
+
+				&[open] > summary {
+					.num-lines {
+						display: none;
+					}
+				}
+			}
 		}
 
 		:global time {
 			display: flex;
 			font: var(--f-mono-sm-regular);
+			letter-spacing: var(--f-mono-sm-spacing, normal);
 			flex-direction: column;
 			color: var(--c-text-ultra-light);
 
