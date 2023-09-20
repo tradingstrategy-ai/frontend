@@ -11,7 +11,7 @@ import {
 	watchNetwork,
 	InjectedConnector
 } from '@wagmi/core';
-import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
+import { arbitrum, avalanche, bsc, mainnet, polygon } from 'viem/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
@@ -22,7 +22,7 @@ const { projectId } = walletConnectConfig;
 // helper function to retrive configured RPC URL by chain ID
 function getRpcUrl({ id }: Chain) {
 	const http = rpcUrls[id];
-	if (http) return { http };
+	return http && { http };
 }
 
 type CommonWallet = {
