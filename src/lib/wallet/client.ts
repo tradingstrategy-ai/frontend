@@ -25,6 +25,8 @@ function getRpcUrl({ id }: Chain) {
 	return http && { http };
 }
 
+export type ConnectorType = 'Injected' | 'WalletConnect';
+
 type CommonWallet = {
 	name: string;
 	address: Address;
@@ -86,18 +88,11 @@ function initWalletClient(connectors: Connector[]) {
 	initialized = true;
 }
 
-async function connectMetaMask(chainId: MaybeNumber) {
-	await connect({
+function connectWallet(type: ConnectorType, chainId: MaybeNumber) {
+	return connect({
 		chainId,
-		connector: connectors.find((c) => c instanceof InjectedConnector)!
+		connector: connectors.find((c) => c.constructor.name === `${type}Connector`)!
 	});
 }
 
-function connectWalletConnect(chainId: MaybeNumber) {
-	connect({
-		chainId,
-		connector: connectors.find((c) => c instanceof WalletConnectConnector)!
-	});
-}
-
-export const wallet = { subscribe, connectMetaMask, connectWalletConnect, disconnect };
+export const wallet = { subscribe, connect: connectWallet, disconnect };

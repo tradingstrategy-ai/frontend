@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { AlertList, Button } from '$lib/components';
-	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
+	import { type ConnectorType, wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: MaybeNumber;
 	export let chainInfo: Record<string, ApiChain>;
@@ -13,9 +13,9 @@
 		error = undefined;
 	}
 
-	function handleConnectMetaMask() {
+	function connectWallet(type: ConnectorType) {
 		error = undefined;
-		wallet.connectMetaMask(chainId).catch((e) => (error = e));
+		wallet.connect(type, chainId).catch((e) => (error = e));
 	}
 </script>
 
@@ -27,11 +27,11 @@
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={handleConnectMetaMask}>
+			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={() => connectWallet('Injected')}>
 				Connect to your<br />
 				browser-based wallet
 			</WalletTile>
-			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => wallet.connectWalletConnect(chainId)}>
+			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => connectWallet('WalletConnect')}>
 				Scan a QR code<br />
 				with your mobile wallet
 			</WalletTile>
@@ -56,6 +56,11 @@
 						Your wallet browser extension prevented connection because it is busy with another operation (such as
 						signing in or importing an account). Open your wallet extension to complete or cancel this operation and try
 						again.
+					</AlertItem>
+				{:else if error.name === 'ChainNotConfiguredForConnectorError'}
+					<AlertItem title="Chain not configured">
+						Chain {chainId} ({chainInfo[chainId].chain_name}) is not configured on your wallet. Please add the missing
+						chain (or <em>network</em>) and try again.
 					</AlertItem>
 				{:else}
 					<AlertItem title={error.name}>
