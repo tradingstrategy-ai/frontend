@@ -33,7 +33,11 @@ export interface TradingPositionInfo {
 	valueAtOpen?: USDollarValue;
 	quantityAtOpen?: TokenUnits;
 
-	portfolioWeightAtOpen: Percent;
+	// How much of total portfolio this position was at open
+	//
+	// Might not be available if the opening trade failed.
+	//
+	portfolioWeightAtOpen?: Percent;
 
 	//
 	candleTimeBucket: TimeBucket;
@@ -55,11 +59,16 @@ export interface TradingPositionInfo {
 
 	estimatedMaximumRisk?: Percent;
 
-	marketMidPriceAtOpen: USDollarPrice;
+	// What was the "market price" when the position was opened.
+	//
+	// Might not be available if the opening trade failed and the position is frozen
+	//
+	marketMidPriceAtOpen?: USDollarPrice;
 
 	// Is stop loss used with this position
 	stopLossable: boolean;
 
+	// How much stop loss was from the mid price when opening
 	stopLossPercentOpen?: USDollarValue;
 	stopLossPriceLast?: USDollarValue;
 	stopLossPercent?: Percent;
@@ -211,12 +220,18 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	let currentPrice: USDollarPrice | undefined = undefined;
 	let durationSeconds: UnixTimestamp;
 
-	const marketMidPriceAtOpen = firstTrade.price_structure.mid_price;
+	const marketMidPriceAtOpen: number | undefined = firstTrade?.price_structure?.mid_price;
 	const stopLossable = position.stop_loss !== null;
 
 	const stopLossPriceOpen = getFirstStopLossPrice(position);
 	const trailingStopLossPercent = position.trailing_stop_loss_pct;
-	let stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
+	let stopLossPercentOpen;
+
+	if(marketMidPriceAtOpen) {
+		stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
+	} else {
+		stopLossPercentOpen = undefined;
+	}
 
 	let stopLossTriggered = false;
 
