@@ -90,10 +90,8 @@
 						To proceed with share purchase, please try again and accept the signature request.
 					`;
 				} else {
-					errorMessage = `
-						Authorization to transfer ${denominationToken.symbol} tokens from your wallet account
-						failed for an unknown reason.
-					`;
+					errorMessage = `Authorization to transfer ${denominationToken.symbol} tokens from your wallet failed. `;
+					errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				}
 				return 'failed';
 			}
@@ -108,7 +106,8 @@
 
 			fail(err) {
 				console.error('confirmPayment error:', err);
-				errorMessage = 'Payment confirmation from wallet account failed.';
+				errorMessage = 'Payment confirmation from wallet account failed. ';
+				errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				return 'failed';
 			}
 		},
