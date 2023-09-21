@@ -227,7 +227,7 @@ export function extractPositionInfo(position: TradingPosition): TradingPositionI
 	const trailingStopLossPercent = position.trailing_stop_loss_pct;
 	let stopLossPercentOpen;
 
-	if(marketMidPriceAtOpen) {
+	if (marketMidPriceAtOpen) {
 		stopLossPercentOpen = stopLossPriceOpen && stopLossPriceOpen / marketMidPriceAtOpen;
 	} else {
 		stopLossPercentOpen = undefined;
