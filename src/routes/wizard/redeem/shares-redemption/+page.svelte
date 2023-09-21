@@ -66,7 +66,7 @@
 
 			fail(err) {
 				console.error('confirmRedemption error:', err);
-				errorMessage = 'Redemption confirmation from wallet account failed.';
+				errorMessage = err.shortMessage ?? 'Redemption confirmation from wallet account failed.';
 				return 'failed';
 			}
 		},
