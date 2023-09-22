@@ -1,9 +1,19 @@
+import type { MaybeDecimalNumber } from '../../ambient';
+
 export const notFilledMarker = '---';
 
 // number of seconds per minute/hour/day; used duration formatters
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
+
+function toFloatingPoint(n: number | string | undefined) {
+	if (typeof n == 'string') {
+		return parseFloat(n);
+	}
+
+	return n;
+}
 
 /**
  * Convert number to thousands.
@@ -140,6 +150,20 @@ export function formatPrice(n: MaybeNumber, minDigits = 2, maxDigits = 4) {
 	});
 }
 
+/**
+ * Format values.
+ *
+ * E.g. trade position size.
+ *
+ * This can deal with USDC amounts that are passed as strings of decimal formats.
+ *
+ * @param n
+ */
+export function formatUSDAmount(n: MaybeDecimalNumber) {
+	n = toFloatingPoint(n);
+	return formatPrice(n);
+}
+
 export function formatPriceChange(n: MaybeNumber): string {
 	if (!Number.isFinite(n)) return notFilledMarker;
 	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n))}`;
@@ -254,6 +278,19 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
+ * Formats minute and seconds timespans.
+ *
+ * Used formatting trade execution delays.
+ *
+ * E.g. 1m 2.34s
+ */
+export function formatDurationMinutesSeconds(seconds: number): string {
+	const minutes = Math.floor(seconds / MINUTE);
+	const secondsRemainder = (seconds - minutes * MINUTE).toFixed(2);
+	return `${minutes}m ${secondsRemainder}s`;
+}
+
+/**
  * Formats the time duration string in day granularity.
  *
  * unixTimestamp is received from API as unix seconds since epoch
@@ -270,4 +307,47 @@ export function formatDaysAgo(unixTimestamp: number): string {
  */
 export function formatValue(value: any): string {
 	return value?.toString() ?? notFilledMarker;
+}
+
+/**
+ * Formats the difference as minutes and seconds.
+ *
+ * E.g. 1m 2s
+ *
+ * @param before UNIX timestamp
+ * @param after UNIX timestamp
+ */
+export function formatTimeDiffMinutesSeconds(before: MaybeNumber, after: MaybeNumber): string {
+	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+		return '---';
+	}
+
+	const duration = after - before;
+
+	return formatDurationMinutesSeconds(duration);
+}
+
+/**
+ * Formats the price difference between expected and executed
+ *
+ * E.g. +0.30%
+ *
+ * @param before Dollar value
+ * @param after Dollar value
+ */
+export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): string {
+	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+		return '---';
+	}
+
+	const diff = ((after - before) / before) * 100;
+
+	const formatted = diff.toLocaleString('en-US', {
+		minimumSignificantDigits: 2,
+		maximumSignificantDigits: 2
+	});
+
+	const sign = diff > 0 ? '+' : '';
+
+	return `${sign}${formatted} %`;
 }
