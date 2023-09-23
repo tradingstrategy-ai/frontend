@@ -192,7 +192,7 @@
 					label={nativeCurrency.symbol}
 					slug={nativeCurrency.symbol.toLowerCase()}
 				/>
-				{formatNumber(Number(nativeCurrency.formatted), 2, 4)}
+				{formatNumber(nativeCurrency.formatted, 2, 4)}
 			</WalletInfoItem>
 
 			<WalletInfoItem>
@@ -202,7 +202,7 @@
 					label={denominationToken.symbol}
 					slug={denominationToken.symbol.toLowerCase()}
 				/>
-				{formatNumber(Number(denominationToken.formatted), 2, 4)}
+				{formatNumber(denominationToken.formatted, 2, 4)}
 			</WalletInfoItem>
 		</WalletInfo>
 	</section>

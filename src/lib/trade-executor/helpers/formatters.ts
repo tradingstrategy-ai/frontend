@@ -15,10 +15,10 @@ import { PROFITABILITY_THRESHOLD } from './profit';
  * @param minDigits - minimum number of digits to display (default = 2)
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
  */
-export function formatTokenAmount(n: MaybeNumberOrString, minDigits = 2, maxPrecision = minDigits) {
+export function formatTokenAmount(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits) {
 	// Token quantities come from the API as strings. Because JavaScript numbers (IEEE 754 floats)
 	// cannot represent quantities accurately, some precision may be lost in the conversion.
-	return formatDollar(parseFloat(n), minDigits, maxPrecision, false);
+	return formatDollar(n, minDigits, maxPrecision, false);
 }
 
 /**

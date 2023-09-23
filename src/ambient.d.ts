@@ -1,13 +1,14 @@
 // Ambient type declarations (separate from app.d.ts)
 // see: https://kit.svelte.dev/docs/types#app
 declare global {
+	// some numbers (e.g. from API) are given as strings
+	type Numberlike = number | string;
+
 	type Maybe<T> = T | null | undefined;
-	type MaybeNumber = MaybeType<number>;
-	type MaybeString = MaybeType<string>;
-	// Decimals are passed as string, because JS is limited to 53 bits
-	type MaybeDecimalNumber = MaybeNumber | MaybeString;
-	type MaybeNumberOrString = MaybeType<number | string>;
-	type MaybeDate = MaybeType<Date>;
+	type MaybeNumber = Maybe<number>;
+	type MaybeNumberlike = Maybe<Numberlike>;
+	type MaybeString = Maybe<string>;
+	type MaybeDate = Maybe<Date>;
 	type MaybePromise<T> = T | Promise<T>;
 
 	type Formatter<T> = (value: T) => string;

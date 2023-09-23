@@ -73,4 +73,16 @@ describe('formatNumber', () => {
 		expect(() => formatNumber(123.456, -1)).toThrowError();
 		expect(() => formatNumber(123.456, 2, 1)).toThrowError();
 	});
+
+	test('should coerce string argument to number', () => {
+		expect(formatNumber('123.456')).toEqual('123.46');
+	});
+
+	test('should return "---" for non-numeric values', () => {
+		expect(formatNumber(null)).toEqual('---');
+		expect(formatNumber(undefined)).toEqual('---');
+		expect(formatNumber(NaN)).toEqual('---');
+		expect(formatNumber('')).toEqual('---');
+		expect(formatNumber('foo')).toEqual('---');
+	});
 });

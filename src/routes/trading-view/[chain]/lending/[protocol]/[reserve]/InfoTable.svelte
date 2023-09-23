@@ -74,9 +74,9 @@
 				</div>
 			</Tooltip>
 			<svelte:fragment slot="value">
-				{formatDollar(Number(formattedReserveUSD.totalLiquidityUSD))}
+				{formatDollar(formattedReserveUSD.totalLiquidityUSD)}
 				<span class="light">of</span>
-				{formatDollar(Number(formattedReserveUSD.supplyCapUSD))}
+				{formatDollar(formattedReserveUSD.supplyCapUSD)}
 			</svelte:fragment>
 		</TradingDataInfoRow>
 
@@ -89,9 +89,9 @@
 			</Tooltip>
 			<svelte:fragment slot="value">
 				{#if borrowable}
-					{formatDollar(Number(formattedReserveUSD.totalDebtUSD))}
+					{formatDollar(formattedReserveUSD.totalDebtUSD)}
 					<span class="light">of</span>
-					{formatDollar(Number(formattedReserveUSD.borrowCapUSD))}
+					{formatDollar(formattedReserveUSD.borrowCapUSD)}
 				{:else}
 					<Tooltip>
 						<span slot="trigger" class="underline">N/A</span>
@@ -108,7 +108,7 @@
 			</Tooltip>
 			<svelte:fragment slot="value">
 				{#if borrowable}
-					{formatPercent(Number(formattedReserveUSD.supplyUsageRatio))}
+					{formatPercent(formattedReserveUSD.supplyUsageRatio)}
 				{:else}
 					<Tooltip>
 						<span slot="trigger" class="underline">N/A</span>

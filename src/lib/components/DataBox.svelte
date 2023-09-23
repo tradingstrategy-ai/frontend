@@ -14,7 +14,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 <script lang="ts">
 	export let label: string;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
-	export let value: MaybeNumberOrString = undefined;
+	export let value: Maybe<number | string> = undefined;
 </script>
 
 <div class="data-box {size}">

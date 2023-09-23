@@ -21,7 +21,7 @@
 		{#each receivedAssets as { symbol, formatted }}
 			<WalletInfoItem>
 				<EntitySymbol slot="label" type="token" label={symbol} slug={symbol.toLowerCase()} />
-				{formatNumber(Number(formatted), 2, 4)}
+				{formatNumber(formatted, 2, 4)}
 			</WalletInfoItem>
 		{/each}
 	</WalletInfo>

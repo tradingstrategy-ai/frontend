@@ -5,8 +5,7 @@
 		formatAmount,
 		formatPrice,
 		formatPriceDifference,
-		formatTimeDiffMinutesSeconds,
-		formatUSDAmount
+		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
@@ -105,13 +104,13 @@
 			<div class="databox-labeled">
 				<label>Expected</label>
 				<span>
-					{formatAmount(Number(trade.planned_quantity))}
+					{formatAmount(trade.planned_quantity)}
 					{trade.pair.base.token_symbol}
 				</span>
 
 				<label>Executed</label>
 				<span>
-					{formatAmount(Number(trade.executed_quantity))}
+					{formatAmount(trade.executed_quantity)}
 					{trade.pair.base.token_symbol}
 				</span>
 			</div>
@@ -121,12 +120,12 @@
 			<div class="databox-labeled">
 				<label>Expected</label>
 				<span>
-					{formatUSDAmount(trade.planned_reserve)}
+					{formatPrice(trade.planned_reserve)}
 				</span>
 
 				<label>Executed</label>
 				<span>
-					{formatUSDAmount(trade.executed_reserve)}
+					{formatPrice(trade.executed_reserve)}
 				</span>
 			</div>
 		</DataBox>

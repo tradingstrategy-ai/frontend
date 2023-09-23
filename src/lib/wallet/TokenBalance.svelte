@@ -10,7 +10,7 @@
 {#await data}
 	<Spinner size="2rem" color="hsla(var(--hsl-text-light))" />
 {:then { symbol, formatted }}
-	<EntitySymbol slug={symbol.toLowerCase()} type="token">{formatNumber(Number(formatted), 2, 4)} {symbol}</EntitySymbol>
+	<EntitySymbol slug={symbol.toLowerCase()} type="token">{formatNumber(formatted, 2, 4)} {symbol}</EntitySymbol>
 {:catch error}
 	<Alert size="xs">Error loading data</Alert>
 {/await}
