@@ -1,15 +1,10 @@
 <script lang="ts">
 	import type { BlockchainTransaction } from 'trade-executor/state/interface';
 	import { formatBPS } from 'trade-executor/helpers/formatters';
-	import {
-		formatAmount,
-		formatPrice,
-		formatPriceDifference,
-		formatTimeDiffMinutesSeconds
-	} from '$lib/helpers/formatters';
+	import { formatAmount, formatPrice, formatPriceChange, formatTimeDiffMinutesSeconds } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
-	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import PositionDataIndicator from '../PositionDataIndicator.svelte';
@@ -87,15 +82,21 @@
 
 				<label>Expected</label>
 				<span>
-					{formatPrice(trade.planned_price)} ({formatPriceDifference(
-						trade.price_structure.mid_price,
-						trade.planned_price
-					)})
+					{formatPrice(trade.planned_price)}
+
+					<UpDownIndicator
+						value={trade.planned_price / trade.price_structure.mid_price - 1}
+						formatter={(n) => formatPriceChange(n, 2, 2)}
+					/>
 				</span>
 
 				<label>Executed</label>
 				<span>
-					{formatPrice(trade.executed_price)} ({formatPriceDifference(trade.planned_price, trade.executed_price)})
+					{formatPrice(trade.executed_price)}
+					<UpDownIndicator
+						value={trade.executed_price / trade.planned_price - 1}
+						formatter={(n) => formatPriceChange(n, 2, 2)}
+					/>
 				</span>
 			</div>
 		</DataBox>
