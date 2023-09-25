@@ -60,6 +60,7 @@ by JS Date) or a Date object.
 	span + span {
 		&::before {
 			content: ' ';
+			white-space: normal;
 		}
 	}
 </style>

@@ -47,7 +47,7 @@
 		{#await fetchNativeCurrency(address)}
 			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 		{:then balance}
-			{formatNumber(Number(balance.formatted), 2, 4)}
+			{formatNumber(balance.formatted, 2, 4)}
 		{/await}
 	</WalletInfoItem>
 
@@ -56,7 +56,7 @@
 		{#await fetchDenominationToken(address)}
 			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
 		{:then balance}
-			{formatNumber(Number(balance.formatted), 2, 4)}
+			{formatNumber(balance.formatted, 2, 4)}
 		{:catch}
 			---
 		{/await}

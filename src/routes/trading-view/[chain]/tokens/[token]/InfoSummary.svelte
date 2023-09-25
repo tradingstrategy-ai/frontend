@@ -14,7 +14,7 @@
 	</p>
 
 	<p>
-		<strong>{data.name}</strong> token supply is {formatAmount(parseFloat(data.total_supply))}
+		<strong>{data.name}</strong> token supply is {formatAmount(data.total_supply)}
 		<strong>{data.symbol}s</strong>.
 		{#if data.pair_count}
 			There are total {formatAmount(data.pair_count)} pairs trading against <strong>{data.symbol}</strong>.

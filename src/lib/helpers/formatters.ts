@@ -5,6 +5,14 @@ const MINUTE = 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
+function toFloatingPoint(n: MaybeNumberlike) {
+	if (typeof n == 'string') {
+		return parseFloat(n);
+	}
+
+	return n;
+}
+
 /**
  * Convert number to thousands.
  *
@@ -72,7 +80,7 @@ export function formatSizeGigabytes(n: MaybeNumber): string {
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
  * @param showPrefix - whether to show "$" prefix (default = true)
  */
-export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, showPrefix = true) {
+export function formatDollar(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits, showPrefix = true) {
 	const style = showPrefix ? 'currency' : 'decimal';
 	const options = { style, currency: 'USD', notation: 'compact', compactDisplay: 'short' };
 	return formatNumber(n, minDigits, maxPrecision, options);
@@ -81,26 +89,27 @@ export function formatDollar(n: MaybeNumber, minDigits = 2, maxPrecision = minDi
 /**
  * Format a number with appropriate number of digits based on its magnitude.
  * - larger numbers display `minDigits` after the decimal point
- * - smaller numbers display from `minDigits` up to `maxDigits`
+ * - smaller numbers display from `minDigits` up to `maxPrecision`
  *   significant digits (to retain precision)
  *
  * @example
- * With min and maxDigits = 2 (the default):
+ * With minDigits and maxPrecision = 2 (the default):
  *    12      -> 12.00
  *     1.234  ->  1.23
  *     0.1    ->  0.10
  *     0.123  ->  0.12
  *     0.0123 ->  0.012
  *
- * @param n - number to format
+ * @param n - number to format (Numberlike - may be a string)
  * @param minDigits - minimum number of digits to display (default = 2)
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
  * @param options - additional options to pass through to `toLocaleString()`
  */
-export function formatNumber(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits, options = {}) {
+export function formatNumber(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits, options = {}) {
 	if (minDigits < 0) throw new RangeError('minDigits must be >= 0');
-	if (maxPrecision < minDigits) throw new RangeError('maxDigits must be >= minDigits');
+	if (maxPrecision < minDigits) throw new RangeError('maxPrecision must be >= minDigits');
 
+	n = toFloatingPoint(n);
 	if (!Number.isFinite(n)) return notFilledMarker;
 
 	// Don't format -0.00
@@ -132,23 +141,25 @@ export function formatNumber(n: MaybeNumber, minDigits = 2, maxPrecision = minDi
  * Format price with '$' prefix, thousands separator, and useful
  * number of digits.
  */
-export function formatPrice(n: MaybeNumber, minDigits = 2, maxDigits = 4) {
-	maxDigits = Math.max(minDigits, maxDigits);
-	return formatNumber(n, minDigits, maxDigits, {
+export function formatPrice(n: MaybeNumberlike, minDigits = 2, maxPrecision = 4) {
+	maxPrecision = Math.max(minDigits, maxPrecision);
+	return formatNumber(n, minDigits, maxPrecision, {
 		style: 'currency',
 		currency: 'USD'
 	});
 }
 
-export function formatPriceChange(n: MaybeNumber): string {
+export function formatPriceChange(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
+	n = toFloatingPoint(n);
 	if (!Number.isFinite(n)) return notFilledMarker;
-	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n))}`;
+	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n), minDigits, maxPrecision)}`;
 }
 
 /**
  * Format number using an English thousand separation
  */
-export function formatAmount(n: MaybeNumber): string {
+export function formatAmount(n: MaybeNumberlike): string {
+	n = toFloatingPoint(n);
 	if (!Number.isFinite(n)) return notFilledMarker;
 
 	return n.toLocaleString('en');
@@ -199,8 +210,8 @@ export function formatShortAddress(address: MaybeString): string {
  *
  * Like average winning profit.
  */
-export function formatPercent(n: MaybeNumber, minDigits = 1, maxDigits = minDigits) {
-	return formatNumber(n, minDigits, maxDigits, {
+export function formatPercent(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
+	return formatNumber(n, minDigits, maxPrecision, {
 		style: 'percent'
 	});
 }
@@ -208,8 +219,8 @@ export function formatPercent(n: MaybeNumber, minDigits = 1, maxDigits = minDigi
 /**
  * Format interest rate value given as percent-form value
  */
-export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxDigits = minDigits) {
-	return formatPercent(n / 100, minDigits, maxDigits);
+export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits) {
+	return formatPercent(n / 100, minDigits, maxPrecision);
 }
 
 /**
@@ -254,6 +265,19 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
+ * Formats minute and seconds timespans.
+ *
+ * Used formatting trade execution delays.
+ *
+ * E.g. 1m 2.34s
+ */
+export function formatDurationMinutesSeconds(seconds: number): string {
+	const minutes = Math.floor(seconds / MINUTE);
+	const secondsRemainder = (seconds - minutes * MINUTE).toFixed(2);
+	return `${minutes}m ${secondsRemainder}s`;
+}
+
+/**
  * Formats the time duration string in day granularity.
  *
  * unixTimestamp is received from API as unix seconds since epoch
@@ -270,4 +294,47 @@ export function formatDaysAgo(unixTimestamp: number): string {
  */
 export function formatValue(value: any): string {
 	return value?.toString() ?? notFilledMarker;
+}
+
+/**
+ * Formats the difference as minutes and seconds.
+ *
+ * E.g. 1m 2s
+ *
+ * @param before UNIX timestamp
+ * @param after UNIX timestamp
+ */
+export function formatTimeDiffMinutesSeconds(before: MaybeNumber, after: MaybeNumber): string {
+	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+		return '---';
+	}
+
+	const duration = after - before;
+
+	return formatDurationMinutesSeconds(duration);
+}
+
+/**
+ * Formats the price difference between expected and executed
+ *
+ * E.g. +0.30%
+ *
+ * @param before Dollar value
+ * @param after Dollar value
+ */
+export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): string {
+	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+		return '---';
+	}
+
+	const diff = ((after - before) / before) * 100;
+
+	const formatted = diff.toLocaleString('en-US', {
+		minimumSignificantDigits: 2,
+		maximumSignificantDigits: 2
+	});
+
+	const sign = diff > 0 ? '+' : '';
+
+	return `${sign}${formatted} %`;
 }

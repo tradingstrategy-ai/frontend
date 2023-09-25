@@ -1,10 +1,16 @@
 <script lang="ts">
 	import type { BlockchainTransaction } from 'trade-executor/state/interface';
 	import { formatBPS } from 'trade-executor/helpers/formatters';
-	import { formatAmount, formatPrice } from '$lib/helpers/formatters';
+	import {
+		formatAmount,
+		formatPercent,
+		formatPrice,
+		formatPriceChange,
+		formatTimeDiffMinutesSeconds
+	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
-	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import PositionDataIndicator from '../PositionDataIndicator.svelte';
@@ -18,7 +24,7 @@
 	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
 </script>
 
-<main class="ds-container">
+<main class="ds-container trade-page">
 	<PageHeading level={2}>
 		<h1>Trade #{trade.trade_id}</h1>
 		<h2>
@@ -45,53 +51,196 @@
 	{/if}
 
 	<DataBoxes>
-		<DataBox label="Pair">
-			<a href={position.pair.info_url}>
+		<DataBox label="Trading pair" size="md">
+			<a class="trading-pair" href={position.pair.info_url}>
 				{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
+				<span class="swap-fee">{formatPercent(position.pair.fee)}</span>
 			</a>
 		</DataBox>
-		<DataBox label="Executed at">
-			<Timestamp date={trade.executed_at} withTime />
+
+		<DataBox label="Time" size="sm">
+			<table class="databox-table">
+				<tbody>
+					<tr>
+						<td class="label">Cycle</td>
+						<td>
+							<Timestamp date={trade.opened_at} withTime withSeconds />
+						</td>
+						<td />
+					</tr>
+
+					<tr>
+						<td class="label">Decision</td>
+						<td>
+							<Timestamp date={trade.started_at} withTime withSeconds />
+						</td>
+						<td class="delta">+{formatTimeDiffMinutesSeconds(trade.opened_at, trade.started_at)}</td>
+					</tr>
+
+					<tr>
+						<td class="label">Execute</td>
+						<td>
+							<Timestamp date={trade.executed_at} withTime withSeconds />
+						</td>
+						<td class="delta">+{formatTimeDiffMinutesSeconds(trade.started_at, trade.executed_at)}</td>
+					</tr>
+				</tbody>
+			</table>
 		</DataBox>
-		<DataBox label="Slippage tolerance" value="{formatBPS(trade.planned_max_slippage)} BPS" />
-		<DataBox label="Expected value" value={formatPrice(trade.planned_reserve)} />
-		<DataBox label="Realized value" value={formatPrice(trade.executed_reserve)} />
-		<DataBox label="Liquidity provider fees" value="N/A" />
-		<DataBox label="Expected quantity">
-			{formatAmount(Number(trade.planned_quantity))}
-			{trade.pair.base.token_symbol}
+
+		<DataBox label="Price" size="sm">
+			<table class="databox-table">
+				<tbody>
+					<tr>
+						<td>Mid</td>
+						<td>{formatPrice(trade.price_structure.mid_price)}</td>
+						<td />
+					</tr>
+					<tr>
+						<td>Expected</td>
+						<td>{formatPrice(trade.planned_price)}</td>
+						<td>
+							<UpDownIndicator
+								value={trade.planned_price / trade.price_structure.mid_price - 1}
+								formatter={(n) => formatPriceChange(n, 2, 2)}
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>Executed</td>
+						<td>{formatPrice(trade.executed_price)}</td>
+						<td>
+							<UpDownIndicator
+								value={trade.executed_price / trade.planned_price - 1}
+								formatter={(n) => formatPriceChange(n, 2, 2)}
+							/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</DataBox>
-		<DataBox label="Realized quantity">
-			{formatAmount(Number(trade.executed_quantity))}
-			{trade.pair.base.token_symbol}
+
+		<DataBox label="Quantity" size="sm">
+			<table class="databox-table">
+				<tbody>
+					<tr>
+						<td>Expected</td>
+						<td>
+							{formatAmount(trade.planned_quantity)}
+							{trade.pair.base.token_symbol}
+						</td>
+						<td>{formatPrice(trade.planned_reserve)}</td>
+					</tr>
+					<tr>
+						<td>Executed</td>
+						<td>
+							{formatAmount(trade.executed_quantity)}
+							{trade.pair.base.token_symbol}
+						</td>
+						<td>{formatPrice(trade.executed_reserve)}</td>
+					</tr>
+				</tbody>
+			</table>
 		</DataBox>
-		<DataBox label="Gas fees" value="N/A" />
-		<DataBox label="Price" value={formatPrice(trade.executed_price)} />
+
+		<DataBox label="Slippage" size="sm">
+			<table class="databox-table">
+				<tbody>
+					<tr>
+						<td>Tolerance</td>
+						<td>{formatBPS(trade.planned_max_slippage)} BPS</td>
+					</tr>
+					<tr>
+						<td>Realised</td>
+						<td>-</td>
+					</tr>
+				</tbody>
+			</table>
+		</DataBox>
 	</DataBoxes>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
 </main>
 
 <style lang="postcss">
-	h2 {
-		display: flex;
-		align-items: center;
-		gap: var(--space-md);
-	}
-
-	main :global .data-boxes {
-		margin-block: var(--space-md) var(--space-5xl);
-
-		@media (--viewport-sm-down) {
-			margin-bottom: var(--space-xl);
+	.trade-page {
+		h2 {
+			display: flex;
+			align-items: center;
+			gap: var(--space-md);
 		}
-	}
 
-	.error-details a {
-		font-weight: 500;
+		.error-details a {
+			font-weight: 500;
 
-		.hash-wrapper {
-			display: inline-grid;
+			.hash-wrapper {
+				display: inline-grid;
+			}
+		}
+
+		.trading-pair {
+			font-weight: bold;
+			& .swap-fee {
+				color: hsla(var(--hsl-text-extra-light));
+			}
+		}
+
+		:global(.data-boxes) {
+			margin-block: var(--space-md) var(--space-5xl);
+
+			@media (--viewport-sm-down) {
+				margin-bottom: var(--space-xl);
+			}
+
+			@media (--viewport-md-up) {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		:global(.data-box) {
+			align-content: flex-start;
+
+			&:first-child {
+				grid-column: 1/-1;
+			}
+		}
+
+		.databox-table {
+			--border-spacing: var(--space-sm);
+
+			@media (--viewport-lg-up) {
+				--border-spacing: var(--space-sl);
+			}
+
+			td {
+				height: auto !important;
+				padding: var(--space-sm) var(--space-xs);
+				font: var(--f-ui-xs-medium);
+				letter-spacing: var(--f-ui-xs-spacing, normal);
+				/* white-space: nowrap; */
+
+				@media (--viewport-lg-up) {
+					font: var(--f-ui-sm-medium);
+					letter-spacing: var(--f-ui-sm-spacing, normal);
+				}
+
+				&:first-child {
+					padding-left: var(--space-sl);
+					color: hsla(var(--hsl-text-extra-light));
+				}
+
+				&:last-child {
+					padding-right: var(--space-sl);
+				}
+
+				&:not(:first-child) {
+					text-align: right;
+				}
+
+				&.delta {
+					font-weight: normal;
+				}
+			}
 		}
 	}
 </style>

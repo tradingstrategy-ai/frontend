@@ -5,10 +5,10 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 
-	export let summary: Record<string, MaybeNumberOrString>;
+	export let summary: Record<string, Maybe<number | string>>;
 	const { exchange_slug, chain_slug, pair_slug, pair_id, exchange_type, pair_symbol } = summary;
 
-	function getApiUrl(path: string, params: Record<string, MaybeNumberOrString>) {
+	function getApiUrl(path: string, params: typeof summary) {
 		return `${backendUrl}/${path}?${new URLSearchParams(params)}`;
 	}
 </script>
