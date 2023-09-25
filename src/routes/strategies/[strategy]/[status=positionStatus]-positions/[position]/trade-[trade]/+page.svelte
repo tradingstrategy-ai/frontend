@@ -22,8 +22,6 @@
 	const tradeFailed = trade.failed_at !== null;
 	// Trade should have only one failed transactions and it is the first one that reverted
 	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
-
-	console.log(trade);
 </script>
 
 <main class="ds-container trade-page">
