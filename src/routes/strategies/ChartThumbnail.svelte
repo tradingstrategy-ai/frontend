@@ -36,7 +36,13 @@
 		return {
 			update() {
 				chartEngine.loadChart('strategy-thumbnail', {
-					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 })),
+					masterData: data.map(([date, value]) => ({
+						// passing ISO date (w/out time) to prevent buggy ChartIQ tz conversions
+						DT: date.toISOString().slice(0, 10),
+						Value: value,
+						// add baseline data for drawing a simple 0 basline series (see above)
+						Baseline: 0
+					})),
 					range: { dtLeft: startDate, dtRight: data.at(-1)?.[0] }
 				});
 
@@ -56,10 +62,8 @@
 			<Marker x={position.DateX} y={position.CloseY} size={4} />
 			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<div class="date">
-						<Timestamp date={data.DT} />
-					</div>
-					<div class="value">{formatPercent(data.Close)}</div>
+					<Timestamp date={data.originalDate} />
+					<div class="value">{formatPercent(data.Close, 2)}</div>
 				</UpDownCell>
 			</div>
 		{/if}
@@ -87,8 +91,7 @@
 		top: var(--y);
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
-		.date {
-			font: var(--f-ui-sm-medium);
+		:global(time) {
 			color: hsla(var(--hsl-text-extra-light));
 		}
 

@@ -121,6 +121,8 @@ Dynamically ChartIQ modules (if available) and render chart element.
 				DateX: data && chartEngine.pixelFromDate(data.DT),
 				CloseY: data && chartEngine.pixelFromPrice(data.Close)
 			};
+			// ChartIQ doesn't preserve original UTC date; restore it from tz-adjusted DT value
+			data.originalDate = new Date(data.DT.getTime() - data.DT.getTimezoneOffset() * 60000);
 			cursor = { position, data };
 		});
 
