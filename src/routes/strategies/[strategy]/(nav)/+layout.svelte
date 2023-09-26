@@ -15,16 +15,21 @@
 
 <main class="strategy-layout ds-container">
 	<PageHeading>
-		<h1>{summary.name}</h1>
-		<p>{summary.long_description}</p>
+		<div class="page-heading-inner">
+			<img class="avatar" src={data.strategy?.icon_url ?? `/avatars/${data.strategy.id}.jpg`} alt="" />
+			<div class="content">
+				<h1>{summary.name}</h1>
+				<p>{summary.long_description}</p>
 
-		{#if errorHtml}
-			<div class="error-wrapper">
-				<Alert status="warning" size="sm" title="Ongoing execution issues">
-					{@html errorHtml}
-				</Alert>
+				{#if errorHtml}
+					<div class="error-wrapper">
+						<Alert status="warning" size="sm" title="Ongoing execution issues">
+							{@html errorHtml}
+						</Alert>
+					</div>
+				{/if}
 			</div>
-		{/if}
+		</div>
 	</PageHeading>
 
 	<div class="subpage">
@@ -45,6 +50,19 @@
 </main>
 
 <style lang="postcss">
+	.page-heading-inner {
+		align-items: center;
+		display: flex;
+		gap: 2rem;
+	}
+	.avatar {
+		background: hsla(var(--hsla-box-1));
+		border: none;
+		border-radius: 10rem;
+		display: flex;
+		height: 8rem;
+		width: 8rem;
+	}
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);
