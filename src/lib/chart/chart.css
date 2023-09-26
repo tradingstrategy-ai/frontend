@@ -38,7 +38,7 @@
 .stx_xaxis,
 .stx-float-date,
 .stx-float-price {
-	font: var(--f-ui-xs-roman);
+	font: var(--f-ui-sm-medium);
 	letter-spacing: var(--f-ui-xs-spacing, normal);
 }
 
@@ -58,8 +58,10 @@
 }
 
 .stx-float-date {
+	border-radius: var(--radius-xs);
 	width: auto;
 	min-width: 5rem;
+	padding: var(--space-sm);
 }
 
 .stx-panel-title {

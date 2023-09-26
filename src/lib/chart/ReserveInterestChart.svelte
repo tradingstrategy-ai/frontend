@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	const rateTypes = {
-		supply_apr: { label: 'Supply APR', color: 'slateblue' },
-		stable_borrow_apr: { label: 'Stable Borrow APR', color: 'darkorange' },
+		supply_apr: { label: 'Supply APR', color: 'deeppink' },
+		stable_borrow_apr: { label: 'Stable Borrow APR', color: 'aqua' },
 		variable_borrow_apr: { label: 'Variable Borrow APR', color: 'gray' }
 	} as const;
 
@@ -118,9 +118,10 @@
 
 <style lang="postcss">
 	.reserve-interest-rate-hud {
-		background: hsla(var(--hsl-box), var(--a-box-a));
-		display: inline-block;
-		padding: var(--space-xs) var(--space-sl);
+		background: hsla(var(--hsla-box-3));
+		display: inline-grid;
+		gap: var(--space-ss);
+		padding: var(--space-md);
 
 		h3 {
 			margin: 0;

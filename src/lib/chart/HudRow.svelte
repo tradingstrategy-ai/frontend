@@ -21,7 +21,7 @@ Use in conjunction with HudMetric to display chart HUD (heads-up-display) data.
 	.hud-row {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-ss);
+		gap: var(--space-sm);
 		font: var(--hud-font, var(--f-ui-xs-roman));
 		letter-spacing: var(--hud-letter-spacing, var(--f-ui-xs-spacing, normal));
 		padding-block: var(--space-xxxs);
