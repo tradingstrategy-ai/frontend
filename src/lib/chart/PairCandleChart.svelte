@@ -104,16 +104,18 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 		{@const priceChangePct = priceChangeAmt / cursor.data.Open}
 		{@const direction = Math.sign(priceChangeAmt)}
 
-		<HudRow>
-			<HudMetric label="O" value={formatForHud(cursor.data.Open)} {direction} />
-			<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
-			<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
-			<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
-			<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
-			<HudMetric value={formatPriceChange(priceChangePct)} {direction} />
-		</HudRow>
+		<div class="pair-candle-chart-hud">
+			<HudRow>
+				<HudMetric label="O" value={formatForHud(cursor.data.Open)} {direction} />
+				<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
+				<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
+				<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
+				<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
+				<HudMetric value={formatPriceChange(priceChangePct)} {direction} />
+			</HudRow>
 
-		<slot name="hud-row-volume" {cursor} formatter={formatForHud} />
+			<slot name="hud-row-volume" {cursor} formatter={formatForHud} />
+		</div>
 	{/if}
 
 	{#if !hasData}
@@ -127,6 +129,13 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 </ChartIQ>
 
 <style lang="postcss">
+	.pair-candle-chart-hud {
+		background: hsla(var(--hsla-box-3));
+		display: inline-grid;
+		gap: var(--space-ss);
+		padding: var(--space-md);
+	}
+
 	.no-chart-data {
 		max-width: min(65ch, 90vw);
 		margin-top: 2rem;
