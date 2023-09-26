@@ -27,6 +27,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let hasPagination: boolean = false;
 	export let isResponsive = false;
 	export let loading = false;
+	export let size = 'md';
 
 	const dispatch = createEventDispatcher();
 	let table: HTMLTableElement;
@@ -83,7 +84,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	$dispatchChange;
 </script>
 
-<table bind:this={table} {...$tableAttrs} class:responsive={isResponsive} class:loading>
+<table bind:this={table} {...$tableAttrs} class:responsive={isResponsive} class:loading class={size}>
 	{#if isResponsive}
 		<MobileSortSelect rows={$headerRows} {sortKeys} />
 	{/if}
@@ -94,7 +95,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} />
+	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} {size} />
 
 	{#if hasPagination}
 		<TableFooter page={pluginStates.page} rowCount={$rows.length} />

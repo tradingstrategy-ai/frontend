@@ -35,7 +35,7 @@
 
 <section class="transaction-table">
 	<h2>Transactions</h2>
-	<DataTable {tableViewModel} />
+	<DataTable size="sm" {tableViewModel} />
 </section>
 
 <style lang="postcss">

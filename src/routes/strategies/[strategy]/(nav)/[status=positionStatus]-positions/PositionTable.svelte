@@ -128,7 +128,7 @@
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} on:change />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} on:change size="sm" />
 </div>
 
 <style lang="postcss">
