@@ -20,17 +20,17 @@
 			<div class="content">
 				<h1>{summary.name}</h1>
 				<p>{summary.long_description}</p>
-
-				{#if errorHtml}
-					<div class="error-wrapper">
-						<Alert status="warning" size="sm" title="Ongoing execution issues">
-							{@html errorHtml}
-						</Alert>
-					</div>
-				{/if}
 			</div>
 		</div>
 	</PageHeading>
+
+	{#if errorHtml}
+		<div class="error-wrapper">
+			<Alert status="warning" size="sm" title="Ongoing execution issues">
+				{@html errorHtml}
+			</Alert>
+		</div>
+	{/if}
 
 	<div class="subpage">
 		<StrategyNav
@@ -55,6 +55,7 @@
 		display: flex;
 		gap: 2rem;
 	}
+
 	.avatar {
 		background: hsla(var(--hsla-box-1));
 		border: none;
@@ -63,6 +64,7 @@
 		height: 8rem;
 		width: 8rem;
 	}
+
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);
@@ -93,6 +95,7 @@
 	}
 
 	.error-wrapper {
-		margin-top: var(--space-md);
+		margin-top: calc(var(--space-md) * -1);
+		margin-bottom: var(--space-md);
 	}
 </style>
