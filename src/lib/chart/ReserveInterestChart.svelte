@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	const rateTypes = {
-		supply_apr: { label: 'Supply APR', color: 'deeppink' },
-		stable_borrow_apr: { label: 'Stable Borrow APR', color: 'aqua' },
+		supply_apr: { label: 'Supply APR', color: 'mediumslateblue' },
+		stable_borrow_apr: { label: 'Stable Borrow APR', color: 'darkorange' },
 		variable_borrow_apr: { label: 'Variable Borrow APR', color: 'gray' }
 	} as const;
 
