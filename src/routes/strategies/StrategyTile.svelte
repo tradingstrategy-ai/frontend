@@ -63,7 +63,7 @@
 	<div class="content">
 		<header>
 			<div class="avatar">
-				<img src="/avatars/{strategy.id}.jpg" alt={strategy.name} />
+				<img src={strategy.icon_url} alt={strategy.name} />
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>

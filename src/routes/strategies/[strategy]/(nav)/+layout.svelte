@@ -16,7 +16,7 @@
 <main class="strategy-layout ds-container">
 	<PageHeading>
 		<div class="page-heading-inner">
-			<img class="avatar" src={data.strategy?.icon_url ?? `/avatars/${data.strategy.id}.jpg`} alt="" />
+			<img class="avatar" src={summary.icon_url} alt={summary.name} />
 			<div class="content">
 				<h1>{summary.name}</h1>
 				<p>{summary.long_description}</p>
