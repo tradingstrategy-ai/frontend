@@ -15,7 +15,7 @@
 
 <main class="strategy-layout ds-container">
 	<PageHeading title={summary.name} description={summary.long_description}>
-		<img slot="logo" src={summary.icon_url} alt={summary.name} />
+		<img slot="icon" src={summary.icon_url} alt={summary.name} />
 	</PageHeading>
 
 	{#if errorHtml}

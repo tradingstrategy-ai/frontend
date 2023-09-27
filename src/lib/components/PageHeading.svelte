@@ -3,14 +3,14 @@
 	export let prefix: MaybeString = undefined;
 	export let description: MaybeString = undefined;
 
-	$: hasLogo = Boolean($$slots.logo);
+	$: hasIcon = Boolean($$slots.icon);
 	$: hasPrefix = Boolean(prefix ?? $$slots.prefix);
 </script>
 
-<header class="page-heading" class:hasLogo class:hasPrefix>
-	{#if hasLogo}
-		<div class="logo">
-			<slot name="logo" />
+<header class="page-heading" class:hasIcon class:hasPrefix>
+	{#if hasIcon}
+		<div class="icon">
+			<slot name="icon" />
 		</div>
 	{/if}
 	<div class="content">
@@ -32,7 +32,7 @@
 	.page-heading {
 		--gap: 1rem 2rem;
 		--padding-bottom: 2rem;
-		--logo-size: 8rem;
+		--icon-size: 8rem;
 		--prefix-font: var(--f-heading-md-medium);
 		--prefix-spacing: var(--f-heading-md-spacing);
 		--title-font: var(--f-heading-xl-medium);
@@ -45,7 +45,7 @@
 		@media (--viewport-md-down) {
 			--gap: 0.5rem 1.5rem;
 			--padding-bottom: 1.5rem;
-			--logo-size: 6rem;
+			--icon-size: 6rem;
 			--prefix-font: var(--f-heading-sm-medium);
 			--prefix-spacing: var(--f-heading-sm-spacing);
 			--title-font: var(--f-heading-lg-medium);
@@ -60,7 +60,7 @@
 			--content-display: contents;
 			--gap: 0.5rem 1rem;
 			--padding-bottom: 1rem;
-			--logo-size: 4.75rem;
+			--icon-size: 4.75rem;
 			--prefix-font: var(--f-heading-xs-medium);
 			--prefix-spacing: var(--f-heading-xs-spacing);
 			--title-font: var(--f-heading-md-medium);
@@ -77,16 +77,16 @@
 		align-items: center;
 		padding-bottom: var(--padding-bottom);
 
-		&.hasLogo {
+		&.hasIcon {
 			grid-template-columns: auto 1fr;
 		}
 	}
 
-	.logo {
+	.icon {
 		background: hsla(var(--hsla-box-1));
-		border-radius: var(--logo-size);
-		height: var(--logo-size);
-		width: var(--logo-size);
+		border-radius: var(--icon-size);
+		height: var(--icon-size);
+		width: var(--icon-size);
 		overflow: hidden;
 		text-align: center;
 	}
