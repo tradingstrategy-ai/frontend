@@ -9,6 +9,9 @@ table:not(.table) {
 	--table-transition: all var(--time-xs) ease-out, color 0ms;
 	--table-font: var(--f-ui-md-medium);
 	--table-letter-spacing: var(--f-ui-md-spacing, normal);
+	--cell-padding: var(--space-sl) var(--space-ml);
+	--table-border-radius: var(--radius-md);
+	--body-cell-height: 3.25rem;
 	border-collapse: separate;
 	border-spacing: 0 var(--border-spacing);
 	margin: calc(-1 * var(--border-spacing)) 0;
@@ -19,12 +22,6 @@ table:not(.table) {
 		--body-cell-height: 2.875rem;
 		--table-border-radius: var(--radius-md);
 		--table-font: var(--f-ui-sm-medium);
-	}
-
-	&.md {
-		--cell-padding: var(--space-sl) var(--space-ml);
-		--table-border-radius: var(--radius-md);
-		--body-cell-height: 3.25rem;
 	}
 
 	@media (width <= 920px) {
