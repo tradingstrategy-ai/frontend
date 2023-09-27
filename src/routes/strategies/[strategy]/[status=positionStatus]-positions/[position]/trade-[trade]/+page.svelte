@@ -25,15 +25,14 @@
 </script>
 
 <main class="ds-container trade-page">
-	<PageHeading level={2}>
-		<h1>Trade #{trade.trade_id}</h1>
-		<h2>
+	<PageHeading prefix="Trade #{trade.trade_id}">
+		<span slot="title">
 			{tradeDirection(trade)}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
 				<PositionDataIndicator lg text="stop-loss" />
 			{/if}
-		</h2>
+		</span>
 	</PageHeading>
 
 	{#if tradeFailed}
@@ -164,7 +163,7 @@
 
 <style lang="postcss">
 	.trade-page {
-		h2 {
+		[slot='title'] {
 			display: flex;
 			align-items: center;
 			gap: var(--space-md);

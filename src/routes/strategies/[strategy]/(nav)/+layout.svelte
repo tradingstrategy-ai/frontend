@@ -14,18 +14,17 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading>
-		<h1>{summary.name}</h1>
-		<p>{summary.long_description}</p>
-
-		{#if errorHtml}
-			<div class="error-wrapper">
-				<Alert status="warning" size="sm" title="Ongoing execution issues">
-					{@html errorHtml}
-				</Alert>
-			</div>
-		{/if}
+	<PageHeading title={summary.name} description={summary.long_description}>
+		<img slot="icon" src={summary.icon_url} alt={summary.name} />
 	</PageHeading>
+
+	{#if errorHtml}
+		<div class="error-wrapper">
+			<Alert status="warning" size="sm" title="Ongoing execution issues">
+				{@html errorHtml}
+			</Alert>
+		</div>
+	{/if}
 
 	<div class="subpage">
 		<StrategyNav
@@ -54,10 +53,6 @@
 			margin-top: var(--space-lg);
 		}
 
-		.page-heading p {
-			font: var(--f-ui-md-roman);
-		}
-
 		.subpage :global {
 			display: grid;
 			gap: var(--space-ls);
@@ -75,6 +70,7 @@
 	}
 
 	.error-wrapper {
-		margin-top: var(--space-md);
+		margin-top: calc(var(--space-md) * -1);
+		margin-bottom: var(--space-md);
 	}
 </style>
