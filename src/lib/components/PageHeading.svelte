@@ -3,12 +3,31 @@
 </script>
 
 <header class="page-heading level-{level}">
-	<slot />
+	{#if $$slots.logo}
+		<div class="logo">
+			<slot name="logo" />
+		</div>
+	{/if}
+	<div class="content">
+		<slot />
+	</div>
 </header>
 
 <style lang="postcss">
 	.page-heading {
 		padding-bottom: var(--space-xl);
+		align-items: center;
+		display: flex;
+		gap: 2rem;
+	}
+
+	.logo {
+		background: hsla(var(--hsla-box-1));
+		border-radius: 10rem;
+		height: 8rem;
+		width: 8rem;
+		overflow: hidden;
+		text-align: center;
 	}
 
 	.level-1 :global {
@@ -19,8 +38,8 @@
 		}
 
 		p {
-			font: var(--fs-ui-xl-medium);
-			letter-spacing: var(--fs-ui-xl-spacing, normal);
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 	}
 

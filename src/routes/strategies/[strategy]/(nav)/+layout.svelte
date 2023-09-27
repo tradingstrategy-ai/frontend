@@ -15,13 +15,9 @@
 
 <main class="strategy-layout ds-container">
 	<PageHeading>
-		<div class="page-heading-inner">
-			<img class="avatar" src={summary.icon_url} alt={summary.name} />
-			<div class="content">
-				<h1>{summary.name}</h1>
-				<p>{summary.long_description}</p>
-			</div>
-		</div>
+		<img slot="logo" src={summary.icon_url} alt={summary.name} />
+		<h1>{summary.name}</h1>
+		<p>{summary.long_description}</p>
 	</PageHeading>
 
 	{#if errorHtml}
@@ -50,21 +46,6 @@
 </main>
 
 <style lang="postcss">
-	.page-heading-inner {
-		align-items: center;
-		display: flex;
-		gap: 2rem;
-	}
-
-	.avatar {
-		background: hsla(var(--hsla-box-1));
-		border: none;
-		border-radius: 10rem;
-		display: flex;
-		height: 8rem;
-		width: 8rem;
-	}
-
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);
@@ -72,10 +53,6 @@
 		:global(> .alert-list) {
 			width: 100%;
 			margin-top: var(--space-lg);
-		}
-
-		.page-heading p {
-			font: var(--f-ui-md-roman);
 		}
 
 		.subpage :global {

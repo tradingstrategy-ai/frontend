@@ -23,7 +23,7 @@
 	<meta name="description" content="Browse currently available automated DeFi trading strategies" />
 </svelte:head>
 
-<main class="ds-container">
+<main class="ds-container strategies-index-page">
 	<PageHeading>
 		<h1>Strategies</h1>
 		<p>Currently available strategies</p>
@@ -45,7 +45,7 @@
 </main>
 
 <style>
-	h1 {
+	.strategies-index-page {
 		margin-top: var(--space-ls);
 	}
 
