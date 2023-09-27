@@ -103,13 +103,15 @@ table:not(.table) {
 			--button-width: 100%;
 
 			&:first-child {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-md);
 				border-radius: var(--table-border-radius) 0 0 var(--table-border-radius);
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
 				border-radius: 0 var(--table-border-radius) var(--table-border-radius) 0;
+
+				&.cta {
+					--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
+				}
 			}
 		}
 
