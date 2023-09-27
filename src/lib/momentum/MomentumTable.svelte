@@ -63,8 +63,8 @@
 </div>
 
 <style>
-	td :global(.up-down-indicator) {
-		float: right;
+	.price-change {
+		padding: 0 var(--space-xs);
 	}
 
 	/* Remove less relevant columns on mobile */

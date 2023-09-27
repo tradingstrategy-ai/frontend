@@ -114,7 +114,7 @@
 			header: '',
 			id: 'cta',
 			accessor: ({ position_id }) => `./${status}-positions/${position_id}`,
-			cell: ({ value }) => createRender(Button, { label: 'Details', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'Details', href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -123,7 +123,6 @@
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
 
-	//$: $columnIdOrder = ['flags', 'position_id', 'ticker'].concat(columns);
 	$: $columnIdOrder = columns;
 </script>
 
@@ -145,21 +144,19 @@
 
 	.position-table :global {
 		:is(td, th) {
-			font-size: 14px !important;
-			height: auto !important;
-			padding: var(--space-ss) var(--space-ss);
+			padding-inline: var(--space-ss);
 		}
 
 		.sortable .icon svg {
 			top: var(--space-sl);
 		}
 
-		.button {
-			height: 2.5rem;
-		}
-
 		.ticker {
 			white-space: pre;
+		}
+
+		.profitability {
+			padding-block: 0;
 		}
 
 		:is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
