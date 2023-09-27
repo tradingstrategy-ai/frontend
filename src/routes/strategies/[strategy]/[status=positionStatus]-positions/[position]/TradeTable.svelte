@@ -70,7 +70,7 @@
 	}
 
 	.trade-table :global {
-		:is(, .quantity, .price, .value) {
+		:is(.price, .value) {
 			text-align: right;
 		}
 	}
