@@ -1,79 +1,127 @@
 <script lang="ts">
-	export let level = 1;
+	export let title: MaybeString = undefined;
+	export let prefix: MaybeString = undefined;
+	export let description: MaybeString = undefined;
+
+	$: hasLogo = Boolean($$slots.logo);
+	$: hasPrefix = Boolean(prefix ?? $$slots.prefix);
 </script>
 
-<header class="page-heading level-{level}">
-	{#if $$slots.logo}
+<header class="page-heading" class:hasLogo class:hasPrefix>
+	{#if hasLogo}
 		<div class="logo">
 			<slot name="logo" />
 		</div>
 	{/if}
 	<div class="content">
-		<slot />
+		<h1>
+			{#if hasPrefix}
+				<span class="prefix">
+					<slot name="prefix">{prefix}</slot>
+				</span>
+			{/if}
+			<slot name="title">{title}</slot>
+		</h1>
+		{#if description}
+			<p>{description}</p>
+		{/if}
 	</div>
 </header>
 
 <style lang="postcss">
 	.page-heading {
-		padding-bottom: var(--space-xl);
+		--gap: 1rem 2rem;
+		--padding-bottom: 2rem;
+		--logo-size: 8rem;
+		--prefix-font: var(--f-heading-md-medium);
+		--prefix-spacing: var(--f-heading-md-spacing);
+		--title-font: var(--f-heading-xl-medium);
+		--title-spacing: var(--f-heading-xl-spacing);
+		--title-with-prefix-font: var(--f-heading-xxxl-medium);
+		--title-with-prefix-spacing: var(--f-heading-xxxl-spacing);
+		--desc-font: var(--f-ui-xl-roman);
+		--desc-spacing: var(--f-ui-xl-spacing);
+
+		@media (--viewport-md-down) {
+			--gap: 0.5rem 1.5rem;
+			--padding-bottom: 1.5rem;
+			--logo-size: 6rem;
+			--prefix-font: var(--f-heading-sm-medium);
+			--prefix-spacing: var(--f-heading-sm-spacing);
+			--title-font: var(--f-heading-lg-medium);
+			--title-spacing: var(--f-heading-lg-spacing);
+			--title-with-prefix-font: var(--f-heading-xl-medium);
+			--title-with-prefix-spacing: var(--f-heading-xl-spacing);
+			--desc-font: var(--f-ui-lg-roman);
+			--desc-spacing: var(--f-ui-lg-spacing);
+		}
+
+		@media (--viewport-xs) {
+			--content-display: contents;
+			--gap: 0.5rem 1rem;
+			--padding-bottom: 1rem;
+			--logo-size: 4.75rem;
+			--prefix-font: var(--f-heading-xs-medium);
+			--prefix-spacing: var(--f-heading-xs-spacing);
+			--title-font: var(--f-heading-md-medium);
+			--title-spacing: var(--f-heading-md-spacing);
+			--title-with-prefix-font: var(--f-heading-lg-medium);
+			--title-with-prefix-spacing: var(--f-heading-lg-spacing);
+			--desc-font: var(--f-ui-md-roman);
+			--desc-spacing: var(--f-ui-me-spacing);
+		}
+
+		display: grid;
+		grid-template-columns: auto;
+		gap: var(--gap);
 		align-items: center;
-		display: flex;
-		gap: 2rem;
+		padding-bottom: var(--padding-bottom);
+
+		&.hasLogo {
+			grid-template-columns: auto 1fr;
+		}
 	}
 
 	.logo {
 		background: hsla(var(--hsla-box-1));
-		border-radius: 10rem;
-		height: 8rem;
-		width: 8rem;
+		border-radius: var(--logo-size);
+		height: var(--logo-size);
+		width: var(--logo-size);
 		overflow: hidden;
 		text-align: center;
 	}
 
-	.level-1 :global {
-		h1 {
-			font: var(--f-heading-xl-medium);
-			letter-spacing: var(--f-heading-xl-spacing, normal);
-			margin-bottom: var(--space-md);
+	.content {
+		display: var(--content-display, grid);
+		gap: inherit;
+	}
+
+	h1 {
+		font: var(--title-font);
+		letter-spacing: var(--title-spacing, normal);
+		margin: 0;
+
+		.hasPrefix & {
+			font: var(--title-with-prefix-font);
+			letter-spacing: var(--title-with-prefix-spacing, normal);
 		}
 
-		p {
-			font: var(--f-ui-xl-roman);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
+		.prefix {
+			display: block;
+			color: var(--c-text-ultra-light);
+			font: var(--prefix-font);
+			letter-spacing: var(--prefix-spacing, normal);
+			margin-bottom: var(--space-ss);
+
+			:global a:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
-	.level-2 :global {
-		h1 {
-			color: var(--c-text-ultra-light);
-			font: var(--f-heading-md-medium);
-			letter-spacing: var(--f-heading-md-spacing, normal);
-			margin-bottom: var(--space-ss);
-
-			@media (--viewport-sm-down) {
-				font: var(--f-heading-xs-medium);
-				letter-spacing: var(--f-heading-xs-spacing, normal);
-				margin: 0 0 var(--space-sl);
-			}
-
-			a {
-				font: inherit;
-
-				&:hover {
-					text-decoration: underline;
-				}
-			}
-		}
-
-		h2 {
-			font: var(--f-heading-xxxl-medium);
-			letter-spacing: var(--f-heading-xxxl-spacing, normal);
-			margin: 0;
-
-			@media (--viewport-sm-down) {
-				font: var(--f-heading-xl-medium);
-				letter-spacing: var(--f-heading-xl-spacing, normal);
-			}
-		}
+	p {
+		font: var(--desc-font);
+		letter-spacing: var(--desc-spacing, normal);
+		grid-column: 1/-1;
 	}
 </style>

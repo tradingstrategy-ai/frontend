@@ -29,9 +29,8 @@
 </script>
 
 <main class="ds-container position-page">
-	<PageHeading level={2}>
-		<h1><a href="/strategies/{summary.id}">{summary.name}</a></h1>
-		<h2>Position #{position.position_id}</h2>
+	<PageHeading title="Position #{position.position_id}">
+		<a slot="prefix" href="/strategies/{summary.id}">{summary.name}</a>
 	</PageHeading>
 
 	<section>

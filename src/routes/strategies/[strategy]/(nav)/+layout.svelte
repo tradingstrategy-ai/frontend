@@ -14,10 +14,8 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading>
+	<PageHeading title={summary.name} description={summary.long_description}>
 		<img slot="logo" src={summary.icon_url} alt={summary.name} />
-		<h1>{summary.name}</h1>
-		<p>{summary.long_description}</p>
 	</PageHeading>
 
 	{#if errorHtml}

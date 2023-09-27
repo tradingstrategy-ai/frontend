@@ -24,10 +24,7 @@
 </svelte:head>
 
 <main class="ds-container strategies-index-page">
-	<PageHeading>
-		<h1>Strategies</h1>
-		<p>Currently available strategies</p>
-	</PageHeading>
+	<PageHeading title="Strategies" description="Currently available strategies" />
 
 	{#if strategies.length}
 		<ul>
