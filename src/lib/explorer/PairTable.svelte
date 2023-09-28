@@ -90,7 +90,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View pair', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'View pair', href: value, size: 'sm' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -135,6 +135,10 @@
 			.exchange_name {
 				min-width: 6rem;
 				white-space: nowrap;
+			}
+
+			.price_change_24h {
+				padding: 0 var(--space-xs);
 			}
 		}
 	}
