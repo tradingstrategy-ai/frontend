@@ -83,7 +83,7 @@
 			<StrategyDataSummary {strategy} />
 
 			{#if isBacktested}
-				<span class="backtest-data-badge">Backtested Metrics*</span>
+				<span class="backtest-data-badge">* Backtested Metrics</span>
 			{/if}
 		</div>
 		<div class="actions" on:click|stopPropagation>

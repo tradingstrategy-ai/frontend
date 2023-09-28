@@ -33,7 +33,7 @@ Display one key metric in a strategy tile.
 
 <Tooltip>
 	<svelte:fragment slot="trigger">
-		<dt>
+		<dt class={metric?.source}>
 			<span>{name}</span>
 			<Icon name="question-circle" />
 		</dt>
@@ -68,6 +68,10 @@ Display one key metric in a strategy tile.
 			margin-bottom: 0.25rem;
 			font: var(--f-ui-xs-medium);
 			letter-spacing: var(--f-ui-xs-spacing);
+		}
+
+		&.backtesting > span::after {
+			content: '*';
 		}
 	}
 </style>

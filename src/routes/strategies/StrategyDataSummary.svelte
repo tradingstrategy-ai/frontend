@@ -34,13 +34,7 @@
 
 	<KeyMetric name="Total assets" metric={metrics.total_equity} formatter={formatDollar} {backtestLink} {badgeSize} />
 
-	<KeyMetric
-		name="Maximum drawdown"
-		metric={metrics.max_drawdown}
-		formatter={formatPercent}
-		{backtestLink}
-		{badgeSize}
-	/>
+	<KeyMetric name="Max drawdown" metric={metrics.max_drawdown} formatter={formatPercent} {backtestLink} {badgeSize} />
 
 	<KeyMetric name="Age" metric={metrics.started_at} formatter={formatDaysAgo} {backtestLink} {badgeSize} />
 
