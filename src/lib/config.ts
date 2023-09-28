@@ -100,7 +100,7 @@ export const strategyConfig = config((jsonStr: string) => {
 		return JSON.parse(jsonStr);
 	} catch (e) {
 		console.warn(`Could not parse TS_PUBLIC_STRATEGIES env JSON; content is ${jsonStr}`);
-		return {};
+		return [];
 	}
 }, 'STRATEGIES');
 
