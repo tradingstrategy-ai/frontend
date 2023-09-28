@@ -8,12 +8,12 @@
 	type ChartTick = [Date, number | undefined];
 
 	export let data: ChartTick[] = [];
-	export let startDate: Date = addUTCDays(floorUTCDate(new Date()), -90);
 
 	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
 
 	const options = {
 		layout: { chartType: 'mountain' },
+		controls: { home: null },
 		allowScroll: false,
 		allowZoom: false,
 		xaxisHeight: 0,
@@ -43,7 +43,7 @@
 						// add baseline data for drawing a simple 0 basline series (see above)
 						Baseline: 0
 					})),
-					range: { dtLeft: startDate, dtRight: data.at(-1)?.[0] }
+					span: { base: 'day', multiplier: 90 }
 				});
 
 				const { yAxis } = chartEngine.chart;

@@ -8,7 +8,6 @@
 	import { fromUnixTime } from 'date-fns';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
-	export let chartStartDate: Date | undefined = undefined;
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
 
@@ -57,7 +56,7 @@
 			{/if}
 		</div>
 		<div class="chart">
-			<ChartThumbnail data={chartData} startDate={chartStartDate} />
+			<ChartThumbnail data={chartData} />
 		</div>
 	</div>
 	<div class="content">

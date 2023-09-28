@@ -1,21 +1,9 @@
 <script lang="ts">
-	import { min } from 'd3-array';
-	import { fromUnixTime } from 'date-fns';
 	import { PageHeading } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
 	$: ({ strategies, chainInfo } = data);
-
-	function minPerformanceDate() {
-		const timestamps = strategies.map(({ summary_statistics }) => {
-			// return timestamp from first tick (each tick is tuple of [ ts, value ])
-			const ticks = summary_statistics?.performance_chart_90_days;
-			if (!ticks || ticks.length === 0) return;
-			return ticks[0]?.[0];
-		});
-		return fromUnixTime(min(timestamps));
-	}
 </script>
 
 <svelte:head>
@@ -29,11 +17,7 @@
 	{#if strategies.length}
 		<ul>
 			{#each strategies as strategy (strategy.id)}
-				<StrategyTile
-					{strategy}
-					chain={chainInfo[strategy.on_chain_data?.chain_id]}
-					chartStartDate={minPerformanceDate()}
-				/>
+				<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id]} />
 			{/each}
 		</ul>
 	{:else}
