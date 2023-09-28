@@ -9,10 +9,20 @@ table:not(.table) {
 	--table-transition: all var(--time-xs) ease-out, color 0ms;
 	--table-font: var(--f-ui-md-medium);
 	--table-letter-spacing: var(--f-ui-md-spacing, normal);
+	--cell-padding: var(--space-sl) var(--space-ml);
+	--table-border-radius: var(--radius-md);
+	--body-cell-height: 3.25rem;
 	border-collapse: separate;
 	border-spacing: 0 var(--border-spacing);
 	margin: calc(-1 * var(--border-spacing)) 0;
 	width: 100%;
+
+	&.sm {
+		--cell-padding: var(--space-ss) var(--space-md);
+		--body-cell-height: 2.875rem;
+		--table-border-radius: var(--radius-md);
+		--table-font: var(--f-ui-sm-medium);
+	}
 
 	@media (width <= 920px) {
 		--cell-padding: 0 var(--space-xs);
@@ -38,7 +48,7 @@ table:not(.table) {
 
 	th {
 		background: hsla(var(--hsl-body));
-		border-radius: var(--radius-md);
+		border-radius: var(--table-border-radius);
 		color: hsla(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
@@ -80,7 +90,7 @@ table:not(.table) {
 	tbody tr {
 		td {
 			background: hsla(var(--hsl-box), var(--a-box-b));
-			height: 3.25rem;
+			height: var(--body-cell-height);
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
 			padding: var(--cell-padding);
@@ -89,18 +99,16 @@ table:not(.table) {
 			vertical-align: middle;
 			--button-width: 100%;
 
-			@media (--viewport-lg-up) {
-				height: 3.825rem !important;
-			}
-
 			&:first-child {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-md);
-				border-radius: var(--radius-md) 0 0 var(--radius-md);
+				border-radius: var(--table-border-radius) 0 0 var(--table-border-radius);
 			}
 
 			&:last-child {
-				--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
-				border-radius: 0 var(--radius-md) var(--radius-md) 0;
+				border-radius: 0 var(--table-border-radius) var(--table-border-radius) 0;
+
+				&.cta {
+					--cell-padding: 0 var(--space-xs) 0 var(--space-xs);
+				}
 			}
 		}
 
@@ -151,7 +159,7 @@ table:not(.table) {
 
 			tbody tr {
 				background: hsla(var(--hsl-box), var(--a-box-b));
-				border-radius: var(--radius-md);
+				border-radius: var(--table-border-radius);
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				overflow: hidden;

@@ -40,7 +40,7 @@
 			header: '',
 			id: 'cta',
 			accessor: ({ position_id, trade_id }) => `./${position_id}/trade-${trade_id}`,
-			cell: ({ value }) => createRender(Button, { label: 'Details', href: value })
+			cell: ({ value }) => createRender(Button, { label: 'Details', href: value, size: 'xs' })
 		})
 	]);
 
@@ -49,7 +49,7 @@
 
 <section class="trade-table">
 	<h2>Trades</h2>
-	<DataTable {tableViewModel} />
+	<DataTable {tableViewModel} size="sm" />
 </section>
 
 <style lang="postcss">
@@ -70,7 +70,7 @@
 	}
 
 	.trade-table :global {
-		:is(, .quantity, .price, .value) {
+		:is(.price, .value) {
 			text-align: right;
 		}
 	}

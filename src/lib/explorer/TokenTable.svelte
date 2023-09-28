@@ -53,7 +53,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/tokens/${row.address}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View token', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'View token', href: value, size: 'sm' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -100,7 +100,7 @@
 			}
 
 			.cta {
-				width: 12rem;
+				width: 11rem;
 				padding-left: 1rem;
 			}
 		}

@@ -52,7 +52,7 @@
 			id: 'cta',
 			header: '',
 			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`,
-			cell: ({ value }) => createRender(Button, { label: 'View exchange', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'View exchange', href: value, size: 'sm' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -98,7 +98,7 @@
 			}
 
 			.cta {
-				width: 15rem;
+				width: 14rem;
 				padding-left: 2em;
 			}
 		}

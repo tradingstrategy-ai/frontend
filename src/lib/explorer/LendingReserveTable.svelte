@@ -69,7 +69,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value }),
+			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'sm' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -83,6 +83,12 @@
 
 <style lang="postcss">
 	.reserve-table :global {
+		@media (--viewport-sm-down) {
+			.asset_name {
+				grid-column: 1/-1;
+			}
+		}
+
 		@media (--viewport-md-up) {
 			table {
 				table-layout: fixed;
@@ -105,7 +111,7 @@
 			}
 
 			.cta {
-				width: 12rem;
+				width: 11rem;
 			}
 		}
 	}
