@@ -25,12 +25,18 @@
 	<SummaryBox title="Vault information" ctaPosition="top">
 		<div class="actions" slot="cta">
 			{#if enzymeUrl}
-				<Button size="xs" label="View on Enzyme" href={enzymeUrl}>
+				<Button size="xs" label="View on Enzyme" href={enzymeUrl} rel="noreferrer" target="_blank">
 					<img slot="icon" alt="Enzyme" src={getLogoUrl('token', 'enzyme')} />
 				</Button>
 			{/if}
 			{#if explorerUrl}
-				<Button size="xs" label="View on {chain.chain_name} explorer" href={explorerUrl}>
+				<Button
+					size="xs"
+					label="View on {chain.chain_name} explorer"
+					href={explorerUrl}
+					rel="noreferrer"
+					target="_blank"
+				>
 					<img slot="icon" alt={chain.chain_name} src={getLogoUrl('blockchain', 'polygon')} />
 				</Button>
 			{/if}

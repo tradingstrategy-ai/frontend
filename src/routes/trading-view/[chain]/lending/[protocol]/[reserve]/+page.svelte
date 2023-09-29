@@ -72,7 +72,7 @@
 		{#if borrowable && formattedReserveUSD?.borrowingEnabled === false}
 			<Alert status="error">
 				Borrowing is disabled due to an Aave community decision.
-				<a href="https://app.aave.com/governance/" target="_blank" rel="external">More details</a>
+				<a href="https://app.aave.com/governance/" target="_blank" rel="noreferrer">More details</a>
 			</Alert>
 		{/if}
 	</section>

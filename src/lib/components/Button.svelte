@@ -13,7 +13,6 @@ using flags: primary (default), secondary, ternary, quarternary.
 		secondary
 		size="lg"
 		disabled
-		external
 		href="http://example.org"
 		target="_blank"
 		title="include for accessibility when label ommitted"
