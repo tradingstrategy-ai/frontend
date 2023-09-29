@@ -9,6 +9,9 @@ import { assert } from 'assert-ts';
 import loadError from '../assets/load-error.jpg';
 import type { UnixTimestamp } from 'trade-executor/state/interface';
 
+// use 10 second timeout when fetching strategy metadata
+const clientTimeout = 5000;
+
 type Nullable<Type> = Type | null;
 type PerformanceTuple = [number, number];
 type Address = `0x${string}`;
@@ -150,7 +153,7 @@ export async function getStrategiesWithRuntimeState(
 				// Because we load from the executor, we need to be able to
 				// catch HTTP 500 from Cloudflare (no CORS headers)
 				// https://github.com/sveltejs/kit/issues/5074
-				resp = await fetch(`${strat.url}/metadata`);
+				resp = await fetch(`${strat.url}/metadata`, { signal: AbortSignal.timeout(clientTimeout) });
 			} catch (e) {
 				// TypeError: Failed to fetch
 				// but happens only on client-side.

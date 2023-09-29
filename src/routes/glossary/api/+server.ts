@@ -40,8 +40,8 @@ export async function GET() {
 	// CloudFlare or any reverse proxy server cache.
 	return new Response(cacheValue, {
 		headers: {
-			'Content-type': 'application/json',
-			'Cache-control': `public; max-age=${cacheTimeSeconds}`
+			'content-type': 'application/json',
+			'cache-control': `public, max-age=${cacheTimeSeconds}`
 		}
 	});
 }
