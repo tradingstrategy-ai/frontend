@@ -6,6 +6,7 @@
 		formatPercent,
 		formatPrice,
 		formatPriceChange,
+		formatPriceDifference,
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
@@ -95,24 +96,20 @@
 						<td>{formatPrice(trade.price_structure.mid_price)}</td>
 						<td />
 					</tr>
+
 					<tr>
 						<td>Expected</td>
 						<td>{formatPrice(trade.planned_price)}</td>
-						<td>
-							<UpDownIndicator
-								value={trade.planned_price / trade.price_structure.mid_price - 1}
-								formatter={(n) => formatPriceChange(n, 2, 2)}
-							/>
+						<td class="delta">
+							{formatPriceDifference(trade.price_structure.mid_price, trade.planned_price)}
 						</td>
 					</tr>
+
 					<tr>
 						<td>Executed</td>
 						<td>{formatPrice(trade.executed_price)}</td>
-						<td>
-							<UpDownIndicator
-								value={trade.executed_price / trade.planned_price - 1}
-								formatter={(n) => formatPriceChange(n, 2, 2)}
-							/>
+						<td class="delta">
+							{formatPriceDifference(trade.planned_price, trade.executed_price)}
 						</td>
 					</tr>
 				</tbody>
