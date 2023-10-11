@@ -15,7 +15,7 @@
 	<div class="icon-group">
 		<SocialIcon {small} name="linkedin" href="https://www.linkedin.com/company/trading-strategy/" title="LinkedIn" />
 		<SocialIcon {small} name="newspaper" title="Newsletter" href="/newsletter" />
-		<SocialIcon {small} name="reading" title="Newsletter" href="/blog" />
+		<SocialIcon {small} name="reading" title="Blog" href="/blog" />
 		<SocialIcon {small} external name="rss" href="/blog/rss.xml" title="RSS" />
 	</div>
 </footer>
