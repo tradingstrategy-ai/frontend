@@ -27,11 +27,11 @@
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={() => connectWallet('Injected')}>
+			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={() => connectWallet('injected')}>
 				Connect to your<br />
 				browser-based wallet
 			</WalletTile>
-			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => connectWallet('WalletConnect')}>
+			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => connectWallet('walletConnect')}>
 				Scan a QR code<br />
 				with your mobile wallet
 			</WalletTile>
