@@ -115,14 +115,19 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		chartEngine.append('headsUpHR', () => {
 			const tick = chartEngine.tickFromPixel(chartEngine.cx);
 			const data = chartEngine.chart.dataSet[tick];
+
 			const position = {
 				cx: chartEngine.cx,
 				cy: chartEngine.cy,
 				DateX: data && chartEngine.pixelFromDate(data.DT),
 				CloseY: data && chartEngine.pixelFromPrice(data.Close)
 			};
+
 			// ChartIQ doesn't preserve original UTC date; restore it from tz-adjusted DT value
-			data.originalDate = new Date(data.DT.getTime() - data.DT.getTimezoneOffset() * 60000);
+			if (data) {
+				data.originalDate = new Date(data.DT.getTime() - data.DT.getTimezoneOffset() * 60000);
+			}
+
 			cursor = { position, data };
 		});
 
