@@ -1,7 +1,7 @@
 import type { ApiChain } from '$lib/helpers/chain.js';
 
 export async function load({ fetch }) {
-	// Load prerendered chain data and make it available site-wide
+	// Load chain lookup data and make it available site-wide
 	const resp = await fetch('/data/chains');
 	const chains = await resp.json();
 

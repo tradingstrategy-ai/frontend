@@ -10,38 +10,24 @@
  * We cache any result for 2 minutes on the server-side and client-side (hydrated).
  */
 import { dev } from '$app/environment';
-
-// We use node-cache https://www.npmjs.com/package/node-cache
-import NodeCache from 'node-cache';
+import swrCache from '$lib/swrCache.js';
+import { json } from '@sveltejs/kit';
 
 import { fetchAndParseGlossary } from './glossary';
 
-// Create NodeCache in-process instance and set cache timeout very low when on a dev server
-const cache = new NodeCache();
-const cacheTimeSeconds = dev ? 1 : 120;
-const cacheKey = 'glossary';
+// Create a SWR cache for strategies with 5 minute TTL in production (1 min in dev)
+const cacheTimeSeconds = dev ? 1 : 5 * 60;
+const getCachedGlossary = swrCache(fetchAndParseGlossary, cacheTimeSeconds);
 
 export async function GET() {
-	// Check if we have a cached result in in-process memory
-	let cacheValue: string | undefined = cache.get(cacheKey);
+	const glossary = await getCachedGlossary('/glossary/');
 
-	// Reconstruct the cached data.
-	// We store stringified JSON in the cache,
-	// so we can pipe the result to the client easily
-	if (!cacheValue) {
-		const glossary = await fetchAndParseGlossary('/glossary/');
-		cacheValue = JSON.stringify(glossary);
-		cache.set(cacheKey, cacheValue, cacheTimeSeconds);
-	}
-
-	// Setting cache-control value will make sure the client-side
-	// rendering does not try to refetch() this API endpoint too often.
-	// Cache-control public will also make sure our response sticks to
-	// CloudFlare or any reverse proxy server cache.
-	return new Response(cacheValue, {
+	return json(glossary, {
+		// Setting cache-control and age headers to limit re-fetching
+		// of this resource by browser and reverse proxy / CDN
 		headers: {
-			'content-type': 'application/json',
-			'cache-control': `public, max-age=${cacheTimeSeconds}`
+			'cache-control': `public, max-age=${cacheTimeSeconds}`,
+			age: getCachedGlossary.getAge('/glossary/').toFixed(0)
 		}
 	});
 }
