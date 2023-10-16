@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@aave/math-utils": "^1.20.0",
-    "@sentry/node": "^7.70.0",
+    "@sentry/sveltekit": "^7.74.0",
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.10",
     "@tryghost/content-api": "^1.11.8",
     "@wagmi/core": "^1.4.2",

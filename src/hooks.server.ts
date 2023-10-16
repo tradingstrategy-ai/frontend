@@ -1,27 +1,14 @@
-import { init as initSentry, captureException } from '@sentry/node';
-import { backendUrl, backendInternalUrl, siteMode, version } from '$lib/config';
-import { env } from '$env/dynamic/private';
+import type { Handle, HandleServerError } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
+import * as Sentry from '@sentry/sveltekit';
+import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
 import { addYears } from 'date-fns';
 
-// Set `data-color-mode` body attribute during SSR to avoid FOUC
-// see app.html and ColorModePicker.svelte
-export async function handle({ event, resolve }) {
-	const colorMode = event.cookies.get('color-mode') || 'system';
-
-	// update the cookie (in case not set and to update expiration)
-	event.cookies.set('color-mode', colorMode, {
-		httpOnly: false,
-		secure: false,
-		path: '/',
-		expires: addYears(new Date(), 1)
-	});
-
-	return resolve(event, {
-		transformPageChunk({ html }) {
-			return html.replace(/%ts:color-mode%/, colorMode);
-		}
-	});
-}
+Sentry.init({
+	dsn: sentryDsn,
+	environment: siteMode,
+	release: `frontend@${version}`
+});
 
 // Shortcut fetch() API requests in SSR; see:
 // https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
@@ -40,29 +27,30 @@ export async function handleFetch({ request }) {
 	return fetch(request);
 }
 
-// Sentry error logging; see:
-// - https://kit.svelte.dev/docs/hooks#shared-hooks-handleerror
-// - https://sentry.io/for/sveltekit/
-initSentry({
-	dsn: env.TS_PRIVATE_SENTRY_DSN,
-	environment: siteMode,
-	release: version
-});
+export const handleError = Sentry.handleErrorWithSentry((async ({ error }) => {
+	console.error(error);
+	const eventId = Sentry.lastEventId();
+	if (eventId) {
+		return { message: 'Internal Server Error', eventId };
+	}
+}) as HandleServerError);
 
-export async function handleError({ error, event }) {
-	if (!env.TS_PRIVATE_SENTRY_DSN) console.error(error);
+const handleColorMode: Handle = async ({ event, resolve }) => {
+	const colorMode = event.cookies.get('color-mode') || 'system';
 
-	const eventData = {
-		isDataRequest: event.isDataRequest,
-		url: event.url.toString(),
-		route: event.route.id,
-		params: JSON.stringify(event.params)
-	};
+	// update the cookie (in case not set and to update expiration)
+	event.cookies.set('color-mode', colorMode, {
+		httpOnly: false,
+		secure: false,
+		path: '/',
+		expires: addYears(new Date(), 1)
+	});
 
-	const eventId = captureException(error, { contexts: { sveltekit: { event: eventData } } });
+	return resolve(event, {
+		transformPageChunk({ html }) {
+			return html.replace(/%ts:color-mode%/, colorMode);
+		}
+	});
+};
 
-	return {
-		message: 'Internal Server Error',
-		eventId
-	};
-}
+export const handle = sequence(Sentry.sentryHandle(), handleColorMode);
