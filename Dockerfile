@@ -34,6 +34,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/scripts/server.js ./scripts/
 
+# Copy root CAs (needed to run sentry-cli)
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
 EXPOSE 3000
 
 # See if increase libuv thread pool size makes performance better
