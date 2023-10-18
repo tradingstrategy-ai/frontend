@@ -1,4 +1,5 @@
 <script>
+	import { discordUrl } from '$lib/config';
 	import { Button, Logo, Section } from '$lib/components';
 
 	$: windowInnerWidth = 0;
@@ -13,11 +14,12 @@
 		</a>
 
 		<Button
-			href="https://discord.gg/en8tW6MDtw"
+			href={discordUrl}
 			icon="discord"
 			label={windowInnerWidth >= 768 ? 'Get help' : undefined}
 			size="sm"
 			target="_blank"
+			rel="noreferrer"
 		/>
 	</div>
 </Section>

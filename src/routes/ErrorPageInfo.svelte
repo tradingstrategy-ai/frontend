@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { discordUrl } from '$lib/config';
 	import { Button } from '$lib/components';
 
 	export let status: number;
@@ -16,7 +17,7 @@
 
 	<div class="buttons">
 		<slot />
-		<Button secondary label="Get help on Discord" icon="discord" href="https://discord.gg/en8tW6MDtw" target="_blank" />
+		<Button secondary label="Get help on Discord" icon="discord" href={discordUrl} target="_blank" rel="noreferrer" />
 	</div>
 </section>
 

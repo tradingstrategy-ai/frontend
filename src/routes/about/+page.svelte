@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { discordUrl } from '$lib/config';
 	import { Banner, Button, HeroVideo, Section } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
@@ -59,8 +60,9 @@
 				secondary
 				label="Join our Discord server"
 				icon="discord"
-				href="https://discord.gg/en8tW6MDtw"
+				href={discordUrl}
 				target="_blank"
+				rel="noreferrer"
 			/>
 		</div>
 	</Section>

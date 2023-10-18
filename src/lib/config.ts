@@ -89,6 +89,16 @@ export const typesenseConfig = config(
 );
 
 /**
+ * Load Discord invite URL and warn if not available.
+ */
+export const discordUrl = config((url: string) => {
+	if (!url) {
+		console.warn('Discord invite URL not configured');
+	}
+	return url;
+}, 'DISCORD_URL');
+
+/**
  * Load configured strategies.
  *
  * Strategies are configured at runtime via the TS_PUBLIC_STRATEGIES environment variable.

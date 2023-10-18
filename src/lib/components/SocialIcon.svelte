@@ -4,14 +4,15 @@
 	export let name: string;
 	export let title = name;
 	export let href: string | undefined = undefined;
-	export let external = false;
+	export let rel: string | undefined = undefined;
+	export let target: string | undefined = undefined;
 	export let small = false;
 
 	$: tag = href ? 'a' : 'span';
-	$: rel = external ? 'external' : undefined;
+	$: anchorProps = { href, rel, target };
 </script>
 
-<svelte:element this={tag} class="social-icon" class:small {href} {title} {rel}>
+<svelte:element this={tag} class="social-icon" class:small {title} {...anchorProps}>
 	<Icon {name} />
 </svelte:element>
 

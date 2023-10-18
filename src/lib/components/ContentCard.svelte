@@ -20,18 +20,18 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 <script lang="ts">
 	import { Button, Icon } from '$lib/components';
 
-	export let ctaLabel = '';
-	export let ctaFullWidth = false;
-	export let description = '';
 	export let icon: string | undefined = undefined;
-	export let href = '';
 	export let title: string | undefined = undefined;
+	export let description = '';
+	export let ctaFullWidth = false;
+	export let ctaLabel = '';
+	export let href: string | undefined = undefined;
+	export let target: string | undefined = undefined;
+	export let rel: string | undefined = undefined;
 
 	$: tag = href ? 'a' : 'div';
 
-	$: anchorProps = {
-		href
-	};
+	$: anchorProps = { href, rel, target };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

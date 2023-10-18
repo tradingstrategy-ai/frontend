@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { discordUrl } from '$lib/config';
 	import { Button, Grid, Section, SummaryBox } from '$lib/components';
 </script>
 
@@ -44,8 +45,9 @@
 					slot="cta"
 					label="Join our Discord server"
 					icon="discord"
-					href="https://discord.gg/en8tW6MDtw"
+					href={discordUrl}
 					target="_blank"
+					rel="noreferrer"
 				/>
 			</SummaryBox>
 		</Grid>

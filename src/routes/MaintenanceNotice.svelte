@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { maintenanceNotice } from '$lib/config';
+	import { discordUrl, maintenanceNotice } from '$lib/config';
 	import { Alert, Button, Section } from '$lib/components';
 </script>
 
@@ -7,7 +7,7 @@
 	<Section padding="sm">
 		<Alert status="warning" title="Site maintenance">
 			{@html maintenanceNotice}
-			<Button slot="cta" icon="discord" label="Join Discord" href="https://discord.gg/en8tW6MDtw" />
+			<Button slot="cta" icon="discord" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer" />
 		</Alert>
 	</Section>
 {/if}
