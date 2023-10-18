@@ -1,8 +1,5 @@
-import { vi } from 'vitest';
 import { render } from '@testing-library/svelte';
 import StrategyTile from './StrategyTile.svelte';
-
-vi.mock('$lib/config');
 
 const baseStrategy = {
 	id: 'strategy_1',
