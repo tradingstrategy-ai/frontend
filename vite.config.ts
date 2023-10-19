@@ -6,6 +6,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { createLogger } from 'vite';
 import { defineConfig } from 'vitest/config';
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
 import GithubActionsReporter from 'vitest-github-actions-reporter';
 
@@ -20,6 +21,12 @@ logger.info = (msg, options) => {
 
 export default defineConfig({
 	plugins: [
+		// Sentry plugin must be added befoer sveltekit plugin. See:
+		// https://docs.sentry.io/platforms/javascript/guides/sveltekit/manual-setup/#vite-setup
+		sentrySvelteKit({
+			autoUploadSourceMaps: false
+		}),
+
 		sveltekit(),
 
 		// vite plugin to create a mock JSON api for integration tests
@@ -42,7 +49,8 @@ export default defineConfig({
 
 	// suppress plotly build warnings (remove once ploty.js is gone)
 	build: {
-		chunkSizeWarningLimit: 1200
+		chunkSizeWarningLimit: 1200,
+		sourcemap: true
 	},
 
 	// vitest configuration for unit tests (`npm run test:unit`)

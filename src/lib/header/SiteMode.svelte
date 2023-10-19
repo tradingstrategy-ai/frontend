@@ -19,8 +19,9 @@ A helpful widget to identify non-production deployment and give some developer d
 		</p>
 
 		<p>
-			<a class="body-link" href="/slow-load">Go to slow page</a> |
-			<a class="body-link" href="/diagnostics">Go to diagnostics page</a>
+			<a class="body-link" href="/diagnostics">Diagnostics page</a> |
+			<a class="body-link" href="/slow-load">Slow page</a> |
+			<a class="body-link" href="/sentry-test">Sentry test page</a>
 		</p>
 	</section>
 {/if}

@@ -51,7 +51,7 @@ export const backendUrl = config((url: string) => {
 }, 'BACKEND_URL');
 
 /**
- * Load optional backend internal URL - see hooks/index.ts
+ * Load optional backend internal URL - see src/hooks.server.ts
  */
 export const backendInternalUrl = config((url: string) => {
 	if (url?.endsWith('/')) {
@@ -59,6 +59,11 @@ export const backendInternalUrl = config((url: string) => {
 	}
 	return url;
 }, 'BACKEND_INTERNAL_URL');
+
+/**
+ * Load Sentry DSN - see hooks (both client and server)
+ */
+export const sentryDsn = config((dsn: string) => dsn, 'SENTRY_DSN');
 
 /**
  * Load Ghost API credentials and warn if not available.

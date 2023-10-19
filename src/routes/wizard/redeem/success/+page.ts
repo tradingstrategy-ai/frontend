@@ -16,10 +16,10 @@ export async function load() {
 		wizard.updateData({ transactionReceipt });
 	}
 
-	const events = getEvents(transactionReceipt.logs, <Abi>vaultABI, 'AssetWithdrawn', contracts.vault);
+	const events = getEvents(transactionReceipt.logs, vaultABI as Abi, 'AssetWithdrawn', contracts.vault);
 
 	const receivedAssets = await Promise.all(
-		events.map(({ args }) => getRedemption(<AssetWithdrawl>args, denominationToken, chainId))
+		events.map(({ args }) => getRedemption(args as AssetWithdrawl, denominationToken, chainId))
 	);
 
 	return { receivedAssets };

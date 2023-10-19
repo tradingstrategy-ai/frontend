@@ -7,11 +7,14 @@ on:
   pull_request: # we can use docker image in PR for testing
     branches: [master]
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: 18.14
@@ -25,12 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH deploy keys for ChartIQ & fonts
-        uses: webfactory/ssh-agent@v0.7.0
+        uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: |
             ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
             ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
       - uses: actions/setup-node@v3
@@ -56,33 +59,31 @@ jobs:
     # needs: test
     # Skip build on master push
     if: github.event_name != 'push' || github.ref != 'refs/heads/master'
-    env:
-      REGISTRY: ghcr.io
     steps:
       - name: Set up SSH deploy keys for ChartIQ & fonts
-        uses: webfactory/ssh-agent@v0.7.0
+        uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: |
             ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
             ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Read metadata
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository }}
       - name: Log in to Github Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           ssh: |
@@ -96,3 +97,32 @@ jobs:
           # https://github.com/docker/build-push-action/issues/557
           build-args: |
             FONT_ZIP_DOWNLOAD_URL=${{ secrets.FONT_ZIP_DOWNLOAD_URL }}
+
+  upload-sourcemaps:
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Read metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          flavor: latest=false
+      - name: Log in to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload sourcemaps
+        env:
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          SENTRY_URL: ${{ vars.SENTRY_URL }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_RELEASE: ${{ vars.SENTRY_PROJECT }}@${{ steps.meta.outputs.version }}
+        run: |
+          docker run --rm -e SENTRY_ORG -e SENTRY_PROJECT -e SENTRY_URL -e SENTRY_AUTH_TOKEN \
+            ${{ steps.meta.outputs.tags }} \
+            npx sentry-cli sourcemaps upload -r $SENTRY_RELEASE build/client build/server/chunks

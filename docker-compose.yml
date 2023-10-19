@@ -23,6 +23,7 @@ services:
       - TS_PUBLIC_FRONTEND_VERSION_TAG
       - TS_PUBLIC_BACKEND_URL
       - TS_PUBLIC_BACKEND_INTERNAL_URL
+      - TS_PUBLIC_SENTRY_DSN
       - TS_PUBLIC_GHOST_CONTENT_API_KEY
       - TS_PUBLIC_GHOST_API_URL
       - TS_PUBLIC_TYPESENSE_API_KEY
@@ -37,7 +38,6 @@ services:
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
-      - TS_PRIVATE_SENTRY_DSN
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
       # Datadog APM env vars
