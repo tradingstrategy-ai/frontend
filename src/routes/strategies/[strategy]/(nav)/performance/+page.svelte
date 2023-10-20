@@ -5,6 +5,7 @@
 	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import WebChart from '../../WebChart.svelte';
+	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 
 	export let data;
 	$: ({ state, summary, profitabilityChart } = data);
@@ -26,6 +27,8 @@
 			yAxisTitle="Realised profit"
 			fillMode="none"
 		/>
+
+		<PortfolioPerformanceChart data={profitabilityChart.data} />
 	{/if}
 
 	<SummaryStatistics {oldLatestStats} {summaryStatistics} />
