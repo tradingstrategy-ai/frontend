@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { addUTCDays, floorUTCDate } from '$lib/helpers/date';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { ChartIQ, Marker } from '$lib/chart';
@@ -36,6 +35,7 @@
 		return {
 			update() {
 				chartEngine.loadChart('strategy-thumbnail', {
+					periodicity: { period: 1, timeUnit: 'day' },
 					masterData: data.map(([date, value]) => ({
 						// passing ISO date (w/out time) to prevent buggy ChartIQ tz conversions
 						DT: date.toISOString().slice(0, 10),
