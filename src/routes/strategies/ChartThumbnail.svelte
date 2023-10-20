@@ -36,14 +36,8 @@
 			update() {
 				chartEngine.loadChart('strategy-thumbnail', {
 					periodicity: { period: 1, timeUnit: 'day' },
-					masterData: data.map(([date, value]) => ({
-						// passing ISO date (w/out time) to prevent buggy ChartIQ tz conversions
-						DT: date.toISOString().slice(0, 10),
-						Value: value,
-						// add baseline data for drawing a simple 0 basline series (see above)
-						Baseline: 0
-					})),
-					span: { base: 'day', multiplier: 90 }
+					span: { base: 'day', multiplier: 90 },
+					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 }))
 				});
 
 				const { yAxis } = chartEngine.chart;
@@ -62,7 +56,7 @@
 			<Marker x={position.DateX} y={position.CloseY} size={4} />
 			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.originalDate} />
+					<Timestamp date={data.adjustedDate} />
 					<div class="value">{formatPercent(data.Close, 2)}</div>
 				</UpDownCell>
 			</div>
