@@ -69,7 +69,11 @@
 				</p>
 				<p>
 					Read the documentation
-					<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html">
+					<a
+						class="body-link"
+						href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+						rel="external"
+					>
 						how to get started with Trading Strategy Python library for algorithmic trading
 					</a>.
 				</p>
@@ -166,12 +170,16 @@
 		<ContentCard title="Learn more" icon="book">
 			<ul>
 				<li>
-					<a class="body-link" href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html">
+					<a
+						class="body-link"
+						href="https://tradingstrategy.ai/docs/programming/code-examples/getting-started.html"
+						rel="external"
+					>
 						Getting started with Trading Strategy Python client
 					</a>
 				</li>
 				<li>
-					<a class="body-link" href="https://tradingstrategy.ai/docs/">Technical documentation</a>
+					<a class="body-link" href="https://tradingstrategy.ai/docs/" rel="external">Technical documentation</a>
 				</li>
 				<li>
 					<a class="body-link" href="https://github.com/tradingstrategy-ai/client">Github</a>

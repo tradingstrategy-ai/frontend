@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Feature from './Feature.svelte';
+	import { Button } from '$lib/components';
 
 	import BlockchainImage from '$lib/assets/illustrations/blockchain-1.svg?raw';
 	import ControlFundsImage from '$lib/assets/illustrations/database-1.svg?raw';
@@ -15,7 +16,7 @@
 		<p>
 			Trading Strategy is the first protocol replacing investment managers with code.<br />
 			Read how Trading Strategy protocol
-			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html"
+			<a href="https://tradingstrategy.ai/docs/protocol/comparison.html" rel="external"
 				>compares to yield farming and quantative hedge funds</a
 			>.
 		</p>
@@ -53,30 +54,34 @@
 		<li>Audit partners to audit and verify smart contract code</li>
 	</Feature>
 
-	<Feature title="Market data" image={MarketDataImage} ctaUrl="/trading-view">
+	<Feature title="Market data" image={MarketDataImage}>
 		<li>
 			We collect raw market data for 1M+ trading pairs directly from decentralised exchanges on multiple integrated
 			blockchains
 		</li>
 		<li>Converts raw data to the familiar OHLCV candles and XY liquidity format</li>
+		<Button slot="cta" label="See more" href="/trading-view" />
 	</Feature>
 
-	<Feature
-		title="Real-time API (REST)"
-		image={RealtimeApiImage}
-		ctaUrl="https://tradingstrategy.ai/api/explorer/"
-		ctaTarget="_blank"
-	>
+	<Feature title="Real-time API (REST)" image={RealtimeApiImage}>
 		<li>Price, volume and liquidity data for decentralised exchanges</li>
 		<li>Trading pairs</li>
 		<li>OHLCV candles for pricing</li>
 		<li>OHLC candles for exchange liquidity</li>
+		<Button
+			slot="cta"
+			label="See more"
+			href="https://tradingstrategy.ai/api/explorer/"
+			target="_blank"
+			rel="external"
+		/>
 	</Feature>
 
-	<Feature title="Backtesting data" image={BacktestingImage} ctaUrl="/trading-view/backtesting">
+	<Feature title="Backtesting data" image={BacktestingImage}>
 		<li>All historical price, volume and liquidity data for decentralised exchanges (DEX)</li>
 		<li>Parquet file format</li>
 		<li>Large files</li>
+		<Button slot="cta" label="See more" href="/trading-view/backtesting" />
 	</Feature>
 </section>
 

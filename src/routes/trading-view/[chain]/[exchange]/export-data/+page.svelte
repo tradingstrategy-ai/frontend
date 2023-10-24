@@ -123,7 +123,7 @@
 			This data export contains only data for
 			<a class="body-link" href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}">{exchangeName}</a>. Read
 			about
-			<a class="body-link" rel="external" href="https://tradingstrategy.ai/api/explorer/"
+			<a class="body-link" target="_blank" rel="external" href="https://tradingstrategy.ai/api/explorer/"
 				>the column format in PairSummary section of the API documentation.</a
 			>
 		</p>

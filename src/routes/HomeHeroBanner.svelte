@@ -13,6 +13,7 @@ Home page hero banner.
 	import { Button } from '$lib/components';
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <header class="home-hero-banner" data-testid="home-hero-banner" on:dblclick={() => goto('/strategies')}>
 	<div class="inner ds-container">
 		<img class="media" src={mbp15Image} alt="Trading Data" />
@@ -29,7 +30,7 @@ Home page hero banner.
 
 			<div class="buttons">
 				<Button href="/trading-view">Explore DEX Data</Button>
-				<Button secondary href="https://tradingstrategy.ai/docs">Read Documentation</Button>
+				<Button secondary href="https://tradingstrategy.ai/docs" rel="external">Read Documentation</Button>
 			</div>
 		</div>
 	</div>

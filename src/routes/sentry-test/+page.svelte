@@ -19,10 +19,15 @@
 	<p>
 		This page is for Trading Strategy developers to test our Sentry integration. View issues on the <a
 			class="body-link"
-			href="https://sentry.tradingstrategy.ai/organizations/tradingstrategy/issues/?project=3">Sentry issues page</a
+			href="https://sentry.tradingstrategy.ai/organizations/tradingstrategy/issues/?project=3"
+			target="_blank"
+			rel="noreferrer">Sentry issues page</a
 		>. For more information, take a look at the
-		<a class="body-link" href="https://docs.sentry.io/platforms/javascript/guides/sveltekit/"
-			>Sentry SvelteKit Documentation</a
+		<a
+			class="body-link"
+			href="https://docs.sentry.io/platforms/javascript/guides/sveltekit/"
+			target="_blank"
+			rel="noreferrer">Sentry SvelteKit Documentation</a
 		>.
 	</p>
 
@@ -51,6 +56,8 @@
 				size="sm"
 				label="View Sentry issues"
 				href="https://sentry.tradingstrategy.ai/organizations/tradingstrategy/issues/?project=3"
+				target="_blank"
+				rel="noreferrer"
 			/>
 		</Alert>
 	{/if}

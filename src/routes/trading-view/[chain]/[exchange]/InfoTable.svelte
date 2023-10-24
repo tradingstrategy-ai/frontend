@@ -27,7 +27,11 @@ Render exchange summary table on exchange page.
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow>
-		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations">
+		<a
+			slot="label"
+			href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
+			rel="external"
+		>
 			Volume 30d
 		</a>
 		<svelte:fragment slot="value">
@@ -36,7 +40,11 @@ Render exchange summary table on exchange page.
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow>
-		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations">
+		<a
+			slot="label"
+			href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html#volume-calculations"
+			rel="external"
+		>
 			Volume all-time
 		</a>
 		<svelte:fragment slot="value">
@@ -47,7 +55,7 @@ Render exchange summary table on exchange page.
 	<TradingDataInfoRow label="Trading pairs" value={formatAmount(details.pair_count)} />
 
 	<TradingDataInfoRow value={formatAmount(details.active_pair_count)}>
-		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external">
 			Tracked trading pairs
 		</a>
 	</TradingDataInfoRow>
@@ -67,6 +75,8 @@ Render exchange summary table on exchange page.
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow value={details.exchange_id}>
-		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html">Internal id</a>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html" rel="external"
+			>Internal id</a
+		>
 	</TradingDataInfoRow>
 </TradingDataInfo>

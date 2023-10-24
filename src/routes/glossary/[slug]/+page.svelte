@@ -70,6 +70,7 @@
 			title="Learn algorithmic trading"
 			ctaLabel="Show tutorials and videos"
 			href="https://tradingstrategy.ai/docs/learn/index.html"
+			rel="external"
 			description="Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources collection."
 		/>
 	</ContentCardsSection>

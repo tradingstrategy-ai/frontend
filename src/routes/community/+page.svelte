@@ -37,6 +37,7 @@
 			description="Learn how to write trading algorithms with our learning resources collection."
 			ctaLabel="Start tutorials"
 			href="https://tradingstrategy.ai/docs/learn/index.html"
+			rel="external"
 		/>
 	</ContentCardsSection>
 

@@ -25,7 +25,7 @@
 	<p>
 		{details.human_readable_name} has <strong>{formatAmount(details.pair_count)}</strong>
 		token trading pairs of which <strong>{formatAmount(details.active_pair_count)}</strong> are
-		<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">actively tracked</a>
+		<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external">actively tracked</a>
 		by Trading Strategy.
 	</p>
 

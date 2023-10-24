@@ -7,9 +7,10 @@
 	export let description: string;
 	export let buttonLabel: string;
 	export let href: string;
+	export let rel: string | undefined = undefined;
 </script>
 
-<a class="summary-data-tile tile a" {href}>
+<a class="summary-data-tile tile a" {href} {rel}>
 	<div>
 		<h3>{formatAmount(count)}</h3>
 		<h4>{title}</h4>

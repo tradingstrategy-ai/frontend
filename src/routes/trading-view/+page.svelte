@@ -96,6 +96,7 @@
 			title="Realtime API"
 			ctaLabel="Read API specification"
 			href="https://tradingstrategy.ai/api/explorer/"
+			rel="external"
 		>
 			<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
 			<p>Real-time API is available in OpenAPI v3 format, no API keys or sign ups needed.</p>
@@ -106,6 +107,7 @@
 			title="Documentation"
 			ctaLabel="Read documentation"
 			href="https://tradingstrategy.ai/docs"
+			rel="external"
 			description="Trading Strategy provides Python libraries for strategy development and execution for decentralised exchanges. Read API documentation and tutorials to learn how to create your own strategies."
 		/>
 
@@ -114,6 +116,7 @@
 			title="Notebooks"
 			ctaLabel="Go to notebooks"
 			href="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
+			rel="external"
 			description="Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies. View example notebooks to see how to use DeFi data in your notebooks."
 		/>
 	</ContentCardsSection>

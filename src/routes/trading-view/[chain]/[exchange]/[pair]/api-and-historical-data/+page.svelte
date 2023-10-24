@@ -43,10 +43,12 @@ Real time examples for the API
 		<p>
 			Examples here do not cover the full API. Read the full <a
 				class="body-link"
-				href="https://tradingstrategy.ai/api/explorer/">real-time API</a
+				href="https://tradingstrategy.ai/api/explorer/"
+				target="_blank"
+				rel="external">real-time API</a
 			>
 			or
-			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html"
+			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/index.html" target="_blank" rel="external"
 				>algorithmic trading programming</a
 			> documentation.
 		</p>

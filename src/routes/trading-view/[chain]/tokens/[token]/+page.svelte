@@ -73,7 +73,7 @@
 	<aside class="ds-container">
 		<p>
 			Trading pairs with complications (such as low liquidity) may not be displayed.
-			<a rel="external" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+			<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external"
 				>Read the rules for tracked trading pairs.</a
 			>
 		</p>
