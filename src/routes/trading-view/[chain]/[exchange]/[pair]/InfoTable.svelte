@@ -103,6 +103,8 @@
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow value={summary.pair_id}>
-		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html">Internal id</a>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html" rel="external"
+			>Internal id</a
+		>
 	</TradingDataInfoRow>
 </TradingDataInfo>

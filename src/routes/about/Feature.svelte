@@ -4,7 +4,6 @@
 	export let title: string;
 	export let image: string;
 	export let ctaUrl: string | undefined = undefined;
-	export let ctaTarget: string | undefined = undefined;
 </script>
 
 <div class="feature">
@@ -17,9 +16,9 @@
 		<ul>
 			<slot />
 		</ul>
-		{#if ctaUrl}
+		{#if $$slots.cta}
 			<div class="cta">
-				<Button label="See more" href={ctaUrl} target={ctaTarget} />
+				<slot name="cta" />
 			</div>
 		{/if}
 	</div>

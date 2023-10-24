@@ -2,13 +2,14 @@
 	export let active = false;
 	export let label: string = '';
 	export let targetUrl: string;
-	export let noScroll = false;
+	export let external = false;
 
 	$: href = active ? undefined : targetUrl;
+	$: rel = external ? 'external' : undefined;
 </script>
 
 <li class="menu-item">
-	<a {href} data-sveltekit-noscroll={noScroll ? '' : 'off'} on:click>
+	<a {href} {rel} on:click>
 		<slot>{label}</slot>
 	</a>
 </li>

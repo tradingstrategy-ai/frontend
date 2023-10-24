@@ -109,7 +109,7 @@ Render the pair trading page
 						This token is unlikely to be tradeable.
 						<a
 							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-							>Read more about transfer fees being broken or malicious in the token tax documentation</a
+							rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
 						>. Error code <strong>{tokenTax.sellTax}</strong>.
 					</AlertItem>
 				{/if}

@@ -52,6 +52,7 @@
 			description="Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data feeds generated for them."
 			buttonLabel="See inclusion criteria"
 			href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+			rel="external"
 		/>
 	</section>
 

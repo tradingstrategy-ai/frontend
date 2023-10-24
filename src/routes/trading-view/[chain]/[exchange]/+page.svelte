@@ -100,7 +100,12 @@
 	<aside class="ds-container">
 		<p>
 			Not all trading pairs are being displayed or included in volume calculations.
-			<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html">See inclusion criteria</a>.
+			<a
+				class="body-link"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+				target="_blank"
+				rel="external">See inclusion criteria</a
+			>.
 		</p>
 	</aside>
 </main>
@@ -157,11 +162,5 @@
 	aside p {
 		font: var(--f-ui-large-roman);
 		text-align: center;
-
-		a {
-			font-weight: 700;
-			text-decoration: underline;
-			white-space: nowrap;
-		}
 	}
 </style>
