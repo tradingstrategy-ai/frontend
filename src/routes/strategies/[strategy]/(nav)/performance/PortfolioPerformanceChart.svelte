@@ -5,31 +5,58 @@ Render the portfolio performance chart using ChartIQ.
 - Y-axis: portfolio value
 -->
 <script lang="ts">
-	import { lightFormat as formatDate } from 'date-fns';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { utcHour, utcDay } from 'd3-time';
+	import { formatPercent } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { SegmentedControl, UpDownCell } from '$lib/components';
+	import { SegmentedControl, Timestamp, UpDownCell } from '$lib/components';
 	import { ChartIQ, Marker } from '$lib/chart';
 
-	export let name: string;
-	export let portfolio: any;
+	export let data: [number, number][];
+	export let helpLink: string;
+
+	type ChartTick = [Date, number];
+	const rawData: ChartTick[] = data.map(([ts, val]) => [new Date(ts * 1000), val]);
 
 	let chartWrapper: HTMLElement;
 
-	let timeSpan = '3M';
-
 	const timeSpanOptions = {
-		'1W': { hours: 1, spanDays: 7, dateFormat: 'M/d HH:mm' },
-		'1M': { hours: 4, spanDays: 30, dateFormat: 'M/d HH:mm' },
-		'3M': { hours: 24, spanDays: 90, dateFormat: 'M/d/yyyy' }
-	};
+		'1W': {
+			spanDays: 7,
+			interval: utcHour.every(1),
+			periodicity: { period: 1, interval: 60, timeUnit: 'minute' }
+		},
+		'1M': {
+			spanDays: 30,
+			interval: utcHour.every(4),
+			periodicity: { period: 1, interval: 4 * 60, timeUnit: 'minute' }
+		},
+		'3M': {
+			spanDays: 90,
+			interval: utcDay.every(1),
+			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+		}
+	} as const;
 
-	$: ({ hours, spanDays, dateFormat } = timeSpanOptions[timeSpan]);
+	let timeSpan: keyof typeof timeSpanOptions = '3M';
+
+	$: ({ spanDays, interval, periodicity } = timeSpanOptions[timeSpan]);
+
+	function getNormalizedIntervalData() {
+		return rawData.reduce((acc: ChartTick[], [date, value]) => {
+			const normalizedDate = interval!.floor(date);
+			const replace = Number(normalizedDate.valueOf() === acc.at(-1)?.[0].valueOf());
+			acc.splice(acc.length - replace, replace, [normalizedDate, value]);
+			return acc;
+		}, []);
+	}
 
 	const options = {
 		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
+		dontRoll: true,
+
 		chart: {
+			tension: 1,
 			xAxis: { displayGridLines: false },
 			yAxis: {
 				displayGridLines: false,
@@ -38,16 +65,6 @@ Render the portfolio performance chart using ChartIQ.
 			}
 		}
 	};
-
-	function getChartData(portfolio) {
-		if (!portfolio) return [];
-		return portfolio.map((tick) => {
-			return {
-				DT: tick.calculated_at * 1000,
-				Value: tick.total_equity
-			};
-		});
-	}
 
 	function init(chartEngine: any) {
 		// update chart colors based on change in value (+/-) for visible data set
@@ -66,10 +83,10 @@ Render the portfolio performance chart using ChartIQ.
 
 		return {
 			update() {
-				chartEngine.loadChart(name, {
-					periodicity: { period: hours, interval: 60, timeUnit: 'minute' },
+				chartEngine.loadChart('strategy-profitability', {
+					periodicity,
 					span: { base: 'day', multiplier: spanDays },
-					masterData: getChartData(portfolio)
+					masterData: getNormalizedIntervalData().map(([DT, Value]) => ({ DT, Value }))
 				});
 			}
 		};
@@ -78,10 +95,12 @@ Render the portfolio performance chart using ChartIQ.
 
 <div class="portfolio-performance-chart">
 	<header>
-		<h2>Total Equity</h2>
+		<h2>Profitability</h2>
 		<SegmentedControl options={Object.keys(timeSpanOptions)} bind:selected={timeSpan} />
 	</header>
-	<p>Cash and market valued tokens in the strategy (USD)</p>
+	<p>
+		Compounded <a class="body-link" href={helpLink}>profitability</a> of realised trading positions.
+	</p>
 	<div bind:this={chartWrapper}>
 		<ChartIQ {init} {options} invalidate={[timeSpan]} let:cursor>
 			{@const { position, data } = cursor}
@@ -89,8 +108,8 @@ Render the portfolio performance chart using ChartIQ.
 				<Marker x={position.DateX} y={position.CloseY} size={4.5} />
 				<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 					<UpDownCell value={data.Close - data.iqPrevClose}>
-						<div class="date">{formatDate(data.displayDate, dateFormat)}</div>
-						<div class="value">{formatDollar(data.Close)}</div>
+						<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'minute'} />
+						<div class="value">{formatPercent(data.Close, 2)}</div>
 					</UpDownCell>
 				</div>
 			{/if}
@@ -128,15 +147,10 @@ Render the portfolio performance chart using ChartIQ.
 		h2 {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
-
-			@media (--viewport-sm-down) {
-				font: var(--f-heading-sm-medium);
-				letter-spacing: var(--f-heading-sm-spacing, normal);
-			}
 		}
 
 		p {
-			color: hsla(var(--hsl-text-extra-light));
+			color: hsla(var(--hsl-text-light));
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 
@@ -151,19 +165,14 @@ Render the portfolio performance chart using ChartIQ.
 		position: absolute;
 		left: var(--x);
 		top: var(--y);
-		background: hsla(var(--hsl-body), 0.8);
-		border-radius: var(--radius-sm);
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
-		.date {
-			font: var(--f-ui-xs-bold);
-			letter-spacing: var(--f-ui-xs-spacing);
-			color: hsla(var(--hsl-text), 0.4);
-			white-space: nowrap;
+		:global(time) {
+			color: hsla(var(--hsl-text-extra-light));
 		}
 
 		.value {
-			font: var(--f-ui-md-roman);
+			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing);
 		}
 	}

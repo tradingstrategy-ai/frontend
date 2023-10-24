@@ -59,6 +59,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { lightFormat as formatDate } from 'date-fns';
+	import { floorUTCDate, addUTCDays } from '$lib/helpers/date';
 	import { type ChartLinker, type QuoteFeed, ChartActivityTracker } from '$lib/chart';
 	import { Alert } from '$lib/components';
 	import Spinner from 'svelte-spinner';
@@ -125,7 +126,12 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 			// ChartIQ doesn't preserve original UTC date; restore it from tz-adjusted DT value
 			if (data) {
-				data.originalDate = new Date(data.DT.getTime() - data.DT.getTimezoneOffset() * 60000);
+				const { timeUnit } = chartEngine.getPeriodicity();
+				if (timeUnit === 'day') {
+					data.adjustedDate = addUTCDays(floorUTCDate(data.DT), 1);
+				} else {
+					data.adjustedDate = new Date(data.DT);
+				}
 			}
 
 			cursor = { position, data };

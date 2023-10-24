@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
-	import WebChart from '../../WebChart.svelte';
+	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
 
 	export let data;
 	$: ({ state, summary, profitabilityChart } = data);
@@ -17,15 +17,7 @@
 
 <section class="performance">
 	{#if profitabilityChart}
-		<!-- We cannot do fill here, because protability chart goes below zero -->
-		<WebChart
-			name="Profitability"
-			description="Compounded profitability of realised trading positions."
-			webChart={profitabilityChart}
-			yType="percent"
-			yAxisTitle="Realised profit"
-			fillMode="none"
-		/>
+		<PortfolioPerformanceChart data={profitabilityChart.data} helpLink={profitabilityChart.help_link} />
 	{/if}
 
 	<SummaryStatistics {oldLatestStats} {summaryStatistics} />
