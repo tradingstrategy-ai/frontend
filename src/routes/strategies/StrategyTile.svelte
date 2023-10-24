@@ -274,9 +274,15 @@
 			}
 		}
 
-		&:is(:hover, :focus) .actions :global(.button) {
-			background: hsla(var(--hsl-text), 1);
-			color: hsla(var(--hsl-text-inverted));
+		&:is(:hover, :focus) {
+			.actions :global(.button) {
+				background: hsla(var(--hsl-text), 1);
+				color: hsla(var(--hsl-text-inverted));
+			}
+
+			.chart :global(figcaption) {
+				opacity: 1;
+			}
 		}
 	}
 </style>

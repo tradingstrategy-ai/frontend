@@ -49,7 +49,7 @@
 	}
 </script>
 
-<div class="chart-thumbnail ds-3 {profitClass}">
+<figure class="chart-thumbnail ds-3 {profitClass}">
 	<ChartIQ {init} {options} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
@@ -62,10 +62,12 @@
 			</div>
 		{/if}
 	</ChartIQ>
-</div>
+	<figcaption>Past 90 days historical performance</figcaption>
+</figure>
 
 <style lang="postcss">
 	.chart-thumbnail {
+		position: relative;
 		height: 14rem;
 
 		@media (--viewport-xs) {
@@ -76,6 +78,23 @@
 			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
+		}
+
+		figcaption {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			text-align: center;
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: hsla(var(--hsl-text-extra-light));
+			opacity: 0;
+			transition: var(--transition-1);
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
 		}
 	}
 
