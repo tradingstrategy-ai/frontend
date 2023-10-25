@@ -44,8 +44,11 @@ Render the portfolio performance chart using ChartIQ.
 	function getNormalizedIntervalData() {
 		return rawData.reduce((acc: ChartTick[], [date, value]) => {
 			const normalizedDate = interval!.floor(date);
-			const replace = Number(normalizedDate.valueOf() === acc.at(-1)?.[0].valueOf());
-			acc.splice(acc.length - replace, replace, [normalizedDate, value]);
+			const lastAddedDate = acc.at(-1)?.[0];
+			if (normalizedDate.valueOf() === lastAddedDate?.valueOf()) {
+				acc.pop();
+			}
+			acc.push([normalizedDate, value]);
 			return acc;
 		}, []);
 	}
