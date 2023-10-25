@@ -63,8 +63,7 @@ Render the portfolio performance chart using ChartIQ.
 			xAxis: { displayGridLines: false },
 			yAxis: {
 				displayGridLines: false,
-				decimalPlaces: 2,
-				maxDecimalPlaces: 2
+				priceFormatter: (...args: any[]) => formatPercent(args[2], 0)
 			}
 		}
 	};
