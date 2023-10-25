@@ -132,7 +132,7 @@
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
 			{#each visibleOptions as option}
-				<MenuItem targetUrl={option.targetUrl} active={option === currentOption} noScroll>
+				<MenuItem targetUrl={option.targetUrl} active={option === currentOption}>
 					<span class="label">{option.label}</span>
 					{#if typeof option.count === 'number'}
 						<span class="count">{option.count}</span>
