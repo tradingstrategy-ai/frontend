@@ -47,7 +47,7 @@
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
     "vite-plugin-simple-json-server": "^0.6.2",
-    "vitest": "^0.34.2",
+    "vitest": "^0.34.6",
     "vitest-github-actions-reporter": "^0.10.0"
   },
   "dependencies": {
