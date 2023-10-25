@@ -16,7 +16,7 @@ https://search.google.com/structured-data/testing-tool
 	type BreadcrumbLabels = Record<string, string>;
 
 	interface Breadcrumb {
-		url: string;
+		href: string;
 		label: string;
 	}
 
@@ -39,33 +39,29 @@ https://search.google.com/structured-data/testing-tool
 
 	export let labels: BreadcrumbLabels = {};
 
-	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, labels);
+	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, { ...baseLabels, ...labels });
 
 	function buildBreadcrumbs(pagePath: string, labels: BreadcrumbLabels): Breadcrumb[] {
 		const segments = pagePath.split('/');
-		const allLabels = { ...baseLabels, ...labels };
-
-		return segments.slice(1).map((segment, index) => {
-			return {
-				url: segments.slice(0, index + 2).join('/'),
-				label: allLabels[segment] || segment
-			};
-		});
+		return segments.slice(1).map((segment, index) => ({
+			href: segments.slice(0, index + 2).join('/'),
+			label: labels[segment] ?? segment
+		}));
 	}
 </script>
 
 <Section tag="nav" ariaAttrs={{ 'aria-label': 'breadcrumb' }}>
 	<ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
-		{#each breadcrumbs as breadcrumb, index (breadcrumb.url)}
-			{@const active = breadcrumb !== breadcrumbs.at(-1)}
+		{#each breadcrumbs as { href, label }, index (href)}
+			{@const active = index !== breadcrumbs?.length - 1}
 			<li class:truncate={!active} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
 				{#if active}
-					<a class="tile a" itemprop="item" href={breadcrumb.url} itemtype="http://schema.org/Thing">
-						<span itemprop="name">{breadcrumb.label}</span>
+					<a class="tile a" itemprop="item" {href} itemtype="http://schema.org/Thing">
+						<span itemprop="name">{label}</span>
 					</a>
 				{:else}
 					<span>
-						<span itemprop="name">{breadcrumb.label}</span>
+						<span itemprop="name">{label}</span>
 					</span>
 				{/if}
 				<meta itemprop="position" content={index + 1} />
