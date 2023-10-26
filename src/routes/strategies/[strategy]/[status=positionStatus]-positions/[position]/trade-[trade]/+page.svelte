@@ -5,13 +5,12 @@
 		formatAmount,
 		formatPercent,
 		formatPrice,
-		formatPriceChange,
 		formatPriceDifference,
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { tradeDirection } from 'trade-executor/helpers/trade';
-	import { Alert, DataBox, DataBoxes, PageHeading, Timestamp, UpDownIndicator } from '$lib/components';
+	import { Alert, Button, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import PositionDataIndicator from '../PositionDataIndicator.svelte';
@@ -34,6 +33,14 @@
 				<PositionDataIndicator lg text="stop-loss" />
 			{/if}
 		</span>
+		<Button
+			slot="cta"
+			size="sm"
+			label="View raw trade data"
+			href="trade-{trade.trade_id}.json"
+			target="_blank"
+			on:click={(e) => e.currentTarget.blur()}
+		/>
 	</PageHeading>
 
 	{#if tradeFailed}

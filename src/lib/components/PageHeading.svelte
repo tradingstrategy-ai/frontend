@@ -26,11 +26,13 @@
 			<p>{description}</p>
 		{/if}
 	</div>
+	<slot name="cta" />
 </header>
 
 <style lang="postcss">
 	.page-heading {
 		--gap: 1rem 2rem;
+		--grid-auto-flow: column;
 		--padding-bottom: 2rem;
 		--icon-size: 8rem;
 		--prefix-font: var(--f-heading-md-medium);
@@ -59,6 +61,7 @@
 		@media (--viewport-xs) {
 			--content-display: contents;
 			--gap: 0.5rem 1rem;
+			--grid-auto-flow: row;
 			--padding-bottom: 1rem;
 			--icon-size: 4.75rem;
 			--prefix-font: var(--f-heading-xs-medium);
@@ -72,7 +75,8 @@
 		}
 
 		display: grid;
-		grid-template-columns: auto;
+		grid-template-columns: 1fr;
+		grid-auto-flow: var(--grid-auto-flow);
 		gap: var(--gap);
 		align-items: center;
 		padding-bottom: var(--padding-bottom);
