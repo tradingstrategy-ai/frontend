@@ -83,7 +83,7 @@
 	{/if}
 
 	<TradingDataInfoRow value={getTokenTaxDescription(details)}>
-		<a slot="label" href={tokenTaxDocsUrl}>Token tax</a>
+		<a slot="label" href={tokenTaxDocsUrl} rel="external">Token tax</a>
 	</TradingDataInfoRow>
 
 	{#if summary.pool_swap_fee}
