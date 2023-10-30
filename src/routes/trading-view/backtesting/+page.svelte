@@ -137,7 +137,7 @@
 							<td>{row.format}</td>
 							<td><Timestamp date={row.last_updated_at} relative /></td>
 							<td>
-								<a class="action-link" href={row.documentation}>Documentation</a>
+								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
 								{#if validApiKey}
 									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.download_link)}>
 										Download
