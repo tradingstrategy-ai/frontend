@@ -8,3 +8,4 @@ export { default as HudMetric } from './HudMetric.svelte';
 export { default as Marker } from './Marker.svelte';
 export { default as PairCandleChart } from './PairCandleChart.svelte';
 export { default as ReserveInterestChart } from './ReserveInterestChart.svelte';
+export { default as StrategyPerformanceChart } from './StrategyPerformanceChart.svelte';

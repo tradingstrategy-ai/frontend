@@ -1,18 +1,12 @@
-<!--
-@component
-Render the portfolio performance chart using ChartIQ.
-- X-axis: time
-- Y-axis: portfolio value
--->
 <script lang="ts">
 	import { utcHour, utcDay } from 'd3-time';
-	import { formatPercent } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { SegmentedControl, Timestamp, UpDownCell } from '$lib/components';
 	import { ChartIQ, Marker } from '$lib/chart';
 
+	export let title: string;
 	export let data: [number, number][];
-	export let helpLink: string;
+	export let formatValue: Formatter<number>;
 
 	type ChartTick = [Date, number];
 	const rawData: ChartTick[] = data.map(([ts, val]) => [new Date(ts * 1000), val]);
@@ -22,7 +16,7 @@ Render the portfolio performance chart using ChartIQ.
 	const timeSpanOptions = {
 		'1W': {
 			spanDays: 7,
-			interval: utcHour.every(1),
+			interval: utcHour,
 			periodicity: { period: 1, interval: 60, timeUnit: 'minute' }
 		},
 		'1M': {
@@ -63,7 +57,7 @@ Render the portfolio performance chart using ChartIQ.
 			xAxis: { displayGridLines: false },
 			yAxis: {
 				displayGridLines: false,
-				priceFormatter: (...args: any[]) => formatPercent(args[2], 0)
+				priceFormatter: (...args: any[]) => formatValue(args[2], 0)
 			}
 		}
 	};
@@ -97,12 +91,12 @@ Render the portfolio performance chart using ChartIQ.
 
 <div class="portfolio-performance-chart">
 	<header>
-		<h2>Profitability</h2>
+		<h2>{title}</h2>
 		<SegmentedControl options={Object.keys(timeSpanOptions)} bind:selected={timeSpan} />
 	</header>
-	<p>
-		Compounded <a class="body-link" href={helpLink}>profitability</a> of realised trading positions.
-	</p>
+	<div class="description">
+		<slot />
+	</div>
 	<div bind:this={chartWrapper}>
 		<ChartIQ {init} {options} invalidate={[timeSpan]} let:cursor>
 			{@const { position, data } = cursor}
@@ -111,7 +105,7 @@ Render the portfolio performance chart using ChartIQ.
 				<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 					<UpDownCell value={data.Close - data.iqPrevClose}>
 						<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'minute'} />
-						<div class="value">{formatPercent(data.Close, 2)}</div>
+						<div class="value">{formatValue(data.Close, 2)}</div>
 					</UpDownCell>
 				</div>
 			{/if}
@@ -144,6 +138,7 @@ Render the portfolio performance chart using ChartIQ.
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
+			gap: var(--space-sm);
 		}
 
 		h2 {
@@ -151,9 +146,8 @@ Render the portfolio performance chart using ChartIQ.
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
-		p {
-			color: hsla(var(--hsl-text-light));
-			font: var(--f-ui-md-medium);
+		.description {
+			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 
 			@media (--viewport-sm-down) {
