@@ -31,18 +31,23 @@
 					masterData: data
 				});
 
-				chartEngine.addSeries('baseline', {
-					color: 'gray',
-					opacity: 0.25,
-					width: 1,
-					shareYAxis: true,
-					data: data.map(({ DT }) => ({ DT, Value: 0 }))
-				});
-
+				// adjust yAxis zoom
 				const { yAxis } = chartEngine.chart;
 				const domain = yAxis.high - yAxis.low;
 				yAxis.zoom = (1 - domain) * 150;
+
+				// adjust xAxis zoom
+				chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
+				chartEngine.micropixels = -2.5;
+
+				// re-draw
 				chartEngine.draw();
+
+				// add thin baseline at y=0
+				const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
+				chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
+					opacity: 0.25
+				});
 			}
 		};
 	}
@@ -74,7 +79,6 @@
 		}
 
 		:global(.chart-container) {
-			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
 		}
