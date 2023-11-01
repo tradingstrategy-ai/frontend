@@ -1,30 +1,15 @@
 <script lang="ts">
-	import type { TimeInterval } from 'd3-time';
-	import { type Periodicity, ChartIQ, Marker } from '$lib/chart';
+	import type { ChartTick, Periodicity } from '$lib/chart';
+	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let data: [number, number][];
+	export let data: ChartTick[];
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
-	export let interval: TimeInterval;
-
-	type ChartTick = [Date, number];
 
 	let chartWrapper: HTMLElement;
-
-	function getNormalizedIntervalData() {
-		return data.reduce((acc: ChartTick[], [ts, value]) => {
-			const normalizedDate = interval!.floor(new Date(ts * 1000));
-			const lastAddedDate = acc.at(-1)?.[0];
-			if (normalizedDate.valueOf() === lastAddedDate?.valueOf()) {
-				acc.pop();
-			}
-			acc.push([normalizedDate, value]);
-			return acc;
-		}, []);
-	}
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -61,7 +46,7 @@
 				chartEngine.loadChart('strategy-profitability', {
 					periodicity,
 					span: { base: 'day', multiplier: spanDays },
-					masterData: getNormalizedIntervalData().map(([DT, Value]) => ({ DT, Value }))
+					masterData: data.map(([DT, Value]) => ({ DT, Value }))
 				});
 			}
 		};

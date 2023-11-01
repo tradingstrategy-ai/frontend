@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { ChartIQ, Marker } from '$lib/chart';
+	import { type ChartTick, ChartIQ, Marker } from '$lib/chart';
 	import { UpDownCell, Timestamp } from '$lib/components';
-
-	type ChartTick = [Date, number | undefined];
 
 	export let data: ChartTick[] = [];
 

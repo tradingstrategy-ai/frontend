@@ -5,7 +5,7 @@
 	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
-	import { fromUnixTime } from 'date-fns';
+	import { parseDate } from '$lib/helpers/date';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let strategy: StrategyRuntimeState;
@@ -13,7 +13,7 @@
 
 	const href = `/strategies/${strategy.id}`;
 	const summaryStatistics = strategy.summary_statistics ?? {};
-	const chartData = summaryStatistics.performance_chart_90_days?.map(([ts, val]) => [fromUnixTime(ts), val]);
+	const chartData = summaryStatistics.performance_chart_90_days?.map(([ts, val]) => [parseDate(ts), val]);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
 	const keyMetrics = summaryStatistics.key_metrics ?? {};
 	const isBacktested = Object.values(keyMetrics).some(({ source }) => source === 'backtesting');

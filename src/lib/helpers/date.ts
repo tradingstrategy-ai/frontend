@@ -1,4 +1,5 @@
-export type MaybeParsableDate = Maybe<Date | string | number>;
+export type ParsableDate = Date | string | number;
+export type MaybeParsableDate = Maybe<ParsableDate>;
 
 /**
  * Try to parse a value as a date. Gracefully handles string values,
