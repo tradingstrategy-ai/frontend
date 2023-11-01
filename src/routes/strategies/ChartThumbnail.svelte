@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { type ChartTick, ChartIQ, Marker } from '$lib/chart';
+	import { type Quote, ChartIQ, Marker } from '$lib/chart';
 	import { UpDownCell, Timestamp } from '$lib/components';
 
-	export let data: ChartTick[] = [];
+	export let data: Quote[] = [];
 
-	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
+	const profitClass = determinePriceChangeClass(data.at(-1)?.Value);
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -23,19 +23,20 @@
 	};
 
 	function init(chartEngine: any) {
-		chartEngine.addSeries('Baseline', {
-			color: 'gray',
-			opacity: 0.25,
-			width: 1,
-			shareYAxis: true
-		});
-
 		return {
 			update() {
 				chartEngine.loadChart('strategy-thumbnail', {
 					periodicity: { period: 1, timeUnit: 'day' },
 					span: { base: 'day', multiplier: 90 },
-					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 }))
+					masterData: data
+				});
+
+				chartEngine.addSeries('baseline', {
+					color: 'gray',
+					opacity: 0.25,
+					width: 1,
+					shareYAxis: true,
+					data: data.map(({ DT }) => ({ DT, Value: 0 }))
 				});
 
 				const { yAxis } = chartEngine.chart;

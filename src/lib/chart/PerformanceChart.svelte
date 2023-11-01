@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { ChartTick, Periodicity } from '$lib/chart';
+	import type { Quote, Periodicity } from '$lib/chart';
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let data: ChartTick[];
+	export let data: Quote[];
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
@@ -46,7 +46,7 @@
 				chartEngine.loadChart('strategy-profitability', {
 					periodicity,
 					span: { base: 'day', multiplier: spanDays },
-					masterData: data.map(([DT, Value]) => ({ DT, Value }))
+					masterData: data
 				});
 			}
 		};

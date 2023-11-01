@@ -2,7 +2,29 @@ import type { TimeInterval } from 'd3-time';
 import { type ParsableDate, parseDate } from '$lib/helpers/date';
 
 export type RawTick = [ParsableDate, MaybeNumber];
-export type ChartTick = [Date, MaybeNumber];
+
+export type Candle = {
+	ts: string;
+	o: number;
+	h: number;
+	l: number;
+	c: number;
+	v?: number;
+	[key: string]: any;
+};
+
+export type Quote = {
+	DT: Date | string;
+	Value?: MaybeNumber;
+	Open?: MaybeNumber;
+	High?: MaybeNumber;
+	Low?: MaybeNumber;
+	Close?: MaybeNumber;
+	ClippedHigh?: MaybeNumber;
+	ClippedLow?: MaybeNumber;
+	Volume?: MaybeNumber;
+	[key: string]: any;
+};
 
 export type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month';
 export type TimeUnitAbbrev = 'm' | 'h' | 'd' | 'w' | 'M';
@@ -20,17 +42,21 @@ export type Periodicity = {
  * @param interval A d3 time interval
  */
 export function normalzeDataForInterval(data: RawTick[], interval: TimeInterval) {
-	return data.reduce((acc, [ts, value]) => {
+	return data.reduce((acc, [ts, Value]) => {
 		const date = parseDate(ts);
 		if (!date) return acc;
 		const normalizedDate = interval.floor(date);
-		const lastAddedDate = acc.at(-1)?.[0];
+		const lastAddedDate = acc.at(-1)?.DT;
 		if (normalizedDate.valueOf() === lastAddedDate?.valueOf()) {
 			acc.pop();
 		}
-		acc.push([normalizedDate, value]);
+		acc.push({ DT: normalizedDate, Value });
 		return acc;
-	}, [] as ChartTick[]);
+	}, [] as Quote[]);
+}
+
+export function rawTicksToQuotes(data: RawTick[]): Quote[] {
+	return data.map(([ts, Value]) => ({ DT: parseDate(ts)!, Value }));
 }
 
 /**
