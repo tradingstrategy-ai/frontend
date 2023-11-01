@@ -3,7 +3,7 @@
  */
 
 type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month';
-type TimeUnitAbbrev = 'm' | 'h' | 'd'; // no shorthands for week or month
+type TimeUnitAbbrev = 'm' | 'h' | 'd' | 'w' | 'm';
 type TimeBucket = `${number}${TimeUnitAbbrev}`;
 type Periodicity = {
 	period: number;

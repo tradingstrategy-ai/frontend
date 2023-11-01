@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import WebChart from '../../WebChart.svelte';
-	import { ChartContainer } from '$lib/chart';
+	import { ChartContainer, PerformanceChart } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
@@ -12,11 +12,16 @@
 
 <section class="tvl">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
-	<ChartContainer title="Total value locked" data={tvlChart.data} formatValue={formatDollar}>
-		Learn more about
-		<a class="body-link" href={tvlChart.help_link}>Total value locked</a>
-		metric and how it is calculated.
+
+	<ChartContainer title="Total value locked" let:timeSpan>
+		<p slot="subtitle">
+			Learn more about
+			<a class="body-link" href={tvlChart.help_link}>Total value locked</a>
+			metric and how it is calculated.
+		</p>
+		<PerformanceChart data={tvlChart.data} formatValue={formatDollar} {...timeSpan} />
 	</ChartContainer>
+
 	<WebChart name="Netflow" webChart={netflowChart} charType="bar" />
 </section>
 
