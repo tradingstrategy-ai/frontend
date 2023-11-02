@@ -72,6 +72,7 @@
 			metric and how it is calculated.
 		</p>
 		<PerformanceChart
+			title="TVL"
 			data={normalzeDataForInterval(tvlChart.data, interval)}
 			formatValue={formatDollar}
 			{spanDays}
@@ -89,6 +90,17 @@
 		/* hide ChartIQ panel controls */
 		:global(:is(.stx-ico-focus, .stx-ico-down, .stx-ico-up, .stx-ico-close)) {
 			display: none;
+		}
+
+		:global(.stx-panel-title) {
+			display: block;
+			margin: 0;
+			padding: 0;
+			font: var(--f-heading-xs-medium);
+			letter-spacing: var(--f-heading-xs-spacing);
+			color: hsla(var(--hsl-text-light));
+			text-transform: capitalize;
+			box-shadow: none;
 		}
 
 		:global(.stx_panel_border) {

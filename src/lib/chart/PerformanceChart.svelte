@@ -4,6 +4,7 @@
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
+	export let title = 'Performance';
 	export let data: Quote[];
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
@@ -47,7 +48,7 @@
 
 		// returned callback invoked on both initial load and updates
 		return () => {
-			chartEngine.loadChart('strategy-profitability', {
+			chartEngine.loadChart(title, {
 				periodicity,
 				span: { base: 'day', multiplier: spanDays },
 				masterData: data
