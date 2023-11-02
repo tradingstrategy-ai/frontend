@@ -31,6 +31,7 @@
 
 		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', 150);
 
+		// add baseline at y=0 to netflow panel
 		chartEngine.append('draw', () => {
 			const { chart } = chartEngine;
 			const y = chartEngine.pixelFromPrice(0, netflowPanel);
@@ -45,13 +46,17 @@
 			});
 		});
 
+		// disable hover highlights on netflow series
+		chartEngine.findHighlights = () => {};
+
 		return () => {
 			chartEngine.addSeries('netflow', {
 				renderer: 'Candles',
 				panel: 'netflow',
 				displayFloatingLabel: false,
 				yAxis: { displayGridLines: false },
-				data: getSummarizedData(netflowChart.data, interval)
+				data: getSummarizedData(netflowChart.data, interval),
+				permanent: true
 			});
 		};
 	}
