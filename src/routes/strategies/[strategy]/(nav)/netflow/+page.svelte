@@ -26,12 +26,22 @@
 	}
 
 	function initForInterval(interval: TimeInterval, chartEngine: any) {
+		chartEngine.xAxisAsFooter = false;
+		chartEngine.displayPanelResize = false;
+
 		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', 150);
 
 		chartEngine.append('draw', () => {
+			const { chart } = chartEngine;
 			const y = chartEngine.pixelFromPrice(0, netflowPanel);
-			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
-				opacity: 0.25
+			chartEngine.plotLine({
+				x0: chartEngine.pixelFromDate(chart.dataSet[0].DT),
+				x1: chartEngine.pixelFromDate(chart.dataSegment.at(-1).DT),
+				y0: y,
+				y1: y,
+				color: 'gray',
+				type: 'segemnt',
+				opacity: 0.5
 			});
 		});
 
@@ -74,6 +84,10 @@
 		/* hide ChartIQ panel controls */
 		:global(:is(.stx-ico-focus, .stx-ico-down, .stx-ico-up, .stx-ico-close)) {
 			display: none;
+		}
+
+		:global(.stx_panel_border) {
+			color: transparent;
 		}
 	}
 </style>
