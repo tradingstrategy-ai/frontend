@@ -66,8 +66,8 @@
 			return originalFormatter(adjustedDate);
 		};
 
-		// update the chart - used on both initial load and updates
-		function update() {
+		// returned callback invoked on both initial load and updates
+		return () => {
 			// clear and re-add secondary rate series
 			Object.values(chartEngine.chart.series).forEach((s) => chartEngine.removeSeries(s));
 			secondaryRates.forEach((rate) => {
@@ -83,9 +83,7 @@
 
 			// load the chart
 			chartEngine.loadChart(symbolObject, { periodicity });
-		}
-
-		return { update };
+		};
 	}
 </script>
 

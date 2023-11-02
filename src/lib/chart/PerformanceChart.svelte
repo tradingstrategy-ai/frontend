@@ -41,14 +41,13 @@
 			}
 		});
 
-		return {
-			update() {
-				chartEngine.loadChart('strategy-profitability', {
-					periodicity,
-					span: { base: 'day', multiplier: spanDays },
-					masterData: data
-				});
-			}
+		// returned callback invoked on both initial load and updates
+		return () => {
+			chartEngine.loadChart('strategy-profitability', {
+				periodicity,
+				span: { base: 'day', multiplier: spanDays },
+				masterData: data
+			});
 		};
 	}
 </script>

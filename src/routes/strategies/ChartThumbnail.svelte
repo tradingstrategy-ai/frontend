@@ -23,32 +23,30 @@
 	};
 
 	function init(chartEngine: any) {
-		return {
-			update() {
-				chartEngine.loadChart('strategy-thumbnail', {
-					periodicity: { period: 1, timeUnit: 'day' },
-					span: { base: 'day', multiplier: 90 },
-					masterData: data
-				});
+		return () => {
+			chartEngine.loadChart('strategy-thumbnail', {
+				periodicity: { period: 1, timeUnit: 'day' },
+				span: { base: 'day', multiplier: 90 },
+				masterData: data
+			});
 
-				// adjust yAxis zoom
-				const { yAxis } = chartEngine.chart;
-				const domain = yAxis.high - yAxis.low;
-				yAxis.zoom = (1 - domain) * 150;
+			// adjust yAxis zoom
+			const { yAxis } = chartEngine.chart;
+			const domain = yAxis.high - yAxis.low;
+			yAxis.zoom = (1 - domain) * 150;
 
-				// adjust xAxis zoom
-				chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
-				chartEngine.micropixels = -2.5;
+			// adjust xAxis zoom
+			chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
+			chartEngine.micropixels = -2.5;
 
-				// re-draw
-				chartEngine.draw();
+			// re-draw
+			chartEngine.draw();
 
-				// add thin baseline at y=0
-				const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
-				chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
-					opacity: 0.25
-				});
-			}
+			// add thin baseline at y=0
+			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
+			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
+				opacity: 0.25
+			});
 		};
 	}
 </script>
