@@ -1,3 +1,19 @@
+<!--
+@component
+Display a peformance line chart for a given (static) dataset.
+
+#### Usage:
+```tsx
+	<PerformanceChart
+		title="Performance"
+		data={chartData}
+		formatValue={formatDollar}
+		spanDays={30}
+		periodicity={ period: 1, interval: 1, timeUnit: 'day'}
+		init={(chartEngine) => chartEngine.doStuff()}
+	/>
+```
+-->
 <script lang="ts">
 	import type { Quote, Periodicity } from '$lib/chart';
 	import { ChartIQ, Marker } from '$lib/chart';

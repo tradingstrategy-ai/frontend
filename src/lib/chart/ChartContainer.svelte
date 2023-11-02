@@ -1,3 +1,18 @@
+<!--
+@component
+Display a chart container with title, description and timespan selector.
+
+#### Usage:
+```tsx
+<ChartContainer title="Performance" let:timeSpan>
+	<p slot="subtitle">
+		Chart description…
+	</p>
+	<SomeChart />
+</ChartContainer>
+```
+-->
+
 <script lang="ts">
 	import type { TimeInterval } from 'd3-time';
 	import type { Periodicity, TimeBucket } from '$lib/chart';
