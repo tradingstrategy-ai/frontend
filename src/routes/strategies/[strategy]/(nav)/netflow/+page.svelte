@@ -79,6 +79,11 @@
 			{periodicity}
 			init={initForInterval.bind(null, interval)}
 		/>
+		<p slot="footer">
+			Learn more about
+			<a class="body-link" href={netflowChart.help_link}>Netflow</a>
+			metric and how it is calculated.
+		</p>
 	</ChartContainer>
 </section>
 

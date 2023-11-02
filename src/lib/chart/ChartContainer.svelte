@@ -40,6 +40,7 @@
 	</header>
 	<slot name="subtitle" />
 	<slot timeSpan={timeSpans[timeSpanKey]} />
+	<slot name="footer" />
 </div>
 
 <style lang="postcss">
@@ -79,7 +80,7 @@
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
-		:global([slot='subtitle']) {
+		:global(:is([slot='subtitle'], [slot='footer'])) {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 
