@@ -70,5 +70,10 @@
 	.tvl {
 		display: grid;
 		gap: var(--space-lg);
+
+		/* hide ChartIQ panel controls */
+		:global(:is(.stx-ico-focus, .stx-ico-down, .stx-ico-up, .stx-ico-close)) {
+			display: none;
+		}
 	}
 </style>
