@@ -8,6 +8,8 @@
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
+	let initCallback: Function | undefined = undefined;
+	export { initCallback as init };
 
 	let chartWrapper: HTMLElement;
 
@@ -41,6 +43,8 @@
 			}
 		});
 
+		const updateCallback = initCallback?.(chartEngine);
+
 		// returned callback invoked on both initial load and updates
 		return () => {
 			chartEngine.loadChart('strategy-profitability', {
@@ -48,6 +52,8 @@
 				span: { base: 'day', multiplier: spanDays },
 				masterData: data
 			});
+
+			updateCallback?.();
 		};
 	}
 </script>

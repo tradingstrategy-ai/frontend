@@ -39,15 +39,16 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			throw new Error('chartiq module not available');
 		}
 
-		const [getLicenseKey, chartiqJs, standardJs]: [any, any, any] = await Promise.all([
+		const [getLicenseKey, ChartIQ, Standard, Advanced]: any[] = await Promise.all([
 			keyFile['/node_modules/chartiq/key.js'](),
 			modules['/node_modules/chartiq/js/chartiq.js'](),
-			modules['/node_modules/chartiq/js/standard.js']()
+			modules['/node_modules/chartiq/js/standard.js'](),
+			modules['/node_modules/chartiq/js/advanced.js']()
 		]);
 
-		CIQ = chartiqJs.CIQ;
+		CIQ = ChartIQ.CIQ;
 		getLicenseKey(CIQ);
-		CIQ.activateImports(standardJs.quoteFeed);
+		CIQ.activateImports(Standard.quoteFeed, Advanced.renderersAdvanced);
 
 		for (const mod of Object.values(studyModules)) {
 			const study = mod(CIQ);

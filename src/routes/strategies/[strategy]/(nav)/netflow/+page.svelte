@@ -2,12 +2,42 @@
 	Page to display netflow, total equity and such.
 -->
 <script lang="ts">
-	import WebChart from '../../WebChart.svelte';
+	import type { RawTick, Quote } from '$lib/chart';
+	import type { TimeInterval } from 'd3-time';
+	import { parseDate } from '$lib/helpers/date.js';
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ tvlChart, netflowChart, startedAt } = data);
+
+	function getSummarizedData(data: RawTick[], interval: TimeInterval) {
+		return data.reduce((acc, [ts, value]) => {
+			const date = parseDate(ts);
+			if (!date) return acc;
+			const normalizedDate = interval.floor(date);
+			const lastAddedDate = acc.at(-1)?.DT;
+			if (normalizedDate.valueOf() !== lastAddedDate?.valueOf()) {
+				acc.push({ DT: normalizedDate, Open: 0, Close: 0 });
+			}
+			acc.at(-1)!.Close! += value ?? 0;
+			return acc;
+		}, [] as Quote[]);
+	}
+
+	function initForInterval(interval: TimeInterval, chartEngine: any) {
+		chartEngine.createPanel('netflow', 'netflow', 150);
+
+		return () => {
+			chartEngine.addSeries('netflow', {
+				renderer: 'Candles',
+				panel: 'netflow',
+				displayFloatingLabel: false,
+				yAxis: { displayGridLines: false },
+				data: getSummarizedData(netflowChart.data, interval)
+			});
+		};
+	}
 </script>
 
 <section class="tvl">
@@ -24,10 +54,9 @@
 			formatValue={formatDollar}
 			{spanDays}
 			{periodicity}
+			init={initForInterval.bind(null, interval)}
 		/>
 	</ChartContainer>
-
-	<WebChart name="Netflow" webChart={netflowChart} charType="bar" />
 </section>
 
 <style lang="postcss">
