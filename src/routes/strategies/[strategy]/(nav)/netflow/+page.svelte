@@ -26,7 +26,14 @@
 	}
 
 	function initForInterval(interval: TimeInterval, chartEngine: any) {
-		chartEngine.createPanel('netflow', 'netflow', 150);
+		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', 150);
+
+		chartEngine.append('draw', () => {
+			const y = chartEngine.pixelFromPrice(0, netflowPanel);
+			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
+				opacity: 0.25
+			});
+		});
 
 		return () => {
 			chartEngine.addSeries('netflow', {
