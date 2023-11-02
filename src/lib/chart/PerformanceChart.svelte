@@ -14,6 +14,9 @@
 
 	let chartWrapper: HTMLElement;
 
+	let viewportWidth: number;
+	$: hideYAxis = viewportWidth <= 576;
+
 	const options = {
 		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
@@ -54,13 +57,18 @@
 				masterData: data
 			});
 
+			// hide the Y Axis on smaller screens
+			chartEngine.setYAxisPosition(chartEngine.chart.yAxis, hideYAxis ? 'none' : 'right');
+
 			updateCallback?.();
 		};
 	}
 </script>
 
+<svelte:window bind:innerWidth={viewportWidth} />
+
 <div class="performance-chart" bind:this={chartWrapper}>
-	<ChartIQ {init} {options} invalidate={periodicity} let:cursor>
+	<ChartIQ {init} {options} invalidate={[periodicity, hideYAxis]} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />

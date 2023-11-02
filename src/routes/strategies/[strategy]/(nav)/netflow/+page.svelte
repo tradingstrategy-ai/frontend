@@ -29,7 +29,10 @@
 		chartEngine.xAxisAsFooter = false;
 		chartEngine.displayPanelResize = false;
 
-		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', 150);
+		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', null, null, {
+			displayGridLines: false
+		});
+		netflowPanel.percent = 0.35;
 
 		// add baseline at y=0 to netflow panel
 		chartEngine.append('draw', () => {
@@ -54,10 +57,13 @@
 				renderer: 'Candles',
 				panel: 'netflow',
 				displayFloatingLabel: false,
-				yAxis: { displayGridLines: false },
+				yAxis: netflowPanel.yAxis,
 				data: getSummarizedData(netflowChart.data, interval),
 				permanent: true
 			});
+
+			// hide the Y Axis when hidden on main panel
+			chartEngine.setYAxisPosition(netflowPanel.yAxis, chartEngine.chart.yAxis.position);
 		};
 	}
 </script>
@@ -102,10 +108,14 @@
 			margin: 0;
 			padding: 0;
 			font: var(--f-heading-xs-medium);
-			letter-spacing: var(--f-heading-xs-spacing);
+			letter-spacing: var(--f-heading-xs-spacing, normal);
 			color: hsla(var(--hsl-text-light));
 			text-transform: capitalize;
 			box-shadow: none;
+
+			@media (--viewport-xs) {
+				display: none;
+			}
 		}
 
 		:global(.stx_panel_border) {

@@ -37,8 +37,8 @@
 	<header>
 		<h2>{title}</h2>
 		<SegmentedControl options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		<slot name="subtitle" />
 	</header>
-	<slot name="subtitle" />
 	<slot timeSpan={timeSpans[timeSpanKey]} />
 	<slot name="footer" />
 </div>
@@ -70,14 +70,26 @@
 			align-items: center;
 			gap: var(--space-sm);
 
+			@media (--viewport-xs) {
+				grid-template-columns: 1fr;
+			}
+
 			:global(.segmented-control) {
 				text-transform: uppercase;
-			}
-		}
 
-		h2 {
-			font: var(--f-heading-md-medium);
-			letter-spacing: var(--f-heading-md-spacing, normal);
+				@media (--viewport-xs) {
+					grid-row: 3;
+				}
+			}
+
+			h2 {
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing, normal);
+			}
+
+			:global([slot='subtitle']) {
+				grid-column: 1 / -1;
+			}
 		}
 
 		:global(:is([slot='subtitle'], [slot='footer'])) {
@@ -85,7 +97,7 @@
 			letter-spacing: var(--f-ui-md-spacing, normal);
 
 			@media (--viewport-sm-down) {
-				font: var(--f-ui-sm-medium);
+				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
 		}
