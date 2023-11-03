@@ -2,6 +2,7 @@
 	Page to display netflow, total equity and such.
 -->
 <script lang="ts">
+	import { min } from 'd3-array';
 	import type { RawTick, Quote } from '$lib/chart';
 	import type { TimeInterval } from 'd3-time';
 	import { parseDate } from '$lib/helpers/date.js';
@@ -11,60 +12,36 @@
 	export let data;
 	$: ({ tvlChart, netflowChart, startedAt } = data);
 
-	function getSummarizedData(data: RawTick[], interval: TimeInterval) {
+	function summarizeNetflowData(data: RawTick[], interval: TimeInterval) {
 		return data.reduce((acc, [ts, value]) => {
 			const date = parseDate(ts);
 			if (!date) return acc;
 			const normalizedDate = interval.floor(date);
 			const lastAddedDate = acc.at(-1)?.DT;
 			if (normalizedDate.valueOf() !== lastAddedDate?.valueOf()) {
-				acc.push({ DT: normalizedDate, Open: 0, Close: 0 });
+				acc.push({ DT: normalizedDate, av: 0, rv: 0 });
 			}
-			acc.at(-1)!.Close! += value ?? 0;
+			acc.at(-1)!.av += value! > 0 ? value : 0;
+			acc.at(-1)!.rv += value! < 0 ? value : 0;
 			return acc;
 		}, [] as Quote[]);
 	}
 
-	function initForInterval(interval: TimeInterval, chartEngine: any) {
-		chartEngine.xAxisAsFooter = false;
-		chartEngine.displayPanelResize = false;
-
-		const netflowPanel = chartEngine.createPanel('netflow', 'netflow', null, null, {
-			displayGridLines: false
-		});
-		netflowPanel.percent = 0.35;
-
-		// add baseline at y=0 to netflow panel
-		chartEngine.append('draw', () => {
-			const { chart } = chartEngine;
-			const y = chartEngine.pixelFromPrice(0, netflowPanel);
-			chartEngine.plotLine({
-				x0: chartEngine.pixelFromDate(chart.dataSet[0].DT),
-				x1: chartEngine.pixelFromDate(chart.dataSegment.at(-1).DT),
-				y0: y,
-				y1: y,
-				color: 'gray',
-				type: 'segemnt',
-				opacity: 0.5
-			});
-		});
-
-		// disable hover highlights on netflow series
-		chartEngine.findHighlights = () => {};
-
-		return () => {
-			chartEngine.addSeries('netflow', {
-				renderer: 'Candles',
-				panel: 'netflow',
-				displayFloatingLabel: false,
-				yAxis: netflowPanel.yAxis,
-				data: getSummarizedData(netflowChart.data, interval),
-				permanent: true
-			});
-
-			// hide the Y Axis when hidden on main panel
-			chartEngine.setYAxisPosition(netflowPanel.yAxis, chartEngine.chart.yAxis.position);
-		};
+	// merge two Quote arrays
+	function mergeData(data1: Quote[], data2: Quote[]) {
+		const merged: Quote[] = [];
+		while (data1.length || data2.length) {
+			const nextDate = min([<Date>data1[0]?.DT, <Date>data2[0]?.DT])!;
+			const quote: Quote = { DT: nextDate };
+			if (nextDate.valueOf() === data1[0]?.DT.valueOf()) {
+				Object.assign(quote, data1.shift());
+			}
+			if (nextDate.valueOf() === data2[0]?.DT.valueOf()) {
+				Object.assign(quote, data2.shift());
+			}
+			merged.push(quote);
+		}
+		return merged;
 	}
 </script>
 
@@ -72,18 +49,20 @@
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
 	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval, periodicity }}>
+		{@const tvlData = normalzeDataForInterval(tvlChart.data, interval)}
+		{@const netflowData = summarizeNetflowData(netflowChart.data, interval)}
+
 		<p slot="subtitle">
 			Learn more about
 			<a class="body-link" href={tvlChart.help_link}>Total value locked</a>
 			metric and how it is calculated.
 		</p>
 		<PerformanceChart
-			title="TVL"
-			data={normalzeDataForInterval(tvlChart.data, interval)}
+			data={mergeData(tvlData, netflowData)}
 			formatValue={formatDollar}
 			{spanDays}
 			{periodicity}
-			init={initForInterval.bind(null, interval)}
+			studies={['Netflow']}
 		/>
 		<p slot="footer">
 			Learn more about
@@ -103,23 +82,19 @@
 			display: none;
 		}
 
-		:global(.stx-panel-title) {
+		:global(.stx-panel-study .stx-panel-title) {
 			display: block;
 			margin: 0;
 			padding: 0;
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--f-heading-xs-spacing, normal);
 			color: hsla(var(--hsl-text-light));
-			text-transform: capitalize;
+			text-transform: none;
 			box-shadow: none;
 
 			@media (--viewport-xs) {
 				display: none;
 			}
-		}
-
-		:global(.stx_panel_border) {
-			color: transparent;
 		}
 	}
 </style>

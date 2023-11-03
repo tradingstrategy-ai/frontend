@@ -5,7 +5,6 @@ Display a peformance line chart for a given (static) dataset.
 #### Usage:
 ```tsx
 	<PerformanceChart
-		title="Performance"
 		data={chartData}
 		formatValue={formatDollar}
 		spanDays={30}
@@ -20,13 +19,11 @@ Display a peformance line chart for a given (static) dataset.
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
-	export let title = 'Performance';
 	export let data: Quote[];
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
-	let initCallback: Function | undefined = undefined;
-	export { initCallback as init };
+	export let studies: any[] = [];
 
 	let chartWrapper: HTMLElement;
 
@@ -63,20 +60,18 @@ Display a peformance line chart for a given (static) dataset.
 			}
 		});
 
-		const updateCallback = initCallback?.(chartEngine);
-
 		// returned callback invoked on both initial load and updates
 		return () => {
-			chartEngine.loadChart(title, {
+			chartEngine.loadChart('Performance', {
 				periodicity,
 				span: { base: 'day', multiplier: spanDays },
 				masterData: data
 			});
 
 			// hide the Y Axis on smaller screens
-			chartEngine.setYAxisPosition(chartEngine.chart.yAxis, hideYAxis ? 'none' : 'right');
-
-			updateCallback?.();
+			Object.values(chartEngine.panels).forEach((panel: any) => {
+				chartEngine.setYAxisPosition(panel.yAxis, hideYAxis ? 'none' : 'right');
+			});
 		};
 	}
 </script>
@@ -84,7 +79,7 @@ Display a peformance line chart for a given (static) dataset.
 <svelte:window bind:innerWidth={viewportWidth} />
 
 <div class="performance-chart" bind:this={chartWrapper}>
-	<ChartIQ {init} {options} invalidate={[periodicity, hideYAxis]} let:cursor>
+	<ChartIQ {init} {options} {studies} invalidate={[periodicity, hideYAxis]} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />

@@ -46,3 +46,23 @@ export function liquidityStudy(CIQ) {
 		underlay: true
 	};
 }
+
+export function netflowStudy(CIQ) {
+	return {
+		name: 'Netflow',
+		seriesFN: CIQ.Studies.displaySeriesAsHistogram,
+		inputs: {},
+		outputs: {
+			av: { color: bullish, opacity: 0.5 },
+			rv: { color: bearish, opacity: 0.5 }
+		},
+		parameters: { widthFactor: 0.95 },
+		range: '0 to max',
+		yAxis: {
+			ground: true,
+			position: 'right',
+			heightFactor: 0.8
+		},
+		panelHeight: 150
+	};
+}
