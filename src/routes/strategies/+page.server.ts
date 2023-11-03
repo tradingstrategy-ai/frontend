@@ -6,8 +6,8 @@
 import swrCache from '$lib/swrCache.js';
 import { getConfiguredStrategiesWithRuntimeState } from 'trade-executor/strategy/runtime-state';
 
-// Create a SWR cache for strategies with 5 minute TTL
-const cacheTimeSeconds = 5 * 60;
+// Create a SWR cache for strategies with 1 minute TTL
+const cacheTimeSeconds = 60;
 const getCachedStrategies = swrCache(getConfiguredStrategiesWithRuntimeState, cacheTimeSeconds);
 
 export async function load({ fetch, setHeaders }) {
