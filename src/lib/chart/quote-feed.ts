@@ -3,28 +3,9 @@
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
 import equal from 'fast-deep-equal';
+import type { Candle, Quote } from './utils';
 import { chartWickThreshold } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-
-export type Candle = {
-	o: number;
-	h: number;
-	l: number;
-	c: number;
-	v?: number;
-	[key: string]: any;
-};
-
-export type Quote = {
-	Open: number;
-	High: number;
-	Low: number;
-	Close: number;
-	ClippedHigh?: number;
-	ClippedLow?: number;
-	Volume?: number;
-	[key: string]: any;
-};
 
 export type DataToQuotes = (data: any) => Quote[];
 
@@ -51,7 +32,7 @@ export function candleToQuote({ ts, o, h, l, c, v, ...restParams }: Candle): Quo
 
 	return {
 		...quote,
-		...clippedValues({ o, h, l, c }),
+		...clippedValues(o, h, l, c),
 		...restParams
 	};
 }
@@ -59,8 +40,9 @@ export function candleToQuote({ ts, o, h, l, c, v, ...restParams }: Candle): Quo
 // Prevent long candle wicks from exploding the yAxis scale.
 // see: ChartIQ#chartIQ action initialization
 // see: https://documentation.chartiq.com/CIQ.ChartEngine.html#determineMinMax
-function clippedValues({ o, h, l, c }: Candle) {
-	if (![o, h, l, c].every(Number.isFinite)) return {};
+function clippedValues(...values: number[]) {
+	if (!values.every(Number.isFinite)) return {};
+	const [o, h, l, c] = values;
 	return {
 		ClippedLow: Math.max(l, Math.min(o, c) * (1 - chartWickThreshold)),
 		ClippedHigh: Math.min(h, Math.max(o, c) * (1 + chartWickThreshold))

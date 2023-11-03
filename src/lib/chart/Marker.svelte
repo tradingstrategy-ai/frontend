@@ -1,11 +1,11 @@
 <script lang="ts">
-	export let x: number | undefined;
-	export let y: number | undefined;
-	export let size: number = 5;
+	export let x: MaybeNumber;
+	export let y: MaybeNumber;
+	export let size = 5;
 </script>
 
 <svg class="chart-marker">
-	{#if x !== undefined && y !== undefined}
+	{#if [x, y].every(Number.isFinite)}
 		<circle cx={x} cy={y} r={size} />
 	{/if}
 </svg>

@@ -39,15 +39,15 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			throw new Error('chartiq module not available');
 		}
 
-		const [getLicenseKey, chartiqJs, standardJs]: [any, any, any] = await Promise.all([
+		const [getLicenseKey, ChartIQ, Standard]: any[] = await Promise.all([
 			keyFile['/node_modules/chartiq/key.js'](),
 			modules['/node_modules/chartiq/js/chartiq.js'](),
 			modules['/node_modules/chartiq/js/standard.js']()
 		]);
 
-		CIQ = chartiqJs.CIQ;
+		CIQ = ChartIQ.CIQ;
 		getLicenseKey(CIQ);
-		CIQ.activateImports(standardJs.quoteFeed);
+		CIQ.activateImports(Standard.quoteFeed);
 
 		for (const mod of Object.values(studyModules)) {
 			const study = mod(CIQ);
@@ -166,7 +166,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		chartEngine.cleanupGaps = 'carry';
 
 		// call init callback if provided
-		const resp = init?.(chartEngine);
+		const updateCallback = init?.(chartEngine);
 
 		// wrap loadChart method to inject callback
 		const originalLoadChart = chartEngine.loadChart.bind(chartEngine);
@@ -180,7 +180,6 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		function destroy() {
 			linker?.remove(chartEngine);
-			resp?.destroy?.();
 			chartEngine.destroy();
 			chartEngine = null;
 		}
@@ -196,8 +195,8 @@ Dynamically ChartIQ modules (if available) and render chart element.
 				CIQ.Studies.addStudy(chartEngine, study);
 			}
 
-			// invoke update function returned from init callback (if provided)
-			resp?.update?.(...args);
+			// invoke updateCallback function returned from init callback (if provided)
+			updateCallback?.(...args);
 		}
 		update(deps);
 

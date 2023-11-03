@@ -4,7 +4,8 @@
 <script lang="ts">
 	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
-	import PortfolioPerformanceChart from './PortfolioPerformanceChart.svelte';
+	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ state, summary, profitabilityChart } = data);
@@ -17,7 +18,19 @@
 
 <section class="performance">
 	{#if profitabilityChart}
-		<PortfolioPerformanceChart data={profitabilityChart.data} helpLink={profitabilityChart.help_link} />
+		<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval, periodicity }}>
+			<p slot="subtitle">
+				Compounded
+				<a class="body-link" href={profitabilityChart.help_link}>profitability</a>
+				of realised trading positions.
+			</p>
+			<PerformanceChart
+				data={normalzeDataForInterval(profitabilityChart.data, interval)}
+				formatValue={formatPercent}
+				{spanDays}
+				{periodicity}
+			/>
+		</ChartContainer>
 	{/if}
 
 	<SummaryStatistics {oldLatestStats} {summaryStatistics} />

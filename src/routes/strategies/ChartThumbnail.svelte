@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { ChartIQ, Marker } from '$lib/chart';
+	import { type Quote, ChartIQ, Marker } from '$lib/chart';
 	import { UpDownCell, Timestamp } from '$lib/components';
 
-	type ChartTick = [Date, number | undefined];
+	export let data: Quote[] = [];
 
-	export let data: ChartTick[] = [];
-
-	const profitClass = determinePriceChangeClass(data.at(-1)?.[1]);
+	const profitClass = determinePriceChangeClass(data.at(-1)?.Value);
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -25,26 +23,30 @@
 	};
 
 	function init(chartEngine: any) {
-		chartEngine.addSeries('Baseline', {
-			color: 'gray',
-			opacity: 0.25,
-			width: 1,
-			shareYAxis: true
-		});
+		return () => {
+			chartEngine.loadChart('strategy-thumbnail', {
+				periodicity: { period: 1, timeUnit: 'day' },
+				span: { base: 'day', multiplier: 90 },
+				masterData: data
+			});
 
-		return {
-			update() {
-				chartEngine.loadChart('strategy-thumbnail', {
-					periodicity: { period: 1, timeUnit: 'day' },
-					span: { base: 'day', multiplier: 90 },
-					masterData: data.map(([DT, Value]) => ({ DT, Value, Baseline: 0 }))
-				});
+			// adjust yAxis zoom
+			const { yAxis } = chartEngine.chart;
+			const domain = yAxis.high - yAxis.low;
+			yAxis.zoom = (1 - domain) * 150;
 
-				const { yAxis } = chartEngine.chart;
-				const domain = yAxis.high - yAxis.low;
-				yAxis.zoom = (1 - domain) * 150;
-				chartEngine.draw();
-			}
+			// adjust xAxis zoom
+			chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
+			chartEngine.micropixels = -2.5;
+
+			// re-draw
+			chartEngine.draw();
+
+			// add thin baseline at y=0
+			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
+			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
+				opacity: 0.25
+			});
 		};
 	}
 </script>
@@ -75,7 +77,6 @@
 		}
 
 		:global(.chart-container) {
-			transform: scale(1.015, 1);
 			width: 100%;
 			height: 100%;
 		}

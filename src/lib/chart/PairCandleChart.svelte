@@ -68,10 +68,10 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			return originalFormatter(adjustedDate);
 		};
 
-		// update the chart - used on both initial load and updates
-		function update() {
+		// returned callback invoked on both initial load and updates
+		return () => {
 			// hide the Y Axis on smaller screens
-			chartEngine.chart.yAxis.position = hideYAxis ? 'none' : 'right';
+			chartEngine.setYAxisPosition(chartEngine.chart.yAxis, hideYAxis ? 'none' : 'right');
 			// pass required data to quoteFeed
 			const symbol = {
 				symbol: pairSymbol,
@@ -82,9 +82,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			chartEngine.loadChart(symbol, { periodicity }, () => {
 				hasData = Boolean(chartEngine.chart.masterData.length);
 			});
-		}
-
-		return { update };
+		};
 	};
 </script>
 
