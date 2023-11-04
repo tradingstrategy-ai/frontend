@@ -23,6 +23,7 @@
 	let paymentInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
+	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
@@ -139,7 +140,7 @@
 			finish(receipt) {
 				if (receipt.status !== 'success') {
 					console.error('waitForTransaction reverted:', receipt);
-					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 					return 'failed';
 				}
 				return 'completed';
@@ -148,9 +149,9 @@
 			fail(err) {
 				console.error('waitForTransaction error:', err);
 				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {
-					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}
 				return 'failed';
 			}
@@ -266,8 +267,8 @@
 
 			{#if $payment === 'processing'}
 				<Alert size="sm" status="info" title="Payment processing">
-					The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
-					the transaction ID above to view the status in the blockchain explorer.
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
+					{viewTransactionCopy}
 				</Alert>
 			{/if}
 
