@@ -11,8 +11,8 @@
 	<VaultBalance {contracts} {address} />
 
 	<p>
-		Congratulations! You've successfully invested in <strong>{strategyName}</strong>. Keep an eye on your progress and
-		returns. Please remember that investing in crypto / DeFi trading strategies carries significant risk. Click "Done"
-		to return to the strategy.
+		Congratulations! You've successfully deposited in <strong>{strategyName}</strong>. Keep an eye on your progress and
+		returns. Please remember that participating in crypto / DeFi trading strategies carries significant risk. Click
+		"Done" to return to the strategy.
 	</p>
 </Grid>

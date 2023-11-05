@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { captureException } from '@sentry/sveltekit';
 	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -21,6 +22,7 @@
 	let sharesInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
+	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
@@ -65,7 +67,8 @@
 			},
 
 			fail(err) {
-				console.error('confirmRedemption error:', err);
+				const eventId = captureException(err);
+				console.error('confirmRedemption error:', eventId, err);
 				errorMessage = err.shortMessage ?? 'Redemption confirmation from wallet account failed.';
 				return 'failed';
 			}
@@ -98,18 +101,19 @@
 			finish(receipt) {
 				if (receipt.status !== 'success') {
 					console.error('waitForTransaction reverted:', receipt);
-					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 					return 'failed';
 				}
 				return 'completed';
 			},
 
 			fail(err) {
-				console.error('waitForTransaction error:', err);
+				const eventId = captureException(err);
+				console.error('waitForTransaction error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {
-					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}
 				return 'failed';
 			}
@@ -204,8 +208,8 @@
 
 			{#if $redemption === 'processing'}
 				<Alert size="sm" status="info" title="Redemption processing">
-					The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
-					the transaction ID above to view the status in the blockchain explorer.
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
+					{viewTransactionCopy}
 				</Alert>
 			{/if}
 

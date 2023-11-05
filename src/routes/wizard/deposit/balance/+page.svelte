@@ -19,7 +19,7 @@
 		{@const href = buyNativeCurrencyUrl(chainId)}
 		<div in:fade>
 			<Alert status="warning" size="md">
-				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when investing in this strategy.
+				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when participating in this strategy.
 				<Button
 					slot="cta"
 					size="sm"

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { captureException } from '@sentry/sveltekit';
 	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -23,6 +24,7 @@
 	let paymentInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
+	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
@@ -78,7 +80,8 @@
 			},
 
 			fail(err) {
-				console.error('authorizeTransfer error:', err);
+				const eventId = captureException(err);
+				console.error('authorizeTransfer error:', eventId, err);
 				if (err.name === 'UnknownRpcError' && err.details.includes('eth_signTypedData_v4')) {
 					errorMessage = `
 						Authorization failed because your wallet does not support typed data signatures.
@@ -105,7 +108,8 @@
 			},
 
 			fail(err) {
-				console.error('confirmPayment error:', err);
+				const eventId = captureException(err);
+				console.error('confirmPayment error:', eventId, err);
 				errorMessage = 'Payment confirmation from wallet account failed. ';
 				errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				return 'failed';
@@ -139,18 +143,19 @@
 			finish(receipt) {
 				if (receipt.status !== 'success') {
 					console.error('waitForTransaction reverted:', receipt);
-					errorMessage = 'Transaction execution reverted. See blockchain explorer for details.';
+					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 					return 'failed';
 				}
 				return 'completed';
 			},
 
 			fail(err) {
-				console.error('waitForTransaction error:', err);
+				const eventId = captureException(err);
+				console.error('waitForTransaction error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} See blockchain explorer for details.`;
+					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {
-					errorMessage = 'Unable to verify transaction status. See blockchain explorer for details.';
+					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}
 				return 'failed';
 			}
@@ -238,8 +243,8 @@
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
 				<Alert size="sm" status="warning" title="Notice">
-					Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
-					Only invest funds you are willing to lose.
+					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
+					future results. Only deposit funds you are willing to lose.
 				</Alert>
 			{/if}
 
@@ -266,8 +271,8 @@
 
 			{#if $payment === 'processing'}
 				<Alert size="sm" status="info" title="Payment processing">
-					The duration of processing may vary based on factors such as blockchain congestion and gas specified. Click
-					the transaction ID above to view the status in the blockchain explorer.
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
+					{viewTransactionCopy}
 				</Alert>
 			{/if}
 
