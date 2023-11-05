@@ -239,8 +239,8 @@
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
 				<Alert size="sm" status="warning" title="Notice">
-					Investing in crypto trading carries significant risks. Past performance is not indicative of future results.
-					Only invest funds you are willing to lose.
+					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
+					future results. Only deposit funds you are willing to lose.
 				</Alert>
 			{/if}
 
