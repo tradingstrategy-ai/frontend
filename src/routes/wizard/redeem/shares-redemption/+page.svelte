@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { captureException } from '@sentry/sveltekit';
 	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -66,7 +67,8 @@
 			},
 
 			fail(err) {
-				console.error('confirmRedemption error:', err);
+				const eventId = captureException(err);
+				console.error('confirmRedemption error:', eventId, err);
 				errorMessage = err.shortMessage ?? 'Redemption confirmation from wallet account failed.';
 				return 'failed';
 			}
@@ -106,7 +108,8 @@
 			},
 
 			fail(err) {
-				console.error('waitForTransaction error:', err);
+				const eventId = captureException(err);
+				console.error('waitForTransaction error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
 					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {

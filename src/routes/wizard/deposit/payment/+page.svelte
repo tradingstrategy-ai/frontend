@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { captureException } from '@sentry/sveltekit';
 	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -79,7 +80,8 @@
 			},
 
 			fail(err) {
-				console.error('authorizeTransfer error:', err);
+				const eventId = captureException(err);
+				console.error('authorizeTransfer error:', eventId, err);
 				if (err.name === 'UnknownRpcError' && err.details.includes('eth_signTypedData_v4')) {
 					errorMessage = `
 						Authorization failed because your wallet does not support typed data signatures.
@@ -106,7 +108,8 @@
 			},
 
 			fail(err) {
-				console.error('confirmPayment error:', err);
+				const eventId = captureException(err);
+				console.error('confirmPayment error:', eventId, err);
 				errorMessage = 'Payment confirmation from wallet account failed. ';
 				errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				return 'failed';
@@ -147,7 +150,8 @@
 			},
 
 			fail(err) {
-				console.error('waitForTransaction error:', err);
+				const eventId = captureException(err);
+				console.error('waitForTransaction error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
 					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {
