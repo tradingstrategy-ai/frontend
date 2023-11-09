@@ -9,6 +9,8 @@ describe('parseDate', () => {
 
 	test('should parse ISO-like date string missing tz offset', () => {
 		expect(parseDate('2022-12-02T16:53')).toEqual(expectedDate);
+		expect(parseDate('2022-12-02T16:53:00')).toEqual(expectedDate);
+		expect(parseDate('2022-12-02T16:53:00.000')).toEqual(expectedDate);
 	});
 
 	test('should parse JS-style numeric date value', () => {

@@ -1,10 +1,15 @@
 export type ParsableDate = Date | string | number;
 export type MaybeParsableDate = Maybe<ParsableDate>;
 
+// Regex to identify unqualified (local) ISO date strings (e.g. "2023-01-01T12:00")
+// JS date parser treats these as local time unless tz offset is appended
+// see https://en.wikipedia.org/wiki/ISO_8601#Local_time_(unqualified)
+const isoLocalDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
+
 /**
  * Try to parse a value as a date. Gracefully handles string values,
  * Unix epoch values (no ms), JS style numeric values (with ms),
- * and ISO-like date strings missing tz offset (e.g. "2023-01-01T12:00")
+ * and ISO date strings, with or without tz offset (coerced to UTC).
  */
 export function parseDate(value: MaybeParsableDate) {
 	if (value instanceof Date) return value;
@@ -20,9 +25,9 @@ export function parseDate(value: MaybeParsableDate) {
 
 	// string values
 	if (typeof value === 'string') {
-		// check for ISO-like date strings missing tz offset, e.g. "2023-01-01T12:00:00"
-		// Append "Z" to ensure JS Date parser treats these as UTC
-		if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/.test(value)) {
+		// check for unqualified (local) ISO date strings (see above)
+		// append "Z" to ensure JS Date parser treats these as UTC
+		if (isoLocalDateRegex.test(value)) {
 			value += 'Z';
 		}
 		const parsedDate = new Date(value);
