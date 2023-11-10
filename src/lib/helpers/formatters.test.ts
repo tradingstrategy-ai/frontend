@@ -5,6 +5,11 @@ describe('formatDollar', () => {
 		expect(formatDollar(123.456)).toEqual('$123.46');
 	});
 
+	test('should format 0 and -0 correctly', () => {
+		expect(formatDollar(0)).toEqual('$0.00');
+		expect(formatDollar(-0)).toEqual('$0.00');
+	});
+
 	test('should use compact format magnitude abbreviations', () => {
 		expect(formatDollar(1234.56)).toEqual('$1.23K');
 		expect(formatDollar(12345.67)).toEqual('$12.35K');

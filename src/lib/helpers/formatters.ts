@@ -6,8 +6,10 @@ const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
 // thresholds for determining when to use scientific notation
-const VERY_SMALL_NUMBER = 1e-6; // 0.000001
-const VERY_LARGE_NUMBER = 1e15; // 1,000,000,000,000 = 1,000T
+const VERY_SMALL_USD_VALUE = 1e-6; // 0.000001
+const VERY_LARGE_USD_VALUE = 1e15; // 1,000,000,000,000 = 1,000T
+const VERY_SMALL_PERCENT = 1e-8; // 0.000001%
+const VERY_LARGE_PERCENT = 1e4; // 1,000,000%
 
 function toFloatingPoint(n: MaybeNumberlike) {
 	if (typeof n == 'string') {
@@ -20,6 +22,12 @@ function toFloatingPoint(n: MaybeNumberlike) {
 // Type predicate to help TypeScript properly narrow type to number
 function isNumber(n: MaybeNumber): n is number {
 	return Number.isFinite(n);
+}
+
+// Check if number is extremely small or large
+function isExtreme(n: number, small: number, large: number) {
+	const absN = Math.abs(n);
+	return n !== 0 && (absN < small || absN >= large);
 }
 
 /**
@@ -94,7 +102,7 @@ export function formatDollar(n: MaybeNumberlike, minDigits = 2, maxPrecision = m
 	if (!isNumber(n)) return notFilledMarker;
 
 	// If n is very small or large, use scientific notation
-	const notation = n < VERY_SMALL_NUMBER || n >= VERY_LARGE_NUMBER ? 'scientific' : 'compact';
+	const notation = isExtreme(n, VERY_SMALL_USD_VALUE, VERY_LARGE_USD_VALUE) ? 'scientific' : 'compact';
 	const style = showPrefix ? 'currency' : 'decimal';
 	const options: Intl.NumberFormatOptions = { notation, style, compactDisplay: 'short', currency: 'USD' };
 	return formatNumber(n, minDigits, maxPrecision, options);
@@ -225,7 +233,12 @@ export function formatShortAddress(address: MaybeString): string {
  * Like average winning profit.
  */
 export function formatPercent(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
+	n = toFloatingPoint(n);
+	if (!isNumber(n)) return notFilledMarker;
+
+	const notation = isExtreme(n, VERY_SMALL_PERCENT, VERY_LARGE_PERCENT) ? 'scientific' : 'standard';
 	return formatNumber(n, minDigits, maxPrecision, {
+		notation,
 		style: 'percent'
 	});
 }

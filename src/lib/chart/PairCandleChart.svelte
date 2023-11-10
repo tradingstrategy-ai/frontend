@@ -49,10 +49,18 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	const options = {
 		layout: { crosshair: true },
 		controls: { chartControls: null },
-		dontRoll: true
+		dontRoll: true,
+		chart: {
+			yAxis: {
+				priceFormatter: (...args: any[]) => formatDollar(args[2], 1, 3, false)
+			}
+		}
 	};
 
 	const init = (chartEngine: any) => {
+		// prevent chart from hanging due to extreme variance in prices
+		chartEngine.setChartScale('log');
+
 		// match the current price label precision to other yAxis labels
 		chartEngine.addEventListener('symbolChange', () => {
 			chartEngine.chart.yAxis.maxDecimalPlaces = chartEngine.chart.yAxis.printDecimalPlaces;
