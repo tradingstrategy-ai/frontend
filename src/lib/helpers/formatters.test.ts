@@ -13,6 +13,11 @@ describe('formatDollar', () => {
 		expect(formatDollar(1_234_567_890_123)).toEqual('$1.23T');
 	});
 
+	test('should use scientific format for very small/large numbers', () => {
+		expect(formatDollar(1e-7)).toEqual('$1.00E-7');
+		expect(formatDollar(1e15)).toEqual('$1.00E15');
+	});
+
 	test('should display minDigits digits when specified', () => {
 		expect(formatDollar(12345.67, 3)).toEqual('$12.346K');
 		expect(formatDollar(123.4567, 3)).toEqual('$123.457');

@@ -5,6 +5,10 @@ const MINUTE = 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
+// thresholds for determining when to use scientific notation
+const VERY_SMALL_NUMBER = 1e-6; // 0.000001
+const VERY_LARGE_NUMBER = 1e15; // 1,000,000,000,000 = 1,000T
+
 function toFloatingPoint(n: MaybeNumberlike) {
 	if (typeof n == 'string') {
 		return parseFloat(n);
@@ -13,13 +17,18 @@ function toFloatingPoint(n: MaybeNumberlike) {
 	return n;
 }
 
+// Type predicate to help TypeScript properly narrow type to number
+function isNumber(n: MaybeNumber): n is number {
+	return Number.isFinite(n);
+}
+
 /**
  * Convert number to thousands.
  *
  * No suffix added.
  */
 export function formatKilos(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	if (n <= 1000) {
 		return (n / 1000).toLocaleString('en', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
@@ -34,7 +43,7 @@ export function formatKilos(n: MaybeNumber): string {
  * No suffix added.
  */
 export function formatSizeMegabytes(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024)).toLocaleString('en', {
@@ -53,7 +62,7 @@ export function formatSizeMegabytes(n: MaybeNumber): string {
  * Format size in gigabyttes
  */
 export function formatSizeGigabytes(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	if (n <= 1024 * 1024) {
 		return (n / (1024 * 1024 * 1024)).toLocaleString('en', {
@@ -81,8 +90,13 @@ export function formatSizeGigabytes(n: MaybeNumber): string {
  * @param showPrefix - whether to show "$" prefix (default = true)
  */
 export function formatDollar(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits, showPrefix = true) {
+	n = toFloatingPoint(n);
+	if (!isNumber(n)) return notFilledMarker;
+
+	// If n is very small or large, use scientific notation
+	const notation = n < VERY_SMALL_NUMBER || n >= VERY_LARGE_NUMBER ? 'scientific' : 'compact';
 	const style = showPrefix ? 'currency' : 'decimal';
-	const options = { style, currency: 'USD', notation: 'compact', compactDisplay: 'short' };
+	const options: Intl.NumberFormatOptions = { notation, style, compactDisplay: 'short', currency: 'USD' };
 	return formatNumber(n, minDigits, maxPrecision, options);
 }
 
@@ -110,7 +124,7 @@ export function formatNumber(n: MaybeNumberlike, minDigits = 2, maxPrecision = m
 	if (maxPrecision < minDigits) throw new RangeError('maxPrecision must be >= minDigits');
 
 	n = toFloatingPoint(n);
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	// Don't format -0.00
 	// https://stackoverflow.com/a/7223395/315168
@@ -151,7 +165,7 @@ export function formatPrice(n: MaybeNumberlike, minDigits = 2, maxPrecision = 4)
 
 export function formatPriceChange(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
 	n = toFloatingPoint(n);
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n), minDigits, maxPrecision)}`;
 }
 
@@ -160,7 +174,7 @@ export function formatPriceChange(n: MaybeNumberlike, minDigits = 1, maxPrecisio
  */
 export function formatAmount(n: MaybeNumberlike): string {
 	n = toFloatingPoint(n);
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	return n.toLocaleString('en');
 }
@@ -169,7 +183,7 @@ export function formatAmount(n: MaybeNumberlike): string {
  * Format number using an English thousand separation
  */
 export function formatMillion(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 
 	return (n / 1_000_000).toLocaleString('en', {
 		minimumFractionDigits: 1,
@@ -227,7 +241,7 @@ export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxPrecision =
  * Format strategy key metric float numbers like Sharpe and Sortino
  */
 export function formatKeyMetricNumber(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return notFilledMarker;
+	if (!isNumber(n)) return notFilledMarker;
 	return n.toLocaleString('en', {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2
@@ -240,7 +254,7 @@ export function formatKeyMetricNumber(n: MaybeNumber): string {
  * Uses `minimumSignificantDigits` instead of `minimumFractionDigits`
  */
 export function formatSwapFee(n: MaybeNumber): string {
-	if (!Number.isFinite(n)) return '';
+	if (!isNumber(n)) return '';
 	return n.toLocaleString('en', {
 		minimumSignificantDigits: 1,
 		maximumSignificantDigits: 1,
@@ -283,7 +297,7 @@ export function formatDurationMinutesSeconds(seconds: number): string {
  * unixTimestamp is received from API as unix seconds since epoch
  */
 export function formatDaysAgo(unixTimestamp: number): string {
-	if (!Number.isFinite(unixTimestamp)) return notFilledMarker;
+	if (!isNumber(unixTimestamp)) return notFilledMarker;
 	const seconds = Date.now() / 1000 - unixTimestamp;
 	const days = Math.floor(seconds / DAY);
 	return days < 1 ? 'Less than a day' : days === 1 ? '1 day' : `${days} days`;
@@ -305,7 +319,7 @@ export function formatValue(value: any): string {
  * @param after UNIX timestamp
  */
 export function formatTimeDiffMinutesSeconds(before: MaybeNumber, after: MaybeNumber): string {
-	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+	if (!isNumber(before) || !isNumber(after)) {
 		return '---';
 	}
 
@@ -323,7 +337,7 @@ export function formatTimeDiffMinutesSeconds(before: MaybeNumber, after: MaybeNu
  * @param after Dollar value
  */
 export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): string {
-	if (!Number.isFinite(before) || !Number.isFinite(after)) {
+	if (!isNumber(before) || !isNumber(after)) {
 		return '---';
 	}
 
