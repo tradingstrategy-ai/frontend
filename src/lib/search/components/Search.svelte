@@ -106,12 +106,18 @@ Display site-wide search box for use in top-nav.
 			{/if}
 
 			<footer>
-				{#if hasQuery}
-					<Button size="sm" label="Show all results" href="/search?q={q}" />
-				{:else}
-					Search exchanges, tokens and trading pairs.
+				{#if !hasQuery}
+					<div class="prompt">
+						Search exchanges, tokens<br />
+						trading pairs and lending reserves.
+					</div>
 				{/if}
-				<Button size="sm" label="Advanced search" href="/search?q={q}" />
+				<div class="ctas">
+					{#if hasQuery}
+						<Button size="sm" label="Show all results" href="/search?q={q}" />
+					{/if}
+					<Button size="sm" label="Advanced search" href="/search?q={q}" />
+				</div>
 			</footer>
 		</div>
 	</div>
@@ -215,20 +221,27 @@ Display site-wide search box for use in top-nav.
 	}
 
 	footer {
-		display: grid;
-		gap: var(--space-sl) var(--space-sm);
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: var(--c-text-7-v1);
-		text-align: center;
+		.prompt {
+			margin-bottom: var(--space-sl);
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: hsl(var(--hsl-text-extra-light));
+			text-align: center;
 
-		@media (--search-layout-mobile) {
-			font: var(--f-ui-sm-medium);
-			--button-font: var(--f-ui-sm-medium);
+			@media (--search-layout-mobile) {
+				font: var(--f-ui-sm-medium);
+			}
 		}
 
-		.hasQuery & {
-			grid-template-columns: 1fr 1fr;
+		.ctas {
+			display: grid;
+			grid-auto-flow: column;
+			grid-auto-columns: 1fr;
+			gap: var(--space-sm);
+
+			@media (--search-layout-mobile) {
+				--button-font: var(--f-ui-sm-medium);
+			}
 		}
 	}
 </style>

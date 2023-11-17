@@ -7,7 +7,7 @@
 	export let formatted_data: Maybe<string[]> = undefined;
 </script>
 
-<div class="log-entry level--{level}">
+<div class="log-entry {level}">
 	<Timestamp date={timestamp} withSeconds />
 	<div class="message">
 		{message}
@@ -27,7 +27,7 @@
 	.log-entry {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: var(--space-lg);
+		gap: var(--space-md);
 		padding: var(--space-md) var(--space-ss);
 		place-items: stretch;
 
@@ -35,13 +35,11 @@
 			grid-template-columns: 1fr;
 		}
 
-		&:not(:first-of-type, :last-of-type) {
-			border-block: 1px solid var(--c-ink-light);
+		&:not(:first-of-type) {
+			border-bottom: 1px solid hsla(var(--hsl-terminal-light), 0.15);
 		}
 
 		.message {
-			font: var(--f-mono-xs-regular);
-			letter-spacing: var(--f-mono-xs-spacing, normal);
 			white-space: pre-wrap;
 
 			details {
@@ -64,33 +62,28 @@
 			}
 		}
 
-		:global time {
+		:global(time) {
 			display: flex;
-			font: var(--f-mono-sm-regular);
-			letter-spacing: var(--f-mono-sm-spacing, normal);
 			flex-direction: column;
-			color: var(--c-text-ultra-light);
+			color: hsl(var(--hsl-terminal-light));
 
 			@media (--viewport-sm-up) {
 				text-align: right;
 			}
 		}
-	}
 
-	.level--info {
-		color: var(--c-text-light-night);
-	}
-	.level--trade {
-		color: palegreen;
-	}
-	.level--warning {
-		color: lightyellow;
-	}
-	.level--error {
-		color: lightcoral;
-	}
-	.level--critical {
-		background: red;
-		color: white;
+		&.trade {
+			color: palegreen;
+		}
+		&.warning {
+			color: lightyellow;
+		}
+		&.error {
+			color: lightcoral;
+		}
+		&.critical {
+			background: red;
+			color: white;
+		}
 	}
 </style>

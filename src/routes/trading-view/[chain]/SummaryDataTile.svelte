@@ -45,7 +45,7 @@
 			@media (--viewport-md-down) {
 				margin-block: 0;
 				font: var(--f-h5-medium);
-				color: var(--c-text-2-v1);
+				color: hsl(var(--hsl-text-light));
 			}
 		}
 

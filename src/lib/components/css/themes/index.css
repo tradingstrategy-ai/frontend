@@ -10,7 +10,6 @@ body {
 	--hsl-black: 0, 0%, 0%;
 	--hsl-white: var(--hue-1), 100%, 100%;
 	--hsl-white-dark: var(--hue-1), 100%, 97%;
-	--c-text-1: hsla(var(--hsl-text)); /*  temp fix until there still is some legacy code from bootstrap theme */
 	color: hsla(var(--hsl-text));
 	background-color: hsla(var(--hsl-body));
 	transition-property: background-color, color;

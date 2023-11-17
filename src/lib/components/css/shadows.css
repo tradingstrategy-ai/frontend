@@ -1,5 +1,7 @@
-:root {
-	--shadow-1: 0 0 4px 0 hsla(var(--hsl-black), 0.2);
-	--shadow-2: 0 0 6px 0 hsla(var(--hsl-black), 0.1);
-	--shadow-3: 0 0 6px 0 hsla(var(--hsl-black), 0.05);
+body {
+	--hsl-shadow: var(--cm-light, var(--hsl-black)) var(--cm-dark, var(--hsl-white));
+
+	--shadow-1: 0 0 4px 0 hsla(var(--hsl-shadow), 0.2);
+	--shadow-2: 0 0 6px 0 hsla(var(--hsl-shadow), 0.1);
+	--shadow-3: 0 0 6px 0 hsla(var(--hsl-shadow), 0.05);
 }

@@ -136,11 +136,19 @@
 
 		pre {
 			margin: var(--space-lg) 0;
-			padding: var(--space-lg);
-			background: var(--c-background-7-v1);
-			border: 2px solid var(--c-border-1-v1);
-			border-radius: var(--radius-xxs);
-			color: var(--c-parchment);
+			border-radius: var(--radius-sm);
+			padding: var(--space-ms) var(--space-ls);
+			background: hsl(var(--hsl-terminal-bg));
+			color: hsl(var(--hsl-terminal));
+			font: var(--f-mono-sm-regular);
+			letter-spacing: var(--f-mono-sm-spacing, normal);
+
+			@media (--viewport-sm-up) {
+				border-radius: var(--radius-md);
+				padding: var(--space-md) var(--space-lg);
+				font: var(--f-mono-md-regular);
+				letter-spacing: var(--f-mono-md-spacing, normal);
+			}
 		}
 
 		blockquote {
@@ -148,9 +156,8 @@
 			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
-			color: var(--c-text-3-v1);
-			background: var(--c-background-1-v1);
-			box-shadow: -0.75rem 0.75rem 0 var(--c-background-4-v1);
+			background: hsla(var(--hsl-box), var(--a-box-b));
+			box-shadow: -0.75rem 0.75rem 0 hsla(var(--hsl-box), var(--a-box-e));
 		}
 
 		.table-responsive {
@@ -166,8 +173,8 @@
 			:is(td, th) {
 				vertical-align: top;
 				padding: var(--space-ss);
-				border-top: 1px solid var(--c-border-1-v1);
-				border-bottom: 1px solid var(--c-border-1-v1);
+				border-top: 1px solid hsla(var(--hsl-text-extra-light));
+				border-bottom: 1px solid hsla(var(--hsl-text-extra-light));
 
 				&:first-child {
 					padding-left: 0;
@@ -179,7 +186,7 @@
 			}
 
 			th {
-				background: var(--c-background-1-v1);
+				background: hsla(var(--hsl-box), var(--a-box-b));
 				font-weight: 600;
 			}
 		}

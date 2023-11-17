@@ -171,7 +171,7 @@ Render the pair trading page
 
 	.pool-swap-fee {
 		margin-left: var(--space-xxs);
-		color: var(--c-text-2-v1);
+		color: hsl(var(--hsl-text-extra-light));
 	}
 
 	.info {

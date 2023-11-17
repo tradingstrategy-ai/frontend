@@ -97,7 +97,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		gap: var(--space-ss);
 		align-items: center;
 		margin-bottom: var(--space-ss);
-		color: var(--c-text-4-v1);
+		color: hsl(var(--hsl-text-extra-light));
 
 		h5 {
 			font: var(--f-ui-lg-medium);

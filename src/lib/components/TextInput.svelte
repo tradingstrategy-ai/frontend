@@ -152,7 +152,7 @@ unknown props through to HTML input element.
 			background: hsla(var(--input-background));
 			font: inherit;
 			letter-spacing: inherit;
-			color: var(--c-text-1-v1);
+			color: inherit;
 			transition: background var(--time-sm) ease-out;
 
 			&::placeholder {

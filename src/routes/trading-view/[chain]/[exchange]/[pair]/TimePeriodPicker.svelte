@@ -16,7 +16,7 @@ Radio button options to select a time period.
 <form>
 	{#each periods as period}
 		<label class:selected={period === selected}>
-			{period}
+			<span>{period}</span>
 			<input type="radio" bind:group={selected} value={period} />
 		</label>
 	{/each}
@@ -25,30 +25,39 @@ Radio button options to select a time period.
 <style lang="postcss">
 	form {
 		display: flex;
+		gap: 1px;
 		margin-top: var(--space-sl);
 	}
 
 	label {
 		flex: 1;
-		border: 2px solid var(--c-border-2-v1);
 		margin: 0;
 		padding-block: var(--space-md);
-		font: var(--f-ui-large-medium);
+		background: hsla(var(--hsl-box), var(--a-box-d));
+		font: var(--f-ui-md-medium);
 		text-align: center;
 		text-transform: capitalize;
 		cursor: pointer;
 
-		&:not(:first-child) {
-			border-left-width: 1px;
+		&:first-child {
+			border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+
+			span {
+				padding-left: var(--space-xs);
+			}
 		}
 
-		&:not(:last-child) {
-			border-right-width: 1px;
+		&:last-child {
+			border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+
+			span {
+				padding-right: var(--space-xs);
+			}
 		}
 
 		&.selected {
-			background: var(--c-background-3-v1);
-			color: var(--c-text-6-v1);
+			background: hsla(var(--hsl-text), 1);
+			color: hsla(var(--hsl-text-inverted));
 		}
 	}
 

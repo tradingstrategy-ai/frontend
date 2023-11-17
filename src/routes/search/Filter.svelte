@@ -97,7 +97,7 @@ Display filter options as checkboxes search queries.
 		}
 
 		&:focus-within::before {
-			outline: 2px solid var(--cm-light, var(--c-parchment-super-dark)) var(--cm-dark, var(--c-gray));
+			outline: 2px solid hsl(var(--hsl-text-extra-light));
 		}
 	}
 
@@ -105,7 +105,7 @@ Display filter options as checkboxes search queries.
 		appearance: none;
 		width: 1.5rem;
 		height: 1.5rem;
-		border: 2px solid var(--c-border-2-v1);
+		border: 2px solid hsla(var(--hsl-text));
 		border-radius: var(--radius-xxs);
 		background: hsla(var(--hsl-body));
 		outline: none;

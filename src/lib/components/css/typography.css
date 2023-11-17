@@ -255,8 +255,7 @@ body {
 	margin: 0;
 }
 
-.ds-container pre,
-.ds-container code {
+:where(.ds-container) :where(pre, code) {
 	font: var(--f-mono-md-regular);
 	letter-spacing: var(--f-mono-md-spacing, normal);
 }

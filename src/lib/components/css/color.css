@@ -81,31 +81,6 @@ body[data-color-mode='dark'] {
   see: https://stackoverflow.com/questions/70845195#answer-70934827
 */
 body {
-	/* Color pairs - Theme 0.1 */
-	--c-body-v1: var(--cm-light, var(--c-parchment)) var(--cm-dark, var(--c-ink-light));
-
-	--c-background-1-v1: var(--cm-light, var(--c-parchment-dark)) var(--cm-dark, var(--c-ink));
-	--c-background-2-v1: var(--cm-light, var(--c-gray-extra-light)) var(--cm-dark, var(--c-gray-extra-dark));
-	--c-background-3-v1: var(--cm-light, var(--c-ink)) var(--cm-dark, var(--c-parchment-dark));
-	--c-background-4-v1: var(--cm-light, var(--c-parchment-extra-dark)) var(--cm-dark, var(--c-gray-dark));
-	--c-background-5-v1: var(--cm-light, var(--c-parchment)) var(--cm-dark, var(--c-ink-light));
-	--c-background-6-v1: var(--cm-light, var(--c-parchment-extra-dark)) var(--cm-dark, var(--c-gray-extra-dark));
-	--c-background-7-v1: var(--cm-light, var(--c-ink-light)) var(--cm-dark, var(--c-ink));
-
-	--c-text-1-v1: var(--cm-light, var(--c-ink)) var(--cm-dark, var(--c-parchment));
-	--c-text-2-v1: var(--cm-light, var(--c-gray-dark)) var(--cm-dark, var(--c-gray-extra-light));
-	--c-text-3-v1: var(--cm-light, var(--c-ink-light)) var(--cm-dark, var(--c-gray-extra-light));
-	--c-text-4-v1: var(--cm-light, var(--c-gray-extra-dark)) var(--cm-dark, var(--c-parchment-dark));
-	--c-text-5-v1: var(--cm-light, var(--c-ink-light)) var(--cm-dark, var(--c-gray-light));
-	--c-text-6-v1: var(--cm-light, var(--c-parchment)) var(--cm-dark, var(--c-ink-light));
-	--c-text-7-v1: var(--cm-light, var(--c-gray)) var(--cm-dark, var(--c-gray-light));
-
-	--c-border-1-v1: var(--cm-light, var(--c-gray-dark)) var(--cm-dark, var(--c-gray));
-	--c-border-2-v1: var(--cm-light, var(--c-ink)) var(--cm-dark, var(--c-parchment));
-
-	--c-shadow-1-v1: var(--cm-light, rgba(0, 0, 0, 0.2)) var(--cm-dark, rgba(255, 255, 255, 0.2));
-
-	/* Color pairs - Theme 0.2 */
 	--c-body: var(--cm-light, var(--c-body-day)) var(--cm-dark, var(--c-body-night));
 
 	--c-text-default: var(--cm-light, var(--c-text-default-day)) var(--cm-dark, var(--c-text-default-night));

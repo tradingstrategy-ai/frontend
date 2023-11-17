@@ -72,6 +72,7 @@
 	.skeleton {
 		color: transparent !important;
 		position: relative;
+		--skeleton-background: hsla(var(--hsl-box), var(--a-box-c));
 
 		&::before {
 			width: var(--skeleton-width, 100%);
@@ -83,9 +84,9 @@
 			border-radius: 2px;
 			background: linear-gradient(
 				to right,
-				var(--c-background-2-v1) 0%,
+				var(--skeleton-background) 0%,
 				transparent 50%,
-				var(--c-background-2-v1) 100%
+				var(--skeleton-background) 100%
 			);
 			background-size: 200%;
 			animation: infinite 1.5s skeleton linear;

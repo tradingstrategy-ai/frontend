@@ -141,10 +141,10 @@
 		.coming-soon {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-2-v1);
+			color: hsl(var(--hsl-text-light));
 			text-transform: uppercase;
 			padding: var(--space-sl) var(--space-ls);
-			border: 1px solid var(--c-parchment-super-dark);
+			border: 1px solid hsl(var(--hsl-text-extra-light));
 			border-radius: var(--radius-xxl);
 		}
 

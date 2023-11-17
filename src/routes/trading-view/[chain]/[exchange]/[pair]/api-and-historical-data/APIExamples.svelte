@@ -18,7 +18,7 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 
 	<p>Get trading pair overview as JSON over HTTP GET.</p>
 
-	<pre>curl "{getApiUrl('pair-details', { exchange_slug, chain_slug, pair_slug })}"</pre>
+	<pre class="terminal-viewport">curl "{getApiUrl('pair-details', { exchange_slug, chain_slug, pair_slug })}"</pre>
 
 	<h2>Daily OHLCV data</h2>
 
@@ -36,7 +36,7 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 		>.
 	</p>
 
-	<pre>curl "{getApiUrl('candles-jsonl', { pair_ids: pair_id, time_bucket: '1d' })}"</pre>
+	<pre class="terminal-viewport">curl "{getApiUrl('candles-jsonl', { pair_ids: pair_id, time_bucket: '1d' })}"</pre>
 
 	<h3>JSON</h3>
 
@@ -45,7 +45,7 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 		candles as <a class="body-link" href="/glossary/json">JSON</a> over HTTP GET.
 	</p>
 
-	<pre>curl "{getApiUrl('candles', { pair_id, exchange_type, time_bucket: '1d' })}"</pre>
+	<pre class="terminal-viewport">curl "{getApiUrl('candles', { pair_id, exchange_type, time_bucket: '1d' })}"</pre>
 
 	<h2>Backtesting datasets</h2>
 
@@ -68,14 +68,6 @@ Trading pair API examples. Display inline curl examples for retreiving trading p
 		h3 {
 			margin-top: var(--space-sm);
 			font: var(--f-h4-medium);
-		}
-
-		pre {
-			background: var(--c-background-7-v1);
-			border: 1px solid var(--c-border-1-v1);
-			border-radius: var(--radius-xxs);
-			color: var(--c-parchment);
-			padding: var(--space-md);
 		}
 	}
 </style>

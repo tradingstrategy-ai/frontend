@@ -4,7 +4,7 @@
 	import { Timestamp } from '$lib/components';
 	import SocialMetaTags from '../SocialMetaTags.svelte';
 	import SocialLinks from '../SocialLinks.svelte';
-	import BlogPostContent from '../BlogPostContent.svelte';
+	import BlogPostContent from './BlogPostContent.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { Section } from '$lib/components';
 
@@ -55,8 +55,9 @@
 		}
 
 		:global(time) {
-			font: var(--timestamp-font, var(--f-ui-md-roman));
-			color: var(--c-text-2-v1);
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: hsl(var(--hsl-text-extra-light));
 		}
 	}
 

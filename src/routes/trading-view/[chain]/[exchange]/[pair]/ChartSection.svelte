@@ -167,7 +167,8 @@ for the same hovered date. Also displays a time-bucket selector.
 
 		.help {
 			font: var(--f-ui-small-roman);
-			color: var(--c-text-2-v1);
+			color: hsl(var(--hsl-text-light));
+
 			text-align: right;
 
 			white-space: nowrap;
@@ -175,7 +176,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			text-overflow: ellipsis;
 
 			a:hover {
-				color: var(--c-text-1-v1);
+				color: hsl(var(--hsl-text));
 			}
 
 			.prefix {

@@ -11,12 +11,12 @@ A test endpoint for the page to show debug data.
 
 	<div>
 		<h2>Public environment variables</h2>
-		<pre>{JSON.stringify(env, null, 4)}</pre>
+		<pre class="terminal-viewport">{JSON.stringify(env, null, 4)}</pre>
 	</div>
 
 	<div>
 		<h2>Config</h2>
-		<pre>{JSON.stringify(config, null, 4)}</pre>
+		<pre class="terminal-viewport">{JSON.stringify(config, null, 4)}</pre>
 	</div>
 </section>
 
@@ -51,10 +51,6 @@ A test endpoint for the page to show debug data.
 	}
 
 	pre {
-		padding: var(--space-lg);
-		background: var(--c-background-7);
-		border-radius: var(--radius-md);
-		color: var(--c-text-default-night);
 		white-space: pre-wrap;
 		word-break: break-all;
 	}

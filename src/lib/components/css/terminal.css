@@ -1,15 +1,33 @@
-.terminal-viewport {
-	background-color: var(--c-ink) !important;
+body {
+	--hsl-terminal-bg: 239, 31%, 6%;
+	--hsl-terminal: var(--hue-1), 4%, 86%;
+	--hsl-terminal-light: var(--hue-1), 3%, 72%;
+}
+
+:where(.terminal-viewport) {
 	border-radius: var(--radius-md);
-	display: grid;
-	padding: var(--space-ss) var(--space-sl);
-}
+	padding: var(--space-md) var(--space-lg);
+	background: hsl(var(--hsl-terminal-bg));
+	color: hsl(var(--hsl-terminal));
+	font: var(--f-mono-md-regular);
+	letter-spacing: var(--f-mono-md-spacing, normal);
 
-.terminal-viewport .hljs {
-	background-color: transparent;
-}
+	&.sm {
+		border-radius: var(--radius-sm);
+		padding: var(--space-ms) var(--space-ls);
+		font: var(--f-mono-sm-regular);
+		letter-spacing: var(--f-mono-sm-spacing, normal);
+	}
 
-.terminal-viewport code,
-.terminal-viewport code span {
-	font: var(--f-mono-sm-regular) !important;
+	&.xs {
+		border-radius: var(--radius-sm);
+		padding: var(--space-sl) var(--space-md);
+		font: var(--f-mono-xs-regular);
+		letter-spacing: var(--f-mono-xs-spacing, normal);
+	}
+
+	code {
+		font: inherit;
+		letter-spacing: inherit;
+	}
 }

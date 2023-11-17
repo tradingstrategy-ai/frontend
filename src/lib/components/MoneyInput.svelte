@@ -125,7 +125,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		input {
 			background: transparent;
 			border: none;
-			color: var(--c-text-1-v1);
+			color: inherit;
 			font: var(--f-ui-xxl-medium);
 			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));

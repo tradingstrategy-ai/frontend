@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Icon, TextInput } from '$lib/components';
+	import { Button, TextInput } from '$lib/components';
 	import SearchHitAdvanced from './SearchHitAdvanced.svelte';
 	import SortSelect from './SortSelect.svelte';
 
@@ -32,9 +32,9 @@
 		<div class="sort-select">
 			<SortSelect bind:value={sortBy} />
 		</div>
-		<button class="filter-toggle" on:click={() => dispatch('showFilters')}>
-			<Icon name="filter" />
-		</button>
+		<div class="filter-toggle">
+			<Button secondary size="md" icon="filter" on:click={() => dispatch('showFilters')} />
+		</div>
 	</div>
 
 	{#if hasSearch && hits.length > 0}
@@ -46,7 +46,7 @@
 	{:else if hasSearch}
 		<div class="fallback">No results found &ndash; try modifying your search query or removing filters.</div>
 	{:else}
-		<div class="fallback">Search exchanges, tokens and trading pairs.</div>
+		<div class="fallback">Search exchanges, tokens, trading pairs and lending reserves.</div>
 	{/if}
 </div>
 
@@ -85,14 +85,6 @@
 	}
 
 	.filter-toggle {
-		width: 3.5rem;
-		padding: 0;
-		border: 2px solid var(--c-border-2-v1);
-		border-radius: 0.5em;
-		font-size: 1.25rem;
-		background: hsla(var(--hsl-body));
-		color: var(--c-text-1-v1);
-
 		@media (--viewport-lg-up) {
 			display: none;
 		}
