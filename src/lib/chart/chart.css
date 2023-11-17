@@ -54,7 +54,8 @@
 .stx-float-date,
 .stx-float-price {
 	color: hsla(var(--hsl-text));
-	background: var(--c-background-3); /* this needs to be a solid bg (no transparency) */
+	/* this needs to be a solid bg color (no transparency) */
+	background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) var(--a-box-c));
 }
 
 .stx-float-date {

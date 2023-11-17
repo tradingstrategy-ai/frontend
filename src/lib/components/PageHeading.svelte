@@ -112,7 +112,7 @@
 
 		.prefix {
 			display: block;
-			color: var(--c-text-ultra-light);
+			color: hsl(var(--hsl-text-ultra-light));
 			font: var(--prefix-font);
 			letter-spacing: var(--prefix-spacing, normal);
 			margin-bottom: var(--space-ss);

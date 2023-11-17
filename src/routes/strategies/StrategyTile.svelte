@@ -212,7 +212,7 @@
 						border-radius: 100%;
 						bottom: -0.5rem;
 						box-shadow: var(--shadow-1);
-						background: hsla(var(--hsl-white));
+						background: hsl(var(--hsl-text-inverted));
 						display: flex;
 						padding: 0.25rem;
 						position: absolute;

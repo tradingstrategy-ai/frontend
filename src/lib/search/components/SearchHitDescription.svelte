@@ -31,7 +31,7 @@
 		letter-spacing: var(--search-hit-description-spacing, var(--f-ui-md-spacing, normal));
 
 		.swap-fee {
-			color: var(--c-text-extra-light);
+			color: hsl(var(--hsl-text-extra-light));
 		}
 
 		.warning-icon {

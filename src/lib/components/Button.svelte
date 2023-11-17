@@ -131,7 +131,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	}
 
 	.quarternary {
-		background: var(--c-background-4);
+		background: hsla(var(--hsl-box), var(--a-box-b));
 	}
 
 	.ghost {

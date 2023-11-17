@@ -9,11 +9,11 @@ body[data-color-mode='dark'] {
 	--hsl-text-inverted: var(--hue-1), 9%, 7%;
 
 	--hsl-box: var(--hue-1), 2%, 92%;
-	--a-box-a: 0.05;
-	--a-box-b: 0.09;
-	--a-box-c: 0.16;
-	--a-box-d: 0.2;
-	--a-box-e: 0.28;
+	--a-box-a: 5%;
+	--a-box-b: 9%;
+	--a-box-c: 16%;
+	--a-box-d: 20%;
+	--a-box-e: 28%;
 
 	--hsla-background-accent-1: 0, 0%, 0%, 0.2;
 

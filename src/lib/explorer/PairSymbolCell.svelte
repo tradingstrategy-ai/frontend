@@ -23,6 +23,6 @@
 	}
 
 	span {
-		color: var(--c-text-extra-light);
+		color: hsl(var(--hsl-text-extra-light));
 	}
 </style>

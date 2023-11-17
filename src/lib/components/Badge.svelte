@@ -29,7 +29,7 @@ Badge component used for inline text labels.
 	}
 
 	.primary {
-		color: var(--c-text-light);
+		color: hsl(var(--hsl-text-light));
 	}
 
 	.secondary {
