@@ -1,99 +1,114 @@
-/*
- HSL Values - Theme 0.2
-*/
-
 :root {
-	/* Status */
+	/* Hues */
+	--hue-1: 36;
+	--hue-bearish: 360;
+	--hue-bullish: 140;
+
+	/* Global HSL colors (no light/dark variants) */
+	--hsl-black: 0, 0%, 0%;
+	--hsl-white: var(--hue-1), 100%, 100%;
+
 	--hsl-error: 358, 56%, 55%;
 	--hsl-success: 149, 64%, 44%;
 	--hsl-warning: 47, 77%, 57%;
-}
 
-/*
- Colors - Theme 0.2
-*/
-
-:root {
-	/* Body colors */
-	--c-body-day: hsla(36 78% 99%);
-	--c-body-night: hsla(36 1% 10%);
-
-	/* Text colors */
-	--c-text-default-day: hsla(60 9% 7%);
-	--c-text-light-day: hsla(240 4% 24%);
-	--c-text-extra-light-day: hsla(240 6% 40%);
-	--c-text-ultra-light-day: hsla(239 6% 68%);
-	--c-text-inverted-day: hsla(40 60% 99%);
-
-	--c-text-default-night: hsla(36 12% 99%);
-	--c-text-light-night: hsla(36 4% 88%);
-	--c-text-extra-light-night: hsla(36 3% 72%);
-	--c-text-ultra-light-night: hsla(40 3% 51%);
-	--c-text-inverted-night: hsla(51 23% 6%);
-
-	/* Background colors */
-	--c-background-1-day: hsla(36 8% 7%);
-	--c-background-2-day: hsla(40 60% 96%);
-	--c-background-3-day: hsla(38 44% 86%);
-	--c-background-4-day: hsla(36 40% 90%);
-	--c-background-5-day: hsla(37 50% 94%);
-	--c-background-6-day: hsla(37 48% 92%);
-	--c-background-7-day: hsla(0 0% 7%);
-
-	--c-background-1-night: hsla(36 64% 94%);
-	--c-background-2-night: hsla(36 1% 7%);
-	--c-background-3-night: hsla(36 1% 40%);
-	--c-background-4-night: hsla(36 1% 24%);
-	--c-background-5-night: hsla(0 0% 17%);
-	--c-background-6-night: hsla(36 1% 26%);
-	--c-background-7-night: hsla(0 0% 0%);
-}
-
-/*
- Color schemes
-*/
-:root {
+	/* Color schemes */
 	color-scheme: light dark;
 }
 
-/* light-mode (default) */
 body {
-	--cm-light: initial;
-	--cm-dark: ;
-}
+	/* Light (LT) color theme */
+	--LT-hsl-body: var(--hue-1), 100%, 96%;
 
-/* dark-mode based on media query (based on OS-level setting) */
-@media (prefers-color-scheme: dark) {
-	body:not([data-color-mode='light']) {
-		--cm-light: ;
-		--cm-dark: initial;
+	--LT-hsl-text: var(--hue-1), 9%, 7%;
+	--LT-hsl-text-light: var(--hue-1), 4%, 24%;
+	--LT-hsl-text-extra-light: var(--hue-1), 6%, 44%;
+	--LT-hsl-text-ultra-light: var(--hue-1), 1%, 68%;
+	--LT-hsl-text-inverted: var(--hue-1), 12%, 99%;
+
+	--LT-hsl-bullish: var(--hue-bullish), 68%, 42%;
+	--LT-hsl-bearish: var(--hue-bearish), 92%, 58%;
+
+	--LT-hsl-box: var(--hue-1), 32%, 72%;
+	--LT-a-box-a: 16%;
+	--LT-a-box-b: 26%;
+	--LT-a-box-c: 40%;
+	--LT-a-box-d: 48%;
+	--LT-a-box-e: 60%;
+
+	--LT-hsla-bg-accent-1: var(--hsl-box), var(--a-box-a);
+
+	--LT-input-background: var(--hsl-white);
+	--LT-input-background-active: var(--hsl-white);
+
+	/* Dark (DK) color theme */
+	--DK-hsl-body: var(--hue-1), 1%, 10%;
+
+	--DK-hsl-text: var(--hue-1), 12%, 99%;
+	--DK-hsl-text-light: var(--hue-1), 4%, 86%;
+	--DK-hsl-text-extra-light: var(--hue-1), 3%, 72%;
+	--DK-hsl-text-ultra-light: var(--hue-1), 2%, 52%;
+	--DK-hsl-text-inverted: var(--hue-1), 9%, 7%;
+
+	--DK-hsl-bullish: var(--hue-bullish), 68%, 42%;
+	--DK-hsl-bearish: var(--hue-bearish), 92%, 72%;
+
+	--DK-hsl-box: var(--hue-1), 2%, 92%;
+	--DK-a-box-a: 5%;
+	--DK-a-box-b: 9%;
+	--DK-a-box-c: 16%;
+	--DK-a-box-d: 20%;
+	--DK-a-box-e: 28%;
+
+	--DK-hsla-bg-accent-1: 0, 0%, 0%, 0.2;
+
+	--DK-input-background: var(--hsl-box), var(--a-box-b);
+	--DK-input-background-active: var(--hsl-box), var(--a-box-d);
+
+	/* light-mode (default) */
+	--LT: initial;
+	--DK: ;
+
+	/* dark-mode based on media query (based on OS-level setting) */
+	@media (prefers-color-scheme: dark) {
+		&:not([data-color-mode='light']) {
+			--LT: ;
+			--DK: initial;
+		}
 	}
-}
 
-/* dark-mode based on user preference (stored in cookie, set in body data attribute) */
-body[data-color-mode='dark'] {
-	--cm-light: ;
-	--cm-dark: initial;
-}
+	/* dark-mode based on user preference (stored in cookie, set in body data attribute) */
+	&[data-color-mode='dark'] {
+		--LT: ;
+		--DK: initial;
+	}
 
-/*
-	define color pairs based on --cm-light / --cm-dark values
-  see: https://stackoverflow.com/questions/70845195#answer-70934827
-*/
-body {
-	--c-body: var(--cm-light, var(--c-body-day)) var(--cm-dark, var(--c-body-night));
+	/* Color pairings; see: https://stackoverflow.com/questions/70845195#answer-70934827 */
+	--hsl-body: var(--LT, var(--LT-hsl-body)) var(--DK, var(--DK-hsl-body));
 
-	--c-text-default: var(--cm-light, var(--c-text-default-day)) var(--cm-dark, var(--c-text-default-night));
-	--c-text-light: var(--cm-light, var(--c-text-light-day)) var(--cm-dark, var(--c-text-light-night));
-	--c-text-extra-light: var(--cm-light, var(--c-text-extra-light-day)) var(--cm-dark, var(--c-text-extra-light-night));
-	--c-text-ultra-light: var(--cm-light, var(--c-text-ultra-light-day)) var(--cm-dark, var(--c-text-ultra-light-night));
-	--c-text-inverted: var(--cm-light, var(--c-text-inverted-day)) var(--cm-dark, var(--c-text-inverted-night));
+	--hsl-text: var(--LT, var(--LT-hsl-text)) var(--DK, var(--DK-hsl-text));
+	--hsl-text-light: var(--LT, var(--LT-hsl-text-light)) var(--DK, var(--DK-hsl-text-light));
+	--hsl-text-extra-light: var(--LT, var(--LT-hsl-text-extra-light)) var(--DK, var(--DK-hsl-text-extra-light));
+	--hsl-text-ultra-light: var(--LT, var(--LT-hsl-text-ultra-light)) var(--DK, var(--DK-hsl-text-ultra-light));
+	--hsl-text-inverted: var(--LT, var(--LT-hsl-text-inverted)) var(--DK, var(--DK-hsl-text-inverted));
 
-	--c-background-1: var(--cm-light, var(--c-background-1-day)) var(--cm-dark, var(--c-background-1-night));
-	--c-background-2: var(--cm-light, var(--c-background-2-day)) var(--cm-dark, var(--c-background-2-night));
-	--c-background-3: var(--cm-light, var(--c-background-3-day)) var(--cm-dark, var(--c-background-3-night));
-	--c-background-4: var(--cm-light, var(--c-background-4-day)) var(--cm-dark, var(--c-background-4-night));
-	--c-background-5: var(--cm-light, var(--c-background-5-day)) var(--cm-dark, var(--c-background-5-night));
-	--c-background-6: var(--cm-light, var(--c-background-6-day)) var(--cm-dark, var(--c-background-6-night));
-	--c-background-7: var(--cm-light, var(--c-background-7-day)) var(--cm-dark, var(--c-background-7-night));
+	--hsl-bullish: var(--LT, var(--LT-hsl-bullish)) var(--DK, var(--DK-hsl-bullish));
+	--hsl-bearish: var(--LT, var(--LT-hsl-bearish)) var(--DK, var(--DK-hsl-bearish));
+
+	--hsl-box: var(--LT, var(--LT-hsl-box)) var(--DK, var(--DK-hsl-box));
+	--a-box-a: var(--LT, var(--LT-a-box-a)) var(--DK, var(--DK-a-box-a));
+	--a-box-b: var(--LT, var(--LT-a-box-b)) var(--DK, var(--DK-a-box-b));
+	--a-box-c: var(--LT, var(--LT-a-box-c)) var(--DK, var(--DK-a-box-c));
+	--a-box-d: var(--LT, var(--LT-a-box-d)) var(--DK, var(--DK-a-box-d));
+	--a-box-e: var(--LT, var(--LT-a-box-e)) var(--DK, var(--DK-a-box-e));
+
+	--hsla-background-accent-1: var(--LT, var(--LT-hsla-bg-accent-1)) var(--DK, var(--DK-hsla-bg-accent-1));
+
+	--input-background: var(--LT, var(--LT-input-background)) var(--DK, var(--DK-input-background));
+	--input-background-active: var(--LT, var(--LT-input-background-active)) var(--DK, var(--DK-input-background-active));
+
+	color: hsla(var(--hsl-text));
+	background-color: hsla(var(--hsl-body));
+	transition-property: background-color, color;
+	transition-duration: var(--time-md);
 }
