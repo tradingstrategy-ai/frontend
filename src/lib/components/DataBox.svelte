@@ -80,7 +80,7 @@ Uses together with SummaryBox or DataBoxes to display a set of properties / stat
 	.label {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: hsla(var(--hsl-text-extra-light));
+		color: hsl(var(--hsl-text-extra-light));
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-medium);

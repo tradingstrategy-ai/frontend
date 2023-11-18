@@ -73,7 +73,7 @@
 		</Section>
 	{/if}
 
-	<Section padding="lg" --section-background="hsla(var(--hsla-background-accent-1))">
+	<Section padding="lg" --section-background="hsl(var(--hsla-background-accent-1))">
 		<div class="strategies">
 			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>

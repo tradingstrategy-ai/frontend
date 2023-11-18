@@ -87,7 +87,7 @@
 	}
 
 	.icon {
-		background: hsla(var(--hsla-box-1));
+		background: hsl(var(--hsla-box-1));
 		border-radius: var(--icon-size);
 		height: var(--icon-size);
 		width: var(--icon-size);

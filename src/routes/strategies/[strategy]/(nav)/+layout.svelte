@@ -66,7 +66,7 @@
 
 	.beta-notice {
 		margin: var(--space-xl) 0;
-		color: hsla(var(--hsl-text-extra-light));
+		color: hsl(var(--hsl-text-extra-light));
 	}
 
 	.error-wrapper {

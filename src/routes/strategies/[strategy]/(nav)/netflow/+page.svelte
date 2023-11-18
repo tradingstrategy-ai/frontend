@@ -88,7 +88,7 @@
 			padding: 0;
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--f-heading-xs-spacing, normal);
-			color: hsla(var(--hsl-text-light));
+			color: hsl(var(--hsl-text-light));
 			text-transform: none;
 			box-shadow: none;
 

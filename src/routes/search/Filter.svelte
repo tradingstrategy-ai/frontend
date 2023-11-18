@@ -105,9 +105,9 @@ Display filter options as checkboxes search queries.
 		appearance: none;
 		width: 1.5rem;
 		height: 1.5rem;
-		border: 2px solid hsla(var(--hsl-text));
+		border: 2px solid hsl(var(--hsl-text));
 		border-radius: var(--radius-xxs);
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 		outline: none;
 	}
 

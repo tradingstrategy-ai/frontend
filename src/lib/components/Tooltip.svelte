@@ -42,7 +42,7 @@ For more information see:
 
 			/* Utility class to provide affordance that the trigger is interactive */
 			:global(.underline) {
-				border-bottom: 1px dotted hsla(var(--hsl-text-light));
+				border-bottom: 1px dotted hsl(var(--hsl-text-light));
 			}
 		}
 
@@ -67,12 +67,12 @@ For more information see:
 
 			.inner {
 				padding: 1.125rem;
-				border: 1px solid hsla(var(--hsl-box-3));
+				border: 1px solid hsl(var(--hsl-box-3));
 				border-radius: var(--radius-md);
-				background: hsla(var(--hsl-text-inverted));
+				background: hsl(var(--hsl-text-inverted));
 				box-shadow: var(--shadow-3);
 				font: var(--f-ui-small-light);
-				color: hsla(var(--hsl-text));
+				color: hsl(var(--hsl-text));
 				text-align: left;
 			}
 

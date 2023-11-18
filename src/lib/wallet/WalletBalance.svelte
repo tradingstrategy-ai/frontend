@@ -45,7 +45,7 @@
 	<WalletInfoItem>
 		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} />
 		{#await fetchNativeCurrency(address)}
-			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+			<Spinner size="30" color="hsl(var(--hsl-text-light))" />
 		{:then balance}
 			{formatNumber(balance.formatted, 2, 4)}
 		{/await}
@@ -54,7 +54,7 @@
 	<WalletInfoItem>
 		<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
 		{#await fetchDenominationToken(address)}
-			<Spinner size="30" color="hsla(var(--hsl-text-light))" />
+			<Spinner size="30" color="hsl(var(--hsl-text-light))" />
 		{:then balance}
 			{formatNumber(balance.formatted, 2, 4)}
 		{:catch}

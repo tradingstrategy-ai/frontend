@@ -36,7 +36,7 @@
 		}
 
 		&:not(:first-of-type) {
-			border-bottom: 1px solid hsla(var(--hsl-terminal-light), 0.15);
+			border-bottom: 1px solid hsl(var(--hsl-terminal-light) / 15%);
 		}
 
 		.message {
@@ -73,17 +73,20 @@
 		}
 
 		&.trade {
-			color: palegreen;
+			color: hsl(var(--hsl-success));
 		}
+
 		&.warning {
-			color: lightyellow;
+			color: hsl(var(--hsl-warning));
 		}
+
 		&.error {
-			color: lightcoral;
+			color: hsl(var(--hsl-error));
 		}
+
 		&.critical {
-			background: red;
-			color: white;
+			background: hsl(var(--hsl-error) / 65%);
+			color: hsl(var(--hsl-white));
 		}
 	}
 </style>

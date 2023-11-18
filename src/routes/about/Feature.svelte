@@ -94,7 +94,7 @@
 			}
 
 			.bg {
-				fill: hsla(var(--hsl-body));
+				fill: hsl(var(--hsl-body));
 			}
 
 			:not(.bg) {

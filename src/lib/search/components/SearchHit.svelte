@@ -108,11 +108,11 @@ props.
 			&:hover {
 				:global .up-down-indicator {
 					&.bearish {
-						background: hsla(var(--hsl-bearish), 0.24) !important;
+						background: hsl(var(--hsl-bearish) / 24%) !important;
 					}
 
 					&.bullish {
-						background: hsla(var(--hsl-bullish), 0.24) !important;
+						background: hsl(var(--hsl-bullish) / 24%) !important;
 					}
 				}
 			}
@@ -165,7 +165,7 @@ props.
 			padding: 0.15em;
 			border-radius: 1em;
 			transform: translate(50%, 50%);
-			background: hsla(var(--hsl-text-inverted));
+			background: hsl(var(--hsl-text-inverted));
 			box-shadow: var(--shadow-1);
 		}
 

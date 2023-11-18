@@ -4,27 +4,27 @@
  */
 .stx_candle_up,
 .stx_candle_shadow_up {
-	color: hsla(var(--hsl-bullish));
-	border-left-color: hsla(var(--hsl-bullish));
+	color: hsl(var(--hsl-bullish));
+	border-left-color: hsl(var(--hsl-bullish));
 }
 
 .stx_candle_down,
 .stx_candle_shadow_down {
-	color: hsla(var(--hsl-bearish));
-	border-left-color: hsla(var(--hsl-bearish));
+	color: hsl(var(--hsl-bearish));
+	border-left-color: hsl(var(--hsl-bearish));
 }
 
 .stx_current_hr_up {
-	background-color: hsla(var(--hsl-bullish));
+	background-color: hsl(var(--hsl-bullish));
 }
 
 .stx_current_hr_down {
-	background-color: hsla(var(--hsl-bearish));
+	background-color: hsl(var(--hsl-bearish));
 }
 
 .stx_volume_underlay_up,
 .stx_volume_underlay_down {
-	border-left-color: hsla(var(--hsl-body));
+	border-left-color: hsl(var(--hsl-body));
 	opacity: 0.3;
 }
 
@@ -44,16 +44,16 @@
 
 .stx_yaxis,
 .stx_xaxis {
-	color: hsla(var(--hsl-text-light));
+	color: hsl(var(--hsl-text-light));
 }
 
 .stx_xaxis_dark {
-	color: hsla(var(--hsl-text));
+	color: hsl(var(--hsl-text));
 }
 
 .stx-float-date,
 .stx-float-price {
-	color: hsla(var(--hsl-text));
+	color: hsl(var(--hsl-text));
 	/* this needs to be a solid bg color (no transparency) */
 	background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 36%);
 }
@@ -97,7 +97,7 @@
 /* default line chart styles */
 .stx_line_chart {
 	--hsl-chart-line: var(--hsl-text-extra-light);
-	color: hsla(var(--hsl-chart-line));
+	color: hsl(var(--hsl-chart-line));
 	width: 2px;
 }
 
@@ -114,9 +114,9 @@
 /* default mountain chart styles */
 .stx_mountain_chart {
 	--hsl-chart-mountain: var(--hsl-text-extra-light);
-	border: hsla(var(--hsl-chart-mountain)); /* line */
-	background-color: hsla(var(--hsl-chart-mountain), 0.25); /* gradient dark */
-	color: hsla(var(--hsl-chart-mountain), 0); /* gradient light */
+	border: hsl(var(--hsl-chart-mountain)); /* line */
+	background-color: hsl(var(--hsl-chart-mountain) / 25%); /* gradient dark */
+	color: hsl(var(--hsl-chart-mountain) / 0%); /* gradient light */
 	width: 2px;
 }
 

@@ -34,7 +34,7 @@ button-like control with a segement for each possible value.
 		padding: var(--space-sm) var(--space-md);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
-		color: hsla(var(--hsl-text));
+		color: hsl(var(--hsl-text));
 		transition: all var(--time-sm) ease-out;
 
 		@media (--viewport-sm-down) {
@@ -65,8 +65,8 @@ button-like control with a segement for each possible value.
 
 		&:hover,
 		&.selected {
-			background: hsla(var(--hsl-text), 1);
-			color: hsla(var(--hsl-text-inverted));
+			background: hsl(var(--hsl-text));
+			color: hsl(var(--hsl-text-inverted));
 		}
 	}
 

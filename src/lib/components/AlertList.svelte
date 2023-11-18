@@ -33,18 +33,18 @@ component instead.
 	}
 
 	.error {
-		background: hsl(var(--hsl-error), 0.1);
-		border-color: hsl(var(--hsl-error), 1);
+		background: hsl(var(--hsl-error) / 10%);
+		border-color: hsl(var(--hsl-error));
 	}
 
 	.success {
-		background: hsl(var(--hsl-success), 0.1);
-		border-color: hsl(var(--hsl-success), 1);
+		background: hsl(var(--hsl-success) / 10%);
+		border-color: hsl(var(--hsl-success));
 	}
 
 	.warning {
-		background: hsl(var(--hsl-warning), 0.1);
-		border-color: hsl(var(--hsl-warning), 1);
+		background: hsl(var(--hsl-warning) / 10%);
+		border-color: hsl(var(--hsl-warning));
 	}
 
 	.info {

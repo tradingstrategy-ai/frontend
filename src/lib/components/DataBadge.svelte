@@ -60,27 +60,27 @@
 		}
 
 		&.bullish {
-			background: hsl(var(--hsl-bullish), 0.25);
+			background: hsl(var(--hsl-bullish) / 25%);
 			color: hsl(var(--hsl-bullish));
 		}
 
 		&.bearish {
-			background: hsl(var(--hsl-bearish), 0.25);
+			background: hsl(var(--hsl-bearish) / 25%);
 			color: hsl(var(--hsl-bearish));
 		}
 
 		&.error {
-			background: hsl(var(--hsl-error), 0.25);
+			background: hsl(var(--hsl-error) / 25%);
 			color: hsl(var(--hsl-error));
 		}
 
 		&.success {
-			background: hsl(var(--hsl-success), 0.25);
+			background: hsl(var(--hsl-success) / 25%);
 			color: hsl(var(--hsl-success));
 		}
 
 		&.warning {
-			background: hsl(var(--hsl-warning), 0.25);
+			background: hsl(var(--hsl-warning) / 25%);
 			color: hsl(var(--hsl-warning));
 		}
 	}

@@ -1,6 +1,6 @@
 .text-field {
-	--active-color: hsla(var(--hsl-text-extra-light));
-	background: hsla(var(--background-color));
+	--active-color: hsl(var(--hsl-text-extra-light));
+	background: hsl(var(--background-color));
 	border-radius: var(--radius-md);
 	border: 2px solid var(--background-color);
 	color: inherit;

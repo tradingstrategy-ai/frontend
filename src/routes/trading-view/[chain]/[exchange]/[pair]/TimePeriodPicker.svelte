@@ -56,8 +56,8 @@ Radio button options to select a time period.
 		}
 
 		&.selected {
-			background: hsla(var(--hsl-text), 1);
-			color: hsla(var(--hsl-text-inverted));
+			background: hsl(var(--hsl-text));
+			color: hsl(var(--hsl-text-inverted));
 		}
 	}
 

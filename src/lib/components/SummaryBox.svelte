@@ -91,7 +91,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 			p {
 				/* grid-area: 2 / 1 / auto / span 2; */
 				grid-column: 1 / span 2;
-				color: hsla(var(--hsl-text-extra-light));
+				color: hsl(var(--hsl-text-extra-light));
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--f-ui-md-spacing, normal);
 			}

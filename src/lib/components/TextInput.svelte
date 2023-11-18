@@ -147,9 +147,9 @@ unknown props through to HTML input element.
 		input {
 			width: inherit;
 			padding: 0 var(--space-sl);
-			border: 1px hsla(var(--hsla-input-border)) solid;
+			border: 1px hsl(var(--hsla-input-border)) solid;
 			border-radius: var(--border-radius);
-			background: hsla(var(--hsla-input-background));
+			background: hsl(var(--hsla-input-background));
 			font: inherit;
 			letter-spacing: inherit;
 			color: inherit;
@@ -165,11 +165,11 @@ unknown props through to HTML input element.
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--hsla-input-background-focus));
+				background: hsl(var(--hsla-input-background-focus));
 			}
 
 			&:focus {
-				border-color: hsla(var(--hsla-input-border-focus));
+				border-color: hsl(var(--hsla-input-border-focus));
 				outline: none;
 			}
 

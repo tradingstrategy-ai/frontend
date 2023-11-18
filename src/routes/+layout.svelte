@@ -61,11 +61,11 @@
 
 	/* Price action and candle colors */
 	.bullish {
-		color: hsla(var(--hsl-bullish));
+		color: hsl(var(--hsl-bullish));
 	}
 
 	.bearish {
-		color: hsla(var(--hsl-bearish));
+		color: hsl(var(--hsl-bearish));
 	}
 
 	/* global skeleton class */

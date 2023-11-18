@@ -67,7 +67,7 @@ Page to display the strategy backtest results.
 
 		{#if !iframeLoaded}
 			<div class="spinner-wrapper">
-				<Spinner size="2rem" color="hsla(var(--hsl-text-light))" />
+				<Spinner size="2rem" color="hsl(var(--hsl-text-light))" />
 			</div>
 		{/if}
 

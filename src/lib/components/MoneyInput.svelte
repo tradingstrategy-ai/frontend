@@ -93,8 +93,8 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 		.inner {
 			display: flex;
-			background: hsla(var(--hsla-input-background));
-			border: 1px hsla(var(--hsla-input-border)) solid;
+			background: hsl(var(--hsla-input-background));
+			border: 1px hsl(var(--hsla-input-border)) solid;
 			border-radius: var(--radius-sm);
 			height: 4.25rem;
 			overflow: hidden;
@@ -102,7 +102,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 		.unit {
 			background-image: linear-gradient(hsl(var(--hsla-box-2)), hsl(var(--hsla-box-2))),
-				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
+				linear-gradient(hsl(var(--hsl-body)), hsl(var(--hsl-body)));
 			display: grid;
 			font: var(--f-ui-lg-bold);
 			height: 100%;
@@ -144,11 +144,11 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--hsla-input-background-focus));
+				background: hsl(var(--hsla-input-background-focus));
 			}
 
 			&:focus {
-				border-color: hsla(var(--hsla-input-border-focus));
+				border-color: hsl(var(--hsla-input-border-focus));
 				outline: none;
 			}
 		}

@@ -47,18 +47,18 @@ or other contexts where a stronger visual representation is desired.
 		}
 
 		:global(.bullish) {
-			background: hsla(var(--hsl-bullish), 0.12);
+			background: hsl(var(--hsl-bullish) / 12%);
 
 			&:hover {
-				background: hsla(var(--hsl-bullish), 0.24) !important;
+				background: hsl(var(--hsl-bullish) / 24%) !important;
 			}
 		}
 
 		:global(.bearish) {
-			background: hsla(var(--hsl-bearish), 0.12);
+			background: hsl(var(--hsl-bearish) / 12%);
 
 			&:hover {
-				background: hsla(var(--hsl-bearish), 0.24) !important;
+				background: hsl(var(--hsl-bearish) / 24%) !important;
 			}
 		}
 	}

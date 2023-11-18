@@ -173,8 +173,8 @@
 			:is(td, th) {
 				vertical-align: top;
 				padding: var(--space-ss);
-				border-top: 1px solid hsla(var(--hsl-text-extra-light));
-				border-bottom: 1px solid hsla(var(--hsl-text-extra-light));
+				border-top: 1px solid hsl(var(--hsl-text-extra-light));
+				border-bottom: 1px solid hsl(var(--hsl-text-extra-light));
 
 				&:first-child {
 					padding-left: 0;

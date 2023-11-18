@@ -184,7 +184,7 @@
 		.trading-pair {
 			font-weight: bold;
 			& .swap-fee {
-				color: hsla(var(--hsl-text-extra-light));
+				color: hsl(var(--hsl-text-extra-light));
 			}
 		}
 
@@ -229,7 +229,7 @@
 
 				&:first-child {
 					padding-left: var(--space-sl);
-					color: hsla(var(--hsl-text-extra-light));
+					color: hsl(var(--hsl-text-extra-light));
 				}
 
 				&:last-child {

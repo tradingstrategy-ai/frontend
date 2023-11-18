@@ -68,7 +68,7 @@
 		left: 0;
 		right: 0;
 		min-height: 100vh;
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 		display: grid;
 		grid-template-rows: 1fr auto 1fr;
 		gap: var(--space-4xl);

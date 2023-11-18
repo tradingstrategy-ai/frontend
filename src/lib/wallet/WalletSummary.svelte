@@ -58,13 +58,13 @@
 		margin-left: var(--space-sm);
 		padding: var(--space-xs) var(--space-sl);
 		border-radius: var(--space-md);
-		background: hsla(var(--hsl-success), 0.2);
+		background: hsl(var(--hsl-success) / 20%);
 		font: var(--f-ui-sm-medium);
-		color: hsla(var(--hsl-success));
+		color: hsl(var(--hsl-success));
 
 		.dot {
 			animation: pulse-opacity 1.5s ease-out infinite;
-			background: hsla(var(--hsl-success));
+			background: hsl(var(--hsl-success));
 			border-radius: 100%;
 			height: 0.625rem;
 			width: 0.625rem;

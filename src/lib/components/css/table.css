@@ -36,7 +36,7 @@ table:not(.table) {
 	}
 
 	thead tr:first-child {
-		background-color: hsla(var(--hsl-body));
+		background-color: hsl(var(--hsl-body));
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -47,9 +47,9 @@ table:not(.table) {
 	}
 
 	th {
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 		border-radius: var(--table-border-radius);
-		color: hsla(var(--hsl-text-extra-light));
+		color: hsl(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
 		overflow: hidden;
@@ -67,7 +67,7 @@ table:not(.table) {
 
 			&:hover {
 				background: hsl(var(--hsla-box-1));
-				color: hsla(var(--hsl-text-light));
+				color: hsl(var(--hsl-text-light));
 			}
 
 			.icon svg {
@@ -82,7 +82,7 @@ table:not(.table) {
 		}
 
 		&.sorted {
-			color: hsla(var(--hsl-text));
+			color: hsl(var(--hsl-text));
 			padding-right: var(--space-5xl);
 		}
 	}
@@ -119,15 +119,15 @@ table:not(.table) {
 
 			.button {
 				--c-accent: var(--hsl-text);
-				color: hsla(var(--hsl-text-inverted));
+				color: hsl(var(--hsl-text-inverted));
 			}
 
 			.up-down-cell .up-down-indicator {
 				&.bearish {
-					background: hsla(var(--hsl-bearish), 0.24) !important;
+					background: hsl(var(--hsl-bearish) / 24%) !important;
 				}
 				&.bullish {
-					background: hsla(var(--hsl-bullish), 0.24) !important;
+					background: hsl(var(--hsl-bullish) / 24%) !important;
 				}
 			}
 		}

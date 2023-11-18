@@ -19,8 +19,8 @@
 	.select {
 		--wrapper-padding: var(--space-sl);
 		align-items: center;
-		border: 1px hsla(var(--hsla-input-border)) solid;
-		background: hsla(var(--hsla-input-background));
+		border: 1px hsl(var(--hsla-input-border)) solid;
+		background: hsl(var(--hsla-input-background));
 		border-radius: var(--radius-sm);
 		display: flex;
 		justify-content: space-between;
@@ -29,11 +29,11 @@
 
 		&:focus-within,
 		&:hover {
-			background: hsla(var(--hsla-input-background-focus));
+			background: hsl(var(--hsla-input-background-focus));
 		}
 
 		&:focus-within {
-			border-color: hsla(var(--hsla-input-border-focus));
+			border-color: hsl(var(--hsla-input-border-focus));
 			outline: none;
 		}
 

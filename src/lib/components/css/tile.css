@@ -32,8 +32,8 @@
 
 	&:is(:hover, :focus) {
 		.button {
-			background: hsla(var(--hsl-text), 1) !important;
-			color: hsla(var(--hsl-text-inverted)) !important;
+			background: hsl(var(--hsl-text)) !important;
+			color: hsl(var(--hsl-text-inverted)) !important;
 		}
 	}
 }

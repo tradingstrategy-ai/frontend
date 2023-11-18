@@ -38,7 +38,7 @@
 			}
 
 			&.disabled {
-				color: hsla(var(--hsl-text-extra-light));
+				color: hsl(var(--hsl-text-extra-light));
 				cursor: not-allowed;
 				&:hover {
 					background: hsl(var(--hsla-box-2));
@@ -46,8 +46,8 @@
 			}
 
 			&.completed {
-				background: hsla(var(--hsl-success), 0.1);
-				color: hsla(var(--hsl-success));
+				background: hsl(var(--hsl-success) / 10%);
+				color: hsl(var(--hsl-success));
 			}
 		}
 	}
