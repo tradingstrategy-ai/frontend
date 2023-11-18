@@ -75,7 +75,7 @@
 
 		&.active,
 		&.active:hover {
-			background: hsl(var(--hsl-box), var(--a-box-c));
+			background: hsl(var(--hsla-box-3));
 		}
 	}
 </style>

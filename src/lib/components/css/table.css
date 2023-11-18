@@ -66,7 +66,7 @@ table:not(.table) {
 			user-select: none;
 
 			&:hover {
-				background: hsla(var(--hsl-box), var(--a-box-a));
+				background: hsl(var(--hsla-box-1));
 				color: hsla(var(--hsl-text-light));
 			}
 
@@ -89,7 +89,7 @@ table:not(.table) {
 
 	tbody tr {
 		td {
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsl(var(--hsla-box-2));
 			height: var(--body-cell-height);
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
@@ -114,7 +114,7 @@ table:not(.table) {
 
 		&:is(:hover, :focus, :focus-within) {
 			td {
-				background: hsla(var(--hsl-box), var(--a-box-d));
+				background: hsl(var(--hsla-box-4));
 			}
 
 			.button {
@@ -158,7 +158,7 @@ table:not(.table) {
 			}
 
 			tbody tr {
-				background: hsla(var(--hsl-box), var(--a-box-b));
+				background: hsl(var(--hsla-box-2));
 				border-radius: var(--table-border-radius);
 				display: grid;
 				grid-template-columns: 1fr 1fr;
@@ -230,7 +230,7 @@ table.loading {
 
 		&::before {
 			animation: pulse-opacity 1s infinite ease-out;
-			background: hsla(var(--hsl-box), var(--a-box-c));
+			background: hsl(var(--hsla-box-3));
 			bottom: var(--space-sm);
 			border-radius: var(--radius-sm);
 			content: '';
@@ -254,7 +254,7 @@ table.loading {
 
 			&::before {
 				animation: pulse-opacity 1s infinite ease-out;
-				background: hsla(var(--hsl-box), var(--a-box-c));
+				background: hsl(var(--hsla-box-3));
 				bottom: var(--space-lg);
 				border-radius: var(--radius-sm);
 				content: '';

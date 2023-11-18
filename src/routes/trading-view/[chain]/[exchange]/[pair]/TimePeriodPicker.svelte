@@ -33,7 +33,7 @@ Radio button options to select a time period.
 		flex: 1;
 		margin: 0;
 		padding-block: var(--space-md);
-		background: hsla(var(--hsl-box), var(--a-box-d));
+		background: hsl(var(--hsla-box-4));
 		font: var(--f-ui-md-medium);
 		text-align: center;
 		text-transform: capitalize;

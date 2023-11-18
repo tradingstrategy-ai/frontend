@@ -48,8 +48,8 @@ component instead.
 	}
 
 	.info {
-		background: hsl(var(--hsl-box), var(--a-box-a));
-		border-color: hsl(var(--hsl-box), var(--a-box-c));
+		background: hsl(var(--hsla-box-1));
+		border-color: hsl(var(--hsla-box-3));
 	}
 
 	.lg {

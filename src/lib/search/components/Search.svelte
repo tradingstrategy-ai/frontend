@@ -166,7 +166,8 @@ Display site-wide search box for use in top-nav.
 		--text-input-height: 2.875rem;
 
 		background: hsla(var(--hsl-body));
-		border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
+		border: 1px hsl(var(--hsla-box-3)) solid;
+		box-shadow: var(--shadow-3);
 		overflow: hidden;
 		position: absolute;
 		right: 0;
@@ -201,7 +202,7 @@ Display site-wide search box for use in top-nav.
 		}
 
 		.inner {
-			background: hsla(var(--hsl-box), var(--a-box-a));
+			background: hsl(var(--hsla-box-1));
 			box-shadow: var(--shadow-sm);
 			display: flex;
 			flex-direction: column;

@@ -7,22 +7,22 @@
 	transition: background var(--time-sm) ease-out;
 
 	&.a {
-		background: hsla(var(--hsl-box), var(--a-box-a));
-		--background-hover: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-1));
+		--background-hover: hsl(var(--hsla-box-2));
 	}
 
 	&.b {
-		background: hsla(var(--hsl-box), var(--a-box-b));
-		--background-hover: hsla(var(--hsl-box), var(--a-box-d));
+		background: hsl(var(--hsla-box-2));
+		--background-hover: hsl(var(--hsla-box-4));
 	}
 
 	&.c {
-		background: hsla(var(--hsl-box), var(--a-box-c));
-		--background-hover: hsla(var(--hsl-box), var(--a-box-d));
+		background: hsl(var(--hsla-box-3));
+		--background-hover: hsl(var(--hsla-box-4));
 	}
 
 	&.d {
-		background: hsla(var(--hsl-box), var(--a-box-d));
+		background: hsl(var(--hsla-box-4));
 	}
 
 	&:hover,

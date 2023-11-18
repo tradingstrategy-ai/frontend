@@ -93,15 +93,15 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 		.inner {
 			display: flex;
-			background: hsla(var(--input-background));
-			border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
+			background: hsla(var(--hsla-input-background));
+			border: 1px hsla(var(--hsla-input-border)) solid;
 			border-radius: var(--radius-sm);
 			height: 4.25rem;
 			overflow: hidden;
 		}
 
 		.unit {
-			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-b)), hsla(var(--hsl-box), var(--a-box-b))),
+			background-image: linear-gradient(hsl(var(--hsla-box-2)), hsl(var(--hsla-box-2))),
 				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
 			display: grid;
 			font: var(--f-ui-lg-bold);
@@ -139,16 +139,16 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			}
 
 			&:disabled {
-				background: hsla(var(--hsl-box), var(--a-box-a));
+				background: hsl(var(--hsla-box-1));
 			}
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--input-background-active));
+				background: hsla(var(--hsla-input-background-focus));
 			}
 
 			&:focus {
-				border-color: hsla(var(--hsl-text-extra-light));
+				border-color: hsla(var(--hsla-input-border-focus));
 				outline: none;
 			}
 		}

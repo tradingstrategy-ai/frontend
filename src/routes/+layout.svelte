@@ -72,7 +72,7 @@
 	.skeleton {
 		color: transparent !important;
 		position: relative;
-		--skeleton-background: hsla(var(--hsl-box), var(--a-box-c));
+		--skeleton-background: hsl(var(--hsla-box-3));
 
 		&::before {
 			width: var(--skeleton-width, 100%);

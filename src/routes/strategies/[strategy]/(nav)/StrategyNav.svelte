@@ -182,7 +182,7 @@
 		font: var(--f-ui-md-bold);
 		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: hsl(var(--hsl-text));
-		background: hsl(var(--hsl-box), var(--a-box-c));
+		background: hsl(var(--hsla-box-3));
 
 		:global(a:not([href]):not([tabindex])) & {
 			background: hsl(var(--hsl-text));

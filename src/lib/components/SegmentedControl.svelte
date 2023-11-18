@@ -30,7 +30,7 @@ button-like control with a segement for each possible value.
 	}
 
 	label {
-		background: hsla(var(--hsl-box), var(--a-box-d));
+		background: hsl(var(--hsla-box-4));
 		padding: var(--space-sm) var(--space-md);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);

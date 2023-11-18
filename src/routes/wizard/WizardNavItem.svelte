@@ -33,7 +33,7 @@
 			transition: all var(--time-sm) ease-out;
 
 			&.active {
-				background: hsla(var(--hsl-box), var(--a-box-d));
+				background: hsl(var(--hsla-box-4));
 				cursor: default;
 			}
 
@@ -41,7 +41,7 @@
 				color: hsla(var(--hsl-text-extra-light));
 				cursor: not-allowed;
 				&:hover {
-					background: hsla(var(--hsl-box), var(--a-box-b));
+					background: hsl(var(--hsla-box-2));
 				}
 			}
 

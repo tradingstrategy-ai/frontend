@@ -79,7 +79,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		height: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
-		background: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-2));
 
 		@media (--viewport-sm-up) {
 			max-height: 20rem;

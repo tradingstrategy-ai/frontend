@@ -19,16 +19,21 @@
 	.select {
 		--wrapper-padding: var(--space-sl);
 		align-items: center;
-		border: 1px hsla(var(--hsl-text-ultra-light)) solid;
-		background: hsla(var(--input-background));
+		border: 1px hsla(var(--hsla-input-border)) solid;
+		background: hsla(var(--hsla-input-background));
 		border-radius: var(--radius-sm);
 		display: flex;
 		justify-content: space-between;
 		outline: none;
 		position: relative;
 
+		&:focus-within,
+		&:hover {
+			background: hsla(var(--hsla-input-background-focus));
+		}
+
 		&:focus-within {
-			border-color: hsla(var(--hsl-text-extra-light));
+			border-color: hsla(var(--hsla-input-border-focus));
 			outline: none;
 		}
 

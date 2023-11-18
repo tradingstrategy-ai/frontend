@@ -57,7 +57,7 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 		font: var(--f-ui-lg-medium);
 
 		input:checked + & {
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsl(var(--hsla-box-2));
 			color: hsl(var(--hsl-text));
 			cursor: auto;
 		}

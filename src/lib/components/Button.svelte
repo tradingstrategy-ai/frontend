@@ -94,7 +94,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	}
 
 	.primary {
-		--c-accent: var(--hsl-box), var(--a-box-d);
+		--c-accent: var(--hsla-box-4);
 		background: hsla(var(--c-accent));
 		color: hsla(var(--hsl-text));
 		outline-color: var(--c-accent);
@@ -120,18 +120,18 @@ using flags: primary (default), secondary, ternary, quarternary.
 	}
 
 	.tertiary {
-		background: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-2));
 		color: hsla(var(--hsl-text));
 		border-color: transparent;
 
 		&:hover,
 		&:focus {
-			background: hsla(var(--hsl-box), var(--a-box-d));
+			background: hsl(var(--hsla-box-4));
 		}
 	}
 
 	.quarternary {
-		background: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-2));
 	}
 
 	.ghost {

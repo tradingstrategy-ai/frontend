@@ -114,7 +114,7 @@
 	}
 
 	.strategies {
-		background: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-2));
 		border-radius: var(--radius-xl);
 		display: grid;
 		gap: var(--space-3xl);

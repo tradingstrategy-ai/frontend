@@ -30,7 +30,7 @@
 
 .stx_grid,
 .stx_grid_dark {
-	color: hsla(var(--hsl-box), var(--a-box-c));
+	color: hsl(var(--hsla-box-3));
 	border-style: solid;
 }
 
@@ -55,7 +55,7 @@
 .stx-float-price {
 	color: hsla(var(--hsl-text));
 	/* this needs to be a solid bg color (no transparency) */
-	background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) var(--a-box-c));
+	background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 36%);
 }
 
 .stx-float-date {
@@ -70,7 +70,7 @@
 }
 
 .stx_jump_today {
-	background: hsla(var(--hsl-box), var(--a-box-b));
+	background: hsl(var(--hsla-box-2));
 }
 
 .crossY,

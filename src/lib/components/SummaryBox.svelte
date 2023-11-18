@@ -52,7 +52,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 		container-type: inline-size;
 		display: grid;
 		grid-template-rows: auto 1fr auto;
-		background: hsla(var(--hsl-box), var(--a-box-a));
+		background: hsl(var(--hsla-box-1));
 		border-radius: var(--radius-md);
 		padding: var(--space-lg) var(--space-lg);
 

@@ -17,7 +17,7 @@
 
 <style lang="postcss">
 	.data-badge {
-		background: hsla(var(--hsla-box-2));
+		background: hsl(var(--hsl-box-2));
 		display: inline-grid;
 		transition: var(--transition-1);
 
@@ -59,19 +59,29 @@
 			padding: 0.625rem;
 		}
 
-		&:is(.bullish, .success) {
-			background: hsla(var(--hsl-bullish), 0.25);
-			color: hsla(var(--hsl-bullish));
+		&.bullish {
+			background: hsl(var(--hsl-bullish), 0.25);
+			color: hsl(var(--hsl-bullish));
 		}
 
-		&:is(.bearish, .error) {
-			background: hsla(var(--hsl-bearish), 0.25);
-			color: hsla(var(--hsl-bearish));
+		&.bearish {
+			background: hsl(var(--hsl-bearish), 0.25);
+			color: hsl(var(--hsl-bearish));
 		}
 
-		&:is(.warning) {
-			background: hsla(var(--hsl-warning), 0.25);
-			color: hsla(var(--hsl-warning));
+		&.error {
+			background: hsl(var(--hsl-error), 0.25);
+			color: hsl(var(--hsl-error));
+		}
+
+		&.success {
+			background: hsl(var(--hsl-success), 0.25);
+			color: hsl(var(--hsl-success));
+		}
+
+		&.warning {
+			background: hsl(var(--hsl-warning), 0.25);
+			color: hsl(var(--hsl-warning));
 		}
 	}
 </style>

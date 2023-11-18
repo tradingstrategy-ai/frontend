@@ -156,8 +156,8 @@
 			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
-			background: hsla(var(--hsl-box), var(--a-box-b));
-			box-shadow: -0.75rem 0.75rem 0 hsla(var(--hsl-box), var(--a-box-e));
+			background: hsl(var(--hsla-quoteblock-background));
+			box-shadow: -0.75rem 0.75rem 0 hsl(var(--hsla-quoteblock-backdrop));
 		}
 
 		.table-responsive {
@@ -186,7 +186,7 @@
 			}
 
 			th {
-				background: hsla(var(--hsl-box), var(--a-box-b));
+				background: hsl(var(--hsla-box-2));
 				font-weight: 600;
 			}
 		}

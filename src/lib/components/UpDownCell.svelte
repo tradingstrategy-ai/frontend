@@ -35,7 +35,7 @@ or other contexts where a stronger visual representation is desired.
 		justify-content: flex-end;
 
 		:global(.up-down-indicator) {
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsl(var(--hsla-box-2));
 			border-radius: var(--radius-sm);
 			display: grid;
 			font: var(--up-down-font, var(--f-ui-sm-medium));
