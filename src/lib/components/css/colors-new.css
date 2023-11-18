@@ -1,3 +1,4 @@
+/* Global color values (not theme-specific) */
 :root {
 	--hue: 36;
 
@@ -13,8 +14,8 @@
 	--hsl-warning-gradient: linear-gradient(180deg, hsla(var(--hsl-warning), 0.4) 0%, hsla(var(--hsl-warning), 0) 100%);
 }
 
-body,
-body[data-color-mode='light'] {
+/* Light theme (default) */
+body {
 	--hsl-body: var(--hue), 100%, 96%;
 
 	--hsl-box: var(--hue), 32%, 72%;
@@ -41,35 +42,7 @@ body[data-color-mode='light'] {
 	--hsla-input-border-focus: var(--hsl-text-extra-light);
 }
 
-body[data-color-mode='dark'] {
-	--hsl-body: 60, 2%, 10%;
-
-	--hsl-box: var(--hue), 2%, 92%;
-
-	--hsla-input-background: var(--hsl-box), var(--a-box-3);
-
-	--hsl-text: var(--hue), 12%, 99%;
-	--hsl-text-light: var(--hue), 4%, 88%;
-	--hsl-text-extra-light: var(--hue), 3%, 64%;
-	--hsl-text-ultra-light: var(--hue), 2%, 36%, 1;
-	--hsl-text-inverted: var(--hue), 9%, 7%;
-
-	/* HSLA */
-
-	--hsla-quoteblock-background: var(--hsla-box-4);
-	--hsla-quoteblock-backdrop: var(--hsla-box-2);
-
-	--hsla-box-1: var(--hsl-box), 0.05;
-	--hsla-box-2: var(--hsl-box), 0.08;
-	--hsla-box-3: var(--hsl-box), 0.14;
-	--hsla-box-4: var(--hsl-box), 0.2;
-
-	--hsla-input-background: var(--hsla-box-2);
-	--hsla-input-background-focus: var(--hsla-box-3);
-	--hsla-input-border: var(--hsla-box-4);
-	--hsla-input-border-focus: var(--hsl-text-extra-light);
-}
-
+/* Dark theme */
 @media (prefers-color-scheme: dark) {
 	body {
 		--hsl-body: 60, 2%, 10%;

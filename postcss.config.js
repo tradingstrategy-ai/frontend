@@ -1,11 +1,19 @@
-import postcssPresetEnv from 'postcss-preset-env';
-import postcssGlobalData from '@csstools/postcss-global-data';
+import presetEnv from 'postcss-preset-env';
+import globalData from '@csstools/postcss-global-data';
+import darkThemeClass from 'postcss-dark-theme-class';
 
 export default {
 	plugins: [
-		postcssGlobalData({
+		globalData({
 			files: ['./src/lib/components/css/breakpoints.css']
 		}),
-		postcssPresetEnv()
+
+		presetEnv(),
+
+		darkThemeClass({
+			darkSelector: '[data-color-mode="dark"]',
+			lightSelector: '[data-color-mode="light"]',
+			rootSelector: ['body']
+		})
 	]
 };

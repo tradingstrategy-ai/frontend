@@ -74,21 +74,8 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	}
 
 	dialog::backdrop {
-		--cm-light-backdrop-color: black;
-		--cm-dark-backdrop-color: white;
-
-		background: var(--cm-light-backdrop-color);
+		background: hsl(var(--hsl-backdrop));
 		opacity: 0.25;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(body:not([data-color-mode='light'])) dialog::backdrop {
-			background: var(--cm-dark-backdrop-color);
-		}
-	}
-
-	:global(body[data-color-mode='dark']) dialog::backdrop {
-		background: var(--cm-dark-backdrop-color);
 	}
 
 	heading {

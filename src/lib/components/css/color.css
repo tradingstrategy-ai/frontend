@@ -1,10 +1,9 @@
+/* Global color values (not theme-specific) */
 :root {
-	/* Hues */
 	--hue-1: 36;
 	--hue-bearish: 360;
 	--hue-bullish: 140;
 
-	/* Global HSL colors (no light/dark variants) */
 	--hsl-black: 0, 0%, 0%;
 	--hsl-white: var(--hue-1), 100%, 100%;
 
@@ -16,97 +15,85 @@
 	color-scheme: light dark;
 }
 
+/* Light theme (default) */
 body {
-	/* Light (LT) color theme */
-	--LT-hsl-body: var(--hue-1), 100%, 96%;
+	--hsl-body: var(--hue-1), 100%, 96%;
 
-	--LT-hsl-text: var(--hue-1), 9%, 7%;
-	--LT-hsl-text-light: var(--hue-1), 4%, 24%;
-	--LT-hsl-text-extra-light: var(--hue-1), 6%, 44%;
-	--LT-hsl-text-ultra-light: var(--hue-1), 1%, 68%;
-	--LT-hsl-text-inverted: var(--hue-1), 12%, 99%;
+	--hsl-text: var(--hue-1), 9%, 7%;
+	--hsl-text-light: var(--hue-1), 4%, 24%;
+	--hsl-text-extra-light: var(--hue-1), 6%, 44%;
+	--hsl-text-ultra-light: var(--hue-1), 1%, 68%;
+	--hsl-text-inverted: var(--hue-1), 12%, 99%;
 
-	--LT-hsl-bullish: var(--hue-bullish), 68%, 42%;
-	--LT-hsl-bearish: var(--hue-bearish), 92%, 58%;
+	--hsl-bullish: var(--hue-bullish), 68%, 42%;
+	--hsl-bearish: var(--hue-bearish), 92%, 58%;
 
-	--LT-hsl-box: var(--hue-1), 32%, 72%;
-	--LT-a-box-a: 16%;
-	--LT-a-box-b: 26%;
-	--LT-a-box-c: 40%;
-	--LT-a-box-d: 48%;
-	--LT-a-box-e: 60%;
+	--hsl-box: var(--hue-1), 32%, 72%;
+	--a-box-a: 16%;
+	--a-box-b: 26%;
+	--a-box-c: 40%;
+	--a-box-d: 48%;
+	--a-box-e: 60%;
 
-	--LT-hsla-bg-accent-1: var(--hsl-box), var(--a-box-a);
+	--hsla-background-accent-1: var(--hsl-box), var(--a-box-a);
 
-	--LT-input-background: var(--hsl-white);
-	--LT-input-background-active: var(--hsl-white);
+	--input-background: var(--hsl-white);
+	--input-background-active: var(--hsl-white);
 
-	/* Dark (DK) color theme */
-	--DK-hsl-body: var(--hue-1), 1%, 10%;
+	--hsl-shadow: var(--hsl-black);
 
-	--DK-hsl-text: var(--hue-1), 12%, 99%;
-	--DK-hsl-text-light: var(--hue-1), 4%, 86%;
-	--DK-hsl-text-extra-light: var(--hue-1), 3%, 72%;
-	--DK-hsl-text-ultra-light: var(--hue-1), 2%, 52%;
-	--DK-hsl-text-inverted: var(--hue-1), 9%, 7%;
+	/* must use raw values since ::backdrop does not inherit from anything */
+	::backdrop {
+		--hsl-backdrop: 0, 0%, 0%;
+	}
 
-	--DK-hsl-bullish: var(--hue-bullish), 68%, 42%;
-	--DK-hsl-bearish: var(--hue-bearish), 92%, 72%;
+	/* color mode utility properties */
+	/* see: https://stackoverflow.com/questions/70845195#answer-70934827 */
+	--cm-light: initial;
+	--cm-dark: ;
+}
 
-	--DK-hsl-box: var(--hue-1), 2%, 92%;
-	--DK-a-box-a: 5%;
-	--DK-a-box-b: 9%;
-	--DK-a-box-c: 16%;
-	--DK-a-box-d: 20%;
-	--DK-a-box-e: 28%;
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+	body {
+		--hsl-body: var(--hue-1), 1%, 10%;
 
-	--DK-hsla-bg-accent-1: 0, 0%, 0%, 0.2;
+		--hsl-text: var(--hue-1), 12%, 99%;
+		--hsl-text-light: var(--hue-1), 4%, 86%;
+		--hsl-text-extra-light: var(--hue-1), 3%, 72%;
+		--hsl-text-ultra-light: var(--hue-1), 2%, 52%;
+		--hsl-text-inverted: var(--hue-1), 9%, 7%;
 
-	--DK-input-background: var(--hsl-box), var(--a-box-b);
-	--DK-input-background-active: var(--hsl-box), var(--a-box-d);
+		--hsl-bullish: var(--hue-bullish), 68%, 42%;
+		--hsl-bearish: var(--hue-bearish), 92%, 72%;
 
-	/* light-mode (default) */
-	--LT: initial;
-	--DK: ;
+		--hsl-box: var(--hue-1), 2%, 92%;
+		--a-box-a: 5%;
+		--a-box-b: 9%;
+		--a-box-c: 16%;
+		--a-box-d: 20%;
+		--a-box-e: 28%;
 
-	/* dark-mode based on media query (based on OS-level setting) */
-	@media (prefers-color-scheme: dark) {
-		&:not([data-color-mode='light']) {
-			--LT: ;
-			--DK: initial;
+		--hsla-background-accent-1: 0, 0%, 0%, 0.2;
+
+		--input-background: var(--hsl-box), var(--a-box-b);
+		--input-background-active: var(--hsl-box), var(--a-box-d);
+
+		--hsl-shadow: var(--hsl-white);
+
+		/* must use raw values since ::backdrop does not inherit from anything */
+		::backdrop {
+			--hsl-backdrop: 36, 100%, 100%;
 		}
+
+		/* color mode utility properties */
+		/* see: https://stackoverflow.com/questions/70845195#answer-70934827 */
+		--cm-light: ;
+		--cm-dark: initial;
 	}
+}
 
-	/* dark-mode based on user preference (stored in cookie, set in body data attribute) */
-	&[data-color-mode='dark'] {
-		--LT: ;
-		--DK: initial;
-	}
-
-	/* Color pairings; see: https://stackoverflow.com/questions/70845195#answer-70934827 */
-	--hsl-body: var(--LT, var(--LT-hsl-body)) var(--DK, var(--DK-hsl-body));
-
-	--hsl-text: var(--LT, var(--LT-hsl-text)) var(--DK, var(--DK-hsl-text));
-	--hsl-text-light: var(--LT, var(--LT-hsl-text-light)) var(--DK, var(--DK-hsl-text-light));
-	--hsl-text-extra-light: var(--LT, var(--LT-hsl-text-extra-light)) var(--DK, var(--DK-hsl-text-extra-light));
-	--hsl-text-ultra-light: var(--LT, var(--LT-hsl-text-ultra-light)) var(--DK, var(--DK-hsl-text-ultra-light));
-	--hsl-text-inverted: var(--LT, var(--LT-hsl-text-inverted)) var(--DK, var(--DK-hsl-text-inverted));
-
-	--hsl-bullish: var(--LT, var(--LT-hsl-bullish)) var(--DK, var(--DK-hsl-bullish));
-	--hsl-bearish: var(--LT, var(--LT-hsl-bearish)) var(--DK, var(--DK-hsl-bearish));
-
-	--hsl-box: var(--LT, var(--LT-hsl-box)) var(--DK, var(--DK-hsl-box));
-	--a-box-a: var(--LT, var(--LT-a-box-a)) var(--DK, var(--DK-a-box-a));
-	--a-box-b: var(--LT, var(--LT-a-box-b)) var(--DK, var(--DK-a-box-b));
-	--a-box-c: var(--LT, var(--LT-a-box-c)) var(--DK, var(--DK-a-box-c));
-	--a-box-d: var(--LT, var(--LT-a-box-d)) var(--DK, var(--DK-a-box-d));
-	--a-box-e: var(--LT, var(--LT-a-box-e)) var(--DK, var(--DK-a-box-e));
-
-	--hsla-background-accent-1: var(--LT, var(--LT-hsla-bg-accent-1)) var(--DK, var(--DK-hsla-bg-accent-1));
-
-	--input-background: var(--LT, var(--LT-input-background)) var(--DK, var(--DK-input-background));
-	--input-background-active: var(--LT, var(--LT-input-background-active)) var(--DK, var(--DK-input-background-active));
-
+body {
 	color: hsla(var(--hsl-text));
 	background-color: hsla(var(--hsl-body));
 	transition-property: background-color, color;

@@ -58,33 +58,24 @@
 		color: hsl(var(--hsl-text));
 		text-align: center;
 		cursor: pointer;
-	}
 
-	li.active {
-		background: hsla(var(--hsl-box), var(--a-box-c));
-	}
-
-	li.light:hover {
-		background: var(--c-background-2-day);
-		color: var(--c-text-default-day);
-	}
-
-	li.dark:hover {
-		background: var(--c-background-2-night);
-		color: var(--c-text-default-night);
-	}
-
-	@media (prefers-color-scheme: light) {
-		li.system:hover {
-			background: var(--c-background-2-day);
-			color: var(--c-text-default-day);
+		&.light:hover {
+			background: var(--cm-light, hsl(var(--hsla-background-accent-1))) var(--cm-dark, hsl(var(--hsl-text)));
+			color: var(--cm-light, hsl(var(--hsl-text))) var(--cm-dark, hsl(var(--hsl-text-inverted)));
 		}
-	}
 
-	@media (prefers-color-scheme: dark) {
-		li.system:hover {
-			background: var(--c-background-2-night);
-			color: var(--c-text-default-night);
+		&.dark:hover {
+			background: var(--cm-dark, hsl(var(--hsla-background-accent-1))) var(--cm-light, hsl(var(--hsl-text)));
+			color: var(--cm-dark, hsl(var(--hsl-text))) var(--cm-light, hsl(var(--hsl-text-inverted)));
+		}
+
+		&.system:hover {
+			background: hsl(var(--hsla-background-accent-1));
+		}
+
+		&.active,
+		&.active:hover {
+			background: hsl(var(--hsl-box), var(--a-box-c));
 		}
 	}
 </style>
