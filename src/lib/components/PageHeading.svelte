@@ -87,7 +87,7 @@
 	}
 
 	.icon {
-		background: hsla(var(--hsla-box-1));
+		background: hsl(var(--hsla-box-1));
 		border-radius: var(--icon-size);
 		height: var(--icon-size);
 		width: var(--icon-size);
@@ -112,7 +112,7 @@
 
 		.prefix {
 			display: block;
-			color: var(--c-text-ultra-light);
+			color: hsl(var(--hsl-text-ultra-light));
 			font: var(--prefix-font);
 			letter-spacing: var(--prefix-spacing, normal);
 			margin-bottom: var(--space-ss);

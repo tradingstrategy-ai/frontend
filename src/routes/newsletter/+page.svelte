@@ -11,6 +11,6 @@
 
 <style lang="postcss">
 	.newsletter-page {
-		--section-background: hsla(var(--hsla-background-accent-1));
+		--section-background: hsl(var(--hsla-background-accent-1));
 	}
 </style>

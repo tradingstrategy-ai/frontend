@@ -96,15 +96,15 @@
 	.strategy-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
-		background: hsla(var(--hsla-box-1));
-		border: 1px hsla(var(--hsla-box-3)) solid;
+		background: hsl(var(--hsla-box-1));
+		border: 1px hsl(var(--hsla-box-3)) solid;
 		border-radius: var(--radius-lg);
-		color: hsla(var(--hsl-text));
+		color: hsl(var(--hsl-text));
 		cursor: pointer;
 		transition: var(--transition-1);
 
 		&:hover {
-			background: hsla(var(--hsla-box-2));
+			background: hsl(var(--hsla-box-2));
 			z-index: 2;
 		}
 
@@ -185,7 +185,7 @@
 				}
 
 				.avatar {
-					background: hsla(var(--hsla-box-3));
+					background: hsl(var(--hsla-box-3));
 					border-radius: 100%;
 					font: var(--f-ui-sm-roman);
 					text-align: center;
@@ -212,7 +212,7 @@
 						border-radius: 100%;
 						bottom: -0.5rem;
 						box-shadow: var(--shadow-1);
-						background: hsla(var(--hsl-white));
+						background: hsl(var(--hsl-text-inverted));
 						display: flex;
 						padding: 0.25rem;
 						position: absolute;
@@ -249,7 +249,7 @@
 
 				p {
 					font: var(--f-ui-md-medium);
-					color: hsla(var(--hsl-text-extra-light));
+					color: hsl(var(--hsl-text-extra-light));
 				}
 			}
 
@@ -260,7 +260,7 @@
 			.backtest-data-badge {
 				align-items: center;
 				border-radius: var(--radius-sl);
-				color: hsla(var(--hsl-text-extra-light));
+				color: hsl(var(--hsl-text-extra-light));
 				display: inline-flex;
 				font: var(--f-ui-xs-bold);
 				gap: 0.625rem;
@@ -276,8 +276,8 @@
 
 		&:is(:hover, :focus) {
 			.actions :global(.button) {
-				background: hsla(var(--hsl-text), 1);
-				color: hsla(var(--hsl-text-inverted));
+				background: hsl(var(--hsl-text));
+				color: hsl(var(--hsl-text-inverted));
 			}
 
 			.chart :global(figcaption) {

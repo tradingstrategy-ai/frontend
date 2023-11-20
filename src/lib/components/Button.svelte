@@ -94,44 +94,44 @@ using flags: primary (default), secondary, ternary, quarternary.
 	}
 
 	.primary {
-		--c-accent: var(--hsl-box), var(--a-box-d);
-		background: hsla(var(--c-accent));
-		color: hsla(var(--hsl-text));
+		--c-accent: var(--hsla-box-4);
+		background: hsl(var(--c-accent));
+		color: hsl(var(--hsl-text));
 		outline-color: var(--c-accent);
 		outline-offset: -1px;
 
 		&:hover,
 		&:focus {
-			--c-accent: var(--hsl-text), 1;
-			color: hsla(var(--hsl-text-inverted));
+			--c-accent: var(--hsl-text);
+			color: hsl(var(--hsl-text-inverted));
 		}
 	}
 
 	.secondary {
 		background: transparent;
-		color: hsla(var(--hsl-text));
-		border-color: hsla(var(--hsl-text));
+		color: hsl(var(--hsl-text));
+		border-color: hsl(var(--hsl-text));
 
 		&:hover,
 		&:focus {
-			background: hsla(var(--hsl-text));
-			color: hsla(var(--hsl-text-inverted));
+			background: hsl(var(--hsl-text));
+			color: hsl(var(--hsl-text-inverted));
 		}
 	}
 
 	.tertiary {
-		background: hsla(var(--hsl-box), var(--a-box-b));
-		color: hsla(var(--hsl-text));
+		background: hsl(var(--hsla-box-2));
+		color: hsl(var(--hsl-text));
 		border-color: transparent;
 
 		&:hover,
 		&:focus {
-			background: hsla(var(--hsl-box), var(--a-box-d));
+			background: hsl(var(--hsla-box-4));
 		}
 	}
 
 	.quarternary {
-		background: var(--c-background-4);
+		background: hsl(var(--hsla-box-2));
 	}
 
 	.ghost {

@@ -33,21 +33,21 @@
 			transition: all var(--time-sm) ease-out;
 
 			&.active {
-				background: hsla(var(--hsl-box), var(--a-box-d));
+				background: hsl(var(--hsla-box-4));
 				cursor: default;
 			}
 
 			&.disabled {
-				color: hsla(var(--hsl-text-extra-light));
+				color: hsl(var(--hsl-text-extra-light));
 				cursor: not-allowed;
 				&:hover {
-					background: hsla(var(--hsl-box), var(--a-box-b));
+					background: hsl(var(--hsla-box-2));
 				}
 			}
 
 			&.completed {
-				background: hsla(var(--hsl-success), 0.1);
-				color: hsla(var(--hsl-success));
+				background: hsl(var(--hsl-success) / 10%);
+				color: hsl(var(--hsl-success));
 			}
 		}
 	}

@@ -55,36 +55,27 @@
 		padding-block: var(--space-ss);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
-		color: var(--c-text-1-v1);
+		color: hsl(var(--hsl-text));
 		text-align: center;
 		cursor: pointer;
-	}
 
-	li.active {
-		background: var(--c-background-2-v1);
-	}
-
-	li.light:hover {
-		background: var(--c-parchment-dark);
-		color: var(--c-ink);
-	}
-
-	li.dark:hover {
-		background: var(--c-ink);
-		color: var(--c-parchment);
-	}
-
-	@media (prefers-color-scheme: light) {
-		li.system:hover {
-			background: var(--c-parchment-dark);
-			color: var(--c-ink);
+		&.light:hover {
+			background: var(--cm-light, hsl(var(--hsla-background-accent-1))) var(--cm-dark, hsl(var(--hsl-text)));
+			color: var(--cm-light, hsl(var(--hsl-text))) var(--cm-dark, hsl(var(--hsl-text-inverted)));
 		}
-	}
 
-	@media (prefers-color-scheme: dark) {
-		li.system:hover {
-			background: var(--c-ink);
-			color: var(--c-parchment);
+		&.dark:hover {
+			background: var(--cm-dark, hsl(var(--hsla-background-accent-1))) var(--cm-light, hsl(var(--hsl-text)));
+			color: var(--cm-dark, hsl(var(--hsl-text))) var(--cm-light, hsl(var(--hsl-text-inverted)));
+		}
+
+		&.system:hover {
+			background: hsl(var(--hsla-background-accent-1));
+		}
+
+		&.active,
+		&.active:hover {
+			background: hsl(var(--hsla-box-3));
 		}
 	}
 </style>

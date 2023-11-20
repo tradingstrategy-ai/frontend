@@ -34,7 +34,7 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 		margin: 0;
 
 		dt {
-			color: hsla(var(--hsl-text-light));
+			color: hsl(var(--hsl-text-light));
 		}
 	}
 </style>

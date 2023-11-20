@@ -27,8 +27,8 @@
 		width: var(--social-icon-size);
 		border: none;
 		border-radius: calc(var(--social-icon-size) / 2);
-		background: hsla(var(--hsl-text));
-		color: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-text));
+		color: hsl(var(--hsl-body));
 		transition: opacity 0.15s;
 
 		@media (--viewport-sm-down) {

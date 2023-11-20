@@ -9,7 +9,7 @@ Display log messages as a scrollable panel
 	export let logs: ComponentProps<LogEntry>[];
 </script>
 
-<div class="log-panel terminal-viewport">
+<div class="log-panel terminal-viewport xs">
 	<!-- `reverse()` mutates the original array, so we need to call it on a copy -->
 	{#each [...logs].reverse() as { timestamp, level, message, formatted_data }}
 		<LogEntry {timestamp} {level} {message} {formatted_data} />
@@ -20,9 +20,8 @@ Display log messages as a scrollable panel
 	.log-panel {
 		display: flex;
 		flex-direction: column-reverse;
-		font: var(--f-mono-sm-regular);
-		letter-spacing: var(--f-mono-sm-spacing);
 		max-height: calc(100vh - 18rem);
+		padding: var(--space-ss) var(--space-sl);
 		overflow-y: scroll;
 		overscroll-behavior: contain;
 		scroll-snap-type: y proximity;

@@ -13,8 +13,8 @@ Optimised to work with server-side rendering and `adapter-node`
 - Sitemap for Google Search Console
 - SEO with HTML meta tags
 - [Social media tags for Facebook, Twitter](./SocialMetaTags.svelte)
-- [Special HTML manipulation techniques to clean up Ghost HTML output](./BlogPostContent.svelte)
-- [Automatically add table of contents listing based on headings](./BlogPostContent.svelte)
+- [Special HTML manipulation techniques to clean up Ghost HTML output](./[slug]/BlogPostContent.svelte)
+- [Automatically add table of contents listing based on headings](./[slug]/BlogPostContent.svelte)
 - [Proxy images locally](./image/server.ts) to make Twitter card preview images work correctly
 
 ## Ghost Content API based

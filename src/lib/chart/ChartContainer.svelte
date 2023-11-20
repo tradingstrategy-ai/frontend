@@ -62,7 +62,7 @@ Display a chart container with title, description and timespan selector.
 	.chart-container {
 		display: grid;
 		gap: var(--space-sm);
-		background: hsla(var(--hsl-box), var(--a-box-a));
+		background: hsl(var(--hsla-box-1));
 		border-radius: var(--radius-md);
 		padding: var(--space-lg) var(--space-lg);
 		--chart-aspect-ratio: 2;

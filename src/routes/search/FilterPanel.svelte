@@ -117,9 +117,9 @@
 			bottom: 0;
 			z-index: 10;
 			overflow-y: scroll;
-			background: hsla(var(--hsl-body));
-			box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
-			transition: transform 0.35s;
+			background: hsl(var(--hsl-body));
+			box-shadow: var(--shadow-1);
+			transition: transform var(--time-xl);
 
 			&:not(.open) {
 				transform: translateY(calc(100vh + var(--space-xl)));
@@ -168,8 +168,8 @@
 		bottom: 0;
 		padding: var(--space-sl);
 		display: grid;
-		background: hsla(var(--hsl-body));
-		box-shadow: 0 -0.25rem 2rem var(--c-shadow-1-v1);
+		background: hsl(var(--hsl-body));
+		box-shadow: var(--shadow-1);
 
 		@media (--viewport-lg-up) {
 			display: none;
@@ -186,7 +186,6 @@
 		text-transform: uppercase;
 		font: var(--f-heading-sm-roman);
 		letter-spacing: var(--f-heading-sm-spacing, normal);
-		color: var(--c-text-1-v1);
 		text-align: left;
 
 		@media (--viewport-lg-up) {

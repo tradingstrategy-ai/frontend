@@ -250,7 +250,7 @@
 		}
 
 		&:not(.button):hover::before {
-			background: hsla(var(--hsl-box), var(--a-box-c));
+			background: hsl(var(--hsla-box-3));
 		}
 	}
 </style>

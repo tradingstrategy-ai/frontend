@@ -8,7 +8,7 @@
 </script>
 
 {#await data}
-	<Spinner size="2rem" color="hsla(var(--hsl-text-light))" />
+	<Spinner size="2rem" color="hsl(var(--hsl-text-light))" />
 {:then { symbol, formatted }}
 	<EntitySymbol slug={symbol.toLowerCase()} type="token">{formatNumber(formatted, 2, 4)} {symbol}</EntitySymbol>
 {:catch error}

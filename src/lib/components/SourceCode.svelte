@@ -27,7 +27,7 @@ See: https://github.com/metonym/svelte-highlight
 		display: grid;
 		padding: var(--space-xxs);
 		border-radius: var(--radius-md);
-		background-color: var(--c-ink);
+		background: hsl(var(--hsl-terminal-bg));
 
 		:global(.hljs) {
 			background-color: transparent;

@@ -78,23 +78,12 @@ props.
 </li>
 
 <style lang="postcss">
-	.exchange {
-		background-color: var(--c-wood);
-	}
-
-	.token {
-		background-color: var(--c-parchment-super-dark);
-	}
-
-	.pair {
-		background-color: var(--c-gray-dark);
-	}
-
-	.lending_reserve {
-		background-color: #7a5c7f;
-	}
-
 	.search-hit {
+		--hsl-exchange: 36, 68%, 35%;
+		--hsl-token: 36, 21%, 54%;
+		--hsl-trading-pair: 239, 6%, 36%;
+		--hsl-lending-reserve: 291, 16%, 43%;
+
 		display: grid;
 		list-style-type: none;
 
@@ -114,19 +103,16 @@ props.
 
 			&.isLowQuality {
 				opacity: 0.35;
-				&:hover {
-					background: var(--c-background-2-v1);
-				}
 			}
 
 			&:hover {
 				:global .up-down-indicator {
 					&.bearish {
-						background: hsla(var(--hsl-bearish), 0.24) !important;
+						background: hsl(var(--hsl-bearish) / 24%) !important;
 					}
 
 					&.bullish {
-						background: hsla(var(--hsl-bullish), 0.24) !important;
+						background: hsl(var(--hsl-bullish) / 24%) !important;
 					}
 				}
 			}
@@ -149,9 +135,25 @@ props.
 			width: 5.625em;
 			font: var(--search-hit-badge-font, var(--f-ui-xs-medium));
 			letter-spacing: var(--search-hit-badge-spacing, var(--f-ui-xs-spacing, normal));
-			color: var(--c-parchment);
+			color: var(--c-text-default-night);
 			text-transform: capitalize;
 			text-align: center;
+
+			&.exchange {
+				background: hsl(var(--hsl-exchange));
+			}
+
+			&.token {
+				background: hsl(var(--hsl-token));
+			}
+
+			&.pair {
+				background: hsl(var(--hsl-trading-pair));
+			}
+
+			&.lending_reserve {
+				background: hsl(var(--hsl-lending-reserve));
+			}
 		}
 
 		.chain-icon {
@@ -163,8 +165,8 @@ props.
 			padding: 0.15em;
 			border-radius: 1em;
 			transform: translate(50%, 50%);
-			background: hsla(var(--hsl-text-inverted));
-			box-shadow: 0 0 1px 1px var(--c-shadow-1-v1);
+			background: hsl(var(--hsl-text-inverted));
+			box-shadow: var(--shadow-1);
 		}
 
 		.info {

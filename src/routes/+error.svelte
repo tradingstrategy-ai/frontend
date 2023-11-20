@@ -56,7 +56,7 @@
 
 	<aside class="ds-container">
 		{#if stack && showLogs}
-			<pre>{stack.join('\n')}</pre>
+			<pre class="terminal-viewport">{stack.join('\n')}</pre>
 		{/if}
 	</aside>
 </main>
@@ -68,7 +68,7 @@
 		left: 0;
 		right: 0;
 		min-height: 100vh;
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 		display: grid;
 		grid-template-rows: 1fr auto 1fr;
 		gap: var(--space-4xl);
@@ -94,11 +94,6 @@
 		}
 
 		pre {
-			padding: var(--space-lg);
-			background: var(--c-background-7-v1);
-			border: 2px solid var(--c-border-1-v1);
-			border-radius: var(--radius-xxs);
-			color: var(--c-parchment);
 			white-space: pre-wrap;
 			overflow-wrap: break-word;
 			max-height: 10rem;

@@ -17,7 +17,7 @@
 		display: grid;
 		gap: var(--space-md);
 		align-items: center;
-		background: hsla(var(--hsl-box), var(--a-box-b));
+		background: hsl(var(--hsla-box-2));
 		border-radius: var(--radius-md);
 		padding: var(--space-md) var(--space-ml);
 

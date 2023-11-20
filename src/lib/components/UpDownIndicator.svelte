@@ -29,14 +29,14 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 
 <style lang="postcss">
 	.up-down-indicator {
-		color: hsla(var(--hsl-text-light));
+		color: hsl(var(--hsl-text-light));
 
 		&.bullish {
-			color: hsla(var(--hsl-bullish));
+			color: hsl(var(--hsl-bullish));
 		}
 
 		&.bearish {
-			color: hsla(var(--hsl-bearish));
+			color: hsl(var(--hsl-bearish));
 		}
 	}
 </style>

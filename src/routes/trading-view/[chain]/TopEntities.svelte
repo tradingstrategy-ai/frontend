@@ -50,7 +50,7 @@
 			padding: 0 var(--space-md) var(--space-xxs) 0;
 			font: var(--f-ui-md-bold);
 			letter-spacing: var(--f-ui-md-spacing);
-			color: hsla(var(--hsl-text-light));
+			color: hsl(var(--hsl-text-light));
 
 			@media (--viewport-md-down) {
 				font: var(--f-ui-sm-bold);

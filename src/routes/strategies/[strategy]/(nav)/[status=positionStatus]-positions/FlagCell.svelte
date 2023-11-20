@@ -11,7 +11,7 @@
 		{#if idx > 0},{/if}
 		<Tooltip>
 			<span slot="trigger">
-				<span class="flag">
+				<span class="flag underline">
 					{flag.abbreviation}
 				</span>
 			</span>
@@ -31,9 +31,7 @@
 	}
 
 	.flag {
-		border-bottom: 1px dotted hsla(var(--hsl-text));
-		font-style: normal;
-		color: var(--c-text-light);
+		color: hsl(var(--hsl-text-light));
 	}
 
 	/* Style help texts generated in position-flags */

@@ -39,7 +39,7 @@
 	}
 
 	h3 {
-		color: hsla(var(--hsl-text-light));
+		color: hsl(var(--hsl-text-light));
 		font: var(--f-ui-lg-medium);
 	}
 </style>

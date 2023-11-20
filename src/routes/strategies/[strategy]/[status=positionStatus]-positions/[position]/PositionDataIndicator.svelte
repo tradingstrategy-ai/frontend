@@ -11,7 +11,7 @@
 	.position-data-indicator {
 		display: inline-flex;
 		align-items: center;
-		background: hsla(var(--hsl-box), var(--a-box-c));
+		background: hsl(var(--hsla-box-3));
 		border-radius: var(--space-sm);
 		text-align: center;
 		text-transform: uppercase;

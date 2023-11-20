@@ -15,7 +15,7 @@ const defaultProps = {
 describe('SearchPanel component', () => {
 	test('should display "search for" fallback when no search criteria', async () => {
 		const { getByText, queryAllByRole } = render(SearchPanel, defaultProps);
-		getByText('Search exchanges, tokens and trading pairs.');
+		getByText('Search exchanges, tokens, trading pairs and lending reserves.');
 		expect(queryAllByRole('listitem')).toHaveLength(0);
 	});
 

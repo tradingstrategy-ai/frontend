@@ -93,16 +93,16 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 		.inner {
 			display: flex;
-			background: hsla(var(--input-background));
-			border: 1px hsla(var(--hsl-box), var(--a-box-c)) solid;
+			background: hsl(var(--hsla-input-background));
+			border: 1px hsl(var(--hsla-input-border)) solid;
 			border-radius: var(--radius-sm);
 			height: 4.25rem;
 			overflow: hidden;
 		}
 
 		.unit {
-			background-image: linear-gradient(hsla(var(--hsl-box), var(--a-box-b)), hsla(var(--hsl-box), var(--a-box-b))),
-				linear-gradient(hsla(var(--hsl-body)), hsla(var(--hsl-body)));
+			background-image: linear-gradient(hsl(var(--hsla-box-2)), hsl(var(--hsla-box-2))),
+				linear-gradient(hsl(var(--hsl-body)), hsl(var(--hsl-body)));
 			display: grid;
 			font: var(--f-ui-lg-bold);
 			height: 100%;
@@ -125,7 +125,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		input {
 			background: transparent;
 			border: none;
-			color: var(--c-text-1-v1);
+			color: inherit;
 			font: var(--f-ui-xxl-medium);
 			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
@@ -139,16 +139,16 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			}
 
 			&:disabled {
-				background: hsla(var(--hsl-box), var(--a-box-a));
+				background: hsl(var(--hsla-box-1));
 			}
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--input-background-active));
+				background: hsl(var(--hsla-input-background-focus));
 			}
 
 			&:focus {
-				border-color: hsla(var(--hsl-text-extra-light));
+				border-color: hsl(var(--hsla-input-border-focus));
 				outline: none;
 			}
 		}

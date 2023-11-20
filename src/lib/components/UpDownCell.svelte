@@ -35,7 +35,7 @@ or other contexts where a stronger visual representation is desired.
 		justify-content: flex-end;
 
 		:global(.up-down-indicator) {
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsl(var(--hsla-box-2));
 			border-radius: var(--radius-sm);
 			display: grid;
 			font: var(--up-down-font, var(--f-ui-sm-medium));
@@ -47,18 +47,18 @@ or other contexts where a stronger visual representation is desired.
 		}
 
 		:global(.bullish) {
-			background: hsla(var(--hsl-bullish), 0.12);
+			background: hsl(var(--hsl-bullish) / 12%);
 
 			&:hover {
-				background: hsla(var(--hsl-bullish), 0.24) !important;
+				background: hsl(var(--hsl-bullish) / 24%) !important;
 			}
 		}
 
 		:global(.bearish) {
-			background: hsla(var(--hsl-bearish), 0.12);
+			background: hsl(var(--hsl-bearish) / 12%);
 
 			&:hover {
-				background: hsla(var(--hsl-bearish), 0.24) !important;
+				background: hsl(var(--hsl-bearish) / 24%) !important;
 			}
 		}
 	}

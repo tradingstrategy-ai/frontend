@@ -35,7 +35,7 @@
 <style lang="postcss">
 	.newsletter-opt-in-banner {
 		--newsletter-banner-padding: var(--space-xl);
-		background-color: hsla(var(--hsl-box), var(--a-box-b));
+		background-color: hsl(var(--hsla-box-2));
 		border-radius: var(--radius-lg);
 		display: grid;
 		gap: var(--space-8xl);

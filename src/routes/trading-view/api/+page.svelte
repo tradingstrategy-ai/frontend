@@ -99,7 +99,7 @@
 			<Button submit {disabled}>
 				{#if submitting}
 					Submitting
-					<Spinner color="var(--c-text-6-v1)" />
+					<Spinner color="currentColor" />
 				{:else}
 					Sign up
 				{/if}

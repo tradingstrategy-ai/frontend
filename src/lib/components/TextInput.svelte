@@ -147,12 +147,12 @@ unknown props through to HTML input element.
 		input {
 			width: inherit;
 			padding: 0 var(--space-sl);
-			border: 1px hsla(var(--hsl-text-ultra-light)) solid;
+			border: 1px hsl(var(--hsla-input-border)) solid;
 			border-radius: var(--border-radius);
-			background: hsla(var(--input-background));
+			background: hsl(var(--hsla-input-background));
 			font: inherit;
 			letter-spacing: inherit;
-			color: var(--c-text-1-v1);
+			color: inherit;
 			transition: background var(--time-sm) ease-out;
 
 			&::placeholder {
@@ -160,16 +160,16 @@ unknown props through to HTML input element.
 			}
 
 			&:disabled {
-				background: hsla(var(--hsl-box), var(--a-box-a));
+				background: hsl(var(--hsla-box-1));
 			}
 
 			&:focus,
 			&:hover {
-				background: hsla(var(--input-background-active));
+				background: hsl(var(--hsla-input-background-focus));
 			}
 
 			&:focus {
-				border-color: hsla(var(--hsl-text-extra-light));
+				border-color: hsl(var(--hsla-input-border-focus));
 				outline: none;
 			}
 

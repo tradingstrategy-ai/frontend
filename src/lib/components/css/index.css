@@ -1,8 +1,6 @@
 @import './animations.css';
 @import './reset.css';
-@import './color-v1.css';
 @import './color.css';
-@import './colors-new.css';
 @import './input.css';
 @import './layout.css';
 @import './progress.css';
@@ -13,7 +11,6 @@
 @import './table-old.css';
 @import './terminal.css';
 @import './text-field.css';
-@import './themes/index.css';
 @import './tile.css';
 @import './time.css';
 @import './truncate.css';

@@ -101,7 +101,7 @@ Display a peformance line chart for a given (static) dataset.
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
 		:global(time) {
-			color: hsla(var(--hsl-text-extra-light));
+			color: hsl(var(--hsl-text-extra-light));
 		}
 
 		.value {

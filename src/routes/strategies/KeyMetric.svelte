@@ -60,7 +60,7 @@ Display one key metric in a strategy tile.
 		margin-bottom: 0.375rem;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing);
-		color: hsla(var(--hsl-text-light));
+		color: hsl(var(--hsl-text-light));
 		--icon-size: 1.25em;
 
 		@media (--viewport-sm-down) {

@@ -86,7 +86,7 @@
 	}
 
 	.inner nav {
-		background: hsla(var(--hsl-box), var(--a-box-a));
+		background: hsl(var(--hsla-box-1));
 		border-radius: var(--radius-md);
 		display: grid;
 		align-content: start;

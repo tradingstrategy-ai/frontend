@@ -70,25 +70,12 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		padding: var(--space-xl);
 		border: none;
 		border-radius: var(--radius-xs);
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 	}
 
 	dialog::backdrop {
-		--cm-light-backdrop-color: black;
-		--cm-dark-backdrop-color: white;
-
-		background: var(--cm-light-backdrop-color);
+		background: hsl(var(--hsl-backdrop));
 		opacity: 0.25;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(body:not([data-color-mode='light'])) dialog::backdrop {
-			background: var(--cm-dark-backdrop-color);
-		}
-	}
-
-	:global(body[data-color-mode='dark']) dialog::backdrop {
-		background: var(--cm-dark-backdrop-color);
 	}
 
 	heading {
@@ -97,7 +84,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		gap: var(--space-ss);
 		align-items: center;
 		margin-bottom: var(--space-ss);
-		color: var(--c-text-4-v1);
+		color: hsl(var(--hsl-text-extra-light));
 
 		h5 {
 			font: var(--f-ui-lg-medium);

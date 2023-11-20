@@ -36,7 +36,7 @@ table:not(.table) {
 	}
 
 	thead tr:first-child {
-		background-color: hsla(var(--hsl-body));
+		background-color: hsl(var(--hsl-body));
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -47,9 +47,9 @@ table:not(.table) {
 	}
 
 	th {
-		background: hsla(var(--hsl-body));
+		background: hsl(var(--hsl-body));
 		border-radius: var(--table-border-radius);
-		color: hsla(var(--hsl-text-extra-light));
+		color: hsl(var(--hsl-text-extra-light));
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
 		overflow: hidden;
@@ -66,8 +66,8 @@ table:not(.table) {
 			user-select: none;
 
 			&:hover {
-				background: hsla(var(--hsl-box), var(--a-box-a));
-				color: hsla(var(--hsl-text-light));
+				background: hsl(var(--hsla-box-1));
+				color: hsl(var(--hsl-text-light));
 			}
 
 			.icon svg {
@@ -82,14 +82,14 @@ table:not(.table) {
 		}
 
 		&.sorted {
-			color: hsla(var(--hsl-text));
+			color: hsl(var(--hsl-text));
 			padding-right: var(--space-5xl);
 		}
 	}
 
 	tbody tr {
 		td {
-			background: hsla(var(--hsl-box), var(--a-box-b));
+			background: hsl(var(--hsla-box-2));
 			height: var(--body-cell-height);
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
@@ -114,20 +114,20 @@ table:not(.table) {
 
 		&:is(:hover, :focus, :focus-within) {
 			td {
-				background: hsla(var(--hsl-box), var(--a-box-d));
+				background: hsl(var(--hsla-box-4));
 			}
 
 			.button {
 				--c-accent: var(--hsl-text);
-				color: hsla(var(--hsl-text-inverted));
+				color: hsl(var(--hsl-text-inverted));
 			}
 
 			.up-down-cell .up-down-indicator {
 				&.bearish {
-					background: hsla(var(--hsl-bearish), 0.24) !important;
+					background: hsl(var(--hsl-bearish) / 24%) !important;
 				}
 				&.bullish {
-					background: hsla(var(--hsl-bullish), 0.24) !important;
+					background: hsl(var(--hsl-bullish) / 24%) !important;
 				}
 			}
 		}
@@ -158,7 +158,7 @@ table:not(.table) {
 			}
 
 			tbody tr {
-				background: hsla(var(--hsl-box), var(--a-box-b));
+				background: hsl(var(--hsla-box-2));
 				border-radius: var(--table-border-radius);
 				display: grid;
 				grid-template-columns: 1fr 1fr;
@@ -230,7 +230,7 @@ table.loading {
 
 		&::before {
 			animation: pulse-opacity 1s infinite ease-out;
-			background: hsla(var(--hsl-box), var(--a-box-c));
+			background: hsl(var(--hsla-box-3));
 			bottom: var(--space-sm);
 			border-radius: var(--radius-sm);
 			content: '';
@@ -254,7 +254,7 @@ table.loading {
 
 			&::before {
 				animation: pulse-opacity 1s infinite ease-out;
-				background: hsla(var(--hsl-box), var(--a-box-c));
+				background: hsl(var(--hsla-box-3));
 				bottom: var(--space-lg);
 				border-radius: var(--radius-sm);
 				content: '';

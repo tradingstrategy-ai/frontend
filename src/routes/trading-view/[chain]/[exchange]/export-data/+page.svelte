@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, Alert, Select } from '$lib/components';
+	import { Button, Alert, Select, TextInput } from '$lib/components';
 
 	export let data;
 	const { exchange } = data;
@@ -63,7 +63,7 @@
 		<form on:change={() => (downloadDisabled = false)}>
 			<div>
 				<label for="exchange_name">Selected exchange</label>
-				<input type="text" class="text-field" id="exchange_name" disabled value={exchangeName} />
+				<TextInput size="xl" id="exchange_name" disabled value={exchangeName} />
 			</div>
 
 			<div>
@@ -152,23 +152,15 @@
 	form {
 		display: grid;
 		gap: var(--space-md);
+
+		div {
+			display: grid;
+			gap: var(--space-xxs);
+		}
 	}
 
 	label {
 		font: var(--f-ui-small-medium);
-	}
-
-	input {
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		width: 100%;
-		background: inherit;
-		color: inherit;
-		border: 1px solid var(--c-border-1-v1);
-	}
-
-	input[disabled] {
-		background: var(--c-background-2-v1);
 	}
 
 	.cta {
