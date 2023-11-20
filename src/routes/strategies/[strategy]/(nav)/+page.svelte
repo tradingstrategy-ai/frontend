@@ -1,17 +1,6 @@
 <script lang="ts">
-	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
-	import { formatDaysAgo, formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { Alert, SummaryBox, DataBox, UpDownIndicator } from '$lib/components';
-	import { InvestorWidget } from '$lib/wallet';
-
 	export let data;
-
 	$: ({ chain, summary, state } = data);
-
-	$: portfolioStats = getPortfolioLatestStats(state);
-	$: returnAllTime = summary?.summary_statistics?.return_all_time;
-	$: age = summary?.summary_statistics?.key_metrics?.started_at?.value;
-	$: cashSymbol = Object.values(state?.portfolio?.reserves ?? {})[0]?.asset?.token_symbol;
 </script>
 
 <svelte:head>
@@ -20,44 +9,52 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<InvestorWidget strategy={summary} {chain} />
-
-	<section class="summary-stats">
-		{#if portfolioStats}
-			<SummaryBox title="Assets">
-				<DataBox label="Total assets" value={formatDollar(portfolioStats.total_equity)} />
-				<DataBox label={`Cash (${cashSymbol})`} value={formatDollar(portfolioStats.free_cash)} />
-			</SummaryBox>
-
-			<SummaryBox title="Performance">
-				<DataBox label="Lifetime realised profit and loss" value={returnAllTime} let:value>
-					<UpDownIndicator {value} formatter={formatPercent} />
-				</DataBox>
-				<DataBox label="Current unrealised profit and loss" value={portfolioStats.unrealised_profit_usd} let:value>
-					<UpDownIndicator {value} formatter={formatDollar} />
-				</DataBox>
-				<DataBox label="Live trading" value={formatDaysAgo(age)} />
-			</SummaryBox>
-		{:else}
-			<Alert>Strategy overview data not available.</Alert>
-		{/if}
-	</section>
+	<div class="deposit-widget">Deposit widget</div>
+	<div class="chart">Chart</div>
+	<div class="metrics">Metrics</div>
+	<div class="description">Strategy description</div>
 </div>
 
 <style lang="postcss">
 	.strategy-overview-page {
 		display: grid;
-		gap: var(--space-ls);
+		gap: 1rem;
 
-		@media (--viewport-md-down) {
-			gap: var(--space-lg);
+		/* Desktop 2 column layout */
+		@media (--viewport-md-up) {
+			gap: 1.5rem;
+			grid-template-columns: 1fr auto;
+
+			/* move deposit widget to row 2, col 2 */
+			.deposit-widget {
+				grid-area: 2 / 2;
+			}
+
+			/* chart and description span full row width */
+			:is(.chart, .description) {
+				grid-column: 1 / -1;
+			}
 		}
-	}
 
-	.summary-stats {
-		display: grid;
-		gap: inherit;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		place-items: start stretch;
+		/* Placeholder styling - remove once real elements all added */
+		> * {
+			border-radius: var(--radius-md);
+			padding: 1.5rem;
+			background: hsl(var(--hsla-box-1));
+			font: var(--f-heading-sm-medium);
+			color: hsl(var(--hsl-text-extra-light));
+		}
+		.chart {
+			height: 18rem;
+		}
+		.metrics {
+			height: 15rem;
+		}
+		.deposit-widget {
+			min-width: 18rem;
+		}
+		.description {
+			height: 10rem;
+		}
 	}
 </style>
