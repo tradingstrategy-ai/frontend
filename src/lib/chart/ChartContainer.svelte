@@ -19,7 +19,7 @@ Display a chart container with title, description and timespan selector.
 	import { utcHour, utcDay } from 'd3-time';
 	import { SegmentedControl } from '$lib/components';
 
-	export let title: string;
+	export let title = '';
 
 	let timeSpanKey: TimeBucket = '3m';
 

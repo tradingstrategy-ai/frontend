@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { formatPercent } from '$lib/helpers/formatters';
+
 	export let data;
-	$: ({ chain, summary, state } = data);
+	$: ({ chain, summary, state, profitabilityChart } = data);
 </script>
 
 <svelte:head>
@@ -10,8 +13,22 @@
 
 <div class="strategy-overview-page">
 	<div class="deposit-widget">Deposit widget</div>
-	<div class="chart">Chart</div>
+
+	<div class="chart">
+		{#if profitabilityChart}
+			<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
+				<PerformanceChart
+					data={normalzeDataForInterval(profitabilityChart.data, interval)}
+					formatValue={formatPercent}
+					{spanDays}
+					{periodicity}
+				/>
+			</ChartContainer>
+		{/if}
+	</div>
+
 	<div class="metrics">Metrics</div>
+
 	<div class="description">Strategy description</div>
 </div>
 
@@ -37,15 +54,12 @@
 		}
 
 		/* Placeholder styling - remove once real elements all added */
-		> * {
+		:is(.metrics, .deposit-widget, .description) {
 			border-radius: var(--radius-md);
 			padding: 1.5rem;
 			background: hsl(var(--hsla-box-1));
 			font: var(--f-heading-sm-medium);
 			color: hsl(var(--hsl-text-extra-light));
-		}
-		.chart {
-			height: 18rem;
 		}
 		.metrics {
 			height: 15rem;
