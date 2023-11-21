@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
 	import MetricsGroup from './MetricsGroup.svelte';
@@ -17,7 +18,7 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<SummaryBox title="Deposit widget" />
+	<MyDeposits strategy={summary} {chain} />
 
 	<div class="chart">
 		{#if profitabilityChart}

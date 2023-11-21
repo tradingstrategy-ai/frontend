@@ -1,5 +1,5 @@
 export { default as ConnectWallet } from './ConnectWallet.svelte';
-export { default as InvestorWidget } from './InvestorWidget.svelte';
+export { default as MyDeposits } from './MyDeposits.svelte';
 export { default as TokenBalance } from './TokenBalance.svelte';
 export { default as VaultBalance } from './VaultBalance.svelte';
 export { default as WalletAddress } from './WalletAddress.svelte';

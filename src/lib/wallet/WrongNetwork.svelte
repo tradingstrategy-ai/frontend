@@ -2,14 +2,10 @@
 	import { switchNetwork } from '@wagmi/core';
 	import { Alert, Button } from '$lib/components';
 
-	// NOTE: don't move this to inline handler (prevent vite build warning)
-	function handleClick() {
-		switchNetwork({ chainId });
-	}
-
 	export let chainId: number;
 	export let chainName: string;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
+	export let hideButton = false;
 
 	const buttonSize = {
 		xs: 'xs',
@@ -22,7 +18,9 @@
 <div class="wrong-network">
 	<Alert {size} status="error" title="Wrong network">
 		Please connect to {chainName}
-		<Button slot="cta" size={buttonSize[size]} label="Switch network" on:click={handleClick} />
+		{#if !hideButton}
+			<Button slot="cta" size={buttonSize[size]} label="Switch network" on:click={() => switchNetwork({ chainId })} />
+		{/if}
 	</Alert>
 </div>
 

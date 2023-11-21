@@ -12,6 +12,7 @@
 		display: grid;
 		gap: 1rem;
 		background: hsl(var(--hsla-box-1));
+		border: 1px solid hsl(var(--hsla-box-3));
 		border-radius: var(--radius-md);
 		padding: 1.25rem;
 	}
