@@ -17,7 +17,7 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<div class="deposit-widget">Deposit widget</div>
+	<SummaryBox title="Deposit widget" />
 
 	<div class="chart">
 		{#if profitabilityChart}
@@ -70,7 +70,9 @@
 		</SummaryBox>
 	</div>
 
-	<div class="description">Strategy description</div>
+	<SummaryBox title="Strategy description">
+		<p>{summary.long_description}</p>
+	</SummaryBox>
 </div>
 
 <style lang="postcss">
@@ -83,13 +85,13 @@
 			gap: 1.5rem;
 			grid-template-columns: 2fr 1fr;
 
-			/* move deposit widget to row 2, col 2 */
-			.deposit-widget {
+			/* move deposit widget (1st element) to row 2, col 2 */
+			> :global(:nth-child(1)) {
 				grid-area: 2 / 2;
 			}
 
-			/* chart and description span full row width */
-			:is(.chart, .description) {
+			/* chart and description (2nd & 4th elements) span full row width */
+			> :global(:nth-child(2n)) {
 				grid-column: 1 / -1;
 			}
 		}
@@ -100,16 +102,14 @@
 			align-items: flex-start;
 		}
 
-		/* Placeholder styling - remove once real elements all added */
-		:is(.deposit-widget, .description) {
-			border-radius: var(--radius-md);
-			padding: 1.5rem;
-			background: hsl(var(--hsla-box-1));
-			font: var(--f-heading-sm-medium);
-			color: hsl(var(--hsl-text-extra-light));
-		}
-		.description {
-			height: 10rem;
+		.description p {
+			font: var(--f-paragraph-lg-roman);
+			letter-spacing: var(--ls-paragraph-lg, normal);
+
+			@media (--viewport-xs) {
+				font: var(--f-paragraph-md-roman);
+				letter-spacing: var(--ls-paragraph-md, normal);
+			}
 		}
 	}
 </style>
