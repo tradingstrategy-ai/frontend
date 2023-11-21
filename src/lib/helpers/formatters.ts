@@ -309,7 +309,7 @@ export function formatDurationMinutesSeconds(seconds: number): string {
  *
  * unixTimestamp is received from API as unix seconds since epoch
  */
-export function formatDaysAgo(unixTimestamp: number): string {
+export function formatDaysAgo(unixTimestamp: MaybeNumber): string {
 	if (!isNumber(unixTimestamp)) return notFilledMarker;
 	const seconds = Date.now() / 1000 - unixTimestamp;
 	const days = Math.floor(seconds / DAY);

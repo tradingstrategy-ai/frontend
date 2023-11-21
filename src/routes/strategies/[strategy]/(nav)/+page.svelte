@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
-	import { formatPercent } from '$lib/helpers/formatters';
+	import MetricsGroup from './MetricsGroup.svelte';
+	import { formatDaysAgo, formatPercent, formatPrice } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ chain, summary, state, profitabilityChart } = data);
+
+	$: keyMetrics = summary.summary_statistics.key_metrics;
 </script>
 
 <svelte:head>
@@ -27,7 +30,22 @@
 		{/if}
 	</div>
 
-	<div class="metrics">Metrics</div>
+	<div class="metrics">
+		<MetricsGroup title="Summary Stats">
+			<div>
+				<dt>Profitability</dt>
+				<dd>{formatPercent(keyMetrics.profitability.value)}</dd>
+			</div>
+			<div>
+				<dt>Age</dt>
+				<dd>{formatDaysAgo(keyMetrics.started_at.value)}</dd>
+			</div>
+			<div>
+				<dt>Total assets</dt>
+				<dd>{formatPrice(keyMetrics.total_equity.value)}</dd>
+			</div>
+		</MetricsGroup>
+	</div>
 
 	<div class="description">Strategy description</div>
 </div>
@@ -53,8 +71,14 @@
 			}
 		}
 
+		.metrics {
+			display: grid;
+			gap: inherit;
+			align-items: flex-start;
+		}
+
 		/* Placeholder styling - remove once real elements all added */
-		:is(.metrics, .deposit-widget, .description) {
+		:is(.deposit-widget, .description) {
 			border-radius: var(--radius-md);
 			padding: 1.5rem;
 			background: hsl(var(--hsla-box-1));
