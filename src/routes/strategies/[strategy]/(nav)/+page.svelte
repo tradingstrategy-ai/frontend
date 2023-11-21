@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { UpDownIndicator } from '$lib/components';
 	import MetricsGroup from './MetricsGroup.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 
@@ -34,7 +35,9 @@
 		<MetricsGroup title="Summary stats">
 			<div>
 				<dt>Profitability</dt>
-				<dd>{formatPercent(keyMetrics.profitability.value)}</dd>
+				<dd>
+					<UpDownIndicator value={keyMetrics.profitability.value} formatter={formatPercent} />
+				</dd>
 			</div>
 			<div>
 				<dt>Age</dt>
