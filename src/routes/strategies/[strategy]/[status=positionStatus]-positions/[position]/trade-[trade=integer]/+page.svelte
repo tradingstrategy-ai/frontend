@@ -100,7 +100,7 @@
 				<tbody>
 					<tr>
 						<td>Mid</td>
-						<td>{formatPrice(trade.price_structure.mid_price)}</td>
+						<td>{formatPrice(trade.price_structure?.mid_price)}</td>
 						<td />
 					</tr>
 

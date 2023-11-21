@@ -7,7 +7,7 @@
  *
  */
 
-export type PrimaryKey = number;
+export type PrimaryKey = `${number}`;
 
 export type UnixTimestamp = number;
 
@@ -31,9 +31,9 @@ export type Percent = number;
  * Used to differetiate different position types in UI logic
  */
 export enum PositionKind {
-	open,
-	closed,
-	frozen
+	open = 'open',
+	closed = 'closed',
+	frozen = 'frozen'
 }
 
 export interface AssetIdentifier {
@@ -95,7 +95,7 @@ export interface TradeExecution {
 	executed_price: USDollarPrice;
 	executed_quantity: TokenUnits;
 
-	price_structure: PriceStructure;
+	price_structure: PriceStructure | null;
 
 	lp_fees_paid?: USDollarValue;
 	lp_fees_estimated: USDollarValue;
