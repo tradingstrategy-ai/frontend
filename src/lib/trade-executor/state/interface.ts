@@ -31,9 +31,9 @@ export type Percent = number;
  * Used to differetiate different position types in UI logic
  */
 export enum PositionKind {
-	open,
-	closed,
-	frozen
+	open = 'open',
+	closed = 'closed',
+	frozen = 'frozen'
 }
 
 export interface AssetIdentifier {
