@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
 	import { UpDownIndicator } from '$lib/components';
+	import SummaryBox from './SummaryBox.svelte';
 	import MetricsGroup from './MetricsGroup.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 
@@ -32,37 +33,41 @@
 	</div>
 
 	<div class="metrics">
-		<MetricsGroup title="Summary stats">
-			<div>
-				<dt>Profitability</dt>
-				<dd>
-					<UpDownIndicator value={keyMetrics.profitability.value} formatter={formatPercent} />
-				</dd>
-			</div>
-			<div>
-				<dt>Age</dt>
-				<dd>{formatDaysAgo(keyMetrics.started_at.value)}</dd>
-			</div>
-			<div>
-				<dt>Total assets</dt>
-				<dd>{formatPrice(keyMetrics.total_equity.value)}</dd>
-			</div>
-		</MetricsGroup>
+		<SummaryBox title="Summary stats">
+			<MetricsGroup>
+				<div>
+					<dt>Profitability</dt>
+					<dd>
+						<UpDownIndicator value={keyMetrics.profitability.value} formatter={formatPercent} />
+					</dd>
+				</div>
+				<div>
+					<dt>Age</dt>
+					<dd>{formatDaysAgo(keyMetrics.started_at.value)}</dd>
+				</div>
+				<div>
+					<dt>Total assets</dt>
+					<dd>{formatPrice(keyMetrics.total_equity.value)}</dd>
+				</div>
+			</MetricsGroup>
+		</SummaryBox>
 
-		<MetricsGroup title="Risk metrics">
-			<div>
-				<dt>Max drawdown</dt>
-				<dd>{formatPercent(keyMetrics.max_drawdown.value)}</dd>
-			</div>
-			<div>
-				<dt>Sharpe</dt>
-				<dd>{formatNumber(keyMetrics.sharpe.value)}</dd>
-			</div>
-			<div>
-				<dt>Sortino</dt>
-				<dd>{formatNumber(keyMetrics.sortino.value)}</dd>
-			</div>
-		</MetricsGroup>
+		<SummaryBox title="Risk metrics">
+			<MetricsGroup>
+				<div>
+					<dt>Max drawdown</dt>
+					<dd>{formatPercent(keyMetrics.max_drawdown.value)}</dd>
+				</div>
+				<div>
+					<dt>Sharpe</dt>
+					<dd>{formatNumber(keyMetrics.sharpe.value)}</dd>
+				</div>
+				<div>
+					<dt>Sortino</dt>
+					<dd>{formatNumber(keyMetrics.sortino.value)}</dd>
+				</div>
+			</MetricsGroup>
+		</SummaryBox>
 	</div>
 
 	<div class="description">Strategy description</div>
