@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
 	import MetricsGroup from './MetricsGroup.svelte';
-	import { formatDaysAgo, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ chain, summary, state, profitabilityChart } = data);
@@ -31,7 +31,7 @@
 	</div>
 
 	<div class="metrics">
-		<MetricsGroup title="Summary Stats">
+		<MetricsGroup title="Summary stats">
 			<div>
 				<dt>Profitability</dt>
 				<dd>{formatPercent(keyMetrics.profitability.value)}</dd>
@@ -43,6 +43,21 @@
 			<div>
 				<dt>Total assets</dt>
 				<dd>{formatPrice(keyMetrics.total_equity.value)}</dd>
+			</div>
+		</MetricsGroup>
+
+		<MetricsGroup title="Risk metrics">
+			<div>
+				<dt>Max drawdown</dt>
+				<dd>{formatPercent(keyMetrics.max_drawdown.value)}</dd>
+			</div>
+			<div>
+				<dt>Sharpe</dt>
+				<dd>{formatNumber(keyMetrics.sharpe.value)}</dd>
+			</div>
+			<div>
+				<dt>Sortino</dt>
+				<dd>{formatNumber(keyMetrics.sortino.value)}</dd>
 			</div>
 		</MetricsGroup>
 	</div>
@@ -58,7 +73,7 @@
 		/* Desktop 2 column layout */
 		@media (--viewport-md-up) {
 			gap: 1.5rem;
-			grid-template-columns: 1fr auto;
+			grid-template-columns: 2fr 1fr;
 
 			/* move deposit widget to row 2, col 2 */
 			.deposit-widget {
@@ -84,12 +99,6 @@
 			background: hsl(var(--hsla-box-1));
 			font: var(--f-heading-sm-medium);
 			color: hsl(var(--hsl-text-extra-light));
-		}
-		.metrics {
-			height: 15rem;
-		}
-		.deposit-widget {
-			min-width: 18rem;
 		}
 		.description {
 			height: 10rem;
