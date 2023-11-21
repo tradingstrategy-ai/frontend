@@ -1,8 +1,10 @@
+import type { TradeExecution } from 'trade-executor/state/interface.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
 	const tradeId = params.trade;
 	const { breadcrumbs, position } = await parent();
+
 	const trade = position.trades[tradeId];
 
 	if (!trade) {

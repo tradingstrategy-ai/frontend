@@ -7,7 +7,7 @@
  *
  */
 
-export type PrimaryKey = number;
+export type PrimaryKey = `${number}`;
 
 export type UnixTimestamp = number;
 
@@ -95,7 +95,7 @@ export interface TradeExecution {
 	executed_price: USDollarPrice;
 	executed_quantity: TokenUnits;
 
-	price_structure: PriceStructure;
+	price_structure: PriceStructure | null;
 
 	lp_fees_paid?: USDollarValue;
 	lp_fees_estimated: USDollarValue;
