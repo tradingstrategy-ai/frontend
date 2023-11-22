@@ -11,7 +11,7 @@ declare global {
 	type MaybeDate = Maybe<Date>;
 	type MaybePromise<T> = T | Promise<T>;
 
-	type Formatter<T> = (value: T) => string;
+	type Formatter<T> = (value: T, ...args: any[]) => string;
 
 	type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
