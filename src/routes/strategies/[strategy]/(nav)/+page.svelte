@@ -84,7 +84,7 @@
 		/* Desktop 2 column layout */
 		@media (--viewport-md-up) {
 			gap: 1.5rem;
-			grid-template-columns: 2fr 1fr;
+			grid-template-columns: 2fr minmax(17rem, 1fr);
 
 			/* move deposit widget (1st element) to row 2, col 2 */
 			> :global(:nth-child(1)) {

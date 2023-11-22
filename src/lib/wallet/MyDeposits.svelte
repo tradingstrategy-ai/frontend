@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { switchNetwork } from '@wagmi/core';
 	import type { ApiChain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { wizard } from 'wizard/store';
-	import { wallet, VaultBalance, WalletAddress, WrongNetwork } from '$lib/wallet';
-	import { Alert, Button, Icon } from '$lib/components';
 	import { goto } from '$app/navigation';
+	import { switchNetwork } from '@wagmi/core';
+	import { wizard } from 'wizard/store';
+	import { wallet, DepositBalance, VaultBalance, WrongNetwork } from '$lib/wallet';
+	import { Alert, Button, Icon } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
@@ -36,14 +36,20 @@
 	{#if depositEnabled}
 		<div class="content">
 			{#if !connected}
-				<div class="not-connected">
-					<strong>Wallet not connected.</strong> Please connect wallet to see your deposit status.
+				<div class="not-connected-warning">
+					<Icon name="warning" />
+					<strong>Wallet not connected</strong>
 				</div>
+				<p>Please connect wallet to see your deposit status.</p>
 			{:else if wrongNetwork}
 				<WrongNetwork size="sm" hideButton chainId={chain.chain_id} chainName={chain.chain_name} />
 			{:else}
-				Balances coming soon
-				<!-- <VaultBalance {contracts} address={$wallet.address} /> -->
+				<dl class="balances">
+					<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
+						<DepositBalance label="Value" data={value} dollar />
+						<DepositBalance label="Shares" data={shares} />
+					</VaultBalance>
+				</dl>
 			{/if}
 		</div>
 		{#if !connected}
@@ -90,8 +96,22 @@
 	}
 
 	.content {
+		display: grid;
+		align-items: flex-start;
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-md-spacing, normal);
+	}
+
+	.not-connected-warning {
+		display: flex;
+		gap: 0.5ch;
+		align-items: center;
+	}
+
+	.balances {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-self: center;
 	}
 
 	.actions {

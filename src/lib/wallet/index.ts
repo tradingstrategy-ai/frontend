@@ -1,4 +1,5 @@
 export { default as ConnectWallet } from './ConnectWallet.svelte';
+export { default as DepositBalance } from './DepositBalance.svelte';
 export { default as MyDeposits } from './MyDeposits.svelte';
 export { default as TokenBalance } from './TokenBalance.svelte';
 export { default as VaultBalance } from './VaultBalance.svelte';
