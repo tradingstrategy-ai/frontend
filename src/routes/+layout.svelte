@@ -60,11 +60,11 @@
 	}
 
 	/* Price action and candle colors */
-	.bullish {
+	:is(.bullish, [data-direction='bullish']) {
 		color: hsl(var(--hsl-bullish));
 	}
 
-	.bearish {
+	:is(.bearish, [data-direction='bearish']) {
 		color: hsl(var(--hsl-bearish));
 	}
 

@@ -103,6 +103,20 @@
 			align-items: flex-start;
 		}
 
+		.chart {
+			:global([data-css-props]) {
+				--chart-aspect-ratio: 3.25;
+
+				@media (--viewport-sm-down) {
+					--chart-aspect-ratio: 2.25;
+				}
+
+				@media (--viewport-xs) {
+					--chart-aspect-ratio: 1.75;
+				}
+			}
+		}
+
 		.description p {
 			font: var(--f-paragraph-lg-roman);
 			letter-spacing: var(--ls-paragraph-lg, normal);

@@ -48,7 +48,7 @@ Display a chart container with title, description and timespan selector.
 	} as const;
 </script>
 
-<div class="chart-container">
+<div class="chart-container" data-css-props>
 	<header>
 		<h2>{title}</h2>
 		<SegmentedControl options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
@@ -58,27 +58,21 @@ Display a chart container with title, description and timespan selector.
 </div>
 
 <style lang="postcss">
-	.chart-container {
+	[data-css-props] {
 		--chart-container-padding: 1.5rem;
-		--chart-aspect-ratio: 2;
+
+		@media (--viewport-md-down) {
+			--chart-container-padding: 1rem;
+		}
+	}
+
+	.chart-container {
 		display: grid;
 		gap: var(--space-sm);
 		background: hsl(var(--hsla-box-1));
 		border: 1px solid hsl(var(--hsla-box-3));
 		border-radius: var(--radius-md);
 		padding-block: var(--chart-container-padding);
-
-		@media (--viewport-md-down) {
-			--chart-container-padding: 1rem;
-		}
-
-		@media (--viewport-sm-down) {
-			--chart-aspect-ratio: 1.75;
-		}
-
-		@media (--viewport-xs) {
-			--chart-aspect-ratio: 1.25;
-		}
 
 		header {
 			display: grid;

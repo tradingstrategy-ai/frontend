@@ -205,7 +205,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 </script>
 
 {#await initialize() then}
-	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
+	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ" data-css-props>
 		<div class="inner">
 			<slot {cursor} />
 		</div>
@@ -222,18 +222,21 @@ Dynamically ChartIQ modules (if available) and render chart element.
 {/await}
 
 <style lang="postcss">
-	.chart-container {
-		--CHART-aspect-ratio: 16/9;
-		position: relative;
-		aspect-ratio: var(--chart-aspect-ratio, var(--CHART-aspect-ratio));
+	[data-css-props] {
+		--chart-aspect-ratio: 16/9;
 
 		@media (--viewport-sm-down) {
-			--CHART-aspect-ratio: 3/2;
+			--chart-aspect-ratio: 3/2;
 		}
 
 		@media (--viewport-xs) {
-			--CHART-aspect-ratio: 4/6;
+			--chart-aspect-ratio: 4/6;
 		}
+	}
+
+	.chart-container {
+		position: relative;
+		aspect-ratio: var(--chart-aspect-ratio);
 
 		:is(.loading, .inner) {
 			position: absolute;

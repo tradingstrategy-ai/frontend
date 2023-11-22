@@ -80,16 +80,8 @@
 		}
 
 		:global(.stx-panel-study .stx-panel-title) {
-			display: block;
-			margin: 0;
-			padding-inline: var(--chart-container-padding, 0);
-			font: var(--f-heading-xs-medium);
-			letter-spacing: var(--f-heading-xs-spacing, normal);
-			text-transform: none;
-			box-shadow: none;
-
-			@media (--viewport-xs) {
-				display: none;
+			@media (--viewport-sm-up) {
+				display: unset;
 			}
 		}
 	}

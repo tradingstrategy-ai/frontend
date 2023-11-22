@@ -53,11 +53,11 @@ Display a peformance line chart for a given (static) dataset.
 			const dataSegment = chartEngine.getDataSegment();
 			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
 			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
-			const className = determinePriceChangeClass(last?.Close - first?.Close);
-			// NOTE: setting class name directly on HTML element rather than declaratively via
+			const direction = determinePriceChangeClass(last?.Close - first?.Close);
+			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
-			if (chartWrapper.className !== className) {
-				chartWrapper.className = className;
+			if (chartWrapper.dataset.direction !== direction) {
+				chartWrapper.dataset.direction = direction;
 				chartEngine.clearStyles();
 			}
 		});
@@ -96,19 +96,33 @@ Display a peformance line chart for a given (static) dataset.
 </div>
 
 <style lang="postcss">
-	.chart-hover-info {
-		position: absolute;
-		left: var(--x);
-		top: var(--y);
-		transform: translate(-50%, calc(-100% - var(--space-md)));
+	.performance-chart {
+		:global([data-css-props]) {
+			--chart-aspect-ratio: 2;
 
-		:global(time) {
-			color: hsl(var(--hsl-text-extra-light));
+			@media (--viewport-sm-down) {
+				--chart-aspect-ratio: 1.75;
+			}
+
+			@media (--viewport-xs) {
+				--chart-aspect-ratio: 1.25;
+			}
 		}
 
-		.value {
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing);
+		.chart-hover-info {
+			position: absolute;
+			left: var(--x);
+			top: var(--y);
+			transform: translate(-50%, calc(-100% - var(--space-md)));
+
+			:global(time) {
+				color: hsl(var(--hsl-text-extra-light));
+			}
+
+			.value {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing);
+			}
 		}
 	}
 </style>

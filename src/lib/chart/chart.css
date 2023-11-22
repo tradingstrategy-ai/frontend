@@ -65,8 +65,15 @@
 	padding: var(--space-sm);
 }
 
+/* Hide panel title by default (show when needed with display:block) */
 .stx-panel-title {
 	display: none;
+	margin: 0;
+	padding-inline: var(--chart-container-padding, 0.625rem);
+	font: var(--f-heading-xs-medium);
+	letter-spacing: var(--f-heading-xs-spacing, normal);
+	text-transform: none;
+	box-shadow: none;
 }
 
 .stx_jump_today {
@@ -102,12 +109,12 @@
 }
 
 /* bullish line chart styles */
-.bullish .stx_line_chart {
+:is(.bullish, [data-direction='bullish']) .stx_line_chart {
 	--hsl-chart-line: var(--hsl-bullish);
 }
 
 /* bearish line chart styles */
-.bearish .stx_line_chart {
+:is(.bearish, [data-direction='bearish']) .stx_line_chart {
 	--hsl-chart-line: var(--hsl-bearish);
 }
 
@@ -121,11 +128,11 @@
 }
 
 /* bullish mountain chart styles */
-.bullish .stx_mountain_chart {
+:is(.bullish, [data-direction='bullish']) .stx_mountain_chart {
 	--hsl-chart-mountain: var(--hsl-bullish);
 }
 
 /* bearish mountain chart styles */
-.bearish .stx_mountain_chart {
+:is(.bearish, [data-direction='bearish']) .stx_mountain_chart {
 	--hsl-chart-mountain: var(--hsl-bearish);
 }
