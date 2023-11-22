@@ -108,7 +108,7 @@
 						<td>Expected</td>
 						<td>{formatPrice(trade.planned_price)}</td>
 						<td class="delta">
-							{formatPriceDifference(trade.price_structure.mid_price, trade.planned_price)}
+							{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
 						</td>
 					</tr>
 
