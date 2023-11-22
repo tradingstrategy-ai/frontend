@@ -55,20 +55,21 @@ Display a chart container with title, description and timespan selector.
 		<slot name="subtitle" />
 	</header>
 	<slot timeSpan={timeSpans[timeSpanKey]} />
-	<slot name="footer" />
 </div>
 
 <style lang="postcss">
 	.chart-container {
+		--chart-container-padding: 1.5rem;
+		--chart-aspect-ratio: 2;
 		display: grid;
 		gap: var(--space-sm);
 		background: hsl(var(--hsla-box-1));
+		border: 1px solid hsl(var(--hsla-box-3));
 		border-radius: var(--radius-md);
-		padding: var(--space-lg) var(--space-lg);
-		--chart-aspect-ratio: 2;
+		padding-block: var(--chart-container-padding);
 
 		@media (--viewport-md-down) {
-			padding: var(--space-md);
+			--chart-container-padding: 1rem;
 		}
 
 		@media (--viewport-sm-down) {
@@ -84,6 +85,7 @@ Display a chart container with title, description and timespan selector.
 			grid-template-columns: 1fr auto;
 			align-items: center;
 			gap: var(--space-sm);
+			padding-inline: var(--chart-container-padding);
 
 			@media (--viewport-xs) {
 				grid-template-columns: 1fr;
@@ -107,7 +109,7 @@ Display a chart container with title, description and timespan selector.
 			}
 		}
 
-		:global(:is([slot='subtitle'], [slot='footer'])) {
+		:global([slot='subtitle']) {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 

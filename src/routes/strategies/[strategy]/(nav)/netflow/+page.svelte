@@ -54,8 +54,9 @@
 
 		<p slot="subtitle">
 			Learn more about
-			<a class="body-link" href={tvlChart.help_link}>Total value locked</a>
-			metric and how it is calculated.
+			<a class="body-link" href={tvlChart.help_link}>TVL</a> and
+			<a class="body-link" href={netflowChart.help_link}>Netflow</a>
+			metrics and how they're calculated.
 		</p>
 		<PerformanceChart
 			data={mergeData(tvlData, netflowData)}
@@ -64,11 +65,6 @@
 			{periodicity}
 			studies={['Netflow']}
 		/>
-		<p slot="footer">
-			Learn more about
-			<a class="body-link" href={netflowChart.help_link}>Netflow</a>
-			metric and how it is calculated.
-		</p>
 	</ChartContainer>
 </section>
 
@@ -85,10 +81,9 @@
 		:global(.stx-panel-study .stx-panel-title) {
 			display: block;
 			margin: 0;
-			padding: 0;
+			padding-inline: var(--chart-container-padding, 0);
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--f-heading-xs-spacing, normal);
-			color: hsl(var(--hsl-text-light));
 			text-transform: none;
 			box-shadow: none;
 
