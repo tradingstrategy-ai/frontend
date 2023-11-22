@@ -24,6 +24,7 @@ Display a peformance line chart for a given (static) dataset.
 	export let spanDays: number;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
+	export let yAxis = false;
 
 	let chartWrapper: HTMLElement;
 
@@ -39,6 +40,7 @@ Display a peformance line chart for a given (static) dataset.
 			tension: 1,
 			xAxis: { displayGridLines: false },
 			yAxis: {
+				noDraw: !yAxis,
 				displayGridLines: false,
 				priceFormatter: (...args: any[]) => formatValue(args[2], 0)
 			}

@@ -25,6 +25,7 @@
 				of realised trading positions.
 			</p>
 			<PerformanceChart
+				yAxis
 				data={normalzeDataForInterval(profitabilityChart.data, interval)}
 				formatValue={formatPercent}
 				{spanDays}
