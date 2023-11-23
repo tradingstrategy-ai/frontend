@@ -71,11 +71,11 @@
 			<TopEntities
 				type="trading-pairs"
 				label="pairs"
-				title="Highest volume trading pairs"
+				title="Highest TVL trading pairs"
 				{chain}
 				data={streamed.pairs}
 				tableComponent={TopPairs}
-				rightColHeader="Vol 30d"
+				rightColHeader="TVL"
 			/>
 
 			<TopEntities

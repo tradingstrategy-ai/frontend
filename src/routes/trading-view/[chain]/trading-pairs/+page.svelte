@@ -45,7 +45,7 @@
 			{...options}
 			{loading}
 			hideChainIcon
-			hiddenColumns={'liquidity_change_24h'}
+			hiddenColumns={['liquidity', 'liquidity_change_24h']}
 			on:change={handleChange}
 		/>
 	</Section>

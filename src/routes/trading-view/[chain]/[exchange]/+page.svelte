@@ -20,13 +20,6 @@
 		[exchange.exchange_slug]: exchange.human_readable_name
 	};
 
-	let hiddenColumns: string[];
-	$: if (exchange.liquidity_type === 'xyliquidity') {
-		hiddenColumns = ['exchange_name', 'tvl'];
-	} else {
-		hiddenColumns = ['exchange_name', 'liquidity', 'liquidity_change_24h'];
-	}
-
 	const pairsClient = getPairsClient(fetch);
 
 	$: $page.route.id?.endsWith('[exchange]') &&
@@ -89,7 +82,12 @@
 		<h2>Trading Pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} {hiddenColumns} hideChainIcon on:change={handlePairsChange} />
+			<PairTable
+				{...$pairsClient}
+				hideChainIcon
+				hiddenColumns={['exchange_name', 'liquidity', 'liquidity_change_24h']}
+				on:change={handlePairsChange}
+			/>
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

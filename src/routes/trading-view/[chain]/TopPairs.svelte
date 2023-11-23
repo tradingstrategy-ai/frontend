@@ -11,5 +11,5 @@
 <TradingEntitiesTable {loading} {rows} {getHref} let:row let:format>
 	<td width="40%">{format(row.pair_symbol)}</td>
 	<td width="35%">{format(row.exchange_name)}</td>
-	<td>{formatDollar(row.usd_volume_30d)}</td>
+	<td>{formatDollar(row.pair_tvl)}</td>
 </TradingEntitiesTable>
