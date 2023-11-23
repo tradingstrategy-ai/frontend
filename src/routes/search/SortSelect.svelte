@@ -10,9 +10,9 @@ pre-defined set of sort options.
 -->
 <script context="module" lang="ts">
 	const options = {
-		'liquidity:desc': {
-			label: '▼ Liquidity',
-			params: ['liquidity:desc', 'pool_swap_fee:asc', '_text_match:desc']
+		'tvl:desc': {
+			label: '▼ TVL',
+			params: ['tvl:desc', 'pool_swap_fee:asc', '_text_match:desc']
 		},
 
 		'volume:desc': {
@@ -58,7 +58,7 @@ pre-defined set of sort options.
 	}
 </script>
 
-<div class="sort-by-wrapper">
+<div class="sort-select">
 	<Select bind:value>
 		{#each Object.entries(options) as [key, option] (key)}
 			<option value={key}>
@@ -69,7 +69,7 @@ pre-defined set of sort options.
 </div>
 
 <style>
-	.sort-by-wrapper {
+	.sort-select {
 		min-width: 11rem;
 	}
 </style>
