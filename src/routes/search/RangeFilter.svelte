@@ -57,6 +57,7 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 	import Filter from './Filter.svelte';
 
 	export let fieldName: string;
+	export let title: string | undefined = undefined;
 	export let selected: string[] = [];
 
 	/** array of numbers in ascending or descending order */
@@ -74,4 +75,4 @@ range options based on breakpoints; dispatches valid Typesense filter on:change.
 	$: dispatch('change', { fieldName, filter: getFilter(fieldName, selected) });
 </script>
 
-<Filter bind:selected {fieldName} {options} />
+<Filter bind:selected {fieldName} {title} {options} />

@@ -135,7 +135,7 @@ props.
 			width: 5.625em;
 			font: var(--search-hit-badge-font, var(--f-ui-xs-medium));
 			letter-spacing: var(--search-hit-badge-spacing, var(--f-ui-xs-spacing, normal));
-			color: var(--c-text-default-night);
+			color: var(--cm-light, hsl(var(--hsl-text-inverted))) var(--cm-dark, hsl(var(--hsl-text)));
 			text-transform: capitalize;
 			text-align: center;
 

@@ -22,7 +22,7 @@ export type PairIndexResponse = {
 const defaultParams: PairIndexParams = {
 	page_size: 10,
 	page: 0,
-	sort: 'volume_30d',
+	sort: 'tvl',
 	direction: 'desc'
 };
 

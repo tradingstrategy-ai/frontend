@@ -270,7 +270,7 @@ export function formatSwapFee(n: MaybeNumber): string {
 	if (!isNumber(n)) return '';
 	return n.toLocaleString('en', {
 		minimumSignificantDigits: 1,
-		maximumSignificantDigits: 1,
+		maximumSignificantDigits: 2,
 		style: 'percent'
 	});
 }

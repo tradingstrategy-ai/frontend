@@ -21,12 +21,13 @@ Display filter options as checkboxes search queries.
 
 <script lang="ts">
 	export let fieldName: string;
+	export let title: string | undefined = undefined;
 	export let options: FilterOption[];
 	export let selected: string[] = [];
 </script>
 
 <div class="filter">
-	<h4>{fieldName.replace(/_/g, ' ')}</h4>
+	<h4>{title ?? fieldName.replace(/_/g, ' ')}</h4>
 	<ul>
 		{#each options as { label, value, count } (value)}
 			{#if value}

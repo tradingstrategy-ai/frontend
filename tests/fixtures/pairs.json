@@ -32,6 +32,7 @@
 			"usd_liquidity_latest": 0,
 			"liquidity_change_24h": 0,
 			"usd_liquidity_change_24h": 0,
+			"pair_tvl": 165500000.0,
 			"liquidity_type": "xyliquidity"
 		},
 		{

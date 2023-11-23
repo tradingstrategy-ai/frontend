@@ -12,7 +12,7 @@
 	export let rows: PairIndexResponse['rows'] | undefined = undefined;
 	export let totalRowCount = 0;
 	export let page = 0;
-	export let sort = 'volume_30d';
+	export let sort = 'tvl';
 	export let direction: 'asc' | 'desc' = 'desc';
 	export let hiddenColumns: string[] = [];
 	export let hideChainIcon = false;
@@ -80,11 +80,10 @@
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
-			id: 'tvl',
+			id: 'tvl', // must match sort key
 			accessor: 'pair_tvl',
 			header: 'TVL',
-			cell: ({ value }) => formatDollar(value),
-			plugins: { sort: { disable: true } }
+			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			id: 'cta',

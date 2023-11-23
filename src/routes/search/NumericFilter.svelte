@@ -19,6 +19,7 @@ Typesense filter on:change.
 	import Filter from './Filter.svelte';
 
 	export let fieldName: string;
+	export let title: string | undefined = undefined;
 	export let selected: string[] = [];
 	export let filters: string[] = [];
 	export let labels: string[] = [];
@@ -34,4 +35,4 @@ Typesense filter on:change.
 	$: dispatch('change', { fieldName, filter: selected.join(' || ') });
 </script>
 
-<Filter bind:selected {fieldName} {options} />
+<Filter bind:selected {fieldName} {title} {options} />
