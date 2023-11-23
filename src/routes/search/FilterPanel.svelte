@@ -93,10 +93,10 @@
 				on:change={handleFilterChange}
 			/>
 			<NumericFilter
-				bind:selected={filters['pool_swap_fee']}
-				fieldName="pool_swap_fee"
-				filters={['0.0001', '0.0005', '0.003', '0.01']}
-				labels={['0.01%', '0.05%', '0.3%', '1.0%']}
+				bind:selected={filters['pair_swap_fee']}
+				fieldName="pair_swap_fee"
+				filters={['0.0001', '0.0005', '0.0025', '0.003', '0.01']}
+				labels={['0.01%', '0.05%', '0.25%', '0.3%', '1.0%']}
 				on:change={handleFilterChange}
 			/>
 		</div>
