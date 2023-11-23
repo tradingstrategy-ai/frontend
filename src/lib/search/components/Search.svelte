@@ -21,7 +21,7 @@ Display site-wide search box for use in top-nav.
 
 	$: tradingEntities.search({
 		q,
-		sort_by: ['type_rank:asc', 'liquidity:desc', 'pool_swap_fee:asc'],
+		sort_by: ['type_rank:asc', 'tvl:desc', 'pool_swap_fee:asc'],
 		group_by: ['type']
 	});
 
