@@ -59,7 +59,6 @@
 			metrics and how they're calculated.
 		</p>
 		<PerformanceChart
-			yAxis
 			data={mergeData(tvlData, netflowData)}
 			formatValue={formatDollar}
 			{spanDays}

@@ -18,20 +18,21 @@ Display a peformance line chart for a given (static) dataset.
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { merge } from '$lib/helpers/object';
 
 	export let data: Quote[];
+	export let options: any = undefined;
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
-	export let yAxis = false;
 
 	let chartWrapper: HTMLElement;
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
 
-	const options = {
+	const defaultOptions = {
 		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
 		dontRoll: true,
@@ -40,7 +41,6 @@ Display a peformance line chart for a given (static) dataset.
 			tension: 1,
 			xAxis: { displayGridLines: false },
 			yAxis: {
-				noDraw: !yAxis,
 				displayGridLines: false,
 				priceFormatter: (...args: any[]) => formatValue(args[2], 0)
 			}
@@ -81,7 +81,7 @@ Display a peformance line chart for a given (static) dataset.
 <svelte:window bind:innerWidth={viewportWidth} />
 
 <div class="performance-chart" bind:this={chartWrapper}>
-	<ChartIQ {init} {options} {studies} invalidate={[periodicity, hideYAxis]} let:cursor>
+	<ChartIQ {init} options={merge(defaultOptions, options)} {studies} invalidate={[periodicity, hideYAxis]} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />

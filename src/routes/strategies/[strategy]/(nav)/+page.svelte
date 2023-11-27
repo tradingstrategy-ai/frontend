@@ -10,6 +10,14 @@
 	$: ({ chain, summary, state, profitabilityChart } = data);
 
 	$: keyMetrics = summary.summary_statistics.key_metrics;
+
+	const chartOptions = {
+		xaxisHeight: 20,
+		chart: {
+			xAxis: { displayBorder: false, fitLeftToRight: true },
+			yAxis: { noDraw: true }
+		}
+	};
 </script>
 
 <svelte:head>
@@ -25,6 +33,7 @@
 			<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
 				<PerformanceChart
 					data={normalzeDataForInterval(profitabilityChart.data, interval)}
+					options={chartOptions}
 					formatValue={formatPercent}
 					{spanDays}
 					{periodicity}
@@ -114,6 +123,14 @@
 				@media (--viewport-xs) {
 					--chart-aspect-ratio: 1.75;
 				}
+			}
+
+			:global(.stx_xaxis) {
+				color: transparent;
+			}
+
+			:global(.stx_xaxis_dark) {
+				color: hsl(var(--hsl-text-extra-light));
 			}
 		}
 
