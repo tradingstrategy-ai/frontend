@@ -12,6 +12,9 @@
 	$: keyMetrics = summary.summary_statistics.key_metrics;
 
 	const chartOptions = {
+		controls: { home: null },
+		allowScroll: false,
+		allowZoom: false,
 		xaxisHeight: 20,
 		chart: {
 			xAxis: { displayBorder: false, fitLeftToRight: true },
