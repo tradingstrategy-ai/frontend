@@ -69,9 +69,10 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	export let studies: any[] = [];
 	export let linker: ChartLinker | undefined = undefined;
 	export let feed: QuoteFeed | undefined = undefined;
-	export let invalidate: any = undefined;
+	export let invalidate: any[] = [];
+	export let loading = false;
 
-	let loading = false;
+	let updating = false;
 
 	interface ChartCursor {
 		position: {
@@ -147,7 +148,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		// ignore mouse/touch movements if chart is in loading state;
 		// this must come _after_ linker registration (above)
-		chartEngine.prepend('mousemoveinner', () => loading);
+		chartEngine.prepend('mousemoveinner', () => loading || updating);
 
 		// cancel mouseWheel zoom unless a modifier key is pressed
 		chartEngine.prepend('mouseWheel', (event) => {
@@ -172,7 +173,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		const originalLoadChart = chartEngine.loadChart.bind(chartEngine);
 		chartEngine.loadChart = (symbol: any, parameters: any, callback: Function | undefined) => {
 			originalLoadChart(symbol, parameters, () => {
-				loading = false;
+				updating = false;
 				chartTracker ??= new ChartActivityTracker(chartEngine);
 				callback?.();
 			});
@@ -185,7 +186,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		}
 
 		function update(...args: any) {
-			loading = true;
+			updating = true;
 
 			// clear attached studies
 			chartEngine.clear();
@@ -205,11 +206,11 @@ Dynamically ChartIQ modules (if available) and render chart element.
 </script>
 
 {#await initialize() then}
-	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ" data-css-props>
+	<div class="chart-container" use:chartIQ={[loading, ...invalidate]} data-testid="chartIQ" data-css-props>
 		<div class="inner">
 			<slot {cursor} />
 		</div>
-		{#if loading}
+		{#if loading || updating}
 			<div class="loading" transition:fade={{ duration: 250 }}>
 				<Spinner size="60" color="hsl(var(--hsl-text))" />
 			</div>

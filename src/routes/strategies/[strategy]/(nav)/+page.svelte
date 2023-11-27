@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
@@ -7,7 +7,7 @@
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ chain, summary, state, profitabilityChart } = data);
+	$: ({ chain, summary, streamed } = data);
 
 	$: keyMetrics = summary.summary_statistics.key_metrics;
 
@@ -32,17 +32,15 @@
 	<MyDeposits strategy={summary} {chain} />
 
 	<div class="chart">
-		{#if profitabilityChart}
-			<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
-				<PerformanceChart
-					data={normalzeDataForInterval(profitabilityChart.data, interval)}
-					options={chartOptions}
-					formatValue={formatPercent}
-					{spanDays}
-					{periodicity}
-				/>
-			</ChartContainer>
-		{/if}
+		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
+			<PerformanceChart
+				data={streamed.profitabilityChart.then(({ data }) => normalizeDataForInterval(data, interval))}
+				options={chartOptions}
+				formatValue={formatPercent}
+				{spanDays}
+				{periodicity}
+			/>
+		</ChartContainer>
 	</div>
 
 	<div class="metrics">

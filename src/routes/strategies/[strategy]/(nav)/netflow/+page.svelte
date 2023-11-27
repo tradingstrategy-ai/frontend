@@ -6,7 +6,7 @@
 	import type { RawTick, Quote } from '$lib/chart';
 	import type { TimeInterval } from 'd3-time';
 	import { parseDate } from '$lib/helpers/date.js';
-	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
@@ -49,7 +49,7 @@
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
 	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval, periodicity }}>
-		{@const tvlData = normalzeDataForInterval(tvlChart.data, interval)}
+		{@const tvlData = normalizeDataForInterval(tvlChart.data, interval)}
 		{@const netflowData = summarizeNetflowData(netflowChart.data, interval)}
 
 		<p slot="subtitle">

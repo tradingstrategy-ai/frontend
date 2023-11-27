@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import SummaryStatistics from './SummaryStatistics.svelte';
-	import { ChartContainer, PerformanceChart, normalzeDataForInterval } from '$lib/chart';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
@@ -25,7 +25,7 @@
 				of realised trading positions.
 			</p>
 			<PerformanceChart
-				data={normalzeDataForInterval(profitabilityChart.data, interval)}
+				data={normalizeDataForInterval(profitabilityChart.data, interval)}
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}

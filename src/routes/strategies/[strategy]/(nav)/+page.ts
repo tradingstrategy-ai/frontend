@@ -19,5 +19,5 @@ export async function load({ parent, fetch }) {
 		throw error(503, { message: 'Service Unavailable', stack });
 	});
 
-	return { profitabilityChart };
+	return { streamed: { profitabilityChart } };
 }

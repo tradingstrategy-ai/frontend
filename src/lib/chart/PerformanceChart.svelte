@@ -20,7 +20,7 @@ Display a peformance line chart for a given (static) dataset.
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { merge } from '$lib/helpers/object';
 
-	export let data: Quote[];
+	export let data: MaybePromise<Quote[]>;
 	export let options: any = undefined;
 	export let formatValue: Formatter<number>;
 	export let spanDays: number;
@@ -31,6 +31,14 @@ Display a peformance line chart for a given (static) dataset.
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
+
+	let resolvedData: Quote[] | undefined;
+	$: resolveData(data);
+
+	async function resolveData(data: MaybePromise<Quote[]>) {
+		resolvedData = undefined;
+		resolvedData = await data;
+	}
 
 	const defaultOptions = {
 		layout: { chartType: 'mountain' },
@@ -67,7 +75,7 @@ Display a peformance line chart for a given (static) dataset.
 			chartEngine.loadChart('Performance', {
 				periodicity,
 				span: { base: 'day', multiplier: spanDays },
-				masterData: data
+				masterData: resolvedData ?? []
 			});
 
 			// hide the Y Axis on smaller screens
@@ -81,7 +89,14 @@ Display a peformance line chart for a given (static) dataset.
 <svelte:window bind:innerWidth={viewportWidth} />
 
 <div class="performance-chart" bind:this={chartWrapper}>
-	<ChartIQ {init} options={merge(defaultOptions, options)} {studies} invalidate={[periodicity, hideYAxis]} let:cursor>
+	<ChartIQ
+		{init}
+		options={merge(defaultOptions, options)}
+		{studies}
+		invalidate={[periodicity, hideYAxis]}
+		loading={!resolvedData}
+		let:cursor
+	>
 		{@const { position, data } = cursor}
 		{#if data}
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />
