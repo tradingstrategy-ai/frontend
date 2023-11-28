@@ -10,7 +10,9 @@
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ tvlChart, netflowChart, startedAt } = data);
+	$: ({ tvlChart, netflowChart, summary } = data);
+
+	$: startedAt = summary.summary_statistics?.key_metrics?.started_at?.value;
 
 	function summarizeNetflowData(data: RawTick[], interval: TimeInterval) {
 		return data.reduce((acc, [ts, value]) => {

@@ -2,11 +2,11 @@
  * Fetch the chart sources
  */
 import { error } from '@sveltejs/kit';
+import { getConfiguredStrategyById } from 'trade-executor/strategy/configuration';
 import { fetchChartData } from '../chart';
 
-export async function load({ parent, fetch }) {
-	const { strategy } = await parent();
-	const { url } = strategy;
+export async function load({ params, fetch }) {
+	const { url } = getConfiguredStrategyById(params.strategy)!;
 
 	const chartParams = {
 		type: 'compounding_realised_profitability',

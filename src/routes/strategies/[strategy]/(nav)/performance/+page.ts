@@ -2,15 +2,14 @@
  * Fetch the chart sources
  */
 import { error } from '@sveltejs/kit';
+import { getConfiguredStrategyById } from 'trade-executor/strategy/configuration';
 import { fetchChartData } from '../../chart';
 
 // Chart cannot be rendered server-side
 export const ssr = false;
 
-export async function load({ parent, fetch }) {
-	// See layout.ts load()
-	const { strategy } = await parent();
-	const { url } = strategy;
+export async function load({ params, fetch }) {
+	const { url } = getConfiguredStrategyById(params.strategy)!;
 
 	// TODO: use backtest data when insufficient trading data?
 	const chartParams = {
