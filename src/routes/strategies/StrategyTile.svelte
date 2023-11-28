@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { EventHandler } from 'svelte/elements';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
@@ -18,6 +19,12 @@
 	const keyMetrics = summaryStatistics.key_metrics ?? {};
 	const isBacktested = Object.values(keyMetrics).some(({ source }) => source === 'backtesting');
 
+	const handleClick: EventHandler = ({ target }) => {
+		// skip explicit goto if user clicked an anchor tag
+		if (target instanceof HTMLAnchorElement && target.href) return;
+		goto(href);
+	};
+
 	// FIXME: hack to infer list of tokens based on strategy ID;
 	// In the future this will come from the strategy configuration.
 	function getStrategyTokens({ id }: StrategyRuntimeState) {
@@ -33,7 +40,7 @@
 
 <!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
 <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
-<div class="strategy-tile ds-3" on:click={() => goto(href)}>
+<div class="strategy-tile ds-3" on:click={handleClick}>
 	<div class="visuals">
 		<div class="top">
 			<div class="tokens">
@@ -86,7 +93,7 @@
 				<span class="backtest-data-badge">* Backtested Metrics</span>
 			{/if}
 		</div>
-		<div class="actions" on:click|stopPropagation>
+		<div class="actions">
 			<Button size="md" {href}>View strategy</Button>
 		</div>
 	</div>
