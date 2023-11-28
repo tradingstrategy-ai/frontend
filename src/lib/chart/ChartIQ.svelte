@@ -205,22 +205,27 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	}
 </script>
 
-{#await initialize() then}
-	<div class="chart-container" use:chartIQ={[loading, ...invalidate]} data-testid="chartIQ" data-css-props>
-		<div class="inner">
-			<slot {cursor} />
+<div class="chart-iq" data-css-props>
+	{#if loading || updating}
+		<div class="loading" transition:fade={{ duration: 250 }}>
+			<Spinner size="60" color="hsl(var(--hsl-text-extra-light))" />
 		</div>
-		{#if loading || updating}
-			<div class="loading" transition:fade={{ duration: 250 }}>
-				<Spinner size="60" color="hsl(var(--hsl-text-extra-light))" />
-			</div>
-		{/if}
+	{/if}
+
+	<div class="overlay">
+		<slot {cursor} />
 	</div>
-{:catch}
-	<Alert status="warning">
-		ChartIQ charting library notavailable. ChartIQ is an optional proprietary dependency that requires a license.
-	</Alert>
-{/await}
+
+	{#await initialize() then}
+		<div use:chartIQ={[loading, ...invalidate]} data-testid="chartIQ" />
+	{:catch}
+		<div class="error">
+			<Alert size="md" status="warning" title="ChartIQ Error">
+				ChartIQ charting library not available. ChartIQ is an optional proprietary dependency that requires a license.
+			</Alert>
+		</div>
+	{/await}
+</div>
 
 <style lang="postcss">
 	[data-css-props] {
@@ -231,15 +236,17 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		}
 
 		@media (--viewport-xs) {
-			--chart-aspect-ratio: 4/6;
+			--chart-aspect-ratio: 1;
 		}
 	}
 
-	.chart-container {
+	.chart-iq {
 		position: relative;
+		width: 100%;
+		height: var(--chart-height, auto);
 		aspect-ratio: var(--chart-aspect-ratio);
 
-		:is(.loading, .inner) {
+		> * {
 			position: absolute;
 			top: 0;
 			bottom: 0;
@@ -247,7 +254,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			right: 0;
 		}
 
-		.inner {
+		.overlay {
 			z-index: 99;
 			pointer-events: none;
 		}
@@ -257,6 +264,11 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			display: flex;
 			justify-content: center;
 			align-items: center;
+		}
+
+		.error {
+			padding-top: 2rem;
+			padding-inline: calc((100% - min(65ch, 100%)) / 2);
 		}
 	}
 </style>
