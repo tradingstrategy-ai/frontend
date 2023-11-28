@@ -212,7 +212,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		</div>
 		{#if loading || updating}
 			<div class="loading" transition:fade={{ duration: 250 }}>
-				<Spinner size="60" color="hsl(var(--hsl-text))" />
+				<Spinner size="60" color="hsl(var(--hsl-text-extra-light))" />
 			</div>
 		{/if}
 	</div>
@@ -257,7 +257,6 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background: hsl(var(--hsl-body) / 75%);
 		}
 	}
 </style>
