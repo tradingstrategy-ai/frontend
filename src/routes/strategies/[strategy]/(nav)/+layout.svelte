@@ -5,8 +5,7 @@
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let data;
-
-	$: ({ summary } = data);
+	$: ({ summary, state } = data);
 
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
@@ -29,7 +28,7 @@
 	<div class="subpage">
 		<StrategyNav
 			strategyId={summary.id}
-			portfolio={data.state.portfolio}
+			portfolio={state.portfolio}
 			onChainData={summary.on_chain_data}
 			currentPath={$page.url.pathname}
 			{backtestAvailable}
