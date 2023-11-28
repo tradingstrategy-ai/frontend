@@ -22,10 +22,11 @@ Display a peformance line chart for a given (static) dataset.
 
 	export let data: MaybePromise<Quote[]>;
 	export let options: any = undefined;
-	export let formatValue: Formatter<number>;
+	export let formatValue: Formatter<MaybeNumber>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
+	export let dataSegmentChange: Function | undefined = undefined;
 
 	let chartWrapper: HTMLElement;
 
@@ -62,12 +63,16 @@ Display a peformance line chart for a given (static) dataset.
 			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
 			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
 			const direction = determinePriceChangeClass(last?.Close - first?.Close);
+
 			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
 			if (chartWrapper.dataset.direction !== direction) {
 				chartWrapper.dataset.direction = direction;
 				chartEngine.clearStyles();
 			}
+
+			// call optional dataSegmentChange callback
+			dataSegmentChange?.(first, last);
 		});
 
 		// returned callback invoked on both initial load and updates

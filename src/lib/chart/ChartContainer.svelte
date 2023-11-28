@@ -24,6 +24,7 @@ Display a chart container with title, description and timespan selector.
 	let timeSpanKey: TimeBucket = '3m';
 
 	type TimeSpan = {
+		label: string;
 		spanDays: number;
 		interval: TimeInterval;
 		periodicity: Periodicity;
@@ -31,16 +32,19 @@ Display a chart container with title, description and timespan selector.
 
 	const timeSpans: Record<TimeBucket, TimeSpan> = {
 		'1w': {
+			label: '1W',
 			spanDays: 7,
 			interval: utcHour,
 			periodicity: { period: 1, interval: 60, timeUnit: 'minute' }
 		},
 		'1m': {
+			label: '1M',
 			spanDays: 30,
 			interval: utcHour.every(4)!,
 			periodicity: { period: 1, interval: 4 * 60, timeUnit: 'minute' }
 		},
 		'3m': {
+			label: '3M',
 			spanDays: 90,
 			interval: utcDay.every(1)!,
 			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
@@ -50,7 +54,9 @@ Display a chart container with title, description and timespan selector.
 
 <div class="chart-container" data-css-props>
 	<header>
-		<h2>{title}</h2>
+		<slot name="title" timeSpan={timeSpans[timeSpanKey]}>
+			<h2>{title}</h2>
+		</slot>
 		<SegmentedControl options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
 		<slot name="subtitle" />
 	</header>

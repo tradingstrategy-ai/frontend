@@ -1,15 +1,23 @@
 <script lang="ts">
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { MyDeposits } from '$lib/wallet';
-	import { UpDownIndicator } from '$lib/components';
+	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
 	import MetricsGroup from './MetricsGroup.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { relativeProfitability } from 'trade-executor/helpers/profit';
 
 	export let data;
 	$: ({ chain, summary, streamed } = data);
 
 	$: keyMetrics = summary.summary_statistics.key_metrics;
+
+	let periodPerformance: MaybeNumber;
+
+	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
+		periodPerformance = relativeProfitability(first?.Close, last?.Close);
+	}
 
 	const chartOptions = {
 		controls: { home: null },
@@ -33,12 +41,19 @@
 
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
+			<div class="period-performance" slot="title" let:timeSpan={{ label }}>
+				{#if periodPerformance !== undefined}
+					<UpDownCell value={periodPerformance} formatter={formatProfitability} />
+					Last {label}
+				{/if}
+			</div>
 			<PerformanceChart
 				data={streamed.profitabilityChart.then(({ data }) => normalizeDataForInterval(data, interval))}
 				options={chartOptions}
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}
+				{dataSegmentChange}
 			/>
 		</ChartContainer>
 	</div>
@@ -133,6 +148,25 @@
 			:global(.stx_xaxis_dark) {
 				color: hsl(var(--hsl-text-extra-light));
 			}
+		}
+
+		.period-performance {
+			:global([data-css-props]) {
+				--up-down-font: var(--f-ui-lg-medium);
+				--up-down-letter-spacing: var(--ls-ui-lg);
+
+				@media (--viewport-md-down) {
+					--up-down-font: var(--f-ui-md-medium);
+					--up-down-letter-spacing: var(--ls-ui-md);
+				}
+			}
+
+			display: flex;
+			gap: 1em;
+			align-items: center;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm);
+			color: hsl(var(--hsl-text-extra-light));
 		}
 
 		.description p {
