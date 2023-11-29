@@ -11,9 +11,12 @@ button-like control with a segement for each possible value.
 <script lang="ts">
 	export let selected: string | undefined = undefined;
 	export let options: string[];
+	export let secondary = false;
+
+	$: kind = secondary ? 'secondary' : 'primary';
 </script>
 
-<div class="segmented-control">
+<div class="segmented-control {kind}">
 	{#each options as option}
 		<label class:selected={option === selected}>
 			<span>{option}</span>
@@ -23,39 +26,60 @@ button-like control with a segement for each possible value.
 </div>
 
 <style lang="postcss">
+	.primary {
+		--gap: 1px;
+		--padding: var(--space-sm) var(--space-md);
+		--background-default: hsl(var(--hsla-box-4));
+		--background-selected: hsl(var(--hsl-text));
+		--color-selected: hsl(var(--hsl-text-inverted));
+
+		@media (--viewport-sm-down) {
+			--padding: var(--space-ss) var(--space-sl);
+		}
+	}
+
+	.secondary {
+		--gap: 2px;
+		--padding: 0.75em;
+		--background-selected: hsl(var(--hsla-box-3));
+		--border-radius: 2em;
+	}
+
 	.segmented-control {
 		display: flex;
-		gap: 1px;
+		gap: var(--gap);
 		overflow: hidden;
 	}
 
 	label {
-		background: hsl(var(--hsla-box-4));
-		padding: var(--space-sm) var(--space-md);
+		background: var(--background-default, inherit);
+		padding: var(--padding);
+		border-radius: var(--border-radius, inherit);
+
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
-		color: hsl(var(--hsl-text));
 		transition: all var(--time-sm) ease-out;
 
 		@media (--viewport-sm-down) {
-			padding: var(--space-ss) var(--space-sl);
 			font: var(--f-ui-xs-medium);
 			letter-spacing: var(--f-ui-xs-spacing, normal);
 		}
 
-		&:first-child {
-			border-radius: var(--radius-md) 0 0 var(--radius-md);
+		.primary & {
+			&:first-child {
+				border-radius: var(--radius-md) 0 0 var(--radius-md);
 
-			span {
-				padding-left: var(--space-xxs);
+				span {
+					padding-left: var(--space-xxs);
+				}
 			}
-		}
 
-		&:last-child {
-			border-radius: 0 var(--radius-md) var(--radius-md) 0;
+			&:last-child {
+				border-radius: 0 var(--radius-md) var(--radius-md) 0;
 
-			span {
-				padding-right: var(--space-xxs);
+				span {
+					padding-right: var(--space-xxs);
+				}
 			}
 		}
 
@@ -63,10 +87,9 @@ button-like control with a segement for each possible value.
 			cursor: pointer;
 		}
 
-		&:hover,
-		&.selected {
-			background: hsl(var(--hsl-text));
-			color: hsl(var(--hsl-text-inverted));
+		&:is(:hover, .selected) {
+			color: var(--color-selected, inherit);
+			background: var(--background-selected, inherit);
 		}
 	}
 

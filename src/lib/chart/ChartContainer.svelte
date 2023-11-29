@@ -57,7 +57,7 @@ Display a chart container with title, description and timespan selector.
 		<slot name="title" timeSpan={timeSpans[timeSpanKey]}>
 			<h2>{title}</h2>
 		</slot>
-		<SegmentedControl options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
 		<slot name="subtitle" />
 	</header>
 	<slot timeSpan={timeSpans[timeSpanKey]} />
