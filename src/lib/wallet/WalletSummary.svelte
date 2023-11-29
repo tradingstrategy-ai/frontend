@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { switchNetwork } from '@wagmi/core';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem, WrongNetwork } from '$lib/wallet';
-	import { EntitySymbol } from '$lib/components';
+	import { type ConnectedWallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { Alert, Button, EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
 	export let chainId: MaybeNumber;
@@ -10,6 +11,11 @@
 
 	$: ({ name, chain } = wallet);
 	$: walletLogoUrl = getLogoUrl('wallet', name.toLowerCase());
+
+	// NOTE: don't move this to inline handler (prevents vite build warning)
+	function handleSwitchNetwork() {
+		switchNetwork({ chainId });
+	}
 </script>
 
 <WalletInfo --wallet-info-label-width="6.5rem">
@@ -32,7 +38,10 @@
 
 	<WalletInfoItem label="Network">
 		{#if chainId && chainId !== chain.id}
-			<WrongNetwork size="xs" {chainId} chainName={chainInfo[chainId].chain_name} />
+			<Alert size="xs" status="error" title="Wrong network">
+				Please connect to {chainInfo[chainId].chain_name}
+				<Button slot="cta" size="xs" label="Switch network" on:click={handleSwitchNetwork} />
+			</Alert>
 		{:else}
 			<EntitySymbol type="blockchain" label={chain.name} slug={chainInfo[chainId].chain_slug} />
 		{/if}

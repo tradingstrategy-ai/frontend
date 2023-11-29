@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { switchNetwork } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { wallet, DepositBalance, VaultBalance, WrongNetwork } from '$lib/wallet';
+	import { wallet, DepositBalance, VaultBalance } from '$lib/wallet';
 	import { Alert, Button, Icon } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
@@ -42,7 +42,9 @@
 				</div>
 				<p>Please connect wallet to see your deposit status.</p>
 			{:else if wrongNetwork}
-				<WrongNetwork size="sm" hideButton chainId={chain.chain_id} chainName={chain.chain_name} />
+				<Alert size="sm" status="error" title="Wrong network">
+					Please connect to {chain.chain_name}
+				</Alert>
 			{:else}
 				<dl class="balances">
 					<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
