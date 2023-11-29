@@ -15,13 +15,9 @@
 		overflow: hidden;
 		white-space: nowrap;
 
-		span {
-			text-decoration: underline;
-
-			&:first-child {
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
+		span:first-child {
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 </style>

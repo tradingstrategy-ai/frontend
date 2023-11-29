@@ -56,7 +56,7 @@
 		</div>
 		{#if !connected}
 			<Button on:click={() => launchWizard('connect-wallet')}>
-				<Icon slot="icon" name="wallet" --icon-size="1em" />
+				<Icon slot="icon" name="wallet" --icon-size="1.25em" />
 				Connect wallet
 			</Button>
 		{/if}

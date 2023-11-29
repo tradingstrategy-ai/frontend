@@ -178,6 +178,7 @@
 
 			.hash-wrapper {
 				display: inline-grid;
+				text-decoration: inherit;
 			}
 		}
 
