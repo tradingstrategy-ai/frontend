@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { DataBadge, UpDownIndicator } from '$lib/components';
-	import KeyMetric from './KeyMetric.svelte';
+	import { UpDownIndicator } from '$lib/components';
+	import { KeyMetric } from 'trade-executor/components';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -9,51 +9,35 @@
 	export let strategy: StrategyRuntimeState;
 
 	const metrics = strategy.summary_statistics?.key_metrics ?? {};
-	const backtestLink = `/strategies/${strategy.id}/backtest`;
+	const strategyId = strategy.id;
 	const hasEnzymeVault = strategy.on_chain_data?.asset_management_mode === 'enzyme';
-	const assetManagementLabel = hasEnzymeVault ? 'Enzyme vault' : 'Hot wallet';
-
-	let innerWidth: number;
-	let badgeSize: 'sm' | 'md' = 'md';
-	$: badgeSize = innerWidth < 768 ? 'sm' : 'md';
 </script>
 
-<svelte:window bind:innerWidth />
-
 <dl class="strategy-data-summary ds-3">
-	<KeyMetric name="Profitability" metric={metrics.profitability} {backtestLink} {badgeSize}>
-		<svelte:fragment slot="value" let:value>
-			<UpDownIndicator {value} formatter={formatProfitability} let:direction let:formatted>
-				{@const status = direction > 0 ? 'bullish' : direction < 0 ? 'bearish' : 'default'}
-				<DataBadge size={badgeSize} {status}>
-					{formatted}
-				</DataBadge>
-			</UpDownIndicator>
-		</svelte:fragment>
+	<KeyMetric name="Profitability" metric={metrics.profitability} {strategyId} let:value>
+		<UpDownIndicator {value} formatter={formatProfitability} />
 	</KeyMetric>
 
-	<KeyMetric name="Total assets" metric={metrics.total_equity} formatter={formatDollar} {backtestLink} {badgeSize} />
+	<KeyMetric name="Total assets" metric={metrics.total_equity} formatter={formatDollar} {strategyId} />
 
-	<KeyMetric name="Max drawdown" metric={metrics.max_drawdown} formatter={formatPercent} {backtestLink} {badgeSize} />
+	<KeyMetric name="Max drawdown" metric={metrics.max_drawdown} formatter={formatPercent} {strategyId} />
 
-	<KeyMetric name="Age" metric={metrics.started_at} formatter={formatDaysAgo} {backtestLink} {badgeSize} />
+	<KeyMetric name="Age" metric={metrics.started_at} formatter={formatDaysAgo} {strategyId} />
 
-	<KeyMetric name="Sharpe" metric={metrics.sharpe} formatter={formatNumber} {backtestLink} {badgeSize} />
+	<KeyMetric name="Sharpe" metric={metrics.sharpe} formatter={formatNumber} {strategyId} />
 
-	<KeyMetric name="Sortino" metric={metrics.sortino} formatter={formatNumber} {backtestLink} {badgeSize} />
+	<KeyMetric name="Sortino" metric={metrics.sortino} formatter={formatNumber} {strategyId} />
 
-	<KeyMetric name="Asset management" {backtestLink} {badgeSize}>
-		<DataBadge slot="value" size={badgeSize}>
+	<KeyMetric name="Asset management" {strategyId}>
+		<div class="asset-management">
 			{#if hasEnzymeVault}
-				<img alt={assetManagementLabel} src={getLogoUrl('token', 'enzyme')} height="20" width="20" />
+				<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
+				<span>Enzyme vault</span>
 			{:else}
-				<img alt={assetManagementLabel} src={getLogoUrl('wallet', 'metamask')} height="20" width="20" />
+				<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
+				<span>Hot wallet</span>
 			{/if}
-			<span>{assetManagementLabel}</span>
-		</DataBadge>
-		<svelte:fragment slot="tooltip-popup">
-			This strategy's assets are managed using <strong>{assetManagementLabel}</strong>
-		</svelte:fragment>
+		</div>
 	</KeyMetric>
 </dl>
 
@@ -93,6 +77,18 @@
 		:global(.popup) {
 			left: 0;
 			right: 0;
+		}
+
+		.asset-management {
+			display: flex;
+			gap: 0.75ex;
+			align-items: center;
+			font-size: 0.9em;
+
+			img {
+				height: 20px;
+				width: 20px;
+			}
 		}
 	}
 </style>

@@ -3,7 +3,7 @@
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
-	import MetricsGroup from './MetricsGroup.svelte';
+	import { KeyMetric } from 'trade-executor/components';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
@@ -12,6 +12,7 @@
 	$: ({ chain, summary, streamed } = data);
 
 	$: keyMetrics = summary.summary_statistics.key_metrics;
+	$: strategyId = summary.id;
 
 	let periodPerformance: MaybeNumber;
 
@@ -60,39 +61,21 @@
 
 	<div class="metrics">
 		<SummaryBox title="Summary stats">
-			<MetricsGroup>
-				<div>
-					<dt>Profitability</dt>
-					<dd>
-						<UpDownIndicator value={keyMetrics.profitability.value} formatter={formatPercent} />
-					</dd>
-				</div>
-				<div>
-					<dt>Age</dt>
-					<dd>{formatDaysAgo(keyMetrics.started_at.value)}</dd>
-				</div>
-				<div>
-					<dt>Total assets</dt>
-					<dd>{formatPrice(keyMetrics.total_equity.value)}</dd>
-				</div>
-			</MetricsGroup>
+			<dl>
+				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+					<UpDownIndicator {value} formatter={formatPercent} />
+				</KeyMetric>
+				<KeyMetric name="Age" metric={keyMetrics.started_at} formatter={formatDaysAgo} {strategyId} />
+				<KeyMetric name="Total assets" metric={keyMetrics.total_equity} formatter={formatPrice} {strategyId} />
+			</dl>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
-			<MetricsGroup>
-				<div>
-					<dt>Max drawdown</dt>
-					<dd>{formatPercent(keyMetrics.max_drawdown.value)}</dd>
-				</div>
-				<div>
-					<dt>Sharpe</dt>
-					<dd>{formatNumber(keyMetrics.sharpe.value)}</dd>
-				</div>
-				<div>
-					<dt>Sortino</dt>
-					<dd>{formatNumber(keyMetrics.sortino.value)}</dd>
-				</div>
-			</MetricsGroup>
+			<dl>
+				<KeyMetric name="Sharpe" metric={keyMetrics.sharpe} formatter={formatNumber} {strategyId} />
+				<KeyMetric name="Sortino" metric={keyMetrics.sortino} formatter={formatNumber} {strategyId} />
+				<KeyMetric name="Max drawdown" metric={keyMetrics.max_drawdown} formatter={formatPercent} {strategyId} />
+			</dl>
 		</SummaryBox>
 	</div>
 
@@ -126,6 +109,31 @@
 			display: grid;
 			gap: inherit;
 			align-items: flex-start;
+
+			dl {
+				display: grid;
+				grid-auto-flow: column;
+				grid-auto-columns: 1fr;
+			}
+
+			:global([data-css-props]) {
+				--key-metric-label-font: var(--f-ui-sm-medium);
+				--key-metric-label-letter-spacing: var(--ls-ui-sm);
+				--key-metric-value-font: var(--f-ui-xxl-medium);
+				--key-metric-value-letter-spacing: var(--ls-ui-xxl);
+
+				@media (--viewport-sm-down) {
+					--key-metric-value-font: var(--f-ui-xl-medium);
+					--key-metric-value-letter-spacing: var(--ls-ui-xl);
+				}
+
+				@media (--viewport-xs) {
+					--key-metric-label-font: var(--f-ui-xs-medium);
+					--key-metric-label-letter-spacing: var(--ls-ui-xs);
+					--key-metric-value-font: var(--f-ui-lg-medium);
+					--key-metric-value-letter-spacing: var(--ls-ui-lg);
+				}
+			}
 		}
 
 		.chart {
