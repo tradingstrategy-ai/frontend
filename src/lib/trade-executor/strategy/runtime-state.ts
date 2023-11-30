@@ -21,7 +21,7 @@ type Address = `0x${string}`;
  *
  * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/summary.py
  */
-type KeyMetricKind = 'sharpe' | 'sortino' | 'max_drawdown' | 'profitability' | 'total_equity' | 'started_at';
+export type KeyMetricKind = 'sharpe' | 'sortino' | 'max_drawdown' | 'profitability' | 'total_equity' | 'started_at';
 export interface KeyMetric {
 	kind: KeyMetricKind;
 	source: 'backtesting' | 'live_trading' | 'missing';

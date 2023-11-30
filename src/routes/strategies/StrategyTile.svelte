@@ -90,7 +90,7 @@
 			<StrategyDataSummary {strategy} />
 
 			{#if isBacktested}
-				<span class="backtest-data-badge">* Backtested Metrics</span>
+				<div class="backtest-indicator">* Backtested Metrics</div>
 			{/if}
 		</div>
 		<div class="actions">
@@ -264,15 +264,10 @@
 				position: relative;
 			}
 
-			.backtest-data-badge {
-				align-items: center;
-				border-radius: var(--radius-sl);
-				color: hsl(var(--hsl-text-extra-light));
-				display: inline-flex;
+			.backtest-indicator {
 				font: var(--f-ui-xs-bold);
-				gap: 0.625rem;
-				justify-content: center;
-				margin-block: 0.25rem 0.75rem;
+				letter-spacing: 0.03em;
+				color: hsl(var(--hsl-text-extra-light));
 				text-transform: uppercase;
 			}
 
