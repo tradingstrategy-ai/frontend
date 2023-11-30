@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { FetchBalanceResult } from '@wagmi/core';
 	import { formatNumber } from '$lib/helpers/formatters';
-	import { Alert, EntitySymbol } from '$lib/components';
+	import { Alert, EntitySymbol, Tooltip } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
 	export let data: MaybePromise<FetchBalanceResult>;
@@ -17,5 +17,8 @@
 		<EntitySymbol slug={symbol.toLowerCase()} type="token">{value} {symbol}</EntitySymbol>
 	</slot>
 {:catch error}
-	<Alert size="xs">Error loading data</Alert>
+	<Tooltip>
+		<Alert slot="trigger" size="xs">Error</Alert>
+		<pre slot="popup">{error}</pre>
+	</Tooltip>
 {/await}

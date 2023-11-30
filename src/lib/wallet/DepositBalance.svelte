@@ -9,12 +9,12 @@
 
 <div class="deposit-balance">
 	<dt>{label}</dt>
-	<TokenBalance {data} let:skeleton let:value let:symbol>
-		<dd>
+	<dd>
+		<TokenBalance {data} let:skeleton let:value let:symbol>
 			<span class="value" class:skeleton>{dollar ? '$' : ''}{value}</span>
 			<span class="symbol" class:skeleton>{symbol}</span>
-		</dd>
-	</TokenBalance>
+		</TokenBalance>
+	</dd>
 </div>
 
 <style lang="postcss">
@@ -29,6 +29,7 @@
 
 		dd {
 			display: grid;
+			align-items: flex-start;
 			--skeleton-height: 90%;
 			--skeleton-width: 5ch;
 		}
