@@ -5,7 +5,7 @@
 	import { switchNetwork } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
 	import { wallet, DepositBalance, DepositWarning, VaultBalance } from '$lib/wallet';
-	import { Button, Icon } from '$lib/components';
+	import { Button, HashAddress, Icon } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
@@ -33,47 +33,94 @@
 </script>
 
 <div class="my-deposits" class:connected>
-	<h2>My deposits</h2>
-	{#if !depositEnabled}
-		<DepositWarning title="Deposits not enabled">
-			This strategy is not using smart contract-based capital management and is not accepting external investments.
-		</DepositWarning>
-	{:else if !connected}
-		<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
-	{:else if wrongNetwork}
-		<DepositWarning title="Wrong network">
-			Please connect to {chain.chain_name}.
-		</DepositWarning>
-	{:else}
-		<dl class="balances">
-			<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
-				<DepositBalance label="Value" data={value} dollar />
-				<DepositBalance label="Shares" data={shares} />
-			</VaultBalance>
-		</dl>
-	{/if}
-	<div class="actions">
-		{#if depositEnabled && !connected}
-			<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
-				<Icon slot="icon" name="wallet" --icon-size="1.25em" />
-				Connect wallet
-			</Button>
-		{:else if depositEnabled && wrongNetwork}
-			<Button class="full-width" label="Switch network" on:click={() => switchNetwork({ chainId: chain.chain_id })} />
+	<header>
+		<h2 class="desktop">My deposits</h2>
+		<button class="mobile">
+			<h2>My deposits</h2>
+			<div class="wallet-address">
+				{#if $wallet.address}
+					<Icon name="wallet" size="1.25rem" />
+					<HashAddress address={$wallet.address ?? ''} endChars={5} />
+				{/if}
+			</div>
+			<Icon name="chevron-down" size="1.25rem" />
+		</button>
+	</header>
+	<div class="content">
+		{#if !depositEnabled}
+			<DepositWarning title="Deposits not enabled">
+				This strategy is not using smart contract-based capital management and is not accepting external investments.
+			</DepositWarning>
+		{:else if !connected}
+			<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
+		{:else if wrongNetwork}
+			<DepositWarning title="Wrong network">
+				Please connect to {chain.chain_name}.
+			</DepositWarning>
+		{:else}
+			<dl class="balances">
+				<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
+					<DepositBalance label="Value" data={value} dollar />
+					<DepositBalance label="Shares" data={shares} />
+				</VaultBalance>
+			</dl>
 		{/if}
-		<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
-		<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+		<div class="actions">
+			{#if depositEnabled && !connected}
+				<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
+					<Icon slot="icon" name="wallet" --icon-size="1.25em" />
+					Connect wallet
+				</Button>
+			{:else if depositEnabled && wrongNetwork}
+				<Button class="full-width" label="Switch network" on:click={() => switchNetwork({ chainId: chain.chain_id })} />
+			{/if}
+			{#if connected}
+				<Button class="mobile full-width" label="Disconnect wallet" on:click={wallet.disconnect}>
+					<Icon slot="icon" name="unlink" --icon-size="1.25em" />
+				</Button>
+			{/if}
+			<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
+			<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+		</div>
 	</div>
 </div>
 
 <style lang="postcss">
 	.my-deposits {
+		@media (--viewport-sm-down) {
+			:global(.desktop) {
+				display: none;
+			}
+		}
+		@media (--viewport-md-up) {
+			:global(.mobile) {
+				display: none;
+			}
+		}
+
 		display: grid;
 		grid-template-rows: auto 1fr;
-		gap: 1rem;
 		border: 1px solid hsl(var(--hsl-text-light));
 		border-radius: var(--radius-md);
-		padding: 1.25rem;
+		--padding: 1.25rem;
+		--gap: 1rem;
+	}
+
+	header {
+		--header-padding: var(--padding) var(--padding) calc(var(--gap) / 2);
+
+		button {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1.25rem;
+			gap: 0.75em;
+			align-items: center;
+			width: 100%;
+			padding: var(--header-padding);
+			border: none;
+			background: transparent;
+			text-align: left;
+			cursor: pointer;
+		}
 	}
 
 	h2 {
@@ -82,10 +129,33 @@
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: hsl(var(--hsl-text-ultra-light));
+		white-space: nowrap;
 
-		@media (--viewport-sm-down) {
+		.mobile & {
+			/* custom xxs heading size (no CSS var) */
 			font-size: 0.875rem;
 		}
+
+		&.desktop {
+			padding: var(--header-padding);
+		}
+	}
+
+	.wallet-address {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.75ex;
+		align-items: center;
+		margin-left: 0.625rem;
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--ls-ui-sm, normal);
+	}
+
+	.content {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: var(--gap);
+		padding: calc(var(--gap) / 2) var(--padding) var(--padding);
 	}
 
 	.balances {
@@ -105,7 +175,7 @@
 		}
 
 		/* desktop: if 2-col button is present, siblings should span single col */
-		:global(.full-width ~ .button) {
+		:global(.full-width:not(.mobile) ~ .button) {
 			grid-column: auto;
 		}
 
