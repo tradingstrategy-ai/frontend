@@ -4,8 +4,8 @@
 	import { goto } from '$app/navigation';
 	import { switchNetwork } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { wallet, DepositBalance, VaultBalance } from '$lib/wallet';
-	import { Alert, Button, Icon } from '$lib/components';
+	import { wallet, DepositBalance, DepositWarning, VaultBalance } from '$lib/wallet';
+	import { Button, Icon } from '$lib/components';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
@@ -20,6 +20,7 @@
 
 	$: connected = $wallet.status === 'connected';
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.chain_id;
+	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
@@ -33,46 +34,36 @@
 
 <div class="my-deposits" class:connected>
 	<h2>My deposits</h2>
-	{#if depositEnabled}
-		<div class="content">
-			{#if !connected}
-				<div class="not-connected-warning">
-					<Icon name="warning" />
-					<strong>Wallet not connected</strong>
-				</div>
-				<p>Please connect wallet to see your deposit status.</p>
-			{:else if wrongNetwork}
-				<Alert size="sm" status="error" title="Wrong network">
-					Please connect to {chain.chain_name}
-				</Alert>
-			{:else}
-				<dl class="balances">
-					<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
-						<DepositBalance label="Value" data={value} dollar />
-						<DepositBalance label="Shares" data={shares} />
-					</VaultBalance>
-				</dl>
-			{/if}
-		</div>
-		{#if !connected}
-			<Button on:click={() => launchWizard('connect-wallet')}>
+	{#if !depositEnabled}
+		<DepositWarning title="Deposits not enabled">
+			This strategy is not using smart contract-based capital management and is not accepting external investments.
+		</DepositWarning>
+	{:else if !connected}
+		<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
+	{:else if wrongNetwork}
+		<DepositWarning title="Wrong network">
+			Please connect to {chain.chain_name}.
+		</DepositWarning>
+	{:else}
+		<dl class="balances">
+			<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
+				<DepositBalance label="Value" data={value} dollar />
+				<DepositBalance label="Shares" data={shares} />
+			</VaultBalance>
+		</dl>
+	{/if}
+	<div class="actions">
+		{#if depositEnabled && !connected}
+			<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
 				<Icon slot="icon" name="wallet" --icon-size="1.25em" />
 				Connect wallet
 			</Button>
+		{:else if depositEnabled && wrongNetwork}
+			<Button class="full-width" label="Switch network" on:click={() => switchNetwork({ chainId: chain.chain_id })} />
 		{/if}
-		<div class="actions">
-			{#if wrongNetwork}
-				<Button label="Switch network" on:click={() => switchNetwork({ chainId: chain.chain_id })} />
-			{:else}
-				<Button label="Deposit" on:click={() => launchWizard('deposit')} />
-				<Button secondary label="Redeem" on:click={() => launchWizard('redeem')} />
-			{/if}
-		</div>
-	{:else}
-		<Alert status="info" size="md" title="Deposits not available">
-			This strategy is not using smart contract-based capital management and is not accepting external investments.
-		</Alert>
-	{/if}
+		<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
+		<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+	</div>
 </div>
 
 <style lang="postcss">
@@ -97,19 +88,6 @@
 		}
 	}
 
-	.content {
-		display: grid;
-		align-items: flex-start;
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-	}
-
-	.not-connected-warning {
-		display: flex;
-		gap: 0.5ch;
-		align-items: center;
-	}
-
 	.balances {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -121,12 +99,21 @@
 		gap: inherit;
 		grid-template-columns: 1fr 1fr;
 
-		.connected & {
-			grid-template-columns: 1fr;
+		/* desktop: normally buttons span both cols */
+		:global(.button) {
+			grid-column: 1 / -1;
 		}
 
+		/* desktop: if 2-col button is present, siblings should span single col */
+		:global(.full-width ~ .button) {
+			grid-column: auto;
+		}
+
+		/* mobile: non 2-col buttons always span single col on mobile */
 		@media (--viewport-sm-down) {
-			grid-template-columns: 1fr;
+			:global(:not(.full-width)) {
+				grid-column: auto;
+			}
 		}
 	}
 </style>

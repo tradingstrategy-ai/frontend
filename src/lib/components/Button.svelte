@@ -100,8 +100,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 		outline-color: var(--c-accent);
 		outline-offset: -1px;
 
-		&:hover,
-		&:focus {
+		&:is(:hover, :focus):not([disabled]) {
 			--c-accent: var(--hsl-text);
 			color: hsl(var(--hsl-text-inverted));
 		}
@@ -112,8 +111,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 		color: hsl(var(--hsl-text));
 		border-color: hsl(var(--hsl-text));
 
-		&:hover,
-		&:focus {
+		&:is(:hover, :focus):not([disabled]) {
 			background: hsl(var(--hsl-text));
 			color: hsl(var(--hsl-text-inverted));
 		}
@@ -124,8 +122,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 		color: hsl(var(--hsl-text));
 		border-color: transparent;
 
-		&:hover,
-		&:focus {
+		&:is(:hover, :focus):not([disabled]) {
 			background: hsl(var(--hsla-box-4));
 		}
 	}
