@@ -19,11 +19,12 @@ Display a chart container with title, description and timespan selector.
 	import { utcHour, utcDay } from 'd3-time';
 	import { SegmentedControl } from '$lib/components';
 
-	export let title: string;
+	export let title = '';
 
 	let timeSpanKey: TimeBucket = '3m';
 
 	type TimeSpan = {
+		label: string;
 		spanDays: number;
 		interval: TimeInterval;
 		periodicity: Periodicity;
@@ -31,16 +32,19 @@ Display a chart container with title, description and timespan selector.
 
 	const timeSpans: Record<TimeBucket, TimeSpan> = {
 		'1w': {
+			label: '1W',
 			spanDays: 7,
 			interval: utcHour,
 			periodicity: { period: 1, interval: 60, timeUnit: 'minute' }
 		},
 		'1m': {
+			label: '1M',
 			spanDays: 30,
 			interval: utcHour.every(4)!,
 			periodicity: { period: 1, interval: 4 * 60, timeUnit: 'minute' }
 		},
 		'3m': {
+			label: '3M',
 			spanDays: 90,
 			interval: utcDay.every(1)!,
 			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
@@ -48,42 +52,40 @@ Display a chart container with title, description and timespan selector.
 	} as const;
 </script>
 
-<div class="chart-container">
+<div class="chart-container" data-css-props>
 	<header>
-		<h2>{title}</h2>
-		<SegmentedControl options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		<slot name="title" timeSpan={timeSpans[timeSpanKey]}>
+			<h2>{title}</h2>
+		</slot>
+		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
 		<slot name="subtitle" />
 	</header>
 	<slot timeSpan={timeSpans[timeSpanKey]} />
-	<slot name="footer" />
 </div>
 
 <style lang="postcss">
+	[data-css-props] {
+		--chart-container-padding: 1.5rem;
+
+		@media (--viewport-md-down) {
+			--chart-container-padding: 1rem;
+		}
+	}
+
 	.chart-container {
 		display: grid;
 		gap: var(--space-sm);
 		background: hsl(var(--hsla-box-1));
+		border: 1px solid hsl(var(--hsla-box-3));
 		border-radius: var(--radius-md);
-		padding: var(--space-lg) var(--space-lg);
-		--chart-aspect-ratio: 2;
-
-		@media (--viewport-md-down) {
-			padding: var(--space-md);
-		}
-
-		@media (--viewport-sm-down) {
-			--chart-aspect-ratio: 1.75;
-		}
-
-		@media (--viewport-xs) {
-			--chart-aspect-ratio: 1.25;
-		}
+		padding-block: var(--chart-container-padding);
 
 		header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
 			gap: var(--space-sm);
+			padding-inline: var(--chart-container-padding);
 
 			@media (--viewport-xs) {
 				grid-template-columns: 1fr;
@@ -107,7 +109,7 @@ Display a chart container with title, description and timespan selector.
 			}
 		}
 
-		:global(:is([slot='subtitle'], [slot='footer'])) {
+		:global([slot='subtitle']) {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 

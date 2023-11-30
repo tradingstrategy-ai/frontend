@@ -7,9 +7,9 @@
 	import PositionTable from './PositionTable.svelte';
 
 	export let data;
+	$: ({ positions, status, state } = data);
 
-	$: status = data.status;
-	$: combinedPositionList = createCombinedPositionList(data.positions, data.state.stats);
+	$: combinedPositionList = createCombinedPositionList(positions, state.stats);
 
 	$: q = $page.url.searchParams;
 	$: options = {

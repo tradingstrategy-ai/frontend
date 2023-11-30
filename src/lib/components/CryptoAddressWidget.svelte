@@ -66,6 +66,7 @@
 	a {
 		display: flex;
 		overflow: hidden;
+		text-decoration: underline;
 	}
 
 	button {

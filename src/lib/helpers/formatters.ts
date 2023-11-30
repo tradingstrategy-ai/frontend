@@ -11,7 +11,7 @@ const VERY_LARGE_USD_VALUE = 1e15; // 1,000,000,000,000 = 1,000T
 const VERY_SMALL_PERCENT = 1e-8; // 0.000001%
 const VERY_LARGE_PERCENT = 1e4; // 1,000,000%
 
-function toFloatingPoint(n: MaybeNumberlike) {
+export function toFloatingPoint(n: MaybeNumberlike) {
 	if (typeof n == 'string') {
 		return parseFloat(n);
 	}
@@ -20,7 +20,7 @@ function toFloatingPoint(n: MaybeNumberlike) {
 }
 
 // Type predicate to help TypeScript properly narrow type to number
-function isNumber(n: MaybeNumber): n is number {
+export function isNumber(n: MaybeNumber): n is number {
 	return Number.isFinite(n);
 }
 
@@ -309,7 +309,7 @@ export function formatDurationMinutesSeconds(seconds: number): string {
  *
  * unixTimestamp is received from API as unix seconds since epoch
  */
-export function formatDaysAgo(unixTimestamp: number): string {
+export function formatDaysAgo(unixTimestamp: MaybeNumber): string {
 	if (!isNumber(unixTimestamp)) return notFilledMarker;
 	const seconds = Date.now() / 1000 - unixTimestamp;
 	const days = Math.floor(seconds / DAY);

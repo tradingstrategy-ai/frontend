@@ -69,9 +69,10 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	export let studies: any[] = [];
 	export let linker: ChartLinker | undefined = undefined;
 	export let feed: QuoteFeed | undefined = undefined;
-	export let invalidate: any = undefined;
+	export let invalidate: any[] = [];
+	export let loading = false;
 
-	let loading = false;
+	let updating = false;
 
 	interface ChartCursor {
 		position: {
@@ -147,7 +148,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 		// ignore mouse/touch movements if chart is in loading state;
 		// this must come _after_ linker registration (above)
-		chartEngine.prepend('mousemoveinner', () => loading);
+		chartEngine.prepend('mousemoveinner', () => loading || updating);
 
 		// cancel mouseWheel zoom unless a modifier key is pressed
 		chartEngine.prepend('mouseWheel', (event) => {
@@ -172,7 +173,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		const originalLoadChart = chartEngine.loadChart.bind(chartEngine);
 		chartEngine.loadChart = (symbol: any, parameters: any, callback: Function | undefined) => {
 			originalLoadChart(symbol, parameters, () => {
-				loading = false;
+				updating = false;
 				chartTracker ??= new ChartActivityTracker(chartEngine);
 				callback?.();
 			});
@@ -185,7 +186,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		}
 
 		function update(...args: any) {
-			loading = true;
+			updating = true;
 
 			// clear attached studies
 			chartEngine.clear();
@@ -204,38 +205,48 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	}
 </script>
 
-{#await initialize() then}
-	<div class="chart-container" use:chartIQ={invalidate} data-testid="chartIQ">
-		<div class="inner">
-			<slot {cursor} />
+<div class="chart-iq" data-css-props>
+	{#if loading || updating}
+		<div class="loading" transition:fade={{ duration: 250 }}>
+			<Spinner size="60" color="hsl(var(--hsl-text-extra-light))" />
 		</div>
-		{#if loading}
-			<div class="loading" transition:fade={{ duration: 250 }}>
-				<Spinner size="60" color="hsl(var(--hsl-text))" />
-			</div>
-		{/if}
+	{/if}
+
+	<div class="overlay">
+		<slot {cursor} />
 	</div>
-{:catch}
-	<Alert status="warning">
-		ChartIQ charting library notavailable. ChartIQ is an optional proprietary dependency that requires a license.
-	</Alert>
-{/await}
+
+	{#await initialize() then}
+		<div use:chartIQ={[loading, ...invalidate]} data-testid="chartIQ" />
+	{:catch}
+		<div class="error">
+			<Alert size="md" status="warning" title="ChartIQ Error">
+				ChartIQ charting library not available. ChartIQ is an optional proprietary dependency that requires a license.
+			</Alert>
+		</div>
+	{/await}
+</div>
 
 <style lang="postcss">
-	.chart-container {
-		--CHART-aspect-ratio: 16/9;
-		position: relative;
-		aspect-ratio: var(--chart-aspect-ratio, var(--CHART-aspect-ratio));
+	[data-css-props] {
+		--chart-aspect-ratio: 16/9;
 
 		@media (--viewport-sm-down) {
-			--CHART-aspect-ratio: 3/2;
+			--chart-aspect-ratio: 3/2;
 		}
 
 		@media (--viewport-xs) {
-			--CHART-aspect-ratio: 4/6;
+			--chart-aspect-ratio: 1;
 		}
+	}
 
-		:is(.loading, .inner) {
+	.chart-iq {
+		position: relative;
+		width: 100%;
+		height: var(--chart-height, auto);
+		aspect-ratio: var(--chart-aspect-ratio);
+
+		> * {
 			position: absolute;
 			top: 0;
 			bottom: 0;
@@ -243,7 +254,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			right: 0;
 		}
 
-		.inner {
+		.overlay {
 			z-index: 99;
 			pointer-events: none;
 		}
@@ -253,7 +264,11 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background: hsl(var(--hsl-body) / 75%);
+		}
+
+		.error {
+			padding-top: 2rem;
+			padding-inline: calc((100% - min(65ch, 100%)) / 2);
 		}
 	}
 </style>

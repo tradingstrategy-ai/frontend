@@ -23,4 +23,6 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<slot />
+<div class="ds-3" style:display="contents">
+	<slot />
+</div>

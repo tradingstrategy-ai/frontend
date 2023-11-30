@@ -69,17 +69,15 @@
 
 <style lang="postcss">
 	.chart-thumbnail {
+		:global([data-css-props]) {
+			--chart-height: 14rem;
+
+			@media (--viewport-xs) {
+				--chart-height: 11rem;
+			}
+		}
+
 		position: relative;
-		height: 14rem;
-
-		@media (--viewport-xs) {
-			height: 11rem;
-		}
-
-		:global(.chart-container) {
-			width: 100%;
-			height: 100%;
-		}
 
 		figcaption {
 			position: absolute;

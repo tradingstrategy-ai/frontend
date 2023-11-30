@@ -4,10 +4,9 @@
 	export let description: MaybeString = undefined;
 
 	$: hasIcon = Boolean($$slots.icon);
-	$: hasPrefix = Boolean(prefix ?? $$slots.prefix);
 </script>
 
-<header class="page-heading" class:hasIcon class:hasPrefix>
+<header class="page-heading" class:hasIcon>
 	{#if hasIcon}
 		<div class="icon">
 			<slot name="icon" />
@@ -15,7 +14,7 @@
 	{/if}
 	<div class="content">
 		<h1>
-			{#if hasPrefix}
+			{#if prefix || $$slots.prefix}
 				<span class="prefix">
 					<slot name="prefix">{prefix}</slot>
 				</span>
@@ -23,7 +22,7 @@
 			<slot name="title">{title}</slot>
 		</h1>
 		{#if description}
-			<p>{description}</p>
+			<p class="description">{description}</p>
 		{/if}
 	</div>
 	<slot name="cta" />
@@ -31,31 +30,23 @@
 
 <style lang="postcss">
 	.page-heading {
-		--gap: 1rem 2rem;
+		--gap: 0.625rem 2rem;
 		--grid-auto-flow: column;
 		--padding-bottom: 2rem;
-		--icon-size: 8rem;
-		--prefix-font: var(--f-heading-md-medium);
-		--prefix-spacing: var(--f-heading-md-spacing);
-		--title-font: var(--f-heading-xl-medium);
-		--title-spacing: var(--f-heading-xl-spacing);
-		--title-with-prefix-font: var(--f-heading-xxxl-medium);
-		--title-with-prefix-spacing: var(--f-heading-xxxl-spacing);
-		--desc-font: var(--f-ui-xl-roman);
-		--desc-spacing: var(--f-ui-xl-spacing);
+		--icon-size: 6rem;
+		--title-font: var(--f-heading-xxl-medium);
+		--title-spacing: var(--f-heading-xxl-spacing);
+		--secondary-font: var(--f-ui-lg-medium);
+		--secondary-spacing: var(--f-ui-lg-spacing);
 
 		@media (--viewport-md-down) {
 			--gap: 0.5rem 1.5rem;
 			--padding-bottom: 1.5rem;
-			--icon-size: 6rem;
-			--prefix-font: var(--f-heading-sm-medium);
-			--prefix-spacing: var(--f-heading-sm-spacing);
-			--title-font: var(--f-heading-lg-medium);
-			--title-spacing: var(--f-heading-lg-spacing);
-			--title-with-prefix-font: var(--f-heading-xl-medium);
-			--title-with-prefix-spacing: var(--f-heading-xl-spacing);
-			--desc-font: var(--f-ui-lg-roman);
-			--desc-spacing: var(--f-ui-lg-spacing);
+			--icon-size: 5rem;
+			--title-font: var(--f-heading-xl-medium);
+			--title-spacing: var(--f-heading-xl-spacing);
+			--secondary-font: var(--f-ui-md-medium);
+			--secondary-spacing: var(--f-ui-md-spacing);
 		}
 
 		@media (--viewport-xs) {
@@ -63,15 +54,11 @@
 			--gap: 0.5rem 1rem;
 			--grid-auto-flow: row;
 			--padding-bottom: 1rem;
-			--icon-size: 4.75rem;
-			--prefix-font: var(--f-heading-xs-medium);
-			--prefix-spacing: var(--f-heading-xs-spacing);
-			--title-font: var(--f-heading-md-medium);
-			--title-spacing: var(--f-heading-md-spacing);
-			--title-with-prefix-font: var(--f-heading-lg-medium);
-			--title-with-prefix-spacing: var(--f-heading-lg-spacing);
-			--desc-font: var(--f-ui-md-roman);
-			--desc-spacing: var(--f-ui-me-spacing);
+			--icon-size: 4.5rem;
+			--title-font: var(--f-heading-lg-medium);
+			--title-spacing: var(--f-heading-lg-spacing);
+			--secondary-font: var(--f-ui-md-medium);
+			--secondary-spacing: var(--f-ui-md-spacing);
 		}
 
 		display: grid;
@@ -88,7 +75,7 @@
 
 	.icon {
 		background: hsl(var(--hsla-box-1));
-		border-radius: var(--icon-size);
+		border-radius: 100%;
 		height: var(--icon-size);
 		width: var(--icon-size);
 		overflow: hidden;
@@ -101,31 +88,24 @@
 	}
 
 	h1 {
+		display: grid;
+		gap: inherit;
 		font: var(--title-font);
 		letter-spacing: var(--title-spacing, normal);
 		margin: 0;
-
-		.hasPrefix & {
-			font: var(--title-with-prefix-font);
-			letter-spacing: var(--title-with-prefix-spacing, normal);
-		}
-
-		.prefix {
-			display: block;
-			color: hsl(var(--hsl-text-ultra-light));
-			font: var(--prefix-font);
-			letter-spacing: var(--prefix-spacing, normal);
-			margin-bottom: var(--space-ss);
-
-			:global a:hover {
-				text-decoration: underline;
-			}
-		}
 	}
 
-	p {
-		font: var(--desc-font);
-		letter-spacing: var(--desc-spacing, normal);
+	:is(.prefix, .description) {
+		font: var(--secondary-font);
+		letter-spacing: var(--secondary-spacing, normal);
+		color: hsl(var(--hsl-text-extra-light));
+	}
+
+	.prefix :global(a:hover) {
+		text-decoration: underline;
+	}
+
+	.description {
 		grid-column: 1/-1;
 	}
 </style>

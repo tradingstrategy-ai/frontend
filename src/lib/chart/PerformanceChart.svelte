@@ -18,19 +18,30 @@ Display a peformance line chart for a given (static) dataset.
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { merge } from '$lib/helpers/object';
 
-	export let data: Quote[];
-	export let formatValue: Formatter<number>;
+	export let data: MaybePromise<Quote[]>;
+	export let options: any = undefined;
+	export let formatValue: Formatter<MaybeNumber>;
 	export let spanDays: number;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
+	export let dataSegmentChange: Function | undefined = undefined;
 
 	let chartWrapper: HTMLElement;
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
 
-	const options = {
+	let resolvedData: Quote[] | undefined;
+	$: resolveData(data);
+
+	async function resolveData(data: MaybePromise<Quote[]>) {
+		resolvedData = undefined;
+		resolvedData = await data;
+	}
+
+	const defaultOptions = {
 		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
 		dontRoll: true,
@@ -51,13 +62,17 @@ Display a peformance line chart for a given (static) dataset.
 			const dataSegment = chartEngine.getDataSegment();
 			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
 			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
-			const className = determinePriceChangeClass(last?.Close - first?.Close);
-			// NOTE: setting class name directly on HTML element rather than declaratively via
+			const direction = determinePriceChangeClass(last?.Close - first?.Close);
+
+			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
-			if (chartWrapper.className !== className) {
-				chartWrapper.className = className;
+			if (chartWrapper.dataset.direction !== direction) {
+				chartWrapper.dataset.direction = direction;
 				chartEngine.clearStyles();
 			}
+
+			// call optional dataSegmentChange callback
+			dataSegmentChange?.(first, last);
 		});
 
 		// returned callback invoked on both initial load and updates
@@ -65,7 +80,7 @@ Display a peformance line chart for a given (static) dataset.
 			chartEngine.loadChart('Performance', {
 				periodicity,
 				span: { base: 'day', multiplier: spanDays },
-				masterData: data
+				masterData: resolvedData ?? []
 			});
 
 			// hide the Y Axis on smaller screens
@@ -79,7 +94,14 @@ Display a peformance line chart for a given (static) dataset.
 <svelte:window bind:innerWidth={viewportWidth} />
 
 <div class="performance-chart" bind:this={chartWrapper}>
-	<ChartIQ {init} {options} {studies} invalidate={[periodicity, hideYAxis]} let:cursor>
+	<ChartIQ
+		{init}
+		options={merge(defaultOptions, options)}
+		{studies}
+		invalidate={[periodicity, hideYAxis]}
+		loading={!resolvedData}
+		let:cursor
+	>
 		{@const { position, data } = cursor}
 		{#if data}
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />
@@ -94,19 +116,33 @@ Display a peformance line chart for a given (static) dataset.
 </div>
 
 <style lang="postcss">
-	.chart-hover-info {
-		position: absolute;
-		left: var(--x);
-		top: var(--y);
-		transform: translate(-50%, calc(-100% - var(--space-md)));
+	.performance-chart {
+		:global([data-css-props]) {
+			--chart-aspect-ratio: 2;
 
-		:global(time) {
-			color: hsl(var(--hsl-text-extra-light));
+			@media (--viewport-sm-down) {
+				--chart-aspect-ratio: 1.75;
+			}
+
+			@media (--viewport-xs) {
+				--chart-aspect-ratio: 1.25;
+			}
 		}
 
-		.value {
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing);
+		.chart-hover-info {
+			position: absolute;
+			left: var(--x);
+			top: var(--y);
+			transform: translate(-50%, calc(-100% - var(--space-md)));
+
+			:global(time) {
+				color: hsl(var(--hsl-text-extra-light));
+			}
+
+			.value {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing);
+			}
 		}
 	}
 </style>

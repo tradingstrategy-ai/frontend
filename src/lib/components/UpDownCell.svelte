@@ -19,7 +19,7 @@ or other contexts where a stronger visual representation is desired.
 	export let compareFn: ComponentProps<UpDownIndicator>['compareFn'] = undefined;
 </script>
 
-<div class="up-down-cell">
+<div class="up-down-cell" data-css-props>
 	<UpDownIndicator {value} {formatter} {compareFn} let:direction let:formatted>
 		{#if $$slots.default}
 			<slot {direction} {formatted} />

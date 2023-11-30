@@ -24,12 +24,13 @@ component instead.
 
 <style lang="postcss">
 	.alert-list {
+		display: grid;
 		width: 100%;
 		border: 2px solid;
 		border-radius: var(--radius-sm);
-		display: grid;
-		list-style: none;
 		margin-inline: auto;
+		list-style: none;
+		color: hsl(var(--hsl-text));
 	}
 
 	.error {

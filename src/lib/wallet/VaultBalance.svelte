@@ -3,13 +3,16 @@
 	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
-	import { DataBox, Grid } from '$lib/components';
+	import { DataBox } from '$lib/components';
 	import { TokenBalance } from '$lib/wallet';
 
 	export let address: Address;
 	export let contracts: Contracts;
 
 	const dispatch = createEventDispatcher();
+
+	const shares = fetchVaultShares(address);
+	const value = fetchVaultNetValue(address);
 
 	async function fetchVaultShares(address: Address) {
 		const vaultShares = await fetchBalance({ token: contracts.vault, address });
@@ -35,14 +38,16 @@
 	}
 </script>
 
-<div class="vault-balance">
-	<DataBox label="Number of shares">
-		<TokenBalance data={fetchVaultShares(address)} />
-	</DataBox>
-	<DataBox label="Value of shares">
-		<TokenBalance data={fetchVaultNetValue(address)} />
-	</DataBox>
-</div>
+<slot {shares} {value}>
+	<div class="vault-balance">
+		<DataBox label="Number of shares">
+			<TokenBalance data={shares} />
+		</DataBox>
+		<DataBox label="Value of shares">
+			<TokenBalance data={value} />
+		</DataBox>
+	</div>
+</slot>
 
 <style lang="postcss">
 	.vault-balance {

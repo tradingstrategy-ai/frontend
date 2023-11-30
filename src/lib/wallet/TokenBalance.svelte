@@ -8,9 +8,14 @@
 </script>
 
 {#await data}
-	<Spinner size="2rem" color="hsl(var(--hsl-text-light))" />
+	<slot skeleton={true} value="---" symbol="---">
+		<Spinner size="2rem" color="hsl(var(--hsl-text-light))" />
+	</slot>
 {:then { symbol, formatted }}
-	<EntitySymbol slug={symbol.toLowerCase()} type="token">{formatNumber(formatted, 2, 4)} {symbol}</EntitySymbol>
+	{@const value = formatNumber(formatted, 2, 4)}
+	<slot skeleton={false} {value} {symbol}>
+		<EntitySymbol slug={symbol.toLowerCase()} type="token">{value} {symbol}</EntitySymbol>
+	</slot>
 {:catch error}
 	<Alert size="xs">Error loading data</Alert>
 {/await}

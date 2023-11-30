@@ -2,11 +2,11 @@
 	import { page } from '$app/stores';
 	import { Alert, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
+	import { WalletWidget } from '$lib/wallet';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let data;
-
-	$: ({ summary } = data);
+	$: ({ chain, summary, state } = data);
 
 	$: backtestAvailable = summary.backtest_available;
 	// Get the error message HTML
@@ -16,6 +16,9 @@
 <main class="strategy-layout ds-container">
 	<PageHeading title={summary.name} description={summary.long_description}>
 		<img slot="icon" src={summary.icon_url} alt={summary.name} />
+		<div class="wallet-widget" slot="cta">
+			<WalletWidget strategy={summary} {chain} />
+		</div>
 	</PageHeading>
 
 	{#if errorHtml}
@@ -29,7 +32,7 @@
 	<div class="subpage">
 		<StrategyNav
 			strategyId={summary.id}
-			portfolio={data.state.portfolio}
+			portfolio={state.portfolio}
 			onChainData={summary.on_chain_data}
 			currentPath={$page.url.pathname}
 			{backtestAvailable}
@@ -61,6 +64,12 @@
 				gap: var(--space-5xl);
 				grid-template-columns: 14rem auto;
 			}
+		}
+	}
+
+	.wallet-widget {
+		@media (--viewport-sm-down) {
+			display: none;
 		}
 	}
 

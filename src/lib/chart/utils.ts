@@ -41,7 +41,7 @@ export type Periodicity = {
  * @param data Raw tick data
  * @param interval A d3 time interval
  */
-export function normalzeDataForInterval(data: RawTick[], interval: TimeInterval) {
+export function normalizeDataForInterval(data: RawTick[], interval: TimeInterval) {
 	return data.reduce((acc, [ts, Value]) => {
 		const date = parseDate(ts);
 		if (!date) return acc;
