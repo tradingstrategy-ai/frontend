@@ -20,7 +20,7 @@
 	export let backtestAvailable: boolean;
 
 	let menuWrapper: HTMLElement;
-	let menuHeight = '';
+	let menuHeight = 'auto';
 
 	const basePath = `/strategies/${strategyId}`;
 

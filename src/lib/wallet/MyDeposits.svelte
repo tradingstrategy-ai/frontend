@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ApiChain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { switchNetwork } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
@@ -9,6 +10,9 @@
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
+
+	let contentWrapper: HTMLElement;
+	let contentHeight = 'auto';
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 	$: depositEnabled = [
@@ -22,6 +26,20 @@
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.chain_id;
 	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
+	const expandable = fsm('closed', {
+		closed: {
+			toggle: 'open'
+		},
+		open: {
+			toggle: 'closed',
+			close: 'closed',
+			_enter() {
+				const clientHeight = contentWrapper.firstElementChild?.clientHeight;
+				contentHeight = clientHeight ? `${clientHeight}px` : 'auto';
+			}
+		}
+	});
+
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
 			chainId: chain.chain_id,
@@ -32,10 +50,10 @@
 	}
 </script>
 
-<div class="my-deposits" class:connected>
+<div class="my-deposits {$expandable}" class:connected style:--content-height={contentHeight}>
 	<header>
 		<h2 class="desktop">My deposits</h2>
-		<button class="mobile">
+		<button class="mobile" on:click={expandable.toggle}>
 			<h2>My deposits</h2>
 			<div class="wallet-address">
 				{#if $wallet.address}
@@ -46,41 +64,47 @@
 			<Icon name="chevron-down" size="1.25rem" />
 		</button>
 	</header>
-	<div class="content">
-		{#if !depositEnabled}
-			<DepositWarning title="Deposits not enabled">
-				This strategy is not using smart contract-based capital management and is not accepting external investments.
-			</DepositWarning>
-		{:else if !connected}
-			<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
-		{:else if wrongNetwork}
-			<DepositWarning title="Wrong network">
-				Please connect to {chain.chain_name}.
-			</DepositWarning>
-		{:else}
-			<dl class="balances">
-				<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
-					<DepositBalance label="Value" data={value} dollar />
-					<DepositBalance label="Shares" data={shares} />
-				</VaultBalance>
-			</dl>
-		{/if}
-		<div class="actions">
-			{#if depositEnabled && !connected}
-				<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
-					<Icon slot="icon" name="wallet" --icon-size="1.25em" />
-					Connect wallet
-				</Button>
-			{:else if depositEnabled && wrongNetwork}
-				<Button class="full-width" label="Switch network" on:click={() => switchNetwork({ chainId: chain.chain_id })} />
+	<div class="content-wrapper" bind:this={contentWrapper}>
+		<div class="content">
+			{#if !depositEnabled}
+				<DepositWarning title="Deposits not enabled">
+					This strategy is not using smart contract-based capital management and is not accepting external investments.
+				</DepositWarning>
+			{:else if !connected}
+				<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
+			{:else if wrongNetwork}
+				<DepositWarning title="Wrong network">
+					Please connect to {chain.chain_name}.
+				</DepositWarning>
+			{:else}
+				<dl class="balances">
+					<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
+						<DepositBalance label="Value" data={value} dollar />
+						<DepositBalance label="Shares" data={shares} />
+					</VaultBalance>
+				</dl>
 			{/if}
-			{#if connected}
-				<Button class="mobile full-width" label="Disconnect wallet" on:click={wallet.disconnect}>
-					<Icon slot="icon" name="unlink" --icon-size="1.25em" />
-				</Button>
-			{/if}
-			<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
-			<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+			<div class="actions">
+				{#if depositEnabled && !connected}
+					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
+						<Icon slot="icon" name="wallet" --icon-size="1.25em" />
+						Connect wallet
+					</Button>
+				{:else if depositEnabled && wrongNetwork}
+					<Button
+						class="full-width"
+						label="Switch network"
+						on:click={() => switchNetwork({ chainId: chain.chain_id })}
+					/>
+				{/if}
+				{#if connected}
+					<Button class="mobile full-width" label="Disconnect wallet" on:click={wallet.disconnect}>
+						<Icon slot="icon" name="unlink" --icon-size="1.25em" />
+					</Button>
+				{/if}
+				<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
+				<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+			</div>
 		</div>
 	</div>
 </div>
@@ -109,6 +133,10 @@
 	header {
 		--header-padding: var(--padding) var(--padding) calc(var(--gap) / 2);
 
+		.closed & {
+			--header-padding: 0.75rem var(--padding);
+		}
+
 		button {
 			display: grid;
 			grid-template-columns: 1fr 1fr 1.25rem;
@@ -120,6 +148,15 @@
 			background: transparent;
 			text-align: left;
 			cursor: pointer;
+			transition: padding var(--time-md) ease-out;
+
+			:global(.chevron-down svg) {
+				transition: transform var(--time-md) ease-out;
+
+				.open & {
+					transform: rotate(180deg);
+				}
+			}
 		}
 	}
 
@@ -151,11 +188,23 @@
 		letter-spacing: var(--ls-ui-sm, normal);
 	}
 
-	.content {
-		display: grid;
-		grid-template-rows: 1fr auto;
-		gap: var(--gap);
-		padding: calc(var(--gap) / 2) var(--padding) var(--padding);
+	.content-wrapper {
+		@media (--viewport-sm-down) {
+			overflow: hidden;
+			height: 0;
+			transition: height var(--time-md) ease-out;
+
+			.open & {
+				height: var(--content-height);
+			}
+		}
+
+		.content {
+			display: grid;
+			grid-template-rows: 1fr auto;
+			gap: var(--gap);
+			padding: calc(var(--gap) / 2) var(--padding) var(--padding);
+		}
 	}
 
 	.balances {

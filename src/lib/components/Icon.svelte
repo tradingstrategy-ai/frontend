@@ -16,7 +16,7 @@
 	export let size: string | undefined = undefined;
 </script>
 
-<div class="icon" style:--size={size}>{@html rawSVG(name) || notFound}</div>
+<div class="icon {name}" style:--size={size}>{@html rawSVG(name) || notFound}</div>
 
 <style lang="postcss">
 	.icon {
