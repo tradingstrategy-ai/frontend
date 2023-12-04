@@ -3,7 +3,14 @@
 </script>
 
 <div class="summary-box">
-	<h2>{title}</h2>
+	<header>
+		<h2>{title}</h2>
+		{#if $$slots.cta}
+			<div class="cta">
+				<slot name="cta" />
+			</div>
+		{/if}
+	</header>
 	<slot />
 </div>
 
@@ -17,12 +24,19 @@
 		padding: 1.25rem;
 	}
 
+	header {
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-columns: 1fr;
+		align-items: center;
+		color: hsl(var(--hsl-text-ultra-light));
+	}
+
 	h2 {
 		font: var(--f-heading-xs-medium);
 		font-size: 1rem;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: hsl(var(--hsl-text-ultra-light));
 
 		@media (--viewport-sm-down) {
 			font-size: 0.875rem;

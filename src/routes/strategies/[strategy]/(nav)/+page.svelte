@@ -7,6 +7,7 @@
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import type { KeyMetricKind } from 'trade-executor/strategy/runtime-state';
 
 	export let data;
 	$: ({ chain, summary, streamed } = data);
@@ -15,6 +16,10 @@
 	$: strategyId = summary.id;
 
 	let periodPerformance: MaybeNumber;
+
+	function hasBacktestedMetric(...metrics: KeyMetricKind[]) {
+		return metrics.some((m) => keyMetrics[m].source === 'backtesting');
+	}
 
 	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
@@ -61,6 +66,12 @@
 
 	<div class="metrics">
 		<SummaryBox title="Summary stats">
+			<svelte:fragment slot="cta">
+				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
+					<div class="backtest-indicator">* Backtested</div>
+				{/if}
+			</svelte:fragment>
+
 			<dl>
 				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
 					<UpDownIndicator {value} formatter={formatPercent} />
@@ -71,6 +82,12 @@
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
+			<svelte:fragment slot="cta">
+				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
+					<div class="backtest-indicator">* Backtested</div>
+				{/if}
+			</svelte:fragment>
+
 			<dl>
 				<KeyMetric name="Sharpe" metric={keyMetrics.sharpe} formatter={formatNumber} {strategyId} />
 				<KeyMetric name="Sortino" metric={keyMetrics.sortino} formatter={formatNumber} {strategyId} />
@@ -185,6 +202,12 @@
 				font: var(--f-paragraph-md-roman);
 				letter-spacing: var(--ls-paragraph-md, normal);
 			}
+		}
+
+		.backtest-indicator {
+			font: var(--f-ui-xs-bold);
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
 		}
 	}
 </style>
