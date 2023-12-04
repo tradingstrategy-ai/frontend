@@ -48,13 +48,7 @@ for the same hovered date. Also displays a time-bucket selector.
 </div>
 
 <div class="chart-wrapper">
-	<div class="chart-title">
-		<h3>Price & volume</h3>
-		<div class="help">
-			<span class="prefix">expressed as</span>
-			<a class="body-link" target="_blank" href="/glossary/ohlcv">OHLCV candles</a>
-		</div>
-	</div>
+	<h3>Price & volume</h3>
 	<PairCandleChart
 		{pairId}
 		{pairSymbol}
@@ -71,63 +65,36 @@ for the same hovered date. Also displays a time-bucket selector.
 	</PairCandleChart>
 </div>
 
-{#if exchangeType === 'uniswap_v3'}
-	<div class="chart-wrapper">
-		<div class="chart-title">
-			<h3>TVL</h3>
-			<div class="help">
-				<span class="prefix">expressed as</span>
-				<a class="body-link" target="_blank" href="/glossary/total-value-locked">USD value of total value locked</a>
-			</div>
-		</div>
-		{#if hasTvlData}
-			<PairCandleChart
-				{pairId}
-				{pairSymbol}
-				{exchangeType}
-				{firstTradeDate}
-				{timeBucket}
-				feed={quoteFeed('candles', { candle_type: 'tvl' }, dataToQuotes)}
-				linker={chartLinker}
-			/>
-		{:else}
-			<div class="no-chart-data">
-				<Alert size="md" status="warning" title="No data available">
-					TVL chart data not currently available for <strong>{pairSymbol}</strong>
-				</Alert>
-			</div>
-		{/if}
-	</div>
-{:else}
-	<div class="chart-wrapper">
-		<div class="chart-title">
-			<h3>Liquidity</h3>
-			<div class="help">
-				<span class="prefix">expressed as</span>
-				<a class="body-link" target="_blank" href="/glossary/xy-liquidity-model">
-					USD value of one side of XY liquidity curve
-				</a>
-			</div>
-		</div>
+<div class="chart-wrapper">
+	<h3>TVL</h3>
+	{#if hasTvlData}
 		<PairCandleChart
 			{pairId}
 			{pairSymbol}
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}
-			feed={quoteFeed('xyliquidity', null, dataToQuotes)}
-			studies={['Liquidity AR']}
+			feed={quoteFeed('candles', { candle_type: 'tvl' }, dataToQuotes)}
 			linker={chartLinker}
 		>
+			<!-- NOTE: re-introduce vol added/removed when these metrics are available from backend for tvl -->
+			<!--
 			<HudRow slot="hud-row-volume" let:cursor let:formatter>
 				<HudMetric label="Vol Added" value={formatter(cursor.data.av)} direction={1}>
 					<span class="vol-added">{formatter(cursor.data.av)}</span>
 				</HudMetric>
 				<HudMetric label="Vol Removed" value={formatter(cursor.data.rv)} direction={-1} />
 			</HudRow>
+			-->
 		</PairCandleChart>
-	</div>
-{/if}
+	{:else}
+		<div class="no-chart-data">
+			<Alert size="md" status="warning" title="No data available">
+				TVL chart data not currently available for <strong>{pairSymbol}</strong>
+			</Alert>
+		</div>
+	{/if}
+</div>
 
 <style lang="postcss">
 	.chart-header {
@@ -148,49 +115,22 @@ for the same hovered date. Also displays a time-bucket selector.
 		overflow: hidden;
 	}
 
-	.chart-title {
-		display: flex;
-		gap: var(--space-md);
-		align-items: baseline;
+	h3 {
 		border-bottom: 1px solid #999;
+		font: var(--f-h5-medium);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 
-		h3 {
-			flex: 1;
-			font: var(--f-h5-medium);
-			text-transform: uppercase;
-			letter-spacing: 0.06em;
-
-			@media (--viewport-xs) {
-				font: var(--f-h6-medium);
-			}
-		}
-
-		.help {
-			font: var(--f-ui-small-roman);
-			color: hsl(var(--hsl-text-light));
-
-			text-align: right;
-
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-
-			a:hover {
-				color: hsl(var(--hsl-text));
-			}
-
-			.prefix {
-				@media (--viewport-xs) {
-					display: none;
-				}
-			}
+		@media (--viewport-xs) {
+			font: var(--f-h6-medium);
 		}
 	}
 
-	.vol-added {
+	/* NOTE: re-introduce vol added/removed when these metrics are available from backend for tvl */
+	/* .vol-added {
 		display: inline-block;
 		min-width: 4.5em;
-	}
+	} */
 
 	.no-chart-data {
 		padding-block: 2rem;

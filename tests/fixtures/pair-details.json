@@ -27,6 +27,7 @@
 		"usd_volume_24h": 12587.757969616072,
 		"usd_volume_30d": 325974.86061897606,
 		"usd_liquidity_latest": 48113600.17426636,
+		"pair_tvl": 96227200.34853272,
 		"liquidity_change_24h": 0.010513045438954568,
 		"usd_liquidity_change_24h": 500558.0750756487,
 		"liquidity_type": "xyliquidity"
