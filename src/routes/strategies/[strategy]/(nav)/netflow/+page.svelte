@@ -8,12 +8,20 @@
 	import { parseDate } from '$lib/helpers/date.js';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
+	import { getChartClient } from 'trade-executor/chart';
 
 	export let data;
-	$: ({ tvlChart, netflowChart, summary } = data);
+	const { strategy, summary } = data;
 
-	$: startedAt = summary.summary_statistics?.key_metrics?.started_at?.value;
+	const startedAt = summary.summary_statistics?.key_metrics?.started_at?.value;
 
+	const tvlClient = getChartClient(fetch, strategy.url);
+	tvlClient.fetch({ type: 'total_equity', source: 'live_trading' });
+
+	const netflowClient = getChartClient(fetch, strategy.url);
+	netflowClient.fetch({ type: 'netflow', source: 'live_trading' });
+
+	// Sum netflow values within the same chart interval
 	function summarizeNetflowData(data: RawTick[], interval: TimeInterval) {
 		return data.reduce((acc, [ts, value]) => {
 			const date = parseDate(ts);
@@ -51,17 +59,18 @@
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
 	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval, periodicity }}>
-		{@const tvlData = normalizeDataForInterval(tvlChart.data, interval)}
-		{@const netflowData = summarizeNetflowData(netflowChart.data, interval)}
-
 		<p slot="subtitle">
 			Learn more about
-			<a class="body-link" href={tvlChart.help_link}>TVL</a> and
-			<a class="body-link" href={netflowChart.help_link}>Netflow</a>
+			<a class="body-link" href="/glossary/total-equity" target="_blank">TVL</a> and
+			<a class="body-link" href="/glossary/netflow" target="_blank">Netflow</a>
 			metrics and how they're calculated.
 		</p>
 		<PerformanceChart
-			data={mergeData(tvlData, netflowData)}
+			loading={$tvlClient.loading}
+			data={mergeData(
+				normalizeDataForInterval($tvlClient.data ?? [], interval),
+				summarizeNetflowData($netflowClient.data ?? [], interval)
+			)}
 			formatValue={formatDollar}
 			{spanDays}
 			{periodicity}

@@ -5,6 +5,7 @@ Display a peformance line chart for a given (static) dataset.
 #### Usage:
 ```tsx
 	<PerformanceChart
+		loading={true|false}
 		data={chartData}
 		formatValue={formatDollar}
 		spanDays={30}
@@ -20,7 +21,8 @@ Display a peformance line chart for a given (static) dataset.
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { merge } from '$lib/helpers/object';
 
-	export let data: MaybePromise<Quote[]>;
+	export let loading = false;
+	export let data: Quote[] = [];
 	export let options: any = undefined;
 	export let formatValue: Formatter<MaybeNumber>;
 	export let spanDays: number;
@@ -32,14 +34,6 @@ Display a peformance line chart for a given (static) dataset.
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
-
-	let resolvedData: Quote[] | undefined;
-	$: resolveData(data);
-
-	async function resolveData(data: MaybePromise<Quote[]>) {
-		resolvedData = undefined;
-		resolvedData = await data;
-	}
 
 	const defaultOptions = {
 		layout: { chartType: 'mountain' },
@@ -80,7 +74,7 @@ Display a peformance line chart for a given (static) dataset.
 			chartEngine.loadChart('Performance', {
 				periodicity,
 				span: { base: 'day', multiplier: spanDays },
-				masterData: resolvedData ?? []
+				masterData: data
 			});
 
 			// hide the Y Axis on smaller screens
@@ -95,11 +89,11 @@ Display a peformance line chart for a given (static) dataset.
 
 <div class="performance-chart" bind:this={chartWrapper}>
 	<ChartIQ
+		{loading}
 		{init}
 		options={merge(defaultOptions, options)}
 		{studies}
 		invalidate={[periodicity, hideYAxis]}
-		loading={!resolvedData}
 		let:cursor
 	>
 		{@const { position, data } = cursor}
