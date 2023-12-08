@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ComponentEvents } from 'svelte';
 	import type { ApiChain } from '$lib/helpers/chain';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
@@ -7,12 +8,15 @@
 	import { wizard } from 'wizard/store';
 	import { wallet, DepositBalance, DepositWarning, VaultBalance } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
 
 	let contentWrapper: HTMLElement;
 	let contentHeight = 'auto';
+
+	let vaultBalance: MaybeString;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 	$: depositEnabled = [
@@ -45,6 +49,12 @@
 		expandable.close();
 	}
 
+	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
+		if (detail.vaultNetValue) {
+			vaultBalance = detail.vaultNetValue.formatted;
+		}
+	}
+
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
 			chainId: chain.chain_id,
@@ -60,13 +70,20 @@
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
 			<button class="mobile" on:click={expandable.toggle}>
-				<h2>My deposits</h2>
+				{#if $expandable === 'open'}
+					<h2>My deposits</h2>
+				{/if}
 				<div class="wallet-address">
 					{#if $wallet.address}
 						<Icon name="wallet" size="1.25rem" />
 						<HashAddress address={$wallet.address ?? ''} endChars={5} />
 					{/if}
 				</div>
+				{#if $expandable === 'closed'}
+					<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
+						{formatDollar(vaultBalance)}
+					</div>
+				{/if}
 				<Icon name="chevron-down" size="1.25rem" />
 			</button>
 		{:else}
@@ -90,7 +107,7 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<VaultBalance {contracts} address={$wallet.address} let:shares let:value>
+					<VaultBalance {contracts} address={$wallet.address} let:shares let:value on:dataFetch={setVaultBalance}>
 						<DepositBalance label="Value" data={value} dollar />
 						<DepositBalance label="Shares" data={shares} />
 					</VaultBalance>
@@ -145,10 +162,6 @@
 	header {
 		--header-padding: var(--padding) var(--padding) calc(var(--gap) / 2);
 
-		.closed & {
-			--header-padding: 0.75rem var(--padding);
-		}
-
 		button {
 			display: grid;
 			gap: 0.75em;
@@ -161,6 +174,10 @@
 			cursor: pointer;
 			transition: padding var(--time-md) ease-out;
 
+			.closed & {
+				--header-padding: 0.75rem var(--padding);
+			}
+
 			.connected & {
 				grid-template-columns: 1fr 1fr 1.25rem;
 			}
@@ -170,6 +187,18 @@
 				justify-content: center;
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--ls-ui-md);
+			}
+
+			.vault-balance {
+				font: var(--f-ui-md-bold);
+				letter-spacing: var(--ls-ui-md, normal);
+				text-align: right;
+				--skeleton-width: 5ch;
+				--skeleton-height: 90%;
+
+				&.skeleton::before {
+					right: 0;
+				}
 			}
 
 			:global(.chevron-down svg) {
@@ -205,9 +234,12 @@
 		grid-template-columns: auto 1fr;
 		gap: 0.75ex;
 		align-items: center;
-		margin-left: 0.625rem;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm, normal);
+
+		.open & {
+			margin-left: 0.625rem;
+		}
 	}
 
 	.content-wrapper {
