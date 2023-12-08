@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
@@ -10,10 +11,10 @@
 	import type { KeyMetricKind } from 'trade-executor/strategy/runtime-state';
 
 	export let data;
-	$: ({ chain, summary, streamed } = data);
+	const { chain, strategy, summary } = data;
 
-	$: keyMetrics = summary.summary_statistics.key_metrics;
-	$: strategyId = summary.id;
+	const keyMetrics = summary.summary_statistics.key_metrics;
+	const strategyId = summary.id;
 
 	let periodPerformance: MaybeNumber;
 
@@ -24,6 +25,13 @@
 	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
 	}
+
+	const chartClient = getChartClient(fetch, strategy.url);
+
+	chartClient.fetch({
+		type: 'compounding_realised_profitability',
+		source: 'live_trading'
+	});
 
 	const chartOptions = {
 		controls: { home: null },
@@ -54,8 +62,9 @@
 				{/if}
 			</div>
 			<PerformanceChart
-				data={streamed.profitabilityChart.then(({ data }) => normalizeDataForInterval(data, interval))}
 				options={chartOptions}
+				loading={$chartClient.loading}
+				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}

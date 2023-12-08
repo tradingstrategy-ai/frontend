@@ -3,35 +3,42 @@
 -->
 <script lang="ts">
 	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
+	import { getChartClient } from 'trade-executor/chart';
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ state, summary, profitabilityChart } = data);
+	const { state, strategy, summary } = data;
+
+	const chartClient = getChartClient(fetch, strategy.url);
+
+	chartClient.fetch({
+		type: 'compounding_realised_profitability',
+		source: 'live_trading'
+	});
 
 	// Old path - read stats from the state
-	$: oldLatestStats = getPortfolioLatestStats(state);
+	const oldLatestStats = getPortfolioLatestStats(state);
 	// New path - use server precalculated stats
-	$: summaryStatistics = summary?.summary_statistics;
+	const summaryStatistics = summary?.summary_statistics;
 </script>
 
 <section class="performance">
-	{#if profitabilityChart}
-		<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval, periodicity }}>
-			<p slot="subtitle">
-				Compounded
-				<a class="body-link" href={profitabilityChart.help_link}>profitability</a>
-				of realised trading positions.
-			</p>
-			<PerformanceChart
-				data={normalizeDataForInterval(profitabilityChart.data, interval)}
-				formatValue={formatPercent}
-				{spanDays}
-				{periodicity}
-			/>
-		</ChartContainer>
-	{/if}
+	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval, periodicity }}>
+		<p slot="subtitle">
+			Compounded
+			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
+			of realised trading positions.
+		</p>
+		<PerformanceChart
+			loading={$chartClient.loading}
+			data={normalizeDataForInterval($chartClient.data ?? [], interval)}
+			formatValue={formatPercent}
+			{spanDays}
+			{periodicity}
+		/>
+	</ChartContainer>
 
 	<SummaryStatistics {oldLatestStats} {summaryStatistics} />
 </section>
