@@ -40,6 +40,11 @@
 		}
 	});
 
+	function disconnectWallet() {
+		wallet.disconnect();
+		expandable.close();
+	}
+
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
 			chainId: chain.chain_id,
@@ -50,19 +55,26 @@
 	}
 </script>
 
-<div class="my-deposits {$expandable}" class:connected style:--content-height={contentHeight}>
+<div class="my-deposits {$expandable} {$wallet.status}" style:--content-height={contentHeight}>
 	<header>
 		<h2 class="desktop">My deposits</h2>
-		<button class="mobile" on:click={expandable.toggle}>
-			<h2>My deposits</h2>
-			<div class="wallet-address">
-				{#if $wallet.address}
-					<Icon name="wallet" size="1.25rem" />
-					<HashAddress address={$wallet.address ?? ''} endChars={5} />
-				{/if}
-			</div>
-			<Icon name="chevron-down" size="1.25rem" />
-		</button>
+		{#if connected}
+			<button class="mobile" on:click={expandable.toggle}>
+				<h2>My deposits</h2>
+				<div class="wallet-address">
+					{#if $wallet.address}
+						<Icon name="wallet" size="1.25rem" />
+						<HashAddress address={$wallet.address ?? ''} endChars={5} />
+					{/if}
+				</div>
+				<Icon name="chevron-down" size="1.25rem" />
+			</button>
+		{:else}
+			<button class="mobile" on:click={() => launchWizard('connect-wallet')}>
+				Connect wallet
+				<Icon name="wallet" size="1.25rem" />
+			</button>
+		{/if}
 	</header>
 	<div class="content-wrapper" bind:this={contentWrapper}>
 		<div class="content">
@@ -98,7 +110,7 @@
 					/>
 				{/if}
 				{#if connected}
-					<Button class="mobile full-width" label="Disconnect wallet" on:click={wallet.disconnect}>
+					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>
 						<Icon slot="icon" name="unlink" --icon-size="1.25em" />
 					</Button>
 				{/if}
@@ -139,7 +151,6 @@
 
 		button {
 			display: grid;
-			grid-template-columns: 1fr 1fr 1.25rem;
 			gap: 0.75em;
 			align-items: center;
 			width: 100%;
@@ -149,6 +160,17 @@
 			text-align: left;
 			cursor: pointer;
 			transition: padding var(--time-md) ease-out;
+
+			.connected & {
+				grid-template-columns: 1fr 1fr 1.25rem;
+			}
+
+			.disconnected & {
+				grid-template-columns: auto auto;
+				justify-content: center;
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md);
+			}
 
 			:global(.chevron-down svg) {
 				transition: transform var(--time-md) ease-out;
