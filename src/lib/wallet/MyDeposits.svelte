@@ -70,20 +70,18 @@
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
 			<button class="mobile" on:click={expandable.toggle}>
-				{#if $expandable === 'open'}
+				<div class="inner">
 					<h2>My deposits</h2>
-				{/if}
-				<div class="wallet-address">
-					{#if $wallet.address}
-						<Icon name="wallet" size="1.25rem" />
-						<HashAddress address={$wallet.address ?? ''} endChars={5} />
-					{/if}
-				</div>
-				{#if $expandable === 'closed'}
+					<div class="wallet-address">
+						{#if $wallet.address}
+							<Icon name="wallet" size="1.25rem" />
+							<HashAddress address={$wallet.address ?? ''} endChars={5} />
+						{/if}
+					</div>
 					<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
 						{formatDollar(vaultBalance)}
 					</div>
-				{/if}
+				</div>
 				<Icon name="chevron-down" size="1.25rem" />
 			</button>
 		{:else}
@@ -179,7 +177,22 @@
 			}
 
 			.connected & {
-				grid-template-columns: 1fr 1fr 1.25rem;
+				grid-template-columns: 1fr 1.25rem;
+			}
+
+			.inner {
+				display: grid;
+				grid-template-columns: repeat(3, calc((100% - var(--gap)) / 2));
+				gap: var(--gap);
+				overflow: hidden;
+
+				& > * {
+					transition: transform var(--time-md) ease-out;
+
+					.closed & {
+						transform: translate(calc(-1 * (100% + var(--gap))), 0);
+					}
+				}
 			}
 
 			.disconnected & {
