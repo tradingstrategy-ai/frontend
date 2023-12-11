@@ -140,12 +140,12 @@
 	.my-deposits {
 		@media (--viewport-sm-down) {
 			:global(.desktop) {
-				display: none;
+				display: none !important;
 			}
 		}
 		@media (--viewport-md-up) {
 			:global(.mobile) {
-				display: none;
+				display: none !important;
 			}
 		}
 
