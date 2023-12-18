@@ -14,7 +14,7 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading title={summary.name} description={summary.long_description}>
+	<PageHeading title={summary.name} description={summary.short_description}>
 		<img slot="icon" src={summary.icon_url} alt={summary.name} />
 		<div class="wallet-widget" slot="cta">
 			<WalletWidget strategy={summary} {chain} />

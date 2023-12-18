@@ -47,7 +47,7 @@
 
 <svelte:head>
 	<title>{summary.name} | Trading Strategy</title>
-	<meta name="description" content={summary.long_description} />
+	<meta name="description" content={summary.short_description} />
 </svelte:head>
 
 <div class="strategy-overview-page">
@@ -106,7 +106,7 @@
 	</div>
 
 	<SummaryBox title="Strategy description">
-		<p>{summary.long_description}</p>
+		<p>{@html summary.long_description}</p>
 	</SummaryBox>
 </div>
 
