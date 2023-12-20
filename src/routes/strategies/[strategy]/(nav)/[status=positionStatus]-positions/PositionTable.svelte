@@ -27,8 +27,8 @@
 
 	$: positionsStore.set(positions);
 
-	function toISODate(epoch: number) {
-		return epoch && fromUnixTime(epoch).toISOString();
+	function toISODate(ts: MaybeNumber) {
+		return ts && fromUnixTime(ts).toISOString();
 	}
 
 	const table = createTable(positionsStore, {
