@@ -127,7 +127,12 @@ export function formatDollar(n: MaybeNumberlike, minDigits = 2, maxPrecision = m
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
  * @param options - additional options to pass through to `toLocaleString()`
  */
-export function formatNumber(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits, options = {}) {
+export function formatNumber(
+	n: MaybeNumberlike,
+	minDigits = 2,
+	maxPrecision = minDigits,
+	options: Intl.NumberFormatOptions = {}
+) {
 	if (minDigits < 0) throw new RangeError('minDigits must be >= 0');
 	if (maxPrecision < minDigits) throw new RangeError('maxPrecision must be >= minDigits');
 
@@ -141,22 +146,22 @@ export function formatNumber(n: MaybeNumberlike, minDigits = 2, maxPrecision = m
 	// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
 	// In theory, we should be able to use `roundingPriority: 'morePrecision'` to achieve
 	// the same result, but this is inconsistent across JavaScript implementations.
-	const v1 = n.toLocaleString('en-US', {
+	const fracDigitsResult = n.toLocaleString('en-US', {
 		minimumFractionDigits: minDigits,
 		maximumFractionDigits: minDigits,
 		...options
 	});
 
-	if (minDigits === 0 && maxPrecision === 0) return v1;
+	if (minDigits === 0 && maxPrecision === 0) return fracDigitsResult;
 
-	const v2 = n.toLocaleString('en-US', {
+	const sigDigitsResult = n.toLocaleString('en-US', {
 		minimumSignificantDigits: minDigits || 1,
 		maximumSignificantDigits: maxPrecision,
 		...options
 	});
 
 	// return the formatted value with greatest precision
-	return v2.length > v1.length ? v2 : v1;
+	return [sigDigitsResult, fracDigitsResult].sort((a, b) => a.length - b.length)[1];
 }
 
 /**

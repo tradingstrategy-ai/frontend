@@ -29,9 +29,13 @@ export function formatProfitability(n: MaybeNumberlike): string {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
-	const absN = Math.abs(n);
-	const symbol = absN < PROFITABILITY_THRESHOLD ? '◼︎' : n > 0 ? '▲' : '▼';
-	const percentStr = formatNumber(absN, 1, 1, { style: 'percent' });
+	const abs = Math.abs(n);
+	const symbol = abs < PROFITABILITY_THRESHOLD ? '◼︎' : n > 0 ? '▲' : '▼';
+	const percentStr = abs.toLocaleString('en-US', {
+		style: 'percent',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	});
 	return `${symbol} ${percentStr}`;
 }
 
