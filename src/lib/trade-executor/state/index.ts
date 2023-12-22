@@ -1,7 +1,7 @@
-import type { State } from './interface';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
 import { getConfiguredStrategyById } from '../strategy/configuration';
+import { stateSchema } from './state';
 
 export async function getStrategyState(fetch: Fetch, strategyId: string) {
 	const strategy = getConfiguredStrategyById(strategyId);
@@ -20,5 +20,5 @@ export async function getStrategyState(fetch: Fetch, strategyId: string) {
 		throw await publicApiError(resp);
 	}
 
-	return resp.json() as Promise<State>;
+	return stateSchema.parse(await resp.json());
 }
