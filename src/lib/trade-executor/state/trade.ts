@@ -51,6 +51,7 @@ export const tradePricingSchema = z.object({
 	token_in: decimal.nullish(),
 	token_out: decimal.nullish()
 });
+export type TradePricing = z.infer<typeof tradePricingSchema>;
 
 export const tradeExecutionSchema = z.object({
 	trade_id: primaryKey,
@@ -101,6 +102,7 @@ export const tradeExecutionSchema = z.object({
 	paid_interest: decimal.nullish(),
 	exchange_name: z.string().nullish()
 });
+export type TradeExecution = z.infer<typeof tradeExecutionSchema>;
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/analysis/trade_analyser.py
 export const tradeSummarySchema = z.object({
@@ -166,3 +168,4 @@ export const tradeSummarySchema = z.object({
 	average_duration_of_all_trades: duration.nullish(),
 	unrealised_profit: usDollarAmount.nullish()
 });
+export type TradeSummary = z.infer<typeof tradeSummarySchema>;

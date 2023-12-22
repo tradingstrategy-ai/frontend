@@ -20,3 +20,4 @@ export const reservePositionSchema = z.object({
 	initial_deposit_reserve_token_price: usDollarAmount.nullish(),
 	balance_updates: z.record(primaryKeyString, balanceUpdateSchema)
 });
+export type ReservePosition = z.infer<typeof reservePositionSchema>;

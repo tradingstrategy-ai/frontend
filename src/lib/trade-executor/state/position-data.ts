@@ -1,12 +1,6 @@
-import type {
-	Percent,
-	TokenUnits,
-	TradeExecution,
-	TradingPosition,
-	UnixTimestamp,
-	USDollarPrice,
-	USDollarValue
-} from 'trade-executor/state/interface';
+import type { Decimal, Percent, UnixTimestamp, USDollarAmount, USDollarPrice } from './utility-types';
+import type { TradeExecution } from './trade';
+import type { TradingPosition } from './position';
 import type { TimeBucket } from '$lib/chart';
 
 /**
@@ -18,10 +12,8 @@ export interface TradingPositionInfo {
 	// trade fails to execute correctly.
 	failedOpen: boolean;
 
-	//
 	openedAt: UnixTimestamp;
 
-	//
 	closedAt?: UnixTimestamp;
 
 	durationSeconds: UnixTimestamp;
@@ -30,16 +22,13 @@ export interface TradingPositionInfo {
 	stillOpen: boolean;
 
 	// See Python get_value_at_open()
-	valueAtOpen?: USDollarValue;
-	quantityAtOpen?: TokenUnits;
+	valueAtOpen?: USDollarAmount;
+	quantityAtOpen?: Decimal;
 
 	// How much of total portfolio this position was at open
-	//
 	// Might not be available if the opening trade failed.
-	//
 	portfolioWeightAtOpen?: Percent;
 
-	//
 	candleTimeBucket: TimeBucket;
 
 	openPrice: USDollarPrice;
@@ -60,25 +49,23 @@ export interface TradingPositionInfo {
 	estimatedMaximumRisk?: Percent;
 
 	// What was the "market price" when the position was opened.
-	//
 	// Might not be available if the opening trade failed and the position is frozen
-	//
 	marketMidPriceAtOpen?: USDollarPrice;
 
 	// Is stop loss used with this position
 	stopLossable: boolean;
 
 	// How much stop loss was from the mid price when opening
-	stopLossPercentOpen?: USDollarValue;
-	stopLossPriceLast?: USDollarValue;
+	stopLossPercentOpen?: USDollarAmount;
+	stopLossPriceLast?: USDollarAmount;
 	stopLossPercent?: Percent;
 	stopLossTriggered: boolean;
 	trailingStopLossPercent?: Percent;
 
 	portfolioRiskPercent?: Percent;
 
-	volume: USDollarValue;
-	tradingFees: USDollarValue;
+	volume: USDollarAmount;
+	tradingFees: USDollarAmount;
 	tradingFeesPercent: Percent;
 }
 
@@ -137,11 +124,10 @@ export const positionInfoDescription = {
  *  Undefined if the trade failed to execute.
  *
  */
-export function calculateTradeValue(trade: TradeExecution): USDollarValue | undefined {
+export function calculateTradeValue(trade: TradeExecution): USDollarAmount | undefined {
 	if (trade.executed_price && trade.executed_quantity) {
-		return trade.executed_price * trade.executed_quantity;
+		return trade.executed_price * Number(trade.executed_quantity);
 	}
-	return undefined;
 }
 
 /**

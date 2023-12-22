@@ -16,3 +16,4 @@ export const loanSchema = z.object({
 	borrowed: assetWithTrackedValueSchema,
 	borrowed_interest: interestSchema.nullish()
 });
+export type Loan = z.infer<typeof loanSchema>;

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { BlockchainTransaction } from 'trade-executor/state/interface';
 	import { formatBPS } from 'trade-executor/helpers/formatters';
 	import {
 		formatAmount,
@@ -21,7 +20,7 @@
 
 	const tradeFailed = trade.failed_at !== null;
 	// Trade should have only one failed transactions and it is the first one that reverted
-	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
+	const failedTx = trade.blockchain_transactions.find((tx) => tx.revert_reason !== null);
 </script>
 
 <main class="ds-container trade-page">

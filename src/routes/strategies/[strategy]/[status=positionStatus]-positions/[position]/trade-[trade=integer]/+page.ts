@@ -1,4 +1,3 @@
-import type { TradeExecution } from 'trade-executor/state/interface.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {

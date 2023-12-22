@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TradeExecution } from 'trade-executor/state/interface';
+	import type { TradeExecution } from 'trade-executor/state/trade';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addClickableRows } from '$lib/components/datatable/plugins';

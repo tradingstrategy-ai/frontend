@@ -30,3 +30,4 @@ export const stateSchema = z.object({
 	// sync: sync
 	backtest_data: backtestDataSchema.nullish()
 });
+export type State = z.infer<typeof stateSchema>;

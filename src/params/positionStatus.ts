@@ -1,5 +1,5 @@
-import type { PositionKind } from 'trade-executor/state/interface';
+import { type PositionStatus, positionStatus } from 'trade-executor/state/position';
 
-export function match(param): param is PositionKind {
-	return ['open', 'closed', 'frozen'].includes(param);
+export function match(param): param is PositionStatus {
+	return positionStatus.safeParse(param).success;
 }

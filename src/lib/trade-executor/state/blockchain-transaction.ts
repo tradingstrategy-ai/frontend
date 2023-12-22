@@ -42,3 +42,4 @@ export const blockchainTransactionSchema = z.object({
 	other: z.record(z.any()),
 	notes: z.string()
 });
+export type BlockchainTransaction = z.infer<typeof blockchainTransactionSchema>;

@@ -33,3 +33,4 @@ export const balanceUpdateSchema = z.object({
 	notes: z.string().nullish(),
 	block_number: blockNumber.nullish()
 });
+export type BalanceUpdate = z.infer<typeof balanceUpdateSchema>;

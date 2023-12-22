@@ -24,6 +24,7 @@ export const triggerPriceUpdateSchema = z.object({
 	take_profit_before: usDollarAmount.nullish(),
 	take_profit_after: usDollarAmount.nullish()
 });
+export type TriggerPriceUpdate = z.infer<typeof triggerPriceUpdateSchema>;
 
 export const tradingPositionSchema = z.object({
 	position_id: primaryKey,
@@ -49,3 +50,4 @@ export const tradingPositionSchema = z.object({
 	loan: loanSchema.nullish(),
 	liquidation_price: usDollarAmount.nullish()
 });
+export type TradingPosition = z.infer<typeof tradingPositionSchema>;

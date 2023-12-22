@@ -17,6 +17,7 @@ export const positionStatisticsSchema = z.object({
 	quantity: z.number(),
 	value: usDollarAmount
 });
+export type PositionStatistics = z.infer<typeof positionStatisticsSchema>;
 
 export const finalPositionStatisticsSchema = z.object({
 	calculated_at: unixTimestamp,
@@ -24,6 +25,7 @@ export const finalPositionStatisticsSchema = z.object({
 	value_at_open: usDollarAmount,
 	value_at_max: usDollarAmount
 });
+export type FinalPositionStatistics = z.infer<typeof finalPositionStatisticsSchema>;
 
 export const portfolioStatisticsSchema = z.object({
 	calculated_at: unixTimestamp,
@@ -41,9 +43,11 @@ export const portfolioStatisticsSchema = z.object({
 	realised_profit_usd: usDollarAmount.nullish(),
 	summary: tradeSummarySchema.nullish()
 });
+export type PortfolioStatistics = z.infer<typeof portfolioStatisticsSchema>;
 
 export const statisticsSchema = z.object({
 	portfolio: portfolioStatisticsSchema.array(),
 	positions: z.record(primaryKeyString, positionStatisticsSchema.array()),
 	closed_positions: z.record(primaryKeyString, finalPositionStatisticsSchema)
 });
+export type Statistics = z.infer<typeof statisticsSchema>;

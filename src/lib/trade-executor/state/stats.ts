@@ -6,35 +6,24 @@
  * For statistics structure see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/statistics.py
  */
 
-import type { State, Stats, TradingPosition } from './interface';
-import type { PositionStatistics } from './interface';
+import type { TradingPosition } from './position';
+import type { State } from './state';
+import type { Statistics } from './statistics';
 
 /**
  * Get the latest portfolio statistics.
  *
- * @return null if state is not loaded
- *
  */
-export function getPortfolioLatestStats(state?: State): object | null {
-	if (state) {
-		return state.stats.portfolio.at(-1);
-	}
-	return null;
+export function getPortfolioLatestStats(state?: State) {
+	return state?.stats.portfolio.at(-1);
 }
 
 /**
  * Get the latest portfolio position statistics.
  *
- * @return null if state is not loaded
  */
-export function getPositionLatestStats(position_id: number, stats?: Stats): PositionStatistics {
-	if (stats) {
-		const positionHistory = stats.positions[position_id];
-		if (positionHistory) {
-			return positionHistory.at(-1);
-		}
-	}
-	return null;
+export function getPositionLatestStats(position_id: number, stats?: Statistics) {
+	return stats?.positions[position_id]?.at(-1);
 }
 
 /**
@@ -51,15 +40,17 @@ export function getPositionLatestStats(position_id: number, stats?: Stats): Posi
  * @return List of row objects that combine both TradingPosition and PositionStatistics vars.
  *
  */
-export function createCombinedPositionList(positions: TradingPosition[], stats: Stats): object[] {
-	let rows = [];
+export function createCombinedPositionList(positions: TradingPosition[], stats: Statistics) {
+	return positions.map((position) => {
+		const positionStats = getPositionLatestStats(position.position_id, stats);
+		const finalStats = stats.closed_positions[position.position_id];
+		const ticker = `${position.pair.base.token_symbol}-${position.pair.quote.token_symbol}`;
 
-	for (let position of positions) {
-		const positionStats = getPositionLatestStats(position.position_id, stats) || {};
-		const finalStats = stats.closed_positions[position.position_id] || {};
-		const merged = { ...position, ...positionStats, ...finalStats };
-		merged.ticker = `${position.pair.base.token_symbol}-${position.pair.quote.token_symbol}`;
-		rows.push(merged);
-	}
-	return rows;
+		return {
+			...position,
+			...positionStats,
+			...finalStats,
+			ticker
+		};
+	});
 }

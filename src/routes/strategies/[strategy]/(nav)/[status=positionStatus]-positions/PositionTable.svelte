@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor/state/interface';
+	import type { TradingPosition } from 'trade-executor/state/position';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
@@ -45,7 +45,7 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
-	function getLastTrade({ trades }) {
+	function getLastTrade({ trades }: TradingPosition) {
 		return Object.values(trades).at(-1);
 	}
 

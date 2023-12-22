@@ -19,3 +19,4 @@ export const portfolioSchema = z.object({
 	closed_positions: z.record(primaryKeyString, tradingPositionSchema),
 	frozen_positions: z.record(primaryKeyString, tradingPositionSchema)
 });
+export type Portfolio = z.infer<typeof portfolioSchema>;

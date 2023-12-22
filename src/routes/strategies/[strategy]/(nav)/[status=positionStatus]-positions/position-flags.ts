@@ -1,7 +1,7 @@
 /**
  * Position status flag.
  */
-import type { TradingPosition } from 'trade-executor/state/interface';
+import type { TradingPosition } from 'trade-executor/state/position';
 
 export enum PositionStatusFlag {
 	stopLoss,

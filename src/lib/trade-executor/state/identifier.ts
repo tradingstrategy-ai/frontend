@@ -27,6 +27,7 @@ const assetIdentifierBase = z.object({
 export const assetIdentifierSchema = assetIdentifierBase.extend({
 	underlying: assetIdentifierBase.nullish()
 });
+export type AssetIdentifier = z.infer<typeof assetIdentifierSchema>;
 
 export const tradingPairKind = z.enum([
 	'spot_market_hold',
@@ -55,6 +56,7 @@ const tradingPairIdentifierBase = z.object({
 export const tradingPairIdentifierSchema = tradingPairIdentifierBase.extend({
 	underlying_spot_pair: tradingPairIdentifierBase.nullish()
 });
+export type TradingPairIdentifier = z.infer<typeof tradingPairIdentifierSchema>;
 
 export const assetWithTrackedValueSchema = z.object({
 	asset: assetIdentifierSchema,
@@ -64,3 +66,4 @@ export const assetWithTrackedValueSchema = z.object({
 	created_at: unixTimestamp,
 	created_strategy_cycle_at: unixTimestamp.nullish()
 });
+export type AssetWithTrackedValue = z.infer<typeof assetWithTrackedValueSchema>;

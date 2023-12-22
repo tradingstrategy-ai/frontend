@@ -1,4 +1,5 @@
-import type { PositionStatistics, TradingPosition, FreezeInfo } from './interface';
+import type { PositionStatistics } from './statistics';
+import type { TradingPosition } from './position';
 
 type Maybe<Value> = Value | null | undefined;
 
@@ -36,18 +37,18 @@ export function getValueAtPeak(stats: Maybe<PositionStatistics[]>): number | und
  * Note that this will keep returning an error reason if position
  * was fixed after the error happened.
  */
-export function getPositionFreezeReason(position: TradingPosition): FreezeInfo | null {
+export function getPositionFreezeReason(position: TradingPosition) {
 	const lastFailedTrade = Object.values(position.trades).findLast((trade) => trade.failed_at);
 	const failedTx = lastFailedTrade?.blockchain_transactions.find((tx) => tx.revert_reason);
 
-	if (!(lastFailedTrade && failedTx)) return null;
+	if (!(lastFailedTrade && failedTx)) return;
 
 	return {
-		chain: failedTx.chain_id,
+		chainId: failedTx.chain_id,
 		positionId: lastFailedTrade.position_id,
 		tradeId: lastFailedTrade.trade_id,
 		revertReason: failedTx.revert_reason!,
-		txHash: failedTx.tx_hash
+		txHash: failedTx.tx_hash!
 	};
 }
 

@@ -18,3 +18,4 @@ export const valuationUpdateSchema = z.object({
 	old_price: usDollarPrice.nullish(),
 	block_number: blockNumber.nullish()
 });
+export type ValuationUpdate = z.infer<typeof valuationUpdateSchema>;

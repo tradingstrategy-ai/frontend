@@ -17,3 +17,4 @@ export const interestSchema = z.object({
 	last_updated_block_number: blockNumber.nullish(),
 	interest_payments: decimal
 });
+export type Interest = z.infer<typeof interestSchema>;
