@@ -2,7 +2,7 @@
 	import { formatProfitability, formatTokenAmount } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { getPositionFreezeReason, isPositionInError } from 'trade-executor/state/position-helpers';
-	import { extractPositionInfo, positionInfoDescription } from 'trade-executor/state/position-data';
+	import { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import {
@@ -22,7 +22,7 @@
 	export let data;
 	const { summary, position, chain } = data;
 
-	const positionInfo = extractPositionInfo(position);
+	const positionInfo = new TradingPositionInfo(position);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
 	const trades = Object.values(position.trades);
@@ -85,9 +85,9 @@
 					</svelte:fragment>
 					<span slot="popup">
 						{#if positionInfo.stillOpen}
-							{positionInfoDescription.unrealisedProfitability}
+							{positionInfo.tooltip('unrealisedProfitability')}
 						{:else}
-							{positionInfoDescription.realisedProfitability}
+							{positionInfo.tooltip('realisedProfitability')}
 						{/if}
 					</span>
 				</Tooltip>
@@ -96,7 +96,7 @@
 					<Tooltip>
 						<PositionDataIndicator slot="trigger" text="stop loss" />
 						<span slot="popup">
-							{positionInfoDescription.stopLossTriggered}
+							{positionInfo.tooltip('stopLossTriggered')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -109,7 +109,7 @@
 							<Timestamp date={positionInfo.openedAt} withTime />
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.openedAt}
+							{positionInfo.tooltip('openedAt')}
 						</span>
 					</Tooltip>
 					{positionInfo.stillOpen ? '' : '—'}
@@ -121,7 +121,7 @@
 							<Timestamp date={positionInfo.closedAt} withTime />
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.closedAt}
+							{positionInfo.tooltip('closedAt')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -131,7 +131,7 @@
 						{formatDuration(positionInfo.durationSeconds)}
 					</span>
 					<span slot="popup">
-						{positionInfoDescription.durationSeconds}
+						{positionInfo.tooltip('durationSeconds')}
 					</span>
 				</Tooltip>
 
@@ -147,7 +147,7 @@
 							{formatPrice(positionInfo.openPrice)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.openPrice}
+							{positionInfo.tooltip('openPrice')}
 						</span>
 					</Tooltip>
 					—
@@ -159,7 +159,7 @@
 							{formatPrice(positionInfo.currentPrice)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.currentPrice}
+							{positionInfo.tooltip('currentPrice')}
 						</span>
 					</Tooltip>
 				{:else}
@@ -168,7 +168,7 @@
 							{formatPrice(positionInfo.closePrice)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.closePrice}
+							{positionInfo.tooltip('closePrice')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -180,7 +180,7 @@
 						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
 					</span>
 					<span slot="popup">
-						{positionInfoDescription.valueAtOpen}
+						{positionInfo.tooltip('valueAtOpen')}
 					</span>
 				</Tooltip>
 
@@ -190,7 +190,7 @@
 						{position.pair.base.token_symbol}
 					</span>
 					<span slot="popup">
-						{positionInfoDescription.quantityAtOpen}
+						{positionInfo.tooltip('quantityAtOpen')}
 					</span>
 				</Tooltip>
 
@@ -199,7 +199,7 @@
 						{formatPercent(positionInfo.portfolioWeightAtOpen)}
 					</span>
 					<span slot="popup">
-						{positionInfoDescription.portfolioWeightAtOpen}
+						{positionInfo.tooltip('portfolioWeightAtOpen')}
 					</span>
 				</Tooltip>
 			</DataBox>
@@ -210,7 +210,7 @@
 						<Tooltip>
 							<span slot="trigger" class="underline"> N/A </span>
 							<span slot="popup">
-								{positionInfoDescription.stopLossPercentOpenMissing}
+								{positionInfo.tooltip('stopLossPercentOpenMissing')}
 							</span>
 						</Tooltip>
 					{:else}
@@ -223,7 +223,7 @@
 								{formatPercent(1 - positionInfo.stopLossPercentOpen)}
 							</span>
 							<span slot="popup">
-								{positionInfoDescription.stopLossPercentOpen}
+								{positionInfo.tooltip('stopLossPercentOpen')}
 							</span>
 						</Tooltip>
 					{/if}
@@ -235,7 +235,7 @@
 								text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
 							/>
 							<span slot="popup">
-								{positionInfoDescription.trailingStopLossPercent}
+								{positionInfo.tooltip('trailingStopLossPercent')}
 							</span>
 						</Tooltip>
 					{/if}
@@ -247,7 +247,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline"> N/A </span>
 						<span slot="popup">
-							{positionInfoDescription.portfolioRiskPercentMissing}
+							{positionInfo.tooltip('portfolioRiskPercentMissing')}
 						</span>
 					</Tooltip>
 				{:else}
@@ -256,7 +256,7 @@
 							{formatPercent(positionInfo.portfolioRiskPercent)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.portfolioRiskPercent}
+							{positionInfo.tooltip('portfolioRiskPercent')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -268,7 +268,7 @@
 						{formatDollar(positionInfo.volume)}
 					</span>
 					<span slot="popup">
-						{positionInfoDescription.volume}
+						{positionInfo.tooltip('volume')}
 					</span>
 				</Tooltip>
 			</DataBox>
@@ -278,7 +278,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline"> N/A </span>
 						<span slot="popup">
-							{positionInfoDescription.tradingFeesMissing}
+							{positionInfo.tooltip('tradingFeesMissing')}
 						</span>
 					</Tooltip>
 				{:else}
@@ -287,7 +287,7 @@
 							{formatDollar(positionInfo.tradingFees, 4)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.tradingFees}
+							{positionInfo.tooltip('tradingFees')}
 						</span>
 					</Tooltip>
 
@@ -296,7 +296,7 @@
 							{formatPercent(positionInfo.tradingFeesPercent, 4)}
 						</span>
 						<span slot="popup">
-							{positionInfoDescription.tradingFeesPercent}
+							{positionInfo.tooltip('tradingFeesPercent')}
 						</span>
 					</Tooltip>
 				{/if}
