@@ -44,7 +44,8 @@ export class TradingPositionInfo {
 	}
 
 	get durationSeconds() {
-		return (this.closedAt ?? Date.now() / 1000) - this.openedAt;
+		const endDate = this.closedAt ?? Date.now();
+		return (+endDate - +this.openedAt) / 1000;
 	}
 
 	get trades() {

@@ -27,10 +27,6 @@
 
 	$: positionsStore.set(positions);
 
-	function toISODate(ts: MaybeNumber) {
-		return ts && fromUnixTime(ts).toISOString();
-	}
-
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
 		tableFilter: addTableFilter({
@@ -94,20 +90,17 @@
 		}),
 		table.column({
 			header: 'Opened',
-			id: 'opened_at',
-			accessor: ({ opened_at }) => toISODate(opened_at),
+			accessor: 'opened_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Closed',
-			id: 'closed_at',
-			accessor: ({ closed_at }) => toISODate(closed_at),
+			accessor: 'closed_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Frozen at',
-			id: 'frozen_at',
-			accessor: ({ frozen_at }) => toISODate(frozen_at),
+			accessor: 'frozen_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({

@@ -44,6 +44,8 @@ export type PrimaryKeyString = z.infer<typeof primaryKeyString>;
 export const unixTimestamp = z.number().nonnegative();
 export type UnixTimestamp = z.infer<typeof unixTimestamp>;
 
+export const unixTimestampToDate = unixTimestamp.transform((ts) => new Date(ts * 1000));
+
 export const usDollarAmount = z.coerce.number();
 export type USDollarAmount = z.infer<typeof usDollarAmount>;
 

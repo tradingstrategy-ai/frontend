@@ -25,7 +25,6 @@
 	const positionInfo = new TradingPositionInfo(position);
 	const positionFailed = isPositionInError(position);
 	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
-	const trades = Object.values(position.trades);
 </script>
 
 <main class="ds-container position-page">
@@ -303,7 +302,7 @@
 			</DataBox>
 		</DataBoxes>
 
-		<TradeTable {trades} />
+		<TradeTable trades={positionInfo.trades} />
 	</section>
 </main>
 
