@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { formatProfitability, formatTokenAmount } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
-	import { getPositionFreezeReason, isPositionInError } from 'trade-executor/state/position-helpers';
-	import { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import {
@@ -21,19 +19,15 @@
 
 	export let data;
 	const { summary, position, chain } = data;
-
-	const positionInfo = new TradingPositionInfo(position);
-	const positionFailed = isPositionInError(position);
-	const positionErrorInfo = positionFailed && getPositionFreezeReason(position);
 </script>
 
 <main class="ds-container position-page">
-	<PageHeading title="Position #{position.position_id}">
+	<PageHeading title="Position #{position.id}">
 		<a slot="prefix" href="/strategies/{summary.id}">{summary.name}</a>
 	</PageHeading>
 
 	<section>
-		{#if positionInfo.failedOpen}
+		{#if position.failedOpen}
 			<Alert size="md" status="error" title="Failed entry">
 				<p>
 					The first trade opening this position failed to execute correctly. There is no correct or meaningful data
@@ -42,21 +36,18 @@
 			</Alert>
 		{/if}
 
-		{#if positionErrorInfo}
+		{#if position.frozen && position.freezeReason}
+			{@const { tradeId, revertReason, txHash } = position.freezeReason}
 			<Alert size="md" status="error" title="This position is currently in an error state">
 				<ul class="error-details">
-					<li>Failure reason: <i>{positionErrorInfo.revertReason}</i></li>
+					<li>Failure reason: <i>{revertReason}</i></li>
 					<li>
-						<a href={`./${position.position_id}/trade-${positionErrorInfo.tradeId}`}
-							>View failed trade #{positionErrorInfo.tradeId}</a
-						>
+						<a href={`./${position.id}/trade-${tradeId}`}>View failed trade #{tradeId}</a>
 					</li>
 					<li>
-						<a href={getExplorerUrl(chain, positionErrorInfo.txHash)} target="_blank" rel="noreferrer">
+						<a href={getExplorerUrl(chain, txHash)} target="_blank" rel="noreferrer">
 							View transaction
-							<span class="hash-wrapper">
-								<HashAddress address={positionErrorInfo.txHash} />
-							</span>
+							<span class="hash-wrapper"><HashAddress address={txHash} /></span>
 						</a>
 					</li>
 				</ul>
@@ -74,7 +65,7 @@
 				<Tooltip>
 					<svelte:fragment slot="trigger">
 						<UpDownIndicator
-							value={positionInfo.profitability}
+							value={position.profitability}
 							formatter={formatProfitability}
 							compareFn={determineProfitability}
 							let:formatted
@@ -83,19 +74,19 @@
 						</UpDownIndicator>
 					</svelte:fragment>
 					<span slot="popup">
-						{#if positionInfo.stillOpen}
-							{positionInfo.tooltip('unrealisedProfitability')}
+						{#if position.stillOpen}
+							{position.tooltip('unrealisedProfitability')}
 						{:else}
-							{positionInfo.tooltip('realisedProfitability')}
+							{position.tooltip('realisedProfitability')}
 						{/if}
 					</span>
 				</Tooltip>
 
-				{#if positionInfo.stopLossTriggered}
+				{#if position.stopLossTriggered}
 					<Tooltip>
 						<PositionDataIndicator slot="trigger" text="stop loss" />
 						<span slot="popup">
-							{positionInfo.tooltip('stopLossTriggered')}
+							{position.tooltip('stopLossTriggered')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -105,36 +96,36 @@
 				<div>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							<Timestamp date={positionInfo.openedAt} withTime />
+							<Timestamp date={position.openedAt} withTime />
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('openedAt')}
+							{position.tooltip('openedAt')}
 						</span>
 					</Tooltip>
-					{positionInfo.stillOpen ? '' : '—'}
+					{position.stillOpen ? '' : '—'}
 				</div>
 
-				{#if !positionInfo.stillOpen}
+				{#if !position.stillOpen}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							<Timestamp date={positionInfo.closedAt} withTime />
+							<Timestamp date={position.closedAt} withTime />
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('closedAt')}
+							{position.tooltip('closedAt')}
 						</span>
 					</Tooltip>
 				{/if}
 
 				<Tooltip>
 					<span slot="trigger" class="underline">
-						{formatDuration(positionInfo.durationSeconds)}
+						{formatDuration(position.durationSeconds)}
 					</span>
 					<span slot="popup">
-						{positionInfo.tooltip('durationSeconds')}
+						{position.tooltip('durationSeconds')}
 					</span>
 				</Tooltip>
 
-				{#if positionInfo.stillOpen}
+				{#if position.stillOpen}
 					<Badge text="Currently open" />
 				{/if}
 			</DataBox>
@@ -143,31 +134,31 @@
 				<div>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPrice(positionInfo.openPrice)}
+							{formatPrice(position.openPrice)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('openPrice')}
+							{position.tooltip('openPrice')}
 						</span>
 					</Tooltip>
 					—
 				</div>
 
-				{#if positionInfo.stillOpen}
+				{#if position.stillOpen}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPrice(positionInfo.currentPrice)}
+							{formatPrice(position.currentPrice)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('currentPrice')}
+							{position.tooltip('currentPrice')}
 						</span>
 					</Tooltip>
 				{:else}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPrice(positionInfo.closePrice)}
+							{formatPrice(position.closePrice)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('closePrice')}
+							{position.tooltip('closePrice')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -176,40 +167,40 @@
 			<DataBox label="Size" size="sm">
 				<Tooltip>
 					<span slot="trigger" class="underline">
-						<span>{formatPrice(positionInfo.valueAtOpen)}</span>
+						<span>{formatPrice(position.valueAtOpen)}</span>
 					</span>
 					<span slot="popup">
-						{positionInfo.tooltip('valueAtOpen')}
+						{position.tooltip('valueAtOpen')}
 					</span>
 				</Tooltip>
 
 				<Tooltip>
 					<span slot="trigger" class="underline">
-						{formatTokenAmount(positionInfo.quantityAtOpen)}
+						{formatTokenAmount(position.quantityAtOpen)}
 						{position.pair.base.token_symbol}
 					</span>
 					<span slot="popup">
-						{positionInfo.tooltip('quantityAtOpen')}
+						{position.tooltip('quantityAtOpen')}
 					</span>
 				</Tooltip>
 
 				<Tooltip>
 					<span slot="trigger" class="underline">
-						{formatPercent(positionInfo.portfolioWeightAtOpen)}
+						{formatPercent(position.portfolioWeightAtOpen)}
 					</span>
 					<span slot="popup">
-						{positionInfo.tooltip('portfolioWeightAtOpen')}
+						{position.tooltip('portfolioWeightAtOpen')}
 					</span>
 				</Tooltip>
 			</DataBox>
 
-			{#if positionInfo.stopLossable}
+			{#if position.stopLossable}
 				<DataBox label="Stop loss" size="sm">
-					{#if positionInfo.stopLossPercentOpen === undefined}
+					{#if position.stopLossPercentOpen === undefined}
 						<Tooltip>
 							<span slot="trigger" class="underline"> N/A </span>
 							<span slot="popup">
-								{positionInfo.tooltip('stopLossPercentOpenMissing')}
+								{position.tooltip('stopLossPercentOpenMissing')}
 							</span>
 						</Tooltip>
 					{:else}
@@ -219,22 +210,22 @@
 								Stop loss is usually expressed percent of the total position, but
 								internally we use the flipped definition as it makes calculations simpler
 								-->
-								{formatPercent(1 - positionInfo.stopLossPercentOpen)}
+								{formatPercent(1 - position.stopLossPercentOpen)}
 							</span>
 							<span slot="popup">
-								{positionInfo.tooltip('stopLossPercentOpen')}
+								{position.tooltip('stopLossPercentOpen')}
 							</span>
 						</Tooltip>
 					{/if}
 
-					{#if positionInfo.trailingStopLossPercent}
+					{#if position.trailingStopLossPercent}
 						<Tooltip>
 							<PositionDataIndicator
 								slot="trigger"
-								text={`Trailing stop loss: ${formatPercent(positionInfo.trailingStopLossPercent)}`}
+								text={`Trailing stop loss: ${formatPercent(position.trailingStopLossPercent)}`}
 							/>
 							<span slot="popup">
-								{positionInfo.tooltip('trailingStopLossPercent')}
+								{position.tooltip('trailingStopLossPercent')}
 							</span>
 						</Tooltip>
 					{/if}
@@ -242,20 +233,20 @@
 			{/if}
 
 			<DataBox label="Risk" size="sm">
-				{#if positionInfo.portfolioRiskPercent === undefined}
+				{#if position.portfolioRiskPercent === undefined}
 					<Tooltip>
 						<span slot="trigger" class="underline"> N/A </span>
 						<span slot="popup">
-							{positionInfo.tooltip('portfolioRiskPercentMissing')}
+							{position.tooltip('portfolioRiskPercentMissing')}
 						</span>
 					</Tooltip>
 				{:else}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPercent(positionInfo.portfolioRiskPercent)}
+							{formatPercent(position.portfolioRiskPercent)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('portfolioRiskPercent')}
+							{position.tooltip('portfolioRiskPercent')}
 						</span>
 					</Tooltip>
 				{/if}
@@ -264,45 +255,45 @@
 			<DataBox label="Volume" size="sm">
 				<Tooltip>
 					<span slot="trigger" class="underline">
-						{formatDollar(positionInfo.volume)}
+						{formatDollar(position.volume)}
 					</span>
 					<span slot="popup">
-						{positionInfo.tooltip('volume')}
+						{position.tooltip('volume')}
 					</span>
 				</Tooltip>
 			</DataBox>
 
 			<DataBox label="Fees" size="sm">
-				{#if positionInfo.tradingFees === undefined}
+				{#if position.tradingFees === undefined}
 					<Tooltip>
 						<span slot="trigger" class="underline"> N/A </span>
 						<span slot="popup">
-							{positionInfo.tooltip('tradingFeesMissing')}
+							{position.tooltip('tradingFeesMissing')}
 						</span>
 					</Tooltip>
 				{:else}
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatDollar(positionInfo.tradingFees, 4)}
+							{formatDollar(position.tradingFees, 4)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('tradingFees')}
+							{position.tooltip('tradingFees')}
 						</span>
 					</Tooltip>
 
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPercent(positionInfo.tradingFeesPercent, 4)}
+							{formatPercent(position.tradingFeesPercent, 4)}
 						</span>
 						<span slot="popup">
-							{positionInfo.tooltip('tradingFeesPercent')}
+							{position.tooltip('tradingFeesPercent')}
 						</span>
 					</Tooltip>
 				{/if}
 			</DataBox>
 		</DataBoxes>
 
-		<TradeTable trades={positionInfo.trades} />
+		<TradeTable trades={position.trades} />
 	</section>
 </main>
 

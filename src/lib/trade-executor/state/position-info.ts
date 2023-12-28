@@ -1,5 +1,4 @@
 import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
-import type { TradeExecution } from './trade';
 import type { TradingPosition } from './position';
 import type { TimeBucket } from '$lib/chart';
 import { createTradeInfo } from './trade-info';
@@ -52,6 +51,10 @@ export class TradingPositionInfo {
 		return tooltips[key];
 	}
 
+	get id() {
+		return this.data.position_id;
+	}
+
 	get openedAt() {
 		return this.data.opened_at;
 	}
@@ -67,6 +70,10 @@ export class TradingPositionInfo {
 	get durationSeconds() {
 		const endDate = this.closedAt ?? Date.now();
 		return (+endDate - +this.openedAt) / 1000;
+	}
+
+	get pair() {
+		return this.data.pair;
 	}
 
 	get trades() {
@@ -91,6 +98,10 @@ export class TradingPositionInfo {
 
 	get stillOpen() {
 		return this.closedAt == null && this.frozenAt == null;
+	}
+
+	get frozen() {
+		return Boolean(this.frozenAt && !this.data.unfrozen_at);
 	}
 
 	get openPrice() {
@@ -190,5 +201,25 @@ export class TradingPositionInfo {
 		if (this.volume) {
 			return this.tradingFees / this.volume;
 		}
+	}
+
+	/**
+	 * Get the last failed trade reason.
+	 *
+	 * Note: still returns freeze reason after position has been unfrozen
+	 */
+	get freezeReason() {
+		const lastFailedTrade = this.trades.findLast((t) => t.failed);
+		const failedTx = lastFailedTrade?.failedTx;
+
+		if (!failedTx) return;
+
+		return {
+			chainId: failedTx.chain_id,
+			positionId: this.id,
+			tradeId: lastFailedTrade.trade_id,
+			revertReason: failedTx.revert_reason!,
+			txHash: failedTx.tx_hash!
+		};
 	}
 }

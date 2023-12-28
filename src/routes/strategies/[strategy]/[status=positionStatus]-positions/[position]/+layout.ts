@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import { TradingPositionInfo } from 'trade-executor/state/position-info.js';
 
 export async function load({ params, parent }) {
 	const { position: id, status } = params;
@@ -13,7 +14,7 @@ export async function load({ params, parent }) {
 
 	return {
 		breadcrumbs: { [id]: `Position #${id}` },
-		position,
+		position: new TradingPositionInfo(position),
 		status
 	};
 }
