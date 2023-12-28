@@ -2,6 +2,7 @@ import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
 import type { TradeExecution } from './trade';
 import type { TradingPosition } from './position';
 import type { TimeBucket } from '$lib/chart';
+import { createTradeInfo } from './trade-info';
 
 /**
  * English tooltips for the datapoints
@@ -44,25 +45,6 @@ const tooltips: Record<string, string> = {
 		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
 };
 
-/**
- * TODO: move this to trade class / helper
- *
- * Trade value.
- *
- * Trade can fail or in-progress in the case this function returns undefined.
- *
- * @return
- *  Return the executed value of the trade.
- *  Negative number for decreasing the size i.e. selling tokens.
- *  Undefined if the trade failed to execute.
- *
- */
-function calculateTradeValue(trade: TradeExecution): USDollarAmount | undefined {
-	if (trade.executed_price && trade.executed_quantity) {
-		return trade.executed_price * Number(trade.executed_quantity);
-	}
-}
-
 export class TradingPositionInfo {
 	constructor(protected data: TradingPosition) {}
 
@@ -88,7 +70,7 @@ export class TradingPositionInfo {
 	}
 
 	get trades() {
-		return Object.values(this.data.trades);
+		return Object.values(this.data.trades).map(createTradeInfo);
 	}
 
 	get firstTrade() {
@@ -116,11 +98,11 @@ export class TradingPositionInfo {
 	}
 
 	get valueAtOpen() {
-		return calculateTradeValue(this.firstTrade);
+		return this.firstTrade.executedValue;
 	}
 
 	get quantityAtOpen() {
-		return this.firstTrade.executed_quantity;
+		return Math.abs(this.firstTrade.executed_quantity ?? 0);
 	}
 
 	get portfolioWeightAtOpen(): Percent | undefined {
@@ -194,7 +176,7 @@ export class TradingPositionInfo {
 
 	get volume(): USDollarAmount {
 		return this.trades.reduce((acc, t) => {
-			return acc + Math.abs(calculateTradeValue(t) ?? 0);
+			return acc + t.executedValue;
 		}, 0);
 	}
 

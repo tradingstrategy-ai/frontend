@@ -1,7 +1,7 @@
 /**
  * zod schemas for trades
  *
- * Based on Python classes found in:
+ * Based on Python class found in:
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/trade.py
  *
  * Additional sources for specific schemas referenced below
@@ -12,6 +12,7 @@ import {
 	blockNumber,
 	count,
 	decimal,
+	decimalToNumber,
 	duration,
 	percent,
 	primaryKey,
@@ -59,8 +60,8 @@ export const tradeExecutionSchema = z.object({
 	trade_type: tradeType,
 	pair: tradingPairIdentifierSchema,
 	opened_at: unixTimestamp.nullable(),
-	planned_quantity: decimal,
-	planned_reserve: decimal,
+	planned_quantity: decimalToNumber,
+	planned_reserve: decimalToNumber,
 	planned_price: usDollarPrice,
 	reserve_currency: assetIdentifierSchema,
 	route: z.string().nullish(),
@@ -78,8 +79,8 @@ export const tradeExecutionSchema = z.object({
 	executed_at: unixTimestamp.nullish(),
 	failed_at: unixTimestamp.nullish(),
 	executed_price: usDollarPrice.nullish(),
-	executed_quantity: decimal.nullish(),
-	executed_reserve: decimal.nullish(),
+	executed_quantity: decimalToNumber.nullish(),
+	executed_reserve: decimalToNumber.nullish(),
 	slippage_tolerance: percent.nullish(),
 	fee_tier: percent.nullish(),
 	lp_fees_paid: usDollarAmount.nullish(),

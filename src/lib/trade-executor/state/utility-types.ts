@@ -20,6 +20,10 @@ export type Count = z.infer<typeof count>;
 export const decimal = z.string().regex(/^-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$/);
 export type Decimal = z.infer<typeof decimal>;
 
+// use `instead of `decimal` when you want the value coerced to a number
+// no type export needed since it's just `number`
+export const decimalToNumber = z.coerce.number();
+
 export const duration = z.coerce.number().nonnegative();
 export type Duration = z.infer<typeof duration>;
 
@@ -44,6 +48,8 @@ export type PrimaryKeyString = z.infer<typeof primaryKeyString>;
 export const unixTimestamp = z.number().nonnegative();
 export type UnixTimestamp = z.infer<typeof unixTimestamp>;
 
+// use instead of unixTimestamp when you want the value coerced to a Date
+// no type export needed since it's just `Date`
 export const unixTimestampToDate = unixTimestamp.transform((ts) => new Date(ts * 1000));
 
 export const usDollarAmount = z.coerce.number();
