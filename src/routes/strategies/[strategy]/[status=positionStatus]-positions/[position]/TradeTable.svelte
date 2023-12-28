@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { TradeExecution } from 'trade-executor/state/trade';
+	import type { TradeInfo } from 'trade-executor/state/trade-info';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
-	import { tradeDirection } from 'trade-executor/helpers/trade';
 
-	export let trades: TradeExecution[];
+	export let trades: TradeInfo[];
 
 	const table = createTable(readable(trades), {
 		clickable: addClickableRows({ id: 'cta' })
@@ -18,7 +17,7 @@
 			id: 'trade_id',
 			header: 'Id',
 			accessor: (trade) => {
-				return `#${trade.trade_id}: ${tradeDirection(trade)}`;
+				return `#${trade.trade_id}: ${trade.direction}`;
 			}
 		}),
 		table.column({
