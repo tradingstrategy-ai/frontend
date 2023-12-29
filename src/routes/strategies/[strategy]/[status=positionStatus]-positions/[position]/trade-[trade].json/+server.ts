@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { getStrategyState } from 'trade-executor/state';
 
 export async function GET({ fetch, params }) {
-	const state = await getStrategyState(fetch, params.strategy);
+	const state = await getStrategyState(fetch, params.strategy, true);
 	const position = state?.portfolio[`${params.status}_positions`][params.position];
 	const trade = position?.trades[params.trade];
 
