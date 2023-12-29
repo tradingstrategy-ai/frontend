@@ -23,6 +23,7 @@ import {
 import { assetIdentifierSchema, tradingPairIdentifierSchema } from './identifier';
 import { blockchainTransactionSchema } from './blockchain-transaction';
 import { loanSchema } from './loan';
+import { createTradingPairInfo } from './trading-pair-info';
 
 export const tradeType = z.enum(['rebalance', 'stop_loss', 'take_profit', 'repair', 'accounting_correction']);
 
@@ -58,7 +59,7 @@ export const tradeExecutionSchema = z.object({
 	trade_id: primaryKey,
 	position_id: primaryKey,
 	trade_type: tradeType,
-	pair: tradingPairIdentifierSchema,
+	pair: tradingPairIdentifierSchema.transform(createTradingPairInfo),
 	opened_at: unixTimestamp.nullable(),
 	planned_quantity: decimalToNumber,
 	planned_reserve: decimalToNumber,

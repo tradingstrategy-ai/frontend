@@ -8,10 +8,12 @@
 import type { TradeExecution } from './trade';
 import type { USDollarAmount } from './utility-types';
 
-// Prototype object that can be applied to a TradeExecution object to enrich
-// it with additional properties. Yields an object with all the properties
-// (and types) of the original plus the inherited prototype properties/types
-// (which is non-trivial with TypeScript classes)
+/**
+ * Prototype object that can be applied to a TradeExecution object to enrich
+ * it with additional properties. Yields an object with all the properties
+ * (and types) of the original plus the inherited prototype properties/types
+ * (which is non-trivial with TypeScript classes)
+ */
 const tradeInfoPrototype = {
 	// Estimate the USD value of this trade
 	// `get_executed_value` in trade.py
@@ -38,8 +40,9 @@ const tradeInfoPrototype = {
 
 export type TradeInfo = TradeExecution & typeof tradeInfoPrototype;
 
-// Factory function to create a TradeInfo object
-export function createTradeInfo(data: TradeExecution) {
-	const tradeInfo = Object.create(tradeInfoPrototype) as TradeInfo;
-	return Object.assign(tradeInfo, data);
+/**
+ * Factory function to create a TradeInfo object
+ */
+export function createTradeInfo(data: TradeExecution): TradeInfo {
+	return Object.assign(Object.create(tradeInfoPrototype), data);
 }

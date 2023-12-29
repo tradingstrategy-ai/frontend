@@ -15,6 +15,12 @@ const kindShortLabels = {
 	lending_protocol_long: 'long'
 } as const;
 
+/**
+ * Prototype object that can be applied to a TradingPairIdentifier object
+ * to enrich it with additional properties. Yields an object with all the
+ * properties (and types) of the original plus the inherited prototype
+ * properties/types (which is non-trivial with TypeScript classes)
+ */
 const tradingPairInfoPrototype = {
 	get underlyingSpotPair(): TradingPairInfo | undefined {
 		if (this.underlying_spot_pair) {
@@ -54,8 +60,9 @@ const tradingPairInfoPrototype = {
 type TradingPairInfoBase = Omit<TradingPairIdentifier, 'underlying_spot_pair'>;
 export type TradingPairInfo = TradingPairInfoBase & typeof tradingPairInfoPrototype;
 
-// Factory function to create a TradingPairInfo object
-export function createTradingPairInfo(data: TradingPairIdentifier) {
-	const tradingPairInfo = Object.create(tradingPairInfoPrototype) as TradingPairInfo;
-	return Object.assign(tradingPairInfo, data);
+/**
+ * Factory function to create a TradingPairInfo object
+ */
+export function createTradingPairInfo(data: TradingPairIdentifier): TradingPairInfo {
+	return Object.assign(Object.create(tradingPairInfoPrototype), data);
 }

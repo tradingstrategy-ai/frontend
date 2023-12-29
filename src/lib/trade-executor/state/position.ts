@@ -12,6 +12,8 @@ import { percent, primaryKey, primaryKeyString, unixTimestampToDate, usDollarAmo
 import { loanSchema } from './loan';
 import { balanceUpdateSchema } from './balance-update';
 import { valuationUpdateSchema } from './valuation';
+import { createTradeInfo } from './trade-info';
+import { createTradingPairInfo } from './trading-pair-info';
 
 export const positionStatus = z.enum(['open', 'closed', 'frozen']);
 export type PositionStatus = z.infer<typeof positionStatus>;
@@ -28,13 +30,13 @@ export type TriggerPriceUpdate = z.infer<typeof triggerPriceUpdateSchema>;
 
 export const tradingPositionSchema = z.object({
 	position_id: primaryKey,
-	pair: tradingPairIdentifierSchema,
+	pair: tradingPairIdentifierSchema.transform(createTradingPairInfo),
 	opened_at: unixTimestampToDate,
 	last_pricing_at: unixTimestampToDate,
 	last_token_price: usDollarAmount,
 	last_reserve_price: usDollarAmount,
 	reserve_currency: assetIdentifierSchema,
-	trades: z.record(primaryKeyString, tradeExecutionSchema),
+	trades: z.record(primaryKeyString, tradeExecutionSchema.transform(createTradeInfo)).transform(Object.values),
 	closed_at: unixTimestampToDate.nullish(),
 	frozen_at: unixTimestampToDate.nullish(),
 	unfrozen_at: unixTimestampToDate.nullish(),
@@ -51,3 +53,13 @@ export const tradingPositionSchema = z.object({
 	liquidation_price: usDollarAmount.nullish()
 });
 export type TradingPosition = z.infer<typeof tradingPositionSchema>;
+
+/**
+ * English tooltips for the datapoints
+ */
+export const tradingPositionTooltips = {
+	opened_at: 'The strategy cycle decision time when the strategy decided to open this trade.',
+	closed_at:
+		'The block timestamp when the closing trade of this position executed. This can be outside normal strategy decision making cycles when stop loss or take profit signals are triggered.',
+	trailing_stop_loss_pct: 'If trailing stop loss was turned on, what was its value relative to the position value.'
+};
