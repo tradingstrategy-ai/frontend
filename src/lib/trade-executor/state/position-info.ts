@@ -2,6 +2,7 @@ import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
 import type { TradingPosition } from './position';
 import type { TimeBucket } from '$lib/chart';
 import { createTradeInfo } from './trade-info';
+import { createTradingPairInfo } from './trading-pair-info';
 
 /**
  * English tooltips for the datapoints
@@ -73,7 +74,11 @@ export class TradingPositionInfo {
 	}
 
 	get pair() {
-		return this.data.pair;
+		return createTradingPairInfo(this.data.pair);
+	}
+
+	get displayPair() {
+		return this.pair.displayPair;
 	}
 
 	get trades() {

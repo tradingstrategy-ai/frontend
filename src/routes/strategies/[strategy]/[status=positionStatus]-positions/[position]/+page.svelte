@@ -55,10 +55,13 @@
 		{/if}
 
 		<DataBoxes>
-			<DataBox label="Pair" size="sm">
-				<a href={position.pair.info_url}>
-					{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
-				</a>
+			<DataBox label="Ticker" size="sm">
+				<div>
+					<a href={position.pair.info_url}>
+						{position.pair.symbol}
+					</a>
+					{position.pair.kindShortLabel}
+				</div>
 			</DataBox>
 
 			<DataBox label="Profitability" size="sm">
@@ -177,7 +180,7 @@
 				<Tooltip>
 					<span slot="trigger" class="underline">
 						{formatTokenAmount(position.quantityAtOpen)}
-						{position.pair.base.token_symbol}
+						{position.displayPair.base.token_symbol}
 					</span>
 					<span slot="popup">
 						{position.tooltip('quantityAtOpen')}
