@@ -2,14 +2,11 @@
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { createCombinedPositionList } from 'trade-executor/state/stats';
 	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
 
 	export let data;
-	$: ({ positions, status, state } = data);
-
-	$: combinedPositionList = createCombinedPositionList(positions, state.stats);
+	$: ({ positions, stats, status } = data);
 
 	$: q = $page.url.searchParams;
 	$: options = {
@@ -26,14 +23,14 @@
 	}
 
 	const statusColumns = {
-		open: ['flags', 'profitability', 'value', 'opened_at', 'cta'],
-		closed: ['flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
-		frozen: ['flags', 'frozen_status', 'frozen_value', 'frozen_at', 'cta']
+		open: ['flags', 'ticker', 'profitability', 'value', 'opened_at', 'cta'],
+		closed: ['flags', 'ticker', 'profitability', 'closed_at', 'cta'],
+		frozen: ['flags', 'ticker', 'frozen_status', 'frozen_value', 'frozen_at', 'cta']
 	};
 </script>
 
 <section class="position-index">
-	{#if combinedPositionList.length > 0}
+	{#if positions.length > 0}
 		{#if status === 'frozen'}
 			<Alert status="error">
 				The frozen positions could not be automatically open or closed, usually due to a problem with related tokens or
@@ -42,8 +39,9 @@
 		{/if}
 
 		<PositionTable
-			positions={combinedPositionList}
+			{positions}
 			{status}
+			{stats}
 			{...options}
 			columns={statusColumns[status]}
 			hasPagination={status === 'closed'}

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor/state/position';
+	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import type { Statistics } from 'trade-executor/state/statistics';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
@@ -7,13 +8,13 @@
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
 	import FrozenStatus from './FrozenStatus.svelte';
 	import FlagCell from './FlagCell.svelte';
 	import { getPositionFlags } from './position-flags';
 
-	export let positions: TradingPosition[];
+	export let positions: TradingPositionInfo[];
+	export let stats: Statistics;
 	export let status: string;
 	export let columns: string[];
 	export let page = 0;
@@ -23,7 +24,7 @@
 	export let hasSearch = false;
 	export let hasPagination = false;
 
-	const positionsStore = writable([] as TradingPosition[]);
+	const positionsStore = writable([] as TradingPositionInfo[]);
 
 	$: positionsStore.set(positions);
 
@@ -41,14 +42,10 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
-	function getLastTrade({ trades }: TradingPosition) {
-		return Object.values(trades).at(-1);
-	}
-
 	const tableColumns = table.createColumns([
 		table.column({
-			id: 'flags',
 			header: '',
+			id: 'flags',
 			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
 			cell: ({ value }) => createRender(FlagCell, { flags: value })
 		}),
@@ -58,34 +55,38 @@
 		}),
 		table.column({
 			header: 'Ticker',
-			accessor: 'ticker'
+			id: 'ticker',
+			accessor: ({ pair }) => pair.ticker
 		}),
 		table.column({
 			header: 'Profitability',
-			accessor: 'profitability',
+			id: 'profitability',
+			accessor: (position) => position.getLatestStats(stats).profitability,
 			cell: ({ value }) =>
 				createRender(UpDownCell, { value, formatter: formatProfitability, compareFn: determineProfitability })
 		}),
 		table.column({
 			header: 'Frozen on',
 			id: 'frozen_status',
-			accessor: (position) => getLastTrade(position)?.planned_quantity,
+			accessor: (position) => position.lastTrade?.planned_quantity,
 			cell: ({ value }) => createRender(FrozenStatus, { lastTradeQuantity: value })
 		}),
 		table.column({
 			header: 'Value',
-			accessor: 'value',
+			id: 'value',
+			accessor: (position) => position.getLatestStats(stats).value,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value (Open)',
-			accessor: 'value_at_open',
+			id: 'value_at_open',
+			accessor: (position) => position.getLatestStats(stats).value_at_open,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value',
 			id: 'frozen_value',
-			accessor: (position) => getLastTrade(position)?.planned_reserve,
+			accessor: (position) => position.lastTrade?.planned_reserve,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({

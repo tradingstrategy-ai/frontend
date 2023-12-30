@@ -7,6 +7,7 @@
  */
 import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
 import { type TradingPosition, tradingPositionTooltips } from './position';
+import type { Statistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
 
 /**
@@ -202,6 +203,12 @@ const tradingPositionInfoPrototype = {
 			revertReason: failedTx.revert_reason!,
 			txHash: failedTx.tx_hash!
 		};
+	},
+
+	getLatestStats({ positions, closed_positions }: Statistics) {
+		const latestPositionStats = positions[this.position_id]?.at(-1);
+		const finalStats = closed_positions[this.position_id];
+		return { ...latestPositionStats, ...finalStats };
 	}
 } satisfies ThisType<TradingPosition & Record<string, any>>;
 
