@@ -9,7 +9,6 @@
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
-	import FrozenStatus from './FrozenStatus.svelte';
 	import FlagCell from './FlagCell.svelte';
 	import { getPositionFlags } from './position-flags';
 
@@ -67,9 +66,8 @@
 		}),
 		table.column({
 			header: 'Frozen on',
-			id: 'frozen_status',
-			accessor: (position) => position.lastTrade?.planned_quantity,
-			cell: ({ value }) => createRender(FrozenStatus, { lastTradeQuantity: value })
+			id: 'frozen_on',
+			accessor: (position) => position.lastTrade?.direction
 		}),
 		table.column({
 			header: 'Value',
