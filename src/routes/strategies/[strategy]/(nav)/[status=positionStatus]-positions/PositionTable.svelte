@@ -56,7 +56,7 @@
 			accessor: ({ pair }) => pair.ticker
 		}),
 		table.column({
-			header: 'Indicators',
+			header: 'Status flags',
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>

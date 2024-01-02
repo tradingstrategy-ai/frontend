@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { Tooltip } from '$lib/components';
+	import type { ComponentProps } from 'svelte';
+	import { DataBadge, Tooltip } from '$lib/components';
 
 	export let label: string;
 	export let title: string;
+	export let status: ComponentProps<DataBadge>['status'] = 'default';
 </script>
 
 <Tooltip>
-	<span slot="trigger" class="flag underline">
-		{label}
+	<span slot="trigger" class="flag">
+		<DataBadge {status}>{label}</DataBadge>
 	</span>
 
 	<div slot="popup" class="tooltip-content">
@@ -18,7 +20,13 @@
 
 <style lang="postcss">
 	.flag {
-		color: hsl(var(--hsl-textlight));
+		:global([data-css-props]) {
+			--data-badge-background: var(--hsla-box-4);
+		}
+
+		:global(*) {
+			text-decoration: dotted underline;
+		}
 	}
 
 	.tooltip-content {

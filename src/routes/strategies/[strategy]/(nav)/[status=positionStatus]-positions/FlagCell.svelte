@@ -25,7 +25,7 @@
 	{/if}
 
 	{#if position.hasFailedTrades}
-		<PositionFlag label="F" title="Failed trades">
+		<PositionFlag status="warning" label="F" title="Failed trades">
 			<p>This position contains failed trades.</p>
 			<p>Trades may fail for various reasons</p>
 			<ul>
@@ -57,9 +57,6 @@
 	.flags {
 		white-space: nowrap;
 		display: flex;
-	}
-
-	.flags > :global(*:not(:first-child)::before) {
-		content: ', ';
+		gap: 0.5em;
 	}
 </style>

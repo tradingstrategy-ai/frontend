@@ -128,7 +128,7 @@
 					</span>
 				</Tooltip>
 
-				{#if position.stillOpen}
+				{#if position.stillOpen || true}
 					<Badge text="Currently open" />
 				{/if}
 			</DataBox>
