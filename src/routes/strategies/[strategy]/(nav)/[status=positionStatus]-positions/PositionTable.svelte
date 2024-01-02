@@ -48,13 +48,6 @@
 
 	const tableColumns = table.createColumns([
 		table.column({
-			header: 'Indicators',
-			id: 'flags',
-			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
-			cell: ({ value }) => createRender(FlagCell, { flags: value }),
-			plugins: { sort: { disable: true } }
-		}),
-		table.column({
 			header: 'Id',
 			accessor: 'position_id'
 		}),
@@ -62,6 +55,13 @@
 			header: 'Position',
 			id: 'ticker',
 			accessor: ({ pair }) => pair.ticker
+		}),
+		table.column({
+			header: 'Indicators',
+			id: 'flags',
+			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
+			cell: ({ value }) => createRender(FlagCell, { flags: value }),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			header: 'Profitability',
