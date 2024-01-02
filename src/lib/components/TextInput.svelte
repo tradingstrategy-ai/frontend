@@ -64,15 +64,11 @@ unknown props through to HTML input element.
 		position: relative;
 		display: inline-grid;
 		gap: var(--space-xs);
-
 		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
-
-		input {
-			font: var(--text-input-font, var(--font));
-			height: var(--text-input-height, var(--height));
-			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
-		}
+		font: var(--text-input-font, var(--font));
+		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
+		color: hsl(var(--hsl-text));
 
 		.label,
 		[slot='label'] {
@@ -146,6 +142,7 @@ unknown props through to HTML input element.
 
 		input {
 			width: inherit;
+			height: var(--text-input-height, var(--height));
 			padding: 0 var(--space-sl);
 			border: 1px hsl(var(--hsla-input-border)) solid;
 			border-radius: var(--border-radius);
