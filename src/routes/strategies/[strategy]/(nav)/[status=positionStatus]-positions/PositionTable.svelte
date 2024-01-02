@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PositionStatus } from 'trade-executor/state/position';
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import type { Statistics } from 'trade-executor/state/statistics';
 	import { writable } from 'svelte/store';
@@ -14,8 +15,7 @@
 
 	export let positions: TradingPositionInfo[];
 	export let stats: Statistics;
-	export let status: string;
-	export let columns: string[];
+	export let status: PositionStatus;
 	export let page = 0;
 	export let sort = 'position_id';
 	export let filter = '';
@@ -24,8 +24,13 @@
 	export let hasPagination = false;
 
 	const positionsStore = writable([] as TradingPositionInfo[]);
-
 	$: positionsStore.set(positions);
+
+	const statusColumns = {
+		open: ['ticker', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
+		closed: ['ticker', 'flags', 'profitability', 'closed_at', 'cta'],
+		frozen: ['ticker', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
+	};
 
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
@@ -43,17 +48,18 @@
 
 	const tableColumns = table.createColumns([
 		table.column({
-			header: '',
+			header: 'Indicators',
 			id: 'flags',
 			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
-			cell: ({ value }) => createRender(FlagCell, { flags: value })
+			cell: ({ value }) => createRender(FlagCell, { flags: value }),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			header: 'Id',
 			accessor: 'position_id'
 		}),
 		table.column({
-			header: 'Ticker',
+			header: 'Position',
 			id: 'ticker',
 			accessor: ({ pair }) => pair.ticker
 		}),
@@ -115,7 +121,7 @@
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
 
-	$: $columnIdOrder = columns;
+	$: $columnIdOrder = statusColumns[status];
 </script>
 
 <div class="position-table">
@@ -135,10 +141,6 @@
 	}
 
 	.position-table :global {
-		:is(td, th) {
-			padding-inline: var(--space-ss);
-		}
-
 		.sortable .icon svg {
 			top: var(--space-sl);
 		}

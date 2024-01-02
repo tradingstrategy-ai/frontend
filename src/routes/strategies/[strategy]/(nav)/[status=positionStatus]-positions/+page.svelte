@@ -21,12 +21,6 @@
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		detail.scrollToTop();
 	}
-
-	const statusColumns = {
-		open: ['flags', 'ticker', 'profitability', 'value', 'opened_at', 'cta'],
-		closed: ['flags', 'ticker', 'profitability', 'closed_at', 'cta'],
-		frozen: ['flags', 'ticker', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
-	};
 </script>
 
 <section class="position-index">
@@ -43,7 +37,6 @@
 			{status}
 			{stats}
 			{...options}
-			columns={statusColumns[status]}
 			hasPagination={status === 'closed'}
 			hasSearch={status === 'closed'}
 			on:change={handleChange}

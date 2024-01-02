@@ -27,7 +27,6 @@
 	.flags {
 		white-space: nowrap;
 		display: flex;
-		justify-content: center;
 	}
 
 	.flag {
