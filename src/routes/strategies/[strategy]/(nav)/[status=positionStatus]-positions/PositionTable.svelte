@@ -27,7 +27,7 @@
 
 	const statusColumns = {
 		open: ['ticker', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
-		closed: ['ticker', 'flags', 'profitability', 'closed_at', 'cta'],
+		closed: ['ticker', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
 		frozen: ['ticker', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
 
