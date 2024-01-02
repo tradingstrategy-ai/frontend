@@ -68,8 +68,8 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
 	// https://stackoverflow.com/a/38040218/315168
 	const flags: PositionFlagMap = new Map();
 
-	for (const [tradeId, trade] of Object.entries(position.trades)) {
-		const tradeLink = `${baseUrl}/trade-${tradeId}`;
+	for (const trade of position.trades) {
+		const tradeLink = `${baseUrl}/trade-${trade.trade_id}`;
 
 		if (trade.trade_type == 'stop_loss') {
 			const msg = `
@@ -93,7 +93,7 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
 				name: 'Stop loss',
 				helpTextHTML: msg,
 				tradeLink,
-				tradeIds: [tradeId as unknown as number]
+				tradeIds: [trade.trade_id]
 			});
 		}
 
@@ -129,7 +129,7 @@ export function getPositionFlags(position: TradingPosition, baseUrl: string): Po
 				name: 'Failed trades',
 				helpTextHTML: msg,
 				tradeLink,
-				tradeIds: [tradeId as unknown as number]
+				tradeIds: [trade.trade_id]
 			});
 		}
 	}
