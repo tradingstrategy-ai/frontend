@@ -58,5 +58,9 @@
 		white-space: nowrap;
 		display: flex;
 		gap: 0.5em;
+
+		:global(.tooltip .popup) {
+			min-width: 32rem;
+		}
 	}
 </style>

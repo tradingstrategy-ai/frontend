@@ -54,6 +54,7 @@ For more information see:
 			padding: 0.25rem 0 0 0;
 			border: none;
 			background: transparent;
+			white-space: normal;
 			/* Need z-index or otherwise the warning text below might be rendered on the top of this text */
 			z-index: 10000;
 
