@@ -11,7 +11,6 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
 	import FlagCell from './FlagCell.svelte';
-	import { getPositionFlags } from './position-flags';
 
 	export let positions: TradingPositionInfo[];
 	export let stats: Statistics;
@@ -59,8 +58,9 @@
 		table.column({
 			header: 'Indicators',
 			id: 'flags',
-			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
-			cell: ({ value }) => createRender(FlagCell, { flags: value }),
+			accessor: (position) => position,
+			cell: ({ value }) =>
+				createRender(FlagCell, { position: value, baseUrl: `./${status}-positions/${value.position_id}` }),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({

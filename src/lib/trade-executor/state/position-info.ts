@@ -75,7 +75,7 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get failedOpen() {
-		return this.firstTrade.failed_at != null;
+		return this.firstTrade.failed;
 	},
 
 	get closed() {
@@ -128,6 +128,14 @@ const tradingPositionInfoPrototype = {
 		}
 	},
 
+	get stopLossTrades() {
+		return this.trades.filter((t) => t.trade_type === 'stop_loss');
+	},
+
+	get stopLossTriggered() {
+		return this.stopLossTrades.length > 0;
+	},
+
 	get currentPrice() {
 		return this.stillOpen ? this.last_token_price : undefined;
 	},
@@ -151,10 +159,6 @@ const tradingPositionInfoPrototype = {
 
 	get profitability() {
 		return this.realisedProfitability ?? this.unrealisedProfitability;
-	},
-
-	get stopLossTriggered() {
-		return this.stillOpen && this.trades.some((t) => t.trade_type === 'stop_loss');
 	},
 
 	get candleTimeBucket(): TimeBucket {
@@ -183,6 +187,14 @@ const tradingPositionInfoPrototype = {
 		if (this.volume) {
 			return this.tradingFees / this.volume;
 		}
+	},
+
+	get failedTrades() {
+		return this.trades.filter((t) => t.failed);
+	},
+
+	get hasFailedTrades() {
+		return this.failedTrades.length > 0;
 	},
 
 	/**

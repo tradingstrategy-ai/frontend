@@ -1,26 +1,56 @@
 <script lang="ts">
-	import type { PositionFlagMap } from './position-flags';
-	import { Tooltip } from '$lib/components';
+	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import type { TradeInfo } from 'trade-executor/state/trade-info';
+	import PositionFlag from './PositionFlag.svelte';
 
-	// input as getPositionFlags(position)
-	export let flags: PositionFlagMap;
+	export let position: TradingPositionInfo;
+	export let baseUrl: string;
+
+	function getTradeLink(trade: TradeInfo) {
+		return `${baseUrl}/trade-${trade.trade_id}`;
+	}
 </script>
 
 <div class="flags">
-	{#each [...flags] as [key, flag], idx}
-		{#if idx > 0},{/if}
-		<Tooltip>
-			<span slot="trigger">
-				<span class="flag underline">
-					{flag.abbreviation}
-				</span>
-			</span>
+	{#if position.stopLossTriggered}
+		<PositionFlag label="SL" title="Stop loss triggered">
+			<p>This position was closed with a stop loss</p>
+			<p>Position can still have a profitable close if a trailing or dynamic stop loss was used.</p>
+			<p>See more</p>
+			<ul>
+				<li><a href="${getTradeLink(position.stopLossTrades.at(-1))}">View the closing trade</a></li>
+				<li><a href="/glossary/stop-loss">What is a stop loss</a></li>
+			</ul>
+		</PositionFlag>
+	{/if}
 
-			<div slot="popup" class="tooltip-content">
-				{@html flag.helpTextHTML}
-			</div>
-		</Tooltip>
-	{/each}
+	{#if position.hasFailedTrades}
+		<PositionFlag label="F" title="Failed trades">
+			<p>This position contains failed trades.</p>
+			<p>Trades may fail for various reasons</p>
+			<ul>
+				<li>
+					Blockchain transaction execution fails due to
+					<a href="https://tradingstrategy.ai/glossary/gas-fee">gas fees spiking</a>
+				</li>
+				<li>
+					The market was moving too fast and trade failed due to
+					<a href="https://tradingstrategy.ai/glossary/slippage">slippage tolerance exceeded</a>
+					during the trade execution
+				</li>
+				<li>Blockchain nodes or blockchain network malfunctioning</li>
+				<li>Internal technical issues</li>
+			</ul>
+			<p>
+				Depending on the failure condition, the trade may or may not need manual intervention. Each failed trade has a
+				corresponding repair trade marked with <i>R</i> flag.
+			</p>
+			<p>See more</p>
+			<ul>
+				<li><a href="${getTradeLink(position.failedTrades.at(-1))}">View the last failed trade</a></li>
+			</ul>
+		</PositionFlag>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -29,22 +59,7 @@
 		display: flex;
 	}
 
-	.flag {
-		color: hsl(var(--hsl-text-light));
-	}
-
-	/* Style help texts generated in position-flags */
-	.tooltip-content :global(h4) {
-		font: var(--f-ui-large-medium);
-		letter-spacing: var(--f-ui-xxl-spacing, normal);
-	}
-
-	/* Style help texts generated in position-flags */
-	.tooltip-content :global(ul) {
-		margin: var(--space-ss) 0;
-	}
-
-	.tooltip-content :global(li) {
-		margin: var(--space-ss) 0;
+	.flags > :global(*:not(:first-child)::before) {
+		content: ', ';
 	}
 </style>
