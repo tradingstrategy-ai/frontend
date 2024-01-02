@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { TradingPosition } from 'trade-executor/state/interface';
+	import type { PositionStatus } from 'trade-executor/state/position';
+	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import type { Statistics } from 'trade-executor/state/statistics';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
@@ -7,15 +9,12 @@
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { fromUnixTime } from 'date-fns';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
-	import FrozenStatus from './FrozenStatus.svelte';
 	import FlagCell from './FlagCell.svelte';
-	import { getPositionFlags } from './position-flags';
 
-	export let positions: TradingPosition[];
-	export let status: string;
-	export let columns: string[];
+	export let positions: TradingPositionInfo[];
+	export let stats: Statistics;
+	export let status: PositionStatus;
 	export let page = 0;
 	export let sort = 'position_id';
 	export let filter = '';
@@ -23,13 +22,14 @@
 	export let hasSearch = false;
 	export let hasPagination = false;
 
-	const positionsStore = writable([] as TradingPosition[]);
-
+	const positionsStore = writable([] as TradingPositionInfo[]);
 	$: positionsStore.set(positions);
 
-	function toISODate(ts: MaybeNumber) {
-		return ts && fromUnixTime(ts).toISOString();
-	}
+	const statusColumns = {
+		open: ['ticker', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
+		closed: ['ticker', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
+		frozen: ['ticker', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
+	};
 
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
@@ -45,69 +45,67 @@
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
-	function getLastTrade({ trades }) {
-		return Object.values(trades).at(-1);
-	}
-
 	const tableColumns = table.createColumns([
-		table.column({
-			id: 'flags',
-			header: '',
-			accessor: (position) => getPositionFlags(position, `./${status}-positions/${position.position_id}`),
-			cell: ({ value }) => createRender(FlagCell, { flags: value })
-		}),
 		table.column({
 			header: 'Id',
 			accessor: 'position_id'
 		}),
 		table.column({
-			header: 'Ticker',
-			accessor: 'ticker'
+			header: 'Position',
+			id: 'ticker',
+			accessor: ({ pair }) => pair.ticker
+		}),
+		table.column({
+			header: 'Status flags',
+			id: 'flags',
+			accessor: (position) => position,
+			cell: ({ value }) =>
+				createRender(FlagCell, { position: value, baseUrl: `./${status}-positions/${value.position_id}` }),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			header: 'Profitability',
-			accessor: 'profitability',
+			id: 'profitability',
+			accessor: (position) => position.getLatestStats(stats).profitability,
 			cell: ({ value }) =>
 				createRender(UpDownCell, { value, formatter: formatProfitability, compareFn: determineProfitability })
 		}),
 		table.column({
 			header: 'Frozen on',
-			id: 'frozen_status',
-			accessor: (position) => getLastTrade(position)?.planned_quantity,
-			cell: ({ value }) => createRender(FrozenStatus, { lastTradeQuantity: value })
+			id: 'frozen_on',
+			accessor: (position) => position.lastTrade?.direction
 		}),
 		table.column({
 			header: 'Value',
-			accessor: 'value',
+			id: 'value',
+			accessor: (position) => position.getLatestStats(stats).value,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value (Open)',
-			accessor: 'value_at_open',
+			id: 'value_at_open',
+			accessor: (position) => position.getLatestStats(stats).value_at_open,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value',
 			id: 'frozen_value',
-			accessor: (position) => getLastTrade(position)?.planned_reserve,
+			accessor: (position) => position.lastTrade?.planned_reserve,
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Opened',
-			id: 'opened_at',
-			accessor: ({ opened_at }) => toISODate(opened_at),
+			accessor: 'opened_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Closed',
-			id: 'closed_at',
-			accessor: ({ closed_at }) => toISODate(closed_at),
+			accessor: 'closed_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
 			header: 'Frozen at',
-			id: 'frozen_at',
-			accessor: ({ frozen_at }) => toISODate(frozen_at),
+			accessor: 'frozen_at',
 			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: true })
 		}),
 		table.column({
@@ -123,7 +121,7 @@
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
 
-	$: $columnIdOrder = columns;
+	$: $columnIdOrder = statusColumns[status];
 </script>
 
 <div class="position-table">
@@ -143,10 +141,6 @@
 	}
 
 	.position-table :global {
-		:is(td, th) {
-			padding-inline: var(--space-ss);
-		}
-
 		.sortable .icon svg {
 			top: var(--space-sl);
 		}

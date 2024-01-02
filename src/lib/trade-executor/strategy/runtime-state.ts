@@ -7,7 +7,7 @@ import type { StrategyConfiguration } from './configuration';
 // https://github.com/fram-x/assert-ts/issues/23
 import { assert } from 'assert-ts';
 import loadError from '../assets/load-error.jpg';
-import type { UnixTimestamp } from 'trade-executor/state/interface';
+import type { UnixTimestamp } from 'trade-executor/state/utility-types';
 
 // use 10 second timeout when fetching strategy metadata
 const clientTimeout = 5000;

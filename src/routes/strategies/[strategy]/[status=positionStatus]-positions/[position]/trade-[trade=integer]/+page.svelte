@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { BlockchainTransaction } from 'trade-executor/state/interface';
 	import { formatBPS } from 'trade-executor/helpers/formatters';
 	import {
 		formatAmount,
@@ -9,7 +8,6 @@
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { tradeDirection } from 'trade-executor/helpers/trade';
 	import { Alert, Button, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
@@ -18,16 +16,12 @@
 	export let data;
 
 	const { chain, position, trade } = data;
-
-	const tradeFailed = trade.failed_at !== null;
-	// Trade should have only one failed transactions and it is the first one that reverted
-	const failedTx = trade.blockchain_transactions.find((tx: BlockchainTransaction) => tx.revert_reason !== null);
 </script>
 
 <main class="ds-container trade-page">
 	<PageHeading prefix="Trade #{trade.trade_id}">
 		<span slot="title">
-			{tradeDirection(trade)}
+			{trade.direction}
 			{trade.pair.base.token_symbol}
 			{#if trade.trade_type === 'stop_loss'}
 				<PositionDataIndicator lg text="stop-loss" />
@@ -43,16 +37,18 @@
 		/>
 	</PageHeading>
 
-	{#if tradeFailed}
+	{#if trade.failed}
 		<Alert size="md" status="error" title="Trade execution failed">
 			<ul class="error-details">
-				<li>Failure reason: <i>{failedTx.revert_reason}</i></li>
-				<li>
-					<a href={getExplorerUrl(chain, failedTx.tx_hash)} target="_blank" rel="noreferrer">
-						View transaction
-						<span class="hash-wrapper"><HashAddress address={failedTx.tx_hash} /></span>
-					</a>
-				</li>
+				<li>Failure reason: <i>{trade.failedTx?.revert_reason ?? 'unknown'}</i></li>
+				{#if trade.failedTx?.tx_hash}
+					<li>
+						<a href={getExplorerUrl(chain, trade.failedTx.tx_hash)} target="_blank" rel="noreferrer">
+							View transaction
+							<span class="hash-wrapper"><HashAddress address={trade.failedTx.tx_hash} /></span>
+						</a>
+					</li>
+				{/if}
 			</ul>
 		</Alert>
 	{/if}

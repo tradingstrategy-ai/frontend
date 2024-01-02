@@ -1,4 +1,4 @@
-import type { PositionStatistics } from './interface';
+import type { PositionStatistics } from './statistics';
 import { describe, test, expect } from 'vitest';
 import { getValueAtOpen, getValueAtClose, getValueAtPeak } from './position-helpers';
 

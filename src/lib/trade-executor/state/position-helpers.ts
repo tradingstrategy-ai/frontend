@@ -1,4 +1,4 @@
-import type { PositionStatistics, TradingPosition, FreezeInfo } from './interface';
+import type { PositionStatistics } from './statistics';
 
 type Maybe<Value> = Value | null | undefined;
 
@@ -28,37 +28,4 @@ export function getValueAtPeak(stats: Maybe<PositionStatistics[]>): number | und
 	if (!stats || stats.length === 0) return undefined;
 	const maxValue = Math.max(...stats.map((s) => s.value));
 	return Number.isFinite(maxValue) ? maxValue : undefined;
-}
-
-/**
- * Get the last failed trade reason.
- *
- * Note that this will keep returning an error reason if position
- * was fixed after the error happened.
- */
-export function getPositionFreezeReason(position: TradingPosition): FreezeInfo | null {
-	const lastFailedTrade = Object.values(position.trades).findLast((trade) => trade.failed_at);
-	const failedTx = lastFailedTrade?.blockchain_transactions.find((tx) => tx.revert_reason);
-
-	if (!(lastFailedTrade && failedTx)) return null;
-
-	return {
-		chain: failedTx.chain_id,
-		positionId: lastFailedTrade.position_id,
-		tradeId: lastFailedTrade.trade_id,
-		revertReason: failedTx.revert_reason!,
-		txHash: failedTx.tx_hash
-	};
-}
-
-/**
- * Is the position currently in an error state.
- *
- * In the error state
- *
- * - Freeze flag frozen_at is set
- * - Unfrozen flag is not set
- */
-export function isPositionInError(position: TradingPosition): boolean {
-	return position.frozen_at !== null && position.unfrozen_at === null;
 }
