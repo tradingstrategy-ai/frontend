@@ -62,8 +62,8 @@ const tradingPositionInfoPrototype = {
 		return (+endDate - +this.opened_at) / 1000;
 	},
 
-	get displayPair() {
-		return this.pair.displayPair;
+	get pricingPair() {
+		return this.pair.pricingPair;
 	},
 
 	get firstTrade() {

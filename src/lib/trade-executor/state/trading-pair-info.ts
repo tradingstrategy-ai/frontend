@@ -28,7 +28,7 @@ const tradingPairInfoPrototype = {
 		}
 	},
 
-	get displayPair() {
+	get pricingPair() {
 		if (this.kind === 'lending_protocol_short' || this.kind === 'lending_protocol_long') {
 			return this.underlyingSpotPair;
 		}
@@ -36,7 +36,7 @@ const tradingPairInfoPrototype = {
 	},
 
 	get symbol() {
-		const { base, quote } = this.displayPair;
+		const { base, quote } = this.pricingPair;
 		if (this.kind === 'credit_supply') {
 			return quote.token_symbol;
 		}
@@ -52,7 +52,7 @@ const tradingPairInfoPrototype = {
 	},
 
 	get infoUrl() {
-		return this.displayPair.info_url;
+		return this.pricingPair.info_url;
 	}
 } satisfies ThisType<TradingPairIdentifier & Record<string, any>>;
 

@@ -180,7 +180,7 @@
 				<Tooltip>
 					<span slot="trigger" class="underline">
 						{formatTokenAmount(position.quantityAtOpen)}
-						{position.displayPair.base.token_symbol}
+						{position.pricingPair.base.token_symbol}
 					</span>
 					<span slot="popup">
 						{position.tooltip.quantityAtOpen}
