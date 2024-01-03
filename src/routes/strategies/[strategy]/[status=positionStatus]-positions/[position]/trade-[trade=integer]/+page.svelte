@@ -21,8 +21,7 @@
 <main class="ds-container trade-page">
 	<PageHeading prefix="Trade #{trade.trade_id}">
 		<span slot="title">
-			{trade.direction}
-			{trade.pair.base.token_symbol}
+			{trade.actionLabel}
 			{#if trade.trade_type === 'stop_loss'}
 				<PositionDataIndicator lg text="stop-loss" />
 			{/if}

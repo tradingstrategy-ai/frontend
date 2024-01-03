@@ -29,6 +29,10 @@ const tradeInfoPrototype = {
 		return this.planned_quantity > 0 ? 'Buy' : 'Sell';
 	},
 
+	get actionLabel() {
+		return `${this.direction} ${this.pair.pricingPair.base.token_symbol}`;
+	},
+
 	get failed() {
 		return this.failed_at != null;
 	},
@@ -36,7 +40,7 @@ const tradeInfoPrototype = {
 	get failedTx() {
 		return this.blockchain_transactions.find((tx) => tx.revert_reason);
 	}
-} satisfies ThisType<TradeExecution>;
+} satisfies ThisType<TradeExecution & Record<string, any>>;
 
 export type TradeInfo = TradeExecution & typeof tradeInfoPrototype;
 
