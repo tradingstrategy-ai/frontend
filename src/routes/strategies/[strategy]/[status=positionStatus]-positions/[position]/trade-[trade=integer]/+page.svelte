@@ -54,9 +54,9 @@
 
 	<DataBoxes>
 		<DataBox label="Trading pair" size="md">
-			<a class="trading-pair" href={position.pair.info_url}>
-				{position.pair.base.token_symbol}-{position.pair.quote.token_symbol}
-				<span class="swap-fee">{formatPercent(position.pair.fee)}</span>
+			<a class="trading-pair" href={trade.pricingPair.info_url}>
+				{trade.pricingPair.symbol}
+				<span class="swap-fee">{formatPercent(trade.pricingPair.fee)}</span>
 			</a>
 		</DataBox>
 

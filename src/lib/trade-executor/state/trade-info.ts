@@ -29,8 +29,12 @@ const tradeInfoPrototype = {
 		return this.planned_quantity > 0 ? 'Buy' : 'Sell';
 	},
 
+	get pricingPair() {
+		return this.pair.pricingPair;
+	},
+
 	get actionLabel() {
-		return `${this.direction} ${this.pair.pricingPair.base.token_symbol}`;
+		return `${this.direction} ${this.pricingPair.base.token_symbol}`;
 	},
 
 	get failed() {
