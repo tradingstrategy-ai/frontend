@@ -56,7 +56,7 @@
 			accessor: ({ pair }) => pair.ticker
 		}),
 		table.column({
-			header: 'Status flags',
+			header: 'Remarks',
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
@@ -82,7 +82,7 @@
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
-			header: 'Value (Open)',
+			header: 'Value',
 			id: 'value_at_open',
 			accessor: (position) => position.getLatestStats(stats).value_at_open,
 			cell: ({ value }) => formatDollar(value)
