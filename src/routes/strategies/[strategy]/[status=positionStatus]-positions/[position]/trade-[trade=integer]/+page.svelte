@@ -11,19 +11,34 @@
 	import { Alert, Button, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
-	import PositionDataIndicator from '../PositionDataIndicator.svelte';
+	import DataBadge from '$lib/components/DataBadge.svelte';
 
 	export let data;
 
-	const { chain, position, trade } = data;
+	const { chain, trade } = data;
 </script>
 
 <main class="ds-container trade-page">
-	<PageHeading prefix="Trade #{trade.trade_id}">
-		<span slot="title">
-			{trade.actionLabel}
+	<PageHeading>
+		<span slot="prefix" class="heading-prefix">
+			Trade #{trade.trade_id}
+			{#if trade.isTest}
+				<span class="heading-badge">
+					<DataBadge status="warning">TEST</DataBadge>
+				</span>
+			{/if}
 			{#if trade.trade_type === 'stop_loss'}
-				<PositionDataIndicator lg text="stop-loss" />
+				<span class="heading-badge">
+					<DataBadge>STOP LOSS</DataBadge>
+				</span>
+			{/if}
+		</span>
+		<span slot="title" class="heading-title">
+			{trade.actionLabel}
+			{#if trade.positionImpact}
+				<span class="position-impact">
+					{trade.positionImpact}
+				</span>
 			{/if}
 		</span>
 		<Button
@@ -162,10 +177,36 @@
 
 <style lang="postcss">
 	.trade-page {
-		[slot='title'] {
+		.heading-prefix {
 			display: flex;
 			align-items: center;
-			gap: var(--space-md);
+			gap: 1ex;
+		}
+
+		.heading-badge {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-xs-medium);
+				letter-spacing: var(--f-ui-xs-spacing);
+			}
+		}
+
+		.position-impact {
+			color: hsl(var(--hsl-text-extra-light));
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--f-heading-xl-spacing);
+
+			@media (--viewport-md-down) {
+				font: var(--f-heading-lg-medium);
+				letter-spacing: var(--f-heading-lg-spacing);
+			}
+
+			@media (--viewport-xs) {
+				font: var(--f-heading-md-medium);
+				letter-spacing: var(--f-heading-md-spacing);
+			}
 		}
 
 		.error-details a {
