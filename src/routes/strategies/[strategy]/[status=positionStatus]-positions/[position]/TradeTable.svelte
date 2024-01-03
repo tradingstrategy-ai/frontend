@@ -15,10 +15,13 @@
 	const columns = table.createColumns([
 		table.column({
 			id: 'trade_id',
-			header: 'Id',
-			accessor: (trade) => {
-				return `#${trade.trade_id}: ${trade.direction}`;
-			}
+			header: '',
+			accessor: ({ trade_id }) => `#${trade_id}`
+		}),
+		table.column({
+			id: 'action_label',
+			header: 'Trade',
+			accessor: 'actionLabel'
 		}),
 		table.column({
 			header: 'Executed',
@@ -69,6 +72,12 @@
 	}
 
 	.trade-table :global {
+		.trade_id {
+			color: hsl(var(--hsl-text-extra-light));
+			width: 2em;
+			padding-right: 0;
+		}
+
 		:is(.price, .value) {
 			text-align: right;
 		}
