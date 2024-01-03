@@ -134,6 +134,12 @@
 	<TradingDataInfoRow label="Blockchain">
 		<a slot="value" href="/trading-view/{reserve.chain_slug}">{reserve.chain_name}</a>
 	</TradingDataInfoRow>
+
+	<TradingDataInfoRow value={reserve.reserve_id}>
+		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html" rel="external"
+			>Internal id</a
+		>
+	</TradingDataInfoRow>
 </TradingDataInfo>
 
 <style lang="postcss">
