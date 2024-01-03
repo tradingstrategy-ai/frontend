@@ -5,6 +5,7 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
+	import TradeDescription from './TradeDescription.svelte';
 
 	export let trades: TradeInfo[];
 
@@ -19,9 +20,10 @@
 			accessor: ({ trade_id }) => `#${trade_id}`
 		}),
 		table.column({
-			id: 'action_label',
+			id: 'description',
 			header: 'Trade',
-			accessor: 'actionLabel'
+			accessor: ({ actionLabel, positionImpact, isTest }) => ({ actionLabel, positionImpact, isTest }),
+			cell: ({ value }) => createRender(TradeDescription, value)
 		}),
 		table.column({
 			header: 'Executed',
