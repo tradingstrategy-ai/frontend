@@ -62,8 +62,8 @@ const tradingPositionInfoPrototype = {
 		return (+endDate - +this.opened_at) / 1000;
 	},
 
-	get displayPair() {
-		return this.pair.displayPair;
+	get pricingPair() {
+		return this.pair.pricingPair;
 	},
 
 	get firstTrade() {
@@ -215,6 +215,12 @@ const tradingPositionInfoPrototype = {
 			revertReason: failedTx.revert_reason!,
 			txHash: failedTx.tx_hash!
 		};
+	},
+
+	// If any trades are test trades, this is a test position
+	// (ALL trades SHOULD be test trades if ANY are)
+	get isTest() {
+		return this.trades.some((t) => t.isTest);
 	},
 
 	getLatestStats({ positions, closed_positions }: Statistics) {

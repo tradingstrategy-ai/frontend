@@ -24,9 +24,16 @@ const tradeInfoPrototype = {
 	},
 
 	// Determine trade direction ('Buy' vs. 'Sell') based on planned_quantity
-	// TODO: replace with method that supports trade flags (open, close, increase, reduce, etc.)
 	get direction() {
 		return this.planned_quantity > 0 ? 'Buy' : 'Sell';
+	},
+
+	get pricingPair() {
+		return this.pair.pricingPair;
+	},
+
+	get actionLabel() {
+		return `${this.direction} ${this.pricingPair.base.token_symbol}`;
 	},
 
 	get failed() {
@@ -35,8 +42,19 @@ const tradeInfoPrototype = {
 
 	get failedTx() {
 		return this.blockchain_transactions.find((tx) => tx.revert_reason);
+	},
+
+	get isTest() {
+		return this.flags?.includes('test_trade');
+	},
+
+	get positionImpact() {
+		// NOTE: order of flags is significant since trades may have multiple flags
+		for (const flag of ['open', 'close', 'increase', 'reduce'] as const) {
+			if (this.flags?.includes(flag)) return flag;
+		}
 	}
-} satisfies ThisType<TradeExecution>;
+} satisfies ThisType<TradeExecution & Record<string, any>>;
 
 export type TradeInfo = TradeExecution & typeof tradeInfoPrototype;
 

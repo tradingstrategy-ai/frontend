@@ -20,7 +20,7 @@ The color and background color may be overridden with CSS props.
 <style lang="postcss">
 	[data-css-props] {
 		--data-badge-background: var(--hsla-box-2);
-		--data-badge-color: inherit;
+		--data-badge-color: var(--hsl-text);
 	}
 
 	.data-badge {
@@ -30,6 +30,7 @@ The color and background color may be overridden with CSS props.
 		font-weight: 500;
 		color: hsl(var(--data-badge-color));
 		background: hsl(var(--data-badge-background));
+		text-transform: uppercase;
 		transition: var(--transition-1);
 
 		&.bullish {

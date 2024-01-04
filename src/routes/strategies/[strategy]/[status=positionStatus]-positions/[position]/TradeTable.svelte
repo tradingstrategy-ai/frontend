@@ -5,6 +5,7 @@
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
+	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
 
 	export let trades: TradeInfo[];
 
@@ -15,10 +16,14 @@
 	const columns = table.createColumns([
 		table.column({
 			id: 'trade_id',
-			header: 'Id',
-			accessor: (trade) => {
-				return `#${trade.trade_id}: ${trade.direction}`;
-			}
+			header: '',
+			accessor: ({ trade_id }) => `#${trade_id}`
+		}),
+		table.column({
+			id: 'description',
+			header: 'Trade',
+			accessor: (t) => ({ label: t.actionLabel, modifier: t.positionImpact, isTest: t.isTest }),
+			cell: ({ value }) => createRender(TradingDescription, value)
 		}),
 		table.column({
 			header: 'Executed',
@@ -69,6 +74,12 @@
 	}
 
 	.trade-table :global {
+		.trade_id {
+			color: hsl(var(--hsl-text-extra-light));
+			width: 2em;
+			padding-right: 0;
+		}
+
 		:is(.price, .value) {
 			text-align: right;
 		}
