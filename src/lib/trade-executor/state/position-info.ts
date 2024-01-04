@@ -217,6 +217,12 @@ const tradingPositionInfoPrototype = {
 		};
 	},
 
+	// If any trades are test trades, this is a test position
+	// (ALL trades SHOULD be test trades if ANY are)
+	get isTest() {
+		return this.trades.some((t) => t.isTest);
+	},
+
 	getLatestStats({ positions, closed_positions }: Statistics) {
 		const latestPositionStats = positions[this.position_id]?.at(-1);
 		const finalStats = closed_positions[this.position_id];

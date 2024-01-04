@@ -10,6 +10,7 @@
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
+	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
 	import FlagCell from './FlagCell.svelte';
 
 	export let positions: TradingPositionInfo[];
@@ -26,9 +27,9 @@
 	$: positionsStore.set(positions);
 
 	const statusColumns = {
-		open: ['ticker', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
-		closed: ['ticker', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
-		frozen: ['ticker', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
+		open: ['description', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
+		closed: ['description', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
+		frozen: ['description', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
 
 	const table = createTable(positionsStore, {
@@ -52,8 +53,9 @@
 		}),
 		table.column({
 			header: 'Position',
-			id: 'ticker',
-			accessor: ({ pair }) => pair.ticker
+			id: 'description',
+			accessor: ({ pair, isTest }) => ({ label: pair.symbol, modifier: pair.kindShortLabel, isTest }),
+			cell: ({ value }) => createRender(TradingDescription, value)
 		}),
 		table.column({
 			header: 'Remarks',

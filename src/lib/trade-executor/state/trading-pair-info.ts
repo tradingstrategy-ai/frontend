@@ -47,10 +47,6 @@ const tradingPairInfoPrototype = {
 		return kindShortLabels[this.kind];
 	},
 
-	get ticker() {
-		return `${this.symbol} ${this.kindShortLabel}`;
-	},
-
 	get infoUrl() {
 		return this.pricingPair.info_url;
 	}

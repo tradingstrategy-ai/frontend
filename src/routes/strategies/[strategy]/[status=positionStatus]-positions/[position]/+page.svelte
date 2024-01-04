@@ -55,12 +55,14 @@
 		{/if}
 
 		<DataBoxes>
-			<DataBox label="Ticker" size="sm">
+			<DataBox label="Position" size="sm">
 				<div>
 					<a href={position.pair.info_url}>
 						{position.pair.symbol}
 					</a>
-					{position.pair.kindShortLabel}
+					<span class="position-kind">
+						{position.pair.kindShortLabel}
+					</span>
 				</div>
 			</DataBox>
 
@@ -318,6 +320,10 @@
 			display: inline-grid;
 			text-decoration: inherit;
 		}
+	}
+
+	.position-kind {
+		color: hsl(var(--hsl-text-extra-light));
 	}
 
 	.position-page :global .data-box {
