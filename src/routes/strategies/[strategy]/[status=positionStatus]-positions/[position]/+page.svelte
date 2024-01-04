@@ -5,7 +5,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import {
 		Alert,
-		Badge,
+		DataBadge,
 		DataBox,
 		DataBoxes,
 		HashAddress,
@@ -15,7 +15,6 @@
 		UpDownIndicator
 	} from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
-	import PositionDataIndicator from './PositionDataIndicator.svelte';
 
 	export let data;
 	const { summary, position, chain } = data;
@@ -89,7 +88,9 @@
 
 				{#if position.stopLossTriggered}
 					<Tooltip>
-						<PositionDataIndicator slot="trigger" text="stop loss" />
+						<span slot="trigger" class="data-badge">
+							<DataBadge>stop loss</DataBadge>
+						</span>
 						<span slot="popup">
 							{position.tooltip.stopLossTriggered}
 						</span>
@@ -130,8 +131,10 @@
 					</span>
 				</Tooltip>
 
-				{#if position.stillOpen || true}
-					<Badge text="Currently open" />
+				{#if position.stillOpen}
+					<span class="data-badge">
+						<DataBadge>Currently open</DataBadge>
+					</span>
 				{/if}
 			</DataBox>
 
@@ -203,7 +206,7 @@
 				<DataBox label="Stop loss" size="sm">
 					{#if position.stopLossPercentOpen === undefined}
 						<Tooltip>
-							<span slot="trigger" class="underline"> N/A </span>
+							<span slot="trigger" class="underline">N/A</span>
 							<span slot="popup">
 								{position.tooltip.stopLossPercentOpenMissing}
 							</span>
@@ -225,10 +228,11 @@
 
 					{#if position.trailing_stop_loss_pct}
 						<Tooltip>
-							<PositionDataIndicator
-								slot="trigger"
-								text={`Trailing stop loss: ${formatPercent(position.trailing_stop_loss_pct)}`}
-							/>
+							<span slot="trigger" class="data-badge">
+								<DataBadge>
+									Trailing stop loss: ${formatPercent(position.trailing_stop_loss_pct)}
+								</DataBadge>
+							</span>
 							<span slot="popup">
 								{position.tooltip.trailing_stop_loss_pct}
 							</span>
@@ -324,6 +328,14 @@
 
 	.position-kind {
 		color: hsl(var(--hsl-text-extra-light));
+	}
+
+	.data-badge {
+		:global([data-css-props]) {
+			--data-badge-background: var(--hsla-box-4);
+		}
+		font-size: 0.6em;
+		line-height: 125%;
 	}
 
 	.position-page :global .data-box {

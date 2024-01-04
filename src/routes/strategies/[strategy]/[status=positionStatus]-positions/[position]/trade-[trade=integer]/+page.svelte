@@ -24,12 +24,12 @@
 			Trade #{trade.trade_id}
 			{#if trade.isTest}
 				<span class="heading-badge">
-					<DataBadge status="warning">TEST</DataBadge>
+					<DataBadge status="warning">test</DataBadge>
 				</span>
 			{/if}
 			{#if trade.trade_type === 'stop_loss'}
 				<span class="heading-badge">
-					<DataBadge>STOP LOSS</DataBadge>
+					<DataBadge>stop loss</DataBadge>
 				</span>
 			{/if}
 		</span>

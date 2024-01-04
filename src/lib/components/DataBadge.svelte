@@ -30,6 +30,7 @@ The color and background color may be overridden with CSS props.
 		font-weight: 500;
 		color: hsl(var(--data-badge-color));
 		background: hsl(var(--data-badge-background));
+		text-transform: uppercase;
 		transition: var(--transition-1);
 
 		&.bullish {
