@@ -7,6 +7,7 @@
 	import SummaryStatistics from './SummaryStatistics.svelte';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatPercent } from '$lib/helpers/formatters';
+	import LongShortTable from './LongShortTable.svelte';
 
 	export let data;
 	const { state, strategy, summary } = data;
@@ -40,7 +41,11 @@
 		/>
 	</ChartContainer>
 
-	<SummaryStatistics {oldLatestStats} {summaryStatistics} />
+	{#if summaryStatistics.long_short_table}
+		<LongShortTable tableData={summaryStatistics.long_short_table} />
+	{:else}
+		<SummaryStatistics {oldLatestStats} {summaryStatistics} />
+	{/if}
 </section>
 
 <style>
