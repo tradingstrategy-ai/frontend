@@ -11,10 +11,14 @@ export async function load({ params, fetch }) {
 	const strategy = getConfiguredStrategyById(params.strategy);
 	if (!strategy) throw error(404, 'Not found');
 
-	const state = getStrategyState(fetch, strategy.id);
 	const summary = await getStrategyRuntimeState(strategy, fetch);
-	const chain_id = summary?.on_chain_data?.chain_id;
-	const chain = fetchPublicApi(fetch, 'chain-details', { chain_id });
+	if (!summary.connected) throw error(503, 'Service Unavailable');
+
+	const state = getStrategyState(fetch, strategy.id);
+
+	const chain = fetchPublicApi(fetch, 'chain-details', {
+		chain_id: summary.on_chain_data.chain_id.toString()
+	});
 
 	return { chain, strategy, summary, state };
 }

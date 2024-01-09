@@ -22,7 +22,7 @@
 	// Old path - read stats from the state
 	const oldLatestStats = getPortfolioLatestStats(state);
 	// New path - use server precalculated stats
-	const summaryStatistics = summary?.summary_statistics;
+	const summaryStatistics = summary.summary_statistics;
 </script>
 
 <section class="performance">
