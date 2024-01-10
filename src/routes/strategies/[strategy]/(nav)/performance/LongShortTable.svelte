@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let tableData: any;
+	import type { LongShortTable } from 'trade-executor/statistics/statistics-table';
+
+	export let tableData: LongShortTable;
 </script>
 
 <table class="long-short-table sm">
