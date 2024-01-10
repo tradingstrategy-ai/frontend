@@ -63,6 +63,7 @@ export const keyMetricKind = z.enum([
 	'max_pullback_of_total_capital',
 	'max_loss_risk_at_opening_of_position'
 ]);
+export type KeyMetricKind = z.infer<typeof keyMetricKind>;
 
 export const keyMetricSource = z.enum(['backtesting', 'live_trading', 'missing']);
 

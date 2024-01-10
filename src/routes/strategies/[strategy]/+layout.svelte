@@ -4,10 +4,10 @@
 
 	export let data;
 
-	$: summary = data.summary;
+	$: ({ strategy } = data);
 
 	$: breadcrumbs = {
-		[summary.id]: summary.name,
+		[strategy.id]: strategy.name,
 		'open-positions': 'Open positions',
 		'closed-positions': 'Closed positions',
 		'frozen-positions': 'Frozen positions',

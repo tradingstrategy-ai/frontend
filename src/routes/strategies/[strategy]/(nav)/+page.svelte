@@ -8,13 +8,13 @@
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
-	import type { KeyMetricKind } from 'trade-executor/strategy/runtime-state';
+	import type { KeyMetricKind } from 'trade-executor/statistics/key-metric';
 
 	export let data;
-	const { chain, strategy, summary } = data;
+	const { chain, strategy } = data;
 
-	const keyMetrics = summary.summary_statistics.key_metrics;
-	const strategyId = summary.id;
+	const keyMetrics = strategy.summary_statistics.key_metrics;
+	const strategyId = strategy.id;
 
 	let periodPerformance: MaybeNumber;
 
@@ -46,12 +46,12 @@
 </script>
 
 <svelte:head>
-	<title>{summary.name} | Trading Strategy</title>
-	<meta name="description" content={summary.short_description} />
+	<title>{strategy.name} | Trading Strategy</title>
+	<meta name="description" content={strategy.short_description} />
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<MyDeposits strategy={summary} {chain} />
+	<MyDeposits {strategy} {chain} />
 
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
@@ -106,7 +106,7 @@
 	</div>
 
 	<SummaryBox title="Strategy description">
-		<p>{@html summary.long_description}</p>
+		<p>{@html strategy.long_description}</p>
 	</SummaryBox>
 </div>
 

@@ -1,38 +1,24 @@
 import { strategyConfig } from '$lib/config';
+import { z } from 'zod';
+
+export const strategyConfigurationSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	url: z.string().url()
+});
+export type StrategyConfiguration = z.infer<typeof strategyConfigurationSchema>;
 
 /**
- * TypeScript helper for having frontend side configuration for strategies.
+ * export all configured strategies as a Map for easy iteration and lookup
  */
-export interface StrategyConfiguration {
-	/** Strategy id - used internally in the state files, etc. */
-	id: string;
-
-	/** Name displayed until we have loaded data from the server-side  */
-	name: string;
-
-	/** Webhook server URL */
-	url: string;
-}
-
-/**
- * Get list of configured strategies.
- *
- * Typedefs JSON load from the config.
- */
-export function getConfiguredStrategies(): StrategyConfiguration[] {
-	if (!!strategyConfig) {
-		return strategyConfig;
-	}
-
-	return [];
-}
-
-export function getConfiguredStrategyById(id: string): StrategyConfiguration | null {
-	const strats = getConfiguredStrategies();
-	for (let strat of strats) {
-		if (strat.id == id) {
-			return strat;
+export const configuredStrategies = ((strategies) => {
+	for (const config of strategyConfig) {
+		try {
+			strategies.set(config.id, strategyConfigurationSchema.parse(config));
+		} catch (e) {
+			const message = e instanceof Error ? e.message : String(e);
+			console.warn('Failed to parse strategy config', config, message);
 		}
 	}
-	return null;
-}
+	return strategies;
+})(new Map() as Map<string, StrategyConfiguration>);

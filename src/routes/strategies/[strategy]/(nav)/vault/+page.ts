@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
-import type { OnChainData } from 'trade-executor/strategy/runtime-state.js';
+import type { OnChainData } from 'trade-executor/strategy/summary.js';
 
 export async function load({ parent }) {
-	const { summary } = await parent();
+	const { strategy } = await parent();
 
-	const onChainData: OnChainData = summary.on_chain_data;
+	const onChainData: OnChainData = strategy.on_chain_data;
 
 	if (onChainData?.asset_management_mode !== 'enzyme') {
 		throw error(404, 'Not found');

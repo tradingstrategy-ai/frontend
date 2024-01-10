@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { KeyMetric } from 'trade-executor/strategy/runtime-state';
+	import type { KeyMetric } from 'trade-executor/statistics/key-metric';
 	import { Timestamp } from '$lib/components';
 
 	export let title: string;

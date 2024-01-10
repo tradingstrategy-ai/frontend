@@ -2,22 +2,27 @@
 	import type { EventHandler } from 'svelte/elements';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import { type RawTick, type Quote, rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
 	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
-	import { rawTicksToQuotes } from '$lib/chart';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain;
 
 	const href = `/strategies/${strategy.id}`;
-	const summaryStatistics = strategy.summary_statistics ?? {};
-	const chartData = rawTicksToQuotes(summaryStatistics.performance_chart_90_days ?? []);
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
-	const keyMetrics = summaryStatistics.key_metrics ?? {};
-	const isBacktested = Object.values(keyMetrics).some(({ source }) => source === 'backtesting');
+
+	let chartData: Quote[] = [];
+	let isBacktested = false;
+
+	if (strategy.connected) {
+		const stats = strategy.summary_statistics;
+		chartData = rawTicksToQuotes(stats.performance_chart_90_days as RawTick[]);
+		isBacktested = Object.values(stats.key_metrics).some(({ source }) => source === 'backtesting');
+	}
 
 	const handleClick: EventHandler = ({ target }) => {
 		// skip explicit goto if user clicked an anchor tag

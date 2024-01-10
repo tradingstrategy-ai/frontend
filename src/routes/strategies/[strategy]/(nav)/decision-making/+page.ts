@@ -3,17 +3,19 @@
  *
  * Generate a variant of decision making status image URL for both color schemes.
  */
-import { getConfiguredStrategyById } from 'trade-executor/strategy/configuration';
+import { configuredStrategies } from 'trade-executor/strategy/configuration';
+import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-	const { url } = getConfiguredStrategyById(params.strategy)!;
+	const strategy = configuredStrategies.get(params.strategy);
+
+	if (!strategy) throw error(404, 'Not found');
 
 	const imageUrls: Record<string, string> = {};
-	const type = 'large';
 
 	for (let theme of ['light', 'dark']) {
-		const encoded = new URLSearchParams({ theme, type });
-		imageUrls[theme] = `${url}/visualisation?${encoded}`;
+		const encoded = new URLSearchParams({ theme, type: 'large' });
+		imageUrls[theme] = `${strategy.url}/visualisation?${encoded}`;
 	}
 
 	return { imageUrls };

@@ -10,7 +10,7 @@
 	import LongShortTable from './LongShortTable.svelte';
 
 	export let data;
-	const { state, strategy, summary } = data;
+	const { state, strategy } = data;
 
 	const chartClient = getChartClient(fetch, strategy.url);
 
@@ -22,7 +22,7 @@
 	// Old path - read stats from the state
 	const oldLatestStats = getPortfolioLatestStats(state);
 	// New path - use server precalculated stats
-	const summaryStatistics = summary.summary_statistics;
+	const summaryStatistics = strategy.summary_statistics;
 </script>
 
 <section class="performance">
