@@ -113,30 +113,34 @@
 			</p>
 		{/if}
 
-		<div class="table-responsive">
-			<table class="table-datasets">
+		<div class="datasets">
+			<table class="sm">
 				<thead>
 					<tr>
-						<th>Name</th>
+						<th class="name">Name</th>
 						<th>Tag</th>
-						<th class="right">Entry count (k)</th>
-						<th class="right">Size (MBytes)</th>
+						<th class="right">Entrys (k)</th>
+						<th class="right">Size (MB)</th>
 						<th>Format</th>
 						<th>Last updated</th>
-						<th>Links</th>
+						<th class="links">Links</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					{#each data.datasets as row}
 						<tr>
-							<td>{row.name}</td>
+							<td class="name">{row.name}</td>
 							<td>{row.designation}</td>
 							<td class="right">{formatKilos(row.entries)}</td>
 							<td class="right">{formatSizeMegabytes(row.size)}</td>
 							<td>{row.format}</td>
-							<td><Timestamp date={row.last_updated_at} relative /></td>
 							<td>
+								<Timestamp date={row.last_updated_at} let:relative>
+									{relative.replace(/^about /, '')}
+								</Timestamp>
+							</td>
+							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
 								{#if validApiKey}
 									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.download_link)}>
@@ -233,24 +237,25 @@
 				cursor: not-allowed;
 			}
 		}
-	}
 
-	.table-datasets td a {
-		position: relative;
+		.datasets {
+			overflow-x: auto;
+			overflow-y: hidden;
 
-		&:not(.button)::before {
-			bottom: calc(-1 * var(--space-sm));
-			border-radius: var(--radius-sm);
-			content: '';
-			left: calc(-1 * var(--space-sm));
-			position: absolute;
-			right: calc(-1 * var(--space-sm));
-			top: calc(-1 * var(--space-sm));
-			transition: background var(--time-sm) ease-out;
-		}
+			:is(th, td) {
+				padding-inline: 0.5em;
+				&:first-child {
+					padding-left: 1em;
+				}
+			}
 
-		&:not(.button):hover::before {
-			background: hsl(var(--hsla-box-3));
+			.name {
+				white-space: nowrap;
+			}
+
+			.links {
+				width: 10em;
+			}
 		}
 	}
 </style>
