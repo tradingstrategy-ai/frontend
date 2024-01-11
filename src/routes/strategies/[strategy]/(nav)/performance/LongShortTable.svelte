@@ -1,19 +1,28 @@
 <script lang="ts">
 	import type { LongShortTable, StatisticsTableMetric } from 'trade-executor/statistics/statistics-table';
-	import { SummaryBox } from '$lib/components';
+	import { SummaryBox, TextInput } from '$lib/components';
+
+	export let tableData: LongShortTable;
+
+	let filter = '';
+
+	$: filteredRows = Object.values(tableData.rows).filter((row) => {
+		return row.name?.toLowerCase().includes(filter.toLowerCase());
+	});
 
 	function isDurationField({ kind }: StatisticsTableMetric) {
 		return /period_length|duration_of/.test(kind);
 	}
 
-	function durationShortLabel(duration?: string) {
-		return duration?.replaceAll(/ (?:days|hours|minutes)/g, (s) => s[1]);
+	function durationShortLabel(duration = '') {
+		return duration.replaceAll(/ (?:days|hours|minutes)/g, (s) => s[1]);
 	}
-
-	export let tableData: LongShortTable;
 </script>
 
-<SummaryBox title="Performance metrics">
+<SummaryBox title="Performance metrics" ctaPosition="top">
+	<div slot="cta" class="wrapper">
+		<TextInput bind:value={filter} size="md" type="search" placeholder="Filter metrics" />
+	</div>
 	<div class="long-short-table">
 		<table>
 			<thead>
@@ -27,7 +36,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each Object.values(tableData.rows) as row (row.kind)}
+				{#each filteredRows as row (row.kind)}
 					<tr>
 						<td class="name">{row.name}</td>
 						{#each tableData.columns as column}
@@ -42,6 +51,10 @@
 							</td>
 						{/each}
 					</tr>
+				{:else}
+					<tr>
+						<td class="name no-match" colspan="4">no matching metrics</td>
+					</tr>
 				{/each}
 			</tbody>
 		</table>
@@ -49,8 +62,15 @@
 </SummaryBox>
 
 <style lang="postcss">
+	.wrapper {
+		display: contents;
+		/* FIXME: overriding radius for now due to inconsistencies with radius.css and radius-new.css */
+		--radius-xs: 0.75rem;
+	}
+
 	.long-short-table {
 		overflow-x: auto;
+		min-height: 60rem;
 		margin-inline: var(--margin-inline, 0);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--ls-ui-md);
@@ -111,9 +131,18 @@
 					white-space: normal;
 					min-width: 9rem;
 				}
+
+				.no-match {
+					color: hsl(var(--hsl-text-extra-light));
+				}
+			}
+
+			.name {
+				width: 40%;
 			}
 
 			:is(.all, .long, .short) {
+				width: 20%;
 				text-align: right;
 			}
 		}
