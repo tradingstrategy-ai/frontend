@@ -7,17 +7,17 @@
 	function injectTOC(node: HTMLElement) {
 		const target = node.querySelector('#table-of-contents');
 		if (target) {
-			const entries = node.querySelectorAll('h2, h3');
+			const entries = node.querySelectorAll('h2, h3') as NodeListOf<HTMLHeadingElement>;
 			new TableOfContents({ target, props: { entries } });
 		}
 	}
 
 	// Make tables mobile friendly by wrapping with container to allow horizontal scrolling
 	function wrapTables(node: HTMLElement) {
-		node.querySelectorAll('table').forEach((tableEl) => {
+		node.querySelectorAll('table').forEach((tableEl: HTMLTableElement) => {
 			const wrapper = document.createElement('div');
-			wrapper.className = 'table-responsive';
-			tableEl.parentNode?.insertBefore(wrapper, tableEl);
+			wrapper.classList.add('table-wrapper');
+			tableEl.parentNode!.insertBefore(wrapper, tableEl);
 			wrapper.appendChild(tableEl);
 		});
 	}
@@ -160,21 +160,20 @@
 			box-shadow: -0.75rem 0.75rem 0 hsl(var(--hsla-quoteblock-backdrop));
 		}
 
-		.table-responsive {
-			width: 100%;
+		.table-wrapper {
 			overflow-x: auto;
+			overflow-y: hidden;
 		}
 
 		table {
-			margin: var(--space-lg) 0;
-			color: inherit;
+			margin-block: var(--space-lg);
 			border-collapse: collapse;
+			color: inherit;
 
 			:is(td, th) {
-				vertical-align: top;
 				padding: var(--space-ss);
-				border-top: 1px solid hsl(var(--hsl-text-extra-light));
-				border-bottom: 1px solid hsl(var(--hsl-text-extra-light));
+				border-block: 1px solid hsl(var(--hsl-text-extra-light));
+				vertical-align: top;
 
 				&:first-child {
 					padding-left: 0;

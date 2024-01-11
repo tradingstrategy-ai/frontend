@@ -1,5 +1,5 @@
 /**
- * zod schemas for positions
+ * zod schemas for trading positions
  *
  * Based on Python classes found in:
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/position.py

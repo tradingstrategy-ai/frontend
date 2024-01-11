@@ -8,9 +8,9 @@
 
 	export let strategy: StrategyRuntimeState;
 
-	const metrics = strategy.summary_statistics?.key_metrics ?? {};
 	const strategyId = strategy.id;
-	const hasEnzymeVault = strategy.on_chain_data?.asset_management_mode === 'enzyme';
+	const metrics = strategy.connected ? strategy.summary_statistics.key_metrics : {};
+	const hasEnzymeVault = strategy.connected && strategy.on_chain_data.asset_management_mode === 'enzyme';
 </script>
 
 <dl class="strategy-data-summary ds-3">

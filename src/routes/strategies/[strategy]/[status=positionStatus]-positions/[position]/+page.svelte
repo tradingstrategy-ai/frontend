@@ -17,12 +17,12 @@
 	import TradeTable from './TradeTable.svelte';
 
 	export let data;
-	const { summary, position, chain } = data;
+	const { strategy, position, chain } = data;
 </script>
 
 <main class="ds-container position-page">
 	<PageHeading title="Position #{position.position_id}">
-		<a slot="prefix" href="/strategies/{summary.id}">{summary.name}</a>
+		<a slot="prefix" href="/strategies/{strategy.id}">{strategy.name}</a>
 	</PageHeading>
 
 	<section>

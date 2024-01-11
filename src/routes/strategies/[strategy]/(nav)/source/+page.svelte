@@ -7,14 +7,14 @@
 
 	export let data;
 
-	$: ({ summary, code } = data);
+	$: ({ strategy, code } = data);
 
 	// Github links disabled as for now they no longer host the canonical source
 	// $: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
 <section class="source">
-	<SummaryBox title="Source code" subtitle="The source code of the {summary.name} strategy" ctaPosition="top">
+	<SummaryBox title="Source code" subtitle="The source code of the {strategy.name} strategy" ctaPosition="top">
 		<!--
 		<Button
 			slot="cta"

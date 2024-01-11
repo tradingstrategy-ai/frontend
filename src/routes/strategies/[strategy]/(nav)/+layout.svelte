@@ -6,18 +6,18 @@
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let data;
-	$: ({ chain, summary, state } = data);
+	$: ({ chain, strategy, state } = data);
 
-	$: backtestAvailable = summary.backtest_available;
+	$: backtestAvailable = strategy.backtest_available;
 	// Get the error message HTML
-	$: errorHtml = getTradeExecutorErrorHtml(summary);
+	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading title={summary.name} description={summary.short_description}>
-		<img slot="icon" src={summary.icon_url} alt={summary.name} />
+	<PageHeading title={strategy.name} description={strategy.short_description}>
+		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
 		<div class="wallet-widget" slot="cta">
-			<WalletWidget strategy={summary} {chain} />
+			<WalletWidget {strategy} {chain} />
 		</div>
 	</PageHeading>
 
@@ -31,9 +31,9 @@
 
 	<div class="subpage">
 		<StrategyNav
-			strategyId={summary.id}
+			strategyId={strategy.id}
 			portfolio={state.portfolio}
-			onChainData={summary.on_chain_data}
+			onChainData={strategy.on_chain_data}
 			currentPath={$page.url.pathname}
 			{backtestAvailable}
 		/>

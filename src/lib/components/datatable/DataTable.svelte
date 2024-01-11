@@ -84,7 +84,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	$dispatchChange;
 </script>
 
-<table bind:this={table} {...$tableAttrs} class:responsive={isResponsive} class:loading class={size}>
+<table bind:this={table} {...$tableAttrs} class="datatable {size}" class:responsive={isResponsive} class:loading>
 	{#if isResponsive}
 		<MobileSortSelect rows={$headerRows} {sortKeys} />
 	{/if}

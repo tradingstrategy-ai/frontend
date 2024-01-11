@@ -1,14 +1,13 @@
 @import './animations.css';
 @import './reset.css';
 @import './color.css';
+@import './datatable.css';
 @import './input.css';
 @import './layout.css';
 @import './progress.css';
 @import './radius.css';
 @import './radius-new.css';
 @import './space.css';
-@import './table.css';
-@import './table-old.css';
 @import './terminal.css';
 @import './tile.css';
 @import './time.css';

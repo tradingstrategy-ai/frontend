@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
 	import type { ApiChain } from '$lib/helpers/chain';
-	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { switchNetwork } from '@wagmi/core';
@@ -10,7 +10,7 @@
 	import { Button, HashAddress, Icon } from '$lib/components';
 	import { formatDollar } from '$lib/helpers/formatters';
 
-	export let strategy: StrategyRuntimeState;
+	export let strategy: ConnectedStrategyRuntimeState;
 	export let chain: ApiChain;
 
 	let contentWrapper: HTMLElement;

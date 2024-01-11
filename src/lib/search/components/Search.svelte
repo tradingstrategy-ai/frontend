@@ -203,7 +203,6 @@ Display site-wide search box for use in top-nav.
 
 		.inner {
 			background: hsl(var(--hsla-box-1));
-			box-shadow: var(--shadow-sm);
 			display: flex;
 			flex-direction: column;
 			gap: var(--space-md);

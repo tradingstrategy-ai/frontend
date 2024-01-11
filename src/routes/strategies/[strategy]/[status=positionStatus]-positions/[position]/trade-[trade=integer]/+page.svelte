@@ -76,7 +76,7 @@
 		</DataBox>
 
 		<DataBox label="Time" size="sm">
-			<table class="databox-table">
+			<table class="datatable">
 				<tbody>
 					<tr>
 						<td class="label">Cycle</td>
@@ -106,7 +106,7 @@
 		</DataBox>
 
 		<DataBox label="Price" size="sm">
-			<table class="databox-table">
+			<table class="datatable">
 				<tbody>
 					<tr>
 						<td>Mid</td>
@@ -134,7 +134,7 @@
 		</DataBox>
 
 		<DataBox label="Quantity" size="sm">
-			<table class="databox-table">
+			<table class="datatable">
 				<tbody>
 					<tr>
 						<td>Expected</td>
@@ -157,7 +157,7 @@
 		</DataBox>
 
 		<DataBox label="Slippage" size="sm">
-			<table class="databox-table">
+			<table class="datatable">
 				<tbody>
 					<tr>
 						<td>Tolerance</td>
@@ -245,7 +245,7 @@
 			}
 		}
 
-		.databox-table {
+		.datatable {
 			--border-spacing: var(--space-sm);
 
 			@media (--viewport-lg-up) {

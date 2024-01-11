@@ -17,60 +17,74 @@
 	export let pairs: MomentumPair[];
 </script>
 
-<div>
-	<table>
-		<thead>
+<table class="momentum-table datatable">
+	<thead>
+		<tr>
+			<th class="position" />
+			<th>Trading pair</th>
+			<th class="exchange">Exchange</th>
+			<th class="blockchain">Blockchain</th>
+			<th class="price-change right">Price change</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each pairs as pair, idx}
 			<tr>
-				<th />
-				<th>Trading pair</th>
-				<th class="exchange">Exchange</th>
-				<th class="blockchain">Blockchain</th>
-				<th class="price-change right">Price change</th>
+				<td class="position">
+					#{idx + 1}
+				</td>
+
+				<td class="pair-name">
+					<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}/${pair.pair_slug}`}>
+						{pair.pair_symbol}
+					</a>
+				</td>
+
+				<td class="exchange">
+					<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}`}>
+						{pair.exchange_name}
+					</a>
+				</td>
+
+				<td class="blockchain">
+					<a href={`/trading-view/${pair.chain_slug}`}>
+						{pair.chain_name}
+					</a>
+				</td>
+
+				<td class="price-change">
+					<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
+				</td>
 			</tr>
-		</thead>
-		<tbody>
-			{#each pairs as pair, idx}
-				<tr>
-					<td class="position">
-						#{idx + 1}
-					</td>
+		{/each}
+	</tbody>
+</table>
 
-					<td class="pair-name">
-						<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}/${pair.pair_slug}`}>
-							{pair.pair_symbol}
-						</a>
-					</td>
+<style lang="postcss">
+	.momentum-table {
+		table-layout: fixed;
 
-					<td class="exchange">
-						<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}`}>
-							{pair.exchange_name}
-						</a>
-					</td>
+		.position {
+			width: 3.5em;
+			padding-right: 0;
+			color: hsl(var(--hsl-text-extra-light));
+		}
 
-					<td class="blockchain">
-						<a href={`/trading-view/${pair.chain_slug}`}>
-							{pair.chain_name}
-						</a>
-					</td>
+		.price-change {
+			padding: 0 var(--space-xs);
+		}
 
-					<td class="price-change">
-						<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+		/* Remove less relevant columns on mobile */
+		@media (--viewport-sm-down) {
+			.exchange {
+				display: none;
+			}
+		}
 
-<style>
-	.price-change {
-		padding: 0 var(--space-xs);
-	}
-
-	/* Remove less relevant columns on mobile */
-	@media (--viewport-sm-down) {
-		:is(.exchange, .blockchain) {
-			display: none;
+		@media (--viewport-xs) {
+			.blockchain {
+				display: none;
+			}
 		}
 	}
 </style>

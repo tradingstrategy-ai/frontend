@@ -1,5 +1,5 @@
 /**
- * zod schemas for state
+ * zod schemas for portfolio and position statistics
  *
  * Based on Python classes found in:
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/statistics.py

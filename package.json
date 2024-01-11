@@ -60,7 +60,6 @@
     "@wagmi/core": "^1.4.5",
     "@walletconnect/modal": "^2.6.2",
     "@web3modal/ethereum": "^2.7.1",
-    "assert-ts": "^0.3.4",
     "bignumber.js": "^9.1.2",
     "cheerio": "^1.0.0-rc.12",
     "cookie": "^0.5.0",

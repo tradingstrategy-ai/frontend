@@ -15,7 +15,7 @@ Display one key metric in a strategy tile.
 ```
 -->
 <script lang="ts">
-	import type { KeyMetric } from 'trade-executor/strategy/runtime-state';
+	import type { KeyMetric } from 'trade-executor/statistics/key-metric';
 	import { Icon, Tooltip } from '$lib/components';
 	import KeyMetricDescription from './KeyMetricDescription.svelte';
 

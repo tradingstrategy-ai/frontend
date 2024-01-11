@@ -15,7 +15,7 @@ of pair records is based on the records returned by `top-momentum` API.
 	export let pairs: Record<string, string | number>[];
 </script>
 
-<table class="top-trades-table">
+<table class="top-trades-table datatable">
 	<tbody>
 		{#each pairs as pair}
 			<a style:display="contents" href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}/${pair.pair_slug}`}>

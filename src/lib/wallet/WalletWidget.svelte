@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { ApiChain } from '$lib/helpers/chain';
-	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
 	import { wallet } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 
 	export let chain: ApiChain;
-	export let strategy: StrategyRuntimeState;
+	export let strategy: ConnectedStrategyRuntimeState;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 
