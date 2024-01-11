@@ -20,7 +20,7 @@
 
 	if (strategy.connected) {
 		const stats = strategy.summary_statistics;
-		chartData = rawTicksToQuotes(stats.performance_chart_90_days as RawTick[]);
+		chartData = rawTicksToQuotes((stats.performance_chart_90_days ?? []) as RawTick[]);
 		isBacktested = Object.values(stats.key_metrics).some(({ source }) => source === 'backtesting');
 	}
 
