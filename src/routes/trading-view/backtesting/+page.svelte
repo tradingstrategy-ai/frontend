@@ -114,7 +114,7 @@
 		{/if}
 
 		<div class="datasets">
-			<table class="sm">
+			<table class="datatable sm">
 				<thead>
 					<tr>
 						<th class="name">Name</th>

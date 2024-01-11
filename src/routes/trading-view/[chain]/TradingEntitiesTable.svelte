@@ -8,7 +8,7 @@
 	export let getHref: Formatter<TradingEntityRow>;
 </script>
 
-<table class="trading-entities-table" class:loading>
+<table class="trading-entities-table datatable" class:loading>
 	<tbody>
 		{#each rows as row}
 			{@const href = loading ? undefined : getHref(row)}

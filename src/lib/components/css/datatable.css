@@ -1,7 +1,14 @@
-/*
- Default table styling.
+/**
+ * Datatable styling
+ *
+ * see: src/lib/components/datatable
+ *
+ * Usage:
+ *   <table class="datatable [sm]">
+ *     ...
+ *   </table>
 */
-table:not(.table) {
+table.datatable {
 	--border-spacing: var(--space-sl);
 	--cell-padding: var(--space-sl) var(--space-ml);
 	--table-transition: all var(--time-xs) ease-out, color 0ms;
