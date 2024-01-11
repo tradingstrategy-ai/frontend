@@ -22,7 +22,7 @@
 </script>
 
 <SummaryBox
-	title="Performance metrics"
+	title="Performance summary"
 	subtitle="Strategy performance metrics based on {isBacktested ? 'backtesting' : 'live trading'} data."
 	ctaPosition="top"
 >
