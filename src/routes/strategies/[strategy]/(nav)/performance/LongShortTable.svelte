@@ -10,6 +10,8 @@
 		return row.name?.toLowerCase().includes(filter.toLowerCase());
 	});
 
+	$: isBacktested = tableData.rows.trading_period_length?.source === 'backtesting';
+
 	function isDurationField({ kind }: StatisticsTableMetric) {
 		return /period_length|duration_of/.test(kind);
 	}
@@ -19,7 +21,11 @@
 	}
 </script>
 
-<SummaryBox title="Performance metrics" ctaPosition="top">
+<SummaryBox
+	title="Performance metrics"
+	subtitle="Strategy performance metrics based on {isBacktested ? 'backtesting' : 'live trading'} data."
+	ctaPosition="top"
+>
 	<div slot="cta" class="wrapper">
 		<TextInput bind:value={filter} size="md" type="search" placeholder="Filter metrics" />
 	</div>
