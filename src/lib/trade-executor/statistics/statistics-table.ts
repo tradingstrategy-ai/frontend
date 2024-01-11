@@ -14,6 +14,7 @@ import { unixTimestampToDate } from 'trade-executor/state/utility-types';
 export const statisticsTableMetricSchema = keyMetricSchema.extend({
 	value: z.record(z.string())
 });
+export type StatisticsTableMetric = z.infer<typeof statisticsTableMetricSchema>;
 
 export const statisticsTableSchema = z.object({
 	columns: z.string().array(),
