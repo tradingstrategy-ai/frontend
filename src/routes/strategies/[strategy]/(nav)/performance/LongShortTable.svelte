@@ -49,8 +49,8 @@
 							{@const value = row.value[column]}
 							<td class={column.toLowerCase()}>
 								{#if isDurationField(row)}
-									<span class="desktop">{value}</span>
-									<span class="mobile">{durationShortLabel(value)}</span>
+									<span class="long-label">{value}</span>
+									<span class="short-label">{durationShortLabel(value)}</span>
 								{:else}
 									{value}
 								{/if}
@@ -76,24 +76,15 @@
 
 	.long-short-table {
 		min-height: 60rem;
-		margin-inline: var(--margin-inline, 0);
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--ls-ui-md);
-		overflow-x: auto;
-		--cell-padding: 0.625rem;
 
 		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--ls-ui-sm);
-			--cell-padding: 0.5rem;
-
-			.desktop {
+			.long-label {
 				display: none;
 			}
 		}
 
 		@media (--viewport-md-up) {
-			.mobile {
+			.short-label {
 				display: none;
 			}
 		}
@@ -105,6 +96,15 @@
 			border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
 			text-align: left;
 			white-space: nowrap;
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md);
+			--cell-padding: 0.625rem;
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--ls-ui-sm);
+				--cell-padding: 0.5rem;
+			}
 
 			/* This makes the whole table one giant grid */
 			:is(thead, tbody, tr) {
@@ -112,9 +112,13 @@
 			}
 
 			th {
+				position: sticky;
+				top: -1px;
 				padding: 1em var(--cell-padding);
 				border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
 				color: hsl(var(--hsl-text-extra-light));
+				/* using color-mix to prevent layered transparency */
+				background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 12%);
 			}
 
 			td {
@@ -130,8 +134,8 @@
 				}
 			}
 
-			/* Desktop/tablet: traditional table layout; zebra-striped rows */
-			@media (--viewport-sm-up) {
+			/* Desktop: traditional table layout; zebra-striped rows */
+			@media (--viewport-md-up) {
 				grid-template-columns: minmax(max-content, 5fr) repeat(3, 2fr);
 
 				:is(th, td.name) {
@@ -144,7 +148,7 @@
 			}
 
 			/* Mobile: nested row layout; border-separated rows */
-			@media (--viewport-xs) {
+			@media (--viewport-sm-down) {
 				grid-template-columns: repeat(3, 1fr);
 
 				tr:not(:last-child) td:not(.name) {
