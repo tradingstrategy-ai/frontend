@@ -69,19 +69,17 @@
 	}
 
 	.long-short-table {
-		overflow-x: auto;
 		min-height: 60rem;
 		margin-inline: var(--margin-inline, 0);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--ls-ui-md);
-		--heading-font-size: 0.875em;
-		--padding: 0.625rem;
+		overflow-x: auto;
+		--cell-padding: 0.625rem;
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-roman);
 			letter-spacing: var(--ls-ui-sm);
-			--padding: 0.5rem;
-			--margin-inline: -1rem;
+			--cell-padding: 0.5rem;
 
 			.desktop {
 				display: none;
@@ -95,55 +93,72 @@
 		}
 
 		table {
+			display: grid;
 			width: 100%;
-			border-collapse: collapse;
 			margin-bottom: 1rem;
+			border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
 			text-align: left;
 			white-space: nowrap;
 
+			/* This makes the whole table one giant grid */
+			:is(thead, tbody, tr) {
+				display: contents;
+			}
+
 			th {
-				padding: 1em var(--padding);
-				font-size: var(--heading-font-size);
+				padding: 1em var(--cell-padding);
+				border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
 				color: hsl(var(--hsl-text-extra-light));
 			}
 
-			tbody {
-				border-block: 2px solid hsl(var(--hsl-text-ultra-light));
+			td {
+				padding: var(--cell-padding);
 
-				tr:nth-child(even) {
-					background: hsl(var(--hsla-box-2));
-				}
-
-				td {
-					padding: var(--padding);
-
-					@media (--viewport-xs) {
-						padding-block: 0;
-						height: 2.5rem;
-						line-height: 1.2;
-					}
-				}
-
-				.name {
-					font-size: var(--heading-font-size);
+				&.name {
 					font-weight: 500;
 					color: hsl(var(--hsl-text-light));
-					white-space: normal;
-					min-width: 9rem;
 				}
 
-				.no-match {
+				&.no-match {
 					color: hsl(var(--hsl-text-extra-light));
 				}
 			}
 
-			.name {
-				width: 40%;
+			/* Desktop/tablet: traditional table layout; zebra-striped rows */
+			@media (--viewport-sm-up) {
+				grid-template-columns: minmax(max-content, 5fr) repeat(3, 2fr);
+
+				:is(th, td.name) {
+					font-size: 0.875em;
+				}
+
+				tr:nth-child(even) td {
+					background: hsl(var(--hsla-box-2));
+				}
 			}
 
-			:is(.all, .long, .short) {
-				width: 20%;
-				text-align: right;
+			/* Mobile: nested row layout; border-separated rows */
+			@media (--viewport-xs) {
+				grid-template-columns: repeat(3, 1fr);
+
+				tr:not(:last-child) td:not(.name) {
+					border-bottom: 1px solid hsl(var(--hsl-text-ultra-light));
+				}
+
+				th.name {
+					display: none;
+				}
+
+				td {
+					&.name {
+						grid-column: 1 / -1;
+						padding-inline: 0;
+					}
+
+					&:not(.name) {
+						padding-top: 0;
+					}
+				}
 			}
 		}
 	}
