@@ -87,12 +87,10 @@
 			white-space: nowrap;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--ls-ui-md);
-			--cell-padding: 0.625rem;
 
 			@media (--viewport-xs) {
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--ls-ui-sm);
-				--cell-padding: 0.5rem;
 			}
 
 			/* Make all table cells part of a single grid */
@@ -100,21 +98,29 @@
 				display: contents;
 			}
 
+			/* zebra-striped rows */
+			tr:nth-child(odd) td {
+				background: hsl(var(--hsla-box-2));
+			}
+
+			:is(th, td) {
+				padding: 0.625rem;
+			}
+
 			th {
 				position: sticky;
 				top: -1px;
-				padding: 1em var(--cell-padding);
+				padding-block: 1em;
 				border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
 				text-align: left;
 
 				color: hsl(var(--hsl-text-extra-light));
 				/* using color-mix to prevent layered transparency */
+				/* FIXME: % value is off for dark-mode (switch to color-mix in colors.css) */
 				background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 12%);
 			}
 
 			td {
-				padding: var(--cell-padding);
-
 				&.name {
 					font-weight: 500;
 					color: hsl(var(--hsl-text-light));
@@ -125,7 +131,11 @@
 				}
 			}
 
-			/* Desktop: traditional table layout; zebra-striped rows */
+			:is(.all, .long, .short) {
+				text-align: right;
+			}
+
+			/* Desktop: traditional table layout */
 			@media (--viewport-md-up) {
 				grid-template-columns: minmax(max-content, 5fr) repeat(3, 2fr);
 
@@ -133,20 +143,12 @@
 					display: none;
 				}
 
-				tr:nth-child(odd) td {
-					background: hsl(var(--hsla-box-2));
-				}
-
 				:is(th, td.name) {
 					font-size: 0.875em;
 				}
-
-				:is(.all, .long, .short) {
-					text-align: right;
-				}
 			}
 
-			/* Mobile: nested row layout; border-separated rows */
+			/* Mobile: nested row layout */
 			@media (--viewport-sm-down) {
 				grid-template-columns: repeat(3, 1fr);
 
@@ -154,22 +156,21 @@
 					display: none;
 				}
 
-				tr:not(:last-child) td:not(.name) {
-					border-bottom: 1px solid hsl(var(--hsl-text-ultra-light));
+				td {
+					padding-inline: 0.375em;
 				}
 
+				/* hide metric name table header */
 				th.name {
 					display: none;
 				}
 
-				td {
-					&.name {
-						grid-column: 1 / -1;
-						padding-inline: 0;
-					}
+				/* give metric name its own sub-row in table rows */
+				td.name {
+					grid-column: 1 / -1;
 
-					&:not(.name) {
-						padding-top: 0;
+					&:not(.no-match) {
+						padding-bottom: 0;
 					}
 				}
 			}
