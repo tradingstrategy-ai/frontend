@@ -21,7 +21,7 @@ test.describe('trading data overview', () => {
 	});
 
 	test('should include database size in backtesting tile', async ({ page }) => {
-		const database = page.getByText(/Currently providing [\d.,]+ GB worth of data/);
+		const database = page.getByText(/Currently providing [\d.,]+ TB of data/);
 		await expect(database).toBeVisible();
 	});
 });
