@@ -11,6 +11,8 @@ const VERY_LARGE_USD_VALUE = 1e15; // 1,000,000,000,000 = 1,000T
 const VERY_SMALL_PERCENT = 1e-8; // 0.000001%
 const VERY_LARGE_PERCENT = 1e4; // 1,000,000%
 
+const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
 export function toFloatingPoint(n: MaybeNumberlike) {
 	if (typeof n == 'string') {
 		return parseFloat(n);
@@ -46,43 +48,17 @@ export function formatKilos(n: MaybeNumber): string {
 }
 
 /**
- * Format size in megabytes
+ * Format a value to a human-readable binary byte unit value.
  *
- * No suffix added.
+ * E.g., 123 B, 2.34 KB, 34.5 MB, 5.6 GB, etc.
  */
-export function formatSizeMegabytes(n: MaybeNumber): string {
+export function formatByteUnits(n: MaybeNumber): string {
 	if (!isNumber(n)) return notFilledMarker;
 
-	if (n <= 1024 * 1024) {
-		return (n / (1024 * 1024)).toLocaleString('en', {
-			minimumFractionDigits: 3,
-			maximumFractionDigits: 3
-		});
-	} else {
-		return (n / (1024 * 1024)).toLocaleString('en', {
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		});
-	}
-}
-
-/**
- * Format size in gigabyttes
- */
-export function formatSizeGigabytes(n: MaybeNumber): string {
-	if (!isNumber(n)) return notFilledMarker;
-
-	if (n <= 1024 * 1024) {
-		return (n / (1024 * 1024 * 1024)).toLocaleString('en', {
-			minimumFractionDigits: 3,
-			maximumFractionDigits: 3
-		});
-	} else {
-		return (n / (1024 * 1024 * 1024)).toLocaleString('en', {
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		});
-	}
+	const magnitude = Math.floor(Math.log(Math.abs(n || 1)) / Math.log(1024));
+	const unitIndex = Math.min(magnitude, BYTE_UNITS.length - 1);
+	const value = n * Math.pow(1024, -unitIndex);
+	return `${formatNumber(value, 1)} ${BYTE_UNITS[unitIndex]}`;
 }
 
 /**

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import { formatKilos, formatSizeMegabytes } from '$lib/helpers/formatters';
+	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
 	import { Alert, Button, ContentCard, HeroBanner, Section, TextInput, Timestamp } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -18,9 +18,9 @@
 		return url.toString();
 	}
 
-	async function handleSubmit(event) {
+	async function handleSubmit(event: SubmitEvent) {
 		const url = `${backendUrl}/validate-api-key`;
-		const key = event.target.apiKey.value.trim();
+		const key = (event.target as HTMLFormElement).apiKey.value.trim();
 
 		apiKeyError = '';
 		submitting = true;
@@ -45,7 +45,7 @@
 
 			validApiKey = key;
 		} catch (e) {
-			apiKeyError = e.toString();
+			apiKeyError = String(e);
 		} finally {
 			submitting = false;
 		}
@@ -119,8 +119,8 @@
 					<tr>
 						<th class="name">Name</th>
 						<th>Tag</th>
-						<th class="right">Entrys (k)</th>
-						<th class="right">Size (MB)</th>
+						<th class="right">Entries</th>
+						<th class="right">Size</th>
 						<th>Format</th>
 						<th>Last updated</th>
 						<th class="links">Links</th>
@@ -132,8 +132,8 @@
 						<tr>
 							<td class="name">{row.name}</td>
 							<td>{row.designation}</td>
-							<td class="right">{formatKilos(row.entries)}</td>
-							<td class="right">{formatSizeMegabytes(row.size)}</td>
+							<td class="right">{formatNumber(row.entries, 1, 1, { notation: 'compact' })}</td>
+							<td class="right">{formatByteUnits(row.size)}</td>
 							<td>{row.format}</td>
 							<td>
 								<Timestamp date={row.last_updated_at} let:relative>

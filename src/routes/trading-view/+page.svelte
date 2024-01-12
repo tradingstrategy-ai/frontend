@@ -2,7 +2,7 @@
 	Trading data splash page renderer
 -->
 <script lang="ts">
-	import { formatAmount, formatSizeGigabytes } from '$lib/helpers/formatters';
+	import { formatAmount, formatByteUnits } from '$lib/helpers/formatters';
 	import heroImage from '$lib/assets/illustrations/data-cloud-1.svg?raw';
 	import { ContentCard, ContentCardsSection, ContentCardsTemplate, HeroBanner } from '$lib/components';
 
@@ -86,7 +86,7 @@
 			</p>
 			{#if impressiveNumbers}
 				<p>
-					Currently providing <strong>{formatSizeGigabytes(impressiveNumbers.database_size)} GB worth of data</strong>
+					Currently providing <strong>{formatByteUnits(impressiveNumbers.database_size)} of data</strong>
 				</p>
 			{/if}
 		</ContentCard>

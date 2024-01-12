@@ -1,4 +1,4 @@
-import { formatDollar, formatNumber } from './formatters';
+import { formatByteUnits, formatDollar, formatNumber } from './formatters';
 
 describe('formatDollar', () => {
 	test('should round to two digits and show $ prefix by default', () => {
@@ -86,6 +86,39 @@ describe('formatNumber', () => {
 
 	test('should coerce string argument to number', () => {
 		expect(formatNumber('123.456')).toEqual('123.46');
+	});
+
+	test('should return "---" for non-numeric values', () => {
+		expect(formatNumber(null)).toEqual('---');
+		expect(formatNumber(undefined)).toEqual('---');
+		expect(formatNumber(NaN)).toEqual('---');
+		expect(formatNumber('')).toEqual('---');
+		expect(formatNumber('foo')).toEqual('---');
+	});
+});
+
+describe('formatByteUnits', () => {
+	test('should convert to human-readable byte units', () => {
+		expect(formatByteUnits(123)).toEqual('123.0 B');
+		expect(formatByteUnits(2345)).toEqual('2.3 KB');
+	});
+
+	test('should support units up to petabytes', () => {
+		expect(formatByteUnits(5e3)).toEqual('4.9 KB');
+		expect(formatByteUnits(5e6)).toEqual('4.8 MB');
+		expect(formatByteUnits(5e9)).toEqual('4.7 GB');
+		expect(formatByteUnits(5e12)).toEqual('4.5 TB');
+		expect(formatByteUnits(5e15)).toEqual('4.4 PB');
+		expect(formatByteUnits(5e18)).toEqual('4,440.9 PB');
+	});
+
+	test('should display 0 B when value is 0', () => {
+		expect(formatByteUnits(0)).toEqual('0.0 B');
+	});
+
+	test('should handle negative values', () => {
+		expect(formatByteUnits(-123)).toEqual('-123.0 B');
+		expect(formatByteUnits(-23456)).toEqual('-22.9 KB');
 	});
 
 	test('should return "---" for non-numeric values', () => {
