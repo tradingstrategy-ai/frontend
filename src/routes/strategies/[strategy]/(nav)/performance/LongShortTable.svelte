@@ -47,7 +47,13 @@
 			</tr>
 			{#each filteredRows as row (row.kind)}
 				<tr>
-					<td class="name">{row.name}</td>
+					<td class="name">
+						{#if row.help_link}
+							<a class="body-link" href={row.help_link} target="_blank">{row.name}</a>
+						{:else}
+							{row.name}
+						{/if}
+					</td>
 					{#each tableData.columns as column}
 						{@const value = row.value[column]}
 						<td class={column.toLowerCase()}>
