@@ -8,7 +8,7 @@
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { Alert, Button, DataBox, DataBoxes, PageHeading, Timestamp } from '$lib/components';
+	import { Alert, Button, DataBox, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
@@ -67,7 +67,7 @@
 		</Alert>
 	{/if}
 
-	<DataBoxes>
+	<div class="trade-info">
 		<DataBox label="Trading pair" size="md">
 			<a class="trading-pair" href={trade.pricingPair.info_url}>
 				{trade.pricingPair.symbol}
@@ -170,7 +170,7 @@
 				</tbody>
 			</table>
 		</DataBox>
-	</DataBoxes>
+	</div>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
 </main>
@@ -225,39 +225,35 @@
 			}
 		}
 
-		:global(.data-boxes) {
-			margin-block: var(--space-md) var(--space-5xl);
+		.trade-info {
+			display: grid;
+			gap: 1.5rem;
+			grid-template-columns: 1fr 1fr;
+			margin-block: 1rem 3rem;
 
 			@media (--viewport-sm-down) {
-				margin-bottom: var(--space-xl);
+				grid-template-columns: 1fr;
+				gap: 1rem;
+				margin-bottom: 2rem;
 			}
 
-			@media (--viewport-md-up) {
-				grid-template-columns: 1fr 1fr;
-			}
-		}
-
-		:global(.data-box) {
-			align-content: flex-start;
-
-			&:first-child {
+			:global(:first-child) {
 				grid-column: 1/-1;
 			}
 		}
 
 		.datatable {
-			--border-spacing: var(--space-sm);
+			--border-spacing: 0.625rem;
 
 			@media (--viewport-lg-up) {
-				--border-spacing: var(--space-sl);
+				--border-spacing: 0.75rem;
 			}
 
 			td {
 				height: auto !important;
-				padding: var(--space-sm) var(--space-xs);
+				padding: 0.625rem 0.375rem;
 				font: var(--f-ui-xs-medium);
 				letter-spacing: var(--f-ui-xs-spacing, normal);
-				/* white-space: nowrap; */
 
 				@media (--viewport-lg-up) {
 					font: var(--f-ui-sm-medium);
@@ -265,12 +261,12 @@
 				}
 
 				&:first-child {
-					padding-left: var(--space-sl);
+					padding-left: 0.75rem;
 					color: hsl(var(--hsl-text-extra-light));
 				}
 
 				&:last-child {
-					padding-right: var(--space-sl);
+					padding-right: 0.75rem;
 				}
 
 				&:not(:first-child) {

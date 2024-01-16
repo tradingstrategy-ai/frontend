@@ -1,6 +1,6 @@
 <!--
 @component
-Uses together with SummaryBox or DataBoxes to display a set of properties / statistics.
+Uses together with SummaryBox (or any grid layout) to display a set of properties / statistics.
 `value` may either be passed as a prop or as slot content if additional markup is required.
 
 #### Usage
