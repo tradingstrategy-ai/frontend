@@ -45,12 +45,9 @@
 			</nav>
 
 			<main>
-				<Section maxWidth="xs">
-					<h2>{currentStep.label}</h2>
-					<slot />
-
-					<WizardActions {steps} {currentStep} />
-				</Section>
+				<h2>{currentStep.label}</h2>
+				<slot />
+				<WizardActions {steps} {currentStep} />
 			</main>
 		</div>
 	</Section>
@@ -128,10 +125,11 @@
 	}
 
 	main {
-		--section-padding: var(--space-xl);
+		width: min(100%, 40rem);
+		margin: 2rem auto;
 
 		@media (--viewport-sm-down) {
-			--section-padding: var(--space-md);
+			margin-block: 1rem;
 		}
 	}
 </style>
