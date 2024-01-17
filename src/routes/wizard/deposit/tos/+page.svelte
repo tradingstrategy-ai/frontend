@@ -1,29 +1,40 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
-	import { Button, SummaryBox } from '$lib/components';
-	import tos from 'trade-executor/tos/v1-748f0d0312.txt?raw';
+	import { Alert, Button, SummaryBox } from '$lib/components';
+
+	export let data;
+	const { version, hash, fileName, tosText } = data;
 
 	wizard.toggleComplete('tos');
 </script>
 
 <div class="deposit-tos">
+	{#if !tosText}
+		<Alert size="md" status="error" title="Error">Terms of service file not found.</Alert>
+	{/if}
+
 	<SummaryBox>
 		<header slot="header">
-			<!-- TODO: dynamic version/hash based on smart contract -->
 			<h2>
-				Version 1
-				<span>748f0d0312</span>
+				Version {version}
+				<span>sha: {hash}</span>
 			</h2>
 			<div class="cta">
-				<!-- TODO: link to terms version route -->
-				<Button size="xs" icon="download" label="Download" href="./tos" download />
+				<Button size="xs" icon="download" label="Download" href="tos/{fileName}" download />
 				<!-- TODO: open fullscreen (modal dialog) -->
 				<Button size="xs" icon="fullscreen" label="Fullscreen" />
 			</div>
 		</header>
-		<div class="tos-text">
-			{tos}
-		</div>
+		<pre class="tos-text" class:no-file={!tosText}>
+			{#if tosText}
+				{tosText}
+			{:else}
+				Terms of service file not found:
+				- version = {version}
+				- hash = {hash.slice(0, 20)}…
+				- file = {fileName}
+			{/if}
+		</pre>
 	</SummaryBox>
 
 	<Button label="Accept terms" />
@@ -47,6 +58,9 @@
 
 		h2 {
 			flex: 1;
+			display: grid;
+			grid-auto-flow: column;
+			gap: 1ex;
 			margin: 0;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -54,7 +68,10 @@
 			white-space: nowrap;
 
 			span {
-				margin-left: 1ex;
+				display: inline-block;
+				min-width: 10ch;
+				overflow: hidden;
+				text-overflow: ellipsis;
 				color: hsl(var(--hsl-text-extra-light));
 				font-weight: 500;
 			}
@@ -92,5 +109,11 @@
 			padding: 1rem;
 			max-height: calc(100vh - 34em);
 		}
+	}
+
+	.no-file {
+		font: var(--f-mono-md-regular);
+		letter-spacing: var(--f-mono-md-spacing, normal);
+		color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
 	}
 </style>
