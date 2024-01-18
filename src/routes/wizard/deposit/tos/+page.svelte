@@ -3,7 +3,9 @@
 	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
 
 	export let data;
-	const { version, hash, fileName, tosText } = data;
+	const { version, tosText } = data;
+
+	const fileName = `tos/v${version}.txt`;
 
 	let fullScreen = false;
 
@@ -12,17 +14,21 @@
 
 <div class="deposit-tos">
 	{#if !tosText}
-		<Alert size="md" status="error" title="Error">Terms of service file not found.</Alert>
+		<Alert size="md" status="error" title="Error">Terms of service file not found</Alert>
 	{/if}
 
 	<SummaryBox>
 		<header slot="header">
-			<h2>
-				Version {version}
-				<span>sha: {hash}</span>
-			</h2>
+			<h2>Version {version}</h2>
 			<div class="cta">
-				<Button size="xs" icon="download" label="Download" href="tos/{fileName}" download disabled={!tosText} />
+				<Button
+					size="xs"
+					icon="download"
+					label="Download"
+					disabled={!tosText}
+					href={fileName}
+					download="Trading Strategy Terms of Service v{version}.txt"
+				/>
 				<Button
 					size="xs"
 					icon="fullscreen"
@@ -37,9 +43,7 @@
 				{tosText}
 			{:else}
 				Terms of service file not found:
-				- version = {version}
-				- hash = {hash.slice(0, 20)}…
-				- file = {fileName}
+  			&gt; src/lib/assets/{fileName}
 			{/if}
 		</pre>
 	</SummaryBox>
@@ -75,23 +79,11 @@
 
 			h2 {
 				flex: 1;
-				display: grid;
-				grid-auto-flow: column;
-				gap: 1ex;
 				margin: 0;
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 				color: hsl(var(--hsl-text-light));
 				white-space: nowrap;
-
-				span {
-					display: inline-block;
-					min-width: 10ch;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					color: hsl(var(--hsl-text-extra-light));
-					font-weight: 500;
-				}
 			}
 
 			.cta {

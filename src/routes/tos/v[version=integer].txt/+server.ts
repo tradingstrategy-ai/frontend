@@ -1,15 +1,13 @@
 import { error, text } from '@sveltejs/kit';
 
 export async function GET({ params }) {
-	const { fileName } = params;
+	const { version } = params;
+
 	let tosText: string;
 
-	if (!/^v\d+-[a-f0-9]{10}\.txt$/.test(fileName)) {
-		throw error(404, 'Not found');
-	}
-
 	try {
-		tosText = (await import(`/src/lib/trade-executor/tos/${fileName}?raw`)).default;
+		// vite dynamic import requires relative path
+		tosText = (await import(`../../../lib/assets/tos/v${version}.txt?raw`)).default;
 	} catch (e) {
 		throw error(404, 'File not found');
 	}
