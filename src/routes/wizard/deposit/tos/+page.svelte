@@ -1,20 +1,68 @@
 <script lang="ts">
+	import fsm from 'svelte-fsm';
+	import { signMessage } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { wallet } from '$lib/wallet';
-	import { Alert, Button, Dialog, HashAddress, SummaryBox } from '$lib/components';
+	import { wallet, WalletAddress } from '$lib/wallet';
+	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
 
 	export let data;
-	const { canProceed, version, fileName, tosText } = data;
+	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
 
-	let accepted = canProceed;
 	let fullScreen = false;
+	let errorMessage: MaybeString;
 
-	$: wizard.toggleComplete('tos', accepted);
+	const tos = fsm('initial', {
+		initial: {
+			restore(completed: boolean) {
+				if (completed) return 'accepted';
+			},
+
+			sign() {
+				signMessage({ message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
+				return 'signing';
+			}
+		},
+
+		signing: {
+			complete(tosSignature) {
+				wizard.updateData({ tosSignature });
+				return 'accepted';
+			},
+
+			fail(err: Error) {
+				if (err.name === 'UserRejectedRequestError') {
+					errorMessage = 'Signature request rejected by user. Please try again and accept the request.';
+				} else {
+					errorMessage = err.message ?? String(err);
+				}
+				return 'failed';
+			}
+		},
+
+		failed: {
+			retry: 'initial'
+		},
+
+		accepted: {
+			_enter() {
+				wizard.toggleComplete('tos');
+			}
+		}
+	});
+
+	$: tos.restore(Boolean(canProceed || $wizard.data?.tosSignature));
 </script>
 
 <div class="deposit-tos">
 	{#if !tosText}
-		<Alert size="md" status="error" title="Error">Terms of service file not found</Alert>
+		<Alert size="md" status="error" title="Error">
+			Terms of service v{version} file not found
+		</Alert>
+	{:else if !acceptanceMessage}
+		<Alert size="md" status="error" title="Error">
+			Terms of service v{version} acceptance message not found in
+			<code>acceptance-messages.json</code>
+		</Alert>
 	{/if}
 
 	<SummaryBox>
@@ -48,12 +96,27 @@
 		</pre>
 	</SummaryBox>
 
-	<Button label="Accept terms of service" disabled={accepted} on:click={() => (accepted = true)} />
+	<Button label="Accept terms of service" disabled={$tos !== 'initial'} on:click={tos.sign} />
 
-	{#if accepted && $wallet.status === 'connected'}
-		<Alert size="md" status="success" title="Success">
-			Terms of service v{version} accepted by wallet address
-			<span class="wallet-address"><HashAddress address={$wallet.address} /></span>
+	{#if $tos === 'signing'}
+		<Alert size="sm" status="info" title="Signature request">
+			To accept the terms and conditions, please confirm the signature request in your wallet.
+		</Alert>
+	{/if}
+
+	{#if $tos === 'failed'}
+		<Alert size="sm" status="error" title="Error">
+			{errorMessage}
+			<Button slot="cta" size="sm" label="Try again" on:click={tos.retry} />
+		</Alert>
+	{/if}
+
+	{#if $tos === 'accepted'}
+		<Alert size="sm" status="success" title="Terms accepted">
+			Terms of service v{version} accepted
+			{#if $wallet.status === 'connected'}
+				by wallet <WalletAddress size="sm" wallet={$wallet} />
+			{/if}
 		</Alert>
 	{/if}
 
@@ -139,11 +202,6 @@
 			font: var(--f-mono-md-regular);
 			letter-spacing: var(--f-mono-md-spacing, normal);
 			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
-		}
-
-		.wallet-address {
-			display: inline-grid;
-			width: clamp(12.5ch, 50%, 20ch);
 		}
 	}
 </style>

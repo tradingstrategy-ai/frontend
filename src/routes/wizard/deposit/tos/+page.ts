@@ -2,6 +2,7 @@ import '$lib/wallet/client';
 import { multicall } from '@wagmi/core';
 import type { Abi } from 'viem';
 import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
+import acceptanceMessages from '$lib/assets/tos/acceptance-messages.json';
 
 // TODO: this will come from wizard.data.contracts
 const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
@@ -29,5 +30,11 @@ export async function load({ fetch }) {
 		console.error(e);
 	}
 
-	return { version, fileName, tosText, canProceed: Boolean(canProceed) };
+	return {
+		canProceed: Boolean(canProceed),
+		version,
+		fileName,
+		tosText,
+		acceptanceMessage: acceptanceMessages[fileName]
+	};
 }
