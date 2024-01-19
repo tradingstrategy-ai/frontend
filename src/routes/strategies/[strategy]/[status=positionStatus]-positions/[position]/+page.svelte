@@ -7,7 +7,6 @@
 		Alert,
 		DataBadge,
 		DataBox,
-		DataBoxes,
 		HashAddress,
 		PageHeading,
 		Timestamp,
@@ -53,7 +52,7 @@
 			</Alert>
 		{/if}
 
-		<DataBoxes>
+		<div class="position-info">
 			<DataBox label="Position" size="sm">
 				<div>
 					<a href={position.pair.info_url}>
@@ -300,7 +299,7 @@
 					</Tooltip>
 				{/if}
 			</DataBox>
-		</DataBoxes>
+		</div>
 
 		<TradeTable trades={position.trades} />
 	</section>
@@ -323,6 +322,16 @@
 		.hash-wrapper {
 			display: inline-grid;
 			text-decoration: inherit;
+		}
+	}
+
+	.position-info {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+		gap: 1.5rem;
+
+		@media (--viewport-sm-down) {
+			gap: 1rem;
 		}
 	}
 

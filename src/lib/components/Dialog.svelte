@@ -52,7 +52,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	});
 </script>
 
-<dialog bind:this={dialog}>
+<dialog bind:this={dialog} data-css-props>
 	<heading>
 		<h5>{title}</h5>
 		<button on:click={() => (open = false)}>
@@ -63,10 +63,15 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 </dialog>
 
 <style lang="postcss">
+	[data-css-props] {
+		--dialog-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
+		--dialog-min-width: 300px;
+		--dialog-max-width: 500px;
+	}
+
 	dialog {
-		--container-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
-		max-width: min(var(--container-width), 500px);
-		min-width: 300px;
+		max-width: min(var(--dialog-width), var(--dialog-max-width));
+		min-width: var(--dialog-min-width);
 		padding: var(--space-xl);
 		border: none;
 		border-radius: var(--radius-xs);
