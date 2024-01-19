@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
-	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
+	import { wallet } from '$lib/wallet';
+	import { Alert, Button, Dialog, HashAddress, SummaryBox } from '$lib/components';
 
 	export let data;
-	const { version, fileName, tosText } = data;
+	const { canProceed, version, fileName, tosText } = data;
 
+	let accepted = canProceed;
 	let fullScreen = false;
 
-	wizard.toggleComplete('tos');
+	$: wizard.toggleComplete('tos', accepted);
 </script>
 
 <div class="deposit-tos">
@@ -46,7 +48,14 @@
 		</pre>
 	</SummaryBox>
 
-	<Button label="Accept terms" />
+	<Button label="Accept terms of service" disabled={accepted} on:click={() => (accepted = true)} />
+
+	{#if accepted && $wallet.status === 'connected'}
+		<Alert size="md" status="success" title="Success">
+			Terms of service v{version} accepted by wallet address
+			<span class="wallet-address"><HashAddress address={$wallet.address} /></span>
+		</Alert>
+	{/if}
 
 	<Dialog bind:open={fullScreen} title="Terms of service">
 		<pre class="dialog tos-text">
@@ -103,8 +112,9 @@
 		.tos-text {
 			padding: 1.25rem;
 			border-radius: 1rem;
-			max-height: calc(100vh - 32em);
+			height: calc(100vh - 32em);
 			min-height: 18rem;
+			max-height: 28rem;
 			white-space: pre-line;
 			background: hsl(var(--hsla-input-background));
 			border: 2px solid hsl(var(--hsla-input-border));
@@ -114,11 +124,14 @@
 
 			@media (--viewport-xs) {
 				padding: 1rem;
-				max-height: calc(100vh - 34em);
+				height: calc(100vh - 34em);
+				min-height: 12rem;
+				max-height: 24rem;
 			}
 		}
 
 		.dialog {
+			height: auto;
 			max-height: calc(100vh - 8.5em);
 		}
 
@@ -126,6 +139,11 @@
 			font: var(--f-mono-md-regular);
 			letter-spacing: var(--f-mono-md-spacing, normal);
 			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
+		}
+
+		.wallet-address {
+			display: inline-grid;
+			width: clamp(12.5ch, 50%, 20ch);
 		}
 	}
 </style>

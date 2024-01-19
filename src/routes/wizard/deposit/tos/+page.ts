@@ -1,16 +1,19 @@
 import '$lib/wallet/client';
-import { readContract } from '@wagmi/core';
+import { multicall } from '@wagmi/core';
+import type { Abi } from 'viem';
 import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
 
 // TODO: this will come from wizard.data.contracts
 const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
 
 export async function load({ fetch }) {
-	const version = await readContract({
-		address,
-		abi: tosABI,
-		functionName: 'latestTermsOfServiceVersion'
-	});
+	const [canProceed, version] = await multicall({
+		contracts: ['canProceed', 'latestTermsOfServiceVersion'].map((functionName) => ({
+			address,
+			abi: tosABI as Abi,
+			functionName
+		}))
+	}).then((response) => response.map((item) => item.result));
 
 	// Temoporary hack - all versions = v0 until we launch
 	// const fileName = `v${version}.txt`;
@@ -26,5 +29,5 @@ export async function load({ fetch }) {
 		console.error(e);
 	}
 
-	return { version, fileName, tosText };
+	return { version, fileName, tosText, canProceed: Boolean(canProceed) };
 }
