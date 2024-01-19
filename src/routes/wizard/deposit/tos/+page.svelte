@@ -3,9 +3,7 @@
 	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
 
 	export let data;
-	const { version, tosText } = data;
-
-	const fileName = `tos/v${version}.txt`;
+	const { version, fileName, tosText } = data;
 
 	let fullScreen = false;
 
@@ -26,7 +24,7 @@
 					icon="download"
 					label="Download"
 					disabled={!tosText}
-					href={fileName}
+					href="/tos/{fileName}"
 					download="Trading Strategy Terms of Service v{version}.txt"
 				/>
 				<Button
@@ -43,7 +41,7 @@
 				{tosText}
 			{:else}
 				Terms of service file not found:
-  			&gt; src/lib/assets/{fileName}
+  			&gt; src/lib/assets/tos/{fileName}
 			{/if}
 		</pre>
 	</SummaryBox>

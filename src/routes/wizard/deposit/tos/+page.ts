@@ -1,16 +1,30 @@
+import '$lib/wallet/client';
+import { readContract } from '@wagmi/core';
+import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
+
+// TODO: this will come from wizard.data.contracts
+const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
+
 export async function load({ fetch }) {
-	// TODO: this value will come from the terms of service contract
-	const version = '0';
+	const version = await readContract({
+		address,
+		abi: tosABI,
+		functionName: 'latestTermsOfServiceVersion'
+	});
+
+	// Temoporary hack - all versions = v0 until we launch
+	// const fileName = `v${version}.txt`;
+	const fileName = 'v0.txt';
 
 	let tosText: string | undefined;
 
 	try {
-		const resp = await fetch(`/tos/v${version}.txt?`);
+		const resp = await fetch(`/tos/${fileName}`);
 		if (!resp.ok) throw new Error(resp.statusText);
 		tosText = await resp.text();
 	} catch (e) {
 		console.error(e);
 	}
 
-	return { version, tosText };
+	return { version, fileName, tosText };
 }
