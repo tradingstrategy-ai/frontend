@@ -2,7 +2,7 @@ import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { GetAccountReturnType } from '@wagmi/core';
-import { type Config, createConfig, connect, disconnect, http, watchAccount } from '@wagmi/core';
+import { type Config, createConfig, connect, disconnect, http, watchAccount, reconnect } from '@wagmi/core';
 import { injected } from '@wagmi/connectors';
 import { type Chain, mainnet, polygon } from '@wagmi/core/chains';
 // import { w3mProvider } from '@web3modal/ethereum';
@@ -25,12 +25,12 @@ export type UnConnectedWallet = Partial<GetAccountReturnType> & {
 
 export type Wallet = ConnectedWallet | UnConnectedWallet;
 
-const connectors = {
+const connectorTypes = {
 	injected: injected()
 	// walletConnect: walletConnect({ projectId })
 } as const;
 
-export type ConnectorType = keyof typeof connectors;
+export type ConnectorType = keyof typeof connectorTypes;
 
 const { subscribe, set }: Writable<Wallet> = writable({ status: 'connecting' });
 
@@ -54,8 +54,10 @@ function initWalletClient() {
 			[polygon.id]: http()
 		},
 
-		connectors: Object.values(connectors)
+		connectors: Object.values(connectorTypes)
 	});
+
+	reconnect(config);
 
 	// TODO: watch on first subscription; stop watching on last unsub
 	watchAccount(config, { onChange: set });
@@ -66,7 +68,7 @@ function initWalletClient() {
 function connectWallet(type: ConnectorType, chainId: number | undefined) {
 	return connect(config!, {
 		chainId,
-		connector: connectors[type]
+		connector: connectorTypes[type]
 	});
 }
 
