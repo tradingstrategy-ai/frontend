@@ -72,4 +72,8 @@ function connectWallet(type: ConnectorType, chainId: number | undefined) {
 	});
 }
 
-export const wallet = { config, subscribe, connect: connectWallet, disconnect };
+function disconnectWallet() {
+	return disconnect(config!);
+}
+
+export const wallet = { config, subscribe, connect: connectWallet, disconnect: disconnectWallet };
