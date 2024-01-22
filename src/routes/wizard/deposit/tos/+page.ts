@@ -1,4 +1,4 @@
-import '$lib/wallet/client';
+import { config } from '$lib/wallet';
 import { multicall } from '@wagmi/core';
 import type { Abi } from 'viem';
 import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
@@ -8,7 +8,7 @@ import acceptanceMessages from '$lib/assets/tos/acceptance-messages.json';
 const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
 
 export async function load({ fetch }) {
-	const [canProceed, version] = await multicall({
+	const [canProceed, version] = await multicall(config, {
 		contracts: ['canProceed', 'latestTermsOfServiceVersion'].map((functionName) => ({
 			address,
 			abi: tosABI as Abi,
