@@ -26,17 +26,17 @@ export type UnConnectedWallet = Partial<GetAccountReturnType> & {
 export type Wallet = ConnectedWallet | UnConnectedWallet;
 
 const connectorTypes = {
-	injected: injected()
+	injected: injected({ target: 'metaMask' })
 	// walletConnect: walletConnect({ projectId })
 } as const;
 export type ConnectorType = keyof typeof connectorTypes;
 
 const chains = [mainnet, polygon] as const;
-type ChainId = (typeof chains)[number]['id'];
+export type ConfiguredChainId = (typeof chains)[number]['id'];
 
 const { subscribe, set }: Writable<Wallet> = writable({ status: 'connecting' });
 
-const config = createConfig({
+export const config = createConfig({
 	ssr: !browser,
 
 	chains,
@@ -59,7 +59,7 @@ reconnect(config);
 // TODO: watch on first subscription; stop watching on last unsub
 watchAccount(config, { onChange: set });
 
-function connectWallet(type: ConnectorType, chainId: ChainId | undefined) {
+function connectWallet(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
 	return connect(config, {
 		chainId,
 		connector: connectorTypes[type]
@@ -70,4 +70,4 @@ function disconnectWallet() {
 	return disconnect(config);
 }
 
-export const wallet = { config, subscribe, connect: connectWallet, disconnect: disconnectWallet };
+export const wallet = { subscribe, connect: connectWallet, disconnect: disconnectWallet };
