@@ -41,8 +41,8 @@
 		/>
 	</ChartContainer>
 
-	{#if summaryStatistics.long_short_table}
-		<LongShortTable tableData={summaryStatistics.long_short_table} />
+	{#if state.stats.long_short_metrics_latest}
+		<LongShortTable tableData={state.stats.long_short_metrics_latest} />
 	{:else}
 		<SummaryStatistics {oldLatestStats} {summaryStatistics} />
 	{/if}

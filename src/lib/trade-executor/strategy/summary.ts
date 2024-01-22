@@ -20,7 +20,6 @@ import {
 	usDollarAmount
 } from '../state/utility-types';
 import { keyMetricSchema } from '../statistics/key-metric';
-import { longShortTableSchema } from '../statistics/statistics-table';
 
 export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
 
@@ -56,8 +55,7 @@ export const strategySummaryStatisticsSchema = z.object({
 	return_annualised: percent.nullish(),
 	performance_chart_90_days: performanceTupleSchema.array().nullish(),
 	key_metrics: z.record(keyMetricSchema),
-	backtest_metrics_cut_off_period: duration.nullish(),
-	long_short_table: longShortTableSchema.nullish()
+	backtest_metrics_cut_off_period: duration.nullish()
 });
 export type StrategySummaryStatistics = z.infer<typeof strategySummaryStatisticsSchema>;
 

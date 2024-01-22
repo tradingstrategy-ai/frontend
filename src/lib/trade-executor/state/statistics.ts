@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { count, percent, primaryKeyString, unixTimestamp, usDollarAmount } from './utility-types';
 import { tradeSummarySchema } from './trade';
+import { longShortTableSchema } from '../statistics/statistics-table';
 
 export const positionStatisticsSchema = z.object({
 	calculated_at: unixTimestamp,
@@ -48,6 +49,7 @@ export type PortfolioStatistics = z.infer<typeof portfolioStatisticsSchema>;
 export const statisticsSchema = z.object({
 	portfolio: portfolioStatisticsSchema.array(),
 	positions: z.record(primaryKeyString, positionStatisticsSchema.array()),
-	closed_positions: z.record(primaryKeyString, finalPositionStatisticsSchema)
+	closed_positions: z.record(primaryKeyString, finalPositionStatisticsSchema),
+	long_short_metrics_latest: longShortTableSchema.nullish()
 });
 export type Statistics = z.infer<typeof statisticsSchema>;
