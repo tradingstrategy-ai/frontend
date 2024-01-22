@@ -2,9 +2,9 @@
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
-	import { fetchBalance, readContract } from '@wagmi/core';
+	import { getBalance, readContract } from '@wagmi/core';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
@@ -16,19 +16,19 @@
 	const dispatch = createEventDispatcher();
 
 	async function fetchNativeCurrency(address: Address) {
-		const nativeCurrency = await fetchBalance({ address });
+		const nativeCurrency = await getBalance(config, { address });
 		dispatch('dataFetch', { nativeCurrency });
 		return nativeCurrency;
 	}
 
 	async function fetchDenominationToken(address: Address) {
-		const token = (await readContract({
+		const token = (await readContract(config, {
 			address: contracts.comptroller,
 			abi: comptrollerABI,
 			functionName: 'getDenominationAsset'
 		})) as Address;
 
-		const balance = await fetchBalance({ address, token });
+		const balance = await getBalance(config, { address, token });
 
 		dispatch('dataFetch', {
 			denominationToken: { address: token, ...balance }
@@ -52,14 +52,16 @@
 		{/await}
 	</WalletInfoItem>
 
-	<WalletInfoItem>
-		<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
-		{#await fetchDenominationToken(address)}
-			<Spinner size="30" color="hsl(var(--hsl-text-light))" />
-		{:then balance}
-			{formatNumber(balance.formatted, 2, 4)}
-		{:catch}
-			---
-		{/await}
-	</WalletInfoItem>
+	{#if contracts.comptroller}
+		<WalletInfoItem>
+			<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
+			{#await fetchDenominationToken(address)}
+				<Spinner size="30" color="hsl(var(--hsl-text-light))" />
+			{:then balance}
+				{formatNumber(balance.formatted, 2, 4)}
+			{:catch}
+				---
+			{/await}
+		</WalletInfoItem>
+	{/if}
 </WalletInfo>
