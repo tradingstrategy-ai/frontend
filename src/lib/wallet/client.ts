@@ -1,7 +1,7 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { CreateConnectorFn, GetAccountReturnType } from '@wagmi/core';
+import type { GetAccountReturnType } from '@wagmi/core';
 import { type Config, createConfig, connect, disconnect, http, watchAccount } from '@wagmi/core';
 import { injected } from '@wagmi/connectors';
 import { type Chain, mainnet, polygon } from '@wagmi/core/chains';
@@ -15,8 +15,6 @@ function getRpcUrl({ id }: Chain) {
 	return http && { http };
 }
 
-export type ConnectorType = 'injected' | 'walletConnect';
-
 export type ConnectedWallet = GetAccountReturnType & {
 	status: 'connected';
 };
@@ -27,18 +25,22 @@ export type UnConnectedWallet = Partial<GetAccountReturnType> & {
 
 export type Wallet = ConnectedWallet | UnConnectedWallet;
 
+const connectors = {
+	injected: injected()
+	// walletConnect: walletConnect({ projectId })
+} as const;
+
+export type ConnectorType = keyof typeof connectors;
+
 const { subscribe, set }: Writable<Wallet> = writable({ status: 'connecting' });
+
+let config: Config | undefined;
 
 // initialize on first client-side load
 let initialized = false;
-let config: Config | undefined;
-const connectors: CreateConnectorFn[] = [];
 if (browser && !initialized) initWalletClient();
 
 function initWalletClient() {
-	connectors.push(injected());
-	// connectors.push(walletConnect({ projectId }));
-
 	config = createConfig({
 		chains: [mainnet, polygon],
 
@@ -52,7 +54,7 @@ function initWalletClient() {
 			[polygon.id]: http()
 		},
 
-		connectors
+		connectors: Object.values(connectors)
 	});
 
 	// TODO: watch on first subscription; stop watching on last unsub
@@ -62,10 +64,10 @@ function initWalletClient() {
 }
 
 function connectWallet(type: ConnectorType, chainId: number | undefined) {
-	const connector = connectors.find((c) => c.id === type)!;
-	if (config) {
-		return connect(config, { chainId, connector });
-	}
+	return connect(config!, {
+		chainId,
+		connector: connectors[type]
+	});
 }
 
 export const wallet = { config, subscribe, connect: connectWallet, disconnect };

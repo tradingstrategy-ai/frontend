@@ -4,7 +4,7 @@
 	import { AlertList, Button } from '$lib/components';
 	import { type ConnectorType, wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
-	export let chainId: MaybeNumber;
+	export let chainId: number | undefined;
 	export let chainInfo: Record<string, ApiChain>;
 
 	let error: any;
