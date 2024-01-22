@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { fetchBalance, readContract } from '@wagmi/core';
@@ -7,7 +8,7 @@
 	import { EntitySymbol } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
-	export let contracts: Contracts;
+	export let contracts: EnzymeSmartContracts;
 
 	$: ({ address, chain } = $wallet);
 	$: chainCurrency = chain?.nativeCurrency.symbol;

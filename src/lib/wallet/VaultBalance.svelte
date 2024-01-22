@@ -1,13 +1,15 @@
 <script lang="ts">
+	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
-	import { fetchBalance, fetchToken, prepareWriteContract } from '@wagmi/core';
+	import { getBalance, simulateContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
+	import { config } from '$lib/wallet';
 	import { DataBox } from '$lib/components';
 	import { TokenBalance } from '$lib/wallet';
 
 	export let address: Address;
-	export let contracts: Contracts;
+	export let contracts: EnzymeSmartContracts;
 
 	const dispatch = createEventDispatcher();
 
@@ -15,25 +17,32 @@
 	const value = fetchVaultNetValue(address);
 
 	async function fetchVaultShares(address: Address) {
-		const vaultShares = await fetchBalance({ token: contracts.vault, address });
+		const vaultShares = await getBalance(config, { token: contracts.vault, address });
 		dispatch('dataFetch', { vaultShares });
 		return vaultShares;
 	}
 
-	async function fetchVaultNetValue(account: Address) {
-		const { result } = await prepareWriteContract({
-			address: contracts.fund_value_calculator,
+	async function fetchVaultNetValue(address: Address) {
+		const { result } = await simulateContract(config, {
 			abi: fundValueCalculatorABI,
+			address: contracts.fund_value_calculator,
 			functionName: 'calcNetValueForSharesHolder',
-			args: [contracts.vault, account]
+			args: [contracts.vault, address]
 		});
 
-		const [address, value] = result as [Address, bigint];
-		const denominationToken = await fetchToken({ address });
+		const [token, value] = result as [Address, bigint];
+		const denominationToken = await getBalance(config, { token, address });
 		const { decimals, symbol } = denominationToken;
 
-		const vaultNetValue = { decimals, symbol, value, formatted: formatUnits(value, decimals) };
+		const vaultNetValue = {
+			decimals,
+			symbol: symbol ?? '---',
+			value,
+			formatted: formatUnits(value, decimals)
+		};
+
 		dispatch('dataFetch', { denominationToken, vaultNetValue });
+
 		return vaultNetValue;
 	}
 </script>

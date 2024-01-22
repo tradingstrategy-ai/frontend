@@ -6,8 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { switchChain } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { config, wallet, DepositWarning } from '$lib/wallet';
-	// import { DepositBalance, VaultBalance } from '$lib/wallet';
+	import { config, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 	import { formatDollar } from '$lib/helpers/formatters';
 
@@ -50,11 +49,11 @@
 		expandable.close();
 	}
 
-	// function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
-	// 	if (detail.vaultNetValue) {
-	// 		vaultBalance = detail.vaultNetValue.formatted;
-	// 	}
-	// }
+	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
+		if (detail.vaultNetValue) {
+			vaultBalance = detail.vaultNetValue.formatted;
+		}
+	}
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
@@ -106,10 +105,10 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<!-- <VaultBalance {contracts} address={$wallet.address} let:shares let:value on:dataFetch={setVaultBalance}>
+					<VaultBalance {contracts} address={$wallet.address} let:shares let:value on:dataFetch={setVaultBalance}>
 						<DepositBalance label="Value" data={value} dollar />
 						<DepositBalance label="Shares" data={shares} />
-					</VaultBalance> -->
+					</VaultBalance>
 				</dl>
 			{/if}
 			<div class="actions">

@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { FetchBalanceResult } from '@wagmi/core';
+	import type { GetBalanceReturnType } from '@wagmi/core';
+
 	import { TokenBalance } from '$lib/wallet';
 
 	export let label: string;
-	export let data: MaybePromise<FetchBalanceResult>;
+	export let data: MaybePromise<GetBalanceReturnType>;
 	export let dollar = false;
 </script>
 
