@@ -1,21 +1,11 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { Chain, Connector } from '@wagmi/core';
-import {
-	createConfig,
-	configureChains,
-	connect,
-	disconnect,
-	watchAccount,
-	watchNetwork,
-	InjectedConnector
-} from '@wagmi/core';
-import { arbitrum, avalanche, bsc, mainnet, polygon } from 'viem/chains';
-import { publicProvider } from '@wagmi/core/providers/public';
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-import { w3mProvider } from '@web3modal/ethereum';
+import type { CreateConnectorFn, GetAccountReturnType } from '@wagmi/core';
+import { type Config, createConfig, connect, disconnect, http, watchAccount } from '@wagmi/core';
+import { injected } from '@wagmi/connectors';
+import { type Chain, mainnet, polygon } from '@wagmi/core/chains';
+// import { w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
 
@@ -27,70 +17,55 @@ function getRpcUrl({ id }: Chain) {
 
 export type ConnectorType = 'injected' | 'walletConnect';
 
-type CommonWallet = {
-	name: string;
-	address: Address;
-	chain: Chain;
-	connector: Connector;
-};
-
-export type ConnectedWallet = CommonWallet & {
+export type ConnectedWallet = GetAccountReturnType & {
 	status: 'connected';
 };
 
-export type UnConnectedWallet = Partial<CommonWallet> & {
-	status: 'disconnected' | 'connecting' | 'reconnecting';
+export type UnConnectedWallet = Partial<GetAccountReturnType> & {
+	status: 'connecting' | 'reconnecting' | 'disconnected';
 };
 
 export type Wallet = ConnectedWallet | UnConnectedWallet;
 
-const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' });
+const { subscribe, set }: Writable<Wallet> = writable({ status: 'connecting' });
 
 // initialize on first client-side load
 let initialized = false;
-const connectors: Connector[] = [];
-if (browser && !initialized) initWalletClient(connectors);
+let config: Config | undefined;
+const connectors: CreateConnectorFn[] = [];
+if (browser && !initialized) initWalletClient();
 
-function initWalletClient(connectors: Connector[]) {
-	const { chains, publicClient, webSocketPublicClient } = configureChains(
-		[arbitrum, avalanche, bsc, mainnet, polygon],
-		[jsonRpcProvider({ rpc: getRpcUrl }), w3mProvider({ projectId }), publicProvider()]
-	);
+function initWalletClient() {
+	connectors.push(injected());
+	// connectors.push(walletConnect({ projectId }));
 
-	connectors.push(new InjectedConnector());
-	connectors.push(new WalletConnectConnector({ chains, options: { projectId } }));
+	config = createConfig({
+		chains: [mainnet, polygon],
 
-	createConfig({
-		autoConnect: true,
-		connectors,
-		publicClient,
-		webSocketPublicClient
+		// TODO: configure connectors based on RPC URLs
+		// old code (from configureChains call):
+		// [jsonRpcProvider({ rpc: getRpcUrl }), w3mProvider({ projectId }), publicProvider()]
+		// see https://wagmi.sh/core/api/transports
+		// or consider using viem createClient (https://wagmi.sh/core/api/createConfig)
+		transports: {
+			[mainnet.id]: http(),
+			[polygon.id]: http()
+		},
+
+		connectors
 	});
 
 	// TODO: watch on first subscription; stop watching on last unsub
-	watchNetwork((network) => {
-		update((wallet) => ({ ...wallet, chain: network?.chain }));
-	});
-
-	// TODO: watch on first subscription; stop watching on last unsub
-	watchAccount(({ address, status, connector }) => {
-		update(({ chain }) => {
-			return {
-				status,
-				address,
-				name: connector?.name,
-				connector,
-				chain: status === 'connected' ? chain : undefined
-			};
-		});
-	});
+	watchAccount(config, { onChange: set });
 
 	initialized = true;
 }
 
 function connectWallet(type: ConnectorType, chainId: number | undefined) {
 	const connector = connectors.find((c) => c.id === type)!;
-	return connect({ chainId, connector });
+	if (config) {
+		return connect(config, { chainId, connector });
+	}
 }
 
-export const wallet = { subscribe, connect: connectWallet, disconnect };
+export const wallet = { config, subscribe, connect: connectWallet, disconnect };
