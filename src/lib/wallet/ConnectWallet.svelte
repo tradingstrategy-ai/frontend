@@ -2,9 +2,10 @@
 	import { fade } from 'svelte/transition';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { AlertList, Button } from '$lib/components';
-	import { type ConnectorType, wallet, WalletSummary, WalletTile } from '$lib/wallet';
+	import type { ConnectorType, ConfiguredChainId } from '$lib/wallet';
+	import { wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
-	export let chainId: number | undefined;
+	export let chainId: ConfiguredChainId | undefined;
 	export let chainInfo: Record<string, ApiChain>;
 
 	let error: any;
