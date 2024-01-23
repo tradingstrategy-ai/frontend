@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
-	import { getBalance, simulateContract } from '@wagmi/core';
 	import { formatUnits } from 'viem';
+	import { simulateContract } from '@wagmi/core';
+	import { config, getTokenBalance } from '$lib/wallet';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
-	import { config } from '$lib/wallet';
 	import { DataBox } from '$lib/components';
 	import { TokenBalance } from '$lib/wallet';
 
@@ -17,7 +17,7 @@
 	const value = fetchVaultNetValue(address);
 
 	async function fetchVaultShares(address: Address) {
-		const vaultShares = await getBalance(config, { token: contracts.vault, address });
+		const vaultShares = await getTokenBalance(config, { token: contracts.vault!, address });
 		dispatch('dataFetch', { vaultShares });
 		return vaultShares;
 	}
@@ -31,7 +31,7 @@
 		});
 
 		const [token, value] = result as [Address, bigint];
-		const denominationToken = await getBalance(config, { token, address });
+		const denominationToken = await getTokenBalance(config, { token, address });
 		const { decimals, symbol } = denominationToken;
 
 		const vaultNetValue = {

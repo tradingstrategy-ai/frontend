@@ -6,7 +6,7 @@
 
 	export let data;
 	const { receivedAssets } = data;
-	const { strategyName, shares } = $wizard.data;
+	const { strategyName, shares } = $wizard.data!;
 
 	function sharesWithLabel(value: number) {
 		const label = value === 1 ? 'share' : 'shares';
