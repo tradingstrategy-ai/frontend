@@ -4,7 +4,7 @@
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getBalance, readContract } from '@wagmi/core';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet, getTokenBalance, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
@@ -27,14 +27,9 @@
 			abi: comptrollerABI,
 			functionName: 'getDenominationAsset'
 		})) as Address;
-
-		const balance = await getBalance(config, { address, token });
-
-		dispatch('dataFetch', {
-			denominationToken: { address: token, ...balance }
-		});
-
-		return balance;
+		const denominationToken = await getTokenBalance(config, { address, token });
+		dispatch('dataFetch', { denominationToken });
+		return denominationToken;
 	}
 </script>
 

@@ -4,21 +4,22 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
-	import type { FetchBalanceResult } from '@wagmi/core';
-	import { getPublicClient, prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core';
+	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+	import type { GetBalanceReturnType } from '@wagmi/core';
+	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { formatNumber } from '$lib/helpers/formatters';
-	import { wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { type GetTokenBalanceReturnType, config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
-	const contracts: Contracts = $wizard.data.contracts;
-	const denominationToken: FetchBalanceResult = $wizard.data.denominationToken;
-	const nativeCurrency: FetchBalanceResult = $wizard.data.nativeCurrency;
+	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
+	const denominationToken: GetTokenBalanceReturnType = $wizard.data?.denominationToken;
+	const nativeCurrency: GetBalanceReturnType = $wizard.data?.nativeCurrency;
 
-	let paymentValue: MaybeString;
+	let paymentValue = '';
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 	let paymentInput: MoneyInput;
@@ -30,28 +31,29 @@
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
 	async function authorizeTransfer() {
-		const tokenInfo = await fetchTokenInfo(denominationToken.address);
+		const tokenInfo = await fetchTokenInfo(config, { address: denominationToken.address });
+
 		const value = parseUnits(paymentValue, tokenInfo.decimals);
 
-		return getSignedArguments(
-			'TransferWithAuthorization',
-			$wizard.data.chainId,
-			tokenInfo,
-			$wallet.address!,
-			contracts.payment_forwarder,
+		return getSignedArguments(config, {
+			chainId: $wizard.data?.chainId,
+			token: tokenInfo,
+			transferMethod: 'TransferWithAuthorization',
+			from: $wallet.address!,
+			to: contracts.payment_forwarder!,
 			value
-		);
+		});
 	}
 
 	async function confirmPayment(signedArgs: SignedArguments) {
-		const { request } = await prepareWriteContract({
+		const { request } = await simulateContract(config, {
 			address: contracts.payment_forwarder,
 			abi: paymentForwarderABI,
 			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
 			args: [...signedArgs, 1]
 		});
 
-		return writeContract(request);
+		return writeContract(config, request);
 	}
 
 	const payment = fsm('initial', {
@@ -101,8 +103,8 @@
 		},
 
 		confirming: {
-			process({ hash }) {
-				transactionId = hash;
+			process(txId) {
+				transactionId = txId;
 				wizard.updateData({ transactionId });
 				return 'processing';
 			},
@@ -123,16 +125,13 @@
 
 				if (event === 'restore') {
 					// try fetching receipt in case transaction already completed
-					getPublicClient()
-						.getTransactionReceipt({ hash })
-						.then(payment.finish)
-						.catch(() => {});
+					getTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.noop);
 					progressBar.set(50, { duration: 0 });
 					duration *= 0.5;
 				}
 
 				// wait for pending transaction
-				waitForTransaction({ hash }).then(payment.finish).catch(payment.fail);
+				waitForTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.fail);
 				progressBar.set(100, { duration });
 			},
 
@@ -142,7 +141,7 @@
 
 			finish(receipt) {
 				if (receipt.status !== 'success') {
-					console.error('waitForTransaction reverted:', receipt);
+					console.error('waitForTransactionReceipt reverted:', receipt);
 					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 					return 'failed';
 				}
@@ -151,14 +150,16 @@
 
 			fail(err) {
 				const eventId = captureException(err);
-				console.error('waitForTransaction error:', eventId, err);
+				console.error('waitForTransactionReceipt error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
 					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
 				} else {
 					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}
 				return 'failed';
-			}
+			},
+
+			noop() {}
 		},
 
 		failed: {
