@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
 	import { fade } from 'svelte/transition';
-	import { formatNumber } from '$lib/helpers/formatters';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
 	import { config, wallet, buyNativeCurrencyUrl, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Alert, Button, Grid, EntitySymbol } from '$lib/components';
@@ -38,7 +38,7 @@
 				{#await getNativeCurrency(address)}
 					<Spinner size="30" color="hsl(var(--hsl-text-light))" />
 				{:then balance}
-					{formatNumber(balance.formatted, 2, 4)}
+					{formatBalance(balance, 2, 4)}
 				{/await}
 			</WalletInfoItem>
 		</WalletInfo>

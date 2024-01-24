@@ -38,6 +38,7 @@
 			decimals,
 			symbol: symbol ?? '---',
 			value,
+			// TODO: remove deprecated `formatted` property after @wagmi removes from GetBalanceReturnType
 			formatted: formatUnits(value, decimals)
 		};
 

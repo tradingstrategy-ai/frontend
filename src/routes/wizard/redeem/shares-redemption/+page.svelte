@@ -8,6 +8,7 @@
 	import type { GetBalanceReturnType } from '@wagmi/core';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { config, wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -159,8 +160,8 @@
 			<Button
 				secondary
 				size="xs"
-				on:click={() => (shares = vaultShares.formatted)}
-				disabled={shares === vaultShares.formatted}
+				on:click={() => (shares = formatBalance(vaultShares))}
+				disabled={shares === formatBalance(vaultShares)}
 			>
 				Redeem all
 				<span class="wide">{vaultShares.symbol}</span>
@@ -173,12 +174,12 @@
 				bind:value={shares}
 				size="xl"
 				tokenUnit={vaultShares.symbol}
-				conversionRatio={Number(vaultNetValue.formatted) / Number(vaultShares.formatted)}
+				conversionRatio={Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares))}
 				conversionUnit={vaultNetValue.symbol}
 				conversionLabel="Estimated value"
 				disabled={$redemption !== 'initial'}
 				min={formatUnits(1n, vaultShares.decimals)}
-				max={vaultShares.formatted}
+				max={formatBalance(vaultShares)}
 				on:change={() => wizard.updateData({ shares })}
 			/>
 

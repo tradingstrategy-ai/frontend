@@ -8,6 +8,7 @@
 	import { wizard } from 'wizard/store';
 	import { config, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let strategy: ConnectedStrategyRuntimeState;
@@ -51,7 +52,7 @@
 
 	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
 		if (detail.vaultNetValue) {
-			vaultBalance = detail.vaultNetValue.formatted;
+			vaultBalance = formatBalance(detail.vaultNetValue);
 		}
 	}
 

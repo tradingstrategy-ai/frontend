@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
-	import { formatNumber } from '$lib/helpers/formatters';
 	import { getBalance, readContract } from '@wagmi/core';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { config, wallet, getTokenBalance, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
@@ -43,7 +43,7 @@
 		{#await fetchNativeCurrency(address)}
 			<Spinner size="30" color="hsl(var(--hsl-text-light))" />
 		{:then balance}
-			{formatNumber(balance.formatted, 2, 4)}
+			{formatBalance(balance, 2, 4)}
 		{/await}
 	</WalletInfoItem>
 
@@ -53,7 +53,7 @@
 			{#await fetchDenominationToken(address)}
 				<Spinner size="30" color="hsl(var(--hsl-text-light))" />
 			{:then balance}
-				{formatNumber(balance.formatted, 2, 4)}
+				{formatBalance(balance, 2, 4)}
 			{:catch}
 				---
 			{/await}

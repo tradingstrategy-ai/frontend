@@ -8,7 +8,7 @@
 	import type { GetBalanceReturnType } from '@wagmi/core';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { formatNumber } from '$lib/helpers/formatters';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { type GetTokenBalanceReturnType, config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
@@ -198,7 +198,7 @@
 					label={nativeCurrency.symbol}
 					slug={nativeCurrency.symbol.toLowerCase()}
 				/>
-				{formatNumber(nativeCurrency.formatted, 2, 4)}
+				{formatBalance(nativeCurrency, 2, 4)}
 			</WalletInfoItem>
 
 			<WalletInfoItem>
@@ -208,7 +208,7 @@
 					label={denominationToken.symbol}
 					slug={denominationToken.symbol.toLowerCase()}
 				/>
-				{formatNumber(denominationToken.formatted, 2, 4)}
+				{formatBalance(denominationToken, 2, 4)}
 			</WalletInfoItem>
 		</WalletInfo>
 	</section>
@@ -220,8 +220,8 @@
 			<Button
 				secondary
 				size="xs"
-				on:click={() => (paymentValue = denominationToken.formatted)}
-				disabled={paymentValue === denominationToken.formatted}
+				on:click={() => (paymentValue = formatBalance(denominationToken))}
+				disabled={paymentValue === formatBalance(denominationToken)}
 			>
 				Deposit all
 				<span class="wide">{denominationToken.symbol}</span>
@@ -236,7 +236,7 @@
 				tokenUnit={denominationToken.symbol}
 				disabled={$payment !== 'initial'}
 				min={formatUnits(1n, denominationToken.decimals)}
-				max={denominationToken.formatted}
+				max={formatBalance(denominationToken)}
 				on:change={() => wizard.updateData({ paymentValue })}
 			/>
 
