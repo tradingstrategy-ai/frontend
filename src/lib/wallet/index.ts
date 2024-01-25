@@ -12,4 +12,4 @@ export { default as WalletSummary } from './WalletSummary.svelte';
 export { default as WalletTile } from './WalletTile.svelte';
 export { default as WalletWidget } from './WalletWidget.svelte';
 export * from './client';
-export * from './utils';
+export * from './helpers';
