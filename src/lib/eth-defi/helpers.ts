@@ -1,7 +1,7 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
-import { getBalance, multicall } from '@wagmi/core';
+import { readContracts } from '@wagmi/core';
 import { formatNumber } from '$lib/helpers/formatters';
 
 /**
@@ -50,7 +50,7 @@ export async function getTokenInfo(
 	const abi = [...erc20Abi, ...tokenVersionAbi];
 	const functionNames = ['decimals', 'name', 'symbol', 'version', 'EIP712_VERSION'] as const;
 
-	const response = await multicall(config, {
+	const response = await readContracts(config, {
 		contracts: functionNames.map((functionName) => ({ address, abi, chainId, functionName }))
 	});
 
@@ -65,20 +65,31 @@ export async function getTokenInfo(
 	} as TokenInfo;
 }
 
-export type GetTokenBalanceReturnType = GetBalanceReturnType & { address: Address };
+export type GetTokenBalanceParameters = Omit<GetBalanceParameters, 'unit'> & { token: Address };
+export type GetTokenBalanceReturnType = Omit<GetBalanceReturnType, 'formatted'> & { address: Address };
 
 /**
- * Wrapper around @wagmi getBalance that includes token address in the returned object
+ * Get token balance for a given address
+ *
+ * Similar API as @wagmi/core getBalance:
+ * - additional `token` param for ERC20 token address
+ * - return object includes additional `address` property
  */
 export async function getTokenBalance(
 	config: Config,
-	parameters: GetBalanceParameters & {
-		token: Address;
-	}
+	parameters: GetTokenBalanceParameters
 ): Promise<GetTokenBalanceReturnType> {
-	const balance = await getBalance(config, parameters);
-	return {
-		...balance,
-		address: parameters.token
-	};
+	const { token, address, ...contractParams } = parameters;
+	const contract = { address: token, abi: erc20Abi, ...contractParams };
+
+	const response = await readContracts(config, {
+		contracts: [
+			{ ...contract, functionName: 'decimals' },
+			{ ...contract, functionName: 'symbol' },
+			{ ...contract, functionName: 'balanceOf', args: [address] }
+		]
+	});
+
+	const [decimals, symbol, value] = response.map(({ result }) => result);
+	return { address: token, decimals, symbol, value } as GetTokenBalanceReturnType;
 }

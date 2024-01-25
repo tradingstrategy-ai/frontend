@@ -23,11 +23,11 @@
 	}
 
 	async function fetchDenominationToken(address: Address) {
-		const token = (await readContract(config, {
+		const token = await readContract(config, {
 			address: contracts.comptroller,
 			abi: comptrollerABI,
 			functionName: 'getDenominationAsset'
-		})) as Address;
+		});
 		const denominationToken = await getTokenBalance(config, { address, token });
 		dispatch('dataFetch', { denominationToken });
 		return denominationToken;
