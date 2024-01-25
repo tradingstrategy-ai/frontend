@@ -8,10 +8,10 @@
 	import type { GetBalanceReturnType } from '@wagmi/core';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { type GetTokenBalanceReturnType, config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { type SignedArguments, fetchTokenInfo, getSignedArguments } from '$lib/eth-defi/eip-3009';
+	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
@@ -31,13 +31,11 @@
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
 	async function authorizeTransfer() {
-		const tokenInfo = await fetchTokenInfo(config, { address: denominationToken.address });
-
-		const value = parseUnits(paymentValue, tokenInfo.decimals);
-
+		const token = await getTokenInfo(config, { address: denominationToken.address });
+		const value = parseUnits(paymentValue, token.decimals);
 		return getSignedArguments(config, {
 			chainId: $wizard.data?.chainId,
-			token: tokenInfo,
+			token: token,
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
 			to: contracts.payment_forwarder!,

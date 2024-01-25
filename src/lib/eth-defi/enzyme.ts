@@ -1,6 +1,7 @@
 import { formatUnits, isAddressEqual } from 'viem';
-import { type Config, type GetBalanceReturnType, getToken } from '@wagmi/core';
+import type { Config, GetBalanceReturnType } from '@wagmi/core';
 import type { GetTokenBalanceReturnType } from '$lib/wallet';
+import { getTokenInfo } from './helpers';
 
 export type AssetWithdrawl = {
 	asset: Address;
@@ -22,7 +23,7 @@ export async function getRedemption(config: Config, params: GetRedemptionParams)
 	const { asset: address, amount: value } = withdrawl;
 	const { decimals, symbol } = isAddressEqual(address, denominationToken.address)
 		? denominationToken
-		: await getToken(config, { address, chainId });
+		: await getTokenInfo(config, { address, chainId });
 
 	return {
 		decimals,
