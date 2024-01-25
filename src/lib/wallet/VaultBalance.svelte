@@ -3,7 +3,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { formatUnits } from 'viem';
 	import { simulateContract } from '@wagmi/core';
-	import { config, getTokenBalance } from '$lib/wallet';
+	import { config } from '$lib/wallet';
+	import { getTokenBalance } from '$lib/eth-defi/helpers';
 	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 	import { DataBox } from '$lib/components';
 	import { TokenBalance } from '$lib/wallet';

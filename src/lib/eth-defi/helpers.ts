@@ -1,5 +1,7 @@
-import { type Config, type GetBalanceReturnType, multicall } from '@wagmi/core';
-import { type Abi, type Log, decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
+import type { Abi, Log } from 'viem';
+import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
+import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
+import { getBalance, multicall } from '@wagmi/core';
 import { formatNumber } from '$lib/helpers/formatters';
 
 /**
@@ -44,7 +46,7 @@ export type TokenInfo = {
 export async function getTokenInfo(
 	config: Config,
 	{ address, chainId }: { address: Address; chainId?: number | undefined }
-) {
+): Promise<TokenInfo> {
 	const abi = [...erc20Abi, ...tokenVersionAbi];
 	const functionNames = ['decimals', 'name', 'symbol', 'version', 'EIP712_VERSION'] as const;
 
@@ -61,4 +63,22 @@ export async function getTokenInfo(
 		symbol,
 		version: version ?? eip712version ?? '1'
 	} as TokenInfo;
+}
+
+export type GetTokenBalanceReturnType = GetBalanceReturnType & { address: Address };
+
+/**
+ * Wrapper around @wagmi getBalance that includes token address in the returned object
+ */
+export async function getTokenBalance(
+	config: Config,
+	parameters: GetBalanceParameters & {
+		token: Address;
+	}
+): Promise<GetTokenBalanceReturnType> {
+	const balance = await getBalance(config, parameters);
+	return {
+		...balance,
+		address: parameters.token
+	};
 }

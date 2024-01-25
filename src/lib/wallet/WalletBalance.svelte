@@ -4,7 +4,8 @@
 	import { getBalance, readContract } from '@wagmi/core';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { config, wallet, getTokenBalance, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { getTokenBalance } from '$lib/eth-defi/helpers';
 	import { EntitySymbol } from '$lib/components';
 	import Spinner from 'svelte-spinner';
 
