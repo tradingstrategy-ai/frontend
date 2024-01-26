@@ -4,9 +4,8 @@
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { switchChain } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { config, disconnect, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
+	import { switchChain, disconnect, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
@@ -119,11 +118,7 @@
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
-					<Button
-						class="full-width"
-						label="Switch network"
-						on:click={() => switchChain(config, { chainId: chain.chain_id })}
-					/>
+					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.chain_id)} />
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>

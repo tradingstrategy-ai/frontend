@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { switchChain } from '@wagmi/core';
 	import type { ApiChain } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import type { ConnectedWallet, ConfiguredChainId } from '$lib/wallet';
-	import { config, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { switchChain, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Alert, Button, EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
@@ -37,7 +36,7 @@
 		{#if chain && chainId !== wallet.chainId}
 			<Alert size="xs" status="error" title="Wrong network">
 				Please connect to {chain.chain_name}
-				<Button slot="cta" size="xs" label="Switch network" on:click={() => switchChain(config, { chainId })} />
+				<Button slot="cta" size="xs" label="Switch network" on:click={() => switchChain(chainId)} />
 			</Alert>
 		{:else}
 			<EntitySymbol type="blockchain" label={wallet.chain?.name} slug={chain?.chain_slug} />

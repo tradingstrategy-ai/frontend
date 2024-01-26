@@ -5,13 +5,14 @@ import type { Transport } from 'viem';
 import type { GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
-	connect as _connect,
-	disconnect as _disconnect,
 	fallback,
 	http,
 	getAccount,
 	watchAccount,
-	reconnect
+	reconnect,
+	connect as _connect,
+	disconnect as _disconnect,
+	switchChain as _switchChain
 } from '@wagmi/core';
 import { injected, walletConnect } from '@wagmi/connectors';
 import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
@@ -44,6 +45,7 @@ export const config = createConfig({
 if (browser) reconnect(config);
 
 export type Wallet = GetAccountReturnType;
+export type ConnectedWallet = Wallet & { status: 'connected' };
 
 export const wallet: Readable<Wallet> = readable(getAccount(config), (set) => {
 	return watchAccount(config, { onChange: set });
@@ -54,6 +56,10 @@ export function connect(type: ConnectorType, chainId: ConfiguredChainId | undefi
 		chainId,
 		connector: connectorTypes[type]
 	});
+}
+
+export function switchChain(chainId: ConfiguredChainId) {
+	return _switchChain(config, { chainId });
 }
 
 export function disconnect() {
