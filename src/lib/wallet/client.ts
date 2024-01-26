@@ -42,12 +42,11 @@ export const config = createConfig({
 	connectors: browser ? Object.values(connectorTypes) : []
 });
 
-if (browser) reconnect(config);
-
 export type Wallet = GetAccountReturnType;
 export type ConnectedWallet = Wallet & { status: 'connected' };
 
 export const wallet: Readable<Wallet> = readable(getAccount(config), (set) => {
+	reconnect(config);
 	return watchAccount(config, { onChange: set });
 });
 
