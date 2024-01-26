@@ -14,7 +14,7 @@ import {
 	reconnect
 } from '@wagmi/core';
 import { injected, walletConnect } from '@wagmi/connectors';
-import { mainnet, polygon } from '@wagmi/core/chains';
+import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
 
 const { projectId } = walletConnectConfig;
 
@@ -24,7 +24,7 @@ const connectorTypes = {
 } as const;
 export type ConnectorType = keyof typeof connectorTypes;
 
-const chains = [mainnet, polygon] as const;
+const chains = [arbitrum, avalanche, bsc, mainnet, polygon] as const;
 export type ConfiguredChainId = (typeof chains)[number]['id'];
 
 // Initialize chain-specific transports based on configured RPC URLs
