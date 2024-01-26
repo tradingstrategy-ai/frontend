@@ -3,7 +3,7 @@
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import { wallet } from '$lib/wallet';
+	import { disconnect, wallet } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 
 	export let chain: ApiChain;
@@ -22,8 +22,8 @@
 </script>
 
 <div class="wallet-widget">
-	{#if $wallet.status === 'connected'}
-		<Button size="sm" on:click={wallet.disconnect}>
+	{#if $wallet.isConnected}
+		<Button size="sm" on:click={disconnect}>
 			<span class="address">
 				<Icon name="wallet" --icon-size="1.25em" />
 				<HashAddress address={$wallet.address} endChars={7} />

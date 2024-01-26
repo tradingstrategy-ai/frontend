@@ -1,96 +1,66 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
-import { writable, type Writable } from 'svelte/store';
+import { type Readable, readable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { Chain, Connector } from '@wagmi/core';
+import type { Transport } from 'viem';
+import type { GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
-	configureChains,
-	connect,
-	disconnect,
+	fallback,
+	http,
+	getAccount,
 	watchAccount,
-	watchNetwork,
-	InjectedConnector
+	reconnect,
+	connect as _connect,
+	disconnect as _disconnect,
+	switchChain as _switchChain
 } from '@wagmi/core';
-import { arbitrum, avalanche, bsc, mainnet, polygon } from 'viem/chains';
-import { publicProvider } from '@wagmi/core/providers/public';
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-import { w3mProvider } from '@web3modal/ethereum';
+import { injected, walletConnect } from '@wagmi/connectors';
+import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
 
 const { projectId } = walletConnectConfig;
 
-// helper function to retrive configured RPC URL by chain ID
-function getRpcUrl({ id }: Chain) {
-	const http = rpcUrls[id];
-	return http && { http };
+const connectorTypes = {
+	injected: injected({ target: 'metaMask' }),
+	walletConnect: walletConnect({ projectId })
+} as const;
+export type ConnectorType = keyof typeof connectorTypes;
+
+const chains = [arbitrum, avalanche, bsc, mainnet, polygon] as const;
+export type ConfiguredChainId = (typeof chains)[number]['id'];
+
+// Initialize chain-specific transports based on configured RPC URLs
+const transports = chains.reduce((acc, { id }) => {
+	const url = rpcUrls[id];
+	acc[id] = url ? fallback([http(url), http()]) : http();
+	return acc;
+}, {} as Record<ConfiguredChainId, Transport>);
+
+export const config = createConfig({
+	ssr: !browser,
+	chains,
+	transports,
+	connectors: browser ? Object.values(connectorTypes) : []
+});
+
+export type Wallet = GetAccountReturnType;
+export type ConnectedWallet = Wallet & { status: 'connected' };
+
+export const wallet: Readable<Wallet> = readable(getAccount(config), (set) => {
+	reconnect(config);
+	return watchAccount(config, { onChange: set });
+});
+
+export function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
+	return _connect(config, {
+		chainId,
+		connector: connectorTypes[type]
+	});
 }
 
-export type ConnectorType = 'injected' | 'walletConnect';
-
-type CommonWallet = {
-	name: string;
-	address: Address;
-	chain: Chain;
-	connector: Connector;
-};
-
-export type ConnectedWallet = CommonWallet & {
-	status: 'connected';
-};
-
-export type UnConnectedWallet = Partial<CommonWallet> & {
-	status: 'disconnected' | 'connecting' | 'reconnecting';
-};
-
-export type Wallet = ConnectedWallet | UnConnectedWallet;
-
-const { subscribe, update }: Writable<Wallet> = writable({ status: 'connecting' });
-
-// initialize on first client-side load
-let initialized = false;
-const connectors: Connector[] = [];
-if (browser && !initialized) initWalletClient(connectors);
-
-function initWalletClient(connectors: Connector[]) {
-	const { chains, publicClient, webSocketPublicClient } = configureChains(
-		[arbitrum, avalanche, bsc, mainnet, polygon],
-		[jsonRpcProvider({ rpc: getRpcUrl }), w3mProvider({ projectId }), publicProvider()]
-	);
-
-	connectors.push(new InjectedConnector());
-	connectors.push(new WalletConnectConnector({ chains, options: { projectId } }));
-
-	createConfig({
-		autoConnect: true,
-		connectors,
-		publicClient,
-		webSocketPublicClient
-	});
-
-	// TODO: watch on first subscription; stop watching on last unsub
-	watchNetwork((network) => {
-		update((wallet) => ({ ...wallet, chain: network?.chain }));
-	});
-
-	// TODO: watch on first subscription; stop watching on last unsub
-	watchAccount(({ address, status, connector }) => {
-		update(({ chain }) => {
-			return {
-				status,
-				address,
-				name: connector?.name,
-				connector,
-				chain: status === 'connected' ? chain : undefined
-			};
-		});
-	});
-
-	initialized = true;
+export function switchChain(chainId: ConfiguredChainId) {
+	return _switchChain(config, { chainId });
 }
 
-function connectWallet(type: ConnectorType, chainId: number | undefined) {
-	const connector = connectors.find((c) => c.id === type)!;
-	return connect({ chainId, connector });
+export function disconnect() {
+	return _disconnect(config);
 }
-
-export const wallet = { subscribe, connect: connectWallet, disconnect };

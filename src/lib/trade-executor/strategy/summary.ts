@@ -33,6 +33,7 @@ export const enzymeSmartContractsSchema = z.object({
 	fund_value_calculator: hexString.nullish(),
 	payment_forwarder: hexString.nullish()
 });
+export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
 
 export const onChainDataSchema = z.object({
 	chain_id: chainId,

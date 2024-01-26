@@ -3,10 +3,11 @@
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
+	import { formatBalance } from '$lib/eth-defi/helpers.js';
 
 	export let data;
 	const { receivedAssets } = data;
-	const { strategyName, shares } = $wizard.data;
+	const { strategyName, shares } = $wizard.data!;
 
 	function sharesWithLabel(value: number) {
 		const label = value === 1 ? 'share' : 'shares';
@@ -18,10 +19,11 @@
 	<h3>The following tokens have been added to your wallet</h3>
 
 	<WalletInfo alignValues="right">
-		{#each receivedAssets as { symbol, formatted }}
+		{#each receivedAssets as balance}
+			{@const { symbol } = balance}
 			<WalletInfoItem>
 				<EntitySymbol slot="label" type="token" label={symbol} slug={symbol.toLowerCase()} />
-				{formatNumber(formatted, 2, 4)}
+				{formatBalance(balance, 2, 4)}
 			</WalletInfoItem>
 		{/each}
 	</WalletInfo>

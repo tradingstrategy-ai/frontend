@@ -4,10 +4,10 @@
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { switchNetwork } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { wallet, DepositBalance, DepositWarning, VaultBalance } from '$lib/wallet';
+	import { switchChain, disconnect, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
+	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let strategy: ConnectedStrategyRuntimeState;
@@ -26,7 +26,7 @@
 		contracts.fund_value_calculator
 	].every(Boolean);
 
-	$: connected = $wallet.status === 'connected';
+	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.chain_id;
 	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
@@ -45,13 +45,13 @@
 	});
 
 	function disconnectWallet() {
-		wallet.disconnect();
+		disconnect();
 		expandable.close();
 	}
 
 	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
 		if (detail.vaultNetValue) {
-			vaultBalance = detail.vaultNetValue.formatted;
+			vaultBalance = formatBalance(detail.vaultNetValue);
 		}
 	}
 
@@ -118,11 +118,7 @@
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
-					<Button
-						class="full-width"
-						label="Switch network"
-						on:click={() => switchNetwork({ chainId: chain.chain_id })}
-					/>
+					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.chain_id)} />
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>

@@ -2,7 +2,7 @@
 	import fsm from 'svelte-fsm';
 	import { signMessage } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
-	import { wallet, WalletAddress } from '$lib/wallet';
+	import { config, wallet, WalletAddress } from '$lib/wallet';
 	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
 
 	export let data;
@@ -18,7 +18,7 @@
 			},
 
 			sign() {
-				signMessage({ message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
+				signMessage(config, { message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
 				return 'signing';
 			}
 		},
@@ -114,7 +114,7 @@
 	{#if $tos === 'accepted'}
 		<Alert size="sm" status="success" title="Terms accepted">
 			Terms of service v{version} accepted
-			{#if $wallet.status === 'connected'}
+			{#if $wallet.isConnected}
 				by wallet <WalletAddress size="sm" wallet={$wallet} />
 			{/if}
 		</Alert>

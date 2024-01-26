@@ -4,7 +4,9 @@
 
 	let retrievedBalanceCount = 0;
 
-	$: wizard.toggleComplete('balance', retrievedBalanceCount === 2);
+	const requiredBalances = $wizard.data?.contracts.comptroller ? 2 : 1;
+
+	$: wizard.toggleComplete('balance', retrievedBalanceCount === requiredBalances);
 </script>
 
-<WalletBalance contracts={$wizard.data.contracts} on:dataFetch={() => retrievedBalanceCount++} />
+<WalletBalance contracts={$wizard.data?.contracts} on:dataFetch={() => retrievedBalanceCount++} />
