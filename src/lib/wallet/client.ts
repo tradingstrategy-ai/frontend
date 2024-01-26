@@ -1,8 +1,8 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
-import { writable, type Writable } from 'svelte/store';
+import { readable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { GetAccountReturnType } from '@wagmi/core';
-import { createConfig, connect, disconnect, fallback, http, watchAccount, reconnect } from '@wagmi/core';
+import { createConfig, connect, disconnect, fallback, http, getAccount, watchAccount, reconnect } from '@wagmi/core';
 import { injected } from '@wagmi/connectors';
 import { mainnet, polygon } from '@wagmi/core/chains';
 import type { Transport } from 'viem';
@@ -10,15 +10,7 @@ import type { Transport } from 'viem';
 
 const { projectId } = walletConnectConfig;
 
-export type ConnectedWallet = GetAccountReturnType & {
-	status: 'connected';
-};
-
-export type UnConnectedWallet = Partial<GetAccountReturnType> & {
-	status: 'connecting' | 'reconnecting' | 'disconnected';
-};
-
-export type Wallet = ConnectedWallet | UnConnectedWallet;
+export type Wallet = GetAccountReturnType;
 
 const connectorTypes = {
 	injected: injected({ target: 'metaMask' })
@@ -45,10 +37,9 @@ export const config = createConfig({
 
 reconnect(config);
 
-const { subscribe, set }: Writable<Wallet> = writable({ status: 'connecting' });
-
-// TODO: watch on first subscription; stop watching on last unsub
-watchAccount(config, { onChange: set });
+const { subscribe } = readable(getAccount(config), (set) => {
+	return watchAccount(config, { onChange: set });
+});
 
 function connectWallet(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
 	return connect(config, {
