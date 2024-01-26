@@ -1,6 +1,7 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { type Readable, readable } from 'svelte/store';
 import { browser } from '$app/environment';
+import type { Transport } from 'viem';
 import type { GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
@@ -12,16 +13,14 @@ import {
 	watchAccount,
 	reconnect
 } from '@wagmi/core';
-import { injected } from '@wagmi/connectors';
+import { injected, walletConnect } from '@wagmi/connectors';
 import { mainnet, polygon } from '@wagmi/core/chains';
-import type { Transport } from 'viem';
-// import { w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
 
 const connectorTypes = {
-	injected: injected({ target: 'metaMask' })
-	// walletConnect: walletConnect({ projectId })
+	injected: injected({ target: 'metaMask' }),
+	walletConnect: walletConnect({ projectId })
 } as const;
 export type ConnectorType = keyof typeof connectorTypes;
 
@@ -39,10 +38,10 @@ export const config = createConfig({
 	ssr: !browser,
 	chains,
 	transports,
-	connectors: Object.values(connectorTypes)
+	connectors: browser ? Object.values(connectorTypes) : []
 });
 
-reconnect(config);
+if (browser) reconnect(config);
 
 export type Wallet = GetAccountReturnType;
 

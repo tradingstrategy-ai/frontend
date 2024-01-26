@@ -59,8 +59,6 @@
     "@types/d3-array": "^3.2.0",
     "@wagmi/connectors": "^4.1.6",
     "@wagmi/core": "^2.3.1",
-    "@walletconnect/modal": "^2.6.2",
-    "@web3modal/ethereum": "^2.7.1",
     "bignumber.js": "^9.1.2",
     "cheerio": "^1.0.0-rc.12",
     "cookie": "^0.5.0",
