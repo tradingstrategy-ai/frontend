@@ -1,16 +1,23 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
-import { readable } from 'svelte/store';
+import { type Readable, readable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { GetAccountReturnType } from '@wagmi/core';
-import { createConfig, connect, disconnect, fallback, http, getAccount, watchAccount, reconnect } from '@wagmi/core';
+import {
+	createConfig,
+	connect as _connect,
+	disconnect as _disconnect,
+	fallback,
+	http,
+	getAccount,
+	watchAccount,
+	reconnect
+} from '@wagmi/core';
 import { injected } from '@wagmi/connectors';
 import { mainnet, polygon } from '@wagmi/core/chains';
 import type { Transport } from 'viem';
 // import { w3mProvider } from '@web3modal/ethereum';
 
 const { projectId } = walletConnectConfig;
-
-export type Wallet = GetAccountReturnType;
 
 const connectorTypes = {
 	injected: injected({ target: 'metaMask' })
@@ -37,19 +44,19 @@ export const config = createConfig({
 
 reconnect(config);
 
-const { subscribe } = readable(getAccount(config), (set) => {
+export type Wallet = GetAccountReturnType;
+
+export const wallet: Readable<Wallet> = readable(getAccount(config), (set) => {
 	return watchAccount(config, { onChange: set });
 });
 
-function connectWallet(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
-	return connect(config, {
+export function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
+	return _connect(config, {
 		chainId,
 		connector: connectorTypes[type]
 	});
 }
 
-function disconnectWallet() {
-	return disconnect(config);
+export function disconnect() {
+	return _disconnect(config);
 }
-
-export const wallet = { subscribe, connect: connectWallet, disconnect: disconnectWallet };
