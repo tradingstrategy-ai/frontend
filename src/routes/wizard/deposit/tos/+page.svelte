@@ -114,7 +114,7 @@
 	{#if $tos === 'accepted'}
 		<Alert size="sm" status="success" title="Terms accepted">
 			Terms of service v{version} accepted
-			{#if $wallet.status === 'connected'}
+			{#if $wallet.isConnected}
 				by wallet <WalletAddress size="sm" wallet={$wallet} />
 			{/if}
 		</Alert>

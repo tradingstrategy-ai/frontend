@@ -27,7 +27,7 @@
 		contracts.fund_value_calculator
 	].every(Boolean);
 
-	$: connected = $wallet.status === 'connected';
+	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.chain_id;
 	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
