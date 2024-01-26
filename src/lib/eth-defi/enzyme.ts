@@ -1,7 +1,6 @@
 import { formatUnits, isAddressEqual } from 'viem';
 import type { Config, GetBalanceReturnType } from '@wagmi/core';
-import type { GetTokenBalanceReturnType } from '$lib/wallet';
-import { getTokenInfo } from './helpers';
+import { type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
 
 export type AssetWithdrawl = {
 	asset: Address;

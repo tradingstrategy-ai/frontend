@@ -8,8 +8,8 @@
 	import type { GetBalanceReturnType } from '@wagmi/core';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
-	import { type GetTokenBalanceReturnType, config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
