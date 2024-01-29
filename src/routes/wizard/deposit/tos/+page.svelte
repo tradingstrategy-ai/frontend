@@ -1,9 +1,10 @@
 <script lang="ts">
 	import fsm from 'svelte-fsm';
+	import { inview } from 'svelte-inview';
 	import { signMessage } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
-	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
+	import { Alert, Button, Dialog, Icon, SummaryBox } from '$lib/components';
 
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
@@ -17,6 +18,10 @@
 				if (completed) return 'accepted';
 			},
 
+			finishReading: 'ready'
+		},
+
+		ready: {
 			sign() {
 				signMessage(config, { message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
 				return 'signing';
@@ -40,7 +45,7 @@
 		},
 
 		failed: {
-			retry: 'initial'
+			retry: 'ready'
 		},
 
 		accepted: {
@@ -89,6 +94,7 @@
 		<pre class="tos-text" class:no-file={!tosText}>
 			{#if tosText}
 				{tosText}
+				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 			{:else}
 				Terms of service file not found:
   			&gt; src/lib/assets/tos/{fileName}
@@ -96,7 +102,15 @@
 		</pre>
 	</SummaryBox>
 
-	<Button label="Accept terms of service" disabled={$tos !== 'initial'} on:click={tos.sign} />
+	<form on:submit|preventDefault={tos.sign}>
+		<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+		{#if $tos === 'initial'}
+			<div class="tooltip">
+				<Icon name="reading" size="1.5rem" />
+				Please read to the end!
+			</div>
+		{/if}
+	</form>
 
 	{#if $tos === 'signing'}
 		<Alert size="sm" status="info" title="Signature request">
@@ -123,6 +137,7 @@
 	<Dialog bind:open={fullScreen} title="Terms of service">
 		<pre class="dialog tos-text">
 			{tosText}
+			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 		</pre>
 	</Dialog>
 </div>
@@ -191,6 +206,10 @@
 				min-height: 12rem;
 				max-height: 24rem;
 			}
+
+			.scroll-check {
+				margin-top: -4rem;
+			}
 		}
 
 		.dialog {
@@ -202,6 +221,24 @@
 			font: var(--f-mono-md-regular);
 			letter-spacing: var(--f-mono-md-spacing, normal);
 			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
+		}
+
+		form {
+			position: relative;
+			display: grid;
+
+			&:not(:focus-within, :hover) .tooltip {
+				display: none;
+			}
+
+			.tooltip {
+				position: absolute;
+				bottom: -2rem;
+				width: 100%;
+				font-weight: bold;
+				color: hsl(var(--hsl-error));
+				text-align: center;
+			}
 		}
 	}
 </style>
