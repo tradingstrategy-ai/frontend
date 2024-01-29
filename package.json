@@ -72,7 +72,7 @@
     "svelte-fsm": "^1.2.0",
     "svelte-headless-table": "^0.17.5",
     "svelte-highlight": "^7.3.0",
-    "svelte-inview": "^4.0.1",
+    "svelte-inview": "^4.0.2",
     "svelte-spinner": "^2.0.2",
     "typesense": "^1.7.1",
     "viem": "^2.5.0",
