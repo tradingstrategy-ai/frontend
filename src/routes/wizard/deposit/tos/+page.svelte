@@ -96,7 +96,7 @@
 		</pre>
 	</SummaryBox>
 
-	<Button label="Accept terms of service" disabled={$tos !== 'initial'} on:click={tos.sign} />
+	<Button label="Sign terms with your wallet" disabled={$tos !== 'initial'} on:click={tos.sign} />
 
 	{#if $tos === 'signing'}
 		<Alert size="sm" status="info" title="Signature request">
