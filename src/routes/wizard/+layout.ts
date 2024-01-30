@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
-import { wizard } from './store.js';
+import { wizard } from './store';
 
 export const ssr = false;
 
-export async function load({ fetch, route }) {
+export async function load({ route }) {
 	// route format: /wizard/[wizard-slug]/[step-slug]
 	const wizardSlug = route.id.split('/')[2];
 
