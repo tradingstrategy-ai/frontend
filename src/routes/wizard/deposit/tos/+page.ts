@@ -1,24 +1,26 @@
+import type { Abi } from 'viem';
+import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import { get } from 'svelte/store';
+import { wizard } from 'wizard/store';
 import { config } from '$lib/wallet';
 import { readContracts } from '@wagmi/core';
-import type { Abi } from 'viem';
+import { getTosInfo } from '$lib/eth-defi/helpers.js';
 import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
-import acceptanceMessages from '$lib/assets/tos/acceptance-messages.json';
-
-// TODO: this will come from wizard.data.contracts
-const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
 
 export async function load({ fetch }) {
-	const [canProceed, version] = await readContracts(config, {
-		contracts: ['canProceed', 'latestTermsOfServiceVersion'].map((functionName) => ({
-			address,
-			abi: tosABI as Abi,
-			functionName
-		}))
-	}).then((response) => response.map((item) => item.result));
+	const data = get(wizard).data as { chainId: number; contracts: EnzymeSmartContracts };
+	const { chainId, contracts } = data;
+	const address = contracts.terms_of_service!;
+	const abi = tosABI as Abi;
 
-	// Temoporary hack - all versions = v0 until we launch
-	// const fileName = `v${version}.txt`;
-	const fileName = 'v0.txt';
+	const [canProceed, version] = await readContracts(config, {
+		contracts: [
+			{ address, abi, functionName: 'canProceed' },
+			{ address, abi, functionName: 'latestTermsOfServiceVersion' }
+		]
+	}).then((response) => response.map((item) => item.result) as [Boolean, number]);
+
+	const { fileName, acceptanceMessage } = getTosInfo(chainId, address, version);
 
 	let tosText: string | undefined;
 
@@ -30,11 +32,5 @@ export async function load({ fetch }) {
 		console.error(e);
 	}
 
-	return {
-		canProceed: Boolean(canProceed),
-		version,
-		fileName,
-		tosText,
-		acceptanceMessage: acceptanceMessages[fileName]
-	};
+	return { canProceed, version, fileName, tosText, acceptanceMessage };
 }

@@ -80,7 +80,7 @@
 					label="Download"
 					disabled={!tosText}
 					href="/tos/{fileName}"
-					download="Trading Strategy Terms of Service v{version}.txt"
+					download="Trading Strategy ToS v{version}-{fileName}"
 				/>
 				<Button
 					size="xs"
