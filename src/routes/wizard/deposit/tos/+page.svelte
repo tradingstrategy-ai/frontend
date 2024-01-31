@@ -5,6 +5,7 @@
 	import { wizard } from 'wizard/store';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
 	import { Alert, Button, Dialog, Icon, SummaryBox } from '$lib/components';
+	import { hashMessage } from 'viem';
 
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
@@ -37,7 +38,8 @@
 
 		signing: {
 			complete(tosSignature) {
-				wizard.updateData({ tosSignature });
+				const tosHash = hashMessage(acceptanceMessage!);
+				wizard.updateData({ tosSignature, tosHash });
 				return 'accepted';
 			},
 
