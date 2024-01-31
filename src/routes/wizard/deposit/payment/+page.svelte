@@ -6,13 +6,20 @@
 	import fsm from 'svelte-fsm';
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import type { GetBalanceReturnType } from '@wagmi/core';
-	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
-	import { formatUnits, parseUnits } from 'viem';
+	import {
+		readContract,
+		simulateContract,
+		writeContract,
+		getTransactionReceipt,
+		waitForTransactionReceipt
+	} from '@wagmi/core';
+	import { type Abi, formatUnits, parseUnits } from 'viem';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
+	import tosPaymentForwarderABI from '$lib/eth-defi/abi/TermedVaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 
 	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
@@ -43,14 +50,38 @@
 		});
 	}
 
-	async function confirmPayment(signedArgs: SignedArguments) {
-		const { request } = await simulateContract(config, {
-			address: contracts.payment_forwarder,
-			abi: paymentForwarderABI,
-			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
-			args: [...signedArgs, 1]
-		});
+	async function isTermsPaymentForwarder(address: Address) {
+		try {
+			return (await readContract(config, {
+				address,
+				abi: tosPaymentForwarderABI,
+				functionName: 'isTermsOfServiceEnabled'
+			})) as boolean;
+		} catch (e) {
+			return false;
+		}
+	}
 
+	async function confirmPayment(signedArgs: SignedArguments) {
+		let requestParams: Record<string, any>;
+
+		if (await isTermsPaymentForwarder(contracts.payment_forwarder!)) {
+			requestParams = {
+				address: contracts.payment_forwarder!,
+				abi: tosPaymentForwarderABI as Abi,
+				functionName: 'buySharesOnBehalfUsingTransferWithAuthorizationAndTermsOfService',
+				args: [...signedArgs, 1, $wizard.data?.tosHash, $wizard.data?.tosSignature]
+			};
+		} else {
+			requestParams = {
+				address: contracts.payment_forwarder!,
+				abi: paymentForwarderABI as Abi,
+				functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
+				args: [...signedArgs, 1]
+			};
+		}
+
+		const { request } = await simulateContract(config, requestParams);
 		return writeContract(config, request);
 	}
 
