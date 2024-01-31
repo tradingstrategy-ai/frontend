@@ -14,6 +14,13 @@
 
 	const tos = fsm('initial', {
 		initial: {
+			validate() {
+				const isValid = fileName && tosText && acceptanceMessage && Number.isFinite(version);
+				return isValid ? 'valid' : 'invalid';
+			}
+		},
+
+		valid: {
 			restore(completed: boolean) {
 				if (completed) return 'accepted';
 			},
@@ -23,7 +30,7 @@
 
 		ready: {
 			sign() {
-				signMessage(config, { message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
+				signMessage(config, { message: acceptanceMessage! }).then(tos.complete).catch(tos.fail);
 				return 'signing';
 			}
 		},
@@ -52,14 +59,17 @@
 			_enter() {
 				wizard.toggleComplete('tos');
 			}
-		}
+		},
+
+		invalid: {}
 	});
 
+	tos.validate();
 	$: tos.restore(Boolean(canProceed || $wizard.data?.tosSignature));
 </script>
 
 <div class="deposit-tos">
-	{#if !tosText}
+	{#if $tos === 'invalid'}
 		<Alert size="md" status="error" title="Error">
 			Terms of service v{version} file not found
 		</Alert>
@@ -104,7 +114,7 @@
 
 	<form on:submit|preventDefault={tos.sign}>
 		<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-		{#if $tos === 'initial'}
+		{#if $tos === 'valid'}
 			<div class="tooltip">
 				<Icon name="reading" size="1.5rem" />
 				Please read to the end!
