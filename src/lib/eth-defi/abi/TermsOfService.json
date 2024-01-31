@@ -68,6 +68,12 @@
 				"internalType": "bytes32",
 				"name": "acceptanceMessageHash",
 				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "acceptanceMessage",
+				"type": "string"
 			}
 		],
 		"name": "UpdateTermsOfService",
@@ -87,6 +93,25 @@
 			}
 		],
 		"name": "acceptances",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "accepted",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "canAddressProceed",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -298,6 +323,11 @@
 				"internalType": "bytes32",
 				"name": "acceptanceMessageHash",
 				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "acceptanceMessage",
+				"type": "string"
 			}
 		],
 		"name": "updateTermsOfService",

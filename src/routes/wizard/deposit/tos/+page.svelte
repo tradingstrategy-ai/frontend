@@ -5,7 +5,7 @@
 	import { wizard } from 'wizard/store';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
 	import { Alert, Button, Dialog, Icon, SummaryBox } from '$lib/components';
-	import { hashMessage } from 'viem';
+	import { hashMessage, numberToHex } from 'viem';
 
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
@@ -22,8 +22,15 @@
 		},
 
 		valid: {
-			restore(completed: boolean) {
-				if (completed) return 'accepted';
+			restore(tosPreviouslyAccepted: boolean, { tosSignature, tosHash } = {}) {
+				// setting dummy signature/hash values since ToS has already been accepted
+				if (tosPreviouslyAccepted) {
+					wizard.updateData({
+						tosSignature: '',
+						tosHash: numberToHex(0, { size: 32 })
+					});
+				}
+				if (tosPreviouslyAccepted || (tosSignature && tosHash)) return 'accepted';
 			},
 
 			finishReading: 'ready'
@@ -67,7 +74,7 @@
 	});
 
 	tos.validate();
-	$: tos.restore(Boolean(canProceed || $wizard.data?.tosSignature));
+	$: tos.restore(canProceed, $wizard.data);
 </script>
 
 <div class="deposit-tos">
