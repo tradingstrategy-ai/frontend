@@ -1,5 +1,5 @@
 import { rpcUrls, walletConnectConfig } from '$lib/config';
-import { type Readable, readable } from 'svelte/store';
+import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Transport } from 'viem';
 import type { GetAccountReturnType } from '@wagmi/core';
@@ -45,10 +45,11 @@ export const config = createConfig({
 export type Wallet = GetAccountReturnType;
 export type ConnectedWallet = Wallet & { status: 'connected' };
 
-export const wallet: Readable<Wallet> = readable(getAccount(config), (set) => {
-	reconnect(config);
-	return watchAccount(config, { onChange: set });
-});
+const { subscribe, set }: Writable<Wallet> = writable(getAccount(config));
+watchAccount(config, { onChange: set });
+reconnect(config);
+
+export const wallet = { subscribe };
 
 export function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
 	return _connect(config, {
