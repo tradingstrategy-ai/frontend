@@ -5,6 +5,7 @@
 	import { wizard } from 'wizard/store';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
 	import { Alert, Button, Dialog, Icon, SummaryBox } from '$lib/components';
+	import { hashMessage, numberToHex } from 'viem';
 
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
@@ -14,8 +15,22 @@
 
 	const tos = fsm('initial', {
 		initial: {
-			restore(completed: boolean) {
-				if (completed) return 'accepted';
+			validate() {
+				const isValid = fileName && tosText && acceptanceMessage && Number.isFinite(version);
+				return isValid ? 'valid' : 'invalid';
+			}
+		},
+
+		valid: {
+			restore(tosPreviouslyAccepted: boolean, { tosSignature, tosHash } = {}) {
+				// setting dummy signature/hash values since ToS has already been accepted
+				if (tosPreviouslyAccepted) {
+					wizard.updateData({
+						tosSignature: '',
+						tosHash: numberToHex(0, { size: 32 })
+					});
+				}
+				if (tosPreviouslyAccepted || (tosSignature && tosHash)) return 'accepted';
 			},
 
 			finishReading: 'ready'
@@ -23,14 +38,15 @@
 
 		ready: {
 			sign() {
-				signMessage(config, { message: acceptanceMessage }).then(tos.complete).catch(tos.fail);
+				signMessage(config, { message: acceptanceMessage! }).then(tos.complete).catch(tos.fail);
 				return 'signing';
 			}
 		},
 
 		signing: {
 			complete(tosSignature) {
-				wizard.updateData({ tosSignature });
+				const tosHash = hashMessage(acceptanceMessage!);
+				wizard.updateData({ tosSignature, tosHash });
 				return 'accepted';
 			},
 
@@ -52,14 +68,17 @@
 			_enter() {
 				wizard.toggleComplete('tos');
 			}
-		}
+		},
+
+		invalid: {}
 	});
 
-	$: tos.restore(Boolean(canProceed || $wizard.data?.tosSignature));
+	tos.validate();
+	$: tos.restore(canProceed, $wizard.data);
 </script>
 
 <div class="deposit-tos">
-	{#if !tosText}
+	{#if $tos === 'invalid'}
 		<Alert size="md" status="error" title="Error">
 			Terms of service v{version} file not found
 		</Alert>
@@ -80,7 +99,7 @@
 					label="Download"
 					disabled={!tosText}
 					href="/tos/{fileName}"
-					download="Trading Strategy Terms of Service v{version}.txt"
+					download="Trading Strategy ToS v{version}-{fileName}"
 				/>
 				<Button
 					size="xs"
@@ -104,7 +123,7 @@
 
 	<form on:submit|preventDefault={tos.sign}>
 		<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-		{#if $tos === 'initial'}
+		{#if $tos === 'valid'}
 			<div class="tooltip">
 				<Icon name="reading" size="1.5rem" />
 				Please read to the end!

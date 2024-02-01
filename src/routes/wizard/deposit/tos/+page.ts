@@ -1,24 +1,25 @@
-import { config } from '$lib/wallet';
-import { readContracts } from '@wagmi/core';
 import type { Abi } from 'viem';
-import tosABI from '$lib/eth-defi/abi/TermsOfService.json';
-import acceptanceMessages from '$lib/assets/tos/acceptance-messages.json';
-
-// TODO: this will come from wizard.data.contracts
-const address = '0xc0a66f20EEb3115a77cAB71ecbEE301fcf2eD5fa';
+import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import { get } from 'svelte/store';
+import { wizard } from 'wizard/store';
+import { config, wallet } from '$lib/wallet';
+import { readContracts } from '@wagmi/core';
+import { getTosInfo } from '$lib/eth-defi/helpers.js';
 
 export async function load({ fetch }) {
-	const [canProceed, version] = await readContracts(config, {
-		contracts: ['canProceed', 'latestTermsOfServiceVersion'].map((functionName) => ({
-			address,
-			abi: tosABI as Abi,
-			functionName
-		}))
-	}).then((response) => response.map((item) => item.result));
+	const abi = (await import('$lib/eth-defi/abi/TermsOfService.json')).default as Abi;
+	const { chainId, contracts } = get(wizard).data as { chainId: number; contracts: EnzymeSmartContracts };
+	const address = contracts.terms_of_service!;
+	const account = get(wallet).address;
 
-	// Temoporary hack - all versions = v0 until we launch
-	// const fileName = `v${version}.txt`;
-	const fileName = 'v0.txt';
+	const [canProceed, version] = await readContracts(config, {
+		contracts: [
+			{ address, abi, functionName: 'canAddressProceed', args: [account] },
+			{ address, abi, functionName: 'latestTermsOfServiceVersion' }
+		]
+	}).then((response) => response.map((item) => item.result) as [boolean, number]);
+
+	const { fileName, acceptanceMessage } = getTosInfo(chainId, address, version);
 
 	let tosText: string | undefined;
 
@@ -30,11 +31,5 @@ export async function load({ fetch }) {
 		console.error(e);
 	}
 
-	return {
-		canProceed: Boolean(canProceed),
-		version,
-		fileName,
-		tosText,
-		acceptanceMessage: acceptanceMessages[fileName]
-	};
+	return { canProceed, version, fileName, tosText, acceptanceMessage };
 }

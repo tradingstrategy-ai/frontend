@@ -3,6 +3,7 @@ import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContracts } from '@wagmi/core';
 import { formatNumber } from '$lib/helpers/formatters';
+import tosMap from '$lib/assets/tos/tos-map.json';
 
 /**
  * Extract events from transaction logs
@@ -92,4 +93,24 @@ export async function getTokenBalance(
 
 	const [decimals, symbol, value] = response.map(({ result }) => result);
 	return { address: token, decimals, symbol, value } as GetTokenBalanceReturnType;
+}
+
+export type TosInfo = {
+	fileName?: string;
+	acceptanceMessage?: string;
+};
+
+/**
+ * Get Terms of Service info based on the mapping stored in: src/lib/assets/tos/tos-map.json
+ *
+ * The mapping is stored in the form: chainId -> address -> version -> TosInfo
+ *
+ * @param chainId - chainId of the strategy
+ * @param address - Terms of Service contract address of the strategy
+ * @param version - Terms of Service version
+ *
+ */
+export function getTosInfo(chainId: number, address: string, version: number): TosInfo {
+	// @ts-ignore
+	return tosMap[chainId]?.[address]?.[version] ?? {};
 }

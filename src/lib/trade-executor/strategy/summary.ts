@@ -31,14 +31,18 @@ export const enzymeSmartContractsSchema = z.object({
 	gas_relay_paymaster_factory: hexString.nullish(),
 	integration_manager: hexString.nullish(),
 	fund_value_calculator: hexString.nullish(),
-	payment_forwarder: hexString.nullish()
+	payment_forwarder: hexString.nullish(),
+	guard: hexString.nullish(),
+	terms_of_service: hexString.nullish()
 });
 export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
 
 export const onChainDataSchema = z.object({
 	chain_id: chainId,
 	asset_management_mode: assetManagementMode,
-	smart_contracts: enzymeSmartContractsSchema
+	smart_contracts: enzymeSmartContractsSchema,
+	owner: hexString.nullish(),
+	trade_executor_hot_wallet: hexString.nullish()
 });
 export type OnChainData = z.infer<typeof onChainDataSchema>;
 

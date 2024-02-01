@@ -1,31 +1,36 @@
 <script lang="ts">
 	import { captureException } from '@sentry/sveltekit';
-	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
-	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
-	import type { GetBalanceReturnType } from '@wagmi/core';
-	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
+	import { wizard } from 'wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
+	import {
+		type GetBalanceReturnType,
+		simulateContract,
+		writeContract,
+		getTransactionReceipt,
+		waitForTransactionReceipt
+	} from '@wagmi/core';
+	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 
-	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
+	export let data;
+	const { paymentContract, tosRequired } = data;
+
 	const denominationToken: GetTokenBalanceReturnType = $wizard.data?.denominationToken;
 	const nativeCurrency: GetBalanceReturnType = $wizard.data?.nativeCurrency;
+
+	const progressBar = tweened(0, { easing: cubicOut });
+	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = '';
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 	let paymentInput: MoneyInput;
-
-	const progressBar = tweened(0, { easing: cubicOut });
-	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
@@ -38,19 +43,16 @@
 			token: token,
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
-			to: contracts.payment_forwarder!,
+			to: paymentContract.address,
 			value
 		});
 	}
 
 	async function confirmPayment(signedArgs: SignedArguments) {
-		const { request } = await simulateContract(config, {
-			address: contracts.payment_forwarder,
-			abi: paymentForwarderABI,
-			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
-			args: [...signedArgs, 1]
-		});
-
+		const { tosHash, tosSignature } = $wizard.data!;
+		const args = [...signedArgs, 1];
+		if (tosRequired) args.push(tosHash, tosSignature);
+		const { request } = await simulateContract(config, { ...paymentContract, args });
 		return writeContract(config, request);
 	}
 
