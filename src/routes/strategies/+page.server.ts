@@ -10,8 +10,13 @@ import { getStrategiesWithRuntimeState } from 'trade-executor/strategy/runtime-s
 const cacheTimeSeconds = 60;
 const getCachedStrategies = swrCache(getStrategiesWithRuntimeState, cacheTimeSeconds);
 
-export async function load({ fetch, setHeaders }) {
-	const strategies = await getCachedStrategies(fetch);
+export async function load({ fetch, locals, setHeaders }) {
+	let strategies = await getCachedStrategies(fetch);
+
+	// only include "live" strategies for non-admin users
+	if (!locals.admin) {
+		strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
+	}
 
 	// Setting cache-control and age headers to limit re-fetching
 	// of this resource by browser and reverse proxy / CDN
