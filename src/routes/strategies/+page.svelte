@@ -33,11 +33,11 @@
 	</PageHeading>
 
 	{#if filteredStrategies.length}
-		<ul>
+		<div class="strategy-tiles" data-testid="strategy-tiles">
 			{#each filteredStrategies as strategy (strategy.id)}
 				<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id]} />
 			{/each}
-		</ul>
+		</div>
 	{:else}
 		<p>
 			No {#if admin && filter !== 'all'}{filter}{/if}
@@ -51,7 +51,7 @@
 		margin-top: var(--space-ls);
 	}
 
-	ul {
+	.strategy-tiles {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(27.75rem, 90vw, var(--container-max-width)), 1fr));
 		gap: var(--strategies-listing-gap, var(--space-xl));
