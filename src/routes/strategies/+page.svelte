@@ -1,9 +1,21 @@
 <script lang="ts">
-	import { PageHeading } from '$lib/components';
+	import { PageHeading, PageHeader, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
-	$: ({ strategies, chainInfo } = data);
+	$: ({ admin, strategies, chainInfo } = data);
+
+	const options = ['all', 'live', 'unpublished'];
+	let filter: (typeof options)[number] = 'all';
+
+	$: filteredStrategies = strategies.filter((s) => {
+		if (!admin || filter === 'all') return true;
+
+		// return live strategies for "live" filter; others for "unpublished" filter
+		const liveFilter = filter === 'live';
+		const liveStrategy = s.connected && s.tags.includes('live');
+		return liveFilter === liveStrategy;
+	});
 </script>
 
 <svelte:head>
@@ -12,16 +24,25 @@
 </svelte:head>
 
 <main class="ds-container strategies-index-page">
-	<PageHeading title="Strategies" description="Currently available strategies" />
+	<PageHeading title="Strategies" description="Currently available strategies">
+		<svelte:fragment slot="cta">
+			{#if admin}
+				<SegmentedControl bind:selected={filter} {options} />
+			{/if}
+		</svelte:fragment>
+	</PageHeading>
 
-	{#if strategies.length}
+	{#if filteredStrategies.length}
 		<ul>
-			{#each strategies as strategy (strategy.id)}
+			{#each filteredStrategies as strategy (strategy.id)}
 				<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id]} />
 			{/each}
 		</ul>
 	{:else}
-		<p>No strategies configured</p>
+		<p>
+			No {#if admin && filter !== 'all'}{filter}{/if}
+			strategies configured
+		</p>
 	{/if}
 </main>
 

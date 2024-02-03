@@ -11,10 +11,12 @@ const cacheTimeSeconds = 60;
 const getCachedStrategies = swrCache(getStrategiesWithRuntimeState, cacheTimeSeconds);
 
 export async function load({ fetch, locals, setHeaders }) {
+	const { admin } = locals;
+
 	let strategies = await getCachedStrategies(fetch);
 
 	// only include "live" strategies for non-admin users
-	if (!locals.admin) {
+	if (!admin) {
 		strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
 	}
 
@@ -25,5 +27,5 @@ export async function load({ fetch, locals, setHeaders }) {
 		age: getCachedStrategies.getAge(fetch).toFixed(0)
 	});
 
-	return { strategies };
+	return { admin, strategies };
 }
