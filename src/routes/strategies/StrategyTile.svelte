@@ -10,7 +10,7 @@
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let strategy: StrategyRuntimeState;
-	export let chain: ApiChain;
+	export let chain: ApiChain | undefined;
 
 	const href = `/strategies/${strategy.id}`;
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
@@ -107,7 +107,7 @@
 <style lang="postcss">
 	.strategy-tile {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 28rem), 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));
 		background: hsl(var(--hsla-box-1));
 		border: 1px hsl(var(--hsla-box-3)) solid;
 		border-radius: var(--radius-lg);

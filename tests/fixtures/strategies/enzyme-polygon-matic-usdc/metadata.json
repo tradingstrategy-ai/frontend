@@ -173,5 +173,6 @@
 	"error_message": null,
 	"backtest_available": true,
 	"crashed_at": null,
-	"badges": []
+	"badges": [],
+	"tags": ["live"]
 }

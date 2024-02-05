@@ -1,6 +1,7 @@
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
+import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
 import { addYears } from 'date-fns';
 
@@ -53,4 +54,34 @@ const handleColorMode: Handle = async ({ event, resolve }) => {
 	});
 };
 
-export const handle = sequence(Sentry.sentryHandle(), handleColorMode);
+/**
+ * Lightweight auth solution for enabling admin-role features - e.g.,
+ * displaying "hidden" strategies (test or unpublished strategies).
+ *
+ * Global admin password is set via TS_PRIVATE_ADMIN_PW env variable
+ * Appropriate users can enable admin role via ?pw URL parameter
+ *
+ * This is not intended to be a strong security measure and should
+ * not be used for restricting access to genuinely sensitive data.
+ */
+const handleAdminRole: Handle = async ({ event, resolve }) => {
+	// update or delete pw cookie if ?pw URL param is present
+	const urlPw = event.url.searchParams.get('pw');
+	if (urlPw !== null) {
+		event.cookies.set('pw', urlPw, {
+			path: '/',
+			expires: urlPw ? addYears(new Date(), 1) : new Date(0)
+		});
+	}
+
+	// set admin role if pw cookie matches configured global admin pw
+	const envPw = env.TS_PRIVATE_ADMIN_PW;
+	const cookiePw = event.cookies.get('pw');
+	if (envPw && cookiePw && cookiePw === envPw) {
+		event.locals.admin = true;
+	}
+
+	return resolve(event);
+};
+
+export const handle = sequence(Sentry.sentryHandle(), handleColorMode, handleAdminRole);

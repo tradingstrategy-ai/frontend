@@ -35,6 +35,7 @@ services:
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
       - TS_PUBLIC_MAINTENANCE_NOTICE
       # Private (secret) env vars - do not add to .env
+      - TS_PRIVATE_ADMIN_PW
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS

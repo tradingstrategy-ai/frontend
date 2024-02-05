@@ -9,7 +9,9 @@ declare global {
 			eventId?: string;
 		}
 
-		// interface Locals {}
+		interface Locals {
+			admin?: boolean;
+		}
 		// interface PageData {}
 		// interface Platform {}
 	}

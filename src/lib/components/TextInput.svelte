@@ -11,7 +11,7 @@ unknown props through to HTML input element.
 <script lang="ts">
 	import { Icon } from '$lib/components';
 
-	export let type: 'email' | 'text' | 'search' = 'text';
+	export let type: 'email' | 'text' | 'search' | 'password' = 'text';
 	export let disabled = false;
 	export let label = '';
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';

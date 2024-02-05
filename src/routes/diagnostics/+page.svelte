@@ -4,10 +4,32 @@ A test endpoint for the page to show debug data.
 <script lang="ts">
 	import * as config from '$lib/config';
 	import { env } from '$env/dynamic/public';
+	import { Alert, Button, Icon, TextInput } from '$lib/components';
+
+	export let data;
 </script>
 
 <section class="ds-container">
 	<h1>Developer diagnostics page</h1>
+
+	<div>
+		<h2>Admin Role</h2>
+		<div class="admin" class:has-admin={data.admin}>
+			{#if data.admin}
+				<Alert size="xs" status="success">You have <strong>admin</strong> role.</Alert>
+				<form data-sveltekit-reload>
+					<input type="hidden" name="pw" value="" />
+					<Button size="sm" label="Clear" />
+				</form>
+			{:else}
+				<Alert size="xs">You do not have <strong>admin</strong> role.</Alert>
+				<form data-sveltekit-reload>
+					<TextInput type="password" name="pw" placeholder="Enter admin pw" />
+					<Button size="sm" label="Save" />
+				</form>
+			{/if}
+		</div>
+	</div>
 
 	<div>
 		<h2>Public environment variables</h2>
@@ -48,6 +70,26 @@ A test endpoint for the page to show debug data.
 	section {
 		--container-max-width: 1020px;
 		gap: var(--space-lg);
+	}
+
+	.admin {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 1rem;
+		align-items: center;
+
+		&:not(.has-admin) {
+			@media (--viewport-sm-down) {
+				grid-template-columns: auto;
+			}
+		}
+
+		form {
+			display: grid;
+			grid-auto-flow: column;
+			gap: 0.5rem;
+			align-items: center;
+		}
 	}
 
 	pre {
