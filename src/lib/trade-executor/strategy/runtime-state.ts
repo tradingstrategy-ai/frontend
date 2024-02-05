@@ -13,11 +13,12 @@ export type ConnectedStrategyRuntimeState = StrategyConfiguration &
 		connected: true;
 	};
 
-export type DisconnectedStrategyRuntimeState = StrategyConfiguration & {
-	connected: false;
-	icon_url: string;
-	error: string;
-};
+export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
+	Partial<StrategySummary> & {
+		connected: false;
+		icon_url: string;
+		error: string;
+	};
 
 export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedStrategyRuntimeState;
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { PageHeading, PageHeader, SegmentedControl } from '$lib/components';
+	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
 	$: ({ admin, strategies, chainInfo } = data);
 
-	const options = ['all', 'live', 'unpublished'];
+	const options = ['all', 'live', 'unpublished'] as const;
 	let filter: (typeof options)[number] = 'all';
 
 	$: filteredStrategies = strategies.filter((s) => {
@@ -23,38 +23,43 @@
 	<meta name="description" content="Browse currently available automated DeFi trading strategies" />
 </svelte:head>
 
-<main class="ds-container strategies-index-page">
-	<PageHeading title="Strategies" description="Currently available strategies">
-		<svelte:fragment slot="cta">
-			{#if admin}
-				<SegmentedControl bind:selected={filter} {options} />
-			{/if}
-		</svelte:fragment>
-	</PageHeading>
+<main class="strategies-index-page">
+	<Section>
+		<PageHeading title="Strategies" description="Currently available strategies">
+			<svelte:fragment slot="cta">
+				{#if admin}
+					<SegmentedControl bind:selected={filter} {options} />
+				{/if}
+			</svelte:fragment>
+		</PageHeading>
 
-	{#if filteredStrategies.length}
-		<div class="strategy-tiles" data-testid="strategy-tiles">
-			{#each filteredStrategies as strategy (strategy.id)}
-				<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id]} />
-			{/each}
-		</div>
-	{:else}
-		<p>
-			No {#if admin && filter !== 'all'}{filter}{/if}
-			strategies configured
-		</p>
-	{/if}
+		{#if filteredStrategies.length}
+			<div class="strategy-tiles" data-testid="strategy-tiles">
+				{#each filteredStrategies as strategy (strategy.id)}
+					<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id ?? 0]} />
+				{/each}
+			</div>
+		{:else}
+			<p>
+				No {#if admin && filter !== 'all'}{filter}{/if}
+				strategies configured
+			</p>
+		{/if}
+	</Section>
 </main>
 
 <style>
 	.strategies-index-page {
-		margin-top: var(--space-ls);
+		margin-top: 1.25rem;
 	}
 
 	.strategy-tiles {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(27.75rem, 90vw, var(--container-max-width)), 1fr));
-		gap: var(--strategies-listing-gap, var(--space-xl));
-		padding: 0;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+
+		@media (--viewport-md-down) {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
