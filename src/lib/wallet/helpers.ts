@@ -12,6 +12,9 @@ export function buyNativeCurrencyUrl(chainId: number) {
  * Return URL for Uniswap v3 page to purchase tokens
  */
 export function buyTokenUrl(chainSlug: string, tokenAddress: Address) {
-	const baseUrl = 'https://app.uniswap.org/#/tokens';
-	return `${baseUrl}/${chainSlug}/${tokenAddress}`;
+	const baseUrl = 'https://app.uniswap.org/tokens/';
+	const path = `./${chainSlug}/${tokenAddress}`;
+	const url = new URL(path, baseUrl);
+	url.searchParams.set('chain', chainSlug);
+	return url.toString();
 }
