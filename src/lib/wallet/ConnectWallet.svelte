@@ -14,9 +14,16 @@
 		error = undefined;
 	}
 
-	function connectWallet(type: ConnectorType) {
+	async function connectWallet(type: ConnectorType) {
 		error = undefined;
-		connect(type, chainId).catch((e) => (error = e));
+		try {
+			const connection = await connect(type, chainId);
+			if (!connection) {
+				throw new Error(`No matching connector found: ${type}`);
+			}
+		} catch (e) {
+			error = e;
+		}
 	}
 </script>
 
