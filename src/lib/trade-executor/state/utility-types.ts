@@ -17,7 +17,10 @@ export type ChainId = z.infer<typeof chainId>;
 export const count = z.number().int().nonnegative();
 export type Count = z.infer<typeof count>;
 
-export const decimal = z.string().regex(/^-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$/);
+// decimal values _should_ always be serialized as strings to preserve precision;
+// coercing to strings to prevent errors in cases where they are serialized as numbers
+// (e.g., `"executed_collateral_allocation": 0` for open short sell trades)
+export const decimal = z.coerce.string().regex(/^-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$/);
 export type Decimal = z.infer<typeof decimal>;
 
 // use `instead of `decimal` when you want the value coerced to a number
