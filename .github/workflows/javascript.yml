@@ -116,6 +116,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload sourcemaps
+        id: upload-sourcemaps
+        continue-on-error: true
         env:
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
@@ -126,3 +128,7 @@ jobs:
           docker run --rm -e SENTRY_ORG -e SENTRY_PROJECT -e SENTRY_URL -e SENTRY_AUTH_TOKEN \
             ${{ steps.meta.outputs.tags }} \
             npx sentry-cli sourcemaps upload -r $SENTRY_RELEASE build/client build/server/chunks
+      # GH action should still succeed even if sourcemaps upload failed
+      - name: Echo failure message
+        run: echo "Sourcemap upload failed"
+        if: steps.upload-sourcemaps.outcome == 'failure'
