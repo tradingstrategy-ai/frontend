@@ -3,7 +3,7 @@ import { publicApiError } from '$lib/helpers/public-api';
 import { configuredStrategies } from '../strategy/configuration';
 import { stateSchema } from './state';
 
-export async function getStrategyState(fetch: Fetch, strategyId: string, raw = false) {
+export async function getRawStrategyState(fetch: Fetch, strategyId: string) {
 	const strategy = configuredStrategies.get(strategyId);
 	if (!strategy) throw error(404, 'Not found');
 
@@ -20,6 +20,10 @@ export async function getStrategyState(fetch: Fetch, strategyId: string, raw = f
 		throw await publicApiError(resp);
 	}
 
-	const rawPayload = await resp.json();
-	return raw ? rawPayload : stateSchema.parse(rawPayload);
+	return resp.json();
+}
+
+export async function getStrategyState(fetch: Fetch, strategyId: string) {
+	const rawPayload = await getRawStrategyState(fetch, strategyId);
+	return stateSchema.parse(rawPayload);
 }

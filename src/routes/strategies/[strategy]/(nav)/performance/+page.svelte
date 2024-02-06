@@ -23,6 +23,13 @@
 	const oldLatestStats = getPortfolioLatestStats(state);
 	// New path - use server precalculated stats
 	const summaryStatistics = strategy.summary_statistics;
+
+	// TODO: remove compatibility layer once trade-executor updates deployed
+	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/760
+	let longShortMetrics = state.stats.long_short_metrics_latest;
+	if (longShortMetrics && 'live_stats' in longShortMetrics) {
+		longShortMetrics = longShortMetrics.live_stats;
+	}
 </script>
 
 <section class="performance">
@@ -41,8 +48,8 @@
 		/>
 	</ChartContainer>
 
-	{#if state.stats.long_short_metrics_latest}
-		<LongShortTable tableData={state.stats.long_short_metrics_latest} />
+	{#if longShortMetrics}
+		<LongShortTable tableData={longShortMetrics} />
 	{:else}
 		<SummaryStatistics {oldLatestStats} {summaryStatistics} />
 	{/if}
