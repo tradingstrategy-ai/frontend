@@ -21,6 +21,6 @@ export async function load({ params, fetch }) {
 	if (!resp.ok) throw await publicApiError(resp);
 
 	return {
-		code: resp.text()
+		code: await resp.text()
 	};
 }

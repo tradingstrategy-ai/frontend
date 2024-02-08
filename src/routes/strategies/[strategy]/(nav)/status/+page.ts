@@ -23,6 +23,6 @@ export async function load({ params, fetch }) {
 	}
 
 	return {
-		runState: resp.json()
+		runState: await resp.json()
 	};
 }

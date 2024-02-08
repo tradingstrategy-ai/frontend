@@ -14,10 +14,9 @@ export async function load({ fetch, setHeaders }) {
 		'cache-control': 'public, max-age=300' // 5 minutes: 5 * 60 = 300
 	});
 
-	// SvelteKit handles these in parallel and automatically unwraps top-level promises
 	return {
-		topMomentum: fetchPublicApi(fetch, 'top-momentum', { summary: 'true' }).catch(logError),
-		impressiveNumbers: fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
-		posts: ghostClient.posts?.browse({ limit: 4 }).catch(logError)
+		topMomentum: await fetchPublicApi(fetch, 'top-momentum', { summary: 'true' }).catch(logError),
+		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
+		posts: await ghostClient.posts?.browse({ limit: 4 }).catch(logError)
 	};
 }
