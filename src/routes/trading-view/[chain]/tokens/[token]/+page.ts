@@ -11,6 +11,6 @@ export async function load({ params, fetch, setHeaders }) {
 	});
 
 	return {
-		token: fetchPublicApi(fetch, 'token/details', { chain_slug, address })
+		token: await fetchPublicApi(fetch, 'token/details', { chain_slug, address })
 	};
 }

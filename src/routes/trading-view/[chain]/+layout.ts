@@ -12,6 +12,6 @@ export async function load({ fetch, params }) {
 	}
 
 	return {
-		chain: fetchPublicApi(fetch, 'chain-details', { chain_slug })
+		chain: await fetchPublicApi(fetch, 'chain-details', { chain_slug })
 	};
 }

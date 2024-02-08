@@ -14,6 +14,6 @@ export async function load({ params, fetch }) {
 	if (!resp.ok) throw await publicApiError(resp);
 
 	return {
-		logs: resp.json()
+		logs: await resp.json()
 	};
 }
