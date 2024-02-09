@@ -150,21 +150,8 @@ const tradingPositionInfoPrototype = {
 		return this.stillOpen ? this.last_token_price : undefined;
 	},
 
-	get unrealisedProfitability(): Percent | undefined {
-		if (this.openPrice && this.currentPrice) {
-			return (this.currentPrice - this.openPrice) / this.openPrice;
-		}
-	},
-
 	get closePrice() {
 		return this.closed ? this.lastTrade?.executed_price : undefined;
-	},
-
-	// TODO: Needs to be changed avg sell - avg buy
-	get realisedProfitability(): Percent | undefined {
-		if (this.openPrice && this.closePrice) {
-			return (this.closePrice - this.openPrice) / this.openPrice;
-		}
 	},
 
 	get profitability() {
