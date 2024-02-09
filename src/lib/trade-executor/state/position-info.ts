@@ -99,12 +99,39 @@ const tradingPositionInfoPrototype = {
 		return this.firstTrade.executed_price;
 	},
 
+	/**
+	 * Return the value based on the latest pre-calculated position stats
+	 *
+	 * NOTE: this will be zero for closed positions
+	 */
+	get value() {
+		return this.stats.at(-1)?.value;
+	},
+
+	/**
+	 * Return the value calculated when the position was opened
+	 */
 	get valueAtOpen() {
 		return this.stats[0]?.value;
 	},
 
-	get value() {
-		return this.stats.at(-1)?.value;
+	/**
+	 * Return the value calculated when the position was closed
+	 */
+	get valueAtClose() {
+		const lastStats = this.stats.at(-1);
+		// confirm position is closed and final stats have been calculated
+		if (this.closed && lastStats && this.closed_at! < lastStats.calculated_at) {
+			// return the value from the second-to-last position stats object
+			return this.stats.at(-2)?.value;
+		}
+	},
+
+	/**
+	 * Return the the highest calculated position value
+	 */
+	get valueAtPeak() {
+		return Math.max(...this.stats.map((s) => s.value));
 	},
 
 	get quantityAtOpen() {
