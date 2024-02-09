@@ -5,10 +5,11 @@
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/position.py
  *
  */
-import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
-import { type TradingPosition, tradingPositionTooltips } from './position';
-import type { Statistics } from './statistics';
+import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from './utility-types';
+import type { State } from './state';
+import type { PositionStatistics, Statistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
+import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
 
 /**
  * English tooltips for the datapoints
@@ -46,6 +47,10 @@ export const tradingPositionInfoTooltips = {
 	tradingFeesMissing: 'Trading fee data was not recorded for this position',
 	tradingFeesPercent:
 		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
+};
+
+type TradingPositionWithStats = TradingPosition & {
+	stats: PositionStatistics[];
 };
 
 /**
@@ -228,13 +233,38 @@ const tradingPositionInfoPrototype = {
 		const finalStats = closed_positions[this.position_id];
 		return { ...latestPositionStats, ...finalStats };
 	}
-} satisfies ThisType<TradingPosition & Record<string, any>>;
+} satisfies ThisType<TradingPositionWithStats & Record<string, any>>;
 
-export type TradingPositionInfo = TradingPosition & typeof tradingPositionInfoPrototype;
+export type TradingPositionInfo = TradingPositionWithStats & typeof tradingPositionInfoPrototype;
 
 /**
- * Factory function to create a TradingPairInfo object
+ * Factory function to create a TradingPositionInfo object
  */
-export function createTradingPositionInfo(data: TradingPosition): TradingPositionInfo {
-	return Object.assign(Object.create(tradingPositionInfoPrototype), data);
+export function createTradingPositionInfo(
+	position: TradingPosition,
+	stats: PositionStatistics[] = []
+): TradingPositionInfo {
+	const positionInfo = Object.create(tradingPositionInfoPrototype);
+	return Object.assign(positionInfo, position, { stats });
+}
+
+/**
+ * Get a single TradingPositionInfo object from state for a given status and id
+ */
+export function getTradingPositionInfo(state: State, status: PositionStatus, id: PrimaryKeyString) {
+	const position = state.portfolio[`${status}_positions`][id];
+	if (!position) return;
+	const stats = state.stats.positions[id] ?? [];
+	return createTradingPositionInfo(position, stats);
+}
+
+/**
+ * Get all TradingPositionInfo objects from state for a given status
+ */
+export function getTradingPositionInfoArray(state: State, status: PositionStatus): TradingPositionInfo[] {
+	const positions = state.portfolio[`${status}_positions`];
+	return Object.values(positions).map((position) => {
+		const stats = state.stats.positions[position.position_id];
+		return createTradingPositionInfo(position, stats);
+	});
 }

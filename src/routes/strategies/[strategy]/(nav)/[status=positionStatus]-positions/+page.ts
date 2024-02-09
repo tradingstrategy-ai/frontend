@@ -1,14 +1,11 @@
-import { createTradingPositionInfo } from 'trade-executor/state/position-info.js';
+import { getTradingPositionInfoArray } from 'trade-executor/state/position-info.js';
 
 export async function load({ params, parent }) {
+	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
 	const { status } = params;
 	const { state } = await parent();
 
-	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
-	const positions = state.portfolio[`${status}_positions`];
+	const positions = getTradingPositionInfoArray(state, status);
 
-	return {
-		status,
-		positions: Object.values(positions).map(createTradingPositionInfo)
-	};
+	return { status, positions };
 }

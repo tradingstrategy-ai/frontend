@@ -1,12 +1,12 @@
 import { error } from '@sveltejs/kit';
-import { createTradingPositionInfo } from 'trade-executor/state/position-info.js';
+import { getTradingPositionInfo } from 'trade-executor/state/position-info.js';
 
 export async function load({ params, parent }) {
+	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
 	const { position: id, status } = params;
 	const { state } = await parent();
 
-	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
-	const position = state.portfolio[`${status}_positions`][id];
+	const position = getTradingPositionInfo(state, status, id);
 
 	if (!position) {
 		throw error(404, 'Not found');
@@ -14,7 +14,7 @@ export async function load({ params, parent }) {
 
 	return {
 		breadcrumbs: { [id]: `Position #${id}` },
-		position: createTradingPositionInfo(position),
+		position,
 		status
 	};
 }
