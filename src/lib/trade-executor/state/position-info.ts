@@ -100,11 +100,16 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get valueAtOpen() {
-		return this.firstTrade.executedValue;
+		return this.stats[0]?.value;
+	},
+
+	get value() {
+		return this.stats.at(-1)?.value;
 	},
 
 	get quantityAtOpen() {
-		return Math.abs(this.firstTrade.executed_quantity ?? 0);
+		const quantity = this.stats[0]?.quantity;
+		return quantity && Math.abs(quantity);
 	},
 
 	get portfolioWeightAtOpen(): Percent | undefined {
@@ -163,7 +168,7 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get profitability() {
-		return this.realisedProfitability ?? this.unrealisedProfitability;
+		return this.stats.at(-1)?.profitability;
 	},
 
 	get candleTimeBucket(): TimeBucket {
@@ -226,12 +231,6 @@ const tradingPositionInfoPrototype = {
 	// (ALL trades SHOULD be test trades if ANY are)
 	get isTest() {
 		return this.trades.some((t) => t.isTest);
-	},
-
-	getLatestStats({ positions, closed_positions }: Statistics) {
-		const latestPositionStats = positions[this.position_id]?.at(-1);
-		const finalStats = closed_positions[this.position_id];
-		return { ...latestPositionStats, ...finalStats };
 	}
 } satisfies ThisType<TradingPositionWithStats & Record<string, any>>;
 

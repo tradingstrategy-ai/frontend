@@ -7,5 +7,5 @@ export async function load({ params, parent }) {
 
 	const positions = getTradingPositionInfoArray(state, status);
 
-	return { status, positions };
+	return { positions, status };
 }
