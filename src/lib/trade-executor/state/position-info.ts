@@ -7,7 +7,7 @@
  */
 import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from './utility-types';
 import type { State } from './state';
-import type { PositionStatistics, Statistics } from './statistics';
+import type { PositionStatistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
 import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
 
