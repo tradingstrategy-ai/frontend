@@ -47,9 +47,9 @@ export default defineConfig({
 	// suppress svg build output during CI (spammy due to cryptocurrency-icons)
 	customLogger: logger,
 
-	// suppress plotly build warnings (remove once ploty.js is gone)
 	build: {
-		chunkSizeWarningLimit: 1200,
+		// suppress chunk size warning during build
+		chunkSizeWarningLimit: 600,
 		sourcemap: true
 	},
 

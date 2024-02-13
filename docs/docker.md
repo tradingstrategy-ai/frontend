@@ -4,7 +4,7 @@ The SvelteKit is run in a docker container.
 
 ### Creating a new release
 
-To build and tag a new Docker image jstjust run the shortcut script locally:
+To build and tag a new Docker image just run the shortcut script locally:
 
 ```shell
 bash scripts/release.sh
@@ -240,5 +240,5 @@ For more information, see [host.docker.internal on Linux](https://stackoverflow.
 ### Building container locally
 
 ```shell
-docker build --build-arg FONT_ZIP_DOWNLOAD_URL=${FONT_ZIP_DOWNLOAD_URL} .
+docker build .
 ```

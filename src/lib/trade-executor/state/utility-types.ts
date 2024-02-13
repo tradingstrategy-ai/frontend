@@ -41,7 +41,7 @@ export type HexString = z.infer<typeof hexString>;
 export const percent = z.coerce.number();
 export type Percent = z.infer<typeof percent>;
 
-export const primaryKey = z.number().int();
+export const primaryKey = z.number().int().positive();
 export type PrimaryKey = z.infer<typeof primaryKey>;
 
 // This is needed when primary key is used as record key

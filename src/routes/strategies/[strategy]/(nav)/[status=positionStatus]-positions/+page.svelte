@@ -6,7 +6,7 @@
 	import PositionTable from './PositionTable.svelte';
 
 	export let data;
-	$: ({ positions, state, status } = data);
+	$: ({ positions, status } = data);
 
 	$: q = $page.url.searchParams;
 	$: options = {
@@ -35,7 +35,6 @@
 		<PositionTable
 			{positions}
 			{status}
-			stats={state.stats}
 			{...options}
 			hasPagination={status === 'closed'}
 			hasSearch={status === 'closed'}

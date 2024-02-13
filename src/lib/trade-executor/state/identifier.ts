@@ -16,7 +16,7 @@ const assetIdentifierBase = z.object({
 	chain_id: chainId,
 	address: hexString,
 	token_symbol: z.string(),
-	decimals: z.number(),
+	decimals: z.number().int().nonnegative(),
 	internal_id: primaryKey.nullish(),
 	info_url: z.string().url().nullish(),
 	type: assetType.nullish(),

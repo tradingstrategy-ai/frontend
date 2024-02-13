@@ -14,7 +14,6 @@
 	import FlagCell from './FlagCell.svelte';
 
 	export let positions: TradingPositionInfo[];
-	export let stats: Statistics;
 	export let status: PositionStatus;
 	export let page = 0;
 	export let sort = 'position_id';
@@ -67,8 +66,7 @@
 		}),
 		table.column({
 			header: 'Profitability',
-			id: 'profitability',
-			accessor: (position) => position.getLatestStats(stats).profitability,
+			accessor: 'profitability',
 			cell: ({ value }) =>
 				createRender(UpDownCell, { value, formatter: formatProfitability, compareFn: determineProfitability })
 		}),
@@ -79,14 +77,13 @@
 		}),
 		table.column({
 			header: 'Value',
-			id: 'value',
-			accessor: (position) => position.getLatestStats(stats).value,
+			accessor: 'value',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
 			header: 'Value',
 			id: 'value_at_open',
-			accessor: (position) => position.getLatestStats(stats).value_at_open,
+			accessor: 'valueAtOpen',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({

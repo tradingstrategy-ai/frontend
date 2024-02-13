@@ -6,13 +6,13 @@
  *
  */
 import { z } from 'zod';
-import { count, percent, primaryKeyString, unixTimestamp, usDollarAmount } from './utility-types';
+import { count, percent, primaryKeyString, unixTimestampToDate, usDollarAmount } from './utility-types';
 import { tradeSummarySchema } from './trade';
 import { longShortTableSchema } from '../statistics/statistics-table';
 
 export const positionStatisticsSchema = z.object({
-	calculated_at: unixTimestamp,
-	last_valuation_at: unixTimestamp,
+	calculated_at: unixTimestampToDate,
+	last_valuation_at: unixTimestampToDate,
 	profitability: percent,
 	profit_usd: usDollarAmount,
 	quantity: z.number(),
@@ -21,7 +21,7 @@ export const positionStatisticsSchema = z.object({
 export type PositionStatistics = z.infer<typeof positionStatisticsSchema>;
 
 export const finalPositionStatisticsSchema = z.object({
-	calculated_at: unixTimestamp,
+	calculated_at: unixTimestampToDate,
 	trade_count: count,
 	value_at_open: usDollarAmount,
 	value_at_max: usDollarAmount
@@ -29,7 +29,7 @@ export const finalPositionStatisticsSchema = z.object({
 export type FinalPositionStatistics = z.infer<typeof finalPositionStatisticsSchema>;
 
 export const portfolioStatisticsSchema = z.object({
-	calculated_at: unixTimestamp,
+	calculated_at: unixTimestampToDate,
 	total_equity: usDollarAmount,
 	net_asset_value: usDollarAmount.nullish(),
 	free_cash: usDollarAmount.nullish(),
@@ -39,8 +39,8 @@ export const portfolioStatisticsSchema = z.object({
 	frozen_position_equity: usDollarAmount.nullish(),
 	closed_position_count: count.nullish(),
 	unrealised_profit_usd: usDollarAmount.nullish(),
-	first_trade_at: unixTimestamp.nullish(),
-	last_trade_at: unixTimestamp.nullish(),
+	first_trade_at: unixTimestampToDate.nullish(),
+	last_trade_at: unixTimestampToDate.nullish(),
 	realised_profit_usd: usDollarAmount.nullish(),
 	summary: tradeSummarySchema.nullish()
 });

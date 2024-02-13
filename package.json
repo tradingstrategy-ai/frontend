@@ -49,7 +49,8 @@
     "vite": "^4.4.9",
     "vite-plugin-simple-json-server": "^0.6.2",
     "vitest": "^0.34.6",
-    "vitest-github-actions-reporter": "^0.10.0"
+    "vitest-github-actions-reporter": "^0.10.0",
+    "zod-fixture": "^2.5.1"
   },
   "dependencies": {
     "@aave/math-utils": "^1.23.1",

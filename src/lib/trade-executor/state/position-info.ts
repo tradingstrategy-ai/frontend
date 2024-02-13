@@ -5,10 +5,11 @@
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/position.py
  *
  */
-import type { Percent, USDollarAmount, USDollarPrice } from './utility-types';
-import { type TradingPosition, tradingPositionTooltips } from './position';
-import type { Statistics } from './statistics';
+import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from './utility-types';
+import type { State } from './state';
+import type { PositionStatistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
+import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
 
 /**
  * English tooltips for the datapoints
@@ -46,6 +47,10 @@ export const tradingPositionInfoTooltips = {
 	tradingFeesMissing: 'Trading fee data was not recorded for this position',
 	tradingFeesPercent:
 		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
+};
+
+type TradingPositionWithStats = TradingPosition & {
+	stats: PositionStatistics[];
 };
 
 /**
@@ -94,12 +99,44 @@ const tradingPositionInfoPrototype = {
 		return this.firstTrade.executed_price;
 	},
 
+	/**
+	 * Return the value based on the latest pre-calculated position stats
+	 *
+	 * NOTE: this will be zero for closed positions
+	 */
+	get value() {
+		return this.stats.at(-1)?.value;
+	},
+
+	/**
+	 * Return the value calculated when the position was opened
+	 */
 	get valueAtOpen() {
-		return this.firstTrade.executedValue;
+		return this.stats[0]?.value;
+	},
+
+	/**
+	 * Return the value calculated when the position was closed
+	 */
+	get valueAtClose() {
+		const lastStats = this.stats.at(-1);
+		// confirm position is closed and final stats have been calculated
+		if (this.closed && lastStats && this.closed_at! < lastStats.calculated_at) {
+			// return the value from the second-to-last position stats object
+			return this.stats.at(-2)?.value;
+		}
+	},
+
+	/**
+	 * Return the the highest calculated position value
+	 */
+	get valueAtPeak() {
+		return Math.max(...this.stats.map((s) => s.value));
 	},
 
 	get quantityAtOpen() {
-		return Math.abs(this.firstTrade.executed_quantity ?? 0);
+		const quantity = this.stats[0]?.quantity;
+		return quantity && Math.abs(quantity);
 	},
 
 	get portfolioWeightAtOpen(): Percent | undefined {
@@ -140,25 +177,12 @@ const tradingPositionInfoPrototype = {
 		return this.stillOpen ? this.last_token_price : undefined;
 	},
 
-	get unrealisedProfitability(): Percent | undefined {
-		if (this.openPrice && this.currentPrice) {
-			return (this.currentPrice - this.openPrice) / this.openPrice;
-		}
-	},
-
 	get closePrice() {
 		return this.closed ? this.lastTrade?.executed_price : undefined;
 	},
 
-	// TODO: Needs to be changed avg sell - avg buy
-	get realisedProfitability(): Percent | undefined {
-		if (this.openPrice && this.closePrice) {
-			return (this.closePrice - this.openPrice) / this.openPrice;
-		}
-	},
-
 	get profitability() {
-		return this.realisedProfitability ?? this.unrealisedProfitability;
+		return this.stats.at(-1)?.profitability;
 	},
 
 	get candleTimeBucket(): TimeBucket {
@@ -221,20 +245,39 @@ const tradingPositionInfoPrototype = {
 	// (ALL trades SHOULD be test trades if ANY are)
 	get isTest() {
 		return this.trades.some((t) => t.isTest);
-	},
-
-	getLatestStats({ positions, closed_positions }: Statistics) {
-		const latestPositionStats = positions[this.position_id]?.at(-1);
-		const finalStats = closed_positions[this.position_id];
-		return { ...latestPositionStats, ...finalStats };
 	}
-} satisfies ThisType<TradingPosition & Record<string, any>>;
+} satisfies ThisType<TradingPositionWithStats & Record<string, any>>;
 
-export type TradingPositionInfo = TradingPosition & typeof tradingPositionInfoPrototype;
+export type TradingPositionInfo = TradingPositionWithStats & typeof tradingPositionInfoPrototype;
 
 /**
- * Factory function to create a TradingPairInfo object
+ * Factory function to create a TradingPositionInfo object
  */
-export function createTradingPositionInfo(data: TradingPosition): TradingPositionInfo {
-	return Object.assign(Object.create(tradingPositionInfoPrototype), data);
+export function createTradingPositionInfo(
+	position: TradingPosition,
+	stats: PositionStatistics[] = []
+): TradingPositionInfo {
+	const positionInfo = Object.create(tradingPositionInfoPrototype);
+	return Object.assign(positionInfo, position, { stats });
+}
+
+/**
+ * Get a single TradingPositionInfo object from state for a given status and id
+ */
+export function getTradingPositionInfo(state: State, status: PositionStatus, id: PrimaryKeyString) {
+	const position = state.portfolio[`${status}_positions`][id];
+	if (!position) return;
+	const stats = state.stats.positions[id] ?? [];
+	return createTradingPositionInfo(position, stats);
+}
+
+/**
+ * Get all TradingPositionInfo objects from state for a given status
+ */
+export function getTradingPositionInfoArray(state: State, status: PositionStatus): TradingPositionInfo[] {
+	const positions = state.portfolio[`${status}_positions`];
+	return Object.values(positions).map((position) => {
+		const stats = state.stats.positions[position.position_id];
+		return createTradingPositionInfo(position, stats);
+	});
 }
