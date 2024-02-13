@@ -3,9 +3,6 @@
 #######################################
 FROM node:18.14 as builder
 
-ARG FONT_ZIP_DOWNLOAD_URL
-ENV FONT_ZIP_DOWNLOAD_URL=$FONT_ZIP_DOWNLOAD_URL
-
 WORKDIR /app
 
 # install npm dependencies (cache first)
@@ -16,8 +13,8 @@ RUN --mount=type=ssh npm ci
 # copy remaining files
 COPY . .
 
-# Fetch commercial fonts
-RUN scripts/fetch-fonts.sh
+# Copy commercial fonts
+RUN scripts/build-deps.sh
 
 # build app
 RUN npm run build
