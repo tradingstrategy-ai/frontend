@@ -10,7 +10,7 @@ button-like control with a segement for each possible value.
 -->
 <script lang="ts">
 	export let selected: string | undefined = undefined;
-	export let options: string[];
+	export let options: readonly string[];
 	export let secondary = false;
 
 	$: kind = secondary ? 'secondary' : 'primary';
