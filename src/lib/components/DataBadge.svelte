@@ -21,16 +21,18 @@ The color and background color may be overridden with CSS props.
 	[data-css-props] {
 		--data-badge-background: var(--hsla-box-2);
 		--data-badge-color: var(--hsl-text);
+		--data-badge-height: auto;
 	}
 
 	.data-badge {
 		display: inline-grid;
+		align-items: center;
+		height: var(--data-badge-height);
 		padding: 0.5em 0.625em;
 		border-radius: 0.75em;
 		font-weight: 500;
 		color: hsl(var(--data-badge-color));
 		background: hsl(var(--data-badge-background));
-		text-transform: uppercase;
 		transition: var(--transition-1);
 
 		&.bullish {

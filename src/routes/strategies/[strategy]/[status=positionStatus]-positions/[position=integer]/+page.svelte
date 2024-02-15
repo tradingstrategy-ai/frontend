@@ -88,7 +88,7 @@
 				{#if position.stopLossTriggered}
 					<Tooltip>
 						<span slot="trigger" class="data-badge">
-							<DataBadge>stop loss</DataBadge>
+							<DataBadge>Stop loss</DataBadge>
 						</span>
 						<span slot="popup">
 							{position.tooltip.stopLossTriggered}

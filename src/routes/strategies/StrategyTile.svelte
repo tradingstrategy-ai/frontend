@@ -4,7 +4,7 @@
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { type RawTick, type Quote, rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
-	import { Alert, Button, EntitySymbol, Tooltip } from '$lib/components';
+	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
@@ -58,14 +58,18 @@
 				{/each}
 			</div>
 
-			{#if errorHtml}
-				<div class="errors">
+			<div class="badges">
+				{#if errorHtml}
 					<Tooltip>
-						<Alert slot="trigger" size="xs">Error occurred</Alert>
+						<DataBadge slot="trigger" status="error">Error</DataBadge>
 						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
-				</div>
-			{/if}
+				{/if}
+				<Tooltip>
+					<DataBadge slot="trigger" status="warning">Beta</DataBadge>
+					<svelte:fragment slot="popup">This strategy is in beta.</svelte:fragment>
+				</Tooltip>
+			</div>
 		</div>
 		<div class="chart">
 			<ChartThumbnail data={chartData} />
@@ -120,23 +124,6 @@
 			z-index: 2;
 		}
 
-		.errors {
-			position: relative;
-			z-index: 1;
-
-			:global(.tooltip .popup) {
-				position: absolute;
-				width: 22rem;
-				right: 0;
-				left: auto;
-				bottom: auto;
-			}
-
-			:global(.alert-item) {
-				container-type: unset;
-			}
-		}
-
 		.visuals {
 			padding-top: 2rem;
 			display: grid;
@@ -146,7 +133,6 @@
 			}
 
 			.top {
-				align-items: flex-start;
 				display: flex;
 				gap: 1rem;
 				justify-content: space-between;
@@ -159,14 +145,29 @@
 				.tokens {
 					display: flex;
 					gap: 0.5rem;
-					--token-size: 2.5rem;
-					@media (--viewport-sm-down) {
-						--token-size: 2rem;
-					}
+					--token-size: 2rem;
 
 					:global(.entity-symbol) {
 						border-radius: 100%;
 						box-shadow: var(--shadow-1);
+					}
+				}
+
+				.badges {
+					display: flex;
+					gap: 0.5em;
+					font: var(--f-ui-sm-medium);
+
+					:global([data-css-props]) {
+						--data-badge-height: 100%;
+					}
+
+					:global(.tooltip .popup) {
+						position: absolute;
+						max-width: 22rem;
+						right: 0;
+						left: auto;
+						bottom: auto;
 					}
 				}
 			}
