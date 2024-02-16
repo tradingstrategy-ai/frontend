@@ -18,9 +18,11 @@
 		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
 		<div class="title" slot="title">
 			{strategy.name}
-			<span class="badges">
-				<DataBadge status="warning">Beta</DataBadge>
-			</span>
+			{#each strategy.tags ?? [] as tag}
+				<span class="badge">
+					<DataBadge status="warning">{tag}</DataBadge>
+				</span>
+			{/each}
 		</div>
 		<div class="wallet-widget" slot="cta">
 			<WalletWidget {strategy} {chain} />
@@ -57,12 +59,13 @@
 		display: grid;
 		gap: var(--space-md);
 
-		.badges {
+		.badge {
 			display: inline-block;
 			font-family: var(--ff-ui);
 			font-size: clamp(11px, 0.45em, 16px);
 			line-height: var(--lh-ui);
-			transform: translate(0.25em, -0.375em);
+			margin-inline: 0.25em;
+			transform: translate(0, -0.375em);
 		}
 
 		:global(> .alert-list) {

@@ -65,10 +65,9 @@
 						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
 				{/if}
-				<Tooltip>
-					<DataBadge slot="trigger" status="warning">Beta</DataBadge>
-					<svelte:fragment slot="popup">This strategy is in beta.</svelte:fragment>
-				</Tooltip>
+				{#each strategy.tags ?? [] as tag}
+					<DataBadge status="warning">{tag}</DataBadge>
+				{/each}
 			</div>
 		</div>
 		<div class="chart">
