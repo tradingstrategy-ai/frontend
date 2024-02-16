@@ -47,9 +47,6 @@
 		/>
 		<div>
 			<slot />
-			<p class="beta-notice">
-				<strong>Beta notice</strong>: Trade execution is currently in beta. Execution may contain issues.
-			</p>
 		</div>
 	</div>
 </main>
@@ -88,11 +85,6 @@
 		@media (--viewport-sm-down) {
 			display: none;
 		}
-	}
-
-	.beta-notice {
-		margin: var(--space-xl) 0;
-		color: hsl(var(--hsl-text-extra-light));
 	}
 
 	.error-wrapper {
