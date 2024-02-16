@@ -18,7 +18,7 @@
 		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
 		<div class="title" slot="title">
 			{strategy.name}
-			<span class="beta-badge">
+			<span class="badges">
 				<DataBadge status="warning">Beta</DataBadge>
 			</span>
 		</div>
@@ -57,7 +57,7 @@
 		display: grid;
 		gap: var(--space-md);
 
-		.beta-badge {
+		.badges {
 			display: inline-block;
 			font-family: var(--ff-ui);
 			font-size: clamp(11px, 0.45em, 16px);

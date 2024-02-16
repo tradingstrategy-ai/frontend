@@ -341,7 +341,7 @@
 
 	.data-badge {
 		:global([data-css-props]) {
-			--data-badge-background: var(--hsla-box-4);
+			--data-badge-background: hsl(var(--hsla-box-4));
 		}
 		font-size: 0.6em;
 		line-height: 125%;

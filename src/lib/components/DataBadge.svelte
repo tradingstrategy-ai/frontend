@@ -19,8 +19,8 @@ The color and background color may be overridden with CSS props.
 
 <style lang="postcss">
 	[data-css-props] {
-		--data-badge-background: var(--hsla-box-2);
-		--data-badge-color: var(--hsl-text);
+		--data-badge-background: hsl(var(--hsla-box-2));
+		--data-badge-color: hsl(var(--hsl-text));
 		--data-badge-height: auto;
 	}
 
@@ -31,8 +31,8 @@ The color and background color may be overridden with CSS props.
 		padding: 0.5em 0.625em;
 		border-radius: 0.75em;
 		font-weight: 500;
-		color: hsl(var(--data-badge-color));
-		background: hsl(var(--data-badge-background));
+		color: var(--data-badge-color);
+		background: var(--data-badge-background);
 		transition: var(--transition-1);
 
 		&.bullish {
@@ -46,18 +46,18 @@ The color and background color may be overridden with CSS props.
 		}
 
 		&.error {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
-			background: hsl(var(--hsl-error) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 25%);
+			background: hsl(var(--hsl-error) / 35%);
 		}
 
 		&.success {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-success)) 50%);
-			background: hsl(var(--hsl-success) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-success)) 25%);
+			background: hsl(var(--hsl-success) / 35%);
 		}
 
 		&.warning {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-warning)) 35%);
-			background: hsl(var(--hsl-warning) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-warning)) 25%);
+			background: hsl(var(--hsl-warning) / 40%);
 		}
 	}
 </style>
