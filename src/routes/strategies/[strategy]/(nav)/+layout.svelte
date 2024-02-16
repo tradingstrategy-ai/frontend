@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Alert, PageHeading } from '$lib/components';
+	import { Alert, DataBadge, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
 	import { WalletWidget } from '$lib/wallet';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
@@ -14,8 +14,14 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading title={strategy.name} description={strategy.short_description}>
+	<PageHeading description={strategy.short_description}>
 		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
+		<div class="title" slot="title">
+			{strategy.name}
+			<span class="beta-badge">
+				<DataBadge status="warning">Beta</DataBadge>
+			</span>
+		</div>
 		<div class="wallet-widget" slot="cta">
 			<WalletWidget {strategy} {chain} />
 		</div>
@@ -50,6 +56,14 @@
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);
+
+		.beta-badge {
+			display: inline-block;
+			font-family: var(--ff-ui);
+			font-size: clamp(11px, 0.45em, 16px);
+			line-height: var(--lh-ui);
+			transform: translate(0.25em, -0.375em);
+		}
 
 		:global(> .alert-list) {
 			width: 100%;
