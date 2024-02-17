@@ -1,7 +1,7 @@
 #######################################
 # Build stage
 #######################################
-FROM node:18.14 as builder
+FROM node:20.11 as builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN npm run build
 #######################################
 # Serve stage
 #######################################
-FROM node:18.14-slim
+FROM node:20.11-slim
 
 WORKDIR /app
 

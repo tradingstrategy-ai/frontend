@@ -6,7 +6,7 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install NPM dependencies
 
-Node >=18.14 required.
+Node >=20.11 required.
 
 ```shell
 npm install
