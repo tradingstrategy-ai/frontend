@@ -60,8 +60,10 @@
 							{#if isDurationField(row)}
 								<span class="long-label">{value}</span>
 								<span class="short-label">{durationShortLabel(value)}</span>
-							{:else}
+							{:else if typeof value === 'string'}
 								{value}
+							{:else}
+								-
 							{/if}
 						</td>
 					{/each}

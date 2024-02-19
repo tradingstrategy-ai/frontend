@@ -29,7 +29,9 @@ export type StatisticsTable = z.infer<typeof statisticsTableSchema>;
 export const longShortTableColumns = z.enum(['All', 'Long', 'Short']);
 
 const longShortTableMetricSchema = statisticsTableMetricSchema.extend({
-	value: z.record(longShortTableColumns, z.string())
+	// FIXME: value should be a string, but is currently an object for
+	// some metrics (return_percent, annualised_return_percent)
+	value: z.record(longShortTableColumns, z.any())
 });
 
 export const longShortTableSchema = statisticsTableSchema.extend({
