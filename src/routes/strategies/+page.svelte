@@ -36,7 +36,7 @@
 		{#if filteredStrategies.length}
 			<div class="strategy-tiles" data-testid="strategy-tiles">
 				{#each filteredStrategies as strategy (strategy.id)}
-					<StrategyTile {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id ?? 0]} />
+					<StrategyTile {admin} {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id ?? 0]} />
 				{/each}
 			</div>
 		{:else}

@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { Alert, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
+	import StrategyBadges from '../../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
@@ -14,8 +15,12 @@
 </script>
 
 <main class="strategy-layout ds-container">
-	<PageHeading title={strategy.name} description={strategy.short_description}>
+	<PageHeading description={strategy.short_description}>
 		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
+		<div class="title" slot="title">
+			{strategy.name}
+			<StrategyBadges class="badge" tags={strategy.tags} />
+		</div>
 		<div class="wallet-widget" slot="cta">
 			<WalletWidget {strategy} {chain} />
 		</div>
@@ -39,9 +44,6 @@
 		/>
 		<div>
 			<slot />
-			<p class="beta-notice">
-				<strong>Beta notice</strong>: Trade execution is currently in beta. Execution may contain issues.
-			</p>
 		</div>
 	</div>
 </main>
@@ -51,12 +53,13 @@
 		display: grid;
 		gap: var(--space-md);
 
-		:global(> .alert-list) {
-			width: 100%;
-			margin-top: var(--space-lg);
+		:global(.badge) {
+			font-size: clamp(11px, 0.45em, 16px);
+			margin-inline: 0.25em;
+			transform: translate(0, -0.375em);
 		}
 
-		.subpage :global {
+		.subpage {
 			display: grid;
 			gap: var(--space-ls);
 
@@ -65,21 +68,16 @@
 				grid-template-columns: 14rem auto;
 			}
 		}
-	}
 
-	.wallet-widget {
-		@media (--viewport-sm-down) {
-			display: none;
+		.wallet-widget {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
 		}
-	}
 
-	.beta-notice {
-		margin: var(--space-xl) 0;
-		color: hsl(var(--hsl-text-extra-light));
-	}
-
-	.error-wrapper {
-		margin-top: calc(var(--space-md) * -1);
-		margin-bottom: var(--space-md);
+		.error-wrapper {
+			margin-top: -1rem;
+			margin-bottom: 1rem;
+		}
 	}
 </style>

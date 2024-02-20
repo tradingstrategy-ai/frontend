@@ -35,7 +35,7 @@ Used in DataTable context (vs. standard svelte component context).
 	{/if}
 	{#if isTest}
 		<span class="test-badge">
-			<DataBadge status="warning">TEST</DataBadge>
+			<DataBadge status="warning">Test</DataBadge>
 		</span>
 	{/if}
 </div>

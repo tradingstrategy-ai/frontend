@@ -10,27 +10,34 @@ The color and background color may be overridden with CSS props.
 ```
 -->
 <script lang="ts">
+	let className: string = '';
+	export { className as class };
 	export let status: 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default' = 'default';
 </script>
 
-<span class="data-badge {status}" data-css-props>
+<span class="data-badge {status} {className}" data-css-props>
 	<slot />
 </span>
 
 <style lang="postcss">
 	[data-css-props] {
-		--data-badge-background: var(--hsla-box-2);
-		--data-badge-color: var(--hsl-text);
+		--data-badge-background: hsl(var(--hsla-box-2));
+		--data-badge-color: hsl(var(--hsl-text));
+		--data-badge-height: auto;
 	}
 
 	.data-badge {
 		display: inline-grid;
+		align-items: center;
+		height: var(--data-badge-height);
 		padding: 0.5em 0.625em;
 		border-radius: 0.75em;
+		font-family: var(--ff-ui);
 		font-weight: 500;
-		color: hsl(var(--data-badge-color));
-		background: hsl(var(--data-badge-background));
-		text-transform: uppercase;
+		line-height: var(--lh-ui, 125%);
+		color: var(--data-badge-color);
+		background: var(--data-badge-background);
+		text-transform: capitalize;
 		transition: var(--transition-1);
 
 		&.bullish {
@@ -44,18 +51,18 @@ The color and background color may be overridden with CSS props.
 		}
 
 		&.error {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
-			background: hsl(var(--hsl-error) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 25%);
+			background: hsl(var(--hsl-error) / 35%);
 		}
 
 		&.success {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-success)) 50%);
-			background: hsl(var(--hsl-success) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-success)) 25%);
+			background: hsl(var(--hsl-success) / 35%);
 		}
 
 		&.warning {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-warning)) 35%);
-			background: hsl(var(--hsl-warning) / 25%);
+			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-warning)) 25%);
+			background: hsl(var(--hsl-warning) / 40%);
 		}
 	}
 </style>

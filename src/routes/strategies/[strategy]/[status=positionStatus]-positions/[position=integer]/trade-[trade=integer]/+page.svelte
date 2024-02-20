@@ -8,10 +8,8 @@
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { Alert, Button, DataBox, PageHeading, Timestamp } from '$lib/components';
+	import { Alert, Button, DataBadge, DataBox, HashAddress, PageHeading, Timestamp } from '$lib/components';
 	import TransactionTable from './TransactionTable.svelte';
-	import HashAddress from '$lib/components/HashAddress.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 
 	export let data;
 
@@ -24,12 +22,12 @@
 			Trade #{trade.trade_id}
 			{#if trade.isTest}
 				<span class="heading-badge">
-					<DataBadge status="warning">test</DataBadge>
+					<DataBadge status="warning">Test</DataBadge>
 				</span>
 			{/if}
 			{#if trade.trade_type === 'stop_loss'}
 				<span class="heading-badge">
-					<DataBadge>stop loss</DataBadge>
+					<DataBadge>Stop loss</DataBadge>
 				</span>
 			{/if}
 		</span>

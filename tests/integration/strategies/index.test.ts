@@ -19,7 +19,7 @@ test.describe('strategy index page', () => {
 
 	test('should only display live strategies to admin user when live filter applied', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
-		await page.getByText('live', { exact: true }).click();
+		await page.locator('label:has-text("live")').click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
 		expect(await rows.count()).toBe(1);

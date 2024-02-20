@@ -26,7 +26,7 @@ describe('StrategyTile component', () => {
 		test('should display error message', async () => {
 			const { getByText } = render(StrategyTile, { strategy, chain });
 			// check for tooltip trigger
-			getByText(/Error occurred/);
+			getByText(/Error/);
 			// check for tooltip popup content
 			const popup = getByText(/Trade executor offline/);
 		});
