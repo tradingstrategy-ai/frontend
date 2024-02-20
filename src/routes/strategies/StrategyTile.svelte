@@ -5,10 +5,12 @@
 	import { type RawTick, type Quote, rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
+	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
+	export let admin = false;
 	export let strategy: StrategyRuntimeState;
 	export let chain: ApiChain | undefined;
 
@@ -65,9 +67,7 @@
 						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
 				{/if}
-				{#each strategy.tags ?? [] as tag}
-					<DataBadge status="warning">{tag}</DataBadge>
-				{/each}
+				<StrategyBadges tags={strategy.tags} includeLive={admin} />
 			</div>
 		</div>
 		<div class="chart">

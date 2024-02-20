@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Alert, DataBadge, PageHeading } from '$lib/components';
+	import { Alert, PageHeading } from '$lib/components';
 	import StrategyNav from './StrategyNav.svelte';
+	import StrategyBadges from '../../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
@@ -18,9 +19,7 @@
 		<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
 		<div class="title" slot="title">
 			{strategy.name}
-			{#each strategy.tags ?? [] as tag}
-				<DataBadge class="badge" status="warning">{tag}</DataBadge>
-			{/each}
+			<StrategyBadges class="badge" tags={strategy.tags} />
 		</div>
 		<div class="wallet-widget" slot="cta">
 			<WalletWidget {strategy} {chain} />
