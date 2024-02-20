@@ -2,43 +2,33 @@
 	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import type { LongShortMetrics } from 'trade-executor/state/statistics';
-	import { getPortfolioLatestStats } from 'trade-executor/state/stats';
 	import { getChartClient } from 'trade-executor/chart';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { SegmentedControl } from '$lib/components';
-	import SummaryStatistics from './SummaryStatistics.svelte';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
 	const { state, strategy } = data;
 
-	const longShortMetrics = state.stats.long_short_metrics_latest;
+	const dataSources = {
+		'Live trading': { table: 'live_stats', chart: 'live_trading' },
+		Backtesting: { table: 'backtested_stats', chart: 'backtest' }
+	} as const;
 
-	const dataSourceOptions = ['Live trading', 'Backtesting'] as const;
-	type DataSource = (typeof dataSourceOptions)[number];
-	let selectedDataSource: DataSource = 'Live trading';
-
-	function getTableData(metrics: LongShortMetrics, source: DataSource) {
-		// TODO: remove compatibility layer when all trade-executors have new schema
-		if (!('live_stats' in metrics)) return metrics;
-
-		const key = source === 'Live trading' ? 'live_stats' : 'backtested_stats';
-		return metrics[key];
-	}
+	let selectedDataSource: keyof typeof dataSources = 'Live trading';
+	$: dataSource = dataSources[selectedDataSource];
 
 	const chartClient = getChartClient(fetch, strategy.url);
-
 	$: chartClient.fetch({
 		type: 'compounding_realised_profitability',
-		source: selectedDataSource === 'Live trading' ? 'live_trading' : 'backtest'
+		source: dataSource.chart
 	});
 </script>
 
 <section class="performance-page">
 	<div class="data-source">
-		<SegmentedControl options={dataSourceOptions} bind:selected={selectedDataSource} />
+		<SegmentedControl options={Object.keys(dataSources)} bind:selected={selectedDataSource} />
 		<p>
 			Viewing performance based on
 			<strong>{selectedDataSource.toLocaleLowerCase()}</strong>
@@ -61,14 +51,7 @@
 		/>
 	</ChartContainer>
 
-	{#if longShortMetrics}
-		<LongShortTable tableData={getTableData(longShortMetrics, selectedDataSource)} />
-	{:else}
-		<SummaryStatistics
-			oldLatestStats={getPortfolioLatestStats(state)}
-			summaryStatistics={strategy.summary_statistics}
-		/>
-	{/if}
+	<LongShortTable tableData={state.stats.long_short_metrics_latest[dataSource.table]} />
 </section>
 
 <style>

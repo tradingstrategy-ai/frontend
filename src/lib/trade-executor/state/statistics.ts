@@ -46,20 +46,15 @@ export const portfolioStatisticsSchema = z.object({
 });
 export type PortfolioStatistics = z.infer<typeof portfolioStatisticsSchema>;
 
-const longShortDatasets = z.object({
-	live_stats: longShortTableSchema,
-	backtested_stats: longShortTableSchema
-});
-
-const longShortMetricsSchema = z.union([longShortTableSchema, longShortDatasets]);
-export type LongShortMetrics = z.infer<typeof longShortMetricsSchema>;
-
 // TODO: remove long_short_metrics_latest compatibility layer once trade-executor updates deployed
 // see: https://github.com/tradingstrategy-ai/trade-executor/issues/760
 export const statisticsSchema = z.object({
 	portfolio: portfolioStatisticsSchema.array(),
 	positions: z.record(primaryKeyString, positionStatisticsSchema.array()),
 	closed_positions: z.record(primaryKeyString, finalPositionStatisticsSchema),
-	long_short_metrics_latest: longShortMetricsSchema.nullish()
+	long_short_metrics_latest: z.object({
+		live_stats: longShortTableSchema,
+		backtested_stats: longShortTableSchema
+	})
 });
 export type Statistics = z.infer<typeof statisticsSchema>;
