@@ -19,9 +19,7 @@
 		<div class="title" slot="title">
 			{strategy.name}
 			{#each strategy.tags ?? [] as tag}
-				<span class="badge">
-					<DataBadge status="warning">{tag}</DataBadge>
-				</span>
+				<DataBadge class="badge" status="warning">{tag}</DataBadge>
 			{/each}
 		</div>
 		<div class="wallet-widget" slot="cta">
@@ -56,21 +54,13 @@
 		display: grid;
 		gap: var(--space-md);
 
-		.badge {
-			display: inline-block;
-			font-family: var(--ff-ui);
+		:global(.badge) {
 			font-size: clamp(11px, 0.45em, 16px);
-			line-height: var(--lh-ui);
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
 		}
 
-		:global(> .alert-list) {
-			width: 100%;
-			margin-top: var(--space-lg);
-		}
-
-		.subpage :global {
+		.subpage {
 			display: grid;
 			gap: var(--space-ls);
 
@@ -79,16 +69,16 @@
 				grid-template-columns: 14rem auto;
 			}
 		}
-	}
 
-	.wallet-widget {
-		@media (--viewport-sm-down) {
-			display: none;
+		.wallet-widget {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
 		}
-	}
 
-	.error-wrapper {
-		margin-top: calc(var(--space-md) * -1);
-		margin-bottom: var(--space-md);
+		.error-wrapper {
+			margin-top: -1rem;
+			margin-bottom: 1rem;
+		}
 	}
 </style>
