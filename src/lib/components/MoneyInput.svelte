@@ -101,8 +101,9 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		}
 
 		.unit {
-			background-image: linear-gradient(hsl(var(--hsla-box-2)), hsl(var(--hsla-box-2))),
-				linear-gradient(hsl(var(--hsl-body)), hsl(var(--hsl-body)));
+			/* layer box-2 on top of body color instead of white */
+			background-color: hsl(var(--hsl-body));
+			background-image: linear-gradient(hsl(var(--hsla-box-2)), hsl(var(--hsla-box-2)));
 			display: grid;
 			font: var(--f-ui-lg-bold);
 			height: 100%;
