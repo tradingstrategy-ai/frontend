@@ -111,15 +111,15 @@
 	.strategy-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));
-		background: hsl(var(--hsla-box-1));
-		border: 1px hsl(var(--hsla-box-3)) solid;
+		background: var(--c-box-1);
+		border: 1px var(--c-box-3) solid;
 		border-radius: var(--radius-lg);
-		color: hsl(var(--hsl-text));
+		color: var(--c-text);
 		cursor: pointer;
 		transition: var(--transition-1);
 
 		&:hover {
-			background: hsl(var(--hsla-box-2));
+			background: var(--c-box-2);
 			z-index: 2;
 		}
 
@@ -197,7 +197,7 @@
 				}
 
 				.avatar {
-					background: hsl(var(--hsla-box-3));
+					background: var(--c-box-3);
 					border-radius: 100%;
 					font: var(--f-ui-sm-roman);
 					text-align: center;
@@ -224,7 +224,7 @@
 						border-radius: 100%;
 						bottom: -0.5rem;
 						box-shadow: var(--shadow-1);
-						background: hsl(var(--hsl-text-inverted));
+						background: var(--c-text-inverted);
 						display: flex;
 						padding: 0.25rem;
 						position: absolute;
@@ -261,7 +261,7 @@
 
 				p {
 					font: var(--f-ui-md-medium);
-					color: hsl(var(--hsl-text-extra-light));
+					color: var(--c-text-extra-light);
 				}
 			}
 
@@ -272,7 +272,7 @@
 			.backtest-indicator {
 				font: var(--f-ui-xs-bold);
 				letter-spacing: 0.03em;
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 				text-transform: uppercase;
 			}
 
@@ -283,8 +283,8 @@
 
 		&:is(:hover, :focus) {
 			.actions :global(.button) {
-				background: hsl(var(--hsl-text));
-				color: hsl(var(--hsl-text-inverted));
+				background: var(--c-text);
+				color: var(--c-text-inverted);
 			}
 
 			.chart :global(figcaption) {

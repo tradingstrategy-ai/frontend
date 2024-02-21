@@ -18,8 +18,8 @@
 	.summary-box {
 		display: grid;
 		gap: 1rem;
-		background: hsl(var(--hsla-box-1));
-		border: 1px solid hsl(var(--hsla-box-3));
+		background: var(--c-box-1);
+		border: 1px solid var(--c-box-3);
 		border-radius: var(--radius-md);
 		padding: 1.25rem;
 	}
@@ -29,7 +29,7 @@
 		grid-auto-flow: column;
 		grid-template-columns: 1fr;
 		align-items: center;
-		color: hsl(var(--hsl-text-ultra-light));
+		color: var(--c-text-ultra-light);
 	}
 
 	h2 {

@@ -22,7 +22,7 @@
 	.inner {
 		--logo-height: 5rem;
 		align-items: center;
-		background: hsl(var(--hsla-box-1));
+		background: var(--c-box-1);
 		border-radius: var(--radius-xl);
 		display: flex;
 		gap: var(--space-md);

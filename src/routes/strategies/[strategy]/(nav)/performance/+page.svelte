@@ -68,7 +68,7 @@
 		}
 
 		.chart-subtitle {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--ls-ui-md, normal);
 		}

@@ -50,7 +50,7 @@
 	<Section>
 		{#if page.loading}
 			<div style:text-align="center">
-				<Spinner size="4rem" color="hsl(var(--hsl-text))" />
+				<Spinner size="4rem" color="var(--c-text)" />
 			</div>
 		{:else if page.error}
 			<Alert title="Error loading blog posts">

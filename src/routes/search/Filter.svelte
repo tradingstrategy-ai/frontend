@@ -87,7 +87,7 @@ Display filter options as checkboxes search queries.
 
 		&:is(:hover, :focus-within)::before {
 			--offset: calc(-1 * var(--space-sm));
-			background: hsl(var(--hsla-box-3));
+			background: var(--c-box-3);
 			border-radius: var(--radius-sm);
 			bottom: var(--offset);
 			content: '';
@@ -98,7 +98,7 @@ Display filter options as checkboxes search queries.
 		}
 
 		&:focus-within::before {
-			outline: 2px solid hsl(var(--hsl-text-extra-light));
+			outline: 2px solid var(--c-text-extra-light);
 		}
 	}
 
@@ -106,9 +106,9 @@ Display filter options as checkboxes search queries.
 		appearance: none;
 		width: 1.5rem;
 		height: 1.5rem;
-		border: 2px solid hsl(var(--hsl-text));
+		border: 2px solid var(--c-text);
 		border-radius: var(--radius-xxs);
-		background: hsl(var(--hsl-body));
+		background: var(--c-body);
 		outline: none;
 	}
 
@@ -129,7 +129,7 @@ Display filter options as checkboxes search queries.
 	.count {
 		padding: var(--space-xxs);
 		border-radius: var(--radius-xxs);
-		background-color: hsl(var(--hsla-box-2));
+		background-color: var(--c-box-2);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--f-ui-sm-spacing, normal);
 	}

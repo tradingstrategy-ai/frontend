@@ -67,7 +67,7 @@
 		.position {
 			width: 3.5em;
 			padding-right: 0;
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		.price-change {

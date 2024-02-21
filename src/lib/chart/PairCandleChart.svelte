@@ -131,7 +131,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 
 <style lang="postcss">
 	.pair-candle-chart-hud {
-		background: hsl(var(--hsla-box-3));
+		background: var(--c-box-3);
 		display: inline-grid;
 		gap: var(--space-ss);
 		padding: var(--space-md);

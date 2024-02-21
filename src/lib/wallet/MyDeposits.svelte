@@ -147,7 +147,7 @@
 
 		display: grid;
 		grid-template-rows: auto 1fr;
-		border: 1px solid hsl(var(--hsl-text-light));
+		border: 1px solid var(--c-text-light);
 		border-radius: var(--radius-md);
 		--padding: 1.25rem;
 		--gap: 1rem;
@@ -225,7 +225,7 @@
 		font-size: 1rem;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: hsl(var(--hsl-text-ultra-light));
+		color: var(--c-text-ultra-light);
 		white-space: nowrap;
 
 		.mobile & {

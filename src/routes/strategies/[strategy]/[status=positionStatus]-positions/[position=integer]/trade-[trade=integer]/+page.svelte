@@ -192,7 +192,7 @@
 		}
 
 		.position-impact {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing);
 
@@ -219,7 +219,7 @@
 		.trading-pair {
 			font-weight: bold;
 			& .swap-fee {
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 			}
 		}
 
@@ -260,7 +260,7 @@
 
 				&:first-child {
 					padding-left: 0.75rem;
-					color: hsl(var(--hsl-text-extra-light));
+					color: var(--c-text-extra-light);
 				}
 
 				&:last-child {

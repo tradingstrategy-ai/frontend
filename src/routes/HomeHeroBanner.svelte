@@ -38,7 +38,7 @@ Home page hero banner.
 
 <style lang="postcss">
 	.home-hero-banner {
-		background: hsl(var(--hsla-background-accent-1));
+		background: var(--c-background-accent-1);
 		padding: var(--space-xl) 0;
 		@media (--viewport-md-up) {
 			padding: var(--space-10xl) var(--space-3xl);
@@ -86,7 +86,7 @@ Home page hero banner.
 	}
 
 	hr {
-		border: 1px solid hsl(var(--hsl-text));
+		border: 1px solid var(--c-text);
 		margin-block: var(--space-lg);
 	}
 </style>

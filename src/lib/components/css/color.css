@@ -5,12 +5,10 @@
 	--hue-bearish: 0;
 	--hue-bullish: 140;
 
-	--hsl-black: 0 0% 0%;
-	--hsl-white: 0 0% 100%;
-	--hsl-console: 120 93% 79%;
-	--hsl-error: 358 56% 55%;
-	--hsl-success: 149 64% 44%;
-	--hsl-warning: 43 92% 50%;
+	--c-console: hsl(120 93% 79%);
+	--c-error: hsl(358 56% 55%);
+	--c-success: hsl(149 64% 44%);
+	--c-warning: hsl(43 92% 50%);
 
 	/* Color schemes */
 	color-scheme: light dark;
@@ -18,38 +16,43 @@
 
 /* Light theme (default) */
 body {
-	--hsl-body: var(--hue-1) 100% 96%;
+	--c-body: hsl(var(--hue-1) 100% 96%);
 
-	--hsl-text: var(--hue-1) 9% 7%;
-	--hsl-text-light: var(--hue-1) 4% 24%;
-	--hsl-text-extra-light: var(--hue-1) 6% 56%;
-	--hsl-text-ultra-light: var(--hue-1) 12% 68%;
-	--hsl-text-inverted: var(--hue-2) 20% 99%;
+	--c-text: hsl(var(--hue-1) 9% 7%);
+	--c-text-light: hsl(var(--hue-1) 4% 24%);
+	--c-text-extra-light: hsl(var(--hue-1) 6% 56%);
+	--c-text-ultra-light: hsl(var(--hue-1) 12% 68%);
+	--c-text-inverted: hsl(var(--hue-2) 20% 99%);
 
-	--hsl-bullish: var(--hue-bullish) 68% 42%;
-	--hsl-bearish: var(--hue-bearish) 92% 57%;
+	--c-bullish: hsl(var(--hue-bullish) 68% 42%);
+	--c-bearish: hsl(var(--hue-bearish) 92% 57%);
 
-	--hsl-shadow: var(--hsl-black);
+	--c-shadow: black;
 
 	--hsl-box: var(--hue-1) 32% 72%;
-	--hsla-box-1: var(--hsl-box) / 12%;
-	--hsla-box-2: var(--hsl-box) / 24%;
-	--hsla-box-3: var(--hsl-box) / 36%;
-	--hsla-box-4: var(--hsl-box) / 48%;
+	--box-1-alpha: 12%;
+	--box-2-alpha: 24%;
+	--box-3-alpha: 36%;
+	--box-4-alpha: 48%;
 
-	--hsla-background-accent-1: var(--hsla-box-2);
+	--c-box-1: hsl(var(--hsl-box) / var(--box-1-alpha));
+	--c-box-2: hsl(var(--hsl-box) / var(--box-2-alpha));
+	--c-box-3: hsl(var(--hsl-box) / var(--box-3-alpha));
+	--c-box-4: hsl(var(--hsl-box) / var(--box-4-alpha));
 
-	--hsla-input-background: var(--hsl-white) / 95%;
-	--hsla-input-background-focus: var(--hsl-white);
-	--hsla-input-border: var(--hsla-box-4);
-	--hsla-input-border-focus: var(--hsl-text-extra-light);
+	--c-background-accent-1: var(--c-box-2);
 
-	--hsla-quoteblock-background: var(--hsl-white);
-	--hsla-quoteblock-backdrop: var(--hsla-box-4);
+	--c-input-background: color-mix(in srgb, white, transparent 5%);
+	--c-input-background-focus: white;
+	--c-input-border: var(--c-box-4);
+	--c-input-border-focus: var(--c-text-extra-light);
+
+	--c-quoteblock-background: white;
+	--c-quoteblock-backdrop: var(--c-box-4);
 
 	/* must use raw values since ::backdrop does not inherit from anything */
 	::backdrop {
-		--hsl-backdrop: 0 0% 0%;
+		--c-backdrop: black;
 	}
 
 	/* color mode utility properties */
@@ -61,38 +64,39 @@ body {
 /* Dark theme */
 @media (prefers-color-scheme: dark) {
 	body {
-		--hsl-body: var(--hue-2) 2% 10%;
+		--c-body: hsl(var(--hue-2) 2% 10%);
 
-		--hsl-text: var(--hue-1) 12% 99%;
-		--hsl-text-light: var(--hue-1) 4% 88%;
-		--hsl-text-extra-light: var(--hue-1) 3% 64%;
-		--hsl-text-ultra-light: var(--hue-1) 2% 36%;
-		--hsl-text-inverted: var(--hue-1) 9% 7%;
+		--c-text: hsl(var(--hue-1) 12% 99%);
+		--c-text-light: hsl(var(--hue-1) 4% 88%);
+		--c-text-extra-light: hsl(var(--hue-1) 3% 64%);
+		--c-text-ultra-light: hsl(var(--hue-1) 2% 36%);
+		--c-text-inverted: hsl(var(--hue-1) 9% 7%);
 
-		--hsl-bullish: var(--hue-bullish) 68% 42%;
-		--hsl-bearish: var(--hue-bearish) 92% 72%;
+		--c-bullish: hsl(var(--hue-bullish) 68% 42%);
+		--c-bearish: hsl(var(--hue-bearish) 92% 72%);
 
-		--hsl-shadow: var(--hsl-white);
+		--c-shadow: white;
 
+		/* see --c-box-n values above */
 		--hsl-box: var(--hue-1) 2% 92%;
-		--hsla-box-1: var(--hsl-box) / 5%;
-		--hsla-box-2: var(--hsl-box) / 8%;
-		--hsla-box-3: var(--hsl-box) / 14%;
-		--hsla-box-4: var(--hsl-box) / 20%;
+		--box-1-alpha: 5%;
+		--box-2-alpha: 8%;
+		--box-3-alpha: 14%;
+		--box-4-alpha: 20%;
 
-		--hsla-background-accent-1: 0 0% 0% / 20%;
+		--c-background-accent-1: hsl(0 0% 0% / 20%);
 
-		--hsla-input-background: var(--hsla-box-2);
-		--hsla-input-background-focus: var(--hsla-box-3);
-		--hsla-input-border: var(--hsla-box-4);
-		--hsla-input-border-focus: var(--hsl-text-extra-light);
+		--c-input-background: var(--c-box-2);
+		--c-input-background-focus: var(--c-box-3);
+		--c-input-border: var(--c-box-4);
+		--c-input-border-focus: var(--c-text-extra-light);
 
-		--hsla-quoteblock-background: var(--hsla-box-4);
-		--hsla-quoteblock-backdrop: var(--hsla-box-2);
+		--c-quoteblock-background: var(--c-box-4);
+		--c-quoteblock-backdrop: var(--c-box-2);
 
 		/* must use raw values since ::backdrop does not inherit from anything */
 		::backdrop {
-			--hsl-backdrop: 0 0% 100%;
+			--c-backdrop: white;
 		}
 
 		/* color mode utility properties */
@@ -103,8 +107,8 @@ body {
 }
 
 body {
-	color: hsl(var(--hsl-text));
-	background-color: hsl(var(--hsl-body));
+	color: var(--c-text);
+	background-color: var(--c-body);
 	transition-property: background-color, color;
 	transition-duration: var(--time-md);
 }

@@ -186,7 +186,7 @@
 				margin: 0;
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
-				color: hsl(var(--hsl-text-light));
+				color: var(--c-text-light);
 				white-space: nowrap;
 			}
 
@@ -213,8 +213,8 @@
 			min-height: 18rem;
 			max-height: 28rem;
 			white-space: pre-line;
-			background: hsl(var(--hsla-input-background));
-			border: 2px solid hsl(var(--hsla-input-border));
+			background: var(--c-input-background);
+			border: 2px solid var(--c-input-border);
 			overflow-y: auto;
 			font: var(--f-text-md-regular);
 			letter-spacing: var(--f-text-md-spacing, normal);
@@ -239,7 +239,7 @@
 		.no-file {
 			font: var(--f-mono-md-regular);
 			letter-spacing: var(--f-mono-md-spacing, normal);
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 50%);
+			color: color-mix(in srgb, var(--c-text), var(--c-error));
 		}
 
 		form {
@@ -255,7 +255,7 @@
 				bottom: -2rem;
 				width: 100%;
 				font-weight: bold;
-				color: hsl(var(--hsl-error));
+				color: var(--c-error);
 				text-align: center;
 			}
 		}

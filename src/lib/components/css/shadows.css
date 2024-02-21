@@ -1,5 +1,5 @@
 body {
-	--shadow-1: 0 0 4px 0 hsl(var(--hsl-shadow) / 20%);
-	--shadow-2: 0 0 6px 0 hsl(var(--hsl-shadow) / 10%);
-	--shadow-3: 0 0 6px 0 hsl(var(--hsl-shadow) / 5%);
+	--shadow-1: 0 0 4px 0 color-mix(in srgb, transparent, var(--c-shadow) 20%);
+	--shadow-2: 0 0 6px 0 color-mix(in srgb, transparent, var(--c-shadow) 10%);
+	--shadow-3: 0 0 6px 0 color-mix(in srgb, transparent, var(--c-shadow) 5%);
 }

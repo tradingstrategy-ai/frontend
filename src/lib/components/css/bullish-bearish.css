@@ -1,0 +1,7 @@
+:is(.bullish, [data-direction='bullish']) {
+	color: var(--c-bullish);
+}
+
+:is(.bearish, [data-direction='bearish']) {
+	color: var(--c-bearish);
+}

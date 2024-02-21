@@ -48,7 +48,7 @@ Used in DataTable context (vs. standard svelte component context).
 		white-space: nowrap;
 
 		.modifier {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		.test-badge {

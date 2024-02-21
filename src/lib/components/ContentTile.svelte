@@ -79,7 +79,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		height: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
-		background: hsl(var(--hsla-box-2));
+		background: var(--c-box-2);
 
 		@media (--viewport-sm-up) {
 			max-height: 20rem;
@@ -112,7 +112,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		:global time {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		h3 {
@@ -124,7 +124,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		p {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: hsl(var(--hsl-text-light));
+			color: var(--c-text-light);
 		}
 	}
 

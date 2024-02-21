@@ -1,6 +1,6 @@
 progress {
-	--background-color: hsl(var(--hsla-box-1));
-	--progress-color: hsl(var(--hsl-success));
+	--background-color: var(--c-box-1);
+	--progress-color: var(--c-success);
 	--border-radius: var(--progress-border-radius, var(--radius-xs));
 	appearance: none;
 	background: var(--background-color);

@@ -24,7 +24,7 @@
 <style lang="postcss">
 	.banner {
 		display: contents;
-		--section-background: hsl(var(--hsla-background-accent-1));
+		--section-background: var(--c-background-accent-1);
 
 		:is(h2, footer) {
 			text-align: center;

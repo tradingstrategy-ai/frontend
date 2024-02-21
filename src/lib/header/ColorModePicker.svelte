@@ -55,27 +55,27 @@
 		padding-block: var(--space-ss);
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
-		color: hsl(var(--hsl-text));
+		color: var(--c-text);
 		text-align: center;
 		cursor: pointer;
 
 		&.light:hover {
-			background: var(--cm-light, hsl(var(--hsla-background-accent-1))) var(--cm-dark, hsl(var(--hsl-text)));
-			color: var(--cm-light, hsl(var(--hsl-text))) var(--cm-dark, hsl(var(--hsl-text-inverted)));
+			background: var(--cm-light, var(--c-background-accent-1)) var(--cm-dark, var(--c-text));
+			color: var(--cm-light, var(--c-text)) var(--cm-dark, var(--c-text-inverted));
 		}
 
 		&.dark:hover {
-			background: var(--cm-dark, hsl(var(--hsla-background-accent-1))) var(--cm-light, hsl(var(--hsl-text)));
-			color: var(--cm-dark, hsl(var(--hsl-text))) var(--cm-light, hsl(var(--hsl-text-inverted)));
+			background: var(--cm-dark, var(--c-background-accent-1)) var(--cm-light, var(--c-text));
+			color: var(--cm-dark, var(--c-text)) var(--cm-light, var(--c-text-inverted));
 		}
 
 		&.system:hover {
-			background: hsl(var(--hsla-background-accent-1));
+			background: var(--c-background-accent-1);
 		}
 
 		&.active,
 		&.active:hover {
-			background: hsl(var(--hsla-box-3));
+			background: var(--c-box-3);
 		}
 	}
 </style>

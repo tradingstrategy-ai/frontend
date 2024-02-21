@@ -29,9 +29,9 @@ button-like control with a segement for each possible value.
 	.primary {
 		--gap: 1px;
 		--padding: var(--space-sm) var(--space-md);
-		--background-default: hsl(var(--hsla-box-4));
-		--background-selected: hsl(var(--hsl-text));
-		--color-selected: hsl(var(--hsl-text-inverted));
+		--background-default: var(--c-box-4);
+		--background-selected: var(--c-text);
+		--color-selected: var(--c-text-inverted);
 
 		@media (--viewport-sm-down) {
 			--padding: var(--space-ss) var(--space-sl);
@@ -41,7 +41,7 @@ button-like control with a segement for each possible value.
 	.secondary {
 		--gap: 2px;
 		--padding: 0.75em;
-		--background-selected: hsl(var(--hsla-box-3));
+		--background-selected: var(--c-box-3);
 		--border-radius: 2em;
 	}
 

@@ -15,7 +15,7 @@
 
 <style lang="postcss">
 	.wallet-tile {
-		border: 2px hsl(var(--hsla-box-1)) solid;
+		border: 2px var(--c-box-1) solid;
 		border-radius: var(--radius-sm);
 		cursor: pointer;
 		display: grid;
@@ -27,8 +27,8 @@
 		outline: none;
 
 		&:focus {
-			background: hsl(var(--hsla-box-3));
-			--background-hover: hsl(var(--hsla-box-4));
+			background: var(--c-box-3);
+			--background-hover: var(--c-box-4);
 		}
 	}
 

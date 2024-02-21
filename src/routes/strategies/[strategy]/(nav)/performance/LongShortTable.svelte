@@ -83,7 +83,7 @@
 			display: grid;
 			width: 100%;
 			margin-bottom: 1rem;
-			border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
+			border-bottom: 2px solid var(--c-text-ultra-light);
 			white-space: nowrap;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--ls-ui-md);
@@ -100,7 +100,7 @@
 
 			/* zebra-striped rows */
 			tr:nth-child(odd) td {
-				background: hsl(var(--hsla-box-2));
+				background: var(--c-box-2);
 			}
 
 			:is(th, td) {
@@ -111,23 +111,22 @@
 				position: sticky;
 				top: -1px;
 				padding-block: 1em;
-				border-bottom: 2px solid hsl(var(--hsl-text-ultra-light));
+				border-bottom: 2px solid var(--c-text-ultra-light);
 				text-align: left;
 
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 				/* using color-mix to prevent layered transparency */
-				/* FIXME: % value is off for dark-mode (switch to color-mix in colors.css) */
-				background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 12%);
+				background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-1-alpha));
 			}
 
 			td {
 				&.name {
 					font-weight: 500;
-					color: hsl(var(--hsl-text-light));
+					color: var(--c-text-light);
 				}
 
 				&.no-match {
-					color: hsl(var(--hsl-text-extra-light));
+					color: var(--c-text-extra-light);
 				}
 			}
 

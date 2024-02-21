@@ -38,7 +38,7 @@
 
 <style lang="postcss">
 	.mobile-sorting {
-		background: hsl(var(--hsl-body));
+		background: var(--c-body);
 		padding: var(--space-md) 0;
 		position: sticky;
 		top: 0;

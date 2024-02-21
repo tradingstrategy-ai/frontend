@@ -59,20 +59,11 @@
 		font-weight: 500;
 	}
 
-	/* Price action and candle colors */
-	:is(.bullish, [data-direction='bullish']) {
-		color: hsl(var(--hsl-bullish));
-	}
-
-	:is(.bearish, [data-direction='bearish']) {
-		color: hsl(var(--hsl-bearish));
-	}
-
 	/* global skeleton class */
 	.skeleton {
 		color: transparent !important;
 		position: relative;
-		--skeleton-background: hsl(var(--hsla-box-3));
+		--skeleton-background: var(--c-box-3);
 
 		&::before {
 			width: var(--skeleton-width, 100%);

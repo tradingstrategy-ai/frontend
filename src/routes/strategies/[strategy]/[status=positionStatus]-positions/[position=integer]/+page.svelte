@@ -336,12 +336,12 @@
 	}
 
 	.position-kind {
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 	}
 
 	.data-badge {
 		:global([data-css-props]) {
-			--data-badge-background: hsl(var(--hsla-box-4));
+			--data-badge-background: var(--c-box-4);
 		}
 		font-size: 0.6em;
 		line-height: 125%;

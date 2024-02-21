@@ -75,7 +75,7 @@
 
 	.trade-table :global {
 		.trade_id {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 			width: 2em;
 			padding-right: 0;
 		}

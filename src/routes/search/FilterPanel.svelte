@@ -119,7 +119,7 @@
 			bottom: 0;
 			z-index: 10;
 			overflow-y: scroll;
-			background: hsl(var(--hsl-body));
+			background: var(--c-body);
 			box-shadow: var(--shadow-1);
 			transition: transform var(--time-xl);
 
@@ -170,7 +170,7 @@
 		bottom: 0;
 		padding: var(--space-sl);
 		display: grid;
-		background: hsl(var(--hsl-body));
+		background: var(--c-body);
 		box-shadow: var(--shadow-1);
 
 		@media (--viewport-lg-up) {

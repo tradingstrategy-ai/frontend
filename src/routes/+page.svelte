@@ -73,7 +73,7 @@
 		</Section>
 	{/if}
 
-	<Section padding="lg" --section-background="hsl(var(--hsla-background-accent-1))">
+	<Section padding="lg" --section-background="var(--c-background-accent-1)">
 		<div class="strategies">
 			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>
@@ -114,7 +114,7 @@
 	}
 
 	.strategies {
-		background: hsl(var(--hsla-box-2));
+		background: var(--c-box-2);
 		border-radius: var(--radius-xl);
 		display: grid;
 		gap: var(--space-3xl);
@@ -141,10 +141,10 @@
 		.coming-soon {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: hsl(var(--hsl-text-light));
+			color: var(--c-text-light);
 			text-transform: uppercase;
 			padding: var(--space-sl) var(--space-ls);
-			border: 1px solid hsl(var(--hsl-text-extra-light));
+			border: 1px solid var(--c-text-extra-light);
 			border-radius: var(--radius-xxl);
 		}
 

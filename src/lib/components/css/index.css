@@ -1,5 +1,6 @@
-@import './animations.css';
 @import './reset.css';
+@import './animations.css';
+@import './bullish-bearish.css';
 @import './color.css';
 @import './datatable.css';
 @import './input.css';
@@ -7,12 +8,12 @@
 @import './progress.css';
 @import './radius.css';
 @import './radius-new.css';
+@import './shadows.css';
 @import './space.css';
 @import './terminal.css';
 @import './tile.css';
 @import './time.css';
+@import './transitions.css';
 @import './truncate.css';
 @import './typography.css';
 @import './typography-new.css';
-@import './transitions.css';
-@import './shadows.css';

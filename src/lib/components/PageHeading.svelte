@@ -74,7 +74,7 @@
 	}
 
 	.icon {
-		background: hsl(var(--hsla-box-1));
+		background: var(--c-box-1);
 		border-radius: 100%;
 		height: var(--icon-size);
 		width: var(--icon-size);
@@ -98,7 +98,7 @@
 	:is(.prefix, .description) {
 		font: var(--secondary-font);
 		letter-spacing: var(--secondary-spacing, normal);
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 	}
 
 	.prefix :global(a:hover) {

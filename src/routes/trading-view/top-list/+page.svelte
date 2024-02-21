@@ -20,7 +20,7 @@
 			ctaLabel="View daily up"
 			href="/trading-view/top-list/daily-up"
 			icon="trend-up"
-			--icon-color="hsl(var(--hsl-bullish))"
+			--icon-color="var(--c-bullish)"
 		>
 			<h3 slot="title">Top daily up</h3>
 			<p>
@@ -33,7 +33,7 @@
 			ctaLabel="View daily down"
 			href="/trading-view/top-list/daily-down"
 			icon="trend-down"
-			--icon-color="hsl(var(--hsl-bearish))"
+			--icon-color="var(--c-bearish)"
 		>
 			<h3 slot="title">Top daily down</h3>
 			<p>

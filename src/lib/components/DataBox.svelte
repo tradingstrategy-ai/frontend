@@ -27,7 +27,7 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 <style lang="postcss">
 	.data-box {
 		border-radius: var(--radius-md);
-		background: hsl(var(--hsla-box-2));
+		background: var(--c-box-2);
 		display: grid;
 
 		&.xs {
@@ -80,7 +80,7 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 	.label {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-medium);

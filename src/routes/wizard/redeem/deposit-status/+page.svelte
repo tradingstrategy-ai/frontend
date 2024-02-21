@@ -36,7 +36,7 @@
 			<WalletInfoItem>
 				<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} />
 				{#await getNativeCurrency(address)}
-					<Spinner size="30" color="hsl(var(--hsl-text-light))" />
+					<Spinner size="30" color="var(--c-text-light)" />
 				{:then balance}
 					{formatBalance(balance, 2, 4)}
 				{/await}
@@ -71,7 +71,7 @@
 
 <style lang="postcss">
 	h3 {
-		color: hsl(var(--hsl-text-light));
+		color: var(--c-text-light);
 		font: var(--f-ui-lg-medium);
 	}
 </style>

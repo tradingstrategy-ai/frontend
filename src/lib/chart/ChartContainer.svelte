@@ -75,8 +75,8 @@ Display a chart container with title, description and timespan selector.
 	.chart-container {
 		display: grid;
 		gap: var(--space-sm);
-		background: hsl(var(--hsla-box-1));
-		border: 1px solid hsl(var(--hsla-box-3));
+		background: var(--c-box-1);
+		border: 1px solid var(--c-box-3);
 		border-radius: var(--radius-md);
 		padding-block: var(--chart-container-padding);
 
