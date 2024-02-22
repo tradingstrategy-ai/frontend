@@ -76,6 +76,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		border: none;
 		border-radius: var(--radius-xs);
 		background: var(--c-body);
+		color: var(--c-text);
 	}
 
 	dialog::backdrop {
