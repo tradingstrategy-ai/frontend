@@ -165,8 +165,8 @@ Display site-wide search box for use in top-nav.
 	.results {
 		--text-input-height: 2.875rem;
 
-		background: hsl(var(--hsl-body));
-		border: 1px hsl(var(--hsla-box-3)) solid;
+		background: var(--c-body);
+		border: 1px var(--c-box-3) solid;
 		box-shadow: var(--shadow-3);
 		overflow: hidden;
 		position: absolute;
@@ -202,7 +202,7 @@ Display site-wide search box for use in top-nav.
 		}
 
 		.inner {
-			background: hsl(var(--hsla-box-1));
+			background: var(--c-box-1);
 			display: flex;
 			flex-direction: column;
 			gap: var(--space-md);
@@ -225,7 +225,7 @@ Display site-wide search box for use in top-nav.
 			margin-bottom: var(--space-sl);
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 			text-align: center;
 
 			@media (--search-layout-mobile) {

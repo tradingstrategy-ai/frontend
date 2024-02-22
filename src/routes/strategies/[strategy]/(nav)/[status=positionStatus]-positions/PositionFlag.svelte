@@ -21,7 +21,7 @@
 <style lang="postcss">
 	.flag {
 		:global([data-css-props]) {
-			--data-badge-background: hsl(var(--hsla-box-4));
+			--data-badge-background: var(--c-box-4);
 		}
 
 		:global(*) {

@@ -35,7 +35,7 @@ or other contexts where a stronger visual representation is desired.
 		justify-content: flex-end;
 
 		:global(.up-down-indicator) {
-			background: hsl(var(--hsla-box-2));
+			background: var(--c-box-2);
 			border-radius: var(--radius-sm);
 			display: grid;
 			font: var(--up-down-font, var(--f-ui-sm-medium));
@@ -46,19 +46,13 @@ or other contexts where a stronger visual representation is desired.
 			transition: all var(--time-sm) ease-out;
 		}
 
-		:global(.bullish) {
-			background: hsl(var(--hsl-bullish) / 12%);
+		:global(:is(.bullish, .bearish)) {
+			transition: none;
+			background: color-mix(in srgb, transparent, currentColor 12%);
+			--background-hover: color-mix(in srgb, transparent, currentColor 24%);
 
 			&:hover {
-				background: hsl(var(--hsl-bullish) / 24%) !important;
-			}
-		}
-
-		:global(.bearish) {
-			background: hsl(var(--hsl-bearish) / 12%);
-
-			&:hover {
-				background: hsl(var(--hsl-bearish) / 24%) !important;
+				background: var(--background-hover);
 			}
 		}
 	}

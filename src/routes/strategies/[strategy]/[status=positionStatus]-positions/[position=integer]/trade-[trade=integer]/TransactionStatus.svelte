@@ -13,6 +13,6 @@
 
 <style lang="postcss">
 	.failure {
-		color: hsl(var(--hsl-error));
+		color: var(--c-error);
 	}
 </style>

@@ -43,7 +43,7 @@
 		.symbol {
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--ls-ui-md);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 	}
 </style>

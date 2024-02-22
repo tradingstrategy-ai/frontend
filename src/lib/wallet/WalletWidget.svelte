@@ -69,7 +69,7 @@
 		justify-content: center;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm);
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 		opacity: 0;
 		transition: opacity var(--time-xs) ease-out;
 

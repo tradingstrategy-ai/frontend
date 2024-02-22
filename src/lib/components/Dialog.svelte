@@ -75,11 +75,12 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		padding: var(--space-xl);
 		border: none;
 		border-radius: var(--radius-xs);
-		background: hsl(var(--hsl-body));
+		background: var(--c-body);
+		color: var(--c-text);
 	}
 
 	dialog::backdrop {
-		background: hsl(var(--hsl-backdrop));
+		background: var(--c-backdrop);
 		opacity: 0.25;
 	}
 
@@ -89,7 +90,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		gap: var(--space-ss);
 		align-items: center;
 		margin-bottom: var(--space-ss);
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 
 		h5 {
 			font: var(--f-ui-lg-medium);

@@ -90,7 +90,7 @@ Display summary performance table for various periods.
 					padding-block: var(--space-md);
 
 					&:not(:last-child) {
-						border-bottom: 1px solid hsl(var(--hsl-text-ultra-light));
+						border-bottom: 1px solid var(--c-text-ultra-light);
 					}
 				}
 			}
@@ -102,7 +102,7 @@ Display summary performance table for various periods.
 		}
 
 		.loading li.col-heading {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		.time-period-col:not(.active) {

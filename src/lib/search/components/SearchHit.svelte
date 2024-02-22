@@ -79,10 +79,10 @@ props.
 
 <style lang="postcss">
 	.search-hit {
-		--hsl-exchange: 36, 68%, 35%;
-		--hsl-token: 36, 21%, 54%;
-		--hsl-trading-pair: 239, 6%, 36%;
-		--hsl-lending-reserve: 291, 16%, 43%;
+		--c-exchange: hsl(36, 68%, 35%);
+		--c-token: hsl(36, 21%, 54%);
+		--c-trading-pair: hsl(239, 6%, 36%);
+		--c-lending-reserve: hsl(291, 16%, 43%);
 
 		display: grid;
 		list-style-type: none;
@@ -105,20 +105,10 @@ props.
 				opacity: 0.35;
 			}
 
-			&:hover {
-				:global .up-down-indicator {
-					&.bearish {
-						background: hsl(var(--hsl-bearish) / 24%) !important;
-					}
-
-					&.bullish {
-						background: hsl(var(--hsl-bullish) / 24%) !important;
-					}
-				}
-			}
-
-			&:focus {
-				background: var(--background-hover); /* see tile.css */
+			/* see tile.css and UpDownCell.svelte */
+			&:focus,
+			&:is(:hover, :focus) :global(.up-down-indicator) {
+				background: var(--background-hover);
 			}
 
 			:global .up-down-cell {
@@ -135,24 +125,24 @@ props.
 			width: 5.625em;
 			font: var(--search-hit-badge-font, var(--f-ui-xs-medium));
 			letter-spacing: var(--search-hit-badge-spacing, var(--f-ui-xs-spacing, normal));
-			color: var(--cm-light, hsl(var(--hsl-text-inverted))) var(--cm-dark, hsl(var(--hsl-text)));
+			color: var(--cm-light, var(--c-text-inverted)) var(--cm-dark, var(--c-text));
 			text-transform: capitalize;
 			text-align: center;
 
 			&.exchange {
-				background: hsl(var(--hsl-exchange));
+				background: var(--c-exchange);
 			}
 
 			&.token {
-				background: hsl(var(--hsl-token));
+				background: var(--c-token);
 			}
 
 			&.pair {
-				background: hsl(var(--hsl-trading-pair));
+				background: var(--c-trading-pair);
 			}
 
 			&.lending_reserve {
-				background: hsl(var(--hsl-lending-reserve));
+				background: var(--c-lending-reserve);
 			}
 		}
 
@@ -165,7 +155,7 @@ props.
 			padding: 0.15em;
 			border-radius: 1em;
 			transform: translate(50%, 50%);
-			background: hsl(var(--hsl-text-inverted));
+			background: var(--c-text-inverted);
 			box-shadow: var(--shadow-1);
 		}
 

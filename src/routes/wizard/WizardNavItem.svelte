@@ -33,21 +33,21 @@
 			transition: all var(--time-sm) ease-out;
 
 			&.active {
-				background: hsl(var(--hsla-box-4));
+				background: var(--c-box-4);
 				cursor: default;
 			}
 
 			&.disabled {
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 				cursor: not-allowed;
 				&:hover {
-					background: hsl(var(--hsla-box-2));
+					background: var(--c-box-2);
 				}
 			}
 
 			&.completed {
-				background: hsl(var(--hsl-success) / 10%);
-				color: hsl(var(--hsl-success));
+				color: var(--c-success);
+				background: color-mix(in srgb, transparent, currentColor 10%);
 			}
 		}
 	}

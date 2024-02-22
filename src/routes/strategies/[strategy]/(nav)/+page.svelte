@@ -180,7 +180,7 @@
 			}
 
 			:global(.stx_xaxis_dark) {
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 			}
 		}
 
@@ -200,7 +200,7 @@
 			align-items: center;
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		.description p {

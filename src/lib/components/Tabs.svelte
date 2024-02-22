@@ -51,14 +51,14 @@ Display tabs and associated content panels. Optional `selected` prop defaults to
 	label {
 		display: inline-block;
 		border-radius: var(--radius-md);
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 		cursor: pointer;
 		padding: var(--space-md);
 		font: var(--f-ui-lg-medium);
 
 		input:checked + & {
-			background: hsl(var(--hsla-box-2));
-			color: hsl(var(--hsl-text));
+			background: var(--c-box-2);
+			color: var(--c-text);
 			cursor: auto;
 		}
 	}

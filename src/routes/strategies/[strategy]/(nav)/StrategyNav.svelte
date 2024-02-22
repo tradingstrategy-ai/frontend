@@ -146,8 +146,8 @@
 <style lang="postcss">
 	.strategy-nav {
 		--menu-gap: var(--space-sl);
-		--menu-item-active-color: hsl(var(--hsl-text));
-		--menu-item-color: hsl(var(--hsl-text-extra-light));
+		--menu-item-active-color: var(--c-text);
+		--menu-item-color: var(--c-text-extra-light);
 		--menu-item-border-radius: var(--radius-md);
 		--menu-item-padding: 0 var(--space-md);
 
@@ -181,12 +181,12 @@
 		border-radius: var(--radius-lg);
 		font: var(--f-ui-md-bold);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: hsl(var(--hsl-text));
-		background: hsl(var(--hsla-box-3));
+		color: var(--c-text);
+		background: var(--c-box-3);
 
 		:global(a:not([href]):not([tabindex])) & {
-			background: hsl(var(--hsl-text));
-			color: hsl(var(--hsl-text-inverted));
+			background: var(--c-text);
+			color: var(--c-text-inverted);
 		}
 
 		@media (--viewport-md-down) {

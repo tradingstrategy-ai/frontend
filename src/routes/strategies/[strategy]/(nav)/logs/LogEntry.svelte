@@ -36,7 +36,7 @@
 		}
 
 		&:not(:first-of-type) {
-			border-bottom: 1px solid hsl(var(--hsl-terminal-light) / 15%);
+			border-bottom: 1px solid color-mix(in srgb, transparent, var(--c-terminal-light) 15%);
 		}
 
 		.message {
@@ -65,7 +65,7 @@
 		:global(time) {
 			display: flex;
 			flex-direction: column;
-			color: hsl(var(--hsl-terminal-light));
+			color: var(--c-terminal-light);
 
 			@media (--viewport-sm-up) {
 				text-align: right;
@@ -73,20 +73,20 @@
 		}
 
 		&.trade {
-			color: hsl(var(--hsl-success));
+			color: var(--c-success);
 		}
 
 		&.warning {
-			color: hsl(var(--hsl-warning));
+			color: var(--c-warning);
 		}
 
 		&.error {
-			color: hsl(var(--hsl-error));
+			color: var(--c-error);
 		}
 
 		&.critical {
-			background: hsl(var(--hsl-error) / 65%);
-			color: hsl(var(--hsl-white));
+			background: color-mix(in srgb, transparent, var(--c-error) 65%);
+			color: white;
 		}
 	}
 </style>

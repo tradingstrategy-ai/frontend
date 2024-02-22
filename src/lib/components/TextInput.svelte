@@ -68,7 +68,7 @@ unknown props through to HTML input element.
 		width: var(--text-input-width, auto);
 		font: var(--text-input-font, var(--font));
 		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
-		color: hsl(var(--hsl-text));
+		color: var(--c-text);
 
 		.label,
 		[slot='label'] {
@@ -144,29 +144,29 @@ unknown props through to HTML input element.
 			width: inherit;
 			height: var(--text-input-height, var(--height));
 			padding: 0 var(--space-sl);
-			border: 1px hsl(var(--hsla-input-border)) solid;
+			border: 1px var(--c-input-border) solid;
 			border-radius: var(--border-radius);
-			background: hsl(var(--hsla-input-background));
+			background: var(--c-input-background);
 			font: inherit;
 			letter-spacing: inherit;
 			color: inherit;
 			transition: background var(--time-sm) ease-out;
 
 			&::placeholder {
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 			}
 
 			&:disabled {
-				background: hsl(var(--hsla-box-1));
+				background: var(--c-box-1);
 			}
 
 			&:focus,
 			&:hover {
-				background: hsl(var(--hsla-input-background-focus));
+				background: var(--c-input-background-focus);
 			}
 
 			&:focus {
-				border-color: hsl(var(--hsla-input-border-focus));
+				border-color: var(--c-input-border-focus);
 				outline: none;
 			}
 

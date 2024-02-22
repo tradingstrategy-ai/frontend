@@ -208,7 +208,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 <div class="chart-iq" data-css-props>
 	{#if loading || updating}
 		<div class="loading" transition:fade={{ duration: 250 }}>
-			<Spinner size="60" color="hsl(var(--hsl-text-extra-light))" />
+			<Spinner size="60" color="var(--c-text-extra-light)" />
 		</div>
 	{/if}
 

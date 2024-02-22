@@ -72,7 +72,7 @@ Display one key metric in a strategy tile.
 			align-items: center;
 			font: var(--key-metric-label-font);
 			letter-spacing: var(--key-metric-label-letter-spacing, normal);
-			color: hsl(var(--hsl-text-light));
+			color: var(--c-text-light);
 
 			&.backtesting > span::after {
 				content: '*';

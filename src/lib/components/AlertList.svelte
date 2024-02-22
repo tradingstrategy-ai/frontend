@@ -30,27 +30,27 @@ component instead.
 		border-radius: var(--radius-sm);
 		margin-inline: auto;
 		list-style: none;
-		color: hsl(var(--hsl-text));
+		color: var(--c-text);
 	}
 
 	.error {
-		background: hsl(var(--hsl-error) / 10%);
-		border-color: hsl(var(--hsl-error));
+		background: color-mix(in srgb, transparent, var(--c-error) 10%);
+		border-color: var(--c-error);
 	}
 
 	.success {
-		background: hsl(var(--hsl-success) / 10%);
-		border-color: hsl(var(--hsl-success));
+		background: color-mix(in srgb, transparent, var(--c-success) 10%);
+		border-color: var(--c-success);
 	}
 
 	.warning {
-		background: hsl(var(--hsl-warning) / 10%);
-		border-color: hsl(var(--hsl-warning));
+		background: color-mix(in srgb, transparent, var(--c-warning) 10%);
+		border-color: var(--c-warning);
 	}
 
 	.info {
-		background: hsl(var(--hsla-box-1));
-		border-color: hsl(var(--hsla-box-3));
+		background: var(--c-box-1);
+		border-color: var(--c-box-3);
 	}
 
 	.lg {

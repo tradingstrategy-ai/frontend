@@ -22,16 +22,16 @@
 	button {
 		background: none;
 		border: none;
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 		cursor: pointer;
 		transition: color var(--time-xs) ease-out;
 
 		&:hover {
-			color: hsl(var(--hsl-text));
+			color: var(--c-text);
 		}
 
 		:global(nav:hover) &:not(:hover) {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 	}
 
@@ -39,11 +39,11 @@
 		cursor: not-allowed;
 
 		&.active {
-			color: hsl(var(--hsl-text));
+			color: var(--c-text);
 		}
 
 		&.disabled {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 	}
 </style>

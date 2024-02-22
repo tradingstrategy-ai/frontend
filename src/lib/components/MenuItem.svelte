@@ -33,12 +33,12 @@
 		border-radius: var(--menu-item-border-radius, var(--radius-xs));
 
 		&:not([href]):not([tabindex]) {
-			background: hsl(var(--hsla-box-3));
+			background: var(--c-box-3);
 			color: var(--menu-item-active-color, inherit);
 		}
 
 		&:hover {
-			background: hsl(var(--hsla-box-2));
+			background: var(--c-box-2);
 		}
 	}
 

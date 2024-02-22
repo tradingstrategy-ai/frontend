@@ -94,7 +94,7 @@
 			display: flex;
 
 			&:hover .gap-indicator {
-				color: hsl(var(--hsl-text-extra-light));
+				color: var(--c-text-extra-light);
 			}
 		}
 	}

@@ -116,7 +116,7 @@
 
 <style lang="postcss">
 	.reserve-interest-rate-hud {
-		background: hsl(var(--hsla-box-3));
+		background: var(--c-box-3);
 		display: inline-grid;
 		gap: var(--space-ss);
 		padding: var(--space-md);

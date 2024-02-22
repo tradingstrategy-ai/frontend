@@ -21,8 +21,8 @@ The color and background color may be overridden with CSS props.
 
 <style lang="postcss">
 	[data-css-props] {
-		--data-badge-background: hsl(var(--hsla-box-2));
-		--data-badge-color: hsl(var(--hsl-text));
+		--data-badge-background: var(--c-box-2);
+		--data-badge-color: var(--c-text);
 		--data-badge-height: auto;
 	}
 
@@ -41,28 +41,28 @@ The color and background color may be overridden with CSS props.
 		transition: var(--transition-1);
 
 		&.bullish {
-			color: hsl(var(--hsl-bullish));
-			background: hsl(var(--hsl-bullish) / 25%);
+			color: var(--c-bullish);
+			background: color-mix(in srgb, currentColor, transparent 75%);
 		}
 
 		&.bearish {
-			color: hsl(var(--hsl-bearish));
-			background: hsl(var(--hsl-bearish) / 25%);
+			color: var(--c-bearish);
+			background: color-mix(in srgb, currentColor, transparent 75%);
 		}
 
 		&.error {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-error)) 25%);
-			background: hsl(var(--hsl-error) / 35%);
+			color: color-mix(in srgb, var(--c-text), var(--c-error) 25%);
+			background: color-mix(in srgb, transparent, var(--c-error) 35%);
 		}
 
 		&.success {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-success)) 25%);
-			background: hsl(var(--hsl-success) / 35%);
+			color: color-mix(in srgb, var(--c-text), var(--c-success) 25%);
+			background: color-mix(in srgb, transparent, var(--c-success) 35%);
 		}
 
 		&.warning {
-			color: color-mix(in srgb, hsl(var(--hsl-text)), hsl(var(--hsl-warning)) 25%);
-			background: hsl(var(--hsl-warning) / 40%);
+			color: color-mix(in srgb, var(--c-text), var(--c-warning) 25%);
+			background: color-mix(in srgb, transparent, var(--c-warning) 40%);
 		}
 	}
 </style>

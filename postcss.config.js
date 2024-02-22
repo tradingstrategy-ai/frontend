@@ -12,8 +12,7 @@ export default {
 
 		darkThemeClass({
 			darkSelector: '[data-color-mode="dark"]',
-			lightSelector: '[data-color-mode="light"]',
-			rootSelector: ['body']
+			lightSelector: '[data-color-mode="light"]'
 		})
 	]
 };

@@ -47,7 +47,7 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 
 		small {
 			font: var(--f-h4-medium);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 	}
 </style>

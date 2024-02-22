@@ -86,7 +86,7 @@
 			text-align: center;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 			opacity: 0;
 			transition: var(--transition-1);
 
@@ -104,7 +104,7 @@
 		transform: translate(-50%, calc(-100% - var(--space-md)));
 
 		:global(time) {
-			color: hsl(var(--hsl-text-extra-light));
+			color: var(--c-text-extra-light);
 		}
 
 		.value {

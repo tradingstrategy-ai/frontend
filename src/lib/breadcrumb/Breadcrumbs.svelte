@@ -78,7 +78,7 @@ https://search.google.com/structured-data/testing-tool
 		margin-bottom: var(--space-sl);
 		margin-left: calc(-1 * var(--space-sm));
 		overflow: hidden;
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
@@ -104,7 +104,7 @@ https://search.google.com/structured-data/testing-tool
 		}
 
 		> span {
-			color: hsl(var(--hsl-text));
+			color: var(--c-text);
 		}
 
 		&:not(:last-child)::after {

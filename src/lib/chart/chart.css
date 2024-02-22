@@ -4,33 +4,33 @@
  */
 .stx_candle_up,
 .stx_candle_shadow_up {
-	color: hsl(var(--hsl-bullish));
-	border-left-color: hsl(var(--hsl-bullish));
+	color: var(--c-bullish);
+	border-left-color: var(--c-bullish);
 }
 
 .stx_candle_down,
 .stx_candle_shadow_down {
-	color: hsl(var(--hsl-bearish));
-	border-left-color: hsl(var(--hsl-bearish));
+	color: var(--c-bearish);
+	border-left-color: var(--c-bearish);
 }
 
 .stx_current_hr_up {
-	background-color: hsl(var(--hsl-bullish));
+	background-color: var(--c-bullish);
 }
 
 .stx_current_hr_down {
-	background-color: hsl(var(--hsl-bearish));
+	background-color: var(--c-bearish);
 }
 
 .stx_volume_underlay_up,
 .stx_volume_underlay_down {
-	border-left-color: hsl(var(--hsl-body));
+	border-left-color: var(--c-body);
 	opacity: 0.3;
 }
 
 .stx_grid,
 .stx_grid_dark {
-	color: hsl(var(--hsla-box-3));
+	color: var(--c-box-3);
 	border-style: solid;
 }
 
@@ -44,18 +44,18 @@
 
 .stx_yaxis,
 .stx_xaxis {
-	color: hsl(var(--hsl-text-light));
+	color: var(--c-text-light);
 }
 
 .stx_xaxis_dark {
-	color: hsl(var(--hsl-text));
+	color: var(--c-text);
 }
 
 .stx-float-date,
 .stx-float-price {
-	color: hsl(var(--hsl-text));
+	color: var(--c-text);
 	/* this needs to be a solid bg color (no transparency) */
-	background: color-mix(in srgb, hsl(var(--hsl-body)), hsl(var(--hsl-box)) 36%);
+	background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-3-alpha));
 }
 
 .stx-float-date {
@@ -77,13 +77,13 @@
 }
 
 .stx_jump_today {
-	background: hsl(var(--hsla-box-2));
+	background: var(--c-box-2);
 }
 
 .crossY,
 .stx_crosshair_y {
 	height: 0px;
-	border-bottom: dashed hsl(var(--hsl-text)) 1px;
+	border-bottom: dashed var(--c-text) 1px;
 	background-color: transparent;
 	margin-top: 1px !important; /* since we're using border-bottom to draw the actual line */
 	opacity: 0.5;
@@ -92,7 +92,7 @@
 .crossX,
 .stx_crosshair_x {
 	width: 0px;
-	border-left: dashed hsl(var(--hsl-text)) 1px;
+	border-left: dashed var(--c-text) 1px;
 	background-color: transparent;
 	opacity: 0.5;
 }
@@ -103,36 +103,36 @@
 
 /* default line chart styles */
 .stx_line_chart {
-	--hsl-chart-line: var(--hsl-text-extra-light);
-	color: hsl(var(--hsl-chart-line));
+	--c-chart-line: var(--c-text-extra-light);
+	color: var(--c-chart-line);
 	width: 2px;
 }
 
 /* bullish line chart styles */
 :is(.bullish, [data-direction='bullish']) .stx_line_chart {
-	--hsl-chart-line: var(--hsl-bullish);
+	--c-chart-line: var(--c-bullish);
 }
 
 /* bearish line chart styles */
 :is(.bearish, [data-direction='bearish']) .stx_line_chart {
-	--hsl-chart-line: var(--hsl-bearish);
+	--c-chart-line: var(--c-bearish);
 }
 
 /* default mountain chart styles */
 .stx_mountain_chart {
-	--hsl-chart-mountain: var(--hsl-text-extra-light);
-	border: hsl(var(--hsl-chart-mountain)); /* line */
-	background-color: hsl(var(--hsl-chart-mountain) / 25%); /* gradient dark */
-	color: hsl(var(--hsl-chart-mountain) / 0%); /* gradient light */
+	--c-chart-mountain: var(--c-text-extra-light);
+	border: var(--c-chart-mountain); /* line */
+	background-color: color-mix(in srgb, var(--c-chart-mountain), transparent 75%); /* gradient dark */
+	color: color-mix(in srgb, var(--c-chart-mountain), transparent 99.9%); /* gradient light */
 	width: 2px;
 }
 
 /* bullish mountain chart styles */
 :is(.bullish, [data-direction='bullish']) .stx_mountain_chart {
-	--hsl-chart-mountain: var(--hsl-bullish);
+	--c-chart-mountain: var(--c-bullish);
 }
 
 /* bearish mountain chart styles */
 :is(.bearish, [data-direction='bearish']) .stx_mountain_chart {
-	--hsl-chart-mountain: var(--hsl-bearish);
+	--c-chart-mountain: var(--c-bearish);
 }

@@ -41,7 +41,7 @@ table.datatable {
 	}
 
 	thead tr:first-child {
-		background-color: hsl(var(--hsl-body));
+		background: var(--c-body);
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -52,9 +52,8 @@ table.datatable {
 	}
 
 	th {
-		background: hsl(var(--hsl-body));
-		border-radius: var(--table-border-radius);
-		color: hsl(var(--hsl-text-extra-light));
+		background: var(--c-body);
+		color: var(--c-text-extra-light);
 		font: var(--table-font);
 		letter-spacing: var(--table-letter-spacing, normal);
 		overflow: hidden;
@@ -71,8 +70,9 @@ table.datatable {
 			user-select: none;
 
 			&:hover {
-				background: hsl(var(--hsla-box-1));
-				color: hsl(var(--hsl-text-light));
+				background: var(--c-box-1);
+				color: var(--c-text-light);
+				border-radius: var(--table-border-radius);
 			}
 
 			.icon svg {
@@ -87,14 +87,14 @@ table.datatable {
 		}
 
 		&.sorted {
-			color: hsl(var(--hsl-text));
+			color: var(--c-text);
 			padding-right: var(--space-5xl);
 		}
 	}
 
 	tbody tr {
 		td {
-			background: hsl(var(--hsla-box-2));
+			background: var(--c-box-2);
 			height: var(--body-cell-height);
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
@@ -119,21 +119,16 @@ table.datatable {
 
 		&:is(:hover, :focus, :focus-within) {
 			td {
-				background: hsl(var(--hsla-box-4));
+				background: var(--c-box-4);
 			}
 
 			.button {
-				--c-accent: var(--hsl-text);
-				color: hsl(var(--hsl-text-inverted));
+				--c-accent: var(--c-text);
+				color: var(--c-text-inverted);
 			}
 
-			.up-down-cell .up-down-indicator {
-				&.bearish {
-					background: hsl(var(--hsl-bearish) / 24%) !important;
-				}
-				&.bullish {
-					background: hsl(var(--hsl-bullish) / 24%) !important;
-				}
+			.up-down-indicator:is(.bullish, .bearish) {
+				background: var(--background-hover);
 			}
 		}
 	}
@@ -163,7 +158,7 @@ table.datatable {
 			}
 
 			tbody tr {
-				background: hsl(var(--hsla-box-2));
+				background: var(--c-box-2);
 				border-radius: var(--table-border-radius);
 				display: grid;
 				grid-template-columns: 1fr 1fr;
@@ -235,7 +230,7 @@ table.loading {
 
 		&::before {
 			animation: pulse-opacity 1s infinite ease-out;
-			background: hsl(var(--hsla-box-3));
+			background: var(--c-box-3);
 			bottom: var(--space-sm);
 			border-radius: var(--radius-sm);
 			content: '';
@@ -259,7 +254,7 @@ table.loading {
 
 			&::before {
 				animation: pulse-opacity 1s infinite ease-out;
-				background: hsl(var(--hsla-box-3));
+				background: var(--c-box-3);
 				bottom: var(--space-lg);
 				border-radius: var(--radius-sm);
 				content: '';

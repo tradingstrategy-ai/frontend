@@ -138,8 +138,8 @@
 			margin: var(--space-lg) 0;
 			border-radius: var(--radius-sm);
 			padding: var(--space-ms) var(--space-ls);
-			background: hsl(var(--hsl-terminal-bg));
-			color: hsl(var(--hsl-terminal));
+			background: var(--c-terminal-bg);
+			color: var(--c-terminal);
 			font: var(--f-mono-sm-regular);
 			letter-spacing: var(--f-mono-sm-spacing, normal);
 
@@ -156,8 +156,8 @@
 			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
-			background: hsl(var(--hsla-quoteblock-background));
-			box-shadow: -0.75rem 0.75rem 0 hsl(var(--hsla-quoteblock-backdrop));
+			background: var(--c-quoteblock-background);
+			box-shadow: -0.75rem 0.75rem 0 var(--c-quoteblock-backdrop);
 		}
 
 		.table-wrapper {
@@ -172,7 +172,7 @@
 
 			:is(td, th) {
 				padding: var(--space-ss);
-				border-block: 1px solid hsl(var(--hsl-text-extra-light));
+				border-block: 1px solid var(--c-text-extra-light);
 				vertical-align: top;
 
 				&:first-child {
@@ -185,7 +185,7 @@
 			}
 
 			th {
-				background: hsl(var(--hsla-box-2));
+				background: var(--c-box-2);
 				font-weight: 600;
 			}
 		}

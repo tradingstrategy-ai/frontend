@@ -316,7 +316,7 @@
 		}
 
 		h3 {
-			color: hsl(var(--hsl-text-light));
+			color: var(--c-text-light);
 			font: var(--f-ui-lg-medium);
 			margin: 0;
 		}

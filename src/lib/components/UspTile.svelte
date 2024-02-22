@@ -34,7 +34,7 @@
 	}
 
 	span {
-		color: hsl(var(--hsl-text-extra-light));
+		color: var(--c-text-extra-light);
 		font: var(--f-ui-xl-medium);
 	}
 </style>

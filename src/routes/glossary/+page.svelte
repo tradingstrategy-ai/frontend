@@ -105,7 +105,7 @@
 
 	hr {
 		margin: var(--space-lg) 0;
-		border: 1px solid hsl(var(--hsl-text));
+		border: 1px solid var(--c-text);
 
 		@media (--viewport-lg-down) {
 			margin: var(--space-lg) 0 var(--space-xl);

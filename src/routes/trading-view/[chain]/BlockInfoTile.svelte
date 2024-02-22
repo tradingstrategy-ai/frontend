@@ -34,13 +34,13 @@
 	time {
 		margin-bottom: var(--space-sm);
 		font: var(--f-ui-large-medium);
-		color: hsl(var(--hsl-text-light));
+		color: var(--c-text-light);
 
 		@media (--viewport-md-down) {
 			margin-bottom: var(--space-xxs);
 			font: var(--f-ui-body-medium);
 			letter-spacing: 0.01em;
-			color: hsl(var(--hsl-text));
+			color: var(--c-text);
 		}
 	}
 
@@ -50,7 +50,7 @@
 
 		@media (--viewport-md-down) {
 			font: var(--f-h4-bold);
-			color: hsl(var(--hsl-text-light));
+			color: var(--c-text-light);
 		}
 	}
 
