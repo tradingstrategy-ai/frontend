@@ -17,12 +17,12 @@
 	};
 
 	function openDialog() {
-		currentMode = document.body.getAttribute('data-color-mode') ?? 'system';
+		currentMode = document.documentElement.dataset.colorMode ?? 'system';
 		open = true;
 	}
 
 	function setMode(mode: string) {
-		document.body.setAttribute('data-color-mode', mode);
+		document.documentElement.dataset.colorMode = mode;
 		document.cookie = cookies.serialize('color-mode', mode, {
 			secure: false,
 			path: '/',
@@ -37,7 +37,9 @@
 <Dialog title="Color Mode" bind:open>
 	<menu>
 		{#each Object.entries(modes) as [mode, label]}
-			<li class={mode} class:active={mode === currentMode} on:click={() => setMode(mode)}>{label}</li>
+			<li class={mode} class:active={mode === currentMode}>
+				<button on:click={() => setMode(mode)}>{label}</button>
+			</li>
 		{/each}
 	</menu>
 </Dialog>
@@ -45,36 +47,39 @@
 <style lang="postcss">
 	menu {
 		display: grid;
-		margin-block: var(--space-md) 0;
+		margin-block: 1rem 0;
 		padding: 0;
-		list-style-type: none;
 	}
 
 	li {
+		display: contents;
+	}
+
+	button {
+		border: none;
 		border-radius: var(--radius-xs);
-		padding-block: var(--space-ss);
+		padding-block: 0.5rem;
+		background: inherit;
 		font: var(--f-ui-lg-medium);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 		color: var(--c-text);
-		text-align: center;
 		cursor: pointer;
 
-		&.light:hover {
+		.light &:hover {
 			background: var(--cm-light, var(--c-background-accent-1)) var(--cm-dark, var(--c-text));
 			color: var(--cm-light, var(--c-text)) var(--cm-dark, var(--c-text-inverted));
 		}
 
-		&.dark:hover {
+		.dark &:hover {
 			background: var(--cm-dark, var(--c-background-accent-1)) var(--cm-light, var(--c-text));
 			color: var(--cm-dark, var(--c-text)) var(--cm-light, var(--c-text-inverted));
 		}
 
-		&.system:hover {
+		.system &:hover {
 			background: var(--c-background-accent-1);
 		}
 
-		&.active,
-		&.active:hover {
+		.active :is(&, &:hover) {
 			background: var(--c-box-3);
 		}
 	}

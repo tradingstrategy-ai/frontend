@@ -1,21 +1,30 @@
-/* Global color values (not theme-specific) */
 :root {
+	/* Supported color schemes */
+	color-scheme: light dark;
+
+	/* Global color hues */
 	--hue-1: 36;
 	--hue-2: 60;
 	--hue-bearish: 0;
 	--hue-bullish: 140;
 
+	/* Common/shared color definitions */
 	--c-console: hsl(120 93% 79%);
 	--c-error: hsl(358 56% 55%);
 	--c-success: hsl(149 64% 44%);
 	--c-warning: hsl(43 92% 50%);
 
-	/* Color schemes */
-	color-scheme: light dark;
-}
+	/* Box shading levels; see theme-specific hsl-box and alpha values */
+	--c-box-1: hsl(var(--hsl-box) / var(--box-1-alpha));
+	--c-box-2: hsl(var(--hsl-box) / var(--box-2-alpha));
+	--c-box-3: hsl(var(--hsl-box) / var(--box-3-alpha));
+	--c-box-4: hsl(var(--hsl-box) / var(--box-4-alpha));
 
-/* Light theme (default) */
-body {
+	/**
+	 * Light theme
+	 *
+	 * This is the default if no system or user-selected theme specified.
+	 */
 	--c-body: hsl(var(--hue-1) 100% 96%);
 
 	--c-text: hsl(var(--hue-1) 9% 7%);
@@ -34,11 +43,6 @@ body {
 	--box-2-alpha: 24%;
 	--box-3-alpha: 36%;
 	--box-4-alpha: 48%;
-
-	--c-box-1: hsl(var(--hsl-box) / var(--box-1-alpha));
-	--c-box-2: hsl(var(--hsl-box) / var(--box-2-alpha));
-	--c-box-3: hsl(var(--hsl-box) / var(--box-3-alpha));
-	--c-box-4: hsl(var(--hsl-box) / var(--box-4-alpha));
 
 	--c-background-accent-1: var(--c-box-2);
 
@@ -59,11 +63,14 @@ body {
 	/* see: https://stackoverflow.com/questions/70845195#answer-70934827 */
 	--cm-light: initial;
 	--cm-dark: ;
-}
 
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-	body {
+	/**
+	 * Dark theme
+   *
+	 * Media query is applied to both system theme and user-selected
+	 * theme via postcss plugin (see postcss.config.js)
+ 	 */
+	@media (prefers-color-scheme: dark) {
 		--c-body: hsl(var(--hue-2) 2% 10%);
 
 		--c-text: hsl(var(--hue-1) 12% 99%);
@@ -106,6 +113,7 @@ body {
 	}
 }
 
+/* Global text and background values (defined in light/dark themes above) */
 body {
 	color: var(--c-text);
 	background-color: var(--c-body);
