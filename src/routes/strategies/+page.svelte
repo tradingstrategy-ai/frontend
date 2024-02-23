@@ -23,7 +23,7 @@
 	<meta name="description" content="Browse currently available automated DeFi trading strategies" />
 </svelte:head>
 
-<main class="strategies-index-page">
+<main class="strategies-index-page ds-3">
 	<Section>
 		<PageHeading title="Strategies" description="Currently available strategies">
 			<svelte:fragment slot="cta">
