@@ -48,7 +48,9 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}" />
+	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}">
+		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
+	</PageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">
 		<div class="ds-2-col">
@@ -64,7 +66,6 @@
 		{/if}
 
 		<div class="exchange-actions">
-			<Button label="Visit {nameDetails.name}" href={exchange.homepage} />
 			<Button label="View {nameDetails.name} on blockchain explorer" href={exchange.blockchain_explorer_link} />
 			<Button
 				label="Download as Excel"
