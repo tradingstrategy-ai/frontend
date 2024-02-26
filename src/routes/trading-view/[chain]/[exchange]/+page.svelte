@@ -47,7 +47,7 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
+<main class="ds-3">
 	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}">
 		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
 	</PageHeader>
