@@ -64,17 +64,16 @@
 				for this exchange may be inaccurate.
 			</Alert>
 		{/if}
+	</section>
 
-		<div class="exchange-actions">
+	<section class="ds-container trading-pairs">
+		<header>
+			<h2>Trading Pairs</h2>
 			<Button
 				label="Download as Excel"
 				href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}/export-data"
 			/>
-		</div>
-	</section>
-
-	<section class="ds-container trading-pairs">
-		<h2>Trading Pairs</h2>
+		</header>
 
 		{#if !$pairsClient.error}
 			<PairTable
@@ -125,23 +124,6 @@
 		}
 	}
 
-	.exchange-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-ls) var(--space-xl);
-		padding-block: var(--space-lg);
-
-		@media (--viewport-xs) {
-			flex-direction: column;
-			padding-block: 0;
-		}
-	}
-
-	h2 {
-		font: var(--f-h2-medium);
-	}
-
 	.trading-pairs {
 		margin-top: var(--space-md);
 		gap: var(--space-md);
@@ -149,6 +131,21 @@
 		@media (--viewport-lg-up) {
 			margin-top: var(--space-lg);
 			gap: var(--space-lg);
+		}
+
+		header {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 1rem;
+			align-items: center;
+
+			@media (--viewport-xs) {
+				grid-template-columns: 1fr;
+			}
+
+			h2 {
+				font: var(--f-h2-medium);
+			}
 		}
 	}
 
