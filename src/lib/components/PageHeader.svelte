@@ -14,7 +14,7 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 </script>
 
 <header class="page-header ds-container">
-	<h1 class:multiline={subtitle}>
+	<h1 class:multiline={$$slots.subtitle || subtitle}>
 		<slot name="title">{title}</slot>
 		{#if $$slots.subtitle || subtitle}
 			<small>

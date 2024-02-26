@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Alert, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
@@ -48,7 +49,12 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main class="ds-3">
-	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}">
+	<PageHeader title="{exchange.human_readable_name} exchange">
+		<span class="subtitle" slot="subtitle">
+			on
+			<img alt={`${exchange.chain_name} logo`} src={getLogoUrl('blockchain', exchange.chain_slug)} />
+			{exchange.chain_name}
+		</span>
 		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
 	</PageHeader>
 
@@ -109,6 +115,16 @@
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
+		}
+	}
+
+	.subtitle {
+		display: flex;
+		align-items: center;
+
+		img {
+			height: 0.875em;
+			margin-inline: 0.25em 0.125em;
 		}
 	}
 
