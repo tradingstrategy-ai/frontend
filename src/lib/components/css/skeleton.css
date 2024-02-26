@@ -1,0 +1,15 @@
+.skeleton {
+	color: transparent !important;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		width: var(--skeleton-width, 100%);
+		height: var(--skeleton-height, 100%);
+		top: calc((100% - var(--skeleton-height)) / 2);
+		border-radius: var(--skeleton-radius, var(--radius-xs));
+		background: var(--c-box-3);
+		animation: pulse-opacity 1s infinite ease-out;
+	}
+}
