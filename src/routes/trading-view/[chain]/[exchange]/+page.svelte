@@ -66,7 +66,6 @@
 		{/if}
 
 		<div class="exchange-actions">
-			<Button label="View {nameDetails.name} on blockchain explorer" href={exchange.blockchain_explorer_link} />
 			<Button
 				label="Download as Excel"
 				href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}/export-data"
