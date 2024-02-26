@@ -16,16 +16,6 @@ Render exchange summary table on exchange page.
 <TradingDataInfo>
 	<TradingDataInfoRow label="Name" value={nameDetails.name} />
 
-	<TradingDataInfoRow label="Homepage">
-		<svelte:fragment slot="value">
-			{#if details.homepage}
-				<a href={details.homepage}>{formatUrlAsDomain(details.homepage)}</a>
-			{:else}
-				Not available
-			{/if}
-		</svelte:fragment>
-	</TradingDataInfoRow>
-
 	<TradingDataInfoRow>
 		<a
 			slot="label"

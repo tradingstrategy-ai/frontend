@@ -16,7 +16,7 @@ button-like control with a segement for each possible value.
 	$: kind = secondary ? 'secondary' : 'primary';
 </script>
 
-<div class="segmented-control {kind}">
+<div class="segmented-control ds-3 {kind}" data-css-props>
 	{#each options as option}
 		<label class:selected={option === selected}>
 			<span>{option}</span>
@@ -26,16 +26,17 @@ button-like control with a segement for each possible value.
 </div>
 
 <style lang="postcss">
+	[data-css-props] {
+		--segmented-control-font: var(--f-ui-sm-medium);
+		--segmented-control-letter-spacing: var(--ls-ui-sm);
+	}
+
 	.primary {
 		--gap: 1px;
-		--padding: var(--space-sm) var(--space-md);
+		--padding: 0.75em 1em;
 		--background-default: var(--c-box-4);
 		--background-selected: var(--c-text);
 		--color-selected: var(--c-text-inverted);
-
-		@media (--viewport-sm-down) {
-			--padding: var(--space-ss) var(--space-sl);
-		}
 	}
 
 	.secondary {
@@ -55,15 +56,9 @@ button-like control with a segement for each possible value.
 		background: var(--background-default, inherit);
 		padding: var(--padding);
 		border-radius: var(--border-radius, inherit);
-
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--f-ui-sm-spacing, normal);
+		font: var(--segmented-control-font);
+		letter-spacing: var(--segmented-control-letter-spacing, normal);
 		transition: all var(--time-sm) ease-out;
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-xs-medium);
-			letter-spacing: var(--f-ui-xs-spacing, normal);
-		}
 
 		.primary & {
 			&:first-child {

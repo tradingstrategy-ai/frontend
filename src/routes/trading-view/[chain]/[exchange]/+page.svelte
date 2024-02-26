@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Alert, Button, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
@@ -47,8 +48,15 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
-	<PageHeader title="{exchange.human_readable_name} exchange" subtitle="on {exchange.chain_name}" />
+<main class="ds-3">
+	<PageHeader title="{exchange.human_readable_name} exchange">
+		<span class="subtitle" slot="subtitle">
+			on
+			<img alt={`${exchange.chain_name} logo`} src={getLogoUrl('blockchain', exchange.chain_slug)} />
+			{exchange.chain_name}
+		</span>
+		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
+	</PageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">
 		<div class="ds-2-col">
@@ -56,30 +64,22 @@
 			<InfoSummary details={exchange} />
 		</div>
 
-		{#if exchange.exchange_type === 'uniswap_v3'}
-			<Alert status="warning" title="Uniswap v3 beta">
-				We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please note
-				that the data for this exchange is currently incomplete.
-			</Alert>
-		{:else if exchange.exchange_type === 'uniswap_v2_incompatible'}
+		{#if exchange.exchange_type === 'uniswap_v2_incompatible'}
 			<Alert status="warning" title="Incompatible exchange">
 				{exchange.human_readable_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data
 				for this exchange may be inaccurate.
 			</Alert>
 		{/if}
+	</section>
 
-		<div class="exchange-actions">
-			<Button label="Visit {nameDetails.name}" href={exchange.homepage} />
-			<Button label="View {nameDetails.name} on blockchain explorer" href={exchange.blockchain_explorer_link} />
+	<section class="ds-container trading-pairs">
+		<header>
+			<h2>Trading Pairs</h2>
 			<Button
 				label="Download as Excel"
 				href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}/export-data"
 			/>
-		</div>
-	</section>
-
-	<section class="ds-container trading-pairs">
-		<h2>Trading Pairs</h2>
+		</header>
 
 		{#if !$pairsClient.error}
 			<PairTable
@@ -118,6 +118,16 @@
 		}
 	}
 
+	.subtitle {
+		display: flex;
+		align-items: center;
+
+		img {
+			height: 0.875em;
+			margin-inline: 0.25em 0.125em;
+		}
+	}
+
 	.info {
 		gap: var(--space-3xl);
 
@@ -130,23 +140,6 @@
 		}
 	}
 
-	.exchange-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-ls) var(--space-xl);
-		padding-block: var(--space-lg);
-
-		@media (--viewport-xs) {
-			flex-direction: column;
-			padding-block: 0;
-		}
-	}
-
-	h2 {
-		font: var(--f-h2-medium);
-	}
-
 	.trading-pairs {
 		margin-top: var(--space-md);
 		gap: var(--space-md);
@@ -154,6 +147,21 @@
 		@media (--viewport-lg-up) {
 			margin-top: var(--space-lg);
 			gap: var(--space-lg);
+		}
+
+		header {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 1rem;
+			align-items: center;
+
+			@media (--viewport-xs) {
+				grid-template-columns: 1fr;
+			}
+
+			h2 {
+				font: var(--f-h2-medium);
+			}
 		}
 	}
 
