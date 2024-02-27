@@ -14,25 +14,21 @@ Page to display the strategy backtest results.
 	import Spinner from 'svelte-spinner';
 
 	export let data;
+	const { strategy } = data;
 
-	let iframeElem: HTMLIFrameElement;
+	const iframeUrl = `${strategy.url}/file?type=html`;
+	const notebookUrl = `${strategy.url}/file?type=notebook`;
+	const notebookName = `${strategy.id}.ipynb`;
+
 	let iframeLoaded = false;
+	let iframeHeight = 0;
 
-	$: strategy = data?.strategy;
-	$: backtested = data?.summary?.backtest_available;
-	$: baseUrl = strategy?.url;
-	$: iframeUrl = baseUrl && `${baseUrl}/file?type=html`;
-	$: notebookUrl = baseUrl && `${baseUrl}/file?type=notebook`;
-	$: notebookName = `${strategy?.id}.ipynb`;
-
-	// iframe (or any plugin crap) wants to communicate with us
-	// Listen for the height messages from the iframe
-	// Backtested result HTML comes with a special JS snippet to post its content height to parent frame
-	// See code here https://github.com/tradingstrategy-ai/trade-executor/blob/4a336031ded403d4fff9819d339a680d6f65b210/tradeexecutor/backtest/report.py#L51
+	// Backtested result HTML includes JS snippet to post its content height to parent frame
+	// See: https://github.com/tradingstrategy-ai/trade-executor/blob/4a336031ded403d4fff9819d339a680d6f65b210/tradeexecutor/backtest/report.py#L51
 	function handleMessage({ data }: MessageEvent) {
 		if (data.iframeContentHeight) {
 			iframeLoaded = true;
-			iframeElem.style.height = `${data.iframeContentHeight}px`;
+			iframeHeight = data.iframeContentHeight;
 		}
 	}
 </script>
@@ -40,64 +36,58 @@ Page to display the strategy backtest results.
 <svelte:window on:message={handleMessage} />
 
 <section class="backtest">
-	{#if backtested}
+	{#if strategy.backtest_available}
 		<SummaryBox title="Backtest data" ctaPosition="top">
 			<div class="content">
 				<ul>
 					<li>View the backtest result report below or download the notebook run the backtests yourself.</li>
-					<li>
-						<a class="body-link" href="/glossary/backtest">Learn more about backtests</a>.
-					</li>
+					<li><a class="body-link" href="/glossary/backtest">Learn more about backtests</a>.</li>
 				</ul>
 			</div>
 
-			<div class="actions" slot="cta">
+			<svelte:fragment slot="cta">
 				<!-- TODO: <a download> does not seem to work here, but always causes the page load instead of downlaod -->
-				<Button
-					size="sm"
-					label="Download notebook"
-					download={notebookName}
-					disabled={notebookUrl == null}
-					href={notebookUrl}
-				/>
+				<Button size="sm" label="Download notebook" download={notebookName} href={notebookUrl} />
 				<!-- TODO: The webhook endpoint missing -->
 				<Button size="sm" label="Download raw backtest data" disabled />
-			</div>
+			</svelte:fragment>
 		</SummaryBox>
 
 		{#if !iframeLoaded}
 			<div class="spinner-wrapper">
-				<Spinner size="2rem" color="var(--c-text-light)" />
+				<Spinner size="60" color="var(--c-text-extra-light)" />
 			</div>
 		{/if}
 
-		<iframe bind:this={iframeElem} src={iframeUrl} title="Backtest report" />
+		<iframe src={iframeUrl} title="Backtest report" style:height="{iframeHeight}px" />
 	{:else}
 		<Alert>Backtest report not available for this strategy.</Alert>
 	{/if}
 </section>
 
 <style>
-	iframe {
-		margin: var(--space-lg) 0;
-		width: 100%;
-		border: 0;
-		height: 0;
-	}
+	.backtest {
+		display: grid;
+		gap: 1.5rem;
 
-	.spinner-wrapper {
-		margin: var(--space-lg) 0;
-		text-align: center;
-	}
+		:global(.summary-box header .cta) {
+			gap: 0.75rem;
 
-	.actions {
-		display: flex;
-		gap: var(--space-md);
+			@media (--viewport-sm-down) {
+				grid-area: 2 / 1 / span 2;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+				margin-block: 0.75rem;
+			}
+		}
 
-		@media (--viewport-sm-down) {
-			flex-direction: column;
-			gap: var(--space-sm);
-			margin-bottom: var(--space-md);
+		iframe {
+			width: 100%;
+			border: 0;
+		}
+
+		.spinner-wrapper {
+			text-align: center;
 		}
 	}
 </style>
