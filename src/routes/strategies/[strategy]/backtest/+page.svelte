@@ -17,8 +17,7 @@ Page to display the strategy backtest results.
 	const { strategy } = data;
 
 	const iframeUrl = `${strategy.url}/file?type=html`;
-	const notebookUrl = `${strategy.url}/file?type=notebook`;
-	const notebookName = `${strategy.id}.ipynb`;
+	const notebookUrl = `/strategies/${strategy.id}.ipynb`;
 
 	let iframeLoaded = false;
 	let iframeHeight = 0;
@@ -46,8 +45,7 @@ Page to display the strategy backtest results.
 			</div>
 
 			<svelte:fragment slot="cta">
-				<!-- TODO: <a download> does not seem to work here, but always causes the page load instead of downlaod -->
-				<Button size="sm" label="Download notebook" download={notebookName} href={notebookUrl} />
+				<Button size="sm" label="Download notebook" href={notebookUrl} download />
 				<!-- TODO: The webhook endpoint missing -->
 				<Button size="sm" label="Download raw backtest data" disabled />
 			</svelte:fragment>
