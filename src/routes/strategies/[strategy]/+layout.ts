@@ -7,8 +7,6 @@ import { getStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 import { getStrategyState } from 'trade-executor/state';
 
 export async function load({ params, fetch }) {
-	const state = getStrategyState(fetch, params.strategy);
-
 	const strategy = await getStrategyRuntimeState(fetch, params.strategy);
 
 	if (!strategy) {
@@ -17,6 +15,8 @@ export async function load({ params, fetch }) {
 		throw error(503, 'Service Unavailable');
 	}
 
+	const state = getStrategyState(fetch, params.strategy).catch(() => {});
+
 	const chain = await fetchPublicApi(fetch, 'chain-details', {
 		chain_id: strategy.on_chain_data.chain_id.toString()
 	});
@@ -24,6 +24,6 @@ export async function load({ params, fetch }) {
 	return {
 		chain,
 		strategy,
-		state: await state
+		deferred: { state }
 	};
 }

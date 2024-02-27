@@ -6,105 +6,112 @@
 
 -->
 <script lang="ts">
+	import type { Portfolio } from 'trade-executor/state/portfolio';
+	import type { PositionStatus } from 'trade-executor/state/position';
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
-	import type { OnChainData } from 'trade-executor/strategy/summary';
 
-	export let strategyId: string;
-
-	export let portfolio: any;
-
-	export let onChainData: OnChainData;
-
+	export let basePath: string;
 	export let currentPath: string;
+	export let hasEnzymeVault: boolean;
 	export let backtestAvailable: boolean;
+	export let portfolioPromise: Promise<Portfolio | undefined>;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = 'auto';
 
-	const basePath = `/strategies/${strategyId}`;
+	let hasFrozenPositions = false;
 
-	const menuOptions = [
+	getPositionCount('frozen').then((count) => {
+		hasFrozenPositions = Boolean(count);
+	});
+
+	type MenuOption = {
+		slug: string;
+		label: string;
+		count?: Promise<number | undefined>;
+	};
+
+	const menuOptions: MenuOption[] = [
 		{
-			label: 'Overview',
-			targetUrl: basePath
+			slug: '',
+			label: 'Overview'
 		},
 		{
-			label: `Open positions`,
-			targetUrl: `${basePath}/open-positions`,
-			count: getCount(portfolio.open_positions)
+			slug: 'open-positions',
+			label: 'Open positions',
+			count: getPositionCount('open')
 		},
 		{
-			label: `Closed positions`,
-			targetUrl: `${basePath}/closed-positions`,
-			count: getCount(portfolio.closed_positions)
+			slug: 'closed-positions',
+			label: 'Closed positions',
+			count: getPositionCount('closed')
 		},
 		{
-			label: `Frozen positions`,
-			targetUrl: `${basePath}/frozen-positions`,
-			count: getCount(portfolio.frozen_positions)
+			slug: 'frozen-positions',
+			label: 'Frozen positions',
+			count: getPositionCount('frozen')
 		},
 		{
-			label: `Performance`,
-			targetUrl: `${basePath}/performance`
+			slug: 'performance',
+			label: 'Performance'
 		},
 		{
-			label: `Enzyme vault`,
-			targetUrl: `${basePath}/vault`
+			slug: 'vault',
+			label: 'Enzyme vault'
 		},
 		{
-			label: `TVL and netflow`,
-			targetUrl: `${basePath}/netflow`
+			slug: 'netflow',
+			label: 'TVL and netflow'
 		},
 		{
-			label: `Backtest results`,
-			targetUrl: `${basePath}/backtest`
+			slug: 'backtest',
+			label: 'Backtest results'
 		},
 		{
-			label: `Decision making`,
-			targetUrl: `${basePath}/decision-making`
+			slug: 'decision-making',
+			label: 'Decision making'
 		},
 		{
-			label: `Instance status`,
-			targetUrl: `${basePath}/status`
+			slug: 'status',
+			label: 'Instance status'
 		},
 		{
-			label: `Logs`,
-			targetUrl: `${basePath}/logs`
+			slug: 'logs',
+			label: 'Logs'
 		},
 		{
-			label: `Source Code`,
-			targetUrl: `${basePath}/source`
+			slug: 'source',
+			label: 'Source Code'
 		}
 	];
 
-	$: currentOption = menuOptions.find(({ targetUrl }) => currentPath.endsWith(targetUrl));
+	$: currentOption = menuOptions.find((option) => currentPath.endsWith(getTargetUrl(option)));
 
 	$: visibleOptions = menuOptions.filter((option) => {
-		// always show current nav option
+		// always show current menu option
 		if (option === currentOption) return true;
 
-		// only show frozen positions if there are any
-		if (option.targetUrl.includes('frozen-positions')) {
-			return getCount(portfolio.frozen_positions) > 0;
-		}
-
-		// only show for Enzyme vault based strategies
-		if (option.targetUrl.includes('vault')) {
-			return onChainData.asset_management_mode === 'enzyme';
-		}
-
-		// only show backtest if available
-		if (option.targetUrl.includes('backtest')) {
-			return backtestAvailable;
+		// conditional menu options
+		// prettier-ignore
+		switch (option.slug) {
+			case 'frozen-positions' : return hasFrozenPositions;
+			case 'vault'            : return hasEnzymeVault;
+			case 'backtest'         : return backtestAvailable;
 		}
 
 		// show all other options
 		return true;
 	});
 
-	function getCount(positions: any = {}) {
-		return Object.keys(positions).length;
+	function getTargetUrl({ slug }: MenuOption) {
+		return slug ? `${basePath}/${slug}` : basePath;
+	}
+
+	async function getPositionCount(status: PositionStatus) {
+		const portfolio = await portfolioPromise;
+		const positions = portfolio?.[`${status}_positions`];
+		return positions && Object.keys(positions).length;
 	}
 
 	const mobileMenu = fsm('closed', {
@@ -132,10 +139,14 @@
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
 			{#each visibleOptions as option}
-				<MenuItem targetUrl={option.targetUrl} active={option === currentOption}>
+				<MenuItem targetUrl={getTargetUrl(option)} active={option === currentOption}>
 					<span class="label">{option.label}</span>
-					{#if typeof option.count === 'number'}
-						<span class="count">{option.count}</span>
+					{#if 'count' in option}
+						{#await option.count}
+							<span class="count skeleton" />
+						{:then count}
+							<span class="count">{count ?? '-'}</span>
+						{/await}
 					{/if}
 				</MenuItem>
 			{/each}
@@ -171,6 +182,7 @@
 	}
 
 	.count {
+		--skeleton-radius: var(--radius-lg);
 		display: flex;
 		justify-content: center;
 		align-items: center;

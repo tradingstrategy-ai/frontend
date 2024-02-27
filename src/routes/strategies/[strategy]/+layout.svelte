@@ -9,11 +9,10 @@
 
 	export let data;
 
-	$: ({ chain, strategy, state } = data);
+	$: ({ chain, strategy, deferred } = data);
 
 	$: routeDepth = Number($page.route.id?.split('/').length) - 1;
 
-	$: backtestAvailable = strategy.backtest_available;
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 
@@ -59,15 +58,13 @@
 
 		<div class="subpage">
 			<StrategyNav
-				strategyId={strategy.id}
-				portfolio={state.portfolio}
-				onChainData={strategy.on_chain_data}
+				basePath="/strategies/{strategy.id}"
 				currentPath={$page.url.pathname}
-				{backtestAvailable}
+				hasEnzymeVault={strategy.on_chain_data.asset_management_mode === 'enzyme'}
+				backtestAvailable={strategy.backtest_available}
+				portfolioPromise={deferred.state.then((s) => s?.portfolio)}
 			/>
-			<div>
-				<slot />
-			</div>
+			<slot />
 		</div>
 	{/if}
 </main>
