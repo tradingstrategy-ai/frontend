@@ -3,9 +3,10 @@
 -->
 <script lang="ts">
 	import { Alert, DataBox, SummaryBox, Timestamp } from '$lib/components';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ runState, state } = data);
+	$: ({ runState, deferred } = data);
 </script>
 
 <section class="instance-status">
@@ -37,9 +38,23 @@
 		</SummaryBox>
 
 		<SummaryBox title="Lifetime" subtitle="Overall execution metrics">
-			<DataBox label="Completed trading cycles" value={`${(state.cycle || 0) - 1}`} size="xs" />
-			<DataBox label="First started" size="xs">
-				<Timestamp date={state.created_at} withTime />
+			<DataBox label="Completed trading cycles" size="xs" --skeleton-width="5rem">
+				{#await deferred.state}
+					<span class="skeleton">---</span>
+				{:then state}
+					{state ? formatAmount(state.cycle - 1) : '---'}
+				{/await}
+			</DataBox>
+			<DataBox label="First started" size="xs" --skeleton-width="12rem">
+				{#await deferred.state}
+					<span class="skeleton">---</span>
+				{:then state}
+					{#if state}
+						<Timestamp date={state.created_at} withTime /> UTC
+					{:else}
+						---
+					{/if}
+				{/await}
 			</DataBox>
 		</SummaryBox>
 	</div>
