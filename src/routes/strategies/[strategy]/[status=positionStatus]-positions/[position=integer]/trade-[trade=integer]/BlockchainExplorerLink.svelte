@@ -1,16 +1,11 @@
 <script lang="ts">
-	export let baseUrl: string | undefined;
-	export let tx_hash: string;
+	import type { Chain } from 'viem';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 
-	$: href = getHref(baseUrl, tx_hash);
+	export let chain: Chain;
+	export let tx_hash: Address;
 
-	function getHref(baseUrl: string | undefined, tx_hash: string) {
-		try {
-			return new URL(`tx/${tx_hash}`, baseUrl).toString();
-		} catch {
-			console.error(`Error - invalid baseURL: ${baseUrl}`);
-		}
-	}
+	$: href = getExplorerUrl(chain, tx_hash);
 </script>
 
 {#if href}

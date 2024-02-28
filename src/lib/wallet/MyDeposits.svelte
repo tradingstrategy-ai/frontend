@@ -1,17 +1,24 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
-	import type { ApiChain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import { switchChain, disconnect, wallet, DepositWarning, DepositBalance, VaultBalance } from '$lib/wallet';
+	import {
+		type ConfiguredChain,
+		disconnect,
+		switchChain,
+		wallet,
+		DepositWarning,
+		DepositBalance,
+		VaultBalance
+	} from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let strategy: ConnectedStrategyRuntimeState;
-	export let chain: ApiChain;
+	export let chain: ConfiguredChain;
 
 	let contentWrapper: HTMLElement;
 	let contentHeight = 'auto';
@@ -27,7 +34,7 @@
 	].every(Boolean);
 
 	$: connected = $wallet.isConnected;
-	$: wrongNetwork = connected && $wallet.chain?.id !== chain.chain_id;
+	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
 	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
 	const expandable = fsm('closed', {
@@ -57,7 +64,7 @@
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
-			chainId: chain.chain_id,
+			chainId: chain.id,
 			strategyName: strategy.name,
 			contracts
 		});
@@ -101,7 +108,7 @@
 				<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
 			{:else if wrongNetwork}
 				<DepositWarning title="Wrong network">
-					Please connect to {chain.chain_name}.
+					Please connect to {chain.name}.
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
@@ -118,7 +125,7 @@
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
-					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.chain_id)} />
+					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>
