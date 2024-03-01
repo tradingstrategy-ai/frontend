@@ -58,39 +58,4 @@
 		border-bottom: 1px solid currentColor;
 		font-weight: 500;
 	}
-
-	/* global skeleton class */
-	.skeleton {
-		color: transparent !important;
-		position: relative;
-		--skeleton-background: var(--c-box-3);
-
-		&::before {
-			width: var(--skeleton-width, 100%);
-			height: var(--skeleton-height, 100%);
-			top: calc((100% - var(--skeleton-height)) / 2);
-
-			content: '';
-			position: absolute;
-			border-radius: 2px;
-			background: linear-gradient(
-				to right,
-				var(--skeleton-background) 0%,
-				transparent 50%,
-				var(--skeleton-background) 100%
-			);
-			background-size: 200%;
-			animation: infinite 1.5s skeleton linear;
-		}
-	}
-
-	@keyframes skeleton {
-		from {
-			background-position: 100%;
-		}
-
-		to {
-			background-position: -100%;
-		}
-	}
 </style>

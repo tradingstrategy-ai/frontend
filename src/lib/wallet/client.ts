@@ -2,7 +2,7 @@ import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Transport } from 'viem';
-import type { Connector, GetAccountReturnType } from '@wagmi/core';
+import type { GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
 	fallback,
@@ -22,7 +22,8 @@ const { projectId } = walletConnectConfig;
 const ssr = !browser;
 
 const chains = [arbitrum, avalanche, bsc, mainnet, polygon] as const;
-export type ConfiguredChainId = (typeof chains)[number]['id'];
+export type ConfiguredChain = (typeof chains)[number];
+export type ConfiguredChainId = ConfiguredChain['id'];
 
 // Initialize chain-specific transports based on configured RPC URLs
 const transports = chains.reduce((acc, { id }) => {
@@ -61,6 +62,10 @@ export async function connect(type: ConnectorType, chainId: ConfiguredChainId | 
 
 export function disconnect() {
 	return _disconnect(config);
+}
+
+export function getChain(chainId: MaybeNumber) {
+	return chains.find(({ id }) => id === chainId);
 }
 
 export function switchChain(chainId: ConfiguredChainId) {

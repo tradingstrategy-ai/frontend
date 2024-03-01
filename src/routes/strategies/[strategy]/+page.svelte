@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { getChartClient } from 'trade-executor/chart';
+	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
@@ -15,6 +15,7 @@
 
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const strategyId = strategy.id;
+	const cachedChartData = strategy.summary_statistics.performance_chart_90_days;
 
 	let periodPerformance: MaybeNumber;
 
@@ -24,6 +25,14 @@
 
 	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
+	}
+
+	// return cached chart data for 3M timeframe if chart data hasn't loaded
+	function getChartData(chartData: WebChartClientData, spanDays: number) {
+		if (spanDays === 90 && cachedChartData && (chartData.loading || chartData.error)) {
+			return { loading: false, data: cachedChartData };
+		}
+		return chartData;
 	}
 
 	const chartClient = getChartClient(fetch, strategy.url);
@@ -61,10 +70,12 @@
 					Last {label}
 				{/if}
 			</div>
+
+			{@const chartData = getChartData($chartClient, spanDays)}
 			<PerformanceChart
 				options={chartOptions}
-				loading={$chartClient.loading}
-				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
+				loading={chartData.loading}
+				data={normalizeDataForInterval(chartData.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}

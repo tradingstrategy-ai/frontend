@@ -12,7 +12,7 @@ import { percent, primaryKey, primaryKeyString, unixTimestampToDate, usDollarAmo
 import { loanSchema } from './loan';
 import { balanceUpdateSchema } from './balance-update';
 import { valuationUpdateSchema } from './valuation';
-import { createTradeInfo } from './trade-info';
+import { type TradeInfo, createTradeInfo } from './trade-info';
 import { createTradingPairInfo } from './trading-pair-info';
 
 export const positionStatus = z.enum(['open', 'closed', 'frozen']);
@@ -28,6 +28,8 @@ export const triggerPriceUpdateSchema = z.object({
 });
 export type TriggerPriceUpdate = z.infer<typeof triggerPriceUpdateSchema>;
 
+const tradeInfoRecordSchema = z.record(primaryKeyString, tradeExecutionSchema.transform(createTradeInfo));
+
 export const tradingPositionSchema = z.object({
 	position_id: primaryKey,
 	pair: tradingPairIdentifierSchema.transform(createTradingPairInfo),
@@ -36,7 +38,7 @@ export const tradingPositionSchema = z.object({
 	last_token_price: usDollarAmount,
 	last_reserve_price: usDollarAmount,
 	reserve_currency: assetIdentifierSchema,
-	trades: z.record(primaryKeyString, tradeExecutionSchema.transform(createTradeInfo)).transform(Object.values),
+	trades: tradeInfoRecordSchema.transform((trades) => Object.values(trades) as TradeInfo[]),
 	closed_at: unixTimestampToDate.nullish(),
 	frozen_at: unixTimestampToDate.nullish(),
 	unfrozen_at: unixTimestampToDate.nullish(),

@@ -1,19 +1,17 @@
 <script lang="ts">
-	import type { ApiChain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
 	import { disconnect, wallet } from '$lib/wallet';
 	import { Button, HashAddress, Icon } from '$lib/components';
 
-	export let chain: ApiChain;
 	export let strategy: ConnectedStrategyRuntimeState;
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 
 	function launchConnectWizard() {
 		wizard.init('connect-wallet', `/strategies/${strategy.id}`, {
-			chainId: chain.chain_id,
+			chainId: strategy.on_chain_data.chain_id,
 			strategyName: strategy.name,
 			contracts
 		});

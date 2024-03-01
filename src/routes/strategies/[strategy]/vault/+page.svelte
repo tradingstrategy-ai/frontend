@@ -1,11 +1,5 @@
 <!--
-	Page to display Enzyme vault information.
-
-	Currently supports only
-
-	- Enzyme
-
-	- Polygon
+	Page to display vault information. Currently only supports Enzyme.
 -->
 <script lang="ts">
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
@@ -14,10 +8,11 @@
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
-	const { chain, onChainData } = data;
+	const { chain, chainInfo, onChainData } = data;
 
-	const address = onChainData.smart_contracts?.vault;
-	const enzymeUrl = address && `https://app.enzyme.finance/vault/${address}?network=${chain.chain_slug}`;
+	const address = onChainData.smart_contracts.vault;
+	const chainSlug = chainInfo[chain.id].chain_slug;
+	const enzymeUrl = address && `https://app.enzyme.finance/vault/${address}?network=${chainSlug}`;
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>
 
@@ -30,14 +25,8 @@
 				</Button>
 			{/if}
 			{#if explorerUrl}
-				<Button
-					size="xs"
-					label="View on {chain.chain_name} explorer"
-					href={explorerUrl}
-					rel="noreferrer"
-					target="_blank"
-				>
-					<img slot="icon" alt={chain.chain_name} src={getLogoUrl('blockchain', 'polygon')} />
+				<Button size="xs" label="View on {chain.name} explorer" href={explorerUrl} rel="noreferrer" target="_blank">
+					<img slot="icon" alt={chain.name} src={getLogoUrl('blockchain', chainSlug)} />
 				</Button>
 			{/if}
 		</div>
@@ -50,7 +39,7 @@
 			</DataBox>
 
 			<DataBox size="sm" label="Blockchain">
-				<EntitySymbol type="blockchain" slug={chain.chain_slug} label={chain.chain_name} />
+				<EntitySymbol type="blockchain" slug={chainSlug} label={chain.name} />
 			</DataBox>
 
 			<DataBox size="sm" label="Address">

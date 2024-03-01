@@ -38,7 +38,7 @@ export const enzymeSmartContractsSchema = z.object({
 export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
 
 export const onChainDataSchema = z.object({
-	chain_id: chainId,
+	chain_id: chainId.nullish(),
 	asset_management_mode: assetManagementMode,
 	smart_contracts: enzymeSmartContractsSchema,
 	owner: hexString.nullish(),
