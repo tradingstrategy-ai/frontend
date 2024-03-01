@@ -18,7 +18,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let strategy: ConnectedStrategyRuntimeState;
-	export let chain: ConfiguredChain;
+	export let chain: ConfiguredChain | undefined;
 
 	let contentWrapper: HTMLElement;
 	let contentHeight = 'auto';
@@ -27,6 +27,7 @@
 
 	$: contracts = strategy.on_chain_data.smart_contracts;
 	$: depositEnabled = [
+		chain,
 		contracts.vault,
 		contracts.comptroller,
 		contracts.payment_forwarder,
@@ -34,7 +35,7 @@
 	].every(Boolean);
 
 	$: connected = $wallet.isConnected;
-	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
+	$: wrongNetwork = connected && $wallet.chain?.id !== chain?.id;
 	$: buttonsDisabled = !depositEnabled || wrongNetwork;
 
 	const expandable = fsm('closed', {
@@ -64,7 +65,7 @@
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
-			chainId: chain.id,
+			chainId: chain?.id,
 			strategyName: strategy.name,
 			contracts
 		});
@@ -108,7 +109,7 @@
 				<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
 			{:else if wrongNetwork}
 				<DepositWarning title="Wrong network">
-					Please connect to {chain.name}.
+					Please connect to {chain?.name}.
 				</DepositWarning>
 			{:else}
 				<dl class="balances">

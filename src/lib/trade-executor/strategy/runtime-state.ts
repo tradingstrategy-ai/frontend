@@ -28,10 +28,13 @@ export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise
 
 	try {
 		const resp = await fetch(`${strategy.url}/metadata`, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
-		if (!resp.ok) throw new Error(resp.statusText);
+		if (!resp.ok) {
+			throw new Error(`Failed to fetch ${strategy.id} metadata (status: ${resp.status})`);
+		}
 		const summary = strategySummarySchema.parse(await resp.json());
 		return { connected: true, ...strategy, ...summary };
 	} catch (e) {
+		console.error(e);
 		return {
 			connected: false,
 			...strategy,
@@ -41,12 +44,10 @@ export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise
 	}
 }
 
-export async function getStrategiesWithRuntimeState(fetch: Fetch) {
-	// prettier-ignore
+export function getStrategiesWithRuntimeState(fetch: Fetch) {
 	return Promise.all(
-		Array.from(
-			configuredStrategies,
-			async ([id]) => getStrategyRuntimeState(fetch, id) as Promise<StrategyRuntimeState>
-		)
+		[...configuredStrategies.keys()].map((id) => {
+			return getStrategyRuntimeState(fetch, id) as Promise<StrategyRuntimeState>;
+		})
 	);
 }

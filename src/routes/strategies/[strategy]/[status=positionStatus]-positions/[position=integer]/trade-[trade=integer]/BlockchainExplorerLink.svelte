@@ -2,7 +2,7 @@
 	import type { Chain } from 'viem';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 
-	export let chain: Chain;
+	export let chain: Chain | undefined;
 	export let tx_hash: Address;
 
 	$: href = getExplorerUrl(chain, tx_hash);

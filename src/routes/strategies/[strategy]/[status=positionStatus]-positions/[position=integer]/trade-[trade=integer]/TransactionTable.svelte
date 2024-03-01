@@ -6,7 +6,7 @@
 	import BlockchainExplorerLink from './BlockchainExplorerLink.svelte';
 	import TransactionStatus from './TransactionStatus.svelte';
 
-	export let chain: ConfiguredChain;
+	export let chain: ConfiguredChain | undefined;
 	export let transactions: Record<string, any>[] = [];
 
 	const table = createTable(readable(transactions));
@@ -15,7 +15,7 @@
 		table.column({
 			id: 'chain',
 			header: 'Chain',
-			accessor: () => chain.name
+			accessor: ({ chain_id }) => chain?.name ?? chain_id
 		}),
 		table.column({
 			id: 'transaction_hash',

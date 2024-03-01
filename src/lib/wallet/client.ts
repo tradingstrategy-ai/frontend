@@ -64,7 +64,7 @@ export function disconnect() {
 	return _disconnect(config);
 }
 
-export function getChain(chainId: number) {
+export function getChain(chainId: MaybeNumber) {
 	return chains.find(({ id }) => id === chainId);
 }
 

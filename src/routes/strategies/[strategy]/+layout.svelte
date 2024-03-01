@@ -9,7 +9,7 @@
 
 	export let data;
 
-	$: ({ chain, strategy, deferred } = data);
+	$: ({ strategy, deferred } = data);
 
 	$: routeDepth = Number($page.route.id?.split('/').length) - 1;
 
@@ -44,7 +44,7 @@
 				<StrategyBadges class="badge" tags={strategy.tags} />
 			</div>
 			<div class="wallet-widget" slot="cta">
-				<WalletWidget {strategy} {chain} />
+				<WalletWidget {strategy} />
 			</div>
 		</PageHeading>
 

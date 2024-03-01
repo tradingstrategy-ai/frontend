@@ -15,7 +15,7 @@ export async function load({ fetch, locals, setHeaders }) {
 
 	let strategies = await getCachedStrategies(fetch);
 
-	// only include "live" strategies for non-admin users
+	// non-admin users should only see "live" strategies
 	if (!admin) {
 		strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
 	}

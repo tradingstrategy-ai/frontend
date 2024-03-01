@@ -16,12 +16,7 @@ export async function load({ params, fetch }) {
 		throw error(503, 'Service Unavailable');
 	}
 
-	const chainId = strategy.on_chain_data.chain_id;
-	const chain = getChain(chainId);
-	if (!chain) {
-		const stack = [`Error: chain ${chainId} is not configured in wallet client.`];
-		throw error(503, { message: 'Service Unavailable', stack });
-	}
+	const chain = getChain(strategy.on_chain_data.chain_id);
 
 	return {
 		chain,
