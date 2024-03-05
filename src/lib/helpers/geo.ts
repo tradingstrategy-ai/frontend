@@ -22,3 +22,9 @@ export function isGeoBlocked(feature: string, countryCode: CountryCode | undefin
 	const country = countryCode?.toUpperCase() ?? 'N/A';
 	return blockedCountries.includes(country);
 }
+
+const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+
+export function getCountryName(countryCode: CountryCode | undefined) {
+	return countryCode ? regionNames.of(countryCode) : 'unknown country';
+}
