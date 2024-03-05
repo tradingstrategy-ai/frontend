@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
 import { addYears } from 'date-fns';
+import { countryCodeSchema } from '$lib/helpers/geo';
 
 Sentry.init({
 	dsn: sentryDsn,
@@ -84,4 +85,24 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(Sentry.sentryHandle(), handleColorMode, handleAdminRole);
+const handleIpCountry: Handle = async ({ event, resolve }) => {
+	const ipCountry = event.request.headers.get('CF-IPCountry');
+
+	if (ipCountry) {
+		try {
+			event.locals.ipCountry = countryCodeSchema.parse(ipCountry);
+		} catch (e) {
+			console.warn(`Invalid CF-IPCountry: ${ipCountry}`);
+		}
+	}
+
+	return resolve(event);
+};
+
+// prettier-ignore
+export const handle = sequence(
+	Sentry.sentryHandle(),
+	handleColorMode,
+	handleAdminRole,
+	handleIpCountry
+);
