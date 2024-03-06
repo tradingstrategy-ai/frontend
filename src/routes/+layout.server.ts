@@ -1,6 +1,6 @@
 import type { ApiChain } from '$lib/helpers/chain.js';
 
-export async function load({ fetch }) {
+export async function load({ fetch, locals }) {
 	// Load chain lookup data and make it available site-wide
 	const resp = await fetch('/data/chains');
 	const chains = await resp.json();
@@ -14,5 +14,8 @@ export async function load({ fetch }) {
 		});
 	}
 
-	return { chainInfo };
+	// Make admin and ipCountry available to all layouts/pages
+	const { admin, ipCountry } = locals;
+
+	return { admin, ipCountry, chainInfo };
 }

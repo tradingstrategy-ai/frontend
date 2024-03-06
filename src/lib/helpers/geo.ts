@@ -17,7 +17,7 @@ export type GeoBlock = z.infer<typeof geoBlockSchema>;
  * @param countryCode - ISO 3166-1 alpha-2 country code
  * @returns true if feature is blocked
  */
-export function isGeoBlocked(feature: string, countryCode: CountryCode | undefined): Boolean {
+export function isGeoBlocked(feature: string, countryCode: CountryCode | undefined): boolean {
 	const blockedCountries = geoBlock[feature] ?? [];
 	const country = countryCode?.toUpperCase() ?? 'N/A';
 	return blockedCountries.includes(country);
