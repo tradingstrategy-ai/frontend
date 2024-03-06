@@ -38,4 +38,28 @@ test.describe('strategy index page', () => {
 		const heading = page.getByRole('heading', { name: 'Multipair breakout strategy on Uniswap v3' });
 		await expect(heading).toBeVisible();
 	});
+
+	test('should return 451 error page when requested from a blocked country', async ({ browser }) => {
+		const page = await browser.newPage({
+			extraHTTPHeaders: { 'CF-IPCountry': 'KP' }
+		});
+		const response = await page.goto('/strategies');
+
+		expect(response?.status()).toBe(451);
+
+		await expect(page.getByRole('heading', { name: '451' })).toBeVisible();
+		await expect(page.getByText('Unavailable in North Korea')).toBeVisible();
+
+		await page.close();
+	});
+
+	test('should return 200 success page when requested from a non-blocked country', async ({ browser }) => {
+		const page = await browser.newPage({
+			extraHTTPHeaders: { 'CF-IPCountry': 'US' }
+		});
+		const response = await page.goto('/strategies');
+
+		expect(response?.status()).toBe(200);
+		await page.close();
+	});
 });
