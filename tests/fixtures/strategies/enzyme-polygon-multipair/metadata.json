@@ -150,5 +150,6 @@
 	"error_message": null,
 	"backtest_available": true,
 	"crashed_at": 1692639700,
-	"badges": []
+	"badges": [],
+	"tags": []
 }

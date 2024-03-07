@@ -3,7 +3,7 @@
 	import StrategyTile from './StrategyTile.svelte';
 
 	export let data;
-	$: ({ admin, strategies, chainInfo } = data);
+	$: ({ admin, strategies } = data);
 
 	const options = ['all', 'live', 'unpublished'] as const;
 	let filter: (typeof options)[number] = 'all';
@@ -36,7 +36,7 @@
 		{#if filteredStrategies.length}
 			<div class="strategy-tiles" data-testid="strategy-tiles">
 				{#each filteredStrategies as strategy (strategy.id)}
-					<StrategyTile {admin} {strategy} chain={chainInfo[strategy.on_chain_data?.chain_id ?? 0]} />
+					<StrategyTile {admin} {strategy} />
 				{/each}
 			</div>
 		{:else}

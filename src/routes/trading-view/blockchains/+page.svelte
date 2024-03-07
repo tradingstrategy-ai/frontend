@@ -22,7 +22,12 @@
 
 	<ContentCardsSection cols={4}>
 		{#each data.chains as chain}
-			<ContentCard ctaFullWidth ctaLabel="Details" href={`/trading-view/${chain.chain_slug}`}>
+			<ContentCard
+				ctaFullWidth
+				ctaLabel="Details"
+				href={`/trading-view/${chain.chain_slug}`}
+				testId="chain-{chain.chain_id}-{chain.chain_slug}"
+			>
 				<img
 					class="blockchain-logo"
 					slot="icon"
