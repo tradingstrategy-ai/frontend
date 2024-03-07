@@ -28,6 +28,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	export let href: string | undefined = undefined;
 	export let target: string | undefined = undefined;
 	export let rel: string | undefined = undefined;
+	export let testId: string | undefined = undefined;
 
 	$: tag = href ? 'a' : 'div';
 
@@ -35,7 +36,14 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<svelte:element this={tag} {...anchorProps} class="content-card tile b" class:ctaFullWidth on:click>
+<svelte:element
+	this={tag}
+	{...anchorProps}
+	class="content-card tile b"
+	class:ctaFullWidth
+	data-testid={testId}
+	on:click
+>
 	{#if icon || $$slots.icon}
 		<div class="icon symbol tile c">
 			<slot name="icon">
