@@ -27,5 +27,5 @@ export async function load({ fetch, locals, setHeaders }) {
 		age: getCachedStrategies.getAge(fetch).toFixed(0)
 	});
 
-	return { admin, strategies };
+	return { strategies };
 }

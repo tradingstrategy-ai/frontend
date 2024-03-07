@@ -41,7 +41,6 @@ for the same hovered date. Also displays a time-bucket selector.
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
 	<SegmentedControl
-		class="time-buckets"
 		options={['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d']}
 		selected={timeBucket}
 		on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}

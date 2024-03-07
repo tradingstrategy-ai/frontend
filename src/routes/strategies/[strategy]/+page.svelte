@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { KeyMetricKind } from 'trade-executor/statistics/key-metric';
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
@@ -8,14 +9,15 @@
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
-	import type { KeyMetricKind } from 'trade-executor/statistics/key-metric';
+	import { isGeoBlocked } from '$lib/helpers/geo';
 
 	export let data;
-	const { chain, strategy } = data;
+	const { chain, strategy, admin, ipCountry } = data;
 
-	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const strategyId = strategy.id;
+	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const cachedChartData = strategy.summary_statistics.performance_chart_90_days;
+	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
 	let periodPerformance: MaybeNumber;
 
@@ -60,7 +62,7 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<MyDeposits {strategy} {chain} />
+	<MyDeposits {strategy} {chain} {geoBlocked} {ipCountry} />
 
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>

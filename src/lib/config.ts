@@ -10,6 +10,7 @@
  * or in the component module context. Test with `npm run build`.
  */
 import { env } from '$env/dynamic/public';
+import { type GeoBlock, geoBlockSchema } from './helpers/geo';
 
 const prefix = 'TS_PUBLIC_';
 
@@ -174,3 +175,18 @@ export const chainsUnderMaintenance = config((jsonStr: string) => {
 		return {};
 	}
 }, 'CHAINS_UNDER_MAINTENANCE');
+
+/**
+ * Specify geographic blocklist as JSON record, mapping features to blocked countries, e.g.:
+ * TS_PUBLIC_GEO_BLOCK='{ "strategies:view": ["CU", "IR", "KP", "RU", "SY"], … }'
+ *
+ * See lib/helpers/geo.ts
+ */
+export const geoBlock = config((jsonStr: string) => {
+	try {
+		return geoBlockSchema.parse(JSON.parse(jsonStr || '{}'));
+	} catch (e) {
+		console.warn(`${prefix}GEO_BLOCK is not a valid GeoBlock JSON string`, jsonStr);
+		return {};
+	}
+}, 'GEO_BLOCK') as GeoBlock;

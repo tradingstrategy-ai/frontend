@@ -16,17 +16,20 @@
 	import { Button, HashAddress, Icon } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 
 	export let strategy: ConnectedStrategyRuntimeState;
 	export let chain: ConfiguredChain | undefined;
+	export let geoBlocked: boolean;
+	export let ipCountry: CountryCode | undefined;
 
 	let contentWrapper: HTMLElement;
 	let contentHeight = 'auto';
 
 	let vaultBalance: MaybeString;
 
-	$: contracts = strategy.on_chain_data.smart_contracts;
-	$: depositEnabled = [
+	const contracts = strategy.on_chain_data.smart_contracts;
+	const depositEnabled = [
 		chain,
 		contracts.vault,
 		contracts.comptroller,
@@ -36,7 +39,7 @@
 
 	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain?.id;
-	$: buttonsDisabled = !depositEnabled || wrongNetwork;
+	$: buttonsDisabled = geoBlocked || !depositEnabled || wrongNetwork;
 
 	const expandable = fsm('closed', {
 		closed: {
@@ -86,9 +89,11 @@
 							<HashAddress address={$wallet.address ?? ''} endChars={5} />
 						{/if}
 					</div>
-					<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
-						{formatDollar(vaultBalance)}
-					</div>
+					{#if !buttonsDisabled}
+						<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
+							{formatDollar(vaultBalance)}
+						</div>
+					{/if}
 				</div>
 				<Icon name="chevron-down" size="1.25rem" />
 			</button>
@@ -104,6 +109,10 @@
 			{#if !depositEnabled}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
+				</DepositWarning>
+			{:else if geoBlocked}
+				<DepositWarning title="Unsupported country">
+					Deposits are not supported in {getCountryName(ipCountry)}
 				</DepositWarning>
 			{:else if !connected}
 				<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
