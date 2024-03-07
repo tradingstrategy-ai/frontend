@@ -1,17 +1,15 @@
 <script lang="ts">
-	import type { ApiChain } from '$lib/helpers/chain.js';
+	import type { Chain } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import type { ConnectedWallet, ConfiguredChainId } from '$lib/wallet';
+	import type { ConnectedWallet } from '$lib/wallet';
 	import { switchChain, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Alert, Button, EntitySymbol } from '$lib/components';
 
 	export let wallet: ConnectedWallet;
-	export let chainId: ConfiguredChainId;
-	export let chainInfo: Record<string, ApiChain>;
+	export let chain: Chain;
 
 	$: name = wallet.connector.name;
 	$: walletLogoUrl = getLogoUrl('wallet', name.toLowerCase());
-	$: chain = chainId != null ? chainInfo[chainId] : undefined;
 </script>
 
 <WalletInfo --wallet-info-label-width="6.5rem">
@@ -33,13 +31,13 @@
 	</WalletInfoItem>
 
 	<WalletInfoItem label="Network">
-		{#if chain && chainId !== wallet.chainId}
+		{#if chain.id !== wallet.chainId}
 			<Alert size="xs" status="error" title="Wrong network">
-				Please connect to {chain.chain_name}
-				<Button slot="cta" size="xs" label="Switch network" on:click={() => switchChain(chainId)} />
+				Please connect to {chain.name}
+				<Button slot="cta" size="xs" label="Switch network" on:click={() => switchChain(chain.id)} />
 			</Alert>
 		{:else}
-			<EntitySymbol type="blockchain" label={wallet.chain?.name} slug={chain?.chain_slug} />
+			<EntitySymbol type="blockchain" label={chain.name} slug={chain.slug} />
 		{/if}
 	</WalletInfoItem>
 </WalletInfo>

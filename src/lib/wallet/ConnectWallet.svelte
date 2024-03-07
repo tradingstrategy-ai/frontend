@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import type { ApiChain } from '$lib/helpers/chain.js';
+	import { getChain } from '$lib/helpers/chain';
+	import { connect, disconnect, wallet, WalletSummary, WalletTile } from '$lib/wallet';
 	import { AlertList, Button } from '$lib/components';
 	import type { ConnectorType, ConfiguredChainId } from '$lib/wallet';
-	import { connect, disconnect, wallet, WalletSummary, WalletTile } from '$lib/wallet';
 
 	export let chainId: ConfiguredChainId | undefined;
-	export let chainInfo: Record<string, ApiChain>;
+
+	const chain = getChain(chainId)!;
 
 	let error: any;
 
@@ -30,7 +31,7 @@
 <div class="connect-wallet">
 	{#if $wallet.isConnected}
 		<div class="connected-wallet">
-			<WalletSummary wallet={$wallet} {chainId} {chainInfo} />
+			<WalletSummary wallet={$wallet} {chain} />
 			<Button size="sm" label="Change wallet" on:click={disconnect} />
 		</div>
 	{:else}
@@ -67,8 +68,8 @@
 					</AlertItem>
 				{:else if error.name === 'ChainNotConfiguredForConnectorError'}
 					<AlertItem title="Chain not configured">
-						Chain {chainId} ({chainInfo[chainId].chain_name}) is not configured on your wallet. Please add the missing
-						chain (or <em>network</em>) and try again.
+						Chain {chainId} ({chain.name}) is not configured on your wallet. Please add the missing chain (or
+						<em>network</em>) and try again.
 					</AlertItem>
 				{:else}
 					<AlertItem title={error.name}>

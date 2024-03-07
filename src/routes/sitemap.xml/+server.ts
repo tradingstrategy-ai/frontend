@@ -1,4 +1,5 @@
 import type { ApiChain } from '$lib/helpers/chain.js';
+import { fetchPublicApi } from '$lib/helpers/public-api.js';
 
 /**
  * Generate a sitemap for static pages and other sitemaps
@@ -15,8 +16,7 @@ export async function GET({ url, fetch }) {
 
 	const baseUrl = `${protocol}//${host}`;
 
-	const resp = await fetch('/data/chains');
-	const chains: ApiChain[] = await resp.json();
+	const chains: ApiChain[] = await fetchPublicApi(fetch, 'chains');
 
 	const headers = {
 		'content-type': 'application/xml',

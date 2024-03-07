@@ -4,14 +4,14 @@
 <script lang="ts">
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
-	const { chain, chainInfo, onChainData } = data;
+	const { chain, onChainData } = data;
 
 	const address = onChainData.smart_contracts.vault;
-	const chainSlug = chainInfo[chain.id].chain_slug;
+	const chainSlug = getChain(chain.id)?.slug;
 	const enzymeUrl = address && `https://app.enzyme.finance/vault/${address}?network=${chainSlug}`;
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>

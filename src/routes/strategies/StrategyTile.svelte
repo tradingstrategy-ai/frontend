@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { EventHandler } from 'svelte/elements';
-	import type { ApiChain } from '$lib/helpers/chain.js';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { type RawTick, type Quote, rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
+	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
 	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
@@ -12,7 +12,8 @@
 
 	export let admin = false;
 	export let strategy: StrategyRuntimeState;
-	export let chain: ApiChain | undefined;
+
+	const chain = getChain(strategy.on_chain_data?.chain_id);
 
 	const href = `/strategies/${strategy.id}`;
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
@@ -81,9 +82,9 @@
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>
-							<EntitySymbol slot="trigger" slug={chain.chain_slug} type="blockchain" />
+							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" />
 							<span slot="popup">
-								This strategy runs on <strong>{chain.chain_slug}</strong> blockchain
+								This strategy runs on <strong>{chain.name}</strong> blockchain
 							</span>
 						</Tooltip>
 					</div>
