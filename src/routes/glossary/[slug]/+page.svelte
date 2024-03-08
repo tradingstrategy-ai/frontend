@@ -6,7 +6,7 @@
 
 -->
 <script lang="ts">
-	import type { GlossaryEntry } from '../api/types';
+	import type { GlossaryEntry } from '../glossary';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { ContentCardsSection, ContentCard } from '$lib/components';

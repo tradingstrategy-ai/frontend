@@ -4,13 +4,22 @@
  * - Scrape the HTML and form the glossary dict.
  * - See: https://github.com/taoqf/node-html-parser
  */
-
-import type { GlossaryMap } from './types';
 import { type HTMLElement, parse } from 'node-html-parser';
 import { slugify } from '$lib/helpers/slugify';
 import assert from 'node:assert';
+import { dev } from '$app/environment';
+import swrCache from '$lib/swrCache.js';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
+
+export type GlossaryEntry = {
+	name: string;
+	slug: string;
+	shortDescription: string;
+	html: string;
+};
+
+export type GlossaryMap = Record<string, GlossaryEntry>;
 
 /**
  * Could not scrape glossary entries correctly
@@ -99,3 +108,7 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 		return glossary;
 	}, {} as GlossaryMap);
 }
+
+// Create a SWR cache for strategies with 5 minute TTL in production (1 min in dev)
+const cacheTimeSeconds = dev ? 1 : 5 * 60;
+export const getCachedGlossary = swrCache(fetchAndParseGlossary, cacheTimeSeconds);

@@ -56,6 +56,8 @@ export default <T extends any[], U>(fn: (...args: T) => Promise<U>, ttl: number)
 		return hasValue ? cached.value : cached.loading;
 	}
 
+	cacheFn.ttl = ttl;
+
 	/**
 	 * Return cache age (in seconds). Expects the same args as the original
 	 * function (needed for cache lookup).
