@@ -15,7 +15,7 @@ const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 export type GlossaryEntry = {
 	name: string;
 	slug: string;
-	shortDescription: string;
+	description: string;
 	html: string;
 };
 
@@ -78,7 +78,7 @@ function getDefinitionElem(dt: HTMLElement) {
  *	to broken manual edits.
  *
  */
-export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> {
+export async function fetchAndParseGlossary(fetch: Fetch) {
 	const resp = await fetch(glossaryBaseUrl);
 	const source = await resp.text();
 
@@ -102,11 +102,11 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 
 		rewriteInternalLinks(dd);
 		const html = dd.innerHTML;
-		const shortDescription = getFirstSentence(dd.text);
+		const description = getFirstSentence(dd.text);
 
-		glossary[slug] = { name, slug, html, shortDescription };
+		glossary[slug] = { name, slug, html, description };
 		return glossary;
-	}, {} as GlossaryMap);
+	}, {} as Record<string, GlossaryEntry>);
 }
 
 // Create a SWR cache for strategies with 5 minute TTL in production (1 min in dev)
