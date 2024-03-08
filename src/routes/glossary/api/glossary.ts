@@ -73,14 +73,10 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 	const resp = await fetch(glossaryBaseUrl);
 	const source = await resp.text();
 
-	const root = parse(source);
-	const glossary: GlossaryMap = {};
-
 	// Find all dt elements that are immediate children of the dl.glossary
-	const dts = root.querySelectorAll('dl.glossary > dt');
+	const dts = parse(source).querySelectorAll('dl.glossary > dt');
 
-	// Go through every element on glosssary.html source
-	for (const dt of dts) {
+	return dts.reduce((glossary, dt) => {
 		const name = getTermText(dt);
 		assert(
 			/\w/.test(name), // should have at least one word character
@@ -96,12 +92,10 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 		assert(dd, new GlossaryParseError(`Sibling <dd> for <dt> "${name}" not found`));
 
 		rewriteInternalLinks(dd);
-
 		const html = dd.innerHTML;
 		const shortDescription = getFirstSentence(dd.text);
 
 		glossary[slug] = { name, slug, html, shortDescription };
-	}
-
-	return glossary;
+		return glossary;
+	}, {} as GlossaryMap);
 }
