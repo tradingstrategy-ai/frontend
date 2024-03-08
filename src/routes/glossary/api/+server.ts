@@ -19,15 +19,15 @@ import { fetchAndParseGlossary } from './glossary';
 const cacheTimeSeconds = dev ? 1 : 5 * 60;
 const getCachedGlossary = swrCache(fetchAndParseGlossary, cacheTimeSeconds);
 
-export async function GET() {
-	const glossary = await getCachedGlossary('/glossary/');
+export async function GET({ fetch }) {
+	const glossary = await getCachedGlossary(fetch);
 
 	return json(glossary, {
 		// Setting cache-control and age headers to limit re-fetching
 		// of this resource by browser and reverse proxy / CDN
 		headers: {
 			'cache-control': `public, max-age=${cacheTimeSeconds}`,
-			age: getCachedGlossary.getAge('/glossary/').toFixed(0)
+			age: getCachedGlossary.getAge(fetch).toFixed(0)
 		}
 	});
 }

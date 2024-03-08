@@ -2,11 +2,11 @@
  * Import the glossary from the documentation HTML.
  *
  * - Scrape the HTML and form the glossary dict.
- *
- * - See Cheerio API https://cheerio.js.org/classes/Cheerio.html
+ * - See: https://github.com/taoqf/node-html-parser
  */
 
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
+import type { HTMLElement } from 'node-html-parser';
 import type { GlossaryMap } from './types';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
@@ -23,26 +23,12 @@ export class GlossaryDataReadFailed extends Error {
 	}
 }
 
-/**
- * Mutate glossary dd node and fix any links in it back to glossary itself.
- *
- * See example https://stackoverflow.com/a/60011663/315168
- *
- * @param dd
- */
-function fixGlossaryElemHtml($, dd, baseUrl: string) {
-	const $dd = $(dd);
-
-	$dd.find('a').each(function () {
-		const $this = $(this);
-		let href = $this.attr('href');
-		// Glossary.html in-page link
-		if (href.startsWith('#')) {
-			href = href.replace('#term-', baseUrl).toLowerCase();
-		}
-		$this.attr('href', href);
+function rewriteInternalLinks(node: HTMLElement) {
+	node.querySelectorAll('a[href^="#term-"]').forEach((a) => {
+		const href = a.getAttribute('href')!;
+		const newHref = href.replace('#term-', '').toLowerCase();
+		a.setAttribute('href', newHref);
 	});
-	return $dd.html();
 }
 
 function getFirstSentence(str: string): string {
@@ -55,40 +41,37 @@ function getFirstSentence(str: string): string {
  *
  * Transform links.
  *
- * @param baseUrl
- *  The base URL for the glossary for the rewritten links
+ * @param fetch - SvelteKit's fetch function
  *
- *  @throws GlossaryDataReadFailed
- *  	In the case the source Sphinx HTML is badly formatted due
- *  	to broken manual edits.
- *
+ * @throws GlossaryDataReadFailed
+ *	In the case the source Sphinx HTML is badly formatted due
+ *	to broken manual edits.
  *
  */
-export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMap> {
+export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> {
 	const resp = await fetch(glossaryBaseUrl);
 	const source = await resp.text();
-	const $ = cheerio.load(source);
 
+	const root = parse(source);
 	const glossary: GlossaryMap = {};
 
-	const dts = $('dt');
+	const dts = root.querySelectorAll('dt');
 
 	let previousTerm = null;
 
 	// Go through every element on glosssary.html source
 	for (const dt of dts) {
-		let $dt = $(dt);
-
-		// There is embedded <a>#</a> anchor in dt we need to remove
-		$dt.find('a').remove();
+		// Get the first text node (ignore nested <a>#</a>)
+		const name = dt.firstChild?.text!;
+		const slug = name.toLowerCase().replaceAll(' ', '-');
 
 		// We have dt and dd elements, the term is in dt followed by body in dd
-		const name = $dt.text();
-		const slug = name.toLowerCase().replaceAll(' ', '-');
-		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
+		// TODO: use better method for guaranteeing `dd` element
+		const dd = dt.nextElementSibling as unknown as HTMLElement;
 
-		const bodyText = $(html).text();
-		const shortDescription = getFirstSentence(bodyText);
+		rewriteInternalLinks(dd);
+
+		const shortDescription = getFirstSentence(dd.text);
 
 		if (!name || !slug) {
 			throw new GlossaryDataReadFailed(`Could not read glossary term: ${name}, previous term is ${previousTerm}`);
@@ -98,6 +81,7 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 			throw new GlossaryDataReadFailed(`Duplicate glossary slug: ${slug}`);
 		}
 
+		const html = dd.innerHTML;
 		glossary[slug] = { html, name, slug, shortDescription };
 
 		previousTerm = name;
