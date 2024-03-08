@@ -3,9 +3,10 @@
  *
  * - All glossary terms are boosted to crawling priority 1.0
  */
+import { getCachedGlossary } from '../glossary.js';
 
 /**
- * Add the default XML headers around sitemap bodh
+ * Add the default XML headers around sitemap body
  *
  */
 function renderSitemapHeaders(body: string): string {
@@ -22,14 +23,11 @@ function renderSitemapHeaders(body: string): string {
  *
  */
 export async function GET({ fetch }) {
-	// Get URL slugs for all glossary terms
-	const resp = await fetch('/glossary/api');
-	const glossary = await resp.json();
-	const slugs = Object.keys(glossary);
+	const baseUrl = 'https://tradingstrategy.ai/glossary';
+	const glossary = await getCachedGlossary(fetch);
 
 	// Build sitemap XML
-	const baseUrl = 'https://tradingstrategy.ai/glossary';
-	const sitemapXmlBody = slugs
+	const sitemapXmlBody = Object.keys(glossary)
 		.map((slug) => {
 			const fullUrl = `${baseUrl}/${slug}`;
 			return `<url><loc>${fullUrl}</loc><priority>1.0</priority></url>`;
@@ -40,7 +38,9 @@ export async function GET({ fetch }) {
 
 	const headers = {
 		'content-type': 'application/xml',
-		'cache-control': 'public, max-age=3600'
+		'cache-control': `public, max-age=${getCachedGlossary.ttl}`,
+		age: getCachedGlossary.getAge(fetch).toFixed(0)
 	};
+
 	return new Response(sitemapXml, { headers });
 }

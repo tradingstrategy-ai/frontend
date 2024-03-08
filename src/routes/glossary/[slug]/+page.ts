@@ -8,11 +8,11 @@ import { error } from '@sveltejs/kit';
 export async function load({ params, parent }) {
 	const { glossary } = await parent();
 
-	const term = glossary[params.slug];
+	const entry = glossary[params.slug];
 
-	if (!term) {
-		throw error(404, `Term not found: ${params.slug}`);
+	if (!entry) {
+		throw error(404, `Glossary entry not found: ${params.slug}`);
 	}
 
-	return { term };
+	return { entry };
 }

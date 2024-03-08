@@ -6,8 +6,7 @@
 
 -->
 <script lang="ts">
-	import type { GlossaryEntry } from '../api/types';
-	import { page } from '$app/stores';
+	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { ContentCardsSection, ContentCard } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
@@ -15,24 +14,24 @@
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	export let data;
-	$: term = data.term;
+	$: ({ entry } = data);
 
 	/**
 	 * Generate LD JSON markup
 	 *
 	 * https://developers.google.com/search/docs/appearance/structured-data/faqpage
 	 */
-	function getGoogleFAQPageSchema(term: GlossaryEntry): object {
+	function getGoogleFAQPageSchema({ name, html }: GlossaryEntry): object {
 		const jsonData = {
 			'@context': 'https://schema.org',
 			'@type': 'FAQPage',
 			mainEntity: [
 				{
 					'@type': 'Question',
-					name: `What is ${term.name}?`,
+					name: `What is ${name}?`,
 					acceptedAnswer: {
 						'@type': 'Answer',
-						text: term.html
+						text: html
 					}
 				}
 			]
@@ -42,18 +41,18 @@
 </script>
 
 <svelte:head>
-	<title>What is {term.name}?</title>
-	<meta name="description" content={term.shortDescription} />
-	{@html serializeSchema(getGoogleFAQPageSchema(term))}
+	<title>What is {entry.name}?</title>
+	<meta name="description" content={entry.description} />
+	{@html serializeSchema(getGoogleFAQPageSchema(entry))}
 </svelte:head>
 
 <main>
-	<Breadcrumbs labels={{ [$page.params.slug]: term.name }} />
+	<Breadcrumbs labels={{ [entry.slug]: entry.name }} />
 
 	<Section tag="article" padding="sm" gap="sm">
-		<h1 data-testid="glossary-heading">What Is {term.name}?</h1>
+		<h1 data-testid="glossary-heading">What Is {entry.name}?</h1>
 		<div class="answer">
-			{@html term.html}
+			{@html entry.html}
 		</div>
 	</Section>
 

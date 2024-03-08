@@ -1,6 +1,6 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
-	import type { GlossaryEntry, GlossaryMap } from './api/types';
+	import type { GlossaryEntry } from './glossary';
 	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
@@ -8,17 +8,12 @@
 
 	const { glossary } = data;
 
-	function buildIndex(glossary: GlossaryMap) {
-		let index: Record<string, GlossaryEntry[]> = {};
-		for (const [key, value] of Object.entries(glossary)) {
-			const firstLetter = key[0];
-			index[firstLetter] ||= [];
-			index[firstLetter].push(value);
-		}
-		return index;
-	}
-
-	const index = buildIndex(glossary);
+	const index = Object.values(glossary).reduce((acc, entry) => {
+		const firstChar = entry.slug[0];
+		acc[firstChar] ??= [];
+		acc[firstChar].push(entry);
+		return acc;
+	}, {} as Record<string, GlossaryEntry[]>);
 </script>
 
 <svelte:head>
