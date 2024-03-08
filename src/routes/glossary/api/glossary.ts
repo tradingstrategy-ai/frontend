@@ -45,13 +45,6 @@ function fixGlossaryElemHtml($, dd, baseUrl: string) {
 	return $dd.html();
 }
 
-// https://stackoverflow.com/a/196991/315168
-function toTitleCase(str: string): string {
-	return str.replace(/\w\S*/g, function (txt) {
-		return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
-	});
-}
-
 function getFirstSentence(str: string): string {
 	var t = str.split('.', 1)[0];
 	return t;
@@ -90,8 +83,7 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		$dt.find('a').remove();
 
 		// We have dt and dd elements, the term is in dt followed by body in dd
-		const text = $dt.text();
-		const name = text;
+		const name = $dt.text();
 		const slug = name.toLowerCase().replaceAll(' ', '-');
 		const html = fixGlossaryElemHtml($, dt.next, baseUrl);
 
@@ -99,7 +91,7 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 		const shortDescription = getFirstSentence(bodyText);
 
 		if (!name || !slug) {
-			throw new GlossaryDataReadFailed(`Could not read glossary term: ${text}, previous term is ${previousTerm}`);
+			throw new GlossaryDataReadFailed(`Could not read glossary term: ${name}, previous term is ${previousTerm}`);
 		}
 
 		if (slug in glossary) {
@@ -108,7 +100,7 @@ export async function fetchAndParseGlossary(baseUrl: string): Promise<GlossaryMa
 
 		glossary[slug] = { html, name, slug, shortDescription };
 
-		previousTerm = text;
+		previousTerm = name;
 	}
 
 	return glossary;
