@@ -5,25 +5,28 @@
  * - See: https://github.com/taoqf/node-html-parser
  */
 
-import type { HTMLElement } from 'node-html-parser';
 import type { GlossaryMap } from './types';
-import { parse } from 'node-html-parser';
+import { type HTMLElement, parse } from 'node-html-parser';
 import { slugify } from '$lib/helpers/slugify';
+import assert from 'node:assert';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 
 /**
  * Could not scrape glossary entries correctly
  */
-export class GlossaryDataReadFailed extends Error {
+export class GlossaryParseError extends Error {
 	// https://stackoverflow.com/a/41429145/315168
 	constructor(msg: string) {
 		super(msg);
 		// Set the prototype explicitly.
-		Object.setPrototypeOf(this, GlossaryDataReadFailed.prototype);
+		Object.setPrototypeOf(this, new.target.prototype);
 	}
 }
 
+/**
+ * Rewrite internal links to relative page refs
+ */
 function rewriteInternalLinks(node: HTMLElement) {
 	node.querySelectorAll('a[href^="#term-"]').forEach((a) => {
 		const href = a.getAttribute('href')!;
@@ -32,9 +35,26 @@ function rewriteInternalLinks(node: HTMLElement) {
 	});
 }
 
-function getFirstSentence(str: string): string {
-	var t = str.split('.', 1)[0];
-	return t;
+/**
+ * Extract first sentence from string
+ */
+function getFirstSentence(str: string) {
+	return str.split('.', 1)[0];
+}
+
+/**
+ * Get text from first text node of <dt> (ignore nested <a>#</a> tags)
+ */
+function getTermText(dt: HTMLElement) {
+	return dt.firstChild?.text ?? '';
+}
+
+/**
+ * Get sibling <dd> element of <dt>
+ */
+function getDefinitionElem(dt: HTMLElement) {
+	const dd = dt.nextElementSibling;
+	return dd?.tagName === 'DD' ? dd : undefined;
 }
 
 /**
@@ -44,7 +64,7 @@ function getFirstSentence(str: string): string {
  *
  * @param fetch - SvelteKit's fetch function
  *
- * @throws GlossaryDataReadFailed
+ * @throws GlossaryParseError
  *	In the case the source Sphinx HTML is badly formatted due
  *	to broken manual edits.
  *
@@ -59,34 +79,28 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 	// Find all dt elements that are immediate children of the dl.glossary
 	const dts = root.querySelectorAll('dl.glossary > dt');
 
-	let previousTerm = null;
-
 	// Go through every element on glosssary.html source
 	for (const dt of dts) {
-		// Get the first text node (ignore nested <a>#</a>)
-		const name = dt.firstChild?.text!;
-		const slug = slugify(name);
+		const name = getTermText(dt);
+		assert(
+			/\w/.test(name), // should have at least one word character
+			new GlossaryParseError(
+				`Could not read glossary term "${name}"; previous term: ${Object.values(glossary).at(-1)?.name}`
+			)
+		);
 
-		// We have dt and dd elements, the term is in dt followed by body in dd
-		// TODO: use better method for guaranteeing `dd` element
-		const dd = dt.nextElementSibling as unknown as HTMLElement;
+		const slug = slugify(name);
+		assert(!glossary[slug], new GlossaryParseError(`Duplicate glossary slug: ${slug}`));
+
+		const dd = getDefinitionElem(dt);
+		assert(dd, new GlossaryParseError(`Sibling <dd> for <dt> "${name}" not found`));
 
 		rewriteInternalLinks(dd);
 
+		const html = dd.innerHTML;
 		const shortDescription = getFirstSentence(dd.text);
 
-		if (!name || !slug) {
-			throw new GlossaryDataReadFailed(`Could not read glossary term: ${name}, previous term is ${previousTerm}`);
-		}
-
-		if (slug in glossary) {
-			throw new GlossaryDataReadFailed(`Duplicate glossary slug: ${slug}`);
-		}
-
-		const html = dd.innerHTML;
-		glossary[slug] = { html, name, slug, shortDescription };
-
-		previousTerm = name;
+		glossary[slug] = { name, slug, html, shortDescription };
 	}
 
 	return glossary;
