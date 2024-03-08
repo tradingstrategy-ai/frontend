@@ -55,7 +55,8 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 	const root = parse(source);
 	const glossary: GlossaryMap = {};
 
-	const dts = root.querySelectorAll('dt');
+	// Find all dt elements that are immediate children of the dl.glossary
+	const dts = root.querySelectorAll('dl.glossary > dt');
 
 	let previousTerm = null;
 
