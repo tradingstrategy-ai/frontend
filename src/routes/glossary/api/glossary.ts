@@ -5,9 +5,10 @@
  * - See: https://github.com/taoqf/node-html-parser
  */
 
-import { parse } from 'node-html-parser';
 import type { HTMLElement } from 'node-html-parser';
 import type { GlossaryMap } from './types';
+import { parse } from 'node-html-parser';
+import { slugify } from '$lib/helpers/slugify';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 
@@ -64,7 +65,7 @@ export async function fetchAndParseGlossary(fetch: Fetch): Promise<GlossaryMap> 
 	for (const dt of dts) {
 		// Get the first text node (ignore nested <a>#</a>)
 		const name = dt.firstChild?.text!;
-		const slug = name.toLowerCase().replaceAll(' ', '-');
+		const slug = slugify(name);
 
 		// We have dt and dd elements, the term is in dt followed by body in dd
 		// TODO: use better method for guaranteeing `dd` element
