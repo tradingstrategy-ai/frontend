@@ -4,9 +4,16 @@ A test endpoint for the page to show debug data.
 <script lang="ts">
 	import * as config from '$lib/config';
 	import { env } from '$env/dynamic/public';
-	import { Alert, Button, Icon, TextInput } from '$lib/components';
+	import { Alert, Button, TextInput } from '$lib/components';
+	import { isGeoBlocked } from '$lib/helpers/geo.js';
 
 	export let data;
+	const { admin, ipCountry, requestHeaders } = data;
+
+	const geoBlocked: Record<string, 'blocked' | 'allowed'> = {};
+	for (const feature in config.geoBlock) {
+		geoBlocked[feature] = isGeoBlocked(feature, ipCountry) ? 'blocked' : 'allowed';
+	}
 </script>
 
 <section class="ds-container">
@@ -14,8 +21,8 @@ A test endpoint for the page to show debug data.
 
 	<div>
 		<h2>Admin Role</h2>
-		<div class="admin" class:has-admin={data.admin}>
-			{#if data.admin}
+		<div class="admin" class:has-admin={admin}>
+			{#if admin}
 				<Alert size="xs" status="success">You have <strong>admin</strong> role.</Alert>
 				<form data-sveltekit-reload>
 					<input type="hidden" name="pw" value="" />
@@ -39,6 +46,16 @@ A test endpoint for the page to show debug data.
 	<div>
 		<h2>Config</h2>
 		<pre class="terminal-viewport">{JSON.stringify(config, null, 4)}</pre>
+	</div>
+
+	<div>
+		<h2>Geo-blocked features</h2>
+		<pre class="terminal-viewport">{JSON.stringify({ ipCountry, ...geoBlocked }, null, 4)}</pre>
+	</div>
+
+	<div>
+		<h2>Request headers</h2>
+		<pre class="terminal-viewport">{JSON.stringify(requestHeaders, null, 4)}</pre>
 	</div>
 </section>
 
