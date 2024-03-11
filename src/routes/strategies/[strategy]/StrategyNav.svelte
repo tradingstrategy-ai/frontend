@@ -61,6 +61,10 @@
 			label: 'Enzyme vault'
 		},
 		{
+			slug: 'fees',
+			label: 'Fees'
+		},
+		{
 			slug: 'netflow',
 			label: 'TVL and netflow'
 		},
