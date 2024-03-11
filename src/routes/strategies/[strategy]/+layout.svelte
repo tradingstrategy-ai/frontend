@@ -22,11 +22,14 @@
 		'closed-positions': 'Closed positions',
 		'frozen-positions': 'Frozen positions',
 		performance: 'Performance',
+		vault: 'Enzyme vault',
+		fees: 'Fees',
+		netflow: 'Netflow',
+		backtest: 'Backtest results',
 		'decision-making': 'Decision making',
 		status: 'Instance status',
 		logs: 'Logs',
 		source: 'Source Code',
-		backtest: 'Backtest results',
 		...$page.data.breadcrumbs
 	};
 </script>
