@@ -13,7 +13,7 @@
 	export let data;
 	const { strategy } = data;
 
-	const startedAt = strategy.summary_statistics.key_metrics.started_at.value;
+	const startedAt = strategy.summary_statistics.key_metrics.started_at?.value;
 
 	const tvlClient = getChartClient(fetch, strategy.url);
 	tvlClient.fetch({ type: 'total_equity', source: 'live_trading' });

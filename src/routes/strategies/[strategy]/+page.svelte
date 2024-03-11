@@ -22,7 +22,7 @@
 	let periodPerformance: MaybeNumber;
 
 	function hasBacktestedMetric(...metrics: KeyMetricKind[]) {
-		return metrics.some((m) => keyMetrics[m].source === 'backtesting');
+		return metrics.some((m) => keyMetrics[m]?.source === 'backtesting');
 	}
 
 	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {

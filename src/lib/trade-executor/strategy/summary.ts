@@ -19,7 +19,7 @@ import {
 	unixTimestampToDate,
 	usDollarAmount
 } from '../state/utility-types';
-import { keyMetricSchema } from '../statistics/key-metric';
+import { keyMetricKind, keyMetricSchema } from '../statistics/key-metric';
 
 export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
 
@@ -59,7 +59,7 @@ export const strategySummaryStatisticsSchema = z.object({
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
 	performance_chart_90_days: performanceTupleSchema.array().nullish(),
-	key_metrics: z.record(keyMetricSchema),
+	key_metrics: z.record(keyMetricKind, keyMetricSchema),
 	backtest_metrics_cut_off_period: duration.nullish()
 });
 export type StrategySummaryStatistics = z.infer<typeof strategySummaryStatisticsSchema>;
