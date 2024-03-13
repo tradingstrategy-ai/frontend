@@ -111,6 +111,8 @@
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: center;
 			margin: var(--space-md) 0;
+			/* fix Firefox scroll issue due to Ghost-added `white-space: pre-wrap` property */
+			overflow: hidden;
 
 			a {
 				font-weight: 500;
