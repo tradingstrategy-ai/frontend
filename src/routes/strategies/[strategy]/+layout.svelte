@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Alert, PageHeading } from '$lib/components';
-	import StrategyNav from './StrategyNav.svelte';
+	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import StrategyBadges from '../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
@@ -18,15 +18,7 @@
 
 	$: breadcrumbs = {
 		[strategy.id]: strategy.name,
-		'open-positions': 'Open positions',
-		'closed-positions': 'Closed positions',
-		'frozen-positions': 'Frozen positions',
-		performance: 'Performance',
-		'decision-making': 'Decision making',
-		status: 'Instance status',
-		logs: 'Logs',
-		source: 'Source Code',
-		backtest: 'Backtest results',
+		...Object.fromEntries(menuOptions.map(({ slug, label }) => [slug, label])),
 		...$page.data.breadcrumbs
 	};
 </script>

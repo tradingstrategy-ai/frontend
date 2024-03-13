@@ -5,34 +5,8 @@
 - Collapse to dropdown on mobile
 
 -->
-<script lang="ts">
-	import type { Portfolio } from 'trade-executor/state/portfolio';
-	import type { PositionStatus } from 'trade-executor/state/position';
-	import fsm from 'svelte-fsm';
-	import { Button, Menu, MenuItem } from '$lib/components';
-
-	export let basePath: string;
-	export let currentPath: string;
-	export let hasEnzymeVault: boolean;
-	export let backtestAvailable: boolean;
-	export let portfolioPromise: Promise<Portfolio | undefined>;
-
-	let menuWrapper: HTMLElement;
-	let menuHeight = 'auto';
-
-	let hasFrozenPositions = false;
-
-	getPositionCount('frozen').then((count) => {
-		hasFrozenPositions = Boolean(count);
-	});
-
-	type MenuOption = {
-		slug: string;
-		label: string;
-		count?: Promise<number | undefined>;
-	};
-
-	const menuOptions: MenuOption[] = [
+<script context="module" lang="ts">
+	export const menuOptions = [
 		{
 			slug: '',
 			label: 'Overview'
@@ -40,17 +14,17 @@
 		{
 			slug: 'open-positions',
 			label: 'Open positions',
-			count: getPositionCount('open')
+			positionStatus: 'open'
 		},
 		{
 			slug: 'closed-positions',
 			label: 'Closed positions',
-			count: getPositionCount('closed')
+			positionStatus: 'closed'
 		},
 		{
 			slug: 'frozen-positions',
 			label: 'Frozen positions',
-			count: getPositionCount('frozen')
+			positionStatus: 'frozen'
 		},
 		{
 			slug: 'performance',
@@ -59,6 +33,10 @@
 		{
 			slug: 'vault',
 			label: 'Enzyme vault'
+		},
+		{
+			slug: 'fees',
+			label: 'Fees'
 		},
 		{
 			slug: 'netflow',
@@ -84,27 +62,44 @@
 			slug: 'source',
 			label: 'Source Code'
 		}
-	];
+	] as const;
+</script>
 
-	$: currentOption = menuOptions.find((option) => currentPath.endsWith(getTargetUrl(option)));
+<script lang="ts">
+	import type { Portfolio } from 'trade-executor/state/portfolio';
+	import type { PositionStatus } from 'trade-executor/state/position';
+	import fsm from 'svelte-fsm';
+	import { Button, Menu, MenuItem } from '$lib/components';
 
-	$: visibleOptions = menuOptions.filter((option) => {
-		// always show current menu option
-		if (option === currentOption) return true;
+	export let basePath: string;
+	export let currentPath: string;
+	export let hasEnzymeVault: boolean;
+	export let backtestAvailable: boolean;
+	export let portfolioPromise: Promise<Portfolio | undefined>;
 
-		// conditional menu options
-		// prettier-ignore
-		switch (option.slug) {
-			case 'frozen-positions' : return hasFrozenPositions;
-			case 'vault'            : return hasEnzymeVault;
-			case 'backtest'         : return backtestAvailable;
-		}
+	let menuWrapper: HTMLElement;
+	let menuHeight = 'auto';
 
-		// show all other options
-		return true;
+	let hasFrozenPositions = false;
+
+	getPositionCount('frozen').then((count) => {
+		hasFrozenPositions = Boolean(count);
 	});
 
-	function getTargetUrl({ slug }: MenuOption) {
+	$: currentOption = menuOptions.find(({ slug }) => currentPath.endsWith(getTargetUrl(slug)));
+
+	$: visibleOptions = menuOptions.filter(({ slug }) => {
+		// prettier-ignore
+		switch (slug) {
+			case currentOption?.slug : return true;
+			case 'frozen-positions'  : return hasFrozenPositions;
+			case 'vault'             : return hasEnzymeVault;
+			case 'backtest'          : return backtestAvailable;
+			default                  : return true;
+		}
+	});
+
+	function getTargetUrl(slug: string) {
 		return slug ? `${basePath}/${slug}` : basePath;
 	}
 
@@ -132,17 +127,17 @@
 <nav class="strategy-nav {$mobileMenu}" style:--menu-height={menuHeight}>
 	<div class="mobile-toggle">
 		<Button icon="chevron-down" quarternary on:click={mobileMenu.toggle}>
-			{currentOption?.label || 'Show page'}
+			{currentOption?.label ?? 'Show page'}
 		</Button>
 	</div>
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
-			{#each visibleOptions as option}
-				<MenuItem targetUrl={getTargetUrl(option)} active={option === currentOption}>
-					<span class="label">{option.label}</span>
-					{#if 'count' in option}
-						{#await option.count}
+			{#each visibleOptions as { slug, label, positionStatus }}
+				<MenuItem targetUrl={getTargetUrl(slug)} active={slug === currentOption?.slug}>
+					<span class="label">{label}</span>
+					{#if positionStatus}
+						{#await getPositionCount(positionStatus)}
 							<span class="count skeleton" />
 						{:then count}
 							<span class="count">{count ?? '-'}</span>

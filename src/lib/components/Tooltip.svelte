@@ -79,6 +79,7 @@ For more information see:
 
 			:global(a) {
 				text-decoration: underline;
+				font-weight: 500;
 			}
 
 			:global(p) {
