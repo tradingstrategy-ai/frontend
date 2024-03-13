@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { SummaryBox } from '$lib/components';
+	import { Icon, SummaryBox, Tooltip } from '$lib/components';
 
 	export let data;
 	const { strategy } = data;
 
-	const isEnzymeVault = strategy.on_chain_data.asset_management_mode === 'enzyme';
+	const hasEnzymeVault = strategy.on_chain_data.asset_management_mode === 'enzyme';
+	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
 </script>
 
 <section class="fees">
@@ -13,20 +14,37 @@
 			<tbody>
 				<tr>
 					<td>Management fee</td>
-					<td>0.0%</td>
+					<td>0.00%</td>
 				</tr>
 				<tr>
 					<td>Performance fee</td>
-					<td>0.0%</td>
+					<td>0.00%</td>
 				</tr>
 				<tr>
 					<td>Trading Strategy Protocol fee</td>
-					<td>0.0%</td>
+					<td>0.00%</td>
 				</tr>
-				{#if isEnzymeVault}
+				{#if hasEnzymeVault}
 					<tr>
-						<td>Enzyme Protocol fee</td>
-						<td>0.1%</td>
+						<td>
+							<Tooltip>
+								<span slot="trigger">
+									Enzyme Protocol fee
+									<Icon name="question-circle" />
+								</span>
+								<div slot="popup">
+									<p>
+										The Enzyme protocol fee rate applied to the vault is 0.50%. Shares accrued can be bought back with
+										MLN at a 50% discount, leading to an effective protocol fee rate of 0.25%.
+									</p>
+									<p>
+										<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Read more</a>
+										about Enzyme protocol fees.
+									</p>
+								</div>
+							</Tooltip>
+						</td>
+						<td>0.25%</td>
 					</tr>
 				{/if}
 			</tbody>
@@ -67,6 +85,17 @@
 				font: var(--f-ui-md-roman);
 				letter-spacing: var(--ls-ui-md);
 			}
+		}
+
+		[slot='trigger'] {
+			display: flex;
+			gap: 0.75ex;
+			align-items: center;
+		}
+
+		[slot='popup'] p {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md-roman);
 		}
 	}
 </style>
