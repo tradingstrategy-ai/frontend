@@ -4,7 +4,7 @@
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { RateType } from '$lib/chart/ReserveInterestChart.svelte';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
-	import { Alert, Button, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import { Alert, Button, EntitySymbol, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -52,8 +52,13 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
-	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}">
+<main class="ds-3">
+	<PageHeader title={reserve.asset_name}>
+		<span class="subtitle" slot="subtitle">
+			{reserve.protocol_name}
+			reserve on
+			<EntitySymbol type="blockchain" slug={reserve.chain_slug} label={reserve.chain_name} size="0.875em" />
+		</span>
 		<svelte:fragment slot="cta">
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
@@ -105,6 +110,12 @@
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 0.5ex;
 	}
 
 	.info {

@@ -52,7 +52,7 @@
 		<span class="subtitle" slot="subtitle">
 			on <EntitySymbol type="blockchain" slug={exchange.chain_slug} label={exchange.chain_name} size="0.875em" />
 		</span>
-		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
+		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" rel="noreferrer" />
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">
