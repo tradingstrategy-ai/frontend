@@ -197,6 +197,7 @@
 					type="token"
 					label={nativeCurrency.symbol}
 					slug={nativeCurrency.symbol.toLowerCase()}
+					size="1.5rem"
 				/>
 				{formatBalance(nativeCurrency, 2, 4)}
 			</WalletInfoItem>
@@ -207,6 +208,7 @@
 					type="token"
 					label={denominationToken.symbol}
 					slug={denominationToken.symbol.toLowerCase()}
+					size="1.5rem"
 				/>
 				{formatBalance(denominationToken, 2, 4)}
 			</WalletInfoItem>

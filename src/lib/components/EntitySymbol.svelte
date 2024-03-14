@@ -4,7 +4,7 @@
 	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
 	export let slug: MaybeString;
 	export let label = '';
-	export let size = '1.5rem';
+	export let size = '1.25em';
 
 	$: src = getLogoUrl(type, slug);
 </script>
@@ -26,7 +26,7 @@
 	.entity-symbol {
 		display: grid;
 		grid-auto-flow: column;
-		gap: var(--space-sm);
+		gap: calc(var(--image-size) / 3);
 		align-items: center;
 		justify-content: flex-start;
 

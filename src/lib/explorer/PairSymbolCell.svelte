@@ -8,7 +8,7 @@
 	export let swapFee: number;
 </script>
 
-<EntitySymbol type="blockchain" slug={chainSlug} label={chainName} size="1.25em">
+<EntitySymbol type="blockchain" slug={chainSlug} label={chainName}>
 	<div>
 		{symbol}
 		<span>
