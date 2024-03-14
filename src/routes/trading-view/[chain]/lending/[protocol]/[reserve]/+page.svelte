@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import type { RateType } from '$lib/chart/ReserveInterestChart.svelte';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import { Alert, Button, EntitySymbol, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -32,14 +30,6 @@
 	$: showChart = borrowable && !isGhoToken;
 
 	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
-
-	function getSecondaryRates({ additional_details: details }: LendingReserve) {
-		const rates: RateType[] = ['supply_apr'];
-		if (details.aggregated_reserve_data?.stableBorrowRateEnabled) {
-			rates.push('stable_borrow_apr');
-		}
-		return rates;
-	}
 </script>
 
 <svelte:head>
@@ -93,12 +83,7 @@
 				on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
 			/>
 		</div>
-		<ReserveInterestChart
-			{reserve}
-			{timeBucket}
-			primaryRate="variable_borrow_apr"
-			secondaryRates={getSecondaryRates(reserve)}
-		/>
+		<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />
 	</Section>
 {/if}
 

@@ -21,7 +21,7 @@
 
 	<TradingDataInfoRow>
 		<Tooltip slot="label">
-			<span slot="trigger" class="underline">Borrow rate – variable</span>
+			<span slot="trigger" class="underline">Borrow rate</span>
 			<div slot="popup">
 				APR paid when borrowing this token using the reserve's <em>variable rate</em>. This is based on the offer and
 				demand in {reserve.protocol_name}. This rate will fluctuate over time and could be the optimal rate depending on
@@ -36,31 +36,6 @@
 					<span slot="trigger" class="underline">N/A</span>
 					<div slot="popup">This reserve is not borrowable.</div>
 				</Tooltip>
-			{/if}
-		</svelte:fragment>
-	</TradingDataInfoRow>
-
-	<TradingDataInfoRow>
-		<Tooltip slot="label">
-			<span slot="trigger" class="underline">Borrow rate – stable</span>
-			<div slot="popup">
-				APR paid when borrowing this token using the reserve's <em>stable rate</em>. Stable rates act as a fixed rate in
-				the short-term, but can be re-balanced in the long-term in response to changes in market conditions.
-			</div>
-		</Tooltip>
-		<svelte:fragment slot="value">
-			{#if !borrowable}
-				<Tooltip>
-					<span slot="trigger" class="underline">N/A</span>
-					<div slot="popup">This reserve is not borrowable.</div>
-				</Tooltip>
-			{:else if formattedReserveUSD?.stableBorrowRateEnabled === false}
-				<Tooltip>
-					<span slot="trigger" class="underline">N/A</span>
-					<div slot="popup">Stable borrow rate is not enabled for this reserve.</div>
-				</Tooltip>
-			{:else}
-				{formatInterestRate(details.stable_borrow_apr_latest)} APR
 			{/if}
 		</svelte:fragment>
 	</TradingDataInfoRow>
