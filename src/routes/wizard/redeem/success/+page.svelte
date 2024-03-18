@@ -22,7 +22,7 @@
 		{#each receivedAssets as balance}
 			{@const { symbol } = balance}
 			<WalletInfoItem>
-				<EntitySymbol slot="label" type="token" label={symbol} slug={symbol.toLowerCase()} />
+				<EntitySymbol slot="label" type="token" label={symbol} slug={symbol.toLowerCase()} size="1.5rem" />
 				{formatBalance(balance, 2, 4)}
 			</WalletInfoItem>
 		{/each}

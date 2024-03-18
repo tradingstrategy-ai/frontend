@@ -55,7 +55,7 @@
 				{#each getStrategyTokens(strategy) as slug}
 					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
-						<EntitySymbol slot="trigger" type="token" size="var(--token-size)" {slug} />
+						<EntitySymbol slot="trigger" type="token" size="2rem" {slug} />
 						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
@@ -82,7 +82,7 @@
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>
-							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" />
+							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" size="1.5rem" />
 							<span slot="popup">
 								This strategy runs on <strong>{chain.name}</strong> blockchain
 							</span>
@@ -145,7 +145,6 @@
 				.tokens {
 					display: flex;
 					gap: 0.5rem;
-					--token-size: 2rem;
 
 					:global(.entity-symbol) {
 						border-radius: 100%;

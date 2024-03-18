@@ -36,8 +36,7 @@
 				createRender(EntitySymbol, {
 					type: 'blockchain',
 					slug: hideChainIcon ? undefined : original.chain_slug,
-					label: original.chain_name,
-					size: '1.25em'
+					label: original.chain_name
 				}).slot(value)
 		}),
 		table.column({

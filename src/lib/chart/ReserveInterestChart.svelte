@@ -2,7 +2,7 @@
 	const rateTypes = {
 		supply_apr: { label: 'Supply APR', color: 'mediumslateblue' },
 		stable_borrow_apr: { label: 'Stable Borrow APR', color: 'darkorange' },
-		variable_borrow_apr: { label: 'Variable Borrow APR', color: 'gray' }
+		variable_borrow_apr: { label: 'Borrow APR', color: 'gray' }
 	} as const;
 
 	export type RateType = keyof typeof rateTypes;
@@ -11,7 +11,7 @@
 <script lang="ts">
 	import type { Candle, TimeBucket } from '$lib/chart';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import { candleToQuote, quoteFeed, timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
+	import { candleToQuote, quoteFeed, timeBucketToPeriodicity, ChartIQ } from '$lib/chart';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	export let reserve: LendingReserve;
@@ -42,8 +42,7 @@
 			yAxis: {
 				drawCurrentPriceLabel: false,
 				initialMarginTop: 75,
-				decimalPlaces: 2,
-				maxDecimalPlaces: 4
+				priceFormatter: (...args: any[]) => formatInterestRate(args[2], 0, 4)
 			}
 		}
 	};
@@ -88,54 +87,58 @@
 </script>
 
 <ChartIQ {init} {options} {feed} invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]} let:cursor>
-	{#if cursor.data}
-		{@const direction = Math.sign(cursor.data.Close - cursor.data.Open)}
-		<div class="reserve-interest-rate-hud">
-			<HudRow>
-				<h3>{rateTypes[primaryRate].label}:</h3>
-				<HudMetric label="O" value={formatInterestRate(cursor.data.Open)} {direction} />
-				<HudMetric label="H" value={formatInterestRate(cursor.data.High)} {direction} />
-				<HudMetric label="L" value={formatInterestRate(cursor.data.Low)} {direction} />
-				<HudMetric label="C" value={formatInterestRate(cursor.data.Close)} {direction} />
-			</HudRow>
-			<HudRow>
-				{#each secondaryRates as rate, idx}
-					{@const { label, color } = rateTypes[rate]}
-					<HudMetric
-						--label-color={color}
-						class="secondary idx-{idx}"
-						{label}
-						value={formatInterestRate(cursor.data[rate])}
-						{direction}
-					/>
-				{/each}
-			</HudRow>
+	{@const { position, data } = cursor}
+	{#if data}
+		{@const direction = Math.sign(data.Close - data.Open)}
+		<div class="reserve-interest-rate-hud ds-3" style:--x="{position.cx}px">
+			<div class="rate-group">
+				<span class="label">{rateTypes[primaryRate].label}</span>
+				<span class="value" class:bullish={direction > 0} class:bearish={direction < 0}>
+					{formatInterestRate(data[primaryRate])}
+				</span>
+			</div>
+			{#each secondaryRates as rate, idx}
+				{@const { label, color } = rateTypes[rate]}
+				<div class="rate-group" style:--label-color={color}>
+					<span class="label">{label}</span>
+					<span class="value" style:color>
+						{formatInterestRate(data[rate])}
+					</span>
+				</div>
+			{/each}
 		</div>
 	{/if}
 </ChartIQ>
 
 <style lang="postcss">
 	.reserve-interest-rate-hud {
-		background: var(--c-box-3);
 		display: inline-grid;
-		gap: var(--space-ss);
-		padding: var(--space-md);
+		grid-template-columns: 1fr 1fr;
+		border-radius: var(--radius-md);
+		margin-top: 0.5rem;
+		padding-block: 0.75rem;
+		background: var(--c-box-3);
 
-		h3 {
-			margin: 0;
-			font-weight: 500;
-		}
+		.rate-group {
+			display: grid;
+			gap: 0.25rem;
+			justify-items: flex-end;
+			min-width: 7.25rem;
+			padding-inline: 1.125rem;
 
-		:global dl .secondary:not(.idx-0) {
-			margin-left: var(--space-md);
-		}
+			& + .rate-group {
+				border-left: 1px solid var(--c-text-ultra-light);
+			}
 
-		:global .secondary dt {
-			font-weight: 500;
-			color: var(--label-color);
+			.label {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--ls-ui-sm);
+				color: var(--c-text-light);
+			}
 
-			&::after {
-				content: ':';
+			.value {
+				font: var(--f-ui-lg-medium);
+				letter-spacing: var(--ls-ui-lg);
 			}
 		}
 	}

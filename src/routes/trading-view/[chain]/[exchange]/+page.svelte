@@ -4,8 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Alert, Button, PageHeader } from '$lib/components';
+	import { Alert, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -51,11 +50,9 @@
 <main class="ds-3">
 	<PageHeader title="{exchange.human_readable_name} exchange">
 		<span class="subtitle" slot="subtitle">
-			on
-			<img alt={`${exchange.chain_name} logo`} src={getLogoUrl('blockchain', exchange.chain_slug)} />
-			{exchange.chain_name}
+			on <EntitySymbol type="blockchain" slug={exchange.chain_slug} label={exchange.chain_name} size="0.875em" />
 		</span>
-		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" />
+		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" rel="noreferrer" />
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">
@@ -121,11 +118,7 @@
 	.subtitle {
 		display: flex;
 		align-items: center;
-
-		img {
-			height: 0.875em;
-			margin-inline: 0.25em 0.125em;
-		}
+		gap: 0.5ex;
 	}
 
 	.info {

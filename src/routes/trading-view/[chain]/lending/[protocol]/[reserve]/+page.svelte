@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import type { RateType } from '$lib/chart/ReserveInterestChart.svelte';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
-	import { Alert, Button, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import { Alert, Button, EntitySymbol, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -32,14 +30,6 @@
 	$: showChart = borrowable && !isGhoToken;
 
 	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
-
-	function getSecondaryRates({ additional_details: details }: LendingReserve) {
-		const rates: RateType[] = ['supply_apr'];
-		if (details.aggregated_reserve_data?.stableBorrowRateEnabled) {
-			rates.push('stable_borrow_apr');
-		}
-		return rates;
-	}
 </script>
 
 <svelte:head>
@@ -52,8 +42,13 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
-	<PageHeader title={reserve.asset_name} subtitle="{reserve.protocol_name} reserve on {reserve.chain_name}">
+<main class="ds-3">
+	<PageHeader title={reserve.asset_name}>
+		<span class="subtitle" slot="subtitle">
+			{reserve.protocol_name}
+			reserve on
+			<EntitySymbol type="blockchain" slug={reserve.chain_slug} label={reserve.chain_name} size="0.875em" />
+		</span>
 		<svelte:fragment slot="cta">
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
@@ -76,26 +71,21 @@
 			</Alert>
 		{/if}
 	</section>
-</main>
 
-{#if showChart}
-	<Section padding="md">
-		<div class="chart-header">
-			<h3>Interest rates</h3>
-			<SegmentedControl
-				options={['1h', '4h', '1d', '7d', '30d']}
-				selected={timeBucket}
-				on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
-			/>
-		</div>
-		<ReserveInterestChart
-			{reserve}
-			{timeBucket}
-			primaryRate="variable_borrow_apr"
-			secondaryRates={getSecondaryRates(reserve)}
-		/>
-	</Section>
-{/if}
+	{#if showChart}
+		<Section>
+			<div class="chart-header">
+				<h3>Interest rates</h3>
+				<SegmentedControl
+					options={['1h', '4h', '1d', '7d', '30d']}
+					selected={timeBucket}
+					on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+				/>
+			</div>
+			<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />
+		</Section>
+	{/if}
+</main>
 
 <style lang="postcss">
 	main {
@@ -105,6 +95,12 @@
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 0.5ex;
 	}
 
 	.info {

@@ -40,7 +40,7 @@
 	</WalletInfoItem>
 
 	<WalletInfoItem>
-		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} />
+		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} size="1.5rem" />
 		{#await fetchNativeCurrency(address)}
 			<Spinner size="30" color="var(--c-text-light)" />
 		{:then balance}
@@ -50,7 +50,7 @@
 
 	{#if contracts.comptroller}
 		<WalletInfoItem>
-			<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" />
+			<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" size="1.5rem" />
 			{#await fetchDenominationToken(address)}
 				<Spinner size="30" color="var(--c-text-light)" />
 			{:then balance}

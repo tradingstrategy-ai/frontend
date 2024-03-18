@@ -58,7 +58,6 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { lightFormat as formatDate } from 'date-fns';
 	import { floorUTCDate, addUTCDays } from '$lib/helpers/date';
 	import { type ChartLinker, type QuoteFeed, ChartActivityTracker } from '$lib/chart';
 	import { Alert } from '$lib/components';
@@ -95,7 +94,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// see: https://documentation.chartiq.com/CIQ.ChartEngine.html#determineMinMax
 		chartEngine.origDetermineMinMax = chartEngine.determineMinMax;
 		// @ts-ignore
-		chartEngine.determineMinMax = function (_q, fields, _s, _b, _l, _c, _p, axis, _f) {
+		chartEngine.determineMinMax = (_q, fields, _s, _b, _l, _c, _p, axis, _f) => {
 			if (axis.name === 'chart') {
 				fields = fields.map((field: string) => field.replace(/^(High|Low)$/, 'Clipped$1'));
 			}
@@ -105,12 +104,31 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// display X-Axis time markers in UTC
 		chartEngine.setTimeZone(null, 'UTC');
 
+		// set locale (for date and number formatting)
+		CIQ.I18N.setLocale(chartEngine, 'en-GB');
+
+		// override date formatters to use ISO-style formatting
+		// see: https://documentation.chartiq.com/CIQ.I18N.html#.setLocale
+		chartEngine.internationalizer.yearMonthDay = {
+			format(date: Date) {
+				return date.toISOString().slice(0, 10); // YYYY-MM-DD
+			}
+		};
+
+		chartEngine.internationalizer.monthDay = {
+			format(date: Date) {
+				return date.toISOString().slice(5, 10); // MM-DD
+			}
+		};
+
 		// set default formatter for x-axis crosshair date label
-		chartEngine.chart.xAxis.formatter = function (labelDate: Date) {
+		chartEngine.chart.xAxis.formatter = (labelDate: Date) => {
 			const { period, interval, timeUnit } = chartEngine.getPeriodicity();
-			const subDay = timeUnit === 'minute' && period * interval < 24 * 60;
-			const format = subDay ? 'M/d HH:mm' : 'M/d/yyyy';
-			return formatDate(labelDate, format);
+			const { monthDay, yearMonthDay, hourMinute } = chartEngine.internationalizer;
+			if (timeUnit === 'minute' && period * interval < 24 * 60) {
+				return `${monthDay.format(labelDate)} ${hourMinute.format(labelDate)} UTC`;
+			}
+			return yearMonthDay.format(labelDate);
 		};
 
 		// update cursor / tick data based on pointer position

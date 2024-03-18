@@ -34,7 +34,13 @@
 
 		<WalletInfo alignValues="right">
 			<WalletInfoItem>
-				<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} />
+				<EntitySymbol
+					slot="label"
+					type="token"
+					label={chainCurrency}
+					slug={chainCurrency?.toLowerCase()}
+					size="1.5rem"
+				/>
 				{#await getNativeCurrency(address)}
 					<Spinner size="30" color="var(--c-text-light)" />
 				{:then balance}

@@ -15,7 +15,7 @@
 	{@const { symbol } = balance}
 	{@const value = formatBalance(balance, 2, 4)}
 	<slot skeleton={false} {value} {symbol}>
-		<EntitySymbol slug={symbol.toLowerCase()} type="token">{value} {symbol}</EntitySymbol>
+		<EntitySymbol slug={symbol.toLowerCase()} type="token" size="1.5rem">{value} {symbol}</EntitySymbol>
 	</slot>
 {:catch error}
 	<Tooltip>
