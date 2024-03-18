@@ -42,8 +42,7 @@
 			yAxis: {
 				drawCurrentPriceLabel: false,
 				initialMarginTop: 75,
-				decimalPlaces: 2,
-				maxDecimalPlaces: 4
+				priceFormatter: (...args: any[]) => formatInterestRate(args[2], 0, 4)
 			}
 		}
 	};
