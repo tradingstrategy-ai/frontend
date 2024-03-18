@@ -87,24 +87,24 @@
 </script>
 
 <ChartIQ {init} {options} {feed} invalidate={[chain_slug, protocol_slug, reserve_slug, periodicity]} let:cursor>
-	{@const { position, data } = cursor}
+	{@const { data } = cursor}
 	{#if data}
 		{@const direction = Math.sign(data.Close - data.Open)}
-		<div class="reserve-interest-rate-hud ds-3" style:--x="{position.cx}px">
-			<div class="rate-group">
-				<span class="label">{rateTypes[primaryRate].label}</span>
-				<span class="value" class:bullish={direction > 0} class:bearish={direction < 0}>
+		<div class="reserve-interest-rate-hud">
+			<dl>
+				<dd>{rateTypes[primaryRate].label}</dd>
+				<dt class:bullish={direction > 0} class:bearish={direction < 0}>
 					{formatInterestRate(data[primaryRate])}
-				</span>
-			</div>
-			{#each secondaryRates as rate, idx}
+				</dt>
+			</dl>
+			{#each secondaryRates as rate}
 				{@const { label, color } = rateTypes[rate]}
-				<div class="rate-group" style:--label-color={color}>
-					<span class="label">{label}</span>
-					<span class="value" style:color>
+				<dl>
+					<dd>{label}</dd>
+					<dt style:color>
 						{formatInterestRate(data[rate])}
-					</span>
-				</div>
+					</dt>
+				</dl>
 			{/each}
 		</div>
 	{/if}
@@ -119,24 +119,24 @@
 		padding-block: 0.75rem;
 		background: var(--c-box-3);
 
-		.rate-group {
+		dl {
 			display: grid;
 			gap: 0.25rem;
 			justify-items: flex-end;
 			min-width: 7.25rem;
 			padding-inline: 1.125rem;
 
-			& + .rate-group {
+			& + dl {
 				border-left: 1px solid var(--c-text-ultra-light);
 			}
 
-			.label {
+			dd {
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--ls-ui-sm);
 				color: var(--c-text-light);
 			}
 
-			.value {
+			dt {
 				font: var(--f-ui-lg-medium);
 				letter-spacing: var(--ls-ui-lg);
 			}
