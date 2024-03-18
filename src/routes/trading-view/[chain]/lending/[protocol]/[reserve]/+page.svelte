@@ -71,21 +71,21 @@
 			</Alert>
 		{/if}
 	</section>
-</main>
 
-{#if showChart}
-	<Section padding="md">
-		<div class="chart-header">
-			<h3>Interest rates</h3>
-			<SegmentedControl
-				options={['1h', '4h', '1d', '7d', '30d']}
-				selected={timeBucket}
-				on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
-			/>
-		</div>
-		<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />
-	</Section>
-{/if}
+	{#if showChart}
+		<Section>
+			<div class="chart-header">
+				<h3>Interest rates</h3>
+				<SegmentedControl
+					options={['1h', '4h', '1d', '7d', '30d']}
+					selected={timeBucket}
+					on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+				/>
+			</div>
+			<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />
+		</Section>
+	{/if}
+</main>
 
 <style lang="postcss">
 	main {
