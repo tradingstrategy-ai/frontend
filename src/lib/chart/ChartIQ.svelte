@@ -107,28 +107,28 @@ Dynamically ChartIQ modules (if available) and render chart element.
 		// set locale (for date and number formatting)
 		CIQ.I18N.setLocale(chartEngine, 'en-GB');
 
-		// override date formatters
+		// override date formatters to use ISO-style formatting
 		// see: https://documentation.chartiq.com/CIQ.I18N.html#.setLocale
-		chartEngine.internationalizer.monthDay = new Intl.DateTimeFormat(chartEngine.locale, {
-			month: 'short',
-			day: 'numeric'
-		});
-		chartEngine.internationalizer.yearMonthDay = new Intl.DateTimeFormat(chartEngine.locale, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
+		chartEngine.internationalizer.yearMonthDay = {
+			format(date: Date) {
+				return date.toISOString().slice(0, 10); // YYYY-MM-DD
+			}
+		};
+
+		chartEngine.internationalizer.monthDay = {
+			format(date: Date) {
+				return date.toISOString().slice(5, 10); // MM-DD
+			}
+		};
 
 		// set default formatter for x-axis crosshair date label
 		chartEngine.chart.xAxis.formatter = (labelDate: Date) => {
 			const { period, interval, timeUnit } = chartEngine.getPeriodicity();
-			const { hourMinute, yearMonthDay } = chartEngine.internationalizer;
-			let dateStr = yearMonthDay.format(labelDate) as string;
+			const { monthDay, yearMonthDay, hourMinute } = chartEngine.internationalizer;
 			if (timeUnit === 'minute' && period * interval < 24 * 60) {
-				dateStr = dateStr.replace(/\d{2}(\d{2})$/, "'$1");
-				dateStr += `, ${hourMinute.format(labelDate)} UTC`;
+				return `${monthDay.format(labelDate)} ${hourMinute.format(labelDate)} UTC`;
 			}
-			return dateStr;
+			return yearMonthDay.format(labelDate);
 		};
 
 		// update cursor / tick data based on pointer position
