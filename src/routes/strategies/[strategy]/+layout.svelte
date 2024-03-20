@@ -11,8 +11,6 @@
 
 	$: ({ strategy, deferred } = data);
 
-	$: routeDepth = Number($page.route.id?.split('/').length) - 1;
-
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 
@@ -26,7 +24,7 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main class="strategy-layout ds-container ds-3">
-	{#if routeDepth > 3}
+	{#if $page.data.skipSideNav}
 		<slot />
 	{:else}
 		<PageHeading description={strategy.short_description}>

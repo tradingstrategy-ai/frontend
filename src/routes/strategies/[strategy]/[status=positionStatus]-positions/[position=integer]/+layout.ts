@@ -15,6 +15,7 @@ export async function load({ params, parent }) {
 	return {
 		breadcrumbs: { [id]: `Position #${id}` },
 		position,
-		status
+		status,
+		skipSideNav: true
 	};
 }
