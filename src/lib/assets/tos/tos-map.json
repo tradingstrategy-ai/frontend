@@ -5,6 +5,12 @@
 				"fileName": "155d6737cb.txt",
 				"acceptanceMessage": "Hello world"
 			}
+		},
+		"0xbe1418df0bAd87577de1A41385F19c6e77312780": {
+			"1": {
+				"fileName": "155d6737cb.txt",
+				"acceptanceMessage": "I read and agree on terms of service (version 1) to use\nsmart contract software deployed on a blockchain.   \n\nThe terms of service text was published 10.1.2024 at https://example.com.\nThe unique identifier hash for this terms of service text was 0x0000000000000000000000000000000000000000."
+			}
 		}
 	}
 }
