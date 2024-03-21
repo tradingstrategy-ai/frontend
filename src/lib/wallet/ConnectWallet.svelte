@@ -57,8 +57,8 @@
 					</AlertItem>
 				{:else if error.name === 'UserRejectedRequestError'}
 					<AlertItem title="Connection refused">
-						The request to connect to your wallet browser extension was refused. Please try again and authorize the
-						connection for one or more accounts to continue.
+						The request to connect to your wallet was refused. Please try again and authorize the connection for one or
+						more accounts to continue.
 					</AlertItem>
 				{:else if error.name === 'ResourceUnavailableRpcError'}
 					<AlertItem title="Wallet busy">
