@@ -1,9 +1,24 @@
 /**
  * Data loader for all /glossary routes
  */
-import { getCachedGlossary } from './glossary.js';
+import { error } from '@sveltejs/kit';
+import { getCachedGlossary, GlossaryParseError } from './glossary.js';
 
 export async function load({ fetch, setHeaders }) {
+	let glossary;
+
+	try {
+		glossary = await getCachedGlossary(fetch);
+	} catch (e) {
+		if (e instanceof GlossaryParseError) {
+			throw error(503, {
+				message: 'Service Unavailable',
+				stack: e.stack?.split('\n')
+			});
+		}
+		throw e;
+	}
+
 	// Setting cache-control and age headers to limit re-fetching
 	// of this resource by browser and reverse proxy / CDN
 	setHeaders({
@@ -11,7 +26,5 @@ export async function load({ fetch, setHeaders }) {
 		age: getCachedGlossary.getAge(fetch).toFixed(0)
 	});
 
-	return {
-		glossary: await getCachedGlossary(fetch)
-	};
+	return { glossary };
 }
