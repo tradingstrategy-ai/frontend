@@ -21,6 +21,7 @@
 <style lang="postcss">
 	.deposit-balance {
 		display: grid;
+		grid-template-rows: auto 1fr;
 		gap: 0.375rem;
 
 		dt {
@@ -30,7 +31,7 @@
 
 		dd {
 			display: grid;
-			align-items: flex-start;
+			grid-template-rows: auto 1fr;
 			--skeleton-height: 90%;
 			--skeleton-width: 5ch;
 		}
