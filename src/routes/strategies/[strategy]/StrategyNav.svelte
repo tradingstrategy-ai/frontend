@@ -12,6 +12,10 @@
 			label: 'Overview'
 		},
 		{
+			slug: 'details',
+			label: 'Strategy details'
+		},
+		{
 			slug: 'open-positions',
 			label: 'Open positions',
 			positionStatus: 'open'
