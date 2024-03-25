@@ -25,6 +25,7 @@ export { default as HeroVideo } from './HeroVideo.svelte';
 export { default as Icon } from './Icon.svelte';
 export { default as Illustration } from './Illustration.svelte';
 export { default as Logo } from './Logo.svelte';
+export { default as Markdown } from './Markdown.svelte';
 export { default as Menu } from './Menu.svelte';
 export { default as MenuItem } from './MenuItem.svelte';
 export { default as MoneyInput } from './MoneyInput.svelte';
