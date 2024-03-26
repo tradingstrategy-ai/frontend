@@ -10,7 +10,7 @@
 		simulateContract,
 		writeContract,
 		getTransactionReceipt,
-		waitForTransactionReceipt
+		waitForTransactionReceipt,
 	} from '@wagmi/core';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
@@ -52,8 +52,15 @@
 		const { tosHash, tosSignature } = $wizard.data!;
 		const args = [...signedArgs, 1];
 		if (tosRequired) args.push(tosHash, tosSignature);
+		const parameters = { ...paymentContract, args };
+	 	//const { request } = await simulateContract(config, { ...paymentContract, args });
+		// https://1.x.wagmi.sh/core/actions/prepareWriteContract
+		debugger;
 		const { request } = await simulateContract(config, { ...paymentContract, args });
 		return writeContract(config, request);
+		// breakpoint;
+		//return writeContract(config, parameters);
+
 	}
 
 	const payment = fsm('initial', {
@@ -245,15 +252,22 @@
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
+				<!--
+
+				Moved to the actual wallet signing message.
+
 				<Alert size="sm" status="warning" title="Notice">
 					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
 					future results. Only deposit funds you are willing to lose.
 				</Alert>
+				-->
 			{/if}
 
 			{#if $payment === 'authorizing'}
-				<Alert size="sm" status="warning" title="Authorize transfer">
-					Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
+				<Alert size="sm" status="warning" title="Authorise transfer">
+					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet.
+					If your wallet does not support the EIP-3009 transfer type, you will be prompted to sign a message
+					and then send a transaction.
 				</Alert>
 			{/if}
 
