@@ -10,7 +10,7 @@
 		simulateContract,
 		writeContract,
 		getTransactionReceipt,
-		waitForTransactionReceipt,
+		waitForTransactionReceipt
 	} from '@wagmi/core';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
@@ -53,7 +53,7 @@
 		const args = [...signedArgs, 1];
 		if (tosRequired) args.push(tosHash, tosSignature);
 		const parameters = { ...paymentContract, args };
-	 	//const { request } = await simulateContract(config, { ...paymentContract, args });
+		//const { request } = await simulateContract(config, { ...paymentContract, args });
 		// https://1.x.wagmi.sh/core/actions/prepareWriteContract
 		//debugger;
 		const { request } = await simulateContract(config, { ...paymentContract, args });
@@ -61,7 +61,6 @@
 		return writeContract(config, request);
 		// breakpoint;
 		//return writeContract(config, parameters);
-
 	}
 
 	const payment = fsm('initial', {
