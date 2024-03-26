@@ -11,11 +11,10 @@
 		writeContract,
 		getTransactionReceipt,
 		waitForTransactionReceipt,
-		prepareTransactionRequest
 	} from '@wagmi/core';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
-	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet, WalletInfo, WalletInfoItem } fr	om '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 
@@ -267,9 +266,8 @@
 
 			{#if $payment === 'authorizing'}
 				<Alert size="sm" status="warning" title="Authorise transfer">
-					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet.
-					If your wallet does not support the EIP-3009 transfer type, you will be prompted to sign a message
-					and then send a transaction.
+					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
+					support the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
 				</Alert>
 			{/if}
 

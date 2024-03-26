@@ -19,9 +19,17 @@ Display one key metric in a strategy tile.
 	import { Icon, Tooltip } from '$lib/components';
 	import KeyMetricDescription from './KeyMetricDescription.svelte';
 
+	// Displayed metric name as the box label
 	export let name: string;
+	// Displayed as the metric name in the tooltip
+	export let tooltipName: string | undefined = undefined;
+	// Extra one liner about the metric description for the tooltip
+	export let tooltipExtraDescription: string | undefined = undefined;
+	// Source from the trade-executir API
 	export let metric: KeyMetric | undefined = undefined;
+	// How to we format the number
 	export let formatter: Formatter<any> | undefined = undefined;
+	// TODO: why is this needed
 	export let strategyId: string | undefined = undefined;
 
 	$: value = metric?.value;
@@ -35,7 +43,13 @@ Display one key metric in a strategy tile.
 				<span>{name}</span>
 				<Icon name="question-circle" />
 			</dt>
-			<KeyMetricDescription slot="popup" title={name} {metric} {strategyId} />
+			<KeyMetricDescription
+				slot="popup"
+				title={tooltipName || name}
+				extraDescription={tooltipExtraDescription}
+				{metric}
+				{strategyId}
+			/>
 		</Tooltip>
 	{:else}
 		<dt>{name}</dt>

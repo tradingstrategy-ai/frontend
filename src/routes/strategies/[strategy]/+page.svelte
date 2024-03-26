@@ -6,10 +6,17 @@
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
-	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import {
+		formatDaysAgo,
+		formatNumber,
+		formatPercent,
+		formatPrice,
+		formatTradesPerMonth
+	} from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
+	import { metricDescriptions } from '$lib/helpers/strategy-metric-help-texts';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -87,7 +94,7 @@
 	</div>
 
 	<div class="metrics">
-		<SummaryBox title="Summary stats">
+		<SummaryBox title="Strategy ">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
 					<div class="backtest-indicator">* Backtested</div>
@@ -95,11 +102,38 @@
 			</svelte:fragment>
 
 			<dl>
-				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
-					<UpDownIndicator {value} formatter={formatPercent} />
-				</KeyMetric>
-				<KeyMetric name="Age" metric={keyMetrics.started_at} formatter={formatDaysAgo} {strategyId} />
-				<KeyMetric name="Total assets" metric={keyMetrics.total_equity} formatter={formatPrice} {strategyId} />
+				<KeyMetric
+					name="Annual return (est.)"
+					metric={keyMetrics.cagr || keyMetrics.profitability}
+					tooltipName="Compounding Annual Growth Rate (CAGR)"
+					tooltipExtraDescription={metricDescriptions.cagr}
+					formatter={formatPercent}
+					{strategyId}
+				/>
+				<KeyMetric
+					name="Age"
+					metric={keyMetrics.started_at}
+					formatter={formatDaysAgo}
+					tooltipExtraDescription={metricDescriptions.age}
+					{strategyId}
+				/>
+				<KeyMetric
+					name="Total value locked"
+					metric={keyMetrics.total_equity}
+					formatter={formatPrice}
+					tooltipExtraDescription={metricDescriptions.tvl}
+					{strategyId}
+				/>
+
+				<!-- TODO: Place holder. Change to the real metric when available from API. -->
+				<KeyMetric
+					name="Trade frequency (est.)"
+					tooltipName="Trade frequency"
+					metric={keyMetrics.cagr}
+					formatter={formatTradesPerMonth}
+					tooltipExtraDescription={metricDescriptions.tradeFrequency}
+					{strategyId}
+				/>
 			</dl>
 		</SummaryBox>
 
@@ -111,9 +145,29 @@
 			</svelte:fragment>
 
 			<dl>
-				<KeyMetric name="Sharpe" metric={keyMetrics.sharpe} formatter={formatNumber} {strategyId} />
-				<KeyMetric name="Sortino" metric={keyMetrics.sortino} formatter={formatNumber} {strategyId} />
-				<KeyMetric name="Max drawdown" metric={keyMetrics.max_drawdown} formatter={formatPercent} {strategyId} />
+				<KeyMetric
+					name="Sharpe (est.)"
+					tooltipName="Sharpe Ratio"
+					metric={keyMetrics.sharpe}
+					formatter={formatNumber}
+					tooltipExtraDescription={metricDescriptions.cagr}
+					{strategyId}
+				/>
+				<KeyMetric
+					name="Sortino (est.)"
+					tooltipName="Sortino Ratio"
+					metric={keyMetrics.sortino}
+					formatter={formatNumber}
+					{strategyId}
+				/>
+				<KeyMetric
+					name="Max drawdown (est.)"
+					tooltipName="Maximum drawdown"
+					metric={keyMetrics.max_drawdown}
+					formatter={formatPercent}
+					tooltipExtraDescription={metricDescriptions.maxDrawdown}
+					{strategyId}
+				/>
 			</dl>
 		</SummaryBox>
 	</div>
