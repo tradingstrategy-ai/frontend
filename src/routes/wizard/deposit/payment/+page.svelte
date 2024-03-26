@@ -11,6 +11,7 @@
 		writeContract,
 		getTransactionReceipt,
 		waitForTransactionReceipt,
+		prepareTransactionRequest
 	} from '@wagmi/core';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
@@ -55,8 +56,9 @@
 		const parameters = { ...paymentContract, args };
 	 	//const { request } = await simulateContract(config, { ...paymentContract, args });
 		// https://1.x.wagmi.sh/core/actions/prepareWriteContract
-		debugger;
+		//debugger;
 		const { request } = await simulateContract(config, { ...paymentContract, args });
+		// const { request } = await prepareTransactionRequest(config, { ...paymentContract, args });
 		return writeContract(config, request);
 		// breakpoint;
 		//return writeContract(config, parameters);
