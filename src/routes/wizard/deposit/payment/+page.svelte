@@ -266,9 +266,8 @@
 
 			{#if $payment === 'authorizing'}
 				<Alert size="sm" status="warning" title="Authorise transfer">
-					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet.
-					If your wallet does not support the EIP-3009 transfer type, you will be prompted to sign a message
-					and then send a transaction.
+					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
+					support the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
 				</Alert>
 			{/if}
 
