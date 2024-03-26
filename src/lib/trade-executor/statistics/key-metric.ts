@@ -61,7 +61,8 @@ export const keyMetricKind = z.enum([
 	'biggest_realised_risk',
 	'avg_realised_risk',
 	'max_pullback_of_total_capital',
-	'max_loss_risk_at_opening_of_position'
+	'max_loss_risk_at_opening_of_position',
+	'cagr'
 ]);
 export type KeyMetricKind = z.infer<typeof keyMetricKind>;
 
