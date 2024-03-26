@@ -29,7 +29,7 @@ Display one key metric in a strategy tile.
 	export let metric: KeyMetric | undefined = undefined;
 	// How to we format the number
 	export let formatter: Formatter<any> | undefined = undefined;
-	// TODO: why is this needed
+	// Needed to generate strategy backtest link
 	export let strategyId: string | undefined = undefined;
 
 	$: value = metric?.value;
