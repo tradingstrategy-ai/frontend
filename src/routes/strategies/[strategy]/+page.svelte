@@ -117,10 +117,6 @@
 			</dl>
 		</SummaryBox>
 	</div>
-
-	<SummaryBox title="Strategy description">
-		<p class="strategy-description">{@html strategy.long_description}</p>
-	</SummaryBox>
 </div>
 
 <style lang="postcss">
@@ -214,18 +210,6 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-text-extra-light);
-		}
-
-		.strategy-description {
-			font: var(--f-paragraph-lg-roman);
-			letter-spacing: var(--ls-paragraph-lg, normal);
-			overflow: hidden;
-			overflow-wrap: break-word;
-
-			@media (--viewport-xs) {
-				font: var(--f-paragraph-md-roman);
-				letter-spacing: var(--ls-paragraph-md, normal);
-			}
 		}
 
 		.backtest-indicator {

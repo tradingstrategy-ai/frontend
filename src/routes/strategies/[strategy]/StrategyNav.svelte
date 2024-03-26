@@ -12,6 +12,10 @@
 			label: 'Overview'
 		},
 		{
+			slug: 'description',
+			label: 'Description'
+		},
+		{
 			slug: 'open-positions',
 			label: 'Open positions',
 			positionStatus: 'open'
@@ -47,20 +51,12 @@
 			label: 'Backtest results'
 		},
 		{
-			slug: 'decision-making',
-			label: 'Decision making'
-		},
-		{
-			slug: 'status',
-			label: 'Instance status'
-		},
-		{
-			slug: 'logs',
-			label: 'Logs'
-		},
-		{
 			slug: 'source',
 			label: 'Source Code'
+		},
+		{
+			slug: 'tech-details',
+			label: 'Technical details'
 		}
 	] as const;
 </script>
@@ -86,7 +82,8 @@
 		hasFrozenPositions = Boolean(count);
 	});
 
-	$: currentOption = menuOptions.find(({ slug }) => currentPath.endsWith(getTargetUrl(slug)));
+	$: currentSlug = currentPath.split('/')[3] ?? '';
+	$: currentOption = menuOptions.find(({ slug }) => slug === currentSlug);
 
 	$: visibleOptions = menuOptions.filter(({ slug }) => {
 		// prettier-ignore

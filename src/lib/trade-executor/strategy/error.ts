@@ -36,7 +36,7 @@ export function getTradeExecutorErrorHtml(state: StrategyRuntimeState): string |
 		}
 
 		return `Strategy execution is currently paused due to an error. The trade execution engine is waiting for a manual action. 
-                <a href="/strategies/${tradeExecutorId}/status">See instance status page for more information</a>. ${crashedAtMsg}`;
+                <a href="/strategies/${tradeExecutorId}/tech-details/status">See instance status page for more information</a>. ${crashedAtMsg}`;
 	} else if (state.frozen_positions > 0) {
 		return `Strategy has currently frozen trading positions that needing manual actions. 
                 <a href="/strategies/${tradeExecutorId}/frozen-positions">See frozen positions page for more information</a>.`;
