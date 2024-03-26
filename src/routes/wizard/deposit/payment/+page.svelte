@@ -14,7 +14,7 @@
 	} from '@wagmi/core';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
-	import { config, wallet, WalletInfo, WalletInfoItem } fr	om '$lib/wallet';
+	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 
