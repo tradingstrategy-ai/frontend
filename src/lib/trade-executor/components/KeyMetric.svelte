@@ -45,7 +45,7 @@ Display one key metric in a strategy tile.
 			</dt>
 			<KeyMetricDescription
 				slot="popup"
-				title={tooltipName || name}
+				title={tooltipName ?? name}
 				extraDescription={tooltipExtraDescription}
 				{metric}
 				{strategyId}

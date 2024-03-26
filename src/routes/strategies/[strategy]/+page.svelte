@@ -104,7 +104,7 @@
 			<dl>
 				<KeyMetric
 					name="Annual return (est.)"
-					metric={keyMetrics.cagr || keyMetrics.profitability}
+					metric={keyMetrics.cagr ?? keyMetrics.profitability}
 					tooltipName="Compounding Annual Growth Rate (CAGR)"
 					tooltipExtraDescription={metricDescriptions.cagr}
 					formatter={formatPercent}
