@@ -2,6 +2,7 @@
  * Extra help labels used for quant finance metrics in the frontend.
  *
  * Let users to have some basic understanding without visiting the help page.
+ *
  */
 
 export let metricDescriptions = {
