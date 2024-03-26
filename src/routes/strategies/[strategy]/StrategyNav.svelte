@@ -12,8 +12,8 @@
 			label: 'Overview'
 		},
 		{
-			slug: 'details',
-			label: 'Strategy details'
+			slug: 'description',
+			label: 'Description'
 		},
 		{
 			slug: 'open-positions',

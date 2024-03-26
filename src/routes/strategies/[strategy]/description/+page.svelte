@@ -5,7 +5,7 @@
 	const content = data.strategy.long_description;
 </script>
 
-<div class="strategy-details">
+<div class="strategy-description">
 	<SummaryBox title="Strategy details">
 		{#if content}
 			<Markdown {content} />
@@ -16,7 +16,7 @@
 </div>
 
 <style lang="postcss">
-	.strategy-details {
+	.strategy-description {
 		:global(header h3) {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--ls-heading-lg, normal);
