@@ -25,7 +25,7 @@
 		justify-content: inherit;
 		align-items: center;
 		font: var(--menu-item-font, var(--f-ui-md-medium));
-		letter-spacing: var(--f-ui-xl-spacing, normal);
+		letter-spacing: var(--menu-item-letter-spacing, var(--ls-ui-md, var(--f-ui-md-spacing, normal)));
 		color: var(--menu-item-color, inherit);
 		text-decoration: none;
 		white-space: nowrap;
@@ -48,7 +48,5 @@
 	*/
 	:global(.dir--horizontal) a {
 		padding: var(--menu-item-padding, var(--space-ss) var(--space-md));
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
 	}
 </style>
