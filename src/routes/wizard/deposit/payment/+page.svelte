@@ -249,15 +249,17 @@
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
-				<Alert size="sm" status="warning" title="Notice">
+				<!-- Moved to the actual wallet signing message. -->
+				<!-- <Alert size="sm" status="warning" title="Notice">
 					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
 					future results. Only deposit funds you are willing to lose.
-				</Alert>
+				</Alert> -->
 			{/if}
 
 			{#if $payment === 'authorizing'}
-				<Alert size="sm" status="warning" title="Authorize transfer">
-					Please authorize the transfer of {denominationToken.symbol} tokens from your wallet account.
+				<Alert size="sm" status="warning" title="Authorise transfer">
+					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
+					support the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
 				</Alert>
 			{/if}
 

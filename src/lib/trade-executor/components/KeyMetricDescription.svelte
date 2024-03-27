@@ -2,8 +2,15 @@
 	import type { KeyMetric } from 'trade-executor/statistics/key-metric';
 	import { Timestamp } from '$lib/components';
 
+	// Tooltip title
 	export let title: string;
+
+	// Metric we are describing
 	export let metric: KeyMetric | undefined;
+
+	// See strategy-metric-help-texts
+	export let extraDescription: string | undefined;
+
 	export let strategyId: string;
 
 	const backtestLink = `/strategies/${strategyId}/backtest`;
@@ -13,6 +20,12 @@
 	<h3>{title}</h3>
 
 	<ul>
+		{#if extraDescription}
+			<li>
+				{extraDescription}.
+			</li>
+		{/if}
+
 		{#if metric?.help_link}
 			<li>
 				See the glossary for the definition of
@@ -32,7 +45,7 @@
 			</li>
 
 			<li>
-				<a href={backtestLink}>Read the backtest report</a>.
+				<a href={backtestLink}>View the backtest results for this strategy</a>.
 			</li>
 
 			<li>

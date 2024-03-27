@@ -4,11 +4,13 @@
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
-	import SummaryBox from './SummaryBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
+	import SummaryBox from './SummaryBox.svelte';
+	import BacktestIndicator from '../BacktestIndicator.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
 
 	export let data;
@@ -87,33 +89,92 @@
 	</div>
 
 	<div class="metrics">
-		<SummaryBox title="Summary stats">
+		<SummaryBox title="Strategy ">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
-					<div class="backtest-indicator">* Backtested</div>
+					<BacktestIndicator />
 				{/if}
 			</svelte:fragment>
 
 			<dl>
-				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
-					<UpDownIndicator {value} formatter={formatPercent} />
-				</KeyMetric>
-				<KeyMetric name="Age" metric={keyMetrics.started_at} formatter={formatDaysAgo} {strategyId} />
-				<KeyMetric name="Total assets" metric={keyMetrics.total_equity} formatter={formatPrice} {strategyId} />
+				{#if keyMetrics.cagr}
+					<KeyMetric
+						name="Annual return"
+						metric={keyMetrics.cagr}
+						tooltipName="Compounding Annual Growth Rate (CAGR)"
+						tooltipExtraDescription={metricDescriptions.cagr}
+						{strategyId}
+						let:value
+					>
+						<UpDownIndicator {value} formatter={formatProfitability} />
+					</KeyMetric>
+				{:else}
+					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+						<UpDownIndicator {value} formatter={formatProfitability} />
+					</KeyMetric>
+				{/if}
+
+				<KeyMetric
+					name="Age"
+					metric={keyMetrics.started_at}
+					formatter={formatDaysAgo}
+					tooltipExtraDescription={metricDescriptions.age}
+					{strategyId}
+				/>
+
+				<KeyMetric
+					name="Total value locked"
+					metric={keyMetrics.total_equity}
+					formatter={formatPrice}
+					tooltipExtraDescription={metricDescriptions.tvl}
+					{strategyId}
+				/>
+
+				<!-- Removing until we have better layout for additional metric -->
+				<!-- <KeyMetric
+					name="Trade frequency"
+					tooltipName="Trade frequency"
+					metric={keyMetrics.trades_per_month}
+					formatter={formatTradesPerMonth}
+					tooltipExtraDescription={metricDescriptions.tradeFrequency}
+					{strategyId}
+				/> -->
 			</dl>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
-					<div class="backtest-indicator">* Backtested</div>
+					<BacktestIndicator />
 				{/if}
 			</svelte:fragment>
 
 			<dl>
-				<KeyMetric name="Sharpe" metric={keyMetrics.sharpe} formatter={formatNumber} {strategyId} />
-				<KeyMetric name="Sortino" metric={keyMetrics.sortino} formatter={formatNumber} {strategyId} />
-				<KeyMetric name="Max drawdown" metric={keyMetrics.max_drawdown} formatter={formatPercent} {strategyId} />
+				<KeyMetric
+					name="Sharpe"
+					tooltipName="Sharpe Ratio"
+					metric={keyMetrics.sharpe}
+					formatter={formatNumber}
+					tooltipExtraDescription={metricDescriptions.cagr}
+					{strategyId}
+				/>
+
+				<KeyMetric
+					name="Sortino"
+					tooltipName="Sortino Ratio"
+					metric={keyMetrics.sortino}
+					formatter={formatNumber}
+					{strategyId}
+				/>
+
+				<KeyMetric
+					name="Max drawdown"
+					tooltipName="Maximum drawdown"
+					metric={keyMetrics.max_drawdown}
+					formatter={formatPercent}
+					tooltipExtraDescription={metricDescriptions.maxDrawdown}
+					{strategyId}
+				/>
 			</dl>
 		</SummaryBox>
 	</div>
@@ -210,12 +271,6 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-text-extra-light);
-		}
-
-		.backtest-indicator {
-			font: var(--f-ui-xs-bold);
-			letter-spacing: 0.03em;
-			text-transform: uppercase;
 		}
 	}
 </style>

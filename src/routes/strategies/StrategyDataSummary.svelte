@@ -2,40 +2,88 @@
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { UpDownIndicator } from '$lib/components';
 	import { KeyMetric } from 'trade-executor/components';
-	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
+	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let strategy: StrategyRuntimeState;
 
 	const strategyId = strategy.id;
-	const metrics = strategy.connected ? strategy.summary_statistics.key_metrics : {};
-	const hasEnzymeVault = strategy.connected && strategy.on_chain_data.asset_management_mode === 'enzyme';
+	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
+	const assetManagementMode = strategy.on_chain_data?.asset_management_mode;
 </script>
 
 <dl class="strategy-data-summary ds-3">
-	<KeyMetric name="Profitability" metric={metrics.profitability} {strategyId} let:value>
-		<UpDownIndicator {value} formatter={formatProfitability} />
-	</KeyMetric>
+	{#if keyMetrics.cagr}
+		<KeyMetric
+			name="Annual return"
+			metric={keyMetrics.cagr}
+			tooltipName="Compounding Annual Growth Rate (CAGR)"
+			tooltipExtraDescription={metricDescriptions.cagr}
+			{strategyId}
+			let:value
+		>
+			<UpDownIndicator {value} formatter={formatProfitability} />
+		</KeyMetric>
+	{:else}
+		<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+			<UpDownIndicator {value} formatter={formatProfitability} />
+		</KeyMetric>
+	{/if}
 
-	<KeyMetric name="Total assets" metric={metrics.total_equity} formatter={formatDollar} {strategyId} />
+	<KeyMetric
+		name="Total value locked"
+		metric={keyMetrics.total_equity}
+		formatter={formatPrice}
+		tooltipExtraDescription={metricDescriptions.tvl}
+		{strategyId}
+	/>
 
-	<KeyMetric name="Max drawdown" metric={metrics.max_drawdown} formatter={formatPercent} {strategyId} />
+	<KeyMetric
+		name="Max drawdown"
+		tooltipName="Maximum drawdown"
+		metric={keyMetrics.max_drawdown}
+		formatter={formatPercent}
+		tooltipExtraDescription={metricDescriptions.maxDrawdown}
+		{strategyId}
+	/>
 
-	<KeyMetric name="Age" metric={metrics.started_at} formatter={formatDaysAgo} {strategyId} />
+	<KeyMetric
+		name="Age"
+		metric={keyMetrics.started_at}
+		formatter={formatDaysAgo}
+		tooltipExtraDescription={metricDescriptions.age}
+		{strategyId}
+	/>
 
-	<KeyMetric name="Sharpe" metric={metrics.sharpe} formatter={formatNumber} {strategyId} />
+	<KeyMetric
+		name="Sharpe"
+		tooltipName="Sharpe Ratio"
+		metric={keyMetrics.sharpe}
+		formatter={formatNumber}
+		tooltipExtraDescription={metricDescriptions.cagr}
+		{strategyId}
+	/>
 
-	<KeyMetric name="Sortino" metric={metrics.sortino} formatter={formatNumber} {strategyId} />
+	<KeyMetric
+		name="Sortino"
+		tooltipName="Sortino Ratio"
+		metric={keyMetrics.sortino}
+		formatter={formatNumber}
+		{strategyId}
+	/>
 
 	<KeyMetric name="Asset management" {strategyId}>
 		<div class="asset-management">
-			{#if hasEnzymeVault}
+			{#if assetManagementMode === 'enzyme'}
 				<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
 				<span>Enzyme vault</span>
-			{:else}
+			{:else if assetManagementMode === 'hot_wallet'}
 				<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
 				<span>Hot wallet</span>
+			{:else}
+				---
 			{/if}
 		</div>
 	</KeyMetric>

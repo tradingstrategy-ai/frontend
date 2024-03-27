@@ -19,9 +19,17 @@ Display one key metric in a strategy tile.
 	import { Icon, Tooltip } from '$lib/components';
 	import KeyMetricDescription from './KeyMetricDescription.svelte';
 
+	// Displayed metric name as the box label
 	export let name: string;
+	// Displayed as the metric name in the tooltip
+	export let tooltipName: string | undefined = undefined;
+	// Extra one liner about the metric description for the tooltip
+	export let tooltipExtraDescription: string | undefined = undefined;
+	// Source from the trade-executir API
 	export let metric: KeyMetric | undefined = undefined;
+	// How to we format the number
 	export let formatter: Formatter<any> | undefined = undefined;
+	// Needed to generate strategy backtest link
 	export let strategyId: string | undefined = undefined;
 
 	$: value = metric?.value;
@@ -32,10 +40,17 @@ Display one key metric in a strategy tile.
 	{#if metric && strategyId}
 		<Tooltip>
 			<dt slot="trigger" class={metric?.source}>
-				<span>{name}</span>
+				<!-- get words to wrap, while keeping icon with last word (see CSS below) -->
+				<span>{@html name.replaceAll(/ +/g, ' <wbr/>')}</span>
 				<Icon name="question-circle" />
 			</dt>
-			<KeyMetricDescription slot="popup" title={name} {metric} {strategyId} />
+			<KeyMetricDescription
+				slot="popup"
+				title={tooltipName ?? name}
+				extraDescription={tooltipExtraDescription}
+				{metric}
+				{strategyId}
+			/>
 		</Tooltip>
 	{:else}
 		<dt>{name}</dt>
@@ -67,15 +82,20 @@ Display one key metric in a strategy tile.
 		gap: var(--key-metric-gap);
 
 		dt {
-			display: flex;
-			gap: 0.75ex;
-			align-items: center;
 			font: var(--key-metric-label-font);
+			white-space: nowrap;
 			letter-spacing: var(--key-metric-label-letter-spacing, normal);
 			color: var(--c-text-light);
 
 			&.backtesting > span::after {
 				content: '*';
+				font-weight: bold;
+				font-size: 1.2em;
+			}
+
+			--icon-size: 1.1em;
+			:global(svg) {
+				transform: translateY(-0.1em);
 			}
 		}
 
