@@ -19,7 +19,7 @@ import {
 	unixTimestampToDate,
 	usDollarAmount
 } from '../state/utility-types';
-import { keyMetricKind, keyMetricSchema } from '../statistics/key-metric';
+import { keyMetricSchema } from '../statistics/key-metric';
 
 export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
 
@@ -48,6 +48,31 @@ export type OnChainData = z.infer<typeof onChainDataSchema>;
 
 export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);
 
+// See `calculate_key_metrics` in:
+// https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/statistics/key_metric.py
+export const summaryKeyMetricKind = z.enum([
+	'sharpe',
+	'sortino',
+	'max_drawdown',
+	'profitability',
+	'cagr',
+	'trades_per_month',
+	'total_equity',
+	'started_at',
+	'last_trade',
+	'trades_last_week'
+]);
+export type SummaryKeyMetricKind = z.infer<typeof summaryKeyMetricKind>;
+
+const summaryKeyMetricEntries = summaryKeyMetricKind.options.map((kind) => {
+	return [kind, keyMetricSchema.extend({ kind: z.literal(kind) })];
+});
+
+const summaryKeyMetricsSchema = z
+	.object(Object.fromEntries(summaryKeyMetricEntries))
+	.partial()
+	.catchall(keyMetricSchema);
+
 export const strategySummaryStatisticsSchema = z.object({
 	calculated_at: unixTimestampToDate,
 	launched_at: unixTimestampToDate.nullish(),
@@ -59,7 +84,7 @@ export const strategySummaryStatisticsSchema = z.object({
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
 	performance_chart_90_days: performanceTupleSchema.array().nullish(),
-	key_metrics: z.record(keyMetricKind, keyMetricSchema),
+	key_metrics: summaryKeyMetricsSchema,
 	backtest_metrics_cut_off_period: duration.nullish()
 });
 export type StrategySummaryStatistics = z.infer<typeof strategySummaryStatisticsSchema>;
