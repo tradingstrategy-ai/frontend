@@ -4,8 +4,9 @@
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
-	import SummaryBox from './SummaryBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
+	import SummaryBox from './SummaryBox.svelte';
+	import BacktestIndicator from '../BacktestIndicator.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
@@ -91,7 +92,7 @@
 		<SummaryBox title="Strategy ">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
-					<div class="backtest-indicator" />
+					<BacktestIndicator />
 				{/if}
 			</svelte:fragment>
 
@@ -144,7 +145,7 @@
 		<SummaryBox title="Risk metrics">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
-					<div class="backtest-indicator" />
+					<BacktestIndicator />
 				{/if}
 			</svelte:fragment>
 
@@ -270,19 +271,6 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-text-extra-light);
-		}
-
-		.backtest-indicator {
-			font: var(--f-ui-xs-bold);
-			letter-spacing: 0.03em;
-			text-transform: uppercase;
-			/* color: var(--c-text-extra-light); */
-			/* make backtest indicator more conspicuous */
-			color: color-mix(in srgb, var(--c-text-extra-light), var(--c-warning) 40%);
-
-			&::after {
-				content: '✻ Backtest estimate';
-			}
 		}
 	}
 </style>
