@@ -25,7 +25,7 @@
 
 <main class="strategies-index-page ds-3">
 	<Section>
-		<PageHeading title="Strategies" description="Currently available strategies">
+		<PageHeading title="Strategies" description="Currently available automated trading strategies for you">
 			<svelte:fragment slot="cta">
 				{#if admin}
 					<SegmentedControl bind:selected={filter} {options} />
@@ -40,9 +40,10 @@
 				{/each}
 			</div>
 		{:else}
+			<p>Currently no open strategies available.</p>
+
 			<p>
-				No {#if admin && filter !== 'all'}{filter}{/if}
-				strategies configured
+				<a class="body-link" href="/community">Join Discord to get access</a>.
 			</p>
 		{/if}
 	</Section>

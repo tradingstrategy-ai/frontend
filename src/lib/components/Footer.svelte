@@ -49,6 +49,11 @@
 	</div>
 </footer>
 
+<div class="disclaimer">
+	<a href="https://tradingstrategy.ai">TradingStrategy.ai</a> operated by Trading Strategy Operations Ltd., Victoria, Mahe,
+	Seychelles.
+</div>
+
 <style lang="postcss">
 	footer {
 		display: flex;
@@ -75,6 +80,19 @@
 		.icon-group {
 			display: flex;
 			gap: inherit;
+		}
+	}
+
+	.disclaimer {
+		text-align: center;
+		font: var(--f-ui-xs-roman);
+		padding-block: var(--space-7xl);
+		padding-top: 0;
+		color: var(--c-text-ultra-light);
+
+		& a {
+			font: var(--f-ui-xs-medium);
+			color: var(--c-text-ultra-light);
 		}
 	}
 </style>
