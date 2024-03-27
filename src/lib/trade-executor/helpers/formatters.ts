@@ -49,3 +49,12 @@ export function formatProfitability(n: MaybeNumberlike): string {
 export function formatBPS(n: MaybeNumber) {
 	return formatNumber(n * 10_000, 0);
 }
+
+/**
+ * Formats trades per month frequency.
+ */
+export function formatTradesPerMonth(n: MaybeNumberlike): string {
+	n = toFloatingPoint(n);
+	if (!isNumber(n)) return notFilledMarker;
+	return formatNumber(n, 1, 2) + ' / mo';
+}

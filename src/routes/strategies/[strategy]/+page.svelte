@@ -6,17 +6,11 @@
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import SummaryBox from './SummaryBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
-	import {
-		formatDaysAgo,
-		formatNumber,
-		formatPercent,
-		formatPrice,
-		formatTradesPerMonth
-	} from '$lib/helpers/formatters';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
-	import { metricDescriptions } from '$lib/helpers/strategy-metric-help-texts';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
