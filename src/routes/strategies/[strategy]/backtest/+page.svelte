@@ -17,7 +17,6 @@ Page to display the strategy backtest results.
 	const { strategy } = data;
 
 	const iframeUrl = `${strategy.url}/file?type=html`;
-	const notebookUrl = `/strategies/${strategy.id}.ipynb`;
 
 	let iframeLoaded = false;
 	let iframeHeight = 0;
@@ -36,7 +35,7 @@ Page to display the strategy backtest results.
 
 <section class="backtest">
 	{#if strategy.backtest_available}
-		<SummaryBox title="Backtest results" ctaPosition="top">
+		<SummaryBox title="Backtest results">
 			<div class="content">
 				You can find the backtest results for this strategy below.
 				<a class="body-link" href="/glossary/backtest">Learn more about backtesting</a>.
@@ -59,17 +58,6 @@ Page to display the strategy backtest results.
 	.backtest {
 		display: grid;
 		gap: 1.5rem;
-
-		:global(.summary-box header .cta) {
-			gap: 0.75rem;
-
-			@media (--viewport-sm-down) {
-				grid-area: 2 / 1 / span 2;
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-				margin-block: 0.75rem;
-			}
-		}
 
 		iframe {
 			width: 100%;
