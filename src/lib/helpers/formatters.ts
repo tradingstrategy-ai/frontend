@@ -300,17 +300,11 @@ export function formatDaysAgo(unixTimestamp: MaybeNumber): string {
 /**
  * Formats trades per month frequency.
  */
-export function formatTradesPerMonth(tradesPerMonth: MaybeNumber): string {
-	if (!isNumber(tradesPerMonth)) return notFilledMarker;
-	return (
-		tradesPerMonth.toLocaleString('en', {
-			minimumSignificantDigits: 1,
-			maximumSignificantDigits: 2
-		}) + ' / mo'
-	);
+export function formatTradesPerMonth(n: MaybeNumberlike): string {
+	n = toFloatingPoint(n);
+	if (!isNumber(n)) return notFilledMarker;
+	return formatNumber(n, 1, 2) + ' / mo';
 }
-
-/**
 
 /**
  * Formats arbitrary value with fallback string if undefined/null
