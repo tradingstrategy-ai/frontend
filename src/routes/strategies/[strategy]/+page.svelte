@@ -129,7 +129,7 @@
 				<KeyMetric
 					name="Trade frequency (est.)"
 					tooltipName="Trade frequency"
-					metric={keyMetrics.cagr}
+					metric={keyMetrics.trades_per_month}
 					formatter={formatTradesPerMonth}
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
 					{strategyId}

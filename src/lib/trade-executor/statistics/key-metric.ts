@@ -17,6 +17,7 @@ export const keyMetricKind = z.enum([
 	'total_equity',
 	'last_trade',
 	'trades_last_week',
+	'trades_per_month',
 	'trading_period_length',
 	'return_percent',
 	'annualised_return_percent',
