@@ -10,8 +10,8 @@
 	export let strategy: StrategyRuntimeState;
 
 	const strategyId = strategy.id;
-	const keyMetrics = strategy.connected ? strategy.summary_statistics.key_metrics : {};
-	const hasEnzymeVault = strategy.connected && strategy.on_chain_data.asset_management_mode === 'enzyme';
+	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
+	const assetManagementMode = strategy.on_chain_data?.asset_management_mode;
 </script>
 
 <dl class="strategy-data-summary ds-3">
@@ -76,12 +76,14 @@
 
 	<KeyMetric name="Asset management" {strategyId}>
 		<div class="asset-management">
-			{#if hasEnzymeVault}
+			{#if assetManagementMode === 'enzyme'}
 				<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
 				<span>Enzyme vault</span>
-			{:else}
+			{:else if assetManagementMode === 'hot_wallet'}
 				<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
 				<span>Hot wallet</span>
+			{:else}
+				---
 			{/if}
 		</div>
 	</KeyMetric>
