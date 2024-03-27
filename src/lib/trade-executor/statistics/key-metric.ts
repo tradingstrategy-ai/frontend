@@ -71,7 +71,7 @@ export const keyMetricSource = z.enum(['backtesting', 'live_trading', 'missing']
 export const keyMetricCalculationMethod = z.enum(['historical_data', 'latest_value']);
 
 export const keyMetricSchema = z.object({
-	kind: keyMetricKind,
+	kind: z.string(),
 	source: keyMetricSource,
 	value: z.number().nullish(),
 	calculation_window_start_at: unixTimestampToDate.nullish(),
