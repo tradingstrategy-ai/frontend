@@ -8,7 +8,7 @@
  *
  */
 import { z } from 'zod';
-import { keyMetricKind, keyMetricSchema, keyMetricSource } from './key-metric';
+import { keyMetricSchema, keyMetricSource } from './key-metric';
 import { unixTimestampToDate } from 'trade-executor/state/utility-types';
 
 export const statisticsTableMetricSchema = keyMetricSchema.extend({
@@ -34,6 +34,6 @@ const longShortTableMetricSchema = statisticsTableMetricSchema.extend({
 
 export const longShortTableSchema = statisticsTableSchema.extend({
 	columns: longShortTableColumns.array(),
-	rows: z.record(keyMetricKind, longShortTableMetricSchema)
+	rows: z.record(longShortTableMetricSchema)
 });
 export type LongShortTable = z.infer<typeof longShortTableSchema>;
