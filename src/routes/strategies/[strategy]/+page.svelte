@@ -106,11 +106,11 @@
 						{strategyId}
 						let:value
 					>
-						<UpDownIndicator {value} formatter={formatPercent} />
+						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{:else}
 					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
-						<UpDownIndicator {value} formatter={formatPercent} />
+						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{/if}
 
