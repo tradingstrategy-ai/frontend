@@ -7,7 +7,7 @@
 	import SummaryBox from './SummaryBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
+	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
@@ -91,19 +91,28 @@
 		<SummaryBox title="Strategy ">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
-					<div class="backtest-indicator">* Backtested</div>
+					<div class="backtest-indicator" />
 				{/if}
 			</svelte:fragment>
 
 			<dl>
-				<KeyMetric
-					name="Annual return (est.)"
-					metric={keyMetrics.cagr ?? keyMetrics.profitability}
-					tooltipName="Compounding Annual Growth Rate (CAGR)"
-					tooltipExtraDescription={metricDescriptions.cagr}
-					formatter={formatPercent}
-					{strategyId}
-				/>
+				{#if keyMetrics.cagr}
+					<KeyMetric
+						name="Annual return"
+						metric={keyMetrics.cagr}
+						tooltipName="Compounding Annual Growth Rate (CAGR)"
+						tooltipExtraDescription={metricDescriptions.cagr}
+						{strategyId}
+						let:value
+					>
+						<UpDownIndicator {value} formatter={formatPercent} />
+					</KeyMetric>
+				{:else}
+					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+						<UpDownIndicator {value} formatter={formatPercent} />
+					</KeyMetric>
+				{/if}
+
 				<KeyMetric
 					name="Age"
 					metric={keyMetrics.started_at}
@@ -111,6 +120,7 @@
 					tooltipExtraDescription={metricDescriptions.age}
 					{strategyId}
 				/>
+
 				<KeyMetric
 					name="Total value locked"
 					metric={keyMetrics.total_equity}
@@ -119,43 +129,45 @@
 					{strategyId}
 				/>
 
-				<!-- TODO: Place holder. Change to the real metric when available from API. -->
-				<KeyMetric
-					name="Trade frequency (est.)"
+				<!-- Removing until we have better layout for additional metric -->
+				<!-- <KeyMetric
+					name="Trade frequency"
 					tooltipName="Trade frequency"
 					metric={keyMetrics.trades_per_month}
 					formatter={formatTradesPerMonth}
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
 					{strategyId}
-				/>
+				/> -->
 			</dl>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
-					<div class="backtest-indicator">* Backtested</div>
+					<div class="backtest-indicator" />
 				{/if}
 			</svelte:fragment>
 
 			<dl>
 				<KeyMetric
-					name="Sharpe (est.)"
+					name="Sharpe"
 					tooltipName="Sharpe Ratio"
 					metric={keyMetrics.sharpe}
 					formatter={formatNumber}
 					tooltipExtraDescription={metricDescriptions.cagr}
 					{strategyId}
 				/>
+
 				<KeyMetric
-					name="Sortino (est.)"
+					name="Sortino"
 					tooltipName="Sortino Ratio"
 					metric={keyMetrics.sortino}
 					formatter={formatNumber}
 					{strategyId}
 				/>
+
 				<KeyMetric
-					name="Max drawdown (est.)"
+					name="Max drawdown"
 					tooltipName="Maximum drawdown"
 					metric={keyMetrics.max_drawdown}
 					formatter={formatPercent}
@@ -264,6 +276,13 @@
 			font: var(--f-ui-xs-bold);
 			letter-spacing: 0.03em;
 			text-transform: uppercase;
+			/* color: var(--c-text-extra-light); */
+			/* make backtest indicator more conspicuous */
+			color: color-mix(in srgb, var(--c-text-extra-light), var(--c-warning) 40%);
+
+			&::after {
+				content: '✻ Backtest estimate';
+			}
 		}
 	}
 </style>
