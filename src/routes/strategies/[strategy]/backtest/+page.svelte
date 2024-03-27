@@ -36,19 +36,11 @@ Page to display the strategy backtest results.
 
 <section class="backtest">
 	{#if strategy.backtest_available}
-		<SummaryBox title="Backtest data" ctaPosition="top">
+		<SummaryBox title="Backtest results" ctaPosition="top">
 			<div class="content">
-				<ul>
-					<li>View the backtest result report below or download the notebook run the backtests yourself.</li>
-					<li><a class="body-link" href="/glossary/backtest">Learn more about backtests</a>.</li>
-				</ul>
+				You can find the backtest results for this strategy below.
+				<a class="body-link" href="/glossary/backtest">Learn more about backtesting</a>.
 			</div>
-
-			<svelte:fragment slot="cta">
-				<Button size="sm" label="Download notebook" href={notebookUrl} download />
-				<!-- TODO: The webhook endpoint missing -->
-				<Button size="sm" label="Download raw backtest data" disabled />
-			</svelte:fragment>
 		</SummaryBox>
 
 		{#if !iframeLoaded}
