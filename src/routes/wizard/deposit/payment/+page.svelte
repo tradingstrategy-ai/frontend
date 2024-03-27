@@ -70,7 +70,11 @@
 			},
 
 			authorize() {
-				authorizeTransfer().then(payment.confirm).catch(payment.fail);
+				// NOTE: adding 500ms delay after signature request promise
+				// resolves to see if this addresses Rabby wallet bug
+				authorizeTransfer()
+					.then((...args) => payment.confirm.debounce(500, ...args))
+					.catch(payment.fail);
 				return 'authorizing';
 			}
 		},

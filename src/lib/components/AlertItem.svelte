@@ -72,6 +72,11 @@ Display a single alert item (should always be nested within AlertList).
 			}
 		}
 
+		.content {
+			overflow: hidden;
+			overflow-wrap: break-word;
+		}
+
 		.cta {
 			display: grid;
 			align-content: start;

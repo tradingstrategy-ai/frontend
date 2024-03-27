@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { KeyMetricKind } from 'trade-executor/statistics/key-metric';
+	import type { SummaryKeyMetricKind } from 'trade-executor/strategy/summary';
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
@@ -28,7 +28,7 @@
 
 	let periodPerformance: MaybeNumber;
 
-	function hasBacktestedMetric(...metrics: KeyMetricKind[]) {
+	function hasBacktestedMetric(...metrics: SummaryKeyMetricKind[]) {
 		return metrics.some((m) => keyMetrics[m]?.source === 'backtesting');
 	}
 
