@@ -52,15 +52,8 @@
 		const { tosHash, tosSignature } = $wizard.data!;
 		const args = [...signedArgs, 1];
 		if (tosRequired) args.push(tosHash, tosSignature);
-		const parameters = { ...paymentContract, args };
-		//const { request } = await simulateContract(config, { ...paymentContract, args });
-		// https://1.x.wagmi.sh/core/actions/prepareWriteContract
-		//debugger;
 		const { request } = await simulateContract(config, { ...paymentContract, args });
-		// const { request } = await prepareTransactionRequest(config, { ...paymentContract, args });
 		return writeContract(config, request);
-		// breakpoint;
-		//return writeContract(config, parameters);
 	}
 
 	const payment = fsm('initial', {
@@ -252,15 +245,11 @@
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
 
-				<!--
-
-				Moved to the actual wallet signing message.
-
-				<Alert size="sm" status="warning" title="Notice">
+				<!-- Moved to the actual wallet signing message. -->
+				<!-- <Alert size="sm" status="warning" title="Notice">
 					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
 					future results. Only deposit funds you are willing to lose.
-				</Alert>
-				-->
+				</Alert> -->
 			{/if}
 
 			{#if $payment === 'authorizing'}
