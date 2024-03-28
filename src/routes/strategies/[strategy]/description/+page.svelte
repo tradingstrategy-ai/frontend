@@ -1,25 +1,26 @@
 <script lang="ts">
-	import { Markdown, SummaryBox } from '$lib/components';
+	import { Markdown } from '$lib/components';
 
 	export let data;
 	const content = data.strategy.long_description;
 </script>
 
 <div class="strategy-description">
-	<SummaryBox title="Strategy details">
-		{#if content}
-			<Markdown {content} />
-		{:else}
-			No details available.
-		{/if}
-	</SummaryBox>
+	{#if content}
+		<Markdown {content} />
+	{:else}
+		No details available.
+	{/if}
 </div>
 
 <style lang="postcss">
 	.strategy-description {
-		:global(header h3) {
-			font: var(--f-heading-lg-medium);
-			letter-spacing: var(--ls-heading-lg, normal);
+		background: var(--c-box-1);
+		border-radius: var(--radius-md);
+		padding: 1.5rem;
+
+		@media (--viewport-sm-down) {
+			padding: 1rem;
 		}
 	}
 </style>
