@@ -84,15 +84,20 @@
 	}
 
 	.disclaimer {
+		padding-bottom: var(--space-7xl);
+		padding-inline: var(--space-lg);
 		text-align: center;
 		font: var(--f-ui-xs-roman);
-		padding-block: var(--space-7xl);
-		padding-top: 0;
+		letter-spacing: var(--f-ui-xs-spacing, normal);
 		color: var(--c-text-ultra-light);
 
-		& a {
-			font: var(--f-ui-xs-medium);
-			color: var(--c-text-ultra-light);
+		a {
+			font-weight: 500;
+
+			&:hover {
+				color: var(--c-text-extra-light);
+				text-decoration: underline;
+			}
 		}
 	}
 </style>
