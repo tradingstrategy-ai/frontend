@@ -15,7 +15,7 @@
 		slot="hero"
 		image={heroImage}
 		title="Trading data"
-		subtitle="Explore and download trading data from multiple blockchains and decentralised exchanges."
+		subtitle="The largest decentralised finance dataset for automated trading."
 	/>
 
 	<ContentCardsSection title="Explore data">
