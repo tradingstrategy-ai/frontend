@@ -19,9 +19,10 @@ Home page hero banner.
 		<img class="media" src={mbp15Image} alt="Trading Data" />
 
 		<div class="content">
+			<!-- ensure line breaks at correct place -->
 			<h1>
-				<!-- ensure line breaks at correct place on larger screens -->
-				Everyone can be a quant trade
+				<span>Everyone can be</span>
+				<span>a quant trader</span>
 			</h1>
 
 			<hr />
@@ -69,10 +70,8 @@ Home page hero banner.
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}
 
-		@media (--viewport-xl-down) {
-			br {
-				display: none;
-			}
+		span {
+			white-space: nowrap;
 		}
 	}
 

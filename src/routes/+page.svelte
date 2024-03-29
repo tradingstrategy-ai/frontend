@@ -24,7 +24,7 @@
 <main class="home-page">
 	<HomeHeroBanner />
 
-	<Section padding="lg" --section-background="var(--c-background-accent-1)">
+	<Section padding="lg">
 		<div class="strategies">
 			<h2>Strategies</h2>
 			<div class="coming-soon">Coming soon</div>
@@ -45,7 +45,7 @@
 	</Section>
 
 	{#if impressiveNumbers}
-		<Section gap="md" padding="md" testId="impressive-numbers">
+		<Section gap="md" padding="md" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
 			<h2 style="text-align: center;">Your strategy can trade</h2>
 			<Grid cols={3} gap="lg">
 				<UspTile
@@ -63,7 +63,8 @@
 
 			<p class="benefits">
 				Decentralised finance offers significant opportunities and risk benefits for algorithmic traders, trading signal
-				developers, and liquid hedge funds. <a class="body-link" href="htps://tradingstrategy.ai/docs">
+				developers, and liquid hedge funds.
+				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs">
 					Read how to port your strategy to decentralised finance.
 				</a>
 			</p>
@@ -120,6 +121,11 @@
 		text-align: center;
 	}
 
+	p {
+		font: var(--f-ui-xl-roman);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
+	}
+
 	.strategies {
 		background: var(--c-box-2);
 		border-radius: var(--radius-xl);
@@ -155,11 +161,6 @@
 			border-radius: var(--radius-xxl);
 		}
 
-		p {
-			font: var(--f-ui-xl-roman);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
-		}
-
 		.ctas {
 			display: flex;
 			gap: var(--space-lg);
@@ -189,7 +190,7 @@
 
 	.benefits {
 		text-align: center;
-		max-width: 600px;
+		max-width: 48ch;
 		margin: 0 auto;
 	}
 </style>
