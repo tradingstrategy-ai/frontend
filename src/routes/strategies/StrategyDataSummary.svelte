@@ -14,7 +14,7 @@
 	const assetManagementMode = strategy.on_chain_data?.asset_management_mode;
 </script>
 
-<dl class="strategy-data-summary ds-3">
+<div class="strategy-data-summary ds-3">
 	{#if keyMetrics.cagr}
 		<KeyMetric
 			name="Annual return"
@@ -87,7 +87,7 @@
 			{/if}
 		</div>
 	</KeyMetric>
-</dl>
+</div>
 
 <style lang="postcss">
 	.strategy-data-summary {

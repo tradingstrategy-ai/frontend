@@ -96,7 +96,7 @@
 				{/if}
 			</svelte:fragment>
 
-			<dl>
+			<div class="metric-group">
 				{#if keyMetrics.cagr}
 					<KeyMetric
 						name="Annual return"
@@ -138,7 +138,7 @@
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
 					{strategyId}
 				/>
-			</dl>
+			</div>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
@@ -148,7 +148,7 @@
 				{/if}
 			</svelte:fragment>
 
-			<dl>
+			<div class="metric-group">
 				<KeyMetric
 					name="Sharpe"
 					tooltipName="Sharpe Ratio"
@@ -174,7 +174,7 @@
 					tooltipExtraDescription={metricDescriptions.maxDrawdown}
 					{strategyId}
 				/>
-			</dl>
+			</div>
 		</SummaryBox>
 	</div>
 </div>
@@ -205,7 +205,7 @@
 			gap: inherit;
 			align-items: flex-start;
 
-			dl {
+			.metric-group {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 1rem 2rem;

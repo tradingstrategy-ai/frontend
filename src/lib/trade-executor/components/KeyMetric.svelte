@@ -39,11 +39,11 @@ Display one key metric in a strategy tile.
 <div class="key-metric" data-css-props>
 	{#if metric && strategyId}
 		<Tooltip>
-			<dt slot="trigger" class={metric?.source}>
+			<div slot="trigger" class="label {metric?.source}">
 				<!-- get words to wrap, while keeping icon with last word (see CSS below) -->
 				<span>{@html name.replaceAll(/ +/g, ' <wbr/>')}</span>
 				<Icon name="question-circle" />
-			</dt>
+			</div>
 			<KeyMetricDescription
 				slot="popup"
 				title={tooltipName ?? name}
@@ -53,11 +53,11 @@ Display one key metric in a strategy tile.
 			/>
 		</Tooltip>
 	{:else}
-		<dt>{name}</dt>
+		<div class="label">{name}</div>
 	{/if}
-	<dd data-testid="key-metric-{metric?.kind}-value">
+	<div class="value" data-testid="key-metric-{metric?.kind}-value">
 		<slot {value}>{formattedValue}</slot>
-	</dd>
+	</div>
 </div>
 
 <style lang="postcss">
@@ -81,7 +81,7 @@ Display one key metric in a strategy tile.
 		display: grid;
 		gap: var(--key-metric-gap);
 
-		dt {
+		.label {
 			font: var(--key-metric-label-font);
 			white-space: nowrap;
 			letter-spacing: var(--key-metric-label-letter-spacing, normal);
@@ -99,7 +99,7 @@ Display one key metric in a strategy tile.
 			}
 		}
 
-		dd {
+		.value {
 			font: var(--key-metric-value-font);
 			letter-spacing: var(--key-metric-value-letter-spacing);
 		}
