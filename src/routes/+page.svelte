@@ -17,16 +17,36 @@
 
 <svelte:head>
 	<title>Trading Strategy - Algorithmic Trading Protocol</title>
-	<meta name="description" content="Automated trading for DEXes and DeFi protocols" />
+	<meta name="description" content="AI-driven best profitable automated trading strategies" />
 	{@html sitelinksSearchBox()}
 </svelte:head>
 
 <main class="home-page">
 	<HomeHeroBanner />
 
+	<Section padding="lg">
+		<div class="strategies">
+			<h2>Strategies</h2>
+			<div class="coming-soon">Coming soon</div>
+			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
+			<div class="ctas">
+				<div class="newsletter-cta">
+					<Button icon="newspaper" label="Subscribe to newsletter" on:click={newsletterBanner.scrollIntoView} />
+				</div>
+				<Button
+					icon="twitter"
+					label="Follow us on Twitter"
+					href="https://twitter.com/TradingProtocol"
+					target="_blank"
+				/>
+				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
+			</div>
+		</div>
+	</Section>
+
 	{#if impressiveNumbers}
-		<Section gap="md" padding="md" testId="impressive-numbers">
-			<h2 style="text-align: center;">Automated trading and research on</h2>
+		<Section gap="md" padding="md" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
+			<h2 style="text-align: center;">Your strategy can trade</h2>
 			<Grid cols={3} gap="lg">
 				<UspTile
 					title={formatAmount(impressiveNumbers.pairs)}
@@ -40,12 +60,20 @@
 				/>
 				<UspTile title={impressiveNumbers.blockchains} subtitle="blockchains" href="/trading-view/blockchains" />
 			</Grid>
+
+			<p class="benefits">
+				Decentralised finance offers significant opportunities and risk benefits for algorithmic traders, trading signal
+				developers, and liquid hedge funds.
+				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs">
+					Read how to port your strategy to decentralised finance.
+				</a>
+			</p>
 		</Section>
 	{/if}
 
 	{#if topMomentum}
 		<Section padding="md" gap="md">
-			<h2>Top trades</h2>
+			<h2>Today's top trades</h2>
 
 			<Grid cols={2} gap="lg">
 				<SummaryBox title="Most profitable 24h">
@@ -73,26 +101,6 @@
 		</Section>
 	{/if}
 
-	<Section padding="lg" --section-background="var(--c-background-accent-1)">
-		<div class="strategies">
-			<h2>Strategies</h2>
-			<div class="coming-soon">Coming soon</div>
-			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
-			<div class="ctas">
-				<div class="newsletter-cta">
-					<Button icon="newspaper" label="Subscribe to newsletter" on:click={newsletterBanner.scrollIntoView} />
-				</div>
-				<Button
-					icon="twitter"
-					label="Follow us on Twitter"
-					href="https://twitter.com/TradingProtocol"
-					target="_blank"
-				/>
-				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
-			</div>
-		</div>
-	</Section>
-
 	{#if posts}
 		<Section padding="md" gap="md">
 			<h2 style:text-align="center">Blog</h2>
@@ -111,6 +119,11 @@
 <style lang="postcss">
 	h2 {
 		text-align: center;
+	}
+
+	p {
+		font: var(--f-ui-xl-roman);
+		letter-spacing: var(--f-ui-xl-spacing, normal);
 	}
 
 	.strategies {
@@ -148,11 +161,6 @@
 			border-radius: var(--radius-xxl);
 		}
 
-		p {
-			font: var(--f-ui-xl-roman);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
-		}
-
 		.ctas {
 			display: flex;
 			gap: var(--space-lg);
@@ -178,5 +186,11 @@
 		@media (width >= 1140px) {
 			display: none;
 		}
+	}
+
+	.benefits {
+		text-align: center;
+		max-width: 48ch;
+		margin: 0 auto;
 	}
 </style>

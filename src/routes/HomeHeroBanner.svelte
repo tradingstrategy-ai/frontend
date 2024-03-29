@@ -19,18 +19,22 @@ Home page hero banner.
 		<img class="media" src={mbp15Image} alt="Trading Data" />
 
 		<div class="content">
+			<!-- ensure line breaks at correct place -->
 			<h1>
-				<!-- ensure line breaks at correct place on larger screens -->
-				Next generation <br />algorithmic trading protocol <br />for decentralised markets
+				<span>Everyone can be</span>
+				<span>a quant trader</span>
 			</h1>
 
 			<hr />
 
-			<p>Develop trading strategies, automate trade execution and research market data.</p>
+			<p>
+				Beat the markets with automated AI-driven trading strategies. Become a quant legend and deploy your strategy for
+				millions of DeFi users.
+			</p>
 
 			<div class="buttons">
-				<Button href="/trading-view">Explore DEX Data</Button>
-				<Button secondary href="https://tradingstrategy.ai/docs" rel="external">Read Documentation</Button>
+				<Button href="/strategies">Trade with strategies</Button>
+				<Button secondary href="https://tradingstrategy.ai/docs" rel="external">Develop your strategy</Button>
 			</div>
 		</div>
 	</div>
@@ -66,10 +70,8 @@ Home page hero banner.
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}
 
-		@media (--viewport-xl-down) {
-			br {
-				display: none;
-			}
+		span {
+			white-space: nowrap;
 		}
 	}
 
