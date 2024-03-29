@@ -6,7 +6,6 @@
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import { KeyMetric } from 'trade-executor/components';
 	import SummaryBox from './SummaryBox.svelte';
-	import BacktestIndicator from '../BacktestIndicator.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
@@ -16,7 +15,7 @@
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
 
-	const strategyId = strategy.id;
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const cachedChartData = strategy.summary_statistics.performance_chart_90_days;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
@@ -90,12 +89,6 @@
 
 	<div class="metrics">
 		<SummaryBox title="Strategy">
-			<svelte:fragment slot="cta">
-				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
-					<BacktestIndicator />
-				{/if}
-			</svelte:fragment>
-
 			<div class="metric-group">
 				{#if keyMetrics.cagr}
 					<KeyMetric
@@ -103,13 +96,13 @@
 						metric={keyMetrics.cagr}
 						tooltipName="Compounding Annual Growth Rate (CAGR)"
 						tooltipExtraDescription={metricDescriptions.cagr}
-						{strategyId}
+						{backtestLink}
 						let:value
 					>
 						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{:else}
-					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
 						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{/if}
@@ -119,7 +112,7 @@
 					metric={keyMetrics.total_equity}
 					formatter={formatPrice}
 					tooltipExtraDescription={metricDescriptions.tvl}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -127,7 +120,7 @@
 					metric={keyMetrics.started_at}
 					formatter={formatDaysAgo}
 					tooltipExtraDescription={metricDescriptions.age}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -136,18 +129,12 @@
 					metric={keyMetrics.trades_per_month}
 					formatter={formatTradesPerMonth}
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
-					{strategyId}
+					{backtestLink}
 				/>
 			</div>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
-			<svelte:fragment slot="cta">
-				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
-					<BacktestIndicator />
-				{/if}
-			</svelte:fragment>
-
 			<div class="metric-group">
 				<KeyMetric
 					name="Sharpe"
@@ -155,7 +142,7 @@
 					metric={keyMetrics.sharpe}
 					formatter={formatNumber}
 					tooltipExtraDescription={metricDescriptions.cagr}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -163,7 +150,7 @@
 					tooltipName="Sortino Ratio"
 					metric={keyMetrics.sortino}
 					formatter={formatNumber}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -172,7 +159,7 @@
 					metric={keyMetrics.max_drawdown}
 					formatter={formatPercent}
 					tooltipExtraDescription={metricDescriptions.maxDrawdown}
-					{strategyId}
+					{backtestLink}
 				/>
 			</div>
 		</SummaryBox>
