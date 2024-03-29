@@ -13,9 +13,11 @@ set -e
 export CI=true
 
 # install dependencies
+./scripts/update-deps.sh
 npm install
 
 # build frontend
+./scripts/build-deps.sh
 npm run build
 
 # delete old screenshots
