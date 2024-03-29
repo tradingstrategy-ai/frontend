@@ -8,7 +8,7 @@
 	import SummaryBox from './SummaryBox.svelte';
 	import BacktestIndicator from '../BacktestIndicator.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
@@ -89,7 +89,7 @@
 	</div>
 
 	<div class="metrics">
-		<SummaryBox title="Strategy ">
+		<SummaryBox title="Strategy">
 			<svelte:fragment slot="cta">
 				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
 					<BacktestIndicator />
@@ -115,6 +115,14 @@
 				{/if}
 
 				<KeyMetric
+					name="Total value locked"
+					metric={keyMetrics.total_equity}
+					formatter={formatPrice}
+					tooltipExtraDescription={metricDescriptions.tvl}
+					{strategyId}
+				/>
+
+				<KeyMetric
 					name="Age"
 					metric={keyMetrics.started_at}
 					formatter={formatDaysAgo}
@@ -123,22 +131,13 @@
 				/>
 
 				<KeyMetric
-					name="Total value locked"
-					metric={keyMetrics.total_equity}
-					formatter={formatPrice}
-					tooltipExtraDescription={metricDescriptions.tvl}
-					{strategyId}
-				/>
-
-				<!-- Removing until we have better layout for additional metric -->
-				<!-- <KeyMetric
 					name="Trade frequency"
 					tooltipName="Trade frequency"
 					metric={keyMetrics.trades_per_month}
 					formatter={formatTradesPerMonth}
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
 					{strategyId}
-				/> -->
+				/>
 			</dl>
 		</SummaryBox>
 
@@ -207,9 +206,10 @@
 			align-items: flex-start;
 
 			dl {
-				display: grid;
-				grid-auto-flow: column;
-				grid-auto-columns: 1fr;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem 2rem;
+				justify-content: space-between;
 			}
 
 			:global([data-css-props]) {
