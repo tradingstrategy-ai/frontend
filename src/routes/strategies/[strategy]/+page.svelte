@@ -197,6 +197,12 @@
 				flex-wrap: wrap;
 				gap: 1rem 2rem;
 				justify-content: space-between;
+
+				> :global(*) {
+					@media (--viewport-xs) {
+						flex: 1;
+					}
+				}
 			}
 
 			:global([data-css-props]) {

@@ -40,8 +40,7 @@ Display one key metric in a strategy tile.
 	{#if metric}
 		<Tooltip>
 			<div slot="trigger" class="label {metric?.source}">
-				<!-- get words to wrap, while keeping icon with last word (see CSS below) -->
-				<span>{@html name.replaceAll(/ +/g, ' <wbr/>')}</span>
+				{name}
 				<Icon name="question-circle" />
 			</div>
 			<KeyMetricDescription
@@ -104,6 +103,7 @@ Display one key metric in a strategy tile.
 		display: grid;
 		gap: var(--key-metric-gap);
 		align-content: flex-start;
+		white-space: nowrap;
 
 		--icon-size: 1.1em;
 		:global(.icon svg) {
@@ -112,7 +112,6 @@ Display one key metric in a strategy tile.
 
 		.label {
 			font: var(--key-metric-label-font);
-			white-space: nowrap;
 			letter-spacing: var(--key-metric-label-letter-spacing, normal);
 			color: var(--c-text-light);
 		}
