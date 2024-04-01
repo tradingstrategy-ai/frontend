@@ -269,6 +269,8 @@
 	}
 
 	.content-wrapper {
+		display: grid;
+
 		@media (--viewport-sm-down) {
 			overflow: hidden;
 			height: 0;
@@ -289,7 +291,8 @@
 
 	.balances {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		gap: 1rem 0.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
 		align-self: center;
 	}
 
