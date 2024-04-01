@@ -6,9 +6,8 @@
 	import { UpDownIndicator, UpDownCell } from '$lib/components';
 	import { KeyMetric } from 'trade-executor/components';
 	import SummaryBox from './SummaryBox.svelte';
-	import BacktestIndicator from '../BacktestIndicator.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
@@ -16,7 +15,7 @@
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
 
-	const strategyId = strategy.id;
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const cachedChartData = strategy.summary_statistics.performance_chart_90_days;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
@@ -89,74 +88,61 @@
 	</div>
 
 	<div class="metrics">
-		<SummaryBox title="Strategy ">
-			<svelte:fragment slot="cta">
-				{#if hasBacktestedMetric('profitability', 'started_at', 'total_equity')}
-					<BacktestIndicator />
-				{/if}
-			</svelte:fragment>
-
-			<dl>
+		<SummaryBox title="Strategy">
+			<div class="metric-group">
 				{#if keyMetrics.cagr}
 					<KeyMetric
 						name="Annual return"
 						metric={keyMetrics.cagr}
 						tooltipName="Compounding Annual Growth Rate (CAGR)"
 						tooltipExtraDescription={metricDescriptions.cagr}
-						{strategyId}
+						{backtestLink}
 						let:value
 					>
 						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{:else}
-					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
 						<UpDownIndicator {value} formatter={formatProfitability} />
 					</KeyMetric>
 				{/if}
-
-				<KeyMetric
-					name="Age"
-					metric={keyMetrics.started_at}
-					formatter={formatDaysAgo}
-					tooltipExtraDescription={metricDescriptions.age}
-					{strategyId}
-				/>
 
 				<KeyMetric
 					name="Total value locked"
 					metric={keyMetrics.total_equity}
 					formatter={formatPrice}
 					tooltipExtraDescription={metricDescriptions.tvl}
-					{strategyId}
+					{backtestLink}
 				/>
 
-				<!-- Removing until we have better layout for additional metric -->
-				<!-- <KeyMetric
+				<KeyMetric
+					name="Age"
+					metric={keyMetrics.started_at}
+					formatter={formatDaysAgo}
+					tooltipExtraDescription={metricDescriptions.age}
+					{backtestLink}
+				/>
+
+				<KeyMetric
 					name="Trade frequency"
 					tooltipName="Trade frequency"
 					metric={keyMetrics.trades_per_month}
 					formatter={formatTradesPerMonth}
 					tooltipExtraDescription={metricDescriptions.tradeFrequency}
-					{strategyId}
-				/> -->
-			</dl>
+					{backtestLink}
+				/>
+			</div>
 		</SummaryBox>
 
 		<SummaryBox title="Risk metrics">
-			<svelte:fragment slot="cta">
-				{#if hasBacktestedMetric('sharpe', 'sortino', 'max_drawdown')}
-					<BacktestIndicator />
-				{/if}
-			</svelte:fragment>
-
-			<dl>
+			<div class="metric-group">
 				<KeyMetric
 					name="Sharpe"
 					tooltipName="Sharpe Ratio"
 					metric={keyMetrics.sharpe}
 					formatter={formatNumber}
 					tooltipExtraDescription={metricDescriptions.cagr}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -164,7 +150,7 @@
 					tooltipName="Sortino Ratio"
 					metric={keyMetrics.sortino}
 					formatter={formatNumber}
-					{strategyId}
+					{backtestLink}
 				/>
 
 				<KeyMetric
@@ -173,9 +159,9 @@
 					metric={keyMetrics.max_drawdown}
 					formatter={formatPercent}
 					tooltipExtraDescription={metricDescriptions.maxDrawdown}
-					{strategyId}
+					{backtestLink}
 				/>
-			</dl>
+			</div>
 		</SummaryBox>
 	</div>
 </div>
@@ -206,10 +192,17 @@
 			gap: inherit;
 			align-items: flex-start;
 
-			dl {
-				display: grid;
-				grid-auto-flow: column;
-				grid-auto-columns: 1fr;
+			.metric-group {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem 2rem;
+				justify-content: space-between;
+
+				> :global(*) {
+					@media (--viewport-xs) {
+						flex: 1;
+					}
+				}
 			}
 
 			:global([data-css-props]) {

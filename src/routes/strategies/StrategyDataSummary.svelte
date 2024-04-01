@@ -9,25 +9,25 @@
 
 	export let strategy: StrategyRuntimeState;
 
-	const strategyId = strategy.id;
+	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
 	const assetManagementMode = strategy.on_chain_data?.asset_management_mode;
 </script>
 
-<dl class="strategy-data-summary ds-3">
+<div class="strategy-data-summary ds-3">
 	{#if keyMetrics.cagr}
 		<KeyMetric
 			name="Annual return"
 			metric={keyMetrics.cagr}
 			tooltipName="Compounding Annual Growth Rate (CAGR)"
 			tooltipExtraDescription={metricDescriptions.cagr}
-			{strategyId}
+			{backtestLink}
 			let:value
 		>
 			<UpDownIndicator {value} formatter={formatProfitability} />
 		</KeyMetric>
 	{:else}
-		<KeyMetric name="Profitability" metric={keyMetrics.profitability} {strategyId} let:value>
+		<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
 			<UpDownIndicator {value} formatter={formatProfitability} />
 		</KeyMetric>
 	{/if}
@@ -37,7 +37,7 @@
 		metric={keyMetrics.total_equity}
 		formatter={formatPrice}
 		tooltipExtraDescription={metricDescriptions.tvl}
-		{strategyId}
+		{backtestLink}
 	/>
 
 	<KeyMetric
@@ -46,7 +46,7 @@
 		metric={keyMetrics.max_drawdown}
 		formatter={formatPercent}
 		tooltipExtraDescription={metricDescriptions.maxDrawdown}
-		{strategyId}
+		{backtestLink}
 	/>
 
 	<KeyMetric
@@ -54,7 +54,7 @@
 		metric={keyMetrics.started_at}
 		formatter={formatDaysAgo}
 		tooltipExtraDescription={metricDescriptions.age}
-		{strategyId}
+		{backtestLink}
 	/>
 
 	<KeyMetric
@@ -63,7 +63,7 @@
 		metric={keyMetrics.sharpe}
 		formatter={formatNumber}
 		tooltipExtraDescription={metricDescriptions.cagr}
-		{strategyId}
+		{backtestLink}
 	/>
 
 	<KeyMetric
@@ -71,10 +71,10 @@
 		tooltipName="Sortino Ratio"
 		metric={keyMetrics.sortino}
 		formatter={formatNumber}
-		{strategyId}
+		{backtestLink}
 	/>
 
-	<KeyMetric name="Asset management" {strategyId}>
+	<KeyMetric name="Asset management" {backtestLink}>
 		<div class="asset-management">
 			{#if assetManagementMode === 'enzyme'}
 				<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
@@ -87,7 +87,7 @@
 			{/if}
 		</div>
 	</KeyMetric>
-</dl>
+</div>
 
 <style lang="postcss">
 	.strategy-data-summary {

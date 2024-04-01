@@ -8,7 +8,6 @@
 	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
-	import BacktestIndicator from './BacktestIndicator.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let admin = false;
@@ -98,10 +97,6 @@
 		</header>
 		<div class="data">
 			<StrategyDataSummary {strategy} />
-
-			{#if isBacktested}
-				<BacktestIndicator />
-			{/if}
 		</div>
 		<div class="actions">
 			<Button size="md" {href}>View strategy</Button>

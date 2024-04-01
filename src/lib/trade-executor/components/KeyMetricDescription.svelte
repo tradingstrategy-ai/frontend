@@ -11,9 +11,7 @@
 	// See strategy-metric-help-texts
 	export let extraDescription: string | undefined;
 
-	export let strategyId: string;
-
-	const backtestLink = `/strategies/${strategyId}/backtest`;
+	export let backtestLink: string | undefined = undefined;
 </script>
 
 <div class="strategy-data-description ds-3">
@@ -41,12 +39,14 @@
 			</li>
 
 			<li>
-				Instead, a <a href={backtestLink}>backtested</a> estimation is displayed.
+				Instead, a <a href="/glossary/backtest">backtested</a> estimation is displayed.
 			</li>
 
-			<li>
-				<a href={backtestLink}>View the backtest results for this strategy</a>.
-			</li>
+			{#if backtestLink}
+				<li>
+					<a href={backtestLink}>View the backtest results for this strategy</a>.
+				</li>
+			{/if}
 
 			<li>
 				The period used for the backtest simulation is
