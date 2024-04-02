@@ -13,12 +13,15 @@
 				"fileName": "2024-03-20.txt",
 				"acceptanceMessage": "I read and agree on Terms of Service to access the\nsmart contract software deployed on a blockchain.\n\nThe Terms of Service version 3, dated 2024-03-20, was published at \nhttps://tradingstrategy.ai/tos/2024-03-20.txt"
 			},
-			"4  ": {
-				"fileName": "2024-03-20.txt",
-				"acceptanceMessage": "Acceptance message: I agree the Terms of Service. I understand smart contract\\ntrading is risky and I may lose all of my deposits. \\n\\nThe Terms of Service version 4, dated 2024-03-20, was published at \\nhttps://tradingstrategy.ai/tos/2024-03-20.txt"
+			"4": {
+				"fileName": "2024-03-30.txt",
+				"acceptanceMessage": "<failed>"
+			},
+			"5": {
+				"fileName": "2024-03-30.txt",
+				"acceptanceMessage": "I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \\n\\nThis Terms of Service version 5, dated 2024-03-30, was published at https://tradingstrategy.ai/tos/2024-03-30.txt"
 			}
-
-		},
+        },
 		"0x24BB78E70bE0fC8e93Ce90cc8A586e48428Ff515": {
 			"2": {
 				"fileName": "155d6737cb.txt",
