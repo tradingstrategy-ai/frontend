@@ -33,12 +33,13 @@
 
 		const [token, value] = result as [Address, bigint];
 		const denominationToken = await getTokenBalance(config, { token, address });
-		const { decimals, symbol } = denominationToken;
+		const { decimals, symbol, label } = denominationToken;
 
 		const vaultNetValue = {
 			decimals,
 			symbol: symbol ?? '---',
 			value,
+			label,
 			// TODO: remove deprecated `formatted` property after @wagmi removes from GetBalanceReturnType
 			formatted: formatUnits(value, decimals)
 		};

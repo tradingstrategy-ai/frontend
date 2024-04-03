@@ -5,18 +5,17 @@
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
-	import type { GetBalanceReturnType } from '@wagmi/core';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { type GetTokenBalanceReturnType, formatBalance } from '$lib/eth-defi/helpers';
 	import { config, wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput } from '$lib/components';
 
 	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
-	const vaultShares: GetBalanceReturnType = $wizard.data?.vaultShares;
-	const vaultNetValue: GetBalanceReturnType = $wizard.data?.vaultNetValue;
+	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
+	const vaultNetValue: GetTokenBalanceReturnType = $wizard.data?.vaultNetValue;
 
 	let shares: MaybeString;
 	let errorMessage: MaybeString;
@@ -173,10 +172,10 @@
 				bind:this={sharesInput}
 				bind:value={shares}
 				size="xl"
-				tokenUnit={vaultShares.symbol}
+				token={vaultShares}
 				conversionRatio={Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares))}
-				conversionUnit={vaultNetValue.symbol}
-				conversionLabel="Estimated value"
+				conversionToken={vaultNetValue}
+				conversionPrefix="Estimated value"
 				disabled={$redemption !== 'initial'}
 				min={formatUnits(1n, vaultShares.decimals)}
 				max={formatBalance(vaultShares)}

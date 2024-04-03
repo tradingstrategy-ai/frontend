@@ -50,7 +50,8 @@
 
 	{#if contracts.comptroller}
 		<WalletInfoItem>
-			<EntitySymbol slot="label" type="token" label="USDC" slug="usdc" size="1.5rem" />
+			<!-- TODO: make EntitySymbol dynamic based on denomination token -->
+			<EntitySymbol slot="label" type="token" slug="usdc" size="1.5rem">USDC.e (bridged)</EntitySymbol>
 			{#await fetchDenominationToken(address)}
 				<Spinner size="30" color="var(--c-text-light)" />
 			{:then balance}

@@ -36,7 +36,7 @@
 		{@const href = chainSlug && buyTokenUrl(chainSlug, denominationToken.address)}
 		<div in:fade>
 			<Alert status="warning" size="md">
-				<strong>{denominationToken.symbol}</strong> is required in order to make a deposit into this strategy.
+				<strong>{denominationToken.label}</strong> is required in order to make a deposit into this strategy.
 				<Button
 					slot="cta"
 					size="sm"
