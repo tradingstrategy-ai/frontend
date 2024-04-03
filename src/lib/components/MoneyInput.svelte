@@ -13,17 +13,18 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 ```
 -->
 <script lang="ts">
+	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { EntitySymbol } from '$lib/components';
 
 	export let disabled = false;
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 	export let step: number | 'any' = 'any';
-	export let tokenUnit: string;
+	export let token: GetTokenBalanceReturnType;
 	export let value = '';
-	export let conversionLabel: string | undefined = undefined;
+	export let conversionPrefix: string | undefined = undefined;
 	export let conversionRatio: number | undefined = undefined;
-	export let conversionUnit: string | undefined = undefined;
+	export let conversionToken: GetTokenBalanceReturnType | undefined = undefined;
 
 	let inputEl: HTMLInputElement;
 
@@ -34,7 +35,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		value = inputEl.value;
 	}
 
-	function getConvertedValue(value: MaybeNumber, ratio: number) {
+	function getConvertedValue(value: MaybeNumberlike, ratio: number) {
 		const converted = (Number(value) || 0) * ratio;
 		return formatNumber(converted, 2, 4);
 	}
@@ -63,20 +64,20 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			on:change
 		/>
 		<div class="symbols">
-			{#if tokenUnit}
+			{#if token}
 				<span class="unit">
-					<EntitySymbol type="token" label={tokenUnit} slug={tokenUnit.toLowerCase()} />
+					<EntitySymbol type="token" label={token.label} slug={token.symbol.toLowerCase()} />
 				</span>
 			{/if}
 		</div>
 	</div>
 
-	{#if conversionUnit && conversionRatio}
+	{#if conversionToken && conversionRatio}
 		<span class="conversion-label">
-			{conversionLabel}
-			<EntitySymbol label={conversionUnit} slug={conversionUnit.toLowerCase()} type="token">
+			{conversionPrefix}
+			<EntitySymbol slug={conversionToken.symbol?.toLowerCase()} type="token">
 				{getConvertedValue(value, conversionRatio)}
-				{conversionUnit}
+				{conversionToken.label}
 			</EntitySymbol>
 		</span>
 	{/if}

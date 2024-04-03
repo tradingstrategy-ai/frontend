@@ -1,5 +1,5 @@
 import { formatUnits, isAddressEqual } from 'viem';
-import type { Config, GetBalanceReturnType } from '@wagmi/core';
+import type { Config } from '@wagmi/core';
 import { type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
 
 export type AssetWithdrawl = {
@@ -20,15 +20,17 @@ type GetRedemptionParams = {
 export async function getRedemption(config: Config, params: GetRedemptionParams) {
 	const { withdrawl, denominationToken, chainId } = params;
 	const { asset: address, amount: value } = withdrawl;
-	const { decimals, symbol } = isAddressEqual(address, denominationToken.address)
+	const { decimals, symbol, label } = isAddressEqual(address, denominationToken.address)
 		? denominationToken
 		: await getTokenInfo(config, { address, chainId });
 
 	return {
+		address,
 		decimals,
 		symbol,
+		label,
 		value,
 		// TODO: remove deprecated `formatted` property after @wagmi removes from GetBalanceReturnType
 		formatted: formatUnits(value, decimals)
-	} as GetBalanceReturnType;
+	} as GetTokenBalanceReturnType;
 }

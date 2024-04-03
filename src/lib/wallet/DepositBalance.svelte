@@ -1,19 +1,18 @@
 <script lang="ts">
-	import type { GetBalanceReturnType } from '@wagmi/core';
-
+	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import { TokenBalance } from '$lib/wallet';
 
 	export let label: string;
-	export let data: MaybePromise<GetBalanceReturnType>;
+	export let data: MaybePromise<GetTokenBalanceReturnType>;
 	export let dollar = false;
 </script>
 
 <div class="deposit-balance">
 	<dt>{label}</dt>
 	<dd>
-		<TokenBalance {data} let:skeleton let:value let:symbol>
+		<TokenBalance {data} let:skeleton let:value let:symbol let:label>
 			<span class="value" class:skeleton>{dollar ? '$' : ''}{value}</span>
-			<span class="symbol" class:skeleton>{symbol}</span>
+			<span class="symbol" class:skeleton>{label}</span>
 		</TokenBalance>
 	</dd>
 </div>

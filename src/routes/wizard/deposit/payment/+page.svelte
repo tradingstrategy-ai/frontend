@@ -210,7 +210,7 @@
 				<EntitySymbol
 					slot="label"
 					type="token"
-					label={denominationToken.symbol}
+					label={denominationToken.label}
 					slug={denominationToken.symbol.toLowerCase()}
 					size="1.5rem"
 				/>
@@ -230,7 +230,7 @@
 				disabled={paymentValue === formatBalance(denominationToken)}
 			>
 				Deposit all
-				<span class="wide">{denominationToken.symbol}</span>
+				<span class="wide">{denominationToken.label}</span>
 			</Button>
 		</header>
 
@@ -239,7 +239,7 @@
 				bind:this={paymentInput}
 				bind:value={paymentValue}
 				size="xl"
-				tokenUnit={denominationToken.symbol}
+				token={denominationToken}
 				disabled={$payment !== 'initial'}
 				min={formatUnits(1n, denominationToken.decimals)}
 				max={formatBalance(denominationToken)}

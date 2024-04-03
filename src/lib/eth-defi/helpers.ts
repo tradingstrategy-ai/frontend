@@ -35,6 +35,7 @@ export type TokenInfo = {
 	decimals: number;
 	name: string | undefined;
 	symbol: string | undefined;
+	label: string | undefined;
 	version: string;
 };
 
@@ -56,18 +57,22 @@ export async function getTokenInfo(
 	});
 
 	const [decimals, name, symbol, version, eip712version] = response.map(({ result }) => result);
-
+	const label = getTokenLabel(symbol as string | undefined, address);
 	return {
 		address,
 		decimals,
 		name,
 		symbol,
+		label,
 		version: version ?? eip712version ?? '1'
 	} as TokenInfo;
 }
 
 export type GetTokenBalanceParameters = Omit<GetBalanceParameters, 'unit'> & { token: Address };
-export type GetTokenBalanceReturnType = Omit<GetBalanceReturnType, 'formatted'> & { address: Address };
+export type GetTokenBalanceReturnType = Omit<GetBalanceReturnType, 'formatted'> & {
+	address: Address;
+	label: string;
+};
 
 /**
  * Get token balance for a given address
@@ -92,7 +97,20 @@ export async function getTokenBalance(
 	});
 
 	const [decimals, symbol, value] = response.map(({ result }) => result);
-	return { address: token, decimals, symbol, value } as GetTokenBalanceReturnType;
+	const label = getTokenLabel(symbol as string | undefined, token);
+	return { address: token, decimals, symbol, label, value } as GetTokenBalanceReturnType;
+}
+
+export function isBridgedUSDC(address: Address) {
+	const bridgedUSDC = [
+		'0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // Polygon
+		'0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' // Arbitrum One
+	];
+	return bridgedUSDC.includes(address.toLowerCase());
+}
+
+export function getTokenLabel(symbol: string | undefined, address: Address) {
+	return symbol === 'USDC' && isBridgedUSDC(address) ? 'USDC.e' : symbol;
 }
 
 export type TosInfo = {
