@@ -16,11 +16,12 @@
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
-	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 
 	export let data;
 	const { paymentContract, tosRequired } = data;
 
+	const chain = getChain($wizard.data?.chainId);
 	const denominationToken: GetTokenBalanceReturnType = $wizard.data?.denominationToken;
 	const nativeCurrency: GetBalanceReturnType = $wizard.data?.nativeCurrency;
 
@@ -116,8 +117,20 @@
 			fail(err) {
 				const eventId = captureException(err);
 				console.error('confirmPayment error:', eventId, err);
-				errorMessage = 'Payment confirmation from wallet account failed. ';
-				errorMessage += err.shortMessage ?? 'Failure reason unknown.';
+				if (['UserRejectedRequestError', 'ContractFunctionRevertedError'].includes(err.cause?.name)) {
+					errorMessage = `Payment confirmation from wallet account failed. ${err.shortMessage}`;
+				} else {
+					errorMessage = `
+						Based on transaction confirmations Trading Strategy did not see your transaction going
+						through on ${chain?.name} yet. This does not mean the transaction was not sent, but may
+						be also caused by external factors like ${chain?.name} cognestion or issues with your
+						wallet. You need to check your wallet transaction history for the transaction status.
+						If your wallet does not show pending or confirmed transaction then try again.
+					`;
+					// TODO: refactor error message content to Svelte template and include Discord link.
+					// TODO: re-add err.shortMessage to a <details> element in error alert
+					// errorMessage += err.shortMessage ?? 'Failure reason unknown.';
+				}
 				return 'failed';
 			}
 		},
