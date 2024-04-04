@@ -1,9 +1,12 @@
 /**
  * Using a server-only load function to serve cached strategies
+ *
+ * NOTE: do NOT add HTTP caching to this route, since it renders
+ * different content based on admin role and IP country
  */
 import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
 
-export async function load({ fetch, locals, setHeaders }) {
+export async function load({ fetch, locals }) {
 	const { admin } = locals;
 
 	let strategies = await getCachedStrategies(fetch);
@@ -12,13 +15,6 @@ export async function load({ fetch, locals, setHeaders }) {
 	if (!admin) {
 		strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
 	}
-
-	// Setting cache-control and age headers to limit re-fetching
-	// of this resource by browser and reverse proxy / CDN
-	setHeaders({
-		'cache-control': `public, max-age=${getCachedStrategies.ttl}`,
-		age: getCachedStrategies.getAge(fetch).toFixed(0)
-	});
 
 	return { strategies };
 }
