@@ -8,13 +8,12 @@ Home page hero banner.
 ```
 -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import mbp15Image from '$lib/assets/misc/mbp-15.webp';
 	import { Button } from '$lib/components';
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<header class="home-hero-banner" data-testid="home-hero-banner" on:dblclick={() => goto('/strategies')}>
+<header class="home-hero-banner" data-testid="home-hero-banner">
 	<div class="inner ds-container">
 		<img class="media" src={mbp15Image} alt="Trading Data" />
 
