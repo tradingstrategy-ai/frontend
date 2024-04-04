@@ -19,7 +19,7 @@
 		:global(h1) {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--ls-heading-lg, normal);
-			margin-block: 2rem 1rem;
+			margin-block: 3rem 1.25rem;
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-md-medium);
@@ -30,7 +30,7 @@
 		:global(h2) {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--ls-heading-md, normal);
-			margin-block: 1.5rem 0.75rem;
+			margin-block: 2.5rem 1rem;
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-sm-medium);
@@ -41,7 +41,7 @@
 		:global(h3) {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--ls-heading-sm, normal);
-			margin-block: 1.25rem 0.5rem;
+			margin-block: 1.5rem 0.75rem;
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-xs-medium);
@@ -102,10 +102,6 @@
 
 		:global(:first-child) {
 			margin-top: 0;
-		}
-
-		:global(:last-child) {
-			margin-bottom: 0;
 		}
 	}
 </style>
