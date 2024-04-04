@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { micromark } from 'micromark';
+	import { gfmTable, gfmTableHtml } from 'micromark-extension-gfm-table';
 
 	export let content: string;
+
+	const options = {
+		extensions: [gfmTable()],
+		htmlExtensions: [gfmTableHtml()]
+	};
 </script>
 
 <div class="markdown ds-3">
-	{@html micromark(content)}
+	{@html micromark(content, options)}
 </div>
 
 <style lang="postcss">
@@ -53,13 +59,45 @@
 			}
 		}
 
-		:global(:is(p, ol, ul)) {
+		:global(:is(p, ol, ul, table)) {
 			margin-bottom: 1em;
 		}
 
 		:global(a) {
 			text-decoration: underline;
 			font-weight: 500;
+		}
+
+		:global table {
+			width: 100%;
+			border-collapse: collapse;
+			border-bottom: 2px solid var(--c-text-ultra-light);
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--ls-ui-sm);
+			}
+
+			tbody tr:nth-child(even) td {
+				background: var(--c-box-2);
+			}
+
+			:is(th, td) {
+				padding: 0.625rem;
+			}
+
+			th {
+				padding-block: 1em;
+				border-bottom: 2px solid var(--c-text-ultra-light);
+				font-size: 0.875em;
+				color: var(--c-text-extra-light);
+
+				&:not([align]) {
+					text-align: left;
+				}
+			}
 		}
 
 		:global(:first-child) {

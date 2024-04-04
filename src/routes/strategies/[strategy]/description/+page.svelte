@@ -15,6 +15,7 @@
 
 <style lang="postcss">
 	.strategy-description {
+		overflow-x: auto;
 		background: var(--c-box-1);
 		border-radius: var(--radius-md);
 		padding: 1.5rem;
