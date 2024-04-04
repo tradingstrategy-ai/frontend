@@ -1,31 +1,26 @@
+import type { TypedData, TypedDataDomain } from 'viem';
+import { bytesToHex, getTypesForEIP712Domain, hexToNumber, numberToHex, slice } from 'viem';
 import { type Config, type SignTypedDataParameters, signTypedData } from '@wagmi/core';
-import { type TypedData, bytesToHex, hexToNumber, numberToHex, slice } from 'viem';
 import type { TokenInfo } from './helpers';
 
-// return custom EIP712Domain for Polygon PoS v1 token
-function getEIP712Domain(chainId: number, tokenVersion: string) {
-	if (chainId === 137 && tokenVersion === '1') {
-		return [
-			{ name: 'name', type: 'string' },
-			{ name: 'version', type: 'string' },
-			{ name: 'verifyingContract', type: 'address' },
-			{ name: 'salt', type: 'bytes32' }
-		];
-	} else {
-		return [
-			{ name: 'name', type: 'string' },
-			{ name: 'version', type: 'string' },
-			{ name: 'chainId', type: 'uint256' },
-			{ name: 'verifyingContract', type: 'address' }
-		];
+function getDomain(chainId: number, { name, version, address }: TokenInfo): TypedDataDomain {
+	const commonFields = { name, version, verifyingContract: address };
+
+	// special case for Polygon PoS v1 USDC (bridged) token
+	if (chainId === 137 && version === '1') {
+		const salt = numberToHex(chainId, { size: 32 });
+		return { ...commonFields, salt };
 	}
+
+	// all other cases
+	return { ...commonFields, chainId };
 }
 
 type TransferMethod = 'TransferWithAuthorization' | 'ReceiveWithAuthorization';
 
-function getTypes(chainId: number, tokenVersion: string, transferMethod: TransferMethod) {
+function getTypes(domain: TypedDataDomain, transferMethod: TransferMethod) {
 	const types: TypedData = {
-		EIP712Domain: getEIP712Domain(chainId, tokenVersion)
+		EIP712Domain: getTypesForEIP712Domain({ domain })
 	};
 
 	types[transferMethod] = [
@@ -38,16 +33,6 @@ function getTypes(chainId: number, tokenVersion: string, transferMethod: Transfe
 	];
 
 	return types;
-}
-
-function getDomain(chainId: number, { name, version, address }: TokenInfo) {
-	return {
-		name,
-		version,
-		chainId,
-		verifyingContract: address,
-		salt: numberToHex(chainId, { size: 32 })
-	};
 }
 
 type RawMessageParams = {
@@ -87,8 +72,8 @@ export type GetSignedArgumentsParams = RawMessageParams & {
 
 export async function getSignedArguments(config: Config, params: GetSignedArgumentsParams) {
 	const { chainId, token, transferMethod, ...messageParams } = params;
-	const types = getTypes(chainId, token.version, transferMethod);
 	const domain = getDomain(chainId, token);
+	const types = getTypes(domain, transferMethod);
 	const message = prepareMessage(messageParams);
 	const { v, r, s } = await getSignature(config, { types, domain, message, primaryType: transferMethod });
 	return [...Object.values(message), v, r, s];
