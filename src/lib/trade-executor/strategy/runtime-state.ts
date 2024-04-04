@@ -4,6 +4,7 @@
 import { type StrategyConfiguration, configuredStrategies } from './configuration';
 import { type StrategySummary, strategySummarySchema } from './summary';
 import loadError from '../assets/load-error.jpg';
+import swrCache from '$lib/swrCache.js';
 
 // use 5 second timeout when fetching strategy metadata
 const CLIENT_TIMEOUT = 5000;
@@ -51,3 +52,7 @@ export function getStrategiesWithRuntimeState(fetch: Fetch) {
 		})
 	);
 }
+
+// Create a SWR cache for strategies with 1 minute TTL
+// NOTE: only use this server-side!
+export const getCachedStrategies = swrCache(getStrategiesWithRuntimeState, 60);

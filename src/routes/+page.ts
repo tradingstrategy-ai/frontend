@@ -7,7 +7,7 @@ function logError(err: Error) {
 	console.error(err);
 }
 
-export async function load({ fetch, setHeaders }) {
+export async function load({ fetch, setHeaders, data }) {
 	// Cache the landing data for 5 minutes at the Cloudflare so pages are
 	// served really fast if they get popular, and also for speed test
 	setHeaders({
@@ -15,6 +15,7 @@ export async function load({ fetch, setHeaders }) {
 	});
 
 	return {
+		strategies: data.strategies,
 		topMomentum: await fetchPublicApi(fetch, 'top-momentum', { summary: 'true' }).catch(logError),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
 		posts: await ghostClient.posts?.browse({ limit: 4 }).catch(logError)

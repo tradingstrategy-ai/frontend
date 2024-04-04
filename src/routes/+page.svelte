@@ -6,13 +6,15 @@
 	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
+	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import StrategyBadges from './strategies/StrategyBadges.svelte';
 
 	export let data;
 	let newsletterBanner: NewsletterOptInBanner;
 
-	const { topMomentum, impressiveNumbers, posts } = data;
+	const { impressiveNumbers, posts, strategies, topMomentum } = data;
 </script>
 
 <svelte:head>
@@ -24,23 +26,17 @@
 <main class="home-page">
 	<HomeHeroBanner />
 
-	<Section padding="lg">
+	<Section padding="xl">
+		<h2>Top strategies</h2>
 		<div class="strategies">
-			<h2>Strategies</h2>
-			<div class="coming-soon">Coming soon</div>
-			<p>Follow us to be the first to know when our automated trading strategies go live.</p>
-			<div class="ctas">
-				<div class="newsletter-cta">
-					<Button icon="newspaper" label="Subscribe to newsletter" on:click={newsletterBanner.scrollIntoView} />
-				</div>
-				<Button
-					icon="twitter"
-					label="Follow us on Twitter"
-					href="https://twitter.com/TradingProtocol"
-					target="_blank"
-				/>
-				<Button icon="telegram" label="Follow us on Telegram" href="https://t.me/trading_protocol" target="_blank" />
-			</div>
+			{#each strategies as strategy (strategy.id)}
+				<StrategyTile {strategy} />
+			{:else}
+				<p class="strategies-fallback">Check back soon to see top-performing strategies.</p>
+			{/each}
+		</div>
+		<div class="strategies-cta">
+			<Button secondary label="See all strategies" href="/strategies" />
 		</div>
 	</Section>
 
@@ -127,58 +123,25 @@
 	}
 
 	.strategies {
-		background: var(--c-box-2);
-		border-radius: var(--radius-xl);
-		display: grid;
-		gap: var(--space-3xl);
-		justify-self: center;
-		max-width: 60rem;
-		padding: var(--space-xl);
-		place-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem;
+		justify-content: center;
+		padding: 3rem 0;
+		overflow: hidden;
+
+		> :global(*) {
+			flex: 1;
+			min-width: min(27.25rem, 100%);
+
+			@media (--viewport-xl-up) {
+				max-width: 36rem;
+			}
+		}
+	}
+
+	:is(.strategies-fallback, .strategies-cta) {
 		text-align: center;
-
-		@media (--viewport-md-up) {
-			margin-top: var(--space-ss);
-			padding: var(--space-5xl);
-		}
-
-		h2 {
-			font: var(--f-heading-lg-medium);
-			letter-spacing: var(--f-heading-lg-spacing, normal);
-			@media (--viewport-md-up) {
-				font: var(--f-heading-xl-medium);
-				letter-spacing: var(--f-heading-xl-spacing, normal);
-			}
-		}
-
-		.coming-soon {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-			color: var(--c-text-light);
-			text-transform: uppercase;
-			padding: var(--space-sl) var(--space-ls);
-			border: 1px solid var(--c-text-extra-light);
-			border-radius: var(--radius-xxl);
-		}
-
-		.ctas {
-			display: flex;
-			gap: var(--space-lg);
-			width: 100%;
-
-			@media (--viewport-sm-down) {
-				flex-direction: column;
-			}
-		}
-
-		/* hide on small displays due to label wrapping */
-		.newsletter-cta {
-			display: grid;
-
-			@media (width < 390px) {
-				display: none;
-			}
-		}
 	}
 
 	/* limit to 3 posts on larger viewports (single row) */
