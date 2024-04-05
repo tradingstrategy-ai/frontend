@@ -1,4 +1,5 @@
 import type { TimeInterval } from 'd3-time';
+import { extent } from 'd3-array';
 import { type ParsableDate, parseDate } from '$lib/helpers/date';
 
 export type RawTick = [ParsableDate, MaybeNumber];
@@ -101,4 +102,21 @@ function interDayPeriodicity(days: number): Periodicity {
 		default:
 			return { period: 1, interval: days, timeUnit: 'day' };
 	}
+}
+
+/**
+ * Calculate a y-axis range to fit the provided chart data
+ *
+ * @param quotes chart data
+ * @param paddingPct padding percentage to apply to top/bottom of the data range
+ * @param minHeight minimum height of the y-axis
+ * @returns tuple of [min, max]
+ */
+export function calculateYAxisRange(quotes: Quote[], paddingPct: number, minHeight: number) {
+	const [min = 0, max = 0] = extent(quotes, ({ Value }) => Value);
+	const quoteHeight = max - min;
+	const paddedHeight = quoteHeight * (1 + paddingPct);
+	const height = Math.max(paddedHeight, minHeight);
+	const heightDelta = (height - quoteHeight) / 2;
+	return [min - heightDelta, max + heightDelta];
 }

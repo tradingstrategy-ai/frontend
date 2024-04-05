@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { type Quote, ChartIQ, Marker } from '$lib/chart';
+	import { type Quote, ChartIQ, Marker, calculateYAxisRange } from '$lib/chart';
 	import { UpDownCell, Timestamp } from '$lib/components';
 
 	export let data: Quote[] = [];
 
 	const profitClass = determinePriceChangeClass(data.at(-1)?.Value);
+
+	const [min, max] = calculateYAxisRange(data, 1, 0.12);
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -18,7 +20,7 @@
 		chart: {
 			tension: 1,
 			xAxis: { noDraw: true },
-			yAxis: { noDraw: true }
+			yAxis: { noDraw: true, min, max }
 		}
 	};
 

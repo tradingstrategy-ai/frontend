@@ -1,5 +1,5 @@
 export * from './quote-feed';
-export * from './utils';
+export * from './helpers';
 export { default as ChartActivityTracker } from './ChartActivityTracker';
 export { default as ChartContainer } from './ChartContainer.svelte';
 export { default as ChartIQ } from './ChartIQ.svelte';

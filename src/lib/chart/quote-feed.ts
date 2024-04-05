@@ -3,7 +3,7 @@
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
 import equal from 'fast-deep-equal';
-import type { Candle, Quote } from './utils';
+import type { Candle, Quote } from './helpers';
 import { chartWickThreshold } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
