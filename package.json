@@ -60,6 +60,7 @@
     "@types/d3-array": "^3.2.0",
     "@wagmi/connectors": "^4.1.25",
     "@wagmi/core": "^2.6.16",
+    "@web3modal/wagmi": "^4.1.7",
     "bignumber.js": "^9.1.2",
     "cookie": "^0.5.0",
     "d3-array": "^3.2.4",

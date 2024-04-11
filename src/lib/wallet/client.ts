@@ -16,6 +16,7 @@ import {
 } from '@wagmi/core';
 import { injected, walletConnect } from '@wagmi/connectors';
 import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
+import { createWeb3Modal } from '@web3modal/wagmi';
 
 const { projectId } = walletConnectConfig;
 
@@ -33,7 +34,7 @@ const transports = chains.reduce((acc, { id }) => {
 }, {} as Record<ConfiguredChainId, Transport>);
 
 export type ConnectorType = 'injected' | 'walletConnect';
-const connectors = ssr ? [] : [injected(), walletConnect({ projectId })];
+const connectors = ssr ? [] : [injected(), walletConnect({ projectId, showQrModal: false })];
 
 export const config = createConfig({ ssr, chains, transports, connectors });
 
@@ -47,7 +48,16 @@ reconnect(config);
 // export wallet as a readable store
 export const wallet = { subscribe };
 
+export const modal = createWeb3Modal({
+	wagmiConfig: config,
+	projectId
+});
+
 export async function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
+	if (type === 'walletConnect') {
+		return modal.open();
+	}
+
 	// find matching connectors by type
 	const connectors = config.connectors.filter((c) => c.type === type);
 
