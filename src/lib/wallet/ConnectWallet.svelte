@@ -1,25 +1,29 @@
 <script lang="ts">
 	import type { ConfiguredChainId } from '$lib/wallet';
 	import { getChain } from '$lib/helpers/chain';
-	import { disconnect, modal, wallet, WalletSummary } from '$lib/wallet';
+	import { modal, wallet, WalletSummary } from '$lib/wallet';
 	import { Button } from '$lib/components';
 
 	export let chainId: ConfiguredChainId | undefined;
 
 	const chain = getChain(chainId)!;
+
+	function connectWallet() {
+		modal.open({ view: 'Connect' });
+	}
 </script>
 
 <div class="connect-wallet">
 	{#if $wallet.isConnected}
 		<div class="is-connected">
 			<WalletSummary wallet={$wallet} {chain} />
-			<Button size="sm" label="Change wallet" on:click={disconnect} />
+			<Button size="sm" label="Change wallet" on:click={connectWallet} />
 		</div>
 	{:else}
 		<div class="not-connected">
 			<div class="desktop">Connect your preferred browser-based, mobile or desktop wallet.</div>
 			<div class="mobile">Connect your preferred mobile wallet.</div>
-			<Button size="md" icon="wallet" label="Connect wallet" on:click={() => modal.open()} />
+			<Button icon="wallet" label="Connect wallet" on:click={connectWallet} />
 		</div>
 	{/if}
 </div>
