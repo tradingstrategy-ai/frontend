@@ -1,31 +1,12 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
+	import type { ConfiguredChainId } from '$lib/wallet';
 	import { getChain } from '$lib/helpers/chain';
-	import { connect, disconnect, wallet, WalletSummary, WalletTile } from '$lib/wallet';
-	import { AlertList, Button } from '$lib/components';
-	import type { ConnectorType, ConfiguredChainId } from '$lib/wallet';
+	import { disconnect, modal, wallet, WalletSummary } from '$lib/wallet';
+	import { Button } from '$lib/components';
 
 	export let chainId: ConfiguredChainId | undefined;
 
 	const chain = getChain(chainId)!;
-
-	let error: any;
-
-	$: if ($wallet.isConnected) {
-		error = undefined;
-	}
-
-	async function connectWallet(type: ConnectorType) {
-		error = undefined;
-		try {
-			const connection = await connect(type, chainId);
-			if (!connection) {
-				throw new Error(`No matching connector found: ${type}`);
-			}
-		} catch (e) {
-			error = e;
-		}
-	}
 </script>
 
 <div class="connect-wallet">
@@ -36,47 +17,8 @@
 		</div>
 	{:else}
 		<div class="wallet-options">
-			<WalletTile name="Browser Wallet" slug="browser-wallet" on:click={() => connectWallet('injected')}>
-				Connect to your<br />
-				browser-based wallet
-			</WalletTile>
-			<WalletTile name="WalletConnect" slug="walletconnect" on:click={() => connectWallet('walletConnect')}>
-				Scan a QR code<br />
-				with your mobile wallet
-			</WalletTile>
-		</div>
-	{/if}
-
-	{#if error}
-		<div transition:fade>
-			<AlertList status="error" size="sm" let:AlertItem>
-				{#if error.name === 'ConnectorNotFoundError'}
-					<AlertItem title="Not found">
-						Wallet browser extension not found. Please confirm you have MetaMask or another browser wallet extension
-						installed and enabled, or use WalletConnect to connect a desktop or mobile app-based wallet.
-					</AlertItem>
-				{:else if error.name === 'UserRejectedRequestError'}
-					<AlertItem title="Connection refused">
-						The request to connect to your wallet was refused. Please try again and authorize the connection for one or
-						more accounts to continue.
-					</AlertItem>
-				{:else if error.name === 'ResourceUnavailableRpcError'}
-					<AlertItem title="Wallet busy">
-						Your wallet browser extension prevented connection because it is busy with another operation (such as
-						signing in or importing an account). Open your wallet extension to complete or cancel this operation and try
-						again.
-					</AlertItem>
-				{:else if error.name === 'ChainNotConfiguredForConnectorError'}
-					<AlertItem title="Chain not configured">
-						Chain {chainId} ({chain.name}) is not configured on your wallet. Please add the missing chain (or
-						<em>network</em>) and try again.
-					</AlertItem>
-				{:else}
-					<AlertItem title={error.name}>
-						{error.message}
-					</AlertItem>
-				{/if}
-			</AlertList>
+			Connect your preferred browser-based, mobile or desktop wallet.
+			<Button icon="wallet" label="Connect wallet" on:click={() => modal.open()} />
 		</div>
 	{/if}
 </div>
@@ -99,7 +41,7 @@
 
 	.wallet-options {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-		gap: var(--space-md);
+		gap: 2.5rem;
+		margin-bottom: 2.5rem;
 	}
 </style>

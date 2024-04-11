@@ -9,7 +9,6 @@ export { default as WalletBalance } from './WalletBalance.svelte';
 export { default as WalletInfo } from './WalletInfo.svelte';
 export { default as WalletInfoItem } from './WalletInfoItem.svelte';
 export { default as WalletSummary } from './WalletSummary.svelte';
-export { default as WalletTile } from './WalletTile.svelte';
 export { default as WalletWidget } from './WalletWidget.svelte';
 export * from './client';
 export * from './helpers';

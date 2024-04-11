@@ -10,7 +10,6 @@ import {
 	getAccount,
 	watchAccount,
 	reconnect,
-	connect as _connect,
 	disconnect as _disconnect,
 	switchChain as _switchChain
 } from '@wagmi/core';
@@ -33,8 +32,7 @@ const transports = chains.reduce((acc, { id }) => {
 	return acc;
 }, {} as Record<ConfiguredChainId, Transport>);
 
-export type ConnectorType = 'injected' | 'walletConnect';
-const connectors = ssr ? [] : [injected(), walletConnect({ projectId, showQrModal: false })];
+const connectors = ssr ? [] : [walletConnect({ projectId, showQrModal: false }), injected()];
 
 export const config = createConfig({ ssr, chains, transports, connectors });
 
@@ -52,23 +50,6 @@ export const modal = createWeb3Modal({
 	wagmiConfig: config,
 	projectId
 });
-
-export async function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
-	if (type === 'walletConnect') {
-		return modal.open();
-	}
-
-	// find matching connectors by type
-	const connectors = config.connectors.filter((c) => c.type === type);
-
-	// select the second matching connector, falling back to first
-	// (prefer EIP-6963 discovered connector over generic injected connector)
-	const connector = connectors[1] ?? connectors[0];
-
-	if (connector) {
-		return _connect(config, { chainId, connector });
-	}
-}
 
 export function disconnect() {
 	return _disconnect(config);
