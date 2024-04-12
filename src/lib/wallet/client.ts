@@ -58,6 +58,7 @@ export const wallet = { subscribe };
 export const modal = createWeb3Modal({
 	wagmiConfig: config,
 	projectId,
+	enableAnalytics: true,
 	// setting default chain to Polygon for now
 	// (remove this when we have strategies on other chains)
 	defaultChain: polygon
