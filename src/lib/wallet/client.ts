@@ -2,7 +2,7 @@ import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Transport } from 'viem';
-import type { GetAccountReturnType } from '@wagmi/core';
+import type { CreateConnectorFn, GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
 	fallback,
@@ -32,7 +32,16 @@ const transports = chains.reduce((acc, { id }) => {
 	return acc;
 }, {} as Record<ConfiguredChainId, Transport>);
 
-const connectors = ssr ? [] : [walletConnect({ projectId, showQrModal: false }), injected()];
+const metadata = {
+	name: 'Trading Strategy',
+	description: 'AI-driven best profitable automated trading strategies',
+	url: 'https://tradingstrategy.ai/',
+	icons: ['https://tradingstrategy.ai/brand-mark-100x100.png']
+};
+
+const connectors: CreateConnectorFn[] = ssr
+	? []
+	: [walletConnect({ projectId, metadata, showQrModal: false }), injected()];
 
 export const config = createConfig({ ssr, chains, transports, connectors });
 
