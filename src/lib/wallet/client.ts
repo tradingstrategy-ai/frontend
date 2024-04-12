@@ -2,7 +2,7 @@ import { rpcUrls, walletConnectConfig } from '$lib/config';
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Transport } from 'viem';
-import type { GetAccountReturnType } from '@wagmi/core';
+import type { CreateConnectorFn, GetAccountReturnType } from '@wagmi/core';
 import {
 	createConfig,
 	fallback,
@@ -10,12 +10,12 @@ import {
 	getAccount,
 	watchAccount,
 	reconnect,
-	connect as _connect,
 	disconnect as _disconnect,
 	switchChain as _switchChain
 } from '@wagmi/core';
 import { injected, walletConnect } from '@wagmi/connectors';
 import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
+import { createWeb3Modal } from '@web3modal/wagmi';
 
 const { projectId } = walletConnectConfig;
 
@@ -32,8 +32,16 @@ const transports = chains.reduce((acc, { id }) => {
 	return acc;
 }, {} as Record<ConfiguredChainId, Transport>);
 
-export type ConnectorType = 'injected' | 'walletConnect';
-const connectors = ssr ? [] : [injected(), walletConnect({ projectId })];
+const metadata = {
+	name: 'Trading Strategy',
+	description: 'AI-driven best profitable automated trading strategies',
+	url: 'https://tradingstrategy.ai/',
+	icons: ['https://tradingstrategy.ai/brand-mark-100x100.png']
+};
+
+const connectors: CreateConnectorFn[] = ssr
+	? []
+	: [walletConnect({ projectId, metadata, showQrModal: false }), injected()];
 
 export const config = createConfig({ ssr, chains, transports, connectors });
 
@@ -47,18 +55,10 @@ reconnect(config);
 // export wallet as a readable store
 export const wallet = { subscribe };
 
-export async function connect(type: ConnectorType, chainId: ConfiguredChainId | undefined) {
-	// find matching connectors by type
-	const connectors = config.connectors.filter((c) => c.type === type);
-
-	// select the second matching connector, falling back to first
-	// (prefer EIP-6963 discovered connector over generic injected connector)
-	const connector = connectors[1] ?? connectors[0];
-
-	if (connector) {
-		return _connect(config, { chainId, connector });
-	}
-}
+export const modal = createWeb3Modal({
+	wagmiConfig: config,
+	projectId
+});
 
 export function disconnect() {
 	return _disconnect(config);

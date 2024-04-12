@@ -58,8 +58,9 @@
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.10",
     "@tryghost/content-api": "^1.11.8",
     "@types/d3-array": "^3.2.0",
-    "@wagmi/connectors": "^4.1.10",
-    "@wagmi/core": "^2.6.1",
+    "@wagmi/connectors": "^4.1.25",
+    "@wagmi/core": "^2.6.16",
+    "@web3modal/wagmi": "^4.1.7",
     "bignumber.js": "^9.1.2",
     "cookie": "^0.5.0",
     "d3-array": "^3.2.4",
@@ -78,7 +79,7 @@
     "svelte-inview": "^4.0.2",
     "svelte-spinner": "^2.0.2",
     "typesense": "^1.7.1",
-    "viem": "^2.5.0",
+    "viem": "^2.9.15",
     "zod": "^3.22.4"
   },
   "optionalDependencies": {
