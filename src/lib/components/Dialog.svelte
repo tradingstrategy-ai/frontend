@@ -17,6 +17,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	import fsm from 'svelte-fsm';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { Icon } from '$lib/components';
+	import { toggleBodyScroll } from '$lib/helpers/scroll';
 
 	export let title: string;
 	export let open = false;
@@ -43,7 +44,10 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		}
 	});
 
+	// call `toggle` whenever `open` is changed
 	$: dialog && state.toggle(open);
+
+	$: toggleBodyScroll(open);
 
 	onMount(() => {
 		// this is needed to keep state synced when dialog is closed via the `escape` key

@@ -13,6 +13,7 @@ Display site-wide search box for use in top-nav.
 	import tradingEntities from '../trading-entities';
 	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, TextInput } from '$lib/components';
+	import { toggleBodyScroll } from '$lib/helpers/scroll';
 
 	let q = '';
 	let hasFocus = false;
@@ -26,6 +27,8 @@ Display site-wide search box for use in top-nav.
 	});
 
 	$: hits = hasQuery ? $tradingEntities.hits : [];
+
+	$: toggleBodyScroll(hasFocus);
 
 	// use event loop to allow click on result anchor tags to propogate before dialog closes
 	function toggleFocus() {
