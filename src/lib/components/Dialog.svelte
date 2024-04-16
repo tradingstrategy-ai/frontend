@@ -104,15 +104,23 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 		button {
 			display: flex;
-			gap: var(--space-ss);
-			justify-content: center;
 			border: none;
+			outline: none;
 			padding: 0;
 			background: transparent;
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--f-ui-lg-spacing, normal);
-			text-transform: capitalize;
 			cursor: pointer;
+
+			:global(svg path) {
+				transition: var(--transition-1);
+				stroke-width: 2.5px;
+			}
+
+			&:is(:hover, :focus) {
+				:global(svg path) {
+					stroke-width: 3px;
+					color: var(--c-text);
+				}
+			}
 		}
 	}
 </style>
