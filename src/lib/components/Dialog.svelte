@@ -35,6 +35,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		open: {
 			_enter: () => dialog.showModal(),
 			_exit: () => dispatch('close'),
+			// keep state synced when dialog is closed via the `escape` key
 			escaped: () => (open = false)
 		},
 
@@ -48,15 +49,9 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	$: dialog && state.toggle(open);
 
 	$: toggleBodyScroll(open);
-
-	onMount(() => {
-		// this is needed to keep state synced when dialog is closed via the `escape` key
-		dialog.addEventListener('close', state.escaped);
-		return () => dialog.removeEventListener('close', state.escaped);
-	});
 </script>
 
-<dialog bind:this={dialog} data-css-props>
+<dialog bind:this={dialog} on:close={state.escaped} data-css-props>
 	<heading>
 		<h5>{title}</h5>
 		<button on:click={() => (open = false)}>
