@@ -100,7 +100,7 @@
 	{/if}
 
 	<SummaryBox>
-		<header slot="header">
+		<header slot="header" class="tos-header">
 			<h2>Version {version}</h2>
 			<div class="cta">
 				<Button
@@ -131,36 +131,32 @@
 		</pre>
 	</SummaryBox>
 
-	<form on:submit|preventDefault={tos.sign}>
-		<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-		{#if $tos === 'valid'}
-			<div class="tooltip">
-				<Icon name="reading" size="1.5rem" />
-				Please read to the end!
-			</div>
-		{/if}
-	</form>
-
 	{#if $tos === 'signing'}
 		<Alert size="sm" status="info" title="Signature request">
 			To accept the terms and conditions, please confirm the signature request in your wallet.
 		</Alert>
-	{/if}
-
-	{#if $tos === 'failed'}
+	{:else if $tos === 'failed'}
 		<Alert size="sm" status="error" title="Error">
 			{errorMessage}
 			<Button slot="cta" size="sm" label="Try again" on:click={tos.retry} />
 		</Alert>
-	{/if}
-
-	{#if $tos === 'accepted'}
+	{:else if $tos === 'accepted'}
 		<Alert size="sm" status="success" title="Terms accepted">
 			Terms of service v{version} accepted
 			{#if $wallet.isConnected}
 				by wallet <WalletAddress size="sm" wallet={$wallet} />
 			{/if}
 		</Alert>
+	{:else}
+		<form on:submit|preventDefault={tos.sign}>
+			<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+			{#if $tos === 'valid'}
+				<div class="tooltip">
+					<Icon name="reading" size="1.5rem" />
+					Please read to the end!
+				</div>
+			{/if}
+		</form>
 	{/if}
 
 	<Dialog fullScreen title="Terms of Service" bind:open={fullScreen}>
@@ -205,7 +201,7 @@
 			gap: 1.5rem;
 		}
 
-		header[slot='header'] {
+		.tos-header {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 1rem;
@@ -252,14 +248,14 @@
 			&.in-doc-flow {
 				border-radius: 1rem;
 				padding: 1.25rem;
-				height: calc(100vh - 32em);
+				height: calc(100vh - 34em);
 				min-height: 18rem;
 				max-height: 28rem;
 				border: 2px solid var(--c-input-border);
 
 				@media (--viewport-xs) {
 					padding: 1rem;
-					height: calc(100vh - 34em);
+					height: calc(100vh - 41em);
 					min-height: 12rem;
 					max-height: 24rem;
 				}
