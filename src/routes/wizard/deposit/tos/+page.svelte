@@ -154,6 +154,10 @@
 	{/if}
 
 	<Dialog fullScreen title="Terms of Service" bind:open={fullScreen}>
+		<span slot="title" class="dialog-title">
+			Terms of Service
+			<small>(v{version})</small>
+		</span>
 		<pre class="tos-text in-dialog">
 			{tosText}
 			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
@@ -261,6 +265,11 @@
 				color: var(--c-error);
 				text-align: center;
 			}
+		}
+
+		.dialog-title small {
+			color: var(--c-text-extra-light);
+			margin-left: 1ex;
 		}
 	}
 </style>

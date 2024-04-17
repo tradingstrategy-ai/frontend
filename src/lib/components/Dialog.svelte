@@ -55,7 +55,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 <dialog bind:this={dialog} class={fullScreen ? 'full-screen' : 'compact'} on:close={state.escaped} data-css-props>
 	<slot name="header">
 		<header>
-			<h5>{title}</h5>
+			<h5><slot name="title">{title}</slot></h5>
 			<button on:click={() => (open = false)}>
 				<Icon name="cancel" size="16px" />
 			</button>
