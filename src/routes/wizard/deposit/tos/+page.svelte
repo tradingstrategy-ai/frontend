@@ -33,6 +33,11 @@
 				if (tosPreviouslyAccepted || (tosSignature && tosHash)) return 'accepted';
 			},
 
+			checkDeviceType({ innerWidth }) {
+				// bypass scoll check for mobile users
+				if (innerWidth <= 576) return 'ready';
+			},
+
 			finishReading: 'ready'
 		},
 
@@ -74,7 +79,8 @@
 	});
 
 	tos.validate();
-	$: tos.restore(canProceed, $wizard.data);
+	tos.restore(canProceed, $wizard.data);
+	tos.checkDeviceType(window);
 </script>
 
 <div class="deposit-tos">
