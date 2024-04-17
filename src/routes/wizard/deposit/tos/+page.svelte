@@ -49,6 +49,10 @@
 		},
 
 		signing: {
+			_enter() {
+				fullScreen = false;
+			},
+
 			complete(tosSignature) {
 				const tosHash = hashMessage(acceptanceMessage!);
 				wizard.updateData({ tosSignature, tosHash });
@@ -168,6 +172,17 @@
 			{tosText}
 			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 		</pre>
+		<footer slot="footer" class="dialog-footer">
+			<form on:submit|preventDefault={tos.sign}>
+				<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+				{#if $tos === 'valid'}
+					<div class="tooltip">
+						<Icon name="reading" size="1.5rem" />
+						Please read to the end!
+					</div>
+				{/if}
+			</form>
+		</footer>
 	</Dialog>
 </div>
 
@@ -276,6 +291,19 @@
 		.dialog-title small {
 			color: var(--c-text-extra-light);
 			margin-left: 1ex;
+		}
+
+		.dialog-footer {
+			display: grid;
+
+			@media (--viewport-sm-up) {
+				justify-content: center;
+			}
+
+			.tooltip {
+				top: -2rem;
+				bottom: auto;
+			}
 		}
 	}
 </style>
