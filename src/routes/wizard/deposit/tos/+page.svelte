@@ -173,15 +173,21 @@
 			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 		</pre>
 		<footer slot="footer" class="dialog-footer">
-			<form on:submit|preventDefault={tos.sign}>
-				<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-				{#if $tos === 'valid'}
-					<div class="tooltip">
-						<Icon name="reading" size="1.5rem" />
-						Please read to the end!
-					</div>
-				{/if}
-			</form>
+			{#if $tos === 'accepted'}
+				<Alert size="sm" status="success" title="Terms accepted">
+					Terms of service v{version} accepted
+				</Alert>
+			{:else}
+				<form on:submit|preventDefault={tos.sign}>
+					<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+					{#if $tos === 'valid'}
+						<div class="tooltip">
+							<Icon name="reading" size="1.5rem" />
+							Please read to the end!
+						</div>
+					{/if}
+				</form>
+			{/if}
 		</footer>
 	</Dialog>
 </div>
@@ -293,7 +299,7 @@
 			margin-left: 1ex;
 		}
 
-		.dialog-footer {
+		.dialog-footer form {
 			display: grid;
 
 			@media (--viewport-sm-up) {
