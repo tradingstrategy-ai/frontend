@@ -110,7 +110,7 @@
 				/>
 			</div>
 		</header>
-		<pre class="tos-text" class:no-file={!tosText}>
+		<pre class="tos-text in-doc-flow" class:no-file={!tosText}>
 			{#if tosText}
 				{tosText}
 				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
@@ -153,8 +153,8 @@
 		</Alert>
 	{/if}
 
-	<Dialog bind:open={fullScreen} title="Terms of service">
-		<pre class="dialog tos-text">
+	<Dialog fullScreen title="Terms of Service" bind:open={fullScreen}>
+		<pre class="tos-text in-dialog">
 			{tosText}
 			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 		</pre>
@@ -164,8 +164,7 @@
 <style lang="postcss">
 	.deposit-tos {
 		:global([data-css-props]) {
-			--dialog-width: max(96vw, 25rem);
-			--dialog-max-width: 64rem;
+			--dialog-max-width: 100ch;
 		}
 
 		display: grid;
@@ -207,33 +206,37 @@
 		}
 
 		.tos-text {
-			padding: 1.25rem;
-			border-radius: 1rem;
-			height: calc(100vh - 32em);
-			min-height: 18rem;
-			max-height: 28rem;
 			white-space: pre-line;
-			background: var(--c-input-background);
-			border: 2px solid var(--c-input-border);
+			background: var(--c-text-inverted);
 			overflow-y: auto;
-			font: var(--f-text-md-regular);
-			letter-spacing: var(--f-text-md-spacing, normal);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			line-height: 150% !important;
 
 			@media (--viewport-xs) {
-				padding: 1rem;
-				height: calc(100vh - 34em);
-				min-height: 12rem;
-				max-height: 24rem;
+				font: var(--f-ui-xs-roman);
+				letter-spacing: var(--f-ui-xs-spacing, normal);
+			}
+
+			&.in-doc-flow {
+				border-radius: 1rem;
+				padding: 1.25rem;
+				height: calc(100vh - 32em);
+				min-height: 18rem;
+				max-height: 28rem;
+				border: 2px solid var(--c-input-border);
+
+				@media (--viewport-xs) {
+					padding: 1rem;
+					height: calc(100vh - 34em);
+					min-height: 12rem;
+					max-height: 24rem;
+				}
 			}
 
 			.scroll-check {
 				margin-top: -4rem;
 			}
-		}
-
-		.dialog {
-			height: auto;
-			max-height: calc(100vh - 8.5em);
 		}
 
 		.no-file {

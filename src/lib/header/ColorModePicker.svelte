@@ -34,21 +34,30 @@
 
 <Button tertiary size="sm" icon="sun" label={buttonLabel} on:click={openDialog} />
 
-<Dialog title="Color Mode" bind:open>
-	<menu>
-		{#each Object.entries(modes) as [mode, label]}
-			<li class={mode} class:active={mode === currentMode}>
-				<button on:click={() => setMode(mode)}>{label}</button>
-			</li>
-		{/each}
-	</menu>
-</Dialog>
+<div class="color-mode-picker">
+	<Dialog title="Color Mode" bind:open>
+		<menu>
+			{#each Object.entries(modes) as [mode, label]}
+				<li class={mode} class:active={mode === currentMode}>
+					<button on:click={() => setMode(mode)}>{label}</button>
+				</li>
+			{/each}
+		</menu>
+	</Dialog>
+</div>
 
 <style lang="postcss">
+	.color-mode-picker {
+		display: contents;
+
+		:global([data-css-props]) {
+			--dialog-max-width: 20rem;
+		}
+	}
+
 	menu {
 		display: grid;
-		margin-block: 1rem 0;
-		padding: 0;
+		margin: 0;
 	}
 
 	li {
