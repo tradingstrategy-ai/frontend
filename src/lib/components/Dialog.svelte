@@ -17,9 +17,12 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	import fsm from 'svelte-fsm';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { Icon } from '$lib/components';
+	import { setViewportHeight } from '$lib/actions/viewport';
+	import { toggleBodyScroll } from '$lib/helpers/scroll';
 
-	export let title: string;
+	export let title = '';
 	export let open = false;
+	export let fullScreen = false;
 
 	const dispatch = createEventDispatcher();
 	let dialog: HTMLDialogElement;
@@ -34,6 +37,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		open: {
 			_enter: () => dialog.showModal(),
 			_exit: () => dispatch('close'),
+			// keep state synced when dialog is closed via the `escape` key
 			escaped: () => (open = false)
 		},
 
@@ -43,72 +47,147 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		}
 	});
 
+	// call `toggle` whenever `open` is changed
 	$: dialog && state.toggle(open);
 
-	onMount(() => {
-		// this is needed to keep state synced when dialog is closed via the `escape` key
-		dialog.addEventListener('close', state.escaped);
-		return () => dialog.removeEventListener('close', state.escaped);
-	});
+	$: toggleBodyScroll(open);
 </script>
 
-<dialog bind:this={dialog} data-css-props>
-	<heading>
-		<h5>{title}</h5>
-		<button on:click={() => (open = false)}>
-			<Icon name="cancel" size="16px" />
-		</button>
-	</heading>
+<dialog
+	bind:this={dialog}
+	class={fullScreen ? 'full-screen' : 'compact'}
+	use:setViewportHeight
+	on:close={state.escaped}
+	data-css-props
+>
+	<slot name="header">
+		<header>
+			<h5><slot name="title">{title}</slot></h5>
+			<button on:click={() => (open = false)}>
+				<Icon name="cancel" size="16px" />
+			</button>
+		</header>
+	</slot>
 	<slot />
+	<slot name="footer" />
 </dialog>
 
 <style lang="postcss">
 	[data-css-props] {
-		--dialog-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
-		--dialog-min-width: 300px;
-		--dialog-max-width: 500px;
+		&:where(.compact) {
+			--dialog-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
+			--dialog-min-width: 18rem;
+			--dialog-max-width: 32rem;
+			--dialog-padding: 2rem;
+		}
+
+		&:where(.full-screen) {
+			--dialog-width: auto;
+			--dialog-min-width: auto;
+			--dialog-max-width: 100vm;
+			--dialog-padding: 1.5rem;
+
+			@media (--viewport-xs) {
+				--dialog-padding: 1.25rem;
+			}
+		}
 	}
 
 	dialog {
-		max-width: min(var(--dialog-width), var(--dialog-max-width));
-		min-width: var(--dialog-min-width);
-		padding: var(--space-xl);
 		border: none;
-		border-radius: var(--radius-xs);
-		background: var(--c-body);
+		outline: none;
 		color: var(--c-text);
+		width: var(--dialog-width);
+		max-width: var(--dialog-max-width);
+		min-width: var(--dialog-min-width);
+		padding: 0;
+		background: var(--c-body);
+
+		&[open] {
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+		}
+
+		&::backdrop {
+			background: var(--c-backdrop);
+			opacity: 0.25;
+		}
+
+		> :global(*) {
+			padding: var(--dialog-padding);
+		}
 	}
 
-	dialog::backdrop {
-		background: var(--c-backdrop);
-		opacity: 0.25;
+	.compact {
+		border-radius: var(--radius-xs);
+
+		:global(header) {
+			padding-bottom: 0;
+		}
+
+		:global(footer) {
+			padding-top: 0;
+		}
 	}
 
-	heading {
+	.full-screen {
+		height: var(--viewport-height, 100vh);
+		max-height: unset;
+
+		:global(:is(header, footer)) {
+			z-index: 1;
+			box-shadow: var(--shadow-1);
+			background: var(--c-box-2);
+		}
+	}
+
+	header {
 		display: grid;
 		grid-template-columns: 1fr auto;
-		gap: var(--space-ss);
+		gap: 0.5rem;
 		align-items: center;
-		margin-bottom: var(--space-ss);
-		color: var(--c-text-extra-light);
 
 		h5 {
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--f-ui-lg-spacing, normal);
 			margin: 0;
+
+			.compact & {
+				font: var(--f-ui-lg-medium);
+				letter-spacing: var(--f-ui-lg-spacing, normal);
+				color: var(--c-text-extra-light);
+			}
+
+			.full-screen & {
+				font: var(--f-heading-sm-medium);
+				letter-spacing: var(--f-heading-sm-spacing, normal);
+				color: var(--c-text-light);
+
+				@media (--viewport-xs) {
+					font: var(--f-heading-xs-medium);
+					letter-spacing: var(--f-heading-xs-spacing, normal);
+				}
+			}
 		}
 
 		button {
 			display: flex;
-			gap: var(--space-ss);
-			justify-content: center;
 			border: none;
+			outline: none;
 			padding: 0;
 			background: transparent;
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--f-ui-lg-spacing, normal);
-			text-transform: capitalize;
+			color: var(--c-text-extra-light);
 			cursor: pointer;
+
+			:global(svg path) {
+				transition: var(--transition-1);
+				stroke-width: 2.5px;
+			}
+
+			&:is(:hover, :focus) {
+				:global(svg path) {
+					stroke-width: 3px;
+					color: var(--c-text);
+				}
+			}
 		}
 	}
 </style>

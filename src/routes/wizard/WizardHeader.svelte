@@ -30,10 +30,7 @@
 		align-items: center;
 		justify-content: space-between;
 		height: var(--header-height);
-
-		@media (--viewport-md-up) {
-			--logo-height: 2.375rem;
-		}
+		--logo-height: 2.375rem;
 
 		@media (--nav-collapsed) {
 			--logo-height: 2rem;

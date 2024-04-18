@@ -40,8 +40,6 @@
 </div>
 
 <style lang="postcss">
-	@custom-media --nav-collapsed (width < 1125px);
-
 	:global :root {
 		--header-height: 4.75rem;
 
@@ -122,7 +120,7 @@
 		}
 	}
 
-	@media (width >= 1125px) {
+	@media (--nav-expanded) {
 		.mobile-only {
 			display: none;
 		}

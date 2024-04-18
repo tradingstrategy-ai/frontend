@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { Logo, Icon, Menu, Footer } from '$lib/components';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
+	import { toggleBodyScroll } from '$lib/helpers/scroll';
 
 	export let hidden = false;
 	export let open = false;
 
 	const close = () => (open = false);
+
+	$: toggleBodyScroll(open);
 </script>
 
 {#if !hidden}

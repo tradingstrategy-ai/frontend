@@ -29,3 +29,12 @@
 @custom-media --viewport-xl-up (width > 1260px);
 @custom-media --viewport-xl-down (width <= 1440px);
 @custom-media --viewport-xxl (width > 1440px);
+
+/**
+ * Special breakpoints for when top-nav is expanded/collapsed
+ *
+ * The width value may need to be manually tweaked/adjused based on
+ * the top-nav items used in Navbar.svelte
+ */
+@custom-media --nav-expanded (width >= 1125px);
+@custom-media --nav-collapsed (width < 1125px);

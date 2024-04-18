@@ -33,6 +33,11 @@
 				if (tosPreviouslyAccepted || (tosSignature && tosHash)) return 'accepted';
 			},
 
+			checkDeviceType({ innerWidth }) {
+				// bypass scoll check for mobile users
+				if (innerWidth <= 576) return 'ready';
+			},
+
 			finishReading: 'ready'
 		},
 
@@ -44,6 +49,10 @@
 		},
 
 		signing: {
+			_enter() {
+				fullScreen = false;
+			},
+
 			complete(tosSignature) {
 				const tosHash = hashMessage(acceptanceMessage!);
 				wizard.updateData({ tosSignature, tosHash });
@@ -74,7 +83,8 @@
 	});
 
 	tos.validate();
-	$: tos.restore(canProceed, $wizard.data);
+	tos.restore(canProceed, $wizard.data);
+	tos.checkDeviceType(window);
 </script>
 
 <div class="deposit-tos">
@@ -90,7 +100,7 @@
 	{/if}
 
 	<SummaryBox>
-		<header slot="header">
+		<header slot="header" class="tos-header">
 			<h2>Version {version}</h2>
 			<div class="cta">
 				<Button
@@ -110,7 +120,7 @@
 				/>
 			</div>
 		</header>
-		<pre class="tos-text" class:no-file={!tosText}>
+		<pre class="tos-text in-doc-flow" class:no-file={!tosText}>
 			{#if tosText}
 				{tosText}
 				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
@@ -121,51 +131,67 @@
 		</pre>
 	</SummaryBox>
 
-	<form on:submit|preventDefault={tos.sign}>
-		<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-		{#if $tos === 'valid'}
-			<div class="tooltip">
-				<Icon name="reading" size="1.5rem" />
-				Please read to the end!
-			</div>
-		{/if}
-	</form>
-
 	{#if $tos === 'signing'}
 		<Alert size="sm" status="info" title="Signature request">
 			To accept the terms and conditions, please confirm the signature request in your wallet.
 		</Alert>
-	{/if}
-
-	{#if $tos === 'failed'}
+	{:else if $tos === 'failed'}
 		<Alert size="sm" status="error" title="Error">
 			{errorMessage}
 			<Button slot="cta" size="sm" label="Try again" on:click={tos.retry} />
 		</Alert>
-	{/if}
-
-	{#if $tos === 'accepted'}
+	{:else if $tos === 'accepted'}
 		<Alert size="sm" status="success" title="Terms accepted">
 			Terms of service v{version} accepted
 			{#if $wallet.isConnected}
 				by wallet <WalletAddress size="sm" wallet={$wallet} />
 			{/if}
 		</Alert>
+	{:else}
+		<form on:submit|preventDefault={tos.sign}>
+			<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+			{#if $tos === 'valid'}
+				<div class="tooltip">
+					<Icon name="reading" size="1.5rem" />
+					Please read to the end!
+				</div>
+			{/if}
+		</form>
 	{/if}
 
-	<Dialog bind:open={fullScreen} title="Terms of service">
-		<pre class="dialog tos-text">
+	<Dialog fullScreen title="Terms of Service" bind:open={fullScreen}>
+		<span slot="title" class="dialog-title">
+			Terms of Service
+			<small>(v{version})</small>
+		</span>
+		<pre class="tos-text in-dialog">
 			{tosText}
 			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
 		</pre>
+		<footer slot="footer" class="dialog-footer">
+			{#if $tos === 'accepted'}
+				<Alert size="sm" status="success" title="Terms accepted">
+					Terms of service v{version} accepted
+				</Alert>
+			{:else}
+				<form on:submit|preventDefault={tos.sign}>
+					<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+					{#if $tos === 'valid'}
+						<div class="tooltip">
+							<Icon name="reading" size="1.5rem" />
+							Please read to the end!
+						</div>
+					{/if}
+				</form>
+			{/if}
+		</footer>
 	</Dialog>
 </div>
 
 <style lang="postcss">
 	.deposit-tos {
 		:global([data-css-props]) {
-			--dialog-width: max(96vw, 25rem);
-			--dialog-max-width: 64rem;
+			--dialog-max-width: 100ch;
 		}
 
 		display: grid;
@@ -175,7 +201,7 @@
 			gap: 1.5rem;
 		}
 
-		header[slot='header'] {
+		.tos-header {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 1rem;
@@ -207,33 +233,37 @@
 		}
 
 		.tos-text {
-			padding: 1.25rem;
-			border-radius: 1rem;
-			height: calc(100vh - 32em);
-			min-height: 18rem;
-			max-height: 28rem;
 			white-space: pre-line;
-			background: var(--c-input-background);
-			border: 2px solid var(--c-input-border);
+			background: var(--c-text-inverted);
 			overflow-y: auto;
-			font: var(--f-text-md-regular);
-			letter-spacing: var(--f-text-md-spacing, normal);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			line-height: 150% !important;
 
 			@media (--viewport-xs) {
-				padding: 1rem;
+				font: var(--f-ui-xs-roman);
+				letter-spacing: var(--f-ui-xs-spacing, normal);
+			}
+
+			&.in-doc-flow {
+				border-radius: 1rem;
+				padding: 1.25rem;
 				height: calc(100vh - 34em);
-				min-height: 12rem;
-				max-height: 24rem;
+				min-height: 18rem;
+				max-height: 28rem;
+				border: 2px solid var(--c-input-border);
+
+				@media (--viewport-xs) {
+					padding: 1rem;
+					height: calc(100vh - 41em);
+					min-height: 12rem;
+					max-height: 24rem;
+				}
 			}
 
 			.scroll-check {
 				margin-top: -4rem;
 			}
-		}
-
-		.dialog {
-			height: auto;
-			max-height: calc(100vh - 8.5em);
 		}
 
 		.no-file {
@@ -257,6 +287,24 @@
 				font-weight: bold;
 				color: var(--c-error);
 				text-align: center;
+			}
+		}
+
+		.dialog-title small {
+			color: var(--c-text-extra-light);
+			margin-left: 1ex;
+		}
+
+		.dialog-footer form {
+			display: grid;
+
+			@media (--viewport-sm-up) {
+				justify-content: center;
+			}
+
+			.tooltip {
+				top: -2rem;
+				bottom: auto;
 			}
 		}
 	}
