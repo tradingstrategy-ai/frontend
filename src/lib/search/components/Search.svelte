@@ -14,6 +14,7 @@ Display site-wide search box for use in top-nav.
 	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, TextInput } from '$lib/components';
 	import { toggleBodyScroll } from '$lib/helpers/scroll';
+	import { setViewportHeight } from '$lib/actions/viewport';
 
 	let q = '';
 	let hasFocus = false;
@@ -33,28 +34,6 @@ Display site-wide search box for use in top-nav.
 	// use event loop to allow click on result anchor tags to propogate before dialog closes
 	function toggleFocus() {
 		setTimeout(() => (hasFocus = !hasFocus));
-	}
-
-	/**
-	 * Mobile Safari does not correctly reflect viewport height with % or vh units when virtual
-	 * keyboard is open (grr!). It does, however, support the VisualViewport JS API for getting the
-	 * (real) visual viewport size. See:
-	 * https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API
-	 */
-	function setViewportHeight(node: HTMLElement) {
-		const { visualViewport } = window;
-		if (!visualViewport) return;
-
-		const setCssVar = () => {
-			node.style.setProperty('--viewport-height', `${visualViewport.height}px`);
-		};
-
-		setCssVar();
-		visualViewport.addEventListener('resize', setCssVar);
-
-		return {
-			destroy: () => visualViewport.removeEventListener('resize', setCssVar)
-		};
 	}
 </script>
 
