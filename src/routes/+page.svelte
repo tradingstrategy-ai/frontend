@@ -9,10 +9,8 @@
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
-	import StrategyBadges from './strategies/StrategyBadges.svelte';
 
 	export let data;
-	let newsletterBanner: NewsletterOptInBanner;
 
 	const { impressiveNumbers, posts, strategies, topMomentum } = data;
 </script>
@@ -108,7 +106,7 @@
 	{/if}
 
 	<Section padding="md">
-		<NewsletterOptInBanner bind:this={newsletterBanner} />
+		<NewsletterOptInBanner />
 	</Section>
 </main>
 
@@ -123,9 +121,10 @@
 	}
 
 	.strategies {
+		--strategy-tile-gap: 1.5rem;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1.5rem;
+		gap: var(--strategy-tile-gap);
 		justify-content: center;
 		padding: 3rem 0;
 		overflow: hidden;
@@ -134,8 +133,19 @@
 			flex: 1;
 			min-width: min(27.25rem, 100%);
 
-			@media (--viewport-xl-up) {
+			@media (--viewport-lg-up) {
+				/* limit tile width */
 				max-width: 36rem;
+
+				/* lone tile on last row should have same width as others */
+				&:nth-child(2n + 3) {
+					max-width: calc((100% - var(--strategy-tile-gap)) / 2);
+				}
+			}
+
+			/* force single column below 1024px */
+			@media (--viewport-md-down) {
+				min-width: 100%;
 			}
 		}
 	}
