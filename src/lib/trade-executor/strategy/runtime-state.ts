@@ -19,6 +19,7 @@ export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
 		connected: false;
 		icon_url: string;
 		error: string;
+		sort_priority: number;
 	};
 
 export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedStrategyRuntimeState;
@@ -40,17 +41,20 @@ export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise
 			connected: false,
 			...strategy,
 			icon_url: loadError,
-			error: e instanceof Error ? e.message : String(e)
+			error: e instanceof Error ? e.message : String(e),
+			sort_priority: 0
 		};
 	}
 }
 
-export function getStrategiesWithRuntimeState(fetch: Fetch) {
-	return Promise.all(
+export async function getStrategiesWithRuntimeState(fetch: Fetch) {
+	const strategies = await Promise.all(
 		[...configuredStrategies.keys()].map((id) => {
 			return getStrategyRuntimeState(fetch, id) as Promise<StrategyRuntimeState>;
 		})
 	);
+
+	return strategies.sort((a, b) => b.sort_priority - a.sort_priority);
 }
 
 // Create a SWR cache for strategies with 1 minute TTL
