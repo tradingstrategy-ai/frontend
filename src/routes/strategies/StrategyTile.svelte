@@ -91,8 +91,8 @@
 				{/if}
 			</div>
 			<div class="description">
-				<h3>{strategy.name}</h3>
-				<p>{strategy.short_description ?? '---'}</p>
+				<h3 class="truncate">{strategy.name}</h3>
+				<p class="truncate lines-3">{strategy.short_description ?? '---'}</p>
 			</div>
 		</header>
 		<div class="data">
@@ -108,6 +108,7 @@
 	.strategy-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));
+		grid-template-rows: auto 1fr;
 		background: var(--c-box-1);
 		border: 1px var(--c-box-3) solid;
 		border-radius: var(--radius-lg);
@@ -124,6 +125,7 @@
 			padding-top: 2rem;
 			display: grid;
 			position: relative;
+
 			@media (--viewport-md-up) {
 				padding-top: 4rem;
 			}
@@ -175,21 +177,24 @@
 		.content {
 			container-type: inline-size;
 			display: grid;
+			grid-template-rows: auto 1fr auto;
 			gap: 0.75rem;
 			padding: 1.5rem;
+
 			@media (--viewport-sm-down) {
 				padding: 1rem;
 			}
 
 			header {
 				--avatar-size: 6rem;
-				align-items: center;
 				display: grid;
-				grid-template-columns: 6rem auto;
+				grid-template-columns: var(--avatar-size) auto;
+				align-items: center;
 				gap: 1.5rem;
-				@media (--viewport-sm-down) {
+
+				@container (width <= 400px) {
 					--avatar-size: 4.75rem;
-					gap: 0.5rem;
+					gap: 1.25rem;
 				}
 
 				.avatar {
@@ -233,8 +238,6 @@
 				}
 
 				.description {
-					align-items: center;
-					justify-items: start;
 					display: grid;
 					gap: 0.25rem;
 
@@ -245,19 +248,29 @@
 
 				h3 {
 					font: var(--f-ui-xxl-medium);
+					letter-spacing: var(--ls-ui-xxl, normal);
+					white-space: nowrap;
 
 					@container (width <= 520px) {
 						font: var(--f-ui-xl-medium);
+						letter-spacing: var(--ls-ui-xl, normal);
 					}
 
 					@container (width <= 400px) {
 						font: var(--f-ui-lg-medium);
+						letter-spacing: var(--ls-ui-lg, normal);
 					}
 				}
 
 				p {
 					font: var(--f-ui-md-medium);
+					letter-spacing: var(--ls-ui-md, normal);
 					color: var(--c-text-extra-light);
+
+					@container (width <= 400px) {
+						font: var(--f-ui-sm-medium);
+						letter-spacing: var(--ls-ui-sm, normal);
+					}
 				}
 			}
 
