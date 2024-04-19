@@ -83,6 +83,6 @@
     "zod": "^3.22.4"
   },
   "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.0.0"
+    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.0.0-key2"
   }
 }
