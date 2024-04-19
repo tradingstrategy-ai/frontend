@@ -14,7 +14,14 @@ test.describe('strategy index page', () => {
 	test('should display all strategies to admin user', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		expect(await rows.count()).toBe(2);
+		await expect(rows).toHaveCount(2);
+	});
+
+	test('should sort strategies with higher sort_priority first', async ({ page }) => {
+		await page.goto('/strategies?pw=secret');
+		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
+		// Below strategy is second in config, but has higher sort_priority
+		await expect(rows.first()).toHaveText(/Multipair breakout strategy on Uniswap v3/);
 	});
 
 	test('should only display live strategies to admin user when live filter applied', async ({ page }) => {

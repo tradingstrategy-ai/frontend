@@ -103,6 +103,7 @@ export const strategySummarySchema = z.object({
 	backtest_available: z.coerce.boolean(),
 	crashed_at: unixTimestampToDate.nullish(),
 	badges: z.string().array(),
-	tags: z.string().array()
+	tags: z.string().array(),
+	sort_priority: z.number().default(0)
 });
 export type StrategySummary = z.infer<typeof strategySummarySchema>;
