@@ -42,7 +42,7 @@ export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise
 			...strategy,
 			icon_url: loadError,
 			error: e instanceof Error ? e.message : String(e),
-			sort_priority: 0
+			sort_priority: -1
 		};
 	}
 }
