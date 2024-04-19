@@ -151,5 +151,6 @@
 	"backtest_available": true,
 	"crashed_at": 1692639700,
 	"badges": [],
-	"tags": []
+	"tags": [],
+	"sort_priority": 10
 }
