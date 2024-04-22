@@ -8,7 +8,7 @@
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
-	import {formatAmount, formatDaysAgo, formatDollar} from '$lib/helpers/formatters';
+	import { formatAmount, formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
 
@@ -21,7 +21,6 @@
 	}
 
 	const openLiveDays = calculateOpenStrategiesLiveDuration();
-
 </script>
 
 <svelte:head>
