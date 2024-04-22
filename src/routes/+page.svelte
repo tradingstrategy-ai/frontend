@@ -35,7 +35,7 @@
 	<Section padding="xl">
 		<h2>Open strategies</h2>
 		<p class="live-ago">
-			Open strategies have been live {openLiveDays}.
+			Open strategies have been live for {openLiveDays}.
 		</p>
 		<div class="strategies">
 			{#each strategies as strategy (strategy.id)}
