@@ -70,7 +70,7 @@
 			<p class="benefits">
 				Decentralised finance offers significant new opportunities for algorithmic traders.
 				<a class="body-link" rel="external" href="https://tradingstrategy.ai/about">
-					Contact us to learn how ot port your algorithms.
+					Contact us to learn how to port your algorithms.
 				</a>
 			</p>
 		</Section>
