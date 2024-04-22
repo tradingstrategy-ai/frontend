@@ -2,7 +2,7 @@ import { strategyConfig } from '$lib/config';
 import { z } from 'zod';
 
 export const strategyConfigurationSchema = z.object({
-	id: z.string(),
+	 id: z.string(),
 	name: z.string(),
 	url: z.string().url()
 });
