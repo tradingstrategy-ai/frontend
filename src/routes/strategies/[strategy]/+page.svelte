@@ -22,10 +22,6 @@
 
 	let periodPerformance: MaybeNumber;
 
-	function hasBacktestedMetric(...metrics: SummaryKeyMetricKind[]) {
-		return metrics.some((m) => keyMetrics[m]?.source === 'backtesting');
-	}
-
 	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
 	}

@@ -35,13 +35,13 @@ Display a chart container with title, description and timespan selector.
 			label: '1W',
 			spanDays: 7,
 			interval: utcHour,
-			periodicity: { period: 1, interval: 60, timeUnit: 'minute' }
+			periodicity: { period: 1, interval: 1, timeUnit: 'hour' }
 		},
 		'1m': {
 			label: '1M',
 			spanDays: 30,
 			interval: utcHour.every(4)!,
-			periodicity: { period: 1, interval: 4 * 60, timeUnit: 'minute' }
+			periodicity: { period: 4, interval: 1, timeUnit: 'hour' }
 		},
 		'3m': {
 			label: '3M',
