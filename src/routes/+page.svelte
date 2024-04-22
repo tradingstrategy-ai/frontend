@@ -8,11 +8,20 @@
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
-	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import {formatAmount, formatDaysAgo, formatDollar} from '$lib/helpers/formatters';
 
 	export let data;
 
 	const { impressiveNumbers, posts, strategies, topMomentum } = data;
+
+	function calculateOpenStrategiesLiveDuration() {
+		const launchAt = new Date(2024, 3, 15);
+		const daysText = formatDaysAgo(launchAt.getTime() / 1000);
+		return daysText;
+	}
+
+	const openLiveDays = calculateOpenStrategiesLiveDuration();
+
 </script>
 
 <svelte:head>
@@ -25,7 +34,10 @@
 	<HomeHeroBanner />
 
 	<Section padding="xl">
-		<h2>Top strategies</h2>
+		<h2>Open strategies</h2>
+		<p class="live-ago">
+			Open strategies have been live {openLiveDays}.
+		</p>
 		<div class="strategies">
 			{#each strategies as strategy (strategy.id)}
 				<StrategyTile {strategy} />
@@ -33,6 +45,7 @@
 				<p class="strategies-fallback">Check back soon to see top-performing strategies.</p>
 			{/each}
 		</div>
+
 		<div class="strategies-cta">
 			<Button secondary label="See all strategies" href="/strategies" />
 		</div>
@@ -56,10 +69,9 @@
 			</Grid>
 
 			<p class="benefits">
-				Decentralised finance offers significant opportunities and risk benefits for algorithmic traders, trading signal
-				developers, and liquid hedge funds.
-				<a class="body-link" rel="external" href="https://tradingstrategy.ai/docs">
-					Read how to port your strategy to decentralised finance.
+				Decentralised finance offers significant new opportunities for algorithmic traders.
+				<a class="body-link" rel="external" href="https://tradingstrategy.ai/about">
+					Contact us to learn how ot port your algorithms.
 				</a>
 			</p>
 		</Section>
@@ -165,5 +177,12 @@
 		text-align: center;
 		max-width: 48ch;
 		margin: 0 auto;
+	}
+
+	.live-ago {
+		text-align: center;
+		max-width: 48ch;
+		margin: 0 auto;
+		color: var(--c-text-extra-light);
 	}
 </style>

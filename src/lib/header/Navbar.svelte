@@ -13,7 +13,7 @@
 			<svelte:fragment slot="menu">
 				<MenuItem label="Strategies" targetUrl="/strategies" active={currentPage === '/strategies'} />
 				<MenuItem label="Data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
-				<MenuItem label="Documentation" external targetUrl="https://tradingstrategy.ai/docs/index.html" />
+				<MenuItem label="For developers" external targetUrl="https://tradingstrategy.ai/docs/index.html" />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
 				<MenuItem label="About" targetUrl="/about" active={currentPage === '/about'} />
 			</svelte:fragment>
