@@ -31,7 +31,7 @@ interface StrategyTVL {
 	chain_id: number;
 	address: string;
 	asset_management_mode: 'enzyme' | 'hot_wallet' | 'simple_vault' | 'velvet';
-	cached_tvl_usd: number | null;
+	tvl_usd: number | null;
 	summary_statistics: StrategySummaryStatistics;
 }
 
@@ -90,14 +90,14 @@ export async function GET({ fetch }) {
 
 		result.strategies[id] = {
 			id,
-			frontend_url: strat.url,
-			trade_executor_url: `https://tradingstrategy.ai/srategies/${id}`,
-			name: strat?.name,
-			short_description: strat?.short_description | null,
+			frontend_url: `https://tradingstrategy.ai/srategies/${id}`,
+			trade_executor_url: strat.url,
+			name: strat?.name || null,
+			short_description: strat?.short_description || null,
 			chain_id,
 			address,
 			asset_management_mode,
-			cached_tvl_usd: tvl,
+			tvl_usd: tvl,
 			summary_statistics
 		};
 	}
