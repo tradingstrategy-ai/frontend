@@ -13,8 +13,6 @@
  * - Beefy TVL API https://api.beefy.finance/tvl
  */
 
-import assert from 'assert';
-
 import { json } from '@sveltejs/kit';
 
 import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
