@@ -18,6 +18,8 @@ import { json } from '@sveltejs/kit';
 import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
 import type { StrategySummaryStatistics } from 'trade-executor/strategy/summary';
 
+type PartialSummaryStatistics = Partial<StrategySummaryStatistics>;
+
 // Per vault TVL record in the export
 // Per DefiLLama's policy, the DefiLlama adapter ignores cachedTVLUSD and re-reads this data on-chain
 interface StrategyTVL {
@@ -26,11 +28,11 @@ interface StrategyTVL {
 	trade_executor_url: string; // e.g. https://polygon-multipair-momentum.tradingstrategy.ai'
 	name: string | null;
 	short_description: string | null;
-	chain_id: number;
+	chain_id: number | null;
 	address: string;
-	asset_management_mode: 'enzyme' | 'hot_wallet' | 'simple_vault' | 'velvet';
+	asset_management_mode: 'enzyme' | 'hot_wallet' | 'simple_vault' | 'velvet' | null;
 	tvl_usd: number | null;
-	summary_statistics: StrategySummaryStatistics;
+	summary_statistics: PartialSummaryStatistics;
 }
 
 // The export main interface description
@@ -44,26 +46,26 @@ interface ProtocolTVL {
 // Currently, this includes strategies not yet visible on the main frontend listing.
 export async function GET({ fetch }) {
 	const strategies = await getCachedStrategies(fetch);
-	let result: ProtocolTVL = { total_tvl_usd: 0, strategies: {} };
+	const result: ProtocolTVL = { total_tvl_usd: 0, strategies: {} };
 	for (const strat of strategies) {
 		console.log(strat);
 		const id = strat.id;
 
 		// Legacy strategies not having their chain_id value configured
 		// Ignore them as they are not critical for the export
-		const chain_id = strat.on_chain_data?.chain_id;
+		const chain_id = strat.on_chain_data?.chain_id ?? null;
 		if (!chain_id) {
 			console.warn(`chain_id missing for strategy: ${id}`);
 		}
 
 		// Strategy does not have key metrics calculated or is down
-		const tvl = strat.summary_statistics?.key_metrics?.total_equity?.value | 0;
+		const tvl = strat.summary_statistics?.key_metrics?.total_equity?.value ?? 0;
 		if (!tvl) {
 			// We can still continue because DefiLlama will do its own on-chain reading
 			console.warn(`Bad strategy TVL: ${id}`);
 		}
 
-		const address = strat.on_chain_data?.smart_contracts?.vault || strat.on_chain_data?.trade_executor_hot_wallet;
+		const address = strat.on_chain_data?.smart_contracts?.vault ?? strat.on_chain_data?.trade_executor_hot_wallet;
 		if (!address) {
 			// The trade-executor likely down
 			// TODO: cache and use a cached value
@@ -71,17 +73,11 @@ export async function GET({ fetch }) {
 			continue;
 		}
 
-		const asset_management_mode = strat.on_chain_data?.asset_management_mode;
+		const asset_management_mode = strat.on_chain_data?.asset_management_mode ?? null;
 
-		let summary_statistics = {};
-
-		if (strat.summary_statistics) {
-			summary_statistics = { ...strat?.summary_statistics };
-			// Decrease the payload size by deleting data we do not need to export
-			if (summary_statistics.performance_chart_90_days) {
-				delete summary_statistics.performance_chart_90_days;
-			}
-		}
+		const summary_statistics: PartialSummaryStatistics = structuredClone(strat.summary_statistics ?? {});
+		// Decrease the payload size by deleting data we do not need to export
+		delete summary_statistics.performance_chart_90_days;
 
 		// Sum the total TVL
 		result.total_tvl_usd += tvl;
@@ -90,8 +86,8 @@ export async function GET({ fetch }) {
 			id,
 			frontend_url: `https://tradingstrategy.ai/srategies/${id}`,
 			trade_executor_url: strat.url,
-			name: strat?.name || null,
-			short_description: strat?.short_description || null,
+			name: strat?.name ?? null,
+			short_description: strat?.short_description ?? null,
 			chain_id,
 			address,
 			asset_management_mode,
