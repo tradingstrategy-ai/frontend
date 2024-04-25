@@ -28,7 +28,9 @@
 		<slot />
 	{:else}
 		<PageHeading description={strategy.short_description}>
-			<img slot="icon" src={strategy.icon_url} alt={strategy.name} />
+			<object slot="icon" type="image/webp" data="/avatars/{strategy.id}.webp" aria-label="Strategy icon">
+				<img src={strategy.icon_url} alt="Strategy icon" />
+			</object>
 			<div class="title" slot="title">
 				{strategy.name}
 				<StrategyBadges class="badge" tags={strategy.tags} />

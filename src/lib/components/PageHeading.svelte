@@ -30,7 +30,7 @@
 
 <style lang="postcss">
 	.page-heading {
-		--gap: 0.625rem 2rem;
+		--gap: 0.625rem 1.25rem;
 		--grid-auto-flow: column;
 		--padding-bottom: 2rem;
 		--icon-size: 6rem;
@@ -40,7 +40,7 @@
 		--secondary-spacing: var(--f-ui-lg-spacing);
 
 		@media (--viewport-md-down) {
-			--gap: 0.5rem 1.5rem;
+			--gap: 0.5rem 1rem;
 			--padding-bottom: 1.5rem;
 			--icon-size: 5rem;
 			--title-font: var(--f-heading-xl-medium);
@@ -80,6 +80,11 @@
 		width: var(--icon-size);
 		overflow: hidden;
 		text-align: center;
+
+		:global(:is(object, img)) {
+			height: inherit;
+			width: inherit;
+		}
 	}
 
 	.content {
