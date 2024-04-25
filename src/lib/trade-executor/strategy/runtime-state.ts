@@ -28,32 +28,35 @@ export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise
 	const strategy = configuredStrategies.get(id);
 	if (!strategy) return;
 
-	try {
-		const resp = await fetch(`${strategy.url}/metadata`, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
-		if (!resp.ok) {
-			throw new Error(`Failed to fetch ${strategy.id} metadata (status: ${resp.status})`);
-		}
-		const summary = strategySummarySchema.parse(await resp.json());
-		return { connected: true, ...strategy, ...summary };
-	} catch (e) {
-		console.error(e);
-		return {
-			connected: false,
-			...strategy,
-			icon_url: loadError,
-			error: e instanceof Error ? e.message : String(e),
-			sort_priority: -1
-		};
+	const resp = await fetch(`${strategy.url}/metadata`, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
+	if (!resp.ok) {
+		throw new Error(`Failed to fetch ${strategy.id} metadata (status: ${resp.status})`);
 	}
+	const summary = strategySummarySchema.parse(await resp.json());
+	return { connected: true, ...strategy, ...summary };
+}
+
+function getDisconnectedStrategy(strategy: StrategyConfiguration, error: any): DisconnectedStrategyRuntimeState {
+	return {
+		...strategy,
+		connected: false,
+		icon_url: loadError,
+		error: error.message ?? String(error),
+		sort_priority: -1
+	};
 }
 
 export async function getStrategiesWithRuntimeState(fetch: Fetch) {
-	const strategies = await Promise.all(
-		[...configuredStrategies.keys()].map((id) => {
-			return getStrategyRuntimeState(fetch, id) as Promise<StrategyRuntimeState>;
-		})
-	);
+	const strategyPromises = [...configuredStrategies].map(async ([id, strat]) => {
+		try {
+			return (await getStrategyRuntimeState(fetch, id))!;
+		} catch (e) {
+			console.error(e);
+			return getDisconnectedStrategy(strat, e);
+		}
+	});
 
+	const strategies = await Promise.all(strategyPromises);
 	return strategies.sort((a, b) => b.sort_priority - a.sort_priority);
 }
 
