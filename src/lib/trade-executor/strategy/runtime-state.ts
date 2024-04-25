@@ -24,36 +24,41 @@ export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
 
 export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedStrategyRuntimeState;
 
-export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise<StrategyRuntimeState | undefined> {
-	const strategy = configuredStrategies.get(id);
-	if (!strategy) return;
-
-	try {
-		const resp = await fetch(`${strategy.url}/metadata`, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
-		if (!resp.ok) {
-			throw new Error(`Failed to fetch ${strategy.id} metadata (status: ${resp.status})`);
-		}
-		const summary = strategySummarySchema.parse(await resp.json());
-		return { connected: true, ...strategy, ...summary };
-	} catch (e) {
-		console.error(e);
-		return {
-			connected: false,
-			...strategy,
-			icon_url: loadError,
-			error: e instanceof Error ? e.message : String(e),
-			sort_priority: -1
-		};
+export async function getStrategyRuntimeState(
+	fetch: Fetch,
+	strategyConf: StrategyConfiguration
+): Promise<ConnectedStrategyRuntimeState> {
+	const url = `${strategyConf.url}/metadata`;
+	const resp = await fetch(url, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
+	if (!resp.ok) {
+		throw new Error(`Failed to fetch ${url} (status: ${resp.status})`);
 	}
+	const summary = strategySummarySchema.parse(await resp.json());
+	return { connected: true, ...strategyConf, ...summary };
 }
 
-export async function getStrategiesWithRuntimeState(fetch: Fetch) {
-	const strategies = await Promise.all(
-		[...configuredStrategies.keys()].map((id) => {
-			return getStrategyRuntimeState(fetch, id) as Promise<StrategyRuntimeState>;
-		})
-	);
+function getDisconnectedStrategy(strategyConf: StrategyConfiguration, error: any): DisconnectedStrategyRuntimeState {
+	return {
+		...strategyConf,
+		connected: false,
+		icon_url: loadError,
+		error: error.message ?? String(error),
+		sort_priority: -1
+	};
+}
 
+export async function getStrategiesWithRuntimeState(fetch: Fetch): Promise<StrategyRuntimeState[]> {
+	const strategyConfigs = [...configuredStrategies.values()];
+	const strategyPromises = strategyConfigs.map(async (strategyConf) => {
+		try {
+			return await getStrategyRuntimeState(fetch, strategyConf);
+		} catch (err) {
+			console.error(err);
+			return getDisconnectedStrategy(strategyConf, err);
+		}
+	});
+
+	const strategies = await Promise.all(strategyPromises);
 	return strategies.sort((a, b) => b.sort_priority - a.sort_priority);
 }
 

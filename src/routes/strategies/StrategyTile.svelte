@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { EventHandler } from 'svelte/elements';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { type RawTick, type Quote, rawTicksToQuotes } from '$lib/chart';
+	import { rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
@@ -17,15 +17,7 @@
 
 	const href = `/strategies/${strategy.id}`;
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
-
-	let chartData: Quote[] = [];
-	let isBacktested = false;
-
-	if (strategy.connected) {
-		const stats = strategy.summary_statistics;
-		chartData = rawTicksToQuotes((stats.performance_chart_90_days ?? []) as RawTick[]);
-		isBacktested = Object.values(stats.key_metrics).some(({ source }) => source === 'backtesting');
-	}
+	const chartData = rawTicksToQuotes(strategy.summary_statistics?.performance_chart_90_days ?? []);
 
 	const handleClick: EventHandler = ({ target }) => {
 		// skip explicit goto if user clicked an anchor tag

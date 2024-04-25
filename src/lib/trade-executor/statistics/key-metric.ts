@@ -15,7 +15,7 @@ export const keyMetricCalculationMethod = z.enum(['historical_data', 'latest_val
 export const keyMetricSchema = z.object({
 	kind: z.string(),
 	source: keyMetricSource,
-	value: z.number().nullish(),
+	value: z.union([z.number(), z.string()]).nullish(),
 	calculation_window_start_at: unixTimestampToDate.nullish(),
 	calculation_window_end_at: unixTimestampToDate.nullish(),
 	calculation_method: keyMetricCalculationMethod.nullish(),
