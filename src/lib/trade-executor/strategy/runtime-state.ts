@@ -24,7 +24,10 @@ export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
 
 export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedStrategyRuntimeState;
 
-export async function getStrategyRuntimeState(fetch: Fetch, id: string): Promise<StrategyRuntimeState | undefined> {
+export async function getStrategyRuntimeState(
+	fetch: Fetch,
+	id: string
+): Promise<ConnectedStrategyRuntimeState | undefined> {
 	const strategy = configuredStrategies.get(id);
 	if (!strategy) return;
 
