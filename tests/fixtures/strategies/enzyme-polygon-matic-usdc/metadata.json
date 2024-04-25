@@ -110,62 +110,123 @@
 			"sharpe": {
 				"kind": "sharpe",
 				"source": "live_trading",
-				"value": 1.5469742821457517,
+				"value": 1.436669093494172,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "historical_data",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/sharpe"
+				"help_link": "https://tradingstrategy.ai/glossary/sharpe",
+				"name": null
 			},
 			"sortino": {
 				"kind": "sortino",
 				"source": "live_trading",
-				"value": 4.871381649367867,
+				"value": 3.930288859392068,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "historical_data",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/sortino"
+				"help_link": "https://tradingstrategy.ai/glossary/sortino",
+				"name": null
 			},
 			"max_drawdown": {
 				"kind": "max_drawdown",
 				"source": "live_trading",
-				"value": 0.03943335198820097,
+				"value": 0.06854116863107718,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "historical_data",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/maximum-drawdown"
+				"help_link": "https://tradingstrategy.ai/glossary/maximum-drawdown",
+				"name": null
 			},
 			"profitability": {
 				"kind": "profitability",
 				"source": "live_trading",
-				"value": 0.04835495163587522,
+				"value": 0.16350983880621817,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "historical_data",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/profitability"
+				"help_link": "https://tradingstrategy.ai/glossary/profitability",
+				"name": null
+			},
+			"cagr": {
+				"kind": "cagr",
+				"source": "live_trading",
+				"value": 0.19798454539772026,
+				"calculation_window_start_at": 1687523697,
+				"calculation_window_end_at": 1714053803,
+				"calculation_method": "historical_data",
+				"unavailability_reason": null,
+				"help_link": "https://tradingstrategy.ai/glossary/compound-annual-growth-rate-cagr",
+				"name": null
+			},
+			"trades_per_month": {
+				"kind": "trades_per_month",
+				"source": "live_trading",
+				"value": 8.402231123491253,
+				"calculation_window_start_at": 1687523697,
+				"calculation_window_end_at": 1714053803,
+				"calculation_method": "historical_data",
+				"unavailability_reason": null,
+				"help_link": "https://tradingstrategy.ai/glossary/trade-frequency",
+				"name": null
 			},
 			"total_equity": {
 				"kind": "total_equity",
 				"source": "live_trading",
-				"value": 18.5610928125,
+				"value": 2207.2455722719997,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "latest_value",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/total-equity"
+				"help_link": "https://tradingstrategy.ai/glossary/total-equity",
+				"name": null
 			},
 			"started_at": {
 				"kind": "started_at",
 				"source": "live_trading",
 				"value": 1687523697,
 				"calculation_window_start_at": 1687523697,
-				"calculation_window_end_at": 1692633918,
+				"calculation_window_end_at": 1714053803,
 				"calculation_method": "latest_value",
 				"unavailability_reason": null,
-				"help_link": "https://tradingstrategy.ai/glossary/strategy-age"
+				"help_link": "https://tradingstrategy.ai/glossary/strategy-age",
+				"name": null
+			},
+			"last_trade": {
+				"kind": "last_trade",
+				"source": "live_trading",
+				"value": 1713965410,
+				"calculation_window_start_at": 1687523697,
+				"calculation_window_end_at": 1714053803,
+				"calculation_method": "latest_value",
+				"unavailability_reason": null,
+				"help_link": "https://tradingstrategy.ai/glossary/last-trade",
+				"name": null
+			},
+			"trades_last_week": {
+				"kind": "trades_last_week",
+				"source": "live_trading",
+				"value": 6,
+				"calculation_window_start_at": 1687523697,
+				"calculation_window_end_at": 1714053803,
+				"calculation_method": "latest_value",
+				"unavailability_reason": null,
+				"help_link": "https://tradingstrategy.ai/glossary/trades-last-week",
+				"name": null
+			},
+			"decision_cycle_duration": {
+				"kind": "decision_cycle_duration",
+				"source": "live_trading",
+				"value": "1h",
+				"calculation_window_start_at": 1687523697,
+				"calculation_window_end_at": 1714053803,
+				"calculation_method": "latest_value",
+				"unavailability_reason": "Not available, should always be available live trading",
+				"help_link": "https://tradingstrategy.ai/glossary/cycle-duration",
+				"name": "Cycle Duration"
 			}
 		},
 		"backtest_metrics_cut_off_period": 0
