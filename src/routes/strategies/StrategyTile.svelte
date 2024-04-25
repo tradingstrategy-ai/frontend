@@ -78,11 +78,13 @@
 	<div class="content">
 		<header>
 			<div class="avatar">
-				<img src={strategy.icon_url} alt={strategy.name} />
+				<object type="image/webp" data="/avatars/{strategy.id}.webp" aria-label="Strategy icon">
+					<img src={strategy.icon_url} alt="Strategy icon" />
+				</object>
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>
-							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" size="1.5rem" />
+							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" size="var(--chain-icon-size)" />
 							<span slot="popup">
 								This strategy runs on <strong>{chain.name}</strong> blockchain
 							</span>
@@ -187,6 +189,7 @@
 
 			header {
 				--avatar-size: 6rem;
+				--chain-icon-size: 1.5rem;
 				display: grid;
 				grid-template-columns: var(--avatar-size) auto;
 				align-items: center;
@@ -194,42 +197,44 @@
 
 				@container (width <= 400px) {
 					--avatar-size: 4.75rem;
+					--chain-icon-size: 1.25rem;
 					gap: 1.25rem;
 				}
 
 				.avatar {
-					background: var(--c-box-3);
-					border-radius: 100%;
-					font: var(--f-ui-sm-roman);
-					text-align: center;
+					position: relative;
 					display: grid;
 					height: var(--avatar-size);
-					position: relative;
 					width: var(--avatar-size);
+					border-radius: 100%;
+					background: var(--c-box-3);
+					font: var(--f-ui-sm-roman);
+					text-align: center;
 
 					:global(.tooltip .popup) {
 						min-width: 20rem;
 					}
 
-					img {
-						border-radius: 100%;
-						height: 100%;
-						object-fit: cover;
-						overflow: hidden;
-						width: 100%;
+					:is(img, object) {
 						display: grid;
 						place-items: center;
+						height: inherit;
+						width: inherit;
+						border-radius: 100%;
+						overflow: hidden;
+						object-fit: cover;
 					}
 
 					.chain-icon {
+						display: flex;
+						position: absolute;
+						right: 0;
+						bottom: 0;
+						padding: 5%;
+						transform: translate(20%, 20%);
 						border-radius: 100%;
-						bottom: -0.5rem;
 						box-shadow: var(--shadow-1);
 						background: var(--c-text-inverted);
-						display: flex;
-						padding: 0.25rem;
-						position: absolute;
-						right: -0.5rem;
 
 						strong {
 							text-transform: capitalize;
