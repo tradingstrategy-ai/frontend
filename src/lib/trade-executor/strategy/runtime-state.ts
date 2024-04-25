@@ -26,22 +26,20 @@ export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedS
 
 export async function getStrategyRuntimeState(
 	fetch: Fetch,
-	id: string
-): Promise<ConnectedStrategyRuntimeState | undefined> {
-	const strategy = configuredStrategies.get(id);
-	if (!strategy) return;
-
-	const resp = await fetch(`${strategy.url}/metadata`, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
+	strategyConf: StrategyConfiguration
+): Promise<ConnectedStrategyRuntimeState> {
+	const url = `${strategyConf.url}/metadata`;
+	const resp = await fetch(url, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
 	if (!resp.ok) {
-		throw new Error(`Failed to fetch ${strategy.id} metadata (status: ${resp.status})`);
+		throw new Error(`Failed to fetch ${url} (status: ${resp.status})`);
 	}
 	const summary = strategySummarySchema.parse(await resp.json());
-	return { connected: true, ...strategy, ...summary };
+	return { connected: true, ...strategyConf, ...summary };
 }
 
-function getDisconnectedStrategy(strategy: StrategyConfiguration, error: any): DisconnectedStrategyRuntimeState {
+function getDisconnectedStrategy(strategyConf: StrategyConfiguration, error: any): DisconnectedStrategyRuntimeState {
 	return {
-		...strategy,
+		...strategyConf,
 		connected: false,
 		icon_url: loadError,
 		error: error.message ?? String(error),
@@ -49,13 +47,14 @@ function getDisconnectedStrategy(strategy: StrategyConfiguration, error: any): D
 	};
 }
 
-export async function getStrategiesWithRuntimeState(fetch: Fetch) {
-	const strategyPromises = [...configuredStrategies].map(async ([id, strat]) => {
+export async function getStrategiesWithRuntimeState(fetch: Fetch): Promise<StrategyRuntimeState[]> {
+	const strategyConfigs = [...configuredStrategies.values()];
+	const strategyPromises = strategyConfigs.map(async (strategyConf) => {
 		try {
-			return (await getStrategyRuntimeState(fetch, id))!;
-		} catch (e) {
-			console.error(e);
-			return getDisconnectedStrategy(strat, e);
+			return await getStrategyRuntimeState(fetch, strategyConf);
+		} catch (err) {
+			console.error(err);
+			return getDisconnectedStrategy(strategyConf, err);
 		}
 	});
 
