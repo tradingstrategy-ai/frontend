@@ -1,10 +1,9 @@
 import { error, text } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
-import { getStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+import { configuredStrategies } from 'trade-executor/strategy/configuration';
 
 export async function GET({ fetch, params }) {
-	const strategy = await getStrategyRuntimeState(fetch, params.strategy);
-
+	const strategy = configuredStrategies.get(params.strategy);
 	if (!strategy) throw error(404, 'Not found');
 
 	const resp = await fetch(`${strategy.url}/file?type=notebook`);
