@@ -12,6 +12,7 @@
 		getTransactionReceipt,
 		waitForTransactionReceipt
 	} from '@wagmi/core';
+	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
@@ -21,9 +22,16 @@
 	export let data;
 	const { paymentContract, tosRequired } = data;
 
+	// Delay (ms) between signature request and payment transaction
+	const WALLET_PAYMENT_DELAY = 500;
+
+	// Share price slippage tollerance - used when calculating minSharesQuantity
+	const SLIPPAGE_TOLERANCE = 0.02;
+
 	const chain = getChain($wizard.data?.chainId);
 	const denominationToken: GetTokenBalanceReturnType = $wizard.data?.denominationToken;
 	const nativeCurrency: GetBalanceReturnType = $wizard.data?.nativeCurrency;
+	const contracts = $wizard.data?.contracts;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -32,9 +40,34 @@
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
 	let paymentInput: MoneyInput;
+	let sharePrice: number | undefined = undefined;
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
+
+	// TODO: extract to a helper module
+	async function fetchSharePrice() {
+		const { result } = await simulateContract(config, {
+			abi: fundValueCalculatorABI,
+			address: contracts.fund_value_calculator,
+			functionName: 'calcGrossShareValue',
+			args: [contracts.vault]
+		});
+
+		const value = result[1];
+
+		if (value === undefined) {
+			throw new Error('failed to fetch sharePrice');
+		}
+
+		return Number(formatUnits(value, denominationToken.decimals));
+	}
+
+	// TODO: extract to a helper module
+	function calcMinSharesQuantity(value: Numberlike, sharePrice: number, decimals: number) {
+		const minSharesDecimal = Number(value) / (sharePrice * (1 + SLIPPAGE_TOLERANCE));
+		return parseUnits(String(minSharesDecimal), decimals);
+	}
 
 	async function authorizeTransfer() {
 		const token = await getTokenInfo(config, { address: denominationToken.address });
@@ -51,17 +84,37 @@
 
 	async function confirmPayment(signedArgs: SignedArguments) {
 		const { tosHash, tosSignature } = $wizard.data!;
-		const args = [...signedArgs, 1];
-		if (tosRequired) args.push(tosHash, tosSignature);
+
+		const [curSharePrice, vaultToken] = await Promise.all([
+			// re-fetch share price if not previously set
+			sharePrice ?? fetchSharePrice(),
+			// get vault token info for decimals unit conversion
+			getTokenInfo(config, { address: contracts.vault }),
+			// short delay to address Rabby wallet race condition
+			new Promise((r) => setTimeout(r, WALLET_PAYMENT_DELAY))
+		]);
+
+		const minSharesQuantity = calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals);
+		const args = [...signedArgs, minSharesQuantity];
+		if (tosRequired) {
+			args.push(tosHash, tosSignature);
+		}
+
 		const { request } = await simulateContract(config, { ...paymentContract, args });
 		return writeContract(config, request);
 	}
 
 	const payment = fsm('initial', {
 		initial: {
+			_enter() {
+				fetchSharePrice()
+					.then((value) => (sharePrice = value))
+					.catch(() => {}); // no-op
+			},
+
 			// restore state on wizard back/next navigation
 			restore(state) {
-				({ errorMessage, transactionId, paymentValue } = $wizard.data);
+				({ errorMessage, transactionId, paymentValue } = $wizard.data!);
 				if (state === 'authorizing' || state === 'confirming') {
 					errorMessage = `Wallet request state lost due to window navigation;
 						please cancel wallet request and try again.`;
@@ -71,11 +124,7 @@
 			},
 
 			authorize() {
-				// NOTE: adding 500ms delay after signature request promise
-				// resolves to see if this addresses Rabby wallet bug
-				authorizeTransfer()
-					.then((...args) => payment.confirm.debounce(500, ...args))
-					.catch(payment.fail);
+				authorizeTransfer().then(payment.confirm).catch(payment.fail);
 				return 'authorizing';
 			}
 		},
@@ -199,7 +248,7 @@
 		}
 	});
 
-	payment.restore($wizard.data.paymentState);
+	payment.restore($wizard.data?.paymentState);
 	$: wizard.updateData({ paymentState: $payment });
 </script>
 
