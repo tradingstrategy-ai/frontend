@@ -17,10 +17,9 @@
 	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
 	const vaultNetValue: GetTokenBalanceReturnType = $wizard.data?.vaultNetValue;
 
-	let shares: MaybeString;
+	let shares = '';
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
-	let sharesInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -169,7 +168,6 @@
 
 		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
 			<MoneyInput
-				bind:this={sharesInput}
 				bind:value={shares}
 				size="xl"
 				token={vaultShares}
