@@ -11,16 +11,16 @@
 	import { config, wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput } from '$lib/components';
+	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
 	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
 	const vaultNetValue: GetTokenBalanceReturnType = $wizard.data?.vaultNetValue;
 
-	let shares: MaybeString;
+	let shares = '';
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
-	let sharesInput: MoneyInput;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -39,6 +39,12 @@
 		});
 
 		return writeContract(config, request);
+	}
+
+	function getEstimatedValue(shares: Numberlike) {
+		const sharePrice = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
+		const estimated = (Number(shares) || 0) * sharePrice;
+		return formatNumber(estimated, 2, 4);
 	}
 
 	const redemption = fsm('initial', {
@@ -169,18 +175,20 @@
 
 		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
 			<MoneyInput
-				bind:this={sharesInput}
 				bind:value={shares}
 				size="xl"
 				token={vaultShares}
-				conversionRatio={Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares))}
-				conversionToken={vaultNetValue}
-				conversionPrefix="Estimated value"
 				disabled={$redemption !== 'initial'}
 				min={formatUnits(1n, vaultShares.decimals)}
 				max={formatBalance(vaultShares)}
 				on:change={() => wizard.updateData({ shares })}
-			/>
+			>
+				Estimated value
+				<EntitySymbol slug={vaultNetValue.symbol?.toLowerCase()} type="token">
+					{getEstimatedValue(shares)}
+					{vaultNetValue.label}
+				</EntitySymbol>
+			</MoneyInput>
 
 			{#if $redemption === 'initial'}
 				<Button submit disabled={!shares}>Redeem</Button>

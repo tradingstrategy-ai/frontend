@@ -14,7 +14,6 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 -->
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import { formatNumber } from '$lib/helpers/formatters';
 	import { EntitySymbol } from '$lib/components';
 
 	export let disabled = false;
@@ -22,9 +21,6 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 	export let step: number | 'any' = 'any';
 	export let token: GetTokenBalanceReturnType;
 	export let value = '';
-	export let conversionPrefix: string | undefined = undefined;
-	export let conversionRatio: number | undefined = undefined;
-	export let conversionToken: GetTokenBalanceReturnType | undefined = undefined;
 
 	let inputEl: HTMLInputElement;
 
@@ -33,11 +29,6 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 	function setValue() {
 		value = inputEl.value;
-	}
-
-	function getConvertedValue(value: MaybeNumberlike, ratio: number) {
-		const converted = (Number(value) || 0) * ratio;
-		return formatNumber(converted, 2, 4);
 	}
 
 	export function focus(options = {}) {
@@ -71,30 +62,20 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			{/if}
 		</div>
 	</div>
-
-	{#if conversionToken && conversionRatio}
-		<span class="conversion-label">
-			{conversionPrefix}
-			<EntitySymbol slug={conversionToken.symbol?.toLowerCase()} type="token">
-				{getConvertedValue(value, conversionRatio)}
-				{conversionToken.label}
-			</EntitySymbol>
-		</span>
+	{#if $$slots.default}
+		<div class="estimated-value">
+			<slot />
+		</div>
 	{/if}
 </span>
 
 <style lang="postcss">
 	.money-input {
-		position: relative;
-		display: inline-grid;
-		gap: var(--space-md);
-		position: relative;
-		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
+		max-width: var(--text-input-max-width, auto);
 
 		.inner {
 			display: flex;
-			background: var(--c-input-background);
 			border: 1px var(--c-input-border) solid;
 			border-radius: var(--radius-sm);
 			height: 4.25rem;
@@ -102,14 +83,12 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		}
 
 		.unit {
-			/* layer box-2 on top of body color instead of white */
-			background-color: var(--c-body);
-			background-image: linear-gradient(var(--c-box-2), var(--c-box-2));
 			display: grid;
-			font: var(--f-ui-lg-bold);
-			height: 100%;
 			place-items: center;
-			padding: 0 var(--space-md);
+			height: 100%;
+			padding-inline: 1rem;
+			background: var(--c-box-2);
+			font: var(--f-ui-lg-bold);
 			text-align: center;
 		}
 
@@ -117,24 +96,17 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			opacity: 0.65;
 		}
 
-		.conversion-label {
-			display: flex;
-			justify-content: flex-end;
-			text-align: right;
-			gap: var(--space-md);
-		}
-
 		input {
-			background: transparent;
+			height: var(--text-input-height, var(--height));
+			width: 100%;
+			padding-inline: 0.75rem;
 			border: none;
+			background: var(--c-input-background);
 			color: inherit;
 			font: var(--f-ui-xxl-medium);
-			height: var(--text-input-height, var(--height));
 			letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
-			padding: 0 var(--space-sl);
 			text-align: right;
 			transition: background var(--time-sm) ease-out;
-			width: 100%;
 
 			&::placeholder {
 				color: var(--c-text-extra-light);
@@ -153,6 +125,14 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 				border-color: var(--c-input-border-focus);
 				outline: none;
 			}
+		}
+
+		.estimated-value {
+			display: flex;
+			gap: 1rem;
+			justify-content: flex-end;
+			margin-top: 1rem;
+			text-align: right;
 		}
 	}
 </style>
