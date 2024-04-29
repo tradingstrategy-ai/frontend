@@ -18,6 +18,7 @@
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { formatNumber } from '$lib/helpers/formatters.js';
 
 	export let data;
 	const { paymentContract, tosRequired } = data;
@@ -67,6 +68,17 @@
 	function calcMinSharesQuantity(value: Numberlike, sharePrice: number, decimals: number) {
 		const minSharesDecimal = Number(value) / (sharePrice * (1 + SLIPPAGE_TOLERANCE));
 		return parseUnits(String(minSharesDecimal), decimals);
+	}
+
+	function getEstimatedShares(paymentValue: Numberlike, sharePrice: number | undefined) {
+		const value = Number(paymentValue || 0);
+		let estimated: number | undefined = undefined;
+		if (value === 0) {
+			estimated = 0;
+		} else if (sharePrice) {
+			estimated = value / sharePrice;
+		}
+		return formatNumber(estimated, 2, 4);
 	}
 
 	async function authorizeTransfer() {
@@ -306,7 +318,10 @@
 				min={formatUnits(1n, denominationToken.decimals)}
 				max={formatBalance(denominationToken)}
 				on:change={() => wizard.updateData({ paymentValue })}
-			/>
+			>
+				Estimated shares:
+				{getEstimatedShares(paymentValue, sharePrice)}
+			</MoneyInput>
 
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
