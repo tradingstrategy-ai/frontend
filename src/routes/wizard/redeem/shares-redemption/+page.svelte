@@ -11,7 +11,8 @@
 	import { config, wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { Alert, Button, CryptoAddressWidget, DataBox, MoneyInput } from '$lib/components';
+	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
 	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
@@ -38,6 +39,12 @@
 		});
 
 		return writeContract(config, request);
+	}
+
+	function getEstimatedValue(shares: Numberlike) {
+		const conversionRatio = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
+		const converted = (Number(shares) || 0) * conversionRatio;
+		return formatNumber(converted, 2, 4);
 	}
 
 	const redemption = fsm('initial', {
@@ -171,14 +178,17 @@
 				bind:value={shares}
 				size="xl"
 				token={vaultShares}
-				conversionRatio={Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares))}
-				conversionToken={vaultNetValue}
-				conversionPrefix="Estimated value"
 				disabled={$redemption !== 'initial'}
 				min={formatUnits(1n, vaultShares.decimals)}
 				max={formatBalance(vaultShares)}
 				on:change={() => wizard.updateData({ shares })}
-			/>
+			>
+				Estimated value
+				<EntitySymbol slug={vaultNetValue.symbol?.toLowerCase()} type="token">
+					{getEstimatedValue(shares)}
+					{vaultNetValue.label}
+				</EntitySymbol>
+			</MoneyInput>
 
 			{#if $redemption === 'initial'}
 				<Button submit disabled={!shares}>Redeem</Button>

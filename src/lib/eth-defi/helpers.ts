@@ -19,7 +19,11 @@ export function getEvents(logs: Log[], abi: Abi, name: string, contractAddress: 
  * Format BigInt value to string based on value and decimals properties
  * uses formatNumber if optional minDigits/maxPrecision are provided
  */
-export function formatBalance({ value, decimals }: GetBalanceReturnType, minDigits?: number, maxPrecision?: number) {
+export function formatBalance(
+	{ value, decimals }: { value: bigint; decimals: number },
+	minDigits?: number,
+	maxPrecision?: number
+) {
 	const formatted = formatUnits(value, decimals);
 	return minDigits === undefined ? formatted : formatNumber(formatted, minDigits, maxPrecision);
 }
