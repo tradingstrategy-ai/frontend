@@ -40,7 +40,6 @@
 	let paymentValue = '';
 	let errorMessage: MaybeString;
 	let transactionId: Maybe<Address>;
-	let paymentInput: MoneyInput;
 	let sharePrice: number | undefined = undefined;
 
 	// Disable the "Cancel" button once a transaction has been initiated
@@ -310,7 +309,6 @@
 
 		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
 			<MoneyInput
-				bind:this={paymentInput}
 				bind:value={paymentValue}
 				size="xl"
 				token={denominationToken}
