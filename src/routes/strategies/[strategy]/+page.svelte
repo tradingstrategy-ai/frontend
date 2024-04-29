@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { SummaryKeyMetricKind } from 'trade-executor/strategy/summary';
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
@@ -84,25 +83,21 @@
 	</div>
 
 	<div class="metrics">
-		<SummaryBox title="Strategy">
-			<div class="metric-group">
-				{#if keyMetrics.cagr}
-					<KeyMetric
-						name="Annual return"
-						metric={keyMetrics.cagr}
-						tooltipName="Compounding Annual Growth Rate (CAGR)"
-						tooltipExtraDescription={metricDescriptions.cagr}
-						{backtestLink}
-						let:value
-					>
-						<UpDownIndicator {value} formatter={formatProfitability} />
-					</KeyMetric>
-				{:else}
-					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
-						<UpDownIndicator {value} formatter={formatProfitability} />
-					</KeyMetric>
-				{/if}
+		<div class="metric-group primary">
+			<div class="primary-metric">
+				<KeyMetric
+					name="Annual return"
+					metric={keyMetrics.cagr}
+					tooltipName="Compounding Annual Growth Rate (CAGR)"
+					tooltipExtraDescription={metricDescriptions.cagr}
+					{backtestLink}
+					let:value
+				>
+					<UpDownIndicator {value} formatter={formatProfitability} />
+				</KeyMetric>
+			</div>
 
+			<div class="primary-metric">
 				<KeyMetric
 					name="Total value locked"
 					metric={keyMetrics.total_equity}
@@ -110,12 +105,24 @@
 					tooltipExtraDescription={metricDescriptions.tvl}
 					{backtestLink}
 				/>
+			</div>
+		</div>
 
+		<SummaryBox title="Timeframes">
+			<div class="metric-group">
 				<KeyMetric
 					name="Age"
 					metric={keyMetrics.started_at}
 					formatter={formatDaysAgo}
 					tooltipExtraDescription={metricDescriptions.age}
+					{backtestLink}
+				/>
+
+				<KeyMetric
+					name="Decision cycle"
+					tooltipName="Decision cycle"
+					metric={keyMetrics.decision_cycle_duration}
+					tooltipExtraDescription={metricDescriptions.tradeFrequency}
 					{backtestLink}
 				/>
 
@@ -166,6 +173,7 @@
 	.strategy-overview-page {
 		display: grid;
 		gap: 1rem;
+		align-items: flex-start;
 
 		/* Desktop 2 column layout */
 		@media (--viewport-md-up) {
@@ -191,13 +199,24 @@
 			.metric-group {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 1rem 2rem;
+				gap: 1rem 1.5rem;
 				justify-content: space-between;
 
-				> :global(*) {
-					@media (--viewport-xs) {
+				&.primary > :global(*) {
+					flex: 1;
+				}
+
+				@media (--viewport-xs) {
+					> :global(*) {
 						flex: 1;
 					}
+				}
+
+				.primary-metric {
+					padding: 1.25rem;
+					border: 1px solid var(--c-box-3);
+					border-radius: 1rem;
+					background: var(--c-box-1);
 				}
 			}
 
