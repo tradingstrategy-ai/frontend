@@ -12,7 +12,7 @@
 		getTransactionReceipt,
 		waitForTransactionReceipt
 	} from '@wagmi/core';
-	import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
+	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
@@ -45,22 +45,12 @@
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
-	// TODO: extract to a helper module
-	async function fetchSharePrice() {
-		const { result } = await simulateContract(config, {
-			abi: fundValueCalculatorABI,
-			address: contracts.fund_value_calculator,
-			functionName: 'calcGrossShareValue',
-			args: [contracts.vault]
+	async function getVaultSharePrice() {
+		return getSharePrice(config, {
+			calculator: contracts.fund_value_calculator,
+			vault: contracts.vault,
+			denominationToken
 		});
-
-		const value = result[1];
-
-		if (value === undefined) {
-			throw new Error('failed to fetch sharePrice');
-		}
-
-		return Number(formatUnits(value, denominationToken.decimals));
 	}
 
 	// TODO: extract to a helper module
@@ -98,7 +88,7 @@
 
 		const [curSharePrice, vaultToken] = await Promise.all([
 			// re-fetch share price if not previously set
-			sharePrice ?? fetchSharePrice(),
+			sharePrice ?? getVaultSharePrice(),
 			// get vault token info for decimals unit conversion
 			getTokenInfo(config, { address: contracts.vault }),
 			// short delay to address Rabby wallet race condition
@@ -118,7 +108,7 @@
 	const payment = fsm('initial', {
 		initial: {
 			_enter() {
-				fetchSharePrice()
+				getVaultSharePrice()
 					.then((value) => (sharePrice = value))
 					.catch(() => {}); // no-op
 			},

@@ -42,9 +42,9 @@
 	}
 
 	function getEstimatedValue(shares: Numberlike) {
-		const conversionRatio = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
-		const converted = (Number(shares) || 0) * conversionRatio;
-		return formatNumber(converted, 2, 4);
+		const sharePrice = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
+		const estimated = (Number(shares) || 0) * sharePrice;
+		return formatNumber(estimated, 2, 4);
 	}
 
 	const redemption = fsm('initial', {
