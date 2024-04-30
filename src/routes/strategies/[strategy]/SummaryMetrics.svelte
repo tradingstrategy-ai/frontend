@@ -3,7 +3,7 @@
 	import MetricsBox from './MetricsBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
 	import { UpDownIndicator } from '$lib/components';
-	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import { formatDaysAgo, formatDollar, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 
@@ -30,7 +30,7 @@
 			<KeyMetric
 				name="Total value locked"
 				metric={keyMetrics.total_equity}
-				formatter={formatPrice}
+				formatter={formatDollar}
 				tooltipExtraDescription={metricDescriptions.tvl}
 				{backtestLink}
 			/>
@@ -38,7 +38,7 @@
 	</div>
 
 	<MetricsBox title="Timeframes">
-		<div class="metric-group">
+		<div class="metric-group secondary">
 			<KeyMetric
 				name="Age"
 				metric={keyMetrics.started_at}
@@ -67,7 +67,7 @@
 	</MetricsBox>
 
 	<MetricsBox title="Risk metrics">
-		<div class="metric-group">
+		<div class="metric-group secondary">
 			<KeyMetric
 				name="Sharpe"
 				tooltipName="Sharpe Ratio"
@@ -120,7 +120,27 @@
 			}
 		}
 
-		:global([data-css-props]) {
+		.primary :global([data-css-props]) {
+			--key-metric-gap: 0.5rem;
+			--key-metric-label-font: var(--f-ui-md-medium);
+			--key-metric-label-letter-spacing: var(--ls-ui-md);
+			--key-metric-value-font: var(--f-heading-xxl-medium);
+			--key-metric-value-letter-spacing: var(--ls-heading-xxl);
+
+			@media (--viewport-lg-down) {
+				--key-metric-value-font: var(--f-heading-xl-medium);
+				--key-metric-value-letter-spacing: var(--ls-heading-xl);
+			}
+
+			@media (--viewport-xs) {
+				--key-metric-label-font: var(--f-ui-sm-medium);
+				--key-metric-label-letter-spacing: var(--ls-ui-sm);
+				--key-metric-value-font: var(--f-heading-lg-medium);
+				--key-metric-value-letter-spacing: var(--ls-heading-lg);
+			}
+		}
+
+		.secondary :global([data-css-props]) {
 			--key-metric-label-font: var(--f-ui-sm-medium);
 			--key-metric-label-letter-spacing: var(--ls-ui-sm);
 			--key-metric-value-font: var(--f-ui-xxl-medium);
