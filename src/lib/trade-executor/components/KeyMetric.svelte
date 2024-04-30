@@ -37,9 +37,9 @@ Display one key metric in a strategy tile.
 </script>
 
 <div class="key-metric" data-css-props>
-	{#if metric}
+	{#if metric || tooltipExtraDescription}
 		<Tooltip>
-			<div slot="trigger" class="label {metric?.source}">
+			<div slot="trigger" class="label">
 				{name}
 				<Icon name="question-circle" />
 			</div>

@@ -4,7 +4,7 @@
 	import { KeyMetric } from 'trade-executor/components';
 	import { UpDownIndicator } from '$lib/components';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
+	import { formatCycleDuration, formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 
 	export let keyMetrics: SummaryKeyMetrics;
@@ -51,7 +51,8 @@
 				name="Decision cycle"
 				tooltipName="Decision cycle"
 				metric={keyMetrics.decision_cycle_duration}
-				tooltipExtraDescription={metricDescriptions.tradeFrequency}
+				formatter={formatCycleDuration}
+				tooltipExtraDescription={metricDescriptions.decisionCycle}
 				{backtestLink}
 			/>
 
