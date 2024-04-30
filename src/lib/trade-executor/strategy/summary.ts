@@ -72,6 +72,7 @@ const summaryKeyMetricsSchema = z
 	.object(Object.fromEntries(summaryKeyMetricEntries))
 	.partial()
 	.catchall(keyMetricSchema);
+export type SummaryKeyMetrics = z.infer<typeof summaryKeyMetricsSchema>;
 
 export const strategySummaryStatisticsSchema = z.object({
 	calculated_at: unixTimestampToDate,

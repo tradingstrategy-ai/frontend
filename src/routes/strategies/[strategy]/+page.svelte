@@ -1,15 +1,12 @@
 <script lang="ts">
-	import type { SummaryKeyMetricKind } from 'trade-executor/strategy/summary';
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
-	import { UpDownIndicator, UpDownCell } from '$lib/components';
-	import { KeyMetric } from 'trade-executor/components';
-	import SummaryBox from './SummaryBox.svelte';
-	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
+	import { UpDownCell } from '$lib/components';
+	import SummaryMetrics from './SummaryMetrics.svelte';
+	import { formatPercent } from '$lib/helpers/formatters';
+	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
-	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { isGeoBlocked } from '$lib/helpers/geo';
 
 	export let data;
@@ -83,89 +80,14 @@
 		</ChartContainer>
 	</div>
 
-	<div class="metrics">
-		<SummaryBox title="Strategy">
-			<div class="metric-group">
-				{#if keyMetrics.cagr}
-					<KeyMetric
-						name="Annual return"
-						metric={keyMetrics.cagr}
-						tooltipName="Compounding Annual Growth Rate (CAGR)"
-						tooltipExtraDescription={metricDescriptions.cagr}
-						{backtestLink}
-						let:value
-					>
-						<UpDownIndicator {value} formatter={formatProfitability} />
-					</KeyMetric>
-				{:else}
-					<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
-						<UpDownIndicator {value} formatter={formatProfitability} />
-					</KeyMetric>
-				{/if}
-
-				<KeyMetric
-					name="Total value locked"
-					metric={keyMetrics.total_equity}
-					formatter={formatPrice}
-					tooltipExtraDescription={metricDescriptions.tvl}
-					{backtestLink}
-				/>
-
-				<KeyMetric
-					name="Age"
-					metric={keyMetrics.started_at}
-					formatter={formatDaysAgo}
-					tooltipExtraDescription={metricDescriptions.age}
-					{backtestLink}
-				/>
-
-				<KeyMetric
-					name="Trade frequency"
-					tooltipName="Trade frequency"
-					metric={keyMetrics.trades_per_month}
-					formatter={formatTradesPerMonth}
-					tooltipExtraDescription={metricDescriptions.tradeFrequency}
-					{backtestLink}
-				/>
-			</div>
-		</SummaryBox>
-
-		<SummaryBox title="Risk metrics">
-			<div class="metric-group">
-				<KeyMetric
-					name="Sharpe"
-					tooltipName="Sharpe Ratio"
-					metric={keyMetrics.sharpe}
-					formatter={formatNumber}
-					tooltipExtraDescription={metricDescriptions.cagr}
-					{backtestLink}
-				/>
-
-				<KeyMetric
-					name="Sortino"
-					tooltipName="Sortino Ratio"
-					metric={keyMetrics.sortino}
-					formatter={formatNumber}
-					{backtestLink}
-				/>
-
-				<KeyMetric
-					name="Max drawdown"
-					tooltipName="Maximum drawdown"
-					metric={keyMetrics.max_drawdown}
-					formatter={formatPercent}
-					tooltipExtraDescription={metricDescriptions.maxDrawdown}
-					{backtestLink}
-				/>
-			</div>
-		</SummaryBox>
-	</div>
+	<SummaryMetrics {keyMetrics} {backtestLink} />
 </div>
 
 <style lang="postcss">
 	.strategy-overview-page {
 		display: grid;
 		gap: 1rem;
+		align-items: flex-start;
 
 		/* Desktop 2 column layout */
 		@media (--viewport-md-up) {
@@ -180,44 +102,6 @@
 			/* chart and description (2nd & 4th elements) span full row width */
 			> :global(:nth-child(2n)) {
 				grid-column: 1 / -1;
-			}
-		}
-
-		.metrics {
-			display: grid;
-			gap: inherit;
-			align-items: flex-start;
-
-			.metric-group {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 1rem 2rem;
-				justify-content: space-between;
-
-				> :global(*) {
-					@media (--viewport-xs) {
-						flex: 1;
-					}
-				}
-			}
-
-			:global([data-css-props]) {
-				--key-metric-label-font: var(--f-ui-sm-medium);
-				--key-metric-label-letter-spacing: var(--ls-ui-sm);
-				--key-metric-value-font: var(--f-ui-xxl-medium);
-				--key-metric-value-letter-spacing: var(--ls-ui-xxl);
-
-				@media (--viewport-sm-down) {
-					--key-metric-value-font: var(--f-ui-xl-medium);
-					--key-metric-value-letter-spacing: var(--ls-ui-xl);
-				}
-
-				@media (--viewport-xs) {
-					--key-metric-label-font: var(--f-ui-xs-medium);
-					--key-metric-label-letter-spacing: var(--ls-ui-xs);
-					--key-metric-value-font: var(--f-ui-lg-medium);
-					--key-metric-value-letter-spacing: var(--ls-ui-lg);
-				}
 			}
 		}
 

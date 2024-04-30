@@ -11,5 +11,6 @@ export let metricDescriptions = {
 	sharpe: 'Sharpe ratio of the returns',
 	tvl: 'The amount of currently deposited assets and trading capital in the vault smart contract',
 	maxDrawdown: "The strategy's observed maximum loss over the backtesting period",
-	tradeFrequency: 'How often this strategy is expected to make trades, as the number of trades per month'
+	tradeFrequency: 'How often this strategy is expected to make trades, as the number of trades per month',
+	decisionCycle: 'How often this strategy checks for trading opportunities'
 };
