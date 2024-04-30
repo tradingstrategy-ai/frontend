@@ -14,16 +14,22 @@
 <div class="summary-metrics">
 	<div class="metric-group primary">
 		<MetricsBox>
-			<KeyMetric
-				name="Annual return"
-				metric={keyMetrics.cagr}
-				tooltipName="Compounding Annual Growth Rate (CAGR)"
-				tooltipExtraDescription={metricDescriptions.cagr}
-				{backtestLink}
-				let:value
-			>
-				<UpDownIndicator {value} formatter={formatProfitability} />
-			</KeyMetric>
+			{#if keyMetrics.cagr}
+				<KeyMetric
+					name="Annual return"
+					metric={keyMetrics.cagr}
+					tooltipName="Compounding Annual Growth Rate (CAGR)"
+					tooltipExtraDescription={metricDescriptions.cagr}
+					{backtestLink}
+					let:value
+				>
+					<UpDownIndicator {value} formatter={formatProfitability} />
+				</KeyMetric>
+			{:else}
+				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
+					<UpDownIndicator {value} formatter={formatProfitability} />
+				</KeyMetric>
+			{/if}
 		</MetricsBox>
 
 		<MetricsBox>
