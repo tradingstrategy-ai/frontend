@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { SummaryKeyMetrics } from 'trade-executor/strategy/summary';
-	import UpDownIndicator from '$lib/components/UpDownIndicator.svelte';
+	import MetricsBox from './MetricsBox.svelte';
 	import { KeyMetric } from 'trade-executor/components';
-	import SummaryBox from './SummaryBox.svelte';
+	import { UpDownIndicator } from '$lib/components';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
@@ -13,7 +13,7 @@
 
 <div class="summary-metrics">
 	<div class="metric-group primary">
-		<div class="primary-metric">
+		<MetricsBox>
 			<KeyMetric
 				name="Annual return"
 				metric={keyMetrics.cagr}
@@ -24,9 +24,9 @@
 			>
 				<UpDownIndicator {value} formatter={formatProfitability} />
 			</KeyMetric>
-		</div>
+		</MetricsBox>
 
-		<div class="primary-metric">
+		<MetricsBox>
 			<KeyMetric
 				name="Total value locked"
 				metric={keyMetrics.total_equity}
@@ -34,10 +34,10 @@
 				tooltipExtraDescription={metricDescriptions.tvl}
 				{backtestLink}
 			/>
-		</div>
+		</MetricsBox>
 	</div>
 
-	<SummaryBox title="Timeframes">
+	<MetricsBox title="Timeframes">
 		<div class="metric-group">
 			<KeyMetric
 				name="Age"
@@ -64,9 +64,9 @@
 				{backtestLink}
 			/>
 		</div>
-	</SummaryBox>
+	</MetricsBox>
 
-	<SummaryBox title="Risk metrics">
+	<MetricsBox title="Risk metrics">
 		<div class="metric-group">
 			<KeyMetric
 				name="Sharpe"
@@ -94,7 +94,7 @@
 				{backtestLink}
 			/>
 		</div>
-	</SummaryBox>
+	</MetricsBox>
 </div>
 
 <style lang="postcss">
@@ -117,13 +117,6 @@
 				> :global(*) {
 					flex: 1;
 				}
-			}
-
-			.primary-metric {
-				padding: 1.25rem;
-				border: 1px solid var(--c-box-3);
-				border-radius: 1rem;
-				background: var(--c-box-1);
 			}
 		}
 
