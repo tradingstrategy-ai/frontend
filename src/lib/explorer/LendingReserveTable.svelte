@@ -44,6 +44,10 @@
 			header: 'Symbol'
 		}),
 		table.column({
+			accessor: 'protocol_name',
+			header: 'Protocol'
+		}),
+		table.column({
 			id: 'tvl',
 			accessor: (row) => {
 				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
@@ -68,7 +72,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'sm' }),
+			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -94,23 +98,27 @@
 			}
 
 			.asset_name {
-				width: 40%;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
+				width: 30%;
+
+				:global(*) {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 
-			.asset_symbol {
-				width: 20%;
+			:is(.asset_symbol, .protocol_name) {
+				width: 12%;
+				white-space: nowrap;
 			}
 
 			:is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
-				width: 20%;
+				width: 15%;
 				text-align: right;
 			}
 
 			.cta {
-				width: 11rem;
+				width: 9rem;
 			}
 		}
 	}
