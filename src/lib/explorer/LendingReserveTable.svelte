@@ -51,7 +51,8 @@
 			id: 'tvl',
 			accessor: (row) => {
 				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
-				return tvl && Number(tvl);
+				// return null (vs. undefined) to sort properly in svelte-headless-table
+				return tvl ? Number(tvl) : null;
 			},
 			header: 'TVL',
 			cell: ({ value }) => formatDollar(value)
