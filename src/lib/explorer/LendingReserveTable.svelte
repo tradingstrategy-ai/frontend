@@ -5,6 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable, EntitySymbol } from '$lib/components';
+	import LendingReserveLabel from './LendingReserveLabel.svelte';
 	import BorrowAprCell from './BorrowAprCell.svelte';
 	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
@@ -30,18 +31,10 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: 'asset_name',
+			id: 'asset_label',
+			accessor: (row) => row.asset_symbol, // sort by asset_symbol
 			header: 'Reserve',
-			cell: ({ value, row: { original } }) =>
-				createRender(EntitySymbol, {
-					type: 'blockchain',
-					slug: hideChainIcon ? undefined : original.chain_slug,
-					label: original.chain_name
-				}).slot(value)
-		}),
-		table.column({
-			accessor: 'asset_symbol',
-			header: 'Symbol'
+			cell: ({ row }) => createRender(LendingReserveLabel, { reserve: row.original, hideChainIcon })
 		}),
 		table.column({
 			accessor: 'protocol_name',
@@ -88,7 +81,7 @@
 <style lang="postcss">
 	.reserve-table :global {
 		@media (--viewport-sm-down) {
-			.asset_name {
+			.asset_label {
 				grid-column: 1/-1;
 			}
 		}
@@ -98,8 +91,8 @@
 				table-layout: fixed;
 			}
 
-			.asset_name {
-				width: 30%;
+			.asset_label {
+				width: 43%;
 
 				:global(*) {
 					white-space: nowrap;
@@ -108,7 +101,7 @@
 				}
 			}
 
-			:is(.asset_symbol, .protocol_name) {
+			.protocol_name {
 				width: 12%;
 				white-space: nowrap;
 			}
