@@ -5,6 +5,7 @@
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { Button, DataTable, EntitySymbol } from '$lib/components';
+	import LendingReserveLabel from './LendingReserveLabel.svelte';
 	import BorrowAprCell from './BorrowAprCell.svelte';
 	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
@@ -30,24 +31,21 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: 'asset_name',
+			id: 'asset_label',
+			accessor: (row) => row.asset_symbol, // sort by asset_symbol
 			header: 'Reserve',
-			cell: ({ value, row: { original } }) =>
-				createRender(EntitySymbol, {
-					type: 'blockchain',
-					slug: hideChainIcon ? undefined : original.chain_slug,
-					label: original.chain_name
-				}).slot(value)
+			cell: ({ row }) => createRender(LendingReserveLabel, { reserve: row.original, hideChainIcon })
 		}),
 		table.column({
-			accessor: 'asset_symbol',
-			header: 'Symbol'
+			accessor: 'protocol_name',
+			header: 'Protocol'
 		}),
 		table.column({
 			id: 'tvl',
 			accessor: (row) => {
 				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
-				return tvl && Number(tvl);
+				// return null (vs. undefined) to sort properly in svelte-headless-table
+				return tvl ? Number(tvl) : null;
 			},
 			header: 'TVL',
 			cell: ({ value }) => formatDollar(value)
@@ -68,7 +66,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'sm' }),
+			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -83,7 +81,7 @@
 <style lang="postcss">
 	.reserve-table :global {
 		@media (--viewport-sm-down) {
-			.asset_name {
+			.asset_label {
 				grid-column: 1/-1;
 			}
 		}
@@ -93,24 +91,28 @@
 				table-layout: fixed;
 			}
 
-			.asset_name {
-				width: 40%;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
+			.asset_label {
+				width: 43%;
+
+				:global(*) {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 
-			.asset_symbol {
-				width: 20%;
+			.protocol_name {
+				width: 12%;
+				white-space: nowrap;
 			}
 
 			:is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
-				width: 20%;
+				width: 15%;
 				text-align: right;
 			}
 
 			.cta {
-				width: 11rem;
+				width: 9rem;
 			}
 		}
 	}

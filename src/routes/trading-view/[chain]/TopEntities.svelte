@@ -50,7 +50,7 @@
 			padding: 0 var(--space-md) var(--space-xxs) 0;
 			font: var(--f-ui-md-bold);
 			letter-spacing: var(--f-ui-md-spacing);
-			color: var(--c-text-light);
+			color: var(--c-text-extra-light);
 
 			@media (--viewport-md-down) {
 				font: var(--f-ui-sm-bold);

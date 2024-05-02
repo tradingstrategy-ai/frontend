@@ -5,13 +5,15 @@ import { formatReserveUSD } from '@aave/math-utils';
  * Return URL for a lending reserve on a given chain and lending protocol
  */
 export function lendingReserveUrl(chain: string, protocol: string, underlyingAsset: Address) {
-	// only Aave V3 is currently supported
-	if (protocol !== 'aave_v3') return undefined;
+	// only Aave V2 and V3 are currently supported
+	if (!/aave_v[23]/.test(protocol)) return undefined;
 
 	const marketSlug = chain === 'ethereum' ? 'mainnet' : chain;
+	const versionSuffix = protocol === 'aave_v3' ? '_v3' : '';
+
 	const params = new URLSearchParams({
 		underlyingAsset,
-		marketName: `proto_${marketSlug}_v3`
+		marketName: `proto_${marketSlug}${versionSuffix}`
 	});
 	return `https://app.aave.com/reserve-overview/?${params}`;
 }
