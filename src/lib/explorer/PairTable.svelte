@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PairIndexResponse } from './pair-client';
-	import { writable, type Writable } from 'svelte/store';
+	import { type Writable, writable, readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
@@ -25,7 +25,7 @@
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ serverSide: true }),
+		page: addPagination({ serverSide: true, serverItemCount: readable(totalRowCount) }),
 		clickable: addClickableRows({ id: 'cta' }),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
@@ -95,18 +95,17 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex, serverItemCount } = tableViewModel.pluginStates.page;
+	const { pageIndex } = tableViewModel.pluginStates.page;
 	const { sortKeys } = tableViewModel.pluginStates.sort;
 	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
 	$: $pageIndex = page;
-	$: $serverItemCount = totalRowCount;
 	$: $sortKeys = [{ id: sort, order: direction }];
 	$: $hiddenColumnIds = hiddenColumns;
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination {loading} {tableViewModel} {totalRowCount} on:change />
 </div>
 
 <style lang="postcss">

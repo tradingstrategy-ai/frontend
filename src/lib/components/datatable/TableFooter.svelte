@@ -4,14 +4,13 @@
 	import PageButton from './PageButton.svelte';
 
 	export let page: PaginationState;
-	export let rowCount: number;
+	export let totalRowCount: number;
 
-	const { pageSize, pageIndex, pageCount, serverItemCount, hasPreviousPage, hasNextPage } = page;
+	const { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = page;
 
 	$: firstRowIndex = $pageIndex * $pageSize + 1;
-	$: totalRowCount = Math.max(rowCount, $serverItemCount);
 	$: lastRowIndex = Math.min(firstRowIndex + $pageSize - 1, totalRowCount);
-	$: visiblePageIndices = getVisibilePageIndices($pageCount, $pageIndex);
+	$: visiblePageIndices = getVisiblePageIndices($pageCount, $pageIndex);
 
 	function handlePageButtonClick({ target }: { target: HTMLButtonElement }) {
 		const index = parseInt(target.value);
@@ -20,7 +19,7 @@
 		}
 	}
 
-	function getVisibilePageIndices(length: number, index: number) {
+	function getVisiblePageIndices(length: number, index: number) {
 		const max = length - 1;
 		const startThreshold = 4;
 		const endThreshold = max - startThreshold;
@@ -49,7 +48,7 @@
 					Showing {formatAmount(firstRowIndex)} to {formatAmount(lastRowIndex)} of {formatAmount(totalRowCount)}
 				</div>
 				{#if $pageCount > 1}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 					<nav on:click={handlePageButtonClick}>
 						<PageButton label="Previous" value={$pageIndex - 1} disabled={!$hasPreviousPage} />
 						{#each visiblePageIndices as pageIdx}
