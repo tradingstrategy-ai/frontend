@@ -1,5 +1,14 @@
-const logos = import.meta.glob('../assets/logos/**/*.svg', { as: 'url', eager: true });
-const cryptoIcons = import.meta.glob('/node_modules/cryptocurrency-icons/svg/color/*.svg', { as: 'url', eager: true });
+const logos = import.meta.glob('../assets/logos/**/*.svg', {
+	query: '?url',
+	import: 'default',
+	eager: true
+});
+
+const cryptoIcons = import.meta.glob('/node_modules/cryptocurrency-icons/svg/color/*.svg', {
+	query: '?url',
+	import: 'default',
+	eager: true
+});
 
 const logoTypes = {
 	blockchain: 'blockchains',
