@@ -75,7 +75,7 @@
     "node-html-parser": "^6.1.12",
     "svelte-fsm": "^1.2.0",
     "svelte-headless-table": "^0.18.2",
-    "svelte-highlight": "^7.3.0",
+    "svelte-highlight": "^7.6.0",
     "svelte-inview": "^4.0.2",
     "svelte-spinner": "^2.0.2",
     "typesense": "^1.7.1",
