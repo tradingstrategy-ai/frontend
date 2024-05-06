@@ -9,7 +9,7 @@ export async function load({ params, parent }) {
 	const position = getTradingPositionInfo(state, status, id);
 
 	if (!position) {
-		throw error(404, 'Not found');
+		error(404, 'Not found');
 	}
 
 	return {

@@ -6,7 +6,7 @@ export async function GET({ fetch, params }) {
 	const position = state?.portfolio[`${params.status}_positions`][params.position];
 	const trade = position?.trades[params.trade];
 
-	if (!trade) throw error(404, 'Not found');
+	if (!trade) error(404, 'Not found');
 
 	const payload = JSON.stringify(trade, null, 4);
 

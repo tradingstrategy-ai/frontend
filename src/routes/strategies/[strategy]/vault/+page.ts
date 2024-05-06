@@ -5,11 +5,11 @@ export async function load({ parent }) {
 	const onChainData = strategy.on_chain_data;
 
 	if (onChainData.asset_management_mode !== 'enzyme') {
-		throw error(404, 'Not found');
+		error(404, 'Not found');
 	}
 
 	if (!chain) {
-		throw error(503, {
+		error(503, {
 			message: 'Service Unavailable',
 			stack: ['Missing chain configuration']
 		});

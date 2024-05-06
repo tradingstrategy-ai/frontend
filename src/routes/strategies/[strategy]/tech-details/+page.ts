@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load() {
-	throw redirect(302, 'tech-details/status');
+	redirect(302, 'tech-details/status');
 }

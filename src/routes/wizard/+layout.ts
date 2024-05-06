@@ -9,7 +9,7 @@ export async function load({ route }) {
 	const wizardSlug = route.id.split('/')[2];
 
 	if (get(wizard).slug !== wizardSlug) {
-		throw error(400, 'Wizard not properly initialized');
+		error(400, 'Wizard not properly initialized');
 	}
 
 	return {

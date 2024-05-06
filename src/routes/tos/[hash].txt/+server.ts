@@ -9,7 +9,7 @@ export async function GET({ params }) {
 		// vite dynamic import requires relative path
 		tosText = (await import(`../../../lib/assets/tos/${hash}.txt?raw`)).default;
 	} catch (e) {
-		throw error(404, 'File not found');
+		error(404, 'File not found');
 	}
 
 	return text(tosText, {
