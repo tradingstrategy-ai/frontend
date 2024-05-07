@@ -11,7 +11,7 @@
 	import TopReserves from './TopReserves.svelte';
 
 	export let data;
-	const { chain, streamed } = data;
+	const { chain } = data;
 </script>
 
 <svelte:head>
@@ -63,7 +63,7 @@
 				type="exchanges"
 				title="Highest volume exchanges"
 				{chain}
-				data={streamed.exchanges}
+				data={data.exchanges}
 				tableComponent={TopExchanges}
 				rightColHeader="Vol 30d"
 			/>
@@ -73,7 +73,7 @@
 				label="pairs"
 				title="Highest TVL trading pairs"
 				{chain}
-				data={streamed.pairs}
+				data={data.pairs}
 				tableComponent={TopPairs}
 				rightColHeader="TVL"
 			/>
@@ -82,7 +82,7 @@
 				type="tokens"
 				title="Highest liquidity tokens"
 				{chain}
-				data={streamed.tokens}
+				data={data.tokens}
 				tableComponent={TopTokens}
 				rightColHeader="Liquidity"
 			/>
@@ -92,7 +92,7 @@
 				label="reserves"
 				title="Lowest APR lending reserves"
 				{chain}
-				data={streamed.reserves}
+				data={data.reserves}
 				tableComponent={TopReserves}
 				rightColHeader="Borrow APR"
 			/>
