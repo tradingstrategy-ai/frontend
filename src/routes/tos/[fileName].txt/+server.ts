@@ -1,13 +1,12 @@
 import { error, text } from '@sveltejs/kit';
 
 export async function GET({ params }) {
-	const { hash } = params;
+	const { fileName } = params;
 
 	let tosText: string;
 
 	try {
-		// vite dynamic import requires relative path
-		tosText = (await import(`../../../lib/assets/tos/${hash}.txt?raw`)).default;
+		tosText = (await import(`$lib/assets/tos/${fileName}.txt?raw`)).default;
 	} catch (e) {
 		error(404, 'File not found');
 	}
