@@ -1,15 +1,14 @@
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { Alert, EntitySymbol, Tooltip } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, EntitySymbol, Spinner, Tooltip } from '$lib/components';
 
 	export let data: MaybePromise<GetTokenBalanceReturnType>;
 </script>
 
 {#await data}
 	<slot skeleton={true} value="---" symbol="---">
-		<Spinner size="2rem" color="var(--c-text-light)" />
+		<Spinner size="32" />
 	</slot>
 {:then balance}
 	{@const { symbol, label } = balance}

@@ -6,8 +6,7 @@
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getTokenBalance } from '$lib/eth-defi/helpers';
-	import { EntitySymbol } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { EntitySymbol, Spinner } from '$lib/components';
 
 	export let contracts: EnzymeSmartContracts;
 
@@ -42,7 +41,7 @@
 	<WalletInfoItem>
 		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} size="1.5rem" />
 		{#await fetchNativeCurrency(address)}
-			<Spinner size="30" color="var(--c-text-light)" />
+			<Spinner />
 		{:then balance}
 			{formatBalance(balance, 2, 4)}
 		{/await}
@@ -53,7 +52,7 @@
 			<!-- TODO: make EntitySymbol dynamic based on denomination token -->
 			<EntitySymbol slot="label" type="token" slug="usdc" size="1.5rem">USDC.e (bridged)</EntitySymbol>
 			{#await fetchDenominationToken(address)}
-				<Spinner size="30" color="var(--c-text-light)" />
+				<Spinner />
 			{:then balance}
 				{formatBalance(balance, 2, 4)}
 			{:catch}

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
-	import { Alert, Button, TextInput } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, Button, Spinner, TextInput } from '$lib/components';
 
 	const url = `${backendUrl}/register`;
 
@@ -99,7 +98,7 @@
 			<Button submit {disabled}>
 				{#if submitting}
 					Submitting
-					<Spinner color="currentColor" />
+					<Spinner size="24" color="var(--c-text-light)" />
 				{:else}
 					Sign up
 				{/if}

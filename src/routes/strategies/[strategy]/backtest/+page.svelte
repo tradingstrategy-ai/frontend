@@ -10,8 +10,7 @@ Page to display the strategy backtest results.
 
 -->
 <script lang="ts">
-	import { Alert, Button, SummaryBox } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, Spinner, SummaryBox } from '$lib/components';
 
 	export let data;
 	const { strategy } = data;
@@ -44,7 +43,7 @@ Page to display the strategy backtest results.
 
 		{#if !iframeLoaded}
 			<div class="spinner-wrapper">
-				<Spinner size="60" color="var(--c-text-extra-light)" />
+				<Spinner size="60" />
 			</div>
 		{/if}
 
