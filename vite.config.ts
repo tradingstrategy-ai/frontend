@@ -8,7 +8,6 @@ import { createLogger } from 'vite';
 import { defineConfig } from 'vitest/config';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
-import GithubActionsReporter from 'vitest-github-actions-reporter';
 
 const logger = createLogger();
 const loggerInfo = logger.info;
@@ -59,7 +58,6 @@ export default defineConfig({
 		environment: 'jsdom',
 		globals: true,
 		include: ['src/**/*.{test,spec}.{js,ts}'],
-		reporters: process.env.GITHUB_ACTIONS ? ['dot', new GithubActionsReporter()] : 'default',
 		restoreMocks: true,
 		setupFiles: ['test.config.ts']
 	}
