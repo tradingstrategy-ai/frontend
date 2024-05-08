@@ -4,19 +4,28 @@
  * https://vitejs.dev/config/
  */
 import { sveltekit } from '@sveltejs/kit/vite';
-import { createLogger } from 'vite';
+import { type LogOptions, createLogger } from 'vite';
 import { defineConfig } from 'vitest/config';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
 
-const logger = createLogger();
-const loggerInfo = logger.info;
+const customLogger = (({ info, warnOnce, ...otherLogMethods }) => {
+	return {
+		...otherLogMethods,
 
-// suppress svg build output during CI (spammy due to cryptocurrency-icons)
-logger.info = (msg, options) => {
-	if (!!process.env.CI && /immutable\/assets\/.*\.svg/.test(msg)) return;
-	loggerInfo(msg, options);
-};
+		// suppress svg build output during CI (spammy due to cryptocurrency-icons)
+		info(msg: string, options: LogOptions) {
+			if (!!process.env.CI && /immutable\/assets\/.*\.svg/.test(msg)) return;
+			info(msg, options);
+		},
+
+		// suppress missing sourcemap warnings from @aave/math-utils during unit tests
+		warnOnce(msg: string, options: LogOptions) {
+			if (/^Sourcemap for ".*@aave\/math-utils/.test(msg)) return;
+			warnOnce(msg, options);
+		}
+	};
+})(createLogger());
 
 export default defineConfig({
 	plugins: [
@@ -43,8 +52,7 @@ export default defineConfig({
 		}
 	},
 
-	// suppress svg build output during CI (spammy due to cryptocurrency-icons)
-	customLogger: logger,
+	customLogger,
 
 	build: {
 		// suppress chunk size warning during build
@@ -59,6 +67,6 @@ export default defineConfig({
 		globals: true,
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		restoreMocks: true,
-		setupFiles: ['test.config.ts']
+		setupFiles: ['tests/vitest.config.ts']
 	}
 });
