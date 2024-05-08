@@ -85,28 +85,31 @@ export async function fetchAndParseGlossary(fetch: Fetch) {
 	// Find all dt elements that are immediate children of the dl.glossary
 	const dts = parse(source).querySelectorAll('dl.glossary > dt');
 
-	return dts.reduce((glossary, dt) => {
-		const name = getTermText(dt);
-		assert(
-			/\w/.test(name), // should have at least one word character
-			new GlossaryParseError(
-				`Could not read glossary term "${name}"; previous term: ${Object.values(glossary).at(-1)?.name}`
-			)
-		);
+	return dts.reduce(
+		(glossary, dt) => {
+			const name = getTermText(dt);
+			assert(
+				/\w/.test(name), // should have at least one word character
+				new GlossaryParseError(
+					`Could not read glossary term "${name}"; previous term: ${Object.values(glossary).at(-1)?.name}`
+				)
+			);
 
-		const slug = slugify(name);
-		assert(!glossary[slug], new GlossaryParseError(`Duplicate glossary slug: ${slug}`));
+			const slug = slugify(name);
+			assert(!glossary[slug], new GlossaryParseError(`Duplicate glossary slug: ${slug}`));
 
-		const dd = getDefinitionElem(dt);
-		assert(dd, new GlossaryParseError(`Sibling <dd> for <dt> "${name}" not found`));
+			const dd = getDefinitionElem(dt);
+			assert(dd, new GlossaryParseError(`Sibling <dd> for <dt> "${name}" not found`));
 
-		rewriteInternalLinks(dd);
-		const html = dd.innerHTML;
-		const description = getFirstSentence(dd.text);
+			rewriteInternalLinks(dd);
+			const html = dd.innerHTML;
+			const description = getFirstSentence(dd.text);
 
-		glossary[slug] = { name, slug, html, description };
-		return glossary;
-	}, {} as Record<string, GlossaryEntry>);
+			glossary[slug] = { name, slug, html, description };
+			return glossary;
+		},
+		{} as Record<string, GlossaryEntry>
+	);
 }
 
 // Create a SWR cache for strategies with 5 minute TTL in production (1 min in dev)

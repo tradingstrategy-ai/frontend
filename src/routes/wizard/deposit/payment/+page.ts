@@ -33,12 +33,12 @@ export async function load() {
 				address,
 				abi: termsPaymentForwarderABI as Abi,
 				functionName: 'buySharesOnBehalfUsingTransferWithAuthorizationAndTermsOfService'
-		  }
+			}
 		: {
 				address,
 				abi: paymentForwarderABI as Abi,
 				functionName: 'buySharesOnBehalfUsingTransferWithAuthorization'
-		  };
+			};
 
 	return { paymentContract, tosRequired };
 }
