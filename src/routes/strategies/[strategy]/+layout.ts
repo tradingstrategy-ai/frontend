@@ -9,7 +9,7 @@ import { getChain } from '$lib/wallet/client.js';
 
 export async function load({ params, fetch }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
-	if (!strategyConf) throw error(404, 'Not found');
+	if (!strategyConf) error(404, 'Not found');
 
 	// kick off slow `/state` request before awaiting metadata (returned as deferred promise)
 	const state = getStrategyState(fetch, params.strategy).catch(() => {});
@@ -24,7 +24,7 @@ export async function load({ params, fetch }) {
 			`Error loading or parsing data from URL: ${strategyConf.url}/metadata`,
 			e instanceof Error ? e.stack ?? e.message : String(e)
 		];
-		throw error(503, { message: 'Service Unavailable', stack });
+		error(503, { message: 'Service Unavailable', stack });
 	}
 
 	const chain = getChain(strategy.on_chain_data.chain_id);

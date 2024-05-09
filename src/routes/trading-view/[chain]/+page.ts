@@ -6,14 +6,11 @@ import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client.js';
 export async function load({ params, fetch }) {
 	const chain_slug = params.chain;
 
-	// TODO: After SvelteKit 2.x upgrade, remove `streamed` nesting
 	return {
-		streamed: {
-			exchanges: fetchTopExchanges(fetch, chain_slug),
-			tokens: fetchTopTokens(fetch, chain_slug),
-			pairs: fetchTopPairs(fetch, chain_slug),
-			reserves: fetchTopReserves(fetch, chain_slug)
-		}
+		exchanges: fetchTopExchanges(fetch, chain_slug),
+		tokens: fetchTopTokens(fetch, chain_slug),
+		pairs: fetchTopPairs(fetch, chain_slug),
+		reserves: fetchTopReserves(fetch, chain_slug)
 	};
 }
 

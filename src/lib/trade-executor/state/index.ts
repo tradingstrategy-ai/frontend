@@ -5,7 +5,7 @@ import { stateSchema } from './state';
 
 export async function getRawStrategyState(fetch: Fetch, strategyId: string) {
 	const strategy = configuredStrategies.get(strategyId);
-	if (!strategy) throw error(404, 'Not found');
+	if (!strategy) error(404, 'Not found');
 
 	const url = `${strategy.url}/state`;
 	let resp;
@@ -13,7 +13,7 @@ export async function getRawStrategyState(fetch: Fetch, strategyId: string) {
 		resp = await fetch(url);
 	} catch (e) {
 		const stack = [`Error loading data from URL: ${url}`, e.message];
-		throw error(503, { message: 'Service Unavailable', stack });
+		error(503, { message: 'Service Unavailable', stack });
 	}
 
 	if (!resp.ok) {

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
-	import Spinner from 'svelte-spinner';
-	import { Alert, BlogRoll, HeroBanner, Section } from '$lib/components';
+	import { Alert, BlogRoll, HeroBanner, Section, Spinner } from '$lib/components';
 	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
@@ -50,7 +49,7 @@
 	<Section>
 		{#if page.loading}
 			<div style:text-align="center">
-				<Spinner size="4rem" color="var(--c-text)" />
+				<Spinner size="60" />
 			</div>
 		{:else if page.error}
 			<Alert title="Error loading blog posts">

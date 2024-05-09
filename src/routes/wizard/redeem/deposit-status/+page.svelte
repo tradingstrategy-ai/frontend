@@ -4,16 +4,15 @@
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
 	import { config, wallet, buyNativeCurrencyUrl, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { Alert, Button, Grid, EntitySymbol } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
 
 	$: ({ address, chain } = $wallet);
-	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data);
+	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data!);
 	$: chainCurrency = chain?.nativeCurrency.symbol;
 
 	$: depositStatusComplete =
-		'denominationToken' in $wizard.data &&
-		'vaultNetValue' in $wizard.data &&
+		'denominationToken' in $wizard.data! &&
+		'vaultNetValue' in $wizard.data! &&
 		nativeCurrency?.value > 0n &&
 		vaultShares?.value > 0n;
 
@@ -42,7 +41,7 @@
 					size="1.5rem"
 				/>
 				{#await getNativeCurrency(address)}
-					<Spinner size="30" color="var(--c-text-light)" />
+					<Spinner />
 				{:then balance}
 					{formatBalance(balance, 2, 4)}
 				{/await}

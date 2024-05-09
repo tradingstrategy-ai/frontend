@@ -7,7 +7,7 @@ export async function load({ params, parent }) {
 	const trade = position.trades.find((t) => t.trade_id === tradeId);
 
 	if (!trade) {
-		throw error(404, 'Not found');
+		error(404, 'Not found');
 	}
 
 	return {

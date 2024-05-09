@@ -26,11 +26,14 @@ export type ConfiguredChain = (typeof chains)[number];
 export type ConfiguredChainId = ConfiguredChain['id'];
 
 // Initialize chain-specific transports based on configured RPC URLs
-const transports = chains.reduce((acc, { id }) => {
-	const url = rpcUrls[id];
-	acc[id] = url ? fallback([http(url), http()]) : http();
-	return acc;
-}, {} as Record<ConfiguredChainId, Transport>);
+const transports = chains.reduce(
+	(acc, { id }) => {
+		const url = rpcUrls[id];
+		acc[id] = url ? fallback([http(url), http()]) : http();
+		return acc;
+	},
+	{} as Record<ConfiguredChainId, Transport>
+);
 
 const metadata = {
 	name: 'Trading Strategy',

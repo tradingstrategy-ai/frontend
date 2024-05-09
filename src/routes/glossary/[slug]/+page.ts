@@ -11,7 +11,7 @@ export async function load({ params, parent }) {
 	const entry = glossary[params.slug];
 
 	if (!entry) {
-		throw error(404, `Glossary entry not found: ${params.slug}`);
+		error(404, `Glossary entry not found: ${params.slug}`);
 	}
 
 	return { entry };

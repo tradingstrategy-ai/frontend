@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
-	import { Alert, Button, ContentCard, HeroBanner, Section, TextInput, Timestamp } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, Button, ContentCard, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
 
@@ -217,8 +216,8 @@
 			--button-height: auto;
 		}
 
-		:global .svelte-spinner {
-			align-self: center;
+		:global .spinner {
+			margin-bottom: 6px;
 		}
 
 		.action-link {

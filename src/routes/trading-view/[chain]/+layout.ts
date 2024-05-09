@@ -8,7 +8,7 @@ export async function load({ fetch, params }) {
 	// trigger error if chain is under maintenance
 	const chainName = chainsUnderMaintenance[chain_slug];
 	if (chainName) {
-		throw error(503, { chainName, message: `Chain under maintenance: ${chainName}` });
+		error(503, { chainName, message: `Chain under maintenance: ${chainName}` });
 	}
 
 	return {

@@ -8,12 +8,15 @@
 
 	const { glossary } = data;
 
-	const index = Object.values(glossary).reduce((acc, entry) => {
-		const firstChar = entry.slug[0];
-		acc[firstChar] ??= [];
-		acc[firstChar].push(entry);
-		return acc;
-	}, {} as Record<string, GlossaryEntry[]>);
+	const index = Object.values(glossary).reduce(
+		(acc, entry) => {
+			const firstChar = entry.slug[0];
+			acc[firstChar] ??= [];
+			acc[firstChar].push(entry);
+			return acc;
+		},
+		{} as Record<string, GlossaryEntry[]>
+	);
 </script>
 
 <svelte:head>

@@ -7,7 +7,6 @@
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: BodyRow<any, any>[];
 	export let page: PaginationState | undefined;
-	export let size = 'md';
 
 	const { pageIndex, pageSize } = page ?? {};
 
@@ -24,10 +23,10 @@
 			{@const index = getRowIndex(pageRowIndex)}
 			{#if rowProps.clickable}
 				<a href={row.cellForId[rowProps.clickable.id].value} style:display="contents">
-					<TableRow attrs={rowAttrs} cells={row.cells} {index} {size} />
+					<TableRow attrs={rowAttrs} cells={row.cells} {index} />
 				</a>
 			{:else}
-				<TableRow attrs={rowAttrs} cells={row.cells} {index} {size} />
+				<TableRow attrs={rowAttrs} cells={row.cells} {index} />
 			{/if}
 		</Subscribe>
 	{/each}

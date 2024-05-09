@@ -11,7 +11,7 @@ export async function load({ fetch, setHeaders }) {
 		glossary = await getCachedGlossary(fetch);
 	} catch (e) {
 		if (e instanceof GlossaryParseError) {
-			throw error(503, {
+			error(503, {
 				message: 'Service Unavailable',
 				stack: e.stack?.split('\n')
 			});

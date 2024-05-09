@@ -5,7 +5,6 @@
 	export let attrs: HTMLAttributes<HTMLTableRowElement>;
 	export let index: number | undefined;
 	export let cells: BodyCell<any, any>[];
-	export let size = 'md';
 </script>
 
 <tr {...attrs} data-row-index={index}>

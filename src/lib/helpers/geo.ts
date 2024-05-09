@@ -40,6 +40,6 @@ export function getCountryName(countryCode: CountryCode | undefined) {
 export function assertNotGeoBlocked(feature: string, countryCode: CountryCode | undefined, isAdmin = false) {
 	if (isAdmin) return;
 	if (isGeoBlocked(feature, countryCode)) {
-		throw error(451, `Unavailable in ${getCountryName(countryCode)}`);
+		error(451, `Unavailable in ${getCountryName(countryCode)}`);
 	}
 }

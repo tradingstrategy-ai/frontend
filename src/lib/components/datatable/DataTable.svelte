@@ -25,6 +25,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let tableViewModel: TableViewModel<any, any>;
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
+	export let totalRowCount: number | undefined = undefined;
 	export let isResponsive = false;
 	export let loading = false;
 	export let size = 'md';
@@ -95,9 +96,9 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} {size} />
+	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} />
 
 	{#if hasPagination}
-		<TableFooter page={pluginStates.page} rowCount={$rows.length} />
+		<TableFooter page={pluginStates.page} totalRowCount={totalRowCount ?? $rows.length} />
 	{/if}
 </table>

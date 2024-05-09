@@ -32,7 +32,7 @@ export type Subscriber = {
 export function getClient(fetch: Fetch) {
 	async function subscribe(subscriber: Subscriber) {
 		if (!mailerLiteConfig) {
-			throw error(401, { message: 'MailerLite URL and/or API key not defined.' });
+			error(401, { message: 'MailerLite URL and/or API key not defined.' });
 		}
 
 		const headers = {

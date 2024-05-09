@@ -60,8 +60,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	import { fade } from 'svelte/transition';
 	import { floorUTCDate, addUTCDays } from '$lib/helpers/date';
 	import { type ChartLinker, type QuoteFeed, ChartActivityTracker } from '$lib/chart';
-	import { Alert } from '$lib/components';
-	import Spinner from 'svelte-spinner';
+	import { Alert, Spinner } from '$lib/components';
 
 	export let options: any = {};
 	export let init: Function | undefined = undefined;
@@ -226,7 +225,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 <div class="chart-iq" data-css-props>
 	{#if loading || updating}
 		<div class="loading" transition:fade={{ duration: 250 }}>
-			<Spinner size="60" color="var(--c-text-extra-light)" />
+			<Spinner size="60" />
 		</div>
 	{/if}
 

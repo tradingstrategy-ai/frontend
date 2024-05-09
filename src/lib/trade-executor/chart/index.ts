@@ -47,7 +47,7 @@ export async function fetchChartData(
 		resp = await fetch(`${executorUrl}/chart?${new URLSearchParams(params)}`);
 	} catch (e) {
 		const stack = [`Error loading data from URL: ${executorUrl}`, e.message];
-		throw error(503, { message: 'Service Unavailable', stack });
+		error(503, { message: 'Service Unavailable', stack });
 	}
 
 	if (!resp.ok) {

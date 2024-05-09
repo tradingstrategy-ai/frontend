@@ -4,7 +4,7 @@
  * NOTE: Don't use this helper for APIs that may include sensitive data
  * in error message or stacktrace.
  */
-import { error } from '@sveltejs/kit';
+import { type NumericRange, error } from '@sveltejs/kit';
 import { backendUrl } from '$lib/config';
 
 type Params = Record<string, string>;
@@ -35,7 +35,8 @@ export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Par
 }
 
 export async function publicApiError(response: Response) {
-	const status = response.status < 500 ? response.status : 503;
+	let status = response.status as NumericRange<400, 599>;
+	if (status >= 500) status = 503;
 
 	const stack: string[] = [];
 	stack.push(`Error loading data from URL: ${response.url}`);
