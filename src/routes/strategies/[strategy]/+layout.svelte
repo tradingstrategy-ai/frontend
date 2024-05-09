@@ -23,10 +23,10 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main class="strategy-layout ds-container ds-3">
-	{#if $page.data.skipSideNav}
-		<slot />
-	{:else}
+{#if $page.data.skipSideNav}
+	<slot />
+{:else}
+	<main class="strategy-layout ds-container ds-3">
 		<PageHeading description={strategy.short_description}>
 			<object slot="icon" type="image/webp" data="/avatars/{strategy.id}.webp" aria-label="Strategy icon">
 				<img src={strategy.icon_url} alt="Strategy icon" />
@@ -58,8 +58,8 @@
 			/>
 			<slot />
 		</div>
-	{/if}
-</main>
+	</main>
+{/if}
 
 <style lang="postcss">
 	.strategy-layout {
