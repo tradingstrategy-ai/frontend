@@ -3,7 +3,7 @@
 
 	let className: string = '';
 	export { className as class };
-	export let tags: string[] = [];
+	export let tags: string[];
 	export let includeLive = false;
 </script>
 

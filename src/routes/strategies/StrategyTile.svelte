@@ -60,7 +60,7 @@
 						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
 				{/if}
-				<StrategyBadges tags={strategy.tags} includeLive={admin} />
+				<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
 			</div>
 		</div>
 		<div class="chart">
