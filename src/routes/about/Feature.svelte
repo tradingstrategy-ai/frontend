@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { Button } from '$lib/components';
-
 	export let title: string;
 	export let image: string;
-	export let ctaUrl: string | undefined = undefined;
 </script>
 
 <div class="feature">
