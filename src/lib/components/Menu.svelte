@@ -7,6 +7,8 @@
 	$: direction = horizontal ? 'horizontal' : 'vertical';
 </script>
 
+<!-- silence ally warnings (on:click is being forwarded from interactive child elements) -->
+<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <menu class="dir--{direction} align--{align}" on:click>
 	<slot />
 </menu>

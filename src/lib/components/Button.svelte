@@ -42,6 +42,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let title: string | undefined = undefined;
 
 	$: tag = href && !disabled ? 'a' : 'button';
+	$: role = tag === 'a' ? 'link' : 'button';
 	$: hasLabel = $$slots.default || label;
 	$: kind = ghost ? 'ghost' : quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
 	$: allClasses = `button ${kind} ${size} ${classes}`;
@@ -61,7 +62,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	$: attrs = tag === 'a' ? linkAttrs : buttonAttrs;
 </script>
 
-<svelte:element this={tag} {...attrs} class={allClasses} {tabindex} {title} on:click>
+<svelte:element this={tag} {...attrs} class={allClasses} {tabindex} {title} {role} on:click>
 	{#if hasLabel}
 		<span><slot>{label}</slot></span>
 	{/if}

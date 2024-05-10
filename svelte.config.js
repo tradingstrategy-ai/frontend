@@ -8,9 +8,6 @@ import postcssConfig from './postcss.config.js';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Disable all warnings during the local compilation for now (spammy)
-	onwarn: () => {},
-
 	kit: {
 		adapter: node({
 			envPrefix: 'FRONTEND_'
