@@ -2,11 +2,14 @@
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 
 	export let strategy: StrategyRuntimeState;
-	const dataUrl = strategy.connected ? `/avatars/${strategy.id}.webp` : strategy.icon_url;
+
+	const localIconUrl = `/avatars/${strategy.id}.webp`;
+	const strategyIconUrl = strategy.icon_url?.replace(/^http:/, 'https:');
+	const dataUrl = strategy.connected ? localIconUrl : strategyIconUrl;
 </script>
 
 <object type="image/webp" data={dataUrl} aria-label="Strategy icon">
-	<img src={strategy.icon_url} alt="Strategy icon" />
+	<img src={strategyIconUrl} alt="Strategy icon" />
 </object>
 
 <style lang="postcss">
