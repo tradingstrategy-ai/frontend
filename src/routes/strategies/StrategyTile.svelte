@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
+	import { StrategyIcon } from 'trade-executor/components';
 	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
@@ -70,9 +71,7 @@
 	<div class="content">
 		<header>
 			<div class="avatar">
-				<object type="image/webp" data="/avatars/{strategy.id}.webp" aria-label="Strategy icon">
-					<img src={strategy.icon_url} alt="Strategy icon" />
-				</object>
+				<StrategyIcon {strategy} />
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>
@@ -205,16 +204,6 @@
 
 					:global(.tooltip .popup) {
 						min-width: 20rem;
-					}
-
-					:is(img, object) {
-						display: grid;
-						place-items: center;
-						height: inherit;
-						width: inherit;
-						border-radius: 100%;
-						overflow: hidden;
-						object-fit: cover;
 					}
 
 					.chain-icon {

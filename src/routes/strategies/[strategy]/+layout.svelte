@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Alert, PageHeading } from '$lib/components';
+	import { StrategyIcon } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import StrategyBadges from '../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
@@ -28,9 +29,7 @@
 {:else}
 	<main class="strategy-layout ds-container ds-3">
 		<PageHeading description={strategy.short_description}>
-			<object slot="icon" type="image/webp" data="/avatars/{strategy.id}.webp" aria-label="Strategy icon">
-				<img src={strategy.icon_url} alt="Strategy icon" />
-			</object>
+			<StrategyIcon slot="icon" {strategy} />
 			<div class="title" slot="title">
 				{strategy.name}
 				<StrategyBadges class="badge" tags={strategy.tags} />

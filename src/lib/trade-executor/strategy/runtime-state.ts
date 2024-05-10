@@ -53,7 +53,6 @@ export async function getStrategiesWithRuntimeState(fetch: Fetch): Promise<Strat
 		try {
 			return await getStrategyRuntimeState(fetch, strategyConf);
 		} catch (err) {
-			console.error(err);
 			return getDisconnectedStrategy(strategyConf, err);
 		}
 	});
