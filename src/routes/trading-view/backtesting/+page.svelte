@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { backendUrl } from '$lib/config';
+	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
 	import { Alert, Button, ContentCard, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -11,8 +11,13 @@
 	let validApiKey = '';
 	let apiKeyError = '';
 
-	function getDownloadUrl(urlStr: string) {
-		const url = new URL(urlStr);
+	function getDownloadUrl(originalUrl: string) {
+		// NOTE: public API does not properly identify the request origin based on `X-Forwarded-Host`
+		// header, so it returns an internal URL instead of cannonical (public) URL
+		if (backendInternalUrl) {
+			originalUrl = originalUrl.replace(backendInternalUrl, backendUrl);
+		}
+		const url = new URL(originalUrl);
 		url.searchParams.set('api-key', validApiKey);
 		return url.toString();
 	}
