@@ -19,11 +19,17 @@ export async function handleFetch({ request }) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {
 			request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
+
 			// set headers to enable backend to determine the original request origin
-			const url = new URL(backendUrl);
-			request.headers.set('Host', url.hostname);
-			request.headers.set('X-Forwarded-Host', url.hostname);
-			request.headers.set('X-Forwarded-Proto', url.protocol.slice(0, -1));
+			//
+			// disabling this for now since `Host` header is no longer supported on
+			// fronetnd, and w/out it backend does not identify origin correctly, so
+			// you end up with internal hostname and external protocol (confusing)
+			//
+			// const url = new URL(backendUrl);
+			// request.headers.set('Host', url.hostname);
+			// request.headers.set('X-Forwarded-Host', url.hostname);
+			// request.headers.set('X-Forwarded-Proto', url.protocol.slice(0, -1));
 		}
 	}
 	return fetch(request);
