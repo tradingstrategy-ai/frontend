@@ -4,6 +4,7 @@
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
+import { lendingReserveInternalUrl } from '$lib/helpers/lending-reserve.js';
 
 export async function GET({ fetch, setHeaders, url }) {
 	// Fetching all reserves (currently < 1000); may need to paginate in the future
@@ -11,7 +12,7 @@ export async function GET({ fetch, setHeaders, url }) {
 
 	const stream = new SitemapStream({ hostname: url.origin });
 	const entries = reserves!.rows.map((row) => ({
-		url: `trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
+		url: lendingReserveInternalUrl(row),
 		priority: 0.8
 	}));
 	Readable.from(entries).pipe(stream);

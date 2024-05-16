@@ -7,7 +7,7 @@
 	import { Button, DataTable, EntitySymbol } from '$lib/components';
 	import LendingReserveLabel from './LendingReserveLabel.svelte';
 	import BorrowAprCell from './BorrowAprCell.svelte';
-	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+	import { getFormattedReserveUSD, lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 
 	export let loading = false;
@@ -64,7 +64,7 @@
 		}),
 		table.column({
 			id: 'cta',
-			accessor: (row) => `/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`,
+			accessor: lendingReserveInternalUrl,
 			header: '',
 			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
