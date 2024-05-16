@@ -13,7 +13,7 @@ export async function load({ fetch, locals }) {
 
 	// non-admin users should only see "live" strategies
 	if (!admin) {
-		strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
+		strategies = strategies = strategies.filter((s) => s.connected && s.tags.includes('live'));
 	}
 
 	return { strategies };
