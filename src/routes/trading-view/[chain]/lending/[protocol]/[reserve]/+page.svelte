@@ -6,7 +6,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import { getFormattedReserveUSD, isBorrowable, lendingReserveUrl } from '$lib/helpers/lending-reserve';
+	import { getFormattedReserveUSD, isBorrowable, lendingReserveExternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 
 	export let data;
@@ -21,7 +21,7 @@
 
 	$: formattedReserveUSD = getFormattedReserveUSD(reserve);
 
-	$: reserveUrl = lendingReserveUrl(reserve.chain_slug, reserve.protocol_slug, reserve.asset_address);
+	$: reserveUrl = lendingReserveExternalUrl(reserve);
 
 	// Hide chart for Aave v3 GHO token as well as non-borrowable reserves
 	// see: https://docs-gho.vercel.app/concepts/overview

@@ -55,6 +55,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>TVL and Netflow | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="TVL and Netflow time-series charts for {strategy.name} strategy" />
+</svelte:head>
+
 <section class="tvl">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 

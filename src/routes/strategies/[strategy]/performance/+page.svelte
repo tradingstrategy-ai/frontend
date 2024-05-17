@@ -26,6 +26,11 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Performance | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Performance chart and summary metrics for {strategy.name} strategy" />
+</svelte:head>
+
 <section class="performance-page">
 	<div class="data-source">
 		<SegmentedControl options={Object.keys(dataSources)} bind:selected={selectedDataSource} />

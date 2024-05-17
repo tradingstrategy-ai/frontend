@@ -8,13 +8,18 @@
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
-	const { chain, onChainData } = data;
+	const { chain, onChainData, strategy } = data;
 
 	const address = onChainData.smart_contracts.vault;
 	const chainSlug = getChain(chain.id)?.slug;
 	const enzymeUrl = address && `https://app.enzyme.finance/vault/${address}?network=${chainSlug}`;
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>
+
+<svelte:head>
+	<title>Enzyme vault | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Enzyme vault information for {strategy.name} strategy" />
+</svelte:head>
 
 <section class="vault">
 	<SummaryBox title="Vault information" ctaPosition="top">

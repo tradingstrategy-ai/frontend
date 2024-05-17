@@ -346,3 +346,10 @@ export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): 
 
 	return `${sign}${formatted} %`;
 }
+
+/**
+ * Capitalize the first letter of a string
+ */
+export function capitalize(string: string) {
+	return string[0].toUpperCase() + string.slice(1);
+}

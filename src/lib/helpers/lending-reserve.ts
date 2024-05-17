@@ -2,17 +2,24 @@ import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 import { formatReserveUSD } from '@aave/math-utils';
 
 /**
- * Return URL for a lending reserve on a given chain and lending protocol
+ * Return internal URL for a lending reserve
  */
-export function lendingReserveUrl(chain: string, protocol: string, underlyingAsset: Address) {
-	// only Aave V2 and V3 are currently supported
-	if (!/aave_v[23]/.test(protocol)) return undefined;
+export function lendingReserveInternalUrl({ chain_slug, protocol_slug, reserve_slug }: LendingReserve) {
+	return `/trading-view/${chain_slug}/lending/${protocol_slug}/${reserve_slug}`;
+}
 
-	const marketSlug = chain === 'ethereum' ? 'mainnet' : chain;
-	const versionSuffix = protocol === 'aave_v3' ? '_v3' : '';
+/**
+ * Return external URL for a lending reserve (on reserve protocol's web site)
+ */
+export function lendingReserveExternalUrl({ chain_slug, protocol_slug, asset_address }: LendingReserve) {
+	// only Aave V2 and V3 are currently supported
+	if (!/aave_v[23]/.test(protocol_slug)) return undefined;
+
+	const marketSlug = chain_slug === 'ethereum' ? 'mainnet' : chain_slug;
+	const versionSuffix = protocol_slug === 'aave_v3' ? '_v3' : '';
 
 	const params = new URLSearchParams({
-		underlyingAsset,
+		underlyingAsset: asset_address,
 		marketName: `proto_${marketSlug}${versionSuffix}`
 	});
 	return `https://app.aave.com/reserve-overview/?${params}`;

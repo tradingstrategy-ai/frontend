@@ -8,6 +8,11 @@
 	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
 </script>
 
+<svelte:head>
+	<title>Fees | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Trading fee information for {strategy.name} strategy" />
+</svelte:head>
+
 <section class="fees">
 	<SummaryBox title="Fees">
 		<table class="datatable">

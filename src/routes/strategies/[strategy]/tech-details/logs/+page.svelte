@@ -8,6 +8,7 @@
 	import { SegmentedControl } from '$lib/components';
 
 	export let data;
+	$: ({ strategy } = data);
 
 	const levels = {
 		trade: { label: 'Trade', number: 21 },
@@ -23,6 +24,11 @@
 		return level === selected || level_number >= levels[selected]?.number;
 	});
 </script>
+
+<svelte:head>
+	<title>Logs | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Trade and execution logs for {strategy.name} strategy" />
+</svelte:head>
 
 <section class="logs">
 	<header>

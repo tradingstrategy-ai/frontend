@@ -13,6 +13,11 @@
 	// $: githubUrl = `http://github.com/tradingstrategy-ai/trade-executor/tree/master/strategies/${summary.id}.py`;
 </script>
 
+<svelte:head>
+	<title>Source code | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="The source code of the {strategy.name} strategy" />
+</svelte:head>
+
 <section class="source">
 	<SummaryBox title="Source code" subtitle="The source code of the {strategy.name} strategy" ctaPosition="top">
 		<!--

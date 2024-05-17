@@ -9,9 +9,7 @@
 	import { Alert } from '$lib/components';
 
 	export let data;
-
-	// The URLs for strategy thinking images
-	$: imageUrls = data.imageUrls;
+	$: ({ imageUrls, strategy } = data);
 
 	let hasError = false;
 	let errorUrl = '';
@@ -25,6 +23,14 @@
 		target.src = fallback;
 	}
 </script>
+
+<svelte:head>
+	<title>Decision making | {strategy.name} | Trading Strategy</title>
+	<meta
+		name="description"
+		content="The technical indicators and strategy decision making process for the last decision making cycle of {strategy.name} strategy"
+	/>
+</svelte:head>
 
 <section class="decision-making" class:hasError>
 	<h4>The technical indicators and strategy decision making process for the last decision making cycle.</h4>
