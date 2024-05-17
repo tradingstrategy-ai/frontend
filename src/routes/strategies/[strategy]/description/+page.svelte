@@ -2,8 +2,15 @@
 	import { Markdown } from '$lib/components';
 
 	export let data;
-	const content = data.strategy.long_description;
+	const { strategy } = data;
+
+	const content = strategy.long_description;
 </script>
+
+<svelte:head>
+	<title>Description | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Detailed information about {strategy.name} strategy" />
+</svelte:head>
 
 <div class="strategy-description">
 	{#if content}

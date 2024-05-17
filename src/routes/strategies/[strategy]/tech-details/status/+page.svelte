@@ -6,8 +6,13 @@
 	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ runState, deferred } = data);
+	$: ({ runState, deferred, strategy } = data);
 </script>
+
+<svelte:head>
+	<title>Instance status | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Instance status information for {strategy.name} strategy" />
+</svelte:head>
 
 <section class="instance-status">
 	<div class="status-box">

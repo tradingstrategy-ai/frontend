@@ -4,9 +4,10 @@
 	import { goto } from '$app/navigation';
 	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
+	import { capitalize } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ positions, status } = data);
+	$: ({ positions, status, strategy } = data);
 
 	$: q = $page.url.searchParams;
 	$: options = {
@@ -22,6 +23,11 @@
 		detail.scrollToTop();
 	}
 </script>
+
+<svelte:head>
+	<title>{capitalize(status)} positions | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="List of all {status} positions for {strategy.name} strategy" />
+</svelte:head>
 
 <section class="position-index">
 	{#if positions.length > 0}

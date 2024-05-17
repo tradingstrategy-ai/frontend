@@ -32,6 +32,11 @@ Page to display the strategy backtest results.
 
 <svelte:window on:message={handleMessage} />
 
+<svelte:head>
+	<title>Backtest results | {strategy.name} | Trading Strategy</title>
+	<meta name="description" content="Detailed backtest results for {strategy.name} strategy" />
+</svelte:head>
+
 <section class="backtest">
 	{#if strategy.backtest_available}
 		<SummaryBox title="Backtest results">
