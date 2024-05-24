@@ -12,7 +12,10 @@ export async function load({ params, fetch }) {
 	if (!strategyConf) error(404, 'Not found');
 
 	// kick off slow `/state` request before awaiting metadata (returned as deferred promise)
-	const state = getStrategyState(fetch, params.strategy).catch(() => {});
+	const state = getStrategyState(fetch, params.strategy).catch((e) => {
+		console.error(`Error loading or parsing ${params.strategy} /state endpoint`);
+		console.error(e);
+	});
 
 	let strategy: ConnectedStrategyRuntimeState;
 
