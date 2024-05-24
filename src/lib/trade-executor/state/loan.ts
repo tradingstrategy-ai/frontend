@@ -13,7 +13,7 @@ export const loanSchema = z.object({
 	pair: tradingPairIdentifierSchema,
 	collateral: assetWithTrackedValueSchema,
 	collateral_interest: interestSchema,
-	borrowed: assetWithTrackedValueSchema,
+	borrowed: assetWithTrackedValueSchema.nullish(),
 	borrowed_interest: interestSchema.nullish()
 });
 export type Loan = z.infer<typeof loanSchema>;
