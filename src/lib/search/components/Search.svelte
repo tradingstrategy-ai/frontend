@@ -10,6 +10,7 @@ Display site-wide search box for use in top-nav.
 ```
 -->
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import tradingEntities from '../trading-entities';
 	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, TextInput } from '$lib/components';
@@ -29,7 +30,10 @@ Display site-wide search box for use in top-nav.
 
 	$: hits = hasQuery ? $tradingEntities.hits : [];
 
+	// Disable body scroll when search box has focus
 	$: toggleBodyScroll(hasFocus);
+	// Make sure body scroll is re-enabled when component unmounts (due to race condition)
+	onDestroy(toggleBodyScroll);
 
 	// use event loop to allow click on result anchor tags to propogate before dialog closes
 	function toggleFocus() {
