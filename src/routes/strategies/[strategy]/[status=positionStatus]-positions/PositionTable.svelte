@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PositionStatus } from 'trade-executor/state/position';
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
-	import type { Statistics } from 'trade-executor/state/statistics';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
