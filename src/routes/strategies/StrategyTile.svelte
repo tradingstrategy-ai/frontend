@@ -2,7 +2,7 @@
 	import type { EventHandler } from 'svelte/elements';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
-	import { utcHour } from 'd3-time';
+	import { utcDay } from 'd3-time';
 	import { normalizeDataForInterval } from '$lib/chart';
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
@@ -22,7 +22,7 @@
 
 	const chartData = normalizeDataForInterval(
 		strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [],
-		utcHour
+		utcDay
 	);
 
 	const handleClick: EventHandler = ({ target }) => {
