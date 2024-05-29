@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { EventHandler } from 'svelte/elements';
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { rawTicksToQuotes } from '$lib/chart';
 	import { goto } from '$app/navigation';
+	import { utcHour } from 'd3-time';
+	import { normalizeDataForInterval } from '$lib/chart';
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
 	import { StrategyIcon } from 'trade-executor/components';
@@ -18,7 +19,11 @@
 
 	const href = `/strategies/${strategy.id}`;
 	const errorHtml = getTradeExecutorErrorHtml(strategy);
-	const chartData = rawTicksToQuotes(strategy.summary_statistics?.performance_chart_90_days ?? []);
+
+	const chartData = normalizeDataForInterval(
+		strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [],
+		utcHour
+	);
 
 	const handleClick: EventHandler = ({ target }) => {
 		// skip explicit goto if user clicked an anchor tag

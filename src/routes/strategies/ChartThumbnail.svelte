@@ -41,7 +41,7 @@
 
 		return () => {
 			chartEngine.loadChart('strategy-thumbnail', {
-				periodicity: { period: 1, timeUnit: 'day' },
+				periodicity: { period: 1, timeUnit: 'hour' },
 				span: { base: 'day', multiplier: 90 },
 				masterData: data
 			});
