@@ -6,6 +6,7 @@
  *
  */
 import type { TradingPairIdentifier } from './identifier';
+import { TradeDirection } from './trade-info';
 
 const kindShortLabels = {
 	spot_market_hold: 'spot',
@@ -35,12 +36,23 @@ const tradingPairInfoPrototype = {
 		return this;
 	},
 
+	get isCreditSupply() {
+		return this.kind === 'credit_supply';
+	},
+
 	get symbol() {
 		const { base, quote } = this.pricingPair;
-		if (this.kind === 'credit_supply') {
+		if (this.isCreditSupply) {
 			return quote.token_symbol;
 		}
 		return `${base.token_symbol}-${quote.token_symbol}`;
+	},
+
+	get actionSymbol() {
+		if (this.isCreditSupply) {
+			return this.pricingPair.quote.token_symbol;
+		}
+		return this.pricingPair.base.token_symbol;
 	},
 
 	get kindShortLabel() {
@@ -49,6 +61,17 @@ const tradingPairInfoPrototype = {
 
 	get infoUrl() {
 		return this.pricingPair.info_url;
+	},
+
+	getDirectionLabel(direction: TradeDirection) {
+		if (direction === TradeDirection.Enter) {
+			return this.isCreditSupply ? 'Supply' : 'Buy';
+		}
+		return this.isCreditSupply ? 'Withdraw' : 'Sell';
+	},
+
+	getActionLabel(direction: TradeDirection) {
+		return `${this.getDirectionLabel(direction)} ${this.actionSymbol}`;
 	}
 } satisfies ThisType<TradingPairIdentifier & Record<string, any>>;
 
