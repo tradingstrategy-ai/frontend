@@ -25,6 +25,20 @@
 	};
 
 	function init(chartEngine: any) {
+		// add thin baseline at y=0
+		chartEngine.append('draw', () => {
+			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
+			chartEngine.plotLine({
+				x0: 0,
+				x1: 1,
+				y0: y,
+				y1: y,
+				color: 'gray',
+				type: 'line',
+				opacity: 0.25
+			});
+		});
+
 		return () => {
 			chartEngine.loadChart('strategy-thumbnail', {
 				periodicity: { period: 1, timeUnit: 'day' },
@@ -43,12 +57,6 @@
 
 			// re-draw
 			chartEngine.draw();
-
-			// add thin baseline at y=0
-			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
-			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
-				opacity: 0.25
-			});
 		};
 	}
 </script>
