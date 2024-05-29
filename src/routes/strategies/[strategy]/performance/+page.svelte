@@ -21,7 +21,7 @@
 
 	const chartClient = getChartClient(fetch, strategy.url);
 	$: chartClient.fetch({
-		type: 'compounding_realised_profitability',
+		type: 'compounding_unrealised_trading_profitability_sampled',
 		source: dataSource.chart
 	});
 </script>
