@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
+	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let data;
-	$: ({ admin, strategies } = data);
+	const { admin, strategies } = data;
+
+	const chartDateRange = getStrategyChartDateRange(strategies);
 
 	const options = ['all', 'live', 'unpublished'] as const;
 	let filter: (typeof options)[number] = 'all';
@@ -36,7 +39,7 @@
 		{#if filteredStrategies.length}
 			<div class="strategy-tiles" data-testid="strategy-tiles">
 				{#each filteredStrategies as strategy (strategy.id)}
-					<StrategyTile {admin} {strategy} />
+					<StrategyTile {admin} {strategy} {chartDateRange} />
 				{/each}
 			</div>
 		{:else}

@@ -11,7 +11,11 @@ import { publicApiError } from '$lib/helpers/public-api';
 
 type ChartSource = 'live_trading' | 'backtest';
 // See WebChartType https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py#L14
-type ChartType = 'compounding_realised_profitability' | 'total_equity' | 'netflow';
+type ChartType =
+	| 'compounding_realised_profitability'
+	| 'compounding_unrealised_trading_profitability_sampled'
+	| 'total_equity'
+	| 'netflow';
 
 export type ChartRequestParams = {
 	type: ChartType;

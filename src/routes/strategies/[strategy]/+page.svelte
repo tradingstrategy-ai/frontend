@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { type WebChartClientData, getChartClient } from 'trade-executor/chart';
+	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
 	import SummaryMetrics from './SummaryMetrics.svelte';
@@ -14,7 +14,6 @@
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
-	const cachedChartData = strategy.summary_statistics.performance_chart_90_days;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
 	let periodPerformance: MaybeNumber;
@@ -23,18 +22,10 @@
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
 	}
 
-	// return cached chart data for 3M timeframe if chart data hasn't loaded
-	function getChartData(chartData: WebChartClientData, spanDays: number) {
-		if (spanDays === 90 && cachedChartData && (chartData.loading || chartData.error)) {
-			return { loading: false, data: cachedChartData };
-		}
-		return chartData;
-	}
-
 	const chartClient = getChartClient(fetch, strategy.url);
 
 	chartClient.fetch({
-		type: 'compounding_realised_profitability',
+		type: 'compounding_unrealised_trading_profitability_sampled',
 		source: 'live_trading'
 	});
 
@@ -67,11 +58,10 @@
 				{/if}
 			</div>
 
-			{@const chartData = getChartData($chartClient, spanDays)}
 			<PerformanceChart
 				options={chartOptions}
-				loading={chartData.loading}
-				data={normalizeDataForInterval(chartData.data ?? [], interval)}
+				loading={$chartClient.loading}
+				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}

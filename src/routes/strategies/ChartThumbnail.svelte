@@ -5,9 +5,9 @@
 	import { UpDownCell, Timestamp } from '$lib/components';
 
 	export let data: Quote[] = [];
+	export let dateRange: [Date?, Date?];
 
-	const profitClass = determinePriceChangeClass(data.at(-1)?.Value);
-
+	// used for setting yAxis zoom
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
 
 	const options = {
@@ -24,36 +24,48 @@
 		}
 	};
 
+	function getProfitChangeClass() {
+		const first = data[0]?.Value ?? 0;
+		const last = data.at(-1)?.Value ?? 0;
+		return determinePriceChangeClass(last - first);
+	}
+
 	function init(chartEngine: any) {
+		// add thin baseline at y=0
+		chartEngine.append('draw', () => {
+			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
+			chartEngine.plotLine({
+				x0: 0,
+				x1: 1,
+				y0: y,
+				y1: y,
+				color: 'gray',
+				type: 'line',
+				opacity: 0.25
+			});
+		});
+
 		return () => {
 			chartEngine.loadChart('strategy-thumbnail', {
 				periodicity: { period: 1, timeUnit: 'day' },
-				span: { base: 'day', multiplier: 90 },
+				range: {
+					dtLeft: dateRange[0],
+					dtRight: dateRange[1],
+					goIntoPast: true
+				},
 				masterData: data
 			});
 
-			// adjust yAxis zoom
-			const { yAxis } = chartEngine.chart;
-			const domain = yAxis.high - yAxis.low;
-			yAxis.zoom = (1 - domain) * 150;
-
-			// adjust xAxis zoom
-			chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
-			chartEngine.micropixels = -2.5;
+			// adjust xAxis pan (slighly off due to range setting)
+			chartEngine.micropixels = 7.5;
 
 			// re-draw
 			chartEngine.draw();
-
-			// add thin baseline at y=0
-			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
-			chartEngine.plotLine(0, 1, y, y, 'gray', 'line', null, null, {
-				opacity: 0.25
-			});
 		};
 	}
 </script>
 
-<figure class="chart-thumbnail ds-3 {profitClass}">
+<figure class="chart-thumbnail ds-3 {getProfitChangeClass()}">
 	<ChartIQ {init} {options} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}

@@ -84,6 +84,7 @@ export const strategySummaryStatisticsSchema = z.object({
 	profitability_90_days: percent.nullish(),
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
+	compounding_unrealised_trading_profitability: performanceTupleSchema.array().nullish(),
 	performance_chart_90_days: performanceTupleSchema.array().nullish(),
 	key_metrics: summaryKeyMetricsSchema,
 	backtest_metrics_cut_off_period: duration.nullish()
