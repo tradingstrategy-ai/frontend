@@ -9,6 +9,7 @@
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
 	import { formatAmount, formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
+	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let data;
 
@@ -21,6 +22,7 @@
 	}
 
 	const openLiveDays = calculateOpenStrategiesLiveDuration();
+	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
 <svelte:head>
@@ -39,7 +41,7 @@
 		</p>
 		<div class="strategies">
 			{#each strategies as strategy (strategy.id)}
-				<StrategyTile {strategy} />
+				<StrategyTile {strategy} {chartDateRange} />
 			{:else}
 				<p class="strategies-fallback">Check back soon to see top-performing strategies.</p>
 			{/each}

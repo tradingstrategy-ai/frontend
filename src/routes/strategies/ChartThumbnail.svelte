@@ -5,6 +5,7 @@
 	import { UpDownCell, Timestamp } from '$lib/components';
 
 	export let data: Quote[] = [];
+	export let dateRange: [Date?, Date?];
 
 	// used for setting yAxis zoom
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
@@ -47,13 +48,16 @@
 		return () => {
 			chartEngine.loadChart('strategy-thumbnail', {
 				periodicity: { period: 1, timeUnit: 'day' },
-				span: { base: 'day', multiplier: 90 },
+				range: {
+					dtLeft: dateRange[0],
+					dtRight: dateRange[1],
+					goIntoPast: true
+				},
 				masterData: data
 			});
 
-			// adjust xAxis zoom
-			chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
-			chartEngine.micropixels = -2.5;
+			// adjust xAxis pan (slighly off due to range setting)
+			chartEngine.micropixels = 7.5;
 
 			// re-draw
 			chartEngine.draw();

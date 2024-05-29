@@ -14,6 +14,7 @@
 
 	export let admin = false;
 	export let strategy: StrategyRuntimeState;
+	export let chartDateRange: [Date?, Date?];
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
 
@@ -70,7 +71,7 @@
 			</div>
 		</div>
 		<div class="chart">
-			<ChartThumbnail data={chartData} />
+			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
 		</div>
 	</div>
 	<div class="content">
