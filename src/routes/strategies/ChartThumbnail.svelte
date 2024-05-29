@@ -6,8 +6,6 @@
 
 	export let data: Quote[] = [];
 
-	const profitClass = determinePriceChangeClass(data.at(-1)?.Value);
-
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
 
 	const options = {
@@ -23,6 +21,12 @@
 			yAxis: { noDraw: true, min, max }
 		}
 	};
+
+	function getProfitChangeClass() {
+		const first = data[0]?.Value ?? 0;
+		const last = data.at(-1)?.Value ?? 0;
+		return determinePriceChangeClass(last - first);
+	}
 
 	function init(chartEngine: any) {
 		// add thin baseline at y=0
@@ -61,7 +65,7 @@
 	}
 </script>
 
-<figure class="chart-thumbnail ds-3 {profitClass}">
+<figure class="chart-thumbnail ds-3 {getProfitChangeClass()}">
 	<ChartIQ {init} {options} let:cursor>
 		{@const { position, data } = cursor}
 		{#if data}
