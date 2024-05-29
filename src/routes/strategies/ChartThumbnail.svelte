@@ -6,6 +6,7 @@
 
 	export let data: Quote[] = [];
 
+	// used for setting yAxis zoom
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
 
 	const options = {
@@ -49,11 +50,6 @@
 				span: { base: 'day', multiplier: 90 },
 				masterData: data
 			});
-
-			// adjust yAxis zoom
-			const { yAxis } = chartEngine.chart;
-			const domain = yAxis.high - yAxis.low;
-			yAxis.zoom = (1 - domain) * 150;
 
 			// adjust xAxis zoom
 			chartEngine.setCandleWidth(chartEngine.layout.candleWidth * 1.01);
