@@ -26,9 +26,10 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 
 <style lang="postcss">
 	.data-box {
+		display: grid;
+		align-content: flex-start;
 		border-radius: var(--radius-md);
 		background: var(--c-box-2);
-		display: grid;
 
 		&.xs {
 			gap: var(--space-ss);

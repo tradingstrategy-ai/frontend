@@ -105,33 +105,35 @@
 			</table>
 		</DataBox>
 
-		<DataBox label="Price" size="sm">
-			<table class="datatable">
-				<tbody>
-					<tr>
-						<td>Mid</td>
-						<td>{formatPrice(trade.price_structure?.mid_price)}</td>
-						<td />
-					</tr>
+		{#if !trade.isCreditTrade}
+			<DataBox label="Price" size="sm">
+				<table class="datatable">
+					<tbody>
+						<tr>
+							<td>Mid</td>
+							<td>{formatPrice(trade.price_structure?.mid_price)}</td>
+							<td />
+						</tr>
 
-					<tr>
-						<td>Expected</td>
-						<td>{formatPrice(trade.planned_price)}</td>
-						<td class="delta">
-							{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
-						</td>
-					</tr>
+						<tr>
+							<td>Expected</td>
+							<td>{formatPrice(trade.planned_price)}</td>
+							<td class="delta">
+								{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
+							</td>
+						</tr>
 
-					<tr>
-						<td>Executed</td>
-						<td>{formatPrice(trade.executed_price)}</td>
-						<td class="delta">
-							{formatPriceDifference(trade.planned_price, trade.executed_price)}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</DataBox>
+						<tr>
+							<td>Executed</td>
+							<td>{formatPrice(trade.executed_price)}</td>
+							<td class="delta">
+								{formatPriceDifference(trade.planned_price, trade.executed_price)}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</DataBox>
+		{/if}
 
 		<DataBox label="Quantity" size="sm">
 			<table class="datatable">
@@ -156,20 +158,22 @@
 			</table>
 		</DataBox>
 
-		<DataBox label="Slippage" size="sm">
-			<table class="datatable">
-				<tbody>
-					<tr>
-						<td>Tolerance</td>
-						<td>{formatBPS(trade.planned_max_slippage)} BPS</td>
-					</tr>
-					<tr>
-						<td>Realised</td>
-						<td>-</td>
-					</tr>
-				</tbody>
-			</table>
-		</DataBox>
+		{#if !trade.isCreditTrade}
+			<DataBox label="Slippage" size="sm">
+				<table class="datatable">
+					<tbody>
+						<tr>
+							<td>Tolerance</td>
+							<td>{formatBPS(trade.planned_max_slippage)} BPS</td>
+						</tr>
+						<tr>
+							<td>Realised</td>
+							<td>-</td>
+						</tr>
+					</tbody>
+				</table>
+			</DataBox>
+		{/if}
 	</div>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />

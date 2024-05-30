@@ -41,6 +41,10 @@ const tradeInfoPrototype = {
 		return this.pair.getActionLabel(this.direction);
 	},
 
+	get isCreditTrade() {
+		return this.pair.isCreditSupply;
+	},
+
 	get failed() {
 		return this.failed_at != null;
 	},
