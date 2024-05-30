@@ -17,6 +17,8 @@
 
 	export let data;
 	const { strategy, position, chain } = data;
+
+	const hiddenColumns = position.isCreditPosition ? ['price'] : [];
 </script>
 
 <main class="ds-container position-page">
@@ -305,7 +307,7 @@
 			</DataBox>
 		</div>
 
-		<TradeTable trades={position.trades} />
+		<TradeTable trades={position.trades} {hiddenColumns} />
 	</section>
 </main>
 
