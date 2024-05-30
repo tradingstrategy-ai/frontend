@@ -140,7 +140,7 @@
 						<td>Expected</td>
 						<td>
 							{formatAmount(trade.planned_quantity)}
-							{trade.pair.base.token_symbol}
+							{trade.pair.actionSymbol}
 						</td>
 						<td>{formatPrice(trade.planned_reserve)}</td>
 					</tr>
@@ -148,7 +148,7 @@
 						<td>Executed</td>
 						<td>
 							{formatAmount(trade.executed_quantity)}
-							{trade.pair.base.token_symbol}
+							{trade.pair.actionSymbol}
 						</td>
 						<td>{formatPrice(trade.executed_reserve)}</td>
 					</tr>
