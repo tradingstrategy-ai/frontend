@@ -3,8 +3,14 @@
  *
  * (see $lib/helpers/formatters for other general-use formatters)
  */
-import { formatDollar, formatNumber, toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
-import { PROFITABILITY_THRESHOLD } from './profit';
+import {
+	formatDollar,
+	formatNumber,
+	formatPercent,
+	toFloatingPoint,
+	isNumber,
+	notFilledMarker
+} from '$lib/helpers/formatters';
 
 /**
  * Format extreme large or small amounts human friendly manner.
@@ -25,17 +31,12 @@ export function formatTokenAmount(n: MaybeNumberlike, minDigits = 2, maxPrecisio
  * Format how much profit a position has made.
  * @param n - number to format
  */
-export function formatProfitability(n: MaybeNumberlike): string {
+export function formatProfitability(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits): string {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
-	const abs = Math.abs(n);
-	const symbol = abs < PROFITABILITY_THRESHOLD ? '◼︎' : n > 0 ? '▲' : '▼';
-	const percentStr = abs.toLocaleString('en-US', {
-		style: 'percent',
-		minimumFractionDigits: 1,
-		maximumFractionDigits: 1
-	});
+	const symbol = n === 0 ? '◼︎' : n > 0 ? '▲' : '▼';
+	const percentStr = formatPercent(Math.abs(n), minDigits, maxPrecision);
 	return `${symbol} ${percentStr}`;
 }
 
