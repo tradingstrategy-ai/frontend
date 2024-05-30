@@ -137,39 +137,41 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Price" size="sm">
-				<div>
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.openPrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.openPrice}
-						</span>
-					</Tooltip>
-					—
-				</div>
+			{#if !position.isCreditPosition}
+				<DataBox label="Price" size="sm">
+					<div>
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.openPrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.openPrice}
+							</span>
+						</Tooltip>
+						—
+					</div>
 
-				{#if position.stillOpen}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.currentPrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.currentPrice}
-						</span>
-					</Tooltip>
-				{:else}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.closePrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.closePrice}
-						</span>
-					</Tooltip>
-				{/if}
-			</DataBox>
+					{#if position.stillOpen}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.currentPrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.currentPrice}
+							</span>
+						</Tooltip>
+					{:else}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.closePrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.closePrice}
+							</span>
+						</Tooltip>
+					{/if}
+				</DataBox>
+			{/if}
 
 			<DataBox label="Size" size="sm">
 				<Tooltip>
@@ -240,25 +242,27 @@
 				</DataBox>
 			{/if}
 
-			<DataBox label="Risk" size="sm">
-				{#if position.portfolioRiskPercent === undefined}
-					<Tooltip>
-						<span slot="trigger" class="underline"> N/A </span>
-						<span slot="popup">
-							{position.tooltip.portfolioRiskPercentMissing}
-						</span>
-					</Tooltip>
-				{:else}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPercent(position.portfolioRiskPercent)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.portfolioRiskPercent}
-						</span>
-					</Tooltip>
-				{/if}
-			</DataBox>
+			{#if !position.isCreditPosition}
+				<DataBox label="Risk" size="sm">
+					{#if position.portfolioRiskPercent === undefined}
+						<Tooltip>
+							<span slot="trigger" class="underline"> N/A </span>
+							<span slot="popup">
+								{position.tooltip.portfolioRiskPercentMissing}
+							</span>
+						</Tooltip>
+					{:else}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPercent(position.portfolioRiskPercent)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.portfolioRiskPercent}
+							</span>
+						</Tooltip>
+					{/if}
+				</DataBox>
+			{/if}
 
 			<DataBox label="Volume" size="sm">
 				<Tooltip>

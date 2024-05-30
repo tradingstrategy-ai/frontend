@@ -189,6 +189,10 @@ const tradingPositionInfoPrototype = {
 		return this.durationSeconds > 7 * 24 * 3600 ? '1d' : '1h';
 	},
 
+	get isCreditPosition() {
+		return this.pair.isCreditSupply;
+	},
+
 	get portfolioRiskPercent(): Percent | undefined {
 		if (this.stopLossPercentOpen && this.portfolioWeightAtOpen) {
 			return (1 - this.stopLossPercentOpen) * this.portfolioWeightAtOpen;
