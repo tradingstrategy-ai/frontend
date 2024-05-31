@@ -14,6 +14,8 @@
 	export let data;
 
 	const { chain, trade } = data;
+
+	const assetUrl = trade.pricingPair.info_url;
 </script>
 
 <main class="ds-container trade-page">
@@ -66,13 +68,18 @@
 	{/if}
 
 	<div class="trade-info">
-		<DataBox label="Trading pair" size="md">
-			<a class="trading-pair" href={trade.pricingPair.info_url}>
-				{trade.pricingPair.symbol}
-				{#if trade.pricingPair.fee}
-					<span class="swap-fee">{formatPercent(trade.pricingPair.fee)}</span>
+		<DataBox label={trade.isCreditTrade ? 'Lending reserve' : 'Trading pair'} size="md">
+			<svelte:element this={assetUrl ? 'a' : 'span'} href={assetUrl}>
+				{#if trade.isCreditTrade}
+					{trade.pricingPair.symbol}
+					on Aave v3
+				{:else}
+					{trade.pricingPair.symbol}
+					{#if trade.pricingPair.fee}
+						<span class="swap-fee">{formatPercent(trade.pricingPair.fee)}</span>
+					{/if}
 				{/if}
-			</a>
+			</svelte:element>
 		</DataBox>
 
 		<DataBox label="Time" size="sm">
@@ -222,11 +229,8 @@
 			}
 		}
 
-		.trading-pair {
-			font-weight: bold;
-			& .swap-fee {
-				color: var(--c-text-extra-light);
-			}
+		.swap-fee {
+			color: var(--c-text-extra-light);
 		}
 
 		.trade-info {
