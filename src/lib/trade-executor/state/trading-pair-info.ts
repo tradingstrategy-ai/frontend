@@ -59,10 +59,6 @@ const tradingPairInfoPrototype = {
 		return kindShortLabels[this.kind];
 	},
 
-	get infoUrl() {
-		return this.pricingPair.info_url;
-	},
-
 	getDirectionLabel(direction: TradeDirection) {
 		if (direction === TradeDirection.Enter) {
 			return this.isCreditSupply ? 'Supply' : 'Buy';
