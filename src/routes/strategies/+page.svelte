@@ -4,7 +4,7 @@
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let data;
-	const { admin, strategies } = data;
+	const { admin, strategies, tvlData } = data;
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 
