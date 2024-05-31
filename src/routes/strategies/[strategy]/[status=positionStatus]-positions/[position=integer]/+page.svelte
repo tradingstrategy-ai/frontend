@@ -17,6 +17,9 @@
 
 	export let data;
 	const { strategy, position, chain } = data;
+
+	const assetUrl = position.pricingPair.info_url;
+	const hiddenColumns = position.isCreditPosition ? ['price'] : [];
 </script>
 
 <main class="ds-container position-page">
@@ -55,9 +58,11 @@
 		<div class="position-info">
 			<DataBox label="Position" size="sm">
 				<div>
-					<a href={position.pair.info_url}>
-						{position.pair.symbol}
-					</a>
+					{#if assetUrl}
+						<a href={assetUrl}>{position.pricingPair.symbol}</a>
+					{:else}
+						{position.pricingPair.symbol}
+					{/if}
 					<span class="position-kind">
 						{position.pair.kindShortLabel}
 					</span>
@@ -137,39 +142,41 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Price" size="sm">
-				<div>
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.openPrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.openPrice}
-						</span>
-					</Tooltip>
-					—
-				</div>
+			{#if !position.isCreditPosition}
+				<DataBox label="Price" size="sm">
+					<div>
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.openPrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.openPrice}
+							</span>
+						</Tooltip>
+						—
+					</div>
 
-				{#if position.stillOpen}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.currentPrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.currentPrice}
-						</span>
-					</Tooltip>
-				{:else}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPrice(position.closePrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.closePrice}
-						</span>
-					</Tooltip>
-				{/if}
-			</DataBox>
+					{#if position.stillOpen}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.currentPrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.currentPrice}
+							</span>
+						</Tooltip>
+					{:else}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.closePrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.closePrice}
+							</span>
+						</Tooltip>
+					{/if}
+				</DataBox>
+			{/if}
 
 			<DataBox label="Size" size="sm">
 				<Tooltip>
@@ -184,7 +191,7 @@
 				<Tooltip>
 					<span slot="trigger" class="underline">
 						{formatTokenAmount(position.quantityAtOpen)}
-						{position.pricingPair.base.token_symbol}
+						{position.pair.actionSymbol}
 					</span>
 					<span slot="popup">
 						{position.tooltip.quantityAtOpen}
@@ -240,25 +247,27 @@
 				</DataBox>
 			{/if}
 
-			<DataBox label="Risk" size="sm">
-				{#if position.portfolioRiskPercent === undefined}
-					<Tooltip>
-						<span slot="trigger" class="underline"> N/A </span>
-						<span slot="popup">
-							{position.tooltip.portfolioRiskPercentMissing}
-						</span>
-					</Tooltip>
-				{:else}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPercent(position.portfolioRiskPercent)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.portfolioRiskPercent}
-						</span>
-					</Tooltip>
-				{/if}
-			</DataBox>
+			{#if !position.isCreditPosition}
+				<DataBox label="Risk" size="sm">
+					{#if position.portfolioRiskPercent === undefined}
+						<Tooltip>
+							<span slot="trigger" class="underline"> N/A </span>
+							<span slot="popup">
+								{position.tooltip.portfolioRiskPercentMissing}
+							</span>
+						</Tooltip>
+					{:else}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPercent(position.portfolioRiskPercent)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.portfolioRiskPercent}
+							</span>
+						</Tooltip>
+					{/if}
+				</DataBox>
+			{/if}
 
 			<DataBox label="Volume" size="sm">
 				<Tooltip>
@@ -301,7 +310,7 @@
 			</DataBox>
 		</div>
 
-		<TradeTable trades={position.trades} />
+		<TradeTable trades={position.trades} {hiddenColumns} />
 	</section>
 </main>
 

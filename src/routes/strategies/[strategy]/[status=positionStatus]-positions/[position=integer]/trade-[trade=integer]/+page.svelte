@@ -14,6 +14,8 @@
 	export let data;
 
 	const { chain, trade } = data;
+
+	const assetUrl = trade.pricingPair.info_url;
 </script>
 
 <main class="ds-container trade-page">
@@ -66,13 +68,18 @@
 	{/if}
 
 	<div class="trade-info">
-		<DataBox label="Trading pair" size="md">
-			<a class="trading-pair" href={trade.pricingPair.info_url}>
-				{trade.pricingPair.symbol}
-				{#if trade.pricingPair.fee}
-					<span class="swap-fee">{formatPercent(trade.pricingPair.fee)}</span>
+		<DataBox label={trade.isCreditTrade ? 'Lending reserve' : 'Trading pair'} size="md">
+			<svelte:element this={assetUrl ? 'a' : 'span'} href={assetUrl}>
+				{#if trade.isCreditTrade}
+					{trade.pricingPair.symbol}
+					on Aave v3
+				{:else}
+					{trade.pricingPair.symbol}
+					{#if trade.pricingPair.fee}
+						<span class="swap-fee">{formatPercent(trade.pricingPair.fee)}</span>
+					{/if}
 				{/if}
-			</a>
+			</svelte:element>
 		</DataBox>
 
 		<DataBox label="Time" size="sm">
@@ -105,33 +112,35 @@
 			</table>
 		</DataBox>
 
-		<DataBox label="Price" size="sm">
-			<table class="datatable">
-				<tbody>
-					<tr>
-						<td>Mid</td>
-						<td>{formatPrice(trade.price_structure?.mid_price)}</td>
-						<td />
-					</tr>
+		{#if !trade.isCreditTrade}
+			<DataBox label="Price" size="sm">
+				<table class="datatable">
+					<tbody>
+						<tr>
+							<td>Mid</td>
+							<td>{formatPrice(trade.price_structure?.mid_price)}</td>
+							<td />
+						</tr>
 
-					<tr>
-						<td>Expected</td>
-						<td>{formatPrice(trade.planned_price)}</td>
-						<td class="delta">
-							{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
-						</td>
-					</tr>
+						<tr>
+							<td>Expected</td>
+							<td>{formatPrice(trade.planned_price)}</td>
+							<td class="delta">
+								{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
+							</td>
+						</tr>
 
-					<tr>
-						<td>Executed</td>
-						<td>{formatPrice(trade.executed_price)}</td>
-						<td class="delta">
-							{formatPriceDifference(trade.planned_price, trade.executed_price)}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</DataBox>
+						<tr>
+							<td>Executed</td>
+							<td>{formatPrice(trade.executed_price)}</td>
+							<td class="delta">
+								{formatPriceDifference(trade.planned_price, trade.executed_price)}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</DataBox>
+		{/if}
 
 		<DataBox label="Quantity" size="sm">
 			<table class="datatable">
@@ -140,7 +149,7 @@
 						<td>Expected</td>
 						<td>
 							{formatAmount(trade.planned_quantity)}
-							{trade.pair.base.token_symbol}
+							{trade.pair.actionSymbol}
 						</td>
 						<td>{formatPrice(trade.planned_reserve)}</td>
 					</tr>
@@ -148,7 +157,7 @@
 						<td>Executed</td>
 						<td>
 							{formatAmount(trade.executed_quantity)}
-							{trade.pair.base.token_symbol}
+							{trade.pair.actionSymbol}
 						</td>
 						<td>{formatPrice(trade.executed_reserve)}</td>
 					</tr>
@@ -156,20 +165,22 @@
 			</table>
 		</DataBox>
 
-		<DataBox label="Slippage" size="sm">
-			<table class="datatable">
-				<tbody>
-					<tr>
-						<td>Tolerance</td>
-						<td>{formatBPS(trade.planned_max_slippage)} BPS</td>
-					</tr>
-					<tr>
-						<td>Realised</td>
-						<td>-</td>
-					</tr>
-				</tbody>
-			</table>
-		</DataBox>
+		{#if !trade.isCreditTrade}
+			<DataBox label="Slippage" size="sm">
+				<table class="datatable">
+					<tbody>
+						<tr>
+							<td>Tolerance</td>
+							<td>{formatBPS(trade.planned_max_slippage)} BPS</td>
+						</tr>
+						<tr>
+							<td>Realised</td>
+							<td>-</td>
+						</tr>
+					</tbody>
+				</table>
+			</DataBox>
+		{/if}
 	</div>
 
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
@@ -218,11 +229,8 @@
 			}
 		}
 
-		.trading-pair {
-			font-weight: bold;
-			& .swap-fee {
-				color: var(--c-text-extra-light);
-			}
+		.swap-fee {
+			color: var(--c-text-extra-light);
 		}
 
 		.trade-info {

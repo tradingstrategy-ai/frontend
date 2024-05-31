@@ -2,15 +2,18 @@
 	import type { TradeInfo } from 'trade-executor/state/trade-info';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
+	import { addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
 	import { formatPrice } from '$lib/helpers/formatters';
 	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
 
 	export let trades: TradeInfo[];
+	export let hiddenColumns: string[] = [];
 
 	const table = createTable(readable(trades), {
-		clickable: addClickableRows({ id: 'cta' })
+		clickable: addClickableRows({ id: 'cta' }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
 	const columns = table.createColumns([

@@ -8,6 +8,11 @@
 import type { TradeExecution } from './trade';
 import type { USDollarAmount } from './utility-types';
 
+export enum TradeDirection {
+	Enter,
+	Exit
+}
+
 /**
  * Prototype object that can be applied to a TradeExecution object to enrich
  * it with additional properties. Yields an object with all the properties
@@ -23,9 +28,9 @@ const tradeInfoPrototype = {
 		return Math.abs(quantity) * price;
 	},
 
-	// Determine trade direction ('Buy' vs. 'Sell') based on planned_quantity
+	// Determine trade direction (enter|exit) based on planned_quantity
 	get direction() {
-		return this.planned_quantity > 0 ? 'Buy' : 'Sell';
+		return this.planned_quantity > 0 ? TradeDirection.Enter : TradeDirection.Exit;
 	},
 
 	get pricingPair() {
@@ -33,7 +38,11 @@ const tradeInfoPrototype = {
 	},
 
 	get actionLabel() {
-		return `${this.direction} ${this.pricingPair.base.token_symbol}`;
+		return this.pair.getActionLabel(this.direction);
+	},
+
+	get isCreditTrade() {
+		return this.pair.isCreditSupply;
 	},
 
 	get failed() {
