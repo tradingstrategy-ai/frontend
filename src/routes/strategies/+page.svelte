@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
+	import StrategyTvlChart from './StrategyTvlChart.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let data;
@@ -16,7 +17,7 @@
 
 		// return live strategies for "live" filter; others for "unpublished" filter
 		const liveFilter = filter === 'live';
-		const liveStrategy = s.connected && s.tags.includes('live');
+		const liveStrategy = s.tags?.includes('live');
 		return liveFilter === liveStrategy;
 	});
 </script>
@@ -50,10 +51,16 @@
 			</p>
 		{/if}
 	</Section>
+
+	<Section maxWidth="md">
+		<StrategyTvlChart {tvlData} />
+	</Section>
 </main>
 
 <style>
 	.strategies-index-page {
+		display: grid;
+		gap: 3rem;
 		margin-top: 1.25rem;
 	}
 
