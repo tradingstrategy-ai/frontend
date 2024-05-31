@@ -18,6 +18,7 @@
 	export let data;
 	const { strategy, position, chain } = data;
 
+	const assetUrl = position.pricingPair.info_url;
 	const hiddenColumns = position.isCreditPosition ? ['price'] : [];
 </script>
 
@@ -57,9 +58,11 @@
 		<div class="position-info">
 			<DataBox label="Position" size="sm">
 				<div>
-					<a href={position.pair.info_url}>
-						{position.pair.symbol}
-					</a>
+					{#if assetUrl}
+						<a href={assetUrl}>{position.pricingPair.symbol}</a>
+					{:else}
+						{position.pricingPair.symbol}
+					{/if}
 					<span class="position-kind">
 						{position.pair.kindShortLabel}
 					</span>
