@@ -20,6 +20,7 @@ Display a chart container with title, description and timespan selector.
 	import { SegmentedControl } from '$lib/components';
 
 	export let title = '';
+	export let showTimeSpans = false;
 
 	let timeSpanKey: TimeBucket = '3m';
 
@@ -57,7 +58,9 @@ Display a chart container with title, description and timespan selector.
 		<slot name="title" timeSpan={timeSpans[timeSpanKey]}>
 			<h2>{title}</h2>
 		</slot>
-		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		{#if showTimeSpans}
+			<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		{/if}
 		<slot name="subtitle" />
 	</header>
 	<slot timeSpan={timeSpans[timeSpanKey]} />
