@@ -50,7 +50,7 @@
 	<MyDeposits {strategy} {chain} {geoBlocked} {ipCountry} />
 
 	<div class="chart">
-		<ChartContainer showTimeSpans let:timeSpan={{ spanDays, interval, periodicity }}>
+		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
 			<div class="period-performance" slot="title" let:timeSpan={{ label }}>
 				{#if periodPerformance !== undefined}
 					<UpDownCell value={periodPerformance} formatter={formatProfitability} />

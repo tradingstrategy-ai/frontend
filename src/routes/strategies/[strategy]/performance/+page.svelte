@@ -41,7 +41,7 @@
 		</p>
 	</div>
 
-	<ChartContainer title="Performance" showTimeSpans let:timeSpan={{ spanDays, interval, periodicity }}>
+	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval, periodicity }}>
 		<p slot="subtitle" class="chart-subtitle">
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
