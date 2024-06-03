@@ -21,4 +21,10 @@ test.describe('exchange details page', () => {
 		const rows = page.locator(selector);
 		expect(await rows.count()).toBeGreaterThanOrEqual(10);
 	});
+
+	test('trading pairs table should include pagination', async ({ page }) => {
+		const selector = '[data-testid="pairs-table"] tfoot button';
+		// wait for datatables to load data (client-side)
+		await page.waitForSelector(selector);
+	});
 });

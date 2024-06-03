@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TokenIndexResponse } from './token-client';
-	import { type Writable, writable, readable } from 'svelte/store';
+	import { type Writable, writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
@@ -15,14 +15,17 @@
 	export let direction: 'asc' | 'desc' = 'desc';
 
 	const tableRows: Writable<TokenIndexResponse['rows']> = writable([]);
-	$: $tableRows = loading ? new Array(10).fill({}) : rows || [];
+	$: tableRows.set(loading ? new Array(10).fill({}) : rows || []);
+
+	const serverItemCount = writable(0);
+	$: serverItemCount.set(totalRowCount);
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ serverSide: true, serverItemCount: readable(totalRowCount) }),
+		page: addPagination({ serverSide: true, serverItemCount }),
 		clickable: addClickableRows({ id: 'cta' })
 	});
 
