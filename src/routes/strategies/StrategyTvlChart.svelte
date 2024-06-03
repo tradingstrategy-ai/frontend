@@ -12,8 +12,7 @@
 	const chartOptions = {
 		controls: { home: null },
 		allowScroll: false,
-		allowZoom: false,
-		chart: { tension: 0.5 }
+		allowZoom: false
 	};
 
 	function getSpanDays(data: RawTick[] | undefined, max: number) {

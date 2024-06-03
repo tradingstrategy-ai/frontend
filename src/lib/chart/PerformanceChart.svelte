@@ -41,7 +41,7 @@ Display a peformance line chart for a given (static) dataset.
 		dontRoll: true,
 
 		chart: {
-			tension: 1,
+			tension: 0.5,
 			xAxis: { displayGridLines: false },
 			yAxis: {
 				displayGridLines: false,

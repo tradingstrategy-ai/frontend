@@ -18,7 +18,7 @@
 		xaxisHeight: 0,
 
 		chart: {
-			tension: 1,
+			tension: 0.5,
 			xAxis: { noDraw: true },
 			yAxis: { noDraw: true, min, max }
 		}
