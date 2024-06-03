@@ -101,7 +101,7 @@ Display a peformance line chart for a given (static) dataset.
 			<Marker x={position.DateX} y={position.CloseY} size={4.5} />
 			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
 				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'minute'} />
+					<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'hour'} />
 					<div class="value">{formatValue(data.Close, 2)}</div>
 				</UpDownCell>
 			</div>

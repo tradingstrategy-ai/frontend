@@ -7,36 +7,27 @@
 
 	export let tvlData: RawTick[] | undefined;
 
-	const spanDays = getSpanDays(tvlData, 90);
-
 	const chartOptions = {
 		controls: { home: null },
 		allowScroll: false,
 		allowZoom: false
 	};
-
-	function getSpanDays(data: RawTick[] | undefined, max: number) {
-		const firstDate = parseDate(data?.[0]?.[0]);
-		if (!firstDate) return max;
-		const age = utcDay.count(firstDate, new Date());
-		return Math.min(age, max);
-	}
 </script>
 
 <div class="strategy-tvl-chart">
-	<ChartContainer title="Strategy TVL">
+	<ChartContainer title="Strategy TVL" let:timeSpan={{ spanDays, interval, periodicity }}>
 		<span slot="subtitle">
-			<a class="body-link" target="_blank" href="/glossary/total-value-locked"> Total value locked </a>
-			in live strategies (past {spanDays} days)
+			<a class="body-link" target="_blank" href="/glossary/total-value-locked">Total value locked</a>
+			in live strategies
 		</span>
 
 		{#if tvlData}
 			<PerformanceChart
 				options={chartOptions}
-				data={normalizeDataForInterval(tvlData ?? [], utcDay)}
+				data={normalizeDataForInterval(tvlData ?? [], interval)}
 				formatValue={formatDollar}
 				{spanDays}
-				periodicity={{ period: 1, interval: 1, timeUnit: 'day' }}
+				{periodicity}
 			/>
 		{:else}
 			<div class="error">
