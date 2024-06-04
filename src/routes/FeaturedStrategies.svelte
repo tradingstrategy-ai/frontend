@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { Button, Section } from '$lib/components';
+	import { Button, Icon, Section } from '$lib/components';
 	import StrategyTile from './strategies/StrategyTile.svelte';
+	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 	import { formatDaysAgo } from '$lib/helpers/formatters';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
@@ -19,9 +20,25 @@
 
 <Section padding="xl">
 	<h2>Open strategies</h2>
-	<p class="live-ago">
-		Open strategies have been live for {openLiveDays}.
-	</p>
+	<div class="differentiators">
+		<p>
+			Open strategies have been live for {openLiveDays}. Our strategies are:
+		</p>
+		<ul>
+			<StrategyDifferentiator
+				title="100% transparent"
+				details="Automated trading on your behalf, using strategies developed by experienced traders."
+			/>
+			<StrategyDifferentiator
+				title="Self-custodial"
+				details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
+			/>
+			<StrategyDifferentiator
+				title="Cost-efficient"
+				details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
+			/>
+		</ul>
+	</div>
 	<div class="strategies">
 		{#each strategies as strategy (strategy.id)}
 			<StrategyTile {strategy} {chartDateRange} />
@@ -53,7 +70,7 @@
 				/* limit tile width */
 				max-width: 36rem;
 
-				/* lone tile on last row should have same width as others */
+				/* solo tile on last row should have same width as others */
 				&:nth-child(2n + 3) {
 					max-width: calc((100% - var(--strategy-tile-gap)) / 2);
 				}
@@ -66,13 +83,39 @@
 		}
 	}
 
-	:is(h2, .strategies-fallback, .strategies-cta, .live-ago) {
+	:is(h2, .strategies-fallback, .strategies-cta) {
 		text-align: center;
 	}
 
-	.live-ago {
-		max-width: 48ch;
-		margin: 0 auto;
-		color: var(--c-text-extra-light);
+	.differentiators {
+		border: 1px solid var(--c-text-ultra-light);
+		border-radius: var(--radius-md);
+		width: 100%;
+		max-width: 52rem;
+		margin: 1.5rem auto 0 auto;
+		padding: 1.5rem 1.25rem;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing);
+		color: var(--c-text-light);
+		text-align: center;
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
+		}
+
+		ul {
+			list-style-type: none;
+			margin-top: 1.25rem;
+			padding: 0;
+			display: grid;
+			gap: 1.5em;
+			grid-template-columns: repeat(3, 1fr);
+			align-items: flex-start;
+
+			@media (--viewport-xs) {
+				grid-template-columns: 1fr;
+			}
+		}
 	}
 </style>
