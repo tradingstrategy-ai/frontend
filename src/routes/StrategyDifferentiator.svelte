@@ -1,33 +1,38 @@
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import { Icon, Tooltip } from '$lib/components';
 
 	export let title: string;
 	export let details: string;
 </script>
 
-<li>
-	<h3>
-		<Icon name="success" />
+<Tooltip>
+	<span slot="trigger">
+		<span class="check">
+			<Icon name="success" />
+		</span>
 		{title}
-	</h3>
-	<div class="details">
+		<span class="question">
+			<Icon name="question-circle" />
+		</span>
+	</span>
+	<div slot="popup">
 		{details}
 	</div>
-</li>
+</Tooltip>
 
 <style lang="postcss">
-	li {
-		display: grid;
-		justify-items: center;
+	[slot='trigger'] {
+		display: flex;
+		gap: 0.75ex;
+		align-items: center;
+		color: color-mix(in srgb, var(--c-bullish), var(--c-text) 25%);
 
-		h3 {
+		span {
+			display: grid;
+		}
+
+		.check {
 			--icon-size: 1.25em;
-			display: flex;
-			gap: 0.75ex;
-			align-items: center;
-			margin: 0;
-			color: color-mix(in srgb, var(--c-bullish), var(--c-text) 25%);
-
 			:global(svg) {
 				overflow: visible;
 			}
@@ -37,11 +42,12 @@
 			}
 		}
 
-		.details {
-			max-width: 24em;
-			margin-top: 0.75em;
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--f-ui-sm-spacing);
+		.question {
+			opacity: 0.8;
 		}
+	}
+
+	[slot='popup'] {
+		max-width: 24rem;
 	}
 </style>
