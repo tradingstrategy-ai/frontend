@@ -6,23 +6,13 @@
 	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
 	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
-	import StrategyTile from './strategies/StrategyTile.svelte';
+	import FeaturedStrategies from './FeaturedStrategies.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
-	import { formatAmount, formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
-	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
 	export let data;
 
 	const { impressiveNumbers, posts, strategies, topMomentum } = data;
-
-	function calculateOpenStrategiesLiveDuration() {
-		const launchAt = new Date(2024, 3, 15);
-		const daysText = formatDaysAgo(launchAt.getTime() / 1000);
-		return daysText;
-	}
-
-	const openLiveDays = calculateOpenStrategiesLiveDuration();
-	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
 <svelte:head>
@@ -34,23 +24,7 @@
 <main class="home-page">
 	<HomeHeroBanner />
 
-	<Section padding="xl">
-		<h2>Open strategies</h2>
-		<p class="live-ago">
-			Open strategies have been live for {openLiveDays}.
-		</p>
-		<div class="strategies">
-			{#each strategies as strategy (strategy.id)}
-				<StrategyTile {strategy} {chartDateRange} />
-			{:else}
-				<p class="strategies-fallback">Check back soon to see top-performing strategies.</p>
-			{/each}
-		</div>
-
-		<div class="strategies-cta">
-			<Button secondary label="See all strategies" href="/strategies" />
-		</div>
-	</Section>
+	<FeaturedStrategies {strategies} />
 
 	{#if impressiveNumbers}
 		<Section gap="md" padding="md" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
@@ -110,7 +84,7 @@
 
 	{#if posts}
 		<Section padding="md" gap="md">
-			<h2 style:text-align="center">Blog</h2>
+			<h2>Blog</h2>
 			<BlogRoll {posts} />
 			<div style:text-align="center">
 				<Button label="Read all posts" href="/blog" />
@@ -133,40 +107,6 @@
 		letter-spacing: var(--f-ui-xl-spacing, normal);
 	}
 
-	.strategies {
-		--strategy-tile-gap: 1.5rem;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--strategy-tile-gap);
-		justify-content: center;
-		padding: 3rem 0;
-		overflow: hidden;
-
-		> :global(*) {
-			flex: 1;
-			min-width: min(27.25rem, 100%);
-
-			@media (--viewport-lg-up) {
-				/* limit tile width */
-				max-width: 36rem;
-
-				/* lone tile on last row should have same width as others */
-				&:nth-child(2n + 3) {
-					max-width: calc((100% - var(--strategy-tile-gap)) / 2);
-				}
-			}
-
-			/* force single column below 1024px */
-			@media (--viewport-md-down) {
-				min-width: 100%;
-			}
-		}
-	}
-
-	:is(.strategies-fallback, .strategies-cta) {
-		text-align: center;
-	}
-
 	/* limit to 3 posts on larger viewports (single row) */
 	.home-page :global .blog-roll > :nth-child(4) {
 		@media (width >= 1140px) {
@@ -178,12 +118,5 @@
 		text-align: center;
 		max-width: 48ch;
 		margin: 0 auto;
-	}
-
-	.live-ago {
-		text-align: center;
-		max-width: 48ch;
-		margin: 0 auto;
-		color: var(--c-text-extra-light);
 	}
 </style>
