@@ -52,7 +52,7 @@
 		{/if}
 	</Section>
 
-	<Section maxWidth="md">
+	<Section>
 		<StrategyTvlChart {tvlData} />
 	</Section>
 </main>
