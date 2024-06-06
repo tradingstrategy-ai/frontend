@@ -26,7 +26,7 @@
 	<div class="differentiators">
 		<StrategyDifferentiator
 			title="100% transparent"
-			details="Automated trading on your behalf, using strategies developed by experienced traders."
+			details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
 		/>
 		<StrategyDifferentiator
 			title="Self-custodial"
