@@ -23,6 +23,7 @@ export const tradingPositionInfoTooltips = {
 	openPrice: 'The execution price of the opening trade.',
 	closePrice: 'The closing price of position.',
 	currentPrice: 'The closing price of position.',
+	interestRateAtOpen: 'The opening interest rate of the position.',
 	realisedProfitability:
 		'The realised profitability of the position. BETA WARNING: Currently calculation may not be correct for multitrade positions.',
 	unrealisedProfitability:
@@ -191,6 +192,10 @@ const tradingPositionInfoPrototype = {
 
 	get isCreditPosition() {
 		return this.pair.isCreditSupply;
+	},
+
+	get interestRateAtOpen() {
+		return this.loan?.collateral.interest_rate_at_open;
 	},
 
 	get portfolioRiskPercent(): Percent | undefined {

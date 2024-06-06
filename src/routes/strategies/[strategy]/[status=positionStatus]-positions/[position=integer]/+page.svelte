@@ -19,7 +19,6 @@
 	const { strategy, position, chain } = data;
 
 	const assetUrl = position.pricingPair.info_url;
-	const hiddenColumns = position.isCreditPosition ? ['price'] : [];
 </script>
 
 <main class="ds-container position-page">
@@ -142,7 +141,18 @@
 				{/if}
 			</DataBox>
 
-			{#if !position.isCreditPosition}
+			{#if position.isCreditPosition}
+				<DataBox label="Interest rate" size="sm">
+					<Tooltip>
+						<span slot="trigger" class="underline">
+							{formatPercent(position.interestRateAtOpen)}
+						</span>
+						<span slot="popup">
+							{position.tooltip.interestRateAtOpen}
+						</span>
+					</Tooltip>
+				</DataBox>
+			{:else}
 				<DataBox label="Price" size="sm">
 					<div>
 						<Tooltip>
@@ -310,7 +320,11 @@
 			</DataBox>
 		</div>
 
-		<TradeTable trades={position.trades} {hiddenColumns} />
+		<TradeTable
+			trades={position.trades}
+			isCreditPosition={position.isCreditPosition}
+			interestRateAtOpen={position.interestRateAtOpen}
+		/>
 	</section>
 </main>
 
