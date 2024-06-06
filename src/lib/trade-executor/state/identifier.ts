@@ -64,6 +64,8 @@ export const assetWithTrackedValueSchema = z.object({
 	last_usd_price: usDollarPrice,
 	last_pricing_at: unixTimestamp,
 	created_at: unixTimestamp,
-	created_strategy_cycle_at: unixTimestamp.nullish()
+	created_strategy_cycle_at: unixTimestamp.nullish(),
+	interest_rate_at_open: percent.nullish(),
+	last_interest_rate: percent.nullish()
 });
 export type AssetWithTrackedValue = z.infer<typeof assetWithTrackedValueSchema>;

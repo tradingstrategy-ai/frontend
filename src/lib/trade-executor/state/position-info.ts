@@ -193,6 +193,10 @@ const tradingPositionInfoPrototype = {
 		return this.pair.isCreditSupply;
 	},
 
+	get interestRateAtOpen() {
+		return this.loan?.collateral.interest_rate_at_open;
+	},
+
 	get portfolioRiskPercent(): Percent | undefined {
 		if (this.stopLossPercentOpen && this.portfolioWeightAtOpen) {
 			return (1 - this.stopLossPercentOpen) * this.portfolioWeightAtOpen;
