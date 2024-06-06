@@ -19,7 +19,6 @@
 	const { strategy, position, chain } = data;
 
 	const assetUrl = position.pricingPair.info_url;
-	const hiddenColumns = position.isCreditPosition ? ['price'] : [];
 </script>
 
 <main class="ds-container position-page">
@@ -321,7 +320,11 @@
 			</DataBox>
 		</div>
 
-		<TradeTable trades={position.trades} {hiddenColumns} />
+		<TradeTable
+			trades={position.trades}
+			isCreditPosition={position.isCreditPosition}
+			interestRateAtOpen={position.interestRateAtOpen}
+		/>
 	</section>
 </main>
 

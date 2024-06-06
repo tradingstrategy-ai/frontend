@@ -5,11 +5,14 @@
 	import { addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { DataTable, Button, Timestamp } from '$lib/components';
-	import { formatPrice } from '$lib/helpers/formatters';
+	import { formatPrice, formatPercent } from '$lib/helpers/formatters';
 	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
 
 	export let trades: TradeInfo[];
-	export let hiddenColumns: string[] = [];
+	export let isCreditPosition;
+	export let interestRateAtOpen: MaybeNumber;
+
+	const hiddenColumns = isCreditPosition ? ['price'] : ['interest_rate'];
 
 	const table = createTable(readable(trades), {
 		clickable: addClickableRows({ id: 'cta' }),
@@ -37,6 +40,11 @@
 			id: 'price',
 			header: 'Price',
 			accessor: ({ executed_price, planned_price }) => formatPrice(executed_price ?? planned_price, 5)
+		}),
+		table.column({
+			id: 'interest_rate',
+			header: 'Interest rate',
+			accessor: (trade) => (trade === trades[0] ? formatPercent(interestRateAtOpen) : '')
 		}),
 		table.column({
 			id: 'value',
@@ -83,7 +91,7 @@
 			padding-right: 0;
 		}
 
-		:is(.price, .value) {
+		:is(.price, .interest_rate, .value) {
 			text-align: right;
 		}
 	}
