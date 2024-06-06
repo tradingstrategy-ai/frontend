@@ -142,7 +142,18 @@
 				{/if}
 			</DataBox>
 
-			{#if !position.isCreditPosition}
+			{#if position.isCreditPosition}
+				<DataBox label="Interest rate" size="sm">
+					<Tooltip>
+						<span slot="trigger" class="underline">
+							{formatPercent(position.interestRateAtOpen)}
+						</span>
+						<span slot="popup">
+							{position.tooltip.interestRateAtOpen}
+						</span>
+					</Tooltip>
+				</DataBox>
+			{:else}
 				<DataBox label="Price" size="sm">
 					<div>
 						<Tooltip>
