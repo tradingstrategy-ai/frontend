@@ -9,6 +9,7 @@
 		DataBox,
 		HashAddress,
 		PageHeading,
+		Section,
 		Timestamp,
 		Tooltip,
 		UpDownIndicator
@@ -16,17 +17,28 @@
 	import TradeTable from './TradeTable.svelte';
 
 	export let data;
-	const { strategy, position, chain } = data;
+	const { position, chain } = data;
 
 	const assetUrl = position.pricingPair.info_url;
 </script>
 
-<main class="ds-container position-page">
-	<PageHeading title="Position #{position.position_id}">
-		<a slot="prefix" href="/strategies/{strategy.id}">{strategy.name}</a>
-	</PageHeading>
+<main class="position-page">
+	<Section>
+		<PageHeading prefix="Position #{position.position_id}">
+			<div slot="title">
+				{#if assetUrl}
+					<a href={assetUrl}>{position.pricingPair.symbol}</a>
+				{:else}
+					{position.pricingPair.symbol}
+				{/if}
+				<span class="position-kind">
+					{position.pair.kindShortLabel}
+				</span>
+			</div>
+		</PageHeading>
+	</Section>
 
-	<section>
+	<Section>
 		{#if position.failedOpen}
 			<Alert size="md" status="error" title="Failed entry">
 				<p>
@@ -55,19 +67,6 @@
 		{/if}
 
 		<div class="position-info">
-			<DataBox label="Position" size="sm">
-				<div>
-					{#if assetUrl}
-						<a href={assetUrl}>{position.pricingPair.symbol}</a>
-					{:else}
-						{position.pricingPair.symbol}
-					{/if}
-					<span class="position-kind">
-						{position.pair.kindShortLabel}
-					</span>
-				</div>
-			</DataBox>
-
 			<DataBox label="Profitability" size="sm">
 				<Tooltip>
 					<svelte:fragment slot="trigger">
@@ -319,26 +318,18 @@
 				{/if}
 			</DataBox>
 		</div>
+	</Section>
 
+	<Section padding="sm">
 		<TradeTable
 			trades={position.trades}
 			isCreditPosition={position.isCreditPosition}
 			interestRateAtOpen={position.interestRateAtOpen}
 		/>
-	</section>
+	</Section>
 </main>
 
 <style lang="postcss">
-	section {
-		margin-top: var(--space-md);
-		display: grid;
-		gap: var(--space-5xl);
-
-		@media (--viewport-sm-down) {
-			gap: var(--space-xl);
-		}
-	}
-
 	.error-details a {
 		font-weight: 500;
 
@@ -359,7 +350,7 @@
 	}
 
 	.position-kind {
-		color: var(--c-text-extra-light);
+		color: var(--c-text-ultra-light);
 	}
 
 	.data-badge {
