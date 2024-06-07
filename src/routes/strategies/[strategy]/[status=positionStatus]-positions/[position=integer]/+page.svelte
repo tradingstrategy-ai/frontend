@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { formatProfitability, formatTokenAmount } from 'trade-executor/helpers/formatters';
+	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
-	import { formatDollar, formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import {
 		Alert,
@@ -10,11 +10,12 @@
 		HashAddress,
 		PageHeading,
 		Section,
-		Timestamp,
+		SummaryBox,
 		Tooltip,
 		UpDownIndicator
 	} from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
+	import PositionSummary from './PositionSummary.svelte';
 
 	export let data;
 	const { position, chain } = data;
@@ -22,7 +23,7 @@
 	const assetUrl = position.pricingPair.info_url;
 </script>
 
-<main class="position-page">
+<main class="position-page ds-3">
 	<Section>
 		<PageHeading prefix="Position #{position.position_id}">
 			<div slot="title">
@@ -66,6 +67,11 @@
 			</Alert>
 		{/if}
 
+		<div class="position-tables">
+			<PositionSummary {position} />
+			<SummaryBox title="Other metrics" />
+		</div>
+
 		<div class="position-info">
 			<DataBox label="Profitability" size="sm">
 				<Tooltip>
@@ -100,46 +106,6 @@
 				{/if}
 			</DataBox>
 
-			<DataBox label="Time" size="sm">
-				<div>
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							<Timestamp date={position.opened_at} withTime />
-						</span>
-						<span slot="popup">
-							{position.tooltip.opened_at}
-						</span>
-					</Tooltip>
-					{position.stillOpen ? '' : '—'}
-				</div>
-
-				{#if !position.stillOpen}
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							<Timestamp date={position.closed_at} withTime />
-						</span>
-						<span slot="popup">
-							{position.tooltip.closed_at}
-						</span>
-					</Tooltip>
-				{/if}
-
-				<Tooltip>
-					<span slot="trigger" class="underline">
-						{formatDuration(position.durationSeconds)}
-					</span>
-					<span slot="popup">
-						{position.tooltip.durationSeconds}
-					</span>
-				</Tooltip>
-
-				{#if position.stillOpen}
-					<span class="data-badge">
-						<DataBadge>Currently open</DataBadge>
-					</span>
-				{/if}
-			</DataBox>
-
 			{#if position.isCreditPosition}
 				<DataBox label="Interest rate" size="sm">
 					<Tooltip>
@@ -151,62 +117,9 @@
 						</span>
 					</Tooltip>
 				</DataBox>
-			{:else}
-				<DataBox label="Price" size="sm">
-					<div>
-						<Tooltip>
-							<span slot="trigger" class="underline">
-								{formatPrice(position.openPrice)}
-							</span>
-							<span slot="popup">
-								{position.tooltip.openPrice}
-							</span>
-						</Tooltip>
-						—
-					</div>
-
-					{#if position.stillOpen}
-						<Tooltip>
-							<span slot="trigger" class="underline">
-								{formatPrice(position.currentPrice)}
-							</span>
-							<span slot="popup">
-								{position.tooltip.currentPrice}
-							</span>
-						</Tooltip>
-					{:else}
-						<Tooltip>
-							<span slot="trigger" class="underline">
-								{formatPrice(position.closePrice)}
-							</span>
-							<span slot="popup">
-								{position.tooltip.closePrice}
-							</span>
-						</Tooltip>
-					{/if}
-				</DataBox>
 			{/if}
 
 			<DataBox label="Size" size="sm">
-				<Tooltip>
-					<span slot="trigger" class="underline">
-						<span>{formatPrice(position.valueAtOpen)}</span>
-					</span>
-					<span slot="popup">
-						{position.tooltip.valueAtOpen}
-					</span>
-				</Tooltip>
-
-				<Tooltip>
-					<span slot="trigger" class="underline">
-						{formatTokenAmount(position.quantityAtOpen)}
-						{position.pair.actionSymbol}
-					</span>
-					<span slot="popup">
-						{position.tooltip.quantityAtOpen}
-					</span>
-				</Tooltip>
-
 				<Tooltip>
 					<span slot="trigger" class="underline">
 						{formatPercent(position.portfolioWeightAtOpen)}
@@ -337,6 +250,17 @@
 			display: inline-grid;
 			text-decoration: inherit;
 		}
+	}
+
+	.position-tables {
+		display: grid;
+		grid-template-columns: 8fr 5fr;
+		/* TODO: adjust gap for desktop/mobile */
+		gap: 2rem;
+
+		/* TODO: remove */
+		margin-bottom: 2rem;
+		min-height: 15rem;
 	}
 
 	.position-info {
