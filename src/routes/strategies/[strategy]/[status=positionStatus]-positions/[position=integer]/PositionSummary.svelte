@@ -144,6 +144,7 @@
 
 <style lang="postcss">
 	table {
+		margin-top: -1rem;
 		border-collapse: collapse;
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--ls-ui-md);

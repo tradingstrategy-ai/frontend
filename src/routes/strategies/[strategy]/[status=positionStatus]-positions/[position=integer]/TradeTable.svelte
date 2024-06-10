@@ -74,12 +74,10 @@
 
 		h2 {
 			margin-bottom: var(--space-md);
-			font: var(--f-heading-xl-medium);
-			letter-spacing: var(--f-heading-xl-spacing, normal);
+			font: var(--f-heading-lg-medium);
 
 			@media (--viewport-sm-down) {
 				font: var(--f-heading-md-medium);
-				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 		}
 	}
