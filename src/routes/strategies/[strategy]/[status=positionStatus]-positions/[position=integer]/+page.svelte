@@ -1,19 +1,9 @@
 <script lang="ts">
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
-	import { determineProfitability } from 'trade-executor/helpers/profit';
-	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { formatPercent } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import {
-		Alert,
-		DataBadge,
-		DataBox,
-		HashAddress,
-		PageHeading,
-		Section,
-		Tooltip,
-		UpDownIndicator
-	} from '$lib/components';
+	import { Alert, DataBox, HashAddress, PageHeading, Section, Tooltip } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
+	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
 	import OtherMetrics from './OtherMetrics.svelte';
 
@@ -71,38 +61,7 @@
 	<Section>
 		<div class="position-info-wrapper">
 			<div class="col1">
-				<DataBox label="Profitability" size="sm">
-					<Tooltip>
-						<svelte:fragment slot="trigger">
-							<UpDownIndicator
-								value={position.profitability}
-								formatter={formatProfitability}
-								compareFn={determineProfitability}
-								let:formatted
-							>
-								<span class="underline">{formatted}</span>
-							</UpDownIndicator>
-						</svelte:fragment>
-						<span slot="popup">
-							{#if position.stillOpen}
-								{position.tooltip.unrealisedProfitability}
-							{:else}
-								{position.tooltip.realisedProfitability}
-							{/if}
-						</span>
-					</Tooltip>
-
-					{#if position.stopLossTriggered}
-						<Tooltip>
-							<span slot="trigger" class="data-badge">
-								<DataBadge>Stop loss</DataBadge>
-							</span>
-							<span slot="popup">
-								{position.tooltip.stopLossTriggered}
-							</span>
-						</Tooltip>
-					{/if}
-				</DataBox>
+				<PositionProfitability {position} />
 
 				<PositionSummary {position} />
 			</div>
@@ -150,16 +109,21 @@
 		display: grid;
 		grid-template-columns: 2fr 1fr;
 		/* TODO: adjust gap for desktop/mobile */
-		gap: 1.5rem;
-		/* align-items: flex-start; */
+		gap: 1.5rem 2rem;
+		align-items: flex-start;
 
 		/* TODO: remove */
-		margin-top: 1.5rem;
+		/* margin-top: 0.5rem; */
 
 		.col1 {
 			display: grid;
 			gap: inherit;
 		}
+	}
+
+	[slot='popup'] {
+		display: inline-block;
+		max-width: 30rem;
 	}
 
 	.position-info {
@@ -175,14 +139,6 @@
 
 	.position-kind {
 		color: var(--c-text-ultra-light);
-	}
-
-	.data-badge {
-		:global([data-css-props]) {
-			--data-badge-background: var(--c-box-4);
-		}
-		font-size: 0.6em;
-		line-height: 125%;
 	}
 
 	.position-page :global .data-box {
