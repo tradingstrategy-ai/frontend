@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import { Timestamp, Tooltip } from '$lib/components';
-	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
+	import { formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatTokenAmount } from 'trade-executor/helpers/formatters';
 
 	export let position: TradingPositionInfo;
@@ -87,32 +87,48 @@
 				<td>---</td>
 			</tr>
 
-			<tr>
-				<td>Price</td>
-				<td>
-					<Tooltip>
-						<span slot="trigger">
-							{formatPrice(position.openPrice)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.openPrice}
-						</span>
-					</Tooltip>
-				</td>
-				<td>
-					<Tooltip>
-						<span slot="trigger">
-							{formatPrice(position[priceProp])}
-						</span>
-						<span slot="popup">
-							{position.tooltip[priceProp]}
-						</span>
-					</Tooltip>
-				</td>
-				<td>
-					{formatPrice(position[priceProp] - position.openPrice)}
-				</td>
-			</tr>
+			{#if position.isCreditPosition}
+				<tr>
+					<td>Interest rate</td>
+					<td>
+						{formatPercent(position.interestRateAtOpen)}
+					</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">N/A</span>
+							<span slot="popup">Closing interest rate not currently available.</span>
+						</Tooltip>
+					</td>
+					<td>---</td>
+				</tr>
+			{:else}
+				<tr>
+					<td>Price</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger">
+								{formatPrice(position.openPrice)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.openPrice}
+							</span>
+						</Tooltip>
+					</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger">
+								{formatPrice(position[priceProp])}
+							</span>
+							<span slot="popup">
+								{position.tooltip[priceProp]}
+							</span>
+						</Tooltip>
+					</td>
+					<td>
+						{formatPrice(position[priceProp] - position.openPrice)}
+					</td>
+				</tr>
+			{/if}
 
 			<tr>
 				<td>Value</td>

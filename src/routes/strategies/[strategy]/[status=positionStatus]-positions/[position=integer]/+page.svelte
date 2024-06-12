@@ -64,22 +64,6 @@
 			<PositionSummary {position} />
 			<OtherMetrics {position} />
 		</div>
-
-		<div class="position-info-old">
-			<!-- TODO: move into "other metrics" table -->
-			{#if position.isCreditPosition}
-				<DataBox label="Interest rate" size="sm">
-					<Tooltip>
-						<span slot="trigger" class="underline">
-							{formatPercent(position.interestRateAtOpen)}
-						</span>
-						<span slot="popup">
-							{position.tooltip.interestRateAtOpen}
-						</span>
-					</Tooltip>
-				</DataBox>
-			{/if}
-		</div>
 	</Section>
 
 	<Section padding="sm">
@@ -118,15 +102,6 @@
 				grid-row: 1 / span 2;
 			}
 		}
-	}
-
-	[slot='popup'] {
-		display: inline-block;
-		max-width: 30rem;
-	}
-
-	.position-info-old {
-		display: none;
 	}
 
 	.position-kind {
