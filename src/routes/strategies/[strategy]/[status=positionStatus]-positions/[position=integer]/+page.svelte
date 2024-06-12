@@ -59,17 +59,13 @@
 	</Section>
 
 	<Section>
-		<div class="position-info-wrapper">
-			<div class="col1">
-				<PositionProfitability {position} />
-
-				<PositionSummary {position} />
-			</div>
-
+		<div class="position-info">
+			<PositionProfitability {position} />
+			<PositionSummary {position} />
 			<OtherMetrics {position} />
 		</div>
 
-		<div class="position-info">
+		<div class="position-info-old">
 			<!-- TODO: move into "other metrics" table -->
 			{#if position.isCreditPosition}
 				<DataBox label="Interest rate" size="sm">
@@ -105,19 +101,22 @@
 		}
 	}
 
-	.position-info-wrapper {
+	.position-info {
 		display: grid;
-		grid-template-columns: 2fr 1fr;
-		/* TODO: adjust gap for desktop/mobile */
-		gap: 1.5rem 2rem;
+		gap: 2rem;
 		align-items: flex-start;
 
-		/* TODO: remove */
-		/* margin-top: 0.5rem; */
+		@media (--viewport-lg-up) {
+			/* use 2-column layout on desktop */
+			grid-template-columns: 2fr 1fr;
+			grid-template-rows: auto 1fr;
+			row-gap: 1.5rem;
 
-		.col1 {
-			display: grid;
-			gap: inherit;
+			/* position OtherMetrics in 2nd column, spanning 2 rows */
+			> :global(:last-child) {
+				grid-column: 2;
+				grid-row: 1 / span 2;
+			}
 		}
 	}
 
@@ -126,27 +125,11 @@
 		max-width: 30rem;
 	}
 
-	.position-info {
-		/* display: grid; */
+	.position-info-old {
 		display: none;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
-		gap: 1.5rem;
-
-		@media (--viewport-sm-down) {
-			gap: 1rem;
-		}
 	}
 
 	.position-kind {
 		color: var(--c-text-ultra-light);
-	}
-
-	.position-page :global .data-box {
-		align-content: flex-start;
-
-		.value {
-			display: grid;
-			gap: var(--space-sm);
-		}
 	}
 </style>
