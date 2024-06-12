@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
-	import { SummaryBox, Timestamp, Tooltip } from '$lib/components';
+	import { Timestamp, Tooltip } from '$lib/components';
 	import { formatDuration, formatPrice } from '$lib/helpers/formatters';
 	import { formatTokenAmount } from 'trade-executor/helpers/formatters';
 
@@ -9,7 +9,9 @@
 	const priceProp = position.stillOpen ? 'currentPrice' : 'closePrice';
 </script>
 
-<SummaryBox title="Position summary">
+<div class="position-summary">
+	<h2>Position Summary</h2>
+
 	<table>
 		<thead>
 			<tr>
@@ -140,53 +142,59 @@
 			</tr>
 		</tbody>
 	</table>
-</SummaryBox>
+</div>
 
 <style lang="postcss">
-	table {
-		margin-top: -1rem;
-		border-collapse: collapse;
-		font: var(--f-ui-md-roman);
-		letter-spacing: var(--ls-ui-md);
-
-		@media (--viewport-xs) {
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--ls-ui-sm);
+	.position-summary {
+		h2 {
+			font: var(--f-heading-md-medium);
 		}
 
-		:is(th, td) {
-			padding: 0.625rem;
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md);
 
-			&:first-child {
-				text-align: left;
+			@media (--viewport-xs) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--ls-ui-sm);
 			}
 
-			&:not(first-child) {
-				text-align: right;
-			}
-		}
+			:is(th, td) {
+				padding: 0.625rem;
 
-		thead {
-			color: var(--c-text-extra-light);
+				&:first-child {
+					text-align: left;
+				}
 
-			th {
-				padding-bottom: 1em;
-				font-size: 0.875em;
-			}
-		}
-
-		tbody {
-			border-block: 2px solid var(--c-text-ultra-light);
-
-			/* zebra-striped rows */
-			tr:nth-child(even) {
-				background: var(--c-box-2);
+				&:not(first-child) {
+					text-align: right;
+				}
 			}
 
-			td:first-child {
-				font-size: 0.875em;
-				font-weight: 500;
-				color: var(--c-text-light);
+			thead {
+				color: var(--c-text-extra-light);
+
+				th {
+					padding-bottom: 1em;
+					font-size: 0.875em;
+				}
+			}
+
+			tbody {
+				border-block: 2px solid var(--c-text-ultra-light);
+
+				/* zebra-striped rows */
+				tr:nth-child(even) {
+					background: var(--c-box-2);
+				}
+
+				td:first-child {
+					font-size: 0.875em;
+					font-weight: 500;
+					color: var(--c-text-light);
+				}
 			}
 		}
 	}
