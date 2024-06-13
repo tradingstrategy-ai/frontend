@@ -7,6 +7,9 @@
 	export let position: TradingPositionInfo;
 
 	const priceProp = position.stillOpen ? 'currentPrice' : 'closePrice';
+	const quantityProp = position.stillOpen ? 'currentQuantity' : 'quantityAtClose';
+	const interestRateProp = position.stillOpen ? 'currentInterestRate' : 'interestRateAtClose';
+	const valueProp = position.stillOpen ? 'currentValue' : 'valueAtClose';
 </script>
 
 <div class="position-summary">
@@ -17,16 +20,18 @@
 			<tr>
 				<th></th>
 				<th>Open</th>
-				<th>Close</th>
+				<th>
+					{position.stillOpen ? 'Latest' : 'Close'}
+				</th>
 				<th>𝚫</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td>Executed</td>
+				<td>Time</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
+						<span slot="trigger" class="underline">
 							<Timestamp date={position.opened_at} withTime />
 						</span>
 						<span slot="popup">
@@ -39,7 +44,7 @@
 						currently open
 					{:else}
 						<Tooltip>
-							<span slot="trigger">
+							<span slot="trigger" class="underline">
 								<Timestamp date={position.closed_at} withTime />
 							</span>
 							<span slot="popup">
@@ -50,7 +55,7 @@
 				</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
+						<span slot="trigger" class="underline">
 							{formatDuration(position.durationSeconds)}
 						</span>
 						<span slot="popup">
@@ -64,7 +69,7 @@
 				<td>Quantity</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
+						<span slot="trigger" class="underline">
 							{formatTokenAmount(position.quantityAtOpen)}
 							{position.pair.actionSymbol}
 						</span>
@@ -75,38 +80,58 @@
 				</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
-							{formatTokenAmount(position.quantityAtOpen)}
+						<span slot="trigger" class="underline">
+							{formatTokenAmount(position[quantityProp])}
 							{position.pair.actionSymbol}
 						</span>
 						<span slot="popup">
-							{position.tooltip.quantityAtOpen}
+							{position.tooltip[quantityProp]}
 						</span>
 					</Tooltip>
 				</td>
-				<td>---</td>
+				<td>
+					{formatTokenAmount(position[quantityProp] - position.quantityAtOpen)}
+					{position.pair.actionSymbol}
+				</td>
 			</tr>
 
 			{#if position.isCreditPosition}
 				<tr>
 					<td>Interest rate</td>
 					<td>
-						{formatPercent(position.interestRateAtOpen)}
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPercent(position.interestRateAtOpen)}
+							</span>
+							<span slot="popup">
+								{position.tooltip.interestRateAtOpen}
+							</span>
+						</Tooltip>
 					</td>
 					<td>
 						<Tooltip>
-							<span slot="trigger" class="underline">N/A</span>
-							<span slot="popup">Closing interest rate not currently available.</span>
+							<span slot="trigger" class="underline">
+								{#if position.stillOpen}
+									{formatPercent(position.currentInterestRate)}
+								{:else}
+									N/A
+								{/if}
+							</span>
+							<span slot="popup">
+								{position.tooltip[interestRateProp]}
+							</span>
 						</Tooltip>
 					</td>
-					<td>---</td>
+					<td>
+						{formatPercent(position[interestRateProp] - position.interestRateAtOpen)}
+					</td>
 				</tr>
 			{:else}
 				<tr>
 					<td>Price</td>
 					<td>
 						<Tooltip>
-							<span slot="trigger">
+							<span slot="trigger" class="underline">
 								{formatPrice(position.openPrice)}
 							</span>
 							<span slot="popup">
@@ -116,7 +141,7 @@
 					</td>
 					<td>
 						<Tooltip>
-							<span slot="trigger">
+							<span slot="trigger" class="underline">
 								{formatPrice(position[priceProp])}
 							</span>
 							<span slot="popup">
@@ -134,8 +159,8 @@
 				<td>Value</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
-							<span>{formatPrice(position.valueAtOpen)}</span>
+						<span slot="trigger" class="underline">
+							{formatPrice(position.valueAtOpen)}
 						</span>
 						<span slot="popup">
 							{position.tooltip.valueAtOpen}
@@ -144,16 +169,16 @@
 				</td>
 				<td>
 					<Tooltip>
-						<span slot="trigger">
-							<span>{formatPrice(position.valueAtClose)}</span>
+						<span slot="trigger" class="underline">
+							{formatPrice(position[valueProp])}
 						</span>
 						<span slot="popup">
-							{position.tooltip.valueAtOpen}
+							{position.tooltip[valueProp]}
 						</span>
 					</Tooltip>
 				</td>
 				<td>
-					{formatPrice(position.valueAtClose - position.valueAtOpen)}
+					{formatPrice(position[valueProp] - position.valueAtOpen)}
 				</td>
 			</tr>
 		</tbody>

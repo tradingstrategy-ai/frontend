@@ -35,8 +35,8 @@ describe('open position with stats entries', () => {
 		expect(positionInfo.stats).toEqual(stats);
 	});
 
-	test('should return last stats value as value', () => {
-		expect(positionInfo.value).toEqual(stats[1].value);
+	test('should return last stats value as currentValue', () => {
+		expect(positionInfo.currentValue).toEqual(stats[1].value);
 	});
 
 	test('should return first stats value as valueAtOpen', () => {
