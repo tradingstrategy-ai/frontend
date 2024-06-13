@@ -49,7 +49,7 @@
 		table.column({
 			id: 'value',
 			header: 'Value',
-			accessor: ({ executedValue, plannedValue }) => formatPrice(executedValue ?? plannedValue, 2, 5)
+			accessor: ({ value }) => formatPrice(value, 2, 5)
 		}),
 		table.column({
 			header: '',
