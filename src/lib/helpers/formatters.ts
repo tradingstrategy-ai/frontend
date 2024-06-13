@@ -337,10 +337,7 @@ export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): 
 
 	const diff = ((after - before) / before) * 100;
 
-	const formatted = diff.toLocaleString('en-US', {
-		minimumSignificantDigits: 2,
-		maximumSignificantDigits: 2
-	});
+	const formatted = formatNumber(diff);
 
 	const sign = diff > 0 ? '+' : '';
 

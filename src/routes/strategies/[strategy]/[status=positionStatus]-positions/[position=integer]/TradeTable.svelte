@@ -39,7 +39,7 @@
 		table.column({
 			id: 'price',
 			header: 'Price',
-			accessor: ({ executed_price, planned_price }) => formatPrice(executed_price ?? planned_price, 5)
+			accessor: ({ executed_price, planned_price }) => formatPrice(executed_price ?? planned_price, 2, 5)
 		}),
 		table.column({
 			id: 'interest_rate',
@@ -49,7 +49,7 @@
 		table.column({
 			id: 'value',
 			header: 'Value',
-			accessor: ({ executed_reserve, planned_reserve }) => formatPrice(executed_reserve ?? planned_reserve, 5)
+			accessor: ({ executedValue, plannedValue }) => formatPrice(executedValue ?? plannedValue, 2, 5)
 		}),
 		table.column({
 			header: '',

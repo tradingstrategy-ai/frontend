@@ -23,7 +23,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td>Time</td>
+				<td>Executed</td>
 				<td>
 					<Tooltip>
 						<span slot="trigger">

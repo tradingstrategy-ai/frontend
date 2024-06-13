@@ -113,18 +113,15 @@ const tradingPositionInfoPrototype = {
 	 * Return the value calculated when the position was opened
 	 */
 	get valueAtOpen() {
-		return this.stats[0]?.value;
+		return this.firstTrade.executedValue;
 	},
 
 	/**
 	 * Return the value calculated when the position was closed
 	 */
 	get valueAtClose() {
-		const lastStats = this.stats.at(-1);
-		// confirm position is closed and final stats have been calculated
-		if (this.closed && lastStats && this.closed_at! < lastStats.calculated_at) {
-			// return the value from the second-to-last position stats object
-			return this.stats.at(-2)?.value;
+		if (this.closed) {
+			return this.lastTrade.executedValue;
 		}
 	},
 

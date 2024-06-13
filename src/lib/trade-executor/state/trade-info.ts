@@ -20,12 +20,16 @@ export enum TradeDirection {
  * (which is non-trivial with TypeScript classes)
  */
 const tradeInfoPrototype = {
-	// Estimate the USD value of this trade
-	// `get_executed_value` in trade.py
+	// Estimate the USD value of trade; see: get_executed_value in trade.py
 	get executedValue(): USDollarAmount {
 		const quantity = this.executed_quantity ?? 0;
 		const price = this.executed_price ?? 0;
 		return Math.abs(quantity) * price;
+	},
+
+	// Planned USD value of trade; see: get_planned_value in trade.py
+	get plannedValue() {
+		return Math.abs(this.planned_quantity) * this.planned_price;
 	},
 
 	// Determine trade direction (enter|exit) based on planned_quantity
