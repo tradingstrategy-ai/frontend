@@ -1,4 +1,4 @@
-import { formatProfitability, formatTokenAmount } from './formatters';
+import { formatProfitability } from './formatters';
 
 describe('formatProfitability', () => {
 	test('should return `---` for null or undefined', () => {
@@ -32,18 +32,5 @@ describe('formatProfitability', () => {
 		expect(formatProfitability(0.05)).toBe('▲ 5.0%');
 		expect(formatProfitability(0.005)).toBe('▲ 0.5%');
 		expect(formatProfitability(0.0005)).toBe('▲ 0.05%');
-	});
-});
-
-describe('formatTokenAmount', () => {
-	test('should return `---` for null or undefined', () => {
-		expect(formatTokenAmount(null)).toBe('---');
-		expect(formatTokenAmount(undefined)).toBe('---');
-	});
-
-	test('should support numeric or string input', () => {
-		expect(formatTokenAmount(1)).toBe('1.00');
-		expect(formatTokenAmount('1')).toBe('1.00');
-		expect(formatTokenAmount('1.00')).toBe('1.00');
 	});
 });

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import { Timestamp, Tooltip } from '$lib/components';
-	import { formatDuration, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatTokenAmount } from 'trade-executor/helpers/formatters';
+	import { formatDuration, formatPercent, formatPrice, formatTokenAmount } from '$lib/helpers/formatters';
 
 	export let position: TradingPositionInfo;
 
@@ -10,6 +9,8 @@
 	const quantityProp = position.stillOpen ? 'currentQuantity' : 'quantityAtClose';
 	const interestRateProp = position.stillOpen ? 'currentInterestRate' : 'interestRateAtClose';
 	const valueProp = position.stillOpen ? 'currentValue' : 'valueAtClose';
+
+	const changeOptions: Intl.NumberFormatOptions = { signDisplay: 'exceptZero' };
 </script>
 
 <div class="position-summary">
@@ -56,7 +57,7 @@
 				<td>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatDuration(position.durationSeconds)}
+							+{formatDuration(position.durationSeconds)}
 						</span>
 						<span slot="popup">
 							{position.tooltip.durationSeconds}
@@ -90,7 +91,7 @@
 					</Tooltip>
 				</td>
 				<td>
-					{formatTokenAmount(position[quantityProp] - position.quantityAtOpen)}
+					{formatTokenAmount(position[quantityProp] - position.quantityAtOpen, undefined, undefined, changeOptions)}
 					{position.pair.actionSymbol}
 				</td>
 			</tr>
@@ -123,7 +124,12 @@
 						</Tooltip>
 					</td>
 					<td>
-						{formatPercent(position[interestRateProp] - position.interestRateAtOpen)}
+						{formatPercent(
+							position[interestRateProp] - position.interestRateAtOpen,
+							undefined,
+							undefined,
+							changeOptions
+						)}
 					</td>
 				</tr>
 			{:else}
@@ -150,7 +156,7 @@
 						</Tooltip>
 					</td>
 					<td>
-						{formatPrice(position[priceProp] - position.openPrice)}
+						{formatPrice(position[priceProp] - position.openPrice, undefined, undefined, changeOptions)}
 					</td>
 				</tr>
 			{/if}
@@ -178,7 +184,7 @@
 					</Tooltip>
 				</td>
 				<td>
-					{formatPrice(position[valueProp] - position.valueAtOpen)}
+					{formatPrice(position[valueProp] - position.valueAtOpen, undefined, undefined, changeOptions)}
 				</td>
 			</tr>
 		</tbody>
