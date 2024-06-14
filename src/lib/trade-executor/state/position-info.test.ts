@@ -39,8 +39,11 @@ describe('open position with stats entries', () => {
 		expect(positionInfo.currentValue).toEqual(stats[1].value);
 	});
 
-	test('should return first stats value as valueAtOpen', () => {
-		expect(positionInfo.valueAtOpen).toEqual(stats[0].value);
+	test('should return first trade executedValue as valueAtOpen', () => {
+		const spy = vi.spyOn(positionInfo.trades[0], 'executedValue', 'get');
+		spy.mockImplementationOnce(() => 123.45);
+		expect(positionInfo.valueAtOpen).toEqual(123.45);
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	test('should return undefined for valutAtClose', () => {
@@ -71,13 +74,10 @@ describe('closed position with stats entries', () => {
 		expect(positionInfo.closed).toBe(true);
 	});
 
-	test('should return undefined for valueAtClose prior to final stats calculated', () => {
-		expect(positionInfo.valueAtClose).toBeUndefined();
-	});
-
-	test('should return second-to-last stats value for valueAtClose after final stats calculated', () => {
-		vi.setSystemTime('2024-01-01T03:00:00Z');
-		positionInfo.stats.push(fixture.fromSchema(positionStatisticsSchema, { seed: 3 }));
-		expect(positionInfo.valueAtClose).toEqual(positionInfo.stats.at(-2)?.value);
+	test('should return last trade executedValue for valueAtClose', () => {
+		const spy = vi.spyOn(positionInfo.trades.at(-1)!, 'executedValue', 'get');
+		spy.mockImplementationOnce(() => 234.56);
+		expect(positionInfo.valueAtClose).toEqual(234.56);
+		expect(spy).toHaveBeenCalledOnce();
 	});
 });
