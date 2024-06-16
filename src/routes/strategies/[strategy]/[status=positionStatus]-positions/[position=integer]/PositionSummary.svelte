@@ -16,7 +16,7 @@
 <div class="position-summary">
 	<h2>Position Summary</h2>
 
-	<table>
+	<table class="metrics-table">
 		<thead>
 			<tr>
 				<th></th>
@@ -195,54 +195,6 @@
 	.position-summary {
 		h2 {
 			font: var(--f-heading-md-medium);
-		}
-
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			font: var(--f-ui-md-roman);
-			letter-spacing: var(--ls-ui-md);
-
-			@media (--viewport-xs) {
-				font: var(--f-ui-sm-roman);
-				letter-spacing: var(--ls-ui-sm);
-			}
-
-			:is(th, td) {
-				padding: 0.625rem;
-
-				&:first-child {
-					text-align: left;
-				}
-
-				&:not(first-child) {
-					text-align: right;
-				}
-			}
-
-			thead {
-				color: var(--c-text-extra-light);
-
-				th {
-					padding-bottom: 1em;
-					font-size: 0.875em;
-				}
-			}
-
-			tbody {
-				border-block: 2px solid var(--c-text-ultra-light);
-
-				/* zebra-striped rows */
-				tr:nth-child(even) {
-					background: var(--c-box-2);
-				}
-
-				td:first-child {
-					font-size: 0.875em;
-					font-weight: 500;
-					color: var(--c-text-light);
-				}
-			}
 		}
 	}
 </style>
