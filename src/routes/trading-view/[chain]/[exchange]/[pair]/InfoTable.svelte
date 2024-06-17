@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDollar, formatSwapFee, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee, formatPriceChange, formatTokenAmount } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
 	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
@@ -31,14 +31,14 @@
 
 	<TradingDataInfoRow label="Price">
 		<span slot="value" class={priceChangeColorClass}>
-			{formatDollar(summary.usd_price_latest, 3, 3, false)} USD
+			{formatTokenAmount(summary.usd_price_latest, 3)} USD
 		</span>
 	</TradingDataInfoRow>
 
 	{#if tokenPrice}
 		<TradingDataInfoRow label="Token price">
 			<span slot="value" class={priceChangeColorClass}>
-				{formatDollar(tokenPrice, 3, 3, false)}
+				{formatTokenAmount(tokenPrice, 3)}
 				{summary.quote_token_symbol_friendly}
 			</span>
 		</TradingDataInfoRow>
@@ -76,7 +76,7 @@
 	{#if summary.exchange_rate}
 		<TradingDataInfoRow label="Dollar exchange rate">
 			<svelte:fragment slot="value">
-				{formatDollar(summary.exchange_rate, 3, 3, false)} USD /
+				{formatTokenAmount(summary.exchange_rate, 3)} USD /
 				{summary.quote_token_symbol_friendly}
 			</svelte:fragment>
 		</TradingDataInfoRow>

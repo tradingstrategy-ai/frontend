@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formatBPS } from 'trade-executor/helpers/formatters';
 	import {
-		formatAmount,
+		formatNumber,
 		formatPercent,
 		formatPrice,
 		formatPriceDifference,
@@ -118,13 +118,13 @@
 					<tbody>
 						<tr>
 							<td>Mid</td>
-							<td>{formatPrice(trade.price_structure?.mid_price)}</td>
+							<td>{formatPrice(trade.price_structure?.mid_price, 2, 5)}</td>
 							<td />
 						</tr>
 
 						<tr>
 							<td>Expected</td>
-							<td>{formatPrice(trade.planned_price)}</td>
+							<td>{formatPrice(trade.planned_price, 2, 5)}</td>
 							<td class="delta">
 								{formatPriceDifference(trade.price_structure?.mid_price, trade.planned_price)}
 							</td>
@@ -148,18 +148,18 @@
 					<tr>
 						<td>Expected</td>
 						<td>
-							{formatAmount(trade.planned_quantity)}
+							{formatNumber(trade.planned_quantity, 2, 5)}
 							{trade.pair.actionSymbol}
 						</td>
-						<td>{formatPrice(trade.planned_reserve)}</td>
+						<td>{formatPrice(trade.plannedValue, 2, 5)}</td>
 					</tr>
 					<tr>
 						<td>Executed</td>
 						<td>
-							{formatAmount(trade.executed_quantity)}
+							{formatNumber(trade.executed_quantity, 2, 5)}
 							{trade.pair.actionSymbol}
 						</td>
-						<td>{formatPrice(trade.executed_reserve)}</td>
+						<td>{formatPrice(trade.executedValue, 2, 5)}</td>
 					</tr>
 				</tbody>
 			</table>

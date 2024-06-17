@@ -21,16 +21,22 @@ export const tradingPositionInfoTooltips = {
 	stillOpen: 'Is the position currently open.',
 	candleTimeBucket: 'Which candles we use to visualise the history of this position.',
 	openPrice: 'The execution price of the opening trade.',
-	closePrice: 'The closing price of position.',
-	currentPrice: 'The closing price of position.',
+	closePrice: 'The closing price of the position.',
+	currentPrice: 'The latest recorded price of the position.',
 	interestRateAtOpen: 'The opening interest rate of the position.',
+	interestRateAtClose: 'Closing interest rate is not currently available.',
+	currentInterestRate: 'The latest recorded interest rate of the position.',
 	realisedProfitability:
 		'The realised profitability of the position. BETA WARNING: Currently calculation may not be correct for multitrade positions.',
 	unrealisedProfitability:
 		'The current estimated profitability of the position if closed now. BETA WARNING: Currently calculation may not be correct for multitrade positions.',
-	portfolioWeightAtOpen: 'What was the position size in the terms of % total portfolio when the position was opened.',
-	valueAtOpen: 'What was the position value when the position was opened.',
-	quantityAtOpen: 'What was the position size in tokens when the position was opened.',
+	portfolioWeightAtOpen: 'The position size in the terms of % total portfolio when the position was opened.',
+	valueAtOpen: 'The position value when the position was opened.',
+	valueAtClose: 'The position value when the position was closed.',
+	currentValue: 'The last recorded value of the position.',
+	quantityAtOpen: 'The position size in tokens when the position was opened.',
+	quantityAtClose: 'The position size in tokens when the position was closed.',
+	currentQuantity: 'The latest recorded position size in tokens.',
 	estimatedMaximumRisk: 'How much % of the portfolio is at the risk if this position is completely lost.',
 	stopLossPercentOpen:
 		'Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. BETA WARNING: Currently calculated relative to the open price, not the current price.',
@@ -80,6 +86,17 @@ const tradingPositionInfoPrototype = {
 		return this.trades.at(-1);
 	},
 
+	get latestStats() {
+		return this.stats.at(-1);
+	},
+
+	get lastStatsBeforeClose() {
+		// confirm position is closed and final stats have been calculated
+		if (this.closed && this.latestStats && this.closed_at! < this.latestStats.calculated_at) {
+			return this.stats.at(-2);
+		}
+	},
+
 	get failedOpen() {
 		return this.firstTrade.failed;
 	},
@@ -96,35 +113,37 @@ const tradingPositionInfoPrototype = {
 		return Boolean(this.frozen_at && !this.unfrozen_at);
 	},
 
+	get multitrade() {
+		const tradeCount = this.trades.length - this.failedTrades.length;
+		return this.closed ? tradeCount > 2 : tradeCount > 1;
+	},
+
 	get openPrice() {
 		return this.firstTrade.executed_price;
 	},
 
 	/**
 	 * Return the value based on the latest pre-calculated position stats
-	 *
-	 * NOTE: this will be zero for closed positions
 	 */
-	get value() {
-		return this.stats.at(-1)?.value;
+	get currentValue() {
+		if (this.stillOpen) {
+			return this.latestStats?.value;
+		}
 	},
 
 	/**
 	 * Return the value calculated when the position was opened
 	 */
 	get valueAtOpen() {
-		return this.stats[0]?.value;
+		return this.firstTrade.executedValue;
 	},
 
 	/**
 	 * Return the value calculated when the position was closed
 	 */
 	get valueAtClose() {
-		const lastStats = this.stats.at(-1);
-		// confirm position is closed and final stats have been calculated
-		if (this.closed && lastStats && this.closed_at! < lastStats.calculated_at) {
-			// return the value from the second-to-last position stats object
-			return this.stats.at(-2)?.value;
+		if (this.closed) {
+			return this.lastTrade.executedValue;
 		}
 	},
 
@@ -138,6 +157,16 @@ const tradingPositionInfoPrototype = {
 	get quantityAtOpen() {
 		const quantity = this.stats[0]?.quantity;
 		return quantity && Math.abs(quantity);
+	},
+
+	get quantityAtClose() {
+		return this.lastStatsBeforeClose?.quantity;
+	},
+
+	get currentQuantity() {
+		if (this.stillOpen) {
+			return this.latestStats?.quantity;
+		}
 	},
 
 	get portfolioWeightAtOpen(): Percent | undefined {
@@ -183,7 +212,7 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get profitability() {
-		return this.stats.at(-1)?.profitability;
+		return this.latestStats?.profitability;
 	},
 
 	get candleTimeBucket(): TimeBucket {
@@ -196,6 +225,10 @@ const tradingPositionInfoPrototype = {
 
 	get interestRateAtOpen() {
 		return this.loan?.collateral.interest_rate_at_open;
+	},
+
+	get currentInterestRate() {
+		return this.loan?.collateral.last_interest_rate;
 	},
 
 	get portfolioRiskPercent(): Percent | undefined {

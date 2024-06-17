@@ -1,44 +1,63 @@
-import { formatByteUnits, formatDollar, formatNumber } from './formatters';
+import { formatByteUnits, formatDollar, formatNumber, formatTokenAmount } from './formatters';
 
-describe('formatDollar', () => {
+describe('formatTokenAmount', () => {
+	test('should return `---` for null or undefined', () => {
+		expect(formatTokenAmount(null)).toBe('---');
+		expect(formatTokenAmount(undefined)).toBe('---');
+	});
+
+	test('should support numeric or string input', () => {
+		expect(formatTokenAmount(1)).toBe('1.00');
+		expect(formatTokenAmount('1')).toBe('1.00');
+		expect(formatTokenAmount('1.00')).toBe('1.00');
+	});
+
 	test('should round to two digits and show $ prefix by default', () => {
-		expect(formatDollar(123.456)).toEqual('$123.46');
+		expect(formatTokenAmount(123.456)).toEqual('123.46');
 	});
 
 	test('should format 0 and -0 correctly', () => {
-		expect(formatDollar(0)).toEqual('$0.00');
-		expect(formatDollar(-0)).toEqual('$0.00');
+		expect(formatTokenAmount(0)).toEqual('0.00');
+		expect(formatTokenAmount(-0)).toEqual('0.00');
 	});
 
 	test('should use compact format magnitude abbreviations', () => {
-		expect(formatDollar(1234.56)).toEqual('$1.23K');
-		expect(formatDollar(12345.67)).toEqual('$12.35K');
-		expect(formatDollar(1_234_567)).toEqual('$1.23M');
-		expect(formatDollar(1_234_567_890)).toEqual('$1.23B');
-		expect(formatDollar(1_234_567_890_123)).toEqual('$1.23T');
+		expect(formatTokenAmount(1234.56)).toEqual('1.23K');
+		expect(formatTokenAmount(12345.67)).toEqual('12.35K');
+		expect(formatTokenAmount(1_234_567)).toEqual('1.23M');
+		expect(formatTokenAmount(1_234_567_890)).toEqual('1.23B');
+		expect(formatTokenAmount(1_234_567_890_123)).toEqual('1.23T');
 	});
 
-	test('should use scientific format for very small/large numbers', () => {
-		expect(formatDollar(1e-7)).toEqual('$1.00E-7');
-		expect(formatDollar(1e15)).toEqual('$1.00E15');
+	test('should use scientific format for ery small/large numbelrs', () => {
+		expect(formatTokenAmount(1e-7)).toEqual('1.00E-7');
+		expect(formatTokenAmount(1e15)).toEqual('1.00E15');
 	});
 
 	test('should display minDigits digits when specified', () => {
-		expect(formatDollar(12345.67, 3)).toEqual('$12.346K');
-		expect(formatDollar(123.4567, 3)).toEqual('$123.457');
-		expect(formatDollar(0.00123, 3)).toEqual('$0.00123');
-		expect(formatDollar(1, 3)).toEqual('$1.000');
+		expect(formatTokenAmount(12345.67, 3)).toEqual('12.346K');
+		expect(formatTokenAmount(123.4567, 3)).toEqual('123.457');
+		expect(formatTokenAmount(0.00123, 3)).toEqual('0.00123');
+		expect(formatTokenAmount(1, 3)).toEqual('1.000');
 	});
 
 	test('should display up to maxPrecision significant digits when specified', () => {
-		expect(formatDollar(12345.67, 2, 3)).toEqual('$12.35K');
-		expect(formatDollar(123.4567, 2, 3)).toEqual('$123.46');
-		expect(formatDollar(0.00123, 2, 3)).toEqual('$0.00123');
-		expect(formatDollar(1, 2, 3)).toEqual('$1.00');
+		expect(formatTokenAmount(12345.67, 2, 3)).toEqual('12.35K');
+		expect(formatTokenAmount(123.4567, 2, 3)).toEqual('123.46');
+		expect(formatTokenAmount(0.00123, 2, 3)).toEqual('0.00123');
+		expect(formatTokenAmount(1, 2, 3)).toEqual('1.00');
+	});
+});
+
+describe('formatDollar', () => {
+	test('should include $ prefix', () => {
+		expect(formatDollar(123.456)).toEqual('$123.46');
 	});
 
-	test('should not show $ prefix when showPrefix = false', () => {
-		expect(formatDollar(123.456, 2, 3, false)).toEqual('123.46');
+	// Testing implementation details to ensure that all of the features
+	// of formatTokenAmount are also supported
+	test('should use formatTokenAmount under the hood', () => {
+		expect(formatDollar.toString()).toContain('formatTokenAmount');
 	});
 });
 

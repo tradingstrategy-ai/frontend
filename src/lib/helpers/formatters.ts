@@ -62,26 +62,56 @@ export function formatByteUnits(n: MaybeNumber): string {
 }
 
 /**
- * Format large money amounts in human friendly manner.
+ * Format extreme large or small amounts human friendly manner.
  *
  * Crypto prices can vary highly between $1B to $0.00000001.
  * Use Intl.NumberFormat "compact" notation to format everything gracefully.
- * see: https://mdn.io/NumberFormat+constructor
+ * @see: {@link https://mdn.io/NumberFormat+constructor}
  *
  * @param n - number to format
  * @param minDigits - minimum number of digits to display (default = 2)
  * @param maxPrecision - maximum number of significant digits (default = minDigits)
- * @param showPrefix - whether to show "$" prefix (default = true)
+ * @param options - additional Intl.NumberFormat options
  */
-export function formatDollar(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits, showPrefix = true) {
+export function formatTokenAmount(
+	n: MaybeNumberlike,
+	minDigits = 2,
+	maxPrecision = minDigits,
+	options: Intl.NumberFormatOptions = {}
+) {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
 	// If n is very small or large, use scientific notation
 	const notation = isExtreme(n, VERY_SMALL_USD_VALUE, VERY_LARGE_USD_VALUE) ? 'scientific' : 'compact';
-	const style = showPrefix ? 'currency' : 'decimal';
-	const options: Intl.NumberFormatOptions = { notation, style, compactDisplay: 'short', currency: 'USD' };
-	return formatNumber(n, minDigits, maxPrecision, options);
+
+	return formatNumber(n, minDigits, maxPrecision, {
+		notation,
+		compactDisplay: 'short',
+		...options
+	});
+}
+
+/**
+ * Format large money amounts in human friendly manner.
+ *
+ * @see formatTokenAmount
+ *
+ * @param n - number to format
+ * @param minDigits - minimum number of digits to display (default = 2)
+ * @param maxPrecision - maximum number of significant digits (default = minDigits)
+ */
+export function formatDollar(
+	n: MaybeNumberlike,
+	minDigits = 2,
+	maxPrecision = minDigits,
+	options: Intl.NumberFormatOptions = {}
+) {
+	return formatTokenAmount(n, minDigits, maxPrecision, {
+		style: 'currency',
+		currency: 'USD',
+		...options
+	});
 }
 
 /**
@@ -144,11 +174,17 @@ export function formatNumber(
  * Format price with '$' prefix, thousands separator, and useful
  * number of digits.
  */
-export function formatPrice(n: MaybeNumberlike, minDigits = 2, maxPrecision = 4) {
+export function formatPrice(
+	n: MaybeNumberlike,
+	minDigits = 2,
+	maxPrecision = 4,
+	options: Intl.NumberFormatOptions = {}
+) {
 	maxPrecision = Math.max(minDigits, maxPrecision);
 	return formatNumber(n, minDigits, maxPrecision, {
 		style: 'currency',
-		currency: 'USD'
+		currency: 'USD',
+		...options
 	});
 }
 
@@ -213,14 +249,20 @@ export function formatShortAddress(address: MaybeString): string {
  *
  * Like average winning profit.
  */
-export function formatPercent(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
+export function formatPercent(
+	n: MaybeNumberlike,
+	minDigits = 1,
+	maxPrecision = minDigits,
+	options: Intl.NumberFormatOptions = {}
+) {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
 	const notation = isExtreme(n, VERY_SMALL_PERCENT, VERY_LARGE_PERCENT) ? 'scientific' : 'standard';
 	return formatNumber(n, minDigits, maxPrecision, {
 		notation,
-		style: 'percent'
+		style: 'percent',
+		...options
 	});
 }
 
@@ -335,16 +377,11 @@ export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): 
 		return '---';
 	}
 
-	const diff = ((after - before) / before) * 100;
+	const diff = (after - before) / before;
 
-	const formatted = diff.toLocaleString('en-US', {
-		minimumSignificantDigits: 2,
-		maximumSignificantDigits: 2
+	return formatPercent(diff, undefined, undefined, {
+		signDisplay: 'exceptZero'
 	});
-
-	const sign = diff > 0 ? '+' : '';
-
-	return `${sign}${formatted} %`;
 }
 
 /**

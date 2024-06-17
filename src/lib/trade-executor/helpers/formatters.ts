@@ -3,29 +3,7 @@
  *
  * (see $lib/helpers/formatters for other general-use formatters)
  */
-import {
-	formatDollar,
-	formatNumber,
-	formatPercent,
-	toFloatingPoint,
-	isNumber,
-	notFilledMarker
-} from '$lib/helpers/formatters';
-
-/**
- * Format extreme large or small amounts human friendly manner.
- *
- * Useful to display token amounts.
- *
- * @param n - number to format
- * @param minDigits - minimum number of digits to display (default = 2)
- * @param maxPrecision - maximum number of significant digits (default = minDigits)
- */
-export function formatTokenAmount(n: MaybeNumberlike, minDigits = 2, maxPrecision = minDigits) {
-	// Token quantities come from the API as strings. Because JavaScript numbers (IEEE 754 floats)
-	// cannot represent quantities accurately, some precision may be lost in the conversion.
-	return formatDollar(n, minDigits, maxPrecision, false);
-}
+import { formatNumber, formatPercent, toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
 
 /**
  * Format how much profit a position has made.

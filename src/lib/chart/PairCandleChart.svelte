@@ -23,7 +23,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	import type { ChartLinker, QuoteFeed, TimeBucket } from '$lib/chart';
 	import { timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { Alert } from '$lib/components';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange, formatTokenAmount } from '$lib/helpers/formatters';
 
 	export let feed: QuoteFeed;
 	export let pairId: number | string;
@@ -43,7 +43,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	let hasData = true;
 
 	function formatForHud(value: number) {
-		return formatDollar(value, 3, 3, false);
+		return formatTokenAmount(value, 3);
 	}
 
 	const options = {
