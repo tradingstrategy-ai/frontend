@@ -184,7 +184,14 @@
 					</Tooltip>
 				</td>
 				<td>
-					{formatPrice(position[valueProp] - position.valueAtOpen, undefined, undefined, changeOptions)}
+					{#if position.multitrade}
+						<Tooltip>
+							<span slot="trigger" class="underline">N/A</span>
+							<span slot="popup">𝚫 Value not currently available for multitrade positions.</span>
+						</Tooltip>
+					{:else}
+						{formatPrice(position[valueProp] - position.valueAtOpen, undefined, undefined, changeOptions)}
+					{/if}
 				</td>
 			</tr>
 		</tbody>

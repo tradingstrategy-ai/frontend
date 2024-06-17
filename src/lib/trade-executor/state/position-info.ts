@@ -113,6 +113,11 @@ const tradingPositionInfoPrototype = {
 		return Boolean(this.frozen_at && !this.unfrozen_at);
 	},
 
+	get multitrade() {
+		const tradeCount = this.trades.length - this.failedTrades.length;
+		return this.closed ? tradeCount > 2 : tradeCount > 1;
+	},
+
 	get openPrice() {
 		return this.firstTrade.executed_price;
 	},
