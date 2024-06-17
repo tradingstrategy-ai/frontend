@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { formatPercent } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { Alert, DataBox, HashAddress, PageHeading, Section, Tooltip } from '$lib/components';
+	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
 	import TradeTable from './TradeTable.svelte';
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
@@ -17,15 +16,18 @@
 	<Section>
 		<PageHeading prefix="Position #{position.position_id}">
 			<div slot="title">
-				{#if assetUrl}
-					<a href={assetUrl}>{position.pricingPair.symbol}</a>
-				{:else}
-					{position.pricingPair.symbol}
-				{/if}
+				{position.pricingPair.symbol}
 				<span class="position-kind">
 					{position.pair.kindShortLabel}
 				</span>
 			</div>
+			<svelte:fragment slot="cta">
+				{#if assetUrl}
+					<Button size="sm" target="_blank" href={assetUrl}>
+						{position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
+					</Button>
+				{/if}
+			</svelte:fragment>
 		</PageHeading>
 	</Section>
 
