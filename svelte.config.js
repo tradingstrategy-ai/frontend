@@ -19,6 +19,13 @@ const config = {
 			wizard: 'src/routes/wizard'
 		},
 
+		// prevent clickjacking (block 3rd-parties from including site via iframe)
+		csp: {
+			directives: {
+				'frame-ancestors': ['self']
+			}
+		},
+
 		// disable CSRF origin checking for now; see:
 		// - https://kit.svelte.dev/docs/configuration#csrf
 		// - https://github.com/sveltejs/kit/tree/master/packages/adapter-node#origin-protocol_header-and-host_header
