@@ -19,15 +19,13 @@ Render the pair trading page
 
 	export let data;
 
-	let copier: ComponentProps<CopyWidget>['copier'];
-
 	$: summary = data.pair.summary;
 	$: details = data.pair.additional_details;
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
 	$: isUniswapIncompatible = summary.exchange_type === 'uniswap_v2_incompatible';
-	$: swapFee = formatSwapFee(summary.pool_swap_fee);
+	$: swapFee = formatSwapFee(summary.pair_swap_fee);
 
 	// Ridiculous token price warning: it is common with scam tokens to price the
 	// token super low so that prices are not readable when converted to USD.
@@ -39,11 +37,7 @@ Render the pair trading page
 		[summary.pair_slug]: summary.pair_name
 	};
 
-	$: pageTitle = [
-		summary.pair_symbol,
-		isUniswapV3 ? `${swapFee} pool` : 'token price',
-		`on ${details.exchange_name}`
-	].join(' ');
+	let copier: ComponentProps<CopyWidget>['copier'];
 
 	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
 	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
@@ -62,7 +56,9 @@ Render the pair trading page
 </script>
 
 <svelte:head>
-	<title>{pageTitle}</title>
+	<title>
+		{summary.pair_symbol} ({swapFee}) token price on {details.exchange_name}
+	</title>
 	<meta
 		name="description"
 		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
@@ -75,9 +71,7 @@ Render the pair trading page
 	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
 		<span slot="title">
 			{summary.pair_symbol}
-			{#if isUniswapV3}
-				<span class="pool-swap-fee">{swapFee}</span>
-			{/if}
+			<span class="swap-fee">{swapFee}</span>
 		</span>
 	</PageHeader>
 
@@ -169,7 +163,7 @@ Render the pair trading page
 		}
 	}
 
-	.pool-swap-fee {
+	.swap-fee {
 		margin-left: var(--space-xxs);
 		color: var(--c-text-extra-light);
 	}
