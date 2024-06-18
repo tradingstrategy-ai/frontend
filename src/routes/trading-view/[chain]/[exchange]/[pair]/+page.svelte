@@ -9,7 +9,7 @@ Render the pair trading page
 	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
+	import { AlertList, Button, CopyWidget, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -68,10 +68,14 @@ Render the pair trading page
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
+	<PageHeader>
 		<span slot="title">
 			{summary.pair_symbol}
 			<span class="swap-fee">{swapFee}</span>
+		</span>
+		<span slot="subtitle" class="subtitle">
+			token pair on {details.exchange_name} on
+			<EntitySymbol type="blockchain" slug={summary.chain_slug} label={summary.chain_name} size="0.875em" />
 		</span>
 	</PageHeader>
 
@@ -161,6 +165,12 @@ Render the pair trading page
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
+	}
+
+	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 0.5ex;
 	}
 
 	.swap-fee {
