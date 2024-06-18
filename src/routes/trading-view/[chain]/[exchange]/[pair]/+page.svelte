@@ -85,20 +85,12 @@ Render the pair trading page
 			<InfoSummary {summary} {details} />
 		</div>
 
-		{#if isUniswapV3 || isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
+		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
 			<AlertList status="warning" let:AlertItem>
-				{#if isUniswapV3}
-					<AlertItem title="Uniswap V3 beta">
-						We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please
-						note that the data for this trading pair is currently incomplete.
-					</AlertItem>
-				{/if}
-
 				{#if isUniswapIncompatible}
 					<AlertItem title="Incompatible exchange">
 						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-						{summary.pair_symbol}
-						may be inaccurate.
+						{summary.pair_symbol} may be inaccurate.
 					</AlertItem>
 				{/if}
 
