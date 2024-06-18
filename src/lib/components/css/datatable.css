@@ -139,31 +139,26 @@ table.datatable {
 
 	&.responsive {
 		@media (--viewport-sm-down) {
-			--table-font: var(--f-ui-md-medium) !important;
-			--table-letter-spacing: var(--f-ui-xs-spacing, normal);
+			display: grid;
+			gap: var(--space-md);
 
-			border-collapse: separate;
-			border-spacing: 0 var(--border-spacing);
-			margin: calc(-1 * var(--border-spacing)) 0;
-			width: 100%;
-
-			&,
-			tbody {
-				display: grid;
-				gap: var(--space-md);
+			/* hide table head; display td:data-label attr as nested cell label instead */
+			thead {
+				display: none;
 			}
 
-			thead {
-				display: none !important;
+			/* remove tbody from layout (so tr's are the grid rows) */
+			tbody {
+				display: contents;
 			}
 
 			tbody tr {
-				background: var(--c-box-2);
-				border-radius: var(--table-border-radius);
 				display: grid;
 				grid-template-columns: 1fr 1fr;
-				overflow: hidden;
 				padding: var(--space-sm) 0;
+				border-radius: var(--table-border-radius);
+				background: var(--c-box-2);
+				overflow: hidden;
 
 				@media (width < 390px) {
 					grid-template-columns: 1fr;
@@ -184,14 +179,13 @@ table.datatable {
 				}
 
 				td {
-					align-content: start;
-					background: transparent;
-					border-radius: 0;
 					display: grid;
-					font: var(--f-ui-xl-medium);
 					gap: var(--space-xxs);
+					align-content: start;
 					height: auto;
 					padding: var(--space-sm) var(--space-ml);
+					background: transparent;
+					font: var(--f-ui-xl-medium);
 					word-break: break-all;
 
 					&:not(.cta)::before {
@@ -207,9 +201,12 @@ table.datatable {
 				}
 			}
 
-			tfoot,
-			tfoot tr {
+			tfoot {
 				display: grid;
+
+				:is(tr, td) {
+					display: contents;
+				}
 			}
 
 			.up-down-cell {

@@ -12,7 +12,10 @@
 	$: lastRowIndex = Math.min(firstRowIndex + $pageSize - 1, totalRowCount);
 	$: visiblePageIndices = getVisiblePageIndices($pageCount, $pageIndex);
 
-	function handlePageButtonClick({ target }: { target: HTMLButtonElement }) {
+	// Click handler is attached to top-level pagination element,
+	// handles propogated events from decendent button elements
+	function handlePageButtonClick({ target }: MouseEvent) {
+		if (!(target instanceof HTMLButtonElement)) return;
 		const index = parseInt(target.value);
 		if (Number.isFinite(index)) {
 			$pageIndex = index;
