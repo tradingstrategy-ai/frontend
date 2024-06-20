@@ -6,10 +6,9 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertList, Button, CopyWidget, EntitySymbol, PageHeader } from '$lib/components';
+	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -36,23 +35,6 @@ Render the pair trading page
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
 	};
-
-	let copier: ComponentProps<CopyWidget>['copier'];
-
-	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
-	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
-	function copyPythonIdentifier(this: HTMLButtonElement) {
-		const parts = [
-			`ChainId.${summary.chain_slug}`,
-			`"${summary.exchange_slug}"`,
-			`"${summary.base_token_symbol}"`,
-			`"${summary.quote_token_symbol}"`,
-			summary.pool_swap_fee
-		];
-		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
-		copier?.copy(identifier);
-		this.blur();
-	}
 </script>
 
 <svelte:head>
@@ -89,7 +71,7 @@ Render the pair trading page
 	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
 			<InfoTable {summary} {details} />
-			<InfoSummary {summary} {details} />
+			<InfoSummary {summary} {details} pageUrl={$page.url.toString()} />
 		</div>
 
 		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
@@ -118,16 +100,6 @@ Render the pair trading page
 				{/if}
 			</AlertList>
 		{/if}
-
-		<div class="trade-actions">
-			<Button
-				label="{summary.pair_symbol} API and historical data"
-				href="./{summary.pair_slug}/api-and-historical-data"
-			/>
-			<Button label="Copy Python identifier" on:click={copyPythonIdentifier}>
-				<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
-			</Button>
-		</div>
 	</section>
 
 	<section class="ds-container charts">
@@ -184,19 +156,6 @@ Render the pair trading page
 		.ds-2-col {
 			row-gap: var(--space-xl);
 			align-items: start;
-		}
-	}
-
-	.trade-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-ls) var(--space-xl);
-		padding-block: var(--space-lg);
-
-		@media (--viewport-xs) {
-			flex-direction: column;
-			padding-block: 0;
 		}
 	}
 
