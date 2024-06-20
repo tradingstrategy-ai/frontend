@@ -1,11 +1,13 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDistanceToNowStrict } from 'date-fns';
-	import { CryptoAddressWidget } from '$lib/components';
+	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
 
 	export let summary: any;
 	export let details: any;
+	export let pageUrl: string;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
 		if (!dateStr) return '(data unavailable)';
@@ -17,6 +19,23 @@
 
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
+
+	let copier: ComponentProps<CopyWidget>['copier'];
+
+	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
+	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
+	function copyPythonIdentifier(this: HTMLButtonElement) {
+		const parts = [
+			`ChainId.${summary.chain_slug}`,
+			`"${summary.exchange_slug}"`,
+			`"${summary.base_token_symbol}"`,
+			`"${summary.quote_token_symbol}"`,
+			summary.pool_swap_fee
+		];
+		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${pageUrl}`;
+		copier?.copy(identifier);
+		this.blur();
+	}
 </script>
 
 <div class="summary">
@@ -76,6 +95,13 @@
 		The trading pair pool smart contract address is
 		<CryptoAddressWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
 	</p>
+
+	<div class="trade-actions">
+		<Button secondary label="API and historical data" href="./{summary.pair_slug}/api-and-historical-data" />
+		<Button secondary label="Copy Python identifier" on:click={copyPythonIdentifier}>
+			<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
+		</Button>
+	</div>
 </div>
 
 <style lang="postcss">
@@ -102,5 +128,11 @@
 		display: grid;
 		gap: var(--space-md);
 		justify-content: flex-start;
+	}
+
+	.trade-actions {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, auto));
+		gap: 1rem;
 	}
 </style>

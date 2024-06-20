@@ -44,7 +44,7 @@
 
 <main class="ds-3">
 	<PageHeader title={reserve.asset_name}>
-		<span class="subtitle" slot="subtitle">
+		<span slot="subtitle" class="subtitle">
 			{reserve.protocol_name}
 			reserve on
 			<EntitySymbol type="blockchain" slug={reserve.chain_slug} label={reserve.chain_name} size="0.875em" />

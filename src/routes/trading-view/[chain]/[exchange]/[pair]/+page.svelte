@@ -6,10 +6,9 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
-	import { AlertList, Button, CopyWidget, PageHeader } from '$lib/components';
+	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -19,15 +18,13 @@ Render the pair trading page
 
 	export let data;
 
-	let copier: ComponentProps<CopyWidget>['copier'];
-
 	$: summary = data.pair.summary;
 	$: details = data.pair.additional_details;
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
 	$: isUniswapIncompatible = summary.exchange_type === 'uniswap_v2_incompatible';
-	$: swapFee = formatSwapFee(summary.pool_swap_fee);
+	$: swapFee = formatSwapFee(summary.pair_swap_fee);
 
 	// Ridiculous token price warning: it is common with scam tokens to price the
 	// token super low so that prices are not readable when converted to USD.
@@ -38,31 +35,12 @@ Render the pair trading page
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
 	};
-
-	$: pageTitle = [
-		summary.pair_symbol,
-		isUniswapV3 ? `${swapFee} pool` : 'token price',
-		`on ${details.exchange_name}`
-	].join(' ');
-
-	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
-	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
-	function copyPythonIdentifier(this: HTMLButtonElement) {
-		const parts = [
-			`ChainId.${summary.chain_slug}`,
-			`"${summary.exchange_slug}"`,
-			`"${summary.base_token_symbol}"`,
-			`"${summary.quote_token_symbol}"`,
-			summary.pool_swap_fee
-		];
-		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${$page.url}`;
-		copier?.copy(identifier);
-		this.blur();
-	}
 </script>
 
 <svelte:head>
-	<title>{pageTitle}</title>
+	<title>
+		{summary.pair_symbol} ({swapFee}) token price on {details.exchange_name}
+	</title>
 	<meta
 		name="description"
 		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
@@ -71,36 +49,37 @@ Render the pair trading page
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
-	<PageHeader subtitle="token pair on {details.exchange_name} on {details.chain_name}">
+<main class="ds-3">
+	<PageHeader>
 		<span slot="title">
 			{summary.pair_symbol}
-			{#if isUniswapV3}
-				<span class="pool-swap-fee">{swapFee}</span>
-			{/if}
+			<span class="swap-fee">{swapFee}</span>
 		</span>
+		<span slot="subtitle" class="subtitle">
+			token pair on {details.exchange_name} on
+			<EntitySymbol type="blockchain" slug={summary.chain_slug} label={summary.chain_name} size="0.875em" />
+		</span>
+		<svelte:fragment slot="cta">
+			{#if details.trade_link}
+				<Button href={details.trade_link} target="_blank" rel="noreferrer">
+					Swap {summary.base_token_symbol_friendly}/{summary.quote_token_symbol_friendly}
+				</Button>
+			{/if}
+		</svelte:fragment>
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
 			<InfoTable {summary} {details} />
-			<InfoSummary {summary} {details} />
+			<InfoSummary {summary} {details} pageUrl={$page.url.toString()} />
 		</div>
 
-		{#if isUniswapV3 || isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
+		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
 			<AlertList status="warning" let:AlertItem>
-				{#if isUniswapV3}
-					<AlertItem title="Uniswap V3 beta">
-						We are in the process of integrating Uniswap V3 data. This page is available as a beta preview, but please
-						note that the data for this trading pair is currently incomplete.
-					</AlertItem>
-				{/if}
-
 				{#if isUniswapIncompatible}
 					<AlertItem title="Incompatible exchange">
 						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-						{summary.pair_symbol}
-						may be inaccurate.
+						{summary.pair_symbol} may be inaccurate.
 					</AlertItem>
 				{/if}
 
@@ -121,19 +100,6 @@ Render the pair trading page
 				{/if}
 			</AlertList>
 		{/if}
-
-		<div class="trade-actions">
-			<Button label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
-			<Button label="Sell {summary.base_token_symbol_friendly}" href={details.sell_link} />
-			<Button label="Blockchain explorer" href={details.explorer_link} />
-			<Button
-				label="{summary.pair_symbol} API and historical data"
-				href="./{summary.pair_slug}/api-and-historical-data"
-			/>
-			<Button label="Copy Python identifier" on:click={copyPythonIdentifier}>
-				<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
-			</Button>
-		</div>
 	</section>
 
 	<section class="ds-container charts">
@@ -169,7 +135,13 @@ Render the pair trading page
 		}
 	}
 
-	.pool-swap-fee {
+	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 0.5ex;
+	}
+
+	.swap-fee {
 		margin-left: var(--space-xxs);
 		color: var(--c-text-extra-light);
 	}
@@ -184,19 +156,6 @@ Render the pair trading page
 		.ds-2-col {
 			row-gap: var(--space-xl);
 			align-items: start;
-		}
-	}
-
-	.trade-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-ls) var(--space-xl);
-		padding-block: var(--space-lg);
-
-		@media (--viewport-xs) {
-			flex-direction: column;
-			padding-block: 0;
 		}
 	}
 

@@ -52,10 +52,6 @@
 
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h)} />
 
-	{#if summary.liquidity_type === 'xyliquidity'}
-		<TradingDataInfoRow label="Liquidity" value={formatDollar(summary.usd_liquidity_latest)} />
-	{/if}
-
 	{#if Number.isFinite(summary.pair_tvl)}
 		<TradingDataInfoRow label="TVL">
 			<Tooltip slot="value">
@@ -86,8 +82,8 @@
 		<a slot="label" href={tokenTaxDocsUrl} rel="external">Token tax</a>
 	</TradingDataInfoRow>
 
-	{#if summary.pool_swap_fee}
-		<TradingDataInfoRow label="Swap fee" value={formatSwapFee(summary.pool_swap_fee)} />
+	{#if summary.pair_swap_fee}
+		<TradingDataInfoRow label="Trading fee" value={formatSwapFee(summary.pair_swap_fee)} />
 	{/if}
 
 	<TradingDataInfoRow label="Exchange">
