@@ -12,8 +12,8 @@
 <div class="search-hit-description truncate lines-2">
 	{#if document.type === 'pair'}
 		{document.name}
-		{#if Number.isFinite(document.pool_swap_fee)}
-			<span class="swap-fee">{formatSwapFee(document.pool_swap_fee)}</span>
+		{#if Number.isFinite(document.pair_swap_fee)}
+			<span class="swap-fee">{formatSwapFee(document.pair_swap_fee)}</span>
 		{/if}
 		on {document.exchange}
 	{:else}

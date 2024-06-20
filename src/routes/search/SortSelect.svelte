@@ -12,22 +12,22 @@ pre-defined set of sort options.
 	const options = {
 		'tvl:desc': {
 			label: '▼ TVL',
-			params: ['tvl:desc', 'pool_swap_fee:asc', '_text_match:desc']
+			params: ['tvl:desc', 'pair_swap_fee:asc', '_text_match:desc']
 		},
 
 		'volume:desc': {
 			label: '▼ Volume',
-			params: ['volume_24h:desc', 'pool_swap_fee:asc', '_text_match:desc']
+			params: ['volume_24h:desc', 'pair_swap_fee:asc', '_text_match:desc']
 		},
 
 		'price_change:desc': {
 			label: '▼ Price change',
-			params: ['price_change_24h:desc', 'pool_swap_fee:asc', '_text_match:desc']
+			params: ['price_change_24h:desc', 'pair_swap_fee:asc', '_text_match:desc']
 		},
 
 		'price_change:asc': {
 			label: '▲ Price change',
-			params: ['price_change_24h:asc', 'pool_swap_fee:asc', '_text_match:desc']
+			params: ['price_change_24h:asc', 'pair_swap_fee:asc', '_text_match:desc']
 		},
 
 		'variable_borrow_apr:asc': {

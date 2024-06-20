@@ -30,7 +30,7 @@
 			`"${summary.exchange_slug}"`,
 			`"${summary.base_token_symbol}"`,
 			`"${summary.quote_token_symbol}"`,
-			summary.pool_swap_fee
+			summary.pair_swap_fee
 		];
 		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${pageUrl}`;
 		copier?.copy(identifier);
