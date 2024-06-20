@@ -67,7 +67,7 @@ Render the pair trading page
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main>
+<main class="ds-3">
 	<PageHeader>
 		<span slot="title">
 			{summary.pair_symbol}
@@ -77,6 +77,13 @@ Render the pair trading page
 			token pair on {details.exchange_name} on
 			<EntitySymbol type="blockchain" slug={summary.chain_slug} label={summary.chain_name} size="0.875em" />
 		</span>
+		<svelte:fragment slot="cta">
+			{#if details.trade_link}
+				<Button href={details.trade_link} target="_blank" rel="noreferrer">
+					Swap {summary.base_token_symbol_friendly}/{summary.quote_token_symbol_friendly}
+				</Button>
+			{/if}
+		</svelte:fragment>
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="pair-info">
@@ -113,8 +120,6 @@ Render the pair trading page
 		{/if}
 
 		<div class="trade-actions">
-			<Button label="Buy {summary.base_token_symbol_friendly}" href={details.buy_link} />
-			<Button label="Sell {summary.base_token_symbol_friendly}" href={details.sell_link} />
 			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
 				label="{summary.pair_symbol} API and historical data"
