@@ -120,7 +120,6 @@ Render the pair trading page
 		{/if}
 
 		<div class="trade-actions">
-			<Button label="Blockchain explorer" href={details.explorer_link} />
 			<Button
 				label="{summary.pair_symbol} API and historical data"
 				href="./{summary.pair_slug}/api-and-historical-data"
