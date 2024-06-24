@@ -3,7 +3,6 @@
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 	import { toggleBodyScroll } from '$lib/helpers/scroll';
 
-	export let hidden = false;
 	export let open = false;
 
 	const close = () => (open = false);
@@ -11,23 +10,21 @@
 	$: toggleBodyScroll(open);
 </script>
 
-{#if !hidden}
-	<nav class:open>
-		<header>
-			<a href="/" aria-label="Home" on:click={close}><Logo /></a>
-			<button on:click={close}>
-				<Icon name="cancel" />
-			</button>
-		</header>
-		<Menu align="center" on:click={close}>
-			<slot />
-		</Menu>
-		<div class="color-mode-picker">
-			<ColorModePicker showLabel />
-		</div>
-		<Footer small />
-	</nav>
-{/if}
+<nav class:open>
+	<header>
+		<a href="/" aria-label="Home" on:click={close}><Logo /></a>
+		<button on:click={close}>
+			<Icon name="cancel" />
+		</button>
+	</header>
+	<Menu align="center" on:click={close}>
+		<slot />
+	</Menu>
+	<div class="color-mode-picker">
+		<ColorModePicker showLabel />
+	</div>
+	<Footer small />
+</nav>
 
 <style lang="postcss">
 	nav {
