@@ -54,7 +54,7 @@ props.
 </script>
 
 <li class="search-hit" title={getTitle()}>
-	<a class="tile b" class:isLowQuality href={document.url_path}>
+	<a class="tile b" class:isLowQuality href={document.url_path} tabindex="0">
 		<div class="badge {document.type}">
 			{typeLabel}
 			<div class="chain-icon">

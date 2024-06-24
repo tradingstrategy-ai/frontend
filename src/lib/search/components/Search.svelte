@@ -18,7 +18,6 @@ Display site-wide search box for use in top-nav.
 	import { setViewportHeight } from '$lib/actions/viewport';
 
 	let q = '';
-	let hasFocus = false;
 
 	$: hasQuery = q.trim() !== '';
 
@@ -30,25 +29,17 @@ Display site-wide search box for use in top-nav.
 
 	$: hits = hasQuery ? $tradingEntities.hits : [];
 
-	// Disable body scroll when search box has focus
-	$: toggleBodyScroll(hasFocus);
 	// Make sure body scroll is re-enabled when component unmounts (due to race condition)
 	onDestroy(toggleBodyScroll);
-
-	// use event loop to allow click on result anchor tags to propogate before dialog closes
-	function toggleFocus() {
-		setTimeout(() => (hasFocus = !hasFocus));
-	}
 </script>
 
 <div
 	class="search"
-	class:hasFocus
 	class:hasQuery
 	data-testid="nav-search"
 	use:setViewportHeight
-	on:focus|capture={toggleFocus}
-	on:blur|capture={toggleFocus}
+	on:focus|capture={() => toggleBodyScroll(true)}
+	on:blur|capture={() => toggleBodyScroll(false)}
 >
 	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
 		<Icon name="search" />
@@ -100,9 +91,9 @@ Display site-wide search box for use in top-nav.
 				{/if}
 				<div class="ctas">
 					{#if hasQuery}
-						<Button size="sm" label="Show all results" href="/search?q={q}" />
+						<Button size="sm" label="Show all results" href="/search?q={q}" tabindex={0} />
 					{/if}
-					<Button size="sm" label="Advanced search" href="/search?q={q}" />
+					<Button size="sm" label="Advanced search" href="/search?q={q}" tabindex={0} />
 				</div>
 			</footer>
 		</div>
@@ -162,7 +153,7 @@ Display site-wide search box for use in top-nav.
 		transition: opacity 0.25s;
 
 		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
-		:not(.hasFocus) & {
+		:not(:focus-within) & {
 			opacity: 0;
 			pointer-events: none;
 		}
