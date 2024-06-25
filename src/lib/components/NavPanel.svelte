@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { Logo, Icon, Menu, Footer } from '$lib/components';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
-	import { toggleBodyScroll } from '$lib/helpers/scroll';
+	import { disableScroll } from '$lib/actions/scroll';
 
 	export let open = false;
 
 	const close = () => (open = false);
-
-	$: toggleBodyScroll(open);
 </script>
+
+<svelte:body use:disableScroll={open} />
 
 <nav class:open>
 	<header>

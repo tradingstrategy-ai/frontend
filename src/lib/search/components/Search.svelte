@@ -10,14 +10,14 @@ Display site-wide search box for use in top-nav.
 ```
 -->
 <script lang="ts">
-	import { onDestroy } from 'svelte';
 	import tradingEntities from '../trading-entities';
 	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, TextInput } from '$lib/components';
-	import { toggleBodyScroll } from '$lib/helpers/scroll';
+	import { disableScroll } from '$lib/actions/scroll';
 	import { setViewportHeight } from '$lib/actions/viewport';
 
 	let q = '';
+	let hasFocus = false;
 
 	$: hasQuery = q.trim() !== '';
 
@@ -28,18 +28,17 @@ Display site-wide search box for use in top-nav.
 	});
 
 	$: hits = hasQuery ? $tradingEntities.hits : [];
-
-	// Make sure body scroll is re-enabled when component unmounts (due to race condition)
-	onDestroy(toggleBodyScroll);
 </script>
+
+<svelte:body use:disableScroll={hasFocus} />
 
 <div
 	class="search"
 	class:hasQuery
 	data-testid="nav-search"
 	use:setViewportHeight
-	on:focus|capture={() => toggleBodyScroll(true)}
-	on:blur|capture={() => toggleBodyScroll(false)}
+	on:focus|capture={() => (hasFocus = true)}
+	on:blur|capture={() => (hasFocus = false)}
 >
 	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
 		<Icon name="search" />

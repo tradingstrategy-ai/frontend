@@ -18,7 +18,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { Icon } from '$lib/components';
 	import { setViewportHeight } from '$lib/actions/viewport';
-	import { toggleBodyScroll } from '$lib/helpers/scroll';
+	import { disableScroll } from '$lib/actions/scroll';
 
 	export let title = '';
 	export let open = false;
@@ -49,9 +49,9 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 	// call `toggle` whenever `open` is changed
 	$: dialog && state.toggle(open);
-
-	$: toggleBodyScroll(open);
 </script>
+
+<svelte:body use:disableScroll={open} />
 
 <dialog
 	bind:this={dialog}
