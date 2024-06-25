@@ -104,41 +104,52 @@ const collection = searchClient?.collections<TradingEntityDocument>('trading-ent
 export type TradingEntitiesStoreValue = {
 	hits: TradingEntityHit[];
 	facets: TradingEntityFacetCount[];
-	count?: number;
-	total?: number;
+	count: number;
+	total: number;
 };
 
-const { subscribe, set }: Writable<TradingEntitiesStoreValue> = writable({
+const emptyResult: TradingEntitiesStoreValue = {
 	hits: [],
-	facets: []
-});
+	facets: [],
+	count: 0,
+	total: 0
+};
+
+const { subscribe, set } = writable(emptyResult);
 
 let lastSearchParams: CustomSearchParams | undefined = undefined;
 
 async function search(searchParams: CustomSearchParams): Promise<void> {
+	// Abort if collection not properly initialized (e.g., due to bad or missing config)
 	if (!collection) return;
 
-	// dedup - don't re-run if same as last search
-	if (dequal(searchParams, lastSearchParams)) {
+	// Don't re-run query if search params are the same as last search
+	if (dequal(searchParams, lastSearchParams)) return;
+
+	lastSearchParams = searchParams;
+
+	const typesenseSearchParams = toTypesenseSearchParams(searchParams);
+
+	// Set empty results if no query or filters
+	if (!typesenseSearchParams.filter_by && !typesenseSearchParams.q) {
+		set(emptyResult);
 		return;
-	} else {
-		lastSearchParams = searchParams;
 	}
 
 	try {
-		const response = await collection.search(toTypesenseSearchParams(searchParams), {});
+		const response = await collection.search(typesenseSearchParams, {});
 
-		// prevent race conditions - only update store if this was the last query
-		if (dequal(searchParams, lastSearchParams)) {
-			const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits as TradingEntityHit[]) ?? [];
+		// abort if new query has been received since search initiated (prevent race conditions)
+		if (!dequal(searchParams, lastSearchParams)) return;
 
-			set({
-				hits: hits as TradingEntityHit[],
-				facets: response.facet_counts as TradingEntityFacetCount[],
-				count: response.found,
-				total: response.out_of
-			});
-		}
+		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits as TradingEntityHit[]) ?? [];
+
+		set({
+			hits: hits as TradingEntityHit[],
+			facets: response.facet_counts as TradingEntityFacetCount[],
+			count: response.found,
+			total: response.out_of
+		});
 	} catch (error) {
 		console.error(error);
 	}
