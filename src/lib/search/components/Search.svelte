@@ -83,7 +83,7 @@ Display site-wide search box for use in top-nav.
 					</ul>
 				{:else if hasQuery && loading}
 					<ul>
-						{#each Array(4) as _}
+						{#each Array(3) as _}
 							<SearchHit />
 						{/each}
 					</ul>
@@ -99,9 +99,9 @@ Display site-wide search box for use in top-nav.
 					</div>
 				{/if}
 
-				{#if hasQuery && loading}
+				<div class="spinner">
 					<Spinner size="60" />
-				{/if}
+				</div>
 			</div>
 
 			<div class="ctas">
@@ -204,11 +204,11 @@ Display site-wide search box for use in top-nav.
 
 	.results {
 		flex: 1;
-		display: grid;
+		position: relative;
 		overflow: auto;
 
-		> :global(*) {
-			grid-area: 1 / -1;
+		> * {
+			transition: all var(--time-xxs) allow-discrete;
 		}
 	}
 
@@ -219,7 +219,6 @@ Display site-wide search box for use in top-nav.
 		align-content: start;
 		overflow-y: auto;
 		overscroll-behavior: contain;
-		transition: opacity var(--time-xs);
 
 		.loading & {
 			opacity: 0.75;
@@ -227,10 +226,17 @@ Display site-wide search box for use in top-nav.
 		}
 	}
 
-	:global(.spinner) {
-		justify-self: center;
-		margin-top: 25%;
+	.spinner {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translate(-50%, 4em);
 		pointer-events: none;
+
+		:not(.loading) > & {
+			display: none;
+			opacity: 0;
+		}
 	}
 
 	.prompt {

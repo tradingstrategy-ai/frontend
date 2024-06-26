@@ -17,11 +17,11 @@ Advanced Search page
 	const params = $page.url.searchParams;
 
 	let q = params.get('q') || '';
-	let sortBy = params.get('sortBy');
-	let filters = parseFilters(params.get('filters'));
+	let sortBy = params.get('sortBy') ?? '';
+	let filters = parseFilters(params.get('filters') ?? '');
 	let filterBy: string[] = [];
 	let filterPanelOpen = false;
-	let debounceTimerId: number;
+	let debounceTimerId: number | NodeJS.Timeout;
 
 	// deserialize filters URL param
 	function parseFilters(filtersJSON: string) {
@@ -73,6 +73,7 @@ Advanced Search page
 			bind:q
 			{hasSearch}
 			hits={$tradingEntities.hits}
+			loading={$tradingEntities.loading}
 			on:showFilters={() => (filterPanelOpen = true)}
 		/>
 	</section>

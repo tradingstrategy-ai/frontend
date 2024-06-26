@@ -77,10 +77,18 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 			</slot>
 		</a>
 	{:else}
-		{@const width = Math.random() * 20 + 70}
+		<!-- skeleton loader -->
 		<div class="inner tile b">
 			<div class="badge skeleton">-</div>
-			<div class="info skeleton" style:--skeleton-width="{width}%">-</div>
+			<div class="info">
+				<slot {isLowQuality}>
+					<div class="skeleton" style:width="clamp(12ch, 75%, 35ch)">-</div>
+					<div class="skeleton" style:width="clamp(6ch, 40%, 20ch)">-</div>
+				</slot>
+			</div>
+			<slot name="price-info" {hasPrice} {hasPriceChange}>
+				<div class="skeleton" style:width="5ch" style:height="2em">-</div>
+			</slot>
 		</div>
 	{/if}
 </li>

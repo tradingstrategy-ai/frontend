@@ -1,50 +1,17 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
+	import type { TradingEntityDocument } from '$lib/search/trading-entities';
 	import { SearchHit, SearchHitDescription } from '$lib/search/components';
 	import { UpDownCell } from '$lib/components';
-	import { formatDollar, formatPriceChange, formatInterestRate } from '$lib/helpers/formatters';
+	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import SearchHitMetrics from './SearchHitMetrics.svelte';
 
-	export let document: ComponentProps<SearchHit>['document'];
-
-	const hasTradingMetrics = [document.liquidity, document.tvl, document.volume_24h].some(Number.isFinite);
-	const isLendingReserve = document.type === 'lending_reserve';
+	export let document: TradingEntityDocument;
 </script>
 
 <div class="search-hit-advanced">
 	<SearchHit {document} let:isLowQuality>
 		<SearchHitDescription {document} {isLowQuality} showWarningIcon />
-
-		{#if hasTradingMetrics}
-			<div class="secondary">
-				<div>
-					<dt>Volume 24h</dt>
-					<dd>{formatDollar(document.volume_24h, 1, 1)}</dd>
-				</div>
-				{#if Number.isFinite(document.tvl)}
-					<div>
-						<dt>TVL</dt>
-						<dd>{formatDollar(document.tvl, 1, 1)}</dd>
-					</div>
-				{:else if document.liquidity}
-					<div>
-						<dt>Liquidity</dt>
-						<dd>{formatDollar(document.liquidity, 1, 1)}</dd>
-					</div>
-				{/if}
-			</div>
-		{:else if isLendingReserve}
-			{@const variableBorrowApr = document.variable_borrow_apr}
-			<div class="secondary">
-				<div>
-					<dt>Supply APR</dt>
-					<dd>{formatInterestRate(document.supply_apr)}</dd>
-				</div>
-				<div>
-					<dt>Variable Borrow APR</dt>
-					<dd>{variableBorrowApr > 0 ? formatInterestRate(variableBorrowApr) : 'N/A'}</dd>
-				</div>
-			</div>
-		{/if}
+		<SearchHitMetrics {document} />
 
 		<svelte:fragment slot="price-info" let:hasPrice let:hasPriceChange>
 			{#if hasPrice || hasPriceChange}
@@ -77,31 +44,6 @@
 
 		.truncate {
 			white-space: nowrap;
-		}
-
-		.secondary {
-			display: flex;
-			flex-wrap: wrap;
-			gap: var(--space-xs);
-			font: var(--f-ui-sm-roman);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-
-			@media (--viewport-xs) {
-				font: var(--f-ui-xs-roman);
-				letter-spacing: var(--f-ui-xs-spacing, normal);
-			}
-
-			dt {
-				display: inline-block;
-				font-weight: 400;
-				white-space: nowrap;
-			}
-
-			dd {
-				display: inline-block;
-				margin: 0;
-				font-weight: 700;
-			}
 		}
 	}
 </style>

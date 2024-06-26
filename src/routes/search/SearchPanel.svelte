@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { TradingEntityHit } from '$lib/search/trading-entities';
 	import { createEventDispatcher } from 'svelte';
-	import { Button, TextInput } from '$lib/components';
+	import { Button, Spinner, TextInput } from '$lib/components';
+	import { SearchHit } from '$lib/search/components';
 	import SearchHitAdvanced from './SearchHitAdvanced.svelte';
 	import SortSelect from './SortSelect.svelte';
 
@@ -9,7 +11,8 @@
 	export let q: string;
 	export let sortBy: string;
 	export let hasSearch: boolean;
-	export let hits: [] = [];
+	export let hits: TradingEntityHit[] = [];
+	export let loading: boolean;
 
 	function handleKeydown({ key, target }: KeyboardEvent) {
 		if (key === 'Enter') {
@@ -37,17 +40,29 @@
 		</div>
 	</div>
 
-	{#if hasSearch && hits.length > 0}
-		<ul>
-			{#each hits as { document } (document.id)}
-				<SearchHitAdvanced {document} />
-			{/each}
-		</ul>
-	{:else if hasSearch}
-		<div class="fallback">No results found &ndash; try modifying your search query or removing filters.</div>
-	{:else}
-		<div class="fallback">Search exchanges, tokens, trading pairs and lending reserves.</div>
-	{/if}
+	<div class="results" class:loading>
+		{#if hasSearch && hits.length}
+			<ul>
+				{#each hits as { document } (document.id)}
+					<SearchHitAdvanced {document} />
+				{/each}
+			</ul>
+		{:else if hasSearch && loading}
+			<ul>
+				{#each Array(3) as _}
+					<SearchHit />
+				{/each}
+			</ul>
+		{:else if hasSearch}
+			<div class="prompt">No results found – try modifying your search query or removing filters.</div>
+		{:else}
+			<div class="prompt">Search exchanges, tokens, trading pairs and lending reserves.</div>
+		{/if}
+
+		<div class="spinner">
+			<Spinner size="60" />
+		</div>
+	</div>
 </div>
 
 <style lang="postcss">
@@ -90,13 +105,38 @@
 		}
 	}
 
+	.results {
+		position: relative;
+
+		> * {
+			transition: opacity var(--time-xxs);
+		}
+	}
+
 	ul {
 		display: grid;
 		gap: var(--space-md);
 		padding: 0;
+
+		.loading > & {
+			opacity: 0.75;
+			pointer-events: none;
+		}
 	}
 
-	.fallback {
+	.spinner {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translate(-50%, 4em);
+		pointer-events: none;
+
+		:not(.loading) > & {
+			opacity: 0;
+		}
+	}
+
+	.prompt {
 		height: calc(100vh - 28rem);
 		font: var(--f-h4-roman);
 	}
