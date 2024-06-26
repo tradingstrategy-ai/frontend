@@ -13,7 +13,7 @@ import type {
 	SearchResponseFacetCountSchema,
 	SearchResponseHit
 } from 'typesense/lib/Typesense/Documents';
-import { type Writable, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import searchClient from './client';
 import { dequal } from 'dequal';
 
@@ -72,7 +72,7 @@ export type TradingEntityHit = SearchResponseHit<TradingEntityDocument>;
 export type TradingEntityFacetCount = SearchResponseFacetCountSchema<TradingEntityDocument>;
 
 // Allow filters to be array of strings rather than single string; see toTypesenseSearchParams
-type CustomSearchParams = SearchParams & {
+type CustomSearchParams = Omit<SearchParams, 'filter_by'> & {
 	filter_by?: string | string[];
 };
 
@@ -101,21 +101,23 @@ function toTypesenseSearchParams({ filter_by, ...searchParams }: CustomSearchPar
 
 const collection = searchClient?.collections<TradingEntityDocument>('trading-entities').documents();
 
-export type TradingEntitiesStoreValue = {
+export type TradingEntitySearchResult = {
+	loading: boolean;
 	hits: TradingEntityHit[];
 	facets: TradingEntityFacetCount[];
 	count: number;
 	total: number;
 };
 
-const emptyResult: TradingEntitiesStoreValue = {
+const emptyResult: TradingEntitySearchResult = {
+	loading: false,
 	hits: [],
 	facets: [],
 	count: 0,
 	total: 0
 };
 
-const { subscribe, set } = writable(emptyResult);
+const { subscribe, set, update } = writable(emptyResult);
 
 let lastSearchParams: CustomSearchParams | undefined = undefined;
 
@@ -136,6 +138,9 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 		return;
 	}
 
+	// Mark as loading (but retain previous results)
+	update((result) => ({ ...result, loading: true }));
+
 	try {
 		const response = await collection.search(typesenseSearchParams, {});
 
@@ -145,6 +150,7 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits as TradingEntityHit[]) ?? [];
 
 		set({
+			loading: false,
 			hits: hits as TradingEntityHit[],
 			facets: response.facet_counts as TradingEntityFacetCount[],
 			count: response.found,

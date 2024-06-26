@@ -12,7 +12,7 @@ Display site-wide search box for use in top-nav.
 <script lang="ts">
 	import tradingEntities from '../trading-entities';
 	import SearchHit from './SearchHit.svelte';
-	import { Button, Icon, TextInput } from '$lib/components';
+	import { Button, Icon, Spinner, TextInput } from '$lib/components';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { setViewportHeight } from '$lib/actions/viewport';
 
@@ -27,6 +27,7 @@ Display site-wide search box for use in top-nav.
 		group_by: ['type']
 	});
 
+	$: loading = $tradingEntities.loading;
 	$: hits = hasQuery ? $tradingEntities.hits : [];
 </script>
 
@@ -57,7 +58,7 @@ Display site-wide search box for use in top-nav.
 		/>
 	</form>
 
-	<div class="results">
+	<div class="dialog">
 		<div class="inner">
 			<form class="mobile-only" action="/search" role="search">
 				<TextInput
@@ -73,28 +74,42 @@ Display site-wide search box for use in top-nav.
 				/>
 			</form>
 
-			{#if hasQuery}
-				<ul>
-					{#each hits as { document } (document.id)}
-						<SearchHit {document} />
-					{/each}
-				</ul>
-			{/if}
-
-			<footer>
-				{#if !hasQuery}
+			<div class="results" class:loading>
+				{#if hasQuery && hits.length}
+					<ul>
+						{#each hits as { document } (document.id)}
+							<SearchHit {document} />
+						{/each}
+					</ul>
+				{:else if hasQuery && loading}
+					<ul>
+						{#each Array(4) as _}
+							<SearchHit />
+						{/each}
+					</ul>
+				{:else if hasQuery}
+					<div class="prompt">
+						No results found.<br />
+						Modify your query or try advanced search.
+					</div>
+				{:else}
 					<div class="prompt">
 						Search exchanges, tokens<br />
 						trading pairs and lending reserves.
 					</div>
 				{/if}
-				<div class="ctas">
-					{#if hasQuery}
-						<Button size="sm" label="Show all results" href="/search?q={q}" tabindex={0} />
-					{/if}
-					<Button size="sm" label="Advanced search" href="/search?q={q}" tabindex={0} />
-				</div>
-			</footer>
+
+				{#if hasQuery && loading}
+					<Spinner size="60" />
+				{/if}
+			</div>
+
+			<div class="ctas">
+				{#if hasQuery}
+					<Button size="sm" label="Show all results" href="/search?q={q}" tabindex={0} />
+				{/if}
+				<Button size="sm" label="Advanced search" href="/search?q={q}" tabindex={0} />
+			</div>
 		</div>
 	</div>
 </div>
@@ -138,86 +153,105 @@ Display site-wide search box for use in top-nav.
 		font-size: 20px;
 	}
 
-	.results {
+	.dialog {
 		--text-input-height: 2.875rem;
-
 		background: var(--c-body);
-		border: 1px var(--c-box-3) solid;
 		box-shadow: var(--shadow-3);
 		overflow: hidden;
 		position: absolute;
 		right: 0;
 		top: var(--space-4xl);
 		z-index: 999;
-		transition: opacity 0.25s;
+		transition: opacity var(--time-md);
 
-		/* NOTE: don't use native :focus-within due to timing issues (see toggleFocus) */
+		/* hide dialog and disable pointer events when not focused */
 		:not(:focus-within) & {
 			opacity: 0;
 			pointer-events: none;
 		}
 
+		/* desktop layout - floating dialog, fixed width, max height within viewport */
 		@media (--search-layout-desktop) {
+			border: 1px var(--c-box-3) solid;
 			border-radius: var(--radius-md);
 			margin-top: var(--space-xxs);
 			width: 450px;
-
-			.inner {
-				max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
-			}
+			max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
 		}
 
+		/* mobile layout - fixed, full width, full height when active search (hasQuery) */
 		@media (--search-layout-mobile) {
 			left: 0;
 			top: 0;
+			border-bottom: 1px var(--c-box-3) solid;
 
-			.hasQuery & .inner {
+			.hasQuery & {
 				height: var(--viewport-height);
-				gap: var(--space-sm);
+				border: none;
 			}
 		}
 
 		.inner {
-			background: var(--c-box-1);
 			display: flex;
 			flex-direction: column;
 			gap: var(--space-md);
+			height: inherit;
+			max-height: inherit;
 			padding: var(--space-md);
+			background: var(--c-box-1);
+		}
+	}
+
+	.results {
+		flex: 1;
+		display: grid;
+		overflow: auto;
+
+		> :global(*) {
+			grid-area: 1 / -1;
 		}
 	}
 
 	ul {
 		padding: 0;
-		flex: 1;
 		display: grid;
 		gap: var(--space-sm);
 		align-content: start;
 		overflow-y: auto;
 		overscroll-behavior: contain;
+		transition: opacity var(--time-xs);
+
+		.loading & {
+			opacity: 0.75;
+			pointer-events: none;
+		}
 	}
 
-	footer {
-		.prompt {
-			margin-bottom: var(--space-sl);
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--f-ui-md-spacing, normal);
-			color: var(--c-text-extra-light);
-			text-align: center;
+	:global(.spinner) {
+		justify-self: center;
+		margin-top: 25%;
+		pointer-events: none;
+	}
 
-			@media (--search-layout-mobile) {
-				font: var(--f-ui-sm-medium);
-			}
+	.prompt {
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing, normal);
+		color: var(--c-text-extra-light);
+		text-align: center;
+
+		@media (--search-layout-mobile) {
+			font: var(--f-ui-sm-medium);
 		}
+	}
 
-		.ctas {
-			display: grid;
-			grid-auto-flow: column;
-			grid-auto-columns: 1fr;
-			gap: var(--space-sm);
+	.ctas {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 1fr;
+		gap: var(--space-sm);
 
-			@media (--search-layout-mobile) {
-				--button-font: var(--f-ui-sm-medium);
-			}
+		@media (--search-layout-mobile) {
+			--button-font: var(--f-ui-sm-medium);
 		}
 	}
 </style>
