@@ -119,20 +119,21 @@ const emptyResult: TradingEntitySearchResult = {
 
 const { subscribe, set, update } = writable(emptyResult);
 
-let lastSearchParams: CustomSearchParams | undefined = undefined;
+let lastSearch: CustomSearchParams | undefined = undefined;
+let controller: AbortController | undefined = undefined;
 
 async function search(searchParams: CustomSearchParams): Promise<void> {
 	// Abort if collection not properly initialized (e.g., due to bad or missing config)
 	if (!collection) return;
 
-	// Don't re-run query if search params are the same as last search
-	if (dequal(searchParams, lastSearchParams)) return;
-	lastSearchParams = searchParams;
+	// Don't re-run query if search params match the last search
+	if (dequal(searchParams, lastSearch)) return;
+	lastSearch = searchParams;
 
 	const typesenseParams = toTypesenseParams(searchParams);
 
-	const hasSearch = typesenseParams.q || typesenseParams.filter_by;
-	const hasFacets = typesenseParams.facet_by?.length;
+	const hasSearch = Boolean(typesenseParams.q || typesenseParams.filter_by);
+	const hasFacets = Boolean(typesenseParams.facet_by?.length);
 
 	// Set empty result if no search or facets
 	if (!hasSearch && !hasFacets) {
@@ -148,11 +149,12 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 	// Mark as loading (but retain previous results)
 	update((result) => ({ ...result, loading: true }));
 
-	try {
-		const response = await collection.search(typesenseParams, {});
+	// Abort pending search to prevent race condition
+	controller?.abort();
+	controller = new AbortController();
 
-		// abort if new query has been received since search initiated (prevent race conditions)
-		if (!dequal(searchParams, lastSearchParams)) return;
+	try {
+		const response = await collection.search(typesenseParams, { abortSignal: controller.signal });
 
 		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits as TradingEntityHit[]) ?? [];
 
@@ -164,6 +166,7 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 			total: response.out_of
 		});
 	} catch (error) {
+		if (String(error).includes('Request aborted')) return;
 		console.error(error);
 	}
 }
