@@ -48,6 +48,7 @@
     "svelte-preprocess": "^5.1.4",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
+    "typesense": "^1.8.2",
     "vite": "^5.2.11",
     "vite-plugin-simple-json-server": "^0.6.2",
     "vitest": "^1.6.0",
@@ -79,7 +80,6 @@
     "svelte-headless-table": "^0.18.2",
     "svelte-highlight": "^7.6.0",
     "svelte-inview": "^4.0.2",
-    "typesense": "^1.8.2",
     "viem": "^2.9.15",
     "zod": "^3.23.8"
   },

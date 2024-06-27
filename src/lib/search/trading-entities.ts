@@ -9,12 +9,11 @@
  */
 import type {
 	DocumentSchema,
-	SearchParams,
 	SearchResponseFacetCountSchema,
 	SearchResponseHit
 } from 'typesense/lib/Typesense/Documents';
 import { writable } from 'svelte/store';
-import searchClient from './client';
+import { type CustomSearchParams, searchCollection } from './typesense-client';
 import { dequal } from 'dequal';
 
 // Trading Entitiy Document schemas; see:
@@ -71,11 +70,6 @@ export type TradingEntityDocument = ExchangeDocument | TradingPairDocument | Tok
 export type TradingEntityHit = SearchResponseHit<TradingEntityDocument>;
 export type TradingEntityFacetCount = SearchResponseFacetCountSchema<TradingEntityDocument>;
 
-// Allow filters to be array of strings rather than single string; see toTypesenseSearchParams
-type CustomSearchParams = Omit<SearchParams, 'filter_by'> & {
-	filter_by?: string | string[];
-};
-
 const defaultSearchParams: CustomSearchParams = {
 	query_by: ['description', 'token_tickers', 'token_names', 'smart_contract_addresses', 'internal_id'],
 	sort_by: [],
@@ -83,23 +77,6 @@ const defaultSearchParams: CustomSearchParams = {
 	highlight_start_tag: '<em>',
 	highlight_end_tag: '</em>'
 };
-
-/**
- * Convert custom search params to standard Typesense search params and apply default values
- */
-function toTypesenseParams({ filter_by, ...searchParams }: CustomSearchParams): SearchParams {
-	if (Array.isArray(filter_by)) {
-		filter_by = filter_by.join(' && ');
-	}
-
-	return {
-		...defaultSearchParams,
-		...searchParams,
-		filter_by
-	};
-}
-
-const collection = searchClient?.collections<TradingEntityDocument>('trading-entities').documents();
 
 export type TradingEntitySearchResult = {
 	loading: boolean;
@@ -120,20 +97,15 @@ const emptyResult: TradingEntitySearchResult = {
 const { subscribe, set, update } = writable(emptyResult);
 
 let lastSearch: CustomSearchParams | undefined = undefined;
-let controller: AbortController | undefined = undefined;
 
-async function search(searchParams: CustomSearchParams): Promise<void> {
-	// Abort if collection not properly initialized (e.g., due to bad or missing config)
-	if (!collection) return;
-
+async function search(fetch: Fetch, searchParams: CustomSearchParams): Promise<void> {
 	// Don't re-run query if search params match the last search
 	if (dequal(searchParams, lastSearch)) return;
 	lastSearch = searchParams;
 
-	const typesenseParams = toTypesenseParams(searchParams);
-
-	const hasSearch = Boolean(typesenseParams.q || typesenseParams.filter_by);
-	const hasFacets = Boolean(typesenseParams.facet_by?.length);
+	const mergedParams = { ...defaultSearchParams, ...searchParams };
+	const hasSearch = Boolean(mergedParams.q || mergedParams.filter_by);
+	const hasFacets = Boolean(mergedParams.facet_by?.length);
 
 	// Set empty result if no search or facets
 	if (!hasSearch && !hasFacets) {
@@ -143,31 +115,27 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 
 	// If only facets are requested, don't include any search hits
 	if (hasFacets && !hasSearch) {
-		typesenseParams.per_page = 0;
+		mergedParams.per_page = 0;
 	}
 
 	// Mark as loading (but retain previous results)
 	update((result) => ({ ...result, loading: true }));
 
-	// Abort pending search to prevent race condition
-	controller?.abort();
-	controller = new AbortController();
-
 	try {
-		const response = await collection.search(typesenseParams, { abortSignal: controller.signal });
+		const response = await searchCollection<TradingEntityDocument>(fetch, 'trading-entities', mergedParams);
+		if (!response) return;
 
-		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits as TradingEntityHit[]) ?? [];
+		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits) ?? [];
 
 		set({
 			loading: false,
-			hits: hits as TradingEntityHit[],
-			facets: response.facet_counts as TradingEntityFacetCount[],
+			hits: hits,
+			facets: response.facet_counts ?? [],
 			count: response.found,
 			total: response.out_of
 		});
-	} catch (error) {
-		if (String(error).includes('Request aborted')) return;
-		console.error(error);
+	} catch (err) {
+		console.error(err);
 	}
 }
 

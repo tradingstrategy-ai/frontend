@@ -49,7 +49,7 @@ Advanced Search page
 
 	$: browser && updateUrlParams({ q, sortBy, filters: JSON.stringify(filters) });
 
-	$: tradingEntities.search({
+	$: tradingEntities.search(fetch, {
 		q,
 		filter_by: filterBy,
 		sort_by: getSortParams(sortBy),

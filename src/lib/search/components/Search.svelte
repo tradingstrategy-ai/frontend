@@ -21,7 +21,7 @@ Display site-wide search box for use in top-nav.
 
 	$: hasQuery = q.trim() !== '';
 
-	$: tradingEntities.search({
+	$: tradingEntities.search(fetch, {
 		q,
 		sort_by: ['type_rank:asc', 'tvl:desc', 'pair_swap_fee:asc'],
 		group_by: ['type']
