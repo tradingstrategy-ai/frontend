@@ -87,7 +87,7 @@ const defaultSearchParams: CustomSearchParams = {
 /**
  * Convert custom search params to standard Typesense search params and apply default values
  */
-function toTypesenseSearchParams({ filter_by, ...searchParams }: CustomSearchParams): SearchParams {
+function toTypesenseParams({ filter_by, ...searchParams }: CustomSearchParams): SearchParams {
 	if (Array.isArray(filter_by)) {
 		filter_by = filter_by.join(' && ');
 	}
@@ -127,22 +127,29 @@ async function search(searchParams: CustomSearchParams): Promise<void> {
 
 	// Don't re-run query if search params are the same as last search
 	if (dequal(searchParams, lastSearchParams)) return;
-
 	lastSearchParams = searchParams;
 
-	const typesenseSearchParams = toTypesenseSearchParams(searchParams);
+	const typesenseParams = toTypesenseParams(searchParams);
 
-	// Set empty results if no query or filters
-	if (!typesenseSearchParams.filter_by && !typesenseSearchParams.q) {
+	const hasSearch = typesenseParams.q || typesenseParams.filter_by;
+	const hasFacets = typesenseParams.facet_by?.length;
+
+	// Set empty result if no search or facets
+	if (!hasSearch && !hasFacets) {
 		set(emptyResult);
 		return;
+	}
+
+	// If only facets are requested, don't include any search hits
+	if (hasFacets && !hasSearch) {
+		typesenseParams.per_page = 0;
 	}
 
 	// Mark as loading (but retain previous results)
 	update((result) => ({ ...result, loading: true }));
 
 	try {
-		const response = await collection.search(typesenseSearchParams, {});
+		const response = await collection.search(typesenseParams, {});
 
 		// abort if new query has been received since search initiated (prevent race conditions)
 		if (!dequal(searchParams, lastSearchParams)) return;
