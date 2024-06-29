@@ -14,7 +14,6 @@ Display site-wide search box for use in top-nav.
 	import SearchHit from './SearchHit.svelte';
 	import { Button, Icon, Spinner, TextInput } from '$lib/components';
 	import { disableScroll } from '$lib/actions/scroll';
-	import { setViewportHeight } from '$lib/actions/viewport';
 
 	let q = '';
 	let hasFocus = false;
@@ -37,7 +36,6 @@ Display site-wide search box for use in top-nav.
 	class="search"
 	class:hasQuery
 	data-testid="nav-search"
-	use:setViewportHeight
 	on:focus|capture={() => (hasFocus = true)}
 	on:blur|capture={() => (hasFocus = false)}
 >
@@ -131,8 +129,6 @@ Display site-wide search box for use in top-nav.
 	}
 
 	.search {
-		/* default --viewport-height; overriden by setViewportHeight action */
-		--viewport-height: 100vh;
 		--text-input-width: 100%;
 
 		@media (--search-layout-mobile) {

@@ -17,7 +17,6 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	import fsm from 'svelte-fsm';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { Icon } from '$lib/components';
-	import { setViewportHeight } from '$lib/actions/viewport';
 	import { disableScroll } from '$lib/actions/scroll';
 
 	export let title = '';
@@ -53,13 +52,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 <svelte:body use:disableScroll={open} />
 
-<dialog
-	bind:this={dialog}
-	class={fullScreen ? 'full-screen' : 'compact'}
-	use:setViewportHeight
-	on:close={state.escaped}
-	data-css-props
->
+<dialog bind:this={dialog} class={fullScreen ? 'full-screen' : 'compact'} on:close={state.escaped} data-css-props>
 	<slot name="header">
 		<header>
 			<h5><slot name="title">{title}</slot></h5>
@@ -131,7 +124,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	}
 
 	.full-screen {
-		height: var(--viewport-height, 100vh);
+		height: var(--viewport-height);
 		max-height: unset;
 
 		:global(:is(header, footer)) {
