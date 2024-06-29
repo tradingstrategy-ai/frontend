@@ -151,13 +151,12 @@ Display site-wide search box for use in top-nav.
 
 	.dialog {
 		--text-input-height: 2.875rem;
+		position: absolute;
+		right: 0;
+		z-index: 999;
 		background: var(--c-body);
 		box-shadow: var(--shadow-3);
 		overflow: hidden;
-		position: absolute;
-		right: 0;
-		top: var(--space-4xl);
-		z-index: 999;
 		transition: opacity var(--time-md);
 
 		/* hide dialog and disable pointer events when not focused */
@@ -168,6 +167,7 @@ Display site-wide search box for use in top-nav.
 
 		/* desktop layout - floating dialog, fixed width, max height within viewport */
 		@media (--search-layout-desktop) {
+			top: var(--space-4xl);
 			border: 1px var(--c-box-3) solid;
 			border-radius: var(--radius-md);
 			margin-top: var(--space-xxs);
