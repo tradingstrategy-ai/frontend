@@ -7,10 +7,11 @@
 	import Navbar from '$lib/header/Navbar.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import MaintenanceNotice from './MaintenanceNotice.svelte';
-	import { Footer, Section } from '$lib/components';
+	import { Footer } from '$lib/components';
 	import { beforeNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { setViewportHeight } from '$lib/actions/viewport';
 	import '$lib/components/css/index.css';
 
 	/**
@@ -40,6 +41,8 @@
 		toggleFontLoad();
 	});
 </script>
+
+<svelte:body use:setViewportHeight />
 
 <AppHead />
 <PageLoadProgressBar />

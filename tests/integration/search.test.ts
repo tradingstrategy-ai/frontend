@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import equal from 'fast-deep-equal';
+import { dequal } from 'dequal';
 
 function urlParamsMatch(expected: Record<string, any>) {
 	return ({ searchParams }: URL) => {
-		return equal(Object.fromEntries(searchParams), expected);
+		return dequal(Object.fromEntries(searchParams), expected);
 	};
 }
 

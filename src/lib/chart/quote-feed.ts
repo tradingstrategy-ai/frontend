@@ -2,7 +2,7 @@
  * ChartIQ quote feed adapter for Trading Strategy candle and liquidity data.
  * See: https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html
  */
-import equal from 'fast-deep-equal';
+import { dequal } from 'dequal';
 import type { Candle, Quote } from './helpers';
 import { chartWickThreshold } from '$lib/config';
 import { fetchPublicApi } from '$lib/helpers/public-api';
@@ -79,7 +79,7 @@ export function quoteFeed(
 		// Prevent infinite request loops: if request is identical to last request,
 		// instruct ChartIQ to check for older data. See:
 		// https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html#toc6__anchor
-		if (equal(urlParams, lastRequest)) {
+		if (dequal(urlParams, lastRequest)) {
 			const periodLength = +endDate - +startDate;
 			return [{ DT: +startDate - periodLength }];
 		}

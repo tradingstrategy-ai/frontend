@@ -1,8 +1,10 @@
 <!--
 @component
-Used for displaying search results; displays a single `$tradingEntity` result
+Used for displaying search results; displays a single TradingEntityDocument
 line item; supports basic (top-nav) search results, or advanced layout via
-props.
+slots.
+
+If `document` prop is `undefined`, a skeleton loader is rendered.
 
 #### Usage:
 ```tsx
@@ -10,15 +12,13 @@ props.
 ```
 -->
 <script lang="ts">
-	import type { DocumentSchema } from 'typesense/lib/Typesense/Documents';
+	import type { TradingEntityDocument } from '../trading-entities';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { Icon, UpDownCell } from '$lib/components';
 	import SearchHitDescription from './SearchHitDescription.svelte';
 
-	// object returned by Typesense `tradingEntity` search hits; see:
-	// https://github.com/tradingstrategy-ai/search/blob/main/docs/trading-entities.md
-	export let document: DocumentSchema;
+	export let document: TradingEntityDocument | undefined = undefined;
 
 	// Pairs below quality threshold are grayed out in the search results.
 	// TVL is typically approximately 2 x liquidity, so we double the quality threshold.
@@ -27,25 +27,25 @@ props.
 		tvl: 100_000
 	};
 
-	const belowQualityThreshold = document.quality_factors?.some((factor: string) => {
+	const belowQualityThreshold = document?.quality_factors?.some((factor: string) => {
 		const value = document[factor];
 		const threshold = QUALITY_THRESHOLD[factor];
 		return Number.isFinite(value) && Number.isFinite(threshold) && value < threshold;
 	});
 
 	// flag low quality results
-	const isIncompatibleExchange = document.exchange_type === 'uniswap_v2_incompatible';
+	const isIncompatibleExchange = document?.exchange_type === 'uniswap_v2_incompatible';
 
 	const isLowQuality = belowQualityThreshold || isIncompatibleExchange;
 
-	const hasPrice = Number.isFinite(document.price_change_24h);
-	const hasPriceChange = Number.isFinite(document.price_change_24h);
+	const hasPrice = Number.isFinite(document?.price_change_24h);
+	const hasPriceChange = Number.isFinite(document?.price_change_24h);
 
-	const labels: Record<string, string> = {
-		exchange: 'DEX',
-		lending_reserve: 'Reserve'
-	};
-	const typeLabel = labels[document.type] ?? document.type;
+	function getTypeLabel({ type }: TradingEntityDocument) {
+		if (type === 'exchange') return 'DEX';
+		if (type === 'lending_reserve') return 'Reserve';
+		return type;
+	}
 
 	function getTitle() {
 		if (isIncompatibleExchange) return 'Warning: incompatible exchange';
@@ -54,27 +54,43 @@ props.
 </script>
 
 <li class="search-hit" title={getTitle()}>
-	<a class="tile b" class:isLowQuality href={document.url_path}>
-		<div class="badge {document.type}">
-			{typeLabel}
-			<div class="chain-icon">
-				<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
+	{#if document}
+		<a class="inner tile b" class:isLowQuality href={document.url_path} tabindex="0">
+			<div class="badge {document.type}">
+				{getTypeLabel(document)}
+				<div class="chain-icon">
+					<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
+				</div>
 			</div>
-		</div>
-		<div class="info">
-			<slot {isLowQuality}>
-				<SearchHitDescription {document} {isLowQuality} />
+			<div class="info">
+				<slot {isLowQuality}>
+					<SearchHitDescription {document} {isLowQuality} />
+				</slot>
+			</div>
+
+			<slot name="price-info" {hasPrice} {hasPriceChange}>
+				{#if isLowQuality}
+					<Icon name="warning" size="20px" />
+				{:else if hasPriceChange}
+					<UpDownCell value={document.price_change_24h} formatter={(val) => formatPercent(Math.abs(val))} />
+				{/if}
+			</slot>
+		</a>
+	{:else}
+		<!-- skeleton loader -->
+		<div class="inner tile b">
+			<div class="badge skeleton">-</div>
+			<div class="info">
+				<slot {isLowQuality}>
+					<div class="skeleton" style:width="clamp(12ch, 75%, 35ch)">-</div>
+					<div class="skeleton" style:width="clamp(6ch, 40%, 20ch)">-</div>
+				</slot>
+			</div>
+			<slot name="price-info" {hasPrice} {hasPriceChange}>
+				<div class="skeleton" style:width="5ch" style:height="2em">-</div>
 			</slot>
 		</div>
-
-		<slot name="price-info" {hasPrice} {hasPriceChange}>
-			{#if isLowQuality}
-				<Icon name="warning" size="20px" />
-			{:else if hasPriceChange}
-				<UpDownCell value={document.price_change_24h} formatter={(val) => formatPercent(Math.abs(val))} />
-			{/if}
-		</slot>
-	</a>
+	{/if}
 </li>
 
 <style lang="postcss">
@@ -87,7 +103,7 @@ props.
 		display: grid;
 		list-style-type: none;
 
-		a {
+		.inner {
 			display: grid;
 			gap: var(--search-hit-gap, var(--space-md));
 			grid-template-columns: auto 1fr auto;

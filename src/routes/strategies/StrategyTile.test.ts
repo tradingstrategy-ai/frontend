@@ -6,19 +6,23 @@ const baseStrategy = {
 	id: 'strategy_1',
 	name: 'Strategy 1',
 	url: 'https://strategy_1.example.com',
-	icon_url: 'https://beautiful.image'
+	icon_url: 'https://beautiful.image',
+	sort_priority: 0
 };
+
+const chartDateRange: [Date?, Date?] = [undefined, undefined];
 
 describe('StrategyTile component', () => {
 	describe('with no connection', () => {
 		const strategy = {
 			...baseStrategy,
 			connected: false,
-			error: 'Trade executor offline'
+			error: 'Trade executor offline',
+			sort_priority: -1
 		} as const;
 
 		test('should display error message', async () => {
-			const { getByText } = render(StrategyTile, { strategy });
+			const { getByText } = render(StrategyTile, { strategy, chartDateRange });
 			// check for tooltip trigger
 			getByText(/Error/);
 			// check for tooltip popup content
@@ -123,7 +127,7 @@ describe('StrategyTile component', () => {
 		// that include anchor tags in the popup content. The illegal nesting
 		// leads to page jank (popup content is not hidden on initial page render).
 		test('should not be an anchor element', () => {
-			const { container } = render(StrategyTile, { strategy });
+			const { container } = render(StrategyTile, { strategy, chartDateRange });
 			const el = container.querySelector('.strategy-tile');
 			expect(el?.tagName).not.toBe('A');
 			// check for nested anchors just to be sure!
@@ -132,13 +136,13 @@ describe('StrategyTile component', () => {
 		});
 
 		test('should display historic performance value', async () => {
-			const { getByTestId } = render(StrategyTile, { strategy });
+			const { getByTestId } = render(StrategyTile, { strategy, chartDateRange });
 			const performanceElem = getByTestId('key-metric-profitability-value');
 			expect(performanceElem).toHaveTextContent('▲ 12.0%');
 		});
 
 		test('should set historic performance bullish/bearish class', async () => {
-			const { container } = render(StrategyTile, { strategy });
+			const { container } = render(StrategyTile, { strategy, chartDateRange });
 			const bullIndicator = container.querySelector('.bullish');
 			expect(bullIndicator).not.toBeNull();
 		});

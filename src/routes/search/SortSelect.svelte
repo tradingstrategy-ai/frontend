@@ -9,7 +9,12 @@ pre-defined set of sort options.
 ```
 -->
 <script context="module" lang="ts">
-	const options = {
+	type SortOption = {
+		label: string;
+		params: string[];
+	};
+
+	const options: Record<string, SortOption> = {
 		'tvl:desc': {
 			label: '▼ TVL',
 			params: ['tvl:desc', 'pair_swap_fee:asc', '_text_match:desc']
@@ -43,8 +48,8 @@ pre-defined set of sort options.
 
 	type SortKey = keyof typeof options;
 
-	export function getSortParams(key: SortKey): string[] {
-		const sortOption = options[key] || Object.values(options)[0];
+	export function getSortParams(key: string) {
+		const sortOption = options[key] ?? Object.values(options)[0];
 		return sortOption.params;
 	}
 </script>

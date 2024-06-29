@@ -9,7 +9,8 @@ vi.mock('$lib/search/trading-entities');
 const defaultProps = {
 	q: '',
 	sortBy: 'liquidity',
-	hasSearch: false
+	hasSearch: false,
+	loading: false
 };
 
 describe('SearchPanel component', () => {
