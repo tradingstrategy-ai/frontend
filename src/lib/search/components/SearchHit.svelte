@@ -59,7 +59,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 			<div class="badge {document.type}">
 				{getTypeLabel(document)}
 				<div class="chain-icon">
-					<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
+					<img src={getLogoUrl('blockchain', document.blockchain)} alt={document.blockchain} />
 				</div>
 			</div>
 			<div class="info">

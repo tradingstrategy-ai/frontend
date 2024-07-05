@@ -1,32 +1,8 @@
-const logos = import.meta.glob('../assets/logos/**/*.svg', {
-	query: '?url',
-	import: 'default',
-	eager: true
-});
+export const logoTypes = ['blockchain', 'exchange', 'partner', 'token', 'wallet'] as const;
+export type LogoType = (typeof logoTypes)[number];
 
-const cryptoIcons = import.meta.glob('/node_modules/cryptocurrency-icons/svg/color/*.svg', {
-	query: '?url',
-	import: 'default',
-	eager: true
-});
-
-const logoTypes = {
-	blockchain: 'blockchains',
-	chain: 'blockchains',
-	token: 'tokens',
-	exchange: 'exchanges',
-	dex: 'exchanges',
-	wallet: 'wallets',
-	partners: 'partners'
-} as const;
-
-type LogoType = keyof typeof logoTypes;
-
-// returns URL for logo images found in `lib/assets/logos/**/*.svg`
-// or cryptocurrency-icons npm module
+// returns URL for logo image found in `lib/assets/logos/**/*.svg`
+// and served from `/logos` server endpoint
 export function getLogoUrl(type: LogoType, name: string) {
-	return (
-		logos[`../assets/logos/${logoTypes[type]}/${name}.svg`] ??
-		cryptoIcons[`/node_modules/cryptocurrency-icons/svg/color/${name}.svg`]
-	);
+	return `/logos/${type}s/${name}`;
 }
