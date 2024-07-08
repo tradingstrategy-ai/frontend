@@ -19,6 +19,7 @@
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters.js';
+	import { getLogoUrl } from '$lib/helpers/assets.js';
 
 	export let data;
 	const { paymentContract, tosRequired } = data;
@@ -261,10 +262,9 @@
 			<WalletInfoItem>
 				<EntitySymbol
 					slot="label"
-					type="token"
-					label={nativeCurrency.symbol}
-					slug={nativeCurrency.symbol.toLowerCase()}
 					size="1.5rem"
+					label={nativeCurrency.symbol}
+					logoUrl={getLogoUrl('token', nativeCurrency.symbol)}
 				/>
 				{formatBalance(nativeCurrency, 2, 4)}
 			</WalletInfoItem>
@@ -272,10 +272,9 @@
 			<WalletInfoItem>
 				<EntitySymbol
 					slot="label"
-					type="token"
-					label={denominationToken.label}
-					slug={denominationToken.symbol.toLowerCase()}
 					size="1.5rem"
+					label={denominationToken.label}
+					logoUrl={getLogoUrl('token', denominationToken.symbol)}
 				/>
 				{formatBalance(denominationToken, 2, 4)}
 			</WalletInfoItem>

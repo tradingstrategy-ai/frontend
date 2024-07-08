@@ -15,6 +15,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import { EntitySymbol } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let disabled = false;
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
@@ -57,7 +58,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		<div class="symbols">
 			{#if token}
 				<span class="unit">
-					<EntitySymbol type="token" label={token.label} slug={token.symbol.toLowerCase()} />
+					<EntitySymbol label={token.label} logoUrl={getLogoUrl('token', token.symbol)} />
 				</span>
 			{/if}
 		</div>

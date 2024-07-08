@@ -3,8 +3,9 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import { Button, DataTable, EntitySymbol } from '$lib/components';
+	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let loading = false;
 	export let rows: Record<string, any>[] | undefined = undefined;
@@ -31,9 +32,8 @@
 			header: 'Exchange',
 			cell: ({ value, row: { original } }) =>
 				createRender(EntitySymbol, {
-					type: 'blockchain',
-					slug: hideChainIcon ? undefined : original.chain_slug,
-					label: original.chain_name
+					label: original.chain_name,
+					logoUrl: hideChainIcon ? undefined : getLogoUrl('blockchain', original.chain_slug)
 				}).slot(value)
 		}),
 		table.column({

@@ -4,9 +4,10 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { formatDollar, formatPriceChange, formatValue } from '$lib/helpers/formatters';
 	import { Button, DataTable, UpDownCell } from '$lib/components';
 	import PairSymbolCell from './PairSymbolCell.svelte';
+	import { formatDollar, formatPriceChange, formatValue } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let loading = false;
 	export let rows: PairIndexResponse['rows'] | undefined = undefined;
@@ -40,10 +41,10 @@
 			header: 'Trading pair',
 			cell: ({ value: row }: { value: any }) =>
 				createRender(PairSymbolCell, {
-					chainSlug: hideChainIcon ? undefined : row.chain_slug,
-					chainName: row.chain_name,
 					symbol: row.pair_symbol,
-					swapFee: row.pair_swap_fee
+					swapFee: row.pair_swap_fee,
+					chainName: row.chain_name,
+					logoUrl: hideChainIcon ? undefined : getLogoUrl('blockchain', row.chain_slug)
 				}),
 			plugins: { sort: { disable: true } }
 		}),

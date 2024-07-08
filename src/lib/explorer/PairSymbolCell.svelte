@@ -2,13 +2,13 @@
 	import { EntitySymbol } from '$lib/components';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 
-	export let chainSlug: string | undefined = undefined;
-	export let chainName: string | undefined = undefined;
 	export let symbol: string;
 	export let swapFee: number;
+	export let chainName: string;
+	export let logoUrl: MaybeString = undefined;
 </script>
 
-<EntitySymbol type="blockchain" slug={chainSlug} label={chainName}>
+<EntitySymbol {logoUrl} label={chainName}>
 	<div>
 		{symbol}
 		<span>

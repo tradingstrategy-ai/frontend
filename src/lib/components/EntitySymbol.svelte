@@ -1,18 +1,13 @@
 <script lang="ts">
-	import { getLogoUrl } from '$lib/helpers/assets';
-
-	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
-	export let slug: MaybeString;
 	export let label = '';
+	export let logoUrl: MaybeString = undefined;
 	export let size = '1.25em';
-
-	$: src = getLogoUrl(type, slug);
 </script>
 
 <div class="entity-symbol" style:--image-size={size}>
-	{#if src}
+	{#if logoUrl}
 		<div class="icon">
-			<img alt={label} {src} />
+			<img alt={label} src={logoUrl} />
 		</div>
 	{/if}
 	{#if label || $$slots.default}

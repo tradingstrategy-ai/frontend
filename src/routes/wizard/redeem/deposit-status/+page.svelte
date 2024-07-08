@@ -5,6 +5,7 @@
 	import { getBalance } from '@wagmi/core';
 	import { config, wallet, buyNativeCurrencyUrl, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	$: ({ address, chain } = $wallet);
 	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data!);
@@ -33,13 +34,7 @@
 
 		<WalletInfo alignValues="right">
 			<WalletInfoItem>
-				<EntitySymbol
-					slot="label"
-					type="token"
-					label={chainCurrency}
-					slug={chainCurrency?.toLowerCase()}
-					size="1.5rem"
-				/>
+				<EntitySymbol slot="label" size="1.5rem" label={chainCurrency} logoUrl={getLogoUrl('token', chainCurrency)} />
 				{#await getNativeCurrency(address)}
 					<Spinner />
 				{:then balance}

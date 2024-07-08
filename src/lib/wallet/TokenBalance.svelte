@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { Alert, EntitySymbol, Spinner, Tooltip } from '$lib/components';
+	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data: MaybePromise<GetTokenBalanceReturnType>;
 </script>
@@ -14,7 +15,7 @@
 	{@const { symbol, label } = balance}
 	{@const value = formatBalance(balance, 2, 4)}
 	<slot skeleton={false} {value} {symbol} {label}>
-		<EntitySymbol slug={symbol.toLowerCase()} type="token" size="1.5rem">{value} {label}</EntitySymbol>
+		<EntitySymbol size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)}>{value} {label}</EntitySymbol>
 	</slot>
 {:catch error}
 	<Tooltip>
