@@ -14,8 +14,7 @@
 <WalletInfo --wallet-info-label-width="6.5rem">
 	<WalletInfoItem label="Wallet">
 		<div class="connected-wallet">
-			<img alt={name} src={getLogoUrl('wallet', name)} />
-			{name}
+			<EntitySymbol size="1.75rem" label={name} logoUrl={getLogoUrl('wallet', name)} />
 			<span class="status">
 				<div class="dot" />
 				Connected
@@ -45,10 +44,6 @@
 		flex-wrap: wrap;
 		gap: var(--space-sm);
 		align-items: center;
-
-		img {
-			width: 1.75rem;
-		}
 	}
 
 	.status {

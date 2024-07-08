@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { UpDownIndicator } from '$lib/components';
+	import { EntitySymbol, UpDownIndicator } from '$lib/components';
 	import { KeyMetric } from 'trade-executor/components';
 	import { formatDaysAgo, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
@@ -77,11 +77,9 @@
 	<KeyMetric name="Asset management" {backtestLink}>
 		<div class="asset-management">
 			{#if assetManagementMode === 'enzyme'}
-				<img alt="Enzyme vault" src={getLogoUrl('token', 'enzyme')} />
-				<span>Enzyme vault</span>
+				<EntitySymbol label="Enzyme vault" logoUrl={getLogoUrl('token', 'enzyme')} />
 			{:else if assetManagementMode === 'hot_wallet'}
-				<img alt="Hot wallet" src={getLogoUrl('wallet', 'metamask')} />
-				<span>Hot wallet</span>
+				<EntitySymbol label="Hot wallet" logoUrl={getLogoUrl('wallet', 'metamask')} />
 			{:else}
 				---
 			{/if}
@@ -128,15 +126,7 @@
 		}
 
 		.asset-management {
-			display: flex;
-			gap: 0.75ex;
-			align-items: center;
 			font-size: 0.9em;
-
-			img {
-				height: 20px;
-				width: 20px;
-			}
 		}
 	}
 </style>

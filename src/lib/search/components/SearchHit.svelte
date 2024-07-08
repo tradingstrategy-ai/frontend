@@ -58,9 +58,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 		<a class="inner tile b" class:isLowQuality href={document.url_path} tabindex="0">
 			<div class="badge {document.type}">
 				{getTypeLabel(document)}
-				<div class="chain-icon">
-					<img src={getLogoUrl('blockchain', document.blockchain)} alt={document.blockchain} />
-				</div>
+				<img class="chain-icon" src={getLogoUrl('blockchain', document.blockchain)} alt={document.blockchain} />
 			</div>
 			<div class="info">
 				<slot {isLowQuality}>
@@ -166,8 +164,8 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 			position: absolute;
 			right: 0;
 			bottom: 0;
-			display: grid;
 			width: 1.6em;
+			height: 1.6em;
 			padding: 0.15em;
 			border-radius: 1em;
 			transform: translate(50%, 50%);
