@@ -53,7 +53,7 @@
 				{#each getStrategyTokens(strategy) as slug}
 					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
-						<EntitySymbol slot="trigger" size="2rem" logoUrl={getLogoUrl('token', slug)} />
+						<img slot="trigger" src={getLogoUrl('token', slug)} alt={symbol} />
 						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
@@ -144,9 +144,12 @@
 
 				.tokens {
 					display: flex;
-					gap: 0.5rem;
+					gap: 0.375rem;
 
-					:global(.entity-symbol) {
+					img {
+						display: flex;
+						width: 1.75rem;
+						height: 1.75rem;
 						border-radius: 100%;
 						box-shadow: var(--shadow-1);
 					}
@@ -154,7 +157,7 @@
 
 				.badges {
 					display: flex;
-					gap: 0.5em;
+					gap: 0.375rem;
 					font: var(--f-ui-sm-medium);
 
 					:global([data-css-props]) {
