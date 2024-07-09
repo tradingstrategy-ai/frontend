@@ -9,15 +9,9 @@ import { defineConfig } from 'vitest/config';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
 
-const customLogger = (({ info, warnOnce, ...otherLogMethods }) => {
+const customLogger = (({ warnOnce, ...otherLogMethods }) => {
 	return {
 		...otherLogMethods,
-
-		// suppress svg build output during CI (spammy due to cryptocurrency-icons)
-		info(msg: string, options: LogOptions) {
-			if (!!process.env.CI && /immutable\/assets\/.*\.svg/.test(msg)) return;
-			info(msg, options);
-		},
 
 		// suppress missing sourcemap warnings from @aave/math-utils during unit tests
 		warnOnce(msg: string, options: LogOptions) {
