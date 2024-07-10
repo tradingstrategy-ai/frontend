@@ -26,18 +26,11 @@
 	.icon {
 		display: contents;
 		font-size: var(--icon-size, var(--size, auto));
+		color: var(--icon-color, currentcolor);
 
 		:global svg {
 			height: 1em;
 			width: 1em;
-			path {
-				stroke: var(--icon-color, currentcolor);
-
-				&.fill {
-					stroke: none;
-					fill: var(--icon-color, currentcolor);
-				}
-			}
 		}
 	}
 </style>
