@@ -10,13 +10,13 @@ Display a single alert item (should always be nested within AlertList).
 ```
 -->
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import IconWarning from '~icons/local/warning';
 
 	export let title = '';
 </script>
 
 <li class="alert-item">
-	<Icon name="warning" />
+	<IconWarning />
 	<div class="inner">
 		<span class="content">
 			{#if title}
@@ -38,9 +38,8 @@ Display a single alert item (should always be nested within AlertList).
 		gap: var(--space-md) var(--space-sm);
 		font: inherit; /* see AlertList */
 
-		:global .icon {
-			display: block;
-			margin-top: -0.1em;
+		:global(.icon) {
+			transform: translateY(0.125em);
 		}
 
 		:global a {

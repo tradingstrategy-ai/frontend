@@ -38,7 +38,15 @@ export default defineConfig({
 			compiler: 'svelte',
 			scale: 1,
 			customCollections: {
-				local: FileSystemIconLoader('./src/lib/assets/icons')
+				local: FileSystemIconLoader('./src/lib/assets/icons', (svg) => {
+					return svg.replace(
+						/^<svg /,
+						'<svg style="font-size: var(--icon-size, 1em); color: var(--icon-color, currentcolor);" '
+					);
+				})
+			},
+			iconCustomizer(_, icon, props) {
+				props.class = `icon ${icon}`;
 			}
 		}),
 

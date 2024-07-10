@@ -89,26 +89,23 @@
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
-			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
-				<TextInput
-					autocomplete="off"
-					id="apiKey"
-					label="Enter API key to enable download"
-					placeholder="secret-token:tradingstrategy-"
-					type="text"
-					size="lg"
-				/>
+			<form id="form-api-key" on:submit|preventDefault={handleSubmit}>
+				<label for="apiKey">Enter API key to enable download</label>
 
-				<Button submit label="Enter" size="sm" disabled={submitting} />
+				<div class="form-group">
+					<TextInput autocomplete="off" id="apiKey" placeholder="secret-token:tradingstrategy-" type="text" size="lg" />
 
-				{#if submitting}
-					<Spinner />
-				{/if}
+					<Button submit label="Enter" size="sm" disabled={submitting} />
+
+					{#if submitting}
+						<Spinner />
+					{/if}
+				</div>
 			</form>
 		{/if}
 
 		{#if apiKeyError}
-			<Alert>{apiKeyError}</Alert>
+			<Alert size="sm">{apiKeyError}</Alert>
 		{/if}
 
 		{#if validApiKey}
@@ -204,7 +201,7 @@
 
 		h2 {
 			font: var(--f-heading-lg-medium);
-			margin-bottom: var(--space-xl);
+			margin-bottom: var(--space-lg);
 		}
 
 		:is(p, li) {
@@ -212,17 +209,22 @@
 		}
 
 		form {
+			display: grid;
+			gap: var(--space-xs);
 			margin-bottom: var(--space-lg);
-			display: flex;
-			align-items: flex-end;
-			gap: var(--space-md);
-			--text-input-width: 100%;
-			--text-input-max-width: 30rem;
-			--button-height: auto;
-		}
 
-		:global .spinner {
-			margin-bottom: 6px;
+			label {
+				font: var(--f-ui-md-medium);
+			}
+
+			.form-group {
+				display: flex;
+				gap: var(--space-sl);
+				align-items: center;
+				--text-input-width: 100%;
+				--text-input-max-width: 30rem;
+				--button-height: auto;
+			}
 		}
 
 		.action-link {

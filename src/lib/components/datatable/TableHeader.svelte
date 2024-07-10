@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { Subscribe, Render, type HeaderRow } from 'svelte-headless-table';
-	import Icon from '../Icon.svelte';
+	import IconChevronUp from '~icons/local/chevron-up';
+	import IconChevronDown from '~icons/local/chevron-down';
 
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: HeaderRow<any, any>[];
@@ -29,9 +30,9 @@
 						>
 							<Render of={cell.render()} />
 							{#if props.sort?.order === 'asc'}
-								<Icon name="chevron-up" size="1rem" />
+								<IconChevronUp />
 							{:else if props.sort?.order === 'desc'}
-								<Icon name="chevron-down" />
+								<IconChevronDown />
 							{/if}
 						</th>
 					</Subscribe>
@@ -41,3 +42,22 @@
 	{/each}
 	<slot />
 </thead>
+
+<style lang="postcss">
+	.sortable {
+		cursor: pointer;
+		user-select: none;
+
+		&:hover {
+			color: var(--c-text-light);
+		}
+
+		:global(.icon path) {
+			stroke-width: 0.1875rem;
+		}
+	}
+
+	.sorted {
+		color: var(--c-text);
+	}
+</style>

@@ -63,33 +63,6 @@ table.datatable {
 		white-space: nowrap;
 		text-align: left;
 		text-overflow: ellipsis;
-
-		&.sortable {
-			cursor: pointer;
-			position: relative;
-			user-select: none;
-
-			&:hover {
-				background: var(--c-box-1);
-				color: var(--c-text-light);
-				border-radius: var(--table-border-radius);
-			}
-
-			.icon svg {
-				position: absolute;
-				right: var(--space-ls);
-				top: var(--space-ls);
-
-				path {
-					stroke-width: 0.1875rem;
-				}
-			}
-		}
-
-		&.sorted {
-			color: var(--c-text);
-			padding-right: var(--space-5xl);
-		}
 	}
 
 	tbody tr {

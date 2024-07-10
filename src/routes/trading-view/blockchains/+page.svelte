@@ -43,9 +43,8 @@
 
 <style lang="postcss">
 	.blockchain-logo {
-		--size: 3rem;
-		height: var(--size);
-		width: var(--size);
+		height: 3rem;
+		width: 3rem;
 	}
 
 	h3.blockchain-title {

@@ -13,7 +13,8 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 -->
 <script lang="ts">
 	import fsm from 'svelte-fsm';
-	import { Icon } from '$lib/components';
+	import IconCopyToClipboard from '~icons/local/copy-to-clipboard';
+	import IconCheckSquare from '~icons/local/check-square';
 	import { fade } from 'svelte/transition';
 
 	export const copier = fsm('idle', {
@@ -36,7 +37,11 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 <div class="copy-widget">
 	{#key $copier}
 		<span transition:fade={{ duration: 100 }}>
-			<Icon name={$copier === 'idle' ? 'copy-to-clipboard' : 'check-square'} />
+			{#if $copier === 'idle'}
+				<IconCopyToClipboard />
+			{:else}
+				<IconCheckSquare />
+			{/if}
 		</span>
 	{/key}
 </div>

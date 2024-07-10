@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { Icon, Tooltip } from '$lib/components';
+	import { Tooltip } from '$lib/components';
+	import IconSuccess from '~icons/local/success';
+	import IconQuestionCircle from '~icons/local/question-circle';
 
 	export let title: string;
 	export let details: string;
@@ -7,13 +9,9 @@
 
 <Tooltip>
 	<span slot="trigger">
-		<span class="check">
-			<Icon name="success" />
-		</span>
+		<IconSuccess />
 		{title}
-		<span class="question">
-			<Icon name="question-circle" />
-		</span>
+		<IconQuestionCircle />
 	</span>
 	<div slot="popup">
 		{details}
@@ -27,22 +25,16 @@
 		align-items: center;
 		color: color-mix(in srgb, var(--c-bullish), var(--c-text) 25%);
 
-		span {
-			display: grid;
-		}
-
-		.check {
+		:global .icon.success {
 			--icon-size: 1.25em;
-			:global(svg) {
-				overflow: visible;
-			}
+			overflow: visible;
 
-			:global(path) {
+			path {
 				stroke-width: 2.5px;
 			}
 		}
 
-		.question {
+		:global .icon.question-circle {
 			opacity: 0.8;
 		}
 	}

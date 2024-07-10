@@ -12,7 +12,8 @@ Display site-wide search box for use in top-nav.
 <script lang="ts">
 	import tradingEntities from '../trading-entities';
 	import SearchHit from './SearchHit.svelte';
-	import { Button, Icon, Spinner, TextInput } from '$lib/components';
+	import { Button, Spinner, TextInput } from '$lib/components';
+	import IconSearch from '~icons/local/search';
 	import { disableScroll } from '$lib/actions/scroll';
 
 	let q = '';
@@ -40,7 +41,7 @@ Display site-wide search box for use in top-nav.
 	on:blur|capture={() => (hasFocus = false)}
 >
 	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
-		<Icon name="search" />
+		<IconSearch />
 	</label>
 
 	<form class="desktop-only" action="/search" role="search">

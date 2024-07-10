@@ -16,7 +16,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { Icon } from '$lib/components';
+	import IconCancel from '~icons/local/cancel';
 	import { disableScroll } from '$lib/actions/scroll';
 
 	export let title = '';
@@ -56,8 +56,8 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	<slot name="header">
 		<header>
 			<h5><slot name="title">{title}</slot></h5>
-			<button on:click={() => (open = false)}>
-				<Icon name="cancel" size="16px" />
+			<button aria-label="Close dialog" on:click={() => (open = false)}>
+				<IconCancel />
 			</button>
 		</header>
 	</slot>

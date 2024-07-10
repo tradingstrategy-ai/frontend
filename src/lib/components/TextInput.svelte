@@ -9,32 +9,22 @@ unknown props through to HTML input element.
 ```
 -->
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import IconSearch from '~icons/local/search';
+	import IconCancel from '~icons/local/cancel';
 
 	export let type: 'email' | 'text' | 'search' | 'password' = 'text';
 	export let disabled = false;
-	export let label = '';
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 	export let value = '';
 
-	const icon = type === 'search' ? 'search' : undefined;
-	const cancelButton = type === 'search';
-
 	let inputEl: HTMLInputElement;
-
-	$: tag = $$slots.label || label ? 'label' : 'span';
 
 	export function focus(options = {}) {
 		inputEl.focus(options);
 	}
 </script>
 
-<svelte:element this={tag} class="text-input size-{size}" class:has-icon={icon} class:disabled>
-	{#if $$slots.label || label}
-		<slot name="label">
-			<span class="label">{label}</span>
-		</slot>
-	{/if}
+<span class="text-input size-{size} type-{type}" class:disabled>
 	<input
 		bind:this={inputEl}
 		{value}
@@ -48,47 +38,33 @@ unknown props through to HTML input element.
 		on:keydown
 	/>
 
-	{#if icon}
-		<Icon name={icon} />
-	{/if}
+	{#if type === 'search'}
+		<IconSearch />
 
-	{#if cancelButton && value}
-		<span class="cancel-btn" on:pointerdown|preventDefault={() => (value = '')}>
-			<Icon name="cancel" />
-		</span>
+		{#if value}
+			<span class="cancel-btn" on:pointerdown|preventDefault={() => (value = '')}>
+				<IconCancel />
+			</span>
+		{/if}
 	{/if}
-</svelte:element>
+</span>
 
 <style lang="postcss">
 	.text-input {
 		position: relative;
 		display: inline-grid;
-		gap: var(--space-xs);
 		max-width: var(--text-input-max-width, auto);
 		width: var(--text-input-width, auto);
 		font: var(--text-input-font, var(--font));
 		letter-spacing: var(--text-input-letter-spacing, var(--letter-spacing, normal));
 		color: var(--c-text);
 
-		.label,
-		[slot='label'] {
-			font-weight: 500;
-		}
-
 		&.disabled {
 			opacity: 0.65;
 		}
 
-		&.has-icon input {
-			text-indent: 1.125em;
-		}
-
-		:global svg {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			left: 0.625em;
-			font-size: 0.875em;
+		&.type-search input {
+			text-indent: 1.25em;
 		}
 
 		&.size-sm {
@@ -150,7 +126,7 @@ unknown props through to HTML input element.
 			font: inherit;
 			letter-spacing: inherit;
 			color: inherit;
-			transition: background var(--time-sm) ease-out;
+			transition: all var(--time-sm) ease-out;
 
 			&::placeholder {
 				color: var(--c-text-extra-light);
@@ -176,19 +152,29 @@ unknown props through to HTML input element.
 			}
 		}
 
-		.cancel-btn {
-			display: none;
+		:global .icon {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
 
-			:global svg {
-				left: auto;
-				right: var(--space-md);
-				font-size: 1rem;
+			&.search {
+				left: 0.625em;
+			}
+
+			&.cancel {
+				right: 0.625em;
+				--icon-color: var(--c-text-extra-light);
 			}
 		}
 
+		.cancel-btn {
+			opacity: 0;
+			transition: opacity var(--time-sm) ease-out;
+		}
+
 		&:is(:hover, :focus-within) {
-			:global .cancel-btn {
-				display: contents;
+			.cancel-btn {
+				opacity: 1;
 			}
 		}
 	}

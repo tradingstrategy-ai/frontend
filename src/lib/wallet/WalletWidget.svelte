@@ -3,7 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
 	import { modal, wallet } from '$lib/wallet';
-	import { Button, HashAddress, Icon } from '$lib/components';
+	import { Button, HashAddress } from '$lib/components';
+	import IconWallet from '~icons/local/wallet';
 
 	export let strategy: ConnectedStrategyRuntimeState;
 
@@ -23,29 +24,30 @@
 	{#if $wallet.isConnected}
 		<Button size="sm" on:click={() => modal.open({ view: 'Account' })}>
 			<span class="address">
-				<Icon name="wallet" --icon-size="1.25em" />
+				<IconWallet --icon-size="1.25em" />
 				<HashAddress address={$wallet.address} endChars={7} />
 			</span>
 		</Button>
 	{:else}
 		<Button size="sm" icon="wallet" label="Connect wallet" on:click={launchConnectWizard}>
-			<Icon slot="icon" name="wallet" --icon-size="1.25em" />
+			<IconWallet slot="icon" --icon-size="1.25em" />
 		</Button>
 	{/if}
 </div>
 
 <style lang="postcss">
 	.address {
-		display: inline-grid;
+		display: grid;
 		grid-auto-flow: column;
 		gap: 1ex;
-		max-width: 10rem;
 		align-items: center;
+		height: 1.25rem;
+		max-width: 10rem;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm);
 
-		:global(.icon svg) {
-			margin-top: -3px;
+		:global(.icon) {
+			transform: translateY(-0.125ex);
 		}
 	}
 </style>

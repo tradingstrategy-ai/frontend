@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import IconChevronDown from '~icons/local/chevron-down';
 
 	let classes = '';
 	export { classes as class };
@@ -12,7 +12,7 @@
 	<select {name} {id} bind:value on:change>
 		<slot />
 	</select>
-	<Icon name="chevron-down" --icon-size="1rem" />
+	<IconChevronDown />
 </div>
 
 <style lang="postcss">
@@ -37,7 +37,7 @@
 			outline: none;
 		}
 
-		:global svg {
+		:global(.icon) {
 			position: absolute;
 			right: var(--wrapper-padding);
 			pointer-events: none;

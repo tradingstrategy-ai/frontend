@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Logo, Icon, Menu, NavPanel, TextInput } from '$lib/components';
+	import { Logo, Menu, NavPanel, TextInput } from '$lib/components';
+	import IconMenu from '~icons/local/menu';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	let panelOpen = false;
@@ -28,8 +29,8 @@
 		<ColorModePicker />
 	</div>
 
-	<button class="show-nav-panel mobile-only" title="Navigation menu" on:click={() => (panelOpen = true)}>
-		<Icon name="menu" />
+	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" on:click={() => (panelOpen = true)}>
+		<IconMenu />
 	</button>
 </div>
 

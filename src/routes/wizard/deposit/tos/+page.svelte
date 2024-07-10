@@ -4,7 +4,8 @@
 	import { signMessage } from '@wagmi/core';
 	import { wizard } from 'wizard/store';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
-	import { Alert, Button, Dialog, Icon, SummaryBox } from '$lib/components';
+	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
+	import IconReading from '~icons/local/reading';
 	import { hashMessage, numberToHex } from 'viem';
 
 	export let data;
@@ -152,7 +153,7 @@
 			<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
 			{#if $tos === 'valid'}
 				<div class="tooltip">
-					<Icon name="reading" size="1.5rem" />
+					<IconReading --icon-size="1.5rem" />
 					Please read to the end!
 				</div>
 			{/if}
@@ -178,7 +179,7 @@
 					<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
 					{#if $tos === 'valid'}
 						<div class="tooltip">
-							<Icon name="reading" size="1.5rem" />
+							<IconReading --icon-size="1.5rem" />
 							Please read to the end!
 						</div>
 					{/if}
