@@ -1,3 +1,4 @@
+import 'unplugin-icons/types/svelte';
 import type { CountryCode } from '$lib/helpers/geo';
 
 // For information about these interfaces, see:

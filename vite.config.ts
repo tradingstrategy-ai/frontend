@@ -3,9 +3,11 @@
  * https://kit.svelte.dev/docs/project-structure#project-files-vite-config-js
  * https://vitejs.dev/config/
  */
+import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { type LogOptions, createLogger } from 'vite';
-import { defineConfig } from 'vitest/config';
+import Icons from 'unplugin-icons/vite';
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
 
@@ -30,6 +32,15 @@ export default defineConfig({
 		}),
 
 		sveltekit(),
+
+		// see: https://github.com/unplugin/unplugin-icons
+		Icons({
+			compiler: 'svelte',
+			scale: 1,
+			customCollections: {
+				local: FileSystemIconLoader('./src/lib/assets/icons')
+			}
+		}),
 
 		// vite plugin to create a mock JSON api for integration tests
 		// only available when using `npm run dev` or `npm run preview`
