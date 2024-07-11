@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
-	import { Alert, Button, ContentCard, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
+	import {
+		Alert,
+		Button,
+		ContentCard,
+		ContentCardsSection,
+		HeroBanner,
+		Section,
+		Spinner,
+		TextInput,
+		Timestamp
+	} from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
+	import IconBook from '~icons/local/book';
 
 	export let data;
 
@@ -159,7 +169,8 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard title="Data logistics" icon="book">
+		<ContentCard title="Data logistics">
+			<IconBook slot="icon" />
 			<p>
 				Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
 				Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
@@ -172,7 +183,8 @@
 				data takes several gigabyte of memory.
 			</p>
 		</ContentCard>
-		<ContentCard title="Learn more" icon="book">
+		<ContentCard title="Learn more">
+			<IconBook slot="icon" />
 			<ul>
 				<li>
 					<a

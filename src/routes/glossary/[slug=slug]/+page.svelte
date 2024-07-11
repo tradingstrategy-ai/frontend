@@ -8,10 +8,11 @@
 <script lang="ts">
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { ContentCardsSection, ContentCard } from '$lib/components';
+	import { Button, ContentCardsSection, ContentCard, Section } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
-	import { Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
+	import IconDictionary from '~icons/local/dictionary';
+	import IconBook from '~icons/local/book';
 
 	export let data;
 	$: ({ entry } = data);
@@ -57,21 +58,27 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard icon="dictionary" title="DeFi and trading Dictionary" ctaLabel="View dictionary" href="/glossary">
+		<ContentCard title="DeFi and trading Dictionary" href="/glossary">
+			<IconDictionary slot="icon" />
 			<p>
 				You are currently browing Trading Strategy's DeFi, Web3 and trading terminology database. See the full
 				dictionary for more terms.
 			</p>
+			<Button slot="cta" label="View dictionary" />
 		</ContentCard>
 
 		<ContentCard
-			icon="book"
 			title="Learn algorithmic trading"
-			ctaLabel="Show tutorials and videos"
 			href="https://tradingstrategy.ai/docs/learn/index.html"
 			rel="external"
-			description="Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources collection."
-		/>
+		>
+			<IconBook slot="icon" />
+			<p>
+				Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources
+				collection.
+			</p>
+			<Button slot="cta" label="Show tutorials and videos" />
+		</ContentCard>
 	</ContentCardsSection>
 
 	<Section padding="md">
