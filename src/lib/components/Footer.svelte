@@ -1,91 +1,109 @@
 <script>
 	import { discordUrl } from '$lib/config';
-	import { SocialIcon } from '$lib/components';
+	import IconGithub from '~icons/local/github';
+	import IconDiscord from '~icons/local/discord';
+	import IconTelegram from '~icons/local/telegram';
+	import IconTwitter from '~icons/local/twitter';
+	import IconLinkedin from '~icons/local/linkedin';
+	import IconReading from '~icons/local/reading';
+	import IconNewpaper from '~icons/local/newspaper';
+	import IconRss from '~icons/local/rss';
 
 	export let small = false;
 </script>
 
-<footer class:small>
-	<div class="icon-group">
-		<SocialIcon
-			{small}
-			name="github"
-			href="https://github.com/tradingstrategy-ai"
-			title="GitHub"
-			target="_blank"
-			rel="noreferrer"
-		/>
-		<SocialIcon {small} name="discord" href={discordUrl} title="Discord" target="_blank" rel="noreferrer" />
-		<SocialIcon
-			{small}
-			name="telegram"
-			href="https://t.me/trading_protocol"
-			title="Telegram"
-			target="_blank"
-			rel="noreferrer"
-		/>
-		<SocialIcon
-			{small}
-			name="twitter"
-			href="https://twitter.com/tradingprotocol"
-			title="Twitter"
-			target="_blank"
-			rel="noreferrer"
-		/>
+<footer>
+	<div class="social-links" class:small>
+		<div class="link-group">
+			<a href="https://github.com/tradingstrategy-ai" title="GitHub" target="_blank" rel="noreferrer">
+				<IconGithub />
+			</a>
+			<a href={discordUrl} title="Discord" target="_blank" rel="noreferrer">
+				<IconDiscord />
+			</a>
+			<a href="https://t.me/trading_protocol" title="Telegram" target="_blank" rel="noreferrer">
+				<IconTelegram />
+			</a>
+			<a href="https://twitter.com/tradingprotocol" title="Twitter" target="_blank" rel="noreferrer">
+				<IconTwitter />
+			</a>
+		</div>
+
+		<div class="link-group">
+			<a href="https://www.linkedin.com/company/trading-strategy/" title="LinkedIn" target="_blank" rel="noreferrer">
+				<IconLinkedin />
+			</a>
+			<a href="/newsletter" title="Newsletter">
+				<IconNewpaper />
+			</a>
+			<a href="/blog" title="Blog">
+				<IconReading />
+			</a>
+			<a href="/blog/rss.xml" title="RSS" target="_blank">
+				<IconRss />
+			</a>
+		</div>
 	</div>
 
-	<div class="icon-group">
-		<SocialIcon
-			{small}
-			name="linkedin"
-			href="https://www.linkedin.com/company/trading-strategy/"
-			title="LinkedIn"
-			target="_blank"
-			rel="noreferrer"
-		/>
-		<SocialIcon {small} name="newspaper" title="Newsletter" href="/newsletter" />
-		<SocialIcon {small} name="reading" title="Blog" href="/blog" />
-		<SocialIcon {small} name="rss" href="/blog/rss.xml" title="RSS" target="_blank" />
+	<div class="disclaimer">
+		<a href="https://tradingstrategy.ai">TradingStrategy.ai</a> operated by Trading Strategy Operations Ltd., Victoria, Mahe,
+		Seychelles.
 	</div>
 </footer>
 
-<div class="disclaimer">
-	<a href="https://tradingstrategy.ai">TradingStrategy.ai</a> operated by Trading Strategy Operations Ltd., Victoria, Mahe,
-	Seychelles.
-</div>
-
 <style lang="postcss">
 	footer {
+		margin-block: 3.5rem;
+		padding-inline: 1.5rem;
+	}
+
+	.social-links {
+		--icon-size: 1.375rem;
 		display: flex;
 		flex-wrap: wrap;
 		place-content: center;
-		gap: var(--space-2xl);
-		margin-top: var(--space-6xl);
-		padding-inline: var(--space-lg);
-		padding-block: var(--space-7xl);
+		gap: 2.25rem;
+		padding-block: 4rem;
 
 		@media (--nav-collapsed) {
-			padding-block: var(--space-lg);
+			padding-block: 1.5rem;
 		}
 
 		@media (--viewport-sm-down) {
-			gap: var(--space-ll);
+			--icon-size: 1.25rem;
+			gap: 1.75rem;
 		}
 
 		&.small {
-			gap: var(--space-ll);
-			padding-block: 0;
+			--icon-size: 1.25rem;
+			gap: 1.75rem;
+			padding-top: 0;
 		}
 
-		.icon-group {
+		.link-group {
 			display: flex;
 			gap: inherit;
+		}
+
+		a {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: calc(var(--icon-size) * 2);
+			aspect-ratio: 1;
+			border: none;
+			border-radius: 100%;
+			background: var(--c-text);
+			color: var(--c-body);
+			transition: opacity var(--time-xs) ease-out;
+
+			&:hover {
+				opacity: 0.9;
+			}
 		}
 	}
 
 	.disclaimer {
-		padding-bottom: var(--space-7xl);
-		padding-inline: var(--space-lg);
 		text-align: center;
 		font: var(--f-ui-xs-roman);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
