@@ -16,7 +16,9 @@ Display a single alert item (should always be nested within AlertList).
 </script>
 
 <li class="alert-item">
-	<IconWarning />
+	<div class="icon">
+		<IconWarning />
+	</div>
 	<div class="inner">
 		<span class="content">
 			{#if title}
@@ -38,8 +40,9 @@ Display a single alert item (should always be nested within AlertList).
 		gap: var(--space-md) var(--space-sm);
 		font: inherit; /* see AlertList */
 
-		:global(.icon) {
-			transform: translateY(0.125em);
+		.icon {
+			display: grid;
+			margin-top: 0.125em;
 		}
 
 		:global a {

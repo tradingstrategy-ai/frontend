@@ -98,12 +98,12 @@
 						</div>
 					{/if}
 				</div>
-				<IconChevronDown --icon-size="1.25rem" />
+				<IconChevronDown --icon-size="1.25em" />
 			</button>
 		{:else}
 			<button class="mobile" on:click={() => launchWizard('connect-wallet')}>
 				Connect wallet
-				<IconWallet --icon-size="1.25rem" />
+				<IconWallet --icon-size="1.25em" />
 			</button>
 		{/if}
 	</header>
@@ -134,7 +134,7 @@
 			<div class="actions">
 				{#if depositEnabled && !connected}
 					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
-						<IconWallet slot="icon" --icon-size="1.25em" />
+						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
@@ -142,7 +142,7 @@
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>
-						<IconUnlink slot="icon" --icon-size="1.25em" />
+						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
 				<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />

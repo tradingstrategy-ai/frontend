@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { CopyWidget, HashAddress, Icon } from '$lib/components';
+	import { CopyWidget, HashAddress } from '$lib/components';
 
 	export let address: Address;
 	export let clipboardCopier = true;

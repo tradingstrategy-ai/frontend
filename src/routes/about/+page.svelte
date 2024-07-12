@@ -5,6 +5,8 @@
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';
 	import Platform from './Platform.svelte';
+	import IconMail from '~icons/local/mail';
+	import IconDiscord from '~icons/local/discord';
 </script>
 
 <svelte:head>
@@ -55,15 +57,12 @@
 	<Section gap="md" padding="md">
 		<h2 style:text-align="center">Get in touch</h2>
 		<div class="contact-cta">
-			<Button secondary label="Send us an email" icon="mail" href="mailto:info@tradingstrategy.ai" />
-			<Button
-				secondary
-				label="Join our Discord server"
-				icon="discord"
-				href={discordUrl}
-				target="_blank"
-				rel="noreferrer"
-			/>
+			<Button secondary label="Send us an email" href="mailto:info@tradingstrategy.ai">
+				<IconMail slot="icon" />
+			</Button>
+			<Button secondary label="Join our Discord server" href={discordUrl} target="_blank" rel="noreferrer">
+				<IconDiscord slot="icon" />
+			</Button>
 		</div>
 	</Section>
 </main>

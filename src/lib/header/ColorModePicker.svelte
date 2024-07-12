@@ -2,10 +2,11 @@
 	import cookies from 'cookie';
 	import { addYears } from 'date-fns';
 	import { Button, Dialog } from '$lib/components';
+	import IconSun from '~icons/local/sun';
 
 	export let showLabel = false;
 
-	const buttonLabel = showLabel ? 'Select color mode' : '';
+	const buttonLabel = 'Select color mode';
 
 	let open: boolean;
 	let currentMode: string;
@@ -32,7 +33,15 @@
 	}
 </script>
 
-<Button tertiary size="sm" icon="sun" label={buttonLabel} on:click={openDialog} />
+<Button
+	tertiary
+	size="sm"
+	label={showLabel ? buttonLabel : ''}
+	title={showLabel ? undefined : buttonLabel}
+	on:click={openDialog}
+>
+	<IconSun slot="icon" />
+</Button>
 
 <div class="color-mode-picker">
 	<Dialog title="Color Mode" bind:open>

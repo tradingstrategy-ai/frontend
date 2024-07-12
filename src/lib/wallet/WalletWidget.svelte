@@ -29,8 +29,8 @@
 			</span>
 		</Button>
 	{:else}
-		<Button size="sm" icon="wallet" label="Connect wallet" on:click={launchConnectWizard}>
-			<IconWallet slot="icon" --icon-size="1.25em" />
+		<Button size="sm" label="Connect wallet" on:click={launchConnectWizard}>
+			<IconWallet slot="icon" />
 		</Button>
 	{/if}
 </div>

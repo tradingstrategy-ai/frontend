@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { discordUrl } from '$lib/config';
 	import { Button, Grid, Section, SummaryBox } from '$lib/components';
+	import IconDiscord from '~icons/local/discord';
 </script>
 
 <div class="audience">
@@ -41,14 +42,9 @@
 					<li>Public open source or private strategies enabled</li>
 				</ul>
 
-				<Button
-					slot="cta"
-					label="Join our Discord server"
-					icon="discord"
-					href={discordUrl}
-					target="_blank"
-					rel="noreferrer"
-				/>
+				<Button slot="cta" label="Join our Discord server" href={discordUrl} target="_blank" rel="noreferrer">
+					<IconDiscord slot="icon" />
+				</Button>
 			</SummaryBox>
 		</Grid>
 	</Section>

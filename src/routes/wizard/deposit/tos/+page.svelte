@@ -6,6 +6,8 @@
 	import { config, wallet, WalletAddress } from '$lib/wallet';
 	import { Alert, Button, Dialog, SummaryBox } from '$lib/components';
 	import IconReading from '~icons/local/reading';
+	import IconDownload from '~icons/local/download';
+	import IconFullscreen from '~icons/local/fullscreen';
 	import { hashMessage, numberToHex } from 'viem';
 
 	export let data;
@@ -106,19 +108,16 @@
 			<div class="cta">
 				<Button
 					size="xs"
-					icon="download"
 					label="Download"
 					disabled={!tosText}
 					href="/tos/{fileName}"
 					download="Trading Strategy ToS v{version}-{fileName}"
-				/>
-				<Button
-					size="xs"
-					icon="fullscreen"
-					label="Fullscreen"
-					disabled={!tosText}
-					on:click={() => (fullScreen = true)}
-				/>
+				>
+					<IconDownload slot="icon" />
+				</Button>
+				<Button size="xs" label="Fullscreen" disabled={!tosText} on:click={() => (fullScreen = true)}>
+					<IconFullscreen slot="icon" />
+				</Button>
 			</div>
 		</header>
 		<pre class="tos-text in-doc-flow" class:no-file={!tosText}>
@@ -223,11 +222,7 @@
 				grid-template-columns: auto auto;
 				gap: 0.5rem;
 
-				:global(.button) {
-					--icon-size: 1rem;
-				}
-
-				:global(svg path) {
+				:global(.icon path) {
 					stroke-width: 2;
 				}
 			}
