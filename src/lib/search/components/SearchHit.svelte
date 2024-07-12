@@ -15,7 +15,8 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 	import type { TradingEntityDocument } from '../trading-entities';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Icon, UpDownCell } from '$lib/components';
+	import { UpDownCell } from '$lib/components';
+	import IconWarning from '~icons/local/warning';
 	import SearchHitDescription from './SearchHitDescription.svelte';
 
 	export let document: TradingEntityDocument | undefined = undefined;
@@ -58,9 +59,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 		<a class="inner tile b" class:isLowQuality href={document.url_path} tabindex="0">
 			<div class="badge {document.type}">
 				{getTypeLabel(document)}
-				<div class="chain-icon">
-					<img src={getLogoUrl('chain', document.blockchain)} alt={document.blockchain} />
-				</div>
+				<img class="chain-icon" src={getLogoUrl('blockchain', document.blockchain)} alt={document.blockchain} />
 			</div>
 			<div class="info">
 				<slot {isLowQuality}>
@@ -70,7 +69,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 
 			<slot name="price-info" {hasPrice} {hasPriceChange}>
 				{#if isLowQuality}
-					<Icon name="warning" size="20px" />
+					<IconWarning --icon-size="1.25em" />
 				{:else if hasPriceChange}
 					<UpDownCell value={document.price_change_24h} formatter={(val) => formatPercent(Math.abs(val))} />
 				{/if}
@@ -166,8 +165,8 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 			position: absolute;
 			right: 0;
 			bottom: 0;
-			display: grid;
 			width: 1.6em;
+			height: 1.6em;
 			padding: 0.15em;
 			border-radius: 1em;
 			transform: translate(50%, 50%);

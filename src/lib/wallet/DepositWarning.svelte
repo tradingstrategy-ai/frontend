@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Icon } from '$lib/components';
+	import IconWarning from '~icons/local/warning';
 
 	export let title: string;
 </script>
 
 <div class="deposit-warning">
 	<h3>
-		<Icon name="warning" />
+		<IconWarning />
 		{title}
 	</h3>
 	<p><slot /></p>

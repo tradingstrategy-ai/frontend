@@ -20,17 +20,6 @@
 
 <section class="source">
 	<SummaryBox title="Source code" subtitle="The source code of the {strategy.name} strategy" ctaPosition="top">
-		<!--
-		<Button
-			slot="cta"
-			let:position
-			size={position === 'header' ? 'sm' : 'md'}
-			tertiary
-			icon="github"
-			href={githubUrl}
-			label="View on GitHub"
-			target="_blank"
-		-->
 		<SourceCode language={python} {code} />
 	</SummaryBox>
 </section>

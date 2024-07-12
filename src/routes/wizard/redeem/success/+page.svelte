@@ -4,6 +4,7 @@
 	import { WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { EntitySymbol } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers.js';
+	import { getLogoUrl } from '$lib/helpers/assets.js';
 
 	export let data;
 	const { receivedAssets } = data;
@@ -22,7 +23,7 @@
 		{#each receivedAssets as balance}
 			{@const { symbol, label } = balance}
 			<WalletInfoItem>
-				<EntitySymbol slot="label" type="token" {label} slug={symbol.toLowerCase()} size="1.5rem" />
+				<EntitySymbol slot="label" size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)} />
 				{formatBalance(balance, 2, 4)}
 			</WalletInfoItem>
 		{/each}

@@ -13,6 +13,7 @@
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import { formatNumber } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
 	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
@@ -184,7 +185,7 @@
 				on:change={() => wizard.updateData({ shares })}
 			>
 				Estimated value
-				<EntitySymbol slug={vaultNetValue.symbol?.toLowerCase()} type="token">
+				<EntitySymbol label={vaultNetValue.label} logoUrl={getLogoUrl('token', vaultNetValue.symbol)}>
 					{getEstimatedValue(shares)}
 					{vaultNetValue.label}
 				</EntitySymbol>

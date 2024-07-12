@@ -6,15 +6,16 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { formatSwapFee } from '$lib/helpers/formatters';
+	import { page } from '$app/stores';
 	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import ChartSection from './ChartSection.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
-	import { page } from '$app/stores';
+	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
+	import { formatSwapFee } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 
@@ -57,7 +58,7 @@ Render the pair trading page
 		</span>
 		<span slot="subtitle" class="subtitle">
 			token pair on {details.exchange_name} on
-			<EntitySymbol type="blockchain" slug={summary.chain_slug} label={summary.chain_name} size="0.875em" />
+			<EntitySymbol size="0.875em" label={summary.chain_name} logoUrl={getLogoUrl('blockchain', summary.chain_slug)} />
 		</span>
 		<svelte:fragment slot="cta">
 			{#if details.trade_link}

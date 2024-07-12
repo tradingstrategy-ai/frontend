@@ -1,30 +1,19 @@
 <!--
 @component
 Display a card with icon, title, description and an optional CTA button. The entire card acts as an
-anchor if `href` is provided. Use default `slot` instead of `description` when addional markup or
-logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button options are required.
+anchor if `href` is provided. The `icon` and `cta` slots are optional.
 
 ### Usage:
 ```tsx
-	<ContentCard
-		title="Content card 1"
-		icon="newspaper"
-		ctaLabel="Click here"
-		href="/destination/page"
-		description="More information about the content card"
-	>
-		<p>Optional slot content overrides description prop</p>
+	<ContentCard title="Content card 1" href="/destination/page">
+		<IconFoo slot="icon" />
+		<p>More information about the content card</p>
+		<Button slot="cta" label="Learn more" />
 	</ContentCard>
 ```
 -->
 <script lang="ts">
-	import { Button, Icon } from '$lib/components';
-
-	export let icon: string | undefined = undefined;
 	export let title: string | undefined = undefined;
-	export let description = '';
-	export let ctaFullWidth = false;
-	export let ctaLabel = '';
 	export let href: string | undefined = undefined;
 	export let target: string | undefined = undefined;
 	export let rel: string | undefined = undefined;
@@ -36,19 +25,10 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<svelte:element
-	this={tag}
-	{...anchorProps}
-	class="content-card tile b"
-	class:ctaFullWidth
-	data-testid={testId}
-	on:click
->
-	{#if icon || $$slots.icon}
-		<div class="icon symbol tile c">
-			<slot name="icon">
-				<Icon name={`${icon}`} />
-			</slot>
+<svelte:element this={tag} {...anchorProps} class="content-card tile b" data-testid={testId} on:click>
+	{#if $$slots.icon}
+		<div class="icon tile c">
+			<slot name="icon" />
 		</div>
 	{/if}
 
@@ -57,14 +37,12 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 	</slot>
 
 	<div class="description">
-		<slot>{description}</slot>
+		<slot />
 	</div>
 
-	{#if $$slots.cta || ctaLabel}
+	{#if $$slots.cta}
 		<div class="cta">
-			<slot name="cta">
-				<Button label={ctaLabel} />
-			</slot>
+			<slot name="cta" />
 		</div>
 	{/if}
 </svelte:element>
@@ -88,7 +66,7 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 			margin-bottom: 0;
 		}
 
-		.symbol {
+		.icon {
 			--icon-size: var(--content-tile-icon-size, 1.75rem);
 			border-radius: 100%;
 			display: flex;
@@ -133,17 +111,11 @@ logic is required. Use `slot="cta"` instead of `ctaLabel` when custom button opt
 
 	.cta {
 		@media (--viewport-sm-down) {
-			:global .button {
-				width: 100%;
-			}
+			--button-width: 100%;
 		}
 
 		@media (--viewport-md-up) {
 			margin-top: var(--space-sm);
-		}
-
-		.ctaFullWidth & :global .button {
-			width: 100%;
 		}
 	}
 </style>

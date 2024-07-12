@@ -16,7 +16,8 @@ Display one key metric in a strategy tile.
 -->
 <script lang="ts">
 	import type { KeyMetric } from 'trade-executor/statistics/key-metric';
-	import { Icon, Tooltip } from '$lib/components';
+	import { Tooltip } from '$lib/components';
+	import IconQuestionCircle from '~icons/local/question-circle';
 	import KeyMetricDescription from './KeyMetricDescription.svelte';
 
 	// Displayed metric name as the box label
@@ -41,7 +42,7 @@ Display one key metric in a strategy tile.
 		<Tooltip>
 			<div slot="trigger" class="label">
 				{name}
-				<Icon name="question-circle" />
+				<IconQuestionCircle />
 			</div>
 			<KeyMetricDescription
 				slot="popup"
@@ -61,7 +62,7 @@ Display one key metric in a strategy tile.
 		<Tooltip>
 			<div slot="trigger" class="backtest-indicator">
 				Estimate
-				<Icon name="question-circle" />
+				<IconQuestionCircle />
 			</div>
 			<div class="backtest-tooltip" slot="popup">
 				<h3>Backtesting estimate</h3>
@@ -105,8 +106,8 @@ Display one key metric in a strategy tile.
 		align-content: flex-start;
 		white-space: nowrap;
 
-		--icon-size: 1.1em;
-		:global(.icon svg) {
+		:global(.icon) {
+			--icon-size: 1.1em;
 			transform: translateY(-0.1em);
 		}
 

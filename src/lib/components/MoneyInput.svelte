@@ -15,6 +15,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import { EntitySymbol } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let disabled = false;
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
@@ -54,13 +55,11 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 			on:keydown
 			on:change
 		/>
-		<div class="symbols">
-			{#if token}
-				<span class="unit">
-					<EntitySymbol type="token" label={token.label} slug={token.symbol.toLowerCase()} />
-				</span>
-			{/if}
-		</div>
+		{#if token}
+			<span class="unit">
+				<EntitySymbol label={token.label} logoUrl={getLogoUrl('token', token.symbol)} />
+			</span>
+		{/if}
 	</div>
 	{#if $$slots.default}
 		<div class="estimated-value">
@@ -76,20 +75,10 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 
 		.inner {
 			display: flex;
+			height: 4.25rem;
 			border: 1px var(--c-input-border) solid;
 			border-radius: var(--radius-sm);
-			height: 4.25rem;
 			overflow: hidden;
-		}
-
-		.unit {
-			display: grid;
-			place-items: center;
-			height: 100%;
-			padding-inline: 1rem;
-			background: var(--c-box-2);
-			font: var(--f-ui-lg-bold);
-			text-align: center;
 		}
 
 		&.disabled {
@@ -97,8 +86,9 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 		}
 
 		input {
-			height: var(--text-input-height, var(--height));
+			flex: 1;
 			width: 100%;
+			height: var(--text-input-height, var(--height));
 			padding-inline: 0.75rem;
 			border: none;
 			background: var(--c-input-background);
@@ -125,6 +115,16 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 				border-color: var(--c-input-border-focus);
 				outline: none;
 			}
+		}
+
+		.unit {
+			display: flex;
+			max-width: 10rem;
+			height: 100%;
+			padding-inline: 0.75rem;
+			background: var(--c-box-2);
+			font: var(--f-ui-lg-bold);
+			text-align: center;
 		}
 
 		.estimated-value {

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Logo, Icon, Menu, Footer } from '$lib/components';
+	import { Logo, Menu, Footer } from '$lib/components';
+	import IconCancel from '~icons/local/cancel';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 	import { disableScroll } from '$lib/actions/scroll';
 
@@ -13,8 +14,8 @@
 <nav class:open>
 	<header>
 		<a href="/" aria-label="Home" on:click={close}><Logo /></a>
-		<button on:click={close}>
-			<Icon name="cancel" />
+		<button aria-label="Close navigation panel" on:click={close}>
+			<IconCancel />
 		</button>
 	</header>
 	<Menu align="center" on:click={close}>

@@ -44,7 +44,7 @@
 			</DataBox>
 
 			<DataBox size="sm" label="Blockchain">
-				<EntitySymbol type="blockchain" slug={chainSlug} label={chain.name} />
+				<EntitySymbol label={chain.name} logoUrl={getLogoUrl('blockchain', chainSlug)} />
 			</DataBox>
 
 			<DataBox size="sm" label="Address">

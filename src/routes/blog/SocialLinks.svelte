@@ -1,11 +1,20 @@
 <script lang="ts">
 	import { Button } from '$lib/components';
+	import IconNewspaper from '~icons/local/newspaper';
+	import IconTwitter from '~icons/local/twitter';
+	import IconRss from '~icons/local/rss';
 </script>
 
 <div class="social-links">
-	<Button icon="newspaper" label="Subscribe to our Newsletter" href="/newsletter" size="sm" />
-	<Button icon="twitter" label="Follow us on Twitter" href="https://twitter.com/TradingProtocol" size="sm" />
-	<Button icon="rss" label="RSS Feed" href="/blog/rss.xml" rel="external" size="sm" />
+	<Button label="Subscribe to our Newsletter" href="/newsletter" size="sm">
+		<IconNewspaper slot="icon" />
+	</Button>
+	<Button label="Follow us on Twitter" href="https://twitter.com/TradingProtocol" size="sm">
+		<IconTwitter slot="icon" />
+	</Button>
+	<Button label="RSS Feed" href="/blog/rss.xml" rel="external" size="sm">
+		<IconRss slot="icon" />
+	</Button>
 </div>
 
 <style lang="postcss">
@@ -19,10 +28,6 @@
 
 		@media (--viewport-sm-down) {
 			flex-direction: column;
-		}
-
-		:global .button {
-			--icon-size: 1.125rem !important;
 		}
 	}
 </style>

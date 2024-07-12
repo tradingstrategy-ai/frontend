@@ -66,6 +66,7 @@
 	import type { PositionStatus } from 'trade-executor/state/position';
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
+	import IconChevronDown from '~icons/local/chevron-down';
 
 	export let basePath: string;
 	export let currentPath: string;
@@ -123,7 +124,8 @@
 
 <nav class="strategy-nav {$mobileMenu}" style:--menu-height={menuHeight}>
 	<div class="mobile-toggle">
-		<Button icon="chevron-down" quarternary on:click={mobileMenu.toggle}>
+		<Button quarternary on:click={mobileMenu.toggle}>
+			<IconChevronDown slot="icon" />
 			{currentOption?.label ?? 'Show page'}
 		</Button>
 	</div>
@@ -203,7 +205,7 @@
 		}
 	}
 
-	.mobile-toggle :global {
+	.mobile-toggle {
 		display: grid;
 
 		@media (--viewport-lg-up) {
@@ -214,15 +216,11 @@
 			opacity: 0.4;
 		}
 
-		button svg {
-			transition: transform 0.25s ease-out;
+		:global(.icon) {
+			transition: transform var(--time-md) ease-out;
 
 			.open & {
 				transform: rotate(180deg);
-			}
-
-			path {
-				stroke-width: 3px;
 			}
 		}
 	}

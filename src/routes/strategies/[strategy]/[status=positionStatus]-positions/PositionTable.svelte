@@ -139,10 +139,6 @@
 	}
 
 	.position-table :global {
-		.sortable .icon svg {
-			top: var(--space-sl);
-		}
-
 		.ticker {
 			white-space: pre;
 		}

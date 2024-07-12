@@ -1,24 +1,20 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain.js';
-	import { getLogoUrl } from '$lib/helpers/assets';
 	import type { ConnectedWallet } from '$lib/wallet';
 	import { switchChain, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Alert, Button, EntitySymbol } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let wallet: ConnectedWallet;
 	export let chain: Chain;
 
 	$: name = wallet.connector.name;
-	$: walletLogoUrl = getLogoUrl('wallet', name.toLowerCase());
 </script>
 
 <WalletInfo --wallet-info-label-width="6.5rem">
 	<WalletInfoItem label="Wallet">
 		<div class="connected-wallet">
-			{#if walletLogoUrl}
-				<img alt={name} src={walletLogoUrl} />
-			{/if}
-			{name}
+			<EntitySymbol size="1.75rem" label={name} logoUrl={getLogoUrl('wallet', name)} />
 			<span class="status">
 				<div class="dot" />
 				Connected
@@ -37,7 +33,7 @@
 				<Button slot="cta" size="xs" label="Switch network" on:click={() => switchChain(chain.id)} />
 			</Alert>
 		{:else}
-			<EntitySymbol type="blockchain" label={chain.name} slug={chain.slug} />
+			<EntitySymbol label={chain.name} logoUrl={getLogoUrl('blockchain', chain.slug)} />
 		{/if}
 	</WalletInfoItem>
 </WalletInfo>
@@ -48,10 +44,6 @@
 		flex-wrap: wrap;
 		gap: var(--space-sm);
 		align-items: center;
-
-		img {
-			width: 1.75rem;
-		}
 	}
 
 	.status {

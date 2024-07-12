@@ -2,11 +2,12 @@
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { getBalance, readContract } from '@wagmi/core';
-	import { formatBalance } from '$lib/eth-defi/helpers';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { getTokenBalance } from '$lib/eth-defi/helpers';
 	import { EntitySymbol, Spinner } from '$lib/components';
+	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let contracts: EnzymeSmartContracts;
 
@@ -39,7 +40,7 @@
 	</WalletInfoItem>
 
 	<WalletInfoItem>
-		<EntitySymbol slot="label" type="token" label={chainCurrency} slug={chainCurrency?.toLowerCase()} size="1.5rem" />
+		<EntitySymbol slot="label" size="1.5rem" label={chainCurrency} logoUrl={getLogoUrl('token', chainCurrency)} />
 		{#await fetchNativeCurrency(address)}
 			<Spinner />
 		{:then balance}
@@ -50,7 +51,9 @@
 	{#if contracts.comptroller}
 		<WalletInfoItem>
 			<!-- TODO: make EntitySymbol dynamic based on denomination token -->
-			<EntitySymbol slot="label" type="token" slug="usdc" size="1.5rem">USDC.e (bridged)</EntitySymbol>
+			<EntitySymbol slot="label" size="1.5rem" label="USDC.e" logoUrl={getLogoUrl('token', 'usdc')}
+				>USDC.e (bridged)</EntitySymbol
+			>
 			{#await fetchDenominationToken(address)}
 				<Spinner />
 			{:then balance}

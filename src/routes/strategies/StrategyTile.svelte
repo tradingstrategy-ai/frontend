@@ -11,6 +11,7 @@
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let admin = false;
 	export let strategy: StrategyRuntimeState;
@@ -35,13 +36,11 @@
 	// FIXME: hack to infer list of tokens based on strategy ID;
 	// In the future this will come from the strategy configuration.
 	function getStrategyTokens({ id }: StrategyRuntimeState) {
-		if (id.includes('multipair')) {
-			return ['usdc'];
-		} else if (id.includes('matic')) {
-			return ['matic', 'usdc'];
-		} else {
-			return ['eth', 'usdc'];
+		const tokens: string[] = [];
+		for (const token of ['eth', 'btc', 'matic']) {
+			if (id.includes(token)) tokens.push(token);
 		}
+		return [...tokens, 'usdc'];
 	}
 </script>
 
@@ -54,7 +53,7 @@
 				{#each getStrategyTokens(strategy) as slug}
 					{@const symbol = slug.toUpperCase()}
 					<Tooltip>
-						<EntitySymbol slot="trigger" type="token" size="2rem" {slug} />
+						<img slot="trigger" src={getLogoUrl('token', slug)} alt={symbol} />
 						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
 					</Tooltip>
 				{/each}
@@ -81,7 +80,11 @@
 				{#if chain}
 					<div class="chain-icon">
 						<Tooltip>
-							<EntitySymbol slot="trigger" slug={chain.slug} type="blockchain" size="var(--chain-icon-size)" />
+							<EntitySymbol
+								slot="trigger"
+								size="var(--chain-icon-size)"
+								logoUrl={getLogoUrl('blockchain', chain.slug)}
+							/>
 							<span slot="popup">
 								This strategy runs on <strong>{chain.name}</strong> blockchain
 							</span>
@@ -141,9 +144,12 @@
 
 				.tokens {
 					display: flex;
-					gap: 0.5rem;
+					gap: 0.375rem;
 
-					:global(.entity-symbol) {
+					img {
+						display: flex;
+						width: 1.75rem;
+						height: 1.75rem;
 						border-radius: 100%;
 						box-shadow: var(--shadow-1);
 					}
@@ -151,7 +157,7 @@
 
 				.badges {
 					display: flex;
-					gap: 0.5em;
+					gap: 0.375rem;
 					font: var(--f-ui-sm-medium);
 
 					:global([data-css-props]) {

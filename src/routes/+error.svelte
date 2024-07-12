@@ -3,6 +3,7 @@
 	import { Button, Logo } from '$lib/components';
 	import MaintenanceNotice from './MaintenanceNotice.svelte';
 	import ErrorPageInfo from './ErrorPageInfo.svelte';
+	import IconConsole from '~icons/local/console';
 
 	let showLogs = false;
 
@@ -40,7 +41,8 @@
 		{:else if status === 503}
 			<ErrorPageInfo {status} title={'Service is unavailable'}>
 				{#if stack}
-					<Button icon="console" on:click={() => (showLogs = !showLogs)}>
+					<Button on:click={() => (showLogs = !showLogs)}>
+						<IconConsole slot="icon" />
 						{showLogs ? 'Hide logs' : 'Show logs'}
 					</Button>
 				{/if}

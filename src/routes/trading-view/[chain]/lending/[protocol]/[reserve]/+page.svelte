@@ -8,6 +8,7 @@
 	import InfoSummary from './InfoSummary.svelte';
 	import { getFormattedReserveUSD, isBorrowable, lendingReserveExternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	$: ({ reserve } = data);
@@ -47,7 +48,7 @@
 		<span slot="subtitle" class="subtitle">
 			{reserve.protocol_name}
 			reserve on
-			<EntitySymbol type="blockchain" slug={reserve.chain_slug} label={reserve.chain_name} size="0.875em" />
+			<EntitySymbol size="0.875em" label={reserve.chain_name} logoUrl={getLogoUrl('blockchain', reserve.chain_slug)} />
 		</span>
 		<svelte:fragment slot="cta">
 			{#if reserveUrl}

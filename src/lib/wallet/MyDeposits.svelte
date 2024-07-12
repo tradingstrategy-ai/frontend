@@ -13,7 +13,10 @@
 		DepositBalance,
 		VaultBalance
 	} from '$lib/wallet';
-	import { Button, HashAddress, Icon } from '$lib/components';
+	import { Button, HashAddress } from '$lib/components';
+	import IconWallet from '~icons/local/wallet';
+	import IconChevronDown from '~icons/local/chevron-down';
+	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
@@ -85,7 +88,7 @@
 					<h2>My deposits</h2>
 					<div class="wallet-address">
 						{#if $wallet.address}
-							<Icon name="wallet" size="1.25rem" />
+							<IconWallet --icon-size="1.25rem" />
 							<HashAddress address={$wallet.address ?? ''} endChars={5} />
 						{/if}
 					</div>
@@ -95,12 +98,12 @@
 						</div>
 					{/if}
 				</div>
-				<Icon name="chevron-down" size="1.25rem" />
+				<IconChevronDown --icon-size="1.25em" />
 			</button>
 		{:else}
 			<button class="mobile" on:click={() => launchWizard('connect-wallet')}>
 				Connect wallet
-				<Icon name="wallet" size="1.25rem" />
+				<IconWallet --icon-size="1.25em" />
 			</button>
 		{/if}
 	</header>
@@ -131,7 +134,7 @@
 			<div class="actions">
 				{#if depositEnabled && !connected}
 					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
-						<Icon slot="icon" name="wallet" --icon-size="1.25em" />
+						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
@@ -139,7 +142,7 @@
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>
-						<Icon slot="icon" name="unlink" --icon-size="1.25em" />
+						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
 				<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
@@ -227,7 +230,7 @@
 				}
 			}
 
-			:global(.chevron-down svg) {
+			:global(.chevron-down) {
 				transition: transform var(--time-md) ease-out;
 
 				.open & {

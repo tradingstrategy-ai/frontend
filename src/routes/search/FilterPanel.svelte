@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { Button, Icon } from '$lib/components';
+	import { Button } from '$lib/components';
+	import IconCancel from '~icons/local/cancel';
 	import SortSelect from './SortSelect.svelte';
 	import FacetFilter from './FacetFilter.svelte';
 	import RangeFilter from './RangeFilter.svelte';
@@ -43,8 +44,8 @@
 <div bind:this={panel} class="filter-panel" class:open>
 	<header>
 		<h4>Select filters</h4>
-		<button on:click={close}>
-			<Icon name="cancel" />
+		<button on:click={close} aria-label="Close filters">
+			<IconCancel />
 		</button>
 	</header>
 
@@ -56,7 +57,7 @@
 		<button class="clear-filters" disabled={!hasFilters} on:click={clearAllFilters}>
 			{#if hasFilters}
 				Clear filters
-				<Icon name="cancel" size="16px" />
+				<IconCancel --icon-size="1rem" />
 			{:else}
 				Select filters
 			{/if}

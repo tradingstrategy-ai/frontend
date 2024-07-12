@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Icon, SummaryBox, Tooltip } from '$lib/components';
+	import { SummaryBox, Tooltip } from '$lib/components';
+	import IconQuestionCircle from '~icons/local/question-circle';
 
 	export let data;
 	const { strategy } = data;
@@ -35,7 +36,7 @@
 							<Tooltip>
 								<span slot="trigger">
 									Enzyme Protocol fee
-									<Icon name="question-circle" />
+									<IconQuestionCircle />
 								</span>
 								<div slot="popup">
 									<p>

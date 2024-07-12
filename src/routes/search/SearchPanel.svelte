@@ -5,6 +5,7 @@
 	import { SearchHit } from '$lib/search/components';
 	import SearchHitAdvanced from './SearchHitAdvanced.svelte';
 	import SortSelect from './SortSelect.svelte';
+	import IconFilter from '~icons/local/filter';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,7 +37,9 @@
 			<SortSelect bind:value={sortBy} />
 		</div>
 		<div class="filter-toggle">
-			<Button secondary size="md" icon="filter" on:click={() => dispatch('showFilters')} />
+			<Button secondary size="md" on:click={() => dispatch('showFilters')}>
+				<IconFilter slot="icon" --icon-size="1.5rem" />
+			</Button>
 		</div>
 	</div>
 

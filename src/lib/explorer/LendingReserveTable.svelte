@@ -4,7 +4,7 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable, EntitySymbol } from '$lib/components';
+	import { Button, DataTable } from '$lib/components';
 	import LendingReserveLabel from './LendingReserveLabel.svelte';
 	import BorrowAprCell from './BorrowAprCell.svelte';
 	import { getFormattedReserveUSD, lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';

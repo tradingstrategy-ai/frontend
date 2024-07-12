@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { ContentCard, ContentCardsSection, HeroBanner, Section } from '$lib/components';
+	import { Button, ContentCard, ContentCardsSection, HeroBanner, Section } from '$lib/components';
+	import IconTrendUp from '~icons/local/trend-up';
+	import IconTrendDown from '~icons/local/trend-down';
 </script>
 
 <svelte:head>
@@ -16,29 +18,23 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard
-			ctaLabel="View daily up"
-			href="/trading-view/top-list/daily-up"
-			icon="trend-up"
-			--icon-color="var(--c-bullish)"
-		>
+		<ContentCard href="/trading-view/top-list/daily-up" --icon-color="var(--c-bullish)">
+			<IconTrendUp slot="icon" />
 			<h3 slot="title">Top daily up</h3>
 			<p>
 				Trading pairs that have gained most profit for the last 24h. Investing to these trading pairs would have been
 				the most profitable trade.
 			</p>
+			<Button slot="cta" label="View daily up" />
 		</ContentCard>
 
-		<ContentCard
-			ctaLabel="View daily down"
-			href="/trading-view/top-list/daily-down"
-			icon="trend-down"
-			--icon-color="var(--c-bearish)"
-		>
+		<ContentCard href="/trading-view/top-list/daily-down" --icon-color="var(--c-bearish)">
+			<IconTrendDown slot="icon" />
 			<h3 slot="title">Top daily down</h3>
 			<p>
 				Trading pairs that have lost most value for the last 24h. Holding these tokens would have caused most losses.
 			</p>
+			<Button slot="cta" label="View daily down" />
 		</ContentCard>
 	</ContentCardsSection>
 </main>

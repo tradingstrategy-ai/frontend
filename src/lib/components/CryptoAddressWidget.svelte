@@ -1,20 +1,17 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { CopyWidget, HashAddress, Icon } from '$lib/components';
+	import { CopyWidget, HashAddress } from '$lib/components';
 
-	export let address: string;
+	export let address: Address;
 	export let clipboardCopier = true;
 	export let href: string;
-	export let icon: string | undefined = undefined;
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 
 	let copier: ComponentProps<CopyWidget>['copier'];
 </script>
 
 <address class="crypto-address-widget size-{size} tile b">
-	{#if icon}
-		<Icon name={icon} --icon-size="1.2em" />
-	{/if}
+	<slot name="icon" />
 	<a {href} rel="noreferrer" target="_blank">
 		<HashAddress {address} endChars={7} />
 	</a>

@@ -1,6 +1,7 @@
 <script>
 	import { discordUrl } from '$lib/config';
 	import { Button, Logo, Section } from '$lib/components';
+	import IconDiscord from '~icons/local/discord';
 
 	$: windowInnerWidth = 0;
 </script>
@@ -14,13 +15,15 @@
 		</a>
 
 		<Button
-			href={discordUrl}
-			icon="discord"
-			label={windowInnerWidth >= 768 ? 'Get help' : undefined}
 			size="sm"
+			label={windowInnerWidth >= 768 ? 'Get help' : undefined}
+			href={discordUrl}
+			title="Get helo on Discord"
 			target="_blank"
 			rel="noreferrer"
-		/>
+		>
+			<IconDiscord slot="icon" />
+		</Button>
 	</div>
 </Section>
 

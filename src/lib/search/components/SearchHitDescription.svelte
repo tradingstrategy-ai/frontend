@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type SearchHit from './SearchHit.svelte';
-	import { Icon } from '$lib/components';
+	import IconWarning from '~icons/local/warning';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 
 	export let document: ComponentProps<SearchHit>['document'];
@@ -21,7 +21,7 @@
 	{/if}
 
 	{#if showWarningIcon && isLowQuality}
-		<span class="warning-icon"><Icon name="warning" /></span>
+		<IconWarning />
 	{/if}
 </div>
 
@@ -34,9 +34,8 @@
 			color: var(--c-text-extra-light);
 		}
 
-		.warning-icon {
-			display: inline-block;
-			transform: translate(0.25em, -0.1em);
+		:global(.icon.warning) {
+			transform: translate(0.25ex, -0.125ex);
 		}
 	}
 </style>

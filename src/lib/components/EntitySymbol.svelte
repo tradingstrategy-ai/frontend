@@ -1,19 +1,14 @@
 <script lang="ts">
-	import { getLogoUrl } from '$lib/helpers/assets';
+	import { removeOnError } from '$lib/actions/image';
 
-	export let type: 'blockchain' | 'exchange' | 'token' | 'wallet';
-	export let slug: MaybeString;
 	export let label = '';
+	export let logoUrl: MaybeString = undefined;
 	export let size = '1.25em';
-
-	$: src = getLogoUrl(type, slug);
 </script>
 
 <div class="entity-symbol" style:--image-size={size}>
-	{#if src}
-		<div class="icon">
-			<img alt={label} {src} />
-		</div>
+	{#if logoUrl}
+		<img class="logo" src={logoUrl} alt={label} use:removeOnError />
 	{/if}
 	{#if label || $$slots.default}
 		<div class="label">
@@ -24,20 +19,13 @@
 
 <style lang="postcss">
 	.entity-symbol {
-		display: grid;
-		grid-auto-flow: column;
+		display: flex;
 		gap: calc(var(--image-size) / 3);
 		align-items: center;
-		justify-content: flex-start;
 
-		.icon {
-			display: grid;
-			justify-items: center;
+		.logo {
 			width: var(--image-size);
-
-			img {
-				height: var(--image-size);
-			}
+			height: var(--image-size);
 		}
 	}
 </style>

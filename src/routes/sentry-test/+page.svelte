@@ -32,20 +32,15 @@
 	</p>
 
 	<Grid cols={2} gap="lg">
-		<ContentCard
-			title="Server error"
-			description="Generate a test node.js server-side rendering error."
-			ctaLabel="Test server error"
-			href="/sentry-test?server"
-		/>
+		<ContentCard title="Server error" href="/sentry-test?server">
+			<p>Generate a test node.js server-side rendering error.</p>
+			<Button slot="cta" label="Test server error" />
+		</ContentCard>
 
-		<ContentCard
-			title="Client error"
-			description="Generate a test client-side (browser) error."
-			ctaLabel="Test client error"
-			href="/sentry-test"
-			on:click={testClientError}
-		/>
+		<ContentCard title="Client error" href="/sentry-test" on:click={testClientError}>
+			<p>Generate a test client-side (browser) error.</p>
+			<Button slot="cta" label="Test client error" />
+		</ContentCard>
 	</Grid>
 
 	{#if hasClientError}

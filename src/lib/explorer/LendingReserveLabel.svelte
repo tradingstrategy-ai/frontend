@@ -1,12 +1,16 @@
 <script lang="ts">
 	import type { LendingReserve } from './lending-reserve-client';
 	import { EntitySymbol } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let reserve: LendingReserve;
 	export let hideChainIcon = false;
 </script>
 
-<EntitySymbol type="blockchain" slug={hideChainIcon ? undefined : reserve.chain_slug} label={reserve.chain_name}>
+<EntitySymbol
+	label={reserve.chain_name}
+	logoUrl={hideChainIcon ? undefined : getLogoUrl('blockchain', reserve.chain_slug)}
+>
 	{reserve.asset_name}
 	<span class="symbol">{reserve.asset_symbol}</span>
 </EntitySymbol>

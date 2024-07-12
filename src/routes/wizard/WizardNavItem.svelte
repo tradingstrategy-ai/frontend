@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Icon } from '$lib/components';
+	import IconSuccess from '~icons/local/success';
+	import IconEmpty from '~icons/local/empty';
 
 	export let slug: string;
 	export let label: string;
@@ -11,7 +12,11 @@
 
 <li class="wizard-nav-item">
 	<button disabled={disabled || active} class:active class:completed class:disabled on:click={() => goto(slug)}>
-		<Icon name={completed ? 'success' : 'empty'} />
+		{#if completed}
+			<IconSuccess />
+		{:else}
+			<IconEmpty />
+		{/if}
 		{label}
 	</button>
 </li>

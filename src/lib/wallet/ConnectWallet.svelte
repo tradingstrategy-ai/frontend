@@ -3,6 +3,7 @@
 	import { getChain } from '$lib/helpers/chain';
 	import { modal, wallet, WalletSummary } from '$lib/wallet';
 	import { Button } from '$lib/components';
+	import IconWallet from '~icons/local/wallet';
 
 	export let chainId: ConfiguredChainId | undefined;
 
@@ -23,7 +24,9 @@
 		<div class="not-connected">
 			<div class="desktop">Connect your preferred browser-based, mobile or desktop wallet.</div>
 			<div class="mobile">Connect your preferred mobile wallet.</div>
-			<Button icon="wallet" label="Connect wallet" on:click={connectWallet} />
+			<Button label="Connect wallet" on:click={connectWallet}>
+				<IconWallet slot="icon" />
+			</Button>
 		</div>
 	{/if}
 </div>

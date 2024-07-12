@@ -9,7 +9,6 @@ using flags: primary (default), secondary, ternary, quarternary.
 ```tsx
 	<Button
 		label="Click here!"
-		icon="link"
 		secondary
 		size="lg"
 		disabled
@@ -21,15 +20,12 @@ using flags: primary (default), secondary, ternary, quarternary.
 ```
 -->
 <script lang="ts">
-	import { Icon } from '$lib/components';
-
 	let classes = '';
 	export { classes as class };
 	export let disabled: boolean | undefined = undefined;
 	export let download: string | boolean | undefined = undefined;
 	export let rel: string | undefined = undefined;
 	export let href: string | undefined = undefined;
-	export let icon: string | undefined = undefined;
 	export let label: string = '';
 	export let ghost = false;
 	export let quarternary = false;
@@ -66,9 +62,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	{#if hasLabel}
 		<span><slot>{label}</slot></span>
 	{/if}
-	<slot name="icon">
-		{#if icon}<Icon name={icon} />{/if}
-	</slot>
+	<slot name="icon" />
 </svelte:element>
 
 <style lang="postcss">
@@ -87,7 +81,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 		text-decoration: none;
 		text-align: center;
 		cursor: pointer;
-		--icon-size: 1.5rem;
+		--icon-size: 1.25em;
 	}
 
 	.button > span {

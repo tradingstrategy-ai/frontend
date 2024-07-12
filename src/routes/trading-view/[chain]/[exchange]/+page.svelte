@@ -9,6 +9,7 @@
 	import PairTable from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	$: ({ exchange } = data);
@@ -50,7 +51,12 @@
 <main class="ds-3">
 	<PageHeader title="{exchange.human_readable_name} exchange">
 		<span class="subtitle" slot="subtitle">
-			on <EntitySymbol type="blockchain" slug={exchange.chain_slug} label={exchange.chain_name} size="0.875em" />
+			on
+			<EntitySymbol
+				size="0.875em"
+				label={exchange.chain_name}
+				logoUrl={getLogoUrl('blockchain', exchange.chain_slug)}
+			/>
 		</span>
 		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" rel="noreferrer" />
 	</PageHeader>

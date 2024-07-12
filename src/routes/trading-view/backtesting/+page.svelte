@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
-	import { Alert, Button, ContentCard, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
+	import {
+		Alert,
+		Button,
+		ContentCard,
+		ContentCardsSection,
+		HeroBanner,
+		Section,
+		Spinner,
+		TextInput,
+		Timestamp
+	} from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ContentCardsSection from '$lib/components/ContentCardsSection.svelte';
+	import IconBook from '~icons/local/book';
 
 	export let data;
 
@@ -89,26 +99,23 @@
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
-			<form id="form-api-key" class="form-group" on:submit|preventDefault={handleSubmit}>
-				<TextInput
-					autocomplete="off"
-					id="apiKey"
-					label="Enter API key to enable download"
-					placeholder="secret-token:tradingstrategy-"
-					type="text"
-					size="lg"
-				/>
+			<form id="form-api-key" on:submit|preventDefault={handleSubmit}>
+				<label for="apiKey">Enter API key to enable download</label>
 
-				<Button submit label="Enter" size="sm" disabled={submitting} />
+				<div class="form-group">
+					<TextInput autocomplete="off" id="apiKey" placeholder="secret-token:tradingstrategy-" type="text" size="lg" />
 
-				{#if submitting}
-					<Spinner />
-				{/if}
+					<Button submit label="Enter" size="sm" disabled={submitting} />
+
+					{#if submitting}
+						<Spinner />
+					{/if}
+				</div>
 			</form>
 		{/if}
 
 		{#if apiKeyError}
-			<Alert>{apiKeyError}</Alert>
+			<Alert size="sm">{apiKeyError}</Alert>
 		{/if}
 
 		{#if validApiKey}
@@ -162,7 +169,8 @@
 	</Section>
 
 	<ContentCardsSection>
-		<ContentCard title="Data logistics" icon="book">
+		<ContentCard title="Data logistics">
+			<IconBook slot="icon" />
 			<p>
 				Datasets are distributed in <a href="https://parquet.apache.org/">Parquet</a> file format designed for data research.
 				Parquet is a columnar data format for high performance in-memory datasets from Apache Arrow project.
@@ -175,7 +183,8 @@
 				data takes several gigabyte of memory.
 			</p>
 		</ContentCard>
-		<ContentCard title="Learn more" icon="book">
+		<ContentCard title="Learn more">
+			<IconBook slot="icon" />
 			<ul>
 				<li>
 					<a
@@ -204,7 +213,7 @@
 
 		h2 {
 			font: var(--f-heading-lg-medium);
-			margin-bottom: var(--space-xl);
+			margin-bottom: var(--space-lg);
 		}
 
 		:is(p, li) {
@@ -212,17 +221,22 @@
 		}
 
 		form {
+			display: grid;
+			gap: var(--space-xs);
 			margin-bottom: var(--space-lg);
-			display: flex;
-			align-items: flex-end;
-			gap: var(--space-md);
-			--text-input-width: 100%;
-			--text-input-max-width: 30rem;
-			--button-height: auto;
-		}
 
-		:global .spinner {
-			margin-bottom: 6px;
+			label {
+				font: var(--f-ui-md-medium);
+			}
+
+			.form-group {
+				display: flex;
+				gap: var(--space-sl);
+				align-items: center;
+				--text-input-width: 100%;
+				--text-input-max-width: 30rem;
+				--button-height: auto;
+			}
 		}
 
 		.action-link {

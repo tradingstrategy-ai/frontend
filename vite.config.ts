@@ -3,21 +3,17 @@
  * https://kit.svelte.dev/docs/project-structure#project-files-vite-config-js
  * https://vitejs.dev/config/
  */
+import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { type LogOptions, createLogger } from 'vite';
-import { defineConfig } from 'vitest/config';
+import Icons from 'unplugin-icons/vite';
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import jsonServer from 'vite-plugin-simple-json-server';
 
-const customLogger = (({ info, warnOnce, ...otherLogMethods }) => {
+const customLogger = (({ warnOnce, ...otherLogMethods }) => {
 	return {
 		...otherLogMethods,
-
-		// suppress svg build output during CI (spammy due to cryptocurrency-icons)
-		info(msg: string, options: LogOptions) {
-			if (!!process.env.CI && /immutable\/assets\/.*\.svg/.test(msg)) return;
-			info(msg, options);
-		},
 
 		// suppress missing sourcemap warnings from @aave/math-utils during unit tests
 		warnOnce(msg: string, options: LogOptions) {
@@ -36,6 +32,23 @@ export default defineConfig({
 		}),
 
 		sveltekit(),
+
+		// see: https://github.com/unplugin/unplugin-icons
+		Icons({
+			compiler: 'svelte',
+			scale: 1,
+			customCollections: {
+				local: FileSystemIconLoader('./src/lib/assets/icons', (svg) => {
+					return svg.replace(
+						/^<svg /,
+						'<svg style="font-size: var(--icon-size, 1em); color: var(--icon-color, currentcolor);" '
+					);
+				})
+			},
+			iconCustomizer(_, icon, props) {
+				props.class = `icon ${icon}`;
+			}
+		}),
 
 		// vite plugin to create a mock JSON api for integration tests
 		// only available when using `npm run dev` or `npm run preview`
