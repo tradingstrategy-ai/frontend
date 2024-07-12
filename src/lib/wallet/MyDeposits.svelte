@@ -230,7 +230,7 @@
 				}
 			}
 
-			:global(.chevron-down svg) {
+			:global(.chevron-down) {
 				transition: transform var(--time-md) ease-out;
 
 				.open & {
