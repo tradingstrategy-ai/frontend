@@ -9,6 +9,7 @@ import { type LogOptions, createLogger } from 'vite';
 import Icons from 'unplugin-icons/vite';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
+import { enhancedImages } from '@sveltejs/enhanced-img';
 import jsonServer from 'vite-plugin-simple-json-server';
 
 const customLogger = (({ warnOnce, ...otherLogMethods }) => {
@@ -30,6 +31,8 @@ export default defineConfig({
 		sentrySvelteKit({
 			autoUploadSourceMaps: false
 		}),
+
+		enhancedImages(),
 
 		sveltekit(),
 
