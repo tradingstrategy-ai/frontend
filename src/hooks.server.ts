@@ -9,7 +9,8 @@ import { countryCodeSchema } from '$lib/helpers/geo';
 Sentry.init({
 	dsn: sentryDsn,
 	environment: siteMode,
-	release: `frontend@${version}`
+	release: `frontend@${version}`,
+	tracesSampleRate: 0.1
 });
 
 // Shortcut fetch() API requests in SSR; see:
