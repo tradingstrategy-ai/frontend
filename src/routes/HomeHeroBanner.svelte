@@ -14,7 +14,7 @@ Home page hero banner.
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <header class="home-hero-banner" data-testid="home-hero-banner">
 	<div class="inner ds-container">
-		<enhanced:img src="$lib/assets/misc/mbp-15.webp" alt="Trading Data" />
+		<enhanced:img src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
 
 		<div class="content">
 			<!-- ensure line breaks at correct place -->

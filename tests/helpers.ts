@@ -12,7 +12,7 @@ export function webServerCommand() {
 
 export function webServerConfig(mode: string) {
 	return {
-		command: `${webServerCommand()} -- --mode=${mode}`,
+		command: `${webServerCommand()} -- --mode=${mode} --host 127.0.0.1`,
 		port: 4173
 	};
 }
