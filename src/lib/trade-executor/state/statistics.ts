@@ -46,8 +46,6 @@ export const portfolioStatisticsSchema = z.object({
 });
 export type PortfolioStatistics = z.infer<typeof portfolioStatisticsSchema>;
 
-// TODO: remove long_short_metrics_latest compatibility layer once trade-executor updates deployed
-// see: https://github.com/tradingstrategy-ai/trade-executor/issues/760
 export const statisticsSchema = z.object({
 	portfolio: portfolioStatisticsSchema.array(),
 	positions: z.record(primaryKeyString, positionStatisticsSchema.array()),
