@@ -97,8 +97,7 @@
 	</p>
 
 	<div class="trade-actions">
-		<Button secondary label="API and historical data" href="./{summary.pair_slug}/api-and-historical-data" />
-		<Button secondary label="Copy Python identifier" on:click={copyPythonIdentifier}>
+		<Button secondary size="sm" label="Copy Python identifier" on:click={copyPythonIdentifier}>
 			<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
 		</Button>
 	</div>
@@ -125,14 +124,9 @@
 	}
 
 	.smart-contract {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-md);
-		justify-content: flex-start;
-	}
-
-	.trade-actions {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, auto));
-		gap: 1rem;
+		align-items: flex-start;
 	}
 </style>
