@@ -5,8 +5,8 @@
 	import { formatDistanceToNowStrict } from 'date-fns';
 	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
 
-	export let summary: any;
-	export let details: any;
+	export let summary: Record<string, string | number>;
+	export let details: Record<string, string | number>;
 	export let pageUrl: string;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
@@ -96,11 +96,12 @@
 		<CryptoAddressWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
 	</p>
 
-	<div class="trade-actions">
-		<Button secondary size="sm" label="Copy Python identifier" on:click={copyPythonIdentifier}>
+	<button class="get-python-identifier tile b" on:click={copyPythonIdentifier}>
+		<div>Get a Python identifier for use in Jupyter notebooks</div>
+		<Button size="xs" label="Copy">
 			<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
 		</Button>
-	</div>
+	</button>
 </div>
 
 <style lang="postcss">
@@ -128,5 +129,18 @@
 		flex-direction: column;
 		gap: var(--space-md);
 		align-items: flex-start;
+	}
+
+	.get-python-identifier {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1rem;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+		font: var(--f-ui-md-medium);
+		color: var(--c-text-light);
 	}
 </style>
