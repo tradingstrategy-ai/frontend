@@ -58,7 +58,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	$: attrs = tag === 'a' ? linkAttrs : buttonAttrs;
 </script>
 
-<svelte:element this={tag} {...attrs} class={allClasses} {tabindex} {title} {role} on:click>
+<svelte:element this={tag} {...attrs} class={allClasses} {tabindex} {title} {role} data-css-props on:click>
 	{#if hasLabel}
 		<span><slot>{label}</slot></span>
 	{/if}
@@ -66,26 +66,57 @@ using flags: primary (default), secondary, ternary, quarternary.
 </svelte:element>
 
 <style lang="postcss">
+	[data-css-props] {
+		--icon-size: 1.25em;
+		--button-border-radius: var(--radius-md);
+
+		&.xs {
+			--button-border-radius: var(--radius-lg);
+			--button-padding: 0.375rem 0.75rem;
+			--button-font: var(--f-ui-sm-medium);
+			--button-letter-spacing: var(--f-ui-sm-spacing);
+		}
+		&.sm {
+			--button-padding: 0.5rem 1.125rem;
+			--button-font: var(--f-ui-md-medium);
+			--button-letter-spacing: var(--f-ui-md-spacing);
+		}
+		&.md {
+			--button-padding: 0.75rem 1.375rem;
+			--button-font: var(--f-ui-md-medium);
+			--button-letter-spacing: var(--f-ui-md-spacing);
+		}
+		&.lg {
+			--button-padding: 1rem 1.375rem;
+			--button-font: var(--f-ui-lg-medium);
+			--button-letter-spacing: var(--f-ui-lg-spacing);
+		}
+		&.xl {
+			--button-padding: 1rem 1.375rem;
+			--button-font: var(--f-ui-xl-medium);
+			--button-letter-spacing: var(--f-ui-xl-spacing);
+		}
+
+		&.ghost {
+			--button-padding: 0 0.25rem;
+		}
+	}
+
 	.button {
 		display: inline-flex;
-		gap: var(--button-gap, var(--space-sm));
+		gap: 0.5em;
 		justify-content: center;
 		align-items: center;
 		width: var(--button-width, auto);
-		padding: var(--button-padding, var(--space-sl) var(--space-md));
+		padding: var(--button-padding);
 		border: 1px solid transparent;
-		border-radius: var(--button-border-radius, var(--radius-md));
-		font: var(--button-font, var(--f-ui-md-medium));
-		letter-spacing: var(--button-letter-spacing, var(--f-ui-md-spacing, normal));
+		border-radius: var(--button-border-radius);
+		font: var(--button-font);
+		letter-spacing: var(--button-letter-spacing, normal);
 		transition: all var(--time-sm) ease-out;
 		text-decoration: none;
 		text-align: center;
 		cursor: pointer;
-		--icon-size: 1.25em;
-	}
-
-	.button > span {
-		margin: 0 var(--space-xs) !important;
 	}
 
 	.primary {
@@ -129,37 +160,6 @@ using flags: primary (default), secondary, ternary, quarternary.
 	.ghost {
 		background: transparent;
 		text-decoration: underline;
-		--button-padding: 0 var(--space-xxs) !important;
-	}
-
-	.xs {
-		--button-border-radius: var(--radius-lg);
-		--button-gap: var(--space-ss);
-		--button-padding: var(--space-xs) var(--space-xs);
-		--button-font: var(--f-ui-sm-medium);
-		--button-letter-spacing: var(--f-ui-sm-spacing);
-	}
-	.sm {
-		--button-gap: var(--space-xs);
-		--button-padding: var(--space-ss) var(--space-sl);
-	}
-	.lg {
-		--button-gap: var(--space-sm);
-		--button-padding: var(--space-md);
-		--button-font: var(--f-ui-lg-medium);
-		--button-letter-spacing: var(--f-ui-lg-spacing);
-	}
-	.xl {
-		--button-gap: var(--space-sl);
-		--button-padding: var(--space-md) var(--space-md);
-		--button-font: var(--f-ui-xl-medium);
-		--button-letter-spacing: var(--f-ui-xl-spacing);
-	}
-	.xxl {
-		--button-gap: var(--space-sl);
-		--button-padding: var(--space-md);
-		--button-font: var(--f-ui-xl-medium);
-		--button-letter-spacing: var(--f-ui-xl-spacing);
 	}
 
 	:focus {
