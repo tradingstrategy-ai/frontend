@@ -47,7 +47,7 @@ Display summary performance table for various periods.
 	.time-period-picker {
 		text-transform: capitalize;
 
-		@media (--viewport-lg-up) {
+		@media (--viewport-md-up) {
 			display: none;
 		}
 	}
@@ -57,7 +57,7 @@ Display summary performance table for various periods.
 		grid-template-columns: 3fr 2fr;
 		overflow: hidden;
 
-		@media (--viewport-lg-up) {
+		@media (--viewport-md-up) {
 			grid-template-columns: repeat(5, 1fr);
 		}
 
@@ -77,6 +77,11 @@ Display summary performance table for various periods.
 			padding-inline: 0.5rem;
 			text-align: right;
 
+			@media (--viewport-md-down) {
+				font: var(--f-ui-md-roman);
+				letter-spacing: var(--ls-ui-md, normal);
+			}
+
 			/* override skeleton position */
 			&.skeleton::before {
 				right: 0.5rem;
@@ -88,6 +93,10 @@ Display summary performance table for various periods.
 				text-transform: capitalize;
 
 				@media (--viewport-md-down) {
+					font: var(--f-heading-xs-medium);
+				}
+
+				@media (--viewport-sm-down) {
 					display: none;
 				}
 			}
@@ -117,7 +126,7 @@ Display summary performance table for various periods.
 		}
 
 		.time-period-col:not(.active) {
-			@media (--viewport-md-down) {
+			@media (--viewport-sm-down) {
 				display: none;
 			}
 		}
