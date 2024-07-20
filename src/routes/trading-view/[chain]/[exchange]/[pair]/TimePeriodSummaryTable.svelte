@@ -9,7 +9,7 @@ Display summary performance table for various periods.
 -->
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
-	import TimePeriodPicker from './TimePeriodPicker.svelte';
+	import { SegmentedControl } from '$lib/components';
 
 	export let pairId: number | string;
 	export let hideLiquidityAndTrades = false;
@@ -18,7 +18,7 @@ Display summary performance table for various periods.
 </script>
 
 <div class="time-period-picker">
-	<TimePeriodPicker bind:selected />
+	<SegmentedControl options={['hourly', 'daily', 'weekly', 'monthly']} bind:selected />
 </div>
 
 <div class="time-period-table">
@@ -45,6 +45,8 @@ Display summary performance table for various periods.
 
 <style lang="postcss">
 	.time-period-picker {
+		text-transform: capitalize;
+
 		@media (--viewport-lg-up) {
 			display: none;
 		}
