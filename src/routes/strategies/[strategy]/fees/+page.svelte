@@ -23,25 +23,43 @@
 	<ul>
 		<li>
 			<span>Management fee</span>
-			<span>{formatPercent(fees.management_fee, 2)}</span>
+			<span class="value">{formatPercent(fees.management_fee, 2)}</span>
 		</li>
 
 		<li>
 			<span>Total performance fee</span>
-			<span>{formatPercent(totalPerformanceFee, 2)}</span>
+			<span class="value">{formatPercent(totalPerformanceFee, 2)}</span>
 
 			<ul>
-				<li>
-					<span>Trading Strategy Protocol fee</span>
-					<span>{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
+				<li class:no-share={fees.trading_strategy_protocol_fee === 0}>
+					<Tooltip>
+						<span slot="trigger">
+							Trading Strategy Protocol fee
+							<IconQuestionCircle />
+						</span>
+						<div slot="popup">Share of strategy's profits distributed back to Trading Strategy protocol.</div>
+					</Tooltip>
+					<span class="value">{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
+				</li>
+				<li class:no-share={fees.strategy_developer_fee === 0}>
+					<Tooltip>
+						<span slot="trigger">
+							Strategy developer fee
+							<IconQuestionCircle />
+						</span>
+						<div slot="popup">Share of strategy's profits distributed to the strategy developer.</div>
+					</Tooltip>
+					<span class="value">{formatPercent(fees.strategy_developer_fee, 2)}</span>
 				</li>
 				<li>
-					<span>Strategy developer fee</span>
-					<span>{formatPercent(fees.strategy_developer_fee, 2)}</span>
-				</li>
-				<li>
-					<span>Strategy participant share</span>
-					<span>{formatPercent(1 - totalPerformanceFee, 2)}</span>
+					<Tooltip>
+						<span slot="trigger">
+							Strategy participant share
+							<IconQuestionCircle />
+						</span>
+						<div slot="popup">Share of strategy's profits returned to participants with deposits in the strategy.</div>
+					</Tooltip>
+					<span class="value">{formatPercent(1 - totalPerformanceFee, 2)}</span>
 				</li>
 			</ul>
 		</li>
@@ -64,7 +82,7 @@
 						</p>
 					</div>
 				</Tooltip>
-				<span>{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
+				<span class="value">{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
 			</li>
 		{/if}
 	</ul>
@@ -106,13 +124,22 @@
 
 			li {
 				display: grid;
-				grid-template-columns: 1fr auto;
+				grid-template-columns: auto auto;
+				justify-content: space-between;
 				gap: inherit;
 				border-radius: var(--radius-md);
 				padding: 1rem;
 				background: var(--c-box-1);
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--ls-ui-md);
+
+				.no-share {
+					color: var(--c-text-extra-light);
+				}
+
+				.value {
+					text-align: right;
+				}
 
 				ul {
 					grid-column: 1 / -1;
