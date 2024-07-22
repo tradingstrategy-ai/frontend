@@ -65,7 +65,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 		<li class="col-heading {priceChangeClass}">
 			{period}
 		</li>
-		<li class={priceChangeClass} class:skeleton>
+		<li class="price-change {priceChangeClass}" class:skeleton>
 			{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
 		</li>
 		<li class:skeleton>

@@ -235,7 +235,6 @@
 				align-items: center;
 				--text-input-width: 100%;
 				--text-input-max-width: 30rem;
-				--button-height: auto;
 			}
 		}
 

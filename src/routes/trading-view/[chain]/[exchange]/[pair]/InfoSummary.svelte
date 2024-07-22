@@ -5,8 +5,8 @@
 	import { formatDistanceToNowStrict } from 'date-fns';
 	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
 
-	export let summary: any;
-	export let details: any;
+	export let summary: Record<string, string | number>;
+	export let details: Record<string, string | number>;
 	export let pageUrl: string;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
@@ -96,12 +96,12 @@
 		<CryptoAddressWidget address={details.pair_contract_address} href={details.pair_explorer_link} />
 	</p>
 
-	<div class="trade-actions">
-		<Button secondary label="API and historical data" href="./{summary.pair_slug}/api-and-historical-data" />
-		<Button secondary label="Copy Python identifier" on:click={copyPythonIdentifier}>
+	<button class="get-python-identifier tile b" on:click={copyPythonIdentifier}>
+		<div>Get a Python identifier for use in Jupyter notebooks</div>
+		<Button size="xs" label="Copy">
 			<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
 		</Button>
-	</div>
+	</button>
 </div>
 
 <style lang="postcss">
@@ -125,14 +125,22 @@
 	}
 
 	.smart-contract {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-md);
-		justify-content: flex-start;
+		align-items: flex-start;
 	}
 
-	.trade-actions {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, auto));
+	.get-python-identifier {
+		display: flex;
 		gap: 1rem;
+		align-items: center;
+		width: fit-content;
+		padding: 0.75rem 1rem;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+		font: var(--f-ui-md-medium);
+		color: var(--c-text-light);
 	}
 </style>

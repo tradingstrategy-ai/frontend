@@ -9,7 +9,7 @@ Display summary performance table for various periods.
 -->
 <script lang="ts">
 	import TimePeriodSummaryColumn from './TimePeriodSummaryColumn.svelte';
-	import TimePeriodPicker from './TimePeriodPicker.svelte';
+	import { SegmentedControl } from '$lib/components';
 
 	export let pairId: number | string;
 	export let hideLiquidityAndTrades = false;
@@ -18,7 +18,7 @@ Display summary performance table for various periods.
 </script>
 
 <div class="time-period-picker">
-	<TimePeriodPicker bind:selected />
+	<SegmentedControl options={['hourly', 'daily', 'weekly', 'monthly']} bind:selected />
 </div>
 
 <div class="time-period-table">
@@ -45,7 +45,9 @@ Display summary performance table for various periods.
 
 <style lang="postcss">
 	.time-period-picker {
-		@media (--viewport-lg-up) {
+		text-transform: capitalize;
+
+		@media (--viewport-md-up) {
 			display: none;
 		}
 	}
@@ -55,7 +57,7 @@ Display summary performance table for various periods.
 		grid-template-columns: 3fr 2fr;
 		overflow: hidden;
 
-		@media (--viewport-lg-up) {
+		@media (--viewport-md-up) {
 			grid-template-columns: repeat(5, 1fr);
 		}
 
@@ -69,45 +71,62 @@ Display summary performance table for various periods.
 			--skeleton-width: 5ch;
 			--skeleton-height: 1.2em;
 			--skeleton-radius: var(--radius-xxs);
-			font: var(--f-ui-xl-roman);
-			letter-spacing: var(--f-ui-xl-spacing, normal);
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--ls-ui-lg, normal);
 			white-space: nowrap;
-			padding-inline: var(--space-ss);
+			padding-inline: 0.5rem;
+			text-align: right;
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-md-roman);
+				letter-spacing: var(--ls-ui-md, normal);
+			}
+
+			/* override skeleton position */
+			&.skeleton::before {
+				right: 0.5rem;
+			}
 
 			&.col-heading {
-				height: 1.4em;
-				font: var(--f-h4-medium);
+				height: 1.375em;
+				font: var(--f-heading-sm-medium);
 				text-transform: capitalize;
 
 				@media (--viewport-md-down) {
+					font: var(--f-heading-xs-medium);
+				}
+
+				@media (--viewport-sm-down) {
 					display: none;
 				}
 			}
 
 			&:not(.col-heading) {
-				padding-block: var(--space-sl);
+				padding-block: 0.75rem;
+
+				&:not(:last-child) {
+					border-bottom: 1px solid var(--c-text-ultra-light);
+				}
 
 				@media (--viewport-md-up) {
-					padding-block: var(--space-md);
-
-					&:not(:last-child) {
-						border-bottom: 1px solid var(--c-text-ultra-light);
-					}
+					padding-block: 1rem;
 				}
+			}
+
+			&.price-change {
+				font-weight: 500;
 			}
 		}
 
 		.row-heading li {
 			font-weight: 500;
 			padding-inline: 0;
-		}
-
-		.loading li.col-heading {
-			color: var(--c-text-extra-light);
+			text-align: left;
+			color: var(--c-text-light);
 		}
 
 		.time-period-col:not(.active) {
-			@media (--viewport-md-down) {
+			@media (--viewport-sm-down) {
 				display: none;
 			}
 		}

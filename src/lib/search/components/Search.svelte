@@ -254,7 +254,10 @@ Display site-wide search box for use in top-nav.
 		gap: var(--space-sm);
 
 		@media (--search-layout-mobile) {
-			--button-font: var(--f-ui-sm-medium);
+			:global([data-css-props]) {
+				--button-font: var(--f-ui-sm-medium);
+				--button-letter-spacing: var(--ls-ui-sm, var(--f-ui-sm-spacing));
+			}
 		}
 	}
 </style>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { formatDollar, formatSwapFee, formatPriceChange, formatTokenAmount } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { getTokenTaxDescription, tokenTaxDocsUrl } from '$lib/helpers/tokentax';
 	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
 	export let summary: Record<string, any>;
@@ -77,10 +76,6 @@
 			</svelte:fragment>
 		</TradingDataInfoRow>
 	{/if}
-
-	<TradingDataInfoRow value={getTokenTaxDescription(details)}>
-		<a slot="label" href={tokenTaxDocsUrl} rel="external">Token tax</a>
-	</TradingDataInfoRow>
 
 	{#if summary.pair_swap_fee}
 		<TradingDataInfoRow label="Trading fee" value={formatSwapFee(summary.pair_swap_fee)} />

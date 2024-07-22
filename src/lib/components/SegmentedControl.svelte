@@ -53,12 +53,14 @@ button-like control with a segement for each possible value.
 	}
 
 	label {
+		flex: 1;
 		background: var(--background-default, inherit);
 		padding: var(--padding);
 		border-radius: var(--border-radius, inherit);
 		font: var(--segmented-control-font);
 		letter-spacing: var(--segmented-control-letter-spacing, normal);
 		transition: all var(--time-sm) ease-out;
+		text-align: center;
 
 		.primary & {
 			&:first-child {

@@ -167,23 +167,29 @@ Render the pair trading page
 
 	.time-period-summary {
 		display: grid;
-		gap: var(--space-2xl);
+		gap: 1.5rem;
 
-		@media (--viewport-lg-up) {
-			gap: var(--space-7xl);
+		@media (--viewport-md-up) {
+			gap: 2.25rem;
 		}
 
 		header {
 			display: grid;
-			gap: var(--space-sl);
+			gap: 0.5rem;
 		}
 
 		h2 {
-			font: var(--f-h1-medium);
+			font: var(--f-h2-medium);
 		}
 
 		p {
-			font: var(--f-h4-roman);
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--ls-ui-lg, normal);
+
+			@media (--viewport-lg-up) {
+				font: var(--f-ui-xl-roman);
+				letter-spacing: var(--ls-ui-xl, normal);
+			}
 		}
 	}
 </style>
