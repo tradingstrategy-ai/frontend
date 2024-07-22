@@ -135,7 +135,7 @@
 		display: flex;
 		gap: 1rem;
 		align-items: center;
-		justify-content: space-between;
+		width: fit-content;
 		padding: 0.75rem 1rem;
 		border: none;
 		cursor: pointer;
