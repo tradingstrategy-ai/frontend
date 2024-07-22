@@ -6,18 +6,11 @@
 	export let data;
 	const { strategy } = data;
 
+	const { fees } = strategy;
+	const totalPerformanceFee = fees.trading_strategy_protocol_fee + fees.strategy_developer_fee;
+
 	const hasEnzymeVault = strategy.on_chain_data.asset_management_mode === 'enzyme';
 	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
-	const enzymeProtocolFee = 0.0025;
-
-	// TODO: move to config
-	const fees = {
-		management_fee: 0,
-		trading_strategy_protocol_fee: 0.02,
-		strategy_developer_fee: 0.1
-	};
-
-	const totalPerformanceFee = fees.trading_strategy_protocol_fee + fees.strategy_developer_fee;
 </script>
 
 <svelte:head>
@@ -71,7 +64,7 @@
 						</p>
 					</div>
 				</Tooltip>
-				<span>{formatPercent(enzymeProtocolFee, 2)}</span>
+				<span>{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
 			</li>
 		{/if}
 	</ul>
