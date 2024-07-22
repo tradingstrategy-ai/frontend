@@ -70,7 +70,14 @@
 	</ul>
 
 	<SummaryBox title="Beta info">
-		<p class="beta-info">During the beta Trading Strategy does not charge any fees.</p>
+		<p class="beta-info">
+			{#if fees.trading_strategy_protocol_fee > 0}
+				For early users, Trading Strategy is offering a discounted protocol fee of just
+				{formatPercent(fees.trading_strategy_protocol_fee)}.
+			{:else}
+				During the beta Trading Strategy does not charge any fees.
+			{/if}
+		</p>
 	</SummaryBox>
 </section>
 
