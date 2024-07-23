@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SummaryBox, Tooltip } from '$lib/components';
+	import { Tooltip } from '$lib/components';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { formatPercent } from '$lib/helpers/formatters';
 
@@ -20,154 +20,157 @@
 
 <section class="fees">
 	<h2>Fees</h2>
-	<ul>
-		<li>
-			<span>Management fee</span>
-			<span class="value">{formatPercent(fees.management_fee, 2)}</span>
-		</li>
 
-		<li>
-			<span>Total performance fee</span>
-			<span class="value">{formatPercent(totalPerformanceFee, 2)}</span>
+	<div class="fees-list">
+		<div class="row">
+			<Tooltip>
+				<span slot="trigger">Management fee <IconQuestionCircle /></span>
+				<div slot="popup">
+					<p>The management fee is a periodic fee charged for managing the strategy's assets.</p>
+					<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
+				</div>
+			</Tooltip>
+			<span>{formatPercent(fees.management_fee, 2)}</span>
+		</div>
 
-			<ul>
-				<li class:no-share={fees.trading_strategy_protocol_fee === 0}>
+		<div class="fees-group">
+			<header class="row">
+				<Tooltip>
+					<span slot="trigger">Total performance fee <IconQuestionCircle /></span>
+					<div slot="popup">
+						<p>The combined fee charged against the strategy's profits.</p>
+						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
+					</div>
+				</Tooltip>
+				<span>{formatPercent(totalPerformanceFee, 2)}</span>
+			</header>
+
+			<div class="fees-list">
+				<div class="row">
 					<Tooltip>
-						<span slot="trigger">
-							Trading Strategy Protocol fee
-							<IconQuestionCircle />
-						</span>
-						<div slot="popup">Share of strategy's profits distributed back to Trading Strategy protocol.</div>
+						<span slot="trigger">Trading Strategy protocol fee <IconQuestionCircle /></span>
+						<div slot="popup">
+							Percent of strategy's profits distributed to the Trading Strategy protocol.
+							{#if fees.trading_strategy_protocol_fee === 0}
+								During the beta period, Trading Strategy is not charging a protocol fee.
+							{:else if fees.trading_strategy_protocol_fee <= 0.02}
+								For early users, Trading Strategy is offering a discounted protocol fee of
+								<strong>{formatPercent(fees.trading_strategy_protocol_fee)}</strong>.
+							{/if}
+						</div>
 					</Tooltip>
-					<span class="value">{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
-				</li>
-				<li class:no-share={fees.strategy_developer_fee === 0}>
+					<span>{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
+				</div>
+				<div class="row">
 					<Tooltip>
-						<span slot="trigger">
-							Strategy developer fee
-							<IconQuestionCircle />
-						</span>
-						<div slot="popup">Share of strategy's profits distributed to the strategy developer.</div>
+						<span slot="trigger">Strategy developer fee <IconQuestionCircle /></span>
+						<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
 					</Tooltip>
-					<span class="value">{formatPercent(fees.strategy_developer_fee, 2)}</span>
-				</li>
-				<li>
-					<Tooltip>
-						<span slot="trigger">
-							Strategy participant share
-							<IconQuestionCircle />
-						</span>
-						<div slot="popup">Share of strategy's profits returned to participants with deposits in the strategy.</div>
-					</Tooltip>
-					<span class="value">{formatPercent(1 - totalPerformanceFee, 2)}</span>
-				</li>
-			</ul>
-		</li>
+					<span>{formatPercent(fees.strategy_developer_fee, 2)}</span>
+				</div>
+			</div>
+
+			<footer class="row">
+				<Tooltip>
+					<span slot="trigger">Strategy participant share <IconQuestionCircle /></span>
+					<div slot="popup">
+						Percentage of strategy profits allocated to depositors, after deducting performance fees.
+					</div>
+				</Tooltip>
+				<span>{formatPercent(1 - totalPerformanceFee, 2)}</span>
+			</footer>
+		</div>
 
 		{#if hasEnzymeVault}
-			<li>
+			<div class="row">
 				<Tooltip>
-					<span slot="trigger">
-						Enzyme Protocol fee
-						<IconQuestionCircle />
-					</span>
+					<span slot="trigger">Enzyme Protocol fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>
 							The Enzyme protocol fee rate applied to the vault is 0.50%. Shares accrued can be bought back with MLN at
 							a 50% discount, leading to an effective protocol fee rate of 0.25%.
 						</p>
 						<p>
-							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Read more</a>
-							about Enzyme protocol fees.
+							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Learn more about Enzyme protocol fees</a>.
 						</p>
 					</div>
 				</Tooltip>
-				<span class="value">{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
-			</li>
+				<span>{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
+			</div>
 		{/if}
-	</ul>
-
-	<SummaryBox title="Beta info">
-		<p class="beta-info">
-			{#if fees.trading_strategy_protocol_fee > 0}
-				For early users, Trading Strategy is offering a discounted protocol fee of just
-				{formatPercent(fees.trading_strategy_protocol_fee)}.
-			{:else}
-				During the beta Trading Strategy does not charge any fees.
-			{/if}
-		</p>
-	</SummaryBox>
+	</div>
 </section>
 
 <style lang="postcss">
 	.fees {
 		display: grid;
-		grid-template-columns: 8fr minmax(18rem, 5fr);
-		gap: 1.25rem;
-		align-items: flex-start;
+		gap: 1.5rem;
 		align-content: flex-start;
 
-		@media (--viewport-sm-down) {
-			grid-template-columns: 1fr;
-		}
-
 		h2 {
-			grid-column: 1 / -1;
 			font: var(--f-heading-lg-medium);
 		}
 
-		ul {
+		.fees-list {
 			display: grid;
-			gap: 0.75rem;
-			list-style-type: none;
-			padding: 0;
+			gap: 1rem;
 
-			li {
+			@media (--viewport-lg-up) {
+				max-width: 50rem;
+			}
+
+			.row {
 				display: grid;
 				grid-template-columns: auto auto;
 				justify-content: space-between;
-				gap: inherit;
+				gap: 1rem;
 				border-radius: var(--radius-md);
 				padding: 1rem;
-				background: var(--c-box-1);
+				background: var(--c-box-2);
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--ls-ui-md);
 
-				.no-share {
-					color: var(--c-text-extra-light);
+				@media (--viewport-xs) {
+					font: var(--f-ui-sm-medium);
+					letter-spacing: var(--ls-ui-sm);
 				}
+			}
 
-				.value {
-					text-align: right;
-				}
+			.fees-group {
+				border-radius: var(--radius-md);
+				background: var(--c-box-1);
 
-				ul {
-					grid-column: 1 / -1;
-					margin-top: 0.25rem;
-					gap: 0;
+				.fees-list {
+					margin: 1.25rem 1rem;
+					gap: 0.625rem;
 
-					li {
-						border-radius: 0;
-						padding: 0.5rem 0;
+					.row {
+						padding: 0;
+						text-indent: 1em;
 						background: transparent;
 						font: var(--f-ui-sm-medium);
 						letter-spacing: var(--ls-ui-sm);
 						color: var(--c-text-light);
-						--border-color: color-mix(in srgb, var(--c-text-ultra-light), transparent);
-						border-bottom: 1px solid var(--border-color);
 
-						&:first-child {
-							border-top: 1px solid var(--border-color);
+						@media (--viewport-xs) {
+							font: var(--f-ui-xs-medium);
+							letter-spacing: var(--ls-ui-xs);
 						}
 					}
 				}
-			}
-		}
 
-		p.beta-info {
-			@media (--viewport-md-down) {
-				font: var(--f-ui-md-roman);
-				letter-spacing: var(--ls-ui-md);
+				:is(header, footer) {
+					background: var(--c-box-1);
+					padding: 1rem;
+				}
+
+				header {
+					border-radius: var(--radius-md) var(--radius-md) 0 0;
+				}
+
+				footer {
+					border-radius: 0 0 var(--radius-md) var(--radius-md);
+				}
 			}
 		}
 
@@ -177,7 +180,7 @@
 			align-items: center;
 		}
 
-		[slot='popup'] p {
+		[slot='popup'] {
 			max-width: 50ch;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--ls-ui-md-roman);
