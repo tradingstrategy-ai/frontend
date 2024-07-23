@@ -24,10 +24,7 @@
 	<div class="fees-list">
 		<div class="row">
 			<Tooltip>
-				<span slot="trigger">
-					Management fee
-					<IconQuestionCircle />
-				</span>
+				<span slot="trigger">Management fee <IconQuestionCircle /></span>
 				<div slot="popup">
 					<p>The management fee is a periodic fee charged for managing the strategy's assets.</p>
 					<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
@@ -39,10 +36,7 @@
 		<div class="fees-group">
 			<header class="row">
 				<Tooltip>
-					<span slot="trigger">
-						Total performance fee
-						<IconQuestionCircle />
-					</span>
+					<span slot="trigger">Total performance fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>The combined fee charged against the strategy's profits.</p>
 						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
@@ -54,10 +48,7 @@
 			<div class="fees-list">
 				<div class="row">
 					<Tooltip>
-						<span slot="trigger">
-							Trading Strategy protocol fee
-							<IconQuestionCircle />
-						</span>
+						<span slot="trigger">Trading Strategy protocol fee <IconQuestionCircle /></span>
 						<div slot="popup">
 							Percent of strategy's profits distributed to the Trading Strategy protocol.
 							{#if fees.trading_strategy_protocol_fee === 0}
@@ -72,10 +63,7 @@
 				</div>
 				<div class="row">
 					<Tooltip>
-						<span slot="trigger">
-							Strategy developer fee
-							<IconQuestionCircle />
-						</span>
+						<span slot="trigger">Strategy developer fee <IconQuestionCircle /></span>
 						<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
 					</Tooltip>
 					<span>{formatPercent(fees.strategy_developer_fee, 2)}</span>
@@ -84,10 +72,7 @@
 
 			<footer class="row">
 				<Tooltip>
-					<span slot="trigger">
-						Strategy participant share
-						<IconQuestionCircle />
-					</span>
+					<span slot="trigger">Strategy participant share <IconQuestionCircle /></span>
 					<div slot="popup">
 						Percentage of strategy profits allocated to depositors, after deducting performance fees.
 					</div>
@@ -99,17 +84,14 @@
 		{#if hasEnzymeVault}
 			<div class="row">
 				<Tooltip>
-					<span slot="trigger">
-						Enzyme Protocol fee
-						<IconQuestionCircle />
-					</span>
+					<span slot="trigger">Enzyme Protocol fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>
 							The Enzyme protocol fee rate applied to the vault is 0.50%. Shares accrued can be bought back with MLN at
 							a 50% discount, leading to an effective protocol fee rate of 0.25%.
 						</p>
 						<p>
-							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Learn more about Enzyme protocol fees </a>.
+							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Learn more about Enzyme protocol fees</a>.
 						</p>
 					</div>
 				</Tooltip>
