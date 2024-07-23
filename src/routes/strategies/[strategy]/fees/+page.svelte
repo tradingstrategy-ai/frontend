@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SummaryBox, Tooltip } from '$lib/components';
+	import { Tooltip } from '$lib/components';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { formatPercent } from '$lib/helpers/formatters';
 
@@ -23,13 +23,31 @@
 
 	<div class="fees-list">
 		<div class="row">
-			<span>Management fee</span>
+			<Tooltip>
+				<span slot="trigger">
+					Management fee
+					<IconQuestionCircle />
+				</span>
+				<div slot="popup">
+					<p>The management fee is a periodic fee charged for managing the strategy's assets.</p>
+					<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
+				</div>
+			</Tooltip>
 			<span>{formatPercent(fees.management_fee, 2)}</span>
 		</div>
 
 		<div class="fees-group">
 			<header class="row">
-				<span>Total performance fee</span>
+				<Tooltip>
+					<span slot="trigger">
+						Total performance fee
+						<IconQuestionCircle />
+					</span>
+					<div slot="popup">
+						<p>The combined fee charged against the strategy's profits.</p>
+						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
+					</div>
+				</Tooltip>
 				<span>{formatPercent(totalPerformanceFee, 2)}</span>
 			</header>
 
@@ -37,10 +55,18 @@
 				<div class="row">
 					<Tooltip>
 						<span slot="trigger">
-							Trading Strategy Protocol fee
+							Trading Strategy protocol fee
 							<IconQuestionCircle />
 						</span>
-						<div slot="popup">Share of strategy's profits distributed back to Trading Strategy protocol.</div>
+						<div slot="popup">
+							Percent of strategy's profits distributed to the Trading Strategy protocol.
+							{#if fees.trading_strategy_protocol_fee === 0}
+								During the beta period, Trading Strategy is not charging a protocol fee.
+							{:else if fees.trading_strategy_protocol_fee <= 0.02}
+								For early users, Trading Strategy is offering a discounted protocol fee of
+								<strong>{formatPercent(fees.trading_strategy_protocol_fee)}</strong>.
+							{/if}
+						</div>
 					</Tooltip>
 					<span>{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
 				</div>
@@ -50,7 +76,7 @@
 							Strategy developer fee
 							<IconQuestionCircle />
 						</span>
-						<div slot="popup">Share of strategy's profits distributed to the strategy developer.</div>
+						<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
 					</Tooltip>
 					<span>{formatPercent(fees.strategy_developer_fee, 2)}</span>
 				</div>
@@ -62,7 +88,9 @@
 						Strategy participant share
 						<IconQuestionCircle />
 					</span>
-					<div slot="popup">Share of strategy's profits returned to participants with deposits in the strategy.</div>
+					<div slot="popup">
+						Percentage of strategy profits allocated to depositors, after deducting performance fees.
+					</div>
 				</Tooltip>
 				<span>{formatPercent(1 - totalPerformanceFee, 2)}</span>
 			</footer>
@@ -81,8 +109,7 @@
 							a 50% discount, leading to an effective protocol fee rate of 0.25%.
 						</p>
 						<p>
-							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Read more</a>
-							about Enzyme protocol fees.
+							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Learn more about Enzyme protocol fees </a>.
 						</p>
 					</div>
 				</Tooltip>
@@ -171,7 +198,7 @@
 			align-items: center;
 		}
 
-		[slot='popup'] p {
+		[slot='popup'] {
 			max-width: 50ch;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--ls-ui-md-roman);
