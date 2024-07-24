@@ -32,13 +32,13 @@ type BaseDocument = DocumentSchema & {
 	url_path: string;
 };
 
-type ExchangeDocument = BaseDocument & {
+export type ExchangeDocument = BaseDocument & {
 	type: 'exchange';
 	exchange: string;
 	exchange_type: string;
 };
 
-type TradingPairDocument = BaseDocument & {
+export type TradingPairDocument = BaseDocument & {
 	type: 'pair';
 	exchange: string;
 	exchange_type: string;
@@ -51,14 +51,14 @@ type TradingPairDocument = BaseDocument & {
 	pair_swap_fee: number;
 };
 
-type TokenDocument = BaseDocument & {
+export type TokenDocument = BaseDocument & {
 	type: 'token';
 	volume_24h?: number;
 	liquidity?: number;
 	tvl?: number;
 };
 
-type LendingReserveDocument = BaseDocument & {
+export type LendingReserveDocument = BaseDocument & {
 	type: 'lending_reserve';
 	lending_protocol: string;
 	supply_apr: number;
@@ -122,7 +122,7 @@ async function search(fetch: Fetch, searchParams: CustomSearchParams): Promise<v
 	update((result) => ({ ...result, loading: true }));
 
 	try {
-		const response = await searchCollection<TradingEntityDocument>(fetch, 'trading-entities', mergedParams);
+		const response = await searchCollection<TradingEntityDocument>(fetch, 'trading-entities', mergedParams, true);
 		if (!response) return;
 
 		const hits = response.hits ?? response.grouped_hits?.flatMap(({ hits }) => hits) ?? [];

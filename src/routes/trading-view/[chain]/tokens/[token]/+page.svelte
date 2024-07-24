@@ -12,7 +12,7 @@
 	import PairTable from '$lib/explorer/PairTable.svelte';
 
 	export let data;
-	$: token = data.token;
+	$: ({ token, reserves } = data);
 
 	$: breadcrumbs = {
 		[token.chain_slug]: token.chain_name,
@@ -55,8 +55,15 @@
 	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
-		<InfoTable data={token} />
-		<InfoSummary data={token} />
+		<InfoTable {token} />
+		<InfoSummary {token} {reserves} />
+	</section>
+
+	<section class="ds-container blockchain-alert">
+		<Alert status="info" size="md">
+			The information on this page is for <a href="/trading-view/{token.chain_slug}">{token.chain_name}</a>.
+			<strong>{token.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the figures.
+		</Alert>
 	</section>
 
 	<section class="ds-container trading-pairs">
@@ -89,45 +96,51 @@
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-3xl);
+		gap: 2.5rem;
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
-	}
 
-	main :global h1 {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	h2 {
-		font: var(--f-h2-medium);
-	}
-
-	.subtitle {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5ex;
-	}
-
-	.info {
-		align-items: start;
-	}
-
-	.trading-pairs {
-		gap: var(--space-lg);
-	}
-
-	aside {
-		p {
-			margin-top: 0;
-			font: var(--f-ui-large-roman);
+		:global(h1) {
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
-		a {
-			font-weight: 700;
-			text-decoration: underline;
+		h2 {
+			font: var(--f-h2-medium);
+		}
+
+		.subtitle {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5ex;
+		}
+
+		.info {
+			align-items: start;
+		}
+
+		.blockchain-alert {
+			@media (--viewport-lg-up) {
+				margin-top: -2.5rem;
+			}
+		}
+
+		.trading-pairs {
+			gap: 1.5rem;
+		}
+
+		aside {
+			p {
+				margin-top: 0;
+				font: var(--f-ui-large-roman);
+			}
+
+			a {
+				font-weight: 700;
+				text-decoration: underline;
+			}
 		}
 	}
 </style>
