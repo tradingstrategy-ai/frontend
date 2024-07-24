@@ -81,16 +81,19 @@
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
 			</Alert>
 		{/if}
-	</section>
 
-	<aside class="ds-container">
-		<p>
+		<p class="inclusion-notice">
 			Trading pairs with complications (such as low liquidity) may not be displayed.
-			<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external"
-				>Read the rules for tracked trading pairs.</a
+			<a
+				class="body-link"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+				target="_blank"
+				rel="external"
 			>
+				Read the rules for tracked trading pairs.
+			</a>
 		</p>
-	</aside>
+	</section>
 </main>
 
 <style lang="postcss">
@@ -131,16 +134,9 @@
 			gap: 1.5rem;
 		}
 
-		aside {
-			p {
-				margin-top: 0;
-				font: var(--f-ui-large-roman);
-			}
-
-			a {
-				font-weight: 700;
-				text-decoration: underline;
-			}
+		.inclusion-notice {
+			font: var(--f-ui-large-roman);
+			text-align: center;
 		}
 	}
 </style>
