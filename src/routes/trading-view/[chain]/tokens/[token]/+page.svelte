@@ -4,14 +4,15 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
-	import { Alert, PageHeader } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
+	import { Alert, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 
 	export let data;
-	$: ({ token } = data);
+	$: token = data.token;
 
 	$: breadcrumbs = {
 		[token.chain_slug]: token.chain_name,
@@ -46,7 +47,12 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={token.name} subtitle="token trading as {token.symbol} on {token.chain_name}" />
+	<PageHeader title={token.name}>
+		<span slot="subtitle" class="subtitle">
+			token trading as {token.symbol} on
+			<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
+		</span>
+	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
 		<InfoTable data={token} />
@@ -97,6 +103,12 @@
 
 	h2 {
 		font: var(--f-h2-medium);
+	}
+
+	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 0.5ex;
 	}
 
 	.info {
