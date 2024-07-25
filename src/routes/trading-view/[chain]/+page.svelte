@@ -90,11 +90,11 @@
 			<TopEntities
 				type="lending"
 				label="reserves"
-				title="Lowest APR lending reserves"
+				title="Highest TVL lending reserves"
 				{chain}
 				data={data.reserves}
 				tableComponent={TopReserves}
-				rightColHeader="Borrow APR"
+				rightColHeader="TVL"
 			/>
 		</Grid>
 	</section>

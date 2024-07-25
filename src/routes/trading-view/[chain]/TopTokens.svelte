@@ -9,7 +9,16 @@
 </script>
 
 <TradingEntitiesTable {loading} {rows} {getHref} let:row let:format>
-	<td width="50%">{format(row.name)}</td>
-	<td width="25%">{format(row.symbol)}</td>
+	<td width="75%">
+		{format(row.name)}
+		<span class="symbol">{format(row.symbol)}</span>
+	</td>
 	<td>{formatDollar(row.liquidity_latest)}</td>
 </TradingEntitiesTable>
+
+<style lang="postcss">
+	.symbol {
+		margin-left: 0.25em;
+		color: var(--c-text-extra-light);
+	}
+</style>
