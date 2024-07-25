@@ -31,7 +31,7 @@
 	<meta name="description" content="Top lending reserves on {chain.chain_name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name, 'lending-reserves': 'Lending reserves' }} />
+<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name, lending: 'Lending reserves' }} />
 
 <main class="reserves-index-page">
 	<Section tag="header">
