@@ -15,6 +15,8 @@
 	// Get the error message HTML
 	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 
+	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
+
 	$: breadcrumbs = {
 		[strategy.id]: strategy.name,
 		...Object.fromEntries(menuOptions.map(({ slug, label }) => [slug, label])),
@@ -39,7 +41,7 @@
 			</div>
 		</PageHeading>
 
-		{#if errorHtml}
+		{#if errorHtml && isOverviewPage}
 			<div class="error-wrapper">
 				<Alert status="warning" size="sm" title="Ongoing execution issues">
 					{@html errorHtml}
