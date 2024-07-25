@@ -1,16 +1,21 @@
 <script lang="ts">
 	import TradingEntitiesTable from './TradingEntitiesTable.svelte';
-	import { formatInterestRate } from '$lib/helpers/formatters';
+	import LendingReserveLabel from '$lib/explorer/LendingReserveLabel.svelte';
+	import { lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let loading = false;
 	export let rows: Record<string, any>[] = [];
-
-	const getHref = (row: Record<string, any>) =>
-		`/trading-view/${row.chain_slug}/lending/${row.protocol_slug}/${row.reserve_slug}`;
 </script>
 
-<TradingEntitiesTable {loading} {rows} {getHref} let:row let:format>
-	<td width="50%">{format(row.asset_name)}</td>
-	<td width="25%">{format(row.asset_symbol)}</td>
-	<td>{formatInterestRate(row.additional_details?.variable_borrow_apr_latest)}</td>
+<TradingEntitiesTable {loading} {rows} getHref={lendingReserveInternalUrl} let:row let:format>
+	<td width="60%" class="asset">
+		{#if row.asset_name}
+			<LendingReserveLabel hideChainIcon reserve={row} />
+		{:else}
+			---
+		{/if}
+	</td>
+	<td style:width="9ch">{format(row.protocol_name)}</td>
+	<td style:width="9ch">{formatDollar(row.totalLiquidityUSD)}</td>
 </TradingEntitiesTable>
