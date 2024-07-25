@@ -19,13 +19,16 @@ function toTypesenseParams({ filter_by = '', ...params }: CustomSearchParams): R
 	return { ...params, filter_by };
 }
 
-let controller: AbortController | undefined = undefined;
+const controllers: Record<string, AbortController> = {};
 
 export async function searchCollection<T extends DocumentSchema>(
 	fetch: Fetch,
 	collection: string,
-	params: CustomSearchParams
+	params: CustomSearchParams,
+	abortPrevious = false
 ): Promise<SearchResponse<T> | undefined> {
+	let signal: AbortSignal | undefined = undefined;
+
 	if (!apiKey || !apiUrl) {
 		throw new Error('Typesense URL and/or API key not configured');
 	}
@@ -35,9 +38,11 @@ export async function searchCollection<T extends DocumentSchema>(
 	const headers = { 'X-TYPESENSE-API-KEY': apiKey };
 
 	// Abort pending search to prevent race condition
-	controller?.abort();
-	controller = new AbortController();
-	const signal = controller.signal;
+	if (abortPrevious) {
+		controllers[collection]?.abort();
+		controllers[collection] = new AbortController();
+		signal = controllers[collection].signal;
+	}
 
 	try {
 		const resp = await fetch(`${url}?${searchParams}`, { headers, signal });
@@ -47,6 +52,6 @@ export async function searchCollection<T extends DocumentSchema>(
 		if ((err as Error).name === 'AbortError') return;
 		throw err;
 	} finally {
-		if (!signal?.aborted) controller = undefined;
+		if (!signal?.aborted) delete controllers[collection];
 	}
 }

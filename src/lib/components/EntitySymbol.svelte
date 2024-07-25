@@ -20,7 +20,7 @@
 <style lang="postcss">
 	.entity-symbol {
 		display: flex;
-		gap: calc(var(--image-size) / 3);
+		gap: 0.5ex;
 		align-items: center;
 
 		.logo {

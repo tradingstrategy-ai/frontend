@@ -96,19 +96,19 @@
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
 			</Alert>
 		{/if}
-	</section>
 
-	<aside class="ds-container">
-		<p>
+		<p class="inclusion-notice">
 			Not all trading pairs are being displayed or included in volume calculations.
 			<a
 				class="body-link"
 				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
 				target="_blank"
-				rel="external">See inclusion criteria</a
-			>.
+				rel="external"
+			>
+				See inclusion criteria
+			</a>.
 		</p>
-	</aside>
+	</section>
 </main>
 
 <style lang="postcss">
@@ -123,7 +123,7 @@
 
 	.subtitle {
 		display: flex;
-		align-items: center;
+		flex-wrap: wrap;
 		gap: 0.5ex;
 	}
 
@@ -162,10 +162,10 @@
 				font: var(--f-h2-medium);
 			}
 		}
-	}
 
-	aside p {
-		font: var(--f-ui-large-roman);
-		text-align: center;
+		.inclusion-notice {
+			font: var(--f-ui-large-roman);
+			text-align: center;
+		}
 	}
 </style>

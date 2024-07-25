@@ -4,14 +4,15 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
-	import { Alert, PageHeader } from '$lib/components';
+	import { getLogoUrl } from '$lib/helpers/assets';
+	import { Alert, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 
 	export let data;
-	$: ({ token } = data);
+	$: ({ token, reserves } = data);
 
 	$: breadcrumbs = {
 		[token.chain_slug]: token.chain_name,
@@ -46,11 +47,23 @@
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
-	<PageHeader title={token.name} subtitle="token trading as {token.symbol} on {token.chain_name}" />
+	<PageHeader title={token.name}>
+		<span slot="subtitle" class="subtitle">
+			token trading as {token.symbol} on
+			<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
+		</span>
+	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
-		<InfoTable data={token} />
-		<InfoSummary data={token} />
+		<InfoTable {token} />
+		<InfoSummary {token} {reserves} />
+	</section>
+
+	<section class="ds-container blockchain-alert">
+		<Alert status="info" size="md">
+			The information on this page is for <a href="/trading-view/{token.chain_slug}">{token.chain_name}</a>.
+			<strong>{token.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the figures.
+		</Alert>
 	</section>
 
 	<section class="ds-container trading-pairs">
@@ -68,54 +81,62 @@
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
 			</Alert>
 		{/if}
-	</section>
 
-	<aside class="ds-container">
-		<p>
+		<p class="inclusion-notice">
 			Trading pairs with complications (such as low liquidity) may not be displayed.
-			<a href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external"
-				>Read the rules for tracked trading pairs.</a
+			<a
+				class="body-link"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+				target="_blank"
+				rel="external"
 			>
+				Read the rules for tracked trading pairs.
+			</a>
 		</p>
-	</aside>
+	</section>
 </main>
 
 <style lang="postcss">
 	main {
 		display: grid;
-		gap: var(--space-3xl);
+		gap: 2.5rem;
 
 		@media (--viewport-lg-up) {
 			gap: 5rem;
 		}
-	}
 
-	main :global h1 {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	h2 {
-		font: var(--f-h2-medium);
-	}
-
-	.info {
-		align-items: start;
-	}
-
-	.trading-pairs {
-		gap: var(--space-lg);
-	}
-
-	aside {
-		p {
-			margin-top: 0;
-			font: var(--f-ui-large-roman);
+		:global(h1) {
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
-		a {
-			font-weight: 700;
-			text-decoration: underline;
+		h2 {
+			font: var(--f-h2-medium);
+		}
+
+		.subtitle {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5ex;
+		}
+
+		.info {
+			align-items: start;
+		}
+
+		.blockchain-alert {
+			@media (--viewport-lg-up) {
+				margin-top: -2.5rem;
+			}
+		}
+
+		.trading-pairs {
+			gap: 1.5rem;
+		}
+
+		.inclusion-notice {
+			font: var(--f-ui-large-roman);
+			text-align: center;
 		}
 	}
 </style>
