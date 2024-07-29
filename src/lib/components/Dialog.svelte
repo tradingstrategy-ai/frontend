@@ -96,11 +96,6 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		padding: 0;
 		background: var(--c-body);
 
-		&[open] {
-			display: grid;
-			grid-template-rows: auto 1fr auto;
-		}
-
 		&::backdrop {
 			background: var(--c-backdrop);
 			opacity: 0.25;
@@ -126,6 +121,11 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	.full-screen {
 		height: var(--viewport-height);
 		max-height: unset;
+
+		&[open] {
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+		}
 
 		:global(:is(header, footer)) {
 			z-index: 1;
