@@ -83,7 +83,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 			};
 			// load the chart
 			chartEngine.loadChart(symbol, { periodicity }, () => {
-				hasData = Boolean(chartEngine.chart.masterData.length);
+				hasData = Boolean(chartEngine.chart.masterData?.length);
 			});
 		};
 	};
