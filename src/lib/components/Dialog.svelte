@@ -34,15 +34,28 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 		},
 
 		open: {
-			_enter: () => dialog.showModal(),
-			_exit: () => dispatch('close'),
+			_enter() {
+				dialog.showModal?.();
+			},
+
+			_exit() {
+				dispatch('close');
+			},
+
 			// keep state synced when dialog is closed via the `escape` key
-			escaped: () => (open = false)
+			escaped() {
+				open = false;
+			}
 		},
 
 		closed: {
-			_enter: () => dialog.close(),
-			_exit: () => dispatch('open')
+			_enter() {
+				dialog.close?.();
+			},
+
+			_exit() {
+				dispatch('open');
+			}
 		}
 	});
 
