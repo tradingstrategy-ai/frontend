@@ -7,6 +7,7 @@ Render the pair trading page
 -->
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { replaceState } from '$app/navigation';
 	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -18,9 +19,7 @@ Render the pair trading page
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
-
-	$: summary = data.pair.summary;
-	$: details = data.pair.additional_details;
+	$: ({ summary, details } = data);
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
@@ -36,6 +35,14 @@ Render the pair trading page
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
 	};
+
+	$: timeBucket = $page.state.timeBucket ?? data.timeBucket;
+
+	function handleChartSectionChange({ detail }: CustomEvent) {
+		if (detail.name !== 'timeBucket') return;
+		const state = { timeBucket: detail.value };
+		replaceState(`?${new URLSearchParams(state)}`, state);
+	}
 </script>
 
 <svelte:head>
@@ -110,6 +117,8 @@ Render the pair trading page
 			exchangeType={summary.exchange_type}
 			hasTvlData={Number.isFinite(summary.pair_tvl)}
 			firstTradeDate={details.first_trade_at}
+			{timeBucket}
+			on:change={handleChartSectionChange}
 		/>
 	</section>
 

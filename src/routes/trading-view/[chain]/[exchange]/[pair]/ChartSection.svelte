@@ -15,9 +15,7 @@ for the same hovered date. Also displays a time-bucket selector.
 ```
 -->
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import type { TimeBucket } from '$lib/chart';
+	import { type CandleTimeBucket, candleTimeBuckets } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
 	import { ChartLinker, HudRow, HudMetric, PairCandleChart } from '$lib/chart';
 	import { Alert, SegmentedControl } from '$lib/components';
@@ -27,6 +25,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let exchangeType: string;
 	export let firstTradeDate: string;
 	export let hasTvlData = false;
+	export let timeBucket: CandleTimeBucket;
 
 	const chartLinker = new ChartLinker();
 
@@ -34,17 +33,11 @@ for the same hovered date. Also displays a time-bucket selector.
 		const candles = data[pairId];
 		return candles ? candles.map(candleToQuote) : [];
 	}
-
-	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
 </script>
 
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
-	<SegmentedControl
-		options={['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d']}
-		selected={timeBucket}
-		on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
-	/>
+	<SegmentedControl name="timeBucket" options={candleTimeBuckets} selected={timeBucket} on:change />
 </div>
 
 <div class="chart-wrapper">

@@ -9,18 +9,28 @@ button-like control with a segement for each possible value.
 ```
 -->
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+
+	export let name: string | undefined = undefined;
 	export let selected: string | undefined = undefined;
 	export let options: readonly string[];
 	export let secondary = false;
 
-	$: kind = secondary ? 'secondary' : 'primary';
+	const dispatch = createEventDispatcher();
+
+	function dispatchChange(this: HTMLInputElement) {
+		dispatch('change', {
+			name: this.name,
+			value: this.value
+		});
+	}
 </script>
 
-<div class="segmented-control ds-3 {kind}" data-css-props>
+<div class="segmented-control ds-3 {secondary ? 'secondary' : 'primary'}" data-css-props>
 	{#each options as option}
 		<label class:selected={option === selected}>
 			<span>{option}</span>
-			<input type="radio" bind:group={selected} value={option} on:change />
+			<input type="radio" {name} bind:group={selected} value={option} on:change={dispatchChange} />
 		</label>
 	{/each}
 </div>
