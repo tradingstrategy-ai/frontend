@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
 	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
 	import { Alert, Button, EntitySymbol, PageHeader, Section, SegmentedControl } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -30,7 +30,12 @@
 	$: borrowable = isBorrowable(reserve);
 	$: showChart = borrowable && !isGhoToken;
 
-	$: timeBucket = ($page.url.hash.slice(1) || '1d') as TimeBucket;
+	$: timeBucket = $page.state.timeBucket ?? data.timeBucket;
+
+	function handleTimeBucketChange({ detail }: CustomEvent) {
+		const state = { timeBucket: detail.value };
+		replaceState(`?${new URLSearchParams(state)}`, state);
+	}
 </script>
 
 <svelte:head>
@@ -80,7 +85,7 @@
 				<SegmentedControl
 					options={['1h', '4h', '1d', '7d', '30d']}
 					selected={timeBucket}
-					on:change={({ target }) => goto(`#${target.value}`, { replaceState: true, noScroll: true })}
+					on:change={handleTimeBucketChange}
 				/>
 			</div>
 			<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />

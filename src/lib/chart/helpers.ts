@@ -27,14 +27,21 @@ export type Quote = {
 	[key: string]: any;
 };
 
-export type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month';
-export type TimeUnitAbbrev = 'm' | 'h' | 'd' | 'w' | 'M';
+export type TimeUnitAbbrev = 'm' | 'h' | 'd';
 export type TimeBucket = `${number}${TimeUnitAbbrev}`;
+export type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month';
 export type Periodicity = {
 	period: number;
 	interval: number;
 	timeUnit: TimeUnit;
 };
+
+export const candleTimeBuckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'] as const;
+export type CandleTimeBucket = (typeof candleTimeBuckets)[number];
+
+export function isCandleTimeBucket(value: MaybeString): value is CandleTimeBucket {
+	return candleTimeBuckets.includes(value as CandleTimeBucket);
+}
 
 /**
  * Normalize data with non-standard or inconsistent date intervals to a standard interval
