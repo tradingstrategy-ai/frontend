@@ -46,7 +46,7 @@
 	// Disable the "Cancel" button once a transaction has been initiated
 	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 
-	async function getVaultSharePrice() {
+	function getVaultSharePrice() {
 		return getSharePrice(config, {
 			calculator: contracts.fund_value_calculator,
 			vault: contracts.vault,
@@ -170,6 +170,11 @@
 				console.error('confirmPayment error:', eventId, err);
 				if (['UserRejectedRequestError', 'ContractFunctionRevertedError'].includes(err.cause?.name)) {
 					errorMessage = `Payment confirmation from wallet account failed. ${err.shortMessage}`;
+				} else if (err.name === 'GetSharePriceError') {
+					errorMessage = `
+						Error fetching share price; unable to calculate minSharesQuantity. Aborting payment
+						contract request.
+					`;
 				} else {
 					errorMessage = `
 						Based on transaction confirmations Trading Strategy did not see your transaction going
