@@ -1,37 +1,15 @@
 <script lang="ts">
-	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
-	import { createEventDispatcher } from 'svelte';
-	import { getBalance, readContract } from '@wagmi/core';
-	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { config, wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
-	import { getTokenBalance } from '$lib/eth-defi/helpers';
-	import { EntitySymbol, Spinner } from '$lib/components';
+	import type { GetBalanceReturnType } from '@wagmi/core';
+	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+	import { wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { EntitySymbol } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let contracts: EnzymeSmartContracts;
+	export let nativeCurrency: GetBalanceReturnType;
+	export let denominationToken: Maybe<GetTokenBalanceReturnType>;
 
-	$: ({ address, chain } = $wallet);
-	$: chainCurrency = chain?.nativeCurrency.symbol;
-
-	const dispatch = createEventDispatcher();
-
-	async function fetchNativeCurrency(address: Address) {
-		const nativeCurrency = await getBalance(config, { address });
-		dispatch('dataFetch', { nativeCurrency });
-		return nativeCurrency;
-	}
-
-	async function fetchDenominationToken(address: Address) {
-		const token = await readContract(config, {
-			address: contracts.comptroller,
-			abi: comptrollerABI,
-			functionName: 'getDenominationAsset'
-		});
-		const denominationToken = await getTokenBalance(config, { address, token });
-		dispatch('dataFetch', { denominationToken });
-		return denominationToken;
-	}
+	const chainSymbol = nativeCurrency.symbol;
 </script>
 
 <WalletInfo alignValues="right">
@@ -40,27 +18,20 @@
 	</WalletInfoItem>
 
 	<WalletInfoItem>
-		<EntitySymbol slot="label" size="1.5rem" label={chainCurrency} logoUrl={getLogoUrl('token', chainCurrency)} />
-		{#await fetchNativeCurrency(address)}
-			<Spinner />
-		{:then balance}
-			{formatBalance(balance, 2, 4)}
-		{/await}
+		<EntitySymbol slot="label" size="1.5rem" label={chainSymbol} logoUrl={getLogoUrl('token', chainSymbol)} />
+		{formatBalance(nativeCurrency, 2, 4)}
 	</WalletInfoItem>
 
-	{#if contracts.comptroller}
+	{#if denominationToken}
+		{@const { label, symbol } = denominationToken}
 		<WalletInfoItem>
-			<!-- TODO: make EntitySymbol dynamic based on denomination token -->
-			<EntitySymbol slot="label" size="1.5rem" label="USDC.e" logoUrl={getLogoUrl('token', 'usdc')}
-				>USDC.e (bridged)</EntitySymbol
-			>
-			{#await fetchDenominationToken(address)}
-				<Spinner />
-			{:then balance}
-				{formatBalance(balance, 2, 4)}
-			{:catch}
-				---
-			{/await}
+			<EntitySymbol slot="label" size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)}>
+				{label}
+				{#if label === 'USDC.e'}
+					(bridged)
+				{/if}
+			</EntitySymbol>
+			{formatBalance(denominationToken, 2, 4)}
 		</WalletInfoItem>
 	{/if}
 </WalletInfo>

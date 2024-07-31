@@ -2,11 +2,10 @@
 	import { wizard } from 'wizard/store';
 	import { WalletBalance } from '$lib/wallet';
 
-	let retrievedBalanceCount = 0;
+	export let data;
+	const { nativeCurrency, denominationToken } = data;
 
-	const requiredBalances = $wizard.data?.contracts.comptroller ? 2 : 1;
-
-	$: wizard.toggleComplete('balance', retrievedBalanceCount === requiredBalances);
+	wizard.toggleComplete('balance');
 </script>
 
-<WalletBalance contracts={$wizard.data?.contracts} on:dataFetch={() => retrievedBalanceCount++} />
+<WalletBalance {nativeCurrency} {denominationToken} />
