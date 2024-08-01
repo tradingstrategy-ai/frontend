@@ -37,7 +37,16 @@ export const tradeStatus = z.enum([
 	'repair_entry'
 ]);
 
-export const tradeFlag = z.enum(['open', 'close', 'increase', 'reduce', 'close_protocol_last', 'test_trade']);
+export const tradeFlag = z.enum([
+	'open',
+	'close',
+	'increase',
+	'reduce',
+	'close_protocol_last',
+	'test_trade',
+	'triggered',
+	'missing_position_repair'
+]);
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/trade_pricing.py
 export const tradePricingSchema = z.object({

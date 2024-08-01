@@ -45,7 +45,7 @@ Display a single alert item (should always be nested within AlertList).
 			margin-top: 0.125em;
 		}
 
-		:global a {
+		:global(:where(a)) {
 			font-weight: 700;
 			text-decoration: underline;
 		}

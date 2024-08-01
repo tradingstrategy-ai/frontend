@@ -43,22 +43,34 @@ type GetSharePriceParams = {
 };
 
 /**
+ * Custom error thrown when getSharePrice fails
+ */
+class GetSharePriceError extends Error {
+	constructor(cause: any) {
+		super('Error fetching share price');
+		this.name = 'GetSharePriceError';
+		this.cause = cause;
+	}
+}
+
+/**
  * Get the current share price for a given vault
  */
 export async function getSharePrice(config: Config, params: GetSharePriceParams) {
 	const { calculator, vault, denominationToken } = params;
 
-	const { result } = await simulateContract(config, {
-		abi: fundValueCalculatorABI,
-		address: calculator,
-		functionName: 'calcGrossShareValue',
-		args: [vault]
-	});
+	let value: bigint;
 
-	const value = result[1];
-
-	if (value === undefined) {
-		throw new Error('failed to fetch sharePrice');
+	try {
+		const { result } = await simulateContract(config, {
+			abi: fundValueCalculatorABI,
+			address: calculator,
+			functionName: 'calcGrossShareValue',
+			args: [vault]
+		});
+		value = result[1];
+	} catch (e) {
+		throw new GetSharePriceError(e);
 	}
 
 	return Number(formatUnits(value, denominationToken.decimals));

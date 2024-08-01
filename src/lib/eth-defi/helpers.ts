@@ -1,7 +1,8 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
-import { readContracts } from '@wagmi/core';
+import { readContract, readContracts } from '@wagmi/core';
+import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import { formatNumber } from '$lib/helpers/formatters';
 import tosMap from '$lib/assets/tos/tos-map.json';
 
@@ -115,6 +116,23 @@ export function isBridgedUSDC(address: Address) {
 
 export function getTokenLabel(symbol: string | undefined, address: Address) {
 	return symbol === 'USDC' && isBridgedUSDC(address) ? 'USDC.e' : symbol;
+}
+
+/**
+ * Get a strategy denomination token balance for a given comptroller and address
+ */
+export async function getDenominationToken(
+	config: Config,
+	{ comptroller, address, chainId }: { comptroller: Address; address: Address; chainId?: number | undefined }
+) {
+	const token = (await readContract(config, {
+		chainId,
+		address: comptroller,
+		abi: comptrollerABI,
+		functionName: 'getDenominationAsset'
+	})) as Address;
+
+	return getTokenBalance(config, { address, token, chainId });
 }
 
 export type TosInfo = {

@@ -1,53 +1,51 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
-	import { fade } from 'svelte/transition';
 	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
 	import { getChain } from '$lib/helpers/chain';
 	import { Alert, Button } from '$lib/components';
 
-	$: ({ chainId, contracts, nativeCurrency, denominationToken } = $wizard.data);
-	$: chainSlug = getChain(chainId)?.slug;
+	export let data;
+	const { chainId, nativeCurrency, denominationToken } = data;
 
-	$: wizard.toggleComplete('balance', nativeCurrency?.value > 0n && denominationToken?.value > 0n);
+	const chainSlug = getChain(chainId)?.slug;
+
+	wizard.updateData({ nativeCurrency, denominationToken });
+	wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);
 </script>
 
 <div class="deposit-balance-page">
-	<WalletBalance {contracts} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
+	<WalletBalance {nativeCurrency} {denominationToken} />
 
-	{#if nativeCurrency?.value === 0n}
+	{#if nativeCurrency.value === 0n}
 		{@const href = buyNativeCurrencyUrl(chainId)}
-		<div in:fade>
-			<Alert status="warning" size="md">
-				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when participating in this strategy.
-				<Button
-					slot="cta"
-					size="sm"
-					label="Buy {nativeCurrency.symbol}"
-					disabled={!href}
-					{href}
-					target="_blank"
-					rel="noreferrer"
-				/>
-			</Alert>
-		</div>
+		<Alert status="warning" size="md">
+			<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when participating in this strategy.
+			<Button
+				slot="cta"
+				size="sm"
+				label="Buy {nativeCurrency.symbol}"
+				disabled={!href}
+				{href}
+				target="_blank"
+				rel="noreferrer"
+			/>
+		</Alert>
 	{/if}
 
-	{#if denominationToken?.value === 0n}
+	{#if denominationToken.value === 0n}
 		{@const href = chainSlug && buyTokenUrl(chainSlug, denominationToken.address)}
-		<div in:fade>
-			<Alert status="warning" size="md">
-				<strong>{denominationToken.label}</strong> is required in order to make a deposit into this strategy.
-				<Button
-					slot="cta"
-					size="sm"
-					label="Buy {denominationToken.symbol}"
-					disabled={!href}
-					{href}
-					target="_blank"
-					rel="noreferrer"
-				/>
-			</Alert>
-		</div>
+		<Alert status="warning" size="md">
+			<strong>{denominationToken.label}</strong> is required in order to make a deposit into this strategy.
+			<Button
+				slot="cta"
+				size="sm"
+				label="Buy {denominationToken.symbol}"
+				disabled={!href}
+				{href}
+				target="_blank"
+				rel="noreferrer"
+			/>
+		</Alert>
 	{/if}
 </div>
 
