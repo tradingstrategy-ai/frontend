@@ -1,11 +1,13 @@
 /**
  * Return URL for purchasing native currency for a given chain
  */
-export function buyNativeCurrencyUrl(chainId: number) {
-	// Polygon
-	if (chainId === 137) {
-		return 'https://wallet.polygon.technology/polygon/gas-swap';
-	}
+export function buyNativeCurrencyUrl(chainId: number): string | undefined {
+	const urls: Record<number, string> = {
+		1: 'https://ethereum.org/en/get-eth/',
+		137: 'https://wallet.polygon.technology/polygon/gas-swap'
+	};
+
+	return urls[chainId];
 }
 
 /**
