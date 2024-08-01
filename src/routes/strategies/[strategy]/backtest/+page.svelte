@@ -62,6 +62,7 @@ Page to display the strategy backtest results.
 	.backtest {
 		display: grid;
 		gap: 1.5rem;
+		align-items: start;
 
 		iframe {
 			width: 100%;
