@@ -12,7 +12,7 @@ export function getStrategyChartDateRange(strategies: StrategyRuntimeState[]): [
 	}) as Date;
 
 	const maxDate = max(strategies, ({ summary_statistics }) => {
-		return summary_statistics?.compounding_unrealised_trading_profitability?.at(-1)?.[0];
+		return summary_statistics?.compounding_unrealised_trading_profitability?.at?.(-1)?.[0];
 	}) as Date;
 
 	return [max([ninetyDaysAgo, minDate]), maxDate];
