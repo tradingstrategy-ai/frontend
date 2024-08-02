@@ -6,7 +6,8 @@ import { publicApiError } from '$lib/helpers/public-api';
 import { configuredStrategies } from 'trade-executor/strategy/configuration';
 
 export async function load({ params, fetch }) {
-	const strategy = configuredStrategies.get(params.strategy)!;
+	const strategy = configuredStrategies.get(params.strategy);
+	if (!strategy) error(404, 'Not found');
 
 	let resp;
 	try {
