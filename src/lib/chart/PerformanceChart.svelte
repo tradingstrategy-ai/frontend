@@ -15,6 +15,7 @@ Display a peformance line chart for a given (static) dataset.
 ```
 -->
 <script lang="ts">
+	import { differenceInCalendarDays } from 'date-fns';
 	import type { Quote, Periodicity } from '$lib/chart';
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
@@ -25,7 +26,7 @@ Display a peformance line chart for a given (static) dataset.
 	export let data: Quote[] = [];
 	export let options: any = undefined;
 	export let formatValue: Formatter<MaybeNumber>;
-	export let spanDays: number;
+	export let spanDays: MaybeNumber;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
 	export let dataSegmentChange: Function | undefined = undefined;
@@ -34,6 +35,8 @@ Display a peformance line chart for a given (static) dataset.
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
+
+	$: spanDays ??= differenceInCalendarDays(new Date(), data[0].DT) || 0;
 
 	const defaultOptions = {
 		layout: { chartType: 'mountain' },
@@ -73,8 +76,13 @@ Display a peformance line chart for a given (static) dataset.
 		return () => {
 			chartEngine.loadChart('Performance', {
 				periodicity,
-				span: { base: 'day', multiplier: spanDays },
 				masterData: data
+			});
+
+			chartEngine.setSpan({
+				base: 'day',
+				multiplier: spanDays,
+				goIntoPast: true
 			});
 
 			// hide the Y Axis on smaller screens
