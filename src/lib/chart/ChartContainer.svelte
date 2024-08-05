@@ -15,46 +15,46 @@ Display a chart container with title, description and timespan selector.
 
 <script lang="ts">
 	import type { TimeInterval } from 'd3-time';
-	import type { Periodicity, TimeBucket } from '$lib/chart';
+	import type { Periodicity } from '$lib/chart';
 	import { utcHour, utcDay } from 'd3-time';
 	import { SegmentedControl } from '$lib/components';
 
 	export let title = '';
 
-	let timeSpanKey: TimeBucket = '3m';
+	let timeSpanKey = '3M';
 
 	type TimeSpan = {
-		label: string;
-		spanDays: number;
+		spanDays?: number;
 		interval: TimeInterval;
 		periodicity: Periodicity;
 	};
 
-	const timeSpans: Record<TimeBucket, TimeSpan> = {
-		'1w': {
-			label: '1W',
+	const timeSpans: Record<string, TimeSpan> = {
+		'1W': {
 			spanDays: 7,
 			interval: utcHour,
 			periodicity: { period: 1, interval: 1, timeUnit: 'hour' }
 		},
-		'1m': {
-			label: '1M',
+		'1M': {
 			spanDays: 30,
 			interval: utcHour.every(4)!,
 			periodicity: { period: 4, interval: 1, timeUnit: 'hour' }
 		},
-		'3m': {
-			label: '3M',
+		'3M': {
 			spanDays: 90,
-			interval: utcDay.every(1)!,
+			interval: utcDay,
+			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+		},
+		Max: {
+			interval: utcDay,
 			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
 		}
-	} as const;
+	};
 </script>
 
 <div class="chart-container" data-css-props>
 	<header>
-		<slot name="title" timeSpan={timeSpans[timeSpanKey]}>
+		<slot name="title" {timeSpanKey}>
 			<h2>{title}</h2>
 		</slot>
 		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
@@ -73,6 +73,13 @@ Display a chart container with title, description and timespan selector.
 	}
 
 	.chart-container {
+		:global([data-css-props]) {
+			@media (--viewport-xs) {
+				--segmented-control-font: var(--f-ui-xs-medium);
+				--segmented-control-letter-spacing: var(--ls-ui-xs);
+			}
+		}
+
 		display: grid;
 		gap: var(--space-sm);
 		background: var(--c-box-1);
@@ -86,18 +93,6 @@ Display a chart container with title, description and timespan selector.
 			align-items: center;
 			gap: var(--space-sm);
 			padding-inline: var(--chart-container-padding);
-
-			@media (--viewport-xs) {
-				grid-template-columns: 1fr;
-			}
-
-			:global(.segmented-control) {
-				text-transform: uppercase;
-
-				@media (--viewport-xs) {
-					grid-row: 3;
-				}
-			}
 
 			h2 {
 				font: var(--f-heading-md-medium);
