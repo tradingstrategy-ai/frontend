@@ -36,7 +36,14 @@ Display a peformance line chart for a given (static) dataset.
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
 
-	$: spanDays ??= differenceInCalendarDays(new Date(), data[0].DT) || 0;
+	// if spanDays is not set, assume "max" (full data range)
+	$: if (spanDays === undefined) {
+		spanDays ??= differenceInCalendarDays(new Date(), data[0]?.DT) || 0;
+		// override periodicity to weekly for time spans greater than 1 year
+		if (spanDays > 365) {
+			periodicity = { period: 7, interval: 1, timeUnit: 'day' };
+		}
+	}
 
 	const defaultOptions = {
 		layout: { chartType: 'mountain' },
