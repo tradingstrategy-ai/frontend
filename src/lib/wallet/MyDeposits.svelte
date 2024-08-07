@@ -40,6 +40,8 @@
 		contracts.fund_value_calculator
 	].every(Boolean);
 
+	const isOutdated = Boolean(strategy.new_version_id);
+
 	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain?.id;
 	$: buttonsDisabled = geoBlocked || !depositEnabled || wrongNetwork;
@@ -145,7 +147,7 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				<Button label="Deposit" disabled={buttonsDisabled} on:click={() => launchWizard('deposit')} />
+				<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
 				<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
 			</div>
 		</div>
