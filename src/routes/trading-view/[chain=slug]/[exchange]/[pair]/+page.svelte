@@ -84,28 +84,22 @@ Render the pair trading page
 
 		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
 			<AlertList status="warning" let:AlertItem>
-				{#if isUniswapIncompatible}
-					<AlertItem title="Incompatible exchange">
-						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-						{summary.pair_symbol} may be inaccurate.
-					</AlertItem>
-				{/if}
+				<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
+					{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+					{summary.pair_symbol} may be inaccurate.
+				</AlertItem>
 
-				{#if tokenTax.broken}
-					<AlertItem>
-						This token is unlikely to be tradeable.
-						<a
-							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-							rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
-						>. Error code <strong>{tokenTax.sellTax}</strong>.
-					</AlertItem>
-				{/if}
+				<AlertItem displayWhen={tokenTax.broken}>
+					This token is unlikely to be tradeable.
+					<a
+						href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+						rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
+					>. Error code <strong>{tokenTax.sellTax}</strong>.
+				</AlertItem>
 
-				{#if ridiculousPrice}
-					<AlertItem>
-						This trading pair is using low digit price units that may prevent displaying the price data properly.
-					</AlertItem>
-				{/if}
+				<AlertItem displayWhen={ridiculousPrice}>
+					This trading pair is using low digit price units that may prevent displaying the price data properly.
+				</AlertItem>
 			</AlertList>
 		{/if}
 	</section>

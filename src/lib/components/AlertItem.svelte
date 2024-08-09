@@ -4,7 +4,7 @@ Display a single alert item (should always be nested within AlertList).
 
 #### Usage:
 ```tsx
-	<AlertItem title="Optional title">
+	<AlertItem title="Optional title" displayWhen={optionalCondition}>
 		Warning message – e.g., data on this page may be incomplete!
 	</AlertItem>
 ```
@@ -13,24 +13,27 @@ Display a single alert item (should always be nested within AlertList).
 	import IconWarning from '~icons/local/warning';
 
 	export let title = '';
+	export let displayWhen: any = true;
 </script>
 
-<li class="alert-item">
-	<div class="icon">
-		<IconWarning />
-	</div>
-	<div class="inner">
-		<span class="content">
-			{#if title}
-				<strong>{title}</strong>
+{#if displayWhen}
+	<li class="alert-item">
+		<div class="icon">
+			<IconWarning />
+		</div>
+		<div class="inner">
+			<span class="content">
+				{#if title}
+					<strong>{title}</strong>
+				{/if}
+				<span><slot /></span>
+			</span>
+			{#if $$slots.cta}
+				<span class="cta"><slot name="cta" /></span>
 			{/if}
-			<span><slot /></span>
-		</span>
-		{#if $$slots.cta}
-			<span class="cta"><slot name="cta" /></span>
-		{/if}
-	</div>
-</li>
+		</div>
+	</li>
+{/if}
 
 <style lang="postcss">
 	.alert-item {

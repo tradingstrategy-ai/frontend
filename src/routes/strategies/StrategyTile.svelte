@@ -66,7 +66,18 @@
 						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
 					</Tooltip>
 				{/if}
+
 				<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
+
+				{#if strategy.new_version_id}
+					<Tooltip>
+						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
+						<svelte:fragment slot="popup">
+							This is an outdated strategy. An updated version is available
+							<a href="/strategies/{strategy.new_version_id}">here</a>.
+						</svelte:fragment>
+					</Tooltip>
+				{/if}
 			</div>
 		</div>
 		<div class="chart">
