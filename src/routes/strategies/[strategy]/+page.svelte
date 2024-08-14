@@ -1,6 +1,13 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import { CIQ } from '$lib/chart/ChartIQ.svelte';
+	import {
+		type Candle,
+		ChartContainer,
+		PerformanceChart,
+		normalizeDataForInterval,
+		periodicityToTimeBucket
+	} from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
@@ -9,6 +16,7 @@
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
+	import { fetchPublicApi } from '$lib/helpers/public-api';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -42,6 +50,89 @@
 		type: 'compounding_unrealised_trading_profitability_sampled',
 		source: 'live_trading'
 	});
+
+	function dateUrlParam(date: Date): string {
+		return date.toISOString().slice(0, 19);
+	}
+
+	const benchmarkTokens = [
+		{
+			symbol: 'BTC',
+			id: 2697647,
+			color: '#EA983D'
+		},
+		{
+			symbol: 'ETH',
+			id: 2697765,
+			color: '#687DE3'
+		},
+		{
+			symbol: 'MATIC',
+			id: 2854997,
+			color: '#6843D0'
+		}
+	] as const;
+
+	function init(chartEngine: any) {
+		chartEngine.findHighlights = () => {};
+
+		return async () => {
+			const periodicity = chartEngine.getPeriodicity();
+			const time_bucket = periodicityToTimeBucket(periodicity)!;
+
+			const dataSegment = chartEngine.getDataSegment();
+			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
+
+			if (!first || !last) return;
+
+			const urlParams = {
+				pair_ids: benchmarkTokens.map((t) => t.id).join(','),
+				exchange_type: 'uniswap_v3',
+				time_bucket,
+				start: dateUrlParam(first.DT),
+				end: dateUrlParam(last.DT)
+			};
+
+			const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
+
+			for (const token of benchmarkTokens) {
+				const tokenData = benchmarkData[token.id];
+				const c0 = tokenData[0].c;
+
+				const quotes = tokenData.map(({ ts, c }: Candle) => {
+					return {
+						DT: `${ts}Z`,
+						Close: (c - c0) / c0 + first.Close
+					};
+				});
+
+				const renderer = chartEngine.setSeriesRenderer(
+					new CIQ.Renderer.Lines({
+						params: {
+							name: 'lines',
+							type: 'line',
+							overChart: true,
+							opacity: 0.5
+						}
+					})
+				);
+
+				chartEngine.addSeries(token.symbol, {
+					// shareYAxis: true,
+					data: quotes,
+					// color: token.color,
+					// opacity: 0.75,
+					fillGaps: true,
+					overChart: false
+				});
+
+				// https://documentation.chartiq.com/tutorial-Renderers.html#Sample+Code
+				// https://documentation.chartiq.com/CIQ.Renderer.Lines.html
+				renderer.attachSeries(token.symbol, token.color).ready();
+			}
+		};
+	}
 
 	const chartOptions = {
 		controls: { home: null },
@@ -78,6 +169,7 @@
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
+				{init}
 				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
 			/>
 		</ChartContainer>

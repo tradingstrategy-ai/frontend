@@ -28,6 +28,8 @@ Display a peformance line chart for a given (static) dataset.
 	export let formatValue: Formatter<MaybeNumber>;
 	export let spanDays: MaybeNumber;
 	export let studies: any[] = [];
+	let initCallback: Function | undefined = undefined;
+	export { initCallback as init };
 
 	const dispatch = createEventDispatcher<{
 		change: {
@@ -61,7 +63,6 @@ Display a peformance line chart for a given (static) dataset.
 		layout: { chartType: 'mountain' },
 		controls: { chartControls: null },
 		dontRoll: true,
-
 		chart: {
 			tension: 0.5,
 			xAxis: { displayGridLines: false },
@@ -91,6 +92,8 @@ Display a peformance line chart for a given (static) dataset.
 			dispatch('change', { first, last, firstTickPosition });
 		});
 
+		const updateCallback = initCallback?.(chartEngine);
+
 		// returned callback invoked on both initial load and updates
 		return () => {
 			chartEngine.loadChart('Performance', {
@@ -108,6 +111,8 @@ Display a peformance line chart for a given (static) dataset.
 			Object.values(chartEngine.panels).forEach((panel: any) => {
 				chartEngine.setYAxisPosition(panel.yAxis, hideYAxis ? 'none' : 'right');
 			});
+
+			updateCallback?.();
 		};
 	}
 </script>

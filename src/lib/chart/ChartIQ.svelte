@@ -32,7 +32,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 	// NOTE: requested TypeScript defs from ChartIQ.
 	// See: https://documentation.chartiq.com/tutorial-SDK%20API%20Reference.html#toc18__anchor
-	let CIQ: any;
+	export let CIQ: any;
 
 	async function initialize() {
 		if (!browser || Object.keys(modules).length === 0) {
