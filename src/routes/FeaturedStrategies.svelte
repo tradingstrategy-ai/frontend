@@ -83,32 +83,35 @@
 	}
 
 	.strategies {
-		--strategy-tile-gap: 1.5rem;
+		--gap: 1.5rem;
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--strategy-tile-gap);
+		gap: var(--gap);
 		justify-content: center;
 		padding: 3rem 0;
 		overflow: hidden;
 
+		/* custom method to ensure equal width strategy tiles in flex layout */
+		--num-gaps: calc(var(--columns) - 1);
+		--total-gap-width: calc(var(--num-gaps) * var(--gap));
+		--available-width: calc(100% - var(--total-gap-width));
+		--column-width: calc(var(--available-width) / var(--columns));
+
+		/* small viewport (default): 1 col */
+		--columns: 1;
+
+		/* mid-size viewport: 2 cols */
+		@media (width >= 896px) {
+			--columns: 2;
+		}
+
+		/* large viewport (default): 3 cols */
+		@media (width >= 1356px) {
+			--columns: 3;
+		}
+
 		> :global(*) {
-			flex: 1;
-			min-width: min(27.25rem, 100%);
-
-			@media (--viewport-lg-up) {
-				/* limit tile width */
-				max-width: 36rem;
-
-				/* solo tile on last row should have same width as others */
-				&:nth-child(2n + 3) {
-					max-width: calc((100% - var(--strategy-tile-gap)) / 2);
-				}
-			}
-
-			/* force single column below 1024px */
-			@media (--viewport-md-down) {
-				min-width: 100%;
-			}
+			width: var(--column-width);
 		}
 	}
 </style>

@@ -15,7 +15,8 @@ export const strategyConfigurationSchema = z.object({
 	name: z.string(),
 	url: z.string().url(),
 	fees: strategyFeesSchema.default({}),
-	new_version_id: z.string().nullish()
+	new_version_id: z.string().nullish(),
+	frontpage: z.boolean().nullish()
 });
 export type StrategyConfiguration = z.infer<typeof strategyConfigurationSchema>;
 
