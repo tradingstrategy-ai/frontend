@@ -18,7 +18,7 @@
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
-<Section padding="xl">
+<Section padding="lg">
 	<h2>Open strategies</h2>
 	<p class="live-ago">
 		Open strategies have been live for {openLiveDays}.
@@ -39,7 +39,7 @@
 	</div>
 	<div class="strategies">
 		{#each strategies as strategy (strategy.id)}
-			<StrategyTile {strategy} {chartDateRange} />
+			<StrategyTile simplified {strategy} {chartDateRange} />
 		{:else}
 			<div class="fallback">
 				<Alert size="sm" status="info">Check back soon to see top-performing strategies.</Alert>
@@ -89,7 +89,6 @@
 		gap: var(--gap);
 		justify-content: center;
 		padding: 3rem 0;
-		overflow: hidden;
 
 		/* custom method to ensure equal width strategy tiles in flex layout */
 		--num-gaps: calc(var(--columns) - 1);

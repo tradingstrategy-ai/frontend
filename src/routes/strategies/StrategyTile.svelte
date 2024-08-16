@@ -14,6 +14,7 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let admin = false;
+	export let simplified = false;
 	export let strategy: StrategyRuntimeState;
 	export let chartDateRange: [Date?, Date?];
 
@@ -32,53 +33,46 @@
 		if (target instanceof HTMLAnchorElement && target.href) return;
 		goto(href);
 	};
-
-	// FIXME: hack to infer list of tokens based on strategy ID;
-	// In the future this will come from the strategy configuration.
-	function getStrategyTokens({ id }: StrategyRuntimeState) {
-		const tokens: string[] = [];
-		for (const token of ['eth', 'btc', 'matic']) {
-			if (id.includes(token)) tokens.push(token);
-		}
-		return [...tokens, 'usdc'];
-	}
 </script>
 
 <!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
 <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
 <div class="strategy-tile ds-3" on:click={handleClick}>
-	<div class="visuals">
+	<div class="visuals" class:simplified>
 		<div class="top">
-			<div class="tokens">
-				{#each getStrategyTokens(strategy) as slug}
-					{@const symbol = slug.toUpperCase()}
+			<div>
+				{#if chain}
 					<Tooltip>
-						<img slot="trigger" src={getLogoUrl('token', slug)} alt={symbol} />
-						<span slot="popup">This strategy trades <strong>{symbol}</strong></span>
-					</Tooltip>
-				{/each}
-			</div>
-
-			<div class="badges">
-				{#if errorHtml}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Error</DataBadge>
-						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
-					</Tooltip>
-				{/if}
-
-				<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
-
-				{#if strategy.new_version_id}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
-						<svelte:fragment slot="popup">
-							This is an outdated strategy. An updated version is available
-							<a href="/strategies/{strategy.new_version_id}">here</a>.
-						</svelte:fragment>
+						<img class="chain-icon" slot="trigger" src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+						<span slot="popup">
+							This strategy runs on <strong>{chain.name}</strong> blockchain
+						</span>
 					</Tooltip>
 				{/if}
 			</div>
+
+			{#if !simplified}
+				<div class="badges">
+					{#if errorHtml}
+						<Tooltip>
+							<DataBadge slot="trigger" status="error">Error</DataBadge>
+							<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
+						</Tooltip>
+					{/if}
+
+					<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
+
+					{#if strategy.new_version_id}
+						<Tooltip>
+							<DataBadge slot="trigger" status="error">Outdated</DataBadge>
+							<svelte:fragment slot="popup">
+								This is an outdated strategy. An updated version is available
+								<a href="/strategies/{strategy.new_version_id}">here</a>.
+							</svelte:fragment>
+						</Tooltip>
+					{/if}
+				</div>
+			{/if}
 		</div>
 		<div class="chart">
 			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
@@ -88,20 +82,6 @@
 		<header>
 			<div class="avatar">
 				<StrategyIcon {strategy} />
-				{#if chain}
-					<div class="chain-icon">
-						<Tooltip>
-							<EntitySymbol
-								slot="trigger"
-								size="var(--chain-icon-size)"
-								logoUrl={getLogoUrl('blockchain', chain.slug)}
-							/>
-							<span slot="popup">
-								This strategy runs on <strong>{chain.name}</strong> blockchain
-							</span>
-						</Tooltip>
-					</div>
-				{/if}
 			</div>
 			<div class="description">
 				<h3 class="truncate">{strategy.name}</h3>
@@ -109,7 +89,7 @@
 			</div>
 		</header>
 		<div class="data">
-			<StrategyDataSummary {strategy} />
+			<StrategyDataSummary {simplified} {strategy} />
 		</div>
 		<div class="actions">
 			<Button size="md" {href}>View strategy</Button>
@@ -152,41 +132,46 @@
 				left: 0;
 				right: 0;
 				top: 0;
+			}
 
-				.tokens {
-					display: flex;
-					gap: 0.375rem;
+			.chain-icon {
+				display: flex;
+				border-radius: 100%;
+				height: 1.875rem;
+				aspect-ratio: 1;
+				padding: 15%;
+				border: 1px solid var(--c-box-4);
+				background: var(--c-box-2);
+			}
 
-					img {
-						display: flex;
-						width: 1.75rem;
-						height: 1.75rem;
-						border-radius: 100%;
-						box-shadow: var(--shadow-1);
-					}
+			.badges {
+				display: flex;
+				gap: 0.375rem;
+				font: var(--f-ui-sm-medium);
+
+				:global([data-css-props]) {
+					--data-badge-height: 100%;
 				}
 
-				.badges {
-					display: flex;
-					gap: 0.375rem;
-					font: var(--f-ui-sm-medium);
-
-					:global([data-css-props]) {
-						--data-badge-height: 100%;
-					}
-
-					:global(.tooltip .popup) {
-						position: absolute;
-						max-width: 22rem;
-						right: 0;
-						left: auto;
-						bottom: auto;
-					}
+				:global(.tooltip .popup) {
+					position: absolute;
+					max-width: 22rem;
+					right: 0;
+					left: auto;
+					bottom: auto;
 				}
 			}
 
-			&:not(:hover) .chart {
+			.chart {
 				z-index: -1;
+			}
+
+			&.simplified .chart {
+				margin-block: -2rem;
+
+				:global(figcaption) {
+					bottom: 1rem;
+				}
 			}
 		}
 
@@ -227,22 +212,6 @@
 
 					:global(.tooltip .popup) {
 						min-width: 20rem;
-					}
-
-					.chain-icon {
-						display: flex;
-						position: absolute;
-						right: 0;
-						bottom: 0;
-						padding: 5%;
-						transform: translate(20%, 20%);
-						border-radius: 100%;
-						box-shadow: var(--shadow-1);
-						background: var(--c-text-inverted);
-
-						strong {
-							text-transform: capitalize;
-						}
 					}
 				}
 

@@ -98,7 +98,7 @@
 			bottom: 0;
 			width: 100%;
 			text-align: center;
-			font: var(--f-ui-md-roman);
+			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			color: var(--c-text-extra-light);
 			opacity: 0;
