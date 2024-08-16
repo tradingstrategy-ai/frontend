@@ -10,13 +10,14 @@
 </script>
 
 <div class="strategy-icon" class:outdated>
-	<object type="image/webp" data={dataUrl} aria-label="Strategy icon">
-		<img src={strategyIconUrl} alt="Strategy icon" />
-	</object>
 	{#if outdated}
 		<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 			<text x="50" y="50">outdated</text>
 		</svg>
+	{:else}
+		<object type="image/webp" data={dataUrl} aria-label="Strategy icon">
+			<img src={strategyIconUrl} alt="Strategy icon" />
+		</object>
 	{/if}
 </div>
 
@@ -32,13 +33,8 @@
 			object-fit: cover;
 		}
 
-		> * {
-			grid-area: 1 / -1;
-		}
-
-		&.outdated object {
-			opacity: 0.85;
-			filter: blur(1.5px);
+		&.outdated {
+			background: hsl(100 0% 50% / 65%);
 		}
 
 		svg {
@@ -47,11 +43,9 @@
 			text {
 				font: var(--f-ui-md-bold);
 				fill: #fdfdfc;
-				stroke: #131211;
-				stroke-width: 0.25px;
 				text-anchor: middle;
 				alignment-baseline: middle;
-				filter: drop-shadow(0 0.25em 0.5em #131211);
+				filter: drop-shadow(0 0.375em 0.625em #131211);
 			}
 		}
 	}
