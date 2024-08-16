@@ -9,7 +9,7 @@
 	import { Section } from '$lib/components';
 
 	export let data;
-	const { post } = data;
+	$: ({ post } = data);
 </script>
 
 <SocialMetaTags url={$page.url} {post} />
