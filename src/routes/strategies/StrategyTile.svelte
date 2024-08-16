@@ -89,7 +89,7 @@
 			</div>
 		</header>
 		<div class="data">
-			<StrategyDataSummary {strategy} />
+			<StrategyDataSummary {simplified} {strategy} />
 		</div>
 		<div class="actions">
 			<Button size="md" {href}>View strategy</Button>
