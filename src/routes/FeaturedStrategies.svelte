@@ -18,7 +18,7 @@
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
-<Section padding="xl">
+<Section padding="lg">
 	<h2>Open strategies</h2>
 	<p class="live-ago">
 		Open strategies have been live for {openLiveDays}.
