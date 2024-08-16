@@ -62,7 +62,7 @@
 		tooltipName="Sharpe Ratio"
 		metric={keyMetrics.sharpe}
 		formatter={formatNumber}
-		tooltipExtraDescription={metricDescriptions.cagr}
+		tooltipExtraDescription={metricDescriptions.sharpe}
 		{backtestLink}
 	/>
 
