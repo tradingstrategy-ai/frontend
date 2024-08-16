@@ -167,7 +167,11 @@
 			}
 
 			&.simplified .chart {
-				margin-top: -2rem;
+				margin-block: -2rem;
+
+				:global(figcaption) {
+					bottom: 1rem;
+				}
 			}
 		}
 
