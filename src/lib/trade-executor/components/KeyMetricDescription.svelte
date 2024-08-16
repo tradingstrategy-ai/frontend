@@ -75,23 +75,17 @@
 
 <style lang="postcss">
 	h3 {
-		font: var(--f-ui-xl-medium);
-		margin-bottom: 0.75rem !important;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--ls-ui-md);
 	}
 
 	ul {
+		display: grid;
+		gap: 0.625rem;
 		margin-block: 1rem;
 	}
 
-	ul li {
-		margin-bottom: 0.75rem;
-	}
-
-	strong {
-		font-weight: 700;
-	}
-
-	.timespan {
+	:is(strong, .timespan) {
 		font-weight: 700;
 	}
 </style>

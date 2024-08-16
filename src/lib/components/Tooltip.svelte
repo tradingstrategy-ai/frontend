@@ -67,12 +67,13 @@ For more information see:
 			}
 
 			.inner {
-				padding: 1.125rem;
+				padding: 1rem;
 				border: 1px solid var(--c-box-3);
-				border-radius: var(--radius-md);
+				border-radius: var(--radius-ms);
 				background: var(--c-text-inverted);
 				box-shadow: var(--shadow-3);
-				font: var(--f-ui-small-light);
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--ls-ui-sm);
 				color: var(--c-text);
 				text-align: left;
 			}
