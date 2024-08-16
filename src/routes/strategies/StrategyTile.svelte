@@ -137,11 +137,11 @@
 			.chain-icon {
 				display: flex;
 				border-radius: 100%;
-				height: 2rem;
+				height: 1.875rem;
 				aspect-ratio: 1;
 				padding: 15%;
-				background: var(--c-text-inverted);
-				box-shadow: var(--shadow-1);
+				border: 1px solid var(--c-box-4);
+				background: var(--c-box-2);
 			}
 
 			.badges {
