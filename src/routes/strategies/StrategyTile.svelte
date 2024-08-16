@@ -14,6 +14,7 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let admin = false;
+	export let simplified = false;
 	export let strategy: StrategyRuntimeState;
 	export let chartDateRange: [Date?, Date?];
 
@@ -37,7 +38,7 @@
 <!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
 <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
 <div class="strategy-tile ds-3" on:click={handleClick}>
-	<div class="visuals">
+	<div class="visuals" class:simplified>
 		<div class="top">
 			<div>
 				{#if chain}
@@ -50,26 +51,28 @@
 				{/if}
 			</div>
 
-			<div class="badges">
-				{#if errorHtml}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Error</DataBadge>
-						<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
-					</Tooltip>
-				{/if}
+			{#if !simplified}
+				<div class="badges">
+					{#if errorHtml}
+						<Tooltip>
+							<DataBadge slot="trigger" status="error">Error</DataBadge>
+							<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
+						</Tooltip>
+					{/if}
 
-				<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
+					<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
 
-				{#if strategy.new_version_id}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
-						<svelte:fragment slot="popup">
-							This is an outdated strategy. An updated version is available
-							<a href="/strategies/{strategy.new_version_id}">here</a>.
-						</svelte:fragment>
-					</Tooltip>
-				{/if}
-			</div>
+					{#if strategy.new_version_id}
+						<Tooltip>
+							<DataBadge slot="trigger" status="error">Outdated</DataBadge>
+							<svelte:fragment slot="popup">
+								This is an outdated strategy. An updated version is available
+								<a href="/strategies/{strategy.new_version_id}">here</a>.
+							</svelte:fragment>
+						</Tooltip>
+					{/if}
+				</div>
+			{/if}
 		</div>
 		<div class="chart">
 			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
@@ -129,38 +132,42 @@
 				left: 0;
 				right: 0;
 				top: 0;
+			}
 
-				.chain-icon {
-					display: flex;
-					border-radius: 100%;
-					height: 2rem;
-					aspect-ratio: 1;
-					padding: 15%;
-					background: var(--c-text-inverted);
-					box-shadow: var(--shadow-1);
+			.chain-icon {
+				display: flex;
+				border-radius: 100%;
+				height: 2rem;
+				aspect-ratio: 1;
+				padding: 15%;
+				background: var(--c-text-inverted);
+				box-shadow: var(--shadow-1);
+			}
+
+			.badges {
+				display: flex;
+				gap: 0.375rem;
+				font: var(--f-ui-sm-medium);
+
+				:global([data-css-props]) {
+					--data-badge-height: 100%;
 				}
 
-				.badges {
-					display: flex;
-					gap: 0.375rem;
-					font: var(--f-ui-sm-medium);
-
-					:global([data-css-props]) {
-						--data-badge-height: 100%;
-					}
-
-					:global(.tooltip .popup) {
-						position: absolute;
-						max-width: 22rem;
-						right: 0;
-						left: auto;
-						bottom: auto;
-					}
+				:global(.tooltip .popup) {
+					position: absolute;
+					max-width: 22rem;
+					right: 0;
+					left: auto;
+					bottom: auto;
 				}
 			}
 
-			&:not(:hover) .chart {
+			.chart {
 				z-index: -1;
+			}
+
+			&.simplified .chart {
+				margin-top: -2rem;
 			}
 		}
 

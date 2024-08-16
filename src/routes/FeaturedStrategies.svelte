@@ -39,7 +39,7 @@
 	</div>
 	<div class="strategies">
 		{#each strategies as strategy (strategy.id)}
-			<StrategyTile {strategy} {chartDateRange} />
+			<StrategyTile simplified {strategy} {chartDateRange} />
 		{:else}
 			<div class="fallback">
 				<Alert size="sm" status="info">Check back soon to see top-performing strategies.</Alert>
