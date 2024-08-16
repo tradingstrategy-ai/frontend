@@ -107,7 +107,6 @@ Display one key metric in a strategy tile.
 		white-space: nowrap;
 
 		:global(.icon) {
-			--icon-size: 1.1em;
 			transform: translateY(-0.1em);
 		}
 
@@ -127,6 +126,11 @@ Display one key metric in a strategy tile.
 			letter-spacing: 0.03em;
 			text-transform: uppercase;
 			color: color-mix(in srgb, var(--c-text-extra-light), var(--c-warning) 40%);
+
+			--icon-size: 1.1em;
+			:global(svg path) {
+				stroke-width: 2.5;
+			}
 		}
 
 		.backtest-tooltip {
