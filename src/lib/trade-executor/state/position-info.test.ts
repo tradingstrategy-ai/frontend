@@ -81,3 +81,28 @@ describe('closed position with stats entries', () => {
 		expect(spy).toHaveBeenCalledOnce();
 	});
 });
+
+describe('position with frozen_at value', () => {
+	const frozenPosition = { ...position, frozen_at: new Date() };
+	const frozenPositionInfo = createTradingPositionInfo(frozenPosition);
+
+	test('should be frozen', () => {
+		expect(frozenPositionInfo.frozen).toBeTruthy();
+	});
+
+	test('should not be stillOpen', () => {
+		expect(frozenPositionInfo.stillOpen).toBeFalsy();
+	});
+
+	describe('and unfrozen_at value', () => {
+		const unfrozenPositionInfo = createTradingPositionInfo({ ...frozenPosition, unfrozen_at: new Date() });
+
+		test('should no longer be frozen', () => {
+			expect(unfrozenPositionInfo.frozen).toBeFalsy();
+		});
+
+		test('should be stillOpen', () => {
+			expect(unfrozenPositionInfo.stillOpen).toBeTruthy();
+		});
+	});
+});
