@@ -106,7 +106,7 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get stillOpen() {
-		return this.closed_at == null && this.frozen_at == null;
+		return !this.closed && !this.frozen;
 	},
 
 	get frozen() {

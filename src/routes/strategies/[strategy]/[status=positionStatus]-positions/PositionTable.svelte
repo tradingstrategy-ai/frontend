@@ -25,7 +25,7 @@
 	$: positionsStore.set(positions);
 
 	const statusColumns = {
-		open: ['description', 'flags', 'profitability', 'value', 'opened_at', 'cta'],
+		open: ['description', 'flags', 'profitability', 'current_value', 'opened_at', 'cta'],
 		closed: ['description', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
 		frozen: ['description', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
@@ -76,7 +76,8 @@
 		}),
 		table.column({
 			header: 'Value',
-			accessor: 'value',
+			id: 'current_value',
+			accessor: 'currentValue',
 			cell: ({ value }) => formatDollar(value)
 		}),
 		table.column({
@@ -147,7 +148,7 @@
 			padding-block: 0;
 		}
 
-		:is(.profitability, .value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
+		:is(.profitability, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
 		}
 
