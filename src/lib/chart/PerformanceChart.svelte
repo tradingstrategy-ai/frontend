@@ -15,8 +15,9 @@ Display a peformance line chart for a given (static) dataset.
 ```
 -->
 <script lang="ts">
-	import { differenceInCalendarDays } from 'date-fns';
 	import type { Quote, Periodicity } from '$lib/chart';
+	import { createEventDispatcher } from 'svelte';
+	import { differenceInCalendarDays } from 'date-fns';
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
@@ -29,7 +30,10 @@ Display a peformance line chart for a given (static) dataset.
 	export let spanDays: MaybeNumber;
 	export let periodicity: Periodicity;
 	export let studies: any[] = [];
-	export let dataSegmentChange: Function | undefined = undefined;
+
+	const dispatch = createEventDispatcher<{
+		change: { first: Maybe<Quote>; last: Maybe<Quote> };
+	}>();
 
 	let chartWrapper: HTMLElement;
 
@@ -75,8 +79,7 @@ Display a peformance line chart for a given (static) dataset.
 				chartEngine.clearStyles();
 			}
 
-			// call optional dataSegmentChange callback
-			dataSegmentChange?.(first, last);
+			dispatch('change', { first, last });
 		});
 
 		// returned callback invoked on both initial load and updates

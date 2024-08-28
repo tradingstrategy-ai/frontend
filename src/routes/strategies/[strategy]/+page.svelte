@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import type { ComponentEvents } from 'svelte';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
@@ -18,7 +19,8 @@
 
 	let periodPerformance: MaybeNumber;
 
-	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
+	function handleChartChange({ detail }: ComponentEvents<PerformanceChart>['change']) {
+		const { first, last } = detail;
 		periodPerformance = relativeProfitability(first?.Close, last?.Close);
 	}
 
@@ -65,7 +67,7 @@
 				formatValue={formatPercent}
 				{spanDays}
 				{periodicity}
-				{dataSegmentChange}
+				on:change={handleChartChange}
 			/>
 		</ChartContainer>
 	</div>
