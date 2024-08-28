@@ -30,7 +30,11 @@ Display a peformance line chart for a given (static) dataset.
 	export let studies: any[] = [];
 
 	const dispatch = createEventDispatcher<{
-		change: { first: Maybe<Quote>; last: Maybe<Quote> };
+		change: {
+			first: Maybe<Quote>;
+			last: Maybe<Quote>;
+			firstTickPosition: number;
+		};
 	}>();
 
 	let chartWrapper: HTMLElement;
@@ -75,6 +79,7 @@ Display a peformance line chart for a given (static) dataset.
 			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
 			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
 			const direction = determinePriceChangeClass(last?.Close - first?.Close);
+			const firstTickPosition = chartEngine.pixelFromTick(0);
 
 			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
@@ -83,7 +88,7 @@ Display a peformance line chart for a given (static) dataset.
 				chartEngine.clearStyles();
 			}
 
-			dispatch('change', { first, last });
+			dispatch('change', { first, last, firstTickPosition });
 		});
 
 		// returned callback invoked on both initial load and updates

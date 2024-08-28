@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import type { ComponentEvents } from 'svelte';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
@@ -18,14 +19,21 @@
 
 	let periodPerformance: MaybeNumber;
 
-	type ChartDataSegment = {
-		first: Maybe<Quote>;
-		last: Maybe<Quote>;
-	};
+	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
 
-	function updatePeriodPerformance({ first, last }: ChartDataSegment, spanDays: MaybeNumber) {
-		const start = spanDays ? first?.Close : 0;
-		periodPerformance = relativeProfitability(start, last?.Close);
+	function getPeriodPerformance({ first, last, firstTickPosition }: ChartChangeDetail, spanDays: MaybeNumber) {
+		if (!first) return undefined;
+
+		let initialValue = first.Close;
+
+		// if max timeframe OR first tick is after start of displayed chart window
+		// use initial value of 0 instead of first quote value (since chart data does
+		// not always start at 0)
+		if (!spanDays || firstTickPosition > 0) {
+			initialValue = 0;
+		}
+
+		return relativeProfitability(initialValue, last?.Close);
 	}
 
 	const chartClient = getChartClient(fetch, strategy.url);
@@ -70,7 +78,7 @@
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
-				on:change={(e) => updatePeriodPerformance(e.detail, spanDays)}
+				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
 			/>
 		</ChartContainer>
 	</div>
