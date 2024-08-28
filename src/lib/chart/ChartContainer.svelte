@@ -21,9 +21,8 @@ Display a chart container with title, description and timespan selector.
 
 	export let title = '';
 
-	let timeSpanKey = '3M';
-
 	type TimeSpan = {
+		performanceLabel: string;
 		spanDays?: number;
 		interval: TimeInterval;
 		periodicity: Periodicity;
@@ -31,36 +30,43 @@ Display a chart container with title, description and timespan selector.
 
 	const timeSpans: Record<string, TimeSpan> = {
 		'1W': {
+			performanceLabel: 'past week',
 			spanDays: 7,
 			interval: utcHour,
 			periodicity: { period: 1, interval: 1, timeUnit: 'hour' }
 		},
 		'1M': {
+			performanceLabel: 'past month',
 			spanDays: 30,
 			interval: utcHour.every(4)!,
 			periodicity: { period: 4, interval: 1, timeUnit: 'hour' }
 		},
 		'3M': {
+			performanceLabel: 'past 90 days',
 			spanDays: 90,
 			interval: utcDay,
 			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
 		},
 		Max: {
+			performanceLabel: 'lifetime',
 			interval: utcDay,
 			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
 		}
 	};
+
+	let selected = '3M';
+	$: timeSpan = timeSpans[selected];
 </script>
 
 <div class="chart-container" data-css-props>
 	<header>
-		<slot name="title" {timeSpanKey}>
+		<slot name="title" {timeSpan}>
 			<h2>{title}</h2>
 		</slot>
-		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected />
 		<slot name="subtitle" />
 	</header>
-	<slot timeSpan={timeSpans[timeSpanKey]} />
+	<slot {timeSpan} />
 </div>
 
 <style lang="postcss">

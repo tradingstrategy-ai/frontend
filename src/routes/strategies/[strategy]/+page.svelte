@@ -53,10 +53,10 @@
 
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
-			<div class="period-performance" slot="title" let:timeSpanKey>
+			<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
 				{#if periodPerformance !== undefined}
 					<UpDownCell value={periodPerformance} formatter={formatProfitability} />
-					{timeSpanKey === 'Max' ? 'Lifetime' : `Last ${timeSpanKey}`}
+					{performanceLabel}
 				{/if}
 			</div>
 
