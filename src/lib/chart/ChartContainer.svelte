@@ -15,7 +15,6 @@ Display a chart container with title, description and timespan selector.
 
 <script lang="ts">
 	import type { TimeInterval } from 'd3-time';
-	import type { Periodicity } from '$lib/chart';
 	import { utcHour, utcDay } from 'd3-time';
 	import { SegmentedControl } from '$lib/components';
 
@@ -25,32 +24,27 @@ Display a chart container with title, description and timespan selector.
 		performanceLabel: string;
 		spanDays?: number;
 		interval: TimeInterval;
-		periodicity: Periodicity;
 	};
 
 	const timeSpans: Record<string, TimeSpan> = {
 		'1W': {
 			performanceLabel: 'past week',
 			spanDays: 7,
-			interval: utcHour,
-			periodicity: { period: 1, interval: 1, timeUnit: 'hour' }
+			interval: utcHour
 		},
 		'1M': {
 			performanceLabel: 'past month',
 			spanDays: 30,
-			interval: utcHour.every(4)!,
-			periodicity: { period: 4, interval: 1, timeUnit: 'hour' }
+			interval: utcHour.every(4)!
 		},
 		'3M': {
 			performanceLabel: 'past 90 days',
 			spanDays: 90,
-			interval: utcDay,
-			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+			interval: utcDay
 		},
 		Max: {
 			performanceLabel: 'lifetime',
-			interval: utcDay,
-			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+			interval: utcDay
 		}
 	};
 

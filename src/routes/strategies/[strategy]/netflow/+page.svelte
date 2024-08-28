@@ -63,7 +63,7 @@
 <section class="tvl">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
-	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval, periodicity }}>
+	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval }}>
 		<p slot="subtitle">
 			Learn more about
 			<a class="body-link" href="/glossary/total-equity" target="_blank">TVL</a> and
@@ -78,7 +78,6 @@
 			)}
 			formatValue={formatDollar}
 			{spanDays}
-			{periodicity}
 			studies={['Netflow']}
 		/>
 	</ChartContainer>

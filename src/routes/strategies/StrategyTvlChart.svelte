@@ -15,7 +15,7 @@
 </script>
 
 <div class="strategy-tvl-chart">
-	<ChartContainer title="Strategy TVL" let:timeSpan={{ spanDays, interval, periodicity }}>
+	<ChartContainer title="Strategy TVL" let:timeSpan={{ spanDays, interval }}>
 		<span slot="subtitle">
 			<a class="body-link" target="_blank" href="/glossary/total-value-locked">Total value locked</a>
 			in live strategies
@@ -27,7 +27,6 @@
 				data={normalizeDataForInterval(tvlData ?? [], interval)}
 				formatValue={formatDollar}
 				{spanDays}
-				{periodicity}
 			/>
 		{:else}
 			<div class="error">
