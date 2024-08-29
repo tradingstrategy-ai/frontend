@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type Quote, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import type { ComponentEvents } from 'svelte';
+	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
@@ -18,8 +19,21 @@
 
 	let periodPerformance: MaybeNumber;
 
-	function dataSegmentChange(first: Maybe<Quote>, last: Maybe<Quote>) {
-		periodPerformance = relativeProfitability(first?.Close, last?.Close);
+	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
+
+	function getPeriodPerformance({ first, last, firstTickPosition }: ChartChangeDetail, spanDays: MaybeNumber) {
+		if (!first) return undefined;
+
+		let initialValue = first.Close;
+
+		// if max timeframe OR first tick is after start of displayed chart window
+		// use initial value of 0 instead of first quote value (since chart data does
+		// not always start at 0)
+		if (!spanDays || firstTickPosition > 0) {
+			initialValue = 0;
+		}
+
+		return relativeProfitability(initialValue, last?.Close);
 	}
 
 	const chartClient = getChartClient(fetch, strategy.url);
@@ -50,11 +64,11 @@
 	<MyDeposits {strategy} {chain} {geoBlocked} {ipCountry} />
 
 	<div class="chart">
-		<ChartContainer let:timeSpan={{ spanDays, interval, periodicity }}>
-			<div class="period-performance" slot="title" let:timeSpanKey>
+		<ChartContainer let:timeSpan={{ spanDays, interval }}>
+			<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
 				{#if periodPerformance !== undefined}
 					<UpDownCell value={periodPerformance} formatter={formatProfitability} />
-					{timeSpanKey === 'Max' ? 'Lifetime' : `Last ${timeSpanKey}`}
+					{performanceLabel}
 				{/if}
 			</div>
 
@@ -64,8 +78,7 @@
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
-				{periodicity}
-				{dataSegmentChange}
+				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
 			/>
 		</ChartContainer>
 	</div>

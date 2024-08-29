@@ -41,7 +41,7 @@
 		</p>
 	</div>
 
-	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval, periodicity }}>
+	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval }}>
 		<p slot="subtitle" class="chart-subtitle">
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
@@ -52,7 +52,6 @@
 			data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 			formatValue={formatPercent}
 			{spanDays}
-			{periodicity}
 		/>
 	</ChartContainer>
 

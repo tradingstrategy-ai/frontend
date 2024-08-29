@@ -15,52 +15,52 @@ Display a chart container with title, description and timespan selector.
 
 <script lang="ts">
 	import type { TimeInterval } from 'd3-time';
-	import type { Periodicity } from '$lib/chart';
 	import { utcHour, utcDay } from 'd3-time';
 	import { SegmentedControl } from '$lib/components';
 
 	export let title = '';
 
-	let timeSpanKey = '3M';
-
 	type TimeSpan = {
+		performanceLabel: string;
 		spanDays?: number;
 		interval: TimeInterval;
-		periodicity: Periodicity;
 	};
 
 	const timeSpans: Record<string, TimeSpan> = {
 		'1W': {
+			performanceLabel: 'past week',
 			spanDays: 7,
-			interval: utcHour,
-			periodicity: { period: 1, interval: 1, timeUnit: 'hour' }
+			interval: utcHour
 		},
 		'1M': {
+			performanceLabel: 'past month',
 			spanDays: 30,
-			interval: utcHour.every(4)!,
-			periodicity: { period: 4, interval: 1, timeUnit: 'hour' }
+			interval: utcHour.every(4)!
 		},
 		'3M': {
+			performanceLabel: 'past 90 days',
 			spanDays: 90,
-			interval: utcDay,
-			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+			interval: utcDay
 		},
 		Max: {
-			interval: utcDay,
-			periodicity: { period: 1, interval: 1, timeUnit: 'day' }
+			performanceLabel: 'lifetime',
+			interval: utcDay
 		}
 	};
+
+	let selected = '3M';
+	$: timeSpan = timeSpans[selected];
 </script>
 
 <div class="chart-container" data-css-props>
 	<header>
-		<slot name="title" {timeSpanKey}>
+		<slot name="title" {timeSpan}>
 			<h2>{title}</h2>
 		</slot>
-		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected={timeSpanKey} />
+		<SegmentedControl secondary options={Object.keys(timeSpans)} bind:selected />
 		<slot name="subtitle" />
 	</header>
-	<slot timeSpan={timeSpans[timeSpanKey]} />
+	<slot {timeSpan} />
 </div>
 
 <style lang="postcss">
