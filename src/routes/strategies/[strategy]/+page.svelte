@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
-	import { CIQ } from '$lib/chart/ChartIQ.svelte';
 	import {
 		type Candle,
 		ChartContainer,
@@ -107,29 +106,14 @@
 					};
 				});
 
-				const renderer = chartEngine.setSeriesRenderer(
-					new CIQ.Renderer.Lines({
-						params: {
-							name: 'lines',
-							type: 'line',
-							overChart: true,
-							opacity: 0.5
-						}
-					})
-				);
-
 				chartEngine.addSeries(token.symbol, {
-					// shareYAxis: true,
+					shareYAxis: true,
 					data: quotes,
-					// color: token.color,
-					// opacity: 0.75,
-					fillGaps: true,
-					overChart: false
+					color: token.color,
+					opacity: 0.5,
+					overChart: false,
+					fillGaps: true
 				});
-
-				// https://documentation.chartiq.com/tutorial-Renderers.html#Sample+Code
-				// https://documentation.chartiq.com/CIQ.Renderer.Lines.html
-				renderer.attachSeries(token.symbol, token.color).ready();
 			}
 		};
 	}
