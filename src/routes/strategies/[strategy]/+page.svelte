@@ -16,6 +16,7 @@
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
 	import { fetchPublicApi } from '$lib/helpers/public-api';
+	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -54,23 +55,7 @@
 		return date.toISOString().slice(0, 19);
 	}
 
-	const benchmarkTokens = [
-		{
-			symbol: 'BTC',
-			id: 2697647,
-			color: '#EA983D'
-		},
-		{
-			symbol: 'ETH',
-			id: 2697765,
-			color: '#687DE3'
-		},
-		{
-			symbol: 'MATIC',
-			id: 2854997,
-			color: '#6843D0'
-		}
-	] as const;
+	const benchmarkTokens = getBenchmarkTokens(strategy);
 
 	function init(chartEngine: any) {
 		chartEngine.findHighlights = () => {};
@@ -86,7 +71,7 @@
 			if (!first || !last) return;
 
 			const urlParams = {
-				pair_ids: benchmarkTokens.map((t) => t.id).join(','),
+				pair_ids: benchmarkTokens.map((t) => t.pairId).join(','),
 				exchange_type: 'uniswap_v3',
 				time_bucket,
 				start: dateUrlParam(first.DT),
@@ -96,7 +81,7 @@
 			const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
 
 			for (const token of benchmarkTokens) {
-				const tokenData = benchmarkData[token.id];
+				const tokenData = benchmarkData[token.pairId];
 				const c0 = tokenData[0].c;
 
 				const quotes = tokenData.map(({ ts, c }: Candle) => {
