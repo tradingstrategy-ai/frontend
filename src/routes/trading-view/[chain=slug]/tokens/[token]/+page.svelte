@@ -40,7 +40,7 @@
 	</title>
 	<meta
 		name="description"
-		content={`${token.name} (${token.symbol} ${getTokenStandardName(token.chain_slug)} on ${token.chain_name}`}
+		content={`${token.name} (${token.symbol} ${getTokenStandardName(token.chain_slug)} on ${token.chain_name})`}
 	/>
 </svelte:head>
 
