@@ -30,6 +30,7 @@ Display a peformance line chart for a given (static) dataset.
 	export let studies: any[] = [];
 	let initCallback: Function | undefined = undefined;
 	export { initCallback as init };
+	export let invalidate: any[] = [];
 
 	const dispatch = createEventDispatcher<{
 		change: {
@@ -125,7 +126,7 @@ Display a peformance line chart for a given (static) dataset.
 		{init}
 		options={merge(defaultOptions, options)}
 		{studies}
-		invalidate={[periodicity, hideYAxis]}
+		invalidate={[periodicity, hideYAxis, ...invalidate]}
 		let:cursor
 	>
 		{@const { position, data } = cursor}

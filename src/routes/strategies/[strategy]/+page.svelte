@@ -56,6 +56,7 @@
 	}
 
 	const benchmarkTokens = getBenchmarkTokens(strategy);
+	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
 
 	function init(chartEngine: any) {
 		chartEngine.findHighlights = () => {};
@@ -81,6 +82,15 @@
 			const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
 
 			for (const token of benchmarkTokens) {
+				// remove benchmark series if it exists
+				const series = chartEngine.chart.series[token.symbol];
+				if (series) chartEngine.removeSeries(series);
+
+				// if benchmark not selected, continue to next
+				if (!selectedBenchmarks.includes(token.symbol)) {
+					continue;
+				}
+
 				const tokenData = benchmarkData[token.pairId];
 				const c0 = tokenData[0].c;
 
@@ -139,8 +149,18 @@
 				formatValue={formatPercent}
 				{spanDays}
 				{init}
+				invalidate={[selectedBenchmarks]}
 				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
 			/>
+
+			<footer slot="footer">
+				{#each benchmarkTokens as { symbol, color }}
+					<label style:color>
+						<input type="checkbox" name="benchmarks" value={symbol} bind:group={selectedBenchmarks} />
+						{symbol}
+					</label>
+				{/each}
+			</footer>
 		</ChartContainer>
 	</div>
 
@@ -208,6 +228,26 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-text-extra-light);
+		}
+
+		footer {
+			margin-top: 0.5rem;
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+
+			label {
+				display: flex;
+				gap: 0.25rem;
+				align-items: center;
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--ls-ui-sm);
+			}
+
+			input[type='checkbox'] {
+				color: inherit;
+				accent-color: currentColor;
+			}
 		}
 	}
 </style>
