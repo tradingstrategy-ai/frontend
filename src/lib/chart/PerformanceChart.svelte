@@ -79,7 +79,7 @@ Display a peformance line chart for a given (static) dataset.
 		chartEngine.append('createDataSegment', () => {
 			const dataSegment = chartEngine.getDataSegment();
 			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
-			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true);
 			const direction = determinePriceChangeClass(last?.Close - first?.Close);
 			const firstTickPosition = chartEngine.pixelFromTick(0);
 
@@ -126,7 +126,7 @@ Display a peformance line chart for a given (static) dataset.
 		{init}
 		options={merge(defaultOptions, options)}
 		{studies}
-		invalidate={[periodicity, hideYAxis, ...invalidate]}
+		invalidate={[data, periodicity, hideYAxis, ...invalidate]}
 		let:cursor
 	>
 		{@const { position, data } = cursor}

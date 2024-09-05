@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { CIQ } from 'chartiq/js/standard';
 	import type { ComponentEvents } from 'svelte';
 	import {
 		type Candle,
@@ -57,59 +58,62 @@
 
 	const benchmarkTokens = getBenchmarkTokens(strategy);
 	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
+	let benchmarksUpdating = false;
+
+	async function updateBenchmarks(chartEngine: CIQ.ChartEngine) {
+		const periodicity = chartEngine.getPeriodicity();
+		const time_bucket = periodicityToTimeBucket(periodicity)!;
+
+		const dataSegment = chartEngine.getDataSegment();
+		const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
+		const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true);
+
+		if (!first || !last) return;
+
+		const urlParams = {
+			pair_ids: benchmarkTokens.map((t) => t.pairId).join(','),
+			exchange_type: 'uniswap_v3',
+			time_bucket,
+			start: dateUrlParam(first.DT),
+			end: dateUrlParam(last.DT)
+		};
+
+		const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
+
+		for (const token of benchmarkTokens) {
+			// remove benchmark series if it exists
+			chartEngine.removeSeries(token.symbol);
+
+			// if benchmark not selected, continue to next
+			if (!selectedBenchmarks.includes(token.symbol)) continue;
+
+			const tokenData = benchmarkData[token.pairId];
+			const c0 = tokenData[0].c;
+
+			const quotes = tokenData.map(({ ts, c }: Candle) => ({
+				DT: `${ts}Z`,
+				Close: (c - c0) / c0 + first.Close
+			}));
+
+			chartEngine.addSeries(token.symbol, {
+				shareYAxis: true,
+				data: quotes,
+				color: token.color,
+				opacity: 0.5,
+				overChart: false,
+				fillGaps: true
+			});
+		}
+	}
 
 	function init(chartEngine: any) {
+		// disable series highlighting on-hover
 		chartEngine.findHighlights = () => {};
 
 		return async () => {
-			const periodicity = chartEngine.getPeriodicity();
-			const time_bucket = periodicityToTimeBucket(periodicity)!;
-
-			const dataSegment = chartEngine.getDataSegment();
-			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
-			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', 'last');
-
-			if (!first || !last) return;
-
-			const urlParams = {
-				pair_ids: benchmarkTokens.map((t) => t.pairId).join(','),
-				exchange_type: 'uniswap_v3',
-				time_bucket,
-				start: dateUrlParam(first.DT),
-				end: dateUrlParam(last.DT)
-			};
-
-			const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
-
-			for (const token of benchmarkTokens) {
-				// remove benchmark series if it exists
-				const series = chartEngine.chart.series[token.symbol];
-				if (series) chartEngine.removeSeries(series);
-
-				// if benchmark not selected, continue to next
-				if (!selectedBenchmarks.includes(token.symbol)) {
-					continue;
-				}
-
-				const tokenData = benchmarkData[token.pairId];
-				const c0 = tokenData[0].c;
-
-				const quotes = tokenData.map(({ ts, c }: Candle) => {
-					return {
-						DT: `${ts}Z`,
-						Close: (c - c0) / c0 + first.Close
-					};
-				});
-
-				chartEngine.addSeries(token.symbol, {
-					shareYAxis: true,
-					data: quotes,
-					color: token.color,
-					opacity: 0.5,
-					overChart: false,
-					fillGaps: true
-				});
-			}
+			benchmarksUpdating = true;
+			await updateBenchmarks(chartEngine);
+			benchmarksUpdating = false;
 		};
 	}
 
@@ -144,7 +148,7 @@
 
 			<PerformanceChart
 				options={chartOptions}
-				loading={$chartClient.loading}
+				loading={$chartClient.loading || benchmarksUpdating}
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
