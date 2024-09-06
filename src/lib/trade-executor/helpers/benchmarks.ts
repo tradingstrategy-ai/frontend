@@ -1,5 +1,11 @@
-// Benchmark tokens
-const benchmarks = [
+export type BenchmarkToken = {
+	symbol: string;
+	pairId: number;
+	color: string;
+};
+
+// Curated list of available benchmark tokens (BTC, ETH, MATIC)
+const benchmarkTokens: BenchmarkToken[] = [
 	// BTC benchmark: WBTC-USDC (0.3%) on Uniswap v3 on Ethereum
 	// https://tradingstrategy.ai/trading-view/ethereum/uniswap-v3/wbtc-usdc-fee-30
 	{
@@ -23,11 +29,11 @@ const benchmarks = [
 		pairId: 2854997,
 		color: '#6843D0'
 	}
-] as const;
+];
 
 // FIXME: using strategy id hack to infer list of tokens based on strategy ID.
 // In the future this should be provided by strategy configuration.
 export function getBenchmarkTokens({ id }: { id: string }) {
 	const parts = id.split('-');
-	return benchmarks.filter((token) => parts.includes(token.symbol.toLowerCase()));
+	return benchmarkTokens.filter((token) => parts.includes(token.symbol.toLowerCase()));
 }

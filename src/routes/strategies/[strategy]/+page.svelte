@@ -3,10 +3,12 @@
 	import type { ComponentEvents } from 'svelte';
 	import {
 		type Candle,
-		ChartContainer,
-		PerformanceChart,
+		type QuoteFeed,
+		quoteFeed,
 		normalizeDataForInterval,
-		periodicityToTimeBucket
+		periodicityToTimeBucket,
+		ChartContainer,
+		PerformanceChart
 	} from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
@@ -16,8 +18,7 @@
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
-	import { fetchPublicApi } from '$lib/helpers/public-api';
-	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
+	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -52,68 +53,75 @@
 		source: 'live_trading'
 	});
 
-	function dateUrlParam(date: Date): string {
-		return date.toISOString().slice(0, 19);
-	}
-
 	const benchmarkTokens = getBenchmarkTokens(strategy);
 	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
-	let benchmarksUpdating = false;
+	let benchmarksUpdating = 0;
 
-	async function updateBenchmarks(chartEngine: CIQ.ChartEngine) {
+	function updateBenchmark(chartEngine: CIQ.ChartEngine, feed: QuoteFeed, token: BenchmarkToken) {
+		// remove benchmark series if it exists
+		chartEngine.removeSeries(token.symbol);
+
+		// abort if benchmark not selected
+		if (!selectedBenchmarks.includes(token.symbol)) return;
+
+		benchmarksUpdating++;
+
 		const periodicity = chartEngine.getPeriodicity();
-		const time_bucket = periodicityToTimeBucket(periodicity)!;
+		const timeBucket = periodicityToTimeBucket(periodicity)!;
 
-		const dataSegment = chartEngine.getDataSegment();
-		const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
-		const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true);
-
-		if (!first || !last) return;
-
-		const urlParams = {
-			pair_ids: benchmarkTokens.map((t) => t.pairId).join(','),
-			exchange_type: 'uniswap_v3',
-			time_bucket,
-			start: dateUrlParam(first.DT),
-			end: dateUrlParam(last.DT)
+		const symbolObject = {
+			symbol: token.symbol,
+			urlParams: { pair_id: token.pairId, exchange_type: 'uniswap_v3', time_bucket: timeBucket }
 		};
 
-		const benchmarkData = await fetchPublicApi(fetch, 'candles', urlParams);
+		chartEngine.attachQuoteFeed(feed, {});
 
-		for (const token of benchmarkTokens) {
-			// remove benchmark series if it exists
-			chartEngine.removeSeries(token.symbol);
-
-			// if benchmark not selected, continue to next
-			if (!selectedBenchmarks.includes(token.symbol)) continue;
-
-			const tokenData = benchmarkData[token.pairId];
-			const c0 = tokenData[0].c;
-
-			const quotes = tokenData.map(({ ts, c }: Candle) => ({
-				DT: `${ts}Z`,
-				Close: (c - c0) / c0 + first.Close
-			}));
-
-			chartEngine.addSeries(token.symbol, {
+		chartEngine.addSeries(
+			token.symbol,
+			{
+				symbolObject,
 				shareYAxis: true,
-				data: quotes,
 				color: token.color,
 				opacity: 0.5,
 				overChart: false,
 				fillGaps: true
-			});
-		}
+			},
+			() => {
+				benchmarksUpdating--;
+			}
+		);
+
+		chartEngine.detachQuoteFeed(feed);
 	}
 
 	function init(chartEngine: any) {
 		// disable series highlighting on-hover
 		chartEngine.findHighlights = () => {};
 
-		return async () => {
-			benchmarksUpdating = true;
-			await updateBenchmarks(chartEngine);
-			benchmarksUpdating = false;
+		// create quote feed to be used for updating benchmarks
+		const feed = quoteFeed('candles', { candle_type: 'price' }, (data: Record<string, Candle[]>) => {
+			const dataSegment = chartEngine.getDataSegment();
+			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close')!;
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true)!;
+
+			let candles = Object.values(data)[0] ?? [];
+
+			candles = candles.filter(({ ts }) => {
+				const d = new Date(`${ts}Z`);
+				return d >= first.DT && d <= last.DT;
+			});
+
+			const c0 = candles[0].c;
+
+			return candles.map(({ ts, c }: Candle) => ({
+				DT: `${ts}Z`,
+				Close: (c - c0) / c0 + first.Close
+			}));
+		});
+
+		return () => {
+			benchmarksUpdating = 0;
+			benchmarkTokens.forEach((token) => updateBenchmark(chartEngine, feed, token));
 		};
 	}
 
@@ -148,7 +156,7 @@
 
 			<PerformanceChart
 				options={chartOptions}
-				loading={$chartClient.loading || benchmarksUpdating}
+				loading={$chartClient.loading || benchmarksUpdating > 0}
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
