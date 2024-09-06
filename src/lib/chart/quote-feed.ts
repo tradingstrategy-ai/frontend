@@ -67,7 +67,7 @@ export function quoteFeed(
 	let lastRequest = {};
 
 	async function fetchData(_: string, startDate: Date, endDate: Date, params: any, callback: Function) {
-		const { symbolObject } = params.stx.chart;
+		const { symbolObject } = params;
 
 		const urlParams = {
 			...feedParams,

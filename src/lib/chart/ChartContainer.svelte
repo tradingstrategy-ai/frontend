@@ -61,6 +61,7 @@ Display a chart container with title, description and timespan selector.
 		<slot name="subtitle" />
 	</header>
 	<slot {timeSpan} />
+	<slot name="footer" />
 </div>
 
 <style lang="postcss">

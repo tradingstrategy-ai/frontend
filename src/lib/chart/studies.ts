@@ -2,7 +2,9 @@
  * Custom Volume Underlay study. See:
  * https://documentation.chartiq.com/tutorial-Using%20and%20Customizing%20Studies%20-%20Creating%20New%20Studies.html
  */
-const [bullish, bearish] = ['#22b554', '#f62f2f'];
+
+const bullish = '#22b554';
+const bearish = '#f62f2f';
 
 export function volumeStudy(CIQ) {
 	return {

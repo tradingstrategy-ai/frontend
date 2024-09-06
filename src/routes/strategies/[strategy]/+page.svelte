@@ -1,6 +1,16 @@
 <script lang="ts">
+	import type { CIQ } from 'chartiq/js/standard';
 	import type { ComponentEvents } from 'svelte';
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import {
+		type Candle,
+		type Quote,
+		type QuoteFeed,
+		quoteFeed,
+		normalizeDataForInterval,
+		periodicityToTimeBucket,
+		ChartContainer,
+		PerformanceChart
+	} from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
 	import { MyDeposits } from '$lib/wallet';
 	import { UpDownCell } from '$lib/components';
@@ -9,6 +19,7 @@
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
+	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -17,7 +28,7 @@
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
-	let periodPerformance: MaybeNumber;
+	const periodPerformance: Record<string, MaybeNumber> = {};
 
 	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
 
@@ -43,6 +54,93 @@
 		source: 'live_trading'
 	});
 
+	const benchmarkTokens = getBenchmarkTokens(strategy);
+	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
+	let benchmarksUpdating = 0;
+
+	$: loading = $chartClient.loading || benchmarksUpdating > 0;
+
+	function updateBenchmark(chartEngine: CIQ.ChartEngine, feed: QuoteFeed, token: BenchmarkToken) {
+		// remove benchmark series if it exists
+		chartEngine.removeSeries(token.symbol);
+
+		// clear benchmark period performance and abort if benchmark not selected
+		if (!selectedBenchmarks.includes(token.symbol)) {
+			periodPerformance[token.symbol] = undefined;
+			return;
+		}
+
+		benchmarksUpdating++;
+
+		const periodicity = chartEngine.getPeriodicity();
+		const timeBucket = periodicityToTimeBucket(periodicity)!;
+
+		const symbolObject = {
+			symbol: token.symbol,
+			urlParams: { pair_id: token.pairId, exchange_type: 'uniswap_v3', time_bucket: timeBucket }
+		};
+
+		chartEngine.attachQuoteFeed(feed, {});
+
+		chartEngine.addSeries(
+			token.symbol,
+			{
+				symbolObject,
+				shareYAxis: true,
+				color: token.color,
+				opacity: 0.5,
+				overChart: false,
+				fillGaps: true
+			},
+			(_: any, { lastQuote }: { lastQuote?: Quote }) => {
+				benchmarksUpdating--;
+
+				// update benchmark period performance
+				if (lastQuote) {
+					periodPerformance[token.symbol] = lastQuote?.percentChange;
+				}
+			}
+		);
+
+		chartEngine.detachQuoteFeed(feed);
+	}
+
+	function init(chartEngine: any) {
+		// disable series highlighting on-hover
+		chartEngine.findHighlights = () => {};
+
+		// create quote feed to be used for updating benchmarks
+		const feed = quoteFeed('candles', { candle_type: 'price' }, (data: Record<string, Candle[]>) => {
+			const dataSegment = chartEngine.getDataSegment();
+			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close')!;
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true)!;
+
+			let candles = Object.values(data)[0] ?? [];
+
+			// filter candles to match date range of strategy series
+			candles = candles.filter(({ ts }) => {
+				const d = new Date(`${ts}Z`);
+				return d >= first.DT && d <= last.DT;
+			});
+
+			const initialValue = candles[0].c;
+
+			return candles.map(({ ts, c }: Candle) => {
+				const percentChange = (c - initialValue) / initialValue;
+				return {
+					DT: `${ts}Z`,
+					percentChange: percentChange,
+					Close: percentChange + first.Close
+				};
+			});
+		});
+
+		return () => {
+			benchmarksUpdating = 0;
+			benchmarkTokens.forEach((token) => updateBenchmark(chartEngine, feed, token));
+		};
+	}
+
 	const chartOptions = {
 		controls: { home: null },
 		allowScroll: false,
@@ -66,20 +164,34 @@
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval }}>
 			<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
-				{#if periodPerformance !== undefined}
-					<UpDownCell value={periodPerformance} formatter={formatProfitability} />
+				{#if periodPerformance[strategy.id] !== undefined}
+					<UpDownCell value={periodPerformance[strategy.id]} formatter={formatProfitability} />
 					{performanceLabel}
 				{/if}
 			</div>
 
 			<PerformanceChart
 				options={chartOptions}
-				loading={$chartClient.loading}
+				{loading}
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
-				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
+				{init}
+				invalidate={[selectedBenchmarks]}
+				on:change={(e) => (periodPerformance[strategy.id] = getPeriodPerformance(e.detail, spanDays))}
 			/>
+
+			<footer class="benchmark-tokens" slot="footer">
+				{#each benchmarkTokens as { symbol, color }}
+					<label style:color>
+						<input type="checkbox" name="benchmarks" value={symbol} bind:group={selectedBenchmarks} />
+						{symbol}
+						<span class="performance" class:skeleton={loading && selectedBenchmarks.includes(symbol)}>
+							{formatProfitability(periodPerformance[symbol])}
+						</span>
+					</label>
+				{/each}
+			</footer>
 		</ChartContainer>
 	</div>
 
@@ -147,6 +259,32 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-text-extra-light);
+		}
+
+		.benchmark-tokens {
+			margin-top: 0.75rem;
+			margin-bottom: -0.25rem;
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+
+			label {
+				display: flex;
+				gap: 0.25rem;
+				align-items: center;
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--ls-ui-sm);
+			}
+
+			input[type='checkbox'] {
+				color: inherit;
+				accent-color: currentColor;
+			}
+
+			.performance {
+				font: var(--f-ui-sm-roman);
+				min-width: 4ch;
+			}
 		}
 	}
 </style>
