@@ -3,6 +3,7 @@
 	import type { ComponentEvents } from 'svelte';
 	import {
 		type Candle,
+		type Quote,
 		type QuoteFeed,
 		quoteFeed,
 		normalizeDataForInterval,
@@ -27,7 +28,7 @@
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
-	let periodPerformance: MaybeNumber;
+	const periodPerformance: Record<string, MaybeNumber> = {};
 
 	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
 
@@ -57,12 +58,17 @@
 	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
 	let benchmarksUpdating = 0;
 
+	$: loading = $chartClient.loading || benchmarksUpdating > 0;
+
 	function updateBenchmark(chartEngine: CIQ.ChartEngine, feed: QuoteFeed, token: BenchmarkToken) {
 		// remove benchmark series if it exists
 		chartEngine.removeSeries(token.symbol);
 
-		// abort if benchmark not selected
-		if (!selectedBenchmarks.includes(token.symbol)) return;
+		// clear benchmark period performance and abort if benchmark not selected
+		if (!selectedBenchmarks.includes(token.symbol)) {
+			periodPerformance[token.symbol] = undefined;
+			return;
+		}
 
 		benchmarksUpdating++;
 
@@ -86,8 +92,11 @@
 				overChart: false,
 				fillGaps: true
 			},
-			() => {
+			(_: any, { id, lastQuote }: { id: string; lastQuote?: Quote }) => {
 				benchmarksUpdating--;
+				if (lastQuote) {
+					periodPerformance[id] = lastQuote?.periodChange;
+				}
 			}
 		);
 
@@ -113,10 +122,14 @@
 
 			const c0 = candles[0].c;
 
-			return candles.map(({ ts, c }: Candle) => ({
-				DT: `${ts}Z`,
-				Close: (c - c0) / c0 + first.Close
-			}));
+			return candles.map(({ ts, c }: Candle) => {
+				const periodChange = (c - c0) / c0;
+				return {
+					DT: `${ts}Z`,
+					periodChange,
+					Close: periodChange + first.Close
+				};
+			});
 		});
 
 		return () => {
@@ -148,28 +161,31 @@
 	<div class="chart">
 		<ChartContainer let:timeSpan={{ spanDays, interval }}>
 			<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
-				{#if periodPerformance !== undefined}
-					<UpDownCell value={periodPerformance} formatter={formatProfitability} />
+				{#if periodPerformance[strategy.id] !== undefined}
+					<UpDownCell value={periodPerformance[strategy.id]} formatter={formatProfitability} />
 					{performanceLabel}
 				{/if}
 			</div>
 
 			<PerformanceChart
 				options={chartOptions}
-				loading={$chartClient.loading || benchmarksUpdating > 0}
+				{loading}
 				data={normalizeDataForInterval($chartClient.data ?? [], interval)}
 				formatValue={formatPercent}
 				{spanDays}
 				{init}
 				invalidate={[selectedBenchmarks]}
-				on:change={(e) => (periodPerformance = getPeriodPerformance(e.detail, spanDays))}
+				on:change={(e) => (periodPerformance[strategy.id] = getPeriodPerformance(e.detail, spanDays))}
 			/>
 
-			<footer slot="footer">
+			<footer class="benchmark-tokens" slot="footer">
 				{#each benchmarkTokens as { symbol, color }}
 					<label style:color>
 						<input type="checkbox" name="benchmarks" value={symbol} bind:group={selectedBenchmarks} />
 						{symbol}
+						<span class="performance" class:skeleton={loading && selectedBenchmarks.includes(symbol)}>
+							{formatProfitability(periodPerformance[symbol])}
+						</span>
 					</label>
 				{/each}
 			</footer>
@@ -242,8 +258,9 @@
 			color: var(--c-text-extra-light);
 		}
 
-		footer {
-			margin-top: 0.5rem;
+		.benchmark-tokens {
+			margin-top: 0.75rem;
+			margin-bottom: -0.25rem;
 			display: flex;
 			gap: 1rem;
 			justify-content: center;
@@ -259,6 +276,11 @@
 			input[type='checkbox'] {
 				color: inherit;
 				accent-color: currentColor;
+			}
+
+			.performance {
+				font: var(--f-ui-sm-roman);
+				min-width: 4ch;
 			}
 		}
 	}
