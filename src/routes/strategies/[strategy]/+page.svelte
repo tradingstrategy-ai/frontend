@@ -187,7 +187,7 @@
 						<input type="checkbox" name="benchmarks" value={symbol} bind:group={selectedBenchmarks} />
 						{symbol}
 						<span class="performance" class:skeleton={loading && selectedBenchmarks.includes(symbol)}>
-							{formatProfitability(periodPerformance[symbol])}
+							{formatPercent(periodPerformance[symbol], 1, 1, { signDisplay: 'exceptZero' })}
 						</span>
 					</label>
 				{/each}
