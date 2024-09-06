@@ -92,10 +92,12 @@
 				overChart: false,
 				fillGaps: true
 			},
-			(_: any, { id, lastQuote }: { id: string; lastQuote?: Quote }) => {
+			(_: any, { lastQuote }: { lastQuote?: Quote }) => {
 				benchmarksUpdating--;
+
+				// update benchmark period performance
 				if (lastQuote) {
-					periodPerformance[id] = lastQuote?.periodChange;
+					periodPerformance[token.symbol] = lastQuote?.percentChange;
 				}
 			}
 		);
@@ -115,19 +117,20 @@
 
 			let candles = Object.values(data)[0] ?? [];
 
+			// filter candles to match date range of strategy series
 			candles = candles.filter(({ ts }) => {
 				const d = new Date(`${ts}Z`);
 				return d >= first.DT && d <= last.DT;
 			});
 
-			const c0 = candles[0].c;
+			const initialValue = candles[0].c;
 
 			return candles.map(({ ts, c }: Candle) => {
-				const periodChange = (c - c0) / c0;
+				const percentChange = (c - initialValue) / initialValue;
 				return {
 					DT: `${ts}Z`,
-					periodChange,
-					Close: periodChange + first.Close
+					percentChange: percentChange,
+					Close: percentChange + first.Close
 				};
 			});
 		});
