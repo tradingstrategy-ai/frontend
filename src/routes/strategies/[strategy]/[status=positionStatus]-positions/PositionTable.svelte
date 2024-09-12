@@ -72,7 +72,7 @@
 		table.column({
 			header: 'Frozen on',
 			id: 'frozen_on',
-			accessor: (position) => position.lastTrade?.direction
+			accessor: (position) => position.lastTrade?.directionLabel
 		}),
 		table.column({
 			header: 'Value',

@@ -6,7 +6,6 @@
  *
  */
 import type { TradingPairIdentifier } from './identifier';
-import { TradeDirection } from './trade-info';
 
 const kindShortLabels = {
 	spot_market_hold: 'spot',
@@ -57,17 +56,6 @@ const tradingPairInfoPrototype = {
 
 	get kindShortLabel() {
 		return kindShortLabels[this.kind];
-	},
-
-	getDirectionLabel(direction: TradeDirection) {
-		if (direction === TradeDirection.Enter) {
-			return this.isCreditSupply ? 'Supply' : 'Buy';
-		}
-		return this.isCreditSupply ? 'Withdraw' : 'Sell';
-	},
-
-	getActionLabel(direction: TradeDirection) {
-		return `${this.getDirectionLabel(direction)} ${this.actionSymbol}`;
 	}
 } satisfies ThisType<TradingPairIdentifier & Record<string, any>>;
 

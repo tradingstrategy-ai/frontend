@@ -8,10 +8,7 @@
 import type { TradeExecution } from './trade';
 import type { USDollarAmount } from './utility-types';
 
-export enum TradeDirection {
-	Enter,
-	Exit
-}
+export type TradeDirection = 'enter' | 'exit';
 
 /**
  * Prototype object that can be applied to a TradeExecution object to enrich
@@ -49,8 +46,15 @@ const tradeInfoPrototype = {
 	},
 
 	// Determine trade direction (enter|exit) based on planned_quantity
-	get direction() {
-		return this.planned_quantity > 0 ? TradeDirection.Enter : TradeDirection.Exit;
+	get direction(): TradeDirection {
+		return this.planned_quantity > 0 ? 'enter' : 'exit';
+	},
+
+	get directionLabel() {
+		if (this.isCreditTrade) {
+			return this.direction === 'enter' ? 'Supply' : 'Withdraw';
+		}
+		return this.direction === 'enter' ? 'Buy' : 'Sell';
 	},
 
 	get pricingPair() {
@@ -58,7 +62,7 @@ const tradeInfoPrototype = {
 	},
 
 	get actionLabel() {
-		return this.pair.getActionLabel(this.direction);
+		return `${this.directionLabel} ${this.pair.actionSymbol}`;
 	},
 
 	get isCreditTrade() {
@@ -78,10 +82,10 @@ const tradeInfoPrototype = {
 	},
 
 	get positionImpact() {
-		// NOTE: order of flags is significant since trades may have multiple flags
-		for (const flag of ['open', 'close', 'increase', 'reduce'] as const) {
-			if (this.flags?.includes(flag)) return flag;
-		}
+		// order of flags is significant since trades may have multiple flags
+		const impacts = ['open', 'close', 'increase', 'reduce'] as const;
+		// return first matching impact flag (if any)
+		return impacts.find((flag) => this.flags?.includes(flag));
 	}
 } satisfies ThisType<TradeExecution & Record<string, any>>;
 
