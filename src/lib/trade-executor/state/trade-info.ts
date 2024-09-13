@@ -16,13 +16,9 @@ export const TradeDirections = {
 
 export type TradeDirection = (typeof TradeDirections)[keyof typeof TradeDirections];
 
-/**
- * Prototype object that can be applied to a TradeExecution object to enrich
- * it with additional properties. Yields an object with all the properties
- * (and types) of the original plus the inherited prototype properties/types
- * (which is non-trivial with TypeScript classes)
- */
-const tradeInfoPrototype = {
+export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
+	...base,
+
 	// Estimate the USD value of trade
 	// see: get_executed_value in trade.py
 	get executedValue(): USDollarAmount {
@@ -114,13 +110,6 @@ const tradeInfoPrototype = {
 		// return first matching impact flag (if any)
 		return impacts.find((flag) => this.flags?.includes(flag));
 	}
-} satisfies ThisType<TradeExecution & Record<string, any>>;
+});
 
-export type TradeInfo = TradeExecution & typeof tradeInfoPrototype;
-
-/**
- * Factory function to create a TradeInfo object
- */
-export function createTradeInfo(data: TradeExecution): TradeInfo {
-	return Object.assign(Object.create(tradeInfoPrototype), data);
-}
+export type TradeInfo = ReturnType<typeof createTradeInfo<TradeExecution>>;

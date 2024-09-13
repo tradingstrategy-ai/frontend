@@ -57,17 +57,11 @@ export const tradingPositionInfoTooltips = {
 		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
 };
 
-type TradingPositionWithStats = TradingPosition & {
-	stats: PositionStatistics[];
-};
+export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({
+	...base,
 
-/**
- * Prototype object that can be applied to a TradingPosition object to enrich
- * it with additional properties. Yields an object with all the properties
- * (and types) of the original plus the inherited prototype properties/types
- * (which is non-trivial with TypeScript classes)
- */
-const tradingPositionInfoPrototype = {
+	stats,
+
 	tooltip: tradingPositionInfoTooltips,
 
 	get durationSeconds() {
@@ -144,7 +138,7 @@ const tradingPositionInfoPrototype = {
 	 */
 	get valueAtClose() {
 		if (this.closed) {
-			return this.lastTrade.executedValue;
+			return this.lastTrade!.executedValue;
 		}
 	},
 
@@ -216,6 +210,7 @@ const tradingPositionInfoPrototype = {
 		return this.latestStats?.profitability;
 	},
 
+	// return sum of all trade values for a given direction (enter = 1 or exit = -1)
 	valueForTradeDirection(direction: TradeDirection) {
 		return this.trades.reduce((acc, t) => {
 			if (t.direction === direction) acc += t.executedValue;
@@ -331,20 +326,9 @@ const tradingPositionInfoPrototype = {
 	get isTest() {
 		return this.trades.some((t) => t.isTest);
 	}
-} satisfies ThisType<TradingPositionWithStats & Record<string, any>>;
+});
 
-export type TradingPositionInfo = TradingPositionWithStats & typeof tradingPositionInfoPrototype;
-
-/**
- * Factory function to create a TradingPositionInfo object
- */
-export function createTradingPositionInfo(
-	position: TradingPosition,
-	stats: PositionStatistics[] = []
-): TradingPositionInfo {
-	const positionInfo = Object.create(tradingPositionInfoPrototype);
-	return Object.assign(positionInfo, position, { stats });
-}
+export type TradingPositionInfo = ReturnType<typeof createTradingPositionInfo<TradingPosition>>;
 
 /**
  * Get a single TradingPositionInfo object from state for a given status and id
@@ -359,7 +343,7 @@ export function getTradingPositionInfo(state: State, status: PositionStatus, id:
 /**
  * Get all TradingPositionInfo objects from state for a given status
  */
-export function getTradingPositionInfoArray(state: State, status: PositionStatus): TradingPositionInfo[] {
+export function getTradingPositionInfoArray(state: State, status: PositionStatus) {
 	const positions = state.portfolio[`${status}_positions`];
 	return Object.values(positions).map((position) => {
 		const stats = state.stats.positions[position.position_id];
