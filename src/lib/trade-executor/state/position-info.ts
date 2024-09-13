@@ -10,6 +10,7 @@ import type { State } from './state';
 import type { PositionStatistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
 import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
+import type { TradeDirection } from './trade-info';
 
 /**
  * English tooltips for the datapoints
@@ -213,6 +214,43 @@ const tradingPositionInfoPrototype = {
 
 	get profitability() {
 		return this.latestStats?.profitability;
+	},
+
+	valueForTradeDirection(direction: TradeDirection) {
+		return this.trades.reduce((acc, t) => {
+			if (t.direction === direction) acc += t.executedValue;
+			return acc;
+		}, 0);
+	},
+
+	get totalEnteredValue() {
+		return this.valueForTradeDirection('enter');
+	},
+
+	get totalExitedValue() {
+		return this.valueForTradeDirection('exit');
+	},
+
+	get profitabilityFromTradeTotals() {
+		if (!this.closed) return;
+
+		const totalEntered = this.totalEnteredValue;
+		const totalExited = this.totalExitedValue;
+		const profitability = (totalExited - totalEntered) / totalEntered;
+		return Number.isFinite(profitability) ? profitability : 0;
+	},
+
+	get hasInconsistentProfitability() {
+		const fromStats = this.profitability;
+		const fromTradeTotals = this.profitabilityFromTradeTotals;
+
+		if (!this.closed || fromStats === undefined || fromTradeTotals === undefined) {
+			return false;
+		}
+
+		const difference = fromTradeTotals - fromStats;
+		const percentChange = difference / fromStats;
+		return Math.abs(percentChange) > 0.01 && Math.abs(difference) > 0.001;
 	},
 
 	get candleTimeBucket(): TimeBucket {
