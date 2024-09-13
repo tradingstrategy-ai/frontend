@@ -70,12 +70,12 @@
 					Profitability value from entry/exit trades:
 					<strong>{formatPercent(position.profitabilityFromTradeTotals, 2)}</strong>
 					<ul>
-						<li>Sum of entry trades: <strong>${formatNumber(position.totalEnteredValue)}</strong></li>
-						<li>Sum of exit trades: <strong>${formatNumber(position.totalExitedValue)}</strong></li>
+						<li>sum of entry trades: <strong>${formatNumber(position.totalEnteredValue)}</strong></li>
+						<li>sum of exit trades: <strong>${formatNumber(position.totalExitedValue)}</strong></li>
 						<li>
-							(${formatNumber(position.totalExitedValue)} - ${formatNumber(position.totalEnteredValue)}) / ${formatNumber(
-								position.totalEnteredValue
-							)} =
+							(${formatNumber(position.totalExitedValue)} - ${formatNumber(position.totalEnteredValue)})
+							{#if position.isShortPosition}&times; -1{/if}
+							/ ${formatNumber(position.totalEnteredValue)} =
 							<strong>{formatPercent(position.profitabilityFromTradeTotals, 2)}</strong>
 						</li>
 					</ul>

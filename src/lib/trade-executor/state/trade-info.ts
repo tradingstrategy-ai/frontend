@@ -8,7 +8,13 @@
 import type { TradeExecution } from './trade';
 import type { USDollarAmount } from './utility-types';
 
-export type TradeDirection = 'enter' | 'exit';
+export const TradeDirections = {
+	Enter: 1,
+	Exit: -1,
+	Unknown: 0
+} as const;
+
+export type TradeDirection = (typeof TradeDirections)[keyof typeof TradeDirections];
 
 /**
  * Prototype object that can be applied to a TradeExecution object to enrich
@@ -45,16 +51,33 @@ const tradeInfoPrototype = {
 		}
 	},
 
-	// Determine trade direction (enter|exit) based on planned_quantity
-	get direction(): TradeDirection {
-		return this.planned_quantity > 0 ? 'enter' : 'exit';
+	// Determine trade direction based on planned_quantity +/-
+	// (reversed for short positions)
+	get direction() {
+		let dir = Math.sign(this.planned_quantity);
+		if (this.isShortTrade) dir *= -1;
+		return dir as TradeDirection;
 	},
 
 	get directionLabel() {
+		// reverse Buy/Sell labels for short trades
+		const dir = (this.direction * (this.isShortTrade ? -1 : 1)) as TradeDirection;
+
+		// Credit supply labels
 		if (this.isCreditTrade) {
-			return this.direction === 'enter' ? 'Supply' : 'Withdraw';
+			return {
+				[TradeDirections.Enter]: 'Supply',
+				[TradeDirections.Exit]: 'Withdraw',
+				[TradeDirections.Unknown]: 'Unknown'
+			}[dir];
 		}
-		return this.direction === 'enter' ? 'Buy' : 'Sell';
+
+		// All other trade types
+		return {
+			[TradeDirections.Enter]: 'Buy',
+			[TradeDirections.Exit]: 'Sell',
+			[TradeDirections.Unknown]: 'Unknown'
+		}[dir];
 	},
 
 	get pricingPair() {
@@ -67,6 +90,10 @@ const tradeInfoPrototype = {
 
 	get isCreditTrade() {
 		return this.pair.isCreditSupply;
+	},
+
+	get isShortTrade() {
+		return this.pair.isShort;
 	},
 
 	get failed() {

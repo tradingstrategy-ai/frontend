@@ -10,7 +10,7 @@ import type { State } from './state';
 import type { PositionStatistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
 import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
-import type { TradeDirection } from './trade-info';
+import { type TradeDirection, TradeDirections } from './trade-info';
 
 /**
  * English tooltips for the datapoints
@@ -224,11 +224,11 @@ const tradingPositionInfoPrototype = {
 	},
 
 	get totalEnteredValue() {
-		return this.valueForTradeDirection('enter');
+		return this.valueForTradeDirection(TradeDirections.Enter);
 	},
 
 	get totalExitedValue() {
-		return this.valueForTradeDirection('exit');
+		return this.valueForTradeDirection(TradeDirections.Exit);
 	},
 
 	get profitabilityFromTradeTotals() {
@@ -236,7 +236,8 @@ const tradingPositionInfoPrototype = {
 
 		const totalEntered = this.totalEnteredValue;
 		const totalExited = this.totalExitedValue;
-		const profitability = (totalExited - totalEntered) / totalEntered;
+		let profitability = (totalExited - totalEntered) / totalEntered;
+		if (this.isShortPosition) profitability *= -1;
 		return Number.isFinite(profitability) ? profitability : 0;
 	},
 
@@ -259,6 +260,10 @@ const tradingPositionInfoPrototype = {
 
 	get isCreditPosition() {
 		return this.pair.isCreditSupply;
+	},
+
+	get isShortPosition() {
+		return this.pair.isShort;
 	},
 
 	get interestRateAtOpen() {

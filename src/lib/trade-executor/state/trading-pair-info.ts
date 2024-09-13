@@ -39,6 +39,10 @@ const tradingPairInfoPrototype = {
 		return this.kind === 'credit_supply';
 	},
 
+	get isShort() {
+		return this.kind === 'lending_protocol_short';
+	},
+
 	get symbol() {
 		const { base, quote } = this.pricingPair;
 		if (this.isCreditSupply) {
