@@ -1,8 +1,8 @@
 import { fixture } from './utility-type-fixtures';
-import { type TradeExecution, tradeExecutionSchema } from './trade';
+import { tradeExecutionSchema } from './trade';
 import { type TradeInfo, TradeDirections, createTradeInfo } from './trade-info';
 
-const tradeExecution = fixture.fromSchema(tradeExecutionSchema, { seed: 1 });
+const tradeExecution = fixture.fromSchema(tradeExecutionSchema);
 
 describe('a spot long position trade', () => {
 	let tradeInfo: TradeInfo;

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import { positionTooltips } from 'trade-executor/state/position-tooltips';
 	import { Timestamp, Tooltip } from '$lib/components';
 	import { formatDuration, formatPercent, formatPrice, formatTokenAmount } from '$lib/helpers/formatters';
 
@@ -36,7 +37,7 @@
 							<Timestamp date={position.opened_at} withTime />
 						</span>
 						<span slot="popup">
-							{position.tooltip.opened_at}
+							{positionTooltips.opened_at}
 						</span>
 					</Tooltip>
 				</td>
@@ -49,7 +50,7 @@
 								<Timestamp date={position.closed_at} withTime />
 							</span>
 							<span slot="popup">
-								{position.tooltip.closed_at}
+								{positionTooltips.closed_at}
 							</span>
 						</Tooltip>
 					{/if}
@@ -60,7 +61,7 @@
 							+{formatDuration(position.durationSeconds)}
 						</span>
 						<span slot="popup">
-							{position.tooltip.durationSeconds}
+							{positionTooltips.durationSeconds}
 						</span>
 					</Tooltip>
 				</td>
@@ -75,7 +76,7 @@
 							{position.pair.actionSymbol}
 						</span>
 						<span slot="popup">
-							{position.tooltip.quantityAtOpen}
+							{positionTooltips.quantityAtOpen}
 						</span>
 					</Tooltip>
 				</td>
@@ -86,7 +87,7 @@
 							{position.pair.actionSymbol}
 						</span>
 						<span slot="popup">
-							{position.tooltip[quantityProp]}
+							{positionTooltips[quantityProp]}
 						</span>
 					</Tooltip>
 				</td>
@@ -105,7 +106,7 @@
 								{formatPercent(position.interestRateAtOpen)}
 							</span>
 							<span slot="popup">
-								{position.tooltip.interestRateAtOpen}
+								{positionTooltips.interestRateAtOpen}
 							</span>
 						</Tooltip>
 					</td>
@@ -119,7 +120,7 @@
 								{/if}
 							</span>
 							<span slot="popup">
-								{position.tooltip[interestRateProp]}
+								{positionTooltips[interestRateProp]}
 							</span>
 						</Tooltip>
 					</td>
@@ -141,7 +142,7 @@
 								{formatPrice(position.openPrice)}
 							</span>
 							<span slot="popup">
-								{position.tooltip.openPrice}
+								{positionTooltips.openPrice}
 							</span>
 						</Tooltip>
 					</td>
@@ -151,7 +152,7 @@
 								{formatPrice(position[priceProp])}
 							</span>
 							<span slot="popup">
-								{position.tooltip[priceProp]}
+								{positionTooltips[priceProp]}
 							</span>
 						</Tooltip>
 					</td>
@@ -169,7 +170,7 @@
 							{formatPrice(position.valueAtOpen)}
 						</span>
 						<span slot="popup">
-							{position.tooltip.valueAtOpen}
+							{positionTooltips.valueAtOpen}
 						</span>
 					</Tooltip>
 				</td>
@@ -179,7 +180,7 @@
 							{formatPrice(position[valueProp])}
 						</span>
 						<span slot="popup">
-							{position.tooltip[valueProp]}
+							{positionTooltips[valueProp]}
 						</span>
 					</Tooltip>
 				</td>
