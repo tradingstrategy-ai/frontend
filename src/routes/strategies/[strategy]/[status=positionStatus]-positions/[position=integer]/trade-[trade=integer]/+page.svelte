@@ -52,7 +52,7 @@
 	</PageHeading>
 
 	{#if trade.failed}
-		<Alert size="md" status="error" title="Trade execution failed">
+		<Alert size="sm" status="error" title="Trade execution failed">
 			<ul class="error-details">
 				<li>Failure reason: <i>{trade.failedTx?.revert_reason ?? 'unknown'}</i></li>
 				{#if trade.failedTx?.tx_hash}

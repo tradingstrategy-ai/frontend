@@ -9,65 +9,13 @@ import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from '.
 import type { State } from './state';
 import type { PositionStatistics } from './statistics';
 import type { TimeBucket } from '$lib/chart';
-import { type PositionStatus, type TradingPosition, tradingPositionTooltips } from './position';
+import { type PositionStatus, type TradingPosition } from './position';
+import { type TradeDirection, TradeDirections } from './trade-info';
 
-/**
- * English tooltips for the datapoints
- */
-export const tradingPositionInfoTooltips = {
-	...tradingPositionTooltips,
-	durationSeconds:
-		'How long this position was or has been open. The duration is calcualated from the open decision time to the closing trade execution time.',
-	stillOpen: 'Is the position currently open.',
-	candleTimeBucket: 'Which candles we use to visualise the history of this position.',
-	openPrice: 'The execution price of the opening trade.',
-	closePrice: 'The closing price of the position.',
-	currentPrice: 'The latest recorded price of the position.',
-	interestRateAtOpen: 'The opening interest rate of the position.',
-	interestRateAtClose: 'Closing interest rate is not currently available.',
-	currentInterestRate: 'The latest recorded interest rate of the position.',
-	realisedProfitability:
-		'The realised profitability of the position. BETA WARNING: Currently calculation may not be correct for multitrade positions.',
-	unrealisedProfitability:
-		'The current estimated profitability of the position if closed now. BETA WARNING: Currently calculation may not be correct for multitrade positions.',
-	portfolioWeightAtOpen: 'The position size in the terms of % total portfolio when the position was opened.',
-	valueAtOpen: 'The position value when the position was opened.',
-	valueAtClose: 'The position value when the position was closed.',
-	currentValue: 'The last recorded value of the position.',
-	quantityAtOpen: 'The position size in tokens when the position was opened.',
-	quantityAtClose: 'The position size in tokens when the position was closed.',
-	currentQuantity: 'The latest recorded position size in tokens.',
-	estimatedMaximumRisk: 'How much % of the portfolio is at the risk if this position is completely lost.',
-	stopLossPercentOpen:
-		'Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. BETA WARNING: Currently calculated relative to the open price, not the current price.',
-	stopLossPercentOpenMissing: 'Stop loss not used at the position open or the value was not recorded',
-	stopLossPrice:
-		'Stop loss price for this position. Position is attempted closed as soon as possible if the market mid-price crosses this level.',
-	stopLossTriggered:
-		'Stop loss was triggered for this position. Stop loss can still close at profit if a trailing stop loss or other form of dynamic stop loss was used.',
-	marketMidPriceAtOpen: 'What was the market mid-price when this position was opened.',
-	portfolioRiskPercent:
-		'Maximum portfolio % value at a risk when the position was opened. This risk assumes any stop losses can be executed without significant price impact or slippage.',
-	portfolioRiskPercentMissing: 'Stop loss data not recorded or stop loss was not used and cannot calculate this value.',
-	volume: 'How much trading volume trades of this position have generated',
-	tradingFees: 'How much trading fees were total. This includes protocol fees and liquidity provider fees',
-	tradingFeesMissing: 'Trading fee data was not recorded for this position',
-	tradingFeesPercent:
-		'How much trading fees were % of trading volume. This includes protocol fees and liquidity provider fees'
-};
+export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({
+	...base,
 
-type TradingPositionWithStats = TradingPosition & {
-	stats: PositionStatistics[];
-};
-
-/**
- * Prototype object that can be applied to a TradingPosition object to enrich
- * it with additional properties. Yields an object with all the properties
- * (and types) of the original plus the inherited prototype properties/types
- * (which is non-trivial with TypeScript classes)
- */
-const tradingPositionInfoPrototype = {
-	tooltip: tradingPositionInfoTooltips,
+	stats,
 
 	get durationSeconds() {
 		const endDate = this.closed_at ?? Date.now();
@@ -143,7 +91,7 @@ const tradingPositionInfoPrototype = {
 	 */
 	get valueAtClose() {
 		if (this.closed) {
-			return this.lastTrade.executedValue;
+			return this.lastTrade!.executedValue;
 		}
 	},
 
@@ -215,12 +163,55 @@ const tradingPositionInfoPrototype = {
 		return this.latestStats?.profitability;
 	},
 
+	// return sum of all trade values for a given direction (enter = 1 or exit = -1)
+	valueForTradeDirection(direction: TradeDirection) {
+		return this.trades.reduce((acc, t) => {
+			if (t.direction === direction) acc += t.executedValue;
+			return acc;
+		}, 0);
+	},
+
+	get totalEnteredValue() {
+		return this.valueForTradeDirection(TradeDirections.Enter);
+	},
+
+	get totalExitedValue() {
+		return this.valueForTradeDirection(TradeDirections.Exit);
+	},
+
+	get profitabilityFromTradeTotals() {
+		if (!this.closed) return;
+
+		const totalEntered = this.totalEnteredValue;
+		const totalExited = this.totalExitedValue;
+		let profitability = (totalExited - totalEntered) / totalEntered;
+		if (this.isShortPosition) profitability *= -1;
+		return Number.isFinite(profitability) ? profitability : 0;
+	},
+
+	get hasInconsistentProfitability() {
+		const fromStats = this.profitability;
+		const fromTradeTotals = this.profitabilityFromTradeTotals;
+
+		if (!this.closed || fromStats === undefined || fromTradeTotals === undefined) {
+			return false;
+		}
+
+		const difference = fromTradeTotals - fromStats;
+		const percentChange = difference / fromStats;
+		return Math.abs(percentChange) > 0.01 && Math.abs(difference) > 0.001;
+	},
+
 	get candleTimeBucket(): TimeBucket {
 		return this.durationSeconds > 7 * 24 * 3600 ? '1d' : '1h';
 	},
 
 	get isCreditPosition() {
 		return this.pair.isCreditSupply;
+	},
+
+	get isShortPosition() {
+		return this.pair.isShort;
 	},
 
 	get interestRateAtOpen() {
@@ -288,20 +279,9 @@ const tradingPositionInfoPrototype = {
 	get isTest() {
 		return this.trades.some((t) => t.isTest);
 	}
-} satisfies ThisType<TradingPositionWithStats & Record<string, any>>;
+});
 
-export type TradingPositionInfo = TradingPositionWithStats & typeof tradingPositionInfoPrototype;
-
-/**
- * Factory function to create a TradingPositionInfo object
- */
-export function createTradingPositionInfo(
-	position: TradingPosition,
-	stats: PositionStatistics[] = []
-): TradingPositionInfo {
-	const positionInfo = Object.create(tradingPositionInfoPrototype);
-	return Object.assign(positionInfo, position, { stats });
-}
+export type TradingPositionInfo = ReturnType<typeof createTradingPositionInfo<TradingPosition>>;
 
 /**
  * Get a single TradingPositionInfo object from state for a given status and id
@@ -316,7 +296,7 @@ export function getTradingPositionInfo(state: State, status: PositionStatus, id:
 /**
  * Get all TradingPositionInfo objects from state for a given status
  */
-export function getTradingPositionInfoArray(state: State, status: PositionStatus): TradingPositionInfo[] {
+export function getTradingPositionInfoArray(state: State, status: PositionStatus) {
 	const positions = state.portfolio[`${status}_positions`];
 	return Object.values(positions).map((position) => {
 		const stats = state.stats.positions[position.position_id];

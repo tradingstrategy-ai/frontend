@@ -31,9 +31,9 @@
 		</PageHeading>
 	</Section>
 
-	<Section>
+	<Section class={position.failedOpen || position.frozen ? 'has-error' : ''}>
 		{#if position.failedOpen}
-			<Alert size="md" status="error" title="Failed entry">
+			<Alert size="sm" status="error" title="Failed entry">
 				<p>
 					The first trade opening this position failed to execute correctly. There is no correct or meaningful data
 					available for this position. The position was discarded.
@@ -43,7 +43,7 @@
 
 		{#if position.frozen && position.freezeReason}
 			{@const { tradeId, revertReason, txHash } = position.freezeReason}
-			<Alert size="md" status="error" title="This position is currently in an error state">
+			<Alert size="sm" status="error" title="This position is currently in an error state">
 				<ul class="error-details">
 					<li>Failure reason: <i>{revertReason}</i></li>
 					<li>
@@ -78,35 +78,41 @@
 </main>
 
 <style lang="postcss">
-	.error-details a {
-		font-weight: 500;
-
-		.hash-wrapper {
-			display: inline-grid;
-			text-decoration: inherit;
+	.position-page {
+		:global(.has-error) {
+			margin-bottom: 1.5rem;
 		}
-	}
 
-	.position-info {
-		display: grid;
-		gap: 2rem;
-		align-items: flex-start;
+		.error-details a {
+			font-weight: 500;
 
-		@media (--viewport-lg-up) {
-			/* use 2-column layout on desktop */
-			grid-template-columns: 2fr 1fr;
-			grid-template-rows: auto 1fr;
-			row-gap: 1.5rem;
-
-			/* position OtherMetrics in 2nd column, spanning 2 rows */
-			> :global(:last-child) {
-				grid-column: 2;
-				grid-row: 1 / span 2;
+			.hash-wrapper {
+				display: inline-grid;
+				text-decoration: inherit;
 			}
 		}
-	}
 
-	.position-kind {
-		color: var(--c-text-ultra-light);
+		.position-info {
+			display: grid;
+			gap: 2rem;
+			align-items: flex-start;
+
+			@media (--viewport-lg-up) {
+				/* use 2-column layout on desktop */
+				grid-template-columns: 2fr 1fr;
+				grid-template-rows: auto 1fr;
+				row-gap: 1.5rem;
+
+				/* position OtherMetrics in 2nd column, spanning 2 rows */
+				> :global(:last-child) {
+					grid-column: 2;
+					grid-row: 1 / span 2;
+				}
+			}
+		}
+
+		.position-kind {
+			color: var(--c-text-ultra-light);
+		}
 	}
 </style>

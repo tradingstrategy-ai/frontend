@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import { positionTooltips } from 'trade-executor/state/position-tooltips';
 	import { SummaryBox, Tooltip } from '$lib/components';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
@@ -20,7 +21,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline">% of portfolio</span>
 						<span slot="popup">
-							{position.tooltip.portfolioWeightAtOpen}
+							{positionTooltips.portfolioWeightAtOpen}
 						</span>
 					</Tooltip>
 				</td>
@@ -32,7 +33,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline">Volume</span>
 						<span slot="popup">
-							{position.tooltip.volume}
+							{positionTooltips.volume}
 						</span>
 					</Tooltip>
 				</td>
@@ -44,7 +45,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline">Fees</span>
 						<span slot="popup">
-							{position.tooltip.tradingFees}
+							{positionTooltips.tradingFees}
 						</span>
 					</Tooltip>
 				</td>
@@ -53,7 +54,7 @@
 						<Tooltip>
 							<span slot="trigger" class="underline">N/A</span>
 							<span slot="popup">
-								{position.tooltip.tradingFeesMissing}
+								{positionTooltips.tradingFeesMissing}
 							</span>
 						</Tooltip>
 					{:else}
@@ -67,7 +68,7 @@
 					<Tooltip>
 						<span slot="trigger" class="underline">Fees % of volume</span>
 						<span slot="popup">
-							{position.tooltip.tradingFeesPercent}
+							{positionTooltips.tradingFeesPercent}
 						</span>
 					</Tooltip>
 				</td>
@@ -76,7 +77,7 @@
 						<Tooltip>
 							<span slot="trigger" class="underline">N/A</span>
 							<span slot="popup">
-								{position.tooltip.tradingFeesMissing}
+								{positionTooltips.tradingFeesMissing}
 							</span>
 						</Tooltip>
 					{:else}
@@ -91,7 +92,7 @@
 						<Tooltip>
 							<span slot="trigger" class="underline">Stop loss</span>
 							<span slot="popup">
-								{position.tooltip.stopLossPercentOpen}
+								{positionTooltips.stopLossPercentOpen}
 							</span>
 						</Tooltip>
 					</td>
@@ -100,7 +101,7 @@
 							<Tooltip>
 								<span slot="trigger" class="underline">N/A</span>
 								<span slot="popup">
-									{position.tooltip.stopLossPercentOpenMissing}
+									{positionTooltips.stopLossPercentOpenMissing}
 								</span>
 							</Tooltip>
 						{:else}
@@ -119,7 +120,7 @@
 							<Tooltip>
 								<span slot="trigger" class="underline">Trailing stop loss</span>
 								<span slot="popup">
-									{position.tooltip.trailing_stop_loss_pct}
+									{positionTooltips.trailing_stop_loss_pct}
 								</span>
 							</Tooltip>
 						</td>
@@ -136,7 +137,7 @@
 						<Tooltip>
 							<span slot="trigger" class="underline">Risk</span>
 							<span slot="popup">
-								{position.tooltip.portfolioRiskPercent}
+								{positionTooltips.portfolioRiskPercent}
 							</span>
 						</Tooltip>
 					</td>
@@ -145,7 +146,7 @@
 							<Tooltip>
 								<span slot="trigger" class="underline"> N/A </span>
 								<span slot="popup">
-									{position.tooltip.portfolioRiskPercentMissing}
+									{positionTooltips.portfolioRiskPercentMissing}
 								</span>
 							</Tooltip>
 						{:else}

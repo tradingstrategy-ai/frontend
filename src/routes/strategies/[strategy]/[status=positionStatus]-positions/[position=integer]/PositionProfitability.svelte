@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
+	import { positionTooltips } from 'trade-executor/state/position-tooltips';
 	import { DataBadge, Tooltip, UpDownIndicator } from '$lib/components';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
-	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
 
 	export let position: TradingPositionInfo;
 </script>
@@ -27,9 +28,9 @@
 		</svelte:fragment>
 		<span slot="popup">
 			{#if position.stillOpen}
-				{position.tooltip.unrealisedProfitability}
+				{positionTooltips.unrealisedProfitability}
 			{:else}
-				{position.tooltip.realisedProfitability}
+				{positionTooltips.realisedProfitability}
 			{/if}
 		</span>
 	</Tooltip>
@@ -37,7 +38,7 @@
 		<Tooltip>
 			<DataBadge slot="trigger">Stop loss</DataBadge>
 			<svelte:fragment slot="popup">
-				{position.tooltip.stopLossTriggered}
+				{positionTooltips.stopLossTriggered}
 			</svelte:fragment>
 		</Tooltip>
 	{/if}

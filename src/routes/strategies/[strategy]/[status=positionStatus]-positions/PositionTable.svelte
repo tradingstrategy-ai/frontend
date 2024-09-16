@@ -12,6 +12,7 @@
 	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
 	import FlagCell from './FlagCell.svelte';
 
+	export let admin = false;
 	export let positions: TradingPositionInfo[];
 	export let status: PositionStatus;
 	export let page = 0;
@@ -60,7 +61,7 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(FlagCell, { position: value, baseUrl: `./${status}-positions/${value.position_id}` }),
+				createRender(FlagCell, { admin, position: value, baseUrl: `./${status}-positions/${value.position_id}` }),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -72,7 +73,7 @@
 		table.column({
 			header: 'Frozen on',
 			id: 'frozen_on',
-			accessor: (position) => position.lastTrade?.direction
+			accessor: (position) => position.lastTrade?.directionLabel
 		}),
 		table.column({
 			header: 'Value',

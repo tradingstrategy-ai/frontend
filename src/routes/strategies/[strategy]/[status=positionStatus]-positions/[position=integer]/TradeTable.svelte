@@ -28,7 +28,7 @@
 		table.column({
 			id: 'description',
 			header: 'Trade',
-			accessor: (t) => ({ label: t.actionLabel, modifier: t.positionImpact, isTest: t.isTest }),
+			accessor: (t) => ({ label: t.actionLabel, modifier: t.positionImpact, isTest: t.isTest, failed: t.failed }),
 			cell: ({ value }) => createRender(TradingDescription, value)
 		}),
 		table.column({

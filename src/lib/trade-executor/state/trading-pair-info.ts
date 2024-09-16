@@ -6,7 +6,6 @@
  *
  */
 import type { TradingPairIdentifier } from './identifier';
-import { TradeDirection } from './trade-info';
 
 const kindShortLabels = {
 	spot_market_hold: 'spot',
@@ -16,28 +15,23 @@ const kindShortLabels = {
 	lending_protocol_long: 'long'
 } as const;
 
-/**
- * Prototype object that can be applied to a TradingPairIdentifier object
- * to enrich it with additional properties. Yields an object with all the
- * properties (and types) of the original plus the inherited prototype
- * properties/types (which is non-trivial with TypeScript classes)
- */
-const tradingPairInfoPrototype = {
-	get underlyingSpotPair(): TradingPairInfo | undefined {
-		if (this.underlying_spot_pair) {
-			return createTradingPairInfo(this.underlying_spot_pair);
-		}
+export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) => ({
+	...base,
+
+	get underlyingSpotPair(): Maybe<TradingPairInfo> {
+		return this.underlying_spot_pair && createTradingPairInfo(this.underlying_spot_pair);
 	},
 
-	get pricingPair() {
-		if (this.kind === 'lending_protocol_short' || this.kind === 'lending_protocol_long') {
-			return this.underlyingSpotPair;
-		}
-		return this;
+	get pricingPair(): TradingPairInfo {
+		return this.kind.startsWith('lending_protocol_') ? this.underlyingSpotPair! : this;
 	},
 
 	get isCreditSupply() {
 		return this.kind === 'credit_supply';
+	},
+
+	get isShort() {
+		return this.kind === 'lending_protocol_short';
 	},
 
 	get symbol() {
@@ -57,27 +51,11 @@ const tradingPairInfoPrototype = {
 
 	get kindShortLabel() {
 		return kindShortLabels[this.kind];
-	},
-
-	getDirectionLabel(direction: TradeDirection) {
-		if (direction === TradeDirection.Enter) {
-			return this.isCreditSupply ? 'Supply' : 'Buy';
-		}
-		return this.isCreditSupply ? 'Withdraw' : 'Sell';
-	},
-
-	getActionLabel(direction: TradeDirection) {
-		return `${this.getDirectionLabel(direction)} ${this.actionSymbol}`;
 	}
-} satisfies ThisType<TradingPairIdentifier & Record<string, any>>;
+});
 
 // exclude underlying_spot_pair from the type (use underlyingSpotPair getter instead)
-type TradingPairInfoBase = Omit<TradingPairIdentifier, 'underlying_spot_pair'>;
-export type TradingPairInfo = TradingPairInfoBase & typeof tradingPairInfoPrototype;
-
-/**
- * Factory function to create a TradingPairInfo object
- */
-export function createTradingPairInfo(data: TradingPairIdentifier): TradingPairInfo {
-	return Object.assign(Object.create(tradingPairInfoPrototype), data);
-}
+export type TradingPairInfo = Omit<
+	ReturnType<typeof createTradingPairInfo<TradingPairIdentifier>>,
+	'underlying_spot_pair'
+>;

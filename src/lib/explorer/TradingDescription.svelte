@@ -20,24 +20,26 @@ Used in DataTable context (vs. standard svelte component context).
 	import { DataBadge } from '$lib/components';
 
 	export let label: string;
-	export let modifier: string | undefined;
+	export let modifier = '';
 	export let isTest = false;
+	export let failed = false;
 </script>
 
 <div class="description-cell">
 	<span class="label">
 		{label}
 	</span>
-	{#if modifier}
-		<span class="modifier">
-			{modifier}
-		</span>
-	{/if}
-	{#if isTest}
-		<span class="test-badge">
+	<span class="modifier">
+		{modifier}
+	</span>
+	<span class="badges">
+		{#if isTest}
 			<DataBadge status="warning">Test</DataBadge>
-		</span>
-	{/if}
+		{/if}
+		{#if failed}
+			<DataBadge status="error">Failed</DataBadge>
+		{/if}
+	</span>
 </div>
 
 <style lang="postcss">
@@ -51,7 +53,7 @@ Used in DataTable context (vs. standard svelte component context).
 			color: var(--c-text-extra-light);
 		}
 
-		.test-badge {
+		.badges {
 			font: var(--f-ui-xs-medium);
 			letter-spacing: var(--ls-ui-xs);
 

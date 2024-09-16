@@ -55,13 +55,3 @@ export const tradingPositionSchema = z.object({
 	liquidation_price: usDollarAmount.nullish()
 });
 export type TradingPosition = z.infer<typeof tradingPositionSchema>;
-
-/**
- * English tooltips for the datapoints
- */
-export const tradingPositionTooltips = {
-	opened_at: 'The strategy cycle decision time when the strategy decided to open this trade.',
-	closed_at:
-		'The block timestamp when the closing trade of this position executed. This can be outside normal strategy decision making cycles when stop loss or take profit signals are triggered.',
-	trailing_stop_loss_pct: 'If trailing stop loss was turned on, what was its value relative to the position value.'
-};

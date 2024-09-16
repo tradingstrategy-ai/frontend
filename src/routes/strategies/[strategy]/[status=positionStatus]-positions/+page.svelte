@@ -7,7 +7,7 @@
 	import { capitalize } from '$lib/helpers/formatters';
 
 	export let data;
-	$: ({ positions, status, strategy } = data);
+	$: ({ admin, positions, status, strategy } = data);
 
 	$: q = $page.url.searchParams;
 	$: options = {
@@ -39,6 +39,7 @@
 		{/if}
 
 		<PositionTable
+			{admin}
 			{positions}
 			{status}
 			{...options}
