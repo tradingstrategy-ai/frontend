@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { AlertList, PageHeading } from '$lib/components';
+	import { AlertList, DataBadge, PageHeading } from '$lib/components';
 	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
-	import StrategyBadges from '../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
 
 	export let data;
@@ -12,6 +11,8 @@
 	$: ({ admin, strategy, deferred } = data);
 
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
+
+	$: tags = strategy.tags.filter((tag) => tag !== 'live');
 
 	$: hasStrategyError = shouldDisplayError(strategy, admin);
 
@@ -34,7 +35,10 @@
 			<StrategyIcon slot="icon" {strategy} />
 			<div class="title" slot="title">
 				{strategy.name}
-				<StrategyBadges class="badge" tags={strategy.tags} />
+
+				{#each tags as tag}
+					<DataBadge class="badge" status="warning">{tag}</DataBadge>
+				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
 				<WalletWidget {strategy} />
