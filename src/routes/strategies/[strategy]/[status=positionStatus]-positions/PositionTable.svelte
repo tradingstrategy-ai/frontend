@@ -21,6 +21,7 @@
 	export let direction: 'asc' | 'desc' = 'desc';
 	export let hasSearch = false;
 	export let hasPagination = false;
+	export let hiddenPositions: number[] = [];
 
 	const positionsStore = writable([] as TradingPositionInfo[]);
 	$: positionsStore.set(positions);
@@ -53,7 +54,12 @@
 		table.column({
 			header: 'Position',
 			id: 'description',
-			accessor: ({ pair, isTest }) => ({ label: pair.symbol, modifier: pair.kindShortLabel, isTest }),
+			accessor: ({ position_id, pair, isTest }) => ({
+				class: hiddenPositions.includes(position_id) ? 'hidden' : '',
+				label: pair.symbol,
+				modifier: pair.kindShortLabel,
+				isTest
+			}),
 			cell: ({ value }) => createRender(TradingDescription, value)
 		}),
 		table.column({
@@ -61,7 +67,12 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(FlagCell, { admin, position: value, baseUrl: `./${status}-positions/${value.position_id}` }),
+				createRender(FlagCell, {
+					admin,
+					position: value,
+					baseUrl: `./${status}-positions/${value.position_id}`,
+					isHidden: hiddenPositions.includes(value.position_id)
+				}),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -141,6 +152,23 @@
 	}
 
 	.position-table :global {
+		/* Make "hidden" position rows look 50% opaque w/out breaking nested tooltip style */
+		tr:has(.hidden) {
+			td {
+				background: var(--c-box-1);
+			}
+
+			/* only apply color-mix to text in leaf nodes */
+			*:not(:has(> *)) {
+				color: color-mix(in srgb, currentColor, var(--c-body) 50%);
+			}
+
+			/* revert the color-mix 50% opacity for the tooltip */
+			.tooltip .popup * {
+				color: var(--c-text);
+			}
+		}
+
 		.ticker {
 			white-space: pre;
 		}

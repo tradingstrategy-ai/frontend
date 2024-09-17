@@ -45,6 +45,7 @@
 			{...options}
 			hasPagination={status === 'closed'}
 			hasSearch={status === 'closed'}
+			hiddenPositions={strategy.hiddenPositions}
 			on:change={handleChange}
 		/>
 	{:else}

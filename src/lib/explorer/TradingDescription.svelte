@@ -19,13 +19,15 @@ Used in DataTable context (vs. standard svelte component context).
 <script lang="ts">
 	import { DataBadge } from '$lib/components';
 
+	let classes = '';
+	export { classes as class };
 	export let label: string;
 	export let modifier = '';
 	export let isTest = false;
 	export let failed = false;
 </script>
 
-<div class="description-cell">
+<div class="description-cell {classes}">
 	<span class="label">
 		{label}
 	</span>

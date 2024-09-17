@@ -8,6 +8,7 @@
 	export let admin = false;
 	export let position: TradingPositionInfo;
 	export let baseUrl: string;
+	export let isHidden = false;
 
 	function getTradeLink(trade: TradeInfo) {
 		return `${baseUrl}/trade-${trade.trade_id}`;
@@ -83,6 +84,19 @@
 			</ul>
 		</PositionFlag>
 	{/if}
+
+	{#if admin && isHidden}
+		<PositionFlag status="warning" label="H" title="Hidden position">
+			<p>
+				<Alert size="xs" status="info" title="Note">This info is only displayed to admin users.</Alert>
+			</p>
+			<p>This position is hidden from non-admin users.</p>
+			<p>
+				Hidden positions are configured in <code>frontend</code> strategy configuration (on production, in the
+				<code>strategy.json</code> config file).
+			</p>
+		</PositionFlag>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -93,6 +107,16 @@
 
 		:global(.tooltip .popup) {
 			min-width: 32rem;
+		}
+
+		code {
+			font-family: var(--ff-mono);
+			font-size: 1em;
+			font-weight: 600;
+			color: var(--c-text-light);
+			background: color-mix(in srgb, transparent, gray 20%);
+			padding-inline: 0.5em;
+			border-radius: var(--radius-xs);
 		}
 	}
 </style>
