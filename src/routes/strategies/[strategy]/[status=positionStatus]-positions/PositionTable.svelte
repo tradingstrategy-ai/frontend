@@ -159,7 +159,7 @@
 			}
 
 			/* only apply color-mix to text in leaf nodes */
-			*:not(:has(> *)) {
+			*:not(:has(*)) {
 				color: color-mix(in srgb, currentColor, var(--c-body) 50%);
 			}
 
