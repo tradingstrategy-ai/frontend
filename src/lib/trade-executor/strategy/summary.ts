@@ -91,6 +91,13 @@ export const strategySummaryStatisticsSchema = z.object({
 });
 export type StrategySummaryStatistics = z.infer<typeof strategySummaryStatisticsSchema>;
 
+export const strategyFeesSchema = z.object({
+	management_fee: percent.default(0),
+	trading_strategy_protocol_fee: percent.default(0),
+	strategy_developer_fee: percent.default(0)
+});
+export type StrategyFees = z.infer<typeof strategyFeesSchema>;
+
 export const strategySummarySchema = z.object({
 	name: z.string(),
 	short_description: z.string().nullish(),
@@ -106,6 +113,7 @@ export const strategySummarySchema = z.object({
 	crashed_at: unixTimestampToDate.nullish(),
 	badges: z.string().array(),
 	tags: z.string().array(),
-	sort_priority: z.number().default(0)
+	sort_priority: z.number().default(0),
+	fees: strategyFeesSchema.default({})
 });
 export type StrategySummary = z.infer<typeof strategySummarySchema>;

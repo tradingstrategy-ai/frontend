@@ -11,6 +11,7 @@
 
 	const hasEnzymeVault = strategy.on_chain_data.asset_management_mode === 'enzyme';
 	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
+	const enzymeProtocolFee = 0.0025;
 </script>
 
 <svelte:head>
@@ -95,7 +96,7 @@
 						</p>
 					</div>
 				</Tooltip>
-				<span>{formatPercent(fees.enzyme_protocol_fee, 2)}</span>
+				<span>{formatPercent(enzymeProtocolFee, 2)}</span>
 			</div>
 		{/if}
 	</div>

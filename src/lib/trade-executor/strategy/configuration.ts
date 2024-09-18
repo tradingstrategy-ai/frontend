@@ -1,20 +1,11 @@
 import { strategyConfig } from '$lib/config';
 import { z } from 'zod';
-import { percent, primaryKey } from '../state/utility-types';
-
-export const strategyFeesSchema = z.object({
-	management_fee: percent.default(0),
-	trading_strategy_protocol_fee: percent.default(0),
-	strategy_developer_fee: percent.default(0),
-	enzyme_protocol_fee: percent.default(0.0025)
-});
-export type StrategyFees = z.infer<typeof strategyFeesSchema>;
+import { primaryKey } from '../state/utility-types';
 
 export const strategyConfigurationSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	url: z.string().url(),
-	fees: strategyFeesSchema.default({}),
 	new_version_id: z.string().nullish(),
 	frontpage: z.boolean().nullish(),
 	hiddenPositions: primaryKey.array().default([])
