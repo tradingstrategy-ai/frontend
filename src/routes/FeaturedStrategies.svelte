@@ -11,7 +11,7 @@
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
-<Section padding="lg">
+<Section padding="md">
 	<h2>Open strategies</h2>
 	<div class="differentiators">
 		<StrategyDifferentiator

@@ -42,16 +42,17 @@ Home page hero banner.
 <style lang="postcss">
 	.home-hero-banner {
 		background: var(--c-background-accent-1);
-		padding: var(--space-xl) 0;
+		padding: 2rem 0;
+
 		@media (--viewport-md-up) {
-			padding: var(--space-10xl) var(--space-3xl);
+			padding: 6rem 2rem;
 		}
 	}
 
 	.inner {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * var(--space-xl))), auto));
-		gap: min(var(--space-8xl), 10vw);
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * 2rem)), auto));
+		gap: min(5rem, 10vw);
 		place-items: center;
 	}
 
@@ -127,6 +128,6 @@ Home page hero banner.
 
 	hr {
 		border: 1px solid var(--c-text);
-		margin-block: var(--space-lg);
+		margin-block: 1.5rem;
 	}
 </style>
