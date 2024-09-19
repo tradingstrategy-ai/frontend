@@ -7,7 +7,7 @@ primary label, a modifier (shown in lighter text), and a testing indicator
 Used in DataTable context (vs. standard svelte component context).
 
 #### Usage:
-```ts
+```tsx
 	table.column({
 		header: 'Position',
 		id: 'description',

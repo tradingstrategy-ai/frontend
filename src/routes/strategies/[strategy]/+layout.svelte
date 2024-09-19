@@ -2,19 +2,16 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, PageHeading } from '$lib/components';
-	import { StrategyIcon } from 'trade-executor/components';
+	import { StrategyIcon, StrategyError, hasError } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import StrategyBadges from '../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
-	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 
 	export let data;
 
 	$: ({ strategy, deferred } = data);
 
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
-
-	$: errorHtml = getTradeExecutorErrorHtml(strategy);
 
 	$: isOutdated = Boolean(strategy.new_version_id);
 
@@ -42,7 +39,7 @@
 			</div>
 		</PageHeading>
 
-		{#if isOverviewPage && (errorHtml || isOutdated)}
+		{#if isOverviewPage && (hasError(strategy) || isOutdated)}
 			<div class="error-wrapper">
 				<AlertList status="warning" size="md" let:AlertItem>
 					<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
@@ -51,8 +48,8 @@
 						participants should consider tranfering deposits to the latest version (though there is no guarantee of
 						better performance).
 					</AlertItem>
-					<AlertItem title="Ongoing execution issues" displayWhen={errorHtml}>
-						{@html errorHtml}
+					<AlertItem title="Ongoing execution issues" displayWhen={hasError(strategy)}>
+						<StrategyError {strategy} />
 					</AlertItem>
 				</AlertList>
 			</div>
