@@ -7,7 +7,6 @@
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, Tooltip } from '$lib/components';
 	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
-	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -19,6 +18,12 @@
 	export let chartDateRange: [Date?, Date?];
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
+
+	const tags = strategy.tags?.filter((tag) => tag !== 'live') ?? [];
+	const isLive = strategy.tags?.includes('live');
+
+	const launchedAt = strategy.summary_statistics?.launched_at;
+	const isNew = launchedAt ? utcDay.count(launchedAt, new Date()) < 90 : false;
 
 	const href = `/strategies/${strategy.id}`;
 
@@ -50,40 +55,52 @@
 				{/if}
 			</div>
 
-			{#if !simplified}
-				<div class="badges">
-					{#if shouldDisplayError(strategy, admin)}
-						<Tooltip>
-							<DataBadge slot="trigger" status="error">Error</DataBadge>
-							<svelte:fragment slot="popup">
-								{#if adminOnlyError(strategy)}
-									<p>
-										<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
-									</p>
-								{/if}
-								<StrategyError {strategy} />
-							</svelte:fragment>
-						</Tooltip>
-					{/if}
+			<div class="badges">
+				{#if !simplified && shouldDisplayError(strategy, admin)}
+					<Tooltip>
+						<DataBadge slot="trigger" status="error">Error</DataBadge>
+						<svelte:fragment slot="popup">
+							{#if adminOnlyError(strategy)}
+								<p>
+									<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
+								</p>
+							{/if}
+							<StrategyError {strategy} />
+						</svelte:fragment>
+					</Tooltip>
+				{/if}
 
-					<StrategyBadges tags={strategy.tags ?? []} includeLive={admin} />
+				{#if !simplified && admin && isLive}
+					<DataBadge status="success">live</DataBadge>
+				{/if}
 
-					{#if strategy.new_version_id}
-						<Tooltip>
-							<DataBadge slot="trigger" status="error">Outdated</DataBadge>
-							<svelte:fragment slot="popup">
-								This is an outdated strategy. An updated version is available
-								<a href="/strategies/{strategy.new_version_id}">here</a>.
-							</svelte:fragment>
-						</Tooltip>
-					{/if}
-				</div>
-			{/if}
+				{#if isNew && !strategy.new_version_id}
+					<DataBadge status="success">new</DataBadge>
+				{/if}
+
+				{#if !simplified}
+					{#each tags as tag}
+						<DataBadge status="warning">{tag}</DataBadge>
+					{/each}
+				{/if}
+
+				{#if !simplified && strategy.new_version_id}
+					<Tooltip>
+						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
+						<svelte:fragment slot="popup">
+							This is an outdated strategy. An updated version is available
+							<a href="/strategies/{strategy.new_version_id}">here</a>.
+						</svelte:fragment>
+					</Tooltip>
+				{/if}
+			</div>
 		</div>
+
 		<div class="chart">
 			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
 		</div>
 	</div>
+
 	<div class="content">
 		<header>
 			<div class="avatar">

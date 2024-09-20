@@ -3,8 +3,7 @@
 -->
 <script lang="ts">
 	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import { BlogRoll, Button, Grid, Section, SummaryBox, UspTile } from '$lib/components';
-	import TopTradesTable from '$lib/momentum/TopTradesTable.svelte';
+	import { BlogRoll, Button, Grid, Section, UspTile } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import FeaturedStrategies from './FeaturedStrategies.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
@@ -12,7 +11,7 @@
 
 	export let data;
 
-	const { impressiveNumbers, posts, strategies, topMomentum } = data;
+	const { impressiveNumbers, posts, strategies } = data;
 </script>
 
 <svelte:head>
@@ -49,36 +48,6 @@
 					Contact us to learn how to port your algorithms.
 				</a>
 			</p>
-		</Section>
-	{/if}
-
-	{#if topMomentum}
-		<Section padding="md" gap="md">
-			<h2>Today's top trades</h2>
-
-			<Grid cols={2} gap="lg">
-				<SummaryBox title="Most profitable 24h">
-					<Button
-						slot="cta"
-						let:position
-						size={position === 'header' ? 'sm' : 'md'}
-						label="View all winning pairs"
-						href="/trading-view/top-list/daily-up"
-					/>
-					<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
-				</SummaryBox>
-
-				<SummaryBox title="Worst performance 24h">
-					<Button
-						slot="cta"
-						let:position
-						size={position === 'header' ? 'sm' : 'md'}
-						label="View all losing pairs"
-						href="/trading-view/top-list/daily-down"
-					/>
-					<TopTradesTable pairs={topMomentum.top_down_24h_min_liq_1m} />
-				</SummaryBox>
-			</Grid>
 		</Section>
 	{/if}
 

@@ -8,21 +8,11 @@
 
 	export let strategies: StrategyRuntimeState[];
 
-	function calculateOpenStrategiesLiveDuration() {
-		const launchAt = new Date(2024, 3, 15);
-		const daysText = formatDaysAgo(launchAt.getTime() / 1000);
-		return daysText;
-	}
-
-	const openLiveDays = calculateOpenStrategiesLiveDuration();
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
-<Section padding="lg">
+<Section padding="md">
 	<h2>Open strategies</h2>
-	<p class="live-ago">
-		Open strategies have been live for {openLiveDays}.
-	</p>
 	<div class="differentiators">
 		<StrategyDifferentiator
 			title="100% transparent"
@@ -53,14 +43,8 @@
 </Section>
 
 <style lang="postcss">
-	:is(h2, p, .cta) {
+	:is(h2, .cta) {
 		text-align: center;
-	}
-
-	p.live-ago {
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing);
-		color: var(--c-text-extra-light);
 	}
 
 	.differentiators {
