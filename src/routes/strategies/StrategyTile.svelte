@@ -6,11 +6,12 @@
 	import { normalizeDataForInterval } from '$lib/chart';
 	import { getChain } from '$lib/helpers/chain.js';
 	import { Button, DataBadge, Tooltip } from '$lib/components';
-	import { StrategyIcon, StrategyError, hasError } from 'trade-executor/components';
+	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import Alert from '$lib/components/Alert.svelte';
 
 	export let admin = false;
 	export let simplified = false;
@@ -51,10 +52,17 @@
 
 			{#if !simplified}
 				<div class="badges">
-					{#if hasError(strategy)}
+					{#if shouldDisplayError(strategy, admin)}
 						<Tooltip>
 							<DataBadge slot="trigger" status="error">Error</DataBadge>
-							<StrategyError slot="popup" {strategy} />
+							<svelte:fragment slot="popup">
+								{#if adminOnlyError(strategy)}
+									<p>
+										<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
+									</p>
+								{/if}
+								<StrategyError {strategy} />
+							</svelte:fragment>
 						</Tooltip>
 					{/if}
 

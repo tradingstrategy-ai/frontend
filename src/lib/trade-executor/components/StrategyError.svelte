@@ -14,8 +14,16 @@ Display an appropriate error message for a strategy when needed. There can be mu
 <script context="module" lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 
-	export function hasError(strategy: StrategyRuntimeState) {
-		return !strategy.connected || !strategy.executor_running || strategy.frozen_positions > 0;
+	export function adminOnlyError(strategy: StrategyRuntimeState) {
+		return strategy.connected && (!strategy.executor_running || strategy.frozen_positions > 0);
+	}
+
+	export function allUsersError(strategy: StrategyRuntimeState) {
+		return !strategy.connected;
+	}
+
+	export function shouldDisplayError(strategy: StrategyRuntimeState, admin = false) {
+		return allUsersError(strategy) || (admin && adminOnlyError(strategy));
 	}
 </script>
 

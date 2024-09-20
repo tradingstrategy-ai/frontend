@@ -2,16 +2,18 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, PageHeading } from '$lib/components';
-	import { StrategyIcon, StrategyError, hasError } from 'trade-executor/components';
+	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import StrategyBadges from '../StrategyBadges.svelte';
 	import { WalletWidget } from '$lib/wallet';
 
 	export let data;
 
-	$: ({ strategy, deferred } = data);
+	$: ({ admin, strategy, deferred } = data);
 
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
+
+	$: hasStrategyError = shouldDisplayError(strategy, admin);
 
 	$: isOutdated = Boolean(strategy.new_version_id);
 
@@ -39,7 +41,7 @@
 			</div>
 		</PageHeading>
 
-		{#if isOverviewPage && (hasError(strategy) || isOutdated)}
+		{#if isOverviewPage && (hasStrategyError || isOutdated)}
 			<div class="error-wrapper">
 				<AlertList status="warning" size="md" let:AlertItem>
 					<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
@@ -48,8 +50,11 @@
 						participants should consider tranfering deposits to the latest version (though there is no guarantee of
 						better performance).
 					</AlertItem>
-					<AlertItem title="Ongoing execution issues" displayWhen={hasError(strategy)}>
+					<AlertItem title="Ongoing execution issues" displayWhen={hasStrategyError}>
 						<StrategyError {strategy} />
+						{#if adminOnlyError(strategy)}
+							<p class="admin-error"><strong>Note:</strong> this error is only displayed to admin users.</p>
+						{/if}
 					</AlertItem>
 				</AlertList>
 			</div>
@@ -77,6 +82,11 @@
 			font-size: clamp(11px, 0.45em, 16px);
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
+		}
+
+		.admin-error {
+			margin-top: 1rem;
+			opacity: 0.5;
 		}
 
 		.subpage {
