@@ -17,14 +17,13 @@ Home page hero banner.
 		<enhanced:img src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
 
 		<div class="content">
-			<!-- ensure line breaks at correct place -->
-			<h1>Harness the power of algorithmic crypto trading</h1>
+			<h1>Unleash the power of automated crypto trading</h1>
 
 			<hr />
 
 			<ol>
 				<li>Select a professional-grade strategy aligned with your goals.</li>
-				<li>Connect your crypto wallet and deposit funds to a blockchain vault.</li>
+				<li>Connect your wallet and deposit funds to the strategy’s vault.</li>
 				<li>Track your returns as the strategy trades automatically.</li>
 				<li>Adjust your portfolio or withdraw anytime.</li>
 			</ol>
