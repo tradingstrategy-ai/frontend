@@ -5,13 +5,13 @@
 	import { utcDay } from 'd3-time';
 	import { normalizeDataForInterval } from '$lib/chart';
 	import { getChain } from '$lib/helpers/chain.js';
-	import { Button, DataBadge, EntitySymbol, Tooltip } from '$lib/components';
-	import { StrategyIcon } from 'trade-executor/components';
+	import { Button, DataBadge, Tooltip } from '$lib/components';
+	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import StrategyBadges from './StrategyBadges.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
-	import { getTradeExecutorErrorHtml } from 'trade-executor/strategy/error';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import Alert from '$lib/components/Alert.svelte';
 
 	export let admin = false;
 	export let simplified = false;
@@ -21,7 +21,6 @@
 	const chain = getChain(strategy.on_chain_data?.chain_id);
 
 	const href = `/strategies/${strategy.id}`;
-	const errorHtml = getTradeExecutorErrorHtml(strategy);
 
 	const chartData = normalizeDataForInterval(
 		strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [],
@@ -53,10 +52,17 @@
 
 			{#if !simplified}
 				<div class="badges">
-					{#if errorHtml}
+					{#if shouldDisplayError(strategy, admin)}
 						<Tooltip>
 							<DataBadge slot="trigger" status="error">Error</DataBadge>
-							<svelte:fragment slot="popup">{@html errorHtml}</svelte:fragment>
+							<svelte:fragment slot="popup">
+								{#if adminOnlyError(strategy)}
+									<p>
+										<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
+									</p>
+								{/if}
+								<StrategyError {strategy} />
+							</svelte:fragment>
 						</Tooltip>
 					{/if}
 
