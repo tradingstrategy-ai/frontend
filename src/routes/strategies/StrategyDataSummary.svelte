@@ -129,19 +129,21 @@
 			grid-template-columns: repeat(4, auto);
 
 			/* 1st and 2nd of 4 columns */
-			:global(.tooltip:is(:nth-of-type(4n + 1), :nth-of-type(4n + 2)) .popup) {
-				right: 12.5%;
+			> :global(:nth-child(4n + 1)),
+			> :global(:nth-child(4n + 2)) {
+				--popup-right: 12.5%;
 			}
 
 			/* 3rd and 4th of 4 columns */
-			:global(.tooltip:is(:nth-of-type(4n + 3), :nth-of-type(4n + 4)) .popup) {
-				left: 12.5%;
+			> :global(:nth-child(4n + 3)),
+			> :global(:nth-child(4n + 4)) {
+				--popup-left: 12.5%;
 			}
 		}
 
 		:global(.popup) {
-			left: 0;
-			right: 0;
+			left: var(--popup-left, 0);
+			right: var(--popup-right, 0);
 		}
 
 		.asset-management {
