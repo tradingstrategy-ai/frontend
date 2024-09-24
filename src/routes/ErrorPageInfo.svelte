@@ -24,7 +24,7 @@
 	</div>
 </section>
 
-<style lang="postcss">
+<style>
 	section {
 		display: grid;
 		justify-items: center;

@@ -27,7 +27,7 @@
 	<Footer small />
 </nav>
 
-<style lang="postcss">
+<style>
 	nav {
 		position: fixed;
 		z-index: 99;

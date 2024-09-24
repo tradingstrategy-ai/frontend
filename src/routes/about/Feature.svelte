@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.feature {
 		display: flex;
 		flex-direction: column;

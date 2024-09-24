@@ -19,7 +19,7 @@ The color and background color may be overridden with CSS props.
 	<slot />
 </span>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--data-badge-background: var(--c-box-2);
 		--data-badge-color: var(--c-text);

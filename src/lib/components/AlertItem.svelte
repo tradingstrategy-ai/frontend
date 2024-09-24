@@ -35,7 +35,7 @@ Display a single alert item (should always be nested within AlertList).
 	</li>
 {/if}
 
-<style lang="postcss">
+<style>
 	.alert-item {
 		container-type: inline-size;
 		display: grid;

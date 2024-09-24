@@ -89,7 +89,7 @@ for the same hovered date. Also displays a time-bucket selector.
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.chart-header {
 		:global([data-css-props]) {
 			@media (--viewport-xs) {

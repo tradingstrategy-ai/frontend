@@ -117,7 +117,7 @@
 	</TradingDataInfoRow>
 </TradingDataInfo>
 
-<style lang="postcss">
+<style>
 	div[slot='popup'] {
 		max-width: 25rem;
 	}

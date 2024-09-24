@@ -68,7 +68,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	.social-links-wrapper {
 		margin-top: var(--space-sm);
 

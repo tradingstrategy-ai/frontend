@@ -49,7 +49,7 @@
 	</div>
 </section>
 
-<style lang="postcss">
+<style>
 	.decision-making {
 		display: grid;
 		gap: 1.25rem;

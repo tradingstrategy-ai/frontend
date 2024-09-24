@@ -71,7 +71,7 @@
 	</SummaryBox>
 </section>
 
-<style lang="postcss">
+<style>
 	.instance-status {
 		&,
 		.inner {

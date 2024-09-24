@@ -81,7 +81,7 @@ Display one key metric in a strategy tile.
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--key-metric-gap: 0.375rem;
 		--key-metric-label-font: var(--f-ui-sm-medium);

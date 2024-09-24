@@ -22,7 +22,7 @@ See: https://github.com/metonym/svelte-highlight
 	<Highlight {language} {code} />
 </div>
 
-<style lang="postcss">
+<style>
 	.source-code {
 		display: grid;
 		padding: var(--space-xxs);

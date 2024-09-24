@@ -85,7 +85,7 @@
 	</Feature>
 </section>
 
-<style lang="postcss">
+<style>
 	section {
 		gap: 8rem;
 		padding-top: var(--space-5xl);

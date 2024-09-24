@@ -40,7 +40,7 @@ CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 	<slot />
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.section {
 		background: var(--section-background, inherit);
 		display: grid;

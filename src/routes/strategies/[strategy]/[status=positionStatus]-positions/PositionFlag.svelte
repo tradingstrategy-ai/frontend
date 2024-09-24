@@ -18,7 +18,7 @@
 	</div>
 </Tooltip>
 
-<style lang="postcss">
+<style>
 	.flag {
 		:global([data-css-props]) {
 			--data-badge-background: var(--c-box-4);

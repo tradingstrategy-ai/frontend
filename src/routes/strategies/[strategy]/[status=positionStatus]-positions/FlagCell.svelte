@@ -99,7 +99,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.flags {
 		white-space: nowrap;
 		display: flex;

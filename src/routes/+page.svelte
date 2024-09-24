@@ -66,7 +66,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	h2 {
 		text-align: center;
 	}

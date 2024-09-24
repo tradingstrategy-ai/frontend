@@ -13,7 +13,7 @@
 	<slot />
 </menu>
 
-<style lang="postcss">
+<style>
 	@custom-media --bigger-gap (width > 1480px);
 	@custom-media --smaller-gap (width <= 1260px);
 	menu {

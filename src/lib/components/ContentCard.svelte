@@ -47,7 +47,7 @@ anchor if `href` is provided. The `icon` and `cta` slots are optional.
 	{/if}
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.content-card {
 		display: flex;
 		flex-direction: column;

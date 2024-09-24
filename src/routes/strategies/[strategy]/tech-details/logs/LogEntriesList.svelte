@@ -18,7 +18,7 @@ Display log messages as a scrollable panel
 	{/each}
 </div>
 
-<style lang="postcss">
+<style>
 	.log-panel {
 		display: flex;
 		flex-direction: column-reverse;

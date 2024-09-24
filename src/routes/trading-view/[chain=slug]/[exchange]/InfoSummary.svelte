@@ -35,7 +35,7 @@
 	</p>
 </div>
 
-<style lang="postcss">
+<style>
 	.summary {
 		align-self: start;
 		display: grid;

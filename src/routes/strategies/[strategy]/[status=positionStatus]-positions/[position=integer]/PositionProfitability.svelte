@@ -44,7 +44,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.position-profitability {
 		padding: 1.25rem;
 		display: grid;

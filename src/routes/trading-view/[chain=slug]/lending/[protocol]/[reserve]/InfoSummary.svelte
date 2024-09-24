@@ -42,7 +42,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.summary {
 		display: grid;
 		font: var(--f-ui-large-roman);

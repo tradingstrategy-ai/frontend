@@ -47,7 +47,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 	</footer>
 </div>
 
-<style lang="postcss">
+<style>
 	.summary-box {
 		container-type: inline-size;
 		display: grid;

@@ -32,7 +32,7 @@ of a single alert item.
 	</AlertList>
 </div>
 
-<style lang="postcss">
+<style>
 	.alert {
 		display: contents;
 

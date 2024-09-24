@@ -22,7 +22,7 @@ component instead.
 
 <ul class="alert-list {size} {status}"><slot {AlertItem} /></ul>
 
-<style lang="postcss">
+<style>
 	.alert-list {
 		display: grid;
 		width: 100%;

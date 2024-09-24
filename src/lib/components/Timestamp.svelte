@@ -49,7 +49,7 @@ by JS Date) or a Date object.
 	</slot>
 </time>
 
-<style lang="postcss">
+<style>
 	.timestamp {
 		:global(span) {
 			white-space: nowrap;

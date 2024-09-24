@@ -7,7 +7,7 @@
 	<iframe src="https://www.youtube.com/embed/{youTubeId}" {title} frameborder="0" allowfullscreen />
 </section>
 
-<style lang="postcss">
+<style>
 	.hero-video {
 		--container-max-width: 1020px;
 		padding-block: var(--space-xxxl);

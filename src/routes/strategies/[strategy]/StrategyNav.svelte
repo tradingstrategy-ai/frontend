@@ -148,7 +148,7 @@
 	</div>
 </nav>
 
-<style lang="postcss">
+<style>
 	.strategy-nav {
 		--menu-gap: var(--space-sl);
 		--menu-item-active-color: var(--c-text);

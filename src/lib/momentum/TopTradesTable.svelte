@@ -36,7 +36,7 @@ This component should be removed if it is not repurposed and displayed on a diff
 	</tbody>
 </table>
 
-<style lang="postcss">
+<style>
 	.top-trades-table {
 		.price-change {
 			padding: 0 var(--space-xs);

@@ -65,7 +65,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	</div>
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.content-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));

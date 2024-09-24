@@ -78,7 +78,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	<slot name="footer" />
 </dialog>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		&:where(.compact) {
 			--dialog-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));

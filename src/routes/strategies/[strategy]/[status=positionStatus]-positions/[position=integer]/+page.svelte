@@ -77,7 +77,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	.position-page {
 		:global(.has-error) {
 			margin-bottom: 1.5rem;

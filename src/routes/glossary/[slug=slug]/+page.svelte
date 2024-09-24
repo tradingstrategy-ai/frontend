@@ -86,7 +86,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	h1 {
 		font: var(--f-h1-medium);
 		text-transform: capitalize;

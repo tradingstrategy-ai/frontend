@@ -35,7 +35,7 @@ button-like control with a segement for each possible value.
 	{/each}
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--segmented-control-font: var(--f-ui-sm-medium);
 		--segmented-control-letter-spacing: var(--ls-ui-sm);

@@ -34,7 +34,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.hero-banner {
 		display: grid;
 		gap: var(--space-10xl);

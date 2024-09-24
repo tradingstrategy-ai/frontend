@@ -32,7 +32,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.newsletter-opt-in-banner {
 		--newsletter-banner-padding: var(--space-xl);
 		background-color: var(--c-box-2);

@@ -12,7 +12,7 @@
 	</SummaryBox>
 </div>
 
-<style lang="postcss">
+<style>
 	.table-of-contents {
 		a {
 			font: var(--f-heading-xs-medium);

@@ -11,7 +11,7 @@
 	{/if}
 </span>
 
-<style lang="postcss">
+<style>
 	.failure {
 		color: var(--c-error);
 	}

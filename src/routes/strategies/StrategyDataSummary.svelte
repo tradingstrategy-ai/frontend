@@ -100,7 +100,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-data-summary {
 		display: flex;
 		flex-wrap: wrap;

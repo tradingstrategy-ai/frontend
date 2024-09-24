@@ -21,7 +21,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-icon {
 		:is(&, img, object) {
 			display: grid;

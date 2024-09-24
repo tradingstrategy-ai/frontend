@@ -142,7 +142,7 @@ Display a peformance line chart for a given (static) dataset.
 	</ChartIQ>
 </div>
 
-<style lang="postcss">
+<style>
 	.performance-chart {
 		:global([data-css-props]) {
 			--chart-aspect-ratio: 2;

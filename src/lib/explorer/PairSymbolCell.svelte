@@ -17,7 +17,7 @@
 	</div>
 </EntitySymbol>
 
-<style lang="postcss">
+<style>
 	div {
 		white-space: nowrap;
 	}

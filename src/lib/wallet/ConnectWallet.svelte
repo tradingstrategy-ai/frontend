@@ -31,7 +31,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.desktop {
 		@media (--viewport-xs) {
 			display: none;

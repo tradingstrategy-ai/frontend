@@ -65,7 +65,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	<slot name="icon" />
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--icon-size: 1.25em;
 		--button-border-radius: var(--radius-md);

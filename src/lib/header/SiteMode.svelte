@@ -26,7 +26,7 @@ A helpful widget to identify non-production deployment and give some developer d
 	</section>
 {/if}
 
-<style lang="postcss">
+<style>
 	.site-mode {
 		padding-block: var(--space-md);
 		gap: var(--space-md);

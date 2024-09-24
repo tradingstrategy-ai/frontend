@@ -186,7 +186,7 @@
 	<TransactionTable {chain} transactions={trade.blockchain_transactions} />
 </main>
 
-<style lang="postcss">
+<style>
 	.trade-page {
 		.heading-prefix {
 			display: flex;

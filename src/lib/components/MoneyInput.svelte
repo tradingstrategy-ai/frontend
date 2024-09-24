@@ -68,7 +68,7 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 	{/if}
 </span>
 
-<style lang="postcss">
+<style>
 	.money-input {
 		width: var(--text-input-width, auto);
 		max-width: var(--text-input-max-width, auto);

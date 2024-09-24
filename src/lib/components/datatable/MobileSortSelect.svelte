@@ -36,7 +36,7 @@
 	</Select>
 </div>
 
-<style lang="postcss">
+<style>
 	.mobile-sorting {
 		background: var(--c-body);
 		padding: var(--space-md) 0;

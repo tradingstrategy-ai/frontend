@@ -68,7 +68,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.search-panel {
 		display: grid;
 		grid-template-rows: auto 1fr;

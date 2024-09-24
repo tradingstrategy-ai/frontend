@@ -159,7 +159,7 @@
 	</table>
 </SummaryBox>
 
-<style lang="postcss">
+<style>
 	table {
 		margin-top: -1rem;
 	}

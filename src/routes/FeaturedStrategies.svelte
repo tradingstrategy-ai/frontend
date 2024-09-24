@@ -41,7 +41,7 @@
 	</div>
 </Section>
 
-<style lang="postcss">
+<style>
 	:is(h2, .cta) {
 		text-align: center;
 	}

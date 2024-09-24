@@ -49,7 +49,7 @@ unknown props through to HTML input element.
 	{/if}
 </span>
 
-<style lang="postcss">
+<style>
 	.text-input {
 		position: relative;
 		display: inline-grid;

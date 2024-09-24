@@ -49,7 +49,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.deposit-balance-page {
 		display: grid;
 		gap: var(--space-md);

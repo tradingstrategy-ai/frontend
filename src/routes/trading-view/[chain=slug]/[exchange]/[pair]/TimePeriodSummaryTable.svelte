@@ -43,7 +43,7 @@ Display summary performance table for various periods.
 	{/each}
 </div>
 
-<style lang="postcss">
+<style>
 	.time-period-picker {
 		text-transform: capitalize;
 

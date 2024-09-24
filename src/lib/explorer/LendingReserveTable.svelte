@@ -78,7 +78,7 @@
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
-<style lang="postcss">
+<style>
 	.reserve-table :global {
 		@media (--viewport-sm-down) {
 			.asset_label {

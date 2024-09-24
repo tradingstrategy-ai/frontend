@@ -101,7 +101,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	</p>
 {/if}
 
-<style lang="postcss">
+<style>
 	.subscribe-form {
 		--text-input-font: var(--f-mono-lg-regular);
 		--text-input-letter-spacing: var(--f-mono-lg-spacing);

@@ -70,7 +70,7 @@ https://search.google.com/structured-data/testing-tool
 	</ol>
 </Section>
 
-<style lang="postcss">
+<style>
 	ol {
 		list-style-type: none;
 		padding: var(--space-sl) 0;

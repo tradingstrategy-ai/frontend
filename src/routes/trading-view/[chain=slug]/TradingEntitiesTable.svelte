@@ -21,7 +21,7 @@
 	</tbody>
 </table>
 
-<style lang="postcss">
+<style>
 	.trading-entities-table {
 		table-layout: fixed;
 

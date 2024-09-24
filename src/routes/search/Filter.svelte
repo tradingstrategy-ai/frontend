@@ -46,7 +46,7 @@ Display filter options as checkboxes search queries.
 	</ul>
 </div>
 
-<style lang="postcss">
+<style>
 	.filter {
 		display: grid;
 		gap: var(--space-ls);

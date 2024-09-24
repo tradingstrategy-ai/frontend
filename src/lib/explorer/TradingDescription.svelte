@@ -44,7 +44,7 @@ Used in DataTable context (vs. standard svelte component context).
 	</span>
 </div>
 
-<style lang="postcss">
+<style>
 	.description-cell {
 		display: flex;
 		gap: 1ex;

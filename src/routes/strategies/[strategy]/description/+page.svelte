@@ -20,7 +20,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-description {
 		overflow-x: auto;
 		background: var(--c-box-1);

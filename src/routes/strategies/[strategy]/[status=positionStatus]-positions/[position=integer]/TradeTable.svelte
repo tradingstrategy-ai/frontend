@@ -67,7 +67,7 @@
 	<DataTable {tableViewModel} size="sm" />
 </section>
 
-<style lang="postcss">
+<style>
 	.trade-table {
 		overflow-x: auto;
 		overflow-y: hidden;

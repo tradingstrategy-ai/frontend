@@ -28,7 +28,7 @@ A section component to display a collection of ContentCards in a responsive grid
 	</Section>
 </div>
 
-<style lang="postcss">
+<style>
 	.content-cards-section {
 		margin-bottom: var(--space-xl);
 		--section-padding: var(--space-ml);

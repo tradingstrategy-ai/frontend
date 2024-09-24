@@ -175,7 +175,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.my-deposits {
 		@media (--viewport-sm-down) {
 			:global(.desktop) {

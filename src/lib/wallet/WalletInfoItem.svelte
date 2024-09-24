@@ -12,7 +12,7 @@
 	</span>
 </li>
 
-<style lang="postcss">
+<style>
 	.wallet-info-item {
 		display: grid;
 		gap: var(--space-md);

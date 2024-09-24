@@ -55,7 +55,7 @@
 	</Dialog>
 </div>
 
-<style lang="postcss">
+<style>
 	.color-mode-picker {
 		display: contents;
 

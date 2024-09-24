@@ -29,7 +29,7 @@ or other contexts where a stronger visual representation is desired.
 	</UpDownIndicator>
 </div>
 
-<style lang="postcss">
+<style>
 	.up-down-cell {
 		display: flex;
 		justify-content: flex-end;

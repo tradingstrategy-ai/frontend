@@ -61,7 +61,7 @@
 	</div>
 </slot>
 
-<style lang="postcss">
+<style>
 	.vault-balance {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(15rem, auto));

@@ -21,7 +21,7 @@
 	</button>
 </li>
 
-<style lang="postcss">
+<style>
 	.wizard-nav-item {
 		display: contents;
 

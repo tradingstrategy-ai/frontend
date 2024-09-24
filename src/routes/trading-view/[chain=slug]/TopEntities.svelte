@@ -49,7 +49,7 @@
 	</Button>
 </SummaryBox>
 
-<style lang="postcss">
+<style>
 	header[slot='header'] {
 		gap: var(--space-md);
 		align-items: flex-end;

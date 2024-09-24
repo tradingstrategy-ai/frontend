@@ -102,7 +102,7 @@
 	</div>
 </section>
 
-<style lang="postcss">
+<style>
 	.fees {
 		display: grid;
 		gap: 1.5rem;

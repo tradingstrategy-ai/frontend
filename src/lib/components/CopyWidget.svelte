@@ -46,7 +46,7 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 	{/key}
 </div>
 
-<style lang="postcss">
+<style>
 	.copy-widget {
 		display: grid;
 

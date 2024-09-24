@@ -39,7 +39,7 @@
 	<DataTable size="sm" {tableViewModel} />
 </section>
 
-<style lang="postcss">
+<style>
 	.transaction-table {
 		overflow-x: auto;
 		overflow-y: hidden;

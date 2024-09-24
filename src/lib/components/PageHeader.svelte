@@ -25,7 +25,7 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 	<slot name="cta" />
 </header>
 
-<style lang="postcss">
+<style>
 	.page-header {
 		display: grid;
 		grid-template-columns: 1fr;

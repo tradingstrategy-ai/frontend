@@ -24,7 +24,7 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 	</span>
 </div>
 
-<style lang="postcss">
+<style>
 	.data-box {
 		display: grid;
 		align-content: flex-start;

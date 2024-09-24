@@ -34,7 +34,7 @@ For more information see:
 	</button>
 </dfn>
 
-<style lang="postcss">
+<style>
 	.tooltip {
 		.trigger {
 			font-style: normal;

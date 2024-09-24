@@ -55,7 +55,7 @@ Display a loading indicator during client-side routing. Invoked when a page
 
 <progress class={$state} value={$progress} />
 
-<style lang="postcss">
+<style>
 	/* see progress.css */
 	progress {
 		--progress-border-radius: 0;

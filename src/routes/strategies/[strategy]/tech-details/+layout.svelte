@@ -17,7 +17,7 @@
 	<slot />
 </SummaryBox>
 
-<style lang="postcss">
+<style>
 	header {
 		@media (--viewport-sm-down) {
 			--menu-item-font: var(--f-ui-sm-medium);

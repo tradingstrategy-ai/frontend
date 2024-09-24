@@ -9,7 +9,7 @@
 	</th>
 </tr>
 
-<style lang="postcss">
+<style>
 	tr.search {
 		position: sticky;
 		top: 3.5rem;

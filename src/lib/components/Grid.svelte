@@ -22,7 +22,7 @@ Utility component for grid-based layouts
 	<slot />
 </div>
 
-<style lang="postcss">
+<style>
 	.grid {
 		display: grid;
 		gap: var(--grid-gap);

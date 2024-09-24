@@ -17,7 +17,7 @@
 	<div class="title">{title}</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.block-info-tile {
 		display: grid;
 		align-content: center;

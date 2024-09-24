@@ -129,7 +129,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{/if}
 </ChartIQ>
 
-<style lang="postcss">
+<style>
 	.pair-candle-chart-hud {
 		background: var(--c-box-3);
 		display: inline-grid;

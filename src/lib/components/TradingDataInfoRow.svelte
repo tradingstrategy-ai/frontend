@@ -28,7 +28,7 @@ anchor tag).
 	<slot name="value">{value}</slot>
 </dd>
 
-<style lang="postcss">
+<style>
 	dt {
 		font: var(--f-ui-large-medium);
 	}

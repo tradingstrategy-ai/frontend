@@ -26,7 +26,7 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 	</dd>
 </div>
 
-<style lang="postcss">
+<style>
 	.hud-metric {
 		display: flex;
 		gap: var(--space-xxs);

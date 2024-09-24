@@ -16,7 +16,7 @@
 	<td>{formatDollar(row.liquidity_latest)}</td>
 </TradingEntitiesTable>
 
-<style lang="postcss">
+<style>
 	.symbol {
 		margin-left: 0.25em;
 		color: var(--c-text-extra-light);

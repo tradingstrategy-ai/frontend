@@ -9,7 +9,7 @@
 	<span>{address.slice(0, sliceAt)}</span><span>{address.slice(sliceAt)}</span>
 </span>
 
-<style lang="postcss">
+<style>
 	.hash-address {
 		display: inline-flex;
 		overflow: hidden;

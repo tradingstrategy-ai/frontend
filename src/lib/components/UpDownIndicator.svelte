@@ -27,7 +27,7 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 	<slot {direction} {formatted}>{formatted}</slot>
 </span>
 
-<style lang="postcss">
+<style>
 	.up-down-indicator {
 		color: var(--c-text-light);
 

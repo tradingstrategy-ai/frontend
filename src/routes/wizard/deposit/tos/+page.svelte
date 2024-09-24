@@ -188,7 +188,7 @@
 	</Dialog>
 </div>
 
-<style lang="postcss">
+<style>
 	.deposit-tos {
 		:global([data-css-props]) {
 			--dialog-max-width: 100ch;

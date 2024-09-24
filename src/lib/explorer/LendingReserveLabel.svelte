@@ -15,7 +15,7 @@
 	<span class="symbol">{reserve.asset_symbol}</span>
 </EntitySymbol>
 
-<style lang="postcss">
+<style>
 	.symbol {
 		margin-left: 0.25em;
 		color: var(--c-text-extra-light);

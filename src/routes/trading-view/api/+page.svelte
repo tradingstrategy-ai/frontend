@@ -107,7 +107,7 @@
 	</section>
 </main>
 
-<style lang="postcss">
+<style>
 	main {
 		--container-max-width: 600px;
 		display: grid;

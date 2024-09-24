@@ -120,7 +120,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(90vw, 24rem), 1fr));

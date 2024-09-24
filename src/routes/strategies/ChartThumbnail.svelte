@@ -81,7 +81,7 @@
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>
 
-<style lang="postcss">
+<style>
 	.chart-thumbnail {
 		:global([data-css-props]) {
 			--chart-height: 14rem;

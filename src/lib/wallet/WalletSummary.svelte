@@ -38,7 +38,7 @@
 	</WalletInfoItem>
 </WalletInfo>
 
-<style lang="postcss">
+<style>
 	.connected-wallet {
 		display: flex;
 		flex-wrap: wrap;

@@ -53,7 +53,7 @@
 	</Section>
 </div>
 
-<style lang="postcss">
+<style>
 	.wizard-layout {
 		display: grid;
 		grid-template-rows: auto 1fr;

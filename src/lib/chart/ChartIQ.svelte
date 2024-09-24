@@ -244,7 +244,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	{/await}
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--chart-aspect-ratio: 16/9;
 

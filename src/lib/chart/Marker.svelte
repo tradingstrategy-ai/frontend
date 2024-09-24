@@ -10,7 +10,7 @@
 	{/if}
 </svg>
 
-<style lang="postcss">
+<style>
 	.chart-marker {
 		position: absolute;
 		left: 0;

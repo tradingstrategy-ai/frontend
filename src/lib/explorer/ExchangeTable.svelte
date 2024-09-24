@@ -63,7 +63,7 @@
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
-<style lang="postcss">
+<style>
 	.exchange-table :global {
 		.exchange_name * {
 			overflow: hidden;

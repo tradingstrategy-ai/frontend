@@ -18,7 +18,7 @@
 	</div>
 </Tooltip>
 
-<style lang="postcss">
+<style>
 	[slot='trigger'] {
 		display: flex;
 		gap: 0.75ex;
