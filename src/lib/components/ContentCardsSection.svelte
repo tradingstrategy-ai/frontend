@@ -2,8 +2,9 @@
 @component
 A section component to display a collection of ContentCards in a responsive grid layout.
 
-### Usage:
-```tsx
+@example
+
+```svelte
 	<ContentCardsSection cols={3} title="First section">
 		<ContentCard title="Content card 1" … />
 		<ContentCard title="Content card 2" … />

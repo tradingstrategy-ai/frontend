@@ -5,8 +5,9 @@ depending on supplied props. Button label may be included as a prop or the
 default slot (or ommitted for icon-only buttons). Supports four style variants
 using flags: primary (default), secondary, ternary, quarternary.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Button
 		label="Click here!"
 		secondary

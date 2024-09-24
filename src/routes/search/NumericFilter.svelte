@@ -3,8 +3,9 @@
 Displays filter options for numeric filter search fields; dispatches valid
 Typesense filter on:change.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <NumericFilter
     bind:selected
     fieldName="numeric_field"

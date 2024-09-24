@@ -4,8 +4,9 @@ Display a copy icon that copies the provided text to the clipboard. The componen
 a `copier` store with a `copy` method – bind this to a variable and call `copier.copy()`
 (from a button, for instance).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<button title="copy to clipboard" on:click={() => copier.copy("This will be copied to clipboard")}>
 		<CopyWidget bind:copier />
 	</button>

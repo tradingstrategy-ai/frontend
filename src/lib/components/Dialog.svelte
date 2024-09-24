@@ -3,8 +3,9 @@
 Modal dialog component. Dispatches `open` and `close` events when state changes
 (but not on initial render/mount).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <Dialog
 		title="Cool dialog"
 		bind:open

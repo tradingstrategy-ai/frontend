@@ -3,8 +3,9 @@
 Display filter options for facet-based search fields; dispatches valid Typesense
 filter on:change.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <FacetFilter
     bind:selected
     fieldName="facet_field"

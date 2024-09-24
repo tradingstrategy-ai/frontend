@@ -2,8 +2,9 @@
 @component
 Embeddable <form> based component that allows subscribing to newsletter.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <SubscribeForm />
 ```
 -->

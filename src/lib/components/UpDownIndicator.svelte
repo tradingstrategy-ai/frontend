@@ -3,8 +3,9 @@
 Utility component for displaying a value with red/green value color. Use in inline contexts where
 a lightweight visual representation is needed. See `UpDownCell.svelte` for a more stylized variant.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<UpDownIndicator value={priceChange} formatter={formatPriceChange} />
 	<UpDownIndicator value={100}>Slot content</UpDownIndicator>
 ```

@@ -4,8 +4,9 @@ Display a loading indicator during client-side routing. Invoked when a page
 `load` function takes longer than 250ms to complete. The component uses
 `fixed` positioning – it may be included anywhere in the page layout.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<PageLoadProgressBar />
 ```
 -->

@@ -4,8 +4,9 @@ Custom variant of UpDownIndicator utility for displaying a value with red/green 
 Displays a more stylized indicator with padding and colored background highlight. Use in tables
 or other contexts where a stronger visual representation is desired.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <UpDownCell value={priceChange} formatter={formatPriceChange} />
 <UpDownCell value={100}>Slot content</UpDownIndicator>
 ```

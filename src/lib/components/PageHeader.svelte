@@ -3,8 +3,9 @@
 Display single- or double-line page header. `title`, `subtitle` can be passed as props (simple
 strings) or named slots (for nested markup); `description` can be a prop or default slot.
 
-#### Usage
-```tsx
+@example
+
+```svelte
   <PageHeader title="Main page title" subtitle="optional secondary page title" />
 ```
 -->

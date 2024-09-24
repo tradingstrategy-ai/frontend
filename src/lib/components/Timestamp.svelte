@@ -4,8 +4,9 @@ Render a `<time>` element with `datestamp` value and formated date/time content.
 can be a unix epoch timestamp, JS-style timestamp, ISO string (or other string that is parsable
 by JS Date) or a Date object.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Timestamp date={1672531200} withTime />
 	<Timestamp date="2023-01-01T00:00" relative />
 	<Timestamp date={someDate} let:parsedDate let:dateStr let:timeStr let:relative>

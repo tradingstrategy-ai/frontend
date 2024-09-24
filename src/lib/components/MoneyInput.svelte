@@ -7,8 +7,9 @@ props through to HTML input element.
 does _not_ coerce the `value` prop to a `number`. The raw `string` value is
 retained to avoid rounding errors and allow for conversion to `BigInt`.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <MoneyInput bind:value size="lg" tokenUnit="USDC" />
 ```
 -->

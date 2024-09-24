@@ -7,8 +7,9 @@ https://developers.google.com/search/docs/data-types/breadcrumbs
 Test at:
 https://search.google.com/structured-data/testing-tool
 
-#### Usage 
-```tsx
+@example
+
+```svelte
 	<Breadcrumbs labels={{ 'url-path-segment': 'Human Readable Name' }} />
 ```
 -->

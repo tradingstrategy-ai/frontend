@@ -2,8 +2,9 @@
 @component
 Display a collection of blog posts is a responsive grid layout.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<BlogRoll posts={arrayOfPosts} />
 ```
 -->

@@ -4,8 +4,9 @@ Display a single row of trading data (should be nested in <TradingDataInfo>). Ac
 `label` and `value` as a prop or named slot (e.g., to add additional styling or an
 anchor tag).
 
-#### Usage
-```tsx
+@example
+
+```svelte
 	<TradingDataInfo>
 		<TradingDataInfoRow label="Row label" value="Row value"	/>
 		<TradingDataInfoRow label="Row label">

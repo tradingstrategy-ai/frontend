@@ -4,8 +4,9 @@ Displays trading pair price/volume and liquidity charts. The two charts are
 linked so they scroll/zoom together and display crosshairs and HUD data
 for the same hovered date. Also displays a time-bucket selector.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <ChartSection
     pairId={12345}
     pairSymbol="ELON-ETH"

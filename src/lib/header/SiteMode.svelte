@@ -2,8 +2,9 @@
 @component
 A helpful widget to identify non-production deployment and give some developer diagnostics.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<SiteMode />
 ```
 -->

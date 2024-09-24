@@ -4,8 +4,9 @@ Display an inline data badge, with an optional status (which determines the badg
 The font size is inherited, and the padding and radius are relative to the font size.
 The color and background color may be overridden with CSS props.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <DataBadge status="error">Failed!</DataBadge>
 ```
 -->

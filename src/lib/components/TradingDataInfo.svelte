@@ -2,8 +2,9 @@
 @component
 Container for displaying a set of trading data key/value pairs. Use with <TradingDataInfoRow>
 
-#### Usage
-```tsx
+@example
+
+```svelte
 <TradingDataInfo>
   <TradingDataInfoRow ... />
   <TradingDataInfoRow ... />

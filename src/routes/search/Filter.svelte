@@ -2,8 +2,9 @@
 @component
 Display filter options as checkboxes search queries.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <Filter
     bind:selected
     fieldName="search_field_1"

@@ -2,8 +2,9 @@
 @component
 Use in conjunction with HudMetric to display chart HUD (heads-up-display) data.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <HudRow>
     <HudMetric ... />
   </HudRow>

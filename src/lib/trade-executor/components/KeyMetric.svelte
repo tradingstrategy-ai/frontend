@@ -4,8 +4,9 @@ Display one key metric in a strategy tile.
 - Key metric can come from backtest or live data
 - Key metric may contain a help link (based on strategyId)
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<KeyMetric
 		name="Total assets"
 		metric={metrics.total_equity}

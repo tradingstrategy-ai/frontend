@@ -3,8 +3,9 @@
 Control for selecting a one value from a set of values, displayed as a horizontal
 button-like control with a segement for each possible value.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<SegmentedControl options={['red', 'yellow', 'green']} bind:selected />
 ```
 -->

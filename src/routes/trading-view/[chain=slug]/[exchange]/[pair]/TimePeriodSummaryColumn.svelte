@@ -2,8 +2,9 @@
 @component
 Display summary performance data for a given period; lazy-loads data when scrolled into view.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<TimePeriodSummaryColumn
 		pairId={1234}
 		hideLiquidityAndTrades={true|false}

@@ -6,8 +6,9 @@ slots.
 
 If `document` prop is `undefined`, a skeleton loader is rendered.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <SearchHit {document} />
 ```
 -->

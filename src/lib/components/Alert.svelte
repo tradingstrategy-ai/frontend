@@ -3,8 +3,9 @@
 Convenience wrapper around `AlertList` and `AlertItem` for the common scenario
 of a single alert item.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Alert size="md" status="warning" title="Warning">
 		Warning message copy.
 		<Button slot="cta" ... />

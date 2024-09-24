@@ -6,8 +6,9 @@ See: https://svelte-headless-table.bryanmylee.com
 The expected `tableViewModel` prop is the result of calling `table.createViewModel()`.
 See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <DataTable {tableViewModel} hasSearch={true|false} hasPagination={true|false} />
 ```
 -->

@@ -2,8 +2,9 @@
 @component
 Display summary performance table for various periods.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<TimePeriodSummaryTable pairId={1234} exchangeType="uniswap_v2" />
 ```
 -->

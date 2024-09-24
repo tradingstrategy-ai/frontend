@@ -2,8 +2,9 @@
 @component
 Dynamically ChartIQ modules (if available) and render chart element.
 
-#### Usage
-```tsx
+@example
+
+```svelte
   <ChartIQ
     options={{ controls: { chartControls: null } }}
     init={ (chartEngine) => { chartEngine.doStuff() } }

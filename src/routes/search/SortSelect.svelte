@@ -3,8 +3,9 @@
 Used for advanced searches; custom drop-down component for selecting from a
 pre-defined set of sort options.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <SortSelect bind:value />
 ```
 -->

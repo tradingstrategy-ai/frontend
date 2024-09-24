@@ -2,8 +2,9 @@
 @component
 Display a single alert item (should always be nested within AlertList).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<AlertItem title="Optional title" displayWhen={optionalCondition}>
 		Warning message – e.g., data on this page may be incomplete!
 	</AlertItem>

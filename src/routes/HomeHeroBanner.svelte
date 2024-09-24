@@ -2,8 +2,9 @@
 @component
 Home page hero banner.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <HeroBanner />
 ```
 -->

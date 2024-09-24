@@ -5,8 +5,9 @@ with a nested `Grid` component to create multi-column layouts.
 
 CSS overrides: `--section-padding`, `--section-gap`, `--section-background`
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Section padding="md" gap="sm">
 		<h2>Section heading</h2>
 		<Grid cols={3} gap="lg">
