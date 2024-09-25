@@ -6,7 +6,13 @@
 
 -->
 <script context="module" lang="ts">
-	export const menuOptions = [
+	type MenuOption = {
+		slug: string;
+		label: string;
+		positionStatus?: 'open' | 'closed' | 'frozen';
+	};
+
+	export const menuOptions: MenuOption[] = [
 		{
 			slug: '',
 			label: 'Overview'
@@ -58,7 +64,7 @@
 			slug: 'tech-details',
 			label: 'Technical details'
 		}
-	] as const;
+	];
 </script>
 
 <script lang="ts">
@@ -122,7 +128,7 @@
 	});
 </script>
 
-<nav class="strategy-nav {$mobileMenu}" style:--menu-height={menuHeight}>
+<nav class="strategy-nav {$mobileMenu}" style:--menu-open-height={menuHeight}>
 	<div class="mobile-toggle">
 		<Button quarternary on:click={mobileMenu.toggle}>
 			<IconChevronDown slot="icon" />
@@ -133,13 +139,14 @@
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
 			{#each visibleOptions as { slug, label, positionStatus }}
-				<MenuItem targetUrl={getTargetUrl(slug)} active={slug === currentOption?.slug}>
+				{@const active = slug === currentOption?.slug}
+				<MenuItem targetUrl={getTargetUrl(slug)} {active}>
 					<span class="label">{label}</span>
 					{#if positionStatus}
 						{#await getPositionCount(positionStatus)}
 							<span class="count skeleton" />
 						{:then count}
-							<span class="count">{count ?? '-'}</span>
+							<span class="count" class:active>{count ?? '-'}</span>
 						{/await}
 					{/if}
 				</MenuItem>
@@ -160,89 +167,83 @@
 			--menu-item-padding: 0 var(--space-ml);
 		}
 
-		@media (--viewport-md-down) {
-			--menu-item-font: var(--f-ui-md-medium);
-			--menu-item-count-font: var(--f-ui-sm-bold);
-		}
-	}
-
-	.label {
-		padding-block: var(--space-ms);
-		overflow: hidden;
-
-		@media (--viewport-md-down) {
-			padding-block: var(--space-sl);
-		}
-	}
-
-	.count {
-		--skeleton-radius: var(--radius-lg);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: var(--space-ll);
-		min-width: var(--space-ll);
-		margin-left: var(--space-sm);
-		padding-inline: var(--space-ss);
-		border-radius: var(--radius-lg);
-		font: var(--f-ui-md-bold);
-		letter-spacing: var(--f-ui-md-spacing, normal);
-		color: var(--c-text);
-		background: var(--c-box-3);
-
-		:global(a:not([href]):not([tabindex])) & {
-			background: var(--c-text);
-			color: var(--c-text-inverted);
-		}
-
-		@media (--viewport-md-down) {
-			height: var(--space-lg);
-			min-width: var(--space-lg);
-			margin-left: var(--space-ss);
-			padding-inline: var(--space-xs);
-			font: var(--f-ui-sm-bold);
-			letter-spacing: var(--f-ui-sm-spacing, normal);
-		}
-	}
-
-	.mobile-toggle {
-		display: grid;
-
-		@media (--viewport-lg-up) {
-			display: none;
-		}
-
-		.open & {
-			opacity: 0.4;
-		}
-
-		:global(.icon) {
-			transition: transform var(--time-md) ease-out;
-
-			.open & {
-				transform: rotate(180deg);
-			}
-		}
-	}
-
-	.menu-wrapper {
-		@media (--viewport-lg-up) {
-			position: sticky;
-			top: 2rem;
-		}
-
-		@media (--viewport-md-down) {
+		.label {
+			padding-block: var(--space-ms);
 			overflow: hidden;
-			height: 0;
-			transition: height 0.25s ease-out;
 
-			.open & {
-				height: var(--menu-height);
+			@media (--viewport-md-down) {
+				padding-block: var(--space-sl);
+			}
+		}
+
+		.count {
+			--skeleton-radius: var(--radius-lg);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: var(--space-ll);
+			min-width: var(--space-ll);
+			margin-left: var(--space-sm);
+			padding-inline: var(--space-ss);
+			border-radius: var(--radius-lg);
+			font: var(--f-ui-md-bold);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: var(--c-text);
+			background: var(--c-box-3);
+
+			&.active {
+				background: var(--c-text);
+				color: var(--c-text-inverted);
 			}
 
-			:global menu {
-				padding-top: var(--space-ls);
+			@media (--viewport-md-down) {
+				height: var(--space-lg);
+				min-width: var(--space-lg);
+				margin-left: var(--space-ss);
+				padding-inline: var(--space-xs);
+				font: var(--f-ui-sm-bold);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
+		}
+
+		.mobile-toggle {
+			display: grid;
+			opacity: var(--mobile-toggle-opacity, 1);
+			transition: opacity var(--time-md) ease-out;
+
+			/* hide on desktop */
+			@media (--viewport-lg-up) {
+				display: none;
+			}
+
+			:global(.icon) {
+				transition: transform var(--time-md) ease-out;
+				transform: rotate(var(--icon-rotation, 0));
+			}
+		}
+
+		.menu-wrapper {
+			@media (--viewport-lg-up) {
+				position: sticky;
+				top: 2rem;
+			}
+
+			@media (--viewport-md-down) {
+				overflow: hidden;
+				height: var(--menu-height, 0);
+				transition: height 0.25s ease-out;
+
+				:global menu {
+					padding-top: var(--space-ls);
+				}
+			}
+		}
+
+		/* mobile menu open styles */
+		&.open {
+			--menu-height: var(--menu-open-height);
+			--mobile-toggle-opacity: 0.5;
+			--icon-rotation: 180deg;
 		}
 	}
 </style>
