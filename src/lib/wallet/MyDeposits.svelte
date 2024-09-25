@@ -85,7 +85,7 @@
 	}
 </script>
 
-<div class="my-deposits {$expandable} {$wallet.status}" style:--content-height={contentHeight}>
+<div class="my-deposits {$expandable}" style:--content-expanded-height={contentHeight}>
 	<header>
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
@@ -194,51 +194,52 @@
 		border-radius: var(--radius-md);
 		--padding: 1.25rem;
 		--gap: 1rem;
+		--header-padding: var(--padding) var(--padding) calc(var(--gap) / 2);
+		--header-font-size: 1rem;
+
+		&.open {
+			--icon-rotation: 180deg;
+			--wallet-address-margin-left: 0.625rem;
+			--content-height: var(--content-expanded-height);
+		}
+
+		&.closed {
+			--header-padding: 0.75rem var(--padding);
+			--header-translate: calc(-1 * (100% + var(--gap)));
+		}
+
+		.mobile {
+			--header-font-size: 0.875rem;
+		}
 	}
 
 	header {
-		--header-padding: var(--padding) var(--padding) calc(var(--gap) / 2);
-
 		button {
-			display: grid;
+			display: flex;
 			gap: 0.75em;
 			align-items: center;
+			justify-content: center;
 			width: 100%;
 			padding: var(--header-padding);
 			border: none;
 			background: transparent;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--ls-ui-md);
 			text-align: left;
 			cursor: pointer;
 			transition: padding var(--time-md) ease-out;
 
-			.closed & {
-				--header-padding: 0.75rem var(--padding);
-			}
-
-			.connected & {
-				grid-template-columns: 1fr 1.25rem;
-			}
-
 			.inner {
+				flex: 1;
 				display: grid;
 				grid-template-columns: repeat(3, calc((100% - var(--gap)) / 2));
 				gap: var(--gap);
 				overflow: hidden;
 
-				& > * {
+				> * {
 					transition: transform var(--time-md) ease-out;
-
-					.closed & {
-						transform: translate(calc(-1 * (100% + var(--gap))), 0);
-					}
+					transform: translateX(var(--header-translate));
 				}
-			}
-
-			.disconnected & {
-				grid-template-columns: auto auto;
-				justify-content: center;
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--ls-ui-md);
 			}
 
 			.vault-balance {
@@ -255,26 +256,18 @@
 
 			:global(.chevron-down) {
 				transition: transform var(--time-md) ease-out;
-
-				.open & {
-					transform: rotate(180deg);
-				}
+				transform: rotate(var(--icon-rotation, 0));
 			}
 		}
 	}
 
 	h2 {
 		font: var(--f-heading-xs-medium);
-		font-size: 1rem;
+		font-size: var(--header-font-size);
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--c-text-ultra-light);
 		white-space: nowrap;
-
-		.mobile & {
-			/* custom xxs heading size (no CSS var) */
-			font-size: 0.875rem;
-		}
 
 		&.desktop {
 			padding: var(--header-padding);
@@ -286,12 +279,9 @@
 		grid-template-columns: auto 1fr;
 		gap: 0.75ex;
 		align-items: center;
+		padding-left: var(--wallet-address-margin-left, 0);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm, normal);
-
-		.open & {
-			margin-left: 0.625rem;
-		}
 	}
 
 	.content-wrapper {
@@ -299,12 +289,8 @@
 
 		@media (--viewport-sm-down) {
 			overflow: hidden;
-			height: 0;
+			height: var(--content-height, 0);
 			transition: height var(--time-md) ease-out;
-
-			.open & {
-				height: var(--content-height);
-			}
 		}
 
 		.content {
