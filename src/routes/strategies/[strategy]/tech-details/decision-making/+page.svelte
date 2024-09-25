@@ -5,7 +5,6 @@
 	be replacead with Plotly JS charts and this is only MVP.
 -->
 <script lang="ts">
-	import warning from '$lib/assets/icons/warning.svg';
 	import { Alert } from '$lib/components';
 
 	export let data;
@@ -14,13 +13,9 @@
 	let hasError = false;
 	let errorUrl = '';
 
-	// https://stackoverflow.com/questions/69020710/fall-back-image-with-sveltekit
-	const fallback = warning;
-	function handleError(ev: Event) {
-		const target = ev.target as HTMLImageElement;
-		errorUrl = target.src;
+	function handleError(this: HTMLImageElement) {
+		errorUrl = this.src;
 		hasError = true;
-		target.src = fallback;
 	}
 </script>
 
@@ -43,10 +38,12 @@
 		</Alert>
 	{/if}
 
-	<div class="images">
-		<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
-		<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
-	</div>
+	{#if !hasError}
+		<div class="images">
+			<img class="light" src={imageUrls.light} alt="Strategy decision data (light)" on:error={handleError} />
+			<img class="dark" src={imageUrls.dark} alt="Strategy decision data (dark)" on:error={handleError} />
+		</div>
+	{/if}
 </section>
 
 <style>
@@ -70,10 +67,6 @@
 
 		img {
 			width: 100%;
-
-			.hasError & {
-				max-width: 20rem;
-			}
 		}
 
 		.light {
