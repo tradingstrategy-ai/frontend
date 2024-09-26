@@ -20,6 +20,7 @@
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
+	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
 	export let strategy: ConnectedStrategyRuntimeState;
 	export let chain: ConfiguredChain | undefined;
@@ -147,8 +148,25 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
-				<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+				<!-- BEGIN: "Deposit at Enzyme" hack  -->
+				{#if strategy.depositOnEnzyme}
+					{@const enzymeUrl = getVaultUrl(strategy)}
+					{@const showRedeemButton = connected && !wrongNetwork}
+					<Button
+						label="Deposit at Enzyme"
+						class={showRedeemButton ? '' : 'full-width'}
+						disabled={!enzymeUrl}
+						href={enzymeUrl}
+					/>
+					{#if showRedeemButton}
+						<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+					{/if}
+				{:else}
+					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
+					<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+				{/if}
+				<!-- END: "Deposit at Enzyme" hack  -->
+				<!-- REVERT: remove all but the last 2 buttons above when "Deposit at Enzyme" hack is removed -->
 			</div>
 		</div>
 	</div>
@@ -312,7 +330,7 @@
 		}
 
 		/* desktop: if 2-col button is present, siblings should span single col */
-		:global(.full-width:not(.mobile) ~ .button) {
+		:global(.full-width:not(.mobile) ~ .button:not(.full-width)) {
 			grid-column: auto;
 		}
 

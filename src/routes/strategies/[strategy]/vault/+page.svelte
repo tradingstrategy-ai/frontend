@@ -5,6 +5,7 @@
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getVaultUrl } from 'trade-executor/helpers/vault.js';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
@@ -12,7 +13,7 @@
 
 	const address = onChainData.smart_contracts.vault;
 	const chainSlug = getChain(chain.id)?.slug;
-	const enzymeUrl = address && `https://app.enzyme.finance/vault/${address}?network=${chainSlug}`;
+	const enzymeUrl = getVaultUrl(strategy);
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>
 
