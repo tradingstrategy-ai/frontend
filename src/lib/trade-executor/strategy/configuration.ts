@@ -6,9 +6,10 @@ export const strategyConfigurationSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	url: z.string().url(),
-	new_version_id: z.string().nullish(),
-	frontpage: z.boolean().nullish(),
-	hiddenPositions: primaryKey.array().default([])
+	new_version_id: z.string().optional(),
+	hiddenPositions: primaryKey.array().default([]),
+	frontpage: z.boolean().default(false),
+	depositOnEnzyme: z.boolean().default(false)
 });
 export type StrategyConfiguration = z.infer<typeof strategyConfigurationSchema>;
 
