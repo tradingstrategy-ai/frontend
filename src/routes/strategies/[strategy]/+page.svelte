@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { CIQ } from 'chartiq/js/standard';
 	import type { ComponentEvents } from 'svelte';
+	import type { Candle, Quote, QuoteFeed, RawTick } from '$lib/chart';
 	import {
-		type Candle,
-		type Quote,
-		type QuoteFeed,
 		quoteFeed,
 		normalizeDataForInterval,
 		periodicityToTimeBucket,
@@ -20,6 +18,7 @@
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { isGeoBlocked } from '$lib/helpers/geo';
 	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
+	import { differenceInCalendarDays } from 'date-fns';
 
 	export let data;
 	const { chain, strategy, admin, ipCountry } = data;
@@ -27,8 +26,9 @@
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
-
 	const periodPerformance: Record<string, MaybeNumber> = {};
+
+	let initialTimeframe = '3M';
 
 	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
 
@@ -53,6 +53,15 @@
 		type: 'compounding_unrealised_trading_profitability_sampled',
 		source: 'live_trading'
 	});
+
+	$: setInitialTimeframe($chartClient.data);
+
+	function setInitialTimeframe(data: RawTick[] | undefined) {
+		const firstTs = data?.[0]?.[0] as number | undefined;
+		if (firstTs === undefined) return;
+		const age = differenceInCalendarDays(new Date(), firstTs * 1000);
+		initialTimeframe = age <= 7 ? '1W' : age <= 30 ? '1M' : '3M';
+	}
 
 	const benchmarkTokens = getBenchmarkTokens(strategy);
 	let selectedBenchmarks = benchmarkTokens.map((t) => t.symbol);
@@ -123,7 +132,7 @@
 				return d >= first.DT && d <= last.DT;
 			});
 
-			const initialValue = candles[0].c;
+			const initialValue = candles[0]?.c ?? 0;
 
 			return candles.map(({ ts, c }: Candle) => {
 				const percentChange = (c - initialValue) / initialValue;
@@ -162,7 +171,7 @@
 	<MyDeposits {strategy} {chain} {geoBlocked} {ipCountry} />
 
 	<div class="chart">
-		<ChartContainer let:timeSpan={{ spanDays, interval }}>
+		<ChartContainer selected={initialTimeframe} let:timeSpan={{ spanDays, interval }}>
 			<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
 				{#if periodPerformance[strategy.id] !== undefined}
 					<UpDownCell value={periodPerformance[strategy.id]} formatter={formatProfitability} />

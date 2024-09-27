@@ -19,6 +19,7 @@ Display a chart container with title, description and timespan selector.
 	import { SegmentedControl } from '$lib/components';
 
 	export let title = '';
+	export let selected = '3M';
 
 	type TimeSpan = {
 		performanceLabel: string;
@@ -48,7 +49,6 @@ Display a chart container with title, description and timespan selector.
 		}
 	};
 
-	let selected = '3M';
 	$: timeSpan = timeSpans[selected];
 </script>
 
