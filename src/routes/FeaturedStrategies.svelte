@@ -3,7 +3,6 @@
 	import { Alert, Button, Section } from '$lib/components';
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
-	import { formatDaysAgo } from '$lib/helpers/formatters';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let strategies: StrategyRuntimeState[];

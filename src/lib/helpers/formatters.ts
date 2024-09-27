@@ -336,7 +336,7 @@ export function formatDaysAgo(unixTimestamp: MaybeNumber): string {
 	if (!isNumber(unixTimestamp)) return notFilledMarker;
 	const seconds = Date.now() / 1000 - unixTimestamp;
 	const days = Math.floor(seconds / DAY);
-	return days < 1 ? 'Less than a day' : days === 1 ? '1 day' : `${days} days`;
+	return days < 1 ? '< 1 day' : days === 1 ? '1 day' : `${days} days`;
 }
 
 /**
