@@ -199,7 +199,7 @@
 	</table>
 </div>
 
-<style lang="postcss">
+<style>
 	.position-summary {
 		h2 {
 			font: var(--f-heading-md-medium);

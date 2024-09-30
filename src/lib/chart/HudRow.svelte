@@ -2,8 +2,9 @@
 @component
 Use in conjunction with HudMetric to display chart HUD (heads-up-display) data.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <HudRow>
     <HudMetric ... />
   </HudRow>
@@ -17,7 +18,7 @@ Use in conjunction with HudMetric to display chart HUD (heads-up-display) data.
 	<slot />
 </dl>
 
-<style lang="postcss">
+<style>
 	.hud-row {
 		display: flex;
 		flex-wrap: wrap;

@@ -2,8 +2,9 @@
 @component
 Display a loading spinner
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <Spinner size="60" color="var(--c-text-ultra-light)" />
 ```
 -->

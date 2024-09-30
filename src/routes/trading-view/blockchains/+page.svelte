@@ -37,7 +37,7 @@
 	</ContentCardsSection>
 </ContentCardsTemplate>
 
-<style lang="postcss">
+<style>
 	.blockchain-logo {
 		height: 3rem;
 		width: 3rem;

@@ -3,8 +3,9 @@
 Convenience wrapper around `AlertList` and `AlertItem` for the common scenario
 of a single alert item.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Alert size="md" status="warning" title="Warning">
 		Warning message copy.
 		<Button slot="cta" ... />
@@ -32,7 +33,7 @@ of a single alert item.
 	</AlertList>
 </div>
 
-<style lang="postcss">
+<style>
 	.alert {
 		display: contents;
 

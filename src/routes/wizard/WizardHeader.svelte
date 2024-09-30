@@ -27,7 +27,7 @@
 	</div>
 </Section>
 
-<style lang="postcss">
+<style>
 	.inner {
 		display: flex;
 		align-items: center;

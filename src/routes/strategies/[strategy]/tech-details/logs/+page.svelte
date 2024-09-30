@@ -43,7 +43,7 @@
 	{/key}
 </section>
 
-<style lang="postcss">
+<style>
 	.logs {
 		display: grid;
 		grid-template-rows: auto 1fr;

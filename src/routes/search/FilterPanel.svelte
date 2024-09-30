@@ -110,7 +110,7 @@
 	</footer>
 </div>
 
-<style lang="postcss">
+<style>
 	.filter-panel {
 		@media (--viewport-md-down) {
 			position: fixed;

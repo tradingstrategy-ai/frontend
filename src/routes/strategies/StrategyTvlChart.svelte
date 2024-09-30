@@ -36,7 +36,7 @@
 	</ChartContainer>
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-tvl-chart {
 		:global([data-css-props]) {
 			--chart-aspect-ratio: 2.5;

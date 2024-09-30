@@ -4,8 +4,9 @@ Display an alert callout box. This should only include `AlertItem` components
 as children. If you only need to display a single `AlertItem`, try the `Alert`
 component instead.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<AlertList status="warning" let:AlertItem>
 		<AlertItem title="Optional title">
 			Warning message – e.g., data on this page may be incomplete!
@@ -22,7 +23,7 @@ component instead.
 
 <ul class="alert-list {size} {status}"><slot {AlertItem} /></ul>
 
-<style lang="postcss">
+<style>
 	.alert-list {
 		display: grid;
 		width: 100%;

@@ -6,7 +6,7 @@
 	<ul><slot /></ul>
 </div>
 
-<style lang="postcss">
+<style>
 	.wallet-info {
 		container-type: inline-size;
 		width: 100%;

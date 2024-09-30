@@ -112,7 +112,7 @@
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} {totalRowCount} on:change />
 </div>
 
-<style lang="postcss">
+<style>
 	.pairs-table :global {
 		overflow-x: auto;
 		overflow-y: hidden;

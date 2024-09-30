@@ -50,7 +50,7 @@
 	</Section>
 </div>
 
-<style lang="postcss">
+<style>
 	.audience {
 		--section-padding: var(--space-md);
 		--section-gap: var(--space-md);

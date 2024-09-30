@@ -110,7 +110,7 @@
 	{/if}
 </ChartIQ>
 
-<style lang="postcss">
+<style>
 	.reserve-interest-rate-hud {
 		display: inline-grid;
 		grid-template-columns: 1fr 1fr;

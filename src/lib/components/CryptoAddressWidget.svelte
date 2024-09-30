@@ -22,7 +22,7 @@
 	{/if}
 </address>
 
-<style lang="postcss">
+<style>
 	.crypto-address-widget {
 		display: inline-grid;
 		grid-auto-flow: column;

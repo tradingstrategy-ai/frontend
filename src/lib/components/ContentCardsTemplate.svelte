@@ -3,8 +3,9 @@
 A page template that includes a HeroBanner header followed by any number of ContentCardSections.
 Should be used in conjunction with those two components.
 
-### Usage:
-```tsx
+@example
+
+```svelte
 	<ContentCardsTemplate pageTitle="For <title> tag" pageDescription="For <meta> description tag">
 		<HeroBanner slot="hero" … />
 		<ContentCardsSection title="First section">

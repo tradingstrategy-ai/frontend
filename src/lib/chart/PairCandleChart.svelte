@@ -2,8 +2,9 @@
 @component
 Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart data.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<PairCandleChart
 		feed={quoteFeed(…)}
 		pairId={12345}
@@ -129,7 +130,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{/if}
 </ChartIQ>
 
-<style lang="postcss">
+<style>
 	.pair-candle-chart-hud {
 		background: var(--c-box-3);
 		display: inline-grid;

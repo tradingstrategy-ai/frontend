@@ -2,8 +2,9 @@
 @component
 Container for displaying a set of trading data key/value pairs. Use with <TradingDataInfoRow>
 
-#### Usage
-```tsx
+@example
+
+```svelte
 <TradingDataInfo>
   <TradingDataInfoRow ... />
   <TradingDataInfoRow ... />
@@ -14,7 +15,7 @@ Container for displaying a set of trading data key/value pairs. Use with <Tradin
 	<slot />
 </dl>
 
-<style lang="postcss">
+<style>
 	.trading-data-info {
 		display: grid;
 		grid-template-columns: auto auto;

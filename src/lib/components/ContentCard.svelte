@@ -3,8 +3,9 @@
 Display a card with icon, title, description and an optional CTA button. The entire card acts as an
 anchor if `href` is provided. The `icon` and `cta` slots are optional.
 
-### Usage:
-```tsx
+@example
+
+```svelte
 	<ContentCard title="Content card 1" href="/destination/page">
 		<IconFoo slot="icon" />
 		<p>More information about the content card</p>
@@ -47,7 +48,7 @@ anchor if `href` is provided. The `icon` and `cta` slots are optional.
 	{/if}
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.content-card {
 		display: flex;
 		flex-direction: column;

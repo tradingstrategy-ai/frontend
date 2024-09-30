@@ -2,8 +2,9 @@
 @component
 Display a collection of blog posts is a responsive grid layout.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<BlogRoll posts={arrayOfPosts} />
 ```
 -->
@@ -30,7 +31,7 @@ Display a collection of blog posts is a responsive grid layout.
 	{/each}
 </div>
 
-<style lang="postcss">
+<style>
 	.blog-roll {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(21.25rem, 1fr));

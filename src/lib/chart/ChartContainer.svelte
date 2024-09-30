@@ -2,8 +2,9 @@
 @component
 Display a chart container with title, description and timespan selector.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <ChartContainer title="Performance" let:timeSpan>
 	<p slot="subtitle">
 		Chart description…
@@ -64,7 +65,7 @@ Display a chart container with title, description and timespan selector.
 	<slot name="footer" />
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--chart-container-padding: 1.5rem;
 

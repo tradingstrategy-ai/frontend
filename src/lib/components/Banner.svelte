@@ -21,7 +21,7 @@
 	</Section>
 </div>
 
-<style lang="postcss">
+<style>
 	.banner {
 		display: contents;
 		--section-background: var(--c-background-accent-1);

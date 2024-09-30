@@ -23,7 +23,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.log-entry {
 		display: grid;
 		grid-template-columns: auto 1fr;

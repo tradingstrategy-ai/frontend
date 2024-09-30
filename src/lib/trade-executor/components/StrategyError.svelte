@@ -6,7 +6,7 @@ Display an appropriate error message for a strategy when needed. There can be mu
  - The trade executor is not halted, but there is capital tied at frozen positions that need manual intervention
 
  #### Usage:
- ```tsx
+ ```svelte
    <StrategyStatus strategy={strategy} />
  ```
 -->

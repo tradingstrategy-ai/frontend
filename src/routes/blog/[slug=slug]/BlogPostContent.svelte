@@ -27,7 +27,7 @@
 	{@html html}
 </div>
 
-<style lang="postcss">
+<style>
 	.blog-post-content :global {
 		overflow: auto;
 

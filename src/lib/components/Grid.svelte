@@ -2,8 +2,9 @@
 @component
 Utility component for grid-based layouts
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<Grid cols={3} gap="lg">
 		your nested grid elements here
 	</Grid>
@@ -22,7 +23,7 @@ Utility component for grid-based layouts
 	<slot />
 </div>
 
-<style lang="postcss">
+<style>
 	.grid {
 		display: grid;
 		gap: var(--grid-gap);

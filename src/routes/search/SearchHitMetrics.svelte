@@ -40,7 +40,7 @@
 	</ul>
 {/if}
 
-<style lang="postcss">
+<style>
 	ul {
 		display: flex;
 		flex-wrap: wrap;

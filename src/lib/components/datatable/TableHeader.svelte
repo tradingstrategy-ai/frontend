@@ -43,7 +43,7 @@
 	<slot />
 </thead>
 
-<style lang="postcss">
+<style>
 	.sortable {
 		cursor: pointer;
 		user-select: none;

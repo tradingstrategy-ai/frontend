@@ -77,7 +77,7 @@
 	</main>
 {/if}
 
-<style lang="postcss">
+<style>
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);

@@ -4,8 +4,9 @@ Display a content tile that links to additional content, such as the blog tiles
 on the blog roll. If `href` is included, the entire tile is a targetable CTA.
 A `ctaLabel` or `cta` slot may also be provided to include an explicit button target.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<ContentTile
 		title="Content title"
 		description="This is some amazing content!"
@@ -65,7 +66,7 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	</div>
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.content-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));

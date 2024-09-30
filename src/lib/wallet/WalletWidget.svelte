@@ -35,7 +35,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.address {
 		display: grid;
 		grid-auto-flow: column;

@@ -73,7 +73,7 @@
 	<p class="disclaimer">Past performance is no guarantee of future results.</p>
 </div>
 
-<style lang="postcss">
+<style>
 	h3 {
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--ls-ui-md);

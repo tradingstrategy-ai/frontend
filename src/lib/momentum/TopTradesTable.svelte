@@ -6,8 +6,9 @@ of pair records is based on the records returned by `top-momentum` API.
 **Note:** The "Top trades" section was removed from the home page in 09/2024 (see #fb6486a3).
 This component should be removed if it is not repurposed and displayed on a different page.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<TopTradesTable pairs={topMomentum.top_up_24h_min_liq_1m} />
 ```
 -->
@@ -36,7 +37,7 @@ This component should be removed if it is not repurposed and displayed on a diff
 	</tbody>
 </table>
 
-<style lang="postcss">
+<style>
 	.top-trades-table {
 		.price-change {
 			padding: 0 var(--space-xs);

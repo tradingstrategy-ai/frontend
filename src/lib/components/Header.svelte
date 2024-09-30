@@ -40,7 +40,7 @@
 	</NavPanel>
 </div>
 
-<style lang="postcss">
+<style>
 	:global :root {
 		--header-height: 4.75rem;
 

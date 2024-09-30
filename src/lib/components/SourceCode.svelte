@@ -3,8 +3,9 @@
 Display source code with syntax highlighting using Highlight.js.
 See: https://github.com/metonym/svelte-highlight
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	import javascript from "svelte-highlight/languages/javascript";
 	<SourceCode language={javascript} code="console.log('Hello, world!');" />
 ```
@@ -22,7 +23,7 @@ See: https://github.com/metonym/svelte-highlight
 	<Highlight {language} {code} />
 </div>
 
-<style lang="postcss">
+<style>
 	.source-code {
 		display: grid;
 		padding: var(--space-xxs);

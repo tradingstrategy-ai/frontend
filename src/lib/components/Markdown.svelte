@@ -14,7 +14,7 @@
 	{@html micromark(content, options)}
 </div>
 
-<style lang="postcss">
+<style>
 	.markdown {
 		:global(h1) {
 			font: var(--f-heading-lg-medium);

@@ -17,7 +17,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.entity-symbol {
 		display: flex;
 		gap: calc(var(--image-size) / 3);

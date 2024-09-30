@@ -18,7 +18,7 @@
 	export let hideChainIcon = false;
 
 	const tableRows: Writable<LendingReserve[]> = writable([]);
-	$: tableRows.set(loading ? new Array(10).fill({}) : rows ?? []);
+	$: tableRows.set(loading ? new Array(10).fill({}) : (rows ?? []));
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
@@ -78,7 +78,7 @@
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
 </div>
 
-<style lang="postcss">
+<style>
 	.reserve-table :global {
 		@media (--viewport-sm-down) {
 			.asset_label {

@@ -12,7 +12,7 @@
 	</p>
 </header>
 
-<style lang="postcss">
+<style>
 	header {
 		gap: var(--space-lg);
 		padding-block: var(--space-lg);

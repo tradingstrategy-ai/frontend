@@ -129,7 +129,7 @@ Render the pair trading page
 	</section>
 </main>
 
-<style lang="postcss">
+<style>
 	main {
 		display: grid;
 		gap: var(--space-3xl);

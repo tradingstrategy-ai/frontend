@@ -12,7 +12,7 @@
 	<p><slot /></p>
 </div>
 
-<style lang="postcss">
+<style>
 	.deposit-warning {
 		display: grid;
 		gap: 0.5rem;

@@ -96,7 +96,7 @@
 	</section>
 </main>
 
-<style lang="postcss">
+<style>
 	main {
 		display: grid;
 		gap: 2.5rem;

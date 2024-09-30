@@ -6,8 +6,9 @@ slots.
 
 If `document` prop is `undefined`, a skeleton loader is rendered.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <SearchHit {document} />
 ```
 -->
@@ -92,7 +93,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 	{/if}
 </li>
 
-<style lang="postcss">
+<style>
 	.search-hit {
 		--c-exchange: hsl(36, 68%, 35%);
 		--c-token: hsl(36, 21%, 54%);

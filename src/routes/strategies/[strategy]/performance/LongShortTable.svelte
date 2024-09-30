@@ -75,7 +75,7 @@
 	</div>
 </SummaryBox>
 
-<style lang="postcss">
+<style>
 	.long-short-table {
 		min-height: 60rem;
 

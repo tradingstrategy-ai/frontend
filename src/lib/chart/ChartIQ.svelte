@@ -2,8 +2,9 @@
 @component
 Dynamically ChartIQ modules (if available) and render chart element.
 
-#### Usage
-```tsx
+@example
+
+```svelte
   <ChartIQ
     options={{ controls: { chartControls: null } }}
     init={ (chartEngine) => { chartEngine.doStuff() } }
@@ -244,7 +245,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	{/await}
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--chart-aspect-ratio: 16/9;
 

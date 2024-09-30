@@ -139,7 +139,7 @@
 	<DataTable {hasPagination} {hasSearch} {tableViewModel} on:change size="sm" />
 </div>
 
-<style lang="postcss">
+<style>
 	.position-table {
 		/*
 			Setting overflow:auto breaks the sticky header, but is required to prevent the layout

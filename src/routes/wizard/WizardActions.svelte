@@ -30,7 +30,7 @@
 	{/if}
 </footer>
 
-<style lang="postcss">
+<style>
 	.wizard-actions {
 		display: flex;
 		gap: var(--space-md);

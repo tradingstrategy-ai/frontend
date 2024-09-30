@@ -28,7 +28,7 @@
 	<slot name="cta" />
 </header>
 
-<style lang="postcss">
+<style>
 	.page-heading {
 		--gap: 0.625rem 1.25rem;
 		--grid-auto-flow: column;

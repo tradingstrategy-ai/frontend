@@ -14,7 +14,7 @@
 	</a>
 </li>
 
-<style lang="postcss">
+<style>
 	.menu-item {
 		list-style-type: none;
 		justify-content: inherit;

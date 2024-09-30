@@ -2,8 +2,9 @@
 @component
 Display a peformance line chart for a given (static) dataset.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<PerformanceChart
 		loading={true|false}
 		data={chartData}
@@ -142,7 +143,7 @@ Display a peformance line chart for a given (static) dataset.
 	</ChartIQ>
 </div>
 
-<style lang="postcss">
+<style>
 	.performance-chart {
 		:global([data-css-props]) {
 			--chart-aspect-ratio: 2;

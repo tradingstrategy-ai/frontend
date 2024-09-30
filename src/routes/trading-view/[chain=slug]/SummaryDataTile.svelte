@@ -19,7 +19,7 @@
 	<Button secondary label={buttonLabel} />
 </a>
 
-<style lang="postcss">
+<style>
 	.summary-data-tile {
 		display: grid;
 		grid-template-rows: 1fr auto;

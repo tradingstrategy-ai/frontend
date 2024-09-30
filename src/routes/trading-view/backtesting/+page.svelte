@@ -206,7 +206,7 @@
 	</ContentCardsSection>
 </main>
 
-<style lang="postcss">
+<style>
 	.backtesting-page {
 		display: grid;
 		gap: var(--space-lg);

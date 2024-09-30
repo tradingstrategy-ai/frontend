@@ -15,7 +15,7 @@
 	<IconChevronDown />
 </div>
 
-<style lang="postcss">
+<style>
 	.select {
 		--wrapper-padding: var(--space-sl);
 		align-items: center;

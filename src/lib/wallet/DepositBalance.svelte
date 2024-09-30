@@ -17,7 +17,7 @@
 	</dd>
 </div>
 
-<style lang="postcss">
+<style>
 	.deposit-balance {
 		display: grid;
 		grid-template-rows: auto 1fr;

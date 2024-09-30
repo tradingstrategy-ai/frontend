@@ -4,8 +4,9 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 - `direction` determines up/down color
 - include `value` prop or default slot when custom formatting is required
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <HudMetric label="Value" value={someValue} direction={1 | 0 | -1} />
 ```
 -->
@@ -26,7 +27,7 @@ Use in conjunction with HudRow to display chart HUD (heads-up-display) data.
 	</dd>
 </div>
 
-<style lang="postcss">
+<style>
 	.hud-metric {
 		display: flex;
 		gap: var(--space-xxs);

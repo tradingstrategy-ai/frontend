@@ -32,7 +32,7 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	.ctas {
 		display: flex;
 		gap: var(--space-md);

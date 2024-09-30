@@ -25,7 +25,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.search-hit-description {
 		font: var(--search-hit-description-font, var(--f-ui-md-medium));
 		letter-spacing: var(--search-hit-description-spacing, var(--f-ui-md-spacing, normal));

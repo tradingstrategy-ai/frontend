@@ -17,7 +17,7 @@
 	</Button>
 </div>
 
-<style lang="postcss">
+<style>
 	.social-links {
 		column-gap: var(--space-md);
 		display: flex;

@@ -2,8 +2,9 @@
 @component
 Home page hero banner.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <HeroBanner />
 ```
 -->
@@ -38,7 +39,7 @@ Home page hero banner.
 	</div>
 </header>
 
-<style lang="postcss">
+<style>
 	.home-hero-banner {
 		background: var(--c-background-accent-1);
 		padding: 2rem 0;

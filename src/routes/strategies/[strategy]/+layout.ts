@@ -25,7 +25,7 @@ export async function load({ params, fetch }) {
 		console.error(e);
 		const stack = [
 			`Error loading or parsing data from URL: ${strategyConf.url}/metadata`,
-			e instanceof Error ? e.stack ?? e.message : String(e)
+			e instanceof Error ? (e.stack ?? e.message) : String(e)
 		];
 		error(503, { message: 'Service Unavailable', stack });
 	}

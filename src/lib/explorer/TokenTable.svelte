@@ -73,7 +73,7 @@
 	<DataTable isResponsive hasPagination {loading} {tableViewModel} {totalRowCount} on:change />
 </div>
 
-<style lang="postcss">
+<style>
 	.token-table :global {
 		@media (--viewport-md-up) {
 			table {

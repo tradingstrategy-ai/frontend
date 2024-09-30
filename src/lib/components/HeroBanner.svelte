@@ -2,8 +2,9 @@
 @component
 Hero banner used as heading on various pages (Community, Trading data, Blog roll).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<HeroBanner {image} {title} {subtitle}>
 		Optional slot content.
 	</HeroBanner>
@@ -34,7 +35,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
 	.hero-banner {
 		display: grid;
 		gap: var(--space-10xl);

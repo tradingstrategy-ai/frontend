@@ -68,7 +68,7 @@
 	</tr>
 </tfoot>
 
-<style lang="postcss">
+<style>
 	td {
 		height: 4.5rem;
 		padding: 0;

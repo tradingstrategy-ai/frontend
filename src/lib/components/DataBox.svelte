@@ -3,8 +3,9 @@
 Uses together with SummaryBox (or any grid layout) to display a set of properties / statistics.
 `value` may either be passed as a prop or as slot content if additional markup is required.
 
-#### Usage
-```tsx
+@example
+
+```svelte
 <SummaryBox title="Fruits">
 	<DataBox label="Banana" value="Minions favorite" />
 	<DataBox label="Tomato">yes, it's <em>is</em> a fruit!</DataBox>
@@ -24,7 +25,7 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 	</span>
 </div>
 
-<style lang="postcss">
+<style>
 	.data-box {
 		display: grid;
 		align-content: flex-start;

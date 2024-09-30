@@ -36,7 +36,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	header {
 		margin-block: var(--space-md);
 		display: grid;

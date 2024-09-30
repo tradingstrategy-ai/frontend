@@ -104,7 +104,7 @@
 	</MetricsBox>
 </div>
 
-<style lang="postcss">
+<style>
 	.summary-metrics {
 		display: grid;
 		gap: inherit;

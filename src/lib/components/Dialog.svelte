@@ -3,8 +3,9 @@
 Modal dialog component. Dispatches `open` and `close` events when state changes
 (but not on initial render/mount).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <Dialog
 		title="Cool dialog"
 		bind:open
@@ -78,13 +79,16 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	<slot name="footer" />
 </dialog>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		&:where(.compact) {
 			--dialog-width: min(calc(100% - (var(--container-margin) * 2)), var(--container-max-width));
 			--dialog-min-width: 18rem;
 			--dialog-max-width: 32rem;
 			--dialog-padding: 2rem;
+			--dialog-title-font: var(--f-ui-lg-medium);
+			--dialog-title-letter-spacing: var(--f-ui-lg-spacing, normal);
+			--dialog-title-color: var(--c-text-extra-light);
 		}
 
 		&:where(.full-screen) {
@@ -92,9 +96,14 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 			--dialog-min-width: auto;
 			--dialog-max-width: 100vm;
 			--dialog-padding: 1.5rem;
+			--dialog-title-font: var(--f-heading-sm-medium);
+			--dialog-title-letter-spacing: var(--f-heading-sm-spacing, normal);
+			--dialog-title-color: var(--c-text-light);
 
 			@media (--viewport-xs) {
 				--dialog-padding: 1.25rem;
+				--dialog-title-font: var(--f-heading-xs-medium);
+				--dialog-title-letter-spacing: var(--f-heading-xs-spacing, normal);
 			}
 		}
 	}
@@ -155,23 +164,9 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 		h5 {
 			margin: 0;
-
-			.compact & {
-				font: var(--f-ui-lg-medium);
-				letter-spacing: var(--f-ui-lg-spacing, normal);
-				color: var(--c-text-extra-light);
-			}
-
-			.full-screen & {
-				font: var(--f-heading-sm-medium);
-				letter-spacing: var(--f-heading-sm-spacing, normal);
-				color: var(--c-text-light);
-
-				@media (--viewport-xs) {
-					font: var(--f-heading-xs-medium);
-					letter-spacing: var(--f-heading-xs-spacing, normal);
-				}
-			}
+			font: var(--dialog-title-font);
+			letter-spacing: var(--dialog-title-letter-spacing);
+			color: var(--dialog-title-color);
 		}
 
 		button {

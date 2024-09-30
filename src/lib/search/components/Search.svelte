@@ -4,8 +4,9 @@ Display site-wide search box for use in top-nav.
 - used for limited inline results; advanced search available through `/search` page
 - uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 <Search />
 ```
 -->
@@ -113,7 +114,7 @@ Display site-wide search box for use in top-nav.
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	@custom-media --search-layout-mobile (width < 576px);
 	@custom-media --search-layout-desktop (width >= 576px);
 

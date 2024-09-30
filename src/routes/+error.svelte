@@ -63,7 +63,7 @@
 	</aside>
 </main>
 
-<style lang="postcss">
+<style>
 	.error-page {
 		position: absolute;
 		top: 0;

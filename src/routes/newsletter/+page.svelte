@@ -9,7 +9,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	.newsletter-page {
 		--section-background: var(--c-background-accent-1);
 	}

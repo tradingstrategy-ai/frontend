@@ -100,7 +100,7 @@
 	</section>
 </main>
 
-<style lang="postcss">
+<style>
 	main {
 		--layout-gap: var(--space-lg);
 

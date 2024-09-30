@@ -69,7 +69,7 @@
 	{/if}
 </Grid>
 
-<style lang="postcss">
+<style>
 	h3 {
 		color: var(--c-text-light);
 		font: var(--f-ui-lg-medium);

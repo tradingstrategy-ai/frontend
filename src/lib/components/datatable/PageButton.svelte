@@ -11,7 +11,7 @@
 	<button {value}>{label}</button>
 {/if}
 
-<style lang="postcss">
+<style>
 	button,
 	span {
 		font: var(--f-ui-md-medium);

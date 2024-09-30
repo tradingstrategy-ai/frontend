@@ -371,7 +371,7 @@
 	</section>
 </div>
 
-<style lang="postcss">
+<style>
 	@container (width < 420px) {
 		.wide {
 			display: none;

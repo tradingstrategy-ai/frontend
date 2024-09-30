@@ -16,7 +16,7 @@
 	{tx_hash}
 {/if}
 
-<style lang="postcss">
+<style>
 	a {
 		font: inherit;
 

@@ -3,8 +3,9 @@
 Displays filter options as ranges for numeric filter search fields; generates
 range options based on breakpoints; dispatches valid Typesense filter on:change.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
   <RangeFilter
     bind:selected
     fieldName="range_field"

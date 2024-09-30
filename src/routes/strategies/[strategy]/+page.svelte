@@ -207,7 +207,7 @@
 	<SummaryMetrics {keyMetrics} {backtestLink} />
 </div>
 
-<style lang="postcss">
+<style>
 	.strategy-overview-page {
 		display: grid;
 		gap: 1rem;

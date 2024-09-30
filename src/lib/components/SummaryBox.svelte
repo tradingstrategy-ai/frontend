@@ -3,8 +3,9 @@
 Display a summary content box with title, optional subtitle and and optional CTA (using `cta` slot).
 Possible `ctaPosition` values include: top, bottom, toggle (default).
 
-#### Usage
-```tsx
+@example
+
+```svelte
 	<SummaryBox title="Fruits" subtitle="These are fruits that are worth trying">
 		<Button slot="cta" label="Find More Fruit" href="http://example.org/fruit" />
 		<DataBox label="Banana" value="Minions favorite" />
@@ -47,7 +48,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 	</footer>
 </div>
 
-<style lang="postcss">
+<style>
 	.summary-box {
 		container-type: inline-size;
 		display: grid;

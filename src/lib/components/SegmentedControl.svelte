@@ -3,8 +3,9 @@
 Control for selecting a one value from a set of values, displayed as a horizontal
 button-like control with a segement for each possible value.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<SegmentedControl options={['red', 'yellow', 'green']} bind:selected />
 ```
 -->
@@ -35,7 +36,7 @@ button-like control with a segement for each possible value.
 	{/each}
 </div>
 
-<style lang="postcss">
+<style>
 	[data-css-props] {
 		--segmented-control-font: var(--f-ui-sm-medium);
 		--segmented-control-letter-spacing: var(--ls-ui-sm);

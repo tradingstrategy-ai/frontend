@@ -9,7 +9,7 @@
 	<slot />
 </div>
 
-<style lang="postcss">
+<style>
 	.summary-box {
 		border: 1px solid var(--c-box-3);
 		border-radius: var(--radius-md);

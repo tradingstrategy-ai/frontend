@@ -55,7 +55,7 @@
 	{/if}
 </section>
 
-<style lang="postcss">
+<style>
 	.position-index {
 		display: grid;
 		gap: 1.5rem;

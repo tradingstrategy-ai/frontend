@@ -64,7 +64,7 @@
 	</Section>
 </main>
 
-<style lang="postcss">
+<style>
 	main {
 		display: grid;
 		gap: var(--space-md);

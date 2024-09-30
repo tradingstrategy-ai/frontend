@@ -83,7 +83,7 @@
 	</ChartContainer>
 </section>
 
-<style lang="postcss">
+<style>
 	.tvl {
 		display: grid;
 		gap: var(--space-lg);

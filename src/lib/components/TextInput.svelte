@@ -3,8 +3,9 @@
 Display a text input component (email, text or search types currently supported). Passes
 unknown props through to HTML input element.
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	<TextInput bind:value type="email" size="lg" placeholder="email" required {disabled} />
 ```
 -->
@@ -49,7 +50,7 @@ unknown props through to HTML input element.
 	{/if}
 </span>
 
-<style lang="postcss">
+<style>
 	.text-input {
 		position: relative;
 		display: inline-grid;

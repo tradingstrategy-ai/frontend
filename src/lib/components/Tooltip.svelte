@@ -10,8 +10,9 @@ For more information see:
 - https://stackoverflow.com/a/40628352/315168
 - https://svelte.dev/tutorial/named-slots
 
-#### Usage
-```tsx
+@example
+
+```svelte
 <Tooltip>
 	<span slot="trigger" class="underline">
 		a piece of text with underline
@@ -34,7 +35,7 @@ For more information see:
 	</button>
 </dfn>
 
-<style lang="postcss">
+<style>
 	.tooltip {
 		.trigger {
 			font-style: normal;

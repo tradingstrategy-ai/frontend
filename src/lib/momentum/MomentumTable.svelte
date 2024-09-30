@@ -60,7 +60,7 @@
 	</tbody>
 </table>
 
-<style lang="postcss">
+<style>
 	.momentum-table {
 		table-layout: fixed;
 

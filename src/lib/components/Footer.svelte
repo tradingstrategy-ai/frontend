@@ -51,7 +51,7 @@
 	</div>
 </footer>
 
-<style lang="postcss">
+<style>
 	footer {
 		margin-block: 3.5rem;
 		padding-inline: 1.5rem;

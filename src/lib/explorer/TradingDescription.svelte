@@ -6,8 +6,9 @@ primary label, a modifier (shown in lighter text), and a testing indicator
 
 Used in DataTable context (vs. standard svelte component context).
 
-#### Usage:
-```tsx
+@example
+
+```svelte
 	table.column({
 		header: 'Position',
 		id: 'description',
@@ -44,7 +45,7 @@ Used in DataTable context (vs. standard svelte component context).
 	</span>
 </div>
 
-<style lang="postcss">
+<style>
 	.description-cell {
 		display: flex;
 		gap: 1ex;

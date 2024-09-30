@@ -18,7 +18,7 @@
 	</a>
 </Section>
 
-<style lang="postcss">
+<style>
 	.inner {
 		--logo-height: 5rem;
 		align-items: center;
