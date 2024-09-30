@@ -85,7 +85,7 @@
     "zod": "^3.23.8"
   },
   "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.0.0-key2"
+    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.4.0"
   },
   "overrides": {
     "vite-plugin-simple-json-server": {
