@@ -37,5 +37,14 @@
 				"acceptanceMessage": "Hello world"
 			}
 		}
+	},
+
+	"42161": {
+		"0xDCD7C644a6AA72eb2f86781175b18ADc30Aa4f4d": {
+			"1": {
+				"fileName": "2024-03-20.txt",
+				"acceptanceMessage": "I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 1, dated 2024-03-20, was published at https://tradingstrategy.ai/tos/2024-03-20.txt"
+			}
+		}
 	}
 }
