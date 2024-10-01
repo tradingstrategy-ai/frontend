@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { config, wallet } from '$lib/wallet';
 import { readContracts } from '@wagmi/core';
-import { getTosInfo } from '$lib/eth-defi/helpers.js';
+import { getTosVersion } from 'trade-executor/helpers/tos';
 
 export async function load({ fetch }) {
 	const abi = (await import('$lib/eth-defi/abi/TermsOfService.json')).default as Abi;
@@ -19,7 +19,7 @@ export async function load({ fetch }) {
 		]
 	}).then((response) => response.map((item) => item.result) as [boolean, number]);
 
-	const { fileName, acceptanceMessage } = getTosInfo(chainId, address, version);
+	const { fileName, acceptanceMessage } = getTosVersion({ chainId, address, version });
 
 	let tosText: string | undefined;
 
