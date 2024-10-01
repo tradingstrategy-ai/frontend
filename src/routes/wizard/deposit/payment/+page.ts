@@ -24,7 +24,7 @@ async function paymentForwarderRequiresTos(address: Address) {
 
 export async function load() {
 	const contracts = get(wizard).data!.contracts as EnzymeSmartContracts;
-	const address = contracts.payment_forwarder!;
+	const address = contracts.payment_forwarder;
 
 	const tosRequired = await paymentForwarderRequiresTos(address);
 

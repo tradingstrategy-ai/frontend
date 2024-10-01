@@ -18,7 +18,7 @@
 	const value = fetchVaultNetValue(address);
 
 	async function fetchVaultShares(address: Address) {
-		const vaultShares = await getTokenBalance(config, { token: contracts.vault!, address });
+		const vaultShares = await getTokenBalance(config, { token: contracts.vault, address });
 		dispatch('dataFetch', { vaultShares });
 		return vaultShares;
 	}

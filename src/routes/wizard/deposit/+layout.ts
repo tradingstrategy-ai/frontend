@@ -29,17 +29,15 @@ export async function load({ parent }) {
 	];
 
 	const { chainId, contracts } = get(wizard).data as DepositWizardData;
+	const { comptroller, terms_of_service } = contracts;
 
 	// skip "Terms of service" step if no terms_of_service contract
-	if (!contracts.terms_of_service) {
+	if (!terms_of_service) {
 		steps = steps.filter(({ slug }) => slug !== 'tos');
 	}
 
-	// get denomination token info and balance
-	const denominationTokenInfo = await getDenominationTokenInfo(config, {
-		chainId,
-		comptroller: contracts.comptroller!
-	});
+	// get denomination token info
+	const denominationTokenInfo = await getDenominationTokenInfo(config, { chainId, comptroller });
 
 	// USDC can forward payment using transferWithAuthorizations; other tokens can't (yet)
 	const canForwardPayment = denominationTokenInfo.symbol === 'USDC';

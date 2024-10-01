@@ -24,15 +24,10 @@ import { keyMetricSchema } from '../statistics/key-metric';
 export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
 
 export const enzymeSmartContractsSchema = z.object({
-	vault: hexString.nullish(),
-	comptroller: hexString.nullish(),
-	generic_adapter: hexString.nullish(),
-	gas_relay_paymaster_lib: hexString.nullish(),
-	gas_relay_paymaster_factory: hexString.nullish(),
-	integration_manager: hexString.nullish(),
-	fund_value_calculator: hexString.nullish(),
-	payment_forwarder: hexString.nullish(),
-	guard: hexString.nullish(),
+	vault: hexString,
+	comptroller: hexString,
+	fund_value_calculator: hexString,
+	payment_forwarder: hexString,
 	terms_of_service: hexString.nullish()
 });
 export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
@@ -40,7 +35,7 @@ export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
 export const onChainDataSchema = z.object({
 	chain_id: chainId.nullish(),
 	asset_management_mode: assetManagementMode,
-	smart_contracts: enzymeSmartContractsSchema,
+	smart_contracts: enzymeSmartContractsSchema.partial(),
 	owner: hexString.nullish(),
 	trade_executor_hot_wallet: hexString.nullish()
 });

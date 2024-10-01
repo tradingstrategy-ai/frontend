@@ -7,7 +7,10 @@ import { type GetTokenBalanceReturnType, getDenominationTokenBalance } from '$li
 
 export async function load() {
 	const { address } = getAccount(config) as { address: Address };
-	const { chainId, contracts } = get(wizard).data! as { chainId: ConfiguredChainId; contracts: EnzymeSmartContracts };
+	const { chainId, contracts } = get(wizard).data! as {
+		chainId: ConfiguredChainId;
+		contracts: Partial<EnzymeSmartContracts>;
+	};
 	const { comptroller } = contracts;
 
 	let denominationToken: Promise<GetTokenBalanceReturnType> | undefined = undefined;

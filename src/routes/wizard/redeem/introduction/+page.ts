@@ -6,7 +6,7 @@ import { getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export async function load() {
 	const { chainId, contracts } = get(wizard).data! as { chainId: ConfiguredChainId; contracts: EnzymeSmartContracts };
-	const comptroller = contracts.comptroller!;
+	const { comptroller } = contracts;
 
 	return {
 		denominationTokenInfo: await getDenominationTokenInfo(config, { chainId, comptroller })
