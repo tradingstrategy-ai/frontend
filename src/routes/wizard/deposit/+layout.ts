@@ -2,16 +2,15 @@ import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 import { type ConfiguredChainId, config } from '$lib/wallet';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
-import { getAccount } from '@wagmi/core';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
-import { type GetTokenBalanceReturnType, getDenominationToken } from '$lib/eth-defi/helpers';
+import { type TokenInfo, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export type DepositWizardData = {
 	chainId: ConfiguredChainId;
 	strategyName: string;
 	contracts: EnzymeSmartContracts;
 	canForwardPayment: boolean;
-	denominationToken: GetTokenBalanceReturnType;
+	denominationTokenInfo: TokenInfo;
 };
 
 export async function load({ parent }) {
@@ -37,16 +36,15 @@ export async function load({ parent }) {
 	}
 
 	// get denomination token info and balance
-	const denominationToken = await getDenominationToken(config, {
+	const denominationTokenInfo = await getDenominationTokenInfo(config, {
 		chainId,
-		address: getAccount(config).address!,
 		comptroller: contracts.comptroller!
 	});
 
 	// USDC can forward payment using transferWithAuthorizations; other tokens can't (yet)
-	const canForwardPayment = denominationToken.symbol === 'USDC';
+	const canForwardPayment = denominationTokenInfo.symbol === 'USDC';
 
-	wizard.updateData({ denominationToken, canForwardPayment });
+	wizard.updateData({ denominationTokenInfo, canForwardPayment });
 
 	return { title, steps };
 }

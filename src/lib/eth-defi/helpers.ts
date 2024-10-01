@@ -118,18 +118,38 @@ export function getTokenLabel(symbol: string | undefined, address: Address) {
 }
 
 /**
- * Get a strategy denomination token balance for a given comptroller and address
+ * Get a strategy denomination token address for a given chain and comptroller
  */
-export async function getDenominationToken(
+export async function getDenominationAsset(
 	config: Config,
-	{ comptroller, address, chainId }: { comptroller: Address; address: Address; chainId?: number | undefined }
+	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
 ) {
-	const token = (await readContract(config, {
+	return readContract(config, {
 		chainId,
 		address: comptroller,
 		abi: comptrollerABI,
 		functionName: 'getDenominationAsset'
-	})) as Address;
+	}) as Promise<Address>;
+}
 
-	return getTokenBalance(config, { address, token, chainId });
+/**
+ * Get strategy denomination token info for a given chain and comptroller
+ */
+export async function getDenominationTokenInfo(
+	config: Config,
+	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
+) {
+	const address = await getDenominationAsset(config, { chainId, comptroller });
+	return getTokenInfo(config, { chainId, address });
+}
+
+/**
+ * Get strategy denomination token balance for a given chain, comptroller and address
+ */
+export async function getDenominationTokenBalance(
+	config: Config,
+	{ chainId, comptroller, address }: { chainId?: number; comptroller: Address; address: Address }
+) {
+	const token = await getDenominationAsset(config, { chainId, comptroller });
+	return getTokenBalance(config, { chainId, token, address });
 }
