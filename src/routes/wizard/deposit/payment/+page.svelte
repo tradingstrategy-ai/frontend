@@ -185,18 +185,17 @@
 
 		processing: {
 			_enter({ event }) {
-				const hash = transactionId!;
 				let duration = 20_000;
 
 				if (event === 'restore') {
 					// try fetching receipt in case transaction already completed
-					getTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.noop);
+					getTransactionReceipt(config, { hash: transactionId! }).then(payment.finish).catch(payment.noop);
 					progressBar.set(50, { duration: 0 });
 					duration *= 0.5;
 				}
 
 				// wait for pending transaction
-				waitForTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.fail);
+				waitForTransactionReceipt(config, { hash: transactionId! }).then(payment.finish).catch(payment.fail);
 				progressBar.set(100, { duration });
 			},
 
@@ -205,12 +204,11 @@
 			},
 
 			finish(receipt) {
-				if (receipt.status !== 'success') {
-					console.error('waitForTransactionReceipt reverted:', receipt);
-					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
-					return 'failed';
-				}
-				return 'completed';
+				if (receipt.status === 'success') return 'completed';
+
+				console.error('waitForTransactionReceipt reverted:', receipt);
+				errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
+				return 'failed';
 			},
 
 			fail(err) {
@@ -309,23 +307,17 @@
 
 			{#if $payment === 'initial'}
 				<Button submit disabled={!paymentValue}>Make payment</Button>
-
-				<!-- Moved to the actual wallet signing message. -->
-				<!-- <Alert size="sm" status="warning" title="Notice">
-					Depositing funds in crypto trading strategies carries significant risk. Past performance is not indicative of
-					future results. Only deposit funds you are willing to lose.
-				</Alert> -->
 			{/if}
 
 			{#if $payment === 'authorizing'}
-				<Alert size="sm" status="warning" title="Authorise transfer">
+				<Alert size="sm" status="info" title="Authorise transfer">
 					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
 					support the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
 				</Alert>
 			{/if}
 
 			{#if $payment === 'confirming'}
-				<Alert size="sm" status="warning" title="Confirm transaction">
+				<Alert size="sm" status="info" title="Confirm transaction">
 					Please confirm the transaction in your wallet in order submit your payment.
 				</Alert>
 			{/if}
