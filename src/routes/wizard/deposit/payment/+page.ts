@@ -1,5 +1,5 @@
 import type { Abi } from 'viem';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { readContract } from '@wagmi/core';
@@ -23,7 +23,7 @@ async function paymentForwarderRequiresTos(address: Address) {
 }
 
 export async function load() {
-	const contracts = get(wizard).data!.contracts as EnzymeSmartContracts;
+	const { contracts } = get(wizard).data as DepositWizardData;
 	const address = contracts.payment_forwarder;
 
 	const tosRequired = await paymentForwarderRequiresTos(address);

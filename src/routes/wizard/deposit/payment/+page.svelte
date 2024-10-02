@@ -1,20 +1,15 @@
 <script lang="ts">
+	import type { DepositWizardData } from '../+layout.js';
 	import { captureException } from '@sentry/sveltekit';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { wizard } from 'wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
-	import {
-		type GetBalanceReturnType,
-		simulateContract,
-		writeContract,
-		getTransactionReceipt,
-		waitForTransactionReceipt
-	} from '@wagmi/core';
+	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import { type GetTokenBalanceReturnType, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+	import { formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
@@ -30,10 +25,9 @@
 	// Share price slippage tollerance - used when calculating minSharesQuantity
 	const SLIPPAGE_TOLERANCE = 0.02;
 
-	const chain = getChain($wizard.data?.chainId);
-	const denominationToken: GetTokenBalanceReturnType = $wizard.data?.denominationToken;
-	const nativeCurrency: GetBalanceReturnType = $wizard.data?.nativeCurrency;
-	const contracts = $wizard.data?.contracts;
+	const { chainId, contracts, denominationToken, denominationTokenInfo, nativeCurrency } =
+		$wizard.data as Required<DepositWizardData>;
+	const chain = getChain(chainId)!;
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -71,16 +65,14 @@
 		return formatNumber(estimated, 2, 4);
 	}
 
-	async function authorizeTransfer() {
-		const token = await getTokenInfo(config, { address: denominationToken.address });
-		const value = parseUnits(paymentValue, token.decimals);
+	function authorizeTransfer() {
 		return getSignedArguments(config, {
-			chainId: $wizard.data?.chainId,
-			token: token,
+			chainId,
+			token: denominationTokenInfo,
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
 			to: paymentContract.address,
-			value
+			value: parseUnits(paymentValue, denominationTokenInfo.decimals)
 		});
 	}
 
@@ -116,7 +108,7 @@
 
 			// restore state on wizard back/next navigation
 			restore(state) {
-				({ errorMessage, transactionId, paymentValue } = $wizard.data!);
+				({ errorMessage, transactionId, paymentValue } = $wizard.data as DepositWizardData);
 				if (state === 'authorizing' || state === 'confirming') {
 					errorMessage = `Wallet request state lost due to window navigation;
 						please cancel wallet request and try again.`;
@@ -178,8 +170,8 @@
 				} else {
 					errorMessage = `
 						Based on transaction confirmations Trading Strategy did not see your transaction going
-						through on ${chain?.name} yet. This does not mean the transaction was not sent, but may
-						be also caused by external factors like ${chain?.name} cognestion or issues with your
+						through on ${chain.name} yet. This does not mean the transaction was not sent, but may
+						be also caused by external factors like ${chain.name} cognestion or issues with your
 						wallet. You need to check your wallet transaction history for the transaction status.
 						If your wallet does not show pending or confirmed transaction then try again.
 					`;

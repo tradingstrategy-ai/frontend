@@ -1,5 +1,5 @@
 import type { Abi } from 'viem';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { config, wallet } from '$lib/wallet';
@@ -8,7 +8,7 @@ import { getTosVersion } from 'trade-executor/helpers/tos';
 
 export async function load({ fetch }) {
 	const abi = (await import('$lib/eth-defi/abi/TermsOfService.json')).default as Abi;
-	const { chainId, contracts } = get(wizard).data as { chainId: number; contracts: EnzymeSmartContracts };
+	const { chainId, contracts } = get(wizard).data as DepositWizardData;
 	const address = contracts.terms_of_service!;
 	const account = get(wallet).address;
 

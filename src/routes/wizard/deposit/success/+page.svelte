@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { DepositWizardData } from '../+layout';
 	import { wizard } from 'wizard/store';
 	import { wallet, VaultBalance } from '$lib/wallet';
 	import { Grid } from '$lib/components';
 
-	$: ({ contracts, strategyName } = $wizard.data);
+	const { contracts, strategyName } = $wizard.data as DepositWizardData;
+
 	$: address = $wallet.address!;
 </script>
 

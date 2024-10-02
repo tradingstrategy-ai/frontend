@@ -1,9 +1,10 @@
 import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { Decimal, HexString } from 'trade-executor/state/utility-types';
 import { type ConfiguredChainId, config } from '$lib/wallet';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
-import { type TokenInfo, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
+import { type TokenInfo, type GetTokenBalanceReturnType, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export type DepositWizardData = {
 	chainId: ConfiguredChainId;
@@ -11,6 +12,14 @@ export type DepositWizardData = {
 	contracts: EnzymeSmartContracts;
 	canForwardPayment: boolean;
 	denominationTokenInfo: TokenInfo;
+	denominationToken?: GetTokenBalanceReturnType;
+	nativeCurrency?: GetTokenBalanceReturnType;
+	tosSignature?: HexString | '';
+	tosHash?: HexString;
+	transactionId?: HexString;
+	errorMessage?: string;
+	paymentState?: 'initial' | 'authorizing' | 'confirming' | 'processing' | 'failed' | 'completed';
+	paymentValue: Decimal;
 };
 
 export async function load({ parent }) {

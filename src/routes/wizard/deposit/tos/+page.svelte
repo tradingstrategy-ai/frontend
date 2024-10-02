@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { DepositWizardData } from '../+layout.js';
 	import fsm from 'svelte-fsm';
 	import { inview } from 'svelte-inview';
 	import { signMessage } from '@wagmi/core';
@@ -25,7 +26,7 @@
 		},
 
 		valid: {
-			restore(tosPreviouslyAccepted: boolean, { tosSignature, tosHash } = {}) {
+			restore(tosPreviouslyAccepted: boolean, { tosSignature, tosHash }: DepositWizardData) {
 				// setting dummy signature/hash values since ToS has already been accepted
 				if (tosPreviouslyAccepted) {
 					wizard.updateData({
@@ -86,7 +87,7 @@
 	});
 
 	tos.validate();
-	tos.restore(canProceed, $wizard.data);
+	tos.restore(canProceed, $wizard.data as DepositWizardData);
 	tos.checkDeviceType(window);
 </script>
 
