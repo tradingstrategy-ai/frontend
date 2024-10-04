@@ -10,7 +10,7 @@
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import { formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+	import { approveTokenTransfer, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
@@ -26,7 +26,7 @@
 	// Share price slippage tollerance - used when calculating minSharesQuantity
 	const SLIPPAGE_TOLERANCE = 0.02;
 
-	const { chainId, contracts, denominationToken, denominationTokenInfo, nativeCurrency } =
+	const { chainId, contracts, canForwardPayment, denominationToken, denominationTokenInfo, nativeCurrency } =
 		$wizard.data as Required<DepositWizardData>;
 	const chain = getChain(chainId)!;
 
@@ -35,11 +35,12 @@
 
 	let paymentValue = '';
 	let errorMessage = '';
-	let transactionId: Address | undefined = undefined;
+	let approvalTxId: Address | undefined = undefined;
+	let paymentTxId: Address | undefined = undefined;
 	let sharePrice: number | undefined = undefined;
 
 	// Disable the "Cancel" button once a transaction has been initiated
-	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
+	$: wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
 
 	function getVaultSharePrice() {
 		return getSharePrice(config, {
@@ -77,6 +78,15 @@
 		});
 	}
 
+	function approveTransfer() {
+		return approveTokenTransfer(config, {
+			chainId,
+			address: denominationToken.address,
+			sender: contracts.comptroller,
+			value: parseUnits(paymentValue, denominationToken.decimals)
+		});
+	}
+
 	async function confirmPayment(signedArgs: SignedArguments) {
 		const { tosHash, tosSignature } = $wizard.data!;
 
@@ -99,6 +109,23 @@
 		return writeContract(config, request);
 	}
 
+	function waitForTransactionWithProgress(event: MaybeString, hash: Address) {
+		let duration = 20_000;
+
+		if (event === 'restore') {
+			// try fetching receipt in case transaction already completed
+			getTransactionReceipt(config, { hash })
+				.then(payment.finish)
+				.catch(() => {});
+			progressBar.set(50, { duration: 0 });
+			duration *= 0.5;
+		}
+
+		// wait for pending transaction
+		waitForTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.fail);
+		progressBar.set(100, { duration });
+	}
+
 	const payment = fsm('initial', {
 		initial: {
 			_enter() {
@@ -117,9 +144,14 @@
 				return state;
 			},
 
-			authorize() {
-				authorizeTransfer().then(payment.confirm).catch(payment.fail);
-				return 'authorizing';
+			authorizeOrApprove() {
+				if (canForwardPayment) {
+					authorizeTransfer().then(payment.confirm).catch(payment.fail);
+					return 'authorizing';
+				}
+
+				approveTransfer().then(payment.process).catch(payment.fail);
+				return 'approving';
 			}
 		},
 
@@ -150,9 +182,58 @@
 			}
 		},
 
+		approving: {
+			process(txId) {
+				approvalTxId = txId;
+				return 'processingApproval';
+			},
+
+			fail(err) {
+				const eventId = captureException(err);
+				console.error('approveTransfer error:', eventId, err);
+				errorMessage = `Transfer approval from wallet account failed. ${err.shortMessage}`;
+				return 'failed';
+			}
+		},
+
+		processingApproval: {
+			_enter({ event }) {
+				waitForTransactionWithProgress(event, approvalTxId!);
+			},
+
+			_exit() {
+				progressBar.set(100, { duration: 100 });
+			},
+
+			finish(receipt) {
+				if (receipt.status === 'success') return 'approved';
+				console.error('waitForTransactionReceipt reverted:', receipt);
+				errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
+				return 'failed';
+			},
+
+			fail(err) {
+				const eventId = captureException(err);
+				console.error('waitForTransactionReceipt error:', eventId, err);
+				if (err.name === 'CallExecutionError') {
+					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
+				} else {
+					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
+				}
+				return 'failed';
+			}
+		},
+
+		approved: {
+			buyShares() {
+				// comptroller.buySharesOnBehalf(buyer: Address, amount: bigint, minSharesQuantity: bigint)
+				console.log('time to buy!');
+			}
+		},
+
 		confirming: {
 			process(txId) {
-				transactionId = txId;
+				paymentTxId = txId;
 				return 'processing';
 			},
 
@@ -184,18 +265,7 @@
 
 		processing: {
 			_enter({ event }) {
-				let duration = 20_000;
-
-				if (event === 'restore') {
-					// try fetching receipt in case transaction already completed
-					getTransactionReceipt(config, { hash: transactionId! }).then(payment.finish).catch(payment.noop);
-					progressBar.set(50, { duration: 0 });
-					duration *= 0.5;
-				}
-
-				// wait for pending transaction
-				waitForTransactionReceipt(config, { hash: transactionId! }).then(payment.finish).catch(payment.fail);
-				progressBar.set(100, { duration });
+				waitForTransactionWithProgress(event, paymentTxId!);
 			},
 
 			_exit() {
@@ -204,7 +274,6 @@
 
 			finish(receipt) {
 				if (receipt.status === 'success') return 'completed';
-
 				console.error('waitForTransactionReceipt reverted:', receipt);
 				errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 				return 'failed';
@@ -219,14 +288,12 @@
 					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}
 				return 'failed';
-			},
-
-			noop() {}
+			}
 		},
 
 		failed: {
 			retry() {
-				return transactionId ? 'processing' : 'initial';
+				return paymentTxId ? 'processing' : 'initial';
 			}
 		},
 
@@ -244,13 +311,13 @@
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
 		wizard.updateData({
-			paymentSnapshot: { state: $payment, errorMessage, paymentValue, sharePrice, transactionId }
+			paymentSnapshot: { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, errorMessage }
 		});
 	});
 
 	afterNavigate(() => {
 		const { state, ...rest } = $wizard.data?.paymentSnapshot ?? {};
-		({ errorMessage, paymentValue, sharePrice, transactionId } = rest);
+		({ paymentValue, sharePrice, approvalTxId, paymentTxId, errorMessage } = rest);
 		payment.restore(state);
 	});
 </script>
@@ -297,7 +364,7 @@
 			</Button>
 		</header>
 
-		<form class="payment-form" on:submit|preventDefault={payment.authorize}>
+		<form class="payment-form" on:submit|preventDefault={payment.authorizeOrApprove}>
 			<MoneyInput
 				bind:value={paymentValue}
 				size="xl"
@@ -310,8 +377,17 @@
 				{getEstimatedShares(paymentValue, sharePrice)}
 			</MoneyInput>
 
-			{#if $payment === 'initial'}
-				<Button submit disabled={!paymentValue}>Make payment</Button>
+			{#if canForwardPayment && $payment === 'initial'}
+				<Button submit disabled={!paymentValue}>'Make payment'</Button>
+			{/if}
+
+			{#if !canForwardPayment}
+				<div class="buttons">
+					<Button submit disabled={!($payment === 'initial' && paymentValue)}>
+						Approve {denominationToken.label}
+					</Button>
+					<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
+				</div>
 			{/if}
 
 			{#if $payment === 'authorizing'}
@@ -321,23 +397,36 @@
 				</Alert>
 			{/if}
 
+			{#if $payment === 'approving'}
+				<Alert size="sm" status="info" title="Approve transfer">
+					Please approve the requested {denominationToken.label} spending cap in your wallet. This allows the designated
+					amount of {denominationToken.label} to be transfered from your wallet to purchase shares.
+				</Alert>
+			{/if}
+
+			{#if $payment === 'approved'}
+				<Alert size="sm" status="success" title="Transfer approved">
+					{denominationToken.label} spending cap approved. Please click "Buy shares" to complete your purchase.
+				</Alert>
+			{/if}
+
 			{#if $payment === 'confirming'}
 				<Alert size="sm" status="info" title="Confirm transaction">
 					Please confirm the transaction in your wallet in order submit your payment.
 				</Alert>
 			{/if}
 
-			{#if transactionId}
+			{#if paymentTxId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl($wallet.chain, paymentTxId)} />
 				</div>
 
 				<progress max="100" value={$progressBar} />
 			{/if}
 
-			{#if $payment === 'processing'}
-				<Alert size="sm" status="info" title="Payment processing">
+			{#if $payment.startsWith('processing')}
+				<Alert size="sm" status="info" title="Transaction processing">
 					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
 					{viewTransactionCopy}
 				</Alert>
@@ -397,6 +486,12 @@
 		.payment-form {
 			display: grid;
 			gap: var(--space-xl);
+		}
+
+		.buttons {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+			gap: 0.75rem;
 		}
 
 		progress {

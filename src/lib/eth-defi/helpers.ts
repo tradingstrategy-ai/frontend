@@ -1,7 +1,7 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
-import { readContract, readContracts } from '@wagmi/core';
+import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import { formatNumber } from '$lib/helpers/formatters';
 
@@ -152,4 +152,26 @@ export async function getDenominationTokenBalance(
 ) {
 	const token = await getDenominationAsset(config, { chainId, comptroller });
 	return getTokenBalance(config, { chainId, token, address });
+}
+
+type ApproveTokenTransferParams = {
+	chainId?: number;
+	address: Address;
+	sender: Address;
+	value: number | bigint;
+};
+
+export async function approveTokenTransfer(
+	config: Config,
+	{ chainId, address, sender, value }: ApproveTokenTransferParams
+) {
+	const { request } = await simulateContract(config, {
+		abi: erc20Abi,
+		chainId,
+		address,
+		functionName: 'approve',
+		args: [sender, BigInt(value)]
+	});
+
+	return writeContract(config, request);
 }
