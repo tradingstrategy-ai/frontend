@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout.js';
 	import { captureException } from '@sentry/sveltekit';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
@@ -33,8 +34,8 @@
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = '';
-	let errorMessage: MaybeString;
-	let transactionId: Maybe<Address>;
+	let errorMessage = '';
+	let transactionId: Address | undefined = undefined;
 	let sharePrice: number | undefined = undefined;
 
 	// Disable the "Cancel" button once a transaction has been initiated
@@ -108,7 +109,6 @@
 
 			// restore state on wizard back/next navigation
 			restore(state) {
-				({ errorMessage, transactionId, paymentValue } = $wizard.data as DepositWizardData);
 				if (state === 'authorizing' || state === 'confirming') {
 					errorMessage = `Wallet request state lost due to window navigation;
 						please cancel wallet request and try again.`;
@@ -153,7 +153,6 @@
 		confirming: {
 			process(txId) {
 				transactionId = txId;
-				wizard.updateData({ transactionId });
 				return 'processing';
 			},
 
@@ -226,10 +225,6 @@
 		},
 
 		failed: {
-			_enter() {
-				wizard.updateData({ errorMessage });
-			},
-
 			retry() {
 				return transactionId ? 'processing' : 'initial';
 			}
@@ -245,8 +240,19 @@
 		}
 	});
 
-	payment.restore($wizard.data?.paymentState);
-	$: wizard.updateData({ paymentState: $payment });
+	// capture/restore ephemeral page state when navigating away from and back to page
+	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
+	beforeNavigate(() => {
+		wizard.updateData({
+			paymentSnapshot: { state: $payment, errorMessage, paymentValue, sharePrice, transactionId }
+		});
+	});
+
+	afterNavigate(() => {
+		const { state, ...rest } = $wizard.data?.paymentSnapshot ?? {};
+		({ errorMessage, paymentValue, sharePrice, transactionId } = rest);
+		payment.restore(state);
+	});
 </script>
 
 <div class="wallet-deposit">
@@ -299,7 +305,6 @@
 				disabled={$payment !== 'initial'}
 				min={formatUnits(1n, denominationToken.decimals)}
 				max={formatBalance(denominationToken)}
-				on:change={() => wizard.updateData({ paymentValue })}
 			>
 				Estimated shares:
 				{getEstimatedShares(paymentValue, sharePrice)}
