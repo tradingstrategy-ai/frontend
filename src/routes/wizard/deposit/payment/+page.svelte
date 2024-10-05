@@ -9,7 +9,7 @@
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
-	import { type SignedArguments, getSignedArguments } from '$lib/eth-defi/eip-3009';
+	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import { approveTokenTransfer, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
@@ -26,8 +26,16 @@
 	// Share price slippage tollerance - used when calculating minSharesQuantity
 	const SLIPPAGE_TOLERANCE = 0.02;
 
-	const { chainId, contracts, canForwardPayment, denominationToken, denominationTokenInfo, nativeCurrency } =
-		$wizard.data as Required<DepositWizardData>;
+	const {
+		chainId,
+		canForwardPayment,
+		contracts,
+		denominationToken,
+		denominationTokenInfo,
+		nativeCurrency,
+		tosHash,
+		tosSignature
+	} = $wizard.data as Required<DepositWizardData>;
 	const chain = getChain(chainId)!;
 
 	const progressBar = tweened(0, { easing: cubicOut });
@@ -87,9 +95,7 @@
 		});
 	}
 
-	async function confirmPayment(signedArgs: SignedArguments) {
-		const { tosHash, tosSignature } = $wizard.data!;
-
+	async function confirmPayment(args: any[] = []) {
 		const [curSharePrice, vaultToken] = await Promise.all([
 			// re-fetch share price if not previously set
 			sharePrice ?? getVaultSharePrice(),
@@ -99,8 +105,8 @@
 			new Promise((r) => setTimeout(r, WALLET_PAYMENT_DELAY))
 		]);
 
-		const minSharesQuantity = calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals);
-		const args = [...signedArgs, minSharesQuantity];
+		args.push(calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals));
+
 		if (tosRequired) {
 			args.push(tosHash, tosSignature);
 		}
@@ -226,8 +232,10 @@
 
 		approved: {
 			buyShares() {
-				// comptroller.buySharesOnBehalf(buyer: Address, amount: bigint, minSharesQuantity: bigint)
-				console.log('time to buy!');
+				const buyer = $wallet.address;
+				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
+				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
+				return 'confirming';
 			}
 		},
 
