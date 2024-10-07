@@ -38,7 +38,9 @@
 	} = $wizard.data as Required<DepositWizardData>;
 	const chain = getChain(chainId)!;
 
-	const progressBar = tweened(0, { easing: cubicOut });
+	// set to value from 0-100 to display progress bar
+	const progressBar = tweened(-1, { easing: cubicOut });
+
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = '';
@@ -116,6 +118,7 @@
 	}
 
 	function waitForTransactionWithProgress(event: MaybeString, hash: Address) {
+		progressBar.set(0, { duration: 0 });
 		let duration = 20_000;
 
 		if (event === 'restore') {
@@ -135,6 +138,8 @@
 	const payment = fsm('initial', {
 		initial: {
 			_enter() {
+				progressBar.set(-1, { duration: 0 });
+
 				getVaultSharePrice()
 					.then((value) => (sharePrice = value))
 					.catch(() => {}); // no-op
@@ -231,6 +236,16 @@
 		},
 
 		approved: {
+			_enter({ event }) {
+				if (event === 'restore') {
+					progressBar.set(100, { duration: 0 });
+				}
+			},
+
+			_exit() {
+				progressBar.set(-1, { duration: 0 });
+			},
+
 			buyShares() {
 				const buyer = $wallet.address;
 				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
@@ -248,24 +263,14 @@
 			fail(err) {
 				const eventId = captureException(err);
 				console.error('confirmPayment error:', eventId, err);
-				if (['UserRejectedRequestError', 'ContractFunctionRevertedError'].includes(err.cause?.name)) {
-					errorMessage = `Payment confirmation from wallet account failed. ${err.shortMessage}`;
-				} else if (err.name === 'GetSharePriceError') {
+				if (err.name === 'GetSharePriceError') {
 					errorMessage = `
 						Error fetching share price; unable to calculate minSharesQuantity. Aborting payment
 						contract request.
 					`;
 				} else {
-					errorMessage = `
-						Based on transaction confirmations Trading Strategy did not see your transaction going
-						through on ${chain.name} yet. This does not mean the transaction was not sent, but may
-						be also caused by external factors like ${chain.name} cognestion or issues with your
-						wallet. You need to check your wallet transaction history for the transaction status.
-						If your wallet does not show pending or confirmed transaction then try again.
-					`;
-					// TODO: refactor error message content to Svelte template and include Discord link.
-					// TODO: re-add err.shortMessage to a <details> element in error alert
-					// errorMessage += err.shortMessage ?? 'Failure reason unknown.';
+					errorMessage = 'Payment confirmation from wallet account failed. ';
+					errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				}
 				return 'failed';
 			}
@@ -385,17 +390,26 @@
 				{getEstimatedShares(paymentValue, sharePrice)}
 			</MoneyInput>
 
-			{#if canForwardPayment && $payment === 'initial'}
-				<Button submit disabled={!paymentValue}>'Make payment'</Button>
+			{#if !['processing', 'completed'].includes($payment)}
+				{#if canForwardPayment}
+					<Button submit disabled={!($payment === 'initial' && paymentValue)}>Make payment</Button>
+				{:else}
+					<div class="buttons">
+						<Button submit disabled={!($payment === 'initial' && paymentValue)}>
+							Approve {denominationToken.label}
+						</Button>
+						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
+					</div>
+				{/if}
+			{:else if paymentTxId}
+				<div class="transaction-id">
+					<h3>Transaction ID</h3>
+					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl($wallet.chain, paymentTxId)} />
+				</div>
 			{/if}
 
-			{#if !canForwardPayment}
-				<div class="buttons">
-					<Button submit disabled={!($payment === 'initial' && paymentValue)}>
-						Approve {denominationToken.label}
-					</Button>
-					<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
-				</div>
+			{#if $progressBar >= 0}
+				<progress max="100" value={$progressBar} />
 			{/if}
 
 			{#if $payment === 'authorizing'}
@@ -418,23 +432,21 @@
 				</Alert>
 			{/if}
 
+			{#if $payment === 'processingApproval'}
+				<Alert size="sm" status="info" title="Approval processing">
+					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
+					{viewTransactionCopy}
+				</Alert>
+			{/if}
+
 			{#if $payment === 'confirming'}
 				<Alert size="sm" status="info" title="Confirm transaction">
 					Please confirm the transaction in your wallet in order submit your payment.
 				</Alert>
 			{/if}
 
-			{#if paymentTxId}
-				<div class="transaction-id">
-					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl($wallet.chain, paymentTxId)} />
-				</div>
-
-				<progress max="100" value={$progressBar} />
-			{/if}
-
-			{#if $payment.startsWith('processing')}
-				<Alert size="sm" status="info" title="Transaction processing">
+			{#if $payment === 'processing'}
+				<Alert size="sm" status="info" title="Payment processing">
 					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
 					{viewTransactionCopy}
 				</Alert>
