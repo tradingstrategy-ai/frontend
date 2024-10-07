@@ -1,10 +1,10 @@
 <script lang="ts">
+	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { captureException } from '@sentry/sveltekit';
 	import { wizard } from 'wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
-	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { type GetTokenBalanceReturnType, formatBalance } from '$lib/eth-defi/helpers';
@@ -15,9 +15,11 @@
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const contracts: EnzymeSmartContracts = $wizard.data?.contracts;
-	const vaultShares: GetTokenBalanceReturnType = $wizard.data?.vaultShares;
-	const vaultNetValue: GetTokenBalanceReturnType = $wizard.data?.vaultNetValue;
+	const { contracts, vaultShares, vaultNetValue } = $wizard.data! as {
+		contracts: EnzymeSmartContracts;
+		vaultShares: GetTokenBalanceReturnType;
+		vaultNetValue: GetTokenBalanceReturnType;
+	};
 
 	let shares = '';
 	let errorMessage: MaybeString;

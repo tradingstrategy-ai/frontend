@@ -1,14 +1,15 @@
 import type { Abi } from 'viem';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { config, wallet } from '$lib/wallet';
 import { readContracts } from '@wagmi/core';
-import { getTosInfo } from '$lib/eth-defi/helpers.js';
+import { getTosVersion } from 'trade-executor/helpers/tos';
+import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 
 export async function load({ fetch }) {
-	const abi = (await import('$lib/eth-defi/abi/TermsOfService.json')).default as Abi;
-	const { chainId, contracts } = get(wizard).data as { chainId: number; contracts: EnzymeSmartContracts };
+	const abi = termsOfServiceABI as Abi;
+	const { chainId, contracts } = get(wizard).data as DepositWizardData;
 	const address = contracts.terms_of_service!;
 	const account = get(wallet).address;
 
@@ -19,7 +20,7 @@ export async function load({ fetch }) {
 		]
 	}).then((response) => response.map((item) => item.result) as [boolean, number]);
 
-	const { fileName, acceptanceMessage } = getTosInfo(chainId, address, version);
+	const { fileName, acceptanceMessage } = getTosVersion({ chainId, address, version });
 
 	let tosText: string | undefined;
 

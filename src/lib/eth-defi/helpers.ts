@@ -1,10 +1,9 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
-import { readContract, readContracts } from '@wagmi/core';
+import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import { formatNumber } from '$lib/helpers/formatters';
-import tosMap from '$lib/assets/tos/tos-map.json';
 
 /**
  * Extract events from transaction logs
@@ -119,38 +118,60 @@ export function getTokenLabel(symbol: string | undefined, address: Address) {
 }
 
 /**
- * Get a strategy denomination token balance for a given comptroller and address
+ * Get a strategy denomination token address for a given chain and comptroller
  */
-export async function getDenominationToken(
+export async function getDenominationAsset(
 	config: Config,
-	{ comptroller, address, chainId }: { comptroller: Address; address: Address; chainId?: number | undefined }
+	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
 ) {
-	const token = (await readContract(config, {
+	return readContract(config, {
 		chainId,
 		address: comptroller,
 		abi: comptrollerABI,
 		functionName: 'getDenominationAsset'
-	})) as Address;
-
-	return getTokenBalance(config, { address, token, chainId });
+	}) as Promise<Address>;
 }
 
-export type TosInfo = {
-	fileName?: string;
-	acceptanceMessage?: string;
-};
+/**
+ * Get strategy denomination token info for a given chain and comptroller
+ */
+export async function getDenominationTokenInfo(
+	config: Config,
+	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
+) {
+	const address = await getDenominationAsset(config, { chainId, comptroller });
+	return getTokenInfo(config, { chainId, address });
+}
 
 /**
- * Get Terms of Service info based on the mapping stored in: src/lib/assets/tos/tos-map.json
- *
- * The mapping is stored in the form: chainId -> address -> version -> TosInfo
- *
- * @param chainId - chainId of the strategy
- * @param address - Terms of Service contract address of the strategy
- * @param version - Terms of Service version
- *
+ * Get strategy denomination token balance for a given chain, comptroller and address
  */
-export function getTosInfo(chainId: number, address: string, version: number): TosInfo {
-	// @ts-ignore
-	return tosMap[chainId]?.[address]?.[version] ?? {};
+export async function getDenominationTokenBalance(
+	config: Config,
+	{ chainId, comptroller, address }: { chainId?: number; comptroller: Address; address: Address }
+) {
+	const token = await getDenominationAsset(config, { chainId, comptroller });
+	return getTokenBalance(config, { chainId, token, address });
+}
+
+type ApproveTokenTransferParams = {
+	chainId?: number;
+	address: Address;
+	sender: Address;
+	value: number | bigint;
+};
+
+export async function approveTokenTransfer(
+	config: Config,
+	{ chainId, address, sender, value }: ApproveTokenTransferParams
+) {
+	const { request } = await simulateContract(config, {
+		abi: erc20Abi,
+		chainId,
+		address,
+		functionName: 'approve',
+		args: [sender, BigInt(value)]
+	});
+
+	return writeContract(config, request);
 }
