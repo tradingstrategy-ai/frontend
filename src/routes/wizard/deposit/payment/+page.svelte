@@ -10,7 +10,7 @@
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import { approveTokenTransfer, formatBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+	import { approveTokenTransfer, formatBalance, getTokenInfo, getTokenAllowance } from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
@@ -88,11 +88,23 @@
 		});
 	}
 
+	async function checkPreApproved() {
+		const allowance = await getTokenAllowance(config, {
+			chainId,
+			address: denominationToken.address,
+			owner: $wallet.address!,
+			spender: contracts.comptroller
+		});
+
+		const value = parseUnits(paymentValue, denominationToken.decimals);
+		return value <= allowance;
+	}
+
 	function approveTransfer() {
 		return approveTokenTransfer(config, {
 			chainId,
 			address: denominationToken.address,
-			sender: contracts.comptroller,
+			spender: contracts.comptroller,
 			value: parseUnits(paymentValue, denominationToken.decimals)
 		});
 	}
@@ -161,8 +173,10 @@
 					return 'authorizing';
 				}
 
-				approveTransfer().then(payment.process).catch(payment.fail);
-				return 'approving';
+				checkPreApproved()
+					.then(payment.handleCheck)
+					.catch(() => payment.handleCheck(false));
+				return 'checkingPreApproved';
 			}
 		},
 
@@ -190,6 +204,23 @@
 					errorMessage += err.shortMessage ?? 'Failure reason unknown.';
 				}
 				return 'failed';
+			}
+		},
+
+		checkingPreApproved: {
+			handleCheck(approved: boolean) {
+				if (approved) return 'preApproved';
+				approveTransfer().then(payment.process).catch(payment.fail);
+				return 'approving';
+			}
+		},
+
+		preApproved: {
+			buyShares() {
+				const buyer = $wallet.address;
+				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
+				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
+				return 'confirming';
 			}
 		},
 
@@ -383,6 +414,7 @@
 				size="xl"
 				token={denominationToken}
 				disabled={$payment !== 'initial'}
+				required
 				min={formatUnits(1n, denominationToken.decimals)}
 				max={formatBalance(denominationToken)}
 			>
@@ -392,13 +424,15 @@
 
 			{#if !['processing', 'completed'].includes($payment)}
 				{#if canForwardPayment}
-					<Button submit disabled={!($payment === 'initial' && paymentValue)}>Make payment</Button>
+					<Button submit disabled={$payment !== 'initial'}>Make payment</Button>
 				{:else}
 					<div class="buttons">
-						<Button submit disabled={!($payment === 'initial' && paymentValue)}>
+						<Button submit disabled={$payment !== 'initial'}>
 							Approve {denominationToken.label}
 						</Button>
-						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
+						<Button disabled={!['preApproved', 'approved'].includes($payment)} on:click={payment.buyShares}>
+							Buy shares
+						</Button>
 					</div>
 				{/if}
 			{:else if paymentTxId}
@@ -426,9 +460,13 @@
 				</Alert>
 			{/if}
 
-			{#if $payment === 'approved'}
+			{#if ['preApproved', 'approved'].includes($payment)}
 				<Alert size="sm" status="success" title="Transfer approved">
-					{denominationToken.label} spending cap approved. Please click "Buy shares" to complete your purchase.
+					{denominationToken.label} spending cap
+					{#if $payment === 'preApproved'}
+						has already been
+					{/if}
+					approved. Please click "Buy shares" to complete your purchase.
 				</Alert>
 			{/if}
 

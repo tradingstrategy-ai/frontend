@@ -157,21 +157,38 @@ export async function getDenominationTokenBalance(
 type ApproveTokenTransferParams = {
 	chainId?: number;
 	address: Address;
-	sender: Address;
+	spender: Address;
 	value: number | bigint;
 };
 
 export async function approveTokenTransfer(
 	config: Config,
-	{ chainId, address, sender, value }: ApproveTokenTransferParams
+	{ chainId, address, spender, value }: ApproveTokenTransferParams
 ) {
 	const { request } = await simulateContract(config, {
 		abi: erc20Abi,
 		chainId,
 		address,
 		functionName: 'approve',
-		args: [sender, BigInt(value)]
+		args: [spender, BigInt(value)]
 	});
 
 	return writeContract(config, request);
+}
+
+type GetTokenAllowanceParams = {
+	chainId?: number;
+	address: Address;
+	owner: Address;
+	spender: Address;
+};
+
+export function getTokenAllowance(config: Config, { chainId, address, owner, spender }: GetTokenAllowanceParams) {
+	return readContract(config, {
+		abi: erc20Abi,
+		chainId,
+		address,
+		functionName: 'allowance',
+		args: [owner, spender]
+	});
 }
