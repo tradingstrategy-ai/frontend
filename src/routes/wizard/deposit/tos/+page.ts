@@ -5,9 +5,10 @@ import { wizard } from 'wizard/store';
 import { config, wallet } from '$lib/wallet';
 import { readContracts } from '@wagmi/core';
 import { getTosVersion } from 'trade-executor/helpers/tos';
+import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 
 export async function load({ fetch }) {
-	const abi = (await import('$lib/eth-defi/abi/TermsOfService.json')).default as Abi;
+	const abi = termsOfServiceABI as Abi;
 	const { chainId, contracts } = get(wizard).data as DepositWizardData;
 	const address = contracts.terms_of_service!;
 	const account = get(wallet).address;
