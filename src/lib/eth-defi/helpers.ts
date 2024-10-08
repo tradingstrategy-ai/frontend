@@ -1,5 +1,6 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
+import type { ConfiguredChainId } from '$lib/wallet';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -191,4 +192,19 @@ export function getTokenAllowance(config: Config, { chainId, address, owner, spe
 		functionName: 'allowance',
 		args: [owner, spender]
 	});
+}
+
+/**
+ * Return expected block time for a given chain. This is used to display a "best guess" progress
+ * bar for transactions. The times returned are about double the average block times, plus added
+ * time for HTTP latency. This results in a conservative but reasonable estimate.
+ */
+export function getExpectedBlockTime(chainId: number) {
+	// prettier-ignore
+	switch (chainId) {
+		case     1 : return 25_000; // Ethereum
+ 		case   137 : return 5_000;  // Polygon
+		case 42161 : return 2_500;  // Arbitrum
+    default    : return 10_000; // everything else
+	}
 }

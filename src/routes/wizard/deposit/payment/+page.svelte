@@ -10,10 +10,16 @@
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import { approveTokenTransfer, formatBalance, getTokenInfo, getTokenAllowance } from '$lib/eth-defi/helpers';
+	import {
+		approveTokenTransfer,
+		formatBalance,
+		getTokenInfo,
+		getTokenAllowance,
+		getExpectedBlockTime
+	} from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { getLogoUrl } from '$lib/helpers/assets.js';
 
@@ -36,7 +42,6 @@
 		tosHash,
 		tosSignature
 	} = $wizard.data as Required<DepositWizardData>;
-	const chain = getChain(chainId)!;
 
 	// set to value from 0-100 to display progress bar
 	const progressBar = tweened(-1, { easing: cubicOut });
@@ -131,7 +136,7 @@
 
 	function waitForTransactionWithProgress(event: MaybeString, hash: Address) {
 		progressBar.set(0, { duration: 0 });
-		let duration = 20_000;
+		let duration = getExpectedBlockTime(chainId);
 
 		if (event === 'restore') {
 			// try fetching receipt in case transaction already completed
