@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { getChartClient } from 'trade-executor/chart';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { SegmentedControl } from '$lib/components';
+	import { Alert, SegmentedControl } from '$lib/components';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 
@@ -18,6 +18,8 @@
 
 	let selectedDataSource: keyof typeof dataSources = 'Live trading';
 	$: dataSource = dataSources[selectedDataSource];
+
+	$: tableData = state.stats.long_short_metrics_latest?.[dataSource.table];
 
 	const chartClient = getChartClient(fetch, strategy.url);
 	$: chartClient.fetch({
@@ -55,7 +57,11 @@
 		/>
 	</ChartContainer>
 
-	<LongShortTable tableData={state.stats.long_short_metrics_latest[dataSource.table]} />
+	{#if tableData}
+		<LongShortTable {tableData} />
+	{:else}
+		<Alert status="warning" size="md" title="Data unavailable">Performance metrics table data not available.</Alert>
+	{/if}
 </section>
 
 <style>

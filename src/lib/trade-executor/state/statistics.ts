@@ -50,9 +50,11 @@ export const statisticsSchema = z.object({
 	portfolio: portfolioStatisticsSchema.array(),
 	positions: z.record(primaryKeyString, positionStatisticsSchema.array()),
 	closed_positions: z.record(primaryKeyString, finalPositionStatisticsSchema),
-	long_short_metrics_latest: z.object({
-		live_stats: longShortTableSchema,
-		backtested_stats: longShortTableSchema
-	})
+	long_short_metrics_latest: z
+		.object({
+			live_stats: longShortTableSchema,
+			backtested_stats: longShortTableSchema
+		})
+		.nullish()
 });
 export type Statistics = z.infer<typeof statisticsSchema>;
