@@ -8,11 +8,9 @@
 <script lang="ts">
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, ContentCardsSection, ContentCard, Section } from '$lib/components';
+	import { Section } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
-	import IconDictionary from '~icons/local/dictionary';
-	import IconBook from '~icons/local/book';
 
 	export let data;
 	$: ({ entry } = data);
@@ -57,31 +55,7 @@
 		</div>
 	</Section>
 
-	<ContentCardsSection>
-		<ContentCard title="DeFi and trading Dictionary" href="/glossary">
-			<IconDictionary slot="icon" />
-			<p>
-				You are currently browing Trading Strategy's DeFi, Web3 and trading terminology database. See the full
-				dictionary for more terms.
-			</p>
-			<Button slot="cta" label="View dictionary" />
-		</ContentCard>
-
-		<ContentCard
-			title="Learn algorithmic trading"
-			href="https://tradingstrategy.ai/docs/learn/index.html"
-			rel="external"
-		>
-			<IconBook slot="icon" />
-			<p>
-				Start learning algorithmic trading and quantitative finance from Trading Strategy's learning resources
-				collection.
-			</p>
-			<Button slot="cta" label="Show tutorials and videos" />
-		</ContentCard>
-	</ContentCardsSection>
-
-	<Section padding="md">
+	<Section padding="sm">
 		<NewsletterOptInBanner />
 	</Section>
 </main>
