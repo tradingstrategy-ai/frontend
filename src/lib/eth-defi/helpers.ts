@@ -1,6 +1,5 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
-import type { ConfiguredChainId } from '$lib/wallet';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -207,4 +206,31 @@ export function getExpectedBlockTime(chainId: number) {
 		case 42161 : return 2_500;  // Arbitrum
     default    : return 10_000; // everything else
 	}
+}
+
+export type ErrorInfo = {
+	name: string;
+	message: string;
+	shortMessage: string | undefined;
+	details: string | undefined;
+	functionName: string | undefined;
+	state: string | undefined;
+	cause: ErrorInfo | unknown | undefined;
+};
+
+/**
+ * Extract an ErrorInfo object from an error. This enables errors to be serialized
+ * (for example, in $wizard.data). Key properties are extracted that are useful for
+ * displaying appropriate error messages in the UI. An optional state (of an fsm)
+ * may also be included.
+ *
+ * Extrated data includes common Error properties as well as some custom properties
+ * available on [viem errors](https://github.com/wevm/viem/blob/main/src/errors/base.ts).
+ */
+export function extractErrorInfo(error: unknown, state?: string | undefined): ErrorInfo | unknown {
+	if (!(error instanceof Error)) return error;
+
+	const { name, message, shortMessage, details, functionName } = error as any;
+	const cause = extractErrorInfo(error.cause);
+	return { name, message, shortMessage, details, functionName, state, cause };
 }

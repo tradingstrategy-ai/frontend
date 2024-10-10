@@ -11,7 +11,9 @@
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
+		type ErrorInfo,
 		approveTokenTransfer,
+		extractErrorInfo,
 		formatBalance,
 		getTokenInfo,
 		getTokenAllowance,
@@ -19,6 +21,7 @@
 	} from '$lib/eth-defi/helpers';
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import PaymentError from './PaymentError.svelte';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { getLogoUrl } from '$lib/helpers/assets.js';
@@ -49,7 +52,7 @@
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = '';
-	let errorMessage = '';
+	let error: ErrorInfo | unknown | undefined = undefined;
 	let approvalTxId: Address | undefined = undefined;
 	let paymentTxId: Address | undefined = undefined;
 	let sharePrice: number | undefined = undefined;
@@ -153,6 +156,10 @@
 	}
 
 	const payment = fsm('initial', {
+		'*': {
+			fail: 'failed'
+		},
+
 		initial: {
 			_enter() {
 				progressBar.set(-1, { duration: 0 });
@@ -164,9 +171,8 @@
 
 			// restore state on wizard back/next navigation
 			restore(state) {
-				if (state === 'authorizing' || state === 'confirming') {
-					errorMessage = `Wallet request state lost due to window navigation;
-						please cancel wallet request and try again.`;
+				if (['authorizing', 'approving', 'confirming'].includes(state)) {
+					error = { name: 'NavigationLostStateError', state };
 					return 'failed';
 				}
 				return state;
@@ -192,22 +198,7 @@
 			},
 
 			fail(err) {
-				const eventId = captureException(err);
-				console.error('authorizeTransfer error:', eventId, err);
-				if (err.name === 'UnknownRpcError' && err.details.includes('eth_signTypedData_v4')) {
-					errorMessage = `
-						Authorization failed because your wallet does not support typed data signatures.
-						Consider using TrustWallet, Rainbow or a browser extension wallet like MetaMask.
-					`;
-				} else if (err.name === 'InvalidInputRpcError' && err.details.includes('User cancelled')) {
-					errorMessage = `
-						Authorization to transfer ${denominationToken.symbol} tokens from your wallet was refused.
-						To proceed with share purchase, please try again and accept the signature request.
-					`;
-				} else {
-					errorMessage = `Authorization to transfer ${denominationToken.symbol} tokens from your wallet failed. `;
-					errorMessage += err.shortMessage ?? 'Failure reason unknown.';
-				}
+				captureException(err);
 				return 'failed';
 			}
 		},
@@ -233,13 +224,6 @@
 			process(txId) {
 				approvalTxId = txId;
 				return 'processingApproval';
-			},
-
-			fail(err) {
-				const eventId = captureException(err);
-				console.error('approveTransfer error:', eventId, err);
-				errorMessage = `Transfer approval from wallet account failed. ${err.shortMessage}`;
-				return 'failed';
 			}
 		},
 
@@ -254,19 +238,7 @@
 
 			finish(receipt) {
 				if (receipt.status === 'success') return 'approved';
-				console.error('waitForTransactionReceipt reverted:', receipt);
-				errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
-				return 'failed';
-			},
-
-			fail(err) {
-				const eventId = captureException(err);
-				console.error('waitForTransactionReceipt error:', eventId, err);
-				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
-				} else {
-					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
-				}
+				error = { name: 'TransactionRevertedError', cause: receipt, state: 'processingApproval' };
 				return 'failed';
 			}
 		},
@@ -297,17 +269,7 @@
 			},
 
 			fail(err) {
-				const eventId = captureException(err);
-				console.error('confirmPayment error:', eventId, err);
-				if (err.name === 'GetSharePriceError') {
-					errorMessage = `
-						Error fetching share price; unable to calculate minSharesQuantity. Aborting payment
-						contract request.
-					`;
-				} else {
-					errorMessage = 'Payment confirmation from wallet account failed. ';
-					errorMessage += err.shortMessage ?? 'Failure reason unknown.';
-				}
+				captureException(err);
 				return 'failed';
 			}
 		},
@@ -323,24 +285,18 @@
 
 			finish(receipt) {
 				if (receipt.status === 'success') return 'completed';
-				console.error('waitForTransactionReceipt reverted:', receipt);
-				errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
-				return 'failed';
-			},
-
-			fail(err) {
-				const eventId = captureException(err);
-				console.error('waitForTransactionReceipt error:', eventId, err);
-				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
-				} else {
-					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
-				}
+				error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
 				return 'failed';
 			}
 		},
 
 		failed: {
+			_enter({ from, event, args }) {
+				if (event === 'fail' && typeof from === 'string') {
+					error = extractErrorInfo(args[0], from);
+				}
+			},
+
 			retry() {
 				return paymentTxId ? 'processing' : 'initial';
 			}
@@ -360,13 +316,13 @@
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
 		wizard.updateData({
-			paymentSnapshot: { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, errorMessage }
+			paymentSnapshot: { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, error }
 		});
 	});
 
 	afterNavigate(() => {
 		const { state, ...rest } = $wizard.data?.paymentSnapshot ?? {};
-		({ paymentValue, sharePrice, approvalTxId, paymentTxId, errorMessage } = rest);
+		({ paymentValue, sharePrice, approvalTxId, paymentTxId, error } = rest);
 		payment.restore(state);
 	});
 </script>
@@ -497,8 +453,8 @@
 
 			{#if $payment === 'failed'}
 				<Alert size="sm" status="error" title="Error">
-					{errorMessage}
-					<Button slot="cta" size="sm" label="Try again" on:click={payment.retry} />
+					<PaymentError {error} {denominationToken} {viewTransactionCopy} />
+					<Button slot="cta" size="xs" label="Try again" on:click={payment.retry} />
 				</Alert>
 			{/if}
 
