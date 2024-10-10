@@ -19,12 +19,12 @@
 	<div class="form">
 		<div class="content">
 			<slot name="title">
-				<h2>Do you want to become an expert on decentralised technology?</h2>
+				<h2>Want to learn more how to profit with algorithmic trading and DeFi?</h2>
 			</slot>
 			<slot name="description">
 				<p>
-					Subscribe to Trading Strategy newsletter to find insights about DeFi markets and learn automated trading and
-					blockchain development.
+					Subscribe to Trading Strategy newsletter for updates on strategies, cryptocurrency market insights and trading
+					opportunities.
 				</p>
 			</slot>
 		</div>
