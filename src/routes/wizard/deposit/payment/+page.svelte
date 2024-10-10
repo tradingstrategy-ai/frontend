@@ -2,12 +2,10 @@
 	import type { DepositWizardData } from '../+layout.js';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { wizard } from 'wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
-	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
+	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
@@ -22,6 +20,7 @@
 	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import PaymentError from './PaymentError.svelte';
+	import { getProgressBar } from '$lib/helpers/progressbar.js';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters.js';
 	import { getLogoUrl } from '$lib/helpers/assets.js';
@@ -46,8 +45,7 @@
 		tosSignature
 	} = $wizard.data as Required<DepositWizardData>;
 
-	// set to value from 0-100 to display progress bar
-	const progressBar = tweened(-1, { easing: cubicOut });
+	const progressBar = getProgressBar(-1, getExpectedBlockTime(chainId));
 
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
@@ -137,24 +135,6 @@
 		return writeContract(config, request);
 	}
 
-	function waitForTransactionWithProgress(event: MaybeString, hash: Address) {
-		progressBar.set(0, { duration: 0 });
-		let duration = getExpectedBlockTime(chainId);
-
-		if (event === 'restore') {
-			// try fetching receipt in case transaction already completed
-			getTransactionReceipt(config, { hash })
-				.then(payment.finish)
-				.catch(() => {});
-			progressBar.set(50, { duration: 0 });
-			duration *= 0.5;
-		}
-
-		// wait for pending transaction
-		waitForTransactionReceipt(config, { hash }).then(payment.finish).catch(payment.fail);
-		progressBar.set(100, { duration });
-	}
-
 	const payment = fsm('initial', {
 		'*': {
 			fail: 'failed'
@@ -162,7 +142,7 @@
 
 		initial: {
 			_enter() {
-				progressBar.set(-1, { duration: 0 });
+				progressBar.reset();
 
 				getVaultSharePrice()
 					.then((value) => (sharePrice = value))
@@ -229,11 +209,12 @@
 
 		processingApproval: {
 			_enter({ event }) {
-				waitForTransactionWithProgress(event, approvalTxId!);
+				progressBar.start(event === 'restore' ? 50 : 0);
+				waitForTransactionReceipt(config, { hash: approvalTxId! }).then(payment.finish).catch(payment.fail);
 			},
 
 			_exit() {
-				progressBar.set(100, { duration: 100 });
+				progressBar.finish();
 			},
 
 			finish(receipt) {
@@ -246,12 +227,12 @@
 		approved: {
 			_enter({ event }) {
 				if (event === 'restore') {
-					progressBar.set(100, { duration: 0 });
+					progressBar.finish(0);
 				}
 			},
 
 			_exit() {
-				progressBar.set(-1, { duration: 0 });
+				progressBar.reset();
 			},
 
 			buyShares() {
@@ -276,11 +257,12 @@
 
 		processing: {
 			_enter({ event }) {
-				waitForTransactionWithProgress(event, paymentTxId!);
+				progressBar.start(event === 'restore' ? 50 : 0);
+				waitForTransactionReceipt(config, { hash: paymentTxId! }).then(payment.finish).catch(payment.fail);
 			},
 
 			_exit() {
-				progressBar.set(100, { duration: 100 });
+				progressBar.finish();
 			},
 
 			finish(receipt) {
@@ -305,7 +287,7 @@
 		completed: {
 			_enter({ event }) {
 				if (event === 'restore') {
-					progressBar.set(100, { duration: 0 });
+					progressBar.finish(0);
 				}
 				wizard.toggleComplete('payment');
 			}
