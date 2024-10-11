@@ -47,7 +47,7 @@
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chainId));
 
-	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
+	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = '';
 	let error: ErrorInfo | unknown | undefined = undefined;
@@ -175,11 +175,6 @@
 			confirm(signedArgs) {
 				confirmPayment(signedArgs).then(payment.process).catch(payment.fail);
 				return 'confirming';
-			},
-
-			fail(err) {
-				captureException(err);
-				return 'failed';
 			}
 		},
 
@@ -253,11 +248,6 @@
 			process(txId) {
 				paymentTxId = txId;
 				return 'processing';
-			},
-
-			fail(err) {
-				captureException(err);
-				return 'failed';
 			}
 		},
 
@@ -279,9 +269,10 @@
 		},
 
 		failed: {
-			_enter({ from, event, args }) {
-				if (event === 'fail' && typeof from === 'string') {
-					error = extractErrorInfo(args[0], from);
+			_enter({ from, event, args: [err] }) {
+				if (event === 'fail') {
+					captureException(err);
+					error = extractErrorInfo(err, from as string);
 				}
 			},
 
@@ -422,7 +413,7 @@
 			{#if $payment === 'processingApproval'}
 				<Alert size="sm" status="info" title="Approval processing">
 					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
-					{viewTransactionCopy}
+					{transactionCopy}
 				</Alert>
 			{/if}
 
@@ -435,13 +426,13 @@
 			{#if $payment === 'processing'}
 				<Alert size="sm" status="info" title="Payment processing">
 					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
-					{viewTransactionCopy}
+					{transactionCopy}
 				</Alert>
 			{/if}
 
 			{#if $payment === 'failed'}
 				<Alert size="sm" status="error" title="Error">
-					<PaymentError {error} {denominationToken} {viewTransactionCopy} />
+					<PaymentError {error} symbol={denominationToken.symbol} {transactionCopy} />
 					<Button slot="cta" size="xs" label="Try again" on:click={payment.retry} />
 				</Alert>
 			{/if}

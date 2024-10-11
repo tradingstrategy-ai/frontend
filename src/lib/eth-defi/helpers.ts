@@ -234,3 +234,12 @@ export function extractErrorInfo(error: unknown, state?: string | undefined): Er
 	const cause = extractErrorInfo(error.cause);
 	return { name, message, shortMessage, details, functionName, state, cause };
 }
+
+/**
+ * Walk error's causes and return true if any match the provided error name
+ */
+export function errorCausedBy(error: any, name: string) {
+	if (error?.name === name) return true;
+	if (error?.cause) return errorCausedBy(error.cause, name);
+	return false;
+}
