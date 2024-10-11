@@ -219,7 +219,13 @@
 
 			finish(receipt) {
 				if (receipt.status === 'success') return 'approved';
-				error = { name: 'TransactionRevertedError', cause: receipt, state: 'processingApproval' };
+
+				error = {
+					name: 'TransactionRevertedError',
+					shortMessage: 'Transaction execution reverted.',
+					cause: receipt,
+					state: 'processingApproval'
+				};
 				return 'failed';
 			}
 		},

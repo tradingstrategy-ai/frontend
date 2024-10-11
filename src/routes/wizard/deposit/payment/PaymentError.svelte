@@ -53,11 +53,6 @@
 {/if}
 
 {#if error.state.startsWith('processing')}
-	{#if error.name === 'CallExecutionError'}
-		{error.shortMessage} {viewTransactionCopy}
-	{:else if error.name === 'TransactionRevertedError'}
-		Transaction execution reverted. {viewTransactionCopy}
-	{:else}
-		Unable to verify transaction status. {viewTransactionCopy}
-	{/if}
+	{error.shortMessage ?? error.details ?? 'Unable to verify transaction status.'}
+	{viewTransactionCopy}
 {/if}
