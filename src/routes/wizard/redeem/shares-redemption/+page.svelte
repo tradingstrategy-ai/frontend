@@ -15,7 +15,7 @@
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { chainId, contracts, vaultShares, vaultNetValue } = $wizard.data! as {
+	const { chainId, contracts, vaultShares, vaultNetValue } = $wizard.data as {
 		chainId: ConfiguredChainId;
 		contracts: EnzymeSmartContracts;
 		vaultShares: GetTokenBalanceReturnType;
@@ -149,7 +149,7 @@
 		}
 	});
 
-	redemption.restore($wizard.data?.redemptionState);
+	redemption.restore($wizard.data.redemptionState);
 	$: wizard.updateData({ redemptionState: $redemption });
 </script>
 

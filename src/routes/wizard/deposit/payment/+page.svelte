@@ -300,7 +300,7 @@
 	});
 
 	afterNavigate(() => {
-		const { state, ...rest } = $wizard.data?.paymentSnapshot ?? {};
+		const { state, ...rest } = $wizard.data.paymentSnapshot ?? {};
 		({ paymentValue, sharePrice, approvalTxId, paymentTxId, error } = rest);
 		payment.restore(state);
 	});
