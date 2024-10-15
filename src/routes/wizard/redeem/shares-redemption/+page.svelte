@@ -7,15 +7,16 @@
 	import fsm from 'svelte-fsm';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { type GetTokenBalanceReturnType, formatBalance } from '$lib/eth-defi/helpers';
-	import { config, wallet, TokenBalance } from '$lib/wallet';
+	import { type GetTokenBalanceReturnType, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { type ConfiguredChainId, config, wallet, TokenBalance } from '$lib/wallet';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { contracts, vaultShares, vaultNetValue } = $wizard.data! as {
+	const { chainId, contracts, vaultShares, vaultNetValue } = $wizard.data as {
+		chainId: ConfiguredChainId;
 		contracts: EnzymeSmartContracts;
 		vaultShares: GetTokenBalanceReturnType;
 		vaultNetValue: GetTokenBalanceReturnType;
@@ -87,7 +88,7 @@
 		processing: {
 			_enter({ event }) {
 				const hash = transactionId!;
-				let duration = 20_000;
+				let duration = getExpectedBlockTime(chainId);
 
 				if (event === 'restore') {
 					// try fetching receipt in case transaction already completed
@@ -148,7 +149,7 @@
 		}
 	});
 
-	redemption.restore($wizard.data?.redemptionState);
+	redemption.restore($wizard.data.redemptionState);
 	$: wizard.updateData({ redemptionState: $redemption });
 </script>
 

@@ -15,13 +15,16 @@
 import { browser } from '$app/environment';
 import { derived, writable, type Writable } from 'svelte/store';
 import { stringify, parse } from 'devalue';
+import { z } from 'zod';
 
-export type WizardValue = {
-	slug?: string;
-	returnTo?: string;
-	data?: Record<string, any>;
-	completed?: Set<string>;
-};
+const wizardValueSchema = z.object({
+	slug: z.string().optional(),
+	returnTo: z.string().optional(),
+	data: z.record(z.any()).default({}),
+	completed: z.set(z.string()).default(new Set())
+});
+
+export type WizardValue = z.infer<typeof wizardValueSchema>;
 
 export type Step = {
 	slug: string;
@@ -33,8 +36,8 @@ const storageKey = 'ts:wizard';
 
 function getSession() {
 	try {
-		const serialized = storage?.getItem(storageKey);
-		return serialized ? parse(serialized) : {};
+		const raw = storage?.getItem(storageKey);
+		return wizardValueSchema.parse(raw ? parse(raw) : {});
 	} catch (e) {
 		console.error('Error deserializing wizard data from sessionStorage.');
 		console.error(e);
@@ -47,15 +50,13 @@ function setSession(data: WizardValue) {
 
 const { set, update, ...baseStore }: Writable<WizardValue> = writable(getSession());
 
-function init(slug: string, returnTo: string, data: any = {}) {
-	const completed: Set<string> = new Set();
-	set({ slug, returnTo, data, completed });
+function init(slug: string, returnTo: string, data: Record<string, any> = {}) {
+	set(wizardValueSchema.parse({ slug, returnTo, data }));
 }
 
 function toggleComplete(step: string, completed = true) {
 	const action = completed ? 'add' : 'delete';
 	update(($wizard) => {
-		if (!$wizard.completed) throw Error('wizard not initialized');
 		$wizard.completed[action](step);
 		return $wizard;
 	});
@@ -63,7 +64,6 @@ function toggleComplete(step: string, completed = true) {
 
 function updateData(data: any) {
 	update(($wizard) => {
-		if (!$wizard.data) throw Error('wizard not initialized');
 		$wizard.data = { ...$wizard.data, ...data };
 		return $wizard;
 	});
@@ -71,7 +71,7 @@ function updateData(data: any) {
 
 // Clear the store and sessionStorage data
 function reset() {
-	set({});
+	set(wizardValueSchema.parse({}));
 	storage?.removeItem(storageKey);
 }
 

@@ -9,6 +9,7 @@
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet, WalletAddress } from '$lib/wallet';
+	import { getExpectedBlockTime } from '$lib/eth-defi/helpers.js';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
@@ -22,7 +23,11 @@
 	const { chainId, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
 	const chain = getChain(chainId)!;
 
-	const progressBar = tweened(0, { easing: cubicOut });
+	const progressBar = tweened(0, {
+		easing: cubicOut,
+		duration: getExpectedBlockTime(chainId)
+	});
+
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let fullScreen = false;
@@ -132,7 +137,7 @@
 		processing: {
 			_enter() {
 				waitForTransactionReceipt(config, { hash: transactionId! }).then(tos.finish).catch(tos.fail);
-				progressBar.set(100, { duration: 20_000 });
+				progressBar.set(100);
 			},
 
 			_exit() {

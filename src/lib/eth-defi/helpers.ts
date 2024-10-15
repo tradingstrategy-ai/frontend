@@ -157,21 +157,89 @@ export async function getDenominationTokenBalance(
 type ApproveTokenTransferParams = {
 	chainId?: number;
 	address: Address;
-	sender: Address;
+	spender: Address;
 	value: number | bigint;
 };
 
 export async function approveTokenTransfer(
 	config: Config,
-	{ chainId, address, sender, value }: ApproveTokenTransferParams
+	{ chainId, address, spender, value }: ApproveTokenTransferParams
 ) {
 	const { request } = await simulateContract(config, {
 		abi: erc20Abi,
 		chainId,
 		address,
 		functionName: 'approve',
-		args: [sender, BigInt(value)]
+		args: [spender, BigInt(value)]
 	});
 
 	return writeContract(config, request);
+}
+
+type GetTokenAllowanceParams = {
+	chainId?: number;
+	address: Address;
+	owner: Address;
+	spender: Address;
+};
+
+export function getTokenAllowance(config: Config, { chainId, address, owner, spender }: GetTokenAllowanceParams) {
+	return readContract(config, {
+		abi: erc20Abi,
+		chainId,
+		address,
+		functionName: 'allowance',
+		args: [owner, spender]
+	});
+}
+
+/**
+ * Return expected block time for a given chain. This is used to display a "best guess" progress
+ * bar for transactions. The times returned are about double the average block times, plus added
+ * time for HTTP latency. This results in a conservative but reasonable estimate.
+ */
+export function getExpectedBlockTime(chainId: number) {
+	// prettier-ignore
+	switch (chainId) {
+		case     1 : return 25_000; // Ethereum
+ 		case   137 : return 10_000;  // Polygon
+		case 42161 : return 2_500;  // Arbitrum
+    default    : return 10_000; // everything else
+	}
+}
+
+export type ErrorInfo = {
+	name: string;
+	message: string;
+	shortMessage: string | undefined;
+	details: string | undefined;
+	functionName: string | undefined;
+	state: string | undefined;
+	cause: ErrorInfo | unknown | undefined;
+};
+
+/**
+ * Extract an ErrorInfo object from an error. This enables errors to be serialized
+ * (for example, in $wizard.data). Key properties are extracted that are useful for
+ * displaying appropriate error messages in the UI. An optional state (of an fsm)
+ * may also be included.
+ *
+ * Extrated data includes common Error properties as well as some custom properties
+ * available on [viem errors](https://github.com/wevm/viem/blob/main/src/errors/base.ts).
+ */
+export function extractErrorInfo(error: unknown, state?: string | undefined): ErrorInfo | unknown {
+	if (!(error instanceof Error)) return error;
+
+	const { name, message, shortMessage, details, functionName } = error as any;
+	const cause = extractErrorInfo(error.cause);
+	return { name, message, shortMessage, details, functionName, state, cause };
+}
+
+/**
+ * Walk error's causes and return true if any match the provided error name
+ */
+export function errorCausedBy(error: any, name: string) {
+	if (error?.name === name) return true;
+	if (error?.cause) return errorCausedBy(error.cause, name);
+	return false;
 }
