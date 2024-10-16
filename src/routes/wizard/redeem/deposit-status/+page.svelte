@@ -3,8 +3,12 @@
 	import { fade } from 'svelte/transition';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
-	import { config, wallet, buyNativeCurrencyUrl, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet } from '$lib/wallet/client';
 	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
+	import { buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	$: ({ address, chain } = $wallet);

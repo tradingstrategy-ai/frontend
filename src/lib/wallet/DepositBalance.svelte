@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import { TokenBalance } from '$lib/wallet';
+	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 
 	export let label: string;
 	export let data: MaybePromise<GetTokenBalanceReturnType>;

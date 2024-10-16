@@ -3,7 +3,7 @@ import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { readContract } from '@wagmi/core';
-import { config } from '$lib/wallet';
+import { config } from '$lib/wallet/client';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import paymentForwarderABI from '$lib/eth-defi/abi/VaultUSDCPaymentForwarder.json';
 import termsPaymentForwarderABI from '$lib/eth-defi/abi/TermedVaultUSDCPaymentForwarder.json';

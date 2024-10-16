@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import type { ConnectedWallet } from '$lib/wallet';
+	import type { ConnectedWallet } from '$lib/wallet/client';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { CryptoAddressWidget } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';

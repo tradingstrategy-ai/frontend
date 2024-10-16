@@ -17,8 +17,10 @@
 		getTokenAllowance,
 		getExpectedBlockTime
 	} from '$lib/eth-defi/helpers';
-	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet } from '$lib/wallet/client';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
 	import { getProgressBar } from '$lib/helpers/progressbar.js';
 	import { getExplorerUrl } from '$lib/helpers/chain';

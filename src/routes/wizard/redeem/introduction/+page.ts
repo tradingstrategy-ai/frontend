@@ -1,5 +1,5 @@
 import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
-import { type ConfiguredChainId, config } from '$lib/wallet';
+import { type ConfiguredChainId, config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { getDenominationTokenInfo } from '$lib/eth-defi/helpers';

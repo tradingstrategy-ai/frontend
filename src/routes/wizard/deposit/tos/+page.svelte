@@ -8,11 +8,12 @@
 	import { wizard } from 'wizard/store';
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { config, wallet, WalletAddress } from '$lib/wallet';
+	import { config, wallet } from '$lib/wallet/client';
+	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 	import { getExpectedBlockTime } from '$lib/eth-defi/helpers.js';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
-	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
+	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
 	import IconReading from '~icons/local/reading';
 	import IconDownload from '~icons/local/download';
 	import IconFullscreen from '~icons/local/fullscreen';

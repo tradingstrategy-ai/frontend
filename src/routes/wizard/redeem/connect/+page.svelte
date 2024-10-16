@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
-	import { wallet, ConnectWallet } from '$lib/wallet';
+	import { wallet } from '$lib/wallet/client';
+	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
 	$: chainId = $wizard?.data?.chainId;
 

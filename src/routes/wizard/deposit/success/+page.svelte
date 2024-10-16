@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout';
 	import { wizard } from 'wizard/store';
-	import { wallet, VaultBalance } from '$lib/wallet';
+	import { wallet } from '$lib/wallet/client';
 	import { Grid } from '$lib/components';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 
 	const { contracts, strategyName } = $wizard.data as DepositWizardData;
 

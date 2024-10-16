@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { ConfiguredChainId } from '$lib/wallet';
+	import type { ConfiguredChainId } from '$lib/wallet/client';
 	import { getChain } from '$lib/helpers/chain';
-	import { modal, wallet, WalletSummary } from '$lib/wallet';
+	import { modal, wallet } from '$lib/wallet/client';
+	import WalletSummary from '$lib/wallet/WalletSummary.svelte';
 	import { Button } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 

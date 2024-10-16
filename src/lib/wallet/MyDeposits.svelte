@@ -4,16 +4,11 @@
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import {
-		type ConfiguredChain,
-		disconnect,
-		switchChain,
-		wallet,
-		DepositWarning,
-		DepositBalance,
-		VaultBalance
-	} from '$lib/wallet';
+	import { type ConfiguredChain, disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
+	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
+	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';

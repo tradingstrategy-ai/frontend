@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { wizard } from 'wizard/store';
-	import { buyTokenUrl, buyNativeCurrencyUrl, WalletBalance } from '$lib/wallet';
-	import { getChain } from '$lib/helpers/chain';
 	import { Alert, Button } from '$lib/components';
+	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
+	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/helpers';
+	import { getChain } from '$lib/helpers/chain';
 
 	export let data;
 	const { chainId, nativeCurrency, denominationToken } = data;

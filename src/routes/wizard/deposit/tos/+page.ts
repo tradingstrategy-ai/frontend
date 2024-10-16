@@ -2,7 +2,7 @@ import type { Abi } from 'viem';
 import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
-import { config, wallet } from '$lib/wallet';
+import { config, wallet } from '$lib/wallet/client';
 import { readContracts } from '@wagmi/core';
 import { getTosVersion } from 'trade-executor/helpers/tos';
 import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';

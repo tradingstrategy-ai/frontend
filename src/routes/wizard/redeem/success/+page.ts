@@ -1,11 +1,11 @@
+import type { Abi } from 'viem';
 import { wizard } from 'wizard/store';
 import { get } from 'svelte/store';
 import { getTransactionReceipt } from '@wagmi/core';
-import type { Abi } from 'viem';
+import { config } from '$lib/wallet/client';
 import { getEvents } from '$lib/eth-defi/helpers';
 import { type AssetWithdrawl, getRedemption } from '$lib/eth-defi/enzyme';
 import vaultABI from '$lib/eth-defi/abi/enzyme/VaultLib.json';
-import { config } from '$lib/wallet';
 
 export async function load() {
 	const data = get(wizard).data!;

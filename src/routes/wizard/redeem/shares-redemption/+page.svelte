@@ -8,11 +8,12 @@
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { type GetTokenBalanceReturnType, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
-	import { type ConfiguredChainId, config, wallet, TokenBalance } from '$lib/wallet';
-	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { type ConfiguredChainId, config, wallet } from '$lib/wallet/client';
 	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
+	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const { chainId, contracts, vaultShares, vaultNetValue } = $wizard.data as {

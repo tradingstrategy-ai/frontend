@@ -1,7 +1,7 @@
 import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
-import { type ConfiguredChainId, config } from '$lib/wallet';
+import { type ConfiguredChainId, config } from '$lib/wallet/client';
 import { getAccount, getBalance } from '@wagmi/core';
 import { type GetTokenBalanceReturnType, getDenominationTokenBalance } from '$lib/eth-defi/helpers';
 

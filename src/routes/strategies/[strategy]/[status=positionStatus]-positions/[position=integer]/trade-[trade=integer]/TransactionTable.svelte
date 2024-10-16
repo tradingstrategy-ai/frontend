@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ConfiguredChain } from '$lib/wallet';
+	import type { ConfiguredChain } from '$lib/wallet/client';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { DataTable } from '$lib/components';

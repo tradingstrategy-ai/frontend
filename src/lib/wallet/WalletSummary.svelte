@@ -1,7 +1,9 @@
 <script lang="ts">
-	import type { Chain } from '$lib/helpers/chain.js';
-	import type { ConnectedWallet } from '$lib/wallet';
-	import { switchChain, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import type { Chain } from '$lib/helpers/chain';
+	import { type ConnectedWallet, switchChain } from '$lib/wallet/client';
+	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { Alert, Button, EntitySymbol } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 

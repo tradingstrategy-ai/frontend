@@ -4,7 +4,7 @@
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
 	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
-	import { WalletWidget } from '$lib/wallet';
+	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 
 	export let data;
 

@@ -1,7 +1,7 @@
 import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
-import { config } from '$lib/wallet';
+import { config } from '$lib/wallet/client';
 import { getAccount, getBalance } from '@wagmi/core';
 import { getDenominationTokenBalance } from '$lib/eth-defi/helpers';
 

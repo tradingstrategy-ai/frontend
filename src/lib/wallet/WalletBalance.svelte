@@ -1,7 +1,10 @@
 <script lang="ts">
 	import type { GetBalanceReturnType } from '@wagmi/core';
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import { wallet, WalletAddress, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { wallet } from '$lib/wallet/client';
+	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { EntitySymbol } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
