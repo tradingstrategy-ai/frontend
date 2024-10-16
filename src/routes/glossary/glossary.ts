@@ -8,7 +8,7 @@ import { type HTMLElement, parse } from 'node-html-parser';
 import { slugify } from '$lib/helpers/slugify';
 import assert from 'node:assert';
 import { dev } from '$app/environment';
-import swrCache from '$lib/swrCache.js';
+import swrCache from '$lib/swrCache';
 
 const glossaryBaseUrl = 'https://tradingstrategy.ai/docs/glossary.html';
 

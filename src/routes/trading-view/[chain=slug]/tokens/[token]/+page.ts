@@ -1,6 +1,6 @@
 import type { LendingReserveDocument } from '$lib/search/trading-entities';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { searchCollection } from '$lib/search/typesense-client.js';
+import { searchCollection } from '$lib/search/typesense-client';
 
 // Use search index to find lending reserves for the given token
 async function searchLendingReserves(fetch: Fetch, chain: string, address: string) {

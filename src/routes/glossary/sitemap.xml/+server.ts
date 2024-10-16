@@ -5,7 +5,7 @@
  */
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
-import { getCachedGlossary } from '../glossary.js';
+import { getCachedGlossary } from '../glossary';
 
 export async function GET({ fetch, setHeaders, url }) {
 	const glossary = await getCachedGlossary(fetch);

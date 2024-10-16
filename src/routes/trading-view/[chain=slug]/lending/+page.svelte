@@ -8,7 +8,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import LendingReserveTable from '$lib/explorer/LendingReserveTable.svelte';
 	import { Alert, HeroBanner, Section } from '$lib/components';
-	import { formatAmount } from '$lib/helpers/formatters.js';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ chain, rows, totalRowCount } = data);

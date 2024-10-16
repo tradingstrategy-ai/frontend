@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
+	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -10,7 +10,7 @@
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
 	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
-	import { getExpectedBlockTime } from '$lib/eth-defi/helpers.js';
+	import { getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
 	import WalletAddress from '$lib/wallet/WalletAddress.svelte';

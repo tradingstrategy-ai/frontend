@@ -2,7 +2,7 @@
  * Generate sitemap with entries for each chain
  */
 import { SitemapStream } from 'sitemap';
-import { fetchPublicApi } from '$lib/helpers/public-api.js';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 const chainPages = ['', 'exchanges', 'lending', 'tokens', 'trading-pairs'];
 const path = 'trading-view';

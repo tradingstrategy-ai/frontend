@@ -2,7 +2,7 @@
  * Data loader for all /glossary routes
  */
 import { error } from '@sveltejs/kit';
-import { getCachedGlossary, GlossaryParseError } from './glossary.js';
+import { getCachedGlossary, GlossaryParseError } from './glossary';
 
 export async function load({ fetch, setHeaders }) {
 	let glossary;

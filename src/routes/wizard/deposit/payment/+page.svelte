@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
+	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import fsm from 'svelte-fsm';
 	import { wizard } from 'wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
+	import { getSharePrice } from '$lib/eth-defi/enzyme';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
 		type ErrorInfo,
@@ -22,10 +22,10 @@
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
-	import { getProgressBar } from '$lib/helpers/progressbar.js';
+	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { formatNumber } from '$lib/helpers/formatters.js';
-	import { getLogoUrl } from '$lib/helpers/assets.js';
+	import { formatNumber } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	const { paymentContract, tosRequired } = data;

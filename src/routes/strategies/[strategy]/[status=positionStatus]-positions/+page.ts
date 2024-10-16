@@ -1,4 +1,4 @@
-import { getTradingPositionInfoArray } from 'trade-executor/state/position-info.js';
+import { getTradingPositionInfoArray } from 'trade-executor/state/position-info';
 
 export async function load({ params, parent }) {
 	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)

@@ -5,7 +5,7 @@
 	import { min } from 'd3-array';
 	import type { RawTick, Quote } from '$lib/chart';
 	import type { TimeInterval } from 'd3-time';
-	import { parseDate } from '$lib/helpers/date.js';
+	import { parseDate } from '$lib/helpers/date';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 	import { getChartClient } from 'trade-executor/chart';

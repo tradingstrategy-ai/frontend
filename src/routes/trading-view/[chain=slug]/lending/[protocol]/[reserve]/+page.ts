@@ -1,6 +1,6 @@
-import type { LendingReserve } from '$lib/explorer/lending-reserve-client.js';
+import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { isCandleTimeBucket } from '$lib/chart/helpers.js';
+import { isCandleTimeBucket } from '$lib/chart/helpers';
 
 export async function load({ fetch, params, url }) {
 	const reserve = (await fetchPublicApi(fetch, 'lending-reserve/details', {

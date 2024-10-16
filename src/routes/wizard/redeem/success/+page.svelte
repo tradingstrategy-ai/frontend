@@ -3,8 +3,8 @@
 	import { EntitySymbol } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
-	import { formatBalance } from '$lib/eth-defi/helpers.js';
-	import { getLogoUrl } from '$lib/helpers/assets.js';
+	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	const { receivedAssets } = data;

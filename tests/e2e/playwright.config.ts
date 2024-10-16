@@ -1,5 +1,5 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
-import { webServerConfig } from '../helpers.js';
+import { webServerConfig } from '../helpers';
 
 const config: PlaywrightTestConfig = {
 	webServer: webServerConfig('production'),
