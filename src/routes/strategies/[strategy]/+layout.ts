@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import { configuredStrategies } from 'trade-executor/strategy/configuration';
 import { getStrategyRuntimeState, type ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 import { getStrategyState } from 'trade-executor/state';
-import { getChain } from '$lib/wallet/client';
+import { getChain } from '$lib/helpers/chain';
 
 export async function load({ params, fetch }) {
 	const strategyConf = configuredStrategies.get(params.strategy);

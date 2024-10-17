@@ -251,7 +251,7 @@
 	{#if transactionId}
 		<div class="transaction-id">
 			<h3>Transaction ID</h3>
-			<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+			<CryptoAddressWidget address={transactionId} href={getExplorerUrl(chain, transactionId)} />
 		</div>
 
 		<progress max="100" value={$progressBar} />

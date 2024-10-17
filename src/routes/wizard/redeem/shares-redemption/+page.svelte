@@ -13,7 +13,7 @@
 	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
-	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const { chainId, contracts, vaultShares, vaultNetValue } = $wizard.data as {
@@ -213,7 +213,7 @@
 			{#if transactionId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+					<CryptoAddressWidget address={transactionId} href={getExplorerUrl(getChain(chainId), transactionId)} />
 				</div>
 
 				<progress max="100" value={$progressBar} />

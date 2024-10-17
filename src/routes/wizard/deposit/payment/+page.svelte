@@ -23,7 +23,7 @@
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
 	import { getProgressBar } from '$lib/helpers/progressbar';
-	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -380,7 +380,7 @@
 			{:else if paymentTxId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl($wallet.chain, paymentTxId)} />
+					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl(getChain(chainId), paymentTxId)} />
 				</div>
 			{/if}
 

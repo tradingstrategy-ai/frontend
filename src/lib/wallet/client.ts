@@ -72,10 +72,3 @@ watchAccount(config, { onChange: set });
 reconnect(config);
 
 export const wallet = { subscribe };
-
-/**
- * Get currently selected wallet chain
- */
-export function getChain(chainId: MaybeNumber) {
-	return chains.find(({ id }) => id === chainId);
-}

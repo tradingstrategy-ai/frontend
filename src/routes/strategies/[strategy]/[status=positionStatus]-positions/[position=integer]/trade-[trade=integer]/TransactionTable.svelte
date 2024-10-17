@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { ConfiguredChain } from '$lib/wallet/client';
+	import type { Chain } from '$lib/helpers/chain';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { DataTable } from '$lib/components';
 	import BlockchainExplorerLink from './BlockchainExplorerLink.svelte';
 	import TransactionStatus from './TransactionStatus.svelte';
 
-	export let chain: ConfiguredChain | undefined;
+	export let chain: Chain;
 	export let transactions: Record<string, any>[] = [];
 
 	const table = createTable(readable(transactions));
@@ -15,7 +15,7 @@
 		table.column({
 			id: 'chain',
 			header: 'Chain',
-			accessor: ({ chain_id }) => chain?.name ?? chain_id
+			accessor: ({ chain_id }) => chain.name ?? chain_id
 		}),
 		table.column({
 			id: 'transaction_hash',
