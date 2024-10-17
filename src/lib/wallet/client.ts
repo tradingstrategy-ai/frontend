@@ -53,7 +53,9 @@ export const modal = createAppKit({
 	adapters: [wagmiAdapter],
 	networks: [...chains],
 	features: {
-		analytics: true
+		analytics: true,
+		email: false,
+		socials: false
 	}
 });
 
