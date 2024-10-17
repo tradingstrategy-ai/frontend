@@ -11,19 +11,27 @@ import {
 	disconnect as _disconnect,
 	switchChain as _switchChain
 } from '@wagmi/core';
+import { metaMask } from '@wagmi/connectors';
 import { arbitrum, mainnet, polygon } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import metaMaskIcon from '$lib/assets/logos/wallets/metamask.svg';
 
 const { projectId } = walletConnectConfig;
 
-// AppKit metadata
+// AppKit and MetaMask metadata
+const iconUrl = 'https://tradingstrategy.ai/brand-mark-100x100.png';
 const metadata = {
 	name: 'Trading Strategy',
 	description: 'Unleash the power of automated crypto trading',
-	url: 'https://tradingstrategy.ai/',
-	icons: ['https://tradingstrategy.ai/brand-mark-100x100.png']
+	url: 'https://tradingstrategy.ai',
+	icons: [iconUrl],
+	iconUrl
 };
+
+// Feature Trust Wallet in AppKit modal
+// see: https://explorer.walletconnect.com
+const featuredWalletIds = ['4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'];
 
 // Initialize chains that should be available to wallet
 const chains = [arbitrum, mainnet, polygon] as const;
@@ -32,16 +40,18 @@ export type ConfiguredChainId = ConfiguredChain['id'];
 
 // Initialize chain-specific transports based on configured RPC URLs
 const transports: Record<number, Transport> = {};
-for (const { id } of chains) {
+chains.forEach(({ id }) => {
 	const url = rpcUrls[id];
 	transports[id] = url ? fallback([http(url), http()]) : http();
-}
+});
 
 // Create AppKit wagmi adapter and export wagmi config
+// (custom MetaMask connector required to support MetaMask on mobile devices)
 const wagmiAdapter = new WagmiAdapter({
 	projectId,
 	transports,
 	networks: [...chains],
+	connectors: [metaMask({ dappMetadata: metadata })],
 	ssr: !browser
 });
 export const config = wagmiAdapter.wagmiConfig;
@@ -52,6 +62,8 @@ export const modal = createAppKit({
 	metadata,
 	adapters: [wagmiAdapter],
 	networks: [...chains],
+	connectorImages: { metaMaskSDK: metaMaskIcon },
+	featuredWalletIds,
 	features: {
 		analytics: true,
 		email: false,
