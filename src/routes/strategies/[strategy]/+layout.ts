@@ -30,7 +30,7 @@ export async function load({ params, fetch }) {
 		error(503, { message: 'Service Unavailable', stack });
 	}
 
-	const chain = getChain(strategy.on_chain_data.chain_id);
+	const chain = getChain(strategy.on_chain_data.chain_id)!;
 
 	return {
 		chain,

@@ -4,7 +4,8 @@
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import { type ConfiguredChain, disconnect, switchChain, wallet } from '$lib/wallet/client';
+	import { type ConfiguredChain, config, wallet } from '$lib/wallet/client';
+	import { disconnect, switchChain } from '@wagmi/core';
 	import { Button, HashAddress } from '$lib/components';
 	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
 	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
@@ -18,7 +19,7 @@
 	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
 	export let strategy: ConnectedStrategyRuntimeState;
-	export let chain: ConfiguredChain | undefined;
+	export let chain: ConfiguredChain;
 	export let geoBlocked: boolean;
 	export let ipCountry: CountryCode | undefined;
 
@@ -60,7 +61,7 @@
 	});
 
 	function disconnectWallet() {
-		disconnect();
+		disconnect(config);
 		expandable.close();
 	}
 
@@ -139,7 +140,11 @@
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
-					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
+					<Button
+						class="full-width"
+						label="Switch network"
+						on:click={() => switchChain(config, { chainId: chain.id })}
+					/>
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>

@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 
-	export let chainId: ConfiguredChainId | undefined;
+	export let chainId: ConfiguredChainId;
 
 	const chain = getChain(chainId)!;
 
