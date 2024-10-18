@@ -7,11 +7,12 @@ import { getDenominationTokenBalance } from '$lib/eth-defi/helpers';
 
 export async function load() {
 	const { address } = getAccount(config) as { address: Address };
-	const { chainId, contracts } = get(wizard).data as DepositWizardData;
+	const { chain, contracts } = get(wizard).data as DepositWizardData;
 	const { comptroller } = contracts;
 
+	const chainId = chain.id;
+
 	return {
-		chainId,
 		nativeCurrency: await getBalance(config, { address, chainId }),
 		denominationToken: await getDenominationTokenBalance(config, { address, comptroller, chainId })
 	};

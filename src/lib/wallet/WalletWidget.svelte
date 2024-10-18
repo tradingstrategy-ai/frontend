@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
@@ -6,15 +7,14 @@
 	import { Button, HashAddress } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 
+	export let chain: Chain;
 	export let strategy: ConnectedStrategyRuntimeState;
-
-	$: contracts = strategy.on_chain_data.smart_contracts;
 
 	function launchConnectWizard() {
 		wizard.init('connect-wallet', `/strategies/${strategy.id}`, {
-			chainId: strategy.on_chain_data.chain_id,
+			chain,
 			strategyName: strategy.name,
-			contracts
+			contracts: strategy.on_chain_data.smart_contracts
 		});
 		goto(`/wizard/connect-wallet/introduction`);
 	}

@@ -23,7 +23,7 @@
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
 	import { getProgressBar } from '$lib/helpers/progressbar';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -37,7 +37,7 @@
 	const SLIPPAGE_TOLERANCE = 0.02;
 
 	const {
-		chainId,
+		chain,
 		canForwardPayment,
 		contracts,
 		denominationToken,
@@ -47,7 +47,7 @@
 		tosSignature
 	} = $wizard.data as Required<DepositWizardData>;
 
-	const progressBar = getProgressBar(-1, getExpectedBlockTime(chainId));
+	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
@@ -87,7 +87,7 @@
 
 	function authorizeTransfer() {
 		return getSignedArguments(config, {
-			chainId,
+			chainId: chain.id,
 			token: denominationTokenInfo,
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
@@ -98,7 +98,7 @@
 
 	async function checkPreApproved() {
 		const allowance = await getTokenAllowance(config, {
-			chainId,
+			chainId: chain.id,
 			address: denominationToken.address,
 			owner: $wallet.address!,
 			spender: contracts.comptroller
@@ -110,7 +110,7 @@
 
 	function approveTransfer() {
 		return approveTokenTransfer(config, {
-			chainId,
+			chainId: chain.id,
 			address: denominationToken.address,
 			spender: contracts.comptroller,
 			value: parseUnits(paymentValue, denominationToken.decimals)
@@ -380,7 +380,7 @@
 			{:else if paymentTxId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl(getChain(chainId), paymentTxId)} />
+					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl(chain, paymentTxId)} />
 				</div>
 			{/if}
 

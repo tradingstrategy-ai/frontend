@@ -1,12 +1,13 @@
+import type { Chain } from '$lib/helpers/chain';
 import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
-import { type ConfiguredChainId, config } from '$lib/wallet/client';
+import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
 import { type TokenInfo, type GetTokenBalanceReturnType, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export type DepositWizardData = {
-	chainId: ConfiguredChainId;
+	chain: Chain;
 	strategyName: string;
 	contracts: EnzymeSmartContracts;
 	canForwardPayment: boolean;
@@ -32,7 +33,7 @@ export async function load({ parent }) {
 		{ slug: 'success', label: 'Success' }
 	];
 
-	const { chainId, contracts } = get(wizard).data as DepositWizardData;
+	const { chain, contracts } = get(wizard).data as DepositWizardData;
 	const { comptroller, terms_of_service } = contracts;
 
 	// skip "Terms of service" step if no terms_of_service contract
@@ -41,7 +42,7 @@ export async function load({ parent }) {
 	}
 
 	// get denomination token info
-	const denominationTokenInfo = await getDenominationTokenInfo(config, { chainId, comptroller });
+	const denominationTokenInfo = await getDenominationTokenInfo(config, { chainId: chain.id, comptroller });
 
 	// USDC can forward payment using transferWithAuthorizations; other tokens can't (yet)
 	const canForwardPayment = denominationTokenInfo.symbol === 'USDC';

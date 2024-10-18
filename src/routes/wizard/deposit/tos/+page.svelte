@@ -11,7 +11,7 @@
 	import { config, wallet } from '$lib/wallet/client';
 	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 	import { getExpectedBlockTime } from '$lib/eth-defi/helpers';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
 	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
 	import IconReading from '~icons/local/reading';
@@ -21,12 +21,11 @@
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
 
-	const { chainId, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
-	const chain = getChain(chainId)!;
+	const { chain, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
 
 	const progressBar = tweened(0, {
 		easing: cubicOut,
-		duration: getExpectedBlockTime(chainId)
+		duration: getExpectedBlockTime(chain.id)
 	});
 
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';

@@ -1,3 +1,12 @@
+import type { Chain } from '$lib/helpers/chain';
+import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+
+export type ConnectWizardData = {
+	chain: Chain;
+	strategyName: string;
+	contracts: EnzymeSmartContracts;
+};
+
 export async function load() {
 	return {
 		title: 'Connect wallet',

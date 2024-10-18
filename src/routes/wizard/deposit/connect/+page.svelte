@@ -4,9 +4,9 @@
 	import { wallet } from '$lib/wallet/client';
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
-	const { chainId } = $wizard.data as DepositWizardData;
+	const { chain } = $wizard.data as DepositWizardData;
 
-	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chainId);
+	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chain.id);
 </script>
 
-<ConnectWallet {chainId} />
+<ConnectWallet {chain} />

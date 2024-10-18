@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
 	import { createEventDispatcher } from 'svelte';
-	import { formatUnits } from 'viem';
 	import { simulateContract } from '@wagmi/core';
 	import { config } from '$lib/wallet/client';
 	import { getTokenBalance } from '$lib/eth-defi/helpers';
@@ -36,13 +36,12 @@
 		const { decimals, symbol, label } = denominationToken;
 
 		const vaultNetValue = {
+			address: contracts.vault,
 			decimals,
 			symbol: symbol ?? '---',
 			value,
-			label,
-			// TODO: remove deprecated `formatted` property after @wagmi removes from GetBalanceReturnType
-			formatted: formatUnits(value, decimals)
-		};
+			label
+		} as GetTokenBalanceReturnType;
 
 		dispatch('dataFetch', { denominationToken, vaultNetValue });
 

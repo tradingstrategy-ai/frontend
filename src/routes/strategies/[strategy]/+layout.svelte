@@ -8,7 +8,7 @@
 
 	export let data;
 
-	$: ({ admin, strategy, deferred } = data);
+	$: ({ admin, chain, strategy, deferred } = data);
 
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
 
@@ -41,7 +41,7 @@
 				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
-				<WalletWidget {strategy} />
+				<WalletWidget {chain} {strategy} />
 			</div>
 		</PageHeading>
 

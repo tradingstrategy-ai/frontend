@@ -73,7 +73,7 @@
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
-			chainId: chain.id,
+			chain,
 			strategyName: strategy.name,
 			contracts
 		});
