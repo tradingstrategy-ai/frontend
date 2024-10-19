@@ -5,8 +5,7 @@
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import { config, wallet } from '$lib/wallet/client';
-	import { disconnect, switchChain } from '@wagmi/core';
+	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
 	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
 	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
@@ -61,7 +60,7 @@
 	});
 
 	function disconnectWallet() {
-		disconnect(config);
+		disconnect();
 		expandable.close();
 	}
 
@@ -140,11 +139,7 @@
 						Connect wallet
 					</Button>
 				{:else if depositEnabled && wrongNetwork}
-					<Button
-						class="full-width"
-						label="Switch network"
-						on:click={() => switchChain(config, { chainId: chain.id })}
-					/>
+					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
 				{/if}
 				{#if connected}
 					<Button class="mobile full-width" label="Disconnect wallet" on:click={disconnectWallet}>

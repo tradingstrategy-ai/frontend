@@ -2,7 +2,15 @@ import type { GetAccountReturnType, Transport } from '@wagmi/core';
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { rpcUrls, walletConnectConfig } from '$lib/config';
-import { fallback, http, getAccount, watchAccount, reconnect } from '@wagmi/core';
+import {
+	fallback,
+	http,
+	getAccount,
+	watchAccount,
+	reconnect,
+	disconnect as _disconnect,
+	switchChain as _switchChain
+} from '@wagmi/core';
 import { metaMask } from '@wagmi/connectors';
 import { arbitrum, mainnet, polygon } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit';
@@ -72,3 +80,17 @@ watchAccount(config, { onChange: set });
 reconnect(config);
 
 export const wallet = { subscribe };
+
+/**
+ * Request wallet to switch to a different chain id
+ */
+export function switchChain(chainId: number) {
+	return _switchChain(config, { chainId });
+}
+
+/**
+ * Disconnect the user's wallet
+ */
+export function disconnect() {
+	_disconnect(config);
+}
