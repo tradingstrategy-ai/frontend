@@ -4,15 +4,14 @@
 <script lang="ts">
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
-	import { getVaultUrl } from 'trade-executor/helpers/vault.js';
+	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { getVaultUrl } from 'trade-executor/helpers/vault';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
 	const { chain, onChainData, strategy } = data;
 
 	const address = onChainData.smart_contracts.vault;
-	const chainSlug = getChain(chain.id)?.slug;
 	const enzymeUrl = getVaultUrl(strategy);
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>
@@ -32,7 +31,7 @@
 			{/if}
 			{#if explorerUrl}
 				<Button size="xs" label="View on {chain.name} explorer" href={explorerUrl} rel="noreferrer" target="_blank">
-					<img slot="icon" alt={chain.name} src={getLogoUrl('blockchain', chainSlug)} />
+					<img slot="icon" alt={chain.name} src={getLogoUrl('blockchain', chain.slug)} />
 				</Button>
 			{/if}
 		</div>
@@ -45,7 +44,7 @@
 			</DataBox>
 
 			<DataBox size="sm" label="Blockchain">
-				<EntitySymbol label={chain.name} logoUrl={getLogoUrl('blockchain', chainSlug)} />
+				<EntitySymbol label={chain.name} logoUrl={getLogoUrl('blockchain', chain.slug)} />
 			</DataBox>
 
 			<DataBox size="sm" label="Address">

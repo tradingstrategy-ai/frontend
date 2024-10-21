@@ -1,10 +1,8 @@
-import { rpcUrls, walletConnectConfig } from '$lib/config';
+import type { GetAccountReturnType, Transport } from '@wagmi/core';
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { Transport } from 'viem';
-import type { CreateConnectorFn, GetAccountReturnType } from '@wagmi/core';
+import { rpcUrls, walletConnectConfig } from '$lib/config';
 import {
-	createConfig,
 	fallback,
 	http,
 	getAccount,
@@ -13,41 +11,67 @@ import {
 	disconnect as _disconnect,
 	switchChain as _switchChain
 } from '@wagmi/core';
-import { injected, walletConnect } from '@wagmi/connectors';
-import { arbitrum, avalanche, bsc, mainnet, polygon } from '@wagmi/core/chains';
-import { createWeb3Modal } from '@web3modal/wagmi';
+import { metaMask } from '@wagmi/connectors';
+import { arbitrum, mainnet, polygon } from '@reown/appkit/networks';
+import { createAppKit } from '@reown/appkit';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import metaMaskIcon from '$lib/assets/logos/wallets/metamask.svg';
 
 const { projectId } = walletConnectConfig;
 
-const ssr = !browser;
+// AppKit and MetaMask metadata
+const iconUrl = 'https://tradingstrategy.ai/brand-mark-100x100.png';
+const metadata = {
+	name: 'Trading Strategy',
+	description: 'Unleash the power of automated crypto trading',
+	url: 'https://tradingstrategy.ai',
+	icons: [iconUrl],
+	iconUrl
+};
 
-const chains = [arbitrum, avalanche, bsc, mainnet, polygon] as const;
+// Feature Trust Wallet in AppKit modal
+// see: https://explorer.walletconnect.com
+const featuredWalletIds = ['4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'];
+
+// Initialize chains that should be available to wallet
+const chains = [arbitrum, mainnet, polygon] as const;
 export type ConfiguredChain = (typeof chains)[number];
 export type ConfiguredChainId = ConfiguredChain['id'];
 
 // Initialize chain-specific transports based on configured RPC URLs
-const transports = chains.reduce(
-	(acc, { id }) => {
-		const url = rpcUrls[id];
-		acc[id] = url ? fallback([http(url), http()]) : http();
-		return acc;
-	},
-	{} as Record<ConfiguredChainId, Transport>
-);
+const transports: Record<number, Transport> = {};
+chains.forEach(({ id }) => {
+	const url = rpcUrls[id];
+	transports[id] = url ? fallback([http(url), http()]) : http();
+});
 
-const metadata = {
-	name: 'Trading Strategy',
-	description: 'AI-driven best profitable automated trading strategies',
-	url: 'https://tradingstrategy.ai/',
-	icons: ['https://tradingstrategy.ai/brand-mark-100x100.png']
-};
+// Create AppKit wagmi adapter and export wagmi config
+// (custom MetaMask connector required to support MetaMask on mobile devices)
+const wagmiAdapter = new WagmiAdapter({
+	projectId,
+	transports,
+	networks: [...chains],
+	connectors: [metaMask({ dappMetadata: metadata })],
+	ssr: !browser
+});
+export const config = wagmiAdapter.wagmiConfig;
 
-const connectors: CreateConnectorFn[] = ssr
-	? []
-	: [walletConnect({ projectId, metadata, showQrModal: false }), injected()];
+// Create and export AppKit modal
+export const modal = createAppKit({
+	projectId,
+	metadata,
+	adapters: [wagmiAdapter],
+	networks: [...chains],
+	connectorImages: { metaMaskSDK: metaMaskIcon },
+	featuredWalletIds,
+	features: {
+		analytics: true,
+		email: false,
+		socials: false
+	}
+});
 
-export const config = createConfig({ ssr, chains, transports, connectors });
-
+// Create and export a readable wallet store
 export type Wallet = GetAccountReturnType;
 export type ConnectedWallet = Wallet & { status: 'connected' };
 
@@ -55,26 +79,18 @@ const { subscribe, set }: Writable<Wallet> = writable(getAccount(config));
 watchAccount(config, { onChange: set });
 reconnect(config);
 
-// export wallet as a readable store
 export const wallet = { subscribe };
 
-export const modal = createWeb3Modal({
-	wagmiConfig: config,
-	projectId,
-	enableAnalytics: true,
-	// setting default chain to Polygon for now
-	// (remove this when we have strategies on other chains)
-	defaultChain: polygon
-});
-
-export function disconnect() {
-	return _disconnect(config);
-}
-
-export function getChain(chainId: MaybeNumber) {
-	return chains.find(({ id }) => id === chainId);
-}
-
-export function switchChain(chainId: ConfiguredChainId) {
+/**
+ * Request wallet to switch to a different chain id
+ */
+export function switchChain(chainId: number) {
 	return _switchChain(config, { chainId });
+}
+
+/**
+ * Disconnect the user's wallet
+ */
+export function disconnect() {
+	_disconnect(config);
 }

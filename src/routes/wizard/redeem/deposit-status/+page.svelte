@@ -1,21 +1,26 @@
 <script lang="ts">
+	import type { RedeemWizardData } from '../+layout';
 	import { wizard } from 'wizard/store';
 	import { fade } from 'svelte/transition';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
-	import { config, wallet, buyNativeCurrencyUrl, VaultBalance, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { type ConnectedWallet, config, wallet } from '$lib/wallet/client';
 	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
+	import { buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	$: ({ address, chain } = $wallet);
-	$: ({ chainId, contracts, nativeCurrency, vaultShares } = $wizard.data);
-	$: chainCurrency = chain?.nativeCurrency.symbol;
+	$: ({ address } = $wallet as ConnectedWallet);
+	$: ({ chain, contracts, nativeCurrency, vaultShares } = $wizard.data as RedeemWizardData);
+	$: chainCurrency = $wallet.chain?.nativeCurrency.symbol;
 
 	$: depositStatusComplete =
 		'denominationToken' in $wizard.data &&
 		'vaultNetValue' in $wizard.data &&
-		nativeCurrency?.value > 0n &&
-		vaultShares?.value > 0n;
+		(nativeCurrency?.value ?? 0n) > 0n &&
+		(vaultShares?.value ?? 0n) > 0n;
 
 	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
 
@@ -51,7 +56,7 @@
 			</Alert>
 		</div>
 	{:else if nativeCurrency?.value === 0n}
-		{@const href = buyNativeCurrencyUrl(chainId)}
+		{@const href = buyNativeCurrencyUrl(chain.id)}
 		<div in:fade>
 			<Alert status="warning" size="md">
 				<strong>{nativeCurrency.symbol}</strong> is required to pay gas fees when redeeming from this strategy.

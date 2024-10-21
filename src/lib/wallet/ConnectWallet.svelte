@@ -1,13 +1,11 @@
 <script lang="ts">
-	import type { ConfiguredChainId } from '$lib/wallet';
-	import { getChain } from '$lib/helpers/chain';
-	import { modal, wallet, WalletSummary } from '$lib/wallet';
+	import type { Chain } from '$lib/helpers/chain';
+	import { modal, wallet } from '$lib/wallet/client';
+	import WalletSummary from '$lib/wallet/WalletSummary.svelte';
 	import { Button } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 
-	export let chainId: ConfiguredChainId | undefined;
-
-	const chain = getChain(chainId)!;
+	export let chain: Chain;
 
 	function connectWallet() {
 		modal.open({ view: 'Connect' });
@@ -15,7 +13,7 @@
 </script>
 
 <div class="connect-wallet">
-	{#if $wallet.isConnected}
+	{#if $wallet.status === 'connected'}
 		<div class="is-connected">
 			<WalletSummary wallet={$wallet} {chain} />
 			<Button size="sm" label="Change wallet" on:click={connectWallet} />

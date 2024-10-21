@@ -4,11 +4,11 @@
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
 	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
-	import { WalletWidget } from '$lib/wallet';
+	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 
 	export let data;
 
-	$: ({ admin, strategy, deferred } = data);
+	$: ({ admin, chain, strategy, deferred } = data);
 
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
 
@@ -41,7 +41,7 @@
 				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
-				<WalletWidget {strategy} />
+				<WalletWidget {chain} {strategy} />
 			</div>
 		</PageHeading>
 

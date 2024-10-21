@@ -1,7 +1,7 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { fetchTokens } from '$lib/explorer/token-client.js';
-import { fetchPairs } from '$lib/explorer/pair-client.js';
-import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client.js';
+import { fetchTokens } from '$lib/explorer/token-client';
+import { fetchPairs } from '$lib/explorer/pair-client';
+import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 
 export async function load({ params, fetch }) {

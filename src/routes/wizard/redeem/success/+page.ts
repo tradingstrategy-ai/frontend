@@ -1,31 +1,30 @@
+import type { Abi } from 'viem';
+import type { RedeemWizardData } from '../+layout';
 import { wizard } from 'wizard/store';
 import { get } from 'svelte/store';
 import { getTransactionReceipt } from '@wagmi/core';
-import type { Abi } from 'viem';
+import { config } from '$lib/wallet/client';
 import { getEvents } from '$lib/eth-defi/helpers';
-import { type AssetWithdrawl, getRedemption } from '$lib/eth-defi/enzyme';
+import { type AssetWithdrawlEvent, getRedemption } from '$lib/eth-defi/enzyme';
 import vaultABI from '$lib/eth-defi/abi/enzyme/VaultLib.json';
-import { config } from '$lib/wallet';
 
 export async function load() {
-	const data = get(wizard).data!;
-	const { chainId, contracts, denominationToken, transactionId } = data;
-	let { transactionReceipt } = data;
+	const { chain, contracts, denominationToken, transactionId } = get(wizard).data as Required<RedeemWizardData>;
 
-	if (!transactionReceipt) {
-		transactionReceipt = await getTransactionReceipt(config, { hash: transactionId });
-		wizard.updateData({ transactionReceipt });
-	}
+	const transactionReceipt = await getTransactionReceipt(config, { hash: transactionId });
 
-	const events = getEvents(transactionReceipt.logs, vaultABI as Abi, 'AssetWithdrawn', contracts.vault);
+	const events = getEvents(
+		transactionReceipt.logs,
+		vaultABI as Abi,
+		'AssetWithdrawn',
+		contracts.vault
+	) as unknown as AssetWithdrawlEvent[];
 
-	const receivedAssets = await Promise.all(
-		events.map(({ args }) => {
-			// manually cast event args to AssetWithdrawl (auto cast from ABI failed)
-			const withdrawl = args as unknown as AssetWithdrawl;
-			return getRedemption(config, { withdrawl, denominationToken, chainId });
-		})
+	const redemptions = events.map(({ args: withdrawl }) =>
+		getRedemption(config, { withdrawl, denominationToken, chainId: chain.id })
 	);
 
-	return { receivedAssets };
+	return {
+		receivedAssets: await Promise.all(redemptions)
+	};
 }

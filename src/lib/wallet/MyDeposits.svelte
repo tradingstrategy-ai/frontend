@@ -1,19 +1,15 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
+	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
-	import {
-		type ConfiguredChain,
-		disconnect,
-		switchChain,
-		wallet,
-		DepositWarning,
-		DepositBalance,
-		VaultBalance
-	} from '$lib/wallet';
+	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
+	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
+	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
+	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -23,7 +19,7 @@
 	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
 	export let strategy: ConnectedStrategyRuntimeState;
-	export let chain: ConfiguredChain | undefined;
+	export let chain: Chain;
 	export let geoBlocked: boolean;
 	export let ipCountry: CountryCode | undefined;
 
@@ -37,7 +33,6 @@
 	const { depositOnEnzyme } = strategy;
 
 	const depositEnabled = [
-		chain,
 		contracts.vault,
 		contracts.comptroller,
 		contracts.payment_forwarder,
@@ -47,7 +42,7 @@
 	const isOutdated = Boolean(strategy.new_version_id);
 
 	$: connected = $wallet.isConnected;
-	$: wrongNetwork = connected && $wallet.chain?.id !== chain?.id;
+	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
 	$: buttonsDisabled = geoBlocked || !depositEnabled || wrongNetwork;
 
 	const expandable = fsm('closed', {
@@ -77,7 +72,7 @@
 
 	function launchWizard(slug: string) {
 		wizard.init(slug, `/strategies/${strategy.id}`, {
-			chainId: chain?.id,
+			chain,
 			strategyName: strategy.name,
 			contracts
 		});
@@ -127,7 +122,7 @@
 				<DepositWarning title="Wallet not connected">Please connect wallet to see your deposit status.</DepositWarning>
 			{:else if wrongNetwork}
 				<DepositWarning title="Wrong network">
-					Please connect to {chain?.name}.
+					Please connect to {chain.name}.
 				</DepositWarning>
 			{:else}
 				<dl class="balances">

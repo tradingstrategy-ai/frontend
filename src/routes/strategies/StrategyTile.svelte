@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { utcDay } from 'd3-time';
 	import { normalizeDataForInterval } from '$lib/chart';
-	import { getChain } from '$lib/helpers/chain.js';
+	import { getChain } from '$lib/helpers/chain';
 	import { Button, DataBadge, Tooltip } from '$lib/components';
 	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
 	import ChartThumbnail from './ChartThumbnail.svelte';

@@ -4,7 +4,7 @@
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
-import { lendingReserveInternalUrl } from '$lib/helpers/lending-reserve.js';
+import { lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
 
 export async function GET({ fetch, setHeaders, url }) {
 	// Fetching all reserves (currently < 1000); may need to paginate in the future

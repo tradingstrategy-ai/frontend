@@ -5,7 +5,7 @@
  * different content based on admin role and IP country
  */
 import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
-import { fetchPublicApi } from '$lib/helpers/public-api.js';
+import { fetchPublicApi } from '$lib/helpers/public-api';
 
 export async function load({ fetch, locals }) {
 	const { admin } = locals;

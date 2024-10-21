@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
+	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import fsm from 'svelte-fsm';
 	import { wizard } from 'wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { getSharePrice } from '$lib/eth-defi/enzyme.js';
+	import { getSharePrice } from '$lib/eth-defi/enzyme';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
 		type ErrorInfo,
@@ -17,13 +17,15 @@
 		getTokenAllowance,
 		getExpectedBlockTime
 	} from '$lib/eth-defi/helpers';
-	import { config, wallet, WalletInfo, WalletInfoItem } from '$lib/wallet';
+	import { config, wallet } from '$lib/wallet/client';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
+	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
-	import { getProgressBar } from '$lib/helpers/progressbar.js';
+	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { formatNumber } from '$lib/helpers/formatters.js';
-	import { getLogoUrl } from '$lib/helpers/assets.js';
+	import { formatNumber } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
 	const { paymentContract, tosRequired } = data;
@@ -35,7 +37,7 @@
 	const SLIPPAGE_TOLERANCE = 0.02;
 
 	const {
-		chainId,
+		chain,
 		canForwardPayment,
 		contracts,
 		denominationToken,
@@ -45,7 +47,7 @@
 		tosSignature
 	} = $wizard.data as Required<DepositWizardData>;
 
-	const progressBar = getProgressBar(-1, getExpectedBlockTime(chainId));
+	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
@@ -85,7 +87,7 @@
 
 	function authorizeTransfer() {
 		return getSignedArguments(config, {
-			chainId,
+			chainId: chain.id,
 			token: denominationTokenInfo,
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
@@ -96,7 +98,7 @@
 
 	async function checkPreApproved() {
 		const allowance = await getTokenAllowance(config, {
-			chainId,
+			chainId: chain.id,
 			address: denominationToken.address,
 			owner: $wallet.address!,
 			spender: contracts.comptroller
@@ -108,7 +110,7 @@
 
 	function approveTransfer() {
 		return approveTokenTransfer(config, {
-			chainId,
+			chainId: chain.id,
 			address: denominationToken.address,
 			spender: contracts.comptroller,
 			value: parseUnits(paymentValue, denominationToken.decimals)
@@ -378,7 +380,7 @@
 			{:else if paymentTxId}
 				<div class="transaction-id">
 					<h3>Transaction ID</h3>
-					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl($wallet.chain, paymentTxId)} />
+					<CryptoAddressWidget address={paymentTxId} href={getExplorerUrl(chain, paymentTxId)} />
 				</div>
 			{/if}
 

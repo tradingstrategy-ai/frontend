@@ -4,7 +4,7 @@
 import { type StrategyConfiguration, configuredStrategies } from './configuration';
 import { type StrategySummary, strategySummarySchema } from './summary';
 import loadError from '../assets/load-error.jpg';
-import swrCache from '$lib/swrCache.js';
+import swrCache from '$lib/swrCache';
 
 // use 5 second timeout when fetching strategy metadata
 const CLIENT_TIMEOUT = 5000;

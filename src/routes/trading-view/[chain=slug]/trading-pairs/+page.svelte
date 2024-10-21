@@ -7,7 +7,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
-	import { formatAmount } from '$lib/helpers/formatters.js';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ chain, pairs, options } = data);

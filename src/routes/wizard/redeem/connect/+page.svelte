@@ -1,10 +1,12 @@
 <script lang="ts">
+	import type { RedeemWizardData } from '../+layout';
 	import { wizard } from 'wizard/store';
-	import { wallet, ConnectWallet } from '$lib/wallet';
+	import { wallet } from '$lib/wallet/client';
+	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
-	$: chainId = $wizard?.data?.chainId;
+	const { chain } = $wizard.data as RedeemWizardData;
 
-	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chainId);
+	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chain.id);
 </script>
 
-<ConnectWallet {chainId} />
+<ConnectWallet {chain} />

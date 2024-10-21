@@ -5,7 +5,7 @@ A test endpoint for the page to show debug data.
 	import * as config from '$lib/config';
 	import { env } from '$env/dynamic/public';
 	import { Alert, Button, TextInput } from '$lib/components';
-	import { isGeoBlocked } from '$lib/helpers/geo.js';
+	import { isGeoBlocked } from '$lib/helpers/geo';
 
 	export let data;
 	const { admin, ipCountry, requestHeaders } = data;

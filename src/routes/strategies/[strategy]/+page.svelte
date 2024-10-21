@@ -10,7 +10,7 @@
 		PerformanceChart
 	} from '$lib/chart';
 	import { getChartClient } from 'trade-executor/chart';
-	import { MyDeposits } from '$lib/wallet';
+	import MyDeposits from '$lib/wallet/MyDeposits.svelte';
 	import { UpDownCell } from '$lib/components';
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';

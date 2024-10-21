@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
+	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -8,11 +8,12 @@
 	import { wizard } from 'wizard/store';
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { config, wallet, WalletAddress } from '$lib/wallet';
-	import { getExpectedBlockTime } from '$lib/eth-defi/helpers.js';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { config, wallet } from '$lib/wallet/client';
 	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
+	import { getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
+	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
 	import IconReading from '~icons/local/reading';
 	import IconDownload from '~icons/local/download';
 	import IconFullscreen from '~icons/local/fullscreen';
@@ -20,12 +21,11 @@
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
 
-	const { chainId, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
-	const chain = getChain(chainId)!;
+	const { chain, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
 
 	const progressBar = tweened(0, {
 		easing: cubicOut,
-		duration: getExpectedBlockTime(chainId)
+		duration: getExpectedBlockTime(chain.id)
 	});
 
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -250,7 +250,7 @@
 	{#if transactionId}
 		<div class="transaction-id">
 			<h3>Transaction ID</h3>
-			<CryptoAddressWidget address={transactionId} href={getExplorerUrl($wallet.chain, transactionId)} />
+			<CryptoAddressWidget address={transactionId} href={getExplorerUrl(chain, transactionId)} />
 		</div>
 
 		<progress max="100" value={$progressBar} />

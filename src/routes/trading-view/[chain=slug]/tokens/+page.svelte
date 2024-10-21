@@ -4,7 +4,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import TokenTable from '$lib/explorer/TokenTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
-	import { formatAmount } from '$lib/helpers/formatters.js';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
 	$: ({ chain, tokens } = data);
