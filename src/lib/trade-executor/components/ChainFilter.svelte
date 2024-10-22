@@ -1,30 +1,32 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
-	import { type Chain, getChain } from '$lib/helpers/chain';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import { type Chain, chains, getChain } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let strategies: StrategyRuntimeState[];
 	export let filteredStrategies = strategies;
 	export let selected: Chain['slug'] | 'all' = 'all';
 
-	const options = ['all'];
+	const chainSlugs = chains
+		.filter((c) => strategies.some((s) => matches(s, c))) // comment to break lines
+		.map((c) => c.slug);
 
-	strategies.forEach((s) => {
-		const option = getChainSlug(s);
-		if (option && !options.includes(option)) options.push(option);
-	});
+	const options = ['all', ...chainSlugs];
 
-	$: filteredStrategies = strategies.filter((s) => selected === 'all' || getChainSlug(s) === selected);
+	$: selectedChain = getChain(selected);
 
-	function getChainSlug({ on_chain_data }: StrategyRuntimeState) {
-		return getChain(on_chain_data?.chain_id)?.slug;
+	$: filteredStrategies = strategies.filter((s) => matches(s, selectedChain));
+
+	function matches(strategy: StrategyRuntimeState, chain?: Chain) {
+		if (chain === undefined) return true;
+		return strategy.on_chain_data?.chain_id === chain.id;
 	}
 </script>
 
 <SegmentedControl {options} bind:selected let:option>
 	<div class="filter-option">
-		{#if option !== 'all'}
+		{#if getChain(option)}
 			<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
 		{/if}
 		<span>{option}</span>
