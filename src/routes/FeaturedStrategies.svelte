@@ -1,33 +1,24 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { Alert, Button, Section } from '$lib/components';
+	import ChainFilter from 'trade-executor/components/ChainFilter.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
-	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let strategies: StrategyRuntimeState[];
+
+	let filteredStrategies = strategies;
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
 <Section padding="md">
 	<h2>Open strategies</h2>
-	<div class="differentiators">
-		<StrategyDifferentiator
-			title="100% transparent"
-			details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
-		/>
-		<StrategyDifferentiator
-			title="Self-custodial"
-			details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
-		/>
-		<StrategyDifferentiator
-			title="No fixed fees"
-			details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
-		/>
+	<div class="filters">
+		<ChainFilter {strategies} bind:filteredStrategies />
 	</div>
 	<div class="strategies">
-		{#each strategies as strategy (strategy.id)}
+		{#each filteredStrategies as strategy (strategy.id)}
 			<StrategyTile simplified {strategy} {chartDateRange} />
 		{:else}
 			<div class="fallback">
@@ -46,23 +37,11 @@
 		text-align: center;
 	}
 
-	.differentiators {
-		margin-top: 0.75rem;
+	.filters {
 		display: flex;
-		gap: 2em;
+		gap: 1.25rem;
 		justify-content: center;
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing);
-
-		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing);
-		}
-
-		@media (--viewport-xs) {
-			display: grid;
-			gap: 0.875em;
-		}
+		margin-top: 1rem;
 	}
 
 	.strategies {
