@@ -45,10 +45,14 @@
 	}
 
 	.filters {
-		display: flex;
+		display: grid;
 		gap: 1.25rem;
 		justify-content: center;
 		margin-top: 1rem;
+
+		@media (--viewport-sm-down) {
+			justify-content: stretch;
+		}
 	}
 
 	.strategies {

@@ -30,7 +30,7 @@ button-like control with a segement for each possible value.
 <div class="segmented-control ds-3 {secondary ? 'secondary' : 'primary'}" data-css-props>
 	{#each options as option}
 		<label class:selected={option === selected}>
-			<slot {option}><span>{option}</span></slot>
+			<div><slot {option}>{option}</slot></div>
 			<input type="radio" {name} bind:group={selected} value={option} on:change={dispatchChange} />
 		</label>
 	{/each}
@@ -58,7 +58,8 @@ button-like control with a segement for each possible value.
 	}
 
 	.segmented-control {
-		display: flex;
+		display: grid;
+		grid-auto-flow: column;
 		gap: var(--gap);
 		overflow: hidden;
 	}
@@ -66,7 +67,7 @@ button-like control with a segement for each possible value.
 	label {
 		display: flex;
 		justify-content: center;
-		flex: 1;
+		align-items: center;
 		background: var(--background-default, inherit);
 		padding: var(--padding);
 		border-radius: var(--border-radius, inherit);
@@ -79,16 +80,16 @@ button-like control with a segement for each possible value.
 			&:first-child {
 				border-radius: var(--radius-md) 0 0 var(--radius-md);
 
-				span {
-					padding-left: var(--space-xxs);
+				div {
+					padding-left: 0.25rem;
 				}
 			}
 
 			&:last-child {
 				border-radius: 0 var(--radius-md) var(--radius-md) 0;
 
-				span {
-					padding-right: var(--space-xxs);
+				div {
+					padding-right: 0.25rem;
 				}
 			}
 		}

@@ -38,14 +38,14 @@
 
 <style>
 	.filter-option {
-		display: inline-flex;
+		display: flex;
 		gap: 0.25rem;
 		align-items: center;
 		justify-content: center;
-		min-width: 7rem;
+		padding-inline: 0.25rem;
 
 		img {
-			width: 1.25rem;
+			width: 1.25em;
 		}
 
 		span {
