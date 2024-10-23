@@ -35,7 +35,7 @@
 	</div>
 
 	<div class="cta">
-		<Button secondary label="See all strategies" href="/strategies" />
+		<Button secondary label="See all strategies" href="/strategies?chainFilter={selected}" />
 	</div>
 </Section>
 

@@ -17,7 +17,12 @@ button-like control with a segement for each possible value.
 	export let options: readonly string[];
 	export let secondary = false;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		change: {
+			name: string | undefined;
+			value: string;
+		};
+	}>();
 
 	function dispatchChange(this: HTMLInputElement) {
 		dispatch('change', {

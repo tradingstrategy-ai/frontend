@@ -27,8 +27,8 @@
 	export let selected: ChainOption;
 </script>
 
-<SegmentedControl {options} bind:selected let:option>
-	<div class="filter-option">
+<SegmentedControl name="chainFilter" {options} bind:selected let:option on:change>
+	<div class="filter-option {option}">
 		{#if option !== 'all'}
 			<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
 		{/if}
@@ -43,13 +43,15 @@
 		align-items: center;
 		justify-content: center;
 		padding-inline: 0.25rem;
+		text-transform: capitalize;
+
+		/* tweak Ethereum padding (logo image is narrower) */
+		&.ethereum {
+			padding-left: 0;
+		}
 
 		img {
 			width: 1.25em;
-		}
-
-		span {
-			text-transform: capitalize;
 		}
 	}
 </style>

@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { ComponentEvents } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
@@ -21,7 +24,11 @@
 	const statusOptions = ['all', 'live', 'unpublished'] as const;
 	let selectedStatus: StatusOption = 'all';
 
-	let selectedChain: ChainOption = 'all';
+	const chainOptions = getChainOptions(strategies);
+	$: selectedChain = ((chainParam: Maybe<string>) => {
+		const selected = chainOptions.includes(chainParam as ChainOption) ? chainParam : 'all';
+		return selected as ChainOption;
+	})($page.url.searchParams.get('chainFilter'));
 
 	$: filteredStrategies = strategies.filter((s) => {
 		return matchesStatus(s, selectedStatus) && matchesChainOption(s, selectedChain);
@@ -35,6 +42,10 @@
 		const liveStrategy = strategy.tags?.includes('live');
 		return liveFilter === liveStrategy;
 	}
+
+	function handleChainFilterChange({ detail }: ComponentEvents<ChainFilter>['change']) {
+		goto(`?chainFilter=${detail.value}`, { replaceState: true, noScroll: true });
+	}
 </script>
 
 <svelte:head>
@@ -47,7 +58,7 @@
 		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
 
 		<div class="filters">
-			<ChainFilter options={getChainOptions(strategies)} bind:selected={selectedChain} />
+			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleChainFilterChange} />
 			{#if admin}
 				<SegmentedControl bind:selected={selectedStatus} options={statusOptions} />
 			{/if}
