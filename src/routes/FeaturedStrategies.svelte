@@ -1,13 +1,20 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 	import { Alert, Button, Section } from '$lib/components';
-	import ChainFilter from 'trade-executor/components/ChainFilter.svelte';
+	import {
+		type ChainOption,
+		default as ChainFilter,
+		getChainOptions,
+		matchesChainOption
+	} from 'trade-executor/components/ChainFilter.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let strategies: StrategyRuntimeState[];
 
-	let filteredStrategies = strategies;
+	let selected: ChainOption = 'all';
+
+	$: filteredStrategies = strategies.filter((s) => matchesChainOption(s, selected));
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
@@ -15,7 +22,7 @@
 <Section padding="md">
 	<h2>Open strategies</h2>
 	<div class="filters">
-		<ChainFilter {strategies} bind:filteredStrategies />
+		<ChainFilter options={getChainOptions(strategies)} bind:selected />
 	</div>
 	<div class="strategies">
 		{#each filteredStrategies as strategy (strategy.id)}
