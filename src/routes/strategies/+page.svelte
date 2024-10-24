@@ -3,6 +3,9 @@
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { cubicOut } from 'svelte/easing';
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
@@ -63,8 +66,11 @@
 
 		{#if filteredStrategies.length}
 			<div class="strategy-tiles" data-testid="strategy-tiles">
-				{#each filteredStrategies as strategy (strategy.id)}
-					<StrategyTile {admin} {strategy} {chartDateRange} />
+				{#each filteredStrategies as strategy, idx (strategy.id)}
+					{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
+					<div transition:slide={{ axis: 'x', ...params }} animate:flip={params} style:display="grid">
+						<StrategyTile {admin} {strategy} {chartDateRange} />
+					</div>
 				{/each}
 			</div>
 		{:else}

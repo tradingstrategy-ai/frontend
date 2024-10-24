@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import { slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { cubicOut } from 'svelte/easing';
 	import { Alert, Button, Section } from '$lib/components';
 	import {
 		type ChainOption,
@@ -24,9 +27,12 @@
 	<div class="filters">
 		<ChainFilter options={getChainOptions(strategies)} bind:selected />
 	</div>
-	<div class="strategies">
-		{#each filteredStrategies as strategy (strategy.id)}
-			<StrategyTile simplified {strategy} {chartDateRange} />
+	<div class="strategies" style:contain="paint">
+		{#each filteredStrategies as strategy, idx (strategy.id)}
+			{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
+			<div transition:slide={{ axis: 'x', ...params }} animate:flip={params} style:display="grid">
+				<StrategyTile simplified {strategy} {chartDateRange} />
+			</div>
 		{:else}
 			<div class="fallback">
 				<Alert size="sm" status="info">Check back soon to see top-performing strategies.</Alert>
