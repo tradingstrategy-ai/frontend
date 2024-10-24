@@ -119,7 +119,9 @@
 			<StrategyDataSummary {simplified} {strategy} />
 		</div>
 		<div class="actions">
-			<Button size="md" {href}>View strategy</Button>
+			<Button size="md" {href}>
+				{simplified ? 'Start trading' : 'View strategy'}
+			</Button>
 		</div>
 	</div>
 </div>
