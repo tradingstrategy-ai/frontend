@@ -5,7 +5,10 @@
 <section class="home-hero-banner" data-testid="home-hero-banner">
 	<div class="inner ds-container">
 		<header>
-			<h1>Unleash the power of automated crypto trading</h1>
+			<h1>
+				<span>Unleash the power of</span>
+				<span>automated crypto trading</span>
+			</h1>
 			<div class="differentiators">
 				<StrategyDifferentiator
 					title="100% transparent"
@@ -23,7 +26,7 @@
 		</header>
 
 		<div class="content">
-			<enhanced:img src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
+			<enhanced:img class="media" src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
 
 			<ol>
 				<li>Select a professional-grade strategy aligned with your goals.</li>
@@ -38,16 +41,24 @@
 <style>
 	.home-hero-banner {
 		background: var(--c-background-accent-1);
-		padding: 2rem 0;
+		padding: 5rem 2rem;
 
-		@media (--viewport-md-up) {
-			padding: 4rem 2rem;
+		@media (--viewport-sm-down) {
+			padding: 3rem 0;
+		}
+
+		@media (--viewport-xs) {
+			padding: 2rem 0;
 		}
 	}
 
 	.inner {
 		display: grid;
-		gap: 2.5rem;
+		gap: 4rem;
+
+		@media (--viewport-sm-down) {
+			gap: 2.5rem;
+		}
 	}
 
 	header {
@@ -58,8 +69,17 @@
 
 	h1 {
 		text-align: center;
-		font: var(--f-heading-xxl-medium);
-		letter-spacing: var(--f-heading-xxl-spacing, normal);
+		font: var(--f-heading-xxxl-medium);
+		letter-spacing: var(--f-heading-xxxl-spacing, normal);
+
+		span {
+			white-space: nowrap;
+		}
+
+		@media (--viewport-lg-down) {
+			font: var(--f-heading-xxl-medium);
+			letter-spacing: var(--f-heading-xxl-spacing, normal);
+		}
 
 		@media (--viewport-md-down) {
 			font: var(--f-heading-xl-medium);
@@ -91,28 +111,47 @@
 
 	.content {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * 2rem)), auto));
-		gap: min(5rem, 10vw);
+		grid-template-columns: 3fr 4fr;
+		gap: 3rem;
 		place-items: center;
+
+		@media (--viewport-lg-down) {
+			grid-template-columns: auto auto;
+		}
+
+		@media (--viewport-md-down) {
+			grid-template-columns: auto;
+		}
+
+		@media (--viewport-md-down) {
+			> * {
+				max-width: 80vw;
+			}
+		}
 	}
 
 	ol {
 		list-style: none;
 		counter-reset: item;
 		display: grid;
-		gap: 1.5em;
+		gap: 1.25em;
 		padding: 0;
-		font: var(--f-ui-xl-roman);
-		letter-spacing: var(--f-ui-xl-spacing, normal);
+		font: var(--f-heading-md-roman);
+		letter-spacing: var(--f-heading-md-spacing, normal);
 
 		@media (--viewport-xl-down) {
-			font: var(--f-ui-lg-roman);
-			letter-spacing: var(--f-ui-lg-spacing, normal);
+			font: var(--f-heading-sm-roman);
+			letter-spacing: var(--f-heading-sm-spacing, normal);
+		}
+
+		@media (--viewport-lg-down) {
+			font: var(--f-ui-xl-roman);
+			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
 
 		@media (--viewport-sm-down) {
-			font: var(--f-ui-md-roman);
-			letter-spacing: var(--f-ui-md-spacing, normal);
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--f-ui-lg-spacing, normal);
 		}
 	}
 
