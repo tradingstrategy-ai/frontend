@@ -1,26 +1,29 @@
-<!--
-@component
-Home page hero banner.
-
-@example
-
-```svelte
-<HeroBanner />
-```
--->
 <script lang="ts">
-	import { Button } from '$lib/components';
+	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<header class="home-hero-banner" data-testid="home-hero-banner">
+<section class="home-hero-banner" data-testid="home-hero-banner">
 	<div class="inner ds-container">
-		<enhanced:img src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
+		<header>
+			<h1>Unleash the power of automated crypto trading</h1>
+			<div class="differentiators">
+				<StrategyDifferentiator
+					title="100% transparent"
+					details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
+				/>
+				<StrategyDifferentiator
+					title="Self-custodial"
+					details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
+				/>
+				<StrategyDifferentiator
+					title="No fixed fees"
+					details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
+				/>
+			</div>
+		</header>
 
 		<div class="content">
-			<h1>Unleash the power of automated crypto trading</h1>
-
-			<hr />
+			<enhanced:img src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
 
 			<ol>
 				<li>Select a professional-grade strategy aligned with your goals.</li>
@@ -28,16 +31,9 @@ Home page hero banner.
 				<li>Track your returns as the strategy trades automatically.</li>
 				<li>Adjust your portfolio or withdraw anytime.</li>
 			</ol>
-
-			<div class="buttons">
-				<Button href="/strategies">Start trading</Button>
-				<Button ghost href="https://github.com/tradingstrategy-ai/getting-started" target="_blank" rel="noreferrer">
-					For developers
-				</Button>
-			</div>
 		</div>
 	</div>
-</header>
+</section>
 
 <style>
 	.home-hero-banner {
@@ -45,22 +41,27 @@ Home page hero banner.
 		padding: 2rem 0;
 
 		@media (--viewport-md-up) {
-			padding: 6rem 2rem;
+			padding: 4rem 2rem;
 		}
 	}
 
 	.inner {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * 2rem)), auto));
-		gap: min(5rem, 10vw);
-		place-items: center;
+		gap: 2.5rem;
+	}
+
+	header {
+		display: grid;
+		gap: 0.5rem;
+		justify-items: center;
 	}
 
 	h1 {
+		text-align: center;
 		font: var(--f-heading-xxl-medium);
 		letter-spacing: var(--f-heading-xxl-spacing, normal);
 
-		@media (--viewport-xl-down) {
+		@media (--viewport-md-down) {
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-xl-spacing, normal);
 		}
@@ -71,11 +72,35 @@ Home page hero banner.
 		}
 	}
 
+	.differentiators {
+		display: flex;
+		gap: 2em;
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--f-ui-md-spacing);
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
+		}
+
+		@media (--viewport-xs) {
+			display: grid;
+			gap: 0.875em;
+		}
+	}
+
+	.content {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(24rem, calc(100vw - 2 * 2rem)), auto));
+		gap: min(5rem, 10vw);
+		place-items: center;
+	}
+
 	ol {
 		list-style: none;
 		counter-reset: item;
 		display: grid;
-		gap: 0.5em;
+		gap: 1.5em;
 		padding: 0;
 		font: var(--f-ui-xl-roman);
 		letter-spacing: var(--f-ui-xl-spacing, normal);
@@ -95,7 +120,7 @@ Home page hero banner.
 		counter-increment: item;
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: 0.5em;
+		gap: 0.625em;
 	}
 
 	li:before {
@@ -110,24 +135,5 @@ Home page hero banner.
 		color: color-mix(in srgb, var(--c-text), var(--c-success) 70%);
 		font-size: 0.9em;
 		font-weight: bold;
-	}
-
-	.buttons {
-		display: flex;
-		gap: 1.25rem;
-		margin-top: 2.5rem;
-
-		:global([data-css-props]:first-child) {
-			--button-padding: 0.75rem 2.5rem;
-		}
-
-		@media (--viewport-xs) {
-			flex-direction: column;
-		}
-	}
-
-	hr {
-		border: 1px solid var(--c-text);
-		margin-block: 1.5rem;
 	}
 </style>
