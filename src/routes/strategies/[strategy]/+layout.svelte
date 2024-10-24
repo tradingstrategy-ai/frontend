@@ -2,7 +2,12 @@
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
-	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
+	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
+	import {
+		default as StrategyError,
+		shouldDisplayError,
+		adminOnlyError
+	} from 'trade-executor/components/StrategyError.svelte';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 

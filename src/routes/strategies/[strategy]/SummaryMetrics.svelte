@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { SummaryKeyMetrics } from 'trade-executor/strategy/summary';
 	import MetricsBox from './MetricsBox.svelte';
-	import { KeyMetric } from 'trade-executor/components';
 	import { UpDownIndicator } from '$lib/components';
+	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
 	import { formatCycleDuration, formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';

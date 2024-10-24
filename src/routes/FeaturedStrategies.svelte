@@ -1,34 +1,38 @@
 <script lang="ts">
 	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import { slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { cubicOut } from 'svelte/easing';
 	import { Alert, Button, Section } from '$lib/components';
+	import {
+		type ChainOption,
+		default as ChainFilter,
+		getChainOptions,
+		matchesChainOption
+	} from 'trade-executor/components/ChainFilter.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
-	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
 	export let strategies: StrategyRuntimeState[];
+
+	let selected: ChainOption = 'all';
+
+	$: filteredStrategies = strategies.filter((s) => matchesChainOption(s, selected));
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
 
 <Section padding="md">
 	<h2>Open strategies</h2>
-	<div class="differentiators">
-		<StrategyDifferentiator
-			title="100% transparent"
-			details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
-		/>
-		<StrategyDifferentiator
-			title="Self-custodial"
-			details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
-		/>
-		<StrategyDifferentiator
-			title="No fixed fees"
-			details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
-		/>
+	<div class="filters">
+		<ChainFilter options={getChainOptions(strategies)} bind:selected />
 	</div>
-	<div class="strategies">
-		{#each strategies as strategy (strategy.id)}
-			<StrategyTile simplified {strategy} {chartDateRange} />
+	<div class="strategies" style:contain="paint">
+		{#each filteredStrategies as strategy, idx (strategy.id)}
+			{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
+			<div transition:slide={{ axis: 'x', ...params }} animate:flip={params} style:display="grid">
+				<StrategyTile simplified {strategy} {chartDateRange} />
+			</div>
 		{:else}
 			<div class="fallback">
 				<Alert size="sm" status="info">Check back soon to see top-performing strategies.</Alert>
@@ -37,7 +41,7 @@
 	</div>
 
 	<div class="cta">
-		<Button secondary label="See all strategies" href="/strategies" />
+		<Button secondary label="See all strategies" href="/strategies?chainFilter={selected}" />
 	</div>
 </Section>
 
@@ -46,22 +50,14 @@
 		text-align: center;
 	}
 
-	.differentiators {
-		margin-top: 0.75rem;
-		display: flex;
-		gap: 2em;
+	.filters {
+		display: grid;
+		gap: 1.25rem;
 		justify-content: center;
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing);
+		margin-top: 1rem;
 
 		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing);
-		}
-
-		@media (--viewport-xs) {
-			display: grid;
-			gap: 0.875em;
+			justify-content: stretch;
 		}
 	}
 

@@ -5,12 +5,16 @@
 	import { utcDay } from 'd3-time';
 	import { normalizeDataForInterval } from '$lib/chart';
 	import { getChain } from '$lib/helpers/chain';
-	import { Button, DataBadge, Tooltip } from '$lib/components';
-	import { StrategyIcon, StrategyError, shouldDisplayError, adminOnlyError } from 'trade-executor/components';
+	import { Alert, Button, DataBadge, Tooltip } from '$lib/components';
+	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
+	import {
+		default as StrategyError,
+		shouldDisplayError,
+		adminOnlyError
+	} from 'trade-executor/components/StrategyError.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import Alert from '$lib/components/Alert.svelte';
 
 	export let admin = false;
 	export let simplified = false;
@@ -115,7 +119,9 @@
 			<StrategyDataSummary {simplified} {strategy} />
 		</div>
 		<div class="actions">
-			<Button size="md" {href}>View strategy</Button>
+			<Button size="md" {href}>
+				{simplified ? 'Start trading' : 'View strategy'}
+			</Button>
 		</div>
 	</div>
 </div>
