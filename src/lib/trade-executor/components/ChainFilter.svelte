@@ -12,6 +12,15 @@
 		return ['all', ...chainSlugs];
 	}
 
+	// Type predicate to narrow type to ChainOption
+	function isChainOption(chainOptions: ChainOption[], input: MaybeString): input is ChainOption {
+		return (chainOptions as MaybeString[]).includes(input);
+	}
+
+	export function parseChainOption(chainOptions: ChainOption[], input: MaybeString): ChainOption {
+		return isChainOption(chainOptions, input) ? input : 'all';
+	}
+
 	export function matchesChainOption(strategy: StrategyRuntimeState, chainOption?: ChainOption) {
 		if (chainOption === 'all') return true;
 		const chain = getChain(chainOption);

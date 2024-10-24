@@ -7,9 +7,9 @@
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
 	import {
-		type ChainOption,
 		default as ChainFilter,
 		getChainOptions,
+		parseChainOption,
 		matchesChainOption
 	} from 'trade-executor/components/ChainFilter.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
@@ -25,10 +25,7 @@
 	let selectedStatus: StatusOption = 'all';
 
 	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = ((chainParam: Maybe<string>) => {
-		const selected = chainOptions.includes(chainParam as ChainOption) ? chainParam : 'all';
-		return selected as ChainOption;
-	})($page.url.searchParams.get('chainFilter'));
+	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
 
 	$: filteredStrategies = strategies.filter((s) => {
 		return matchesStatus(s, selectedStatus) && matchesChainOption(s, selectedChain);
