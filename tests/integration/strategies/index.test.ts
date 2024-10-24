@@ -29,7 +29,7 @@ test.describe('strategy index page', () => {
 		await page.locator('label:has-text("live")').click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		expect(await rows.count()).toBe(1);
+		await expect(rows).toHaveCount(1);
 
 		const heading = page.getByRole('heading', { name: 'MATIC-USD breakout on Uniswap v3' });
 		await expect(heading).toBeVisible();
@@ -40,7 +40,7 @@ test.describe('strategy index page', () => {
 		await page.getByText('unpublished', { exact: true }).click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		expect(await rows.count()).toBe(1);
+		await expect(rows).toHaveCount(1);
 
 		const heading = page.getByRole('heading', { name: 'Multipair breakout strategy on Uniswap v3' });
 		await expect(heading).toBeVisible();
