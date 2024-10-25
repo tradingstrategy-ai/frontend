@@ -8,8 +8,8 @@
  *
  */
 import { z } from 'zod';
+import { unixTimestampToDate } from './utility-types';
 import { keyMetricSchema, keyMetricSource } from './key-metric';
-import { unixTimestampToDate } from 'trade-executor/state/utility-types';
 
 export const statisticsTableMetricSchema = keyMetricSchema.extend({
 	value: z.record(z.string())

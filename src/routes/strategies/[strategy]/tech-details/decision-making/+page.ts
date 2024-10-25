@@ -4,7 +4,7 @@
  * Generate a variant of decision making status image URL for both color schemes.
  */
 import { error } from '@sveltejs/kit';
-import { configuredStrategies } from 'trade-executor/strategy/configuration';
+import { configuredStrategies } from 'trade-executor/schemas/configuration';
 
 export async function load({ params }) {
 	const strategy = configuredStrategies.get(params.strategy);

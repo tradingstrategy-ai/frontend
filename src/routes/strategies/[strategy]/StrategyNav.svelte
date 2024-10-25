@@ -68,8 +68,8 @@
 </script>
 
 <script lang="ts">
-	import type { Portfolio } from 'trade-executor/state/portfolio';
-	import type { PositionStatus } from 'trade-executor/state/position';
+	import type { Portfolio } from 'trade-executor/schemas/portfolio';
+	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
 	import IconChevronDown from '~icons/local/chevron-down';

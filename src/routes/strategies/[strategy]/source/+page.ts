@@ -3,7 +3,7 @@
  */
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
-import { configuredStrategies } from 'trade-executor/strategy/configuration';
+import { configuredStrategies } from 'trade-executor/schemas/configuration';
 
 export async function load({ params, fetch }) {
 	const strategy = configuredStrategies.get(params.strategy);

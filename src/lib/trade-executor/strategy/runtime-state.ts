@@ -1,8 +1,8 @@
 /**
  * Strategy runtime state fetching.
  */
-import { type StrategyConfiguration, configuredStrategies } from './configuration';
-import { type StrategySummary, strategySummarySchema } from './summary';
+import { type StrategyConfiguration, configuredStrategies } from '../schemas/configuration';
+import { type StrategySummary, strategySummarySchema } from '../schemas/summary';
 import loadError from '../assets/load-error.jpg';
 import swrCache from '$lib/swrCache';
 

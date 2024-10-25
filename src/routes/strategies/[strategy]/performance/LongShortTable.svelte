@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LongShortTable, StatisticsTableMetric } from 'trade-executor/statistics/statistics-table';
+	import type { LongShortTable, StatisticsTableMetric } from 'trade-executor/schemas/statistics-table';
 	import { SummaryBox, TextInput } from '$lib/components';
 
 	export let tableData: LongShortTable;

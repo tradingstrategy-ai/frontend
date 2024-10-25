@@ -1,5 +1,5 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';

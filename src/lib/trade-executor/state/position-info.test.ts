@@ -1,6 +1,6 @@
-import { fixture } from './utility-type-fixtures';
-import { tradingPositionSchema } from './position';
-import { type PositionStatistics, positionStatisticsSchema } from './statistics';
+import { fixture } from '../schemas/utility-type-fixtures';
+import { tradingPositionSchema } from '../schemas/position';
+import { type PositionStatistics, positionStatisticsSchema } from '../schemas/statistics';
 import { type TradingPositionInfo, createTradingPositionInfo } from './position-info';
 
 const position = fixture.fromSchema(tradingPositionSchema, { seed: 1 });

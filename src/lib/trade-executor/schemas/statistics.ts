@@ -8,7 +8,7 @@
 import { z } from 'zod';
 import { count, percent, primaryKeyString, unixTimestampToDate, usDollarAmount } from './utility-types';
 import { tradeSummarySchema } from './trade';
-import { longShortTableSchema } from '../statistics/statistics-table';
+import { longShortTableSchema } from './statistics-table';
 
 export const positionStatisticsSchema = z.object({
 	calculated_at: unixTimestampToDate,

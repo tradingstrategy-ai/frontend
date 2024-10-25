@@ -23,7 +23,7 @@ import {
 import { assetIdentifierSchema, tradingPairIdentifierSchema } from './identifier';
 import { blockchainTransactionSchema } from './blockchain-transaction';
 import { loanSchema } from './loan';
-import { createTradingPairInfo } from './trading-pair-info';
+import { createTradingPairInfo } from '../state/trading-pair-info';
 
 export const tradeType = z.enum(['rebalance', 'stop_loss', 'take_profit', 'repair', 'accounting_correction']);
 

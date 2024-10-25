@@ -2,7 +2,7 @@
  * Fetch data needed to render the strategy frame and all subpages.
  */
 import { error } from '@sveltejs/kit';
-import { configuredStrategies } from 'trade-executor/strategy/configuration';
+import { configuredStrategies } from 'trade-executor/schemas/configuration';
 import { getStrategyRuntimeState, type ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
 import { getStrategyState } from 'trade-executor/state';
 import { getChain } from '$lib/helpers/chain';

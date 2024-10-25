@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PositionStatus } from 'trade-executor/state/position';
+	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';

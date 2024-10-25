@@ -1,5 +1,5 @@
-import { fixture } from './utility-type-fixtures';
-import { tradeExecutionSchema } from './trade';
+import { fixture } from '../schemas/utility-type-fixtures';
+import { tradeExecutionSchema } from '../schemas/trade';
 import { type TradeInfo, TradeDirections, createTradeInfo } from './trade-info';
 
 const tradeExecution = fixture.fromSchema(tradeExecutionSchema);
