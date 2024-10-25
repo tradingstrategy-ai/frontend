@@ -7,6 +7,15 @@
 import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
+async function fetchTvlData() {
+	try {
+		return (await fetchPublicApi(fetch, 'impressive-numbers')).strategies_tvl;
+	} catch (e) {
+		console.error('Request failed; rendering page without TVL data.');
+		console.error(e);
+	}
+}
+
 export async function load({ fetch, locals }) {
 	const { admin } = locals;
 
@@ -15,13 +24,8 @@ export async function load({ fetch, locals }) {
 		return admin ? strategies : strategies.filter((s) => s.tags?.includes('live'));
 	});
 
-	// fail gracefully if TVL data doesn't load
-	const tvlData = fetchPublicApi(fetch, 'impressive-numbers')
-		.then((data) => data.strategies_tvl)
-		.catch((e) => {
-			console.error('Request failed; rendering page without TVL data.');
-			console.error(e);
-		});
+	// return TVL data for admins only
+	const tvlData = admin ? fetchTvlData() : undefined;
 
 	return {
 		strategies: await strategies,

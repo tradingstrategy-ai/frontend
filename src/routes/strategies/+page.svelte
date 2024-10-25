@@ -91,9 +91,11 @@
 		{/if}
 	</Section>
 
-	<Section>
-		<StrategyTvlChart {tvlData} />
-	</Section>
+	{#if admin}
+		<Section>
+			<StrategyTvlChart {tvlData} />
+		</Section>
+	{/if}
 </main>
 
 <style>

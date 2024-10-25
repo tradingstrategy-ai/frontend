@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { utcDay } from 'd3-time';
 	import { type RawTick, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { Alert } from '$lib/components';
-	import { parseDate } from '$lib/helpers/date';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let tvlData: RawTick[] | undefined;
