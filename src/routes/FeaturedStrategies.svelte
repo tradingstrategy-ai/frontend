@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';

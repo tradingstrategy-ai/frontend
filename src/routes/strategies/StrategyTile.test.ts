@@ -1,6 +1,6 @@
 import { render } from '@testing-library/svelte';
 import StrategyTile from './StrategyTile.svelte';
-import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 
 const baseStrategy = {
 	id: 'strategy_1',
@@ -119,7 +119,7 @@ describe('StrategyTile component', () => {
 			backtest_available: false,
 			badges: [],
 			tags: []
-		} as ConnectedStrategyRuntimeState;
+		} as ConnectedStrategyInfo;
 
 		// This test is intentionally checking for very specific markup:
 		// The strategy tile container element MUST NOT be an anchor tag.

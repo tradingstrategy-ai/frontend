@@ -12,7 +12,7 @@ Display an appropriate error message for a strategy when needed. There can be mu
 -->
 
 <script context="module" lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
 
 	export function adminOnlyError(strategy: StrategyRuntimeState) {
 		return strategy.connected && (!strategy.executor_running || strategy.frozen_positions > 0);

@@ -1,9 +1,9 @@
-import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 import { min, max } from 'd3-array';
 import { utcDay } from 'd3-time';
 
 // Determine the chart min/max dates from all strategies standardize x-axis range
-export function getStrategyChartDateRange(strategies: StrategyRuntimeState[]): [Date?, Date?] {
+export function getStrategyChartDateRange(strategies: StrategyInfo[]): [Date?, Date?] {
 	const today = utcDay.floor(new Date());
 	const ninetyDaysAgo = utcDay.offset(today, -90) as Date;
 

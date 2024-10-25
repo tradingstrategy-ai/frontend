@@ -2,7 +2,7 @@
  * Generate a sitemap for strategy pages (live strategies only)
  */
 import { SitemapStream } from 'sitemap';
-import { getCachedStrategies } from 'trade-executor/strategy/runtime-state';
+import { getCachedStrategies } from 'trade-executor/models/strategy-info';
 
 // see StrategyNav menuOptions
 // also see special-case vault and backtest pages below

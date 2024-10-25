@@ -3,7 +3,7 @@
  */
 import { error } from '@sveltejs/kit';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
-import { getStrategyRuntimeState, type ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+import { getStrategyInfo, type ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 import { getStrategyState } from 'trade-executor/state';
 import { getChain } from '$lib/helpers/chain';
 
@@ -17,10 +17,10 @@ export async function load({ params, fetch }) {
 		console.error(e);
 	});
 
-	let strategy: ConnectedStrategyRuntimeState;
+	let strategy: ConnectedStrategyInfo;
 
 	try {
-		strategy = await getStrategyRuntimeState(fetch, strategyConf);
+		strategy = await getStrategyInfo(fetch, strategyConf);
 	} catch (e) {
 		console.error(e);
 		const stack = [
