@@ -12,8 +12,8 @@ import { tradeExecutionSchema } from './trade';
 import { loanSchema } from './loan';
 import { balanceUpdateSchema } from './balance-update';
 import { valuationUpdateSchema } from './valuation';
-import { type TradeInfo, createTradeInfo } from '../state/trade-info';
-import { createTradingPairInfo } from '../state/trading-pair-info';
+import { type TradeInfo, createTradeInfo } from '../models/trade-info';
+import { createTradingPairInfo } from '../models/trading-pair-info';
 
 export const positionStatus = z.enum(['open', 'closed', 'frozen']);
 export type PositionStatus = z.infer<typeof positionStatus>;

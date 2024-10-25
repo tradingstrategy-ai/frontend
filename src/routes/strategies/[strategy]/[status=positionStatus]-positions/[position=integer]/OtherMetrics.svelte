@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
-	import { positionTooltips } from 'trade-executor/state/position-tooltips';
+	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
+	import { positionTooltips } from 'trade-executor/models/position-tooltips';
 	import { SummaryBox, Tooltip } from '$lib/components';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
