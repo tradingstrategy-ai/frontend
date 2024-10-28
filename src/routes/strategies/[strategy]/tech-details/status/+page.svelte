@@ -2,11 +2,13 @@
 	Page to display the instance run-time status
 -->
 <script lang="ts">
-	import { Alert, Timestamp, Tooltip } from '$lib/components';
-	import { formatAmount } from '$lib/helpers/formatters';
+	import { Alert, HashAddress, Timestamp, Tooltip } from '$lib/components';
+	import IconWarning from '~icons/local/warning';
+	import { formatAmount, formatNumber } from '$lib/helpers/formatters';
+	import { getExplorerUrl } from '$lib/helpers/chain.js';
 
 	export let data;
-	$: ({ runState, deferred, strategy } = data);
+	$: ({ runState, deferred, strategy, chain } = data);
 </script>
 
 <svelte:head>
@@ -89,6 +91,45 @@
 					</Tooltip>
 				</td>
 			</tr>
+			<tr>
+				<td>Hot wallet address</td>
+				<td>
+					{#if runState.hot_wallet_address}
+						<a class="hot-wallet" href={getExplorerUrl(chain, runState.hot_wallet_address)} target="_blank">
+							<HashAddress address={runState.hot_wallet_address} />
+						</a>
+					{:else}
+						---
+					{/if}
+				</td>
+			</tr>
+			<tr>
+				<td>Hot wallet gas balance</td>
+				<td>
+					{#if runState.hot_wallet_gas >= runState.hot_wallet_gas_warning_level}
+						{formatNumber(runState.hot_wallet_gas, 2, 4)}
+						{chain.gas}
+					{:else}
+						<Tooltip>
+							<span slot="trigger" class="gas-warning">
+								<span class="underline">
+									{formatNumber(runState.hot_wallet_gas, 2, 4)}
+									{chain.gas}
+								</span>
+								<IconWarning />
+							</span>
+							<svelte:fragment slot="popup">
+								{#if runState.hot_wallet_gas_warning_message}
+									{runState.hot_wallet_gas_warning_message}
+								{:else}
+									Hot wallet balance is below the warning level of {formatNumber(runState.hot_wallet_gas_warning_level)}
+									{chain.gas}
+								{/if}
+							</svelte:fragment>
+						</Tooltip>
+					{/if}
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </section>
@@ -121,5 +162,19 @@
 			font: var(--f-paragraph-md-roman);
 			letter-spacing: var(--ls-paragraph-md);
 		}
+	}
+
+	.hot-wallet {
+		display: inline-grid;
+		border-bottom: 1px solid currentColor;
+
+		&:hover {
+			font-weight: 500;
+		}
+	}
+
+	.gas-warning {
+		color: var(--c-error);
+		font-weight: 500;
 	}
 </style>

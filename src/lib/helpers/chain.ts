@@ -8,11 +8,11 @@ export type ApiChain = {
 
 // Local cache of supported chains (helps limit API calls)
 export const chains = [
-	{ id: 1, slug: 'ethereum', name: 'Ethereum', explorer: 'https://etherscan.io' },
-	{ id: 56, slug: 'binance', name: 'BNB Smart Chain', explorer: 'https://bscscan.com' },
-	{ id: 137, slug: 'polygon', name: 'Polygon', explorer: 'https://polygonscan.com' },
-	{ id: 43114, slug: 'avalanche', name: 'Avalanche C-chain', explorer: 'https://snowtrace.io' },
-	{ id: 42161, slug: 'arbitrum', name: 'Arbitrum One', explorer: 'https://arbiscan.io' }
+	{ id: 1, slug: 'ethereum', name: 'Ethereum', explorer: 'https://etherscan.io', gas: 'ETH' },
+	{ id: 56, slug: 'binance', name: 'BNB Smart Chain', explorer: 'https://bscscan.com', gas: 'BNB' },
+	{ id: 137, slug: 'polygon', name: 'Polygon', explorer: 'https://polygonscan.com', gas: 'POL' },
+	{ id: 43114, slug: 'avalanche', name: 'Avalanche C-chain', explorer: 'https://snowtrace.io', gas: 'AVAX' },
+	{ id: 42161, slug: 'arbitrum', name: 'Arbitrum One', explorer: 'https://arbiscan.io', gas: 'ETH' }
 ] as const;
 
 export type Chain = (typeof chains)[number];
