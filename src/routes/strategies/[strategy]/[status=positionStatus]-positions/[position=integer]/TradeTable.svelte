@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TradeInfo } from 'trade-executor/state/trade-info';
+	import type { TradeInfo } from 'trade-executor/models/trade-info';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addHiddenColumns } from 'svelte-headless-table/plugins';

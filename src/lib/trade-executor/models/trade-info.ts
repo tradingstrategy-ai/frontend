@@ -5,8 +5,8 @@
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/trade.py
  *
  */
-import type { TradeExecution } from './trade';
-import type { USDollarAmount } from './utility-types';
+import type { TradeExecution } from '../schemas/trade';
+import type { USDollarAmount } from '../schemas/utility-types';
 
 export const TradeDirections = {
 	Enter: 1,

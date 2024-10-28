@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { ConnectedStrategyRuntimeState } from 'trade-executor/models/strategy-info';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
 	import { modal, wallet } from '$lib/wallet/client';

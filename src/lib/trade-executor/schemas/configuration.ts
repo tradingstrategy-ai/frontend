@@ -1,6 +1,6 @@
 import { strategyConfig } from '$lib/config';
 import { z } from 'zod';
-import { primaryKey } from '../state/utility-types';
+import { primaryKey } from './utility-types';
 
 export const strategyConfigurationSchema = z.object({
 	id: z.string(),

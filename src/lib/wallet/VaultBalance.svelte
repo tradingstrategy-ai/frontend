@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { simulateContract } from '@wagmi/core';
 	import { config } from '$lib/wallet/client';

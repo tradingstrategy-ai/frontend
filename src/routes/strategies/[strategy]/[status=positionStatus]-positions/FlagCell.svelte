@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TradingPositionInfo } from 'trade-executor/state/position-info';
-	import type { TradeInfo } from 'trade-executor/state/trade-info';
+	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
+	import type { TradeInfo } from 'trade-executor/models/trade-info';
 	import { Alert } from '$lib/components';
 	import PositionFlag from './PositionFlag.svelte';
 	import { formatNumber, formatPercent } from '$lib/helpers/formatters';

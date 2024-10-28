@@ -6,7 +6,7 @@
  *
  */
 import { z } from 'zod';
-import { unixTimestampToDate } from '../state/utility-types';
+import { unixTimestampToDate } from './utility-types';
 
 export const keyMetricSource = z.enum(['backtesting', 'live_trading', 'missing']);
 

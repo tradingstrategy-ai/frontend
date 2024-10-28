@@ -10,16 +10,8 @@
  * Also see
  */
 import { z } from 'zod';
-import {
-	chainId,
-	count,
-	duration,
-	hexString,
-	percent,
-	unixTimestampToDate,
-	usDollarAmount
-} from '../state/utility-types';
-import { keyMetricSchema } from '../statistics/key-metric';
+import { chainId, count, duration, hexString, percent, unixTimestampToDate, usDollarAmount } from './utility-types';
+import { keyMetricSchema } from './key-metric';
 
 export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
 

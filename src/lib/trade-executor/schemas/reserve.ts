@@ -6,8 +6,8 @@
  *
  */
 import { z } from 'zod';
-import { assetIdentifierSchema } from './identifier';
 import { decimal, primaryKeyString, unixTimestamp, usDollarAmount } from './utility-types';
+import { assetIdentifierSchema } from './identifier';
 import { balanceUpdateSchema } from './balance-update';
 
 export const reservePositionSchema = z.object({

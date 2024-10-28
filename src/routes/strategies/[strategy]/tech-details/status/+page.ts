@@ -3,25 +3,23 @@
  */
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
-import { configuredStrategies } from 'trade-executor/strategy/configuration';
+import { configuredStrategies } from 'trade-executor/schemas/configuration';
+import { type RunState, runStateSchema } from 'trade-executor/schemas/run-state';
 
 export async function load({ params, fetch }) {
 	const strategy = configuredStrategies.get(params.strategy);
 	if (!strategy) error(404, 'Not found');
 
-	let resp;
+	let runState: RunState;
+
 	try {
-		resp = await fetch(`${strategy.url}/status`);
+		const resp = await fetch(`${strategy.url}/status`);
+		if (!resp.ok) throw await publicApiError(resp);
+		runState = runStateSchema.parse(await resp.json());
 	} catch (e) {
 		const stack = [`Error loading data from URL: ${strategy.url}/status`, e.message];
 		error(503, { message: 'Service Unavailable', stack });
 	}
 
-	if (!resp.ok) {
-		throw await publicApiError(resp);
-	}
-
-	return {
-		runState: await resp.json()
-	};
+	return { runState };
 }

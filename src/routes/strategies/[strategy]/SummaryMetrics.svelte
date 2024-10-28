@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SummaryKeyMetrics } from 'trade-executor/strategy/summary';
+	import type { SummaryKeyMetrics } from 'trade-executor/schemas/summary';
 	import MetricsBox from './MetricsBox.svelte';
 	import { UpDownIndicator } from '$lib/components';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';

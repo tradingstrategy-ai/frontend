@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
-import { configuredStrategies } from '../strategy/configuration';
-import { stateSchema } from './state';
+import { configuredStrategies } from '../schemas/configuration';
+import { stateSchema } from '../schemas/state';
 
 export async function getRawStrategyState(fetch: Fetch, strategyId: string) {
 	const strategy = configuredStrategies.get(strategyId);

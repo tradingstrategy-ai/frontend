@@ -5,11 +5,11 @@
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/position.py
  *
  */
-import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from './utility-types';
-import type { State } from './state';
-import type { PositionStatistics } from './statistics';
+import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from '../schemas/utility-types';
+import type { State } from '../schemas/state';
+import type { PositionStatistics } from '../schemas/statistics';
+import type { PositionStatus, TradingPosition } from '../schemas/position';
 import type { TimeBucket } from '$lib/chart';
-import { type PositionStatus, type TradingPosition } from './position';
 import { type TradeDirection, TradeDirections } from './trade-info';
 
 export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({

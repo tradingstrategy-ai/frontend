@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { KeyMetric } from 'trade-executor/statistics/key-metric';
+	import type { KeyMetric } from 'trade-executor/schemas/key-metric';
 	import { Timestamp } from '$lib/components';
 
 	// Tooltip title

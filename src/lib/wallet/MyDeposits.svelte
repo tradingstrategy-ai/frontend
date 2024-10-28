@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
-	import type { ConnectedStrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { ConnectedStrategyRuntimeState } from 'trade-executor/models/strategy-info';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';

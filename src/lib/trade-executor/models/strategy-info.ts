@@ -1,20 +1,20 @@
 /**
  * Strategy runtime state fetching.
  */
-import { type StrategyConfiguration, configuredStrategies } from './configuration';
-import { type StrategySummary, strategySummarySchema } from './summary';
+import { type StrategyConfiguration, configuredStrategies } from '../schemas/configuration';
+import { type StrategySummary, strategySummarySchema } from '../schemas/summary';
 import loadError from '../assets/load-error.jpg';
 import swrCache from '$lib/swrCache';
 
 // use 5 second timeout when fetching strategy metadata
 const CLIENT_TIMEOUT = 5000;
 
-export type ConnectedStrategyRuntimeState = StrategyConfiguration &
+export type ConnectedStrategyInfo = StrategyConfiguration &
 	StrategySummary & {
 		connected: true;
 	};
 
-export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
+export type DisconnectedStrategyInfo = StrategyConfiguration &
 	Partial<StrategySummary> & {
 		connected: false;
 		icon_url: string;
@@ -22,12 +22,12 @@ export type DisconnectedStrategyRuntimeState = StrategyConfiguration &
 		sort_priority: number;
 	};
 
-export type StrategyRuntimeState = ConnectedStrategyRuntimeState | DisconnectedStrategyRuntimeState;
+export type StrategyInfo = ConnectedStrategyInfo | DisconnectedStrategyInfo;
 
-export async function getStrategyRuntimeState(
+export async function getStrategyInfo(
 	fetch: Fetch,
 	strategyConf: StrategyConfiguration
-): Promise<ConnectedStrategyRuntimeState> {
+): Promise<ConnectedStrategyInfo> {
 	const url = `${strategyConf.url}/metadata`;
 	const resp = await fetch(url, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });
 	if (!resp.ok) {
@@ -37,7 +37,7 @@ export async function getStrategyRuntimeState(
 	return { connected: true, ...strategyConf, ...summary };
 }
 
-function getDisconnectedStrategy(strategyConf: StrategyConfiguration, error: any): DisconnectedStrategyRuntimeState {
+function getDisconnectedStrategy(strategyConf: StrategyConfiguration, error: any): DisconnectedStrategyInfo {
 	return {
 		...strategyConf,
 		connected: false,
@@ -47,11 +47,11 @@ function getDisconnectedStrategy(strategyConf: StrategyConfiguration, error: any
 	};
 }
 
-export async function getStrategiesWithRuntimeState(fetch: Fetch): Promise<StrategyRuntimeState[]> {
+export async function getAllStrategies(fetch: Fetch): Promise<StrategyInfo[]> {
 	const strategyConfigs = [...configuredStrategies.values()];
 	const strategyPromises = strategyConfigs.map(async (strategyConf) => {
 		try {
-			return await getStrategyRuntimeState(fetch, strategyConf);
+			return await getStrategyInfo(fetch, strategyConf);
 		} catch (err) {
 			return getDisconnectedStrategy(strategyConf, err);
 		}
@@ -63,4 +63,4 @@ export async function getStrategiesWithRuntimeState(fetch: Fetch): Promise<Strat
 
 // Create a SWR cache for strategies with 1 minute TTL
 // NOTE: only use this server-side!
-export const getCachedStrategies = swrCache(getStrategiesWithRuntimeState, 60);
+export const getCachedStrategies = swrCache(getAllStrategies, 60);

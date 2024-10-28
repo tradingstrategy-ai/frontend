@@ -1,5 +1,5 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 
 export type RedeemWizardData = {

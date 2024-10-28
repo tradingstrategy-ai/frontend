@@ -1,5 +1,5 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/strategy/summary';
+import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 
 export type ConnectWizardData = {
 	chain: Chain;

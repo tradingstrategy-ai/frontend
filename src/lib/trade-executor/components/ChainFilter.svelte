@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/strategy/runtime-state';
+	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
 	import { type Chain, chains, getChain } from '$lib/helpers/chain';
 
 	export type ChainOption = Chain['slug'] | 'all';

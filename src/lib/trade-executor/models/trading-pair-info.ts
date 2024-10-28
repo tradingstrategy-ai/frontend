@@ -5,7 +5,7 @@
  * https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/state/identifier.py
  *
  */
-import type { TradingPairIdentifier } from './identifier';
+import type { TradingPairIdentifier } from '../schemas/identifier';
 
 const kindShortLabels = {
 	spot_market_hold: 'spot',
