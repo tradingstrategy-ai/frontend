@@ -149,6 +149,17 @@
 		white-space: pre-wrap;
 	}
 
+	@media (--viewport-md-up) {
+		.metrics-table {
+			position: relative;
+
+			:global(.tooltip .popup) {
+				right: 0;
+				max-width: 40ch;
+			}
+		}
+	}
+
 	.commit {
 		display: grid;
 		gap: 0.75em;
