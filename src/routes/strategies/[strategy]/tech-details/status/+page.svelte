@@ -2,7 +2,7 @@
 	Page to display the instance run-time status
 -->
 <script lang="ts">
-	import { Alert, DataBox, SummaryBox, Timestamp } from '$lib/components';
+	import { Alert, Timestamp, Tooltip } from '$lib/components';
 	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
@@ -29,69 +29,97 @@
 		{/if}
 	</div>
 
-	<div class="inner">
-		<SummaryBox title="Current session" subtitle="Statistics since the trade executor instance was restarted">
-			<DataBox label="Restarted" size="xs">
-				<Timestamp date={runState.started_at} relative />
-			</DataBox>
-			<DataBox label="Status last updated" size="xs">
-				<Timestamp date={runState.last_refreshed_at} relative />
-			</DataBox>
-			<DataBox label="Trading cycles" value={runState.cycles} size="xs" />
-			<DataBox label="Take profit/stop loss checks" value={runState.position_trigger_checks} size="xs" />
-			<DataBox label="Position revaluations" value={runState.position_revaluations} size="xs" />
-		</SummaryBox>
-
-		<SummaryBox title="Lifetime" subtitle="Overall execution metrics">
-			<DataBox label="Completed trading cycles" size="xs" --skeleton-width="5rem">
-				{#await deferred.state}
-					<span class="skeleton">---</span>
-				{:then state}
-					{state ? formatAmount(state.cycle - 1) : '---'}
-				{/await}
-			</DataBox>
-			<DataBox label="First started" size="xs" --skeleton-width="12rem">
-				{#await deferred.state}
-					<span class="skeleton">---</span>
-				{:then state}
-					{#if state}
-						<Timestamp date={state.created_at} withTime /> UTC
-					{:else}
-						---
-					{/if}
-				{/await}
-			</DataBox>
-		</SummaryBox>
-	</div>
-
-	<SummaryBox title="Version" subtitle="Current software version">
-		<DataBox label="Version" value={runState.version.tag} size="xs" />
-		<DataBox label="Commit hash" value={runState.version.commit_hash} size="xs" />
-		<DataBox label="Last commit message" value={runState.version.commit_message} size="xs" />
-	</SummaryBox>
+	<table class="metrics-table">
+		<thead>
+			<tr>
+				<th>Status metric</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Status last updated</td>
+				<td><Timestamp date={runState.last_refreshed_at} relative /></td>
+			</tr>
+			<tr>
+				<td>Last restarted</td>
+				<td><Timestamp date={runState.started_at} relative /></td>
+			</tr>
+			<tr>
+				<td>First started</td>
+				<td>
+					{#await deferred.state}
+						<span class="skeleton">---</span>
+					{:then state}
+						{#if state}
+							<Timestamp date={state.created_at} withTime /> UTC
+						{:else}
+							---
+						{/if}
+					{/await}
+				</td>
+			</tr>
+			<tr>
+				<td>Trading cycles since restart</td>
+				<td>{formatAmount(runState.cycles)}</td>
+			</tr>
+			<tr>
+				<td>Total trading cycles</td>
+				<td>{formatAmount(runState.completed_cycle)}</td>
+			</tr>
+			<tr>
+				<td>Take profit/stop loss checks</td>
+				<td>{formatAmount(runState.position_trigger_checks)}</td>
+			</tr>
+			<tr>
+				<td>Position reevaluations</td>
+				<td>{formatAmount(runState.position_revaluations)}</td>
+			</tr>
+			<tr>
+				<td>Version</td>
+				<td>
+					<Tooltip>
+						<span slot="trigger" class="underline">
+							{runState.version.tag}
+						</span>
+						<div slot="popup" class="commit">
+							<div class="hash">commit: {runState.version.commit_hash}</div>
+							<div class="message">{runState.version.commit_message}</div>
+						</div>
+					</Tooltip>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </section>
 
 <style>
 	.instance-status {
-		&,
-		.inner {
-			display: grid;
-			gap: var(--space-lg);
-			place-content: stretch;
-			place-items: stretch;
+		display: grid;
+		gap: var(--space-lg);
 
-			@media (--viewport-md-down) {
-				gap: var(--space-ls);
-			}
-		}
-
-		.inner {
-			grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		@media (--viewport-md-down) {
+			gap: var(--space-ls);
 		}
 	}
 
 	.status-box pre {
 		color: inherit;
 		white-space: pre-wrap;
+	}
+
+	.commit {
+		display: grid;
+		gap: 0.75em;
+
+		.hash {
+			color: var(--c-text-extra-light);
+			font-weight: 500;
+		}
+
+		.message {
+			font: var(--f-paragraph-md-roman);
+			letter-spacing: var(--ls-paragraph-md);
+		}
 	}
 </style>
