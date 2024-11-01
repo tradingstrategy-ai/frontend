@@ -30,6 +30,19 @@ export function formatBPS(n: MaybeNumber) {
 }
 
 /**
+ * Format an internal stop loss value to human-readable representation.
+ *
+ * To simplify calculations, stop loss values are stored internally as
+ * percent of entry price (e.g., 0.9 / 90%).
+ *
+ * Traders expect stop loss values to be displayed as percent below entry
+ * price (e.g., 10%).
+ */
+export function formatStopLoss(internalValue: number, minDigits = 1, maxPrecision = minDigits) {
+	return formatPercent(1 - internalValue, minDigits, maxPrecision);
+}
+
+/**
  * Formats trades per month frequency.
  */
 export function formatTradesPerMonth(n: MaybeNumberlike): string {

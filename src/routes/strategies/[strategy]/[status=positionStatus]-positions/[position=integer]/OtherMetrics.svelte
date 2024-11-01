@@ -3,6 +3,7 @@
 	import { positionTooltips } from 'trade-executor/models/position-tooltips';
 	import { SummaryBox, Tooltip } from '$lib/components';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { formatStopLoss } from 'trade-executor/helpers/formatters';
 
 	export let position: TradingPositionInfo;
 </script>
@@ -105,11 +106,7 @@
 								</span>
 							</Tooltip>
 						{:else}
-							<!--
-								Stop loss is usually expressed percent of the total position, but
-								internally we use the flipped definition as it makes calculations simpler
-								-->
-							{formatPercent(1 - position.stopLossPercentOpen)}
+							{formatStopLoss(position.stopLossPercentOpen)}
 						{/if}
 					</td>
 				</tr>
@@ -125,7 +122,7 @@
 							</Tooltip>
 						</td>
 						<td>
-							{formatPercent(position.trailing_stop_loss_pct)}
+							{formatStopLoss(position.trailing_stop_loss_pct)}
 						</td>
 					</tr>
 				{/if}
