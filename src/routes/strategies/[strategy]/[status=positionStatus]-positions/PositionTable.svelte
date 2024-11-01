@@ -10,7 +10,7 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
 	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
-	import FlagCell from './FlagCell.svelte';
+	import RemarksCell from './RemarksCell.svelte';
 
 	export let admin = false;
 	export let positions: TradingPositionInfo[];
@@ -67,7 +67,7 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(FlagCell, {
+				createRender(RemarksCell, {
 					admin,
 					position: value,
 					baseUrl: `./${status}-positions/${value.position_id}`,
