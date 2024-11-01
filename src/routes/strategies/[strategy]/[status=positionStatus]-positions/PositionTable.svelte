@@ -9,7 +9,7 @@
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
-	import TradingDescription from '$lib/explorer/TradingDescription.svelte';
+	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
 
 	export let admin = false;
