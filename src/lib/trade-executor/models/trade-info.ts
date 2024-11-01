@@ -104,6 +104,10 @@ export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 		return this.flags?.includes('test_trade');
 	},
 
+	get isStopLoss() {
+		return this.trade_type === 'stop_loss';
+	},
+
 	get positionImpact() {
 		// order of flags is significant since trades may have multiple flags
 		const impacts = ['open', 'close', 'increase', 'reduce'] as const;

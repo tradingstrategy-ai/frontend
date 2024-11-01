@@ -143,12 +143,16 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		}
 	},
 
-	get stopLossTrades() {
-		return this.trades.filter((t) => t.trade_type === 'stop_loss');
+	get stopLossTriggered() {
+		return this.lastTrade?.isStopLoss ?? false;
 	},
 
-	get stopLossTriggered() {
-		return this.stopLossTrades.length > 0;
+	get isTrailingStopLoss() {
+		return (
+			this.trailing_stop_loss_pct != null &&
+			this.stopLossTriggered &&
+			this.trigger_updates.some((tu) => tu.stop_loss_after != null)
+		);
 	},
 
 	get currentPrice() {

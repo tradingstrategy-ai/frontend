@@ -26,6 +26,7 @@ Used in DataTable context (vs. standard svelte component context).
 	export let modifier = '';
 	export let isTest = false;
 	export let failed = false;
+	export let stopLoss = false;
 </script>
 
 <div class="description-cell {classes}">
@@ -42,6 +43,9 @@ Used in DataTable context (vs. standard svelte component context).
 		{#if failed}
 			<DataBadge status="error">Failed</DataBadge>
 		{/if}
+		{#if stopLoss}
+			<DataBadge>Stop loss</DataBadge>
+		{/if}
 	</span>
 </div>
 
@@ -57,6 +61,10 @@ Used in DataTable context (vs. standard svelte component context).
 		}
 
 		.badges {
+			:global([data-css-props]) {
+				--data-badge-background: var(--c-box-4);
+			}
+
 			font: var(--f-ui-xs-medium);
 			letter-spacing: var(--ls-ui-xs);
 

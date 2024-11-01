@@ -129,6 +129,24 @@
 						</td>
 					</tr>
 				{/if}
+
+				<tr>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">Stop loss triggered</span>
+							<span slot="popup">
+								{positionTooltips.stopLossTriggered}
+							</span>
+						</Tooltip>
+					</td>
+					<td>
+						{#if position.stopLossTriggered}
+							Yes ({position.isTrailingStopLoss ? 'trailing' : 'normal'})
+						{:else}
+							No {position.stillOpen ? '(still open)' : ''}
+						{/if}
+					</td>
+				</tr>
 			{/if}
 
 			{#if !position.isCreditPosition}
