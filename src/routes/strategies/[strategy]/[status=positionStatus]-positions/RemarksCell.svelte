@@ -22,7 +22,7 @@
 			<p>Position can still have a profitable close if a trailing or dynamic stop loss was used.</p>
 			<p>See more</p>
 			<ul>
-				<li><a href={getTradeLink(position.stopLossTrades.at(-1))}>View the closing trade</a></li>
+				<li><a href={getTradeLink(position.lastTrade)}>View the closing trade</a></li>
 				<li><a href="/glossary/stop-loss">What is a stop loss</a></li>
 			</ul>
 		</PositionFlag>

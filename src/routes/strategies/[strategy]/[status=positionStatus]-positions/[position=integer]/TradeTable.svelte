@@ -33,7 +33,7 @@
 				modifier: t.positionImpact,
 				isTest: t.isTest,
 				failed: t.failed,
-				stopLoss: t.trade_type === 'stop_loss'
+				stopLoss: t.isStopLoss
 			}),
 			cell: ({ value }) => createRender(TradingDescription, value)
 		}),

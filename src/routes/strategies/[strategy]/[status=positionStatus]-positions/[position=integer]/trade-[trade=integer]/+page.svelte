@@ -27,7 +27,7 @@
 					<DataBadge status="warning">Test</DataBadge>
 				</span>
 			{/if}
-			{#if trade.trade_type === 'stop_loss'}
+			{#if trade.isStopLoss}
 				<span class="heading-badge">
 					<DataBadge>Stop loss</DataBadge>
 				</span>
