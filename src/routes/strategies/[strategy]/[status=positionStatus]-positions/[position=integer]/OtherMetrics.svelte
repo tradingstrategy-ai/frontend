@@ -29,6 +29,31 @@
 				<td>{formatPercent(position.portfolioWeightAtOpen)}</td>
 			</tr>
 
+			{#if !position.isCreditPosition}
+				<tr>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">Risk</span>
+							<span slot="popup">
+								{positionTooltips.portfolioRiskPercent}
+							</span>
+						</Tooltip>
+					</td>
+					<td>
+						{#if position.portfolioRiskPercent === undefined}
+							<Tooltip>
+								<span slot="trigger" class="underline"> N/A </span>
+								<span slot="popup">
+									{positionTooltips.portfolioRiskPercentMissing}
+								</span>
+							</Tooltip>
+						{:else}
+							{formatPercent(position.portfolioRiskPercent)}
+						{/if}
+					</td>
+				</tr>
+			{/if}
+
 			<tr>
 				<td>
 					<Tooltip>
@@ -107,6 +132,7 @@
 							</Tooltip>
 						{:else}
 							{formatStopLoss(position.stopLossPercentOpen)}
+							({formatDollar(position.stopLossPriceOpen)})
 						{/if}
 					</td>
 				</tr>
@@ -123,6 +149,7 @@
 						</td>
 						<td>
 							{formatStopLoss(position.trailing_stop_loss_pct)}
+							({formatDollar(position.trailingStopLossPrice)})
 						</td>
 					</tr>
 				{/if}
@@ -141,31 +168,6 @@
 							Yes ({position.isTrailingStopLoss ? 'trailing' : 'normal'})
 						{:else}
 							No {position.stillOpen ? '(still open)' : ''}
-						{/if}
-					</td>
-				</tr>
-			{/if}
-
-			{#if !position.isCreditPosition}
-				<tr>
-					<td>
-						<Tooltip>
-							<span slot="trigger" class="underline">Risk</span>
-							<span slot="popup">
-								{positionTooltips.portfolioRiskPercent}
-							</span>
-						</Tooltip>
-					</td>
-					<td>
-						{#if position.portfolioRiskPercent === undefined}
-							<Tooltip>
-								<span slot="trigger" class="underline"> N/A </span>
-								<span slot="popup">
-									{positionTooltips.portfolioRiskPercentMissing}
-								</span>
-							</Tooltip>
-						{:else}
-							{formatPercent(position.portfolioRiskPercent)}
 						{/if}
 					</td>
 				</tr>

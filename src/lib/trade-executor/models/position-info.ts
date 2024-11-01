@@ -147,6 +147,12 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		return this.lastTrade?.isStopLoss ?? false;
 	},
 
+	get trailingStopLossPrice(): USDollarPrice | undefined {
+		if (this.trailing_stop_loss_pct == null) return;
+		const lastTriggerUpdate = this.trigger_updates.at(-1);
+		return lastTriggerUpdate?.stop_loss_after ?? undefined;
+	},
+
 	get isTrailingStopLoss() {
 		return (
 			this.trailing_stop_loss_pct != null &&
