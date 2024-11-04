@@ -1,7 +1,17 @@
 /* Global settings for design-system layout */
 :root {
 	--container-max-width: 86rem;
-	--container-margin: 1.5rem;
+	--container-margin: 2rem;
+
+	@media (--viewport-lg-down) {
+		--container-margin: 1.75rem;
+	}
+	@media (--viewport-md-down) {
+		--container-margin: 1.5rem;
+	}
+	@media (--viewport-sm-down) {
+		--container-margin: 1rem;
+	}
 }
 
 /* design-system layout utility classes */
