@@ -1,19 +1,18 @@
 <script lang="ts">
-	import { parseDate } from '$lib/helpers/date';
+	import type { Announcement } from '$lib/schemas/announcement';
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 
-	export let title: MaybeString = undefined;
-	export let description: string;
-	export let ctaLabel: string;
-	export let href: string;
-	export let publishedAt: string | undefined;
-	export let dismissedAt: Date | undefined;
+	export let title: Announcement['title'];
+	export let description: Announcement['description'];
+	export let ctaLabel: Announcement['ctaLabel'];
+	export let href: Announcement['href'];
+	export let publishedAt: Announcement['publishedAt'];
 
-	const publishedDate = parseDate(publishedAt);
+	export let dismissedAt: Date | undefined;
 </script>
 
-{#if publishedDate && (!dismissedAt || dismissedAt < publishedDate)}
+{#if publishedAt && (!dismissedAt || dismissedAt < publishedAt)}
 	<section class="announcement-banner ds-container">
 		<div class="content">
 			{#if title}
