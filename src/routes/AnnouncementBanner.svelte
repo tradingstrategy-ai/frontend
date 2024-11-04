@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { parseDate } from '$lib/helpers/date';
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 
@@ -6,24 +7,30 @@
 	export let description: string;
 	export let ctaLabel: string;
 	export let href: string;
+	export let publishedAt: string | undefined;
+	export let dismissedAt: Date | undefined;
+
+	const publishedDate = parseDate(publishedAt);
 </script>
 
-<section class="announcement-banner ds-container">
-	<div class="content">
-		{#if title}
-			<strong class="title">{title}</strong>
-		{/if}
-		<span class="description">
-			{description}
-		</span>
-	</div>
+{#if publishedDate && (!dismissedAt || dismissedAt < publishedDate)}
+	<section class="announcement-banner ds-container">
+		<div class="content">
+			{#if title}
+				<strong class="title">{title}</strong>
+			{/if}
+			<span class="description">
+				{description}
+			</span>
+		</div>
 
-	<Button class="cta" quarternary size="xs" label={ctaLabel} {href} />
+		<Button class="cta" quarternary size="xs" label={ctaLabel} {href} />
 
-	<Button class="cancel" ghost title="Dismiss announcement">
-		<IconCancel slot="icon" --icon-size="1rem" />
-	</Button>
-</section>
+		<Button class="cancel" ghost title="Dismiss announcement">
+			<IconCancel slot="icon" --icon-size="1rem" />
+		</Button>
+	</section>
+{/if}
 
 <style>
 	.announcement-banner {

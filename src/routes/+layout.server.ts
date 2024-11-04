@@ -1,5 +1,5 @@
+// Make admin, ipCountry and announcementDismissedAt available to all layouts/pages
 export async function load({ locals }) {
-	// Make admin and ipCountry available to all layouts/pages
-	const { admin, ipCountry } = locals;
-	return { admin, ipCountry };
+	const { admin, ipCountry, announcementDismissedAt } = locals;
+	return { admin, ipCountry, announcementDismissedAt };
 }

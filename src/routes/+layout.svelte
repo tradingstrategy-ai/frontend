@@ -4,6 +4,7 @@
 <script lang="ts">
 	import AppHead from '$lib/header/AppHead.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
+	import AnnouncementBanner from './AnnouncementBanner.svelte';
 	import Navbar from '$lib/header/Navbar.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import MaintenanceNotice from './MaintenanceNotice.svelte';
@@ -13,6 +14,12 @@
 	import { page } from '$app/stores';
 	import { setViewportHeight } from '$lib/actions/viewport';
 	import '$lib/components/css/index.css';
+
+	export let data;
+	const { announcementDismissedAt } = data;
+
+	// TODO: announcmement will come from env var / config
+	const announcement = undefined;
 
 	/**
 	 * Lazily load fonts as per issue 9.
@@ -47,6 +54,9 @@
 <AppHead />
 <PageLoadProgressBar />
 {#if !$page.data.skipNavbar}
+	{#if announcement}
+		<AnnouncementBanner {...announcement} dismissedAt={announcementDismissedAt} />
+	{/if}
 	<Navbar />
 {/if}
 <MaintenanceNotice />

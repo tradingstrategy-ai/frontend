@@ -5,6 +5,7 @@ import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
 import { addYears } from 'date-fns';
 import { countryCodeSchema } from '$lib/helpers/geo';
+import { parseDate } from '$lib/helpers/date';
 
 Sentry.init({
 	dsn: sentryDsn,
@@ -92,6 +93,13 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+// get announcment-dismissed-at cookie and set local
+const handleAnnouncement: Handle = async ({ event, resolve }) => {
+	const dismissedAtStr = event.cookies.get('announcement-dismissed-at');
+	event.locals.announcementDismissedAt = parseDate(dismissedAtStr);
+	return resolve(event);
+};
+
 const handleIpCountry: Handle = async ({ event, resolve }) => {
 	const ipCountry = event.request.headers.get('CF-IPCountry');
 
@@ -111,5 +119,6 @@ export const handle = sequence(
 	Sentry.sentryHandle(),
 	handleColorMode,
 	handleAdminRole,
+	handleAnnouncement,
 	handleIpCountry
 );
