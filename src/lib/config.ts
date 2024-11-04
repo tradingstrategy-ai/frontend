@@ -11,6 +11,7 @@
  */
 import { env } from '$env/dynamic/public';
 import { type GeoBlock, geoBlockSchema } from './helpers/geo';
+import { type Announcement, announcementSchema } from './schemas/announcement';
 
 const prefix = 'TS_PUBLIC_';
 
@@ -186,7 +187,17 @@ export const geoBlock = config((jsonStr: string) => {
 	try {
 		return geoBlockSchema.parse(JSON.parse(jsonStr || '{}'));
 	} catch (e) {
-		console.warn(`${prefix}GEO_BLOCK is not a valid GeoBlock JSON string`, jsonStr);
+		console.warn(`${prefix}GEO_BLOCK is not valid GeoBlock JSON`, jsonStr);
 		return {};
 	}
 }, 'GEO_BLOCK') as GeoBlock;
+
+export const announcement = config((jsonStr: string = '') => {
+	if (jsonStr.trim().length === 0) return;
+	try {
+		return announcementSchema.parse(JSON.parse(jsonStr || '{}'));
+	} catch (e) {
+		console.warn(`${prefix}ANNOUNCEMENT is not valid announcement JSON`, jsonStr);
+		return undefined;
+	}
+}, 'ANNOUNCEMENT') as Announcement | undefined;

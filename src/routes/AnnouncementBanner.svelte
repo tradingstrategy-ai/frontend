@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 
-	export let title = '';
+	export let title: MaybeString = undefined;
 	export let description: string;
 	export let ctaLabel: string;
 	export let href: string;
