@@ -1,4 +1,14 @@
+<script lang="ts" context="module">
+	import { writable } from 'svelte/store';
+
+	// use global store for dismissed state so the banner stays dismissed
+	// even if the component is unloaded/reloaded (e.g., entering a wizard)
+	const dismissed = writable(false);
+</script>
+
 <script lang="ts">
+	import cookies from 'cookie';
+	import { slide } from 'svelte/transition';
 	import type { Announcement } from '$lib/schemas/announcement';
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
@@ -8,12 +18,26 @@
 	export let ctaLabel: Announcement['ctaLabel'];
 	export let href: Announcement['href'];
 	export let publishedAt: Announcement['publishedAt'];
-
 	export let dismissedAt: Date | undefined;
+
+	dismissed.update(($dismissed) => {
+		if ($dismissed) return $dismissed; // already dismissed in current browser session
+		if (dismissedAt) return dismissedAt > publishedAt; // previously dismissed (cookie)
+		return false;
+	});
+
+	function dismiss() {
+		const ts = new Date().toISOString();
+		document.cookie = cookies.serialize('announcement-dismissed-at', ts, {
+			path: '/',
+			maxAge: 365 * 24 * 60 * 60
+		});
+		$dismissed = true;
+	}
 </script>
 
-{#if publishedAt && (!dismissedAt || dismissedAt < publishedAt)}
-	<section class="announcement-banner ds-container">
+{#if !$dismissed}
+	<section class="announcement-banner ds-container" out:slide={{ axis: 'y', duration: 750 }}>
 		<div class="content">
 			{#if title}
 				<strong class="title">{title}</strong>
@@ -23,9 +47,9 @@
 			</span>
 		</div>
 
-		<Button class="cta" quarternary size="xs" label={ctaLabel} {href} />
+		<Button class="cta" quarternary size="xs" label={ctaLabel} {href} on:click={dismiss} />
 
-		<Button class="cancel" ghost title="Dismiss announcement">
+		<Button class="cancel" ghost title="Dismiss announcement" on:click={dismiss}>
 			<IconCancel slot="icon" --icon-size="1rem" />
 		</Button>
 	</section>
