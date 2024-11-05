@@ -17,12 +17,17 @@
 	export let description: Announcement['description'];
 	export let ctaLabel: Announcement['ctaLabel'];
 	export let href: Announcement['href'];
-	export let publishedAt: Announcement['publishedAt'];
+	export let publishAt: Announcement['publishAt'];
+	export let expireAt: Announcement['expireAt'];
 	export let dismissedAt: Date | undefined;
+
+	const now = new Date();
+	const published = now >= publishAt;
+	const expired = expireAt ? now >= expireAt : false;
 
 	dismissed.update(($dismissed) => {
 		if ($dismissed) return $dismissed; // already dismissed in current browser session
-		if (dismissedAt) return dismissedAt > publishedAt; // previously dismissed (cookie)
+		if (dismissedAt) return dismissedAt > publishAt; // previously dismissed (cookie)
 		return false;
 	});
 
@@ -36,7 +41,7 @@
 	}
 </script>
 
-{#if !$dismissed}
+{#if published && !expired && !$dismissed}
 	<section class="announcement-banner ds-container" out:slide={{ axis: 'y', duration: 750 }}>
 		<div class="content">
 			{#if title}
