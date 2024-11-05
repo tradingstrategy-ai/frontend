@@ -63,11 +63,16 @@
 <style>
 	.announcement-banner {
 		display: grid;
-		padding-block: 1.25rem;
+		padding-block: 1rem;
 		background: var(--c-text-light);
 		color: var(--c-text-inverted);
-		font: var(--f-paragraph-md-roman);
-		letter-spacing: var(--ls-paragraph-md);
+		font: var(--f-ui-md-roman);
+		letter-spacing: var(--f-ui-1md-spacing);
+
+		@media (--viewport-md-down) {
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing);
+		}
 
 		/* desktop layout */
 		@media (--viewport-md-up) {
@@ -104,6 +109,16 @@
 			:global(.cta) {
 				grid-area: 3 / 1 / auto / -1;
 				margin-top: 0.5rem;
+			}
+		}
+
+		:global(.cta) {
+			background: var(--c-body);
+			color: var(--c-text);
+			opacity: 0.85;
+
+			&:is(:hover, :focus) {
+				opacity: 0.95;
 			}
 		}
 
