@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
 	import { writable } from 'svelte/store';
 
-	// use global store for dismissed state so the banner stays dismissed
-	// even if the component is unloaded/reloaded (e.g., entering a wizard)
+	// use global store for dismissed flag so the state persists
+	// when the component is unloaded/reloaded (e.g., entering a wizard)
 	const dismissed = writable(false);
 </script>
 
@@ -25,12 +25,14 @@
 	const published = now >= publishAt;
 	const expired = expireAt ? now >= expireAt : false;
 
+	// set the initial state of the dismissed flag
 	dismissed.update(($dismissed) => {
 		if ($dismissed) return $dismissed; // already dismissed in current browser session
 		if (dismissedAt) return dismissedAt > publishAt; // previously dismissed (cookie)
 		return false;
 	});
 
+	// set cookie and dismissed flag when announcement is dismissed
 	function dismiss() {
 		const ts = new Date().toISOString();
 		document.cookie = cookies.serialize('announcement-dismissed-at', ts, {
@@ -38,6 +40,13 @@
 			maxAge: 365 * 24 * 60 * 60
 		});
 		$dismissed = true;
+	}
+
+	// dismiss announcement if user clicks a link in the content
+	function handleContentClick(e: MouseEvent) {
+		if ((e.target as HTMLElement).matches('a[href]')) {
+			dismiss();
+		}
 	}
 </script>
 
@@ -47,8 +56,9 @@
 			{#if title}
 				<strong class="title">{title}</strong>
 			{/if}
-			<span class="description">
-				{description}
+			<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+			<span class="description" on:click={handleContentClick}>
+				{@html description}
 			</span>
 		</div>
 
@@ -110,6 +120,11 @@
 				grid-area: 3 / 1 / auto / -1;
 				margin-top: 0.5rem;
 			}
+		}
+
+		.description :global(a[href]) {
+			text-decoration: underline;
+			font-weight: 500;
 		}
 
 		:global(.cta) {
