@@ -3,8 +3,10 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
-import { addYears } from 'date-fns';
 import { countryCodeSchema } from '$lib/helpers/geo';
+import { parseDate } from '$lib/helpers/date';
+
+const ONE_YEAR = 365 * 24 * 60 * 60;
 
 Sentry.init({
 	dsn: sentryDsn,
@@ -52,7 +54,7 @@ const handleColorMode: Handle = async ({ event, resolve }) => {
 		httpOnly: false,
 		secure: false,
 		path: '/',
-		expires: addYears(new Date(), 1)
+		maxAge: ONE_YEAR
 	});
 
 	return resolve(event, {
@@ -78,7 +80,7 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 	if (urlPw !== null) {
 		event.cookies.set('pw', urlPw, {
 			path: '/',
-			expires: urlPw ? addYears(new Date(), 1) : new Date(0)
+			maxAge: urlPw ? ONE_YEAR : 0
 		});
 	}
 
@@ -89,6 +91,13 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 		event.locals.admin = true;
 	}
 
+	return resolve(event);
+};
+
+// get announcment-dismissed-at cookie and set local
+const handleAnnouncement: Handle = async ({ event, resolve }) => {
+	const dismissedAtStr = event.cookies.get('announcement-dismissed-at');
+	event.locals.announcementDismissedAt = parseDate(dismissedAtStr);
 	return resolve(event);
 };
 
@@ -111,5 +120,6 @@ export const handle = sequence(
 	Sentry.sentryHandle(),
 	handleColorMode,
 	handleAdminRole,
+	handleAnnouncement,
 	handleIpCountry
 );

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import cookies from 'cookie';
-	import { addYears } from 'date-fns';
 	import { Button, Dialog } from '$lib/components';
 	import IconSun from '~icons/local/sun';
 
@@ -25,9 +24,8 @@
 	function setMode(mode: string) {
 		document.documentElement.dataset.colorMode = mode;
 		document.cookie = cookies.serialize('color-mode', mode, {
-			secure: false,
 			path: '/',
-			expires: addYears(new Date(), 1)
+			maxAge: 365 * 24 * 60 * 60
 		});
 		open = false;
 	}
