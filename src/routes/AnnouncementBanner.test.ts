@@ -95,6 +95,8 @@ describe('AnnouncementBanner component', () => {
 	test('should be dismissed when CTA button is clicked', async () => {
 		vi.setSystemTime('2024-11-01T00:01:00Z');
 		const { container, getByRole } = render(AnnouncementBanner, announcementProps);
+		// stop links from navigating (prevents JS-DOM error)
+		container.addEventListener('click', (e) => e.preventDefault());
 		const ctaButton = getByRole('link', { name: 'Click here' });
 		await fireEvent.click(ctaButton);
 		vi.advanceTimersByTime(1000);
@@ -107,6 +109,8 @@ describe('AnnouncementBanner component', () => {
 			...announcementProps,
 			description: `Here's a <a href="https://foo.com">content link</a>`
 		});
+		// stop links from navigating (prevents JS-DOM error)
+		container.addEventListener('click', (e) => e.preventDefault());
 		const contentLink = getByRole('link', { name: 'content link' });
 		await fireEvent.click(contentLink);
 		vi.advanceTimersByTime(1000);
