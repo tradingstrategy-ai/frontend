@@ -1,3 +1,15 @@
+<!--
+@component
+Display a configurable annoucement banner, which may be dismissed by the user.
+Announcement is configured as a runtime environment variable (see `lib/config.ts`).
+Dismissed state is retained in a cookie (see `hooks.server.ts`).
+
+@example
+
+```svelte
+	<AnnouncementBanner {...announcement} dismissedAt={announcementDismissedAt} />
+```
+-->
 <script lang="ts" context="module">
 	import { writable } from 'svelte/store';
 
@@ -13,12 +25,12 @@
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 
-	export let title: Announcement['title'];
+	export let title: Announcement['title'] = undefined;
 	export let description: Announcement['description'];
 	export let ctaLabel: Announcement['ctaLabel'];
 	export let href: Announcement['href'];
 	export let publishAt: Announcement['publishAt'];
-	export let expireAt: Announcement['expireAt'];
+	export let expireAt: Announcement['expireAt'] = undefined;
 	export let dismissedAt: Date | undefined;
 
 	const now = new Date();
