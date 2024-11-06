@@ -3,7 +3,7 @@
 
 	// use global store for dismissed flag so the state persists
 	// when the component is unloaded/reloaded (e.g., entering a wizard)
-	const dismissed = writable(false);
+	export const dismissed = writable(false);
 </script>
 
 <script lang="ts">
