@@ -19,7 +19,7 @@
 	$: isPrivate = !strategy.tags.includes('live');
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
 	$: hasError = shouldDisplayError(strategy, admin);
-	$: isOutdated = !Boolean(strategy.new_version_id);
+	$: isOutdated = Boolean(strategy.new_version_id);
 	$: displayWarning = isOverviewPage && (hasError || isOutdated);
 
 	$: breadcrumbs = {
