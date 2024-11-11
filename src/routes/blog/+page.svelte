@@ -56,7 +56,7 @@
 				<pre>{page.error}</pre>
 			</Alert>
 		{:else if page.next}
-			<div use:inview={{ rootMargin: '500px' }} on:enter={fetchNextPage} />
+			<div use:inview={{ rootMargin: '500px' }} on:inview_enter={fetchNextPage}></div>
 		{:else}
 			<OptInBanner>
 				<h2 slot="title">Congratulations – you've reached the end 🎉!</h2>

@@ -144,7 +144,7 @@
 					<span class="label">{label}</span>
 					{#if positionStatus}
 						{#await getPositionCount(positionStatus)}
-							<span class="count skeleton" />
+							<span class="count skeleton"></span>
 						{:then count}
 							<span class="count" class:active>{count ?? '-'}</span>
 						{/await}

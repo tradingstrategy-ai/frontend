@@ -35,7 +35,7 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 	});
 </script>
 
-<div class="copy-widget">
+<span class="copy-widget">
 	{#key $copier}
 		<span transition:fade={{ duration: 100 }}>
 			{#if $copier === 'idle'}
@@ -45,11 +45,11 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 			{/if}
 		</span>
 	{/key}
-</div>
+</span>
 
 <style>
 	.copy-widget {
-		display: grid;
+		display: inline-grid;
 
 		span {
 			grid-area: 1 / -1;

@@ -10,7 +10,7 @@
 	let copier: ComponentProps<CopyWidget>['copier'];
 </script>
 
-<address class="crypto-address-widget size-{size} tile b">
+<span class="crypto-address-widget size-{size} tile b">
 	<slot name="icon" />
 	<a {href} rel="noreferrer" target="_blank">
 		<HashAddress {address} endChars={7} />
@@ -20,7 +20,7 @@
 			<CopyWidget bind:copier />
 		</button>
 	{/if}
-</address>
+</span>
 
 <style>
 	.crypto-address-widget {

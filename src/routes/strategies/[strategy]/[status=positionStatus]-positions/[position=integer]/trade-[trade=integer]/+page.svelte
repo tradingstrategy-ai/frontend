@@ -90,7 +90,7 @@
 						<td>
 							<Timestamp date={trade.opened_at} withTime withSeconds />
 						</td>
-						<td />
+						<td></td>
 					</tr>
 
 					<tr>
@@ -119,7 +119,7 @@
 						<tr>
 							<td>Mid</td>
 							<td>{formatPrice(trade.price_structure?.mid_price, 2, 5)}</td>
-							<td />
+							<td></td>
 						</tr>
 
 						<tr>
