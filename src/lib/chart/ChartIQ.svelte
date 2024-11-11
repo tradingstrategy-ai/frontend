@@ -235,7 +235,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	</div>
 
 	{#await initialize() then}
-		<div use:chartIQ={invalidate} data-testid="chartIQ" />
+		<div use:chartIQ={invalidate} data-testid="chartIQ"></div>
 	{:catch}
 		<div class="error">
 			<Alert size="md" status="warning" title="ChartIQ Error">

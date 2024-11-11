@@ -60,7 +60,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 <div class="time-period-col" class:active class:loading={!loaded}>
 	<!-- inview beacon must be nested in conditional block so it resets when pairId changes -->
 	{#if !loaded}
-		<span use:inview={{ rootMargin: '100px' }} on:enter={loadData} />
+		<span use:inview={{ rootMargin: '100px' }} on:enter={loadData}></span>
 	{/if}
 	<ul>
 		<li class="col-heading {priceChangeClass}">
