@@ -15,13 +15,12 @@
 
 	$: ({ admin, chain, strategy, deferred } = data);
 
-	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
-
 	$: tags = strategy.tags.filter((tag) => tag !== 'live');
-
-	$: hasStrategyError = shouldDisplayError(strategy, admin);
-
-	$: isOutdated = Boolean(strategy.new_version_id);
+	$: isPrivate = !strategy.tags.includes('live');
+	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
+	$: hasError = shouldDisplayError(strategy, admin);
+	$: isOutdated = !Boolean(strategy.new_version_id);
+	$: displayWarning = isOverviewPage && (hasError || isOutdated);
 
 	$: breadcrumbs = {
 		[strategy.id]: strategy.name,
@@ -50,22 +49,31 @@
 			</div>
 		</PageHeading>
 
-		{#if isOverviewPage && (hasStrategyError || isOutdated)}
+		{#if isPrivate || displayWarning}
 			<div class="error-wrapper">
-				<AlertList status="warning" size="md" let:AlertItem>
-					<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
-						You are viewing an outdated version of this strategy. An updated version is available
-						<a href="/strategies/{strategy.new_version_id}" data-sveltekit-reload>here</a>. To maximize future returns,
-						participants should consider tranfering deposits to the latest version (though there is no guarantee of
-						better performance).
-					</AlertItem>
-					<AlertItem title="Ongoing execution issues" displayWhen={hasStrategyError}>
-						<StrategyError {strategy} />
-						{#if adminOnlyError(strategy)}
-							<p class="admin-error"><strong>Note:</strong> this error is only displayed to admin users.</p>
-						{/if}
-					</AlertItem>
-				</AlertList>
+				{#if isPrivate}
+					<AlertList status="error" size="md" let:AlertItem>
+						<AlertItem title="Private strategy">
+							This strategies is only available to admins – please do not share.
+						</AlertItem>
+					</AlertList>
+				{/if}
+				{#if displayWarning}
+					<AlertList status="warning" size="md" let:AlertItem>
+						<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
+							You are viewing an outdated version of this strategy. An updated version is available
+							<a href="/strategies/{strategy.new_version_id}" data-sveltekit-reload>here</a>. To maximize future
+							returns, participants should consider tranfering deposits to the latest version (though there is no
+							guarantee of better performance).
+						</AlertItem>
+						<AlertItem title="Ongoing execution issues" displayWhen={hasError}>
+							<StrategyError {strategy} />
+							{#if adminOnlyError(strategy)}
+								<p class="admin-error"><strong>Note:</strong> this error is only displayed to admin users.</p>
+							{/if}
+						</AlertItem>
+					</AlertList>
+				{/if}
 			</div>
 		{/if}
 
@@ -115,8 +123,9 @@
 		}
 
 		.error-wrapper {
-			margin-top: -1rem;
-			margin-bottom: 1rem;
+			display: grid;
+			gap: 1rem;
+			margin-block: -1rem 1rem;
 		}
 	}
 </style>
