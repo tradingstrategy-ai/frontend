@@ -7,7 +7,7 @@ import { getStrategyInfo, type ConnectedStrategyInfo } from 'trade-executor/mode
 import { getStrategyState } from 'trade-executor/state';
 import { getChain } from '$lib/helpers/chain';
 
-export async function load({ params, fetch }) {
+export async function load({ params, fetch, parent }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
 	if (!strategyConf) error(404, 'Not found');
 
@@ -29,6 +29,10 @@ export async function load({ params, fetch }) {
 		];
 		error(503, { message: 'Service Unavailable', stack });
 	}
+
+	// prevent non-admins from viewing private strategies
+	const { admin } = await parent();
+	if (!(admin || strategy.tags.includes('live'))) error(401, 'Unauthorized');
 
 	const chain = getChain(strategy.on_chain_data.chain_id)!;
 
