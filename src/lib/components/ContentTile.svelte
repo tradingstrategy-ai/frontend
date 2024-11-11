@@ -1,8 +1,7 @@
 <!--
 @component
 Display a content tile that links to additional content, such as the blog tiles
-on the blog roll. If `href` is included, the entire tile is a targetable CTA.
-A `ctaLabel` or `cta` slot may also be provided to include an explicit button target.
+on the blog roll.
 
 @example
 
@@ -27,16 +26,13 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 	export let ctaLabel = '';
 	export let date: ComponentProps<Timestamp>['date'];
 	export let description = '';
-	export let href: string | undefined = undefined;
+	export let href: string;
 	export let mediaSrc = '';
 	export let mediaAlt = '';
 	export let title = '';
-
-	$: tag = href ? 'a' : 'div';
-	$: anchorProps = { href };
 </script>
 
-<svelte:element this={tag} class="content-tile tile a {classes}" {...anchorProps}>
+<a class="content-tile tile a {classes}" {href}>
 	<img src={mediaSrc} alt={mediaAlt} />
 
 	<div class="content">
@@ -59,12 +55,12 @@ A `ctaLabel` or `cta` slot may also be provided to include an explicit button ta
 		{#if $$slots.cta || ctaLabel}
 			<div class="cta">
 				<slot name="cta">
-					<Button label={ctaLabel} {href} />
+					<Button label={ctaLabel} />
 				</slot>
 			</div>
 		{/if}
 	</div>
-</svelte:element>
+</a>
 
 <style>
 	.content-tile {
