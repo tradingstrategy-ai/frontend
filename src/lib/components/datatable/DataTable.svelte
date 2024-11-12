@@ -30,6 +30,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	export let isResponsive = false;
 	export let loading = false;
 	export let size = 'md';
+	export let targetableRows = false;
 
 	const dispatch = createEventDispatcher();
 	let table: HTMLTableElement;
@@ -97,7 +98,12 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} />
+	<TableBody
+		attrs={$tableBodyAttrs}
+		rows={hasPagination ? $pageRows : $rows}
+		page={pluginStates.page}
+		{targetableRows}
+	/>
 
 	{#if hasPagination}
 		<TableFooter page={pluginStates.page} totalRowCount={totalRowCount ?? $rows.length} />

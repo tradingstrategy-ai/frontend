@@ -4,11 +4,12 @@
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { DataTable, Button, Timestamp, UpDownCell } from '$lib/components';
+	import { Timestamp, UpDownCell } from '$lib/components';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
 
@@ -42,8 +43,7 @@
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' })
+		page: addPagination({ initialPageIndex: page })
 	});
 
 	const tableColumns = table.createColumns([
@@ -123,7 +123,7 @@
 			header: '',
 			id: 'cta',
 			accessor: ({ position_id }) => `./${status}-positions/${position_id}`,
-			cell: ({ value }) => createRender(Button, { label: 'Details', href: value, size: 'xs' }),
+			cell: ({ value }) => createRender(TableRowTarget, { href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -136,7 +136,7 @@
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} on:change size="sm" />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change />
 </div>
 
 <style>

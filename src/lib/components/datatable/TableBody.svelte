@@ -7,6 +7,7 @@
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: BodyRow<any, any>[];
 	export let page: PaginationState | {};
+	export let targetableRows = false;
 
 	const { pageIndex, pageSize } = page;
 
@@ -19,8 +20,8 @@
 
 <tbody {...attrs}>
 	{#each rows as row, pageRowIndex (row.id)}
-		<Subscribe rowAttrs={row.attrs()} let:rowAttrs rowProps={row.props()} let:rowProps>
-			<TableRow attrs={rowAttrs} props={rowProps} cells={row.cells} index={getRowIndex(pageRowIndex)} />
+		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+			<TableRow attrs={rowAttrs} cells={row.cells} index={getRowIndex(pageRowIndex)} targetable={targetableRows} />
 		</Subscribe>
 	{/each}
 </tbody>

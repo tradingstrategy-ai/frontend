@@ -3,9 +3,9 @@
 	import { type Writable, writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
 	import { formatDollar, formatValue } from '$lib/helpers/formatters';
-	import { Button, DataTable } from '$lib/components';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 
 	export let loading = false;
 	export let rows: TokenIndexResponse['rows'] | undefined = undefined;
@@ -25,8 +25,7 @@
 			serverSide: true,
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ serverSide: true, serverItemCount }),
-		clickable: addClickableRows({ id: 'cta' })
+		page: addPagination({ serverSide: true, serverItemCount })
 	});
 
 	const columns = table.createColumns([
@@ -56,7 +55,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/tokens/${row.address}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View token', href: value, size: 'sm' }),
+			cell: ({ value }) => createRender(TableRowTarget, { label: 'View token', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -70,7 +69,7 @@
 </script>
 
 <div class="token-table" data-testid="token-table">
-	<DataTable isResponsive hasPagination {loading} {tableViewModel} {totalRowCount} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} on:change />
 </div>
 
 <style>

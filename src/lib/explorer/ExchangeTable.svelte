@@ -2,8 +2,9 @@
 	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable, EntitySymbol } from '$lib/components';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -21,8 +22,7 @@
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' })
+		page: addPagination({ initialPageIndex: page })
 	});
 
 	const columns = table.createColumns([
@@ -51,7 +51,7 @@
 			id: 'cta',
 			header: '',
 			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}`,
-			cell: ({ value }) => createRender(Button, { label: 'View exchange', href: value, size: 'sm' }),
+			cell: ({ value }) => createRender(TableRowTarget, { label: 'View exchange', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -60,7 +60,7 @@
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} on:change />
 </div>
 
 <style>
