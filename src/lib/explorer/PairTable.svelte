@@ -118,11 +118,6 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			tr:hover td {
-				position: relative;
-				overflow: visible;
-			}
-
 			:is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
 				max-width: 12ch;
 				text-align: right;

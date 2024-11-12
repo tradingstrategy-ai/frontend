@@ -72,7 +72,6 @@ table.datatable {
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
 			padding: var(--cell-padding);
-			position: relative;
 			transition: var(--table-transition);
 			vertical-align: middle;
 			--button-width: 100%;
@@ -196,43 +195,20 @@ table.datatable {
 
 table.loading {
 	:not(thead, tfoot) tr td {
+		position: relative;
 		color: transparent;
 
+		> * {
+			opacity: 0;
+		}
+
 		&::before {
-			animation: pulse-opacity 1s infinite ease-out;
-			background: var(--c-box-3);
-			bottom: var(--space-sm);
-			border-radius: var(--radius-sm);
 			content: '';
-			left: var(--space-sm);
 			position: absolute;
-			right: var(--space-sm);
-			top: var(--space-sm);
-		}
-
-		* {
-			color: transparent;
-			background: transparent !important;
-		}
-	}
-
-	.button {
-		cursor: loading;
-
-		span {
-			color: transparent;
-
-			&::before {
-				animation: pulse-opacity 1s infinite ease-out;
-				background: var(--c-box-3);
-				bottom: var(--space-lg);
-				border-radius: var(--radius-sm);
-				content: '';
-				left: var(--space-lg);
-				position: absolute;
-				right: var(--space-lg);
-				top: var(--space-lg);
-			}
+			inset: var(--space-sm);
+			border-radius: var(--radius-sm);
+			background: var(--c-box-3);
+			animation: pulse-opacity 1s infinite ease-out;
 		}
 	}
 }

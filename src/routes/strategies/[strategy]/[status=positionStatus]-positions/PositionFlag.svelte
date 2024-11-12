@@ -8,7 +8,7 @@
 </script>
 
 <Tooltip>
-	<span slot="trigger" class="flag">
+	<span slot="trigger" class="flag targetable-above">
 		<DataBadge {status}>{label}</DataBadge>
 	</span>
 
