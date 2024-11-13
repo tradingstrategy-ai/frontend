@@ -126,11 +126,7 @@
 			<Button slot="cta" label="Read documentation" />
 		</ContentCard>
 
-		<ContentCard
-			title="Notebooks"
-			href="https://tradingstrategy.ai/docs/programming/strategy-examples/index.html"
-			rel="external"
-		>
+		<ContentCard title="Notebooks" href="https://github.com/tradingstrategy-ai/getting-started" rel="external">
 			<IconPython slot="icon" />
 			<p>
 				Use popular Jupyter Notebook, Pandas and other data science libraries to model and backtest your strategies.
