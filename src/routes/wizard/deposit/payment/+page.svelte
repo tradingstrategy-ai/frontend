@@ -385,7 +385,7 @@
 			{/if}
 
 			{#if $progressBar >= 0}
-				<progress max="100" value={$progressBar} />
+				<progress max="100" value={$progressBar}></progress>
 			{/if}
 
 			{#if $payment === 'authorizing'}

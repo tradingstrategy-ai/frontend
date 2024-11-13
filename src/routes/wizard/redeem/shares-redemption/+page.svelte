@@ -211,7 +211,7 @@
 					<CryptoAddressWidget address={transactionId} href={getExplorerUrl(chain, transactionId)} />
 				</div>
 
-				<progress max="100" value={$progressBar} />
+				<progress max="100" value={$progressBar}></progress>
 			{/if}
 
 			{#if $redemption === 'processing'}
