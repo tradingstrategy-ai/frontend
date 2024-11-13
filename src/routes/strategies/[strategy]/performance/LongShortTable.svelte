@@ -37,40 +37,44 @@
 	/>
 	<div class="long-short-table">
 		<table>
-			<tr>
-				<th class="name">Metric</th>
-				{#each tableData.columns as column}
-					<th class={column.toLowerCase()}>
-						{column}
-					</th>
-				{/each}
-			</tr>
-			{#each filteredRows as row (row.kind)}
+			<thead>
 				<tr>
-					<td class="name">
-						{#if row.help_link}
-							<a class="body-link" href={row.help_link} target="_blank">{row.name}</a>
-						{:else}
-							{row.name}
-						{/if}
-					</td>
+					<th class="name">Metric</th>
 					{#each tableData.columns as column}
-						{@const value = row.value[column]}
-						<td class={column.toLowerCase()}>
-							{#if isDurationField(row)}
-								<span class="long-label">{value}</span>
-								<span class="short-label">{durationShortLabel(value)}</span>
-							{:else}
-								{value}
-							{/if}
-						</td>
+						<th class={column.toLowerCase()}>
+							{column}
+						</th>
 					{/each}
 				</tr>
-			{:else}
-				<tr>
-					<td class="name no-match" colspan="4">no matching metrics</td>
-				</tr>
-			{/each}
+			</thead>
+			<tbody>
+				{#each filteredRows as row (row.kind)}
+					<tr>
+						<td class="name">
+							{#if row.help_link}
+								<a class="body-link" href={row.help_link} target="_blank">{row.name}</a>
+							{:else}
+								{row.name}
+							{/if}
+						</td>
+						{#each tableData.columns as column}
+							{@const value = row.value[column]}
+							<td class={column.toLowerCase()}>
+								{#if isDurationField(row)}
+									<span class="long-label">{value}</span>
+									<span class="short-label">{durationShortLabel(value)}</span>
+								{:else}
+									{value}
+								{/if}
+							</td>
+						{/each}
+					</tr>
+				{:else}
+					<tr>
+						<td class="name no-match">no matching metrics</td>
+					</tr>
+				{/each}
+			</tbody>
 		</table>
 	</div>
 </SummaryBox>
@@ -94,7 +98,7 @@
 			}
 
 			/* Make all table cells part of a single grid */
-			tr {
+			:is(thead, tbody, tr) {
 				display: contents;
 			}
 
@@ -126,6 +130,7 @@
 				}
 
 				&.no-match {
+					grid-column: 1 / -1;
 					color: var(--c-text-extra-light);
 				}
 			}
