@@ -88,11 +88,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 </script>
 
 <table bind:this={table} {...$tableAttrs} class="datatable {size}" class:responsive={isResponsive} class:loading>
-	{#if isResponsive}
-		<MobileSortSelect rows={$headerRows} {sortKeys} />
-	{/if}
-
 	<TableHeader attrs={$tableHeadAttrs} rows={$headerRows}>
+		{#if isResponsive}
+			<MobileSortSelect rows={$headerRows} {sortKeys} />
+		{/if}
 		{#if hasSearch}
 			<SearchHeaderRow bind:value={$filterValue} />
 		{/if}

@@ -16,36 +16,38 @@
 	}
 </script>
 
-<div class="mobile-sorting">
-	<Select value={sortValue($sortKeys[0])} on:change={handleChange}>
-		{#each rows as headerRow (headerRow.id)}
-			{#each headerRow.cells as cell (cell.id)}
-				<Subscribe props={cell.props()} let:props>
-					{@const sort = props.sort}
-					{#if sort && !sort.disabled}
-						{#each [['desc', '▼'], ['asc', '▲']] as [order, indicator]}
-							<option value={sortValue({ ...cell, order })} selected={sort.order === order}>
-								{cell.label}
-								{indicator}
-							</option>
-						{/each}
-					{/if}
-				</Subscribe>
+<tr class="mobile-sort-select">
+	<th>
+		<Select value={sortValue($sortKeys[0])} on:change={handleChange}>
+			{#each rows as headerRow (headerRow.id)}
+				{#each headerRow.cells as cell (cell.id)}
+					<Subscribe props={cell.props()} let:props>
+						{@const sort = props.sort}
+						{#if sort && !sort.disabled}
+							{#each [['desc', '▼'], ['asc', '▲']] as [order, indicator]}
+								<option value={sortValue({ ...cell, order })} selected={sort.order === order}>
+									{cell.label}
+									{indicator}
+								</option>
+							{/each}
+						{/if}
+					</Subscribe>
+				{/each}
 			{/each}
-		{/each}
-	</Select>
-</div>
+		</Select>
+	</th>
+</tr>
 
 <style>
-	.mobile-sorting {
-		background: var(--c-body);
-		padding: var(--space-md) 0;
-		position: sticky;
-		top: 0;
-		z-index: 1;
+	.mobile-sort-select {
+		display: grid;
 
 		@media (--viewport-md-up) {
 			display: none;
+		}
+
+		th {
+			padding: var(--space-md) 0;
 		}
 	}
 </style>

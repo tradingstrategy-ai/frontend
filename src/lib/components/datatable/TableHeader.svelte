@@ -6,19 +6,12 @@
 
 	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
 	export let rows: HeaderRow<any, any>[];
-
-	let tableHead: HTMLTableSectionElement;
-	let tableHeadRect: DOMRect;
-
-	$: tableHeadY = tableHeadRect?.y;
 </script>
 
-<svelte:window on:scroll={() => (tableHeadRect = tableHead.getBoundingClientRect())} />
-
-<thead {...attrs} bind:this={tableHead} class:sticky={tableHeadY <= 0}>
+<thead {...attrs}>
 	{#each rows as headerRow (headerRow.id)}
 		<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
-			<tr {...rowAttrs}>
+			<tr class="col-headers" {...rowAttrs}>
 				{#each headerRow.cells as cell (cell.id)}
 					<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 						<th

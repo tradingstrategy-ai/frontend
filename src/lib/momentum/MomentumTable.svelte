@@ -20,7 +20,7 @@
 
 <table class="momentum-table datatable">
 	<thead>
-		<tr>
+		<tr class="col-headers">
 			<th class="position"></th>
 			<th class="pair">Trading pair</th>
 			<th class="exchange">Exchange</th>

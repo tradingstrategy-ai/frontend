@@ -8,7 +8,7 @@
  *     ...
  *   </table>
 */
-table.datatable {
+:where(table.datatable) {
 	--border-spacing: var(--space-sl);
 	--cell-padding: var(--space-sl) var(--space-ml);
 	--table-transition: all var(--time-xs) ease-out, color 0ms;
@@ -40,29 +40,27 @@ table.datatable {
 		--table-letter-spacing: var(--f-ui-xs-spacing, normal);
 	}
 
-	thead tr:first-child {
-		background: var(--c-body);
+	thead tr {
 		position: sticky;
 		top: 0;
-		z-index: 1;
-	}
+		z-index: 3;
 
-	thead.sticky th {
-		border-radius: 0;
-	}
+		th {
+			background: var(--c-body);
+			padding: 0;
+			text-align: left;
+		}
 
-	th {
-		background: var(--c-body);
-		color: var(--c-text-extra-light);
-		font: var(--table-font);
-		letter-spacing: var(--table-letter-spacing, normal);
-		overflow: hidden;
-		padding: var(--space-md) var(--space-ls);
-		position: relative;
-		transition: var(--table-transition);
-		white-space: nowrap;
-		text-align: left;
-		text-overflow: ellipsis;
+		&.col-headers th {
+			padding: var(--space-md) var(--space-ls);
+			font: var(--table-font);
+			letter-spacing: var(--table-letter-spacing, normal);
+			color: var(--c-text-extra-light);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			transition: var(--table-transition);
+		}
 	}
 
 	tbody tr {
@@ -114,14 +112,14 @@ table.datatable {
 			display: grid;
 			gap: var(--space-md);
 
-			/* hide table head; display td:data-label attr as nested cell label instead */
-			thead {
-				display: none;
+			/* remove tbody/thead from layout (so tr's are the grid rows) */
+			:is(tbody, thead) {
+				display: contents;
 			}
 
-			/* remove tbody from layout (so tr's are the grid rows) */
-			tbody {
-				display: contents;
+			/* hide table head rows (display td:data-label attr as nested cell label instead) */
+			thead tr.col-headers {
+				display: none;
 			}
 
 			tbody tr {
@@ -191,10 +189,8 @@ table.datatable {
 	.button {
 		white-space: nowrap;
 	}
-}
 
-table.loading {
-	:not(thead, tfoot) tr td {
+	&.loading tbody tr td {
 		position: relative;
 		color: transparent;
 

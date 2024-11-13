@@ -127,7 +127,7 @@
 		<div class="datasets">
 			<table class="datatable sm">
 				<thead>
-					<tr>
+					<tr class="col-headers">
 						<th class="name">Name</th>
 						<th>Tag</th>
 						<th class="right">Entries</th>

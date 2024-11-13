@@ -10,18 +10,17 @@
 </tr>
 
 <style>
-	tr.search {
+	.search {
 		position: sticky;
 		top: 3.5rem;
-		left: 0;
-		z-index: 1;
+		z-index: 3;
 
 		th {
-			border-radius: 0 !important;
-			padding: 0 0 var(--space-sl) !important;
-			--text-input-width: 100%;
-			--text-input-max-width: calc(100vw - 3rem);
+			padding-top: var(--border-spacing);
+			transform: translateY(calc(-1 * var(--border-spacing)));
 
+			--text-input-width: 100%;
+			--text-input-max-width: calc(100vw - 2 * var(--container-margin));
 			/* FIXME: overriding radius for now due to inconsistencies with radius.css and radius-new.css */
 			--radius-xs: 0.75rem;
 		}
