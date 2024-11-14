@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { mount } from 'svelte';
 	import TableOfContents from './TableOfContents.svelte';
 
 	export let html: string;
@@ -8,7 +9,7 @@
 		const target = node.querySelector('#table-of-contents');
 		if (target) {
 			const entries = node.querySelectorAll('h2, h3') as NodeListOf<HTMLHeadingElement>;
-			new TableOfContents({ target, props: { entries } });
+			mount(TableOfContents, { target, props: { entries } });
 		}
 	}
 

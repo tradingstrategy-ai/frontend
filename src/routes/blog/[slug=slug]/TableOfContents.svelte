@@ -3,10 +3,10 @@
 	export let entries: NodeListOf<HTMLElement>;
 </script>
 
-<!-- Have different CSS class for TOC entries whether they are H2 or H3 based -->
 <div class="table-of-contents">
 	<SummaryBox title="Table of Contents">
 		{#each entries as { id, innerText, tagName } (id)}
+			<!-- Specify different CSS class for TOC entries based on tag (h2, h3) -->
 			<a class="tile b {`toc-entry-${tagName.toLowerCase()}`}" href="#{id}">{innerText}</a>
 		{/each}
 	</SummaryBox>
