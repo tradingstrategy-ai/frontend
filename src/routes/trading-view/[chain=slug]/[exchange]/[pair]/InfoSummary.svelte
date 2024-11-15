@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
 	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDistanceToNowStrict } from 'date-fns';
@@ -20,7 +19,7 @@
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
 
-	let copier: ComponentProps<CopyWidget>['copier'];
+	let copyWidget: CopyWidget;
 
 	// Construct and copy identifier used in Python code (such as Jupyter notebooks); e.g.:
 	// (ChainId.ethereum, "uniswap-v3", "WETH", "USDC", 0.0005) # Ether-USD Coin http://localhost:5173/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
@@ -33,7 +32,7 @@
 			summary.pair_swap_fee
 		];
 		const identifier = `(${parts.join(', ')}) # ${summary.pair_name} ${pageUrl}`;
-		copier?.copy(identifier);
+		copyWidget?.copy(identifier);
 		this.blur();
 	}
 </script>
@@ -97,10 +96,11 @@
 	</p>
 
 	<button class="get-python-identifier tile b" on:click={copyPythonIdentifier}>
-		<div>Get a Python identifier for use in Jupyter notebooks</div>
-		<Button size="xs" label="Copy">
-			<CopyWidget slot="icon" bind:copier --icon-size="1rem" />
-		</Button>
+		<span class="info">Get a Python identifier for use in Jupyter notebooks</span>
+		<span class="cta tile d">
+			Copy
+			<CopyWidget bind:this={copyWidget} --icon-size="1rem" />
+		</span>
 	</button>
 </div>
 
@@ -137,7 +137,26 @@
 		border: none;
 		cursor: pointer;
 		text-align: left;
-		font: var(--f-ui-md-medium);
-		color: var(--c-text-light);
+
+		.info {
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: var(--c-text-light);
+		}
+
+		.cta {
+			display: inline-flex;
+			gap: 0.375em;
+			padding: 0.375rem 0.875rem;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: var(--c-text);
+			transition: var(--transition-1);
+			--background-hover: var(--c-text);
+		}
+
+		&:hover .cta {
+			color: var(--c-text-inverted);
+		}
 	}
 </style>

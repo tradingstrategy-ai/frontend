@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
 	import { CopyWidget, HashAddress } from '$lib/components';
 
 	export let address: Address;
@@ -7,7 +6,7 @@
 	export let href: string;
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 
-	let copier: ComponentProps<CopyWidget>['copier'];
+	let copyWidget: CopyWidget;
 </script>
 
 <span class="crypto-address-widget size-{size} tile b">
@@ -16,8 +15,8 @@
 		<HashAddress {address} endChars={7} />
 	</a>
 	{#if clipboardCopier}
-		<button title="Copy to clipboard" on:click={() => copier?.copy(address)}>
-			<CopyWidget bind:copier />
+		<button title="Copy to clipboard" on:click={() => copyWidget.copy(address)}>
+			<CopyWidget bind:this={copyWidget} />
 		</button>
 	{/if}
 </span>

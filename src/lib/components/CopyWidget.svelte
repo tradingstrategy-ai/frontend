@@ -1,14 +1,14 @@
 <!--
 @component
 Display a copy icon that copies the provided text to the clipboard. The component exports
-a `copier` store with a `copy` method – bind this to a variable and call `copier.copy()`
+a `copy` method – bind a variable to a component instance and call `copyWidget.copy()`
 (from a button, for instance).
 
 @example
 
 ```svelte
-	<button title="copy to clipboard" on:click={() => copier.copy("This will be copied to clipboard")}>
-		<CopyWidget bind:copier />
+	<button title="copy to clipboard" on:click={() => copyWidget.copy("This will be copied to clipboard")}>
+		<CopyWidget bind:this={copyWidget} />
 	</button>
 ```
 -->
@@ -18,7 +18,7 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 	import IconCheckSquare from '~icons/local/check-square';
 	import { fade } from 'svelte/transition';
 
-	export const copier = fsm('idle', {
+	const copier = fsm('idle', {
 		idle: {
 			copy(text: string) {
 				navigator.clipboard.writeText(text).then(this.success);
@@ -33,6 +33,8 @@ a `copier` store with a `copy` method – bind this to a variable and call `copi
 			complete: 'idle'
 		}
 	});
+
+	export const { copy } = copier;
 </script>
 
 <span class="copy-widget">
