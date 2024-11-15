@@ -21,9 +21,9 @@ on the conference rolls.
 	pageDescription="Follow us on our socials and join the discussion."
 >
 	<HeroBanner
-		title="Follow Trading Strategy"
-		image={BrandMark}
 		slot="hero"
+		image={BrandMark}
+		title="Follow Trading Strategy"
 		subtitle="Follow us on our socials and join the discussion."
 	/>
 	<ContentCardsSection cols={3} title="">

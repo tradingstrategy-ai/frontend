@@ -75,7 +75,7 @@
 
 <main class="backtesting-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="Historical DEX trading data">
+		<HeroBanner title="Historical DEX trading data">
 			<svelte:fragment slot="subtitle">
 				<p>
 					The following datasets are available for historical DEX trading data.

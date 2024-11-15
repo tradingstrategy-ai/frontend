@@ -28,7 +28,7 @@
 
 <main class="token-index-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="{chain.chain_name} tokens">
+		<HeroBanner title="{chain.chain_name} tokens">
 			<svelte:fragment slot="subtitle">
 				Browse {formatAmount(tokens.totalRowCount)} tokens on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.

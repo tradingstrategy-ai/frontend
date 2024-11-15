@@ -11,17 +11,18 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 ```
 -->
 <script lang="ts">
-	export let contentFullWidth = false;
 	export let image: string | undefined = undefined;
 	export let title: string;
 	export let subtitle = '';
 	export let hr = false;
 </script>
 
-<div class="hero-banner" class:has-image={image} class:has-fullwidth-content={contentFullWidth}>
+<div class="hero-banner" class:has-image={image}>
 	<div class="content">
 		<h1>{@html title}</h1>
-		<p><slot name="subtitle">{@html subtitle}</slot></p>
+		<div class="subtitle">
+			<slot name="subtitle">{@html subtitle}</slot>
+		</div>
 		{#if hr}
 			<hr />
 		{/if}
@@ -49,15 +50,14 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 		}
 
 		&.has-image {
-			@media (--viewport-md) {
-				min-height: max(40vh, 32rem);
-			}
-		}
-
-		&:not(.has-fullwidth-content) {
 			place-content: center;
+
 			@media (--viewport-md-up) {
 				grid-template-columns: 1fr minmax(12rem, min(28vw, 32rem));
+			}
+
+			@media (--viewport-md) {
+				min-height: max(40vh, 32rem);
 			}
 		}
 	}
@@ -77,7 +77,7 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 			}
 		}
 
-		p {
+		.subtitle {
 			margin: 0;
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);

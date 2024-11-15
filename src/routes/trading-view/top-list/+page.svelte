@@ -14,7 +14,7 @@
 
 <main>
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
+		<HeroBanner title="Top lists" subtitle="Explore currently the most volatile trading pairs." />
 	</Section>
 
 	<ContentCardsSection>

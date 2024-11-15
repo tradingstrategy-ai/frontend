@@ -31,7 +31,7 @@
 
 <main class="pair-index-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="{chain.chain_name} trading pairs">
+		<HeroBanner title="{chain.chain_name} trading pairs">
 			<svelte:fragment slot="subtitle">
 				Browse {formatAmount(pairs.totalRowCount)} trading pairs on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
