@@ -14,9 +14,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 -->
 <script lang="ts">
 	import { writable, type Writable } from 'svelte/store';
-	import { dequal } from 'dequal';
 	import type { TableViewModel } from 'svelte-headless-table';
-	import type { SortKey } from 'svelte-headless-table/lib/plugins/addSortBy';
+	import type { SortKey } from 'svelte-headless-table/plugins';
 	import { createEventDispatcher } from 'svelte';
 	import TableHeader from './TableHeader.svelte';
 	import TableBody from './TableBody.svelte';
@@ -41,11 +40,10 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	const filterValue = pluginStates.tableFilter?.filterValue;
 
 	// assign real plugin stores or fallback/dummy stores if sort/pagination not enabled
-	// see dispatchChange derived store below
 	const sortKeys: Writable<SortKey[]> = pluginStates.sort?.sortKeys || writable([]);
 	const pageIndex: Writable<number> = pluginStates.page?.pageIndex || writable(0);
 
-	let lastSortKey = $sortKeys[0];
+	let lastSortKey: SortKey | undefined = $sortKeys[0];
 	let lastPageIdx = $pageIndex;
 
 	$: dispatchIfChanged($sortKeys[0], $pageIndex);
@@ -56,8 +54,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		}
 	}
 
-	function dispatchIfChanged(sortKey: SortKey, pageIdx: number) {
-		const sortChanged = ['id', 'order'].some((prop) => sortKey[prop] !== lastSortKey[prop]);
+	function dispatchIfChanged(sortKey: SortKey | undefined, pageIdx: number) {
+		const sortChanged = !(sortKey?.id === lastSortKey?.id && sortKey?.order === lastSortKey?.order);
 		const pageChanged = pageIdx !== lastPageIdx;
 
 		// prevent dispatch when returning to page via browser back button)
@@ -72,7 +70,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 		// dispatch change event with updated page/sort params
 		dispatch('change', {
-			params: { page: pageIdx, sort: sortKey.id, direction: sortKey.order },
+			params: { page: pageIdx, sort: sortKey?.id, direction: sortKey?.order },
 			scrollToTop
 		});
 	}

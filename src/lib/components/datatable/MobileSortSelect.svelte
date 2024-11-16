@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SortKey, WritableSortKeys } from 'svelte-headless-table/lib/plugins/addSortBy';
+	import type { SortKey, WritableSortKeys } from 'svelte-headless-table/plugins';
 	import { Subscribe, type HeaderRow } from 'svelte-headless-table';
 	import { Select } from '$lib/components';
 
