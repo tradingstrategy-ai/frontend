@@ -28,8 +28,6 @@
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 	const periodPerformance: Record<string, MaybeNumber> = {};
 
-	let initialTimeframe = '3M';
-
 	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
 
 	function getPeriodPerformance({ first, last, firstTickPosition }: ChartChangeDetail, spanDays: MaybeNumber) {
@@ -54,13 +52,13 @@
 		source: 'live_trading'
 	});
 
-	$: setInitialTimeframe($chartClient.data);
+	$: initialTimeframe = getInitialTimeframe($chartClient.data);
 
-	function setInitialTimeframe(data: RawTick[] | undefined) {
+	function getInitialTimeframe(data: RawTick[] | undefined) {
 		const firstTs = data?.[0]?.[0] as number | undefined;
-		if (firstTs === undefined) return;
+		if (firstTs === undefined) return '3M';
 		const age = differenceInCalendarDays(new Date(), firstTs * 1000);
-		initialTimeframe = age <= 7 ? '1W' : age <= 30 ? '1M' : '3M';
+		return age <= 7 ? '1W' : age <= 30 ? '1M' : '3M';
 	}
 
 	const benchmarkTokens = getBenchmarkTokens(strategy);
@@ -145,6 +143,7 @@
 		});
 
 		return () => {
+			if ($chartClient.loading) return;
 			benchmarksUpdating = 0;
 			benchmarkTokens.forEach((token) => updateBenchmark(chartEngine, feed, token));
 		};
