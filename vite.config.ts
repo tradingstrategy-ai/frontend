@@ -11,6 +11,7 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import jsonServer from 'vite-plugin-simple-json-server';
+import { svelteTesting } from '@testing-library/svelte/vite';
 
 const customLogger = (({ warnOnce, ...otherLogMethods }) => {
 	return {
@@ -53,6 +54,9 @@ export default defineConfig({
 			}
 		}),
 
+		// Testing Library plugin for unit tests
+		svelteTesting(),
+
 		// vite plugin to create a mock JSON api for integration tests
 		// only available when using `npm run dev` or `npm run preview`
 		// https://github.com/alextim/vite-plugin-simple-json-server/
@@ -83,6 +87,6 @@ export default defineConfig({
 		globals: true,
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		restoreMocks: true,
-		setupFiles: ['tests/vitest.config.ts']
+		setupFiles: ['./vitest.setup.js']
 	}
 });

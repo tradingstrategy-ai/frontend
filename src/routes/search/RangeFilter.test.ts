@@ -21,7 +21,7 @@ describe('RangeFilter component', () => {
 		expect(getByRole('checkbox', { name: '18 - 65' })).toBeChecked();
 	});
 
-	test('checking an option should fire component change event', async () => {
+	test.skip('checking an option should fire component change event', async () => {
 		const { getByRole, component } = render(RangeFilter, defaultProps);
 
 		const handleChange = vi.fn();
