@@ -5,7 +5,7 @@ test.describe('strategy index page', () => {
 		await page.goto('/strategies');
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		expect(await rows.count()).toBe(1);
+		await expect(rows).toHaveCount(1);
 
 		const heading = page.getByRole('heading', { name: 'MATIC-USD breakout on Uniswap v3' });
 		await expect(heading).toBeVisible();
