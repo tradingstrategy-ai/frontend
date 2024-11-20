@@ -65,9 +65,9 @@
 						<DataBadge slot="trigger" status="error">Error</DataBadge>
 						<svelte:fragment slot="popup">
 							{#if adminOnlyError(strategy)}
-								<p>
-									<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
-								</p>
+								<div style:margin-bottom="1em">
+									<Alert size="xs" status="info">This error is only displayed to admin users.</Alert>
+								</div>
 							{/if}
 							<StrategyError {strategy} />
 						</svelte:fragment>
