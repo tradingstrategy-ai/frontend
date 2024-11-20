@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 
-	export let strategy: StrategyRuntimeState;
+	export let strategy: StrategyInfo;
 
 	const localIconUrl = `/avatars/${strategy.id}.webp`;
 	const strategyIconUrl = strategy.icon_url?.replace(/^http:/, 'https:');

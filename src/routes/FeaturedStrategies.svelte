@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
@@ -13,7 +13,7 @@
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
 
-	export let strategies: StrategyRuntimeState[];
+	export let strategies: StrategyInfo[];
 
 	let selected: ChainOption = 'all';
 
