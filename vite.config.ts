@@ -11,7 +11,6 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import jsonServer from 'vite-plugin-simple-json-server';
-import { svelteTesting } from '@testing-library/svelte/vite';
 
 const customLogger = (({ warnOnce, ...otherLogMethods }) => {
 	return {
@@ -54,9 +53,6 @@ export default defineConfig({
 			}
 		}),
 
-		// Testing Library plugin for unit tests
-		svelteTesting(),
-
 		// vite plugin to create a mock JSON api for integration tests
 		// only available when using `npm run dev` or `npm run preview`
 		// https://github.com/alextim/vite-plugin-simple-json-server/
@@ -65,6 +61,10 @@ export default defineConfig({
 			mockDir: 'tests/fixtures'
 		})
 	],
+
+	// Tell Vitest to use the `browser` entry points in `package.json` files, even though it's running in Node
+	// see: https://svelte.dev/docs/svelte/testing#Unit-and-integration-testing-using-Vitest
+	resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
 
 	server: {
 		fs: {
