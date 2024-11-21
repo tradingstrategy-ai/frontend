@@ -1,4 +1,4 @@
-import { render } from '@testing-library/svelte';
+import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import SearchPanel from './SearchPanel.svelte';
 
@@ -15,23 +15,23 @@ const defaultProps = {
 
 describe('SearchPanel component', () => {
 	test('should display "search for" fallback when no search criteria', async () => {
-		const { getByText, queryAllByRole } = render(SearchPanel, defaultProps);
-		getByText('Search exchanges, tokens, trading pairs and lending reserves.');
-		expect(queryAllByRole('listitem')).toHaveLength(0);
+		render(SearchPanel, defaultProps);
+		screen.getByText('Search exchanges, tokens, trading pairs and lending reserves.');
+		expect(screen.queryAllByRole('listitem')).toHaveLength(0);
 	});
 
 	test('should display "no results" fallback when no results found', async () => {
-		const { getByText, queryAllByRole } = render(SearchPanel, {
+		render(SearchPanel, {
 			...defaultProps,
 			hasSearch: true,
 			hits: []
 		});
-		getByText('No results found', { exact: false });
-		expect(queryAllByRole('listitem')).toHaveLength(0);
+		screen.getByText('No results found', { exact: false });
+		expect(screen.queryAllByRole('listitem')).toHaveLength(0);
 	});
 
 	test('should display results when results found', async () => {
-		const { queryByText, queryAllByRole } = render(SearchPanel, {
+		render(SearchPanel, {
 			...defaultProps,
 			hasSearch: true,
 			hits: [
@@ -45,16 +45,17 @@ describe('SearchPanel component', () => {
 				}
 			]
 		});
-		expect(queryByText('No results found', { exact: false })).toBeNull();
-		expect(queryByText('Search exchanges, tokens and trading pairs.')).toBeNull();
-		expect(queryAllByRole('listitem')).toHaveLength(1);
+		expect(screen.queryByText('No results found', { exact: false })).toBeNull();
+		expect(screen.queryByText('Search exchanges, tokens and trading pairs.')).toBeNull();
+		expect(screen.queryAllByRole('listitem')).toHaveLength(1);
 	});
 
 	test('search field should lose focus when "Enter" key is pressed', async () => {
 		const user = userEvent.setup();
-		const searchBox = render(SearchPanel, defaultProps).getByRole('searchbox');
-		searchBox.focus();
+		render(SearchPanel, defaultProps);
+		const searchBox = screen.getByRole('searchbox');
 
+		searchBox.focus();
 		await user.keyboard('eth');
 		expect(searchBox).toHaveFocus();
 

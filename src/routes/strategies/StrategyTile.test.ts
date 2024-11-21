@@ -1,6 +1,6 @@
-import { render } from '@testing-library/svelte';
-import StrategyTile from './StrategyTile.svelte';
 import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+import { render, screen } from '@testing-library/svelte';
+import StrategyTile from './StrategyTile.svelte';
 
 const baseStrategy = {
 	id: 'strategy_1',
@@ -22,11 +22,11 @@ describe('StrategyTile component', () => {
 		} as const;
 
 		test('should display error message', async () => {
-			const { getByText } = render(StrategyTile, { strategy, chartDateRange });
+			render(StrategyTile, { strategy, chartDateRange });
 			// check for tooltip trigger
-			getByText(/Error/);
+			screen.getByText(/Error/);
 			// check for tooltip popup content
-			const popup = getByText(/Trade executor offline/);
+			const popup = screen.getByText(/Trade executor offline/);
 		});
 	});
 
@@ -136,8 +136,8 @@ describe('StrategyTile component', () => {
 		});
 
 		test('should display historic performance value', async () => {
-			const { getByTestId } = render(StrategyTile, { strategy, chartDateRange });
-			const performanceElem = getByTestId('key-metric-profitability-value');
+			render(StrategyTile, { strategy, chartDateRange });
+			const performanceElem = screen.getByTestId('key-metric-profitability-value');
 			expect(performanceElem).toHaveTextContent('▲ 12.0%');
 		});
 

@@ -1,25 +1,25 @@
-import { render } from '@testing-library/svelte';
-import SortSelect, { getSortParams } from './SortSelect.svelte';
+import { render, screen } from '@testing-library/svelte';
+import { default as SortSelect, getSortParams } from './SortSelect.svelte';
 
 describe('SortSelect component', () => {
 	test('should render a drop-down with sort options', () => {
-		const { getAllByRole } = render(SortSelect);
-		expect(getAllByRole('option')).toHaveLength(6);
+		render(SortSelect);
+		expect(screen.getAllByRole('option')).toHaveLength(6);
 	});
 
 	test('should select first option by default', () => {
-		const { getByRole } = render(SortSelect);
-		getByRole('option', { name: '▼ TVL', selected: true });
+		render(SortSelect);
+		screen.getByRole('option', { name: '▼ TVL', selected: true });
 	});
 
 	test('should select option matching the value prop', () => {
-		const { getByRole } = render(SortSelect, { value: 'volume:desc' });
-		getByRole('option', { name: '▼ Volume', selected: true });
+		render(SortSelect, { value: 'volume:desc' });
+		screen.getByRole('option', { name: '▼ Volume', selected: true });
 	});
 
 	test('should default to first option if value does not match any options', () => {
-		const { getByRole } = render(SortSelect, { value: 'foo:bar' });
-		getByRole('option', { name: '▼ TVL', selected: true });
+		render(SortSelect, { value: 'foo:bar' });
+		screen.getByRole('option', { name: '▼ TVL', selected: true });
 	});
 
 	describe('getSortParams module function', () => {

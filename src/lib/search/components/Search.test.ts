@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { render } from '@testing-library/svelte';
+import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import Search from './Search.svelte';
 
@@ -12,12 +12,13 @@ vi.mock('$lib/search/trading-entities');
 describe('Search component', () => {
 	test('should submit form when user hits enter', async () => {
 		const user = userEvent.setup();
-		const searchBox = render(Search).getByLabelText('search-desktop') as HTMLFormElement;
-		const formSubmitHandler = vi.fn();
+		render(Search);
+		const searchBox = screen.getByLabelText('search-desktop') as HTMLFormElement;
+		const formSubmitSpy = vi.fn();
+		searchBox.form.onsubmit = formSubmitSpy;
 
-		searchBox.form.onsubmit = formSubmitHandler;
 		searchBox.focus();
 		await user.keyboard('eth{Enter}');
-		expect(formSubmitHandler).toHaveBeenCalled();
+		expect(formSubmitSpy).toHaveBeenCalled();
 	});
 });

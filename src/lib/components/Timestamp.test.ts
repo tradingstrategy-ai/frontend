@@ -1,19 +1,19 @@
 import { vi } from 'vitest';
-import { render } from '@testing-library/svelte';
+import { render, screen } from '@testing-library/svelte';
 import Timestamp from './Timestamp.svelte';
 
 describe('Timestamp component', () => {
 	const date = new Date('2023-01-01T12:00Z');
 
 	test('should render fallback string if no valid date supplied', () => {
-		const { getByText } = render(Timestamp, { date: undefined });
-		getByText('---');
+		render(Timestamp, { date: undefined });
+		screen.getByText('---');
 	});
 
 	test('should render iso date string by default', () => {
-		const { getByText, queryByText } = render(Timestamp, { date });
-		getByText('2023-01-01');
-		expect(queryByText('12:00')).toBeNull();
+		render(Timestamp, { date });
+		screen.getByText('2023-01-01');
+		expect(screen.queryByText('12:00')).toBeNull();
 	});
 
 	test('should render iso date with time', () => {
@@ -36,7 +36,8 @@ describe('Timestamp component', () => {
 		vi.useFakeTimers();
 		vi.setSystemTime('2023-01-15T12:00Z');
 
-		const timeEl = render(Timestamp, { date, relative: true }).container.querySelector('time');
+		const { container } = render(Timestamp, { date, relative: true });
+		const timeEl = container.querySelector('time');
 
 		expect(timeEl).toHaveAttribute('datetime', date.toISOString());
 		expect(timeEl).toHaveTextContent('14 days ago');
