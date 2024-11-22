@@ -85,7 +85,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 	let cursor: ChartCursor = { position: {} };
 
-	function chartIQ(node: HTMLElement, deps: any) {
+	function chartIQ(node: HTMLElement, initialArg: any[]) {
 		let chartTracker;
 		let chartEngine = new CIQ.ChartEngine({ container: node, ...options });
 
@@ -203,7 +203,17 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			chartEngine = null;
 		}
 
-		function update(...args: any) {
+		let lastArg: any[] | undefined = undefined;
+
+		function update(updateArg: any[]) {
+			// Svelte 5 has an apparent bug where the update function of an action is invoked even when
+			// the action's arg has not changed. This is mitigated below by comparing the current arg to
+			// the last arg and aborting if they match. We intentionaly manually invoke update on action
+			// initialization (see below) - the comparison evaluates to false in this case (as desired)
+			// because lastArg is undefined prior the first invocation of update.
+			if (updateArg === lastArg) return;
+			lastArg = updateArg;
+
 			updating = true;
 
 			// clear attached studies
@@ -215,9 +225,9 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			}
 
 			// invoke updateCallback function returned from init callback (if provided)
-			updateCallback?.(...args);
+			updateCallback?.(updateArg);
 		}
-		update(deps);
+		update(initialArg);
 
 		return { destroy, update };
 	}
@@ -235,7 +245,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	</div>
 
 	{#await initialize() then}
-		<div use:chartIQ={invalidate} data-testid="chartIQ" />
+		<div use:chartIQ={invalidate} data-testid="chartIQ"></div>
 	{:catch}
 		<div class="error">
 			<Alert size="md" status="warning" title="ChartIQ Error">

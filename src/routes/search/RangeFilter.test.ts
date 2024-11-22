@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { render, fireEvent } from '@testing-library/svelte';
+import { render, screen, fireEvent } from '@testing-library/svelte';
 import RangeFilter, { generateOptions, getLabel, getFilter } from './RangeFilter.svelte';
 
 const defaultProps = {
@@ -9,30 +9,27 @@ const defaultProps = {
 
 describe('RangeFilter component', () => {
 	test('should render checkbox options', () => {
-		const { getAllByRole } = render(RangeFilter, defaultProps);
-		expect(getAllByRole('checkbox')).toHaveLength(3);
+		render(RangeFilter, defaultProps);
+		expect(screen.getAllByRole('checkbox')).toHaveLength(3);
 	});
 
 	test('should pre-check selected items', () => {
-		const { getByRole } = render(RangeFilter, {
-			...defaultProps,
-			selected: ['18-65']
-		});
-		expect(getByRole('checkbox', { name: '18 - 65' })).toBeChecked();
+		render(RangeFilter, { ...defaultProps, selected: ['18-65'] });
+		expect(screen.getByRole('checkbox', { name: '18 - 65' })).toBeChecked();
 	});
 
 	test('checking an option should fire component change event', async () => {
-		const { getByRole, component } = render(RangeFilter, defaultProps);
+		const changeEventSpy = vi.fn();
+		render(RangeFilter, { props: defaultProps, events: { change: changeEventSpy } });
 
-		const handleChange = vi.fn();
-		component.$on('change', handleChange);
-
-		const checkbox = getByRole('checkbox', { name: '0 - 18' });
+		// for some reason the handler is invoked when rendering; clear invocations before clicking checkbox
+		changeEventSpy.mockClear();
+		const checkbox = screen.getByRole('checkbox', { name: '0 - 18' });
 		await fireEvent.click(checkbox);
 
 		const expected = { fieldName: 'age', filter: 'age:>=0 && age:<18' };
-		expect(handleChange).toHaveBeenCalledOnce();
-		expect(handleChange.mock.calls[0][0]).toHaveProperty('detail', expected);
+		expect(changeEventSpy).toHaveBeenCalledOnce();
+		expect(changeEventSpy.mock.calls[0][0]).toHaveProperty('detail', expected);
 	});
 
 	describe('generateOptions module function', () => {

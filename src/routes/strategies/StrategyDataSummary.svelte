@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { EntitySymbol, UpDownIndicator } from '$lib/components';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
 	import { formatDaysAgo, formatNumber, formatPercent, formatDollar } from '$lib/helpers/formatters';
@@ -8,7 +8,7 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let simplified = false;
-	export let strategy: StrategyRuntimeState;
+	export let strategy: StrategyInfo;
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};

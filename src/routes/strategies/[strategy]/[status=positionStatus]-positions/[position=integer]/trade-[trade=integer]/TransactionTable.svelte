@@ -2,7 +2,7 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
-	import { DataTable } from '$lib/components';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import BlockchainExplorerLink from './BlockchainExplorerLink.svelte';
 	import TransactionStatus from './TransactionStatus.svelte';
 

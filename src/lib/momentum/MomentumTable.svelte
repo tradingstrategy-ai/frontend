@@ -1,6 +1,7 @@
 <script lang="ts">
+	import UpDownCell from '$lib/components/UpDownCell.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import { formatPriceChange } from '$lib/helpers/formatters';
-	import { UpDownCell } from '$lib/components';
 
 	interface MomentumPair {
 		chain_name: string;
@@ -19,9 +20,9 @@
 
 <table class="momentum-table datatable">
 	<thead>
-		<tr>
-			<th class="position" />
-			<th>Trading pair</th>
+		<tr class="col-headers">
+			<th class="position"></th>
+			<th class="pair">Trading pair</th>
 			<th class="exchange">Exchange</th>
 			<th class="blockchain">Blockchain</th>
 			<th class="price-change right">Price change</th>
@@ -29,27 +30,25 @@
 	</thead>
 	<tbody>
 		{#each pairs as pair, idx}
-			<tr>
+			<tr class="targetable">
 				<td class="position">
 					#{idx + 1}
 				</td>
 
-				<td class="pair-name">
-					<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}/${pair.pair_slug}`}>
-						{pair.pair_symbol}
-					</a>
+				<td class="pair">
+					{pair.pair_symbol}
+					<TargetableLink
+						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"
+						label="View pair details"
+					/>
 				</td>
 
 				<td class="exchange">
-					<a href={`/trading-view/${pair.chain_slug}/${pair.exchange_slug}`}>
-						{pair.exchange_name}
-					</a>
+					{pair.exchange_name}
 				</td>
 
 				<td class="blockchain">
-					<a href={`/trading-view/${pair.chain_slug}`}>
-						{pair.chain_name}
-					</a>
+					{pair.chain_name}
 				</td>
 
 				<td class="price-change">

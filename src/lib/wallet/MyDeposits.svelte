@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentEvents } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
-	import type { ConnectedStrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
@@ -18,7 +18,7 @@
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
-	export let strategy: ConnectedStrategyRuntimeState;
+	export let strategy: ConnectedStrategyInfo;
 	export let chain: Chain;
 	export let geoBlocked: boolean;
 	export let ipCountry: CountryCode | undefined;

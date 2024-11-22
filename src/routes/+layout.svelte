@@ -63,10 +63,3 @@
 	<Footer />
 {/if}
 <SiteMode />
-
-<style global lang="postcss">
-	a.body-link {
-		border-bottom: 1px solid currentColor;
-		font-weight: 500;
-	}
-</style>

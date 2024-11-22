@@ -19,6 +19,7 @@
 	let selectedDataSource: keyof typeof dataSources = 'Live trading';
 	$: dataSource = dataSources[selectedDataSource];
 
+	// svelte-ignore reactive_declaration_non_reactive_property
 	$: tableData = state.stats.long_short_metrics_latest?.[dataSource.table];
 
 	const chartClient = getChartClient(fetch, strategy.url);

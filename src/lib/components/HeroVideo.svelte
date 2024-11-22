@@ -4,7 +4,7 @@
 </script>
 
 <section class="ds-container hero-video">
-	<iframe src="https://www.youtube.com/embed/{youTubeId}" {title} frameborder="0" allowfullscreen />
+	<iframe src="https://www.youtube.com/embed/{youTubeId}" {title} frameborder="0" allowfullscreen></iframe>
 </section>
 
 <style>

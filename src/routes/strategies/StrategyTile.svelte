@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EventHandler } from 'svelte/elements';
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { goto } from '$app/navigation';
 	import { utcDay } from 'd3-time';
 	import { normalizeDataForInterval } from '$lib/chart';
@@ -18,7 +18,7 @@
 
 	export let admin = false;
 	export let simplified = false;
-	export let strategy: StrategyRuntimeState;
+	export let strategy: StrategyInfo;
 	export let chartDateRange: [Date?, Date?];
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
@@ -65,9 +65,9 @@
 						<DataBadge slot="trigger" status="error">Error</DataBadge>
 						<svelte:fragment slot="popup">
 							{#if adminOnlyError(strategy)}
-								<p>
-									<Alert size="xs" status="info" title="Note">This error is only displayed to admin users.</Alert>
-								</p>
+								<div style:margin-bottom="1em">
+									<Alert size="xs" status="info">This error is only displayed to admin users.</Alert>
+								</div>
 							{/if}
 							<StrategyError {strategy} />
 						</svelte:fragment>

@@ -21,12 +21,13 @@
 
 	let downloadDisabled = false;
 
-	$: breadcrumbs = {
+	const breadcrumbs = {
 		[exchange.chain_slug]: exchange.chain_name,
 		[exchange.exchange_slug]: exchangeName,
 		'export-data': 'Export data'
 	};
 
+	// svelte-ignore reactive_declaration_non_reactive_property
 	$: downloadParams = new URLSearchParams({
 		chain_slugs: exchange.chain_slug,
 		exchange_slugs: exchange.exchange_slug,

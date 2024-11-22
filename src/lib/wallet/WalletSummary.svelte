@@ -18,7 +18,7 @@
 		<div class="connected-wallet">
 			<EntitySymbol size="1.75rem" label={name} logoUrl={getLogoUrl('wallet', name)} />
 			<span class="status">
-				<div class="dot" />
+				<span class="dot"></span>
 				Connected
 			</span>
 		</div>
@@ -60,6 +60,7 @@
 		background: color-mix(in srgb, transparent, currentColor 20%);
 
 		.dot {
+			display: inline-block;
 			animation: pulse-opacity 1.5s ease-out infinite;
 			background: currentColor;
 			border-radius: 100%;

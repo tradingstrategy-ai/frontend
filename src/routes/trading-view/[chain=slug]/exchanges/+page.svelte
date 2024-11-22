@@ -34,7 +34,7 @@
 
 <main class="chain-exchanges-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="{chain.chain_name} DEXes">
+		<HeroBanner title="{chain.chain_name} DEXes">
 			<svelte:fragment slot="subtitle">
 				Browse {exchanges.length} decentralised exchanges on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.

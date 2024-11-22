@@ -45,12 +45,9 @@
 <style>
 	.summary {
 		display: grid;
-		font: var(--f-ui-large-roman);
 		gap: 1.4em;
-	}
-
-	p {
-		font: inherit;
+		align-self: start;
+		font: var(--f-ui-large-roman);
 	}
 
 	strong {

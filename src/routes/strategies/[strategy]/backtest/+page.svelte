@@ -52,7 +52,7 @@ Page to display the strategy backtest results.
 			</div>
 		{/if}
 
-		<iframe src={iframeUrl} title="Backtest report" style:height="{iframeHeight}px" />
+		<iframe src={iframeUrl} title="Backtest report" style:height="{iframeHeight}px"></iframe>
 	{:else}
 		<Alert>Backtest report not available for this strategy.</Alert>
 	{/if}

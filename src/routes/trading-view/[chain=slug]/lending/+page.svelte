@@ -35,7 +35,7 @@
 
 <main class="reserves-index-page">
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="{chain.chain_name} lending reserves">
+		<HeroBanner title="{chain.chain_name} lending reserves">
 			<svelte:fragment slot="subtitle">
 				Browse {formatAmount(totalRowCount)} lending reserves on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.

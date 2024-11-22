@@ -19,7 +19,7 @@
 
 <main>
 	<Section tag="header">
-		<HeroBanner contentFullWidth title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h">
+		<HeroBanner title="Trading pairs with the most {up ? 'profit' : 'loss'} for the last 24h">
 			<svelte:fragment slot="subtitle">
 				<a class="body-link" href="/trading-view/trading-pairs">Trading pairs</a>
 				with the highest ${up ? 'profit' : 'drawdown'} on

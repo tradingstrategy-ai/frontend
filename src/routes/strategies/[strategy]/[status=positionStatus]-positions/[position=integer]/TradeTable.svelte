@@ -3,8 +3,9 @@
 	import { readable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addHiddenColumns } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { DataTable, Button, Timestamp } from '$lib/components';
+	import Timestamp from '$lib/components/Timestamp.svelte';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import { formatPrice, formatPercent } from '$lib/helpers/formatters';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 
@@ -15,7 +16,6 @@
 	const hiddenColumns = isCreditPosition ? ['price'] : ['interest_rate'];
 
 	const table = createTable(readable(trades), {
-		clickable: addClickableRows({ id: 'cta' }),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
@@ -61,7 +61,7 @@
 			header: '',
 			id: 'cta',
 			accessor: ({ position_id, trade_id }) => `./${position_id}/trade-${trade_id}`,
-			cell: ({ value }) => createRender(Button, { label: 'Details', href: value, size: 'xs' })
+			cell: ({ value }) => createRender(TableRowTarget, { href: value, size: 'xs' })
 		})
 	]);
 
@@ -70,7 +70,7 @@
 
 <section class="trade-table">
 	<h2>Trades</h2>
-	<DataTable {tableViewModel} size="sm" />
+	<DataTable {tableViewModel} targetableRows size="sm" />
 </section>
 
 <style>

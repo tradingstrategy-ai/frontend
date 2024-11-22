@@ -6,6 +6,7 @@
 
 	const { chain } = $wizard.data as DepositWizardData;
 
+	// svelte-ignore reactive_declaration_non_reactive_property
 	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chain.id);
 </script>
 

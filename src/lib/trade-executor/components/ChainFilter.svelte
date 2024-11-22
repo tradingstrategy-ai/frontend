@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { type Chain, chains, getChain } from '$lib/helpers/chain';
 
 	export type ChainOption = Chain['slug'] | 'all';
 
-	export function getChainOptions(strategies: StrategyRuntimeState[]): ChainOption[] {
+	export function getChainOptions(strategies: StrategyInfo[]): ChainOption[] {
 		const chainSlugs = chains
 			.filter((c) => strategies.some((s) => matchesChainOption(s, c.slug))) // comment to break lines
 			.map((c) => c.slug);
@@ -21,7 +21,7 @@
 		return isChainOption(chainOptions, input) ? input : 'all';
 	}
 
-	export function matchesChainOption(strategy: StrategyRuntimeState, chainOption?: ChainOption) {
+	export function matchesChainOption(strategy: StrategyInfo, chainOption?: ChainOption) {
 		if (chainOption === 'all') return true;
 		const chain = getChain(chainOption);
 		return strategy.on_chain_data?.chain_id === chain?.id;

@@ -12,24 +12,24 @@ Display an appropriate error message for a strategy when needed. There can be mu
 -->
 
 <script context="module" lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 
-	export function adminOnlyError(strategy: StrategyRuntimeState) {
+	export function adminOnlyError(strategy: StrategyInfo) {
 		return strategy.connected && (!strategy.executor_running || strategy.frozen_positions > 0);
 	}
 
-	export function allUsersError(strategy: StrategyRuntimeState) {
+	export function allUsersError(strategy: StrategyInfo) {
 		return !strategy.connected;
 	}
 
-	export function shouldDisplayError(strategy: StrategyRuntimeState, admin = false) {
+	export function shouldDisplayError(strategy: StrategyInfo, admin = false) {
 		return allUsersError(strategy) || (admin && adminOnlyError(strategy));
 	}
 </script>
 
 <script lang="ts">
 	import { Timestamp } from '$lib/components';
-	export let strategy: StrategyRuntimeState;
+	export let strategy: StrategyInfo;
 
 	const baseUrl = `/strategies/${strategy.id}`;
 </script>

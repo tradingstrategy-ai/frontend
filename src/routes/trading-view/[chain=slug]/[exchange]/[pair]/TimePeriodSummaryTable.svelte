@@ -24,7 +24,7 @@ Display summary performance table for various periods.
 
 <div class="time-period-table">
 	<ul class="row-heading">
-		<li class="col-heading" />
+		<li class="col-heading"></li>
 		<li>Change</li>
 		<li>Open</li>
 		<li>Highest</li>

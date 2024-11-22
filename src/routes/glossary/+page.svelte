@@ -26,7 +26,7 @@
 
 <main class="glossary-main">
 	<Section tag="header" padding="md">
-		<HeroBanner contentFullWidth title="DeFi and trading dictionary">
+		<HeroBanner title="DeFi and trading dictionary">
 			<div slot="subtitle">
 				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
 

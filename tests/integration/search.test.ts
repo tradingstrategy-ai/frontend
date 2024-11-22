@@ -1,29 +1,41 @@
 import { expect, test } from '@playwright/test';
 import { dequal } from 'dequal';
+import { merge } from '$lib/helpers/object';
 
-function urlParamsMatch(expected: Record<string, any>) {
-	return ({ searchParams }: URL) => {
-		return dequal(Object.fromEntries(searchParams), expected);
-	};
-}
-
-function searchParams({ filters = {}, ...restParams }: any = {}) {
-	const filterJSON = JSON.stringify({
+const defaultSearchParams = {
+	q: '',
+	sortBy: 'tvl:desc',
+	filters: {
 		pair_swap_fee: [],
 		price_change_24h: [],
 		liquidity: [],
 		volume_24h: [],
 		type: [],
 		blockchain: [],
-		exchange: [],
-		...filters
-	});
+		exchange: []
+	}
+} as const;
 
-	return {
-		q: '',
-		sortBy: 'tvl:desc',
-		filters: filterJSON,
-		...restParams
+// merge given search params with defaults
+function getSearchParams(searchParams: object) {
+	return merge(structuredClone(defaultSearchParams), searchParams);
+}
+
+// merge given search params with defaults, then strigify (with `filters` as nested strigified JSON)
+function getUrlSearchParams(searchParams: object) {
+	const params = getSearchParams(searchParams);
+	params.filters = JSON.stringify(params.filters);
+	return new URLSearchParams(params);
+}
+
+// return a function that tests if URL search params match expected value
+function urlParamsMatch(expected: Record<string, any>) {
+	return (url: URL) => {
+		const { filters, ...searchParams } = Object.fromEntries(url.searchParams);
+		if (filters) {
+			searchParams.filters = JSON.parse(filters);
+		}
+		return dequal(searchParams, expected);
 	};
 }
 
@@ -45,7 +57,7 @@ test.describe('advanced search page', () => {
 			exchange: ['Uniswap v2'],
 			volume_24h: ['Infinity-1000000']
 		};
-		const params = new URLSearchParams(searchParams({ filters }));
+		const params = getUrlSearchParams({ filters });
 		await page.goto(`/search?${params}`);
 
 		for (const name of ['Pair', 'Ethereum', 'Uniswap v2', '> $1M']) {
@@ -55,7 +67,7 @@ test.describe('advanced search page', () => {
 
 	test('should populate URL query params with default search options', async ({ page }) => {
 		await page.goto('/search');
-		const expected = searchParams({});
+		const expected = getSearchParams({});
 		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 	});
 
@@ -70,7 +82,7 @@ test.describe('advanced search page', () => {
 		await page.getByText('binance', { exact: true }).click();
 		await page.getByText('Up > 5%').click();
 
-		const expected = searchParams({
+		const expected = getSearchParams({
 			q: 'eth',
 			sortBy: 'price_change:asc',
 			filters: {
@@ -96,7 +108,7 @@ test.describe('advanced search page', () => {
 		await page.getByText('ethereum', { exact: true }).click();
 
 		// wait for URL params to reflect the search selections (computer is faster than human)
-		const expected = searchParams({
+		const expected = getSearchParams({
 			q: 'eth',
 			sortBy: 'volume:desc',
 			filters: { blockchain: ['ethereum'] }

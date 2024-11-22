@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PaginationState } from 'svelte-headless-table/lib/plugins/addPagination';
+	import type { PaginationState } from 'svelte-headless-table/plugins';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import PageButton from './PageButton.svelte';
 

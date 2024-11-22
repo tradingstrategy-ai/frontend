@@ -1,4 +1,4 @@
-import { render } from '@testing-library/svelte';
+import { mount } from 'svelte';
 import Tooltip from './Tooltip.svelte';
 
 describe('Tooltip component', () => {
@@ -8,8 +8,8 @@ describe('Tooltip component', () => {
 	// (the popup content is not hidden on initial page render).
 	// see: https://stackoverflow.com/questions/40531029 updates 3 & 4
 	test('should use button tag for popup content', () => {
-		const { container } = render(Tooltip);
-		const popup = container.querySelector('.popup');
+		mount(Tooltip, { target: document.body });
+		const popup = document.body.querySelector('.popup');
 		expect(popup?.tagName).toBe('BUTTON');
 		// button should be disabled to remove from tab index and prevent click events
 		expect(popup).toBeDisabled();

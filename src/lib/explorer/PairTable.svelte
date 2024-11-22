@@ -3,8 +3,9 @@
 	import { type Writable, writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable, UpDownCell } from '$lib/components';
+	import UpDownCell from '$lib/components/UpDownCell.svelte';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import PairSymbolCell from './PairSymbolCell.svelte';
 	import { formatDollar, formatPriceChange, formatValue } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -30,7 +31,6 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ serverSide: true, serverItemCount }),
-		clickable: addClickableRows({ id: 'cta' }),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
@@ -93,7 +93,7 @@
 			id: 'cta',
 			accessor: (row) => `/trading-view/${row.chain_slug}/${row.exchange_slug}/${row.pair_slug}`,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View pair', href: value, size: 'sm' }),
+			cell: ({ value }) => createRender(TableRowTarget, { label: 'View pair', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -109,7 +109,7 @@
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination {loading} {tableViewModel} {totalRowCount} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} on:change />
 </div>
 
 <style>
@@ -118,11 +118,6 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			tr:hover td {
-				position: relative;
-				overflow: visible;
-			}
-
 			:is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
 				max-width: 12ch;
 				text-align: right;

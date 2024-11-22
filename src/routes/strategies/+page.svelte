@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StrategyRuntimeState } from 'trade-executor/models/strategy-info';
+	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -34,7 +34,7 @@
 		return matchesStatus(s, selectedStatus) && matchesChainOption(s, selectedChain);
 	});
 
-	function matchesStatus(strategy: StrategyRuntimeState, status: StatusOption) {
+	function matchesStatus(strategy: StrategyInfo, status: StatusOption) {
 		if (!admin || status === 'all') return true;
 
 		// return live strategies for "live" filter; others for "unpublished" filter

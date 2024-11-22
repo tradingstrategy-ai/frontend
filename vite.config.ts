@@ -62,6 +62,10 @@ export default defineConfig({
 		})
 	],
 
+	// Tell Vitest to use the `browser` entry points in `package.json` files, even though it's running in Node
+	// see: https://svelte.dev/docs/svelte/testing#Unit-and-integration-testing-using-Vitest
+	resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+
 	server: {
 		fs: {
 			allow: [process.cwd()]
@@ -83,6 +87,6 @@ export default defineConfig({
 		globals: true,
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		restoreMocks: true,
-		setupFiles: ['tests/vitest.config.ts']
+		setupFiles: ['./vitest.setup.js']
 	}
 });

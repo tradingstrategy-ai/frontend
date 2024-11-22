@@ -215,7 +215,7 @@
 		<pre class="tos-text in-doc-flow" class:no-file={!tosText}>
 			{#if tosText}
 				{tosText}
-				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
+				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading}></div>
 			{:else}
 				Terms of service file not found:
   			&gt; src/lib/assets/tos/{fileName}
@@ -253,7 +253,7 @@
 			<CryptoAddressWidget address={transactionId} href={getExplorerUrl(chain, transactionId)} />
 		</div>
 
-		<progress max="100" value={$progressBar} />
+		<progress max="100" value={$progressBar}></progress>
 	{/if}
 
 	{#if $tos === 'processing'}
@@ -286,7 +286,7 @@
 		</span>
 		<pre class="tos-text in-dialog">
 			{tosText}
-			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading} />
+			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading}></div>
 		</pre>
 		<footer slot="footer" class="dialog-footer">
 			{#if $tos === 'completed'}

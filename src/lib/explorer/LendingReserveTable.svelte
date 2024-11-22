@@ -3,8 +3,8 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
-	import { addClickableRows } from '$lib/components/datatable/plugins';
-	import { Button, DataTable } from '$lib/components';
+	import DataTable from '$lib/components/datatable/DataTable.svelte';
+	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import LendingReserveLabel from './LendingReserveLabel.svelte';
 	import BorrowAprCell from './BorrowAprCell.svelte';
 	import { getFormattedReserveUSD, lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
@@ -25,8 +25,7 @@
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
 		}),
-		page: addPagination({ initialPageIndex: page }),
-		clickable: addClickableRows({ id: 'cta' })
+		page: addPagination({ initialPageIndex: page })
 	});
 
 	const columns = table.createColumns([
@@ -66,7 +65,7 @@
 			id: 'cta',
 			accessor: lendingReserveInternalUrl,
 			header: '',
-			cell: ({ value }) => createRender(Button, { label: 'View reserve', href: value, size: 'xs' }),
+			cell: ({ value }) => createRender(TableRowTarget, { label: 'View reserve', href: value, size: 'xs' }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -75,7 +74,7 @@
 </script>
 
 <div class="reserve-table" data-testid="reserve-table">
-	<DataTable isResponsive hasPagination {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} on:change />
 </div>
 
 <style>
