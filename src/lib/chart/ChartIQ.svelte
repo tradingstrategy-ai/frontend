@@ -85,7 +85,16 @@ Dynamically ChartIQ modules (if available) and render chart element.
 
 	let cursor: ChartCursor = { position: {} };
 
-	function chartIQ(node: HTMLElement, initialArg: any[]) {
+	// Svelte 5's behavior for action updates differs from Svelte 4. Action updates are triggered
+	// in scenarios where reactivity effects are not (though it is difficult to pinpoint the exact
+	// cause). This resulted in an infinite loop of update calls for this action. The work-around
+	// is to reactively trigger an update to a nonce value, which in-turn is used to trigger the
+	// action updates. This will hopefully not be an issue once the component is updated to runes
+	// mode (including using an $effect() rune in the action instead of update function).
+	let actionUpdateNonce = 0;
+	$: invalidate && actionUpdateNonce++;
+
+	function chartIQ(node: HTMLElement, _nonce: number) {
 		let chartTracker;
 		let chartEngine = new CIQ.ChartEngine({ container: node, ...options });
 
@@ -203,17 +212,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			chartEngine = null;
 		}
 
-		let lastArg: any[] | undefined = undefined;
-
-		function update(updateArg: any[]) {
-			// Svelte 5 has an apparent bug where the update function of an action is invoked even when
-			// the action's arg has not changed. This is mitigated below by comparing the current arg to
-			// the last arg and aborting if they match. We intentionaly manually invoke update on action
-			// initialization (see below) - the comparison evaluates to false in this case (as desired)
-			// because lastArg is undefined prior the first invocation of update.
-			if (updateArg === lastArg) return;
-			lastArg = updateArg;
-
+		function update() {
 			updating = true;
 
 			// clear attached studies
@@ -225,9 +224,9 @@ Dynamically ChartIQ modules (if available) and render chart element.
 			}
 
 			// invoke updateCallback function returned from init callback (if provided)
-			updateCallback?.(updateArg);
+			updateCallback?.();
 		}
-		update(initialArg);
+		update();
 
 		return { destroy, update };
 	}
@@ -245,7 +244,7 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	</div>
 
 	{#await initialize() then}
-		<div use:chartIQ={invalidate} data-testid="chartIQ"></div>
+		<div use:chartIQ={actionUpdateNonce} data-testid="chartIQ"></div>
 	{:catch}
 		<div class="error">
 			<Alert size="md" status="warning" title="ChartIQ Error">
