@@ -2,7 +2,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
-import { backendUrl, backendInternalUrl, sentryDsn, siteMode, version } from '$lib/config';
+import { backendUrl, backendInternalUrl, sentryDsn, siteMode, strategyMicrosite, version } from '$lib/config';
 import { countryCodeSchema } from '$lib/helpers/geo';
 import { parseDate } from '$lib/helpers/date';
 
@@ -47,15 +47,22 @@ export const handleError = Sentry.handleErrorWithSentry((async ({ error }) => {
 }) as HandleServerError);
 
 const handleColorMode: Handle = async ({ event, resolve }) => {
-	const colorMode = event.cookies.get('color-mode') || 'system';
+	let colorMode: string;
 
-	// update the cookie (in case not set and to update expiration)
-	event.cookies.set('color-mode', colorMode, {
-		httpOnly: false,
-		secure: false,
-		path: '/',
-		maxAge: ONE_YEAR
-	});
+	if (strategyMicrosite) {
+		// ignore cookie value and set to 'dark' for custom strategy site
+		colorMode = 'dark';
+	} else {
+		// check and update cookie value and expiration
+		colorMode = event.cookies.get('color-mode') || 'system';
+
+		event.cookies.set('color-mode', colorMode, {
+			httpOnly: false,
+			secure: false,
+			path: '/',
+			maxAge: ONE_YEAR
+		});
+	}
 
 	return resolve(event, {
 		transformPageChunk({ html }) {
