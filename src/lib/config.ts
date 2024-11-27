@@ -122,6 +122,14 @@ export const strategyConfig = config((jsonStr: string) => {
 }, 'STRATEGIES');
 
 /**
+ * If a configured strategy includes a truthy `microsite` value, set strategyMicrosite
+ * to the strategy's ID (otherwise undefined)
+ */
+export const strategyMicrosite = ((strategies: any[]) => {
+	return strategies.find((s) => s.microsite)?.id;
+})(strategyConfig) as string | undefined;
+
+/**
  * Load WalletConnect projectId and warn if not available.
  */
 export const walletConnectConfig = config((projectId: string) => {
