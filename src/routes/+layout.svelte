@@ -2,7 +2,7 @@
 	Root layout
 -->
 <script lang="ts">
-	import { announcement } from '$lib/config';
+	import { announcement, strategyMicrosite } from '$lib/config';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { beforeNavigate } from '$app/navigation';
@@ -51,7 +51,7 @@
 
 <AppHead />
 <PageLoadProgressBar />
-{#if !$page.data.skipNavbar}
+{#if !($page.data.skipNavbar || strategyMicrosite)}
 	{#if announcement}
 		<AnnouncementBanner {...announcement} dismissedAt={announcementDismissedAt} />
 	{/if}
