@@ -13,15 +13,18 @@ https://search.google.com/structured-data/testing-tool
 	<Breadcrumbs labels={{ 'url-path-segment': 'Human Readable Name' }} />
 ```
 -->
-<script context="module" lang="ts">
-	type BreadcrumbLabels = Record<string, string>;
+<script lang="ts">
+	import { page } from '$app/stores';
+	import { Section } from '$lib/components';
 
-	interface Breadcrumb {
-		href: string;
-		label: string;
-	}
+	type Props = {
+		labels?: Record<string, string>;
+		startAt?: number;
+	};
 
-	const baseLabels: BreadcrumbLabels = {
+	let { labels = {}, startAt = 0 }: Props = $props();
+
+	const baseLabels: Record<string, string> = {
 		about: 'About',
 		backtesting: 'Historical data',
 		blog: 'Blog',
@@ -32,23 +35,14 @@ https://search.google.com/structured-data/testing-tool
 		tokens: 'Tokens',
 		'trading-view': 'Trading data'
 	};
-</script>
 
-<script lang="ts">
-	import { page } from '$app/stores';
-	import { Section } from '$lib/components';
-
-	export let labels: BreadcrumbLabels = {};
-
-	$: breadcrumbs = buildBreadcrumbs($page.url.pathname, { ...baseLabels, ...labels });
-
-	function buildBreadcrumbs(pagePath: string, labels: BreadcrumbLabels): Breadcrumb[] {
-		const segments = pagePath.split('/');
-		return segments.slice(1).map((segment, index) => ({
-			href: segments.slice(0, index + 2).join('/'),
-			label: labels[segment] ?? segment
+	let breadcrumbs = $derived.by(() => {
+		const segments = $page.url.pathname.split('/');
+		return segments.slice(startAt + 1).map((segment, index) => ({
+			href: segments.slice(0, index + startAt + 2).join('/'),
+			label: labels[segment] ?? baseLabels[segment] ?? segment
 		}));
-	}
+	});
 </script>
 
 <Section tag="nav" ariaAttrs={{ 'aria-label': 'breadcrumb' }}>
@@ -65,7 +59,7 @@ https://search.google.com/structured-data/testing-tool
 						<span itemprop="name">{label}</span>
 					</span>
 				{/if}
-				<meta itemprop="position" content={index + 1} />
+				<meta itemprop="position" content={String(index + 1)} />
 			</li>
 		{/each}
 	</ol>

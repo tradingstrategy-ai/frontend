@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { strategyMicrosite } from '$lib/config';
 	import { page } from '$app/stores';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
@@ -29,14 +30,27 @@
 	};
 </script>
 
-<Breadcrumbs labels={breadcrumbs} />
+{#if !strategyMicrosite}
+	<Breadcrumbs labels={breadcrumbs} />
+{/if}
 
 {#if $page.data.skipSideNav}
+	{#if strategyMicrosite}
+		<Breadcrumbs labels={breadcrumbs} startAt={1} />
+	{/if}
 	<slot />
 {:else}
-	<main class="strategy-layout ds-container ds-3">
+	<main class="strategy-layout ds-container ds-3" class:microsite={strategyMicrosite}>
 		<PageHeading description={strategy.short_description}>
-			<StrategyIcon slot="icon" {strategy} />
+			<svelte:fragment slot="icon">
+				{#if strategyMicrosite && !isOverviewPage}
+					<a href="/strategies/{strategy.id}" aria-label="Home">
+						<StrategyIcon {strategy} />
+					</a>
+				{:else}
+					<StrategyIcon {strategy} />
+				{/if}
+			</svelte:fragment>
 			<div class="title" slot="title">
 				{strategy.name}
 
@@ -94,6 +108,18 @@
 	.strategy-layout {
 		display: grid;
 		gap: var(--space-md);
+
+		&.microsite {
+			margin-top: 1.5rem;
+
+			@media (--viewport-xs) {
+				margin-top: 1rem;
+			}
+
+			a {
+				width: 100%;
+			}
+		}
 
 		:global(.badge) {
 			font-size: clamp(11px, 0.45em, 16px);
