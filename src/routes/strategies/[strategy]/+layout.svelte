@@ -42,7 +42,15 @@
 {:else}
 	<main class="strategy-layout ds-container ds-3" class:microsite={strategyMicrosite}>
 		<PageHeading description={strategy.short_description}>
-			<StrategyIcon slot="icon" {strategy} />
+			<svelte:fragment slot="icon">
+				{#if strategyMicrosite && !isOverviewPage}
+					<a href="/strategies/{strategy.id}" aria-label="Home">
+						<StrategyIcon {strategy} />
+					</a>
+				{:else}
+					<StrategyIcon {strategy} />
+				{/if}
+			</svelte:fragment>
 			<div class="title" slot="title">
 				{strategy.name}
 
@@ -106,6 +114,10 @@
 
 			@media (--viewport-xs) {
 				margin-top: 1rem;
+			}
+
+			a {
+				width: 100%;
 			}
 		}
 
