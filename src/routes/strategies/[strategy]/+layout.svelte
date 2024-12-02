@@ -34,10 +34,7 @@
 	<Breadcrumbs labels={breadcrumbs} />
 {/if}
 
-{#if $page.data.skipSideNav}
-	{#if strategyMicrosite}
-		<Breadcrumbs labels={breadcrumbs} startAt={1} />
-	{/if}
+{#if $page.data.skipSideNav && !strategyMicrosite}
 	<slot />
 {:else}
 	<main class="strategy-layout ds-container ds-3" class:microsite={strategyMicrosite}>
@@ -91,16 +88,23 @@
 			</div>
 		{/if}
 
-		<div class="subpage">
-			<StrategyNav
-				basePath="/strategies/{strategy.id}"
-				currentPath={$page.url.pathname}
-				hasEnzymeVault={strategy.on_chain_data.asset_management_mode === 'enzyme'}
-				backtestAvailable={strategy.backtest_available}
-				portfolioPromise={deferred.state.then((s) => s?.portfolio)}
-			/>
+		{#if $page.data.skipSideNav}
+			{#if strategyMicrosite}
+				<Breadcrumbs labels={breadcrumbs} startAt={2} />
+			{/if}
 			<slot />
-		</div>
+		{:else}
+			<div class="subpage">
+				<StrategyNav
+					basePath="/strategies/{strategy.id}"
+					currentPath={$page.url.pathname}
+					hasEnzymeVault={strategy.on_chain_data.asset_management_mode === 'enzyme'}
+					backtestAvailable={strategy.backtest_available}
+					portfolioPromise={deferred.state.then((s) => s?.portfolio)}
+				/>
+				<slot />
+			</div>
+		{/if}
 	</main>
 {/if}
 
