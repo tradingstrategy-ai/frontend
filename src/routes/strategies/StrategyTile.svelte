@@ -78,7 +78,7 @@
 					<DataBadge status="success">live</DataBadge>
 				{/if}
 
-				{#if isNew && !strategy.new_version_id}
+				{#if isNew && !strategy.newVersionId}
 					<DataBadge status="success">new</DataBadge>
 				{/if}
 
@@ -88,12 +88,12 @@
 					{/each}
 				{/if}
 
-				{#if !simplified && strategy.new_version_id}
+				{#if !simplified && strategy.newVersionId}
 					<Tooltip>
 						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
 						<svelte:fragment slot="popup">
 							This is an outdated strategy. An updated version is available
-							<a href="/strategies/{strategy.new_version_id}">here</a>.
+							<a href="/strategies/{strategy.newVersionId}">here</a>.
 						</svelte:fragment>
 					</Tooltip>
 				{/if}

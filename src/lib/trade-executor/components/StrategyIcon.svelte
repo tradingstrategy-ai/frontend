@@ -6,7 +6,7 @@
 	const localIconUrl = `/avatars/${strategy.id}.webp`;
 	const strategyIconUrl = strategy.icon_url?.replace(/^http:/, 'https:');
 	const dataUrl = strategy.connected ? localIconUrl : strategyIconUrl;
-	const outdated = Boolean(strategy.new_version_id);
+	const outdated = Boolean(strategy.newVersionId);
 </script>
 
 <div class="strategy-icon" class:outdated>
