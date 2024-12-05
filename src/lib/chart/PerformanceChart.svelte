@@ -16,11 +16,11 @@ Display a peformance line chart for a given (static) dataset.
 -->
 <script lang="ts">
 	import type { Quote, Periodicity } from '$lib/chart';
-	import { createEventDispatcher } from 'svelte';
 	import { differenceInCalendarDays } from 'date-fns';
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { merge } from '$lib/helpers/object';
 
 	export let loading = false;
@@ -32,27 +32,21 @@ Display a peformance line chart for a given (static) dataset.
 	let initCallback: Function | undefined = undefined;
 	export { initCallback as init };
 	export let invalidate: any[] = [];
-
-	const dispatch = createEventDispatcher<{
-		change: {
-			first: Maybe<Quote>;
-			last: Maybe<Quote>;
-			firstTickPosition: number;
-		};
-	}>();
+	export let onPeriodPerformanceChange: ((value: MaybeNumber) => void) | undefined = undefined;
 
 	let chartWrapper: HTMLElement;
 
 	let viewportWidth: number;
 	$: hideYAxis = viewportWidth <= 576;
 
-	// if spanDays is not set, assume "max" (full data range)
-	$: if (spanDays === undefined) {
-		const start = data[0]?.DT;
-		spanDays = start ? differenceInCalendarDays(new Date(), start) : 0;
+	$: displayDays = spanDays ?? getMaxDays(data);
+
+	function getMaxDays(quotes: Quote[]) {
+		const start = quotes[0]?.DT;
+		return start ? differenceInCalendarDays(new Date(), start) : 0;
 	}
 
-	$: periodicity = getPeriodicity(spanDays!);
+	$: periodicity = getPeriodicity(displayDays);
 
 	function getPeriodicity(days: number): Periodicity {
 		if (days <= 7) return { period: 1, interval: 1, timeUnit: 'hour' };
@@ -79,10 +73,21 @@ Display a peformance line chart for a given (static) dataset.
 		// update chart colors based on change in value (+/-) for visible data set
 		chartEngine.append('createDataSegment', () => {
 			const dataSegment = chartEngine.getDataSegment();
-			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Close');
-			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Close', true);
-			const direction = determinePriceChangeClass(last?.Close - first?.Close);
+			const first = chartEngine.getFirstLastDataRecord(dataSegment, 'Value');
+			const last = chartEngine.getFirstLastDataRecord(dataSegment, 'Value', true);
 			const firstTickPosition = chartEngine.pixelFromTick(0);
+
+			let initialValue = first?.Value;
+
+			// if max timeframe OR first tick is after start of displayed chart window
+			// use initial value of 0 instead of first quote value (since chart data does
+			// not always start at 0)
+			if (!spanDays || firstTickPosition > 0) {
+				initialValue = 0;
+			}
+
+			const direction = determinePriceChangeClass(last?.Value - initialValue);
+			const periodPerformance = relativeProfitability(initialValue, last?.Value);
 
 			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
@@ -91,7 +96,7 @@ Display a peformance line chart for a given (static) dataset.
 				chartEngine.clearStyles();
 			}
 
-			dispatch('change', { first, last, firstTickPosition });
+			onPeriodPerformanceChange?.(periodPerformance);
 		});
 
 		const updateCallback = initCallback?.(chartEngine);
@@ -105,7 +110,7 @@ Display a peformance line chart for a given (static) dataset.
 
 			chartEngine.setSpan({
 				base: 'day',
-				multiplier: spanDays,
+				multiplier: displayDays,
 				goIntoPast: true
 			});
 

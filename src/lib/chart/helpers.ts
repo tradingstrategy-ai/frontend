@@ -50,7 +50,7 @@ export function isCandleTimeBucket(value: MaybeString): value is CandleTimeBucke
  * @param interval A d3 time interval
  */
 export function normalizeDataForInterval(data: RawTick[], interval: TimeInterval) {
-	return data.reduce((acc, [ts, Value]) => {
+	const normalized = data.reduce((acc, [ts, Value]) => {
 		const date = parseDate(ts);
 		if (!date) return acc;
 		const normalizedDate = interval.floor(date);
@@ -61,6 +61,14 @@ export function normalizeDataForInterval(data: RawTick[], interval: TimeInterval
 		acc.push({ DT: normalizedDate, Value });
 		return acc;
 	}, [] as Quote[]);
+
+	// prepend entry for prior interval (if needed) so starting value doesn't get swallowed
+	if (data[0] && normalized[0] && data[0][1] !== normalized[0].Value) {
+		const priorInterval = interval.offset(normalized[0].DT as Date, -1);
+		normalized.unshift({ DT: priorInterval, Value: data[0][1] });
+	}
+
+	return normalized;
 }
 
 export function rawTicksToQuotes(data: RawTick[]): Quote[] {

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { CIQ } from 'chartiq/js/standard';
 	import type { Candle, Quote, QuoteFeed } from '$lib/chart';
@@ -13,7 +12,6 @@
 	import { getChartClient } from 'trade-executor/chart';
 	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 	import { differenceInCalendarDays } from 'date-fns';
-	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { UpDownCell } from '$lib/components';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { formatProfitability } from 'trade-executor/helpers/formatters';
@@ -40,23 +38,6 @@
 		const age = differenceInCalendarDays(new Date(), firstTs * 1000);
 		return age <= 7 ? '1W' : age <= 30 ? '1M' : '3M';
 	});
-
-	type ChartChangeDetail = ComponentEvents<PerformanceChart>['change']['detail'];
-
-	function updatePeriodPerformance({ first, last, firstTickPosition }: ChartChangeDetail, spanDays: MaybeNumber) {
-		if (!first) return;
-
-		let initialValue = first.Close;
-
-		// if max timeframe OR first tick is after start of displayed chart window
-		// use initial value of 0 instead of first quote value (since chart data does
-		// not always start at 0)
-		if (!spanDays || firstTickPosition > 0) {
-			initialValue = 0;
-		}
-
-		periodPerformance[strategy.id] = relativeProfitability(initialValue, last?.Close);
-	}
 
 	chartClient.fetch({
 		type: 'compounding_unrealised_trading_profitability_sampled',
@@ -174,7 +155,7 @@
 			{spanDays}
 			{init}
 			invalidate={[selectedBenchmarks]}
-			on:change={(e) => updatePeriodPerformance(e.detail, spanDays)}
+			onPeriodPerformanceChange={(value) => (periodPerformance[strategy.id] = value)}
 		/>
 
 		<footer class="benchmark-tokens" slot="footer">
