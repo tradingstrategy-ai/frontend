@@ -39,7 +39,7 @@
 		contracts.fund_value_calculator
 	].every(Boolean);
 
-	const isOutdated = Boolean(strategy.new_version_id);
+	const isOutdated = Boolean(strategy.newVersionId);
 
 	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;

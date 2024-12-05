@@ -20,7 +20,7 @@
 	$: isPrivate = !strategy.tags.includes('live');
 	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
 	$: hasError = shouldDisplayError(strategy, admin);
-	$: isOutdated = Boolean(strategy.new_version_id);
+	$: isOutdated = Boolean(strategy.newVersionId);
 	$: displayWarning = isOverviewPage && (hasError || isOutdated);
 
 	$: breadcrumbs = {
@@ -73,9 +73,9 @@
 					<AlertList status="warning" size="md" let:AlertItem>
 						<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
 							You are viewing an outdated version of this strategy. An updated version is available
-							<a href="/strategies/{strategy.new_version_id}" data-sveltekit-reload>here</a>. To maximize future
-							returns, participants should consider tranfering deposits to the latest version (though there is no
-							guarantee of better performance).
+							<a href="/strategies/{strategy.newVersionId}" data-sveltekit-reload>here</a>. To maximize future returns,
+							participants should consider tranfering deposits to the latest version (though there is no guarantee of
+							better performance).
 						</AlertItem>
 						<AlertItem title="Ongoing execution issues" displayWhen={hasError}>
 							<StrategyError {strategy} />
