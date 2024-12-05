@@ -15,7 +15,7 @@ Display a peformance line chart for a given (static) dataset.
 ```
 -->
 <script lang="ts">
-	import type { Quote, Periodicity } from '$lib/chart';
+	import type { Quote } from '$lib/chart';
 	import { differenceInCalendarDays } from 'date-fns';
 	import { ChartIQ, Marker } from '$lib/chart';
 	import { Timestamp, UpDownCell } from '$lib/components';
@@ -23,37 +23,49 @@ Display a peformance line chart for a given (static) dataset.
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { merge } from '$lib/helpers/object';
 
-	export let loading = false;
-	export let data: Quote[] = [];
-	export let options: any = undefined;
-	export let formatValue: Formatter<MaybeNumber>;
-	export let spanDays: MaybeNumber;
-	export let studies: any[] = [];
-	let initCallback: Function | undefined = undefined;
-	export { initCallback as init };
-	export let invalidate: any[] = [];
-	export let onPeriodPerformanceChange: ((value: MaybeNumber) => void) | undefined = undefined;
+	type Props = {
+		loading?: boolean;
+		data?: Quote[];
+		options?: object;
+		formatValue: Formatter<MaybeNumber>;
+		spanDays: MaybeNumber;
+		studies?: any[];
+		invalidate?: any[];
+		init?: (arg: any) => () => void;
+		onPeriodPerformanceChange?: (value: MaybeNumber) => void;
+	};
+
+	let {
+		loading = false,
+		data = [],
+		options,
+		formatValue,
+		spanDays,
+		studies = [],
+		invalidate = [],
+		init: initCallback,
+		onPeriodPerformanceChange
+	}: Props = $props();
 
 	let chartWrapper: HTMLElement;
 
-	let viewportWidth: number;
-	$: hideYAxis = viewportWidth <= 576;
+	let viewportWidth = $state() as number;
+	let hideYAxis = $derived(viewportWidth <= 576);
 
-	$: displayDays = spanDays ?? getMaxDays(data);
-
-	function getMaxDays(quotes: Quote[]) {
-		const start = quotes[0]?.DT;
+	// set displayDays to spanDays if set; otherwise max data range
+	let displayDays = $derived.by(() => {
+		if (spanDays) return spanDays;
+		const start = data[0]?.DT;
 		return start ? differenceInCalendarDays(new Date(), start) : 0;
-	}
+	});
 
-	$: periodicity = getPeriodicity(displayDays);
-
-	function getPeriodicity(days: number): Periodicity {
-		if (days <= 7) return { period: 1, interval: 1, timeUnit: 'hour' };
-		if (days <= 30) return { period: 4, interval: 1, timeUnit: 'hour' };
-		if (days <= 365) return { period: 1, interval: 1, timeUnit: 'day' };
+	// dynamically set periodicity based on number of days displayed
+	let periodicity = $derived.by(() => {
+		if (displayDays <= 7) return { period: 1, interval: 1, timeUnit: 'hour' };
+		if (displayDays <= 30) return { period: 4, interval: 1, timeUnit: 'hour' };
+		if (displayDays <= 365) return { period: 1, interval: 1, timeUnit: 'day' };
 		return { period: 7, interval: 1, timeUnit: 'day' };
-	}
+	});
 
 	const defaultOptions = {
 		layout: { chartType: 'mountain' },
