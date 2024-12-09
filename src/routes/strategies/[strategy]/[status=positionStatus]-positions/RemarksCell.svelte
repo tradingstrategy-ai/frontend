@@ -58,9 +58,7 @@
 
 	{#if admin && position.hasInconsistentProfitability}
 		<PositionFlag status="warning" label="P" title="Profitability data inconsistent">
-			<p>
-				<Alert size="xs" status="info" title="Note">This info is only displayed to admin users.</Alert>
-			</p>
+			<Alert size="xs" status="info" title="Note">This info is only displayed to admin users.</Alert>
 			<p>
 				This position has inconsistent profitability data. The value from position stats does not match the result of
 				comparing all entry and exit trades.

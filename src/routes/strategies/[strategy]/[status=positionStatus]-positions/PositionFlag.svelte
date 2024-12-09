@@ -1,10 +1,15 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
 	import { DataBadge, Tooltip } from '$lib/components';
 
-	export let label: string;
-	export let title: string;
-	export let status: ComponentProps<DataBadge>['status'] = 'default';
+	type Props = {
+		label: string;
+		title: string;
+		status?: ComponentProps<DataBadge>['status'];
+		children: Snippet;
+	};
+
+	let { label, title, status = 'default', children }: Props = $props();
 </script>
 
 <Tooltip>
@@ -14,7 +19,7 @@
 
 	<div slot="popup" class="tooltip-content">
 		<h4>{title}</h4>
-		<slot />
+		{@render children()}
 	</div>
 </Tooltip>
 
@@ -31,6 +36,7 @@
 
 	.tooltip-content {
 		h4 {
+			margin-bottom: 0.75rem;
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--f-heading-xs-spacing, normal);
 		}
