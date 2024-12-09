@@ -18,6 +18,7 @@
 	}
 </script>
 
+<!-- --table-width needed for proper tr.targetable styling  -->
 <tbody {...attrs}>
 	{#each rows as row, pageRowIndex (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
