@@ -11,6 +11,8 @@
 
 	const { pageIndex, pageSize } = page ?? {};
 
+	let offsetWidth: number;
+
 	function getRowIndex(pageRowIndex: number) {
 		if ($pageIndex !== undefined && $pageSize !== undefined) {
 			return $pageIndex * $pageSize + pageRowIndex + 1;
@@ -19,7 +21,7 @@
 </script>
 
 <!-- --table-width needed for proper tr.targetable styling  -->
-<tbody {...attrs}>
+<tbody {...attrs} bind:offsetWidth style:--table-width="{offsetWidth}px">
 	{#each rows as row, pageRowIndex (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
 			<TableRow attrs={rowAttrs} cells={row.cells} index={getRowIndex(pageRowIndex)} targetable={targetableRows} />
