@@ -1,7 +1,9 @@
 import { getCachedStrategies } from 'trade-executor/models/strategy-info';
 
 export async function load({ fetch }) {
-	const strategies = (await getCachedStrategies(fetch)).filter((s) => s.frontpage);
+	const strategies = await getCachedStrategies(fetch);
 
-	return { strategies };
+	return {
+		strategies: strategies.filter((s) => s.frontpage && s.connected)
+	};
 }
