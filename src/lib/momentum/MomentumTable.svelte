@@ -1,9 +1,5 @@
-<script lang="ts">
-	import UpDownCell from '$lib/components/UpDownCell.svelte';
-	import TargetableLink from '$lib/components/TargetableLink.svelte';
-	import { formatPriceChange } from '$lib/helpers/formatters';
-
-	interface MomentumPair {
+<script lang="ts" module>
+	export type MomentumPair = {
 		chain_name: string;
 		chain_slug: string;
 		exchange_name: string;
@@ -12,10 +8,15 @@
 		pair_slug: string;
 		pair_symbol: string;
 		price_change_24h: number;
-	}
+	};
+</script>
 
-	// Trading pairs to render in this momentum table
-	export let pairs: MomentumPair[];
+<script lang="ts">
+	import UpDownCell from '$lib/components/UpDownCell.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
+	import { formatPriceChange } from '$lib/helpers/formatters';
+
+	let { pairs }: { pairs: MomentumPair[] } = $props();
 </script>
 
 <table class="momentum-table datatable">
@@ -37,10 +38,6 @@
 
 				<td class="pair">
 					{pair.pair_symbol}
-					<TargetableLink
-						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"
-						label="View pair details"
-					/>
 				</td>
 
 				<td class="exchange">
@@ -53,6 +50,11 @@
 
 				<td class="price-change">
 					<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
+
+					<TargetableLink
+						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"
+						label="View {pair.pair_symbol} pair details"
+					/>
 				</td>
 			</tr>
 		{/each}

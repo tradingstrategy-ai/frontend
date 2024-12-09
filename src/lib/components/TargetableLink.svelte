@@ -48,4 +48,28 @@ as the link target.
 			z-index: 2;
 		}
 	}
+
+	/* special case for targetable tr elements to address Mobile Safari bug */
+	:global(tr.targetable td:last-child) {
+		position: relative;
+		overflow: visible;
+
+		a {
+			--container-width: calc(100cqw - (2 * var(--container-margin)));
+			width: var(--table-width, var(--container-width));
+			left: auto;
+		}
+
+		/* revert special-case styles for responsive datatables below "small" breakpoint */
+		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive) & {
+				position: static;
+
+				a {
+					width: auto;
+					left: 0;
+				}
+			}
+		}
+	}
 </style>

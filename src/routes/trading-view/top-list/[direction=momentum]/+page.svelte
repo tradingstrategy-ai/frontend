@@ -6,8 +6,8 @@
 	import MomentumTable from '$lib/momentum/MomentumTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data;
-	$: up = data.direction === 'up';
+	let { data } = $props();
+	let up = $derived(data.direction === 'up');
 </script>
 
 <svelte:head>

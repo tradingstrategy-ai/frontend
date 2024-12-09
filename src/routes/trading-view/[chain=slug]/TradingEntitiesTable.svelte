@@ -7,9 +7,12 @@
 	export let loading = false;
 	export let rows: TradingEntityRow[];
 	export let getHref: Formatter<TradingEntityRow>;
+
+	let offsetWidth: number;
 </script>
 
-<table class="trading-entities-table datatable" class:loading>
+<!-- --table-width needed for proper tr.targetable styling  -->
+<table class="trading-entities-table datatable" class:loading bind:offsetWidth style:--table-width="{offsetWidth}px">
 	<tbody>
 		{#each rows as row}
 			<tr class="targetable">

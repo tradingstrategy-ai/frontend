@@ -1,3 +1,4 @@
+import type { MomentumPair } from '$lib/momentum/MomentumTable.svelte';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 export async function load({ params, fetch }) {
@@ -7,6 +8,6 @@ export async function load({ params, fetch }) {
 
 	return {
 		direction,
-		pairs: data[`top_${direction}_24h_min_liq_1m`]
+		pairs: data[`top_${direction}_24h_min_liq_1m`] as MomentumPair[]
 	};
 }
