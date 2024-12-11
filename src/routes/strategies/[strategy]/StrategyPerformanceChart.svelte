@@ -13,8 +13,7 @@
 	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 	import { differenceInCalendarDays } from 'date-fns';
 	import { UpDownCell } from '$lib/components';
-	import { formatPercent } from '$lib/helpers/formatters';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatPercent, formatProfitability } from '$lib/helpers/formatters';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;

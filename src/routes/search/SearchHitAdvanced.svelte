@@ -2,7 +2,7 @@
 	import type { TradingEntityDocument } from '$lib/search/trading-entities';
 	import { SearchHit, SearchHitDescription } from '$lib/search/components';
 	import { UpDownCell } from '$lib/components';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatProfitability } from '$lib/helpers/formatters';
 	import SearchHitMetrics from './SearchHitMetrics.svelte';
 
 	export let document: TradingEntityDocument;
@@ -20,7 +20,7 @@
 						<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
 					{/if}
 					{#if hasPriceChange}
-						<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
+						<span class="truncate">{formatProfitability(document.price_change_24h)}</span>
 					{/if}
 				</UpDownCell>
 			{/if}

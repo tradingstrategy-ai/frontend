@@ -16,7 +16,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import { inview } from 'svelte-inview';
-	import { formatDollar, formatAmount, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatAmount, formatProfitability } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 
 	export let pairId: number | string;
@@ -67,7 +67,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 			{period}
 		</li>
 		<li class="price-change {priceChangeClass}" class:skeleton>
-			{formatPriceChange(tradeData.price_close / tradeData.price_open - 1)}
+			{formatProfitability(tradeData.price_close / tradeData.price_open - 1)}
 		</li>
 		<li class:skeleton>
 			<!-- coercing 0 values to null in order to render "---" fallback -->

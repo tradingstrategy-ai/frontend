@@ -14,7 +14,7 @@
 <script lang="ts">
 	import UpDownCell from '$lib/components/UpDownCell.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
-	import { formatPriceChange } from '$lib/helpers/formatters';
+	import { formatProfitability } from '$lib/helpers/formatters';
 
 	let { pairs }: { pairs: MomentumPair[] } = $props();
 </script>
@@ -49,7 +49,7 @@
 				</td>
 
 				<td class="price-change">
-					<UpDownCell value={pair.price_change_24h} formatter={formatPriceChange} />
+					<UpDownCell value={pair.price_change_24h} formatter={formatProfitability} />
 
 					<TargetableLink
 						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"

@@ -2,7 +2,7 @@
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import { positionTooltips } from 'trade-executor/models/position-tooltips';
 	import { DataBadge, Tooltip, UpDownIndicator } from '$lib/components';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatProfitability } from '$lib/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
 
 	export let position: TradingPositionInfo;

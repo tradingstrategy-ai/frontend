@@ -3,8 +3,14 @@
 	import MetricsBox from './MetricsBox.svelte';
 	import { UpDownIndicator } from '$lib/components';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
-	import { formatDaysAgo, formatDollar, formatNumber, formatPercent, formatPrice } from '$lib/helpers/formatters';
-	import { formatCycleDuration, formatProfitability, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
+	import {
+		formatDaysAgo,
+		formatDollar,
+		formatNumber,
+		formatPercent,
+		formatProfitability
+	} from '$lib/helpers/formatters';
+	import { formatCycleDuration, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 
 	export let keyMetrics: SummaryKeyMetrics;

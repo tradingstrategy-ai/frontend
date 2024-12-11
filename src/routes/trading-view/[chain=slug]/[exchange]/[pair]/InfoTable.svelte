@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDollar, formatSwapFee, formatPriceChange, formatTokenAmount } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee, formatProfitability, formatTokenAmount } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
@@ -45,7 +45,7 @@
 
 	<TradingDataInfoRow label="Change 24h">
 		<span slot="value" class={priceChangeColorClass}>
-			{formatPriceChange(summary.price_change_24h)}
+			{formatProfitability(summary.price_change_24h)}
 		</span>
 	</TradingDataInfoRow>
 

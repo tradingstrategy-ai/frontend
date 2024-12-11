@@ -7,7 +7,7 @@
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import PairSymbolCell from './PairSymbolCell.svelte';
-	import { formatDollar, formatPriceChange, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatProfitability, formatValue } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let loading = false;
@@ -63,7 +63,7 @@
 		table.column({
 			accessor: 'price_change_24h', // must match sort key
 			header: 'Price Δ 24h',
-			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatPriceChange })
+			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatProfitability })
 		}),
 		table.column({
 			id: 'volume_30d', // must match sort key
@@ -80,7 +80,7 @@
 		table.column({
 			accessor: 'liquidity_change_24h',
 			header: 'Liq Δ 24h',
-			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatPriceChange }),
+			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatProfitability }),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({

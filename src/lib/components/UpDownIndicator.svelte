@@ -6,7 +6,7 @@ a lightweight visual representation is needed. See `UpDownCell.svelte` for a mor
 @example
 
 ```svelte
-	<UpDownIndicator value={priceChange} formatter={formatPriceChange} />
+	<UpDownIndicator value={priceChange} formatter={formatProfitability} />
 	<UpDownIndicator value={100}>Slot content</UpDownIndicator>
 ```
 -->

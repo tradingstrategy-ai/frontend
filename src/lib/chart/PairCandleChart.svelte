@@ -24,7 +24,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	import type { ChartLinker, QuoteFeed, TimeBucket } from '$lib/chart';
 	import { timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { Alert } from '$lib/components';
-	import { formatDollar, formatPriceChange, formatTokenAmount } from '$lib/helpers/formatters';
+	import { formatProfitability, formatTokenAmount } from '$lib/helpers/formatters';
 
 	export let feed: QuoteFeed;
 	export let pairId: number | string;
@@ -113,7 +113,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 				<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
 				<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
 				<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
-				<HudMetric value={formatPriceChange(priceChangePct)} {direction} />
+				<HudMetric value={formatProfitability(priceChangePct)} {direction} />
 			</HudRow>
 
 			<slot name="hud-row-volume" {cursor} formatter={formatForHud} />

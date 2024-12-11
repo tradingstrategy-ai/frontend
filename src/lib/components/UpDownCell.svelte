@@ -7,7 +7,7 @@ or other contexts where a stronger visual representation is desired.
 @example
 
 ```svelte
-<UpDownCell value={priceChange} formatter={formatPriceChange} />
+<UpDownCell value={priceChange} formatter={formatProfitability} />
 <UpDownCell value={100}>Slot content</UpDownIndicator>
 ```
 -->

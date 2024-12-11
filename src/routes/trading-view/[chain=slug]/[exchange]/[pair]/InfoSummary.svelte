@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import { formatDollar, formatProfitability } from '$lib/helpers/formatters';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatDistanceToNowStrict } from 'date-fns';
 	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
@@ -64,7 +64,7 @@
 		<strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong>
 		and is
 		<strong class={priceChangeColorClass}>
-			{formatPriceChange(summary.price_change_24h)}
+			{formatProfitability(summary.price_change_24h)}
 			{summary.price_change_24h > 0 ? 'up' : summary.price_change_24h < 0 ? 'down' : ''}
 		</strong>
 		against US Dollar for the last 24h.

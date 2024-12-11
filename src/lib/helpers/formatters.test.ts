@@ -1,65 +1,4 @@
-import { formatByteUnits, formatDollar, formatNumber, formatTokenAmount } from './formatters';
-
-describe('formatTokenAmount', () => {
-	test('should return `---` for null or undefined', () => {
-		expect(formatTokenAmount(null)).toBe('---');
-		expect(formatTokenAmount(undefined)).toBe('---');
-	});
-
-	test('should support numeric or string input', () => {
-		expect(formatTokenAmount(1)).toBe('1.00');
-		expect(formatTokenAmount('1')).toBe('1.00');
-		expect(formatTokenAmount('1.00')).toBe('1.00');
-	});
-
-	test('should round to two digits and show $ prefix by default', () => {
-		expect(formatTokenAmount(123.456)).toEqual('123.46');
-	});
-
-	test('should format 0 and -0 correctly', () => {
-		expect(formatTokenAmount(0)).toEqual('0.00');
-		expect(formatTokenAmount(-0)).toEqual('0.00');
-	});
-
-	test('should use compact format magnitude abbreviations', () => {
-		expect(formatTokenAmount(1234.56)).toEqual('1.23K');
-		expect(formatTokenAmount(12345.67)).toEqual('12.35K');
-		expect(formatTokenAmount(1_234_567)).toEqual('1.23M');
-		expect(formatTokenAmount(1_234_567_890)).toEqual('1.23B');
-		expect(formatTokenAmount(1_234_567_890_123)).toEqual('1.23T');
-	});
-
-	test('should use scientific format for ery small/large numbelrs', () => {
-		expect(formatTokenAmount(1e-7)).toEqual('1.00E-7');
-		expect(formatTokenAmount(1e15)).toEqual('1.00E15');
-	});
-
-	test('should display minDigits digits when specified', () => {
-		expect(formatTokenAmount(12345.67, 3)).toEqual('12.346K');
-		expect(formatTokenAmount(123.4567, 3)).toEqual('123.457');
-		expect(formatTokenAmount(0.00123, 3)).toEqual('0.00123');
-		expect(formatTokenAmount(1, 3)).toEqual('1.000');
-	});
-
-	test('should display up to maxPrecision significant digits when specified', () => {
-		expect(formatTokenAmount(12345.67, 2, 3)).toEqual('12.35K');
-		expect(formatTokenAmount(123.4567, 2, 3)).toEqual('123.46');
-		expect(formatTokenAmount(0.00123, 2, 3)).toEqual('0.00123');
-		expect(formatTokenAmount(1, 2, 3)).toEqual('1.00');
-	});
-});
-
-describe('formatDollar', () => {
-	test('should include $ prefix', () => {
-		expect(formatDollar(123.456)).toEqual('$123.46');
-	});
-
-	// Testing implementation details to ensure that all of the features
-	// of formatTokenAmount are also supported
-	test('should use formatTokenAmount under the hood', () => {
-		expect(formatDollar.toString()).toContain('formatTokenAmount');
-	});
-});
+import { formatByteUnits, formatDollar, formatNumber, formatProfitability, formatTokenAmount } from './formatters';
 
 describe('formatNumber', () => {
 	test('should round to two digits by default', () => {
@@ -113,6 +52,107 @@ describe('formatNumber', () => {
 		expect(formatNumber(NaN)).toEqual('---');
 		expect(formatNumber('')).toEqual('---');
 		expect(formatNumber('foo')).toEqual('---');
+	});
+});
+
+describe('formatDollar', () => {
+	test('should include $ prefix', () => {
+		expect(formatDollar(123.456)).toEqual('$123.46');
+	});
+
+	// Testing implementation details to ensure that all of the features
+	// of formatTokenAmount are also supported
+	test('should use formatTokenAmount under the hood', () => {
+		expect(formatDollar.toString()).toContain('formatTokenAmount');
+	});
+});
+
+describe('formatTokenAmount', () => {
+	test('should return `---` for null or undefined', () => {
+		expect(formatTokenAmount(null)).toBe('---');
+		expect(formatTokenAmount(undefined)).toBe('---');
+	});
+
+	test('should support numeric or string input', () => {
+		expect(formatTokenAmount(1)).toBe('1.00');
+		expect(formatTokenAmount('1')).toBe('1.00');
+		expect(formatTokenAmount('1.00')).toBe('1.00');
+	});
+
+	test('should round to two digits and show $ prefix by default', () => {
+		expect(formatTokenAmount(123.456)).toEqual('123.46');
+	});
+
+	test('should format 0 and -0 correctly', () => {
+		expect(formatTokenAmount(0)).toEqual('0.00');
+		expect(formatTokenAmount(-0)).toEqual('0.00');
+	});
+
+	test('should use compact format magnitude abbreviations', () => {
+		expect(formatTokenAmount(1234.56)).toEqual('1.23K');
+		expect(formatTokenAmount(12345.67)).toEqual('12.35K');
+		expect(formatTokenAmount(1_234_567)).toEqual('1.23M');
+		expect(formatTokenAmount(1_234_567_890)).toEqual('1.23B');
+		expect(formatTokenAmount(1_234_567_890_123)).toEqual('1.23T');
+	});
+
+	test('should use scientific format for ery small/large numbelrs', () => {
+		expect(formatTokenAmount(1e-7)).toEqual('1.00E-7');
+		expect(formatTokenAmount(1e15)).toEqual('1.00E15');
+	});
+
+	test('should display minDigits digits when specified', () => {
+		expect(formatTokenAmount(12345.67, 3)).toEqual('12.346K');
+		expect(formatTokenAmount(123.4567, 3)).toEqual('123.457');
+		expect(formatTokenAmount(0.00123, 3)).toEqual('0.00123');
+		expect(formatTokenAmount(1, 3)).toEqual('1.000');
+	});
+
+	test('should display up to maxPrecision significant digits when specified', () => {
+		expect(formatTokenAmount(12345.67, 2, 3)).toEqual('12.35K');
+		expect(formatTokenAmount(123.4567, 2, 3)).toEqual('123.46');
+		expect(formatTokenAmount(0.00123, 2, 3)).toEqual('0.00123');
+		expect(formatTokenAmount(1, 2, 3)).toEqual('1.00');
+	});
+});
+
+describe('formatProfitability', () => {
+	test('should return `---` for null or undefined', () => {
+		expect(formatProfitability(null)).toBe('---');
+		expect(formatProfitability(undefined)).toBe('---');
+	});
+
+	test('should support numeric or string input', () => {
+		expect(formatProfitability(0.01)).toBe('▲ 1.0%');
+		expect(formatProfitability('0.01')).toBe('▲ 1.0%');
+	});
+
+	test('should have neutral direction indicator for value of zero', () => {
+		expect(formatProfitability(0.0)).toBe('◼︎ 0.0%');
+		expect(formatProfitability(-0.0)).toBe('◼︎ 0.0%');
+	});
+
+	test('should have neutral direction indicator for values that round to zero', () => {
+		expect(formatProfitability(0.0001)).toBe('◼︎ 0.0%');
+		expect(formatProfitability(-0.0001)).toBe('◼︎ 0.0%');
+	});
+
+	test('should have up direction indicator for positive values', () => {
+		expect(formatProfitability(0.001)).toBe('▲ 0.1%');
+		expect(formatProfitability(0.01)).toBe('▲ 1.0%');
+	});
+
+	test('should have down direction indicator for negative values', () => {
+		expect(formatProfitability(-0.001)).toBe('▼ 0.1%');
+		expect(formatProfitability(-0.01)).toBe('▼ 1.0%');
+	});
+
+	test('should display 1 decimal of precision by default', () => {
+		expect(formatProfitability(5)).toBe('▲ 500.0%');
+		expect(formatProfitability(0.5)).toBe('▲ 50.0%');
+		expect(formatProfitability(0.05)).toBe('▲ 5.0%');
+		expect(formatProfitability(0.005)).toBe('▲ 0.5%');
+		expect(formatProfitability(0.0005)).toBe('▲ 0.1%');
 	});
 });
 

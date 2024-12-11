@@ -6,19 +6,6 @@
 import { formatNumber, formatPercent, toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
 
 /**
- * Format how much profit a position has made.
- * @param n - number to format
- */
-export function formatProfitability(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits): string {
-	n = toFloatingPoint(n);
-	if (!isNumber(n)) return notFilledMarker;
-
-	const symbol = n === 0 ? '◼︎' : n > 0 ? '▲' : '▼';
-	const percentStr = formatPercent(Math.abs(n), minDigits, maxPrecision);
-	return `${symbol} ${percentStr}`;
-}
-
-/**
  * Format basis points (BPS)
  *
  * No unit suffix added.

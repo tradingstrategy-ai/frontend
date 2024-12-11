@@ -4,9 +4,8 @@
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
 	import { determineProfitability } from 'trade-executor/helpers/profit';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatProfitability } from '$lib/helpers/formatters';
 	import { Timestamp, UpDownCell } from '$lib/components';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';

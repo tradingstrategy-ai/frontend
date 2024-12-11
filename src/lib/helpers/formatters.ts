@@ -8,8 +8,6 @@ const DAY = HOUR * 24;
 // thresholds for determining when to use scientific notation
 const VERY_SMALL_USD_VALUE = 1e-6; // 0.000001
 const VERY_LARGE_USD_VALUE = 1e15; // 1,000,000,000,000 = 1,000T
-const VERY_SMALL_PERCENT = 1e-8; // 0.000001%
-const VERY_LARGE_PERCENT = 1e4; // 1,000,000%
 
 const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
@@ -188,10 +186,18 @@ export function formatPrice(
 	});
 }
 
-export function formatPriceChange(n: MaybeNumberlike, minDigits = 1, maxPrecision = minDigits) {
+/**
+ * Format a value representing profit/loss or a price change.
+ *
+ * @param n - number to format
+ */
+export function formatProfitability(n: MaybeNumberlike): string {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
-	return `${n > 0 ? '▲' : '▼'} ${formatPercent(Math.abs(n), minDigits, maxPrecision)}`;
+
+	const percentStr = formatPercent(Math.abs(n));
+	const symbol = percentStr === '0.0%' ? '◼︎' : n > 0 ? '▲' : '▼';
+	return `${symbol} ${percentStr}`;
 }
 
 /**
@@ -252,15 +258,15 @@ export function formatShortAddress(address: MaybeString): string {
 export function formatPercent(
 	n: MaybeNumberlike,
 	minDigits = 1,
-	maxPrecision = minDigits,
+	maxDigits = minDigits,
 	options: Intl.NumberFormatOptions = {}
 ) {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
-	const notation = isExtreme(n, VERY_SMALL_PERCENT, VERY_LARGE_PERCENT) ? 'scientific' : 'standard';
-	return formatNumber(n, minDigits, maxPrecision, {
-		notation,
+	return n.toLocaleString('en-US', {
+		minimumFractionDigits: minDigits,
+		maximumFractionDigits: maxDigits,
 		style: 'percent',
 		...options
 	});
