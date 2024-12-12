@@ -3,11 +3,11 @@
 	import { type Writable, writable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
-	import UpDownCell from '$lib/components/UpDownCell.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import PairSymbolCell from './PairSymbolCell.svelte';
-	import { formatDollar, formatProfitability, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatValue } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let loading = false;
@@ -63,25 +63,13 @@
 		table.column({
 			accessor: 'price_change_24h', // must match sort key
 			header: 'Price Δ 24h',
-			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatProfitability })
+			cell: ({ value }) => createRender(Profitability, { of: value, boxed: true })
 		}),
 		table.column({
 			id: 'volume_30d', // must match sort key
 			accessor: 'usd_volume_30d',
 			header: 'Vol 30d',
 			cell: ({ value }) => formatDollar(value)
-		}),
-		table.column({
-			id: 'liquidity', // must match sort key
-			accessor: 'usd_liquidity_latest',
-			header: 'Liquidity',
-			cell: ({ value }) => formatDollar(value)
-		}),
-		table.column({
-			accessor: 'liquidity_change_24h',
-			header: 'Liq Δ 24h',
-			cell: ({ value }) => createRender(UpDownCell, { value, formatter: formatProfitability }),
-			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'tvl', // must match sort key
@@ -118,7 +106,7 @@
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			:is(.usd_price_latest, .price_change_24h, .volume_30d, .liquidity, .liquidity_change_24h, .tvl) {
+			:is(.usd_price_latest, .price_change_24h, .volume_30d, .tvl) {
 				max-width: 12ch;
 				text-align: right;
 				overflow: hidden;
@@ -136,6 +124,16 @@
 
 			.price_change_24h {
 				padding: 0 var(--space-xs);
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--f-ui-sm-spacing, normal);
+			}
+		}
+
+		@media (--viewport-sm-down) {
+			.price_change_24h {
+				width: fit-content;
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--f-ui-md-spacing, normal);
 			}
 		}
 	}

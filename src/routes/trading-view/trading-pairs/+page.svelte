@@ -34,12 +34,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<PairTable
-			{...pairs}
-			{...options}
-			{loading}
-			hiddenColumns={['liquidity', 'liquidity_change_24h']}
-			on:change={handleChange}
-		/>
+		<PairTable {...pairs} {...options} {loading} on:change={handleChange} />
 	</Section>
 </main>
