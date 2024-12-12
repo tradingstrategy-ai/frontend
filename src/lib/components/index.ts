@@ -29,6 +29,7 @@ export { default as MoneyInput } from './MoneyInput.svelte';
 export { default as NavPanel } from './NavPanel.svelte';
 export { default as PageHeader } from './PageHeader.svelte';
 export { default as PageHeading } from './PageHeading.svelte';
+export { default as Profitability } from './Profitability.svelte';
 export { default as Select } from './Select.svelte';
 export { default as Section } from './Section.svelte';
 export { default as SegmentedControl } from './SegmentedControl.svelte';

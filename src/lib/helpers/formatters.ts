@@ -16,7 +16,7 @@ export function toFloatingPoint(n: MaybeNumberlike) {
 		return parseFloat(n);
 	}
 
-	return n;
+	return n ?? undefined;
 }
 
 // Type predicate to help TypeScript properly narrow type to number

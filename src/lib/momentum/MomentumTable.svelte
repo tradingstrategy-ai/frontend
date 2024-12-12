@@ -12,9 +12,8 @@
 </script>
 
 <script lang="ts">
-	import UpDownCell from '$lib/components/UpDownCell.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
-	import { formatProfitability } from '$lib/helpers/formatters';
 
 	let { pairs }: { pairs: MomentumPair[] } = $props();
 </script>
@@ -49,7 +48,7 @@
 				</td>
 
 				<td class="price-change">
-					<UpDownCell value={pair.price_change_24h} formatter={formatProfitability} />
+					<Profitability of={pair.price_change_24h} boxed class="price-change-value" />
 
 					<TargetableLink
 						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"
@@ -72,7 +71,15 @@
 		}
 
 		.price-change {
-			padding: 0 var(--space-xs);
+			padding-inline: 0.625em;
+			text-align: right;
+
+			:global(.price-change-value) {
+				@media (--viewport-md-up) {
+					font: var(--f-ui-sm-medium);
+					letter-spacing: var(--f-ui-sm-spacing, normal);
+				}
+			}
 		}
 
 		/* Remove less relevant columns on mobile */

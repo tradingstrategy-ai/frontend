@@ -1,15 +1,9 @@
 <script lang="ts">
 	import type { SummaryKeyMetrics } from 'trade-executor/schemas/summary';
 	import MetricsBox from './MetricsBox.svelte';
-	import { UpDownIndicator } from '$lib/components';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
-	import {
-		formatDaysAgo,
-		formatDollar,
-		formatNumber,
-		formatPercent,
-		formatProfitability
-	} from '$lib/helpers/formatters';
+	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { formatCycleDuration, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 
@@ -29,11 +23,11 @@
 					{backtestLink}
 					let:value
 				>
-					<UpDownIndicator {value} formatter={formatProfitability} />
+					<Profitability of={value} />
 				</KeyMetric>
 			{:else}
 				<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
-					<UpDownIndicator {value} formatter={formatProfitability} />
+					<Profitability of={value} />
 				</KeyMetric>
 			{/if}
 		</MetricsBox>

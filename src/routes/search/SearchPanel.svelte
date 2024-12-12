@@ -2,7 +2,7 @@
 	import type { TradingEntityHit } from '$lib/search/trading-entities';
 	import { createEventDispatcher } from 'svelte';
 	import { Button, Spinner, TextInput } from '$lib/components';
-	import { SearchHit } from '$lib/search/components';
+	import SearchHit from '$lib/search/components/SearchHit.svelte';
 	import SearchHitAdvanced from './SearchHitAdvanced.svelte';
 	import SortSelect from './SortSelect.svelte';
 	import IconFilter from '~icons/local/filter';

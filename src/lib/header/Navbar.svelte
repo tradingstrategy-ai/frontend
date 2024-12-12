@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Header, MenuItem, Section } from '$lib/components';
-	import { Search } from '$lib/search/components';
+	import Search from '$lib/search/components/Search.svelte';
 
 	$: currentPage = $page.url.pathname;
 	$: showSearch = $page.url.pathname !== '/search';

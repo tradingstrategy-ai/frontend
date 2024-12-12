@@ -12,8 +12,8 @@
 	import { getChartClient } from 'trade-executor/chart';
 	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 	import { differenceInCalendarDays } from 'date-fns';
-	import { UpDownCell } from '$lib/components';
-	import { formatPercent, formatProfitability } from '$lib/helpers/formatters';
+	import Profitability from '$lib/components/Profitability.svelte';
+	import { formatPercent } from '$lib/helpers/formatters';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -141,7 +141,7 @@
 	<ChartContainer selected={initialTimeframe} let:timeSpan={{ spanDays, interval }}>
 		<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
 			{#if periodPerformance[strategy.id] !== undefined}
-				<UpDownCell value={periodPerformance[strategy.id]} formatter={formatProfitability} />
+				<Profitability of={periodPerformance[strategy.id]} boxed class="performance-value" />
 				{performanceLabel}
 			{/if}
 		</div>
@@ -195,22 +195,22 @@
 	}
 
 	.period-performance {
-		:global([data-css-props]) {
-			--up-down-font: var(--f-ui-lg-medium);
-			--up-down-letter-spacing: var(--ls-ui-lg);
-
-			@media (--viewport-md-down) {
-				--up-down-font: var(--f-ui-md-medium);
-				--up-down-letter-spacing: var(--ls-ui-md);
-			}
-		}
-
 		display: flex;
 		gap: 1em;
 		align-items: center;
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm);
 		color: var(--c-text-extra-light);
+
+		:global(.performance-value) {
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--ls-ui-lg);
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md);
+			}
+		}
 	}
 
 	.benchmark-tokens {

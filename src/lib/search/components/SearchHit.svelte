@@ -14,9 +14,8 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 -->
 <script lang="ts">
 	import type { TradingEntityDocument } from '../trading-entities';
-	import { formatPercent } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { UpDownCell } from '$lib/components';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import IconWarning from '~icons/local/warning';
 	import SearchHitDescription from './SearchHitDescription.svelte';
 
@@ -72,7 +71,7 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 				{#if isLowQuality}
 					<IconWarning --icon-size="1.25em" />
 				{:else if hasPriceChange}
-					<UpDownCell value={document.price_change_24h} formatter={(val) => formatPercent(Math.abs(val))} />
+					<Profitability of={document.price_change_24h} boxed class="price-change truncate" />
 				{/if}
 			</slot>
 		</a>
@@ -126,10 +125,13 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 			&:is(:hover, :focus) :global(.up-down-indicator) {
 				background: var(--background-hover);
 			}
+		}
 
-			:global .up-down-cell {
-				max-width: min(20vw, 12rem);
-			}
+		:global(.price-change) {
+			max-width: min(20vw, 12rem);
+			padding-inline: 0.625em;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
 		}
 
 		.badge {
