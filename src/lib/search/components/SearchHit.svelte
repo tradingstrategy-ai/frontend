@@ -120,9 +120,9 @@ If `document` prop is `undefined`, a skeleton loader is rendered.
 				opacity: 0.35;
 			}
 
-			/* see tile.css and UpDownCell.svelte */
+			/* see tile.css and Profitability.svelte */
 			&:focus,
-			&:is(:hover, :focus) :global(.up-down-indicator) {
+			&:is(:hover, :focus) :global(.profitability.boxed) {
 				background: var(--background-hover);
 			}
 		}
