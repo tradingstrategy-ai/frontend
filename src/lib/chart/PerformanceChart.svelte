@@ -17,8 +17,8 @@ Display a peformance line chart for a given (static) dataset.
 <script lang="ts">
 	import type { Quote } from '$lib/chart';
 	import { differenceInCalendarDays } from 'date-fns';
-	import { ChartIQ, Marker } from '$lib/chart';
-	import { Timestamp, UpDownCell } from '$lib/components';
+	import ChartIQ from '$lib/chart/ChartIQ.svelte';
+	import ChartTooltip from './ChartTooltip.svelte';
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
 	import { merge } from '$lib/helpers/object';
@@ -147,16 +147,7 @@ Display a peformance line chart for a given (static) dataset.
 		invalidate={[data, periodicity, hideYAxis, ...invalidate]}
 		let:cursor
 	>
-		{@const { position, data } = cursor}
-		{#if data}
-			<Marker x={position.DateX} y={position.CloseY} size={4.5} />
-			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
-				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'hour'} />
-					<div class="value">{formatValue(data.Close, 2)}</div>
-				</UpDownCell>
-			</div>
-		{/if}
+		<ChartTooltip {cursor} withTime={periodicity.timeUnit === 'hour'} {formatValue} />
 	</ChartIQ>
 </div>
 
@@ -171,22 +162,6 @@ Display a peformance line chart for a given (static) dataset.
 
 			@media (--viewport-xs) {
 				--chart-aspect-ratio: 1.25;
-			}
-		}
-
-		.chart-hover-info {
-			position: absolute;
-			left: var(--x);
-			top: var(--y);
-			transform: translate(-50%, calc(-100% - var(--space-md)));
-
-			:global(time) {
-				color: var(--c-text-extra-light);
-			}
-
-			.value {
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { type Quote, ChartIQ, Marker, calculateYAxisRange } from '$lib/chart';
-	import { UpDownCell, Timestamp } from '$lib/components';
+	import ChartTooltip from '$lib/chart/ChartTooltip.svelte';
 
 	export let data: Quote[] = [];
 	export let dateRange: [Date?, Date?];
@@ -67,16 +67,7 @@
 
 <figure class="chart-thumbnail ds-3 {getProfitChangeClass()}">
 	<ChartIQ {init} {options} let:cursor>
-		{@const { position, data } = cursor}
-		{#if data}
-			<Marker x={position.DateX} y={position.CloseY} size={4} />
-			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
-				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.adjustedDate} />
-					<div class="value">{formatPercent(data.Close, 2)}</div>
-				</UpDownCell>
-			</div>
-		{/if}
+		<ChartTooltip {cursor} formatValue={formatPercent} />
 	</ChartIQ>
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>
@@ -108,21 +99,6 @@
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
-		}
-	}
-
-	.chart-hover-info {
-		position: absolute;
-		left: var(--x);
-		top: var(--y);
-		transform: translate(-50%, calc(-100% - var(--space-md)));
-
-		:global(time) {
-			color: var(--c-text-extra-light);
-		}
-
-		.value {
-			font: var(--f-ui-md-medium);
 		}
 	}
 </style>

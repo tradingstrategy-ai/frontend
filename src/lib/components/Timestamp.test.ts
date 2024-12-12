@@ -20,16 +20,14 @@ describe('Timestamp component', () => {
 		const { container } = render(Timestamp, { date, withTime: true });
 		const timeEl = container.querySelector('time');
 		// getByText does not search across inline HTML tags; use toHaveTextContent instead
-		// note: space between date and time is injected via CSS
-		expect(timeEl).toHaveTextContent('2023-01-0112:00');
+		expect(timeEl).toHaveTextContent('2023-01-01 12:00');
 	});
 
 	test('should render iso date with time including seconds', () => {
 		const { container } = render(Timestamp, { date, withSeconds: true });
 		const timeEl = container.querySelector('time');
 		// getByText does not search across inline HTML tags; use toHaveTextContent instead
-		// note: space between date and time is injected via CSS
-		expect(timeEl).toHaveTextContent('2023-01-0112:00:00');
+		expect(timeEl).toHaveTextContent('2023-01-01 12:00:00');
 	});
 
 	test('should render relative date string', () => {
