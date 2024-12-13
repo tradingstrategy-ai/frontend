@@ -19,8 +19,8 @@ Display a peformance line chart for a given (static) dataset.
 	import { differenceInCalendarDays } from 'date-fns';
 	import ChartIQ from '$lib/chart/ChartIQ.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { merge } from '$lib/helpers/object';
 
 	type Props = {
@@ -32,7 +32,7 @@ Display a peformance line chart for a given (static) dataset.
 		studies?: any[];
 		invalidate?: any[];
 		init?: (arg: any) => () => void;
-		onPeriodPerformanceChange?: (value: MaybeNumber) => void;
+		onPeriodPerformanceChange?: (value: ProfitInfo) => void;
 	};
 
 	let {
@@ -98,13 +98,12 @@ Display a peformance line chart for a given (static) dataset.
 				initialValue = 0;
 			}
 
-			const direction = determinePriceChangeClass(last?.Value - initialValue);
-			const periodPerformance = relativeProfitability(initialValue, last?.Value);
+			const periodPerformance = getProfitInfo(relativeProfitability(initialValue, last?.Value));
 
 			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
-			if (chartWrapper.dataset.direction !== direction) {
-				chartWrapper.dataset.direction = direction;
+			if (chartWrapper.dataset.direction !== periodPerformance.directionClass) {
+				chartWrapper.dataset.direction = periodPerformance.directionClass;
 				chartEngine.clearStyles();
 			}
 

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { type Quote, ChartIQ, Marker, calculateYAxisRange } from '$lib/chart';
+	import { type Quote, ChartIQ, calculateYAxisRange } from '$lib/chart';
 	import ChartTooltip from '$lib/chart/ChartTooltip.svelte';
 
 	export let data: Quote[] = [];
@@ -9,6 +10,9 @@
 
 	// used for setting yAxis zoom
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
+
+	// TODO: should be based on displayed data range rather than full range
+	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.Value, data.at(-1)?.Value));
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -23,12 +27,6 @@
 			yAxis: { noDraw: true, min, max }
 		}
 	};
-
-	function getProfitChangeClass() {
-		const first = data[0]?.Value ?? 0;
-		const last = data.at(-1)?.Value ?? 0;
-		return determinePriceChangeClass(last - first);
-	}
 
 	function init(chartEngine: any) {
 		// add thin baseline at y=0
@@ -65,7 +63,7 @@
 	}
 </script>
 
-<figure class="chart-thumbnail ds-3 {getProfitChangeClass()}">
+<figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
 	<ChartIQ {init} {options} let:cursor>
 		<ChartTooltip {cursor} formatValue={formatPercent} />
 	</ChartIQ>

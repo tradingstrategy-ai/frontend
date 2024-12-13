@@ -154,7 +154,7 @@
 			{spanDays}
 			{init}
 			invalidate={[selectedBenchmarks]}
-			onPeriodPerformanceChange={(value) => (periodPerformance[strategy.id] = value)}
+			onPeriodPerformanceChange={({ value }) => (periodPerformance[strategy.id] = value)}
 		/>
 
 		<footer class="benchmark-tokens" slot="footer">
