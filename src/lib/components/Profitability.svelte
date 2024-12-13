@@ -63,12 +63,11 @@ using the component isn't practical.
 	function formatProfitability(value: number | undefined) {
 		if (!isNumber(value)) return;
 
-		const absValue = Math.abs(value);
-
-		return absValue.toLocaleString('en-us', {
+		return value.toLocaleString('en-us', {
 			minimumFractionDigits: 1,
-			maximumFractionDigits: absValue < 0.001 ? 2 : 1,
-			style: 'percent'
+			maximumFractionDigits: Math.abs(value) < 0.001 ? 2 : 1,
+			style: 'percent',
+			signDisplay: 'never'
 		});
 	}
 
