@@ -110,15 +110,15 @@ using the component isn't practical.
 		&.boxed {
 			border-radius: var(--radius-sm);
 			padding: 0.5em 0.75em;
-			background: var(--c-box-2);
+
+			&.neutral {
+				background: var(--c-box-2);
+				--background-hover: var(--c-box-4);
+			}
 
 			&:is(.bullish, .bearish) {
 				background: color-mix(in srgb, transparent, currentColor 12%);
 				--background-hover: color-mix(in srgb, transparent, currentColor 24%);
-
-				&:hover {
-					background: var(--background-hover);
-				}
 			}
 		}
 	}

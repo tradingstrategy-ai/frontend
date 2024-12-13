@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { CopyWidget, CryptoAddressWidget, Profitability } from '$lib/components';
+	import { CopyWidget, CryptoAddressWidget } from '$lib/components';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatDistanceToNowStrict } from 'date-fns';
 
@@ -15,6 +16,8 @@
 
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
+
+	$: priceChange = getProfitInfo(summary.price_change_24h);
 
 	let copyWidget: CopyWidget;
 
@@ -58,19 +61,12 @@
 			{summary.base_token_symbol}
 		</a>
 		in <strong>{summary.pair_symbol}</strong> pair is
-		<Profitability of={summary.price_change_24h}>
-			<strong>{formatDollar(summary.usd_price_latest)}</strong>
-		</Profitability>
+		<strong class={priceChange.directionClass}>{formatDollar(summary.usd_price_latest)}</strong>
 		and is
-		<Profitability of={summary.price_change_24h}>
-			{#snippet children({ marker, formatted, direction })}
-				<strong>
-					{marker}
-					{formatted}
-					{direction > 0 ? 'up' : direction < 0 ? 'down' : ''}
-				</strong>
-			{/snippet}
-		</Profitability>
+		<strong class={priceChange.directionClass}>
+			{priceChange}
+			{priceChange.getLabel('down', '', 'up')}
+		</strong>
 		against US Dollar for the last 24h.
 	</p>
 

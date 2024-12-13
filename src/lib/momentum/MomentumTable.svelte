@@ -48,7 +48,7 @@
 				</td>
 
 				<td class="price-change">
-					<Profitability of={pair.price_change_24h} boxed class="price-change-value" />
+					<Profitability of={pair.price_change_24h} boxed />
 
 					<TargetableLink
 						href="/trading-view/{pair.chain_slug}/{pair.exchange_slug}/{pair.pair_slug}"
@@ -74,7 +74,7 @@
 			padding-inline: 0.625em;
 			text-align: right;
 
-			:global(.price-change-value) {
+			&:is(td) {
 				@media (--viewport-md-up) {
 					font: var(--f-ui-sm-medium);
 					letter-spacing: var(--f-ui-sm-spacing, normal);

@@ -97,8 +97,8 @@
 				color: var(--c-text-inverted);
 			}
 
-			.profitability.boxed:is(.bullish, .bearish) {
-				background: var(--background-hover);
+			.profitability.boxed {
+				background: var(--background-hover) !important;
 			}
 		}
 	}

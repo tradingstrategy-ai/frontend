@@ -1,16 +1,19 @@
 <script lang="ts">
-	import { Profitability, Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
+	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 	import { formatDollar, formatSwapFee, formatTokenAmount } from '$lib/helpers/formatters';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
 	export let summary: Record<string, any>;
 	export let details: Record<string, any>;
+
+	$: priceChange = getProfitInfo(summary.price_change_24h);
+
+	$: tokenPrice = calculateTokenPrice(summary.exchange_rate, summary.usd_price_latest);
 
 	// Reverse-calculate raw price using the US/quota token exchange rate
 	function calculateTokenPrice(exchangeRate: number, priceUsd: number) {
 		return exchangeRate ? priceUsd / exchangeRate : null;
 	}
-
-	$: tokenPrice = calculateTokenPrice(summary.exchange_rate, summary.usd_price_latest);
 </script>
 
 <TradingDataInfo>
@@ -27,22 +30,24 @@
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Price">
-		<Profitability of={summary.price_change_24h} slot="value">
+		<span slot="value" class={priceChange.directionClass}>
 			{formatTokenAmount(summary.usd_price_latest, 3)} USD
-		</Profitability>
+		</span>
 	</TradingDataInfoRow>
 
 	{#if tokenPrice}
 		<TradingDataInfoRow label="Token price">
-			<Profitability of={summary.price_change_24h} slot="value">
+			<span slot="value" class={priceChange.directionClass}>
 				{formatTokenAmount(tokenPrice, 3)}
 				{summary.quote_token_symbol_friendly}
-			</Profitability>
+			</span>
 		</TradingDataInfoRow>
 	{/if}
 
 	<TradingDataInfoRow label="Change 24h">
-		<Profitability of={summary.price_change_24h} slot="value" />
+		<span slot="value" class={priceChange.directionClass}>
+			{priceChange}
+		</span>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h)} />

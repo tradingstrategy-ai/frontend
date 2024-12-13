@@ -141,8 +141,8 @@
 	<ChartContainer selected={initialTimeframe} let:timeSpan={{ spanDays, interval }}>
 		<div class="period-performance" slot="title" let:timeSpan={{ performanceLabel }}>
 			{#if periodPerformance[strategy.id] !== undefined}
-				<Profitability of={periodPerformance[strategy.id]} boxed class="performance-value" />
-				{performanceLabel}
+				<Profitability of={periodPerformance[strategy.id]} boxed />
+				<span class="performance-label">{performanceLabel}</span>
 			{/if}
 		</div>
 
@@ -198,18 +198,18 @@
 		display: flex;
 		gap: 1em;
 		align-items: center;
-		font: var(--f-ui-sm-medium);
-		letter-spacing: var(--ls-ui-sm);
-		color: var(--c-text-extra-light);
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--ls-ui-lg);
 
-		:global(.performance-value) {
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--ls-ui-lg);
+		@media (--viewport-md-down) {
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--ls-ui-md);
+		}
 
-			@media (--viewport-md-down) {
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--ls-ui-md);
-			}
+		.performance-label {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm);
+			color: var(--c-text-extra-light);
 		}
 	}
 

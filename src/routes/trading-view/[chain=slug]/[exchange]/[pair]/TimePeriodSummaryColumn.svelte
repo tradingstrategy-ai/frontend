@@ -16,7 +16,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import { inview } from 'svelte-inview';
-	import Profitability from '$lib/components/Profitability.svelte';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 
 	export let pairId: number | string;
@@ -34,7 +34,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 
 	$: skeleton = !loaded;
 
-	$: priceChange = getPriceChange(tradeData);
+	$: priceChange = getProfitInfo(getPriceChange(tradeData));
 
 	async function loadData() {
 		const params = new URLSearchParams({ pair_id: pairId, period });
@@ -63,11 +63,11 @@ Display summary performance data for a given period; lazy-loads data when scroll
 		<span use:inview={{ rootMargin: '100px' }} on:inview_enter={loadData}></span>
 	{/if}
 	<ul>
-		<li class="col-heading">
-			<Profitability of={priceChange}>{period}</Profitability>
+		<li class="col-heading {priceChange.directionClass}">
+			{period}
 		</li>
-		<li class="price-change" class:skeleton>
-			<Profitability of={priceChange} />
+		<li class="price-change {priceChange.directionClass}" class:skeleton>
+			{priceChange}
 		</li>
 		<li class:skeleton>
 			<!-- coercing 0 values to null in order to render "---" fallback -->

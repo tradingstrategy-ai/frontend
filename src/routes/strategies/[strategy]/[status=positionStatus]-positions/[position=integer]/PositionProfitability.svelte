@@ -9,13 +9,12 @@
 <div class="position-profitability tile a">
 	<Tooltip>
 		<Profitability of={position.profitability} slot="trigger">
-			{#snippet children({ formatted, direction, marker })}
+			{#snippet children(profitInfo, getLabel)}
 				<span class="value">
-					{marker}
-					{formatted}
+					{profitInfo}
 				</span>
 				<span class="direction">
-					{direction > 0 ? 'profit' : direction < 0 ? 'loss' : 'break even'}
+					{getLabel('loss', 'break even', 'profit')}
 				</span>
 			{/snippet}
 		</Profitability>
