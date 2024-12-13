@@ -17,7 +17,7 @@
 		<svelte:fragment slot="price-info" let:hasPrice let:hasPriceChange>
 			{#if hasPrice || hasPriceChange}
 				<Profitability of={document.price_change_24h} boxed class="price-info">
-					{#snippet content({ marker, formatted })}
+					{#snippet children({ marker, formatted })}
 						{#if hasPrice}
 							<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
 						{/if}

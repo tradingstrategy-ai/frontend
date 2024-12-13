@@ -9,7 +9,7 @@
 <div class="position-profitability tile a">
 	<Tooltip>
 		<Profitability of={position.profitability} slot="trigger">
-			{#snippet content({ formatted, direction, marker })}
+			{#snippet children({ formatted, direction, marker })}
 				<span class="value">
 					{marker}
 					{formatted}

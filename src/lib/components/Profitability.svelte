@@ -1,20 +1,66 @@
-<script lang="ts">
-	import type { Snippet } from 'svelte';
+<!--
+@component
+Display profit/loss or price change value, formatted as percent, with color class
+and ▼ ◼︎ ▲ direction markers.
+
+The `boxed` prop displays the value with padding and a background color.
+
+The module also exports a `getProfitInfo` utility function for scenarios where
+using the component isn't practical.
+
+@example
+
+```svelte
+	<Profitability of={profitValue} />
+
+	<Profitability of={profitValue} boxed>
+		{someOtherValue} with profit/loss color coding
+	</Profitability>
+
+	<Profitability of={profitValue}>
+		{#snippet children(profitInfo, getLabel)}
+			{profitInfo}
+			<span class="custom-label">
+				{getLabel('down', 'neutral', 'up')}
+			</span>
+		{/snippet}
+	</Profitability>
+```
+-->
+<script module lang="ts">
 	import { toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
 
-	type Props = {
-		of: MaybeNumberlike;
-		boxed?: boolean;
-		class?: string;
-		children?: Snippet;
-		content?: Snippet<[{ formatted: string | undefined; direction: number; marker: string }]>;
-	};
+	export type ProfitInfo = ReturnType<typeof getProfitInfo>;
 
-	let { of, boxed = false, class: classes, children, content }: Props = $props();
+	/**
+	 * Get information used to display profit/loss or price change values.
+	 *
+	 * This encapsulates the core display logic of the Profitability component as
+	 * a utility function for scenarios where using the component isn't practical.
+	 *
+	 * The returned object provides a `getLabel` method, which accepts a tuple of
+	 * of ('down', 'neutral', 'up') labels and returns the appropriate option.
+	 *
+	 * The object also includes a `toString` method, enabling it to be used
+	 * directly in template or string interpolation contexts.
+	 *
+	 * @param n decimal representation profit or price change value
+	 */
+	export function getProfitInfo(n: MaybeNumberlike) {
+		const value = toFloatingPoint(n);
+		const formatted = formatProfitability(value);
+		const direction = getDirection(value, formatted);
 
-	let value = $derived(toFloatingPoint(of));
+		const getLabel = (...labels: string[]) => labels[direction + 1];
+		const marker = getLabel('▼', '◼︎', '▲');
+		const directionClass = getLabel('bearish', 'neutral', 'bullish');
 
-	let formatted = $derived.by(() => {
+		const toString = () => (value === undefined ? notFilledMarker : `${marker} ${formatted}`);
+
+		return { value, formatted, direction, marker, directionClass, getLabel, toString };
+	}
+
+	function formatProfitability(value: number | undefined) {
 		if (!isNumber(value)) return;
 
 		const absValue = Math.abs(value);
@@ -24,27 +70,34 @@
 			maximumFractionDigits: absValue < 0.001 ? 2 : 1,
 			style: 'percent'
 		});
-	});
+	}
 
-	let direction = $derived.by(() => {
+	function getDirection(value: number | undefined, formatted: string | undefined) {
 		if (!value || formatted === '0.0%') return 0;
 		return Math.sign(value);
-	});
-
-	let marker = $derived(direction === 0 ? '◼︎' : direction > 0 ? '▲' : '▼');
-
-	let directionClass = $derived(direction === 0 ? 'neutral' : direction > 0 ? 'bullish' : 'bearish');
+	}
 </script>
 
-<span class="profitability {directionClass} {classes}" class:boxed class:default={!content}>
-	{#if children || content}
-		{@render children?.()}
-		{@render content?.({ formatted, direction, marker })}
-	{:else if value === undefined}
-		{notFilledMarker}
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+
+	type Props = {
+		of: MaybeNumberlike;
+		boxed?: boolean;
+		class?: string;
+		children?: Snippet<[ProfitInfo, ProfitInfo['getLabel']]>;
+	};
+
+	let { of, boxed = false, class: classes, children }: Props = $props();
+
+	let profitInfo = $derived(getProfitInfo(of));
+</script>
+
+<span class="profitability {profitInfo.directionClass} {classes}" class:boxed class:default={!children}>
+	{#if children}
+		{@render children?.(profitInfo, profitInfo.getLabel)}
 	{:else}
-		{marker}
-		{formatted}
+		{profitInfo}
 	{/if}
 </span>
 

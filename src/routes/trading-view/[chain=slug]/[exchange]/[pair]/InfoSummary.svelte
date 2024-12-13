@@ -63,7 +63,7 @@
 		</Profitability>
 		and is
 		<Profitability of={summary.price_change_24h}>
-			{#snippet content({ marker, formatted, direction })}
+			{#snippet children({ marker, formatted, direction })}
 				<strong>
 					{marker}
 					{formatted}
