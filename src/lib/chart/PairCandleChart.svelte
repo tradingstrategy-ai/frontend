@@ -24,7 +24,8 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	import type { ChartLinker, QuoteFeed, TimeBucket } from '$lib/chart';
 	import { timeBucketToPeriodicity, ChartIQ, HudRow, HudMetric } from '$lib/chart';
 	import { Alert } from '$lib/components';
-	import { formatProfitability, formatTokenAmount } from '$lib/helpers/formatters';
+	import { formatTokenAmount } from '$lib/helpers/formatters';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
 	export let feed: QuoteFeed;
 	export let pairId: number | string;
@@ -102,9 +103,8 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	let:cursor
 >
 	{#if cursor.data}
-		{@const priceChangeAmt = cursor.data.Close - cursor.data.Open}
-		{@const priceChangePct = priceChangeAmt / cursor.data.Open}
-		{@const direction = Math.sign(priceChangeAmt)}
+		{@const priceDiff = cursor.data.Close - cursor.data.Open}
+		{@const { direction, ...priceChange } = getProfitInfo(priceDiff / cursor.data.Open)}
 
 		<div class="pair-candle-chart-hud">
 			<HudRow>
@@ -112,8 +112,8 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 				<HudMetric label="H" value={formatForHud(cursor.data.High)} {direction} />
 				<HudMetric label="L" value={formatForHud(cursor.data.Low)} {direction} />
 				<HudMetric label="C" value={formatForHud(cursor.data.Close)} {direction} />
-				<HudMetric value={formatForHud(priceChangeAmt)} {direction} />
-				<HudMetric value={formatProfitability(priceChangePct)} {direction} />
+				<HudMetric value={formatForHud(priceDiff)} {direction} />
+				<HudMetric value={priceChange.toString()} {direction} />
 			</HudRow>
 
 			<slot name="hud-row-volume" {cursor} formatter={formatForHud} />

@@ -187,20 +187,6 @@ export function formatPrice(
 }
 
 /**
- * Format a value representing profit/loss or a price change.
- *
- * @param n - number to format
- */
-export function formatProfitability(n: MaybeNumberlike): string {
-	n = toFloatingPoint(n);
-	if (!isNumber(n)) return notFilledMarker;
-
-	const percentStr = formatPercent(Math.abs(n));
-	const symbol = percentStr === '0.0%' ? '◼︎' : n > 0 ? '▲' : '▼';
-	return `${symbol} ${percentStr}`;
-}
-
-/**
  * Format number using an English thousand separation
  */
 export function formatAmount(n: MaybeNumberlike): string {
