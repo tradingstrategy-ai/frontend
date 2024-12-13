@@ -6,10 +6,11 @@
 		of: MaybeNumberlike;
 		boxed?: boolean;
 		class?: string;
-		content?: Snippet<[{ formatted?: string; direction: number; marker: string }]>;
+		children?: Snippet;
+		content?: Snippet<[{ formatted: string | undefined; direction: number; marker: string }]>;
 	};
 
-	let { of, boxed = false, class: classes, content }: Props = $props();
+	let { of, boxed = false, class: classes, children, content }: Props = $props();
 
 	let value = $derived(toFloatingPoint(of));
 
@@ -26,7 +27,7 @@
 	});
 
 	let direction = $derived.by(() => {
-		if (value === undefined || formatted === '0.0%') return 0;
+		if (!value || formatted === '0.0%') return 0;
 		return Math.sign(value);
 	});
 
@@ -35,9 +36,10 @@
 	let directionClass = $derived(direction === 0 ? 'neutral' : direction > 0 ? 'bullish' : 'bearish');
 </script>
 
-<span class="profitability {directionClass} {classes}" class:boxed>
-	{#if content}
-		{@render content({ formatted, direction, marker })}
+<span class="profitability {directionClass} {classes}" class:boxed class:default={!content}>
+	{#if children || content}
+		{@render children?.()}
+		{@render content?.({ formatted, direction, marker })}
 	{:else if value === undefined}
 		{notFilledMarker}
 	{:else}
@@ -48,7 +50,9 @@
 
 <style>
 	.profitability {
-		white-space: nowrap;
+		&.default {
+			white-space: nowrap;
+		}
 
 		&.boxed {
 			border-radius: var(--radius-sm);

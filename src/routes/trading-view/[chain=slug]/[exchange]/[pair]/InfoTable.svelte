@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { formatDollar, formatSwapFee, formatProfitability, formatTokenAmount } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
-	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
+	import { Profitability, Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
+	import { formatDollar, formatSwapFee, formatTokenAmount } from '$lib/helpers/formatters';
 
 	export let summary: Record<string, any>;
 	export let details: Record<string, any>;
@@ -12,7 +11,6 @@
 	}
 
 	$: tokenPrice = calculateTokenPrice(summary.exchange_rate, summary.usd_price_latest);
-	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 </script>
 
 <TradingDataInfo>
@@ -29,24 +27,22 @@
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Price">
-		<span slot="value" class={priceChangeColorClass}>
+		<Profitability of={summary.price_change_24h} slot="value">
 			{formatTokenAmount(summary.usd_price_latest, 3)} USD
-		</span>
+		</Profitability>
 	</TradingDataInfoRow>
 
 	{#if tokenPrice}
 		<TradingDataInfoRow label="Token price">
-			<span slot="value" class={priceChangeColorClass}>
+			<Profitability of={summary.price_change_24h} slot="value">
 				{formatTokenAmount(tokenPrice, 3)}
 				{summary.quote_token_symbol_friendly}
-			</span>
+			</Profitability>
 		</TradingDataInfoRow>
 	{/if}
 
 	<TradingDataInfoRow label="Change 24h">
-		<span slot="value" class={priceChangeColorClass}>
-			{formatProfitability(summary.price_change_24h)}
-		</span>
+		<Profitability of={summary.price_change_24h} slot="value" />
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(summary.usd_volume_24h)} />

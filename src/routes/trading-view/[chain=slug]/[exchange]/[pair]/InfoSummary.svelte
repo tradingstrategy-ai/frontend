@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { formatDollar, formatProfitability } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { CopyWidget, CryptoAddressWidget, Profitability } from '$lib/components';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatDistanceToNowStrict } from 'date-fns';
-	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
 
 	export let summary: Record<string, string | number>;
 	export let details: Record<string, string | number>;
@@ -13,8 +12,6 @@
 		const date = Date.parse(`${dateStr}Z`);
 		return formatDistanceToNowStrict(date, { addSuffix: true, ...options });
 	}
-
-	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
 
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
@@ -61,12 +58,19 @@
 			{summary.base_token_symbol}
 		</a>
 		in <strong>{summary.pair_symbol}</strong> pair is
-		<strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong>
+		<Profitability of={summary.price_change_24h}>
+			<strong>{formatDollar(summary.usd_price_latest)}</strong>
+		</Profitability>
 		and is
-		<strong class={priceChangeColorClass}>
-			{formatProfitability(summary.price_change_24h)}
-			{summary.price_change_24h > 0 ? 'up' : summary.price_change_24h < 0 ? 'down' : ''}
-		</strong>
+		<Profitability of={summary.price_change_24h}>
+			{#snippet content({ marker, formatted, direction })}
+				<strong>
+					{marker}
+					{formatted}
+					{direction > 0 ? 'up' : direction < 0 ? 'down' : ''}
+				</strong>
+			{/snippet}
+		</Profitability>
 		against US Dollar for the last 24h.
 	</p>
 
