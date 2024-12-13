@@ -44,6 +44,7 @@
 		align-items: center;
 
 		.value {
+			margin-right: 0.25ex;
 			font: var(--f-heading-xxl-medium);
 
 			@media (--viewport-xs) {
