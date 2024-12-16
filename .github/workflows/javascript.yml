@@ -48,6 +48,8 @@ jobs:
         run: npm ci
       - name: Setup submodules
         run: bash scripts/build-deps.sh
+      - name: Check fonts
+        run: ls -l static/fonts/NeueHaasGrotesk*
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
       # use separate build step to avoid playwright timeout issue
