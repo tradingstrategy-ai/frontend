@@ -22,6 +22,16 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	import * as studyModules from './studies';
 	import './chart.css';
 
+	export type ChartCursor = {
+		position: {
+			cx?: number;
+			cy?: number;
+			DateX?: number;
+			CloseY?: number;
+		};
+		data?: any;
+	};
+
 	/**
 	 * NOTE: normal dynamic import doesn't work for optional dependency due to Vite's
 	 * pre-bundling import analysis; using Vite's custom import.meta.glob instead.
@@ -72,16 +82,6 @@ Dynamically ChartIQ modules (if available) and render chart element.
 	export let loading = false;
 
 	let updating = false;
-
-	interface ChartCursor {
-		position: {
-			cx?: number;
-			cy?: number;
-			DateX?: number;
-			CloseY?: number;
-		};
-		data?: any;
-	}
 
 	let cursor: ChartCursor = { position: {} };
 

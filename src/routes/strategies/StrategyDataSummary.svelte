@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-	import { EntitySymbol, UpDownIndicator } from '$lib/components';
+	import { EntitySymbol, Profitability } from '$lib/components';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
-	import { formatDaysAgo, formatNumber, formatPercent, formatDollar } from '$lib/helpers/formatters';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
+	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -30,11 +29,11 @@
 			{backtestLink}
 			let:value
 		>
-			<UpDownIndicator {value} formatter={formatProfitability} />
+			<Profitability of={value} />
 		</KeyMetric>
 	{:else}
 		<KeyMetric name="Profitability" metric={keyMetrics.profitability} {backtestLink} let:value>
-			<UpDownIndicator {value} formatter={formatProfitability} />
+			<Profitability of={value} />
 		</KeyMetric>
 	{/if}
 

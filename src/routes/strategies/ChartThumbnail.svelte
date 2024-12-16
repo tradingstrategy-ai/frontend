@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { type Quote, ChartIQ, Marker, calculateYAxisRange } from '$lib/chart';
-	import { UpDownCell, Timestamp } from '$lib/components';
+	import { type Quote, ChartIQ, calculateYAxisRange } from '$lib/chart';
+	import ChartTooltip from '$lib/chart/ChartTooltip.svelte';
 
 	export let data: Quote[] = [];
 	export let dateRange: [Date?, Date?];
 
 	// used for setting yAxis zoom
 	const [min, max] = calculateYAxisRange(data, 1, 0.12);
+
+	// TODO: should be based on displayed data range rather than full range
+	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.Value, data.at(-1)?.Value));
 
 	const options = {
 		layout: { chartType: 'mountain' },
@@ -23,12 +27,6 @@
 			yAxis: { noDraw: true, min, max }
 		}
 	};
-
-	function getProfitChangeClass() {
-		const first = data[0]?.Value ?? 0;
-		const last = data.at(-1)?.Value ?? 0;
-		return determinePriceChangeClass(last - first);
-	}
 
 	function init(chartEngine: any) {
 		// add thin baseline at y=0
@@ -65,18 +63,9 @@
 	}
 </script>
 
-<figure class="chart-thumbnail ds-3 {getProfitChangeClass()}">
+<figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
 	<ChartIQ {init} {options} let:cursor>
-		{@const { position, data } = cursor}
-		{#if data}
-			<Marker x={position.DateX} y={position.CloseY} size={4} />
-			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
-				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.adjustedDate} />
-					<div class="value">{formatPercent(data.Close, 2)}</div>
-				</UpDownCell>
-			</div>
-		{/if}
+		<ChartTooltip {cursor} formatValue={formatPercent} />
 	</ChartIQ>
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>
@@ -108,21 +97,6 @@
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
 			}
-		}
-	}
-
-	.chart-hover-info {
-		position: absolute;
-		left: var(--x);
-		top: var(--y);
-		transform: translate(-50%, calc(-100% - var(--space-md)));
-
-		:global(time) {
-			color: var(--c-text-extra-light);
-		}
-
-		.value {
-			font: var(--f-ui-md-medium);
 		}
 	}
 </style>

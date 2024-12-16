@@ -1,13 +1,4 @@
-import { isNumber, toFloatingPoint } from '$lib/helpers/formatters';
-
-/**
- * Determine profitability above/below threshold
- * returns -1 (loss) | 0 (neutral) | +1 (profit)
- *
- */
-export function determineProfitability(value: MaybeNumberlike): number {
-	return Math.sign(toFloatingPoint(value) || 0);
-}
+import { isNumber } from '$lib/helpers/formatters';
 
 /**
  * Calculate a relative profitability percent for a given time period

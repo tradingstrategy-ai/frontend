@@ -17,10 +17,10 @@ Display a peformance line chart for a given (static) dataset.
 <script lang="ts">
 	import type { Quote } from '$lib/chart';
 	import { differenceInCalendarDays } from 'date-fns';
-	import { ChartIQ, Marker } from '$lib/chart';
-	import { Timestamp, UpDownCell } from '$lib/components';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import ChartIQ from '$lib/chart/ChartIQ.svelte';
+	import ChartTooltip from './ChartTooltip.svelte';
 	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { merge } from '$lib/helpers/object';
 
 	type Props = {
@@ -32,7 +32,7 @@ Display a peformance line chart for a given (static) dataset.
 		studies?: any[];
 		invalidate?: any[];
 		init?: (arg: any) => () => void;
-		onPeriodPerformanceChange?: (value: MaybeNumber) => void;
+		onPeriodPerformanceChange?: (value: ProfitInfo) => void;
 	};
 
 	let {
@@ -98,13 +98,12 @@ Display a peformance line chart for a given (static) dataset.
 				initialValue = 0;
 			}
 
-			const direction = determinePriceChangeClass(last?.Value - initialValue);
-			const periodPerformance = relativeProfitability(initialValue, last?.Value);
+			const periodPerformance = getProfitInfo(relativeProfitability(initialValue, last?.Value));
 
 			// NOTE: setting attribute selector on HTML element rather than declaratively via
 			// Svelte template; needed to prevent race condition / ensure colors update correctly.
-			if (chartWrapper.dataset.direction !== direction) {
-				chartWrapper.dataset.direction = direction;
+			if (chartWrapper.dataset.direction !== periodPerformance.directionClass) {
+				chartWrapper.dataset.direction = periodPerformance.directionClass;
 				chartEngine.clearStyles();
 			}
 
@@ -147,16 +146,7 @@ Display a peformance line chart for a given (static) dataset.
 		invalidate={[data, periodicity, hideYAxis, ...invalidate]}
 		let:cursor
 	>
-		{@const { position, data } = cursor}
-		{#if data}
-			<Marker x={position.DateX} y={position.CloseY} size={4.5} />
-			<div class="chart-hover-info" style:--x="{position.cx}px" style:--y="{position.CloseY}px">
-				<UpDownCell value={data.Close - data.iqPrevClose}>
-					<Timestamp date={data.adjustedDate} withTime={periodicity.timeUnit === 'hour'} />
-					<div class="value">{formatValue(data.Close, 2)}</div>
-				</UpDownCell>
-			</div>
-		{/if}
+		<ChartTooltip {cursor} withTime={periodicity.timeUnit === 'hour'} {formatValue} />
 	</ChartIQ>
 </div>
 
@@ -171,22 +161,6 @@ Display a peformance line chart for a given (static) dataset.
 
 			@media (--viewport-xs) {
 				--chart-aspect-ratio: 1.25;
-			}
-		}
-
-		.chart-hover-info {
-			position: absolute;
-			left: var(--x);
-			top: var(--y);
-			transform: translate(-50%, calc(-100% - var(--space-md)));
-
-			:global(time) {
-				color: var(--c-text-extra-light);
-			}
-
-			.value {
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--f-ui-md-spacing);
 			}
 		}
 	}

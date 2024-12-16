@@ -97,8 +97,8 @@
 				color: var(--c-text-inverted);
 			}
 
-			.up-down-indicator:is(.bullish, .bearish) {
-				background: var(--background-hover);
+			.profitability.boxed {
+				background: var(--background-hover) !important;
 			}
 		}
 	}
@@ -177,11 +177,6 @@
 				:is(tr, td) {
 					display: contents;
 				}
-			}
-
-			.up-down-cell {
-				justify-content: flex-start;
-				margin-top: var(--space-sm);
 			}
 		}
 	}

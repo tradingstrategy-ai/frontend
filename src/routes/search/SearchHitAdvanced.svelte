@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { TradingEntityDocument } from '$lib/search/trading-entities';
-	import { SearchHit, SearchHitDescription } from '$lib/search/components';
-	import { UpDownCell } from '$lib/components';
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
+	import SearchHit from '$lib/search/components/SearchHit.svelte';
+	import SearchHitDescription from '$lib/search/components/SearchHitDescription.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import SearchHitMetrics from './SearchHitMetrics.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	export let document: TradingEntityDocument;
 </script>
@@ -15,14 +16,16 @@
 
 		<svelte:fragment slot="price-info" let:hasPrice let:hasPriceChange>
 			{#if hasPrice || hasPriceChange}
-				<UpDownCell value={document.price_change_24h}>
-					{#if hasPrice}
-						<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
-					{/if}
-					{#if hasPriceChange}
-						<span class="truncate">{formatPriceChange(document.price_change_24h)}</span>
-					{/if}
-				</UpDownCell>
+				<Profitability of={document.price_change_24h} boxed class="price-info">
+					{#snippet children(profitInfo)}
+						{#if hasPrice}
+							<span class="truncate">{formatDollar(document.price_usd_latest)}</span>
+						{/if}
+						{#if hasPriceChange}
+							<span class="truncate">{profitInfo}</span>
+						{/if}
+					{/snippet}
+				</Profitability>
 			{/if}
 		</svelte:fragment>
 	</SearchHit>
@@ -42,8 +45,14 @@
 			--search-hit-description-spacing: var(--f-ui-lg-spacing, normal);
 		}
 
-		.truncate {
-			white-space: nowrap;
+		:global(.price-info) {
+			display: grid;
+			gap: 0.25rem;
+			max-width: min(20vw, 12rem);
+			padding: 0.5rem 0.75rem;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
+			text-align: right;
 		}
 	}
 </style>

@@ -22,6 +22,7 @@ by JS Date) or a Date object.
 	export let relative = false;
 	export let withSeconds = false;
 	export let withTime = withSeconds;
+	export let nowrap = false;
 
 	let isoStr: string, relativeStr: string, dateStr: string, timeStr: string;
 
@@ -35,14 +36,16 @@ by JS Date) or a Date object.
 	}
 </script>
 
-<time class="timestamp" datetime={isoStr}>
+<time class="timestamp" class:nowrap datetime={isoStr}>
 	<slot {parsedDate} {dateStr} {timeStr} relative={relativeStr}>
 		{#if parsedDate}
 			{#if relative}
 				<span>{relativeStr}</span>
 			{:else}
-				<!-- ensure no whitespace between span and #if block! -->
-				<span>{dateStr}</span>{#if withTime}<span>{timeStr}</span>{/if}
+				<span>{dateStr}</span>
+				{#if withTime}
+					<span>{timeStr}</span>
+				{/if}
 			{/if}
 		{:else}
 			---
@@ -52,16 +55,14 @@ by JS Date) or a Date object.
 
 <style>
 	.timestamp {
+		/* prevent segments from wrapping (including slot content) */
 		:global(span) {
 			white-space: nowrap;
 		}
-	}
 
-	/* re-inject space between sibling spans */
-	span + span {
-		&::before {
-			content: ' ';
-			white-space: normal;
+		/* prevent whole timestamp from wrapping if nowrap is set  */
+		&.nowrap {
+			white-space: nowrap;
 		}
 	}
 </style>

@@ -4,10 +4,9 @@
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
-	import { formatProfitability } from 'trade-executor/helpers/formatters';
-	import { determineProfitability } from 'trade-executor/helpers/profit';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { Timestamp, UpDownCell } from '$lib/components';
+	import Profitability from '$lib/components/Profitability.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
@@ -28,8 +27,8 @@
 	$: positionsStore.set(positions);
 
 	const statusColumns = {
-		open: ['description', 'flags', 'profitability', 'current_value', 'opened_at', 'cta'],
-		closed: ['description', 'flags', 'profitability', 'value_at_open', 'closed_at', 'cta'],
+		open: ['description', 'flags', 'profit', 'current_value', 'opened_at', 'cta'],
+		closed: ['description', 'flags', 'profit', 'value_at_open', 'closed_at', 'cta'],
 		frozen: ['description', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
 
@@ -77,9 +76,9 @@
 		}),
 		table.column({
 			header: 'Profitability',
+			id: 'profit',
 			accessor: 'profitability',
-			cell: ({ value }) =>
-				createRender(UpDownCell, { value, formatter: formatProfitability, compareFn: determineProfitability })
+			cell: ({ value }) => createRender(Profitability, { of: value, boxed: true })
 		}),
 		table.column({
 			header: 'Frozen on',
@@ -173,17 +172,8 @@
 			white-space: pre;
 		}
 
-		.profitability {
-			padding-block: 0;
-		}
-
-		:is(.profitability, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
+		:is(.profit, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
 			text-align: right;
-		}
-
-		@media (--viewport-sm-down) {
-			--up-down-font: var(--f-ui-xs-medium);
-			--up-down-spacing: var(--f-ui-xs-spacing);
 		}
 	}
 </style>

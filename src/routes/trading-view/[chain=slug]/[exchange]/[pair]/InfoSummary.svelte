@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { formatDollar, formatPriceChange } from '$lib/helpers/formatters';
-	import { determinePriceChangeClass } from '$lib/helpers/price';
+	import { CopyWidget, CryptoAddressWidget } from '$lib/components';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatDistanceToNowStrict } from 'date-fns';
-	import { Button, CopyWidget, CryptoAddressWidget } from '$lib/components';
 
 	export let summary: Record<string, string | number>;
 	export let details: Record<string, string | number>;
@@ -14,10 +14,10 @@
 		return formatDistanceToNowStrict(date, { addSuffix: true, ...options });
 	}
 
-	$: priceChangeColorClass = determinePriceChangeClass(summary.price_change_24h);
-
 	// TODO: Fix this in the data source
 	$: [baseTokenName, quoteTokenName] = summary.pair_name.split('-');
+
+	$: priceChange = getProfitInfo(summary.price_change_24h);
 
 	let copyWidget: CopyWidget;
 
@@ -61,11 +61,11 @@
 			{summary.base_token_symbol}
 		</a>
 		in <strong>{summary.pair_symbol}</strong> pair is
-		<strong class={priceChangeColorClass}>{formatDollar(summary.usd_price_latest)}</strong>
+		<strong class={priceChange.directionClass}>{formatDollar(summary.usd_price_latest)}</strong>
 		and is
-		<strong class={priceChangeColorClass}>
-			{formatPriceChange(summary.price_change_24h)}
-			{summary.price_change_24h > 0 ? 'up' : summary.price_change_24h < 0 ? 'down' : ''}
+		<strong class={priceChange.directionClass}>
+			{priceChange}
+			{priceChange.getLabel('down', '', 'up')}
 		</strong>
 		against US Dollar for the last 24h.
 	</p>
