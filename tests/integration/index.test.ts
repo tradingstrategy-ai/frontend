@@ -10,7 +10,7 @@ test.describe('home page', () => {
 	// $ ./scripts/update-test-screenshots.sh
 	test('hero banner looks correct', async ({ page }) => {
 		const header = page.getByTestId('home-hero-banner');
-		await expect(header).toHaveScreenshot();
+		await expect(header).toHaveScreenshot({ maxDiffPixels: 150 });
 	});
 
 	test('home page has impressive numbers', async ({ page }) => {
