@@ -56,6 +56,16 @@ jobs:
       # skip build in test step
       - name: Run Tests
         run: npm run test --skip-build
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: |
+            test-results/
+            tests/integration/**/*-snapshots/
+          retention-days: 7
+          compression-level: 0 # Skip compression since PNGs are already compressed
 
   build:
     runs-on: ubuntu-latest
