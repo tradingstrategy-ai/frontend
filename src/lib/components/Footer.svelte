@@ -46,8 +46,7 @@
 	</div>
 
 	<div class="disclaimer">
-		<a href="https://tradingstrategy.ai">TradingStrategy.ai</a> operated by Trading Strategy Operations Ltd., Victoria, Mahe,
-		Seychelles.
+		<a href="https://tradingstrategy.ai">TradingStrategy.ai</a> operated by Trading Strategy DAO LLC. Majuro, Marshall Islands.
 	</div>
 </footer>
 
