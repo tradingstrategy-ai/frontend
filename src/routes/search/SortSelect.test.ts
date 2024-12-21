@@ -28,7 +28,7 @@ describe('SortSelect component', () => {
 		});
 
 		test('should return default params for non-matching option', () => {
-			expect(getSortParams('foo:bar')).toStrictEqual(['tvl:desc', 'pair_swap_fee:asc', '_text_match:desc']);
+			expect(getSortParams('foo:bar')).toStrictEqual(['tvl:desc', 'liquidity:desc', '_text_match:desc']);
 		});
 	});
 });

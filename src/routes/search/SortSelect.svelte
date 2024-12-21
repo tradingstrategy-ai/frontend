@@ -18,7 +18,7 @@ pre-defined set of sort options.
 	const options: Record<string, SortOption> = {
 		'tvl:desc': {
 			label: '▼ TVL',
-			params: ['tvl:desc', 'pair_swap_fee:asc', '_text_match:desc']
+			params: ['tvl:desc', 'liquidity:desc', '_text_match:desc']
 		},
 
 		'volume:desc': {
