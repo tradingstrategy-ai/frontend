@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { chainId, count, duration, hexString, percent, unixTimestampToDate, usDollarAmount } from './utility-types';
 import { keyMetricSchema } from './key-metric';
 
-export const assetManagementMode = z.enum(['hot_wallet', 'enzyme']);
+export const assetManagementMode = z.enum(['hot_wallet', 'enzyme', 'velvet']);
 
 export const enzymeSmartContractsSchema = z.object({
 	vault: hexString,
