@@ -10,7 +10,7 @@ export const strategyConfigurationSchema = z.object({
 	hiddenPositions: primaryKey.array().default([]),
 	frontpage: z.boolean().default(false),
 	microsite: z.boolean().default(false),
-	depositOnEnzyme: z.boolean().default(false)
+	depositExternal: z.boolean().default(false)
 });
 export type StrategyConfiguration = z.infer<typeof strategyConfigurationSchema>;
 

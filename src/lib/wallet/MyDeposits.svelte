@@ -30,7 +30,7 @@
 
 	const contracts = strategy.on_chain_data.smart_contracts;
 
-	const { depositOnEnzyme } = strategy;
+	const { depositExternal } = strategy;
 
 	const depositEnabled = [
 		contracts.vault,
@@ -110,7 +110,7 @@
 	</header>
 	<div class="content-wrapper" bind:this={contentWrapper}>
 		<div class="content">
-			{#if !(depositEnabled || depositOnEnzyme)}
+			{#if !(depositEnabled || depositExternal)}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
 				</DepositWarning>
@@ -147,7 +147,7 @@
 					</Button>
 				{/if}
 				<!-- BEGIN: "Deposit at Enzyme" hack  -->
-				{#if depositOnEnzyme}
+				{#if depositExternal}
 					{@const enzymeUrl = getVaultUrl(strategy)}
 					{@const showRedeemButton = connected && !wrongNetwork}
 					<Button
