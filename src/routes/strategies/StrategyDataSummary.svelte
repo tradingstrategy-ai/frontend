@@ -89,6 +89,8 @@
 			<div class="asset-management">
 				{#if assetManagementMode === 'enzyme'}
 					<EntitySymbol label="Enzyme vault" logoUrl={getLogoUrl('token', 'enzyme')} />
+				{:else if assetManagementMode === 'velvet'}
+					<EntitySymbol label="Velvet vault" logoUrl={getLogoUrl('token', 'velvet')} />
 				{:else if assetManagementMode === 'hot_wallet'}
 					<EntitySymbol label="Hot wallet" logoUrl={getLogoUrl('wallet', 'metamask')} />
 				{:else}

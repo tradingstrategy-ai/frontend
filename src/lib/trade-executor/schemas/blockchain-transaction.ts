@@ -38,7 +38,7 @@ export const blockchainTransactionSchema = z.object({
 	revert_reason: z.string().nullish(),
 	stack_trace: z.string().nullish(),
 	asset_deltas: blockchainAssetDeltaSchema.array(),
-	args: z.any().array(),
+	args: z.any().array().nullish(),
 	other: z.record(z.any()),
 	notes: z.string()
 });
