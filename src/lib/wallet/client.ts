@@ -12,7 +12,7 @@ import {
 	switchChain as _switchChain
 } from '@wagmi/core';
 import { metaMask } from '@wagmi/connectors';
-import { arbitrum, mainnet, polygon } from '@reown/appkit/networks';
+import { arbitrum, base, mainnet, polygon } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import metaMaskIcon from '$lib/assets/logos/wallets/metamask.svg';
@@ -34,7 +34,7 @@ const metadata = {
 const featuredWalletIds = ['4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'];
 
 // Initialize chains that should be available to wallet
-const chains = [arbitrum, mainnet, polygon] as const;
+const chains = [arbitrum, base, mainnet, polygon] as const;
 export type ConfiguredChain = (typeof chains)[number];
 export type ConfiguredChainId = ConfiguredChain['id'];
 
