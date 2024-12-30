@@ -13,8 +13,6 @@ import { z } from 'zod';
 import { chainId, count, duration, hexString, percent, unixTimestampToDate, usDollarAmount } from './utility-types';
 import { keyMetricSchema } from './key-metric';
 
-export const assetManagementMode = z.enum(['hot_wallet', 'enzyme', 'velvet']);
-
 export const enzymeSmartContractsSchema = z.object({
 	vault: hexString,
 	comptroller: hexString,
@@ -24,13 +22,42 @@ export const enzymeSmartContractsSchema = z.object({
 });
 export type EnzymeSmartContracts = z.infer<typeof enzymeSmartContractsSchema>;
 
-export const onChainDataSchema = z.object({
+export const velvetSmartContractSchema = z.object({
+	portfolio: hexString,
+	symbol: z.string(),
+	feeModule: hexString,
+	vaultAddress: hexString,
+	depositManager: hexString,
+	withdrawManager: hexString
+});
+export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
+
+const baseOnChainDataSchema = z.object({
 	chain_id: chainId,
-	asset_management_mode: assetManagementMode,
-	smart_contracts: enzymeSmartContractsSchema.partial(),
 	owner: hexString.nullish(),
 	trade_executor_hot_wallet: hexString.nullish()
 });
+
+const hotWalletSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('hot_wallet'),
+	smart_contracts: z.object({})
+});
+
+const enzymeSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('enzyme'),
+	smart_contracts: enzymeSmartContractsSchema
+});
+
+const velvetSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('velvet'),
+	smart_contracts: velvetSmartContractSchema
+});
+
+export const onChainDataSchema = z.discriminatedUnion('asset_management_mode', [
+	hotWalletSchema,
+	enzymeSchema,
+	velvetSchema
+]);
 export type OnChainData = z.infer<typeof onChainDataSchema>;
 
 export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);

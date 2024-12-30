@@ -14,7 +14,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { capitalize, formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
@@ -146,15 +146,16 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				<!-- BEGIN: "Deposit at Enzyme" hack  -->
+				<!-- BEGIN: "Deposit at Vault" hack  -->
 				{#if depositExternal}
-					{@const enzymeUrl = getVaultUrl(strategy)}
+					{@const vaultUrl = getVaultUrl(strategy)}
+					{@const vaultProviderName = capitalize(strategy.on_chain_data.asset_management_mode)}
 					{@const showRedeemButton = connected && !wrongNetwork}
 					<Button
-						label="Deposit at Enzyme"
+						label="Deposit at {vaultProviderName}"
 						class={showRedeemButton ? '' : 'full-width'}
-						disabled={!enzymeUrl}
-						href={enzymeUrl}
+						disabled={!vaultUrl}
+						href={vaultUrl}
 					/>
 					{#if showRedeemButton}
 						<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
@@ -163,8 +164,8 @@
 					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
 					<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
 				{/if}
-				<!-- END: "Deposit at Enzyme" hack  -->
-				<!-- REVERT: remove all but the last 2 buttons above when "Deposit at Enzyme" hack is removed -->
+				<!-- END: "Deposit at Vault" hack  -->
+				<!-- REVERT: remove all but the last 2 buttons above when "Deposit at Vault" hack is removed -->
 			</div>
 		</div>
 	</div>

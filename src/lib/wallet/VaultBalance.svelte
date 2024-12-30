@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
+	import type { EnzymeSmartContracts, VelvetSmartContracts } from 'trade-executor/schemas/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { simulateContract } from '@wagmi/core';
 	import { config } from '$lib/wallet/client';
@@ -10,7 +10,7 @@
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 
 	export let address: Address;
-	export let contracts: EnzymeSmartContracts;
+	export let contracts: EnzymeSmartContracts | VelvetSmartContracts;
 
 	const dispatch = createEventDispatcher();
 
@@ -18,12 +18,18 @@
 	const value = fetchVaultNetValue(address);
 
 	async function fetchVaultShares(address: Address) {
-		const vaultShares = await getTokenBalance(config, { token: contracts.vault, address });
+		// TODO: move token logic to vault adapter (Enzyme vs. Velvet)
+		const token = 'vault' in contracts ? contracts.vault : contracts.portfolio;
+		const vaultShares = await getTokenBalance(config, { token, address });
 		dispatch('dataFetch', { vaultShares });
 		return vaultShares;
 	}
 
 	async function fetchVaultNetValue(address: Address) {
+		if (!('fund_value_calculator' in contracts)) {
+			throw new Error('Velvet deposit value not yet available.');
+		}
+
 		const { result } = await simulateContract(config, {
 			abi: fundValueCalculatorABI,
 			address: contracts.fund_value_calculator,
