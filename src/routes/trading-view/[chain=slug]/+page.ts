@@ -23,7 +23,12 @@ async function fetchTopExchanges(fetch: Fetch, chainSlug: string) {
 			direction: 'desc',
 			filter_zero_volume: 'true'
 		});
-		return { rows: data.exchanges.slice(0, 5) };
+		const rows = data.exchanges
+			.filter((row: Record<string, any>) => {
+				return !row.human_readable_name.startsWith('Unknown 0x');
+			})
+			.slice(0, 5);
+		return { rows };
 	} catch (error) {
 		return { error };
 	}
