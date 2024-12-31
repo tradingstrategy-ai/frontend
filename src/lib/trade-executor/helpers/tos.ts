@@ -27,6 +27,15 @@ const tosVersions: TosVersion[] = [
 		acceptanceMessage:
 			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 1, dated 2024-03-20, was published at https://tradingstrategy.ai/tos/2024-03-20.txt'
 	},
+	{
+		chainId: 1,
+		address: '0xd63c1bE9D8B56CCcD6fd2Dd9F9c030c6a9916f5F',
+		version: 2,
+		fileName: '2024-12-19.txt',
+		acceptanceMessage:
+			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 2, dated 2024-12-19, was published at https://tradingstrategy.ai/tos/2024-12-19.txt'
+		// hash: '0x40619123f870e7764ae1bbe25a8119064e061eabf718c3b1cd60cbe17c10e329'
+	},
 
 	// Polygon versions
 	{
@@ -68,6 +77,15 @@ const tosVersions: TosVersion[] = [
 		acceptanceMessage:
 			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 5, dated 2024-03-30, was published at https://tradingstrategy.ai/tos/2024-03-30.txt'
 	},
+	{
+		chainId: 137,
+		address: '0xbe1418df0bAd87577de1A41385F19c6e77312780',
+		version: 6,
+		fileName: '2024-12-19.txt',
+		acceptanceMessage:
+			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 6, dated 2024-12-19, was published at https://tradingstrategy.ai/tos/2024-12-19.txt'
+		// hash: '0x83d8da65df25dedc79c7fda77c475cedf151882ffc1aa0e6574b86cc139d09d5'
+	},
 
 	// Arbitrum versions
 	{
@@ -77,6 +95,15 @@ const tosVersions: TosVersion[] = [
 		fileName: '2024-03-20.txt',
 		acceptanceMessage:
 			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 1, dated 2024-03-20, was published at https://tradingstrategy.ai/tos/2024-03-20.txt'
+	},
+	{
+		chainId: 42161,
+		address: '0xDCD7C644a6AA72eb2f86781175b18ADc30Aa4f4d',
+		version: 2,
+		fileName: '2024-12-19.txt',
+		acceptanceMessage:
+			'I agree on Terms of Service. I understand smart contract trading is risky and I may lose all of my deposits. \n\nThis Terms of Service version 2, dated 2024-12-19, was published at https://tradingstrategy.ai/tos/2024-12-19.txt'
+		// hash: '0x40619123f870e7764ae1bbe25a8119064e061eabf718c3b1cd60cbe17c10e329'
 	}
 ];
 
