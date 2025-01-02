@@ -3,7 +3,7 @@ import { tradingPositionSchema } from '../schemas/position';
 import { type PositionStatistics, positionStatisticsSchema } from '../schemas/statistics';
 import { type TradingPositionInfo, createTradingPositionInfo } from './position-info';
 
-const position = fixture.fromSchema(tradingPositionSchema, { seed: 1 });
+const position = fixture.fromSchema(tradingPositionSchema, { seed: 3 });
 
 describe('TradingPositionInfo object with no stats', () => {
 	const positionInfo = createTradingPositionInfo(position);
