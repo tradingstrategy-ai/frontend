@@ -16,7 +16,7 @@
 		parseChainOption,
 		matchesChainOption
 	} from 'trade-executor/components/ChainFilter.svelte';
-	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
+	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 	import { getChain } from '$lib/helpers/chain';
 
 	export let data;

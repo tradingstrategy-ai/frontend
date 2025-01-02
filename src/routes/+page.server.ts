@@ -1,4 +1,4 @@
-import { getCachedStrategies } from 'trade-executor/models/strategy-info';
+import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 
 export async function load({ fetch }) {
 	const strategies = await getCachedStrategies(fetch);

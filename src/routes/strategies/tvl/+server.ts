@@ -15,7 +15,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { getCachedStrategies } from 'trade-executor/models/strategy-info';
+import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import type { StrategySummaryStatistics } from 'trade-executor/schemas/summary';
 
 type PartialSummaryStatistics = Partial<StrategySummaryStatistics>;

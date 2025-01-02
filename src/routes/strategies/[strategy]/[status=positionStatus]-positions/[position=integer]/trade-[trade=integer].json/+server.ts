@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getRawStrategyState } from 'trade-executor/state';
+import { getRawStrategyState } from 'trade-executor/client/state';
 
 export async function GET({ fetch, params }) {
 	const state = await getRawStrategyState(fetch, params.strategy);
