@@ -40,6 +40,6 @@ export const blockchainTransactionSchema = z.object({
 	asset_deltas: blockchainAssetDeltaSchema.array(),
 	args: z.any().array().nullish(),
 	other: z.record(z.any()),
-	notes: z.string()
+	notes: z.string().nullish()
 });
 export type BlockchainTransaction = z.infer<typeof blockchainTransactionSchema>;
