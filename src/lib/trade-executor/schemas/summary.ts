@@ -32,6 +32,8 @@ export const velvetSmartContractSchema = z.object({
 });
 export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
 
+export type SmartContracts = EnzymeSmartContracts | VelvetSmartContracts;
+
 const baseOnChainDataSchema = z.object({
 	chain_id: chainId,
 	owner: hexString.nullish(),
