@@ -3,6 +3,6 @@ import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 
 export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	type = 'enzyme';
-	label = 'Enzyme valult';
+	label = 'Enzyme';
 	logoUrl = '/logos/tokens/enzyme';
 }

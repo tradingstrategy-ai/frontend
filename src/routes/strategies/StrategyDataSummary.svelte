@@ -1,17 +1,17 @@
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
+	import { createVaultAdapter } from 'trade-executor/vaults';
 	import { EntitySymbol, Profitability } from '$lib/components';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
-	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let simplified = false;
 	export let strategy: StrategyInfo;
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
-	const assetManagementMode = strategy.on_chain_data?.asset_management_mode;
+	const vault = strategy.on_chain_data ? createVaultAdapter(strategy.on_chain_data) : undefined;
 
 	function formatTvl(value: MaybeNumber) {
 		const digits = value && value < 1000 ? 2 : 1;
@@ -87,12 +87,8 @@
 	{#if !simplified}
 		<KeyMetric name="Asset management" {backtestLink}>
 			<div class="asset-management">
-				{#if assetManagementMode === 'enzyme'}
-					<EntitySymbol label="Enzyme vault" logoUrl={getLogoUrl('token', 'enzyme')} />
-				{:else if assetManagementMode === 'velvet'}
-					<EntitySymbol label="Velvet vault" logoUrl={getLogoUrl('token', 'velvet')} />
-				{:else if assetManagementMode === 'hot_wallet'}
-					<EntitySymbol label="Hot wallet" logoUrl={getLogoUrl('wallet', 'metamask')} />
+				{#if vault}
+					<EntitySymbol label={vault.mode} logoUrl={vault.logoUrl} />
 				{:else}
 					---
 				{/if}
