@@ -6,6 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { wizard } from 'wizard/store';
 	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
+	import { createVaultAdapter } from 'trade-executor/vaults';
 	import { Button, HashAddress } from '$lib/components';
 	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
 	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
@@ -14,9 +15,8 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { capitalize, formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
-	import { getVaultUrl } from 'trade-executor/helpers/vault';
 
 	export let strategy: ConnectedStrategyInfo;
 	export let chain: Chain;
@@ -28,22 +28,15 @@
 
 	let vaultBalance: MaybeString;
 
+	const vault = createVaultAdapter(strategy.on_chain_data);
 	const contracts = strategy.on_chain_data.smart_contracts;
 
-	const { depositExternal } = strategy;
-
-	const depositEnabled = [
-		contracts.vault,
-		contracts.comptroller,
-		contracts.payment_forwarder,
-		contracts.fund_value_calculator
-	].every(Boolean);
-
 	const isOutdated = Boolean(strategy.newVersionId);
+	const canDeposit = !geoBlocked && vault.depositEnabled;
 
 	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
-	$: buttonsDisabled = geoBlocked || !depositEnabled || wrongNetwork;
+	$: buttonsDisabled = !canDeposit || wrongNetwork;
 
 	const expandable = fsm('closed', {
 		closed: {
@@ -110,7 +103,7 @@
 	</header>
 	<div class="content-wrapper" bind:this={contentWrapper}>
 		<div class="content">
-			{#if !(depositEnabled || depositExternal)}
+			{#if !vault.depositEnabled}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
 				</DepositWarning>
@@ -133,12 +126,12 @@
 				</dl>
 			{/if}
 			<div class="actions">
-				{#if depositEnabled && !connected}
+				{#if vault.depositEnabled && !connected}
 					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
 						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
-				{:else if depositEnabled && wrongNetwork}
+				{:else if vault.depositEnabled && wrongNetwork}
 					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
 				{/if}
 				{#if connected}
@@ -146,26 +139,17 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				<!-- BEGIN: "Deposit at Vault" hack  -->
-				{#if depositExternal}
-					{@const vaultUrl = getVaultUrl(strategy)}
-					{@const vaultProviderName = capitalize(strategy.on_chain_data.asset_management_mode)}
-					{@const showRedeemButton = connected && !wrongNetwork}
-					<Button
-						label="Deposit at {vaultProviderName}"
-						class={showRedeemButton ? '' : 'full-width'}
-						disabled={!vaultUrl}
-						href={vaultUrl}
-					/>
-					{#if showRedeemButton}
-						<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
-					{/if}
+				{#if vault.depositMethod === 'external'}
+					<Button disabled={buttonsDisabled || isOutdated} href={vault.externalProviderUrl!}>
+						Deposit at {vault.shortLabel}
+					</Button>
+					<Button secondary disabled={buttonsDisabled} href={vault.externalProviderUrl!}>
+						Redeem at {vault.shortLabel}
+					</Button>
 				{:else}
 					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
 					<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
 				{/if}
-				<!-- END: "Deposit at Vault" hack  -->
-				<!-- REVERT: remove all but the last 2 buttons above when "Deposit at Vault" hack is removed -->
 			</div>
 		</div>
 	</div>
