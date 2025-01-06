@@ -3,8 +3,7 @@ import type { Chain } from '$lib/helpers/chain';
 
 export const DepositMethod = {
 	INTERNAL: 'internal',
-	EXTERNAL: 'external',
-	NONE: null
+	EXTERNAL: 'external'
 } as const;
 
 /**
@@ -16,10 +15,9 @@ export abstract class BaseAssetManager {
 	abstract readonly label: string;
 	abstract readonly logoUrl: string;
 
-	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
-
 	constructor(public readonly chain: Chain) {}
 
+	// overridden in BaseVault to append " vault"
 	get mode(): string {
 		return this.label;
 	}
@@ -29,15 +27,9 @@ export abstract class BaseAssetManager {
 		return this.label;
 	}
 
-	get depositEnabled(): boolean {
-		return this.depositMethod !== DepositMethod.NONE;
+	depositEnabled(): this is BaseVault<SmartContracts> {
+		return this instanceof BaseVault;
 	}
-
-	// FIXME: should not be required on BaseAssetManager
-	// - use a type predicate to narrow type when depositEnabled is true
-	// - un-comment abstract method definition in BaseVault
-	// - remove implementation from HotWallet
-	abstract get externalProviderUrl(): string | null;
 }
 
 /**
@@ -45,6 +37,8 @@ export abstract class BaseAssetManager {
  * (e.g., EnzymeVault or VelvetVault)
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
+	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
+
 	constructor(
 		chain: Chain,
 		protected readonly contracts: Contracts
@@ -56,5 +50,5 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return `${this.label} vault`;
 	}
 
-	// abstract get externalProviderUrl(): string;
+	abstract get externalProviderUrl(): string;
 }

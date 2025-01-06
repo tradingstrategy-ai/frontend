@@ -32,11 +32,11 @@
 	const contracts = strategy.on_chain_data.smart_contracts;
 
 	const isOutdated = Boolean(strategy.newVersionId);
-	const canDeposit = !geoBlocked && vault.depositEnabled;
+	const depositEnabled = vault.depositEnabled();
 
 	$: connected = $wallet.isConnected;
 	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
-	$: buttonsDisabled = !canDeposit || wrongNetwork;
+	$: buttonsDisabled = !depositEnabled || geoBlocked || wrongNetwork;
 
 	const expandable = fsm('closed', {
 		closed: {
@@ -103,7 +103,7 @@
 	</header>
 	<div class="content-wrapper" bind:this={contentWrapper}>
 		<div class="content">
-			{#if !vault.depositEnabled}
+			{#if !depositEnabled}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
 				</DepositWarning>
@@ -126,12 +126,12 @@
 				</dl>
 			{/if}
 			<div class="actions">
-				{#if vault.depositEnabled && !connected}
+				{#if depositEnabled && !connected}
 					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
 						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
-				{:else if vault.depositEnabled && wrongNetwork}
+				{:else if depositEnabled && wrongNetwork}
 					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
 				{/if}
 				{#if connected}
@@ -139,11 +139,11 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				{#if vault.depositMethod === 'external'}
-					<Button disabled={buttonsDisabled || isOutdated} href={vault.externalProviderUrl!}>
+				{#if depositEnabled && vault.depositMethod === 'external'}
+					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl}>
 						Deposit at {vault.shortLabel}
 					</Button>
-					<Button secondary disabled={buttonsDisabled} href={vault.externalProviderUrl!}>
+					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl}>
 						Redeem at {vault.shortLabel}
 					</Button>
 				{:else}
