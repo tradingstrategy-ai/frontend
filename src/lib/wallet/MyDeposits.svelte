@@ -139,7 +139,7 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				{#if depositEnabled && vault.depositMethod === 'external'}
+				{#if depositEnabled && (vault.depositMethod === 'external' || strategy.depositExternal)}
 					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl}>
 						Deposit at {vault.shortLabel}
 					</Button>
