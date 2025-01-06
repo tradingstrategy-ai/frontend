@@ -5,14 +5,14 @@
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { getVaultUrl } from 'trade-executor/helpers/vault';
+	import { createVaultAdapter } from 'trade-executor/vaults/index.js';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;
 	const { chain, onChainData, strategy } = data;
 
 	const address = onChainData.smart_contracts.vault;
-	const enzymeUrl = getVaultUrl(strategy);
+	const vault = createVaultAdapter(onChainData);
 	const explorerUrl = address && getExplorerUrl(chain, address);
 </script>
 
@@ -24,8 +24,8 @@
 <section class="vault">
 	<SummaryBox title="Vault information" ctaPosition="top">
 		<div class="actions" slot="cta">
-			{#if enzymeUrl}
-				<Button size="xs" label="View on Enzyme" href={enzymeUrl} rel="noreferrer" target="_blank">
+			{#if vault.depositEnabled()}
+				<Button size="xs" label="View on Enzyme" href={vault.externalProviderUrl} rel="noreferrer" target="_blank">
 					<img slot="icon" alt="Enzyme" src={getLogoUrl('token', 'enzyme')} />
 				</Button>
 			{/if}
