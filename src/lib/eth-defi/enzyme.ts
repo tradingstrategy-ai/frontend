@@ -1,6 +1,6 @@
 import { formatUnits, isAddressEqual } from 'viem';
 import { type Config, simulateContract } from '@wagmi/core';
-import { type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
+import { type TokenInfo, type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
 import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 
 export type AssetWithdrawl = {
@@ -16,7 +16,7 @@ export type AssetWithdrawlEvent = {
 
 type GetRedemptionParams = {
 	withdrawl: AssetWithdrawl;
-	denominationToken: GetTokenBalanceReturnType;
+	denominationToken: TokenInfo;
 	chainId: number;
 };
 
@@ -44,7 +44,7 @@ export async function getRedemption(config: Config, params: GetRedemptionParams)
 type GetSharePriceParams = {
 	calculator: Address;
 	vault: Address;
-	denominationToken: GetTokenBalanceReturnType;
+	denominationToken: { decimals: number };
 };
 
 /**

@@ -49,7 +49,7 @@
 			label
 		} as GetTokenBalanceReturnType;
 
-		dispatch('dataFetch', { denominationToken, vaultNetValue });
+		dispatch('dataFetch', { vaultNetValue });
 
 		return vaultNetValue;
 	}

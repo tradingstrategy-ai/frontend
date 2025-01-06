@@ -17,10 +17,7 @@
 	$: chainCurrency = $wallet.chain?.nativeCurrency.symbol;
 
 	$: depositStatusComplete =
-		'denominationToken' in $wizard.data &&
-		'vaultNetValue' in $wizard.data &&
-		(nativeCurrency?.value ?? 0n) > 0n &&
-		(vaultShares?.value ?? 0n) > 0n;
+		'vaultNetValue' in $wizard.data && (nativeCurrency?.value ?? 0n) > 0n && (vaultShares?.value ?? 0n) > 0n;
 
 	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
 

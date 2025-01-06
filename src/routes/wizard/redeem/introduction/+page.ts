@@ -9,6 +9,6 @@ export async function load() {
 	const { comptroller } = contracts;
 
 	return {
-		denominationTokenInfo: await getDenominationTokenInfo(config, { chainId: chain.id, comptroller })
+		denominationToken: await getDenominationTokenInfo(config, { chainId: chain.id, comptroller })
 	};
 }
