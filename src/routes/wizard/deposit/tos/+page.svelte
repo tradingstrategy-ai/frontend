@@ -21,7 +21,8 @@
 	export let data;
 	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
 
-	const { chain, contracts, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
+	const { chain, onChainData, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
+	const contracts = onChainData.smart_contracts;
 
 	const progressBar = tweened(0, {
 		easing: cubicOut,

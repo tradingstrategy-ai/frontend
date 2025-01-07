@@ -1,5 +1,5 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
+import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
 import { wizard } from 'wizard/store';
@@ -9,7 +9,7 @@ import { type TokenInfo, type GetTokenBalanceReturnType, getDenominationTokenInf
 export type DepositWizardData = {
 	chain: Chain;
 	strategyName: string;
-	contracts: EnzymeSmartContracts;
+	onChainData: EnzymeOnChainData;
 	canForwardPayment: boolean;
 	denominationTokenInfo: TokenInfo;
 	denominationToken?: GetTokenBalanceReturnType;
@@ -33,8 +33,8 @@ export async function load({ parent }) {
 		{ slug: 'success', label: 'Success' }
 	];
 
-	const { chain, contracts } = get(wizard).data as DepositWizardData;
-	const { comptroller, terms_of_service } = contracts;
+	const { chain, onChainData } = get(wizard).data as DepositWizardData;
+	const { comptroller, terms_of_service } = onChainData.smart_contracts;
 
 	// skip "Terms of service" step if no terms_of_service contract
 	if (!terms_of_service) {

@@ -9,8 +9,8 @@ import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 
 export async function load({ fetch }) {
 	const abi = termsOfServiceABI as Abi;
-	const { chain, contracts } = get(wizard).data as DepositWizardData;
-	const address = contracts.terms_of_service!;
+	const { chain, onChainData } = get(wizard).data as DepositWizardData;
+	const address = onChainData.smart_contracts.terms_of_service!;
 	const account = get(wallet).address;
 
 	const [canProceed, version] = await readContracts(config, {

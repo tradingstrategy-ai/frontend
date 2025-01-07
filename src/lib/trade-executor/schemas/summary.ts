@@ -49,6 +49,7 @@ const enzymeSchema = baseOnChainDataSchema.extend({
 	asset_management_mode: z.literal('enzyme'),
 	smart_contracts: enzymeSmartContractsSchema
 });
+export type EnzymeOnChainData = z.infer<typeof enzymeSchema>;
 
 const velvetSchema = baseOnChainDataSchema.extend({
 	asset_management_mode: z.literal('velvet'),
@@ -61,6 +62,11 @@ export const onChainDataSchema = z.discriminatedUnion('asset_management_mode', [
 	velvetSchema
 ]);
 export type OnChainData = z.infer<typeof onChainDataSchema>;
+
+// narrowed version of OnChainData that only includes vaults (excludes hot_wallet)
+export type VaultOnChainData = OnChainData & {
+	asset_management_mode: Exclude<OnChainData['asset_management_mode'], 'hot_wallet'>;
+};
 
 export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);
 

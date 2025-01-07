@@ -2,12 +2,16 @@
  * Vault adapter abstract classes and factory
  *
  */
-import type { OnChainData } from '../schemas/summary';
-import type { BaseAssetManager } from './base';
+import type { OnChainData, VaultOnChainData, SmartContracts } from '../schemas/summary';
+import type { BaseAssetManager, BaseVault } from './base';
 import { EnzymeVault } from './enzyme';
 import { VelvetVault } from './velvet';
 import { HotWallet } from './hot_wallet';
 import { getChain } from '$lib/helpers/chain';
+
+// Overload signatures (helps TS know that vault input -> vault output)
+export function createVaultAdapter(data: VaultOnChainData): BaseVault<SmartContracts>;
+export function createVaultAdapter(data: OnChainData): BaseAssetManager;
 
 /**
  * Vault adapter factory - returns the correct vault adapter instance

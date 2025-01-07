@@ -9,7 +9,7 @@ import { type AssetWithdrawlEvent, getRedemption } from '$lib/eth-defi/enzyme';
 import vaultABI from '$lib/eth-defi/abi/enzyme/VaultLib.json';
 
 export async function load() {
-	const { chain, contracts, denominationToken, transactionId } = get(wizard).data as Required<RedeemWizardData>;
+	const { chain, onChainData, denominationToken, transactionId } = get(wizard).data as Required<RedeemWizardData>;
 
 	const transactionReceipt = await getTransactionReceipt(config, { hash: transactionId });
 
@@ -17,7 +17,7 @@ export async function load() {
 		transactionReceipt.logs,
 		vaultABI as Abi,
 		'AssetWithdrawn',
-		contracts.vault
+		onChainData.smart_contracts.vault
 	) as unknown as AssetWithdrawlEvent[];
 
 	const redemptions = events.map(({ args: withdrawl }) =>

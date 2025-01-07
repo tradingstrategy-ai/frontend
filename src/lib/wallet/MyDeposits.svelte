@@ -28,8 +28,8 @@
 
 	let vaultBalance: MaybeString;
 
-	const vault = createVaultAdapter(strategy.on_chain_data);
-	const contracts = strategy.on_chain_data.smart_contracts;
+	const onChainData = strategy.on_chain_data;
+	const vault = createVaultAdapter(onChainData);
 
 	const isOutdated = Boolean(strategy.newVersionId);
 	const depositEnabled = vault.depositEnabled();
@@ -67,7 +67,7 @@
 		wizard.init(slug, `/strategies/${strategy.id}`, {
 			chain,
 			strategyName: strategy.name,
-			contracts
+			onChainData
 		});
 		goto(`/wizard/${slug}/introduction`);
 	}
@@ -119,7 +119,7 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<VaultBalance {contracts} address={$wallet.address} let:shares let:value on:dataFetch={setVaultBalance}>
+					<VaultBalance {onChainData} address={$wallet.address!} let:shares let:value on:dataFetch={setVaultBalance}>
 						<DepositBalance label="Value" data={value} dollar />
 						<DepositBalance label="Shares" data={shares} />
 					</VaultBalance>

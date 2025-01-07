@@ -39,13 +39,15 @@
 	const {
 		chain,
 		canForwardPayment,
-		contracts,
+		onChainData,
 		denominationToken,
 		denominationTokenInfo,
 		nativeCurrency,
 		tosHash,
 		tosSignature
 	} = $wizard.data as Required<DepositWizardData>;
+
+	const contracts = onChainData.smart_contracts;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
