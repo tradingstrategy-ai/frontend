@@ -45,6 +45,7 @@ button-like control with a segement for each possible value.
 	[data-css-props] {
 		--segmented-control-font: var(--f-ui-sm-medium);
 		--segmented-control-letter-spacing: var(--ls-ui-sm);
+		--segmented-control-padding: var(--padding);
 	}
 
 	.primary {
@@ -74,7 +75,7 @@ button-like control with a segement for each possible value.
 		justify-content: center;
 		align-items: center;
 		background: var(--background-default, inherit);
-		padding: var(--padding);
+		padding: var(--segmented-control-padding);
 		border-radius: var(--border-radius, inherit);
 		font: var(--segmented-control-font);
 		letter-spacing: var(--segmented-control-letter-spacing, normal);
