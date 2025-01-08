@@ -57,7 +57,7 @@
 	}
 
 	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = parseChainOption(chainOptions, searchParams.get('chainFilter'));
+	$: selectedChain = parseChainOption(chainOptions, searchParams.get('chain'));
 
 	$: filteredStrategies = strategies.filter((s) => {
 		return (

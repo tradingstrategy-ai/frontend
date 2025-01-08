@@ -36,7 +36,7 @@
 	export let selected: ChainOption;
 </script>
 
-<SegmentedControl name="chainFilter" {options} bind:selected let:option on:change>
+<SegmentedControl name="chain" {options} bind:selected let:option on:change>
 	<div class="filter-option {option}">
 		{#if option !== 'all'}
 			<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
