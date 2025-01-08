@@ -23,11 +23,22 @@
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 
-	const publicationStatusOptions = ['all', 'live', 'unpublished'] as const;
-	type PublicationStatus = (typeof publicationStatusOptions)[number];
-	let selectedPublicationStatus: PublicationStatus = 'all';
+	$: ({ searchParams } = $page.url);
 
-	function matchesPublicationStatus(strategy: StrategyInfo, status: PublicationStatus) {
+	// Helper type predicate function
+	function isValidOption<T extends string>(options: readonly T[], value: MaybeString): value is T {
+		return value != null && options.includes(value as T);
+	}
+
+	// Parser function that infers types from the options array
+	function parseParam<T extends string>(options: readonly T[], value: MaybeString, defaultValue: T): T {
+		return isValidOption(options, value) ? value : defaultValue;
+	}
+
+	const publicationStatusOptions = ['all', 'live', 'unpublished'] as const;
+	$: selectedPublicationStatus = parseParam(publicationStatusOptions, searchParams.get('publicationStatus'), 'all');
+
+	function matchesPublicationStatus(strategy: StrategyInfo, status: (typeof publicationStatusOptions)[number]) {
 		if (!admin || status === 'all') return true;
 
 		// return live strategies for "live" filter; others for "unpublished" filter
@@ -37,17 +48,16 @@
 	}
 
 	const archiveStatusOptions = ['current', 'archived'] as const;
-	type ArchiveStatus = (typeof archiveStatusOptions)[number];
-	let selectedArchiveStatus: ArchiveStatus = 'current';
+	$: selectedArchiveStatus = parseParam(archiveStatusOptions, searchParams.get('archiveStatus'), 'current');
 
-	function matchesArchiveStatus(strategy: StrategyInfo, status: ArchiveStatus) {
+	function matchesArchiveStatus(strategy: StrategyInfo, status: (typeof archiveStatusOptions)[number]) {
 		const archivedFilter = status === 'archived';
 		const archivedStrategy = strategy.tags?.includes('archived');
 		return archivedFilter === archivedStrategy;
 	}
 
 	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
+	$: selectedChain = parseChainOption(chainOptions, searchParams.get('chainFilter'));
 
 	$: filteredStrategies = strategies.filter((s) => {
 		return (
@@ -57,8 +67,12 @@
 		);
 	});
 
-	function handleChainFilterChange({ detail }: ComponentEvents<ChainFilter>['change']) {
-		goto(`?chainFilter=${detail.value}`, { replaceState: true, noScroll: true });
+	function handleFilterChange({ detail }: ComponentEvents<SegmentedControl>['change']) {
+		if (!detail.name) return;
+
+		const newParams = new URLSearchParams(searchParams);
+		newParams.set(detail.name, detail.value);
+		goto(`?${newParams}`, { replaceState: true, noScroll: true });
 	}
 </script>
 
@@ -72,10 +86,20 @@
 		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
 
 		<div class="filters" class:admin>
-			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleChainFilterChange} />
-			<SegmentedControl bind:selected={selectedArchiveStatus} options={archiveStatusOptions} />
+			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleFilterChange} />
+			<SegmentedControl
+				name="archiveStatus"
+				options={archiveStatusOptions}
+				selected={selectedArchiveStatus}
+				on:change={handleFilterChange}
+			/>
 			{#if admin}
-				<SegmentedControl bind:selected={selectedPublicationStatus} options={publicationStatusOptions} />
+				<SegmentedControl
+					name="publicationStatus"
+					options={publicationStatusOptions}
+					selected={selectedPublicationStatus}
+					on:change={handleFilterChange}
+				/>
 			{/if}
 		</div>
 
