@@ -27,13 +27,6 @@
 	type PublicationStatus = (typeof publicationStatusOptions)[number];
 	let selectedPublicationStatus: PublicationStatus = 'all';
 
-	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
-
-	$: filteredStrategies = strategies.filter((s) => {
-		return matchesPublicationStatus(s, selectedPublicationStatus) && matchesChainOption(s, selectedChain);
-	});
-
 	function matchesPublicationStatus(strategy: StrategyInfo, status: PublicationStatus) {
 		if (!admin || status === 'all') return true;
 
@@ -42,6 +35,27 @@
 		const liveStrategy = strategy.tags?.includes('live');
 		return liveFilter === liveStrategy;
 	}
+
+	const archiveStatusOptions = ['current', 'archived'] as const;
+	type ArchiveStatus = (typeof archiveStatusOptions)[number];
+	let selectedArchiveStatus: ArchiveStatus = 'current';
+
+	function matchesArchiveStatus(strategy: StrategyInfo, status: ArchiveStatus) {
+		const archivedFilter = status === 'archived';
+		const archivedStrategy = strategy.tags?.includes('archived');
+		return archivedFilter === archivedStrategy;
+	}
+
+	const chainOptions = getChainOptions(strategies);
+	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
+
+	$: filteredStrategies = strategies.filter((s) => {
+		return (
+			matchesChainOption(s, selectedChain) &&
+			matchesPublicationStatus(s, selectedPublicationStatus) &&
+			matchesArchiveStatus(s, selectedArchiveStatus)
+		);
+	});
 
 	function handleChainFilterChange({ detail }: ComponentEvents<ChainFilter>['change']) {
 		goto(`?chainFilter=${detail.value}`, { replaceState: true, noScroll: true });
@@ -57,8 +71,9 @@
 	<Section>
 		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
 
-		<div class="filters">
+		<div class="filters" class:admin>
 			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleChainFilterChange} />
+			<SegmentedControl bind:selected={selectedArchiveStatus} options={archiveStatusOptions} />
 			{#if admin}
 				<SegmentedControl bind:selected={selectedPublicationStatus} options={publicationStatusOptions} />
 			{/if}
@@ -75,7 +90,8 @@
 			</div>
 		{:else}
 			<p>
-				Currently no
+				No
+				{selectedArchiveStatus}
 				{#if selectedPublicationStatus !== 'all'}
 					{selectedPublicationStatus}
 				{/if}
@@ -108,16 +124,30 @@
 	.filters {
 		display: grid;
 		gap: 0.75rem 1rem;
-		grid-template-columns: auto auto;
+		grid-auto-flow: column;
 		justify-content: space-between;
 		margin-block: -1.5rem 1.75rem;
 		text-transform: capitalize;
 
 		@media (--viewport-md-down) {
 			margin-block: -1rem 1.5rem;
+
+			:global([data-css-props]) {
+				--segmented-control-font: var(--f-ui-xs-medium);
+				--segmented-control-letter-spacing: var(--ls-ui-xs);
+				--segmented-control-padding: 0.75em 0.875em;
+			}
 		}
 
-		@media (--viewport-sm-down) {
+		&.admin {
+			@media (--viewport-sm-down) {
+				grid-auto-flow: row;
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media (--viewport-xs) {
+			grid-auto-flow: row;
 			grid-template-columns: 1fr;
 		}
 
