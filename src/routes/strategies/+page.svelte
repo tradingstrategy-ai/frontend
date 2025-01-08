@@ -23,18 +23,18 @@
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 
-	type StatusOption = (typeof statusOptions)[number];
-	const statusOptions = ['all', 'live', 'unpublished'] as const;
-	let selectedStatus: StatusOption = 'all';
+	const publicationStatusOptions = ['all', 'live', 'unpublished'] as const;
+	type PublicationStatus = (typeof publicationStatusOptions)[number];
+	let selectedPublicationStatus: PublicationStatus = 'all';
 
 	const chainOptions = getChainOptions(strategies);
 	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
 
 	$: filteredStrategies = strategies.filter((s) => {
-		return matchesStatus(s, selectedStatus) && matchesChainOption(s, selectedChain);
+		return matchesPublicationStatus(s, selectedPublicationStatus) && matchesChainOption(s, selectedChain);
 	});
 
-	function matchesStatus(strategy: StrategyInfo, status: StatusOption) {
+	function matchesPublicationStatus(strategy: StrategyInfo, status: PublicationStatus) {
 		if (!admin || status === 'all') return true;
 
 		// return live strategies for "live" filter; others for "unpublished" filter
@@ -60,7 +60,7 @@
 		<div class="filters">
 			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleChainFilterChange} />
 			{#if admin}
-				<SegmentedControl bind:selected={selectedStatus} options={statusOptions} />
+				<SegmentedControl bind:selected={selectedPublicationStatus} options={publicationStatusOptions} />
 			{/if}
 		</div>
 
@@ -76,8 +76,8 @@
 		{:else}
 			<p>
 				Currently no
-				{#if selectedStatus !== 'all'}
-					{selectedStatus}
+				{#if selectedPublicationStatus !== 'all'}
+					{selectedPublicationStatus}
 				{/if}
 				{#if selectedChain !== 'all'}
 					{getChain(selectedChain)?.name}
