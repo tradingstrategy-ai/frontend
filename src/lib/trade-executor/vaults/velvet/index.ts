@@ -1,7 +1,5 @@
 import type { VelvetSmartContracts } from 'trade-executor/schemas/summary';
 import { BaseVault, DepositMethod } from '../base';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
-import type { Config } from '@wagmi/core';
 
 export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 	type = 'velvet';

@@ -32,7 +32,17 @@ export const velvetSmartContractSchema = z.object({
 });
 export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
 
-export type SmartContracts = EnzymeSmartContracts | VelvetSmartContracts;
+export const lagoonSmartContractSchema = z.object({
+	address: hexString,
+	feeReceiver: hexString,
+	feeRegistry: hexString,
+	valuationManager: hexString,
+	safe: hexString,
+	asset: hexString
+});
+export type LagoonSmartContracts = z.infer<typeof lagoonSmartContractSchema>;
+
+export type SmartContracts = EnzymeSmartContracts | VelvetSmartContracts | LagoonSmartContracts;
 
 const baseOnChainDataSchema = z.object({
 	chain_id: chainId,
@@ -56,10 +66,16 @@ const velvetSchema = baseOnChainDataSchema.extend({
 	smart_contracts: velvetSmartContractSchema
 });
 
+const lagoonSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('lagoon'),
+	smart_contracts: lagoonSmartContractSchema
+});
+
 export const onChainDataSchema = z.discriminatedUnion('asset_management_mode', [
 	hotWalletSchema,
 	enzymeSchema,
-	velvetSchema
+	velvetSchema,
+	lagoonSchema
 ]);
 export type OnChainData = z.infer<typeof onChainDataSchema>;
 

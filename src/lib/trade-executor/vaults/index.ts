@@ -6,6 +6,7 @@ import type { OnChainData, VaultOnChainData, SmartContracts } from '../schemas/s
 import type { BaseAssetManager, BaseVault } from './base';
 import { EnzymeVault } from './enzyme';
 import { VelvetVault } from './velvet';
+import { LagoonVault } from './lagoon';
 import { HotWallet } from './hot_wallet';
 import { getChain } from '$lib/helpers/chain';
 
@@ -33,6 +34,8 @@ export function createVaultAdapter({
 			return new EnzymeVault(chain, contracts);
 		case 'velvet':
 			return new VelvetVault(chain, contracts);
+		case 'lagoon':
+			return new LagoonVault(chain, contracts);
 		case 'hot_wallet':
 			return new HotWallet(chain);
 		default:
