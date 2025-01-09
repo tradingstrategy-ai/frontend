@@ -9,7 +9,14 @@ import { z } from 'zod';
 import { blockNumber, chainId, decimal, hexString, primaryKey, unixTimestamp, usDollarAmount } from './utility-types';
 import { assetIdentifierSchema } from './identifier';
 
-export const balanceUpdateCause = z.enum(['deposit', 'redemption', 'interest', 'correction']);
+export const balanceUpdateCause = z.enum([
+	'deposit',
+	'redemption',
+	'deposit_and_redemption',
+	'interest',
+	'correction',
+	'vault_flow'
+]);
 
 export const balanceUpdatePositionType = z.enum(['reserve', 'open_position']);
 
