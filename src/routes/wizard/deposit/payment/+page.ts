@@ -24,8 +24,8 @@ async function paymentForwarderRequiresTos(address: Address) {
 }
 
 export async function load() {
-	const { canForwardPayment, contracts } = get(wizard).data as DepositWizardData;
-	const { comptroller, payment_forwarder } = contracts;
+	const { canForwardPayment, onChainData } = get(wizard).data as DepositWizardData;
+	const { comptroller, payment_forwarder } = onChainData.smart_contracts;
 
 	let paymentContract: ContractFunctionParameters;
 	let tosRequired = false;

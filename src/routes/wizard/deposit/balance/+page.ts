@@ -7,8 +7,8 @@ import { getDenominationTokenBalance } from '$lib/eth-defi/helpers';
 
 export async function load() {
 	const { address } = getAccount(config) as { address: Address };
-	const { chain, contracts } = get(wizard).data as DepositWizardData;
-	const { comptroller } = contracts;
+	const { chain, onChainData } = get(wizard).data as DepositWizardData;
+	const { comptroller } = onChainData.smart_contracts;
 
 	const chainId = chain.id;
 

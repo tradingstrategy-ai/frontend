@@ -2,9 +2,10 @@
  * Fetch data needed to render the strategy frame and all subpages.
  */
 import { error } from '@sveltejs/kit';
+import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
-import { getStrategyInfo, type ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-import { getStrategyState } from 'trade-executor/state';
+import { getStrategyInfo } from 'trade-executor/client/strategy-info';
+import { getStrategyState } from 'trade-executor/client/state';
 import { getChain } from '$lib/helpers/chain';
 
 export async function load({ params, fetch, parent }) {

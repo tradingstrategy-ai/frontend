@@ -32,6 +32,18 @@ export const velvetSmartContractSchema = z.object({
 });
 export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
 
+export const lagoonSmartContractSchema = z.object({
+	address: hexString,
+	feeReceiver: hexString,
+	feeRegistry: hexString,
+	valuationManager: hexString,
+	safe: hexString,
+	asset: hexString
+});
+export type LagoonSmartContracts = z.infer<typeof lagoonSmartContractSchema>;
+
+export type SmartContracts = EnzymeSmartContracts | VelvetSmartContracts | LagoonSmartContracts;
+
 const baseOnChainDataSchema = z.object({
 	chain_id: chainId,
 	owner: hexString.nullish(),
@@ -47,18 +59,30 @@ const enzymeSchema = baseOnChainDataSchema.extend({
 	asset_management_mode: z.literal('enzyme'),
 	smart_contracts: enzymeSmartContractsSchema
 });
+export type EnzymeOnChainData = z.infer<typeof enzymeSchema>;
 
 const velvetSchema = baseOnChainDataSchema.extend({
 	asset_management_mode: z.literal('velvet'),
 	smart_contracts: velvetSmartContractSchema
 });
 
+const lagoonSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('lagoon'),
+	smart_contracts: lagoonSmartContractSchema
+});
+
 export const onChainDataSchema = z.discriminatedUnion('asset_management_mode', [
 	hotWalletSchema,
 	enzymeSchema,
-	velvetSchema
+	velvetSchema,
+	lagoonSchema
 ]);
 export type OnChainData = z.infer<typeof onChainDataSchema>;
+
+// narrowed version of OnChainData that only includes vaults (excludes hot_wallet)
+export type VaultOnChainData = OnChainData & {
+	asset_management_mode: Exclude<OnChainData['asset_management_mode'], 'hot_wallet'>;
+};
 
 export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);
 

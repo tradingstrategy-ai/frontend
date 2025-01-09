@@ -13,14 +13,11 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	$: ({ address } = $wallet as ConnectedWallet);
-	$: ({ chain, contracts, nativeCurrency, vaultShares } = $wizard.data as RedeemWizardData);
+	$: ({ chain, onChainData, nativeCurrency, vaultShares } = $wizard.data as RedeemWizardData);
 	$: chainCurrency = $wallet.chain?.nativeCurrency.symbol;
 
 	$: depositStatusComplete =
-		'denominationToken' in $wizard.data &&
-		'vaultNetValue' in $wizard.data &&
-		(nativeCurrency?.value ?? 0n) > 0n &&
-		(vaultShares?.value ?? 0n) > 0n;
+		'vaultNetValue' in $wizard.data && (nativeCurrency?.value ?? 0n) > 0n && (vaultShares?.value ?? 0n) > 0n;
 
 	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
 
@@ -32,7 +29,7 @@
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {contracts} {address} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
+	<VaultBalance {onChainData} {address} on:dataFetch={({ detail }) => wizard.updateData(detail)} />
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>

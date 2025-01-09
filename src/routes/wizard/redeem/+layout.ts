@@ -1,15 +1,16 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
+import type { GetTokenBalanceReturnType, TokenInfo } from '$lib/eth-defi/helpers';
 
 export type RedeemWizardData = {
 	chain: Chain;
 	strategyName: string;
-	contracts: EnzymeSmartContracts;
+	onChainData: EnzymeOnChainData;
 	nativeCurrency?: GetTokenBalanceReturnType;
-	denominationToken?: GetTokenBalanceReturnType;
+	denominationToken?: TokenInfo;
 	vaultShares?: GetTokenBalanceReturnType;
 	vaultNetBalance?: GetTokenBalanceReturnType;
+	vaultNetValue?: GetTokenBalanceReturnType;
 	transactionId?: Address;
 };
 

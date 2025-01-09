@@ -7,7 +7,7 @@
 import { z } from 'zod';
 import { blockNumber, chainId, count, decimal, hexString, hexEncodedData, unixTimestamp } from './utility-types';
 
-export const blockchainTransactionType = z.enum(['hot_wallet', 'enzyme_vault', 'simulated']);
+export const blockchainTransactionType = z.enum(['hot_wallet', 'enzyme_vault', 'lagoon_vault', 'simulated']);
 
 export const blockchainAssetDeltaSchema = z.object({
 	asset: hexString,

@@ -11,7 +11,7 @@
 		matchesChainOption
 	} from 'trade-executor/components/ChainFilter.svelte';
 	import StrategyTile from './strategies/StrategyTile.svelte';
-	import { getStrategyChartDateRange } from 'trade-executor/chart/helpers';
+	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 
 	export let strategies: StrategyInfo[];
 

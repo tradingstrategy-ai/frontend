@@ -2,7 +2,7 @@
 	Page to display the strategy performance.
 -->
 <script lang="ts">
-	import { getChartClient } from 'trade-executor/chart';
+	import { getChartClient } from 'trade-executor/client/chart';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { Alert, SegmentedControl } from '$lib/components';
 	import LongShortTable from './LongShortTable.svelte';

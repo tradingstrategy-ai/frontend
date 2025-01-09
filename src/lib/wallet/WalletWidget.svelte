@@ -14,7 +14,7 @@
 		wizard.init('connect-wallet', `/strategies/${strategy.id}`, {
 			chain,
 			strategyName: strategy.name,
-			contracts: strategy.on_chain_data.smart_contracts
+			onChainData: strategy.on_chain_data
 		});
 		goto(`/wizard/connect-wallet/introduction`);
 	}

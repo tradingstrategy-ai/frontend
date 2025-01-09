@@ -5,13 +5,13 @@
 	import { Grid } from '$lib/components';
 	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
 
-	const { contracts, strategyName } = $wizard.data as DepositWizardData;
+	const { onChainData, strategyName } = $wizard.data as DepositWizardData;
 
 	$: address = $wallet.address!;
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {contracts} {address} />
+	<VaultBalance {onChainData} {address} />
 
 	<p>
 		Congratulations! You've successfully deposited in <strong>{strategyName}</strong>. Keep an eye on your progress and

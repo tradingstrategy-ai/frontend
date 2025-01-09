@@ -4,7 +4,7 @@
  * NOTE: do NOT add HTTP caching to this route, since it renders
  * different content based on admin role and IP country
  */
-import { getCachedStrategies } from 'trade-executor/models/strategy-info';
+import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 async function fetchTvlData() {

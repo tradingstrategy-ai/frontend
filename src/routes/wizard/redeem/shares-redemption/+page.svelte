@@ -16,7 +16,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { chain, contracts, vaultShares, vaultNetValue } = $wizard.data as RedeemWizardData;
+	const { chain, onChainData, vaultShares, vaultNetValue } = $wizard.data as RedeemWizardData;
 
 	let shares = '';
 	let errorMessage: MaybeString;
@@ -32,7 +32,7 @@
 		const sharesQuantity = parseUnits(shares, vaultShares.decimals);
 
 		const { request } = await simulateContract(config, {
-			address: contracts.comptroller,
+			address: onChainData.smart_contracts.comptroller,
 			abi: comptrollerABI,
 			functionName: 'redeemSharesInKind',
 			args: [$wallet.address, sharesQuantity, [], []]

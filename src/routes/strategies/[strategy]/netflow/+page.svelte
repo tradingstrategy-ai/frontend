@@ -8,7 +8,7 @@
 	import { parseDate } from '$lib/helpers/date';
 	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
-	import { getChartClient } from 'trade-executor/chart';
+	import { getChartClient } from 'trade-executor/client/chart';
 
 	export let data;
 	const { strategy } = data;

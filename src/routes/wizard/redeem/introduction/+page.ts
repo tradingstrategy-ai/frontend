@@ -5,10 +5,10 @@ import { wizard } from 'wizard/store';
 import { getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export async function load() {
-	const { chain, contracts } = get(wizard).data as RedeemWizardData;
-	const { comptroller } = contracts;
+	const { chain, onChainData } = get(wizard).data as RedeemWizardData;
+	const { comptroller } = onChainData.smart_contracts;
 
 	return {
-		denominationTokenInfo: await getDenominationTokenInfo(config, { chainId: chain.id, comptroller })
+		denominationToken: await getDenominationTokenInfo(config, { chainId: chain.id, comptroller })
 	};
 }

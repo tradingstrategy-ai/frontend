@@ -1,10 +1,10 @@
 import type { Chain } from '$lib/helpers/chain';
-import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
+import type { OnChainData } from 'trade-executor/schemas/summary';
 
 export type ConnectWizardData = {
 	chain: Chain;
 	strategyName: string;
-	contracts: EnzymeSmartContracts;
+	onChainData: OnChainData;
 };
 
 export async function load() {
