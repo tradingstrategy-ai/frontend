@@ -9,6 +9,7 @@
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import {
 		default as ChainFilter,
 		getChainOptions,
@@ -25,20 +26,10 @@
 
 	$: ({ searchParams } = $page.url);
 
-	// Helper type predicate function
-	function isValidOption<T extends string>(options: readonly T[], value: MaybeString): value is T {
-		return value != null && options.includes(value as T);
-	}
+	const publicationStatus = new OptionGroup(['all', 'live', 'unpublished'], 'all');
+	$: publicationStatus.selected = searchParams.get('publicationStatus');
 
-	// Parser function that infers types from the options array
-	function parseParam<T extends string>(options: readonly T[], value: MaybeString, defaultValue: T): T {
-		return isValidOption(options, value) ? value : defaultValue;
-	}
-
-	const publicationStatusOptions = ['all', 'live', 'unpublished'] as const;
-	$: selectedPublicationStatus = parseParam(publicationStatusOptions, searchParams.get('publicationStatus'), 'all');
-
-	function matchesPublicationStatus(strategy: StrategyInfo, status: (typeof publicationStatusOptions)[number]) {
+	function matchesPublicationStatus(strategy: StrategyInfo, status: string) {
 		if (!admin || status === 'all') return true;
 
 		// return live strategies for "live" filter; others for "unpublished" filter
@@ -47,10 +38,10 @@
 		return liveFilter === liveStrategy;
 	}
 
-	const archiveStatusOptions = ['current', 'archived'] as const;
-	$: selectedArchiveStatus = parseParam(archiveStatusOptions, searchParams.get('archiveStatus'), 'current');
+	const archiveStatus = new OptionGroup(['current', 'archived'], 'current');
+	$: archiveStatus.selected = searchParams.get('archiveStatus');
 
-	function matchesArchiveStatus(strategy: StrategyInfo, status: (typeof archiveStatusOptions)[number]) {
+	function matchesArchiveStatus(strategy: StrategyInfo, status: string) {
 		const archivedFilter = status === 'archived';
 		const archivedStrategy = strategy.tags?.includes('archived');
 		return archivedFilter === archivedStrategy;
@@ -62,8 +53,8 @@
 	$: filteredStrategies = strategies.filter((s) => {
 		return (
 			matchesChainOption(s, selectedChain) &&
-			matchesPublicationStatus(s, selectedPublicationStatus) &&
-			matchesArchiveStatus(s, selectedArchiveStatus)
+			matchesPublicationStatus(s, publicationStatus.selected) &&
+			matchesArchiveStatus(s, archiveStatus.selected)
 		);
 	});
 
@@ -89,15 +80,15 @@
 			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleFilterChange} />
 			<SegmentedControl
 				name="archiveStatus"
-				options={archiveStatusOptions}
-				selected={selectedArchiveStatus}
+				options={archiveStatus.options}
+				selected={archiveStatus.selected}
 				on:change={handleFilterChange}
 			/>
 			{#if admin}
 				<SegmentedControl
 					name="publicationStatus"
-					options={publicationStatusOptions}
-					selected={selectedPublicationStatus}
+					options={publicationStatus.options}
+					selected={publicationStatus.selected}
 					on:change={handleFilterChange}
 				/>
 			{/if}
@@ -115,9 +106,9 @@
 		{:else}
 			<p>
 				No
-				{selectedArchiveStatus}
-				{#if selectedPublicationStatus !== 'all'}
-					{selectedPublicationStatus}
+				{archiveStatus.selected}
+				{#if publicationStatus.selected !== 'all'}
+					{publicationStatus.selected}
 				{/if}
 				{#if selectedChain !== 'all'}
 					{getChain(selectedChain)?.name}
