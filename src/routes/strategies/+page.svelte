@@ -9,6 +9,7 @@
 	import { PageHeading, Section, SegmentedControl } from '$lib/components';
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import {
 		default as ChainFilter,
 		getChainOptions,
@@ -23,11 +24,12 @@
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 
-	const publicationStatusOptions = ['all', 'live', 'unpublished'] as const;
-	type PublicationStatus = (typeof publicationStatusOptions)[number];
-	let selectedPublicationStatus: PublicationStatus = 'all';
+	$: ({ searchParams } = $page.url);
 
-	function matchesPublicationStatus(strategy: StrategyInfo, status: PublicationStatus) {
+	const publicationStatus = new OptionGroup(['all', 'live', 'unpublished'], 'all');
+	$: publicationStatus.selected = searchParams.get('publicationStatus');
+
+	function matchesPublicationStatus(strategy: StrategyInfo, status: string) {
 		if (!admin || status === 'all') return true;
 
 		// return live strategies for "live" filter; others for "unpublished" filter
@@ -36,29 +38,32 @@
 		return liveFilter === liveStrategy;
 	}
 
-	const archiveStatusOptions = ['current', 'archived'] as const;
-	type ArchiveStatus = (typeof archiveStatusOptions)[number];
-	let selectedArchiveStatus: ArchiveStatus = 'current';
+	const archiveStatus = new OptionGroup(['current', 'archived'], 'current');
+	$: archiveStatus.selected = searchParams.get('archiveStatus');
 
-	function matchesArchiveStatus(strategy: StrategyInfo, status: ArchiveStatus) {
+	function matchesArchiveStatus(strategy: StrategyInfo, status: string) {
 		const archivedFilter = status === 'archived';
 		const archivedStrategy = strategy.tags?.includes('archived');
 		return archivedFilter === archivedStrategy;
 	}
 
 	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = parseChainOption(chainOptions, $page.url.searchParams.get('chainFilter'));
+	$: selectedChain = parseChainOption(chainOptions, searchParams.get('chain'));
 
 	$: filteredStrategies = strategies.filter((s) => {
 		return (
 			matchesChainOption(s, selectedChain) &&
-			matchesPublicationStatus(s, selectedPublicationStatus) &&
-			matchesArchiveStatus(s, selectedArchiveStatus)
+			matchesPublicationStatus(s, publicationStatus.selected) &&
+			matchesArchiveStatus(s, archiveStatus.selected)
 		);
 	});
 
-	function handleChainFilterChange({ detail }: ComponentEvents<ChainFilter>['change']) {
-		goto(`?chainFilter=${detail.value}`, { replaceState: true, noScroll: true });
+	function handleFilterChange({ detail }: ComponentEvents<SegmentedControl>['change']) {
+		if (!detail.name) return;
+
+		const newParams = new URLSearchParams(searchParams);
+		newParams.set(detail.name, detail.value);
+		goto(`?${newParams}`, { replaceState: true, noScroll: true });
 	}
 </script>
 
@@ -72,10 +77,20 @@
 		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
 
 		<div class="filters" class:admin>
-			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleChainFilterChange} />
-			<SegmentedControl bind:selected={selectedArchiveStatus} options={archiveStatusOptions} />
+			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleFilterChange} />
+			<SegmentedControl
+				name="archiveStatus"
+				options={archiveStatus.options}
+				selected={archiveStatus.selected}
+				on:change={handleFilterChange}
+			/>
 			{#if admin}
-				<SegmentedControl bind:selected={selectedPublicationStatus} options={publicationStatusOptions} />
+				<SegmentedControl
+					name="publicationStatus"
+					options={publicationStatus.options}
+					selected={publicationStatus.selected}
+					on:change={handleFilterChange}
+				/>
 			{/if}
 		</div>
 
@@ -91,9 +106,9 @@
 		{:else}
 			<p>
 				No
-				{selectedArchiveStatus}
-				{#if selectedPublicationStatus !== 'all'}
-					{selectedPublicationStatus}
+				{archiveStatus.selected}
+				{#if publicationStatus.selected !== 'all'}
+					{publicationStatus.selected}
 				{/if}
 				{#if selectedChain !== 'all'}
 					{getChain(selectedChain)?.name}
