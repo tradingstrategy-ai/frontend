@@ -1,7 +1,7 @@
+// TODO: move all of these methods to vault adapter
 import { formatUnits, isAddressEqual } from 'viem';
 import { type Config, simulateContract } from '@wagmi/core';
 import { type TokenInfo, type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
-import fundValueCalculatorABI from '$lib/eth-defi/abi/enzyme/FundValueCalculator.json';
 
 export type AssetWithdrawl = {
 	asset: Address;
@@ -62,13 +62,15 @@ class GetSharePriceError extends Error {
  * Get the current share price for a given vault
  */
 export async function getSharePrice(config: Config, params: GetSharePriceParams) {
+	const { default: abi } = await import('$lib/trade-executor/vaults/enzyme/abi/FundValueCalculator.json');
+
 	const { calculator, vault, denominationToken } = params;
 
 	let value: bigint;
 
 	try {
 		const { result } = await simulateContract(config, {
-			abi: fundValueCalculatorABI,
+			abi,
 			address: calculator,
 			functionName: 'calcGrossShareValue',
 			args: [vault]

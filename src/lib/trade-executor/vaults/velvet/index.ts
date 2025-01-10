@@ -20,6 +20,5 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 
 	async getShareValueUSD() {
 		throw new Error('Velvet deposit value not yet available.');
-		return undefined;
 	}
 }

@@ -60,5 +60,5 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return getTokenBalance(config, { token: this.shareTokenAddress, address });
 	}
 
-	abstract getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType | undefined>;
+	abstract getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType>;
 }
