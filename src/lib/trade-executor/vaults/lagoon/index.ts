@@ -1,5 +1,9 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
+import type { Config } from '@wagmi/core';
+import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 import { BaseVault, DepositMethod } from '../base';
+import { getTokenBalance } from '$lib/eth-defi/helpers';
+import { readContract } from '@wagmi/core';
 
 export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	type = 'lagoon';
@@ -14,8 +18,30 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 
 	shareTokenAddress = this.contracts.address;
 
-	async getShareValueUSD() {
-		throw new Error('Lagoon deposit value not yet available.');
-		return undefined;
+	async getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType> {
+		const [denominationToken, value] = await Promise.all([
+			getTokenBalance(config, { chainId: this.chain.id, token: this.contracts.asset, address }),
+			this.#getVaultAssetValue(config, address)
+		]);
+
+		return { ...denominationToken, value };
+	}
+
+	async #getVaultAssetValue(config: Config, address: Address) {
+		const { default: abi } = await import('./abi/Vault.json');
+
+		const vaultBalance = await getTokenBalance(config, {
+			chainId: this.chain.id,
+			token: this.contracts.address,
+			address
+		});
+
+		return readContract(config, {
+			abi,
+			chainId: this.chain.id,
+			address: this.contracts.address,
+			functionName: 'convertToAssets',
+			args: [vaultBalance.value]
+		}) as Promise<bigint>;
 	}
 }
