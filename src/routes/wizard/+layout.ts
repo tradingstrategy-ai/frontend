@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
-import { wizard } from './store';
+import { wizard } from '$lib/wizard/store';
 
 export const ssr = false;
 

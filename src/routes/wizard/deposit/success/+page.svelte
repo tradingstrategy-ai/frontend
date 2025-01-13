@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { wallet } from '$lib/wallet/client';
 	import { Grid } from '$lib/components';
 	import VaultBalance from '$lib/wallet/VaultBalance.svelte';

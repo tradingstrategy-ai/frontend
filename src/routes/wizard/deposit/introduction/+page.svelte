@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 
 	const { strategyName, denominationTokenInfo } = $wizard.data as DepositWizardData;
 

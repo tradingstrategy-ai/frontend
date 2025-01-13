@@ -1,7 +1,7 @@
 import type { Abi, ContractFunctionParameters } from 'viem';
 import type { DepositWizardData } from '../+layout';
 import { get } from 'svelte/store';
-import { wizard } from 'wizard/store';
+import { wizard } from '$lib/wizard/store';
 import { readContract } from '@wagmi/core';
 import { config } from '$lib/wallet/client';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';

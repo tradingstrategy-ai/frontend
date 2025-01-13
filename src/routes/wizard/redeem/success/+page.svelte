@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { EntitySymbol } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';

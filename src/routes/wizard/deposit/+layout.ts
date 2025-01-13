@@ -2,7 +2,7 @@ import type { Chain } from '$lib/helpers/chain';
 import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
-import { wizard } from 'wizard/store';
+import { wizard } from '$lib/wizard/store';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
 import { type TokenInfo, type GetTokenBalanceReturnType, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 

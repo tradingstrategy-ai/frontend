@@ -5,7 +5,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { inview } from 'svelte-inview';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';

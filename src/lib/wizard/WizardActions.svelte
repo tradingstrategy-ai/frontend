@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Step, wizard } from 'wizard/store';
+	import { type Step, wizard } from '$lib/wizard/store';
 	import { Button } from '$lib/components';
 	import { goto } from '$app/navigation';
 

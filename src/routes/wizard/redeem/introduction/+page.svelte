@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 
 	export let data;
 	const { denominationToken } = data;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 
 	export let data;

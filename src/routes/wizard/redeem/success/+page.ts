@@ -1,6 +1,6 @@
 import type { Abi } from 'viem';
 import type { RedeemWizardData } from '../+layout';
-import { wizard } from 'wizard/store';
+import { wizard } from '$lib/wizard/store';
 import { get } from 'svelte/store';
 import { getTransactionReceipt } from '@wagmi/core';
 import { config } from '$lib/wallet/client';

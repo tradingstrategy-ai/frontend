@@ -15,8 +15,7 @@ const config = {
 
 		alias: {
 			'design-system-fonts': 'deps/fonts',
-			'trade-executor': 'src/lib/trade-executor',
-			wizard: 'src/routes/wizard'
+			'trade-executor': 'src/lib/trade-executor'
 		},
 
 		// prevent clickjacking (block 3rd-parties from including site via iframe)

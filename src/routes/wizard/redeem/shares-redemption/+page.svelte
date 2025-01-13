@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { RedeemWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';

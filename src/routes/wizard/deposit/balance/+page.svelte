@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout.js';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { Alert, Button } from '$lib/components';
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/helpers';

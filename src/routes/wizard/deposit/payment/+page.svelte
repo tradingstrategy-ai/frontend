@@ -3,7 +3,7 @@
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import fsm from 'svelte-fsm';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme';

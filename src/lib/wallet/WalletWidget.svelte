@@ -2,7 +2,7 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import { goto } from '$app/navigation';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { modal, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';

@@ -4,7 +4,7 @@
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import { createVaultAdapter } from 'trade-executor/vaults';
 	import { Button, HashAddress } from '$lib/components';

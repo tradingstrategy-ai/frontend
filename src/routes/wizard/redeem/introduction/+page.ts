@@ -1,7 +1,7 @@
 import type { RedeemWizardData } from '../+layout';
 import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
-import { wizard } from 'wizard/store';
+import { wizard } from '$lib/wizard/store';
 import { getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
 export async function load() {

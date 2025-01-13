@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RedeemWizardData } from '../+layout';
-	import { wizard } from 'wizard/store';
+	import { wizard } from '$lib/wizard/store';
 	import { fade } from 'svelte/transition';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
