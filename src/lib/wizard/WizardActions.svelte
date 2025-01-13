@@ -3,17 +3,21 @@
 	import { Button } from '$lib/components';
 	import { goto } from '$app/navigation';
 
-	export let steps: Step[];
-	export let currentStep: Step;
+	interface Props {
+		steps: Step[];
+		currentStep: Step;
+	}
+
+	let { steps, currentStep }: Props = $props();
 
 	async function exitWizard() {
 		await goto($wizard.returnTo!);
 		wizard.reset();
 	}
 
-	$: stepIndex = steps.indexOf(currentStep);
-	$: previousStep = steps[stepIndex - 1];
-	$: nextStep = steps[stepIndex + 1];
+	let stepIndex = $derived(steps.indexOf(currentStep));
+	let previousStep = $derived(steps[stepIndex - 1]);
+	let nextStep = $derived(steps[stepIndex + 1]);
 </script>
 
 <footer class="wizard-actions">
