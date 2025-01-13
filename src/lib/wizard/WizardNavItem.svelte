@@ -3,15 +3,19 @@
 	import IconSuccess from '~icons/local/success';
 	import IconEmpty from '~icons/local/empty';
 
-	export let slug: string;
-	export let label: string;
-	export let active = false;
-	export let completed = false;
-	export let disabled = false;
+	interface Props {
+		slug: string;
+		label: string;
+		active: boolean;
+		completed: boolean;
+		disabled: boolean;
+	}
+
+	let { slug, label, active, completed, disabled }: Props = $props();
 </script>
 
 <li class="wizard-nav-item">
-	<button disabled={disabled || active} class:active class:completed class:disabled on:click={() => goto(slug)}>
+	<button disabled={disabled || active} class={{ active, completed, disabled }} onclick={() => goto(slug)}>
 		{#if completed}
 			<IconSuccess />
 		{:else}
