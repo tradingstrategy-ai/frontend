@@ -1,12 +1,11 @@
 <script>
+	import { MediaQuery } from 'svelte/reactivity';
 	import { discordUrl } from '$lib/config';
 	import { Button, Logo, Section } from '$lib/components';
 	import IconDiscord from '~icons/local/discord';
 
-	$: windowInnerWidth = 0;
+	const large = new MediaQuery('width > 768px');
 </script>
-
-<svelte:window bind:innerWidth={windowInnerWidth} />
 
 <Section tag="header" class="wizard-header">
 	<div class="inner">
@@ -16,9 +15,9 @@
 
 		<Button
 			size="sm"
-			label={windowInnerWidth >= 768 ? 'Get help' : undefined}
+			label={large.current ? 'Get help' : undefined}
 			href={discordUrl}
-			title="Get helo on Discord"
+			title="Get help on Discord"
 			target="_blank"
 			rel="noreferrer"
 		>
