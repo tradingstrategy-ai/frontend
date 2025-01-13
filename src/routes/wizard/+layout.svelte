@@ -1,15 +1,22 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { Step } from '$lib/wizard/store';
-	import { page } from '$app/stores';
-	import { Section } from '$lib/components';
+	import { page } from '$app/state';
+	import Section from '$lib/components/Section.svelte';
 	import WizardHeader from '$lib/wizard/WizardHeader.svelte';
 	import WizardNavItem from '$lib/wizard/WizardNavItem.svelte';
 	import WizardActions from '$lib/wizard/WizardActions.svelte';
 
-	$: ({ steps, title } = $page.data);
-	$: stepSlug = $page.route.id?.split('/').at(-1);
-	$: stepIndex = steps.findIndex(({ slug }: Step) => slug === stepSlug);
-	$: currentStep = steps[stepIndex];
+	type Props = {
+		children: Snippet;
+	};
+
+	let { children }: Props = $props();
+
+	let { steps, title } = $derived(page.data);
+	let stepSlug = $derived(page.route.id?.split('/').at(-1));
+	let stepIndex = $derived(steps.findIndex(({ slug }: Step) => slug === stepSlug));
+	let currentStep = $derived(steps[stepIndex]);
 </script>
 
 <svelte:head>
@@ -46,7 +53,7 @@
 
 			<main>
 				<h2>{currentStep.label}</h2>
-				<slot />
+				{@render children()}
 				<WizardActions {steps} {currentStep} />
 			</main>
 		</div>
