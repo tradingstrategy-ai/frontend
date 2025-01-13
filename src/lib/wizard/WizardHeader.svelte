@@ -10,7 +10,7 @@
 
 <Section tag="header" class="wizard-header">
 	<div class="inner">
-		<a href="/">
+		<a href="/" aria-label="Home">
 			<Logo />
 		</a>
 

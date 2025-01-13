@@ -2,9 +2,9 @@
 	import type { Step } from 'wizard/store';
 	import { page } from '$app/stores';
 	import { Section } from '$lib/components';
-	import WizardHeader from './WizardHeader.svelte';
-	import WizardNavItem from './WizardNavItem.svelte';
-	import WizardActions from './WizardActions.svelte';
+	import WizardHeader from '$lib/wizard/WizardHeader.svelte';
+	import WizardNavItem from '$lib/wizard/WizardNavItem.svelte';
+	import WizardActions from '$lib/wizard/WizardActions.svelte';
 
 	$: ({ steps, title } = $page.data);
 	$: stepSlug = $page.route.id?.split('/').at(-1);
