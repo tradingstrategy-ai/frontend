@@ -9,7 +9,6 @@ export type RedeemWizardData = {
 	nativeCurrency?: GetTokenBalanceReturnType;
 	denominationToken?: TokenInfo;
 	vaultShares?: GetTokenBalanceReturnType;
-	vaultNetBalance?: GetTokenBalanceReturnType;
 	vaultNetValue?: GetTokenBalanceReturnType;
 	transactionId?: Address;
 };
