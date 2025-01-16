@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-	import { goto } from '$app/navigation';
-	import { wizard } from '$lib/wizard/store';
 	import { modal, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
@@ -10,13 +8,14 @@
 	export let chain: Chain;
 	export let strategy: ConnectedStrategyInfo;
 
-	function launchConnectWizard() {
-		wizard.init('connect-wallet', `/strategies/${strategy.id}`, {
-			chain,
+	function connectWalletUrl(chain: Chain, strategy: ConnectedStrategyInfo) {
+		const params = new URLSearchParams({
+			chainId: String(chain.id),
 			strategyName: strategy.name,
-			onChainData: strategy.on_chain_data
+			token: '' // TBD - denominationToken (from vault)
 		});
-		goto(`/wizard/connect-wallet/introduction`);
+
+		return `/wizard/connect-wallet/introduction?${params}`;
 	}
 </script>
 
@@ -29,7 +28,7 @@
 			</span>
 		</Button>
 	{:else}
-		<Button size="sm" label="Connect wallet" on:click={launchConnectWizard}>
+		<Button size="sm" label="Connect wallet" href={connectWalletUrl(chain, strategy)}>
 			<IconWallet slot="icon" />
 		</Button>
 	{/if}

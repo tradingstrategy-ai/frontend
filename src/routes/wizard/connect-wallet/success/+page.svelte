@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { wizard } from '$lib/wizard/store';
+	let { data } = $props();
+	const { wizard } = data;
 </script>
 
 <div class="connect-wallet-success">

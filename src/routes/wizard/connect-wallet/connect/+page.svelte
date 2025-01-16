@@ -1,13 +1,15 @@
 <script lang="ts">
-	import type { ConnectWizardData } from '../+layout';
-	import { wizard } from '$lib/wizard/store';
 	import { wallet } from '$lib/wallet/client';
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
+	import { getChain } from '$lib/helpers/chain.js';
 
-	const { chain } = $wizard.data as ConnectWizardData;
+	const { data } = $props();
+	const { wizard } = data;
+	const { chainId } = $wizard.data;
 
-	// svelte-ignore reactive_declaration_non_reactive_property
-	$: wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chain.id);
+	$effect(() => {
+		wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chainId);
+	});
 </script>
 
-<ConnectWallet {chain} />
+<ConnectWallet chain={getChain(chainId)!} />
