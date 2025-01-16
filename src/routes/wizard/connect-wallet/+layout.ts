@@ -11,19 +11,17 @@ export type ConnectWizardData = {
 	token: Address;
 };
 
-export async function load({ url }) {
+export async function load({ url, untrack }) {
 	const wizardSlug = 'connect-wallet';
 	const returnTo = navigating.from?.url.pathname;
+	const { chainId, strategyName } = untrack(() => Object.fromEntries(url.searchParams));
 
-	// TODO: is there a better way to know this is "first load"?
 	// if layout was navigated to, initialize the wizard store
-	if (returnTo && !returnTo.startsWith('/wizard')) {
-		const chainId = Number(url.searchParams.get('chainId'));
-		const strategyName = url.searchParams.get('strategyName');
+	if (returnTo) {
 		if (!(chainId && strategyName)) {
 			error(400, 'Wizard not properly initialized');
 		}
-		wizard.init(wizardSlug, returnTo, { chainId, strategyName });
+		wizard.init(wizardSlug, returnTo, { chainId: Number(chainId), strategyName });
 	}
 
 	if (get(wizard).slug !== wizardSlug) {
