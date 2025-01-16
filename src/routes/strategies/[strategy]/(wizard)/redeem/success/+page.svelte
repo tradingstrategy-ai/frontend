@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { wizard } from '$lib/wizard/store';
 	import { EntitySymbol } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let data;
-	const { receivedAssets } = data;
-	const { strategyName, shares } = $wizard.data;
+	let { data } = $props();
+	const { wizard, strategy, receivedAssets } = data;
+	const { shares } = $wizard.data;
 
 	function sharesWithLabel(value: number) {
 		const label = value === 1 ? 'share' : 'shares';
@@ -31,7 +30,7 @@
 
 	<p>
 		Congratulations! You've successfully redeemed <strong>{sharesWithLabel(shares)}</strong> of
-		<strong>{strategyName}</strong>. Click "Done" to return to the strategy.
+		<strong>{strategy.name}</strong>. Click "Done" to return to the strategy.
 	</p>
 </div>
 

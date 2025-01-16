@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { RedeemWizardData } from '../+layout';
+	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 	import { captureException } from '@sentry/sveltekit';
-	import { wizard } from '$lib/wizard/store';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
@@ -16,17 +17,24 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { chain, onChainData, vaultShares, vaultNetValue } = $wizard.data as RedeemWizardData;
+	let { data } = $props();
+	const { wizard, chain, strategy } = data;
 
-	let shares = '';
-	let errorMessage: MaybeString;
-	let transactionId: Maybe<Address>;
+	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
+
+	const { vaultShares, vaultNetValue } = $wizard.data as Required<RedeemWizardData>;
+
+	let shares = $state('');
+	let errorMessage: MaybeString = $state();
+	let transactionId: Maybe<Address> = $state();
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
-	$: wizard.toggleComplete('meta:no-return', transactionId !== undefined);
+	$effect(() => {
+		wizard.toggleComplete('meta:no-return', transactionId !== undefined);
+	});
 
 	async function confirmRedemption() {
 		const sharesQuantity = parseUnits(shares, vaultShares.decimals);
@@ -69,7 +77,6 @@
 		confirming: {
 			process(txId) {
 				transactionId = txId;
-				wizard.updateData({ transactionId });
 				return 'processing';
 			},
 
@@ -126,15 +133,10 @@
 		},
 
 		failed: {
-			_enter() {
-				wizard.updateData({ errorMessage });
-			},
-
 			retry() {
 				return transactionId ? 'processing' : 'initial';
 			}
 		},
-
 		completed: {
 			_enter({ event }) {
 				if (event === 'restore') {
@@ -145,8 +147,16 @@
 		}
 	});
 
-	redemption.restore($wizard.data.redemptionState);
-	$: wizard.updateData({ redemptionState: $redemption });
+	// capture/restore ephemeral state when navigating away from and back to page
+	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
+	beforeNavigate(() => {
+		wizard.updateData({ redemptionState: $redemption, shares, transactionId, errorMessage });
+	});
+
+	afterNavigate(() => {
+		({ shares, transactionId, errorMessage } = $wizard.data);
+		redemption.restore($wizard.data.redemptionState);
+	});
 </script>
 
 <div class="shares-redemption">
@@ -173,7 +183,13 @@
 			</Button>
 		</header>
 
-		<form class="redemption-form" on:submit|preventDefault={redemption.confirm}>
+		<form
+			class="redemption-form"
+			onsubmit={(e) => {
+				e.preventDefault();
+				redemption.confirm();
+			}}
+		>
 			<MoneyInput
 				bind:value={shares}
 				size="xl"
@@ -181,7 +197,6 @@
 				disabled={$redemption !== 'initial'}
 				min={formatUnits(1n, vaultShares.decimals)}
 				max={formatBalance(vaultShares)}
-				on:change={() => wizard.updateData({ shares })}
 			>
 				Estimated value
 				<EntitySymbol label={vaultNetValue.label} logoUrl={getLogoUrl('token', vaultNetValue.symbol)}>

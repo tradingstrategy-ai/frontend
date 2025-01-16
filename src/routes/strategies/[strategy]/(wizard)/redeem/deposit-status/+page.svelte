@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RedeemWizardData } from '../+layout';
-	import { wizard } from '$lib/wizard/store';
+	import type { VaultOnChainData } from 'trade-executor/schemas/summary';
 	import { fade } from 'svelte/transition';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
@@ -12,14 +12,21 @@
 	import { buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	$: ({ address } = $wallet as ConnectedWallet);
-	$: ({ chain, onChainData, nativeCurrency, vaultShares } = $wizard.data as RedeemWizardData);
-	$: chainCurrency = $wallet.chain?.nativeCurrency.symbol;
+	let { data } = $props();
+	const { wizard, chain, strategy } = data;
+	const onChainData = strategy.on_chain_data as VaultOnChainData;
 
-	$: depositStatusComplete =
-		'vaultNetValue' in $wizard.data && (nativeCurrency?.value ?? 0n) > 0n && (vaultShares?.value ?? 0n) > 0n;
+	let address = $derived($wallet.address!);
+	let { nativeCurrency, vaultShares } = $derived($wizard.data as RedeemWizardData);
+	let chainCurrency = $derived($wallet.chain?.nativeCurrency.symbol);
 
-	$: wizard.toggleComplete('deposit-status', depositStatusComplete);
+	let complete = $derived(
+		'vaultNetValue' in $wizard.data && (nativeCurrency?.value ?? 0n) > 0n && (vaultShares?.value ?? 0n) > 0n
+	);
+
+	$effect(() => {
+		wizard.toggleComplete('deposit-status', complete);
+	});
 
 	async function getNativeCurrency(address: Address) {
 		const nativeCurrency = await getBalance(config, { address });
