@@ -7,7 +7,7 @@
 	import WizardActions from './WizardActions.svelte';
 
 	type Props = {
-		steps: Step[];
+		steps: readonly Step[];
 		title: string;
 		route: MaybeString;
 		children: Snippet;

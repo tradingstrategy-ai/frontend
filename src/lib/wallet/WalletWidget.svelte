@@ -1,26 +1,14 @@
 <script lang="ts">
-	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import { modal, wallet } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 
-	export let chain: Chain;
 	export let strategy: ConnectedStrategyInfo;
-
-	function connectWalletUrl(chain: Chain, strategy: ConnectedStrategyInfo) {
-		const params = new URLSearchParams({
-			chainId: String(chain.id),
-			strategyName: strategy.name,
-			token: '' // TBD - denominationToken (from vault)
-		});
-
-		return `/wizard/connect-wallet/introduction?${params}`;
-	}
 </script>
 
 <div class="wallet-widget">
-	{#if $wallet.isConnected}
+	{#if $wallet.status === 'connected'}
 		<Button size="sm" on:click={() => modal.open({ view: 'Account' })}>
 			<span class="address">
 				<IconWallet --icon-size="1.25em" />
@@ -28,7 +16,7 @@
 			</span>
 		</Button>
 	{:else}
-		<Button size="sm" label="Connect wallet" href={connectWalletUrl(chain, strategy)}>
+		<Button size="sm" label="Connect wallet" href="/strategies/{strategy.id}/connect-wallet/introduction">
 			<IconWallet slot="icon" />
 		</Button>
 	{/if}

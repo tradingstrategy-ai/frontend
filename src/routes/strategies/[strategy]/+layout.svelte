@@ -56,7 +56,7 @@
 				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
-				<WalletWidget {chain} {strategy} />
+				<WalletWidget {strategy} />
 			</div>
 		</PageHeading>
 
