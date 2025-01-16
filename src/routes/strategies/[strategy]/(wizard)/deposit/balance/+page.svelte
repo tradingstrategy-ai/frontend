@@ -1,14 +1,10 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
-	import { wizard } from '$lib/wizard/store';
 	import { Alert, Button } from '$lib/components';
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 
-	export let data;
-	const { nativeCurrency, denominationToken } = data;
-
-	const { chain } = $wizard.data as DepositWizardData;
+	let { data } = $props();
+	const { wizard, chain, nativeCurrency, denominationToken } = data;
 
 	wizard.updateData({ nativeCurrency, denominationToken });
 	wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);

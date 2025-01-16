@@ -1,15 +1,16 @@
 import type { Abi } from 'viem';
-import type { DepositWizardData } from '../+layout';
+import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import { get } from 'svelte/store';
-import { wizard } from '$lib/wizard/store';
 import { config, wallet } from '$lib/wallet/client';
 import { readContracts } from '@wagmi/core';
 import { getTosVersion } from 'trade-executor/helpers/tos';
 import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
 
-export async function load({ fetch }) {
+export async function load({ fetch, parent }) {
 	const abi = termsOfServiceABI as Abi;
-	const { chain, onChainData } = get(wizard).data as DepositWizardData;
+	const { chain, strategy } = await parent();
+	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
+
 	const address = onChainData.smart_contracts.terms_of_service!;
 	const account = get(wallet).address;
 

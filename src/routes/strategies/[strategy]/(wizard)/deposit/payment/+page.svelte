@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import fsm from 'svelte-fsm';
-	import { wizard } from '$lib/wizard/store';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { getSharePrice } from '$lib/eth-defi/enzyme';
@@ -27,40 +27,33 @@
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let data;
-	const { paymentContract, tosRequired } = data;
-
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
 
 	// Share price slippage tollerance - used when calculating minSharesQuantity
 	const SLIPPAGE_TOLERANCE = 0.02;
 
-	const {
-		chain,
-		canForwardPayment,
-		onChainData,
-		denominationToken,
-		denominationTokenInfo,
-		nativeCurrency,
-		tosHash,
-		tosSignature
-	} = $wizard.data as Required<DepositWizardData>;
+	let { data } = $props();
+	const { wizard, chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
 
-	const contracts = onChainData.smart_contracts;
+	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
+
+	const { denominationToken, nativeCurrency, tosHash, tosSignature } = $wizard.data as Required<DepositWizardData>;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
-	let paymentValue = '';
-	let error: ErrorInfo | unknown | undefined = undefined;
-	let approvalTxId: Address | undefined = undefined;
-	let paymentTxId: Address | undefined = undefined;
-	let sharePrice: number | undefined = undefined;
+	let paymentValue = $state('');
+	let error: ErrorInfo | unknown | undefined = $state();
+	let approvalTxId: Maybe<Address> = $state();
+	let paymentTxId: Maybe<Address> = $state();
+	let sharePrice: MaybeNumber = $state();
 
 	// Disable the "Cancel" button once a transaction has been initiated
-	$: wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
+	$effect(() => {
+		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
+	});
 
 	function getVaultSharePrice() {
 		return getSharePrice(config, {
@@ -352,7 +345,13 @@
 			</Button>
 		</header>
 
-		<form class="payment-form" on:submit|preventDefault={payment.authorizeOrApprove}>
+		<form
+			class="payment-form"
+			onsubmit={(e) => {
+				e.preventDefault();
+				payment.authorizeOrApprove();
+			}}
+		>
 			<MoneyInput
 				bind:value={paymentValue}
 				size="xl"

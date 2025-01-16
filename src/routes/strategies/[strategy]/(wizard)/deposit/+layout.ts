@@ -1,17 +1,26 @@
-import type { Chain } from '$lib/helpers/chain';
 import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
+import { navigating } from '$app/state';
+import { error } from '@sveltejs/kit';
 import { config } from '$lib/wallet/client';
 import { get } from 'svelte/store';
 import { wizard } from '$lib/wizard/store';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
-import { type TokenInfo, type GetTokenBalanceReturnType, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
+import { type GetTokenBalanceReturnType, getDenominationTokenInfo } from '$lib/eth-defi/helpers';
+
+const slug = 'deposit';
+
+const title = 'Deposit tokens';
+
+const allSteps = [
+	{ slug: 'introduction', label: 'Introduction' },
+	{ slug: 'connect', label: 'Connect your wallet' },
+	{ slug: 'balance', label: 'Wallet balance' },
+	{ slug: 'tos', label: 'Terms of service' },
+	{ slug: 'payment', label: 'Payment' },
+	{ slug: 'success', label: 'Success' }
+];
 
 export type DepositWizardData = {
-	chain: Chain;
-	strategyName: string;
-	onChainData: EnzymeOnChainData;
-	canForwardPayment: boolean;
-	denominationTokenInfo: TokenInfo;
 	denominationToken?: GetTokenBalanceReturnType;
 	nativeCurrency?: GetTokenBalanceReturnType;
 	tosSignature?: Address | '';
@@ -19,22 +28,24 @@ export type DepositWizardData = {
 };
 
 export async function load({ parent }) {
-	const { admin, ipCountry } = await parent();
+	const { admin, ipCountry, chain, strategy } = await parent();
 	assertNotGeoBlocked('strategies:deposit', ipCountry, admin);
 
-	const title = 'Deposit tokens';
+	const returnTo = navigating.from?.url.pathname;
 
-	let steps = [
-		{ slug: 'introduction', label: 'Introduction' },
-		{ slug: 'connect', label: 'Connect your wallet' },
-		{ slug: 'balance', label: 'Wallet balance' },
-		{ slug: 'tos', label: 'Terms of service' },
-		{ slug: 'payment', label: 'Payment' },
-		{ slug: 'success', label: 'Success' }
-	];
+	// if layout was navigated to, initialize the wizard store
+	if (returnTo) {
+		wizard.init(slug, returnTo);
+	}
 
-	const { chain, onChainData } = get(wizard).data as DepositWizardData;
+	if (get(wizard).slug !== slug) {
+		error(400, 'Wizard not properly initialized');
+	}
+
+	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 	const { comptroller, terms_of_service } = onChainData.smart_contracts;
+
+	let steps = structuredClone(allSteps);
 
 	// skip "Terms of service" step if no terms_of_service contract
 	if (!terms_of_service) {
@@ -47,7 +58,5 @@ export async function load({ parent }) {
 	// USDC can forward payment using transferWithAuthorizations; other tokens can't (yet)
 	const canForwardPayment = denominationTokenInfo.symbol === 'USDC';
 
-	wizard.updateData({ denominationTokenInfo, canForwardPayment });
-
-	return { title, steps };
+	return { title, steps, wizard, denominationTokenInfo, canForwardPayment };
 }

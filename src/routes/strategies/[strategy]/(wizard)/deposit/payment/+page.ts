@@ -1,7 +1,5 @@
 import type { Abi, ContractFunctionParameters } from 'viem';
-import type { DepositWizardData } from '../+layout';
-import { get } from 'svelte/store';
-import { wizard } from '$lib/wizard/store';
+import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import { readContract } from '@wagmi/core';
 import { config } from '$lib/wallet/client';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -23,9 +21,9 @@ async function paymentForwarderRequiresTos(address: Address) {
 	}
 }
 
-export async function load() {
-	const { canForwardPayment, onChainData } = get(wizard).data as DepositWizardData;
-	const { comptroller, payment_forwarder } = onChainData.smart_contracts;
+export async function load({ parent }) {
+	const { canForwardPayment, strategy } = await parent();
+	const { comptroller, payment_forwarder } = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
 	let paymentContract: ContractFunctionParameters;
 	let tosRequired = false;

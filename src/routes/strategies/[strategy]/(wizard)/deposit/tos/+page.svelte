@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { DepositWizardData } from '../+layout';
+	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import { captureException } from '@sentry/sveltekit';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { inview } from 'svelte-inview';
-	import { wizard } from '$lib/wizard/store';
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
@@ -19,10 +19,11 @@
 	import IconFullscreen from '~icons/local/fullscreen';
 
 	export let data;
-	const { canProceed, version, fileName, tosText, acceptanceMessage } = data;
+	const { wizard, chain, strategy, canForwardPayment, canProceed, version, fileName, tosText, acceptanceMessage } =
+		data;
 
-	const { chain, onChainData, tosHash, tosSignature, canForwardPayment } = $wizard.data as DepositWizardData;
-	const contracts = onChainData.smart_contracts;
+	const { tosHash, tosSignature } = $wizard.data as DepositWizardData;
+	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
 	const progressBar = tweened(0, {
 		easing: cubicOut,

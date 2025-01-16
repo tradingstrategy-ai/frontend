@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { strategyMicrosite } from '$lib/config';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
@@ -14,11 +14,11 @@
 
 	export let data;
 
-	$: ({ admin, chain, strategy, deferred } = data);
+	$: ({ admin, strategy, deferred } = data);
 
 	$: tags = strategy.tags.filter((tag) => tag !== 'live');
 	$: isPrivate = !strategy.tags.includes('live');
-	$: isOverviewPage = $page.url.pathname.endsWith(strategy.id);
+	$: isOverviewPage = page.url.pathname.endsWith(strategy.id);
 	$: hasError = shouldDisplayError(strategy, admin);
 	$: isOutdated = Boolean(strategy.newVersionId);
 	$: displayWarning = isOverviewPage && (hasError || isOutdated);
@@ -26,15 +26,15 @@
 	$: breadcrumbs = {
 		[strategy.id]: strategy.name,
 		...Object.fromEntries(menuOptions.map(({ slug, label }) => [slug, label])),
-		...$page.data.breadcrumbs
+		...page.data.breadcrumbs
 	};
 </script>
 
-{#if !strategyMicrosite}
+{#if !(strategyMicrosite || page.data.skipBreadcrumbs)}
 	<Breadcrumbs labels={breadcrumbs} />
 {/if}
 
-{#if $page.data.skipSideNav && !strategyMicrosite}
+{#if page.data.skipSideNav && !strategyMicrosite}
 	<slot />
 {:else}
 	<main class="strategy-layout ds-container ds-3" class:microsite={strategyMicrosite}>
@@ -88,7 +88,7 @@
 			</div>
 		{/if}
 
-		{#if $page.data.skipSideNav}
+		{#if page.data.skipSideNav}
 			{#if strategyMicrosite}
 				<Breadcrumbs labels={breadcrumbs} startAt={2} />
 			{/if}
@@ -97,7 +97,7 @@
 			<div class="subpage">
 				<StrategyNav
 					basePath="/strategies/{strategy.id}"
-					currentPath={$page.url.pathname}
+					currentPath={page.url.pathname}
 					hasEnzymeVault={strategy.on_chain_data.asset_management_mode === 'enzyme'}
 					backtestAvailable={strategy.backtest_available}
 					portfolioPromise={deferred.state.then((s) => s?.portfolio)}
