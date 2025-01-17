@@ -1,17 +1,19 @@
 <script lang="ts">
+	import type { RedeemWizardData } from '../+layout';
 	import { EntitySymbol } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
 	const { wizard, strategy, receivedAssets } = data;
-	const { shares } = $wizard.data;
+	const { shares } = $wizard.data as RedeemWizardData;
 
-	function sharesWithLabel(value: number) {
-		const label = value === 1 ? 'share' : 'shares';
-		return `${value} ${label}`;
+	function sharesWithLabel(value: Numberlike) {
+		const label = Number(value) === 1 ? 'share' : 'shares';
+		return `${formatNumber(value, 2, 5)} ${label}`;
 	}
 </script>
 
