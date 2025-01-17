@@ -1,3 +1,4 @@
+import type { GetBalanceReturnType } from '@wagmi/core';
 import type { GetTokenBalanceReturnType, TokenInfo } from '$lib/eth-defi/helpers';
 import { navigating } from '$app/state';
 import { error } from '@sveltejs/kit';
@@ -17,7 +18,7 @@ const steps = [
 ];
 
 export type RedeemWizardData = {
-	nativeCurrency?: GetTokenBalanceReturnType;
+	nativeCurrency?: GetBalanceReturnType;
 	denominationToken?: TokenInfo;
 	vaultShares?: GetTokenBalanceReturnType;
 	vaultNetValue?: GetTokenBalanceReturnType;
