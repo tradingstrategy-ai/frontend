@@ -5,7 +5,7 @@
 	import { Alert, HashAddress, Timestamp, Tooltip } from '$lib/components';
 	import IconWarning from '~icons/local/warning';
 	import { formatAmount, formatNumber } from '$lib/helpers/formatters';
-	import { getExplorerUrl } from '$lib/helpers/chain.js';
+	import { getExplorerUrl } from '$lib/helpers/chain';
 
 	export let data;
 	$: ({ runState, deferred, strategy, chain } = data);
