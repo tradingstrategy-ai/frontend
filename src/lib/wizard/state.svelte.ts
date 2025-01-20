@@ -20,9 +20,8 @@ const wizardDataSchema = z.object({
 	completed: z.set(z.string())
 });
 
-// TODO: make (static) properties?
 const storage = browser ? window.sessionStorage : undefined;
-const storageKey = 'ts:wizard';
+const storageKeyBase = 'ts:wizard';
 
 export class WizardState {
 	slug: string;
@@ -59,7 +58,7 @@ export class WizardState {
 	}
 
 	get storageKey() {
-		return `${storageKey}:${this.slug}`;
+		return `${storageKeyBase}:${this.slug}`;
 	}
 
 	hasCompleted(stepSlug: string) {
