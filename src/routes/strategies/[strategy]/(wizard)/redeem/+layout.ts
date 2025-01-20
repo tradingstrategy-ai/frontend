@@ -1,5 +1,6 @@
 import type { GetBalanceReturnType } from '@wagmi/core';
 import type { GetTokenBalanceReturnType, TokenInfo } from '$lib/eth-defi/helpers';
+import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
 import { navigating } from '$app/state';
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
@@ -9,7 +10,7 @@ const slug = 'redeem';
 
 const title = 'Redeem tokens';
 
-const steps = [
+const steps: WizardStep[] = [
 	{ slug: 'introduction', label: 'Introduction' },
 	{ slug: 'connect', label: 'Connect your wallet' },
 	{ slug: 'deposit-status', label: 'Deposit status' },

@@ -26,11 +26,6 @@ const wizardValueSchema = z.object({
 
 export type WizardValue = z.infer<typeof wizardValueSchema>;
 
-export type Step = {
-	slug: string;
-	label: string;
-};
-
 const storage = browser ? window.sessionStorage : undefined;
 const storageKey = 'ts:wizard';
 

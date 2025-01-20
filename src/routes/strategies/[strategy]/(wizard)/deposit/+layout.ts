@@ -1,4 +1,5 @@
 import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
+import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
 import { navigating } from '$app/state';
 import { error } from '@sveltejs/kit';
 import { config } from '$lib/wallet/client';
@@ -11,7 +12,7 @@ const slug = 'deposit';
 
 const title = 'Deposit tokens';
 
-const allSteps = [
+const allSteps: WizardStep[] = [
 	{ slug: 'introduction', label: 'Introduction' },
 	{ slug: 'connect', label: 'Connect your wallet' },
 	{ slug: 'balance', label: 'Wallet balance' },

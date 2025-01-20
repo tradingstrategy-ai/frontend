@@ -20,12 +20,6 @@ const wizardDataSchema = z.object({
 	completed: z.set(z.string())
 });
 
-// TODO: move this somewhere better!
-export type Step = {
-	slug: string;
-	label: string;
-};
-
 // TODO: make (static) properties?
 const storage = browser ? window.sessionStorage : undefined;
 const storageKey = 'ts:wizard';
@@ -68,16 +62,15 @@ export class WizardState {
 		return `${storageKey}:${this.slug}`;
 	}
 
-	// TODO: replace with hasCompleted(step)
-	get completed() {
-		return this.#completed;
+	hasCompleted(stepSlug: string) {
+		return this.#completed.has(stepSlug);
 	}
 
-	toggleComplete(step: string, completed = true) {
+	toggleComplete(stepSlug: string, completed = true) {
 		if (completed) {
-			this.completed.add(step);
+			this.#completed.add(stepSlug);
 		} else {
-			this.completed.delete(step);
+			this.#completed.delete(stepSlug);
 		}
 	}
 
@@ -85,7 +78,7 @@ export class WizardState {
 		const data = {
 			returnTo: this.returnTo,
 			data: this.data,
-			completed: this.completed
+			completed: this.#completed
 		};
 		storage?.setItem(this.storageKey, stringify(data));
 	}

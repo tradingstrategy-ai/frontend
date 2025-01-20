@@ -1,12 +1,18 @@
+<script module lang="ts">
+	export type WizardStep = {
+		slug: string;
+		label: string;
+	};
+</script>
+
 <script lang="ts">
-	import type { Step } from '$lib/wizard/state.svelte';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { Button } from '$lib/components';
 	import { goto } from '$app/navigation';
 
 	interface Props {
-		steps: Step[];
-		currentStep: Step;
+		steps: WizardStep[];
+		currentStep: WizardStep;
 	}
 
 	let { steps, currentStep }: Props = $props();
@@ -23,7 +29,7 @@
 		<Button
 			ghost
 			label="Cancel"
-			disabled={wizard.completed?.has('meta:no-return')}
+			disabled={wizard.hasCompleted('meta:no-return')}
 			on:click={() => goto(wizard.returnTo)}
 		/>
 	{/if}
@@ -31,7 +37,7 @@
 		<Button secondary label="Back" on:click={() => goto(previousStep.slug)} />
 	{/if}
 	{#if nextStep}
-		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!wizard.completed?.has(currentStep.slug)} />
+		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!wizard.hasCompleted(currentStep.slug)} />
 	{:else}
 		<Button label="Done" on:click={() => goto(wizard.returnTo)} />
 	{/if}
