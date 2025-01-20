@@ -1,19 +1,19 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { Step } from './store';
+	import type { Step } from './state.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import WizardHeader from './WizardHeader.svelte';
 	import WizardNavItem from './WizardNavItem.svelte';
 	import WizardActions from './WizardActions.svelte';
 
 	type Props = {
-		steps: readonly Step[];
 		title: string;
+		steps: Step[];
 		route: MaybeString;
 		children: Snippet;
 	};
 
-	let { steps, title, route, children }: Props = $props();
+	let { title, steps, route, children }: Props = $props();
 
 	let stepSlug = $derived(route?.split('/').at(-1));
 	let stepIndex = $derived(steps.findIndex(({ slug }: Step) => slug === stepSlug));

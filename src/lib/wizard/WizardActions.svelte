@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type Step, wizard } from '$lib/wizard/store';
+	import type { Step } from '$lib/wizard/state.svelte';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { Button } from '$lib/components';
 	import { goto } from '$app/navigation';
 
@@ -10,10 +11,7 @@
 
 	let { steps, currentStep }: Props = $props();
 
-	async function exitWizard() {
-		await goto($wizard.returnTo!);
-		wizard.reset();
-	}
+	const wizard = getWizardContext();
 
 	let stepIndex = $derived(steps.indexOf(currentStep));
 	let previousStep = $derived(steps[stepIndex - 1]);
@@ -22,15 +20,20 @@
 
 <footer class="wizard-actions">
 	{#if nextStep}
-		<Button ghost label="Cancel" disabled={$wizard.completed?.has('meta:no-return')} on:click={exitWizard} />
+		<Button
+			ghost
+			label="Cancel"
+			disabled={wizard.completed?.has('meta:no-return')}
+			on:click={() => goto(wizard.returnTo)}
+		/>
 	{/if}
 	{#if previousStep}
 		<Button secondary label="Back" on:click={() => goto(previousStep.slug)} />
 	{/if}
 	{#if nextStep}
-		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!$wizard.completed?.has(currentStep.slug)} />
+		<Button label="Next" on:click={() => goto(nextStep.slug)} disabled={!wizard.completed?.has(currentStep.slug)} />
 	{:else}
-		<Button label="Done" on:click={exitWizard} />
+		<Button label="Done" on:click={() => goto(wizard.returnTo)} />
 	{/if}
 </footer>
 

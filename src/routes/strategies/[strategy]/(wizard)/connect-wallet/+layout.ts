@@ -1,30 +1,14 @@
-import { error } from '@sveltejs/kit';
-import { navigating } from '$app/state';
-import { get } from 'svelte/store';
-import { wizard } from '$lib/wizard/store';
-
-const slug = 'connect-wallet';
-
-const title = 'Connect wallet';
-
-const steps = [
-	{ slug: 'introduction', label: 'Introduction' },
-	{ slug: 'connect', label: 'Connect your wallet' },
-	{ slug: 'balance', label: 'Wallet balance' },
-	{ slug: 'success', label: 'Success' }
-] as const;
-
 export async function load() {
-	const returnTo = navigating.from?.url.pathname;
+	const slug = 'connect-wallet';
 
-	// if layout was navigated to, initialize the wizard store
-	if (returnTo) {
-		wizard.init(slug, returnTo);
-	}
+	const title = 'Connect wallet';
 
-	if (get(wizard).slug !== slug) {
-		error(400, 'Wizard not properly initialized');
-	}
+	const steps = [
+		{ slug: 'introduction', label: 'Introduction' },
+		{ slug: 'connect', label: 'Connect your wallet' },
+		{ slug: 'balance', label: 'Wallet balance' },
+		{ slug: 'success', label: 'Success' }
+	];
 
-	return { title, steps, wizard };
+	return { slug, title, steps };
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
-	let { data } = $props();
-	const { wizard } = data;
+	import { getWizardContext } from '$lib/wizard/state.svelte';
+
+	const wizard = getWizardContext();
 
 	wizard.toggleComplete('introduction');
 </script>
