@@ -6,6 +6,7 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
@@ -18,15 +19,17 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	const { wizard, chain, strategy } = data;
+	const { chain, strategy } = data;
+
+	const wizard = getWizardContext<RedeemWizardData>();
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 
-	const { vaultShares, vaultNetValue } = $wizard.data as Required<RedeemWizardData>;
+	const { vaultShares, vaultNetValue } = wizard.data as Required<RedeemWizardData>;
 
-	let shares = $state('');
-	let errorMessage: MaybeString = $state();
-	let transactionId: Maybe<Address> = $state();
+	let shares: string | undefined = $state();
+	let errorMessage: string | undefined = $state();
+	let transactionId: Address | undefined = $state();
 
 	const progressBar = tweened(0, { easing: cubicOut });
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
@@ -59,7 +62,6 @@
 		initial: {
 			// restore state on wizard back/next navigation
 			restore(state) {
-				({ errorMessage, transactionId, shares } = $wizard.data);
 				if (state === 'confirming') {
 					errorMessage = `Wallet request state lost due to window navigation;
 						please cancel wallet request and try again.`;
@@ -115,6 +117,8 @@
 					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
 					return 'failed';
 				}
+
+				wizard.data.transactionLogs = receipt.logs;
 				return 'completed';
 			},
 
@@ -154,8 +158,8 @@
 	});
 
 	afterNavigate(() => {
-		({ shares, transactionId, errorMessage } = $wizard.data);
-		redemption.restore($wizard.data.redemptionState);
+		({ shares, transactionId, errorMessage } = wizard.data);
+		redemption.restore(wizard.data.redemptionState);
 	});
 </script>
 

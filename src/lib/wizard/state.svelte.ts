@@ -62,6 +62,10 @@ export class WizardState<T extends BaseWizardData> {
 		return `${storageKeyBase}:${this.slug}`;
 	}
 
+	updateData(data: T) {
+		Object.assign(this.data, data);
+	}
+
 	hasCompleted(stepSlug: string) {
 		return this.#completed.has(stepSlug);
 	}

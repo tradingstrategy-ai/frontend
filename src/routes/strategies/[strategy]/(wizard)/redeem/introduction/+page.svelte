@@ -1,8 +1,12 @@
 <script lang="ts">
-	let { data } = $props();
-	const { wizard, strategy, denominationToken } = data;
+	import type { RedeemWizardData } from '../+layout.js';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 
-	wizard.updateData({ denominationToken });
+	let { data } = $props();
+	const { strategy, denominationToken } = data;
+	const wizard = getWizardContext<RedeemWizardData>();
+
+	wizard.data.denominationToken = denominationToken;
 	wizard.toggleComplete('introduction');
 </script>
 

@@ -1,37 +1,56 @@
 <script lang="ts">
+	import type { Abi } from 'viem';
 	import type { RedeemWizardData } from '../+layout';
-	import { EntitySymbol } from '$lib/components';
+	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
+	import { config } from '$lib/wallet/client';
+	import { formatBalance, getEvents } from '$lib/eth-defi/helpers';
+	import { type AssetWithdrawlEvent, getRedemption } from '$lib/eth-defi/enzyme';
+	import vaultABI from '$lib/eth-defi/abi/enzyme/VaultLib.json';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
-	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	const { wizard, strategy, receivedAssets } = data;
-	const { shares } = $wizard.data as RedeemWizardData;
+	const { chain, strategy } = data;
 
-	function sharesWithLabel(value: Numberlike) {
-		const label = Number(value) === 1 ? 'share' : 'shares';
-		return `${formatNumber(value, 2, 5)} ${label}`;
-	}
+	const wizard = getWizardContext<Required<RedeemWizardData>>();
+	const { denominationToken, shares, transactionLogs } = wizard.data;
+
+	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
+
+	const events = getEvents(
+		transactionLogs,
+		vaultABI as Abi,
+		'AssetWithdrawn',
+		onChainData.smart_contracts.vault
+	) as unknown as AssetWithdrawlEvent[];
 </script>
 
 <div class="redemption-success">
 	<h3>The following tokens have been added to your wallet</h3>
 
 	<WalletInfo alignValues="right">
-		{#each receivedAssets as balance}
-			{@const { symbol, label } = balance}
-			<WalletInfoItem>
-				<EntitySymbol slot="label" size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)} />
-				{formatBalance(balance, 2, 4)}
-			</WalletInfoItem>
+		{#each events as { args: withdrawl }}
+			{#await getRedemption(config, { withdrawl, denominationToken, chainId: chain.id })}
+				<WalletInfoItem>
+					<span slot="label" class="skeleton">-</span>
+					<span class="skeleton">-</span>
+				</WalletInfoItem>
+			{:then balance}
+				{@const { label, symbol } = balance}
+				<WalletInfoItem>
+					<EntitySymbol slot="label" size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)} />
+					{formatBalance(balance, 2, 4)}
+				</WalletInfoItem>
+			{/await}
 		{/each}
 	</WalletInfo>
 
 	<p>
-		Congratulations! You've successfully redeemed <strong>{sharesWithLabel(shares)}</strong> of
+		Congratulations! You've successfully redeemed <strong>{formatNumber(shares, 2, 5)} shares</strong> of
 		<strong>{strategy.name}</strong>. Click "Done" to return to the strategy.
 	</p>
 </div>
@@ -45,5 +64,10 @@
 	h3 {
 		color: var(--c-text-light);
 		font: var(--f-ui-lg-medium);
+	}
+
+	.skeleton {
+		display: inline-grid;
+		width: 8ch;
 	}
 </style>

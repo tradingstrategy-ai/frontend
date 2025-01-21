@@ -3,6 +3,7 @@
 	import type { VaultOnChainData } from 'trade-executor/schemas/summary';
 	import { beforeNavigate } from '$app/navigation';
 	import { fade } from 'svelte/transition';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getBalance } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
@@ -14,7 +15,10 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	const { wizard, chain, strategy } = data;
+	const { chain, strategy } = data;
+
+	const wizard = getWizardContext<RedeemWizardData>();
+
 	const onChainData = strategy.on_chain_data as VaultOnChainData;
 
 	let address = $derived($wallet.address!);
@@ -29,7 +33,7 @@
 	});
 
 	beforeNavigate(() => {
-		wizard.updateData($state.snapshot(tokens));
+		wizard.data = { ...wizard.data, ...tokens };
 	});
 
 	async function getNativeCurrency(address: Address) {
