@@ -6,6 +6,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { inview } from 'svelte-inview';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { hashMessage, numberToHex } from 'viem';
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
@@ -19,10 +20,10 @@
 	import IconFullscreen from '~icons/local/fullscreen';
 
 	export let data;
-	const { wizard, chain, strategy, canForwardPayment, canProceed, version, fileName, tosText, acceptanceMessage } =
-		data;
+	const { chain, strategy, canForwardPayment, canProceed, version, fileName, tosText, acceptanceMessage } = data;
+	const wizard = getWizardContext<DepositWizardData>();
 
-	const { tosHash, tosSignature } = $wizard.data as DepositWizardData;
+	const { tosHash, tosSignature } = wizard.data;
 	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
 	const progressBar = tweened(0, {
@@ -62,10 +63,8 @@
 			restore(tosPreviouslyAccepted: boolean, tosSignature?: string, tosHash?: string) {
 				// setting dummy signature/hash values since ToS has already been accepted
 				if (tosPreviouslyAccepted) {
-					wizard.updateData({
-						tosSignature: '',
-						tosHash: numberToHex(0, { size: 32 })
-					});
+					wizard.data.tosSignature = '';
+					wizard.data.tosHash = numberToHex(0, { size: 32 });
 				}
 
 				if (tosPreviouslyAccepted || (tosSignature && tosHash)) {
@@ -97,7 +96,8 @@
 				const tosHash = hashMessage(acceptanceMessage!);
 
 				if (canForwardPayment) {
-					wizard.updateData({ tosSignature, tosHash });
+					wizard.data.tosSignature = tosSignature;
+					wizard.data.tosHash = tosHash;
 					return 'completed';
 				}
 
@@ -275,7 +275,7 @@
 	{#if $tos === 'completed'}
 		<Alert size="sm" status="success" title="Terms accepted">
 			Terms of service v{version} accepted
-			{#if $wallet.isConnected}
+			{#if $wallet.status === 'connected'}
 				by wallet <WalletAddress size="sm" wallet={$wallet} />
 			{/if}
 		</Alert>

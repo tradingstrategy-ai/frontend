@@ -6,12 +6,12 @@ import { z } from 'zod';
 
 const wizardContextKey = Symbol('wizard');
 
-export function setWizardContext(wizard: WizardState) {
+export function setWizardContext<T extends BaseWizardData>(wizard: WizardState<T>) {
 	setContext(wizardContextKey, wizard);
 }
 
-export function getWizardContext(): WizardState {
-	return getContext(wizardContextKey) as WizardState;
+export function getWizardContext<T extends BaseWizardData>(): WizardState<T> {
+	return getContext(wizardContextKey) as WizardState<T>;
 }
 
 const wizardDataSchema = z.object({
@@ -20,21 +20,22 @@ const wizardDataSchema = z.object({
 	completed: z.set(z.string())
 });
 
+type WizardData<T> = z.infer<typeof wizardDataSchema> & {
+	data: T;
+};
+
 const storage = browser ? window.sessionStorage : undefined;
 const storageKeyBase = 'ts:wizard';
 
-export class WizardState {
+type BaseWizardData = Record<string, any>;
+
+export class WizardState<T extends BaseWizardData> {
 	slug: string;
 	returnTo: string;
-	data = $state() as Record<string, any>;
+	data = $state() as T;
 	#completed: SvelteSet<string>;
 
-	constructor(
-		slug: string,
-		returnTo: string | undefined,
-		data: Record<string, any> = {},
-		completed?: Iterable<string>
-	) {
+	constructor(slug: string, returnTo: string | undefined, data: T = {} as T, completed?: Iterable<string>) {
 		// assign slug right away (required by deserialize)
 		this.slug = slug;
 
@@ -88,7 +89,7 @@ export class WizardState {
 			if (!raw) {
 				throw new Error(`sessionStorage['${this.storageKey}'] not found`);
 			}
-			return wizardDataSchema.parse(parse(raw));
+			return wizardDataSchema.parse(parse(raw)) as WizardData<T>;
 		} catch (cause) {
 			throw new Error('Error deserializing wizard data from sessionStorage.', { cause });
 		}

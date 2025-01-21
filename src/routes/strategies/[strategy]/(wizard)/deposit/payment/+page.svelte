@@ -3,6 +3,7 @@
 	import type { DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import fsm from 'svelte-fsm';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
@@ -34,11 +35,13 @@
 	const SLIPPAGE_TOLERANCE = 0.02;
 
 	let { data } = $props();
-	const { wizard, chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
+	const { chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
+
+	const wizard = getWizardContext<Required<DepositWizardData>>();
 
 	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
-	const { denominationToken, nativeCurrency, tosHash, tosSignature } = $wizard.data as Required<DepositWizardData>;
+	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
@@ -69,7 +72,7 @@
 		return parseUnits(String(minSharesDecimal), decimals);
 	}
 
-	function getEstimatedShares(paymentValue: Numberlike, sharePrice: number | undefined) {
+	function getEstimatedShares(paymentValue: Numberlike, sharePrice: MaybeNumber) {
 		const value = Number(paymentValue || 0);
 		let estimated: number | undefined = undefined;
 		if (value === 0) {
@@ -291,13 +294,11 @@
 	// capture/restore ephemeral page state when navigating away from and back to page
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
-		wizard.updateData({
-			paymentSnapshot: { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, error }
-		});
+		wizard.data.paymentSnapshot = { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, error };
 	});
 
 	afterNavigate(() => {
-		const { state, ...rest } = $wizard.data.paymentSnapshot ?? {};
+		const { state, ...rest } = wizard.data.paymentSnapshot ?? {};
 		({ paymentValue, sharePrice, approvalTxId, paymentTxId, error } = rest);
 		payment.restore(state);
 	});
