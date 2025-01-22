@@ -16,9 +16,9 @@
 	export let positions: TradingPositionInfo[];
 	export let status: PositionStatus;
 	export let page = 0;
-	export let sort = 'position_id';
+	export let sort: string;
+	export let direction: 'asc' | 'desc';
 	export let filter = '';
-	export let direction: 'asc' | 'desc' = 'desc';
 	export let hasSearch = false;
 	export let hasPagination = false;
 	export let hiddenPositions: number[] = [];
@@ -40,7 +40,7 @@
 		}),
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
-			toggleOrder: ['asc', 'desc']
+			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({ initialPageIndex: page })
 	});
@@ -130,8 +130,10 @@
 	const tableViewModel = table.createViewModel(tableColumns);
 	const { pluginStates } = tableViewModel;
 	const { columnIdOrder } = pluginStates.colOrder;
+	const { sortKeys } = pluginStates.sort;
 
 	$: $columnIdOrder = statusColumns[status];
+	$: $sortKeys = [{ id: sort, order: direction }];
 </script>
 
 <div class="position-table">
