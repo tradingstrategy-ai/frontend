@@ -57,7 +57,8 @@
 				class: hiddenPositions.includes(position_id) ? 'hidden' : '',
 				label: pair.symbol,
 				modifier: pair.kindShortLabel,
-				isTest
+				isTest,
+				toString: () => `${pair.symbol} ${pair.kindShortLabel} ${isTest ? 'test' : ''}`
 			}),
 			cell: ({ value }) => createRender(TradingDescription, value)
 		}),
