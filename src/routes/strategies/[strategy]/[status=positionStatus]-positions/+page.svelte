@@ -1,20 +1,28 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
+	import type { ComponentEvents, ComponentProps } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
 	import { capitalize } from '$lib/helpers/formatters';
 
-	export let data;
-	$: ({ admin, positions, status, strategy } = data);
+	let { data } = $props();
+	let { admin, positions, status, strategy } = $derived(data);
 
-	$: q = $page.url.searchParams;
-	$: options = {
+	type Options = Pick<ComponentProps<PositionTable>, 'page' | 'sort' | 'direction'>;
+
+	const defaultSort = {
+		open: 'profit',
+		closed: 'closed_at',
+		frozen: 'frozen_at'
+	} as const;
+
+	let q = $derived($page.url.searchParams);
+	let options: Options = $derived({
 		page: Number(q.get('page')) || 0,
-		sort: q.get('sort') || 'position_id',
-		direction: q.get('direction') || 'desc'
-	};
+		sort: q.get('sort') || defaultSort[status],
+		direction: q.get('direction') === 'asc' ? 'asc' : 'desc'
+	});
 
 	async function handleChange({ detail }: ComponentEvents<PositionTable>['change']) {
 		// skip URL updates when user navigates to different positions status page
@@ -43,8 +51,8 @@
 			{positions}
 			{status}
 			{...options}
-			hasPagination={status === 'closed'}
-			hasSearch={status === 'closed'}
+			hasPagination={positions.length > 5}
+			hasSearch={positions.length > 5}
 			hiddenPositions={strategy.hiddenPositions}
 			on:change={handleChange}
 		/>
