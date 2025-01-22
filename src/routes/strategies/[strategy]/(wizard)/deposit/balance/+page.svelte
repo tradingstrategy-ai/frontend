@@ -9,8 +9,7 @@
 	const { chain, nativeCurrency, denominationToken } = data;
 	const wizard = getWizardContext<DepositWizardData>();
 
-	wizard.data.nativeCurrency = nativeCurrency;
-	wizard.data.denominationToken = denominationToken;
+	wizard.updateData({ nativeCurrency, denominationToken });
 	wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);
 </script>
 

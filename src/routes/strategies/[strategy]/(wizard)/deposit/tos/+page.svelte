@@ -63,8 +63,10 @@
 			restore(tosPreviouslyAccepted: boolean, tosSignature?: string, tosHash?: string) {
 				// setting dummy signature/hash values since ToS has already been accepted
 				if (tosPreviouslyAccepted) {
-					wizard.data.tosSignature = '';
-					wizard.data.tosHash = numberToHex(0, { size: 32 });
+					wizard.updateData({
+						tosSignature: '',
+						tosHash: numberToHex(0, { size: 32 })
+					});
 				}
 
 				if (tosPreviouslyAccepted || (tosSignature && tosHash)) {
@@ -96,8 +98,7 @@
 				const tosHash = hashMessage(acceptanceMessage!);
 
 				if (canForwardPayment) {
-					wizard.data.tosSignature = tosSignature;
-					wizard.data.tosHash = tosHash;
+					wizard.updateData({ tosHash, tosSignature });
 					return 'completed';
 				}
 
