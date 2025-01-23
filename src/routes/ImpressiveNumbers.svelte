@@ -2,14 +2,26 @@
 	import Section from '$lib/components/Section.svelte';
 	import Grid from '$lib/components/Grid.svelte';
 	import UspTile from '$lib/components/UspTile.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
-	let { impressiveNumbers } = $props();
+	let { chains, impressiveNumbers } = $props();
 </script>
 
-{#if impressiveNumbers}
-	<Section gap="md" padding="md" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
-		<h2 style="text-align: center;">Your strategy can trade</h2>
+<Section gap="md" padding="lg" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
+	{#if chains}
+		<h2>Trading Strategy runs on</h2>
+		<div class="chains">
+			{#each chains as chain}
+				<a class="tile b" title={chain.chain_name} href="/trading-view/{chain.chain_slug}" data-sveltekit-preload-data>
+					<img src={getLogoUrl('blockchain', chain.chain_slug)} alt={chain.chain_name} />
+				</a>
+			{/each}
+		</div>
+	{/if}
+
+	{#if impressiveNumbers}
+		<h2>Your strategy can trade</h2>
 		<Grid cols={3} gap="lg">
 			<UspTile
 				title={formatAmount(impressiveNumbers.pairs)}
@@ -30,12 +42,31 @@
 				Contact us to learn how to port your algorithms.
 			</a>
 		</p>
-	</Section>
-{/if}
+	{/if}
+</Section>
 
 <style>
 	h2 {
 		text-align: center;
+	}
+
+	.chains {
+		display: flex;
+		justify-content: center;
+		gap: clamp(1rem, 4.5vw, 5rem);
+		margin-block: 1rem;
+		--size: clamp(2.5rem, 8vw, 6rem);
+
+		@media (--viewport-sm-down) {
+			margin-block: 0.5rem;
+		}
+
+		a {
+			border-radius: 50%;
+			width: var(--size);
+			height: var(--size);
+			padding: calc(var(--size) * 0.2);
+		}
 	}
 
 	p {
