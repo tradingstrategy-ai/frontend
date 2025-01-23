@@ -4,47 +4,52 @@ import { browser } from '$app/environment';
 import { stringify, parse } from 'devalue';
 import { z } from 'zod';
 
-const wizardContextKey = Symbol('wizard');
+const storage = browser ? window.sessionStorage : undefined;
+const storageKeyBase = 'ts:wizard';
+const wizardContextKey = Symbol(storageKeyBase);
 
-export function setWizardContext<T extends BaseWizardData>(wizard: WizardState<T>) {
+const baseDataSchema = z.object({});
+type BaseDataSchema = typeof baseDataSchema;
+
+const wizardSerializationSchema = z.object({
+	returnTo: z.string(),
+	data: baseDataSchema,
+	completed: z.set(z.string())
+});
+type WizardSerialization = z.infer<typeof wizardSerializationSchema>;
+
+export function setWizardContext<T extends BaseDataSchema>(wizard: WizardState<T>) {
 	setContext(wizardContextKey, wizard);
 }
 
-export function getWizardContext<T extends BaseWizardData>(): WizardState<T> {
+export function getWizardContext<T extends BaseDataSchema>(): WizardState<T> {
 	return getContext(wizardContextKey) as WizardState<T>;
 }
 
-const wizardDataSchema = z.object({
-	returnTo: z.string(),
-	data: z.record(z.any()),
-	completed: z.set(z.string())
-});
-
-type WizardData<T> = z.infer<typeof wizardDataSchema> & {
-	data: T;
-};
-
-const storage = browser ? window.sessionStorage : undefined;
-const storageKeyBase = 'ts:wizard';
-
-type BaseWizardData = Record<string, any>;
-
-export class WizardState<T extends BaseWizardData> {
+export class WizardState<T extends BaseDataSchema> {
 	slug: string;
 	returnTo: string;
-	data = $state() as T;
+	data = $state() as z.infer<T>;
 	#completed: SvelteSet<string>;
 
-	constructor(slug: string, returnTo: string | undefined, data: T = {} as T, completed?: Iterable<string>) {
+	constructor(
+		slug: string,
+		returnTo: string | undefined,
+		dataSchema: T = baseDataSchema as T,
+		data: z.infer<T> = dataSchema.parse({}),
+		completed?: Iterable<string>
+	) {
 		// assign slug right away (required by deserialize)
 		this.slug = slug;
 
 		// if returnTo is not defined, deserialize data from session storage
-		if (!returnTo) {
-			({ returnTo, data, completed } = this.deserialize());
+		if (returnTo) {
+			data = dataSchema.parse(data);
+		} else {
+			({ returnTo, data, completed } = this.deserialize(dataSchema));
 		}
 
-		// assign instance variables
+		// assign remaining instance variables
 		this.returnTo = returnTo;
 		this.data = data;
 		this.#completed = new SvelteSet(completed);
@@ -62,7 +67,7 @@ export class WizardState<T extends BaseWizardData> {
 		return `${storageKeyBase}:${this.slug}`;
 	}
 
-	updateData(data: T) {
+	updateData(data: z.infer<T>) {
 		Object.assign(this.data, data);
 	}
 
@@ -79,7 +84,7 @@ export class WizardState<T extends BaseWizardData> {
 	}
 
 	serialize() {
-		const data = {
+		const data: WizardSerialization = {
 			returnTo: this.returnTo,
 			data: this.data,
 			completed: this.#completed
@@ -87,13 +92,17 @@ export class WizardState<T extends BaseWizardData> {
 		storage?.setItem(this.storageKey, stringify(data));
 	}
 
-	deserialize() {
+	deserialize(dataSchema: T) {
 		try {
 			const raw = storage?.getItem(this.storageKey);
 			if (!raw) {
 				throw new Error(`sessionStorage['${this.storageKey}'] not found`);
 			}
-			return wizardDataSchema.parse(parse(raw)) as WizardData<T>;
+			const parsed = wizardSerializationSchema.parse(parse(raw));
+			return {
+				...parsed,
+				data: dataSchema.parse(parsed.data)
+			};
 		} catch (cause) {
 			throw new Error('Error deserializing wizard data from sessionStorage.', { cause });
 		}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout.js';
+	import type { DepositWizardDataSchema } from '../+layout.js';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { Alert, Button } from '$lib/components';
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
@@ -7,7 +7,7 @@
 
 	let { data } = $props();
 	const { chain, nativeCurrency, denominationToken } = data;
-	const wizard = getWizardContext<DepositWizardData>();
+	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	wizard.updateData({ nativeCurrency, denominationToken });
 	wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RedeemWizardData } from '../+layout';
+	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import type { VaultOnChainData } from 'trade-executor/schemas/summary';
 	import { beforeNavigate } from '$app/navigation';
 	import { fade } from 'svelte/transition';
@@ -17,7 +17,7 @@
 	let { data } = $props();
 	const { chain, strategy } = data;
 
-	const wizard = getWizardContext<RedeemWizardData>();
+	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
 	const onChainData = strategy.on_chain_data as VaultOnChainData;
 

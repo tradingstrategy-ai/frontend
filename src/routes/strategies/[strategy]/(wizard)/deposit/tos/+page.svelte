@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DepositWizardData } from '../+layout';
+	import type { DepositWizardDataSchema } from '../+layout';
 	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import { captureException } from '@sentry/sveltekit';
 	import { tweened } from 'svelte/motion';
@@ -21,7 +21,7 @@
 
 	export let data;
 	const { chain, strategy, canForwardPayment, canProceed, version, fileName, tosText, acceptanceMessage } = data;
-	const wizard = getWizardContext<DepositWizardData>();
+	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	const { tosHash, tosSignature } = wizard.data;
 	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;

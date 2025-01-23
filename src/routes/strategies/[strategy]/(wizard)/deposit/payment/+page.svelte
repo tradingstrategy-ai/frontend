@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
-	import type { DepositWizardData } from '../+layout';
+	import type { DepositWizardDataSchema, DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
@@ -37,11 +37,11 @@
 	let { data } = $props();
 	const { chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
 
-	const wizard = getWizardContext<Required<DepositWizardData>>();
+	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
-	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data;
+	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data as Required<DepositWizardData>;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 

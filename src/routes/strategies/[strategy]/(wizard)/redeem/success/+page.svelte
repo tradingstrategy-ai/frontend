@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Abi } from 'viem';
-	import type { RedeemWizardData } from '../+layout';
+	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { config } from '$lib/wallet/client';
@@ -16,8 +16,8 @@
 	let { data } = $props();
 	const { chain, strategy } = data;
 
-	const wizard = getWizardContext<Required<RedeemWizardData>>();
-	const { denominationToken, shares, transactionLogs } = wizard.data;
+	const wizard = getWizardContext<RedeemWizardDataSchema>();
+	const { denominationToken, shares, transactionLogs } = wizard.data as Required<RedeemWizardData>;
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 

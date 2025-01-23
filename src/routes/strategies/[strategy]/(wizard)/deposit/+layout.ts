@@ -1,18 +1,25 @@
-import type { GetBalanceReturnType } from '@wagmi/core';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
 import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
+import { z } from 'zod';
+import { hexString, hexEncodedData } from '$lib/eth-defi/schemas/core';
+import { currencyBalanceSchema, tokenBalanceSchema } from '$lib/eth-defi/schemas/token';
 import { config } from '$lib/wallet/client';
 import { assertNotGeoBlocked } from '$lib/helpers/geo';
 import { getDenominationTokenInfo } from '$lib/eth-defi/helpers';
 
-export type DepositWizardData = {
-	denominationToken?: GetTokenBalanceReturnType;
-	nativeCurrency?: GetBalanceReturnType;
-	tosSignature?: Address | '';
-	tosHash?: Address;
-	paymentSnapshot?: Record<string, any>;
-};
+const dataSchema = z
+	.object({
+		nativeCurrency: currencyBalanceSchema,
+		denominationToken: tokenBalanceSchema,
+		tosSignature: hexEncodedData,
+		tosHash: hexString,
+		paymentSnapshot: z.record(z.any())
+	})
+	.partial();
+
+export type DepositWizardDataSchema = typeof dataSchema;
+
+export type DepositWizardData = z.infer<DepositWizardDataSchema>;
 
 export async function load({ parent }) {
 	const { admin, ipCountry, chain, strategy } = await parent();
@@ -45,6 +52,7 @@ export async function load({ parent }) {
 		slug: 'deposit',
 		title: 'Deposit tokens',
 		steps,
+		dataSchema,
 		denominationTokenInfo,
 		canForwardPayment
 	};

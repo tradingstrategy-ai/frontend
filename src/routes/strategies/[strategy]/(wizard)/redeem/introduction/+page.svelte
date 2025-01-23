@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { RedeemWizardData } from '../+layout.js';
+	import type { RedeemWizardDataSchema } from '../+layout.js';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 
 	let { data } = $props();
 	const { strategy, denominationToken } = data;
-	const wizard = getWizardContext<RedeemWizardData>();
+	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
 	wizard.data.denominationToken = denominationToken;
 	wizard.toggleComplete('introduction');

@@ -7,12 +7,8 @@
  *
  */
 import { z } from 'zod';
-
-export const blockNumber = z.number().int().positive();
-export type BlockNumber = z.infer<typeof blockNumber>;
-
-export const chainId = z.number().int().positive();
-export type ChainId = z.infer<typeof chainId>;
+export type { BlockNumber, ChainId, HexEncodedData, HexString } from '$lib/eth-defi/schemas/core';
+export { blockNumber, chainId, hexEncodedData, hexString } from '$lib/eth-defi/schemas/core';
 
 export const count = z.number().int().nonnegative();
 export type Count = z.infer<typeof count>;
@@ -29,14 +25,6 @@ export const decimalToNumber = z.coerce.number();
 
 export const duration = z.coerce.number().nonnegative();
 export type Duration = z.infer<typeof duration>;
-
-export const hexEncodedData = z.string().regex(/^[0-9a-fA-F]+$/);
-export type HexEncodedData = z.infer<typeof hexEncodedData>;
-
-export const hexString = z.string().refine((arg): arg is Address => {
-	return /^0x[0-9a-fA-F]+$/.test(arg);
-});
-export type HexString = z.infer<typeof hexString>;
 
 export const percent = z.coerce.number();
 export type Percent = z.infer<typeof percent>;

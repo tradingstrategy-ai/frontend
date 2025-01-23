@@ -1,17 +1,25 @@
-import type { GetBalanceReturnType, GetTransactionReceiptReturnType } from '@wagmi/core';
-import type { GetTokenBalanceReturnType, TokenInfo } from '$lib/eth-defi/helpers';
+import { z } from 'zod';
+import { hexString } from '$lib/eth-defi/schemas/core';
+import { currencyBalanceSchema, tokenBalanceSchema, tokenInfoSchema } from '$lib/eth-defi/schemas/token';
+import { transactionLog } from '$lib/eth-defi/schemas/transaction';
 
-export type RedeemWizardData = {
-	nativeCurrency?: GetBalanceReturnType;
-	denominationToken?: TokenInfo;
-	vaultShares?: GetTokenBalanceReturnType;
-	vaultNetValue?: GetTokenBalanceReturnType;
-	shares?: string;
-	transactionId?: Address;
-	transactionLogs?: GetTransactionReceiptReturnType['logs'];
-	errorMessage?: string;
-	redemptionState?: string;
-};
+const dataSchema = z
+	.object({
+		nativeCurrency: currencyBalanceSchema,
+		denominationToken: tokenInfoSchema,
+		vaultShares: tokenBalanceSchema,
+		vaultNetValue: tokenBalanceSchema,
+		shares: z.string(),
+		transactionId: hexString,
+		transactionLogs: transactionLog.array(),
+		errorMessage: z.string(),
+		redemptionState: z.string()
+	})
+	.partial();
+
+export type RedeemWizardDataSchema = typeof dataSchema;
+
+export type RedeemWizardData = z.infer<RedeemWizardDataSchema>;
 
 export async function load() {
 	return {
@@ -25,6 +33,8 @@ export async function load() {
 			{ slug: 'deposit-status', label: 'Deposit status' },
 			{ slug: 'shares-redemption', label: 'Shares redemption' },
 			{ slug: 'success', label: 'Success' }
-		]
+		],
+
+		dataSchema
 	};
 }

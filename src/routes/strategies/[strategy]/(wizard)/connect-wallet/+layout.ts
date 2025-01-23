@@ -9,6 +9,8 @@ export async function load() {
 			{ slug: 'connect', label: 'Connect your wallet' },
 			{ slug: 'balance', label: 'Wallet balance' },
 			{ slug: 'success', label: 'Success' }
-		]
+		],
+
+		dataSchema: undefined
 	};
 }

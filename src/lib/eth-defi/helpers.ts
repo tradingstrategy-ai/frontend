@@ -1,5 +1,6 @@
 import type { Abi, Log } from 'viem';
 import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
+import type { TokenInfo } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -33,15 +34,6 @@ const tokenVersionAbi = parseAbi([
 	'function version() view returns (string)',
 	'function EIP712_VERSION() view returns (string)'
 ]);
-
-export type TokenInfo = {
-	address: Address;
-	decimals: number;
-	name: string | undefined;
-	symbol: string | undefined;
-	label: string | undefined;
-	version: string;
-};
 
 /**
  * Get info about an ERC20 token.

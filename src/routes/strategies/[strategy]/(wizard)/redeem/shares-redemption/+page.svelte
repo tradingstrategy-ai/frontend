@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RedeemWizardData } from '../+layout';
+	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
@@ -21,7 +21,7 @@
 	let { data } = $props();
 	const { chain, strategy } = data;
 
-	const wizard = getWizardContext<RedeemWizardData>();
+	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 
@@ -40,7 +40,7 @@
 	});
 
 	async function confirmRedemption() {
-		const sharesQuantity = parseUnits(shares, vaultShares.decimals);
+		const sharesQuantity = parseUnits(shares!, vaultShares.decimals);
 
 		const { request } = await simulateContract(config, {
 			address: onChainData.smart_contracts.comptroller,
@@ -204,7 +204,7 @@
 			>
 				Estimated value
 				<EntitySymbol label={vaultNetValue.label} logoUrl={getLogoUrl('token', vaultNetValue.symbol)}>
-					{getEstimatedValue(shares)}
+					{getEstimatedValue(shares!)}
 					{vaultNetValue.label}
 				</EntitySymbol>
 			</MoneyInput>

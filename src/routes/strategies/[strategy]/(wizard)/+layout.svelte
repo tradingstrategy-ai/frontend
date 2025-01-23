@@ -5,14 +5,14 @@
 	import { WizardState, setWizardContext } from '$lib/wizard/state.svelte';
 	import Wizard from '$lib/wizard/Wizard.svelte';
 
-	let { data, children } = $props();
+	let { children } = $props();
 
-	const { slug, title, steps, strategy } = data;
+	const { slug, title, steps, dataSchema, strategy } = page.data;
 
 	const returnTo = navigating.from?.url.pathname;
 
 	try {
-		setWizardContext(new WizardState(slug, returnTo));
+		setWizardContext(new WizardState(slug, returnTo, dataSchema));
 	} catch (e) {
 		goto(`/strategies/${strategy.id}/error`, { replaceState: true });
 	}
