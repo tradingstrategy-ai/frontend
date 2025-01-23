@@ -4,7 +4,6 @@
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { wizard } from 'wizard/store';
 	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import { createVaultAdapter } from 'trade-executor/vaults';
 	import { Button, HashAddress } from '$lib/components';
@@ -63,13 +62,8 @@
 		}
 	}
 
-	function launchWizard(slug: string) {
-		wizard.init(slug, `/strategies/${strategy.id}`, {
-			chain,
-			strategyName: strategy.name,
-			onChainData
-		});
-		goto(`/wizard/${slug}/introduction`);
+	function getWizardUrl(slug: string) {
+		return `/strategies/${strategy.id}/${slug}/introduction`;
 	}
 </script>
 
@@ -77,7 +71,7 @@
 	<header>
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
-			<button class="mobile" on:click={expandable.toggle}>
+			<button class="mobile" onclick={expandable.toggle}>
 				<div class="inner">
 					<h2>My deposits</h2>
 					<div class="wallet-address">
@@ -95,7 +89,7 @@
 				<IconChevronDown --icon-size="1.25em" />
 			</button>
 		{:else}
-			<button class="mobile" on:click={() => launchWizard('connect-wallet')}>
+			<button class="mobile" onclick={() => goto(getWizardUrl('connect-wallet'))}>
 				Connect wallet
 				<IconWallet --icon-size="1.25em" />
 			</button>
@@ -127,7 +121,7 @@
 			{/if}
 			<div class="actions">
 				{#if depositEnabled && !connected}
-					<Button class="full-width" on:click={() => launchWizard('connect-wallet')}>
+					<Button class="full-width" href={getWizardUrl('connect-wallet')}>
 						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
@@ -140,15 +134,15 @@
 					</Button>
 				{/if}
 				{#if depositEnabled && (vault.depositMethod === 'external' || strategy.depositExternal)}
-					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl}>
+					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Deposit at {vault.shortLabel}
 					</Button>
-					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl}>
+					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Redeem at {vault.shortLabel}
 					</Button>
 				{:else}
-					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} on:click={() => launchWizard('deposit')} />
-					<Button secondary label="Redeem" disabled={buttonsDisabled} on:click={() => launchWizard('redeem')} />
+					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
+					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
 		</div>

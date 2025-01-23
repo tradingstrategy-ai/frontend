@@ -5,7 +5,7 @@
 	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { createVaultAdapter } from 'trade-executor/vaults/index.js';
+	import { createVaultAdapter } from 'trade-executor/vaults';
 	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
 
 	export let data;

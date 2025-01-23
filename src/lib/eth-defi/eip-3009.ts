@@ -1,7 +1,7 @@
 import type { TypedData, TypedDataDomain } from 'viem';
+import type { TokenInfo } from './schemas/token';
 import { bytesToHex, getTypesForEIP712Domain, hexToNumber, numberToHex, slice } from 'viem';
 import { type Config, type SignTypedDataParameters, signTypedData } from '@wagmi/core';
-import type { TokenInfo } from './helpers';
 
 function getDomain(chainId: number, { name, version, address }: TokenInfo): TypedDataDomain {
 	const commonFields = { name, version, verifyingContract: address };

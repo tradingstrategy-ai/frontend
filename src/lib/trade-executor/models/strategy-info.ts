@@ -30,19 +30,21 @@ export type DisconnectedStrategyInfo = StrategyConfiguration &
 
 export type StrategyInfo = ConnectedStrategyInfo | DisconnectedStrategyInfo;
 
-export function createStrategyInfo(
+export function createConnectedStrategyInfo(
 	strategyConf: StrategyConfiguration,
-	strategySummary: Maybe<StrategySummary>,
-	error?: any
-): StrategyInfo {
-	if (strategySummary) {
-		return {
-			connected: true,
-			...strategyConf,
-			...strategySummary
-		};
-	}
+	strategySummary: StrategySummary
+): ConnectedStrategyInfo {
+	return {
+		connected: true,
+		...strategyConf,
+		...strategySummary
+	};
+}
 
+export function createDisconnectedStrategyInfo(
+	strategyConf: StrategyConfiguration,
+	error: any
+): DisconnectedStrategyInfo {
 	return {
 		...strategyConf,
 		connected: false,

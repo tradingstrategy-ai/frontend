@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentEvents, ComponentProps } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { Alert } from '$lib/components';
 	import PositionTable from './PositionTable.svelte';
@@ -17,7 +17,7 @@
 		frozen: 'frozen_at'
 	} as const;
 
-	let q = $derived($page.url.searchParams);
+	let q = $derived(page.url.searchParams);
 	let options: Options = $derived({
 		page: Number(q.get('page')) || 0,
 		sort: q.get('sort') || defaultSort[status],
@@ -26,7 +26,7 @@
 
 	async function handleChange({ detail }: ComponentEvents<PositionTable>['change']) {
 		// skip URL updates when user navigates to different positions status page
-		if (!$page.url.pathname.includes(status)) return;
+		if (!page.url.pathname.includes(status)) return;
 		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
 		detail.scrollToTop();
 	}

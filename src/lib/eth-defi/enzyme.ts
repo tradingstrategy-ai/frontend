@@ -1,7 +1,8 @@
-// TODO: move all of these methods to vault adapter
+// TODO: move vault-specific methods to vault adapter
+import type { TokenInfo, TokenBalance } from './schemas/token';
 import { formatUnits, isAddressEqual } from 'viem';
 import { type Config, simulateContract } from '@wagmi/core';
-import { type TokenInfo, type GetTokenBalanceReturnType, getTokenInfo } from './helpers';
+import { getTokenInfo } from './helpers';
 
 export type AssetWithdrawl = {
 	asset: Address;
@@ -35,10 +36,8 @@ export async function getRedemption(config: Config, params: GetRedemptionParams)
 		decimals,
 		symbol,
 		label,
-		value,
-		// TODO: remove deprecated `formatted` property after @wagmi removes from GetBalanceReturnType
-		formatted: formatUnits(value, decimals)
-	} as GetTokenBalanceReturnType;
+		value
+	} as TokenBalance;
 }
 
 type GetSharePriceParams = {

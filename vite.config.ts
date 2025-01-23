@@ -1,7 +1,5 @@
 /**
- * Vite 4 configuration file. See:
- * https://kit.svelte.dev/docs/project-structure#project-files-vite-config-js
- * https://vitejs.dev/config/
+ * Vite configuration file; see: https://vite.dev/config/
  */
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
@@ -12,14 +10,14 @@ import { sentrySvelteKit } from '@sentry/sveltekit';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import jsonServer from 'vite-plugin-simple-json-server';
 
-const customLogger = (({ warnOnce, ...otherLogMethods }) => {
+const customLogger = ((logger) => {
 	return {
-		...otherLogMethods,
+		...logger,
 
 		// suppress missing sourcemap warnings from @aave/math-utils during unit tests
 		warnOnce(msg: string, options: LogOptions) {
 			if (/^Sourcemap for ".*@aave\/math-utils/.test(msg)) return;
-			warnOnce(msg, options);
+			logger.warnOnce(msg, options);
 		}
 	};
 })(createLogger());

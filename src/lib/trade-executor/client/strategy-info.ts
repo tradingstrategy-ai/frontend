@@ -4,7 +4,7 @@
  */
 import { type StrategyConfiguration, configuredStrategies } from '../schemas/configuration';
 import { strategySummarySchema } from '../schemas/summary';
-import { createStrategyInfo } from 'trade-executor/models/strategy-info';
+import { createConnectedStrategyInfo, createDisconnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 import swrCache from '$lib/swrCache';
 
 // use 5 second timeout when fetching strategy metadata
@@ -17,7 +17,7 @@ export async function getStrategyInfo(fetch: Fetch, strategyConf: StrategyConfig
 		throw new Error(`Failed to fetch ${url} (status: ${resp.status})`);
 	}
 	const summary = strategySummarySchema.parse(await resp.json());
-	return createStrategyInfo(strategyConf, summary);
+	return createConnectedStrategyInfo(strategyConf, summary);
 }
 
 export async function getAllStrategies(fetch: Fetch) {
@@ -26,7 +26,7 @@ export async function getAllStrategies(fetch: Fetch) {
 		try {
 			return await getStrategyInfo(fetch, strategyConf);
 		} catch (err) {
-			return createStrategyInfo(strategyConf, undefined, err);
+			return createDisconnectedStrategyInfo(strategyConf, err);
 		}
 	});
 
