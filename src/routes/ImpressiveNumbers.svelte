@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Section from '$lib/components/Section.svelte';
-	import Grid from '$lib/components/Grid.svelte';
-	import UspTile from '$lib/components/UspTile.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 
@@ -22,19 +20,22 @@
 
 	{#if impressiveNumbers}
 		<h2>Your strategy can trade</h2>
-		<Grid cols={3} gap="lg">
-			<UspTile
-				title={formatAmount(impressiveNumbers.pairs)}
-				subtitle="trading pairs"
-				href="/trading-view/trading-pairs"
-			/>
-			<UspTile
-				title={formatDollar(impressiveNumbers.liquidity)}
-				subtitle="liquidity"
-				href="/trading-view/trading-pairs"
-			/>
-			<UspTile title={impressiveNumbers.blockchains} subtitle="blockchains" href="/trading-view/blockchains" />
-		</Grid>
+		<div class="number-tiles">
+			<a class="tile b" href="/trading-view/trading-pairs" data-sveltekit-preload-data>
+				<strong>{formatAmount(impressiveNumbers.pairs)}</strong>
+				<span>trading pairs</span>
+			</a>
+
+			<a class="tile b" href="/trading-view/trading-pairs" data-sveltekit-preload-data>
+				<strong>{formatDollar(impressiveNumbers.liquidity)}</strong>
+				<span>liquidity</span>
+			</a>
+
+			<a class="tile b" href="/trading-view/exchanges" data-sveltekit-preload-data>
+				<strong>{formatAmount(impressiveNumbers.exchanges)}</strong>
+				<span>decentralised exchanges</span>
+			</a>
+		</div>
 
 		<p class="benefits">
 			Decentralised finance offers significant new opportunities for algorithmic traders.
@@ -66,6 +67,33 @@
 			width: var(--size);
 			height: var(--size);
 			padding: calc(var(--size) * 0.2);
+		}
+	}
+
+	.number-tiles {
+		display: grid;
+		gap: 1.5rem;
+
+		@media (--viewport-lg-up) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		a {
+			display: grid;
+			gap: 0.125rem;
+			padding: 1rem;
+			place-content: center;
+			text-align: center;
+			min-height: 12rem;
+
+			strong {
+				font: var(--f-heading-xl-bold);
+			}
+
+			span {
+				color: var(--c-text-extra-light);
+				font: var(--f-ui-xl-medium);
+			}
 		}
 	}
 
