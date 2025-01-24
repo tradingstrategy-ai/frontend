@@ -9,7 +9,7 @@ test.describe('home page', () => {
 		const impressiveSection = page.getByTestId('impressive-numbers');
 		await expect(impressiveSection).toHaveText(/[\d.,]+ trading pairs/);
 		await expect(impressiveSection).toHaveText(/\$[\d.,]+[kMB] liquidity/);
-		await expect(impressiveSection).toHaveText(/\d blockchains/);
+		await expect(impressiveSection).toHaveText(/[\d.,]+ decentralised exchanges/);
 	});
 
 	test('should include blog roll', async ({ page }) => {

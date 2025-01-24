@@ -16,6 +16,7 @@ export async function load({ fetch, setHeaders, data }) {
 
 	return {
 		strategies: data.strategies,
+		chains: await fetchPublicApi(fetch, 'chains').catch(logError),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
 		posts: await ghostClient.posts?.browse({ limit: 4 }).catch(logError)
 	};

@@ -23,7 +23,7 @@ test.describe('home page', () => {
 		const liquidity = tiles.filter({ hasText: '$1.23B liquidity' });
 		await expect(liquidity).toHaveAttribute('href', '/trading-view/trading-pairs');
 
-		const blockchains = tiles.filter({ hasText: '3 blockchains' });
-		await expect(blockchains).toHaveAttribute('href', '/trading-view/blockchains');
+		const blockchains = tiles.filter({ hasText: '1,000 decentralised exchanges' });
+		await expect(blockchains).toHaveAttribute('href', '/trading-view/exchanges');
 	});
 });
