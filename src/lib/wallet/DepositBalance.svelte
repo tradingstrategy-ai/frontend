@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+	import type { TokenBalance as TokenBalanceType } from '$lib/eth-defi/schemas/token';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 
 	export let label: string;
-	export let data: MaybePromise<GetTokenBalanceReturnType>;
+	export let data: MaybePromise<TokenBalanceType>;
 	export let dollar = false;
 </script>
 

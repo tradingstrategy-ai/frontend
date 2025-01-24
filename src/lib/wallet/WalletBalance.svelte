@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { GetBalanceReturnType } from '@wagmi/core';
-	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+	import type { CurrencyBalance, TokenBalance } from '$lib/eth-defi/schemas/token';
 	import { wallet } from '$lib/wallet/client';
 	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
@@ -9,8 +8,8 @@
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let nativeCurrency: GetBalanceReturnType;
-	export let denominationToken: Maybe<GetTokenBalanceReturnType>;
+	export let nativeCurrency: CurrencyBalance;
+	export let denominationToken: Maybe<TokenBalance>;
 
 	const chainSymbol = nativeCurrency.symbol;
 </script>
