@@ -2,10 +2,10 @@
 	import type { ComponentEvents } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+	import type { BaseAssetManager } from 'trade-executor/vaults/base';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
-	import { createVaultAdapter } from 'trade-executor/vaults';
 	import { Button, HashAddress } from '$lib/components';
 	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
 	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
@@ -17,25 +17,26 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 
-	export let strategy: ConnectedStrategyInfo;
-	export let chain: Chain;
-	export let geoBlocked: boolean;
-	export let ipCountry: CountryCode | undefined;
+	interface Props {
+		strategy: ConnectedStrategyInfo;
+		chain: Chain;
+		vault: BaseAssetManager;
+		geoBlocked: boolean;
+		ipCountry: CountryCode | undefined;
+	}
 
-	let contentWrapper: HTMLElement;
-	let contentHeight = 'auto';
+	let { strategy, chain, vault, geoBlocked, ipCountry }: Props = $props();
 
-	let vaultBalance: MaybeString;
+	let contentWrapper = $state() as HTMLElement;
+	let contentHeight = $state('auto');
 
-	const onChainData = strategy.on_chain_data;
-	const vault = createVaultAdapter(onChainData);
+	let vaultBalance: MaybeString = $state();
 
 	const isOutdated = Boolean(strategy.newVersionId);
-	const depositEnabled = vault.depositEnabled();
 
-	$: connected = $wallet.isConnected;
-	$: wrongNetwork = connected && $wallet.chain?.id !== chain.id;
-	$: buttonsDisabled = !depositEnabled || geoBlocked || wrongNetwork;
+	let connected = $derived($wallet.status === 'connected');
+	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
+	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
 
 	const expandable = fsm('closed', {
 		closed: {
@@ -97,7 +98,7 @@
 	</header>
 	<div class="content-wrapper" bind:this={contentWrapper}>
 		<div class="content">
-			{#if !depositEnabled}
+			{#if !vault.depositEnabled()}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
 				</DepositWarning>
@@ -113,19 +114,19 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<VaultBalance {onChainData} address={$wallet.address!} let:shares let:value on:dataFetch={setVaultBalance}>
+					<VaultBalance {vault} address={$wallet.address!} let:shares let:value on:dataFetch={setVaultBalance}>
 						<DepositBalance label="Value" data={value} dollar />
 						<DepositBalance label="Shares" data={shares} />
 					</VaultBalance>
 				</dl>
 			{/if}
 			<div class="actions">
-				{#if depositEnabled && !connected}
+				{#if vault.depositEnabled() && !connected}
 					<Button class="full-width" href={getWizardUrl('connect-wallet')}>
 						<IconWallet slot="icon" />
 						Connect wallet
 					</Button>
-				{:else if depositEnabled && wrongNetwork}
+				{:else if vault.depositEnabled() && wrongNetwork}
 					<Button class="full-width" label="Switch network" on:click={() => switchChain(chain.id)} />
 				{/if}
 				{#if connected}
@@ -133,7 +134,7 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				{#if depositEnabled && (vault.depositMethod === 'external' || strategy.depositExternal)}
+				{#if vault.depositEnabled() && (vault.depositMethod === 'external' || strategy.depositExternal)}
 					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Deposit at {vault.shortLabel}
 					</Button>

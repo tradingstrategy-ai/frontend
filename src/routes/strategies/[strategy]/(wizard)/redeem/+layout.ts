@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { error } from '@sveltejs/kit';
 import { hexString } from '$lib/eth-defi/schemas/core';
 import { currencyBalanceSchema, tokenBalanceSchema, tokenInfoSchema } from '$lib/eth-defi/schemas/token';
 import { transactionLog } from '$lib/eth-defi/schemas/transaction';
@@ -21,7 +22,13 @@ export type RedeemWizardDataSchema = typeof dataSchema;
 
 export type RedeemWizardData = z.infer<RedeemWizardDataSchema>;
 
-export async function load() {
+export async function load({ parent }) {
+	const { vault } = await parent();
+
+	if (!vault.depositEnabled()) {
+		error(400, 'This strategy does not support deposits.');
+	}
+
 	return {
 		slug: 'redeem',
 
@@ -35,6 +42,9 @@ export async function load() {
 			{ slug: 'success', label: 'Success' }
 		],
 
-		dataSchema
+		dataSchema,
+
+		// re-return type-narrowed vault
+		vault
 	};
 }

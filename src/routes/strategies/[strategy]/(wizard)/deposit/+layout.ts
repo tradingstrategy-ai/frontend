@@ -1,5 +1,6 @@
 import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
+import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { hexString, hexEncodedData } from '$lib/eth-defi/schemas/core';
 import { currencyBalanceSchema, tokenBalanceSchema } from '$lib/eth-defi/schemas/token';
@@ -22,8 +23,12 @@ export type DepositWizardDataSchema = typeof dataSchema;
 export type DepositWizardData = z.infer<DepositWizardDataSchema>;
 
 export async function load({ parent }) {
-	const { admin, ipCountry, chain, strategy } = await parent();
+	const { admin, ipCountry, chain, strategy, vault } = await parent();
 	assertNotGeoBlocked('strategies:deposit', ipCountry, admin);
+
+	if (!vault.depositEnabled()) {
+		error(400, 'This strategy does not support deposits.');
+	}
 
 	let steps: WizardStep[] = [
 		{ slug: 'introduction', label: 'Introduction' },
@@ -54,6 +59,7 @@ export async function load({ parent }) {
 		steps,
 		dataSchema,
 		denominationTokenInfo,
-		canForwardPayment
+		canForwardPayment,
+		vault // re-return type-narrowed vault
 	};
 }

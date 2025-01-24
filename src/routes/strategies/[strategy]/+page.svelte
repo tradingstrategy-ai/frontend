@@ -4,8 +4,8 @@
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import { isGeoBlocked } from '$lib/helpers/geo';
 
-	export let data;
-	const { chain, strategy, admin, ipCountry } = data;
+	let { data } = $props();
+	const { chain, strategy, vault, admin, ipCountry } = data;
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
@@ -18,7 +18,7 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<MyDeposits {strategy} {chain} {geoBlocked} {ipCountry} />
+	<MyDeposits {strategy} {chain} {vault} {geoBlocked} {ipCountry} />
 	<StrategyPerformanceChart {strategy} />
 	<SummaryMetrics {keyMetrics} {backtestLink} />
 </div>
