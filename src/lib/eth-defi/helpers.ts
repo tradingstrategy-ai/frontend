@@ -1,6 +1,6 @@
 import type { Abi, Log } from 'viem';
-import type { Config, GetBalanceParameters, GetBalanceReturnType } from '@wagmi/core';
-import type { TokenInfo } from './schemas/token';
+import type { Config, GetBalanceParameters } from '@wagmi/core';
+import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
@@ -64,11 +64,7 @@ export async function getTokenInfo(
 	} as TokenInfo;
 }
 
-export type GetTokenBalanceParameters = Omit<GetBalanceParameters, 'unit'> & { token: Address };
-export type GetTokenBalanceReturnType = Omit<GetBalanceReturnType, 'formatted'> & {
-	address: Address;
-	label: string;
-};
+type GetTokenBalanceParameters = Omit<GetBalanceParameters, 'unit'> & { token: Address };
 
 /**
  * Get token balance for a given address
@@ -77,10 +73,7 @@ export type GetTokenBalanceReturnType = Omit<GetBalanceReturnType, 'formatted'> 
  * - additional `token` param for ERC20 token address
  * - return object includes additional `address` property
  */
-export async function getTokenBalance(
-	config: Config,
-	parameters: GetTokenBalanceParameters
-): Promise<GetTokenBalanceReturnType> {
+export async function getTokenBalance(config: Config, parameters: GetTokenBalanceParameters) {
 	const { token, address, ...contractParams } = parameters;
 	const contract = { address: token, abi: erc20Abi, ...contractParams };
 
@@ -94,7 +87,7 @@ export async function getTokenBalance(
 
 	const [decimals, symbol, value] = response.map(({ result }) => result);
 	const label = getTokenLabel(symbol as string | undefined, token);
-	return { address: token, decimals, symbol, label, value } as GetTokenBalanceReturnType;
+	return { address: token, decimals, symbol, label, value } as TokenBalance;
 }
 
 export function isBridgedUSDC(address: Address) {

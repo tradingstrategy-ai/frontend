@@ -1,6 +1,6 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod } from '../base';
 import { getTokenBalance } from '$lib/eth-defi/helpers';
 import { readContract } from '@wagmi/core';
@@ -16,9 +16,9 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
 	}
 
-	shareTokenAddress = this.contracts.address;
+	address = this.contracts.address;
 
-	async getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType> {
+	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const [denominationToken, value] = await Promise.all([
 			getTokenBalance(config, { chainId: this.chain.id, token: this.contracts.asset, address }),
 			this.#getVaultAssetValue(config, address)

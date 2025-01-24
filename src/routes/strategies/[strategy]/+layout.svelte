@@ -14,7 +14,7 @@
 
 	export let data;
 
-	$: ({ admin, strategy, deferred } = data);
+	$: ({ admin, strategy, vault, deferred } = data);
 
 	$: tags = strategy.tags.filter((tag) => tag !== 'live');
 	$: isPrivate = !strategy.tags.includes('live');
@@ -98,7 +98,7 @@
 				<StrategyNav
 					basePath="/strategies/{strategy.id}"
 					currentPath={page.url.pathname}
-					hasEnzymeVault={strategy.on_chain_data.asset_management_mode === 'enzyme'}
+					hasVault={vault.depositEnabled()}
 					backtestAvailable={strategy.backtest_available}
 					portfolioPromise={deferred.state.then((s) => s?.portfolio)}
 				/>

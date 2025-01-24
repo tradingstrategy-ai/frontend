@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 	import { Alert, EntitySymbol, Spinner, Tooltip } from '$lib/components';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let data: MaybePromise<GetTokenBalanceReturnType>;
+	export let data: MaybePromise<TokenBalance>;
 </script>
 
 {#await data}

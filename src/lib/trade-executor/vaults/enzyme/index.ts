@@ -1,6 +1,6 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod } from '../base';
 import { getTokenBalance } from '$lib/eth-defi/helpers';
 import { simulateContract } from '@wagmi/core';
@@ -16,9 +16,9 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		return `https://app.enzyme.finance/vault/${this.contracts.vault}?network=${this.chain.slug}`;
 	}
 
-	shareTokenAddress = this.contracts.vault;
+	address = this.contracts.vault;
 
-	async getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType> {
+	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const { default: abi } = await import('./abi/FundValueCalculator.json');
 
 		const { result } = await simulateContract(config, {

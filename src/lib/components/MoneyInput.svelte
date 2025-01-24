@@ -14,14 +14,14 @@ retained to avoid rounding errors and allow for conversion to `BigInt`.
 ```
 -->
 <script lang="ts">
-	import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 	import { EntitySymbol } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let disabled = false;
 	export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 	export let step: number | 'any' = 'any';
-	export let token: GetTokenBalanceReturnType;
+	export let token: TokenBalance;
 	export let value = '';
 
 	let inputEl: HTMLInputElement;

@@ -1,7 +1,7 @@
 import type { SmartContracts } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
-import type { GetTokenBalanceReturnType } from '$lib/eth-defi/helpers';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 
 export const DepositMethod = {
 	INTERNAL: 'internal',
@@ -40,7 +40,7 @@ export abstract class BaseAssetManager {
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
 	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
-	abstract readonly shareTokenAddress: Address;
+	abstract readonly address: Address;
 
 	constructor(
 		chain: Chain,
@@ -55,10 +55,10 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	abstract get externalProviderUrl(): string;
 
-	async getShareBalance(config: Config, address: Address): Promise<GetTokenBalanceReturnType> {
+	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
 		const { getTokenBalance } = await import('$lib/eth-defi/helpers');
-		return getTokenBalance(config, { token: this.shareTokenAddress, address });
+		return getTokenBalance(config, { token: this.address, address });
 	}
 
-	abstract getShareValueUSD(config: Config, address: Address): Promise<GetTokenBalanceReturnType>;
+	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
 }

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
-	import type { VaultOnChainData } from 'trade-executor/schemas/summary';
 	import { beforeNavigate } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
@@ -15,11 +14,9 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	const { chain, strategy } = data;
+	const { chain, vault } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
-
-	const onChainData = strategy.on_chain_data as VaultOnChainData;
 
 	let address = $derived($wallet.address!);
 	let tokens: RedeemWizardData = $state({});
@@ -43,7 +40,7 @@
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {onChainData} {address} on:dataFetch={({ detail }) => Object.assign(tokens, detail)} />
+	<VaultBalance {vault} {address} on:dataFetch={({ detail }) => Object.assign(tokens, detail)} />
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>

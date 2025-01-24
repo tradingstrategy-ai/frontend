@@ -1,19 +1,12 @@
 import { error } from '@sveltejs/kit';
 
 export async function load({ parent }) {
-	const { chain, strategy } = await parent();
-	const onChainData = strategy.on_chain_data;
+	const { vault } = await parent();
 
-	if (onChainData.asset_management_mode !== 'enzyme') {
+	if (!vault.depositEnabled()) {
 		error(404, 'Not found');
 	}
 
-	if (!chain) {
-		error(503, {
-			message: 'Service Unavailable',
-			stack: ['Missing chain configuration']
-		});
-	}
-
-	return { chain, onChainData };
+	// re-return type-narrowed vault
+	return { vault };
 }

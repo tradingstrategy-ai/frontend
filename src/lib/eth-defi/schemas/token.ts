@@ -3,7 +3,6 @@ import { hexString } from './core';
 
 export const currencyBalanceSchema = z.object({
 	decimals: z.number(),
-	formatted: z.string(),
 	symbol: z.string(),
 	value: z.bigint()
 });
@@ -16,9 +15,7 @@ const baseTokenSchema = z.object({
 	label: z.string()
 });
 
-export const tokenBalanceSchema = baseTokenSchema.extend({
-	value: z.bigint()
-});
+export const tokenBalanceSchema = baseTokenSchema.merge(currencyBalanceSchema);
 export type TokenBalance = z.infer<typeof tokenBalanceSchema>;
 
 export const tokenInfoSchema = baseTokenSchema.extend({

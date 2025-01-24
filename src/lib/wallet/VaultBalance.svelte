@@ -1,17 +1,15 @@
 <script lang="ts">
-	import type { VaultOnChainData } from 'trade-executor/schemas/summary';
+	import type { BaseVault } from 'trade-executor/vaults/base';
+	import type { SmartContracts } from 'trade-executor/schemas/summary';
 	import { createEventDispatcher } from 'svelte';
 	import { config } from '$lib/wallet/client';
 	import { DataBox } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
-	import { createVaultAdapter } from 'trade-executor/vaults';
 
 	export let address: Address;
-	export let onChainData: VaultOnChainData;
+	export let vault: BaseVault<SmartContracts>;
 
 	const dispatch = createEventDispatcher();
-
-	const vault = createVaultAdapter(onChainData);
 
 	const shares = vault.getShareBalance(config, address).then((vaultShares) => {
 		dispatch('dataFetch', { vaultShares });
