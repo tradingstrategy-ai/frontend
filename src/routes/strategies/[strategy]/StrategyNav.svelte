@@ -42,7 +42,7 @@
 		},
 		{
 			slug: 'vault',
-			label: 'Enzyme vault'
+			label: 'Vault'
 		},
 		{
 			slug: 'fees',
@@ -76,7 +76,7 @@
 
 	export let basePath: string;
 	export let currentPath: string;
-	export let hasEnzymeVault: boolean;
+	export let hasVault: boolean;
 	export let backtestAvailable: boolean;
 	export let portfolioPromise: Promise<Portfolio | undefined>;
 
@@ -97,7 +97,7 @@
 		switch (slug) {
 			case currentOption?.slug : return true;
 			case 'frozen-positions'  : return hasFrozenPositions;
-			case 'vault'             : return hasEnzymeVault;
+			case 'vault'             : return hasVault;
 			case 'backtest'          : return backtestAvailable;
 			default                  : return true;
 		}

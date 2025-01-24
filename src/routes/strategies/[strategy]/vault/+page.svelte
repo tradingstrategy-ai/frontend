@@ -1,19 +1,18 @@
 <!--
-	Page to display vault information. Currently only supports Enzyme.
+	Page to display vault information.
 -->
 <script lang="ts">
-	import { Button, CryptoAddressWidget, DataBox, EntitySymbol, SummaryBox } from '$lib/components';
+	import Button from '$lib/components/Button.svelte';
+	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import DataBox from '$lib/components/DataBox.svelte';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
+	import SummaryBox from '$lib/components/SummaryBox.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { createVaultAdapter } from 'trade-executor/vaults';
-	import enzymeLogo from '$lib/assets/logos/partners/enzyme.svg?raw';
+	import IconArrowRightUp from '~icons/local/arrow-right-up';
 
-	export let data;
-	const { chain, onChainData, strategy } = data;
-
-	const address = onChainData.smart_contracts.vault;
-	const vault = createVaultAdapter(onChainData);
-	const explorerUrl = address && getExplorerUrl(chain, address);
+	let { data } = $props();
+	const { chain, strategy, vault } = data;
 </script>
 
 <svelte:head>
@@ -23,23 +22,14 @@
 
 <section class="vault">
 	<SummaryBox title="Vault information" ctaPosition="top">
-		<div class="actions" slot="cta">
-			{#if vault.depositEnabled()}
-				<Button size="xs" label="View on Enzyme" href={vault.externalProviderUrl} rel="noreferrer" target="_blank">
-					<img slot="icon" alt="Enzyme" src={getLogoUrl('token', 'enzyme')} />
-				</Button>
-			{/if}
-			{#if explorerUrl}
-				<Button size="xs" label="View on {chain.name} explorer" href={explorerUrl} rel="noreferrer" target="_blank">
-					<img slot="icon" alt={chain.name} src={getLogoUrl('blockchain', chain.slug)} />
-				</Button>
-			{/if}
-		</div>
-
 		<div class="vault-info">
 			<DataBox size="sm" label="Vault type">
-				<div class="enzyme-logo">
-					{@html enzymeLogo}
+				<div class="vault-type">
+					<EntitySymbol label={vault.label} logoUrl={vault.logoUrl} />
+					<Button size="sm" href={vault.externalProviderUrl} rel="noreferrer" target="_blank">
+						View on {vault.label}
+						<IconArrowRightUp slot="icon" --icon-size="0.875em" />
+					</Button>
 				</div>
 			</DataBox>
 
@@ -48,11 +38,7 @@
 			</DataBox>
 
 			<DataBox size="sm" label="Address">
-				{#if explorerUrl}
-					<CryptoAddressWidget {address} href={explorerUrl} />
-				{:else}
-					---
-				{/if}
+				<CryptoAddressWidget address={vault.address} href={getExplorerUrl(chain, vault.address)} />
 			</DataBox>
 		</div>
 	</SummaryBox>
@@ -61,25 +47,22 @@
 <style>
 	.vault-info {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		gap: inherit;
 	}
 
-	/* responsively scale relative to font-size */
-	.enzyme-logo {
-		width: 9em;
-	}
+	.vault-type {
+		display: grid;
+		gap: 0.875rem;
+		grid-template-columns: 1fr auto;
+		align-items: center;
 
-	.actions {
-		display: flex;
-		gap: var(--space-ml);
-		@media (--viewport-sm-down) {
-			gap: var(--space-sm);
-			flex-direction: column;
+		@media (--viewport-xs) {
+			grid-template-columns: 1fr;
 		}
 
-		img {
-			width: 1.5rem;
+		:global(.button *) {
+			overflow: visible;
+			stroke-width: 3;
 		}
 	}
 </style>

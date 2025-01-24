@@ -7,6 +7,7 @@ import { configuredStrategies } from 'trade-executor/schemas/configuration';
 import { getStrategyInfo } from 'trade-executor/client/strategy-info';
 import { getStrategyState } from 'trade-executor/client/state';
 import { getChain } from '$lib/helpers/chain';
+import { createVaultAdapter } from 'trade-executor/vaults/index.js';
 
 export async function load({ params, fetch, parent }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
@@ -37,9 +38,12 @@ export async function load({ params, fetch, parent }) {
 
 	const chain = getChain(strategy.on_chain_data.chain_id)!;
 
+	const vault = createVaultAdapter(strategy.on_chain_data);
+
 	return {
 		chain,
 		strategy,
+		vault,
 		deferred: { state }
 	};
 }

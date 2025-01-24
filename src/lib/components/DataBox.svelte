@@ -130,10 +130,5 @@ Uses together with SummaryBox (or any grid layout) to display a set of propertie
 				letter-spacing: var(--f-ui-xxl-spacing, normal);
 			}
 		}
-
-		:global a {
-			font: inherit;
-			text-decoration: underline;
-		}
 	}
 </style>
