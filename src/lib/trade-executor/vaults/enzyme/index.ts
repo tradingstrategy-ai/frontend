@@ -16,7 +16,7 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		return `https://app.enzyme.finance/vault/${this.contracts.vault}?network=${this.chain.slug}`;
 	}
 
-	shareTokenAddress = this.contracts.vault;
+	address = this.contracts.vault;
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const { default: abi } = await import('./abi/FundValueCalculator.json');

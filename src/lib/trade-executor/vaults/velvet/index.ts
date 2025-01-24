@@ -16,7 +16,7 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 		return `https://dapp.velvet.capital/VaultDetails/${this.contracts.portfolio}`;
 	}
 
-	shareTokenAddress = this.contracts.portfolio;
+	address = this.contracts.portfolio;
 
 	async getShareValueUSD() {
 		throw new Error('Velvet deposit value not yet available.');

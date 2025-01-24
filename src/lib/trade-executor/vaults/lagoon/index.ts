@@ -16,7 +16,7 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
 	}
 
-	shareTokenAddress = this.contracts.address;
+	address = this.contracts.address;
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const [denominationToken, value] = await Promise.all([

@@ -40,7 +40,7 @@ export abstract class BaseAssetManager {
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
 	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
-	abstract readonly shareTokenAddress: Address;
+	abstract readonly address: Address;
 
 	constructor(
 		chain: Chain,
@@ -57,7 +57,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
 		const { getTokenBalance } = await import('$lib/eth-defi/helpers');
-		return getTokenBalance(config, { token: this.shareTokenAddress, address });
+		return getTokenBalance(config, { token: this.address, address });
 	}
 
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
