@@ -1,4 +1,4 @@
-import type { SmartContracts } from '../schemas/summary';
+import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
@@ -16,8 +16,11 @@ export abstract class BaseAssetManager {
 	abstract readonly type: string;
 	abstract readonly label: string;
 	abstract readonly logoUrl: string;
+	readonly chain: Chain;
 
-	constructor(public readonly chain: Chain) {}
+	constructor(chain: Chain) {
+		this.chain = chain;
+	}
 
 	// overridden in BaseVault to append " vault"
 	get mode(): string {
@@ -41,12 +44,13 @@ export abstract class BaseAssetManager {
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
 	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
 	abstract readonly address: Address;
+	readonly contracts: Contracts;
+	#feeData: StrategyFees;
 
-	constructor(
-		chain: Chain,
-		protected readonly contracts: Contracts
-	) {
+	constructor(chain: Chain, contracts: Contracts, feeData: StrategyFees) {
 		super(chain);
+		this.contracts = contracts;
+		this.#feeData = feeData;
 	}
 
 	get mode(): string {
@@ -61,4 +65,17 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	}
 
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
+
+	// By default, vault adapters return the fees included in metadata payload, plus
+	// a vault-specific protocol fee. This can be overridden at the adapter level (e.g.,
+	// see lagoon vault adapter)
+	async getFees() {
+		const fees = this.#feeData;
+		return {
+			managementFee: fees.management_fee,
+			tradingStrategyProtocolFee: fees.trading_strategy_protocol_fee,
+			strategyDeveloperFee: fees.strategy_developer_fee,
+			totalPerformanceFee: fees.trading_strategy_protocol_fee + fees.strategy_developer_fee
+		};
+	}
 }

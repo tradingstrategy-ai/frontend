@@ -98,6 +98,7 @@
 			case currentOption?.slug : return true;
 			case 'frozen-positions'  : return hasFrozenPositions;
 			case 'vault'             : return hasVault;
+			case 'fees'              : return hasVault;
 			case 'backtest'          : return backtestAvailable;
 			default                  : return true;
 		}

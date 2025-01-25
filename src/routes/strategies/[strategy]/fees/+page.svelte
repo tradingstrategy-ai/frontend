@@ -4,12 +4,8 @@
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
-	const { strategy } = data;
+	const { strategy, vault, fees } = data;
 
-	const { fees } = strategy;
-	const totalPerformanceFee = fees.trading_strategy_protocol_fee + fees.strategy_developer_fee;
-
-	const hasEnzymeVault = strategy.on_chain_data.asset_management_mode === 'enzyme';
 	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
 	const enzymeProtocolFee = 0.0025;
 </script>
@@ -31,7 +27,7 @@
 					<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
 				</div>
 			</Tooltip>
-			<span>{formatPercent(fees.management_fee, 2)}</span>
+			<span>{formatPercent(fees.managementFee, 2)}</span>
 		</div>
 
 		<div class="fees-group">
@@ -43,7 +39,7 @@
 						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
 					</div>
 				</Tooltip>
-				<span>{formatPercent(totalPerformanceFee, 2)}</span>
+				<span>{formatPercent(fees.totalPerformanceFee, 2)}</span>
 			</header>
 
 			<div class="fees-list">
@@ -52,22 +48,22 @@
 						<span slot="trigger">Trading Strategy protocol fee <IconQuestionCircle /></span>
 						<div slot="popup">
 							Percent of strategy's profits distributed to the Trading Strategy protocol.
-							{#if fees.trading_strategy_protocol_fee === 0}
+							{#if fees.tradingStrategyProtocolFee === 0}
 								During the beta period, Trading Strategy is not charging a protocol fee.
-							{:else if fees.trading_strategy_protocol_fee <= 0.02}
+							{:else if fees.tradingStrategyProtocolFee <= 0.02}
 								For early users, Trading Strategy is offering a discounted protocol fee of
-								<strong>{formatPercent(fees.trading_strategy_protocol_fee)}</strong>.
+								<strong>{formatPercent(fees.tradingStrategyProtocolFee)}</strong>.
 							{/if}
 						</div>
 					</Tooltip>
-					<span>{formatPercent(fees.trading_strategy_protocol_fee, 2)}</span>
+					<span>{formatPercent(fees.tradingStrategyProtocolFee, 2)}</span>
 				</div>
 				<div class="row">
 					<Tooltip>
 						<span slot="trigger">Strategy developer fee <IconQuestionCircle /></span>
 						<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
 					</Tooltip>
-					<span>{formatPercent(fees.strategy_developer_fee, 2)}</span>
+					<span>{formatPercent(fees.strategyDeveloperFee, 2)}</span>
 				</div>
 			</div>
 
@@ -78,11 +74,12 @@
 						Percentage of strategy profits allocated to depositors, after deducting performance fees.
 					</div>
 				</Tooltip>
-				<span>{formatPercent(1 - totalPerformanceFee, 2)}</span>
+				<span>{formatPercent(1 - fees.totalPerformanceFee, 2)}</span>
 			</footer>
 		</div>
 
-		{#if hasEnzymeVault}
+		<!-- TODO: use vault.providerProtocolFee plus property for description -->
+		{#if vault.type === 'enzyme'}
 			<div class="row">
 				<Tooltip>
 					<span slot="trigger">Enzyme Protocol fee <IconQuestionCircle /></span>

@@ -38,7 +38,7 @@ export async function load({ params, fetch, parent }) {
 
 	const chain = getChain(strategy.on_chain_data.chain_id)!;
 
-	const vault = createVaultAdapter(strategy.on_chain_data);
+	const vault = createVaultAdapter(strategy.on_chain_data, strategy.fees);
 
 	return {
 		chain,
