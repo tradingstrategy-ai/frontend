@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import { config } from '$lib/wallet/client.js';
 
 export async function load({ parent }) {
 	const { vault } = await parent();
@@ -9,6 +10,6 @@ export async function load({ parent }) {
 
 	return {
 		vault, // type-narrowed vault
-		fees: await vault.getFees()
+		fees: await vault.getFees(config)
 	};
 }

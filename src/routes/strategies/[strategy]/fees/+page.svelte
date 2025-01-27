@@ -41,30 +41,32 @@
 				<span>{formatPercent(fees.totalPerformanceFee, 2)}</span>
 			</header>
 
-			<div class="fees-list">
-				<div class="row">
-					<Tooltip>
-						<span slot="trigger">Trading Strategy protocol fee <IconQuestionCircle /></span>
-						<div slot="popup">
-							Percent of strategy's profits distributed to the Trading Strategy protocol.
-							{#if fees.tradingStrategyProtocolFee === 0}
-								During the beta period, Trading Strategy is not charging a protocol fee.
-							{:else if fees.tradingStrategyProtocolFee <= 0.02}
-								For early users, Trading Strategy is offering a discounted protocol fee of
-								<strong>{formatPercent(fees.tradingStrategyProtocolFee)}</strong>.
-							{/if}
-						</div>
-					</Tooltip>
-					<span>{formatPercent(fees.tradingStrategyProtocolFee, 2)}</span>
+			{#if fees.tradingStrategyProtocolFee && fees.strategyDeveloperFee}
+				<div class="fees-list">
+					<div class="row">
+						<Tooltip>
+							<span slot="trigger">Trading Strategy protocol fee <IconQuestionCircle /></span>
+							<div slot="popup">
+								Percent of strategy's profits distributed to the Trading Strategy protocol.
+								{#if fees.tradingStrategyProtocolFee === 0}
+									During the beta period, Trading Strategy is not charging a protocol fee.
+								{:else if fees.tradingStrategyProtocolFee <= 0.02}
+									For early users, Trading Strategy is offering a discounted protocol fee of
+									<strong>{formatPercent(fees.tradingStrategyProtocolFee)}</strong>.
+								{/if}
+							</div>
+						</Tooltip>
+						<span>{formatPercent(fees.tradingStrategyProtocolFee, 2)}</span>
+					</div>
+					<div class="row">
+						<Tooltip>
+							<span slot="trigger">Strategy developer fee <IconQuestionCircle /></span>
+							<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
+						</Tooltip>
+						<span>{formatPercent(fees.strategyDeveloperFee, 2)}</span>
+					</div>
 				</div>
-				<div class="row">
-					<Tooltip>
-						<span slot="trigger">Strategy developer fee <IconQuestionCircle /></span>
-						<div slot="popup">Percent of strategy's profits earned by the strategy developer.</div>
-					</Tooltip>
-					<span>{formatPercent(fees.strategyDeveloperFee, 2)}</span>
-				</div>
-			</div>
+			{/if}
 
 			<footer class="row">
 				<Tooltip>
@@ -165,6 +167,10 @@
 
 				footer {
 					border-radius: 0 0 var(--radius-md) var(--radius-md);
+				}
+
+				header + footer {
+					border-top: 4px solid var(--c-body);
 				}
 			}
 		}

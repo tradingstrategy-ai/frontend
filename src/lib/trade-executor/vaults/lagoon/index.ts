@@ -15,7 +15,7 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	// Lagoon protocol fee and info
 	protocolFee = 0;
 	protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
-	protocolFeeUrl = undefined;
+	protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
 
 	get externalProviderUrl() {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
@@ -46,5 +46,21 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 			functionName: 'convertToAssets',
 			args: [vaultBalance.value]
 		}) as Promise<bigint>;
+	}
+
+	// Get Lagoon vault fees from vault smart contract
+	async getFees(config: Config) {
+		const fees = (await readContract(config, {
+			abi: (await import('./abi/Vault.json')).default,
+			chainId: this.chain.id,
+			address: this.contracts.address,
+			functionName: 'feeRates'
+		})) as { managementRate: number; performanceRate: number };
+
+		// convert basis point values to decimal percentage values
+		return {
+			managementFee: fees.managementRate / 10_000,
+			totalPerformanceFee: fees.performanceRate / 10_000
+		};
 	}
 }

@@ -3,6 +3,13 @@ import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 
+export type VaultFees = {
+	managementFee: number;
+	totalPerformanceFee: number;
+	tradingStrategyProtocolFee?: number;
+	strategyDeveloperFee?: number;
+};
+
 export const DepositMethod = {
 	INTERNAL: 'internal',
 	EXTERNAL: 'external'
@@ -58,12 +65,12 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Common properties set in the constructor
 	readonly contracts: Contracts;
-	#feeData: StrategyFees;
+	protected readonly feeData: StrategyFees;
 
 	constructor(chain: Chain, contracts: Contracts, feeData: StrategyFees) {
 		super(chain);
 		this.contracts = contracts;
-		this.#feeData = feeData;
+		this.feeData = feeData;
 	}
 
 	// Return a given vault's URL on vault provider's website
@@ -86,13 +93,13 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// By default, vault adapters return the fees defined in metadata payload. This
 	// can be overridden at the adapter level (e.g., see lagoon vault adapter).
-	async getFees() {
-		const fees = this.#feeData;
+	async getFees(_config: Config): Promise<VaultFees> {
+		const fees = this.feeData;
 		return {
 			managementFee: fees.management_fee,
+			totalPerformanceFee: fees.trading_strategy_protocol_fee + fees.strategy_developer_fee,
 			tradingStrategyProtocolFee: fees.trading_strategy_protocol_fee,
-			strategyDeveloperFee: fees.strategy_developer_fee,
-			totalPerformanceFee: fees.trading_strategy_protocol_fee + fees.strategy_developer_fee
+			strategyDeveloperFee: fees.strategy_developer_fee
 		};
 	}
 }
