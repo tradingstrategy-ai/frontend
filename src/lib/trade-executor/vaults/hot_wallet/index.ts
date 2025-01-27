@@ -1,4 +1,4 @@
-import { BaseAssetManager, DepositMethod } from '../base';
+import { BaseAssetManager } from '../base';
 
 export class HotWallet extends BaseAssetManager {
 	type = 'hot_wallet';

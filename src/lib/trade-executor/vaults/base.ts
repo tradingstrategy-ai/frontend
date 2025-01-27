@@ -22,12 +22,13 @@ export abstract class BaseAssetManager {
 		this.chain = chain;
 	}
 
-	// overridden in BaseVault to append " vault"
+	// Used for displaying the asset management mode.
+	// Overridden in BaseVault to append " vault"
 	get mode(): string {
 		return this.label;
 	}
 
-	// override this is subclass if short label should be something different (shorter)
+	// Override this is subclass if short label should be something different (shorter)
 	get shortLabel(): string {
 		return this.label;
 	}
@@ -42,8 +43,20 @@ export abstract class BaseAssetManager {
  * (e.g., EnzymeVault or VelvetVault)
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
-	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
+	// Returns the vault ERC-20 token address (the specific contract address property
+	// differs by vault-type)
 	abstract readonly address: Address;
+
+	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
+	// via vault-provider's website (EXTERNAL)
+	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
+
+	// Vault-specific protocol fee and info
+	abstract readonly protocolFee: number;
+	abstract readonly protocolFeeTooltip: string;
+	abstract readonly protocolFeeUrl?: string;
+
+	// Common properties set in the constructor
 	readonly contracts: Contracts;
 	#feeData: StrategyFees;
 
@@ -53,22 +66,26 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		this.#feeData = feeData;
 	}
 
+	// Return a given vault's URL on vault provider's website
+	abstract get externalProviderUrl(): string;
+
+	// Return a wallet's share value in USD
+	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
+
+	// Used for displaying the asset management mode.
+	// Appends " vault" to label for vaults.
 	get mode(): string {
 		return `${this.label} vault`;
 	}
 
-	abstract get externalProviderUrl(): string;
-
+	// Returns a wallet's vault share balance
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
 		const { getTokenBalance } = await import('$lib/eth-defi/helpers');
 		return getTokenBalance(config, { token: this.address, address });
 	}
 
-	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
-
-	// By default, vault adapters return the fees included in metadata payload, plus
-	// a vault-specific protocol fee. This can be overridden at the adapter level (e.g.,
-	// see lagoon vault adapter)
+	// By default, vault adapters return the fees defined in metadata payload. This
+	// can be overridden at the adapter level (e.g., see lagoon vault adapter).
 	async getFees() {
 		const fees = this.#feeData;
 		return {

@@ -7,7 +7,6 @@
 	const { strategy, vault, fees } = data;
 
 	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
-	const enzymeProtocolFee = 0.0025;
 </script>
 
 <svelte:head>
@@ -78,24 +77,22 @@
 			</footer>
 		</div>
 
-		<!-- TODO: use vault.providerProtocolFee plus property for description -->
-		{#if vault.type === 'enzyme'}
-			<div class="row">
-				<Tooltip>
-					<span slot="trigger">Enzyme Protocol fee <IconQuestionCircle /></span>
-					<div slot="popup">
+		<div class="row">
+			<Tooltip>
+				<span slot="trigger">{vault.label} Protocol fee <IconQuestionCircle /></span>
+				<div slot="popup">
+					<p>{@html vault.protocolFeeTooltip}</p>
+					{#if vault.protocolFeeUrl}
 						<p>
-							The Enzyme protocol fee rate applied to the vault is 0.50%. Shares accrued can be bought back with MLN at
-							a 50% discount, leading to an effective protocol fee rate of 0.25%.
+							<a href={vault.protocolFeeUrl} target="_blank" rel="noreferrer">
+								Learn more about {vault.shortLabel} protocol fees
+							</a>.
 						</p>
-						<p>
-							<a href={enzymeFeeUrl} target="_blank" rel="noreferrer">Learn more about Enzyme protocol fees</a>.
-						</p>
-					</div>
-				</Tooltip>
-				<span>{formatPercent(enzymeProtocolFee, 2)}</span>
-			</div>
-		{/if}
+					{/if}
+				</div>
+			</Tooltip>
+			<span>{formatPercent(vault.protocolFee, 2)}</span>
+		</div>
 	</div>
 </section>
 
@@ -182,6 +179,13 @@
 			max-width: 50ch;
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--ls-ui-md-roman);
+
+			p {
+				margin: 0;
+				& + p {
+					margin-top: 0.75em;
+				}
+			}
 		}
 	}
 </style>

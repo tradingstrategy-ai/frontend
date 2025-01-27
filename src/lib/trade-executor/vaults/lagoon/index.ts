@@ -9,14 +9,17 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	type = 'lagoon';
 	label = 'Lagoon';
 	logoUrl = '/logos/tokens/lagoon';
-
+	address = this.contracts.address;
 	depositMethod = DepositMethod.EXTERNAL;
+
+	// Lagoon protocol fee and info
+	protocolFee = 0;
+	protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
+	protocolFeeUrl = undefined;
 
 	get externalProviderUrl() {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
 	}
-
-	address = this.contracts.address;
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const [denominationToken, value] = await Promise.all([
