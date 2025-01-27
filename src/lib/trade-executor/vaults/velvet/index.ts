@@ -9,9 +9,13 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 	depositMethod = DepositMethod.EXTERNAL;
 
 	// Velvet Capital protocol fee and info
-	protocolFee = 0;
-	protocolFeeTooltip = 'Velvet Capital protocol fee info TBD.';
-	protocolFeeUrl = undefined;
+	protocolFee = 0.002;
+	protocolFeeTooltip = `
+		To support further development & future token buy-backs Velvet Capital DeFi execution engine
+		takes a 0.2% transaction fee. The fee can be further reduced by staking Velvet tokens (please
+		refer to the Tokenomics section).
+	`;
+	protocolFeeUrl = 'https://docs.velvet.capital/product/fees';
 
 	get shortLabel() {
 		return 'Velvet';
