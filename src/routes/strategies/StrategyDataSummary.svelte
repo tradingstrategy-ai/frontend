@@ -11,7 +11,7 @@
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
-	const vault = strategy.on_chain_data ? createVaultAdapter(strategy.on_chain_data) : undefined;
+	const vault = strategy.connected ? createVaultAdapter(strategy.on_chain_data, strategy.fees) : undefined;
 
 	function formatTvl(value: MaybeNumber) {
 		const digits = value && value < 1000 ? 2 : 1;
