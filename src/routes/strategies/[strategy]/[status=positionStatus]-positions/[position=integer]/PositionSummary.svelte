@@ -3,6 +3,7 @@
 	import { positionTooltips } from 'trade-executor/models/position-tooltips';
 	import { Timestamp, Tooltip } from '$lib/components';
 	import { formatDuration, formatPercent, formatPrice, formatTokenAmount } from '$lib/helpers/formatters';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
 	export let position: TradingPositionInfo;
 
@@ -162,6 +163,34 @@
 				</tr>
 			{/if}
 
+			{#if position.stillOpen}
+				<tr>
+					<td>Nominal value</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">N/A</span>
+							<span slot="popup">Nominal value is only available for latest price/quantity.</span>
+						</Tooltip>
+					</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">
+								{formatPrice(position.nominalValue)}
+							</span>
+							<span slot="popup">
+								{positionTooltips.nominalValue}
+							</span>
+						</Tooltip>
+					</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger" class="underline">N/A</span>
+							<span slot="popup">Nominal value is only available for latest price/quantity.</span>
+						</Tooltip>
+					</td>
+				</tr>
+			{/if}
+
 			<tr>
 				<td>Value</td>
 				<td>
@@ -181,6 +210,14 @@
 						</span>
 						<span slot="popup">
 							{positionTooltips[valueProp]}
+
+							{#if position.stillOpen}
+								{@const { value, formatted, getLabel } = getProfitInfo(position.valueRealizationGap)}
+								<br /><br />Currently
+								<strong>{value ? formatted : ''}</strong>
+								{getLabel('lower than', 'equal to', 'higher than')}
+								nominal value.
+							{/if}
 						</span>
 					</Tooltip>
 				</td>
