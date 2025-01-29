@@ -195,7 +195,7 @@
 						</span>
 					</Tooltip>
 					<!-- value realization gap info/warning icon and tooltip -->
-					{#if position.stillOpen}
+					{#if position.stillOpen && !position.isCreditPosition}
 						{@const { value, formatted, direction } = getProfitInfo(position.valueRealizationGap)}
 						{@const exceedsThreshold = -(value ?? 0) > VALUE_REALIZATION_GAP_THRESHOLD}
 						<span class={['value-realization-gap', exceedsThreshold && 'warning']}>
