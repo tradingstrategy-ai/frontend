@@ -11,6 +11,7 @@ import type { PositionStatistics } from '../schemas/statistics';
 import type { PositionStatus, TradingPosition } from '../schemas/position';
 import type { TimeBucket } from '$lib/chart';
 import { type TradeDirection, TradeDirections } from './trade-info';
+import { isNumber } from '$lib/helpers/formatters';
 
 export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({
 	...base,
@@ -76,6 +77,25 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	get currentValue() {
 		if (this.stillOpen) {
 			return this.latestStats?.value;
+		}
+	},
+
+	/**
+	 * Return the current value based `price * quantity` if sold on unobtainable theoretical price
+	 */
+	get nominalValue() {
+		if (isNumber(this.currentPrice) && isNumber(this.currentQuantity)) {
+			return this.currentPrice * this.currentQuantity;
+		}
+	},
+
+	/**
+	 * Percentage difference between realizable value and nominal value.
+	 * Negative when realizable is lower (which is expected).
+	 */
+	get valueRealizationGap() {
+		if (isNumber(this.currentValue) && this.nominalValue) {
+			return this.currentValue / this.nominalValue - 1;
 		}
 	},
 
@@ -196,7 +216,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		const totalExited = this.totalExitedValue;
 		let profitability = (totalExited - totalEntered) / totalEntered;
 		if (this.isShortPosition) profitability *= -1;
-		return Number.isFinite(profitability) ? profitability : 0;
+		return isNumber(profitability) ? profitability : 0;
 	},
 
 	get hasInconsistentProfitability() {

@@ -1,10 +1,21 @@
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import { positionTooltips } from 'trade-executor/models/position-tooltips';
-	import { Timestamp, Tooltip } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { formatDuration, formatPercent, formatPrice, formatTokenAmount } from '$lib/helpers/formatters';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
+	import IconInfo from '~icons/local/info';
+	import IconWarning from '~icons/local/warning';
 
-	export let position: TradingPositionInfo;
+	type Props = {
+		position: TradingPositionInfo;
+	};
+
+	let { position } = $props();
+
+	const VALUE_REALIZATION_GAP_THRESHOLD = 0.01;
 
 	const priceProp = position.stillOpen ? 'currentPrice' : 'closePrice';
 	const quantityProp = position.stillOpen ? 'currentQuantity' : 'quantityAtClose';
@@ -183,6 +194,43 @@
 							{positionTooltips[valueProp]}
 						</span>
 					</Tooltip>
+					<!-- value realization gap info/warning icon and tooltip -->
+					{#if position.stillOpen && !position.isCreditPosition}
+						{@const { value, formatted, direction } = getProfitInfo(position.valueRealizationGap)}
+						{@const exceedsThreshold = -(value ?? 0) > VALUE_REALIZATION_GAP_THRESHOLD}
+						<span class={['value-realization-gap', exceedsThreshold && 'warning']}>
+							<Tooltip>
+								<svelte:fragment slot="trigger">
+									{#if exceedsThreshold}<IconWarning />{:else}<IconInfo />{/if}
+								</svelte:fragment>
+								<div slot="popup">
+									{#if exceedsThreshold}
+										<Alert size="xs" status="warning">
+											This position has a <strong>high value realisation gap</strong> of
+											<strong>{formatted}</strong>.
+										</Alert>
+									{/if}
+									<p>
+										The <strong>theoretical value</strong> (quantity ✕ mid price) is
+										<strong>{formatPrice(position.nominalValue)}</strong>
+									</p>
+									<p>
+										The <strong>realisable value</strong> based on the estimated execution price is
+										<strong>{formatPrice(position.currentValue)}</strong>,
+										{#if direction}
+											<strong>
+												{formatted}
+												{direction < 1 ? 'lower than' : 'higher than'}
+											</strong>
+											than the theoretical value.
+										{:else}
+											equal to (or very close to) the theoretical value.
+										{/if}
+									</p>
+								</div>
+							</Tooltip>
+						</span>
+					{/if}
 				</td>
 				<td>
 					{#if position.multitrade}
@@ -203,6 +251,32 @@
 	.position-summary {
 		h2 {
 			font: var(--f-heading-md-medium);
+		}
+
+		.value-realization-gap {
+			position: absolute;
+			margin-left: 0.5rem;
+			--icon-color: var(--c-text-light);
+
+			&.warning {
+				--icon-color: var(--c-warning);
+			}
+
+			p {
+				margin: 0;
+			}
+
+			[slot='popup'] {
+				display: grid;
+				gap: 1em;
+				min-width: 30rem;
+			}
+
+			@media (--viewport-md-up) {
+				:global(.popup) {
+					left: -10rem;
+				}
+			}
 		}
 	}
 </style>

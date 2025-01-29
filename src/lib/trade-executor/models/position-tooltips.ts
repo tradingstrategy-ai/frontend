@@ -26,7 +26,7 @@ export const positionTooltips = {
 	portfolioWeightAtOpen: 'The position size in the terms of % total portfolio when the position was opened.',
 	valueAtOpen: 'The position value when the position was opened.',
 	valueAtClose: 'The position value when the position was closed.',
-	currentValue: 'The last recorded value of the position.',
+	currentValue: 'The last recorded value of the position based on estimated execution price.',
 	quantityAtOpen: 'The position size in tokens when the position was opened.',
 	quantityAtClose: 'The position size in tokens when the position was closed.',
 	currentQuantity: 'The latest recorded position size in tokens.',
