@@ -128,17 +128,6 @@ export async function getDenominationTokenInfo(
 	return getTokenInfo(config, { chainId, address });
 }
 
-/**
- * Get strategy denomination token balance for a given chain, comptroller and address
- */
-export async function getDenominationTokenBalance(
-	config: Config,
-	{ chainId, comptroller, address }: { chainId?: number; comptroller: Address; address: Address }
-) {
-	const token = await getDenominationAsset(config, { chainId, comptroller });
-	return getTokenBalance(config, { chainId, token, address });
-}
-
 type ApproveTokenTransferParams = {
 	chainId?: number;
 	address: Address;

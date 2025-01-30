@@ -80,7 +80,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
 
-	// abstract getDenominationTokenInfo(config: Config): Promise<TokenInfo>;
+	// Returns address of the vault's denomination token
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
 	// Used for displaying the asset management mode.
@@ -94,10 +94,16 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return getTokenBalance(config, { token: this.address, address });
 	}
 
-	// Returns address of the vault's denomination token
+	// Returns denomination token info
 	async getDenominationTokenInfo(config: Config): Promise<TokenInfo> {
 		const address = await this.getDenominationAsset(config);
 		return getTokenInfo(config, { chainId: this.chain.id, address });
+	}
+
+	// Returns strategy denomination token balance for a given address
+	async getDenominationTokenBalance(config: Config, address: Address): Promise<TokenBalance> {
+		const token = await this.getDenominationAsset(config);
+		return getTokenBalance(config, { chainId: this.chain.id, token, address });
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This
