@@ -10,7 +10,7 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	label = 'Lagoon';
 	logoUrl = '/logos/tokens/lagoon';
 	address = this.contracts.address;
-	depositMethod = DepositMethod.EXTERNAL;
+	depositMethod = DepositMethod.INTERNAL;
 
 	// Lagoon protocol fee and info
 	protocolFee = 0;
@@ -46,6 +46,10 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 			functionName: 'convertToAssets',
 			args: [vaultBalance.value]
 		}) as Promise<bigint>;
+	}
+
+	async getDenominationAsset(_config: Config) {
+		return this.contracts.asset;
 	}
 
 	// Get Lagoon vault fees from vault smart contract

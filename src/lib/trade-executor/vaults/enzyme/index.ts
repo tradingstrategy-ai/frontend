@@ -3,7 +3,7 @@ import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod } from '../base';
 import { getTokenBalance } from '$lib/eth-defi/helpers';
-import { simulateContract } from '@wagmi/core';
+import { readContract, simulateContract } from '@wagmi/core';
 
 export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	type = 'enzyme';
@@ -39,5 +39,16 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		const denominationToken = await getTokenBalance(config, { token, address });
 
 		return { ...denominationToken, value };
+	}
+
+	async getDenominationAsset(config: Config) {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		return readContract(config, {
+			chainId: this.chain.id,
+			address: this.contracts.comptroller,
+			abi,
+			functionName: 'getDenominationAsset'
+		}) as Promise<Address>;
 	}
 }

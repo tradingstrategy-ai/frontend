@@ -1,7 +1,8 @@
 import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
-import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
+import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 
 export type VaultFees = {
 	managementFee: number;
@@ -79,6 +80,9 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
 
+	// abstract getDenominationTokenInfo(config: Config): Promise<TokenInfo>;
+	abstract getDenominationAsset(config: Config): Promise<Address>;
+
 	// Used for displaying the asset management mode.
 	// Appends " vault" to label for vaults.
 	get mode(): string {
@@ -87,8 +91,13 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Returns a wallet's vault share balance
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
-		const { getTokenBalance } = await import('$lib/eth-defi/helpers');
 		return getTokenBalance(config, { token: this.address, address });
+	}
+
+	// Returns address of the vault's denomination token
+	async getDenominationTokenInfo(config: Config): Promise<TokenInfo> {
+		const address = await this.getDenominationAsset(config);
+		return getTokenInfo(config, { chainId: this.chain.id, address });
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This
