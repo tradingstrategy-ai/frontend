@@ -12,6 +12,7 @@
 import { env } from '$env/dynamic/public';
 import { type GeoBlock, geoBlockSchema } from './helpers/geo';
 import { type Announcement, announcementSchema } from './schemas/announcement';
+import { type TosContractConfig, tosContractConfigSchema } from 'trade-executor/schemas/tos-contract-info';
 
 const prefix = 'TS_PUBLIC_';
 
@@ -151,6 +152,19 @@ export const rpcUrls = config((jsonStr: string) => {
 		return {};
 	}
 }, 'RPC_URLS');
+
+/**
+ * Terms of Service contract configuration.
+ * See: trade-executor/schemas/tos-contract-info.ts
+ */
+export const tosContracts = config((jsonStr: string = '{}') => {
+	try {
+		return tosContractConfigSchema.parse(JSON.parse(jsonStr));
+	} catch (e) {
+		console.warn(`${prefix}TOS_CONTRACTS is not valid ToS contract JSON`, jsonStr);
+		return {};
+	}
+}, 'TOS_CONTRACTS') as TosContractConfig;
 
 /**
  * Load chart wick threshold

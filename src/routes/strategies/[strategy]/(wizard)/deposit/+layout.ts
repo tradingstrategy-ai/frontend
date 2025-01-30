@@ -2,6 +2,7 @@ import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
+import { tosContracts } from '$lib/config.js';
 import { hexString, hexEncodedData } from '$lib/eth-defi/schemas/core';
 import { currencyBalanceSchema, tokenBalanceSchema } from '$lib/eth-defi/schemas/token';
 import { config } from '$lib/wallet/client';
@@ -40,10 +41,10 @@ export async function load({ parent }) {
 	];
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
-	const { comptroller, terms_of_service } = onChainData.smart_contracts;
+	const { comptroller } = onChainData.smart_contracts;
 
-	// skip "Terms of service" step if no terms_of_service contract
-	if (!terms_of_service) {
+	// skip "Terms of service" step if no ToS contract configured for the chain
+	if (!(chain.slug in tosContracts)) {
 		steps = steps.filter(({ slug }) => slug !== 'tos');
 	}
 
