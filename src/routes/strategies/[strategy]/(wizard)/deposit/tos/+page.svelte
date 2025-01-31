@@ -20,7 +20,7 @@
 	import IconFullscreen from '~icons/local/fullscreen';
 
 	export let data;
-	const { chain, strategy, canForwardPayment, canProceed, version, fileName, tosText, acceptanceMessage } = data;
+	const { chain, strategy, canForwardToS, canProceed, version, fileName, tosText, acceptanceMessage } = data;
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	const { tosHash, tosSignature } = wizard.data;
@@ -97,7 +97,7 @@
 			continue(tosSignature) {
 				const tosHash = hashMessage(acceptanceMessage!);
 
-				if (canForwardPayment) {
+				if (canForwardToS) {
 					wizard.updateData({ tosHash, tosSignature });
 					return 'completed';
 				}

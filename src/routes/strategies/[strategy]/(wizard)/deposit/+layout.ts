@@ -43,19 +43,14 @@ export async function load({ parent }) {
 		steps = steps.filter(({ slug }) => slug !== 'tos');
 	}
 
-	// get denomination token info
-	const denominationTokenInfo = await vault.getDenominationTokenInfo(config);
-
-	// USDC can forward payment using transferWithAuthorizations; other tokens can't (yet)
-	const canForwardPayment = denominationTokenInfo.symbol === 'USDC';
-
 	return {
 		slug: 'deposit',
 		title: 'Deposit tokens',
 		steps,
 		dataSchema,
-		denominationTokenInfo,
-		canForwardPayment,
-		vault // re-return type-narrowed vault
+		vault, // re-return type-narrowed vault
+		denominationTokenInfo: await vault.getDenominationTokenInfo(config),
+		canForwardToS: await vault.canForwardToS(config),
+		canForwardPayment: await vault.canForwardPayment(config)
 	};
 }

@@ -25,6 +25,28 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		return `https://app.enzyme.finance/vault/${this.contracts.vault}?network=${this.chain.slug}`;
 	}
 
+	// Enzyme vaults support payment forwarding for USDC denominatoin token
+	async canForwardPayment(config: Config): Promise<boolean> {
+		const { symbol } = await this.getDenominationTokenInfo(config);
+		return symbol === 'USDC';
+	}
+
+	// Enzyme vaults with the right type of payment forwarder can forward ToS
+	async canForwardToS(config: Config): Promise<boolean> {
+		try {
+			return (await readContract(config, {
+				abi: (await import('./abi/TermedVaultUSDCPaymentForwarder.json')).default,
+				address: this.contracts.payment_forwarder,
+				functionName: 'isTermsOfServiceEnabled'
+			})) as boolean;
+		} catch (e) {
+			if (e instanceof Error && e.name === 'ContractFunctionExecutionError') {
+				return false;
+			}
+			throw e;
+		}
+	}
+
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const { default: abi } = await import('./abi/FundValueCalculator.json');
 
@@ -44,11 +66,15 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	async getDenominationAsset(config: Config) {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
-		return readContract(config, {
+		const asset = (await readContract(config, {
 			chainId: this.chain.id,
 			address: this.contracts.comptroller,
 			abi,
 			functionName: 'getDenominationAsset'
-		}) as Promise<Address>;
+		})) as Address;
+
+		// memoize
+		this.getDenominationAsset = async () => asset;
+		return asset;
 	}
 }

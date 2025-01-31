@@ -35,7 +35,7 @@
 	const SLIPPAGE_TOLERANCE = 0.02;
 
 	let { data } = $props();
-	const { chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
+	const { chain, strategy, denominationTokenInfo, canForwardPayment, canForwardToS, paymentContract } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
@@ -127,7 +127,7 @@
 
 		args.push(calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals));
 
-		if (tosRequired) {
+		if (canForwardToS) {
 			args.push(tosHash, tosSignature);
 		}
 

@@ -89,6 +89,18 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return `${this.label} vault`;
 	}
 
+	// Determine if vault supports payment forwarding
+	// defaults to false; override in subclass if supported
+	async canForwardPayment(_config: Config): Promise<boolean> {
+		return false;
+	}
+
+	// Determine if vault supports Terms of Service forwarding
+	// defaults to false; override in subclass if supported
+	async canForwardToS(_config: Config): Promise<boolean> {
+		return false;
+	}
+
 	// Returns a wallet's vault share balance
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
 		return getTokenBalance(config, { token: this.address, address });
@@ -97,7 +109,10 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Returns denomination token info
 	async getDenominationTokenInfo(config: Config): Promise<TokenInfo> {
 		const address = await this.getDenominationAsset(config);
-		return getTokenInfo(config, { chainId: this.chain.id, address });
+		const tokenInfo = getTokenInfo(config, { chainId: this.chain.id, address });
+		// memoize
+		this.getDenominationTokenInfo = async () => tokenInfo;
+		return tokenInfo;
 	}
 
 	// Returns strategy denomination token balance for a given address
