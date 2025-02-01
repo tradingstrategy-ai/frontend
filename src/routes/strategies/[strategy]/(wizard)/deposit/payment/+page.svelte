@@ -48,10 +48,12 @@
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let paymentValue = $state('');
+	let value = $derived(parseUnits(paymentValue, denominationTokenInfo.decimals));
 	let error: ErrorInfo | unknown | undefined = $state();
 	let approvalTxId: Maybe<Address> = $state();
 	let paymentTxId: Maybe<Address> = $state();
 	let sharePrice: MaybeNumber = $state();
+	let isPreApproved = $state(false);
 
 	// Disable the "Cancel" button once a transaction has been initiated
 	$effect(() => {
@@ -90,7 +92,7 @@
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
 			to: paymentContract.address,
-			value: parseUnits(paymentValue, denominationTokenInfo.decimals)
+			value
 		});
 	}
 
@@ -102,8 +104,7 @@
 			spender: contracts.comptroller
 		});
 
-		const value = parseUnits(paymentValue, denominationToken.decimals);
-		return value <= allowance;
+		isPreApproved = value <= allowance;
 	}
 
 	function approveTransfer() {
@@ -111,7 +112,7 @@
 			chainId: chain.id,
 			address: denominationToken.address,
 			spender: contracts.comptroller,
-			value: parseUnits(paymentValue, denominationToken.decimals)
+			value
 		});
 	}
 
@@ -179,19 +180,10 @@
 		},
 
 		checkingPreApproved: {
-			handleCheck(approved: boolean) {
-				if (approved) return 'preApproved';
+			handleCheck() {
+				if (isPreApproved) return 'approved';
 				approveTransfer().then(payment.process).catch(payment.fail);
 				return 'approving';
-			}
-		},
-
-		preApproved: {
-			buyShares() {
-				const buyer = $wallet.address;
-				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
-				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
-				return 'confirming';
 			}
 		},
 
@@ -238,7 +230,6 @@
 
 			buyShares() {
 				const buyer = $wallet.address;
-				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
 				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
 				return 'confirming';
 			}
@@ -374,9 +365,7 @@
 						<Button submit disabled={$payment !== 'initial'}>
 							Approve {denominationToken.label}
 						</Button>
-						<Button disabled={!['preApproved', 'approved'].includes($payment)} on:click={payment.buyShares}>
-							Buy shares
-						</Button>
+						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
 					</div>
 				{/if}
 			{:else if paymentTxId}
@@ -404,10 +393,10 @@
 				</Alert>
 			{/if}
 
-			{#if ['preApproved', 'approved'].includes($payment)}
+			{#if $payment === 'approved'}
 				<Alert size="sm" status="success" title="Transfer approved">
 					{denominationToken.label} spending cap
-					{#if $payment === 'preApproved'}
+					{#if isPreApproved}
 						has already been
 					{/if}
 					approved. Please click "Buy shares" to complete your purchase.
