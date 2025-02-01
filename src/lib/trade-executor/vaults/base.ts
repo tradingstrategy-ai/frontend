@@ -2,7 +2,7 @@ import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
-import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getTokenInfo, getTokenAllowance } from '$lib/eth-defi/helpers';
 
 export type VaultFees = {
 	managementFee: number;
@@ -62,9 +62,10 @@ export abstract class BaseAssetManager {
  * (e.g., EnzymeVault or VelvetVault)
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
-	// Returns the vault ERC-20 token address (the specific contract address property
-	// differs by vault-type)
+	// Returns the vault ERC-20 token address
 	abstract readonly address: Address;
+	// Returns the token address to which deposits are issued
+	abstract readonly spender: Address;
 
 	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
 	// via vault-provider's website (EXTERNAL)
@@ -133,6 +134,16 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	async getDenominationTokenBalance(config: Config, address: Address): Promise<TokenBalance> {
 		const token = await this.getDenominationAsset(config);
 		return getTokenBalance(config, { chainId: this.chain.id, token, address });
+	}
+
+	// Check a wallet's current deposit allowance
+	async getDepositAllowance(config: Config, address: Address): Promise<bigint> {
+		return getTokenAllowance(config, {
+			chainId: this.chain.id,
+			address: await this.getDenominationAsset(config),
+			owner: address,
+			spender: this.spender
+		});
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This

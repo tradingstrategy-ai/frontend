@@ -10,6 +10,7 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	label = 'Lagoon';
 	logoUrl = '/logos/tokens/lagoon';
 	address = this.contracts.address;
+	spender = this.address;
 	depositMethod = DepositMethod.INTERNAL;
 
 	// Lagoon protocol fee and info

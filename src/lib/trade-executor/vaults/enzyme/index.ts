@@ -11,6 +11,7 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	label = 'Enzyme';
 	logoUrl = '/logos/tokens/enzyme';
 	address = this.contracts.vault;
+	spender = this.contracts.comptroller;
 	depositMethod = DepositMethod.INTERNAL;
 
 	// Enzyme protocol fee and info; see:

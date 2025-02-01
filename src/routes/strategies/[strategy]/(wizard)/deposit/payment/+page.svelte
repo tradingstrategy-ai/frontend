@@ -87,17 +87,6 @@
 		});
 	}
 
-	async function checkPreApproved() {
-		const allowance = await getTokenAllowance(config, {
-			chainId: chain.id,
-			address: denominationToken.address,
-			owner: $wallet.address!,
-			spender: contracts.comptroller
-		});
-
-		isPreApproved = value <= allowance;
-	}
-
 	function approveTransfer() {
 		return approveTokenTransfer(config, {
 			chainId: chain.id,
@@ -152,14 +141,21 @@
 			},
 
 			authorizeOrApprove() {
+				// use authorization (signature) flow if vault canForwardPayment
 				if (canForwardPayment) {
 					authorizeTransfer().then(payment.confirm).catch(payment.fail);
 					return 'authorizing';
 				}
 
-				checkPreApproved()
-					.then(payment.handleCheck)
-					.catch(() => payment.handleCheck(false));
+				// otherwise, fall back to traditional approve flow (check allowance first)
+				vault
+					.getDepositAllowance(config, $wallet.address!)
+					.then((allowance) => {
+						isPreApproved = value <= allowance;
+						payment.handleCheck();
+					})
+					.catch(payment.handleCheck);
+
 				return 'checkingPreApproved';
 			}
 		},
