@@ -1,9 +1,10 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-import { BaseVault, DepositMethod } from '../base';
+import { BaseVault, DepositMethod, GetSharePriceError } from '../base';
 import { getTokenBalance } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract } from '@wagmi/core';
+import { formatUnits } from 'viem';
 
 export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	type = 'enzyme';
@@ -61,6 +62,27 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		const denominationToken = await getTokenBalance(config, { token, address });
 
 		return { ...denominationToken, value };
+	}
+
+	async getSharePriceUSD(config: Config): Promise<number> {
+		const { default: abi } = await import('./abi/FundValueCalculator.json');
+
+		let value: bigint;
+
+		try {
+			const { result } = await simulateContract(config, {
+				abi,
+				address: this.contracts.fund_value_calculator,
+				functionName: 'calcGrossShareValue',
+				args: [this.contracts.vault]
+			});
+			value = result[1];
+		} catch (e) {
+			throw new GetSharePriceError(e);
+		}
+
+		const { decimals } = await this.getDenominationTokenInfo(config);
+		return Number(formatUnits(value, decimals));
 	}
 
 	async getDenominationAsset(config: Config) {

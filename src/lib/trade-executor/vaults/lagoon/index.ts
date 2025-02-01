@@ -48,6 +48,11 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 		}) as Promise<bigint>;
 	}
 
+	// TODO: implement!
+	async getSharePriceUSD(config: Config): Promise<number> {
+		throw new Error('not yet implemented!');
+	}
+
 	async getDenominationAsset(_config: Config) {
 		return this.contracts.asset;
 	}

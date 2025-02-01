@@ -7,7 +7,6 @@
 	import fsm from 'svelte-fsm';
 	import { formatUnits, parseUnits } from 'viem';
 	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { getSharePrice } from '$lib/eth-defi/enzyme';
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
 		type ErrorInfo,
@@ -35,7 +34,7 @@
 	const SLIPPAGE_TOLERANCE = 0.02;
 
 	let { data } = $props();
-	const { chain, strategy, denominationTokenInfo, canForwardPayment, canForwardToS, paymentContract } = data;
+	const { chain, strategy, denominationTokenInfo, canForwardPayment, canForwardToS, paymentContract, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
@@ -59,14 +58,6 @@
 	$effect(() => {
 		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
 	});
-
-	function getVaultSharePrice() {
-		return getSharePrice(config, {
-			calculator: contracts.fund_value_calculator,
-			vault: contracts.vault,
-			denominationToken
-		});
-	}
 
 	// TODO: extract to a helper module
 	function calcMinSharesQuantity(value: Numberlike, sharePrice: number, decimals: number) {
@@ -119,7 +110,7 @@
 	async function confirmPayment(args: any[] = []) {
 		const [curSharePrice, vaultToken] = await Promise.all([
 			// re-fetch share price if not previously set
-			sharePrice ?? getVaultSharePrice(),
+			sharePrice ?? vault.getSharePriceUSD(config),
 			// get vault token info for decimals unit conversion
 			getTokenInfo(config, { address: contracts.vault }),
 			// short delay to address Rabby wallet race condition
@@ -145,7 +136,8 @@
 			_enter() {
 				progressBar.reset();
 
-				getVaultSharePrice()
+				vault
+					.getSharePriceUSD(config)
 					.then((value) => (sharePrice = value))
 					.catch(() => {}); // no-op
 			},

@@ -17,6 +17,17 @@ export const DepositMethod = {
 } as const;
 
 /**
+ * Custom error thrown when getSharePrice fails
+ */
+export class GetSharePriceError extends Error {
+	constructor(cause: any) {
+		super('Error fetching share price');
+		this.name = 'GetSharePriceError';
+		this.cause = cause;
+	}
+}
+
+/**
  * BaseAssetManager functionality is shared across non-vault asset managers
  * (i.e., HotWallet) and vault adapters.
  */
@@ -79,6 +90,9 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
+
+	// Returns the current share price in USD
+	abstract getSharePriceUSD(config: Config): Promise<number>;
 
 	// Returns address of the vault's denomination token
 	abstract getDenominationAsset(config: Config): Promise<Address>;
