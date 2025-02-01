@@ -2,7 +2,7 @@ import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
-import { getTokenBalance, getTokenInfo, getTokenAllowance } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
 
 export type VaultFees = {
 	managementFee: number;
@@ -136,13 +136,23 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return getTokenBalance(config, { chainId: this.chain.id, token, address });
 	}
 
-	// Check a wallet's current deposit allowance
+	// Check a wallet address' current deposit allowance
 	async getDepositAllowance(config: Config, address: Address): Promise<bigint> {
 		return getTokenAllowance(config, {
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
 			owner: address,
 			spender: this.spender
+		});
+	}
+
+	// Approve deposit allowance through wallet
+	async approveDepositAllowance(config: Config, value: number | bigint) {
+		return approveTokenTransfer(config, {
+			chainId: this.chain.id,
+			address: await this.getDenominationAsset(config),
+			spender: this.spender,
+			value
 		});
 	}
 

@@ -10,11 +10,9 @@
 	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
 	import {
 		type ErrorInfo,
-		approveTokenTransfer,
 		extractErrorInfo,
 		formatBalance,
 		getTokenInfo,
-		getTokenAllowance,
 		getExpectedBlockTime
 	} from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
@@ -83,15 +81,6 @@
 			transferMethod: 'TransferWithAuthorization',
 			from: $wallet.address!,
 			to: paymentContract.address,
-			value
-		});
-	}
-
-	function approveTransfer() {
-		return approveTokenTransfer(config, {
-			chainId: chain.id,
-			address: denominationToken.address,
-			spender: contracts.comptroller,
 			value
 		});
 	}
@@ -170,7 +159,7 @@
 		checkingPreApproved: {
 			handleCheck() {
 				if (isPreApproved) return 'approved';
-				approveTransfer().then(payment.process).catch(payment.fail);
+				vault.approveDepositAllowance(config, value).then(payment.process).catch(payment.fail);
 				return 'approving';
 			}
 		},
