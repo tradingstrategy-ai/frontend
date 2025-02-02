@@ -206,8 +206,7 @@
 			},
 
 			buyShares() {
-				const buyer = $wallet.address;
-				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
+				vault.buyShares(config, $wallet.address!, value).then(payment.process).catch(payment.fail);
 				return 'confirming';
 			}
 		},

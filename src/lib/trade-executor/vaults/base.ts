@@ -98,6 +98,8 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Returns address of the vault's denomination token
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
+	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
+
 	// Used for displaying the asset management mode.
 	// Appends " vault" to label for vaults.
 	get mode(): string {

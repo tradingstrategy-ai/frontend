@@ -2,9 +2,11 @@ import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod, GetSharePriceError } from '../base';
-import { getTokenBalance } from '$lib/eth-defi/helpers';
-import { readContract, simulateContract } from '@wagmi/core';
-import { formatUnits } from 'viem';
+import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+import { readContract, simulateContract, writeContract } from '@wagmi/core';
+import { formatUnits, parseUnits } from 'viem';
+
+const SLIPPAGE_TOLERANCE = 0.02;
 
 export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	type = 'enzyme';
@@ -99,5 +101,33 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		// memoize
 		this.getDenominationAsset = async () => asset;
 		return asset;
+	}
+
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		const minShares = await this.#calculateMinShares(config, value);
+
+		const { request } = await simulateContract(config, {
+			address: this.spender,
+			abi,
+			functionName: 'buySharesOnBehalf',
+			args: [buyer, value, minShares]
+		});
+
+		return writeContract(config, request);
+	}
+
+	// TODO: move to parent class (or eth-defi/helpers)
+	async #calculateMinShares(config: Config, value: bigint): Promise<bigint> {
+		const [sharePrice, vaultToken, denominationToken] = await Promise.all([
+			this.getSharePriceUSD(config),
+			getTokenInfo(config, { address: this.address }),
+			this.getDenominationTokenInfo(config)
+		]);
+
+		const valueDecimal = Number(formatUnits(value, denominationToken.decimals));
+		const minSharesDecimal = valueDecimal / (sharePrice * (1 + SLIPPAGE_TOLERANCE));
+		return parseUnits(String(minSharesDecimal), vaultToken.decimals);
 	}
 }
