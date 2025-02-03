@@ -42,7 +42,10 @@
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ initialPageIndex: page })
+		page: addPagination({
+			initialPageIndex: page,
+			initialPageSize: 20
+		})
 	});
 
 	const tableColumns = table.createColumns([
