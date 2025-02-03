@@ -21,95 +21,96 @@
 	--c-box-4: hsl(var(--hsl-box) / var(--box-4-alpha));
 
 	/**
-	 * Light theme
+	 * Dark theme
 	 *
 	 * This is the default if no system or user-selected theme specified.
 	 */
-	--c-body: hsl(var(--hue-1) 100% 96%);
+	--c-body: hsl(var(--hue-2) 2% 10%);
 
-	--c-text: hsl(var(--hue-1) 9% 7%);
-	--c-text-light: hsl(var(--hue-1) 4% 24%);
-	--c-text-extra-light: hsl(var(--hue-1) 6% 56%);
-	--c-text-ultra-light: hsl(var(--hue-1) 12% 68%);
-	--c-text-inverted: hsl(var(--hue-2) 20% 99%);
+	--c-text: hsl(var(--hue-1) 12% 99%);
+	--c-text-light: hsl(var(--hue-1) 4% 88%);
+	--c-text-extra-light: hsl(var(--hue-1) 3% 64%);
+	--c-text-ultra-light: hsl(var(--hue-1) 2% 36%);
+	--c-text-inverted: hsl(var(--hue-1) 9% 7%);
 
 	--c-bullish: hsl(var(--hue-bullish) 68% 42%);
-	--c-bearish: hsl(var(--hue-bearish) 92% 57%);
+	--c-bearish: hsl(var(--hue-bearish) 92% 72%);
 
-	--c-shadow: black;
+	--c-shadow: white;
 
-	--hsl-box: var(--hue-1) 32% 72%;
-	--box-1-alpha: 12%;
-	--box-2-alpha: 24%;
-	--box-3-alpha: 36%;
-	--box-4-alpha: 48%;
+	/* see --c-box-n values above */
+	--hsl-box: var(--hue-1) 2% 92%;
+	--box-1-alpha: 5%;
+	--box-2-alpha: 8%;
+	--box-3-alpha: 14%;
+	--box-4-alpha: 20%;
 
-	--c-background-accent-1: var(--c-box-2);
+	--c-background-accent-1: hsl(0 0% 0% / 20%);
 
-	--c-input-background: color-mix(in srgb, white, transparent 5%);
-	--c-input-background-focus: white;
+	--c-input-background: var(--c-box-2);
+	--c-input-background-focus: var(--c-box-3);
 	--c-input-border: var(--c-box-4);
 	--c-input-border-focus: var(--c-text-extra-light);
 
-	--c-quoteblock-background: white;
-	--c-quoteblock-backdrop: var(--c-box-4);
+	--c-quoteblock-background: var(--c-box-4);
+	--c-quoteblock-backdrop: var(--c-box-2);
 
 	/* must use raw values since ::backdrop does not inherit from anything */
 	::backdrop {
-		--c-backdrop: black;
+		--c-backdrop: white;
 	}
 
 	/* color mode utility properties */
 	/* see: https://stackoverflow.com/questions/70845195#answer-70934827 */
-	--cm-light: initial;
-	--cm-dark: ;
+	--cm-light: ;
+	--cm-dark: initial;
 
 	/**
-	 * Dark theme
+	 * Light theme
    *
 	 * Media query is applied to both system theme and user-selected
 	 * theme via postcss plugin (see postcss.config.js)
  	 */
-	@media (prefers-color-scheme: dark) {
-		--c-body: hsl(var(--hue-2) 2% 10%);
+	@media (prefers-color-scheme: light) {
+		--c-body: hsl(var(--hue-1) 100% 96%);
 
-		--c-text: hsl(var(--hue-1) 12% 99%);
-		--c-text-light: hsl(var(--hue-1) 4% 88%);
-		--c-text-extra-light: hsl(var(--hue-1) 3% 64%);
-		--c-text-ultra-light: hsl(var(--hue-1) 2% 36%);
-		--c-text-inverted: hsl(var(--hue-1) 9% 7%);
+		--c-text: hsl(var(--hue-1) 9% 7%);
+		--c-text-light: hsl(var(--hue-1) 4% 24%);
+		--c-text-extra-light: hsl(var(--hue-1) 6% 56%);
+		--c-text-ultra-light: hsl(var(--hue-1) 12% 68%);
+		--c-text-inverted: hsl(var(--hue-2) 20% 99%);
 
 		--c-bullish: hsl(var(--hue-bullish) 68% 42%);
-		--c-bearish: hsl(var(--hue-bearish) 92% 72%);
+		--c-bearish: hsl(var(--hue-bearish) 92% 57%);
 
-		--c-shadow: white;
+		--c-shadow: black;
 
 		/* see --c-box-n values above */
-		--hsl-box: var(--hue-1) 2% 92%;
-		--box-1-alpha: 5%;
-		--box-2-alpha: 8%;
-		--box-3-alpha: 14%;
-		--box-4-alpha: 20%;
+		--hsl-box: var(--hue-1) 32% 72%;
+		--box-1-alpha: 12%;
+		--box-2-alpha: 24%;
+		--box-3-alpha: 36%;
+		--box-4-alpha: 48%;
 
-		--c-background-accent-1: hsl(0 0% 0% / 20%);
+		--c-background-accent-1: var(--c-box-2);
 
-		--c-input-background: var(--c-box-2);
-		--c-input-background-focus: var(--c-box-3);
+		--c-input-background: color-mix(in srgb, white, transparent 5%);
+		--c-input-background-focus: white;
 		--c-input-border: var(--c-box-4);
 		--c-input-border-focus: var(--c-text-extra-light);
 
-		--c-quoteblock-background: var(--c-box-4);
-		--c-quoteblock-backdrop: var(--c-box-2);
+		--c-quoteblock-background: white;
+		--c-quoteblock-backdrop: var(--c-box-4);
 
 		/* must use raw values since ::backdrop does not inherit from anything */
 		::backdrop {
-			--c-backdrop: white;
+			--c-backdrop: black;
 		}
 
 		/* color mode utility properties */
 		/* see: https://stackoverflow.com/questions/70845195#answer-70934827 */
-		--cm-light: ;
-		--cm-dark: initial;
+		--cm-light: initial;
+		--cm-dark: ;
 	}
 }
 
