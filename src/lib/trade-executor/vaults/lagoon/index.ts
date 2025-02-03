@@ -2,8 +2,9 @@ import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod } from '../base';
-import { getTokenBalance } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract } from '@wagmi/core';
+import { formatUnits, parseUnits } from 'viem';
 
 export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 	type = 'lagoon';
@@ -24,34 +25,20 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const [denominationToken, value] = await Promise.all([
-			getTokenBalance(config, { chainId: this.chain.id, token: this.contracts.asset, address }),
+			this.getDenominationTokenInfo(config),
 			this.#getVaultAssetValue(config, address)
 		]);
 
 		return { ...denominationToken, value };
 	}
 
-	async #getVaultAssetValue(config: Config, address: Address) {
-		const { default: abi } = await import('./abi/Vault.json');
-
-		const vaultBalance = await getTokenBalance(config, {
-			chainId: this.chain.id,
-			token: this.contracts.address,
-			address
-		});
-
-		return readContract(config, {
-			abi,
-			chainId: this.chain.id,
-			address: this.contracts.address,
-			functionName: 'convertToAssets',
-			args: [vaultBalance.value]
-		}) as Promise<bigint>;
-	}
-
-	// TODO: implement!
 	async getSharePriceUSD(config: Config): Promise<number> {
-		throw new Error('not yet implemented!');
+		const [denominationToken, value] = await Promise.all([
+			this.getDenominationTokenInfo(config),
+			this.#getShareAssetValue(config)
+		]);
+
+		return Number(formatUnits(value, denominationToken.decimals));
 	}
 
 	async getDenominationAsset(_config: Config) {
@@ -72,5 +59,37 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 			managementFee: fees.managementRate / 10_000,
 			totalPerformanceFee: fees.performanceRate / 10_000
 		};
+	}
+
+	async #getVaultAssetValue(config: Config, address: Address) {
+		const { value } = await getTokenBalance(config, {
+			chainId: this.chain.id,
+			token: this.address,
+			address
+		});
+
+		return this.#convertToAssets(config, value);
+	}
+
+	async #getShareAssetValue(config: Config) {
+		const { decimals } = await getTokenInfo(config, {
+			chainId: this.chain.id,
+			address: this.address
+		});
+
+		const value = parseUnits('1', decimals);
+		return this.#convertToAssets(config, value);
+	}
+
+	async #convertToAssets(config: Config, value: bigint) {
+		const { default: abi } = await import('./abi/Vault.json');
+
+		return readContract(config, {
+			abi,
+			chainId: this.chain.id,
+			address: this.contracts.address,
+			functionName: 'convertToAssets',
+			args: [value]
+		}) as Promise<bigint>;
 	}
 }
