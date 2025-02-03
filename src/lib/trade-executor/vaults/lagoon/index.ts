@@ -3,7 +3,7 @@ import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault, DepositMethod } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
-import { readContract } from '@wagmi/core';
+import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 
 export class LagoonVault extends BaseVault<LagoonSmartContracts> {
@@ -45,10 +45,25 @@ export class LagoonVault extends BaseVault<LagoonSmartContracts> {
 		return this.contracts.asset;
 	}
 
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+		const { default: abi } = await import('./abi/Vault.json');
+
+		const { request } = await simulateContract(config, {
+			abi,
+			address: this.address,
+			functionName: 'requestDeposit',
+			args: [value, buyer, buyer]
+		});
+
+		return writeContract(config, request);
+	}
+
 	// Get Lagoon vault fees from vault smart contract
 	async getFees(config: Config) {
+		const { default: abi } = await import('./abi/Vault.json');
+
 		const fees = (await readContract(config, {
-			abi: (await import('./abi/Vault.json')).default,
+			abi,
 			chainId: this.chain.id,
 			address: this.contracts.address,
 			functionName: 'feeRates'
