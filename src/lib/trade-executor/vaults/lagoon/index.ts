@@ -1,18 +1,17 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-import { BaseVault, DepositMethod } from '../base';
+import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 
-export class LagoonVault extends BaseVault<LagoonSmartContracts> {
+export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> {
 	type = 'lagoon';
 	label = 'Lagoon';
 	logoUrl = '/logos/tokens/lagoon';
 	address = this.contracts.address;
 	payee = this.address;
-	depositMethod = DepositMethod.INTERNAL;
 
 	// Lagoon protocol fee and info
 	protocolFee = 0;

@@ -1,20 +1,19 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-import { BaseVault, DepositMethod, GetSharePriceError } from '../base';
+import { VaultWithInternalDeposits, GetSharePriceError } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 
 const SLIPPAGE_TOLERANCE = 0.02;
 
-export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
+export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts> {
 	type = 'enzyme';
 	label = 'Enzyme';
 	logoUrl = '/logos/tokens/enzyme';
 	address = this.contracts.vault;
 	payee = this.contracts.comptroller;
-	depositMethod = DepositMethod.INTERNAL;
 
 	// Enzyme protocol fee and info; see:
 	// https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting

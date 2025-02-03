@@ -55,6 +55,10 @@ export abstract class BaseAssetManager {
 	depositEnabled(): this is BaseVault<SmartContracts> {
 		return this instanceof BaseVault;
 	}
+
+	internalDepositEnabled(): this is VaultWithInternalDeposits<SmartContracts> {
+		return this.depositEnabled() && this.depositMethod === DepositMethod.INTERNAL;
+	}
 }
 
 /**
@@ -64,12 +68,10 @@ export abstract class BaseAssetManager {
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
 	// The vault ERC-20 token address
 	abstract readonly address: Address;
-	// The address to which deposit funds are issued (e.g, vault or comptroller)
-	abstract readonly payee: Address;
 
 	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
 	// via vault-provider's website (EXTERNAL)
-	abstract readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod];
+	readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod] = DepositMethod.EXTERNAL;
 
 	// Vault-specific protocol fee and info
 	abstract readonly protocolFee: number;
@@ -89,6 +91,35 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Return a given vault's URL on vault provider's website
 	abstract get externalProviderUrl(): string;
 
+	// Used for displaying the asset management mode.
+	// Appends " vault" to label for vaults.
+	get mode(): string {
+		return `${this.label} vault`;
+	}
+
+	// By default, vault adapters return the fees defined in metadata payload. This
+	// can be overridden at the adapter level (e.g., see lagoon vault adapter).
+	async getFees(_config: Config): Promise<VaultFees> {
+		const fees = this.feeData;
+		return {
+			managementFee: fees.management_fee,
+			totalPerformanceFee: fees.trading_strategy_protocol_fee + fees.strategy_developer_fee,
+			tradingStrategyProtocolFee: fees.trading_strategy_protocol_fee,
+			strategyDeveloperFee: fees.strategy_developer_fee
+		};
+	}
+}
+
+/**
+ * VaultWithInternalDeposits provides functionality used by vault adapters that support
+ * internal deposits (e.g., Enzyme, Lagoon)
+ */
+export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts> extends BaseVault<Contracts> {
+	depositMethod = DepositMethod.INTERNAL;
+
+	// The address to which deposit funds are issued (e.g, vault or comptroller)
+	abstract readonly payee: Address;
+
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
 
@@ -100,20 +131,12 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
 
-	// Used for displaying the asset management mode.
-	// Appends " vault" to label for vaults.
-	get mode(): string {
-		return `${this.label} vault`;
-	}
-
-	// Determine if vault supports payment forwarding
-	// defaults to false; override in subclass if supported
+	// Determine if vault supports payment forwarding (defaults to false)
 	async canForwardPayment(_config: Config): Promise<boolean> {
 		return false;
 	}
 
-	// Determine if vault supports Terms of Service forwarding
-	// defaults to false; override in subclass if supported
+	// Determine if vault supports Terms of Service forwarding (defaults to false)
 	async canForwardToS(_config: Config): Promise<boolean> {
 		return false;
 	}
@@ -156,17 +179,5 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 			spender: this.payee,
 			value
 		});
-	}
-
-	// By default, vault adapters return the fees defined in metadata payload. This
-	// can be overridden at the adapter level (e.g., see lagoon vault adapter).
-	async getFees(_config: Config): Promise<VaultFees> {
-		const fees = this.feeData;
-		return {
-			managementFee: fees.management_fee,
-			totalPerformanceFee: fees.trading_strategy_protocol_fee + fees.strategy_developer_fee,
-			tradingStrategyProtocolFee: fees.trading_strategy_protocol_fee,
-			strategyDeveloperFee: fees.strategy_developer_fee
-		};
 	}
 }

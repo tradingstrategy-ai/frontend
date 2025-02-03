@@ -25,8 +25,8 @@ export async function load({ parent }) {
 	const { admin, ipCountry, chain, vault } = await parent();
 	assertNotGeoBlocked('strategies:deposit', ipCountry, admin);
 
-	if (!vault.depositEnabled()) {
-		error(400, 'This strategy does not support deposits.');
+	if (!vault.internalDepositEnabled()) {
+		error(400, 'This strategy does not support deposits on Trading Strategy’s website.');
 	}
 
 	let steps: WizardStep[] = [
