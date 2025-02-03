@@ -29,7 +29,7 @@ npm run test:integration --skip-build || true
 
 # extract playwright version -> identity playwright docker image
 playwright_version=`npm ls @playwright/test | grep playwright | cut -d '@' -f 3`
-playwright_image="mcr.microsoft.com/playwright:v${playwright_version}-focal"
+playwright_image="mcr.microsoft.com/playwright:v${playwright_version}"
 
 # run npm install in docker (for platform-specific esbuild dependency)
 docker run --rm -v $(pwd):/work/ ${playwright_image} bash -c 'cd work && npm install --force'
