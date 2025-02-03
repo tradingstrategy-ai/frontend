@@ -62,10 +62,10 @@ export abstract class BaseAssetManager {
  * (e.g., EnzymeVault or VelvetVault)
  */
 export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAssetManager {
-	// Returns the vault ERC-20 token address
+	// The vault ERC-20 token address
 	abstract readonly address: Address;
-	// Returns the token address to which deposits are issued
-	abstract readonly spender: Address;
+	// The address to which deposit funds are issued (e.g, vault or comptroller)
+	abstract readonly payee: Address;
 
 	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
 	// via vault-provider's website (EXTERNAL)
@@ -144,7 +144,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
 			owner: address,
-			spender: this.spender
+			spender: this.payee
 		});
 	}
 
@@ -153,7 +153,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 		return approveTokenTransfer(config, {
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
-			spender: this.spender,
+			spender: this.payee,
 			value
 		});
 	}

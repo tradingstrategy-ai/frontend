@@ -13,7 +13,7 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 	label = 'Enzyme';
 	logoUrl = '/logos/tokens/enzyme';
 	address = this.contracts.vault;
-	spender = this.contracts.comptroller;
+	payee = this.contracts.comptroller;
 	depositMethod = DepositMethod.INTERNAL;
 
 	// Enzyme protocol fee and info; see:
@@ -92,9 +92,9 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
 		const asset = (await readContract(config, {
+			abi,
 			chainId: this.chain.id,
 			address: this.contracts.comptroller,
-			abi,
 			functionName: 'getDenominationAsset'
 		})) as Address;
 
@@ -109,8 +109,8 @@ export class EnzymeVault extends BaseVault<EnzymeSmartContracts> {
 		const minShares = await this.#calculateMinShares(config, value);
 
 		const { request } = await simulateContract(config, {
-			address: this.spender,
 			abi,
+			address: this.payee,
 			functionName: 'buySharesOnBehalf',
 			args: [buyer, value, minShares]
 		});
