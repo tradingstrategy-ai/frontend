@@ -34,23 +34,30 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	// Enzyme vaults support payment forwarding for USDC denominatoin token
 	async canForwardPayment(config: Config): Promise<boolean> {
 		const { symbol } = await this.getDenominationTokenInfo(config);
+		// NOTE: memoization not needed since getDenominationTokenInfo is memoized
 		return symbol === 'USDC';
 	}
 
 	// Enzyme vaults with the right type of payment forwarder can forward ToS
 	async canForwardToS(config: Config): Promise<boolean> {
+		const { default: abi } = await import('./abi/TermedVaultUSDCPaymentForwarder.json');
+		let canForward = false;
+
 		try {
-			return (await readContract(config, {
-				abi: (await import('./abi/TermedVaultUSDCPaymentForwarder.json')).default,
+			canForward = (await readContract(config, {
+				abi,
 				address: this.contracts.payment_forwarder,
 				functionName: 'isTermsOfServiceEnabled'
 			})) as boolean;
 		} catch (e) {
-			if (e instanceof Error && e.name === 'ContractFunctionExecutionError') {
-				return false;
+			if (!(e instanceof Error && e.name === 'ContractFunctionExecutionError')) {
+				throw e;
 			}
-			throw e;
 		}
+
+		// memoize
+		this.canForwardToS = async () => canForward;
+		return canForward;
 	}
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
