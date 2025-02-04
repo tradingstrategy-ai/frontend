@@ -117,13 +117,10 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
  * internal deposits (e.g., Enzyme, Lagoon)
  */
 export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts> extends BaseVault<Contracts> {
-	depositMethod = DepositMethod.INTERNAL;
+	readonly depositMethod = DepositMethod.INTERNAL;
 
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
-
-	// The address used when forwarding payment authorization (EIP-3009 signature)
-	abstract readonly paymentForwarder?: Address;
 
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
@@ -135,6 +132,9 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
 	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
+
+	// The address used when forwarding payment authorization (EIP-3009 signature)
+	readonly paymentForwarder?: Address = undefined;
 
 	// Determine if vault supports payment forwarding (defaults to false)
 	async canForwardPayment(_config: Config): Promise<boolean> {

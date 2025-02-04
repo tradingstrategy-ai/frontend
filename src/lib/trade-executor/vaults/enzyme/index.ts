@@ -11,21 +11,21 @@ import { formatUnits, parseUnits } from 'viem';
 const SLIPPAGE_TOLERANCE = 0.02;
 
 export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts> {
-	type = 'enzyme';
-	label = 'Enzyme';
-	logoUrl = '/logos/tokens/enzyme';
-	address = this.contracts.vault;
-	payee = this.contracts.comptroller;
-	paymentForwarder = this.contracts.payment_forwarder;
+	readonly type = 'enzyme';
+	readonly label = 'Enzyme';
+	readonly logoUrl = '/logos/tokens/enzyme';
+	readonly address = this.contracts.vault;
+	readonly payee = this.contracts.comptroller;
+	readonly paymentForwarder = this.contracts.payment_forwarder;
 
 	// Enzyme protocol fee and info; see:
 	// https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting
-	protocolFee = 0.0025;
-	protocolFeeTooltip = `
+	readonly protocolFee = 0.0025;
+	readonly protocolFeeTooltip = `
 		The Enzyme protocol fee rate applied to the vault is 0.50%. Shares accrued can be bought
 		back with MLN at a 50% discount, leading to an effective protocol fee rate of 0.25%.
 	`;
-	protocolFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
+	readonly protocolFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
 
 	get externalProviderUrl() {
 		return `https://app.enzyme.finance/vault/${this.contracts.vault}?network=${this.chain.slug}`;

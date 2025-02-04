@@ -7,16 +7,16 @@ import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 
 export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> {
-	type = 'lagoon';
-	label = 'Lagoon';
-	logoUrl = '/logos/tokens/lagoon';
-	address = this.contracts.address;
-	payee = this.address;
+	readonly type = 'lagoon';
+	readonly label = 'Lagoon';
+	readonly logoUrl = '/logos/tokens/lagoon';
+	readonly address = this.contracts.address;
+	readonly payee = this.address;
 
 	// Lagoon protocol fee and info
-	protocolFee = 0;
-	protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
-	protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
+	readonly protocolFee = 0;
+	readonly protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
+	readonly protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
 
 	get externalProviderUrl() {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
