@@ -24,7 +24,6 @@
 	const { chain, denominationTokenInfo, canForwardPayment, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
-
 	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data as Required<DepositWizardData>;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
@@ -38,23 +37,8 @@
 	let approvalTxId: Maybe<Address> = $state();
 	let paymentTxId: Maybe<Address> = $state();
 	let sharePrice: MaybeNumber = $state();
+	let estimatedShares = $derived(Number(paymentValue ?? 0) / (sharePrice ?? 0));
 	let isPreApproved = $state(false);
-
-	// Disable the "Cancel" button once a transaction has been initiated
-	$effect(() => {
-		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
-	});
-
-	function getEstimatedShares(paymentValue: Numberlike, sharePrice: MaybeNumber) {
-		const value = Number(paymentValue || 0);
-		let estimated: number | undefined = undefined;
-		if (value === 0) {
-			estimated = 0;
-		} else if (sharePrice) {
-			estimated = value / sharePrice;
-		}
-		return formatNumber(estimated, 2, 4);
-	}
 
 	const payment = fsm('initial', {
 		'*': {
@@ -220,6 +204,11 @@
 		}
 	});
 
+	// Disable the "Cancel" button once a transaction has been initiated
+	$effect(() => {
+		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
+	});
+
 	// capture/restore ephemeral page state when navigating away from and back to page
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
@@ -292,7 +281,7 @@
 				max={formatBalance(denominationToken)}
 			>
 				Estimated shares:
-				{getEstimatedShares(paymentValue, sharePrice)}
+				{formatNumber(estimatedShares, 2, 4)}
 			</MoneyInput>
 
 			{#if !['processing', 'completed'].includes($payment)}
