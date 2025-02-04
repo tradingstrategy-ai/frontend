@@ -14,6 +14,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	logoUrl = '/logos/tokens/enzyme';
 	address = this.contracts.vault;
 	payee = this.contracts.comptroller;
+	paymentForwarder = this.contracts.payment_forwarder;
 
 	// Enzyme protocol fee and info; see:
 	// https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting

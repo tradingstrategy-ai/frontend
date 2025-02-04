@@ -120,6 +120,9 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
 
+	// The address used when forwarding payment authorization (EIP-3009 signature)
+	abstract readonly paymentForwarder?: Address;
+
 	// Return a wallet's share value in USD
 	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
 
@@ -177,6 +180,24 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
 			spender: this.payee,
+			value
+		});
+	}
+
+	// Get EIP-3009 authorization to transfer funds from wallet
+	async getTransferAuthorization(config: Config, address: Address, value: bigint) {
+		if (!this.paymentForwarder) {
+			throw new Error('paymentForwarder is not defined');
+		}
+
+		const { getSignedArguments } = await import('$lib/eth-defi/eip-3009');
+
+		return getSignedArguments(config, {
+			chainId: this.chain.id,
+			token: await this.getDenominationTokenInfo(config),
+			transferMethod: 'TransferWithAuthorization',
+			from: address,
+			to: this.paymentForwarder,
 			value
 		});
 	}

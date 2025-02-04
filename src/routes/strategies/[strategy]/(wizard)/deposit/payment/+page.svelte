@@ -44,6 +44,7 @@
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
+	let address = $derived($wallet.address!);
 	let paymentValue = $state('');
 	let value = $derived(parseUnits(paymentValue, denominationTokenInfo.decimals));
 	let error: ErrorInfo | unknown | undefined = $state();
@@ -72,17 +73,6 @@
 			estimated = value / sharePrice;
 		}
 		return formatNumber(estimated, 2, 4);
-	}
-
-	function authorizeTransfer() {
-		return getSignedArguments(config, {
-			chainId: chain.id,
-			token: denominationTokenInfo,
-			transferMethod: 'TransferWithAuthorization',
-			from: $wallet.address!,
-			to: paymentContract.address,
-			value
-		});
 	}
 
 	async function confirmPayment(args: any[] = []) {
@@ -130,15 +120,16 @@
 			},
 
 			authorizeOrApprove() {
-				// use authorization (signature) flow if vault canForwardPayment
+				// use authorization (signature) flow if supported by vault
 				if (canForwardPayment) {
-					authorizeTransfer().then(payment.confirm).catch(payment.fail);
+					const promise = vault.getTransferAuthorization(config, address, value);
+					promise.then(payment.confirm).catch(payment.fail);
 					return 'authorizing';
 				}
 
 				// otherwise, fall back to traditional approve flow (check allowance first)
 				vault
-					.getDepositAllowance(config, $wallet.address!)
+					.getDepositAllowance(config, address)
 					.then((allowance) => {
 						isPreApproved = value <= allowance;
 						payment.handleCheck();
@@ -206,7 +197,7 @@
 			},
 
 			buyShares() {
-				vault.buyShares(config, $wallet.address!, value).then(payment.process).catch(payment.fail);
+				vault.buyShares(config, address, value).then(payment.process).catch(payment.fail);
 				return 'confirming';
 			}
 		},
