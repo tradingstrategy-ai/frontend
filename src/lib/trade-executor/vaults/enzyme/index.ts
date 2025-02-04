@@ -1,6 +1,8 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+import type { SignedArguments } from '$lib/eth-defi/eip-3009';
+import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits, GetSharePriceError } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
@@ -116,6 +118,54 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		});
 
 		return writeContract(config, request);
+	}
+
+	async buySharesWithAuthorization(
+		config: Config,
+		signedArgs: SignedArguments,
+		tosHash?: HexString,
+		tosSignature?: string
+	) {
+		const [canForwardPayment, canForwardToS] = await Promise.all([
+			this.canForwardPayment(config),
+			this.canForwardToS(config)
+		]);
+
+		if (!canForwardPayment) {
+			throw new Error('Cannot forward payment for this vault');
+		}
+
+		const value = signedArgs[2]; // see eip-3009:getSignedArguments return type
+		const minShares = await this.#calculateMinShares(config, value);
+		const args = [...signedArgs, minShares];
+
+		const { request } = canForwardToS
+			? await this.#simulateBuySharesWithAuthorizationAndToS(config, [...args, tosHash, tosSignature])
+			: await this.#simulateBuySharesWithAuthorization(config, args);
+
+		return writeContract(config, request);
+	}
+
+	async #simulateBuySharesWithAuthorization(config: Config, args: any[]) {
+		const { default: abi } = await import('./abi/VaultUSDCPaymentForwarder.json');
+
+		return simulateContract(config, {
+			abi,
+			address: this.paymentForwarder,
+			functionName: 'buySharesOnBehalfUsingTransferWithAuthorization',
+			args
+		});
+	}
+
+	async #simulateBuySharesWithAuthorizationAndToS(config: Config, args: any[]) {
+		const { default: abi } = await import('./abi/TermedVaultUSDCPaymentForwarder.json');
+
+		return simulateContract(config, {
+			abi,
+			address: this.paymentForwarder,
+			functionName: 'buySharesOnBehalfUsingTransferWithAuthorizationAndTermsOfService',
+			args
+		});
 	}
 
 	// TODO: move to parent class (or eth-defi/helpers)

@@ -1,7 +1,9 @@
 import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
-import type { Config } from '@wagmi/core';
+import type { Config, WriteContractReturnType } from '@wagmi/core';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
+import type { SignedArguments } from '$lib/eth-defi/eip-3009';
+import type { HexString } from 'trade-executor/schemas/utility-types';
 import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
 
 export type VaultFees = {
@@ -200,5 +202,16 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 			to: this.paymentForwarder,
 			value
 		});
+	}
+
+	// Default implementation raises exception for vaults that can't forward payment
+	// Vaults returning `true` for `canForwardPayment` should implement (e.g, Enzyme)
+	buySharesWithAuthorization(
+		_config: Config,
+		_signedArgs: SignedArguments,
+		_tosHash?: HexString,
+		_tosSignature?: string
+	): Promise<WriteContractReturnType> {
+		throw new Error('Method not implemented');
 	}
 }

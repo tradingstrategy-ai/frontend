@@ -1,20 +1,12 @@
 <script lang="ts">
-	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import type { DepositWizardDataSchema, DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import fsm from 'svelte-fsm';
 	import { formatUnits, parseUnits } from 'viem';
-	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import {
-		type ErrorInfo,
-		extractErrorInfo,
-		formatBalance,
-		getTokenInfo,
-		getExpectedBlockTime
-	} from '$lib/eth-defi/helpers';
+	import { waitForTransactionReceipt } from '@wagmi/core';
+	import { type ErrorInfo, extractErrorInfo, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
@@ -28,15 +20,10 @@
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
 
-	// Share price slippage tollerance - used when calculating minSharesQuantity
-	const SLIPPAGE_TOLERANCE = 0.02;
-
 	let { data } = $props();
-	const { chain, strategy, denominationTokenInfo, canForwardPayment, canForwardToS, paymentContract, vault } = data;
+	const { chain, denominationTokenInfo, canForwardPayment, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
-
-	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
 	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data as Required<DepositWizardData>;
 
@@ -58,12 +45,6 @@
 		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
 	});
 
-	// TODO: extract to a helper module
-	function calcMinSharesQuantity(value: Numberlike, sharePrice: number, decimals: number) {
-		const minSharesDecimal = Number(value) / (sharePrice * (1 + SLIPPAGE_TOLERANCE));
-		return parseUnits(String(minSharesDecimal), decimals);
-	}
-
 	function getEstimatedShares(paymentValue: Numberlike, sharePrice: MaybeNumber) {
 		const value = Number(paymentValue || 0);
 		let estimated: number | undefined = undefined;
@@ -73,26 +54,6 @@
 			estimated = value / sharePrice;
 		}
 		return formatNumber(estimated, 2, 4);
-	}
-
-	async function confirmPayment(args: any[] = []) {
-		const [curSharePrice, vaultToken] = await Promise.all([
-			// re-fetch share price if not previously set
-			sharePrice ?? vault.getSharePriceUSD(config),
-			// get vault token info for decimals unit conversion
-			getTokenInfo(config, { address: contracts.vault }),
-			// short delay to address Rabby wallet race condition
-			new Promise((r) => setTimeout(r, WALLET_PAYMENT_DELAY))
-		]);
-
-		args.push(calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals));
-
-		if (canForwardToS) {
-			args.push(tosHash, tosSignature);
-		}
-
-		const { request } = await simulateContract(config, { ...paymentContract, args });
-		return writeContract(config, request);
 	}
 
 	const payment = fsm('initial', {
@@ -122,8 +83,14 @@
 			authorizeOrApprove() {
 				// use authorization (signature) flow if supported by vault
 				if (canForwardPayment) {
-					const promise = vault.getTransferAuthorization(config, address, value);
-					promise.then(payment.confirm).catch(payment.fail);
+					vault
+						.getTransferAuthorization(config, address, value)
+						.then((signedArgs) => {
+							// insert short delay to address Rabby wallet race condition
+							setTimeout(() => payment.confirm(signedArgs), WALLET_PAYMENT_DELAY);
+						})
+						.catch(payment.fail);
+
 					return 'authorizing';
 				}
 
@@ -142,7 +109,11 @@
 
 		authorizing: {
 			confirm(signedArgs) {
-				confirmPayment(signedArgs).then(payment.process).catch(payment.fail);
+				vault
+					.buySharesWithAuthorization(config, signedArgs, tosHash, tosSignature)
+					.then(payment.process)
+					.catch(payment.fail);
+
 				return 'confirming';
 			}
 		},
