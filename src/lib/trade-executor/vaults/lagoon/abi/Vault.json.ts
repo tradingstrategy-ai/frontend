@@ -1,4 +1,5 @@
-[
+// Vault.json exported `as const` for proper typing with viem/@wagmi
+export const vaultAbi = [
 	{
 		"type": "constructor",
 		"inputs": [
@@ -2452,4 +2453,4 @@
 			}
 		]
 	}
-]
+] as const;

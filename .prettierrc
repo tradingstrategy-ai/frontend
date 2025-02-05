@@ -10,6 +10,13 @@
 			"options": {
 				"parser": "svelte"
 			}
+		},
+		{
+			"files": "*.json.ts",
+			"options": {
+				"singleQuote": false,
+				"quoteProps": "preserve"
+			}
 		}
 	]
 }

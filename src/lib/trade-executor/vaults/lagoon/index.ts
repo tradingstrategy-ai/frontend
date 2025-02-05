@@ -1,12 +1,14 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+import type { PendingDeposit, SettlementRequired } from '../types';
 import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
-import { readContract, simulateContract, writeContract } from '@wagmi/core';
+import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
+import { vaultAbi } from './abi/Vault.json';
 
-export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> {
+export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> implements SettlementRequired {
 	readonly type = 'lagoon';
 	readonly label = 'Lagoon';
 	readonly logoUrl = '/logos/tokens/lagoon';
@@ -18,8 +20,18 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	readonly protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
 	readonly protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
 
+	// Used by requiresSettlement() type predicate
+	protected readonly _requiresSettlement = true;
+
+	// private utility prop for generating vault contracts
+	#vaultBaseContract = {
+		abi: vaultAbi,
+		chainId: this.chain.id,
+		address: this.address
+	} as const;
+
 	get externalProviderUrl() {
-		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.contracts.address}`;
+		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.address}`;
 	}
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
@@ -45,11 +57,8 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
-		const { default: abi } = await import('./abi/Vault.json');
-
 		const { request } = await simulateContract(config, {
-			abi,
-			address: this.address,
+			...this.#vaultBaseContract,
 			functionName: 'requestDeposit',
 			args: [value, buyer, buyer]
 		});
@@ -57,16 +66,48 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
+	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
+		const [depositId, assetInfo] = await Promise.all([
+			this.#getPendingDepositId(config, address),
+			this.getDenominationTokenInfo(config)
+		]);
+
+		const baseContract = {
+			...this.#vaultBaseContract,
+			args: [depositId, address] as const
+		};
+
+		const response = await readContracts(config, {
+			contracts: [
+				{ ...baseContract, functionName: 'pendingDepositRequest' },
+				{ ...baseContract, functionName: 'claimableDepositRequest' }
+			]
+		});
+
+		const [pending, claimable] = response.map(({ result }) => result);
+		const value = pending || claimable || 0n;
+		const settled = Boolean(claimable);
+
+		return {
+			asset: { ...assetInfo, value },
+			settled
+		};
+	}
+
+	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
+		return readContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'lastDepositRequestId',
+			args: [address]
+		}).then(BigInt);
+	}
+
 	// Get Lagoon vault fees from vault smart contract
 	async getFees(config: Config) {
-		const { default: abi } = await import('./abi/Vault.json');
-
-		const fees = (await readContract(config, {
-			abi,
-			chainId: this.chain.id,
-			address: this.contracts.address,
+		const fees = await readContract(config, {
+			...this.#vaultBaseContract,
 			functionName: 'feeRates'
-		})) as { managementRate: number; performanceRate: number };
+		});
 
 		// convert basis point values to decimal percentage values
 		return {
@@ -95,15 +136,11 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.#convertToAssets(config, value);
 	}
 
-	async #convertToAssets(config: Config, value: bigint) {
-		const { default: abi } = await import('./abi/Vault.json');
-
+	async #convertToAssets(config: Config, value: bigint): Promise<bigint> {
 		return readContract(config, {
-			abi,
-			chainId: this.chain.id,
-			address: this.contracts.address,
+			...this.#vaultBaseContract,
 			functionName: 'convertToAssets',
 			args: [value]
-		}) as Promise<bigint>;
+		});
 	}
 }

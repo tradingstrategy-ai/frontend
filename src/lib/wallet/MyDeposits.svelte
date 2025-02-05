@@ -5,7 +5,7 @@
 	import type { BaseAssetManager } from 'trade-executor/vaults/base';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
+	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
 	import { Button, HashAddress } from '$lib/components';
 	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
 	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
@@ -37,6 +37,10 @@
 	let connected = $derived($wallet.status === 'connected');
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
+
+	if ($wallet.address && vault.internalDepositEnabled() && vault.requiresSettlement()) {
+		vault.getPendingDeposit(config, $wallet.address).then(console.log);
+	}
 
 	const expandable = fsm('closed', {
 		closed: {

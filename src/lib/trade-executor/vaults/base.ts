@@ -4,14 +4,8 @@ import type { Config, WriteContractReturnType } from '@wagmi/core';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
+import type { VaultFees, SettlementRequired } from './types';
 import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
-
-export type VaultFees = {
-	managementFee: number;
-	totalPerformanceFee: number;
-	tradingStrategyProtocolFee?: number;
-	strategyDeveloperFee?: number;
-};
 
 export const DepositMethod = {
 	INTERNAL: 'internal',
@@ -119,6 +113,9 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts> extends BaseVault<Contracts> {
 	readonly depositMethod = DepositMethod.INTERNAL;
 
+	// Used by requiresSettlement() to determine if adapter implements SettlementRequired
+	protected readonly _requiresSettlement: boolean = false;
+
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
 
@@ -135,6 +132,11 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 
 	// The address used when forwarding payment authorization (EIP-3009 signature)
 	readonly paymentForwarder?: Address = undefined;
+
+	// Type predicate to indicate if adapter implements SettlementRequired
+	requiresSettlement(): this is SettlementRequired {
+		return this._requiresSettlement;
+	}
 
 	// Determine if vault supports payment forwarding (defaults to false)
 	async canForwardPayment(_config: Config): Promise<boolean> {
