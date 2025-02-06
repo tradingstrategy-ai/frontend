@@ -1,6 +1,6 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
-import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
@@ -22,6 +22,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	// Used by requiresSettlement() type predicate
 	protected readonly _requiresSettlement = true;
+
+	// for memoization
+	#vaultTokenInfo?: TokenInfo;
 
 	// private utility prop for generating vault contracts
 	#vaultBaseContract = {
@@ -67,9 +70,10 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
-		const [depositId, assetInfo] = await Promise.all([
+		const [depositId, assetToken, vaultToken] = await Promise.all([
 			this.#getPendingDepositId(config, address),
-			this.getDenominationTokenInfo(config)
+			this.getDenominationTokenInfo(config),
+			this.#getVaultTokenInfo(config)
 		]);
 
 		const baseContract = {
@@ -85,11 +89,18 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		});
 
 		const [pending, claimable] = response.map(({ result }) => result);
-		const value = pending || claimable || 0n;
+		const assetValue = pending || claimable || 0n;
 		const settled = Boolean(claimable);
 
+		const shareValue = await readContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'convertToShares',
+			args: [assetValue, depositId]
+		});
+
 		return {
-			asset: { ...assetInfo, value },
+			asset: { ...assetToken, value: assetValue },
+			shares: { ...vaultToken, value: shareValue },
 			settled
 		};
 	}
@@ -126,12 +137,17 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.#convertToAssets(config, value);
 	}
 
-	async #getShareAssetValue(config: Config) {
-		const { decimals } = await getTokenInfo(config, {
+	async #getVaultTokenInfo(config: Config): Promise<TokenInfo> {
+		this.#vaultTokenInfo ??= await getTokenInfo(config, {
 			chainId: this.chain.id,
 			address: this.address
 		});
 
+		return this.#vaultTokenInfo;
+	}
+
+	async #getShareAssetValue(config: Config) {
+		const { decimals } = await this.#getVaultTokenInfo(config);
 		const value = parseUnits('1', decimals);
 		return this.#convertToAssets(config, value);
 	}

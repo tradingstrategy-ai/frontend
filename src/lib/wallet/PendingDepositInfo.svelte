@@ -17,7 +17,7 @@
 	let { vault, address }: Props = $props();
 </script>
 
-{#await vault.getPendingDeposit(config, address) then { asset, settled }}
+{#await vault.getPendingDeposit(config, address) then { asset, shares, settled }}
 	<div class={['pending-deposit', settled && 'settled']} transition:slide>
 		<h3>
 			{#if settled}
@@ -28,10 +28,16 @@
 				Pending Deposit
 			{/if}
 		</h3>
-		<div class="asset">
-			${formatBalance(asset, 2)}
-			<small>{asset.label}</small>
-		</div>
+		<dl class="values">
+			<div class="asset">
+				<dt>${formatBalance(asset, 2, 4)}</dt>
+				<dd>{asset.label}</dd>
+			</div>
+			<div class="shares">
+				<dt>{formatBalance(shares, 2, 4)}</dt>
+				<dd>{settled ? 'shares claimable' : 'estimated shares'}</dd>
+			</div>
+		</dl>
 		{#if settled}
 			<Button size="sm" label="Claim shares" />
 		{:else}
@@ -73,14 +79,37 @@
 			}
 		}
 
-		.asset {
-			font: var(--f-ui-xl-medium);
-			letter-spacing: var(--ls-ui-xl);
+		.values {
+			:is(dt, dd) {
+				display: inline;
+			}
 
-			small {
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--ls-ui-md);
+			dd {
 				color: var(--c-text-extra-light);
+			}
+
+			.asset {
+				dt {
+					font: var(--f-ui-xl-medium);
+					letter-spacing: var(--ls-ui-xl);
+				}
+
+				dd {
+					font: var(--f-ui-md-medium);
+					letter-spacing: var(--ls-ui-md);
+				}
+			}
+
+			.shares {
+				dt {
+					font: var(--f-ui-md-medium);
+					letter-spacing: var(--ls-ui-md);
+				}
+
+				dd {
+					font: var(--f-ui-sm-medium);
+					letter-spacing: var(--ls-ui-sm);
+				}
 			}
 		}
 	}

@@ -10,6 +10,7 @@ export type VaultFees = {
 
 export type PendingDeposit = {
 	asset: TokenBalance;
+	shares: TokenBalance;
 	settled: boolean;
 };
 
