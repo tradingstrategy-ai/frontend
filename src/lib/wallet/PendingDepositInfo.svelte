@@ -15,9 +15,10 @@
 	type Props = {
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
+		refreshDepositInfo: () => void;
 	};
 
-	let { vault, address }: Props = $props();
+	let { vault, address, refreshDepositInfo }: Props = $props();
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
 
@@ -81,8 +82,13 @@
 			// TODO: _enter action - capture error from args when event is 'fail'
 		},
 
-		// final state - nothing left to do!
-		completed: {}
+		completed: {
+			_enter({ from }) {
+				if (from === 'processing') {
+					refreshDepositInfo();
+				}
+			}
+		}
 	});
 
 	// TODO: instrument to confirm if/when this re-runs

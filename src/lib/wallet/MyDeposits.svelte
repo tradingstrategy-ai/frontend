@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { BaseAssetManager } from 'trade-executor/vaults/base';
+	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
-	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
+	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
 	import Button from '$lib/components/Button.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DepositWarning from './DepositWarning.svelte';
@@ -16,7 +16,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { capitalize, formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 
 	interface Props {
@@ -41,6 +41,9 @@
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
 
+	let depositInfoVersion = $state(0);
+	const refreshDepositInfo = () => depositInfoVersion++;
+
 	const expandable = fsm('closed', {
 		closed: {
 			toggle: 'open'
@@ -60,9 +63,9 @@
 		expandable.close();
 	}
 
-	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
-		if (detail.vaultNetValue) {
-			vaultBalance = formatBalance(detail.vaultNetValue);
+	function setVaultBalance(type: string, tokenBalance: TokenBalance) {
+		if (type === 'vaultNetValue') {
+			vaultBalance = formatBalance(tokenBalance);
 		}
 	}
 
@@ -117,10 +120,13 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<VaultBalance {vault} address={address!} let:shares let:value on:dataFetch={setVaultBalance}>
-						<DepositBalance label="Value" data={value} dollar />
-						<DepositBalance label="Shares" data={shares} />
-					</VaultBalance>
+					{#key depositInfoVersion}
+						<VaultBalance {vault} address={address!} onDataFetch={setVaultBalance}>
+							{#snippet children(type, tokenBalance)}
+								<DepositBalance label={capitalize(type)} data={tokenBalance} dollar={type === 'value'} />
+							{/snippet}
+						</VaultBalance>
+					{/key}
 				</dl>
 			{/if}
 			<div class="actions">
@@ -150,7 +156,9 @@
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingDepositInfo {vault} {address} />
+				{#key depositInfoVersion}
+					<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
+				{/key}
 			{/if}
 		</div>
 	</div>

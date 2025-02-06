@@ -1,28 +1,43 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { BaseVault } from 'trade-executor/vaults/base';
 	import type { SmartContracts } from 'trade-executor/schemas/summary';
-	import { createEventDispatcher } from 'svelte';
+	import type { TokenBalance as TokenBalanceType } from '$lib/eth-defi/schemas/token';
 	import { config } from '$lib/wallet/client';
 	import { DataBox } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 
-	export let address: Address;
-	export let vault: BaseVault<SmartContracts>;
+	type TokenType = 'vaultShares' | 'vaultNetValue';
 
-	const dispatch = createEventDispatcher();
+	type Props = {
+		address: Address;
+		vault: BaseVault<SmartContracts>;
+		children?: Snippet<[string, Promise<TokenBalanceType>]>;
+		onDataFetch?: (type: TokenType, tokenBalance: TokenBalanceType) => void;
+	};
 
-	const shares = vault.getShareBalance(config, address).then((vaultShares) => {
-		dispatch('dataFetch', { vaultShares });
-		return vaultShares;
+	let { address, vault, children, onDataFetch }: Props = $props();
+
+	let shares = $state() as Promise<TokenBalanceType>;
+	let value = $state() as Promise<TokenBalanceType>;
+
+	// fetch shares and value before component render
+	$effect.pre(() => {
+		shares = vault.getShareBalance(config, address);
+		value = vault.getShareValueUSD(config, address);
 	});
 
-	const value = vault.getShareValueUSD(config, address).then((vaultNetValue) => {
-		dispatch('dataFetch', { vaultNetValue });
-		return vaultNetValue;
+	// call callback if supplied
+	$effect(() => {
+		shares.then((val) => onDataFetch?.('vaultShares', val));
+		value.then((val) => onDataFetch?.('vaultNetValue', val));
 	});
 </script>
 
-<slot {shares} {value}>
+{#if children}
+	{@render children('value', value)}
+	{@render children('shares', shares)}
+{:else}
 	<div class="vault-balance">
 		<DataBox label="Number of shares">
 			<TokenBalance data={shares} />
@@ -31,7 +46,7 @@
 			<TokenBalance data={value} />
 		</DataBox>
 	</div>
-</slot>
+{/if}
 
 <style>
 	.vault-balance {

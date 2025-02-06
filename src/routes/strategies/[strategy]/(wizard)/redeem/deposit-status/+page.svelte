@@ -22,7 +22,7 @@
 	let tokens: RedeemWizardData = $state({});
 
 	let isComplete = $derived(
-		(['nativeCurrency', 'vaultShares', 'vaultNetValue'] as const).every((key) => tokens[key]?.value)
+		Boolean(tokens.nativeCurrency?.value && tokens.vaultShares?.value && tokens.vaultNetValue?.value)
 	);
 
 	$effect(() => {
@@ -40,7 +40,13 @@
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {vault} {address} on:dataFetch={({ detail }) => Object.assign(tokens, detail)} />
+	<VaultBalance
+		{vault}
+		{address}
+		onDataFetch={(type, val) => {
+			tokens[type] = val;
+		}}
+	/>
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>
