@@ -96,7 +96,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		const shareValue = await readContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'convertToShares',
-			args: [assetValue, depositId]
+			args: settled ? [assetValue, depositId] : [assetValue]
 		});
 
 		return {
