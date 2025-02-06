@@ -22,6 +22,13 @@
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
 
+	let buttonLabels: Record<string, string> = {
+		pending: 'Cancel deposit',
+		settled: 'Claim shares',
+		confirming: 'Approve in wallet',
+		processing: 'Processing'
+	};
+
 	const deposit = fsm('initial', {
 		'*': {
 			fail: 'failed'
@@ -39,20 +46,20 @@
 				if (pendingDeposit.asset.value === 0n) {
 					return 'completed';
 				}
-				return 'ready';
+				return pendingDeposit.settled ? 'settled' : 'pending';
 			}
 		},
 
-		// this state represents both "unsettled" and "settled" deposits
-		// ready for a user action (cancel or claim)
-		ready: {
-			cancel() {
+		pending: {
+			confirm() {
 				const request = vault.cancelPendingDeposit(config);
 				request.then(deposit.process).catch(deposit.fail);
 				return 'confirming';
-			},
+			}
+		},
 
-			claimShares() {
+		settled: {
+			confirm() {
 				const request = vault.claimPendingDeposit(config, address, pendingDeposit.asset.value);
 				request.then(deposit.process).catch(deposit.fail);
 				return 'confirming';
@@ -66,8 +73,10 @@
 				return 'processing';
 			},
 
-			// TODO: user cancels in wallet -> 'ready'; other error: report
-			fail: 'ready'
+			// TODO: user cancels in wallet -> 'pending|settled'; other error: report
+			fail() {
+				return pendingDeposit.settled ? 'settled' : 'pending';
+			}
 		},
 
 		// processing blockchain transaction
@@ -91,7 +100,8 @@
 		}
 	});
 
-	// TODO: instrument to confirm if/when this re-runs
+	let buttonDisabled = $derived(!['pending', 'settled'].includes($deposit));
+
 	$effect(() => {
 		deposit.getData();
 	});
@@ -119,21 +129,12 @@
 				<dd>{settled ? 'shares claimable' : 'estimated shares'}</dd>
 			</div>
 		</dl>
-		{#if settled}
-			<Button size="sm" disabled={$deposit !== 'ready'} on:click={deposit.claimShares}>
-				<svelte:fragment slot="icon">
-					{#if $deposit !== 'ready'}<Spinner size="20" />{/if}
-				</svelte:fragment>
-				{$deposit === 'ready' ? 'Claim shares' : 'Claiming'}
-			</Button>
-		{:else}
-			<Button secondary size="sm" disabled={$deposit !== 'ready'} on:click={deposit.cancel}>
-				<svelte:fragment slot="icon">
-					{#if $deposit !== 'ready'}<Spinner size="20" />{/if}
-				</svelte:fragment>
-				{$deposit === 'ready' ? 'Cancel request' : 'Canceling'}
-			</Button>
-		{/if}
+		<Button size="sm" disabled={buttonDisabled} on:click={deposit.confirm}>
+			<svelte:fragment slot="icon">
+				{#if buttonDisabled}<Spinner size="20" />{/if}
+			</svelte:fragment>
+			{buttonLabels[$deposit]}
+		</Button>
 	</div>
 {/if}
 
