@@ -87,10 +87,18 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 	// Return a given vault's URL on vault provider's website
 	abstract get externalProviderUrl(): string;
 
+	// Return a wallet's share value in USD
+	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
+
 	// Used for displaying the asset management mode.
 	// Appends " vault" to label for vaults.
 	get mode(): string {
 		return `${this.label} vault`;
+	}
+
+	// Returns a wallet's vault share balance
+	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
+		return getTokenBalance(config, { token: this.address, address });
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This
@@ -119,9 +127,6 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
 
-	// Return a wallet's share value in USD
-	abstract getShareValueUSD(config: Config, address: Address): Promise<TokenBalance>;
-
 	// Returns the current share price in USD
 	abstract getSharePriceUSD(config: Config): Promise<number>;
 
@@ -146,11 +151,6 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// Determine if vault supports Terms of Service forwarding (defaults to false)
 	async canForwardToS(_config: Config): Promise<boolean> {
 		return false;
-	}
-
-	// Returns a wallet's vault share balance
-	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
-		return getTokenBalance(config, { token: this.address, address });
 	}
 
 	// Returns denomination token info

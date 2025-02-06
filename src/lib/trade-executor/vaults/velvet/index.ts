@@ -1,4 +1,5 @@
 import type { VelvetSmartContracts } from 'trade-executor/schemas/summary';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import { BaseVault } from '../base';
 
 export class VelvetVault extends BaseVault<VelvetSmartContracts> {
@@ -22,5 +23,10 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 
 	get externalProviderUrl() {
 		return `https://dapp.velvet.capital/VaultDetails/${this.contracts.portfolio}`;
+	}
+
+	// TODO: implement!
+	getShareValueUSD(): Promise<TokenBalance> {
+		throw new Error('Method not implemented');
 	}
 }
