@@ -2,6 +2,7 @@ import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
+import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
@@ -103,6 +104,23 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 			shares: { ...vaultToken, value: shareValue },
 			settled
 		};
+	}
+
+	async cancelPendingDeposit(config: Config): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'cancelRequestDeposit'
+		});
+		return writeContract(config, request);
+	}
+
+	async claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'deposit',
+			args: [value, address]
+		});
+		return writeContract(config, request);
 	}
 
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {

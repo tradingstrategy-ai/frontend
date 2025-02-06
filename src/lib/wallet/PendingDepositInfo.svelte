@@ -18,32 +18,38 @@
 </script>
 
 {#await vault.getPendingDeposit(config, address) then { asset, shares, settled }}
-	<div class={['pending-deposit', settled && 'settled']} transition:slide>
-		<h3>
+	{#if asset.value > 0n}
+		<div class={['pending-deposit', settled && 'settled']} transition:slide>
+			<h3>
+				{#if settled}
+					<IconSuccess />
+					Deposit Settled
+				{:else}
+					<IconHistory />
+					Pending Deposit
+				{/if}
+			</h3>
+			<dl class="values">
+				<div class="asset">
+					<dt>${formatBalance(asset, 2, 4)}</dt>
+					<dd>{asset.label}</dd>
+				</div>
+				<div class="shares">
+					<dt>{formatBalance(shares, 2, 4)}</dt>
+					<dd>{settled ? 'shares claimable' : 'estimated shares'}</dd>
+				</div>
+			</dl>
 			{#if settled}
-				<IconSuccess />
-				Deposit Settled
+				<Button
+					size="sm"
+					label="Claim shares"
+					on:click={() => vault.claimPendingDeposit(config, address, asset.value)}
+				/>
 			{:else}
-				<IconHistory />
-				Pending Deposit
+				<Button secondary size="sm" label="Cancel request" on:click={() => vault.cancelPendingDeposit(config)} />
 			{/if}
-		</h3>
-		<dl class="values">
-			<div class="asset">
-				<dt>${formatBalance(asset, 2, 4)}</dt>
-				<dd>{asset.label}</dd>
-			</div>
-			<div class="shares">
-				<dt>{formatBalance(shares, 2, 4)}</dt>
-				<dd>{settled ? 'shares claimable' : 'estimated shares'}</dd>
-			</div>
-		</dl>
-		{#if settled}
-			<Button size="sm" label="Claim shares" />
-		{:else}
-			<Button secondary size="sm" label="Cancel request" />
-		{/if}
-	</div>
+		</div>
+	{/if}
 {/await}
 
 <style>
