@@ -6,10 +6,12 @@
 	import fsm from 'svelte-fsm';
 	import { goto } from '$app/navigation';
 	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
-	import { Button, HashAddress } from '$lib/components';
-	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
-	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
-	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import HashAddress from '$lib/components/HashAddress.svelte';
+	import DepositWarning from './DepositWarning.svelte';
+	import DepositBalance from './DepositBalance.svelte';
+	import PendingDepositInfo from './PendingDepositInfo.svelte';
+	import VaultBalance from './VaultBalance.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -35,12 +37,9 @@
 	const isOutdated = Boolean(strategy.newVersionId);
 
 	let connected = $derived($wallet.status === 'connected');
+	let address = $derived($wallet.address);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
-
-	if ($wallet.address && vault.internalDepositEnabled() && vault.requiresSettlement()) {
-		vault.getPendingDeposit(config, $wallet.address).then(console.log);
-	}
 
 	const expandable = fsm('closed', {
 		closed: {
@@ -80,9 +79,9 @@
 				<div class="inner">
 					<h2>My deposits</h2>
 					<div class="wallet-address">
-						{#if $wallet.address}
+						{#if address}
 							<IconWallet --icon-size="1.25rem" />
-							<HashAddress address={$wallet.address ?? ''} endChars={5} />
+							<HashAddress {address} endChars={5} />
 						{/if}
 					</div>
 					{#if !buttonsDisabled}
@@ -118,7 +117,7 @@
 				</DepositWarning>
 			{:else}
 				<dl class="balances">
-					<VaultBalance {vault} address={$wallet.address!} let:shares let:value on:dataFetch={setVaultBalance}>
+					<VaultBalance {vault} address={address!} let:shares let:value on:dataFetch={setVaultBalance}>
 						<DepositBalance label="Value" data={value} dollar />
 						<DepositBalance label="Shares" data={shares} />
 					</VaultBalance>
@@ -150,6 +149,9 @@
 					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
+			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
+				<PendingDepositInfo {vault} {address} />
+			{/if}
 		</div>
 	</div>
 </div>
