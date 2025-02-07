@@ -8,8 +8,11 @@
 	import { slide } from 'svelte/transition';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import IconHistory from '~icons/local/history';
 	import IconSuccess from '~icons/local/success';
+	import IconQuestionCircle from '~icons/local/question-circle';
+	import { errorCausedBy } from '$lib/eth-defi/helpers';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 
 	const MAX_RETRIES = 3;
@@ -24,14 +27,7 @@
 	let { vault, address, refreshDepositInfo }: Props = $props();
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
-
-	let buttonLabels: Record<string, string> = {
-		pending: 'Cancel deposit',
-		settled: 'Claim shares',
-		confirming: 'Approve in wallet',
-		processing: 'Processing'
-	};
-
+	let error: any = $state();
 	let retryCount = $state(0);
 
 	const deposit = fsm('initial', {
@@ -40,6 +36,10 @@
 		},
 
 		initial: {
+			_enter() {
+				retryCount = 0;
+			},
+
 			// this is called on-mount (see $effect below)
 			getData() {
 				const request = vault.getPendingDeposit(config, address);
@@ -51,33 +51,28 @@
 				if (pendingDeposit.asset.value === 0n) {
 					return 'completed';
 				}
-				return pendingDeposit.settled ? 'settled' : 'pending';
+				return 'ready';
 			},
 
-			retry(error) {
+			retry(err) {
 				if (retryCount >= MAX_RETRIES) {
-					console.error(`Error fetching pending deposit; no more retries (max=${MAX_RETRIES})\n`, error);
+					console.error(`Error fetching pending deposit; no more retries (max=${MAX_RETRIES})\n`, err);
 					return;
 				}
 
 				const delay = RETRY_DELAY * 2 ** retryCount;
 				retryCount++;
-				console.error(`Error fetching pending deposit; retry ${retryCount} in ${delay}ms\n`, error);
+				console.error(`Error fetching pending deposit; retry ${retryCount} in ${delay}ms\n`, err);
 				setTimeout(deposit.getData, delay);
 			}
 		},
 
-		pending: {
+		// waiting for user action
+		ready: {
 			confirm() {
-				const request = vault.cancelPendingDeposit(config);
-				request.then(deposit.process).catch(deposit.fail);
-				return 'confirming';
-			}
-		},
-
-		settled: {
-			confirm() {
-				const request = vault.claimPendingDeposit(config, address, pendingDeposit.asset.value);
+				const request = pendingDeposit.settled
+					? vault.claimPendingDeposit(config, address, pendingDeposit.asset.value)
+					: vault.cancelPendingDeposit(config);
 				request.then(deposit.process).catch(deposit.fail);
 				return 'confirming';
 			}
@@ -90,22 +85,34 @@
 				return 'processing';
 			},
 
-			// TODO: user cancels in wallet -> 'pending|settled'; other error: report
-			fail() {
-				return pendingDeposit.settled ? 'settled' : 'pending';
+			fail(err) {
+				return errorCausedBy(err, 'UserRejectedRequestError') ? 'ready' : 'failed';
 			}
 		},
 
 		// processing blockchain transaction
 		processing: {
 			finish(receipt) {
-				return receipt.status === 'success' ? 'completed' : 'failed';
-				// TODO: capture error info if failed
+				if (receipt.status === 'success') return 'completed';
+
+				error = new Error('Transaction execution reverted.');
+				error.cause = receipt;
+				return 'failed';
 			}
 		},
 
 		failed: {
-			// TODO: _enter action - capture error from args when event is 'fail'
+			_enter({ args }) {
+				error ??= args[0];
+			},
+
+			_exit() {
+				error = undefined;
+			},
+
+			retry() {
+				return error.state ?? 'ready';
+			}
 		},
 
 		completed: {
@@ -117,7 +124,18 @@
 		}
 	});
 
-	let buttonDisabled = $derived(!['pending', 'settled'].includes($deposit));
+	let buttonDisabled = $derived($deposit !== 'ready');
+
+	let buttonLabel = $derived.by(() => {
+		switch ($deposit) {
+			case 'confirming':
+				return 'Approve in wallet';
+			case 'processing':
+				return 'Processing';
+			default:
+				return pendingDeposit.settled ? 'Claim shares' : 'Cancel deposit';
+		}
+	});
 
 	$effect(() => {
 		deposit.getData();
@@ -146,12 +164,32 @@
 				<dd>{settled ? 'shares claimable' : 'estimated shares'}</dd>
 			</div>
 		</dl>
-		<Button size="sm" disabled={buttonDisabled} on:click={deposit.confirm}>
+		<Button size="sm" secondary={!settled} disabled={buttonDisabled} on:click={deposit.confirm}>
 			<svelte:fragment slot="icon">
-				{#if buttonDisabled}<Spinner size="20" />{/if}
+				{#if buttonDisabled && $deposit !== 'failed'}<Spinner size="20" />{/if}
 			</svelte:fragment>
-			{buttonLabels[$deposit]}
+			{buttonLabel}
 		</Button>
+		{#if error}
+			<div class="error" transition:slide={{ duration: 100 }}>
+				<Tooltip>
+					<span slot="trigger">
+						<span class="underline">Error</span>
+						<IconQuestionCircle />
+					</span>
+					<svelte:fragment slot="popup">
+						<h4>The following error occurred:</h4>
+						<p>{error.shortMessage ?? String(error)}</p>
+						<p>
+							Click <strong>Try again</strong> to reset the form and retry your <strong>{buttonLabel}</strong> request.
+							Or visit the <a href={vault.externalProviderUrl} target="_blank" rel="noreferrer">{vault.mode}</a> to try
+							{settled ? 'claming your shares' : 'canceling your deposit'} there.
+						</p>
+					</svelte:fragment>
+				</Tooltip>
+				<Button tertiary size="xs" label="Try again" on:click={deposit.retry} />
+			</div>
+		{/if}
 	</div>
 {/if}
 
@@ -219,6 +257,39 @@
 					font: var(--f-ui-sm-medium);
 					letter-spacing: var(--ls-ui-sm);
 				}
+			}
+		}
+
+		.error {
+			display: flex;
+			align-items: center;
+			justify-content: space-evenly;
+			margin-block: -0.25rem;
+			text-align: center;
+
+			[slot='trigger'] {
+				display: flex;
+				gap: 0.5ex;
+				font: var(--f-ui-sm-bold);
+				color: var(--c-error);
+				--icon-size: 1.25em;
+			}
+
+			.underline {
+				border-bottom-color: currentColor;
+			}
+
+			h4 {
+				font: var(--f-ui-sm-bold);
+				margin-bottom: 1em;
+			}
+
+			p {
+				margin-top: 1em;
+			}
+
+			a {
+				font-weight: bold;
 			}
 		}
 	}
