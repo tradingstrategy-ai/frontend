@@ -54,9 +54,9 @@ const handleColorMode: Handle = async ({ event, resolve }) => {
 		colorMode = 'dark';
 	} else {
 		// check and update cookie value and expiration
-		colorMode = event.cookies.get('color-mode') || 'dark';
+		colorMode = event.cookies.get('ts-color-mode') || 'dark';
 
-		event.cookies.set('color-mode', colorMode, {
+		event.cookies.set('ts-color-mode', colorMode, {
 			httpOnly: false,
 			secure: false,
 			path: '/',

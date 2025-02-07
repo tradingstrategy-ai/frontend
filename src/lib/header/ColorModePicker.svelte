@@ -23,7 +23,7 @@
 
 	function setMode(mode: string) {
 		document.documentElement.dataset.colorMode = mode;
-		document.cookie = cookies.serialize('color-mode', mode, {
+		document.cookie = cookies.serialize('ts-color-mode', mode, {
 			path: '/',
 			maxAge: 365 * 24 * 60 * 60
 		});
