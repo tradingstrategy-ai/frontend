@@ -12,6 +12,9 @@
 	import IconSuccess from '~icons/local/success';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 
+	const MAX_RETRIES = 3;
+	const RETRY_DELAY = 500;
+
 	type Props = {
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
@@ -29,6 +32,8 @@
 		processing: 'Processing'
 	};
 
+	let retryCount = $state(0);
+
 	const deposit = fsm('initial', {
 		'*': {
 			fail: 'failed'
@@ -36,9 +41,9 @@
 
 		initial: {
 			// this is called on-mount (see $effect below)
-			// TODO: custom error handling - retry with incremental backoff / max retries
 			getData() {
-				vault.getPendingDeposit(config, address).then(deposit.checkStatus);
+				const request = vault.getPendingDeposit(config, address);
+				request.then(deposit.checkStatus).catch(deposit.retry);
 			},
 
 			checkStatus(response: PendingDeposit) {
@@ -47,6 +52,18 @@
 					return 'completed';
 				}
 				return pendingDeposit.settled ? 'settled' : 'pending';
+			},
+
+			retry(error) {
+				if (retryCount >= MAX_RETRIES) {
+					console.error(`Error fetching pending deposit; no more retries (max=${MAX_RETRIES})\n`, error);
+					return;
+				}
+
+				const delay = RETRY_DELAY * 2 ** retryCount;
+				retryCount++;
+				console.error(`Error fetching pending deposit; retry ${retryCount} in ${delay}ms\n`, error);
+				setTimeout(deposit.getData, delay);
 			}
 		},
 
