@@ -156,9 +156,7 @@
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				{#key depositInfoVersion}
-					<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
-				{/key}
+				<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
 			{/if}
 		</div>
 	</div>
