@@ -3,9 +3,11 @@
 	import type { VaultWithInternalDeposits } from 'trade-executor/vaults/base';
 	import type { PendingDeposit, SettlementRequired } from 'trade-executor/vaults/types';
 	import fsm from 'svelte-fsm';
+	import { onMount } from 'svelte';
 	import { config } from './client';
 	import { waitForTransactionReceipt } from '@wagmi/core';
 	import { slide } from 'svelte/transition';
+	import { retryCounter } from '$lib/helpers/retry-counter';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
@@ -14,9 +16,6 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { errorCausedBy } from '$lib/eth-defi/helpers';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-
-	const MAX_RETRIES = 3;
-	const RETRY_DELAY = 500;
 
 	type Props = {
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
@@ -28,16 +27,19 @@
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
 	let error: any = $state();
-	let retryCount = $state(0);
+
+	const retries = retryCounter(3, 500);
 
 	const deposit = fsm('initial', {
 		'*': {
-			fail: 'failed'
+			fail: 'failed',
+			bail: 'completed'
 		},
 
 		initial: {
-			_enter() {
-				retryCount = 0;
+			// see retry action below
+			_exit() {
+				clearTimeout(retries.timer);
 			},
 
 			// this is called on-mount (see $effect below)
@@ -55,15 +57,15 @@
 			},
 
 			retry(err) {
-				if (retryCount >= MAX_RETRIES) {
-					console.error(`Error fetching pending deposit; no more retries (max=${MAX_RETRIES})\n`, err);
+				const { value: retry, done } = retries.next();
+
+				if (done) {
+					console.error(`Error fetching pending deposit; no more retries\n`, err);
 					return;
 				}
 
-				const delay = RETRY_DELAY * 2 ** retryCount;
-				retryCount++;
-				console.error(`Error fetching pending deposit; retry ${retryCount} in ${delay}ms\n`, err);
-				setTimeout(deposit.getData, delay);
+				console.error(`Error fetching pending deposit; retry ${retry.count} in ${retry.delay}ms\n`, err);
+				retries.timer = setTimeout(deposit.getData, retry.delay);
 			}
 		},
 
@@ -116,8 +118,8 @@
 		},
 
 		completed: {
-			_enter({ from }) {
-				if (from === 'processing') {
+			_enter({ event }) {
+				if (event === 'finish') {
 					refreshDepositInfo();
 				}
 			}
@@ -137,8 +139,9 @@
 		}
 	});
 
-	$effect(() => {
+	onMount(() => {
 		deposit.getData();
+		return deposit.bail;
 	});
 </script>
 
