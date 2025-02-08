@@ -2,10 +2,10 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { BaseAssetManager } from 'trade-executor/vaults/base';
-	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-	import fsm from 'svelte-fsm';
+	import { MediaQuery } from 'svelte/reactivity';
+	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
+	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
 	import Button from '$lib/components/Button.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DepositWarning from './DepositWarning.svelte';
@@ -29,11 +29,6 @@
 
 	let { strategy, chain, vault, geoBlocked, ipCountry }: Props = $props();
 
-	let contentWrapper = $state() as HTMLElement;
-	let contentHeight = $state('auto');
-
-	let vaultBalance: MaybeString = $state();
-
 	const isOutdated = Boolean(strategy.newVersionId);
 
 	let connected = $derived($wallet.status === 'connected');
@@ -44,29 +39,12 @@
 	let depositInfoVersion = $state(0);
 	const refreshDepositInfo = () => depositInfoVersion++;
 
-	const expandable = fsm('closed', {
-		closed: {
-			toggle: 'open'
-		},
-		open: {
-			toggle: 'closed',
-			close: 'closed',
-			_enter() {
-				const clientHeight = contentWrapper.firstElementChild?.clientHeight;
-				contentHeight = clientHeight ? `${clientHeight}px` : 'auto';
-			}
-		}
-	});
+	const desktop = new MediaQuery('width > 768px', true);
+	let mobileOpen = $state(false);
 
 	function disconnectWallet() {
 		disconnect();
-		expandable.close();
-	}
-
-	function setVaultBalance(type: string, tokenBalance: TokenBalance) {
-		if (type === 'vaultNetValue') {
-			vaultBalance = formatBalance(tokenBalance);
-		}
+		mobileOpen = false;
 	}
 
 	function getWizardUrl(slug: string) {
@@ -74,11 +52,11 @@
 	}
 </script>
 
-<div class="my-deposits {$expandable}" style:--content-expanded-height={contentHeight}>
+<div class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop']}>
 	<header>
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
-			<button class="mobile" onclick={expandable.toggle}>
+			<button class="mobile" onclick={() => (mobileOpen = !mobileOpen)}>
 				<div class="inner">
 					<h2>My deposits</h2>
 					<div class="wallet-address">
@@ -87,10 +65,14 @@
 							<HashAddress {address} endChars={5} />
 						{/if}
 					</div>
-					{#if !buttonsDisabled}
-						<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
-							{formatDollar(vaultBalance)}
-						</div>
+					{#if !buttonsDisabled && vault.depositEnabled() && address}
+						{#await vault.getShareValueUSD(config, address)}
+							<div class="vault-balance skeleton"></div>
+						{:then vaultBalance}
+							<div class="vault-balance">
+								{formatDollar(formatBalance(vaultBalance))}
+							</div>
+						{/await}
 					{/if}
 				</div>
 				<IconChevronDown --icon-size="1.25em" />
@@ -102,8 +84,8 @@
 			</button>
 		{/if}
 	</header>
-	<div class="content-wrapper" bind:this={contentWrapper}>
-		<div class="content">
+	{#if desktop.current || mobileOpen}
+		<div class="content" transition:slide={{ duration: 250 }}>
 			{#if !vault.depositEnabled()}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
@@ -121,7 +103,7 @@
 			{:else}
 				<dl class="balances">
 					{#key depositInfoVersion}
-						<VaultBalance {vault} address={address!} onDataFetch={setVaultBalance}>
+						<VaultBalance {vault} address={address!}>
 							{#snippet children(type, tokenBalance)}
 								<DepositBalance label={capitalize(type)} data={tokenBalance} dollar={type === 'value'} />
 							{/snippet}
@@ -159,7 +141,7 @@
 				<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
 			{/if}
 		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
@@ -187,7 +169,6 @@
 		&.open {
 			--icon-rotation: 180deg;
 			--wallet-address-margin-left: 0.625rem;
-			--content-height: var(--content-expanded-height);
 		}
 
 		&.closed {
@@ -271,20 +252,17 @@
 		letter-spacing: var(--ls-ui-sm, normal);
 	}
 
-	.content-wrapper {
+	.content {
 		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: var(--gap);
+		padding: calc(var(--gap) / 2) var(--padding) var(--padding);
 
+		/* Prevent FOUC on mobile when JS MediaQuery value is hydrating */
 		@media (--viewport-sm-down) {
-			overflow: hidden;
-			height: var(--content-height, 0);
-			transition: height var(--time-md) ease-out;
-		}
-
-		.content {
-			display: grid;
-			grid-template-rows: 1fr auto;
-			gap: var(--gap);
-			padding: calc(var(--gap) / 2) var(--padding) var(--padding);
+			.desktop.closed & {
+				display: none;
+			}
 		}
 	}
 
