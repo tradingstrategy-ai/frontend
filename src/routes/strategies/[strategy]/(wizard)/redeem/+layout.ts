@@ -25,7 +25,7 @@ export type RedeemWizardData = z.infer<RedeemWizardDataSchema>;
 export async function load({ parent }) {
 	const { vault } = await parent();
 
-	if (!vault.depositEnabled()) {
+	if (!vault.internalDepositEnabled()) {
 		error(400, 'This strategy does not support deposits.');
 	}
 

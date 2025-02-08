@@ -11,12 +11,11 @@
 	import DepositWarning from './DepositWarning.svelte';
 	import DepositBalance from './DepositBalance.svelte';
 	import PendingDepositInfo from './PendingDepositInfo.svelte';
-	import VaultBalance from './VaultBalance.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { capitalize, formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 
 	interface Props {
@@ -35,6 +34,13 @@
 	let address = $derived($wallet.address);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
+
+	let [shareBalance, shareValue] = $derived.by(() => {
+		if (!(vault.depositEnabled() && address && !wrongNetwork)) return [undefined, undefined];
+		const shares = vault.getShareBalance(config, address);
+		const value = vault.getShareValueUSD(config, address);
+		return [shares, value];
+	});
 
 	let depositInfoVersion = $state(0);
 	const refreshDepositInfo = () => depositInfoVersion++;
@@ -65,12 +71,12 @@
 							<HashAddress {address} endChars={5} />
 						{/if}
 					</div>
-					{#if !buttonsDisabled && vault.depositEnabled() && address}
-						{#await vault.getShareValueUSD(config, address)}
+					{#if shareValue}
+						{#await shareValue}
 							<div class="vault-balance skeleton"></div>
-						{:then vaultBalance}
+						{:then balance}
 							<div class="vault-balance">
-								{formatDollar(formatBalance(vaultBalance))}
+								{formatDollar(formatBalance(balance))}
 							</div>
 						{/await}
 					{/if}
@@ -100,14 +106,11 @@
 				<DepositWarning title="Wrong network">
 					Please connect to {chain.name}.
 				</DepositWarning>
-			{:else}
+			{:else if shareValue && shareBalance}
 				<dl class="balances">
 					{#key depositInfoVersion}
-						<VaultBalance {vault} address={address!}>
-							{#snippet children(type, tokenBalance)}
-								<DepositBalance label={capitalize(type)} data={tokenBalance} dollar={type === 'value'} />
-							{/snippet}
-						</VaultBalance>
+						<DepositBalance label="Value" data={shareValue} dollar />
+						<DepositBalance label="Shares" data={shareBalance} />
 					{/key}
 				</dl>
 			{/if}
