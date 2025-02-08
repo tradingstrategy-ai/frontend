@@ -1,13 +1,11 @@
-import type { Abi } from 'viem';
 import { get } from 'svelte/store';
 import { error } from '@sveltejs/kit';
 import { tosContracts } from '$lib/config.js';
 import { config, wallet } from '$lib/wallet/client';
 import { readContracts } from '@wagmi/core';
-import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
+import abi from '$lib/eth-defi/abi/TermsOfService.json';
 
 export async function load({ fetch, parent }) {
-	const abi = termsOfServiceABI as Abi;
 	const { chain } = await parent();
 	const tosContractInfo = tosContracts[chain.slug];
 
@@ -16,7 +14,7 @@ export async function load({ fetch, parent }) {
 	}
 
 	const { address } = tosContractInfo;
-	const account = get(wallet).address;
+	const account = get(wallet).address!;
 
 	const [canProceed, version] = await readContracts(config, {
 		contracts: [

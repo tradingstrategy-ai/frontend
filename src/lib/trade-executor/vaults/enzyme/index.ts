@@ -44,11 +44,11 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		let canForward = false;
 
 		try {
-			canForward = (await readContract(config, {
+			canForward = await readContract(config, {
 				abi,
 				address: this.contracts.payment_forwarder,
 				functionName: 'isTermsOfServiceEnabled'
-			})) as boolean;
+			});
 		} catch (e) {
 			if (!(e instanceof Error && e.name === 'ContractFunctionExecutionError')) {
 				throw e;
@@ -70,7 +70,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 			args: [this.contracts.vault, address]
 		});
 
-		const [token, value] = result as [Address, bigint];
+		const [token, value] = result;
 		const denominationToken = await getTokenBalance(config, { token, address });
 
 		return { ...denominationToken, value };
@@ -100,12 +100,12 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	async getDenominationAsset(config: Config) {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
-		const asset = (await readContract(config, {
+		const asset = await readContract(config, {
 			abi,
 			chainId: this.chain.id,
 			address: this.contracts.comptroller,
 			functionName: 'getDenominationAsset'
-		})) as Address;
+		});
 
 		// memoize
 		this.getDenominationAsset = async () => asset;
@@ -131,7 +131,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		config: Config,
 		signedArgs: SignedArguments,
 		tosHash?: HexString,
-		tosSignature?: string
+		tosSignature?: HexString
 	) {
 		const [canForwardPayment, canForwardToS] = await Promise.all([
 			this.canForwardPayment(config),
@@ -144,16 +144,22 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 
 		const value = signedArgs[2]; // see eip-3009:getSignedArguments return type
 		const minShares = await this.#calculateMinShares(config, value);
-		const args = [...signedArgs, minShares];
+		const args = [...signedArgs, minShares] as [...SignedArguments, bigint];
 
-		const { request } = canForwardToS
-			? await this.#simulateBuySharesWithAuthorizationAndToS(config, [...args, tosHash, tosSignature])
-			: await this.#simulateBuySharesWithAuthorization(config, args);
+		if (canForwardToS && tosHash && tosSignature) {
+			const { request } = await this.#simulateBuySharesWithAuthorizationAndToS(config, [
+				...args,
+				tosHash,
+				tosSignature
+			]);
+			return writeContract(config, request);
+		}
 
+		const { request } = await this.#simulateBuySharesWithAuthorization(config, args);
 		return writeContract(config, request);
 	}
 
-	async #simulateBuySharesWithAuthorization(config: Config, args: any[]) {
+	async #simulateBuySharesWithAuthorization(config: Config, args: [...SignedArguments, bigint]) {
 		const { default: abi } = await import('./abi/VaultUSDCPaymentForwarder.json');
 
 		return simulateContract(config, {
@@ -164,7 +170,10 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		});
 	}
 
-	async #simulateBuySharesWithAuthorizationAndToS(config: Config, args: any[]) {
+	async #simulateBuySharesWithAuthorizationAndToS(
+		config: Config,
+		args: [...SignedArguments, bigint, HexString, HexString]
+	) {
 		const { default: abi } = await import('./abi/TermedVaultUSDCPaymentForwarder.json');
 
 		return simulateContract(config, {

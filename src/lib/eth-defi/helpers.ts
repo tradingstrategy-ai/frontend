@@ -108,13 +108,13 @@ export function getTokenLabel(symbol: string | undefined, address: Address) {
 export async function getDenominationAsset(
 	config: Config,
 	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
-) {
+): Promise<Address> {
 	return readContract(config, {
 		chainId,
 		address: comptroller,
 		abi: comptrollerABI,
 		functionName: 'getDenominationAsset'
-	}) as Promise<Address>;
+	});
 }
 
 /**

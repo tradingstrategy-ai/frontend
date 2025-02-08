@@ -1,4 +1,5 @@
-[
+// ComptrollerLib.json exported `as const` for proper typing with viem/@wagmi
+export default [
 	{
 		"inputs": [
 			{
@@ -894,4 +895,4 @@
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
-]
+] as const;

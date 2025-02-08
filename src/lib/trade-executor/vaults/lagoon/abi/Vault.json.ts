@@ -1,5 +1,5 @@
 // Vault.json exported `as const` for proper typing with viem/@wagmi
-export const vaultAbi = [
+export default [
 	{
 		"type": "constructor",
 		"inputs": [

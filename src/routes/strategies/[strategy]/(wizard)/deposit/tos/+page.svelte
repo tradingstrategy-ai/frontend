@@ -43,7 +43,7 @@
 			abi: termsOfServiceABI,
 			functionName: 'signTermsOfServiceOwn',
 			// TODO: include metadata arg? (use viem `toHex`)
-			args: [tosHash, tosSignature, '']
+			args: [tosHash, tosSignature, '0x']
 		});
 
 		return writeContract(config, request);
@@ -64,7 +64,7 @@
 				// setting dummy signature/hash values since ToS has already been accepted
 				if (tosPreviouslyAccepted) {
 					wizard.updateData({
-						tosSignature: '',
+						tosSignature: '0x',
 						tosHash: numberToHex(0, { size: 32 })
 					});
 				}

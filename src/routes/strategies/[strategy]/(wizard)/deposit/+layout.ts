@@ -11,7 +11,7 @@ const dataSchema = z
 	.object({
 		nativeCurrency: currencyBalanceSchema,
 		denominationToken: tokenBalanceSchema,
-		tosSignature: hexEncodedData,
+		tosSignature: hexString,
 		tosHash: hexString,
 		paymentSnapshot: z.record(z.any())
 	})

@@ -46,7 +46,7 @@
 			address: onChainData.smart_contracts.comptroller,
 			abi: comptrollerABI,
 			functionName: 'redeemSharesInKind',
-			args: [$wallet.address, sharesQuantity, [], []]
+			args: [$wallet.address!, sharesQuantity, [], []]
 		});
 
 		return writeContract(config, request);

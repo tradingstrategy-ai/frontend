@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Abi } from 'viem';
 	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
@@ -23,7 +22,7 @@
 
 	const events = getEvents(
 		transactionLogs,
-		vaultABI as Abi,
+		vaultABI,
 		'AssetWithdrawn',
 		onChainData.smart_contracts.vault
 	) as unknown as AssetWithdrawlEvent[];

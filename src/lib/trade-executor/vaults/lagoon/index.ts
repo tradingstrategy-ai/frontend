@@ -7,7 +7,7 @@ import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
-import { vaultAbi } from './abi/Vault.json';
+import vaultAbi from './abi/Vault.json';
 
 export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> implements SettlementRequired {
 	readonly type = 'lagoon';

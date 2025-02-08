@@ -212,7 +212,7 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 		_config: Config,
 		_signedArgs: SignedArguments,
 		_tosHash?: HexString,
-		_tosSignature?: string
+		_tosSignature?: HexString
 	): Promise<WriteContractReturnType> {
 		throw new Error('Method not implemented');
 	}

@@ -1,4 +1,5 @@
-[
+// TermedVaultUSDCPaymentForwarder.json exported `as const` for proper typing with viem/@wagmi
+export default [
 	{
 		"type": "constructor",
 		"inputs": [
@@ -159,4 +160,4 @@
 		],
 		"stateMutability": "view"
 	}
-]
+] as const;
