@@ -3,6 +3,8 @@
 	import { config } from '$lib/wallet/client';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import ShareBalances from '$lib/wallet/ShareBalances.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	let { data } = $props();
 	const { strategy, vault } = data;
@@ -21,6 +23,14 @@
 		returns. Please remember that participating in crypto / DeFi trading strategies carries significant risk. Click
 		"Done" to return to the strategy.
 	</p>
+
+	{#if vault.requiresSettlement()}
+		<Alert size="md" status="info" title="Note">
+			{vault.label} vaults have a <i>settlement</i> phase. Your deposit will appear as <i>pending</i> until settled,
+			after which you will be able to claim your shares.
+			<Button slot="cta" size="xs" label="Learn more" href={vault.settlementInfoUrl} target="_blank" rel="noreferrer" />
+		</Alert>
+	{/if}
 </div>
 
 <style>

@@ -19,6 +19,8 @@ export type PendingDeposit = DepositResult & {
 };
 
 export type SettlementRequired = {
+	readonly settlementInfoUrl: string;
+
 	getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit>;
 
 	cancelPendingDeposit(config: Config): Promise<HexString>;

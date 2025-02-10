@@ -26,6 +26,8 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	// Used by requiresSettlement() type predicate
 	protected readonly _requiresSettlement = true;
 
+	readonly settlementInfoUrl = 'https://docs.lagoon.finance/introduction/readme/terminology#vault-settlement';
+
 	// private utility prop for generating vault contracts
 	#vaultBaseContract = {
 		abi: vaultAbi,

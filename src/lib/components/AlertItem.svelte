@@ -50,7 +50,7 @@ Display a single alert item (should always be nested within AlertList).
 		}
 
 		:global(:where(a)) {
-			font-weight: 700;
+			font-weight: 500;
 			text-decoration: underline;
 		}
 
