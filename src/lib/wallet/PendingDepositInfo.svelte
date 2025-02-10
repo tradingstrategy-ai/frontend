@@ -50,7 +50,7 @@
 
 			checkStatus(response: PendingDeposit) {
 				pendingDeposit = response;
-				if (pendingDeposit.asset.value === 0n) {
+				if (pendingDeposit.assets.value === 0n) {
 					return 'completed';
 				}
 				return 'ready';
@@ -73,7 +73,7 @@
 		ready: {
 			confirm() {
 				const request = pendingDeposit.settled
-					? vault.claimPendingDeposit(config, address, pendingDeposit.asset.value)
+					? vault.claimPendingDeposit(config, address, pendingDeposit.assets.value)
 					: vault.cancelPendingDeposit(config);
 				request.then(deposit.process).catch(deposit.fail);
 				return 'confirming';
@@ -146,7 +146,7 @@
 </script>
 
 {#if !['initial', 'completed'].includes($deposit)}
-	{@const { asset, shares, settled } = pendingDeposit}
+	{@const { assets, shares, settled } = pendingDeposit}
 	<div class={['pending-deposit', settled && 'settled']} transition:slide>
 		<h3>
 			{#if settled}
@@ -158,9 +158,9 @@
 			{/if}
 		</h3>
 		<dl class="values">
-			<div class="asset">
-				<dt>${formatBalance(asset, 2, 4)}</dt>
-				<dd>{asset.label}</dd>
+			<div class="assets">
+				<dt>${formatBalance(assets, 2, 4)}</dt>
+				<dd>{assets.label}</dd>
 			</div>
 			<div class="shares">
 				<dt>{formatBalance(shares, 2, 4)}</dt>
@@ -238,7 +238,7 @@
 				color: var(--c-text-extra-light);
 			}
 
-			.asset {
+			.assets {
 				dt {
 					font: var(--f-ui-xl-medium);
 					letter-spacing: var(--ls-ui-xl);

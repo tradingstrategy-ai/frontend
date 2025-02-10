@@ -1,10 +1,12 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
-import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
+import type { Log } from 'viem';
+import type { DepositResult } from '../types';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
-import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+import { getTokenBalance } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 import vaultAbi from './abi/Vault.json';
@@ -23,9 +25,6 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	// Used by requiresSettlement() type predicate
 	protected readonly _requiresSettlement = true;
-
-	// for memoization
-	#vaultTokenInfo?: TokenInfo;
 
 	// private utility prop for generating vault contracts
 	#vaultBaseContract = {
@@ -70,11 +69,15 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
+	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
+		throw new Error('Method not yet implemented');
+	}
+
 	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
 		const [depositId, assetToken, vaultToken] = await Promise.all([
 			this.#getPendingDepositId(config, address),
 			this.getDenominationTokenInfo(config),
-			this.#getVaultTokenInfo(config)
+			this.getVaultTokenInfo(config)
 		]);
 
 		const baseContract = {
@@ -104,7 +107,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		}
 
 		return {
-			asset: { ...assetToken, value: assetValue },
+			assets: { ...assetToken, value: assetValue },
 			shares: { ...vaultToken, value: shareValue },
 			settled
 		};
@@ -159,17 +162,8 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.#convertToAssets(config, value);
 	}
 
-	async #getVaultTokenInfo(config: Config): Promise<TokenInfo> {
-		this.#vaultTokenInfo ??= await getTokenInfo(config, {
-			chainId: this.chain.id,
-			address: this.address
-		});
-
-		return this.#vaultTokenInfo;
-	}
-
 	async #getShareAssetValue(config: Config) {
-		const { decimals } = await this.#getVaultTokenInfo(config);
+		const { decimals } = await this.getVaultTokenInfo(config);
 		const value = parseUnits('1', decimals);
 		return this.#convertToAssets(config, value);
 	}

@@ -1,10 +1,11 @@
 import type { SmartContracts, StrategyFees } from '../schemas/summary';
 import type { Chain } from '$lib/helpers/chain';
 import type { Config, WriteContractReturnType } from '@wagmi/core';
+import type { Log } from 'viem';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
-import type { VaultFees, SettlementRequired } from './types';
+import type { VaultFees, DepositResult, SettlementRequired } from './types';
 import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
 
 export const DepositMethod = {
@@ -133,7 +134,11 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// Returns address of the vault's denomination token
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
+	// Submit payment, receive shares (or a pending deposit)
 	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
+
+	// Returns the result of a successful deposit, extracted from the transaction logs
+	abstract getDepositResult(config: Config, logs: Log[]): Promise<DepositResult>;
 
 	// The address used when forwarding payment authorization (EIP-3009 signature)
 	readonly paymentForwarder?: Address = undefined;
@@ -151,6 +156,14 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// Determine if vault supports Terms of Service forwarding (defaults to false)
 	async canForwardToS(_config: Config): Promise<boolean> {
 		return false;
+	}
+
+	// Returns vault token info
+	async getVaultTokenInfo(config: Config): Promise<TokenInfo> {
+		const tokenInfo = await getTokenInfo(config, { chainId: this.chain.id, address: this.address });
+		// memoize
+		this.getVaultTokenInfo = async () => tokenInfo;
+		return tokenInfo;
 	}
 
 	// Returns denomination token info

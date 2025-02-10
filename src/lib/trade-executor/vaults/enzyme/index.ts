@@ -1,10 +1,12 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
+import type { Log } from 'viem';
+import type { DepositResult } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits, GetSharePriceError } from '../base';
-import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 
@@ -159,6 +161,22 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		return writeContract(config, request);
 	}
 
+	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		const [{ args: sharesBought }] = getEvents(logs, abi, 'SharesBought', this.contracts.comptroller);
+
+		const [denominationTokenInfo, vaultTokenInfo] = await Promise.all([
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config)
+		]);
+
+		return {
+			assets: { ...denominationTokenInfo, value: sharesBought.investmentAmount },
+			shares: { ...vaultTokenInfo, value: sharesBought.sharesIssued }
+		};
+	}
+
 	async #simulateBuySharesWithAuthorization(config: Config, args: [...SignedArguments, bigint]) {
 		const { default: abi } = await import('./abi/VaultUSDCPaymentForwarder.json');
 
@@ -188,7 +206,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	async #calculateMinShares(config: Config, value: bigint): Promise<bigint> {
 		const [sharePrice, vaultToken, denominationToken] = await Promise.all([
 			this.getSharePriceUSD(config),
-			getTokenInfo(config, { address: this.address }),
+			this.getVaultTokenInfo(config),
 			this.getDenominationTokenInfo(config)
 		]);
 

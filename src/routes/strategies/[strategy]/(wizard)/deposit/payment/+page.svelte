@@ -175,9 +175,13 @@
 			},
 
 			finish(receipt) {
-				if (receipt.status === 'success') return 'completed';
-				error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
-				return 'failed';
+				if (receipt.status !== 'success') {
+					error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
+					return 'failed';
+				}
+
+				wizard.data.transactionLogs = receipt.logs;
+				return 'completed';
 			}
 		},
 
