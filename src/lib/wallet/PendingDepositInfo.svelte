@@ -131,7 +131,7 @@
 	let buttonLabel = $derived.by(() => {
 		switch ($deposit) {
 			case 'confirming':
-				return 'Approve in wallet';
+				return 'Confirm in wallet';
 			case 'processing':
 				return 'Processing';
 			default:
