@@ -1,4 +1,4 @@
-import type { Abi, Log } from 'viem';
+import type { Abi, ContractEventName, DecodeEventLogReturnType, Log } from 'viem';
 import type { Config, GetBalanceParameters } from '@wagmi/core';
 import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
@@ -9,10 +9,23 @@ import { formatNumber } from '$lib/helpers/formatters';
 /**
  * Extract events from transaction logs
  */
-export function getEvents(logs: Log[], abi: Abi, name: string, contractAddress: Address) {
+export function getEvents<const AbiType extends Abi, EventName extends ContractEventName<AbiType>>(
+	logs: Log[],
+	abi: AbiType,
+	name: EventName,
+	contractAddress: Address
+): DecodeEventLogReturnType<AbiType, EventName>[] {
 	return logs
 		.filter(({ address }: Log) => isAddressEqual(address, contractAddress))
-		.map(({ data, topics }: Log) => decodeEventLog({ abi, data, topics, eventName: name }))
+		.map(
+			({ data, topics }: Log) =>
+				decodeEventLog({
+					abi,
+					data,
+					topics,
+					eventName: name
+				}) as DecodeEventLogReturnType<AbiType, EventName>
+		)
 		.filter(({ eventName }) => eventName === name);
 }
 

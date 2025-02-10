@@ -4,7 +4,7 @@
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { config } from '$lib/wallet/client';
 	import { formatBalance, getEvents } from '$lib/eth-defi/helpers';
-	import { type AssetWithdrawlEvent, getRedemption } from '$lib/eth-defi/enzyme';
+	import { getRedemption } from '$lib/eth-defi/enzyme';
 	import vaultABI from '$lib/eth-defi/abi/enzyme/VaultLib.json';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
@@ -20,12 +20,7 @@
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 
-	const events = getEvents(
-		transactionLogs,
-		vaultABI,
-		'AssetWithdrawn',
-		onChainData.smart_contracts.vault
-	) as unknown as AssetWithdrawlEvent[];
+	const events = getEvents(transactionLogs, vaultABI, 'AssetWithdrawn', onChainData.smart_contracts.vault);
 </script>
 
 <div class="redemption-success">

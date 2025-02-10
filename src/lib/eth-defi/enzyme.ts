@@ -10,11 +10,6 @@ export type AssetWithdrawl = {
 	amount: bigint;
 };
 
-export type AssetWithdrawlEvent = {
-	eventName: 'AssetWithdrawn';
-	args: AssetWithdrawl;
-};
-
 type GetRedemptionParams = {
 	withdrawl: AssetWithdrawl;
 	denominationToken: TokenInfo;
