@@ -6,7 +6,7 @@ import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
-import { getTokenBalance } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 import vaultAbi from './abi/Vault.json';
@@ -70,7 +70,18 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
-		throw new Error('Method not yet implemented');
+		const [{ args: depositRequest }] = getEvents(logs, vaultAbi, 'DepositRequest', this.address);
+
+		const [sharesValue, denominationTokenInfo, vaultTokenInfo] = await Promise.all([
+			this.#convertToShares(config, depositRequest.assets),
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config)
+		]);
+
+		return {
+			assets: { ...denominationTokenInfo, value: depositRequest.assets },
+			shares: { ...vaultTokenInfo, value: sharesValue }
+		};
 	}
 
 	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
@@ -99,11 +110,8 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		let shareValue = 0n;
 
 		if (assetValue > 0n) {
-			shareValue = await readContract(config, {
-				...this.#vaultBaseContract,
-				functionName: 'convertToShares',
-				args: settled ? [assetValue, depositId] : [assetValue]
-			});
+			const requestId = settled ? depositId : undefined;
+			shareValue = await this.#convertToShares(config, assetValue, requestId);
 		}
 
 		return {
@@ -168,11 +176,21 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.#convertToAssets(config, value);
 	}
 
-	async #convertToAssets(config: Config, value: bigint): Promise<bigint> {
+	// Convert number of shares to value in denomination asset (with optional requestId)
+	async #convertToAssets(config: Config, value: bigint, requestId?: bigint): Promise<bigint> {
 		return readContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'convertToAssets',
-			args: [value]
+			args: requestId ? [value, requestId] : [value]
+		});
+	}
+
+	// Convert an asset value to number of shares (with optional requestId)
+	async #convertToShares(config: Config, value: bigint, requestId?: bigint): Promise<bigint> {
+		return readContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'convertToShares',
+			args: requestId ? [value, requestId] : [value]
 		});
 	}
 }
