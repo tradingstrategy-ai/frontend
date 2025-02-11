@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { hexString } from 'trade-executor/schemas/utility-types';
 
 export const tosContractInfoSchema = z.object({
-	address: hexString,
+	address: hexString.nullish(),
 	version: z.number().nonnegative(),
 	fileName: z.string(),
 	acceptanceMessage: z.string()

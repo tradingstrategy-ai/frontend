@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { DepositWizardDataSchema } from '../+layout';
-	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
+	import { page } from '$app/state';
 	import { captureException } from '@sentry/sveltekit';
-	import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
+	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { inview } from 'svelte-inview';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { hashMessage, numberToHex } from 'viem';
@@ -19,27 +18,25 @@
 	import IconDownload from '~icons/local/download';
 	import IconFullscreen from '~icons/local/fullscreen';
 
-	export let data;
-	const { chain, strategy, canForwardToS, canProceed, version, fileName, tosText, acceptanceMessage } = data;
+	const { data } = $props();
+	const { chain, canForwardToS, canProceed, tosContract, latestContractVersion, tosText } = data;
+	const { version, fileName, acceptanceMessage } = tosContract;
+
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	const { tosHash, tosSignature } = wizard.data;
-	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
 
-	const progressBar = tweened(0, {
-		easing: cubicOut,
-		duration: getExpectedBlockTime(chain.id)
-	});
-
+	const progressBar = getProgressBar(0, getExpectedBlockTime(chain.id));
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
+	const tosNotFound = `Terms of service file not found:\n${page.url.origin}/tos/${fileName}`;
 
-	let fullScreen = false;
-	let transactionId: Maybe<Address>;
-	let errorMessage: MaybeString;
+	let fullScreen = $state(false);
+	let transactionId: Address | undefined = $state();
+	let errorMessage = $state('');
 
-	async function recordSignature(tosHash: Address, tosSignature: Address) {
+	async function recordSignature(address: Address, tosHash: Address, tosSignature: Address) {
 		const { request } = await simulateContract(config, {
-			address: contracts.terms_of_service!,
+			address,
 			abi: termsOfServiceABI,
 			functionName: 'signTermsOfServiceOwn',
 			// TODO: include metadata arg? (use viem `toHex`)
@@ -52,7 +49,7 @@
 	const tos = fsm('initial', {
 		initial: {
 			validate() {
-				if (fileName && tosText && acceptanceMessage && Number.isFinite(version)) {
+				if (tosText && version === latestContractVersion) {
 					return 'valid';
 				}
 				return 'invalid';
@@ -83,8 +80,9 @@
 		},
 
 		ready: {
-			sign() {
-				signMessage(config, { message: acceptanceMessage! }).then(tos.continue).catch(tos.fail);
+			submit(event: SubmitEvent) {
+				event.preventDefault();
+				signMessage(config, { message: acceptanceMessage }).then(tos.continue).catch(tos.fail);
 				return 'signing';
 			}
 		},
@@ -95,15 +93,15 @@
 			},
 
 			continue(tosSignature) {
-				const tosHash = hashMessage(acceptanceMessage!);
+				const tosHash = hashMessage(acceptanceMessage);
 
-				if (canForwardToS) {
-					wizard.updateData({ tosHash, tosSignature });
-					return 'completed';
+				if (!canForwardToS && tosContract.address) {
+					recordSignature(tosContract.address, tosHash, tosSignature).then(tos.process).catch(tos.fail);
+					return 'recording';
 				}
 
-				recordSignature(tosHash, tosSignature).then(tos.process).catch(tos.fail);
-				return 'recording';
+				wizard.updateData({ tosHash, tosSignature });
+				return 'completed';
 			},
 
 			fail(err: Error) {
@@ -140,11 +138,11 @@
 		processing: {
 			_enter() {
 				waitForTransactionReceipt(config, { hash: transactionId! }).then(tos.finish).catch(tos.fail);
-				progressBar.set(100);
+				progressBar.start();
 			},
 
 			_exit() {
-				progressBar.set(100, { duration: 100 });
+				progressBar.finish();
 			},
 
 			finish(receipt) {
@@ -185,15 +183,30 @@
 	tos.checkDeviceType(window);
 </script>
 
+{#snippet tosForm(size: 'sm' | 'md' = 'md')}
+	<form onsubmit={tos.submit}>
+		<Button {size} label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
+		{#if $tos === 'valid'}
+			<div class="tooltip">
+				<IconReading --icon-size="1.5rem" />
+				Please read to the end!
+			</div>
+		{/if}
+	</form>
+{/snippet}
+
+{#snippet scrollCheck()}
+	<div class="scroll-check" use:inview oninview_enter={tos.finishReading}></div>
+{/snippet}
+
 <div class="deposit-tos">
 	{#if $tos === 'invalid'}
 		<Alert size="md" status="error" title="Error">
-			Terms of service v{version} file not found
-		</Alert>
-	{:else if !acceptanceMessage}
-		<Alert size="md" status="error" title="Error">
-			Terms of service v{version} acceptance message not found in
-			<code>acceptance-messages.json</code>
+			{#if version !== latestContractVersion}
+				Configured Terms of Service version (v{version}) does not match latest smart contract version (v{latestContractVersion}).
+			{:else if !tosText}
+				Terms of service v{version} file not found.
+			{/if}
 		</Alert>
 	{/if}
 
@@ -215,27 +228,14 @@
 				</Button>
 			</div>
 		</header>
-		<pre class="tos-text in-doc-flow" class:no-file={!tosText}>
-			{#if tosText}
-				{tosText}
-				<div class="scroll-check" use:inview on:inview_enter={tos.finishReading}></div>
-			{:else}
-				Terms of service file not found:
-  			&gt; src/lib/assets/tos/{fileName}
-			{/if}
+		<pre class="tos-text in-doc-flow" class:not-found={!tosText}>
+			{tosText ? tosText : tosNotFound}
+			{@render scrollCheck()}
 		</pre>
 	</SummaryBox>
 
-	{#if ['initial', 'valid', 'ready'].includes($tos)}
-		<form on:submit|preventDefault={tos.sign}>
-			<Button label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-			{#if $tos === 'valid'}
-				<div class="tooltip">
-					<IconReading --icon-size="1.5rem" />
-					Please read to the end!
-				</div>
-			{/if}
-		</form>
+	{#if ['initial', 'valid', 'invalid', 'ready'].includes($tos)}
+		{@render tosForm()}
 	{/if}
 
 	{#if $tos === 'signing'}
@@ -289,7 +289,7 @@
 		</span>
 		<pre class="tos-text in-dialog">
 			{tosText}
-			<div class="scroll-check" use:inview on:inview_enter={tos.finishReading}></div>
+			{@render scrollCheck()}
 		</pre>
 		<footer slot="footer" class="dialog-footer">
 			{#if $tos === 'completed'}
@@ -297,15 +297,7 @@
 					Terms of service v{version} accepted
 				</Alert>
 			{:else}
-				<form on:submit|preventDefault={tos.sign}>
-					<Button size="sm" label="Sign terms with your wallet" disabled={$tos !== 'ready'} />
-					{#if $tos === 'valid'}
-						<div class="tooltip">
-							<IconReading --icon-size="1.5rem" />
-							Please read to the end!
-						</div>
-					{/if}
-				</form>
+				{@render tosForm('sm')}
 			{/if}
 		</footer>
 	</Dialog>
@@ -385,7 +377,7 @@
 			}
 		}
 
-		.no-file {
+		.not-found {
 			font: var(--f-mono-md-regular);
 			letter-spacing: var(--f-mono-md-spacing, normal);
 			color: color-mix(in srgb, var(--c-text), var(--c-error));
