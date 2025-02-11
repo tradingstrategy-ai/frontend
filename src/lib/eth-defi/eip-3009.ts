@@ -1,4 +1,4 @@
-import type { TypedData, TypedDataDomain } from 'viem';
+import type { Hex, TypedData, TypedDataDomain } from 'viem';
 import type { TokenInfo } from './schemas/token';
 import { bytesToHex, getTypesForEIP712Domain, hexToNumber, numberToHex, slice } from 'viem';
 import { type Config, type SignTypedDataParameters, signTypedData } from '@wagmi/core';
@@ -75,8 +75,20 @@ export async function getSignedArguments(config: Config, params: GetSignedArgume
 	const domain = getDomain(chainId, token);
 	const types = getTypes(domain, transferMethod);
 	const message = prepareMessage(messageParams);
-	const { v, r, s } = await getSignature(config, { types, domain, message, primaryType: transferMethod });
-	return [...Object.values(message), v, r, s];
+	const signature = await getSignature(config, { types, domain, message, primaryType: transferMethod });
+
+	// return explicit ordered list to ensure typed tuple (vs. Object.value(...))
+	return [
+		message.from,
+		message.to,
+		message.value,
+		message.validAfter,
+		message.validBefore,
+		message.nonce,
+		signature.v,
+		signature.r,
+		signature.s
+	] as const;
 }
 
 export type SignedArguments = Awaited<ReturnType<typeof getSignedArguments>>;

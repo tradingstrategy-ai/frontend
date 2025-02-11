@@ -1,4 +1,5 @@
-[
+// VaultLib.json exported `as const` for proper typing with viem/@wagmi
+export default [
 	{
 		"inputs": [
 			{
@@ -1305,4 +1306,4 @@
 		"stateMutability": "payable",
 		"type": "receive"
 	}
-]
+] as const;

@@ -18,7 +18,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	let { data } = $props();
+	const { data } = $props();
 	const { chain, strategy } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
@@ -46,7 +46,7 @@
 			address: onChainData.smart_contracts.comptroller,
 			abi: comptrollerABI,
 			functionName: 'redeemSharesInKind',
-			args: [$wallet.address, sharesQuantity, [], []]
+			args: [$wallet.address!, sharesQuantity, [], []]
 		});
 
 		return writeContract(config, request);

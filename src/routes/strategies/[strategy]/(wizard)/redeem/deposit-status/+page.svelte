@@ -1,46 +1,39 @@
 <script lang="ts">
-	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
-	import { beforeNavigate } from '$app/navigation';
+	import type { RedeemWizardDataSchema, RedeemWizardData } from '../+layout';
 	import { fade } from 'svelte/transition';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { getBalance } from '@wagmi/core';
-	import { config, wallet } from '$lib/wallet/client';
 	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
-	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import ShareBalances from '$lib/wallet/ShareBalances.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	let { data } = $props();
-	const { chain, vault } = data;
+	const { data } = $props();
+	const { chain, tokenPromises } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
-	let address = $derived($wallet.address!);
-	let tokens: RedeemWizardData = $state({});
+	let tokens = $derived(wizard.data);
 
-	let isComplete = $derived(
-		(['nativeCurrency', 'vaultShares', 'vaultNetValue'] as const).every((key) => tokens[key]?.value)
-	);
+	let isComplete = $derived.by(() => {
+		const { nativeCurrency, vaultShares, vaultNetValue } = tokens;
+		return Boolean(nativeCurrency?.value && vaultShares?.value && vaultNetValue?.value);
+	});
+
+	// update wizard data when promises resolve
+	(['nativeCurrency', 'vaultShares', 'vaultNetValue'] as const).forEach((key) => {
+		tokenPromises[key].then((token) => wizard.updateData({ [key]: token }));
+	});
 
 	$effect(() => {
 		wizard.toggleComplete('deposit-status', isComplete);
 	});
-
-	beforeNavigate(() => {
-		wizard.data = { ...wizard.data, ...tokens };
-	});
-
-	async function getNativeCurrency(address: Address) {
-		tokens.nativeCurrency = await getBalance(config, { address });
-		return tokens.nativeCurrency;
-	}
 </script>
 
 <Grid gap="lg">
-	<VaultBalance {vault} {address} on:dataFetch={({ detail }) => Object.assign(tokens, detail)} />
+	<ShareBalances shares={tokenPromises.vaultShares} value={tokenPromises.vaultNetValue} />
 
 	<div class="gas-fees-balance">
 		<h3>Balance for gas fees</h3>
@@ -48,8 +41,8 @@
 		<WalletInfo alignValues="right">
 			<WalletInfoItem>
 				<EntitySymbol slot="label" size="1.5rem" label={chain.gas} logoUrl={getLogoUrl('token', chain.gas)} />
-				{#await getNativeCurrency(address)}
-					<Spinner />
+				{#await tokenPromises.nativeCurrency}
+					<span class="skeleton" style:width="8ch" style:display="inline-grid">-</span>
 				{:then balance}
 					{formatBalance(balance, 2, 4)}
 				{/await}

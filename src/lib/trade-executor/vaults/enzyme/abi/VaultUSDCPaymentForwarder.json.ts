@@ -1,4 +1,5 @@
-[
+// VaultUSDCPaymentForwarder.json exported `as const` for proper typing with viem/@wagmi
+export default [
 	{
 		"inputs": [
 			{
@@ -182,4 +183,4 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
+] as const;

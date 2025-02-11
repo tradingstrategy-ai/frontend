@@ -1,4 +1,4 @@
-import type { Abi, Log } from 'viem';
+import type { Abi, ContractEventName, DecodeEventLogReturnType, Log } from 'viem';
 import type { Config, GetBalanceParameters } from '@wagmi/core';
 import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
@@ -9,10 +9,23 @@ import { formatNumber } from '$lib/helpers/formatters';
 /**
  * Extract events from transaction logs
  */
-export function getEvents(logs: Log[], abi: Abi, name: string, contractAddress: Address) {
+export function getEvents<const AbiType extends Abi, EventName extends ContractEventName<AbiType>>(
+	logs: Log[],
+	abi: AbiType,
+	name: EventName,
+	contractAddress: Address
+): DecodeEventLogReturnType<AbiType, EventName>[] {
 	return logs
 		.filter(({ address }: Log) => isAddressEqual(address, contractAddress))
-		.map(({ data, topics }: Log) => decodeEventLog({ abi, data, topics, eventName: name }))
+		.map(
+			({ data, topics }: Log) =>
+				decodeEventLog({
+					abi,
+					data,
+					topics,
+					eventName: name
+				}) as DecodeEventLogReturnType<AbiType, EventName>
+		)
 		.filter(({ eventName }) => eventName === name);
 }
 
@@ -108,13 +121,13 @@ export function getTokenLabel(symbol: string | undefined, address: Address) {
 export async function getDenominationAsset(
 	config: Config,
 	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
-) {
+): Promise<Address> {
 	return readContract(config, {
 		chainId,
 		address: comptroller,
 		abi: comptrollerABI,
 		functionName: 'getDenominationAsset'
-	}) as Promise<Address>;
+	});
 }
 
 /**
@@ -126,17 +139,6 @@ export async function getDenominationTokenInfo(
 ) {
 	const address = await getDenominationAsset(config, { chainId, comptroller });
 	return getTokenInfo(config, { chainId, address });
-}
-
-/**
- * Get strategy denomination token balance for a given chain, comptroller and address
- */
-export async function getDenominationTokenBalance(
-	config: Config,
-	{ chainId, comptroller, address }: { chainId?: number; comptroller: Address; address: Address }
-) {
-	const token = await getDenominationAsset(config, { chainId, comptroller });
-	return getTokenBalance(config, { chainId, token, address });
 }
 
 type ApproveTokenTransferParams = {

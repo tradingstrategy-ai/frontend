@@ -1,21 +1,21 @@
 import type { VelvetSmartContracts } from 'trade-executor/schemas/summary';
-import { BaseVault, DepositMethod } from '../base';
+import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+import { BaseVault } from '../base';
 
 export class VelvetVault extends BaseVault<VelvetSmartContracts> {
-	type = 'velvet';
-	label = 'Velvet Capital';
-	logoUrl = '/logos/tokens/velvet';
-	address = this.contracts.portfolio;
-	depositMethod = DepositMethod.EXTERNAL;
+	readonly type = 'velvet';
+	readonly label = 'Velvet Capital';
+	readonly logoUrl = '/logos/tokens/velvet';
+	readonly address = this.contracts.portfolio;
 
 	// Velvet Capital protocol fee and info
-	protocolFee = 0.002;
-	protocolFeeTooltip = `
+	readonly protocolFee = 0.002;
+	readonly protocolFeeTooltip = `
 		To support further development & future token buy-backs Velvet Capital DeFi execution engine
 		takes a 0.2% transaction fee. The fee can be further reduced by staking Velvet tokens (please
 		refer to the Tokenomics section).
 	`;
-	protocolFeeUrl = 'https://docs.velvet.capital/product/fees';
+	readonly protocolFeeUrl = 'https://docs.velvet.capital/product/fees';
 
 	get shortLabel() {
 		return 'Velvet';
@@ -25,7 +25,8 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 		return `https://dapp.velvet.capital/VaultDetails/${this.contracts.portfolio}`;
 	}
 
-	async getShareValueUSD() {
-		throw new Error('Velvet deposit value not yet available.');
+	// TODO: implement!
+	getShareValueUSD(): Promise<TokenBalance> {
+		throw new Error('Method not implemented');
 	}
 }

@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { BaseAssetManager } from 'trade-executor/vaults/base';
-	import fsm from 'svelte-fsm';
+	import { MediaQuery } from 'svelte/reactivity';
+	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { disconnect, switchChain, wallet } from '$lib/wallet/client';
-	import { Button, HashAddress } from '$lib/components';
-	import DepositWarning from '$lib/wallet/DepositWarning.svelte';
-	import DepositBalance from '$lib/wallet/DepositBalance.svelte';
-	import VaultBalance from '$lib/wallet/VaultBalance.svelte';
+	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
+	import Button from '$lib/components/Button.svelte';
+	import HashAddress from '$lib/components/HashAddress.svelte';
+	import DepositWarning from './DepositWarning.svelte';
+	import DepositBalance from './DepositBalance.svelte';
+	import PendingDepositInfo from './PendingDepositInfo.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -27,40 +28,29 @@
 
 	let { strategy, chain, vault, geoBlocked, ipCountry }: Props = $props();
 
-	let contentWrapper = $state() as HTMLElement;
-	let contentHeight = $state('auto');
-
-	let vaultBalance: MaybeString = $state();
-
 	const isOutdated = Boolean(strategy.newVersionId);
 
 	let connected = $derived($wallet.status === 'connected');
+	let address = $derived($wallet.address);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
 
-	const expandable = fsm('closed', {
-		closed: {
-			toggle: 'open'
-		},
-		open: {
-			toggle: 'closed',
-			close: 'closed',
-			_enter() {
-				const clientHeight = contentWrapper.firstElementChild?.clientHeight;
-				contentHeight = clientHeight ? `${clientHeight}px` : 'auto';
-			}
-		}
+	let [shareBalance, shareValue] = $derived.by(() => {
+		if (!(vault.depositEnabled() && address && !wrongNetwork)) return [undefined, undefined];
+		const shares = vault.getShareBalance(config, address);
+		const value = vault.getShareValueUSD(config, address);
+		return [shares, value];
 	});
+
+	let depositInfoVersion = $state(0);
+	const refreshDepositInfo = () => depositInfoVersion++;
+
+	const desktop = new MediaQuery('width > 768px', true);
+	let mobileOpen = $state(false);
 
 	function disconnectWallet() {
 		disconnect();
-		expandable.close();
-	}
-
-	function setVaultBalance({ detail }: ComponentEvents<VaultBalance>['dataFetch']) {
-		if (detail.vaultNetValue) {
-			vaultBalance = formatBalance(detail.vaultNetValue);
-		}
+		mobileOpen = false;
 	}
 
 	function getWizardUrl(slug: string) {
@@ -68,23 +58,27 @@
 	}
 </script>
 
-<div class="my-deposits {$expandable}" style:--content-expanded-height={contentHeight}>
+<div class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop']}>
 	<header>
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
-			<button class="mobile" onclick={expandable.toggle}>
+			<button class="mobile" onclick={() => (mobileOpen = !mobileOpen)}>
 				<div class="inner">
 					<h2>My deposits</h2>
 					<div class="wallet-address">
-						{#if $wallet.address}
+						{#if address}
 							<IconWallet --icon-size="1.25rem" />
-							<HashAddress address={$wallet.address ?? ''} endChars={5} />
+							<HashAddress {address} endChars={5} />
 						{/if}
 					</div>
-					{#if !buttonsDisabled}
-						<div class="vault-balance" class:skeleton={vaultBalance === undefined}>
-							{formatDollar(vaultBalance)}
-						</div>
+					{#if shareValue}
+						{#await shareValue}
+							<div class="vault-balance skeleton"></div>
+						{:then balance}
+							<div class="vault-balance">
+								{formatDollar(formatBalance(balance))}
+							</div>
+						{/await}
 					{/if}
 				</div>
 				<IconChevronDown --icon-size="1.25em" />
@@ -96,8 +90,8 @@
 			</button>
 		{/if}
 	</header>
-	<div class="content-wrapper" bind:this={contentWrapper}>
-		<div class="content">
+	{#if desktop.current || mobileOpen}
+		<div class="content" transition:slide={{ duration: 250 }}>
 			{#if !vault.depositEnabled()}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
@@ -112,12 +106,12 @@
 				<DepositWarning title="Wrong network">
 					Please connect to {chain.name}.
 				</DepositWarning>
-			{:else}
+			{:else if shareValue && shareBalance}
 				<dl class="balances">
-					<VaultBalance {vault} address={$wallet.address!} let:shares let:value on:dataFetch={setVaultBalance}>
-						<DepositBalance label="Value" data={value} dollar />
-						<DepositBalance label="Shares" data={shares} />
-					</VaultBalance>
+					{#key depositInfoVersion}
+						<DepositBalance label="Value" data={shareValue} dollar />
+						<DepositBalance label="Shares" data={shareBalance} />
+					{/key}
 				</dl>
 			{/if}
 			<div class="actions">
@@ -134,20 +128,28 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				{#if vault.depositEnabled() && (vault.depositMethod === 'external' || strategy.depositExternal)}
+				<!-- "Deposit" or "Deposit at Vault" button -->
+				{#if !vault.depositEnabled() || vault.internalDepositEnabled()}
+					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
+				{:else}
 					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Deposit at {vault.shortLabel}
 					</Button>
+				{/if}
+				<!-- "Redeem" or "Redeem at Vault" button -->
+				{#if !vault.depositEnabled() || (vault.internalDepositEnabled() && vault.redeemMethod === 'internal')}
+					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
+				{:else}
 					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Redeem at {vault.shortLabel}
 					</Button>
-				{:else}
-					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
-					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
+			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
+				<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
+			{/if}
 		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
@@ -175,7 +177,6 @@
 		&.open {
 			--icon-rotation: 180deg;
 			--wallet-address-margin-left: 0.625rem;
-			--content-height: var(--content-expanded-height);
 		}
 
 		&.closed {
@@ -259,20 +260,17 @@
 		letter-spacing: var(--ls-ui-sm, normal);
 	}
 
-	.content-wrapper {
+	.content {
 		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: var(--gap);
+		padding: calc(var(--gap) / 2) var(--padding) var(--padding);
 
+		/* Prevent FOUC on mobile when JS MediaQuery value is hydrating */
 		@media (--viewport-sm-down) {
-			overflow: hidden;
-			height: var(--content-height, 0);
-			transition: height var(--time-md) ease-out;
-		}
-
-		.content {
-			display: grid;
-			grid-template-rows: 1fr auto;
-			gap: var(--gap);
-			padding: calc(var(--gap) / 2) var(--padding) var(--padding);
+			.desktop.closed & {
+				display: none;
+			}
 		}
 	}
 

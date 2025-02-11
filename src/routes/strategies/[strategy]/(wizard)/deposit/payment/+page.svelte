@@ -1,23 +1,12 @@
 <script lang="ts">
-	import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 	import type { DepositWizardDataSchema, DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import fsm from 'svelte-fsm';
 	import { formatUnits, parseUnits } from 'viem';
-	import { simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
-	import { getSharePrice } from '$lib/eth-defi/enzyme';
-	import { getSignedArguments } from '$lib/eth-defi/eip-3009';
-	import {
-		type ErrorInfo,
-		approveTokenTransfer,
-		extractErrorInfo,
-		formatBalance,
-		getTokenInfo,
-		getTokenAllowance,
-		getExpectedBlockTime
-	} from '$lib/eth-defi/helpers';
+	import { waitForTransactionReceipt } from '@wagmi/core';
+	import { type ErrorInfo, extractErrorInfo, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
 	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
@@ -31,109 +20,25 @@
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
 
-	// Share price slippage tollerance - used when calculating minSharesQuantity
-	const SLIPPAGE_TOLERANCE = 0.02;
-
-	let { data } = $props();
-	const { chain, strategy, denominationTokenInfo, canForwardPayment, paymentContract, tosRequired } = data;
+	const { data } = $props();
+	const { chain, denominationTokenInfo, canForwardPayment, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
-
-	const contracts = strategy.on_chain_data.smart_contracts as EnzymeSmartContracts;
-
 	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data as Required<DepositWizardData>;
 
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
+	let address = $derived($wallet.address!);
 	let paymentValue = $state('');
+	let value = $derived(parseUnits(paymentValue, denominationTokenInfo.decimals));
 	let error: ErrorInfo | unknown | undefined = $state();
 	let approvalTxId: Maybe<Address> = $state();
 	let paymentTxId: Maybe<Address> = $state();
 	let sharePrice: MaybeNumber = $state();
-
-	// Disable the "Cancel" button once a transaction has been initiated
-	$effect(() => {
-		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
-	});
-
-	function getVaultSharePrice() {
-		return getSharePrice(config, {
-			calculator: contracts.fund_value_calculator,
-			vault: contracts.vault,
-			denominationToken
-		});
-	}
-
-	// TODO: extract to a helper module
-	function calcMinSharesQuantity(value: Numberlike, sharePrice: number, decimals: number) {
-		const minSharesDecimal = Number(value) / (sharePrice * (1 + SLIPPAGE_TOLERANCE));
-		return parseUnits(String(minSharesDecimal), decimals);
-	}
-
-	function getEstimatedShares(paymentValue: Numberlike, sharePrice: MaybeNumber) {
-		const value = Number(paymentValue || 0);
-		let estimated: number | undefined = undefined;
-		if (value === 0) {
-			estimated = 0;
-		} else if (sharePrice) {
-			estimated = value / sharePrice;
-		}
-		return formatNumber(estimated, 2, 4);
-	}
-
-	function authorizeTransfer() {
-		return getSignedArguments(config, {
-			chainId: chain.id,
-			token: denominationTokenInfo,
-			transferMethod: 'TransferWithAuthorization',
-			from: $wallet.address!,
-			to: paymentContract.address,
-			value: parseUnits(paymentValue, denominationTokenInfo.decimals)
-		});
-	}
-
-	async function checkPreApproved() {
-		const allowance = await getTokenAllowance(config, {
-			chainId: chain.id,
-			address: denominationToken.address,
-			owner: $wallet.address!,
-			spender: contracts.comptroller
-		});
-
-		const value = parseUnits(paymentValue, denominationToken.decimals);
-		return value <= allowance;
-	}
-
-	function approveTransfer() {
-		return approveTokenTransfer(config, {
-			chainId: chain.id,
-			address: denominationToken.address,
-			spender: contracts.comptroller,
-			value: parseUnits(paymentValue, denominationToken.decimals)
-		});
-	}
-
-	async function confirmPayment(args: any[] = []) {
-		const [curSharePrice, vaultToken] = await Promise.all([
-			// re-fetch share price if not previously set
-			sharePrice ?? getVaultSharePrice(),
-			// get vault token info for decimals unit conversion
-			getTokenInfo(config, { address: contracts.vault }),
-			// short delay to address Rabby wallet race condition
-			new Promise((r) => setTimeout(r, WALLET_PAYMENT_DELAY))
-		]);
-
-		args.push(calcMinSharesQuantity(paymentValue, curSharePrice, vaultToken.decimals));
-
-		if (tosRequired) {
-			args.push(tosHash, tosSignature);
-		}
-
-		const { request } = await simulateContract(config, { ...paymentContract, args });
-		return writeContract(config, request);
-	}
+	let estimatedShares = $derived(Number(paymentValue ?? 0) / (sharePrice ?? 0));
+	let isPreApproved = $state(false);
 
 	const payment = fsm('initial', {
 		'*': {
@@ -144,7 +49,8 @@
 			_enter() {
 				progressBar.reset();
 
-				getVaultSharePrice()
+				vault
+					.getSharePriceUSD(config)
 					.then((value) => (sharePrice = value))
 					.catch(() => {}); // no-op
 			},
@@ -159,39 +65,48 @@
 			},
 
 			authorizeOrApprove() {
+				// use authorization (signature) flow if supported by vault
 				if (canForwardPayment) {
-					authorizeTransfer().then(payment.confirm).catch(payment.fail);
+					vault
+						.getTransferAuthorization(config, address, value)
+						.then((signedArgs) => {
+							// insert short delay to address Rabby wallet race condition
+							setTimeout(() => payment.confirm(signedArgs), WALLET_PAYMENT_DELAY);
+						})
+						.catch(payment.fail);
+
 					return 'authorizing';
 				}
 
-				checkPreApproved()
-					.then(payment.handleCheck)
-					.catch(() => payment.handleCheck(false));
+				// otherwise, fall back to traditional approve flow (check allowance first)
+				vault
+					.getDepositAllowance(config, address)
+					.then((allowance) => {
+						isPreApproved = value <= allowance;
+						payment.handleCheck();
+					})
+					.catch(payment.handleCheck);
+
 				return 'checkingPreApproved';
 			}
 		},
 
 		authorizing: {
 			confirm(signedArgs) {
-				confirmPayment(signedArgs).then(payment.process).catch(payment.fail);
+				vault
+					.buySharesWithAuthorization(config, signedArgs, tosHash, tosSignature)
+					.then(payment.process)
+					.catch(payment.fail);
+
 				return 'confirming';
 			}
 		},
 
 		checkingPreApproved: {
-			handleCheck(approved: boolean) {
-				if (approved) return 'preApproved';
-				approveTransfer().then(payment.process).catch(payment.fail);
+			handleCheck() {
+				if (isPreApproved) return 'approved';
+				vault.approveDepositAllowance(config, value).then(payment.process).catch(payment.fail);
 				return 'approving';
-			}
-		},
-
-		preApproved: {
-			buyShares() {
-				const buyer = $wallet.address;
-				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
-				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
-				return 'confirming';
 			}
 		},
 
@@ -237,9 +152,7 @@
 			},
 
 			buyShares() {
-				const buyer = $wallet.address;
-				const value = parseUnits(paymentValue, denominationTokenInfo.decimals);
-				confirmPayment([buyer, value]).then(payment.process).catch(payment.fail);
+				vault.buyShares(config, address, value).then(payment.process).catch(payment.fail);
 				return 'confirming';
 			}
 		},
@@ -262,9 +175,13 @@
 			},
 
 			finish(receipt) {
-				if (receipt.status === 'success') return 'completed';
-				error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
-				return 'failed';
+				if (receipt.status !== 'success') {
+					error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
+					return 'failed';
+				}
+
+				wizard.data.transactionLogs = receipt.logs;
+				return 'completed';
 			}
 		},
 
@@ -289,6 +206,11 @@
 				wizard.toggleComplete('payment');
 			}
 		}
+	});
+
+	// Disable the "Cancel" button once a transaction has been initiated
+	$effect(() => {
+		wizard.toggleComplete('meta:no-return', paymentTxId !== undefined);
 	});
 
 	// capture/restore ephemeral page state when navigating away from and back to page
@@ -363,7 +285,7 @@
 				max={formatBalance(denominationToken)}
 			>
 				Estimated shares:
-				{getEstimatedShares(paymentValue, sharePrice)}
+				{formatNumber(estimatedShares, 2, 4)}
 			</MoneyInput>
 
 			{#if !['processing', 'completed'].includes($payment)}
@@ -374,9 +296,7 @@
 						<Button submit disabled={$payment !== 'initial'}>
 							Approve {denominationToken.label}
 						</Button>
-						<Button disabled={!['preApproved', 'approved'].includes($payment)} on:click={payment.buyShares}>
-							Buy shares
-						</Button>
+						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
 					</div>
 				{/if}
 			{:else if paymentTxId}
@@ -404,10 +324,10 @@
 				</Alert>
 			{/if}
 
-			{#if ['preApproved', 'approved'].includes($payment)}
+			{#if $payment === 'approved'}
 				<Alert size="sm" status="success" title="Transfer approved">
 					{denominationToken.label} spending cap
-					{#if $payment === 'preApproved'}
+					{#if isPreApproved}
 						has already been
 					{/if}
 					approved. Please click "Buy shares" to complete your purchase.

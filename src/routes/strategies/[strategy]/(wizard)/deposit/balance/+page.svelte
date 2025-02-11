@@ -5,7 +5,7 @@
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 
-	let { data } = $props();
+	const { data } = $props();
 	const { chain, nativeCurrency, denominationToken } = data;
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 

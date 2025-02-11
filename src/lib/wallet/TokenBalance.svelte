@@ -9,7 +9,7 @@
 
 {#await data}
 	<slot skeleton={true} value="---" symbol="---">
-		<Spinner size="32" />
+		<div class="skeleton" style:--skeleton-width="8em">-</div>
 	</slot>
 {:then balance}
 	{@const { symbol, label } = balance}

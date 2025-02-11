@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { data } = $props();
+	const { data } = $props();
 	const { strategy } = data;
 </script>
 
