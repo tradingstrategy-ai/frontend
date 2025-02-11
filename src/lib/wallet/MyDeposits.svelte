@@ -128,16 +128,21 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				{#if vault.depositEnabled() && (vault.depositMethod === 'external' || strategy.depositExternal)}
+				<!-- "Deposit" or "Deposit at Vault" button -->
+				{#if !vault.depositEnabled() || vault.internalDepositEnabled()}
+					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
+				{:else}
 					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Deposit at {vault.shortLabel}
 					</Button>
+				{/if}
+				<!-- "Redeem" or "Redeem at Vault" button -->
+				{#if !vault.depositEnabled() || (vault.internalDepositEnabled() && vault.redeemMethod === 'internal')}
+					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
+				{:else}
 					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Redeem at {vault.shortLabel}
 					</Button>
-				{:else}
-					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
-					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
