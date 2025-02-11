@@ -42,6 +42,9 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 
 	// Enzyme vaults with the right type of payment forwarder can forward ToS
 	async canForwardToS(config: Config): Promise<boolean> {
+		// return false immediately if payment forwarding is not supported for this vault
+		if (!(await this.canForwardPayment(config))) return false;
+
 		const { default: abi } = await import('./abi/TermedVaultUSDCPaymentForwarder.json');
 		let canForward = false;
 
