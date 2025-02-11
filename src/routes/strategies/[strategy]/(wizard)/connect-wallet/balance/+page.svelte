@@ -4,7 +4,7 @@
 
 	const wizard = getWizardContext();
 
-	let { data } = $props();
+	const { data } = $props();
 	const { nativeCurrency, denominationToken } = data;
 
 	wizard.toggleComplete('balance');

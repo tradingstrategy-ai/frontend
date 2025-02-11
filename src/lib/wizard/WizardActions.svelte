@@ -10,10 +10,10 @@
 	import { Button } from '$lib/components';
 	import { goto } from '$app/navigation';
 
-	interface Props {
+	type Props = {
 		steps: WizardStep[];
 		currentStep: WizardStep;
-	}
+	};
 
 	let { steps, currentStep }: Props = $props();
 

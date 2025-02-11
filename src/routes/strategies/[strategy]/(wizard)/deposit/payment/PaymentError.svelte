@@ -14,21 +14,21 @@ Displays relevant user-facing error message based on the type of payment error e
 <script lang="ts">
 	import { type ErrorInfo, errorCausedBy } from '$lib/eth-defi/helpers';
 
-	export let error: ErrorInfo | any;
-	export let symbol: string;
-	export let transactionCopy: string;
+	type Props = {
+		error: ErrorInfo | any;
+		symbol: string;
+		transactionCopy: string;
+	};
+
+	let { error, symbol, transactionCopy }: Props = $props();
 
 	const causedBy = errorCausedBy.bind(null, error);
-
 	const state = error.state ?? 'unknown';
-	const authorizingOrApproving = ['authorizing', 'approving'].includes(state);
-	const processing = state.startsWith('processing');
-	const confirming = state === 'confirming';
 </script>
 
 {#if causedBy('NavigationLostStateError')}
 	Wallet request state lost due to window navigation; please cancel the request in your wallet and try again.
-{:else if authorizingOrApproving}
+{:else if ['authorizing', 'approving'].includes(state)}
 	{#if causedBy('UserRejectedRequestError')}
 		Authorization to transfer {symbol} tokens from your wallet was refused by user. To proceed with share purchase, please
 		try again and approve the request.
@@ -39,7 +39,7 @@ Displays relevant user-facing error message based on the type of payment error e
 		Authorization to transfer {symbol} tokens from your wallet failed.
 		{error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
 	{/if}
-{:else if confirming}
+{:else if state === 'confirming'}
 	{#if causedBy('GetSharePriceError')}
 		Error fetching share price; unable to calculate minSharesQuantity. Aborting payment contract request.
 	{:else if causedBy('UserRejectedRequestError')}
@@ -49,7 +49,7 @@ Displays relevant user-facing error message based on the type of payment error e
 		Payment confirmation from wallet account failed.
 		{error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
 	{/if}
-{:else if processing}
+{:else if state.startsWith('processing')}
 	{error.shortMessage ?? error.details ?? 'Unable to verify transaction status.'}
 	{transactionCopy}
 {:else}

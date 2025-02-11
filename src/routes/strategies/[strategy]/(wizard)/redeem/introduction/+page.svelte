@@ -2,7 +2,7 @@
 	import type { RedeemWizardDataSchema } from '../+layout.js';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 
-	let { data } = $props();
+	const { data } = $props();
 	const { strategy, denominationToken } = data;
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 

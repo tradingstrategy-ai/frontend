@@ -6,7 +6,7 @@
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	let { data } = $props();
+	const { data } = $props();
 	const { strategy, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();

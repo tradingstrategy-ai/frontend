@@ -3,13 +3,13 @@
 	import IconSuccess from '~icons/local/success';
 	import IconEmpty from '~icons/local/empty';
 
-	interface Props {
+	type Props = {
 		slug: string;
 		label: string;
 		active: boolean;
 		completed: boolean;
 		disabled: boolean;
-	}
+	};
 
 	let { slug, label, active, completed, disabled }: Props = $props();
 </script>

@@ -20,7 +20,7 @@
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
 
-	let { data } = $props();
+	const { data } = $props();
 	const { chain, denominationTokenInfo, canForwardPayment, vault } = data;
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();

@@ -18,7 +18,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	let { data } = $props();
+	const { data } = $props();
 	const { chain, strategy } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
