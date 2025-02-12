@@ -8,7 +8,7 @@
 </script>
 
 {#await data}
-	<slot skeleton={true} value="---" symbol="---">
+	<slot skeleton={true} value="---" symbol="---" label="---">
 		<div class="skeleton" style:--skeleton-width="8em">-</div>
 	</slot>
 {:then balance}

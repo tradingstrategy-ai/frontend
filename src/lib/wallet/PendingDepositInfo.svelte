@@ -20,10 +20,10 @@
 	type Props = {
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
-		refreshDepositInfo: () => void;
+		invalidateBalances: () => void;
 	};
 
-	let { vault, address, refreshDepositInfo }: Props = $props();
+	let { vault, address, invalidateBalances }: Props = $props();
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
 	let error: any = $state();
@@ -120,7 +120,7 @@
 		completed: {
 			_enter({ event }) {
 				if (event === 'finish') {
-					refreshDepositInfo();
+					invalidateBalances();
 				}
 			}
 		}

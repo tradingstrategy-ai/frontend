@@ -10,7 +10,7 @@
 <div class="deposit-balance">
 	<dt>{label}</dt>
 	<dd>
-		<TokenBalance {data} let:skeleton let:value let:symbol let:label>
+		<TokenBalance {data} let:skeleton let:value let:label>
 			<span class="value" class:skeleton>{dollar ? '$' : ''}{value}</span>
 			<span class="symbol" class:skeleton>{label}</span>
 		</TokenBalance>
