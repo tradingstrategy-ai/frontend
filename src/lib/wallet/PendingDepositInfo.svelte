@@ -20,10 +20,10 @@
 	type Props = {
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
-		refreshDepositInfo: () => void;
+		invalidateBalances: () => void;
 	};
 
-	let { vault, address, refreshDepositInfo }: Props = $props();
+	let { vault, address, invalidateBalances }: Props = $props();
 
 	let pendingDeposit = $state.raw() as PendingDeposit;
 	let error: any = $state();
@@ -120,7 +120,7 @@
 		completed: {
 			_enter({ event }) {
 				if (event === 'finish') {
-					refreshDepositInfo();
+					invalidateBalances();
 				}
 			}
 		}
@@ -216,10 +216,6 @@
 			align-items: center;
 			--icon-size: 1.25rem;
 
-			.settled & {
-				color: var(--c-success);
-			}
-
 			:global(.icon.history) {
 				transform: scaleX(-1);
 			}
@@ -227,6 +223,11 @@
 			:global(.icon *) {
 				stroke-width: 2.5;
 			}
+		}
+
+		/* NOTE: nesting inside h3 as `.settled &` causes PostCSS transform warning  */
+		&.settled h3 {
+			color: var(--c-success);
 		}
 
 		.values {

@@ -35,15 +35,18 @@
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
 
+	let depositBalancesVersion = $state(0);
+	const invalidateBalances = () => depositBalancesVersion++;
+
 	let [shareBalance, shareValue] = $derived.by(() => {
 		if (!(vault.depositEnabled() && address && !wrongNetwork)) return [undefined, undefined];
+
+		// force update to dervived values when deposit values invalidated
+		depositBalancesVersion;
 		const shares = vault.getShareBalance(config, address);
 		const value = vault.getShareValueUSD(config, address);
 		return [shares, value];
 	});
-
-	let depositInfoVersion = $state(0);
-	const refreshDepositInfo = () => depositInfoVersion++;
 
 	const desktop = new MediaQuery('width > 768px', true);
 	let mobileOpen = $state(false);
@@ -108,10 +111,8 @@
 				</DepositWarning>
 			{:else if shareValue && shareBalance}
 				<dl class="balances">
-					{#key depositInfoVersion}
-						<DepositBalance label="Value" data={shareValue} dollar />
-						<DepositBalance label="Shares" data={shareBalance} />
-					{/key}
+					<DepositBalance label="Value" data={shareValue} dollar />
+					<DepositBalance label="Shares" data={shareBalance} />
 				</dl>
 			{/if}
 			<div class="actions">
@@ -146,7 +147,7 @@
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingDepositInfo {vault} {address} {refreshDepositInfo} />
+				<PendingDepositInfo {vault} {address} {invalidateBalances} />
 			{/if}
 		</div>
 	{/if}
