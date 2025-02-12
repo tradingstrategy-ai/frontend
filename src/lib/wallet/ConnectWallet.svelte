@@ -1,28 +1,28 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import { modal, wallet } from '$lib/wallet/client';
+	import { connect, wallet } from '$lib/wallet/client';
 	import WalletSummary from '$lib/wallet/WalletSummary.svelte';
 	import { Button } from '$lib/components';
 	import IconWallet from '~icons/local/wallet';
 
-	export let chain: Chain;
+	type Props = {
+		chain: Chain;
+	};
 
-	function connectWallet() {
-		modal.open({ view: 'Connect' });
-	}
+	const { chain }: Props = $props();
 </script>
 
 <div class="connect-wallet">
 	{#if $wallet.status === 'connected'}
 		<div class="is-connected">
 			<WalletSummary wallet={$wallet} {chain} />
-			<Button size="sm" label="Change wallet" on:click={connectWallet} />
+			<Button size="sm" label="Change wallet" on:click={() => connect(chain.id)} />
 		</div>
 	{:else}
 		<div class="not-connected">
 			<div class="desktop">Connect your preferred browser-based, mobile or desktop wallet.</div>
 			<div class="mobile">Connect your preferred mobile wallet.</div>
-			<Button label="Connect wallet" on:click={connectWallet}>
+			<Button label="Connect wallet" on:click={() => connect(chain.id)}>
 				<IconWallet slot="icon" />
 			</Button>
 		</div>

@@ -89,6 +89,32 @@ export function switchChain(chainId: number) {
 }
 
 /**
+ * Store unsubscribe function for modal state (no-op by default; see `connect` below)
+ */
+let unsubModalState = () => {};
+
+/**
+ * Open AppKit connect dialog
+ *
+ * @param chainId - if provided, attempt auto-switch to chain after dialog closes
+ */
+export function connect(chainId?: number) {
+	// remove previous modal state subscription if it's still active
+	unsubModalState();
+
+	modal.open({ view: 'Connect' });
+
+	if (!chainId) return;
+
+	// switch to requested chain when modal is closed (and remove subscription)
+	unsubModalState = modal.subscribeState(({ open }) => {
+		if (open) return;
+		switchChain(chainId);
+		unsubModalState();
+	});
+}
+
+/**
  * Disconnect the user's wallet
  */
 export function disconnect() {
