@@ -81,6 +81,8 @@
 							<div class="vault-balance">
 								{formatDollar(formatBalance(balance))}
 							</div>
+						{:catch e}
+							<div class="vault-balance">---</div>
 						{/await}
 					{/if}
 				</div>
