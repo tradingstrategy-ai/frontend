@@ -4,9 +4,9 @@
 
 	const { data } = $props();
 	const { strategy, denominationToken } = data;
+
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
-	wizard.data.denominationToken = denominationToken;
 	wizard.toggleComplete('introduction');
 </script>
 

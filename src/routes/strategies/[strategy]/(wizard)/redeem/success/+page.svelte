@@ -13,10 +13,10 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const { data } = $props();
-	const { chain, strategy } = data;
+	const { chain, strategy, denominationToken } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
-	const { denominationToken, shares, transactionLogs } = wizard.data as Required<RedeemWizardData>;
+	const { shares, transactionLogs } = wizard.data as Required<RedeemWizardData>;
 
 	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
 
