@@ -5,7 +5,7 @@ import type { DepositResult } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
-import { DepositMethod, VaultWithInternalDeposits } from '../base';
+import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
@@ -22,9 +22,6 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	readonly protocolFee = 0;
 	readonly protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
 	readonly protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
-
-	// temporary hack to support external redemptions on Lagoon
-	readonly redeemMethod = DepositMethod.EXTERNAL;
 
 	// Used by requiresSettlement() type predicate
 	protected readonly _requiresSettlement = true;

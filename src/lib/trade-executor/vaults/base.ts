@@ -13,8 +13,6 @@ export const DepositMethod = {
 	EXTERNAL: 'external'
 } as const;
 
-type DepositMethodOption = (typeof DepositMethod)[keyof typeof DepositMethod];
-
 /**
  * Custom error thrown when getSharePrice fails
  */
@@ -70,7 +68,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
 	// via vault-provider's website (EXTERNAL)
-	readonly depositMethod: DepositMethodOption = DepositMethod.EXTERNAL;
+	readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod] = DepositMethod.EXTERNAL;
 
 	// Vault-specific protocol fee and info
 	abstract readonly protocolFee: number;
@@ -123,8 +121,6 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
  */
 export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts> extends BaseVault<Contracts> {
 	readonly depositMethod = DepositMethod.INTERNAL;
-	// temporary hack to support external redemptions on Lagoon
-	readonly redeemMethod: DepositMethodOption = DepositMethod.INTERNAL;
 
 	// Used by requiresSettlement() to determine if adapter implements SettlementRequired
 	protected readonly _requiresSettlement: boolean = false;
