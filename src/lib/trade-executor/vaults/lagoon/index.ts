@@ -140,9 +140,14 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
-	// TODO: implement!
-	async redeemShares(config: Config, seller: Address, quantity: bigint): Promise<HexString> {
-		throw new Error('Method not implemented');
+	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'requestRedeem',
+			args: [shares, seller, seller]
+		});
+
+		return writeContract(config, request);
 	}
 
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
