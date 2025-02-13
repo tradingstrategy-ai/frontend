@@ -61,7 +61,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.contracts.asset;
 	}
 
-	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'requestDeposit',
@@ -138,6 +138,11 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 			args: [value, address]
 		});
 		return writeContract(config, request);
+	}
+
+	// TODO: implement!
+	async redeemShares(config: Config, seller: Address, quantity: bigint): Promise<HexString> {
+		throw new Error('Method not implemented');
 	}
 
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {

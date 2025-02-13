@@ -135,10 +135,13 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
 	// Submit payment, receive shares (or a pending deposit)
-	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
+	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString>;
 
 	// Returns the result of a successful deposit, extracted from the transaction logs
 	abstract getDepositResult(config: Config, logs: Log[]): Promise<DepositResult>;
+
+	// Redeem shares, receive denomination tokens / in-kind invested tokens (or pending redemption)
+	abstract redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString>;
 
 	// The address used when forwarding payment authorization (EIP-3009 signature)
 	readonly paymentForwarder?: Address = undefined;

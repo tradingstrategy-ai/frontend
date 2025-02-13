@@ -117,7 +117,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		return asset;
 	}
 
-	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString> {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
 		const minShares = await this.#calculateMinShares(config, value);
@@ -178,6 +178,19 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 			assets: { ...denominationTokenInfo, value: sharesBought.investmentAmount },
 			shares: { ...vaultTokenInfo, value: sharesBought.sharesIssued }
 		};
+	}
+
+	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		const { request } = await simulateContract(config, {
+			abi,
+			address: this.contracts.comptroller,
+			functionName: 'redeemSharesInKind',
+			args: [seller, shares, [], []]
+		});
+
+		return writeContract(config, request);
 	}
 
 	async #simulateBuySharesWithAuthorization(config: Config, args: [...SignedArguments, bigint]) {
