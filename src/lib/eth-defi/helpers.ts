@@ -1,4 +1,4 @@
-import type { Abi, ContractEventName, DecodeEventLogReturnType, Log } from 'viem';
+import type { Abi, ContractEventName, ContractEventArgsFromTopics, Log } from 'viem';
 import type { Config, GetBalanceParameters } from '@wagmi/core';
 import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
@@ -6,27 +6,28 @@ import { readContract, readContracts, simulateContract, writeContract } from '@w
 import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import { formatNumber } from '$lib/helpers/formatters';
 
+type GetEventsParams<AbiType extends Abi, EventName extends ContractEventName<AbiType>> = {
+	abi: AbiType;
+	address: Address;
+	eventName: EventName;
+	transactionLogs: Log[];
+};
+
 /**
  * Extract events from transaction logs
  */
 export function getEvents<const AbiType extends Abi, EventName extends ContractEventName<AbiType>>(
-	logs: Log[],
-	abi: AbiType,
-	name: EventName,
-	contractAddress: Address
-): DecodeEventLogReturnType<AbiType, EventName>[] {
-	return logs
-		.filter(({ address }: Log) => isAddressEqual(address, contractAddress))
-		.map(
-			({ data, topics }: Log) =>
-				decodeEventLog({
-					abi,
-					data,
-					topics,
-					eventName: name
-				}) as DecodeEventLogReturnType<AbiType, EventName>
-		)
-		.filter(({ eventName }) => eventName === name);
+	params: GetEventsParams<AbiType, EventName>
+): ContractEventArgsFromTopics<AbiType, EventName>[] {
+	const { transactionLogs, abi, eventName, address } = params;
+	return transactionLogs.reduce((acc: ContractEventArgsFromTopics<AbiType, EventName>[], log: Log) => {
+		if (!isAddressEqual(log.address, address)) return acc;
+		const event = decodeEventLog({ abi, eventName, ...log });
+		if (event.eventName === eventName) {
+			acc.push(event.args as ContractEventArgsFromTopics<AbiType, EventName>);
+		}
+		return acc;
+	}, []);
 }
 
 /**

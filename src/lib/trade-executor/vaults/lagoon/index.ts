@@ -1,7 +1,7 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { Log } from 'viem';
-import type { DepositResult } from '../types';
+import type { DepositResult, RedemptionResult } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
@@ -71,18 +71,23 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
-	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
-		const [{ args: depositRequest }] = getEvents(logs, vaultAbi, 'DepositRequest', this.address);
+	async getDepositResult(config: Config, transactionLogs: Log[]): Promise<DepositResult> {
+		const [{ assets }] = getEvents({
+			abi: vaultAbi,
+			address: this.address,
+			eventName: 'DepositRequest',
+			transactionLogs
+		});
 
-		const [sharesValue, denominationTokenInfo, vaultTokenInfo] = await Promise.all([
-			this.#convertToShares(config, depositRequest.assets),
+		const [denominationTokenInfo, vaultTokenInfo, shareQuantity] = await Promise.all([
 			this.getDenominationTokenInfo(config),
-			this.getVaultTokenInfo(config)
+			this.getVaultTokenInfo(config),
+			this.#convertToShares(config, assets)
 		]);
 
 		return {
-			assets: { ...denominationTokenInfo, value: depositRequest.assets },
-			shares: { ...vaultTokenInfo, value: sharesValue }
+			assets: { ...denominationTokenInfo, value: assets },
+			shares: { ...vaultTokenInfo, value: shareQuantity }
 		};
 	}
 
@@ -148,6 +153,30 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		});
 
 		return writeContract(config, request);
+	}
+
+	async getRedemptionResult(config: Config, transactionLogs: Log[]): Promise<RedemptionResult> {
+		throw new Error('Method not implemented!');
+
+		const [redeemRequest] = getEvents({
+			abi: vaultAbi,
+			address: this.address,
+			eventName: 'RedeemRequest',
+			transactionLogs
+		});
+
+		// below is just copied from getDepositRequest - re-work for redemption result!
+
+		const [denominationTokenInfo, vaultTokenInfo, assetValue] = await Promise.all([
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config),
+			this.#convertToAssets(config, redeemRequest.shares)
+		]);
+
+		return {
+			assets: { ...denominationTokenInfo, value: assetValue },
+			shares: { ...vaultTokenInfo, value: redeemRequest.shares }
+		};
 	}
 
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {

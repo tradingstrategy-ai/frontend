@@ -5,7 +5,7 @@ import type { Log } from 'viem';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
-import type { VaultFees, DepositResult, SettlementRequired } from './types';
+import type { VaultFees, DepositResult, SettlementRequired, RedemptionResult } from './types';
 import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
 
 export const DepositMethod = {
@@ -142,6 +142,9 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 
 	// Redeem shares, receive denomination tokens / in-kind invested tokens (or pending redemption)
 	abstract redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString>;
+
+	// Returns the result of a successful deposit, extracted from the transaction logs
+	abstract getRedemptionResult(config: Config, logs: Log[]): Promise<RedemptionResult>;
 
 	// The address used when forwarding payment authorization (EIP-3009 signature)
 	readonly paymentForwarder?: Address = undefined;

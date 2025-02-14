@@ -18,6 +18,12 @@ export type PendingDeposit = DepositResult & {
 	settled: boolean;
 };
 
+export type RedemptionResult = {
+	sharesRedeemed: TokenBalance;
+	assetsReceived: TokenBalance[];
+	estimatedValue: TokenBalance;
+};
+
 export type SettlementRequired = {
 	readonly settlementInfoUrl: string;
 
