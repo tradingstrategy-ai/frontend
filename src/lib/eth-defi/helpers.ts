@@ -3,7 +3,6 @@ import type { Config, GetBalanceParameters } from '@wagmi/core';
 import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
-import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
 import { formatNumber } from '$lib/helpers/formatters';
 
 type GetEventsParams<AbiType extends Abi, EventName extends ContractEventName<AbiType>> = {
@@ -114,32 +113,6 @@ export function isBridgedUSDC(address: Address) {
 
 export function getTokenLabel(symbol: string | undefined, address: Address) {
 	return symbol === 'USDC' && isBridgedUSDC(address) ? 'USDC.e' : symbol;
-}
-
-/**
- * Get a strategy denomination token address for a given chain and comptroller
- */
-export async function getDenominationAsset(
-	config: Config,
-	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
-): Promise<Address> {
-	return readContract(config, {
-		chainId,
-		address: comptroller,
-		abi: comptrollerABI,
-		functionName: 'getDenominationAsset'
-	});
-}
-
-/**
- * Get strategy denomination token info for a given chain and comptroller
- */
-export async function getDenominationTokenInfo(
-	config: Config,
-	{ chainId, comptroller }: { chainId?: number; comptroller: Address }
-) {
-	const address = await getDenominationAsset(config, { chainId, comptroller });
-	return getTokenInfo(config, { chainId, address });
 }
 
 type ApproveTokenTransferParams = {
