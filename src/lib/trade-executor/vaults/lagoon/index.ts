@@ -72,22 +72,22 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getDepositResult(config: Config, transactionLogs: Log[]): Promise<DepositResult> {
-		const [{ assets }] = getEvents({
+		const [{ assets: assetValue }] = getEvents({
 			abi: vaultAbi,
 			address: this.address,
 			eventName: 'DepositRequest',
 			transactionLogs
 		});
 
-		const [denominationTokenInfo, vaultTokenInfo, shareQuantity] = await Promise.all([
+		const [denominationTokenInfo, vaultTokenInfo, shareValue] = await Promise.all([
 			this.getDenominationTokenInfo(config),
 			this.getVaultTokenInfo(config),
-			this.#convertToShares(config, assets)
+			this.#convertToShares(config, assetValue)
 		]);
 
 		return {
-			assets: { ...denominationTokenInfo, value: assets },
-			shares: { ...vaultTokenInfo, value: shareQuantity }
+			assets: { ...denominationTokenInfo, value: assetValue },
+			shares: { ...vaultTokenInfo, value: shareValue }
 		};
 	}
 
@@ -156,26 +156,23 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getRedemptionResult(config: Config, transactionLogs: Log[]): Promise<RedemptionResult> {
-		throw new Error('Method not implemented!');
-
-		const [redeemRequest] = getEvents({
+		const [{ shares: shareValue }] = getEvents({
 			abi: vaultAbi,
 			address: this.address,
 			eventName: 'RedeemRequest',
 			transactionLogs
 		});
 
-		// below is just copied from getDepositRequest - re-work for redemption result!
-
 		const [denominationTokenInfo, vaultTokenInfo, assetValue] = await Promise.all([
 			this.getDenominationTokenInfo(config),
 			this.getVaultTokenInfo(config),
-			this.#convertToAssets(config, redeemRequest.shares)
+			this.#convertToAssets(config, shareValue)
 		]);
 
 		return {
-			assets: { ...denominationTokenInfo, value: assetValue },
-			shares: { ...vaultTokenInfo, value: redeemRequest.shares }
+			sharesRedeemed: { ...vaultTokenInfo, value: shareValue },
+			assetsReceived: [],
+			estimatedValue: { ...denominationTokenInfo, value: assetValue }
 		};
 	}
 
