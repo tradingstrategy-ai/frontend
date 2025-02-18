@@ -208,10 +208,10 @@
 						{/if}
 
 						{#if vault.requiresSettlement()}
-							<AlertItem title="Settlement required">
-								{vault.label} vaults have a settlement phase. Your redemption will appear as <i>pending</i> until
-								settled, after which you will be able to claim your redeemed tokens.
-								<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more</a>
+							<AlertItem title="Settlement period required">
+								Your redemption will show as <i>pending</i> during settlement. Once complete, you'll be able to claim
+								your redeemed tokens.
+								<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
 							</AlertItem>
 						{/if}
 					</AlertList>

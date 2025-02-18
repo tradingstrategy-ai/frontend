@@ -50,10 +50,9 @@
 	</WalletInfo>
 
 	{#if requiresSettlement}
-		<Alert size="sm" status="info" title="Settlement required">
-			{vault.label} vaults have a settlement phase. Your redemption will appear as <i>pending</i> until settled, after
-			which you will be able to claim your redeemed tokens.
-			<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more</a>
+		<Alert size="sm" status="info" title="Settlement in progress">
+			Your redemption is now <i>pending</i>. Once settlement is complete, you'll be able to claim your redeemed tokens.
+			<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
 		</Alert>
 	{/if}
 </div>
