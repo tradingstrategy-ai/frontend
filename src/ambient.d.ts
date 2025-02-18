@@ -16,6 +16,9 @@ declare global {
 	type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 	type Address = `0x${string}`;
+
+	// utility to expand intersection types for better inline type feedback
+	type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 }
 
 export {};

@@ -14,9 +14,13 @@ export type DepositResult = {
 	shares: TokenBalance;
 };
 
-export type PendingDeposit = DepositResult & {
-	settled: boolean;
-};
+export type PendingDeposit = Expand<
+	DepositResult & {
+		settled: boolean;
+	}
+>;
+
+export type PendingRedemption = PendingDeposit;
 
 export type RedemptionResult = {
 	sharesRedeemed: TokenBalance;
@@ -32,4 +36,6 @@ export type SettlementRequired = {
 	cancelPendingDeposit(config: Config): Promise<HexString>;
 
 	claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString>;
+
+	getPendingRedemption(config: Config, address: Address): Promise<PendingRedemption>;
 };

@@ -1,7 +1,7 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { Log } from 'viem';
-import type { DepositResult, RedemptionResult } from '../types';
+import type { DepositResult, PendingRedemption, RedemptionResult } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
@@ -177,10 +177,55 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
+	async getPendingRedemption(config: Config, address: Address): Promise<PendingRedemption> {
+		const [redeemId, assetToken, vaultToken] = await Promise.all([
+			this.#getPendingRedeemId(config, address),
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config)
+		]);
+
+		const baseContract = {
+			...this.#vaultBaseContract,
+			args: [redeemId, address] as const
+		};
+
+		const response = await readContracts(config, {
+			contracts: [
+				{ ...baseContract, functionName: 'pendingRedeemRequest' },
+				{ ...baseContract, functionName: 'claimableRedeemRequest' }
+			]
+		});
+
+		const [pending, claimable] = response.map(({ result }) => result);
+		const shareValue = pending || claimable || 0n;
+		const settled = Boolean(claimable);
+
+		let assetValue = 0n;
+
+		if (shareValue > 0n) {
+			const requestId = settled ? redeemId : undefined;
+			assetValue = await this.#convertToAssets(config, shareValue, requestId);
+		}
+
+		return {
+			shares: { ...vaultToken, value: shareValue },
+			assets: { ...assetToken, value: assetValue },
+			settled
+		};
+	}
+
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
 		return readContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'lastDepositRequestId',
+			args: [address]
+		}).then(BigInt);
+	}
+
+	#getPendingRedeemId(config: Config, address: Address): Promise<bigint> {
+		return readContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'lastRedeemRequestId',
 			args: [address]
 		}).then(BigInt);
 	}
