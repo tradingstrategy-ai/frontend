@@ -38,4 +38,6 @@ export type SettlementRequired = {
 	claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString>;
 
 	getPendingRedemption(config: Config, address: Address): Promise<PendingRedemption>;
+
+	claimPendingRedemption(config: Config, address: Address, value: bigint): Promise<HexString>;
 };

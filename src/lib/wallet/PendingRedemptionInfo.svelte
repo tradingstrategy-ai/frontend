@@ -72,10 +72,9 @@
 		// waiting for user action
 		ready: {
 			confirm() {
-				// TODO: finish implementing!
-				// const request = vault.claimPendingRedemption(config, address, pendingRedemption.assets.value);
-				// request.then(redemption.process).catch(redemption.fail);
-				// return 'confirming';
+				const request = vault.claimPendingRedemption(config, address, pendingRedemption.shares.value);
+				request.then(redemption.process).catch(redemption.fail);
+				return 'confirming';
 			}
 		},
 

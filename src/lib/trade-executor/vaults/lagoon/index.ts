@@ -214,6 +214,15 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
+	async claimPendingRedemption(config: Config, address: Address, value: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'redeem',
+			args: [value, address, address]
+		});
+		return writeContract(config, request);
+	}
+
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
 		return readContract(config, {
 			...this.#vaultBaseContract,
