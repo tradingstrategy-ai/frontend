@@ -17,6 +17,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	readonly logoUrl = '/logos/tokens/lagoon';
 	readonly address = this.contracts.address;
 	readonly payee = this.address;
+	readonly inKindRedemption = false;
 
 	// Lagoon protocol fee and info
 	readonly protocolFee = 0;

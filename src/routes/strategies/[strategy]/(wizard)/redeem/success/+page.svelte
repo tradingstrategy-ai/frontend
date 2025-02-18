@@ -3,7 +3,6 @@
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { config } from '$lib/wallet/client';
 	import Alert from '$lib/components/Alert.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
@@ -51,10 +50,10 @@
 	</WalletInfo>
 
 	{#if requiresSettlement}
-		<Alert size="sm" status="info" title="Note">
+		<Alert size="sm" status="info" title="Settlement required">
 			{vault.label} vaults have a settlement phase. Your redemption will appear as <i>pending</i> until settled, after
 			which you will be able to claim your redeemed tokens.
-			<Button slot="cta" size="xs" label="Learn more" href={vault.settlementInfoUrl} target="_blank" rel="noreferrer" />
+			<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more</a>
 		</Alert>
 	{/if}
 </div>

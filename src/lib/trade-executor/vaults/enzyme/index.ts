@@ -19,6 +19,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	readonly address = this.contracts.vault;
 	readonly payee = this.contracts.comptroller;
 	readonly paymentForwarder = this.contracts.payment_forwarder;
+	readonly inKindRedemption = true;
 
 	// Enzyme protocol fee and info; see:
 	// https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting

@@ -128,6 +128,9 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
 
+	// Whether vault redemptions are "in-kind" (any token the vault is invested in) or not (denomination token)
+	abstract readonly inKindRedemption: boolean;
+
 	// Returns the current share price in USD
 	abstract getSharePriceUSD(config: Config): Promise<number>;
 

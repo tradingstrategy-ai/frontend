@@ -10,7 +10,7 @@
 	import { formatUnits, parseUnits } from 'viem';
 	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
-	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
+	import { Alert, AlertList, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
@@ -198,10 +198,24 @@
 			{#if $redemption === 'initial'}
 				<Button submit disabled={!shares}>Redeem</Button>
 
-				<Alert size="sm" status="warning" title="Shares redeemed in-kind">
-					You will receive a portion of all tokens held by this strategy, in proportion to the number of shares you are
-					redeeming relative to the total strategy assets.
-				</Alert>
+				{#if vault.inKindRedemption || vault.requiresSettlement()}
+					<AlertList size="sm" status="warning" let:AlertItem>
+						{#if vault.inKindRedemption}
+							<AlertItem title="Shares redeemed in-kind">
+								You will receive a portion of all tokens held by this strategy, in proportion to the number of shares
+								you are redeeming relative to the total strategy assets.
+							</AlertItem>
+						{/if}
+
+						{#if vault.requiresSettlement()}
+							<AlertItem title="Settlement required">
+								{vault.label} vaults have a settlement phase. Your redemption will appear as <i>pending</i> until
+								settled, after which you will be able to claim your redeemed tokens.
+								<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more</a>
+							</AlertItem>
+						{/if}
+					</AlertList>
+				{/if}
 			{/if}
 
 			{#if $redemption === 'confirming'}
