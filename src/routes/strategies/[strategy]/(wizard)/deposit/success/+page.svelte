@@ -25,9 +25,9 @@
 	</p>
 
 	{#if vault.requiresSettlement()}
-		<Alert size="md" status="info" title="Note">
-			{vault.label} vaults have a <i>settlement</i> phase. Your deposit will appear as <i>pending</i> until settled,
-			after which you will be able to claim your shares.
+		<Alert size="sm" status="info" title="Note">
+			{vault.label} vaults have a settlement phase. Your deposit will appear as <i>pending</i> until settled, after
+			which you will be able to claim your shares.
 			<Button slot="cta" size="xs" label="Learn more" href={vault.settlementInfoUrl} target="_blank" rel="noreferrer" />
 		</Alert>
 	{/if}
