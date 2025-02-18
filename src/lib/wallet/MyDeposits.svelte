@@ -11,6 +11,7 @@
 	import DepositWarning from './DepositWarning.svelte';
 	import DepositBalance from './DepositBalance.svelte';
 	import PendingDepositInfo from './PendingDepositInfo.svelte';
+	import PendingRedemptionInfo from './PendingRedemptionInfo.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -145,6 +146,7 @@
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
 				<PendingDepositInfo {vault} {address} {invalidateBalances} />
+				<PendingRedemptionInfo {vault} {address} {invalidateBalances} />
 			{/if}
 		</div>
 	{/if}
