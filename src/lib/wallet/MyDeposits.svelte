@@ -144,8 +144,11 @@
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
-				<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
+				<!-- force re-render of PendingExchangeInfo when address changes -->
+				{#key address}
+					<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
+					<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
+				{/key}
 			{/if}
 		</div>
 	{/if}
