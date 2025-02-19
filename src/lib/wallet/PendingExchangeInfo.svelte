@@ -159,10 +159,10 @@
 	$inspect(type, $exchange);
 </script>
 
-{#snippet tokenValue(token: TokenBalance, label: string = token.label)}
+{#snippet tokenValue(token: TokenBalance, label?: string)}
 	<div>
 		<dt>${formatBalance(token, 2, 4)}</dt>
-		<dd>{label}</dd>
+		<dd>{label ?? token.label}</dd>
 	</div>
 {/snippet}
 
