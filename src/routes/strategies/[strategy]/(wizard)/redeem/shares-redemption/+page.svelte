@@ -1,33 +1,31 @@
 <script lang="ts">
 	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
-	import type { EnzymeOnChainData } from 'trade-executor/schemas/summary';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
-	import { simulateContract, writeContract, getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
+	import { getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
 	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
-	import comptrollerABI from '$lib/eth-defi/abi/enzyme/ComptrollerLib.json';
-	import { Alert, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
+	import { Alert, AlertList, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const { data } = $props();
-	const { chain, strategy } = data;
+	const { chain, vault } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
-	const onChainData = strategy.on_chain_data as EnzymeOnChainData;
-
 	const { vaultShares, vaultNetValue } = wizard.data as Required<RedeemWizardData>;
 
-	let shares: string | undefined = $state();
+	let address = $derived($wallet.address!);
+	let shares = $state('');
+	let shareQuantity = $derived(parseUnits(shares, vaultShares.decimals));
 	let errorMessage: string | undefined = $state();
 	let transactionId: Address | undefined = $state();
 
@@ -38,19 +36,6 @@
 	$effect(() => {
 		wizard.toggleComplete('meta:no-return', transactionId !== undefined);
 	});
-
-	async function confirmRedemption() {
-		const sharesQuantity = parseUnits(shares!, vaultShares.decimals);
-
-		const { request } = await simulateContract(config, {
-			address: onChainData.smart_contracts.comptroller,
-			abi: comptrollerABI,
-			functionName: 'redeemSharesInKind',
-			args: [$wallet.address!, sharesQuantity, [], []]
-		});
-
-		return writeContract(config, request);
-	}
 
 	function getEstimatedValue(shares: Numberlike) {
 		const sharePrice = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
@@ -71,7 +56,7 @@
 			},
 
 			confirm() {
-				confirmRedemption().then(redemption.process).catch(redemption.fail);
+				vault.redeemShares(config, address, shareQuantity).then(redemption.process).catch(redemption.fail);
 				return 'confirming';
 			}
 		},
@@ -141,6 +126,7 @@
 				return transactionId ? 'processing' : 'initial';
 			}
 		},
+
 		completed: {
 			_enter({ event }) {
 				if (event === 'restore') {
@@ -212,10 +198,24 @@
 			{#if $redemption === 'initial'}
 				<Button submit disabled={!shares}>Redeem</Button>
 
-				<Alert size="sm" status="warning" title="Shares redeemed in-kind">
-					You will receive a portion of all tokens held by this strategy, in proportion to the number of shares you are
-					redeeming relative to the total strategy assets.
-				</Alert>
+				{#if vault.inKindRedemption || vault.requiresSettlement()}
+					<AlertList size="sm" status="warning" let:AlertItem>
+						{#if vault.inKindRedemption}
+							<AlertItem title="Shares redeemed in-kind">
+								You will receive a portion of all tokens held by this strategy, in proportion to the number of shares
+								you are redeeming relative to the total strategy assets.
+							</AlertItem>
+						{/if}
+
+						{#if vault.requiresSettlement()}
+							<AlertItem title="Settlement period required">
+								Your redemption will show as <i>pending</i> during settlement. Once complete, you'll be able to claim
+								your redeemed tokens.
+								<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
+							</AlertItem>
+						{/if}
+					</AlertList>
+				{/if}
 			{/if}
 
 			{#if $redemption === 'confirming'}

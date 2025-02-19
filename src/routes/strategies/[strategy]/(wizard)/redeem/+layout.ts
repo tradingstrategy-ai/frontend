@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { error } from '@sveltejs/kit';
+import { config } from '$lib/wallet/client';
 import { hexString } from '$lib/eth-defi/schemas/core';
 import { currencyBalanceSchema, tokenBalanceSchema, tokenInfoSchema } from '$lib/eth-defi/schemas/token';
 import { transactionLog } from '$lib/eth-defi/schemas/transaction';
@@ -7,7 +8,6 @@ import { transactionLog } from '$lib/eth-defi/schemas/transaction';
 const dataSchema = z
 	.object({
 		nativeCurrency: currencyBalanceSchema,
-		denominationToken: tokenInfoSchema,
 		vaultShares: tokenBalanceSchema,
 		vaultNetValue: tokenBalanceSchema,
 		shares: z.string(),
@@ -45,6 +45,8 @@ export async function load({ parent }) {
 		dataSchema,
 
 		// re-return type-narrowed vault
-		vault
+		vault,
+
+		denominationToken: await vault.getDenominationTokenInfo(config)
 	};
 }

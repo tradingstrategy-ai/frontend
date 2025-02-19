@@ -1,14 +1,14 @@
 import type { EnzymeSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { Log } from 'viem';
-import type { DepositResult } from '../types';
+import type { DepositResult, RedemptionResult } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits, GetSharePriceError } from '../base';
-import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
+import { getTokenBalance, getTokenInfo, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits, parseUnits, isAddressEqual } from 'viem';
 
 const SLIPPAGE_TOLERANCE = 0.02;
 
@@ -19,6 +19,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	readonly address = this.contracts.vault;
 	readonly payee = this.contracts.comptroller;
 	readonly paymentForwarder = this.contracts.payment_forwarder;
+	readonly inKindRedemption = true;
 
 	// Enzyme protocol fee and info; see:
 	// https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting
@@ -82,24 +83,15 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	}
 
 	async getSharePriceUSD(config: Config): Promise<number> {
-		const { default: abi } = await import('./abi/FundValueCalculator.json');
-
-		let value: bigint;
-
 		try {
-			const { result } = await simulateContract(config, {
-				abi,
-				address: this.contracts.fund_value_calculator,
-				functionName: 'calcGrossShareValue',
-				args: [this.contracts.vault]
-			});
-			value = result[1];
+			const [value, { decimals }] = await Promise.all([
+				this.#getGrossShareValue(config),
+				this.getDenominationTokenInfo(config)
+			]);
+			return Number(formatUnits(value, decimals));
 		} catch (e) {
 			throw new GetSharePriceError(e);
 		}
-
-		const { decimals } = await this.getDenominationTokenInfo(config);
-		return Number(formatUnits(value, decimals));
 	}
 
 	async getDenominationAsset(config: Config) {
@@ -117,7 +109,7 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		return asset;
 	}
 
-	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString> {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
 		const minShares = await this.#calculateMinShares(config, value);
@@ -164,10 +156,15 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 		return writeContract(config, request);
 	}
 
-	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
+	async getDepositResult(config: Config, transactionLogs: Log[]): Promise<DepositResult> {
 		const { default: abi } = await import('./abi/ComptrollerLib.json');
 
-		const [{ args: sharesBought }] = getEvents(logs, abi, 'SharesBought', this.contracts.comptroller);
+		const [sharesBought] = getEvents({
+			abi,
+			address: this.contracts.comptroller,
+			eventName: 'SharesBought',
+			transactionLogs
+		});
 
 		const [denominationTokenInfo, vaultTokenInfo] = await Promise.all([
 			this.getDenominationTokenInfo(config),
@@ -178,6 +175,61 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 			assets: { ...denominationTokenInfo, value: sharesBought.investmentAmount },
 			shares: { ...vaultTokenInfo, value: sharesBought.sharesIssued }
 		};
+	}
+
+	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		const { request } = await simulateContract(config, {
+			abi,
+			address: this.contracts.comptroller,
+			functionName: 'redeemSharesInKind',
+			args: [seller, shares, [], []]
+		});
+
+		return writeContract(config, request);
+	}
+
+	async getRedemptionResult(config: Config, transactionLogs: Log[]): Promise<RedemptionResult> {
+		const { default: abi } = await import('./abi/ComptrollerLib.json');
+
+		const [{ sharesAmount, receivedAssets: assets, receivedAssetAmounts: values }] = getEvents({
+			abi,
+			address: this.contracts.comptroller,
+			eventName: 'SharesRedeemed',
+			transactionLogs
+		});
+
+		const receivedAssets = assets.map((address, idx) => ({ address, value: values[idx] }));
+
+		const [vaultTokenInfo, denominationTokenInfo, assetsReceived, grossShareValue] = await Promise.all([
+			this.getVaultTokenInfo(config),
+			this.getDenominationTokenInfo(config),
+			this.#getReceivedAssetBalances(config, receivedAssets),
+			this.#getGrossShareValue(config)
+		]);
+
+		// determine estimated redeemed value based on share price
+		const redeemedValue = (sharesAmount * grossShareValue) / 10n ** BigInt(vaultTokenInfo.decimals);
+
+		return {
+			sharesRedeemed: { ...vaultTokenInfo, value: sharesAmount },
+			assetsReceived,
+			estimatedValue: { ...denominationTokenInfo, value: redeemedValue }
+		};
+	}
+
+	async #getGrossShareValue(config: Config): Promise<bigint> {
+		const { default: abi } = await import('./abi/FundValueCalculator.json');
+
+		const { result } = await simulateContract(config, {
+			abi,
+			address: this.contracts.fund_value_calculator,
+			functionName: 'calcGrossShareValue',
+			args: [this.contracts.vault]
+		});
+
+		return result[1];
 	}
 
 	async #simulateBuySharesWithAuthorization(config: Config, args: [...SignedArguments, bigint]) {
@@ -203,6 +255,29 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 			functionName: 'buySharesOnBehalfUsingTransferWithAuthorizationAndTermsOfService',
 			args
 		});
+	}
+
+	#getReceivedAssetBalances(config: Config, assets: { address: Address; value: bigint }[]): Promise<TokenBalance[]> {
+		return Promise.all(
+			assets.reduce((acc: Promise<TokenBalance>[], { address, value }) => {
+				if (value > 0n) {
+					acc.push(this.#getReceivedAssetBalance(config, address, value));
+				}
+				return acc;
+			}, [])
+		);
+	}
+
+	async #getReceivedAssetBalance(config: Config, address: Address, value: bigint): Promise<TokenBalance> {
+		// first check if asset is the denomination token (since it's cached)
+		let tokenInfo = await this.getDenominationTokenInfo(config);
+
+		// if not, fetch the token info for the asset
+		if (!isAddressEqual(address, tokenInfo.address)) {
+			tokenInfo = await getTokenInfo(config, { address, chainId: this.chain.id });
+		}
+
+		return { ...tokenInfo, value };
 	}
 
 	// TODO: move to parent class (or eth-defi/helpers)

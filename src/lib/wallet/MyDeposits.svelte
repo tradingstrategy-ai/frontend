@@ -10,7 +10,7 @@
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DepositWarning from './DepositWarning.svelte';
 	import DepositBalance from './DepositBalance.svelte';
-	import PendingDepositInfo from './PendingDepositInfo.svelte';
+	import PendingExchangeInfo from './PendingExchangeInfo.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -131,25 +131,24 @@
 						<IconUnlink slot="icon" />
 					</Button>
 				{/if}
-				<!-- "Deposit" or "Deposit at Vault" button -->
-				{#if !vault.depositEnabled() || vault.internalDepositEnabled()}
-					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
-				{:else}
+				{#if vault.depositEnabled() && (vault.depositMethod === 'external' || strategy.depositExternal)}
 					<Button disabled={geoBlocked || isOutdated} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Deposit at {vault.shortLabel}
 					</Button>
-				{/if}
-				<!-- "Redeem" or "Redeem at Vault" button -->
-				{#if !vault.depositEnabled() || (vault.internalDepositEnabled() && vault.redeemMethod === 'internal')}
-					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
-				{:else}
 					<Button secondary disabled={geoBlocked} href={vault.externalProviderUrl} target="_blank" rel="noreferrer">
 						Redeem at {vault.shortLabel}
 					</Button>
+				{:else}
+					<Button label="Deposit" disabled={buttonsDisabled || isOutdated} href={getWizardUrl('deposit')} />
+					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingDepositInfo {vault} {address} {invalidateBalances} />
+				<!-- force re-render of PendingExchangeInfo when address changes -->
+				{#key address}
+					<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
+					<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
+				{/key}
 			{/if}
 		</div>
 	{/if}

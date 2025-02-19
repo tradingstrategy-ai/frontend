@@ -9,6 +9,7 @@ export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 	readonly label = 'Velvet Capital';
 	readonly logoUrl = '/logos/tokens/velvet';
 	readonly address = this.contracts.portfolio;
+	readonly inKindRedemption = true;
 
 	// Velvet Capital protocol fee and info
 	readonly protocolFee = 0.002;

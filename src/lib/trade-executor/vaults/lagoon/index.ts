@@ -1,11 +1,10 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { Log } from 'viem';
-import type { DepositResult } from '../types';
+import type { DepositResult, RedemptionResult, PendingExchange, SettlementRequired } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
-import { DepositMethod, VaultWithInternalDeposits } from '../base';
+import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
@@ -17,14 +16,12 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	readonly logoUrl = '/logos/tokens/lagoon';
 	readonly address = this.contracts.address;
 	readonly payee = this.address;
+	readonly inKindRedemption = false;
 
 	// Lagoon protocol fee and info
 	readonly protocolFee = 0;
 	readonly protocolFeeTooltip = `During the introductory period, Lagoon is not charging a protocol fee.`;
 	readonly protocolFeeUrl = 'https://docs.lagoon.finance/vault-creators/fees-and-economics';
-
-	// temporary hack to support external redemptions on Lagoon
-	readonly redeemMethod = DepositMethod.EXTERNAL;
 
 	// Used by requiresSettlement() type predicate
 	protected readonly _requiresSettlement = true;
@@ -64,7 +61,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return this.contracts.asset;
 	}
 
-	async buyShares(config: Config, buyer: Address, value: bigint): Promise<Address> {
+	async buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'requestDeposit',
@@ -74,22 +71,27 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
-	async getDepositResult(config: Config, logs: Log[]): Promise<DepositResult> {
-		const [{ args: depositRequest }] = getEvents(logs, vaultAbi, 'DepositRequest', this.address);
+	async getDepositResult(config: Config, transactionLogs: Log[]): Promise<DepositResult> {
+		const [{ assets: assetValue }] = getEvents({
+			abi: vaultAbi,
+			address: this.address,
+			eventName: 'DepositRequest',
+			transactionLogs
+		});
 
-		const [sharesValue, denominationTokenInfo, vaultTokenInfo] = await Promise.all([
-			this.#convertToShares(config, depositRequest.assets),
+		const [denominationTokenInfo, vaultTokenInfo, shareValue] = await Promise.all([
 			this.getDenominationTokenInfo(config),
-			this.getVaultTokenInfo(config)
+			this.getVaultTokenInfo(config),
+			this.#convertToShares(config, assetValue)
 		]);
 
 		return {
-			assets: { ...denominationTokenInfo, value: depositRequest.assets },
-			shares: { ...vaultTokenInfo, value: sharesValue }
+			assets: { ...denominationTokenInfo, value: assetValue },
+			shares: { ...vaultTokenInfo, value: shareValue }
 		};
 	}
 
-	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
+	async getPendingDeposit(config: Config, address: Address): Promise<PendingExchange> {
 		const [depositId, assetToken, vaultToken] = await Promise.all([
 			this.#getPendingDepositId(config, address),
 			this.getDenominationTokenInfo(config),
@@ -120,6 +122,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		}
 
 		return {
+			type: 'deposit',
 			assets: { ...assetToken, value: assetValue },
 			shares: { ...vaultToken, value: shareValue },
 			settled
@@ -143,10 +146,96 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
+	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'requestRedeem',
+			args: [shares, seller, seller]
+		});
+
+		return writeContract(config, request);
+	}
+
+	async getRedemptionResult(config: Config, transactionLogs: Log[]): Promise<RedemptionResult> {
+		const [{ shares: shareValue }] = getEvents({
+			abi: vaultAbi,
+			address: this.address,
+			eventName: 'RedeemRequest',
+			transactionLogs
+		});
+
+		const [denominationTokenInfo, vaultTokenInfo, assetValue] = await Promise.all([
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config),
+			this.#convertToAssets(config, shareValue)
+		]);
+
+		return {
+			sharesRedeemed: { ...vaultTokenInfo, value: shareValue },
+			assetsReceived: [],
+			estimatedValue: { ...denominationTokenInfo, value: assetValue }
+		};
+	}
+
+	async getPendingRedemption(config: Config, address: Address): Promise<PendingExchange> {
+		const [redeemId, assetToken, vaultToken] = await Promise.all([
+			this.#getPendingRedeemId(config, address),
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config)
+		]);
+
+		const baseContract = {
+			...this.#vaultBaseContract,
+			args: [redeemId, address] as const
+		};
+
+		const response = await readContracts(config, {
+			contracts: [
+				{ ...baseContract, functionName: 'pendingRedeemRequest' },
+				{ ...baseContract, functionName: 'claimableRedeemRequest' }
+			]
+		});
+
+		const [pending, claimable] = response.map(({ result }) => result);
+		const shareValue = pending || claimable || 0n;
+		const settled = Boolean(claimable);
+
+		let assetValue = 0n;
+
+		if (shareValue > 0n) {
+			const requestId = settled ? redeemId : undefined;
+			assetValue = await this.#convertToAssets(config, shareValue, requestId);
+		}
+
+		return {
+			type: 'redemption',
+			shares: { ...vaultToken, value: shareValue },
+			assets: { ...assetToken, value: assetValue },
+			settled
+		};
+	}
+
+	async claimPendingRedemption(config: Config, address: Address, value: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'redeem',
+			args: [value, address, address]
+		});
+		return writeContract(config, request);
+	}
+
 	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
 		return readContract(config, {
 			...this.#vaultBaseContract,
 			functionName: 'lastDepositRequestId',
+			args: [address]
+		}).then(BigInt);
+	}
+
+	#getPendingRedeemId(config: Config, address: Address): Promise<bigint> {
+		return readContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'lastRedeemRequestId',
 			args: [address]
 		}).then(BigInt);
 	}

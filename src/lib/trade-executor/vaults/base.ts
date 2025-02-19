@@ -5,15 +5,13 @@ import type { Log } from 'viem';
 import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
-import type { VaultFees, DepositResult, SettlementRequired } from './types';
+import type { VaultFees, DepositResult, SettlementRequired, RedemptionResult } from './types';
 import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
 
 export const DepositMethod = {
 	INTERNAL: 'internal',
 	EXTERNAL: 'external'
 } as const;
-
-type DepositMethodOption = (typeof DepositMethod)[keyof typeof DepositMethod];
 
 /**
  * Custom error thrown when getSharePrice fails
@@ -70,7 +68,7 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Whether this vault accepts deposits on Trading Strategy (INTERNAL) or
 	// via vault-provider's website (EXTERNAL)
-	readonly depositMethod: DepositMethodOption = DepositMethod.EXTERNAL;
+	readonly depositMethod: (typeof DepositMethod)[keyof typeof DepositMethod] = DepositMethod.EXTERNAL;
 
 	// Vault-specific protocol fee and info
 	abstract readonly protocolFee: number;
@@ -123,14 +121,15 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
  */
 export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts> extends BaseVault<Contracts> {
 	readonly depositMethod = DepositMethod.INTERNAL;
-	// temporary hack to support external redemptions on Lagoon
-	readonly redeemMethod: DepositMethodOption = DepositMethod.INTERNAL;
 
 	// Used by requiresSettlement() to determine if adapter implements SettlementRequired
 	protected readonly _requiresSettlement: boolean = false;
 
 	// The address to which deposit funds are issued (e.g, vault or comptroller)
 	abstract readonly payee: Address;
+
+	// Whether vault redemptions are "in-kind" (any token the vault is invested in) or not (denomination token)
+	abstract readonly inKindRedemption: boolean;
 
 	// Returns the current share price in USD
 	abstract getSharePriceUSD(config: Config): Promise<number>;
@@ -139,10 +138,16 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 	abstract getDenominationAsset(config: Config): Promise<Address>;
 
 	// Submit payment, receive shares (or a pending deposit)
-	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<Address>;
+	abstract buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString>;
 
 	// Returns the result of a successful deposit, extracted from the transaction logs
 	abstract getDepositResult(config: Config, logs: Log[]): Promise<DepositResult>;
+
+	// Redeem shares, receive denomination tokens / in-kind invested tokens (or pending redemption)
+	abstract redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString>;
+
+	// Returns the result of a successful deposit, extracted from the transaction logs
+	abstract getRedemptionResult(config: Config, logs: Log[]): Promise<RedemptionResult>;
 
 	// The address used when forwarding payment authorization (EIP-3009 signature)
 	readonly paymentForwarder?: Address = undefined;

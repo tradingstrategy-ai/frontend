@@ -310,6 +310,14 @@
 				<progress max="100" value={$progressBar}></progress>
 			{/if}
 
+			{#if $payment === 'initial' && vault.requiresSettlement()}
+				<Alert size="sm" status="warning" title="Settlement period required">
+					Your deposit will show as <i>pending</i> during settlement. Once complete, you'll be able to claim your
+					deposited shares.
+					<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
+				</Alert>
+			{/if}
+
 			{#if $payment === 'authorizing'}
 				<Alert size="sm" status="info" title="Authorise transfer">
 					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
