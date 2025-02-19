@@ -10,8 +10,7 @@
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DepositWarning from './DepositWarning.svelte';
 	import DepositBalance from './DepositBalance.svelte';
-	import PendingDepositInfo from './PendingDepositInfo.svelte';
-	import PendingRedemptionInfo from './PendingRedemptionInfo.svelte';
+	import PendingExchangeInfo from './PendingExchangeInfo.svelte';
 	import IconWallet from '~icons/local/wallet';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconUnlink from '~icons/local/unlink';
@@ -145,8 +144,8 @@
 				{/if}
 			</div>
 			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingDepositInfo {vault} {address} {invalidateBalances} />
-				<PendingRedemptionInfo {vault} {address} {invalidateBalances} />
+				<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
+				<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
 			{/if}
 		</div>
 	{/if}

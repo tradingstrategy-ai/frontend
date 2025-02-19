@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { SmartContracts } from 'trade-executor/schemas/summary';
 	import type { VaultWithInternalDeposits } from 'trade-executor/vaults/base';
-	import type { PendingRedemption, SettlementRequired } from 'trade-executor/vaults/types';
+	import type { PendingExchange, SettlementRequired } from 'trade-executor/vaults/types';
+	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
+	import type { HexString } from 'trade-executor/schemas/utility-types';
 	import fsm from 'svelte-fsm';
 	import { onMount } from 'svelte';
 	import { config } from './client';
@@ -16,21 +18,23 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { errorCausedBy } from '$lib/eth-defi/helpers';
 	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { capitalize } from '$lib/helpers/formatters';
 
 	type Props = {
+		type: 'deposit' | 'redemption';
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
 		invalidateBalances: () => void;
 	};
 
-	let { vault, address, invalidateBalances }: Props = $props();
+	let { vault, address, type, invalidateBalances }: Props = $props();
 
-	let pendingRedemption = $state.raw() as PendingRedemption;
+	let pendingExchange = $state.raw() as PendingExchange;
 	let error: any = $state();
 
 	const retries = retryCounter(3, 500);
 
-	const redemption = fsm('initial', {
+	const exchange = fsm('initial', {
 		'*': {
 			fail: 'failed',
 			bail: 'completed'
@@ -42,38 +46,45 @@
 				clearTimeout(retries.timer);
 			},
 
-			// this is called on-mount (see $effect below)
+			// this is called onMount (see below)
 			getData() {
-				const request = vault.getPendingRedemption(config, address);
-				request.then(redemption.checkStatus).catch(redemption.retry);
+				const method = type === 'deposit' ? 'getPendingDeposit' : 'getPendingRedemption';
+				vault[method](config, address).then(exchange.checkStatus).catch(exchange.retry);
 			},
 
-			checkStatus(response: PendingRedemption) {
-				pendingRedemption = response;
-				if (pendingRedemption.shares.value === 0n) {
-					return 'completed';
-				}
-				return 'ready';
+			checkStatus(response: PendingExchange) {
+				pendingExchange = response;
+				return pendingExchange.assets.value === 0n ? 'completed' : 'ready';
 			},
 
 			retry(err) {
 				const { value: retry, done } = retries.next();
 
 				if (done) {
-					console.error(`Error fetching pending redemption; no more retries\n`, err);
+					console.error(`Error fetching pending exchange; no more retries\n`, err);
 					return;
 				}
 
-				console.error(`Error fetching pending redemption; retry ${retry.count} in ${retry.delay}ms\n`, err);
-				retries.timer = setTimeout(redemption.getData, retry.delay);
+				console.error(`Error fetching pending exchange; retry ${retry.count} in ${retry.delay}ms\n`, err);
+				retries.timer = setTimeout(exchange.getData, retry.delay);
 			}
 		},
 
 		// waiting for user action
 		ready: {
 			confirm() {
-				const request = vault.claimPendingRedemption(config, address, pendingRedemption.shares.value);
-				request.then(redemption.process).catch(redemption.fail);
+				const { settled, assets, shares } = pendingExchange;
+				let request: Promise<HexString>;
+
+				if (type === 'deposit' && !settled) {
+					request = vault.cancelPendingDeposit(config);
+				} else if (type === 'deposit') {
+					request = vault.claimPendingDeposit(config, address, assets.value);
+				} else {
+					request = vault.claimPendingRedemption(config, address, shares.value);
+				}
+
+				request.then(exchange.process).catch(exchange.fail);
 				return 'confirming';
 			}
 		},
@@ -81,7 +92,7 @@
 		// confirming action in wallet
 		confirming: {
 			process(hash) {
-				waitForTransactionReceipt(config, { hash }).then(redemption.finish).catch(redemption.fail);
+				waitForTransactionReceipt(config, { hash }).then(exchange.finish).catch(exchange.fail);
 				return 'processing';
 			},
 
@@ -124,57 +135,62 @@
 		}
 	});
 
-	let buttonDisabled = $derived($redemption !== 'ready');
-
 	let buttonLabel = $derived.by(() => {
-		switch ($redemption) {
-			case 'confirming':
+		const { settled, assets } = pendingExchange;
+		switch (true) {
+			case $exchange === 'confirming':
 				return 'Confirm in wallet';
-			case 'processing':
+			case $exchange === 'processing':
 				return 'Processing';
+			case type === 'redemption':
+				return `Claim ${assets.label}`;
+			case settled:
+				return 'Claim shares';
 			default:
-				return 'Claim tokens';
+				return 'Cancel deposit';
 		}
 	});
 
 	onMount(() => {
-		redemption.getData();
-		return redemption.bail;
+		exchange.getData();
+		return exchange.bail;
 	});
+
+	$inspect(type, $exchange);
 </script>
 
-{#if !['initial', 'completed'].includes($redemption)}
-	{@const { assets, shares, settled } = pendingRedemption}
-	<div class={['pending-redemption', settled && 'settled']} transition:slide>
+{#snippet tokenValue(token: TokenBalance, label: string = token.label)}
+	<div>
+		<dt>${formatBalance(token, 2, 4)}</dt>
+		<dd>{label}</dd>
+	</div>
+{/snippet}
+
+{#if !['initial', 'completed'].includes($exchange)}
+	{@const { assets, shares, settled } = pendingExchange}
+	<div class={['pending-exchange', type, settled && 'settled']} transition:slide>
 		<h3>
 			{#if settled}
 				<IconSuccess />
-				Redemption settled
+				{capitalize(type)} settled
 			{:else}
 				<IconHistory />
-				Pending redemption
+				Pending {type}
 			{/if}
 		</h3>
 		<dl class="values">
-			<div class="shares">
-				<dt>{formatBalance(shares, 2, 4)}</dt>
-				<dd>{shares.label}</dd>
-			</div>
-			<div class="assets">
-				<dt>${formatBalance(assets, 2, 4)}</dt>
-				<dd>
-					{#if settled}
-						{assets.label} claimable
-					{:else}
-						estimated {assets.label}
-					{/if}
-				</dd>
-			</div>
+			{#if type === 'deposit'}
+				{@render tokenValue(assets)}
+				{@render tokenValue(shares, settled ? 'shares claimable' : 'estimated shares')}
+			{:else}
+				{@render tokenValue(shares)}
+				{@render tokenValue(assets, settled ? `${assets.label} claimable` : `estimated ${assets.label}`)}
+			{/if}
 		</dl>
-		{#if settled}
-			<Button size="sm" disabled={buttonDisabled} on:click={redemption.confirm}>
+		{#if type === 'deposit' || settled}
+			<Button size="sm" secondary={!settled} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
 				<svelte:fragment slot="icon">
-					{#if buttonDisabled && $redemption !== 'failed'}<Spinner size="20" />{/if}
+					{#if !['ready', 'failed'].includes($exchange)}<Spinner size="20" />{/if}
 				</svelte:fragment>
 				{buttonLabel}
 			</Button>
@@ -190,20 +206,25 @@
 						<h4>The following error occurred:</h4>
 						<p>{error.shortMessage ?? String(error)}</p>
 						<p>
-							Click <strong>Try again</strong> to reset the form and retry your <strong>Claim tokens</strong> request.
-							Or visit the <a href={vault.externalProviderUrl} target="_blank" rel="noreferrer">{vault.mode}</a> to try claiming
-							your tokens there.
+							Click <strong>Try again</strong> to reset the form and retry your <strong>{buttonLabel}</strong> request.
+							Or visit the <a href={vault.externalProviderUrl} target="_blank" rel="noreferrer">{vault.mode}</a> to try
+							{#if type === 'deposit'}
+								{settled ? 'claming your shares' : 'canceling your deposit'}
+							{:else}
+								claiming your {assets.label}
+							{/if}
+							there.
 						</p>
 					</svelte:fragment>
 				</Tooltip>
-				<Button tertiary size="xs" label="Try again" on:click={redemption.retry} />
+				<Button tertiary size="xs" label="Try again" on:click={exchange.retry} />
 			</div>
 		{/if}
 	</div>
 {/if}
 
 <style>
-	.pending-redemption {
+	.pending-exchange {
 		background: var(--c-box-2);
 		border-radius: var(--radius-sl);
 		padding: 1.125rem;
@@ -245,7 +266,17 @@
 				color: var(--c-text-extra-light);
 			}
 
-			.shares {
+			dt {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md);
+			}
+
+			dd {
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--ls-ui-sm);
+			}
+
+			div:first-child {
 				dt {
 					font: var(--f-ui-xl-medium);
 					letter-spacing: var(--ls-ui-xl);
@@ -254,18 +285,6 @@
 				dd {
 					font: var(--f-ui-md-medium);
 					letter-spacing: var(--ls-ui-md);
-				}
-			}
-
-			.assets {
-				dt {
-					font: var(--f-ui-md-medium);
-					letter-spacing: var(--ls-ui-md);
-				}
-
-				dd {
-					font: var(--f-ui-sm-medium);
-					letter-spacing: var(--ls-ui-sm);
 				}
 			}
 		}

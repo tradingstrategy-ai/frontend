@@ -1,9 +1,8 @@
 import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
 import type { Config } from '@wagmi/core';
 import type { Log } from 'viem';
-import type { DepositResult, PendingRedemption, RedemptionResult } from '../types';
+import type { DepositResult, RedemptionResult, PendingExchange, SettlementRequired } from '../types';
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
-import type { PendingDeposit, SettlementRequired } from '../types';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
 import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
@@ -92,7 +91,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	async getPendingDeposit(config: Config, address: Address): Promise<PendingDeposit> {
+	async getPendingDeposit(config: Config, address: Address): Promise<PendingExchange> {
 		const [depositId, assetToken, vaultToken] = await Promise.all([
 			this.#getPendingDepositId(config, address),
 			this.getDenominationTokenInfo(config),
@@ -123,6 +122,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		}
 
 		return {
+			type: 'deposit',
 			assets: { ...assetToken, value: assetValue },
 			shares: { ...vaultToken, value: shareValue },
 			settled
@@ -177,7 +177,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	async getPendingRedemption(config: Config, address: Address): Promise<PendingRedemption> {
+	async getPendingRedemption(config: Config, address: Address): Promise<PendingExchange> {
 		const [redeemId, assetToken, vaultToken] = await Promise.all([
 			this.#getPendingRedeemId(config, address),
 			this.getDenominationTokenInfo(config),
@@ -208,6 +208,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		}
 
 		return {
+			type: 'redemption',
 			shares: { ...vaultToken, value: shareValue },
 			assets: { ...assetToken, value: assetValue },
 			settled
