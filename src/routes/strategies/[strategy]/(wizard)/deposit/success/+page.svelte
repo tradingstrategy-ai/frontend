@@ -4,7 +4,6 @@
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import ShareBalances from '$lib/wallet/ShareBalances.svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import Button from '$lib/components/Button.svelte';
 
 	const { data } = $props();
 	const { strategy, vault } = data;
@@ -12,6 +11,7 @@
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 	const { transactionLogs } = wizard.data as Required<DepositWizardData>;
 
+	const requiresSettlement = vault.requiresSettlement();
 	const depositResult = vault.getDepositResult(config, transactionLogs);
 </script>
 
@@ -19,16 +19,16 @@
 	<ShareBalances shares={depositResult.then((r) => r.shares)} value={depositResult.then((r) => r.assets)} />
 
 	<p>
-		Congratulations! You've successfully deposited in <strong>{strategy.name}</strong>. Keep an eye on your progress and
-		returns. Please remember that participating in crypto / DeFi trading strategies carries significant risk. Click
-		"Done" to return to the strategy.
+		Congratulations! You've
+		{requiresSettlement ? 'initiated a deposit' : 'successfully deposited'}
+		into <strong>{strategy.name}</strong>. Keep an eye on your progress and returns. Please remember that participating
+		in crypto / DeFi trading strategies carries significant risk. Click "Done" to return to the strategy.
 	</p>
 
-	{#if vault.requiresSettlement()}
-		<Alert size="sm" status="info" title="Note">
-			{vault.label} vaults have a settlement phase. Your deposit will appear as <i>pending</i> until settled, after
-			which you will be able to claim your shares.
-			<Button slot="cta" size="xs" label="Learn more" href={vault.settlementInfoUrl} target="_blank" rel="noreferrer" />
+	{#if requiresSettlement}
+		<Alert size="sm" status="info" title="Settlement in progress">
+			Your deposit is now <i>pending</i>. Once settlement is complete, you'll be able to claim your deposited shares.
+			<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
 		</Alert>
 	{/if}
 </div>
