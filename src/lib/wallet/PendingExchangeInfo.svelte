@@ -5,11 +5,10 @@
 	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 	import type { HexString } from 'trade-executor/schemas/utility-types';
 	import fsm from 'svelte-fsm';
-	import { onMount } from 'svelte';
 	import { config } from './client';
 	import { waitForTransactionReceipt } from '@wagmi/core';
 	import { slide } from 'svelte/transition';
-	import { retryCounter } from '$lib/helpers/retry-counter';
+	import { type RetryGenerator, retryCounter } from '$lib/helpers/retry-counter';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
@@ -29,51 +28,80 @@
 
 	let { vault, address, type, invalidateBalances }: Props = $props();
 
-	let pendingExchange = $state.raw() as PendingExchange;
+	let pendingExchange: PendingExchange | undefined = $state.raw();
 	let error: any = $state();
 
-	const retries = retryCounter(3, 500);
+	let abortController: AbortController;
+	let retries: RetryGenerator;
 
 	const exchange = fsm('initial', {
+		// wildcard actions (available from any state)
 		'*': {
 			fail: 'failed',
-			bail: 'completed'
+			reset: 'initial'
 		},
 
+		// base state on initial load, or when resetting due to wallet address change
 		initial: {
-			// see retry action below
+			_enter() {
+				pendingExchange = undefined;
+			},
+
+			load: 'loading'
+		},
+
+		// loading the pending exchange data (or waiting to retry)
+		loading: {
+			_enter() {
+				retries = retryCounter(3, 500);
+				this.getData();
+			},
+
 			_exit() {
-				clearTimeout(retries.timer);
+				abortController.abort();
 			},
 
-			// this is called onMount (see below)
 			getData() {
+				abortController = new AbortController();
+				const { signal } = abortController;
 				const method = type === 'deposit' ? 'getPendingDeposit' : 'getPendingRedemption';
-				vault[method](config, address).then(exchange.checkStatus).catch(exchange.retry);
+				vault[method](config, address)
+					.then((data) => {
+						if (!signal.aborted) exchange.continue(data);
+					})
+					.catch((err) => {
+						if (!signal.aborted) exchange.fail(err);
+					});
 			},
 
-			checkStatus(response: PendingExchange) {
+			continue(response: PendingExchange) {
+				if (response.assets.value === 0n) return 'inital';
 				pendingExchange = response;
-				return pendingExchange.assets.value === 0n ? 'completed' : 'ready';
+				return 'ready';
 			},
 
-			retry(err) {
+			fail(err) {
 				const { value: retry, done } = retries.next();
 
 				if (done) {
 					console.error(`Error fetching pending exchange; no more retries\n`, err);
-					return;
+					return 'initial';
 				}
 
 				console.error(`Error fetching pending exchange; retry ${retry.count} in ${retry.delay}ms\n`, err);
-				retries.timer = setTimeout(exchange.getData, retry.delay);
+
+				abortController = new AbortController();
+				const { signal } = abortController;
+				setTimeout(() => {
+					if (!signal.aborted) exchange.getData();
+				}, retry.delay);
 			}
 		},
 
 		// waiting for user action
 		ready: {
 			confirm() {
-				const { settled, assets, shares } = pendingExchange;
+				const { settled, assets, shares } = pendingExchange!;
 				let request: Promise<HexString>;
 
 				if (type === 'deposit' && !settled) {
@@ -112,6 +140,7 @@
 			}
 		},
 
+		// failure state if something went wrong in confirming / processing
 		failed: {
 			_enter({ args }) {
 				error ??= args[0];
@@ -121,22 +150,23 @@
 				error = undefined;
 			},
 
-			retry() {
-				return error.state ?? 'ready';
-			}
+			retry: 'ready'
 		},
 
+		// final state after user has completed an action on their pending exchange (cancel or claim)
 		completed: {
-			_enter({ event }) {
-				if (event === 'finish') {
-					invalidateBalances();
-				}
+			_enter() {
+				pendingExchange = undefined;
+				invalidateBalances();
 			}
 		}
 	});
 
 	let buttonLabel = $derived.by(() => {
+		if (!pendingExchange) return;
+
 		const { settled, assets } = pendingExchange;
+
 		switch (true) {
 			case $exchange === 'confirming':
 				return 'Confirm in wallet';
@@ -151,12 +181,19 @@
 		}
 	});
 
-	onMount(() => {
-		exchange.getData();
-		return exchange.bail;
+	$effect(() => {
+		// run effect whenever address changes
+		address;
+
+		exchange.reset();
+		exchange.load();
+
+		return () => {
+			exchange.reset();
+		};
 	});
 
-	$inspect(type, $exchange);
+	$inspect(type, address, $exchange);
 </script>
 
 {#snippet tokenValue(token: TokenBalance, label?: string)}
@@ -166,7 +203,7 @@
 	</div>
 {/snippet}
 
-{#if !['initial', 'completed'].includes($exchange)}
+{#if pendingExchange}
 	{@const { assets, shares, settled } = pendingExchange}
 	<div class={['pending-exchange', type, settled && 'settled']} transition:slide>
 		<h3>
@@ -195,6 +232,7 @@
 				{buttonLabel}
 			</Button>
 		{/if}
+
 		{#if error}
 			<div class="error" transition:slide={{ duration: 100 }}>
 				<Tooltip>
