@@ -101,7 +101,11 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Returns a wallet's vault share balance
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
-		return getTokenBalance(config, { token: this.address, address });
+		return getTokenBalance(config, {
+			chainId: this.chain.id,
+			token: this.address,
+			address
+		});
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This

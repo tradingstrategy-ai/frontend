@@ -40,11 +40,12 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
-		const [denominationToken, value] = await Promise.all([
+		const [denominationToken, shareBalance] = await Promise.all([
 			this.getDenominationTokenInfo(config),
-			this.#getVaultAssetValue(config, address)
+			this.getShareBalance(config, address)
 		]);
 
+		const value = await this.#convertValue(config, 'assets', shareBalance.value);
 		return { ...denominationToken, value };
 	}
 
@@ -231,17 +232,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	async #getVaultAssetValue(config: Config, address: Address) {
-		const { value } = await getTokenBalance(config, {
-			chainId: this.chain.id,
-			token: this.address,
-			address
-		});
-
-		return this.#convertValue(config, 'assets', value);
-	}
-
-	async #getShareAssetValue(config: Config) {
+	async #getShareAssetValue(config: Config): Promise<bigint> {
 		const { decimals } = await this.getVaultTokenInfo(config);
 		const value = parseUnits('1', decimals);
 		return this.#convertValue(config, 'assets', value);

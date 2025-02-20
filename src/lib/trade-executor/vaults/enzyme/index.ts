@@ -69,17 +69,19 @@ export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts>
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
 		const { default: abi } = await import('./abi/FundValueCalculator.json');
 
-		const { result } = await simulateContract(config, {
-			abi,
-			address: this.contracts.fund_value_calculator,
-			functionName: 'calcNetValueForSharesHolder',
-			args: [this.contracts.vault, address]
-		});
+		const [denominationToken, netValue] = await Promise.all([
+			this.getDenominationTokenInfo(config),
 
-		const [token, value] = result;
-		const denominationToken = await getTokenBalance(config, { token, address });
+			simulateContract(config, {
+				abi,
+				chainId: this.chain.id,
+				address: this.contracts.fund_value_calculator,
+				functionName: 'calcNetValueForSharesHolder',
+				args: [this.contracts.vault, address]
+			})
+		]);
 
-		return { ...denominationToken, value };
+		return { ...denominationToken, value: netValue.result[1] };
 	}
 
 	async getSharePriceUSD(config: Config): Promise<number> {
