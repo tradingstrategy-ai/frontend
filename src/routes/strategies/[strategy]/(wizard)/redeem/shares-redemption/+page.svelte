@@ -2,19 +2,18 @@
 	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
-	import { getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
-	import { formatUnits, parseUnits } from 'viem';
-	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
 	import { Alert, AlertList, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
-	import { formatNumber } from '$lib/helpers/formatters';
+	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { formatNumber } from '$lib/helpers/formatters';
+	import { formatUnits, parseUnits } from 'viem';
 
 	const { data } = $props();
 	const { chain, vault } = data;
@@ -29,7 +28,8 @@
 	let errorMessage: string | undefined = $state();
 	let transactionId: Address | undefined = $state();
 
-	const progressBar = tweened(0, { easing: cubicOut });
+	const progressBar = getProgressBar(0, getExpectedBlockTime(chain.id));
+
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	// Disable the "Cancel" button once a transaction has been initiated
@@ -78,22 +78,12 @@
 		processing: {
 			_enter({ event }) {
 				const hash = transactionId!;
-				let duration = getExpectedBlockTime(chain.id);
-
-				if (event === 'restore') {
-					// try fetching receipt in case transaction already completed
-					getTransactionReceipt(config, { hash }).then(redemption.finish).catch(redemption.noop);
-					progressBar.set(50, { duration: 0 });
-					duration *= 0.5;
-				}
-
-				// wait for pending transaction
+				progressBar.start(event === 'restore' ? 50 : 0);
 				waitForTransactionReceipt(config, { hash }).then(redemption.finish).catch(redemption.fail);
-				progressBar.set(100, { duration });
 			},
 
 			_exit() {
-				progressBar.set(100, { duration: 100 });
+				progressBar.finish();
 			},
 
 			finish(receipt) {
@@ -130,7 +120,7 @@
 		completed: {
 			_enter({ event }) {
 				if (event === 'restore') {
-					progressBar.set(100, { duration: 0 });
+					progressBar.finish(0);
 				}
 				wizard.toggleComplete('shares-redemption');
 			}
