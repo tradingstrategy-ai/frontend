@@ -143,7 +143,7 @@
 					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
-			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
+			{#if !buttonsDisabled && address && vault.internalDepositEnabled() && vault.requiresSettlement()}
 				<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
 				<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
 			{/if}
