@@ -7,24 +7,31 @@
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const { data } = $props();
 	const { strategy, vault } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
-	const { shares, transactionLogs } = wizard.data as Required<RedeemWizardData>;
+	const { transactionLogs } = wizard.data as Required<RedeemWizardData>;
 
 	const requiresSettlement = vault.requiresSettlement();
-	const redemptionResultPromise = vault.getRedemptionResult(config, transactionLogs);
+	const redemptionResult = vault.getRedemptionResult(config, transactionLogs);
 </script>
 
 <div class="redemption-success">
 	<p>
 		Congratulations! You've
 		{requiresSettlement ? 'initiated the redemption of' : 'successfully redeemed'}
-		<strong>{formatNumber(shares, 2, 5)} shares</strong> of
+		<strong>
+			{#await redemptionResult}
+				<span class="skeleton" style:width="6ch">-</span>
+			{:then { sharesRedeemed }}
+				{formatBalance(sharesRedeemed, 2, 5)}
+			{/await}
+			shares
+		</strong>
+		of
 		<strong>{strategy.name}</strong>. Click "Done" to return to the strategy overview page.
 	</p>
 
@@ -33,7 +40,7 @@
 	</h3>
 
 	<WalletInfo alignValues="right">
-		{#await redemptionResultPromise}
+		{#await redemptionResult}
 			<WalletInfoItem>
 				<span slot="label" class="skeleton">-</span>
 				<span class="skeleton">-</span>
