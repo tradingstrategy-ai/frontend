@@ -371,8 +371,13 @@
 
 			{#if $payment === 'completed'}
 				<Alert size="sm" status="success" title="Payment completed">
-					Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
-					review your share balance.
+					{#if vault.requiresSettlement()}
+						Your transaction completed successfully. Your shares will be available to claim once the settlement period
+						is complete.
+					{:else}
+						Your transaction completed successfully and the shares have been added to your wallet.
+					{/if}
+					Click "Next" below to review your deposit details.
 				</Alert>
 			{/if}
 		</form>

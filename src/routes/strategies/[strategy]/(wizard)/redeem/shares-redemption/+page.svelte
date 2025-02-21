@@ -238,9 +238,14 @@
 			{/if}
 
 			{#if $redemption === 'completed'}
-				<Alert size="sm" status="success" title="Redemption completed">
-					Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
-					below to review your redeemed token values.
+				<Alert size="sm" status="success" title="Redemption {vault.requiresSettlement() ? 'initiated' : 'completed'}">
+					{#if vault.requiresSettlement()}
+						Your transaction completed successfully. Your tokens will be available to claim once the settlement period
+						is complete.
+					{:else}
+						Your transaction completed successfully and the redeemed tokens have been added to your wallet.
+					{/if}
+					Click "Next" below to review your redemption details.
 				</Alert>
 			{/if}
 		</form>
