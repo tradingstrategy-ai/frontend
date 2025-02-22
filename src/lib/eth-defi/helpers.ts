@@ -124,8 +124,9 @@ export function getExpectedBlockTime(chainId: number) {
 	// prettier-ignore
 	switch (chainId) {
 		case     1 : return 25_000; // Ethereum
- 		case   137 : return 10_000;  // Polygon
-		case 42161 : return 2_500;  // Arbitrum
+ 		case   137 : return 10_000; // Polygon
+		case  8453 : return  7_500; // Base
+		case 42161 : return  2_500; // Arbitrum
     default    : return 10_000; // everything else
 	}
 }
