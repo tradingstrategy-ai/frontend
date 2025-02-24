@@ -294,13 +294,13 @@
 
 			{#if !['processing', 'completed'].includes($payment)}
 				{#if canForwardPayment}
-					<Button submit disabled={$payment !== 'initial'}>Make payment</Button>
+					<Button submit disabled={$payment !== 'initial'}>Deposit</Button>
 				{:else}
 					<div class="buttons">
 						<Button submit disabled={$payment !== 'initial'}>
 							Approve {denominationToken.label}
 						</Button>
-						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
+						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Deposit</Button>
 					</div>
 				{/if}
 			{:else if paymentTxId}
