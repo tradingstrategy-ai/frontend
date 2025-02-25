@@ -17,13 +17,14 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { errorCausedBy, formatBalance } from '$lib/eth-defi/helpers';
 	import { capitalize } from '$lib/helpers/formatters';
-	import { formatCycleDuration } from 'trade-executor/helpers/formatters';
+	import { type CycleDuration, getNextExpectedCycleTime } from 'trade-executor/helpers/date';
+	import { formatDistanceToNow } from 'date-fns';
 
 	type Props = {
 		type: 'deposit' | 'redemption';
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
-		cycleDuration: string | undefined;
+		cycleDuration: CycleDuration;
 		invalidateBalances: () => void;
 	};
 
@@ -34,6 +35,8 @@
 
 	let abortController: AbortController;
 	let retries: RetryGenerator;
+
+	let nextCycleTime = $derived(getNextExpectedCycleTime(cycleDuration, 15));
 
 	const exchange = fsm('initial', {
 		// wildcard actions (available from any state)
@@ -206,6 +209,8 @@
 
 {#if pendingExchange}
 	{@const { assets, shares, settled } = pendingExchange}
+	{@const pending = !settled}
+
 	<div class={['pending-exchange', type, settled && 'settled']} transition:slide>
 		<h3>
 			{#if settled}
@@ -216,6 +221,7 @@
 				Pending {type}
 			{/if}
 		</h3>
+
 		<dl class="values">
 			{#if type === 'deposit'}
 				{@render tokenValue(assets)}
@@ -225,13 +231,28 @@
 				{@render tokenValue(assets, settled ? `${assets.label} claimable` : `estimated ${assets.label}`)}
 			{/if}
 		</dl>
-		{#if !settled}
+
+		{#if pending && nextCycleTime}
 			<p>
-				{capitalize(type)}s are settled approximately every {formatCycleDuration(cycleDuration)}.
+				Your {type} will settle and you may claim your {type === 'deposit' ? 'shares' : 'tokens'} in
+				<Tooltip>
+					<span slot="trigger" class="underline">
+						{formatDistanceToNow(nextCycleTime)}.
+					</span>
+					<svelte:fragment slot="popup">
+						Next settlement at approximately
+						{nextCycleTime?.toLocaleTimeString(undefined, {
+							hour: 'numeric',
+							minute: '2-digit',
+							timeZoneName: 'short'
+						})}
+					</svelte:fragment>
+				</Tooltip>
 			</p>
 		{/if}
+
 		{#if type === 'deposit' || settled}
-			<Button size="sm" secondary={!settled} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
+			<Button size="sm" secondary={pending} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
 				<svelte:fragment slot="icon">
 					{#if !['ready', 'failed'].includes($exchange)}<Spinner size="20" />{/if}
 				</svelte:fragment>
