@@ -6,7 +6,9 @@ import type { TokenBalance, TokenInfo } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import type { VaultFees, DepositResult, SettlementRequired, RedemptionResult } from './types';
-import { getTokenBalance, getTokenInfo, getTokenAllowance, approveTokenTransfer } from '$lib/eth-defi/helpers';
+import { erc20Abi } from 'viem';
+import { readContract, simulateContract, writeContract } from '@wagmi/core';
+import { getTokenBalance, getTokenInfo } from '$lib/eth-defi/helpers';
 
 export const DepositMethod = {
 	INTERNAL: 'internal',
@@ -99,7 +101,11 @@ export abstract class BaseVault<Contracts extends SmartContracts> extends BaseAs
 
 	// Returns a wallet's vault share balance
 	async getShareBalance(config: Config, address: Address): Promise<TokenBalance> {
-		return getTokenBalance(config, { token: this.address, address });
+		return getTokenBalance(config, {
+			chainId: this.chain.id,
+			token: this.address,
+			address
+		});
 	}
 
 	// By default, vault adapters return the fees defined in metadata payload. This
@@ -190,24 +196,28 @@ export abstract class VaultWithInternalDeposits<Contracts extends SmartContracts
 		return getTokenBalance(config, { chainId: this.chain.id, token, address });
 	}
 
-	// Check a wallet address' current deposit allowance
-	async getDepositAllowance(config: Config, address: Address): Promise<bigint> {
-		return getTokenAllowance(config, {
+	// Check a wallet owner's current deposit allowance
+	async getDepositAllowance(config: Config, owner: Address): Promise<bigint> {
+		return readContract(config, {
+			abi: erc20Abi,
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
-			owner: address,
-			spender: this.payee
+			functionName: 'allowance',
+			args: [owner, this.payee]
 		});
 	}
 
 	// Approve deposit allowance through wallet
-	async approveDepositAllowance(config: Config, value: number | bigint) {
-		return approveTokenTransfer(config, {
+	async approveDepositAllowance(config: Config, value: bigint) {
+		const { request } = await simulateContract(config, {
+			abi: erc20Abi,
 			chainId: this.chain.id,
 			address: await this.getDenominationAsset(config),
-			spender: this.payee,
-			value
+			functionName: 'approve',
+			args: [this.payee, value]
 		});
+
+		return writeContract(config, request);
 	}
 
 	// Get EIP-3009 authorization to transfer funds from wallet

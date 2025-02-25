@@ -143,12 +143,10 @@
 					<Button secondary label="Redeem" disabled={buttonsDisabled} href={getWizardUrl('redeem')} />
 				{/if}
 			</div>
-			{#if address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<!-- force re-render of PendingExchangeInfo when address changes -->
-				{#key address}
-					<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
-					<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
-				{/key}
+			{#if !buttonsDisabled && address && vault.internalDepositEnabled() && vault.requiresSettlement()}
+				{@const cycleDuration = strategy.summary_statistics.key_metrics.decision_cycle_duration?.value}
+				<PendingExchangeInfo type="deposit" {vault} {address} {cycleDuration} {invalidateBalances} />
+				<PendingExchangeInfo type="redemption" {vault} {address} {cycleDuration} {invalidateBalances} />
 			{/if}
 		</div>
 	{/if}

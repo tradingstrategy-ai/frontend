@@ -40,11 +40,12 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	}
 
 	async getShareValueUSD(config: Config, address: Address): Promise<TokenBalance> {
-		const [denominationToken, value] = await Promise.all([
+		const [denominationToken, shareBalance] = await Promise.all([
 			this.getDenominationTokenInfo(config),
-			this.#getVaultAssetValue(config, address)
+			this.getShareBalance(config, address)
 		]);
 
+		const value = await this.#convertValue(config, 'assets', shareBalance.value);
 		return { ...denominationToken, value };
 	}
 
@@ -82,68 +83,13 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		const [denominationTokenInfo, vaultTokenInfo, shareValue] = await Promise.all([
 			this.getDenominationTokenInfo(config),
 			this.getVaultTokenInfo(config),
-			this.#convertToShares(config, assetValue)
+			this.#convertValue(config, 'shares', assetValue)
 		]);
 
 		return {
 			assets: { ...denominationTokenInfo, value: assetValue },
 			shares: { ...vaultTokenInfo, value: shareValue }
 		};
-	}
-
-	async getPendingDeposit(config: Config, address: Address): Promise<PendingExchange> {
-		const [depositId, assetToken, vaultToken] = await Promise.all([
-			this.#getPendingDepositId(config, address),
-			this.getDenominationTokenInfo(config),
-			this.getVaultTokenInfo(config)
-		]);
-
-		const baseContract = {
-			...this.#vaultBaseContract,
-			args: [depositId, address] as const
-		};
-
-		const response = await readContracts(config, {
-			contracts: [
-				{ ...baseContract, functionName: 'pendingDepositRequest' },
-				{ ...baseContract, functionName: 'claimableDepositRequest' }
-			]
-		});
-
-		const [pending, claimable] = response.map(({ result }) => result);
-		const assetValue = pending || claimable || 0n;
-		const settled = Boolean(claimable);
-
-		let shareValue = 0n;
-
-		if (assetValue > 0n) {
-			const requestId = settled ? depositId : undefined;
-			shareValue = await this.#convertToShares(config, assetValue, requestId);
-		}
-
-		return {
-			type: 'deposit',
-			assets: { ...assetToken, value: assetValue },
-			shares: { ...vaultToken, value: shareValue },
-			settled
-		};
-	}
-
-	async cancelPendingDeposit(config: Config): Promise<HexString> {
-		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
-			functionName: 'cancelRequestDeposit'
-		});
-		return writeContract(config, request);
-	}
-
-	async claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString> {
-		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
-			functionName: 'deposit',
-			args: [value, address]
-		});
-		return writeContract(config, request);
 	}
 
 	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
@@ -167,7 +113,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		const [denominationTokenInfo, vaultTokenInfo, assetValue] = await Promise.all([
 			this.getDenominationTokenInfo(config),
 			this.getVaultTokenInfo(config),
-			this.#convertToAssets(config, shareValue)
+			this.#convertValue(config, 'assets', shareValue)
 		]);
 
 		return {
@@ -177,42 +123,29 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	async getPendingRedemption(config: Config, address: Address): Promise<PendingExchange> {
-		const [redeemId, assetToken, vaultToken] = await Promise.all([
-			this.#getPendingRedeemId(config, address),
-			this.getDenominationTokenInfo(config),
-			this.getVaultTokenInfo(config)
-		]);
+	getPendingDeposit(config: Config, address: Address): Promise<PendingExchange> {
+		return this.#getPendingExchange(config, address, 'deposit');
+	}
 
-		const baseContract = {
+	getPendingRedemption(config: Config, address: Address): Promise<PendingExchange> {
+		return this.#getPendingExchange(config, address, 'redemption');
+	}
+
+	async cancelPendingDeposit(config: Config): Promise<HexString> {
+		const { request } = await simulateContract(config, {
 			...this.#vaultBaseContract,
-			args: [redeemId, address] as const
-		};
-
-		const response = await readContracts(config, {
-			contracts: [
-				{ ...baseContract, functionName: 'pendingRedeemRequest' },
-				{ ...baseContract, functionName: 'claimableRedeemRequest' }
-			]
+			functionName: 'cancelRequestDeposit'
 		});
+		return writeContract(config, request);
+	}
 
-		const [pending, claimable] = response.map(({ result }) => result);
-		const shareValue = pending || claimable || 0n;
-		const settled = Boolean(claimable);
-
-		let assetValue = 0n;
-
-		if (shareValue > 0n) {
-			const requestId = settled ? redeemId : undefined;
-			assetValue = await this.#convertToAssets(config, shareValue, requestId);
-		}
-
-		return {
-			type: 'redemption',
-			shares: { ...vaultToken, value: shareValue },
-			assets: { ...assetToken, value: assetValue },
-			settled
-		};
+	async claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString> {
+		const { request } = await simulateContract(config, {
+			...this.#vaultBaseContract,
+			functionName: 'deposit',
+			args: [value, address]
+		});
+		return writeContract(config, request);
 	}
 
 	async claimPendingRedemption(config: Config, address: Address, value: bigint): Promise<HexString> {
@@ -224,18 +157,63 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		return writeContract(config, request);
 	}
 
-	#getPendingDepositId(config: Config, address: Address): Promise<bigint> {
-		return readContract(config, {
+	// get a pending deposit or redemption
+	async #getPendingExchange(
+		config: Config,
+		address: Address,
+		type: 'deposit' | 'redemption'
+	): Promise<PendingExchange> {
+		const isDeposit = type === 'deposit';
+
+		const [requestId, assetToken, vaultToken] = await Promise.all([
+			this.#getLastRequestId(config, address, type),
+			this.getDenominationTokenInfo(config),
+			this.getVaultTokenInfo(config)
+		]);
+
+		const baseContract = {
 			...this.#vaultBaseContract,
-			functionName: 'lastDepositRequestId',
-			args: [address]
-		}).then(BigInt);
+			args: [requestId, address] as const
+		};
+
+		const fnSuffix = isDeposit ? 'DepositRequest' : 'RedeemRequest';
+
+		const response = await readContracts(config, {
+			contracts: [
+				{ ...baseContract, functionName: `pending${fnSuffix}` },
+				{ ...baseContract, functionName: `claimable${fnSuffix}` }
+			]
+		});
+
+		const [pending, claimable] = response.map(({ result }) => result);
+		const settled = Boolean(claimable);
+
+		// if deposit: from = assets, to = shares
+		// if redemption: from = shares, to = assets
+		const values = {
+			from: pending || claimable || 0n,
+			to: 0n
+		};
+
+		if (values.from > 0n) {
+			const reqId = settled ? requestId : undefined;
+			const convertTo = isDeposit ? 'shares' : 'assets';
+			values.to = await this.#convertValue(config, convertTo, values.from, reqId);
+		}
+
+		return {
+			type,
+			settled,
+			assets: { ...assetToken, value: isDeposit ? values.from : values.to },
+			shares: { ...vaultToken, value: isDeposit ? values.to : values.from }
+		};
 	}
 
-	#getPendingRedeemId(config: Config, address: Address): Promise<bigint> {
+	#getLastRequestId(config: Config, address: Address, type: 'deposit' | 'redemption'): Promise<bigint> {
+		const functionName = type === 'deposit' ? 'lastDepositRequestId' : 'lastRedeemRequestId';
 		return readContract(config, {
 			...this.#vaultBaseContract,
-			functionName: 'lastRedeemRequestId',
+			functionName,
 			args: [address]
 		}).then(BigInt);
 	}
@@ -254,36 +232,18 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	async #getVaultAssetValue(config: Config, address: Address) {
-		const { value } = await getTokenBalance(config, {
-			chainId: this.chain.id,
-			token: this.address,
-			address
-		});
-
-		return this.#convertToAssets(config, value);
-	}
-
-	async #getShareAssetValue(config: Config) {
+	async #getShareAssetValue(config: Config): Promise<bigint> {
 		const { decimals } = await this.getVaultTokenInfo(config);
 		const value = parseUnits('1', decimals);
-		return this.#convertToAssets(config, value);
+		return this.#convertValue(config, 'assets', value);
 	}
 
-	// Convert number of shares to value in denomination asset (with optional requestId)
-	async #convertToAssets(config: Config, value: bigint, requestId?: bigint): Promise<bigint> {
+	// Convert asset value to shares or vice-versa
+	async #convertValue(config: Config, to: 'assets' | 'shares', value: bigint, requestId?: bigint): Promise<bigint> {
+		const functionName = to === 'assets' ? 'convertToAssets' : 'convertToShares';
 		return readContract(config, {
 			...this.#vaultBaseContract,
-			functionName: 'convertToAssets',
-			args: requestId ? [value, requestId] : [value]
-		});
-	}
-
-	// Convert an asset value to number of shares (with optional requestId)
-	async #convertToShares(config: Config, value: bigint, requestId?: bigint): Promise<bigint> {
-		return readContract(config, {
-			...this.#vaultBaseContract,
-			functionName: 'convertToShares',
+			functionName,
 			args: requestId ? [value, requestId] : [value]
 		});
 	}

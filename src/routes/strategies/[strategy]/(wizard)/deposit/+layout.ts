@@ -15,7 +15,7 @@ const dataSchema = z
 		tosSignature: hexString,
 		tosHash: hexString,
 		transactionLogs: transactionLog.array(),
-		paymentSnapshot: z.record(z.any())
+		snapshot: z.record(z.any())
 	})
 	.partial();
 

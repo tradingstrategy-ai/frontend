@@ -98,7 +98,8 @@ export const summaryKeyMetricKind = z.enum([
 	'total_equity',
 	'started_at',
 	'last_trade',
-	'trades_last_week'
+	'trades_last_week',
+	'decision_cycle_duration'
 ]);
 export type SummaryKeyMetricKind = z.infer<typeof summaryKeyMetricKind>;
 

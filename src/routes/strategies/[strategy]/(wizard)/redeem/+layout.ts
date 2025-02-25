@@ -10,11 +10,8 @@ const dataSchema = z
 		nativeCurrency: currencyBalanceSchema,
 		vaultShares: tokenBalanceSchema,
 		vaultNetValue: tokenBalanceSchema,
-		shares: z.string(),
-		transactionId: hexString,
 		transactionLogs: transactionLog.array(),
-		errorMessage: z.string(),
-		redemptionState: z.string()
+		snapshot: z.record(z.any())
 	})
 	.partial();
 

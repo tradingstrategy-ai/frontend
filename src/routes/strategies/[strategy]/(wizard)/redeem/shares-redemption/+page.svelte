@@ -2,61 +2,64 @@
 	import type { RedeemWizardData, RedeemWizardDataSchema } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
 	import fsm from 'svelte-fsm';
-	import { getWizardContext } from '$lib/wizard/state.svelte';
-	import { getTransactionReceipt, waitForTransactionReceipt } from '@wagmi/core';
 	import { formatUnits, parseUnits } from 'viem';
-	import { formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { waitForTransactionReceipt } from '@wagmi/core';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
+	import { type ErrorInfo, extractErrorInfo, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
 	import { Alert, AlertList, Button, CryptoAddressWidget, DataBox, EntitySymbol, MoneyInput } from '$lib/components';
 	import TokenBalance from '$lib/wallet/TokenBalance.svelte';
-	import { formatNumber } from '$lib/helpers/formatters';
+	import RedemptionError from './RedemptionError.svelte';
+	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	const { data } = $props();
-	const { chain, vault } = data;
+	const { chain, vault, denominationToken } = data;
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
+	const { vaultShares } = wizard.data as Required<RedeemWizardData>;
 
-	const { vaultShares, vaultNetValue } = wizard.data as Required<RedeemWizardData>;
+	const progressBar = getProgressBar(0, getExpectedBlockTime(chain.id));
+
+	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
 
 	let address = $derived($wallet.address!);
-	let shares = $state('');
-	let shareQuantity = $derived(parseUnits(shares, vaultShares.decimals));
-	let errorMessage: string | undefined = $state();
+	let sharesValue = $state('');
+	let shares = $derived(parseUnits(sharesValue, vaultShares.decimals));
+	let sharePrice: MaybeNumber = $state();
+	let estimatedValue = $derived(Number(sharesValue ?? 0) * (sharePrice ?? 0));
 	let transactionId: Address | undefined = $state();
-
-	const progressBar = tweened(0, { easing: cubicOut });
-	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
-
-	// Disable the "Cancel" button once a transaction has been initiated
-	$effect(() => {
-		wizard.toggleComplete('meta:no-return', transactionId !== undefined);
-	});
-
-	function getEstimatedValue(shares: Numberlike) {
-		const sharePrice = Number(formatBalance(vaultNetValue)) / Number(formatBalance(vaultShares));
-		const estimated = (Number(shares) || 0) * sharePrice;
-		return formatNumber(estimated, 2, 4);
-	}
+	let error: ErrorInfo | unknown | undefined = $state();
 
 	const redemption = fsm('initial', {
+		'*': {
+			fail: 'failed'
+		},
+
 		initial: {
+			_enter() {
+				progressBar.reset();
+
+				vault
+					.getSharePriceUSD(config)
+					.then((value) => (sharePrice = value))
+					.catch(() => {}); // no-op
+			},
+
 			// restore state on wizard back/next navigation
 			restore(state) {
 				if (state === 'confirming') {
-					errorMessage = `Wallet request state lost due to window navigation;
-						please cancel wallet request and try again.`;
+					error = { name: 'NavigationLostStateError', state };
 					return 'failed';
 				}
 				return state;
 			},
 
 			confirm() {
-				vault.redeemShares(config, address, shareQuantity).then(redemption.process).catch(redemption.fail);
+				vault.redeemShares(config, address, shares).then(redemption.process).catch(redemption.fail);
 				return 'confirming';
 			}
 		},
@@ -65,63 +68,42 @@
 			process(txId) {
 				transactionId = txId;
 				return 'processing';
-			},
-
-			fail(err) {
-				const eventId = captureException(err);
-				console.error('confirmRedemption error:', eventId, err);
-				errorMessage = err.shortMessage ?? 'Redemption confirmation from wallet account failed.';
-				return 'failed';
 			}
 		},
 
 		processing: {
 			_enter({ event }) {
 				const hash = transactionId!;
-				let duration = getExpectedBlockTime(chain.id);
-
-				if (event === 'restore') {
-					// try fetching receipt in case transaction already completed
-					getTransactionReceipt(config, { hash }).then(redemption.finish).catch(redemption.noop);
-					progressBar.set(50, { duration: 0 });
-					duration *= 0.5;
-				}
-
-				// wait for pending transaction
+				progressBar.start(event === 'restore' ? 50 : 0);
 				waitForTransactionReceipt(config, { hash }).then(redemption.finish).catch(redemption.fail);
-				progressBar.set(100, { duration });
 			},
 
 			_exit() {
-				progressBar.set(100, { duration: 100 });
+				progressBar.finish();
 			},
 
 			finish(receipt) {
 				if (receipt.status !== 'success') {
-					console.error('waitForTransactionReceipt reverted:', receipt);
-					errorMessage = `Transaction execution reverted. ${viewTransactionCopy}`;
+					error = { name: 'TransactionRevertedError', cause: receipt, state: 'processing' };
 					return 'failed';
 				}
 
 				wizard.data.transactionLogs = receipt.logs;
 				return 'completed';
-			},
-
-			fail(err) {
-				const eventId = captureException(err);
-				console.error('waitForTransactionReceipt error:', eventId, err);
-				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
-				} else {
-					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
-				}
-				return 'failed';
-			},
-
-			noop() {}
+			}
 		},
 
 		failed: {
+			_enter({ from, args: [err] }) {
+				if (error) return;
+				error = extractErrorInfo(err, from as string);
+				captureException(err);
+			},
+
+			_exit() {
+				error = undefined;
+			},
+
 			retry() {
 				return transactionId ? 'processing' : 'initial';
 			}
@@ -130,22 +112,29 @@
 		completed: {
 			_enter({ event }) {
 				if (event === 'restore') {
-					progressBar.set(100, { duration: 0 });
+					progressBar.finish(0);
 				}
 				wizard.toggleComplete('shares-redemption');
 			}
 		}
 	});
 
+	// Disable the "Cancel" button once a transaction has been initiated
+	$effect(() => {
+		wizard.toggleComplete('meta:no-return', transactionId !== undefined);
+	});
+
 	// capture/restore ephemeral state when navigating away from and back to page
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
-		wizard.updateData({ redemptionState: $redemption, shares, transactionId, errorMessage });
+		wizard.data.snapshot = { state: $redemption, sharesValue, sharePrice, transactionId, error };
 	});
 
 	afterNavigate(() => {
-		({ shares, transactionId, errorMessage } = wizard.data);
-		redemption.restore(wizard.data.redemptionState);
+		const { state, ...rest } = wizard.data.snapshot ?? {};
+		({ sharesValue, sharePrice, transactionId, error } = rest);
+		redemption.restore(state);
+		delete wizard.data.snapshot;
 	});
 </script>
 
@@ -165,8 +154,8 @@
 			<Button
 				secondary
 				size="xs"
-				on:click={() => (shares = formatBalance(vaultShares))}
-				disabled={shares === formatBalance(vaultShares)}
+				on:click={() => (sharesValue = formatBalance(vaultShares))}
+				disabled={sharesValue === formatBalance(vaultShares)}
 			>
 				Redeem all
 				<span class="wide">{vaultShares.symbol}</span>
@@ -181,7 +170,7 @@
 			}}
 		>
 			<MoneyInput
-				bind:value={shares}
+				bind:value={sharesValue}
 				size="xl"
 				token={vaultShares}
 				disabled={$redemption !== 'initial'}
@@ -189,14 +178,14 @@
 				max={formatBalance(vaultShares)}
 			>
 				Estimated value
-				<EntitySymbol label={vaultNetValue.label} logoUrl={getLogoUrl('token', vaultNetValue.symbol)}>
-					{getEstimatedValue(shares!)}
-					{vaultNetValue.label}
+				<EntitySymbol label={denominationToken.label} logoUrl={getLogoUrl('token', denominationToken.symbol)}>
+					{formatNumber(estimatedValue, 2, 4)}
+					{denominationToken.label}
 				</EntitySymbol>
 			</MoneyInput>
 
 			{#if $redemption === 'initial'}
-				<Button submit disabled={!shares}>Redeem</Button>
+				<Button submit disabled={!sharesValue}>Redeem</Button>
 
 				{#if vault.inKindRedemption || vault.requiresSettlement()}
 					<AlertList size="sm" status="warning" let:AlertItem>
@@ -236,21 +225,26 @@
 			{#if $redemption === 'processing'}
 				<Alert size="sm" status="info" title="Redemption processing">
 					The duration of processing may vary based on factors such as blockchain congestion and gas specified.
-					{viewTransactionCopy}
+					{transactionCopy}
 				</Alert>
 			{/if}
 
 			{#if $redemption === 'failed'}
 				<Alert size="sm" status="error" title="Error">
-					{errorMessage}
+					<RedemptionError {error} symbol={denominationToken.symbol} {transactionCopy} />
 					<Button slot="cta" size="sm" label="Try again" on:click={redemption.retry} />
 				</Alert>
 			{/if}
 
 			{#if $redemption === 'completed'}
-				<Alert size="sm" status="success" title="Redemption completed">
-					Your transaction completed successfully and the redeemed tokens have been added to your wallet. Click "Next"
-					below to review your redeemed token values.
+				<Alert size="sm" status="success" title="Redemption {vault.requiresSettlement() ? 'initiated' : 'completed'}">
+					{#if vault.requiresSettlement()}
+						Your transaction completed successfully. Your tokens will be available to claim once the settlement period
+						is complete.
+					{:else}
+						Your transaction completed successfully and the redeemed tokens have been added to your wallet.
+					{/if}
+					Click "Next" below to review your redemption details.
 				</Alert>
 			{/if}
 		</form>

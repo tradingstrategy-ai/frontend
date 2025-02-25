@@ -1,6 +1,6 @@
 <!--
 @component
-Displays relevant user-facing error message based on the type of payment error encountered.render
+Displays relevant user-facing error message based on the type of payment error encountered.
 
 @example
 ```svelte

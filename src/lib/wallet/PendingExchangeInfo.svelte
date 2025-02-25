@@ -5,75 +5,107 @@
 	import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 	import type { HexString } from 'trade-executor/schemas/utility-types';
 	import fsm from 'svelte-fsm';
-	import { onMount } from 'svelte';
 	import { config } from './client';
 	import { waitForTransactionReceipt } from '@wagmi/core';
 	import { slide } from 'svelte/transition';
-	import { retryCounter } from '$lib/helpers/retry-counter';
+	import { type RetryGenerator, retryCounter } from '$lib/helpers/retry-counter';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import IconHistory from '~icons/local/history';
 	import IconSuccess from '~icons/local/success';
 	import IconQuestionCircle from '~icons/local/question-circle';
-	import { errorCausedBy } from '$lib/eth-defi/helpers';
-	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { errorCausedBy, formatBalance } from '$lib/eth-defi/helpers';
 	import { capitalize } from '$lib/helpers/formatters';
+	import { type CycleDuration, getNextExpectedCycleTime } from 'trade-executor/helpers/date';
+	import { formatDistanceToNow } from 'date-fns';
 
 	type Props = {
 		type: 'deposit' | 'redemption';
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
+		cycleDuration: CycleDuration;
 		invalidateBalances: () => void;
 	};
 
-	let { vault, address, type, invalidateBalances }: Props = $props();
+	let { type, vault, address, cycleDuration, invalidateBalances }: Props = $props();
 
-	let pendingExchange = $state.raw() as PendingExchange;
+	let pendingExchange: PendingExchange | undefined = $state.raw();
 	let error: any = $state();
 
-	const retries = retryCounter(3, 500);
+	let abortController: AbortController;
+	let retries: RetryGenerator;
+
+	let nextCycleTime = $derived(getNextExpectedCycleTime(cycleDuration, 15));
 
 	const exchange = fsm('initial', {
+		// wildcard actions (available from any state)
 		'*': {
 			fail: 'failed',
-			bail: 'completed'
+			reset: 'initial'
 		},
 
+		// base state on initial load, or when resetting due to wallet address change
 		initial: {
-			// see retry action below
+			_enter() {
+				pendingExchange = undefined;
+			},
+
+			load: 'loading'
+		},
+
+		// loading the pending exchange data (or waiting to retry)
+		loading: {
+			_enter() {
+				retries = retryCounter(3, 500);
+				this.getData();
+			},
+
 			_exit() {
-				clearTimeout(retries.timer);
+				abortController.abort();
 			},
 
-			// this is called onMount (see below)
 			getData() {
+				abortController = new AbortController();
+				const { signal } = abortController;
 				const method = type === 'deposit' ? 'getPendingDeposit' : 'getPendingRedemption';
-				vault[method](config, address).then(exchange.checkStatus).catch(exchange.retry);
+				vault[method](config, address)
+					.then((data) => {
+						if (!signal.aborted) exchange.continue(data);
+					})
+					.catch((err) => {
+						if (!signal.aborted) exchange.fail(err);
+					});
 			},
 
-			checkStatus(response: PendingExchange) {
+			continue(response: PendingExchange) {
+				if (response.assets.value === 0n) return 'inital';
 				pendingExchange = response;
-				return pendingExchange.assets.value === 0n ? 'completed' : 'ready';
+				return 'ready';
 			},
 
-			retry(err) {
+			fail(err) {
 				const { value: retry, done } = retries.next();
 
 				if (done) {
 					console.error(`Error fetching pending exchange; no more retries\n`, err);
-					return;
+					return 'initial';
 				}
 
 				console.error(`Error fetching pending exchange; retry ${retry.count} in ${retry.delay}ms\n`, err);
-				retries.timer = setTimeout(exchange.getData, retry.delay);
+
+				abortController = new AbortController();
+				const { signal } = abortController;
+				setTimeout(() => {
+					if (!signal.aborted) exchange.getData();
+				}, retry.delay);
 			}
 		},
 
 		// waiting for user action
 		ready: {
 			confirm() {
-				const { settled, assets, shares } = pendingExchange;
+				const { settled, assets, shares } = pendingExchange!;
 				let request: Promise<HexString>;
 
 				if (type === 'deposit' && !settled) {
@@ -112,6 +144,7 @@
 			}
 		},
 
+		// failure state if something went wrong in confirming / processing
 		failed: {
 			_enter({ args }) {
 				error ??= args[0];
@@ -121,22 +154,23 @@
 				error = undefined;
 			},
 
-			retry() {
-				return error.state ?? 'ready';
-			}
+			retry: 'ready'
 		},
 
+		// final state after user has completed an action on their pending exchange (cancel or claim)
 		completed: {
-			_enter({ event }) {
-				if (event === 'finish') {
-					invalidateBalances();
-				}
+			_enter() {
+				pendingExchange = undefined;
+				invalidateBalances();
 			}
 		}
 	});
 
 	let buttonLabel = $derived.by(() => {
+		if (!pendingExchange) return;
+
 		const { settled, assets } = pendingExchange;
+
 		switch (true) {
 			case $exchange === 'confirming':
 				return 'Confirm in wallet';
@@ -151,12 +185,19 @@
 		}
 	});
 
-	onMount(() => {
-		exchange.getData();
-		return exchange.bail;
+	$effect(() => {
+		// run effect whenever address changes
+		address;
+
+		exchange.reset();
+		exchange.load();
+
+		return () => {
+			exchange.reset();
+		};
 	});
 
-	$inspect(type, $exchange);
+	$inspect(type, address, $exchange);
 </script>
 
 {#snippet tokenValue(token: TokenBalance, label?: string)}
@@ -166,8 +207,10 @@
 	</div>
 {/snippet}
 
-{#if !['initial', 'completed'].includes($exchange)}
+{#if pendingExchange}
 	{@const { assets, shares, settled } = pendingExchange}
+	{@const pending = !settled}
+
 	<div class={['pending-exchange', type, settled && 'settled']} transition:slide>
 		<h3>
 			{#if settled}
@@ -178,6 +221,7 @@
 				Pending {type}
 			{/if}
 		</h3>
+
 		<dl class="values">
 			{#if type === 'deposit'}
 				{@render tokenValue(assets)}
@@ -187,14 +231,35 @@
 				{@render tokenValue(assets, settled ? `${assets.label} claimable` : `estimated ${assets.label}`)}
 			{/if}
 		</dl>
+
+		{#if pending && nextCycleTime}
+			<p>
+				Your {type} will settle and you may claim your {type === 'deposit' ? 'shares' : 'tokens'} in
+				<Tooltip>
+					<span slot="trigger" class="underline">
+						{formatDistanceToNow(nextCycleTime)}.
+					</span>
+					<svelte:fragment slot="popup">
+						Next settlement at approximately
+						{nextCycleTime?.toLocaleTimeString(undefined, {
+							hour: 'numeric',
+							minute: '2-digit',
+							timeZoneName: 'short'
+						})}
+					</svelte:fragment>
+				</Tooltip>
+			</p>
+		{/if}
+
 		{#if type === 'deposit' || settled}
-			<Button size="sm" secondary={!settled} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
+			<Button size="sm" secondary={pending} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
 				<svelte:fragment slot="icon">
 					{#if !['ready', 'failed'].includes($exchange)}<Spinner size="20" />{/if}
 				</svelte:fragment>
 				{buttonLabel}
 			</Button>
 		{/if}
+
 		{#if error}
 			<div class="error" transition:slide={{ duration: 100 }}>
 				<Tooltip>
@@ -255,6 +320,11 @@
 		/* NOTE: nesting inside h3 as `.settled &` causes PostCSS transform warning  */
 		&.settled h3 {
 			color: var(--c-success);
+		}
+
+		p {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md);
 		}
 
 		.values {

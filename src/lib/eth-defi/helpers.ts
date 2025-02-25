@@ -2,7 +2,7 @@ import type { Abi, ContractEventName, ContractEventArgsFromTopics, Log } from 'v
 import type { Config, GetBalanceParameters } from '@wagmi/core';
 import type { TokenInfo, TokenBalance } from './schemas/token';
 import { decodeEventLog, formatUnits, isAddressEqual, parseAbi, erc20Abi } from 'viem';
-import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
+import { readContracts } from '@wagmi/core';
 import { formatNumber } from '$lib/helpers/formatters';
 
 type GetEventsParams<AbiType extends Abi, EventName extends ContractEventName<AbiType>> = {
@@ -115,45 +115,6 @@ export function getTokenLabel(symbol: string | undefined, address: Address) {
 	return symbol === 'USDC' && isBridgedUSDC(address) ? 'USDC.e' : symbol;
 }
 
-type ApproveTokenTransferParams = {
-	chainId?: number;
-	address: Address;
-	spender: Address;
-	value: number | bigint;
-};
-
-export async function approveTokenTransfer(
-	config: Config,
-	{ chainId, address, spender, value }: ApproveTokenTransferParams
-) {
-	const { request } = await simulateContract(config, {
-		abi: erc20Abi,
-		chainId,
-		address,
-		functionName: 'approve',
-		args: [spender, BigInt(value)]
-	});
-
-	return writeContract(config, request);
-}
-
-type GetTokenAllowanceParams = {
-	chainId?: number;
-	address: Address;
-	owner: Address;
-	spender: Address;
-};
-
-export function getTokenAllowance(config: Config, { chainId, address, owner, spender }: GetTokenAllowanceParams) {
-	return readContract(config, {
-		abi: erc20Abi,
-		chainId,
-		address,
-		functionName: 'allowance',
-		args: [owner, spender]
-	});
-}
-
 /**
  * Return expected block time for a given chain. This is used to display a "best guess" progress
  * bar for transactions. The times returned are about double the average block times, plus added
@@ -163,8 +124,9 @@ export function getExpectedBlockTime(chainId: number) {
 	// prettier-ignore
 	switch (chainId) {
 		case     1 : return 25_000; // Ethereum
- 		case   137 : return 10_000;  // Polygon
-		case 42161 : return 2_500;  // Arbitrum
+ 		case   137 : return 10_000; // Polygon
+		case  8453 : return  7_500; // Base
+		case 42161 : return  2_500; // Arbitrum
     default    : return 10_000; // everything else
 	}
 }

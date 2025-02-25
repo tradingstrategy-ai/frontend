@@ -2,20 +2,20 @@
 	import type { DepositWizardDataSchema, DepositWizardData } from '../+layout';
 	import { captureException } from '@sentry/sveltekit';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import fsm from 'svelte-fsm';
 	import { formatUnits, parseUnits } from 'viem';
 	import { waitForTransactionReceipt } from '@wagmi/core';
+	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { type ErrorInfo, extractErrorInfo, formatBalance, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { config, wallet } from '$lib/wallet/client';
-	import { Button, Alert, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
+	import { Alert, Button, CryptoAddressWidget, EntitySymbol, MoneyInput } from '$lib/components';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';
 	import PaymentError from './PaymentError.svelte';
 	import { getProgressBar } from '$lib/helpers/progressbar';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { formatNumber } from '$lib/helpers/formatters';
 
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
@@ -33,12 +33,12 @@
 	let address = $derived($wallet.address!);
 	let paymentValue = $state('');
 	let value = $derived(parseUnits(paymentValue, denominationTokenInfo.decimals));
-	let error: ErrorInfo | unknown | undefined = $state();
-	let approvalTxId: Maybe<Address> = $state();
-	let paymentTxId: Maybe<Address> = $state();
 	let sharePrice: MaybeNumber = $state();
 	let estimatedShares = $derived(Number(paymentValue ?? 0) / (sharePrice ?? 0));
 	let isPreApproved = $state(false);
+	let approvalTxId: Maybe<Address> = $state();
+	let paymentTxId: Maybe<Address> = $state();
+	let error: ErrorInfo | unknown | undefined = $state();
 
 	const payment = fsm('initial', {
 		'*': {
@@ -186,11 +186,14 @@
 		},
 
 		failed: {
-			_enter({ from, event, args: [err] }) {
-				if (event === 'fail') {
-					captureException(err);
-					error = extractErrorInfo(err, from as string);
-				}
+			_enter({ from, args: [err] }) {
+				if (error) return;
+				error = extractErrorInfo(err, from as string);
+				captureException(err);
+			},
+
+			_exit() {
+				error = undefined;
 			},
 
 			retry() {
@@ -216,13 +219,14 @@
 	// capture/restore ephemeral page state when navigating away from and back to page
 	// NOTE: Svelte's "snapshot" feature only works with browser-native back/forward nav
 	beforeNavigate(() => {
-		wizard.data.paymentSnapshot = { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, error };
+		wizard.data.snapshot = { state: $payment, paymentValue, sharePrice, approvalTxId, paymentTxId, error };
 	});
 
 	afterNavigate(() => {
-		const { state, ...rest } = wizard.data.paymentSnapshot ?? {};
+		const { state, ...rest } = wizard.data.snapshot ?? {};
 		({ paymentValue, sharePrice, approvalTxId, paymentTxId, error } = rest);
 		payment.restore(state);
+		delete wizard.data.snapshot;
 	});
 </script>
 
@@ -290,13 +294,13 @@
 
 			{#if !['processing', 'completed'].includes($payment)}
 				{#if canForwardPayment}
-					<Button submit disabled={$payment !== 'initial'}>Make payment</Button>
+					<Button submit disabled={$payment !== 'initial'}>Deposit</Button>
 				{:else}
 					<div class="buttons">
 						<Button submit disabled={$payment !== 'initial'}>
 							Approve {denominationToken.label}
 						</Button>
-						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Buy shares</Button>
+						<Button disabled={$payment !== 'approved'} on:click={payment.buyShares}>Deposit</Button>
 					</div>
 				{/if}
 			{:else if paymentTxId}
@@ -371,8 +375,13 @@
 
 			{#if $payment === 'completed'}
 				<Alert size="sm" status="success" title="Payment completed">
-					Your transaction completed successfully and the shares have been added to your wallet. Click "Next" below to
-					review your share balance.
+					{#if vault.requiresSettlement()}
+						Your transaction completed successfully. Your shares will be available to claim once the settlement period
+						is complete.
+					{:else}
+						Your transaction completed successfully and the shares have been added to your wallet.
+					{/if}
+					Click "Next" below to review your deposit details.
 				</Alert>
 			{/if}
 		</form>

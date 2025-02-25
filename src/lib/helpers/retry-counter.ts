@@ -1,4 +1,4 @@
-type RetryGenerator = Generator<{ delay: number; count: number }, void, unknown> & {
+export type RetryGenerator = Generator<{ delay: number; count: number }, void, unknown> & {
 	timer?: number | NodeJS.Timeout;
 };
 
