@@ -15,18 +15,19 @@
 	import IconHistory from '~icons/local/history';
 	import IconSuccess from '~icons/local/success';
 	import IconQuestionCircle from '~icons/local/question-circle';
-	import { errorCausedBy } from '$lib/eth-defi/helpers';
-	import { formatBalance } from '$lib/eth-defi/helpers';
+	import { errorCausedBy, formatBalance } from '$lib/eth-defi/helpers';
 	import { capitalize } from '$lib/helpers/formatters';
+	import { formatCycleDuration } from 'trade-executor/helpers/formatters';
 
 	type Props = {
 		type: 'deposit' | 'redemption';
 		vault: VaultWithInternalDeposits<SmartContracts> & SettlementRequired;
 		address: Address;
+		cycleDuration: string | undefined;
 		invalidateBalances: () => void;
 	};
 
-	let { vault, address, type, invalidateBalances }: Props = $props();
+	let { type, vault, address, cycleDuration, invalidateBalances }: Props = $props();
 
 	let pendingExchange: PendingExchange | undefined = $state.raw();
 	let error: any = $state();
@@ -224,6 +225,11 @@
 				{@render tokenValue(assets, settled ? `${assets.label} claimable` : `estimated ${assets.label}`)}
 			{/if}
 		</dl>
+		{#if !settled}
+			<p>
+				{capitalize(type)}s are settled approximately every {formatCycleDuration(cycleDuration)}.
+			</p>
+		{/if}
 		{#if type === 'deposit' || settled}
 			<Button size="sm" secondary={!settled} disabled={$exchange !== 'ready'} on:click={exchange.confirm}>
 				<svelte:fragment slot="icon">
@@ -293,6 +299,11 @@
 		/* NOTE: nesting inside h3 as `.settled &` causes PostCSS transform warning  */
 		&.settled h3 {
 			color: var(--c-success);
+		}
+
+		p {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--ls-ui-md);
 		}
 
 		.values {

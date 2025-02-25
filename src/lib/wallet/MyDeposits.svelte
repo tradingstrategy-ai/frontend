@@ -144,8 +144,9 @@
 				{/if}
 			</div>
 			{#if !buttonsDisabled && address && vault.internalDepositEnabled() && vault.requiresSettlement()}
-				<PendingExchangeInfo type="deposit" {vault} {address} {invalidateBalances} />
-				<PendingExchangeInfo type="redemption" {vault} {address} {invalidateBalances} />
+				{@const cycleDuration = strategy.summary_statistics.key_metrics.decision_cycle_duration?.value}
+				<PendingExchangeInfo type="deposit" {vault} {address} {cycleDuration} {invalidateBalances} />
+				<PendingExchangeInfo type="redemption" {vault} {address} {cycleDuration} {invalidateBalances} />
 			{/if}
 		</div>
 	{/if}
