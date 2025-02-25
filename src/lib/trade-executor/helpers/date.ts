@@ -1,4 +1,5 @@
 import { utcHour } from 'd3-time';
+import { addMinutes } from 'date-fns';
 
 type CycleUnit = 'h' | 'd';
 export type CycleDuration = `${number}${CycleUnit}`;
@@ -7,16 +8,17 @@ export type CycleDuration = `${number}${CycleUnit}`;
  * Get next expected cycle time based on a cycle duration string and offset minutes.
  *
  * @param cycleDuration duration and units, e.g.: "4h", "1d" (only hours and days supported)
- * @param offsetMinutes number of minutes offset to add to the next cycle time (optional)
+ * @param offset minutes to offset the cycle time from the top of the hour
  * @returns the next cycle time or undefined if the duration couldn't be parsed
  */
-export function getNextExpectedCycleTime(cycleDuration: CycleDuration, offsetMinutes = 0): Date | undefined {
+export function getNextExpectedCycleTime(cycleDuration: CycleDuration, offset = 0): Date | undefined {
 	const hours = cycleDurationToHours(cycleDuration);
 	if (!hours) return undefined;
 
-	const nextCycleTime = utcHour.every(hours)!.ceil(new Date());
-	nextCycleTime.setUTCMinutes(offsetMinutes);
-	return nextCycleTime;
+	const interval = utcHour.every(hours)!;
+	const now = new Date();
+	const next = interval.ceil(addMinutes(now, -offset));
+	return addMinutes(next, offset);
 }
 
 /**
