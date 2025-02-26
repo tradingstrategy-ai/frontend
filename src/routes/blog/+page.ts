@@ -1,5 +1,5 @@
-import fetchPosts from './fetchPosts';
+import { getPosts } from '$lib/blog/client';
 
-export async function load() {
-	return await fetchPosts();
+export async function load({ fetch }) {
+	return await getPosts(fetch, { limit: 40 });
 }

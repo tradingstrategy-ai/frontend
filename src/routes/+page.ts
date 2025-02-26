@@ -1,5 +1,5 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import ghostClient from '$lib/blog/client';
+import { getPosts } from '$lib/blog/client';
 
 // handle API fetch errors gracefully (see `catch` below)
 function logError(err: Error) {
@@ -18,6 +18,6 @@ export async function load({ fetch, setHeaders, data }) {
 		strategies: data.strategies,
 		chains: await fetchPublicApi(fetch, 'chains').catch(logError),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
-		posts: await ghostClient.posts?.browse({ limit: 4 }).catch(logError)
+		posts: await getPosts(fetch, { limit: 4 }).catch(logError)
 	};
 }

@@ -9,10 +9,14 @@ Display a collection of blog posts is a responsive grid layout.
 ```
 -->
 <script lang="ts">
-	import type { Blog } from '$lib/types';
+	import type { BlogPost } from '$lib/schemas/blog';
 	import { ContentTile } from '$lib/components';
 
-	export let posts: Blog.BlogPost[];
+	type Props = {
+		posts: BlogPost[];
+	};
+
+	let { posts }: Props = $props();
 </script>
 
 <div class="blog-roll" data-testid="blog-roll">

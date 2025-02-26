@@ -1,15 +1,16 @@
 /**
  * Generate a sitemap for blog posts
  */
+import type { BlogPost } from '$lib/schemas/blog.js';
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
-import ghostClient from '$lib/blog/client';
+import { getPosts } from '$lib/blog/client';
 
-export async function GET({ setHeaders, url }) {
-	const posts = await ghostClient.posts.browse({ limit: 'all' });
+export async function GET({ fetch, setHeaders, url }) {
+	const { posts } = await getPosts(fetch, { limit: 'all' });
 
 	const stream = new SitemapStream({ hostname: url.origin });
-	const entries = posts.map((post: Record<string, string>) => ({
+	const entries = posts.map((post: BlogPost) => ({
 		url: `blog/${post.slug}`,
 		lastmod: post.updated_at,
 		priority: 0.8

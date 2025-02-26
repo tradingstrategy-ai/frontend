@@ -33,7 +33,7 @@ export type BlogPost = z.infer<typeof blogPostSchema>;
 // See: https://ghost.org/docs/content-api/#pagination
 export const blogPaginationSchema = z.object({
 	page: positiveInteger,
-	limit: positiveInteger,
+	limit: positiveInteger.or(z.literal('all')),
 	pages: positiveInteger,
 	total: positiveInteger,
 	next: positiveInteger.nullable(),

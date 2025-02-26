@@ -28,12 +28,12 @@ on the blog roll.
 	export let description = '';
 	export let href: string;
 	export let mediaSrc = '';
-	export let mediaAlt = '';
+	export let mediaAlt: MaybeString = undefined;
 	export let title = '';
 </script>
 
 <a class="content-tile tile a {classes}" {href}>
-	<img src={mediaSrc} alt={mediaAlt} />
+	<img src={mediaSrc} alt={mediaAlt ?? 'Blog post image'} />
 
 	<div class="content">
 		<div class="info">
