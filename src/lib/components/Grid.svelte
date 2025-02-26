@@ -11,10 +11,8 @@ Utility component for grid-based layouts
 ```
 -->
 <script lang="ts">
-	import type { SectionSizing } from '$lib/types';
-
 	export let cols = 1;
-	export let gap: SectionSizing = '';
+	export let gap: '' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' = '';
 
 	$: gridGap = gap ? `var(--space-${gap}, initial)` : null;
 </script>
