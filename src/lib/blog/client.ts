@@ -1,18 +1,6 @@
 import { ghostConfig } from '$lib/config';
 import { type BlogPost, type BlogPostIndex, blogPostsSchema, blogPostIndexSchema } from '$lib/schemas/blog';
 
-// deprecated
-import GhostContentAPI from '@tryghost/content-api';
-export default (({ apiUrl, contentApiKey }) => {
-	if (!apiUrl || !contentApiKey) return;
-
-	return new GhostContentAPI({
-		url: apiUrl,
-		key: contentApiKey,
-		version: 'v5.0'
-	});
-})(ghostConfig);
-
 const { contentApiKey, apiUrl } = ghostConfig;
 
 export async function getPost(fetch: Fetch, slug: string): Promise<BlogPost> {

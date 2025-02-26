@@ -21,9 +21,9 @@
     "node": "^20.11.0"
   },
   "devDependencies": {
+    "@csstools/postcss-global-data": "^3.0.0",
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
-    "@csstools/postcss-global-data": "^3.0.0",
     "@playwright/test": "^1.49.1",
     "@sveltejs/adapter-node": "^5.2.11",
     "@sveltejs/enhanced-img": "^0.4.4",
@@ -62,7 +62,6 @@
     "@reown/appkit-adapter-wagmi": "^1.1.5",
     "@sentry/sveltekit": "^8.48.0",
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.10",
-    "@tryghost/content-api": "^1.11.21",
     "@wagmi/connectors": "^5.2.1",
     "@wagmi/core": "^2.13.8",
     "bignumber.js": "^9.1.2",
