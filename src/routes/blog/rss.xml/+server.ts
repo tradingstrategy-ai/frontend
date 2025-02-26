@@ -1,13 +1,15 @@
 import ghostClient from '$lib/blog/client';
 import { escapeHtml } from '$lib/helpers/html';
 
-export async function GET() {
+export async function GET({ setHeaders }) {
 	const posts = await ghostClient.posts.browse({ limit: 'all' });
-	const headers = {
+
+	setHeaders({
 		'content-type': 'application/rss+xml; charset=utf-8',
 		'cache-control': 'public, max-age=600'
-	};
-	return new Response(render(posts), { headers });
+	});
+
+	return new Response(render(posts));
 }
 
 type Post = Record<string, string>;
