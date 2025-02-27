@@ -1,7 +1,8 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import type { BlogPostDetails, BlogPostIndex } from '$lib/schemas/blog';
 import { error } from '@sveltejs/kit';
 import { ghostConfig } from '$lib/config';
-import { type BlogPost, type BlogPostIndex, blogPostsSchema, blogPostIndexSchema } from '$lib/schemas/blog';
+import { blogPostResponseSchema, blogPostIndexSchema, blogPostIndexItemSchema } from '$lib/schemas/blog';
 
 const { contentApiKey, apiUrl } = ghostConfig;
 
@@ -14,7 +15,7 @@ export const maxAge = 300;
 /**
  * Fetch a single blog post from Ghost API
  */
-export async function getPost(fetch: Fetch, slug: string): Promise<BlogPost> {
+export async function getPost(fetch: Fetch, slug: string): Promise<BlogPostDetails> {
 	const resp = await fetch(`${apiUrl}/ghost/api/content/posts/slug/${slug}/?key=${contentApiKey}`);
 
 	if (!resp.ok) {
@@ -22,7 +23,7 @@ export async function getPost(fetch: Fetch, slug: string): Promise<BlogPost> {
 	}
 
 	const data = await resp.json();
-	return blogPostsSchema.parse(data).posts[0];
+	return blogPostResponseSchema.parse(data).posts[0];
 }
 
 /**
@@ -46,6 +47,9 @@ type BlogIndexParams = {
  */
 export async function getPosts(fetch: Fetch, params: BlogIndexParams, proxy = false): Promise<BlogPostIndex> {
 	const searchParams = getSearchParams(params as Record<string, string>, !proxy);
+
+	const indexItemFields = Object.keys(blogPostIndexItemSchema.shape);
+	searchParams.set('fields', indexItemFields.join(','));
 
 	const url = proxy ? proxyPostsUrl : directPostsUrl;
 	const resp = await fetch(`${url}?${searchParams}`);

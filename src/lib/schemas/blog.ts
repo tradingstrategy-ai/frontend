@@ -5,19 +5,25 @@ const url = z.string().url();
 const positiveInteger = z.number().int().positive();
 
 // See: https://ghost.org/docs/content-api/#posts
-export const blogPostSchema = z.object({
-	slug: z.string(),
+export const blogPostIndexItemSchema = z.object({
 	id: z.string(),
-	uuid: z.string().uuid(),
+	slug: z.string(),
 	title: z.string(),
-	html: z.string(),
 	feature_image: url,
 	feature_image_alt: z.string().nullable(),
 	created_at: datetime,
 	updated_at: datetime,
 	published_at: datetime,
+	excerpt: z.string()
+});
+
+export type BlogPostIndexItem = z.infer<typeof blogPostIndexItemSchema>;
+
+// See: https://ghost.org/docs/content-api/#posts
+export const blogPostDetailsSchema = blogPostIndexItemSchema.extend({
+	uuid: z.string().uuid(),
+	html: z.string(),
 	url: url,
-	excerpt: z.string(),
 	og_image: url.nullable(),
 	og_title: z.string().nullable(),
 	og_description: z.string().nullable(),
@@ -28,7 +34,11 @@ export const blogPostSchema = z.object({
 	meta_description: z.string().nullable()
 });
 
-export type BlogPost = z.infer<typeof blogPostSchema>;
+export type BlogPostDetails = z.infer<typeof blogPostDetailsSchema>;
+
+export const blogPostResponseSchema = z.object({
+	posts: blogPostDetailsSchema.array()
+});
 
 // See: https://ghost.org/docs/content-api/#pagination
 export const blogPaginationSchema = z.object({
@@ -40,15 +50,8 @@ export const blogPaginationSchema = z.object({
 	prev: positiveInteger.nullable()
 });
 
-export type BlogPagination = z.infer<typeof blogPaginationSchema>;
-
-export const blogPostsSchema = z.object({
-	posts: blogPostSchema.array()
-});
-
-export type BlogPostsSchema = z.infer<typeof blogPostsSchema>;
-
-export const blogPostIndexSchema = blogPostsSchema.extend({
+export const blogPostIndexSchema = z.object({
+	posts: blogPostIndexItemSchema.array(),
 	meta: z.object({ pagination: blogPaginationSchema })
 });
 
