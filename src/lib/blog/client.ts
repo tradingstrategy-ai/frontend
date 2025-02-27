@@ -16,6 +16,8 @@ export const maxAge = 300;
  * Fetch a single blog post from Ghost API
  */
 export async function getPost(fetch: Fetch, slug: string): Promise<BlogPostDetails> {
+	if (!apiUrl || !contentApiKey) error(503, 'Ghost URL or API key not configured');
+
 	const resp = await fetch(`${apiUrl}/ghost/api/content/posts/slug/${slug}/?key=${contentApiKey}`);
 
 	if (!resp.ok) {
@@ -46,6 +48,8 @@ type BlogIndexParams = {
  * Fetch collection of blog posts, optionally using a local proxy endpoint (see proxyPosts below)
  */
 export async function getPosts(fetch: Fetch, params: BlogIndexParams, proxy = false): Promise<BlogPostIndex> {
+	if (!apiUrl || !contentApiKey) error(503, 'Ghost URL or API key not configured');
+
 	const searchParams = getSearchParams(params as Record<string, string>, !proxy);
 
 	const indexItemFields = Object.keys(blogPostIndexItemSchema.shape);
@@ -77,11 +81,11 @@ export const proxyPosts: RequestHandler = async function ({ fetch, setHeaders, u
 	try {
 		resp = await fetch(`${directPostsUrl}?${searchParams}`);
 	} catch (e) {
-		throw error(500, 'Failed to connect to Ghost API');
+		error(500, 'Failed to connect to Ghost API');
 	}
 
 	if (!resp.ok) {
-		throw error(resp.status, `Ghost API error: ${resp.statusText}`);
+		error(resp.status, `Ghost API error: ${resp.statusText}`);
 	}
 
 	// Required headers
