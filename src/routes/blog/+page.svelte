@@ -25,7 +25,7 @@
 		loading = true;
 
 		try {
-			const { posts: newPosts, meta } = await getPosts(fetch, { page, limit }, true);
+			const { posts: newPosts, meta } = await getPosts(fetch, { page, limit });
 			posts = [...posts, ...newPosts];
 			pagination = meta.pagination;
 		} catch (err: any) {

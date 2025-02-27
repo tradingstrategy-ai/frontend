@@ -1,10 +1,21 @@
 import { strategyMicrosite } from '$lib/config';
 import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ locals, route }) {
+const ONE_YEAR = 365 * 24 * 60 * 60;
+
+export async function load({ locals, route, url, cookies }) {
 	// restrict routes on custom strategy site
 	if (strategyMicrosite) {
 		restrictMicrositeRoutes(route.id!, strategyMicrosite);
+	}
+
+	// set (or delete) pw cookie if pw URL param present
+	const pw = url.searchParams.get('pw');
+	if (pw !== null) {
+		cookies.set('pw', pw, {
+			path: '/',
+			maxAge: pw ? ONE_YEAR : 0
+		});
 	}
 
 	// Make admin, ipCountry and announcementDismissedAt available to all layouts/pages

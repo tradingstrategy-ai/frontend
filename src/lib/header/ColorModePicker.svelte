@@ -1,5 +1,5 @@
 <script lang="ts">
-	import cookies from 'cookie';
+	import { serialize } from 'cookie';
 	import { Button, Dialog } from '$lib/components';
 	import IconSun from '~icons/local/sun';
 
@@ -23,9 +23,9 @@
 
 	function setMode(mode: string) {
 		document.documentElement.dataset.colorMode = mode;
-		document.cookie = cookies.serialize('ts-color-mode', mode, {
+		document.cookie = serialize('ts-color-mode', mode, {
 			path: '/',
-			maxAge: 365 * 24 * 60 * 60
+			maxAge: 5 * 365 * 24 * 60 * 60
 		});
 		open = false;
 	}
