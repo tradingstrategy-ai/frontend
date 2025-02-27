@@ -1,24 +1,37 @@
 <script lang="ts">
-	import fetchPosts from './fetchPosts';
 	import { inview } from 'svelte-inview';
-	import { Alert, BlogRoll, HeroBanner, Section, Spinner } from '$lib/components';
+	import { getPosts } from '$lib/blog/client';
+	import Alert from '$lib/components/Alert.svelte';
+	import BlogRoll from '$lib/components/BlogRoll.svelte';
+	import HeroBanner from '$lib/components/HeroBanner.svelte';
+	import Section from '$lib/components/Section.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import OptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import SocialLinks from './SocialLinks.svelte';
 	import heroImage from '$lib/assets/illustrations/newspaper-1.svg?raw';
 
-	export let data;
+	let { data } = $props();
 
-	let { posts, page } = data;
+	let posts = $state(data.posts);
+	let pagination = $state(data.meta.pagination);
+
+	let loading = $state(false);
+	let error: any = $state();
 
 	async function fetchNextPage() {
-		page.loading = true;
+		const { next: page, limit } = pagination;
+		if (!page) return;
+
+		loading = true;
+
 		try {
-			const response = await fetchPosts(page);
-			posts = [...posts, ...response.posts];
-			page = response.page;
-		} catch (e) {
-			page.error = e.message;
-			page.loading = false;
+			const { posts: newPosts, meta } = await getPosts(fetch, { page, limit }, true);
+			posts = [...posts, ...newPosts];
+			pagination = meta.pagination;
+		} catch (err: any) {
+			error = err;
+		} finally {
+			loading = false;
 		}
 	}
 </script>
@@ -47,16 +60,16 @@
 	</Section>
 
 	<Section>
-		{#if page.loading}
+		{#if loading}
 			<div style:text-align="center">
 				<Spinner size="60" />
 			</div>
-		{:else if page.error}
+		{:else if error}
 			<Alert title="Error loading blog posts">
-				<pre>{page.error}</pre>
+				<pre>{error.message ?? String(error)}</pre>
 			</Alert>
-		{:else if page.next}
-			<div use:inview={{ rootMargin: '500px' }} on:inview_enter={fetchNextPage}></div>
+		{:else if pagination.next}
+			<div use:inview={{ rootMargin: '500px' }} oninview_enter={fetchNextPage}></div>
 		{:else}
 			<OptInBanner>
 				<h2 slot="title">Congratulations – you've reached the end 🎉!</h2>

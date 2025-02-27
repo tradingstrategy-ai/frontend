@@ -17,10 +17,6 @@ Optimised to work with server-side rendering and `adapter-node`
 - [Automatically add table of contents listing based on headings](./[slug]/BlogPostContent.svelte)
 - [Proxy images locally](./image/server.ts) to make Twitter card preview images work correctly
 
-## Ghost Content API based
+## Ghost REST API
 
-Uses Ghost JavaScript client
-
-```typescrt
-import GhostContentAPI from '@tryghost/content-api';
-```
+Uses [Ghost REST Content API](https://ghost.org/docs/content-api/)

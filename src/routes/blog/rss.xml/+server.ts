@@ -1,18 +1,19 @@
-import ghostClient from '$lib/blog/client';
+import type { BlogPostIndexItem } from '$lib/schemas/blog.js';
+import { getPosts, maxAge } from '$lib/blog/client';
 import { escapeHtml } from '$lib/helpers/html';
 
-export async function GET() {
-	const posts = await ghostClient.posts.browse({ limit: 'all' });
-	const headers = {
+export async function GET({ fetch, setHeaders }) {
+	const { posts } = await getPosts(fetch, { limit: 'all' });
+
+	setHeaders({
 		'content-type': 'application/rss+xml; charset=utf-8',
-		'cache-control': 'public, max-age=600'
-	};
-	return new Response(render(posts), { headers });
+		'cache-control': `public, max-age=${maxAge}`
+	});
+
+	return new Response(render(posts));
 }
 
-type Post = Record<string, string>;
-
-const render = (posts: Post[]) => `<?xml version="1.0" encoding="UTF-8" ?>
+const render = (posts: BlogPostIndexItem[]) => `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <atom:link href="https://tradingstrategy.ai/blog/rss.xml" rel="self" type="application/rss+xml" />
@@ -23,7 +24,7 @@ ${posts.map(renderItem).join('')}
 </channel>
 </rss>`;
 
-const renderItem = (post: Post) => `<item>
+const renderItem = (post: BlogPostIndexItem) => `<item>
 <guid>https://tradingstrategy.ai/blog/${post.slug}</guid>
 <title>${escapeHtml(post.title)}</title>
 <link>https://tradingstrategy.ai/blog/${post.slug}</link>
