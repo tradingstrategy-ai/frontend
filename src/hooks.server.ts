@@ -17,7 +17,7 @@ Sentry.init({
 
 // Shortcut fetch() API requests in SSR; see:
 // https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
-export async function handleFetch({ request }) {
+export async function handleFetch({ request, fetch }) {
 	if (backendInternalUrl) {
 		// replace backendUrl to use the internal network
 		if (request.url.startsWith(backendUrl)) {

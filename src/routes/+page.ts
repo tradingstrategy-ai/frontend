@@ -1,4 +1,3 @@
-import { browser } from '$app/environment';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { getPosts } from '$lib/blog/client';
 
@@ -19,7 +18,7 @@ export async function load({ fetch, setHeaders, data }) {
 		strategies: data.strategies,
 		chains: await fetchPublicApi(fetch, 'chains').catch(logError),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(logError),
-		posts: await getPosts(fetch, { limit: 4 }, browser)
+		posts: await getPosts(fetch, { limit: 4 })
 			.then((r) => r.posts)
 			.catch(logError)
 	};
