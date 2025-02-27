@@ -1,69 +1,47 @@
 <!--
 @component
-Display a content tile that links to additional content, such as the blog tiles
-on the blog roll.
+Display a blog post tile - e.g., on main blog roll or home page preview
 
 @example
 
 ```svelte
-	<ContentTile
-		title="Content title"
-		description="This is some amazing content!"
-		mediaSrc="https://example.com/image"
-		mediaAlt="image"
-		date="2023-01-01"
-		href="/blog/{post.slug}"
-		ctaLabel="Read article"
-	/>
+	<BlogPostTile {post} />
 ```
  -->
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
-	import { Button, Timestamp } from '$lib/components';
+	import type { BlogPostIndexItem } from '$lib/schemas/blog';
+	import Button from '$lib/components/Button.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 
-	let classes = '';
-	export { classes as class };
-	export let ctaLabel = '';
-	export let date: ComponentProps<Timestamp>['date'];
-	export let description = '';
-	export let href: string;
-	export let mediaSrc = '';
-	export let mediaAlt: MaybeString = undefined;
-	export let title = '';
+	type Props = {
+		post: BlogPostIndexItem;
+	};
+
+	let { post }: Props = $props();
 </script>
 
-<a class="content-tile tile a {classes}" {href}>
-	<img src={mediaSrc} alt={mediaAlt ?? 'Blog post image'} />
+<a class="blog-post-tile tile a" href="/blog/{post.slug}">
+	<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} />
 
 	<div class="content">
 		<div class="info">
-			{#if date}
-				<Timestamp {date} let:parsedDate let:relative>
-					{parsedDate?.toDateString()}, {relative}
-				</Timestamp>
-			{/if}
+			<Timestamp date={post.published_at} let:parsedDate let:relative>
+				{parsedDate?.toDateString()}, {relative}
+			</Timestamp>
 
-			{#if title}
-				<h3 class="truncate lines-3">{title}</h3>
-			{/if}
+			<h3 class="truncate lines-3">{post.title}</h3>
 
-			{#if description}
-				<p class="truncate lines-3">{description}</p>
-			{/if}
+			<p class="truncate lines-3">{post.excerpt}</p>
 		</div>
 
-		{#if $$slots.cta || ctaLabel}
-			<div class="cta">
-				<slot name="cta">
-					<Button label={ctaLabel} />
-				</slot>
-			</div>
-		{/if}
+		<div class="cta">
+			<Button label="Read article" />
+		</div>
 	</div>
 </a>
 
 <style>
-	.content-tile {
+	.blog-post-tile {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 		grid-auto-rows: auto 1fr;
