@@ -1,5 +1,5 @@
-import { getPost } from '$lib/blog/client';
 import { error } from '@sveltejs/kit';
+import { getPost, maxAge } from '$lib/blog/client';
 
 export async function load({ fetch, params, setHeaders }) {
 	const post = await getPost(fetch, params.slug).catch((e: any) => {
@@ -8,7 +8,7 @@ export async function load({ fetch, params, setHeaders }) {
 	});
 
 	setHeaders({
-		'cache-control': 'public, max-age=1800' // 30 minutes: 30 * 60 = 1800
+		'cache-control': `public, max-age=${maxAge}`
 	});
 
 	return { post };

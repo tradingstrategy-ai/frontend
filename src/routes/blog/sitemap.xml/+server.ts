@@ -4,7 +4,7 @@
 import type { BlogPost } from '$lib/schemas/blog.js';
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
-import { getPosts } from '$lib/blog/client';
+import { getPosts, maxAge } from '$lib/blog/client';
 
 export async function GET({ fetch, setHeaders, url }) {
 	const { posts } = await getPosts(fetch, { limit: 'all' });
@@ -19,7 +19,7 @@ export async function GET({ fetch, setHeaders, url }) {
 
 	setHeaders({
 		'content-type': 'application/xml',
-		'cache-control': 'public, max-age=600'
+		'cache-control': `public, max-age=${maxAge}`
 	});
 
 	// coerce stream to ReadableStream to make TypeScript happy

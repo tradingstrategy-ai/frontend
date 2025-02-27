@@ -1,5 +1,5 @@
 import type { BlogPost } from '$lib/schemas/blog.js';
-import { getPosts } from '$lib/blog/client';
+import { getPosts, maxAge } from '$lib/blog/client';
 import { escapeHtml } from '$lib/helpers/html';
 
 export async function GET({ fetch, setHeaders }) {
@@ -7,7 +7,7 @@ export async function GET({ fetch, setHeaders }) {
 
 	setHeaders({
 		'content-type': 'application/rss+xml; charset=utf-8',
-		'cache-control': 'public, max-age=600'
+		'cache-control': `public, max-age=${maxAge}`
 	});
 
 	return new Response(render(posts));
