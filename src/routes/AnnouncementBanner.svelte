@@ -19,7 +19,7 @@ Dismissed state is retained in a cookie (see `hooks.server.ts`).
 </script>
 
 <script lang="ts">
-	import cookies from 'cookie';
+	import { serialize } from 'cookie';
 	import { slide } from 'svelte/transition';
 	import type { Announcement } from '$lib/schemas/announcement';
 	import { Button } from '$lib/components';
@@ -47,7 +47,7 @@ Dismissed state is retained in a cookie (see `hooks.server.ts`).
 	// set cookie and dismissed flag when announcement is dismissed
 	function dismiss() {
 		const ts = new Date().toISOString();
-		document.cookie = cookies.serialize('announcement-dismissed-at', ts, {
+		document.cookie = serialize('announcement-dismissed-at', ts, {
 			path: '/',
 			maxAge: 365 * 24 * 60 * 60
 		});
