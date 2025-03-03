@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { SvelteComponent } from 'svelte';
+	import type { Constructor } from 'svelte-headless-table';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import type { ReservePosition } from 'trade-executor/schemas/reserve';
@@ -89,7 +91,7 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(RemarksCell, {
+				createRender(RemarksCell as unknown as Constructor<SvelteComponent>, {
 					admin,
 					position: value,
 					baseUrl: `./${status}-positions/${value.position_id}`,
@@ -101,7 +103,11 @@
 			header: 'Profitability',
 			id: 'profit',
 			accessor: 'profitability',
-			cell: ({ value }) => createRender(Profitability, { of: value, boxed: true })
+			cell: ({ value }) =>
+				createRender(Profitability as unknown as Constructor<SvelteComponent>, {
+					of: value,
+					boxed: true
+				})
 		}),
 		table.column({
 			header: 'Frozen on',

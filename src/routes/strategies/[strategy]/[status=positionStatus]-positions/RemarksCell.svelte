@@ -5,13 +5,17 @@
 	import PositionFlag from './PositionFlag.svelte';
 	import { formatNumber, formatPercent } from '$lib/helpers/formatters';
 
-	export let admin = false;
-	export let position: TradingPositionInfo;
-	export let baseUrl: string;
-	export let isHidden = false;
+	interface Props {
+		admin?: boolean;
+		position: TradingPositionInfo;
+		baseUrl: string;
+		isHidden?: boolean;
+	}
 
-	function getTradeLink(trade: TradeInfo) {
-		return `${baseUrl}/trade-${trade.trade_id}`;
+	let { admin = false, position, baseUrl, isHidden = false }: Props = $props();
+
+	function getTradeLink({ trade_id }: TradeInfo) {
+		return `${baseUrl}/trade-${trade_id}`;
 	}
 </script>
 
@@ -22,7 +26,7 @@
 			<p>Position can still have a profitable close if a trailing or dynamic stop loss was used.</p>
 			<p>See more</p>
 			<ul>
-				<li><a href={getTradeLink(position.lastTrade)}>View the closing trade</a></li>
+				<li><a href={getTradeLink(position.lastTrade!)}>View the closing trade</a></li>
 				<li><a href="/glossary/stop-loss">What is a stop loss</a></li>
 			</ul>
 		</PositionFlag>
@@ -51,7 +55,7 @@
 			</p>
 			<p>See more</p>
 			<ul>
-				<li><a href={getTradeLink(position.failedTrades.at(-1))}>View the last failed trade</a></li>
+				<li><a href={getTradeLink(position.failedTrades.at(-1)!)}>View the last failed trade</a></li>
 			</ul>
 		</PositionFlag>
 	{/if}
