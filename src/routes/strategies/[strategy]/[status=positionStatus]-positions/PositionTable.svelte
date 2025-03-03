@@ -11,23 +11,36 @@
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
 	import ReservesRow from './ReservesRow.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
-	export let admin = false;
-	export let positions: TradingPositionInfo[];
-	export let status: PositionStatus;
-	export let page = 0;
-	export let sort: string;
-	export let direction: 'asc' | 'desc';
-	export let filter = '';
-	export let hasSearch = false;
-	export let hasPagination = false;
-	export let hiddenPositions: number[] = [];
-	export let reserves: ReservePosition;
+	interface Props {
+		admin?: boolean;
+		positions: TradingPositionInfo[];
+		status: PositionStatus;
+		page?: number;
+		sort: string;
+		direction: 'asc' | 'desc';
+		hasSearch?: boolean;
+		hasPagination?: boolean;
+		hiddenPositions?: number[];
+		reserves: ReservePosition;
+	}
 
-	const positionsStore = writable([] as TradingPositionInfo[]);
-	$: positionsStore.set(positions);
+	let {
+		admin = false,
+		positions,
+		status,
+		page = 0,
+		sort,
+		direction,
+		hasSearch = false,
+		hasPagination = false,
+		hiddenPositions = [],
+		reserves
+	}: Props = $props();
+
+	const positionsStore = writable(positions);
 
 	const statusColumns = {
 		open: ['description', 'flags', 'profit', 'current_value', 'opened_at', 'cta'],
@@ -36,9 +49,12 @@
 	};
 
 	const table = createTable(positionsStore, {
-		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
+		colOrder: addColumnOrder({
+			initialColumnIdOrder: statusColumns[status],
+			hideUnspecifiedColumns: true
+		}),
 		tableFilter: addTableFilter({
-			initialFilterValue: filter,
+			initialFilterValue: '',
 			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
 		}),
 		sort: addSortBy({
@@ -139,8 +155,11 @@
 	const { columnIdOrder } = pluginStates.colOrder;
 	const { sortKeys } = pluginStates.sort;
 
-	$: $columnIdOrder = statusColumns[status];
-	$: $sortKeys = [{ id: sort, order: direction }];
+	$effect(() => {
+		$positionsStore = positions;
+		$columnIdOrder = statusColumns[status];
+		$sortKeys = [{ id: sort, order: direction }];
+	});
 </script>
 
 <div class="position-table">
