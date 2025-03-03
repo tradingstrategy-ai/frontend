@@ -1,30 +1,48 @@
 <script lang="ts">
+	import type { SvelteComponent } from 'svelte';
+	import type { Constructor } from 'svelte-headless-table';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
+	import type { ReservePosition } from 'trade-executor/schemas/reserve';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
-	import { formatDollar } from '$lib/helpers/formatters';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
+	import ReservesRow from './ReservesRow.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
-	export let admin = false;
-	export let positions: TradingPositionInfo[];
-	export let status: PositionStatus;
-	export let page = 0;
-	export let sort: string;
-	export let direction: 'asc' | 'desc';
-	export let filter = '';
-	export let hasSearch = false;
-	export let hasPagination = false;
-	export let hiddenPositions: number[] = [];
+	interface Props {
+		admin?: boolean;
+		positions: TradingPositionInfo[];
+		status: PositionStatus;
+		page?: number;
+		sort: string;
+		direction: 'asc' | 'desc';
+		hasSearch?: boolean;
+		hasPagination?: boolean;
+		hiddenPositions?: number[];
+		reserves: ReservePosition;
+	}
 
-	const positionsStore = writable([] as TradingPositionInfo[]);
-	$: positionsStore.set(positions);
+	let {
+		admin = false,
+		positions,
+		status,
+		page = 0,
+		sort,
+		direction,
+		hasSearch = false,
+		hasPagination = false,
+		hiddenPositions = [],
+		reserves
+	}: Props = $props();
+
+	const positionsStore = writable(positions);
 
 	const statusColumns = {
 		open: ['description', 'flags', 'profit', 'current_value', 'opened_at', 'cta'],
@@ -33,9 +51,12 @@
 	};
 
 	const table = createTable(positionsStore, {
-		colOrder: addColumnOrder({ hideUnspecifiedColumns: true }),
+		colOrder: addColumnOrder({
+			initialColumnIdOrder: statusColumns[status],
+			hideUnspecifiedColumns: true
+		}),
 		tableFilter: addTableFilter({
-			initialFilterValue: filter,
+			initialFilterValue: '',
 			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
 		}),
 		sort: addSortBy({
@@ -70,7 +91,7 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(RemarksCell, {
+				createRender(RemarksCell as unknown as Constructor<SvelteComponent>, {
 					admin,
 					position: value,
 					baseUrl: `./${status}-positions/${value.position_id}`,
@@ -82,7 +103,11 @@
 			header: 'Profitability',
 			id: 'profit',
 			accessor: 'profitability',
-			cell: ({ value }) => createRender(Profitability, { of: value, boxed: true })
+			cell: ({ value }) =>
+				createRender(Profitability as unknown as Constructor<SvelteComponent>, {
+					of: value,
+					boxed: true
+				})
 		}),
 		table.column({
 			header: 'Frozen on',
@@ -136,12 +161,19 @@
 	const { columnIdOrder } = pluginStates.colOrder;
 	const { sortKeys } = pluginStates.sort;
 
-	$: $columnIdOrder = statusColumns[status];
-	$: $sortKeys = [{ id: sort, order: direction }];
+	$effect(() => {
+		$positionsStore = positions;
+		$columnIdOrder = statusColumns[status];
+		$sortKeys = [{ id: sort, order: direction }];
+	});
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change>
+		{#if status === 'open'}
+			<ReservesRow {reserves} />
+		{/if}
+	</DataTable>
 </div>
 
 <style>

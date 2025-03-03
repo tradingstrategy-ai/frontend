@@ -104,11 +104,10 @@ export async function getTokenBalance(config: Config, parameters: GetTokenBalanc
 }
 
 export function isBridgedUSDC(address: Address) {
-	const bridgedUSDC = [
+	return [
 		'0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // Polygon
 		'0xff970a61a04b1ca14834a43f5de4533ebddb5cc8' // Arbitrum One
-	];
-	return bridgedUSDC.includes(address.toLowerCase());
+	].includes(address.toLowerCase());
 }
 
 export function getTokenLabel(symbol: string | undefined, address: Address) {

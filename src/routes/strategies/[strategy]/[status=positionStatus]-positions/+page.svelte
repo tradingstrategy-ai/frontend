@@ -7,7 +7,7 @@
 	import { capitalize } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { admin, positions, status, strategy } = $derived(data);
+	let { admin, positions, status, strategy, reserves } = $derived(data);
 
 	type Options = Pick<ComponentProps<PositionTable>, 'page' | 'sort' | 'direction'>;
 
@@ -38,7 +38,7 @@
 </svelte:head>
 
 <section class="position-index">
-	{#if positions.length > 0}
+	{#if positions.length > 0 || status === 'open'}
 		{#if status === 'frozen'}
 			<Alert status="error">
 				The frozen positions could not be automatically open or closed, usually due to a problem with related tokens or
@@ -54,6 +54,7 @@
 			hasPagination={positions.length > 5}
 			hasSearch={positions.length > 5}
 			hiddenPositions={strategy.hiddenPositions}
+			{reserves}
 			on:change={handleChange}
 		/>
 	{:else}
