@@ -1,16 +1,18 @@
 <script lang="ts">
 	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
+	import type { ReservePosition } from 'trade-executor/schemas/reserve';
 	import { writable } from 'svelte/store';
 	import { createTable, createRender } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
-	import { formatDollar } from '$lib/helpers/formatters';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
+	import ReservesRow from './ReservesRow.svelte';
 
 	export let admin = false;
 	export let positions: TradingPositionInfo[];
@@ -22,6 +24,7 @@
 	export let hasSearch = false;
 	export let hasPagination = false;
 	export let hiddenPositions: number[] = [];
+	export let reserves: ReservePosition;
 
 	const positionsStore = writable([] as TradingPositionInfo[]);
 	$: positionsStore.set(positions);
@@ -141,7 +144,11 @@
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change />
+	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change>
+		{#if status === 'open'}
+			<ReservesRow {reserves} />
+		{/if}
+	</DataTable>
 </div>
 
 <style>

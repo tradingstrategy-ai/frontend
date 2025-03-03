@@ -86,12 +86,9 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody
-		attrs={$tableBodyAttrs}
-		rows={hasPagination ? $pageRows : $rows}
-		page={pluginStates.page}
-		{targetableRows}
-	/>
+	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} {targetableRows}>
+		<slot />
+	</TableBody>
 
 	{#if hasPagination}
 		<TableFooter page={pluginStates.page} totalRowCount={totalRowCount ?? $rows.length} />

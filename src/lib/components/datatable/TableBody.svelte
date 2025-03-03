@@ -22,6 +22,7 @@
 
 <!-- --table-width needed for proper tr.targetable styling  -->
 <tbody {...attrs} bind:offsetWidth style:--table-width="{offsetWidth}px">
+	<slot />
 	{#each rows as row, pageRowIndex (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
 			<TableRow attrs={rowAttrs} cells={row.cells} index={getRowIndex(pageRowIndex)} targetable={targetableRows} />

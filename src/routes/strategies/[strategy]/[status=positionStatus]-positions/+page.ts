@@ -12,5 +12,7 @@ export async function load({ params, parent }) {
 		positions = positions.filter((p) => !hiddenPositions.includes(p.position_id));
 	}
 
-	return { positions, status };
+	const reserves = Object.values(state.portfolio.reserves)[0];
+
+	return { positions, status, reserves };
 }
