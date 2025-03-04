@@ -19,7 +19,8 @@ for the same hovered date. Also displays a time-bucket selector.
 	import { type CandleTimeBucket, candleTimeBuckets } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
 	import { ChartLinker, HudRow, HudMetric, PairCandleChart } from '$lib/chart';
-	import { Alert, SegmentedControl } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -42,6 +43,7 @@ for the same hovered date. Also displays a time-bucket selector.
 
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
+	<slot />
 	<SegmentedControl name="timeBucket" options={candleTimeBuckets} selected={timeBucket} on:change />
 </div>
 

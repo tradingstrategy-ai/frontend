@@ -19,7 +19,7 @@ Render the pair trading page
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
-	$: ({ summary, details } = data);
+	$: ({ admin, summary, details } = data);
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
@@ -114,7 +114,11 @@ Render the pair trading page
 			{timeBucket}
 			chainSlug={summary.chain_slug}
 			on:change={handleChartSectionChange}
-		/>
+		>
+			{#if admin}
+				<Button secondary size="sm" label="View chart PoC" href="{summary.pair_slug}/tv-chart" />
+			{/if}
+		</ChartSection>
 	</section>
 
 	<section class="ds-container time-period-summary">
@@ -165,6 +169,15 @@ Render the pair trading page
 	}
 
 	.charts {
+		/* TODO: remove when TV chart migration is complete */
+		:global([data-css-props]) {
+			@media (--viewport-xs) {
+				--button-padding: 0.375rem 0.75rem;
+				--button-font: var(--f-ui-sm-medium);
+				--button-letter-spacing: var(--f-ui-sm-spacing);
+			}
+		}
+
 		/* prevent chart-flicker bug when scrollbars are enabled */
 		overflow: visible;
 	}
