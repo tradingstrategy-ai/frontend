@@ -19,7 +19,10 @@ for the same hovered date. Also displays a time-bucket selector.
 	import { type CandleTimeBucket, candleTimeBuckets } from '$lib/chart';
 	import { type Candle, quoteFeed, candleToQuote } from '$lib/chart';
 	import { ChartLinker, HudRow, HudMetric, PairCandleChart } from '$lib/chart';
-	import { Alert, SegmentedControl } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	// TODO: remove when chart-poc is complete
+	import Button from '$lib/components/Button.svelte';
 
 	export let pairId: number | string;
 	export let pairSymbol: string;
@@ -27,6 +30,10 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let firstTradeDate: string;
 	export let hasTvlData = false;
 	export let timeBucket: CandleTimeBucket;
+
+	// TODO: remove when chart-poc is complete
+	export let admin = false;
+	export let pairSlug: string;
 
 	const chartLinker = new ChartLinker();
 
@@ -38,6 +45,10 @@ for the same hovered date. Also displays a time-bucket selector.
 
 <div class="chart-header">
 	<h2>{pairSymbol} charts</h2>
+	<!-- TODO: remove when chart-poc is complete -->
+	{#if admin}
+		<Button secondary size="sm" label="View chart PoC" href="{pairSlug}/chart-poc" />
+	{/if}
 	<SegmentedControl name="timeBucket" options={candleTimeBuckets} selected={timeBucket} on:change />
 </div>
 
@@ -96,6 +107,11 @@ for the same hovered date. Also displays a time-bucket selector.
 			@media (--viewport-xs) {
 				--segmented-control-font: var(--f-ui-xs-medium);
 				--segmented-control-letter-spacing: var(--ls-ui-xs);
+
+				/* TODO: remove when chart-poc is complete */
+				--button-padding: 0.375rem 0.75rem;
+				--button-font: var(--f-ui-sm-medium);
+				--button-letter-spacing: var(--f-ui-sm-spacing);
 			}
 		}
 

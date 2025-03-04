@@ -19,7 +19,7 @@ Render the pair trading page
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
-	$: ({ summary, details } = data);
+	$: ({ admin, summary, details } = data);
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
@@ -112,6 +112,8 @@ Render the pair trading page
 			hasTvlData={Number.isFinite(summary.pair_tvl)}
 			firstTradeDate={details.first_trade_at}
 			{timeBucket}
+			pairSlug={summary.pair_slug}
+			{admin}
 			on:change={handleChartSectionChange}
 		/>
 	</section>
