@@ -3,11 +3,12 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import PairCandleChart from '$lib/charts/PairCandleChart.svelte';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	let { summary, details } = $derived(data);
+	let { summary, candles } = $derived(data);
 
 	let swapFee = $derived(formatSwapFee(summary.pair_swap_fee));
 
@@ -21,7 +22,7 @@
 
 <svelte:head>
 	<title>
-		LayerChart PoC | {summary.pair_symbol} ({swapFee}) token price on {details.exchange_name}
+		LayerChart PoC | {summary.pair_symbol} ({swapFee}) token price on {summary.exchange_name}
 	</title>
 </svelte:head>
 
@@ -34,14 +35,14 @@
 			<span class="swap-fee">{swapFee}</span>
 		</span>
 		<span slot="subtitle" class="subtitle">
-			token pair on {details.exchange_name} on
+			token pair on {summary.exchange_name} on
 			<EntitySymbol size="0.875em" label={summary.chain_name} logoUrl={getLogoUrl('blockchain', summary.chain_slug)} />
 		</span>
 	</PageHeader>
 
 	<Section padding="md" gap="xs">
 		<h2>LayerChart proof-of-concept</h2>
-		<p>Hello. Your new chart will go here!</p>
+		<PairCandleChart {candles} />
 	</Section>
 </main>
 
