@@ -35,13 +35,13 @@
 				<Rule x="right" y class="axis-rule" />
 				<Highlight area={{ class: 'highlight' }} />
 			</Svg>
-			<Tooltip.Root let:data>
-				<Tooltip.Header>{formatDate(data.ts, PeriodType.Day)}</Tooltip.Header>
+			<Tooltip.Root class="tooltip" let:data>
+				<Tooltip.Header>{new Date(data.ts).toISOString().slice(0, 10)}</Tooltip.Header>
 				<Tooltip.List>
 					<Tooltip.Item label="Open" value={data.o} format="decimal" />
-					<Tooltip.Item label="Close" value={data.c} format="decimal" />
 					<Tooltip.Item label="High" value={data.h} format="decimal" />
 					<Tooltip.Item label="Low" value={data.l} format="decimal" />
+					<Tooltip.Item label="Close" value={data.c} format="decimal" />
 				</Tooltip.List>
 			</Tooltip.Root>
 		</Chart>
@@ -68,6 +68,13 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--ls-ui-sm, normal);
 			fill: var(--c-text-light);
+		}
+
+		:global(.tooltip) {
+			padding: 0.75rem 1rem;
+			border-radius: var(--radius-sm);
+			background: color-mix(in srgb, transparent, var(--c-text-inverted) 80%);
+			box-shadow: var(--shadow-3);
 		}
 	}
 </style>
