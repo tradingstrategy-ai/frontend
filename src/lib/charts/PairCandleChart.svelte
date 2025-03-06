@@ -17,7 +17,7 @@
 		<Chart
 			data={candles}
 			x="ts"
-			xScale={scaleBand().paddingInner(0.4)}
+			xScale={scaleBand().paddingInner(0.25)}
 			y={['h', 'l']}
 			yNice
 			c={({ o, c }: Candle) => (c < o ? 'bearish' : 'bullish')}
