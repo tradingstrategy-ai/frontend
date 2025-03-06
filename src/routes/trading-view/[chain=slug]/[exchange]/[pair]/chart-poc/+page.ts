@@ -28,5 +28,9 @@ export async function load({ fetch, params, parent }) {
 
 	const candles = candleData[summary.pair_id] as Candle[];
 
+	for (const candle of candles) {
+		candle.ts += 'Z';
+	}
+
 	return { summary, candles };
 }
