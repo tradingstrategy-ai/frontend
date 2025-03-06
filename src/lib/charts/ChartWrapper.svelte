@@ -9,6 +9,6 @@
 	let { children }: Props = $props();
 </script>
 
-<div class="tailwind">
+<div class="tailwind ds-3">
 	{@render children()}
 </div>

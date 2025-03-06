@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Candle } from '$lib/chart/helpers';
 	import ChartWrapper from './ChartWrapper.svelte';
-	import { Axis, Chart, Svg, Points, Bars, Highlight, Tooltip } from 'layerchart';
+	import { Axis, Chart, Svg, Points, Bars, Rule, Highlight, Tooltip } from 'layerchart';
 	import { scaleBand, scaleOrdinal } from 'd3-scale';
 	import { formatDate, PeriodType } from '@layerstack/utils';
 
@@ -28,10 +28,11 @@
 			tooltip={{ mode: 'bisect-x' }}
 		>
 			<Svg>
-				<Axis placement="right" grid rule />
-				<Axis placement="bottom" format={(d) => formatDate(d.date, PeriodType.Day)} />
+				<Axis placement="right" grid />
+				<Axis placement="bottom" grid ticks={30} format={(d) => formatDate(d, PeriodType.MonthYear)} />
 				<Points links r={0} />
 				<Bars y={({ o, c }: Candle) => [o, c]} />
+				<Rule x="right" y class="axis-rule" />
 				<Highlight area={{ class: 'highlight' }} />
 			</Svg>
 			<Tooltip.Root let:data>
@@ -52,12 +53,21 @@
 		height: 500px;
 
 		:global(.highlight) {
-			fill: var(--c-box-4);
+			fill: var(--c-box-2);
 		}
 
 		:global(.grid) {
-			stroke: var(--c-text-ultra-light);
-			opacity: 0.5;
+			stroke: var(--c-box-3);
+		}
+
+		:global(.axis-rule) {
+			stroke: var(--c-text-extra-light);
+		}
+
+		:global(.tickLabel) {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm, normal);
+			fill: var(--c-text-light);
 		}
 	}
 </style>
