@@ -41,7 +41,7 @@
 </div>
 
 <style>
-	:global :root {
+	:global(:root) {
 		--header-height: 4.75rem;
 
 		@media (--viewport-xxl) {

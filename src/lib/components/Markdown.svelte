@@ -68,7 +68,7 @@
 			font-weight: 500;
 		}
 
-		:global table {
+		:global(table) {
 			width: 100%;
 			border-collapse: collapse;
 			border-bottom: 2px solid var(--c-text-ultra-light);
@@ -79,25 +79,26 @@
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--ls-ui-sm);
 			}
+		}
 
-			tbody tr:nth-child(even) td {
-				background: var(--c-box-2);
-			}
+		:global(tbody tr:nth-child(even) td) {
+			background: var(--c-box-2);
+		}
 
-			:is(th, td) {
-				padding: 0.625rem;
-			}
+		:global(td) {
+			padding: 0.625rem;
+		}
 
-			th {
-				padding-block: 1em;
-				border-bottom: 2px solid var(--c-text-ultra-light);
-				font-size: 0.875em;
-				color: var(--c-text-extra-light);
+		:global(th) {
+			padding: 0.625rem;
+			padding-block: 1em;
+			border-bottom: 2px solid var(--c-text-ultra-light);
+			font-size: 0.875em;
+			color: var(--c-text-extra-light);
+		}
 
-				&:not([align]) {
-					text-align: left;
-				}
-			}
+		:global(th:not([align])) {
+			text-align: left;
 		}
 
 		:global(:first-child) {

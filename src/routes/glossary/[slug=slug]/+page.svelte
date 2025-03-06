@@ -66,21 +66,19 @@
 		text-transform: capitalize;
 	}
 
-	.answer :global {
+	.answer {
 		display: grid;
 		gap: var(--space-lg);
 		font: var(--f-ui-lg-roman);
 		letter-spacing: var(--f-ui-lg-spacing, normal);
 
 		/* Format tags in HTML output */
-		a,
-		a:hover {
-			color: inherit;
+		:global(a) {
 			font-weight: 700;
 			text-decoration: underline;
 		}
 
-		p {
+		:global(p) {
 			margin-bottom: 0.5rem;
 		}
 	}

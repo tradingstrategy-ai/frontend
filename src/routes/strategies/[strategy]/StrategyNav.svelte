@@ -234,7 +234,7 @@
 				height: var(--menu-height, 0);
 				transition: height 0.25s ease-out;
 
-				:global menu {
+				:global(menu) {
 					padding-top: var(--space-ls);
 				}
 			}

@@ -14,7 +14,11 @@ export default {
 		tailwindcss(),
 		autoprefixer(),
 
-		presetEnv(),
+		presetEnv({
+			features: {
+				'is-pseudo-class': false
+			}
+		}),
 
 		darkThemeClass({
 			darkSelector: '[data-color-mode="dark"]',

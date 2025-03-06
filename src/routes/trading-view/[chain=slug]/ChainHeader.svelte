@@ -36,7 +36,7 @@
 			flex-direction: column;
 			margin-top: var(--space-ms);
 
-			:global .button {
+			:global(.button) {
 				width: 100%;
 			}
 		}

@@ -78,19 +78,19 @@
 </div>
 
 <style>
-	.reserve-table :global {
+	.reserve-table {
 		@media (--viewport-sm-down) {
-			.asset_label {
+			:global(.asset_label) {
 				grid-column: 1/-1;
 			}
 		}
 
 		@media (--viewport-md-up) {
-			table {
+			:global(table) {
 				table-layout: fixed;
 			}
 
-			.asset_label {
+			:global(.asset_label) {
 				width: 43%;
 
 				:global(*) {
@@ -100,17 +100,17 @@
 				}
 			}
 
-			.protocol_name {
+			:global(.protocol_name) {
 				width: 12%;
 				white-space: nowrap;
 			}
 
-			:is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest) {
+			:global(:is(.tvl, .supply_apr_latest, .variable_borrow_apr_latest)) {
 				width: 15%;
 				text-align: right;
 			}
 
-			.cta {
+			:global(.cta) {
 				width: 9rem;
 			}
 		}

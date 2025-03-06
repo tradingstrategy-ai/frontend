@@ -25,16 +25,16 @@
 		align-items: center;
 		color: color-mix(in srgb, var(--c-bullish), var(--c-text) 25%);
 
-		:global .icon.success {
+		:global(.icon.success) {
 			--icon-size: 1.25em;
 			overflow: visible;
 
-			path {
+			:global(path) {
 				stroke-width: 2.5px;
 			}
 		}
 
-		:global .icon.question-circle {
+		:global(.icon.question-circle) {
 			opacity: 0.8;
 		}
 	}

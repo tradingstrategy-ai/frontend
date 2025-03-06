@@ -80,7 +80,7 @@
 		align-items: center;
 	}
 
-	a :global svg * {
+	a :global(svg *) {
 		fill: currentcolor;
 	}
 

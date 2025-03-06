@@ -86,16 +86,14 @@
 				font: var(--f-heading-md-medium);
 			}
 		}
-	}
 
-	.trade-table :global {
-		.trade_id {
+		:global(.trade_id) {
 			color: var(--c-text-extra-light);
 			width: 2em;
 			padding-right: 0;
 		}
 
-		:is(.price, .interest_rate, .value) {
+		:global(:is(.price, .interest_rate, .value)) {
 			text-align: right;
 		}
 	}
