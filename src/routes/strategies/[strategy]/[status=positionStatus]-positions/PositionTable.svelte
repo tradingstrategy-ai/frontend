@@ -188,29 +188,29 @@
 		}
 	}
 
-	.position-table :global {
+	.position-table {
 		/* Make "hidden" position rows look 50% opaque w/out breaking nested tooltip style */
-		tr:has(.hidden) {
-			td {
+		:global(tr:has(.hidden)) {
+			:global(td) {
 				background: var(--c-box-1);
 			}
 
 			/* only apply color-mix to text in leaf nodes */
-			*:not(:has(*)) {
+			:global(*:not(:has(*))) {
 				color: color-mix(in srgb, currentColor, var(--c-body) 50%);
 			}
 
 			/* revert the color-mix 50% opacity for the tooltip */
-			.tooltip .popup * {
+			:global(.tooltip .popup *) {
 				color: var(--c-text);
 			}
 		}
 
-		.ticker {
+		:global(.ticker) {
 			white-space: pre;
 		}
 
-		:is(.profit, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at) {
+		:global(:is(.profit, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at)) {
 			text-align: right;
 		}
 	}

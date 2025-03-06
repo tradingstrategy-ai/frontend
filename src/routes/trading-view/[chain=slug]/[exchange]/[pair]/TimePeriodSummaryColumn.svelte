@@ -102,6 +102,39 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	</ul>
 </div>
 
-<!--
-NOTE: styles inherited from parent component TimePeriodSummaryTable
--->
+<style>
+	/* NOTE: shared ul/li styles inherited from parent component TimePeriodSummaryTable */
+
+	.time-period-col {
+		&:not(.active) {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
+		}
+
+		li {
+			font: var(--f-ui-lg-roman);
+			letter-spacing: var(--ls-ui-lg, normal);
+			white-space: nowrap;
+			padding-inline: 0.5rem;
+			text-align: right;
+			--skeleton-width: 5ch;
+			--skeleton-height: 1.2em;
+			--skeleton-radius: var(--radius-xxs);
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-md-roman);
+				letter-spacing: var(--ls-ui-md, normal);
+			}
+
+			/* override skeleton position */
+			&.skeleton::before {
+				right: 0.5rem;
+			}
+
+			&.price-change {
+				font-weight: 500;
+			}
+		}
+	}
+</style>

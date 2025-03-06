@@ -54,10 +54,8 @@
 				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 		}
-	}
 
-	.transaction-table :global {
-		.status {
+		:global(.status) {
 			text-align: right;
 		}
 	}

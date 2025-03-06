@@ -101,28 +101,28 @@
 </div>
 
 <style>
-	.pairs-table :global {
+	.pairs-table {
 		overflow-x: auto;
 		overflow-y: hidden;
 
 		@media (--viewport-md-up) {
-			:is(.usd_price_latest, .price_change_24h, .volume_30d, .tvl) {
+			:global(:is(.usd_price_latest, .price_change_24h, .volume_30d, .tvl)) {
 				max-width: 12ch;
 				text-align: right;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			.pair_symbol {
+			:global(.pair_symbol) {
 				min-width: 12rem;
 			}
 
-			.exchange_name {
+			:global(.exchange_name) {
 				min-width: 6rem;
 				white-space: nowrap;
 			}
 
-			.price_change_24h {
+			:global(.price_change_24h) {
 				padding: 0 var(--space-xs);
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--f-ui-sm-spacing, normal);
@@ -130,7 +130,7 @@
 		}
 
 		@media (--viewport-sm-down) {
-			.price_change_24h {
+			:global(.price_change_24h) {
 				width: fit-content;
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--f-ui-md-spacing, normal);

@@ -153,19 +153,19 @@ unknown props through to HTML input element.
 			}
 		}
 
-		:global .icon {
+		:global(.icon) {
 			position: absolute;
 			top: 50%;
 			transform: translateY(-50%);
+		}
 
-			&.search {
-				left: 0.625em;
-			}
+		:global(.icon.search) {
+			left: 0.625em;
+		}
 
-			&.cancel {
-				right: 0.625em;
-				--icon-color: var(--c-text-extra-light);
-			}
+		:global(.icon.cancel) {
+			right: 0.625em;
+			--icon-color: var(--c-text-extra-light);
 		}
 
 		.cancel-btn {
