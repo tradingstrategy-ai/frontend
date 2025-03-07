@@ -60,7 +60,7 @@
 			stroke: var(--c-box-3);
 		}
 
-		:global(.axis-rule) {
+		:global(:is(.axis-rule, .tick)) {
 			stroke: var(--c-text-extra-light);
 		}
 
