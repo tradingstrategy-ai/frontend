@@ -112,6 +112,7 @@ Render the pair trading page
 			hasTvlData={Number.isFinite(summary.pair_tvl)}
 			firstTradeDate={details.first_trade_at}
 			{timeBucket}
+			chainSlug={summary.chain_slug}
 			on:change={handleChartSectionChange}
 		/>
 	</section>

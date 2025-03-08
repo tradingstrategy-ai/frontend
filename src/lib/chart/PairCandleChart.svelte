@@ -84,6 +84,7 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 				firstQuoteDate: firstTradeDate && new Date(firstTradeDate)
 			};
 			// load the chart
+			hasData = true;
 			chartEngine.loadChart(symbol, { periodicity }, () => {
 				hasData = Boolean(chartEngine.chart.masterData?.length);
 			});
@@ -123,8 +124,8 @@ Display trading pair candles (ohlc+v) charts, with attached quoteFeed for chart 
 	{#if !hasData}
 		<div class="no-chart-data">
 			<Alert size="md" status="warning" title="No data available">
-				No chart data available for <strong>{pairSymbol}</strong> at <strong>{timeBucket}</strong> time bucket. Try
-				switching to a candle length of <strong>1d</strong> or greater.
+				No chart data available for <strong>{pairSymbol}</strong> at <strong>{timeBucket}</strong> time interval. Try switching
+				to a longer candle length.
 			</Alert>
 		</div>
 	{/if}

@@ -59,37 +59,56 @@ function hasMoreAvailable(startDate: Date, firstQuoteDate: MaybeDate) {
 	return firstQuoteDate ? startDate > firstQuoteDate : true;
 }
 
+// NOTE: this is only used for special-case exception
+// remove it once we have better support for base uniswap-v3 1d TVL chart data
+function specialCaseNotAvailable(params: Record<string, string>) {
+	return (
+		params.candle_type === 'tvl' &&
+		params.chain_slug === 'base' &&
+		params.exchange_type === 'uniswap_v3' &&
+		params.time_bucket === '1d'
+	);
+}
+
 export function quoteFeed(
 	endpoint: string,
-	feedParams: Maybe<Record<string, string>> = {},
+	feedParams: Record<string, string> = {},
 	responseDataToQuotes: DataToQuotes = candlesToQuotes
 ) {
-	let lastRequest = {};
+	let lastRequestParams: Record<string, string> = {};
 
 	async function fetchData(_: string, startDate: Date, endDate: Date, params: any, callback: Function) {
 		const { symbolObject } = params;
+		const { urlParams, firstQuoteDate } = symbolObject;
 
-		const urlParams = {
+		const requestParams: Record<string, string> = {
 			...feedParams,
-			...symbolObject.urlParams,
+			...urlParams,
 			start: dateUrlParam(startDate),
 			end: dateUrlParam(endDate)
 		};
 
+		let quotes: Quote[];
+
 		// Prevent infinite request loops: if request is identical to last request,
 		// instruct ChartIQ to check for older data. See:
 		// https://documentation.chartiq.com/tutorial-DataIntegrationQuoteFeeds.html#toc6__anchor
-		if (dequal(urlParams, lastRequest)) {
+		if (dequal(requestParams, lastRequestParams)) {
 			const periodLength = +endDate - +startDate;
-			return [{ DT: +startDate - periodLength }];
+			const suggestedStartDate = new Date(+startDate - periodLength);
+			quotes = [{ DT: suggestedStartDate }];
+		} else if (specialCaseNotAvailable(requestParams)) {
+			quotes = [];
+		} else {
+			const data = await fetchPublicApi(fetch, endpoint, requestParams);
+			quotes = responseDataToQuotes(data);
 		}
-		lastRequest = urlParams;
 
-		const data = await fetchPublicApi(fetch, endpoint, urlParams);
+		lastRequestParams = requestParams;
 
 		callback({
-			quotes: responseDataToQuotes(data),
-			moreAvailable: hasMoreAvailable(startDate, symbolObject.firstQuoteDate)
+			quotes,
+			moreAvailable: hasMoreAvailable(startDate, firstQuoteDate)
 		});
 	}
 
