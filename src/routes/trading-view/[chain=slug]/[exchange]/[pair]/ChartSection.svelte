@@ -28,6 +28,10 @@ for the same hovered date. Also displays a time-bucket selector.
 	export let hasTvlData = false;
 	export let timeBucket: CandleTimeBucket;
 
+	// NOTE: this is only used for special-case exception in quoteFeed
+	// remove it once we have better support for base uniswap-v3 1d TVL chart data
+	export let chainSlug: string;
+
 	const chartLinker = new ChartLinker();
 
 	function dataToQuotes(data: Record<string, Candle[]>) {
@@ -68,7 +72,7 @@ for the same hovered date. Also displays a time-bucket selector.
 			{exchangeType}
 			{firstTradeDate}
 			{timeBucket}
-			feed={quoteFeed('candles', { candle_type: 'tvl' }, dataToQuotes)}
+			feed={quoteFeed('candles', { candle_type: 'tvl', chain_slug: chainSlug }, dataToQuotes)}
 			linker={chartLinker}
 		>
 			<!-- NOTE: re-introduce vol added/removed when these metrics are available from backend for tvl -->
