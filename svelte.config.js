@@ -3,8 +3,7 @@
  * https://kit.svelte.dev/docs/configuration
  */
 import node from '@sveltejs/adapter-node';
-import { sveltePreprocess } from 'svelte-preprocess';
-import postcssConfig from './postcss.config.js';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -37,10 +36,7 @@ const config = {
 		}
 	},
 
-	preprocess: sveltePreprocess({
-		sourceMap: true,
-		postcss: postcssConfig
-	})
+	preprocess: vitePreprocess()
 };
 
 export default config;
