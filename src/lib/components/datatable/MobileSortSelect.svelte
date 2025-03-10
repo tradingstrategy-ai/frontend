@@ -12,7 +12,7 @@
 
 	function handleChange({ target }: Event) {
 		const [id, order] = (target as HTMLSelectElement).value.split(':');
-		$sortKeys = [<SortKey>{ id, order }];
+		$sortKeys = [{ id, order } as SortKey];
 	}
 </script>
 
