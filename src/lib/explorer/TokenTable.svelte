@@ -73,34 +73,34 @@
 </div>
 
 <style>
-	.token-table :global {
+	.token-table {
 		@media (--viewport-md-up) {
-			table {
+			:global(table) {
 				table-layout: fixed;
 			}
 
-			.name {
+			:global(.name) {
 				width: 35%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
-			.symbol {
+			:global(.symbol) {
 				width: 15%;
 			}
 
-			.volume_24h {
+			:global(.volume_24h) {
 				width: 25%;
 				text-align: right;
 			}
 
-			.liquidity_latest {
+			:global(.liquidity_latest) {
 				width: 25%;
 				text-align: right;
 			}
 
-			.cta {
+			:global(.cta) {
 				width: 11rem;
 				padding-left: 1rem;
 			}

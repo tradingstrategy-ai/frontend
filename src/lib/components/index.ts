@@ -18,7 +18,6 @@ export { default as Footer } from './Footer.svelte';
 export { default as Grid } from './Grid.svelte';
 export { default as HashAddress } from './HashAddress.svelte';
 export { default as Header } from './Header.svelte';
-export { default as Hero } from './Hero.svelte';
 export { default as HeroBanner } from './HeroBanner.svelte';
 export { default as HeroVideo } from './HeroVideo.svelte';
 export { default as Logo } from './Logo.svelte';

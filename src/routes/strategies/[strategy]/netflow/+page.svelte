@@ -41,7 +41,7 @@
 	function mergeData(data1: Quote[], data2: Quote[]) {
 		const merged: Quote[] = [];
 		while (data1.length || data2.length) {
-			const nextDate = min([<Date>data1[0]?.DT, <Date>data2[0]?.DT])!;
+			const nextDate = min([data1[0]?.DT as Date, data2[0]?.DT as Date])!;
 			const quote: Quote = { DT: nextDate };
 			if (nextDate.valueOf() === data1[0]?.DT.valueOf()) {
 				Object.assign(quote, data1.shift());

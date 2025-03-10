@@ -60,7 +60,7 @@
 			gap: var(--space-lg);
 		}
 
-		:global li {
+		:global(li) {
 			font: var(--f-ui-xl-roman);
 			letter-spacing: var(--f-ui-xl-spacing, normal);
 		}
@@ -78,11 +78,11 @@
 		}
 	}
 
-	.media :global {
+	.media {
 		display: flex;
 		justify-content: center;
 
-		svg {
+		:global(svg) {
 			width: 100%;
 			max-width: 480px;
 
@@ -90,12 +90,12 @@
 				width: 80%;
 			}
 
-			.bg {
-				fill: var(--c-body);
+			:global(*) {
+				fill: currentColor;
 			}
 
-			:not(.bg) {
-				fill: currentColor;
+			:global(.bg) {
+				fill: var(--c-body);
 			}
 		}
 	}

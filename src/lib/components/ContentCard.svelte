@@ -80,7 +80,7 @@ anchor if `href` is provided. The `icon` and `cta` slots are optional.
 			}
 		}
 
-		:global h3 {
+		:global(h3) {
 			font: var(--f-heading-lg-medium);
 
 			@media (--viewport-xs) {

@@ -94,11 +94,11 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 			display: none;
 		}
 
-		:global svg {
+		:global(svg) {
 			max-height: min(28rem, 64vw);
 			margin: auto;
 
-			* {
+			:global(*) {
 				fill: currentColor;
 			}
 		}

@@ -29,30 +29,34 @@
 </div>
 
 <style>
-	.blog-post-content :global {
+	.blog-post-content {
+		--blog-post-font: var(--f-text-md-regular);
+		--blog-post-letter-spacing: var(--f-text-md-spacing, normal);
+		font: var(--blog-post-font);
+		letter-spacing: (--blog-post-letter-spacing);
 		overflow: auto;
 
-		h1 {
+		@media (--viewport-sm-up) {
+			--blog-post-font: var(--f-text-lg-regular);
+			--blog-post-letter-spacing: var(--f-text-lg-spacing, normal);
+		}
+
+		:global(:is(p, li)) {
+			font: var(--blog-post-font);
+			letter-spacing: (--blog-post-letter-spacing);
+		}
+
+		:global(p:not(:first-of-type)) {
+			margin-top: var(--space-lg);
+		}
+
+		:global(h1) {
 			font: var(--f-heading-lg-medium);
 			margin: var(--space-2xl) 0 !important;
 			text-transform: capitalize;
 		}
 
-		&,
-		:is(p, li) {
-			font: var(--f-text-md-regular);
-			letter-spacing: var(--f-text-lg-spacing, normal);
-
-			@media (--viewport-sm-up) {
-				font: var(--f-text-lg-regular);
-			}
-		}
-
-		p:not(:first-of-type) {
-			margin-top: var(--space-lg);
-		}
-
-		> h2 {
+		:global(> h2) {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 			margin: var(--space-5xl) 0 var(--space-lg);
@@ -61,7 +65,7 @@
 			}
 		}
 
-		> h3 {
+		:global(> h3) {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
@@ -69,7 +73,8 @@
 				font: var(--f-heading-sm-medium);
 			}
 		}
-		> h4 {
+
+		:global(> h4) {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--f-heading-sm-spacing, normal);
 			margin: var(--space-xl) 0 var(--space-md) 0;
@@ -78,36 +83,35 @@
 			}
 		}
 
-		:is(ol, ul) {
+		:global(:is(ol, ul)) {
 			margin: 0;
 		}
 
-		li {
+		:global(li) {
 			margin: 0.5em 0 0 0;
 			padding-left: var(--space-xxs);
 		}
 
-		a,
-		a:hover {
+		:global(:is(a, a:hover)) {
 			text-decoration: underline;
 			color: inherit;
 		}
 
-		:is(strong, b) {
+		:global(:is(strong, b)) {
 			font-weight: 600;
 		}
 
-		figure {
+		:global(figure) {
 			display: grid;
 			margin: var(--space-3xl) 0 var(--space-5xl);
 
-			img {
+			:global(img) {
 				height: 100%;
 				width: 100%;
 			}
 		}
 
-		figcaption {
+		:global(figcaption) {
 			font: var(--f-ui-sm-roman);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: center;
@@ -115,29 +119,29 @@
 			/* fix Firefox scroll issue due to Ghost-added `white-space: pre-wrap` property */
 			overflow: hidden;
 
-			a {
+			:global(a) {
 				font-weight: 500;
 			}
 		}
 
-		iframe {
+		:global(iframe) {
 			border: 0;
 			width: 100%;
 			min-height: 450px;
 		}
 
-		.kg-image-card {
+		:global(.kg-image-card) {
 			text-align: center;
 		}
 
-		.kg-image {
+		:global(.kg-image) {
 			width: 100%;
 			height: auto;
 			max-width: 100%;
 			display: inline-block;
 		}
 
-		pre {
+		:global(pre) {
 			margin: var(--space-lg) 0;
 			border-radius: var(--radius-sm);
 			padding: var(--space-ms) var(--space-ls);
@@ -154,7 +158,7 @@
 			}
 		}
 
-		blockquote {
+		:global(blockquote) {
 			margin: var(--space-lg) 0 var(--space-lg) var(--space-sl);
 			padding: var(--space-lg);
 			font: var(--f-text-lg-regular);
@@ -163,17 +167,17 @@
 			box-shadow: -0.75rem 0.75rem 0 var(--c-quoteblock-backdrop);
 		}
 
-		.table-wrapper {
+		:global(.table-wrapper) {
 			overflow-x: auto;
 			overflow-y: hidden;
 		}
 
-		table {
+		:global(table) {
 			margin-block: var(--space-lg);
 			border-collapse: collapse;
 			color: inherit;
 
-			:is(td, th) {
+			:global(:is(td, th)) {
 				padding: var(--space-ss);
 				border-block: 1px solid var(--c-text-extra-light);
 				vertical-align: top;
@@ -187,14 +191,14 @@
 				}
 			}
 
-			th {
+			:global(th) {
 				background: var(--c-box-2);
 				font-weight: 600;
 			}
 		}
 
 		/* JavaScript generated TOC */
-		#table-of-contents {
+		:global(#table-of-contents) {
 			display: contents;
 		}
 	}

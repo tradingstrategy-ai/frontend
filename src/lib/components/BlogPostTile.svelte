@@ -84,7 +84,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 		display: grid;
 		gap: var(--content-gap);
 
-		:global time {
+		:global(time) {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			color: var(--c-text-extra-light);

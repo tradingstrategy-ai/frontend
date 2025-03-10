@@ -72,7 +72,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 			}
 		}
 
-		:global header {
+		:global(header) {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			gap: var(--space-sm) var(--space-lg);
@@ -83,13 +83,13 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 				margin-bottom: var(--space-sm);
 			}
 
-			h3 {
+			:global(h3) {
 				align-self: center;
 				font: var(--f-heading-md-medium);
 				letter-spacing: var(--f-heading-md-spacing, normal);
 			}
 
-			p {
+			:global(p) {
 				/* grid-area: 2 / 1 / auto / span 2; */
 				grid-column: 1 / span 2;
 				color: var(--c-text-extra-light);

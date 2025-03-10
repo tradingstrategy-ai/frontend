@@ -91,7 +91,7 @@
 			--text-input-height: 100%;
 		}
 
-		:global input:not(:placeholder-shown) {
+		:global(input:not(:placeholder-shown)) {
 			font-weight: 700;
 		}
 	}

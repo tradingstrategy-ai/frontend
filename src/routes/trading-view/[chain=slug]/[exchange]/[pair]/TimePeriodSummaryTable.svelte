@@ -23,7 +23,7 @@ Display summary performance table for various periods.
 </div>
 
 <div class="time-period-table">
-	<ul class="row-heading">
+	<ul>
 		<li class="col-heading"></li>
 		<li>Change</li>
 		<li>Open</li>
@@ -53,7 +53,7 @@ Display summary performance table for various periods.
 		}
 	}
 
-	.time-period-table :global {
+	.time-period-table {
 		display: grid;
 		grid-template-columns: 3fr 2fr;
 		overflow: hidden;
@@ -62,71 +62,45 @@ Display summary performance table for various periods.
 			grid-template-columns: repeat(5, 1fr);
 		}
 
-		ul {
+		/* Row heading specific styles */
+		li {
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--ls-ui-lg, normal);
+			color: var(--c-text-light);
+
+			@media (--viewport-md-down) {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md, normal);
+			}
+		}
+
+		/* Shared :global ul/li styles (see TimePeriodSummaryColumn.svelte) */
+		:global(ul) {
 			list-style-type: none;
 			padding: 0;
 			display: grid;
 		}
 
-		li {
-			--skeleton-width: 5ch;
-			--skeleton-height: 1.2em;
-			--skeleton-radius: var(--radius-xxs);
-			font: var(--f-ui-lg-roman);
-			letter-spacing: var(--ls-ui-lg, normal);
-			white-space: nowrap;
-			padding-inline: 0.5rem;
-			text-align: right;
+		:global(li) {
+			padding-block: 0.75rem;
+			border-bottom: 1px solid var(--c-text-ultra-light);
+
+			@media (--viewport-md-up) {
+				padding-block: 1rem;
+			}
+		}
+
+		:global(li.col-heading) {
+			height: 1.375em;
+			padding-block: 0;
+			border-bottom: none;
+			font: var(--f-heading-sm-medium);
+			text-transform: capitalize;
 
 			@media (--viewport-md-down) {
-				font: var(--f-ui-md-roman);
-				letter-spacing: var(--ls-ui-md, normal);
+				font: var(--f-heading-xs-medium);
 			}
 
-			/* override skeleton position */
-			&.skeleton::before {
-				right: 0.5rem;
-			}
-
-			&.col-heading {
-				height: 1.375em;
-				font: var(--f-heading-sm-medium);
-				text-transform: capitalize;
-
-				@media (--viewport-md-down) {
-					font: var(--f-heading-xs-medium);
-				}
-
-				@media (--viewport-sm-down) {
-					display: none;
-				}
-			}
-
-			&:not(.col-heading) {
-				padding-block: 0.75rem;
-
-				&:not(:last-child) {
-					border-bottom: 1px solid var(--c-text-ultra-light);
-				}
-
-				@media (--viewport-md-up) {
-					padding-block: 1rem;
-				}
-			}
-
-			&.price-change {
-				font-weight: 500;
-			}
-		}
-
-		.row-heading li {
-			font-weight: 500;
-			padding-inline: 0;
-			text-align: left;
-			color: var(--c-text-light);
-		}
-
-		.time-period-col:not(.active) {
 			@media (--viewport-sm-down) {
 				display: none;
 			}

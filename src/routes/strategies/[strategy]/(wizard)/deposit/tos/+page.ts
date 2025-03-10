@@ -28,7 +28,7 @@ function getLatestContractVersion(chainId: number, address: Maybe<Address>) {
 	});
 }
 
-async function getTosText(fileName: string) {
+async function getTosText(fetch: Fetch, fileName: string) {
 	try {
 		const resp = await fetch(`/tos/${fileName}`);
 		if (!resp.ok) throw new Error(resp.statusText);
@@ -50,6 +50,6 @@ export async function load({ fetch, parent }) {
 		tosContract,
 		canProceed: await getCanProceed(chain.id, tosContract.address, get(wallet).address),
 		latestContractVersion: await getLatestContractVersion(chain.id, tosContract.address),
-		tosText: await getTosText(tosContract.fileName)
+		tosText: await getTosText(fetch, tosContract.fileName)
 	};
 }

@@ -82,39 +82,39 @@
 </div>
 
 <style>
-	.exchange-table :global {
-		.exchange_name * {
+	.exchange-table {
+		:global(.exchange_name *) {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
 		@media (--viewport-sm-down) {
-			.exchange_name {
+			:global(.exchange_name) {
 				grid-column: 1/-1;
 			}
 		}
 
 		@media (--viewport-md-up) {
-			table {
+			:global(table) {
 				table-layout: fixed;
 			}
 
-			.exchange_name {
+			:global(.exchange_name) {
 				width: 45%;
 			}
 
-			.pair_count {
+			:global(.pair_count) {
 				width: 25%;
 				text-align: right;
 			}
 
-			.volume_30d {
+			:global(.volume_30d) {
 				width: 30%;
 				text-align: right;
 			}
 
-			.cta {
+			:global(.cta) {
 				width: 14rem;
 				padding-left: 2em;
 			}
