@@ -13,6 +13,13 @@
 
 	let loading = $state(false);
 
+	function handleWheel(event: WheelEvent) {
+		const isVertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+		const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
+		// disabling for now since this page doesn't require scrolling
+		// if (isVertical && !modifierPressed) event.stopPropagation();
+	}
+
 	function initChart(node: HTMLElement) {
 		const c = getCssColors(['text', 'text-extra-light', 'text-ultra-light', 'bullish', 'bearish', 'box-3']);
 
@@ -71,7 +78,7 @@
 	}
 </script>
 
-<div class="chart-container" use:initChart></div>
+<div class="chart-container" use:initChart onwheelcapture={handleWheel}></div>
 
 <style>
 	.chart-container {
