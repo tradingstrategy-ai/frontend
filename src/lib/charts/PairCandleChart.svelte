@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CandlestickData } from 'lightweight-charts';
 	import { createChart, CandlestickSeries } from 'lightweight-charts';
+	import { getCssColors } from '$lib/helpers/style';
 
 	type Props = {
 		candles: CandlestickData[];
@@ -9,13 +10,38 @@
 	let { candles }: Props = $props();
 
 	function initChart(node: HTMLElement) {
-		const chart = createChart(node);
+		const c = getCssColors(['text', 'text-extra-light', 'text-ultra-light', 'bullish', 'bearish', 'box-3']);
+
+		console.log(c);
+
+		const chart = createChart(node, {
+			layout: {
+				background: { color: 'transparent' },
+				textColor: c.text
+			},
+			grid: {
+				vertLines: { color: c['box-3'] },
+				horzLines: { color: c['box-3'] }
+			},
+			crosshair: {
+				vertLine: {
+					color: c['text-extra-light'],
+					// TODO: use non-alpha variant of box-3
+					labelBackgroundColor: c['text-ultra-light']
+				},
+				horzLine: {
+					color: c['text-extra-light'],
+					// TODO: use non-alpha variant of box-3
+					labelBackgroundColor: c['text-ultra-light']
+				}
+			}
+		});
 
 		const candlestickSeries = chart.addSeries(CandlestickSeries, {
-			upColor: '#26a69a',
-			downColor: '#ef5350',
-			wickUpColor: '#26a69a',
-			wickDownColor: '#ef5350',
+			upColor: c.bullish,
+			downColor: c.bearish,
+			wickUpColor: c.bullish,
+			wickDownColor: c.bearish,
 			borderVisible: false
 		});
 
