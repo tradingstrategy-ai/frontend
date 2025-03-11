@@ -1,18 +1,20 @@
 <script lang="ts">
 	import type { CandlestickData } from 'lightweight-charts';
 	import { createChart, CandlestickSeries } from 'lightweight-charts';
+	import { type CandleParams, fetchCandles } from './client';
 	import { getCssColors } from '$lib/helpers/style';
 
 	type Props = {
 		candles: CandlestickData[];
+		candleParams: CandleParams;
 	};
 
-	let { candles }: Props = $props();
+	let { candles, candleParams }: Props = $props();
+
+	let loading = $state(false);
 
 	function initChart(node: HTMLElement) {
 		const c = getCssColors(['text', 'text-extra-light', 'text-ultra-light', 'bullish', 'bearish', 'box-3']);
-
-		console.log(c);
 
 		const chart = createChart(node, {
 			layout: {
@@ -39,7 +41,7 @@
 			}
 		});
 
-		const candlestickSeries = chart.addSeries(CandlestickSeries, {
+		const candleSeries = chart.addSeries(CandlestickSeries, {
 			upColor: c.bullish,
 			downColor: c.bearish,
 			wickUpColor: c.bullish,
@@ -47,9 +49,25 @@
 			borderVisible: false
 		});
 
-		candlestickSeries.setData(candles);
+		candleSeries.setData(candles);
 
-		chart.timeScale().fitContent();
+		chart.timeScale().setVisibleLogicalRange({ from: candles.length - 181, to: candles.length - 1 });
+
+		chart.timeScale().subscribeVisibleLogicalRangeChange((logicalRange) => {
+			if (loading) return;
+
+			const { from, to } = logicalRange!;
+
+			if (from < 50) {
+				loading = true;
+				const ticksVisible = Math.round(to - from) + 1;
+				const data = candleSeries.data();
+				fetchCandles(data[0].time as number, ticksVisible * 2, candleParams).then((candles) => {
+					candleSeries.setData([...candles, ...data]);
+					loading = false;
+				});
+			}
+		});
 	}
 </script>
 

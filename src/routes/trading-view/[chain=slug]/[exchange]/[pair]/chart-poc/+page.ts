@@ -3,6 +3,7 @@ import type { CandlestickData } from 'lightweight-charts';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { error } from '@sveltejs/kit';
 import { floorUTCDate, addUTCDays } from '$lib/helpers/date.js';
+import { fetchCandles } from '$lib/charts/client.js';
 
 export async function load({ fetch, params, parent }) {
 	// page only available to admins
@@ -14,28 +15,12 @@ export async function load({ fetch, params, parent }) {
 		pair_slug: params.pair
 	});
 
-	const end = floorUTCDate(new Date());
-	const start = addUTCDays(end, -180);
-
-	// fetch last 180 daily candles
-	const candleData = await fetchPublicApi(fetch, 'candles', {
+	const candleParams = {
 		pair_id: summary.pair_id,
-		exchange_type: summary.exchange_type,
-		candle_type: 'price',
-		time_bucket: '1d',
-		start: start.toISOString().slice(0, 10),
-		end: end.toISOString().slice(0, 10)
-	});
+		exchange_type: summary.exchange_type
+	};
 
-	const candles = candleData[summary.pair_id].map(({ o, h, l, c, ts }: Candle) => {
-		return {
-			open: o,
-			high: h,
-			low: l,
-			close: c,
-			time: new Date(`${ts}Z`).valueOf() / 1000
-		};
-	}) as CandlestickData[];
+	const candles = await fetchCandles(null, 360, candleParams);
 
-	return { summary, candles };
+	return { summary, candles, candleParams };
 }

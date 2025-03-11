@@ -8,7 +8,7 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
-	let { summary, candles } = $derived(data);
+	let { summary, candles, candleParams } = $derived(data);
 
 	let swapFee = $derived(formatSwapFee(summary.pair_swap_fee));
 
@@ -42,7 +42,7 @@
 
 	<Section padding="md" gap="xs">
 		<h2>TradingView Lightweight Charts proof-of-concept</h2>
-		<PairCandleChart {candles} />
+		<PairCandleChart {candles} {candleParams} />
 	</Section>
 </main>
 
