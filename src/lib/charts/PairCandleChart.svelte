@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { CandlestickData } from 'lightweight-charts';
-	import { createChart, CandlestickSeries } from 'lightweight-charts';
-	import { type CandleParams, fetchCandles } from './client';
+	import { createChart, CandlestickSeries, HistogramSeries } from 'lightweight-charts';
+	import { type CandleParams, fetchCandles, getVolumeData } from './client';
 	import { getCssColors } from '$lib/helpers/style';
 
 	type Props = {
@@ -56,7 +56,25 @@
 			borderVisible: false
 		});
 
+		const volumeSeries = chart.addSeries(HistogramSeries, {
+			priceFormat: {
+				type: 'volume'
+			},
+			priceScaleId: '',
+			lastValueVisible: false
+		});
+
+		volumeSeries.priceScale().applyOptions({
+			scaleMargins: { top: 0.7, bottom: 0 }
+		});
+
+		const volumeColors = {
+			bullish: c.bullish!.replace(')', ', 0.3)'),
+			bearish: c.bearish!.replace(')', ', 0.3)')
+		};
+
 		candleSeries.setData(candles);
+		volumeSeries.setData(getVolumeData(candles, volumeColors));
 
 		chart.timeScale().setVisibleLogicalRange({ from: candles.length - 181, to: candles.length - 1 });
 
@@ -68,9 +86,11 @@
 			if (from < 50) {
 				loading = true;
 				const ticksVisible = Math.round(to - from) + 1;
-				const data = candleSeries.data();
+				const data = candleSeries.data() as CandlestickData[];
 				fetchCandles(data[0].time as number, ticksVisible * 2, candleParams).then((candles) => {
-					candleSeries.setData([...candles, ...data]);
+					const newData = [...candles, ...data];
+					candleSeries.setData(newData);
+					volumeSeries.setData(getVolumeData(newData, volumeColors));
 					loading = false;
 				});
 			}
@@ -82,6 +102,6 @@
 
 <style>
 	.chart-container {
-		height: 500px;
+		height: 600px;
 	}
 </style>

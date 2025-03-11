@@ -29,15 +29,28 @@ export async function fetchCandles(lastDateVal: MaybeParsableDate, numCandles: n
 		end: end.toISOString().slice(0, 10)
 	});
 
-	const candles = candleData[params.pair_id].map(({ o, h, l, c, ts }: Candle) => {
+	const candles = candleData[params.pair_id].map(({ o, h, l, c, v, ts }: Candle) => {
 		return {
 			open: o,
 			high: h,
 			low: l,
 			close: c,
+			customValues: {
+				volume: v
+			},
 			time: new Date(`${ts}Z`).valueOf() / 1000
 		};
 	}) as CandlestickData[];
 
 	return candles;
+}
+
+export function getVolumeData(candles: CandlestickData[], colors: { bullish: string; bearish: string }) {
+	return candles.map((c) => {
+		return {
+			time: c.time,
+			value: c.customValues?.volume,
+			color: c.close > c.open ? colors.bullish : colors.bearish
+		};
+	});
 }
