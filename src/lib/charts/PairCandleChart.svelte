@@ -17,7 +17,9 @@
 		const chart = createChart(node, {
 			layout: {
 				background: { color: 'transparent' },
-				textColor: c.text
+				textColor: c.text,
+				fontFamily: '"Neue Haas Grotesk Text", system-ui, sans-serif',
+				fontSize: 14
 			},
 			grid: {
 				vertLines: { color: c['box-3'] },
