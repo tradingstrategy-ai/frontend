@@ -114,7 +114,7 @@ Render the pair trading page
 			{timeBucket}
 			chainSlug={summary.chain_slug}
 			pairSlug={summary.pair_slug}
-			{admin}
+			admin={true}
 			on:change={handleChartSectionChange}
 		/>
 	</section>
