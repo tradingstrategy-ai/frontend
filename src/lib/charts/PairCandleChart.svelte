@@ -178,7 +178,7 @@
 
 			:global(.profitability) {
 				display: block;
-				width: 12rem;
+				min-width: 12rem;
 				padding: 1rem;
 				box-shadow: var(--shadow-3);
 			}
@@ -186,6 +186,7 @@
 			header {
 				display: grid;
 				grid-template-columns: 1fr auto;
+				gap: 1rem;
 				align-content: center;
 				margin-bottom: 1rem;
 				font: var(--f-ui-md-medium);
