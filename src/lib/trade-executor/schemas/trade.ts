@@ -25,7 +25,15 @@ import { blockchainTransactionSchema } from './blockchain-transaction';
 import { loanSchema } from './loan';
 import { createTradingPairInfo } from '../models/trading-pair-info';
 
-export const tradeType = z.enum(['rebalance', 'stop_loss', 'take_profit', 'repair', 'accounting_correction']);
+export const tradeType = z.enum([
+	'rebalance',
+	'stop_loss',
+	'take_profit',
+	'market_limit',
+	'repair',
+	'accounting_correction',
+	'flexible_trigger'
+]);
 
 export const tradeStatus = z.enum([
 	'planned',
@@ -34,7 +42,8 @@ export const tradeStatus = z.enum([
 	'success',
 	'failed',
 	'repaired',
-	'repair_entry'
+	'repair_entry',
+	'expired'
 ]);
 
 export const tradeFlag = z.enum([
@@ -45,7 +54,9 @@ export const tradeFlag = z.enum([
 	'close_protocol_last',
 	'test_trade',
 	'triggered',
-	'missing_position_repair'
+	'missing_position_repair',
+	'partial_take_profit',
+	'ignore_open'
 ]);
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/trade_pricing.py
