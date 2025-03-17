@@ -1,0 +1,233 @@
+[
+	{
+		"designation": "exchange_universe",
+		"name": "Decentralised exchanges",
+		"size": 4992564,
+		"last_updated_at": 1741368132,
+		"entries": 7871,
+		"format": "JSON",
+		"duration": 1923.0085213184357,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.exchange.html",
+		"download_link": "http://tradingstrategy.ai/api/exchange-universe"
+	},
+	{
+		"designation": "pair_universe",
+		"name": "Trading pairs",
+		"size": 43988993,
+		"last_updated_at": 1741434331,
+		"entries": 342177,
+		"format": "Parquet",
+		"duration": 3915.5337297916412,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.pair.html",
+		"download_link": "http://tradingstrategy.ai/api/pair-universe"
+	},
+	{
+		"designation": "candles_1m",
+		"name": "OHLCV candles, 1 minute",
+		"size": 60224830279,
+		"last_updated_at": 1741321502,
+		"entries": 761798381,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=1m"
+	},
+	{
+		"designation": "candles_5m",
+		"name": "OHLCV candles, 5 minutes",
+		"size": 37621820943,
+		"last_updated_at": 1741224445,
+		"entries": 470146218,
+		"format": "Parquet",
+		"duration": 4.76837158203125e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=5m"
+	},
+	{
+		"designation": "candles_15m",
+		"name": "OHLCV candles, 15 minutes",
+		"size": 24512053457,
+		"last_updated_at": 1741213012,
+		"entries": 302073035,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=15m"
+	},
+	{
+		"designation": "candles_1h",
+		"name": "OHLCV candles, 1 hour",
+		"size": 12794391980,
+		"last_updated_at": 1741375787,
+		"entries": 155480543,
+		"format": "Parquet",
+		"duration": 4.76837158203125e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=1h"
+	},
+	{
+		"designation": "candles_4h",
+		"name": "OHLCV candles, 4 hours",
+		"size": 5955356814,
+		"last_updated_at": 1741370328,
+		"entries": 71409103,
+		"format": "Parquet",
+		"duration": 4.76837158203125e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=4h"
+	},
+	{
+		"designation": "candles_1d",
+		"name": "OHLCV candles, daily",
+		"size": 1938520433,
+		"last_updated_at": 1741367202,
+		"entries": 22610283,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=1d"
+	},
+	{
+		"designation": "candles_7d",
+		"name": "OHLCV candles, weekly",
+		"size": 515387919,
+		"last_updated_at": 1741366943,
+		"entries": 5791937,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=7d"
+	},
+	{
+		"designation": "candles_30d",
+		"name": "OHLCV candles, montly",
+		"size": 197915380,
+		"last_updated_at": 1740924369,
+		"entries": 2153083,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+		"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=30d"
+	},
+	{
+		"designation": "liquidity_1m",
+		"name": "XY Liquidity, 1 minute",
+		"size": 38700533967,
+		"last_updated_at": 1741280155,
+		"entries": 722999776,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=1m"
+	},
+	{
+		"designation": "liquidity_5m",
+		"name": "XY Liquidity, 5 minutes",
+		"size": 23749207642,
+		"last_updated_at": 1741217534,
+		"entries": 442000421,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=5m"
+	},
+	{
+		"designation": "liquidity_15m",
+		"name": "XY Liquidity, 15 minutes",
+		"size": 15679108147,
+		"last_updated_at": 1741114655,
+		"entries": 288750970,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=15m"
+	},
+	{
+		"designation": "liquidity_1h",
+		"name": "XY Liquidity, 1 hour",
+		"size": 8426920478,
+		"last_updated_at": 1741375099,
+		"entries": 153712673,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=1h"
+	},
+	{
+		"designation": "liquidity_4h",
+		"name": "XY Liquidity, 4 hours",
+		"size": 4073736632,
+		"last_updated_at": 1741371205,
+		"entries": 73574110,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=4h"
+	},
+	{
+		"designation": "liquidity_1d",
+		"name": "XY Liquidity / TVL, daily",
+		"size": 2063577274,
+		"last_updated_at": 1741370948,
+		"entries": 91301947,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=1d"
+	},
+	{
+		"designation": "liquidity_7d",
+		"name": "XY Liquidity / TVL, weekly",
+		"size": 514682177,
+		"last_updated_at": 1741369351,
+		"entries": 16220801,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=7d"
+	},
+	{
+		"designation": "liquidity_30d",
+		"name": "XY Liquidity / TVL, monthly",
+		"size": 191931597,
+		"last_updated_at": 1741369402,
+		"entries": 4847986,
+		"format": "Parquet",
+		"duration": 2.384185791015625e-7,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.liquidity.html",
+		"download_link": "http://tradingstrategy.ai/api/liquidity-all?bucket=30d"
+	},
+	{
+		"designation": "top_movers_24h",
+		"name": "Top momentum, daily",
+		"size": 650955,
+		"last_updated_at": 1741436303,
+		"entries": 483,
+		"format": "JSON",
+		"duration": 134.72221779823303,
+		"documentation": "https://tradingstrategy.ai",
+		"download_link": "http://tradingstrategy.ai/api/top-momentum"
+	},
+	{
+		"designation": "aave_v3",
+		"name": "AAVE v3 supply and borrow rates",
+		"size": 2153591525,
+		"last_updated_at": 1741367181,
+		"entries": 24775685,
+		"format": "Parquet",
+		"duration": null,
+		"documentation": "https://web3-ethereum-defi.readthedocs.io/tutorials/aave-v3-interest-analysis.html",
+		"download_link": "http://tradingstrategy.ai/api/aave-v3-all"
+	},
+	{
+		"designation": "uniswap_trades",
+		"name": "Uniswap trades",
+		"size": 105277141148,
+		"last_updated_at": 1709634890,
+		"entries": 2030976037,
+		"format": "Parquet",
+		"duration": 0,
+		"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.trade.html",
+		"download_link": "http://tradingstrategy.ai/api/uniswap-trades"
+	}
+]
