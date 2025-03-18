@@ -3,6 +3,9 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import TvChart from '$lib/charts/TvChart.svelte';
+	import Series from '$lib/charts/Series.svelte';
+	import { CandlestickSeries } from 'lightweight-charts';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -17,6 +20,23 @@
 		[summary.pair_slug]: summary.pair_name,
 		'tv-chart': 'TradingView Chart'
 	});
+
+	const candles = [
+		{
+			open: 5,
+			high: 5,
+			low: 1.5,
+			close: 2,
+			time: new Date('2024-05-16') / 1000
+		},
+		{
+			open: 2,
+			high: 4,
+			low: 1,
+			close: 3,
+			time: new Date('2024-05-17') / 1000
+		}
+	];
 </script>
 
 <svelte:head>
@@ -41,7 +61,9 @@
 
 	<Section padding="md" gap="xs">
 		<h2>TradingView pair chart</h2>
-		<p>Hello. Your new chart will go here!</p>
+		<TvChart>
+			<Series type={CandlestickSeries} data={candles} />
+		</TvChart>
 	</Section>
 </main>
 
