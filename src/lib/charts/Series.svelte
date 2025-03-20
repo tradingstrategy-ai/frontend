@@ -18,7 +18,7 @@
 	let series = $derived(chart?.addSeries(type));
 
 	function handleRangeChange(logicalRange: LogicalRange | null) {
-		if (logicalRange === null) return;
+		if (!dataFeed.hasMoreData || logicalRange === null) return;
 		const { to, from } = logicalRange;
 		if (from < LOGICAL_RANGE_THRESHOLD) {
 			const ticksVisible = Math.round(to - from) + 1;
