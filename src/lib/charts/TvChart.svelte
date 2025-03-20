@@ -26,9 +26,17 @@
 	let chart = $derived(el && createChart(el));
 
 	setContext(key, () => chart);
+
+	// prevent chart from capturing vertical wheel events so you can still scroll the page
+	// use wheel with modifier key pressed (ctrl, alt, meta) to zoom chart
+	function handleWheel(event: WheelEvent) {
+		const isVertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+		const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
+		if (isVertical && !modifierPressed) event.stopPropagation();
+	}
 </script>
 
-<div class="tv-chart" bind:this={el}>
+<div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
 	{@render children()}
 </div>
 
