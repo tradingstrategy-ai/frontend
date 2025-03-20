@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { LogicalRange, SeriesDefinition, SeriesType } from 'lightweight-charts';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
-	import { onMount } from 'svelte';
 	import { getChartContext } from './TvChart.svelte';
 
 	const LOGICAL_RANGE_THRESHOLD = 50;
@@ -26,11 +25,6 @@
 			dataFeed.fetchData(ticksVisible * 2);
 		}
 	}
-
-	// fetch initial series data
-	onMount(() => {
-		dataFeed.fetchData();
-	});
 
 	// update series when data changes
 	$effect(() => {

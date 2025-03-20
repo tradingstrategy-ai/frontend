@@ -3,10 +3,12 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import Series from '$lib/charts/Series.svelte';
 	import { CandlestickSeries } from 'lightweight-charts';
 	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -22,8 +24,10 @@
 		'tv-chart': 'TradingView Chart'
 	});
 
+	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
+
 	const dataFeed = $derived(
-		new CandleDataFeed(fetch, 'candles', {
+		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
 			candle_type: 'price',
 			pair_id: summary.pair_id,
 			exchange_type: summary.exchange_type
@@ -52,7 +56,11 @@
 	</PageHeader>
 
 	<Section padding="md" gap="xs">
-		<h2>TradingView pair chart</h2>
+		<div class="chart-header">
+			<h2>{summary.pair_symbol} TradingView chart</h2>
+			<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} />
+		</div>
+
 		<TvChart>
 			<Series type={CandlestickSeries} {dataFeed} />
 		</TvChart>
@@ -69,5 +77,16 @@
 	.swap-fee {
 		margin-left: var(--space-xxs);
 		color: var(--c-text-extra-light);
+	}
+
+	.chart-header {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+
+		h2 {
+			font: var(--f-heading-xl-medium);
+			letter-spacing: var(--ls-heading-xl, normal);
+		}
 	}
 </style>
