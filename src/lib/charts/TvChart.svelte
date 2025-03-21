@@ -30,9 +30,34 @@
 
 	let el: HTMLDivElement | undefined = $state();
 
-	let chart = $derived(el && createChart(el));
-
 	let colors = $derived(el && getCssColors(el, colorProps));
+
+	let chart = $derived.by(() => {
+		if (!el || !colors) return undefined;
+
+		return createChart(el, {
+			layout: {
+				background: { color: 'transparent' },
+				textColor: colors.text,
+				fontFamily: '"Neue Haas Grotesk Text", system-ui, sans-serif',
+				fontSize: 14
+			},
+			grid: {
+				vertLines: { color: colors.box3 },
+				horzLines: { color: colors.box3 }
+			},
+			crosshair: {
+				vertLine: {
+					color: colors.textExtraLight,
+					labelBackgroundColor: colors.textUltraLight
+				},
+				horzLine: {
+					color: colors.textExtraLight,
+					labelBackgroundColor: colors.textUltraLight
+				}
+			}
+		});
+	});
 
 	// prevent chart from capturing vertical wheel events so you can still scroll the page
 	// use wheel with modifier key pressed (ctrl, alt, meta) to zoom chart
