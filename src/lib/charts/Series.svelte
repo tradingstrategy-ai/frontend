@@ -1,21 +1,18 @@
 <script lang="ts">
-	import type { LogicalRange, SeriesDefinition, SeriesType } from 'lightweight-charts';
+	import type { IChartApi, LogicalRange, SeriesDefinition, SeriesType } from 'lightweight-charts';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
-	import { getChartContext } from './TvChart.svelte';
 
 	const LOGICAL_RANGE_THRESHOLD = 50;
 
 	type Props = {
 		type: SeriesDefinition<SeriesType>;
+		chart: IChartApi;
 		dataFeed: CandleDataFeed;
 	};
 
-	let { type, dataFeed }: Props = $props();
+	let { type, chart, dataFeed }: Props = $props();
 
-	const getChart = getChartContext();
-
-	let chart = $derived(getChart());
-	let series = $derived(chart?.addSeries(type));
+	let series = $derived(chart.addSeries(type));
 
 	function handleRangeChange(logicalRange: LogicalRange | null) {
 		if (!dataFeed.hasMoreData || logicalRange === null) return;
@@ -28,14 +25,14 @@
 
 	// update series when data changes
 	$effect(() => {
-		series?.setData(dataFeed.data);
+		series.setData(dataFeed.data);
 	});
 
 	// subscribe range changes (due to pan/zoom interactions)
 	$effect(() => {
-		chart?.timeScale().subscribeVisibleLogicalRangeChange(handleRangeChange);
+		chart.timeScale().subscribeVisibleLogicalRangeChange(handleRangeChange);
 		return () => {
-			chart?.timeScale().unsubscribeVisibleLogicalRangeChange(handleRangeChange);
+			chart.timeScale().unsubscribeVisibleLogicalRangeChange(handleRangeChange);
 		};
 	});
 </script>

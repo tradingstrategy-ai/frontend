@@ -1,22 +1,10 @@
-<script module lang="ts">
-	import type { IChartApi } from 'lightweight-charts';
-	import { getContext, setContext } from 'svelte';
-
-	const key = Symbol();
-
-	type ChartContext = () => IChartApi | undefined;
-
-	export function getChartContext() {
-		return getContext<ChartContext>(key);
-	}
-</script>
-
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { IChartApi } from 'lightweight-charts';
 	import { createChart } from 'lightweight-charts';
 
 	type Props = {
-		children: Snippet;
+		children: Snippet<[chart: IChartApi]>;
 	};
 
 	let { children }: Props = $props();
@@ -24,8 +12,6 @@
 	let el: HTMLDivElement | undefined = $state();
 
 	let chart = $derived(el && createChart(el));
-
-	setContext(key, () => chart);
 
 	// prevent chart from capturing vertical wheel events so you can still scroll the page
 	// use wheel with modifier key pressed (ctrl, alt, meta) to zoom chart
@@ -37,7 +23,9 @@
 </script>
 
 <div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
-	{@render children()}
+	{#if chart}
+		{@render children(chart)}
+	{/if}
 </div>
 
 <style>

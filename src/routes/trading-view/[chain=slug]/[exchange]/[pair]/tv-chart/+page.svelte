@@ -62,7 +62,9 @@
 		</div>
 
 		<TvChart>
-			<Series type={CandlestickSeries} {dataFeed} />
+			{#snippet children(chart)}
+				<Series type={CandlestickSeries} {chart} {dataFeed} />
+			{/snippet}
 		</TvChart>
 	</Section>
 </main>
