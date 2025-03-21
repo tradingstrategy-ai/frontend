@@ -5,9 +5,8 @@
 	import Section from '$lib/components/Section.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
-	import Series from '$lib/charts/Series.svelte';
+	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
-	import { CandlestickSeries, HistogramSeries } from 'lightweight-charts';
 	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { formatSwapFee } from '$lib/helpers/formatters';
@@ -27,7 +26,7 @@
 
 	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
 
-	const dataFeed = $derived(
+	let dataFeed = $derived(
 		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
 			candle_type: 'price',
 			pair_id: summary.pair_id,
@@ -64,7 +63,7 @@
 
 		<TvChart>
 			{#snippet children(chart, colors)}
-				<Series type={CandlestickSeries} {chart} {dataFeed} />
+				<CandleSeries {chart} {dataFeed} {colors} />
 				<CandleVolumeSeries {chart} {dataFeed} {colors} />
 			{/snippet}
 		</TvChart>
