@@ -13,7 +13,9 @@ export const chains = [
 	{ id: 137, slug: 'polygon', name: 'Polygon', explorer: 'https://polygonscan.com', gas: 'POL' },
 	{ id: 8453, slug: 'base', name: 'Base', explorer: 'https://basescan.org', gas: 'ETH' },
 	{ id: 43114, slug: 'avalanche', name: 'Avalanche C-chain', explorer: 'https://snowtrace.io', gas: 'AVAX' },
-	{ id: 42161, slug: 'arbitrum', name: 'Arbitrum One', explorer: 'https://arbiscan.io', gas: 'ETH' }
+	{ id: 42161, slug: 'arbitrum', name: 'Arbitrum One', explorer: 'https://arbiscan.io', gas: 'ETH' },
+	{ id: 80094, slug: 'berachain', name: 'Berachain', explorer: 'https://berascan.com', gas: 'BERA' },
+	{ id: 130, slug: 'unichain', name: 'Unichain', explorer: 'https://unichain.blockscout.com', gas: 'ETH' }
 ] as const;
 
 export type Chain = (typeof chains)[number];

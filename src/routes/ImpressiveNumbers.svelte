@@ -52,11 +52,17 @@
 	}
 
 	.chains {
-		display: flex;
-		justify-content: center;
-		gap: clamp(1rem, 4.5vw, 5rem);
+		display: grid;
+		grid-template-columns: repeat(8, auto);
+		justify-content: space-evenly;
 		margin-block: 1rem;
-		--size: clamp(2.5rem, 8vw, 6rem);
+		--size: clamp(3.5rem, 8vw, 6rem);
+
+		@media (--viewport-md-down) {
+			grid-template-columns: repeat(4, auto);
+			justify-content: center;
+			gap: clamp(1.5rem, 4.5vw, 5rem);
+		}
 
 		@media (--viewport-sm-down) {
 			margin-block: 0.5rem;
