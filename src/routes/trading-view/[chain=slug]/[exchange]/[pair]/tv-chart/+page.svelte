@@ -6,7 +6,8 @@
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import Series from '$lib/charts/Series.svelte';
-	import { CandlestickSeries } from 'lightweight-charts';
+	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
+	import { CandlestickSeries, HistogramSeries } from 'lightweight-charts';
 	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { formatSwapFee } from '$lib/helpers/formatters';
@@ -62,8 +63,9 @@
 		</div>
 
 		<TvChart>
-			{#snippet children(chart)}
+			{#snippet children(chart, colors)}
 				<Series type={CandlestickSeries} {chart} {dataFeed} />
+				<CandleVolumeSeries {chart} {dataFeed} {colors} />
 			{/snippet}
 		</TvChart>
 	</Section>
