@@ -2,9 +2,28 @@
 	import type { Snippet } from 'svelte';
 	import type { IChartApi } from 'lightweight-charts';
 	import { createChart } from 'lightweight-charts';
+	import { getCssColors } from '$lib/helpers/style';
+
+	const colorProps = [
+		'text',
+		'textLight',
+		'textExtraLight',
+		'textUltraLight',
+		'textInverted',
+		'box1',
+		'box2',
+		'box3',
+		'box4',
+		'bullish',
+		'bearish',
+		'bullish30',
+		'bearish30'
+	] as const;
+
+	type Colors = Record<(typeof colorProps)[number], string>;
 
 	type Props = {
-		children: Snippet<[chart: IChartApi]>;
+		children: Snippet<[chart: IChartApi, colors: Colors]>;
 	};
 
 	let { children }: Props = $props();
@@ -12,6 +31,8 @@
 	let el: HTMLDivElement | undefined = $state();
 
 	let chart = $derived(el && createChart(el));
+
+	let colors = $derived(el && getCssColors(el, colorProps));
 
 	// prevent chart from capturing vertical wheel events so you can still scroll the page
 	// use wheel with modifier key pressed (ctrl, alt, meta) to zoom chart
@@ -23,13 +44,16 @@
 </script>
 
 <div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
-	{#if chart}
-		{@render children(chart)}
+	{#if chart && colors}
+		{@render children(chart, colors)}
 	{/if}
 </div>
 
 <style>
 	.tv-chart {
 		aspect-ratio: 16/9;
+
+		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
+		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
 	}
 </style>

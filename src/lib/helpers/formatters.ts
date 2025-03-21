@@ -382,3 +382,10 @@ export function formatPriceDifference(before: MaybeNumber, after: MaybeNumber): 
 export function capitalize(string: string) {
 	return string[0].toUpperCase() + string.slice(1);
 }
+
+/**
+ * Convert camelCase to kebab-case
+ */
+export function camelToKebab(string: string) {
+	return string.replace(/([a-z]|[A-Z0-9]+)([A-Z0-9])/g, '$1-$2').toLowerCase();
+}
