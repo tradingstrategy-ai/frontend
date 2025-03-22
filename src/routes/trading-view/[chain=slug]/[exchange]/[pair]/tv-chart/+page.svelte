@@ -61,7 +61,7 @@
 			<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} />
 		</div>
 
-		<TvChart>
+		<TvChart loading={dataFeed.loadingInitialData}>
 			<CandleSeries {dataFeed} />
 			<CandleVolumeSeries {dataFeed} />
 		</TvChart>

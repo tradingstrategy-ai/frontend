@@ -34,14 +34,17 @@
 
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
+	import Spinner from '$lib/components/Spinner.svelte';
 
 	type Props = {
+		loading?: boolean;
 		children?: Snippet;
 	};
 
-	let { children }: Props = $props();
+	let { loading = false, children }: Props = $props();
 
 	let el: HTMLDivElement | undefined = $state();
 
@@ -94,6 +97,12 @@
 </script>
 
 <div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
+	{#if loading}
+		<div class="loading" transition:fade={{ duration: 250 }}>
+			<Spinner size="60" />
+		</div>
+	{/if}
+
 	{#if chart && colors}
 		{@render children?.()}
 	{/if}
@@ -101,7 +110,18 @@
 
 <style>
 	.tv-chart {
+		display: grid;
 		aspect-ratio: 16/9;
+
+		> :global(*) {
+			grid-area: 1 / -1;
+		}
+
+		.loading {
+			display: grid;
+			place-content: center;
+			z-index: 100;
+		}
 
 		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
 		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
