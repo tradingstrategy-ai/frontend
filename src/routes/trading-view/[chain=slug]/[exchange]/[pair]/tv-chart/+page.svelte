@@ -62,10 +62,8 @@
 		</div>
 
 		<TvChart>
-			{#snippet children(chart, colors)}
-				<CandleSeries {chart} {dataFeed} {colors} />
-				<CandleVolumeSeries {chart} {dataFeed} {colors} />
-			{/snippet}
+			<CandleSeries {dataFeed} />
+			<CandleVolumeSeries {dataFeed} />
 		</TvChart>
 	</Section>
 </main>

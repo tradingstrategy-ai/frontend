@@ -2,7 +2,6 @@
 	import type {
 		DataItem,
 		DeepPartial,
-		IChartApi,
 		LogicalRange,
 		PriceScaleOptions,
 		SeriesDefinition,
@@ -11,21 +10,27 @@
 		UTCTimestamp
 	} from 'lightweight-charts';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
+	import { getChartContext } from './TvChart.svelte';
 
 	const LOGICAL_RANGE_THRESHOLD = 50;
 
+	const { chart } = getChartContext();
+
 	type Props = {
 		type: SeriesDefinition<SeriesType>;
-		chart: IChartApi;
 		data?: DataItem<UTCTimestamp>[];
 		dataFeed?: CandleDataFeed;
 		options?: SeriesPartialOptionsMap[SeriesType];
 		priceScale?: DeepPartial<PriceScaleOptions>;
 	};
 
-	let { type, chart, data, dataFeed, options, priceScale }: Props = $props();
+	let { type, data, dataFeed, options, priceScale }: Props = $props();
 
-	let series = $derived(chart.addSeries(type, options));
+	const series = chart.addSeries(type, options);
+
+	if (priceScale) {
+		series.priceScale().applyOptions(priceScale);
+	}
 
 	function handleRangeChange(logicalRange: LogicalRange | null) {
 		if (!dataFeed?.hasMoreData || logicalRange === null) return;
@@ -35,13 +40,6 @@
 			dataFeed.fetchData(ticksVisible * 2);
 		}
 	}
-
-	// apply price scale options
-	$effect(() => {
-		if (priceScale) {
-			series.priceScale().applyOptions(priceScale);
-		}
-	});
 
 	// update series when data changes
 	$effect(() => {

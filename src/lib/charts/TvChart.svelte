@@ -1,8 +1,8 @@
-<script lang="ts">
-	import type { Snippet } from 'svelte';
+<script module lang="ts">
 	import type { IChartApi } from 'lightweight-charts';
-	import { createChart } from 'lightweight-charts';
-	import { getCssColors } from '$lib/helpers/style';
+	import { getContext, setContext } from 'svelte';
+
+	const contextKey = Symbol();
 
 	const colorProps = [
 		'text',
@@ -22,8 +22,23 @@
 
 	type Colors = Record<(typeof colorProps)[number], string>;
 
+	type ChartContext = {
+		chart: IChartApi;
+		colors: Colors;
+	};
+
+	export function getChartContext() {
+		return getContext<ChartContext>(contextKey);
+	}
+</script>
+
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+	import { createChart } from 'lightweight-charts';
+	import { getCssColors } from '$lib/helpers/style';
+
 	type Props = {
-		children: Snippet<[chart: IChartApi, colors: Colors]>;
+		children?: Snippet;
 	};
 
 	let { children }: Props = $props();
@@ -59,6 +74,16 @@
 		});
 	});
 
+	setContext(contextKey, {
+		get chart() {
+			return chart;
+		},
+
+		get colors() {
+			return colors;
+		}
+	});
+
 	// prevent chart from capturing vertical wheel events so you can still scroll the page
 	// use wheel with modifier key pressed (ctrl, alt, meta) to zoom chart
 	function handleWheel(event: WheelEvent) {
@@ -70,7 +95,7 @@
 
 <div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
 	{#if chart && colors}
-		{@render children(chart, colors)}
+		{@render children?.()}
 	{/if}
 </div>
 

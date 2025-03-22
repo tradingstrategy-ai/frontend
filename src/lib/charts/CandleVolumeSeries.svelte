@@ -1,15 +1,16 @@
 <script lang="ts">
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
-	import { type IChartApi, HistogramSeries } from 'lightweight-charts';
+	import { HistogramSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
+	import { getChartContext } from './TvChart.svelte';
+
+	const { colors } = getChartContext();
 
 	type Props = {
-		chart: IChartApi;
 		dataFeed: CandleDataFeed;
-		colors: { bullish30: string; bearish30: string };
 	};
 
-	let { chart, dataFeed, colors }: Props = $props();
+	let { dataFeed }: Props = $props();
 
 	let data = $derived(
 		dataFeed.data.map((c) => ({
@@ -22,7 +23,6 @@
 
 <Series
 	type={HistogramSeries}
-	{chart}
 	{data}
 	options={{
 		priceFormat: { type: 'volume' },
