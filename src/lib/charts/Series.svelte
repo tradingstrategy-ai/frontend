@@ -41,6 +41,12 @@
 		}
 	}
 
+	$effect(() => {
+		if (dataFeed?.loadingInitialData) {
+			chart.timeScale().scrollToRealTime();
+		}
+	});
+
 	// update series when data changes
 	$effect(() => {
 		series.setData(data ?? dataFeed!.data);

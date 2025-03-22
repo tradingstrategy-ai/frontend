@@ -59,6 +59,10 @@ export class CandleDataFeed {
 		untrack(() => this.fetchData());
 	}
 
+	get loadingInitialData() {
+		return this.loading && this.data.length === 0;
+	}
+
 	get interval() {
 		const [durationStr, timeUnit] = this.timeBucket.split(/(?=[mhd])/) as [`${number}`, TimeUnit];
 		const timeUnitInterval = timeUnitIntervals[timeUnit];
