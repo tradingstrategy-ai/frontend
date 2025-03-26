@@ -17,7 +17,10 @@
 		'bullish',
 		'bearish',
 		'bullish30',
-		'bearish30'
+		'bearish30',
+		'axisBorder',
+		'gridLines',
+		'paneSeparator'
 	] as const;
 
 	type Colors = Record<(typeof colorProps)[number], string>;
@@ -38,6 +41,7 @@
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { formatTokenAmount } from '$lib/helpers/formatters';
 
 	type Props = {
 		loading?: boolean;
@@ -53,16 +57,20 @@
 	let chart = $derived.by(() => {
 		if (!el || !colors) return undefined;
 
-		return createChart(el, {
+		const chart = createChart(el, {
 			layout: {
 				background: { color: 'transparent' },
 				textColor: colors.text,
 				fontFamily: '"Neue Haas Grotesk Text", system-ui, sans-serif',
-				fontSize: 14
+				fontSize: 14,
+				panes: {
+					separatorColor: colors.paneSeparator,
+					separatorHoverColor: colors.box4
+				}
 			},
 			grid: {
-				vertLines: { color: colors.box3 },
-				horzLines: { color: colors.box3 }
+				vertLines: { color: colors.gridLines },
+				horzLines: { color: colors.gridLines }
 			},
 			crosshair: {
 				vertLine: {
@@ -73,8 +81,17 @@
 					color: colors.textExtraLight,
 					labelBackgroundColor: colors.textUltraLight
 				}
+			},
+			localization: {
+				priceFormatter: (n: number) => formatTokenAmount(n, 1, 2)
 			}
 		});
+
+		chart.timeScale().applyOptions({
+			borderColor: colors.axisBorder
+		});
+
+		return chart;
 	});
 
 	setContext(contextKey, {
@@ -110,6 +127,12 @@
 
 <style>
 	.tv-chart {
+		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
+		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
+		--c-axis-border: var(--cm-light, var(--c-text-light)) var(--cm-dark, var(--c-text-extra-light));
+		--c-grid-lines: var(--cm-light, var(--c-box-3)) var(--cm-dark, var(--c-box-1));
+		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));
+
 		display: grid;
 		aspect-ratio: 16/9;
 
@@ -122,8 +145,5 @@
 			place-content: center;
 			z-index: 100;
 		}
-
-		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
-		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
 	}
 </style>

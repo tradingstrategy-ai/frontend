@@ -14,7 +14,7 @@
 
 	const LOGICAL_RANGE_THRESHOLD = 50;
 
-	const { chart } = getChartContext();
+	const { chart, colors } = getChartContext();
 
 	type Props = {
 		type: SeriesDefinition<SeriesType>;
@@ -28,9 +28,11 @@
 
 	const series = chart.addSeries(type, options);
 
-	if (priceScale) {
-		series.priceScale().applyOptions(priceScale);
-	}
+	// apply default priceScale options and any custom ones provided as prop
+	series.priceScale().applyOptions({
+		borderColor: colors.axisBorder,
+		...priceScale
+	});
 
 	function handleRangeChange(logicalRange: LogicalRange | null) {
 		if (!dataFeed?.hasMoreData || logicalRange === null) return;
