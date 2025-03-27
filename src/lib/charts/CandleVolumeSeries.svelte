@@ -1,16 +1,21 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
 	import { HistogramSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
+	import { merge } from '$lib/helpers/object';
 
 	const { colors } = getChartContext();
 
-	type Props = {
+	type SeriesProps = ComponentProps<typeof Series>;
+	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data'>;
+
+	type Props = Partial<SupportedSeriesProps> & {
 		dataFeed: CandleDataFeed;
 	};
 
-	let { dataFeed }: Props = $props();
+	let { dataFeed, options, ...restProps }: Props = $props();
 
 	let data = $derived(
 		dataFeed.data.map((c) => ({
@@ -19,17 +24,12 @@
 			color: c.close > c.open ? colors.bullish30 : colors.bearish30
 		}))
 	);
-</script>
 
-<Series
-	type={HistogramSeries}
-	{data}
-	options={{
+	const baseOptions = {
 		priceFormat: { type: 'volume' },
 		priceScaleId: '',
 		lastValueVisible: false
-	}}
-	priceScale={{
-		scaleMargins: { top: 0.7, bottom: 0 }
-	}}
-/>
+	};
+</script>
+
+<Series type={HistogramSeries} {data} options={merge({ ...baseOptions }, options)} {...restProps} />

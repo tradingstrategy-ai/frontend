@@ -21,12 +21,13 @@
 		data?: DataItem<UTCTimestamp>[];
 		dataFeed?: CandleDataFeed;
 		options?: SeriesPartialOptionsMap[SeriesType];
+		paneIndex?: number;
 		priceScale?: DeepPartial<PriceScaleOptions>;
 	};
 
-	let { type, data, dataFeed, options, priceScale }: Props = $props();
+	let { type, data, dataFeed, options, paneIndex, priceScale }: Props = $props();
 
-	const series = chart.addSeries(type, options);
+	const series = chart.addSeries(type, options, paneIndex);
 
 	// apply default priceScale options and any custom ones provided as prop
 	series.priceScale().applyOptions({

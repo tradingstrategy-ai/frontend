@@ -26,9 +26,17 @@
 
 	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
 
-	let dataFeed = $derived(
+	let priceFeed = $derived(
 		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
 			candle_type: 'price',
+			pair_id: summary.pair_id,
+			exchange_type: summary.exchange_type
+		})
+	);
+
+	let tvlFeed = $derived(
+		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
+			candle_type: 'tvl',
 			pair_id: summary.pair_id,
 			exchange_type: summary.exchange_type
 		})
@@ -43,7 +51,7 @@
 
 <Breadcrumbs labels={breadcrumbs} />
 
-<main class="ds-3">
+<main class="tv-chart-page ds-3">
 	<PageHeader>
 		<span slot="title">
 			{summary.pair_symbol}
@@ -61,9 +69,15 @@
 			<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} />
 		</div>
 
-		<TvChart loading={dataFeed.loadingInitialData}>
-			<CandleSeries {dataFeed} />
-			<CandleVolumeSeries {dataFeed} />
+		<TvChart loading={priceFeed.loadingInitialData}>
+			<CandleSeries dataFeed={priceFeed} priceScale={{ scaleMargins: { top: 0.1, bottom: 0.1 } }} />
+			<CandleVolumeSeries dataFeed={priceFeed} paneIndex={1} priceScale={{ scaleMargins: { top: 0.25, bottom: 0 } }} />
+			<CandleSeries
+				dataFeed={tvlFeed}
+				options={{ lastValueVisible: false }}
+				paneIndex={1}
+				priceScale={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
+			/>
 		</TvChart>
 	</Section>
 </main>
@@ -89,5 +103,18 @@
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--ls-heading-xl, normal);
 		}
+	}
+
+	/* Hack to add label to 2nd pane (tr: 2 * paneIndx + 1) */
+	.tv-chart-page :global(table tr:nth-child(3) td:nth-child(2)::before) {
+		position: absolute;
+		z-index: 2;
+		top: 0.25rem;
+		padding: 0.125em 0.25em 0.125em 0;
+		background: hsl(from var(--c-body) h s l / 60%);
+		font: var(--f-ui-sm-bold);
+		letter-spacing: var(--ls-ui-sm);
+		color: var(--c-text-extra-light);
+		content: 'TVL & VOLUME';
 	}
 </style>

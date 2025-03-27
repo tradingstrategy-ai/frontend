@@ -1,24 +1,30 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
 	import { CandlestickSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
+	import { merge } from '$lib/helpers/object';
 
 	const { colors } = getChartContext();
 
-	type Props = {
+	type SeriesProps = ComponentProps<typeof Series>;
+	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data'>;
+
+	type Props = Partial<SupportedSeriesProps> & {
 		dataFeed: CandleDataFeed;
 	};
 
-	let { dataFeed }: Props = $props();
+	let { dataFeed, options, ...restProps }: Props = $props();
 
-	const options = {
+	const baseOptions = {
 		upColor: colors.bullish,
 		downColor: colors.bearish,
 		wickUpColor: colors.bullish,
 		wickDownColor: colors.bearish,
-		borderVisible: false
+		borderVisible: false,
+		priceLineVisible: false
 	};
 </script>
 
-<Series type={CandlestickSeries} {dataFeed} {options} />
+<Series type={CandlestickSeries} {dataFeed} options={merge({ ...baseOptions }, options)} {...restProps} />
