@@ -57,12 +57,14 @@
 	let chart = $derived.by(() => {
 		if (!el || !colors) return undefined;
 
+		const style = getComputedStyle(el);
+
 		const chart = createChart(el, {
 			layout: {
 				background: { color: 'transparent' },
 				textColor: colors.text,
-				fontFamily: '"Neue Haas Grotesk Text", system-ui, sans-serif',
-				fontSize: 14,
+				fontFamily: style.fontFamily,
+				fontSize: parseInt(style.fontSize),
 				panes: {
 					separatorColor: colors.paneSeparator,
 					separatorHoverColor: colors.box4
@@ -135,6 +137,7 @@
 
 		display: grid;
 		aspect-ratio: 16/9;
+		font: var(--f-ui-sm-roman);
 
 		> :global(*) {
 			grid-area: 1 / -1;
