@@ -1,5 +1,5 @@
 <script module lang="ts">
-	import type { IChartApi } from 'lightweight-charts';
+	import type { DataItem, IChartApi, ISeriesApi, MouseEventParams, Point, SeriesType, Time } from 'lightweight-charts';
 	import { getContext, setContext } from 'svelte';
 
 	const contextKey = Symbol();
@@ -43,12 +43,20 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
 
+	type TooltipParams = MouseEventParams<Time>;
+	type ActiveTooltipParams = TooltipParams & Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
+	type TooltipData = ((DataItem<Time> & Record<string, any>) | undefined)[];
+
 	type Props = {
 		loading?: boolean;
 		children?: Snippet;
+		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, children }: Props = $props();
+	let { loading = false, children, tooltip }: Props = $props();
+
+	// local registry of series that are added to the chart (needed for tooltip data lookup)
+	const allSeries: ISeriesApi<SeriesType>[] = [];
 
 	let el: HTMLDivElement | undefined = $state();
 
@@ -67,7 +75,8 @@
 				fontSize: parseInt(style.fontSize),
 				panes: {
 					separatorColor: colors.paneSeparator,
-					separatorHoverColor: colors.box4
+					separatorHoverColor: colors.box4,
+					enableResize: false
 				}
 			},
 			grid: {
@@ -86,14 +95,53 @@
 			},
 			localization: {
 				priceFormatter: (n: number) => formatTokenAmount(n, 1, 2)
+			},
+			timeScale: {
+				borderColor: colors.axisBorder
 			}
 		});
 
-		chart.timeScale().applyOptions({
-			borderColor: colors.axisBorder
-		});
+		// decorate chart.addSeries to add series to local series registry
+		chart.addSeries = function () {
+			const series = chart.constructor.prototype.addSeries.apply(chart, arguments);
+			allSeries.push(series);
+			return series;
+		};
+
+		// decorate chart.removeSeries to remove series from local series registry
+		chart.removeSeries = function (series) {
+			chart.constructor.prototype.removeSeries.apply(chart, arguments);
+			const index = allSeries.indexOf(series);
+			if (index !== -1) allSeries.splice(index, 1);
+		};
 
 		return chart;
+	});
+
+	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
+
+	function isActiveTooltip(params: TooltipParams): params is ActiveTooltipParams {
+		return [params.time, params.logical, params.point, params.paneIndex].every((v) => v !== undefined);
+	}
+
+	// address multi-pane tooltip positioning bug
+	function getCorrectedTooltip(params: ActiveTooltipParams): ActiveTooltipParams {
+		const point: Point = { ...params.point };
+		const preceedingPanes = chart!.panes().slice(0, params.paneIndex);
+
+		// add preceeding pane heights to point.y (+1 for pane separator)
+		preceedingPanes.forEach((pane) => {
+			(point as any).y += pane.getHeight() + 1;
+		});
+
+		return { ...params, point };
+	}
+
+	// capture tooltip data when hovering over the chart
+	$effect(() => {
+		const updateTooltip = (params: TooltipParams) => (tooltipParams = params);
+		chart?.subscribeCrosshairMove(updateTooltip);
+		return () => chart?.unsubscribeCrosshairMove(updateTooltip);
 	});
 
 	setContext(contextKey, {
@@ -125,6 +173,12 @@
 	{#if chart && colors}
 		{@render children?.()}
 	{/if}
+
+	{#if tooltip && isActiveTooltip(tooltipParams)}
+		{@const adjustedTooltipParams = getCorrectedTooltip(tooltipParams)}
+		{@const tooltipData = allSeries.map((s) => tooltipParams.seriesData.get(s))}
+		{@render tooltip(adjustedTooltipParams, tooltipData)}
+	{/if}
 </div>
 
 <style>
@@ -135,6 +189,7 @@
 		--c-grid-lines: var(--cm-light, var(--c-box-3)) var(--cm-dark, var(--c-box-1));
 		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));
 
+		position: relative;
 		display: grid;
 		aspect-ratio: 16/9;
 		font: var(--f-ui-sm-roman);
