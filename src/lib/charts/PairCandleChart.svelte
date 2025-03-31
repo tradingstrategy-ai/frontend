@@ -9,6 +9,7 @@
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
 	import { relativeProfitability } from '$lib/helpers/profit.js';
+	import { formatDate } from './helpers';
 
 	type Props = {
 		exchangeType: string;
@@ -17,15 +18,6 @@
 	};
 
 	let { exchangeType, pairId, pairSymbol }: Props = $props();
-
-	// TODO: refactor to somewhere!
-	// TODO: handle sub-day formatting (add `HH:MM`), or use another method w/in snippet
-	const formatter = new Intl.DateTimeFormat('en-GB', {
-		timeZone: 'UTC',
-		year: 'numeric',
-		month: 'short',
-		day: '2-digit'
-	});
 
 	// TODO: handle via page url params
 	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
@@ -78,7 +70,7 @@
 			{/snippet}
 
 			<ChartTooltip {point}>
-				<h3>{formatter.format(new Date((time as number) * 1000))}</h3>
+				<h3>{formatDate(time as number, timeBucket.selected)}</h3>
 				<table class="metrics">
 					<thead>
 						<tr>
