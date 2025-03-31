@@ -4,12 +4,13 @@
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
-	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
+	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
@@ -92,14 +93,11 @@
 				priceScale={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
 			/>
 
-			<!-- TODO: refactor this to Tooltip components -->
-			{#snippet tooltip({ point }, [price, volume, tvl])}
+			{#snippet tooltip({ point, time }, [price, volume, tvl])}
 				{@const priceInfo = getProfitInfo((price?.close - price?.open) / (1 + price?.open))}
 				{@const tvlInfo = getProfitInfo((tvl?.close - tvl?.open) / (1 + tvl?.open))}
-				<div class="tooltip" style:--x="{point.x}px" style:--y="{point.y}px">
-					<header>
-						<h3>{formatter.format(new Date((price?.time as number) * 1000))}</h3>
-					</header>
+				<ChartTooltip {point}>
+					<h3>{formatter.format(new Date((time as number) * 1000))}</h3>
 					<table class="metrics">
 						<thead>
 							<tr>
@@ -140,7 +138,7 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
+				</ChartTooltip>
 			{/snippet}
 		</TvChart>
 	</Section>
@@ -182,70 +180,52 @@
 		content: 'TVL & VOLUME';
 	}
 
-	.tooltip {
-		position: absolute;
-		display: grid;
-		margin-left: 0.75rem;
-		min-width: 12rem;
-		padding: 1.125rem;
-		border-radius: var(--radius-md);
-		background: hsl(from var(--c-text-inverted) h s l / 80%);
-		box-shadow: var(--shadow-3);
+	h3 {
+		font: var(--f-ui-sm-bold);
 		letter-spacing: var(--ls-ui-sm, normal);
-		z-index: 3;
+		color: var(--c-text-light);
+	}
 
-		top: var(--y);
-		left: var(--x);
+	.metrics {
+		width: 100%;
+		border-collapse: collapse;
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--ls-ui-sm, normal);
 
-		h3 {
-			font: var(--f-ui-sm-bold);
-			color: var(--c-text-light);
+		tr * {
+			padding-block: 0.25em;
 		}
 
-		.metrics {
-			width: 100%;
-			border-collapse: collapse;
-			font: var(--f-ui-sm-medium);
+		tbody tr:last-child * {
+			padding-bottom: 0;
+		}
 
-			tr * {
-				padding-block: 0.25em;
-			}
+		thead th {
+			border-bottom: 1px solid var(--c-text-ultra-light);
+			font: var(--f-ui-xs-medium);
+			letter-spacing: 0.1em;
+			color: var(--c-text-extra-light);
+			text-align: right;
+			text-transform: uppercase;
+		}
 
-			tbody tr:last-child * {
-				padding-bottom: 0;
-			}
+		tbody th {
+			color: var(--c-text-extra-light);
+			text-align: left;
+		}
 
-			thead th {
-				border-bottom: 1px solid var(--c-text-ultra-light);
-				font: var(--f-ui-xs-medium);
-				letter-spacing: 0.1em;
-				color: var(--c-text-extra-light);
-				text-align: right;
-				text-transform: uppercase;
-			}
+		td {
+			padding-left: 1rem;
+			text-align: right;
+			min-width: 4.75rem;
+		}
 
-			tbody th {
-				color: var(--c-text-extra-light);
-				text-align: left;
-			}
+		tbody tr:last-child {
+			border-top: 1px solid var(--c-text-ultra-light);
+		}
 
-			td {
-				padding-left: 1rem;
-				text-align: right;
-				min-width: 4.75rem;
-			}
-
-			.tvl {
-				/* display: none; */
-			}
-
-			tbody tr:last-child {
-				border-top: 1px solid var(--c-text-ultra-light);
-			}
-
-			.volume {
-				color: var(--c-text-light);
-			}
+		.volume {
+			color: var(--c-text-light);
 		}
 	}
 </style>
