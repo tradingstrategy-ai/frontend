@@ -19,7 +19,7 @@ Display a peformance line chart for a given (static) dataset.
 	import { differenceInCalendarDays } from 'date-fns';
 	import ChartIQ from '$lib/chart/ChartIQ.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
-	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { relativeProfitability } from '$lib/helpers/profit';
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { merge } from '$lib/helpers/object';
 

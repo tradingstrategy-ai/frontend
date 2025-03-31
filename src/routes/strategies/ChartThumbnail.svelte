@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { relativeProfitability } from 'trade-executor/helpers/profit';
+	import { relativeProfitability } from '$lib/helpers/profit';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { type Quote, ChartIQ, calculateYAxisRange } from '$lib/chart';

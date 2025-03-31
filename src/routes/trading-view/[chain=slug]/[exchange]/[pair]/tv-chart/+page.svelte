@@ -14,6 +14,7 @@
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
+	import { relativeProfitability } from '$lib/helpers/profit.js';
 
 	let { data } = $props();
 	let { summary } = $derived(data);
@@ -94,47 +95,40 @@
 			/>
 
 			{#snippet tooltip({ point, time }, [price, volume, tvl])}
-				{@const priceInfo = getProfitInfo((price?.close - price?.open) / (1 + price?.open))}
-				{@const tvlInfo = getProfitInfo((tvl?.close - tvl?.open) / (1 + tvl?.open))}
+				{@const priceInfo = getProfitInfo(relativeProfitability(price?.open, price?.close))}
+				{@const tvlInfo = getProfitInfo(relativeProfitability(tvl?.open, tvl?.close))}
+
+				{#snippet metricsRow(label: string, property: string)}
+					<tr>
+						<th>{label}</th>
+						<td class={priceInfo.directionClass}>{formatTokenAmount(price?.[property], 3)}</td>
+						<td class={tvlInfo.directionClass}>{formatTokenAmount(tvl?.[property], 3)}</td>
+					</tr>
+				{/snippet}
+
 				<ChartTooltip {point}>
 					<h3>{formatter.format(new Date((time as number) * 1000))}</h3>
 					<table class="metrics">
 						<thead>
 							<tr>
-								<th class="metric"></th>
-								<th class="price">Price</th>
-								<th class="tvl">TVL</th>
+								<th></th>
+								<th>Price</th>
+								<th>TVL</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<th class="metric">% ▲▼</th>
-								<td class="price {priceInfo.directionClass}">{priceInfo.value ? priceInfo : '---'}</td>
-								<td class="tvl {tvlInfo.directionClass}">{tvlInfo.value ? tvlInfo : '---'}</td>
+								<th>% ▲▼</th>
+								<td class={priceInfo.directionClass}>{priceInfo}</td>
+								<td class={tvlInfo.directionClass}>{tvlInfo}</td>
 							</tr>
+							{@render metricsRow('Open', 'open')}
+							{@render metricsRow('High', 'high')}
+							{@render metricsRow('Low', 'low')}
+							{@render metricsRow('Close', 'close')}
 							<tr>
-								<th class="metric">Open</th>
-								<td class="price {priceInfo.directionClass}">{formatTokenAmount(price?.open, 3)}</td>
-								<td class="tvl {tvlInfo.directionClass}">{formatTokenAmount(tvl?.open, 3)}</td>
-							</tr>
-							<tr>
-								<th class="metric">High</th>
-								<td class="price {priceInfo.directionClass}">{formatTokenAmount(price?.high, 3)}</td>
-								<td class="tvl {tvlInfo.directionClass}">{formatTokenAmount(tvl?.high, 3)}</td>
-							</tr>
-							<tr>
-								<th class="metric">Low</th>
-								<td class="price {priceInfo.directionClass}">{formatTokenAmount(price?.low, 3)}</td>
-								<td class="tvl {tvlInfo.directionClass}">{formatTokenAmount(tvl?.low, 3)}</td>
-							</tr>
-							<tr>
-								<th class="metric">Close</th>
-								<td class="price {priceInfo.directionClass}">{formatTokenAmount(price?.close, 3)}</td>
-								<td class="tvl {tvlInfo.directionClass}">{formatTokenAmount(tvl?.close, 3)}</td>
-							</tr>
-							<tr>
-								<th class="metric">Volume</th>
-								<td class="volume">{formatTokenAmount(volume?.value, 3)}</td>
+								<th>Volume</th>
+								<td>{formatTokenAmount(volume?.value, 3)}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -218,14 +212,14 @@
 			padding-left: 1rem;
 			text-align: right;
 			min-width: 4.75rem;
+
+			&:not(.bullish, .bearish) {
+				color: var(--c-text-light);
+			}
 		}
 
 		tbody tr:last-child {
 			border-top: 1px solid var(--c-text-ultra-light);
-		}
-
-		.volume {
-			color: var(--c-text-light);
 		}
 	}
 </style>
