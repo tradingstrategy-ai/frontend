@@ -38,6 +38,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { MediaQuery } from 'svelte/reactivity';
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -54,6 +55,8 @@
 	};
 
 	let { loading = false, children, tooltip }: Props = $props();
+
+	const isMobile = new MediaQuery('width <= 576px');
 
 	// local registry of series that are added to the chart (needed for tooltip data lookup)
 	const allSeries: ISeriesApi<SeriesType>[] = [];
@@ -137,6 +140,13 @@
 
 		return { ...params, point };
 	}
+
+	// toggle visibility of y-axis scale based on screen size
+	// NOTE: may need to make this configirable for future charts
+	$effect(() => {
+		const visible = !isMobile.current;
+		chart?.panes().forEach((p) => p.priceScale('right').applyOptions({ visible }));
+	});
 
 	// capture tooltip data when hovering over the chart
 	$effect(() => {
