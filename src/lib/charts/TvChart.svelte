@@ -73,6 +73,7 @@
 		const chart = createChart(el, {
 			autoSize: true,
 			layout: {
+				attributionLogo: false,
 				background: { color: 'transparent' },
 				textColor: colors.text,
 				fontFamily: style.fontFamily,
