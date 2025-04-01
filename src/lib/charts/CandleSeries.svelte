@@ -25,6 +25,16 @@
 		borderVisible: false,
 		priceLineVisible: false
 	};
+
+	// use neutral color for neutral candles
+	let data = $derived(
+		dataFeed.data.map(({ ...c }) => {
+			if (c.open === c.close) {
+				c.color ??= c.wickColor = colors.text;
+			}
+			return c;
+		})
+	);
 </script>
 
-<Series type={CandlestickSeries} {dataFeed} options={merge({ ...baseOptions }, options)} {...restProps} />
+<Series type={CandlestickSeries} {dataFeed} {data} options={merge({ ...baseOptions }, options)} {...restProps} />
