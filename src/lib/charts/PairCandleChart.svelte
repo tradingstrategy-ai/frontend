@@ -4,12 +4,14 @@
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
 	import { relativeProfitability } from '$lib/helpers/profit.js';
 	import { formatDate } from './helpers';
+	import IconQuestionCircle from '~icons/local/question-circle';
 
 	type Props = {
 		exchangeType: string;
@@ -55,7 +57,24 @@
 			options={{ lastValueVisible: false }}
 			paneIndex={1}
 			priceScale={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
-		/>
+		>
+			<h3>TVL & VOLUME</h3>
+
+			{#if !tvlFeed.hasData}
+				<div class="no-tvl-data">
+					<Tooltip>
+						<span slot="trigger">
+							No TVL data
+							<IconQuestionCircle />
+						</span>
+						<span slot="popup">
+							No TVL chart data available for {pairSymbol} at {timeBucket.selected} interval. Try switching to a longer candle
+							length.
+						</span>
+					</Tooltip>
+				</div>
+			{/if}
+		</CandleSeries>
 
 		{#snippet tooltip({ point, time }, [price, volume, tvl])}
 			{@const priceInfo = getProfitInfo(relativeProfitability(price?.open, price?.close))}
@@ -70,7 +89,7 @@
 			{/snippet}
 
 			<ChartTooltip {point}>
-				<h3>{formatDate(time as number, timeBucket.selected)}</h3>
+				<h4>{formatDate(time as number, timeBucket.selected)}</h4>
 				<table class="metrics">
 					<thead>
 						<tr>
@@ -116,7 +135,40 @@
 			}
 		}
 
+		:is(h3, .no-tvl-data) {
+			position: absolute;
+			top: 0.25rem;
+			padding: 0.125em 0.25em;
+			background: hsl(from var(--c-body) h s l / 60%);
+			font: var(--f-ui-sm-bold);
+			letter-spacing: var(--ls-ui-sm);
+			color: var(--c-text-extra-light);
+		}
+
 		h3 {
+			font: var(--f-ui-sm-bold);
+		}
+
+		.no-tvl-data {
+			right: 0.25rem;
+			color: var(--c-warning);
+			pointer-events: auto;
+
+			:global(.popup) {
+				min-width: 22rem;
+				right: 0;
+			}
+
+			:global(.icon) {
+				--icon-size: 1.25em;
+				transform: translateY(-0.125rem);
+				:global(path) {
+					stroke-width: 2.5px;
+				}
+			}
+		}
+
+		h4 {
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--ls-ui-sm, normal);
 			color: var(--c-text-light);
@@ -163,19 +215,6 @@
 			tbody tr:last-child {
 				border-top: 1px solid var(--c-text-ultra-light);
 			}
-		}
-
-		/* Hack to add label to 2nd pane (tr: 2 * paneIndx + 1) */
-		:global(table:not(.metrics) tr:nth-child(3) td:nth-child(2)::before) {
-			position: absolute;
-			z-index: 2;
-			top: 0.25rem;
-			padding: 0.125em 0.25em 0.125em 0;
-			background: hsl(from var(--c-body) h s l / 60%);
-			font: var(--f-ui-sm-bold);
-			letter-spacing: var(--ls-ui-sm);
-			color: var(--c-text-extra-light);
-			content: 'TVL & VOLUME';
 		}
 	}
 </style>
