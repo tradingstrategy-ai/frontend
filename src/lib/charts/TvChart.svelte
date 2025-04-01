@@ -68,6 +68,7 @@
 		const style = getComputedStyle(el);
 
 		const chart = createChart(el, {
+			autoSize: true,
 			layout: {
 				background: { color: 'transparent' },
 				textColor: colors.text,
@@ -190,6 +191,7 @@
 		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));
 
 		position: relative;
+		contain: size;
 		display: grid;
 		aspect-ratio: 16/9;
 		font: var(--f-ui-sm-roman);
