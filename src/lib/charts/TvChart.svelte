@@ -102,7 +102,8 @@
 				priceFormatter: (n: number) => formatTokenAmount(n, 1, 2)
 			},
 			timeScale: {
-				borderColor: colors.axisBorder
+				borderColor: colors.axisBorder,
+				barSpacing: 8
 			}
 		});
 

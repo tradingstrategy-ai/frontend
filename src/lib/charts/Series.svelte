@@ -28,7 +28,7 @@
 		children?: Snippet;
 	};
 
-	let { type, data, dataFeed, options, paneIndex, priceScale, children }: Props = $props();
+	let { type, data, dataFeed, options, paneIndex = 0, priceScale, children }: Props = $props();
 
 	const series = chart.addSeries(type, options, paneIndex);
 
@@ -42,17 +42,17 @@
 
 	function handleRangeChange(logicalRange: LogicalRange | null) {
 		if (!dataFeed?.hasMoreData || logicalRange === null) return;
-		const { to, from } = logicalRange;
+		const { from, to } = logicalRange;
 		if (from < LOGICAL_RANGE_THRESHOLD) {
 			const ticksVisible = Math.round(to - from) + 1;
 			dataFeed.fetchData(ticksVisible * 2);
 		}
 	}
 
-	// scroll x-axis to current time (e.g., due to change of time interval)
+	// reset primary pane x-axis scale when dataFeed is reset (e.g., time interval change)
 	$effect(() => {
-		if (dataFeed?.loadingInitialData) {
-			chart.timeScale().scrollToRealTime();
+		if (paneIndex === 0 && dataFeed?.loadingInitialData) {
+			chart.timeScale().resetTimeScale();
 		}
 	});
 
