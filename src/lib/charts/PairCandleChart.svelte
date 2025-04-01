@@ -84,7 +84,9 @@
 				<tr>
 					<th>{label}</th>
 					<td class={priceInfo.directionClass}>{formatTokenAmount(price?.[property], 3)}</td>
-					<td class={tvlInfo.directionClass}>{formatTokenAmount(tvl?.[property], 3)}</td>
+					{#if tvlFeed.hasData}
+						<td class={tvlInfo.directionClass}>{formatTokenAmount(tvl?.[property], 3)}</td>
+					{/if}
 				</tr>
 			{/snippet}
 
@@ -95,14 +97,18 @@
 						<tr>
 							<th></th>
 							<th>Price</th>
-							<th>TVL</th>
+							{#if tvlFeed.hasData}
+								<th>TVL</th>
+							{/if}
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<th>% ▲▼</th>
 							<td class={priceInfo.directionClass}>{priceInfo}</td>
-							<td class={tvlInfo.directionClass}>{tvlInfo}</td>
+							{#if tvlFeed.hasData}
+								<td class={tvlInfo.directionClass}>{tvlInfo}</td>
+							{/if}
 						</tr>
 						{@render metricsRow('Open', 'open')}
 						{@render metricsRow('High', 'high')}
