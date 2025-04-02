@@ -1,5 +1,5 @@
-import type { AutoscaleInfo, CandlestickData, UTCTimestamp } from 'lightweight-charts';
-import type { SeriesDataItem } from './types';
+import type { AutoscaleInfo, UTCTimestamp } from 'lightweight-charts';
+import type { CandleDataItem, DataFeed, TvDataItem } from './types';
 import { chartWickThreshold } from '$lib/config';
 import { untrack } from 'svelte';
 import { parseDate } from '$lib/helpers/date';
@@ -15,8 +15,6 @@ export type ApiCandle = {
 	v?: number;
 };
 
-export type ChartCandle = CandlestickData<UTCTimestamp>;
-
 export type CandleTimeBucket = (typeof CandleDataFeed.timeBuckets)[number];
 
 const timeUnitIntervals = {
@@ -31,7 +29,7 @@ function tsToUnixTimestamp(ts: string) {
 	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
 }
 
-function apiToChartCandle(c: ApiCandle): ChartCandle {
+function apiToDataItem(c: ApiCandle): CandleDataItem {
 	return {
 		time: tsToUnixTimestamp(c.ts),
 		open: c.o,
@@ -53,10 +51,10 @@ function apiToChartCandle(c: ApiCandle): ChartCandle {
  * calculateClippedCandleScale address this by clipping the high/low values based on a
  * configurable threshold.
  */
-export function calculateClippedCandleScale(candles: SeriesDataItem[]): AutoscaleInfo | null {
+export function calculateClippedCandleScale(candles: TvDataItem[]): AutoscaleInfo | null {
 	if (candles.length === 0) return null;
 
-	const priceRange = (candles as ChartCandle[]).reduce(
+	const priceRange = (candles as CandleDataItem[]).reduce(
 		({ minValue, maxValue }, { open, high, low, close }) => {
 			const clippedLow = Math.max(low, Math.min(open, close) * (1 - chartWickThreshold));
 			const clippedHigh = Math.min(high, Math.max(open, close) * (1 + chartWickThreshold));
@@ -72,12 +70,12 @@ export function calculateClippedCandleScale(candles: SeriesDataItem[]): Autoscal
 	return { priceRange };
 }
 
-export class CandleDataFeed {
+export class CandleDataFeed implements DataFeed<CandleDataItem> {
 	static timeBuckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'] as const;
 
 	loading = $state(false);
 	hasMoreData = $state(true);
-	data = $state([]) as ChartCandle[];
+	data = $state([]) as CandleDataItem[];
 
 	constructor(
 		readonly fetch: Fetch,
@@ -127,7 +125,7 @@ export class CandleDataFeed {
 		if (!apiCandles?.length) {
 			this.hasMoreData = false;
 		} else {
-			const chartCandles = apiCandles.map(apiToChartCandle);
+			const chartCandles = apiCandles.map(apiToDataItem);
 			this.data = [...chartCandles, ...this.data];
 		}
 

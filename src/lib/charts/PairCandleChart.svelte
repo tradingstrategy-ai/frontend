@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { CandleDataItem, DataFeed } from './types';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
@@ -14,15 +15,28 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 
 	type Props = {
+		chainSlug: string;
 		exchangeType: string;
 		pairId: string;
 		pairSymbol: string;
 	};
 
-	let { exchangeType, pairId, pairSymbol }: Props = $props();
+	let { chainSlug, exchangeType, pairId, pairSymbol }: Props = $props();
 
 	// TODO: handle via page url params
 	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
+
+	// NOTE: this is only used for special-case exception
+	// remove it once we have better support for base uniswap-v3 1d TVL chart data
+	let hideTvlSeries = $derived(chainSlug === 'base' && exchangeType === 'uniswap_v3' && timeBucket.selected === '1d');
+	const dummyTvlDataFeed: DataFeed<CandleDataItem> = {
+		loading: false,
+		hasMoreData: false,
+		data: [],
+		loadingInitialData: false,
+		hasData: false,
+		fetchData: (ticks?: number) => {}
+	};
 
 	let priceFeed = $derived(
 		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
@@ -32,13 +46,15 @@
 		})
 	);
 
-	let tvlFeed = $derived(
-		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
+	let tvlFeed = $derived.by(() => {
+		if (hideTvlSeries) return dummyTvlDataFeed;
+
+		return new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
 			candle_type: 'tvl',
 			pair_id: pairId,
 			exchange_type: exchangeType
-		})
-	);
+		});
+	});
 </script>
 
 <div class="pair-candle-chart">

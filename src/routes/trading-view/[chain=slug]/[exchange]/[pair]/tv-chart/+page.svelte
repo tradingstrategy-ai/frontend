@@ -41,7 +41,12 @@
 	</PageHeader>
 
 	<Section padding="md">
-		<PairCandleChart exchangeType={summary.exchange_type} pairId={summary.pair_id} pairSymbol={summary.pair_symbol} />
+		<PairCandleChart
+			chainSlug={summary.chain_slug}
+			exchangeType={summary.exchange_type}
+			pairId={summary.pair_id}
+			pairSymbol={summary.pair_symbol}
+		/>
 	</Section>
 </main>
 

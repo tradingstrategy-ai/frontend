@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import type { CandleDataFeed } from './candle-data-feed.svelte';
+	import type { DataFeed, CandleDataItem } from './types';
 	import { HistogramSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
@@ -9,10 +9,10 @@
 	const { colors } = getChartContext();
 
 	type SeriesProps = ComponentProps<typeof Series>;
-	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data'>;
+	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data' | 'dataFeed'>;
 
 	type Props = Partial<SupportedSeriesProps> & {
-		dataFeed: CandleDataFeed;
+		dataFeed: DataFeed<CandleDataItem>;
 	};
 
 	let { dataFeed, options, ...restProps }: Props = $props();

@@ -1,5 +1,18 @@
-import type { AutoscaleInfo, DataItem, UTCTimestamp } from 'lightweight-charts';
+import type { AutoscaleInfo, CandlestickData, DataItem, UTCTimestamp } from 'lightweight-charts';
 
-export type SeriesDataItem = DataItem<UTCTimestamp>;
+export type TvDataItem = DataItem<UTCTimestamp>;
 
-export type PriceScaleCalculator = (data: SeriesDataItem[]) => AutoscaleInfo | null;
+export type CandleDataItem = CandlestickData<UTCTimestamp>;
+
+declare const foo: TvDataItem;
+
+export type PriceScaleCalculator = (data: TvDataItem[]) => AutoscaleInfo | null;
+
+export type DataFeed<T extends TvDataItem = TvDataItem> = {
+	loading: boolean;
+	loadingInitialData: boolean;
+	hasData: boolean;
+	hasMoreData: boolean;
+	data: T[];
+	fetchData: (ticks: number) => void;
+};

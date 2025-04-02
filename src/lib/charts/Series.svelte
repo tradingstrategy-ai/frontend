@@ -7,8 +7,7 @@
 		type SeriesPartialOptionsMap,
 		type SeriesType
 	} from 'lightweight-charts';
-	import type { SeriesDataItem, PriceScaleCalculator } from './types';
-	import type { CandleDataFeed } from './candle-data-feed.svelte';
+	import type { DataFeed, PriceScaleCalculator, TvDataItem } from './types';
 	import { type Snippet, mount, unmount } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
@@ -19,8 +18,8 @@
 
 	type Props = {
 		type: SeriesDefinition<SeriesType>;
-		data?: SeriesDataItem[];
-		dataFeed?: CandleDataFeed;
+		data?: TvDataItem[];
+		dataFeed?: DataFeed;
 		options?: SeriesPartialOptionsMap[SeriesType];
 		paneIndex?: number;
 		priceScaleOptions?: DeepPartial<PriceScaleOptions>;
@@ -59,10 +58,10 @@
 	}
 
 	// Get currently visible chart data segment
-	function getVisibleData(): SeriesDataItem[] {
+	function getVisibleData(): TvDataItem[] {
 		if (!visibileLogicalRange) return [];
 
-		const data = series.data() as SeriesDataItem[];
+		const data = series.data() as TvDataItem[];
 		const { from, to } = visibileLogicalRange;
 
 		const barsInfo = series.barsInLogicalRange({ from, to });
