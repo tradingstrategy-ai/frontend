@@ -8,7 +8,7 @@
 		type SeriesType
 	} from 'lightweight-charts';
 	import type { DataFeed, PriceScaleCalculator, TvDataItem } from './types';
-	import { type Snippet, mount, unmount } from 'svelte';
+	import { type Snippet, mount, unmount, untrack } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
 
@@ -82,6 +82,14 @@
 			dataFeed.fetchData(ticksVisible * 2);
 		}
 	}
+
+	// fetch initial data whenever a new dataFeed is provided
+	$effect(() => {
+		if (dataFeed) {
+			// prevent effect from triggering itself
+			untrack(() => dataFeed.fetchData());
+		}
+	});
 
 	// reset primary pane x-axis scale when dataFeed is reset (e.g., time interval change)
 	$effect(() => {

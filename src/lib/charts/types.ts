@@ -14,5 +14,5 @@ export type DataFeed<T extends TvDataItem = TvDataItem> = {
 	hasData: boolean;
 	hasMoreData: boolean;
 	data: T[];
-	fetchData: (ticks: number) => void;
+	fetchData: (ticks?: number) => void;
 };

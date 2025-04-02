@@ -1,7 +1,6 @@
 import type { AutoscaleInfo, UTCTimestamp } from 'lightweight-charts';
 import type { CandleDataItem, DataFeed, TvDataItem } from './types';
 import { chartWickThreshold } from '$lib/config';
-import { untrack } from 'svelte';
 import { parseDate } from '$lib/helpers/date';
 import { utcMinute, utcHour, utcDay } from 'd3-time';
 import { fetchPublicApi } from '$lib/helpers/public-api';
@@ -82,12 +81,7 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly endpoint: string,
 		readonly timeBucket: CandleTimeBucket,
 		readonly urlParams: Record<string, string> = {}
-	) {
-		// fetch initial data
-		// must be wrapped in `untrack` to prevent `state_unsafe_local_read` error
-		// https://svelte.dev/docs/svelte/runtime-errors#Client-errors-state_unsafe_local_read
-		untrack(() => this.fetchData());
-	}
+	) {}
 
 	get loadingInitialData() {
 		return this.loading && this.data.length === 0;
