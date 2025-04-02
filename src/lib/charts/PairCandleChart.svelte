@@ -5,7 +5,7 @@
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte.js';
+	import { CandleDataFeed, calculateClippedCandleScale } from '$lib/charts/candle-data-feed.svelte.js';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
@@ -48,15 +48,23 @@
 	</div>
 
 	<TvChart loading={priceFeed.loadingInitialData}>
-		<CandleSeries dataFeed={priceFeed} priceScale={{ scaleMargins: { top: 0.1, bottom: 0.1 } }} />
+		<CandleSeries
+			dataFeed={priceFeed}
+			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
+			priceScaleCalculator={calculateClippedCandleScale}
+		/>
 
-		<CandleVolumeSeries dataFeed={priceFeed} paneIndex={1} priceScale={{ scaleMargins: { top: 0.25, bottom: 0 } }} />
+		<CandleVolumeSeries
+			dataFeed={priceFeed}
+			paneIndex={1}
+			priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
+		/>
 
 		<CandleSeries
 			dataFeed={tvlFeed}
 			options={{ lastValueVisible: false }}
 			paneIndex={1}
-			priceScale={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
+			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
 		>
 			<h3>TVL & VOLUME</h3>
 

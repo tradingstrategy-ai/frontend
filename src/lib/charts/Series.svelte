@@ -1,14 +1,13 @@
 <script lang="ts">
-	import type {
-		DataItem,
-		DeepPartial,
-		LogicalRange,
-		PriceScaleOptions,
-		SeriesDefinition,
-		SeriesPartialOptionsMap,
-		SeriesType,
-		UTCTimestamp
+	import {
+		type DeepPartial,
+		type LogicalRange,
+		type PriceScaleOptions,
+		type SeriesDefinition,
+		type SeriesPartialOptionsMap,
+		type SeriesType
 	} from 'lightweight-charts';
+	import type { SeriesDataItem, PriceScaleCalculator } from './types';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
 	import { type Snippet, mount, unmount } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
@@ -20,31 +19,67 @@
 
 	type Props = {
 		type: SeriesDefinition<SeriesType>;
-		data?: DataItem<UTCTimestamp>[];
+		data?: SeriesDataItem[];
 		dataFeed?: CandleDataFeed;
 		options?: SeriesPartialOptionsMap[SeriesType];
 		paneIndex?: number;
-		priceScale?: DeepPartial<PriceScaleOptions>;
+		priceScaleOptions?: DeepPartial<PriceScaleOptions>;
+		priceScaleCalculator?: PriceScaleCalculator;
 		children?: Snippet;
 	};
 
-	let { type, data, dataFeed, options, paneIndex = 0, priceScale, children }: Props = $props();
+	let {
+		type,
+		data,
+		dataFeed,
+		options,
+		paneIndex = 0,
+		priceScaleOptions,
+		priceScaleCalculator,
+		children
+	}: Props = $props();
 
-	const series = chart.addSeries(type, options, paneIndex);
+	let visibileLogicalRange: LogicalRange | null = null;
 
 	let seriesContent: Record<string, any> | undefined = undefined;
+
+	const series = chart.addSeries(type, options, paneIndex);
 
 	// apply default priceScale options and any custom ones provided as prop
 	series.priceScale().applyOptions({
 		borderColor: colors.axisBorder,
-		...priceScale
+		...priceScaleOptions
 	});
 
-	function handleRangeChange(logicalRange: LogicalRange | null) {
-		if (!dataFeed?.hasMoreData || logicalRange === null) return;
-		const { from, to } = logicalRange;
-		if (from < LOGICAL_RANGE_THRESHOLD) {
-			const ticksVisible = Math.round(to - from) + 1;
+	// apply priceScaleCalculator if one was provided
+	if (priceScaleCalculator) {
+		series.applyOptions({
+			autoscaleInfoProvider: () => priceScaleCalculator(getVisibleData())
+		});
+	}
+
+	// Get currently visible chart data segment
+	function getVisibleData(): SeriesDataItem[] {
+		if (!visibileLogicalRange) return [];
+
+		const data = series.data() as SeriesDataItem[];
+		const { from, to } = visibileLogicalRange;
+
+		const barsInfo = series.barsInLogicalRange({ from, to });
+		if (!barsInfo) return [];
+
+		const startIndex = data.findIndex((c) => c.time === barsInfo?.from);
+		const endIndex = data.findIndex((c) => c.time === barsInfo?.to);
+		return data.slice(startIndex, endIndex + 1);
+	}
+
+	function handleRangeChange(range: LogicalRange | null) {
+		visibileLogicalRange = range;
+
+		if (!dataFeed?.hasMoreData || !range) return;
+
+		if (range.from < LOGICAL_RANGE_THRESHOLD) {
+			const ticksVisible = Math.round(range.to - range.from) + 1;
 			dataFeed.fetchData(ticksVisible * 2);
 		}
 	}

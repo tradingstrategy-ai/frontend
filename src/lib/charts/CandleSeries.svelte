@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { CandleDataFeed } from './candle-data-feed.svelte';
-	import { CandlestickSeries } from 'lightweight-charts';
+	import { type CandlestickSeriesPartialOptions, CandlestickSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
 	import { merge } from '$lib/helpers/object';
@@ -13,11 +13,12 @@
 
 	type Props = Partial<SupportedSeriesProps> & {
 		dataFeed: CandleDataFeed;
+		options?: CandlestickSeriesPartialOptions;
 	};
 
 	let { dataFeed, options, ...restProps }: Props = $props();
 
-	const baseOptions = {
+	const baseOptions: CandlestickSeriesPartialOptions = {
 		upColor: colors.bullish,
 		downColor: colors.bearish,
 		wickUpColor: colors.bullish,

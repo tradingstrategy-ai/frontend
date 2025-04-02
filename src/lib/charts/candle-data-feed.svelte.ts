@@ -1,4 +1,6 @@
-import type { CandlestickData, UTCTimestamp } from 'lightweight-charts';
+import type { AutoscaleInfo, CandlestickData, UTCTimestamp } from 'lightweight-charts';
+import type { SeriesDataItem } from './types';
+import { chartWickThreshold } from '$lib/config';
 import { untrack } from 'svelte';
 import { parseDate } from '$lib/helpers/date';
 import { utcMinute, utcHour, utcDay } from 'd3-time';
@@ -38,6 +40,36 @@ function apiToChartCandle(c: ApiCandle): ChartCandle {
 		close: c.c,
 		customValues: { volume: c.v }
 	};
+}
+
+/**
+ * Custom PriceScaleCalculator for trading pair price candle data
+ *
+ * By default, TradingView CandlestickSeries determines price scale using min/max
+ * of all currently displayed candle values. For trading pairs with extremely long
+ * wicks (high/low values), this results in an overly flattened-out price scale.
+ * E.g.: http://localhost:5173/trading-view/arbitrum/uniswap-v3/crv-eth-fee-30
+ *
+ * calculateClippedCandleScale address this by clipping the high/low values based on a
+ * configurable threshold.
+ */
+export function calculateClippedCandleScale(candles: SeriesDataItem[]): AutoscaleInfo | null {
+	if (candles.length === 0) return null;
+
+	const priceRange = (candles as ChartCandle[]).reduce(
+		({ minValue, maxValue }, { open, high, low, close }) => {
+			const clippedLow = Math.max(low, Math.min(open, close) * (1 - chartWickThreshold));
+			const clippedHigh = Math.min(high, Math.max(open, close) * (1 + chartWickThreshold));
+			return {
+				minValue: Math.min(minValue, clippedLow),
+				maxValue: Math.max(maxValue, clippedHigh)
+			};
+		},
+		// initial accumulator: ±Infinity ensures any candle value will be lower/higher
+		{ minValue: Infinity, maxValue: -Infinity }
+	);
+
+	return { priceRange };
 }
 
 export class CandleDataFeed {
