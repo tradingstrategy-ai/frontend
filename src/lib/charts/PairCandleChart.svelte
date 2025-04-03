@@ -70,7 +70,9 @@
 			dataFeed={priceFeed}
 			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
 			priceScaleCalculator={calculateClippedCandleScale}
-		/>
+		>
+			<h3 class="price">Price</h3>
+		</CandleSeries>
 
 		<CandleVolumeSeries
 			dataFeed={priceFeed}
@@ -84,7 +86,7 @@
 			paneIndex={1}
 			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
 		>
-			<h3>TVL & VOLUME</h3>
+			<h3 class="tvl">TVL & Volume</h3>
 
 			{#if !tvlFeed.hasData}
 				<div class="no-tvl-data">
@@ -179,20 +181,30 @@
 
 		:is(h3, .no-tvl-data) {
 			position: absolute;
-			top: 0.25rem;
 			padding: 0.125em 0.25em;
 			background: hsl(from var(--c-body) h s l / 60%);
-			font: var(--f-ui-sm-bold);
-			letter-spacing: var(--ls-ui-sm);
-			color: var(--c-text-extra-light);
 		}
 
 		h3 {
-			font: var(--f-ui-sm-bold);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: var(--c-text-light);
+
+			&.price {
+				bottom: 0.25rem;
+			}
+
+			&.tvl {
+				top: 0.25rem;
+			}
 		}
 
 		.no-tvl-data {
+			top: 0.25rem;
 			right: 0.25rem;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm);
 			color: var(--c-warning);
 			pointer-events: auto;
 
