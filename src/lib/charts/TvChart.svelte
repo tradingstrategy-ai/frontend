@@ -176,7 +176,7 @@
 	}
 </script>
 
-<div class="tv-chart" bind:this={el} onwheelcapture={handleWheel} data-css-props>
+<div class="tv-chart" bind:this={el} onwheelcapture={handleWheel} data-css-props data-testid="tv-chart">
 	{#if loading}
 		<div class="loading" transition:fade={{ duration: 250 }}>
 			<Spinner size="60" />
