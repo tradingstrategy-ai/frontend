@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { a } from 'vitest/dist/chunks/suite.BMWOKiTe.js';
 
 test.describe('trading pair details page', () => {
 	test.beforeEach(async ({ page }) => {
@@ -11,9 +12,10 @@ test.describe('trading pair details page', () => {
 		await expect(pairInfo).toContainText('Token price 0.0000870 ETH');
 	});
 
-	test('should include 2 ChartIQ chart elements', async ({ page }) => {
-		const chartIQ = page.getByTestId('chartIQ');
-		await expect(chartIQ.nth(0)).toBeVisible();
-		await expect(chartIQ.nth(1)).toBeVisible();
+	test('should include TradingView chart canvas elements', async ({ page }) => {
+		const tvChart = page.getByTestId('tv-chart');
+		await expect(tvChart).toBeVisible();
+		const count = await tvChart.locator('canvas').count();
+		expect(count).toBeGreaterThan(0);
 	});
 });

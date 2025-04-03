@@ -6,42 +6,43 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import ChartSection from './ChartSection.svelte';
+	import PairCandleChart from '$lib/charts/PairCandleChart.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 
-	export let data;
-	$: ({ summary, details } = data);
+	let { data } = $props();
+	let { summary, details } = $derived(data);
 
-	$: tokenTax = getTokenTaxInformation(details);
-	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
-	$: isUniswapIncompatible = summary.exchange_type === 'uniswap_v2_incompatible';
-	$: swapFee = formatSwapFee(summary.pair_swap_fee);
+	let tokenTax = $derived(getTokenTaxInformation(details));
+	let isUniswapV3 = $derived(summary.exchange_type === 'uniswap_v3');
+	let isUniswapIncompatible = $derived(summary.exchange_type === 'uniswap_v2_incompatible');
+	let swapFee = $derived(formatSwapFee(summary.pair_swap_fee));
 
 	// Ridiculous token price warning: it is common with scam tokens to price the
 	// token super low so that prices are not readable when converted to USD.
-	$: ridiculousPrice = summary.usd_price_latest < 0.000001;
+	let ridiculousPrice = $derived(summary.usd_price_latest < 0.000001);
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[summary.chain_slug]: summary.chain_name,
 		[summary.exchange_slug]: summary.exchange_name,
 		[summary.pair_slug]: summary.pair_name
-	};
+	});
 
-	$: timeBucket = $page.state.timeBucket ?? data.timeBucket;
+	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, page.state.timeBucket ?? data.timeBucket);
 
-	function handleChartSectionChange({ detail }: CustomEvent) {
-		if (detail.name !== 'timeBucket') return;
-		const state = { timeBucket: detail.value };
-		replaceState(`?${new URLSearchParams(state)}`, state);
+	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
+		if (name !== 'timeBucket') return;
+		replaceState(`?${new URLSearchParams({ timeBucket: value })}`, { timeBucket: value });
 	}
 </script>
 
@@ -59,61 +60,69 @@ Render the pair trading page
 
 <main class="ds-3">
 	<PageHeader>
-		<span slot="title">
-			{summary.pair_symbol}
-			<span class="swap-fee">{swapFee}</span>
-		</span>
-		<span slot="subtitle" class="subtitle">
-			token pair on {details.exchange_name} on
-			<EntitySymbol size="0.875em" label={summary.chain_name} logoUrl={getLogoUrl('blockchain', summary.chain_slug)} />
-		</span>
-		<svelte:fragment slot="cta">
+		{#snippet title()}
+			<span>
+				{summary.pair_symbol}
+				<span class="swap-fee">{swapFee}</span>
+			</span>
+		{/snippet}
+		{#snippet subtitle()}
+			<span class="subtitle">
+				token pair on {details.exchange_name} on
+				<EntitySymbol
+					size="0.875em"
+					label={summary.chain_name}
+					logoUrl={getLogoUrl('blockchain', summary.chain_slug)}
+				/>
+			</span>
+		{/snippet}
+		{#snippet cta()}
 			{#if details.trade_link}
 				<Button href={details.trade_link} target="_blank" rel="noreferrer">
 					Swap {summary.base_token_symbol_friendly}/{summary.quote_token_symbol_friendly}
 				</Button>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="pair-info">
 		<div class="ds-2-col">
 			<InfoTable {summary} {details} />
-			<InfoSummary {summary} {details} pageUrl={$page.url.toString()} />
+			<InfoSummary {summary} {details} pageUrl={page.url.toString()} />
 		</div>
 
 		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
-			<AlertList status="warning" let:AlertItem>
-				<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
-					{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-					{summary.pair_symbol} may be inaccurate.
-				</AlertItem>
+			<AlertList status="warning">
+				{#snippet children({ AlertItem })}
+					<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
+						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+						{summary.pair_symbol} may be inaccurate.
+					</AlertItem>
 
-				<AlertItem displayWhen={tokenTax.broken}>
-					This token is unlikely to be tradeable.
-					<a
-						href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-						rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
-					>. Error code <strong>{tokenTax.sellTax}</strong>.
-				</AlertItem>
+					<AlertItem displayWhen={tokenTax.broken}>
+						This token is unlikely to be tradeable.
+						<a
+							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+							rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
+						>. Error code <strong>{tokenTax.sellTax}</strong>.
+					</AlertItem>
 
-				<AlertItem displayWhen={ridiculousPrice}>
-					This trading pair is using low digit price units that may prevent displaying the price data properly.
-				</AlertItem>
+					<AlertItem displayWhen={ridiculousPrice}>
+						This trading pair is using low digit price units that may prevent displaying the price data properly.
+					</AlertItem>
+				{/snippet}
 			</AlertList>
 		{/if}
 	</section>
 
 	<section class="ds-container charts">
-		<ChartSection
+		<PairCandleChart
+			chainSlug={summary.chain_slug}
+			exchangeType={summary.exchange_type}
 			pairId={summary.pair_id}
 			pairSymbol={summary.pair_symbol}
-			exchangeType={summary.exchange_type}
-			hasTvlData={Number.isFinite(summary.pair_tvl)}
-			firstTradeDate={details.first_trade_at}
 			{timeBucket}
-			chainSlug={summary.chain_slug}
-			on:change={handleChartSectionChange}
+			on:change={handleTimeBucketChange}
 		/>
 	</section>
 
@@ -165,6 +174,15 @@ Render the pair trading page
 	}
 
 	.charts {
+		/* TODO: remove when TV chart migration is complete */
+		:global([data-css-props]) {
+			@media (--viewport-xs) {
+				--button-padding: 0.375rem 0.75rem;
+				--button-font: var(--f-ui-sm-medium);
+				--button-letter-spacing: var(--f-ui-sm-spacing);
+			}
+		}
+
 		/* prevent chart-flicker bug when scrollbars are enabled */
 		overflow: visible;
 	}
