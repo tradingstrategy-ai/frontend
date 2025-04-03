@@ -1,30 +1,32 @@
 <script lang="ts">
 	import type { CandleDataItem, DataFeed } from './types';
+	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
+	import {
+		type CandleTimeBucket,
+		CandleDataFeed,
+		calculateClippedCandleScale
+	} from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { CandleDataFeed, calculateClippedCandleScale } from '$lib/charts/candle-data-feed.svelte.js';
-	import { OptionGroup } from '$lib/helpers/option-group.svelte.js';
+	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
 	import { relativeProfitability } from '$lib/helpers/profit.js';
 	import { formatDate } from './helpers';
-	import IconQuestionCircle from '~icons/local/question-circle';
 
 	type Props = {
 		chainSlug: string;
 		exchangeType: string;
 		pairId: string;
 		pairSymbol: string;
+		timeBucket: OptionGroup<CandleTimeBucket>;
 	};
 
-	let { chainSlug, exchangeType, pairId, pairSymbol }: Props = $props();
-
-	// TODO: handle via page url params
-	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, '1d');
+	let { chainSlug, exchangeType, pairId, pairSymbol, timeBucket }: Props = $props();
 
 	// NOTE: this is only used for special-case exception
 	// remove it once we have better support for base uniswap-v3 1d TVL chart data
@@ -60,7 +62,7 @@
 <div class="pair-candle-chart">
 	<div class="chart-header">
 		<h2>{pairSymbol} chart</h2>
-		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} />
+		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</div>
 
 	<TvChart loading={priceFeed.loadingInitialData}>
