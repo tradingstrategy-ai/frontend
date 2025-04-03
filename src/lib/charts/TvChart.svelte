@@ -176,7 +176,7 @@
 	}
 </script>
 
-<div class="tv-chart" bind:this={el} onwheelcapture={handleWheel}>
+<div class="tv-chart" bind:this={el} onwheelcapture={handleWheel} data-css-props>
 	{#if loading}
 		<div class="loading" transition:fade={{ duration: 250 }}>
 			<Spinner size="60" />
@@ -195,6 +195,18 @@
 </div>
 
 <style>
+	[data-css-props] {
+		--chart-aspect-ratio: 16/9;
+
+		@media (--viewport-sm-down) {
+			--chart-aspect-ratio: 3/2;
+		}
+
+		@media (--viewport-xs) {
+			--chart-aspect-ratio: 1;
+		}
+	}
+
 	.tv-chart {
 		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
 		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
@@ -205,7 +217,7 @@
 		position: relative;
 		contain: size;
 		display: grid;
-		aspect-ratio: 16/9;
+		aspect-ratio: var(--chart-aspect-ratio);
 		font: var(--f-ui-sm-roman);
 
 		> :global(*) {

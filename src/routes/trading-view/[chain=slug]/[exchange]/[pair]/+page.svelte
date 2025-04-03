@@ -12,14 +12,14 @@ Render the pair trading page
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import ChartSection from './ChartSection.svelte';
+	import PairCandleChart from '$lib/charts/PairCandleChart.svelte';
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	export let data;
-	$: ({ admin, summary, details } = data);
+	$: ({ summary, details } = data);
 
 	$: tokenTax = getTokenTaxInformation(details);
 	$: isUniswapV3 = summary.exchange_type === 'uniswap_v3';
@@ -105,20 +105,12 @@ Render the pair trading page
 	</section>
 
 	<section class="ds-container charts">
-		<ChartSection
+		<PairCandleChart
+			chainSlug={summary.chain_slug}
+			exchangeType={summary.exchange_type}
 			pairId={summary.pair_id}
 			pairSymbol={summary.pair_symbol}
-			exchangeType={summary.exchange_type}
-			hasTvlData={Number.isFinite(summary.pair_tvl)}
-			firstTradeDate={details.first_trade_at}
-			{timeBucket}
-			chainSlug={summary.chain_slug}
-			on:change={handleChartSectionChange}
-		>
-			{#if admin}
-				<Button secondary size="sm" label="View chart PoC" href="{summary.pair_slug}/tv-chart" />
-			{/if}
-		</ChartSection>
+		/>
 	</section>
 
 	<section class="ds-container time-period-summary">

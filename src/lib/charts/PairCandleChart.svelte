@@ -59,7 +59,7 @@
 
 <div class="pair-candle-chart">
 	<div class="chart-header">
-		<h2>{pairSymbol} TradingView chart</h2>
+		<h2>{pairSymbol} chart</h2>
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} />
 	</div>
 
@@ -155,13 +155,23 @@
 		gap: 1rem;
 
 		.chart-header {
-			display: grid;
-			grid-template-columns: 1fr auto;
+			:global([data-css-props]) {
+				@media (--viewport-xs) {
+					--segmented-control-font: var(--f-ui-xs-medium);
+					--segmented-control-letter-spacing: var(--ls-ui-xs);
+				}
+			}
+
+			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
+			gap: 0.75rem 1.5rem;
+			margin-bottom: 1em;
 
 			h2 {
-				font: var(--f-heading-xl-medium);
-				letter-spacing: var(--ls-heading-xl, normal);
+				flex: 1;
+				font: var(--f-h2-medium);
+				white-space: nowrap;
 			}
 		}
 
