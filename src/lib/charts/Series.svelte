@@ -106,16 +106,14 @@
 
 		if (!children) return;
 
-		// push to event loop to allow TradingView to first create the series pane elements
-		setTimeout(() => {
-			try {
-				const target = series.getPane().getHTMLElement().querySelector('td:nth-child(2)');
-				if (!target) throw new Error('No series target HTML element found.');
+		// Use requestAnimationFrame to push to event loop and only run when window is in foreground
+		// (allows TradingView to first create the series pane elements)
+		requestAnimationFrame(() => {
+			const target = series.getPane().getHTMLElement().querySelector('td:nth-child(2)');
+			if (target) {
 				seriesContent = mount(SeriesContent, { target, props: { children } });
-			} catch (e) {
-				console.error(e);
 			}
-		}, 100);
+		});
 	});
 
 	// subscribe range changes (due to pan/zoom interactions)
