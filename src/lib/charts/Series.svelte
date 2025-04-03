@@ -12,7 +12,7 @@
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
 
-	const LOGICAL_RANGE_THRESHOLD = 50;
+	const LOGICAL_RANGE_THRESHOLD = 100;
 
 	const { chart, colors } = getChartContext();
 
@@ -75,11 +75,8 @@
 	function handleRangeChange(range: LogicalRange | null) {
 		visibileLogicalRange = range;
 
-		if (!dataFeed?.hasMoreData || !range) return;
-
-		if (range.from < LOGICAL_RANGE_THRESHOLD) {
-			const ticksVisible = Math.round(range.to - range.from) + 1;
-			dataFeed.fetchData(ticksVisible * 2);
+		if (dataFeed?.hasMoreData && range && range.from < LOGICAL_RANGE_THRESHOLD) {
+			dataFeed.fetchData();
 		}
 	}
 
