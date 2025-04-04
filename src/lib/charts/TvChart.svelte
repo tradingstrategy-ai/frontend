@@ -42,7 +42,6 @@
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { formatTokenAmount } from '$lib/helpers/formatters';
 
 	type TooltipParams = MouseEventParams<Time>;
 	type ActiveTooltipParams = TooltipParams & Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
@@ -50,11 +49,12 @@
 
 	type Props = {
 		loading?: boolean;
+		priceFormatter: Formatter<number>;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, children, tooltip }: Props = $props();
+	let { loading = false, priceFormatter, children, tooltip }: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -99,7 +99,7 @@
 				}
 			},
 			localization: {
-				priceFormatter: (n: number) => formatTokenAmount(n, 1, 2)
+				priceFormatter
 			},
 			timeScale: {
 				borderColor: colors.axisBorder,

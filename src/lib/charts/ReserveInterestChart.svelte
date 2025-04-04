@@ -66,7 +66,7 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart loading={borrowFeed.loadingInitialData}>
+	<TvChart priceFormatter={(n) => formatInterestRate(n, 1, 2)} loading={borrowFeed.loadingInitialData}>
 		<CandleSeries dataFeed={borrowFeed} />
 		<Series type={LineSeries} dataFeed={supplyFeed} {options} />
 
