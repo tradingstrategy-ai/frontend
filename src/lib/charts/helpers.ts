@@ -1,4 +1,4 @@
-import type { CandleTimeBucket } from './candle-data-feed.svelte';
+import type { CandleTimeBucket } from './types';
 import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 import { notFilledMarker } from '$lib/helpers/formatters';
 

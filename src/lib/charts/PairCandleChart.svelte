@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { CandleDataItem, DataFeed } from './types';
+	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import {
-		type CandleTimeBucket,
+		type ApiDataTransformer,
 		CandleDataFeed,
 		calculateClippedCandleScale
 	} from '$lib/charts/candle-data-feed.svelte.js';
@@ -40,22 +40,34 @@
 		fetchData: (ticks?: number) => {}
 	};
 
+	const transformApiData: ApiDataTransformer = (data, transformItem) => {
+		const apiCandles = (Object.values(data)[0] ?? []) as ApiCandle[];
+		return apiCandles.map((c) => ({
+			...transformItem(c),
+			customValues: { volume: c.v }
+		}));
+	};
+
 	let priceFeed = $derived(
-		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
-			candle_type: 'price',
-			pair_id: pairId,
-			exchange_type: exchangeType
-		})
+		new CandleDataFeed(
+			fetch,
+			'candles',
+			timeBucket.selected,
+			{ candle_type: 'price', pair_id: pairId, exchange_type: exchangeType },
+			transformApiData
+		)
 	);
 
 	let tvlFeed = $derived.by(() => {
 		if (hideTvlSeries) return dummyTvlDataFeed;
 
-		return new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
-			candle_type: 'tvl',
-			pair_id: pairId,
-			exchange_type: exchangeType
-		});
+		return new CandleDataFeed(
+			fetch,
+			'candles',
+			timeBucket.selected,
+			{ candle_type: 'tvl', pair_id: pairId, exchange_type: exchangeType },
+			transformApiData
+		);
 	});
 </script>
 

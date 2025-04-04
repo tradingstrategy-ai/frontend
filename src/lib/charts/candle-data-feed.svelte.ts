@@ -1,19 +1,8 @@
 import type { AutoscaleInfo, UTCTimestamp } from 'lightweight-charts';
-import type { CandleDataItem, DataFeed, TvDataItem } from './types';
+import type { ApiCandle, CandleDataItem, CandleTimeBucket, DataFeed, TvDataItem } from './types';
 import { chartWickThreshold } from '$lib/config';
 import { type TimeInterval, utcMinute, utcHour, utcDay } from 'd3-time';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-
-export type ApiCandle = {
-	ts: string;
-	o: number;
-	h: number;
-	l: number;
-	c: number;
-	v?: number;
-};
-
-export type CandleTimeBucket = (typeof CandleDataFeed.timeBuckets)[number];
 
 const timeUnitIntervals = {
 	m: utcMinute,
@@ -21,22 +10,25 @@ const timeUnitIntervals = {
 	d: utcDay
 } as const;
 
-export type TimeUnit = keyof typeof timeUnitIntervals;
+type TimeUnit = keyof typeof timeUnitIntervals;
 
 function tsToUnixTimestamp(ts: string) {
 	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
 }
 
-function apiToDataItem(c: ApiCandle): CandleDataItem {
+export type TransformItem = (c: ApiCandle) => CandleDataItem;
+
+function transformItem(c: ApiCandle): CandleDataItem {
 	return {
 		time: tsToUnixTimestamp(c.ts),
 		open: c.o,
 		high: c.h,
 		low: c.l,
-		close: c.c,
-		customValues: { volume: c.v }
+		close: c.c
 	};
 }
+
+export type ApiDataTransformer = (data: any, transformItem: TransformItem) => CandleDataItem[];
 
 /**
  * Custom PriceScaleCalculator for trading pair price candle data
@@ -69,7 +61,7 @@ export function calculateClippedCandleScale(candles: TvDataItem[]): AutoscaleInf
 }
 
 export class CandleDataFeed implements DataFeed<CandleDataItem> {
-	static timeBuckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'] as const;
+	static timeBuckets: CandleTimeBucket[] = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'];
 
 	interval: TimeInterval;
 	endDate: Date;
@@ -81,7 +73,8 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly fetch: Fetch,
 		readonly endpoint: string,
 		readonly timeBucket: CandleTimeBucket,
-		readonly urlParams: Record<string, string> = {}
+		readonly urlParams: Record<string, string> = {},
+		readonly transformApiData: ApiDataTransformer
 	) {
 		this.interval = this.timeBucketToInterval(timeBucket);
 		this.endDate = this.interval.floor(new Date());
@@ -108,21 +101,20 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 
 		const startDate = this.interval.offset(this.endDate, -(ticks - 1));
 
-		const candleData = await fetchPublicApi(this.fetch, this.endpoint, {
+		const data = await fetchPublicApi(this.fetch, this.endpoint, {
 			...this.urlParams,
 			time_bucket: this.timeBucket,
 			start: startDate.toISOString().slice(0, 19),
 			end: this.endDate.toISOString().slice(0, 19)
 		});
 
-		const apiCandles = Object.values(candleData)[0] as ApiCandle[] | undefined;
+		const candles = this.transformApiData(data, transformItem);
 
-		if (!apiCandles?.length) {
-			this.hasMoreData = false;
-		} else {
-			const chartCandles = apiCandles.map(apiToDataItem);
-			this.data = [...chartCandles, ...this.data];
+		if (candles.length) {
+			this.data = [...candles, ...this.data];
 			this.endDate = this.interval.offset(startDate, -1);
+		} else {
+			this.hasMoreData = false;
 		}
 
 		this.loading = false;
