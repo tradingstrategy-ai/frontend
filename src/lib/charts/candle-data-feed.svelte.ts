@@ -12,13 +12,13 @@ const timeUnitIntervals = {
 
 type TimeUnit = keyof typeof timeUnitIntervals;
 
-function tsToUnixTimestamp(ts: string) {
+export function tsToUnixTimestamp(ts: string) {
 	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
 }
 
 export type TransformItem = (c: ApiCandle) => CandleDataItem;
 
-function transformItem(c: ApiCandle): CandleDataItem {
+export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
 	return {
 		time: tsToUnixTimestamp(c.ts),
 		open: c.o,
@@ -28,7 +28,7 @@ function transformItem(c: ApiCandle): CandleDataItem {
 	};
 }
 
-export type ApiDataTransformer = (data: any, transformItem: TransformItem) => CandleDataItem[];
+export type ApiDataTransformer = (data: any) => CandleDataItem[];
 
 /**
  * Custom PriceScaleCalculator for trading pair price candle data
@@ -108,7 +108,7 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 			end: this.endDate.toISOString().slice(0, 19)
 		});
 
-		const candles = this.transformApiData(data, transformItem);
+		const candles = this.transformApiData(data);
 
 		if (candles.length) {
 			this.data = [...candles, ...this.data];

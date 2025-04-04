@@ -1,36 +1,41 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
-	import { type TimeBucket, ReserveInterestChart } from '$lib/chart';
-	import { Alert, Button, EntitySymbol, PageHeader, Section, SegmentedControl } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import Section from '$lib/components/Section.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import ReserveInterestChart from '$lib/charts/ReserveInterestChart.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import { getFormattedReserveUSD, isBorrowable, lendingReserveExternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let data;
-	$: ({ reserve } = data);
+	let { data } = $props();
+	let { reserve } = $derived(data);
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[reserve.chain_slug]: reserve.chain_name,
 		lending: 'Lending',
 		[reserve.protocol_slug]: reserve.protocol_name,
 		[reserve.reserve_slug]: reserve.asset_symbol
-	};
+	});
 
-	$: formattedReserveUSD = getFormattedReserveUSD(reserve);
+	let formattedReserveUSD = $derived(getFormattedReserveUSD(reserve));
 
-	$: reserveUrl = lendingReserveExternalUrl(reserve);
+	let reserveUrl = $derived(lendingReserveExternalUrl(reserve));
 
 	// Hide chart for Aave v3 GHO token as well as non-borrowable reserves
 	// see: https://docs-gho.vercel.app/concepts/overview
-	$: isGhoToken = reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO';
-	$: borrowable = isBorrowable(reserve);
-	$: showChart = borrowable && !isGhoToken;
+	let isGhoToken = $derived(reserve.protocol_slug === 'aave_v3' && reserve.asset_symbol === 'GHO');
+	let borrowable = $derived(isBorrowable(reserve));
+	let showChart = $derived(borrowable && !isGhoToken);
 
-	$: timeBucket = $page.state.timeBucket ?? data.timeBucket;
+	let timeBucket = $derived(page.state.timeBucket ?? data.timeBucket);
 
 	function handleTimeBucketChange({ detail }: CustomEvent) {
 		const state = { timeBucket: detail.value };
@@ -88,7 +93,7 @@
 					on:change={handleTimeBucketChange}
 				/>
 			</div>
-			<ReserveInterestChart {reserve} {timeBucket} primaryRate="variable_borrow_apr" secondaryRates={['supply_apr']} />
+			<ReserveInterestChart {reserve} {timeBucket} />
 		</Section>
 	{/if}
 </main>

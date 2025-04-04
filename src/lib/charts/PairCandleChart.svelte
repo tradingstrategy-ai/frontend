@@ -4,7 +4,8 @@
 	import {
 		type ApiDataTransformer,
 		CandleDataFeed,
-		calculateClippedCandleScale
+		calculateClippedCandleScale,
+		apiCandleToDataItem
 	} from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
@@ -40,10 +41,9 @@
 		fetchData: (ticks?: number) => {}
 	};
 
-	const transformApiData: ApiDataTransformer = (data, transformItem) => {
-		const apiCandles = (Object.values(data)[0] ?? []) as ApiCandle[];
-		return apiCandles.map((c) => ({
-			...transformItem(c),
+	const transformApiData: ApiDataTransformer = (data) => {
+		return (data[pairId] ?? []).map((c: ApiCandle) => ({
+			...apiCandleToDataItem(c),
 			customValues: { volume: c.v }
 		}));
 	};
