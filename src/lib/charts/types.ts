@@ -4,8 +4,6 @@ export type TvDataItem = DataItem<UTCTimestamp>;
 
 export type CandleDataItem = CandlestickData<UTCTimestamp>;
 
-declare const foo: TvDataItem;
-
 export type PriceScaleCalculator = (data: TvDataItem[]) => AutoscaleInfo | null;
 
 export type DataFeed<T extends TvDataItem = TvDataItem> = {
