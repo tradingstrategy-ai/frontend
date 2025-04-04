@@ -1,12 +1,7 @@
 <script lang="ts">
 	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
-	import {
-		type ApiDataTransformer,
-		CandleDataFeed,
-		calculateClippedCandleScale,
-		apiCandleToDataItem
-	} from '$lib/charts/candle-data-feed.svelte.js';
+	import { type ApiDataTransformer, CandleDataFeed, apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
@@ -78,11 +73,7 @@
 	</div>
 
 	<TvChart loading={priceFeed.loadingInitialData}>
-		<CandleSeries
-			dataFeed={priceFeed}
-			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
-			priceScaleCalculator={calculateClippedCandleScale}
-		>
+		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
 			<h3 class="price">Price</h3>
 		</CandleSeries>
 
