@@ -2,7 +2,7 @@
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { ApiCandle, CandleTimeBucket } from './types';
 	import { CandleDataFeed, apiCandleToDataItem, tsToUnixTimestamp } from './candle-data-feed.svelte';
-	import { LineSeries } from 'lightweight-charts';
+	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
 	import TvChart from './TvChart.svelte';
 	import CandleSeries from './CandleSeries.svelte';
 	import Series from './Series.svelte';
@@ -39,12 +39,19 @@
 			(data) => data.supply_apr.map((c: ApiCandle) => ({ time: tsToUnixTimestamp(c.ts), value: c.c }))
 		)
 	);
+
+	const options: LineSeriesPartialOptions = {
+		color: 'mediumslateblue',
+		lineWidth: 2,
+		lastValueVisible: false,
+		priceLineVisible: false
+	};
 </script>
 
 <div class="reserve-interest-chart">
 	<TvChart loading={variableBorrowAprFeed.loadingInitialData}>
 		<CandleSeries dataFeed={variableBorrowAprFeed} />
-		<Series type={LineSeries} dataFeed={supplyAprFeed} options={{ color: 'mediumslateblue', lineWidth: 2 }} />
+		<Series type={LineSeries} dataFeed={supplyAprFeed} {options} />
 	</TvChart>
 </div>
 

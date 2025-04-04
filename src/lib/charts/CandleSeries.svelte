@@ -10,7 +10,7 @@
 	const { colors } = getChartContext();
 
 	type SeriesProps = ComponentProps<typeof Series>;
-	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data' | 'dataFeed' | 'priceScaleCalculator'>;
+	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data' | 'dataFeed' | 'options' | 'priceScaleCalculator'>;
 
 	type Props = Partial<SupportedSeriesProps> & {
 		dataFeed: DataFeed<CandleDataItem>;
