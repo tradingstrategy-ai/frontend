@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { DataFeed, CandleDataItem } from './types';
-	import { HistogramSeries } from 'lightweight-charts';
+	import { type HistogramSeriesPartialOptions, HistogramSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
 	import { merge } from '$lib/helpers/object';
@@ -9,10 +9,11 @@
 	const { colors } = getChartContext();
 
 	type SeriesProps = ComponentProps<typeof Series>;
-	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data' | 'dataFeed'>;
+	type SupportedSeriesProps = Omit<SeriesProps, 'type' | 'data' | 'dataFeed' | 'options'>;
 
 	type Props = Partial<SupportedSeriesProps> & {
 		dataFeed: DataFeed<CandleDataItem>;
+		options?: HistogramSeriesPartialOptions;
 	};
 
 	let { dataFeed, options, ...restProps }: Props = $props();
@@ -25,7 +26,7 @@
 		}))
 	);
 
-	const baseOptions = {
+	const baseOptions: HistogramSeriesPartialOptions = {
 		priceFormat: { type: 'volume' },
 		priceScaleId: '',
 		lastValueVisible: false

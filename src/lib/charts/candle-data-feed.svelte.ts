@@ -1,19 +1,8 @@
-import type { AutoscaleInfo, UTCTimestamp } from 'lightweight-charts';
-import type { CandleDataItem, DataFeed, TvDataItem } from './types';
-import { chartWickThreshold } from '$lib/config';
+import type { UTCTimestamp } from 'lightweight-charts';
+import type { ApiCandle, CandleDataItem, CandleTimeBucket, DataFeed } from './types';
 import { type TimeInterval, utcMinute, utcHour, utcDay } from 'd3-time';
+import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-
-export type ApiCandle = {
-	ts: string;
-	o: number;
-	h: number;
-	l: number;
-	c: number;
-	v?: number;
-};
-
-export type CandleTimeBucket = (typeof CandleDataFeed.timeBuckets)[number];
 
 const timeUnitIntervals = {
 	m: utcMinute,
@@ -21,55 +10,26 @@ const timeUnitIntervals = {
 	d: utcDay
 } as const;
 
-export type TimeUnit = keyof typeof timeUnitIntervals;
+type TimeUnit = keyof typeof timeUnitIntervals;
 
-function tsToUnixTimestamp(ts: string) {
+export function tsToUnixTimestamp(ts: string) {
 	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
 }
 
-function apiToDataItem(c: ApiCandle): CandleDataItem {
+export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
 	return {
 		time: tsToUnixTimestamp(c.ts),
 		open: c.o,
 		high: c.h,
 		low: c.l,
-		close: c.c,
-		customValues: { volume: c.v }
+		close: c.c
 	};
 }
 
-/**
- * Custom PriceScaleCalculator for trading pair price candle data
- *
- * By default, TradingView CandlestickSeries determines price scale using min/max
- * of all currently displayed candle values. For trading pairs with extremely long
- * wicks (high/low values), this results in an overly flattened-out price scale.
- * E.g.: http://localhost:5173/trading-view/arbitrum/uniswap-v3/crv-eth-fee-30
- *
- * calculateClippedCandleScale address this by clipping the high/low values based on a
- * configurable threshold.
- */
-export function calculateClippedCandleScale(candles: TvDataItem[]): AutoscaleInfo | null {
-	if (candles.length === 0) return null;
-
-	const priceRange = (candles as CandleDataItem[]).reduce(
-		({ minValue, maxValue }, { open, high, low, close }) => {
-			const clippedLow = Math.max(low, Math.min(open, close) * (1 - chartWickThreshold));
-			const clippedHigh = Math.min(high, Math.max(open, close) * (1 + chartWickThreshold));
-			return {
-				minValue: Math.min(minValue, clippedLow),
-				maxValue: Math.max(maxValue, clippedHigh)
-			};
-		},
-		// initial accumulator: ±Infinity ensures any candle value will be lower/higher
-		{ minValue: Infinity, maxValue: -Infinity }
-	);
-
-	return { priceRange };
-}
+export type ApiDataTransformer = (data: any) => CandleDataItem[];
 
 export class CandleDataFeed implements DataFeed<CandleDataItem> {
-	static timeBuckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'] as const;
+	static timeBuckets: CandleTimeBucket[] = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'];
 
 	interval: TimeInterval;
 	endDate: Date;
@@ -81,7 +41,8 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly fetch: Fetch,
 		readonly endpoint: string,
 		readonly timeBucket: CandleTimeBucket,
-		readonly urlParams: Record<string, string> = {}
+		readonly urlParams: Record<string, string> = {},
+		readonly transformApiData: ApiDataTransformer
 	) {
 		this.interval = this.timeBucketToInterval(timeBucket);
 		this.endDate = this.interval.floor(new Date());
@@ -108,21 +69,26 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 
 		const startDate = this.interval.offset(this.endDate, -(ticks - 1));
 
-		const candleData = await fetchPublicApi(this.fetch, this.endpoint, {
-			...this.urlParams,
-			time_bucket: this.timeBucket,
-			start: startDate.toISOString().slice(0, 19),
-			end: this.endDate.toISOString().slice(0, 19)
-		});
+		let candles: CandleDataItem[] = [];
 
-		const apiCandles = Object.values(candleData)[0] as ApiCandle[] | undefined;
+		try {
+			const data = await fetchPublicApi(this.fetch, this.endpoint, {
+				...this.urlParams,
+				time_bucket: this.timeBucket,
+				start: startDate.toISOString().slice(0, 19),
+				end: this.endDate.toISOString().slice(0, 19)
+			});
+			candles = this.transformApiData(data);
+		} catch (e) {
+			// Swallow 404 returned by reserve candles API when date range returns no data
+			if (!(isHttpError(e) && e.status === 404)) throw e;
+		}
 
-		if (!apiCandles?.length) {
-			this.hasMoreData = false;
-		} else {
-			const chartCandles = apiCandles.map(apiToDataItem);
-			this.data = [...chartCandles, ...this.data];
+		if (candles.length) {
+			this.data = [...candles, ...this.data];
 			this.endDate = this.interval.offset(startDate, -1);
+		} else {
+			this.hasMoreData = false;
 		}
 
 		this.loading = false;

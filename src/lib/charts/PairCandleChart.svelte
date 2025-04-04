@@ -1,15 +1,12 @@
 <script lang="ts">
-	import type { CandleDataItem, DataFeed } from './types';
+	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
-	import {
-		type CandleTimeBucket,
-		CandleDataFeed,
-		calculateClippedCandleScale
-	} from '$lib/charts/candle-data-feed.svelte.js';
+	import { type ApiDataTransformer, CandleDataFeed, apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
+	import ChartHeader from './ChartHeader.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
@@ -40,37 +37,43 @@
 		fetchData: (ticks?: number) => {}
 	};
 
+	const transformApiData: ApiDataTransformer = (data) => {
+		return (data[pairId] ?? []).map((c: ApiCandle) => ({
+			...apiCandleToDataItem(c),
+			customValues: { volume: c.v }
+		}));
+	};
+
 	let priceFeed = $derived(
-		new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
-			candle_type: 'price',
-			pair_id: pairId,
-			exchange_type: exchangeType
-		})
+		new CandleDataFeed(
+			fetch,
+			'candles',
+			timeBucket.selected,
+			{ candle_type: 'price', pair_id: pairId, exchange_type: exchangeType },
+			transformApiData
+		)
 	);
 
 	let tvlFeed = $derived.by(() => {
 		if (hideTvlSeries) return dummyTvlDataFeed;
 
-		return new CandleDataFeed(fetch, 'candles', timeBucket.selected, {
-			candle_type: 'tvl',
-			pair_id: pairId,
-			exchange_type: exchangeType
-		});
+		return new CandleDataFeed(
+			fetch,
+			'candles',
+			timeBucket.selected,
+			{ candle_type: 'tvl', pair_id: pairId, exchange_type: exchangeType },
+			transformApiData
+		);
 	});
 </script>
 
 <div class="pair-candle-chart">
-	<div class="chart-header">
-		<h2>{pairSymbol} chart</h2>
+	<ChartHeader title="Price / TVL / Volume">
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
-	</div>
+	</ChartHeader>
 
-	<TvChart loading={priceFeed.loadingInitialData}>
-		<CandleSeries
-			dataFeed={priceFeed}
-			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
-			priceScaleCalculator={calculateClippedCandleScale}
-		>
+	<TvChart priceFormatter={(n) => formatTokenAmount(n, 1, 2)} loading={priceFeed.loadingInitialData}>
+		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
 			<h3 class="price">Price</h3>
 		</CandleSeries>
 
@@ -156,28 +159,6 @@
 <style>
 	.pair-candle-chart {
 		display: grid;
-		gap: 1rem;
-
-		.chart-header {
-			:global([data-css-props]) {
-				@media (--viewport-xs) {
-					--segmented-control-font: var(--f-ui-xs-medium);
-					--segmented-control-letter-spacing: var(--ls-ui-xs);
-				}
-			}
-
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.75rem 1.5rem;
-			margin-bottom: 1em;
-
-			h2 {
-				flex: 1;
-				font: var(--f-h2-medium);
-				white-space: nowrap;
-			}
-		}
 
 		:is(h3, .no-tvl-data) {
 			position: absolute;
@@ -223,6 +204,7 @@
 		}
 
 		h4 {
+			margin-bottom: 0.5rem;
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--ls-ui-sm, normal);
 			color: var(--c-text-light);
