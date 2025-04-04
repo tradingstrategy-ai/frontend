@@ -34,7 +34,7 @@
 			'lending-reserve/candles',
 			timeBucket.selected,
 			{ ...urlParams, candle_types: 'variable_borrow_apr' },
-			(data) => data.variable_borrow_apr.map((c: ApiCandle) => apiCandleToDataItem(c))
+			(data) => (data.variable_borrow_apr ?? []).map((c: ApiCandle) => apiCandleToDataItem(c))
 		)
 	);
 
@@ -45,7 +45,7 @@
 			timeBucket.selected,
 			{ ...urlParams, candle_types: 'supply_apr' },
 			(data) =>
-				data.supply_apr.map(({ ts, c: value, o: open }: ApiCandle) => ({
+				(data.supply_apr ?? []).map(({ ts, c: value, o: open }: ApiCandle) => ({
 					time: tsToUnixTimestamp(ts),
 					value,
 					customValues: { open }

@@ -1,6 +1,7 @@
 import type { UTCTimestamp } from 'lightweight-charts';
 import type { ApiCandle, CandleDataItem, CandleTimeBucket, DataFeed } from './types';
 import { type TimeInterval, utcMinute, utcHour, utcDay } from 'd3-time';
+import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 const timeUnitIntervals = {
@@ -68,14 +69,20 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 
 		const startDate = this.interval.offset(this.endDate, -(ticks - 1));
 
-		const data = await fetchPublicApi(this.fetch, this.endpoint, {
-			...this.urlParams,
-			time_bucket: this.timeBucket,
-			start: startDate.toISOString().slice(0, 19),
-			end: this.endDate.toISOString().slice(0, 19)
-		});
+		let candles: CandleDataItem[] = [];
 
-		const candles = this.transformApiData(data);
+		try {
+			const data = await fetchPublicApi(this.fetch, this.endpoint, {
+				...this.urlParams,
+				time_bucket: this.timeBucket,
+				start: startDate.toISOString().slice(0, 19),
+				end: this.endDate.toISOString().slice(0, 19)
+			});
+			candles = this.transformApiData(data);
+		} catch (e) {
+			// Swallow 404 returned by reserve candles API when date range returns no data
+			if (!(isHttpError(e) && e.status === 404)) throw e;
+		}
 
 		if (candles.length) {
 			this.data = [...candles, ...this.data];
