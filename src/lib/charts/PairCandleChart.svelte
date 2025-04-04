@@ -204,6 +204,7 @@
 		}
 
 		h4 {
+			margin-bottom: 0.5rem;
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--ls-ui-sm, normal);
 			color: var(--c-text-light);

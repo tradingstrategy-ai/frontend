@@ -9,6 +9,11 @@
 	import TvChart from './TvChart.svelte';
 	import CandleSeries from './CandleSeries.svelte';
 	import Series from './Series.svelte';
+	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
+	import { formatDate } from './helpers';
+	import { getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { relativeProfitability } from '$lib/helpers/profit';
+	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	type Props = {
 		reserve: LendingReserve;
@@ -23,7 +28,7 @@
 		reserve_slug: reserve.reserve_slug
 	});
 
-	let variableBorrowAprFeed = $derived(
+	let borrowFeed = $derived(
 		new CandleDataFeed(
 			fetch,
 			'lending-reserve/candles',
@@ -33,13 +38,18 @@
 		)
 	);
 
-	let supplyAprFeed = $derived(
+	let supplyFeed = $derived(
 		new CandleDataFeed(
 			fetch,
 			'lending-reserve/candles',
 			timeBucket.selected,
 			{ ...urlParams, candle_types: 'supply_apr' },
-			(data) => data.supply_apr.map((c: ApiCandle) => ({ time: tsToUnixTimestamp(c.ts), value: c.c }))
+			(data) =>
+				data.supply_apr.map(({ ts, c: value, o: open }: ApiCandle) => ({
+					time: tsToUnixTimestamp(ts),
+					value,
+					customValues: { open }
+				}))
 		)
 	);
 
@@ -56,14 +66,72 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart loading={variableBorrowAprFeed.loadingInitialData}>
-		<CandleSeries dataFeed={variableBorrowAprFeed} />
-		<Series type={LineSeries} dataFeed={supplyAprFeed} {options} />
+	<TvChart loading={borrowFeed.loadingInitialData}>
+		<CandleSeries dataFeed={borrowFeed} />
+		<Series type={LineSeries} dataFeed={supplyFeed} {options} />
+
+		{#snippet tooltip({ point, time }, [borrow, supply])}
+			{@const borrowInfo = getProfitInfo(relativeProfitability(borrow?.open, borrow?.close))}
+			{@const supplyInfo = getProfitInfo(
+				relativeProfitability(supply?.customValues?.open as MaybeNumber, supply?.value)
+			)}
+
+			<ChartTooltip {point}>
+				<h4>{formatDate(time as number, timeBucket.selected)}</h4>
+				<table class="metrics">
+					<tbody>
+						<tr class={borrowInfo.directionClass}>
+							<th>Borrow APR</th>
+							<td>{formatInterestRate(borrow?.close)}</td>
+						</tr>
+						<tr class={supplyInfo.directionClass}>
+							<th>Supply APR</th>
+							<td>{formatInterestRate(supply?.value)}</td>
+						</tr>
+					</tbody>
+				</table>
+			</ChartTooltip>
+		{/snippet}
 	</TvChart>
 </div>
 
 <style>
 	.reserve-interest-chart {
 		display: grid;
+
+		h4 {
+			margin-bottom: 0.5rem;
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--ls-ui-md, normal);
+			color: var(--c-text-extra-light);
+			white-space: nowrap;
+		}
+
+		.metrics {
+			width: 100%;
+			border-collapse: collapse;
+			color: var(--c-text-light);
+
+			tr * {
+				padding-block: 0.25rem;
+			}
+
+			tr:last-child * {
+				padding-bottom: 0;
+			}
+
+			th {
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md, normal);
+				text-align: left;
+			}
+
+			td {
+				padding-left: 1rem;
+				font: var(--f-ui-md-bold);
+				letter-spacing: var(--ls-ui-md, normal);
+				text-align: right;
+			}
+		}
 	}
 </style>
