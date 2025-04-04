@@ -6,6 +6,7 @@
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
+	import ChartHeader from './ChartHeader.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
@@ -67,10 +68,9 @@
 </script>
 
 <div class="pair-candle-chart">
-	<div class="chart-header">
-		<h2>{pairSymbol} chart</h2>
+	<ChartHeader title="{pairSymbol} chart">
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
-	</div>
+	</ChartHeader>
 
 	<TvChart loading={priceFeed.loadingInitialData}>
 		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
@@ -160,27 +160,6 @@
 	.pair-candle-chart {
 		display: grid;
 		gap: 1rem;
-
-		.chart-header {
-			:global([data-css-props]) {
-				@media (--viewport-xs) {
-					--segmented-control-font: var(--f-ui-xs-medium);
-					--segmented-control-letter-spacing: var(--ls-ui-xs);
-				}
-			}
-
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.75rem 1.5rem;
-			margin-bottom: 1em;
-
-			h2 {
-				flex: 1;
-				font: var(--f-h2-medium);
-				white-space: nowrap;
-			}
-		}
 
 		:is(h3, .no-tvl-data) {
 			position: absolute;
