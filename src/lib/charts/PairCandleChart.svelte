@@ -68,7 +68,7 @@
 </script>
 
 <div class="pair-candle-chart">
-	<ChartHeader title="{pairSymbol} chart">
+	<ChartHeader title="Price / TVL / Volume">
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
@@ -159,7 +159,6 @@
 <style>
 	.pair-candle-chart {
 		display: grid;
-		gap: 1rem;
 
 		:is(h3, .no-tvl-data) {
 			position: absolute;

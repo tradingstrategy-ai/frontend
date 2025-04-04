@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { ApiCandle, CandleTimeBucket } from './types';
+	import type { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { CandleDataFeed, apiCandleToDataItem, tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
+	import ChartHeader from './ChartHeader.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from './TvChart.svelte';
 	import CandleSeries from './CandleSeries.svelte';
 	import Series from './Series.svelte';
 
 	type Props = {
 		reserve: LendingReserve;
-		timeBucket: CandleTimeBucket;
+		timeBucket: OptionGroup<CandleTimeBucket>;
 	};
 
 	let { reserve, timeBucket }: Props = $props();
@@ -24,7 +27,7 @@
 		new CandleDataFeed(
 			fetch,
 			'lending-reserve/candles',
-			timeBucket,
+			timeBucket.selected,
 			{ ...urlParams, candle_types: 'variable_borrow_apr' },
 			(data) => data.variable_borrow_apr.map((c: ApiCandle) => apiCandleToDataItem(c))
 		)
@@ -34,7 +37,7 @@
 		new CandleDataFeed(
 			fetch,
 			'lending-reserve/candles',
-			timeBucket,
+			timeBucket.selected,
 			{ ...urlParams, candle_types: 'supply_apr' },
 			(data) => data.supply_apr.map((c: ApiCandle) => ({ time: tsToUnixTimestamp(c.ts), value: c.c }))
 		)
@@ -49,6 +52,10 @@
 </script>
 
 <div class="reserve-interest-chart">
+	<ChartHeader title="Interest rates">
+		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
+	</ChartHeader>
+
 	<TvChart loading={variableBorrowAprFeed.loadingInitialData}>
 		<CandleSeries dataFeed={variableBorrowAprFeed} />
 		<Series type={LineSeries} dataFeed={supplyAprFeed} {options} />
@@ -57,6 +64,6 @@
 
 <style>
 	.reserve-interest-chart {
-		/*  */
+		display: grid;
 	}
 </style>

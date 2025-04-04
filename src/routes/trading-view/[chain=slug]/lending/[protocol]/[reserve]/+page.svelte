@@ -6,11 +6,11 @@
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import ReserveInterestChart from '$lib/charts/ReserveInterestChart.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { getFormattedReserveUSD, isBorrowable, lendingReserveExternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -35,11 +35,11 @@
 	let borrowable = $derived(isBorrowable(reserve));
 	let showChart = $derived(borrowable && !isGhoToken);
 
-	let timeBucket = $derived(page.state.timeBucket ?? data.timeBucket);
+	let timeBucket = new OptionGroup(['1h', '4h', '1d', '7d', '30d'], page.state.timeBucket ?? data.timeBucket);
 
-	function handleTimeBucketChange({ detail }: CustomEvent) {
-		const state = { timeBucket: detail.value };
-		replaceState(`?${new URLSearchParams(state)}`, state);
+	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
+		if (name !== 'timeBucket') return;
+		replaceState(`?${new URLSearchParams({ timeBucket: value })}`, { timeBucket: value });
 	}
 </script>
 
@@ -85,15 +85,7 @@
 
 	{#if showChart}
 		<Section>
-			<div class="chart-header">
-				<h3>Interest rates</h3>
-				<SegmentedControl
-					options={['1h', '4h', '1d', '7d', '30d']}
-					selected={timeBucket}
-					on:change={handleTimeBucketChange}
-				/>
-			</div>
-			<ReserveInterestChart {reserve} {timeBucket} />
+			<ReserveInterestChart {reserve} {timeBucket} on:change={handleTimeBucketChange} />
 		</Section>
 	{/if}
 </main>
@@ -124,28 +116,6 @@
 		.ds-2-col {
 			row-gap: var(--space-xl);
 			align-items: start;
-		}
-	}
-
-	.chart-header {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-md);
-		border-bottom: 1px solid #999;
-		padding-bottom: 0.5rem;
-
-		h3 {
-			flex: 1;
-			font: var(--f-h5-medium);
-			margin: 0;
-			text-transform: uppercase;
-			letter-spacing: 0.06em;
-			white-space: nowrap;
-
-			@media (--viewport-xs) {
-				font: var(--f-h6-medium);
-			}
 		}
 	}
 </style>
