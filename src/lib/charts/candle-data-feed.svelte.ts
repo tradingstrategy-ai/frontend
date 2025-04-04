@@ -1,8 +1,7 @@
 import type { AutoscaleInfo, UTCTimestamp } from 'lightweight-charts';
 import type { CandleDataItem, DataFeed, TvDataItem } from './types';
 import { chartWickThreshold } from '$lib/config';
-import { parseDate } from '$lib/helpers/date';
-import { utcMinute, utcHour, utcDay } from 'd3-time';
+import { type TimeInterval, utcMinute, utcHour, utcDay } from 'd3-time';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 export type ApiCandle = {
@@ -72,6 +71,8 @@ export function calculateClippedCandleScale(candles: TvDataItem[]): AutoscaleInf
 export class CandleDataFeed implements DataFeed<CandleDataItem> {
 	static timeBuckets = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'] as const;
 
+	interval: TimeInterval;
+	endDate: Date;
 	loading = $state(false);
 	hasMoreData = $state(true);
 	data = $state([]) as CandleDataItem[];
@@ -81,7 +82,17 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly endpoint: string,
 		readonly timeBucket: CandleTimeBucket,
 		readonly urlParams: Record<string, string> = {}
-	) {}
+	) {
+		this.interval = this.timeBucketToInterval(timeBucket);
+		this.endDate = this.interval.floor(new Date());
+	}
+
+	timeBucketToInterval(timeBucket: CandleTimeBucket) {
+		const [durationStr, timeUnit] = timeBucket.split(/(?=[mhd])/) as [`${number}`, TimeUnit];
+		const timeUnitInterval = timeUnitIntervals[timeUnit];
+		const duration = Number(durationStr);
+		return timeUnitInterval.every(duration)!;
+	}
 
 	get loadingInitialData() {
 		return this.loading && this.data.length === 0;
@@ -91,27 +102,17 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		return this.hasMoreData || this.data.length > 0;
 	}
 
-	get interval() {
-		const [durationStr, timeUnit] = this.timeBucket.split(/(?=[mhd])/) as [`${number}`, TimeUnit];
-		const timeUnitInterval = timeUnitIntervals[timeUnit];
-		const duration = Number(durationStr);
-		return timeUnitInterval.every(duration)!;
-	}
-
-	async fetchData(ticks = 200) {
+	async fetchData(ticks = 400) {
 		if (!this.hasMoreData || this.loading) return;
 		this.loading = true;
 
-		const interval = this.interval;
-		const lastDate = parseDate(this.data[0]?.time);
-		const endDate = lastDate ? interval.offset(lastDate, -1) : interval.ceil(new Date());
-		const startDate = interval.offset(endDate, -ticks);
+		const startDate = this.interval.offset(this.endDate, -(ticks - 1));
 
 		const candleData = await fetchPublicApi(this.fetch, this.endpoint, {
 			...this.urlParams,
 			time_bucket: this.timeBucket,
 			start: startDate.toISOString().slice(0, 19),
-			end: endDate.toISOString().slice(0, 19)
+			end: this.endDate.toISOString().slice(0, 19)
 		});
 
 		const apiCandles = Object.values(candleData)[0] as ApiCandle[] | undefined;
@@ -121,6 +122,7 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		} else {
 			const chartCandles = apiCandles.map(apiToDataItem);
 			this.data = [...chartCandles, ...this.data];
+			this.endDate = this.interval.offset(startDate, -1);
 		}
 
 		this.loading = false;
