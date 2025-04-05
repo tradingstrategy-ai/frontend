@@ -110,6 +110,7 @@
 		.metrics {
 			width: 100%;
 			border-collapse: collapse;
+			white-space: nowrap;
 			color: var(--c-text-light);
 
 			tr * {
