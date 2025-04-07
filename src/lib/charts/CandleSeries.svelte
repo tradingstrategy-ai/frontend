@@ -44,7 +44,7 @@
 	 * By default, TradingView CandlestickSeries determines price scale using min/max
 	 * of all currently displayed candle values. For trading pairs with extremely long
 	 * wicks (high/low values), this results in an overly flattened-out price scale.
-	 * E.g.: http://localhost:5173/trading-view/arbitrum/uniswap-v3/crv-eth-fee-30
+	 * E.g.: https://tradingstrategy.ai/trading-view/arbitrum/uniswap-v3/crv-eth-fee-30
 	 *
 	 * calculateClippedCandleScale address this by clipping the high/low values based on a
 	 * configurable threshold.
