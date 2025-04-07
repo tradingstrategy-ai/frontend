@@ -1,7 +1,8 @@
 <script lang="ts">
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import AvalancheImage from '$lib/assets/partners/avalanche.svg?raw';
 	import BlizzardImage from '$lib/assets/partners/blizzard.svg?raw';
-	import ChartIqImage from '$lib/assets/partners/chartiq.svg?raw';
+	import TradingViewImage from '$lib/assets/partners/tradingview.svg?raw';
 	import InfinityVenturesImage from '$lib/assets/partners/infinity-ventures-crypto.svg?raw';
 	import MenthaPartnersImage from '$lib/assets/partners/mentha-partners.svg?raw';
 	import TypesenseImage from '$lib/assets/partners/typesense.svg?raw';
@@ -20,10 +21,6 @@
 
 		<a href="https://twitter.com/blizzardfund" target="_blank" style:width="180px">
 			{@html BlizzardImage}
-		</a>
-
-		<a href="https://cosaic.io/chartiq/" target="_blank" style:width="160px">
-			{@html ChartIqImage}
 		</a>
 
 		<a href="https://www.ivcrypto.io/" target="_blank" style:width="170px" style:opacity="0.9">
@@ -49,6 +46,19 @@
 		<a href="https://typesense.org/" target="_blank" style:width="160px">
 			{@html TypesenseImage}
 		</a>
+
+		<Tooltip>
+			<a slot="trigger" href="https://www.tradingview.com/" target="_blank" style:width="220px">
+				{@html TradingViewImage}
+			</a>
+			<svelte:fragment slot="popup">
+				<p>TradingView Lightweight Charts™</p>
+				<p>Copyright &copy; 2025 TradingView, Inc.</p>
+				<p>
+					<a href="https://www.tradingview.com/" target="_blank">https://www.tradingview.com/</a>
+				</p>
+			</svelte:fragment>
+		</Tooltip>
 	</div>
 </section>
 
@@ -80,8 +90,12 @@
 		align-items: center;
 	}
 
-	a :global(svg *) {
-		fill: currentcolor;
+	a {
+		display: inline-block;
+
+		:global(svg *) {
+			fill: currentcolor;
+		}
 	}
 
 	@media (--viewport-md-up) {
