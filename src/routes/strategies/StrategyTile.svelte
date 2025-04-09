@@ -144,23 +144,15 @@
 		}
 
 		.visuals {
-			padding-top: 2rem;
-			display: grid;
 			position: relative;
-
-			@media (--viewport-md-up) {
-				padding-top: 4rem;
-			}
+			display: grid;
+			grid-template-rows: auto 1fr;
 
 			.top {
 				display: flex;
 				gap: 1rem;
 				justify-content: space-between;
 				padding: 1rem;
-				position: absolute;
-				left: 0;
-				right: 0;
-				top: 0;
 			}
 
 			.chain-icon {
@@ -189,10 +181,6 @@
 					left: auto;
 					bottom: auto;
 				}
-			}
-
-			.chart {
-				z-index: -1;
 			}
 
 			&.simplified .chart {
