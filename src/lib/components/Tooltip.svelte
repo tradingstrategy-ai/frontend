@@ -24,7 +24,7 @@ For more information see:
 ```
 -->
 <dfn class="tooltip ds-3">
-	<span class="trigger">
+	<span class="trigger targetable-above">
 		<slot name="trigger" />
 	</span>
 	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
