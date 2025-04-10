@@ -85,6 +85,7 @@ export type VaultOnChainData = OnChainData & {
 };
 
 export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);
+export type PerformanceTuple = z.infer<typeof performanceTupleSchema>;
 
 // See `calculate_key_metrics` in:
 // https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/statistics/key_metric.py

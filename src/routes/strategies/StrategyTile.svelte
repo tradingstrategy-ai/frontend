@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { utcDay } from 'd3-time';
-	import { normalizeDataForInterval } from '$lib/chart';
+	import { normalizeDataForInterval } from '$lib/charts/helpers';
 	import { getChain } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';

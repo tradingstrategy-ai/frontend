@@ -31,6 +31,7 @@ using the component isn't practical.
 	import { toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
 
 	export type ProfitInfo = ReturnType<typeof getProfitInfo>;
+	export type ProfitDirection = 0 | 1 | -1;
 
 	/**
 	 * Get information used to display profit/loss or price change values.
@@ -73,7 +74,7 @@ using the component isn't practical.
 
 	function getDirection(value: number | undefined, formatted: string | undefined) {
 		if (!value || formatted === '0.0%') return 0;
-		return Math.sign(value);
+		return Math.sign(value) as ProfitDirection;
 	}
 </script>
 

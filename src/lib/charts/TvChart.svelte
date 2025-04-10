@@ -1,5 +1,6 @@
 <script module lang="ts">
 	import type { DataItem, IChartApi, ISeriesApi, MouseEventParams, Point, SeriesType, Time } from 'lightweight-charts';
+	import type { TvChartOptions } from './types';
 	import { getContext, setContext } from 'svelte';
 
 	const contextKey = Symbol();
@@ -16,6 +17,8 @@
 		'box4',
 		'bullish',
 		'bearish',
+		'bullish0',
+		'bearish0',
 		'bullish30',
 		'bearish30',
 		'axisBorder',
@@ -23,11 +26,11 @@
 		'paneSeparator'
 	] as const;
 
-	type Colors = Record<(typeof colorProps)[number], string>;
+	export type ChartColors = Record<(typeof colorProps)[number], string>;
 
 	type ChartContext = {
 		chart: IChartApi;
-		colors: Colors;
+		colors: ChartColors;
 	};
 
 	export function getChartContext() {
@@ -49,12 +52,13 @@
 
 	type Props = {
 		loading?: boolean;
+		options?: TvChartOptions;
 		priceFormatter: Formatter<number>;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, priceFormatter, children, tooltip }: Props = $props();
+	let { loading = false, options = {}, priceFormatter, children, tooltip }: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -67,10 +71,15 @@
 
 	let chart = $derived.by(() => {
 		if (!el || !colors) return undefined;
-
 		const style = getComputedStyle(el);
+		const baseOptions = getBaseOptions(style, colors);
+		return createChart(el, baseOptions);
+	});
 
-		const chart = createChart(el, {
+	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
+
+	function getBaseOptions(style: CSSStyleDeclaration, colors: ChartColors): TvChartOptions {
+		return {
 			autoSize: true,
 			layout: {
 				attributionLogo: false,
@@ -105,26 +114,8 @@
 				borderColor: colors.axisBorder,
 				barSpacing: 8
 			}
-		});
-
-		// decorate chart.addSeries to add series to local series registry
-		chart.addSeries = function () {
-			const series = chart.constructor.prototype.addSeries.apply(chart, arguments);
-			allSeries.push(series);
-			return series;
 		};
-
-		// decorate chart.removeSeries to remove series from local series registry
-		chart.removeSeries = function (series) {
-			chart.constructor.prototype.removeSeries.apply(chart, arguments);
-			const index = allSeries.indexOf(series);
-			if (index !== -1) allSeries.splice(index, 1);
-		};
-
-		return chart;
-	});
-
-	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
+	}
 
 	function isActiveTooltip(params: TooltipParams): params is ActiveTooltipParams {
 		return [params.time, params.logical, params.point, params.paneIndex].every((v) => v !== undefined);
@@ -143,11 +134,33 @@
 		return { ...params, point };
 	}
 
-	// toggle visibility of y-axis scale based on screen size
-	// NOTE: may need to make this configirable for future charts
+	// apply custom chart options
 	$effect(() => {
-		const visible = !isMobile.current;
-		chart?.panes().forEach((p) => p.priceScale('right').applyOptions({ visible }));
+		chart?.applyOptions(options);
+	});
+
+	// decorate chart.addSeries and chart.removeSeries to add/remove series to/from local registry
+	// (to provide deterministic series order back to tooltip)
+	$effect(() => {
+		if (!chart) return;
+
+		chart.addSeries = function () {
+			const series = chart.constructor.prototype.addSeries.apply(chart, arguments);
+			allSeries.push(series);
+			return series;
+		};
+
+		chart.removeSeries = function (series) {
+			chart.constructor.prototype.removeSeries.apply(chart, arguments);
+			const index = allSeries.indexOf(series);
+			if (index !== -1) allSeries.splice(index, 1);
+		};
+	});
+
+	// toggle visibility of y-axis scale based on screen size (unless visibility is explicitly set)
+	$effect(() => {
+		const visible = options.rightPriceScale?.visible ?? !isMobile.current;
+		chart?.applyOptions({ rightPriceScale: { visible } });
 	});
 
 	// capture tooltip data when hovering over the chart
@@ -197,6 +210,7 @@
 <style>
 	[data-css-props] {
 		--chart-aspect-ratio: 16/9;
+		--chart-height: auto;
 
 		@media (--viewport-sm-down) {
 			--chart-aspect-ratio: 3/2;
@@ -208,6 +222,8 @@
 	}
 
 	.tv-chart {
+		--c-bullish-0: hsl(from var(--c-bullish) h s l / 0%);
+		--c-bearish-0: hsl(from var(--c-bearish) h s l / 0%);
 		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
 		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
 		--c-axis-border: var(--cm-light, var(--c-text-light)) var(--cm-dark, var(--c-text-extra-light));
@@ -217,6 +233,8 @@
 		position: relative;
 		contain: size;
 		display: grid;
+		width: 100%;
+		height: var(--chart-height);
 		aspect-ratio: var(--chart-aspect-ratio);
 		font: var(--f-ui-sm-roman);
 
