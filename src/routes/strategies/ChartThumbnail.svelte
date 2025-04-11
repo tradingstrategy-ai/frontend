@@ -1,22 +1,39 @@
 <script lang="ts">
-	import type { TvChartOptions } from '$lib/charts/types';
-	import { type AreaSeriesPartialOptions, type AreaData, type UTCTimestamp, LineType } from 'lightweight-charts';
+	import type { SeriesCallbackParam, TvChartOptions } from '$lib/charts/types';
+	import type { AreaSeriesPartialOptions, AreaData, UTCTimestamp, LineSeriesPartialOptions } from 'lightweight-charts';
+	import { LineType, LineSeries } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
+	import Series from '$lib/charts/Series.svelte';
+	import { utcDay } from 'd3-time';
+	import { dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
 	export let data: AreaData<UTCTimestamp>[] = [];
-	export let dateRange: [Date?, Date?];
+	export let dateRange: [Date, Date];
 
 	// TODO: should be based on displayed data range rather than full range?
 	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.value, data.at(-1)?.value));
 
 	// TEMPORARY HACK: filter duplicate / out-of-order items
 	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/1160
-	$: tvData = data.filter(({ time }, index) => {
+	const tvData = data.filter(({ time }, index) => {
 		return time >= data[index - 1]?.time;
 	});
+
+	// Create baseline data set - needed to display baseline and to set chart date range
+	const baselineData = utcDay.range(dateRange[0], utcDay.offset(dateRange[1])).map((d) => {
+		return { time: dateToTs(d), value: 0 };
+	});
+
+	// Once baseline series loads, set the visible range to the baseline's start/end dates
+	function baselineCallback({ chart }: SeriesCallbackParam) {
+		chart.timeScale().setVisibleRange({
+			from: baselineData[0].time,
+			to: baselineData.at(-1)!.time
+		});
+	}
 
 	const hidden = { visible: false };
 
@@ -32,17 +49,29 @@
 		}
 	};
 
-	const seriesOptions: AreaSeriesPartialOptions = {
+	const areaSeriesOptions: AreaSeriesPartialOptions = {
 		lineWidth: 2,
 		lineType: LineType.Curved,
 		priceLineVisible: false,
+		crosshairMarkerVisible: false
+	};
+
+	const baselineSeriesOptions: LineSeriesPartialOptions = {
+		lineVisible: false,
+		priceLineColor: 'gray',
 		crosshairMarkerVisible: false
 	};
 </script>
 
 <figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
 	<TvChart priceFormatter={() => ''} options={chartOptions}>
-		<AreaSeries data={tvData} direction={relativeProfit.direction} options={seriesOptions} />
+		<AreaSeries
+			data={tvData}
+			direction={relativeProfit.direction}
+			options={areaSeriesOptions}
+			priceScaleOptions={{ scaleMargins: { top: 0.2, bottom: 0.2 } }}
+		/>
+		<Series type={LineSeries} data={baselineData} options={baselineSeriesOptions} callback={baselineCallback} />
 	</TvChart>
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>

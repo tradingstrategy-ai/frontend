@@ -3,6 +3,9 @@ import type {
 	CandlestickData,
 	DataItem,
 	DeepPartial,
+	IChartApi,
+	ISeriesApi,
+	SeriesType,
 	SingleValueData,
 	TimeChartOptions,
 	UTCTimestamp
@@ -37,3 +40,9 @@ export type DataFeed<T extends TvDataItem = TvDataItem> = {
 	data: T[];
 	fetchData: (ticks?: number) => void;
 };
+
+export type ChartCallbackParam = { chart: IChartApi };
+export type ChartCallback = ({ chart }: ChartCallbackParam) => void;
+
+export type SeriesCallbackParam = ChartCallbackParam & { series: ISeriesApi<SeriesType> };
+export type SeriesCallback = ({ chart, series }: SeriesCallbackParam) => void;

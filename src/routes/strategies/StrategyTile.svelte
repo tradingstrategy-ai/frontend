@@ -17,7 +17,7 @@
 	export let admin = false;
 	export let simplified = false;
 	export let strategy: StrategyInfo;
-	export let chartDateRange: [Date?, Date?];
+	export let chartDateRange: [Date, Date];
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
 

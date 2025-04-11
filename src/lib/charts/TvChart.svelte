@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import type { DataItem, IChartApi, ISeriesApi, MouseEventParams, Point, SeriesType, Time } from 'lightweight-charts';
-	import type { TvChartOptions } from './types';
+	import type { ChartCallback, TvChartOptions } from './types';
 	import { getContext, setContext } from 'svelte';
 
 	const contextKey = Symbol();
@@ -54,11 +54,12 @@
 		loading?: boolean;
 		options?: TvChartOptions;
 		priceFormatter: Formatter<number>;
+		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, options = {}, priceFormatter, children, tooltip }: Props = $props();
+	let { loading = false, options, priceFormatter, callback, children, tooltip }: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -136,7 +137,15 @@
 
 	// apply custom chart options
 	$effect(() => {
-		chart?.applyOptions(options);
+		if (options) chart?.applyOptions(options);
+	});
+
+	// call callback (after chart created and whenever callback is updated)
+	// push to event loop to allow series init to complete
+	$effect(() => {
+		if (chart && callback) {
+			setTimeout(() => callback({ chart }));
+		}
 	});
 
 	// decorate chart.addSeries and chart.removeSeries to add/remove series to/from local registry
@@ -159,7 +168,7 @@
 
 	// toggle visibility of y-axis scale based on screen size (unless visibility is explicitly set)
 	$effect(() => {
-		const visible = options.rightPriceScale?.visible ?? !isMobile.current;
+		const visible = options?.rightPriceScale?.visible ?? !isMobile.current;
 		chart?.applyOptions({ rightPriceScale: { visible } });
 	});
 
