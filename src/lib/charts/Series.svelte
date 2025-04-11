@@ -7,7 +7,7 @@
 		type SeriesPartialOptionsMap,
 		type SeriesType
 	} from 'lightweight-charts';
-	import type { DataFeed, PriceScaleCalculator, TvDataItem } from './types';
+	import type { DataFeed, PriceScaleCalculator, SeriesCallback, TvDataItem } from './types';
 	import { type Snippet, mount, unmount, untrack } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
@@ -24,6 +24,7 @@
 		paneIndex?: number;
 		priceScaleOptions?: DeepPartial<PriceScaleOptions>;
 		priceScaleCalculator?: PriceScaleCalculator;
+		callback?: SeriesCallback;
 		children?: Snippet;
 	};
 
@@ -35,6 +36,7 @@
 		paneIndex = 0,
 		priceScaleOptions,
 		priceScaleCalculator,
+		callback,
 		children
 	}: Props = $props();
 
@@ -42,7 +44,20 @@
 
 	let seriesContent: Record<string, any> | undefined = undefined;
 
-	const series = chart.addSeries(type, options, paneIndex);
+	const series = chart.addSeries(type, {}, paneIndex);
+
+	// apply series options (re-applies when they change)
+	$effect(() => {
+		if (options) series.applyOptions(options);
+	});
+
+	// call callback (on initial load and whenever callback is updated)
+	// push to event loop to allow series init to complete
+	$effect(() => {
+		if (callback) {
+			setTimeout(() => callback({ chart, series }));
+		}
+	});
 
 	// apply default priceScale options and any custom ones provided as prop
 	series.priceScale().applyOptions({

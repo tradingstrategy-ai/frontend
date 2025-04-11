@@ -1,25 +1,27 @@
 <script lang="ts">
-	import type { EventHandler } from 'svelte/elements';
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-	import { goto } from '$app/navigation';
 	import { utcDay } from 'd3-time';
-	import { normalizeDataForInterval } from '$lib/chart';
+	import { normalizeDataForInterval } from '$lib/charts/helpers';
 	import { getChain } from '$lib/helpers/chain';
-	import { Alert, Button, DataBadge, Tooltip } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import DataBadge from '$lib/components/DataBadge.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
-	import {
-		default as StrategyError,
-		shouldDisplayError,
-		adminOnlyError
-	} from 'trade-executor/components/StrategyError.svelte';
+	import StrategyError, { shouldDisplayError, adminOnlyError } from 'trade-executor/components/StrategyError.svelte';
 	import ChartThumbnail from './ChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let admin = false;
-	export let simplified = false;
-	export let strategy: StrategyInfo;
-	export let chartDateRange: [Date?, Date?];
+	interface Props {
+		admin?: boolean;
+		simplified?: boolean;
+		strategy: StrategyInfo;
+		chartDateRange: [Date, Date];
+	}
+
+	let { admin = false, simplified = false, strategy, chartDateRange }: Props = $props();
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
 
@@ -35,17 +37,10 @@
 		strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [],
 		utcDay
 	);
-
-	const handleClick: EventHandler = ({ target }) => {
-		// skip explicit goto if user clicked an anchor tag
-		if (target instanceof HTMLAnchorElement && target.href) return;
-		goto(href);
-	};
 </script>
 
-<!-- tile container element MUST NOT be an anchor tag; see StrategyTile.test.ts  -->
-<!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
-<div class="strategy-tile ds-3" on:click={handleClick}>
+<div class="strategy-tile ds-3 targetable">
+	<TargetableLink label="View strategy details" {href} />
 	<div class="visuals" class:simplified>
 		<div class="top">
 			<div>
@@ -100,9 +95,9 @@
 			</div>
 		</div>
 
-		<div class="chart">
+		<a class="chart targetable-above" {href}>
 			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
-		</div>
+		</a>
 	</div>
 
 	<div class="content">
@@ -119,7 +114,7 @@
 			<StrategyDataSummary {simplified} {strategy} />
 		</div>
 		<div class="actions">
-			<Button size="md" {href}>
+			<Button size="md" class="targetable-above" {href}>
 				{simplified ? 'Start trading' : 'View strategy'}
 			</Button>
 		</div>
@@ -135,7 +130,6 @@
 		border: 1px var(--c-box-3) solid;
 		border-radius: var(--radius-lg);
 		color: var(--c-text);
-		cursor: pointer;
 		transition: var(--transition-1);
 
 		&:hover {
@@ -144,23 +138,15 @@
 		}
 
 		.visuals {
-			padding-top: 2rem;
-			display: grid;
 			position: relative;
-
-			@media (--viewport-md-up) {
-				padding-top: 4rem;
-			}
+			display: grid;
+			grid-template-rows: auto 1fr;
 
 			.top {
 				display: flex;
 				gap: 1rem;
 				justify-content: space-between;
 				padding: 1rem;
-				position: absolute;
-				left: 0;
-				right: 0;
-				top: 0;
 			}
 
 			.chain-icon {
@@ -189,10 +175,6 @@
 					left: auto;
 					bottom: auto;
 				}
-			}
-
-			.chart {
-				z-index: -1;
 			}
 
 			&.simplified .chart {
@@ -248,7 +230,7 @@
 					display: grid;
 					gap: 0.25rem;
 
-					:where(h3, p) {
+					> * {
 						margin: 0;
 					}
 				}

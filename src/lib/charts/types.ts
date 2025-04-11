@@ -1,4 +1,17 @@
-import type { AutoscaleInfo, CandlestickData, DataItem, UTCTimestamp } from 'lightweight-charts';
+import type {
+	AutoscaleInfo,
+	CandlestickData,
+	DataItem,
+	DeepPartial,
+	IChartApi,
+	ISeriesApi,
+	SeriesType,
+	SingleValueData,
+	TimeChartOptions,
+	UTCTimestamp
+} from 'lightweight-charts';
+
+export type TvChartOptions = DeepPartial<TimeChartOptions>;
 
 export type CandleTimeBucket = '1m' | '5m' | '15m' | '1h' | '4h' | '1d' | '7d' | '30d';
 
@@ -15,6 +28,8 @@ export type TvDataItem = DataItem<UTCTimestamp>;
 
 export type CandleDataItem = CandlestickData<UTCTimestamp>;
 
+export type SimpleDataItem = SingleValueData<UTCTimestamp>;
+
 export type PriceScaleCalculator = (data: TvDataItem[]) => AutoscaleInfo | null;
 
 export type DataFeed<T extends TvDataItem = TvDataItem> = {
@@ -25,3 +40,9 @@ export type DataFeed<T extends TvDataItem = TvDataItem> = {
 	data: T[];
 	fetchData: (ticks?: number) => void;
 };
+
+export type ChartCallbackParam = { chart: IChartApi };
+export type ChartCallback = ({ chart }: ChartCallbackParam) => void;
+
+export type SeriesCallbackParam = ChartCallbackParam & { series: ISeriesApi<SeriesType> };
+export type SeriesCallback = ({ chart, series }: SeriesCallbackParam) => void;

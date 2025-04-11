@@ -53,7 +53,7 @@
 		)
 	);
 
-	const options: LineSeriesPartialOptions = {
+	const supplySeriesOptions: LineSeriesPartialOptions = {
 		color: 'mediumslateblue',
 		lineWidth: 2,
 		lastValueVisible: false,
@@ -68,7 +68,7 @@
 
 	<TvChart priceFormatter={(n) => formatInterestRate(n, 1, 2)} loading={borrowFeed.loadingInitialData}>
 		<CandleSeries dataFeed={borrowFeed} />
-		<Series type={LineSeries} dataFeed={supplyFeed} {options} />
+		<Series type={LineSeries} dataFeed={supplyFeed} options={supplySeriesOptions} />
 
 		{#snippet tooltip({ point, time }, [borrow, supply])}
 			{@const borrowInfo = getProfitInfo(relativeProfitability(borrow?.open, borrow?.close))}

@@ -1,72 +1,82 @@
 <script lang="ts">
+	import type { SeriesCallbackParam, TvChartOptions } from '$lib/charts/types';
+	import type { AreaSeriesPartialOptions, AreaData, UTCTimestamp, LineSeriesPartialOptions } from 'lightweight-charts';
+	import { LineType, LineSeries } from 'lightweight-charts';
+	import TvChart from '$lib/charts/TvChart.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
+	import Series from '$lib/charts/Series.svelte';
+	import { utcDay } from 'd3-time';
+	import { dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
-	import { formatPercent } from '$lib/helpers/formatters';
-	import { type Quote, ChartIQ, calculateYAxisRange } from '$lib/chart';
-	import ChartTooltip from '$lib/chart/ChartTooltip.svelte';
 
-	export let data: Quote[] = [];
-	export let dateRange: [Date?, Date?];
+	interface Props {
+		data: AreaData<UTCTimestamp>[];
+		dateRange: [Date, Date];
+	}
 
-	// used for setting yAxis zoom
-	const [min, max] = calculateYAxisRange(data, 1, 0.12);
+	let { data, dateRange }: Props = $props();
 
-	// TODO: should be based on displayed data range rather than full range
-	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.Value, data.at(-1)?.Value));
+	// TODO: should be based on displayed data range rather than full range?
+	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.value, data.at(-1)?.value));
 
-	const options = {
-		layout: { chartType: 'mountain' },
-		controls: { home: null },
-		allowScroll: false,
-		allowZoom: false,
-		xaxisHeight: 0,
+	// TEMPORARY HACK: filter duplicate / out-of-order items
+	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/1160
+	const tvData = data.filter(({ time }, index) => {
+		return time >= data[index - 1]?.time;
+	});
 
-		chart: {
-			tension: 0.5,
-			xAxis: { noDraw: true },
-			yAxis: { noDraw: true, min, max }
+	// Create baseline data set - needed to display baseline and to set chart date range
+	const baselineData = utcDay.range(dateRange[0], utcDay.offset(dateRange[1])).map((d) => {
+		return { time: dateToTs(d), value: 0 };
+	});
+
+	// Once baseline series loads, set the visible range to the baseline's start/end dates
+	function baselineCallback({ chart }: SeriesCallbackParam) {
+		chart.timeScale().setVisibleRange({
+			from: baselineData[0].time,
+			to: baselineData.at(-1)!.time
+		});
+	}
+
+	const hidden = { visible: false };
+
+	const chartOptions: TvChartOptions = {
+		handleScroll: false,
+		handleScale: false,
+		grid: { vertLines: hidden, horzLines: hidden },
+		crosshair: { vertLine: hidden, horzLine: hidden },
+		rightPriceScale: hidden,
+		timeScale: {
+			...hidden,
+			lockVisibleTimeRangeOnResize: true
 		}
 	};
 
-	function init(chartEngine: any) {
-		// add thin baseline at y=0
-		chartEngine.append('draw', () => {
-			const y = chartEngine.pixelFromPrice(0, chartEngine.chart.panel);
-			chartEngine.plotLine({
-				x0: 0,
-				x1: 1,
-				y0: y,
-				y1: y,
-				color: 'gray',
-				type: 'line',
-				opacity: 0.25
-			});
-		});
+	const areaSeriesOptions: AreaSeriesPartialOptions = {
+		lineWidth: 2,
+		lineType: LineType.Curved,
+		priceLineVisible: false,
+		crosshairMarkerVisible: false
+	};
 
-		return () => {
-			chartEngine.loadChart('strategy-thumbnail', {
-				periodicity: { period: 1, timeUnit: 'day' },
-				range: {
-					dtLeft: dateRange[0],
-					dtRight: dateRange[1],
-					goIntoPast: true
-				},
-				masterData: data
-			});
-
-			// adjust xAxis pan (slighly off due to range setting)
-			chartEngine.micropixels = 7.5;
-
-			// re-draw
-			chartEngine.draw();
-		};
-	}
+	const baselineSeriesOptions: LineSeriesPartialOptions = {
+		lineVisible: false,
+		priceLineColor: 'gray',
+		crosshairMarkerVisible: false
+	};
 </script>
 
 <figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
-	<ChartIQ {init} {options} let:cursor>
-		<ChartTooltip {cursor} formatValue={formatPercent} />
-	</ChartIQ>
+	<TvChart priceFormatter={() => ''} options={chartOptions}>
+		<AreaSeries
+			data={tvData}
+			direction={relativeProfit.direction}
+			options={areaSeriesOptions}
+			priceScaleOptions={{ scaleMargins: { top: 0.2, bottom: 0.2 } }}
+		/>
+		<Series type={LineSeries} data={baselineData} options={baselineSeriesOptions} callback={baselineCallback} />
+	</TvChart>
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>
 

@@ -27,7 +27,7 @@
 	<div class="filters">
 		<ChainFilter options={getChainOptions(strategies)} bind:selected />
 	</div>
-	<div class="strategies" style:contain="paint">
+	<div class="strategies">
 		{#each filteredStrategies as strategy, idx (strategy.id)}
 			{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
 			<div transition:slide={{ axis: 'x', ...params }} animate:flip={params} style:display="grid">

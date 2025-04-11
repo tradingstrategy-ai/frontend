@@ -13,7 +13,7 @@
 </script>
 
 <Tooltip>
-	<span slot="trigger" class="flag targetable-above">
+	<span slot="trigger" class="flag">
 		<DataBadge {status}>{label}</DataBadge>
 	</span>
 
