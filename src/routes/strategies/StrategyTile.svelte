@@ -14,10 +14,14 @@
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let admin = false;
-	export let simplified = false;
-	export let strategy: StrategyInfo;
-	export let chartDateRange: [Date, Date];
+	interface Props {
+		admin?: boolean;
+		simplified?: boolean;
+		strategy: StrategyInfo;
+		chartDateRange: [Date, Date];
+	}
+
+	let { admin = false, simplified = false, strategy, chartDateRange }: Props = $props();
 
 	const chain = getChain(strategy.on_chain_data?.chain_id);
 
@@ -226,7 +230,7 @@
 					display: grid;
 					gap: 0.25rem;
 
-					:where(h3, p) {
+					> * {
 						margin: 0;
 					}
 				}

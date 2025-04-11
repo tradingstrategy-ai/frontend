@@ -10,8 +10,12 @@
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
-	export let data: AreaData<UTCTimestamp>[] = [];
-	export let dateRange: [Date, Date];
+	interface Props {
+		data: AreaData<UTCTimestamp>[];
+		dateRange: [Date, Date];
+	}
+
+	let { data, dateRange }: Props = $props();
 
 	// TODO: should be based on displayed data range rather than full range?
 	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.value, data.at(-1)?.value));
