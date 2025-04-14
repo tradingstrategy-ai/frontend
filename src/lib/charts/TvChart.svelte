@@ -42,9 +42,11 @@
 	import type { Snippet } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { MediaQuery } from 'svelte/reactivity';
+	import { captureException } from '@sentry/sveltekit';
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	type TooltipParams = MouseEventParams<Time>;
 	type ActiveTooltipParams = TooltipParams & Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
@@ -202,7 +204,18 @@
 	{/if}
 
 	{#if chart && colors}
-		{@render children?.()}
+		<svelte:boundary onerror={(e) => captureException(e)}>
+			{@render children?.()}
+
+			{#snippet failed(error)}
+				<div class="tv-error">
+					<Tooltip>
+						<span slot="trigger" class="underline">Error rendering chart series</span>
+						<pre slot="popup">{error}</pre>
+					</Tooltip>
+				</div>
+			{/snippet}
+		</svelte:boundary>
 	{/if}
 
 	{#if tooltip && isActiveTooltip(tooltipParams)}
@@ -251,6 +264,21 @@
 			display: grid;
 			place-content: center;
 			z-index: 100;
+		}
+	}
+
+	.tv-error {
+		margin: 1rem;
+		z-index: 5;
+
+		span {
+			color: var(--c-error);
+			font-weight: 500;
+		}
+
+		pre {
+			color: var(--c-error);
+			white-space: pre-wrap;
 		}
 	}
 </style>
