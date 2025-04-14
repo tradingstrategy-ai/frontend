@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed } from './types';
+	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { type ApiDataTransformer, CandleDataFeed, apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -65,6 +65,12 @@
 			transformApiData
 		);
 	});
+
+	const options: TvChartOptions = {
+		localization: {
+			priceFormatter: (n: number) => formatTokenAmount(n, 1, 2)
+		}
+	};
 </script>
 
 <div class="pair-candle-chart">
@@ -72,7 +78,7 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart priceFormatter={(n) => formatTokenAmount(n, 1, 2)} loading={priceFeed.loadingInitialData}>
+	<TvChart {options} loading={priceFeed.loadingInitialData}>
 		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
 			<h3 class="price">Price</h3>
 		</CandleSeries>

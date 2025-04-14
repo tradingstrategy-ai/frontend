@@ -53,13 +53,12 @@
 	type Props = {
 		loading?: boolean;
 		options?: TvChartOptions;
-		priceFormatter: Formatter<number>;
 		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, options, priceFormatter, callback, children, tooltip }: Props = $props();
+	let { loading = false, options, callback, children, tooltip }: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -107,9 +106,6 @@
 					color: colors.textExtraLight,
 					labelBackgroundColor: colors.textUltraLight
 				}
-			},
-			localization: {
-				priceFormatter
 			},
 			timeScale: {
 				borderColor: colors.axisBorder,

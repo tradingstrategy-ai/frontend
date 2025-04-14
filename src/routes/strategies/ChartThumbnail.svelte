@@ -68,7 +68,7 @@
 </script>
 
 <figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
-	<TvChart priceFormatter={() => ''} options={chartOptions}>
+	<TvChart options={chartOptions}>
 		<AreaSeries
 			data={tvData}
 			direction={relativeProfit.direction}
