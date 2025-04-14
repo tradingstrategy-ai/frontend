@@ -3,6 +3,7 @@ import type { UTCTimestamp } from 'lightweight-charts';
 import type { CandleTimeBucket, SimpleDataItem } from './types';
 import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 import { notFilledMarker } from '$lib/helpers/formatters';
+import type { UnixTimestamp } from 'trade-executor/schemas/utility-types';
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 	timeZone: 'UTC',
@@ -40,9 +41,9 @@ export function formatDate(dateValue: MaybeParsableDate, timeBucket: CandleTimeB
  * @param data Raw tick data
  * @param interval A d3 time interval
  */
-export function normalizeDataForInterval(data: [Date, number][], interval: TimeInterval): SimpleDataItem[] {
-	const normalized = data.reduce((acc, [date, value]) => {
-		const normalizedTs = dateToTs(interval.floor(date));
+export function normalizeDataForInterval(data: [UnixTimestamp, number][], interval: TimeInterval): SimpleDataItem[] {
+	const normalized = data.reduce((acc, [ts, value]) => {
+		const normalizedTs = dateToTs(interval.floor(tsToDate(ts)));
 		const lastAddedTs = acc.at(-1)?.time;
 		if (normalizedTs === lastAddedTs) acc.pop();
 		acc.push({ time: normalizedTs, value });
