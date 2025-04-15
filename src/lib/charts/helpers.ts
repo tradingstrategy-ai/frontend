@@ -22,6 +22,12 @@ const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
 	timeZoneName: 'short'
 });
 
+const monthYearFormatter = new Intl.DateTimeFormat('en-GB', {
+	timeZone: 'UTC',
+	month: 'short',
+	year: '2-digit'
+});
+
 /**
  * Format a possible date value for with the relevant units for a given time bucket.
  *
@@ -33,6 +39,14 @@ export function formatDate(dateValue: MaybeParsableDate, timeBucket: CandleTimeB
 	const date = parseDate(dateValue);
 	const formatter = timeBucket.endsWith('d') ? dateFormatter : dateTimeFormatter;
 	return date ? formatter.format(date) : notFilledMarker;
+}
+
+/**
+ * Format a timestamp as "Feb ‘25"
+ */
+export function formatMonthYear(ts: UTCTimestamp) {
+	const date = tsToDate(ts);
+	return monthYearFormatter.format(date).replace(' ', ' ‘');
 }
 
 /**

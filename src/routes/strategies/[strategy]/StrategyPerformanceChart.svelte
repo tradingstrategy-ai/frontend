@@ -1,13 +1,15 @@
 <script lang="ts">
+	import type { TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
+	import { type UTCTimestamp, TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
-	import TvChart from '$lib/charts/TvChart.svelte';
+	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { normalizeDataForInterval } from '$lib/charts/helpers';
+	import { normalizeDataForInterval, formatMonthYear } from '$lib/charts/helpers';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -61,6 +63,19 @@
 			source: 'live_trading'
 		});
 	});
+
+	function chartOptions(colors: ChartColors): TvChartOptions {
+		return {
+			rightPriceScale: { visible: false },
+			layout: { textColor: colors.textExtraLight },
+			timeScale: {
+				borderVisible: false,
+				tickMarkFormatter: (ts: UTCTimestamp, type: TickMarkType) => {
+					return type === TickMarkType.Month ? formatMonthYear(ts) : '';
+				}
+			}
+		};
+	}
 </script>
 
 <div class="strategy-performance-chart">
@@ -74,7 +89,7 @@
 			</div>
 		{/snippet}
 
-		<TvChart loading={$chartClient.loading}>
+		<TvChart loading={$chartClient.loading} options={chartOptions}>
 			<AreaSeries {data} />
 		</TvChart>
 	</ChartContainer>

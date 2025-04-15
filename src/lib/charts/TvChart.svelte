@@ -56,7 +56,7 @@
 		loading?: boolean;
 		grid?: boolean;
 		crosshairs?: boolean;
-		options?: TvChartOptions;
+		options?: TvChartOptions | ((colors: ChartColors) => TvChartOptions);
 		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
@@ -90,6 +90,13 @@
 	});
 
 	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
+
+	let resolvedOptions = $derived.by(() => {
+		if (options instanceof Function) {
+			return colors && options(colors);
+		}
+		return options;
+	});
 
 	function getBaseOptions(style: CSSStyleDeclaration, colors: ChartColors): TvChartOptions {
 		return {
@@ -154,7 +161,7 @@
 
 	// apply custom chart options
 	$effect(() => {
-		if (options) chart?.applyOptions(options);
+		if (resolvedOptions) chart?.applyOptions(resolvedOptions);
 	});
 
 	// call callback (after chart created and whenever callback is updated)
@@ -185,7 +192,7 @@
 
 	// toggle visibility of y-axis scale based on screen size (unless visibility is explicitly set)
 	$effect(() => {
-		const visible = options?.rightPriceScale?.visible ?? !isMobile.current;
+		const visible = resolvedOptions?.rightPriceScale?.visible ?? !isMobile.current;
 		chart?.applyOptions({ rightPriceScale: { visible } });
 	});
 
