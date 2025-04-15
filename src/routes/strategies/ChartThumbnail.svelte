@@ -4,7 +4,7 @@
 	import { LineType, LineSeries } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
-	import Series from '$lib/charts/Series.svelte';
+	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { utcDay } from 'd3-time';
 	import { dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
@@ -26,19 +26,6 @@
 		return time >= data[index - 1]?.time;
 	});
 
-	// Create baseline data set - needed to display baseline and to set chart date range
-	const baselineData = utcDay.range(dateRange[0], utcDay.offset(dateRange[1])).map((d) => {
-		return { time: dateToTs(d), value: 0 };
-	});
-
-	// Once baseline series loads, set the visible range to the baseline's start/end dates
-	function baselineCallback({ chart }: SeriesCallbackParam) {
-		chart.timeScale().setVisibleRange({
-			from: baselineData[0].time,
-			to: baselineData.at(-1)!.time
-		});
-	}
-
 	const chartOptions: TvChartOptions = {
 		handleScroll: false,
 		handleScale: false,
@@ -55,12 +42,6 @@
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
 	};
-
-	const baselineSeriesOptions: LineSeriesPartialOptions = {
-		lineVisible: false,
-		priceLineColor: 'gray',
-		crosshairMarkerVisible: false
-	};
 </script>
 
 <figure class="chart-thumbnail ds-3 {relativeProfit.directionClass}">
@@ -71,7 +52,7 @@
 			options={areaSeriesOptions}
 			priceScaleOptions={{ scaleMargins: { top: 0.2, bottom: 0.2 } }}
 		/>
-		<Series type={LineSeries} data={baselineData} options={baselineSeriesOptions} callback={baselineCallback} />
+		<BaselineSeries interval={utcDay} range={dateRange} alwaysVisible setChartVisibleRange />
 	</TvChart>
 	<figcaption>Past 90 days historical performance</figcaption>
 </figure>

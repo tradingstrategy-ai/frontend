@@ -2,14 +2,15 @@
 	import type { TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
-	import { type UTCTimestamp, TickMarkType } from 'lightweight-charts';
+	import { type AreaSeriesPartialOptions, type UTCTimestamp, LineType, TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
+	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { normalizeDataForInterval, formatMonthYear } from '$lib/charts/helpers';
+	import { normalizeDataForInterval, formatMonthYear, tsToDate } from '$lib/charts/helpers';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -56,6 +57,21 @@
 
 	let data = $derived(normalizeDataForInterval($chartClient.data ?? [], timeSpan.interval));
 
+	let range = $derived.by(() => {
+		if (data.length === 0) return;
+		const endDate = tsToDate(data.at(-1)!.time);
+
+		let startDate: Date;
+		if (timeSpan.spanDays) {
+			startDate = utcDay.offset(endDate, -timeSpan.spanDays);
+			startDate = timeSpan.interval.offset(startDate);
+		} else {
+			startDate = tsToDate(data[0].time);
+		}
+
+		return [startDate, endDate] as [Date, Date];
+	});
+
 	// fetch chart data (initial load or if chartClient is updated)
 	$effect(() => {
 		chartClient.fetch({
@@ -70,12 +86,22 @@
 			layout: { textColor: colors.textExtraLight },
 			timeScale: {
 				borderVisible: false,
+				lockVisibleTimeRangeOnResize: true,
 				tickMarkFormatter: (ts: UTCTimestamp, type: TickMarkType) => {
 					return type === TickMarkType.Month ? formatMonthYear(ts) : '';
 				}
 			}
 		};
 	}
+
+	const seriesOptions: AreaSeriesPartialOptions = {
+		lineType: LineType.Curved,
+		priceLineVisible: false
+	};
+
+	const priceScaleOptions = {
+		scaleMargins: { top: 0.1, bottom: 0.1 }
+	};
 </script>
 
 <div class="strategy-performance-chart">
@@ -90,7 +116,11 @@
 		{/snippet}
 
 		<TvChart loading={$chartClient.loading} options={chartOptions}>
-			<AreaSeries {data} />
+			<AreaSeries {data} options={seriesOptions} {priceScaleOptions} />
+
+			{#if range}
+				<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
+			{/if}
 		</TvChart>
 	</ChartContainer>
 </div>
