@@ -5,12 +5,13 @@
 	import { type AreaSeriesPartialOptions, type UTCTimestamp, LineType, TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
-	import Profitability from '$lib/components/Profitability.svelte';
+	import Profitability, { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { normalizeDataForInterval, formatMonthYear, tsToDate } from '$lib/charts/helpers';
+	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
+	import { relativeProfitability } from '$lib/helpers/profit';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -50,14 +51,11 @@
 
 	let timeSpan = $derived(timeSpanInfo[timeSpans.selected]);
 
-	// TODO: get periodPerformance based on timeSpans.selected and data
-	let periodPerformance = undefined;
-
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
 	let data = $derived(normalizeDataForInterval($chartClient.data ?? [], timeSpan.interval));
 
-	let range = $derived.by(() => {
+	let visibleRange = $derived.by(() => {
 		if (data.length === 0) return;
 		const endDate = tsToDate(data.at(-1)!.time);
 
@@ -70,6 +68,21 @@
 		}
 
 		return [startDate, endDate] as [Date, Date];
+	});
+
+	let periodPerformance = $derived.by(() => {
+		if (!visibleRange) return;
+
+		// default startValue = 0 (assume full data range visible)
+		let startValue = 0;
+
+		// if full data range not visible, find first value on or before start of visible range
+		const startTs = dateToTs(visibleRange[0]);
+		if (startTs > data[0].time) {
+			startValue = data.findLast(({ time }) => time <= startTs)!.value;
+		}
+
+		return getProfitInfo(relativeProfitability(startValue, data.at(-1)?.value));
 	});
 
 	// fetch chart data (initial load or if chartClient is updated)
@@ -109,17 +122,17 @@
 		{#snippet title()}
 			<div class="period-performance">
 				{#if periodPerformance !== undefined}
-					<Profitability of={periodPerformance} boxed />
+					<Profitability of={periodPerformance.value} boxed />
 					<span class="performance-label">{timeSpan.performanceLabel}</span>
 				{/if}
 			</div>
 		{/snippet}
 
 		<TvChart loading={$chartClient.loading} options={chartOptions}>
-			<AreaSeries {data} options={seriesOptions} {priceScaleOptions} />
+			<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
 
-			{#if range}
-				<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
+			{#if visibleRange}
+				<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
 			{/if}
 		</TvChart>
 	</ChartContainer>
