@@ -3,7 +3,7 @@
  *
  * Calls to web_chart API endpoint.
  */
-import type { RawTick } from '$lib/chart';
+import type { UnixTimestamp } from 'trade-executor/schemas/utility-types';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { error } from '@sveltejs/kit';
@@ -28,7 +28,7 @@ export type ChartRequestParams = {
  * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py
  */
 export interface WebChartData {
-	data: RawTick[];
+	data: [UnixTimestamp, number][];
 	title: string;
 	help_link: string;
 	source: ChartSource;

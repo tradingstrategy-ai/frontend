@@ -1,8 +1,13 @@
 <script lang="ts">
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
+	import TvChart from '$lib/charts/TvChart.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
+	import { getChartClient } from 'trade-executor/client/chart';
+	import { normalizeDataForInterval } from '$lib/charts/helpers';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -10,19 +15,52 @@
 
 	let { strategy }: Props = $props();
 
-	const timeSpans = new OptionGroup(['1W', '1M', '3M', 'Max'], '3M');
+	type TimeSpan = {
+		performanceLabel: string;
+		spanDays?: number;
+		interval: TimeInterval;
+	};
 
-	const performanceLabels = {
-		'1W': 'past week',
-		'1M': 'past month',
-		'3M': 'past 90 days',
-		Max: 'lifetime'
+	const timeSpanInfo: Record<string, TimeSpan> = {
+		'1W': {
+			performanceLabel: 'past week',
+			spanDays: 7,
+			interval: utcHour
+		},
+		'1M': {
+			performanceLabel: 'past month',
+			spanDays: 30,
+			interval: utcHour.every(4)!
+		},
+		'3M': {
+			performanceLabel: 'past 90 days',
+			spanDays: 90,
+			interval: utcDay
+		},
+		Max: {
+			performanceLabel: 'lifetime',
+			interval: utcDay
+		}
 	} as const;
 
-	let performanceLabel = $derived(performanceLabels[timeSpans.selected]);
+	const timeSpans = new OptionGroup(Object.keys(timeSpanInfo), '3M');
+
+	let timeSpan = $derived(timeSpanInfo[timeSpans.selected]);
 
 	// TODO: get periodPerformance based on timeSpans.selected and data
 	let periodPerformance = undefined;
+
+	let chartClient = $derived(getChartClient(fetch, strategy.url));
+
+	let data = $derived(normalizeDataForInterval($chartClient.data ?? [], timeSpan.interval));
+
+	// fetch chart data (initial load or if chartClient is updated)
+	$effect(() => {
+		chartClient.fetch({
+			type: 'compounding_unrealised_trading_profitability_sampled',
+			source: 'live_trading'
+		});
+	});
 </script>
 
 <div class="strategy-performance-chart">
@@ -31,12 +69,14 @@
 			<div class="period-performance">
 				{#if periodPerformance !== undefined}
 					<Profitability of={periodPerformance} boxed />
-					<span class="performance-label">{performanceLabel}</span>
+					<span class="performance-label">{timeSpan.performanceLabel}</span>
 				{/if}
 			</div>
 		{/snippet}
 
-		TradingView chart for {strategy.name} ({timeSpans.selected}) coming soon!
+		<TvChart loading={$chartClient.loading}>
+			<AreaSeries {data} />
+		</TvChart>
 	</ChartContainer>
 </div>
 
