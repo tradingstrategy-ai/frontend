@@ -78,7 +78,7 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart {options} loading={priceFeed.loadingInitialData}>
+	<TvChart grid crosshairs {options} loading={priceFeed.loadingInitialData}>
 		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
 			<h3 class="price">Price</h3>
 		</CandleSeries>

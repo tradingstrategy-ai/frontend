@@ -72,7 +72,7 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart options={chartOptions} loading={borrowFeed.loadingInitialData}>
+	<TvChart grid crosshairs options={chartOptions} loading={borrowFeed.loadingInitialData}>
 		<CandleSeries dataFeed={borrowFeed} />
 		<Series type={LineSeries} dataFeed={supplyFeed} options={supplySeriesOptions} />
 

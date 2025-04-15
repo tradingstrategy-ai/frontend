@@ -39,16 +39,12 @@
 		});
 	}
 
-	const hidden = { visible: false };
-
 	const chartOptions: TvChartOptions = {
 		handleScroll: false,
 		handleScale: false,
-		grid: { vertLines: hidden, horzLines: hidden },
-		crosshair: { vertLine: hidden, horzLine: hidden },
-		rightPriceScale: hidden,
+		rightPriceScale: { visible: false },
 		timeScale: {
-			...hidden,
+			visible: false,
 			lockVisibleTimeRangeOnResize: true
 		}
 	};

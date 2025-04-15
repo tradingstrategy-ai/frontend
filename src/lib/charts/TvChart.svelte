@@ -54,13 +54,24 @@
 
 	type Props = {
 		loading?: boolean;
+		grid?: boolean;
+		crosshairs?: boolean;
 		options?: TvChartOptions;
 		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, options, callback, children, tooltip }: Props = $props();
+	// prettier-ignore
+	let {
+		loading = false,
+		grid = false,
+		crosshairs = false,
+		options,
+		callback,
+		children,
+		tooltip
+	}: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -96,17 +107,25 @@
 				}
 			},
 			grid: {
-				vertLines: { color: colors.gridLines },
-				horzLines: { color: colors.gridLines }
+				vertLines: {
+					color: colors.gridLines,
+					visible: grid
+				},
+				horzLines: {
+					color: colors.gridLines,
+					visible: grid
+				}
 			},
 			crosshair: {
 				vertLine: {
 					color: colors.textExtraLight,
-					labelBackgroundColor: colors.textUltraLight
+					labelBackgroundColor: colors.textUltraLight,
+					visible: crosshairs
 				},
 				horzLine: {
 					color: colors.textExtraLight,
-					labelBackgroundColor: colors.textUltraLight
+					labelBackgroundColor: colors.textUltraLight,
+					visible: crosshairs
 				}
 			},
 			timeScale: {
