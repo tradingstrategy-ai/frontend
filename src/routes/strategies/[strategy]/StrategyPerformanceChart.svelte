@@ -9,9 +9,12 @@
 	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
+	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
+	import { formatPercent } from '$lib/helpers/formatters';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -97,6 +100,7 @@
 		return {
 			rightPriceScale: { visible: false },
 			layout: { textColor: colors.textExtraLight },
+			crosshair: { vertLine: { visible: true } },
 			timeScale: {
 				borderVisible: false,
 				lockVisibleTimeRangeOnResize: true,
@@ -109,7 +113,8 @@
 
 	const seriesOptions: AreaSeriesPartialOptions = {
 		lineType: LineType.Curved,
-		priceLineVisible: false
+		priceLineVisible: false,
+		crosshairMarkerVisible: false
 	};
 
 	const priceScaleOptions = {
@@ -134,6 +139,16 @@
 			{#if visibleRange}
 				<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
 			{/if}
+
+			{#snippet tooltip({ point, time }, [performance])}
+				{#if performance}
+					{@const withTime = ['1W', '1M'].includes(timeSpans.selected)}
+					<ChartTooltip {point}>
+						<h4><Timestamp date={time as number} {withTime} /></h4>
+						<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+					</ChartTooltip>
+				{/if}
+			{/snippet}
 		</TvChart>
 	</ChartContainer>
 </div>
@@ -169,6 +184,20 @@
 				letter-spacing: var(--ls-ui-sm);
 				color: var(--c-text-extra-light);
 			}
+		}
+
+		h4 {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm, normal);
+			color: var(--c-text-extra-light);
+			margin-bottom: 0.25rem;
+		}
+
+		.tooltip-value {
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--ls-ui-lg, normal);
+			color: var(--c-text);
+			text-align: right;
 		}
 	}
 </style>
