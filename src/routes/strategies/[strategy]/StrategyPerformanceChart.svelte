@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
-	import { type AreaSeriesPartialOptions, type UTCTimestamp, LineType, TickMarkType } from 'lightweight-charts';
+	import { LineType, TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability, { getProfitInfo } from '$lib/components/Profitability.svelte';
@@ -96,20 +97,26 @@
 		});
 	});
 
-	function chartOptions(colors: ChartColors): TvChartOptions {
-		return {
-			rightPriceScale: { visible: false },
-			layout: { textColor: colors.textExtraLight },
-			crosshair: { vertLine: { visible: true } },
-			timeScale: {
-				borderVisible: false,
-				lockVisibleTimeRangeOnResize: true,
-				tickMarkFormatter: (ts: UTCTimestamp, type: TickMarkType) => {
-					return type === TickMarkType.Month ? formatMonthYear(ts) : '';
+	let chartOptions = $derived.by(() => {
+		// use custom tickMarkFormatter for 3M time span (only show month/year markers)
+		const tickMarkFormatter: TickMarkFormatter =
+			timeSpans.selected === '3M'
+				? (ts, type) => (type <= TickMarkType.Month ? formatMonthYear(ts as UTCTimestamp) : '')
+				: () => null;
+
+		return (colors: ChartColors): TvChartOptions => {
+			return {
+				rightPriceScale: { visible: false },
+				layout: { textColor: colors.textExtraLight },
+				crosshair: { vertLine: { visible: true } },
+				timeScale: {
+					borderVisible: false,
+					lockVisibleTimeRangeOnResize: true,
+					tickMarkFormatter
 				}
-			}
+			};
 		};
-	}
+	});
 
 	const seriesOptions: AreaSeriesPartialOptions = {
 		lineType: LineType.Curved,
