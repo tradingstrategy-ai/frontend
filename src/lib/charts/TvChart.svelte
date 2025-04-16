@@ -127,12 +127,14 @@
 				vertLine: {
 					color: colors.textExtraLight,
 					labelBackgroundColor: colors.textUltraLight,
-					visible: crosshairs
+					visible: crosshairs,
+					labelVisible: crosshairs
 				},
 				horzLine: {
 					color: colors.textExtraLight,
 					labelBackgroundColor: colors.textUltraLight,
-					visible: crosshairs
+					visible: crosshairs,
+					labelVisible: crosshairs
 				}
 			},
 			timeScale: {
