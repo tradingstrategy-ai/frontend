@@ -214,7 +214,6 @@
 			font: var(--f-ui-sm-bold);
 			letter-spacing: var(--ls-ui-sm, normal);
 			color: var(--c-text-light);
-			white-space: nowrap;
 		}
 
 		.metrics {

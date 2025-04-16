@@ -110,13 +110,11 @@
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--ls-ui-md, normal);
 			color: var(--c-text-extra-light);
-			white-space: nowrap;
 		}
 
 		.metrics {
 			width: 100%;
 			border-collapse: collapse;
-			white-space: nowrap;
 			color: var(--c-text-light);
 
 			tr * {
