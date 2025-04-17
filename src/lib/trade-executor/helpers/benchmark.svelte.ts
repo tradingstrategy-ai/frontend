@@ -1,9 +1,16 @@
-export type BenchmarkToken = {
-	symbol: string;
-	pairId: string;
-	exchangeType: string;
-	color: string;
-};
+export class BenchmarkToken {
+	symbol!: string;
+	pairId!: string;
+	exchangeType!: string;
+	color!: string;
+
+	loading? = $state(false);
+	periodPerformance?: number | undefined = $state();
+
+	constructor(data: BenchmarkToken) {
+		Object.assign(this, data);
+	}
+}
 
 // Curated list of available benchmark tokens (BTC, ETH, MATIC)
 const benchmarkTokens: BenchmarkToken[] = [
@@ -37,7 +44,8 @@ const benchmarkTokens: BenchmarkToken[] = [
 
 // FIXME: using strategy id hack to infer list of tokens based on strategy ID.
 // In the future this should be provided by strategy configuration.
-export function getBenchmarkTokens({ id }: { id: string }) {
+export function getBenchmarkTokens({ id }: { id: string }): BenchmarkToken[] {
 	const parts = id.split('-');
-	return benchmarkTokens.filter((token) => parts.includes(token.symbol.toLowerCase()));
+	const tokens = benchmarkTokens.filter((token) => parts.includes(token.symbol.toLowerCase()));
+	return tokens.map((t) => new BenchmarkToken(t));
 }

@@ -10,7 +10,7 @@
 		PerformanceChart
 	} from '$lib/chart';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
+	import { type BenchmarkToken, getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { differenceInCalendarDays } from 'date-fns';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';

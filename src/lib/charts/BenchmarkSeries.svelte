@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ApiCandle, CandleTimeBucket, SimpleDataItem } from './types';
-	import type { BenchmarkToken } from 'trade-executor/helpers/benchmarks';
+	import type { BenchmarkToken } from 'trade-executor/helpers/benchmark.svelte';
 	import { type LineSeriesPartialOptions, LineSeries, LineType } from 'lightweight-charts';
 	import { tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import Series from './Series.svelte';
@@ -31,6 +31,7 @@
 	});
 
 	async function fetchData() {
+		token.loading = true;
 		data = [];
 
 		const pairCandles = await fetchPublicApi(fetch, 'candles', {
@@ -54,6 +55,9 @@
 				customValues: { percentChange }
 			};
 		});
+
+		token.periodPerformance = data.at(-1)?.customValues?.percentChange as number | undefined;
+		token.loading = false;
 	}
 </script>
 

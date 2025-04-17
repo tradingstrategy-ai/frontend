@@ -13,7 +13,7 @@
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
+	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
@@ -104,6 +104,8 @@
 
 	let benchmarkTokens = $derived(getBenchmarkTokens(strategy));
 
+	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
+
 	// fetch chart data (initial load or when chartClient is updated)
 	$effect(() => {
 		chartClient.fetch({
@@ -155,7 +157,7 @@
 			</div>
 		{/snippet}
 
-		<TvChart loading={$chartClient.loading} options={chartOptions}>
+		<TvChart {loading} options={chartOptions}>
 			<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
 
 			{#if visibleRange && firstVisibleDataItem}
