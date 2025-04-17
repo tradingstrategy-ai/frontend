@@ -60,7 +60,7 @@
 
 		const symbolObject = {
 			symbol: token.symbol,
-			urlParams: { pair_id: token.pairId, exchange_type: 'uniswap_v3', time_bucket: timeBucket }
+			urlParams: { pair_id: token.pairId, exchange_type: token.exchangeType, time_bucket: timeBucket }
 		};
 
 		chartEngine.attachQuoteFeed(feed, {});

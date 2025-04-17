@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleDataItem, TvChartOptions } from '$lib/charts/types';
+	import type { CandleTimeBucket, SimpleDataItem, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
@@ -13,9 +13,11 @@
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
+	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmarks';
 	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
+	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -27,27 +29,32 @@
 		performanceLabel: string;
 		spanDays?: number;
 		interval: TimeInterval;
+		timeBucket: CandleTimeBucket;
 	};
 
 	const timeSpanInfo: Record<string, TimeSpan> = {
 		'1W': {
 			performanceLabel: 'past week',
 			spanDays: 7,
-			interval: utcHour
+			interval: utcHour,
+			timeBucket: '1h'
 		},
 		'1M': {
 			performanceLabel: 'past month',
 			spanDays: 30,
-			interval: utcHour.every(4)!
+			interval: utcHour.every(4)!,
+			timeBucket: '4h'
 		},
 		'3M': {
 			performanceLabel: 'past 90 days',
 			spanDays: 90,
-			interval: utcDay
+			interval: utcDay,
+			timeBucket: '1d'
 		},
 		Max: {
 			performanceLabel: 'lifetime',
-			interval: utcDay
+			interval: utcDay,
+			timeBucket: '1d'
 		}
 	} as const;
 
@@ -74,6 +81,12 @@
 		return [startDate, endDate] as [Date, Date];
 	});
 
+	let firstVisibleDataItem = $derived.by(() => {
+		if (!visibleRange) return;
+		const startTs = dateToTs(visibleRange[0]);
+		return data.findLast(({ time }) => time <= startTs) ?? data[0];
+	});
+
 	let periodPerformance = $derived.by(() => {
 		if (!visibleRange) return;
 
@@ -89,7 +102,9 @@
 		return getProfitInfo(relativeProfitability(startValue, data.at(-1)?.value));
 	});
 
-	// fetch chart data (initial load or if chartClient is updated)
+	let benchmarkTokens = $derived(getBenchmarkTokens(strategy));
+
+	// fetch chart data (initial load or when chartClient is updated)
 	$effect(() => {
 		chartClient.fetch({
 			type: 'compounding_unrealised_trading_profitability_sampled',
@@ -106,9 +121,9 @@
 
 		return (colors: ChartColors): TvChartOptions => {
 			return {
-				rightPriceScale: { visible: false },
 				layout: { textColor: colors.textExtraLight },
 				crosshair: { vertLine: { visible: true } },
+				rightPriceScale: { visible: false },
 				timeScale: {
 					borderVisible: false,
 					lockVisibleTimeRangeOnResize: true,
@@ -142,6 +157,17 @@
 
 		<TvChart loading={$chartClient.loading} options={chartOptions}>
 			<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
+
+			{#if visibleRange && firstVisibleDataItem}
+				{#each benchmarkTokens as token}
+					<BenchmarkSeries
+						{token}
+						timeBucket={timeSpan.timeBucket}
+						firstDataItem={firstVisibleDataItem}
+						endDate={visibleRange[1]}
+					/>
+				{/each}
+			{/if}
 
 			{#if visibleRange}
 				<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />

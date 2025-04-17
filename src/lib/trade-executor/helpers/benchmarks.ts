@@ -1,6 +1,7 @@
 export type BenchmarkToken = {
 	symbol: string;
-	pairId: number;
+	pairId: string;
+	exchangeType: string;
 	color: string;
 };
 
@@ -10,24 +11,27 @@ const benchmarkTokens: BenchmarkToken[] = [
 	// https://tradingstrategy.ai/trading-view/ethereum/uniswap-v3/wbtc-usdc-fee-30
 	{
 		symbol: 'BTC',
-		pairId: 2697647,
-		color: '#EA983D'
+		pairId: '2697647',
+		exchangeType: 'uniswap_v3',
+		color: 'rgb(234 152 61 / 50%)'
 	},
 
-	// ETH benchmark: ETH-USDC 0.05%Uniswap v3 on Ethereum
+	// ETH benchmark: ETH-USDC 0.05% Uniswap v3 on Ethereum
 	// https://tradingstrategy.ai/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5
 	{
 		symbol: 'ETH',
-		pairId: 2697765,
-		color: '#687DE3'
+		pairId: '2697765',
+		exchangeType: 'uniswap_v3',
+		color: 'rgb(104 125 227 / 50%)'
 	},
 
 	// MATIC benchmark: MATIC-USDC 0.05% on  Uniswap v3 on Polygon
 	// https://tradingstrategy.ai/trading-view/polygon/uniswap-v3/matic-usdc-fee-5
 	{
 		symbol: 'MATIC',
-		pairId: 2854997,
-		color: '#6843D0'
+		pairId: '2854997',
+		exchangeType: 'uniswap_v3',
+		color: 'rgb(104 67 208 / 50%)'
 	}
 ];
 
