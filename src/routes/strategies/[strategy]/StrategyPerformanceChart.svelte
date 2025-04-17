@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TvChartOptions } from '$lib/charts/types';
+	import type { SimpleDataItem, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
@@ -150,9 +150,11 @@
 			{#snippet tooltip({ point, time }, [performance])}
 				{#if performance}
 					{@const withTime = ['1W', '1M'].includes(timeSpans.selected)}
+					{@const previous = performance.customValues?.previous as SimpleDataItem | undefined}
+					{@const value = performance.value ?? previous?.value}
 					<ChartTooltip {point}>
 						<h4><Timestamp date={time as number} {withTime} /></h4>
-						<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+						<div class="tooltip-value">{formatPercent(value, 2)}</div>
 					</ChartTooltip>
 				{/if}
 			{/snippet}
