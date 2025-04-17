@@ -1,19 +1,38 @@
-export class BenchmarkToken {
+type BenchmarkTokenInfo = {
+	symbol: string;
+	pairId: string;
+	exchangeType: string;
+	color: string;
+};
+
+export class BenchmarkToken implements BenchmarkTokenInfo {
 	symbol!: string;
 	pairId!: string;
 	exchangeType!: string;
 	color!: string;
 
-	loading? = $state(false);
-	periodPerformance?: number | undefined = $state();
+	loading = $state(false);
+	periodPerformance: number | undefined = $state();
 
-	constructor(data: BenchmarkToken) {
+	#checked = $state(true);
+
+	constructor(data: BenchmarkTokenInfo) {
 		Object.assign(this, data);
+	}
+
+	set checked(val: boolean) {
+		this.loading = false;
+		this.periodPerformance = undefined;
+		this.#checked = val;
+	}
+
+	get checked() {
+		return this.#checked;
 	}
 }
 
 // Curated list of available benchmark tokens (BTC, ETH, MATIC)
-const benchmarkTokens: BenchmarkToken[] = [
+const benchmarkTokens: BenchmarkTokenInfo[] = [
 	// BTC benchmark: WBTC-USDC (0.3%) on Uniswap v3 on Ethereum
 	// https://tradingstrategy.ai/trading-view/ethereum/uniswap-v3/wbtc-usdc-fee-30
 	{

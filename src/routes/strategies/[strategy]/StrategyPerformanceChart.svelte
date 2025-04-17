@@ -161,7 +161,7 @@
 			<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
 
 			{#if visibleRange && firstVisibleDataItem}
-				{#each benchmarkTokens as token}
+				{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
 					<BenchmarkSeries
 						{token}
 						timeBucket={timeSpan.timeBucket}
@@ -187,6 +187,18 @@
 				{/if}
 			{/snippet}
 		</TvChart>
+
+		<footer class="benchmark-tokens">
+			{#each benchmarkTokens as benchmark}
+				<label style:--color={benchmark.color}>
+					<input type="checkbox" name="benchmarks" bind:checked={benchmark.checked} />
+					{benchmark.symbol}
+					<span class="performance" class:skeleton={benchmark.loading}>
+						{formatPercent(benchmark.periodPerformance, 1, 1, { signDisplay: 'exceptZero' })}
+					</span>
+				</label>
+			{/each}
+		</footer>
 	</ChartContainer>
 </div>
 
@@ -235,6 +247,33 @@
 			letter-spacing: var(--ls-ui-lg, normal);
 			color: var(--c-text);
 			text-align: right;
+		}
+
+		.benchmark-tokens {
+			margin-top: 0.75rem;
+			margin-bottom: -0.25rem;
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+
+			label {
+				display: flex;
+				gap: 0.25rem;
+				align-items: center;
+				font: var(--f-ui-sm-medium);
+				letter-spacing: var(--ls-ui-sm);
+				color: hsl(from var(--color) h s l / 100%);
+			}
+
+			input[type='checkbox'] {
+				color: inherit;
+				accent-color: currentColor;
+			}
+
+			.performance {
+				font: var(--f-ui-sm-roman);
+				min-width: 4ch;
+			}
 		}
 	}
 </style>
