@@ -16,11 +16,14 @@
 		'box3',
 		'box4',
 		'bullish',
-		'bearish',
 		'bullish0',
-		'bearish0',
 		'bullish30',
+		'bearish',
+		'bearish0',
 		'bearish30',
+		'neutral',
+		'neutral0',
+		'neutral30',
 		'axisBorder',
 		'gridLines',
 		'paneSeparator'
@@ -272,6 +275,9 @@
 		--c-bearish-0: hsl(from var(--c-bearish) h s l / 0%);
 		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
 		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
+		--c-neutral: var(--c-text-ultra-light);
+		--c-neutral-0: hsl(from var(--c-text-ultra-light) h s l / 0%);
+		--c-neutral-30: hsl(from var(--c-text-ultra-light) h s l / 30%);
 		--c-axis-border: var(--cm-light, var(--c-text-light)) var(--cm-dark, var(--c-text-extra-light));
 		--c-grid-lines: var(--cm-light, var(--c-box-3)) var(--cm-dark, var(--c-box-1));
 		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));
