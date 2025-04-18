@@ -43,7 +43,7 @@
 	import { fade } from 'svelte/transition';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { captureException } from '@sentry/sveltekit';
-	import { createChart, MismatchDirection } from 'lightweight-charts';
+	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
@@ -222,16 +222,6 @@
 		const modifierPressed = event.ctrlKey || event.altKey || event.metaKey;
 		if (isVertical && !modifierPressed) event.stopPropagation();
 	}
-
-	function getTooltipSeriesData({ logical, time, seriesData }: TooltipParams) {
-		return allSeries.map((series) => {
-			const item = seriesData.get(series);
-			if (item) return item;
-			if (logical === undefined || time === undefined) return;
-			const previous = series.dataByIndex(logical, MismatchDirection.NearestLeft);
-			return previous && { time, customValues: { previous } };
-		});
-	}
 </script>
 
 <div class="tv-chart" bind:this={el} onwheelcapture={handleWheel} data-css-props data-testid="tv-chart">
@@ -258,7 +248,8 @@
 
 	{#if tooltip && isActiveTooltip(tooltipParams)}
 		{@const adjustedTooltipParams = getCorrectedTooltip(tooltipParams)}
-		{@render tooltip(adjustedTooltipParams, getTooltipSeriesData(adjustedTooltipParams))}
+		{@const tooltipData = allSeries.map((s) => tooltipParams.seriesData.get(s))}
+		{@render tooltip(adjustedTooltipParams, tooltipData)}
 	{/if}
 </div>
 
