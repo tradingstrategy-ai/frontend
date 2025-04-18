@@ -43,6 +43,7 @@
 		border-radius: var(--radius-md);
 		background: hsl(from var(--c-text-inverted) h s l / 80%);
 		box-shadow: var(--shadow-3);
+		white-space: nowrap;
 		pointer-events: none;
 		transform: translateX(var(--translate-x));
 		--margin-x: 0.75rem;

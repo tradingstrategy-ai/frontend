@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import type { ApiCandle, CandleTimeBucket } from './types';
+	import type { ApiCandle, CandleTimeBucket, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { CandleDataFeed, apiCandleToDataItem, tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
@@ -59,6 +59,12 @@
 		lastValueVisible: false,
 		priceLineVisible: false
 	};
+
+	const chartOptions: TvChartOptions = {
+		localization: {
+			priceFormatter: (n: number) => formatInterestRate(n, 1, 2)
+		}
+	};
 </script>
 
 <div class="reserve-interest-chart">
@@ -66,7 +72,7 @@
 		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
 	</ChartHeader>
 
-	<TvChart priceFormatter={(n) => formatInterestRate(n, 1, 2)} loading={borrowFeed.loadingInitialData}>
+	<TvChart grid crosshairs options={chartOptions} loading={borrowFeed.loadingInitialData}>
 		<CandleSeries dataFeed={borrowFeed} />
 		<Series type={LineSeries} dataFeed={supplyFeed} options={supplySeriesOptions} />
 
@@ -104,13 +110,11 @@
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--ls-ui-md, normal);
 			color: var(--c-text-extra-light);
-			white-space: nowrap;
 		}
 
 		.metrics {
 			width: 100%;
 			border-collapse: collapse;
-			white-space: nowrap;
 			color: var(--c-text-light);
 
 			tr * {

@@ -16,11 +16,14 @@
 		'box3',
 		'box4',
 		'bullish',
-		'bearish',
 		'bullish0',
-		'bearish0',
 		'bullish30',
+		'bearish',
+		'bearish0',
 		'bearish30',
+		'neutral',
+		'neutral0',
+		'neutral30',
 		'axisBorder',
 		'gridLines',
 		'paneSeparator'
@@ -42,24 +45,36 @@
 	import type { Snippet } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { MediaQuery } from 'svelte/reactivity';
+	import { captureException } from '@sentry/sveltekit';
 	import { createChart } from 'lightweight-charts';
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	type TooltipParams = MouseEventParams<Time>;
 	type ActiveTooltipParams = TooltipParams & Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
-	type TooltipData = ((DataItem<Time> & Record<string, any>) | undefined)[];
+	type TooltipData = Maybe<DataItem<Time> & Record<string, any>>[];
 
 	type Props = {
 		loading?: boolean;
-		options?: TvChartOptions;
-		priceFormatter: Formatter<number>;
+		grid?: boolean;
+		crosshairs?: boolean;
+		options?: TvChartOptions | ((colors: ChartColors) => TvChartOptions);
 		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
 	};
 
-	let { loading = false, options, priceFormatter, callback, children, tooltip }: Props = $props();
+	// prettier-ignore
+	let {
+		loading = false,
+		grid = false,
+		crosshairs = false,
+		options,
+		callback,
+		children,
+		tooltip
+	}: Props = $props();
 
 	const isMobile = new MediaQuery('width <= 576px');
 
@@ -79,6 +94,13 @@
 
 	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
 
+	let resolvedOptions = $derived.by(() => {
+		if (options instanceof Function) {
+			return colors && options(colors);
+		}
+		return options;
+	});
+
 	function getBaseOptions(style: CSSStyleDeclaration, colors: ChartColors): TvChartOptions {
 		return {
 			autoSize: true,
@@ -95,21 +117,28 @@
 				}
 			},
 			grid: {
-				vertLines: { color: colors.gridLines },
-				horzLines: { color: colors.gridLines }
+				vertLines: {
+					color: colors.gridLines,
+					visible: grid
+				},
+				horzLines: {
+					color: colors.gridLines,
+					visible: grid
+				}
 			},
 			crosshair: {
 				vertLine: {
 					color: colors.textExtraLight,
-					labelBackgroundColor: colors.textUltraLight
+					labelBackgroundColor: colors.textUltraLight,
+					visible: crosshairs,
+					labelVisible: crosshairs
 				},
 				horzLine: {
 					color: colors.textExtraLight,
-					labelBackgroundColor: colors.textUltraLight
+					labelBackgroundColor: colors.textUltraLight,
+					visible: crosshairs,
+					labelVisible: crosshairs
 				}
-			},
-			localization: {
-				priceFormatter
 			},
 			timeScale: {
 				borderColor: colors.axisBorder,
@@ -137,7 +166,7 @@
 
 	// apply custom chart options
 	$effect(() => {
-		if (options) chart?.applyOptions(options);
+		if (resolvedOptions) chart?.applyOptions(resolvedOptions);
 	});
 
 	// call callback (after chart created and whenever callback is updated)
@@ -168,7 +197,7 @@
 
 	// toggle visibility of y-axis scale based on screen size (unless visibility is explicitly set)
 	$effect(() => {
-		const visible = options?.rightPriceScale?.visible ?? !isMobile.current;
+		const visible = resolvedOptions?.rightPriceScale?.visible ?? !isMobile.current;
 		chart?.applyOptions({ rightPriceScale: { visible } });
 	});
 
@@ -206,7 +235,18 @@
 	{/if}
 
 	{#if chart && colors}
-		{@render children?.()}
+		<svelte:boundary onerror={(e) => captureException(e)}>
+			{@render children?.()}
+
+			{#snippet failed(error)}
+				<div class="tv-error">
+					<Tooltip>
+						<span slot="trigger" class="underline">Error rendering chart series</span>
+						<pre slot="popup">{error}</pre>
+					</Tooltip>
+				</div>
+			{/snippet}
+		</svelte:boundary>
 	{/if}
 
 	{#if tooltip && isActiveTooltip(tooltipParams)}
@@ -235,6 +275,9 @@
 		--c-bearish-0: hsl(from var(--c-bearish) h s l / 0%);
 		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
 		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
+		--c-neutral: var(--c-text-ultra-light);
+		--c-neutral-0: hsl(from var(--c-text-ultra-light) h s l / 0%);
+		--c-neutral-30: hsl(from var(--c-text-ultra-light) h s l / 30%);
 		--c-axis-border: var(--cm-light, var(--c-text-light)) var(--cm-dark, var(--c-text-extra-light));
 		--c-grid-lines: var(--cm-light, var(--c-box-3)) var(--cm-dark, var(--c-box-1));
 		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));
@@ -255,6 +298,21 @@
 			display: grid;
 			place-content: center;
 			z-index: 100;
+		}
+	}
+
+	.tv-error {
+		margin: 1rem;
+		z-index: 5;
+
+		span {
+			color: var(--c-error);
+			font-weight: 500;
+		}
+
+		pre {
+			color: var(--c-error);
+			white-space: pre-wrap;
 		}
 	}
 </style>

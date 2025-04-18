@@ -22,7 +22,7 @@
 
 	const directionOptions = [
 		{ lineColor: colors.bearish, topColor: colors.bearish30, bottomColor: colors.bearish0 },
-		{ lineColor: colors.textUltraLight, topColor: 'transparent', bottomColor: 'transparent' },
+		{ lineColor: colors.neutral, topColor: colors.neutral30, bottomColor: colors.neutral0 },
 		{ lineColor: colors.bullish, topColor: colors.bullish30, bottomColor: colors.bullish0 }
 	] as const;
 

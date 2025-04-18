@@ -10,7 +10,16 @@
  * Also see
  */
 import { z } from 'zod';
-import { chainId, count, duration, hexString, percent, unixTimestampToDate, usDollarAmount } from './utility-types';
+import {
+	chainId,
+	count,
+	duration,
+	hexString,
+	percent,
+	unixTimestamp,
+	unixTimestampToDate,
+	usDollarAmount
+} from './utility-types';
 import { keyMetricSchema } from './key-metric';
 
 export const enzymeSmartContractsSchema = z.object({
@@ -84,7 +93,7 @@ export type VaultOnChainData = OnChainData & {
 	asset_management_mode: Exclude<OnChainData['asset_management_mode'], 'hot_wallet'>;
 };
 
-export const performanceTupleSchema = z.tuple([unixTimestampToDate, usDollarAmount]);
+export const performanceTupleSchema = z.tuple([unixTimestamp, usDollarAmount]);
 export type PerformanceTuple = z.infer<typeof performanceTupleSchema>;
 
 // See `calculate_key_metrics` in:

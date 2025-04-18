@@ -1,4 +1,4 @@
-export class OptionGroup<T extends string> {
+export class OptionGroup<T extends string = string> {
 	#selected = $state() as T;
 
 	constructor(

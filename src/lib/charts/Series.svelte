@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		type DeepPartial,
+		type ISeriesApi,
 		type LogicalRange,
 		type PriceScaleOptions,
 		type SeriesDefinition,
@@ -44,37 +45,53 @@
 
 	let seriesContent: Record<string, any> | undefined = undefined;
 
-	const series = chart.addSeries(type, {}, paneIndex);
+	let series: ISeriesApi<SeriesType> | undefined = $state();
+
+	// primary mount/unmount effect
+	$effect(() => {
+		// add the series to the chart
+		series = chart.addSeries(type, {}, paneIndex);
+		// subscribe range changes (resulting from pan/zoom interactions)
+		chart.timeScale().subscribeVisibleLogicalRangeChange(handleRangeChange);
+
+		return () => {
+			series && chart.removeSeries(series);
+			chart.timeScale().unsubscribeVisibleLogicalRangeChange(handleRangeChange);
+		};
+	});
 
 	// apply series options (re-applies when they change)
 	$effect(() => {
-		if (options) series.applyOptions(options);
+		options && series?.applyOptions(options);
 	});
 
 	// call callback (on initial load and whenever callback is updated)
 	// push to event loop to allow series init to complete
 	$effect(() => {
-		if (callback) {
-			setTimeout(() => callback({ chart, series }));
+		if (callback && series) {
+			setTimeout(() => series && callback({ chart, series }));
 		}
 	});
 
 	// apply default priceScale options and any custom ones provided as prop
-	series.priceScale().applyOptions({
-		borderColor: colors.axisBorder,
-		...priceScaleOptions
+	$effect(() => {
+		series?.priceScale().applyOptions({
+			borderColor: colors.axisBorder,
+			...priceScaleOptions
+		});
 	});
 
 	// apply priceScaleCalculator if one was provided
-	if (priceScaleCalculator) {
-		series.applyOptions({
-			autoscaleInfoProvider: () => priceScaleCalculator(getVisibleData())
-		});
-	}
+	$effect(() => {
+		priceScaleCalculator &&
+			series?.applyOptions({
+				autoscaleInfoProvider: () => priceScaleCalculator(getVisibleData())
+			});
+	});
 
 	// Get currently visible chart data segment
 	function getVisibleData(): TvDataItem[] {
-		if (!visibileLogicalRange) return [];
+		if (!series || !visibileLogicalRange) return [];
 
 		const data = series.data() as TvDataItem[];
 		const { from, to } = visibileLogicalRange;
@@ -97,10 +114,8 @@
 
 	// fetch initial data whenever a new dataFeed is provided
 	$effect(() => {
-		if (dataFeed) {
-			// prevent effect from triggering itself
-			untrack(() => dataFeed.fetchData());
-		}
+		// prevent effect from triggering itself
+		dataFeed && untrack(() => dataFeed.fetchData());
 	});
 
 	// reset primary pane x-axis scale when dataFeed is reset (e.g., time interval change)
@@ -112,30 +127,22 @@
 
 	// update series when data changes
 	$effect(() => {
-		series.setData(data ?? dataFeed!.data);
+		series?.setData(data ?? dataFeed!.data);
 	});
 
 	// mount/unmount SeriesContent to inject children into the series pane element
 	$effect(() => {
 		if (seriesContent) unmount(seriesContent);
 
-		if (!children) return;
+		if (!children || !series) return;
 
 		// Use requestAnimationFrame to push to event loop and only run when window is in foreground
 		// (allows TradingView to first create the series pane elements)
 		requestAnimationFrame(() => {
-			const target = series.getPane().getHTMLElement().querySelector('td:nth-child(2)');
+			const target = series?.getPane().getHTMLElement().querySelector('td:nth-child(2)');
 			if (target) {
 				seriesContent = mount(SeriesContent, { target, props: { children } });
 			}
 		});
-	});
-
-	// subscribe range changes (due to pan/zoom interactions)
-	$effect(() => {
-		chart.timeScale().subscribeVisibleLogicalRangeChange(handleRangeChange);
-		return () => {
-			chart.timeScale().unsubscribeVisibleLogicalRangeChange(handleRangeChange);
-		};
 	});
 </script>
