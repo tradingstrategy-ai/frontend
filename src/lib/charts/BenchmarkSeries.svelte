@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ApiCandle, CandleTimeBucket, SimpleDataItem } from './types';
 	import type { BenchmarkToken } from 'trade-executor/helpers/benchmark.svelte';
-	import { type LineSeriesPartialOptions, LineSeries, LineType } from 'lightweight-charts';
+	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
 	import { tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import Series from './Series.svelte';
 	import { fetchPublicApi } from '$lib/helpers/public-api';
@@ -17,7 +17,6 @@
 	let { token, timeBucket, firstDataItem, endDate }: Props = $props();
 
 	const options: LineSeriesPartialOptions = {
-		lineType: LineType.Curved,
 		color: token.color,
 		lineWidth: 2,
 		priceLineVisible: false,

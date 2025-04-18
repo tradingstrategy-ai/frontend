@@ -3,7 +3,7 @@
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
 	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
-	import { LineType, TickMarkType } from 'lightweight-charts';
+	import { TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability, { getProfitInfo } from '$lib/components/Profitability.svelte';
@@ -138,7 +138,6 @@
 	});
 
 	const seriesOptions: AreaSeriesPartialOptions = {
-		lineType: LineType.Curved,
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
 	};

@@ -1,12 +1,10 @@
 <script lang="ts">
-	import type { SeriesCallbackParam, TvChartOptions } from '$lib/charts/types';
+	import type { TvChartOptions } from '$lib/charts/types';
 	import type { AreaSeriesPartialOptions, AreaData, UTCTimestamp, LineSeriesPartialOptions } from 'lightweight-charts';
-	import { LineType, LineSeries } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { utcDay } from 'd3-time';
-	import { dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
@@ -38,7 +36,6 @@
 
 	const areaSeriesOptions: AreaSeriesPartialOptions = {
 		lineWidth: 2,
-		lineType: LineType.Curved,
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
 	};
