@@ -2,7 +2,6 @@
 	import type { TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
-	import { utcDay } from 'd3-time';
 	import { TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
@@ -16,7 +15,7 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
-	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
+	import { dateToTs, formatMonthYear, getVisibleRange, normalizeDataForInterval } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
 
@@ -27,47 +26,26 @@
 	let { strategy }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
-
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
 	let data = $derived(normalizeDataForInterval($chartClient.data ?? [], timeSpan.interval));
 
-	let visibleRange = $derived.by(() => {
-		if (data.length === 0) return;
-		const endDate = tsToDate(data.at(-1)!.time);
-
-		let startDate: Date;
-		if (timeSpan.spanDays) {
-			startDate = utcDay.offset(endDate, -timeSpan.spanDays);
-			startDate = timeSpan.interval.offset(startDate);
-		} else {
-			startDate = tsToDate(data[0].time);
-		}
-
-		return [startDate, endDate] as [Date, Date];
-	});
+	let visibleRange = $derived(getVisibleRange(data, timeSpan));
 
 	let firstVisibleDataItem = $derived.by(() => {
 		if (!visibleRange) return;
 		const startTs = dateToTs(visibleRange[0]);
-		return data.findLast(({ time }) => time <= startTs) ?? data[0];
+		return data.findLast(({ time }) => time === startTs) ?? data[0];
 	});
 
 	let periodPerformance = $derived.by(() => {
-		if (!visibleRange) return;
-
-		// default startValue = 0 (assume full data range visible)
-		let startValue = 0;
-
-		// if full data range not visible, find first value on or before start of visible range
+		if (!visibleRange || !firstVisibleDataItem) return;
 		const startTs = dateToTs(visibleRange[0]);
-		if (startTs > data[0].time) {
-			startValue = data.findLast(({ time }) => time <= startTs)!.value;
-		}
-
-		return getProfitInfo(relativeProfitability(startValue, data.at(-1)?.value));
+		const startValue = startTs > data[0].time ? firstVisibleDataItem.value : 0;
+		const endValue = data.at(-1)?.value;
+		return getProfitInfo(relativeProfitability(startValue, endValue));
 	});
 
 	let benchmarkTokens = $derived(getBenchmarkTokens(strategy));

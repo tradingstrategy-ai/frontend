@@ -1,5 +1,5 @@
 import type { UTCTimestamp } from 'lightweight-charts';
-import type { CandleTimeBucket, SimpleDataItem } from './types';
+import type { CandleTimeBucket, SimpleDataItem, TimeSpan } from './types';
 import { type TimeInterval, utcDay, utcHour, utcMinute } from 'd3-time';
 import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 import { notFilledMarker } from '$lib/helpers/formatters';
@@ -114,6 +114,29 @@ export function normalizeDataForInterval(data: [UnixTimestamp, number][], interv
 	}
 
 	return normalized;
+}
+
+/**
+ * Get the visible date range to display based on the chart data and time span
+ *
+ * @param data chart data array
+ * @param timeSpan selected time span
+ * @returns start/end date tuple
+ */
+export function getVisibleRange(data: SimpleDataItem[], timeSpan: TimeSpan): [Date, Date] | undefined {
+	if (data.length === 0) return;
+
+	const endDate = tsToDate(data.at(-1)!.time);
+	let startDate: Date;
+
+	if (timeSpan.spanDays) {
+		startDate = utcDay.offset(endDate, -timeSpan.spanDays);
+		startDate = timeSpan.interval.offset(startDate);
+	} else {
+		startDate = tsToDate(data[0].time);
+	}
+
+	return [startDate, endDate];
 }
 
 export function dateToTs(date: Date) {

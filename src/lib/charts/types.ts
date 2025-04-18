@@ -1,3 +1,4 @@
+import type { TimeInterval } from 'd3-time';
 import type {
 	AutoscaleInfo,
 	CandlestickData,
@@ -27,6 +28,13 @@ export type ApiCandle = {
 export type TvDataItem = DataItem<UTCTimestamp>;
 
 export type CandleDataItem = CandlestickData<UTCTimestamp>;
+
+export type TimeSpan = {
+	performanceLabel: string;
+	timeBucket: CandleTimeBucket;
+	spanDays?: number;
+	interval: TimeInterval;
+};
 
 export type SimpleDataItem = SingleValueData<UTCTimestamp>;
 

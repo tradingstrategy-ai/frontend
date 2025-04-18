@@ -1,13 +1,5 @@
-import type { TimeInterval } from 'd3-time';
-import type { CandleTimeBucket } from './types';
+import type { TimeSpan } from './types';
 import { timeBucketToInterval } from './helpers';
-
-type TimeSpan = {
-	performanceLabel: string;
-	timeBucket: CandleTimeBucket;
-	spanDays?: number;
-	interval: TimeInterval;
-};
 
 const timeSpans = {
 	'1W': {
@@ -31,7 +23,7 @@ const timeSpans = {
 	}
 } as const;
 
-export type TimeSpanKey = keyof typeof timeSpans;
+type TimeSpanKey = keyof typeof timeSpans;
 
 export const TimeSpans = {
 	get keys() {
