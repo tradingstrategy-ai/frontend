@@ -1,15 +1,17 @@
 <script lang="ts">
-	import type { CandleTimeBucket, TvChartOptions } from '$lib/charts/types';
+	import type { TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
-	import { type TimeInterval, utcDay, utcHour } from 'd3-time';
+	import { utcDay } from 'd3-time';
 	import { TickMarkType } from 'lightweight-charts';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
+	import { TimeSpans } from '$lib/charts/time-span';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability, { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
+	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
@@ -17,7 +19,6 @@
 	import { normalizeDataForInterval, formatMonthYear, tsToDate, dateToTs } from '$lib/charts/helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -25,42 +26,9 @@
 
 	let { strategy }: Props = $props();
 
-	type TimeSpan = {
-		performanceLabel: string;
-		spanDays?: number;
-		interval: TimeInterval;
-		timeBucket: CandleTimeBucket;
-	};
+	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
-	const timeSpanInfo: Record<string, TimeSpan> = {
-		'1W': {
-			performanceLabel: 'past week',
-			spanDays: 7,
-			interval: utcHour,
-			timeBucket: '1h'
-		},
-		'1M': {
-			performanceLabel: 'past month',
-			spanDays: 30,
-			interval: utcHour.every(4)!,
-			timeBucket: '4h'
-		},
-		'3M': {
-			performanceLabel: 'past 90 days',
-			spanDays: 90,
-			interval: utcDay,
-			timeBucket: '1d'
-		},
-		Max: {
-			performanceLabel: 'lifetime',
-			interval: utcDay,
-			timeBucket: '1d'
-		}
-	} as const;
-
-	const timeSpans = new OptionGroup(Object.keys(timeSpanInfo), '3M');
-
-	let timeSpan = $derived(timeSpanInfo[timeSpans.selected]);
+	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
@@ -106,14 +74,6 @@
 
 	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
 
-	// fetch chart data (initial load or when chartClient is updated)
-	$effect(() => {
-		chartClient.fetch({
-			type: 'compounding_unrealised_trading_profitability_sampled',
-			source: 'live_trading'
-		});
-	});
-
 	let chartOptions = $derived.by(() => {
 		// use custom tickMarkFormatter for 3M time span (only show month/year markers)
 		const tickMarkFormatter: TickMarkFormatter =
@@ -145,6 +105,14 @@
 	const priceScaleOptions = {
 		scaleMargins: { top: 0.1, bottom: 0.1 }
 	};
+
+	// fetch chart data (initial load or when chartClient is updated)
+	$effect(() => {
+		chartClient.fetch({
+			type: 'compounding_unrealised_trading_profitability_sampled',
+			source: 'live_trading'
+		});
+	});
 </script>
 
 <div class="strategy-performance-chart">
