@@ -50,24 +50,56 @@ export function formatMonthYear(ts: UTCTimestamp) {
 }
 
 /**
+ * Generator function for iterating over all of the dates in a range (inclusive).
+ * The start/end dates are normalized to nearest `floor` values.
+ *
+ * @param interval a d3 time interval
+ * @param startDate starting date for iterator
+ * @param endDate ending date for iterator
+ *
+ * @yields An object containing `current` and `next` Date values
+ *
+ */
+export function* intervalRange(interval: TimeInterval, startDate: Date, endDate: Date) {
+	let current = interval.floor(startDate);
+	const lastIntervalDate = interval.floor(endDate);
+
+	while (current <= lastIntervalDate) {
+		const next = interval.offset(current);
+		yield { current, next };
+		current = next;
+	}
+}
+
+/**
  * Normalize data with non-standard or inconsistent date intervals to a standard interval
  *
  * @param data Raw tick data
  * @param interval A d3 time interval
  */
 export function normalizeDataForInterval(data: [UnixTimestamp, number][], interval: TimeInterval): SimpleDataItem[] {
-	const normalized = data.reduce((acc, [ts, value]) => {
-		const normalizedTs = dateToTs(interval.floor(tsToDate(ts)));
-		const lastAddedTs = acc.at(-1)?.time;
-		if (normalizedTs === lastAddedTs) acc.pop();
-		acc.push({ time: normalizedTs, value });
-		return acc;
-	}, [] as SimpleDataItem[]);
+	if (data.length === 0) return [];
+
+	const normalized: SimpleDataItem[] = [];
+	const start = tsToDate(data[0][0]);
+	const end = tsToDate(data.at(-1)![0]);
+
+	let dataIndex = 0;
+	let value = 0;
+
+	for (const { current, next } of intervalRange(interval, start, end)) {
+		// find the last value in original data within the current interval
+		while (dataIndex < data.length && tsToDate(data[dataIndex][0]) < next) {
+			value = data[dataIndex][1];
+			dataIndex++;
+		}
+		normalized.push({ time: dateToTs(current), value });
+	}
 
 	// prepend entry for prior interval (if needed) so starting value doesn't get swallowed
-	if (data[0] && normalized[0] && data[0][1] !== normalized[0].value) {
-		const priorInterval = interval.offset(tsToDate(normalized[0].time), -1);
-		normalized.unshift({ time: dateToTs(priorInterval), value: data[0][1] });
+	if (data[0][1] !== normalized[0].value) {
+		const previous = interval.offset(tsToDate(normalized[0].time), -1);
+		normalized.unshift({ time: dateToTs(previous), value: data[0][1] });
 	}
 
 	return normalized;
