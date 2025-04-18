@@ -1,16 +1,9 @@
+import type { TimeInterval } from 'd3-time';
 import type { UTCTimestamp } from 'lightweight-charts';
 import type { ApiCandle, CandleDataItem, CandleTimeBucket, DataFeed } from './types';
-import { type TimeInterval, utcMinute, utcHour, utcDay } from 'd3-time';
+import { timeBucketToInterval } from './helpers';
 import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-
-const timeUnitIntervals = {
-	m: utcMinute,
-	h: utcHour,
-	d: utcDay
-} as const;
-
-type TimeUnit = keyof typeof timeUnitIntervals;
 
 export function tsToUnixTimestamp(ts: string) {
 	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
@@ -44,15 +37,8 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly urlParams: Record<string, string> = {},
 		readonly transformApiData: ApiDataTransformer
 	) {
-		this.interval = this.timeBucketToInterval(timeBucket);
+		this.interval = timeBucketToInterval(timeBucket);
 		this.endDate = this.interval.floor(new Date());
-	}
-
-	timeBucketToInterval(timeBucket: CandleTimeBucket) {
-		const [durationStr, timeUnit] = timeBucket.split(/(?=[mhd])/) as [`${number}`, TimeUnit];
-		const timeUnitInterval = timeUnitIntervals[timeUnit];
-		const duration = Number(durationStr);
-		return timeUnitInterval.every(duration)!;
 	}
 
 	get loadingInitialData() {
