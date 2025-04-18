@@ -123,6 +123,8 @@
 
 		return (colors: ChartColors): TvChartOptions => {
 			return {
+				handleScroll: false,
+				handleScale: false,
 				layout: { textColor: colors.textExtraLight },
 				crosshair: { vertLine: { visible: true } },
 				rightPriceScale: { visible: false },
