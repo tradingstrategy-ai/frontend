@@ -271,13 +271,13 @@
 	}
 
 	.tv-chart {
-		--c-bullish-0: hsl(from var(--c-bullish) h s l / 0%);
-		--c-bearish-0: hsl(from var(--c-bearish) h s l / 0%);
-		--c-bullish-30: hsl(from var(--c-bullish) h s l / 30%);
-		--c-bearish-30: hsl(from var(--c-bearish) h s l / 30%);
+		--c-bullish-0: color-mix(in srgb, transparent, var(--c-bullish) 0.1%);
+		--c-bullish-30: color-mix(in srgb, transparent, var(--c-bullish) 30%);
+		--c-bearish-0: color-mix(in srgb, transparent, var(--c-bearish) 0.1%);
+		--c-bearish-30: color-mix(in srgb, transparent, var(--c-bearish) 30%);
 		--c-neutral: var(--c-text-ultra-light);
-		--c-neutral-0: hsl(from var(--c-text-ultra-light) h s l / 0%);
-		--c-neutral-30: hsl(from var(--c-text-ultra-light) h s l / 30%);
+		--c-neutral-0: color-mix(in srgb, transparent, var(--c-neutral) 0.1%);
+		--c-neutral-30: color-mix(in srgb, transparent, var(--c-neutral) 30%);
 		--c-axis-border: var(--cm-light, var(--c-text-light)) var(--cm-dark, var(--c-text-extra-light));
 		--c-grid-lines: var(--cm-light, var(--c-box-3)) var(--cm-dark, var(--c-box-1));
 		--c-pane-separator: var(--cm-light, var(--c-text-extra-light)) var(--cm-dark, var(--c-text-ultra-light));

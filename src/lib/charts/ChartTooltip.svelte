@@ -41,7 +41,7 @@
 		z-index: 3;
 		padding: 1.125rem;
 		border-radius: var(--radius-md);
-		background: hsl(from var(--c-text-inverted) h s l / 80%);
+		background: color-mix(in srgb, transparent, var(--c-text-inverted) 80%);
 		box-shadow: var(--shadow-3);
 		white-space: nowrap;
 		pointer-events: none;

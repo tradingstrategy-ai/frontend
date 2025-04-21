@@ -169,7 +169,7 @@
 		:is(h3, .no-tvl-data) {
 			position: absolute;
 			padding: 0.125em 0.25em;
-			background: hsl(from var(--c-body) h s l / 60%);
+			background: color-mix(in srgb, transparent, var(--c-body) 60%);
 		}
 
 		h3 {
