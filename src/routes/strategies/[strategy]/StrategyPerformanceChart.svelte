@@ -1,17 +1,17 @@
 <script lang="ts">
 	import type { TimeSpan, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+	import type { ChartColors } from '$lib/charts/TvChart.svelte';
 	import {
-		TickMarkType,
 		type AreaSeriesPartialOptions,
 		type TickMarkFormatter,
-		type UTCTimestamp
+		type UTCTimestamp,
+		TickMarkType
 	} from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
-	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
-	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -85,7 +85,7 @@
 		{/snippet}
 
 		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
-			<TvChart {loading} options={getChartOptions(timeSpan)}>
+			<PerformanceChart {loading} options={getChartOptions(timeSpan)} {timeSpan} {visibleRange}>
 				<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
 
 				{#if visibleRange && firstVisibleDataItem}
@@ -99,10 +99,6 @@
 					{/each}
 				{/if}
 
-				{#if visibleRange}
-					<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
-				{/if}
-
 				{#snippet tooltip({ point, time }, [performance])}
 					{#if performance}
 						{@const withTime = timeSpan.timeBucket !== '1d'}
@@ -112,7 +108,7 @@
 						</ChartTooltip>
 					{/if}
 				{/snippet}
-			</TvChart>
+			</PerformanceChart>
 
 			<footer class="benchmark-tokens">
 				{#each benchmarkTokens as benchmark}
