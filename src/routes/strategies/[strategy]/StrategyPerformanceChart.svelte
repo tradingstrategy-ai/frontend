@@ -1,12 +1,14 @@
 <script lang="ts">
-	import type { TvChartOptions } from '$lib/charts/types';
+	import type { TimeSpan, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-	import type { AreaSeriesPartialOptions, TickMarkFormatter, UTCTimestamp } from 'lightweight-charts';
-	import { TickMarkType } from 'lightweight-charts';
-	import { OptionGroup } from '$lib/helpers/option-group.svelte';
-	import { TimeSpans } from '$lib/charts/time-span';
+	import {
+		TickMarkType,
+		type AreaSeriesPartialOptions,
+		type TickMarkFormatter,
+		type UTCTimestamp
+	} from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
-	import Profitability, { getProfitInfo } from '$lib/components/Profitability.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
 	import TvChart, { type ChartColors } from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
@@ -15,9 +17,8 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
-	import { dateToTs, formatMonthYear, getVisibleRange, normalizeDataForInterval } from '$lib/charts/helpers';
-	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
+	import { formatMonthYear } from '$lib/charts/helpers';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -25,37 +26,16 @@
 
 	let { strategy }: Props = $props();
 
-	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
-	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
-
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
-
-	let data = $derived(normalizeDataForInterval($chartClient.data ?? [], timeSpan.interval));
-
-	let visibleRange = $derived(getVisibleRange(data, timeSpan));
-
-	let firstVisibleDataItem = $derived.by(() => {
-		if (!visibleRange) return;
-		const startTs = dateToTs(visibleRange[0]);
-		return data.findLast(({ time }) => time === startTs) ?? data[0];
-	});
-
-	let periodPerformance = $derived.by(() => {
-		if (!visibleRange || !firstVisibleDataItem) return;
-		const startTs = dateToTs(visibleRange[0]);
-		const startValue = startTs > data[0].time ? firstVisibleDataItem.value : 0;
-		const endValue = data.at(-1)?.value;
-		return getProfitInfo(relativeProfitability(startValue, endValue));
-	});
 
 	let benchmarkTokens = $derived(getBenchmarkTokens(strategy));
 
 	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
 
-	let chartOptions = $derived.by(() => {
+	function getChartOptions(timeSpan: TimeSpan) {
 		// use custom tickMarkFormatter for 3M time span (only show month/year markers)
 		const tickMarkFormatter: TickMarkFormatter =
-			timeSpans.selected === '3M'
+			timeSpan.spanDays === 90
 				? (ts, type) => (type <= TickMarkType.Month ? formatMonthYear(ts as UTCTimestamp) : '')
 				: () => null;
 
@@ -73,7 +53,7 @@
 				}
 			};
 		};
-	});
+	}
 
 	const seriesOptions: AreaSeriesPartialOptions = {
 		priceLineVisible: false,
@@ -94,56 +74,58 @@
 </script>
 
 <div class="strategy-performance-chart">
-	<ChartContainer {timeSpans}>
-		{#snippet title()}
+	<ChartContainer data={$chartClient.data}>
+		{#snippet title(timeSpan, periodPerformance)}
 			<div class="period-performance">
-				{#if periodPerformance !== undefined}
+				{#if periodPerformance}
 					<Profitability of={periodPerformance.value} boxed />
 					<span class="performance-label">{timeSpan.performanceLabel}</span>
 				{/if}
 			</div>
 		{/snippet}
 
-		<TvChart {loading} options={chartOptions}>
-			<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
+		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
+			<TvChart {loading} options={getChartOptions(timeSpan)}>
+				<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
 
-			{#if visibleRange && firstVisibleDataItem}
-				{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
-					<BenchmarkSeries
-						{token}
-						timeBucket={timeSpan.timeBucket}
-						firstDataItem={firstVisibleDataItem}
-						endDate={visibleRange[1]}
-					/>
-				{/each}
-			{/if}
-
-			{#if visibleRange}
-				<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
-			{/if}
-
-			{#snippet tooltip({ point, time }, [performance])}
-				{#if performance}
-					{@const withTime = ['1W', '1M'].includes(timeSpans.selected)}
-					<ChartTooltip {point}>
-						<h4><Timestamp date={time as number} {withTime} /></h4>
-						<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
-					</ChartTooltip>
+				{#if visibleRange && firstVisibleDataItem}
+					{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
+						<BenchmarkSeries
+							{token}
+							timeBucket={timeSpan.timeBucket}
+							firstDataItem={firstVisibleDataItem}
+							endDate={visibleRange[1]}
+						/>
+					{/each}
 				{/if}
-			{/snippet}
-		</TvChart>
 
-		<footer class="benchmark-tokens">
-			{#each benchmarkTokens as benchmark}
-				<label style:--color={benchmark.color}>
-					<input type="checkbox" name="benchmarks" bind:checked={benchmark.checked} />
-					{benchmark.symbol}
-					<span class="performance" class:skeleton={benchmark.loading}>
-						{formatPercent(benchmark.periodPerformance, 1, 1, { signDisplay: 'exceptZero' })}
-					</span>
-				</label>
-			{/each}
-		</footer>
+				{#if visibleRange}
+					<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
+				{/if}
+
+				{#snippet tooltip({ point, time }, [performance])}
+					{#if performance}
+						{@const withTime = timeSpan.timeBucket !== '1d'}
+						<ChartTooltip {point}>
+							<h4><Timestamp date={time as number} {withTime} /></h4>
+							<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+						</ChartTooltip>
+					{/if}
+				{/snippet}
+			</TvChart>
+
+			<footer class="benchmark-tokens">
+				{#each benchmarkTokens as benchmark}
+					<label style:--color={benchmark.color}>
+						<input type="checkbox" name="benchmarks" bind:checked={benchmark.checked} />
+						{benchmark.symbol}
+						<span class="performance" class:skeleton={benchmark.loading}>
+							{formatPercent(benchmark.periodPerformance, 1, 1, { signDisplay: 'exceptZero' })}
+						</span>
+					</label>
+				{/each}
+			</footer>
+		{/snippet}
 	</ChartContainer>
 </div>
 

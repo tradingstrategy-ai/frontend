@@ -1,15 +1,42 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { OptionGroup } from '$lib/helpers/option-group.svelte';
+	import type { SimpleDataItem, TimeSpan } from './types';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
+	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { dateToTs, getVisibleRange, normalizeDataForInterval } from './helpers';
+	import { relativeProfitability } from '$lib/helpers/profit';
 
 	type Props = {
-		timeSpans: OptionGroup;
-		title?: Snippet | string;
-		children: Snippet;
+		data: [number, number][] | undefined;
+		title?: Snippet<[TimeSpan, Maybe<ProfitInfo>]> | string;
+		children: Snippet<[TimeSpan, Maybe<ProfitInfo>, SimpleDataItem[], Maybe<[Date, Date]>, Maybe<SimpleDataItem>]>;
 	};
 
-	let { timeSpans, title, children }: Props = $props();
+	let { data, title, children }: Props = $props();
+
+	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
+
+	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
+
+	let normalizedData = $derived(normalizeDataForInterval(data ?? [], timeSpan.interval));
+
+	let visibleRange = $derived(getVisibleRange(normalizedData, timeSpan));
+
+	let firstVisibleDataItem = $derived.by(() => {
+		if (!visibleRange) return;
+		const startTs = dateToTs(visibleRange[0]);
+		return normalizedData.findLast(({ time }) => time === startTs) ?? normalizedData[0];
+	});
+
+	let periodPerformance = $derived.by(() => {
+		if (!visibleRange || !firstVisibleDataItem) return;
+		const startTs = dateToTs(visibleRange[0]);
+		const startValue = startTs > normalizedData[0].time ? firstVisibleDataItem.value : 0;
+		const endValue = normalizedData.at(-1)?.value;
+		return getProfitInfo(relativeProfitability(startValue, endValue));
+	});
 </script>
 
 <div class="chart-container" data-css-props>
@@ -17,12 +44,12 @@
 		{#if typeof title === 'string'}
 			<h2>{title}</h2>
 		{:else}
-			<div>{@render title?.()}</div>
+			<div>{@render title?.(timeSpan, periodPerformance)}</div>
 		{/if}
 		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
 	</header>
 
-	{@render children()}
+	{@render children(timeSpan, periodPerformance, normalizedData, visibleRange, firstVisibleDataItem)}
 </div>
 
 <style>
