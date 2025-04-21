@@ -2,16 +2,10 @@
 	import type { TimeSpan, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { ChartColors } from '$lib/charts/TvChart.svelte';
-	import {
-		type AreaSeriesPartialOptions,
-		type TickMarkFormatter,
-		type UTCTimestamp,
-		TickMarkType
-	} from 'lightweight-charts';
+	import { type TickMarkFormatter, type UTCTimestamp, TickMarkType } from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
-	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -55,15 +49,6 @@
 		};
 	}
 
-	const seriesOptions: AreaSeriesPartialOptions = {
-		priceLineVisible: false,
-		crosshairMarkerVisible: false
-	};
-
-	const priceScaleOptions = {
-		scaleMargins: { top: 0.1, bottom: 0.1 }
-	};
-
 	// fetch chart data (initial load or when chartClient is updated)
 	$effect(() => {
 		chartClient.fetch({
@@ -85,9 +70,14 @@
 		{/snippet}
 
 		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
-			<PerformanceChart {loading} options={getChartOptions(timeSpan)} {timeSpan} {visibleRange}>
-				<AreaSeries {data} direction={periodPerformance?.direction} options={seriesOptions} {priceScaleOptions} />
-
+			<PerformanceChart
+				{loading}
+				options={getChartOptions(timeSpan)}
+				{timeSpan}
+				{periodPerformance}
+				{data}
+				{visibleRange}
+			>
 				{#if visibleRange && firstVisibleDataItem}
 					{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
 						<BenchmarkSeries

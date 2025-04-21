@@ -1,31 +1,42 @@
-<!--
-	Page to display the strategy performance.
--->
 <script lang="ts">
+	import type { TvChartOptions } from '$lib/charts/types';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { Alert, SegmentedControl } from '$lib/components';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 
-	export let data;
-	const { state, strategy } = data;
+	let { data } = $props();
+
+	const { strategyState, strategy } = data;
 
 	const dataSources = {
 		'Live trading': { table: 'live_stats', chart: 'live_trading' },
 		Backtesting: { table: 'backtested_stats', chart: 'backtest' }
 	} as const;
 
-	let selectedDataSource: keyof typeof dataSources = 'Live trading';
-	$: dataSource = dataSources[selectedDataSource];
+	let selectedDataSource: keyof typeof dataSources = $state('Live trading');
+	let dataSource = $derived(dataSources[selectedDataSource]);
 
-	// svelte-ignore reactive_declaration_non_reactive_property
-	$: tableData = state.stats.long_short_metrics_latest?.[dataSource.table];
+	let tableData = $derived(strategyState.stats.long_short_metrics_latest?.[dataSource.table]);
+
+	const options: TvChartOptions = {
+		crosshair: { vertLine: { visible: true } },
+		localization: { priceFormatter: formatPercent },
+		timeScale: {
+			lockVisibleTimeRangeOnResize: true
+		}
+	};
 
 	const chartClient = getChartClient(fetch, strategy.url);
-	$: chartClient.fetch({
-		type: 'compounding_unrealised_trading_profitability_sampled',
-		source: dataSource.chart
+
+	$effect(() => {
+		chartClient.fetch({
+			type: 'compounding_unrealised_trading_profitability_sampled',
+			source: dataSource.chart
+		});
 	});
 </script>
 
@@ -44,18 +55,15 @@
 		</p>
 	</div>
 
-	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval }}>
-		<p slot="subtitle" class="chart-subtitle">
+	<ChartContainer title="Performance" data={$chartClient.data}>
+		<!-- <p slot="subtitle" class="chart-subtitle">
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
-		</p>
-		<PerformanceChart
-			loading={$chartClient.loading}
-			data={normalizeDataForInterval($chartClient.data ?? [], interval)}
-			formatValue={formatPercent}
-			{spanDays}
-		/>
+		</p> -->
+		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
+			<PerformanceChart loading={$chartClient.loading} {options} {timeSpan} {periodPerformance} {data} {visibleRange} />
+		{/snippet}
 	</ChartContainer>
 
 	{#if tableData}

@@ -30,7 +30,8 @@
 	const options: LineSeriesPartialOptions = {
 		lineVisible: false,
 		priceLineColor: 'gray',
-		crosshairMarkerVisible: false
+		crosshairMarkerVisible: false,
+		lastValueVisible: false
 	};
 
 	let priceScaleCalculator = $derived(alwaysVisible ? undefined : () => null);
