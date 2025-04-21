@@ -207,6 +207,8 @@
 				align-items: center;
 				font: var(--f-ui-sm-medium);
 				letter-spacing: var(--ls-ui-sm);
+				/* NOTE: There's no way to remove alpha-channel with color-mix, so have to use */
+				/* relative color syntax here (not supported by Mobile Safari < 16.4 ) */
 				color: hsl(from var(--color) h s l / 100%);
 			}
 
