@@ -8,7 +8,7 @@
 		type SeriesPartialOptionsMap,
 		type SeriesType
 	} from 'lightweight-charts';
-	import type { DataFeed, PriceScaleCalculator, SeriesCallback, TvDataItem } from './types';
+	import type { ChartCallbackReturnType, DataFeed, PriceScaleCalculator, SeriesCallback, TvDataItem } from './types';
 	import { type Snippet, mount, unmount, untrack } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
@@ -66,11 +66,21 @@
 	});
 
 	// call callback (on initial load and whenever callback is updated)
-	// push to event loop to allow series init to complete
 	$effect(() => {
+		let teardown: ChartCallbackReturnType = undefined;
+
+		// push to event loop to allow series init to complete
 		if (callback && series) {
-			setTimeout(() => series && callback({ chart, series }));
+			setTimeout(() => {
+				if (series) teardown = callback({ chart, colors, series });
+			});
 		}
+
+		// if callback returned a teardown fn, run it and clear it
+		return () => {
+			teardown?.();
+			teardown = undefined;
+		};
 	});
 
 	// apply default priceScale options and any custom ones provided as prop

@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import type { DataItem, IChartApi, ISeriesApi, MouseEventParams, Point, SeriesType, Time } from 'lightweight-charts';
-	import type { ChartCallback, TvChartOptions } from './types';
+	import type { ChartCallback, ChartCallbackReturnType, TvChartOptions } from './types';
 	import { getContext, setContext } from 'svelte';
 
 	const contextKey = Symbol();
@@ -59,7 +59,7 @@
 		loading?: boolean;
 		grid?: boolean;
 		crosshairs?: boolean;
-		options?: TvChartOptions | ((colors: ChartColors) => TvChartOptions);
+		options?: TvChartOptions;
 		callback?: ChartCallback;
 		children?: Snippet;
 		tooltip?: Snippet<[ActiveTooltipParams, TooltipData]>;
@@ -93,13 +93,6 @@
 	});
 
 	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
-
-	let resolvedOptions = $derived.by(() => {
-		if (options instanceof Function) {
-			return colors && options(colors);
-		}
-		return options;
-	});
 
 	function getBaseOptions(style: CSSStyleDeclaration, colors: ChartColors): TvChartOptions {
 		return {
@@ -166,15 +159,23 @@
 
 	// apply custom chart options
 	$effect(() => {
-		if (resolvedOptions) chart?.applyOptions(resolvedOptions);
+		if (options) chart?.applyOptions(options);
 	});
 
 	// call callback (after chart created and whenever callback is updated)
-	// push to event loop to allow series init to complete
 	$effect(() => {
-		if (chart && callback) {
-			setTimeout(() => callback({ chart }));
+		let teardown: ChartCallbackReturnType = undefined;
+
+		// push to event loop to allow series init to complete
+		if (chart && colors && callback) {
+			setTimeout(() => (teardown = callback({ chart, colors })));
 		}
+
+		// if callback returned a teardown fn, run it and clear it
+		return () => {
+			teardown?.();
+			teardown = undefined;
+		};
 	});
 
 	// decorate chart.addSeries and chart.removeSeries to add/remove series to/from local registry
@@ -197,7 +198,7 @@
 
 	// toggle visibility of y-axis scale based on screen size (unless visibility is explicitly set)
 	$effect(() => {
-		const visible = resolvedOptions?.rightPriceScale?.visible ?? !isMobile.current;
+		const visible = options?.rightPriceScale?.visible ?? !isMobile.current;
 		chart?.applyOptions({ rightPriceScale: { visible } });
 	});
 

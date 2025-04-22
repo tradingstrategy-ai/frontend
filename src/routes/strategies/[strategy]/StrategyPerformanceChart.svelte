@@ -1,8 +1,6 @@
 <script lang="ts">
-	import type { TimeSpan, TvChartOptions } from '$lib/charts/types';
+	import type { ChartCallbackParam, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-	import type { ChartColors } from '$lib/charts/TvChart.svelte';
-	import { type TickMarkFormatter, type UTCTimestamp, TickMarkType } from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
@@ -10,7 +8,6 @@
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import { formatMonthYear } from '$lib/charts/helpers';
 
 	type Props = {
 		strategy: ConnectedStrategyInfo;
@@ -24,27 +21,22 @@
 
 	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
 
-	function getChartOptions(timeSpan: TimeSpan) {
-		// use custom tickMarkFormatter for 3M time span (only show month/year markers)
-		const tickMarkFormatter: TickMarkFormatter =
-			timeSpan.spanDays === 90
-				? (ts, type) => (type <= TickMarkType.Month ? formatMonthYear(ts as UTCTimestamp) : '')
-				: () => null;
+	const options: TvChartOptions = {
+		handleScroll: false,
+		handleScale: false,
+		crosshair: { vertLine: { visible: true } },
+		rightPriceScale: { visible: false },
+		timeScale: {
+			borderVisible: false,
+			lockVisibleTimeRangeOnResize: true
+		}
+	};
 
-		return (colors: ChartColors): TvChartOptions => {
-			return {
-				handleScroll: false,
-				handleScale: false,
-				layout: { textColor: colors.textExtraLight },
-				crosshair: { vertLine: { visible: true } },
-				rightPriceScale: { visible: false },
-				timeScale: {
-					borderVisible: false,
-					lockVisibleTimeRangeOnResize: true,
-					tickMarkFormatter
-				}
-			};
-		};
+	// use light color for text labels (set via callback where `colors` is available)
+	function callback({ chart, colors }: ChartCallbackParam) {
+		chart.applyOptions({
+			layout: { textColor: colors.textExtraLight }
+		});
 	}
 
 	// fetch chart data (initial load or when chartClient is updated)
@@ -68,14 +60,7 @@
 		{/snippet}
 
 		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
-			<PerformanceChart
-				{loading}
-				options={getChartOptions(timeSpan)}
-				{timeSpan}
-				{periodPerformance}
-				{data}
-				{visibleRange}
-			>
+			<PerformanceChart {loading} {options} {timeSpan} {periodPerformance} {data} {visibleRange} {callback}>
 				{#if visibleRange && firstVisibleDataItem}
 					{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
 						<BenchmarkSeries

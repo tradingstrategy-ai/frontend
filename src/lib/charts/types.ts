@@ -11,6 +11,7 @@ import type {
 	TimeChartOptions,
 	UTCTimestamp
 } from 'lightweight-charts';
+import type { ChartColors } from './TvChart.svelte';
 
 export type TvChartOptions = DeepPartial<TimeChartOptions>;
 
@@ -49,8 +50,10 @@ export type DataFeed<T extends TvDataItem = TvDataItem> = {
 	fetchData: (ticks?: number) => void;
 };
 
-export type ChartCallbackParam = { chart: IChartApi };
-export type ChartCallback = ({ chart }: ChartCallbackParam) => void;
+export type ChartCallbackReturnType = (() => void) | void;
+
+export type ChartCallbackParam = { chart: IChartApi; colors: ChartColors };
+export type ChartCallback = ({ chart }: ChartCallbackParam) => ChartCallbackReturnType;
 
 export type SeriesCallbackParam = ChartCallbackParam & { series: ISeriesApi<SeriesType> };
-export type SeriesCallback = ({ chart, series }: SeriesCallbackParam) => void;
+export type SeriesCallback = ({ chart, series }: SeriesCallbackParam) => ChartCallbackReturnType;
