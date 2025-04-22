@@ -1,21 +1,29 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
+	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
 	import type { SimpleDataItem, TimeSpan } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import TvChart from './TvChart.svelte';
+	import AreaSeries from './AreaSeries.svelte';
+	import BaselineSeries from './BaselineSeries.svelte';
+	import ChartTooltip from './ChartTooltip.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { dateToTs, getVisibleRange, normalizeDataForInterval } from './helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
+	import { formatPercent } from '$lib/helpers/formatters';
 
-	type Props = {
+	type Props = ComponentProps<typeof TvChart> & {
 		data: [number, number][] | undefined;
 		title?: Snippet<[TimeSpan, Maybe<ProfitInfo>]> | string;
 		subtitle?: Snippet;
-		children: Snippet<[TimeSpan, Maybe<ProfitInfo>, SimpleDataItem[], Maybe<[Date, Date]>, Maybe<SimpleDataItem>]>;
+		series?: Snippet<[TimeSpan, [Date, Date], SimpleDataItem]>;
+		footer?: Snippet;
 	};
 
-	let { data, title, subtitle, children }: Props = $props();
+	let { data, title, subtitle, series, footer, ...restProps }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -38,6 +46,15 @@
 		const endValue = normalizedData.at(-1)?.value;
 		return getProfitInfo(relativeProfitability(startValue, endValue));
 	});
+
+	const seriesOptions: AreaSeriesPartialOptions = {
+		priceLineVisible: false,
+		crosshairMarkerVisible: false
+	};
+
+	const priceScaleOptions: DeepPartial<PriceScaleOptions> = {
+		scaleMargins: { top: 0.1, bottom: 0.1 }
+	};
 </script>
 
 <div class="chart-container" data-css-props>
@@ -51,7 +68,34 @@
 		<p>{@render subtitle?.()}</p>
 	</header>
 
-	{@render children(timeSpan, periodPerformance, normalizedData, visibleRange, firstVisibleDataItem)}
+	<TvChart {...restProps}>
+		<AreaSeries
+			data={normalizedData}
+			direction={periodPerformance?.direction}
+			options={seriesOptions}
+			{priceScaleOptions}
+		/>
+
+		{#if visibleRange && firstVisibleDataItem}
+			{@render series?.(timeSpan, visibleRange, firstVisibleDataItem)}
+		{/if}
+
+		{#if visibleRange}
+			<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
+		{/if}
+
+		{#snippet tooltip({ point, time }, [performance])}
+			{#if performance}
+				{@const withTime = timeSpan.timeBucket !== '1d'}
+				<ChartTooltip {point}>
+					<h4><Timestamp date={time as number} {withTime} /></h4>
+					<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+				</ChartTooltip>
+			{/if}
+		{/snippet}
+	</TvChart>
+
+	{@render footer?.()}
 </div>
 
 <style>
@@ -100,6 +144,20 @@
 					letter-spacing: var(ls-ui-sm);
 				}
 			}
+		}
+
+		h4 {
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--ls-ui-sm, normal);
+			color: var(--c-text-extra-light);
+			margin-bottom: 0.25rem;
+		}
+
+		.tooltip-value {
+			font: var(--f-ui-lg-medium);
+			letter-spacing: var(--ls-ui-lg, normal);
+			color: var(--c-text);
+			text-align: right;
 		}
 	}
 </style>

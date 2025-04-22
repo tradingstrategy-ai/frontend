@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { ChartCallbackParam, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-	import ChartContainer from '$lib/charts/ChartContainer.svelte';
-	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
@@ -49,7 +48,7 @@
 </script>
 
 <div class="strategy-performance-chart">
-	<ChartContainer data={$chartClient.data}>
+	<StrategyChart {loading} data={$chartClient.data} {options} {callback}>
 		{#snippet title(timeSpan, periodPerformance)}
 			<div class="period-performance">
 				{#if periodPerformance}
@@ -59,20 +58,18 @@
 			</div>
 		{/snippet}
 
-		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
-			<PerformanceChart {loading} {options} {timeSpan} {periodPerformance} {data} {visibleRange} {callback}>
-				{#if visibleRange && firstVisibleDataItem}
-					{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
-						<BenchmarkSeries
-							{token}
-							timeBucket={timeSpan.timeBucket}
-							firstDataItem={firstVisibleDataItem}
-							endDate={visibleRange[1]}
-						/>
-					{/each}
-				{/if}
-			</PerformanceChart>
+		{#snippet series(timeSpan, visibleRange, firstVisibleDataItem)}
+			{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
+				<BenchmarkSeries
+					{token}
+					timeBucket={timeSpan.timeBucket}
+					firstDataItem={firstVisibleDataItem}
+					endDate={visibleRange[1]}
+				/>
+			{/each}
+		{/snippet}
 
+		{#snippet footer()}
 			<footer class="benchmark-tokens">
 				{#each benchmarkTokens as benchmark}
 					<label style:--color={benchmark.color}>
@@ -85,7 +82,7 @@
 				{/each}
 			</footer>
 		{/snippet}
-	</ChartContainer>
+	</StrategyChart>
 </div>
 
 <style>
@@ -121,7 +118,7 @@
 			}
 		}
 
-		.benchmark-tokens {
+		footer {
 			margin-top: 0.75rem;
 			margin-bottom: -0.25rem;
 			display: flex;

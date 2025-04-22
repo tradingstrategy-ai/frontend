@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { TvChartOptions } from '$lib/charts/types';
 	import { getChartClient } from 'trade-executor/client/chart';
-	import ChartContainer from '$lib/charts/ChartContainer.svelte';
-	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
@@ -55,16 +54,13 @@
 		</p>
 	</div>
 
-	<ChartContainer title="Performance" data={$chartClient.data}>
+	<StrategyChart title="Performance" loading={$chartClient.loading} data={$chartClient.data} {options}>
 		{#snippet subtitle()}
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
 		{/snippet}
-		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
-			<PerformanceChart loading={$chartClient.loading} {options} {timeSpan} {periodPerformance} {data} {visibleRange} />
-		{/snippet}
-	</ChartContainer>
+	</StrategyChart>
 
 	{#if tableData}
 		<LongShortTable {tableData} />
