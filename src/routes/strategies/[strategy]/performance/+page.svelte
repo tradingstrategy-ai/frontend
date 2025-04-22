@@ -1,11 +1,9 @@
 <script lang="ts">
-	import type { TvChartOptions } from '$lib/charts/types';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
-	import { formatPercent } from '$lib/helpers/formatters';
 
 	let { data } = $props();
 
@@ -20,14 +18,6 @@
 	let dataSource = $derived(dataSources[selectedDataSource]);
 
 	let tableData = $derived(strategyState.stats.long_short_metrics_latest?.[dataSource.table]);
-
-	const options: TvChartOptions = {
-		crosshair: { vertLine: { visible: true } },
-		localization: { priceFormatter: formatPercent },
-		timeScale: {
-			lockVisibleTimeRangeOnResize: true
-		}
-	};
 
 	const chartClient = getChartClient(fetch, strategy.url);
 
@@ -54,7 +44,7 @@
 		</p>
 	</div>
 
-	<StrategyChart title="Performance" loading={$chartClient.loading} data={$chartClient.data} {options}>
+	<StrategyChart title="Performance" loading={$chartClient.loading} data={$chartClient.data}>
 		{#snippet subtitle()}
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>

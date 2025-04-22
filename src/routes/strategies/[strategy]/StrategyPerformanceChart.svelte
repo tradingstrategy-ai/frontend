@@ -23,12 +23,8 @@
 	const options: TvChartOptions = {
 		handleScroll: false,
 		handleScale: false,
-		crosshair: { vertLine: { visible: true } },
 		rightPriceScale: { visible: false },
-		timeScale: {
-			borderVisible: false,
-			lockVisibleTimeRangeOnResize: true
-		}
+		timeScale: { borderVisible: false }
 	};
 
 	// use light color for text labels (set via callback where `colors` is available)

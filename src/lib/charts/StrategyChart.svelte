@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
 	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TimeSpan } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -14,6 +14,7 @@
 	import { dateToTs, getVisibleRange, normalizeDataForInterval } from './helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
+	import { merge } from '$lib/helpers/object';
 
 	type Props = ComponentProps<typeof TvChart> & {
 		data: [number, number][] | undefined;
@@ -23,7 +24,7 @@
 		footer?: Snippet;
 	};
 
-	let { data, title, subtitle, series, footer, ...restProps }: Props = $props();
+	let { data, options, title, subtitle, series, footer, ...restProps }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -47,6 +48,14 @@
 		return getProfitInfo(relativeProfitability(startValue, endValue));
 	});
 
+	const chartOptions: TvChartOptions = {
+		crosshair: { vertLine: { visible: true } },
+		localization: { priceFormatter: formatPercent },
+		timeScale: {
+			lockVisibleTimeRangeOnResize: true
+		}
+	};
+
 	const seriesOptions: AreaSeriesPartialOptions = {
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
@@ -68,7 +77,7 @@
 		<p>{@render subtitle?.()}</p>
 	</header>
 
-	<TvChart {...restProps}>
+	<TvChart options={merge({ ...chartOptions }, options)} {...restProps}>
 		<AreaSeries
 			data={normalizedData}
 			direction={periodPerformance?.direction}
