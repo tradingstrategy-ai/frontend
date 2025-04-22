@@ -6,6 +6,9 @@
 	import TvChart from './TvChart.svelte';
 	import BaselineSeries from './BaselineSeries.svelte';
 	import AreaSeries from './AreaSeries.svelte';
+	import ChartTooltip from './ChartTooltip.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
+	import { formatPercent } from '$lib/helpers/formatters';
 
 	type Props = ComponentProps<typeof TvChart> & {
 		timeSpan: TimeSpan;
@@ -34,4 +37,30 @@
 	{#if visibleRange}
 		<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
 	{/if}
+
+	{#snippet tooltip({ point, time }, [performance])}
+		{#if performance}
+			{@const withTime = timeSpan.timeBucket !== '1d'}
+			<ChartTooltip {point}>
+				<h4><Timestamp date={time as number} {withTime} /></h4>
+				<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+			</ChartTooltip>
+		{/if}
+	{/snippet}
 </TvChart>
+
+<style>
+	h4 {
+		font: var(--f-ui-sm-medium);
+		letter-spacing: var(--ls-ui-sm, normal);
+		color: var(--c-text-extra-light);
+		margin-bottom: 0.25rem;
+	}
+
+	.tooltip-value {
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--ls-ui-lg, normal);
+		color: var(--c-text);
+		text-align: right;
+	}
+</style>

@@ -7,8 +7,6 @@
 	import PerformanceChart from '$lib/charts/PerformanceChart.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
-	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
-	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
@@ -88,16 +86,6 @@
 						/>
 					{/each}
 				{/if}
-
-				{#snippet tooltip({ point, time }, [performance])}
-					{#if performance}
-						{@const withTime = timeSpan.timeBucket !== '1d'}
-						<ChartTooltip {point}>
-							<h4><Timestamp date={time as number} {withTime} /></h4>
-							<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
-						</ChartTooltip>
-					{/if}
-				{/snippet}
 			</PerformanceChart>
 
 			<footer class="benchmark-tokens">
@@ -146,20 +134,6 @@
 				letter-spacing: var(--ls-ui-sm);
 				color: var(--c-text-extra-light);
 			}
-		}
-
-		h4 {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--ls-ui-sm, normal);
-			color: var(--c-text-extra-light);
-			margin-bottom: 0.25rem;
-		}
-
-		.tooltip-value {
-			font: var(--f-ui-lg-medium);
-			letter-spacing: var(--ls-ui-lg, normal);
-			color: var(--c-text);
-			text-align: right;
 		}
 
 		.benchmark-tokens {
