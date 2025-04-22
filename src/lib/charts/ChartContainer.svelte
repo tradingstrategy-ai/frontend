@@ -11,10 +11,11 @@
 	type Props = {
 		data: [number, number][] | undefined;
 		title?: Snippet<[TimeSpan, Maybe<ProfitInfo>]> | string;
+		subtitle?: Snippet;
 		children: Snippet<[TimeSpan, Maybe<ProfitInfo>, SimpleDataItem[], Maybe<[Date, Date]>, Maybe<SimpleDataItem>]>;
 	};
 
-	let { data, title, children }: Props = $props();
+	let { data, title, subtitle, children }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -47,6 +48,7 @@
 			<div>{@render title?.(timeSpan, periodPerformance)}</div>
 		{/if}
 		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
+		<p>{@render subtitle?.()}</p>
 	</header>
 
 	{@render children(timeSpan, periodPerformance, normalizedData, visibleRange, firstVisibleDataItem)}
@@ -86,6 +88,17 @@
 			h2 {
 				font: var(--f-heading-md-medium);
 				letter-spacing: var(--f-heading-md-spacing, normal);
+			}
+
+			p {
+				grid-column: 1 / -1;
+				font: var(--f-ui-md-roman);
+				letter-spacing: var(ls-ui-md);
+
+				@media (--viewport-xs) {
+					font: var(--f-ui-sm-roman);
+					letter-spacing: var(ls-ui-sm);
+				}
 			}
 		}
 	}

@@ -56,11 +56,11 @@
 	</div>
 
 	<ChartContainer title="Performance" data={$chartClient.data}>
-		<!-- <p slot="subtitle" class="chart-subtitle">
+		{#snippet subtitle()}
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
-		</p> -->
+		{/snippet}
 		{#snippet children(timeSpan, periodPerformance, data, visibleRange, firstVisibleDataItem)}
 			<PerformanceChart loading={$chartClient.loading} {options} {timeSpan} {periodPerformance} {data} {visibleRange} />
 		{/snippet}
@@ -84,12 +84,6 @@
 			gap: 1rem;
 			align-items: center;
 			justify-content: space-between;
-		}
-
-		.chart-subtitle {
-			color: var(--c-text-extra-light);
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--ls-ui-md, normal);
 		}
 	}
 </style>
