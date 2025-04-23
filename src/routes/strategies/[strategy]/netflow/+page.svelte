@@ -1,12 +1,9 @@
-<!--
-	Page to display netflow, total equity and such.
--->
 <script lang="ts">
-	import { min } from 'd3-array';
 	import type { RawTick, Quote } from '$lib/chart';
 	import type { TimeInterval } from 'd3-time';
+	import type { TvChartOptions } from '$lib/charts/types.js';
 	import { parseDate } from '$lib/helpers/date';
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 	import { getChartClient } from 'trade-executor/client/chart';
 
@@ -20,6 +17,10 @@
 
 	const netflowClient = getChartClient(fetch, strategy.url);
 	netflowClient.fetch({ type: 'netflow', source: 'live_trading' });
+
+	const options: TvChartOptions = {
+		localization: { priceFormatter: formatDollar }
+	};
 
 	// Sum netflow values within the same chart interval
 	function summarizeNetflowData(data: RawTick[], interval: TimeInterval) {
@@ -36,23 +37,6 @@
 			return acc;
 		}, [] as Quote[]);
 	}
-
-	// merge two Quote arrays
-	function mergeData(data1: Quote[], data2: Quote[]) {
-		const merged: Quote[] = [];
-		while (data1.length || data2.length) {
-			const nextDate = min([data1[0]?.DT as Date, data2[0]?.DT as Date])!;
-			const quote: Quote = { DT: nextDate };
-			if (nextDate.valueOf() === data1[0]?.DT.valueOf()) {
-				Object.assign(quote, data1.shift());
-			}
-			if (nextDate.valueOf() === data2[0]?.DT.valueOf()) {
-				Object.assign(quote, data2.shift());
-			}
-			merged.push(quote);
-		}
-		return merged;
-	}
 </script>
 
 <svelte:head>
@@ -63,40 +47,19 @@
 <section class="tvl">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
-	<ChartContainer title="Total value locked" let:timeSpan={{ spanDays, interval }}>
-		<p slot="subtitle">
+	<StrategyChart title="Total value locked" loading={$tvlClient.loading} data={$tvlClient.data} {options}>
+		{#snippet subtitle()}
 			Learn more about
 			<a class="body-link" href="/glossary/total-equity" target="_blank">TVL</a> and
 			<a class="body-link" href="/glossary/netflow" target="_blank">Netflow</a>
 			metrics and how they're calculated.
-		</p>
-		<PerformanceChart
-			loading={$tvlClient.loading}
-			data={mergeData(
-				normalizeDataForInterval($tvlClient.data ?? [], interval),
-				summarizeNetflowData($netflowClient.data ?? [], interval)
-			)}
-			formatValue={formatDollar}
-			{spanDays}
-			studies={['Netflow']}
-		/>
-	</ChartContainer>
+		{/snippet}
+	</StrategyChart>
 </section>
 
 <style>
 	.tvl {
 		display: grid;
 		gap: var(--space-lg);
-
-		/* hide ChartIQ panel controls */
-		:global(:is(.stx-ico-focus, .stx-ico-down, .stx-ico-up, .stx-ico-close)) {
-			display: none;
-		}
-
-		:global(.stx-panel-study .stx-panel-title) {
-			@media (--viewport-sm-up) {
-				display: unset;
-			}
-		}
 	}
 </style>
