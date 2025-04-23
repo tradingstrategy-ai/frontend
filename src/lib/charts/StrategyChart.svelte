@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
 	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -11,16 +11,16 @@
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
-	import { dateToTs, getVisibleRange, normalizeDataForInterval } from './helpers';
+	import { getDataRange, normalizeDataForInterval, tsToDate } from './helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
 	import { formatPercent } from '$lib/helpers/formatters';
 	import { merge } from '$lib/helpers/object';
 
 	type Props = ComponentProps<typeof TvChart> & {
 		data: [number, number][] | undefined;
-		title?: Snippet<[TimeSpan, Maybe<ProfitInfo>]> | string;
+		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet;
-		series?: Snippet<[TimeSpan, [Date, Date], SimpleDataItem]>;
+		series?: Snippet<[SimpleDataItem[], TimeSpan, [Date, Date]]>;
 		footer?: Snippet;
 	};
 
@@ -32,21 +32,13 @@
 
 	let normalizedData = $derived(normalizeDataForInterval(data ?? [], timeSpan.interval));
 
-	let visibleRange = $derived(getVisibleRange(normalizedData, timeSpan));
+	let timeSpanRange = $derived(getDataRange(normalizedData, timeSpan));
 
-	let firstVisibleDataItem = $derived.by(() => {
-		if (!visibleRange) return;
-		const startTs = dateToTs(visibleRange[0]);
-		return normalizedData.findLast(({ time }) => time === startTs) ?? normalizedData[0];
-	});
+	let visibleData: SimpleDataItem[] = $state([]);
 
-	let periodPerformance = $derived.by(() => {
-		if (!visibleRange || !firstVisibleDataItem) return;
-		const startTs = dateToTs(visibleRange[0]);
-		const startValue = startTs > normalizedData[0].time ? firstVisibleDataItem.value : 0;
-		const endValue = normalizedData.at(-1)?.value;
-		return getProfitInfo(relativeProfitability(startValue, endValue));
-	});
+	let periodPerformance = $derived(
+		getProfitInfo(relativeProfitability(visibleData[0]?.value, visibleData.at(-1)?.value))
+	);
 
 	const chartOptions: TvChartOptions = {
 		crosshair: { vertLine: { visible: true } },
@@ -83,14 +75,15 @@
 			direction={periodPerformance?.direction}
 			options={seriesOptions}
 			{priceScaleOptions}
+			onVisibleDataChange={(data) => (visibleData = data as SimpleDataItem[])}
 		/>
 
-		{#if visibleRange && firstVisibleDataItem}
-			{@render series?.(timeSpan, visibleRange, firstVisibleDataItem)}
+		{#if timeSpanRange}
+			{@render series?.(normalizedData, timeSpan, timeSpanRange)}
 		{/if}
 
-		{#if visibleRange}
-			<BaselineSeries interval={timeSpan.interval} range={visibleRange} setChartVisibleRange />
+		{#if timeSpanRange}
+			<BaselineSeries interval={timeSpan.interval} range={timeSpanRange} setChartVisibleRange />
 		{/if}
 
 		{#snippet tooltip({ point, time }, [performance])}

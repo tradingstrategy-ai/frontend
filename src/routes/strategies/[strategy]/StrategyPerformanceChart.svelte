@@ -54,14 +54,9 @@
 			</div>
 		{/snippet}
 
-		{#snippet series(timeSpan, visibleRange, firstVisibleDataItem)}
+		{#snippet series(data, timeSpan, range)}
 			{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
-				<BenchmarkSeries
-					{token}
-					timeBucket={timeSpan.timeBucket}
-					firstDataItem={firstVisibleDataItem}
-					endDate={visibleRange[1]}
-				/>
+				<BenchmarkSeries {token} {data} timeBucket={timeSpan.timeBucket} {range} />
 			{/each}
 		{/snippet}
 

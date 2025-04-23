@@ -25,6 +25,7 @@
 		paneIndex?: number;
 		priceScaleOptions?: DeepPartial<PriceScaleOptions>;
 		priceScaleCalculator?: PriceScaleCalculator;
+		onVisibleDataChange?: (data: TvDataItem[]) => void;
 		callback?: SeriesCallback;
 		children?: Snippet;
 	};
@@ -37,11 +38,12 @@
 		paneIndex = 0,
 		priceScaleOptions,
 		priceScaleCalculator,
+		onVisibleDataChange,
 		callback,
 		children
 	}: Props = $props();
 
-	let visibileLogicalRange: LogicalRange | null = null;
+	let visibleLogicalRange: LogicalRange | null = null;
 
 	let seriesContent: Record<string, any> | undefined = undefined;
 
@@ -101,10 +103,10 @@
 
 	// Get currently visible chart data segment
 	function getVisibleData(): TvDataItem[] {
-		if (!series || !visibileLogicalRange) return [];
+		if (!series || !visibleLogicalRange) return [];
 
 		const data = series.data() as TvDataItem[];
-		const { from, to } = visibileLogicalRange;
+		const { from, to } = visibleLogicalRange;
 
 		const barsInfo = series.barsInLogicalRange({ from, to });
 		if (!barsInfo) return [];
@@ -115,11 +117,13 @@
 	}
 
 	function handleRangeChange(range: LogicalRange | null) {
-		visibileLogicalRange = range;
+		visibleLogicalRange = range;
 
 		if (dataFeed?.hasMoreData && range && range.from < LOGICAL_RANGE_THRESHOLD) {
 			dataFeed.fetchData();
 		}
+
+		onVisibleDataChange?.(getVisibleData());
 	}
 
 	// fetch initial data whenever a new dataFeed is provided

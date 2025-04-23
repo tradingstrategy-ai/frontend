@@ -117,13 +117,13 @@ export function normalizeDataForInterval(data: [UnixTimestamp, number][], interv
 }
 
 /**
- * Get the visible date range to display based on the chart data and time span
+ * Get the date range for given chart data and time span (ending at the last date in the data)
  *
  * @param data chart data array
  * @param timeSpan selected time span
  * @returns start/end date tuple
  */
-export function getVisibleRange(data: SimpleDataItem[], timeSpan: TimeSpan): [Date, Date] | undefined {
+export function getDataRange(data: SimpleDataItem[], timeSpan: TimeSpan): [Date, Date] | undefined {
 	if (data.length === 0) return;
 
 	const endDate = tsToDate(data.at(-1)!.time);
