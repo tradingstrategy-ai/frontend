@@ -8,7 +8,7 @@
 		type SeriesPartialOptionsMap,
 		type SeriesType
 	} from 'lightweight-charts';
-	import type { DataFeed, PriceScaleCalculator, SeriesCallback, TvDataItem } from './types';
+	import type { ChartCallbackReturnType, DataFeed, PriceScaleCalculator, SeriesCallback, TvDataItem } from './types';
 	import { type Snippet, mount, unmount, untrack } from 'svelte';
 	import SeriesContent from './SeriesContent.svelte';
 	import { getChartContext } from './TvChart.svelte';
@@ -25,6 +25,7 @@
 		paneIndex?: number;
 		priceScaleOptions?: DeepPartial<PriceScaleOptions>;
 		priceScaleCalculator?: PriceScaleCalculator;
+		onVisibleDataChange?: (data: TvDataItem[]) => void;
 		callback?: SeriesCallback;
 		children?: Snippet;
 	};
@@ -37,11 +38,12 @@
 		paneIndex = 0,
 		priceScaleOptions,
 		priceScaleCalculator,
+		onVisibleDataChange,
 		callback,
 		children
 	}: Props = $props();
 
-	let visibileLogicalRange: LogicalRange | null = null;
+	let visibleLogicalRange: LogicalRange | null = null;
 
 	let seriesContent: Record<string, any> | undefined = undefined;
 
@@ -66,11 +68,21 @@
 	});
 
 	// call callback (on initial load and whenever callback is updated)
-	// push to event loop to allow series init to complete
 	$effect(() => {
+		let teardown: ChartCallbackReturnType = undefined;
+
+		// push to event loop to allow series init to complete
 		if (callback && series) {
-			setTimeout(() => series && callback({ chart, series }));
+			setTimeout(() => {
+				if (series) teardown = callback({ chart, colors, series });
+			});
 		}
+
+		// if callback returned a teardown fn, run it and clear it
+		return () => {
+			teardown?.();
+			teardown = undefined;
+		};
 	});
 
 	// apply default priceScale options and any custom ones provided as prop
@@ -91,10 +103,10 @@
 
 	// Get currently visible chart data segment
 	function getVisibleData(): TvDataItem[] {
-		if (!series || !visibileLogicalRange) return [];
+		if (!series || !visibleLogicalRange) return [];
 
 		const data = series.data() as TvDataItem[];
-		const { from, to } = visibileLogicalRange;
+		const { from, to } = visibleLogicalRange;
 
 		const barsInfo = series.barsInLogicalRange({ from, to });
 		if (!barsInfo) return [];
@@ -105,11 +117,13 @@
 	}
 
 	function handleRangeChange(range: LogicalRange | null) {
-		visibileLogicalRange = range;
+		visibleLogicalRange = range;
 
 		if (dataFeed?.hasMoreData && range && range.from < LOGICAL_RANGE_THRESHOLD) {
 			dataFeed.fetchData();
 		}
+
+		onVisibleDataChange?.(getVisibleData());
 	}
 
 	// fetch initial data whenever a new dataFeed is provided

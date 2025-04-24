@@ -2,19 +2,24 @@
 	import type { ApiCandle, CandleTimeBucket, SimpleDataItem } from './types';
 	import type { BenchmarkToken } from 'trade-executor/helpers/benchmark.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
-	import { tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import Series from './Series.svelte';
+	import { tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { fetchPublicApi } from '$lib/helpers/public-api';
-	import { tsToDate } from './helpers';
+	import { dateToTs, tsToDate } from './helpers';
 
 	type Props = {
 		token: BenchmarkToken;
+		data: SimpleDataItem[];
 		timeBucket: CandleTimeBucket;
-		firstDataItem: SimpleDataItem;
-		endDate: Date;
+		range: [Date, Date];
 	};
 
-	let { token, timeBucket, firstDataItem, endDate }: Props = $props();
+	let { token, data, timeBucket, range }: Props = $props();
+
+	let initialDataValue = $derived.by(() => {
+		const initialTs = dateToTs(range[0]);
+		return data.find((i) => i.time === initialTs)?.value ?? 0;
+	});
 
 	const options: LineSeriesPartialOptions = {
 		color: token.color,
@@ -23,41 +28,41 @@
 		crosshairMarkerVisible: false
 	};
 
-	let data: SimpleDataItem[] = $state([]);
+	let benchmarkData: SimpleDataItem[] = $state([]);
 
 	$effect(() => {
-		fetchData();
+		fetchBenchmarkData();
 	});
 
-	async function fetchData() {
+	async function fetchBenchmarkData() {
 		token.loading = true;
-		data = [];
+		benchmarkData = [];
 
 		const pairCandles = await fetchPublicApi(fetch, 'candles', {
 			pair_id: token.pairId,
 			exchange_type: token.exchangeType,
 			candle_type: 'price',
 			time_bucket: timeBucket,
-			start: tsToDate(firstDataItem.time).toISOString().slice(0, 19),
-			end: endDate.toISOString().slice(0, 19)
+			start: range[0].toISOString().slice(0, 19),
+			end: range[1].toISOString().slice(0, 19)
 		});
 
 		const candles = (pairCandles[token.pairId] ?? []) as ApiCandle[];
 
-		const initialValue = candles[0]?.c ?? 0;
+		const initialBenchmarkValue = candles[0]?.c ?? 0;
 
-		data = candles.map(({ ts, c }) => {
-			const percentChange = (c - initialValue) / initialValue;
+		benchmarkData = candles.map(({ ts, c }) => {
+			const percentChange = (c - initialBenchmarkValue) / initialBenchmarkValue;
 			return {
 				time: tsToUnixTimestamp(ts),
-				value: percentChange + firstDataItem.value,
+				value: percentChange + initialDataValue,
 				customValues: { percentChange }
 			};
 		});
 
-		token.periodPerformance = data.at(-1)?.customValues?.percentChange as number | undefined;
+		token.periodPerformance = benchmarkData.at(-1)?.customValues?.percentChange as number | undefined;
 		token.loading = false;
 	}
 </script>
 
-<Series type={LineSeries} {data} {options} />
+<Series type={LineSeries} data={benchmarkData} {options} />

@@ -66,6 +66,8 @@ export type WebChartClientData = Partial<WebChartData> & {
 	error?: Error;
 };
 
+export type ChartClient = ReturnType<typeof getChartClient>;
+
 export function getChartClient(fetchFn: Fetch, executorUrl: string) {
 	const { set, subscribe } = writable({} as WebChartClientData);
 

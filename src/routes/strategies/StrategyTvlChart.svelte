@@ -1,37 +1,27 @@
 <script lang="ts">
-	import { type RawTick, ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { Alert } from '$lib/components';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import type { TvChartOptions } from '$lib/charts/types';
 	import { formatDollar } from '$lib/helpers/formatters';
 
-	export let tvlData: RawTick[] | undefined;
+	export let tvlData: [number, number][] | undefined;
 
-	const chartOptions = {
-		controls: { home: null },
-		allowScroll: false,
-		allowZoom: false
+	const options: TvChartOptions = {
+		handleScroll: false,
+		handleScale: false
 	};
+
+	function formatValue(value: number, min = 0, max = min || 1) {
+		return formatDollar(value, min, max);
+	}
 </script>
 
 <div class="strategy-tvl-chart">
-	<ChartContainer title="Strategy TVL" let:timeSpan={{ spanDays, interval }}>
-		<span slot="subtitle">
+	<StrategyChart title="Strategy TVL" data={tvlData} {options} {formatValue}>
+		{#snippet subtitle()}
 			<a class="body-link" target="_blank" href="/glossary/total-value-locked">Total value locked</a>
 			in live strategies
-		</span>
-
-		{#if tvlData}
-			<PerformanceChart
-				options={chartOptions}
-				data={normalizeDataForInterval(tvlData ?? [], interval)}
-				formatValue={formatDollar}
-				{spanDays}
-			/>
-		{:else}
-			<div class="error">
-				<Alert size="md" title="Error">Strategy TVL data failed to load.</Alert>
-			</div>
-		{/if}
-	</ChartContainer>
+		{/snippet}
+	</StrategyChart>
 </div>
 
 <style>
@@ -45,14 +35,6 @@
 
 			@media (--viewport-xs) {
 				--chart-aspect-ratio: 2;
-			}
-		}
-
-		.error {
-			padding: 1.5rem;
-
-			@media (--viewport-md-down) {
-				padding: 1rem;
 			}
 		}
 	}

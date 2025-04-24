@@ -7,6 +7,7 @@
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import CandleVolumeSeries from '$lib/charts/CandleVolumeSeries.svelte';
 	import ChartHeader from './ChartHeader.svelte';
+	import SeriesLabel from './SeriesLabel.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
@@ -80,7 +81,7 @@
 
 	<TvChart grid crosshairs {options} loading={priceFeed.loadingInitialData}>
 		<CandleSeries dataFeed={priceFeed} priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}>
-			<h3 class="price">Price</h3>
+			<SeriesLabel heading bottom>Price</SeriesLabel>
 		</CandleSeries>
 
 		<CandleVolumeSeries
@@ -95,10 +96,10 @@
 			paneIndex={1}
 			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
 		>
-			<h3 class="tvl">TVL & Volume</h3>
+			<SeriesLabel heading>TVL & Volume</SeriesLabel>
 
 			{#if !tvlFeed.hasData}
-				<div class="no-tvl-data">
+				<SeriesLabel right class="no-tvl-data">
 					<Tooltip>
 						<span slot="trigger">
 							No TVL data
@@ -109,7 +110,7 @@
 							length.
 						</span>
 					</Tooltip>
-				</div>
+				</SeriesLabel>
 			{/if}
 		</CandleSeries>
 
@@ -166,32 +167,7 @@
 	.pair-candle-chart {
 		display: grid;
 
-		:is(h3, .no-tvl-data) {
-			position: absolute;
-			padding: 0.125em 0.25em;
-			background: color-mix(in srgb, transparent, var(--c-body) 60%);
-		}
-
-		h3 {
-			font: var(--f-ui-sm-roman);
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--c-text-light);
-
-			&.price {
-				bottom: 0.25rem;
-			}
-
-			&.tvl {
-				top: 0.25rem;
-			}
-		}
-
-		.no-tvl-data {
-			top: 0.25rem;
-			right: 0.25rem;
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--ls-ui-sm);
+		:global(.no-tvl-data) {
 			color: var(--c-warning);
 			pointer-events: auto;
 

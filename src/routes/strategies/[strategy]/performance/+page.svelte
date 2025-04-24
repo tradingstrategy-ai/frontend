@@ -1,31 +1,32 @@
-<!--
-	Page to display the strategy performance.
--->
 <script lang="ts">
 	import { getChartClient } from 'trade-executor/client/chart';
-	import { ChartContainer, PerformanceChart, normalizeDataForInterval } from '$lib/chart';
-	import { Alert, SegmentedControl } from '$lib/components';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 
-	export let data;
-	const { state, strategy } = data;
+	let { data } = $props();
+
+	const { strategyState, strategy } = data;
 
 	const dataSources = {
 		'Live trading': { table: 'live_stats', chart: 'live_trading' },
 		Backtesting: { table: 'backtested_stats', chart: 'backtest' }
 	} as const;
 
-	let selectedDataSource: keyof typeof dataSources = 'Live trading';
-	$: dataSource = dataSources[selectedDataSource];
+	let selectedDataSource: keyof typeof dataSources = $state('Live trading');
+	let dataSource = $derived(dataSources[selectedDataSource]);
 
-	// svelte-ignore reactive_declaration_non_reactive_property
-	$: tableData = state.stats.long_short_metrics_latest?.[dataSource.table];
+	let tableData = $derived(strategyState.stats.long_short_metrics_latest?.[dataSource.table]);
 
 	const chartClient = getChartClient(fetch, strategy.url);
-	$: chartClient.fetch({
-		type: 'compounding_unrealised_trading_profitability_sampled',
-		source: dataSource.chart
+
+	$effect(() => {
+		chartClient.fetch({
+			type: 'compounding_unrealised_trading_profitability_sampled',
+			source: dataSource.chart
+		});
 	});
 </script>
 
@@ -44,19 +45,18 @@
 		</p>
 	</div>
 
-	<ChartContainer title="Performance" let:timeSpan={{ spanDays, interval }}>
-		<p slot="subtitle" class="chart-subtitle">
+	<StrategyChart
+		title="Performance"
+		loading={$chartClient.loading}
+		data={$chartClient.data}
+		formatValue={formatPercent}
+	>
+		{#snippet subtitle()}
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
-		</p>
-		<PerformanceChart
-			loading={$chartClient.loading}
-			data={normalizeDataForInterval($chartClient.data ?? [], interval)}
-			formatValue={formatPercent}
-			{spanDays}
-		/>
-	</ChartContainer>
+		{/snippet}
+	</StrategyChart>
 
 	{#if tableData}
 		<LongShortTable {tableData} />
@@ -76,12 +76,6 @@
 			gap: 1rem;
 			align-items: center;
 			justify-content: space-between;
-		}
-
-		.chart-subtitle {
-			color: var(--c-text-extra-light);
-			font: var(--f-ui-md-medium);
-			letter-spacing: var(--ls-ui-md, normal);
 		}
 	}
 </style>
