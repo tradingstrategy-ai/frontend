@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { TimeInterval } from 'd3-time';
-	import type { HistogramData, HistogramSeriesPartialOptions, UTCTimestamp } from 'lightweight-charts';
+	import type { AutoscaleInfo, HistogramData, HistogramSeriesPartialOptions, UTCTimestamp } from 'lightweight-charts';
+	import type { SimpleDataItem, TvDataItem } from './types';
 	import { HistogramSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
 	import { getChartContext } from './TvChart.svelte';
 	import { dateToTs, tsToDate } from './helpers';
 	import { merge } from '$lib/helpers/object';
+	import { max } from 'd3-array';
 
 	const { colors } = getChartContext();
 
@@ -19,7 +21,7 @@
 		options?: HistogramSeriesPartialOptions;
 	};
 
-	let { data, interval, options, priceScaleOptions, ...restProps }: Props = $props();
+	let { data, interval, options, priceScaleOptions, priceScaleCalculator, ...restProps }: Props = $props();
 
 	// Sum netflow values within the same chart interval
 	let summarizedData = $derived(
@@ -42,12 +44,24 @@
 	};
 
 	const defaultPriceScaleOptions = { scaleMargins: { top: 0.2, bottom: 0 } };
+
+	// prevent price scale from scaling too small (smallest max value = 1000)
+	function netflowPriceScaleCalculator(data: TvDataItem[]): AutoscaleInfo | null {
+		const maxNetflowValue = max(data as SimpleDataItem[], ({ value }) => value) ?? 0;
+		return {
+			priceRange: {
+				minValue: 0,
+				maxValue: Math.max(1000, maxNetflowValue)
+			}
+		};
+	}
 </script>
 
 <Series
 	type={HistogramSeries}
 	data={summarizedData}
-	priceScaleOptions={priceScaleOptions ?? defaultPriceScaleOptions}
 	options={merge({ ...baseOptions }, options)}
+	priceScaleOptions={priceScaleOptions ?? defaultPriceScaleOptions}
+	priceScaleCalculator={priceScaleCalculator ?? netflowPriceScaleCalculator}
 	{...restProps}
 />
