@@ -23,8 +23,8 @@
 
 	let { data, interval, options, priceScaleOptions, priceScaleCalculator, ...restProps }: Props = $props();
 
-	// Sum netflow values within the same chart interval
-	let summarizedData = $derived(
+	// Bin netflow values by chart interval
+	let binnedData = $derived(
 		data.reduce((acc, [ts, value]) => {
 			const date = tsToDate(ts);
 			const normalizedTs = dateToTs(interval.floor(date));
@@ -59,7 +59,7 @@
 
 <Series
 	type={HistogramSeries}
-	data={summarizedData}
+	data={binnedData}
 	options={merge({ ...baseOptions }, options)}
 	priceScaleOptions={priceScaleOptions ?? defaultPriceScaleOptions}
 	priceScaleCalculator={priceScaleCalculator ?? netflowPriceScaleCalculator}
