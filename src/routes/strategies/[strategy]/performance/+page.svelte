@@ -4,6 +4,7 @@
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
+	import { formatPercent } from '$lib/helpers/formatters';
 
 	let { data } = $props();
 
@@ -44,7 +45,12 @@
 		</p>
 	</div>
 
-	<StrategyChart title="Performance" loading={$chartClient.loading} data={$chartClient.data}>
+	<StrategyChart
+		title="Performance"
+		loading={$chartClient.loading}
+		data={$chartClient.data}
+		formatValue={formatPercent}
+	>
 		{#snippet subtitle()}
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>

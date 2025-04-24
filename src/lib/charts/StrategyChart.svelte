@@ -18,13 +18,14 @@
 
 	type Props = ComponentProps<typeof TvChart> & {
 		data: [number, number][] | undefined;
+		formatValue: Formatter<number>;
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet;
 		series?: Snippet<[SimpleDataItem[], TimeSpan, [Date, Date]]>;
 		footer?: Snippet;
 	};
 
-	let { data, options, title, subtitle, series, footer, ...restProps }: Props = $props();
+	let { data, formatValue, options, title, subtitle, series, footer, ...restProps }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -42,7 +43,7 @@
 
 	const chartOptions: TvChartOptions = {
 		crosshair: { vertLine: { visible: true } },
-		localization: { priceFormatter: formatPercent },
+		localization: { priceFormatter: formatValue },
 		timeScale: {
 			lockVisibleTimeRangeOnResize: true
 		}
@@ -91,7 +92,7 @@
 				{@const withTime = timeSpan.timeBucket !== '1d'}
 				<ChartTooltip {point}>
 					<h4><Timestamp date={time as number} {withTime} /></h4>
-					<div class="tooltip-value">{formatPercent(performance.value, 2)}</div>
+					<div class="tooltip-value">{formatValue(performance.value, 2)}</div>
 				</ChartTooltip>
 			{/if}
 		{/snippet}

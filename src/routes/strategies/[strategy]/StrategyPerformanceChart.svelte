@@ -44,7 +44,7 @@
 </script>
 
 <div class="strategy-performance-chart">
-	<StrategyChart {loading} data={$chartClient.data} {options} {callback}>
+	<StrategyChart {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
 		{#snippet title(timeSpan, periodPerformance)}
 			<div class="period-performance">
 				{#if periodPerformance}

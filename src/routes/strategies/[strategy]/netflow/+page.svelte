@@ -15,10 +15,6 @@
 
 	const netflowClient = getChartClient(fetch, strategy.url);
 	netflowClient.fetch({ type: 'netflow', source: 'live_trading' });
-
-	const options: TvChartOptions = {
-		localization: { priceFormatter: formatDollar }
-	};
 </script>
 
 <svelte:head>
@@ -33,7 +29,7 @@
 		title="Total value locked"
 		loading={$tvlClient.loading || $netflowClient.loading}
 		data={$tvlClient.data}
-		{options}
+		formatValue={formatDollar}
 	>
 		{#snippet subtitle()}
 			Learn more about
