@@ -112,6 +112,18 @@
 
 	.chart-container {
 		:global([data-css-props]) {
+			--chart-aspect-ratio: 2;
+
+			@media (--viewport-sm-down) {
+				--chart-aspect-ratio: 1.75;
+			}
+
+			@media (--viewport-xs) {
+				--chart-aspect-ratio: 1.25;
+			}
+		}
+
+		:global([data-css-props]) {
 			@media (--viewport-xs) {
 				--segmented-control-font: var(--f-ui-xs-medium);
 				--segmented-control-letter-spacing: var(--ls-ui-xs);
