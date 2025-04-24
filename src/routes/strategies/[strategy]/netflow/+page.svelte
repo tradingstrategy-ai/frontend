@@ -5,16 +5,18 @@
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 	import { getChartClient } from 'trade-executor/client/chart';
 
-	export let data;
+	let { data } = $props();
 	const { strategy } = data;
 
 	const startedAt = strategy.summary_statistics.key_metrics.started_at?.value;
 
 	const tvlClient = getChartClient(fetch, strategy.url);
-	tvlClient.fetch({ type: 'total_equity', source: 'live_trading' });
-
 	const netflowClient = getChartClient(fetch, strategy.url);
-	netflowClient.fetch({ type: 'netflow', source: 'live_trading' });
+
+	$effect(() => {
+		tvlClient.fetch({ type: 'total_equity', source: 'live_trading' });
+		netflowClient.fetch({ type: 'netflow', source: 'live_trading' });
+	});
 </script>
 
 <svelte:head>
