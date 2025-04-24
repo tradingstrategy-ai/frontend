@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { TvChartOptions } from '$lib/charts/types.js';
 	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import NetflowSeries from '$lib/charts/NetflowSeries.svelte';
+	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
 	import { getChartClient } from 'trade-executor/client/chart';
 
@@ -22,7 +22,7 @@
 	<meta name="description" content="TVL and Netflow time-series charts for {strategy.name} strategy" />
 </svelte:head>
 
-<section class="tvl">
+<section class="netflow-page">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
 	<StrategyChart
@@ -39,14 +39,25 @@
 		{/snippet}
 
 		{#snippet series(_, timeSpan)}
-			<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1} />
+			<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>
+				<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
+			</NetflowSeries>
 		{/snippet}
 	</StrategyChart>
 </section>
 
 <style>
-	.tvl {
+	.netflow-page {
 		display: grid;
 		gap: var(--space-lg);
+
+		:global(.netflow-title) {
+			top: 0.5rem;
+			left: var(--chart-container-padding);
+			padding-inline: 0;
+			font: var(--f-heading-xs-medium);
+			letter-spacing: var(--ls-heading-sm, normal);
+			color: var(--c-text);
+		}
 	}
 </style>
