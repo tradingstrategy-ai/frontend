@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-	import type { ApiCandle, CandleTimeBucket, TvChartOptions } from './types';
+	import type { TimeBucket } from '$lib/schemas/utility';
+	import type { ApiCandle, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { CandleDataFeed, apiCandleToDataItem, tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
@@ -17,7 +18,7 @@
 
 	type Props = {
 		reserve: LendingReserve;
-		timeBucket: OptionGroup<CandleTimeBucket>;
+		timeBucket: OptionGroup<TimeBucket>;
 	};
 
 	let { reserve, timeBucket }: Props = $props();

@@ -84,9 +84,6 @@
     "viem": "^2.21.16",
     "zod": "^3.23.8"
   },
-  "optionalDependencies": {
-    "chartiq": "github:tradingstrategy-ai/chartiq-dist#v9.4.0"
-  },
   "overrides": {
     "vite-plugin-simple-json-server": {
       "vite": "^5.4.11"

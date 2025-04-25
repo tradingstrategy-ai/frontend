@@ -1,6 +1,6 @@
 import 'unplugin-icons/types/svelte';
 import type { CountryCode } from '$lib/helpers/geo';
-import type { CandleTimeBucket } from '$lib/chart';
+import type { TimeBucket } from '$lib/schemas/utility';
 
 // For information about these interfaces, see:
 // https://kit.svelte.dev/docs/types#app
@@ -20,7 +20,7 @@ declare global {
 		}
 
 		interface PageState {
-			timeBucket?: CandleTimeBucket;
+			timeBucket?: TimeBucket;
 		}
 
 		// interface PageData {}

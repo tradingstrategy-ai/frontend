@@ -1,5 +1,5 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { isCandleTimeBucket } from '$lib/chart';
+import { timeBucketEnum } from '$lib/schemas/utility.js';
 
 export async function load({ fetch, params, setHeaders, url }) {
 	const pair = await fetchPublicApi(fetch, 'pair-details', {
@@ -9,7 +9,7 @@ export async function load({ fetch, params, setHeaders, url }) {
 	});
 
 	const timeBucketParam = url.searchParams.get('timeBucket');
-	const timeBucket = isCandleTimeBucket(timeBucketParam) ? timeBucketParam : '1d';
+	const timeBucket = timeBucketEnum.catch('1d').parse(timeBucketParam);
 
 	// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
 	// pages are served really fast if they get popular, and also for speed test

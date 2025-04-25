@@ -1,6 +1,6 @@
 import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 import { fetchPublicApi } from '$lib/helpers/public-api';
-import { isCandleTimeBucket } from '$lib/chart/helpers';
+import { timeBucketEnum } from '$lib/schemas/utility.js';
 
 export async function load({ fetch, params, url }) {
 	const reserve = (await fetchPublicApi(fetch, 'lending-reserve/details', {
@@ -10,7 +10,7 @@ export async function load({ fetch, params, url }) {
 	})) as LendingReserve;
 
 	const timeBucketParam = url.searchParams.get('timeBucket');
-	const timeBucket = isCandleTimeBucket(timeBucketParam) ? timeBucketParam : '1d';
+	const timeBucket = timeBucketEnum.catch('1d').parse(timeBucketParam);
 
 	return { reserve, timeBucket };
 }

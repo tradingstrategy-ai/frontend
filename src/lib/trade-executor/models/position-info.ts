@@ -9,7 +9,7 @@ import type { Percent, PrimaryKeyString, USDollarAmount, USDollarPrice } from '.
 import type { State } from '../schemas/state';
 import type { PositionStatistics } from '../schemas/statistics';
 import type { PositionStatus, TradingPosition } from '../schemas/position';
-import type { TimeBucket } from '$lib/chart';
+import type { TimeBucket } from '$lib/schemas/utility';
 import { type TradeDirection, TradeDirections } from './trade-info';
 import { isNumber } from '$lib/helpers/formatters';
 

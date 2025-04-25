@@ -11,6 +11,7 @@
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
+	import { timeBucketEnum } from '$lib/schemas/utility';
 	import { getFormattedReserveUSD, isBorrowable, lendingReserveExternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -35,7 +36,8 @@
 	let borrowable = $derived(isBorrowable(reserve));
 	let showChart = $derived(borrowable && !isGhoToken);
 
-	let timeBucket = new OptionGroup(['1h', '4h', '1d', '7d', '30d'], page.state.timeBucket ?? data.timeBucket);
+	const validTimeBuckets = timeBucketEnum.exclude(['1m', '5m', '15m']).options;
+	let timeBucket = new OptionGroup(validTimeBuckets, page.state.timeBucket ?? data.timeBucket);
 
 	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
 		if (name !== 'timeBucket') return;
