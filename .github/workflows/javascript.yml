@@ -31,12 +31,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up SSH deploy keys for ChartIQ & fonts
+      - name: Set up SSH deploy key for fonts
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: |
-            ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
-            ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
@@ -74,12 +72,10 @@ jobs:
     # Skip build on master push
     if: github.event_name != 'push' || github.ref != 'refs/heads/master'
     steps:
-      - name: Set up SSH deploy keys for ChartIQ & fonts
+      - name: Set up SSH deploy key for fonts
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: |
-            ${{ secrets.SSH_DEPLOY_KEY_CHARTIQ }}
-            ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
