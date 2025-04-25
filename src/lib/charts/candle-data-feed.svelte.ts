@@ -1,6 +1,7 @@
 import type { TimeInterval } from 'd3-time';
 import type { UTCTimestamp } from 'lightweight-charts';
-import type { ApiCandle, CandleDataItem, CandleTimeBucket, DataFeed } from './types';
+import type { TimeBucket } from '$lib/schemas/utility';
+import type { ApiCandle, CandleDataItem, DataFeed } from './types';
 import { timeBucketToInterval } from './helpers';
 import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
@@ -22,8 +23,6 @@ export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
 export type ApiDataTransformer = (data: any) => CandleDataItem[];
 
 export class CandleDataFeed implements DataFeed<CandleDataItem> {
-	static timeBuckets: CandleTimeBucket[] = ['1m', '5m', '15m', '1h', '4h', '1d', '7d', '30d'];
-
 	interval: TimeInterval;
 	endDate: Date;
 	loading = $state(false);
@@ -33,7 +32,7 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 	constructor(
 		readonly fetch: Fetch,
 		readonly endpoint: string,
-		readonly timeBucket: CandleTimeBucket,
+		readonly timeBucket: TimeBucket,
 		readonly urlParams: Record<string, string> = {},
 		readonly transformApiData: ApiDataTransformer
 	) {

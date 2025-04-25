@@ -17,7 +17,7 @@ Render the pair trading page
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { CandleDataFeed } from '$lib/charts/candle-data-feed.svelte';
+	import { timeBucketEnum } from '$lib/schemas/utility';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 
 	let { data } = $props();
@@ -38,7 +38,7 @@ Render the pair trading page
 		[summary.pair_slug]: summary.pair_name
 	});
 
-	let timeBucket = new OptionGroup(CandleDataFeed.timeBuckets, page.state.timeBucket ?? data.timeBucket);
+	let timeBucket = new OptionGroup(timeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
 	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
 		if (name !== 'timeBucket') return;

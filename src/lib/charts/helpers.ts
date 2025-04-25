@@ -1,5 +1,6 @@
 import type { UTCTimestamp } from 'lightweight-charts';
-import type { CandleTimeBucket, SimpleDataItem, TimeSpan } from './types';
+import type { TimeBucket } from '$lib/schemas/utility';
+import type { SimpleDataItem, TimeSpan } from './types';
 import { type TimeInterval, utcDay, utcHour, utcMinute } from 'd3-time';
 import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 import { notFilledMarker } from '$lib/helpers/formatters';
@@ -35,7 +36,7 @@ const monthYearFormatter = new Intl.DateTimeFormat('en-GB', {
  * @param timeBucket a candle time bucket such as 15m, 4h, 1d
  * @returns a formatted date or fallback string
  */
-export function formatDate(dateValue: MaybeParsableDate, timeBucket: CandleTimeBucket) {
+export function formatDate(dateValue: MaybeParsableDate, timeBucket: TimeBucket) {
 	const date = parseDate(dateValue);
 	const formatter = timeBucket.endsWith('d') ? dateFormatter : dateTimeFormatter;
 	return date ? formatter.format(date) : notFilledMarker;
@@ -52,7 +53,7 @@ export function formatMonthYear(ts: UTCTimestamp) {
 /**
  * Convert a time bucket string (e.g., "1h", "4h", "1d") to a d3 time interval
  */
-export function timeBucketToInterval(timeBucket: CandleTimeBucket): TimeInterval {
+export function timeBucketToInterval(timeBucket: TimeBucket): TimeInterval {
 	const intervals = { m: utcMinute, h: utcHour, d: utcDay } as const;
 	const [durationStr, timeUnit] = timeBucket.split(/(?=[mhd])/) as [`${number}`, keyof typeof intervals];
 	const interval = intervals[timeUnit];

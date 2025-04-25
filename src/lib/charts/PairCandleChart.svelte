@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { ApiCandle, CandleTimeBucket, CandleDataItem, DataFeed, TvChartOptions } from './types';
+	import type { TimeBucket } from '$lib/schemas/utility';
+	import type { ApiCandle, CandleDataItem, DataFeed, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { type ApiDataTransformer, CandleDataFeed, apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -21,7 +22,7 @@
 		exchangeType: string;
 		pairId: string;
 		pairSymbol: string;
-		timeBucket: OptionGroup<CandleTimeBucket>;
+		timeBucket: OptionGroup<TimeBucket>;
 	};
 
 	let { chainSlug, exchangeType, pairId, pairSymbol, timeBucket }: Props = $props();

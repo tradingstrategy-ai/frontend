@@ -11,11 +11,10 @@ import type {
 	TimeChartOptions,
 	UTCTimestamp
 } from 'lightweight-charts';
+import type { TimeBucket } from '$lib/schemas/utility';
 import type { ChartColors } from './TvChart.svelte';
 
 export type TvChartOptions = DeepPartial<TimeChartOptions>;
-
-export type CandleTimeBucket = '1m' | '5m' | '15m' | '1h' | '4h' | '1d' | '7d' | '30d';
 
 export type ApiCandle = {
 	ts: string;
@@ -32,7 +31,7 @@ export type CandleDataItem = CandlestickData<UTCTimestamp>;
 
 export type TimeSpan = {
 	performanceLabel: string;
-	timeBucket: CandleTimeBucket;
+	timeBucket: TimeBucket;
 	spanDays?: number;
 	interval: TimeInterval;
 };

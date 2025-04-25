@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { ApiCandle, CandleTimeBucket, SimpleDataItem } from './types';
+	import type { TimeBucket } from '$lib/schemas/utility';
+	import type { ApiCandle, SimpleDataItem } from './types';
 	import type { BenchmarkToken } from 'trade-executor/helpers/benchmark.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
 	import Series from './Series.svelte';
@@ -10,7 +11,7 @@
 	type Props = {
 		token: BenchmarkToken;
 		data: SimpleDataItem[];
-		timeBucket: CandleTimeBucket;
+		timeBucket: TimeBucket;
 		range: [Date, Date];
 	};
 
