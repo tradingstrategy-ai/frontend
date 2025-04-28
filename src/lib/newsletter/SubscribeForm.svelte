@@ -108,12 +108,12 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		--text-input-letter-spacing: var(--f-mono-lg-spacing);
 		padding-block: var(--space-ss);
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(8rem, auto));
-		gap: var(--space-ml) var(--space-ms);
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem 0.875rem;
 		align-items: center;
 
-		@media (--viewport-xs) {
-			gap: var(--space-md);
+		@media (--viewport-sm-down) {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

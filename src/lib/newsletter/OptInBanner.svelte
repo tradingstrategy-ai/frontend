@@ -50,10 +50,6 @@
 			max-width: 60rem;
 		}
 
-		:global(.subscribe-form) {
-			grid-template-columns: repeat(auto-fit, minmax(17rem, auto));
-		}
-
 		.artwork {
 			display: grid;
 			place-items: center;
