@@ -10,6 +10,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 -->
 <script lang="ts">
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { turnstileSiteKey } from '$lib/config';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
 	import { TextInput, Button, Alert } from '$lib/components';
@@ -69,19 +70,31 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	};
 </script>
 
+<svelte:head>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+</svelte:head>
+
 {#if $form !== 'subscribed'}
 	<form class="subscribe-form" method="POST" action="/newsletter?/subscribe" use:enhance={enhancedSubmit}>
-		<TextInput
-			bind:value={email}
-			size="xl"
-			type="email"
-			name="email"
-			placeholder="email@example.org"
-			autocomplete="off"
-			required
-			disabled={$form === 'submitting'}
-		/>
-		<Button submit label="Subscribe" disabled={$form === 'submitting'} />
+		<div class="fields">
+			<TextInput
+				bind:value={email}
+				size="xl"
+				type="email"
+				name="email"
+				placeholder="email@example.org"
+				autocomplete="off"
+				required
+				disabled={$form === 'submitting'}
+			/>
+			<Button submit label="Subscribe" disabled={$form === 'submitting'} />
+		</div>
+
+		{#if turnstileSiteKey}
+			<div class="captcha">
+				<div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+			</div>
+		{/if}
 	</form>
 	{#if $form === 'failed'}
 		<Alert size="md">{errorMessage}</Alert>
@@ -95,16 +108,25 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 <style>
 	.subscribe-form {
-		--text-input-font: var(--f-mono-lg-regular);
-		--text-input-letter-spacing: var(--f-mono-lg-spacing);
-		padding-block: var(--space-ss);
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1rem 0.875rem;
-		align-items: center;
+		gap: inherit;
 
-		@media (--viewport-sm-down) {
-			grid-template-columns: 1fr;
+		.fields {
+			--text-input-font: var(--f-mono-lg-regular);
+			--text-input-letter-spacing: var(--f-mono-lg-spacing);
+			padding-block: 0.5rem;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem 0.875rem;
+			align-items: center;
+
+			@media (--viewport-sm-down) {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.captcha {
+			text-align: center;
 		}
 	}
 </style>
