@@ -28,6 +28,7 @@ services:
       - TS_PUBLIC_TYPESENSE_API_KEY
       - TS_PUBLIC_TYPESENSE_API_URL
       - TS_PUBLIC_DISCORD_URL
+      - TS_PUBLIC_TURNSTILE_SITE_KEY
       - TS_PUBLIC_STRATEGIES
       - TS_PUBLIC_GEO_BLOCK
       - TS_PUBLIC_ANNOUNCEMENT
@@ -41,6 +42,7 @@ services:
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
+      - TS_PRIVATE_TURNSTILE_SECRET_KEY
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
       # Datadog APM env vars
