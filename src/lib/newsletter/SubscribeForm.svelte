@@ -9,38 +9,38 @@ Embeddable <form> based component that allows subscribing to newsletter.
 ```
 -->
 <script lang="ts">
-	import type { SubmitFunction } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
 	import { TextInput, Button, Alert } from '$lib/components';
 
-	let form: HTMLFormElement;
-	let title: string;
-	let email: string;
-	let errorMessage: string;
-	let emailField: TextInput;
+	let email = $state('');
+	let errorMessage = $state('');
 
 	// finite state machine to manage form states/transitions
 	// see: https://github.com/kenkunz/svelte-fsm/wiki
-	const state = fsm('initial', {
+	const form = fsm('initial', {
 		initial: {
 			_enter() {
-				title = 'Trading Strategy Newsletter';
 				email = '';
 			},
+
 			submit: 'submitting'
 		},
 
 		submitting: {
 			success: 'subscribed',
+
 			failure: 'failed',
+
 			error: 'failed'
 		},
 
 		subscribed: {
 			_enter() {
-				title = 'Thank you!';
+				form.reset.debounce(5000);
 			},
+
 			reset: 'initial'
 		},
 
@@ -49,9 +49,11 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				const { data, error } = args[0];
 				errorMessage = (data || error)?.message || 'The subscription request failed.';
 			},
+
 			_exit() {
 				errorMessage = '';
 			},
+
 			submit: 'submitting'
 		}
 	});
@@ -61,26 +63,15 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	 * https://kit.svelte.dev/docs/form-actions#progressive-enhancement
 	 */
 	const enhancedSubmit: SubmitFunction = () => {
-		state.submit();
+		form.submit();
 		// @ts-ignore
-		return ({ result }) => state[result.type](result);
+		return ({ result }) => form[result.type](result);
 	};
-
-	export function focus(options = {}) {
-		emailField.focus(options);
-	}
 </script>
 
-{#if $state !== 'subscribed'}
-	<form
-		class="subscribe-form"
-		bind:this={form}
-		method="POST"
-		action="/newsletter?/subscribe"
-		use:enhance={enhancedSubmit}
-	>
+{#if $form !== 'subscribed'}
+	<form class="subscribe-form" method="POST" action="/newsletter?/subscribe" use:enhance={enhancedSubmit}>
 		<TextInput
-			bind:this={emailField}
 			bind:value={email}
 			size="xl"
 			type="email"
@@ -88,18 +79,18 @@ Embeddable <form> based component that allows subscribing to newsletter.
 			placeholder="email@example.org"
 			autocomplete="off"
 			required
-			disabled={$state === 'submitting'}
+			disabled={$form === 'submitting'}
 		/>
-		<Button submit label="Subscribe" disabled={$state === 'submitting'} />
+		<Button submit label="Subscribe" disabled={$form === 'submitting'} />
 	</form>
-	{#if $state === 'failed'}
-		<Alert>{errorMessage}</Alert>
+	{#if $form === 'failed'}
+		<Alert size="md">{errorMessage}</Alert>
 	{/if}
 {:else}
-	<p>
+	<Alert status="success" size="md">
 		You have successfully joined our newsletter list and will begin receiving the lastest updates and insights from
 		Trading Strategy.
-	</p>
+	</Alert>
 {/if}
 
 <style>

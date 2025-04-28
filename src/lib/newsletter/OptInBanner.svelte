@@ -1,86 +1,51 @@
 <script lang="ts">
 	import SubscribeForm from './SubscribeForm.svelte';
 
-	let banner: HTMLElement;
-	let form: SubscribeForm;
+	type Props = {
+		title?: string;
+		description?: string;
+	};
 
-	export function scrollIntoView() {
-		banner.scrollIntoView({ behavior: 'smooth' });
-		form.focus({ preventScroll: true });
-	}
+	let { title, description }: Props = $props();
 </script>
 
-<div bind:this={banner} class="newsletter-opt-in-banner">
-	{#if $$slots.artwork}
-		<div class="artwork">
-			<slot name="artwork" />
-		</div>
-	{/if}
-	<div class="form">
-		<div class="content">
-			<slot name="title">
-				<h2>Want to learn more how to profit with algorithmic trading and DeFi?</h2>
-			</slot>
-			<slot name="description">
-				<p>
-					Subscribe to Trading Strategy newsletter for updates on strategies, cryptocurrency market insights and trading
-					opportunities.
-				</p>
-			</slot>
-		</div>
-		<SubscribeForm bind:this={form} />
-	</div>
+<div class="newsletter-opt-in-banner">
+	<h2>
+		{#if title}
+			{title}
+		{:else}
+			Want to learn more how to profit with algorithmic trading and DeFi?
+		{/if}
+	</h2>
+	<p>
+		{#if description}
+			{description}
+		{:else}
+			Subscribe to Trading Strategy newsletter for updates on strategies, cryptocurrency market insights and trading
+			opportunities.
+		{/if}
+	</p>
+	<SubscribeForm />
 </div>
 
 <style>
 	.newsletter-opt-in-banner {
-		--newsletter-banner-padding: var(--space-xl);
-		background-color: var(--c-box-2);
-		border-radius: var(--radius-lg);
 		display: grid;
-		gap: var(--space-8xl);
-		grid-template-columns: repeat(auto-fit, minmax(min(20rem, calc(100vw - 10rem)), 1fr));
-		padding: var(--newsletter-banner-padding);
+		gap: 1.625rem;
+		padding: 2rem;
 		place-items: center stretch;
 		place-content: center;
+		border-radius: var(--radius-lg);
+		background-color: var(--c-box-2);
 
 		@media (--viewport-lg-up) {
-			--newsletter-banner-padding: var(--space-5xl) var(--space-4xl);
 			margin: auto;
 			max-width: 60rem;
+			padding: 3rem 2.75rem;
 		}
 
-		.artwork {
-			display: grid;
-			place-items: center;
-
-			@media (--viewport-md) {
-				padding: 2rem;
-			}
-
-			:global(svg) {
-				@media (--viewport-md-down) {
-					max-width: min(36vw, 24rem);
-					max-height: min(36vw, 24rem);
-				}
-				@media (--viewport-xs) {
-					max-width: min(64vw, 16rem);
-					max-height: min(64vw, 16rem);
-				}
-			}
-		}
-
-		.form {
-			display: grid;
-			gap: var(--space-sm);
-		}
-
-		:global([slot='title']),
 		h2 {
-			margin-bottom: var(--space-lg);
-		}
-
-		:global(h2) {
+			margin-bottom: 0;
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 
@@ -95,7 +60,8 @@
 			}
 		}
 
-		:global(p) {
+		p {
+			margin-bottom: 0;
 			font: var(--f-ui-xl-roman);
 
 			@media (--viewport-xs) {
