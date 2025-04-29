@@ -23,6 +23,13 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 	let resetCaptcha = $state<() => void>();
 
+	let captchaTheme = $state<'dark' | 'light' | 'auto'>('dark');
+
+	$effect.pre(() => {
+		const colorMode = document.documentElement.dataset.colorMode as 'dark' | 'light' | 'system';
+		captchaTheme = colorMode === 'system' ? 'auto' : colorMode;
+	});
+
 	// finite state machine to manage form states/transitions
 	// see: https://github.com/kenkunz/svelte-fsm/wiki
 	const form = fsm('initial', {
@@ -48,6 +55,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		subscribed: {
 			_enter() {
+				// @ts-ignore
 				form.reset.debounce(5000);
 			},
 
@@ -108,7 +116,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		{#if $form !== 'initial'}
 			<div class="captcha" transition:slide>
-				<Turnstile siteKey={turnstileSiteKey} bind:reset={resetCaptcha} />
+				<Turnstile siteKey={turnstileSiteKey} theme={captchaTheme} bind:reset={resetCaptcha} />
 			</div>
 		{/if}
 	</form>

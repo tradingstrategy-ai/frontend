@@ -17,7 +17,7 @@
 	};
 
 	function openDialog() {
-		currentMode = document.documentElement.dataset.colorMode ?? 'system';
+		currentMode = document.documentElement.dataset.colorMode ?? 'dark';
 		open = true;
 	}
 
