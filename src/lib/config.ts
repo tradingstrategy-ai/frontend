@@ -107,6 +107,16 @@ export const discordUrl = config((url: string) => {
 }, 'DISCORD_URL');
 
 /**
+ * Load Turnstile Site Key (Cloudflare CAPTCHA) and warn if not available
+ */
+export const turnstileSiteKey = config((key: string) => {
+	if (!key) {
+		console.warn('Turnstile Site Key not configured');
+	}
+	return key;
+}, 'TURNSTILE_SITE_KEY');
+
+/**
  * Load configured strategies.
  *
  * Strategies are configured at runtime via the TS_PUBLIC_STRATEGIES environment variable.

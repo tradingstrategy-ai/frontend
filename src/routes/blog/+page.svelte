@@ -71,12 +71,10 @@
 		{:else if pagination.next}
 			<div use:inview={{ rootMargin: '500px' }} oninview_enter={fetchNextPage}></div>
 		{:else}
-			<OptInBanner>
-				<h2 slot="title">Congratulations – you've reached the end 🎉!</h2>
-				<p slot="description">
-					Want more? Subscribe to our newsletter and get fresh posts directly to your email inbox!
-				</p>
-			</OptInBanner>
+			<OptInBanner
+				title="Congratulations – you've reached the end &nbsp;🎉"
+				description="Want more? Subscribe to our newsletter and get fresh posts directly to your email inbox!"
+			/>
 		{/if}
 	</Section>
 </main>

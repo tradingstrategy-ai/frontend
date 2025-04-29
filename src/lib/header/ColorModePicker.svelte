@@ -1,32 +1,34 @@
 <script lang="ts">
-	import { serialize } from 'cookie';
-	import { Button, Dialog } from '$lib/components';
+	import type { ColorMode } from '$lib/schemas/utility';
+	import Button from '$lib/components/Button.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 	import IconSun from '~icons/local/sun';
+	import { getColorMode, setColorMode } from '$lib/helpers/style';
 
-	export let showLabel = false;
+	type Props = {
+		showLabel?: boolean;
+	};
+
+	let { showLabel = false }: Props = $props();
 
 	const buttonLabel = 'Select color mode';
 
-	let open: boolean;
-	let currentMode: string;
+	let open = $state(false);
+	let currentMode = $state<ColorMode>('dark');
 
 	const modes = {
 		system: 'Use system setting',
 		light: 'Light mode',
 		dark: 'Dark mode'
-	};
+	} as const;
 
 	function openDialog() {
-		currentMode = document.documentElement.dataset.colorMode ?? 'system';
+		currentMode = getColorMode();
 		open = true;
 	}
 
-	function setMode(mode: string) {
-		document.documentElement.dataset.colorMode = mode;
-		document.cookie = serialize('ts-color-mode', mode, {
-			path: '/',
-			maxAge: 5 * 365 * 24 * 60 * 60
-		});
+	function setMode(mode: ColorMode) {
+		setColorMode(mode);
 		open = false;
 	}
 </script>
@@ -46,7 +48,7 @@
 		<menu>
 			{#each Object.entries(modes) as [mode, label]}
 				<li class={mode} class:active={mode === currentMode}>
-					<button on:click={() => setMode(mode)}>{label}</button>
+					<button onclick={() => setMode(mode as ColorMode)}>{label}</button>
 				</li>
 			{/each}
 		</menu>

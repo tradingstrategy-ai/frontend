@@ -78,6 +78,10 @@ export default defineConfig({
 		sourcemap: true
 	},
 
+	preview: {
+		allowedHosts: ['.tradingstrategy.ai']
+	},
+
 	// vitest configuration for unit tests (`npm run test:unit`)
 	// https://vitest.dev/config/
 	test: {
