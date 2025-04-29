@@ -10,12 +10,16 @@ Embeddable <form> based component that allows subscribing to newsletter.
 -->
 <script lang="ts">
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { ColorMode } from '$lib/schemas/utility';
+	import { enhance } from '$app/forms';
 	import { slide } from 'svelte/transition';
 	import { turnstileSiteKey } from '$lib/config';
-	import { Turnstile } from 'svelte-turnstile';
-	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
-	import { TextInput, Button, Alert } from '$lib/components';
+	import { Turnstile } from 'svelte-turnstile';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import { getColorMode } from '$lib/helpers/style';
 
 	let email = $state('');
 
@@ -23,12 +27,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 	let resetCaptcha = $state<() => void>();
 
-	let captchaTheme = $state<'dark' | 'light' | 'auto'>('dark');
-
-	$effect.pre(() => {
-		const colorMode = document.documentElement.dataset.colorMode as 'dark' | 'light' | 'system';
-		captchaTheme = colorMode === 'system' ? 'auto' : colorMode;
-	});
+	let colorMode = $state<ColorMode>('dark');
 
 	// finite state machine to manage form states/transitions
 	// see: https://github.com/kenkunz/svelte-fsm/wiki
@@ -38,11 +37,24 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				email = '';
 			},
 
-			focus: 'entering'
+			focus: 'validating'
 		},
 
-		entering: {
-			validate: 'valid'
+		validating: {
+			_enter({ from }) {
+				colorMode = getColorMode();
+				if (from !== 'initial') resetCaptcha?.();
+			},
+
+			confirm: 'valid',
+
+			deny() {
+				const message =
+					'CAPTCHA validation failed. <a target="_blank" href="https://youtu.be/4VrLQXR7mKU">Are you a bot?</a>';
+				form.error({ error: { message } });
+			},
+
+			error: 'failed'
 		},
 
 		valid: {
@@ -76,10 +88,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				errorMessage = '';
 			},
 
-			input() {
-				resetCaptcha?.();
-				return 'entering';
-			}
+			input: 'validating'
 		}
 	});
 
@@ -114,7 +123,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		{#if $form === 'failed'}
 			<div transition:slide>
-				<Alert size="md">{errorMessage}</Alert>
+				<Alert size="md">{@html errorMessage}</Alert>
 			</div>
 		{/if}
 
@@ -122,9 +131,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 			<div class="captcha" transition:slide>
 				<Turnstile
 					siteKey={turnstileSiteKey}
-					theme={captchaTheme}
+					theme={colorMode === 'system' ? 'auto' : colorMode}
 					bind:reset={resetCaptcha}
-					on:callback={form.validate}
+					on:callback={form.confirm}
+					on:error={form.deny}
 				/>
 			</div>
 		{/if}

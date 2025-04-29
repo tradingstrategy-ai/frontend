@@ -1,4 +1,6 @@
+import { serialize } from 'cookie';
 import { camelToKebab } from './formatters';
+import { type ColorMode, colorModeEnum } from '$lib/schemas/utility';
 
 /**
  * Extract CSS colors from an element; only works client-side.
@@ -38,4 +40,30 @@ function colorToRgb(color: string) {
 
 function toPct(val: string) {
 	return `${Number(val) * 100}%`;
+}
+
+/**
+ * Returns the current user-configured color mode.
+ *
+ * @throws Error when called outside of browser context (requires `document`)
+ */
+export function getColorMode(): ColorMode {
+	if (!document) throw new Error('No `document` global (should only be called in browser context)');
+
+	return colorModeEnum.catch('dark').parse(document.documentElement.dataset.colorMode);
+}
+
+/**
+ * Sets the current user-configured color mode.
+ *
+ * @throws Error when called outside of browser context (requires `document`)
+ */
+export function setColorMode(mode: ColorMode) {
+	if (!document) throw new Error('No `document` global (should only be called in browser context)');
+
+	document.documentElement.dataset.colorMode = mode;
+	document.cookie = serialize('ts-color-mode', mode, {
+		path: '/',
+		maxAge: 5 * 365 * 24 * 60 * 60
+	});
 }
