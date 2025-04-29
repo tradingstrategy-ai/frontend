@@ -10,13 +10,18 @@ Embeddable <form> based component that allows subscribing to newsletter.
 -->
 <script lang="ts">
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { slide } from 'svelte/transition';
 	import { turnstileSiteKey } from '$lib/config';
+	import { Turnstile } from 'svelte-turnstile';
 	import { enhance } from '$app/forms';
 	import fsm from 'svelte-fsm';
 	import { TextInput, Button, Alert } from '$lib/components';
 
 	let email = $state('');
+
 	let errorMessage = $state('');
+
+	let resetCaptcha = $state<() => void>();
 
 	// finite state machine to manage form states/transitions
 	// see: https://github.com/kenkunz/svelte-fsm/wiki
@@ -26,6 +31,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				email = '';
 			},
 
+			focus: 'entering'
+		},
+
+		entering: {
 			submit: 'submitting'
 		},
 
@@ -55,7 +64,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				errorMessage = '';
 			},
 
-			submit: 'submitting'
+			input() {
+				resetCaptcha?.();
+				return 'entering';
+			}
 		}
 	});
 
@@ -70,10 +82,6 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	};
 </script>
 
-<svelte:head>
-	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
-</svelte:head>
-
 {#if $form !== 'subscribed'}
 	<form class="subscribe-form" method="POST" action="/newsletter?/subscribe" use:enhance={enhancedSubmit}>
 		<div class="fields">
@@ -86,19 +94,24 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				autocomplete="off"
 				required
 				disabled={$form === 'submitting'}
+				on:focus={form.focus}
+				on:input={form.input}
 			/>
-			<Button submit label="Subscribe" disabled={$form === 'submitting'} />
+			<Button submit label="Subscribe" disabled={$form === 'submitting' || $form === 'failed'} />
 		</div>
 
-		{#if turnstileSiteKey}
-			<div class="captcha">
-				<div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+		{#if $form === 'failed'}
+			<div transition:slide>
+				<Alert size="md">{errorMessage}</Alert>
+			</div>
+		{/if}
+
+		{#if $form !== 'initial'}
+			<div class="captcha" transition:slide>
+				<Turnstile siteKey={turnstileSiteKey} bind:reset={resetCaptcha} />
 			</div>
 		{/if}
 	</form>
-	{#if $form === 'failed'}
-		<Alert size="md">{errorMessage}</Alert>
-	{/if}
 {:else}
 	<Alert status="success" size="md">
 		You have successfully joined our newsletter list and will begin receiving the lastest updates and insights from
@@ -127,6 +140,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		.captcha {
 			text-align: center;
+			height: 71.5px;
 		}
 	}
 </style>
