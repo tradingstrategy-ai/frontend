@@ -42,6 +42,10 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		},
 
 		entering: {
+			validate: 'valid'
+		},
+
+		valid: {
 			submit: 'submitting'
 		},
 
@@ -105,7 +109,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				on:focus={form.focus}
 				on:input={form.input}
 			/>
-			<Button submit label="Subscribe" disabled={$form === 'submitting' || $form === 'failed'} />
+			<Button submit label="Subscribe" disabled={$form !== 'valid'} />
 		</div>
 
 		{#if $form === 'failed'}
@@ -116,7 +120,12 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		{#if $form !== 'initial'}
 			<div class="captcha" transition:slide>
-				<Turnstile siteKey={turnstileSiteKey} theme={captchaTheme} bind:reset={resetCaptcha} />
+				<Turnstile
+					siteKey={turnstileSiteKey}
+					theme={captchaTheme}
+					bind:reset={resetCaptcha}
+					on:callback={form.validate}
+				/>
 			</div>
 		{/if}
 	</form>
