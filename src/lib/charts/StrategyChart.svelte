@@ -13,7 +13,6 @@
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { getDataRange, normalizeDataForInterval, tsToDate } from './helpers';
 	import { relativeProfitability } from '$lib/helpers/profit';
-	import { formatPercent } from '$lib/helpers/formatters';
 	import { merge } from '$lib/helpers/object';
 
 	type Props = ComponentProps<typeof TvChart> & {
