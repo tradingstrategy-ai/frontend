@@ -34,7 +34,7 @@ export function annualizedReturn(start: ParsableDate, end: ParsableDate, returnR
 	const endDate = parseDate(end);
 
 	if (!startDate || !endDate) return undefined;
-	if (endDate < startDate) throw new Error('endDate must be equal to or later than startDate');
+	if (endDate <= startDate) throw new Error('endDate must be later than startDate');
 
 	return (1 + returnRate) ** (MS_IN_YEAR / (+endDate - +startDate)) - 1;
 }
