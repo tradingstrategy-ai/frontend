@@ -13,7 +13,7 @@
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import { formatDate } from './helpers';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
-	import { relativeProfitability } from '$lib/helpers/profit';
+	import { relativeReturn } from '$lib/helpers/financial';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
 	type Props = {
@@ -78,10 +78,8 @@
 		<Series type={LineSeries} dataFeed={supplyFeed} options={supplySeriesOptions} />
 
 		{#snippet tooltip({ point, time }, [borrow, supply])}
-			{@const borrowInfo = getProfitInfo(relativeProfitability(borrow?.open, borrow?.close))}
-			{@const supplyInfo = getProfitInfo(
-				relativeProfitability(supply?.customValues?.open as MaybeNumber, supply?.value)
-			)}
+			{@const borrowInfo = getProfitInfo(relativeReturn(borrow?.open, borrow?.close))}
+			{@const supplyInfo = getProfitInfo(relativeReturn(supply?.customValues?.open as MaybeNumber, supply?.value))}
 
 			<ChartTooltip {point}>
 				<h4>{formatDate(time as number, timeBucket.selected)}</h4>

@@ -5,7 +5,7 @@
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { utcDay } from 'd3-time';
-	import { relativeProfitability } from '$lib/helpers/profit';
+	import { relativeReturn } from '$lib/helpers/financial';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
 	interface Props {
@@ -16,7 +16,7 @@
 	let { data, dateRange }: Props = $props();
 
 	// TODO: should be based on displayed data range rather than full range?
-	const relativeProfit = getProfitInfo(relativeProfitability(data[0]?.value, data.at(-1)?.value));
+	const relativeProfit = getProfitInfo(relativeReturn(data[0]?.value, data.at(-1)?.value));
 
 	// TEMPORARY HACK: filter duplicate / out-of-order items
 	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/1160

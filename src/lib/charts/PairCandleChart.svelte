@@ -14,7 +14,7 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
-	import { relativeProfitability } from '$lib/helpers/profit.js';
+	import { relativeReturn } from '$lib/helpers/financial';
 	import { formatDate } from './helpers';
 
 	type Props = {
@@ -116,8 +116,8 @@
 		</CandleSeries>
 
 		{#snippet tooltip({ point, time }, [price, volume, tvl])}
-			{@const priceInfo = getProfitInfo(relativeProfitability(price?.open, price?.close))}
-			{@const tvlInfo = getProfitInfo(relativeProfitability(tvl?.open, tvl?.close))}
+			{@const priceInfo = getProfitInfo(relativeReturn(price?.open, price?.close))}
+			{@const tvlInfo = getProfitInfo(relativeReturn(tvl?.open, tvl?.close))}
 
 			{#snippet metricsRow(label: string, property: string)}
 				<tr>
