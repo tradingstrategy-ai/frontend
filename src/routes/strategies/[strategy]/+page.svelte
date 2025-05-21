@@ -3,6 +3,7 @@
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import { isGeoBlocked } from '$lib/helpers/geo';
+	import { calculateAltCagr } from 'trade-executor/helpers/metrics';
 
 	let { data } = $props();
 	const { chain, strategy, vault, admin, ipCountry } = data;
@@ -10,6 +11,11 @@
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
+
+	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
+	// Replace API-provided CAGR metric with alternative calculated CAGR
+	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+	if (altCagr) keyMetrics.cagr = altCagr;
 </script>
 
 <svelte:head>

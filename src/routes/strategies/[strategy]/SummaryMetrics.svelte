@@ -7,8 +7,12 @@
 	import { formatCycleDuration, formatTradesPerMonth } from 'trade-executor/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
 
-	export let keyMetrics: SummaryKeyMetrics;
-	export let backtestLink: string;
+	type Props = {
+		keyMetrics: SummaryKeyMetrics;
+		backtestLink: string;
+	};
+
+	let { keyMetrics, backtestLink }: Props = $props();
 </script>
 
 <div class="summary-metrics">
