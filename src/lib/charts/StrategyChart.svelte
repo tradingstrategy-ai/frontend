@@ -11,9 +11,8 @@
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
-	import { getDataRange, normalizeDataForInterval, tsToDate } from './helpers';
-	import { relativeProfitability } from '$lib/helpers/profit';
-	import { formatPercent } from '$lib/helpers/formatters';
+	import { getDataRange, normalizeDataForInterval } from './helpers';
+	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
 
 	type Props = ComponentProps<typeof TvChart> & {
@@ -37,9 +36,7 @@
 
 	let visibleData: SimpleDataItem[] = $state([]);
 
-	let periodPerformance = $derived(
-		getProfitInfo(relativeProfitability(visibleData[0]?.value, visibleData.at(-1)?.value))
-	);
+	let periodPerformance = $derived(getProfitInfo(relativeReturn(visibleData[0]?.value, visibleData.at(-1)?.value)));
 
 	const chartOptions: TvChartOptions = {
 		crosshair: { vertLine: { visible: true } },

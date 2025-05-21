@@ -5,13 +5,23 @@
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
 	import { metricDescriptions } from 'trade-executor/helpers/strategy-metric-help-texts';
+	import { calculateAltCagr } from 'trade-executor/helpers/metrics';
 
-	export let simplified = false;
-	export let strategy: StrategyInfo;
+	type Props = {
+		simplified?: boolean;
+		strategy: StrategyInfo;
+	};
+
+	let { simplified = false, strategy }: Props = $props();
 
 	const backtestLink = `/strategies/${strategy.id}/backtest`;
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
 	const vault = strategy.connected ? createVaultAdapter(strategy.on_chain_data, strategy.fees) : undefined;
+
+	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
+	// Replace API-provided CAGR metric with alternative calculated CAGR
+	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+	if (altCagr) keyMetrics.cagr = altCagr;
 
 	function formatTvl(value: MaybeNumber) {
 		const digits = value && value < 1000 ? 2 : 1;
