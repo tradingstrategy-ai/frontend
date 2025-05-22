@@ -33,29 +33,29 @@
 	{/if}
 
 	{#if position.hasFailedTrades}
-		<PositionFlag status="warning" label="F" title="Failed trades">
-			<p>This position contains failed trades.</p>
-			<p>Trades may fail for various reasons</p>
+		<PositionFlag status="warning" label="I" title="Issues">
+			<p>This position includes trades that encountered transaction issues.</p>
+			<p>Transaction issues may occur for various reasons</p>
 			<ul>
 				<li>
 					Blockchain transaction execution fails due to
 					<a href="https://tradingstrategy.ai/glossary/gas-fee">gas fees spiking</a>
 				</li>
 				<li>
-					The market was moving too fast and trade failed due to
+					The market was moving too fast and the transaction failed due to
 					<a href="https://tradingstrategy.ai/glossary/slippage">slippage tolerance exceeded</a>
-					during the trade execution
+					during execution
 				</li>
 				<li>Blockchain nodes or blockchain network malfunctioning</li>
 				<li>Internal technical issues</li>
 			</ul>
 			<p>
-				Depending on the failure condition, the trade may or may not need manual intervention. Each failed trade has a
-				corresponding repair trade marked with <i>R</i> flag.
+				Depending on the issue, the transaction may or may not need manual intervention. Some transactions with issues
+				have corresponding repair transactions marked with <i>R</i> flag.
 			</p>
 			<p>See more</p>
 			<ul>
-				<li><a href={getTradeLink(position.failedTrades.at(-1)!)}>View the last failed trade</a></li>
+				<li><a href={getTradeLink(position.failedTrades.at(-1)!)}>View the last trade with issues</a></li>
 			</ul>
 		</PositionFlag>
 	{/if}
