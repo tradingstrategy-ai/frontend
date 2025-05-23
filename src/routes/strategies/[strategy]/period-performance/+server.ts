@@ -1,6 +1,6 @@
 import { dateToTs } from '$lib/charts/helpers';
 import { parseDate } from '$lib/helpers/date.js';
-import { relativeReturn } from '$lib/helpers/financial.js';
+import { relativeReturn, annualizedReturn } from '$lib/helpers/financial.js';
 import { error, json } from '@sveltejs/kit';
 import { utcDay, utcHour, utcMinute } from 'd3-time';
 import { getStrategyInfo } from 'trade-executor/client/strategy-info.js';
@@ -44,15 +44,17 @@ function getPerformanceSummary(data: [number, number][], endDate: Date, timeInte
 	const startTs = dateToTs(startDate);
 	const endTs = dateToTs(endDate);
 
-	const startValue = data.findLast(([ts]) => ts < startTs)!;
-	const endValue = data.findLast(([ts]) => ts < endTs)!;
+	const startEntry = data.findLast(([ts]) => ts < startTs)!;
+	const endEntry = data.findLast(([ts]) => ts < endTs)!;
 
-	const performance = relativeReturn(startValue[1], endValue[1]);
+	const performance = relativeReturn(startEntry[1], endEntry[1]);
+	const annualized = performance && annualizedReturn(startEntry[0], endEntry[0], performance);
 
 	return {
 		interval: timeInterval,
 		start: startDate,
 		end: endDate,
-		performance
+		performance,
+		annualizedReturn: annualized
 	};
 }
