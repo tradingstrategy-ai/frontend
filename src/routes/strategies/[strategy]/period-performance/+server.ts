@@ -47,14 +47,14 @@ function getPerformanceSummary(data: [number, number][], endDate: Date, timeInte
 	const startEntry = data.findLast(([ts]) => ts < startTs)!;
 	const endEntry = data.findLast(([ts]) => ts < endTs)!;
 
-	const performance = relativeReturn(startEntry[1], endEntry[1]);
+	const performance = relativeReturn(startEntry?.[1], endEntry?.[1]);
 	const annualized = performance && annualizedReturn(startEntry[0], endEntry[0], performance);
 
 	return {
 		interval: timeInterval,
 		start: startDate,
 		end: endDate,
-		performance,
-		annualizedReturn: annualized
+		performance: performance ?? null,
+		annualizedReturn: annualized ?? null
 	};
 }
