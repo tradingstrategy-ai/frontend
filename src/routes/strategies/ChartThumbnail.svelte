@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TvChartOptions } from '$lib/charts/types';
-	import type { AreaSeriesPartialOptions, AreaData, UTCTimestamp, LineSeriesPartialOptions } from 'lightweight-charts';
+	import type { AreaSeriesPartialOptions, AreaData, UTCTimestamp } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
