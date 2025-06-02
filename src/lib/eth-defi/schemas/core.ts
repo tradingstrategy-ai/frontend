@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const blockNumber = z.number().int().positive();
+export const blockNumber = z.number().int().nonnegative();
 export type BlockNumber = z.infer<typeof blockNumber>;
 
 export const chainId = z.number().int().positive();
