@@ -7,7 +7,7 @@ import { getStrategyInfo } from 'trade-executor/client/strategy-info.js';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
 
 // return an array of period performance summaries
-export async function GET({ params, url }) {
+export async function GET({ fetch, params, url }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
 	if (!strategyConf) error(404, 'Not found');
 
