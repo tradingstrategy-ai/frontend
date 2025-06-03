@@ -67,6 +67,16 @@ export function addUTCDays(date: Date, days: number) {
 }
 
 /**
+ * Return a new date with `hours` added (may be negative to subtract days).
+ * Uses UTC date functions (which matters when crossing daylight-savings boundaries)
+ */
+export function addUTCHours(date: Date, hours: number) {
+	const d2 = new Date(date);
+	d2.setUTCHours(d2.getUTCHours() + hours);
+	return d2;
+}
+
+/**
  * Return a new date at midnight UTC that is closest to original date
  */
 export function roundUTCDate(date: Date) {

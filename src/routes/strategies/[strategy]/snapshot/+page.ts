@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
+import { configuredStrategies } from 'trade-executor/schemas/configuration';
+import { getStrategyInfo } from 'trade-executor/client/strategy-info';
 import { fetchChartData } from 'trade-executor/client/chart';
 import { getDateParam } from '$lib/helpers/url-params.js';
 import { normalizeDataForInterval } from '$lib/charts/helpers';
 import { utcHour } from 'd3-time';
-import { configuredStrategies } from 'trade-executor/schemas/configuration';
-import { getStrategyInfo } from 'trade-executor/client/strategy-info';
 
 export async function load({ fetch, params, url }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
