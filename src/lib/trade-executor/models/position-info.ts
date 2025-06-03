@@ -320,7 +320,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 			open_price: this.openPrice,
 			close_price: this.closePrice,
 			profitability: this.profitability,
-			type: this.pricingPair.kindShortLabel,
+			kind: this.pricingPair.kindShortLabel,
 			symbol: this.pricingPair.symbol
 		};
 	}
