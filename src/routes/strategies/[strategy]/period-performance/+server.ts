@@ -1,10 +1,14 @@
-import { dateToTs } from '$lib/charts/helpers';
+import { dateToTs, timeBucketToIntervalParts } from '$lib/charts/helpers';
 import { parseDate } from '$lib/helpers/date.js';
 import { relativeReturn, annualizedReturn } from '$lib/helpers/financial.js';
+import { timeBucketEnum } from '$lib/schemas/utility.js';
 import { error, json } from '@sveltejs/kit';
-import { utcDay, utcHour, utcMinute } from 'd3-time';
 import { getStrategyInfo } from 'trade-executor/client/strategy-info.js';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
+
+const periodTimeBuckets = timeBucketEnum.exclude(['1m', '5m', '15m']).options;
+
+type PeriodTimeBucket = (typeof periodTimeBuckets)[number];
 
 // return an array of period performance summaries
 export async function GET({ fetch, params, url }) {
@@ -22,38 +26,31 @@ export async function GET({ fetch, params, url }) {
 		error(400, 'param `end` must be a valid date string or timestamp (or omitted for current date)');
 	}
 
-	// get performance summaries for various intervals
-	const intervals = ['1h', '4h', '1d', '7d', '30d'] as const;
+	// get performance summaries for specified time buckets
 	const data = strategy.summary_statistics?.compounding_unrealised_trading_profitability!;
-	const performanceSummaries = intervals.map((interval) => getPerformanceSummary(data, endDate, interval));
+	const performanceSummaries = periodTimeBuckets.map((timeBucket) => getPerformanceSummary(data, endDate, timeBucket));
 
 	return json(performanceSummaries);
 }
 
-type TimeInterval = `${number}${'m' | 'h' | 'd'}`;
-
 // check performance of strategy over time interval
-function getPerformanceSummary(data: [number, number][], endDate: Date, timeInterval: TimeInterval) {
-	const intervalMap = { m: utcMinute, h: utcHour, d: utcDay } as const;
-	const [durationStr, timeUnit] = timeInterval.split(/(?=[mhd])/) as [`${number}`, keyof typeof intervalMap];
-	const interval = intervalMap[timeUnit];
-	const duration = Number(durationStr);
+function getPerformanceSummary(data: [number, number][], end: Date, timeBucket: PeriodTimeBucket) {
+	const [interval, duration] = timeBucketToIntervalParts(timeBucket);
+	const start = interval.offset(end, -duration);
 
-	const startDate = interval.offset(endDate, -duration);
+	const startTs = dateToTs(start);
+	const endTs = dateToTs(end);
 
-	const startTs = dateToTs(startDate);
-	const endTs = dateToTs(endDate);
+	const first = data.findLast(([ts]) => ts < startTs)!;
+	const last = data.findLast(([ts]) => ts < endTs)!;
 
-	const startEntry = data.findLast(([ts]) => ts < startTs)!;
-	const endEntry = data.findLast(([ts]) => ts < endTs)!;
-
-	const performance = relativeReturn(startEntry?.[1], endEntry?.[1]);
-	const annualized = performance && annualizedReturn(startEntry[0], endEntry[0], performance);
+	const performance = relativeReturn(first?.[1], last?.[1]);
+	const annualized = performance && annualizedReturn(start, end, performance);
 
 	return {
-		interval: timeInterval,
-		start: startDate,
-		end: endDate,
+		timeBucket,
+		start: start,
+		end: end,
 		performance: performance ?? null,
 		annualizedReturn: annualized ?? null
 	};
