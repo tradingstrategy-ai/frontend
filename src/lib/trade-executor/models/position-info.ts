@@ -35,6 +35,15 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		return this.trades.at(-1);
 	},
 
+	get entryTrade() {
+		return this.trades.find((t) => !t.failed && t.direction === TradeDirections.Enter);
+	},
+
+	get exitTrade() {
+		if (!this.closed) return;
+		return this.trades.findLast((t) => !t.failed && t.direction === TradeDirections.Exit);
+	},
+
 	get latestStats() {
 		return this.stats.at(-1);
 	},

@@ -8,6 +8,7 @@
 	type Props = {
 		interval: TimeInterval;
 		range: [Date, Date];
+		color?: string;
 		alwaysVisible?: boolean;
 		setChartVisibleRange?: boolean;
 	};
@@ -16,6 +17,7 @@
 	let {
 		interval,
 		range,
+		color = 'gray',
 		alwaysVisible = false,
 		setChartVisibleRange = false,
 	}: Props = $props();
@@ -29,7 +31,7 @@
 
 	const options: LineSeriesPartialOptions = {
 		lineVisible: false,
-		priceLineColor: 'gray',
+		priceLineColor: color,
 		crosshairMarkerVisible: false,
 		lastValueVisible: false
 	};

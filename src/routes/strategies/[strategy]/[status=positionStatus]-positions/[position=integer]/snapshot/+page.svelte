@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { SeriesCallback, TvChartOptions } from '$lib/charts/types.js';
+	import { type SeriesMarker, type UTCTimestamp, createSeriesMarkers } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import CandleSeries from '$lib/charts/CandleSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
-	import { createSeriesMarkers, type SeriesMarker, type UTCTimestamp } from 'lightweight-charts';
 
 	const { data } = $props();
 	const { strategy, position, candleData, interval, range } = data;
@@ -27,17 +27,29 @@
 		layout: { fontSize: 15 }
 	};
 
-	const markers: SeriesMarker<UTCTimestamp>[] = position.trades
-		.filter((t) => !t.failed)
-		.map((t) => ({
-			time: t.executed_at as UTCTimestamp,
-			position: t.direction === 1 ? 'belowBar' : 'aboveBar',
-			color: 'orange',
-			shape: t.direction === 1 ? 'arrowUp' : 'arrowDown',
-			text: t.directionLabel
-		}));
+	const seriesCallback: SeriesCallback = ({ series, colors }) => {
+		const markers: SeriesMarker<UTCTimestamp>[] = [];
 
-	const seriesCallback: SeriesCallback = ({ series }) => {
+		if (position.entryTrade) {
+			markers.push({
+				time: position.entryTrade.executed_at as UTCTimestamp,
+				position: 'belowBar',
+				color: colors.textLight,
+				shape: 'arrowUp',
+				text: 'Enter'
+			});
+		}
+
+		if (position.exitTrade) {
+			markers.push({
+				time: position.exitTrade.executed_at as UTCTimestamp,
+				position: 'aboveBar',
+				color: colors.textLight,
+				shape: 'arrowDown',
+				text: 'Exit'
+			});
+		}
+
 		createSeriesMarkers(series, markers);
 	};
 </script>
@@ -63,7 +75,7 @@
 				callback={seriesCallback}
 				priceScaleOptions={{ scaleMargins: { top: 0.2, bottom: 0.2 } }}
 			/>
-			<BaselineSeries {interval} {range} setChartVisibleRange />
+			<BaselineSeries {interval} {range} color="transparent" setChartVisibleRange />
 		</TvChart>
 	</div>
 </Section>

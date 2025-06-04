@@ -52,7 +52,7 @@ export type DataFeed<T extends TvDataItem = TvDataItem> = {
 export type ChartCallbackReturnType = (() => void) | void;
 
 export type ChartCallbackParam = { chart: IChartApi; colors: ChartColors };
-export type ChartCallback = ({ chart }: ChartCallbackParam) => ChartCallbackReturnType;
+export type ChartCallback = ({ chart, colors }: ChartCallbackParam) => ChartCallbackReturnType;
 
 export type SeriesCallbackParam = ChartCallbackParam & { series: ISeriesApi<SeriesType> };
-export type SeriesCallback = ({ chart, series }: SeriesCallbackParam) => ChartCallbackReturnType;
+export type SeriesCallback = ({ chart, colors, series }: SeriesCallbackParam) => ChartCallbackReturnType;
