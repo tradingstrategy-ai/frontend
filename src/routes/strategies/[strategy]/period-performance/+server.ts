@@ -27,7 +27,7 @@ export async function GET({ fetch, params, url }) {
 	}
 
 	// get performance summaries for specified time buckets
-	const data = strategy.summary_statistics?.compounding_unrealised_trading_profitability!;
+	const data = strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [];
 	const performanceSummaries = periodTimeBuckets.map((timeBucket) => getPerformanceSummary(data, endDate, timeBucket));
 
 	return json(performanceSummaries);
