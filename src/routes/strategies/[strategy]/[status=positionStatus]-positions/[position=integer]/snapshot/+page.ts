@@ -2,10 +2,13 @@ import type { TimeInterval } from 'd3-time';
 import type { TimeBucket } from '$lib/schemas/utility.js';
 import type { TradingPositionInfo } from 'trade-executor/models/position-info.js';
 import type { TradingPairInfo } from 'trade-executor/models/trading-pair-info.js';
+import type { CandleDataItem } from '$lib/charts/types.js';
 import { error } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api.js';
 import { apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 import { timeBucketToInterval } from '$lib/charts/helpers.js';
+
+export const ssr = false;
 
 type IntervalInfo = {
 	timeBucket: TimeBucket;
@@ -35,7 +38,7 @@ export async function load({ fetch, params, parent }) {
 		end: end.toISOString().slice(0, 19)
 	});
 
-	const candleData = rawCandleData[pairId].map(apiCandleToDataItem);
+	const candleData: CandleDataItem[] = rawCandleData[pairId].map(apiCandleToDataItem);
 
 	return {
 		timeBucket,
