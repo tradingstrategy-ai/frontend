@@ -8,7 +8,7 @@
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
 
 	const { data } = $props();
-	const { strategy, position, candleData, interval, range } = data;
+	const { strategy, position, candleData, interval, start, end } = data;
 
 	const dataFeed = {
 		loading: false,
@@ -75,7 +75,7 @@
 				callback={seriesCallback}
 				priceScaleOptions={{ scaleMargins: { top: 0.2, bottom: 0.2 } }}
 			/>
-			<BaselineSeries {interval} {range} color="transparent" setChartVisibleRange />
+			<BaselineSeries color="transparent" {interval} range={[start, interval.offset(end, 1)]} setChartVisibleRange />
 		</TvChart>
 	</div>
 </Section>
