@@ -1,7 +1,7 @@
 import type { UTCTimestamp } from 'lightweight-charts';
 import type { TimeBucket } from '$lib/schemas/utility';
 import type { SimpleDataItem, TimeSpan } from './types';
-import { type TimeInterval, utcDay, utcHour, utcMinute } from 'd3-time';
+import { type CountableTimeInterval, type TimeInterval, utcDay, utcHour, utcMinute } from 'd3-time';
 import { type MaybeParsableDate, parseDate } from '$lib/helpers/date';
 import { notFilledMarker } from '$lib/helpers/formatters';
 import type { UnixTimestamp } from 'trade-executor/schemas/utility-types';
@@ -53,11 +53,18 @@ export function formatMonthYear(ts: UTCTimestamp) {
 /**
  * Convert a time bucket string (e.g., "1h", "4h", "1d") to a d3 time interval
  */
-export function timeBucketToInterval(timeBucket: TimeBucket): TimeInterval {
+export function timeBucketToIntervalParts(timeBucket: TimeBucket): [CountableTimeInterval, number] {
 	const intervals = { m: utcMinute, h: utcHour, d: utcDay } as const;
 	const [durationStr, timeUnit] = timeBucket.split(/(?=[mhd])/) as [`${number}`, keyof typeof intervals];
-	const interval = intervals[timeUnit];
 	const duration = Number(durationStr);
+	return [intervals[timeUnit], duration];
+}
+
+/**
+ * Convert a time bucket string (e.g., "1h", "4h", "1d") to a d3 time interval
+ */
+export function timeBucketToInterval(timeBucket: TimeBucket): TimeInterval {
+	const [interval, duration] = timeBucketToIntervalParts(timeBucket);
 	return interval.every(duration)!;
 }
 

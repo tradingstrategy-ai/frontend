@@ -35,6 +35,15 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		return this.trades.at(-1);
 	},
 
+	get entryTrade() {
+		return this.trades.find((t) => !t.failed && t.direction === TradeDirections.Enter);
+	},
+
+	get exitTrade() {
+		if (!this.closed) return;
+		return this.trades.findLast((t) => !t.failed && t.direction === TradeDirections.Exit);
+	},
+
 	get latestStats() {
 		return this.stats.at(-1);
 	},
@@ -308,6 +317,21 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	// (ALL trades SHOULD be test trades if ANY are)
 	get isTest() {
 		return this.trades.some((t) => t.isTest);
+	},
+
+	toJSON() {
+		return {
+			position_id: this.position_id,
+			opened_at: this.opened_at,
+			closed_at: this.closed_at,
+			value_at_open: this.valueAtOpen,
+			value_at_close: this.valueAtClose,
+			open_price: this.openPrice,
+			close_price: this.closePrice,
+			profitability: this.profitability,
+			kind: this.pricingPair.kindShortLabel,
+			symbol: this.pricingPair.symbol
+		};
 	}
 });
 
