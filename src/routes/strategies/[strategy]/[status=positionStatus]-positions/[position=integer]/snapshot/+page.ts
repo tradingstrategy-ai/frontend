@@ -14,7 +14,7 @@ export async function load({ fetch, params, parent }) {
 	const exchangeType = pair.exchange_name === 'uniswap-v3' ? 'uniswap_v3' : 'uniswap_v2';
 
 	const durationDays = position.durationSeconds / (60 * 60 * 24);
-	const timeBucket = durationDays > 6 ? '1d' : '4h';
+	const timeBucket = durationDays > 6 ? '1d' : durationDays > 1 ? '4h' : '1h';
 	const interval = timeBucketToInterval(timeBucket);
 
 	const start = interval.offset(interval.floor(position.opened_at), -2);
@@ -22,9 +22,9 @@ export async function load({ fetch, params, parent }) {
 	const range: [Date, Date] = [start, interval.offset(end, 1)];
 
 	const rawCandleData = await fetchPublicApi(fetch, 'candles', {
+		candle_type: 'price',
 		pair_id: pairId,
 		exchange_type: exchangeType,
-		candle_type: 'price',
 		time_bucket: timeBucket,
 		start: start.toISOString().slice(0, 19),
 		end: end.toISOString().slice(0, 19)
