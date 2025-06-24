@@ -34,7 +34,9 @@ export const tradingPairKind = z.enum([
 	'spot_market_hold_rebalancing_token',
 	'credit_supply',
 	'lending_protocol_long',
-	'lending_protocol_short'
+	'lending_protocol_short',
+	'vault',
+	'cash'
 ]);
 
 // zod schemas can't reference themselves, so in order for `underlying_spot_pair`
@@ -43,7 +45,7 @@ const tradingPairIdentifierBase = z.object({
 	base: assetIdentifierSchema,
 	quote: assetIdentifierSchema,
 	pool_address: hexString,
-	exchange_address: hexString,
+	exchange_address: hexString.nullish(),
 	internal_id: primaryKey.nullish(),
 	internal_exchange_id: primaryKey.nullish(),
 	info_url: z.string().url().nullish(),

@@ -12,7 +12,9 @@ const kindShortLabels = {
 	spot_market_hold_rebalancing_token: 'rebalance',
 	credit_supply: 'credit',
 	lending_protocol_short: 'short',
-	lending_protocol_long: 'long'
+	lending_protocol_long: 'long',
+	vault: 'vault',
+	cash: 'cash'
 } as const;
 
 export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) => ({
