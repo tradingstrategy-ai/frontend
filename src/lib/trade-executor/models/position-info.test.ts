@@ -83,7 +83,11 @@ describe('closed position with stats entries', () => {
 });
 
 describe('position with frozen_at value', () => {
-	const frozenPosition = { ...position, frozen_at: new Date() };
+	const frozenPosition = {
+		...position,
+		frozen_at: new Date(),
+		unfrozen_at: null
+	};
 	const frozenPositionInfo = createTradingPositionInfo(frozenPosition);
 
 	test('should be frozen', () => {
