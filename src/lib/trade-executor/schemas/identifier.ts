@@ -53,7 +53,8 @@ const tradingPairIdentifierBase = z.object({
 	reverse_token_order: z.boolean().nullish(),
 	kind: tradingPairKind,
 	underlying_spot_pair: z.null().optional(),
-	exchange_name: z.string().nullish()
+	exchange_name: z.string().nullish(),
+	other_data: z.record(z.any()).nullish()
 });
 
 export const tradingPairIdentifierSchema = tradingPairIdentifierBase.extend({

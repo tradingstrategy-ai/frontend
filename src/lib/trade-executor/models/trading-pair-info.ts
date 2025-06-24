@@ -36,12 +36,21 @@ export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) 
 		return this.kind === 'lending_protocol_short';
 	},
 
-	get symbol() {
+	get isVault() {
+		return this.kind === 'vault';
+	},
+
+	get symbol(): string {
 		const { base, quote } = this.pricingPair;
-		if (this.isCreditSupply) {
-			return quote.token_symbol;
+
+		switch (this.kind) {
+			case 'credit_supply':
+				return quote.token_symbol;
+			case 'vault':
+				return this.other_data?.vault_name ?? base.token_symbol;
+			default:
+				return `${base.token_symbol}-${quote.token_symbol}`;
 		}
-		return `${base.token_symbol}-${quote.token_symbol}`;
 	},
 
 	get actionSymbol() {
