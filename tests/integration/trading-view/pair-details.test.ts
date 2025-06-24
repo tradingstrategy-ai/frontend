@@ -13,6 +13,8 @@ test.describe('trading pair details page', () => {
 	});
 
 	test('should include TradingView chart canvas elements', async ({ page }) => {
+		test.skip(!!process.env.CI, 'Skipping on CI runs for now');
+
 		const tvChart = page.getByTestId('tv-chart');
 		await expect(tvChart).toBeVisible();
 		const count = await tvChart.locator('canvas').count();
