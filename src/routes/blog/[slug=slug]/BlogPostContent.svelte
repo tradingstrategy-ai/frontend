@@ -177,18 +177,24 @@
 			margin-block: 1.5rem;
 			border-collapse: collapse;
 			color: inherit;
+			background: var(--c-box-1); 
 
-			font: var(--f-text-md-regular);
-			line-height: 1.25;
+			font: var(--f-mono-xs-regular);
+			line-height: 1;
 			letter-spacing: var(--f-text-md-spacing, normal);
 
 			@media (--viewport-xs) {
 				font-size: 14px;
 			}
 
+			:global(a), :global(a:not(.does-not-exist)) {
+				text-decoration: none;
+				font-weight: bold;
+			}
+
 			:global(:is(td, th)) {
-				padding: 0.5em 0.25em;
-				border-block: 1px solid var(--c-text-extra-light);
+				padding: 0.25em 0.5em;
+				border-block: 1px solid var(--c-text-ultra-light);
 				vertical-align: top;
 
 				&:first-child {
@@ -198,11 +204,23 @@
 				&:last-child {
 					padding-right: 0;
 				}
+
+
 			}
 
+			:global(:is(td)) {
+				/* Alternating column colors */
+				&:nth-child(even) {
+					background-color: var(--c-box-3);
+				}
+
+				&:nth-child(odd) {
+					background-color: var(--c-box-1);
+				}				
+			}
 			:global(th) {
-				background: var(--c-box-2);
-				font-weight: 600;
+				background: var(--c-box-3);
+				font-weight: 900;
 			}
 		}
 
