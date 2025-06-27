@@ -13,7 +13,7 @@
 		position: TradingPositionInfo;
 	};
 
-	let { position } = $props();
+	let { position }: Props = $props();
 
 	const VALUE_REALIZATION_GAP_THRESHOLD = 0.01;
 

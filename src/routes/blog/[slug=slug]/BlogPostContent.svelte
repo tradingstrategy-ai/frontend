@@ -25,6 +25,7 @@
 </script>
 
 <div class="blog-post-content" use:injectTOC use:wrapTables>
+	<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html html}
 </div>
 
@@ -47,19 +48,19 @@
 		}
 
 		:global(p:not(:first-of-type)) {
-			margin-top: var(--space-lg);
+			margin-top: 1.5rem;
 		}
 
 		:global(h1) {
 			font: var(--f-heading-lg-medium);
-			margin: var(--space-2xl) 0 !important;
+			margin: 2.25rem 0 !important;
 			text-transform: capitalize;
 		}
 
 		:global(> h2) {
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
-			margin: var(--space-5xl) 0 var(--space-lg);
+			margin: 3rem 0 1.5rem;
 			@media (--viewport-xs) {
 				font: var(--f-heading-md-medium);
 			}
@@ -68,7 +69,7 @@
 		:global(> h3) {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
-			margin: var(--space-xl) 0 var(--space-md) 0;
+			margin: 2rem 0 1rem 0;
 			@media (--viewport-xs) {
 				font: var(--f-heading-sm-medium);
 			}
@@ -77,7 +78,7 @@
 		:global(> h4) {
 			font: var(--f-heading-sm-medium);
 			letter-spacing: var(--f-heading-sm-spacing, normal);
-			margin: var(--space-xl) 0 var(--space-md) 0;
+			margin: 2rem 0 1rem 0;
 			@media (--viewport-xs) {
 				font: var(--f-heading-xs-medium);
 			}
@@ -89,7 +90,7 @@
 
 		:global(li) {
 			margin: 0.5em 0 0 0;
-			padding-left: var(--space-xxs);
+			padding-left: 0.25rem;
 		}
 
 		:global(:is(a, a:hover)) {
@@ -103,7 +104,7 @@
 
 		:global(figure) {
 			display: grid;
-			margin: var(--space-3xl) 0 var(--space-5xl);
+			margin: 2.5rem 0 3rem;
 
 			:global(img) {
 				height: 100%;
@@ -115,7 +116,7 @@
 			font: var(--f-ui-sm-roman);
 			letter-spacing: var(--f-ui-sm-spacing, normal);
 			text-align: center;
-			margin: var(--space-md) 0;
+			margin: 1rem 0;
 			/* fix Firefox scroll issue due to Ghost-added `white-space: pre-wrap` property */
 			overflow: hidden;
 
@@ -142,9 +143,9 @@
 		}
 
 		:global(pre) {
-			margin: var(--space-lg) 0;
+			margin: 1.5rem 0;
 			border-radius: var(--radius-sm);
-			padding: var(--space-ms) var(--space-ls);
+			padding: 0.875rem 1.25rem;
 			background: var(--c-terminal-bg);
 			color: var(--c-terminal);
 			font: var(--f-mono-sm-regular);
@@ -152,15 +153,15 @@
 
 			@media (--viewport-sm-up) {
 				border-radius: var(--radius-md);
-				padding: var(--space-md) var(--space-lg);
+				padding: 1rem 1.5rem;
 				font: var(--f-mono-md-regular);
 				letter-spacing: var(--f-mono-md-spacing, normal);
 			}
 		}
 
 		:global(blockquote) {
-			margin: var(--space-lg) 0 var(--space-lg) var(--space-sl);
-			padding: var(--space-lg);
+			margin: 1.5rem 0 1.5rem 0.75rem;
+			padding: 1.5rem;
 			font: var(--f-text-lg-regular);
 			letter-spacing: var(--f-text-lg-spacing, normal);
 			background: var(--c-quoteblock-background);
@@ -173,12 +174,20 @@
 		}
 
 		:global(table) {
-			margin-block: var(--space-lg);
+			margin-block: 1.5rem;
 			border-collapse: collapse;
 			color: inherit;
 
+			font: var(--f-text-md-regular);
+			line-height: 1.25;
+			letter-spacing: var(--f-text-md-spacing, normal);
+
+			@media (--viewport-xs) {
+				font-size: 14px;
+			}
+
 			:global(:is(td, th)) {
-				padding: var(--space-ss);
+				padding: 0.5em;
 				border-block: 1px solid var(--c-text-extra-light);
 				vertical-align: top;
 
