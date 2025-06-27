@@ -177,7 +177,7 @@
 			margin-block: 1.5rem;
 			border-collapse: collapse;
 			color: inherit;
-			background: var(--c-box-1); 
+			background: var(--c-box-1);
 
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
@@ -187,7 +187,8 @@
 				font-size: 14px;
 			}
 
-			:global(a), :global(a:not(.does-not-exist)) {
+			:global(a),
+			:global(a:not(.does-not-exist)) {
 				text-decoration: none;
 				font-weight: bold;
 			}
@@ -204,8 +205,6 @@
 				&:last-child {
 					padding-right: 0;
 				}
-
-
 			}
 
 			:global(:is(td)) {
@@ -216,7 +215,7 @@
 
 				&:nth-child(odd) {
 					background-color: var(--c-box-1);
-				}				
+				}
 			}
 			:global(th) {
 				background: var(--c-box-3);

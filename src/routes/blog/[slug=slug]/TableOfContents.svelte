@@ -14,7 +14,6 @@
 
 <style>
 	.table-of-contents {
-
 		:global(.summary-box .main) {
 			gap: var(--space-sm);
 		}
