@@ -187,7 +187,7 @@
 			}
 
 			:global(:is(td, th)) {
-				padding: 0.5em;
+				padding: 0.5em 0.25em;
 				border-block: 1px solid var(--c-text-extra-light);
 				vertical-align: top;
 
