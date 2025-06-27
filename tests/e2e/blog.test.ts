@@ -12,6 +12,7 @@ test.describe('blog index page', () => {
 	});
 
 	test('clicking blog tile heading should open post', async ({ page }) => {
+		test.setTimeout(60000);  // Page too slow https://tradingstrategy.ai/blog/the-best-performing-stablecoin-vaults-june-2025
 		const post = page.locator('[data-testid="blog-roll"] a').first();
 		const heading = post.getByRole('heading');
 		const url = await post.getAttribute('href');
