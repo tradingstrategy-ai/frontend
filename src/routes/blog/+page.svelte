@@ -38,7 +38,7 @@
 
 <svelte:head>
 	<title>Trading Strategy Blog</title>
-	<meta name="description" content="Insights and research on DeFi and algorithmic trading." />
+	<meta name="description" content="Research in DeFi and algorithmic trading." />
 </svelte:head>
 
 <main class="blog-index-page">
@@ -46,7 +46,7 @@
 		<HeroBanner
 			image={heroImage}
 			title="Trading Strategy Blog"
-			subtitle="Read our insights into on-chain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
+			subtitle="Read our insights into onchain trading. We cover trading and investing in blockchains, decentralised finance (DeFi), decentralised exchanges (DEXes), automated trading strategies and web3."
 			hr
 		>
 			<div class="social-links-wrapper">

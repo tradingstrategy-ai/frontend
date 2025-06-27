@@ -14,10 +14,15 @@
 
 <style>
 	.table-of-contents {
+		:global(.summary-box .main) {
+			gap: var(--space-sm);
+		}
+
 		a {
 			font: var(--f-heading-xs-medium);
+			font-size: 80%;
 			letter-spacing: var(--f-heading-xs-spacing, normal);
-			padding: var(--space-sm) var(--space-md);
+			padding: var(--space-xs) var(--space-md);
 			text-decoration: none !important;
 		}
 
