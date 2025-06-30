@@ -127,11 +127,14 @@ export const strategySummaryStatisticsSchema = z.object({
 	last_trade_at: unixTimestampToDate.nullish(),
 	enough_data: z.boolean().nullish(),
 	current_value: usDollarAmount.nullish(),
-	profitability_90_days: percent.nullish(),
+	// Deprecated - remove when this is no longer in trade-executor
+	// profitability_90_days: percent.nullish(),
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
 	compounding_unrealised_trading_profitability: performanceData.nullish(),
-	performance_chart_90_days: performanceData.nullish(),
+	// Deprecated - remove when this is no longer in trade-executor
+	// performance_chart_90_days: performanceData.nullish(),
+	share_price_returns_90_days: performanceData.nullish(),
 	key_metrics: summaryKeyMetricsSchema,
 	backtest_metrics_cut_off_period: duration.nullish()
 });
