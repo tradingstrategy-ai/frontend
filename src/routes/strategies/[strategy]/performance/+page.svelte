@@ -20,11 +20,15 @@
 
 	let tableData = $derived(strategyState.stats.long_short_metrics_latest?.[dataSource.table]);
 
+	let chartDataType = $derived(
+		strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
+	);
+
 	const chartClient = getChartClient(fetch, strategy.url);
 
 	$effect(() => {
 		chartClient.fetch({
-			type: 'compounding_unrealised_trading_profitability_sampled',
+			type: chartDataType,
 			source: dataSource.chart
 		});
 	});
