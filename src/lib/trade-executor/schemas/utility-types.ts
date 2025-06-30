@@ -48,3 +48,9 @@ export type USDollarAmount = z.infer<typeof usDollarAmount>;
 
 export const usDollarPrice = z.coerce.number();
 export type USDollarPrice = z.infer<typeof usDollarPrice>;
+
+export const performanceTuple = z.tuple([unixTimestamp, decimalToNumber]);
+export type PerformanceTuple = z.infer<typeof performanceTuple>;
+
+export const performanceData = performanceTuple.array();
+export type PerformanceData = z.infer<typeof performanceData>;
