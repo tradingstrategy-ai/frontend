@@ -18,10 +18,16 @@
 	const keyMetrics = strategy.summary_statistics?.key_metrics ?? {};
 	const vault = strategy.connected ? createVaultAdapter(strategy.on_chain_data, strategy.fees) : undefined;
 
-	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
+	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
+	// also see: src/routes/strategies/[strategy]/+page.svelte
 	// Replace API-provided CAGR metric with alternative calculated CAGR
-	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
-	if (altCagr && !strategy.useSharePrice) keyMetrics.cagr = altCagr;
+	if (strategy.useSharePrice && keyMetrics.cagr) {
+		keyMetrics.cagr.value = strategy.summary_statistics?.profitability_90_days;
+	} else {
+		const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+		if (altCagr) keyMetrics.cagr = altCagr;
+	}
+	// End temporary hack
 
 	function formatTvl(value: MaybeNumber) {
 		const digits = value && value < 1000 ? 2 : 1;
