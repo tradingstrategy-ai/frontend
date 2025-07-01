@@ -3,36 +3,17 @@
  *
  * Calls to web_chart API endpoint.
  */
-import type { UnixTimestamp } from 'trade-executor/schemas/utility-types';
+import type { WebChartSource, WebChartType, WebChart } from 'trade-executor/schemas/web-chart';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
+import { webChartSchema } from 'trade-executor/schemas/web-chart';
 
-type ChartSource = 'live_trading' | 'backtest';
-// See WebChartType https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py#L14
-type ChartType =
-	| 'compounding_realised_profitability'
-	| 'compounding_unrealised_trading_profitability_sampled'
-	| 'total_equity'
-	| 'netflow';
-
-export type ChartRequestParams = {
-	type: ChartType;
-	source: ChartSource;
+export type WebChartRequestParams = {
+	type: WebChartType;
+	source: WebChartSource;
 };
-
-/**
- * Describe chart data
- *
- * See https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/visual/web_chart.py
- */
-export interface WebChartData {
-	data: [UnixTimestamp, number][];
-	title: string;
-	help_link: string;
-	source: ChartSource;
-}
 
 /**
  * Get the chart data for a named chart
@@ -44,8 +25,8 @@ export interface WebChartData {
 export async function fetchChartData(
 	fetch: Fetch,
 	executorUrl: string,
-	params: ChartRequestParams
-): Promise<WebChartData> {
+	params: WebChartRequestParams
+): Promise<WebChart> {
 	let resp: Response;
 	try {
 		resp = await fetch(`${executorUrl}/chart?${new URLSearchParams(params)}`);
@@ -58,10 +39,10 @@ export async function fetchChartData(
 		throw await publicApiError(resp);
 	}
 
-	return resp.json();
+	return webChartSchema.parse(await resp.json());
 }
 
-export type WebChartClientData = Partial<WebChartData> & {
+export type WebChartClientData = Partial<WebChart> & {
 	loading?: boolean;
 	error?: Error;
 };
@@ -71,7 +52,7 @@ export type ChartClient = ReturnType<typeof getChartClient>;
 export function getChartClient(fetchFn: Fetch, executorUrl: string) {
 	const { set, subscribe } = writable({} as WebChartClientData);
 
-	async function fetch(params: ChartRequestParams) {
+	async function fetch(params: WebChartRequestParams) {
 		// abort if called during SSR
 		if (!browser) return;
 

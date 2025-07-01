@@ -16,6 +16,10 @@
 
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
+	let chartDataType = $derived(
+		strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
+	);
+
 	let benchmarkTokens = $derived(getBenchmarkTokens(strategy));
 
 	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
@@ -37,7 +41,7 @@
 	// fetch chart data (initial load or when chartClient is updated)
 	$effect(() => {
 		chartClient.fetch({
-			type: 'compounding_unrealised_trading_profitability_sampled',
+			type: chartDataType,
 			source: 'live_trading'
 		});
 	});

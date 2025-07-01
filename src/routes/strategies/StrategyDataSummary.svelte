@@ -21,7 +21,7 @@
 	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
 	// Replace API-provided CAGR metric with alternative calculated CAGR
 	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
-	if (altCagr) keyMetrics.cagr = altCagr;
+	if (altCagr && !strategy.useSharePrice) keyMetrics.cagr = altCagr;
 
 	function formatTvl(value: MaybeNumber) {
 		const digits = value && value < 1000 ? 2 : 1;

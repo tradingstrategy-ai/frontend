@@ -33,10 +33,11 @@
 
 	const href = `/strategies/${strategy.id}`;
 
-	const chartData = normalizeDataForInterval(
-		strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [],
-		utcDay
-	);
+	const rawChartData = strategy.useSharePrice
+		? strategy.summary_statistics?.share_price_returns_90_days
+		: strategy.summary_statistics?.compounding_unrealised_trading_profitability;
+
+	const chartData = normalizeDataForInterval(rawChartData ?? [], utcDay);
 </script>
 
 <div class="strategy-tile ds-3 targetable">

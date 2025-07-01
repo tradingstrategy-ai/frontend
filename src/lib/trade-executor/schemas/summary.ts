@@ -16,7 +16,7 @@ import {
 	duration,
 	hexString,
 	percent,
-	unixTimestamp,
+	performanceData,
 	unixTimestampToDate,
 	usDollarAmount
 } from './utility-types';
@@ -93,9 +93,6 @@ export type VaultOnChainData = OnChainData & {
 	asset_management_mode: Exclude<OnChainData['asset_management_mode'], 'hot_wallet'>;
 };
 
-export const performanceTupleSchema = z.tuple([unixTimestamp, usDollarAmount]);
-export type PerformanceTuple = z.infer<typeof performanceTupleSchema>;
-
 // See `calculate_key_metrics` in:
 // https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/statistics/key_metric.py
 export const summaryKeyMetricKind = z.enum([
@@ -130,11 +127,14 @@ export const strategySummaryStatisticsSchema = z.object({
 	last_trade_at: unixTimestampToDate.nullish(),
 	enough_data: z.boolean().nullish(),
 	current_value: usDollarAmount.nullish(),
-	profitability_90_days: percent.nullish(),
+	// Deprecated - remove when this is no longer in trade-executor
+	// profitability_90_days: percent.nullish(),
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
-	compounding_unrealised_trading_profitability: performanceTupleSchema.array().nullish(),
-	performance_chart_90_days: performanceTupleSchema.array().nullish(),
+	compounding_unrealised_trading_profitability: performanceData.nullish(),
+	// Deprecated - remove when this is no longer in trade-executor
+	// performance_chart_90_days: performanceData.nullish(),
+	share_price_returns_90_days: performanceData.nullish(),
 	key_metrics: summaryKeyMetricsSchema,
 	backtest_metrics_cut_off_period: duration.nullish()
 });
