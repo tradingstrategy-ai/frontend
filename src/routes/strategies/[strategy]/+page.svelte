@@ -12,16 +12,10 @@
 	const keyMetrics = strategy.summary_statistics.key_metrics;
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
-	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
-	// also see: src/routes/strategies/StrategyDataSummary.svelte
+	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
 	// Replace API-provided CAGR metric with alternative calculated CAGR
-	if (strategy.useSharePrice && keyMetrics.cagr) {
-		keyMetrics.cagr.value = strategy.summary_statistics?.profitability_90_days;
-	} else {
-		const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
-		if (altCagr) keyMetrics.cagr = altCagr;
-	}
-	// End temporary hack
+	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+	if (altCagr && !strategy.useSharePrice) keyMetrics.cagr = altCagr;
 </script>
 
 <svelte:head>

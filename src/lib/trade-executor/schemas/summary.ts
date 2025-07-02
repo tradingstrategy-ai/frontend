@@ -127,7 +127,8 @@ export const strategySummaryStatisticsSchema = z.object({
 	last_trade_at: unixTimestampToDate.nullish(),
 	enough_data: z.boolean().nullish(),
 	current_value: usDollarAmount.nullish(),
-	profitability_90_days: percent.nullish(),
+	// Deprecated - remove when this is no longer in trade-executor
+	// profitability_90_days: percent.nullish(),
 	return_all_time: percent.nullish(),
 	return_annualised: percent.nullish(),
 	compounding_unrealised_trading_profitability: performanceData.nullish(),
