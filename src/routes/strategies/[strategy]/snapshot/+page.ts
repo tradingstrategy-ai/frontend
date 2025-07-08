@@ -20,14 +20,14 @@ export async function load({ fetch, params, url }) {
 		error(400, 'start and end query params required');
 	}
 
-	const resp = await fetchChartData(fetch, strategy.url, {
-		type: 'compounding_unrealised_trading_profitability_sampled',
-		source: 'live_trading'
+	const { data } = await fetchChartData(fetch, strategy.url, {
+		source: 'live_trading',
+		type: strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
 	});
 
 	return {
 		strategy,
-		chartData: normalizeDataForInterval(resp.data, utcHour),
+		chartData: normalizeDataForInterval(data, utcHour),
 		dateRange: [startDate, endDate] as [Date, Date],
 		// remove unneeded layout items (page used only for generating social media image)
 		skipNavbar: true,

@@ -44,8 +44,8 @@ function getPerformanceSummary(data: [number, number][], end: Date, timeBucket: 
 	const startTs = dateToTs(start);
 	const endTs = dateToTs(end);
 
-	const first = data.findLast(([ts]) => ts < startTs)!;
-	const last = data.findLast(([ts]) => ts < endTs)!;
+	const first = data.findLast(([ts]) => ts <= startTs)!;
+	const last = data.findLast(([ts]) => ts <= endTs)!;
 
 	const performance = relativeReturn(first?.[1], last?.[1]);
 	const annualized = performance && annualizedReturn(start, end, performance);
