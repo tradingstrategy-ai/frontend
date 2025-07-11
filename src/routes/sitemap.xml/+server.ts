@@ -39,7 +39,10 @@ async function getPairSitemaps(fetch: Fetch) {
 	return Array.from({ length: pageCount }).map((_, page) => `api/sitemap/pairs/paged/${page}.xml`);
 }
 
-async function sitemapExists(sitemapUrl) {
+/**
+ * Confirm if a given sitemap URL actually exists on backend server
+ */
+async function sitemapExists(sitemapUrl: string) {
 	try {
 		return (await fetch(sitemapUrl, { method: 'HEAD' })).ok;
 	} catch {
