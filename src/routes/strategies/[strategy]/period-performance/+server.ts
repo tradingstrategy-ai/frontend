@@ -1,57 +1,81 @@
-import { dateToTs, timeBucketToIntervalParts } from '$lib/charts/helpers';
-import { parseDate } from '$lib/helpers/date.js';
-import { relativeReturn, annualizedReturn } from '$lib/helpers/financial.js';
-import { timeBucketEnum } from '$lib/schemas/utility.js';
+import type { PerformanceTuple } from 'trade-executor/schemas/utility-types';
 import { error, json } from '@sveltejs/kit';
-import { getStrategyInfo } from 'trade-executor/client/strategy-info.js';
+import { timeBucketEnum } from '$lib/schemas/utility.js';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
+import { getDateParam } from '$lib/helpers/url-params.js';
+import { fetchChartData } from 'trade-executor/client/chart.js';
+import { timeBucketToIntervalParts, dateToTs, tsToDate } from '$lib/charts/helpers';
+import { relativeReturn } from '$lib/helpers/financial.js';
 
 const periodTimeBuckets = timeBucketEnum.exclude(['1m', '5m', '15m']).options;
 
 type PeriodTimeBucket = (typeof periodTimeBuckets)[number];
 
-// return an array of period performance summaries
+// Used to a add a buffer to time periods when checking for entries in-range
+const PERIOD_BUFFER_MINUTES = 5;
+
+/**
+ * Return an array of period performance summaries
+ */
 export async function GET({ fetch, params, url }) {
-	const strategyConf = configuredStrategies.get(params.strategy);
-	if (!strategyConf) error(404, 'Not found');
+	// verify strategy is configured
+	const strategy = configuredStrategies.get(params.strategy);
+	if (!strategy) error(404, 'Not found');
 
-	const strategy = await getStrategyInfo(fetch, strategyConf);
+	// parse `end` param (default to current date)
+	const endDate = getDateParam(url.searchParams, 'end') ?? new Date();
 
-	// parse `end` param (if provided) and set `endDate` to provided value or current date
-	const end = url.searchParams.get('end');
-	const endDate = end ? parseDate(end) : new Date();
+	// get performance data
+	const { data } = await fetchChartData(fetch, strategy.url, {
+		source: 'live_trading',
+		type: strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
+	});
 
-	// return error if invalid `end` param supplied
-	if (!endDate) {
-		error(400, 'param `end` must be a valid date string or timestamp (or omitted for current date)');
-	}
+	// find the last entry prior to requested end date and use this as end target instead
+	// (this helps maximize the data points found per period since strategies run on regular cycles)
+	const endTs = dateToTs(endDate);
+	const lastEntry = data.findLast(([ts]) => ts <= endTs);
+
+	// return empty JSON array response if no lastEntry found
+	if (!lastEntry) return json([]);
 
 	// get performance summaries for specified time buckets
-	const data = strategy.summary_statistics?.compounding_unrealised_trading_profitability ?? [];
-	const performanceSummaries = periodTimeBuckets.map((timeBucket) => getPerformanceSummary(data, endDate, timeBucket));
+	const performanceSummaries = periodTimeBuckets.map((timeBucket) => {
+		return getPerformanceSummary(data, timeBucket, lastEntry);
+	});
 
+	// return JSON response object
 	return json(performanceSummaries);
 }
 
-// check performance of strategy over time interval
-function getPerformanceSummary(data: [number, number][], end: Date, timeBucket: PeriodTimeBucket) {
+/**
+ * Summarize performance of strategy for a given time interval
+ */
+function getPerformanceSummary(data: PerformanceTuple[], timeBucket: PeriodTimeBucket, lastEntry: PerformanceTuple) {
+	// get the last entry date
+	const end = tsToDate(lastEntry[0]);
+
+	// find the start time based on end and interval
 	const [interval, duration] = timeBucketToIntervalParts(timeBucket);
 	const start = interval.offset(end, -duration);
 
+	// add a small buffer to the start time due to variability in cycle times
+	start.setUTCMinutes(start.getUTCMinutes() - PERIOD_BUFFER_MINUTES);
+
+	// get the start and end timestamps as they are needed for iterator comparisions
 	const startTs = dateToTs(start);
 	const endTs = dateToTs(end);
 
-	const first = data.findLast(([ts]) => ts < startTs)!;
-	const last = data.findLast(([ts]) => ts < endTs)!;
+	// find the first entry within the interval time window
+	const firstEntry = data.find(([ts]) => ts >= startTs && ts <= endTs);
 
-	const performance = relativeReturn(first?.[1], last?.[1]);
-	const annualized = performance && annualizedReturn(start, end, performance);
+	const performance = firstEntry !== lastEntry ? relativeReturn(firstEntry?.[1], lastEntry?.[1]) : undefined;
 
 	return {
 		timeBucket,
-		start: start,
-		end: end,
-		performance: performance ?? null,
-		annualizedReturn: annualized ?? null
+		start,
+		end,
+		first: firstEntry ? tsToDate(firstEntry?.[0]) : null,
+		performance: performance ?? null
 	};
 }

@@ -1,26 +1,27 @@
 <script lang="ts">
 	import type { AreaSeriesPartialOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TvChartOptions } from '$lib/charts/types.js';
+	import type { TvChartOptions } from '$lib/charts/types.js';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
-	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
-	import { utcHour } from 'd3-time';
+	import Profitability from '$lib/components/Profitability.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { relativeReturn } from '$lib/helpers/financial';
-	import { Profitability, Section } from '$lib/components';
 
 	const { data } = $props();
-	const { strategy, chartData, dateRange } = data;
+	const { strategy, chartData, range } = data;
+
+	const first = chartData.find(({ time }) => time >= range.from);
+	const last = chartData.findLast(({ time }) => time <= range.to);
+
+	const periodPerformance = getProfitInfo(relativeReturn(first?.value, last?.value));
 
 	const chartOptions: TvChartOptions = {
 		handleScroll: false,
 		handleScale: false,
 		rightPriceScale: { visible: false },
-		timeScale: {
-			visible: false,
-			lockVisibleTimeRangeOnResize: true
-		}
+		timeScale: { visible: false }
 	};
 
 	const areaSeriesOptions: AreaSeriesPartialOptions = {
@@ -28,10 +29,6 @@
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
 	};
-
-	let visibleData: SimpleDataItem[] = $state([]);
-
-	let periodPerformance = $derived(getProfitInfo(relativeReturn(visibleData[0]?.value, visibleData.at(-1)?.value)));
 </script>
 
 <Section padding="md" gap="sm">
@@ -54,9 +51,8 @@
 				direction={periodPerformance.direction}
 				options={areaSeriesOptions}
 				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
-				onVisibleDataChange={(data) => (visibleData = data as SimpleDataItem[])}
+				callback={({ chart }) => chart.timeScale().setVisibleRange(range)}
 			/>
-			<BaselineSeries interval={utcHour} range={dateRange} setChartVisibleRange />
 		</TvChart>
 	</div>
 </Section>

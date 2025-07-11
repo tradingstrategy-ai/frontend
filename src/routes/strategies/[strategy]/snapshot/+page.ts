@@ -1,10 +1,10 @@
+import type { SimpleDataItem } from '$lib/charts/types.js';
 import { error } from '@sveltejs/kit';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
 import { getStrategyInfo } from 'trade-executor/client/strategy-info';
 import { fetchChartData } from 'trade-executor/client/chart';
 import { getDateParam } from '$lib/helpers/url-params.js';
-import { normalizeDataForInterval } from '$lib/charts/helpers';
-import { utcHour } from 'd3-time';
+import { dateToTs } from '$lib/charts/helpers';
 
 export async function load({ fetch, params, url }) {
 	const strategyConf = configuredStrategies.get(params.strategy);
@@ -20,15 +20,27 @@ export async function load({ fetch, params, url }) {
 		error(400, 'start and end query params required');
 	}
 
-	const resp = await fetchChartData(fetch, strategy.url, {
-		type: 'compounding_unrealised_trading_profitability_sampled',
-		source: 'live_trading'
+	const range = {
+		from: dateToTs(startDate),
+		to: dateToTs(endDate)
+	};
+
+	const { data } = await fetchChartData(fetch, strategy.url, {
+		source: 'live_trading',
+		type: strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
 	});
+
+	const chartData = data
+		// exclude records with duplicate or or out-of-order timestamps
+		.filter(([ts], index) => !(ts >= data[index + 1]?.[0]))
+		// map to TvChart SimpleDataItem records
+		.map(([time, value]) => ({ time, value })) as SimpleDataItem[];
 
 	return {
 		strategy,
-		chartData: normalizeDataForInterval(resp.data, utcHour),
-		dateRange: [startDate, endDate] as [Date, Date],
+		chartData,
+		range,
+
 		// remove unneeded layout items (page used only for generating social media image)
 		skipNavbar: true,
 		skipFooter: true
