@@ -1,10 +1,10 @@
 import { error, json } from '@sveltejs/kit';
-import { dateToTs, timeBucketToIntervalParts } from '$lib/charts/helpers';
-import { getDateParam } from '$lib/helpers/url-params.js';
-import { relativeReturn, annualizedReturn } from '$lib/helpers/financial.js';
 import { timeBucketEnum } from '$lib/schemas/utility.js';
-import { fetchChartData } from 'trade-executor/client/chart.js';
 import { configuredStrategies } from 'trade-executor/schemas/configuration';
+import { getDateParam } from '$lib/helpers/url-params.js';
+import { fetchChartData } from 'trade-executor/client/chart.js';
+import { dateToTs, timeBucketToIntervalParts } from '$lib/charts/helpers';
+import { relativeReturn } from '$lib/helpers/financial.js';
 
 const periodTimeBuckets = timeBucketEnum.exclude(['1m', '5m', '15m']).options;
 
@@ -38,23 +38,26 @@ export async function GET({ fetch, params, url }) {
  * Summarize performance of strategy for a given time interval
  */
 function getPerformanceSummary(data: [number, number][], end: Date, timeBucket: PeriodTimeBucket) {
+	// find the start time based on end and interval
 	const [interval, duration] = timeBucketToIntervalParts(timeBucket);
 	const start = interval.offset(end, -duration);
 
+	// get the start and end timestamps as they are needed for iterator comparisions
 	const startTs = dateToTs(start);
 	const endTs = dateToTs(end);
 
-	const first = data.findLast(([ts]) => ts <= startTs)!;
-	const last = data.findLast(([ts]) => ts <= endTs)!;
+	// find the first and last data point within the interval time window
+	const first = data.find(([ts]) => ts >= startTs && ts <= endTs);
+	const last = data.findLast(([ts]) => ts <= endTs && ts >= startTs);
 
-	const performance = relativeReturn(first?.[1], last?.[1]);
-	const annualized = performance && annualizedReturn(start, end, performance);
+	const performance = first !== last ? relativeReturn(first?.[1], last?.[1]) : undefined;
 
 	return {
 		timeBucket,
-		start: start,
-		end: end,
-		performance: performance ?? null,
-		annualizedReturn: annualized ?? null
+		start,
+		end,
+		first: first ?? null,
+		last: last ?? null,
+		performance: performance ?? null
 	};
 }
