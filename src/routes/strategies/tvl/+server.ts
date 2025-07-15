@@ -48,7 +48,6 @@ export async function GET({ fetch }) {
 	const strategies = await getCachedStrategies(fetch);
 	const result: ProtocolTVL = { total_tvl_usd: 0, strategies: {} };
 	for (const strat of strategies) {
-		console.log(strat);
 		const id = strat.id;
 
 		// Legacy strategies not having their chain_id value configured
