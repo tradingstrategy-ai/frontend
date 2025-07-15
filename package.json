@@ -18,7 +18,7 @@
     "test": "npm run test:unit -- --run && npm run test:integration && npm run test:e2e --skip-build"
   },
   "engines": {
-    "node": "^20.11.0"
+    "node": "^20.19.3"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^3.0.0",
