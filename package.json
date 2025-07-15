@@ -6,16 +6,16 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "test:unit": "vitest run",
-    "test:unit:watch": "vitest watch",
-    "test:integration": "playwright test --config tests/integration",
-    "test:e2e": "playwright test --config tests/e2e",
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e --skip-build",
+    "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint": "prettier --check . && eslint .",
+    "test:unit": "vitest",
+    "test:integration": "playwright test --config tests/integration",
+    "test:e2e": "playwright test --config tests/e2e",
+    "test": "npm run test:unit -- --run && npm run test:integration && npm run test:e2e --skip-build"
   },
   "engines": {
     "node": "^20.11.0"
