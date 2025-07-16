@@ -19,6 +19,12 @@ const customLogger = ((logger) => {
 		warnOnce(msg: string, options: LogOptions) {
 			if (/^Sourcemap for ".*@aave\/math-utils/.test(msg)) return;
 			logger.warnOnce(msg, options);
+		},
+
+		// suppress /*#__PURE__*/ Rollup warnings from ox during build
+		warn(msg: string, options: LogOptions) {
+			if (msg.includes('/*#__PURE__*/')) return;
+			logger.warn(msg, options);
 		}
 	};
 })(createLogger());
