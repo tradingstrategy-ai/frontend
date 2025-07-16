@@ -51,6 +51,7 @@
     "typesense": "^1.8.2",
     "unplugin-icons": "^0.20.1",
     "vite": "^7.0.0",
+    "vite-plugin-devtools-json": "^0.3.0",
     "vite-plugin-simple-json-server": "^0.6.2",
     "vitest": "^3.2.3",
     "zod-fixture": "^2.5.2"
