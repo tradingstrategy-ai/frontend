@@ -89,7 +89,8 @@
 		if (!el || !colors) return undefined;
 		const style = getComputedStyle(el);
 		const baseOptions = getBaseOptions(style, colors);
-		return createChart(el, baseOptions);
+		const chart = createChart(el, baseOptions);
+		return decorateChartMethods(chart);
 	});
 
 	let tooltipParams: TooltipParams = $state({ seriesData: new Map() });
@@ -140,6 +141,28 @@
 		};
 	}
 
+	/**
+	 * Decorate addSeries and removeSeries chart methods with a local chart registry
+	 * (to provide deterministic series order back to tooltip)
+	 */
+	function decorateChartMethods(chart: IChartApi): IChartApi {
+		const { addSeries, removeSeries } = chart;
+
+		chart.addSeries = function (...args) {
+			const series = addSeries.apply(chart, args);
+			allSeries.push(series);
+			return series;
+		} as typeof addSeries;
+
+		chart.removeSeries = function (series, ...args) {
+			removeSeries.apply(chart, [series, ...args]);
+			const index = allSeries.indexOf(series);
+			if (index !== -1) allSeries.splice(index, 1);
+		} as typeof removeSeries;
+
+		return chart;
+	}
+
 	function isActiveTooltip(params: TooltipParams): params is ActiveTooltipParams {
 		return [params.time, params.logical, params.point, params.paneIndex].every((v) => v !== undefined);
 	}
@@ -159,7 +182,9 @@
 
 	// apply custom chart options
 	$effect(() => {
-		if (options) chart?.applyOptions(options);
+		if (chart && options) {
+			chart.applyOptions(options);
+		}
 	});
 
 	// call callback (after chart created and whenever callback is updated)
@@ -175,24 +200,6 @@
 		return () => {
 			teardown?.();
 			teardown = undefined;
-		};
-	});
-
-	// decorate chart.addSeries and chart.removeSeries to add/remove series to/from local registry
-	// (to provide deterministic series order back to tooltip)
-	$effect(() => {
-		if (!chart) return;
-
-		chart.addSeries = function () {
-			const series = chart.constructor.prototype.addSeries.apply(chart, arguments);
-			allSeries.push(series);
-			return series;
-		};
-
-		chart.removeSeries = function (series) {
-			chart.constructor.prototype.removeSeries.apply(chart, arguments);
-			const index = allSeries.indexOf(series);
-			if (index !== -1) allSeries.splice(index, 1);
 		};
 	});
 

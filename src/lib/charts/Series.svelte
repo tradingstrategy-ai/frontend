@@ -57,14 +57,18 @@
 		chart.timeScale().subscribeVisibleLogicalRangeChange(handleRangeChange);
 
 		return () => {
-			series && chart.removeSeries(series);
+			if (series) {
+				chart.removeSeries(series);
+			}
 			chart.timeScale().unsubscribeVisibleLogicalRangeChange(handleRangeChange);
 		};
 	});
 
 	// apply series options (re-applies when they change)
 	$effect(() => {
-		options && series?.applyOptions(options);
+		if (series && options) {
+			series.applyOptions(options);
+		}
 	});
 
 	// call callback (on initial load and whenever callback is updated)
@@ -74,7 +78,9 @@
 		// push to event loop to allow series init to complete
 		if (callback && series) {
 			setTimeout(() => {
-				if (series) teardown = callback({ chart, colors, series });
+				if (series) {
+					teardown = callback({ chart, colors, series });
+				}
 			});
 		}
 
@@ -95,10 +101,11 @@
 
 	// apply priceScaleCalculator if one was provided
 	$effect(() => {
-		priceScaleCalculator &&
-			series?.applyOptions({
+		if (series && priceScaleCalculator) {
+			series.applyOptions({
 				autoscaleInfoProvider: () => priceScaleCalculator(getVisibleData())
 			});
+		}
 	});
 
 	// Get currently visible chart data segment
@@ -129,7 +136,9 @@
 	// fetch initial data whenever a new dataFeed is provided
 	$effect(() => {
 		// prevent effect from triggering itself
-		dataFeed && untrack(() => dataFeed.fetchData());
+		if (dataFeed) {
+			untrack(() => dataFeed.fetchData());
+		}
 	});
 
 	// reset primary pane x-axis scale when dataFeed is reset (e.g., time interval change)
@@ -153,7 +162,7 @@
 		// Use requestAnimationFrame to push to event loop and only run when window is in foreground
 		// (allows TradingView to first create the series pane elements)
 		requestAnimationFrame(() => {
-			const target = series?.getPane().getHTMLElement().querySelector('td:nth-child(2)');
+			const target = series?.getPane().getHTMLElement()?.querySelector('td:nth-child(2)');
 			if (target) {
 				seriesContent = mount(SeriesContent, { target, props: { children } });
 			}
