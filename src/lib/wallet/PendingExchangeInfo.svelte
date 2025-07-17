@@ -187,6 +187,7 @@
 
 	$effect(() => {
 		// run effect whenever address changes
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		address;
 
 		exchange.reset();
@@ -196,8 +197,6 @@
 			exchange.reset();
 		};
 	});
-
-	$inspect(type, address, $exchange);
 </script>
 
 {#snippet tokenValue(token: TokenBalance, label?: string)}

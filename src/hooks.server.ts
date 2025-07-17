@@ -12,6 +12,7 @@ const adminPw = env.TS_PRIVATE_ADMIN_PW;
 
 Sentry.init({
 	dsn: sentryDsn,
+	sendDefaultPii: true,
 	environment: siteMode,
 	release: `frontend@${version}`,
 	tracesSampleRate: 0.1

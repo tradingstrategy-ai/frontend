@@ -4,6 +4,7 @@ import { sentryDsn, siteMode, version } from '$lib/config';
 
 Sentry.init({
 	dsn: sentryDsn,
+	sendDefaultPii: true,
 	environment: siteMode,
 	release: `frontend@${version}`,
 	tracesSampleRate: 0.1

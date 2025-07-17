@@ -40,7 +40,9 @@
 
 	const chartOptions: TvChartOptions = {
 		crosshair: { vertLine: { visible: true } },
-		localization: { priceFormatter: formatValue },
+		localization: {
+			priceFormatter: (v: number) => formatValue(v)
+		},
 		timeScale: {
 			lockVisibleTimeRangeOnResize: true
 		}
