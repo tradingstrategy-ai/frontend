@@ -53,8 +53,7 @@
     "vite": "^7.0.5",
     "vite-plugin-devtools-json": "^0.3.0",
     "vite-plugin-simple-json-server": "^0.6.2",
-    "vitest": "^3.2.4",
-    "zod-fixture": "^2.5.2"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@aave/math-utils": "^1.36.0",
