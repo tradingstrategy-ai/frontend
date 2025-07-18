@@ -20,7 +20,7 @@ export const keyMetricSchema = z.object({
 	calculation_window_end_at: unixTimestampToDate.nullish(),
 	calculation_method: keyMetricCalculationMethod.nullish(),
 	unavailability_reason: z.string().nullish(),
-	help_link: z.string().url().nullish(),
+	help_link: z.url().nullish(),
 	name: z.string().nullish()
 });
 export type KeyMetric = z.infer<typeof keyMetricSchema>;

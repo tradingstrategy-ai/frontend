@@ -15,7 +15,7 @@ export const portfolioSchema = z.object({
 	next_trade_id: primaryKey,
 	next_balance_update_id: primaryKey,
 	open_positions: z.record(primaryKeyString, tradingPositionSchema),
-	reserves: z.record(reservePositionSchema),
+	reserves: z.record(z.string(), reservePositionSchema),
 	closed_positions: z.record(primaryKeyString, tradingPositionSchema),
 	frozen_positions: z.record(primaryKeyString, tradingPositionSchema)
 });

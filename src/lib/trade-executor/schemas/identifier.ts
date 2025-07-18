@@ -10,22 +10,19 @@ import { chainId, decimal, hexString, percent, primaryKey, unixTimestamp, usDoll
 
 export const assetType = z.enum(['token', 'collateral', 'borrowed']);
 
-// zod schemas can't reference themselves, so in order for `underlying` to
-// reference another assetIdentifier, we define a base schema and extend it
-const assetIdentifierBase = z.object({
+// Using Zod 4's recursive types with getter syntax
+export const assetIdentifierSchema = z.object({
 	chain_id: chainId,
 	address: hexString,
 	token_symbol: z.string(),
 	decimals: z.number().int().nonnegative(),
 	internal_id: primaryKey.nullish(),
-	info_url: z.string().url().nullish(),
+	info_url: z.url().nullish(),
+	get underlying() {
+		return assetIdentifierSchema.nullish();
+	},
 	type: assetType.nullish(),
-	underlying: z.null().optional(),
 	liquidation_threshold: z.number().nullish()
-});
-
-export const assetIdentifierSchema = assetIdentifierBase.extend({
-	underlying: assetIdentifierBase.nullish()
 });
 export type AssetIdentifier = z.infer<typeof assetIdentifierSchema>;
 
@@ -39,26 +36,23 @@ export const tradingPairKind = z.enum([
 	'cash'
 ]);
 
-// zod schemas can't reference themselves, so in order for `underlying_spot_pair`
-// to reference another tradingPairIdentifier, we define a base schema and extend it
-const tradingPairIdentifierBase = z.object({
+// Using Zod 4's recursive types with getter syntax
+export const tradingPairIdentifierSchema = z.object({
 	base: assetIdentifierSchema,
 	quote: assetIdentifierSchema,
 	pool_address: hexString,
 	exchange_address: hexString.nullish(),
 	internal_id: primaryKey.nullish(),
 	internal_exchange_id: primaryKey.nullish(),
-	info_url: z.string().url().nullish(),
+	info_url: z.url().nullish(),
 	fee: percent.nullish(),
 	reverse_token_order: z.boolean().nullish(),
 	kind: tradingPairKind,
-	underlying_spot_pair: z.null().optional(),
+	get underlying_spot_pair() {
+		return tradingPairIdentifierSchema.nullish();
+	},
 	exchange_name: z.string().nullish(),
-	other_data: z.record(z.any()).nullish()
-});
-
-export const tradingPairIdentifierSchema = tradingPairIdentifierBase.extend({
-	underlying_spot_pair: tradingPairIdentifierBase.nullish()
+	other_data: z.record(z.string(), z.any()).nullish()
 });
 export type TradingPairIdentifier = z.infer<typeof tradingPairIdentifierSchema>;
 

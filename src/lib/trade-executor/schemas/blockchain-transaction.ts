@@ -25,7 +25,7 @@ export const blockchainTransactionSchema = z.object({
 	wrapped_args: hexEncodedData.nullish(),
 	tx_hash: hexString.nullish(),
 	nonce: count,
-	details: z.record(z.any()).nullish(),
+	details: z.record(z.string(), z.any()).nullish(),
 	signed_bytes: hexString.nullish(),
 	signed_tx_object: hexEncodedData.nullish(),
 	broadcasted_at: unixTimestamp.nullish(),
@@ -39,7 +39,7 @@ export const blockchainTransactionSchema = z.object({
 	stack_trace: z.string().nullish(),
 	asset_deltas: blockchainAssetDeltaSchema.array(),
 	args: z.any().array().nullish(),
-	other: z.record(z.any()),
+	other: z.record(z.string(), z.any()),
 	notes: z.string().nullish()
 });
 export type BlockchainTransaction = z.infer<typeof blockchainTransactionSchema>;

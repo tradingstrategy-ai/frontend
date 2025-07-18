@@ -151,7 +151,7 @@ export const strategySummarySchema = z.object({
 	name: z.string(),
 	short_description: z.string().nullish(),
 	long_description: z.string().nullish(),
-	icon_url: z.string().url().nullish(),
+	icon_url: z.url().nullish(),
 	on_chain_data: onChainDataSchema,
 	started_at: unixTimestampToDate,
 	executor_running: z.boolean(),
@@ -163,6 +163,6 @@ export const strategySummarySchema = z.object({
 	badges: z.string().array(),
 	tags: z.string().array(),
 	sort_priority: z.number().default(0),
-	fees: strategyFeesSchema.default({})
+	fees: strategyFeesSchema.default(() => strategyFeesSchema.parse({}))
 });
 export type StrategySummary = z.infer<typeof strategySummarySchema>;

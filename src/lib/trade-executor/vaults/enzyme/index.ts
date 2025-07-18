@@ -6,7 +6,7 @@ import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { SignedArguments } from '$lib/eth-defi/eip-3009';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits, GetSharePriceError } from '../base';
-import { getTokenBalance, getTokenInfo, getEvents } from '$lib/eth-defi/helpers';
+import { getTokenInfo, getEvents } from '$lib/eth-defi/helpers';
 import { readContract, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits, isAddressEqual } from 'viem';
 

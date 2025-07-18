@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { error } from '@sveltejs/kit';
 import { config } from '$lib/wallet/client';
-import { hexString } from '$lib/eth-defi/schemas/core';
-import { currencyBalanceSchema, tokenBalanceSchema, tokenInfoSchema } from '$lib/eth-defi/schemas/token';
+import { currencyBalanceSchema, tokenBalanceSchema } from '$lib/eth-defi/schemas/token';
 import { transactionLog } from '$lib/eth-defi/schemas/transaction';
 
 const dataSchema = z
@@ -11,7 +10,7 @@ const dataSchema = z
 		vaultShares: tokenBalanceSchema,
 		vaultNetValue: tokenBalanceSchema,
 		transactionLogs: transactionLog.array(),
-		snapshot: z.record(z.any())
+		snapshot: z.record(z.string(), z.any())
 	})
 	.partial();
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const dateStrSchema = z.string().date().or(z.string().datetime());
+const dateStrSchema = z.iso.date().or(z.iso.datetime());
 const dateSchema = dateStrSchema.pipe(z.coerce.date());
 
 export const announcementSchema = z.object({
