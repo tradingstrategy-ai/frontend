@@ -53,8 +53,7 @@
     "vite": "^7.0.5",
     "vite-plugin-devtools-json": "^0.3.0",
     "vite-plugin-simple-json-server": "^0.6.2",
-    "vitest": "^3.2.4",
-    "zod-fixture": "^2.5.2"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@aave/math-utils": "^1.36.0",
@@ -84,7 +83,7 @@
     "svelte-inview": "^4.0.4",
     "svelte-turnstile": "^0.11.0",
     "viem": "^2.32.0",
-    "zod": "^3.25.76"
+    "zod": "^4.0.5"
   },
   "overrides": {
     "vite-plugin-simple-json-server": {

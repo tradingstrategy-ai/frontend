@@ -5,7 +5,7 @@ import { primaryKey } from './utility-types';
 export const strategyConfigurationSchema = z.object({
 	id: z.string(),
 	name: z.string(),
-	url: z.string().url(),
+	url: z.url(),
 	newVersionId: z.string().optional(),
 	hiddenPositions: primaryKey.array().default([]),
 	frontpage: z.boolean().default(false),

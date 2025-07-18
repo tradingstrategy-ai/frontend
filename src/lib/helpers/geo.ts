@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 export const countryCodeSchema = z.string().regex(/^[A-Z]{2}$/);
 export type CountryCode = z.infer<typeof countryCodeSchema>;
 
-export const geoBlockSchema = z.record(countryCodeSchema.array().nullish());
+export const geoBlockSchema = z.record(z.string(), countryCodeSchema.array().nullish());
 export type GeoBlock = z.infer<typeof geoBlockSchema>;
 
 /**

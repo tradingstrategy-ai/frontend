@@ -12,13 +12,13 @@ import { unixTimestampToDate } from './utility-types';
 import { keyMetricSchema, keyMetricSource } from './key-metric';
 
 export const statisticsTableMetricSchema = keyMetricSchema.extend({
-	value: z.record(z.string())
+	value: z.record(z.string(), z.string())
 });
 export type StatisticsTableMetric = z.infer<typeof statisticsTableMetricSchema>;
 
 export const statisticsTableSchema = z.object({
 	columns: z.string().array(),
-	rows: z.record(statisticsTableMetricSchema),
+	rows: z.record(z.string(), statisticsTableMetricSchema),
 	created_at: unixTimestampToDate,
 	source: keyMetricSource.nullish(),
 	calculationWindowStartAt: unixTimestampToDate.nullish(),
@@ -34,6 +34,6 @@ const longShortTableMetricSchema = statisticsTableMetricSchema.extend({
 
 export const longShortTableSchema = statisticsTableSchema.extend({
 	columns: longShortTableColumns.array(),
-	rows: z.record(longShortTableMetricSchema)
+	rows: z.record(z.string(), longShortTableMetricSchema)
 });
 export type LongShortTable = z.infer<typeof longShortTableSchema>;

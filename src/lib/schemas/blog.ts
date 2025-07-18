@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-const datetime = z.string().datetime({ offset: true });
-const url = z.string().url();
+const datetime = z.iso.datetime({ offset: true });
+const url = z.url();
 const positiveInteger = z.number().int().positive();
 
 // See: https://ghost.org/docs/content-api/#posts
@@ -21,7 +21,7 @@ export type BlogPostIndexItem = z.infer<typeof blogPostIndexItemSchema>;
 
 // See: https://ghost.org/docs/content-api/#posts
 export const blogPostDetailsSchema = blogPostIndexItemSchema.extend({
-	uuid: z.string().uuid(),
+	uuid: z.uuid(),
 	html: z.string(),
 	url: url,
 	og_image: url.nullable(),

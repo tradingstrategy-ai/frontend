@@ -19,5 +19,5 @@ export const tosContractInfoSchema = z.object({
 });
 export type TosContractInfo = z.infer<typeof tosContractInfoSchema>;
 
-export const tosContractConfigSchema = z.record(tosContractInfoSchema);
+export const tosContractConfigSchema = z.record(z.string(), tosContractInfoSchema);
 export type TosContractConfig = z.infer<typeof tosContractConfigSchema>;
