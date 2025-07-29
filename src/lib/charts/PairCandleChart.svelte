@@ -98,8 +98,7 @@
 			priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.25 } }}
 		>
 			<SeriesLabel heading>TVL & Volume</SeriesLabel>
-
-			{#if !tvlFeed.hasData}
+			{#if tvlFeed && !tvlFeed.hasData}
 				<SeriesLabel right class="no-tvl-data">
 					<Tooltip>
 						<span slot="trigger">
