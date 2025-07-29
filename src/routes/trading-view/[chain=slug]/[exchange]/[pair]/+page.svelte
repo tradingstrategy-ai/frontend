@@ -8,7 +8,12 @@ Render the pair trading page
 <script lang="ts">
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
-	import { AlertList, Button, EntitySymbol, PageHeader } from '$lib/components';
+	import { captureException } from '@sentry/sveltekit';
+	import Alert from '$lib/components/Alert.svelte';
+	import AlertList from '$lib/components/AlertList.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -116,14 +121,22 @@ Render the pair trading page
 	</section>
 
 	<section class="ds-container charts">
-		<PairCandleChart
-			chainSlug={summary.chain_slug}
-			exchangeType={summary.exchange_type}
-			pairId={summary.pair_id}
-			pairSymbol={summary.pair_symbol}
-			{timeBucket}
-			on:change={handleTimeBucketChange}
-		/>
+		<svelte:boundary onerror={(e) => captureException(e)}>
+			<PairCandleChart
+				chainSlug={summary.chain_slug}
+				exchangeType={summary.exchange_type}
+				pairId={summary.pair_id}
+				pairSymbol={summary.pair_symbol}
+				{timeBucket}
+				on:change={handleTimeBucketChange}
+			/>
+
+			{#snippet failed(error)}
+				<Alert status="error" title="Render error">
+					{error}
+				</Alert>
+			{/snippet}
+		</svelte:boundary>
 	</section>
 
 	<section class="ds-container time-period-summary">
