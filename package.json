@@ -59,7 +59,7 @@
     "@aave/math-utils": "^1.36.0",
     "@reown/appkit": "^1.7.15",
     "@reown/appkit-adapter-wagmi": "^1.7.15",
-    "@sentry/sveltekit": "^9.40.0",
+    "@sentry/sveltekit": "^9.42.1",
     "@trading-strategy-ai/web-top-node": "^0.1.0-beta.10",
     "@wagmi/connectors": "^5.8.6",
     "@wagmi/core": "^2.17.3",
