@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Menu, MenuItem, SummaryBox } from '$lib/components';
+	import Menu from '$lib/components/Menu.svelte';
+	import MenuItem from '$lib/components/MenuItem.svelte';
+	import SummaryBox from '$lib/components/SummaryBox.svelte';
 
 	$: currentTab = $page.url.pathname.split('/').at(-1);
 </script>
@@ -10,6 +12,7 @@
 		<Menu horizontal>
 			<MenuItem label="Status" targetUrl="status" active={currentTab === 'status'} />
 			<MenuItem label="Logs" targetUrl="logs" active={currentTab === 'logs'} />
+			<MenuItem label="Analysis" targetUrl="analysis" active={currentTab === 'analysis'} />
 			<MenuItem label="Decision making" targetUrl="decision-making" active={currentTab === 'decision-making'} />
 		</Menu>
 	</header>
