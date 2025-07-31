@@ -7,8 +7,7 @@ import { configuredStrategies } from 'trade-executor/schemas/configuration';
 import { type RunState, runStateSchema } from 'trade-executor/schemas/run-state';
 
 export async function load({ params, fetch }) {
-	const strategy = configuredStrategies.get(params.strategy);
-	if (!strategy) error(404, 'Not found');
+	const strategy = configuredStrategies.get(params.strategy)!;
 
 	let runState: RunState;
 
