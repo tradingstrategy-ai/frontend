@@ -1,6 +1,6 @@
 <script lang="ts">
 	let { data } = $props();
-	let { strategy, chartRegistry } = $derived(data);
+	let { strategy, chartRegistrations } = $derived(data);
 </script>
 
 <svelte:head>
@@ -11,7 +11,7 @@
 <section class="analysis">
 	<h2>Available charts and tables</h2>
 	<ul>
-		{#each chartRegistry as { id } (id)}
+		{#each chartRegistrations as { id } (id)}
 			<li>{id}</li>
 		{/each}
 	</ul>
