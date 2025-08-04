@@ -4,6 +4,13 @@
 	let { data } = $props();
 	let { strategy, chartRegistrations, chartId } = $derived(data);
 
+	let content = $derived.by(async () => {
+		if (!chartId) return undefined;
+		const response = await fetch(`${strategy.url}/chart-registry/render?chart_id=${chartId}`);
+		const blob = await response.blob();
+		return URL.createObjectURL(blob);
+	});
+
 	function handleAnalysisChange(this: HTMLSelectElement) {
 		goto(`?chart_id=${this.value}`);
 	}
@@ -23,6 +30,17 @@
 			{/each}
 		</select>
 	</p>
+	<p>
+		{#await content}
+			Loading…
+		{:then imageUrl}
+			{#if imageUrl}
+				<img src={imageUrl} alt="Analysis content" />
+			{:else}
+				Nothing to display
+			{/if}
+		{/await}
+	</p>
 </section>
 
 <style>
@@ -30,6 +48,7 @@
 		select {
 			border-radius: var(--radius-sm);
 			padding: 0.5rem;
+			margin-bottom: 1rem;
 		}
 	}
 </style>
