@@ -5,7 +5,7 @@ import type { DepositResult, RedemptionResult, PendingExchange, SettlementRequir
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
-import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
+import { getEvents } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
 import vaultAbi from './abi/Vault.json';
