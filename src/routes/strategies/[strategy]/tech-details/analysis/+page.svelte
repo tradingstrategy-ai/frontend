@@ -1,6 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	let { data } = $props();
-	let { strategy, chartRegistrations } = $derived(data);
+	let { strategy, chartRegistrations, chartId } = $derived(data);
+
+	function handleAnalysisChange(this: HTMLSelectElement) {
+		goto(`?chart_id=${this.value}`);
+	}
 </script>
 
 <svelte:head>
@@ -9,20 +15,21 @@
 </svelte:head>
 
 <section class="analysis">
-	<h2>Available charts and tables</h2>
-	<ul>
-		{#each chartRegistrations as { id } (id)}
-			<li>{id}</li>
-		{/each}
-	</ul>
+	<p>
+		<select onchange={handleAnalysisChange}>
+			<option value="">Select analysis</option>
+			{#each chartRegistrations as { id, name } (id)}
+				<option value={id} selected={id === chartId}>{name}</option>
+			{/each}
+		</select>
+	</p>
 </section>
 
 <style>
 	.analysis {
-		h2 {
-			margin-bottom: 1rem;
-			font: var(--f-heading-sm-medium);
-			letter-spacing: var(--ls-heading-sm, normal);
+		select {
+			border-radius: var(--radius-sm);
+			padding: 0.5rem;
 		}
 	}
 </style>

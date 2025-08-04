@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { publicApiError } from '$lib/helpers/public-api';
 import { type ChartRegistrations, chartRegistrationsSchema } from 'trade-executor/schemas/chart.js';
 
-export async function load({ parent }) {
+export async function load({ parent, url }) {
 	const { admin, strategy } = await parent();
 	if (!admin) error(401, 'Unauthorized');
 
@@ -17,5 +17,13 @@ export async function load({ parent }) {
 		error(503, { message: 'Service Unavailable', stack });
 	}
 
-	return { chartRegistrations };
+	let chartId = url.searchParams.get('chart_id') ?? undefined;
+	if (chartId && !chartRegistrations.find(({ id }) => id === chartId)) {
+		chartId = undefined;
+	}
+
+	return {
+		chartRegistrations,
+		chartId
+	};
 }
