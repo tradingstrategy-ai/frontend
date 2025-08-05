@@ -4,7 +4,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 
 	let { data } = $props();
-	let { strategy, chartRegistrations, chartId, contentPromise } = $derived(data);
+	let { strategy, chartRegistrations, chartId, pairIds, contentPromise } = $derived(data);
 
 	function handleAnalysisChange(this: HTMLSelectElement) {
 		goto(`?chart_id=${this.value}`, { noScroll: true });
@@ -17,13 +17,14 @@
 </svelte:head>
 
 <section class="analysis">
-	<p>
+	<p class="controls">
 		<select onchange={handleAnalysisChange}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
 				<option value={id} selected={id === chartId}>{name}</option>
 			{/each}
 		</select>
+		<span>default pair_ids: {pairIds}</span>
 	</p>
 
 	<div class="content">
@@ -32,13 +33,13 @@
 				<Spinner size="60" />
 			</div>
 		{:then content}
-			{#if content?.type === 'image/png'}
+			{#if !content}
+				<p>Select analysis from the drop-down above.</p>
+			{:else if content.type === 'image/png'}
 				<img src={URL.createObjectURL(content.data)} alt="Analysis content" />
-			{:else if content?.type === 'text/html'}
+			{:else if content.type === 'text/html'}
 				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html content.data}
-			{:else}
-				Nothing to display
 			{/if}
 		{:catch error}
 			<Alert size="md" status="error" title="Error loading analysis">
@@ -56,8 +57,18 @@
 			margin-bottom: 1rem;
 		}
 
+		.controls {
+			span {
+				margin-left: 1rem;
+			}
+		}
+
 		.content {
 			min-height: 500px;
+
+			p {
+				padding: 1rem 0.5rem;
+			}
 		}
 
 		.loading {

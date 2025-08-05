@@ -6,6 +6,8 @@
  *
  */
 import { z } from 'zod';
+import { tradingPairIdentifierSchema } from './identifier';
+import { createTradingPairInfo } from 'trade-executor/models/trading-pair-info';
 
 export const chartKind = z.enum([
 	'indicator_single_pair',
@@ -28,3 +30,9 @@ export type ChartRegistration = z.infer<typeof chartRegistrationSchema>;
 // is exposed via the trade-executor API as an array rather than a record.
 export const chartRegistrationsSchema = z.array(chartRegistrationSchema);
 export type ChartRegistrations = z.infer<typeof chartRegistrationsSchema>;
+
+export const chartPairsSchema = z.object({
+	default_pairs: z.array(tradingPairIdentifierSchema.transform(createTradingPairInfo)),
+	all_pairs: z.array(tradingPairIdentifierSchema.transform(createTradingPairInfo))
+});
+export type ChartPairs = z.infer<typeof chartPairsSchema>;
