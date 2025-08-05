@@ -9,7 +9,7 @@ export type ChainId = z.infer<typeof chainId>;
 export const hexEncodedData = z.string().regex(/^[0-9a-fA-F]+$/);
 export type HexEncodedData = z.infer<typeof hexEncodedData>;
 
-export const hexString = z.string().refine((arg): arg is Address => {
-	return /^0x[0-9a-fA-F]+$/.test(arg);
+export const hexString = z.custom<`0x${string}`>((arg) => {
+	return typeof arg === 'string' && /^0x[0-9a-fA-F]+$/.test(arg);
 });
 export type HexString = z.infer<typeof hexString>;

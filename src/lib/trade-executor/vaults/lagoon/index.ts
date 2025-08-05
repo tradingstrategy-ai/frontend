@@ -5,10 +5,11 @@ import type { DepositResult, RedemptionResult, PendingExchange, SettlementRequir
 import type { TokenBalance } from '$lib/eth-defi/schemas/token';
 import type { HexString } from 'trade-executor/schemas/utility-types';
 import { VaultWithInternalDeposits } from '../base';
-import { getTokenBalance, getEvents } from '$lib/eth-defi/helpers';
+import { getEvents } from '$lib/eth-defi/helpers';
 import { readContract, readContracts, simulateContract, writeContract } from '@wagmi/core';
 import { formatUnits, parseUnits } from 'viem';
-import vaultAbi from './abi/Vault.json';
+import vaultAbi_v0 from './abi/v0/Vault.json';
+import vaultAbi_v0_5_0 from './abi/v0.5.0/Vault.json';
 
 export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> implements SettlementRequired {
 	readonly type = 'lagoon';
@@ -28,12 +29,39 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	readonly settlementInfoUrl = 'https://docs.lagoon.finance/introduction/readme/terminology#vault-settlement';
 
-	// private utility prop for generating vault contracts
-	#vaultBaseContract = {
-		abi: vaultAbi,
-		chainId: this.chain.id,
-		address: this.address
-	} as const;
+	#versionPromise?: Promise<string>;
+
+	// Returns Lagoon vault contract version
+	async #getVersion(config: Config) {
+		if (!this.#versionPromise) {
+			const versionAbi = [
+				{ type: 'function', name: 'version', inputs: [], outputs: [{ type: 'string' }], stateMutability: 'pure' }
+			] as const;
+
+			this.#versionPromise = readContract(config, {
+				abi: versionAbi,
+				chainId: this.chain.id,
+				address: this.address,
+				functionName: 'version'
+			}).catch((error) => {
+				// if contract doesn't support `version` function, it's old (v0)
+				if (error.name === 'ContractFunctionExecutionError') return 'v0';
+
+				this.#versionPromise = undefined;
+				throw error;
+			});
+		}
+
+		return this.#versionPromise;
+	}
+
+	// Returns correct Lagoon vault ABI based on contract version
+	async #getVaultAbi(config: Config) {
+		const version = await this.#getVersion(config);
+		if (version === 'v0') return vaultAbi_v0;
+		if (version === 'v0.5.0') return vaultAbi_v0_5_0;
+		throw new Error(`Unsupported vault version: ${version}`);
+	}
 
 	get externalProviderUrl() {
 		return `https://app.lagoon.finance/vault/${this.chain.id}/${this.address}`;
@@ -64,7 +92,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async buyShares(config: Config, buyer: Address, value: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'requestDeposit',
 			args: [value, buyer, buyer]
 		});
@@ -74,7 +104,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async getDepositResult(config: Config, transactionLogs: Log[]): Promise<DepositResult> {
 		const [{ assets: assetValue }] = getEvents({
-			abi: vaultAbi,
+			abi: await this.#getVaultAbi(config),
 			address: this.address,
 			eventName: 'DepositRequest',
 			transactionLogs
@@ -94,7 +124,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async redeemShares(config: Config, seller: Address, shares: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'requestRedeem',
 			args: [shares, seller, seller]
 		});
@@ -104,7 +136,7 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async getRedemptionResult(config: Config, transactionLogs: Log[]): Promise<RedemptionResult> {
 		const [{ shares: shareValue }] = getEvents({
-			abi: vaultAbi,
+			abi: await this.#getVaultAbi(config),
 			address: this.address,
 			eventName: 'RedeemRequest',
 			transactionLogs
@@ -133,7 +165,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async cancelPendingDeposit(config: Config): Promise<HexString> {
 		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'cancelRequestDeposit'
 		});
 		return writeContract(config, request);
@@ -141,7 +175,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async claimPendingDeposit(config: Config, address: Address, value: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'deposit',
 			args: [value, address]
 		});
@@ -150,7 +186,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 
 	async claimPendingRedemption(config: Config, address: Address, value: bigint): Promise<HexString> {
 		const { request } = await simulateContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'redeem',
 			args: [value, address, address]
 		});
@@ -166,13 +204,15 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		const isDeposit = type === 'deposit';
 
 		const [requestId, assetToken, vaultToken] = await Promise.all([
-			this.#getLastRequestId(config, address, type),
+			this.#getRequestId(config, address, type),
 			this.getDenominationTokenInfo(config),
 			this.getVaultTokenInfo(config)
 		]);
 
 		const baseContract = {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			args: [requestId, address] as const
 		};
 
@@ -209,10 +249,17 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 		};
 	}
 
-	#getLastRequestId(config: Config, address: Address, type: 'deposit' | 'redemption'): Promise<bigint> {
+	async #getRequestId(config: Config, address: Address, type: 'deposit' | 'redemption'): Promise<bigint> {
+		// Newer Lagoon contracts no longer support lastDepositRequestId/lastRedeemRequestId
+		// Pending and claimable deposit/redeem request functions now expect 0n for requestId
+		const version = await this.#getVersion(config);
+		if (version === 'v0.5.0') return 0n;
+
 		const functionName = type === 'deposit' ? 'lastDepositRequestId' : 'lastRedeemRequestId';
 		return readContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName,
 			args: [address]
 		}).then(BigInt);
@@ -221,7 +268,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	// Get Lagoon vault fees from vault smart contract
 	async getFees(config: Config) {
 		const fees = await readContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName: 'feeRates'
 		});
 
@@ -242,7 +291,9 @@ export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts>
 	async #convertValue(config: Config, to: 'assets' | 'shares', value: bigint, requestId?: bigint): Promise<bigint> {
 		const functionName = to === 'assets' ? 'convertToAssets' : 'convertToShares';
 		return readContract(config, {
-			...this.#vaultBaseContract,
+			abi: await this.#getVaultAbi(config),
+			chainId: this.chain.id,
+			address: this.address,
 			functionName,
 			args: requestId ? [value, requestId] : [value]
 		});
