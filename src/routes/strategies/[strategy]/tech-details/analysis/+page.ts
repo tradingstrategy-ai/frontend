@@ -1,29 +1,18 @@
-import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/public-api';
-import { type ChartRegistrations, chartRegistrationsSchema } from 'trade-executor/schemas/chart.js';
+async function fetchAnalysis(fetch: Fetch, strategyUrl: string, chartId: string) {
+	const response = await fetch(`${strategyUrl}/chart-registry/render?chart_id=${chartId}`);
+	const blob = await response.blob();
+	return URL.createObjectURL(blob);
+}
 
-export async function load({ parent, url }) {
-	const { admin, strategy } = await parent();
-	if (!admin) error(401, 'Unauthorized');
-
-	let chartRegistrations: ChartRegistrations;
-
-	try {
-		const resp = await fetch(`${strategy.url}/chart-registry`);
-		if (!resp.ok) throw await publicApiError(resp);
-		chartRegistrations = chartRegistrationsSchema.parse(await resp.json());
-	} catch (e) {
-		const stack = [`Error loading data from URL: ${strategy.url}/status`, e.message];
-		error(503, { message: 'Service Unavailable', stack });
-	}
+export async function load({ fetch, parent, url }) {
+	const { strategy, chartRegistrations } = await parent();
 
 	let chartId = url.searchParams.get('chart_id') ?? undefined;
 	if (chartId && !chartRegistrations.find(({ id }) => id === chartId)) {
 		chartId = undefined;
 	}
 
-	return {
-		chartRegistrations,
-		chartId
-	};
+	const content = chartId ? fetchAnalysis(fetch, strategy.url, chartId) : undefined;
+
+	return { chartRegistrations, chartId, content };
 }

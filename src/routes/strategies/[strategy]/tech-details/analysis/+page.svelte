@@ -2,17 +2,10 @@
 	import { goto } from '$app/navigation';
 
 	let { data } = $props();
-	let { strategy, chartRegistrations, chartId } = $derived(data);
-
-	let content = $derived.by(async () => {
-		if (!chartId) return undefined;
-		const response = await fetch(`${strategy.url}/chart-registry/render?chart_id=${chartId}`);
-		const blob = await response.blob();
-		return URL.createObjectURL(blob);
-	});
+	let { strategy, chartRegistrations, chartId, content } = $derived(data);
 
 	function handleAnalysisChange(this: HTMLSelectElement) {
-		goto(`?chart_id=${this.value}`);
+		goto(`?chart_id=${this.value}`, { noScroll: true });
 	}
 </script>
 
