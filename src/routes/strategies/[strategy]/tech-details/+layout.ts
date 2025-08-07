@@ -3,7 +3,8 @@ export async function load() {
 		breadcrumbs: {
 			status: 'Instance status',
 			logs: 'Logs',
-			'decision-making': 'Decision making'
+			'decision-making': 'Decision making',
+			analysis: 'Analysis'
 		}
 	};
 }

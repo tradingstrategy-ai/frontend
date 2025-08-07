@@ -49,6 +49,8 @@
 		grid-template-rows: auto 1fr;
 
 		header {
+			display: grid;
+			grid-template-columns: 1fr auto;
 			align-items: center;
 			margin-bottom: 1rem;
 

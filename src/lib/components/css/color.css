@@ -1,6 +1,6 @@
 :root {
 	/* Supported color schemes */
-	color-scheme: light dark;
+	color-scheme: dark;
 
 	/* Global color hues */
 	--hue-1: 36;
@@ -72,6 +72,8 @@
 	 * theme via postcss plugin (see postcss.config.js)
  	 */
 	@media (prefers-color-scheme: light) {
+		color-scheme: light;
+
 		--c-body: hsl(var(--hue-1) 100% 96%);
 
 		--c-text: hsl(var(--hue-1) 9% 7%);
