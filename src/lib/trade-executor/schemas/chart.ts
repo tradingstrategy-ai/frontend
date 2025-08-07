@@ -31,8 +31,11 @@ export type ChartRegistration = z.infer<typeof chartRegistrationSchema>;
 export const chartRegistrationsSchema = z.array(chartRegistrationSchema);
 export type ChartRegistrations = z.infer<typeof chartRegistrationsSchema>;
 
+export const tradingPairsSchema = z.array(tradingPairIdentifierSchema.transform(createTradingPairInfo));
+export type TradingPairs = z.infer<typeof tradingPairsSchema>;
+
 export const chartPairsSchema = z.object({
-	default_pairs: z.array(tradingPairIdentifierSchema.transform(createTradingPairInfo)),
-	all_pairs: z.array(tradingPairIdentifierSchema.transform(createTradingPairInfo))
+	default_pairs: tradingPairsSchema,
+	all_pairs: tradingPairsSchema
 });
 export type ChartPairs = z.infer<typeof chartPairsSchema>;

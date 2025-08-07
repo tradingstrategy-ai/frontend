@@ -2,12 +2,17 @@
 	import { goto } from '$app/navigation';
 	import Alert from '$lib/components/Alert.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import PairsSelector from './PairsSelector.svelte';
 
 	let { data } = $props();
-	let { strategy, chartRegistrations, chartId, pairIds, contentPromise } = $derived(data);
+	let { strategy, chartRegistrations, tradingPairs, chartId, selectedPairIds, contentPromise } = $derived(data);
 
-	function handleAnalysisChange(this: HTMLSelectElement) {
-		goto(`?chart_id=${this.value}`, { noScroll: true });
+	function handleChange() {
+		const params = new URLSearchParams({
+			chart_id: chartId ?? '',
+			pair_ids: selectedPairIds.join(',')
+		});
+		goto(`?${params}`, { noScroll: true });
 	}
 </script>
 
@@ -17,15 +22,15 @@
 </svelte:head>
 
 <section class="analysis">
-	<p class="controls">
-		<select onchange={handleAnalysisChange}>
+	<div class="controls">
+		<select bind:value={chartId} onchange={handleChange}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
 				<option value={id} selected={id === chartId}>{name}</option>
 			{/each}
 		</select>
-		<span>default pair_ids: {pairIds}</span>
-	</p>
+		<PairsSelector bind:selectedPairIds {tradingPairs} onchange={handleChange} />
+	</div>
 
 	<div class="content">
 		{#await contentPromise}
@@ -51,6 +56,10 @@
 
 <style>
 	.analysis {
+		position: relative;
+		display: grid;
+		gap: 1.5rem;
+
 		select {
 			border-radius: var(--radius-sm);
 			padding: 0.5rem;
@@ -58,8 +67,13 @@
 		}
 
 		.controls {
-			span {
-				margin-left: 1rem;
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: center;
+			gap: 1rem;
+
+			select {
+				margin: 0;
 			}
 		}
 

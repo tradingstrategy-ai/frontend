@@ -72,7 +72,7 @@ Possible `ctaPosition` values include: top, bottom, toggle (default).
 			}
 		}
 
-		:global(header) {
+		> :global(header) {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			gap: var(--space-sm) var(--space-lg);

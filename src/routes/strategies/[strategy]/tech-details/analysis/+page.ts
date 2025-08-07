@@ -1,4 +1,4 @@
-import type { ChartRegistration } from 'trade-executor/schemas/chart.js';
+import type { ChartRegistration, TradingPairs } from 'trade-executor/schemas/chart.js';
 
 // Use discriminated union so data type is correctly inferred
 type AnalysisContent =
@@ -45,13 +45,23 @@ async function fetchAnalysisContent(
 }
 
 export async function load({ fetch, parent, url }) {
-	const { strategy, chartRegistrations, chartPairs } = await parent();
+	const { strategy, chartRegistrations, tradingPairs } = await parent();
 
 	const chartId = url.searchParams.get('chart_id') ?? undefined;
 	const chartRegistration = chartRegistrations.find(({ id }) => id === chartId);
-	const pairIds = chartPairs.default_pairs.map((p) => p.internal_id!);
 
-	const contentPromise = chartRegistration && fetchAnalysisContent(fetch, strategy.url, chartRegistration, pairIds);
+	const pairIds = url.searchParams.get('pair_ids')?.split(',') ?? [];
 
-	return { chartRegistrations, chartId, pairIds, contentPromise };
+	let selectedPairs = tradingPairs.all_pairs.filter((p) => {
+		return pairIds.find((id) => Number(id) === p.internal_id);
+	});
+
+	if (!selectedPairs.length) selectedPairs = tradingPairs.default_pairs;
+
+	const selectedPairIds = selectedPairs.map((p) => p.internal_id!);
+
+	const contentPromise =
+		chartRegistration && fetchAnalysisContent(fetch, strategy.url, chartRegistration, selectedPairIds);
+
+	return { chartRegistrations, chartId, selectedPairIds, contentPromise };
 }

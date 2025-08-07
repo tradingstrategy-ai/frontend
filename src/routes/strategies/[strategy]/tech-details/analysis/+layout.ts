@@ -25,10 +25,10 @@ export async function load({ fetch, parent }) {
 		chartRegistrationsSchema
 	);
 
-	const chartPairsPromise = fetchChartEndpoint(fetch, `${strategy.url}/chart-registry/pairs`, chartPairsSchema);
+	const pairsPromise = fetchChartEndpoint(fetch, `${strategy.url}/chart-registry/pairs`, chartPairsSchema);
 
 	return {
 		chartRegistrations: await chartRegistrationsPromise,
-		chartPairs: await chartPairsPromise
+		tradingPairs: await pairsPromise
 	};
 }
