@@ -7,10 +7,10 @@
 	let { data } = $props();
 	let { strategy, chartRegistrations, tradingPairs, chartId, selectedPairIds, contentPromise } = $derived(data);
 
-	function handleChange() {
+	function updateAnalysis({ chart_id, pair_ids }: { chart_id?: string; pair_ids?: number[] }) {
 		const params = new URLSearchParams({
-			chart_id: chartId ?? '',
-			pair_ids: selectedPairIds.join(',')
+			chart_id: chart_id ?? chartId ?? '',
+			pair_ids: (pair_ids ?? selectedPairIds).join(',')
 		});
 		goto(`?${params}`, { noScroll: true });
 	}
@@ -23,13 +23,13 @@
 
 <section class="analysis">
 	<div class="controls">
-		<select bind:value={chartId} onchange={handleChange}>
+		<select onchange={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
 				<option value={id} selected={id === chartId}>{name}</option>
 			{/each}
 		</select>
-		<PairsSelector bind:selectedPairIds {tradingPairs} onchange={handleChange} />
+		<PairsSelector {selectedPairIds} {tradingPairs} onchange={(pair_ids) => updateAnalysis({ pair_ids })} />
 	</div>
 
 	<div class="content">

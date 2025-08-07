@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ChartPairs } from 'trade-executor/schemas/chart';
 	import { slide } from 'svelte/transition';
+	import fsm from 'svelte-fsm';
 	import Button from '$lib/components/Button.svelte';
 
 	interface Props {
@@ -9,48 +10,54 @@
 		onchange?: (ids: number[]) => void;
 	}
 
-	let { selectedPairIds = $bindable(), tradingPairs, onchange }: Props = $props();
+	let { selectedPairIds, tradingPairs, onchange }: Props = $props();
 
-	let activePairIds = $state(selectedPairIds);
+	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
+	let provisionalPairIds = $state(selectedPairIds);
 
-	let activePairs = $derived(
+	let provisionalPairs = $derived(
 		tradingPairs.all_pairs.filter((p) => {
-			return activePairIds.includes(p.internal_id!);
+			return provisionalPairIds.includes(p.internal_id!);
 		})
 	);
 
-	let editing = $state(false);
+	const pairSelector = fsm('ready', {
+		ready: {
+			edit: 'editing'
+		},
 
-	function cancel() {
-		activePairIds = selectedPairIds;
-		editing = false;
-	}
+		editing: {
+			save() {
+				onchange?.(provisionalPairIds);
+				return 'ready';
+			},
 
-	function save() {
-		selectedPairIds = activePairIds;
-		onchange?.(selectedPairIds);
-		editing = false;
-	}
+			cancel() {
+				provisionalPairIds = selectedPairIds;
+				return 'ready';
+			}
+		}
+	});
 </script>
 
 <div class="pairs-selector">
 	<label class="current-selection tile b">
-		<span>Pairs: {activePairs.map((pair) => pair.symbol).join(', ')}</span>
-		<Button size="xs" disabled={editing} on:click={() => (editing = true)}>Edit</Button>
+		<span>Pairs: {provisionalPairs.map((p) => p.symbol).join(', ')}</span>
+		<Button size="xs" disabled={$pairSelector === 'editing'} on:click={pairSelector.edit}>Edit</Button>
 	</label>
 
-	{#if editing}
+	{#if $pairSelector === 'editing'}
 		<div class="dialog" transition:slide={{ duration: 250 }}>
 			<div class="inner">
 				<header>
 					<h4>Select pairs</h4>
-					<Button size="xs" ghost on:click={cancel}>Cancel</Button>
-					<Button size="xs" on:click={save}>Save</Button>
+					<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
+					<Button size="xs" on:click={pairSelector.save}>Save</Button>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
 						<label>
-							<input type="checkbox" value={pair.internal_id} bind:group={activePairIds} />
+							<input type="checkbox" value={pair.internal_id} bind:group={provisionalPairIds} />
 							{pair.symbol}
 						</label>
 					{/each}
