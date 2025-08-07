@@ -5,11 +5,11 @@
 	import PairsSelector from './PairsSelector.svelte';
 
 	let { data } = $props();
-	let { strategy, chartRegistrations, tradingPairs, chartId, selectedPairIds, contentPromise } = $derived(data);
+	let { strategy, chartRegistrations, selectedChart, tradingPairs, selectedPairIds, contentPromise } = $derived(data);
 
 	function updateAnalysis({ chart_id, pair_ids }: { chart_id?: string; pair_ids?: number[] }) {
 		const params = new URLSearchParams({
-			chart_id: chart_id ?? chartId ?? '',
+			chart_id: chart_id ?? selectedChart?.id ?? '',
 			pair_ids: (pair_ids ?? selectedPairIds).join(',')
 		});
 		goto(`?${params}`, { noScroll: true });
@@ -26,10 +26,15 @@
 		<select onchange={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
-				<option value={id} selected={id === chartId}>{name}</option>
+				<option value={id} selected={id === selectedChart?.id}>{name}</option>
 			{/each}
 		</select>
-		<PairsSelector {selectedPairIds} {tradingPairs} onchange={(pair_ids) => updateAnalysis({ pair_ids })} />
+		<PairsSelector
+			{selectedPairIds}
+			{tradingPairs}
+			disabled={selectedChart?.kind !== 'indicator_multi_pair'}
+			onchange={(pair_ids) => updateAnalysis({ pair_ids })}
+		/>
 	</div>
 
 	<div class="content">

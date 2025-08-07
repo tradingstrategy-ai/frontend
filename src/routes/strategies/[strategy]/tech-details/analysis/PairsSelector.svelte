@@ -7,10 +7,11 @@
 	interface Props {
 		selectedPairIds: number[];
 		tradingPairs: ChartPairs;
+		disabled?: boolean;
 		onchange?: (ids: number[]) => void;
 	}
 
-	let { selectedPairIds, tradingPairs, onchange }: Props = $props();
+	let { selectedPairIds, tradingPairs, disabled = false, onchange }: Props = $props();
 
 	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
 	let provisionalPairIds = $state(selectedPairIds);
@@ -43,7 +44,7 @@
 </script>
 
 <div class="pairs-selector">
-	<label class={['current-selection', editing && 'editing']}>
+	<label class={['current-selection', editing && 'editing', disabled && 'disabled']}>
 		<span class="title">Pairs:</span>
 		<span class="selected-pairs">
 			{#if tradingPairs.all_pairs.length === 0}
@@ -54,7 +55,7 @@
 				{provisionalPairs.map((p) => p.symbol).join(', ')}
 			{/if}
 		</span>
-		<Button size="xs" disabled={editing} on:click={pairSelector.edit}>Edit</Button>
+		<Button size="xs" disabled={disabled || editing} on:click={pairSelector.edit}>Edit</Button>
 	</label>
 
 	{#if editing}
@@ -93,15 +94,14 @@
 			border-radius: var(--radius-sl);
 			cursor: pointer;
 
-			&:hover {
+			&:hover:not(.disabled),
+			&.editing {
 				background: var(--c-box-3);
+				outline: 1px solid var(--c-box-3);
 				box-shadow: inset var(--shadow-2);
 			}
 
-			&.editing {
-				background: var(--c-box-3);
-				border: 1px solid var(--c-box-3);
-				box-shadow: inset var(--shadow-2);
+			&:is(.editing, .disabled) {
 				color: var(--c-text-extra-light);
 				cursor: not-allowed;
 			}
@@ -111,6 +111,7 @@
 				font-weight: 500;
 				letter-spacing: 0.025em;
 				text-transform: uppercase;
+				color: var(--c-text-light);
 				color: var(--c-text-light);
 			}
 

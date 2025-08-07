@@ -48,7 +48,7 @@ export async function load({ fetch, parent, url }) {
 	const { strategy, chartRegistrations, tradingPairs } = await parent();
 
 	const chartId = url.searchParams.get('chart_id') ?? undefined;
-	const chartRegistration = chartRegistrations.find(({ id }) => id === chartId);
+	const selectedChart = chartRegistrations.find(({ id }) => id === chartId);
 
 	const pairIds = url.searchParams.get('pair_ids')?.split(',') ?? [];
 
@@ -60,8 +60,7 @@ export async function load({ fetch, parent, url }) {
 
 	const selectedPairIds = selectedPairs.map((p) => p.internal_id!);
 
-	const contentPromise =
-		chartRegistration && fetchAnalysisContent(fetch, strategy.url, chartRegistration, selectedPairIds);
+	const contentPromise = selectedChart && fetchAnalysisContent(fetch, strategy.url, selectedChart, selectedPairIds);
 
-	return { chartRegistrations, chartId, selectedPairIds, contentPromise };
+	return { chartRegistrations, selectedChart, selectedPairIds, contentPromise };
 }
