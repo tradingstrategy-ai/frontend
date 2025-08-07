@@ -84,9 +84,55 @@
 
 		.content {
 			min-height: 500px;
+			overflow: auto;
 
 			p {
 				padding: 1rem 0.5rem;
+			}
+
+			:global(table) {
+				width: 100%;
+				border-collapse: collapse;
+				color: inherit;
+				background: var(--c-box-1);
+				font: var(--f-mono-sm-regular);
+				line-height: 1.2;
+				letter-spacing: var(--f-mono-sm-spacing, normal);
+
+				@media (--viewport-xs) {
+					font-size: 12px;
+				}
+
+				:global(:is(td, th)) {
+					padding: 0.25em 0.5em;
+					border-block: 1px solid var(--c-text-ultra-light);
+					vertical-align: top;
+
+					&:first-child {
+						padding-left: 0.25em;
+					}
+
+					&:last-child {
+						padding-right: 0.25em;
+					}
+				}
+
+				:global(tbody :is(td, th)) {
+					/* Alternating column colors */
+					&:nth-child(even) {
+						background-color: var(--c-box-3);
+					}
+
+					&:nth-child(odd) {
+						background-color: var(--c-box-1);
+					}
+				}
+
+				:global(thead th) {
+					background: var(--c-box-3);
+					font-weight: 900;
+					border-bottom: 2px solid currentColor;
+				}
 			}
 		}
 
