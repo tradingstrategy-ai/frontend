@@ -42,7 +42,16 @@
 
 <div class="pairs-selector">
 	<label class="current-selection tile b">
-		<span>Pairs: {provisionalPairs.map((p) => p.symbol).join(', ')}</span>
+		<span class="title">Pairs:</span>
+		<span class="selected-pairs">
+			{#if tradingPairs.all_pairs.length === 0}
+				No pairs loaded
+			{:else if provisionalPairs.length === 0}
+				No pairs selected
+			{:else}
+				{provisionalPairs.map((p) => p.symbol).join(', ')}
+			{/if}
+		</span>
 		<Button size="xs" disabled={$pairSelector === 'editing'} on:click={pairSelector.edit}>Edit</Button>
 	</label>
 
@@ -73,12 +82,27 @@
 
 		.current-selection {
 			display: grid;
-			grid-template-columns: 1fr auto;
+			grid-template-columns: auto 1fr auto;
+			gap: 1ex;
 			align-items: center;
 			height: 100%;
 			padding-inline: 0.75rem 0.25rem;
 			border-radius: var(--radius-sl);
 			cursor: pointer;
+
+			.title {
+				font-size: smaller;
+				font-weight: 500;
+				letter-spacing: 0.025em;
+				text-transform: uppercase;
+				color: var(--c-text-light);
+			}
+
+			.selected-pairs {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 
 		.dialog {

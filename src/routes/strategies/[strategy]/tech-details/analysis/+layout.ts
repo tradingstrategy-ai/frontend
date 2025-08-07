@@ -25,7 +25,13 @@ export async function load({ fetch, parent }) {
 		chartRegistrationsSchema
 	);
 
-	const pairsPromise = fetchChartEndpoint(fetch, `${strategy.url}/chart-registry/pairs`, chartPairsSchema);
+	const pairsPromise = fetchChartEndpoint(fetch, `${strategy.url}/chart-registry/pairs`, chartPairsSchema).catch(() => {
+		// gracefully handle pairs endpoint failure
+		return {
+			default_pairs: [],
+			all_pairs: []
+		};
+	});
 
 	return {
 		chartRegistrations: await chartRegistrationsPromise,
