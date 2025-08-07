@@ -38,10 +38,12 @@
 			}
 		}
 	});
+
+	let editing = $derived($pairSelector === 'editing');
 </script>
 
 <div class="pairs-selector">
-	<label class="current-selection tile b">
+	<label class={['current-selection', editing && 'editing']}>
 		<span class="title">Pairs:</span>
 		<span class="selected-pairs">
 			{#if tradingPairs.all_pairs.length === 0}
@@ -52,10 +54,10 @@
 				{provisionalPairs.map((p) => p.symbol).join(', ')}
 			{/if}
 		</span>
-		<Button size="xs" disabled={$pairSelector === 'editing'} on:click={pairSelector.edit}>Edit</Button>
+		<Button size="xs" disabled={editing} on:click={pairSelector.edit}>Edit</Button>
 	</label>
 
-	{#if $pairSelector === 'editing'}
+	{#if editing}
 		<div class="dialog" transition:slide={{ duration: 250 }}>
 			<div class="inner">
 				<header>
@@ -87,8 +89,22 @@
 			align-items: center;
 			height: 100%;
 			padding-inline: 0.75rem 0.25rem;
+			background: var(--c-box-2);
 			border-radius: var(--radius-sl);
 			cursor: pointer;
+
+			&:hover {
+				background: var(--c-box-3);
+				box-shadow: inset var(--shadow-2);
+			}
+
+			&.editing {
+				background: var(--c-box-3);
+				border: 1px solid var(--c-box-3);
+				box-shadow: inset var(--shadow-2);
+				color: var(--c-text-extra-light);
+				cursor: not-allowed;
+			}
 
 			.title {
 				font-size: smaller;
@@ -107,16 +123,21 @@
 
 		.dialog {
 			position: absolute;
-			inset: 3.75rem 0 0 0;
+			inset: 4rem 0 auto 0;
 			display: grid;
+			max-height: 501px;
+			margin-block: -1px;
 			background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-1-alpha));
 
 			.inner {
 				display: grid;
 				gap: 0.75rem;
+				max-height: inherit;
 				padding: 1.25rem 1.5rem;
 				background: color-mix(in srgb, transparent, hsl(var(--hsl-box)) var(--box-2-alpha));
+				border: 1px solid var(--c-box-3);
 				border-radius: var(--radius-sl);
+				box-shadow: inset var(--shadow-2);
 				overflow: hidden;
 			}
 
