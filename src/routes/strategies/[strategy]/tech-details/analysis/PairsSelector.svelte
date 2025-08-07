@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ChartPairs } from 'trade-executor/schemas/chart';
+	import type { ChartPairs, TradingPairs } from 'trade-executor/schemas/chart';
 	import { slide } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 	import Button from '$lib/components/Button.svelte';
@@ -28,6 +28,10 @@
 		},
 
 		editing: {
+			select(pairs: TradingPairs) {
+				provisionalPairIds = pairs.map((p) => p.internal_id!);
+			},
+
 			save() {
 				onchange?.(provisionalPairIds);
 				return 'ready';
@@ -63,8 +67,15 @@
 			<div class="inner">
 				<header>
 					<h4>Select pairs</h4>
-					<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
-					<Button size="xs" on:click={pairSelector.save}>Save</Button>
+					<div class="button-group">
+						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.default_pairs)}>Default</Button>
+						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
+						<Button size="xs" tertiary on:click={() => pairSelector.select([])}>None</Button>
+					</div>
+					<div class="button-group">
+						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
+						<Button size="xs" on:click={pairSelector.save}>Save</Button>
+					</div>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
@@ -144,12 +155,17 @@
 
 			header {
 				display: grid;
-				grid-template-columns: 1fr auto auto;
-				gap: 0.5rem;
+				grid-template-columns: auto 1fr auto;
+				gap: 1.5rem;
 				align-items: center;
 
 				h4 {
 					font: var(--f-heading-xs-medium);
+				}
+
+				.button-group {
+					display: flex;
+					gap: 0.5rem;
 				}
 			}
 
