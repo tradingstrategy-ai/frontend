@@ -59,7 +59,7 @@
 				{provisionalPairs.map((p) => p.symbol).join(', ')}
 			{/if}
 		</span>
-		<Button size="xs" disabled={disabled || editing} on:click={pairSelector.edit}>Edit</Button>
+		<Button size="xs" secondary disabled={disabled || editing} on:click={pairSelector.edit}>Edit</Button>
 	</label>
 
 	{#if editing}
@@ -74,7 +74,7 @@
 					</div>
 					<div class="button-group">
 						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
-						<Button size="xs" on:click={pairSelector.save}>Save</Button>
+						<Button size="xs" secondary on:click={pairSelector.save}>Save</Button>
 					</div>
 				</header>
 				<div class="pairs">
@@ -100,16 +100,16 @@
 			gap: 1ex;
 			align-items: center;
 			height: 100%;
-			padding-inline: 0.75rem 0.25rem;
+			padding-inline: 0.75rem 0.5rem;
 			background: var(--c-box-2);
-			border-radius: var(--radius-sl);
+			border: 1px solid var(--c-text-ultra-light);
+			border-radius: var(--radius-sm);
 			cursor: pointer;
 
 			&:hover:not(.disabled),
 			&.editing {
 				background: var(--c-box-3);
-				outline: 1px solid var(--c-box-3);
-				box-shadow: inset var(--shadow-2);
+				border-color: var(--c-text-extra-light);
 			}
 
 			&:is(.editing, .disabled) {
@@ -147,8 +147,8 @@
 				max-height: inherit;
 				padding: 1.25rem 1.5rem;
 				background: color-mix(in srgb, transparent, hsl(var(--hsl-box)) var(--box-2-alpha));
-				border: 1px solid var(--c-box-3);
-				border-radius: var(--radius-sl);
+				border: 1px solid var(--c-text-extra-light);
+				border-radius: var(--radius-sm);
 				box-shadow: inset var(--shadow-2);
 				overflow: hidden;
 			}

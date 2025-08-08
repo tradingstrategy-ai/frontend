@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Alert from '$lib/components/Alert.svelte';
+	import Select from '$lib/components/Select.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import PairsSelector from './PairsSelector.svelte';
 
@@ -23,12 +24,12 @@
 
 <section class="analysis">
 	<div class="controls">
-		<select onchange={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
+		<Select on:change={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
 				<option value={id} selected={id === selectedChart?.id}>{name}</option>
 			{/each}
-		</select>
+		</Select>
 		<PairsSelector
 			{selectedPairIds}
 			{tradingPairs}
