@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { TimeBucket } from '$lib/schemas/utility';
 	import type { ApiCandle, CandleDataItem, DataFeed, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
@@ -17,15 +18,16 @@
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { formatDate } from './helpers';
 
-	type Props = {
+	interface Props {
 		chainSlug: string;
 		exchangeType: string;
 		pairId: string;
 		pairSymbol: string;
 		timeBucket: OptionGroup<TimeBucket>;
-	};
+		onchange?: ComponentProps<typeof SegmentedControl>['onchange'];
+	}
 
-	let { chainSlug, exchangeType, pairId, pairSymbol, timeBucket }: Props = $props();
+	let { chainSlug, exchangeType, pairId, pairSymbol, timeBucket, onchange }: Props = $props();
 
 	// NOTE: this is only used for special-case exception
 	// remove it once we have better support for base uniswap-v3 1d TVL chart data
@@ -77,7 +79,7 @@
 
 <div class="pair-candle-chart">
 	<ChartHeader title="Price / TVL / Volume">
-		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
+		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} {onchange} />
 	</ChartHeader>
 
 	<TvChart grid crosshairs {options} loading={priceFeed.loadingInitialData}>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { TimeBucket } from '$lib/schemas/utility';
 	import type { ApiCandle, TvChartOptions } from './types';
@@ -16,12 +17,13 @@
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { formatInterestRate } from '$lib/helpers/formatters';
 
-	type Props = {
+	interface Props {
 		reserve: LendingReserve;
 		timeBucket: OptionGroup<TimeBucket>;
-	};
+		onchange?: ComponentProps<typeof SegmentedControl>['onchange'];
+	}
 
-	let { reserve, timeBucket }: Props = $props();
+	let { reserve, timeBucket, onchange }: Props = $props();
 
 	let urlParams = $derived({
 		chain_slug: reserve.chain_slug,
@@ -70,7 +72,7 @@
 
 <div class="reserve-interest-chart">
 	<ChartHeader title="Interest rates">
-		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} on:change />
+		<SegmentedControl name="timeBucket" options={timeBucket.options} bind:selected={timeBucket.selected} {onchange} />
 	</ChartHeader>
 
 	<TvChart grid crosshairs options={chartOptions} loading={borrowFeed.loadingInitialData}>

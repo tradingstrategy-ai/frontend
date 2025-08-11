@@ -1,6 +1,6 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-	import type { ComponentEvents } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
@@ -64,14 +64,14 @@
 		})
 	);
 
-	function handleFilterChange({ detail }: ComponentEvents<SegmentedControl>['change']) {
-		if (!detail.name) return;
+	const handleFilterChange: ComponentProps<typeof SegmentedControl>['onchange'] = ({ name, value }) => {
+		if (!name) return;
 
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const newParams = new URLSearchParams(searchParams);
-		newParams.set(detail.name, detail.value);
+		newParams.set(name, value);
 		goto(`?${newParams}`, { replaceState: true, noScroll: true });
-	}
+	};
 </script>
 
 <svelte:head>
@@ -84,19 +84,19 @@
 		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
 
 		<div class="filters" class:admin>
-			<ChainFilter options={chainOptions} selected={selectedChain} on:change={handleFilterChange} />
+			<ChainFilter options={chainOptions} selected={selectedChain} onchange={handleFilterChange} />
 			<SegmentedControl
 				name="archiveStatus"
 				options={archiveStatus.options}
 				selected={archiveStatus.selected}
-				on:change={handleFilterChange}
+				onchange={handleFilterChange}
 			/>
 			{#if admin}
 				<SegmentedControl
 					name="publicationStatus"
 					options={publicationStatus.options}
 					selected={publicationStatus.selected}
-					on:change={handleFilterChange}
+					onchange={handleFilterChange}
 				/>
 			{/if}
 		</div>

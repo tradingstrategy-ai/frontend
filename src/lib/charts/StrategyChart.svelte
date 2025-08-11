@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
 	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -15,14 +15,14 @@
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
 
-	type Props = ComponentProps<typeof TvChart> & {
+	interface Props extends ComponentProps<typeof TvChart> {
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet;
 		series?: Snippet<[SimpleDataItem[], TimeSpan, [Date, Date]]>;
 		footer?: Snippet;
-	};
+	}
 
 	let { data, formatValue, options, title, subtitle, series, footer, ...restProps }: Props = $props();
 
