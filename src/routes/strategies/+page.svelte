@@ -1,33 +1,33 @@
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
-	import { PageHeading, Section, SegmentedControl } from '$lib/components';
+	import PageHeading from '$lib/components/PageHeading.svelte';
+	import Section from '$lib/components/Section.svelte';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import StrategyTile from './StrategyTile.svelte';
 	import StrategyTvlChart from './StrategyTvlChart.svelte';
-	import { OptionGroup } from '$lib/helpers/option-group.svelte';
-	import {
-		default as ChainFilter,
+	import ChainFilter, {
 		getChainOptions,
 		parseChainOption,
 		matchesChainOption
 	} from 'trade-executor/components/ChainFilter.svelte';
+	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 	import { getChain } from '$lib/helpers/chain';
 
-	export let data;
+	const { data } = $props();
 	const { admin, strategies, tvlData } = data;
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 
-	$: ({ searchParams } = $page.url);
+	let { searchParams } = $derived(page.url);
 
 	const publicationStatus = new OptionGroup(['all', 'live', 'unpublished'], 'all');
-	$: publicationStatus.selected = searchParams.get('publicationStatus');
 
 	function matchesPublicationStatus(strategy: StrategyInfo, status: string) {
 		if (!admin || status === 'all') return true;
@@ -39,7 +39,6 @@
 	}
 
 	const archiveStatus = new OptionGroup(['current', 'archived'], 'current');
-	$: archiveStatus.selected = searchParams.get('archiveStatus');
 
 	function matchesArchiveStatus(strategy: StrategyInfo, status: string) {
 		const archivedFilter = status === 'archived';
@@ -48,19 +47,27 @@
 	}
 
 	const chainOptions = getChainOptions(strategies);
-	$: selectedChain = parseChainOption(chainOptions, searchParams.get('chain'));
+	let selectedChain = $derived(parseChainOption(chainOptions, searchParams.get('chain')));
 
-	$: filteredStrategies = strategies.filter((s) => {
-		return (
-			matchesChainOption(s, selectedChain) &&
-			matchesPublicationStatus(s, publicationStatus.selected) &&
-			matchesArchiveStatus(s, archiveStatus.selected)
-		);
+	$effect(() => {
+		publicationStatus.selected = searchParams.get('publicationStatus');
+		archiveStatus.selected = searchParams.get('archiveStatus');
 	});
+
+	let filteredStrategies = $derived(
+		strategies.filter((s) => {
+			return (
+				matchesChainOption(s, selectedChain) &&
+				matchesPublicationStatus(s, publicationStatus.selected) &&
+				matchesArchiveStatus(s, archiveStatus.selected)
+			);
+		})
+	);
 
 	function handleFilterChange({ detail }: ComponentEvents<SegmentedControl>['change']) {
 		if (!detail.name) return;
 
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const newParams = new URLSearchParams(searchParams);
 		newParams.set(detail.name, detail.value);
 		goto(`?${newParams}`, { replaceState: true, noScroll: true });
