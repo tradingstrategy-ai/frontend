@@ -32,7 +32,7 @@
 				label: t.actionLabel,
 				modifier: t.positionImpact,
 				isTest: t.isTest,
-				failed: t.failed,
+				failed: t.didFail,
 				stopLoss: t.isStopLoss
 			}),
 			cell: ({ value }) => createRender(TradingDescription, value)
