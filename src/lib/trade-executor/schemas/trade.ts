@@ -34,6 +34,7 @@ export const tradeType = z.enum([
 	'accounting_correction',
 	'flexible_trigger'
 ]);
+export type TradeType = z.infer<typeof tradeType>;
 
 export const tradeFlag = z.enum([
 	'open',
@@ -47,6 +48,7 @@ export const tradeFlag = z.enum([
 	'partial_take_profit',
 	'ignore_open'
 ]);
+export type TradeFlag = z.infer<typeof tradeFlag>;
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/trade_pricing.py
 export const tradePricingSchema = z.object({

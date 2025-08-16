@@ -31,8 +31,9 @@
 			accessor: (t) => ({
 				label: t.actionLabel,
 				modifier: t.positionImpact,
+				status: t.status,
+				type: t.trade_type,
 				isTest: t.isTest,
-				failed: t.didFail,
 				stopLoss: t.isStopLoss
 			}),
 			cell: ({ value }) => createRender(TradingDescription, value)
