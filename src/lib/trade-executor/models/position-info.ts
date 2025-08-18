@@ -36,12 +36,16 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	},
 
 	get entryTrade() {
-		return this.trades.find((t) => !t.failed && t.direction === TradeDirections.Enter);
+		return this.trades.find((t) => {
+			return !t.didFail && !t.isRepair && t.direction === TradeDirections.Enter;
+		});
 	},
 
 	get exitTrade() {
 		if (!this.closed) return;
-		return this.trades.findLast((t) => !t.failed && t.direction === TradeDirections.Exit);
+		return this.trades.findLast((t) => {
+			return !t.didFail && !t.isRepair && t.direction === TradeDirections.Exit;
+		});
 	},
 
 	get latestStats() {
@@ -56,7 +60,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	},
 
 	get failedOpen() {
-		return this.firstTrade.failed;
+		return this.firstTrade.didFail;
 	},
 
 	get closed() {
@@ -72,7 +76,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	},
 
 	get multitrade() {
-		const tradeCount = this.trades.length - this.failedTrades.length;
+		const tradeCount = this.trades.filter((t) => !t.didFail && !t.isRepair).length;
 		return this.closed ? tradeCount > 2 : tradeCount > 1;
 	},
 
@@ -286,7 +290,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	},
 
 	get failedTrades() {
-		return this.trades.filter((t) => t.failed);
+		return this.trades.filter((t) => t.didFail);
 	},
 
 	get hasFailedTrades() {
@@ -299,7 +303,7 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	 * Note: still returns freeze reason after position has been unfrozen
 	 */
 	get freezeReason() {
-		const lastFailedTrade = this.trades.findLast((t) => t.failed);
+		const lastFailedTrade = this.trades.findLast((t) => t.didFail);
 		const failedTx = lastFailedTrade?.failedTx;
 
 		if (!failedTx) return;

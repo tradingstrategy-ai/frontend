@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const datetime = z.iso.datetime({ offset: true });
 const url = z.url();
-const positiveInteger = z.number().int().positive();
+const positiveInteger = z.int().positive();
 
 // See: https://ghost.org/docs/content-api/#posts
 export const blogPostIndexItemSchema = z.object({

@@ -1,16 +1,13 @@
 <script lang="ts">
+	import type { HTMLSelectAttributes } from 'svelte/elements';
 	import IconChevronDown from '~icons/local/chevron-down';
 
-	let classes = '';
-	export { classes as class };
-	export let id: string | undefined = undefined;
-	export let name: string | undefined = undefined;
-	export let value: string | undefined = undefined;
+	let { value = $bindable(), class: classes, children, ...rest }: HTMLSelectAttributes = $props();
 </script>
 
 <div class="select {classes}">
-	<select {name} {id} bind:value on:change>
-		<slot />
+	<select bind:value {...rest}>
+		{@render children?.()}
 	</select>
 	<IconChevronDown />
 </div>

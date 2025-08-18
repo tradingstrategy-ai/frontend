@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import Alert from '$lib/components/Alert.svelte';
@@ -36,13 +37,14 @@
 	let borrowable = $derived(isBorrowable(reserve));
 	let showChart = $derived(borrowable && !isGhoToken);
 
-	const validTimeBuckets = timeBucketEnum.exclude(['1m', '5m', '15m']).options;
-	let timeBucket = new OptionGroup(validTimeBuckets, page.state.timeBucket ?? data.timeBucket);
+	const reserveTimeBucketEnum = timeBucketEnum.exclude(['1m', '5m', '15m']);
+	let timeBucket = new OptionGroup(reserveTimeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
-	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
+	const handleTimeBucketChange: ComponentProps<typeof ReserveInterestChart>['onchange'] = ({ name, value }) => {
 		if (name !== 'timeBucket') return;
-		replaceState(`?${new URLSearchParams({ timeBucket: value })}`, { timeBucket: value });
-	}
+		const { success, data: timeBucket } = reserveTimeBucketEnum.safeParse(value);
+		if (success) replaceState(`?${new URLSearchParams({ timeBucket })}`, { timeBucket });
+	};
 </script>
 
 <svelte:head>
@@ -87,7 +89,7 @@
 
 	{#if showChart}
 		<Section>
-			<ReserveInterestChart {reserve} {timeBucket} on:change={handleTimeBucketChange} />
+			<ReserveInterestChart {reserve} {timeBucket} onchange={handleTimeBucketChange} />
 		</Section>
 	{/if}
 </main>

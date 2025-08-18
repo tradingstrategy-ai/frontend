@@ -10,33 +10,35 @@ button-like control with a segement for each possible value.
 ```
 -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import type { Snippet } from 'svelte';
 
-	export let name: string | undefined = undefined;
-	export let selected: string | undefined = undefined;
-	export let options: readonly string[];
-	export let secondary = false;
+	interface Props {
+		name?: string;
+		selected?: string | undefined;
+		options: readonly string[];
+		secondary?: boolean;
+		children?: Snippet<[string]>;
+		onchange?: (event: { name: string | undefined; value: string }) => void;
+	}
 
-	const dispatch = createEventDispatcher<{
-		change: {
-			name: string | undefined;
-			value: string;
-		};
-	}>();
+	let { name, selected = $bindable(), options, secondary = false, children, onchange }: Props = $props();
 
 	function dispatchChange(this: HTMLInputElement) {
-		dispatch('change', {
-			name: this.name,
-			value: this.value
-		});
+		onchange?.({ name: this.name, value: this.value });
 	}
 </script>
 
 <div class="segmented-control ds-3 {secondary ? 'secondary' : 'primary'}" data-css-props>
-	{#each options as option}
+	{#each options as option (option)}
 		<label class:selected={option === selected}>
-			<div><slot {option}>{option}</slot></div>
-			<input type="radio" {name} bind:group={selected} value={option} on:change={dispatchChange} />
+			<div>
+				{#if children}
+					{@render children(option)}
+				{:else}
+					{option}
+				{/if}
+			</div>
+			<input type="radio" {name} bind:group={selected} value={option} onchange={dispatchChange} />
 		</label>
 	{/each}
 </div>

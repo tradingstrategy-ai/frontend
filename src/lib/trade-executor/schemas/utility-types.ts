@@ -10,7 +10,7 @@ import { z } from 'zod';
 export type { BlockNumber, ChainId, HexEncodedData, HexString } from '$lib/eth-defi/schemas/core';
 export { blockNumber, chainId, hexEncodedData, hexString } from '$lib/eth-defi/schemas/core';
 
-export const count = z.number().int().nonnegative();
+export const count = z.int().nonnegative();
 export type Count = z.infer<typeof count>;
 
 // decimal values _should_ always be serialized as strings to preserve precision;
@@ -29,7 +29,7 @@ export type Duration = z.infer<typeof duration>;
 export const percent = z.coerce.number();
 export type Percent = z.infer<typeof percent>;
 
-export const primaryKey = z.number().int().positive();
+export const primaryKey = z.int().positive();
 export type PrimaryKey = z.infer<typeof primaryKey>;
 
 // This is needed when primary key is used as record key

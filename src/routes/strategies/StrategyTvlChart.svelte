@@ -1,9 +1,13 @@
 <script lang="ts">
-	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import type { TvChartOptions } from '$lib/charts/types';
+	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 
-	export let tvlData: [number, number][] | undefined;
+	interface Props {
+		tvlData?: [number, number][] | undefined;
+	}
+
+	let { tvlData }: Props = $props();
 
 	const options: TvChartOptions = {
 		handleScroll: false,

@@ -82,6 +82,7 @@
 				label: pair.symbol,
 				modifier: pair.kindShortLabel,
 				isTest,
+				// accessor.toString() used when searching table
 				toString: () => `${pair.symbol} ${pair.kindShortLabel} ${isTest ? 'test' : ''}`
 			}),
 			cell: ({ value }) => createRender(TradingDescription, value)

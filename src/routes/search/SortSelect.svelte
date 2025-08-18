@@ -9,11 +9,11 @@ pre-defined set of sort options.
   <SortSelect bind:value />
 ```
 -->
-<script context="module" lang="ts">
-	type SortOption = {
+<script module lang="ts">
+	interface SortOption {
 		label: string;
 		params: string[];
-	};
+	}
 
 	const options: Record<string, SortOption> = {
 		'tvl:desc': {
@@ -47,8 +47,6 @@ pre-defined set of sort options.
 		}
 	};
 
-	type SortKey = keyof typeof options;
-
 	export function getSortParams(key: string) {
 		const sortOption = options[key] ?? Object.values(options)[0];
 		return sortOption.params;
@@ -56,8 +54,9 @@ pre-defined set of sort options.
 </script>
 
 <script lang="ts">
-	import { Select } from '$lib/components';
-	export let value: string;
+	import Select from '$lib/components/Select.svelte';
+
+	let { value = $bindable() }: { value: string } = $props();
 
 	if (!(value in options)) {
 		value = Object.keys(options)[0];

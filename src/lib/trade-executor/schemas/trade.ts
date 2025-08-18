@@ -34,17 +34,7 @@ export const tradeType = z.enum([
 	'accounting_correction',
 	'flexible_trigger'
 ]);
-
-export const tradeStatus = z.enum([
-	'planned',
-	'started',
-	'broadcasted',
-	'success',
-	'failed',
-	'repaired',
-	'repair_entry',
-	'expired'
-]);
+export type TradeType = z.infer<typeof tradeType>;
 
 export const tradeFlag = z.enum([
 	'open',
@@ -58,6 +48,7 @@ export const tradeFlag = z.enum([
 	'partial_take_profit',
 	'ignore_open'
 ]);
+export type TradeFlag = z.infer<typeof tradeFlag>;
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/trade_pricing.py
 export const tradePricingSchema = z.object({
@@ -87,6 +78,9 @@ export const tradeExecutionSchema = z.object({
 	reserve_currency: assetIdentifierSchema,
 	route: z.string().nullish(),
 	flags: tradeFlag.array().nullish(),
+	// triggers: see trigger.py; leaving unparsed for now
+	// activated_trigger: see trigger.py; leaving unparsed for now
+	// expired_triggers: see trigger.py; leaving unparsed for now
 	planned_collateral_allocation: decimal.nullish(),
 	executed_collateral_allocation: decimal.nullish(),
 	planned_collateral_consumption: decimal.nullish(),
@@ -103,6 +97,7 @@ export const tradeExecutionSchema = z.object({
 	executed_quantity: decimalToNumber.nullish(),
 	executed_reserve: decimalToNumber.nullish(),
 	slippage_tolerance: percent.nullish(),
+	price_impact_tolerance: percent.nullish(),
 	fee_tier: percent.nullish(),
 	lp_fees_paid: usDollarAmount.nullish(),
 	lp_fees_estimated: usDollarAmount.nullish(),
@@ -120,9 +115,15 @@ export const tradeExecutionSchema = z.object({
 	leverage: z.number().nullish(),
 	planned_loan_update: loanSchema.nullish(),
 	executed_loan_update: loanSchema.nullish(),
+	closing: z.boolean().nullish(),
 	claimed_interest: decimal.nullish(),
 	paid_interest: decimal.nullish(),
-	exchange_name: z.string().nullish()
+	exchange_name: z.string().nullish(),
+	// trade_size_risk: see size_risk.py; leaving unparsed for now
+	// position_size_risk: see size_risk.py; leaving unparsed for now
+	expired_at: unixTimestamp.nullish(),
+	sort_index: z.int().nullish(),
+	other_data: z.record(z.string(), z.any()).nullish()
 });
 export type TradeExecution = z.infer<typeof tradeExecutionSchema>;
 

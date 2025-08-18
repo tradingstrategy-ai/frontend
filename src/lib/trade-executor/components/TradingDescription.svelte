@@ -18,15 +18,21 @@ Used in DataTable context (vs. standard svelte component context).
 ```
 -->
 <script lang="ts">
-	import { DataBadge } from '$lib/components';
+	import type { TradeStatus } from 'trade-executor/models/trade-info';
+	import type { TradeType } from 'trade-executor/schemas/trade';
+	import DataBadge from '$lib/components/DataBadge.svelte';
 
-	let classes = '';
-	export { classes as class };
-	export let label: string;
-	export let modifier = '';
-	export let isTest = false;
-	export let failed = false;
-	export let stopLoss = false;
+	interface Props {
+		label: string;
+		modifier?: string;
+		class?: string;
+		status?: TradeStatus;
+		type?: TradeType;
+		isTest?: boolean;
+		stopLoss?: boolean;
+	}
+
+	let { label, modifier, class: classes, status, type, isTest = false, stopLoss = false }: Props = $props();
 </script>
 
 <div class="description-cell {classes}">
@@ -40,8 +46,14 @@ Used in DataTable context (vs. standard svelte component context).
 		{#if isTest}
 			<DataBadge status="warning">Test</DataBadge>
 		{/if}
-		{#if failed}
+		{#if status === 'failed'}
 			<DataBadge status="error">Failed</DataBadge>
+		{/if}
+		{#if status === 'repaired'}
+			<DataBadge status="warning">Repaired</DataBadge>
+		{/if}
+		{#if type === 'repair'}
+			<DataBadge>Repair</DataBadge>
 		{/if}
 		{#if stopLoss}
 			<DataBadge>Stop loss</DataBadge>

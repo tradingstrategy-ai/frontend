@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { type Chain, chains, getChain } from '$lib/helpers/chain';
 
@@ -31,18 +31,25 @@
 <script lang="ts">
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import type { ComponentProps } from 'svelte';
 
-	export let options: ChainOption[];
-	export let selected: ChainOption;
+	interface Props extends Omit<ComponentProps<typeof SegmentedControl>, 'name'> {
+		options: ChainOption[];
+		selected: ChainOption;
+	}
+
+	let { options, selected = $bindable(), ...rest }: Props = $props();
 </script>
 
-<SegmentedControl name="chain" {options} bind:selected let:option on:change>
-	<div class="filter-option {option}">
-		{#if option !== 'all'}
-			<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
-		{/if}
-		<span>{option}</span>
-	</div>
+<SegmentedControl name="chain" bind:selected {options} {...rest}>
+	{#snippet children(option)}
+		<div class="filter-option {option}">
+			{#if option !== 'all'}
+				<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
+			{/if}
+			<span>{option}</span>
+		</div>
+	{/snippet}
 </SegmentedControl>
 
 <style>

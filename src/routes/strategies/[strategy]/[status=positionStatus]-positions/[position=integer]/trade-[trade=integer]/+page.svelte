@@ -8,14 +8,20 @@
 		formatTimeDiffMinutesSeconds
 	} from '$lib/helpers/formatters';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { Alert, Button, DataBadge, DataBox, HashAddress, PageHeading, Timestamp } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import DataBadge from '$lib/components/DataBadge.svelte';
+	import DataBox from '$lib/components/DataBox.svelte';
+	import HashAddress from '$lib/components/HashAddress.svelte';
+	import PageHeading from '$lib/components/PageHeading.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TransactionTable from './TransactionTable.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	const { chain, trade } = data;
+	let { chain, trade } = $derived(data);
 
-	const assetUrl = trade.pricingPair.info_url;
+	let assetUrl = $derived(trade.pricingPair.info_url);
 </script>
 
 <main class="ds-container trade-page">
@@ -23,14 +29,19 @@
 		<span slot="prefix" class="heading-prefix">
 			Trade #{trade.trade_id}
 			{#if trade.isTest}
-				<span class="heading-badge">
-					<DataBadge status="warning">Test</DataBadge>
-				</span>
+				<DataBadge class="heading-badge" status="warning">Test</DataBadge>
+			{/if}
+			{#if trade.status === 'failed'}
+				<DataBadge class="heading-badge" status="error">Failed</DataBadge>
+			{/if}
+			{#if trade.status === 'repaired'}
+				<DataBadge class="heading-badge" status="warning">Repaired</DataBadge>
+			{/if}
+			{#if trade.trade_type === 'repair'}
+				<DataBadge class="heading-badge">Repair</DataBadge>
 			{/if}
 			{#if trade.isStopLoss}
-				<span class="heading-badge">
-					<DataBadge>Stop loss</DataBadge>
-				</span>
+				<DataBadge class="heading-badge">Stop loss</DataBadge>
 			{/if}
 		</span>
 		<span slot="title" class="heading-title">
@@ -51,8 +62,8 @@
 		/>
 	</PageHeading>
 
-	{#if trade.failed}
-		<Alert size="sm" status="error" title="Trade execution failed">
+	{#if ['failed', 'repaired'].includes(trade.status)}
+		<Alert size="sm" status={trade.status === 'failed' ? 'error' : 'warning'} title="Trade execution failed">
 			<ul class="error-details">
 				<li>Failure reason: <i>{trade.failedTx?.revert_reason ?? 'unknown'}</i></li>
 				{#if trade.failedTx?.tx_hash}
@@ -63,7 +74,24 @@
 						</a>
 					</li>
 				{/if}
+				{#if trade.status === 'repaired'}
+					<li>
+						Repaired by:
+						{#if trade.repairedByTradeId}
+							<a href="./trade-{trade.repairedByTradeId}">Trade #{trade.repairedByTradeId}</a>
+						{:else}
+							<i>unknown</i>
+						{/if}
+					</li>
+				{/if}
 			</ul>
+		</Alert>
+	{/if}
+
+	{#if trade.repaired_trade_id}
+		<Alert size="sm" status="info" title="Repair trade">
+			This trade was recorded to repair
+			<a href="./trade-{trade.repaired_trade_id}">Trade #{trade.repaired_trade_id}</a>
 		</Alert>
 	{/if}
 
@@ -194,7 +222,7 @@
 			gap: 1ex;
 		}
 
-		.heading-badge {
+		:global(.heading-badge) {
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing);
 

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Button, Alert, Select, TextInput } from '$lib/components';
+	import Button from '$lib/components/Button.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import Select from '$lib/components/Select.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 
-	export let data;
+	const { data } = $props();
 	const { exchange } = data;
 
 	const isUniswapV3 = exchange.exchange_type === 'uniswap_v3';
@@ -11,15 +14,13 @@
 	const downloadUrl = `${backendUrl}/pairs`;
 
 	// Download options
-	let selectedFormat = 'excel';
-	let selectedDataset = 'top_3000_rows';
-	let selectedSort = 'price_change_24h';
+	let selectedFormat = $state('excel');
+	let selectedDataset = $state('top_3000_rows');
+	let selectedSort = $state('price_change_24h');
+	// Uniswap v3 does not have liquidity data available in the same format, so this cannot be used for filtering
+	let selectedFilter = $state(isUniswapV3 ? 'unfiltered' : 'min_liquidity_1M');
 
-	// Uniswap v3 does not have liquidity data available in
-	// the same format, so this cannot be used for filtering
-	let selectedFilter = isUniswapV3 ? 'unfiltered' : 'min_liquidity_1M';
-
-	let downloadDisabled = false;
+	let downloadDisabled = $state(false);
 
 	const breadcrumbs = {
 		[exchange.chain_slug]: exchange.chain_name,
@@ -27,15 +28,16 @@
 		'export-data': 'Export data'
 	};
 
-	// svelte-ignore reactive_declaration_non_reactive_property
-	$: downloadParams = new URLSearchParams({
-		chain_slugs: exchange.chain_slug,
-		exchange_slugs: exchange.exchange_slug,
-		export_format: selectedFormat,
-		filter: selectedFilter,
-		sort: selectedSort,
-		direction: 'desc'
-	});
+	let downloadParams = $derived(
+		new URLSearchParams({
+			chain_slugs: exchange.chain_slug,
+			exchange_slugs: exchange.exchange_slug,
+			export_format: selectedFormat,
+			filter: selectedFilter,
+			sort: selectedSort,
+			direction: 'desc'
+		})
+	);
 </script>
 
 <svelte:head>
@@ -61,7 +63,7 @@
 	</header>
 
 	<section class="ds-container">
-		<form on:change={() => (downloadDisabled = false)}>
+		<form onchange={() => (downloadDisabled = false)}>
 			<div>
 				<label for="exchange_name">Selected exchange</label>
 				<TextInput size="xl" id="exchange_name" disabled value={exchangeName} />
@@ -69,21 +71,21 @@
 
 			<div>
 				<label for="export_format">Export format</label>
-				<Select class="form-control" id="export_format" bind:value={selectedFormat}>
+				<Select id="export_format" bind:value={selectedFormat}>
 					<option value="excel">Microsoft Excel .xlsx</option>
 				</Select>
 			</div>
 
 			<div>
 				<label for="export_dataset">Dataset</label>
-				<Select class="form-control" id="export_dataset" bind:value={selectedDataset}>
+				<Select id="export_dataset" bind:value={selectedDataset}>
 					<option value="top_3000_rows">Top 3000 pairs</option>
 				</Select>
 			</div>
 
 			<div>
-				<label for="export_dataset">Sorted by</label>
-				<Select class="form-control" id="sorted_by" bind:value={selectedSort}>
+				<label for="sorted_by">Sorted by</label>
+				<Select id="sorted_by" bind:value={selectedSort}>
 					<option value="liquidity_change_relative_24h">Liquidity % change 24h</option>
 					<option value="liquidity_change_abs_24h">Liquidity USD change 24h</option>
 					<option value="liquidity">Liquidity available latest</option>
@@ -93,8 +95,8 @@
 			</div>
 
 			<div>
-				<label for="export_dataset">Filter</label>
-				<Select class="form-control" id="filter" bind:value={selectedFilter}>
+				<label for="filter">Filter</label>
+				<Select id="filter" bind:value={selectedFilter}>
 					<option value="unfiltered">Unfiltered</option>
 					<!-- Uniswap v3 hot fix until data is available -->
 					{#if !isUniswapV3}

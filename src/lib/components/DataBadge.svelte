@@ -11,13 +11,19 @@ The color and background color may be overridden with CSS props.
 ```
 -->
 <script lang="ts">
-	let className: string = '';
-	export { className as class };
-	export let status: 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default' = 'default';
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		class?: string;
+		status?: 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default';
+		children: Snippet<[]>;
+	}
+
+	let { class: classes, status = 'default', children }: Props = $props();
 </script>
 
-<span class="data-badge {status} {className}" data-css-props>
-	<slot />
+<span class="data-badge {status} {classes}" data-css-props>
+	{@render children()}
 </span>
 
 <style>

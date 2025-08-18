@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export const blockNumber = z.number().int().nonnegative();
+export const blockNumber = z.int().nonnegative();
 export type BlockNumber = z.infer<typeof blockNumber>;
 
-export const chainId = z.number().int().positive();
+export const chainId = z.int().positive();
 export type ChainId = z.infer<typeof chainId>;
 
 export const hexEncodedData = z.string().regex(/^[0-9a-fA-F]+$/);

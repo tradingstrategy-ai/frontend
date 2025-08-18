@@ -1,10 +1,14 @@
 <script lang="ts">
 	import type { SortKey, WritableSortKeys } from 'svelte-headless-table/plugins';
 	import { Subscribe, type HeaderRow } from 'svelte-headless-table';
-	import { Select } from '$lib/components';
+	import Select from '$lib/components/Select.svelte';
 
-	export let rows: HeaderRow<any, any>[];
-	export let sortKeys: WritableSortKeys;
+	interface Props {
+		rows: HeaderRow<any, any>[];
+		sortKeys: WritableSortKeys;
+	}
+
+	let { rows, sortKeys }: Props = $props();
 
 	function sortValue({ id, order }: { id: string; order: string }) {
 		return `${id}:${order}`;
@@ -18,14 +22,15 @@
 
 <tr class="mobile-sort-select">
 	<th>
-		<Select value={sortValue($sortKeys[0])} on:change={handleChange}>
+		<Select value={sortValue($sortKeys[0])} onchange={handleChange}>
 			{#each rows as headerRow (headerRow.id)}
 				{#each headerRow.cells as cell (cell.id)}
 					<Subscribe props={cell.props()} let:props>
 						{@const sort = props.sort}
 						{#if sort && !sort.disabled}
-							{#each [['desc', '▼'], ['asc', '▲']] as [order, indicator]}
+							{#each [['desc', '▼'], ['asc', '▲']] as [order, indicator] (order)}
 								<option value={sortValue({ ...cell, order })} selected={sort.order === order}>
+									<!-- eslint-disable-next-line svelte/require-store-reactive-access -->
 									{cell.label}
 									{indicator}
 								</option>

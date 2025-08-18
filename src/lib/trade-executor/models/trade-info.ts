@@ -8,6 +8,8 @@
 import type { TradeExecution } from '../schemas/trade';
 import type { USDollarAmount } from '../schemas/utility-types';
 
+export type TradeStatus = 'planned' | 'started' | 'broadcasted' | 'success' | 'failed' | 'repaired' | 'expired';
+
 export const TradeDirections = {
 	Enter: 1,
 	Exit: -1,
@@ -18,6 +20,26 @@ export type TradeDirection = (typeof TradeDirections)[keyof typeof TradeDirectio
 
 export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 	...base,
+
+	get status(): TradeStatus {
+		if (this.repaired_trade_id) {
+			return 'success';
+		} else if (this.repaired_at) {
+			return 'repaired';
+		} else if (this.failed_at) {
+			return 'failed';
+		} else if (this.executed_at) {
+			return 'success';
+		} else if (this.broadcasted_at) {
+			return 'broadcasted';
+		} else if (this.started_at) {
+			return 'started';
+		} else if (this.expired_at) {
+			return 'expired';
+		} else {
+			return 'planned';
+		}
+	},
 
 	// Estimate the USD value of trade
 	// see: get_executed_value in trade.py
@@ -92,8 +114,25 @@ export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 		return this.pair.isShort;
 	},
 
-	get failed() {
-		return this.failed_at != null;
+	// NOTE: this is different from `is_failed` method on backend, since it is true for
+	// all trades that have ever failed, whereas `is_failed` exludes repaired trades.
+	get didFail() {
+		return Boolean(this.failed_at);
+	},
+
+	get wasRepaired() {
+		return Boolean(this.repaired_at);
+	},
+
+	get isRepair() {
+		return this.trade_type === 'repair';
+	},
+
+	get repairedByTradeId() {
+		if (this.status === 'repaired') {
+			const match = this.notes?.match(/Repaired.*by #(\d+)/);
+			return match?.[1];
+		}
 	},
 
 	get failedTx() {
@@ -101,7 +140,7 @@ export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 	},
 
 	get isTest() {
-		return this.flags?.includes('test_trade');
+		return Boolean(this.flags?.includes('test_trade'));
 	},
 
 	get isStopLoss() {

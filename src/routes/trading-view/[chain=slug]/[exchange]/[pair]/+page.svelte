@@ -6,6 +6,7 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { captureException } from '@sentry/sveltekit';
@@ -45,10 +46,11 @@ Render the pair trading page
 
 	let timeBucket = new OptionGroup(timeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
-	function handleTimeBucketChange({ detail: { name, value } }: CustomEvent) {
+	const handleTimeBucketChange: ComponentProps<typeof PairCandleChart>['onchange'] = ({ name, value }) => {
 		if (name !== 'timeBucket') return;
-		replaceState(`?${new URLSearchParams({ timeBucket: value })}`, { timeBucket: value });
-	}
+		const { success, data: timeBucket } = timeBucketEnum.safeParse(value);
+		if (success) replaceState(`?${new URLSearchParams({ timeBucket })}`, { timeBucket });
+	};
 </script>
 
 <svelte:head>
@@ -128,7 +130,7 @@ Render the pair trading page
 				pairId={summary.pair_id}
 				pairSymbol={summary.pair_symbol}
 				{timeBucket}
-				on:change={handleTimeBucketChange}
+				onchange={handleTimeBucketChange}
 			/>
 
 			{#snippet failed(error)}

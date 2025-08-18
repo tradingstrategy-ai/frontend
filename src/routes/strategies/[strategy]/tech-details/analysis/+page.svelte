@@ -24,7 +24,7 @@
 
 <section class="analysis">
 	<div class="controls">
-		<Select on:change={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
+		<Select onchange={(e) => updateAnalysis({ chart_id: e.currentTarget.value })}>
 			<option value="">Select analysis</option>
 			{#each chartRegistrations as { id, name } (id)}
 				<option value={id} selected={id === selectedChart?.id}>{name}</option>
