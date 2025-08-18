@@ -52,8 +52,12 @@ using the component isn't practical.
 		const formatted = formatProfitability(value);
 		const direction = getDirection(value, formatted);
 
-		const getLabel = (...labels: string[]) => labels[direction + 1];
+		const getLabel = <const T extends string[]>(...labels: T): T[number] => {
+			return labels[direction + 1] as T[number];
+		};
+
 		const marker = getLabel('▼', '◼︎', '▲');
+
 		const directionClass = getLabel('bearish', 'neutral', 'bullish');
 
 		const toString = () => (value === undefined ? notFilledMarker : `${marker} ${formatted}`);
