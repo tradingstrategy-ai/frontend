@@ -79,7 +79,7 @@
 				{/if}
 
 				{#if !simplified}
-					{#each tags as tag}
+					{#each tags as tag (tag)}
 						<DataBadge status="warning">{tag}</DataBadge>
 					{/each}
 				{/if}
