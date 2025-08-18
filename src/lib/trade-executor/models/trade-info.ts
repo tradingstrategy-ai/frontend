@@ -128,6 +128,13 @@ export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 		return this.trade_type === 'repair';
 	},
 
+	get repairedByTradeId() {
+		if (this.status === 'repaired') {
+			const match = this.notes?.match(/Repaired.*by #(\d+)/);
+			return match?.[1];
+		}
+	},
+
 	get failedTx() {
 		return this.blockchain_transactions.find((tx) => tx.revert_reason);
 	},
