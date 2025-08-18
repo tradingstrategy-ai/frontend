@@ -8,9 +8,9 @@
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
 
-	type Props = {
+	interface Props {
 		strategy: ConnectedStrategyInfo;
-	};
+	}
 
 	let { strategy }: Props = $props();
 
@@ -66,7 +66,7 @@
 
 		{#snippet footer()}
 			<footer class="benchmark-tokens">
-				{#each benchmarkTokens as benchmark}
+				{#each benchmarkTokens as benchmark (benchmark.pairId)}
 					<label style:--color={benchmark.color}>
 						<input type="checkbox" name="benchmarks" bind:checked={benchmark.checked} />
 						{benchmark.symbol}
