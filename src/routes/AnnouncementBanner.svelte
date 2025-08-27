@@ -70,6 +70,7 @@ Dismissed state is retained in a cookie (see `hooks.server.ts`).
 			{/if}
 			<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 			<span class="description" on:click={handleContentClick}>
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html description}
 			</span>
 		</div>
