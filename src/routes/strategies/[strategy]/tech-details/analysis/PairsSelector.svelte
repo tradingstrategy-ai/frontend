@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ChartPairs, TradingPairs } from 'trade-executor/schemas/chart';
+	import type { ChartKind, ChartPairs, TradingPairs } from 'trade-executor/schemas/chart';
 	import { slide } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 	import Button from '$lib/components/Button.svelte';
@@ -7,14 +7,18 @@
 	interface Props {
 		selectedPairIds: number[];
 		tradingPairs: ChartPairs;
-		disabled?: boolean;
+		chartKind: ChartKind | undefined;
 		onchange?: (ids: number[]) => void;
 	}
 
-	let { selectedPairIds, tradingPairs, disabled = false, onchange }: Props = $props();
+	let { selectedPairIds, tradingPairs, chartKind, onchange }: Props = $props();
+
+	let singlePair = $derived(chartKind?.includes('_single_'));
+	let multiPair = $derived(chartKind?.includes('_multi_'));
+	let disabled = $derived(!(singlePair || multiPair));
 
 	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
-	let provisionalPairIds = $state(selectedPairIds);
+	let provisionalPairIds = $derived(singlePair ? selectedPairIds.slice(0, 1) : selectedPairIds);
 
 	let provisionalPairs = $derived(
 		tradingPairs.all_pairs.filter((p) => {
@@ -49,9 +53,13 @@
 
 <div class="pairs-selector">
 	<label class={['current-selection', editing && 'editing', disabled && 'disabled']}>
-		<span class="title">Pairs:</span>
+		<span class="title">
+			{singlePair ? 'Pair' : 'Pairs'}:
+		</span>
 		<span class="selected-pairs">
-			{#if tradingPairs.all_pairs.length === 0}
+			{#if disabled}
+				No pairs required
+			{:else if tradingPairs.all_pairs.length === 0}
 				No pairs loaded
 			{:else if provisionalPairs.length === 0}
 				No pairs selected
@@ -74,13 +82,19 @@
 					</div>
 					<div class="button-group">
 						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
-						<Button size="xs" secondary on:click={pairSelector.save}>Save</Button>
+						<Button size="xs" secondary disabled={provisionalPairIds.length === 0} on:click={pairSelector.save}>
+							Save
+						</Button>
 					</div>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
 						<label>
-							<input type="checkbox" value={pair.internal_id} bind:group={provisionalPairIds} />
+							{#if singlePair}
+								<input type="radio" value={pair.internal_id} bind:group={provisionalPairIds[0]} />
+							{:else}
+								<input type="checkbox" value={pair.internal_id} bind:group={provisionalPairIds} />
+							{/if}
 							{pair.symbol}
 						</label>
 					{/each}
