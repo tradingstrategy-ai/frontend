@@ -3,6 +3,7 @@
 	import { slide } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 	import Button from '$lib/components/Button.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 
 	interface Props {
 		selectedPairIds: number[];
@@ -30,9 +31,17 @@
 		})
 	);
 
+	let search = $state('');
+
 	const pairSelector = fsm('ready', {
 		ready: {
-			edit: () => (singlePair ? 'editingSingle' : 'editingMulti')
+			_enter() {
+				search = '';
+			},
+
+			edit() {
+				return singlePair ? 'editingSingle' : 'editingMulti';
+			}
 		},
 
 		editingSingle: {
@@ -95,21 +104,24 @@
 			<div class="inner">
 				<header>
 					<h4>Select pairs</h4>
-					<div class="button-group">
+					<div class="button-group quick-select">
 						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.default_pairs)}>Default</Button>
 						{#if multiPair}
 							<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
 						{/if}
 						<Button size="xs" tertiary on:click={() => pairSelector.select([])}>None</Button>
 					</div>
-					<div class="button-group">
+					<div class="search">
+						<TextInput bind:value={search} type="search" size="sm" placeholder="Search" />
+					</div>
+					<div class="button-group primary-controls">
 						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
 						<Button size="xs" secondary disabled={multiPairIds.length === 0} on:click={pairSelector.save}>Save</Button>
 					</div>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
-						<label>
+						<label hidden={!pair.symbol.toLowerCase().includes(search.toLowerCase())}>
 							{#if singlePair}
 								<input type="radio" value={pair.internal_id} bind:group={singlePairId} />
 							{:else}
@@ -189,12 +201,40 @@
 
 			header {
 				display: grid;
-				grid-template-columns: auto 1fr auto;
-				gap: 1.5rem;
+				grid-template-columns:
+					[title] auto
+					[quick-select] 1fr
+					[search] auto
+					[primary-controls] auto;
+				grid-template-rows: auto;
+				gap: 0.75rem 1.25rem;
 				align-items: center;
 
+				@media (--viewport-sm-down) {
+					grid-template-columns:
+						[title quick-select] auto
+						[search primary-controls] 1fr;
+				}
+
 				h4 {
+					grid-column-start: title;
 					font: var(--f-heading-xs-medium);
+					white-space: nowrap;
+				}
+
+				.search {
+					grid-column-start: search;
+					text-align: right;
+				}
+
+				.quick-select {
+					grid-column-start: quick-select;
+				}
+
+				.primary-controls {
+					grid-row-start: 1;
+					grid-column-start: primary-controls;
+					justify-content: end;
 				}
 
 				.button-group {
@@ -221,6 +261,10 @@
 
 					&:hover {
 						background: var(--c-box-2);
+					}
+
+					&[hidden] {
+						display: none;
 					}
 				}
 			}
