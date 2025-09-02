@@ -18,37 +18,57 @@
 	let disabled = $derived(!(singlePair || multiPair));
 
 	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
-	let provisionalPairIds = $derived(singlePair ? selectedPairIds.slice(0, 1) : selectedPairIds);
+	let multiPairIds = $derived(selectedPairIds);
+	let singlePairId = $derived(selectedPairIds[0]);
 
 	let provisionalPairs = $derived(
 		tradingPairs.all_pairs.filter((p) => {
-			return provisionalPairIds.includes(p.internal_id!);
+			if (singlePair) {
+				return p.internal_id! === singlePairId;
+			}
+			return multiPairIds.includes(p.internal_id!);
 		})
 	);
 
 	const pairSelector = fsm('ready', {
 		ready: {
-			edit: 'editing'
+			edit: () => (singlePair ? 'editingSingle' : 'editingMulti')
 		},
 
-		editing: {
+		editingSingle: {
 			select(pairs: TradingPairs) {
-				provisionalPairIds = pairs.map((p) => p.internal_id!);
+				singlePairId = pairs[0]?.internal_id;
 			},
 
 			save() {
-				onchange?.(provisionalPairIds);
+				onchange?.([singlePairId]);
 				return 'ready';
 			},
 
 			cancel() {
-				provisionalPairIds = selectedPairIds;
+				singlePairId = selectedPairIds[0];
+				return 'ready';
+			}
+		},
+
+		editingMulti: {
+			select(pairs: TradingPairs) {
+				multiPairIds = pairs.map((p) => p.internal_id!);
+			},
+
+			save() {
+				onchange?.(multiPairIds);
+				return 'ready';
+			},
+
+			cancel() {
+				multiPairIds = selectedPairIds;
 				return 'ready';
 			}
 		}
 	});
 
-	let editing = $derived($pairSelector === 'editing');
+	let editing = $derived($pairSelector.startsWith('editing'));
 </script>
 
 <div class="pairs-selector">
@@ -77,23 +97,23 @@
 					<h4>Select pairs</h4>
 					<div class="button-group">
 						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.default_pairs)}>Default</Button>
-						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
+						{#if multiPair}
+							<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
+						{/if}
 						<Button size="xs" tertiary on:click={() => pairSelector.select([])}>None</Button>
 					</div>
 					<div class="button-group">
 						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
-						<Button size="xs" secondary disabled={provisionalPairIds.length === 0} on:click={pairSelector.save}>
-							Save
-						</Button>
+						<Button size="xs" secondary disabled={multiPairIds.length === 0} on:click={pairSelector.save}>Save</Button>
 					</div>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
 						<label>
 							{#if singlePair}
-								<input type="radio" value={pair.internal_id} bind:group={provisionalPairIds[0]} />
+								<input type="radio" value={pair.internal_id} bind:group={singlePairId} />
 							{:else}
-								<input type="checkbox" value={pair.internal_id} bind:group={provisionalPairIds} />
+								<input type="checkbox" value={pair.internal_id} bind:group={multiPairIds} />
 							{/if}
 							{pair.symbol}
 						</label>
