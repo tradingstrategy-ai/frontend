@@ -1,57 +1,94 @@
 <script lang="ts">
-	import type { ChartPairs, TradingPairs } from 'trade-executor/schemas/chart';
+	import type { ChartKind, ChartPairs, TradingPairs } from 'trade-executor/schemas/chart';
 	import { slide } from 'svelte/transition';
 	import fsm from 'svelte-fsm';
 	import Button from '$lib/components/Button.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 
 	interface Props {
 		selectedPairIds: number[];
 		tradingPairs: ChartPairs;
-		disabled?: boolean;
+		chartKind: ChartKind | undefined;
 		onchange?: (ids: number[]) => void;
 	}
 
-	let { selectedPairIds, tradingPairs, disabled = false, onchange }: Props = $props();
+	let { selectedPairIds, tradingPairs, chartKind, onchange }: Props = $props();
+
+	let singlePair = $derived(chartKind?.includes('_single_'));
+	let multiPair = $derived(chartKind?.includes('_multi_'));
+	let disabled = $derived(!(singlePair || multiPair));
 
 	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
-	let provisionalPairIds = $state(selectedPairIds);
+	let multiPairIds = $derived(selectedPairIds);
+	let singlePairId = $derived(selectedPairIds[0]);
 
 	let provisionalPairs = $derived(
 		tradingPairs.all_pairs.filter((p) => {
-			return provisionalPairIds.includes(p.internal_id!);
+			if (singlePair) {
+				return p.internal_id! === singlePairId;
+			}
+			return multiPairIds.includes(p.internal_id!);
 		})
 	);
 
+	let search = $state('');
+
 	const pairSelector = fsm('ready', {
 		ready: {
-			edit: 'editing'
+			_enter() {
+				search = '';
+			},
+
+			edit() {
+				return singlePair ? 'editingSingle' : 'editingMulti';
+			}
 		},
 
-		editing: {
+		editingSingle: {
 			select(pairs: TradingPairs) {
-				provisionalPairIds = pairs.map((p) => p.internal_id!);
+				singlePairId = pairs[0]?.internal_id;
 			},
 
 			save() {
-				onchange?.(provisionalPairIds);
+				onchange?.([singlePairId]);
 				return 'ready';
 			},
 
 			cancel() {
-				provisionalPairIds = selectedPairIds;
+				singlePairId = selectedPairIds[0];
+				return 'ready';
+			}
+		},
+
+		editingMulti: {
+			select(pairs: TradingPairs) {
+				multiPairIds = pairs.map((p) => p.internal_id!);
+			},
+
+			save() {
+				onchange?.(multiPairIds);
+				return 'ready';
+			},
+
+			cancel() {
+				multiPairIds = selectedPairIds;
 				return 'ready';
 			}
 		}
 	});
 
-	let editing = $derived($pairSelector === 'editing');
+	let editing = $derived($pairSelector.startsWith('editing'));
 </script>
 
 <div class="pairs-selector">
 	<label class={['current-selection', editing && 'editing', disabled && 'disabled']}>
-		<span class="title">Pairs:</span>
+		<span class="title">
+			{singlePair ? 'Pair' : 'Pairs'}:
+		</span>
 		<span class="selected-pairs">
-			{#if tradingPairs.all_pairs.length === 0}
+			{#if disabled}
+				No pairs required
+			{:else if tradingPairs.all_pairs.length === 0}
 				No pairs loaded
 			{:else if provisionalPairs.length === 0}
 				No pairs selected
@@ -67,20 +104,29 @@
 			<div class="inner">
 				<header>
 					<h4>Select pairs</h4>
-					<div class="button-group">
+					<div class="button-group quick-select">
 						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.default_pairs)}>Default</Button>
-						<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
+						{#if multiPair}
+							<Button size="xs" tertiary on:click={() => pairSelector.select(tradingPairs.all_pairs)}>All</Button>
+						{/if}
 						<Button size="xs" tertiary on:click={() => pairSelector.select([])}>None</Button>
 					</div>
-					<div class="button-group">
+					<div class="search">
+						<TextInput bind:value={search} type="search" size="sm" placeholder="Search" />
+					</div>
+					<div class="button-group primary-controls">
 						<Button size="xs" ghost on:click={pairSelector.cancel}>Cancel</Button>
-						<Button size="xs" secondary on:click={pairSelector.save}>Save</Button>
+						<Button size="xs" secondary disabled={multiPairIds.length === 0} on:click={pairSelector.save}>Save</Button>
 					</div>
 				</header>
 				<div class="pairs">
 					{#each tradingPairs.all_pairs as pair (pair.internal_id)}
-						<label>
-							<input type="checkbox" value={pair.internal_id} bind:group={provisionalPairIds} />
+						<label hidden={!pair.symbol.toLowerCase().includes(search.toLowerCase())}>
+							{#if singlePair}
+								<input type="radio" value={pair.internal_id} bind:group={singlePairId} />
+							{:else}
+								<input type="checkbox" value={pair.internal_id} bind:group={multiPairIds} />
+							{/if}
 							{pair.symbol}
 						</label>
 					{/each}
@@ -155,12 +201,40 @@
 
 			header {
 				display: grid;
-				grid-template-columns: auto 1fr auto;
-				gap: 1.5rem;
+				grid-template-columns:
+					[title] auto
+					[quick-select] 1fr
+					[search] auto
+					[primary-controls] auto;
+				grid-template-rows: auto;
+				gap: 0.75rem 1.25rem;
 				align-items: center;
 
+				@media (--viewport-sm-down) {
+					grid-template-columns:
+						[title quick-select] auto
+						[search primary-controls] 1fr;
+				}
+
 				h4 {
+					grid-column-start: title;
 					font: var(--f-heading-xs-medium);
+					white-space: nowrap;
+				}
+
+				.search {
+					grid-column-start: search;
+					text-align: right;
+				}
+
+				.quick-select {
+					grid-column-start: quick-select;
+				}
+
+				.primary-controls {
+					grid-row-start: 1;
+					grid-column-start: primary-controls;
+					justify-content: end;
 				}
 
 				.button-group {
@@ -187,6 +261,10 @@
 
 					&:hover {
 						background: var(--c-box-2);
+					}
+
+					&[hidden] {
+						display: none;
 					}
 				}
 			}

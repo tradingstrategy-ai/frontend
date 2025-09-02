@@ -17,6 +17,7 @@ export const chartKind = z.enum([
 	'state_single_pair',
 	'state_single_vault_pair'
 ]);
+export type ChartKind = z.infer<typeof chartKind>;
 
 export const chartRegistrationSchema = z.object({
 	id: z.string(),

@@ -33,7 +33,7 @@
 		<PairsSelector
 			{selectedPairIds}
 			{tradingPairs}
-			disabled={selectedChart?.kind !== 'indicator_multi_pair'}
+			chartKind={selectedChart?.kind}
 			onchange={(pair_ids) => updateAnalysis({ pair_ids })}
 		/>
 	</div>
