@@ -1,13 +1,30 @@
 minimumReleaseAge: 10080
 engineStrict: true
 
+ignoredBuiltDependencies:
+  - '@datadog/native-iast-taint-tracking'
+  - '@datadog/native-metrics'
+  - '@datadog/pprof'
+
+onlyBuiltDependencies:
+  - '@reown/appkit'
+  - '@sentry/cli'
+  - bufferutil
+  - dd-trace
+  - esbuild
+  - keccak
+  - protobufjs
+  - sharp
+  - utf-8-validate
+
 overrides:
-  vite-plugin-simple-json-server>vite: ^7.0.5
-  # Below needed for svelte-headless-table
+  # @reown/appkit overrides (try removing after upgrade)
+  '@reown/appkit-wallet>zod': ^4.0.5
+  abitype>zod: ^4.0.5
+  # svelte-headless-table overrides (remove when we switch to Tanstack)
   svelte-headless-table>svelte: ^4.0.0 || ^5.0.0
+  svelte-keyed>svelte: ^5.37.1
   svelte-render>svelte: ^5.37.1
   svelte-subscribe>svelte: ^5.37.1
-  svelte-keyed>svelte: ^5.37.1
-  # Below needed for @reown/appkit - try removing once we upgrade
-  abitype>zod: ^4.0.5
-  '@reown/appkit-wallet>zod': ^4.0.5
+  # vite-plugin-simple-json-server override (remove when we switch to MSW)
+  vite-plugin-simple-json-server>vite: ^7.0.5
