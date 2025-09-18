@@ -15,7 +15,8 @@
     "test:unit": "vitest",
     "test:integration": "playwright test --config tests/integration",
     "test:e2e": "playwright test --config tests/e2e",
-    "test": "pnpm run test:unit --run && pnpm run build && pnpm run test:integration && pnpm run test:e2e"
+    "test": "pnpm run test:unit --run && pnpm run build && pnpm run test:integration && pnpm run test:e2e",
+    "test:no-build": "pnpm run test:unit --run && pnpm run test:integration && pnpm run test:e2e"
   },
   "engines": {
     "node": "^20.19.3"
