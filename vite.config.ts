@@ -55,7 +55,7 @@ export default defineConfig({
 		}),
 
 		// vite plugin to create a mock JSON api for integration tests
-		// only available when using `npm run dev` or `npm run preview`
+		// only available when using `pnpm run dev` or `pnpm run preview`
 		// https://github.com/alextim/vite-plugin-simple-json-server/
 		jsonServer({
 			logLevel: 'silent',
@@ -85,7 +85,7 @@ export default defineConfig({
 		allowedHosts: ['.tradingstrategy.ai']
 	},
 
-	// vitest configuration for unit tests (`npm run test:unit`)
+	// vitest configuration for unit tests (`pnpm run test:unit`)
 	// https://vitest.dev/config/
 	test: {
 		environment: 'jsdom',

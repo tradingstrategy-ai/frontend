@@ -12,7 +12,7 @@ This application includes three test suites:
 See below to run each suite separately, or run all test suites sequentially with:
 
 ```shell
-npm run test # use --skip-build flag to save time if you have already run `npm build`
+pnpm run test # use pnpm run test:no-build to save time if you have already run `pnpm build`
 ```
 
 ## Running Tests
@@ -22,41 +22,45 @@ npm run test # use --skip-build flag to save time if you have already run `npm b
 Run once:
 
 ```shell
-npm run test:unit
+pnpm run test:unit --run
 ```
 
 Watch for file changes:
 
 ```shell
-npm run test:unit:watch
+pnpm run test:unit
 ```
 
 #### Options:
 
 Pass additional options to `vitest` after `--` – e.g.,
 
-- `npm run test:unit -- Blog` to only run tests that match "Blog"
-- `npm run test:unit -- --help` to see additional `vitest` options
+- `pnpm run test:unit -- Search` to only run tests that match "Search"
+- `pnpm run test:unit -- --help` to see additional `vitest` options
 
 See [Unit test frameworks](#unit-test-frameworks) below for additional info.
 
 ### Integration tests
 
 ```shell
-npm run test:integration
+# Build first if source files have changed since last build
+pnpm run build
+
+# Run all integration tests
+pnpm run test:integration
 ```
 
 #### Options:
 
-- use `--skip-build` flag if you already have a current build (saves significant time)
+- prefix with `CI=1` to skip some flaky tests that we skip in CI
 - pass additional options to `playwright` after `--` – e.g.,
-  - `npm run test:integration -- trading-view` to only run tests that match "trading-view"
-  - `npm run test:integration -- --help` to see additional `playwright` options
+  - `pnpm run test:integration -- trading-view` to only run tests that match "trading-view"
+  - `pnpm run test:integration -- --help` to see additional `playwright` options
 
 #### This command does the following:
 
 - runs tests in `tests/integration` folder (headlessly) and reports results
-- automatically runs `npm build` and starts a node preview server with `npm preview`
+- automatically runs `pnpm preview` to start a node preview server
 - uses mock API data found in `tests/fixtures`
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
@@ -64,7 +68,11 @@ See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) 
 ### End-to-end tests
 
 ```shell
-npm run test:e2e
+# Build first if source files have changed since last build
+pnpm run build
+
+# Run all e2e tests
+pnpm run test:e2e
 ```
 
 #### Options:
@@ -74,7 +82,7 @@ npm run test:e2e
 #### This command does the following:
 
 - runs tests in `tests/e2e` folder (headlessly) and reports results
-- automatically runs `npm build` and starts a node preview server with `npm preview`
+- automatically runs `pnpm preview` to start a node preview server
 - uses real production backend API
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.

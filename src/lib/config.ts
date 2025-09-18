@@ -7,7 +7,7 @@
  * This file can be imported and used directly into client-side code, but not
  * in all contexts. It works fine in component initialization or in a the load
  * function, but may generate build errors when imported by a js/ts lib file
- * or in the component module context. Test with `npm run build`.
+ * or in the component module context. Test with `pnpm run build`.
  */
 import { env } from '$env/dynamic/public';
 import { type GeoBlock, geoBlockSchema } from './helpers/geo';

@@ -8,8 +8,20 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 Node >=20.19 required.
 
+### Setup pnpm
+
 ```shell
-npm install
+# Enable pnpm via corepack (recommended)
+corepack enable
+
+# Verify installation
+pnpm --version
+```
+
+### Install dependencies
+
+```shell
+pnpm install
 ```
 
 ## Install and build submodules
@@ -43,7 +55,7 @@ Environment variables required by the app are maintained in a `.env` file. Read 
 Start the SvelteKit development server:
 
 ```shell
-npm run dev
+pnpm run dev
 ```
 
 ## Documentation
@@ -63,13 +75,13 @@ If you prefer not to have your editor do automatic formatting, please run the fo
 commit properly formatted code before pushing a PR:
 
 ```shell
-npm run format
+pnpm run format
 ```
 
 Our CI/CD pipeline runs the following chack on PRs or pushes to `master`:
 
 ```shell
-npm run format:check
+pnpm run format:check
 ```
 
 ### `dependencies` vs `devDependencies`
