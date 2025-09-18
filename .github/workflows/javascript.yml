@@ -51,7 +51,7 @@ jobs:
       - name: Setup submodules
         run: bash scripts/build-deps.sh
       - name: Install Playwright
-        run: pnpm dlx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
       # use separate build step to avoid playwright timeout issue
       - name: Build SvelteKit vite app
         run: pnpm run build
