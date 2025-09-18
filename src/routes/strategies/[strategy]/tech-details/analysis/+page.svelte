@@ -66,21 +66,11 @@
 		display: grid;
 		gap: 1.5rem;
 
-		select {
-			border-radius: var(--radius-sm);
-			padding: 0.5rem;
-			margin-bottom: 1rem;
-		}
-
 		.controls {
 			display: grid;
 			grid-template-columns: auto 1fr;
 			align-items: center;
 			gap: 1rem;
-
-			select {
-				margin: 0;
-			}
 		}
 
 		.content {

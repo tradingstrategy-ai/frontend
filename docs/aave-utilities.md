@@ -19,7 +19,7 @@ depenedency on [`bignumber.js`](https://www.npmjs.com/package/bignumber.js)
 so it's important that both are installed as production/runtime dependencies:
 
 ```bash
-npm i @aave/math-utils bignumber.js
+pnpm i @aave/math-utils bignumber.js
 ```
 
 The main conversion functions we're using are found in

@@ -1,14 +1,19 @@
 #######################################
 # Build stage
 #######################################
-FROM node:20.19 as builder
+FROM node:20.19 AS builder
 
 WORKDIR /app
 
-# install npm dependencies (cache first)
-COPY package*.json ./
+# Install pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+# Install package dependencies (cache first)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
-RUN --mount=type=ssh npm ci
+RUN --mount=type=ssh pnpm install --frozen-lockfile
 
 # copy remaining files
 COPY . .
@@ -17,7 +22,7 @@ COPY . .
 RUN scripts/build-deps.sh
 
 # build app
-RUN npm run build
+RUN pnpm run build
 
 #######################################
 # Serve stage
