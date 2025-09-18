@@ -14,31 +14,34 @@ export CI=true
 
 # install dependencies
 ./scripts/update-deps.sh
-npm install
+pnpm install
 
 # build frontend
 ./scripts/build-deps.sh
-npm run build
+pnpm run build
 
 # delete old screenshots
 rm -r tests/integration/*snapshots
 
 # run integration tests
 # generates snapshot for your local platform (e.g., darwin)
-npm run test:integration --skip-build || true
+pnpm run test:integration || true
 
 # extract playwright version -> identity playwright docker image
-playwright_version=`npm ls @playwright/test | grep playwright | cut -d '@' -f 3`
+playwright_version=`pnpm ls @playwright/test | grep playwright | cut -d ' ' -f 2`
 playwright_image="mcr.microsoft.com/playwright:v${playwright_version}"
 
-# run npm install in docker (for platform-specific esbuild dependency)
-docker run --rm -v $(pwd):/work/ ${playwright_image} bash -c 'cd work && npm install --force'
+# run rebuild in docker (for platform-specific dependencies)
+docker run --rm -v $(pwd):/work/ ${playwright_image} bash -c 'cd work && pnpm rebuild'
 
 # run integration tests in docker
 # generates snapshot for CI platform (linux)
-docker run -e CI --rm -v $(pwd):/work/ ${playwright_image} bash -c 'cd work && npm run test:integration --skip-build' || true
+docker run -e CI --rm -v $(pwd):/work/ ${playwright_image} bash -c 'cd work && pnpm run test:integration' || true
+
+# rebuild for local platform
+pnpm rebuild
 
 echo -e "\nNew screenshots generated:\n"
 git status tests/integration | grep 'modified.*snapshots' | cut -d ':' -f 2
 echo -e "\nRun the following command to confirm tests pass:\n"
-echo "   npm run test:integration --skip-build"
+echo "   pnpm run test:integration"
