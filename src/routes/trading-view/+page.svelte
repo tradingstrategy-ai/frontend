@@ -11,10 +11,11 @@
 	import IconBook from '~icons/local/book';
 	import IconDictionary from '~icons/local/dictionary';
 	import IconExchange from '~icons/local/exchange';
-	import IconLendingReserve from '~icons/local/lending-reserve';
-	import IconPair from '~icons/local/pair';
-	import IconPython from '~icons/local/python';
-	import IconSearch from '~icons/local/search';
+import IconLendingReserve from '~icons/local/lending-reserve';
+import IconPair from '~icons/local/pair';
+import IconPython from '~icons/local/python';
+import IconSearch from '~icons/local/search';
+import IconWallet from '~icons/local/wallet';
 
 	export let data;
 	const { impressiveNumbers } = data;
@@ -74,6 +75,15 @@
 				</p>
 			{/if}
 			<Button slot="cta" label="Browse reserves" />
+		</ContentCard>
+
+		<ContentCard title="Vaults" href="/trading-view/vaults">
+			<IconWallet slot="icon" />
+			<p>
+				Explore top-performing vaults across supported chains. Compare TVL, returns, Sharpe ratio, and historical
+				performance metrics.
+			</p>
+			<Button slot="cta" label="See top vaults" />
 		</ContentCard>
 
 		<ContentCard title="Advanced search" href="/search">

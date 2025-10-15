@@ -3,15 +3,40 @@ import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+import type { LayoutData } from './$types';
 
-export async function load({ params, fetch }) {
+const VAULT_ENDPOINT = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
+
+type RemoteVault = {
+	id: string;
+	name: string;
+	protocol?: string | null;
+	chain: number;
+	current_tvl_usd?: number | null;
+	'1m_return'?: number | null;
+};
+
+type VaultRow = {
+	id: string;
+	name: string;
+	protocol?: string;
+	tvlUsd: number;
+	return1m?: number | null;
+};
+
+export async function load({ params, fetch, parent }) {
 	const { chain } = params;
+	const parentData = (await parent()) as LayoutData;
+	const chainId = parentData.chain?.chain_id;
+
+	const emptyVaults = { rows: [] as VaultRow[] };
 
 	return {
 		exchanges: fetchTopExchanges(fetch, chain),
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
-		reserves: fetchTopReserves(fetch, chain)
+		reserves: fetchTopReserves(fetch, chain),
+		vaults: chainId ? fetchTopVaults(fetch, chainId) : Promise.resolve(emptyVaults)
 	};
 }
 
@@ -78,6 +103,35 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string) {
 			.sort((a, b) => b.totalLiquidityUSD - a.totalLiquidityUSD);
 
 		return { rows: rows?.slice(0, 5) ?? [] };
+	} catch (error) {
+		return { error };
+	}
+}
+
+async function fetchTopVaults(fetch: Fetch, chainId: number) {
+	try {
+		const resp = await fetch(VAULT_ENDPOINT);
+		if (!resp.ok) {
+			throw new Error(`Failed to fetch vault data: ${resp.status} ${resp.statusText}`);
+		}
+
+		const { vaults = [] } = (await resp.json()) as {
+			vaults?: RemoteVault[];
+		};
+
+		const rows = vaults
+			.filter((vault) => vault.chain === chainId)
+			.sort((a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0))
+			.slice(0, 5)
+			.map<VaultRow>((vault) => ({
+				id: vault.id,
+				name: vault.name,
+				protocol: vault.protocol ?? undefined,
+				tvlUsd: vault.current_tvl_usd ?? 0,
+				return1m: vault['1m_return'] ?? null
+			}));
+
+		return { rows };
 	} catch (error) {
 		return { error };
 	}
