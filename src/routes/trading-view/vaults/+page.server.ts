@@ -76,9 +76,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const groups = Array.from(groupsMap.values())
 		.map((group) => ({
 			...group,
-			vaults: [...group.vaults].sort(
-				(a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0)
-			)
+			vaults: [...group.vaults].sort((a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0))
 		}))
 		.sort((a, b) => b.totalTvlUsd - a.totalTvlUsd);
 

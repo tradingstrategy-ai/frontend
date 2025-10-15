@@ -75,8 +75,8 @@
 		<h1>{chainName} vaults</h1>
 		<p class="meta">Data generated {generatedTimestamp}</p>
 		<p class="meta">
-			Showing vaults currently tracked on {chainName}, sorted by total value locked (TVL). Switch to other
-			blockchains via the trading view navigation.
+			Showing vaults currently tracked on {chainName}, sorted by total value locked (TVL). Switch to other blockchains
+			via the trading view navigation.
 		</p>
 		<div class="totals">
 			<span>Total chain TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
@@ -226,7 +226,18 @@
 
 	.address-cell,
 	.id-cell {
-		font-family: var(--monospace, ui-monospace, SFMono-Regular, SFMono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
+		font-family: var(
+			--monospace,
+			ui-monospace,
+			SFMono-Regular,
+			SFMono,
+			Menlo,
+			Monaco,
+			Consolas,
+			'Liberation Mono',
+			'Courier New',
+			monospace
+		);
 	}
 
 	@media (--viewport-sm-down) {

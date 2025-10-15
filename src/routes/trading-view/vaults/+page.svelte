@@ -32,14 +32,14 @@
 		address?: string | null;
 	};
 
-type VaultGroup = {
-	chainId: number;
-	chainLabel: string;
-	chainSlug: string;
-	totalTvlUsd: number;
-	totalPeakTvlUsd: number;
-	vaults: Vault[];
-};
+	type VaultGroup = {
+		chainId: number;
+		chainLabel: string;
+		chainSlug: string;
+		totalTvlUsd: number;
+		totalPeakTvlUsd: number;
+		vaults: Vault[];
+	};
 
 	const { data } = $props();
 	const { generatedAt, groups } = data as {
@@ -256,7 +256,18 @@ type VaultGroup = {
 
 	.address-cell,
 	.id-cell {
-		font-family: var(--monospace, ui-monospace, SFMono-Regular, SFMono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
+		font-family: var(
+			--monospace,
+			ui-monospace,
+			SFMono-Regular,
+			SFMono,
+			Menlo,
+			Monaco,
+			Consolas,
+			'Liberation Mono',
+			'Courier New',
+			monospace
+		);
 	}
 
 	@media (--viewport-sm-down) {

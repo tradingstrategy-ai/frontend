@@ -116,12 +116,7 @@
 				</div>
 
 				<div class="vault-cta">
-					<Button
-						size="sm"
-						label="See vaults"
-						href={`/trading-view/${chain.chain_slug}/vaults`}
-						secondary
-					/>
+					<Button size="sm" label="See vaults" href={`/trading-view/${chain.chain_slug}/vaults`} secondary />
 				</div>
 			</article>
 		</div>
@@ -169,7 +164,6 @@
 			/>
 		</Grid>
 	</section>
-
 </main>
 
 <style>
