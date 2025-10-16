@@ -8,9 +8,11 @@
 		formatShortAddress
 	} from '$lib/helpers/formatters';
 
-	type Vault = {
+	type VaultRow = {
 		id: string;
 		name: string;
+		chainLabel: string;
+		chainSlug: string;
 		protocol?: string | null;
 		denomination?: string | null;
 		management_fee?: number | null;
@@ -32,19 +34,13 @@
 		address?: string | null;
 	};
 
-	type VaultGroup = {
-		chainId: number;
-		chainLabel: string;
-		chainSlug: string;
+	const { data } = $props();
+	const { generatedAt, updatedAt, vaults, totalTvlUsd, totalPeakTvlUsd } = data as {
+		generatedAt: string;
+		updatedAt?: string;
+		vaults: VaultRow[];
 		totalTvlUsd: number;
 		totalPeakTvlUsd: number;
-		vaults: Vault[];
-	};
-
-	const { data } = $props();
-	const { generatedAt, groups } = data as {
-		generatedAt: string;
-		groups: VaultGroup[];
 	};
 
 	function formatPercentValue(value: number | null | undefined, digits = 2) {
@@ -59,155 +55,176 @@
 		return formatDatetime(value ? new Date(value) : undefined);
 	}
 
-	const generatedTimestamp = generatedAt ? formatDatetime(new Date(generatedAt)) : '---';
+	function formatUpdatedTimestamp(value: string | undefined) {
+		if (!value) return;
+		const date = new Date(value);
+		const formatted = new Intl.DateTimeFormat('en-US', {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false,
+			timeZone: 'UTC'
+		}).format(date);
+		return `${formatted} UTC`;
+	}
+
+	const updatedLabel = formatUpdatedTimestamp(updatedAt ?? generatedAt);
 </script>
 
 <svelte:head>
-	<title>Top vaults by chain | Trading Strategy</title>
-	<meta name="description" content="Browse the highest TVL strategy vaults on each supported blockchain." />
+	<title>Top vaults | Trading Strategy</title>
+	<meta name="description" content="Browse the highest performing vaults across all supported blockchains." />
 </svelte:head>
 
 <main class="top-vaults ds-3">
-	<Section padding="lg">
-		<h1>Top vaults by chain</h1>
-		<p class="meta">Data generated {generatedTimestamp}</p>
-		<p class="meta">Ranked by current total value locked (TVL) in USD.</p>
-	</Section>
-
-	{#if !groups.length}
-		<Section padding="md">
+	{#if !vaults.length}
+		<Section padding="sm">
 			<p>No vault data available.</p>
 		</Section>
 	{:else}
-		{#each groups as group}
-			<Section padding="md" class="vault-group">
-				<header class="group-header">
-					<h2>
-						<a class="chain-link" href={`/trading-view/${group.chainSlug}/vaults`}>
-							{group.chainLabel}
-						</a>
-					</h2>
-					<div class="totals">
-						<span>Total chain TVL {formatDollar(group.totalTvlUsd, 2, 2)}</span>
-						<span>Peak chain TVL {formatDollar(group.totalPeakTvlUsd, 2, 2)}</span>
-						<span>Vaults {group.vaults.length}</span>
-					</div>
-				</header>
+		<Section padding="sm" class="vaults-table">
+			<div class="page-header">
+				<h1 class="page-title">The best-performing vaults on each chain</h1>
+				<p class="page-subtitle">Minimum $50k USD TVL</p>
+				<p class="page-subtitle">
+					{#if updatedLabel}
+						Data updated at {updatedLabel}
+					{:else}
+						Data updated recently
+					{/if}
+				</p>
+			</div>
 
-				<div class="table-wrapper">
-					<table>
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>Vault</th>
-								<th>Protocol</th>
-								<th>Denomination</th>
-								<th>TVL (USD)</th>
-								<th>Peak TVL (USD)</th>
-								<th>Return 1m</th>
-								<th>Return 1m (ann.)</th>
-								<th>Return 3m</th>
-								<th>Return 3m (ann.)</th>
-								<th>Return lifetime</th>
-								<th>Return lifetime (ann.)</th>
-								<th>3m Sharpe</th>
-								<th>3m Volatility</th>
-								<th>Age (years)</th>
-								<th>Deposits/Redeems</th>
-								<th>Mgmt fee</th>
-								<th>Perf fee</th>
-								<th>First deposit</th>
-								<th>Last deposit</th>
-								<th>Vault address</th>
-								<th>Vault ID</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each group.vaults as vault, idx}
-								<tr>
-									<td>{idx + 1}</td>
-									<td>
-										<div class="vault-name">
-											<strong>{vault.name}</strong>
-										</div>
-									</td>
-									<td>{vault.protocol ?? '---'}</td>
-									<td>{vault.denomination ?? '---'}</td>
-									<td>{formatDollar(vault.current_tvl_usd ?? 0, 2, 2)}</td>
-									<td>{formatDollar(vault.peak_tvl_usd ?? 0, 2, 2)}</td>
-									<td>{formatPercentValue(vault['1m_return'])}</td>
-									<td>{formatPercentValue(vault['1m_return_ann'])}</td>
-									<td>{formatPercentValue(vault['3m_return'])}</td>
-									<td>{formatPercentValue(vault['3m_return_ann'])}</td>
-									<td>{formatPercentValue(vault.lifetime_return)}</td>
-									<td>{formatPercentValue(vault.lifetime_return_ann)}</td>
-									<td>{formatNumberValue(vault['3m_sharpe'])}</td>
-									<td>{formatPercentValue(vault['3m_volatility'], 4)}</td>
-									<td>{formatNumberValue(vault.age_years, 2, 4)}</td>
-									<td>{vault.deposit_redeem_count?.toLocaleString('en-US') ?? '---'}</td>
-									<td>{formatPercentValue(vault.management_fee)}</td>
-									<td>{formatPercentValue(vault.performance_fee)}</td>
-									<td>{formatDateTime(vault.first_deposit)}</td>
-									<td>{formatDateTime(vault.last_deposit)}</td>
-									<td class="address-cell" title={vault.address ?? undefined}>
-										{vault.address ? formatShortAddress(vault.address) : '---'}
-									</td>
-									<td class="id-cell" title={vault.id}>{vault.id}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
+			<header class="table-header">
+				<div class="totals">
+					<span>Total current TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
+					<span>Peak TVL {formatDollar(totalPeakTvlUsd, 2, 2)}</span>
+					<span>Total vaults {vaults.length}</span>
 				</div>
-			</Section>
-		{/each}
+			</header>
+
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>Vault</th>
+							<th>Chain</th>
+							<th>1M return</th>
+							<th>1M return (ann.)</th>
+							<th>3M return (ann.)</th>
+							<th>3M Sharpe</th>
+							<th>Lifetime return (ann.)</th>
+							<th>Current TVL (USD)</th>
+							<th>Age (years)</th>
+							<th>Denomination</th>
+							<th>Peak TVL (USD)</th>
+							<th>3M return</th>
+							<th>Lifetime return</th>
+							<th>3M volatility</th>
+							<th>Deposits/Redeems</th>
+							<th>Mgmt fee</th>
+							<th>Perf fee</th>
+							<th>First deposit</th>
+							<th>Last deposit</th>
+							<th>Vault address</th>
+							<th>Vault ID</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each vaults as vault}
+							<tr>
+								<td>
+									<div class="vault-name">
+										<strong>{vault.name}</strong>
+										{#if vault.protocol}
+											<span class="protocol">{vault.protocol}</span>
+										{/if}
+									</div>
+								</td>
+								<td>
+									<a class="chain-link" href={`/trading-view/${vault.chainSlug}/vaults`}>
+										{vault.chainLabel}
+									</a>
+								</td>
+								<td>{formatPercentValue(vault['1m_return'])}</td>
+								<td>{formatPercentValue(vault['1m_return_ann'])}</td>
+								<td>{formatPercentValue(vault['3m_return_ann'])}</td>
+								<td>{formatNumberValue(vault['3m_sharpe'])}</td>
+								<td>{formatPercentValue(vault.lifetime_return_ann)}</td>
+								<td>{formatDollar(vault.current_tvl_usd ?? 0, 2, 2)}</td>
+								<td>{formatNumberValue(vault.age_years, 2, 4)}</td>
+								<td>{vault.denomination ?? '---'}</td>
+								<td>{formatDollar(vault.peak_tvl_usd ?? 0, 2, 2)}</td>
+								<td>{formatPercentValue(vault['3m_return'])}</td>
+								<td>{formatPercentValue(vault.lifetime_return)}</td>
+								<td>{formatPercentValue(vault['3m_volatility'], 4)}</td>
+								<td>{vault.deposit_redeem_count?.toLocaleString('en-US') ?? '---'}</td>
+								<td>{formatPercentValue(vault.management_fee)}</td>
+								<td>{formatPercentValue(vault.performance_fee)}</td>
+								<td>{formatDateTime(vault.first_deposit)}</td>
+								<td>{formatDateTime(vault.last_deposit)}</td>
+								<td class="address-cell" title={vault.address ?? undefined}>
+									{vault.address ? formatShortAddress(vault.address) : '---'}
+								</td>
+								<td class="id-cell" title={vault.id}>{vault.id}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</Section>
 	{/if}
 </main>
 
 <style>
 	.top-vaults {
 		display: grid;
-		gap: 2.5rem;
-		padding-bottom: 4rem;
+		gap: 0.5rem;
+		padding-bottom: 1rem;
 	}
 
-	.meta {
-		color: var(--c-text-extra-light);
-		margin-top: 0.25rem;
+	.page-header {
+		display: grid;
+		gap: var(--space-xs);
+		max-width: 70ch;
 	}
 
-	.vault-group {
+	.page-title {
+		font-size: 1.9rem;
+		font-weight: 600;
+		color: var(--c-text);
+		margin: 0;
+	}
+
+	.page-subtitle {
+		font-size: 1rem;
+		color: var(--c-text-light);
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.vaults-table {
 		display: grid;
 		gap: 1.5rem;
 	}
 
-	.group-header {
+	.table-header {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
 		justify-content: space-between;
-		gap: 0.75rem;
-
-		h2 {
-			margin: 0;
-			font: var(--f-heading-lg-medium);
-
-			.chain-link {
-				color: inherit;
-				text-decoration: none;
-
-				&:hover {
-					text-decoration: underline;
-				}
-			}
-		}
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: var(--space-sm);
 	}
 
 	.totals {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1rem;
+		gap: var(--space-md);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-sm-roman);
+		margin-top: 1rem;
 	}
 
 	.table-wrapper {
@@ -249,9 +266,24 @@
 	}
 
 	.vault-name {
-		display: flex;
-		flex-direction: column;
+		display: grid;
 		gap: 0.25rem;
+	}
+
+	.protocol {
+		font: var(--f-ui-xs-medium);
+		letter-spacing: 0.02em;
+		color: var(--c-text-light);
+		text-transform: uppercase;
+	}
+
+	.chain-link {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	.address-cell,

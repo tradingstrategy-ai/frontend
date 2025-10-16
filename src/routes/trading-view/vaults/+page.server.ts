@@ -28,13 +28,9 @@ type RemoteVault = {
 	chain: number;
 };
 
-type VaultGroup = {
-	chainId: number;
+type VaultRow = RemoteVault & {
 	chainLabel: string;
 	chainSlug: string;
-	totalTvlUsd: number;
-	totalPeakTvlUsd: number;
-	vaults: RemoteVault[];
 };
 
 export const load: PageServerLoad = async ({ fetch }) => {
@@ -43,45 +39,41 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		throw new Error(`Failed to fetch top vault data: ${resp.status} ${resp.statusText}`);
 	}
 
-	const { generated_at: generatedAt, vaults = [] } = (await resp.json()) as {
+	const {
+		generated_at: generatedAt,
+		updated_at: updatedAt,
+		vaults = []
+	} = (await resp.json()) as {
 		generated_at: string;
+		updated_at?: string;
 		vaults: RemoteVault[];
 	};
 
-	const groupsMap = new Map<number, VaultGroup>();
+	vaults.sort((a, b) => (b['1m_return_ann'] ?? 0) - (a['1m_return_ann'] ?? 0));
 
-	for (const vault of vaults) {
-		const chainId = vault.chain;
-		const currentTvl = vault.current_tvl_usd ?? 0;
-		const peakTvl = vault.peak_tvl_usd ?? 0;
+	const rows: VaultRow[] = vaults.map((vault) => {
+		const chainInfo = getChain(vault.chain);
+		return {
+			...vault,
+			chainLabel: chainInfo?.name ?? `Chain ${vault.chain}`,
+			chainSlug: chainInfo?.slug ?? String(vault.chain)
+		};
+	});
 
-		if (!groupsMap.has(chainId)) {
-			const chain = getChain(chainId);
-			groupsMap.set(chainId, {
-				chainId,
-				chainLabel: chain?.name ?? `Chain ${chainId}`,
-				chainSlug: chain?.slug ?? String(chainId),
-				totalTvlUsd: 0,
-				totalPeakTvlUsd: 0,
-				vaults: []
-			});
-		}
-
-		const group = groupsMap.get(chainId)!;
-		group.vaults.push(vault);
-		group.totalTvlUsd += currentTvl;
-		group.totalPeakTvlUsd += peakTvl;
-	}
-
-	const groups = Array.from(groupsMap.values())
-		.map((group) => ({
-			...group,
-			vaults: [...group.vaults].sort((a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0))
-		}))
-		.sort((a, b) => b.totalTvlUsd - a.totalTvlUsd);
+	const totals = rows.reduce(
+		(acc, vault) => {
+			acc.current += vault.current_tvl_usd ?? 0;
+			acc.peak += vault.peak_tvl_usd ?? 0;
+			return acc;
+		},
+		{ current: 0, peak: 0 }
+	);
 
 	return {
 		generatedAt,
-		groups
+		updatedAt,
+		vaults: rows,
+		totalTvlUsd: totals.current,
+		totalPeakTvlUsd: totals.peak
 	};
 };

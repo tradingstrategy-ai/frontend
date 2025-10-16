@@ -70,9 +70,9 @@
 			<SummaryDataTile
 				count={chain.exchanges}
 				title="Exchanges"
-				description="Decentralised exchanges with market data available on Trading Strategy"
+				description="Decentralised exchanges with market data available on Trading Strategy."
 				buttonLabel="See exchanges"
-				href="{chain.chain_slug}/exchanges"
+				href={`${chain.chain_slug}/exchanges`}
 			/>
 
 			<SummaryDataTile
@@ -80,7 +80,7 @@
 				title="Tracked trading pairs"
 				description="Total trading pairs on Trading Strategy for this blockchain."
 				buttonLabel="See trading pairs"
-				href="{chain.chain_slug}/trading-pairs"
+				href={`${chain.chain_slug}/trading-pairs`}
 			/>
 
 			<SummaryDataTile
@@ -92,33 +92,14 @@
 				rel="external"
 			/>
 
-			<article class="tile a top-vault-tile">
-				<div class="top-vault-content">
-					<h3>Top vaults</h3>
-					<p>Top-performing vaults on this chain.</p>
-				</div>
-
-				<div class="vault-list">
-					{#if vaults?.error}
-						<p class="status">Unable to load vault data right now.</p>
-					{:else if previewVaults.length}
-						<ul>
-							{#each previewVaults as vault}
-								<li>
-									<span class="vault-name">{vault.name}</span>
-									<span class="vault-tvl">{formatDollar(vault.tvlUsd, 2, 2)}</span>
-								</li>
-							{/each}
-						</ul>
-					{:else}
-						<p class="status">No vaults tracked for this chain yet.</p>
-					{/if}
-				</div>
-
-				<div class="vault-cta">
-					<Button size="sm" label="See vaults" href={`/trading-view/${chain.chain_slug}/vaults`} secondary />
-				</div>
-			</article>
+			<!-- ✅ Rewritten Top Vaults tile -->
+			<SummaryDataTile
+				count={vaults?.rows?.length ?? 30}
+				title="Best vaults"
+				description="Top-performing vaults on this chain."
+				buttonLabel="See vaults"
+				href={`/trading-view/${chain.chain_slug}/vaults`}
+			/>
 		</div>
 	</section>
 
@@ -222,68 +203,59 @@
 		}
 	}
 
-	.top-vault-tile {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-md);
+	.summary-card {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: var(--space-lg);
 		padding: calc(var(--container-width) * 0.15);
 		height: 100%;
 	}
 
+	.summary-card__content {
+		display: grid;
+		gap: var(--space-sm);
+
+		h3 {
+			margin: 0;
+			font: var(--f-h4-medium);
+		}
+
+		p {
+			font: var(--f-ui-small-roman);
+			letter-spacing: 0.01em;
+			color: var(--c-text-light);
+		}
+	}
+
 	@media (--viewport-md-down) {
-		.top-vault-tile {
+		.summary-card {
 			padding: var(--space-ls);
 		}
 	}
 
-	.top-vault-content {
-		display: grid;
-		gap: var(--space-xs);
-	}
-
-	.top-vault-content h3 {
-		margin: 0;
-		font: var(--f-h4-medium);
-	}
-
-	.top-vault-content p {
-		font: var(--f-ui-small-roman);
-		letter-spacing: 0.01em;
-		color: var(--c-text-light);
-	}
-
-	.vault-list {
-		display: grid;
-		gap: var(--space-sm);
-	}
-
-	.vault-list ul {
+	.vault-preview {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
 		gap: var(--space-sm);
-	}
 
-	.vault-list li {
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		gap: var(--space-sm);
-		font: var(--f-ui-md-roman);
-	}
+		li {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			gap: var(--space-sm);
+			font: var(--f-ui-md-roman);
+		}
 
-	.vault-name {
-		font-weight: 600;
-	}
+		.label {
+			font-weight: 600;
+		}
 
-	.vault-tvl {
-		color: var(--c-text-light);
-		font: var(--f-ui-sm-medium);
-	}
-
-	.vault-cta {
-		margin-top: auto;
+		.value {
+			color: var(--c-text-light);
+			font: var(--f-ui-sm-medium);
+		}
 	}
 
 	.trading-entities {

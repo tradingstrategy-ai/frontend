@@ -46,9 +46,11 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 		vaults: RemoteVault[];
 	};
 
+	vaults.sort((a, b) => (b['1m_return_ann'] ?? 0) - (a['1m_return_ann'] ?? 0));
+
 	const chainVaults = vaults
 		.filter((vault) => vault.chain === chainRecord.id)
-		.sort((a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0));
+		.sort((a, b) => (b['1m_return_ann'] ?? 0) - (a['1m_return_ann'] ?? 0));
 
 	const totals = chainVaults.reduce(
 		(acc, vault) => {

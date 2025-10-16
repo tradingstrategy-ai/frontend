@@ -71,45 +71,46 @@
 </svelte:head>
 
 <main class="chain-vaults ds-3">
-	<Section padding="lg">
-		<h1>{chainName} vaults</h1>
-		<p class="meta">Data generated {generatedTimestamp}</p>
-		<p class="meta">
-			Showing vaults currently tracked on {chainName}, sorted by total value locked (TVL). Switch to other blockchains
-			via the trading view navigation.
-		</p>
-		<div class="totals">
-			<span>Total chain TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
-			<span>Peak chain TVL {formatDollar(totalPeakTvlUsd, 2, 2)}</span>
-			<span>Vaults listed {vaults.length}</span>
-		</div>
-	</Section>
-
 	{#if vaults.length === 0}
-		<Section padding="md">
+		<Section padding="sm">
 			<p>No vault data available for {chainName}.</p>
 		</Section>
 	{:else}
-		<Section padding="md">
+		<Section padding="sm" class="vaults-table">
+			<div class="page-header">
+				<h1 class="chain-title">{chainName} vaults</h1>
+				<p class="chain-subtitle">Data generated {generatedTimestamp}</p>
+				<p class="chain-subtitle">
+					Showing vaults currently tracked on {chainName}.
+				</p>
+			</div>
+
+			<header class="table-header">
+				<div class="totals">
+					<span>Total chain TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
+					<span>Peak chain TVL {formatDollar(totalPeakTvlUsd, 2, 2)}</span>
+					<span>Vaults listed {vaults.length}</span>
+				</div>
+			</header>
+
 			<div class="table-wrapper">
 				<table>
 					<thead>
 						<tr>
-							<th>#</th>
 							<th>Vault</th>
-							<th>Protocol</th>
-							<th>Denomination</th>
-							<th>TVL (USD)</th>
-							<th>Peak TVL (USD)</th>
-							<th>Return 1m</th>
-							<th>Return 1m (ann.)</th>
-							<th>Return 3m</th>
-							<th>Return 3m (ann.)</th>
-							<th>Return lifetime</th>
-							<th>Return lifetime (ann.)</th>
-							<th>3m Sharpe</th>
-							<th>3m Volatility</th>
+							<th>Chain</th>
+							<th>1M return</th>
+							<th>1M return (ann.)</th>
+							<th>3M return (ann.)</th>
+							<th>3M Sharpe</th>
+							<th>Lifetime return (ann.)</th>
+							<th>Current TVL (USD)</th>
 							<th>Age (years)</th>
+							<th>Denomination</th>
+							<th>Peak TVL (USD)</th>
+							<th>3M return</th>
+							<th>Lifetime return</th>
+							<th>3M volatility</th>
 							<th>Deposits/Redeems</th>
 							<th>Mgmt fee</th>
 							<th>Perf fee</th>
@@ -120,27 +121,33 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each vaults as vault, idx}
+						{#each vaults as vault}
 							<tr>
-								<td>{idx + 1}</td>
 								<td>
 									<div class="vault-name">
 										<strong>{vault.name}</strong>
+										{#if vault.protocol}
+											<span class="protocol">{vault.protocol}</span>
+										{/if}
 									</div>
 								</td>
-								<td>{vault.protocol ?? '---'}</td>
-								<td>{vault.denomination ?? '---'}</td>
-								<td>{formatDollar(vault.current_tvl_usd ?? 0, 2, 2)}</td>
-								<td>{formatDollar(vault.peak_tvl_usd ?? 0, 2, 2)}</td>
+								<td>
+									<a class="chain-link" href={`/trading-view/${chain.slug}/vaults`}>
+										{chainName}
+									</a>
+								</td>
 								<td>{formatPercentValue(vault['1m_return'])}</td>
 								<td>{formatPercentValue(vault['1m_return_ann'])}</td>
-								<td>{formatPercentValue(vault['3m_return'])}</td>
 								<td>{formatPercentValue(vault['3m_return_ann'])}</td>
-								<td>{formatPercentValue(vault.lifetime_return)}</td>
-								<td>{formatPercentValue(vault.lifetime_return_ann)}</td>
 								<td>{formatNumberValue(vault['3m_sharpe'])}</td>
-								<td>{formatPercentValue(vault['3m_volatility'], 4)}</td>
+								<td>{formatPercentValue(vault.lifetime_return_ann)}</td>
+								<td>{formatDollar(vault.current_tvl_usd ?? 0, 2, 2)}</td>
 								<td>{formatNumberValue(vault.age_years, 2, 4)}</td>
+								<td>{vault.denomination ?? '---'}</td>
+								<td>{formatDollar(vault.peak_tvl_usd ?? 0, 2, 2)}</td>
+								<td>{formatPercentValue(vault['3m_return'])}</td>
+								<td>{formatPercentValue(vault.lifetime_return)}</td>
+								<td>{formatPercentValue(vault['3m_volatility'], 4)}</td>
 								<td>{vault.deposit_redeem_count?.toLocaleString('en-US') ?? '---'}</td>
 								<td>{formatPercentValue(vault.management_fee)}</td>
 								<td>{formatPercentValue(vault.performance_fee)}</td>
@@ -162,13 +169,28 @@
 <style>
 	.chain-vaults {
 		display: grid;
-		gap: 2.5rem;
-		padding-bottom: 4rem;
+		gap: 0.5rem;
+		padding-bottom: 1rem;
 	}
 
-	.meta {
-		color: var(--c-text-extra-light);
-		margin-top: 0.25rem;
+	.page-header {
+		display: grid;
+		gap: var(--space-xs);
+		max-width: 70ch;
+	}
+
+	.chain-title {
+		font-size: 1.9rem;
+		font-weight: 600;
+		color: var(--c-text);
+		margin: 0;
+	}
+
+	.chain-subtitle {
+		font-size: 1rem;
+		color: var(--c-text-light);
+		font-weight: 500;
+		margin: 0;
 	}
 
 	.totals {
@@ -219,9 +241,24 @@
 	}
 
 	.vault-name {
-		display: flex;
-		flex-direction: column;
+		display: grid;
 		gap: 0.25rem;
+	}
+
+	.protocol {
+		font: var(--f-ui-xs-medium);
+		letter-spacing: 0.02em;
+		color: var(--c-text-light);
+		text-transform: uppercase;
+	}
+
+	.chain-link {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	.address-cell,
