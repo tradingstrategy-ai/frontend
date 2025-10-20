@@ -1,29 +1,18 @@
 <script lang="ts">
 	import Section from '$lib/components/Section.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import {
+		formatAmount,
 		formatDollar,
-		formatPercent,
 		formatNumber,
-		formatDatetime,
-		formatShortAddress
+		formatPercent,
+		formatShortAddress,
+		formatValue
 	} from '$lib/helpers/formatters';
 
 	const { data } = $props();
 	const { topVaults, chain } = data;
 
-	function formatPercentValue(value: number | null | undefined, digits = 2) {
-		return formatPercent(value ?? undefined, digits, digits);
-	}
-
-	function formatNumberValue(value: number | null | undefined, digits = 2, precision = digits) {
-		return formatNumber(value ?? undefined, digits, precision);
-	}
-
-	function formatDateTime(value: string | null | undefined) {
-		return formatDatetime(value ? new Date(value) : undefined);
-	}
-
-	const generatedTimestamp = formatDatetime(new Date(topVaults.generated_at));
 	const chainName = chain.chain_name;
 </script>
 
@@ -41,7 +30,9 @@
 		<Section padding="sm" class="vaults-table">
 			<div class="page-header">
 				<h1 class="chain-title">{chainName} vaults</h1>
-				<p class="chain-subtitle">Data generated {generatedTimestamp}</p>
+				<p class="chain-subtitle">
+					Updated <Timestamp date={topVaults.generated_at} relative />
+				</p>
 				<p class="chain-subtitle">
 					Showing vaults currently tracked on {chainName}.
 				</p>
@@ -94,26 +85,24 @@
 									</div>
 								</td>
 								<td><a class="chain-link" href=".">{chainName}</a></td>
-								<td>{formatPercentValue(vault['1m_return'])}</td>
-								<td>{formatPercentValue(vault['1m_return_ann'])}</td>
-								<td>{formatPercentValue(vault['3m_return_ann'])}</td>
-								<td>{formatNumberValue(vault['3m_sharpe'])}</td>
-								<td>{formatPercentValue(vault.lifetime_return_ann)}</td>
-								<td>{formatDollar(vault.current_tvl_usd ?? 0, 2, 2)}</td>
-								<td>{formatNumberValue(vault.age_years, 2, 4)}</td>
-								<td>{vault.denomination ?? '---'}</td>
-								<td>{formatDollar(vault.peak_tvl_usd ?? 0, 2, 2)}</td>
-								<td>{formatPercentValue(vault['3m_return'])}</td>
-								<td>{formatPercentValue(vault.lifetime_return)}</td>
-								<td>{formatPercentValue(vault['3m_volatility'], 4)}</td>
-								<td>{vault.deposit_redeem_count?.toLocaleString('en-US') ?? '---'}</td>
-								<td>{formatPercentValue(vault.management_fee)}</td>
-								<td>{formatPercentValue(vault.performance_fee)}</td>
-								<td>{formatDateTime(vault.first_deposit)}</td>
-								<td>{formatDateTime(vault.last_deposit)}</td>
-								<td class="address-cell" title={vault.address ?? undefined}>
-									{vault.address ? formatShortAddress(vault.address) : '---'}
-								</td>
+								<td>{formatPercent(vault['1m_return'], 2)}</td>
+								<td>{formatPercent(vault['1m_return_ann'], 2)}</td>
+								<td>{formatPercent(vault['3m_return_ann'], 2)}</td>
+								<td>{formatNumber(vault['3m_sharpe'])}</td>
+								<td>{formatPercent(vault.lifetime_return_ann, 2)}</td>
+								<td>{formatDollar(vault.current_tvl_usd, 2, 2)}</td>
+								<td>{formatNumber(vault.age_years, 2, 4)}</td>
+								<td>{formatValue(vault.denomination)}</td>
+								<td>{formatDollar(vault.peak_tvl_usd, 2, 2)}</td>
+								<td>{formatPercent(vault['3m_return'], 2)}</td>
+								<td>{formatPercent(vault.lifetime_return, 2)}</td>
+								<td>{formatPercent(vault['3m_volatility'], 4)}</td>
+								<td>{formatAmount(vault.deposit_redeem_count)}</td>
+								<td>{formatPercent(vault.management_fee, 1)}</td>
+								<td>{formatPercent(vault.performance_fee, 1)}</td>
+								<td><Timestamp date={vault.first_deposit} withTime /> UTC</td>
+								<td><Timestamp date={vault.last_deposit} withTime /> UTC</td>
+								<td class="address-cell" title={vault.address}>{formatShortAddress(vault.address)}</td>
 								<td class="id-cell" title={vault.id}>{vault.id}</td>
 							</tr>
 						{/each}
