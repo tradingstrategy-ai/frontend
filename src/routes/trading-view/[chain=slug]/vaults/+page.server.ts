@@ -1,21 +1,12 @@
-import { getChain } from '$lib/helpers/chain';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 
 export async function load({ fetch, params }) {
-	const chainId = getChain(params.chain)!.id;
-
-	const vaultData = await fetchTopVaults(fetch);
-
-	const { generated_at: generatedAt, vaults = [] } = vaultData;
-
-	// TODO: move to client
-	vaults.sort((a, b) => b['1m_return'] - a['1m_return']);
-
-	// TODO: move to client
-	const chainVaults = vaults.filter((vault) => vault.chain === chainId);
+	const { generated_at: generatedAt, vaults } = await fetchTopVaults(fetch, {
+		chainSlug: params.chain
+	});
 
 	// TODO: DRY (see trading-view/vaults load fn)
-	const totals = chainVaults.reduce(
+	const totals = vaults.reduce(
 		(acc, vault) => {
 			acc.current += vault.current_tvl_usd ?? 0;
 			acc.peak += vault.peak_tvl_usd ?? 0;
@@ -26,7 +17,7 @@ export async function load({ fetch, params }) {
 
 	return {
 		generatedAt,
-		vaults: chainVaults,
+		vaults,
 		totalTvlUsd: totals.current,
 		totalPeakTvlUsd: totals.peak
 	};

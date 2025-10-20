@@ -3,11 +3,9 @@ import { fetchTopVaults } from '$lib/top-vaults/client';
 export async function load({ fetch }) {
 	const vaultData = await fetchTopVaults(fetch);
 
-	const { generated_at: generatedAt, vaults = [] } = vaultData;
+	const { generated_at: generatedAt, vaults } = vaultData;
 
-	// TODO: move sort to client
-	vaults.sort((a, b) => b['1m_return'] - a['1m_return']);
-
+	// TODO: DRY (see trading-view/[chain=slug]/vaults load fn)
 	const totals = vaults.reduce(
 		(acc, vault) => {
 			acc.current += vault.current_tvl_usd ?? 0;

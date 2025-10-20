@@ -1,4 +1,3 @@
-import { getChain } from '$lib/helpers/chain';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
@@ -87,15 +86,9 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string) {
 }
 
 async function fetchTopDeFiVaults(fetch: Fetch, chainSlug: string) {
-	const chainId = getChain(chainSlug)!.id;
-
 	try {
-		const { vaults } = await fetchTopVaults(fetch);
-
-		// TODO: move to client
-		const rows = vaults.filter((vault) => vault.chain === chainId);
-
-		return { rows };
+		const { vaults } = await fetchTopVaults(fetch, { chainSlug });
+		return { rows: vaults };
 	} catch (error) {
 		return { error };
 	}
