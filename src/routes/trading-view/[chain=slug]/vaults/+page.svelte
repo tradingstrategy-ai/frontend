@@ -3,6 +3,7 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	const { data } = $props();
 	const { topVaults, chain } = data;
@@ -14,6 +15,8 @@
 	<title>{chainName} vaults | Trading Strategy</title>
 	<meta name="description" content="Top vaults on {chainName} ranked by TVL." />
 </svelte:head>
+
+<Breadcrumbs labels={{ [chain.chain_slug]: chainName, vaults: 'Top Vaults' }} />
 
 <main class="chain-vaults ds-3">
 	{#if !topVaults.rows.length}

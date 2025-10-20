@@ -3,6 +3,7 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	const { data } = $props();
 	const { topVaults } = data;
@@ -12,6 +13,8 @@
 	<title>Top vaults | Trading Strategy</title>
 	<meta name="description" content="Browse the highest performing vaults across all supported blockchains." />
 </svelte:head>
+
+<Breadcrumbs labels={{ vaults: 'Top Vaults' }} />
 
 <main class="top-vaults ds-3">
 	{#if !topVaults.rows.length}
