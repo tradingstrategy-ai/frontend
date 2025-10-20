@@ -8,46 +8,8 @@
 		formatShortAddress
 	} from '$lib/helpers/formatters';
 
-	type Vault = {
-		id: string;
-		name: string;
-		protocol?: string | null;
-		denomination?: string | null;
-		management_fee?: number | null;
-		performance_fee?: number | null;
-		current_tvl_usd?: number | null;
-		peak_tvl_usd?: number | null;
-		'1m_return'?: number | null;
-		'1m_return_ann'?: number | null;
-		'3m_return'?: number | null;
-		'3m_return_ann'?: number | null;
-		'3m_sharpe'?: number | null;
-		'3m_volatility'?: number | null;
-		lifetime_return?: number | null;
-		lifetime_return_ann?: number | null;
-		age_years?: number | null;
-		deposit_redeem_count?: number | null;
-		first_deposit?: string | null;
-		last_deposit?: string | null;
-		address?: string | null;
-	};
-
-	type ChainInfo = {
-		id: number;
-		name: string;
-		slug: string;
-		gas: string;
-		explorer?: string;
-	};
-
 	const { data } = $props();
-	const { generatedAt, chain, vaults, totalTvlUsd, totalPeakTvlUsd } = data as {
-		generatedAt: string;
-		chain: ChainInfo;
-		vaults: Vault[];
-		totalTvlUsd: number;
-		totalPeakTvlUsd: number;
-	};
+	const { generatedAt, chain, vaults, totalTvlUsd, totalPeakTvlUsd } = data;
 
 	function formatPercentValue(value: number | null | undefined, digits = 2) {
 		return formatPercent(value ?? undefined, digits, digits);
@@ -62,12 +24,12 @@
 	}
 
 	const generatedTimestamp = generatedAt ? formatDatetime(new Date(generatedAt)) : '---';
-	const chainName = chain?.name ?? 'Selected chain';
+	const chainName = chain.chain_name;
 </script>
 
 <svelte:head>
 	<title>{chainName} vaults | Trading Strategy</title>
-	<meta name="description" content={`Top vaults on ${chainName} ranked by TVL.`} />
+	<meta name="description" content="Top vaults on {chainName} ranked by TVL." />
 </svelte:head>
 
 <main class="chain-vaults ds-3">
@@ -121,7 +83,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each vaults as vault}
+						{#each vaults as vault (vault.id)}
 							<tr>
 								<td>
 									<div class="vault-name">
@@ -131,11 +93,7 @@
 										{/if}
 									</div>
 								</td>
-								<td>
-									<a class="chain-link" href={`/trading-view/${chain.slug}/vaults`}>
-										{chainName}
-									</a>
-								</td>
+								<td><a class="chain-link" href=".">{chainName}</a></td>
 								<td>{formatPercentValue(vault['1m_return'])}</td>
 								<td>{formatPercentValue(vault['1m_return_ann'])}</td>
 								<td>{formatPercentValue(vault['3m_return_ann'])}</td>

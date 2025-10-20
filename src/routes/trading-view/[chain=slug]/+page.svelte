@@ -10,41 +10,7 @@
 	import TopTokens from './TopTokens.svelte';
 	import TopReserves from './TopReserves.svelte';
 
-	import Button from '$lib/components/Button.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
-
-	type VaultRow = {
-		id: string;
-		name: string;
-		protocol?: string;
-		tvlUsd: number;
-		return1m?: number | null;
-	};
-
-	type VaultPreviewData = {
-		rows?: VaultRow[];
-		error?: unknown;
-	};
-
-	export let data: {
-		chain: {
-			chain_name: string;
-			chain_slug: string;
-			homepage?: string | null;
-			end_block: number;
-			last_swap_at: string;
-			start_block: number;
-			first_swap_at: string;
-			exchanges: number;
-			pairs: number;
-			tracked_pairs: number;
-		};
-		vaults: VaultPreviewData;
-		exchanges: unknown;
-		pairs: unknown;
-		tokens: unknown;
-		reserves: unknown;
-	};
+	export let data;
 
 	const { chain, vaults } = data;
 </script>

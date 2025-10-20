@@ -27,7 +27,7 @@ type RemoteVault = {
 };
 
 export async function load({ fetch, params }) {
-	const chainRecord = getChain(params.chain)!;
+	const chainId = getChain(params.chain)!.id;
 
 	const vaultData = await fetchTopVaults(fetch);
 
@@ -39,7 +39,7 @@ export async function load({ fetch, params }) {
 	vaults.sort((a, b) => (b['1m_return_ann'] ?? 0) - (a['1m_return_ann'] ?? 0));
 
 	const chainVaults = vaults
-		.filter((vault) => vault.chain === chainRecord.id)
+		.filter((vault) => vault.chain === chainId)
 		.sort((a, b) => (b['1m_return_ann'] ?? 0) - (a['1m_return_ann'] ?? 0));
 
 	const totals = chainVaults.reduce(
@@ -53,7 +53,6 @@ export async function load({ fetch, params }) {
 
 	return {
 		generatedAt,
-		chain: chainRecord,
 		vaults: chainVaults,
 		totalTvlUsd: totals.current,
 		totalPeakTvlUsd: totals.peak
