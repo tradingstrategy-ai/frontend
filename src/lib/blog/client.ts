@@ -1,8 +1,12 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import type { BlogPostDetails, BlogPostIndex } from '$lib/schemas/blog';
-import { error } from '@sveltejs/kit';
 import { ghostConfig } from '$lib/config';
-import { blogPostResponseSchema, blogPostIndexSchema, blogPostIndexItemSchema } from '$lib/schemas/blog';
+import { type RequestHandler, error } from '@sveltejs/kit';
+import {
+	type BlogPostDetails,
+	type BlogPostIndex,
+	blogPostResponseSchema,
+	blogPostIndexSchema,
+	blogPostIndexItemSchema
+} from './schemas';
 
 const { contentApiKey, apiUrl } = ghostConfig;
 

@@ -9,7 +9,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 ```
  -->
 <script lang="ts">
-	import type { BlogPostIndexItem } from '$lib/schemas/blog';
+	import type { BlogPostIndexItem } from '$lib/blog/schemas';
 	import Button from '$lib/components/Button.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 

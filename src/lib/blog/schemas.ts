@@ -1,6 +1,6 @@
 import { z } from 'zod';
+import { isoDateTime } from '$lib/schemas/utility';
 
-const datetime = z.iso.datetime({ offset: true });
 const url = z.url();
 const positiveInteger = z.int().positive();
 
@@ -11,9 +11,9 @@ export const blogPostIndexItemSchema = z.object({
 	title: z.string(),
 	feature_image: url,
 	feature_image_alt: z.string().nullable(),
-	created_at: datetime,
-	updated_at: datetime,
-	published_at: datetime,
+	created_at: isoDateTime,
+	updated_at: isoDateTime,
+	published_at: isoDateTime,
 	excerpt: z.string()
 });
 
