@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Section from '$lib/components/Section.svelte';
+	import { getChain } from '$lib/helpers/chain';
 	import {
 		formatDollar,
 		formatPercent,
@@ -8,40 +9,8 @@
 		formatShortAddress
 	} from '$lib/helpers/formatters';
 
-	type VaultRow = {
-		id: string;
-		name: string;
-		chainLabel: string;
-		chainSlug: string;
-		protocol?: string | null;
-		denomination?: string | null;
-		management_fee?: number | null;
-		performance_fee?: number | null;
-		current_tvl_usd?: number | null;
-		peak_tvl_usd?: number | null;
-		'1m_return'?: number | null;
-		'1m_return_ann'?: number | null;
-		'3m_return'?: number | null;
-		'3m_return_ann'?: number | null;
-		'3m_sharpe'?: number | null;
-		'3m_volatility'?: number | null;
-		lifetime_return?: number | null;
-		lifetime_return_ann?: number | null;
-		age_years?: number | null;
-		deposit_redeem_count?: number | null;
-		first_deposit?: string | null;
-		last_deposit?: string | null;
-		address?: string | null;
-	};
-
 	const { data } = $props();
-	const { generatedAt, updatedAt, vaults, totalTvlUsd, totalPeakTvlUsd } = data as {
-		generatedAt: string;
-		updatedAt?: string;
-		vaults: VaultRow[];
-		totalTvlUsd: number;
-		totalPeakTvlUsd: number;
-	};
+	const { generatedAt, vaults, totalTvlUsd, totalPeakTvlUsd } = data;
 
 	function formatPercentValue(value: number | null | undefined, digits = 2) {
 		return formatPercent(value ?? undefined, digits, digits);
@@ -70,7 +39,7 @@
 		return `${formatted} UTC`;
 	}
 
-	const updatedLabel = formatUpdatedTimestamp(updatedAt ?? generatedAt);
+	const updatedLabel = formatUpdatedTimestamp(generatedAt);
 </script>
 
 <svelte:head>
@@ -133,7 +102,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each vaults as vault}
+						{#each vaults as vault (vault.id)}
+							{@const chain = getChain(vault.chain)}
 							<tr>
 								<td>
 									<div class="vault-name">
@@ -144,9 +114,13 @@
 									</div>
 								</td>
 								<td>
-									<a class="chain-link" href={`/trading-view/${vault.chainSlug}/vaults`}>
-										{vault.chainLabel}
-									</a>
+									{#if chain}
+										<a class="chain-link" href={`/trading-view/${chain.slug}`}>
+											{chain.name}
+										</a>
+									{:else}
+										Chain {vault.chain}
+									{/if}
 								</td>
 								<td>{formatPercentValue(vault['1m_return'])}</td>
 								<td>{formatPercentValue(vault['1m_return_ann'])}</td>

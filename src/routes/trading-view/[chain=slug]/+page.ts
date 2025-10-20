@@ -6,23 +6,6 @@ import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 
-type RemoteVault = {
-	id: string;
-	name: string;
-	protocol?: string | null;
-	chain: number;
-	current_tvl_usd?: number | null;
-	'1m_return'?: number | null;
-};
-
-type VaultRow = {
-	id: string;
-	name: string;
-	protocol?: string;
-	tvlUsd: number;
-	return1m?: number | null;
-};
-
 export async function load({ params, fetch }) {
 	const { chain } = params;
 
@@ -107,23 +90,10 @@ async function fetchTopDeFiVaults(fetch: Fetch, chainSlug: string) {
 	const chainId = getChain(chainSlug)!.id;
 
 	try {
-		const vaultData = await fetchTopVaults(fetch);
+		const { vaults } = await fetchTopVaults(fetch);
 
-		const { vaults = [] } = vaultData as {
-			vaults?: RemoteVault[];
-		};
-
-		const rows = vaults
-			.filter((vault) => vault.chain === chainId)
-			.sort((a, b) => (b.current_tvl_usd ?? 0) - (a.current_tvl_usd ?? 0))
-			.slice(0, 5)
-			.map<VaultRow>((vault) => ({
-				id: vault.id,
-				name: vault.name,
-				protocol: vault.protocol ?? undefined,
-				tvlUsd: vault.current_tvl_usd ?? 0,
-				return1m: vault['1m_return'] ?? null
-			}));
+		// TODO: move to client
+		const rows = vaults.filter((vault) => vault.chain === chainId);
 
 		return { rows };
 	} catch (error) {

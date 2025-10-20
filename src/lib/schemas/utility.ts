@@ -5,3 +5,6 @@ export type TimeBucket = z.infer<typeof timeBucketEnum>;
 
 export const colorModeEnum = z.enum(['light', 'dark', 'system']);
 export type ColorMode = z.infer<typeof colorModeEnum>;
+
+export const isoDateTime = z.iso.datetime({ local: true });
+export type ISODateTime = z.infer<typeof isoDateTime>;

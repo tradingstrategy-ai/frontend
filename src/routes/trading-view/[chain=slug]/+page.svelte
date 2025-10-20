@@ -57,7 +57,7 @@
 				rel="external"
 			/>
 
-			<!-- ✅ Rewritten Top Vaults tile -->
+			<!-- FIXME: vaults is a promise! -->
 			<SummaryDataTile
 				count={vaults?.rows?.length ?? 30}
 				title="Best vaults"
