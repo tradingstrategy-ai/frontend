@@ -32,4 +32,4 @@ export const topVaultsSchema = z.object({
 	generated_at: isoDateTime,
 	vaults: vaultInfoSchema.array()
 });
-export type TopVaults = z.infer<typeof topVaultsSchema>;
+// See top-vaults/client for TopVaults type def

@@ -36,3 +36,5 @@ export async function fetchTopVaults(
 		peak_tvl_usd
 	};
 }
+
+export type TopVaults = Awaited<ReturnType<typeof fetchTopVaults>>;
