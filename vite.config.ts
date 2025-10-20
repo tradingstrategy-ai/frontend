@@ -70,9 +70,7 @@ export default defineConfig({
 	server: {
 		fs: {
 			allow: [process.cwd()]
-		},
-		host: true,
-		port: 5173
+		}
 	},
 
 	customLogger,
