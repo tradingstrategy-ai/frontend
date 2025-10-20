@@ -1,8 +1,5 @@
-import { error } from '@sveltejs/kit';
 import { getChain } from '$lib/helpers/chain';
-import type { PageServerLoad } from './$types';
-
-const DATA_ENDPOINT = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
+import { fetchTopVaults } from '$lib/top-vaults/client';
 
 type RemoteVault = {
 	id: string;
@@ -29,19 +26,12 @@ type RemoteVault = {
 	chain: number;
 };
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
-	const chainRecord = getChain(params.chain);
+export async function load({ fetch, params }) {
+	const chainRecord = getChain(params.chain)!;
 
-	if (!chainRecord) {
-		error(404, { message: `Unsupported chain: ${params.chain}` });
-	}
+	const vaultData = await fetchTopVaults(fetch);
 
-	const resp = await fetch(DATA_ENDPOINT);
-	if (!resp.ok) {
-		throw new Error(`Failed to fetch top vault data: ${resp.status} ${resp.statusText}`);
-	}
-
-	const { generated_at: generatedAt, vaults = [] } = (await resp.json()) as {
+	const { generated_at: generatedAt, vaults = [] } = vaultData as {
 		generated_at: string;
 		vaults: RemoteVault[];
 	};
@@ -68,4 +58,4 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 		totalTvlUsd: totals.current,
 		totalPeakTvlUsd: totals.peak
 	};
-};
+}

@@ -47,7 +47,6 @@
 	};
 
 	const { chain, vaults } = data;
-	const previewVaults = (vaults?.rows ?? []).slice(0, 3);
 </script>
 
 <svelte:head>

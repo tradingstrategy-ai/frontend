@@ -1,11 +1,10 @@
+import { getChain } from '$lib/helpers/chain';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
+import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
-import type { LayoutData } from './$types';
-
-const VAULT_ENDPOINT = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
 
 type RemoteVault = {
 	id: string;
@@ -24,19 +23,15 @@ type VaultRow = {
 	return1m?: number | null;
 };
 
-export async function load({ params, fetch, parent }) {
+export async function load({ params, fetch }) {
 	const { chain } = params;
-	const parentData = (await parent()) as LayoutData;
-	const chainId = parentData.chain?.chain_id;
-
-	const emptyVaults = { rows: [] as VaultRow[] };
 
 	return {
 		exchanges: fetchTopExchanges(fetch, chain),
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
 		reserves: fetchTopReserves(fetch, chain),
-		vaults: chainId ? fetchTopVaults(fetch, chainId) : Promise.resolve(emptyVaults)
+		vaults: fetchTopDeFiVaults(fetch, chain)
 	};
 }
 
@@ -108,14 +103,13 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string) {
 	}
 }
 
-async function fetchTopVaults(fetch: Fetch, chainId: number) {
-	try {
-		const resp = await fetch(VAULT_ENDPOINT);
-		if (!resp.ok) {
-			throw new Error(`Failed to fetch vault data: ${resp.status} ${resp.statusText}`);
-		}
+async function fetchTopDeFiVaults(fetch: Fetch, chainSlug: string) {
+	const chainId = getChain(chainSlug)!.id;
 
-		const { vaults = [] } = (await resp.json()) as {
+	try {
+		const vaultData = await fetchTopVaults(fetch);
+
+		const { vaults = [] } = vaultData as {
 			vaults?: RemoteVault[];
 		};
 

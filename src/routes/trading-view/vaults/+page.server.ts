@@ -1,7 +1,5 @@
 import { getChain } from '$lib/helpers/chain';
-import type { PageServerLoad } from './$types';
-
-const DATA_ENDPOINT = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
+import { fetchTopVaults } from '$lib/top-vaults/client';
 
 type RemoteVault = {
 	name: string;
@@ -33,17 +31,14 @@ type VaultRow = RemoteVault & {
 	chainSlug: string;
 };
 
-export const load: PageServerLoad = async ({ fetch }) => {
-	const resp = await fetch(DATA_ENDPOINT);
-	if (!resp.ok) {
-		throw new Error(`Failed to fetch top vault data: ${resp.status} ${resp.statusText}`);
-	}
+export async function load({ fetch }) {
+	const vaultData = await fetchTopVaults(fetch);
 
 	const {
 		generated_at: generatedAt,
 		updated_at: updatedAt,
 		vaults = []
-	} = (await resp.json()) as {
+	} = vaultData as {
 		generated_at: string;
 		updated_at?: string;
 		vaults: RemoteVault[];
@@ -76,4 +71,4 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		totalTvlUsd: totals.current,
 		totalPeakTvlUsd: totals.peak
 	};
-};
+}
