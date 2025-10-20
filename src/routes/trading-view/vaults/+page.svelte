@@ -1,9 +1,11 @@
 <script lang="ts">
+	import Alert from '$lib/components/Alert.svelte';
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	const { data } = $props();
 	const { topVaults } = data;
@@ -17,79 +19,40 @@
 <Breadcrumbs labels={{ vaults: 'Top Vaults' }} />
 
 <main class="top-vaults ds-3">
-	{#if !topVaults.rows.length}
-		<Section padding="sm">
-			<p>No vault data available.</p>
+	<Section tag="header">
+		<HeroBanner
+			title="Top DeFi Vaults"
+			subtitle="The best performing DeFi vaults across all chains with minimum $50k USD TVL"
+		/>
+	</Section>
+
+	{#if topVaults.rows.length}
+		<Section>
+			<div class="totals">
+				<span>Total current TVL {formatDollar(topVaults.current_tvl_usd, 2, 2)}</span>
+				<span>Peak TVL {formatDollar(topVaults.peak_tvl_usd, 2, 2)}</span>
+				<span>Total vaults {topVaults.rows.length}</span>
+				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
+			</div>
+		</Section>
+
+		<Section --section-padding="1rem">
+			<TopVaultsTable {topVaults} />
 		</Section>
 	{:else}
-		<Section padding="sm" class="vaults-table">
-			<div class="page-header">
-				<h1 class="page-title">The best-performing vaults on each chain</h1>
-				<p class="page-subtitle">Minimum $50k USD TVL</p>
-				<p class="page-subtitle">
-					Updated <Timestamp date={topVaults.generated_at} relative />
-				</p>
-			</div>
-
-			<header class="table-header">
-				<div class="totals">
-					<span>Total current TVL {formatDollar(topVaults.current_tvl_usd, 2, 2)}</span>
-					<span>Peak TVL {formatDollar(topVaults.peak_tvl_usd, 2, 2)}</span>
-					<span>Total vaults {topVaults.rows.length}</span>
-				</div>
-			</header>
-
-			<TopVaultsTable {topVaults} />
+		<Section padding="sm">
+			<Alert title="Error">No vault data available.</Alert>
 		</Section>
 	{/if}
 </main>
 
 <style>
-	.top-vaults {
-		display: grid;
-		gap: 0.5rem;
-		padding-bottom: 1rem;
-	}
-
-	.page-header {
-		display: grid;
-		gap: var(--space-xs);
-		max-width: 70ch;
-	}
-
-	.page-title {
-		font-size: 1.9rem;
-		font-weight: 600;
-		color: var(--c-text);
-		margin: 0;
-	}
-
-	.page-subtitle {
-		font-size: 1rem;
-		color: var(--c-text-light);
-		font-weight: 500;
-		margin: 0;
-	}
-
-	.vaults-table {
-		display: grid;
-		gap: 1.5rem;
-	}
-
-	.table-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: var(--space-sm);
-	}
-
 	.totals {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-md);
+		gap: 1rem;
 		color: var(--c-text-extra-light);
-		font: var(--f-ui-sm-roman);
+		font: var(--f-ui-md-medium);
 		margin-top: 1rem;
 	}
 </style>
