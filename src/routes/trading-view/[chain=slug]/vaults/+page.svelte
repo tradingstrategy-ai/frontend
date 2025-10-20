@@ -9,7 +9,7 @@
 	} from '$lib/helpers/formatters';
 
 	const { data } = $props();
-	const { generatedAt, chain, vaults, totalTvlUsd, totalPeakTvlUsd } = data;
+	const { topVaults, chain } = data;
 
 	function formatPercentValue(value: number | null | undefined, digits = 2) {
 		return formatPercent(value ?? undefined, digits, digits);
@@ -23,7 +23,7 @@
 		return formatDatetime(value ? new Date(value) : undefined);
 	}
 
-	const generatedTimestamp = generatedAt ? formatDatetime(new Date(generatedAt)) : '---';
+	const generatedTimestamp = formatDatetime(new Date(topVaults.generated_at));
 	const chainName = chain.chain_name;
 </script>
 
@@ -33,7 +33,7 @@
 </svelte:head>
 
 <main class="chain-vaults ds-3">
-	{#if vaults.length === 0}
+	{#if !topVaults.rows.length}
 		<Section padding="sm">
 			<p>No vault data available for {chainName}.</p>
 		</Section>
@@ -49,9 +49,9 @@
 
 			<header class="table-header">
 				<div class="totals">
-					<span>Total chain TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
-					<span>Peak chain TVL {formatDollar(totalPeakTvlUsd, 2, 2)}</span>
-					<span>Vaults listed {vaults.length}</span>
+					<span>Total chain TVL {formatDollar(topVaults.current_tvl_usd, 2, 2)}</span>
+					<span>Peak chain TVL {formatDollar(topVaults.peak_tvl_usd, 2, 2)}</span>
+					<span>Vaults listed {topVaults.rows.length}</span>
 				</div>
 			</header>
 
@@ -83,7 +83,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each vaults as vault (vault.id)}
+						{#each topVaults.rows as vault (vault.id)}
 							<tr>
 								<td>
 									<div class="vault-name">

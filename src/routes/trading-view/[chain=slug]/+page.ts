@@ -13,7 +13,7 @@ export async function load({ params, fetch }) {
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
 		reserves: fetchTopReserves(fetch, chain),
-		vaults: fetchTopDeFiVaults(fetch, chain)
+		vaults: fetchTopVaults(fetch, { chainSlug: chain }).catch((error) => ({ error }))
 	};
 }
 
@@ -80,15 +80,6 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string) {
 			.sort((a, b) => b.totalLiquidityUSD - a.totalLiquidityUSD);
 
 		return { rows: rows?.slice(0, 5) ?? [] };
-	} catch (error) {
-		return { error };
-	}
-}
-
-async function fetchTopDeFiVaults(fetch: Fetch, chainSlug: string) {
-	try {
-		const { vaults } = await fetchTopVaults(fetch, { chainSlug });
-		return { rows: vaults };
 	} catch (error) {
 		return { error };
 	}

@@ -10,7 +10,7 @@
 	} from '$lib/helpers/formatters';
 
 	const { data } = $props();
-	const { generatedAt, vaults, totalTvlUsd, totalPeakTvlUsd } = data;
+	const { topVaults } = data;
 
 	function formatPercentValue(value: number | null | undefined, digits = 2) {
 		return formatPercent(value ?? undefined, digits, digits);
@@ -39,7 +39,7 @@
 		return `${formatted} UTC`;
 	}
 
-	const updatedLabel = formatUpdatedTimestamp(generatedAt);
+	const updatedLabel = formatUpdatedTimestamp(topVaults.generated_at);
 </script>
 
 <svelte:head>
@@ -48,7 +48,7 @@
 </svelte:head>
 
 <main class="top-vaults ds-3">
-	{#if !vaults.length}
+	{#if !topVaults.rows.length}
 		<Section padding="sm">
 			<p>No vault data available.</p>
 		</Section>
@@ -68,9 +68,9 @@
 
 			<header class="table-header">
 				<div class="totals">
-					<span>Total current TVL {formatDollar(totalTvlUsd, 2, 2)}</span>
-					<span>Peak TVL {formatDollar(totalPeakTvlUsd, 2, 2)}</span>
-					<span>Total vaults {vaults.length}</span>
+					<span>Total current TVL {formatDollar(topVaults.current_tvl_usd, 2, 2)}</span>
+					<span>Peak TVL {formatDollar(topVaults.peak_tvl_usd, 2, 2)}</span>
+					<span>Total vaults {topVaults.rows.length}</span>
 				</div>
 			</header>
 
@@ -102,7 +102,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each vaults as vault (vault.id)}
+						{#each topVaults.rows as vault (vault.id)}
 							{@const chain = getChain(vault.chain)}
 							<tr>
 								<td>
