@@ -1,4 +1,4 @@
-import type { BlogPostIndexItem } from '$lib/schemas/blog.js';
+import type { BlogPostIndexItem } from '$lib/blog/schemas';
 import { getPosts, maxAge } from '$lib/blog/client';
 import { escapeHtml } from '$lib/helpers/html';
 

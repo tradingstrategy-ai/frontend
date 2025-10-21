@@ -21,6 +21,7 @@ const pages = [
 	'trading-view/blockchains',
 	'trading-view/exchanges',
 	'trading-view/lending-reserves',
+	'trading-view/vaults',
 	'trading-view/top-list',
 	'trading-view/top-list/daily-up',
 	'trading-view/top-list/daily-down',

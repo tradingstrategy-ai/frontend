@@ -2,6 +2,7 @@ import { fetchPublicApi } from '$lib/helpers/public-api';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
+import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 
 export async function load({ params, fetch }) {
@@ -11,7 +12,8 @@ export async function load({ params, fetch }) {
 		exchanges: fetchTopExchanges(fetch, chain),
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
-		reserves: fetchTopReserves(fetch, chain)
+		reserves: fetchTopReserves(fetch, chain),
+		vaults: fetchTopVaults(fetch, { chainSlug: chain }).catch((error) => ({ error }))
 	};
 }
 

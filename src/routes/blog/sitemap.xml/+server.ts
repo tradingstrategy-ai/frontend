@@ -1,7 +1,7 @@
 /**
  * Generate a sitemap for blog posts
  */
-import type { BlogPostIndexItem } from '$lib/schemas/blog.js';
+import type { BlogPostIndexItem } from '$lib/blog/schemas';
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
 import { getPosts, maxAge } from '$lib/blog/client';
