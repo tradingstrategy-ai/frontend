@@ -1,11 +1,13 @@
-import { fetchPublicApi } from '$lib/helpers/public-api';
+import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
+import { fetchTopVaults } from '$lib/top-vaults/client.js';
 
-export async function load({ fetch }) {
-	try {
-		const impressiveNumbers = await fetchPublicApi(fetch, 'impressive-numbers');
-		return { impressiveNumbers };
-	} catch (e) {
-		console.error('Request failed; rendering page without data.');
-		console.error(e);
-	}
+export async function load({ fetch, setHeaders }) {
+	setHeaders({
+		'cache-control': 'public, max-age=300' // 5 minutes: 5 * 60 = 300
+	});
+
+	return {
+		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
+		topVaults: await fetchTopVaults(fetch).catch(optionalDataError('top-vaults'))
+	};
 }
