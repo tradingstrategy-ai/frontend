@@ -30,23 +30,22 @@
 						<th></th>
 						<th>Vault</th>
 						<th>Chain</th>
-						<th>1M return</th>
-						<th>1M return (ann.)</th>
-						<th>3M return (ann.)</th>
-						<th>3M Sharpe</th>
-						<th>Lifetime return (ann.)</th>
 						<th>Current TVL (USD)</th>
+						<th>1M return (ann.)</th>
+						<th>1M return</th>
+						<th>3M return (ann.)</th>
+						<th>3M return</th>
+						<th>3M Sharpe</th>
+						<th>3M volatility</th>
+						<th>Lifetime return (ann.)</th>
+						<th>Lifetime return</th>
 						<th>Age (years)</th>
 						<th>Denom-ination</th>
 						<th>Peak TVL (USD)</th>
-						<th>3M return</th>
-						<th>Lifetime return</th>
-						<th>3M volatility</th>
-						<th>Deposits & Redemptions</th>
+						<th>Deposits & Redeems</th>
 						<th>Mgmt fee</th>
 						<th>Perf fee</th>
-						<th>First deposit</th>
-						<th>Last deposit</th>
+						<th>First/Last deposit</th>
 						<th>Vault address</th>
 					</tr>
 				</thead>
