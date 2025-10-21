@@ -27,6 +27,7 @@
 			<table>
 				<thead>
 					<tr>
+						<th></th>
 						<th>Vault</th>
 						<th>Chain</th>
 						<th>1M return</th>
@@ -36,23 +37,22 @@
 						<th>Lifetime return (ann.)</th>
 						<th>Current TVL (USD)</th>
 						<th>Age (years)</th>
-						<th>Denomination</th>
+						<th>Denom-ination</th>
 						<th>Peak TVL (USD)</th>
 						<th>3M return</th>
 						<th>Lifetime return</th>
 						<th>3M volatility</th>
-						<th>Deposits/Redeems</th>
+						<th>Deposits & Redemptions</th>
 						<th>Mgmt fee</th>
 						<th>Perf fee</th>
 						<th>First deposit</th>
 						<th>Last deposit</th>
 						<th>Vault address</th>
-						<th>Vault ID</th>
 					</tr>
 				</thead>
 				<tbody>
-					{#each topVaults.rows as vault (vault.id)}
-						<TopVaultsRow {vault} />
+					{#each topVaults.rows as vault, idx (vault.id)}
+						<TopVaultsRow {vault} index={idx + 1} />
 					{/each}
 				</tbody>
 			</table>
@@ -74,82 +74,51 @@
 			margin-top: 1rem;
 		}
 
-		.table-wrapper :global {
+		.table-wrapper {
 			width: 100%;
 			overflow-x: auto;
+		}
 
-			table {
-				width: 100%;
-				border-collapse: collapse;
-				min-width: 1200px;
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			min-width: 75rem;
+			background: var(--c-box-1);
+			color: inherit;
+			font: var(--f-mono-xs-regular);
+			line-height: 1;
+			letter-spacing: var(--f-text-md-spacing, normal);
 
-				@media (--viewport-sm-down) {
-					min-width: 1024px;
-				}
+			@media (--viewport-sm-down) {
+				min-width: 64rem;
 			}
 
-			th,
-			td {
-				text-align: left;
-				padding: 0.75rem 1rem;
-				border-bottom: 1px solid var(--c-box-4);
+			@media (--viewport-xs) {
+				font-size: 14px;
+			}
+
+			:global(:is(td, th)) {
+				padding: 0.25em 0.5em;
+				border-block: 1px solid var(--c-text-ultra-light);
 				vertical-align: top;
 			}
 
-			th {
-				font: var(--f-ui-xs-medium);
-				letter-spacing: var(--ls-ui-xs);
-				text-transform: uppercase;
-				color: var(--c-text-light);
-				background: color-mix(in srgb, var(--c-box-1), var(--c-box-2) 40%);
-				position: sticky;
-				top: 0;
-			}
+			:global(td) {
+				/* Alternating column colors */
+				&:nth-child(even) {
+					background-color: var(--c-box-3);
+				}
 
-			td {
-				font: var(--f-ui-sm-roman);
-				letter-spacing: var(--ls-ui-sm, normal);
-			}
-
-			tr:nth-child(even) td {
-				background: color-mix(in srgb, var(--c-box-1), var(--c-box-2) 20%);
-			}
-
-			.vault-name {
-				display: grid;
-				gap: 0.25rem;
-			}
-
-			.protocol {
-				font: var(--f-ui-xs-medium);
-				letter-spacing: 0.02em;
-				color: var(--c-text-light);
-				text-transform: uppercase;
-			}
-
-			.chain-link {
-				color: inherit;
-				text-decoration: none;
-
-				&:hover {
-					text-decoration: underline;
+				&:nth-child(odd) {
+					background-color: var(--c-box-1);
 				}
 			}
 
-			.address-cell,
-			.id-cell {
-				font-family: var(
-					--monospace,
-					ui-monospace,
-					SFMono-Regular,
-					SFMono,
-					Menlo,
-					Monaco,
-					Consolas,
-					'Liberation Mono',
-					'Courier New',
-					monospace
-				);
+			th {
+				background: var(--c-box-3);
+				font-weight: 900;
+				text-transform: uppercase;
+				text-align: left;
 			}
 		}
 	}

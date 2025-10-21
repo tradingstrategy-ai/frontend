@@ -181,7 +181,6 @@
 
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
-			letter-spacing: var(--f-text-md-spacing, normal);
 
 			@media (--viewport-xs) {
 				font-size: 14px;
