@@ -3,16 +3,16 @@
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
-	import { Grid } from '$lib/components';
+	import Grid from '$lib/components/Grid.svelte';
 	import TopEntities from './TopEntities.svelte';
 	import TopExchanges from './TopExchanges.svelte';
 	import TopPairs from './TopPairs.svelte';
 	import TopTokens from './TopTokens.svelte';
 	import TopReserves from './TopReserves.svelte';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	export let data;
-
-	const { chain, vaults } = data;
+	const { chain, topVaults } = data;
 </script>
 
 <svelte:head>
@@ -26,46 +26,40 @@
 	<ChainHeader name={chain.chain_name} slug={chain.chain_slug} homepage={chain.homepage} />
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
-		<div class="summary-cards">
-			<div class="block-info">
-				<BlockInfoTile title="Last indexed block" count={chain.end_block} timestamp={chain.last_swap_at} />
-				<BlockInfoTile title="First indexed block" count={chain.start_block} timestamp={chain.first_swap_at} />
-			</div>
-
-			<SummaryDataTile
-				count={chain.exchanges}
-				title="Exchanges"
-				description="Decentralised exchanges with market data available on Trading Strategy."
-				buttonLabel="See exchanges"
-				href={`${chain.chain_slug}/exchanges`}
-			/>
-
-			<SummaryDataTile
-				count={chain.pairs}
-				title="Tracked trading pairs"
-				description="Total trading pairs on Trading Strategy for this blockchain."
-				buttonLabel="See trading pairs"
-				href={`${chain.chain_slug}/trading-pairs`}
-			/>
-
-			<SummaryDataTile
-				count={chain.tracked_pairs}
-				title="Active trading pairs"
-				description="Trading pairs with market data feeds. Active trading pairs have enough trading activity to have data feeds generated for them."
-				buttonLabel="See inclusion criteria"
-				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
-				rel="external"
-			/>
-
-			<!-- FIXME: vaults is a promise! -->
-			<SummaryDataTile
-				count={vaults?.rows?.length ?? 30}
-				title="Best vaults"
-				description="Top-performing vaults on this chain."
-				buttonLabel="See vaults"
-				href={`/trading-view/${chain.chain_slug}/vaults`}
-			/>
+		<div class="block-info">
+			<BlockInfoTile title="Last indexed block" count={chain.end_block} timestamp={chain.last_swap_at} />
+			<BlockInfoTile title="First indexed block" count={chain.start_block} timestamp={chain.first_swap_at} />
 		</div>
+
+		<SummaryDataTile
+			count={chain.exchanges}
+			title="Exchanges"
+			buttonLabel="See exchanges"
+			href="{chain.chain_slug}/exchanges"
+		>
+			Decentralised exchanges with market data available on Trading Strategy.
+		</SummaryDataTile>
+
+		<SummaryDataTile
+			count={chain.pairs}
+			title="Trading pairs"
+			buttonLabel="See trading pairs"
+			href="{chain.chain_slug}/trading-pairs"
+		>
+			Total trading pairs available on Trading Strategy. {formatAmount(chain.tracked_pairs)} have active market data feeds.
+			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external">
+				View inclusion criteria
+			</a>
+		</SummaryDataTile>
+
+		<SummaryDataTile
+			count={topVaults?.rows.length}
+			title="Top vaults"
+			buttonLabel="See vaults"
+			href="{chain.chain_slug}/vaults"
+		>
+			Top performing DeFi vaults on {chain.chain_name} with a minimum TVL of $50k USD.
+		</SummaryDataTile>
 	</section>
 
 	<section class="ds-container trading-entities">
@@ -126,100 +120,23 @@
 	}
 
 	.summary-data {
-		width: 100%;
-	}
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--layout-gap);
 
-	.summary-cards {
-		display: grid;
-		gap: var(--space-lg);
-		grid-template-columns: repeat(1, minmax(0, 1fr));
-	}
-
-	@media (min-width: 768px) {
-		.summary-cards {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.summary-cards {
-			grid-template-columns: repeat(4, minmax(0, 1fr));
-		}
-	}
-
-	@media (min-width: 1280px) {
-		.summary-cards {
-			grid-template-columns: repeat(5, minmax(0, 1fr));
+		@media (--viewport-md-down) {
+			grid-template-columns: 1fr;
 		}
 	}
 
 	.block-info {
 		display: grid;
 		gap: var(--space-lg);
-		grid-template-rows: repeat(2, minmax(0, 1fr));
-		height: 100%;
-	}
+		grid-template-rows: 1fr 1fr;
 
-	@media (--viewport-md-down) {
-		.block-info {
-			grid-template-rows: none;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+		@media (--viewport-md-down) {
+			grid-template-rows: 1fr;
+			grid-template-columns: 1fr 1fr;
 			gap: var(--space-md);
-		}
-	}
-
-	.summary-card {
-		display: grid;
-		grid-template-rows: 1fr auto;
-		gap: var(--space-lg);
-		padding: calc(var(--container-width) * 0.15);
-		height: 100%;
-	}
-
-	.summary-card__content {
-		display: grid;
-		gap: var(--space-sm);
-
-		h3 {
-			margin: 0;
-			font: var(--f-h4-medium);
-		}
-
-		p {
-			font: var(--f-ui-small-roman);
-			letter-spacing: 0.01em;
-			color: var(--c-text-light);
-		}
-	}
-
-	@media (--viewport-md-down) {
-		.summary-card {
-			padding: var(--space-ls);
-		}
-	}
-
-	.vault-preview {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		gap: var(--space-sm);
-
-		li {
-			display: flex;
-			justify-content: space-between;
-			align-items: baseline;
-			gap: var(--space-sm);
-			font: var(--f-ui-md-roman);
-		}
-
-		.label {
-			font-weight: 600;
-		}
-
-		.value {
-			color: var(--c-text-light);
-			font: var(--f-ui-sm-medium);
 		}
 	}
 
@@ -229,9 +146,5 @@
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}
-	}
-
-	.status {
-		color: var(--c-text-extra-light);
 	}
 </style>
