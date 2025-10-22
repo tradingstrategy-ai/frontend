@@ -4,6 +4,7 @@
 	import Alert from '$lib/components/Alert.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsRow from './TopVaultsRow.svelte';
+	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -14,6 +15,8 @@
 </script>
 
 <div class="top-vaults-table">
+	<TopVaultsOptIn />
+
 	{#if !topVaults.vaults.length}
 		<Alert title="Error">No vault data available.</Alert>
 	{:else}

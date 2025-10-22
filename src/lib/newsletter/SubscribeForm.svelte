@@ -21,12 +21,16 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	import Alert from '$lib/components/Alert.svelte';
 	import { getColorMode } from '$lib/helpers/style';
 
+	interface Props {
+		inputSize?: 'sm' | 'md' | 'lg' | 'xl';
+		buttonSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+	}
+
+	const { inputSize = 'xl', buttonSize = 'md' }: Props = $props();
+
 	let email = $state('');
-
 	let errorMessage = $state('');
-
 	let resetCaptcha = $state<() => void>();
-
 	let colorMode = $state<ColorMode>('dark');
 
 	// finite state machine to manage form states/transitions
@@ -108,7 +112,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 		<div class="fields">
 			<TextInput
 				bind:value={email}
-				size="xl"
+				size={inputSize}
 				type="email"
 				name="email"
 				placeholder="email@example.org"
@@ -118,11 +122,12 @@ Embeddable <form> based component that allows subscribing to newsletter.
 				on:focus={form.focus}
 				on:input={form.input}
 			/>
-			<Button submit label="Subscribe" disabled={$form !== 'valid'} />
+			<Button size={buttonSize} submit label="Subscribe" disabled={$form !== 'valid'} />
 		</div>
 
 		{#if $form === 'failed'}
 			<div transition:slide>
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				<Alert size="md">{@html errorMessage}</Alert>
 			</div>
 		{/if}
