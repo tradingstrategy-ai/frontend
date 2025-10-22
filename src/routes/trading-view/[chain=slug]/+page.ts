@@ -1,4 +1,4 @@
-import { fetchPublicApi } from '$lib/helpers/public-api';
+import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
@@ -13,7 +13,7 @@ export async function load({ params, fetch }) {
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
 		reserves: fetchTopReserves(fetch, chain),
-		vaults: fetchTopVaults(fetch, { chainSlug: chain }).catch((error) => ({ error }))
+		topVaults: await fetchTopVaults(fetch, { chainSlug: chain }).catch(optionalDataError('top vaults'))
 	};
 }
 

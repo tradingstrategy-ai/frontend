@@ -18,7 +18,7 @@
 	import IconWallet from '~icons/local/wallet';
 
 	export let data;
-	const { impressiveNumbers } = data;
+	const { impressiveNumbers, topVaults } = data;
 </script>
 
 <ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">
@@ -34,7 +34,9 @@
 			<IconBlockchain slot="icon" />
 			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
 			{#if impressiveNumbers}
-				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.blockchains)} blockchains</strong></p>
+				<p>
+					Currently indexing data from <strong>{formatAmount(impressiveNumbers.blockchains)} blockchains</strong>.
+				</p>
 			{/if}
 			<Button slot="cta" label="Explore blockchains" />
 		</ContentCard>
@@ -46,7 +48,9 @@
 				trades, across multiple DEXs.
 			</p>
 			{#if impressiveNumbers}
-				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.exchanges)} DEXes</strong></p>
+				<p>
+					Currently indexing data from <strong>{formatAmount(impressiveNumbers.exchanges)} DEXes</strong>.
+				</p>
 			{/if}
 			<Button slot="cta" label="Browse DEXes" />
 		</ContentCard>
@@ -58,7 +62,9 @@
 				current datasets here.
 			</p>
 			{#if impressiveNumbers}
-				<p>Currently indexing data from <strong>{formatAmount(impressiveNumbers.pairs)} trading pairs</strong></p>
+				<p>
+					Currently indexing data from <strong>{formatAmount(impressiveNumbers.pairs)} trading pairs</strong>.
+				</p>
 			{/if}
 			<Button slot="cta" label="Browse trading pairs" />
 		</ContentCard>
@@ -71,7 +77,7 @@
 			{#if impressiveNumbers}
 				<p>
 					Currently indexing data from
-					<strong>{formatAmount(impressiveNumbers.lending_reserves)} lending reserves</strong>
+					<strong>{formatAmount(impressiveNumbers.lending_reserves)} lending reserves</strong>.
 				</p>
 			{/if}
 			<Button slot="cta" label="Browse reserves" />
@@ -83,7 +89,13 @@
 				Explore top-performing vaults across supported chains. Compare TVL, returns, Sharpe ratio, and historical
 				performance metrics.
 			</p>
-			<Button slot="cta" label="See top vaults" />
+			{#if topVaults?.vaults.length}
+				<p>
+					Currently displaying
+					<strong>{formatAmount(topVaults?.vaults.length)} vaults</strong> with minimum $50k USD TVL.
+				</p>
+			{/if}
+			<Button slot="cta" label="Compare vaults" />
 		</ContentCard>
 
 		<ContentCard title="Advanced search" href="/search">
@@ -114,7 +126,7 @@
 			</p>
 			{#if impressiveNumbers}
 				<p>
-					Currently providing <strong>{formatByteUnits(impressiveNumbers.database_size)} of data</strong>
+					Currently providing <strong>{formatByteUnits(impressiveNumbers.database_size)}</strong> of data.
 				</p>
 			{/if}
 			<Button slot="cta" label="Download datasets" />

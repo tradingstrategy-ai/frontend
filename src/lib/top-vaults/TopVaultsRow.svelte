@@ -1,23 +1,16 @@
 <script lang="ts">
 	import type { VaultInfo } from './schemas';
 	import { Timestamp } from '$lib/components';
-	import { getChain } from '$lib/helpers/chain';
-	import {
-		formatPercent,
-		formatNumber,
-		formatDollar,
-		formatValue,
-		formatAmount,
-		formatShortAddress
-	} from '$lib/helpers/formatters';
+	import { type ApiChain, getChain } from '$lib/helpers/chain';
+	import { formatPercent, formatNumber, formatDollar, formatValue, formatAmount } from '$lib/helpers/formatters';
 
 	interface Props {
 		index: number;
 		vault: VaultInfo;
+		chain?: ApiChain | undefined;
 	}
 
-	const { index, vault }: Props = $props();
-	const chain = getChain(vault.chain);
+	const { index, vault, chain }: Props = $props();
 </script>
 
 <tr>
@@ -30,13 +23,16 @@
 			{/if}
 		</div>
 	</td>
-	<td>
-		{#if chain}
-			<a href={`/trading-view/${chain.slug}`}>{chain.name}</a>
-		{:else}
-			Chain {vault.chain}
-		{/if}
-	</td>
+	{#if !chain}
+		{@const { name, slug } = getChain(vault.chain) ?? {}}
+		<td>
+			{#if slug}
+				<a href={`/trading-view/${slug}`}>{name}</a>
+			{:else}
+				Chain {vault.chain}
+			{/if}
+		</td>
+	{/if}
 	<td align="right">{formatDollar(vault.current_tvl_usd, 2, 2)}</td>
 	<td align="right">{formatPercent(vault['1m_return_ann'], 2)}</td>
 	<td align="right">{formatPercent(vault['1m_return'], 2)}</td>

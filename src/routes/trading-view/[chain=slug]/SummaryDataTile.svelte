@@ -1,20 +1,25 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
-	import { Button } from '$lib/components';
+	import Button from '$lib/components/Button.svelte';
 
-	export let count: number;
-	export let title: string;
-	export let description: string;
-	export let buttonLabel: string;
-	export let href: string;
-	export let rel: string | undefined = undefined;
+	interface Props {
+		count: number | undefined;
+		title: string;
+		buttonLabel: string;
+		href: string;
+		rel?: string;
+		children: Snippet;
+	}
+
+	const { count, title, buttonLabel, href, rel, children }: Props = $props();
 </script>
 
 <a class="summary-data-tile tile a" {href} {rel}>
 	<div>
 		<h3>{formatAmount(count)}</h3>
 		<h4>{title}</h4>
-		<p>{description}</p>
+		<p>{@render children()}</p>
 	</div>
 	<Button secondary label={buttonLabel} />
 </a>
