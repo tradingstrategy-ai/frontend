@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { TopVaults } from './client';
+	import type { TopVaults } from './schemas';
 	import Alert from '$lib/components/Alert.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsRow from './TopVaultsRow.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -13,13 +12,11 @@
 </script>
 
 <div class="top-vaults-table">
-	{#if !topVaults.rows.length}
+	{#if !topVaults.vaults.length}
 		<Alert title="Error">No vault data available.</Alert>
 	{:else}
 		<div class="totals">
-			<span>Total current TVL {formatDollar(topVaults.current_tvl_usd, 2, 2)}</span>
-			<span>Peak TVL {formatDollar(topVaults.peak_tvl_usd, 2, 2)}</span>
-			<span>Total vaults {topVaults.rows.length}</span>
+			<span>{topVaults.vaults.length} total vaults</span>
 			<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 		</div>
 
@@ -50,7 +47,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each topVaults.rows as vault, idx (vault.id)}
+					{#each topVaults.vaults as vault, idx (vault.id)}
 						<TopVaultsRow {vault} index={idx + 1} />
 					{/each}
 				</tbody>

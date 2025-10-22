@@ -4,7 +4,7 @@
 	import Button from '$lib/components/Button.svelte';
 
 	interface Props {
-		count: number;
+		count: number | undefined;
 		title: string;
 		buttonLabel: string;
 		href: string;

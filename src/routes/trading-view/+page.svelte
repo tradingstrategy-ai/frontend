@@ -89,10 +89,10 @@
 				Explore top-performing vaults across supported chains. Compare TVL, returns, Sharpe ratio, and historical
 				performance metrics.
 			</p>
-			{#if topVaults?.rows.length}
+			{#if topVaults?.vaults.length}
 				<p>
 					Currently displaying
-					<strong>{formatAmount(topVaults?.rows.length)} vaults</strong> with minimum $50k USD TVL.
+					<strong>{formatAmount(topVaults?.vaults.length)} vaults</strong> with minimum $50k USD TVL.
 				</p>
 			{/if}
 			<Button slot="cta" label="Compare vaults" />

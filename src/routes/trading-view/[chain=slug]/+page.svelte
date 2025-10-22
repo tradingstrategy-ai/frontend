@@ -53,7 +53,7 @@
 		</SummaryDataTile>
 
 		<SummaryDataTile
-			count={topVaults?.rows.length}
+			count={topVaults?.vaults.length}
 			title="Top vaults"
 			buttonLabel="See vaults"
 			href="{chain.chain_slug}/vaults"
