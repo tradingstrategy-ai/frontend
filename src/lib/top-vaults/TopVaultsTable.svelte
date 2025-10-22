@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ApiChain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
 	import Alert from '$lib/components/Alert.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -6,17 +7,18 @@
 
 	interface Props {
 		topVaults: TopVaults;
+		chain?: ApiChain;
 	}
 
-	const { topVaults }: Props = $props();
+	const { topVaults, chain }: Props = $props();
 </script>
 
 <div class="top-vaults-table">
 	{#if !topVaults.vaults.length}
 		<Alert title="Error">No vault data available.</Alert>
 	{:else}
-		<div class="totals">
-			<span>{topVaults.vaults.length} total vaults</span>
+		<div class="table-meta">
+			<span>{topVaults.vaults.length} {chain ? chain.chain_name : 'total'} vaults</span>
 			<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 		</div>
 
@@ -26,7 +28,9 @@
 					<tr>
 						<th></th>
 						<th>Vault</th>
-						<th>Chain</th>
+						{#if !chain}
+							<th>Chain</th>
+						{/if}
 						<th>Current TVL (USD)</th>
 						<th>1M return (ann.)</th>
 						<th>1M return</th>
@@ -48,7 +52,7 @@
 				</thead>
 				<tbody>
 					{#each topVaults.vaults as vault, idx (vault.id)}
-						<TopVaultsRow {vault} index={idx + 1} />
+						<TopVaultsRow {vault} index={idx + 1} {chain} />
 					{/each}
 				</tbody>
 			</table>
@@ -61,13 +65,18 @@
 		display: grid;
 		gap: 1rem;
 
-		.totals {
+		.table-meta {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 1rem;
+			gap: 0.75rem;
 			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 			margin-top: 1rem;
+
+			> :not(:last-child)::after {
+				content: '|';
+				margin-left: 0.75rem;
+			}
 		}
 
 		.table-wrapper {
