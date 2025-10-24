@@ -8,7 +8,7 @@
 </script>
 
 <div class="log-entry {level}">
-	<Timestamp date={timestamp} withSeconds />
+	<Timestamp date={timestamp} withTime="seconds" />
 	<div class="message">
 		{message}
 		{#if formatted_data?.length}

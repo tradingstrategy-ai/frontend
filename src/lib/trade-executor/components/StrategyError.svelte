@@ -40,8 +40,8 @@ Display an appropriate error message for a strategy when needed. There can be mu
 	Strategy execution is currently paused due to an error. The trade execution engine is waiting for a manual action.
 	{#if strategy.crashed_at}
 		<Timestamp relative date={strategy.crashed_at}>
-			{#snippet children({ relative })}
-				Strategy executor halted {relative}.
+			{#snippet children({ relativeStr })}
+				Strategy executor halted {relativeStr}.
 			{/snippet}
 		</Timestamp>
 	{/if}

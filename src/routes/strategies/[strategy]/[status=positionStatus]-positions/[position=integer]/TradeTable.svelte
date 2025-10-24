@@ -41,7 +41,7 @@
 		table.column({
 			header: 'Executed',
 			accessor: 'executed_at',
-			cell: ({ value }) => createRender(Timestamp, { date: value, withSeconds: true })
+			cell: ({ value }) => createRender(Timestamp, { date: value, withTime: 'seconds' })
 		}),
 		table.column({
 			id: 'price',

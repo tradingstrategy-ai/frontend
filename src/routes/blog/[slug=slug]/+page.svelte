@@ -22,8 +22,8 @@
 			<SocialLinks --justify-content="space-between" />
 			<h1>{post.title}</h1>
 			<Timestamp date={post.published_at}>
-				{#snippet children({ parsedDate, relative })}
-					{parsedDate?.toDateString()}, {relative}
+				{#snippet children({ parsedDate, relativeStr })}
+					{parsedDate?.toDateString()}, {relativeStr}
 				{/snippet}
 			</Timestamp>
 

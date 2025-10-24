@@ -16,9 +16,9 @@ Used by Timestamp.test.ts to verify snippet rendering.
 </script>
 
 {#if testId === 'full-snippet'}
-	<Timestamp {date}>
-		{#snippet children({ dateStr, timeStr, relative })}
-			Date: {dateStr} Time: {timeStr} Relative: {relative}
+	<Timestamp {date} relative>
+		{#snippet children({ dateStr, timeStr, relativeStr })}
+			Date: {dateStr} Time: {timeStr} Relative: {relativeStr}
 		{/snippet}
 	</Timestamp>
 {:else if testId === 'partial-snippet'}

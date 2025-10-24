@@ -60,8 +60,8 @@
 				</span>
 				<svelte:fragment slot="popup">
 					<Timestamp date={summary.pair_tvl_last_updated}>
-						{#snippet children({ dateStr, timeStr, relative })}
-							Updated {relative}<br />
+						{#snippet children({ dateStr, timeStr, relativeStr })}
+							Updated {relativeStr}<br />
 							{dateStr}
 							{timeStr} UTC
 						{/snippet}
