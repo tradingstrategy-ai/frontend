@@ -48,8 +48,7 @@
 						<th>Denom-ination</th>
 						<th>Peak TVL (USD)</th>
 						<th>Deposits & Redeems</th>
-						<th>Mgmt fee</th>
-						<th>Perf fee</th>
+						<th>Fees</th>
 						<th>Vault address</th>
 					</tr>
 				</thead>
