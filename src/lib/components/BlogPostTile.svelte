@@ -25,8 +25,10 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 
 	<div class="content">
 		<div class="info">
-			<Timestamp date={post.published_at} let:parsedDate let:relative>
-				{parsedDate?.toDateString()}, {relative}
+			<Timestamp date={post.published_at}>
+				{#snippet children({ parsedDate, relative })}
+					{parsedDate?.toDateString()}, {relative}
+				{/snippet}
 			</Timestamp>
 
 			<h3 class="truncate lines-3">{post.title}</h3>

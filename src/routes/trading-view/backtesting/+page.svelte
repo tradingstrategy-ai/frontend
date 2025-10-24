@@ -147,8 +147,10 @@
 							<td class="right">{formatByteUnits(row.size)}</td>
 							<td>{row.format}</td>
 							<td>
-								<Timestamp date={row.last_updated_at} let:relative>
-									{relative.replace(/^about /, '')}
+								<Timestamp date={row.last_updated_at}>
+									{#snippet children({ relative })}
+										{relative.replace(/^about /, '')}
+									{/snippet}
 								</Timestamp>
 							</td>
 							<td class="links">
