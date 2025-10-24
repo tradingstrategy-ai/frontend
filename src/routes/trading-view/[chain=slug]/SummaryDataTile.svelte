@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import Button from '$lib/components/Button.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
 
 	interface Props {
 		count: number | undefined;
@@ -15,14 +16,15 @@
 	const { count, title, buttonLabel, href, rel, children }: Props = $props();
 </script>
 
-<a class="summary-data-tile tile a" {href} {rel}>
+<div class="summary-data-tile tile a targetable">
+	<TargetableLink {href} {rel} label="View details" />
 	<div>
 		<h3>{formatAmount(count)}</h3>
 		<h4>{title}</h4>
 		<p>{@render children()}</p>
 	</div>
 	<Button secondary label={buttonLabel} />
-</a>
+</div>
 
 <style>
 	.summary-data-tile {

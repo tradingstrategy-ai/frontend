@@ -47,7 +47,11 @@
 			href="{chain.chain_slug}/trading-pairs"
 		>
 			Total trading pairs available on Trading Strategy. {formatAmount(chain.tracked_pairs)} have active market data feeds.
-			<a class="body-link" href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html" rel="external">
+			<a
+				class="body-link targetable-above"
+				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
+				rel="external"
+			>
 				View inclusion criteria
 			</a>
 		</SummaryDataTile>
