@@ -1,39 +1,52 @@
 <script lang="ts">
+	import { getChain } from '$lib/helpers/chain';
 	import type { VaultInfo } from './schemas';
 	import { Timestamp } from '$lib/components';
-	import { type ApiChain, getChain } from '$lib/helpers/chain';
-	import { formatPercent, formatNumber, formatDollar, formatValue, formatAmount } from '$lib/helpers/formatters';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { formatPercent, formatNumber, formatDollar, formatValue, formatAmount } from '$lib/helpers/formatters';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
 		index: number;
 		vault: VaultInfo;
-		chain?: ApiChain | undefined;
+		showChain: boolean;
 	}
 
-	const { index, vault, chain }: Props = $props();
+	const { index, vault, showChain }: Props = $props();
+	const chain = getChain(vault.chain);
 </script>
 
 <tr>
-	<td>{index}</td>
+	<td align="center" class="index">{index}</td>
 	<td>
-		<div class="multiline">
-			<strong>{vault.name}</strong>
-			{#if vault.protocol}
-				<span class="protocol">{vault.protocol}</span>
+		<div class="chain">
+			{#if showChain}
+				{#if chain}
+					<Tooltip>
+						<a slot="trigger" href="/trading-view/{chain.slug}">
+							<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+						</a>
+						<svelte:fragment slot="popup">
+							{chain.name}
+						</svelte:fragment>
+					</Tooltip>
+				{:else}
+					<Tooltip>
+						<div slot="trigger" class="no-logo">?</div>
+						<svelte:fragment slot="popup">
+							Chain {vault.chain}
+						</svelte:fragment>
+					</Tooltip>
+				{/if}
 			{/if}
+			<div class="multiline">
+				<strong>{vault.name}</strong>
+				{#if vault.protocol}
+					<span class="protocol">{vault.protocol}</span>
+				{/if}
+			</div>
 		</div>
 	</td>
-	{#if !chain}
-		{@const { name, slug } = getChain(vault.chain) ?? {}}
-		<td>
-			{#if slug}
-				<a href={`/trading-view/${slug}`}>{name}</a>
-			{:else}
-				Chain {vault.chain}
-			{/if}
-		</td>
-	{/if}
 	<td align="right">{formatDollar(vault.current_tvl_usd, 2, 2)}</td>
 	<td align="right">{formatPercent(vault['1m_return_ann'], 2)}</td>
 	<td align="right">{formatPercent(vault['1m_return'], 2)}</td>
@@ -72,6 +85,32 @@
 </tr>
 
 <style>
+	.index {
+		vertical-align: middle !important;
+	}
+
+	.chain {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.625rem;
+		align-items: center;
+		--logo-size: 1.25rem;
+
+		img {
+			width: var(--logo-size);
+			height: var(--logo-size);
+		}
+
+		.no-logo {
+			display: grid;
+			place-content: center;
+			width: var(--logo-size);
+			height: var(--logo-size);
+			border-radius: 50%;
+			background: var(--c-text-ultra-light);
+		}
+	}
+
 	.multiline {
 		display: grid;
 		gap: 0.125rem;
@@ -80,10 +119,6 @@
 	.protocol {
 		color: var(--c-text-light);
 		text-transform: uppercase;
-	}
-
-	a:hover {
-		text-decoration: underline;
 	}
 
 	.fees-popup {

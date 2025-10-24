@@ -30,10 +30,7 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th>Vault</th>
-						{#if !chain}
-							<th>Chain</th>
-						{/if}
+						<th class="name">Vault</th>
 						<th>Current TVL (USD)</th>
 						<th>1M return (ann.)</th>
 						<th>1M return</th>
@@ -47,14 +44,14 @@
 						<th>Last deposit</th>
 						<th>Denom-ination</th>
 						<th>Peak TVL (USD)</th>
-						<th>Deposits & Redeems</th>
+						<th>Deposits &&nbsp;Redeems</th>
 						<th>Fees</th>
 						<th>Vault address</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each topVaults.vaults as vault, idx (vault.id)}
-						<TopVaultsRow {vault} index={idx + 1} {chain} />
+						<TopVaultsRow {vault} index={idx + 1} showChain={!chain} />
 					{/each}
 				</tbody>
 			</table>
@@ -90,7 +87,6 @@
 			width: 100%;
 			border-collapse: collapse;
 			min-width: 75rem;
-			background: var(--c-box-1);
 			color: inherit;
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
@@ -105,12 +101,13 @@
 			}
 
 			:global(:is(td, th)) {
-				padding: 0.25em 0.5em;
-				border-block: 1px solid var(--c-text-ultra-light);
 				vertical-align: top;
 			}
 
 			:global(td) {
+				border-block: 1px solid var(--c-text-ultra-light);
+				padding: 0.25em 0.5em;
+
 				/* Alternating column colors */
 				&:nth-child(even) {
 					background-color: var(--c-box-3);
@@ -122,10 +119,20 @@
 			}
 
 			th {
-				background: var(--c-box-3);
+				background: var(--c-box-4);
+				border-bottom: 3px solid var(--c-text-extra-light);
+				padding: 0.5rem;
 				font-weight: 900;
 				text-transform: uppercase;
 				text-align: left;
+
+				&:first-child {
+					background: none;
+				}
+			}
+
+			.name {
+				text-indent: 1.875rem;
 			}
 		}
 	}
