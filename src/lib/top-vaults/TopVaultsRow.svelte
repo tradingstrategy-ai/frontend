@@ -42,16 +42,15 @@
 	<td align="right">{formatPercent(vault['3m_volatility'], 4)}</td>
 	<td align="right">{formatPercent(vault.lifetime_return_ann, 2)}</td>
 	<td align="right">{formatPercent(vault.lifetime_return, 2)}</td>
-	<td align="right">{formatNumber(vault.age_years, 2, 4)}</td>
+	<td align="right">{formatNumber(vault.age_years, 2)}</td>
+	<td>
+		<Timestamp date={vault.last_deposit} />
+	</td>
 	<td align="center">{formatValue(vault.denomination)}</td>
 	<td align="right">{formatDollar(vault.peak_tvl_usd, 2, 2)}</td>
 	<td align="right">{formatAmount(vault.deposit_redeem_count)}</td>
 	<td align="right">{formatPercent(vault.management_fee, 1)}</td>
 	<td align="right">{formatPercent(vault.performance_fee, 1)}</td>
-	<td class="multiline">
-		<Timestamp date={vault.first_deposit} />
-		<Timestamp date={vault.last_deposit} />
-	</td>
 	<td>{vault.address}</td>
 </tr>
 

@@ -44,12 +44,12 @@
 						<th>Lifetime return (ann.)</th>
 						<th>Lifetime return</th>
 						<th>Age (years)</th>
+						<th>Last deposit</th>
 						<th>Denom-ination</th>
 						<th>Peak TVL (USD)</th>
 						<th>Deposits & Redeems</th>
 						<th>Mgmt fee</th>
 						<th>Perf fee</th>
-						<th>First/Last deposit</th>
 						<th>Vault address</th>
 					</tr>
 				</thead>
