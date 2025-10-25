@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { getChain } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl, type ApiChain } from '$lib/helpers/chain';
 	import type { VaultInfo } from './schemas';
-	import { Timestamp } from '$lib/components';
+	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { formatPercent, formatNumber, formatDollar, formatValue, formatAmount } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -16,9 +17,9 @@
 	const chain = getChain(vault.chain);
 </script>
 
-<tr>
+<tr class="top-vault-row">
 	<td align="center" class="index">{index}</td>
-	<td>
+	<td class="has-tooltip">
 		<div class="chain">
 			{#if showChain}
 				{#if chain}
@@ -57,11 +58,22 @@
 	<td align="right">{formatPercent(vault.lifetime_return_ann, 2)}</td>
 	<td align="right">{formatPercent(vault.lifetime_return, 2)}</td>
 	<td align="right">{formatNumber(vault.age_years, 2)}</td>
-	<td align="right"><Timestamp date={vault.last_deposit} relative={{ strict: true }} /></td>
+	<td align="right" class="has-tooltip right">
+		<Tooltip>
+			<Timestamp slot="trigger" date={vault.last_deposit} relative={{ strict: true, unit: 'day' }}>
+				{#snippet children({ relativeStr })}
+					{relativeStr.replace(' days', 'd')}
+				{/snippet}
+			</Timestamp>
+			<span slot="popup">
+				{vault.last_deposit.replace('T', ' ')} UTC
+			</span>
+		</Tooltip>
+	</td>
 	<td align="center">{formatValue(vault.denomination)}</td>
 	<td align="right">{formatDollar(vault.peak_tvl_usd, 2, 2)}</td>
 	<td align="right">{formatAmount(vault.deposit_redeem_count)}</td>
-	<td align="right">
+	<td align="right" class="fees has-tooltip right">
 		{#if !vault.management_fee && !vault.performance_fee}
 			---
 		{:else}
@@ -81,47 +93,80 @@
 			</Tooltip>
 		{/if}
 	</td>
-	<td>{vault.address}</td>
+	<td>
+		<CryptoAddressWidget
+			class="vault-address"
+			size="sm"
+			address={vault.address}
+			href={getExplorerUrl(chain, vault.address)}
+		/>
+	</td>
 </tr>
 
 <style>
-	.index {
-		vertical-align: middle !important;
-	}
-
-	.chain {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 0.625rem;
-		align-items: center;
-		--logo-size: 1.25rem;
-
-		img {
-			width: var(--logo-size);
-			height: var(--logo-size);
+	.top-vault-row {
+		.index {
+			vertical-align: middle !important;
 		}
 
-		.no-logo {
+		.chain {
 			display: grid;
-			place-content: center;
-			width: var(--logo-size);
-			height: var(--logo-size);
-			border-radius: 50%;
-			background: var(--c-text-ultra-light);
+			grid-template-columns: auto 1fr;
+			gap: 0.625rem;
+			align-items: center;
+			--logo-size: 1.25rem;
+
+			img {
+				width: var(--logo-size);
+				height: var(--logo-size);
+			}
+
+			.no-logo {
+				display: grid;
+				place-content: center;
+				width: var(--logo-size);
+				height: var(--logo-size);
+				border-radius: 50%;
+				background: var(--c-text-ultra-light);
+				cursor: not-allowed;
+			}
 		}
-	}
 
-	.multiline {
-		display: grid;
-		gap: 0.125rem;
-	}
+		.multiline {
+			display: grid;
+			gap: 0.125rem;
+		}
 
-	.protocol {
-		color: var(--c-text-light);
-		text-transform: uppercase;
-	}
+		.protocol {
+			color: var(--c-text-light);
+			text-transform: uppercase;
+		}
 
-	.fees-popup {
-		text-align: right;
+		.has-tooltip {
+			position: relative;
+
+			:global(.popup) {
+				white-space: nowrap;
+			}
+
+			&.right {
+				:global(.popup) {
+					right: 0;
+				}
+
+				* {
+					text-align: right;
+				}
+			}
+		}
+
+		:global(.vault-address) {
+			min-width: 8rem;
+			padding: 0;
+			background: inherit;
+			font: inherit;
+			letter-spacing: inherit;
+			border-radius: 0;
+		}
 	}
 </style>
