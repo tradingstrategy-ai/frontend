@@ -6,11 +6,12 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
+	import ChainCell from './ChainCell.svelte';
 	import VaultCell from './VaultCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import LastDepositCell from './LastDepositCell.svelte';
 	import { createRender, createTable } from 'svelte-headless-table';
-	import { addSortBy } from 'svelte-headless-table/plugins';
+	import { addSortBy, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 
@@ -21,9 +22,10 @@
 
 	const { topVaults, apiChain }: Props = $props();
 
-	const vaultsStore = readable(topVaults.vaults.map((row, index) => ({ ...row, index })));
+	const vaultsStore = readable(topVaults.vaults);
 
 	const table = createTable(vaultsStore, {
+		hide: addHiddenColumns({ initialHiddenColumnIds: apiChain ? ['chain'] : [] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'return_ann_1m', order: 'desc' }],
 			toggleOrder: ['desc', 'asc']
@@ -38,22 +40,37 @@
 			cell: () => ''
 		}),
 		table.column({
+			id: 'chain',
+			header: '',
+			accessor: ({ chain: chainId }) => {
+				const chain = getChain(chainId);
+				return {
+					chain,
+					label: chain?.name ?? `Chain ${chainId}`,
+					// accessor.toString() used when searching table
+					toString: () => `${chainId} ${chain?.name}`
+				};
+			},
+			cell: ({ value }) => createRender(ChainCell, value),
+			plugins: {
+				sort: {
+					getSortValue: ({ label }) => label,
+					invert: true
+				}
+			}
+		}),
+		table.column({
 			id: 'vault',
 			header: 'Vault',
 			accessor: ({ chain: chainId, name, protocol }) => {
-				const chain = getChain(chainId);
 				return {
-					showChain: !apiChain,
-					chainId,
-					chain,
 					name,
 					protocol,
 					// accessor.toString() used when searching table
-					toString: () => `${chainId} ${chain?.name} ${name} ${protocol}`
+					toString: () => `${name} ${protocol}`
 				};
 			},
 			cell: ({ value }) => createRender(VaultCell, value),
-			// plugins: { sort: { disable: true } }
 			plugins: {
 				sort: {
 					getSortValue: ({ name }) => name.toLowerCase(),
@@ -280,26 +297,41 @@
 				background: var(--c-body);
 			}
 
-			/* flip the sort indicator on columns that use inverse sort */
-			:global(:is(th.vault, th.last_deposit, th.denomination, th.fees) svg) {
-				rotate: 180deg;
+			/* custom alignment for chain sort indicator (no header label) */
+			:global(th.chain.sorted svg) {
+				right: 0.5rem;
 			}
 
-			:global(th.vault) {
-				text-indent: 1.875rem;
+			/* flip the sort indicator on columns that use inverse sort */
+			:global(:is(th.chain, th.vault, th.last_deposit, th.denomination, th.fees) svg) {
+				rotate: 180deg;
 			}
 
 			:global(td) {
 				border-block: 1px solid var(--c-text-ultra-light);
 				padding: 0.25em 0.5em;
 
-				/* Alternating column colors */
+				--c-col-a: var(--c-box-3);
+				--c-col-b: var(--c-box-1);
+
+				/* alternating column colors */
 				&:nth-child(even) {
-					background-color: var(--c-box-3);
+					background-color: var(--c-col-a);
 				}
 
 				&:nth-child(odd) {
-					background-color: var(--c-box-1);
+					background-color: var(--c-col-b);
+				}
+			}
+
+			/* reverse column colors if chain col is present */
+			:global(:where(tr:has(.chain)) td) {
+				&:nth-child(odd) {
+					background-color: var(--c-col-a);
+				}
+
+				&:nth-child(even) {
+					background-color: var(--c-col-b);
 				}
 			}
 
@@ -315,11 +347,20 @@
 			:global(td.index) {
 				text-align: center;
 				vertical-align: middle;
+				background-color: var(--c-col-b);
 				counter-increment: rowNumber;
 
 				&::before {
 					content: counter(rowNumber);
 				}
+			}
+
+			:global(td.chain) {
+				vertical-align: middle;
+				text-align: center;
+				padding-right: 0.25rem;
+				/* override background color to match vault column */
+				background-color: var(--c-col-a);
 			}
 
 			:global(.vault-address) {
