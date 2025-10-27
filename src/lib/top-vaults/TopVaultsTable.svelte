@@ -31,9 +31,11 @@
 	});
 
 	const tableColumns = table.createColumns([
-		table.column({
-			accessor: 'index',
-			header: ''
+		table.display({
+			id: 'index',
+			header: '',
+			// Cell is populated with row index via CSS counters; see `rowNumber` below
+			cell: () => ''
 		}),
 		table.column({
 			id: 'vault',
@@ -233,6 +235,7 @@
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
 			letter-spacing: var(--f-text-md-spacing, normal);
+			counter-reset: rowNumber;
 
 			@media (--viewport-sm-down) {
 				min-width: 64rem;
@@ -309,9 +312,14 @@
 				gap: 0.125rem;
 			}
 
-			:global(.index) {
+			:global(td.index) {
 				text-align: center;
 				vertical-align: middle;
+				counter-increment: rowNumber;
+
+				&::before {
+					content: counter(rowNumber);
+				}
 			}
 
 			:global(.vault-address) {
