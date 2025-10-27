@@ -56,6 +56,11 @@
 			height: var(--logo-size);
 		}
 
+		.protocol {
+			color: var(--c-text-light);
+			text-transform: uppercase;
+		}
+
 		.no-logo {
 			display: grid;
 			place-content: center;
