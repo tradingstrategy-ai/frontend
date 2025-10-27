@@ -9,8 +9,9 @@
 	import VaultCell from './VaultCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import LastDepositCell from './LastDepositCell.svelte';
-	import { readable } from 'svelte/store';
 	import { createRender, createTable } from 'svelte-headless-table';
+	import { addSortBy } from 'svelte-headless-table/plugins';
+	import { readable } from 'svelte/store';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 
 	interface Props {
@@ -22,7 +23,12 @@
 
 	const vaultsStore = readable(topVaults.vaults.map((row, index) => ({ ...row, index })));
 
-	const table = createTable(vaultsStore);
+	const table = createTable(vaultsStore, {
+		sort: addSortBy({
+			initialSortKeys: [{ id: 'return_ann_1m', order: 'desc' }],
+			toggleOrder: ['desc', 'asc']
+		})
+	});
 
 	const tableColumns = table.createColumns([
 		table.column({
@@ -44,7 +50,14 @@
 					toString: () => `${chainId} ${chain?.name} ${name} ${protocol}`
 				};
 			},
-			cell: ({ value }) => createRender(VaultCell, value)
+			cell: ({ value }) => createRender(VaultCell, value),
+			// plugins: { sort: { disable: true } }
+			plugins: {
+				sort: {
+					getSortValue: ({ name }) => name.toLowerCase(),
+					invert: true
+				}
+			}
 		}),
 		table.column({
 			accessor: 'current_tvl_usd',
@@ -110,7 +123,10 @@
 		table.column({
 			accessor: 'denomination',
 			header: 'Denom-ination',
-			cell: ({ value }) => formatValue(value)
+			cell: ({ value }) => formatValue(value),
+			plugins: {
+				sort: { invert: true }
+			}
 		}),
 		table.column({
 			accessor: 'peak_tvl_usd',
@@ -125,8 +141,17 @@
 		table.column({
 			id: 'fees',
 			header: 'Fees',
-			accessor: ({ management_fee, performance_fee }) => ({ management_fee, performance_fee }),
-			cell: ({ value }) => createRender(FeesCell, value)
+			accessor: ({ management_fee, performance_fee }) => ({
+				management_fee,
+				performance_fee
+			}),
+			cell: ({ value }) => createRender(FeesCell, value),
+			plugins: {
+				sort: {
+					getSortValue: (v) => (v.management_fee ?? 0) + (v.performance_fee ?? 0),
+					invert: true
+				}
+			}
 		}),
 		table.column({
 			id: 'address',
@@ -143,7 +168,8 @@
 					size: 'sm',
 					address: value.address,
 					href: getExplorerUrl(getChain(value.chainId), value.address)
-				})
+				}),
+			plugins: { sort: { disable: true } }
 		})
 	]);
 
@@ -212,6 +238,34 @@
 				vertical-align: top;
 			}
 
+			:global(th) {
+				background: var(--c-box-4);
+				border-bottom: 3px solid var(--c-text-extra-light);
+				padding: 0.5rem;
+				font-weight: 900;
+				text-transform: uppercase;
+				text-align: left;
+			}
+
+			:global(th.sorted) {
+				position: relative;
+				padding-right: 1.125rem;
+
+				:global(svg) {
+					position: absolute;
+					top: 0.5rem;
+					right: 0.25rem;
+				}
+			}
+
+			:global(:is(th.vault, th.last_deposit, th.denomination, th.fees) svg) {
+				rotate: 180deg;
+			}
+
+			:global(th.vault) {
+				text-indent: 1.875rem;
+			}
+
 			:global(td) {
 				border-block: 1px solid var(--c-text-ultra-light);
 				padding: 0.25em 0.5em;
@@ -228,19 +282,6 @@
 
 			:global(td:has(.tooltip)) {
 				position: relative;
-			}
-
-			:global(th) {
-				background: var(--c-box-4);
-				border-bottom: 3px solid var(--c-text-extra-light);
-				padding: 0.5rem;
-				font-weight: 900;
-				text-transform: uppercase;
-				text-align: left;
-			}
-
-			:global(th.vault) {
-				text-indent: 1.875rem;
 			}
 
 			:global(.multiline) {
