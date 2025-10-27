@@ -21,8 +21,10 @@
 		<header>
 			<SocialLinks --justify-content="space-between" />
 			<h1>{post.title}</h1>
-			<Timestamp date={post.published_at} let:parsedDate let:relative>
-				{parsedDate?.toDateString()}, {relative}
+			<Timestamp date={post.published_at}>
+				{#snippet children({ parsedDate, relativeStr })}
+					{parsedDate?.toDateString()}, {relativeStr}
+				{/snippet}
 			</Timestamp>
 
 			<img src={post.feature_image} alt={post.feature_image_alt} />

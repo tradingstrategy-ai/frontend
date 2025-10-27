@@ -23,6 +23,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	import SearchHeaderRow from './SearchHeaderRow.svelte';
 	import MobileSortSelect from './MobileSortSelect.svelte';
 
+	let classes = 'datatable';
+	export { classes as class };
 	export let tableViewModel: TableViewModel<any, any>;
 	export let hasSearch: boolean = false;
 	export let hasPagination: boolean = false;
@@ -76,7 +78,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	}
 </script>
 
-<table bind:this={table} {...$tableAttrs} class="datatable {size}" class:responsive={isResponsive} class:loading>
+<table bind:this={table} {...$tableAttrs} class={[classes, size, isResponsive && 'responsive', loading && 'loading']}>
 	<TableHeader attrs={$tableHeadAttrs} rows={$headerRows}>
 		{#if isResponsive}
 			<MobileSortSelect rows={$headerRows} {sortKeys} />

@@ -116,7 +116,7 @@
 					<tr>
 						<td class="label">Cycle</td>
 						<td>
-							<Timestamp date={trade.opened_at} withTime withSeconds />
+							<Timestamp date={trade.opened_at} withTime="seconds" />
 						</td>
 						<td></td>
 					</tr>
@@ -124,7 +124,7 @@
 					<tr>
 						<td class="label">Decision</td>
 						<td>
-							<Timestamp date={trade.started_at} withTime withSeconds />
+							<Timestamp date={trade.started_at} withTime="seconds" />
 						</td>
 						<td class="delta">+{formatTimeDiffMinutesSeconds(trade.opened_at, trade.started_at)}</td>
 					</tr>
@@ -132,7 +132,7 @@
 					<tr>
 						<td class="label">Execute</td>
 						<td>
-							<Timestamp date={trade.executed_at} withTime withSeconds />
+							<Timestamp date={trade.executed_at} withTime="seconds" />
 						</td>
 						<td class="delta">+{formatTimeDiffMinutesSeconds(trade.started_at, trade.executed_at)}</td>
 					</tr>

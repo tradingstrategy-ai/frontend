@@ -39,8 +39,10 @@ Display an appropriate error message for a strategy when needed. There can be mu
 {:else if !strategy.executor_running}
 	Strategy execution is currently paused due to an error. The trade execution engine is waiting for a manual action.
 	{#if strategy.crashed_at}
-		<Timestamp relative date={strategy.crashed_at} let:relative>
-			Strategy executor halted {relative}.
+		<Timestamp relative date={strategy.crashed_at}>
+			{#snippet children({ relativeStr })}
+				Strategy executor halted {relativeStr}.
+			{/snippet}
 		</Timestamp>
 	{/if}
 	<a href="{baseUrl}/tech-details/status"> See instance status page for more information </a>.

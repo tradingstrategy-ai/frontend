@@ -147,9 +147,7 @@
 							<td class="right">{formatByteUnits(row.size)}</td>
 							<td>{row.format}</td>
 							<td>
-								<Timestamp date={row.last_updated_at} let:relative>
-									{relative.replace(/^about /, '')}
-								</Timestamp>
+								<Timestamp date={row.last_updated_at} relative={{ strict: true }} />
 							</td>
 							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>

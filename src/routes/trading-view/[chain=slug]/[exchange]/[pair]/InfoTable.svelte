@@ -59,10 +59,12 @@
 					{formatDollar(summary.pair_tvl)}
 				</span>
 				<svelte:fragment slot="popup">
-					<Timestamp date={summary.pair_tvl_last_updated} let:dateStr let:timeStr let:relative>
-						Updated {relative}<br />
-						{dateStr}
-						{timeStr} UTC
+					<Timestamp date={summary.pair_tvl_last_updated}>
+						{#snippet children({ dateStr, timeStr, relativeStr })}
+							Updated {relativeStr}<br />
+							{dateStr}
+							{timeStr} UTC
+						{/snippet}
 					</Timestamp>
 				</svelte:fragment>
 			</Tooltip>

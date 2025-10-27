@@ -25,6 +25,6 @@
 	</Section>
 
 	<Section>
-		<TopVaultsTable {topVaults} {chain} />
+		<TopVaultsTable {topVaults} apiChain={chain} />
 	</Section>
 </main>

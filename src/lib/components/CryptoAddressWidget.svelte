@@ -1,21 +1,28 @@
 <script lang="ts">
 	import { CopyWidget, HashAddress } from '$lib/components';
+	import type { Snippet } from 'svelte';
 
-	export let address: Address;
-	export let clipboardCopier = true;
-	export let href: string;
-	export let size: 'sm' | 'md' | 'lg' = 'md';
+	interface Props {
+		address: Address;
+		clipboardCopier?: boolean;
+		href: string;
+		size?: 'sm' | 'md' | 'lg';
+		class?: string;
+		icon?: Snippet;
+	}
 
-	let copyWidget: CopyWidget;
+	let { address, clipboardCopier = true, href, size = 'md', class: classes, icon }: Props = $props();
+
+	let copyWidget = $state<CopyWidget>();
 </script>
 
-<span class="crypto-address-widget size-{size} tile b">
-	<slot name="icon" />
+<span class="crypto-address-widget size-{size} tile b {classes}">
+	{@render icon?.()}
 	<a {href} rel="noreferrer" target="_blank">
 		<HashAddress {address} endChars={7} />
 	</a>
 	{#if clipboardCopier}
-		<button title="Copy to clipboard" on:click={() => copyWidget.copy(address)}>
+		<button title="Copy to clipboard" onclick={() => copyWidget?.copy(address)}>
 			<CopyWidget bind:this={copyWidget} />
 		</button>
 	{/if}
