@@ -214,10 +214,18 @@
 
 		.table-wrapper {
 			width: 100%;
-			overflow-x: auto;
+
+			/*
+				Setting overflow:auto breaks the sticky header, but is needed to allow horizontal scrolling
+				on smaller viewports. Best compromise is to only set overflow on smaller viewports.
+			 */
+			@media (--viewport-xl-down) {
+				overflow-x: auto;
+			}
 		}
 
 		:global(.top-vaults-table) {
+			position: relative;
 			width: 100%;
 			border-collapse: collapse;
 			min-width: 75rem;
@@ -239,16 +247,22 @@
 			}
 
 			:global(th) {
-				background: var(--c-box-4);
-				border-bottom: 3px solid var(--c-text-extra-light);
+				position: sticky;
+				top: 0px;
+				z-index: 1;
+				/* sticky header background must be solid (no transparency) */
+				background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-4-alpha));
+				/* sticky header border gets lost on scroll, so use box-shadow instead */
+				box-shadow: inset 0px -2px var(--c-text-extra-light);
 				padding: 0.5rem;
+				/* add extra padding to bottom to account for the inset box-shadow */
+				padding-bottom: calc(0.5rem + 2px);
 				font-weight: 900;
 				text-transform: uppercase;
 				text-align: left;
 			}
 
 			:global(th.sorted) {
-				position: relative;
 				padding-right: 1.125rem;
 
 				:global(svg) {
@@ -258,6 +272,12 @@
 				}
 			}
 
+			/* no background on index column */
+			:global(th.index) {
+				background: var(--c-body);
+			}
+
+			/* flip the sort indicator on columns that use inverse sort */
 			:global(:is(th.vault, th.last_deposit, th.denomination, th.fees) svg) {
 				rotate: 180deg;
 			}
@@ -292,10 +312,6 @@
 			:global(.index) {
 				text-align: center;
 				vertical-align: middle;
-			}
-
-			:global(th.index) {
-				background: none;
 			}
 
 			:global(.vault-address) {
