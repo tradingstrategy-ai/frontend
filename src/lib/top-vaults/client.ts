@@ -14,13 +14,10 @@ export async function fetchTopVaults(
 	// eslint-disable-next-line prefer-const
 	let { vaults, generated_at } = topVaultsSchema.parse(await resp.json());
 
-	// sort by 1m return descending
-	vaults.sort((a, b) => b['1m_return'] - a['1m_return']);
-
 	// filter by chain if provided
 	chainId ??= getChain(chainSlug)?.id;
 	if (chainId) {
-		vaults = vaults.filter((vault) => vault.chain === chainId);
+		vaults = vaults.filter(({ chain_id }) => chain_id === chainId);
 	}
 
 	return { vaults, generated_at };

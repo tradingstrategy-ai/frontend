@@ -3,34 +3,34 @@
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	interface Props {
-		management_fee: MaybeNumber;
-		performance_fee: MaybeNumber;
+		mgmt_fee: MaybeNumber;
+		perf_fee: MaybeNumber;
 	}
 
-	let { management_fee, performance_fee }: Props = $props();
+	let { mgmt_fee, perf_fee }: Props = $props();
 </script>
 
 <div class="fees">
-	{#if !management_fee && !performance_fee}
+	{#if !mgmt_fee && !perf_fee}
 		---
 	{:else}
 		<Tooltip>
 			<div class="multiline" slot="trigger">
-				{#if management_fee}
-					<div>{formatPercent(management_fee, 1)}</div>
+				{#if mgmt_fee}
+					<div>{formatPercent(mgmt_fee, 1)}</div>
 				{/if}
-				{#if performance_fee}
-					<div>{formatPercent(performance_fee, 1)}</div>
+				{#if perf_fee}
+					<div>{formatPercent(perf_fee, 1)}</div>
 				{/if}
 			</div>
 			<dl slot="popup" class="fees-popup">
 				<div>
 					<dt>Management fee:</dt>
-					<dd>{formatPercent(management_fee, 1)}</dd>
+					<dd>{formatPercent(mgmt_fee, 1)}</dd>
 				</div>
 				<div>
 					<dt>Performance fee:</dt>
-					<dd>{formatPercent(performance_fee, 1)}</dd>
+					<dd>{formatPercent(perf_fee, 1)}</dd>
 				</div>
 			</dl>
 		</Tooltip>

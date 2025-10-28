@@ -10,7 +10,7 @@
 	import ChainCell from './ChainCell.svelte';
 	import VaultCell from './VaultCell.svelte';
 	import FeesCell from './FeesCell.svelte';
-	import LastDepositCell from './LastDepositCell.svelte';
+	// import LastDepositCell from './LastDepositCell.svelte';
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
@@ -28,7 +28,7 @@
 	const table = createTable(vaultsStore, {
 		hide: addHiddenColumns({ initialHiddenColumnIds: apiChain ? ['chain'] : [] }),
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'return_ann_1m', order: 'desc' }],
+			initialSortKeys: [{ id: 'one_month_returns', order: 'desc' }],
 			toggleOrder: ['desc', 'asc']
 		}),
 		filter: addTableFilter({
@@ -46,9 +46,10 @@
 		table.column({
 			id: 'chain',
 			header: '',
-			accessor: ({ chain: chainId }) => {
-				const chain = getChain(chainId);
-				return { chainId, chain, label: chain?.name ?? `Chain ${chainId}` };
+			accessor: ({ chain_id }) => {
+				const chain = getChain(chain_id);
+				const label = chain?.name ?? `Chain ${chain_id}`;
+				return { chain_id, chain, label };
 			},
 			cell: ({ value }) => createRender(ChainCell, value),
 			plugins: {
@@ -57,7 +58,7 @@
 					invert: true
 				},
 				filter: {
-					getFilterValue: ({ chainId, chain }) => `${chainId} ${chain?.name}`
+					getFilterValue: ({ chain_id, chain }) => `${chain_id} ${chain?.name}`
 				}
 			}
 		}),
@@ -77,55 +78,49 @@
 			}
 		}),
 		table.column({
-			accessor: 'current_tvl_usd',
+			accessor: 'current_nav',
 			header: 'Current TVL (USD)',
 			cell: ({ value }) => formatDollar(value, 2, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'return_ann_1m',
-			accessor: '1m_return_ann',
+			accessor: 'one_month_cagr',
 			header: '1M return (ann.)',
 			cell: ({ value }) => formatPercent(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'return_1m',
-			accessor: '1m_return',
+			accessor: 'one_month_returns',
 			header: '1M return',
 			cell: ({ value }) => formatPercent(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'return_ann_3m',
-			accessor: '3m_return_ann',
+			accessor: 'three_months_cagr',
 			header: '3M return (ann.)',
 			cell: ({ value }) => formatPercent(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'return_3m',
-			accessor: '3m_return',
+			accessor: 'three_months_returns',
 			header: '3M return',
 			cell: ({ value }) => formatPercent(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'sharpe_3m',
-			accessor: '3m_sharpe',
+			accessor: 'three_months_sharpe',
 			header: '3M Sharpe',
 			cell: ({ value }) => formatNumber(value, 1),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			id: 'volatility_3m',
-			accessor: '3m_volatility',
+			accessor: 'three_months_volatility',
 			header: '3M vola-tility',
 			cell: ({ value }) => formatPercent(value),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'lifetime_return_ann',
+			accessor: 'cagr',
 			header: 'Lifetime return (ann.)',
 			cell: ({ value }) => formatPercent(value, 2),
 			plugins: { filter: { exclude: true } }
@@ -137,17 +132,18 @@
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'age_years',
+			accessor: 'years',
 			header: 'Age (years)',
 			cell: ({ value }) => formatNumber(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
-		table.column({
-			header: 'Last deposit',
-			accessor: 'last_deposit',
-			cell: ({ value }) => createRender(LastDepositCell, { last_deposit: value }),
-			plugins: { filter: { exclude: true } }
-		}),
+		// `last_deposit` is missing from latest data schema so dropping from table for now
+		// table.column({
+		// 	header: 'Last deposit',
+		// 	accessor: 'last_deposit',
+		// 	cell: ({ value }) => createRender(LastDepositCell, { last_deposit: value }),
+		// 	plugins: { filter: { exclude: true } }
+		// }),
 		table.column({
 			accessor: 'denomination',
 			header: 'Denom-ination',
@@ -155,13 +151,13 @@
 			plugins: { sort: { invert: true } }
 		}),
 		table.column({
-			accessor: 'peak_tvl_usd',
+			accessor: 'peak_nav',
 			header: 'Peak TVL (USD)',
 			cell: ({ value }) => formatDollar(value, 2),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'deposit_redeem_count',
+			accessor: 'event_count',
 			header: 'Deposits & Redeems', // NOTE: non-breaking space after "&"
 			cell: ({ value }) => formatAmount(value),
 			plugins: { filter: { exclude: true } }
@@ -169,11 +165,11 @@
 		table.column({
 			id: 'fees',
 			header: 'Fees',
-			accessor: ({ management_fee, performance_fee }) => ({ management_fee, performance_fee }),
+			accessor: ({ mgmt_fee, perf_fee }) => ({ mgmt_fee, perf_fee }),
 			cell: ({ value }) => createRender(FeesCell, value),
 			plugins: {
 				sort: {
-					getSortValue: (v) => (v.management_fee ?? 0) + (v.performance_fee ?? 0),
+					getSortValue: ({ mgmt_fee, perf_fee }) => (mgmt_fee ?? 0) + (perf_fee ?? 0),
 					invert: true
 				},
 				filter: { exclude: true }
@@ -405,19 +401,19 @@
 
 			:global(
 				:is(
-					td.current_tvl_usd,
-					td.return_ann_1m,
-					td.return_1m,
-					td.return_ann_3m,
-					td.return_3m,
-					td.sharpe_3m,
-					td.volatility_3m,
-					td.lifetime_return_ann,
+					td.current_nav,
+					td.one_month_cagr,
+					td.one_month_returns,
+					td.three_months_cagr,
+					td.three_months_returns,
+					td.three_months_sharpe,
+					td.three_months_volatility,
+					td.cagr,
 					td.lifetime_return,
-					td.age_years,
+					td.years,
 					td.last_deposit,
-					td.peak_tvl_usd,
-					td.deposit_redeem_count,
+					td.peak_nav,
+					td.event_count,
 					td.fees
 				)
 			) {
