@@ -20,5 +20,8 @@ export async function fetchTopVaults(
 		vaults = vaults.filter(({ chain_id }) => chain_id === chainId);
 	}
 
+	// filter out blacklisted vaults
+	vaults = vaults.filter(({ risk }) => risk !== 'Blacklisted');
+
 	return { vaults, generated_at };
 }
