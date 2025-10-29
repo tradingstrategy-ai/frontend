@@ -14,7 +14,14 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
-	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import {
+		formatAmount,
+		formatDollar,
+		formatNumber,
+		formatPercent,
+		formatValue,
+		isNumber
+	} from '$lib/helpers/formatters';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -169,7 +176,8 @@
 			cell: ({ value }) => createRender(FeesCell, value),
 			plugins: {
 				sort: {
-					getSortValue: ({ mgmt_fee, perf_fee }) => (mgmt_fee ?? 0) + (perf_fee ?? 0),
+					// sort by perf_fee then mgmt_fee (scaled down as tie-break), nulls last
+					getSortValue: ({ perf_fee, mgmt_fee }) => (perf_fee ?? 1) + (mgmt_fee ?? 1) / 100,
 					invert: true
 				},
 				filter: { exclude: true }

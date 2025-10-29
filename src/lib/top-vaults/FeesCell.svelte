@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { formatPercent } from '$lib/helpers/formatters';
+	import { isNumber, formatPercent, notFilledMarker } from '$lib/helpers/formatters';
 
 	interface Props {
 		mgmt_fee: MaybeNumber;
@@ -11,30 +11,28 @@
 </script>
 
 <div class="fees">
-	{#if !mgmt_fee && !perf_fee}
-		---
-	{:else}
-		<Tooltip>
-			<div class="multiline" slot="trigger">
-				{#if mgmt_fee}
-					<div>{formatPercent(mgmt_fee, 1)}</div>
-				{/if}
-				{#if perf_fee}
-					<div>{formatPercent(perf_fee, 1)}</div>
-				{/if}
+	<Tooltip>
+		<div class="multiline" slot="trigger">
+			{#if !isNumber(mgmt_fee) && !isNumber(perf_fee)}
+				{notFilledMarker}
+			{:else if mgmt_fee === 0 && perf_fee === 0}
+				0.0%
+			{:else}
+				<div>{formatPercent(mgmt_fee, 1)}</div>
+				<div>{formatPercent(perf_fee, 1)}</div>
+			{/if}
+		</div>
+		<dl slot="popup" class="fees-popup">
+			<div>
+				<dt>Management fee:</dt>
+				<dd>{isNumber(mgmt_fee) ? formatPercent(mgmt_fee, 1) : 'unknown'}</dd>
 			</div>
-			<dl slot="popup" class="fees-popup">
-				<div>
-					<dt>Management fee:</dt>
-					<dd>{formatPercent(mgmt_fee, 1)}</dd>
-				</div>
-				<div>
-					<dt>Performance fee:</dt>
-					<dd>{formatPercent(perf_fee, 1)}</dd>
-				</div>
-			</dl>
-		</Tooltip>
-	{/if}
+			<div>
+				<dt>Performance fee:</dt>
+				<dd>{isNumber(perf_fee) ? formatPercent(perf_fee, 1) : 'unknown'}</dd>
+			</div>
+		</dl>
+	</Tooltip>
 </div>
 
 <style>
