@@ -178,13 +178,13 @@
 		table.column({
 			id: 'address',
 			header: 'Vault address',
-			accessor: ({ address, chain: chainId }) => ({ address, chainId }),
-			cell: ({ value: { address, chainId } }) =>
+			accessor: ({ address, chain_id }) => ({ address, chain_id }),
+			cell: ({ value: { address, chain_id } }) =>
 				createRender(CryptoAddressWidget, {
 					class: 'vault-address',
 					size: 'sm',
 					address,
-					href: getExplorerUrl(getChain(chainId), address)
+					href: getExplorerUrl(getChain(chain_id), address)
 				}),
 			plugins: {
 				sort: { disable: true },
