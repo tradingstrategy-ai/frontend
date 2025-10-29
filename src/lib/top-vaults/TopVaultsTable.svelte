@@ -14,14 +14,7 @@
 	import { createRender, createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
-	import {
-		formatAmount,
-		formatDollar,
-		formatNumber,
-		formatPercent,
-		formatValue,
-		isNumber
-	} from '$lib/helpers/formatters';
+	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -47,8 +40,7 @@
 		table.display({
 			id: 'index',
 			header: '',
-			// Cell is populated with row index via CSS counters; see `rowNumber` below
-			cell: () => ''
+			cell: () => '' // populated with row index via `rowNumber` CSS counter
 		}),
 		table.column({
 			id: 'chain',
@@ -122,7 +114,7 @@
 		}),
 		table.column({
 			accessor: 'three_months_volatility',
-			header: '3M vola-tility',
+			header: '3M vola&shy;tility',
 			cell: ({ value }) => formatPercent(value),
 			plugins: { filter: { exclude: true } }
 		}),
@@ -153,7 +145,7 @@
 		// }),
 		table.column({
 			accessor: 'denomination',
-			header: 'Denom-ination',
+			header: 'Denom&shy;ination',
 			cell: ({ value }) => formatValue(value),
 			plugins: { sort: { invert: true } }
 		}),
@@ -165,7 +157,7 @@
 		}),
 		table.column({
 			accessor: 'event_count',
-			header: 'Deposits & Redeems', // NOTE: non-breaking space after "&"
+			header: 'Deposits &&nbsp;Redeems',
 			cell: ({ value }) => formatAmount(value),
 			plugins: { filter: { exclude: true } }
 		}),

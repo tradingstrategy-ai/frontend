@@ -13,6 +13,7 @@
 		<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
 			<tr class="col-headers" {...rowAttrs}>
 				{#each headerRow.cells as cell (cell.id)}
+					{@const renderConfig = cell.render()}
 					<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 						<th
 							{...attrs}
@@ -21,7 +22,13 @@
 							class:sorted={props.sort?.order}
 							on:click={() => props.sort?.toggle?.()}
 						>
-							<Render of={cell.render()} />
+							<!-- this conditional is needed to support header strings that contain HTML entity refs -->
+							{#if typeof renderConfig === 'string'}
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+								{@html renderConfig}
+							{:else}
+								<Render of={renderConfig} />
+							{/if}
 							{#if props.sort?.order === 'asc'}
 								<IconChevronUp />
 							{:else if props.sort?.order === 'desc'}
