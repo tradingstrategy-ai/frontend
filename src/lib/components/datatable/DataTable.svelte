@@ -13,28 +13,51 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 ```
 -->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import type { TableViewModel } from 'svelte-headless-table';
 	import type { SortKey } from 'svelte-headless-table/plugins';
-	import { createEventDispatcher } from 'svelte';
 	import TableHeader from './TableHeader.svelte';
 	import TableBody from './TableBody.svelte';
 	import TableFooter from './TableFooter.svelte';
 	import SearchHeaderRow from './SearchHeaderRow.svelte';
 	import MobileSortSelect from './MobileSortSelect.svelte';
 
-	let classes = 'datatable';
-	export { classes as class };
-	export let tableViewModel: TableViewModel<any, any>;
-	export let hasSearch: boolean = false;
-	export let hasPagination: boolean = false;
-	export let totalRowCount: number | undefined = undefined;
-	export let isResponsive = false;
-	export let loading = false;
-	export let size = 'md';
-	export let targetableRows = false;
+	type DataTableChangeParams = {
+		page: string;
+		sort?: string;
+		direction?: 'asc' | 'desc';
+	};
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		tableViewModel: TableViewModel<any, any>;
+		class?: string;
+		size?: string;
+		totalRowCount?: number | undefined;
+		loading?: boolean;
+		hasSearch?: boolean;
+		hasPagination?: boolean;
+		isResponsive?: boolean;
+		targetableRows?: boolean;
+		children?: Snippet;
+		onChange?: (params: DataTableChangeParams, scrollFn: () => void) => void;
+	}
+
+	let {
+		tableViewModel,
+		class: classes = 'datatable',
+		size = 'md',
+		totalRowCount,
+		loading = false,
+		hasSearch = false,
+		hasPagination = false,
+		isResponsive = false,
+		targetableRows = false,
+		children,
+		onChange
+	}: Props = $props();
+
 	let table: HTMLTableElement;
 
 	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
@@ -48,7 +71,9 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	let lastSortKey: SortKey | undefined = $sortKeys[0];
 	let lastPageIdx = $pageIndex;
 
-	$: dispatchIfChanged($sortKeys[0], $pageIndex);
+	$effect(() => {
+		dispatchIfChanged($sortKeys[0], $pageIndex);
+	});
 
 	function scrollToTop() {
 		if (table?.getBoundingClientRect().y < 0) {
@@ -57,6 +82,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	}
 
 	function dispatchIfChanged(sortKey: SortKey | undefined, pageIdx: number) {
+		if (!onChange) return;
+
 		const sortChanged = !(sortKey?.id === lastSortKey?.id && sortKey?.order === lastSortKey?.order);
 		const pageChanged = pageIdx !== lastPageIdx;
 
@@ -70,11 +97,13 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		lastSortKey = sortKey;
 		lastPageIdx = pageIdx;
 
+		const params: DataTableChangeParams = { page: String(pageIdx) };
+		if (sortKey) {
+			Object.assign(params, { sort: sortKey.id, direction: sortKey.order });
+		}
+
 		// dispatch change event with updated page/sort params
-		dispatch('change', {
-			params: { page: pageIdx, sort: sortKey?.id, direction: sortKey?.order },
-			scrollToTop
-		});
+		onChange(params, scrollToTop);
 	}
 </script>
 
@@ -89,7 +118,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	</TableHeader>
 
 	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} {targetableRows}>
-		<slot />
+		{@render children?.()}
 	</TableBody>
 
 	{#if hasPagination}

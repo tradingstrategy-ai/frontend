@@ -1,14 +1,21 @@
 <script lang="ts">
-	import type { SortKey, WritableSortKeys } from 'svelte-headless-table/plugins';
+	import type { Writable } from 'svelte/store';
+	import type { SortKey } from 'svelte-headless-table/plugins';
 	import { Subscribe, type HeaderRow } from 'svelte-headless-table';
 	import Select from '$lib/components/Select.svelte';
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		rows: HeaderRow<any, any>[];
-		sortKeys: WritableSortKeys;
+		sortKeys: Writable<SortKey[]>;
 	}
 
 	let { rows, sortKeys }: Props = $props();
+
+	let selectedSortValue = $derived.by(() => {
+		const key = $sortKeys[0];
+		return key ? sortValue(key) : undefined;
+	});
 
 	function sortValue({ id, order }: { id: string; order: string }) {
 		return `${id}:${order}`;
@@ -22,7 +29,7 @@
 
 <tr class="mobile-sort-select">
 	<th>
-		<Select value={sortValue($sortKeys[0])} onchange={handleChange}>
+		<Select value={selectedSortValue} onchange={handleChange}>
 			{#each rows as headerRow (headerRow.id)}
 				{#each headerRow.cells as cell (cell.id)}
 					<Subscribe props={cell.props()} let:props>

@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { type Chain, getExplorerUrl } from '$lib/helpers/chain';
 
-	export let chain: Chain;
-	export let tx_hash: Address;
+	interface Props {
+		chain: Chain;
+		tx_hash: Address;
+	}
+	let { chain, tx_hash }: Props = $props();
 
-	$: href = getExplorerUrl(chain, tx_hash);
+	let href = $derived(getExplorerUrl(chain, tx_hash));
 </script>
 
 {#if href}

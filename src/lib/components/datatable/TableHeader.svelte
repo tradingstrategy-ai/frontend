@@ -1,11 +1,18 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { Subscribe, Render, type HeaderRow } from 'svelte-headless-table';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 
-	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
-	export let rows: HeaderRow<any, any>[];
+	interface Props {
+		attrs: HTMLAttributes<HTMLTableSectionElement>;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		rows: HeaderRow<any, any>[];
+		children?: Snippet;
+	}
+
+	let { attrs, rows, children }: Props = $props();
 </script>
 
 <thead {...attrs}>
@@ -20,7 +27,7 @@
 							class={cell.id}
 							class:sortable={props.sort && !props.sort.disabled}
 							class:sorted={props.sort?.order}
-							on:click={() => props.sort?.toggle?.()}
+							onclick={() => props.sort?.toggle?.()}
 						>
 							<!-- this conditional is needed to support header strings that contain HTML entity refs -->
 							{#if typeof renderConfig === 'string'}
@@ -40,7 +47,7 @@
 			</tr>
 		</Subscribe>
 	{/each}
-	<slot />
+	{@render children?.()}
 </thead>
 
 <style>

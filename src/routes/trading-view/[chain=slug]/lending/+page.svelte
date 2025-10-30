@@ -2,28 +2,30 @@
 	Render listing of all available Reserves for specific chain
 -->
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import LendingReserveTable from '$lib/explorer/LendingReserveTable.svelte';
+	import LendingReserveTable, { sortOptions } from '$lib/explorer/LendingReserveTable.svelte';
 	import { Alert, HeroBanner, Section } from '$lib/components';
 	import { formatAmount } from '$lib/helpers/formatters';
+	import { getNumberParam, getStringParam } from '$lib/helpers/url-params.js';
 
-	export let data;
-	$: ({ chain, rows, totalRowCount } = data);
+	let { data } = $props();
+	let { chain, rows, totalRowCount } = $derived(data);
 
-	$: q = $page.url.searchParams;
-	$: options = {
-		page: Number(q.get('page')) || 0,
-		sort: q.get('sort') || 'tvl',
-		direction: q.get('direction') || 'desc'
+	let { searchParams } = $derived(page.url);
+
+	let options = $derived({
+		page: getNumberParam(searchParams, 'page', 0),
+		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
+		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
+	});
+
+	const onChange: ComponentProps<typeof LendingReserveTable>['onChange'] = async (params, scrollToTop) => {
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
 	};
-
-	async function handleChange({ detail }: ComponentEvents<LendingReserveTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
 </script>
 
 <svelte:head>
@@ -53,6 +55,6 @@
 	{/if}
 
 	<Section padding="sm">
-		<LendingReserveTable hideChainIcon {rows} {...options} on:change={handleChange} />
+		<LendingReserveTable hideChainIcon {rows} {...options} {onChange} />
 	</Section>
 </main>

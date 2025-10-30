@@ -1,19 +1,44 @@
+<script module lang="ts">
+	export const sortOptions = {
+		keys: ['volume_30d', 'pair_count', 'exchange_name'],
+		directions: ['desc', 'asc']
+	} as const;
+
+	type SortOptions = typeof sortOptions;
+</script>
+
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import { readable } from 'svelte/store';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import { formatDollar, formatAmount } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let loading = false;
-	export let rows: Record<string, any>[] | undefined = undefined;
-	export let page = 0;
-	export let sort = 'volume_30d';
-	export let direction: 'asc' | 'desc' = 'desc';
-	export let hideChainIcon = false;
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
+
+	interface Props extends DataTableProps {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		rows?: Record<string, any>[];
+		page?: number;
+		sort?: SortOptions['keys'][number];
+		direction?: SortOptions['directions'][number];
+		hideChainIcon?: boolean;
+	}
+
+	let {
+		rows,
+		page = 0,
+		sort = sortOptions.keys[0],
+		direction = sortOptions.directions[0],
+		loading = false,
+		hideChainIcon = false,
+		...restProps
+	}: Props = $props();
 
 	const tableRows = loading ? new Array(10).fill({}) : rows || [];
 
@@ -78,7 +103,7 @@
 </script>
 
 <div class="exchange-table">
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {...restProps} />
 </div>
 
 <style>

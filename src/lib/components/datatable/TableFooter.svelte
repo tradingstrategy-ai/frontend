@@ -3,14 +3,18 @@
 	import { formatAmount } from '$lib/helpers/formatters';
 	import PageButton from './PageButton.svelte';
 
-	export let page: PaginationState;
-	export let totalRowCount: number;
+	interface Props {
+		page: PaginationState;
+		totalRowCount: number;
+	}
+
+	let { page, totalRowCount }: Props = $props();
 
 	const { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = page;
 
-	$: firstRowIndex = $pageIndex * $pageSize + 1;
-	$: lastRowIndex = Math.min(firstRowIndex + $pageSize - 1, totalRowCount);
-	$: visiblePageIndices = getVisiblePageIndices($pageCount, $pageIndex);
+	let firstRowIndex = $derived($pageIndex * $pageSize + 1);
+	let lastRowIndex = $derived(Math.min(firstRowIndex + $pageSize - 1, totalRowCount));
+	let visiblePageIndices = $derived(getVisiblePageIndices($pageCount, $pageIndex));
 
 	// Click handler is attached to top-level pagination element,
 	// handles propogated events from decendent button elements
@@ -51,10 +55,10 @@
 					Showing {formatAmount(firstRowIndex)} to {formatAmount(lastRowIndex)} of {formatAmount(totalRowCount)}
 				</div>
 				{#if $pageCount > 1}
-					<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-					<nav on:click={handlePageButtonClick}>
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions, a11y_click_events_have_key_events -->
+					<nav onclick={handlePageButtonClick}>
 						<PageButton label="Previous" value={$pageIndex - 1} disabled={!$hasPreviousPage} />
-						{#each visiblePageIndices as pageIdx}
+						{#each visiblePageIndices as pageIdx (pageIdx)}
 							{#if hasPageIndexGap(pageIdx)}
 								<span class="gap-indicator">…</span>
 							{/if}

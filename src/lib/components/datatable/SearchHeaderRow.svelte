@@ -1,6 +1,11 @@
 <script lang="ts">
-	export let value: string;
-	import { TextInput } from '$lib/components';
+	import TextInput from '$lib/components/TextInput.svelte';
+
+	interface Props {
+		value: string;
+	}
+
+	let { value = $bindable() }: Props = $props();
 </script>
 
 <tr class="search">

@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { TradeInfo } from 'trade-executor/models/trade-info';
 	import { readable } from 'svelte/store';
-	import { createTable, createRender } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addHiddenColumns } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';

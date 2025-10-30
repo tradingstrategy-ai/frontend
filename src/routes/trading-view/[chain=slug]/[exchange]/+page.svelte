@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
@@ -11,29 +11,32 @@
 	import InfoSummary from './InfoSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let data;
-	$: ({ exchange } = data);
+	let { data } = $props();
+	let { exchange } = $derived(data);
 
-	$: nameDetails = parseExchangeName(exchange.human_readable_name);
+	let nameDetails = $derived(parseExchangeName(exchange.human_readable_name));
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[exchange.chain_slug]: exchange.chain_name,
 		[exchange.exchange_slug]: exchange.human_readable_name
-	};
+	});
 
 	const pairsClient = getPairsClient(fetch);
 
-	$: $page.route.id?.endsWith('[exchange]') &&
+	$effect(() => {
+		if (!page.route.id?.endsWith('[exchange]')) return;
+
 		pairsClient.update({
 			chain_slugs: exchange.chain_slug,
 			exchange_slugs: exchange.exchange_slug,
-			...Object.fromEntries($page.url.searchParams.entries())
+			...Object.fromEntries(page.url.searchParams.entries())
 		});
+	});
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
+	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -85,7 +88,7 @@
 		</header>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} hideChainIcon hiddenColumns={['exchange_name']} on:change={handlePairsChange} />
+			<PairTable {...$pairsClient} hideChainIcon hiddenColumns={['exchange_name']} {onChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

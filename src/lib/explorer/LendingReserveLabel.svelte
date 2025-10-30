@@ -3,8 +3,12 @@
 	import { EntitySymbol } from '$lib/components';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let reserve: LendingReserve;
-	export let hideChainIcon = false;
+	interface Props {
+		reserve: LendingReserve;
+		hideChainIcon: boolean;
+	}
+
+	let { reserve, hideChainIcon = false }: Props = $props();
 </script>
 
 <EntitySymbol

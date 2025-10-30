@@ -7,7 +7,7 @@ export type PairIndexParams = Partial<{
 	exchange_slugs: string;
 	token_addresses: string;
 	page_size: number | string;
-	page: number | string | null;
+	page: MaybeNumber;
 	sort: string;
 	direction: 'asc' | 'desc';
 }>;
@@ -57,7 +57,7 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 export type PairIndexData = PairIndexResponse & {
 	loading: boolean;
 	error?: Error;
-	page: number;
+	page: MaybeNumber;
 	sort: string;
 	direction: PairIndexParams['direction'];
 };

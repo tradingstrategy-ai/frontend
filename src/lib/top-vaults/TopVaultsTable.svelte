@@ -11,8 +11,9 @@
 	import VaultCell from './VaultCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	// import LastDepositCell from './LastDepositCell.svelte';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 

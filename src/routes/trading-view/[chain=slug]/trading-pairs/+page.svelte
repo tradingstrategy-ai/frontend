@@ -2,24 +2,24 @@
 	Render listing of all available Pairs for specific chain
 -->
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
+	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 	import { formatAmount } from '$lib/helpers/formatters';
 
-	export let data;
-	$: ({ chain, pairs, options } = data);
+	let { data } = $props();
+	let { chain, pairs, options } = $derived(data);
 
-	let loading = false;
+	let loading = $state(false);
 
-	async function handleChange({ detail }: ComponentEvents<PairTable>['change']) {
+	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
 		loading = true;
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		loading = false;
-		detail.scrollToTop();
-	}
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -40,6 +40,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<PairTable {...pairs} {...options} {loading} hideChainIcon on:change={handleChange} />
+		<PairTable {...pairs} {...options} {loading} hideChainIcon {onChange} />
 	</Section>
 </main>

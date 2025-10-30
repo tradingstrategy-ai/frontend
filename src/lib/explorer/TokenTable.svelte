@@ -1,24 +1,47 @@
+<script module lang="ts">
+	export const sortOptions = {
+		keys: ['volume_24h', 'liquidity_latest'],
+		directions: ['desc', 'asc']
+	} as const;
+
+	type SortOptions = typeof sortOptions;
+</script>
+
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { TokenIndexResponse } from './token-client';
 	import { type Writable, writable } from 'svelte/store';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import { formatDollar, formatValue } from '$lib/helpers/formatters';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 
-	export let loading = false;
-	export let rows: TokenIndexResponse['rows'] | undefined = undefined;
-	export let totalRowCount = 0;
-	export let page = 0;
-	export let sort = 'volume_30d';
-	export let direction: 'asc' | 'desc' = 'desc';
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
+
+	interface Props extends DataTableProps {
+		rows?: TokenIndexResponse['rows'];
+		page?: number;
+		sort?: SortOptions['keys'][number];
+		direction?: SortOptions['directions'][number];
+	}
+
+	let {
+		rows,
+		page = 0,
+		sort = sortOptions.keys[0],
+		direction = sortOptions.directions[0],
+		loading = false,
+		totalRowCount = 0,
+		...restProps
+	}: Props = $props();
 
 	const tableRows: Writable<TokenIndexResponse['rows']> = writable([]);
-	$: tableRows.set(loading ? new Array(10).fill({}) : rows || []);
+	$effect(() => tableRows.set(loading ? new Array(10).fill({}) : rows || []));
 
 	const serverItemCount = writable(0);
-	$: serverItemCount.set(totalRowCount);
+	$effect(() => serverItemCount.set(totalRowCount));
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
@@ -61,15 +84,16 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex } = tableViewModel.pluginStates.page;
-	const { sortKeys } = tableViewModel.pluginStates.sort;
 
-	$: $pageIndex = page;
-	$: $sortKeys = [{ id: sort, order: direction }];
+	const { pageIndex } = tableViewModel.pluginStates.page;
+	$effect(() => pageIndex.set(page));
+
+	const { sortKeys } = tableViewModel.pluginStates.sort;
+	$effect(() => sortKeys.set([{ id: sort, order: direction }]));
 </script>
 
 <div class="token-table" data-testid="token-table">
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} {...restProps} />
 </div>
 
 <style>

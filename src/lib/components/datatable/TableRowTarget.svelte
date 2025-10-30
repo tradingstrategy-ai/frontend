@@ -3,9 +3,13 @@
 	import Button from '../Button.svelte';
 	import TargetableLink from '../TargetableLink.svelte';
 
-	export let size: ComponentProps<Button>['size'] = 'sm';
-	export let label = 'Details';
-	export let href: string;
+	interface Props {
+		size?: ComponentProps<Button>['size'];
+		label?: string;
+		href: string;
+	}
+
+	let { size = 'sm', label = 'Details', href }: Props = $props();
 </script>
 
 <Button {size} {label} {href} />

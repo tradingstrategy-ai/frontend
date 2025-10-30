@@ -1,8 +1,19 @@
+<script module lang="ts">
+	export const sortOptions = {
+		keys: ['tvl', 'asset_label', 'protocol_name', 'supply_apr_latest', 'variable_borrow_apr_latest'],
+		directions: ['desc', 'asc']
+	} as const;
+
+	type SortOptions = typeof sortOptions;
+</script>
+
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { LendingReserve } from './lending-reserve-client';
 	import { writable, type Writable } from 'svelte/store';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import LendingReserveLabel from './LendingReserveLabel.svelte';
@@ -10,15 +21,28 @@
 	import { getFormattedReserveUSD, lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 
-	export let loading = false;
-	export let rows: LendingReserve[] | undefined = undefined;
-	export let page = 0;
-	export let sort = 'tvl';
-	export let direction: 'asc' | 'desc' = 'desc';
-	export let hideChainIcon = false;
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
+
+	interface Props extends DataTableProps {
+		rows?: LendingReserve[];
+		page?: number;
+		sort?: SortOptions['keys'][number];
+		direction?: SortOptions['directions'][number];
+		hideChainIcon?: boolean;
+	}
+
+	let {
+		rows,
+		page = 0,
+		sort = sortOptions.keys[0],
+		direction = sortOptions.directions[0],
+		loading = false,
+		hideChainIcon = false,
+		...restProps
+	}: Props = $props();
 
 	const tableRows: Writable<LendingReserve[]> = writable([]);
-	$: tableRows.set(loading ? new Array(10).fill({}) : (rows ?? []));
+	$effect(() => tableRows.set(loading ? new Array(10).fill({}) : (rows ?? [])));
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
@@ -31,9 +55,14 @@
 	const columns = table.createColumns([
 		table.column({
 			id: 'asset_label',
-			accessor: (row) => row.asset_symbol, // sort by asset_symbol
+			accessor: (row) => row,
 			header: 'Reserve',
-			cell: ({ row }) => createRender(LendingReserveLabel, { reserve: row.original, hideChainIcon })
+			cell: ({ value: reserve }) => createRender(LendingReserveLabel, { reserve, hideChainIcon }),
+			plugins: {
+				sort: {
+					getSortValue: ({ asset_symbol }) => asset_symbol
+				}
+			}
 		}),
 		table.column({
 			accessor: 'protocol_name',
@@ -57,9 +86,14 @@
 		}),
 		table.column({
 			id: 'variable_borrow_apr_latest',
-			accessor: (row) => row.additional_details?.variable_borrow_apr_latest,
+			accessor: (row) => row,
 			header: 'Borrow APR',
-			cell: ({ value, row }) => createRender(BorrowAprCell, { apr: value, reserve: row.original })
+			cell: ({ value: reserve }) => createRender(BorrowAprCell, { reserve }),
+			plugins: {
+				sort: {
+					getSortValue: (reserve) => reserve.additional_details?.variable_borrow_apr_latest
+				}
+			}
 		}),
 		table.column({
 			id: 'cta',
@@ -74,7 +108,7 @@
 </script>
 
 <div class="reserve-table" data-testid="reserve-table">
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {...restProps} />
 </div>
 
 <style>

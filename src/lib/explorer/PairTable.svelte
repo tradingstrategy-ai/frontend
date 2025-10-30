@@ -1,8 +1,19 @@
+<script module lang="ts">
+	export const sortOptions = {
+		keys: ['tvl', 'price_change_24h', 'volume_30d'],
+		directions: ['desc', 'asc']
+	} as const;
+
+	type SortOptions = typeof sortOptions;
+</script>
+
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { PairIndexResponse } from './pair-client';
 	import { type Writable, writable } from 'svelte/store';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
@@ -10,20 +21,34 @@
 	import { formatDollar, formatValue } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	export let loading = false;
-	export let rows: PairIndexResponse['rows'] | undefined = undefined;
-	export let totalRowCount = 0;
-	export let page = 0;
-	export let sort = 'tvl';
-	export let direction: 'asc' | 'desc' = 'desc';
-	export let hiddenColumns: string[] = [];
-	export let hideChainIcon = false;
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
+
+	interface Props extends DataTableProps {
+		rows?: PairIndexResponse['rows'];
+		page?: MaybeNumber;
+		sort?: SortOptions['keys'][number];
+		direction?: SortOptions['directions'][number];
+		hiddenColumns?: string[];
+		hideChainIcon?: boolean;
+	}
+
+	let {
+		rows,
+		page = 0,
+		sort = sortOptions.keys[0],
+		direction = sortOptions.directions[0],
+		hiddenColumns = [],
+		hideChainIcon = false,
+		loading = false,
+		totalRowCount = 0,
+		...restProps
+	}: Props = $props();
 
 	const tableRows: Writable<PairIndexResponse['rows']> = writable([]);
-	$: tableRows.set(loading ? new Array(10).fill({}) : rows || []);
+	$effect(() => tableRows.set(loading ? new Array(10).fill({}) : rows || []));
 
 	const serverItemCount = writable(0);
-	$: serverItemCount.set(totalRowCount);
+	$effect(() => serverItemCount.set(totalRowCount));
 
 	const table = createTable(tableRows, {
 		sort: addSortBy({
@@ -87,17 +112,19 @@
 	]);
 
 	const tableViewModel = table.createViewModel(columns);
-	const { pageIndex } = tableViewModel.pluginStates.page;
-	const { sortKeys } = tableViewModel.pluginStates.sort;
-	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
 
-	$: $pageIndex = page;
-	$: $sortKeys = [{ id: sort, order: direction }];
-	$: $hiddenColumnIds = hiddenColumns;
+	const { pageIndex } = tableViewModel.pluginStates.page;
+	$effect(() => pageIndex.set(page));
+
+	const { sortKeys } = tableViewModel.pluginStates.sort;
+	$effect(() => sortKeys.set([{ id: sort, order: direction }]));
+
+	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
+	$effect(() => hiddenColumnIds.set(hiddenColumns));
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {totalRowCount} {...restProps} />
 </div>
 
 <style>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
@@ -11,27 +11,30 @@
 	import InfoSummary from './InfoSummary.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 
-	export let data;
-	$: ({ token, reserves } = data);
+	let { data } = $props();
+	let { token, reserves } = $derived(data);
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[token.chain_slug]: token.chain_name,
 		[token.address]: token.name
-	};
+	});
 
 	const pairsClient = getPairsClient(fetch);
 
-	$: $page.route.id?.endsWith('[token]') &&
+	$effect(() => {
+		if (!page.route.id?.endsWith('[token]')) return;
+
 		pairsClient.update({
 			chain_slugs: token.chain_slug,
 			token_addresses: token.address,
-			...Object.fromEntries($page.url.searchParams.entries())
+			...Object.fromEntries(page.url.searchParams.entries())
 		});
+	});
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
+	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -70,7 +73,7 @@
 		<h2>Trading pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} hideChainIcon on:change={handlePairsChange} />
+			<PairTable {...$pairsClient} hideChainIcon {onChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
