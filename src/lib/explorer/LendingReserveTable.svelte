@@ -10,7 +10,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { LendingReserve } from './lending-reserve-client';
-	import { writable, type Writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
@@ -41,10 +41,17 @@
 		...restProps
 	}: Props = $props();
 
-	const tableRows: Writable<LendingReserve[]> = writable([]);
-	$effect(() => tableRows.set(loading ? new Array(10).fill({}) : (rows ?? [])));
+	// set tableRows to real or dummy table rows based on laoding state
+	let tableRows: LendingReserve[] = $derived(loading ? new Array(10).fill({}) : (rows ?? []));
 
-	const table = createTable(tableRows, {
+	// create a store needed createTable - initial state of tableRows is required for SSR / to prevent FOUC
+	// svelte-ignore state_referenced_locally
+	const tableRowsStore = writable(tableRows);
+
+	// update the store when data changes
+	$effect(() => tableRowsStore.set(tableRows));
+
+	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
