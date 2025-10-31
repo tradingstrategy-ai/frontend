@@ -9,8 +9,8 @@
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import ChainCell from './ChainCell.svelte';
 	import VaultCell from './VaultCell.svelte';
+	import MultiValCell, { multiValCompareFn } from './MultiValCell.svelte';
 	import FeesCell from './FeesCell.svelte';
-	// import LastDepositCell from './LastDepositCell.svelte';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
@@ -24,12 +24,30 @@
 
 	const { topVaults, apiChain }: Props = $props();
 
+	const formatReturn = (v: number | null) => formatPercent(v, 2);
+	const formatTvl = (v: number | null) => formatDollar(v, 2);
+
+	// Based on VaultTechnicalRisk enum
+	// see: https://github.com/tradingstrategy-ai/web3-ethereum-defi/blob/master/eth_defi/vault/risk.py
+	function getRiskValue(risk: string | null) {
+		// prettier-ignore
+		switch (risk?.toLowerCase().replace(/ /g, '_')) {
+			case 'low'         : return 1;
+			case 'lowish'      : return 5;
+			case 'high'        : return 20;
+			case 'extra_high'  : return 20;
+			case 'dangerous'   : return 50;
+			case 'blacklisted' : return 999;
+			default            : return 1000
+		}
+	}
+
 	const vaultsStore = readable(topVaults.vaults);
 
 	const table = createTable(vaultsStore, {
 		hide: addHiddenColumns({ initialHiddenColumnIds: apiChain ? ['chain'] : [] }),
 		sort: addSortBy({
-			initialSortKeys: [{ id: 'one_month_returns', order: 'desc' }],
+			initialSortKeys: [{ id: 'one_month_return_ann', order: 'desc' }],
 			toggleOrder: ['desc', 'asc']
 		}),
 		filter: addTableFilter({
@@ -78,34 +96,44 @@
 			}
 		}),
 		table.column({
-			accessor: 'current_nav',
-			header: 'Current TVL (USD)',
-			cell: ({ value }) => formatDollar(value, 2, 2),
-			plugins: { filter: { exclude: true } }
+			id: 'one_month_return_ann',
+			accessor: (vault) => [vault.one_month_cagr_net, vault.one_month_cagr],
+			header: '1M return ann.<br/>(net/gross)',
+			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
+			plugins: {
+				sort: { compareFn: multiValCompareFn },
+				filter: { exclude: true }
+			}
 		}),
 		table.column({
-			accessor: 'one_month_cagr',
-			header: '1M return (ann.)',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
+			id: 'lifetime_return_abs',
+			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
+			header: 'Lifetime return abs.<br/>(net/gross)',
+			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
+			plugins: {
+				sort: { compareFn: multiValCompareFn },
+				filter: { exclude: true }
+			}
 		}),
 		table.column({
-			accessor: 'one_month_returns',
-			header: '1M return',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
+			id: 'lifetime_return_ann',
+			accessor: (vault) => [vault.cagr_net, vault.cagr],
+			header: 'Lifetime return ann.<br/>(net/gross)',
+			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
+			plugins: {
+				sort: { compareFn: multiValCompareFn },
+				filter: { exclude: true }
+			}
 		}),
 		table.column({
-			accessor: 'three_months_cagr',
-			header: '3M return (ann.)',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
-			accessor: 'three_months_returns',
-			header: '3M return',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
+			id: 'three_months_return_ann',
+			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
+			header: '3M return ann.<br/>(net/gross)',
+			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
+			plugins: {
+				sort: { compareFn: multiValCompareFn },
+				filter: { exclude: true }
+			}
 		}),
 		table.column({
 			accessor: 'three_months_sharpe',
@@ -120,18 +148,23 @@
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'cagr',
-			header: 'Lifetime return (ann.)',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
+			accessor: 'denomination',
+			header: 'Denom&shy;ination',
+			cell: ({ value }) => formatValue(value),
+			plugins: { sort: { invert: true } }
 		}),
 		table.column({
-			accessor: 'lifetime_return',
-			header: 'Lifetime return',
-			cell: ({ value }) => formatPercent(value, 2),
-			plugins: { filter: { exclude: true } }
+			id: 'tvl',
+			accessor: (vault) => [vault.current_nav, vault.peak_nav],
+			header: 'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
+			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatTvl }),
+			plugins: {
+				sort: { compareFn: multiValCompareFn },
+				filter: { exclude: true }
+			}
 		}),
 		table.column({
+			id: 'age',
 			accessor: 'years',
 			header: 'Age (years)',
 			cell: ({ value }) => formatNumber(value, 2),
@@ -145,26 +178,8 @@
 		// 	plugins: { filter: { exclude: true } }
 		// }),
 		table.column({
-			accessor: 'denomination',
-			header: 'Denom&shy;ination',
-			cell: ({ value }) => formatValue(value),
-			plugins: { sort: { invert: true } }
-		}),
-		table.column({
-			accessor: 'peak_nav',
-			header: 'Peak TVL (USD)',
-			cell: ({ value }) => formatDollar(value, 2),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
-			accessor: 'event_count',
-			header: 'Deposits &&nbsp;Redeems',
-			cell: ({ value }) => formatAmount(value),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
 			id: 'fees',
-			header: 'Fees',
+			header: 'Fees<br>(mgmt/&ZeroWidthSpace;perf)',
 			accessor: ({ mgmt_fee, perf_fee }) => ({ mgmt_fee, perf_fee }),
 			cell: ({ value }) => createRender(FeesCell, value),
 			plugins: {
@@ -174,6 +189,23 @@
 					invert: true
 				},
 				filter: { exclude: true }
+			}
+		}),
+		table.column({
+			accessor: 'event_count',
+			header: 'Deposit events',
+			cell: ({ value }) => formatAmount(value),
+			plugins: { filter: { exclude: true } }
+		}),
+		table.column({
+			accessor: 'risk',
+			header: 'Risk',
+			cell: ({ value }) => value ?? 'Unknown',
+			plugins: {
+				sort: {
+					getSortValue: getRiskValue,
+					invert: true
+				}
 			}
 		}),
 		table.column({
@@ -330,8 +362,8 @@
 				min-width: 12rem;
 			}
 
-			/* flip the sort indicator on columns that use inverse sort */
-			:global(:is(th.chain, th.vault, th.last_deposit, th.denomination, th.fees) svg) {
+			/* flip the sort indicator on columns that use inverted sort */
+			:global(:is(th.chain, th.vault, th.denomination, th.fees, th.risk) svg) {
 				rotate: 180deg;
 			}
 
@@ -402,20 +434,16 @@
 
 			:global(
 				:is(
-					td.current_nav,
-					td.one_month_cagr,
-					td.one_month_returns,
-					td.three_months_cagr,
-					td.three_months_returns,
+					td.one_month_return_ann,
+					td.lifetime_return_abs,
+					td.lifetime_return_ann,
+					td.three_months_return_ann,
 					td.three_months_sharpe,
 					td.three_months_volatility,
-					td.cagr,
-					td.lifetime_return,
-					td.years,
-					td.last_deposit,
-					td.peak_nav,
-					td.event_count,
-					td.fees
+					td.tvl,
+					td.age,
+					td.fees,
+					td.event_count
 				)
 			) {
 				text-align: right;
@@ -423,6 +451,10 @@
 
 			:global(td.denomination) {
 				text-align: center;
+			}
+
+			:global(td.risk) {
+				white-space: nowrap;
 			}
 		}
 	}
