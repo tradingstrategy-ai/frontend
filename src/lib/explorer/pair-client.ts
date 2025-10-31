@@ -67,9 +67,7 @@ export function getPairsClient(fetch: Fetch) {
 		loading: false,
 		rows: [],
 		totalRowCount: 0,
-		page: Number(defaultParams.page),
-		sort: defaultParams.sort,
-		direction: defaultParams.direction
+		...defaultParams
 	} as PairIndexData);
 
 	function merge(data: Partial<PairIndexData>) {

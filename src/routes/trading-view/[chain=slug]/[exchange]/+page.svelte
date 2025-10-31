@@ -6,10 +6,11 @@
 	import { parseExchangeName } from '$lib/helpers/exchange';
 	import { Alert, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import PairTable from '$lib/explorer/PairTable.svelte';
+	import PairTable, { sortOptions } from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
 	let { data } = $props();
 	let { exchange } = $derived(data);
@@ -23,14 +24,16 @@
 
 	const pairsClient = getPairsClient(fetch);
 
-	$effect(() => {
-		if (!page.route.id?.endsWith('[exchange]')) return;
+	let { searchParams } = $derived(page.url);
 
-		pairsClient.update({
-			chain_slugs: exchange.chain_slug,
-			exchange_slugs: exchange.exchange_slug,
-			...Object.fromEntries(page.url.searchParams.entries())
-		});
+	let pairOptions = $derived({
+		page: getNumberParam(searchParams, 'page', 0),
+		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
+		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
+	});
+
+	$effect(() => {
+		pairsClient.update({ chain_slugs: exchange.chain_slug, exchange_slugs: exchange.exchange_slug, ...pairOptions });
 	});
 
 	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
@@ -88,7 +91,7 @@
 		</header>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} hideChainIcon hiddenColumns={['exchange_name']} {onChange} />
+			<PairTable {...$pairsClient} {...pairOptions} hideChainIcon hiddenColumns={['exchange_name']} {onChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

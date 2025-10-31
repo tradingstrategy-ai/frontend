@@ -9,7 +9,8 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import PairTable from '$lib/explorer/PairTable.svelte';
+	import PairTable, { sortOptions } from '$lib/explorer/PairTable.svelte';
+	import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
 	let { data } = $props();
 	let { token, reserves } = $derived(data);
@@ -21,14 +22,16 @@
 
 	const pairsClient = getPairsClient(fetch);
 
-	$effect(() => {
-		if (!page.route.id?.endsWith('[token]')) return;
+	let { searchParams } = $derived(page.url);
 
-		pairsClient.update({
-			chain_slugs: token.chain_slug,
-			token_addresses: token.address,
-			...Object.fromEntries(page.url.searchParams.entries())
-		});
+	let pairOptions = $derived({
+		page: getNumberParam(searchParams, 'page', 0),
+		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
+		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
+	});
+
+	$effect(() => {
+		pairsClient.update({ chain_slugs: token.chain_slug, token_addresses: token.address, ...pairOptions });
 	});
 
 	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
@@ -73,7 +76,7 @@
 		<h2>Trading pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} hideChainIcon {onChange} />
+			<PairTable {...$pairsClient} {...pairOptions} hideChainIcon {onChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.
