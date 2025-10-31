@@ -2,16 +2,20 @@
 	import { EntitySymbol } from '$lib/components';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 
-	export let symbol: string;
-	export let swapFee: number;
-	export let chainName: string;
-	export let logoUrl: MaybeString = undefined;
+	interface Props {
+		symbol: string;
+		swapFee: number;
+		chainName: string;
+		logoUrl: MaybeString;
+	}
+
+	let { symbol, swapFee, chainName, logoUrl }: Props = $props();
 </script>
 
 <EntitySymbol {logoUrl} label={chainName}>
 	<div>
-		{symbol}
-		<span>
+		<span class="symbol">{symbol}</span>
+		<span class="fee">
 			{formatSwapFee(swapFee)}
 		</span>
 	</div>
@@ -20,9 +24,18 @@
 <style>
 	div {
 		white-space: nowrap;
+		display: flex;
+		gap: 0.5rem;
 	}
 
-	span {
+	.symbol {
+		display: inline-block;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		max-width: 12ch;
+	}
+
+	.fee {
 		color: var(--c-text-extra-light);
 	}
 </style>

@@ -4,8 +4,11 @@
 	import { formatInterestRate } from '$lib/helpers/formatters';
 	import { Tooltip } from '$lib/components';
 
-	export let apr: number;
-	export let reserve: LendingReserve;
+	interface Props {
+		reserve: LendingReserve;
+	}
+
+	let { reserve }: Props = $props();
 </script>
 
 {#if !reserve.additional_details}
@@ -16,5 +19,5 @@
 		<svelte:fragment slot="popup">Non-borrowable reserve</svelte:fragment>
 	</Tooltip>
 {:else}
-	{formatInterestRate(apr)}
+	{formatInterestRate(reserve.additional_details.variable_borrow_apr_latest)}
 {/if}

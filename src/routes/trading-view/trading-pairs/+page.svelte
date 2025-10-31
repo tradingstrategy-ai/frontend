@@ -2,23 +2,23 @@
 	Render listing of all available Pairs
 -->
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
+	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable from '$lib/explorer/PairTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
 
-	export let data;
-	$: ({ pairs, options } = data);
+	let { data } = $props();
+	let { pairs, options } = $derived(data);
 
-	let loading = false;
+	let loading = $state(false);
 
-	async function handleChange({ detail }: ComponentEvents<PairTable>['change']) {
+	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
 		loading = true;
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		loading = false;
-		detail.scrollToTop();
-	}
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -34,6 +34,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<PairTable {...pairs} {...options} {loading} on:change={handleChange} />
+		<PairTable {...pairs} {...options} {loading} {onChange} />
 	</Section>
 </main>

@@ -15,7 +15,7 @@
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			{#if chain}
-				<a href="/trading-view/{chain.slug}">
+				<a href="/trading-view/{chain.slug}/vaults">
 					<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 				</a>
 			{:else}

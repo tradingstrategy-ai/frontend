@@ -9,7 +9,7 @@
 	let { data } = $props();
 	let { admin, positions, status, strategy, reserves } = $derived(data);
 
-	type Options = Pick<ComponentProps<PositionTable>, 'page' | 'sort' | 'direction'>;
+	type Options = Pick<ComponentProps<typeof PositionTable>, 'page' | 'sort' | 'direction'>;
 
 	const defaultSort = {
 		open: 'profit',
@@ -24,12 +24,12 @@
 		direction: q.get('direction') === 'asc' ? 'asc' : 'desc'
 	});
 
-	async function handleChange({ detail }: ComponentEvents<PositionTable>['change']) {
+	const onChange: ComponentProps<typeof PositionTable>['onChange'] = async (params, scrollToTop) => {
 		// skip URL updates when user navigates to different positions status page
 		if (!page.url.pathname.includes(status)) return;
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -55,7 +55,7 @@
 			hasSearch={positions.length > 5}
 			hiddenPositions={strategy.hiddenPositions}
 			{reserves}
-			on:change={handleChange}
+			{onChange}
 		/>
 	{:else}
 		<Alert status="info">

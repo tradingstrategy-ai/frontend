@@ -1,6 +1,9 @@
 <script lang="ts">
-	export let status: boolean;
-	export let revert_reason: string | null;
+	interface Props {
+		status: boolean;
+		revert_reason: string | null;
+	}
+	let { status, revert_reason }: Props = $props();
 </script>
 
 <span class:failure={!status}>

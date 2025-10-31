@@ -11,7 +11,7 @@
 	import TopReserves from './TopReserves.svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
 
-	export let data;
+	const { data } = $props();
 	const { chain, topVaults } = data;
 </script>
 

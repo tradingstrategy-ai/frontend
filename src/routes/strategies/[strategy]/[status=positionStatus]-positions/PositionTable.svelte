@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { SvelteComponent } from 'svelte';
-	import type { Constructor } from 'svelte-headless-table';
+	import type { ComponentProps } from 'svelte';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import type { ReservePosition } from 'trade-executor/schemas/reserve';
 	import { writable } from 'svelte/store';
-	import { createTable, createRender } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addTableFilter, addColumnOrder, addPagination } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
@@ -16,15 +16,15 @@
 	import ReservesRow from './ReservesRow.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 
-	interface Props {
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
+
+	interface Props extends DataTableProps {
 		admin?: boolean;
 		positions: TradingPositionInfo[];
 		status: PositionStatus;
 		page?: number;
 		sort: string;
 		direction: 'asc' | 'desc';
-		hasSearch?: boolean;
-		hasPagination?: boolean;
 		hiddenPositions?: number[];
 		reserves: ReservePosition;
 	}
@@ -36,10 +36,9 @@
 		page = 0,
 		sort,
 		direction,
-		hasSearch = false,
-		hasPagination = false,
 		hiddenPositions = [],
-		reserves
+		reserves,
+		...restProps
 	}: Props = $props();
 
 	const positionsStore = writable(positions);
@@ -92,7 +91,7 @@
 			id: 'flags',
 			accessor: (position) => position,
 			cell: ({ value }) =>
-				createRender(RemarksCell as unknown as Constructor<SvelteComponent>, {
+				createRender(RemarksCell, {
 					admin,
 					position: value,
 					baseUrl: `./${status}-positions/${value.position_id}`,
@@ -104,11 +103,7 @@
 			header: 'Profitability',
 			id: 'profit',
 			accessor: 'profitability',
-			cell: ({ value }) =>
-				createRender(Profitability as unknown as Constructor<SvelteComponent>, {
-					of: value,
-					boxed: true
-				})
+			cell: ({ value }) => createRender(Profitability, { of: value, boxed: true })
 		}),
 		table.column({
 			header: 'Frozen on',
@@ -170,7 +165,7 @@
 </script>
 
 <div class="position-table">
-	<DataTable {hasPagination} {hasSearch} {tableViewModel} targetableRows size="sm" on:change>
+	<DataTable {tableViewModel} targetableRows size="sm" {...restProps}>
 		{#if status === 'open'}
 			<ReservesRow {reserves} />
 		{/if}

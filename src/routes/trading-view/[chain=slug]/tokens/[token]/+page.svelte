@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
@@ -9,29 +9,35 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import PairTable from '$lib/explorer/PairTable.svelte';
+	import PairTable, { sortOptions } from '$lib/explorer/PairTable.svelte';
+	import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
-	export let data;
-	$: ({ token, reserves } = data);
+	let { data } = $props();
+	let { token, reserves } = $derived(data);
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[token.chain_slug]: token.chain_name,
 		[token.address]: token.name
-	};
+	});
 
 	const pairsClient = getPairsClient(fetch);
 
-	$: $page.route.id?.endsWith('[token]') &&
-		pairsClient.update({
-			chain_slugs: token.chain_slug,
-			token_addresses: token.address,
-			...Object.fromEntries($page.url.searchParams.entries())
-		});
+	let { searchParams } = $derived(page.url);
 
-	async function handlePairsChange({ detail }: ComponentEvents<PairTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
+	let pairOptions = $derived({
+		page: getNumberParam(searchParams, 'page', 0),
+		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
+		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
+	});
+
+	$effect(() => {
+		pairsClient.update({ chain_slugs: token.chain_slug, token_addresses: token.address, ...pairOptions });
+	});
+
+	const onChange: ComponentProps<typeof PairTable>['onChange'] = async (params, scrollToTop) => {
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
+	};
 </script>
 
 <svelte:head>
@@ -70,7 +76,7 @@
 		<h2>Trading pairs</h2>
 
 		{#if !$pairsClient.error}
-			<PairTable {...$pairsClient} hideChainIcon on:change={handlePairsChange} />
+			<PairTable {...$pairsClient} {...pairOptions} hideChainIcon {onChange} />
 		{:else}
 			<Alert>
 				An error occurred loading the pairs data. Check the URL parameters for errors and try reloading the page.

@@ -17,7 +17,7 @@
 	import IconSearch from '~icons/local/search';
 	import IconWallet from '~icons/local/wallet';
 
-	export let data;
+	const { data } = $props();
 	const { impressiveNumbers, topVaults } = data;
 </script>
 

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import { readable } from 'svelte/store';
-	import { createTable, createRender } from 'svelte-headless-table';
+	import { createTable } from 'svelte-headless-table';
+	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import BlockchainExplorerLink from './BlockchainExplorerLink.svelte';
 	import TransactionStatus from './TransactionStatus.svelte';
@@ -20,8 +21,8 @@
 		table.column({
 			id: 'transaction_hash',
 			header: 'Transaction hash',
-			accessor: ({ tx_hash }) => ({ tx_hash }),
-			cell: ({ value }) => createRender(BlockchainExplorerLink, { ...value, chain })
+			accessor: ({ tx_hash }) => tx_hash,
+			cell: ({ value: tx_hash }) => createRender(BlockchainExplorerLink, { tx_hash, chain })
 		}),
 		table.column({
 			id: 'status',

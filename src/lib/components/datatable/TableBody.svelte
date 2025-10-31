@@ -1,17 +1,24 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { PaginationState } from 'svelte-headless-table/plugins';
 	import { Subscribe, type BodyRow } from 'svelte-headless-table';
 	import TableRow from './TableRow.svelte';
 
-	export let attrs: HTMLAttributes<HTMLTableSectionElement>;
-	export let rows: BodyRow<any, any>[];
-	export let page: PaginationState | undefined;
-	export let targetableRows = false;
+	interface Props {
+		attrs: HTMLAttributes<HTMLTableSectionElement>;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		rows: BodyRow<any, any>[];
+		page: PaginationState | undefined;
+		targetableRows?: boolean;
+		children?: Snippet;
+	}
+
+	let { attrs, rows, page, targetableRows = false, children }: Props = $props();
 
 	const { pageIndex, pageSize } = page ?? {};
 
-	let offsetWidth: number;
+	let offsetWidth = $state<number>();
 
 	function getRowIndex(pageRowIndex: number) {
 		if ($pageIndex !== undefined && $pageSize !== undefined) {
@@ -22,7 +29,7 @@
 
 <!-- --table-width needed for proper tr.targetable styling  -->
 <tbody {...attrs} bind:offsetWidth style:--table-width="{offsetWidth}px">
-	<slot />
+	{@render children?.()}
 	{#each rows as row, pageRowIndex (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
 			<TableRow attrs={rowAttrs} cells={row.cells} index={getRowIndex(pageRowIndex)} targetable={targetableRows} />

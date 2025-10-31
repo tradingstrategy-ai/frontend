@@ -1,10 +1,13 @@
 import { fetchPairs } from '$lib/explorer/pair-client';
+import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
+import { sortOptions } from '$lib/explorer/PairTable.svelte';
 
 export async function load({ fetch, url }) {
 	const { searchParams } = url;
-	const page = Number(searchParams.get('page')) || 0;
-	const sort = searchParams.get('sort') || 'volume_30d';
-	const direction = searchParams.get('direction') || 'desc';
+
+	const page = getNumberParam(searchParams, 'page', 0);
+	const sort = getStringParam(searchParams, 'sort', sortOptions.keys);
+	const direction = getStringParam(searchParams, 'direction', sortOptions.directions);
 
 	const pairs = await fetchPairs(fetch, { page, sort, direction });
 

@@ -1,8 +1,19 @@
+<script module lang="ts">
+	export const sortOptions = {
+		keys: ['tvl', 'asset_label', 'protocol_name', 'supply_apr_latest', 'variable_borrow_apr_latest'],
+		directions: ['desc', 'asc']
+	} as const;
+
+	type SortOptions = typeof sortOptions;
+</script>
+
 <script lang="ts">
+	import type { ComponentProps } from 'svelte';
 	import type { LendingReserve } from './lending-reserve-client';
-	import { writable, type Writable } from 'svelte/store';
-	import { createRender, createTable } from 'svelte-headless-table';
+	import { writable } from 'svelte/store';
+	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import LendingReserveLabel from './LendingReserveLabel.svelte';
@@ -10,17 +21,39 @@
 	import { getFormattedReserveUSD, lendingReserveInternalUrl } from '$lib/helpers/lending-reserve';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 
-	export let loading = false;
-	export let rows: LendingReserve[] | undefined = undefined;
-	export let page = 0;
-	export let sort = 'tvl';
-	export let direction: 'asc' | 'desc' = 'desc';
-	export let hideChainIcon = false;
+	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
-	const tableRows: Writable<LendingReserve[]> = writable([]);
-	$: tableRows.set(loading ? new Array(10).fill({}) : (rows ?? []));
+	interface Props extends DataTableProps {
+		rows?: LendingReserve[];
+		page?: number;
+		sort?: SortOptions['keys'][number];
+		direction?: SortOptions['directions'][number];
+		hideChainIcon?: boolean;
+	}
 
-	const table = createTable(tableRows, {
+	let {
+		rows,
+		page = 0,
+		sort = sortOptions.keys[0],
+		direction = sortOptions.directions[0],
+		loading = false,
+		hideChainIcon = false,
+		...restProps
+	}: Props = $props();
+
+	// set tableRows to real or dummy table rows based on laoding state
+	let tableRows: LendingReserve[] = $derived(loading ? new Array(10).fill({}) : (rows ?? []));
+
+	// create a store needed createTable - initial state of tableRows is required for SSR / to prevent FOUC
+	// svelte-ignore state_referenced_locally
+	const tableRowsStore = writable(tableRows);
+
+	// update the store when data changes
+	$effect(() => {
+		tableRowsStore.set(tableRows);
+	});
+
+	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['asc', 'desc']
@@ -31,9 +64,14 @@
 	const columns = table.createColumns([
 		table.column({
 			id: 'asset_label',
-			accessor: (row) => row.asset_symbol, // sort by asset_symbol
+			accessor: (row) => row,
 			header: 'Reserve',
-			cell: ({ row }) => createRender(LendingReserveLabel, { reserve: row.original, hideChainIcon })
+			cell: ({ value: reserve }) => createRender(LendingReserveLabel, { reserve, hideChainIcon }),
+			plugins: {
+				sort: {
+					getSortValue: ({ asset_symbol }) => asset_symbol
+				}
+			}
 		}),
 		table.column({
 			accessor: 'protocol_name',
@@ -41,13 +79,14 @@
 		}),
 		table.column({
 			id: 'tvl',
-			accessor: (row) => {
-				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
-				// return null (vs. undefined) to sort properly in svelte-headless-table
-				return tvl ? Number(tvl) : null;
-			},
+			accessor: (row) => getFormattedReserveUSD(row)?.totalLiquidityUSD,
 			header: 'TVL',
-			cell: ({ value }) => formatDollar(value)
+			cell: ({ value }) => formatDollar(value),
+			plugins: {
+				sort: {
+					getSortValue: (tvl) => Number(tvl) || -1
+				}
+			}
 		}),
 		table.column({
 			id: 'supply_apr_latest',
@@ -57,9 +96,14 @@
 		}),
 		table.column({
 			id: 'variable_borrow_apr_latest',
-			accessor: (row) => row.additional_details?.variable_borrow_apr_latest,
+			accessor: (row) => row,
 			header: 'Borrow APR',
-			cell: ({ value, row }) => createRender(BorrowAprCell, { apr: value, reserve: row.original })
+			cell: ({ value: reserve }) => createRender(BorrowAprCell, { reserve }),
+			plugins: {
+				sort: {
+					getSortValue: (reserve) => reserve.additional_details?.variable_borrow_apr_latest
+				}
+			}
 		}),
 		table.column({
 			id: 'cta',
@@ -74,7 +118,7 @@
 </script>
 
 <div class="reserve-table" data-testid="reserve-table">
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} on:change />
+	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {...restProps} />
 </div>
 
 <style>

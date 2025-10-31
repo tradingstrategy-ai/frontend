@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let active = false;
-	export let disabled = false;
-	export let label: string | number;
-	export let value: number;
+	interface Props {
+		active?: boolean;
+		disabled?: boolean;
+		label: string | number;
+		value: number;
+	}
+
+	let { active = false, disabled = false, label, value }: Props = $props();
 </script>
 
 {#if active || disabled}

@@ -2,26 +2,28 @@
 	Render listing of all available exchanges
 -->
 <script lang="ts">
-	import type { ComponentEvents } from 'svelte';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import ExchangeTable from '$lib/explorer/ExchangeTable.svelte';
+	import ExchangeTable, { sortOptions } from '$lib/explorer/ExchangeTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
+	import { getStringParam, getNumberParam } from '$lib/helpers/url-params.js';
 
-	export let data;
+	let { data } = $props();
 
-	$: q = $page.url.searchParams;
-	$: options = {
-		page: Number(q.get('page')) || 0,
-		sort: q.get('sort') || 'volume_30d',
-		direction: q.get('direction') || 'desc'
+	let { searchParams } = $derived(page.url);
+
+	let options = $derived({
+		page: getNumberParam(searchParams, 'page', 0),
+		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
+		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
+	});
+
+	const onChange: ComponentProps<typeof ExchangeTable>['onChange'] = async (params, scrollToTop) => {
+		await goto('?' + new URLSearchParams(params), { noScroll: true });
+		scrollToTop();
 	};
-
-	async function handleChange({ detail }: ComponentEvents<ExchangeTable>['change']) {
-		await goto('?' + new URLSearchParams(detail.params), { noScroll: true });
-		detail.scrollToTop();
-	}
 </script>
 
 <svelte:head>
@@ -40,6 +42,6 @@
 	</Section>
 
 	<Section padding="sm">
-		<ExchangeTable rows={data.exchanges} {...options} on:change={handleChange} />
+		<ExchangeTable rows={data.exchanges} {...options} {onChange} />
 	</Section>
 </main>
