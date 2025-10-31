@@ -25,7 +25,7 @@
 
 	interface Props extends DataTableProps {
 		rows?: PairIndexResponse['rows'];
-		page?: MaybeNumber;
+		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
 		hiddenColumns?: string[];
@@ -47,22 +47,28 @@
 	// set tableRows to real or dummy table rows based on laoding state
 	let tableRows: PairIndexResponse['rows'] = $derived(loading ? new Array(10).fill({}) : (rows ?? []));
 
-	// create a store needed createTable - initial state of tableRows is required for SSR / to prevent FOUC
+	// create stores needed by createTable - initial state is required for SSR / to prevent FOUC
 	// svelte-ignore state_referenced_locally
 	const tableRowsStore = writable(tableRows);
+	const serverItemCount = writable(totalRowCount);
 
-	// update the store when data changes
-	$effect(() => tableRowsStore.set(tableRows));
-
-	const serverItemCount = writable(0);
-	$effect(() => serverItemCount.set(totalRowCount));
+	// update the stores when data changes
+	$effect(() => {
+		tableRowsStore.set(tableRows);
+		serverItemCount.set(totalRowCount);
+	});
 
 	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			serverSide: true,
-			toggleOrder: ['desc', 'asc']
+			toggleOrder: [...sortOptions.directions],
+			initialSortKeys: [{ id: sort, order: direction }]
 		}),
-		page: addPagination({ serverSide: true, serverItemCount }),
+		page: addPagination({
+			serverSide: true,
+			serverItemCount,
+			initialPageIndex: page
+		}),
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns })
 	});
 
@@ -121,13 +127,19 @@
 	const tableViewModel = table.createViewModel(columns);
 
 	const { pageIndex } = tableViewModel.pluginStates.page;
-	$effect(() => pageIndex.set(page));
+	$effect(() => {
+		pageIndex.set(page);
+	});
 
 	const { sortKeys } = tableViewModel.pluginStates.sort;
-	$effect(() => sortKeys.set([{ id: sort, order: direction }]));
+	$effect(() => {
+		sortKeys.set([{ id: sort, order: direction }]);
+	});
 
 	const { hiddenColumnIds } = tableViewModel.pluginStates.hide;
-	$effect(() => hiddenColumnIds.set(hiddenColumns));
+	$effect(() => {
+		hiddenColumnIds.set(hiddenColumns);
+	});
 </script>
 
 <div class="pairs-table" data-testid="pairs-table">

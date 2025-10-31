@@ -49,7 +49,9 @@
 	const tableRowsStore = writable(tableRows);
 
 	// update the store when data changes
-	$effect(() => tableRowsStore.set(tableRows));
+	$effect(() => {
+		tableRowsStore.set(tableRows);
+	});
 
 	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
@@ -77,13 +79,14 @@
 		}),
 		table.column({
 			id: 'tvl',
-			accessor: (row) => {
-				const tvl = getFormattedReserveUSD(row)?.totalLiquidityUSD;
-				// return null (vs. undefined) to sort properly in svelte-headless-table
-				return tvl ? Number(tvl) : null;
-			},
+			accessor: (row) => getFormattedReserveUSD(row)?.totalLiquidityUSD,
 			header: 'TVL',
-			cell: ({ value }) => formatDollar(value)
+			cell: ({ value }) => formatDollar(value),
+			plugins: {
+				sort: {
+					getSortValue: (tvl) => Number(tvl) || -1
+				}
+			}
 		}),
 		table.column({
 			id: 'supply_apr_latest',
