@@ -16,6 +16,7 @@
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import RiskCell from './RiskCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -199,8 +200,8 @@
 		}),
 		table.column({
 			accessor: 'risk',
-			header: 'Risk',
-			cell: ({ value }) => value ?? 'Unknown',
+			header: 'Technical risk',
+			cell: ({ value }) => createRender(RiskCell, { value }),
 			plugins: {
 				sort: {
 					getSortValue: getRiskValue,
@@ -214,7 +215,7 @@
 			accessor: ({ address, chain_id }) => ({ address, chain_id }),
 			cell: ({ value: { address, chain_id } }) =>
 				createRender(CryptoAddressWidget, {
-					class: 'vault-address',
+					class: 'vault-address tile c',
 					size: 'sm',
 					address,
 					href: getExplorerUrl(getChain(chain_id), address)
@@ -424,12 +425,17 @@
 			}
 
 			:global(.vault-address) {
-				min-width: 8rem;
-				padding: 0;
-				background: none;
-				font: inherit;
-				letter-spacing: inherit;
-				border-radius: 0;
+				min-width: 9rem;
+				height: 1.5rem;
+				padding: 0 0.75rem;
+				border-radius: 1rem;
+				font-weight: 500;
+				font-family: var(--ff-ui);
+				letter-spacing: 0.02em;
+
+				:global(a):not(:hover) {
+					text-decoration: none;
+				}
 			}
 
 			:global(
