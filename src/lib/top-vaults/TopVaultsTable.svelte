@@ -15,8 +15,9 @@
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
-	import { formatDollar, formatNumber, formatPercent, formatTokenAmount, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import RiskCell from './RiskCell.svelte';
+	import DepositEventsCell from './DepositEventsCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -180,7 +181,7 @@
 		table.column({
 			accessor: 'event_count',
 			header: 'Deposit events',
-			cell: ({ value }) => formatTokenAmount(value, 0, 1),
+			cell: ({ value }) => createRender(DepositEventsCell, { value }),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
