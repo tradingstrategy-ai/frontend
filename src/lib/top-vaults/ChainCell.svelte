@@ -36,6 +36,8 @@
 			display: block;
 			width: var(--logo-size);
 			height: var(--logo-size);
+			min-width: var(--logo-size);
+			min-height: var(--logo-size);
 		}
 
 		.no-logo {
