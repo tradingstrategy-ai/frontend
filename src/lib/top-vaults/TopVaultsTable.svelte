@@ -15,7 +15,8 @@
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
-	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatTokenAmount, formatValue } from '$lib/helpers/formatters';
+	import RiskCell from './RiskCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -26,21 +27,6 @@
 
 	const formatReturn = (v: number | null) => formatPercent(v, 2);
 	const formatTvl = (v: number | null) => formatDollar(v, 2);
-
-	// Based on VaultTechnicalRisk enum
-	// see: https://github.com/tradingstrategy-ai/web3-ethereum-defi/blob/master/eth_defi/vault/risk.py
-	function getRiskValue(risk: string | null) {
-		// prettier-ignore
-		switch (risk?.toLowerCase().replace(/ /g, '_')) {
-			case 'low'         : return 1;
-			case 'lowish'      : return 5;
-			case 'high'        : return 20;
-			case 'extra_high'  : return 20;
-			case 'dangerous'   : return 50;
-			case 'blacklisted' : return 999;
-			default            : return 1000
-		}
-	}
 
 	const vaultsStore = readable(topVaults.vaults);
 
@@ -87,7 +73,7 @@
 			cell: ({ value }) => createRender(VaultCell, value),
 			plugins: {
 				sort: {
-					getSortValue: ({ name }) => name.toLowerCase(),
+					getSortValue: ({ name }) => name.trim().toLowerCase(),
 					invert: true
 				},
 				filter: {
@@ -98,7 +84,7 @@
 		table.column({
 			id: 'one_month_return_ann',
 			accessor: (vault) => [vault.one_month_cagr_net, vault.one_month_cagr],
-			header: '1M return ann.<br/>(net/gross)',
+			header: '1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -108,7 +94,7 @@
 		table.column({
 			id: 'lifetime_return_abs',
 			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
-			header: 'Lifetime return abs.<br/>(net/gross)',
+			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -118,7 +104,7 @@
 		table.column({
 			id: 'lifetime_return_ann',
 			accessor: (vault) => [vault.cagr_net, vault.cagr],
-			header: 'Lifetime return ann.<br/>(net/gross)',
+			header: 'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -128,7 +114,7 @@
 		table.column({
 			id: 'three_months_return_ann',
 			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
-			header: '3M return ann.<br/>(net/gross)',
+			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -194,16 +180,16 @@
 		table.column({
 			accessor: 'event_count',
 			header: 'Deposit events',
-			cell: ({ value }) => formatAmount(value),
+			cell: ({ value }) => formatTokenAmount(value, 0, 1),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'risk',
-			header: 'Risk',
-			cell: ({ value }) => value ?? 'Unknown',
+			accessor: ({ risk, risk_numeric }) => ({ risk, risk_numeric }),
+			header: 'Technical risk',
+			cell: ({ value }) => createRender(RiskCell, value),
 			plugins: {
 				sort: {
-					getSortValue: getRiskValue,
+					getSortValue: (v) => v.risk_numeric ?? Infinity,
 					invert: true
 				}
 			}
@@ -214,7 +200,7 @@
 			accessor: ({ address, chain_id }) => ({ address, chain_id }),
 			cell: ({ value: { address, chain_id } }) =>
 				createRender(CryptoAddressWidget, {
-					class: 'vault-address',
+					class: 'vault-address tile c',
 					size: 'sm',
 					address,
 					href: getExplorerUrl(getChain(chain_id), address)
@@ -425,11 +411,15 @@
 
 			:global(.vault-address) {
 				min-width: 8rem;
-				padding: 0;
-				background: none;
-				font: inherit;
-				letter-spacing: inherit;
-				border-radius: 0;
+				height: 1.375rem;
+				padding: 0 0.625rem;
+				border-radius: 1rem;
+				font: var(--f-ui-xs-medium);
+				letter-spacing: var(--ls-ui-xs, normal);
+
+				:global(a):not(:hover) {
+					text-decoration: none;
+				}
 			}
 
 			:global(
