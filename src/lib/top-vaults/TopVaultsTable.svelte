@@ -73,7 +73,7 @@
 			cell: ({ value }) => createRender(VaultCell, value),
 			plugins: {
 				sort: {
-					getSortValue: ({ name }) => name.toLowerCase(),
+					getSortValue: ({ name }) => name.trim().toLowerCase(),
 					invert: true
 				},
 				filter: {
