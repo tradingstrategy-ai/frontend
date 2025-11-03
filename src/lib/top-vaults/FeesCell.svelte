@@ -15,11 +15,9 @@
 		<div class="multiline" slot="trigger">
 			{#if !isNumber(mgmt_fee) && !isNumber(perf_fee)}
 				{notFilledMarker}
-			{:else if mgmt_fee === 0 && perf_fee === 0}
-				0.0%
 			{:else}
-				<div>{formatPercent(mgmt_fee, 1)}</div>
-				<div>{formatPercent(perf_fee, 1)}</div>
+				<span>{formatPercent(mgmt_fee, 1)}/</span>
+				<span>{formatPercent(perf_fee, 1)}</span>
 			{/if}
 		</div>
 		<dl slot="popup" class="fees-popup">
