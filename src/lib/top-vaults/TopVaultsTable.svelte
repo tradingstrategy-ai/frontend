@@ -15,7 +15,7 @@
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
-	import { formatAmount, formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatTokenAmount, formatValue } from '$lib/helpers/formatters';
 	import RiskCell from './RiskCell.svelte';
 
 	interface Props {
@@ -27,21 +27,6 @@
 
 	const formatReturn = (v: number | null) => formatPercent(v, 2);
 	const formatTvl = (v: number | null) => formatDollar(v, 2);
-
-	// Based on VaultTechnicalRisk enum
-	// see: https://github.com/tradingstrategy-ai/web3-ethereum-defi/blob/master/eth_defi/vault/risk.py
-	function getRiskValue(risk: string | null) {
-		// prettier-ignore
-		switch (risk?.toLowerCase().replace(/ /g, '_')) {
-			case 'low'         : return 1;
-			case 'lowish'      : return 5;
-			case 'high'        : return 20;
-			case 'extra_high'  : return 20;
-			case 'dangerous'   : return 50;
-			case 'blacklisted' : return 999;
-			default            : return 1000
-		}
-	}
 
 	const vaultsStore = readable(topVaults.vaults);
 
@@ -99,7 +84,7 @@
 		table.column({
 			id: 'one_month_return_ann',
 			accessor: (vault) => [vault.one_month_cagr_net, vault.one_month_cagr],
-			header: '1M return ann.<br/>(net/gross)',
+			header: '1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -109,7 +94,7 @@
 		table.column({
 			id: 'lifetime_return_abs',
 			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
-			header: 'Lifetime return abs.<br/>(net/gross)',
+			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -119,7 +104,7 @@
 		table.column({
 			id: 'lifetime_return_ann',
 			accessor: (vault) => [vault.cagr_net, vault.cagr],
-			header: 'Lifetime return ann.<br/>(net/gross)',
+			header: 'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -129,7 +114,7 @@
 		table.column({
 			id: 'three_months_return_ann',
 			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
-			header: '3M return ann.<br/>(net/gross)',
+			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -195,16 +180,16 @@
 		table.column({
 			accessor: 'event_count',
 			header: 'Deposit events',
-			cell: ({ value }) => formatAmount(value),
+			cell: ({ value }) => formatTokenAmount(value, 0, 1),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
-			accessor: 'risk',
+			accessor: ({ risk, risk_numeric }) => ({ risk, risk_numeric }),
 			header: 'Technical risk',
-			cell: ({ value }) => createRender(RiskCell, { value }),
+			cell: ({ value }) => createRender(RiskCell, value),
 			plugins: {
 				sort: {
-					getSortValue: getRiskValue,
+					getSortValue: (v) => v.risk_numeric ?? Infinity,
 					invert: true
 				}
 			}
@@ -425,13 +410,12 @@
 			}
 
 			:global(.vault-address) {
-				min-width: 9rem;
-				height: 1.5rem;
-				padding: 0 0.75rem;
+				min-width: 8rem;
+				height: 1.375rem;
+				padding: 0 0.625rem;
 				border-radius: 1rem;
-				font-weight: 500;
-				font-family: var(--ff-ui);
-				letter-spacing: 0.02em;
+				font: var(--f-ui-xs-medium);
+				letter-spacing: var(--ls-ui-xs, normal);
 
 				:global(a):not(:hover) {
 					text-decoration: none;

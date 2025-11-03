@@ -33,6 +33,7 @@ export const vaultInfoSchema = z.object({
 	event_count: z.int().nullable(),
 	protocol: z.string(),
 	risk: z.string().nullable(),
+	risk_numeric: z.int().nullable(),
 	id: z.string(),
 	start_date: isoDateTime,
 	end_date: isoDateTime,
