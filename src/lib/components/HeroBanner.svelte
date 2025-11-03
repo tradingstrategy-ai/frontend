@@ -11,26 +11,44 @@ Hero banner used as heading on various pages (Community, Trading data, Blog roll
 ```
 -->
 <script lang="ts">
-	export let image: string | undefined = undefined;
-	export let title: string;
-	export let subtitle = '';
-	export let hr = false;
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		title: string | Snippet;
+		subtitle?: string | Snippet;
+		image?: string;
+		hr?: boolean;
+		children?: Snippet;
+	}
+
+	let { image, title, subtitle, hr = false, children }: Props = $props();
 </script>
 
 <div class="hero-banner" class:has-image={image}>
 	<div class="content">
-		<h1>{@html title}</h1>
+		<h1>
+			{#if typeof title === 'function'}
+				{@render title()}
+			{:else}
+				{title}
+			{/if}
+		</h1>
 		<div class="subtitle">
-			<slot name="subtitle">{@html subtitle}</slot>
+			{#if typeof subtitle === 'function'}
+				{@render subtitle()}
+			{:else}
+				{subtitle}
+			{/if}
 		</div>
 		{#if hr}
 			<hr />
 		{/if}
-		<slot />
+		{@render children?.()}
 	</div>
 
 	{#if image}
 		<div class="media">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html image}
 		</div>
 	{/if}

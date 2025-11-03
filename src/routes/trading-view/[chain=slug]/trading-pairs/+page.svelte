@@ -32,10 +32,10 @@
 <main class="pair-index-page">
 	<Section tag="header">
 		<HeroBanner title="{chain.chain_name} trading pairs">
-			<svelte:fragment slot="subtitle">
+			{#snippet subtitle()}
 				Browse {formatAmount(pairs.totalRowCount)} trading pairs on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
-			</svelte:fragment>
+			{/snippet}
 		</HeroBanner>
 	</Section>
 

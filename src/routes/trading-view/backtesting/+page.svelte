@@ -76,7 +76,7 @@
 <main class="backtesting-page">
 	<Section tag="header">
 		<HeroBanner title="Historical DEX trading data">
-			<svelte:fragment slot="subtitle">
+			{#snippet subtitle()}
 				<p>
 					The following datasets are available for historical DEX trading data.
 					<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
@@ -91,7 +91,7 @@
 						how to get started with Trading Strategy Python library for algorithmic trading
 					</a>.
 				</p>
-			</svelte:fragment>
+			{/snippet}
 		</HeroBanner>
 	</Section>
 
