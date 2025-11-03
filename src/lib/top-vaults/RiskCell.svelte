@@ -8,53 +8,45 @@
 	const riskClass = risk?.toLowerCase().replace(/ /g, '-') ?? 'unknown';
 </script>
 
-<div class={['risk', riskClass]}>
+<span class={['risk', riskClass]}>
 	{risk ?? 'Unknown'}
-</div>
+</span>
 
 <style>
 	.risk {
-		display: inline-grid;
-		align-items: center;
-		height: 1.375rem;
-		padding: 0 0.625rem;
-		border-radius: 1rem;
 		font: var(--f-ui-xs-medium);
 		letter-spacing: 0.02em;
-		background: var(--c-text-ultra-light);
 
-		/* custom text color defs that ignore light/dark mode (always light or dark color) */
-		--c-always-light: var(--cm-light, var(--c-text-inverted)) var(--cm-dark, var(--c-text));
-		--c-always-dark: var(--cm-light, var(--c-text)) var(--cm-dark, var(--c-text-inverted));
+		--c-text-base: var(--c-text-light);
+		color: color-mix(in srgb, var(--c-text-base), var(--c-risk) 75%);
 
 		&.negligible {
-			background-color: #2d7a2e;
-			color: var(--c-always-light);
+			--c-risk: #13b1c0;
 		}
 
 		&.minimal {
-			background-color: #4caf50;
-			color: var(--c-text-inverted);
+			--c-risk: var(--c-success);
 		}
 
 		&.low {
-			background-color: #fbc02d;
-			color: var(--c-always-dark);
+			--c-risk: var(--c-warning);
 		}
 
 		&.high {
-			background-color: #ff9800;
-			color: var(--c-text-inverted);
+			--c-risk: color-mix(in srgb, var(--c-warning), var(--c-error));
 		}
 
 		&.severe {
-			background-color: #f4511e;
-			color: var(--c-always-light);
+			--c-risk: var(--c-error);
 		}
 
 		&.dangerous {
-			background-color: #c62828;
-			color: var(--c-always-light);
+			--c-risk: #c62847;
+			--c-text-base: var(--c-text);
+		}
+
+		&.unknown {
+			color: var(--c-text-light);
 		}
 	}
 </style>
