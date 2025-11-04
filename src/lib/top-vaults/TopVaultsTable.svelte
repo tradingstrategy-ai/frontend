@@ -15,8 +15,9 @@
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
-	import { formatDollar, formatNumber, formatPercent, formatTokenAmount, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import RiskCell from './RiskCell.svelte';
+	import DepositEventsCell from './DepositEventsCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -180,7 +181,7 @@
 		table.column({
 			accessor: 'event_count',
 			header: 'Deposit events',
-			cell: ({ value }) => formatTokenAmount(value, 0, 1),
+			cell: ({ value }) => createRender(DepositEventsCell, { value }),
 			plugins: { filter: { exclude: true } }
 		}),
 		table.column({
@@ -200,7 +201,7 @@
 			accessor: ({ address, chain_id }) => ({ address, chain_id }),
 			cell: ({ value: { address, chain_id } }) =>
 				createRender(CryptoAddressWidget, {
-					class: 'vault-address tile c',
+					class: 'vault-address',
 					size: 'sm',
 					address,
 					href: getExplorerUrl(getChain(chain_id), address)
@@ -410,11 +411,11 @@
 			}
 
 			:global(.vault-address) {
-				min-width: 8rem;
-				height: 1.375rem;
-				padding: 0 0.625rem;
-				border-radius: 1rem;
-				font: var(--f-ui-xs-medium);
+				min-width: 7rem;
+				padding: 0;
+				border-radius: 0;
+				background: transparent !important;
+				font: var(--f-ui-xs-roman);
 				letter-spacing: var(--ls-ui-xs, normal);
 
 				:global(a):not(:hover) {
@@ -441,10 +442,6 @@
 
 			:global(td.denomination) {
 				text-align: center;
-			}
-
-			:global(td.risk) {
-				white-space: nowrap;
 			}
 		}
 	}

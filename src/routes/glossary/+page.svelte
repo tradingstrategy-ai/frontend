@@ -27,7 +27,7 @@
 <main class="glossary-main">
 	<Section tag="header" padding="md">
 		<HeroBanner title="DeFi and trading dictionary">
-			<div slot="subtitle">
+			{#snippet subtitle()}
 				<p>Browser explanations for different decentralised finance (DeFi) and technical trading terms.</p>
 
 				<p class="glossary-introduction">
@@ -37,7 +37,7 @@
 					<a class="body-link" href="/glossary/trading-strategy">trading strategies</a> and
 					<a class="body-link" href="/glossary/algorithmic-trading">algorithmic trading</a>.
 				</p>
-			</div>
+			{/snippet}
 		</HeroBanner>
 	</Section>
 

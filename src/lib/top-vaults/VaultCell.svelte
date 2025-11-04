@@ -16,7 +16,6 @@
 
 <style>
 	.protocol {
-		color: var(--c-text-light);
-		text-transform: uppercase;
+		opacity: 0.7;
 	}
 </style>

@@ -29,10 +29,10 @@
 <main class="token-index-page">
 	<Section tag="header">
 		<HeroBanner title="{chain.chain_name} tokens">
-			<svelte:fragment slot="subtitle">
+			{#snippet subtitle()}
 				Browse {formatAmount(tokens.totalRowCount)} tokens on
 				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
-			</svelte:fragment>
+			{/snippet}
 		</HeroBanner>
 	</Section>
 
