@@ -108,13 +108,13 @@
 				<td>
 					{#if runState.hot_wallet_gas >= runState.hot_wallet_gas_warning_level}
 						{formatNumber(runState.hot_wallet_gas, 2, 4)}
-						{chain.gas}
+						{chain.nativeCurrency}
 					{:else}
 						<Tooltip>
 							<span slot="trigger" class="gas-warning">
 								<span class="underline">
 									{formatNumber(runState.hot_wallet_gas, 2, 4)}
-									{chain.gas}
+									{chain.nativeCurrency}
 								</span>
 								<IconWarning />
 							</span>
@@ -123,7 +123,7 @@
 									{runState.hot_wallet_gas_warning_message}
 								{:else}
 									Hot wallet balance is below the warning level of {formatNumber(runState.hot_wallet_gas_warning_level)}
-									{chain.gas}
+									{chain.nativeCurrency}
 								{/if}
 							</svelte:fragment>
 						</Tooltip>
