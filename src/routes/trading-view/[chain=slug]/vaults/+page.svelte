@@ -32,7 +32,7 @@
 	</Section>
 
 	<Section>
-		<TopVaultsTable {topVaults} apiChain={chain} />
+		<TopVaultsTable {topVaults} chainDetails={chain} />
 	</Section>
 </main>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from './schemas';
-	import { type ApiChain, getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import type { ChainDetails } from '$lib/schemas/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -21,10 +22,10 @@
 
 	interface Props {
 		topVaults: TopVaults;
-		apiChain?: ApiChain;
+		chainDetails?: ChainDetails;
 	}
 
-	const { topVaults, apiChain }: Props = $props();
+	const { topVaults, chainDetails }: Props = $props();
 
 	const formatReturn = (v: number | null) => formatPercent(v, 2);
 	const formatTvl = (v: number | null) => formatDollar(v, 2);
@@ -32,7 +33,7 @@
 	const vaultsStore = readable(topVaults.vaults);
 
 	const table = createTable(vaultsStore, {
-		hide: addHiddenColumns({ initialHiddenColumnIds: apiChain ? ['chain'] : [] }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: chainDetails ? ['chain'] : [] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'one_month_return_ann', order: 'desc' }],
 			toggleOrder: ['desc', 'asc']
@@ -228,7 +229,7 @@
 	{:else}
 		<div class="table-extras">
 			<div class="table-meta">
-				<span>{topVaults.vaults.length} {apiChain ? apiChain.chain_name : 'total'} vaults</span>
+				<span>{topVaults.vaults.length} {chainDetails ? chainDetails.chain_name : 'total'} vaults</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
 			<TextInput bind:value={$filterValue} type="search" placeholder="Search vaults" />

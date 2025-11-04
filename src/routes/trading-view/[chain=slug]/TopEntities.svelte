@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
-	import type { ApiChain } from '$lib/helpers/chain';
+	import type { ChainDetails } from '$lib/schemas/chain';
 	import { Alert, Button, SummaryBox } from '$lib/components';
 
 	type EntityData = { error: object; rows?: [] } | { error?: undefined; rows: Record<string, any>[] };
@@ -8,7 +8,7 @@
 	export let type: string;
 	export let label = type.replaceAll('-', ' ');
 	export let title: string;
-	export let chain: ApiChain;
+	export let chain: ChainDetails;
 	export let data: Promise<EntityData>;
 	export let tableComponent: ComponentType;
 	export let rightColHeader = '';
