@@ -29,18 +29,18 @@
 </script>
 
 <svelte:head>
-	<title>{chain.chain_name} Lending Reserves</title>
-	<meta name="description" content="Top lending reserves on {chain.chain_name} blockchain" />
+	<title>{chain.name} Lending Reserves</title>
+	<meta name="description" content="Top lending reserves on {chain.name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name, lending: 'Lending reserves' }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, lending: 'Lending reserves' }} />
 
 <main class="reserves-index-page">
 	<Section tag="header">
-		<HeroBanner title="{chain.chain_name} lending reserves">
+		<HeroBanner title="{chain.name} lending reserves">
 			{#snippet subtitle()}
 				Browse {formatAmount(totalRowCount)} lending reserves on
-				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
+				<a class="body-link" href=".">{chain.name} blockchain</a>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

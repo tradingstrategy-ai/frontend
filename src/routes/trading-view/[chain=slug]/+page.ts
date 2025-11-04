@@ -1,4 +1,5 @@
 import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
+import { chainDetailsSchema } from '$lib/schemas/chain.js';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
@@ -9,12 +10,18 @@ export async function load({ params, fetch }) {
 	const { chain } = params;
 
 	return {
+		chainDetails: await fetchChainDetails(fetch, chain),
 		exchanges: fetchTopExchanges(fetch, chain),
 		tokens: fetchTopTokens(fetch, chain),
 		pairs: fetchTopPairs(fetch, chain),
 		reserves: fetchTopReserves(fetch, chain),
 		topVaults: await fetchTopVaults(fetch, { chainSlug: chain }).catch(optionalDataError('top vaults'))
 	};
+}
+
+async function fetchChainDetails(fetch: Fetch, chainSlug: string) {
+	const data = await fetchPublicApi(fetch, 'chain-details', { chain_slug: chainSlug });
+	return chainDetailsSchema.parse(data);
 }
 
 async function fetchTopExchanges(fetch: Fetch, chainSlug: string) {

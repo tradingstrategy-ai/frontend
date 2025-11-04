@@ -12,41 +12,42 @@
 	import { formatAmount } from '$lib/helpers/formatters';
 
 	const { data } = $props();
-	const { chain, topVaults } = data;
+	const { chain, chainDetails, topVaults } = data;
 </script>
 
 <svelte:head>
-	<title>{chain.chain_name} decentralised exchanges and trading pairs</title>
-	<meta name="description" content={`Top ${chain.chain_name} tokens and prices`} />
+	<title>{chain.name} decentralised exchanges and trading pairs</title>
+	<meta name="description" content={`Top ${chain.name} tokens and prices`} />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name }} />
 
 <main>
-	<ChainHeader name={chain.chain_name} slug={chain.chain_slug} homepage={chain.homepage} />
+	<ChainHeader name={chain.name} slug={chain.slug} homepage={chain.homepage} />
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">
-			<BlockInfoTile title="Last indexed block" count={chain.end_block} timestamp={chain.last_swap_at} />
-			<BlockInfoTile title="First indexed block" count={chain.start_block} timestamp={chain.first_swap_at} />
+			<BlockInfoTile title="Last indexed block" count={chainDetails.end_block} timestamp={chainDetails.last_swap_at} />
+			<BlockInfoTile title="First indexed block" count={chainDetails.start_block} />
 		</div>
 
 		<SummaryDataTile
-			count={chain.exchanges}
+			count={chainDetails.exchanges}
 			title="Exchanges"
 			buttonLabel="See exchanges"
-			href="{chain.chain_slug}/exchanges"
+			href="{chain.slug}/exchanges"
 		>
 			Decentralised exchanges with market data available on Trading Strategy.
 		</SummaryDataTile>
 
 		<SummaryDataTile
-			count={chain.pairs}
+			count={chainDetails.pairs}
 			title="Trading pairs"
 			buttonLabel="See trading pairs"
-			href="{chain.chain_slug}/trading-pairs"
+			href="{chain.slug}/trading-pairs"
 		>
-			Total trading pairs available on Trading Strategy. {formatAmount(chain.tracked_pairs)} have active market data feeds.
+			Total trading pairs available on Trading Strategy. {formatAmount(chainDetails.tracked_pairs)} have active market data
+			feeds.
 			<a
 				class="body-link targetable-above"
 				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
@@ -60,19 +61,19 @@
 			count={topVaults?.vaults.length}
 			title="Top vaults"
 			buttonLabel="See vaults"
-			href="{chain.chain_slug}/vaults"
+			href="{chain.slug}/vaults"
 		>
-			Top performing DeFi vaults on {chain.chain_name} with a minimum TVL of $50k USD.
+			Top performing DeFi vaults on {chain.name} with a minimum TVL of $50k USD.
 		</SummaryDataTile>
 	</section>
 
 	<section class="ds-container trading-entities">
-		<h2>{chain.chain_name} trading entities</h2>
+		<h2>{chain.name} trading entities</h2>
 		<Grid cols={2} gap="lg">
 			<TopEntities
 				type="exchanges"
 				title="Highest volume exchanges"
-				{chain}
+				chain={chainDetails}
 				data={data.exchanges}
 				tableComponent={TopExchanges}
 				rightColHeader="Vol 30d"
@@ -82,7 +83,7 @@
 				type="trading-pairs"
 				label="pairs"
 				title="Highest TVL trading pairs"
-				{chain}
+				chain={chainDetails}
 				data={data.pairs}
 				tableComponent={TopPairs}
 				rightColHeader="TVL"
@@ -91,7 +92,7 @@
 			<TopEntities
 				type="tokens"
 				title="Highest liquidity tokens"
-				{chain}
+				chain={chainDetails}
 				data={data.tokens}
 				tableComponent={TopTokens}
 				rightColHeader="Liquidity"
@@ -101,7 +102,7 @@
 				type="lending"
 				label="reserves"
 				title="Highest TVL lending reserves"
-				{chain}
+				chain={chainDetails}
 				data={data.reserves}
 				tableComponent={TopReserves}
 				rightColHeader="TVL"

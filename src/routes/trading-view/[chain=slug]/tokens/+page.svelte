@@ -20,18 +20,18 @@
 </script>
 
 <svelte:head>
-	<title>{chain.chain_name} Tokens | Trading Strategy</title>
-	<meta name="description" content="Top tokens on {chain.chain_name} blockchain" />
+	<title>{chain.name} Tokens | Trading Strategy</title>
+	<meta name="description" content="Top tokens on {chain.name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name }} />
 
 <main class="token-index-page">
 	<Section tag="header">
-		<HeroBanner title="{chain.chain_name} tokens">
+		<HeroBanner title="{chain.name} tokens">
 			{#snippet subtitle()}
 				Browse {formatAmount(tokens.totalRowCount)} tokens on
-				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
+				<a class="body-link" href=".">{chain.name} blockchain</a>.
 			{/snippet}
 		</HeroBanner>
 	</Section>
