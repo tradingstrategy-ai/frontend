@@ -58,8 +58,9 @@
 			buttonLabel="See trading pairs"
 			href="{chain.slug}/trading-pairs"
 		>
-			Total trading pairs available on Trading Strategy. {formatAmount(chainDetails?.tracked_pairs)} have active market data
-			feeds.
+			Total trading pairs available on Trading Strategy.
+			{formatAmount(chainDetails?.tracked_pairs ?? 0)}
+			pairs have active market data feeds.
 			<a
 				class="body-link targetable-above"
 				href="https://tradingstrategy.ai/docs/programming/market-data/tracking.html"
