@@ -1,17 +1,21 @@
 import { error } from '@sveltejs/kit';
 import { chainsUnderMaintenance } from '$lib/config';
-import { fetchPublicApi } from '$lib/helpers/public-api';
+import { getChain } from '$lib/helpers/chain.js';
 
-export async function load({ fetch, params }) {
-	const chain_slug = params.chain;
+export async function load({ params }) {
+	const { chain: chainSlug } = params;
 
 	// trigger error if chain is under maintenance
-	const chainName = chainsUnderMaintenance[chain_slug];
+	const chainName = chainsUnderMaintenance[chainSlug];
 	if (chainName) {
 		error(503, { chainName, message: `Chain under maintenance: ${chainName}` });
 	}
 
-	return {
-		chain: await fetchPublicApi(fetch, 'chain-details', { chain_slug })
-	};
+	const chain = getChain(chainSlug);
+
+	if (!chain) {
+		error(404, `Chain not found: ${chainSlug}`);
+	}
+
+	return { chain };
 }

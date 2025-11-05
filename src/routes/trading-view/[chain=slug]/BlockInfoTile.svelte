@@ -1,17 +1,19 @@
 <script lang="ts">
+	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
-	import { formatDistanceToNowStrict } from 'date-fns';
 
-	export let title: string;
-	export let count: number;
-	export let timestamp: string | undefined;
+	interface Props {
+		title: string;
+		count: number | undefined;
+		timestamp?: string;
+	}
+
+	let { title, count, timestamp }: Props = $props();
 </script>
 
 <div class="block-info-tile tile a">
 	{#if timestamp}
-		<time datetime={timestamp}>
-			{formatDistanceToNowStrict(Date.parse(`${timestamp}Z`), { addSuffix: true })}
-		</time>
+		<Timestamp class="block-ts" date={timestamp} relative />
 	{/if}
 	<h3>{formatAmount(count)}</h3>
 	<div class="title">{title}</div>
@@ -31,7 +33,7 @@
 		}
 	}
 
-	time {
+	:global(.block-ts) {
 		margin-bottom: var(--space-sm);
 		font: var(--f-ui-large-medium);
 		color: var(--c-text-light);

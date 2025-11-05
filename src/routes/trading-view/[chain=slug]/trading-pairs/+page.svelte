@@ -23,18 +23,18 @@
 </script>
 
 <svelte:head>
-	<title>{chain.chain_name} Trading Pairs | Trading Strategy</title>
-	<meta name="description" content="Top trading pairs on {chain.chain_name} blockchain" />
+	<title>{chain.name} Trading Pairs | Trading Strategy</title>
+	<meta name="description" content="Top trading pairs on {chain.name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name, 'trading-pairs': 'Trading pairs' }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, 'trading-pairs': 'Trading pairs' }} />
 
 <main class="pair-index-page">
 	<Section tag="header">
-		<HeroBanner title="{chain.chain_name} trading pairs">
+		<HeroBanner title="{chain.name} trading pairs">
 			{#snippet subtitle()}
 				Browse {formatAmount(pairs.totalRowCount)} trading pairs on
-				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
+				<a class="body-link" href=".">{chain.name} blockchain</a>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

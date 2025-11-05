@@ -1,14 +1,16 @@
+<script module lang="ts">
+	export type EntityData = { error: object; rows?: [] } | { error?: undefined; rows: Record<string, any>[] };
+</script>
+
 <script lang="ts">
 	import type { ComponentType } from 'svelte';
-	import type { ApiChain } from '$lib/helpers/chain';
+	import type { Chain } from '$lib/helpers/chain';
 	import { Alert, Button, SummaryBox } from '$lib/components';
-
-	type EntityData = { error: object; rows?: [] } | { error?: undefined; rows: Record<string, any>[] };
 
 	export let type: string;
 	export let label = type.replaceAll('-', ' ');
 	export let title: string;
-	export let chain: ApiChain;
+	export let chain: Chain;
 	export let data: Promise<EntityData>;
 	export let tableComponent: ComponentType;
 	export let rightColHeader = '';
@@ -39,12 +41,12 @@
 		{:else if hasData}
 			<svelte:component this={tableComponent} {rows} />
 		{:else}
-			<p>No {label} available for {chain.chain_name}</p>
+			<p>No {label} available for {chain.name}</p>
 		{/if}
 	{/await}
 
-	<Button slot="cta" href="/trading-view/{chain.chain_slug}/{type}" disabled={!hasData}>
-		View all {chain.chain_name}
+	<Button slot="cta" href="/trading-view/{chain.slug}/{type}" disabled={!hasData}>
+		View all {chain.name}
 		{label}
 	</Button>
 </SummaryBox>

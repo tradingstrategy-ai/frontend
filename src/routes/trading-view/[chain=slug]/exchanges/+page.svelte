@@ -28,18 +28,18 @@
 </script>
 
 <svelte:head>
-	<title>{chain.chain_name} Exchanges | Trading Strategy</title>
-	<meta name="description" content="Top decentralised exchanges on {chain.chain_name} blockchain" />
+	<title>{chain.name} Exchanges | Trading Strategy</title>
+	<meta name="description" content="Top decentralised exchanges on {chain.name} blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chain.chain_name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name }} />
 
 <main class="chain-exchanges-page">
 	<Section tag="header">
-		<HeroBanner title="{chain.chain_name} DEXes">
+		<HeroBanner title="{chain.name} DEXes">
 			{#snippet subtitle()}
 				Browse {exchanges.length} decentralised exchanges on
-				<a class="body-link" href=".">{chain.chain_name} blockchain</a>.
+				<a class="body-link" href=".">{chain.name} blockchain</a>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

@@ -7,24 +7,23 @@
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 
 	const { data } = $props();
-	const { topVaults, chain } = data;
-	const chainName = chain.chain_name;
+	const { chain, topVaults } = data;
 </script>
 
 <svelte:head>
-	<title>{chainName} top vaults | Trading Strategy</title>
-	<meta name="description" content="Top vaults on {chainName} ranked by performance." />
+	<title>{chain.name} top vaults | Trading Strategy</title>
+	<meta name="description" content="Top vaults on {chain.name} ranked by performance." />
 </svelte:head>
 
-<Breadcrumbs labels={{ [chain.chain_slug]: chainName, vaults: 'Top Vaults' }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults' }} />
 
 <main class="chain-vaults ds-3">
 	<Section tag="header">
-		<HeroBanner subtitle="The best performing DeFi vaults on {chainName} with minimum $50k USD TVL">
+		<HeroBanner subtitle="The best performing DeFi vaults on {chain.name} with minimum $50k USD TVL">
 			{#snippet title()}
 				<span>
-					<img src={getLogoUrl('blockchain', chain.chain_slug)} alt={chain.chain_name} />
-					<span>Top {chainName} Vaults</span>
+					<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+					<span>Top {chain.name} Vaults</span>
 					<DataBadge class="badge" status="warning">Beta</DataBadge>
 				</span>
 			{/snippet}
@@ -32,7 +31,7 @@
 	</Section>
 
 	<Section>
-		<TopVaultsTable {topVaults} apiChain={chain} />
+		<TopVaultsTable {topVaults} {chain} />
 	</Section>
 </main>
 

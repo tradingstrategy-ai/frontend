@@ -14,16 +14,20 @@
 	}
 
 	const { count, title, buttonLabel, href, rel, children }: Props = $props();
+
+	const disabled = count === undefined;
 </script>
 
-<div class="summary-data-tile tile a targetable">
-	<TargetableLink {href} {rel} label="View details" />
+<div class={['summary-data-tile', 'tile a', 'targetable', disabled && 'disabled']}>
+	{#if !disabled}
+		<TargetableLink {href} {rel} label="View details" />
+	{/if}
 	<div>
 		<h3>{formatAmount(count)}</h3>
 		<h4>{title}</h4>
 		<p>{@render children()}</p>
 	</div>
-	<Button secondary label={buttonLabel} />
+	<Button secondary {disabled} label={buttonLabel} />
 </div>
 
 <style>
@@ -35,6 +39,10 @@
 
 		@media (--viewport-md-down) {
 			padding: var(--space-ls);
+		}
+
+		&.disabled {
+			cursor: not-allowed;
 		}
 
 		h3 {

@@ -49,13 +49,14 @@ Options:
 
 	interface Props {
 		date: MaybeParsableDate;
+		class?: string;
 		relative?: boolean | RelativeOptions;
 		withTime?: boolean | 'seconds';
 		wrap?: 'none' | 'allow' | 'inner';
 		children?: Snippet<[{ parsedDate: Date | undefined; dateStr: string; timeStr: string; relativeStr: string }]>;
 	}
 
-	let { date, relative = false, withTime = false, wrap = 'inner', children }: Props = $props();
+	let { date, class: classes, relative = false, withTime = false, wrap = 'inner', children }: Props = $props();
 
 	let parsedDate = $derived(parseDate(date));
 	let isoStr = $derived(parsedDate?.toISOString() ?? '');
@@ -76,7 +77,7 @@ Options:
 	});
 </script>
 
-<time class="timestamp wrap-{wrap}" datetime={isoStr}>
+<time class={['timestamp', `wrap-${wrap}`, classes]} datetime={isoStr}>
 	{#if children}
 		{@render children({ parsedDate, dateStr, timeStr, relativeStr })}
 	{:else if parsedDate}

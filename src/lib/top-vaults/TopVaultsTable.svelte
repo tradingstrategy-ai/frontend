@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from './schemas';
-	import { type ApiChain, getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import type { Chain } from '$lib/helpers/chain';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -11,20 +12,20 @@
 	import VaultCell from './VaultCell.svelte';
 	import MultiValCell, { multiValCompareFn } from './MultiValCell.svelte';
 	import FeesCell from './FeesCell.svelte';
+	import DepositEventsCell from './DepositEventsCell.svelte';
+	import RiskCell from './RiskCell.svelte';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import RiskCell from './RiskCell.svelte';
-	import DepositEventsCell from './DepositEventsCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
-		apiChain?: ApiChain;
+		chain?: Chain;
 	}
 
-	const { topVaults, apiChain }: Props = $props();
+	const { topVaults, chain }: Props = $props();
 
 	const formatReturn = (v: number | null) => formatPercent(v, 2);
 	const formatTvl = (v: number | null) => formatDollar(v, 2);
@@ -32,7 +33,7 @@
 	const vaultsStore = readable(topVaults.vaults);
 
 	const table = createTable(vaultsStore, {
-		hide: addHiddenColumns({ initialHiddenColumnIds: apiChain ? ['chain'] : [] }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: chain ? ['chain'] : [] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: 'one_month_return_ann', order: 'desc' }],
 			toggleOrder: ['desc', 'asc']
@@ -93,9 +94,9 @@
 			}
 		}),
 		table.column({
-			id: 'lifetime_return_abs',
-			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
-			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
+			id: 'three_months_return_ann',
+			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
+			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -113,9 +114,9 @@
 			}
 		}),
 		table.column({
-			id: 'three_months_return_ann',
-			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
-			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+			id: 'lifetime_return_abs',
+			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
+			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -154,7 +155,7 @@
 			id: 'age',
 			accessor: 'years',
 			header: 'Age (years)',
-			cell: ({ value }) => formatNumber(value, 2),
+			cell: ({ value }) => formatNumber(value, 1),
 			plugins: { filter: { exclude: true } }
 		}),
 		// `last_deposit` is missing from latest data schema so dropping from table for now
@@ -186,7 +187,7 @@
 		}),
 		table.column({
 			accessor: ({ risk, risk_numeric }) => ({ risk, risk_numeric }),
-			header: 'Technical risk',
+			header: 'Protocol technical risk',
 			cell: ({ value }) => createRender(RiskCell, value),
 			plugins: {
 				sort: {
@@ -228,7 +229,7 @@
 	{:else}
 		<div class="table-extras">
 			<div class="table-meta">
-				<span>{topVaults.vaults.length} {apiChain ? apiChain.chain_name : 'total'} vaults</span>
+				<span>{topVaults.vaults.length} {chain?.name ?? 'total'} vaults</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
 			<TextInput bind:value={$filterValue} type="search" placeholder="Search vaults" />

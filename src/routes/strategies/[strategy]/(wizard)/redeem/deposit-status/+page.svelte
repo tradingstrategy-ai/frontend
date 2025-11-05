@@ -40,7 +40,12 @@
 
 		<WalletInfo alignValues="right">
 			<WalletInfoItem>
-				<EntitySymbol slot="label" size="1.5rem" label={chain.gas} logoUrl={getLogoUrl('token', chain.gas)} />
+				<EntitySymbol
+					slot="label"
+					size="1.5rem"
+					label={chain.nativeCurrency}
+					logoUrl={getLogoUrl('token', chain.nativeCurrency)}
+				/>
 				{#await tokenPromises.nativeCurrency}
 					<span class="skeleton" style:width="8ch" style:display="inline-grid">-</span>
 				{:then balance}
