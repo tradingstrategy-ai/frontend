@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
@@ -80,9 +81,16 @@
 		</SummaryDataTile>
 	</section>
 
-	{#if chain.hasBackendData && chainDetails}
-		<TradingEntities {chain} {entities} />
-	{/if}
+	<section class="ds-container">
+		{#if chain.hasBackendData && chainDetails}
+			<TradingEntities {chain} {entities} />
+		{:else}
+			<Alert status="info" title="Limited chain data">
+				We currently offer limited data for {chain.name} blockchain. View
+				<a href="./vaults">top {chain.name} DeFi vaults</a>.
+			</Alert>
+		{/if}
+	</section>
 </main>
 
 <style>

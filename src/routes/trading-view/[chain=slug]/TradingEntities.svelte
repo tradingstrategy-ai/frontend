@@ -19,7 +19,7 @@
 	let { chain, entities }: Props = $props();
 </script>
 
-<section class="ds-container trading-entities">
+<div class="trading-entities">
 	<h2>{chain.name} trading entities</h2>
 	<Grid cols={2} gap="lg">
 		<TopEntities
@@ -60,10 +60,12 @@
 			rightColHeader="TVL"
 		/>
 	</Grid>
-</section>
+</div>
 
 <style>
 	.trading-entities {
+		display: contents;
+
 		h2 {
 			margin-block: var(--space-lg);
 			font: var(--f-heading-lg-medium);
