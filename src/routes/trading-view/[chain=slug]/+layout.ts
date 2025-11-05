@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { chainsUnderMaintenance } from '$lib/config';
-import { getChain } from '$lib/helpers/chain.js';
+import { getChain } from '$lib/helpers/chain';
 
 export async function load({ params }) {
 	const { chain: chainSlug } = params;
