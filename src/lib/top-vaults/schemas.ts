@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { chainId, hexString } from '$lib/eth-defi/schemas/core';
+import { blockNumber, chainId, hexString } from '$lib/eth-defi/schemas/core';
 import { isoDateTime } from '$lib/schemas/utility';
 
 const nullableNumber = z.number().nullable();
@@ -38,7 +38,11 @@ export const vaultInfoSchema = z.object({
 	start_date: isoDateTime,
 	end_date: isoDateTime,
 	address: hexString,
-	chain_id: chainId
+	chain_id: chainId,
+	stablecoinish: z.boolean(),
+	last_updated_at: isoDateTime,
+	last_updated_block: blockNumber,
+	features: z.string().array()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 

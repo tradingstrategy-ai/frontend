@@ -4,7 +4,7 @@
 
 	interface Props {
 		title: string;
-		count: number;
+		count: number | undefined;
 		timestamp?: string;
 	}
 

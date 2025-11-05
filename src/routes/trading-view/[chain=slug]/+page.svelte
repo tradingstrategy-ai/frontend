@@ -5,9 +5,26 @@
 	import BlockInfoTile from './BlockInfoTile.svelte';
 	import TradingEntities from './TradingEntities.svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
+	import { max } from 'd3-array';
 
 	const { data } = $props();
 	const { chain, chainDetails, topVaults, entities } = data;
+
+	let lastIndexedBlock = $derived.by(() => {
+		if (chainDetails) {
+			return chainDetails.end_block;
+		} else if (topVaults) {
+			return max(topVaults.vaults, (d) => d.last_updated_block);
+		}
+	});
+
+	let lastUpdatedTimestamp = $derived.by(() => {
+		if (chainDetails) {
+			return chainDetails.last_swap_at;
+		} else if (topVaults) {
+			return max(topVaults.vaults, (d) => d.last_updated_at);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -22,11 +39,7 @@
 
 	<section class="ds-container summary-data" data-testid="chain-summary">
 		<div class="block-info">
-			<BlockInfoTile
-				title="Last indexed block"
-				count={chainDetails?.end_block}
-				timestamp={chainDetails?.last_swap_at}
-			/>
+			<BlockInfoTile title="Last indexed block" count={lastIndexedBlock} timestamp={lastUpdatedTimestamp} />
 			<BlockInfoTile title="First indexed block" count={chainDetails?.start_block} />
 		</div>
 
