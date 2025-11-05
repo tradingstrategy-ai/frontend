@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Tooltip from '$lib/components/Tooltip.svelte';
+
 	interface Props {
 		risk: string | null;
 	}
@@ -9,7 +11,15 @@
 </script>
 
 <span class={['risk', riskClass]}>
-	{risk ?? 'Unknown'}
+	<Tooltip>
+		<svelte:fragment slot="trigger">
+			{risk ?? 'Unknown'}
+		</svelte:fragment>
+		<svelte:fragment slot="popup">
+			Read more about
+			<a href="/blog/announcing-vault-technical-risk-framework-beta" target="_blank">protocol technical risk</a>
+		</svelte:fragment>
+	</Tooltip>
 </span>
 
 <style>
@@ -47,6 +57,11 @@
 
 		&.unknown {
 			color: var(--c-text-light);
+		}
+
+		:global(.popup) {
+			right: 0;
+			white-space: nowrap;
 		}
 	}
 </style>

@@ -12,13 +12,13 @@
 	import VaultCell from './VaultCell.svelte';
 	import MultiValCell, { multiValCompareFn } from './MultiValCell.svelte';
 	import FeesCell from './FeesCell.svelte';
+	import DepositEventsCell from './DepositEventsCell.svelte';
+	import RiskCell from './RiskCell.svelte';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import { readable } from 'svelte/store';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import RiskCell from './RiskCell.svelte';
-	import DepositEventsCell from './DepositEventsCell.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -94,9 +94,9 @@
 			}
 		}),
 		table.column({
-			id: 'lifetime_return_abs',
-			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
-			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
+			id: 'three_months_return_ann',
+			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
+			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -114,9 +114,9 @@
 			}
 		}),
 		table.column({
-			id: 'three_months_return_ann',
-			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
-			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+			id: 'lifetime_return_abs',
+			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
+			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
 			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
 			plugins: {
 				sort: { compareFn: multiValCompareFn },
@@ -155,7 +155,7 @@
 			id: 'age',
 			accessor: 'years',
 			header: 'Age (years)',
-			cell: ({ value }) => formatNumber(value, 2),
+			cell: ({ value }) => formatNumber(value, 1),
 			plugins: { filter: { exclude: true } }
 		}),
 		// `last_deposit` is missing from latest data schema so dropping from table for now
@@ -187,7 +187,7 @@
 		}),
 		table.column({
 			accessor: ({ risk, risk_numeric }) => ({ risk, risk_numeric }),
-			header: 'Technical risk',
+			header: 'Protocol technical risk',
 			cell: ({ value }) => createRender(RiskCell, value),
 			plugins: {
 				sort: {
