@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	const { chains, impressiveNumbers, posts, strategies } = data;
+	const { impressiveNumbers, posts, strategies } = data;
 </script>
 
 <svelte:head>
@@ -27,7 +27,7 @@
 
 	<FeaturedStrategies {strategies} />
 
-	<ImpressiveNumbers {chains} {impressiveNumbers} />
+	<ImpressiveNumbers {impressiveNumbers} />
 
 	{#if posts}
 		<Section padding="md" gap="md">

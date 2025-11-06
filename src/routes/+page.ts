@@ -10,7 +10,6 @@ export async function load({ fetch, setHeaders, data }) {
 
 	return {
 		strategies: data.strategies,
-		chains: await fetchPublicApi(fetch, 'chains').catch(optionalDataError('chains')),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
 		posts: await getPosts(fetch, { limit: 4 })
 			.then((r) => r.posts)
