@@ -14,32 +14,32 @@
 </script>
 
 <Section tag="header">
-	<a class="inner tile a" href={homepage}>
+	<div class="inner tile a">
 		<h1>
 			<img alt={`${name} logo`} src={getLogoUrl('blockchain', slug)} />
 			<span>{name} blockchain</span>
 		</h1>
-		<Button>Visit {formatUrlAsDomain(homepage)}</Button>
-	</a>
+		<Button href={homepage} target="_blank" rel="noreferrer">Visit {formatUrlAsDomain(homepage)}</Button>
+	</div>
 </Section>
 
 <style>
 	.inner {
-		--logo-height: 5rem;
+		display: flex;
+		gap: 1rem;
+		justify-content: space-between;
 		align-items: center;
 		background: var(--c-box-1);
 		border-radius: var(--radius-xl);
-		display: flex;
-		gap: var(--space-md);
-		justify-content: space-between;
-		padding: var(--space-2xl);
+		padding: 2.25rem;
 		text-decoration: none;
+		--logo-height: 5rem;
 
 		@media (--viewport-md-down) {
-			--logo-height: 3.5rem;
-			padding: var(--space-xl);
 			flex-direction: column;
-			margin-top: var(--space-ms);
+			margin-top: 0.875rem;
+			padding: 2rem;
+			--logo-height: 3.5rem;
 
 			:global(.button) {
 				width: 100%;
@@ -50,7 +50,7 @@
 	.inner h1 {
 		flex: 1;
 		display: flex;
-		gap: var(--space-xl);
+		gap: 0.625em;
 		align-items: center;
 		font: var(--f-heading-xl-medium);
 
@@ -59,10 +59,6 @@
 		}
 
 		span {
-			display: flex;
-			align-items: center;
-			min-height: var(--logo-height);
-			padding-block: var(--space-ss);
 			line-height: 1.2em;
 		}
 
