@@ -3,25 +3,35 @@
 </script>
 
 <script lang="ts">
-	import type { ComponentType } from 'svelte';
+	import type { Component } from 'svelte';
+	import type { EntityTableProps } from './TradingEntitiesTable.svelte';
 	import type { Chain } from '$lib/helpers/chain';
-	import { Alert, Button, SummaryBox } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import SummaryBox from '$lib/components/SummaryBox.svelte';
 
-	export let type: string;
-	export let label = type.replaceAll('-', ' ');
-	export let title: string;
-	export let chain: Chain;
-	export let data: Promise<EntityData>;
-	export let tableComponent: ComponentType;
-	export let rightColHeader = '';
+	interface Props {
+		type: string;
+		label?: string;
+		title: string;
+		chain: Chain;
+		data: Promise<EntityData>;
+		EntityTable: Component<EntityTableProps>;
+		rightColHeader?: string;
+	}
 
-	let hasData = true;
+	let { type, label, title, chain, data, EntityTable, rightColHeader }: Props = $props();
 
-	$: data.then(({ rows, error }) => {
-		hasData = !error && rows.length > 0;
-		if (error) {
-			console.error(`Error loading ${label}:`, error);
-		}
+	label ??= type.replaceAll('-', ' ');
+
+	let hasData = $state(true);
+
+	// assign hasData inside $effect() instead of $derived() because it's async
+	$effect(() => {
+		data.then(({ rows, error }) => {
+			hasData = !error && rows.length > 0;
+			if (error) console.error(`Error loading ${label}:`, error);
+		});
 	});
 </script>
 
@@ -34,12 +44,12 @@
 	</header>
 
 	{#await data}
-		<svelte:component this={tableComponent} loading rows={Array(5).fill({})} />
+		<EntityTable loading rows={Array(5).fill({})} />
 	{:then { rows, error }}
 		{#if error}
 			<Alert size="md" title="Error">An error occurred loading {label}. Try reloading the page.</Alert>
 		{:else if hasData}
-			<svelte:component this={tableComponent} {rows} />
+			<EntityTable {rows} />
 		{:else}
 			<p>No {label} available for {chain.name}</p>
 		{/if}

@@ -1,11 +1,16 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import { formatUrlAsDomain } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Button, Section } from '$lib/components';
 
-	export let name: string;
-	export let slug: string;
-	export let homepage: string;
+	interface Props {
+		name: string;
+		slug: string;
+		homepage: string;
+	}
+
+	let { name, slug, homepage }: Props = $props();
 </script>
 
 <Section tag="header">

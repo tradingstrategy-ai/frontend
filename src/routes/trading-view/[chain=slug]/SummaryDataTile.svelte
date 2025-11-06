@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { formatAmount } from '$lib/helpers/formatters';
 	import Button from '$lib/components/Button.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
+	import { formatAmount } from '$lib/helpers/formatters';
 
 	interface Props {
 		count: number | undefined;

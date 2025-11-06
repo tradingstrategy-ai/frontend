@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Chain } from '$lib/helpers/chain';
 	import Grid from '$lib/components/Grid.svelte';
 	import TopEntities, { type EntityData } from './TopEntities.svelte';
 	import TopExchanges from './TopExchanges.svelte';
@@ -27,7 +28,7 @@
 			title="Highest volume exchanges"
 			{chain}
 			data={entities.exchanges}
-			tableComponent={TopExchanges}
+			EntityTable={TopExchanges}
 			rightColHeader="Vol 30d"
 		/>
 
@@ -37,7 +38,7 @@
 			title="Highest TVL trading pairs"
 			{chain}
 			data={entities.pairs}
-			tableComponent={TopPairs}
+			EntityTable={TopPairs}
 			rightColHeader="TVL"
 		/>
 
@@ -46,7 +47,7 @@
 			title="Highest liquidity tokens"
 			{chain}
 			data={entities.tokens}
-			tableComponent={TopTokens}
+			EntityTable={TopTokens}
 			rightColHeader="Liquidity"
 		/>
 
@@ -56,7 +57,7 @@
 			title="Highest TVL lending reserves"
 			{chain}
 			data={entities.reserves}
-			tableComponent={TopReserves}
+			EntityTable={TopReserves}
 			rightColHeader="TVL"
 		/>
 	</Grid>
