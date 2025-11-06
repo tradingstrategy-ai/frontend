@@ -3,6 +3,7 @@
 	import { chains } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import Button from '$lib/components/Button.svelte';
 
 	let { impressiveNumbers } = $props();
 
@@ -13,11 +14,14 @@
 	{#if chains}
 		<h2>Trading Strategy runs on</h2>
 		<div class="chains">
-			{#each indexedChains as chain (chain.id)}
-				<a class="tile b" title={chain.name} href="/trading-view/{chain.slug}" data-sveltekit-preload-data>
-					<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
-				</a>
-			{/each}
+			<div class="chain-logos">
+				{#each indexedChains as chain (chain.id)}
+					<a class="tile b" title={chain.name} href="/trading-view/{chain.slug}" data-sveltekit-preload-data>
+						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+					</a>
+				{/each}
+			</div>
+			<Button class="chain-button" secondary label="See all chains" href="/trading-view/blockchains" />
 		</div>
 	{/if}
 
@@ -55,6 +59,15 @@
 	}
 
 	.chains {
+		display: grid;
+		gap: 2rem;
+
+		:global(.chain-button) {
+			justify-self: center;
+		}
+	}
+
+	.chain-logos {
 		display: grid;
 		grid-template-columns: repeat(8, auto);
 		gap: 2rem 0;
