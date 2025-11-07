@@ -28,9 +28,10 @@ const baseSitemaps = [
  * how many pages of sitemaps to expect based on pair sitemap page size.
  */
 async function getPairSitemaps(fetch: Fetch) {
-	const datasets = await fetchPublicApi(fetch, 'datasets');
-	const pairUniverse = datasets.find((d: any) => d.designation === 'pair_universe');
-	let pageCount = Math.ceil(pairUniverse.entries / PAIR_SITEMAP_PAGE_SIZE);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const datasets = await fetchPublicApi<Record<string, any>[]>(fetch, 'datasets');
+	const pairUniverse = datasets.find((d) => d.designation === 'pair_universe');
+	let pageCount = Math.ceil(pairUniverse!.entries / PAIR_SITEMAP_PAGE_SIZE);
 
 	// confirm whether last pair sitemap page exists (since the counts can be off)
 	const lastPageExists = await sitemapExists(`${backendUrl}/sitemap/pairs/paged/${pageCount - 1}.xml`);

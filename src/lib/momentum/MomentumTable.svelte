@@ -5,6 +5,7 @@
 		exchange_name: string;
 		exchange_slug: string;
 		liquidity_change_24h: number;
+		pair_id: number;
 		pair_slug: string;
 		pair_symbol: string;
 		price_change_24h: number;
@@ -29,7 +30,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each pairs as pair, idx}
+		{#each pairs as pair, idx (pair.pair_id)}
 			<tr class="targetable">
 				<td class="position">
 					#{idx + 1}

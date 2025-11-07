@@ -1,13 +1,15 @@
 import type { MomentumPair } from '$lib/momentum/MomentumTable.svelte';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
+type TopMomentumData = Record<string, MomentumPair[]>;
+
 export async function load({ params, fetch }) {
 	const direction = params.direction.split('-')[1] as 'up' | 'down';
 
-	const data = await fetchPublicApi(fetch, 'top-momentum');
+	const data = await fetchPublicApi<TopMomentumData>(fetch, 'top-momentum');
 
 	return {
 		direction,
-		pairs: data[`top_${direction}_24h_min_liq_1m`] as MomentumPair[]
+		pairs: data[`top_${direction}_24h_min_liq_1m`]
 	};
 }

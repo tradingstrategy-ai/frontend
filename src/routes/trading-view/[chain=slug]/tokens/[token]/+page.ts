@@ -1,4 +1,5 @@
 import type { LendingReserveDocument } from '$lib/search/trading-entities';
+import type { TokenDetails } from '$lib/explorer/token-client.js';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { searchCollection } from '$lib/search/typesense-client';
 
@@ -27,7 +28,7 @@ export async function load({ params, fetch, setHeaders }) {
 	});
 
 	return {
-		token: await fetchPublicApi(fetch, 'token/details', { chain_slug: chain, address: token }),
+		token: await fetchPublicApi<TokenDetails>(fetch, 'token/details', { chain_slug: chain, address: token }),
 		reserves: await searchLendingReserves(fetch, chain, token)
 	};
 }

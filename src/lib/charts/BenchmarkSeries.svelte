@@ -6,7 +6,7 @@
 	import Series from './Series.svelte';
 	import { tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { fetchPublicApi } from '$lib/helpers/public-api';
-	import { dateToTs, tsToDate } from './helpers';
+	import { dateToTs } from './helpers';
 
 	type Props = {
 		token: BenchmarkToken;
@@ -39,7 +39,7 @@
 		token.loading = true;
 		benchmarkData = [];
 
-		const pairCandles = await fetchPublicApi(fetch, 'candles', {
+		const pairCandles = await fetchPublicApi<Record<string, ApiCandle[]>>(fetch, 'candles', {
 			pair_id: token.pairId,
 			exchange_type: token.exchangeType,
 			candle_type: 'price',
@@ -48,7 +48,7 @@
 			end: range[1].toISOString().slice(0, 19)
 		});
 
-		const candles = (pairCandles[token.pairId] ?? []) as ApiCandle[];
+		const candles = pairCandles[token.pairId] ?? [];
 
 		const initialBenchmarkValue = candles[0]?.c ?? 0;
 

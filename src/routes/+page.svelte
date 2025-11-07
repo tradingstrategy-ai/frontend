@@ -19,6 +19,7 @@
 <svelte:head>
 	<title>Trading Strategy - Algorithmic Trading Protocol</title>
 	<meta name="description" content="AI-driven best profitable automated trading strategies" />
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html sitelinksSearchBox()}
 </svelte:head>
 

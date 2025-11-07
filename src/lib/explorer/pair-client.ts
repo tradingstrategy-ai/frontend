@@ -14,8 +14,21 @@ export type PairIndexParams = Partial<{
 
 type PairSearchKey = keyof PairIndexParams;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PairInfo = Record<string, any>;
+
+export type PairDetails = {
+	summary: PairInfo;
+	additional_details: PairInfo;
+};
+
+type PairApiResponse = {
+	results: PairInfo[];
+	total: number;
+};
+
 export type PairIndexResponse = {
-	rows: Record<string, any>[];
+	rows: PairInfo[];
 	totalRowCount: number;
 };
 
@@ -36,7 +49,7 @@ const allKeys: PairSearchKey[] = [
 	'token_addresses'
 ];
 
-export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
+export async function fetchPairs(fetch: Fetch, params: PairIndexParams): Promise<PairIndexResponse | undefined> {
 	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
@@ -44,14 +57,14 @@ export async function fetchPairs(fetch: Fetch, params: PairIndexParams) {
 		if (value) apiParams[key] = String(value);
 	}
 
-	const data = await fetchPublicApi(fetch, 'pairs', apiParams, true);
+	const data = await fetchPublicApi<PairApiResponse>(fetch, 'pairs', apiParams, { abortPrevious: true });
 
 	if (!data) return;
 
 	return {
 		rows: data.results,
 		totalRowCount: data.total
-	} as PairIndexResponse;
+	};
 }
 
 export type PairIndexData = PairIndexResponse & {

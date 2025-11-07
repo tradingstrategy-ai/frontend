@@ -2,7 +2,7 @@ import type { TimeInterval } from 'd3-time';
 import type { TimeBucket } from '$lib/schemas/utility.js';
 import type { TradingPositionInfo } from 'trade-executor/models/position-info.js';
 import type { TradingPairInfo } from 'trade-executor/models/trading-pair-info.js';
-import type { CandleDataItem } from '$lib/charts/types.js';
+import type { ApiCandle } from '$lib/charts/types.js';
 import { error } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api.js';
 import { apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
@@ -29,7 +29,7 @@ export async function load({ fetch, params, parent }) {
 	const exchangeType = getExchangeType(position.pair);
 	const { timeBucket, interval, start, end } = getIntervalInfo(position);
 
-	const rawCandleData = await fetchPublicApi(fetch, 'candles', {
+	const rawCandleData = await fetchPublicApi<Record<string, ApiCandle[]>>(fetch, 'candles', {
 		candle_type: 'price',
 		pair_id: pairId,
 		exchange_type: exchangeType,
@@ -38,7 +38,7 @@ export async function load({ fetch, params, parent }) {
 		end: end.toISOString().slice(0, 19)
 	});
 
-	const candleData: CandleDataItem[] = rawCandleData[pairId].map(apiCandleToDataItem);
+	const candleData = rawCandleData[pairId].map(apiCandleToDataItem);
 
 	return {
 		timeBucket,

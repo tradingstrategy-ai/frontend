@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { PerformanceData } from 'trade-executor/schemas/utility-types';
 	import type { TvChartOptions } from '$lib/charts/types';
 	import StrategyChart from '$lib/charts/StrategyChart.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	interface Props {
-		tvlData?: [number, number][] | undefined;
+		tvlData?: PerformanceData | undefined;
 	}
 
 	let { tvlData }: Props = $props();

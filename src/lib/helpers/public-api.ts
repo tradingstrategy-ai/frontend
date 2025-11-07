@@ -1,5 +1,6 @@
 // Helpers for working with Trading Strategy public APIs
 import { type NumericRange, error } from '@sveltejs/kit';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { backendUrl } from '$lib/config';
 
 type Params = Record<string, string>;
@@ -12,10 +13,22 @@ const controllers: Record<string, AbortController> = {};
  * @param fetch SvelteKit's fetch function
  * @param endpoint final path segment of endpoint, e.g.: 'chains', 'pairs'
  * @param params URL paramaters as a record of string values
- * @param abortPrevious set to true to abort pending requets to the same endpoint
- * @returns the deserialised JSON payload
+ * @param options optional configuration
+ * @param options.abortPrevious abort any pending requests to the same endpoint
+ * @param options.schema Standard Schema for response validation (e.g., `z.object({ ... })`)
+ * @returns the deserialized and optionally validated JSON payload
  */
-export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Params = {}, abortPrevious = false) {
+export async function fetchPublicApi<T = unknown>(
+	fetch: Fetch,
+	endpoint: string,
+	params: Params = {},
+	options?: {
+		abortPrevious?: boolean;
+		schema?: StandardSchemaV1<unknown, T>;
+	}
+): Promise<T> {
+	const { abortPrevious = false, schema } = options ?? {};
+
 	let signal: AbortSignal | undefined = undefined;
 
 	if (abortPrevious) {
@@ -26,16 +39,28 @@ export async function fetchPublicApi(fetch: Fetch, endpoint: string, params: Par
 
 	const searchParams = new URLSearchParams(params);
 
+	let data: unknown;
+
 	try {
 		const resp = await fetch(`${backendUrl}/${endpoint}?${searchParams}`, { signal });
 		if (!resp.ok) throw await publicApiError(resp);
-		return resp.json();
+		data = await resp.json();
 	} catch (e) {
-		if (e.name === 'AbortError') return;
+		if ((e as Error).name === 'AbortError') return undefined as T;
 		throw e;
 	} finally {
 		if (!signal?.aborted) delete controllers[endpoint];
 	}
+
+	// return raw response payload if no validation schema was provided
+	if (!schema) return data as T;
+
+	// validate response and return validated/typed payload if successful
+	const result = await schema['~standard'].validate(data);
+	if (result.issues) {
+		error(500, { message: 'API response validation failed', ...result });
+	}
+	return result.value;
 }
 
 /**
@@ -82,5 +107,6 @@ export function optionalDataError(dataType?: string) {
 	return (err: Error) => {
 		console.error(`${errorIntro}; rendering page without data.`);
 		console.error(err);
+		return undefined;
 	};
 }

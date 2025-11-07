@@ -7,7 +7,9 @@ export async function load({ fetch, setHeaders }) {
 	});
 
 	return {
-		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
+		impressiveNumbers: await fetchPublicApi<Record<string, MaybeNumber>>(fetch, 'impressive-numbers').catch(
+			optionalDataError('impressive-numbers')
+		),
 		topVaults: await fetchTopVaults(fetch).catch(optionalDataError('top-vaults'))
 	};
 }

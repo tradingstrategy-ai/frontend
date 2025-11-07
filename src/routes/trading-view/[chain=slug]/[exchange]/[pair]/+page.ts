@@ -1,8 +1,9 @@
+import type { PairDetails } from '$lib/explorer/pair-client.js';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { timeBucketEnum } from '$lib/schemas/utility.js';
 
 export async function load({ fetch, params, setHeaders, url }) {
-	const pair = await fetchPublicApi(fetch, 'pair-details', {
+	const pair = await fetchPublicApi<PairDetails>(fetch, 'pair-details', {
 		chain_slug: params.chain,
 		exchange_slug: params.exchange,
 		pair_slug: params.pair
