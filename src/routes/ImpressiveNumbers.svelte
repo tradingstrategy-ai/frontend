@@ -1,20 +1,27 @@
 <script lang="ts">
 	import Section from '$lib/components/Section.svelte';
+	import { chains } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import Button from '$lib/components/Button.svelte';
 
-	let { chains, impressiveNumbers } = $props();
+	let { impressiveNumbers } = $props();
+
+	const indexedChains = chains.filter((c) => c.hasBackendData);
 </script>
 
 <Section gap="md" padding="lg" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
 	{#if chains}
 		<h2>Trading Strategy runs on</h2>
 		<div class="chains">
-			{#each chains as chain}
-				<a class="tile b" title={chain.chain_name} href="/trading-view/{chain.chain_slug}" data-sveltekit-preload-data>
-					<img src={getLogoUrl('blockchain', chain.chain_slug)} alt={chain.chain_name} />
-				</a>
-			{/each}
+			<div class="chain-logos">
+				{#each indexedChains as chain (chain.id)}
+					<a class="tile b" title={chain.name} href="/trading-view/{chain.slug}" data-sveltekit-preload-data>
+						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+					</a>
+				{/each}
+			</div>
+			<Button class="chain-button" secondary label="See all chains" href="/trading-view/blockchains" />
 		</div>
 	{/if}
 
@@ -53,7 +60,17 @@
 
 	.chains {
 		display: grid;
+		gap: 2rem;
+
+		:global(.chain-button) {
+			justify-self: center;
+		}
+	}
+
+	.chain-logos {
+		display: grid;
 		grid-template-columns: repeat(8, auto);
+		gap: 2rem 0;
 		justify-content: space-evenly;
 		margin-block: 1rem;
 		--size: clamp(3.5rem, 8vw, 6rem);

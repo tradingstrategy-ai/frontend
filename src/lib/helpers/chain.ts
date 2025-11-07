@@ -92,7 +92,7 @@ export const chains = (() => {
 			explorer: 'https://berascan.com',
 			nativeCurrency: 'BERA',
 			hasBackendData: true,
-			sortOrder: 6
+			sortOrder: 7
 		},
 		// Partially supported chains (indexed vaults, logos)
 		{

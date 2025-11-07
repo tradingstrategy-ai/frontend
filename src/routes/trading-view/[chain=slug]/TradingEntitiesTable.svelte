@@ -1,22 +1,33 @@
+<script module lang="ts">
+	export interface EntityTableProps {
+		loading?: boolean;
+		rows: TradingEntityRow[];
+	}
+</script>
+
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import { formatValue } from '$lib/helpers/formatters';
 
 	type TradingEntityRow = Record<string, any>;
 
-	export let loading = false;
-	export let rows: TradingEntityRow[];
-	export let getHref: Formatter<TradingEntityRow>;
+	interface Props extends EntityTableProps {
+		getHref: Formatter<TradingEntityRow>;
+		cells: Snippet<[TradingEntityRow, Formatter<string>]>;
+	}
 
-	let offsetWidth: number;
+	let { loading = false, rows, getHref, cells }: Props = $props();
+
+	let offsetWidth = $state<number>();
 </script>
 
 <!-- --table-width needed for proper tr.targetable styling  -->
 <table class="trading-entities-table datatable" class:loading bind:offsetWidth style:--table-width="{offsetWidth}px">
 	<tbody>
-		{#each rows as row}
+		{#each rows as row, idx (idx)}
 			<tr class="targetable">
-				<slot {row} format={formatValue} />
+				{@render cells(row, formatValue)}
 				<td class="target">
 					{#if !loading}
 						<TargetableLink href={getHref(row)} label="View details" />

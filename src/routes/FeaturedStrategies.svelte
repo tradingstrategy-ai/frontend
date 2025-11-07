@@ -3,7 +3,9 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
-	import { Alert, Button, Section } from '$lib/components';
+	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import {
 		type ChainOption,
 		default as ChainFilter,
@@ -13,11 +15,15 @@
 	import StrategyTile from './strategies/StrategyTile.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 
-	export let strategies: StrategyInfo[];
+	interface Props {
+		strategies: StrategyInfo[];
+	}
 
-	let selected: ChainOption = 'all';
+	let { strategies }: Props = $props();
 
-	$: filteredStrategies = strategies.filter((s) => matchesChainOption(s, selected));
+	let selected: ChainOption = $state('all');
+
+	let filteredStrategies = $derived(strategies.filter((s) => matchesChainOption(s, selected)));
 
 	const chartDateRange = getStrategyChartDateRange(strategies);
 </script>
