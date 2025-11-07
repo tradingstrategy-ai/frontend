@@ -26,7 +26,9 @@
 		<div class="chains">
 			{#each chains as chain (chain.id)}
 				<a class="tile b" href={`/trading-view/${chain.slug}`}>
-					<img class="tile c" alt={`${chain.name} logo`} src={getLogoUrl('blockchain', chain.slug)} />
+					<div class="tile c">
+						<img alt={`${chain.name} logo`} src={getLogoUrl('blockchain', chain.slug)} />
+					</div>
 					<h3>{chain.name}</h3>
 					<Button>View details</Button>
 				</a>
@@ -50,7 +52,7 @@
 			--button-width: clamp(10rem, 50%, 15rem);
 		}
 
-		img {
+		div {
 			height: 5rem;
 			width: 5rem;
 			border-radius: 50%;
