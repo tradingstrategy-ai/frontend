@@ -4,12 +4,14 @@
  * NOTE: do NOT add HTTP caching to this route, since it renders
  * different content based on admin role and IP country
  */
+import type { PerformanceData } from 'trade-executor/schemas/utility-types.js';
 import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 async function fetchTvlData() {
 	try {
-		return (await fetchPublicApi(fetch, 'impressive-numbers')).strategies_tvl;
+		const tvlData = await fetchPublicApi<{ strategies_tvl?: PerformanceData }>(fetch, 'impressive-numbers');
+		return tvlData.strategies_tvl;
 	} catch (e) {
 		console.error('Request failed; rendering page without TVL data.');
 		console.error(e);

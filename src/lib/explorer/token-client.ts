@@ -10,8 +10,16 @@ export type TokenIndexParams = Partial<{
 
 type TokenSearchKey = keyof TokenIndexParams;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TokenDetails = Record<string, any>;
+
+type TokenApiResponse = {
+	results: TokenDetails[];
+	total: number;
+};
+
 export type TokenIndexResponse = {
-	rows: Record<string, any>[];
+	rows: TokenDetails[];
 	totalRowCount: number;
 };
 
@@ -24,7 +32,7 @@ const defaultParams: TokenIndexParams = {
 
 const allKeys: TokenSearchKey[] = ['page_size', 'page', 'sort', 'direction', 'chain_slug'];
 
-export async function fetchTokens(fetch: Fetch, params: TokenIndexParams) {
+export async function fetchTokens(fetch: Fetch, params: TokenIndexParams): Promise<TokenIndexResponse | undefined> {
 	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
@@ -32,12 +40,12 @@ export async function fetchTokens(fetch: Fetch, params: TokenIndexParams) {
 		if (value) apiParams[key] = String(value);
 	}
 
-	const data = await fetchPublicApi(fetch, 'tokens', apiParams, true);
+	const data = await fetchPublicApi<TokenApiResponse>(fetch, 'tokens', apiParams, { abortPrevious: true });
 
 	if (!data) return;
 
 	return {
 		rows: data.results,
 		totalRowCount: data.total
-	} as TokenIndexResponse;
+	};
 }

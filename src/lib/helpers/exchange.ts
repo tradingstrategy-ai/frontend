@@ -2,6 +2,10 @@
  * Misc exchange data helpers.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExchangeDetails = Record<string, any>;
+export type ExchangeIndexResponse = { exchanges: ExchangeDetails[] };
+
 export type ExchangeNameInfo = {
 	name: string;
 	version: number;

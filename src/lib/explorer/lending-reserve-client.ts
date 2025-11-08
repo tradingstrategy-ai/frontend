@@ -39,6 +39,11 @@ export type LendingReserveIndexParams = Partial<{
 
 type LendingReserveSearchKey = keyof LendingReserveIndexParams;
 
+type LendingReserveApiResponse = {
+	results: LendingReserve[];
+	total: number;
+};
+
 export type LendingReserveIndexResponse = {
 	rows: LendingReserve[];
 	totalRowCount: number;
@@ -53,7 +58,10 @@ const defaultParams: LendingReserveIndexParams = {
 
 const allKeys: LendingReserveSearchKey[] = ['page_size', 'page', 'sort', 'direction', 'protocol_slug', 'chain_slug'];
 
-export async function fetchLendingReserves(fetch: Fetch, params: LendingReserveIndexParams) {
+export async function fetchLendingReserves(
+	fetch: Fetch,
+	params: LendingReserveIndexParams
+): Promise<LendingReserveIndexResponse | undefined> {
 	const apiParams: Record<string, string> = {};
 
 	for (const key of allKeys) {
@@ -61,10 +69,14 @@ export async function fetchLendingReserves(fetch: Fetch, params: LendingReserveI
 		if (value) apiParams[key] = String(value);
 	}
 
-	const data = await fetchPublicApi(fetch, 'lending-reserves', apiParams, true);
+	const data = await fetchPublicApi<LendingReserveApiResponse>(fetch, 'lending-reserves', apiParams, {
+		abortPrevious: true
+	});
+
+	if (!data) return;
 
 	return {
 		rows: data.results,
 		totalRowCount: data.total
-	} as LendingReserveIndexResponse;
+	};
 }

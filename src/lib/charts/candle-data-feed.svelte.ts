@@ -1,13 +1,14 @@
 import type { TimeInterval } from 'd3-time';
-import type { UTCTimestamp } from 'lightweight-charts';
 import type { TimeBucket } from '$lib/schemas/utility';
 import type { ApiCandle, CandleDataItem, DataFeed } from './types';
 import { timeBucketToInterval } from './helpers';
 import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
+import { parseDate } from '$lib/helpers/date';
+import { dateToTs } from './helpers';
 
 export function tsToUnixTimestamp(ts: string) {
-	return (new Date(`${ts}Z`).valueOf() / 1000) as UTCTimestamp;
+	return dateToTs(parseDate(ts)!);
 }
 
 export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
@@ -20,7 +21,7 @@ export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
 	};
 }
 
-export type ApiDataTransformer = (data: any) => CandleDataItem[];
+export type ApiDataTransformer = (data: unknown) => CandleDataItem[];
 
 export class CandleDataFeed implements DataFeed<CandleDataItem> {
 	interval: TimeInterval;
@@ -37,6 +38,7 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 		readonly transformApiData: ApiDataTransformer
 	) {
 		this.interval = timeBucketToInterval(timeBucket);
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		this.endDate = this.interval.floor(new Date());
 	}
 

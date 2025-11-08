@@ -1,3 +1,4 @@
+import type { ExchangeDetails } from '$lib/helpers/exchange';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
 /**
@@ -9,6 +10,6 @@ export async function load({ params, fetch }) {
 	const chain_slug = params.chain;
 
 	return {
-		exchange: await fetchPublicApi(fetch, 'exchange-details', { exchange_slug, chain_slug })
+		exchange: await fetchPublicApi<ExchangeDetails>(fetch, 'exchange-details', { exchange_slug, chain_slug })
 	};
 }
