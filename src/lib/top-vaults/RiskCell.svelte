@@ -10,7 +10,7 @@
 	const riskClass = risk?.toLowerCase().replace(/ /g, '-') ?? 'unknown';
 </script>
 
-<span class={['risk', riskClass]}>
+<span class="risk-cell {riskClass}">
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			{risk ?? 'Unknown'}
@@ -23,7 +23,7 @@
 </span>
 
 <style>
-	.risk {
+	.risk-cell {
 		font: var(--f-ui-xs-medium);
 		letter-spacing: 0.02em;
 

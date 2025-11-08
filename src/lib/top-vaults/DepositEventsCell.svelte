@@ -28,13 +28,13 @@
 	});
 </script>
 
-<div>
+<div class="deposit-events-cell">
 	<span>{number}</span>
 	<span class="unit">{unit}</span>
 </div>
 
 <style>
-	div {
+	.deposit-events-cell {
 		display: inline-flex;
 		gap: 0.5ex;
 	}

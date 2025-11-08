@@ -8,8 +8,6 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import ChainCell from './ChainCell.svelte';
-	import VaultCell from './VaultCell.svelte';
-	import MultiValCell from './MultiValCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import DepositEventsCell from './DepositEventsCell.svelte';
 	import RiskCell from './RiskCell.svelte';
@@ -22,11 +20,18 @@
 
 	const { topVaults, chain }: Props = $props();
 
-	const formatReturn = (v: number | null) => formatPercent(v, 2);
-	const formatTvl = (v: number | null) => formatDollar(v, 2);
+	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
+	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
 	let filterValue = $state('');
 </script>
+
+{#snippet multiVal<T = MaybeNumber>(values: [T, T], formatter: Formatter<T>)}
+	<div class="multiline multival">
+		<span class="primary">{formatter(values[0])}</span>
+		<span class="secondary">{formatter(values[1])}</span>
+	</div>
+{/snippet}
 
 <div class="top-vaults">
 	<TopVaultsOptIn />
@@ -74,42 +79,44 @@
 								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
 							</td>
 							<td class="vault">
-								<VaultCell name={vault.name} protocol={vault.protocol} />
+								<div class="multiline">
+									<strong>{vault.name}</strong>
+									{#if vault.protocol}
+										<span class="secondary">{vault.protocol}</span>
+									{/if}
+								</div>
 							</td>
-							<td class="one_month_return_ann">
-								<MultiValCell values={[vault.one_month_cagr_net, vault.one_month_cagr]} formatter={formatReturn} />
+							<td class="one_month_return_ann right">
+								{@render multiVal([vault.one_month_cagr_net, vault.one_month_cagr], formatReturn)}
 							</td>
-							<td class="three_months_return_ann">
-								<MultiValCell
-									values={[vault.three_months_cagr_net, vault.three_months_cagr]}
-									formatter={formatReturn}
-								/>
+							<td class="three_months_return_ann right">
+								{@render multiVal([vault.three_months_cagr_net, vault.three_months_cagr], formatReturn)}
 							</td>
-							<td class="lifetime_return_ann">
-								<MultiValCell values={[vault.cagr_net, vault.cagr]} formatter={formatReturn} />
+							<td class="lifetime_return_ann right">
+								{@render multiVal([vault.cagr_net, vault.cagr], formatReturn)}
 							</td>
-							<td class="lifetime_return_abs">
-								<MultiValCell values={[vault.lifetime_return_net, vault.lifetime_return]} formatter={formatReturn} />
+							<td class="lifetime_return_abs right">
+								{@render multiVal([vault.lifetime_return_net, vault.lifetime_return], formatReturn)}
 							</td>
-							<td class="three_months_sharpe">
+							<td class="three_months_sharpe right">
 								{formatNumber(vault.three_months_sharpe, 1)}
 							</td>
-							<td class="three_months_volatility">
+							<td class="three_months_volatility right">
 								{formatPercent(vault.three_months_volatility, 1)}
 							</td>
-							<td class="denomination">
+							<td class="denomination center">
 								{formatValue(vault.denomination)}
 							</td>
-							<td class="tvl">
-								<MultiValCell values={[vault.current_nav, vault.peak_nav]} formatter={formatTvl} />
+							<td class="tvl right">
+								{@render multiVal([vault.current_nav, vault.peak_nav], formatTvl)}
 							</td>
-							<td class="age">
+							<td class="age right">
 								{formatNumber(vault.years, 1)}
 							</td>
-							<td class="fees">
+							<td class="fees right">
 								<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 							</td>
-							<td class="event_count">
+							<td class="event_count right">
 								<DepositEventsCell value={vault.event_count} />
 							</td>
 							<td class="risk">
@@ -127,8 +134,6 @@
 					{/each}
 				</tbody>
 			</table>
-
-			<!-- <DataTable class="top-vaults-table" {tableViewModel} /> -->
 		</div>
 	{/if}
 </div>
@@ -175,7 +180,7 @@
 			}
 		}
 
-		:global(.top-vaults-table) {
+		.top-vaults-table {
 			position: relative;
 			width: 100%;
 			border-collapse: collapse;
@@ -194,11 +199,11 @@
 				font-size: 14px;
 			}
 
-			:global(:is(td, th)) {
+			:is(td, th) {
 				vertical-align: top;
 			}
 
-			:global(th) {
+			th {
 				position: sticky;
 				top: 0px;
 				z-index: 1;
@@ -214,10 +219,10 @@
 				text-align: left;
 			}
 
-			:global(th.sorted) {
+			th.sorted {
 				padding-right: 1.125rem;
 
-				:global(svg) {
+				svg {
 					position: absolute;
 					top: 0.5rem;
 					right: 0.25rem;
@@ -225,29 +230,29 @@
 			}
 
 			/* no background on index column */
-			:global(th.index) {
+			th.index {
 				background: var(--c-body);
 			}
 
 			/* custom alignment for chain sort indicator (no header label) */
-			:global(th.chain.sorted svg) {
+			th.chain.sorted svg {
 				right: 0.5rem;
 			}
 
-			:global(td.chain) {
+			td.chain {
 				width: 1.875rem;
 			}
 
-			:global(td.vault) {
+			td.vault {
 				min-width: 12rem;
 			}
 
 			/* flip the sort indicator on columns that use inverted sort */
-			:global(:is(th.chain, th.vault, th.denomination, th.fees, th.risk) svg) {
+			:is(th.chain, th.vault, th.denomination, th.fees, th.risk) svg {
 				rotate: 180deg;
 			}
 
-			:global(td) {
+			td {
 				border-block: 1px solid var(--c-text-ultra-light);
 				padding: 0.25em 0.5em;
 
@@ -262,10 +267,18 @@
 				&:nth-child(odd) {
 					background-color: var(--c-col-b);
 				}
+
+				&.right {
+					text-align: right;
+				}
+
+				&.center {
+					text-align: center;
+				}
 			}
 
 			/* reverse column colors if chain col is present */
-			:global(:where(tr:has(.chain)) td) {
+			:where(tr:has(.chain)) td {
 				&:nth-child(odd) {
 					background-color: var(--c-col-a);
 				}
@@ -275,16 +288,39 @@
 				}
 			}
 
-			:global(td:has(.tooltip)) {
+			td:global(:has(.tooltip)) {
 				position: relative;
 			}
 
 			:global(.multiline) {
 				display: grid;
-				gap: 0.125rem;
+				gap: 0.5rem;
 			}
 
-			:global(td.index) {
+			:global(.secondary) {
+				opacity: 0.7;
+			}
+
+			.multival {
+				> ::before {
+					content: '(';
+				}
+
+				> ::after {
+					content: ')';
+				}
+
+				.primary {
+					font-weight: 600;
+
+					&::before,
+					&::after {
+						visibility: hidden;
+					}
+				}
+			}
+
+			td.index {
 				text-align: center;
 				vertical-align: middle;
 				background-color: var(--c-col-b);
@@ -295,7 +331,7 @@
 				}
 			}
 
-			:global(td.chain) {
+			td.chain {
 				vertical-align: middle;
 				text-align: center;
 				padding-right: 0.25rem;
@@ -311,30 +347,9 @@
 				font: var(--f-ui-xs-roman);
 				letter-spacing: var(--ls-ui-xs, normal);
 
-				:global(a):not(:hover) {
+				:global(a:not(:hover)) {
 					text-decoration: none;
 				}
-			}
-
-			:global(
-				:is(
-					td.one_month_return_ann,
-					td.lifetime_return_abs,
-					td.lifetime_return_ann,
-					td.three_months_return_ann,
-					td.three_months_sharpe,
-					td.three_months_volatility,
-					td.tvl,
-					td.age,
-					td.fees,
-					td.event_count
-				)
-			) {
-				text-align: right;
-			}
-
-			:global(td.denomination) {
-				text-align: center;
 			}
 		}
 	}
