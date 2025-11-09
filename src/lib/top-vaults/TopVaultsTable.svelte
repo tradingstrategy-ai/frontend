@@ -24,6 +24,24 @@
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
 	let filterValue = $state('');
+
+	// filter vaults
+	let vaults = $derived.by(() => {
+		const filterCompareStr = filterValue.trim().toLowerCase();
+		return topVaults.vaults.filter((v) => {
+			const chain = getChain(v.chain_id);
+			const vaultCompareStr = [
+				v.chain_id,
+				chain?.name ?? '',
+				v.name,
+				v.protocol,
+				v.denomination,
+				v.risk ?? '',
+				v.address
+			].join(' ');
+			return vaultCompareStr.toLowerCase().includes(filterCompareStr);
+		});
+	});
 </script>
 
 {#snippet multiVal<T = MaybeNumber>(values: [T, T], formatter: Formatter<T>)}
@@ -70,7 +88,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each topVaults.vaults as vault (vault.id)}
+					{#each vaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
 						<tr>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
