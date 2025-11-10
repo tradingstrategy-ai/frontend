@@ -32,7 +32,9 @@
 
 	<Section>
 		<div class="api-link">
-			<a href="https://tradingstrategy.ai/blog/announcing-defi-vault-top-lists-and-api">Available as API here.</a>
+			<a class="body-link" href="https://tradingstrategy.ai/blog/announcing-defi-vault-top-lists-and-api">
+				Available as API here.
+			</a>
 		</div>
 	</Section>
 </main>
@@ -47,10 +49,10 @@
 	}
 
 	.api-link {
-		text-align: center;
+		margin-top: 2rem;
 		font: var(--f-ui-body-medium);
 		color: var(--c-text-light);
-		text-decoration: underline;
+		text-align: center;
 
 		@media (--viewport-md-down) {
 			font: var(--f-ui-small-medium);
