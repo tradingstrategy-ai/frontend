@@ -10,17 +10,17 @@
 </script>
 
 <svelte:head>
-	<title>Top vaults | Trading Strategy</title>
-	<meta name="description" content="Browse the highest performing vaults across all supported blockchains." />
+	<title>Top DeFi stablecoin vaults</title>
+	<meta name="description" content="The best DeFi vaults for all blockchains." />
 </svelte:head>
 
 <Breadcrumbs labels={{ vaults: 'Top Vaults' }} />
 
 <main class="top-vaults ds-3">
 	<Section tag="header">
-		<HeroBanner subtitle="The best performing DeFi vaults across all chains with minimum $50k USD TVL">
+		<HeroBanner subtitle="The best performing DeFi stablecoin vaults across multiple blockchains">
 			{#snippet title()}
-				<span>Top DeFi Vaults</span>
+				<span>Top DeFi stablecoin vaults</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>

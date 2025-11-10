@@ -131,6 +131,8 @@
 		<div class="table-extras">
 			<div class="table-meta">
 				<span>{topVaults.vaults.length} {chain?.name ?? 'total'} vaults</span>
+				<span>Min. TVL $50k</span>
+				<span>Stablecoin-only</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
 			<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
