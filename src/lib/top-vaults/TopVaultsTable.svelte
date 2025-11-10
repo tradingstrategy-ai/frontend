@@ -106,14 +106,14 @@
 		<button onclick={() => sortBy(key, direction, compareFn)}>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html label}
-			{#if sortOptions.key === key}
-				{#if sortOptions.direction === 'asc'}
-					<IconChevronUp />
-				{:else}
-					<IconChevronDown />
-				{/if}
-			{/if}
 		</button>
+		{#if sortOptions.key === key}
+			{#if sortOptions.direction === 'asc'}
+				<IconChevronUp />
+			{:else}
+				<IconChevronDown />
+			{/if}
+		{/if}
 	</th>
 {/snippet}
 
@@ -162,13 +162,13 @@
 							stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
 						)}
 						{@render sortColHeader(
-							'1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'1M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
 							'one_month_return_ann',
 							'desc',
 							multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
 						)}
 						{@render sortColHeader(
-							'3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'3M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
 							'three_months_return_ann',
 							'desc',
 							multiValCompare(['three_months_cagr_net', 'three_months_cagr'])
@@ -223,7 +223,12 @@
 							'asc',
 							multiValCompare(['risk_numeric'], Infinity)
 						)}
-						<th class="address">Vault Address</th>
+						{@render sortColHeader(
+							'Vault address',
+							'address',
+							'asc',
+							stringCompare((v) => v.address)
+						)}
 					</tr>
 				</thead>
 				<tbody>
@@ -349,9 +354,9 @@
 
 		.top-vaults-table {
 			position: relative;
-			width: 100%;
+			table-layout: fixed;
 			border-collapse: collapse;
-			min-width: 75rem;
+			width: 86rem;
 			color: inherit;
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
@@ -402,31 +407,17 @@
 				}
 
 				:global(.icon) {
+					position: absolute;
+					top: 0.625rem;
+					right: 0.125rem;
+					left: var(--icon-left, auto);
 					min-width: 1em;
-					translate: 0.25rem 0;
+					--icon-size: 0.875em;
 
 					:global(*) {
 						stroke-width: 3;
 					}
 				}
-
-				/* custom alignment for chain sort indicator (no header label) */
-				&.chain :global(.icon) {
-					translate: 0;
-				}
-			}
-
-			/* no background on index column */
-			th.index {
-				background: var(--c-body);
-			}
-
-			td.chain {
-				width: 1.875rem;
-			}
-
-			td.vault {
-				min-width: 12rem;
 			}
 
 			td {
@@ -497,35 +488,90 @@
 				}
 			}
 
-			td.index {
-				text-align: center;
-				vertical-align: middle;
-				background-color: var(--c-col-b);
-				counter-increment: rowNumber;
+			/**
+			 * Column-specific widths and style overrides
+			 */
+			.index {
+				width: 2.25rem;
 
-				&::before {
-					content: counter(rowNumber);
+				/* no background on index column header */
+				&:is(th) {
+					background: var(--c-body);
+				}
+
+				&:is(td) {
+					text-align: center;
+					vertical-align: middle;
+					background-color: var(--c-col-b);
+					counter-increment: rowNumber;
+
+					&::before {
+						content: counter(rowNumber);
+					}
 				}
 			}
 
-			td.chain {
-				vertical-align: middle;
-				text-align: center;
-				padding-right: 0.25rem;
-				/* override background color to match vault column */
-				background-color: var(--c-col-a);
+			.chain {
+				width: 1.875rem;
+				--icon-left: calc(50% - 1ex);
+
+				&:is(td) {
+					vertical-align: middle;
+					/* override background color to match vault column */
+					background-color: var(--c-col-a);
+				}
 			}
 
-			:global(.vault-address) {
-				min-width: 7rem;
-				padding: 0;
-				border-radius: 0;
-				background: transparent !important;
-				font: var(--f-ui-xs-roman);
-				letter-spacing: var(--ls-ui-xs, normal);
+			.vault {
+				width: 20.5%;
+				--icon-left: 8ch;
+			}
 
-				:global(a:not(:hover)) {
-					text-decoration: none;
+			:is(.one_month_return_ann, .three_months_return_ann, .lifetime_return_ann, .lifetime_return_abs) {
+				width: 6.5%;
+			}
+
+			:is(.three_months_sharpe, .three_months_volatility) {
+				width: 4.5%;
+			}
+
+			.denomination {
+				width: 5%;
+			}
+
+			.tvl {
+				width: 6.25%;
+			}
+
+			.age {
+				width: 5%;
+			}
+
+			.fees {
+				width: 4.5%;
+			}
+
+			.event_count {
+				width: 5.5%;
+			}
+
+			.risk {
+				width: 6%;
+			}
+
+			.address {
+				width: 9%;
+
+				:global(.vault-address) {
+					padding: 0;
+					border-radius: 0;
+					background: transparent !important;
+					font: var(--f-ui-xs-roman);
+					letter-spacing: var(--ls-ui-xs, normal);
+
+					:global(a:not(:hover)) {
+						text-decoration: none;
+					}
 				}
 			}
 		}
