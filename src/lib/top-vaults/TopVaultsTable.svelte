@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { TopVaults } from './schemas';
+	import type { TopVaults, VaultInfo } from './schemas';
 	import type { Chain } from '$lib/helpers/chain';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -11,7 +10,16 @@
 	import FeesCell from './FeesCell.svelte';
 	import DepositEventsCell from './DepositEventsCell.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import IconChevronUp from '~icons/local/chevron-up';
+	import IconChevronDown from '~icons/local/chevron-down';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+
+	interface SortOptions {
+		key: string;
+		direction: 'asc' | 'desc';
+		compareFn: (a: VaultInfo, b: VaultInfo) => number;
+	}
 
 	interface Props {
 		topVaults: TopVaults;
@@ -26,7 +34,7 @@
 	let filterValue = $state('');
 
 	// filter vaults
-	let vaults = $derived.by(() => {
+	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
 		return topVaults.vaults.filter((v) => {
 			const chain = getChain(v.chain_id);
@@ -42,7 +50,70 @@
 			return vaultCompareStr.toLowerCase().includes(filterCompareStr);
 		});
 	});
+
+	let sortOptions = $state<SortOptions>({
+		key: 'one_month_return_ann',
+		direction: 'desc',
+		compareFn: multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+	});
+
+	// sort vaults
+	let sortedVaults = $derived.by(() => {
+		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
+		if (sortOptions.direction === 'desc') sorted.reverse();
+		return sorted;
+	});
+
+	function multiValCompare(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
+		return (a: VaultInfo, b: VaultInfo) => {
+			for (const key of keys) {
+				const aVal = a[key] as number | null;
+				const bVal = b[key] as number | null;
+				if (aVal === bVal) continue;
+				return (aVal ?? defaultValue) - (bVal ?? defaultValue);
+			}
+			return 0;
+		};
+	}
+
+	function stringCompare(sortBy: (v: VaultInfo) => string) {
+		return (a: VaultInfo, b: VaultInfo) => {
+			return sortBy(a).localeCompare(sortBy(b));
+		};
+	}
+
+	function sortBy(
+		key: SortOptions['key'],
+		direction: SortOptions['direction'],
+		compareFn: (a: VaultInfo, b: VaultInfo) => number
+	) {
+		if (sortOptions.key === key) {
+			direction = sortOptions.direction === 'asc' ? 'desc' : 'asc';
+		}
+		sortOptions = { key, direction, compareFn };
+	}
 </script>
+
+{#snippet sortColHeader(
+	label: string,
+	key: string,
+	direction: SortOptions['direction'],
+	compareFn: SortOptions['compareFn']
+)}
+	<th class={key}>
+		<button onclick={() => sortBy(key, direction, compareFn)}>
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html label}
+			{#if sortOptions.key === key}
+				{#if sortOptions.direction === 'asc'}
+					<IconChevronUp />
+				{:else}
+					<IconChevronDown />
+				{/if}
+			{/if}
+		</button>
+	</th>
+{/snippet}
 
 {#snippet multiVal<T = MaybeNumber>(values: [T, T], formatter: Formatter<T>)}
 	<div class="multiline multival">
@@ -70,25 +141,85 @@
 				<thead>
 					<tr>
 						<th class="index"></th>
-						<th class="chain"></th>
-						<th class="vault">Vault</th>
-						<th class="one_month_return_ann">1M return ann.<br />(net/&ZeroWidthSpace;gross)</th>
-						<th class="three_months_return_ann">3M return ann.<br />(net/&ZeroWidthSpace;gross)</th>
-						<th class="lifetime_return_ann">Lifetime return ann.<br />(net/&ZeroWidthSpace;gross)</th>
-						<th class="lifetime_return_abs">Lifetime return abs.<br />(net/&ZeroWidthSpace;gross)</th>
-						<th class="three_months_sharpe">3m Sharpe</th>
-						<th class="three_months_volatility">3M Vola-tility</th>
-						<th class="denomination">Denom-ination</th>
-						<th class="tvl">TVL USD<br />(current/&ZeroWidthSpace;peak)</th>
-						<th class="age">Age (Years)</th>
-						<th class="fees">Fees<br />(mgmt/&ZeroWidthSpace;perf)</th>
-						<th class="event_count">Deposit Events</th>
-						<th class="risk">Protocol Technical Risk</th>
+						{@render sortColHeader(
+							'',
+							'chain',
+							'asc',
+							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+						)}
+						{@render sortColHeader(
+							'Vault',
+							'vault',
+							'asc',
+							stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
+						)}
+						{@render sortColHeader(
+							'1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'one_month_return_ann',
+							'desc',
+							multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+						)}
+						{@render sortColHeader(
+							'3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'three_months_return_ann',
+							'desc',
+							multiValCompare(['three_months_cagr_net', 'three_months_cagr'])
+						)}
+						{@render sortColHeader(
+							'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'lifetime_return_ann',
+							'desc',
+							multiValCompare(['cagr_net', 'cagr'])
+						)}
+						{@render sortColHeader(
+							'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
+							'lifetime_return_abs',
+							'desc',
+							multiValCompare(['lifetime_return_net', 'lifetime_return'])
+						)}
+						{@render sortColHeader(
+							'3m Sharpe',
+							'three_months_sharpe',
+							'desc',
+							multiValCompare(['three_months_sharpe'])
+						)}
+						{@render sortColHeader(
+							'3M Vola&shy;tility',
+							'three_months_volatility',
+							'asc',
+							multiValCompare(['three_months_volatility'])
+						)}
+						{@render sortColHeader(
+							'Denom&shy;ination',
+							'denomination',
+							'asc',
+							stringCompare((v) => v.denomination)
+						)}
+						{@render sortColHeader(
+							'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
+							'tvl',
+							'desc',
+							multiValCompare(['current_nav', 'peak_nav'])
+						)}
+						{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
+						{@render sortColHeader(
+							'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
+							'fees',
+							'asc',
+							multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
+						)}
+						{@render sortColHeader('Deposit Events', 'event_count', 'desc', multiValCompare(['event_count']))}
+						{@render sortColHeader(
+							'Protocol Technical Risk',
+							'risk',
+							'asc',
+							multiValCompare(['risk_numeric'], Infinity)
+						)}
 						<th class="address">Vault Address</th>
 					</tr>
 				</thead>
 				<tbody>
-					{#each vaults as vault (vault.id)}
+					{#each sortedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
 						<tr>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
@@ -229,21 +360,41 @@
 				background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-4-alpha));
 				/* sticky header border gets lost on scroll, so use box-shadow instead */
 				box-shadow: inset 0px -2px var(--c-text-extra-light);
-				padding: 0.5rem;
 				/* add extra padding to bottom to account for the inset box-shadow */
-				padding-bottom: calc(0.5rem + 2px);
+				--th-padding: 0.5rem 0.5rem calc(0.5rem + 2px) 0.5rem;
 				font-weight: 900;
 				text-transform: uppercase;
 				text-align: left;
-			}
 
-			th.sorted {
-				padding-right: 1.125rem;
+				&:not(:has(button)) {
+					padding: var(--th-padding);
+				}
 
-				svg {
-					position: absolute;
-					top: 0.5rem;
-					right: 0.25rem;
+				button {
+					display: flex;
+					border: none;
+					width: 100%;
+					min-height: 4.75rem;
+					padding: var(--th-padding);
+					background: transparent;
+					font: inherit;
+					text-align: inherit;
+					text-transform: inherit;
+					cursor: pointer;
+				}
+
+				:global(.icon) {
+					min-width: 1em;
+					translate: 0.25rem 0;
+
+					:global(*) {
+						stroke-width: 3;
+					}
+				}
+
+				/* custom alignment for chain sort indicator (no header label) */
+				&.chain :global(.icon) {
+					translate: 0;
 				}
 			}
 
@@ -252,22 +403,12 @@
 				background: var(--c-body);
 			}
 
-			/* custom alignment for chain sort indicator (no header label) */
-			th.chain.sorted svg {
-				right: 0.5rem;
-			}
-
 			td.chain {
 				width: 1.875rem;
 			}
 
 			td.vault {
 				min-width: 12rem;
-			}
-
-			/* flip the sort indicator on columns that use inverted sort */
-			:is(th.chain, th.vault, th.denomination, th.fees, th.risk) svg {
-				rotate: 180deg;
 			}
 
 			td {
