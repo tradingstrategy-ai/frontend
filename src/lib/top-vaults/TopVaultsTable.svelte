@@ -14,6 +14,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { browser } from '$app/environment';
 
 	interface SortOptions {
 		key: string;
@@ -94,6 +95,11 @@
 		}
 		sortOptions = { key, direction, compareFn };
 	}
+
+	// Limit the number of vaults renderered during SSR to 100
+	// This results in faster initial page render / lower LCP value, while still including the
+	// top 100 vaults for SEO benefits.
+	let truncatedVaults = $derived(browser ? sortedVaults : sortedVaults.slice(0, 100));
 </script>
 
 {#snippet sortColHeader(
@@ -232,7 +238,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each sortedVaults as vault (vault.id)}
+					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
 						<tr>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
