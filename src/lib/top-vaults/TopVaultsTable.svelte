@@ -28,6 +28,8 @@
 
 	const { topVaults, chain }: Props = $props();
 
+	let showChainCol = $derived(!chain);
+
 	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
@@ -145,12 +147,14 @@
 				<thead>
 					<tr>
 						<th class="index"></th>
-						{@render sortColHeader(
-							'',
-							'chain',
-							'asc',
-							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
-						)}
+						{#if showChainCol}
+							{@render sortColHeader(
+								'',
+								'chain',
+								'asc',
+								stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+							)}
+						{/if}
 						{@render sortColHeader(
 							'Vault',
 							'vault',
@@ -228,9 +232,11 @@
 						<tr>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
-							<td class="chain">
-								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
-							</td>
+							{#if showChainCol}
+								<td class="chain">
+									<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
+								</td>
+							{/if}
 							<td class="vault">
 								<div class="multiline">
 									<strong>{vault.name}</strong>
