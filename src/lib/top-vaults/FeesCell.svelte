@@ -10,7 +10,7 @@
 	let { mgmt_fee, perf_fee }: Props = $props();
 </script>
 
-<div class="fees">
+<div class="fees-cell">
 	<Tooltip>
 		<div class="multiline" slot="trigger">
 			{#if !isNumber(mgmt_fee) && !isNumber(perf_fee)}
@@ -34,7 +34,7 @@
 </div>
 
 <style>
-	.fees {
+	.fees-cell {
 		display: contents;
 
 		:global(.popup) {

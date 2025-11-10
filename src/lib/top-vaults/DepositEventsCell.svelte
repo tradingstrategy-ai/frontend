@@ -28,13 +28,15 @@
 	});
 </script>
 
-<div>
+<div class="deposit-events-cell">
 	<span>{number}</span>
-	<span class="unit">{unit}</span>
+	{#if unit}
+		<span class="unit">{unit}</span>
+	{/if}
 </div>
 
 <style>
-	div {
+	.deposit-events-cell {
 		display: inline-flex;
 		gap: 0.5ex;
 	}

@@ -1,24 +1,25 @@
 <script lang="ts">
-	import type { TopVaults } from './schemas';
+	import type { TopVaults, VaultInfo } from './schemas';
 	import type { Chain } from '$lib/helpers/chain';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import ChainCell from './ChainCell.svelte';
-	import VaultCell from './VaultCell.svelte';
-	import MultiValCell, { multiValCompareFn } from './MultiValCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import DepositEventsCell from './DepositEventsCell.svelte';
 	import RiskCell from './RiskCell.svelte';
-	import { createTable } from 'svelte-headless-table';
-	import { addSortBy, addHiddenColumns, addTableFilter } from 'svelte-headless-table/plugins';
-	import { createRender } from '$lib/components/datatable/utils';
-	import { readable } from 'svelte/store';
+	import IconChevronUp from '~icons/local/chevron-up';
+	import IconChevronDown from '~icons/local/chevron-down';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+
+	interface SortOptions {
+		key: string;
+		direction: 'asc' | 'desc';
+		compareFn: (a: VaultInfo, b: VaultInfo) => number;
+	}
 
 	interface Props {
 		topVaults: TopVaults;
@@ -27,199 +28,99 @@
 
 	const { topVaults, chain }: Props = $props();
 
-	const formatReturn = (v: number | null) => formatPercent(v, 2);
-	const formatTvl = (v: number | null) => formatDollar(v, 2);
+	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
+	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
-	const vaultsStore = readable(topVaults.vaults);
+	let filterValue = $state('');
 
-	const table = createTable(vaultsStore, {
-		hide: addHiddenColumns({ initialHiddenColumnIds: chain ? ['chain'] : [] }),
-		sort: addSortBy({
-			initialSortKeys: [{ id: 'one_month_return_ann', order: 'desc' }],
-			toggleOrder: ['desc', 'asc']
-		}),
-		filter: addTableFilter({
-			fn: ({ filterValue, value }) => value.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())
-		})
+	// filter vaults
+	let filteredVaults = $derived.by(() => {
+		const filterCompareStr = filterValue.trim().toLowerCase();
+		return topVaults.vaults.filter((v) => {
+			const chain = getChain(v.chain_id);
+			const vaultCompareStr = [
+				v.chain_id,
+				chain?.name ?? '',
+				v.name,
+				v.protocol,
+				v.denomination,
+				v.risk ?? '',
+				v.address
+			].join(' ');
+			return vaultCompareStr.toLowerCase().includes(filterCompareStr);
+		});
 	});
 
-	const tableColumns = table.createColumns([
-		table.display({
-			id: 'index',
-			header: '',
-			cell: () => '' // populated with row index via `rowNumber` CSS counter
-		}),
-		table.column({
-			id: 'chain',
-			header: '',
-			accessor: ({ chain_id }) => {
-				const chain = getChain(chain_id);
-				const label = chain?.name ?? `Chain ${chain_id}`;
-				return { chain_id, chain, label };
-			},
-			cell: ({ value }) => createRender(ChainCell, value),
-			plugins: {
-				sort: {
-					getSortValue: ({ label }) => label,
-					invert: true
-				},
-				filter: {
-					getFilterValue: ({ chain_id, chain }) => `${chain_id} ${chain?.name}`
-				}
-			}
-		}),
-		table.column({
-			id: 'vault',
-			header: 'Vault',
-			accessor: ({ name, protocol }) => ({ name, protocol }),
-			cell: ({ value }) => createRender(VaultCell, value),
-			plugins: {
-				sort: {
-					getSortValue: ({ name }) => name.trim().toLowerCase(),
-					invert: true
-				},
-				filter: {
-					getFilterValue: ({ name, protocol }) => `${name} ${protocol}`
-				}
-			}
-		}),
-		table.column({
-			id: 'one_month_return_ann',
-			accessor: (vault) => [vault.one_month_cagr_net, vault.one_month_cagr],
-			header: '1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
-			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
-			plugins: {
-				sort: { compareFn: multiValCompareFn },
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			id: 'three_months_return_ann',
-			accessor: (vault) => [vault.three_months_cagr_net, vault.three_months_cagr],
-			header: '3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
-			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
-			plugins: {
-				sort: { compareFn: multiValCompareFn },
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			id: 'lifetime_return_ann',
-			accessor: (vault) => [vault.cagr_net, vault.cagr],
-			header: 'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
-			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
-			plugins: {
-				sort: { compareFn: multiValCompareFn },
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			id: 'lifetime_return_abs',
-			accessor: (vault) => [vault.lifetime_return_net, vault.lifetime_return],
-			header: 'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
-			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatReturn }),
-			plugins: {
-				sort: { compareFn: multiValCompareFn },
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			accessor: 'three_months_sharpe',
-			header: '3M Sharpe',
-			cell: ({ value }) => formatNumber(value, 1),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
-			accessor: 'three_months_volatility',
-			header: '3M vola&shy;tility',
-			cell: ({ value }) => formatPercent(value),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
-			accessor: 'denomination',
-			header: 'Denom&shy;ination',
-			cell: ({ value }) => formatValue(value),
-			plugins: { sort: { invert: true } }
-		}),
-		table.column({
-			id: 'tvl',
-			accessor: (vault) => [vault.current_nav, vault.peak_nav],
-			header: 'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
-			cell: ({ value }) => createRender(MultiValCell, { values: value, formatter: formatTvl }),
-			plugins: {
-				sort: { compareFn: multiValCompareFn },
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			id: 'age',
-			accessor: 'years',
-			header: 'Age (years)',
-			cell: ({ value }) => formatNumber(value, 1),
-			plugins: { filter: { exclude: true } }
-		}),
-		// `last_deposit` is missing from latest data schema so dropping from table for now
-		// table.column({
-		// 	header: 'Last deposit',
-		// 	accessor: 'last_deposit',
-		// 	cell: ({ value }) => createRender(LastDepositCell, { last_deposit: value }),
-		// 	plugins: { filter: { exclude: true } }
-		// }),
-		table.column({
-			id: 'fees',
-			header: 'Fees<br>(mgmt/&ZeroWidthSpace;perf)',
-			accessor: ({ mgmt_fee, perf_fee }) => ({ mgmt_fee, perf_fee }),
-			cell: ({ value }) => createRender(FeesCell, value),
-			plugins: {
-				sort: {
-					// sort by perf_fee then mgmt_fee (scaled down as tie-break), nulls last
-					getSortValue: ({ perf_fee, mgmt_fee }) => (perf_fee ?? 1) + (mgmt_fee ?? 1) / 100,
-					invert: true
-				},
-				filter: { exclude: true }
-			}
-		}),
-		table.column({
-			accessor: 'event_count',
-			header: 'Deposit events',
-			cell: ({ value }) => createRender(DepositEventsCell, { value }),
-			plugins: { filter: { exclude: true } }
-		}),
-		table.column({
-			accessor: ({ risk, risk_numeric }) => ({ risk, risk_numeric }),
-			header: 'Protocol technical risk',
-			cell: ({ value }) => createRender(RiskCell, value),
-			plugins: {
-				sort: {
-					getSortValue: (v) => v.risk_numeric ?? Infinity,
-					invert: true
-				}
-			}
-		}),
-		table.column({
-			id: 'address',
-			header: 'Vault address',
-			accessor: ({ address, chain_id }) => ({ address, chain_id }),
-			cell: ({ value: { address, chain_id } }) =>
-				createRender(CryptoAddressWidget, {
-					class: 'vault-address',
-					size: 'sm',
-					address,
-					href: getExplorerUrl(getChain(chain_id), address)
-				}),
-			plugins: {
-				sort: { disable: true },
-				filter: {
-					getFilterValue: ({ address }) => address
-				}
-			}
-		})
-	]);
+	let sortOptions = $state<SortOptions>({
+		key: 'one_month_return_ann',
+		direction: 'desc',
+		compareFn: multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+	});
 
-	const tableViewModel = table.createViewModel(tableColumns);
-	const { pluginStates } = tableViewModel;
-	const filterValue = pluginStates.filter.filterValue;
+	// sort vaults
+	let sortedVaults = $derived.by(() => {
+		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
+		if (sortOptions.direction === 'desc') sorted.reverse();
+		return sorted;
+	});
+
+	function multiValCompare(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
+		return (a: VaultInfo, b: VaultInfo) => {
+			for (const key of keys) {
+				const aVal = a[key] as number | null;
+				const bVal = b[key] as number | null;
+				if (aVal === bVal) continue;
+				return (aVal ?? defaultValue) - (bVal ?? defaultValue);
+			}
+			return 0;
+		};
+	}
+
+	function stringCompare(sortBy: (v: VaultInfo) => string) {
+		return (a: VaultInfo, b: VaultInfo) => {
+			return sortBy(a).localeCompare(sortBy(b));
+		};
+	}
+
+	function sortBy(
+		key: SortOptions['key'],
+		direction: SortOptions['direction'],
+		compareFn: (a: VaultInfo, b: VaultInfo) => number
+	) {
+		if (sortOptions.key === key) {
+			direction = sortOptions.direction === 'asc' ? 'desc' : 'asc';
+		}
+		sortOptions = { key, direction, compareFn };
+	}
 </script>
+
+{#snippet sortColHeader(
+	label: string,
+	key: string,
+	direction: SortOptions['direction'],
+	compareFn: SortOptions['compareFn']
+)}
+	<th class={key}>
+		<button onclick={() => sortBy(key, direction, compareFn)}>
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html label}
+			{#if sortOptions.key === key}
+				{#if sortOptions.direction === 'asc'}
+					<IconChevronUp />
+				{:else}
+					<IconChevronDown />
+				{/if}
+			{/if}
+		</button>
+	</th>
+{/snippet}
+
+{#snippet multiVal<T = MaybeNumber>(values: [T, T], formatter: Formatter<T>)}
+	<div class="multiline multival">
+		<span class="primary">{formatter(values[0])}</span>
+		<span class="secondary">{formatter(values[1])}</span>
+	</div>
+{/snippet}
 
 <div class="top-vaults">
 	<TopVaultsOptIn />
@@ -232,11 +133,156 @@
 				<span>{topVaults.vaults.length} {chain?.name ?? 'total'} vaults</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
-			<TextInput bind:value={$filterValue} type="search" placeholder="Search vaults" />
+			<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
 		</div>
 
 		<div class="table-wrapper">
-			<DataTable class="top-vaults-table" {tableViewModel} />
+			<table class="top-vaults-table">
+				<thead>
+					<tr>
+						<th class="index"></th>
+						{@render sortColHeader(
+							'',
+							'chain',
+							'asc',
+							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+						)}
+						{@render sortColHeader(
+							'Vault',
+							'vault',
+							'asc',
+							stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
+						)}
+						{@render sortColHeader(
+							'1M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'one_month_return_ann',
+							'desc',
+							multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+						)}
+						{@render sortColHeader(
+							'3M return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'three_months_return_ann',
+							'desc',
+							multiValCompare(['three_months_cagr_net', 'three_months_cagr'])
+						)}
+						{@render sortColHeader(
+							'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'lifetime_return_ann',
+							'desc',
+							multiValCompare(['cagr_net', 'cagr'])
+						)}
+						{@render sortColHeader(
+							'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
+							'lifetime_return_abs',
+							'desc',
+							multiValCompare(['lifetime_return_net', 'lifetime_return'])
+						)}
+						{@render sortColHeader(
+							'3m Sharpe',
+							'three_months_sharpe',
+							'desc',
+							multiValCompare(['three_months_sharpe'])
+						)}
+						{@render sortColHeader(
+							'3M Vola&shy;tility',
+							'three_months_volatility',
+							'asc',
+							multiValCompare(['three_months_volatility'])
+						)}
+						{@render sortColHeader(
+							'Denom&shy;ination',
+							'denomination',
+							'asc',
+							stringCompare((v) => v.denomination)
+						)}
+						{@render sortColHeader(
+							'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
+							'tvl',
+							'desc',
+							multiValCompare(['current_nav', 'peak_nav'])
+						)}
+						{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
+						{@render sortColHeader(
+							'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
+							'fees',
+							'asc',
+							multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
+						)}
+						{@render sortColHeader('Deposit Events', 'event_count', 'desc', multiValCompare(['event_count']))}
+						{@render sortColHeader(
+							'Protocol Technical Risk',
+							'risk',
+							'asc',
+							multiValCompare(['risk_numeric'], Infinity)
+						)}
+						<th class="address">Vault Address</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each sortedVaults as vault (vault.id)}
+						{@const chain = getChain(vault.chain_id)}
+						<tr>
+							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
+							<td class="index"></td>
+							<td class="chain">
+								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
+							</td>
+							<td class="vault">
+								<div class="multiline">
+									<strong>{vault.name}</strong>
+									{#if vault.protocol}
+										<span class="secondary">{vault.protocol}</span>
+									{/if}
+								</div>
+							</td>
+							<td class="one_month_return_ann right">
+								{@render multiVal([vault.one_month_cagr_net, vault.one_month_cagr], formatReturn)}
+							</td>
+							<td class="three_months_return_ann right">
+								{@render multiVal([vault.three_months_cagr_net, vault.three_months_cagr], formatReturn)}
+							</td>
+							<td class="lifetime_return_ann right">
+								{@render multiVal([vault.cagr_net, vault.cagr], formatReturn)}
+							</td>
+							<td class="lifetime_return_abs right">
+								{@render multiVal([vault.lifetime_return_net, vault.lifetime_return], formatReturn)}
+							</td>
+							<td class="three_months_sharpe right">
+								{formatNumber(vault.three_months_sharpe, 1)}
+							</td>
+							<td class="three_months_volatility right">
+								{formatPercent(vault.three_months_volatility, 1)}
+							</td>
+							<td class="denomination center">
+								{formatValue(vault.denomination)}
+							</td>
+							<td class="tvl right">
+								{@render multiVal([vault.current_nav, vault.peak_nav], formatTvl)}
+							</td>
+							<td class="age right">
+								{formatNumber(vault.years, 1)}
+							</td>
+							<td class="fees right">
+								<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
+							</td>
+							<td class="event_count right">
+								<DepositEventsCell value={vault.event_count} />
+							</td>
+							<td class="risk">
+								<RiskCell risk={vault.risk} risk_numeric={vault.risk_numeric} />
+							</td>
+							<td class="address">
+								<CryptoAddressWidget
+									class="vault-address"
+									size="sm"
+									address={vault.address}
+									href={getExplorerUrl(chain, vault.address)}
+								/>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
 	{/if}
 </div>
@@ -283,7 +329,7 @@
 			}
 		}
 
-		:global(.top-vaults-table) {
+		.top-vaults-table {
 			position: relative;
 			width: 100%;
 			border-collapse: collapse;
@@ -302,11 +348,11 @@
 				font-size: 14px;
 			}
 
-			:global(:is(td, th)) {
+			:is(td, th) {
 				vertical-align: top;
 			}
 
-			:global(th) {
+			th {
 				position: sticky;
 				top: 0px;
 				z-index: 1;
@@ -314,48 +360,58 @@
 				background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-4-alpha));
 				/* sticky header border gets lost on scroll, so use box-shadow instead */
 				box-shadow: inset 0px -2px var(--c-text-extra-light);
-				padding: 0.5rem;
 				/* add extra padding to bottom to account for the inset box-shadow */
-				padding-bottom: calc(0.5rem + 2px);
+				--th-padding: 0.5rem 0.5rem calc(0.5rem + 2px) 0.5rem;
 				font-weight: 900;
 				text-transform: uppercase;
 				text-align: left;
-			}
 
-			:global(th.sorted) {
-				padding-right: 1.125rem;
+				&:not(:has(button)) {
+					padding: var(--th-padding);
+				}
 
-				:global(svg) {
-					position: absolute;
-					top: 0.5rem;
-					right: 0.25rem;
+				button {
+					display: flex;
+					border: none;
+					width: 100%;
+					min-height: 4.75rem;
+					padding: var(--th-padding);
+					background: transparent;
+					font: inherit;
+					text-align: inherit;
+					text-transform: inherit;
+					cursor: pointer;
+				}
+
+				:global(.icon) {
+					min-width: 1em;
+					translate: 0.25rem 0;
+
+					:global(*) {
+						stroke-width: 3;
+					}
+				}
+
+				/* custom alignment for chain sort indicator (no header label) */
+				&.chain :global(.icon) {
+					translate: 0;
 				}
 			}
 
 			/* no background on index column */
-			:global(th.index) {
+			th.index {
 				background: var(--c-body);
 			}
 
-			/* custom alignment for chain sort indicator (no header label) */
-			:global(th.chain.sorted svg) {
-				right: 0.5rem;
-			}
-
-			:global(td.chain) {
+			td.chain {
 				width: 1.875rem;
 			}
 
-			:global(td.vault) {
+			td.vault {
 				min-width: 12rem;
 			}
 
-			/* flip the sort indicator on columns that use inverted sort */
-			:global(:is(th.chain, th.vault, th.denomination, th.fees, th.risk) svg) {
-				rotate: 180deg;
-			}
-
-			:global(td) {
+			td {
 				border-block: 1px solid var(--c-text-ultra-light);
 				padding: 0.25em 0.5em;
 
@@ -370,10 +426,18 @@
 				&:nth-child(odd) {
 					background-color: var(--c-col-b);
 				}
+
+				&.right {
+					text-align: right;
+				}
+
+				&.center {
+					text-align: center;
+				}
 			}
 
 			/* reverse column colors if chain col is present */
-			:global(:where(tr:has(.chain)) td) {
+			:where(tr:has(.chain)) td {
 				&:nth-child(odd) {
 					background-color: var(--c-col-a);
 				}
@@ -383,16 +447,39 @@
 				}
 			}
 
-			:global(td:has(.tooltip)) {
+			td:global(:has(.tooltip)) {
 				position: relative;
 			}
 
 			:global(.multiline) {
 				display: grid;
-				gap: 0.125rem;
+				gap: 0.5rem;
 			}
 
-			:global(td.index) {
+			:global(.secondary) {
+				opacity: 0.7;
+			}
+
+			.multival {
+				> ::before {
+					content: '(';
+				}
+
+				> ::after {
+					content: ')';
+				}
+
+				.primary {
+					font-weight: 600;
+
+					&::before,
+					&::after {
+						visibility: hidden;
+					}
+				}
+			}
+
+			td.index {
 				text-align: center;
 				vertical-align: middle;
 				background-color: var(--c-col-b);
@@ -403,7 +490,7 @@
 				}
 			}
 
-			:global(td.chain) {
+			td.chain {
 				vertical-align: middle;
 				text-align: center;
 				padding-right: 0.25rem;
@@ -419,30 +506,9 @@
 				font: var(--f-ui-xs-roman);
 				letter-spacing: var(--ls-ui-xs, normal);
 
-				:global(a):not(:hover) {
+				:global(a:not(:hover)) {
 					text-decoration: none;
 				}
-			}
-
-			:global(
-				:is(
-					td.one_month_return_ann,
-					td.lifetime_return_abs,
-					td.lifetime_return_ann,
-					td.three_months_return_ann,
-					td.three_months_sharpe,
-					td.three_months_volatility,
-					td.tvl,
-					td.age,
-					td.fees,
-					td.event_count
-				)
-			) {
-				text-align: right;
-			}
-
-			:global(td.denomination) {
-				text-align: center;
 			}
 		}
 	}
