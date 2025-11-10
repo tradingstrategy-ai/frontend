@@ -135,7 +135,9 @@
 				<span>Stablecoin-only</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
-			<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
+			<div class="filter">
+				<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
+			</div>
 		</div>
 
 		<div class="table-wrapper">
@@ -295,28 +297,36 @@
 		gap: 1rem;
 
 		.table-extras {
-			display: grid;
-			grid-template-columns: 1fr 24rem;
-			gap: 1rem;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+
+			gap: 1rem 1.5rem;
 			align-items: center;
 			margin-top: 1rem;
 			--text-input-width: 100%;
 
-			@media (--viewport-sm-down) {
+			@media (--viewport-md-down) {
 				grid-template-columns: 1fr;
 			}
 		}
 
 		.table-meta {
 			display: flex;
-			gap: 0.75rem;
+			flex-wrap: wrap;
+			flex-grow: 1;
+			gap: 0.5rem 0;
 			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 
-			> :not(:last-child)::after {
+			span:not(:last-child)::after {
 				content: '|';
-				margin-left: 0.75rem;
+				margin-inline: 0.75rem;
 			}
+		}
+
+		.filter {
+			flex: 1 24rem;
 		}
 
 		.table-wrapper {
