@@ -29,6 +29,12 @@
 	<Section>
 		<TopVaultsTable {topVaults} />
 	</Section>
+
+	<Section>
+		<div class="api-link">
+			<a href="https://tradingstrategy.ai/blog/announcing-defi-vault-top-lists-and-api">Available as API here.</a>
+		</div>
+	</Section>
 </main>
 
 <style>
@@ -37,6 +43,17 @@
 			font-size: 0.5em;
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
+		}
+	}
+
+	.api-link {
+		text-align: center;
+		font: var(--f-ui-body-medium);
+		color: var(--c-text-light);
+		text-decoration: underline;
+
+		@media (--viewport-md-down) {
+			font: var(--f-ui-small-medium);
 		}
 	}
 </style>
