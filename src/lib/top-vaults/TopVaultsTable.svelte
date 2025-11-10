@@ -28,6 +28,8 @@
 
 	const { topVaults, chain }: Props = $props();
 
+	let showChainCol = $derived(!chain);
+
 	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
@@ -131,9 +133,13 @@
 		<div class="table-extras">
 			<div class="table-meta">
 				<span>{topVaults.vaults.length} {chain?.name ?? 'total'} vaults</span>
+				<span>Min. TVL $50k</span>
+				<span>Stablecoin-only</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
-			<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
+			<div class="filter">
+				<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
+			</div>
 		</div>
 
 		<div class="table-wrapper">
@@ -141,12 +147,14 @@
 				<thead>
 					<tr>
 						<th class="index"></th>
-						{@render sortColHeader(
-							'',
-							'chain',
-							'asc',
-							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
-						)}
+						{#if showChainCol}
+							{@render sortColHeader(
+								'',
+								'chain',
+								'asc',
+								stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+							)}
+						{/if}
 						{@render sortColHeader(
 							'Vault',
 							'vault',
@@ -224,9 +232,11 @@
 						<tr>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
-							<td class="chain">
-								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
-							</td>
+							{#if showChainCol}
+								<td class="chain">
+									<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
+								</td>
+							{/if}
 							<td class="vault">
 								<div class="multiline">
 									<strong>{vault.name}</strong>
@@ -293,28 +303,36 @@
 		gap: 1rem;
 
 		.table-extras {
-			display: grid;
-			grid-template-columns: 1fr 24rem;
-			gap: 1rem;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+
+			gap: 1rem 1.5rem;
 			align-items: center;
 			margin-top: 1rem;
 			--text-input-width: 100%;
 
-			@media (--viewport-sm-down) {
+			@media (--viewport-md-down) {
 				grid-template-columns: 1fr;
 			}
 		}
 
 		.table-meta {
 			display: flex;
-			gap: 0.75rem;
+			flex-wrap: wrap;
+			flex-grow: 1;
+			gap: 0.5rem 0;
 			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 
-			> :not(:last-child)::after {
+			span:not(:last-child)::after {
 				content: '|';
-				margin-left: 0.75rem;
+				margin-inline: 0.75rem;
 			}
+		}
+
+		.filter {
+			flex: 1 24rem;
 		}
 
 		.table-wrapper {

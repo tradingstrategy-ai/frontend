@@ -5,7 +5,7 @@
 
 <div style:margin-top="1rem">
 	<Alert size="md" status="info" title="Coming soon">
-		Automated vault multistrategy coming soon. Subscribe here for our newsletter to be first to know.
+		Automated vault of vaults multistrategy. Subscribe to the newsletter to be first to know.
 		<div class="subscribe-form-wrapper">
 			<SubscribeForm inputSize="md" buttonSize="sm" />
 		</div>

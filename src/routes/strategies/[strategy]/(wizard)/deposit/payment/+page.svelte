@@ -41,9 +41,7 @@
 	let error: ErrorInfo | unknown | undefined = $state();
 
 	const payment = fsm('initial', {
-		'*': {
-			fail: 'failed'
-		},
+		'*': { fail: 'failed' },
 
 		initial: {
 			_enter() {
