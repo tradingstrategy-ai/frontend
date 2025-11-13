@@ -57,7 +57,7 @@
 	let sortOptions = $state<SortOptions>({
 		key: 'one_month_return_ann',
 		direction: 'desc',
-		compareFn: multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+		compareFn: multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
 	});
 
 	// sort vaults
@@ -171,25 +171,25 @@
 							'1M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
 							'one_month_return_ann',
 							'desc',
-							multiValCompare(['one_month_cagr_net', 'one_month_cagr'])
+							multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
 						)}
 						{@render sortColHeader(
 							'3M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
 							'three_months_return_ann',
 							'desc',
-							multiValCompare(['three_months_cagr_net', 'three_months_cagr'])
+							multiValCompare(['three_months_cagr', 'three_months_cagr_net'])
 						)}
 						{@render sortColHeader(
 							'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
 							'lifetime_return_ann',
 							'desc',
-							multiValCompare(['cagr_net', 'cagr'])
+							multiValCompare(['cagr', 'cagr_net'])
 						)}
 						{@render sortColHeader(
 							'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
 							'lifetime_return_abs',
 							'desc',
-							multiValCompare(['lifetime_return_net', 'lifetime_return'])
+							multiValCompare(['lifetime_return', 'lifetime_return_net'])
 						)}
 						{@render sortColHeader(
 							'3m Sharpe',
