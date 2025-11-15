@@ -1,5 +1,15 @@
-minimumReleaseAge: 10080
 engineStrict: true
+
+minimumReleaseAge: 1440
+
+minimumReleaseAgeExclude:
+  - '@sveltejs/adapter-node'
+  - '@sveltejs/enhanced-img'
+  - '@sveltejs/kit'
+  - '@sveltejs/vite-plugin-svelte'
+  - prettier-plugin-svelte
+  - svelte
+  - svelte-check
 
 ignoredBuiltDependencies:
   - '@datadog/native-iast-taint-tracking'
@@ -7,6 +17,7 @@ ignoredBuiltDependencies:
   - '@datadog/pprof'
 
 onlyBuiltDependencies:
+  - '@datadog/native-appsec'
   - '@reown/appkit'
   - '@sentry/cli'
   - bufferutil
@@ -18,13 +29,10 @@ onlyBuiltDependencies:
   - utf-8-validate
 
 overrides:
-  # @reown/appkit overrides (try removing after upgrade)
   '@reown/appkit-wallet>zod': ^4.0.5
   abitype>zod: ^4.0.5
-  # svelte-headless-table overrides (remove when we switch to Tanstack)
   svelte-headless-table>svelte: ^4.0.0 || ^5.0.0
   svelte-keyed>svelte: ^5.37.1
   svelte-render>svelte: ^5.37.1
   svelte-subscribe>svelte: ^5.37.1
-  # vite-plugin-simple-json-server override (remove when we switch to MSW)
   vite-plugin-simple-json-server>vite: ^7.0.5
