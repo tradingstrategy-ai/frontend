@@ -16,8 +16,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     environment:
-      # See config.ts
-      # See .env - docker-compose reads .env file
+      # Public SvelteKit env vars
       - TS_PUBLIC_SITE_MODE
       - TS_PUBLIC_FRONTEND_VERSION_TAG
       - TS_PUBLIC_BACKEND_URL
@@ -37,12 +36,16 @@ services:
       - TS_PUBLIC_RPC_URLS
       - TS_PUBLIC_CHAINS_UNDER_MAINTENANCE
       - TS_PUBLIC_MAINTENANCE_NOTICE
-      # Private (secret) env vars - do not add to .env
+      # Private (secret) SvelteKit env vars
       - TS_PRIVATE_ADMIN_PW
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
       - TS_PRIVATE_TURNSTILE_SECRET_KEY
+      # Required for node adapter; see:
+      # https://svelte.dev/docs/kit/adapter-node#Environment-variables-ORIGIN-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER
+      - FRONTEND_PROTOCOL_HEADER
+      - FRONTEND_HOST_HEADER
       # https://www.npmjs.com/package/@trading-strategy-ai/web-top-node
       - TOP_WEB_API_KEY
       # Datadog APM env vars
