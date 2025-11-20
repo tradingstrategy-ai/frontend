@@ -15,6 +15,7 @@
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import { browser } from '$app/environment';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface SortOptions {
 		key: string;
@@ -123,11 +124,23 @@
 	</th>
 {/snippet}
 
-{#snippet multiVal<T = MaybeNumber>(values: [T, T], formatter: Formatter<T>)}
-	<div class="multiline multival">
-		<span class="primary">{formatter(values[0])}</span>
-		<span class="secondary">{formatter(values[1])}</span>
-	</div>
+{#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>)}
+	{#if net !== null}
+		<span class="primary">{formatter(net)}</span>
+	{:else if gross !== null}
+		<Tooltip>
+			<div slot="trigger" class="multiline">
+				<span class="primary">{formatter(gross)}</span>
+				<span class="secondary">(G)</span>
+			</div>
+			<svelte:fragment slot="popup">
+				Fee information for this protocol is not yet available. The calculation is based on gross profit and fees may
+				apply.
+			</svelte:fragment>
+		</Tooltip>
+	{:else}
+		---
+	{/if}
 {/snippet}
 
 <div class="top-vaults">
@@ -168,25 +181,25 @@
 							stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
 						)}
 						{@render sortColHeader(
-							'1M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'1M<br/>return ann.',
 							'one_month_return_ann',
 							'desc',
 							multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
 						)}
 						{@render sortColHeader(
-							'3M<br/>return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'3M<br/>return ann.',
 							'three_months_return_ann',
 							'desc',
 							multiValCompare(['three_months_cagr', 'three_months_cagr_net'])
 						)}
 						{@render sortColHeader(
-							'Lifetime return ann.<br/>(net/&ZeroWidthSpace;gross)',
+							'Lifetime return ann.',
 							'lifetime_return_ann',
 							'desc',
 							multiValCompare(['cagr', 'cagr_net'])
 						)}
 						{@render sortColHeader(
-							'Lifetime return abs.<br/>(net/&ZeroWidthSpace;gross)',
+							'Lifetime return abs.',
 							'lifetime_return_abs',
 							'desc',
 							multiValCompare(['lifetime_return', 'lifetime_return_net'])
@@ -256,17 +269,17 @@
 									{/if}
 								</div>
 							</td>
-							<td class="one_month_return_ann right">
-								{@render multiVal([vault.one_month_cagr_net, vault.one_month_cagr], formatReturn)}
+							<td class="one_month_return_ann right net-gross">
+								{@render netGrossCell(vault.one_month_cagr_net, vault.one_month_cagr, formatReturn)}
 							</td>
-							<td class="three_months_return_ann right">
-								{@render multiVal([vault.three_months_cagr_net, vault.three_months_cagr], formatReturn)}
+							<td class="three_months_return_ann right net-gross">
+								{@render netGrossCell(vault.three_months_cagr_net, vault.three_months_cagr, formatReturn)}
 							</td>
-							<td class="lifetime_return_ann right">
-								{@render multiVal([vault.cagr_net, vault.cagr], formatReturn)}
+							<td class="lifetime_return_ann right net-gross">
+								{@render netGrossCell(vault.cagr_net, vault.cagr, formatReturn)}
 							</td>
-							<td class="lifetime_return_abs right">
-								{@render multiVal([vault.lifetime_return_net, vault.lifetime_return], formatReturn)}
+							<td class="lifetime_return_abs right net-gross">
+								{@render netGrossCell(vault.lifetime_return_net, vault.lifetime_return, formatReturn)}
 							</td>
 							<td class="three_months_sharpe right">
 								{formatNumber(vault.three_months_sharpe, 1)}
@@ -278,7 +291,10 @@
 								{formatValue(vault.denomination)}
 							</td>
 							<td class="tvl right">
-								{@render multiVal([vault.current_nav, vault.peak_nav], formatTvl)}
+								<div class="multiline multival">
+									<span class="primary">{formatTvl(vault.current_nav)}</span>
+									<span class="secondary">{formatTvl(vault.peak_nav)}</span>
+								</div>
 							</td>
 							<td class="age right">
 								{formatNumber(vault.years, 1)}
@@ -403,7 +419,7 @@
 					display: flex;
 					border: none;
 					width: 100%;
-					min-height: 4.75rem;
+					min-height: 3rem;
 					padding: var(--th-padding);
 					background: transparent;
 					font: inherit;
@@ -563,6 +579,10 @@
 
 			.risk {
 				width: 6%;
+			}
+
+			.net-gross :global(.popup) {
+				width: 17rem;
 			}
 
 			.address {

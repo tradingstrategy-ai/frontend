@@ -32,7 +32,7 @@ export const vaultInfoSchema = z.object({
 	// lockup: nullableNumber,
 	event_count: z.int().nullable(),
 	protocol: z.string(),
-	risk: z.coerce.string().nullable(),
+	risk: z.string().nullable(),
 	risk_numeric: z.int().nullable(),
 	id: z.string(),
 	start_date: isoDateTime,
