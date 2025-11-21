@@ -2,7 +2,6 @@
 	import type { TopVaults, VaultInfo } from './schemas';
 	import type { Chain } from '$lib/helpers/chain';
 	import { browser } from '$app/environment';
-	import { getTimeSeries } from '$lib/top-vaults/metrics.remote';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -17,10 +16,8 @@
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import Drawer from '$lib/components/Drawer.svelte';
-
-	let selectedVault = $state<VaultInfo>();
-	let open = $derived(Boolean(selectedVault));
+	import { resolve } from '$app/paths';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
 
 	interface SortOptions {
 		key: string;
@@ -36,6 +33,8 @@
 	const { topVaults, chain }: Props = $props();
 
 	let showChainCol = $derived(!chain);
+
+	let offsetWidth = $state<number>();
 
 	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
@@ -148,12 +147,6 @@
 	{/if}
 {/snippet}
 
-<Drawer bind:open title="Vault Details">
-	{#if selectedVault}
-		<h3>{selectedVault.name}</h3>
-	{/if}
-</Drawer>
-
 <div class="top-vaults">
 	<TopVaultsOptIn />
 
@@ -173,7 +166,8 @@
 		</div>
 
 		<div class="table-wrapper">
-			<table class="top-vaults-table">
+			<!-- --table-width needed for proper tr.targetable styling  -->
+			<table class="top-vaults-table" bind:offsetWidth style:--table-width="{offsetWidth}px">
 				<thead>
 					<tr>
 						<th class="index"></th>
@@ -264,7 +258,7 @@
 				<tbody>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
-						<tr onclick={() => (selectedVault = vault)}>
+						<tr class="targetable">
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
 							{#if showChainCol}
@@ -325,6 +319,11 @@
 									size="sm"
 									address={vault.address}
 									href={getExplorerUrl(chain, vault.address)}
+								/>
+								<TargetableLink
+									label="View {vault.name} details"
+									href={resolve(`/trading-view/vaults/${vault.id}`)}
+									data-sveltekit-noscroll
 								/>
 							</td>
 						</tr>

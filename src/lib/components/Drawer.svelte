@@ -6,24 +6,27 @@
 	import IconCancel from '~icons/local/cancel';
 
 	interface Props {
-		open: boolean;
-		modal?: boolean;
 		title: string;
+		open?: boolean;
+		modal?: boolean;
+		onClose?: () => void;
 		children: Snippet;
 	}
 
-	let { open = $bindable(), modal = false, title, children }: Props = $props();
+	let { title, open = false, modal = false, onClose, children }: Props = $props();
 
 	const id = $props.id();
 	const service = useMachine(dialog.machine, {
 		id,
+		modal,
+
 		get open() {
 			return open;
 		},
+
 		onOpenChange(details) {
-			open = details.open;
-		},
-		modal
+			if (!details.open) onClose?.();
+		}
 	});
 	const api = $derived(dialog.connect(service, normalizeProps));
 </script>
@@ -33,12 +36,12 @@
 	<div use:portal {...api.getPositionerProps()}>
 		<div {...api.getContentProps()} transition:slide={{ axis: 'x', duration: undefined }}>
 			<div class="content-inner">
-				<header>
+				<nav>
 					<h2 {...api.getTitleProps()}>{title}</h2>
 					<button {...api.getCloseTriggerProps()}>
 						<IconCancel />
 					</button>
-				</header>
+				</nav>
 				{@render children()}
 			</div>
 		</div>
@@ -55,7 +58,7 @@
 	}
 
 	.content-inner {
-		width: min(500px, 90vw);
+		width: min(70vw, 50rem);
 		height: 100%;
 		padding: 2rem;
 		overflow-y: auto;
@@ -64,17 +67,18 @@
 		overflow: visible;
 	}
 
-	header {
+	nav {
 		display: grid;
 		grid-template-columns: 1fr auto;
 		align-items: center;
-		margin-bottom: 1rem;
+		margin-bottom: 2rem;
+		color: var(--c-text-extra-light);
 	}
 
 	h2 {
 		margin: 0;
-		font: var(--f-heading-sm-medium);
-		letter-spacing: var(--ls-heading-sm, normal);
+		font: var(--f-heading-xs-medium);
+		letter-spacing: var(--ls-heading-xs, normal);
 	}
 
 	button {
@@ -86,8 +90,12 @@
 		padding: 0;
 		cursor: pointer;
 
+		&:hover {
+			color: var(--c-text);
+		}
+
 		:global(.icon *) {
-			stroke-width: 3;
+			stroke-width: 2.5;
 		}
 	}
 </style>

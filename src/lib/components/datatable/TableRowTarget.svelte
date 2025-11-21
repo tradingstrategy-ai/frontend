@@ -13,4 +13,4 @@
 </script>
 
 <Button {size} {label} {href} />
-<TargetableLink {href} {label} class="foo" />
+<TargetableLink {href} {label} />
