@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@aave/math-utils": "^1.36.2",
+    "@duckdb/node-api": "1.4.2-r.1",
     "@reown/appkit": "^1.8.14",
     "@reown/appkit-adapter-wagmi": "^1.8.14",
     "@sentry/sveltekit": "^9.46.0",

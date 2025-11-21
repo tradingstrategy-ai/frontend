@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { TopVaults, VaultInfo } from './schemas';
 	import type { Chain } from '$lib/helpers/chain';
+	import { browser } from '$app/environment';
+	import { getTimeSeries } from '$lib/top-vaults/metrics.remote';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -14,7 +16,6 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { browser } from '$app/environment';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface SortOptions {
@@ -253,7 +254,7 @@
 				<tbody>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
-						<tr>
+						<tr onclick={() => getTimeSeries(vault.id).then(console.log)}>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
 							{#if showChainCol}

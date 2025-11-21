@@ -7,6 +7,8 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+	preprocess: vitePreprocess(),
+
 	kit: {
 		adapter: node({
 			envPrefix: 'FRONTEND_'
@@ -26,10 +28,18 @@ const config = {
 
 		env: {
 			publicPrefix: 'TS_PUBLIC_'
+		},
+
+		experimental: {
+			remoteFunctions: true
 		}
 	},
 
-	preprocess: vitePreprocess()
+	compilerOptions: {
+		experimental: {
+			async: true
+		}
+	}
 };
 
 export default config;
