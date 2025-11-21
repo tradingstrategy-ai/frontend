@@ -66,6 +66,8 @@
     "@trading-strategy-ai/web-top-node": "0.1.0-beta.10",
     "@wagmi/connectors": "^5.11.2",
     "@wagmi/core": "^2.22.1",
+    "@zag-js/dialog": "^1.29.0",
+    "@zag-js/svelte": "^1.29.0",
     "bignumber.js": "^9.3.1",
     "cookie": "^1.0.2",
     "d3-array": "^3.2.4",

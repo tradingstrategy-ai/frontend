@@ -17,6 +17,10 @@
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import Drawer from '$lib/components/Drawer.svelte';
+
+	let selectedVault = $state<VaultInfo>();
+	let open = $derived(Boolean(selectedVault));
 
 	interface SortOptions {
 		key: string;
@@ -144,6 +148,12 @@
 	{/if}
 {/snippet}
 
+<Drawer bind:open title="Vault Details">
+	{#if selectedVault}
+		<h3>{selectedVault.name}</h3>
+	{/if}
+</Drawer>
+
 <div class="top-vaults">
 	<TopVaultsOptIn />
 
@@ -254,7 +264,7 @@
 				<tbody>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
-						<tr onclick={() => getTimeSeries(vault.id).then(console.log)}>
+						<tr onclick={() => (selectedVault = vault)}>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
 							{#if showChainCol}
