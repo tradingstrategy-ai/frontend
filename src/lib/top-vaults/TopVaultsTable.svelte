@@ -1,23 +1,24 @@
 <script lang="ts">
-	import type { TopVaults, VaultInfo } from './schemas';
+	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Chain } from '$lib/helpers/chain';
+	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
+	import { resolve } from '$app/paths';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import ChainCell from './ChainCell.svelte';
-	import FeesCell from './FeesCell.svelte';
 	import DepositEventsCell from './DepositEventsCell.svelte';
+	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { resolve } from '$app/paths';
-	import TargetableLink from '$lib/components/TargetableLink.svelte';
 
 	interface SortOptions {
 		key: string;
@@ -28,9 +29,10 @@
 	interface Props {
 		topVaults: TopVaults;
 		chain?: Chain;
+		tbodyProps?: HTMLAttributes<HTMLTableSectionElement>;
 	}
 
-	const { topVaults, chain }: Props = $props();
+	const { topVaults, chain, tbodyProps }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -255,7 +257,7 @@
 						)}
 					</tr>
 				</thead>
-				<tbody>
+				<tbody {...tbodyProps}>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
 						<tr class="targetable">

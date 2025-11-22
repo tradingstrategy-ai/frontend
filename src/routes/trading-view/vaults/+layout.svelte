@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { VaultInfo } from '$lib/top-vaults/schemas.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -7,20 +8,20 @@
 	import Drawer from '$lib/components/Drawer.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import type { VaultInfo } from '$lib/top-vaults/schemas.js';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 
 	const { data, children } = $props();
 	const { topVaults } = data;
 
-	let vault = $derived<VaultInfo | undefined>(page.data.vault);
+	let selectedVault = $derived<VaultInfo | undefined>(page.data.vault);
+	let selectedVaultLabel = $derived(selectedVault && { [selectedVault.id]: selectedVault.name });
 
-	let drawerOpen = $derived(Boolean(vault));
+	let vaultRowHovered = $state(false);
 
-	let vaultLabel = $derived(vault && { [vault.id]: vault.name });
-
-	function returnToIndex() {
-		goto(resolve('/trading-view/vaults'), { noScroll: true });
+	function returnToIndex({ open }: { open: boolean }) {
+		if (!open) {
+			goto(resolve('/trading-view/vaults'), { noScroll: true });
+		}
 	}
 </script>
 
@@ -29,9 +30,15 @@
 	<meta name="description" content="The best DeFi vaults for all blockchains." />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', ...vaultLabel }} />
+<Breadcrumbs labels={{ vaults: 'Top Vaults', ...selectedVaultLabel }} />
 
-<Drawer open={drawerOpen} title="Vault Details" onClose={returnToIndex}>
+<Drawer
+	title="Vault Details"
+	open={Boolean(selectedVault)}
+	onOpenChange={returnToIndex}
+	closeOnInteractOutside={!vaultRowHovered}
+	allowBackgroundInteraction
+>
 	{@render children()}
 </Drawer>
 
@@ -46,7 +53,13 @@
 	</Section>
 
 	<Section>
-		<TopVaultsTable {topVaults} />
+		<TopVaultsTable
+			{topVaults}
+			tbodyProps={{
+				onpointerenter: () => (vaultRowHovered = true),
+				onpointerleave: () => (vaultRowHovered = false)
+			}}
+		/>
 	</Section>
 
 	<Section>

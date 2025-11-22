@@ -1,39 +1,28 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import * as dialog from '@zag-js/dialog';
 	import { portal, normalizeProps, useMachine } from '@zag-js/svelte';
+	import * as dialog from '@zag-js/dialog';
 	import IconCancel from '~icons/local/cancel';
 
-	interface Props {
+	interface Props extends Omit<dialog.Props, 'id'> {
 		title: string;
-		open?: boolean;
-		modal?: boolean;
-		onClose?: () => void;
+		allowBackgroundInteraction?: boolean;
 		children: Snippet;
 	}
 
-	let { title, open = false, modal = false, onClose, children }: Props = $props();
+	let { title, modal = false, allowBackgroundInteraction = false, children, ...restProps }: Props = $props();
 
 	const id = $props.id();
-	const service = useMachine(dialog.machine, {
-		id,
-		modal,
-
-		get open() {
-			return open;
-		},
-
-		onOpenChange(details) {
-			if (!details.open) onClose?.();
-		}
-	});
+	const service = useMachine(dialog.machine, () => ({ id, modal, ...restProps }));
 	const api = $derived(dialog.connect(service, normalizeProps));
+
+	let pointerEvents = $derived(allowBackgroundInteraction ? 'none' : undefined);
 </script>
 
 {#if api.open}
-	<div use:portal {...api.getBackdropProps()}></div>
-	<div use:portal {...api.getPositionerProps()}>
+	<div use:portal {...api.getBackdropProps()} style:pointer-events={pointerEvents}></div>
+	<div use:portal {...api.getPositionerProps()} style:pointer-events={pointerEvents}>
 		<div {...api.getContentProps()} transition:slide={{ axis: 'x', duration: undefined }}>
 			<div class="content-inner">
 				<nav>
