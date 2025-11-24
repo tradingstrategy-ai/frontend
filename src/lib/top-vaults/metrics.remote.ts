@@ -1,3 +1,4 @@
+import type { UTCTimestamp } from 'lightweight-charts';
 import { query } from '$app/server';
 import { DuckDBConnection } from '@duckdb/node-api';
 import { error } from '@sveltejs/kit';
@@ -21,7 +22,10 @@ export const getTimeSeries = query(z.string(), async (vaultId) => {
 	try {
 		const reader = await connection.runAndReadAll(SQL, { parquetFile, vaultId });
 		const rows = reader.getRowObjects();
-		return rows.map((row) => [Number(row.timestamp_seconds), row.share_price]);
+		return rows.map((row) => ({
+			time: Number(row.timestamp_seconds) as UTCTimestamp,
+			value: row.share_price as number
+		}));
 	} catch (e) {
 		console.error(`Error loading data from ${parquetFile} for vault <${vaultId}>`);
 		const { stack } = e as Error;

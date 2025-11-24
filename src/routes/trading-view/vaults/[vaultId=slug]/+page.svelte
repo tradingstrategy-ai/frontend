@@ -2,9 +2,10 @@
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { formatPercent } from '$lib/helpers/formatters.js';
+	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 
 	let { data } = $props();
-	let { chain, vault } = $derived(data);
+	let { vault, chain, vaultPriceData } = $derived(data);
 </script>
 
 <header>
@@ -17,51 +18,55 @@
 	</div>
 </header>
 
-<div class="returns tile b">
-	<h4>Vault Returns</h4>
+<div class="content">
+	<VaultPriceChart data={vaultPriceData} />
 
-	<table>
-		<thead>
-			<tr>
-				<th></th>
-				<th>1 month</th>
-				<th>3 month</th>
-				<th>1 year</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Gross</td>
-				<td>
-					<span>{formatPercent(vault.one_month_cagr)}</span>
-					<span>{formatPercent(vault.one_month_returns)}</span>
-				</td>
-				<td>
-					<span>{formatPercent(vault.three_months_cagr)}</span>
-					<span>{formatPercent(vault.three_months_returns)}</span>
-				</td>
-				<td>
-					<span>{formatPercent(vault.cagr)}</span>
-					<span>{formatPercent(vault.lifetime_return)}</span>
-				</td>
-			</tr>
-			<tr>
-				<td>Net</td>
-				<td>
-					<span>{formatPercent(vault.one_month_cagr_net)}</span>
-					<span>{formatPercent(vault.one_month_returns_net)}</span>
-				</td>
-				<td>
-					<span>{formatPercent(vault.three_months_cagr_net)}</span>
-					<span>{formatPercent(vault.three_months_returns_net)}</span>
-				</td>
-				<td>
-					<span>{formatPercent(vault.cagr_net)}</span>
-					<span>{formatPercent(vault.lifetime_return_net)}</span>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="returns">
+		<h4>Vault Returns</h4>
+
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>1 month</th>
+					<th>3 month</th>
+					<th>1 year</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Gross</td>
+					<td>
+						<span>{formatPercent(vault.one_month_cagr)}</span>
+						<span>{formatPercent(vault.one_month_returns)}</span>
+					</td>
+					<td>
+						<span>{formatPercent(vault.three_months_cagr)}</span>
+						<span>{formatPercent(vault.three_months_returns)}</span>
+					</td>
+					<td>
+						<span>{formatPercent(vault.cagr)}</span>
+						<span>{formatPercent(vault.lifetime_return)}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Net</td>
+					<td>
+						<span>{formatPercent(vault.one_month_cagr_net)}</span>
+						<span>{formatPercent(vault.one_month_returns_net)}</span>
+					</td>
+					<td>
+						<span>{formatPercent(vault.three_months_cagr_net)}</span>
+						<span>{formatPercent(vault.three_months_returns_net)}</span>
+					</td>
+					<td>
+						<span>{formatPercent(vault.cagr_net)}</span>
+						<span>{formatPercent(vault.lifetime_return_net)}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <style>
@@ -93,15 +98,21 @@
 		}
 	}
 
-	h4 {
-		margin-bottom: 0.5em;
-		font: var(--f-heading-xs-medium);
+	.content {
+		display: grid;
+		gap: 2rem;
+	}
+
+	:global(h4) {
+		font: var(--f-ui-sm-medium);
 		letter-spacing: 0.05em;
 		color: var(--c-text-extra-light);
 		text-transform: uppercase;
 	}
 
 	.returns {
+		background: var(--c-box-2);
+		border-radius: 1.25rem;
 		padding: 1.75rem;
 
 		table {
