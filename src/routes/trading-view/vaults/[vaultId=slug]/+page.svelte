@@ -1,78 +1,91 @@
 <script lang="ts">
+	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
-	import { getExplorerUrl } from '$lib/helpers/chain.js';
-	import { formatPercent } from '$lib/helpers/formatters.js';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
+	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
+	import { formatPercent } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
-	let { vault, chain, vaultPriceData } = $derived(data);
+	let { vault } = $derived(data);
+
+	let chain = $derived(getChain(vault.chain_id));
 </script>
 
-<header>
-	<h3>{vault.name}</h3>
-	<div class="subheader">
-		<p>{vault.protocol}</p>
-		<div class="address">
-			<CryptoAddressWidget size="sm" address={vault.address} href={getExplorerUrl(chain, vault.address)} />
+<svelte:head>
+	<title>{vault.name} | DeFi Vault | Trading Strategy</title>
+	<meta name="description" content="Vault details for {vault.name} on {vault.protocol}" />
+</svelte:head>
+
+<Breadcrumbs labels={{ vaults: 'Top Vaults', [vault.id]: vault.name }} />
+
+<main class="vault-details ds-3">
+	<Section tag="header">
+		<h3>{vault.name}</h3>
+		<div class="subheader">
+			<p>{vault.protocol}</p>
+			<div class="address">
+				<CryptoAddressWidget size="sm" address={vault.address} href={getExplorerUrl(chain, vault.address)} />
+			</div>
 		</div>
-	</div>
-</header>
+	</Section>
 
-<div class="content">
-	<VaultPriceChart data={vaultPriceData} />
+	<Section padding="md">
+		<div class="content">
+			<VaultPriceChart vaultId={vault.id} />
 
-	<div class="returns">
-		<h4>Vault Returns</h4>
+			<div class="returns">
+				<h4>Vault Returns</h4>
 
-		<table>
-			<thead>
-				<tr>
-					<th></th>
-					<th>1 month</th>
-					<th>3 month</th>
-					<th>1 year</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Gross</td>
-					<td>
-						<span>{formatPercent(vault.one_month_cagr)}</span>
-						<span>{formatPercent(vault.one_month_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr)}</span>
-						<span>{formatPercent(vault.three_months_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr)}</span>
-						<span>{formatPercent(vault.lifetime_return)}</span>
-					</td>
-				</tr>
-				<tr>
-					<td>Net</td>
-					<td>
-						<span>{formatPercent(vault.one_month_cagr_net)}</span>
-						<span>{formatPercent(vault.one_month_returns_net)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr_net)}</span>
-						<span>{formatPercent(vault.three_months_returns_net)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr_net)}</span>
-						<span>{formatPercent(vault.lifetime_return_net)}</span>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>1 month</th>
+							<th>3 month</th>
+							<th>1 year</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Gross</td>
+							<td>
+								<span>{formatPercent(vault.one_month_cagr)}</span>
+								<span>{formatPercent(vault.one_month_returns)}</span>
+							</td>
+							<td>
+								<span>{formatPercent(vault.three_months_cagr)}</span>
+								<span>{formatPercent(vault.three_months_returns)}</span>
+							</td>
+							<td>
+								<span>{formatPercent(vault.cagr)}</span>
+								<span>{formatPercent(vault.lifetime_return)}</span>
+							</td>
+						</tr>
+						<tr>
+							<td>Net</td>
+							<td>
+								<span>{formatPercent(vault.one_month_cagr_net)}</span>
+								<span>{formatPercent(vault.one_month_returns_net)}</span>
+							</td>
+							<td>
+								<span>{formatPercent(vault.three_months_cagr_net)}</span>
+								<span>{formatPercent(vault.three_months_returns_net)}</span>
+							</td>
+							<td>
+								<span>{formatPercent(vault.cagr_net)}</span>
+								<span>{formatPercent(vault.lifetime_return_net)}</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</Section>
+</main>
 
 <style>
-	header {
-		margin-bottom: 3rem;
-
+	.vault-details {
 		h3 {
 			margin-bottom: 0.25rem;
 			font: var(--f-heading-lg-bold);
@@ -84,17 +97,17 @@
 			flex-wrap: wrap;
 			gap: 1rem;
 			align-items: center;
-		}
 
-		.address {
-			max-width: 12.5rem;
-		}
+			.address {
+				max-width: 12.5rem;
+			}
 
-		p {
-			font: var(--f-heading-xs-bold);
-			letter-spacing: var(--ls-heading-xs, normal);
-			color: var(--c-text-extra-light);
-			margin: 0;
+			p {
+				font: var(--f-heading-xs-bold);
+				letter-spacing: var(--ls-heading-xs, normal);
+				color: var(--c-text-extra-light);
+				margin: 0;
+			}
 		}
 	}
 

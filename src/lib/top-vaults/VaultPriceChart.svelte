@@ -1,19 +1,22 @@
 <script lang="ts">
 	import type { SeriesCallback } from '$lib/charts/types';
-	import { type LineData, type UTCTimestamp, LineSeries } from 'lightweight-charts';
+	import { LineSeries } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
 	import Series from '$lib/charts/Series.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
+	import { getTimeSeries } from './metrics.remote';
 	import { utcDay } from 'd3-time';
 	import { formatValue } from '$lib/helpers/formatters';
 
 	interface Props {
-		data: LineData<UTCTimestamp>[];
+		vaultId: string;
 	}
 
-	let { data }: Props = $props();
+	let { vaultId }: Props = $props();
+
+	let data = $derived(getTimeSeries(vaultId));
 
 	let range = $derived.by<[Date, Date]>(() => {
 		const end = utcDay.floor(new Date());
@@ -46,8 +49,8 @@
 
 <div class="vault-price-chart">
 	<h4>90 day price</h4>
-	<TvChart options={chartOptions}>
-		<Series type={LineSeries} options={seriesOptions} callback={seriesCallback} {data} />
+	<TvChart options={chartOptions} loading={data.loading}>
+		<Series type={LineSeries} options={seriesOptions} callback={seriesCallback} data={data.current ?? []} />
 		<BaselineSeries color="transparent" interval={utcDay} {range} setChartVisibleRange />
 
 		{#snippet tooltip({ point, time }, [item])}
