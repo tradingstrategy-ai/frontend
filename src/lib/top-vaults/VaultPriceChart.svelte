@@ -28,7 +28,6 @@
 		crosshair: { vertLine: { visible: true } },
 		handleScroll: false,
 		handleScale: false,
-		rightPriceScale: { visible: false },
 		timeScale: {
 			lockVisibleTimeRangeOnResize: true
 		}
