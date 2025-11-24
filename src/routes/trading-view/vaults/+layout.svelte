@@ -55,6 +55,7 @@
 	<Section>
 		<TopVaultsTable
 			{topVaults}
+			{selectedVault}
 			tbodyProps={{
 				onpointerenter: () => (vaultRowHovered = true),
 				onpointerleave: () => (vaultRowHovered = false)

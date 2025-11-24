@@ -28,11 +28,12 @@
 
 	interface Props {
 		topVaults: TopVaults;
+		selectedVault: VaultInfo | undefined;
 		chain?: Chain;
 		tbodyProps?: HTMLAttributes<HTMLTableSectionElement>;
 	}
 
-	const { topVaults, chain, tbodyProps }: Props = $props();
+	const { topVaults, selectedVault, chain, tbodyProps }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -257,7 +258,7 @@
 				<tbody {...tbodyProps}>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
-						<tr class="targetable">
+						<tr class={['targetable', vault === selectedVault && 'selected']}>
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
 							{#if showChainCol}
@@ -460,6 +461,16 @@
 
 				--c-col-a: var(--c-box-3);
 				--c-col-b: var(--c-box-1);
+
+				tbody tr:hover & {
+					--c-col-a: var(--c-box-4);
+					--c-col-b: var(--c-box-2);
+				}
+
+				tbody tr.selected & {
+					--c-col-a: hsl(var(--hsl-box) / 30%);
+					--c-col-b: var(--c-box-4);
+				}
 
 				/* alternating column colors */
 				&:nth-child(even) {
