@@ -10,20 +10,33 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 ```
 -->
 <script lang="ts">
-	export let title = '';
-	export let subtitle = '';
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		title: string | Snippet;
+		subtitle?: string | Snippet;
+		cta?: Snippet;
+	}
+
+	let { title, subtitle, cta }: Props = $props();
 </script>
 
 <header class="page-header ds-container">
-	<h1 class:multiline={$$slots.subtitle || subtitle}>
-		<slot name="title">{title}</slot>
-		{#if $$slots.subtitle || subtitle}
-			<small>
-				<slot name="subtitle">{subtitle}</slot>
-			</small>
+	<h1 class:multiline={subtitle}>
+		{#if title instanceof Function}
+			{@render title()}
+		{:else}
+			{title}
+		{/if}
+
+		{#if subtitle instanceof Function}
+			<small>{@render subtitle()}</small>
+		{:else if subtitle}
+			<small>{subtitle}</small>
 		{/if}
 	</h1>
-	<slot name="cta" />
+
+	{@render cta?.()}
 </header>
 
 <style>
