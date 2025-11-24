@@ -1,13 +1,20 @@
 <script lang="ts">
+	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { formatPercent } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
-	let { vault } = $derived(data);
+	let { chain, vault } = $derived(data);
 </script>
 
 <header>
 	<h3>{vault.name}</h3>
-	<p>{vault.protocol}</p>
+	<div class="subheader">
+		<p>{vault.protocol}</p>
+		<div class="address">
+			<CryptoAddressWidget size="sm" address={vault.address} href={getExplorerUrl(chain, vault.address)} />
+		</div>
+	</div>
 </header>
 
 <div class="returns tile b">
@@ -67,10 +74,22 @@
 			letter-spacing: var(--ls-heading-lg, normal);
 		}
 
+		.subheader {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+			align-items: center;
+		}
+
+		.address {
+			max-width: 12.5rem;
+		}
+
 		p {
 			font: var(--f-heading-xs-bold);
 			letter-spacing: var(--ls-heading-xs, normal);
 			color: var(--c-text-extra-light);
+			margin: 0;
 		}
 	}
 

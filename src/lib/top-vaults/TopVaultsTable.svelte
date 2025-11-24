@@ -4,8 +4,8 @@
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
+	import { SvelteSet } from 'svelte/reactivity';
 	import Alert from '$lib/components/Alert.svelte';
-	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -17,7 +17,7 @@
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 
 	interface SortOptions {
@@ -102,6 +102,8 @@
 		}
 		sortOptions = { key, direction, compareFn };
 	}
+
+	let failedSparklines = new SvelteSet<string>();
 
 	// Limit the number of vaults renderered during SSR to 100
 	// This results in faster initial page render / lower LCP value, while still including the
@@ -249,12 +251,7 @@
 							'asc',
 							multiValCompare(['risk_numeric'], Infinity)
 						)}
-						{@render sortColHeader(
-							'Vault address',
-							'address',
-							'asc',
-							stringCompare((v) => v.address)
-						)}
+						<th class="sparkline">90 day price</th>
 					</tr>
 				</thead>
 				<tbody {...tbodyProps}>
@@ -315,13 +312,16 @@
 							<td class="risk">
 								<RiskCell risk={vault.risk} risk_numeric={vault.risk_numeric} />
 							</td>
-							<td class="address">
-								<CryptoAddressWidget
-									class="vault-address"
-									size="sm"
-									address={vault.address}
-									href={getExplorerUrl(chain, vault.address)}
-								/>
+							<td class="sparkline">
+								{#if failedSparklines.has(vault.id)}
+									chart data unavailable
+								{:else}
+									<img
+										src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
+										alt="{vault.name} 90 day price"
+										onerror={() => failedSparklines.add(vault.id)}
+									/>
+								{/if}
 								<TargetableLink
 									label="View {vault.name} details"
 									href={resolve(`/trading-view/vaults/${vault.id}`)}
@@ -593,24 +593,19 @@
 				width: 6%;
 			}
 
-			.net-gross :global(.popup) {
-				width: 17rem;
+			.sparkline {
+				width: 9%;
+				text-align: center;
+				vertical-align: middle;
+				color: var(--c-text-ultra-light);
+
+				img {
+					width: 100%;
+				}
 			}
 
-			.address {
-				width: 9%;
-
-				:global(.vault-address) {
-					padding: 0;
-					border-radius: 0;
-					background: transparent !important;
-					font: var(--f-ui-xs-roman);
-					letter-spacing: var(--ls-ui-xs, normal);
-
-					:global(a:not(:hover)) {
-						text-decoration: none;
-					}
-				}
+			.net-gross :global(.popup) {
+				width: 17rem;
 			}
 		}
 	}
