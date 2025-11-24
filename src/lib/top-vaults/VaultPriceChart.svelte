@@ -1,22 +1,22 @@
 <script lang="ts">
-	import type { SeriesCallback } from '$lib/charts/types';
-	import { LineSeries } from 'lightweight-charts';
+	import type { VaultInfo } from './schemas';
+	import type { AreaSeriesPartialOptions } from 'lightweight-charts';
 	import TvChart from '$lib/charts/TvChart.svelte';
-	import Series from '$lib/charts/Series.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { getTimeSeries } from './metrics.remote';
 	import { utcDay } from 'd3-time';
-	import { formatValue } from '$lib/helpers/formatters';
+	import { formatTokenAmount } from '$lib/helpers/formatters';
 
 	interface Props {
-		vaultId: string;
+		vault: VaultInfo;
 	}
 
-	let { vaultId }: Props = $props();
+	let { vault }: Props = $props();
 
-	let data = $derived(getTimeSeries(vaultId));
+	let data = $derived(getTimeSeries(vault.id));
 
 	let range = $derived.by<[Date, Date]>(() => {
 		const end = utcDay.floor(new Date());
@@ -34,30 +34,23 @@
 		}
 	};
 
-	const seriesOptions = {
-		lineWidth: 2,
-		lastValueVisible: false,
-		priceLineVisible: false
-	};
-
-	const seriesCallback: SeriesCallback = ({ series, colors }) => {
-		series.applyOptions({
-			color: colors.textExtraLight
-		});
+	const seriesOptions: AreaSeriesPartialOptions = {
+		priceLineVisible: false,
+		crosshairMarkerVisible: false
 	};
 </script>
 
 <div class="vault-price-chart">
 	<h4>90 day price</h4>
 	<TvChart options={chartOptions} loading={data.loading}>
-		<Series type={LineSeries} options={seriesOptions} callback={seriesCallback} data={data.current ?? []} />
+		<AreaSeries data={data.current ?? []} direction={1} options={seriesOptions} />
 		<BaselineSeries color="transparent" interval={utcDay} {range} setChartVisibleRange />
 
 		{#snippet tooltip({ point, time }, [item])}
 			{#if item}
 				<ChartTooltip {point}>
 					<div class="tooltip-date"><Timestamp date={time as number} /></div>
-					<div class="tooltip-value">{formatValue(item.value, 2)}</div>
+					<div class="tooltip-value">{formatTokenAmount(item.value, 2)} {vault.denomination}</div>
 				</ChartTooltip>
 			{/if}
 		{/snippet}

@@ -32,7 +32,7 @@
 
 	<Section padding="md">
 		<div class="content">
-			<VaultPriceChart vaultId={vault.id} />
+			<VaultPriceChart {vault} />
 
 			<div class="returns">
 				<h4>Vault Returns</h4>
