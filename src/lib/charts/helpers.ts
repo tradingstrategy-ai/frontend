@@ -91,17 +91,22 @@ export function* intervalRange(interval: TimeInterval, startDate: Date, endDate:
 }
 
 /**
- * Normalize data with non-standard or inconsistent date intervals to a standard interval
+ * Resample data with non-standard or inconsistent date intervals to a standard interval,
+ * forward-filling the last known data value.
  *
  * @param data Raw tick data
  * @param interval A d3 time interval
  */
-export function normalizeDataForInterval(data: [UnixTimestamp, number][], interval: TimeInterval): SimpleDataItem[] {
+export function resampleTimeSeries(
+	data: [UnixTimestamp, number][],
+	interval: TimeInterval,
+	endAt?: Date
+): SimpleDataItem[] {
 	if (data.length === 0) return [];
 
-	const normalized: SimpleDataItem[] = [];
+	const resampled: SimpleDataItem[] = [];
 	const start = tsToDate(data[0][0]);
-	const end = tsToDate(data.at(-1)![0]);
+	const end = endAt ?? tsToDate(data.at(-1)![0]);
 
 	let dataIndex = 0;
 	let value = 0;
@@ -112,16 +117,16 @@ export function normalizeDataForInterval(data: [UnixTimestamp, number][], interv
 			value = data[dataIndex][1];
 			dataIndex++;
 		}
-		normalized.push({ time: dateToTs(current), value });
+		resampled.push({ time: dateToTs(current), value });
 	}
 
 	// prepend entry for prior interval (if needed) so starting value doesn't get swallowed
-	if (data[0][1] !== normalized[0].value) {
-		const previous = interval.offset(tsToDate(normalized[0].time), -1);
-		normalized.unshift({ time: dateToTs(previous), value: data[0][1] });
+	if (data[0][1] !== resampled[0].value) {
+		const previous = interval.offset(tsToDate(resampled[0].time), -1);
+		resampled.unshift({ time: dateToTs(previous), value: data[0][1] });
 	}
 
-	return normalized;
+	return resampled;
 }
 
 /**
