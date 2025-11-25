@@ -9,8 +9,6 @@ import { utcDay } from 'd3-time';
 // TODO: move to env var / config
 const parquetFile = 'data/cleaned-vault-prices-1h.parquet';
 
-const connection = await DuckDBConnection.create();
-
 const SQL = `
   SELECT
     EXTRACT(EPOCH FROM timestamp) as ts,
@@ -21,6 +19,8 @@ const SQL = `
 `;
 
 export const getTimeSeries = query(z.string(), async (vaultId) => {
+	const connection = await DuckDBConnection.create();
+
 	try {
 		const reader = await connection.runAndReadAll(SQL, { parquetFile, vaultId });
 		const rows = reader.getRows() as [UTCTimestamp, number][];
@@ -32,5 +32,7 @@ export const getTimeSeries = query(z.string(), async (vaultId) => {
 			message: `Error loading vault data for vault id <${vaultId}>`,
 			stack: stack ? [stack] : undefined
 		});
+	} finally {
+		connection.closeSync();
 	}
 });
