@@ -1,16 +1,23 @@
 <script lang="ts">
-	export let title = '';
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		title?: string;
+		children: Snippet;
+	}
+
+	let { title, children }: Props = $props();
 </script>
 
-<div class="summary-box">
+<div class="metrics-box">
 	{#if title}
 		<h2>{title}</h2>
 	{/if}
-	<slot />
+	{@render children()}
 </div>
 
 <style>
-	.summary-box {
+	.metrics-box {
 		border: 1px solid var(--c-box-3);
 		border-radius: var(--radius-md);
 		padding: 1.25rem;

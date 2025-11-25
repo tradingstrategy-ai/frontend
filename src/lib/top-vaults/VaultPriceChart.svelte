@@ -63,7 +63,8 @@
 		}
 
 		display: grid;
-		background: var(--c-box-2);
+		background: var(--c-box-1);
+		border: 1px solid var(--c-box-3);
 		border-radius: 1.25rem;
 		padding-bottom: 1.75rem;
 

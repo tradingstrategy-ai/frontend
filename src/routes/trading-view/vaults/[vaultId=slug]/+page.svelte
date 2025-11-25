@@ -5,7 +5,9 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
-	import { formatPercent } from '$lib/helpers/formatters.js';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters.js';
+	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
 
 	let { data } = $props();
 	let { vault } = $derived(data);
@@ -33,7 +35,23 @@
 	</PageHeader>
 
 	<Section padding="md" class="content">
-		<VaultPriceChart {vault} />
+		<div class="chart-area">
+			<VaultPriceChart {vault} />
+			<div class="featured-metrics">
+				<MetricsBox>
+					<dl>
+						<dt>1M return (ann)</dt>
+						<dd><Profitability of={vault.cagr} /></dd>
+					</dl>
+				</MetricsBox>
+				<MetricsBox>
+					<dl>
+						<dt>Total value locked</dt>
+						<dd>{formatDollar(vault.current_nav)}</dd>
+					</dl>
+				</MetricsBox>
+			</div>
+		</div>
 
 		<div class="returns">
 			<h4>Vault Returns</h4>
@@ -102,8 +120,38 @@
 			text-transform: uppercase;
 		}
 
+		.chart-area {
+			display: grid;
+			grid-template-columns: 1fr 16rem;
+			gap: 1.75rem;
+
+			.featured-metrics {
+				display: grid;
+				gap: inherit;
+				align-content: start;
+			}
+		}
+
+		dl {
+			display: grid;
+			gap: 1rem;
+			grid-template-rows: auto 1fr;
+
+			dt {
+				font: var(--f-ui-md-medium);
+				color: var(--c-text-light);
+			}
+
+			dd {
+				font: var(--f-heading-xxl-medium);
+				justify-self: end;
+				display: grid;
+			}
+		}
+
 		.returns {
-			background: var(--c-box-2);
+			background: var(--c-box-1);
+			border: 1px solid var(--c-box-3);
 			border-radius: 1.25rem;
 			padding: 1.75rem;
 

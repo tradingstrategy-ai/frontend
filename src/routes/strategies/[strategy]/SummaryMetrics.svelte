@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SummaryKeyMetrics } from 'trade-executor/schemas/summary';
-	import MetricsBox from './MetricsBox.svelte';
+	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import KeyMetric from 'trade-executor/components/KeyMetric.svelte';
 	import { formatDaysAgo, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
