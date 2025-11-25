@@ -322,11 +322,7 @@
 										onerror={() => failedSparklines.add(vault.id)}
 									/>
 								{/if}
-								<TargetableLink
-									label="View {vault.name} details"
-									href={resolve(`/trading-view/vaults/${vault.id}`)}
-									data-sveltekit-noscroll
-								/>
+								<TargetableLink label="View {vault.name} details" href={resolve(`/trading-view/vaults/${vault.id}`)} />
 							</td>
 						</tr>
 					{/each}
