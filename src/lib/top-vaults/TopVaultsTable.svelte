@@ -322,7 +322,11 @@
 										onerror={() => failedSparklines.add(vault.id)}
 									/>
 								{/if}
-								<TargetableLink label="View {vault.name} details" href={resolve(`/trading-view/vaults/${vault.id}`)} />
+								<TargetableLink
+									label="View {vault.name} details"
+									href={resolve(`/trading-view/vaults/${vault.id}`)}
+									class="row-link"
+								/>
 							</td>
 						</tr>
 					{/each}
@@ -456,11 +460,6 @@
 
 				--c-col-a: var(--c-box-3);
 				--c-col-b: var(--c-box-1);
-
-				tbody tr:hover & {
-					--c-col-a: var(--c-box-4);
-					--c-col-b: var(--c-box-2);
-				}
 
 				/* alternating column colors */
 				&:nth-child(even) {
@@ -607,6 +606,10 @@
 
 			.net-gross :global(.popup) {
 				width: 17rem;
+			}
+
+			:global(.row-link):hover {
+				background: var(--c-box-2);
 			}
 		}
 	}
