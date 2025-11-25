@@ -3,6 +3,8 @@ import { query } from '$app/server';
 import { DuckDBConnection } from '@duckdb/node-api';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
+import { resampleTimeSeries } from '$lib/charts/helpers';
+import { utcDay } from 'd3-time';
 
 // TODO: move to env var / config
 const parquetFile = 'data/cleaned-vault-prices-1h.parquet';
@@ -11,7 +13,7 @@ const connection = await DuckDBConnection.create();
 
 const SQL = `
   SELECT
-    CAST(EXTRACT(EPOCH FROM timestamp) AS BIGINT) as timestamp_seconds,
+    EXTRACT(EPOCH FROM timestamp) as ts,
     share_price
   FROM parquet_scan($parquetFile)
   WHERE id = $vaultId
@@ -21,11 +23,8 @@ const SQL = `
 export const getTimeSeries = query(z.string(), async (vaultId) => {
 	try {
 		const reader = await connection.runAndReadAll(SQL, { parquetFile, vaultId });
-		const rows = reader.getRowObjects();
-		return rows.map((row) => ({
-			time: Number(row.timestamp_seconds) as UTCTimestamp,
-			value: row.share_price as number
-		}));
+		const rows = reader.getRows() as [UTCTimestamp, number][];
+		return resampleTimeSeries(rows, utcDay, new Date());
 	} catch (e) {
 		console.error(`Error loading data from ${parquetFile} for vault <${vaultId}>`);
 		const { stack } = e as Error;
