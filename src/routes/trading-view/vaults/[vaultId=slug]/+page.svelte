@@ -6,9 +6,10 @@
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
+	import Risk from '$lib/top-vaults/Risk.svelte';
+	import Metric from './Metric.svelte';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
 	import { formatAmount, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters.js';
-	import Metric from './Metric.svelte';
 
 	let { data } = $props();
 	let { vault } = $derived(data);
@@ -63,7 +64,9 @@
 				<div class="other-metrics-inner">
 					<Metric label="Age">{formatNumber(vault.years, 1)} years</Metric>
 					<Metric label="Deposit events">{formatAmount(vault.event_count)}</Metric>
-					<Metric label="Protocol Technical Risk">{vault.risk}</Metric>
+					<Metric label="Protocol Technical Risk">
+						<Risk risk={vault.risk} />
+					</Metric>
 				</div>
 			</MetricsBox>
 
@@ -187,8 +190,7 @@
 				grid-area: span 2 / 2;
 			}
 
-			.other-metrics-inner,
-			.fees-inner {
+			:is(.other-metrics-inner, .fees-inner) {
 				display: flex;
 				gap: 2rem;
 			}
