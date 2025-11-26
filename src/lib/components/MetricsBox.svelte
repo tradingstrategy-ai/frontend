@@ -3,13 +3,14 @@
 
 	interface Props {
 		title?: string;
+		class?: string;
 		children: Snippet;
 	}
 
-	let { title, children }: Props = $props();
+	let { title, class: classes, children }: Props = $props();
 </script>
 
-<div class="metrics-box">
+<div class={['metrics-box', classes]}>
 	{#if title}
 		<h2>{title}</h2>
 	{/if}
@@ -18,9 +19,11 @@
 
 <style>
 	.metrics-box {
+		display: grid;
+		grid-template-rows: auto 1fr;
 		border: 1px solid var(--c-box-3);
 		border-radius: var(--radius-md);
-		padding: 1.25rem;
+		padding: var(--padding, 1.25rem);
 		background: var(--c-box-1);
 
 		h2 {

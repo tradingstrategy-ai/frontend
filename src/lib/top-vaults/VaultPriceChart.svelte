@@ -83,8 +83,11 @@
 
 <style>
 	.vault-price-chart {
+		margin-bottom: -0.25rem;
+
 		:global([data-css-props]) {
-			--chart-aspect-ratio: 2;
+			--chart-aspect-ratio: auto;
+			--chart-height: 28rem;
 		}
 
 		.tooltip-date {
