@@ -87,17 +87,6 @@
 			--chart-aspect-ratio: 2;
 		}
 
-		--c-background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-1-alpha));
-		display: grid;
-		background: var(--c-background);
-		border: 1px solid var(--c-box-3);
-		border-radius: 1.25rem;
-		padding: 1.75rem 0.5rem 1.5rem 1.75rem;
-
-		> :global(*) {
-			grid-area: 1 / -1;
-		}
-
 		.tooltip-date {
 			margin-bottom: 0.75rem;
 			font: var(--f-ui-sm-bold);

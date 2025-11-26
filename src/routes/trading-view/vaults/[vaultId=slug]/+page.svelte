@@ -1,13 +1,12 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import Section from '$lib/components/Section.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import Profitability from '$lib/components/Profitability.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
-	import { formatDollar, formatPercent } from '$lib/helpers/formatters.js';
-	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import Profitability from '$lib/components/Profitability.svelte';
+	import { formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
 	let { vault } = $derived(data);
@@ -37,20 +36,25 @@
 	<Section padding="md" class="content">
 		<div class="chart-area">
 			<VaultPriceChart {vault} />
-			<div class="featured-metrics">
-				<MetricsBox>
-					<dl>
-						<dt>1M return (ann)</dt>
-						<dd><Profitability of={vault.cagr} /></dd>
-					</dl>
-				</MetricsBox>
-				<MetricsBox>
-					<dl>
-						<dt>Total value locked</dt>
-						<dd>{formatDollar(vault.current_nav)}</dd>
-					</dl>
-				</MetricsBox>
-			</div>
+			<dl class="featured-metrics">
+				<div>
+					<dt>1M return (ann)</dt>
+					<dd class="large"><Profitability of={vault.one_month_cagr_net} /></dd>
+				</div>
+				<div>
+					<dt>Total value locked</dt>
+					<dd class="large">{formatDollar(vault.current_nav)}</dd>
+					<dd class="small">peak {formatDollar(vault.peak_nav)}</dd>
+				</div>
+				<div>
+					<dt>3M Sharpe</dt>
+					<dd>{formatNumber(vault.three_months_sharpe, 1)}</dd>
+				</div>
+				<div>
+					<dt>3M volatility</dt>
+					<dd>{formatPercent(vault.three_months_volatility, 1)}</dd>
+				</div>
+			</dl>
 		</div>
 
 		<div class="returns">
@@ -121,31 +125,48 @@
 		}
 
 		.chart-area {
+			--c-background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-1-alpha));
 			display: grid;
-			grid-template-columns: 1fr 16rem;
+			grid-template-columns: 1fr auto;
 			gap: 1.75rem;
+			padding: 1.75rem;
+			border: 1px solid var(--c-box-3);
+			border-radius: 1.25rem;
+			background: var(--c-background);
 
 			.featured-metrics {
 				display: grid;
-				gap: inherit;
-				align-content: start;
-			}
-		}
+				align-content: space-evenly;
+				gap: 2.25rem;
 
-		dl {
-			display: grid;
-			gap: 1rem;
-			grid-template-rows: auto 1fr;
+				border-left: 2px solid var(--c-box-3);
+				padding-left: 1.75rem;
+				text-align: center;
 
-			dt {
-				font: var(--f-ui-md-medium);
-				color: var(--c-text-light);
-			}
+				div {
+					display: grid;
+					align-content: start;
+					padding-inline: 0.75rem;
+				}
 
-			dd {
-				font: var(--f-heading-xxl-medium);
-				justify-self: end;
-				display: grid;
+				dt {
+					margin-bottom: 0.5rem;
+					font: var(--f-ui-md-medium);
+					color: var(--c-text-extra-light);
+				}
+
+				dd {
+					font: var(--f-heading-xl-medium);
+
+					&.large {
+						font: var(--f-heading-xxl-medium);
+					}
+
+					&.small {
+						font: var(--f-heading-xs-roman);
+						color: var(--c-text-light);
+					}
+				}
 			}
 		}
 
