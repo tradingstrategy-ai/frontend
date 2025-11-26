@@ -5,6 +5,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
@@ -44,11 +45,24 @@
 
 			<div class="featured-metrics">
 				<Metric size="xl" label="1M return (ann)">
-					<Profitability of={vault.one_month_cagr_net} />
+					{#if vault.one_month_cagr_net}
+						<Profitability of={vault.one_month_cagr_net} />
+					{:else}
+						<Tooltip>
+							<svelte:fragment slot="trigger">
+								<Profitability of={vault.one_month_cagr} />
+								<span class="sm">(G)</span>
+							</svelte:fragment>
+							<svelte:fragment slot="popup">
+								Fee information for this protocol is not yet available. The calculation is based on gross profit and
+								fees may apply.
+							</svelte:fragment>
+						</Tooltip>
+					{/if}
 				</Metric>
 				<Metric size="xl" label="Total value locked">
 					{formatDollar(vault.current_nav, 1)}
-					<small>peak {formatDollar(vault.peak_nav, 1)}</small>
+					<div class="sm">peak {formatDollar(vault.peak_nav, 1)}</div>
 				</Metric>
 				<Metric size="lg" label="3M Sharpe">
 					{formatNumber(vault.three_months_sharpe, 1)}
@@ -165,8 +179,7 @@
 				padding-inline: 0.75rem;
 				text-align: center;
 
-				small {
-					display: block;
+				.sm {
 					font: var(--f-heading-xs-roman);
 					color: var(--c-text-light);
 				}
