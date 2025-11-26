@@ -595,9 +595,12 @@
 
 			.sparkline {
 				width: 9%;
-				text-align: center;
-				vertical-align: middle;
-				color: var(--c-text-ultra-light);
+
+				&:is(td) {
+					text-align: center;
+					vertical-align: middle;
+					color: var(--c-text-ultra-light);
+				}
 
 				img {
 					width: 100%;
