@@ -12,14 +12,14 @@
 	};
 
 	let {
-		class: classes = '',
+		class: classes,
 		heading = false,
 		bottom = false,
 		top = !bottom,
 		right = false,
 		left = !right,
 		children
-	} = $props();
+	}: Props = $props();
 </script>
 
 <h3 class={[classes, { heading, top, bottom, left, right }]}>
@@ -30,7 +30,7 @@
 	h3 {
 		position: absolute;
 		padding: 0.125em 0.25em;
-		background: color-mix(in srgb, transparent, var(--c-body) 60%);
+		background: color-mix(in srgb, transparent, var(--c-background, var(--c-body)) 60%);
 		color: var(--c-text-light);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm, nornal);

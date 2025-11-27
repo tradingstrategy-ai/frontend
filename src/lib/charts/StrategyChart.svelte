@@ -11,7 +11,7 @@
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
-	import { getDataRange, normalizeDataForInterval } from './helpers';
+	import { getDataRange, resampleTimeSeries } from './helpers';
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
 
@@ -30,7 +30,7 @@
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
-	let normalizedData = $derived(normalizeDataForInterval(data ?? [], timeSpan.interval));
+	let normalizedData = $derived(resampleTimeSeries(data ?? [], timeSpan.interval));
 
 	let timeSpanRange = $derived(getDataRange(normalizedData, timeSpan));
 

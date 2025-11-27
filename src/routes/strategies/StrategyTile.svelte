@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { utcDay } from 'd3-time';
-	import { normalizeDataForInterval } from '$lib/charts/helpers';
+	import { resampleTimeSeries } from '$lib/charts/helpers';
 	import { getChain } from '$lib/helpers/chain';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -37,7 +37,7 @@
 		? strategy.summary_statistics?.share_price_returns_90_days
 		: strategy.summary_statistics?.compounding_unrealised_trading_profitability;
 
-	const chartData = normalizeDataForInterval(rawChartData ?? [], utcDay);
+	const chartData = resampleTimeSeries(rawChartData ?? [], utcDay);
 </script>
 
 <div class="strategy-tile ds-3 targetable">

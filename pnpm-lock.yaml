@@ -20,6 +20,9 @@ importers:
       '@aave/math-utils':
         specifier: ^1.36.2
         version: 1.36.2(bignumber.js@9.3.1)(tslib@2.8.1)
+      '@duckdb/node-api':
+        specifier: 1.4.2-r.1
+        version: 1.4.2-r.1
       '@reown/appkit':
         specifier: ^1.8.14
         version: 1.8.14(@types/react@19.2.4)(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@4.1.12)
@@ -38,6 +41,12 @@ importers:
       '@wagmi/core':
         specifier: ^2.22.1
         version: 2.22.1(@tanstack/query-core@5.83.0)(@types/react@19.2.4)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
+      '@zag-js/dialog':
+        specifier: ^1.29.0
+        version: 1.29.0
+      '@zag-js/svelte':
+        specifier: ^1.29.0
+        version: 1.29.0(svelte@5.43.6)
       bignumber.js:
         specifier: ^9.3.1
         version: 9.3.1
@@ -636,6 +645,37 @@ packages:
   '@datadog/wasm-js-rewriter@5.0.1':
     resolution: {integrity: sha512-EzbV3Lrdt3udQEsbDOVC5gB1y7yxfpBbrSIk4jaEsGjyj0Dbv2HGj7tZjs+qXzIzNonHc8h5El2bYZOGfC2wwg==}
     engines: {node: '>= 10'}
+
+  '@duckdb/node-api@1.4.2-r.1':
+    resolution: {integrity: sha512-8Ef4R/Lq+rXTpcqZIJZe6ALfgMGxy88HmiPvRpWrRw1fUTy85x1U0NnGrqCklZsmWyZUdPwVYj90MQOF2MY/TA==}
+
+  '@duckdb/node-bindings-darwin-arm64@1.4.2-r.1':
+    resolution: {integrity: sha512-C4yBI3zBX7iZ9iq8zJDvPatXA+2xM22sg1kX3fx76nG+qTqKtU/dGFVYL7Fx6cBYxBO1ZZ8Y+vjgYb6/bich8A==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-darwin-x64@1.4.2-r.1':
+    resolution: {integrity: sha512-dgTSBuEfWyhymYovsGoRESjqcJuZWwJqla9l89SSsBDrGYcUp+EHsXUF73oUCspzTesT2lOvHrDufO8pKgtudw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-linux-arm64@1.4.2-r.1':
+    resolution: {integrity: sha512-r2Ml1LvU2vkVMx4YU04T79FjGkYg8YMVtbOz7j740SZGIi5Cch5P1/oy48jJBWRqoaXuqimpYWeTZiGVeCQiZA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@duckdb/node-bindings-linux-x64@1.4.2-r.1':
+    resolution: {integrity: sha512-ed5KiNIu1rqSva5rgo4PRVYSmBolAMVqGFWsYWLoRZ94ka2F/dHwJNkarCTmBFCEDGVZWzWzjRyWTQgYTvQxTg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@duckdb/node-bindings-win32-x64@1.4.2-r.1':
+    resolution: {integrity: sha512-kIIT8tuoW3mzr9EPcdSoKfv9CgOhTqRryHDI10Z0nuhc9UhqOWPUM/LnSUebfo1mdD9Drm7YrKCKYxNTr5dqBQ==}
+    cpu: [x64]
+    os: [win32]
+
+  '@duckdb/node-bindings@1.4.2-r.1':
+    resolution: {integrity: sha512-z0pJCdEnIj0Famkip6w7JZ/A17nm5VcYc6H7isOHXfEnPhBQ9PBusUTFgIzl6+3J8HOFQOv0szJq46zldbsHfQ==}
 
   '@ecies/ciphers@0.2.5':
     resolution: {integrity: sha512-GalEZH4JgOMHYYcYmVqnFirFsjZHeoGMDt9IxEnM9F7GRUUyUksJ7Ou53L83WHJq3RWKD3AcBpo0iQh0oMpf8A==}
@@ -2580,6 +2620,44 @@ packages:
 
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
+
+  '@zag-js/anatomy@1.29.0':
+    resolution: {integrity: sha512-XNazj0Pdo86/VKrKUPJujSWrHCk3SK7pMx/UikOzAg6mf6LBJm3Nan2fcGpex/j6gUCa1znvLAmYYAzfGvJ/Zg==}
+
+  '@zag-js/aria-hidden@1.29.0':
+    resolution: {integrity: sha512-tZiOP4xDmIrFSwCA93Fw2qi/6XyJevuUQsBtEq/hgLpOHMVwdG50CznLE5YvF6RNi+L0t+pHhHj+kfnQhmjyQg==}
+
+  '@zag-js/core@1.29.0':
+    resolution: {integrity: sha512-vZ4kTNt4SYDf2HrpYY2RtU98yF0fe6FdDBg79PfWA6d+o1SBEfcyT7IP+COv1vJlHWRrnSxe1QKycarys/aPVw==}
+
+  '@zag-js/dialog@1.29.0':
+    resolution: {integrity: sha512-EDeK17CrFn8MuhVhnps03uMGe45WvnGLVKq8YwSsTvuyTIMFnRJI30FuYmjGQRP/CoInSmYamh27PfIGycbPDg==}
+
+  '@zag-js/dismissable@1.29.0':
+    resolution: {integrity: sha512-aiyOZwECCuNasV0SaGvSEErmET7oBpCsmw3AlClqSlRw9JfQrT4jHPsyWNAqyzguDe4G1SeGhxcnt3MTAjKBUw==}
+
+  '@zag-js/dom-query@1.29.0':
+    resolution: {integrity: sha512-zunmDJqrRo0G1SDKrGh4iMUIkzz2qP+hPdvX4YKBsrjAZPs7q3M8fh5GWS6+WvSJGfaJTlacgF+ZMliTrDkVAw==}
+
+  '@zag-js/focus-trap@1.29.0':
+    resolution: {integrity: sha512-eZCKUT7VJzCHCeIyCdX9hG+c5a4uMnHLA0CBDGFsB69On5wQ3v8N5febbdpEFvJMfOrf93HVK1cNHCZ+rvvQNA==}
+
+  '@zag-js/interact-outside@1.29.0':
+    resolution: {integrity: sha512-xb0sYUXCl8OZTPZg1SNo391ovkiXe6VCMn2ZDPjllhO43zUJLdUkdkK48bxb0DfaAdJeWWziOMZPTZuNlQrb5g==}
+
+  '@zag-js/remove-scroll@1.29.0':
+    resolution: {integrity: sha512-SYYo4tHHNF/38GGZN8F5SKIOusCqHCvjmx9C2kwoqHRttrSQcuNLzagEEHQ/NPycTy3N1p8BOdITI/jGq3fK9w==}
+
+  '@zag-js/svelte@1.29.0':
+    resolution: {integrity: sha512-S9ryUJcksqKcTXRUdVYAuX/DgwfQfa3cfnvN23SxM5gV5MDsnj20LDPlhZFYOWLlMUczgPD5+WXffsrPYztd3Q==}
+    peerDependencies:
+      svelte: '>=5'
+
+  '@zag-js/types@1.29.0':
+    resolution: {integrity: sha512-ycJVP0NVYCc1cImqlrSYPda2xZSA09kzRFon/J+20tYmHbqXAgaT8kYuJk2d1Y7dGPSQexbymN053kZS/FDtMA==}
+
+  '@zag-js/utils@1.29.0':
+    resolution: {integrity: sha512-C9rz2XTXEuJ5duODU5DP6NmXPg48rjpM+yjVvsQFsMh3qB+QKci7jzgsYreVuP6jN6hUb23aQztTe0VYNzVE/w==}
 
   abitype@1.0.6:
     resolution: {integrity: sha512-MMSqYh4+C/aVqI2RQaWqbvI4Kxo5cQV40WQ4QFtDnNzCkqChm8MuENhElmynZlO0qUy/ObkEUaXtKqYnx1Kp3A==}
@@ -6324,6 +6402,33 @@ snapshots:
       module-details-from-path: 1.0.4
       node-gyp-build: 4.8.4
 
+  '@duckdb/node-api@1.4.2-r.1':
+    dependencies:
+      '@duckdb/node-bindings': 1.4.2-r.1
+
+  '@duckdb/node-bindings-darwin-arm64@1.4.2-r.1':
+    optional: true
+
+  '@duckdb/node-bindings-darwin-x64@1.4.2-r.1':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64@1.4.2-r.1':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64@1.4.2-r.1':
+    optional: true
+
+  '@duckdb/node-bindings-win32-x64@1.4.2-r.1':
+    optional: true
+
+  '@duckdb/node-bindings@1.4.2-r.1':
+    optionalDependencies:
+      '@duckdb/node-bindings-darwin-arm64': 1.4.2-r.1
+      '@duckdb/node-bindings-darwin-x64': 1.4.2-r.1
+      '@duckdb/node-bindings-linux-arm64': 1.4.2-r.1
+      '@duckdb/node-bindings-linux-x64': 1.4.2-r.1
+      '@duckdb/node-bindings-win32-x64': 1.4.2-r.1
+
   '@ecies/ciphers@0.2.5(@noble/ciphers@1.3.0)':
     dependencies:
       '@noble/ciphers': 1.3.0
@@ -8598,7 +8703,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.4
       '@noble/curves': 1.9.7
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.8.0
       '@solana/buffer-layout': 4.0.1
       '@solana/codecs-numbers': 2.3.0(typescript@5.9.3)
       agentkeepalive: 4.6.0
@@ -9822,6 +9927,65 @@ snapshots:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
 
+  '@zag-js/anatomy@1.29.0': {}
+
+  '@zag-js/aria-hidden@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+
+  '@zag-js/core@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+      '@zag-js/utils': 1.29.0
+
+  '@zag-js/dialog@1.29.0':
+    dependencies:
+      '@zag-js/anatomy': 1.29.0
+      '@zag-js/aria-hidden': 1.29.0
+      '@zag-js/core': 1.29.0
+      '@zag-js/dismissable': 1.29.0
+      '@zag-js/dom-query': 1.29.0
+      '@zag-js/focus-trap': 1.29.0
+      '@zag-js/remove-scroll': 1.29.0
+      '@zag-js/types': 1.29.0
+      '@zag-js/utils': 1.29.0
+
+  '@zag-js/dismissable@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+      '@zag-js/interact-outside': 1.29.0
+      '@zag-js/utils': 1.29.0
+
+  '@zag-js/dom-query@1.29.0':
+    dependencies:
+      '@zag-js/types': 1.29.0
+
+  '@zag-js/focus-trap@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+
+  '@zag-js/interact-outside@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+      '@zag-js/utils': 1.29.0
+
+  '@zag-js/remove-scroll@1.29.0':
+    dependencies:
+      '@zag-js/dom-query': 1.29.0
+
+  '@zag-js/svelte@1.29.0(svelte@5.43.6)':
+    dependencies:
+      '@zag-js/core': 1.29.0
+      '@zag-js/types': 1.29.0
+      '@zag-js/utils': 1.29.0
+      svelte: 5.43.6
+
+  '@zag-js/types@1.29.0':
+    dependencies:
+      csstype: 3.1.3
+
+  '@zag-js/utils@1.29.0': {}
+
   abitype@1.0.6(typescript@5.9.3)(zod@3.25.76):
     optionalDependencies:
       typescript: 5.9.3
@@ -10229,8 +10393,7 @@ snapshots:
       '@asamuzakjp/css-color': 3.2.0
       rrweb-cssom: 0.8.0
 
-  csstype@3.1.3:
-    optional: true
+  csstype@3.1.3: {}
 
   d3-array@3.2.4:
     dependencies:
@@ -11542,10 +11705,10 @@ snapshots:
   ox@0.6.7(typescript@5.9.3)(zod@4.1.12):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
-      '@scure/bip32': 1.6.2
-      '@scure/bip39': 1.5.4
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.9.3)(zod@4.1.12)
       eventemitter3: 5.0.1
     optionalDependencies:

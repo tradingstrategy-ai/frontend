@@ -1,21 +1,24 @@
 <script lang="ts">
-	import type { TopVaults, VaultInfo } from './schemas';
+	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Chain } from '$lib/helpers/chain';
+	import type { TopVaults, VaultInfo } from './schemas';
+	import { browser } from '$app/environment';
+	import { resolve } from '$app/paths';
+	import { SvelteSet } from 'svelte/reactivity';
 	import Alert from '$lib/components/Alert.svelte';
-	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import ChainCell from './ChainCell.svelte';
-	import FeesCell from './FeesCell.svelte';
 	import DepositEventsCell from './DepositEventsCell.svelte';
+	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain';
+	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { browser } from '$app/environment';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface SortOptions {
 		key: string;
@@ -26,11 +29,14 @@
 	interface Props {
 		topVaults: TopVaults;
 		chain?: Chain;
+		tbodyProps?: HTMLAttributes<HTMLTableSectionElement>;
 	}
 
-	const { topVaults, chain }: Props = $props();
+	const { topVaults, chain, tbodyProps }: Props = $props();
 
 	let showChainCol = $derived(!chain);
+
+	let offsetWidth = $state<number>();
 
 	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
@@ -97,6 +103,8 @@
 		sortOptions = { key, direction, compareFn };
 	}
 
+	let failedSparklines = new SvelteSet<string>();
+
 	// Limit the number of vaults renderered during SSR to 100
 	// This results in faster initial page render / lower LCP value, while still including the
 	// top 100 vaults for SEO benefits.
@@ -162,7 +170,8 @@
 		</div>
 
 		<div class="table-wrapper">
-			<table class="top-vaults-table">
+			<!-- --table-width needed for proper tr.targetable styling  -->
+			<table class="top-vaults-table" bind:offsetWidth style:--table-width="{offsetWidth}px">
 				<thead>
 					<tr>
 						<th class="index"></th>
@@ -242,18 +251,13 @@
 							'asc',
 							multiValCompare(['risk_numeric'], Infinity)
 						)}
-						{@render sortColHeader(
-							'Vault address',
-							'address',
-							'asc',
-							stringCompare((v) => v.address)
-						)}
+						<th class="sparkline">90 day price</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody {...tbodyProps}>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
-						<tr>
+						<tr class="targetable">
 							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 							<td class="index"></td>
 							{#if showChainCol}
@@ -308,12 +312,20 @@
 							<td class="risk">
 								<RiskCell risk={vault.risk} risk_numeric={vault.risk_numeric} />
 							</td>
-							<td class="address">
-								<CryptoAddressWidget
-									class="vault-address"
-									size="sm"
-									address={vault.address}
-									href={getExplorerUrl(chain, vault.address)}
+							<td class="sparkline">
+								{#if failedSparklines.has(vault.id)}
+									chart data unavailable
+								{:else}
+									<img
+										src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
+										alt="{vault.name} 90 day price"
+										onerror={() => failedSparklines.add(vault.id)}
+									/>
+								{/if}
+								<TargetableLink
+									label="View {vault.name} details"
+									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.id}`)}
+									class="row-link"
 								/>
 							</td>
 						</tr>
@@ -581,24 +593,26 @@
 				width: 6%;
 			}
 
+			.sparkline {
+				width: 9%;
+
+				&:is(td) {
+					text-align: center;
+					vertical-align: middle;
+					color: var(--c-text-ultra-light);
+				}
+
+				img {
+					width: 100%;
+				}
+			}
+
 			.net-gross :global(.popup) {
 				width: 17rem;
 			}
 
-			.address {
-				width: 9%;
-
-				:global(.vault-address) {
-					padding: 0;
-					border-radius: 0;
-					background: transparent !important;
-					font: var(--f-ui-xs-roman);
-					letter-spacing: var(--ls-ui-xs, normal);
-
-					:global(a:not(:hover)) {
-						text-decoration: none;
-					}
-				}
+			:global(.row-link):hover {
+				background: var(--c-box-2);
 			}
 		}
 	}
