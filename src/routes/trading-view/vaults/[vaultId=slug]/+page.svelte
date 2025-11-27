@@ -10,7 +10,7 @@
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
-	import { formatAmount, formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters.js';
+	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
 	let { vault } = $derived(data);
@@ -140,6 +140,13 @@
 						</tr>
 					</tbody>
 				</table>
+				<div class="net-fee-info">
+					{#if isNumber(vault.mgmt_fee) && isNumber(vault.perf_fee)}
+						Net returns are calculated based on gross returns after accounting for fees.
+					{:else}
+						Net returns cannot be calculated because fee information is not yet available for this protocol.
+					{/if}
+				</div>
 			</MetricsBox>
 
 			<MetricsBox class="fees" title="Fees" --padding="1.75rem">
@@ -280,6 +287,16 @@
 			@media (--viewport-sm-down) {
 				font: var(--f-ui-sm-roman);
 				--cell-padding: 0.5rem 0.25rem;
+			}
+		}
+
+		.net-fee-info {
+			margin-top: 1rem;
+			font: var(--f-ui-md-roman);
+			color: var(--c-text-extra-light);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-sm-roman);
 			}
 		}
 
