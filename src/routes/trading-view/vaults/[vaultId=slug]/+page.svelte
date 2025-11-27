@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
@@ -10,6 +11,7 @@
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
@@ -26,7 +28,14 @@
 <Breadcrumbs labels={{ vaults: 'Top Vaults', [vault.id]: vault.name }} />
 
 <main class="vault-details ds-3">
-	<PageHeader title={vault.name} subtitle={vault.protocol}>
+	<PageHeader title={vault.name}>
+		{#snippet subtitle()}
+			<span class="subtitle">
+				vault on {vault.protocol} on
+				<EntitySymbol size="0.875em" label={chain?.name} logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+			</span>
+		{/snippet}
+
 		{#snippet cta()}
 			<CryptoAddressWidget
 				size="md"
@@ -181,6 +190,12 @@
 			.mobile {
 				display: none;
 			}
+		}
+
+		.subtitle {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5ex;
 		}
 
 		:global(.vault-address) {
