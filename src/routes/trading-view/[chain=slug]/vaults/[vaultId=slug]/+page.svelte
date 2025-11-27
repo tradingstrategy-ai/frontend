@@ -10,22 +10,20 @@
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
-	import { getChain, getExplorerUrl } from '$lib/helpers/chain.js';
+	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
-	let { vault } = $derived(data);
-
-	let chain = $derived(getChain(vault.chain_id));
+	let { vault, chain } = $derived(data);
 </script>
 
 <svelte:head>
 	<title>{vault.name} | DeFi Vault | Trading Strategy</title>
-	<meta name="description" content="Vault details for {vault.name} on {vault.protocol}" />
+	<meta name="description" content="Vault details for {vault.name} vault on {vault.protocol} on {chain.name}" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', [vault.id]: vault.name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.id]: vault.name }} />
 
 <main class="vault-details ds-3">
 	<PageHeader title={vault.name}>

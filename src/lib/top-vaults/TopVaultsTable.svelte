@@ -324,7 +324,7 @@
 								{/if}
 								<TargetableLink
 									label="View {vault.name} details"
-									href={resolve(`/trading-view/vaults/${vault.id}`)}
+									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.id}`)}
 									class="row-link"
 								/>
 							</td>
