@@ -46,5 +46,23 @@
 				font: var(--f-heading-xxl-medium);
 			}
 		}
+
+		@media (--viewport-sm-down) {
+			.label {
+				font: var(--f-ui-sm-medium);
+			}
+
+			.value {
+				font: var(--f-heading-md-medium);
+
+				.lg & {
+					font: var(--f-heading-lg-medium);
+				}
+
+				.xl & {
+					font: var(--f-heading-xl-medium);
+				}
+			}
+		}
 	}
 </style>

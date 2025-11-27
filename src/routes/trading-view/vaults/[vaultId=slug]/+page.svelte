@@ -38,44 +38,57 @@
 	</PageHeader>
 
 	<Section padding="md" class="content">
-		<div class="chart-area">
-			<VaultPriceChart {vault} />
+		<MetricsBox>
+			<div class="chart-area">
+				<VaultPriceChart {vault} />
 
-			<div class="divider"></div>
+				<div class="divider"></div>
 
-			<div class="featured-metrics">
-				<Metric size="xl" label="1M return (ann)">
-					{#if vault.one_month_cagr_net}
-						<Profitability of={vault.one_month_cagr_net} />
-					{:else}
-						<Tooltip>
-							<svelte:fragment slot="trigger">
-								<Profitability of={vault.one_month_cagr} />
-								<span class="sm">(G)</span>
-							</svelte:fragment>
-							<svelte:fragment slot="popup">
-								Fee information for this protocol is not yet available. The calculation is based on gross profit and
-								fees may apply.
-							</svelte:fragment>
-						</Tooltip>
-					{/if}
-				</Metric>
-				<Metric size="xl" label="Total value locked">
-					{formatDollar(vault.current_nav, 1)}
-					<div class="sm">peak {formatDollar(vault.peak_nav, 1)}</div>
-				</Metric>
-				<Metric size="lg" label="3M Sharpe">
-					{formatNumber(vault.three_months_sharpe, 1)}
-				</Metric>
-				<Metric size="lg" label="3M volatility">
-					{formatPercent(vault.three_months_volatility, 1)}
-				</Metric>
+				<div class="featured-metrics">
+					<Metric size="xl" label="1M return (ann)">
+						{#if vault.one_month_cagr_net}
+							<Profitability of={vault.one_month_cagr_net} />
+						{:else}
+							<Tooltip>
+								<span slot="trigger" style:white-space="nowrap">
+									<Profitability of={vault.one_month_cagr} />
+									<span class="sm">(G)</span>
+								</span>
+								<svelte:fragment slot="popup">
+									Fee information for this protocol is not yet available. The calculation is based on gross profit and
+									fees may apply.
+								</svelte:fragment>
+							</Tooltip>
+						{/if}
+					</Metric>
+					<Metric size="xl" label="Total value locked">
+						{formatDollar(vault.current_nav, 1)}
+						<div class="sm">peak {formatDollar(vault.peak_nav, 1)}</div>
+					</Metric>
+					<div class="desktop">
+						<Metric size="lg" label="3M Sharpe">
+							{formatNumber(vault.three_months_sharpe, 1)}
+						</Metric>
+						<Metric size="lg" label="3M volatility">
+							{formatPercent(vault.three_months_volatility, 1)}
+						</Metric>
+					</div>
+				</div>
 			</div>
-		</div>
+		</MetricsBox>
 
 		<div class="additional-metrics">
-			<MetricsBox class="other-metrics" title="Other metrics" --padding="1.75rem">
+			<MetricsBox class="other-metrics" title="Other metrics">
 				<div class="other-metrics-inner">
+					<div class="mobile">
+						<Metric size="lg" label="3M Sharpe">
+							{formatNumber(vault.three_months_sharpe, 1)}
+						</Metric>
+						<Metric size="lg" label="3M volatility">
+							{formatPercent(vault.three_months_volatility, 1)}
+						</Metric>
+					</div>
+
 					<Metric label="Age">{formatNumber(vault.years, 1)} years</Metric>
 					<Metric label="Deposit events">{formatAmount(vault.event_count)}</Metric>
 					<Metric label="Protocol Technical Risk">
@@ -84,14 +97,7 @@
 				</div>
 			</MetricsBox>
 
-			<MetricsBox class="fees" title="Fees" --padding="1.75rem">
-				<div class="fees-inner">
-					<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
-					<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
-				</div>
-			</MetricsBox>
-
-			<MetricsBox class="returns" title="Returns" --padding="1.75rem">
+			<MetricsBox class="returns" title="Returns">
 				<table class="returns-table">
 					<thead>
 						<tr>
@@ -135,19 +141,48 @@
 					</tbody>
 				</table>
 			</MetricsBox>
+
+			<MetricsBox class="fees" title="Fees" --padding="1.75rem">
+				<div class="fees-inner">
+					<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
+					<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
+				</div>
+			</MetricsBox>
 		</div>
 	</Section>
 </main>
 
 <style>
 	.vault-details {
+		:is(.desktop, .mobile) {
+			display: contents;
+		}
+
+		@media (--viewport-sm-down) {
+			.desktop {
+				display: none;
+			}
+
+			--padding: 1.25rem;
+			--gap: 1.5rem;
+		}
+
+		@media (--viewport-md-up) {
+			--padding: 1.75rem;
+			--gap: 2rem;
+
+			.mobile {
+				display: none;
+			}
+		}
+
 		:global(.vault-address) {
 			max-width: 15rem;
 		}
 
 		:global(.content) {
 			display: grid;
-			gap: 2rem;
+			gap: var(--gap);
 		}
 
 		:global(h4) {
@@ -158,14 +193,9 @@
 		}
 
 		.chart-area {
-			--c-background: color-mix(in srgb, var(--c-body), hsl(var(--hsl-box)) var(--box-1-alpha));
 			display: grid;
 			grid-template-columns: 1fr auto auto;
 			gap: 1.75rem;
-			padding: 1.75rem;
-			border: 1px solid var(--c-box-3);
-			border-radius: 1.25rem;
-			background: var(--c-background);
 
 			.divider {
 				width: 2px;
@@ -175,7 +205,7 @@
 			.featured-metrics {
 				display: grid;
 				align-content: space-evenly;
-				gap: 2.25rem;
+				gap: var(--gap);
 				padding-inline: 0.75rem;
 				text-align: center;
 
@@ -184,28 +214,60 @@
 					color: var(--c-text-light);
 				}
 			}
+
+			@media (--viewport-md-down) {
+				grid-template-columns: auto;
+
+				.divider {
+					display: none;
+				}
+
+				.featured-metrics {
+					grid-row: 1;
+					display: flex;
+					justify-content: space-between;
+				}
+			}
+
+			@media (--viewport-sm-down) {
+				.featured-metrics {
+					justify-content: space-evenly;
+				}
+			}
 		}
 
 		.additional-metrics {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 2rem;
+			grid-template-columns: 1fr;
+			gap: var(--gap);
 
-			:global(.fees) {
-				grid-area: 1 / 1;
+			/* 2-column desktop layout */
+			@media (--viewport-lg-up) {
+				grid-template-columns: 1fr 1fr;
+
+				:global(.fees) {
+					grid-area: 1 / 1;
+				}
+
+				:global(.fees) {
+					grid-area: 2 / 1;
+				}
+
+				:global(.returns) {
+					grid-area: span 2 / 2;
+				}
 			}
 
-			:global(.fees) {
-				grid-area: 2 / 1;
-			}
-
-			:global(.returns) {
-				grid-area: span 2 / 2;
-			}
-
-			:is(.other-metrics-inner, .fees-inner) {
+			.other-metrics-inner {
 				display: flex;
-				gap: 2rem;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				gap: var(--gap);
+			}
+
+			.fees-inner {
+				display: flex;
+				gap: var(--gap);
 			}
 		}
 
@@ -213,6 +275,12 @@
 			width: 100%;
 			border-collapse: collapse;
 			font: var(--f-ui-md-roman);
+			--cell-padding: 0.5rem;
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-sm-roman);
+				--cell-padding: 0.5rem 0.25rem;
+			}
 		}
 
 		th {
@@ -224,7 +292,7 @@
 		}
 
 		:is(th, td) {
-			padding: 0.5rem;
+			padding: var(--cell-padding);
 
 			&:first-child {
 				font-weight: 500;
