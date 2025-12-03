@@ -36,5 +36,5 @@
  * The width value may need to be manually tweaked/adjused based on
  * the top-nav items used in Navbar.svelte
  */
-@custom-media --nav-expanded (width >= 1125px);
-@custom-media --nav-collapsed (width < 1125px);
+@custom-media --nav-expanded (width >= 1170px);
+@custom-media --nav-collapsed (width < 1170px);
