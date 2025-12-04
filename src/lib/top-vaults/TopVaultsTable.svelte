@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
@@ -29,10 +28,9 @@
 	interface Props {
 		topVaults: TopVaults;
 		chain?: Chain;
-		tbodyProps?: HTMLAttributes<HTMLTableSectionElement>;
 	}
 
-	const { topVaults, chain, tbodyProps }: Props = $props();
+	const { topVaults, chain }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -43,10 +41,16 @@
 
 	let filterValue = $state('');
 
-	// filter vaults
+	// filter out blacklisted vaults (unless specifically searching "blacklisted")
+	let baseVaults = $derived.by(() => {
+		if (filterValue.startsWith('blacklist')) return topVaults.vaults;
+		return topVaults.vaults.filter((v) => v.risk_numeric !== 999);
+	});
+
+	// filter vaults matching filterValue (search string)
 	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
-		return topVaults.vaults.filter((v) => {
+		return baseVaults.filter((v) => {
 			const chain = getChain(v.chain_id);
 			const vaultCompareStr = [
 				v.chain_id,
@@ -154,12 +158,12 @@
 <div class="top-vaults">
 	<TopVaultsOptIn />
 
-	{#if !topVaults.vaults.length}
+	{#if !baseVaults.length}
 		<Alert title="Error">No vault data available.</Alert>
 	{:else}
 		<div class="table-extras">
 			<div class="table-meta">
-				<span>{topVaults.vaults.length} {chain?.name ?? 'total'} vaults</span>
+				<span>{baseVaults.length} {chain?.name ?? 'total'} vaults</span>
 				<span>Min. TVL $50k</span>
 				<span>Stablecoin-only</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
@@ -254,7 +258,7 @@
 						<th class="sparkline">90 day price</th>
 					</tr>
 				</thead>
-				<tbody {...tbodyProps}>
+				<tbody>
 					{#each truncatedVaults as vault (vault.id)}
 						{@const chain = getChain(vault.chain_id)}
 						<tr class="targetable">
