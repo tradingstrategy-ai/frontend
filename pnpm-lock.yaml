@@ -101,6 +101,9 @@ importers:
       svelte-inview:
         specifier: ^4.0.4
         version: 4.0.4(svelte@5.43.6)
+      svelte-meta-tags:
+        specifier: ^4.5.0
+        version: 4.5.0(svelte@5.43.6)
       svelte-turnstile:
         specifier: ^0.11.0
         version: 0.11.0(svelte@5.43.6)
@@ -4918,6 +4921,9 @@ packages:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
 
+  schema-dts@1.1.5:
+    resolution: {integrity: sha512-RJr9EaCmsLzBX2NDiO5Z3ux2BVosNZN5jo0gWgsyKvxKIUL5R3swNvoorulAeL9kLB0iTSX7V6aokhla2m7xbg==}
+
   semifies@1.0.0:
     resolution: {integrity: sha512-xXR3KGeoxTNWPD4aBvL5NUpMTT7WMANr3EWnaS190QVkY52lqqcVRD7Q05UVbBhiWDGWMlJEUam9m7uFFGVScw==}
 
@@ -5158,6 +5164,11 @@ packages:
     resolution: {integrity: sha512-7TeEn+QbJC2OJrHiuM0T8vMBkms3DNpTE+Ir+NtnVBnBMA78aL4f1ft9t0Hn/pBbD/TnIXi4YfjFRAgtN+DZ5g==}
     peerDependencies:
       svelte: ^5.37.1
+
+  svelte-meta-tags@4.5.0:
+    resolution: {integrity: sha512-E1/ULp4j8qwYFQeYBR0WypgOIsZkOnywAExFhufyl07eTvyCDQVW1HaNTSA0n2sX/Hw0jtti+TKuOml5dt2v9A==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   svelte-parse-markup@0.1.5:
     resolution: {integrity: sha512-T6mqZrySltPCDwfKXWQ6zehipVLk4GWfH1zCMGgRtLlOIFPuw58ZxVYxVvotMJgJaurKi1i14viB2GIRKXeJTQ==}
@@ -12460,6 +12471,8 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
+  schema-dts@1.1.5: {}
+
   semifies@1.0.0: {}
 
   semver@6.3.1: {}
@@ -12745,6 +12758,11 @@ snapshots:
 
   svelte-keyed@2.0.0(svelte@5.43.6):
     dependencies:
+      svelte: 5.43.6
+
+  svelte-meta-tags@4.5.0(svelte@5.43.6):
+    dependencies:
+      schema-dts: 1.1.5
       svelte: 5.43.6
 
   svelte-parse-markup@0.1.5(svelte@5.43.6):

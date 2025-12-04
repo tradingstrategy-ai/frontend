@@ -10,18 +10,17 @@
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
+	import SocialMediaTags from './SocialMetaTags.svelte';
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
+	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
 </script>
 
-<svelte:head>
-	<title>{vault.name} | DeFi Vault | Trading Strategy</title>
-	<meta name="description" content="Vault details for {vault.name} vault on {vault.protocol} on {chain.name}" />
-</svelte:head>
+<SocialMediaTags {vault} {chain} />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.id]: vault.name }} />
 
@@ -163,6 +162,10 @@
 				</div>
 			</MetricsBox>
 		</div>
+	</Section>
+
+	<Section>
+		<TopVaultsOptIn />
 	</Section>
 </main>
 

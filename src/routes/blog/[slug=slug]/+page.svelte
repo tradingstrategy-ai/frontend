@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Timestamp } from '$lib/components';
-	import SocialMetaTags from '../SocialMetaTags.svelte';
+	import SocialMetaTags from './SocialMetaTags.svelte';
 	import SocialLinks from '../SocialLinks.svelte';
 	import BlogPostContent from './BlogPostContent.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { Section } from '$lib/components';
 
-	export let data;
-	$: ({ post } = data);
+	let { data } = $props();
+	let { post } = $derived(data);
 </script>
 
-<SocialMetaTags url={$page.url} {post} />
+<SocialMetaTags url={page.url} {post} />
 
-<Breadcrumbs labels={{ [$page.params.slug]: post.title }} />
+<Breadcrumbs labels={{ [page.params.slug!]: post.title }} />
 
 <main class="blog-details-page">
 	<Section tag="article" maxWidth="sm">

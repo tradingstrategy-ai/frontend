@@ -2,7 +2,11 @@
 	import { mount } from 'svelte';
 	import TableOfContents from './TableOfContents.svelte';
 
-	export let html: string;
+	interface Props {
+		html: string;
+	}
+
+	let { html }: Props = $props();
 
 	// Inject Table of Contents; to include TOC, add <div id="#table-of-contents"> to Ghost content
 	function injectTOC(node: HTMLElement) {
