@@ -22,6 +22,8 @@ export const vaultInfoSchema = z.object({
 	one_month_cagr: nullableNumber,
 	one_month_cagr_net: nullableNumber,
 	denomination: z.string(),
+	share_token: z.string(),
+	chain: z.string(),
 	peak_nav: nullableNumber,
 	current_nav: nullableNumber,
 	years: nullableNumber,
@@ -29,6 +31,8 @@ export const vaultInfoSchema = z.object({
 	perf_fee: nullableNumber,
 	deposit_fee: nullableNumber,
 	withdraw_fee: nullableNumber,
+	fee_mode: z.string().nullable(),
+	fee_internalised: z.boolean().nullable(),
 	// lockup: nullableNumber,
 	event_count: z.int().nullable(),
 	protocol: z.string(),
@@ -42,7 +46,9 @@ export const vaultInfoSchema = z.object({
 	stablecoinish: z.boolean(),
 	last_updated_at: isoDateTime,
 	last_updated_block: blockNumber,
-	features: z.string().array()
+	features: z.string().array(),
+	// flags: z.string().array(),
+	notes: z.string().nullable()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
