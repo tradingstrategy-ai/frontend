@@ -17,16 +17,17 @@
 
 	let { post, url }: Props = $props();
 
+	let pageUrl = $derived(new URL(url.pathname, url.origin).href);
 	let imageUrl = $derived(post.feature_image.replace(ghostConfig.apiUrl, new URL('/blog/image', url).href));
 </script>
 
 <MetaTags
 	title={post.title}
 	description={post.excerpt}
-	canonical={url.href}
+	canonical={pageUrl}
 	openGraph={{
 		siteName: 'Trading Strategy',
-		url: url.href,
+		url: pageUrl,
 		title: post.title,
 		description: post.og_description || post.excerpt,
 		images: [{ url: imageUrl }],
