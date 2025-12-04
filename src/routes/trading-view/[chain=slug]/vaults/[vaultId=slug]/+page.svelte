@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
@@ -9,12 +10,12 @@
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
+	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import Metric from './Metric.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
-	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -44,6 +45,11 @@
 	</PageHeader>
 
 	<Section padding="md" class="content">
+		{#if vault.risk_numeric === 999}
+			<Alert size="md" title="Blacklisted">
+				{vault.notes ?? 'Unknown reason'}
+			</Alert>
+		{/if}
 		<MetricsBox>
 			<div class="chart-area">
 				<VaultPriceChart {vault} />
@@ -203,7 +209,7 @@
 			max-width: 15rem;
 		}
 
-		:global(.content) {
+		> :global(.content) {
 			display: grid;
 			gap: var(--gap);
 		}
