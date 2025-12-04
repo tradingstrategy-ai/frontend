@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { SummaryBox } from '$lib/components';
-	export let entries: NodeListOf<HTMLElement>;
+
+	interface Props {
+		entries: NodeListOf<HTMLElement>;
+	}
+
+	let { entries }: Props = $props();
 </script>
 
 <div class="table-of-contents">
