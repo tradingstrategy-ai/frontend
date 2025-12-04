@@ -14,6 +14,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
+	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -161,6 +162,10 @@
 				</div>
 			</MetricsBox>
 		</div>
+	</Section>
+
+	<Section>
+		<TopVaultsOptIn />
 	</Section>
 </main>
 
