@@ -30,7 +30,7 @@
 		chain?: Chain;
 	}
 
-	const { topVaults, chain }: Props = $props();
+	let { topVaults, chain }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -163,7 +163,7 @@
 	{:else}
 		<div class="table-extras">
 			<div class="table-meta">
-				<span>{baseVaults.length} {chain?.name ?? 'total'} vaults</span>
+				<span>{baseVaults.length} vaults</span>
 				<span>Min. TVL $50k</span>
 				<span>Stablecoin-only</span>
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>

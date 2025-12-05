@@ -3,11 +3,11 @@
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import { getLogoUrl } from '$lib/helpers/assets';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { data } = $props();
-	const { chain, topVaults } = data;
+	let { data } = $props();
+	let { chain, topVaults } = data;
 </script>
 
 <svelte:head>
