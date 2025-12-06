@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['vault_count', 'name', 'risk'],
+		keys: ['tvl', 'vault_count', 'name', 'risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -17,6 +17,7 @@
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -71,6 +72,11 @@
 			cell: ({ value }) => value
 		}),
 		table.column({
+			accessor: 'tvl',
+			header: 'TVL',
+			cell: ({ value }) => formatDollar(value, 2)
+		}),
+		table.column({
 			id: 'cta',
 			header: '',
 			accessor: (row) => `/trading-view/vaults/protocols/${row.slug}`,
@@ -88,16 +94,6 @@
 
 <style>
 	.vault-protocol-table {
-		:global(.name) {
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-
-			@media (--viewport-sm-down) {
-				grid-column: 1/-1;
-			}
-		}
-
 		/* flip the sort indicator on columns that use inverted sort */
 		:global(:is(th.name, th.risk) .icon) {
 			rotate: 180deg;
@@ -109,21 +105,26 @@
 			}
 
 			:global(.name) {
-				width: 50%;
+				width: 45%;
 			}
 
 			:global(.risk) {
-				width: 25%;
+				width: 20%;
 			}
 
 			:global(.vault_count) {
-				width: 25%;
+				width: 20%;
 				text-align: right;
-				padding-right: 5%;
+			}
+
+			:global(.tvl) {
+				width: 20%;
+				text-align: right;
 			}
 
 			:global(.cta) {
-				width: 12rem;
+				width: 14rem;
+				padding-left: 2rem;
 			}
 		}
 	}

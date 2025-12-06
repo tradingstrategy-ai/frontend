@@ -13,9 +13,11 @@ export async function load({ parent }) {
 			name: vault.protocol,
 			risk: vault.risk,
 			risk_numeric: vault.risk_numeric,
-			vault_count: 0
+			vault_count: 0,
+			tvl: 0
 		};
 		acc[slug].vault_count++;
+		acc[slug].tvl += vault.current_nav ?? 0;
 		return acc;
 	}, {});
 

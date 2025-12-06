@@ -64,4 +64,5 @@ export interface VaultProtocol {
 	risk: string | null;
 	risk_numeric: number | null;
 	vault_count: number;
+	tvl: number;
 }
