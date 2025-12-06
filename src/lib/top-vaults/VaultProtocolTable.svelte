@@ -16,6 +16,7 @@
 	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
+	import RiskCell from './RiskCell.svelte';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -35,8 +36,6 @@
 		...restProps
 	}: Props = $props();
 
-	$inspect(rows[0]);
-
 	const tableRows = loading ? new Array(10).fill({}) : rows || [];
 
 	const table = createTable(readable(tableRows), {
@@ -51,12 +50,20 @@
 		table.column({
 			header: 'Protocol',
 			accessor: 'name',
-			cell: ({ value }) => value
+			cell: ({ value }) => value,
+			plugins: { sort: { invert: true } }
 		}),
 		table.column({
-			accessor: 'risk',
-			header: 'Risk',
-			cell: ({ value }) => value ?? 'unknown'
+			id: 'risk',
+			header: 'Technical Risk',
+			accessor: (row) => ({ risk: row.risk, risk_numeric: row.risk_numeric }),
+			cell: ({ value }) => createRender(RiskCell, { risk: value.risk }),
+			plugins: {
+				sort: {
+					getSortValue: (v) => v.risk_numeric ?? Infinity,
+					invert: true
+				}
+			}
 		}),
 		table.column({
 			accessor: 'vault_count',
@@ -89,6 +96,11 @@
 			@media (--viewport-sm-down) {
 				grid-column: 1/-1;
 			}
+		}
+
+		/* flip the sort indicator on columns that use inverted sort */
+		:global(:is(th.name, th.risk) .icon) {
+			rotate: 180deg;
 		}
 
 		@media (--viewport-md-up) {

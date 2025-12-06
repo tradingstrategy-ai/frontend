@@ -20,15 +20,3 @@
 		</svelte:fragment>
 	</Tooltip>
 </span>
-
-<style>
-	.risk-cell {
-		font: var(--f-ui-xs-medium);
-		letter-spacing: 0.02em;
-
-		:global(.popup) {
-			right: 0;
-			white-space: nowrap;
-		}
-	}
-</style>

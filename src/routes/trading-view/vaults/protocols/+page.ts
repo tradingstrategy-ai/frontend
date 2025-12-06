@@ -5,6 +5,8 @@ export async function load({ parent }) {
 	const { topVaults } = await parent();
 
 	const protocols = topVaults.vaults.reduce<Record<string, VaultProtocol>>((acc, vault) => {
+		if (vault.risk_numeric === 999) return acc;
+
 		const slug = slugify(vault.protocol);
 		acc[slug] ??= {
 			slug,
