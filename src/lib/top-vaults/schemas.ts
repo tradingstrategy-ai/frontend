@@ -57,3 +57,11 @@ export const topVaultsSchema = z.object({
 	vaults: vaultInfoSchema.array()
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
+
+export interface VaultProtocol {
+	slug: string;
+	name: string;
+	risk: string | null;
+	risk_numeric: number | null;
+	vault_count: number;
+}
