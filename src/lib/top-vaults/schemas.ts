@@ -6,6 +6,8 @@ const nullableNumber = z.number().nullable();
 
 export const vaultInfoSchema = z.object({
 	name: z.string(),
+	vault_slug: z.string(),
+	protocol_slug: z.string(),
 	lifetime_return: nullableNumber,
 	lifetime_return_net: nullableNumber,
 	cagr: nullableNumber,
@@ -47,8 +49,9 @@ export const vaultInfoSchema = z.object({
 	last_updated_at: isoDateTime,
 	last_updated_block: blockNumber,
 	features: z.string().array(),
-	// flags: z.string().array(),
-	notes: z.string().nullable()
+	flags: z.string().array(),
+	notes: z.string().nullable(),
+	link: z.url().nullable()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 

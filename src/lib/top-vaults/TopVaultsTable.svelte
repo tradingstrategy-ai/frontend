@@ -314,7 +314,7 @@
 								<DepositEventsCell value={vault.event_count} />
 							</td>
 							<td class="risk">
-								<RiskCell risk={vault.risk} risk_numeric={vault.risk_numeric} />
+								<RiskCell risk={vault.risk} />
 							</td>
 							<td class="sparkline">
 								{#if failedSparklines.has(vault.id)}
@@ -328,7 +328,7 @@
 								{/if}
 								<TargetableLink
 									label="View {vault.name} details"
-									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.id}`)}
+									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.vault_slug}`)}
 									class="row-link"
 								/>
 							</td>
