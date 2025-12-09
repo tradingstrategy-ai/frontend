@@ -25,18 +25,19 @@ const baseSitemaps = [
 ];
 
 /**
- * Find the current number of pair entries returned by /api/datasets and calculate
- * how many pages of sitemaps to expect based on pair sitemap page size.
+ * Find all paged pair sitemaps by checking for their existence on backend
  */
 async function getPairSitemaps(fetch: Fetch) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const datasets = await fetchPublicApi<Record<string, any>[]>(fetch, 'datasets');
-	const pairUniverse = datasets.find((d) => d.designation === 'pair_universe');
-	let pageCount = Math.ceil(pairUniverse!.entries / PAIR_SITEMAP_PAGE_SIZE);
+	let pageCount = 0;
 
-	// confirm whether last pair sitemap page exists (since the counts can be off)
-	const lastPageExists = await sitemapExists(`${backendUrl}/sitemap/pairs/paged/${pageCount - 1}.xml`);
-	if (!lastPageExists) pageCount--;
+	while (pageCount < 20) {
+		// check if sitemap for this page exists then increment to find last page
+		if (await sitemapExists(`${backendUrl}/sitemap/pairs/paged/${pageCount}.xml`)) {
+			pageCount += 1;
+		} else {
+			break;
+		}
+	}
 
 	return Array.from({ length: pageCount }).map((_, page) => `api/sitemap/pairs/paged/${page}.xml`);
 }
