@@ -4,21 +4,18 @@
 import { SitemapStream } from 'sitemap';
 import type { SitemapItemLoose } from 'sitemap';
 import { Readable } from 'stream';
-import { resolve } from '$app/paths';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { getChain } from '$lib/helpers/chain.js';
+import { resolveVaultDetails } from '$lib/top-vaults/helpers';
 
 async function getVaultEntries(fetch: Fetch, url: URL) {
 	// Fetching all vaults (currently < 1000); may need to paginate in the future
 	const { vaults } = await fetchTopVaults(fetch);
 
 	return vaults.reduce((acc, vault) => {
-		const chain = getChain(vault.chain_id);
-
 		// skip if blacklisted or chain is not recognized
-		if (vault.risk_numeric !== 999 && chain) {
+		if (vault.risk_numeric !== 999) {
 			acc.push({
-				url: resolve(`/trading-view/${chain?.slug}/vaults/${vault.vault_slug}`),
+				url: resolveVaultDetails(vault),
 				priority: 0.8
 			});
 		}

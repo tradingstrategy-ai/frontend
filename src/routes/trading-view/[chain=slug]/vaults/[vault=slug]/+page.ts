@@ -1,16 +1,16 @@
-import { resolve } from '$app/paths';
+import { resolveVaultDetails } from '$lib/top-vaults/helpers.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
 	const { topVaults } = await parent();
 
-	const vault = topVaults.vaults.find(({ id, vault_slug }) => {
-		// redirect to vault_slug if someone tries old vault id URL
-		if (id === params.vault) {
-			redirect(301, resolve(`/trading-view/${params.chain}/vaults/${vault_slug}`));
+	const vault = topVaults.vaults.find((v) => {
+		// redirect to canonical vault path if someone tries old vault id URL
+		if (v.id === params.vault) {
+			redirect(301, resolveVaultDetails(v));
 		}
 
-		return vault_slug === params.vault;
+		return v.vault_slug === params.vault;
 	});
 
 	if (!vault) error(404, 'Vault not found');

@@ -2,7 +2,6 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
-	import { resolve } from '$app/paths';
 	import { SvelteSet } from 'svelte/reactivity';
 	import Alert from '$lib/components/Alert.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
@@ -18,6 +17,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { resolveVaultDetails } from './helpers';
 
 	interface SortOptions {
 		key: string;
@@ -326,11 +326,7 @@
 										onerror={() => failedSparklines.add(vault.id)}
 									/>
 								{/if}
-								<TargetableLink
-									label="View {vault.name} details"
-									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.vault_slug}`)}
-									class="row-link"
-								/>
+								<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
 							</td>
 						</tr>
 					{/each}
