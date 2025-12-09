@@ -15,6 +15,7 @@ const baseSitemaps = [
 	'glossary/sitemap.xml',
 	'strategies/sitemap.xml',
 	'trading-view/blockchains/sitemap.xml',
+	'trading-view/vaults/sitemap.xml',
 
 	// served by documentation site
 	'docs/sitemap-docs.xml',

@@ -18,6 +18,7 @@ test.describe('sitemap index', () => {
 			'glossary/sitemap',
 			'strategies/sitemap',
 			'blockchains/sitemap',
+			'vaults/sitemap',
 			'exchanges/sitemap',
 			'pairs/paged/0'
 		];
