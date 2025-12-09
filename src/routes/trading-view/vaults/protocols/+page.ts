@@ -1,13 +1,14 @@
 import type { VaultProtocol } from '$lib/top-vaults/schemas.js';
-import { slugify } from '$lib/helpers/slugify';
+import { isBlacklisted } from '$lib/top-vaults/helpers.js';
 
 export async function load({ parent }) {
 	const { topVaults } = await parent();
 
 	const protocols = topVaults.vaults.reduce<Record<string, VaultProtocol>>((acc, vault) => {
-		if (vault.risk_numeric === 999) return acc;
+		if (isBlacklisted(vault)) return acc;
 
-		const slug = slugify(vault.protocol);
+		const slug = vault.protocol_slug;
+
 		acc[slug] ??= {
 			slug,
 			name: vault.protocol,

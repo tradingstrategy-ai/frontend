@@ -2,7 +2,6 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
-	import { resolve } from '$app/paths';
 	import { SvelteSet } from 'svelte/reactivity';
 	import Alert from '$lib/components/Alert.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
@@ -18,6 +17,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { isBlacklisted, resolveVaultDetails } from './helpers';
 
 	interface SortOptions {
 		key: string;
@@ -44,7 +44,7 @@
 	// filter out blacklisted vaults (unless specifically searching "blacklisted")
 	let baseVaults = $derived.by(() => {
 		if (filterValue.startsWith('blacklist')) return topVaults.vaults;
-		return topVaults.vaults.filter((v) => v.risk_numeric !== 999);
+		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
 	// filter vaults matching filterValue (search string)
@@ -314,7 +314,7 @@
 								<DepositEventsCell value={vault.event_count} />
 							</td>
 							<td class="risk">
-								<RiskCell risk={vault.risk} risk_numeric={vault.risk_numeric} />
+								<RiskCell risk={vault.risk} />
 							</td>
 							<td class="sparkline">
 								{#if failedSparklines.has(vault.id)}
@@ -326,11 +326,7 @@
 										onerror={() => failedSparklines.add(vault.id)}
 									/>
 								{/if}
-								<TargetableLink
-									label="View {vault.name} details"
-									href={resolve(`/trading-view/${chain?.slug}/vaults/${vault.id}`)}
-									class="row-link"
-								/>
+								<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
 							</td>
 						</tr>
 					{/each}

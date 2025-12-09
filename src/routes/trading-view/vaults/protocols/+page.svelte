@@ -28,7 +28,7 @@
 </script>
 
 <svelte:head>
-	<title>DeFi vault protocols | Trading Strategy</title>
+	<title>DeFi stablecoin vault protocols | Trading Strategy</title>
 	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
 </svelte:head>
 
@@ -36,9 +36,9 @@
 
 <main class="protocol-index-page">
 	<Section tag="header">
-		<HeroBanner subtitle="Browse supported DeFi vault protocols across all blockchains">
+		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
 			{#snippet title()}
-				<span>DeFi vault protocols</span>
+				<span>DeFi stablecoin vault protocols</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>

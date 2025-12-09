@@ -16,6 +16,7 @@
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
+	import { isBlacklisted } from '$lib/top-vaults/helpers';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -45,7 +46,7 @@
 	</PageHeader>
 
 	<Section padding="md" class="content">
-		{#if vault.risk_numeric === 999}
+		{#if isBlacklisted(vault)}
 			<Alert size="md" title="Blacklisted">
 				{vault.notes ?? 'Unknown reason'}
 			</Alert>
