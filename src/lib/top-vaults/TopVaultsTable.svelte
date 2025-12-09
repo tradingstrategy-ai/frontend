@@ -17,7 +17,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { resolveVaultDetails } from './helpers';
+	import { isBlacklisted, resolveVaultDetails } from './helpers';
 
 	interface SortOptions {
 		key: string;
@@ -44,7 +44,7 @@
 	// filter out blacklisted vaults (unless specifically searching "blacklisted")
 	let baseVaults = $derived.by(() => {
 		if (filterValue.startsWith('blacklist')) return topVaults.vaults;
-		return topVaults.vaults.filter((v) => v.risk_numeric !== 999);
+		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
 	// filter vaults matching filterValue (search string)

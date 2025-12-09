@@ -5,7 +5,7 @@ import { SitemapStream } from 'sitemap';
 import type { SitemapItemLoose } from 'sitemap';
 import { Readable } from 'stream';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 
 async function getVaultEntries(fetch: Fetch, url: URL) {
 	// Fetching all vaults (currently < 1000); may need to paginate in the future
@@ -13,7 +13,7 @@ async function getVaultEntries(fetch: Fetch, url: URL) {
 
 	return vaults.reduce((acc, vault) => {
 		// skip if blacklisted or chain is not recognized
-		if (vault.risk_numeric !== 999) {
+		if (!isBlacklisted(vault)) {
 			acc.push({
 				url: resolveVaultDetails(vault),
 				priority: 0.8
