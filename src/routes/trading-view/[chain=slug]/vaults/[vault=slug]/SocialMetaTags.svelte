@@ -13,7 +13,7 @@
 
 	let description = $derived(`Vault details for ${vault.name} vault on ${vault.protocol} on ${chain.name}`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let imageUrl = $derived(`https://vault-sparklines.tradingstrategy.ai/sparkline-90d-${vault.id}.svg`);
+	let imageUrl = $derived(`https://vault-sparklines.tradingstrategy.ai/sparkline-90d-${vault.id}.png`);
 </script>
 
 <MetaTags
@@ -32,7 +32,8 @@
 		site: '@TradingProtocol',
 		cardType: 'summary',
 		title: vault.name,
-		description
+		description,
+		image: imageUrl
 	}}
 />
 
