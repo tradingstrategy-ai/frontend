@@ -2,11 +2,8 @@
  * Generate sitemap index with entries for all the sitemaps
  */
 import { backendUrl } from '$lib/config';
-import { fetchPublicApi } from '$lib/helpers/public-api';
 import { SitemapIndexStream } from 'sitemap';
 import { Readable } from 'stream';
-
-const PAIR_SITEMAP_PAGE_SIZE = 25_000;
 
 const baseSitemaps = [
 	// served by frontend
@@ -32,7 +29,7 @@ async function getPairSitemaps(fetch: Fetch) {
 
 	while (pageCount < 20) {
 		// check if sitemap for this page exists then increment to find last page
-		if (await sitemapExists(`${backendUrl}/sitemap/pairs/paged/${pageCount}.xml`)) {
+		if (await sitemapExists(fetch, `${backendUrl}/sitemap/pairs/paged/${pageCount}.xml`)) {
 			pageCount += 1;
 		} else {
 			break;
@@ -45,7 +42,7 @@ async function getPairSitemaps(fetch: Fetch) {
 /**
  * Confirm if a given sitemap URL actually exists on backend server
  */
-async function sitemapExists(sitemapUrl: string) {
+async function sitemapExists(fetch: Fetch, sitemapUrl: string) {
 	try {
 		return (await fetch(sitemapUrl, { method: 'HEAD' })).ok;
 	} catch {
