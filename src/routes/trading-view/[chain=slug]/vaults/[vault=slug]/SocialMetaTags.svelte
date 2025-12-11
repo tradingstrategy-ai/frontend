@@ -17,7 +17,7 @@
 </script>
 
 <MetaTags
-	title={`{vault.name} | DeFi Vault | Trading Strategy`}
+	title={`${vault.name} | DeFi Vault | Trading Strategy`}
 	{description}
 	canonical={pageUrl}
 	openGraph={{
