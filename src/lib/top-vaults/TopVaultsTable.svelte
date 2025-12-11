@@ -169,7 +169,11 @@
 				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 			</div>
 			<div class="filter">
-				<TextInput bind:value={filterValue} type="search" placeholder="Search vaults" />
+				<TextInput
+					bind:value={filterValue}
+					type="search"
+					placeholder="Search by name, protocol, chain, denomination, risk or address"
+				/>
 			</div>
 		</div>
 
