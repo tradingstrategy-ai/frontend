@@ -51,7 +51,9 @@ export const vaultInfoSchema = z.object({
 	features: z.string().array(),
 	flags: z.string().array(),
 	notes: z.string().nullable(),
-	link: z.url().nullable()
+	// `link` is deprecated – will be repaced with `deposit_ui_link` and `vault_page_link`
+	// Making it `nullish` for now so parse doesn't fail when it's remvoed
+	link: z.url().nullish()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
