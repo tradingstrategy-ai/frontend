@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getChartClient } from 'trade-executor/client/chart';
-	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
@@ -49,7 +49,7 @@
 		</p>
 	</div>
 
-	<StrategyChart
+	<ChartContainer
 		title="Performance"
 		loading={$chartClient.loading}
 		data={$chartClient.data}
@@ -60,7 +60,7 @@
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
 		{/snippet}
-	</StrategyChart>
+	</ChartContainer>
 
 	{#if tableData}
 		<LongShortTable {tableData} />

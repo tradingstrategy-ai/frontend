@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import NetflowSeries from '$lib/charts/NetflowSeries.svelte';
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
@@ -27,7 +27,7 @@
 <section class="netflow-page">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
-	<StrategyChart
+	<ChartContainer
 		title="Total value locked"
 		loading={$tvlClient.loading || $netflowClient.loading}
 		data={$tvlClient.data}
@@ -45,7 +45,7 @@
 				<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
 			</NetflowSeries>
 		{/snippet}
-	</StrategyChart>
+	</ChartContainer>
 </section>
 
 <style>

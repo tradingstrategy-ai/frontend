@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ChartCallbackParam, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
-	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
@@ -48,7 +48,7 @@
 </script>
 
 <div class="strategy-performance-chart">
-	<StrategyChart {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
+	<ChartContainer {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
 		{#snippet title(timeSpan, periodPerformance)}
 			<div class="period-performance">
 				{#if periodPerformance}
@@ -77,7 +77,7 @@
 				{/each}
 			</footer>
 		{/snippet}
-	</StrategyChart>
+	</ChartContainer>
 </div>
 
 <style>
