@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import NetflowSeries from '$lib/charts/NetflowSeries.svelte';
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
@@ -40,10 +41,19 @@
 			metrics and how they're calculated.
 		{/snippet}
 
-		{#snippet series(_, timeSpan)}
-			<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>
-				<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
-			</NetflowSeries>
+		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
+			<AreaSeries
+				{data}
+				{direction}
+				{onVisibleDataChange}
+				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
+			/>
+
+			{#if range}
+				<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>
+					<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
+				</NetflowSeries>
+			{/if}
 		{/snippet}
 	</ChartContainer>
 </section>

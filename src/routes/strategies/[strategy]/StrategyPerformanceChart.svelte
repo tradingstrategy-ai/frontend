@@ -3,6 +3,7 @@
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
@@ -58,10 +59,20 @@
 			</div>
 		{/snippet}
 
-		{#snippet series(data, timeSpan, range)}
-			{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
-				<BenchmarkSeries {token} {data} timeBucket={timeSpan.timeBucket} {range} />
-			{/each}
+		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
+			<AreaSeries
+				{data}
+				{direction}
+				{onVisibleDataChange}
+				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
+				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
+			/>
+
+			{#if range}
+				{#each benchmarkTokens.filter((t) => t.checked) as token (token.symbol)}
+					<BenchmarkSeries {token} {data} timeBucket={timeSpan.timeBucket} {range} />
+				{/each}
+			{/if}
 		{/snippet}
 
 		{#snippet footer()}

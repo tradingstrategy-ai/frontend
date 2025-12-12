@@ -1,26 +1,32 @@
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
-	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart from './TvChart.svelte';
-	import AreaSeries from './AreaSeries.svelte';
 	import BaselineSeries from './BaselineSeries.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { type ProfitDirection, type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { getDataRange, resampleTimeSeries } from './helpers';
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
+
+	interface SeriesSnippetOptions {
+		data: SimpleDataItem[];
+		direction: ProfitDirection | undefined;
+		onVisibleDataChange: (data: TvDataItem[]) => void;
+		timeSpan: TimeSpan;
+		range: [Date, Date] | undefined;
+	}
 
 	interface Props extends ComponentProps<typeof TvChart> {
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet;
-		series?: Snippet<[SimpleDataItem[], TimeSpan, [Date, Date]]>;
+		series?: Snippet<[SeriesSnippetOptions]>;
 		footer?: Snippet;
 	}
 
@@ -30,9 +36,9 @@
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
-	let normalizedData = $derived(resampleTimeSeries(data ?? [], timeSpan.interval));
+	let resampledData = $derived(resampleTimeSeries(data ?? [], timeSpan.interval));
 
-	let timeSpanRange = $derived(getDataRange(normalizedData, timeSpan));
+	let range = $derived(getDataRange(resampledData, timeSpan));
 
 	let visibleData: SimpleDataItem[] = $state([]);
 
@@ -46,15 +52,6 @@
 		timeScale: {
 			lockVisibleTimeRangeOnResize: true
 		}
-	};
-
-	const seriesOptions: AreaSeriesPartialOptions = {
-		priceLineVisible: false,
-		crosshairMarkerVisible: false
-	};
-
-	const priceScaleOptions: DeepPartial<PriceScaleOptions> = {
-		scaleMargins: { top: 0.1, bottom: 0.1 }
 	};
 </script>
 
@@ -70,20 +67,16 @@
 	</header>
 
 	<TvChart options={merge({ ...chartOptions }, options)} {...restProps}>
-		<AreaSeries
-			data={normalizedData}
-			direction={periodPerformance?.direction}
-			options={seriesOptions}
-			{priceScaleOptions}
-			onVisibleDataChange={(data) => (visibleData = data as SimpleDataItem[])}
-		/>
+		{@render series?.({
+			data: resampledData,
+			direction: periodPerformance?.direction,
+			onVisibleDataChange: (data) => (visibleData = data as SimpleDataItem[]),
+			timeSpan,
+			range
+		})}
 
-		{#if timeSpanRange}
-			{@render series?.(normalizedData, timeSpan, timeSpanRange)}
-		{/if}
-
-		{#if timeSpanRange}
-			<BaselineSeries interval={timeSpan.interval} range={timeSpanRange} setChartVisibleRange />
+		{#if range}
+			<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
 		{/if}
 
 		{#snippet tooltip({ point, time }, [performance])}

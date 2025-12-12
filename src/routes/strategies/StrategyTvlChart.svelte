@@ -2,6 +2,7 @@
 	import type { PerformanceData } from 'trade-executor/schemas/utility-types';
 	import type { TvChartOptions } from '$lib/charts/types';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	interface Props {
@@ -25,6 +26,15 @@
 		{#snippet subtitle()}
 			<a class="body-link" target="_blank" href="/glossary/total-value-locked">Total value locked</a>
 			in live strategies
+		{/snippet}
+
+		{#snippet series({ data, direction, onVisibleDataChange })}
+			<AreaSeries
+				{data}
+				{direction}
+				{onVisibleDataChange}
+				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
+			/>
 		{/snippet}
 	</ChartContainer>
 </div>

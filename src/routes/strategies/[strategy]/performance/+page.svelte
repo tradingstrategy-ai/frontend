@@ -5,6 +5,7 @@
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 
 	let { data } = $props();
 
@@ -59,6 +60,15 @@
 			Compounded
 			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
+		{/snippet}
+
+		{#snippet series({ data, direction, onVisibleDataChange })}
+			<AreaSeries
+				{data}
+				{direction}
+				{onVisibleDataChange}
+				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
+			/>
 		{/snippet}
 	</ChartContainer>
 
