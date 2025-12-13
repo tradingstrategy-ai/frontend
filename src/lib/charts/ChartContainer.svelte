@@ -26,8 +26,8 @@
 		formatValue: Formatter<number>;
 		boxed?: boolean;
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
-		subtitle?: Snippet;
-		series?: Snippet<[SeriesSnippetOptions]>;
+		subtitle?: Snippet | string;
+		series: Snippet<[SeriesSnippetOptions]>;
 		footer?: Snippet;
 	}
 
@@ -75,7 +75,13 @@
 			<div>{@render title?.(timeSpan, periodPerformance)}</div>
 		{/if}
 		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
-		<p>{@render subtitle?.()}</p>
+		<p>
+			{#if typeof subtitle === 'string'}
+				{subtitle}
+			{:else}
+				{@render subtitle?.()}
+			{/if}
+		</p>
 	</header>
 
 	{#snippet defaultTooltip({ point, time }: ActiveTooltipParams, [performance]: TooltipData)}
@@ -89,7 +95,7 @@
 	{/snippet}
 
 	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltip ?? defaultTooltip}>
-		{@render series?.({
+		{@render series({
 			data: resampledData,
 			direction: periodPerformance?.direction,
 			onVisibleDataChange: (data) => (visibleData = data as SimpleDataItem[]),

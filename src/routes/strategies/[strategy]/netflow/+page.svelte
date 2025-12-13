@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import NetflowSeries from '$lib/charts/NetflowSeries.svelte';
@@ -37,8 +38,8 @@
 	>
 		{#snippet subtitle()}
 			Learn more about
-			<a class="body-link" href="/glossary/total-equity" target="_blank">TVL</a> and
-			<a class="body-link" href="/glossary/netflow" target="_blank">Netflow</a>
+			<a class="body-link" href={resolve('/glossary/total-equity')} target="_blank">TVL</a> and
+			<a class="body-link" href={resolve('/glossary/netflow')} target="_blank">Netflow</a>
 			metrics and how they're calculated.
 		{/snippet}
 
