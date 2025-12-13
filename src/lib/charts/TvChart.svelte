@@ -3,6 +3,12 @@
 	import type { ChartCallback, ChartCallbackReturnType, TvChartOptions } from './types';
 	import { getContext, setContext } from 'svelte';
 
+	export type TooltipParams = MouseEventParams<Time>;
+	export type ActiveTooltipParams = TooltipParams &
+		Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	export type TooltipData = Maybe<DataItem<Time> & Record<string, any>>[];
+
 	const contextKey = Symbol();
 
 	const colorProps = [
@@ -50,10 +56,6 @@
 	import { getCssColors } from '$lib/helpers/style';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-
-	type TooltipParams = MouseEventParams<Time>;
-	type ActiveTooltipParams = TooltipParams & Required<Pick<TooltipParams, 'time' | 'logical' | 'point' | 'paneIndex'>>;
-	type TooltipData = Maybe<DataItem<Time> & Record<string, any>>[];
 
 	type Props = {
 		loading?: boolean;

@@ -4,7 +4,7 @@
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
-	import TvChart from './TvChart.svelte';
+	import TvChart, { type ActiveTooltipParams, type TooltipData } from './TvChart.svelte';
 	import BaselineSeries from './BaselineSeries.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -30,7 +30,7 @@
 		footer?: Snippet;
 	}
 
-	let { data, formatValue, options, title, subtitle, series, footer, ...restProps }: Props = $props();
+	let { data, formatValue, options, title, subtitle, series, tooltip, footer, ...restProps }: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -66,7 +66,17 @@
 		<p>{@render subtitle?.()}</p>
 	</header>
 
-	<TvChart options={merge({ ...chartOptions }, options)} {...restProps}>
+	{#snippet defaultTooltip({ point, time }: ActiveTooltipParams, [performance]: TooltipData)}
+		{#if performance}
+			{@const withTime = timeSpan.timeBucket !== '1d'}
+			<ChartTooltip {point}>
+				<h4><Timestamp date={time as number} {withTime} /></h4>
+				<div class="tooltip-value">{formatValue(performance.value, 2)}</div>
+			</ChartTooltip>
+		{/if}
+	{/snippet}
+
+	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltip ?? defaultTooltip}>
 		{@render series?.({
 			data: resampledData,
 			direction: periodPerformance?.direction,
@@ -78,16 +88,6 @@
 		{#if range}
 			<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
 		{/if}
-
-		{#snippet tooltip({ point, time }, [performance])}
-			{#if performance}
-				{@const withTime = timeSpan.timeBucket !== '1d'}
-				<ChartTooltip {point}>
-					<h4><Timestamp date={time as number} {withTime} /></h4>
-					<div class="tooltip-value">{formatValue(performance.value, 2)}</div>
-				</ChartTooltip>
-			{/if}
-		{/snippet}
 	</TvChart>
 
 	{@render footer?.()}
