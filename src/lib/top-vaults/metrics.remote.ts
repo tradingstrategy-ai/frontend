@@ -36,21 +36,13 @@ async function getPriceAndTvlData(vaultId: string) {
 export const getTimeSeries = query(z.string(), async (vaultId) => {
 	const rows = await getPriceAndTvlData(vaultId);
 
-	const now = new Date();
-	const cutoffDate = utcDay.offset(utcDay.floor(now), -90);
-	const cutoffTs = dateToTs(cutoffDate);
-
 	const priceData: [UTCTimestamp, number][] = [];
 	const tvlData: [UTCTimestamp, number][] = [];
 
 	for (const [ts, price, tvl] of rows) {
-		if (ts < cutoffTs) continue;
 		priceData.push([ts, price]);
 		tvlData.push([ts, tvl]);
 	}
 
-	return {
-		price: resampleTimeSeries(priceData, utcDay, now),
-		tvl: resampleTimeSeries(tvlData, utcDay, now)
-	};
+	return { price: priceData, tvl: tvlData };
 });
