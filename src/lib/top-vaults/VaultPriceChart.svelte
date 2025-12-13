@@ -24,6 +24,7 @@
 <div class="vault-price-chart">
 	<ChartContainer
 		title="Vault price"
+		timeSpanOptions={['1M', '3M', 'Max']}
 		loading={vaultData.loading}
 		data={vaultData.current?.price}
 		{formatValue}

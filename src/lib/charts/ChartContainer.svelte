@@ -2,7 +2,7 @@
 	import type { ComponentProps, Snippet } from 'svelte';
 	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
-	import { TimeSpans } from '$lib/charts/time-span';
+	import { TimeSpans, type TimeSpanKey } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import TvChart, { type ActiveTooltipParams, type TooltipData } from './TvChart.svelte';
 	import BaselineSeries from './BaselineSeries.svelte';
@@ -25,6 +25,7 @@
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
 		boxed?: boolean;
+		timeSpanOptions?: TimeSpanKey[];
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet | string;
 		series: Snippet<[SeriesSnippetOptions]>;
@@ -35,6 +36,7 @@
 		data,
 		formatValue,
 		boxed = false,
+		timeSpanOptions = TimeSpans.keys,
 		options,
 		title,
 		subtitle,
@@ -44,7 +46,7 @@
 		...restProps
 	}: Props = $props();
 
-	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
+	const timeSpans = new OptionGroup(timeSpanOptions, '3M');
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
