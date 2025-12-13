@@ -24,13 +24,25 @@
 	interface Props extends ComponentProps<typeof TvChart> {
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
+		boxed?: boolean;
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
 		subtitle?: Snippet;
 		series?: Snippet<[SeriesSnippetOptions]>;
 		footer?: Snippet;
 	}
 
-	let { data, formatValue, options, title, subtitle, series, tooltip, footer, ...restProps }: Props = $props();
+	let {
+		data,
+		formatValue,
+		boxed = false,
+		options,
+		title,
+		subtitle,
+		series,
+		tooltip,
+		footer,
+		...restProps
+	}: Props = $props();
 
 	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
 
@@ -55,7 +67,7 @@
 	};
 </script>
 
-<div class="chart-container" data-css-props>
+<div class={['chart-container', boxed && 'boxed']} data-css-props>
 	<header>
 		{#if typeof title === 'string'}
 			<h2>{title}</h2>
@@ -95,10 +107,14 @@
 
 <style>
 	[data-css-props] {
-		--chart-container-padding: 1.5rem;
+		--chart-container-padding: 0;
 
-		@media (--viewport-md-down) {
-			--chart-container-padding: 1rem;
+		&:where(.boxed) {
+			--chart-container-padding: 1.5rem;
+
+			@media (--viewport-md-down) {
+				--chart-container-padding: 1rem;
+			}
 		}
 	}
 
@@ -123,17 +139,20 @@
 		}
 
 		display: grid;
-		gap: var(--space-sm);
-		background: var(--c-box-1);
-		border: 1px solid var(--c-box-3);
-		border-radius: var(--radius-md);
+		gap: 0.25rem;
 		padding-block: var(--chart-container-padding);
+
+		&.boxed {
+			background: var(--c-box-1);
+			border: 1px solid var(--c-box-3);
+			border-radius: var(--radius-md);
+		}
 
 		header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
-			gap: var(--space-sm);
+			gap: inherit;
 			padding-inline: var(--chart-container-padding);
 
 			h2 {

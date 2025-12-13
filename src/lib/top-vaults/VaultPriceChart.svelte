@@ -75,7 +75,7 @@
 
 		:global([data-css-props]) {
 			--chart-aspect-ratio: auto;
-			--chart-height: 28rem;
+			--chart-height: 26rem;
 		}
 
 		.tooltip-date {

@@ -49,7 +49,7 @@
 </script>
 
 <div class="strategy-performance-chart">
-	<ChartContainer {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
+	<ChartContainer boxed {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
 		{#snippet title(timeSpan, periodPerformance)}
 			<div class="period-performance">
 				{#if periodPerformance}

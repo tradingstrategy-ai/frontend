@@ -51,6 +51,7 @@
 	</div>
 
 	<ChartContainer
+		boxed
 		title="Performance"
 		loading={$chartClient.loading}
 		data={$chartClient.data}

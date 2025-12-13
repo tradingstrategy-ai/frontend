@@ -29,6 +29,7 @@
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
 	<ChartContainer
+		boxed
 		title="Total value locked"
 		loading={$tvlClient.loading || $netflowClient.loading}
 		data={$tvlClient.data}

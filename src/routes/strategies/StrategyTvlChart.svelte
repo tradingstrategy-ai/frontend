@@ -22,7 +22,7 @@
 </script>
 
 <div class="strategy-tvl-chart">
-	<ChartContainer title="Strategy TVL" data={tvlData} {options} {formatValue}>
+	<ChartContainer boxed title="Strategy TVL" data={tvlData} {options} {formatValue}>
 		{#snippet subtitle()}
 			<a class="body-link" target="_blank" href="/glossary/total-value-locked">Total value locked</a>
 			in live strategies
