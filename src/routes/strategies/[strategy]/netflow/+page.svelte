@@ -68,7 +68,6 @@
 		:global(.netflow-title) {
 			top: 0.5rem;
 			left: var(--chart-container-padding);
-			padding-inline: 0;
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--ls-heading-sm, normal);
 			color: var(--c-text);
