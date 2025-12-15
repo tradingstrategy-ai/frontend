@@ -24,7 +24,7 @@
 
 <SocialMediaTags {vault} {chain} />
 
-<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.id]: vault.name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.vault_slug]: vault.name }} />
 
 <main class="vault-details ds-3">
 	<PageHeader title={vault.name}>

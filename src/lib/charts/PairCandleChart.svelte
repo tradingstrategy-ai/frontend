@@ -172,6 +172,7 @@
 		:global(.no-tvl-data) {
 			color: var(--c-warning);
 			pointer-events: auto;
+			margin-right: var(--margin);
 
 			:global(.popup) {
 				min-width: 22rem;

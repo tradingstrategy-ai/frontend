@@ -1,5 +1,7 @@
 <script lang="ts">
-	import StrategyChart from '$lib/charts/StrategyChart.svelte';
+	import { resolve } from '$app/paths';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import NetflowSeries from '$lib/charts/NetflowSeries.svelte';
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import { formatDaysAgo, formatDollar } from '$lib/helpers/formatters';
@@ -27,7 +29,8 @@
 <section class="netflow-page">
 	<p>Displaying live trading metrics. This strategy has been live <strong>{formatDaysAgo(startedAt)}</strong>.</p>
 
-	<StrategyChart
+	<ChartContainer
+		boxed
 		title="Total value locked"
 		loading={$tvlClient.loading || $netflowClient.loading}
 		data={$tvlClient.data}
@@ -35,17 +38,26 @@
 	>
 		{#snippet subtitle()}
 			Learn more about
-			<a class="body-link" href="/glossary/total-equity" target="_blank">TVL</a> and
-			<a class="body-link" href="/glossary/netflow" target="_blank">Netflow</a>
+			<a class="body-link" href={resolve('/glossary/total-equity')} target="_blank">TVL</a> and
+			<a class="body-link" href={resolve('/glossary/netflow')} target="_blank">Netflow</a>
 			metrics and how they're calculated.
 		{/snippet}
 
-		{#snippet series(_, timeSpan)}
-			<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>
-				<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
-			</NetflowSeries>
+		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
+			<AreaSeries
+				{data}
+				{direction}
+				{onVisibleDataChange}
+				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
+			/>
+
+			{#if range}
+				<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>
+					<SeriesLabel class="netflow-title">Netflow</SeriesLabel>
+				</NetflowSeries>
+			{/if}
 		{/snippet}
-	</StrategyChart>
+	</ChartContainer>
 </section>
 
 <style>
@@ -56,7 +68,6 @@
 		:global(.netflow-title) {
 			top: 0.5rem;
 			left: var(--chart-container-padding);
-			padding-inline: 0;
 			font: var(--f-heading-xs-medium);
 			letter-spacing: var(--ls-heading-sm, normal);
 			color: var(--c-text);

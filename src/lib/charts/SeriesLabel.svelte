@@ -29,12 +29,11 @@
 <style>
 	h3 {
 		position: absolute;
-		padding: 0.125em 0.25em;
-		background: color-mix(in srgb, transparent, var(--c-background, var(--c-body)) 60%);
+		--margin: 0.375rem;
+		margin-block: var(--margin);
 		color: var(--c-text-light);
 		font: var(--f-ui-sm-medium);
 		letter-spacing: var(--ls-ui-sm, nornal);
-		--margin: 0.25rem;
 
 		&.heading {
 			font: var(--f-ui-sm-roman);
@@ -43,19 +42,19 @@
 		}
 
 		&.top {
-			top: var(--margin);
+			top: 0;
 		}
 
 		&.bottom {
-			bottom: var(--margin);
+			bottom: 0;
 		}
 
 		&.left {
-			left: var(--margin);
+			left: 0;
 		}
 
 		&.right {
-			right: var(--margin);
+			right: 0;
 		}
 	}
 </style>

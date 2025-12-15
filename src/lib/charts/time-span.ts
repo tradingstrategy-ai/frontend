@@ -23,7 +23,7 @@ const timeSpans = {
 	}
 } as const;
 
-type TimeSpanKey = keyof typeof timeSpans;
+export type TimeSpanKey = keyof typeof timeSpans;
 
 export const TimeSpans = {
 	get keys() {

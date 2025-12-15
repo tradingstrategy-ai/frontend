@@ -1,38 +1,58 @@
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
-	import type { AreaSeriesPartialOptions, DeepPartial, PriceScaleOptions } from 'lightweight-charts';
-	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
-	import { TimeSpans } from '$lib/charts/time-span';
+	import { TimeSpans, type TimeSpanKey } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
-	import TvChart from './TvChart.svelte';
-	import AreaSeries from './AreaSeries.svelte';
+	import TvChart, { type ActiveTooltipParams, type TooltipData } from './TvChart.svelte';
 	import BaselineSeries from './BaselineSeries.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import { type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { type ProfitDirection, type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { getDataRange, resampleTimeSeries } from './helpers';
 	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
 
+	interface SeriesSnippetOptions {
+		data: SimpleDataItem[];
+		direction: ProfitDirection | undefined;
+		onVisibleDataChange: (data: TvDataItem[]) => void;
+		timeSpan: TimeSpan;
+		range: [Date, Date] | undefined;
+	}
+
 	interface Props extends ComponentProps<typeof TvChart> {
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
+		boxed?: boolean;
+		timeSpanOptions?: TimeSpanKey[];
 		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
-		subtitle?: Snippet;
-		series?: Snippet<[SimpleDataItem[], TimeSpan, [Date, Date]]>;
+		subtitle?: Snippet | string;
+		series: Snippet<[SeriesSnippetOptions]>;
 		footer?: Snippet;
 	}
 
-	let { data, formatValue, options, title, subtitle, series, footer, ...restProps }: Props = $props();
+	let {
+		data,
+		formatValue,
+		boxed = false,
+		timeSpanOptions = TimeSpans.keys,
+		options,
+		title,
+		subtitle,
+		series,
+		tooltip,
+		footer,
+		...restProps
+	}: Props = $props();
 
-	const timeSpans = new OptionGroup(TimeSpans.keys, '3M');
+	const timeSpans = new OptionGroup(timeSpanOptions, '3M');
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 
-	let normalizedData = $derived(resampleTimeSeries(data ?? [], timeSpan.interval));
+	let resampledData = $derived(resampleTimeSeries(data ?? [], timeSpan.interval));
 
-	let timeSpanRange = $derived(getDataRange(normalizedData, timeSpan));
+	let range = $derived(getDataRange(resampledData, timeSpan));
 
 	let visibleData: SimpleDataItem[] = $state([]);
 
@@ -47,18 +67,9 @@
 			lockVisibleTimeRangeOnResize: true
 		}
 	};
-
-	const seriesOptions: AreaSeriesPartialOptions = {
-		priceLineVisible: false,
-		crosshairMarkerVisible: false
-	};
-
-	const priceScaleOptions: DeepPartial<PriceScaleOptions> = {
-		scaleMargins: { top: 0.1, bottom: 0.1 }
-	};
 </script>
 
-<div class="chart-container" data-css-props>
+<div class={['chart-container', boxed && 'boxed']} data-css-props>
 	<header>
 		{#if typeof title === 'string'}
 			<h2>{title}</h2>
@@ -66,35 +77,37 @@
 			<div>{@render title?.(timeSpan, periodPerformance)}</div>
 		{/if}
 		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
-		<p>{@render subtitle?.()}</p>
+		<p>
+			{#if typeof subtitle === 'string'}
+				{subtitle}
+			{:else}
+				{@render subtitle?.()}
+			{/if}
+		</p>
 	</header>
 
-	<TvChart options={merge({ ...chartOptions }, options)} {...restProps}>
-		<AreaSeries
-			data={normalizedData}
-			direction={periodPerformance?.direction}
-			options={seriesOptions}
-			{priceScaleOptions}
-			onVisibleDataChange={(data) => (visibleData = data as SimpleDataItem[])}
-		/>
-
-		{#if timeSpanRange}
-			{@render series?.(normalizedData, timeSpan, timeSpanRange)}
+	{#snippet defaultTooltip({ point, time }: ActiveTooltipParams, [performance]: TooltipData)}
+		{#if performance}
+			{@const withTime = timeSpan.timeBucket !== '1d'}
+			<ChartTooltip {point}>
+				<h4><Timestamp date={time as number} {withTime} /></h4>
+				<div class="tooltip-value">{formatValue(performance.value, 2)}</div>
+			</ChartTooltip>
 		{/if}
+	{/snippet}
 
-		{#if timeSpanRange}
-			<BaselineSeries interval={timeSpan.interval} range={timeSpanRange} setChartVisibleRange />
+	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltip ?? defaultTooltip}>
+		{@render series({
+			data: resampledData,
+			direction: periodPerformance?.direction,
+			onVisibleDataChange: (data) => (visibleData = data as SimpleDataItem[]),
+			timeSpan,
+			range
+		})}
+
+		{#if range}
+			<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
 		{/if}
-
-		{#snippet tooltip({ point, time }, [performance])}
-			{#if performance}
-				{@const withTime = timeSpan.timeBucket !== '1d'}
-				<ChartTooltip {point}>
-					<h4><Timestamp date={time as number} {withTime} /></h4>
-					<div class="tooltip-value">{formatValue(performance.value, 2)}</div>
-				</ChartTooltip>
-			{/if}
-		{/snippet}
 	</TvChart>
 
 	{@render footer?.()}
@@ -102,10 +115,14 @@
 
 <style>
 	[data-css-props] {
-		--chart-container-padding: 1.5rem;
+		--chart-container-padding: 0;
 
-		@media (--viewport-md-down) {
-			--chart-container-padding: 1rem;
+		&:where(.boxed) {
+			--chart-container-padding: 1.5rem;
+
+			@media (--viewport-md-down) {
+				--chart-container-padding: 1rem;
+			}
 		}
 	}
 
@@ -130,17 +147,20 @@
 		}
 
 		display: grid;
-		gap: var(--space-sm);
-		background: var(--c-box-1);
-		border: 1px solid var(--c-box-3);
-		border-radius: var(--radius-md);
+		gap: 0.25rem;
 		padding-block: var(--chart-container-padding);
+
+		&.boxed {
+			background: var(--c-box-1);
+			border: 1px solid var(--c-box-3);
+			border-radius: var(--radius-md);
+		}
 
 		header {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			align-items: center;
-			gap: var(--space-sm);
+			gap: inherit;
 			padding-inline: var(--chart-container-padding);
 
 			h2 {
