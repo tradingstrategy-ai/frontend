@@ -63,13 +63,8 @@
 			based on {selectedDataSource.toLocaleLowerCase()} data
 		{/snippet}
 
-		{#snippet series({ data, direction, onVisibleDataChange })}
-			<AreaSeries
-				{data}
-				{direction}
-				{onVisibleDataChange}
-				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
-			/>
+		{#snippet series({ data })}
+			<AreaSeries {data} options={{ priceLineVisible: false, crosshairMarkerVisible: false }} />
 		{/snippet}
 	</ChartContainer>
 

@@ -30,11 +30,9 @@
 		{formatValue}
 		options={{ handleScroll: false, handleScale: false }}
 	>
-		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
+		{#snippet series({ data, timeSpan })}
 			<AreaSeries
 				{data}
-				{direction}
-				{onVisibleDataChange}
 				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
 				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
 			/>
