@@ -3,7 +3,6 @@
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
 	import { SvelteSet } from 'svelte/reactivity';
-	import Alert from '$lib/components/Alert.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -12,12 +11,13 @@
 	import DepositEventsCell from './DepositEventsCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
-	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import { isBlacklisted, resolveVaultDetails } from './helpers';
+
+	const TVL_THRESHOLD_DEFAULT = 50_000;
 
 	interface SortOptions {
 		key: string;
@@ -28,9 +28,10 @@
 	interface Props {
 		topVaults: TopVaults;
 		chain?: Chain;
+		tvlThreshold?: number;
 	}
 
-	let { topVaults, chain }: Props = $props();
+	let { topVaults, chain, tvlThreshold = TVL_THRESHOLD_DEFAULT }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -155,193 +156,177 @@
 	{/if}
 {/snippet}
 
-<div class="top-vaults">
-	<TopVaultsOptIn />
-
-	{#if !baseVaults.length}
-		<Alert title="Error">No vault data available.</Alert>
-	{:else}
-		<div class="table-extras">
-			<div class="table-meta">
-				<span>{baseVaults.length} vaults</span>
-				<span>Min. TVL $50k</span>
-				<span>Stablecoin-only</span>
-				<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
-			</div>
-			<div class="filter">
-				<TextInput
-					bind:value={filterValue}
-					type="search"
-					placeholder="Search by name, protocol, chain, denomination, risk or address"
-				/>
-			</div>
+<div class="top-vaults-table">
+	<div class="table-extras">
+		<div class="table-meta">
+			<span>{baseVaults.length} vaults</span>
+			<span>Min. TVL {formatDollar(tvlThreshold, 0)}</span>
+			<span>Stablecoin-only</span>
+			<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
 		</div>
+		<div class="filter">
+			<TextInput
+				bind:value={filterValue}
+				type="search"
+				placeholder="Search by name, protocol, chain, denomination, risk or address"
+			/>
+		</div>
+	</div>
 
-		<div class="table-wrapper">
-			<!-- --table-width needed for proper tr.targetable styling  -->
-			<table class="top-vaults-table" bind:offsetWidth style:--table-width="{offsetWidth}px">
-				<thead>
-					<tr>
-						<th class="index"></th>
+	<div class="table-wrapper">
+		<!-- --table-width needed for proper tr.targetable styling  -->
+		<table bind:offsetWidth style:--table-width="{offsetWidth}px">
+			<thead>
+				<tr>
+					<th class="index"></th>
+					{#if showChainCol}
+						{@render sortColHeader(
+							'',
+							'chain',
+							'asc',
+							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+						)}
+					{/if}
+					{@render sortColHeader(
+						'Vault',
+						'vault',
+						'asc',
+						stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
+					)}
+					{@render sortColHeader(
+						'1M<br/>return ann.',
+						'one_month_return_ann',
+						'desc',
+						multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
+					)}
+					{@render sortColHeader(
+						'3M<br/>return ann.',
+						'three_months_return_ann',
+						'desc',
+						multiValCompare(['three_months_cagr', 'three_months_cagr_net'])
+					)}
+					{@render sortColHeader(
+						'Lifetime return ann.',
+						'lifetime_return_ann',
+						'desc',
+						multiValCompare(['cagr', 'cagr_net'])
+					)}
+					{@render sortColHeader(
+						'Lifetime return abs.',
+						'lifetime_return_abs',
+						'desc',
+						multiValCompare(['lifetime_return', 'lifetime_return_net'])
+					)}
+					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', multiValCompare(['three_months_sharpe']))}
+					{@render sortColHeader(
+						'3M Vola&shy;tility',
+						'three_months_volatility',
+						'asc',
+						multiValCompare(['three_months_volatility'])
+					)}
+					{@render sortColHeader(
+						'Denom&shy;ination',
+						'denomination',
+						'asc',
+						stringCompare((v) => v.denomination)
+					)}
+					{@render sortColHeader(
+						'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
+						'tvl',
+						'desc',
+						multiValCompare(['current_nav', 'peak_nav'])
+					)}
+					{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
+					{@render sortColHeader(
+						'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
+						'fees',
+						'asc',
+						multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
+					)}
+					{@render sortColHeader('Deposit Events', 'event_count', 'desc', multiValCompare(['event_count']))}
+					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', multiValCompare(['risk_numeric'], Infinity))}
+					<th class="sparkline">90 day price</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each truncatedVaults as vault (vault.id)}
+					{@const chain = getChain(vault.chain_id)}
+					<tr class="targetable">
+						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
+						<td class="index"></td>
 						{#if showChainCol}
-							{@render sortColHeader(
-								'',
-								'chain',
-								'asc',
-								stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
-							)}
+							<td class="chain">
+								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
+							</td>
 						{/if}
-						{@render sortColHeader(
-							'Vault',
-							'vault',
-							'asc',
-							stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
-						)}
-						{@render sortColHeader(
-							'1M<br/>return ann.',
-							'one_month_return_ann',
-							'desc',
-							multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
-						)}
-						{@render sortColHeader(
-							'3M<br/>return ann.',
-							'three_months_return_ann',
-							'desc',
-							multiValCompare(['three_months_cagr', 'three_months_cagr_net'])
-						)}
-						{@render sortColHeader(
-							'Lifetime return ann.',
-							'lifetime_return_ann',
-							'desc',
-							multiValCompare(['cagr', 'cagr_net'])
-						)}
-						{@render sortColHeader(
-							'Lifetime return abs.',
-							'lifetime_return_abs',
-							'desc',
-							multiValCompare(['lifetime_return', 'lifetime_return_net'])
-						)}
-						{@render sortColHeader(
-							'3m Sharpe',
-							'three_months_sharpe',
-							'desc',
-							multiValCompare(['three_months_sharpe'])
-						)}
-						{@render sortColHeader(
-							'3M Vola&shy;tility',
-							'three_months_volatility',
-							'asc',
-							multiValCompare(['three_months_volatility'])
-						)}
-						{@render sortColHeader(
-							'Denom&shy;ination',
-							'denomination',
-							'asc',
-							stringCompare((v) => v.denomination)
-						)}
-						{@render sortColHeader(
-							'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
-							'tvl',
-							'desc',
-							multiValCompare(['current_nav', 'peak_nav'])
-						)}
-						{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
-						{@render sortColHeader(
-							'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
-							'fees',
-							'asc',
-							multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
-						)}
-						{@render sortColHeader('Deposit Events', 'event_count', 'desc', multiValCompare(['event_count']))}
-						{@render sortColHeader(
-							'Protocol Technical Risk',
-							'risk',
-							'asc',
-							multiValCompare(['risk_numeric'], Infinity)
-						)}
-						<th class="sparkline">90 day price</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each truncatedVaults as vault (vault.id)}
-						{@const chain = getChain(vault.chain_id)}
-						<tr class="targetable">
-							<!-- index cell is populated with row index via `rowNumber` CSS counter -->
-							<td class="index"></td>
-							{#if showChainCol}
-								<td class="chain">
-									<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
-								</td>
-							{/if}
-							<td class="vault">
-								<div class="multiline">
-									<strong>{vault.name}</strong>
-									{#if vault.protocol}
-										<span class="secondary">{vault.protocol}</span>
-									{/if}
-								</div>
-							</td>
-							<td class="one_month_return_ann right net-gross">
-								{@render netGrossCell(vault.one_month_cagr_net, vault.one_month_cagr, formatReturn)}
-							</td>
-							<td class="three_months_return_ann right net-gross">
-								{@render netGrossCell(vault.three_months_cagr_net, vault.three_months_cagr, formatReturn)}
-							</td>
-							<td class="lifetime_return_ann right net-gross">
-								{@render netGrossCell(vault.cagr_net, vault.cagr, formatReturn)}
-							</td>
-							<td class="lifetime_return_abs right net-gross">
-								{@render netGrossCell(vault.lifetime_return_net, vault.lifetime_return, formatReturn)}
-							</td>
-							<td class="three_months_sharpe right">
-								{formatNumber(vault.three_months_sharpe, 1)}
-							</td>
-							<td class="three_months_volatility right">
-								{formatPercent(vault.three_months_volatility, 1)}
-							</td>
-							<td class="denomination center">
-								{formatValue(vault.denomination)}
-							</td>
-							<td class="tvl right">
-								<div class="multiline multival">
-									<span class="primary">{formatTvl(vault.current_nav)}</span>
-									<span class="secondary">{formatTvl(vault.peak_nav)}</span>
-								</div>
-							</td>
-							<td class="age right">
-								{formatNumber(vault.years, 1)}
-							</td>
-							<td class="fees right">
-								<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
-							</td>
-							<td class="event_count right">
-								<DepositEventsCell value={vault.event_count} />
-							</td>
-							<td class="risk">
-								<RiskCell risk={vault.risk} />
-							</td>
-							<td class="sparkline">
-								{#if failedSparklines.has(vault.id)}
-									chart data unavailable
-								{:else}
-									<img
-										src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
-										alt="{vault.name} 90 day price"
-										onerror={() => failedSparklines.add(vault.id)}
-									/>
+						<td class="vault">
+							<div class="multiline">
+								<strong>{vault.name}</strong>
+								{#if vault.protocol}
+									<span class="secondary">{vault.protocol}</span>
 								{/if}
-								<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	{/if}
+							</div>
+						</td>
+						<td class="one_month_return_ann right net-gross">
+							{@render netGrossCell(vault.one_month_cagr_net, vault.one_month_cagr, formatReturn)}
+						</td>
+						<td class="three_months_return_ann right net-gross">
+							{@render netGrossCell(vault.three_months_cagr_net, vault.three_months_cagr, formatReturn)}
+						</td>
+						<td class="lifetime_return_ann right net-gross">
+							{@render netGrossCell(vault.cagr_net, vault.cagr, formatReturn)}
+						</td>
+						<td class="lifetime_return_abs right net-gross">
+							{@render netGrossCell(vault.lifetime_return_net, vault.lifetime_return, formatReturn)}
+						</td>
+						<td class="three_months_sharpe right">
+							{formatNumber(vault.three_months_sharpe, 1)}
+						</td>
+						<td class="three_months_volatility right">
+							{formatPercent(vault.three_months_volatility, 1)}
+						</td>
+						<td class="denomination center">
+							{formatValue(vault.denomination)}
+						</td>
+						<td class="tvl right">
+							<div class="multiline multival">
+								<span class="primary">{formatTvl(vault.current_nav)}</span>
+								<span class="secondary">{formatTvl(vault.peak_nav)}</span>
+							</div>
+						</td>
+						<td class="age right">
+							{formatNumber(vault.years, 1)}
+						</td>
+						<td class="fees right">
+							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
+						</td>
+						<td class="event_count right">
+							<DepositEventsCell value={vault.event_count} />
+						</td>
+						<td class="risk">
+							<RiskCell risk={vault.risk} />
+						</td>
+						<td class="sparkline">
+							{#if failedSparklines.has(vault.id)}
+								chart data unavailable
+							{:else}
+								<img
+									src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
+									alt="{vault.name} 90 day price"
+									onerror={() => failedSparklines.add(vault.id)}
+								/>
+							{/if}
+							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <style>
-	.top-vaults {
+	.top-vaults-table {
 		display: grid;
 		gap: 1rem;
 
@@ -390,7 +375,7 @@
 			}
 		}
 
-		.top-vaults-table {
+		table {
 			position: relative;
 			table-layout: fixed;
 			border-collapse: collapse;

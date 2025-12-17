@@ -2,9 +2,11 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -14,18 +16,19 @@
 		breadcrumbs?: Record<string, string>;
 		title: string;
 		subtitle: string;
+		tvlThreshold?: number;
 	}
 
-	let { chain, topVaults, breadcrumbs, title: pageTitle, subtitle }: Props = $props();
+	let { chain, topVaults, breadcrumbs, title: pageTitle, subtitle, tvlThreshold }: Props = $props();
 </script>
 
 <Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
 
-<main class="chain-vaults ds-3">
+<main class="top-vaults-page ds-3">
 	<Section tag="header">
 		<HeroBanner {subtitle}>
 			{#snippet title()}
-				<span>
+				<span class="page-title">
 					{#if chain}
 						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 					{/if}
@@ -37,13 +40,21 @@
 	</Section>
 
 	<Section>
-		<TopVaultsTable {topVaults} {chain} />
+		<div class="top-vaults-content">
+			<TopVaultsOptIn />
+
+			{#if !topVaults.vaults.length}
+				<Alert title="Error">No vault data available.</Alert>
+			{:else}
+				<TopVaultsTable {topVaults} {chain} {tvlThreshold} />
+			{/if}
+		</div>
 	</Section>
 </main>
 
 <style>
-	.chain-vaults {
-		span {
+	.top-vaults-page {
+		.page-title {
 			display: inline-flex;
 			flex-wrap: wrap;
 			gap: 0.25em;
@@ -56,6 +67,11 @@
 
 		:global(.badge) {
 			font-size: 0.5em;
+		}
+
+		.top-vaults-content {
+			display: grid;
+			gap: 1rem;
 		}
 	}
 </style>
