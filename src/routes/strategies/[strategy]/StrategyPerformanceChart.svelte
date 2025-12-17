@@ -2,7 +2,7 @@
 	import type { ChartCallbackParam, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
-	import Profitability from '$lib/components/Profitability.svelte';
+	import Profitability, { type ProfitInfo } from '$lib/components/Profitability.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
 	import { getChartClient } from 'trade-executor/client/chart';
@@ -25,6 +25,8 @@
 
 	let loading = $derived($chartClient.loading || benchmarkTokens.some((t) => t.loading));
 
+	let periodPerformance = $state<ProfitInfo>();
+
 	const options: TvChartOptions = {
 		handleScroll: false,
 		handleScale: false,
@@ -41,16 +43,13 @@
 
 	// fetch chart data (initial load or when chartClient is updated)
 	$effect(() => {
-		chartClient.fetch({
-			type: chartDataType,
-			source: 'live_trading'
-		});
+		chartClient.fetch({ type: chartDataType, source: 'live_trading' });
 	});
 </script>
 
 <div class="strategy-performance-chart">
 	<ChartContainer boxed {loading} data={$chartClient.data} formatValue={formatPercent} {options} {callback}>
-		{#snippet title(timeSpan, periodPerformance)}
+		{#snippet title(timeSpan)}
 			<div class="period-performance">
 				{#if periodPerformance}
 					<Profitability of={periodPerformance.value} boxed />
@@ -59,11 +58,10 @@
 			</div>
 		{/snippet}
 
-		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
+		{#snippet series({ data, timeSpan, range })}
 			<AreaSeries
 				{data}
-				{direction}
-				{onVisibleDataChange}
+				onVisibleDataChange={(_, profitInfo) => (periodPerformance = profitInfo)}
 				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
 				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
 			/>

@@ -43,13 +43,8 @@
 			metrics and how they're calculated.
 		{/snippet}
 
-		{#snippet series({ data, direction, onVisibleDataChange, timeSpan, range })}
-			<AreaSeries
-				{data}
-				{direction}
-				{onVisibleDataChange}
-				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
-			/>
+		{#snippet series({ data, timeSpan, range })}
+			<AreaSeries {data} options={{ priceLineVisible: false, crosshairMarkerVisible: false }} />
 
 			{#if range}
 				<NetflowSeries data={$netflowClient.data ?? []} interval={timeSpan.interval} paneIndex={1}>

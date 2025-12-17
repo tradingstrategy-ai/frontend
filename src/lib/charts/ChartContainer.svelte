@@ -8,15 +8,11 @@
 	import BaselineSeries from './BaselineSeries.svelte';
 	import ChartTooltip from './ChartTooltip.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
-	import { type ProfitDirection, type ProfitInfo, getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { getDataRange, resampleTimeSeries } from './helpers';
-	import { relativeReturn } from '$lib/helpers/financial';
 	import { merge } from '$lib/helpers/object';
 
 	interface SeriesSnippetOptions {
 		data: SimpleDataItem[];
-		direction: ProfitDirection | undefined;
-		onVisibleDataChange: (data: TvDataItem[]) => void;
 		timeSpan: TimeSpan;
 		range: [Date, Date] | undefined;
 	}
@@ -26,7 +22,7 @@
 		formatValue: Formatter<number>;
 		boxed?: boolean;
 		timeSpanOptions?: TimeSpanKey[];
-		title?: Snippet<[TimeSpan, ProfitInfo]> | string;
+		title?: Snippet<[TimeSpan]> | string;
 		subtitle?: Snippet | string;
 		series: Snippet<[SeriesSnippetOptions]>;
 		footer?: Snippet;
@@ -54,10 +50,6 @@
 
 	let range = $derived(getDataRange(resampledData, timeSpan));
 
-	let visibleData: SimpleDataItem[] = $state([]);
-
-	let periodPerformance = $derived(getProfitInfo(relativeReturn(visibleData[0]?.value, visibleData.at(-1)?.value)));
-
 	const chartOptions: TvChartOptions = {
 		crosshair: { vertLine: { visible: true } },
 		localization: {
@@ -74,7 +66,7 @@
 		{#if typeof title === 'string'}
 			<h2>{title}</h2>
 		{:else}
-			<div>{@render title?.(timeSpan, periodPerformance)}</div>
+			<div>{@render title?.(timeSpan)}</div>
 		{/if}
 		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
 		<p>
@@ -99,8 +91,6 @@
 	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltip ?? defaultTooltip}>
 		{@render series({
 			data: resampledData,
-			direction: periodPerformance?.direction,
-			onVisibleDataChange: (data) => (visibleData = data as SimpleDataItem[]),
 			timeSpan,
 			range
 		})}
