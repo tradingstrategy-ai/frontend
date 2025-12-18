@@ -9,10 +9,10 @@
 
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import type { VaultProtocol } from '$lib/top-vaults/schemas';
+	import type { VaultGroup } from '$lib/top-vaults/schemas';
 	import { readable } from 'svelte/store';
 	import { createTable } from 'svelte-headless-table';
-	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
+	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
@@ -22,7 +22,9 @@
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
 	interface Props extends DataTableProps {
-		rows?: VaultProtocol[];
+		rows?: VaultGroup[];
+		groupLabel: string;
+		includeRisk?: boolean;
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
@@ -30,6 +32,8 @@
 
 	let {
 		rows,
+		groupLabel,
+		includeRisk = false,
 		page = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
@@ -40,16 +44,20 @@
 	const tableRows = loading ? new Array(10).fill({}) : rows || [];
 
 	const table = createTable(readable(tableRows), {
+		hide: addHiddenColumns({ initialHiddenColumnIds: includeRisk ? [''] : ['risk'] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']
 		}),
-		page: addPagination({ initialPageIndex: page })
+		page: addPagination({
+			initialPageSize: 50,
+			initialPageIndex: page
+		})
 	});
 
 	const columns = table.createColumns([
 		table.column({
-			header: 'Protocol',
+			header: groupLabel,
 			accessor: 'name',
 			cell: ({ value }) => value,
 			plugins: { sort: { invert: true } }
@@ -104,27 +112,31 @@
 				table-layout: fixed;
 			}
 
-			:global(.name) {
-				width: 45%;
-			}
+			:global(:is(th, td)) {
+				width: 25%;
 
-			:global(.risk) {
-				width: 20%;
-			}
-
-			:global(.vault_count) {
-				width: 20%;
-				text-align: right;
-			}
-
-			:global(.tvl) {
-				width: 20%;
-				text-align: right;
+				&:not(.name) {
+					text-align: right;
+				}
 			}
 
 			:global(.cta) {
-				width: 14rem;
-				padding-left: 2rem;
+				--button-width: 12rem;
+				width: max(calc(24vw), 14rem);
+			}
+
+			:global(:has(.risk)) {
+				:global(:is(th, td)) {
+					width: 20%;
+				}
+
+				:global(.name) {
+					width: 45%;
+				}
+
+				:global(.cta) {
+					width: 14rem;
+				}
 			}
 		}
 	}

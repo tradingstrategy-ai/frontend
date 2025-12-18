@@ -1,3 +1,4 @@
+import type { Chain } from '$lib/helpers/chain';
 import { z } from 'zod';
 import { blockNumber, chainId, hexString } from '$lib/eth-defi/schemas/core';
 import { isoDateTime } from '$lib/schemas/utility';
@@ -63,11 +64,11 @@ export const topVaultsSchema = z.object({
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
 
-export interface VaultProtocol {
+export interface VaultGroup {
 	slug: string;
 	name: string;
-	risk: string | null;
-	risk_numeric: number | null;
 	vault_count: number;
 	tvl: number;
+	risk?: string | null;
+	risk_numeric?: number | null;
 }

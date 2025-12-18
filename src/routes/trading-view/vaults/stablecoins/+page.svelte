@@ -8,7 +8,7 @@
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 
 	let { data } = $props();
-	let { protocols, options } = $derived(data);
+	let { stablecoins, options } = $derived(data);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
@@ -18,13 +18,13 @@
 </script>
 
 <svelte:head>
-	<title>DeFi stablecoin vault protocols | Trading Strategy</title>
-	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
+	<title>DeFi vault stablecoins | Trading Strategy</title>
+	<meta name="description" content="Top DeFi vault stablecoins across all blockchains" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', protocols: 'Protocols' }} />
+<Breadcrumbs labels={{ vaults: 'Top Vaults', stablecoins: 'Stablecoins' }} />
 
-<main class="protocol-index-page">
+<main class="stablecoin-index-page">
 	<Section tag="header">
 		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
 			{#snippet title()}
@@ -35,12 +35,12 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Protocol" includeRisk rows={protocols} {...options} {onChange} />
+		<VaultGroupTable groupLabel="Stablecoin" rows={stablecoins} {...options} {onChange} />
 	</Section>
 </main>
 
 <style>
-	.protocol-index-page {
+	.stablecoin-index-page {
 		:global(.badge) {
 			font-size: 0.5em;
 			margin-inline: 0.25em;
