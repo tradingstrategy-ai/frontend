@@ -1,24 +1,14 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import VaultProtocolTable, { sortOptions } from '$lib/top-vaults/VaultProtocolTable.svelte';
-	import { getStringParam, getNumberParam } from '$lib/helpers/url-params.js';
+	import VaultProtocolTable from '$lib/top-vaults/VaultProtocolTable.svelte';
 
 	let { data } = $props();
-	let { protocols } = $derived(data);
-
-	let { searchParams } = $derived(page.url);
-
-	let options = $derived({
-		page: getNumberParam(searchParams, 'page', 0),
-		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
-		direction: getStringParam(searchParams, 'direction', sortOptions.directions)
-	});
+	let { protocols, options } = $derived(data);
 
 	const onChange: ComponentProps<typeof VaultProtocolTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
