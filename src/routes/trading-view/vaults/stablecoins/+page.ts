@@ -1,5 +1,5 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { getDenominationSlug, isBlacklisted } from '$lib/top-vaults/helpers.js';
+import { getNormalizedDenomination, isBlacklisted } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getChain } from '$lib/helpers/chain.js';
@@ -10,22 +10,16 @@ export async function load({ parent, url: { searchParams } }) {
 	const stablecoins = topVaults.vaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
 		if (isBlacklisted(vault) || !vault.stablecoinish) return acc;
 
-		const slug = getDenominationSlug(vault);
+		const denomination = getNormalizedDenomination(vault);
 
-		acc[slug] ??= {
-			slug,
-			name: vault.denomination,
+		acc[denomination] ??= {
+			slug: denomination,
+			name: denomination,
 			vault_count: 0,
-			tvl: 0,
-			chains: new Set()
+			tvl: 0
 		};
-
-		acc[slug].vault_count++;
-		acc[slug].tvl += vault.current_nav ?? 0;
-
-		const chain = getChain(vault.chain_id);
-		if (chain) acc[slug].chains.add(chain.slug);
-
+		acc[denomination].vault_count++;
+		acc[denomination].tvl += vault.current_nav ?? 0;
 		return acc;
 	}, {});
 

@@ -20,11 +20,10 @@ export function isBlacklisted(vault: VaultInfo) {
 /**
  * Normalize denomination token to consistent value for use in URL path
  */
-export function getDenominationSlug(vault: VaultInfo) {
+export function getNormalizedDenomination(vault: VaultInfo) {
 	// prettier-ignore
 	return vault.denomination
-	  .toLowerCase()
-	  .replace('₮', 't')
+	  .replace('₮', 'T')
 	  .replace(/\.e$/, '')
-	  .replace('usdt0', 'usdt')
+	  .replace('USDT0', 'USDT')
 }

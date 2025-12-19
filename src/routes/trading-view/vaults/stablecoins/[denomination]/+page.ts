@@ -1,19 +1,18 @@
-import { getDenominationSlug } from '$lib/top-vaults/helpers.js';
+import { getNormalizedDenomination } from '$lib/top-vaults/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, parent }) {
-	const { stablecoin } = params;
+	const { denomination } = params;
 	const { topVaults } = await parent();
 
 	const vaults = topVaults.vaults.filter((vault) => {
-		return getDenominationSlug(vault) === stablecoin;
+		return getNormalizedDenomination(vault) === denomination;
 	});
 
 	if (!vaults.length) error(404, 'Vault stablecoin not found');
 
 	return {
-		stablecoinSlug: stablecoin,
-		stablecoinName: vaults[0].denomination,
+		denomination,
 		topVaults: { ...topVaults, vaults }
 	};
 }
