@@ -16,14 +16,3 @@ export function resolveVaultDetails(vault: VaultInfo) {
 export function isBlacklisted(vault: VaultInfo) {
 	return vault.risk_numeric === 999;
 }
-
-/**
- * Normalize denomination token to consistent value for use in URL path
- */
-export function getNormalizedDenomination(vault: VaultInfo) {
-	// prettier-ignore
-	return vault.denomination
-	  .replace('₮', 'T')
-	  .replace(/\.e$/, '')
-	  .replace('USDT0', 'USDT')
-}
