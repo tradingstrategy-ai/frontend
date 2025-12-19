@@ -26,9 +26,9 @@
 
 <main class="stablecoin-index-page">
 	<Section tag="header">
-		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
+		<HeroBanner subtitle="Browse supported DeFi vault stablecoins across all blockchains">
 			{#snippet title()}
-				<span>DeFi stablecoin vault protocols</span>
+				<span>DeFi vault stablecoins</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>

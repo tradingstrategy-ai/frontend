@@ -10,6 +10,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { VaultGroup } from '$lib/top-vaults/schemas';
+	import { page } from '$app/state';
 	import { readable } from 'svelte/store';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
@@ -34,7 +35,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
-		page = 0,
+		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
 		loading = false,
@@ -51,7 +52,7 @@
 		}),
 		page: addPagination({
 			initialPageSize: 50,
-			initialPageIndex: page
+			initialPageIndex: pageIndex
 		})
 	});
 
@@ -87,7 +88,7 @@
 		table.column({
 			id: 'cta',
 			header: '',
-			accessor: (row) => `/trading-view/vaults/protocols/${row.slug}`,
+			accessor: (row) => `${page.url.pathname}/${row.slug}`,
 			cell: ({ value }) => createRender(TableRowTarget, { size: 'sm', label: 'View protocol', href: value }),
 			plugins: { sort: { disable: true } }
 		})
