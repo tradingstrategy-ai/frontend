@@ -1,6 +1,8 @@
+import type { VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
 import { getChain } from '$lib/helpers/chain';
-import type { VaultInfo } from './schemas';
+import { formatDuration, intervalToDuration } from 'date-fns';
+import { isNumber } from '$lib/helpers/formatters';
 
 /**
  * Resolve path to vault datails page for a given vault
@@ -15,4 +17,29 @@ export function resolveVaultDetails(vault: VaultInfo) {
  */
 export function isBlacklisted(vault: VaultInfo) {
 	return vault.risk_numeric === 999;
+}
+
+/**
+ * Return the formatted lockup value for a vault (in days, hours, minutes if needed)
+ */
+export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
+	if (!isNumber(seconds)) return 'Unknown';
+
+	const minutes = Math.floor(seconds / 60);
+	const hours = seconds / 3600;
+	const days = Math.floor(hours / 24);
+	const remainderHours = Math.floor(hours % 24);
+
+	const parts: string[] = [];
+
+	function addUnit(unit: string, duration: number) {
+		parts.push(`${duration} ${unit}${duration === 1 ? '' : 's'}`);
+	}
+
+	if (days > 0) addUnit('day', days);
+	if (remainderHours > 0) addUnit('hour', remainderHours);
+	if (parts.length === 0 && minutes > 0) addUnit('minute', minutes);
+	if (parts.length === 0) parts.push('None (instant)');
+
+	return parts.join(', ');
 }

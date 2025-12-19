@@ -16,10 +16,16 @@
 	import { getExplorerUrl } from '$lib/helpers/chain.js';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup, isBlacklisted } from '$lib/top-vaults/helpers';
+	import Button from '$lib/components/Button.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
+
+	let externalSiteName = $derived.by(() => {
+		if (!vault.protocol.startsWith('<')) return vault.protocol;
+		if (vault.link) return new URL(vault.link).host;
+	});
 </script>
 
 <SocialMediaTags {vault} {chain} />
@@ -36,12 +42,11 @@
 		{/snippet}
 
 		{#snippet cta()}
-			<CryptoAddressWidget
-				size="md"
-				class="vault-address"
-				address={vault.address}
-				href={getExplorerUrl(chain, vault.address)}
-			/>
+			{#if vault.link}
+				<Button href={vault.link} target="_blank" rel="noreferrer">
+					View on {externalSiteName}
+				</Button>
+			{/if}
 		{/snippet}
 	</PageHeader>
 
@@ -92,7 +97,7 @@
 
 		<div class="additional-metrics">
 			<MetricsBox class="other-metrics" title="Other metrics">
-				<div class="other-metrics-inner">
+				<div class="metrics-inner">
 					<div class="mobile">
 						<Metric size="lg" label="3M Sharpe">
 							{formatNumber(vault.three_months_sharpe, 1)}
@@ -162,10 +167,11 @@
 				</div>
 			</MetricsBox>
 
-			<MetricsBox class="fees" title="Fees" --padding="1.75rem">
-				<div class="fees-inner">
+			<MetricsBox class="fees" title="Fees / lockup" --padding="1.75rem">
+				<div class="metrics-inner">
 					<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
 					<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
+					<Metric label="Lockup period">{getFormattedLockup(vault)}</Metric>
 				</div>
 			</MetricsBox>
 		</div>
@@ -288,15 +294,10 @@
 				}
 			}
 
-			.other-metrics-inner {
+			.metrics-inner {
 				display: flex;
 				flex-wrap: wrap;
 				justify-content: space-between;
-				gap: var(--gap);
-			}
-
-			.fees-inner {
-				display: flex;
 				gap: var(--gap);
 			}
 		}
