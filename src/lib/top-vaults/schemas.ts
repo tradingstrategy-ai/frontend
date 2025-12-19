@@ -1,9 +1,18 @@
-import type { Chain } from '$lib/helpers/chain';
 import { z } from 'zod';
 import { blockNumber, chainId, hexString } from '$lib/eth-defi/schemas/core';
 import { isoDateTime } from '$lib/schemas/utility';
 
 const nullableNumber = z.number().nullable();
+
+export const feeMode = z.enum(['externalised', 'feeless', 'internalised_minting', 'internalised_skimming']);
+
+export const vaultFeesSchema = z.object({
+	fee_mode: feeMode.nullable(),
+	management: nullableNumber,
+	performance: nullableNumber,
+	deposit: nullableNumber,
+	withdraw: nullableNumber
+});
 
 export const vaultInfoSchema = z.object({
 	name: z.string(),
@@ -25,6 +34,8 @@ export const vaultInfoSchema = z.object({
 	one_month_cagr: nullableNumber,
 	one_month_cagr_net: nullableNumber,
 	denomination: z.string(),
+	normalised_denomination: z.string(),
+	denomination_slug: z.string(),
 	share_token: z.string(),
 	chain: z.string(),
 	peak_nav: nullableNumber,
@@ -36,7 +47,9 @@ export const vaultInfoSchema = z.object({
 	withdraw_fee: nullableNumber,
 	fee_mode: z.string().nullable(),
 	fee_internalised: z.boolean().nullable(),
-	// lockup: nullableNumber,
+	gross_fees: vaultFeesSchema.nullable(),
+	net_fees: vaultFeesSchema.nullable(),
+	lockup: nullableNumber,
 	event_count: z.int().nullable(),
 	protocol: z.string(),
 	risk: z.string().nullable(),
@@ -52,9 +65,16 @@ export const vaultInfoSchema = z.object({
 	features: z.string().array(),
 	flags: z.string().array(),
 	notes: z.string().nullable(),
-	// `link` is deprecated – will be repaced with `deposit_ui_link` and `vault_page_link`
-	// Making it `nullish` for now so parse doesn't fail when it's remvoed
-	link: z.url().nullish()
+	link: z.url().nullish(), // deprecated – to be repaced with `deposit_ui_link` and `vault_page_link`
+	one_month_start: isoDateTime.nullable(),
+	one_month_end: isoDateTime.nullable(),
+	one_month_samples: z.int().nullable(),
+	three_months_start: isoDateTime.nullable(),
+	three_months_end: isoDateTime.nullable(),
+	three_months_samples: z.int().nullable(),
+	lifetime_start: isoDateTime.nullable(),
+	lifetime_end: isoDateTime.nullable(),
+	lifetime_samples: z.int().nullable()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
