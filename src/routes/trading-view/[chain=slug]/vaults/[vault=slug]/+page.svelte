@@ -1,11 +1,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
-	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
@@ -14,19 +10,12 @@
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import Metric from './Metric.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
-	import { getExplorerUrl } from '$lib/helpers/chain.js';
-	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
 	import { getFormattedLockup, isBlacklisted } from '$lib/top-vaults/helpers';
-	import Button from '$lib/components/Button.svelte';
+	import VaultPageHeader from './VaultPageHeader.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
-
-	let externalSiteName = $derived.by(() => {
-		if (!vault.protocol.startsWith('<')) return vault.protocol;
-		if (vault.link) return new URL(vault.link).host;
-	});
 </script>
 
 <SocialMediaTags {vault} {chain} />
@@ -34,31 +23,7 @@
 <Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.vault_slug]: vault.name }} />
 
 <main class="vault-details ds-3">
-	<PageHeader>
-		{#snippet title()}
-			<span class="page-title">
-				<span>{vault.name}</span>
-				{#each vault.flags as flag (flag)}
-					<DataBadge class="badge" status="warning">{flag}</DataBadge>
-				{/each}
-			</span>
-		{/snippet}
-
-		{#snippet subtitle()}
-			<span class="subtitle">
-				vault on {vault.protocol} on
-				<EntitySymbol size="0.875em" label={chain?.name} logoUrl={getLogoUrl('blockchain', chain?.slug)} />
-			</span>
-		{/snippet}
-
-		{#snippet cta()}
-			{#if vault.link}
-				<Button href={vault.link} target="_blank" rel="noreferrer">
-					View on {externalSiteName}
-				</Button>
-			{/if}
-		{/snippet}
-	</PageHeader>
+	<VaultPageHeader {vault} {chain} />
 
 	<Section padding="md" class="content">
 		{#if isBlacklisted(vault)}
@@ -214,28 +179,6 @@
 			.mobile {
 				display: none;
 			}
-		}
-
-		.page-title {
-			display: inline-flex;
-			flex-wrap: wrap;
-			gap: 0.25em;
-			align-items: center;
-
-			:global(.badge) {
-				font: var(--f-ui-lg-bold);
-				letter-spacing: var(--ls-ui-lg, normal);
-			}
-		}
-
-		.subtitle {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5ex;
-		}
-
-		:global(.vault-address) {
-			max-width: 15rem;
 		}
 
 		> :global(.content) {
