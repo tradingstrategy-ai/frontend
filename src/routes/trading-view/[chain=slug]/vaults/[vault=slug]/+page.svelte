@@ -2,6 +2,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
+	import DataBadge from '$lib/components/DataBadge.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
@@ -33,7 +34,16 @@
 <Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.vault_slug]: vault.name }} />
 
 <main class="vault-details ds-3">
-	<PageHeader title={vault.name}>
+	<PageHeader>
+		{#snippet title()}
+			<span class="page-title">
+				<span>{vault.name}</span>
+				{#each vault.flags as flag (flag)}
+					<DataBadge class="badge" status="warning">{flag}</DataBadge>
+				{/each}
+			</span>
+		{/snippet}
+
 		{#snippet subtitle()}
 			<span class="subtitle">
 				vault on {vault.protocol} on
@@ -203,6 +213,18 @@
 
 			.mobile {
 				display: none;
+			}
+		}
+
+		.page-title {
+			display: inline-flex;
+			flex-wrap: wrap;
+			gap: 0.25em;
+			align-items: center;
+
+			:global(.badge) {
+				font: var(--f-ui-lg-bold);
+				letter-spacing: var(--ls-ui-lg, normal);
 			}
 		}
 
