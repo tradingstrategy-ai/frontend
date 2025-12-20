@@ -2,17 +2,15 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import Profitability from '$lib/components/Profitability.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
-	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import Metric from './Metric.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
-	import { formatAmount, formatDollar, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
+	import { formatAmount, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters.js';
 	import { getFormattedLockup, isBlacklisted } from '$lib/top-vaults/helpers';
 	import VaultPageHeader from './VaultPageHeader.svelte';
+	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -31,44 +29,8 @@
 				{vault.notes ?? 'Unknown reason'}
 			</Alert>
 		{/if}
-		<MetricsBox>
-			<div class="chart-area">
-				<VaultPriceChart {vault} />
 
-				<div class="divider"></div>
-
-				<div class="featured-metrics">
-					<Metric size="xl" label="1M return (ann)">
-						{#if vault.one_month_cagr_net}
-							<Profitability of={vault.one_month_cagr_net} />
-						{:else}
-							<Tooltip>
-								<span slot="trigger" style:white-space="nowrap">
-									<Profitability of={vault.one_month_cagr} />
-									<span class="sm">(G)</span>
-								</span>
-								<svelte:fragment slot="popup">
-									Fee information for this protocol is not yet available. The calculation is based on gross profit and
-									fees may apply.
-								</svelte:fragment>
-							</Tooltip>
-						{/if}
-					</Metric>
-					<Metric size="xl" label="Total value locked">
-						{formatDollar(vault.current_nav, 1)}
-						<div class="sm">peak {formatDollar(vault.peak_nav, 1)}</div>
-					</Metric>
-					<div class="desktop">
-						<Metric size="lg" label="3M Sharpe">
-							{formatNumber(vault.three_months_sharpe, 1)}
-						</Metric>
-						<Metric size="lg" label="3M volatility">
-							{formatPercent(vault.three_months_volatility, 1)}
-						</Metric>
-					</div>
-				</div>
-			</div>
-		</MetricsBox>
+		<ChartWithFeaturedMetrics {vault} />
 
 		<div class="additional-metrics">
 			<MetricsBox class="other-metrics" title="Other metrics">
@@ -159,24 +121,24 @@
 
 <style>
 	.vault-details {
-		:is(.desktop, .mobile) {
+		:global(:is(.desktop, .mobile)) {
 			display: contents;
 		}
 
 		@media (--viewport-sm-down) {
-			.desktop {
-				display: none;
-			}
-
 			--padding: 1.25rem;
 			--gap: 1.5rem;
+
+			:global(.desktop) {
+				display: none;
+			}
 		}
 
 		@media (--viewport-md-up) {
 			--padding: 1.75rem;
 			--gap: 2rem;
 
-			.mobile {
+			:global(.mobile) {
 				display: none;
 			}
 		}
@@ -191,50 +153,6 @@
 			letter-spacing: 0.05em;
 			color: var(--c-text-extra-light);
 			text-transform: uppercase;
-		}
-
-		.chart-area {
-			display: grid;
-			grid-template-columns: 1fr auto auto;
-			gap: 1.75rem;
-
-			.divider {
-				width: 2px;
-				background: var(--c-box-3);
-			}
-
-			.featured-metrics {
-				display: grid;
-				align-content: space-evenly;
-				gap: var(--gap);
-				padding-inline: 0.75rem;
-				text-align: center;
-
-				.sm {
-					font: var(--f-heading-xs-roman);
-					color: var(--c-text-light);
-				}
-			}
-
-			@media (--viewport-md-down) {
-				grid-template-columns: auto;
-
-				.divider {
-					display: none;
-				}
-
-				.featured-metrics {
-					grid-row: 1;
-					display: flex;
-					justify-content: space-between;
-				}
-			}
-
-			@media (--viewport-sm-down) {
-				.featured-metrics {
-					justify-content: space-evenly;
-				}
-			}
 		}
 
 		.additional-metrics {
