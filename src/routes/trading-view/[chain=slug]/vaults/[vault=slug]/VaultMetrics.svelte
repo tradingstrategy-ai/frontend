@@ -85,11 +85,21 @@
 		</div>
 	</MetricsBox>
 
-	<MetricsBox class="fees" title="Fees / lockup" --padding="1.75rem">
+	<MetricsBox class="fees" title="Fees / lockup">
 		<div class="metrics-inner">
 			<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
 			<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
 			<Metric label="Lockup period">{getFormattedLockup(vault)}</Metric>
+		</div>
+	</MetricsBox>
+
+	<MetricsBox class="notes" title="Notes">
+		<div class={['notes-inner', !vault.notes && 'empty']}>
+			{#if vault.notes}
+				{vault.notes}
+			{:else}
+				No notes available.
+			{/if}
 		</div>
 	</MetricsBox>
 </div>
@@ -114,6 +124,10 @@
 
 			:global(.returns) {
 				grid-area: span 2 / 2;
+			}
+
+			:global(.notes) {
+				grid-column: span 2;
 			}
 		}
 
@@ -181,6 +195,14 @@
 
 			@media (--viewport-sm-down) {
 				font: var(--f-ui-sm-roman);
+			}
+		}
+
+		.notes-inner {
+			font: var(--f-ui-lg-roman);
+
+			&.empty {
+				color: var(--c-text-extra-light);
 			}
 		}
 	}
