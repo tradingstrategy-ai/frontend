@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { Chain } from '$lib/helpers/chain';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import { type Chain, getExplorerUrl } from '$lib/helpers/chain';
 	import Button from '$lib/components/Button.svelte';
+	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
@@ -32,8 +33,16 @@
 
 	{#snippet subtitle()}
 		<span class="subtitle">
-			vault on {vault.protocol} on
-			<EntitySymbol size="0.875em" label={chain?.name} logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+			<span class="protocol-and-chain">
+				vault on {vault.protocol} on
+				<EntitySymbol size="0.875em" label={chain?.name} logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+			</span>
+			<CryptoAddressWidget
+				size="sm"
+				class="vault-address"
+				address={vault.address}
+				href={getExplorerUrl(chain, vault.address)}
+			/>
 		</span>
 	{/snippet}
 
@@ -60,8 +69,20 @@
 	}
 
 	.subtitle {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5ex;
+		@media (--viewport-sm-up) {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+
+			:global(.vault-address) {
+				max-width: 10rem;
+			}
+		}
+
+		.protocol-and-chain {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5ex;
+		}
 	}
 </style>
