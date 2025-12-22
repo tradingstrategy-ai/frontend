@@ -114,6 +114,15 @@ export const chains = (() => {
 			hasBackendData: false
 		},
 		{
+			id: 143,
+			slug: 'monad',
+			name: 'Monad',
+			homepage: 'https://www.monad.xyz/',
+			explorer: 'https://monadscan.com',
+			nativeCurrency: 'MON',
+			hasBackendData: false
+		},
+		{
 			id: 146,
 			slug: 'sonic',
 			name: 'Sonic',
