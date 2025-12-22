@@ -580,8 +580,11 @@
 
 			.risk {
 				width: 6%;
-				font: var(--f-ui-xs-medium);
-				letter-spacing: 0.02em;
+
+				&:is(td) {
+					font: var(--f-ui-xs-medium);
+					letter-spacing: 0.02em;
+				}
 
 				:global(.popup) {
 					right: 0;
