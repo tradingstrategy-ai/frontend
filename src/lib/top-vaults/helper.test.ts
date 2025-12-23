@@ -13,12 +13,12 @@ describe('getFormattedLockup', () => {
 		expect(getFormattedLockup(vault)).toBe('Unknown');
 	});
 
-	test('should return "None (instant)" for zero or very small lockup', () => {
+	test('should return "No lockup" for zero or very small lockup', () => {
 		vault.lockup = 0;
-		expect(getFormattedLockup(vault)).toBe('None (instant)');
+		expect(getFormattedLockup(vault)).toBe('No lockup');
 
 		vault.lockup = 59;
-		expect(getFormattedLockup(vault)).toBe('None (instant)');
+		expect(getFormattedLockup(vault)).toBe('No lockup');
 	});
 
 	test('should include minutes if under 1 hour', () => {

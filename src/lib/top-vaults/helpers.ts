@@ -38,7 +38,7 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 	if (days > 0) addUnit('day', days);
 	if (remainderHours > 0) addUnit('hour', remainderHours);
 	if (parts.length === 0 && minutes > 0) addUnit('minute', minutes);
-	if (parts.length === 0) parts.push('None (instant)');
+	if (parts.length === 0) parts.push('No lockup');
 
 	return parts.join(', ');
 }
