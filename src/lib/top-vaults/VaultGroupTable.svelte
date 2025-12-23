@@ -89,7 +89,7 @@
 			id: 'cta',
 			header: '',
 			accessor: (row) => `${page.url.pathname}/${row.slug}`,
-			cell: ({ value }) => createRender(TableRowTarget, { size: 'sm', label: 'View protocol', href: value }),
+			cell: ({ value }) => createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -122,7 +122,7 @@
 			}
 
 			:global(.cta) {
-				--button-width: 12rem;
+				--button-width: 10rem;
 				width: max(calc(24vw), 14rem);
 			}
 
@@ -136,7 +136,7 @@
 				}
 
 				:global(.cta) {
-					width: 14rem;
+					width: 12rem;
 				}
 			}
 		}
