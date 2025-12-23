@@ -139,13 +139,12 @@
 
 {#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>)}
 	{#if net !== null}
-		<span class="primary">{formatter(net)}</span>
+		{formatter(net)}
 	{:else if gross !== null}
 		<Tooltip>
-			<div slot="trigger" class="multiline">
-				<span class="primary">{formatter(gross)}</span>
-				<span class="secondary">(G)</span>
-			</div>
+			<svelte:fragment slot="trigger">
+				{formatter(gross)}*
+			</svelte:fragment>
 			<svelte:fragment slot="popup">
 				Fee information for this protocol is not yet available. The calculation is based on gross profit and fees may
 				apply.
