@@ -1,7 +1,6 @@
 import type { VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
 import { getChain } from '$lib/helpers/chain';
-import { formatDuration, intervalToDuration } from 'date-fns';
 import { isNumber } from '$lib/helpers/formatters';
 
 /**
