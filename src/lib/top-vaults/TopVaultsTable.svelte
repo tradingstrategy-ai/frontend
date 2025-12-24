@@ -8,14 +8,13 @@
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import ChainCell from './ChainCell.svelte';
-	import DepositEventsCell from './DepositEventsCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { isBlacklisted, resolveVaultDetails } from './helpers';
+	import { getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
 
@@ -242,7 +241,7 @@
 						'asc',
 						multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
 					)}
-					{@render sortColHeader('Deposit Events', 'event_count', 'desc', multiValCompare(['event_count']))}
+					{@render sortColHeader('Lockup', 'lockup', 'asc', multiValCompare(['lockup'], Infinity))}
 					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', multiValCompare(['risk_numeric'], Infinity))}
 					<th class="sparkline">90 day price</th>
 				</tr>
@@ -299,8 +298,8 @@
 						<td class="fees right">
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
-						<td class="event_count right">
-							<DepositEventsCell value={vault.event_count} />
+						<td class={['lockup', vault.lockup === null && 'unknown']}>
+							{getFormattedLockup(vault)}
 						</td>
 						<td class="risk">
 							<RiskCell risk={vault.risk} />
@@ -573,22 +572,26 @@
 				width: 4.5%;
 			}
 
-			.event_count {
-				width: 5.5%;
+			.lockup {
+				width: 6%;
+
+				&.unknown {
+					color: var(--c-text-light);
+				}
 			}
 
 			.risk {
-				width: 6%;
-
-				&:is(td) {
-					font: var(--f-ui-xs-medium);
-					letter-spacing: 0.02em;
-				}
+				width: 5.5%;
 
 				:global(.popup) {
 					right: 0;
 					white-space: nowrap;
 				}
+			}
+
+			td:is(.lockup, .risk) {
+				font: var(--f-ui-xs-medium);
+				letter-spacing: 0.02em;
 			}
 
 			.sparkline {
