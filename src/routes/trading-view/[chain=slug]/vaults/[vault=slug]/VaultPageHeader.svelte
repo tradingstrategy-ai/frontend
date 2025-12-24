@@ -8,6 +8,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { resolve } from '$app/paths';
+	import { hasSupportedProtocol } from '$lib/top-vaults/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -17,7 +18,7 @@
 	let { vault, chain }: Props = $props();
 
 	let externalSiteName = $derived.by(() => {
-		if (!vault.protocol.startsWith('<')) return vault.protocol;
+		if (hasSupportedProtocol(vault)) return vault.protocol;
 		if (vault.link) return new URL(vault.link).host;
 	});
 </script>

@@ -18,6 +18,10 @@ export function isBlacklisted(vault: VaultInfo) {
 	return vault.risk_numeric === 999;
 }
 
+export function hasSupportedProtocol(vault: VaultInfo) {
+	return !vault.protocol.startsWith('<');
+}
+
 /**
  * Return the formatted lockup value for a vault (in days, hours, minutes if needed)
  */
