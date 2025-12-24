@@ -7,6 +7,7 @@
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		vault: VaultInfo;
@@ -34,8 +35,11 @@
 	{#snippet subtitle()}
 		<span class="subtitle">
 			<span class="protocol-and-chain">
-				vault on {vault.protocol} on
-				<EntitySymbol size="0.875em" label={chain?.name} logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+				vault on
+				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>{vault.protocol}</a> on
+				<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
+					<a href={resolve(`/trading-view/${chain?.slug}`)}>{chain?.name}</a>
+				</EntitySymbol>
 			</span>
 			<CryptoAddressWidget
 				size="sm"
@@ -83,6 +87,17 @@
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5ex;
+
+			a {
+				--shadow-color: var(--c-text-ultra-light);
+				box-shadow: inset 0px -2px var(--shadow-color);
+				transition: var(--transition-1);
+
+				&:hover {
+					color: var(--c-text-light);
+					--shadow-color: currentColor;
+				}
+			}
 		}
 	}
 </style>
