@@ -1,7 +1,6 @@
 import type { VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
 import { getChain } from '$lib/helpers/chain';
-import { formatDuration, intervalToDuration } from 'date-fns';
 import { isNumber } from '$lib/helpers/formatters';
 
 /**
@@ -17,6 +16,10 @@ export function resolveVaultDetails(vault: VaultInfo) {
  */
 export function isBlacklisted(vault: VaultInfo) {
 	return vault.risk_numeric === 999;
+}
+
+export function hasSupportedProtocol(vault: VaultInfo) {
+	return !vault.protocol.startsWith('<');
 }
 
 /**
@@ -39,7 +42,7 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 	if (days > 0) addUnit('day', days);
 	if (remainderHours > 0) addUnit('hour', remainderHours);
 	if (parts.length === 0 && minutes > 0) addUnit('minute', minutes);
-	if (parts.length === 0) parts.push('None (instant)');
+	if (parts.length === 0) parts.push('No lockup');
 
 	return parts.join(', ');
 }

@@ -93,15 +93,11 @@
 		</div>
 	</MetricsBox>
 
-	<MetricsBox class="notes" title="Notes">
-		<div class={['notes-inner', !vault.notes && 'empty']}>
-			{#if vault.notes}
-				{vault.notes}
-			{:else}
-				No notes available.
-			{/if}
-		</div>
-	</MetricsBox>
+	{#if vault.notes}
+		<MetricsBox class="notes" title="Notes">
+			<div class="notes-inner">{vault.notes}</div>
+		</MetricsBox>
+	{/if}
 </div>
 
 <style>
@@ -200,10 +196,6 @@
 
 		.notes-inner {
 			font: var(--f-ui-lg-roman);
-
-			&.empty {
-				color: var(--c-text-extra-light);
-			}
 		}
 	}
 </style>

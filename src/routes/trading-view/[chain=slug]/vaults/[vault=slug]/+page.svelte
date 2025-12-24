@@ -1,13 +1,16 @@
 <script lang="ts">
+	import { discordUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import VaultPageHeader from './VaultPageHeader.svelte';
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 	import VaultMetrics from './VaultMetrics.svelte';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
+	import IconDiscord from '~icons/local/discord';
+	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -24,6 +27,17 @@
 		{#if isBlacklisted(vault)}
 			<Alert size="md" title="Blacklisted">
 				{vault.notes ?? 'Unknown reason'}
+			</Alert>
+		{/if}
+
+		{#if !hasSupportedProtocol(vault)}
+			<Alert size="md" status="warning" title="Protocol not supported">
+				<div>
+					This protocol is not supported yet. Contact us on Discord for information about how to include new protocols.
+				</div>
+				<Button slot="cta" size="sm" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer">
+					<IconDiscord slot="icon" />
+				</Button>
 			</Alert>
 		{/if}
 

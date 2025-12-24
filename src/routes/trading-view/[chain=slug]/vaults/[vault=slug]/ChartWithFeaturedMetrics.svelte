@@ -27,8 +27,7 @@
 				{:else}
 					<Tooltip>
 						<span slot="trigger" style:white-space="nowrap">
-							<Profitability of={vault.one_month_cagr} />
-							<span class="sm">(G)</span>
+							<Profitability of={vault.one_month_cagr} /><span class="gross-indicator">*</span>
 						</span>
 						<svelte:fragment slot="popup">
 							Fee information for this protocol is not yet available. The calculation is based on gross profit and fees
@@ -70,6 +69,10 @@
 			gap: var(--gap);
 			padding-inline: 0.75rem;
 			text-align: center;
+
+			.gross-indicator {
+				color: var(--c-text-light);
+			}
 
 			.sm {
 				font: var(--f-heading-xs-roman);
