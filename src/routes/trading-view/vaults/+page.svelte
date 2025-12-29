@@ -1,8 +1,17 @@
 <script lang="ts">
+	import type { TopVaults } from '$lib/top-vaults/schemas.js';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 
+	function filterByMinTvl(topVaults: TopVaults, tvlThreshold: number) {
+		const vaults = topVaults.vaults.filter((vault) => {
+			return (vault.current_nav ?? 0) >= tvlThreshold;
+		});
+
+		return { ...topVaults, vaults };
+	}
+
 	let { data } = $props();
-	let { topVaults } = data;
+	let topVaults = $derived(filterByMinTvl(data.topVaults, 50_000));
 </script>
 
 <svelte:head>
