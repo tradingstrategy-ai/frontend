@@ -28,7 +28,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Code format check
-        run: pnpm run format:check
+        run: |
+          echo "Using prettier: $(pnpm run format --version)"
+          pnpm run format:check
 
   test:
     runs-on: ubuntu-latest
