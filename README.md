@@ -21,7 +21,7 @@ pnpm --version
 ### Install dependencies
 
 ```shell
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ## Install and build submodules

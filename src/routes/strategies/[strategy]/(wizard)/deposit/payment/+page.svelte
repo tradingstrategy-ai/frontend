@@ -322,15 +322,15 @@
 
 			{#if $payment === 'authorizing'}
 				<Alert size="sm" status="info" title="Authorise transfer">
-					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not support
-					the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
+					Authorise the EIP-3009 transfer of {denominationToken.symbol} tokens from your wallet. If your wallet does not
+					support the EIP-3009 transfer type, you will be prompted to sign a message and then send a transaction.
 				</Alert>
 			{/if}
 
 			{#if $payment === 'approving'}
 				<Alert size="sm" status="info" title="Approve transfer">
-					Please approve the requested {denominationToken.label} spending cap in your wallet. This allows the designated amount
-					of {denominationToken.label} to be transfered from your wallet to purchase shares.
+					Please approve the requested {denominationToken.label} spending cap in your wallet. This allows the designated
+					amount of {denominationToken.label} to be transfered from your wallet to purchase shares.
 				</Alert>
 			{/if}
 
