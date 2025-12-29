@@ -3,12 +3,11 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 
 	function filterByMinTvl(topVaults: TopVaults, tvlThreshold: number) {
-
 		const vaults = topVaults.vaults.filter((vault) => {
 			return (vault.current_nav ?? 0) >= tvlThreshold;
-		});		
+		});
 
-		return { ...topVaults, vaults }
+		return { ...topVaults, vaults };
 	}
 
 	let { data } = $props();
