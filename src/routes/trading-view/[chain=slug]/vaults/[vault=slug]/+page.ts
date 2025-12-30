@@ -15,5 +15,7 @@ export async function load({ params, parent }) {
 
 	if (!vault) error(404, 'Vault not found');
 
+	console.log(vault);
+
 	return { vault };
 }

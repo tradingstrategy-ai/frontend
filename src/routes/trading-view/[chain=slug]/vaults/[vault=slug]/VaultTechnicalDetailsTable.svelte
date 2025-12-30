@@ -16,20 +16,25 @@
 	let copyWidget = $state<CopyWidget>();
 
 	const rows = $derived([
-		{ label: 'Name', value: vault.name },
+		{ label: 'Vault name', value: vault.name },
 		{ label: 'Vault address', value: vault.address, type: 'address' as const },
 		{ label: 'Chain', value: chain, type: 'chain' as const },
 		{
 			label: 'Denomination',
-			value: { name: vault.denomination, slug: vault.denomination_slug },
+			value: { name: vault.denomination, slug: vault.denomination_slug, address: vault.denomination_token_address },
 			type: 'denomination' as const
 		},
-		{ label: 'Share token', value: vault.share_token },
+		{
+			label: 'Share token',
+			value: { name: vault.share_token, address: vault.share_token_address },
+			type: 'token' as const
+		},
 		{
 			label: 'Protocol',
 			value: { name: vault.protocol, slug: vault.protocol_slug },
 			type: 'protocol' as const
 		},
+		{ label: 'Homepage', value: vault.link, type: 'link' as const },
 		{
 			label: 'Current NAV',
 			value: { amount: vault.current_nav, symbol: vault.denomination },
@@ -40,17 +45,20 @@
 			value: { amount: vault.peak_nav, symbol: vault.denomination },
 			type: 'currency' as const
 		},
+		{
+			label: 'Last share price',
+			value: { amount: vault.last_share_price, symbol: vault.denomination },
+			type: 'currency' as const
+		},
 
-		{ label: 'Start date', value: vault.start_date, type: 'date' as const },
-		{ label: 'End date', value: vault.end_date, type: 'date' as const },
+		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
 		{ label: 'Last updated', value: vault.last_updated_at, type: 'date' as const },
 		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
 		{ label: 'Fee mode', value: vault.fee_mode },
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
-		{ label: 'Stablecoinish', value: vault.stablecoinish, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
-		{ label: 'Event count', value: vault.event_count, type: 'number' as const },
+		{ label: 'Deposit events', value: vault.event_count, type: 'number' as const },
 		{ label: 'Lifetime samples', value: vault.lifetime_samples, type: 'number' as const },
 		{ label: 'Lifetime start', value: vault.lifetime_start, type: 'date' as const },
 		{ label: 'Lifetime end', value: vault.lifetime_end, type: 'date' as const },
@@ -67,7 +75,7 @@
 
 		switch (type) {
 			case 'date':
-				return String(value);
+				return String(value).replace('T', ' ') + ' UTC';
 			case 'number':
 				return formatAmount(value as number);
 			case 'boolean':
@@ -101,10 +109,28 @@
 								<a href="/trading-view/{row.value.slug}">{row.value.name} ({row.value.id})</a>
 							{:else if row.type === 'denomination'}
 								<a href="/trading-view/vaults/stablecoins/{row.value.slug}">{row.value.name}</a>
+								{#if row.value.address}
+									(<a href={getExplorerUrl(chain, row.value.address)} target="_blank" rel="noreferrer">
+										<HashAddress address={row.value.address} endChars={4} />
+									</a>)
+								{/if}
+							{:else if row.type === 'token'}
+								{row.value.name}
+								{#if row.value.address}
+									(<a href={getExplorerUrl(chain, row.value.address)} target="_blank" rel="noreferrer">
+										<HashAddress address={row.value.address} endChars={4} />
+									</a>)
+								{/if}
 							{:else if row.type === 'protocol'}
 								<a href="/trading-view/vaults/protocols/{row.value.slug}">{row.value.name}</a>
 							{:else if row.type === 'currency'}
 								{row.value.amount != null ? `${formatAmount(row.value.amount)} ${row.value.symbol}` : notFilledMarker}
+							{:else if row.type === 'link'}
+								{#if row.value}
+									<a href={row.value} target="_blank" rel="noreferrer">View vault on protocol website</a>
+								{:else}
+									{notFilledMarker}
+								{/if}
 							{:else}
 								{formatValue(row.value, row.type)}
 							{/if}
