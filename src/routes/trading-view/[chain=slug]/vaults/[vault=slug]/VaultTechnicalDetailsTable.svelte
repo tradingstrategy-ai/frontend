@@ -16,35 +16,50 @@
 	let copyWidget = $state<CopyWidget>();
 
 	const rows = $derived([
-		{ label: 'Vault Address', value: vault.address, type: 'address' as const },
+		{ label: 'Name', value: vault.name },
+		{ label: 'Vault address', value: vault.address, type: 'address' as const },
 		{ label: 'Chain', value: chain, type: 'chain' as const },
-		{ label: 'Share Token', value: vault.share_token },
-		{ label: 'Vault ID', value: vault.id },
-		{ label: 'Vault Slug', value: vault.vault_slug },
-		{ label: 'Protocol', value: vault.protocol },
-		{ label: 'Protocol Slug', value: vault.protocol_slug },
-		{ label: 'Denomination', value: vault.denomination },
-		{ label: 'Normalised Denomination', value: vault.normalised_denomination },
-		{ label: 'Denomination Slug', value: vault.denomination_slug },
-		{ label: 'Start Date', value: vault.start_date, type: 'date' as const },
-		{ label: 'End Date', value: vault.end_date, type: 'date' as const },
-		{ label: 'Last Updated', value: vault.last_updated_at, type: 'date' as const },
-		{ label: 'Last Updated Block', value: vault.last_updated_block, type: 'number' as const },
-		{ label: 'Fee Mode', value: vault.fee_mode },
-		{ label: 'Fees Internalised', value: vault.fee_internalised, type: 'boolean' as const },
+		{
+			label: 'Denomination',
+			value: { name: vault.denomination, slug: vault.denomination_slug },
+			type: 'denomination' as const
+		},
+		{ label: 'Share token', value: vault.share_token },
+		{
+			label: 'Protocol',
+			value: { name: vault.protocol, slug: vault.protocol_slug },
+			type: 'protocol' as const
+		},
+		{
+			label: 'Current NAV',
+			value: { amount: vault.current_nav, symbol: vault.denomination },
+			type: 'currency' as const
+		},
+		{
+			label: 'Peak NAV',
+			value: { amount: vault.peak_nav, symbol: vault.denomination },
+			type: 'currency' as const
+		},
+
+		{ label: 'Start date', value: vault.start_date, type: 'date' as const },
+		{ label: 'End date', value: vault.end_date, type: 'date' as const },
+		{ label: 'Last updated', value: vault.last_updated_at, type: 'date' as const },
+		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
+		{ label: 'Fee mode', value: vault.fee_mode },
+		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Stablecoinish', value: vault.stablecoinish, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
-		{ label: 'Event Count', value: vault.event_count, type: 'number' as const },
-		{ label: 'Lifetime Samples', value: vault.lifetime_samples, type: 'number' as const },
-		{ label: 'Lifetime Start', value: vault.lifetime_start, type: 'date' as const },
-		{ label: 'Lifetime End', value: vault.lifetime_end, type: 'date' as const },
-		{ label: '1 Month Samples', value: vault.one_month_samples, type: 'number' as const },
-		{ label: '1 Month Start', value: vault.one_month_start, type: 'date' as const },
-		{ label: '1 Month End', value: vault.one_month_end, type: 'date' as const },
-		{ label: '3 Month Samples', value: vault.three_months_samples, type: 'number' as const },
-		{ label: '3 Month Start', value: vault.three_months_start, type: 'date' as const },
-		{ label: '3 Month End', value: vault.three_months_end, type: 'date' as const }
+		{ label: 'Event count', value: vault.event_count, type: 'number' as const },
+		{ label: 'Lifetime samples', value: vault.lifetime_samples, type: 'number' as const },
+		{ label: 'Lifetime start', value: vault.lifetime_start, type: 'date' as const },
+		{ label: 'Lifetime end', value: vault.lifetime_end, type: 'date' as const },
+		{ label: '1 month samples', value: vault.one_month_samples, type: 'number' as const },
+		{ label: '1 month start', value: vault.one_month_start, type: 'date' as const },
+		{ label: '1 month end', value: vault.one_month_end, type: 'date' as const },
+		{ label: '3 month samples', value: vault.three_months_samples, type: 'number' as const },
+		{ label: '3 month start', value: vault.three_months_start, type: 'date' as const },
+		{ label: '3 month end', value: vault.three_months_end, type: 'date' as const }
 	]);
 
 	function formatValue(value: unknown, type?: string): string {
@@ -84,6 +99,12 @@
 								</span>
 							{:else if row.type === 'chain'}
 								<a href="/trading-view/{row.value.slug}">{row.value.name} ({row.value.id})</a>
+							{:else if row.type === 'denomination'}
+								<a href="/trading-view/vaults/stablecoins/{row.value.slug}">{row.value.name}</a>
+							{:else if row.type === 'protocol'}
+								<a href="/trading-view/vaults/protocols/{row.value.slug}">{row.value.name}</a>
+							{:else if row.type === 'currency'}
+								{row.value.amount != null ? `${formatAmount(row.value.amount)} ${row.value.symbol}` : notFilledMarker}
 							{:else}
 								{formatValue(row.value, row.type)}
 							{/if}

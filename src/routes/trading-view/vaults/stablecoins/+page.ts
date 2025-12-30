@@ -11,7 +11,7 @@ export async function load({ parent, url: { searchParams } }) {
 
 		const slug = vault.denomination_slug;
 
-		if(vault.vault_slug == "savings-infinifi-usd") {
+		if (vault.vault_slug == 'savings-infinifi-usd') {
 			console.log(vault);
 		}
 
