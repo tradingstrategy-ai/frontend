@@ -34,7 +34,11 @@
 			value: { name: vault.protocol, slug: vault.protocol_slug },
 			type: 'protocol' as const
 		},
-		{ label: 'Homepage', value: vault.link, type: 'link' as const },
+		{
+			label: 'Homepage',
+			value: { url: vault.link, hasProtocol: !vault.protocol.includes('<') },
+			type: 'link' as const
+		},
 		{
 			label: 'Current NAV',
 			value: { amount: vault.current_nav, symbol: vault.denomination },
@@ -126,8 +130,10 @@
 							{:else if row.type === 'currency'}
 								{row.value.amount != null ? `${formatAmount(row.value.amount)} ${row.value.symbol}` : notFilledMarker}
 							{:else if row.type === 'link'}
-								{#if row.value}
-									<a href={row.value} target="_blank" rel="noreferrer">View vault on protocol website</a>
+								{#if row.value.url}
+									<a href={row.value.url} target="_blank" rel="noreferrer">
+										{row.value.hasProtocol ? 'View vault on protocol website' : 'View vault on blockchain explorer'}
+									</a>
 								{:else}
 									{notFilledMarker}
 								{/if}
