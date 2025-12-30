@@ -28,9 +28,10 @@
 		topVaults: TopVaults;
 		chain?: Chain;
 		tvlThreshold?: number;
+		filterTvl?: boolean;
 	}
 
-	let { topVaults, chain, tvlThreshold = TVL_THRESHOLD_DEFAULT }: Props = $props();
+	let { topVaults, chain, tvlThreshold = TVL_THRESHOLD_DEFAULT, filterTvl }: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -52,6 +53,13 @@
 		const filterCompareStr = filterValue.trim().toLowerCase();
 		return baseVaults.filter((v) => {
 			const chain = getChain(v.chain_id);
+
+			if (filterTvl) {
+				if ((v.current_nav ?? 0) < tvlThreshold) {
+					return false;
+				}
+			}
+
 			const vaultCompareStr = [
 				v.chain_id,
 				chain?.name ?? '',

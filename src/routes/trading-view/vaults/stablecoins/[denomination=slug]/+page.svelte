@@ -14,5 +14,7 @@
 	{topVaults}
 	breadcrumbs={{ stablecoins: 'Stablecoins', [denominationSlug]: denominationName }}
 	title="Top {denominationName} vaults"
-	subtitle="The best performing {denominationName} DeFi vaults with minimum $50k USD TVL"
+	subtitle="The best performing {denominationName} DeFi vaults with minimum $10k USD TVL"
+	tvlThreshold={10000}
+	filterTvl={true}
 />

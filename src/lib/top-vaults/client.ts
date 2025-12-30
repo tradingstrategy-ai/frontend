@@ -3,8 +3,8 @@ import { type TopVaults, topVaultsSchema } from './schemas';
 import { getChain } from '$lib/helpers/chain';
 
 // Debug helper to play with new data and bypass Cloudflare
-// const TOP_VAULTS_URL = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json?cache-bust=2';
-const TOP_VAULTS_URL = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
+const TOP_VAULTS_URL = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json?cache-bust=3';
+// const TOP_VAULTS_URL = 'https://top-defi-vaults.tradingstrategy.ai/top_vaults_by_chain.json';
 
 export async function fetchTopVaults(
 	fetch: Fetch,

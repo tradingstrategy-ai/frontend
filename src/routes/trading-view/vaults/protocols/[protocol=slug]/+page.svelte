@@ -14,5 +14,7 @@
 	{topVaults}
 	breadcrumbs={{ protocols: 'Protocols', [protocolSlug]: protocolName }}
 	title="Top {protocolName} vaults"
-	subtitle="The best performing DeFi vaults on {protocolName} protocol with minimum $50k USD TVL"
+	subtitle="The best performing DeFi vaults on {protocolName} protocol with minimum $10k USD TVL"
+	tvlThreshold={10000}
+	filterTvl={true}
 />

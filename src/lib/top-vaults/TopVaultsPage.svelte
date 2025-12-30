@@ -17,9 +17,10 @@
 		title: string;
 		subtitle: string;
 		tvlThreshold?: number;
+		filterTvl?: boolean;
 	}
 
-	let { chain, topVaults, breadcrumbs, title: pageTitle, subtitle, tvlThreshold }: Props = $props();
+	let { chain, topVaults, breadcrumbs, title: pageTitle, subtitle, tvlThreshold, filterTvl }: Props = $props();
 </script>
 
 <Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
@@ -46,7 +47,7 @@
 			{#if !topVaults.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
 			{:else}
-				<TopVaultsTable {topVaults} {chain} {tvlThreshold} />
+				<TopVaultsTable {topVaults} {chain} {tvlThreshold} {filterTvl} />
 			{/if}
 		</div>
 	</Section>
