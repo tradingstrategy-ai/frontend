@@ -16,4 +16,6 @@
 	breadcrumbs={{ [chain.slug]: chain.name }}
 	title="Top {chain.name} Vaults"
 	subtitle="The best performing DeFi vaults on {chain.name} with minimum $50k USD TVL"
+	tvlThreshold={50000}
+	filterTvl={true}
 />

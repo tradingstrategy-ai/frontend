@@ -34,7 +34,11 @@
 			value: { name: vault.protocol, slug: vault.protocol_slug },
 			type: 'protocol' as const
 		},
-		{ label: 'Homepage', value: vault.link, type: 'link' as const },
+		{
+			label: 'Homepage',
+			value: { url: vault.link, hasProtocol: !(vault.link || '').includes('routescan') },
+			type: 'link' as const
+		},
 		{
 			label: 'Current NAV',
 			value: { amount: vault.current_nav, symbol: vault.denomination },
@@ -106,7 +110,7 @@
 									</button>
 								</span>
 							{:else if row.type === 'chain'}
-								<a href="/trading-view/{row.value.slug}">{row.value.name} ({row.value.id})</a>
+								<a href="/trading-view/{row.value.slug}/vaults">{row.value.name} ({row.value.id})</a>
 							{:else if row.type === 'denomination'}
 								<a href="/trading-view/vaults/stablecoins/{row.value.slug}">{row.value.name}</a>
 								{#if row.value.address}
@@ -126,8 +130,10 @@
 							{:else if row.type === 'currency'}
 								{row.value.amount != null ? `${formatAmount(row.value.amount)} ${row.value.symbol}` : notFilledMarker}
 							{:else if row.type === 'link'}
-								{#if row.value}
-									<a href={row.value} target="_blank" rel="noreferrer">View vault on protocol website</a>
+								{#if row.value.url}
+									<a href={row.value.url} target="_blank" rel="noreferrer">
+										{row.value.hasProtocol ? 'View vault on protocol website' : 'View vault on blockchain explorer'}
+									</a>
 								{:else}
 									{notFilledMarker}
 								{/if}
