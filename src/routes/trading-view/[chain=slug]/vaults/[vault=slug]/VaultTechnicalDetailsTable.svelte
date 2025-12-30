@@ -36,7 +36,7 @@
 		},
 		{
 			label: 'Homepage',
-			value: { url: vault.link, hasProtocol: !vault.protocol.includes('<') },
+			value: { url: vault.link, hasProtocol: !(vault.link || '').includes('routescan') },
 			type: 'link' as const
 		},
 		{
@@ -110,7 +110,7 @@
 									</button>
 								</span>
 							{:else if row.type === 'chain'}
-								<a href="/trading-view/{row.value.slug}">{row.value.name} ({row.value.id})</a>
+								<a href="/trading-view/{row.value.slug}/vaults">{row.value.name} ({row.value.id})</a>
 							{:else if row.type === 'denomination'}
 								<a href="/trading-view/vaults/stablecoins/{row.value.slug}">{row.value.name}</a>
 								{#if row.value.address}
