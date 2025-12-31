@@ -12,6 +12,7 @@
 			"Bash(poetry:*)",
 			"Bash(source:*)",
 			"Bash(grep:*)",
+			"Bash(pnpm:*)",
 			"Edit(**)",
 			"Write(**)",
 			"MultiEdit(**)",
