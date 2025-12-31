@@ -6,6 +6,7 @@
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
+	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 
 	let { data } = $props();
 	let { protocols, options } = $derived(data);
@@ -33,6 +34,8 @@
 			{/snippet}
 		</HeroBanner>
 	</Section>
+
+	<VaultListingsSelector boxed />
 
 	<Section padding="sm">
 		<VaultGroupTable groupLabel="Protocol" includeRisk rows={protocols} {...options} {onChange} />

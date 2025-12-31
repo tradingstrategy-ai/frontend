@@ -8,6 +8,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import TopVaultsTable from './TopVaultsTable.svelte';
+	import VaultListingsSelector from './VaultListingsSelector.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
@@ -42,7 +43,7 @@
 
 	<Section>
 		<div class="top-vaults-content">
-			<TopVaultsOptIn />
+			<VaultListingsSelector />
 
 			{#if !topVaults.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
@@ -50,6 +51,10 @@
 				<TopVaultsTable {topVaults} {chain} {tvlThreshold} {filterTvl} />
 			{/if}
 		</div>
+	</Section>
+
+	<Section>
+		<TopVaultsOptIn />
 	</Section>
 </main>
 
