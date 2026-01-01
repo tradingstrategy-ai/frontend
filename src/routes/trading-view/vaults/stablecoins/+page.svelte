@@ -29,13 +29,15 @@
 	<Section tag="header">
 		<HeroBanner subtitle="Browse supported DeFi vault stablecoins across all blockchains">
 			{#snippet title()}
-				<span>DeFi vault stablecoins</span>
+				<span>DeFi vaults by their stablecoin denomiation</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
 
-	<VaultListingsSelector boxed />
+	<Section --section-padding="0">
+		<VaultListingsSelector />
+	</Section>
 
 	<Section padding="sm">
 		<VaultGroupTable groupLabel="Stablecoin" rows={stablecoins} {...options} {onChange} />

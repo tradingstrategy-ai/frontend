@@ -9,27 +9,31 @@
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 
 	let { data } = $props();
-	let { protocols, options } = $derived(data);
+	let { chains, options } = $derived(data);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};
+
+	function getHref(slug: string) {
+		return `/trading-view/${slug}/vaults`;
+	}
 </script>
 
 <svelte:head>
-	<title>DeFi stablecoin vault protocols | Trading Strategy</title>
-	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
+	<title>DeFi vaults by chain | Trading Strategy</title>
+	<meta name="description" content="Top DeFi vaults across all blockchains, grouped by chain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', protocols: 'Protocols' }} />
+<Breadcrumbs labels={{ vaults: 'Top Vaults', chains: 'Chains' }} />
 
-<main class="protocol-index-page">
+<main class="chain-index-page">
 	<Section tag="header">
-		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
+		<HeroBanner subtitle="Browse DeFi vaults grouped by blockchain">
 			{#snippet title()}
-				<span>DeFi stablecoin vault protocols</span>
+				<span>DeFi vaults by chain</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
@@ -40,12 +44,12 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Protocol" includeRisk rows={protocols} {...options} {onChange} />
+		<VaultGroupTable groupLabel="Chain" rows={chains} {...options} {onChange} {getHref} />
 	</Section>
 </main>
 
 <style>
-	.protocol-index-page {
+	.chain-index-page {
 		:global(.badge) {
 			font-size: 0.5em;
 			margin-inline: 0.25em;
