@@ -12,6 +12,7 @@
 		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
 		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
 		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
+		{ href: '/trading-view/vaults/chains', label: 'By chain' },
 		{ href: '/trading-view/vaults/protocols', label: 'By protocol' }
 	];
 

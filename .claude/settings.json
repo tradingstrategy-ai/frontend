@@ -19,6 +19,7 @@
 			"Bash(./scripts/*.sh:*)",
 			"Bash(bash scripts/:*)",
 			"Bash(sh scripts/:*)"
-		]
+		],
+		"allowedTools": ["mcp__playwright(*)"]
 	}
 }

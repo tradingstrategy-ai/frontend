@@ -29,6 +29,7 @@
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
+		getHref?: (slug: string) => string;
 	}
 
 	let {
@@ -38,6 +39,7 @@
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
+		getHref = (slug: string) => `${page.url.pathname}/${slug}`,
 		loading = false,
 		...restProps
 	}: Props = $props();
@@ -88,7 +90,7 @@
 		table.column({
 			id: 'cta',
 			header: '',
-			accessor: (row) => `${page.url.pathname}/${row.slug}`,
+			accessor: (row) => getHref(row.slug),
 			cell: ({ value }) => createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }),
 			plugins: { sort: { disable: true } }
 		})

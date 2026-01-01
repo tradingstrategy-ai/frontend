@@ -2,21 +2,22 @@ import type { VaultGroup } from '$lib/top-vaults/schemas.js';
 import { isBlacklisted } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
+import { getChain } from '$lib/helpers/chain';
 
 export async function load({ parent, url: { searchParams } }) {
 	const { topVaults } = await parent();
 
-	const stablecoins = topVaults.vaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
-		if (isBlacklisted(vault) || !vault.stablecoinish) return acc;
+	const chains = topVaults.vaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
+		if (isBlacklisted(vault)) return acc;
 
-		//
-		if (isBlacklisted(vault) || !vault.stablecoinish) return acc;
+		const chain = getChain(vault.chain_id);
+		if (!chain) return acc;
 
-		const slug = vault.denomination_slug;
+		const slug = chain.slug;
 
 		acc[slug] ??= {
-			slug: slug,
-			name: vault.normalised_denomination,
+			slug,
+			name: chain.name,
 			vault_count: 0,
 			tvl: 0
 		};
@@ -32,7 +33,7 @@ export async function load({ parent, url: { searchParams } }) {
 	};
 
 	return {
-		stablecoins: Object.values(stablecoins),
+		chains: Object.values(chains),
 		options
 	};
 }
