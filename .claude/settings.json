@@ -13,13 +13,14 @@
 			"Bash(source:*)",
 			"Bash(grep:*)",
 			"Bash(pnpm:*)",
+			"Bash(gh:*)",
 			"Edit(**)",
 			"Write(**)",
 			"MultiEdit(**)",
 			"Bash(./scripts/*.sh:*)",
 			"Bash(bash scripts/:*)",
-			"Bash(sh scripts/:*)"
-		],
-		"allowedTools": ["mcp__playwright(*)"]
+			"Bash(sh scripts/:*)",
+			"mcp__playwright__*"
+		]
 	}
 }
