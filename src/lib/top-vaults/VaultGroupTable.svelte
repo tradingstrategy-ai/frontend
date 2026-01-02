@@ -84,7 +84,7 @@
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: 'Avg. APY %',
+			header: 'Avg. 1M APY %',
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
