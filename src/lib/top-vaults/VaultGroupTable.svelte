@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'vault_count', 'name', 'risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -18,7 +18,7 @@
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import RiskCell from './RiskCell.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -83,6 +83,11 @@
 			cell: ({ value }) => value
 		}),
 		table.column({
+			accessor: 'avg_apy',
+			header: 'Avg. APY %',
+			cell: ({ value }) => formatPercent(value)
+		}),
+		table.column({
 			accessor: 'tvl',
 			header: 'TVL',
 			cell: ({ value }) => formatDollar(value, 2)
@@ -116,7 +121,7 @@
 			}
 
 			:global(:is(th, td)) {
-				width: 25%;
+				width: 20%;
 
 				&:not(.name) {
 					text-align: right;
@@ -125,16 +130,16 @@
 
 			:global(.cta) {
 				--button-width: 10rem;
-				width: max(calc(24vw), 14rem);
+				width: max(calc(20vw), 12rem);
 			}
 
 			:global(:has(.risk)) {
 				:global(:is(th, td)) {
-					width: 20%;
+					width: 16%;
 				}
 
 				:global(.name) {
-					width: 45%;
+					width: 36%;
 				}
 
 				:global(.cta) {

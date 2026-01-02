@@ -139,6 +139,7 @@ export interface VaultGroup {
 	name: string;
 	vault_count: number;
 	tvl: number;
+	avg_apy?: number | null;
 	risk?: string | null;
 	risk_numeric?: number | null;
 }
