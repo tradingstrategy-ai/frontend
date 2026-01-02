@@ -35,13 +35,28 @@
 
 	{#snippet subtitle()}
 		<span class="subtitle">
-			<span class="protocol-and-chain">
-				vault on
-				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>{vault.protocol}</a> on
-				<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
-					<a href={resolve(`/trading-view/${chain?.slug}`)}>{chain?.name}</a>
-				</EntitySymbol>
-			</span>
+			{#if vault.ranking_overall_3m != null || vault.ranking_chain_3m != null || vault.ranking_protocol_3m != null}
+				<EntitySymbol size="1.25em" logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+				<span class="ranking">
+					Top
+					{#if vault.ranking_overall_3m != null}
+						<a href={resolve('/trading-view/vaults')}>#{vault.ranking_overall_3m} overall,</a
+						>{/if}{#if vault.ranking_chain_3m != null}<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}
+							>#{vault.ranking_chain_3m} on {chain?.name},</a
+						>{/if}{#if vault.ranking_protocol_3m != null}<a
+							href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}
+							>#{vault.ranking_protocol_3m} on {vault.protocol}</a
+						>{/if}
+				</span>
+			{:else}
+				<span class="protocol-and-chain">
+					vault on
+					<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>{vault.protocol}</a> on
+					<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
+						<a href={resolve(`/trading-view/${chain?.slug}`)}>{chain?.name}</a>
+					</EntitySymbol>
+				</span>
+			{/if}
 			<CryptoAddressWidget
 				size="sm"
 				class="vault-address"
@@ -98,6 +113,23 @@
 					color: var(--c-text-light);
 					--shadow-color: currentColor;
 				}
+			}
+		}
+	}
+
+	.ranking {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5ex;
+		font: var(--f-h6-medium);
+		a {
+			--shadow-color: var(--c-text-ultra-light);
+			box-shadow: inset 0px -2px var(--shadow-color);
+			transition: var(--transition-1);
+
+			&:hover {
+				color: var(--c-text-light);
+				--shadow-color: currentColor;
 			}
 		}
 	}
