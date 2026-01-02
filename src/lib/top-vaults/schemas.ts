@@ -14,6 +14,48 @@ export const vaultFeesSchema = z.object({
 	withdraw: nullableNumber
 });
 
+/** Tearsheet metrics for one period. */
+export const periodMetricsSchema = z.object({
+	period: z.string(),
+	/** Error reason if metrics could not be calculated, null if successful */
+	error_reason: z.string().nullable(),
+	/** When was start share price sampled */
+	period_start_at: isoDateTime.nullable(),
+	/** When was end share price sampled */
+	period_end_at: isoDateTime.nullable(),
+	/** Share price at beginning */
+	share_price_start: nullableNumber,
+	/** Share price at end */
+	share_price_end: nullableNumber,
+	/** Number of raw datapoints used */
+	raw_samples: z.int(),
+	samples_start_at: isoDateTime.nullable(),
+	samples_end_at: isoDateTime.nullable(),
+	/** Number of daily datapoints used */
+	daily_samples: z.int(),
+	/** How much absolute returns we had */
+	returns_gross: nullableNumber,
+	returns_net: nullableNumber,
+	/** Compounding annual returns */
+	cagr_gross: nullableNumber,
+	cagr_net: nullableNumber,
+	/** Annualised volatility, calculated based on daily returns */
+	volatility: nullableNumber,
+	/** Sharpe ratio */
+	sharpe: nullableNumber,
+	/** Period maximum drawdown */
+	max_drawdown: nullableNumber,
+	/** TVL at the start of the period */
+	tvl_start: nullableNumber,
+	/** TVL at the end of the period */
+	tvl_end: nullableNumber,
+	/** Minimum TVL in the period */
+	tvl_low: nullableNumber,
+	/** Maximum TVL in the period */
+	tvl_high: nullableNumber
+});
+export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
+
 export const vaultInfoSchema = z.object({
 	name: z.string(),
 	vault_slug: z.string(),
@@ -81,7 +123,8 @@ export const vaultInfoSchema = z.object({
 	three_months_samples: z.int().nullable(),
 	lifetime_start: isoDateTime.nullable(),
 	lifetime_end: isoDateTime.nullable(),
-	lifetime_samples: z.int().nullable()
+	lifetime_samples: z.int().nullable(),
+	period_results: periodMetricsSchema.array().optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
