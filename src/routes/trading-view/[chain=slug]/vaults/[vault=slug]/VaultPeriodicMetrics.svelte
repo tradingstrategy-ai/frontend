@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { VaultInfo, PeriodMetrics } from '$lib/top-vaults/schemas';
+	import type { Chain } from '$lib/helpers/chain';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import {
 		formatPercent,
@@ -8,12 +9,14 @@
 		formatNumber,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		vault: VaultInfo;
+		chain: Chain;
 	}
 
-	let { vault }: Props = $props();
+	let { vault, chain }: Props = $props();
 
 	// Ordered list of periods to display as columns
 	const periodOrder = ['1w', '1m', '3m', '6m', '1y', 'lifetime'] as const;
@@ -60,6 +63,21 @@
 	// Row definitions in display order
 	const rows: RowDefinition[] = [
 		{
+			label: `<a href="${resolve('/trading-view/vaults')}">Ranking overall</a>`,
+			field: 'ranking_overall',
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+		},
+		{
+			label: `<a href="${resolve(`/trading-view/${chain.slug}/vaults`)}">Ranking on ${chain.name}</a>`,
+			field: 'ranking_chain',
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+		},
+		{
+			label: `<a href="${resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}">Ranking on ${vault.protocol}</a>`,
+			field: 'ranking_protocol',
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+		},
+		{
 			label: '<a href="/glossary/cagr">CAGR</a> (net)',
 			field: 'cagr_net',
 			formatter: (v) => (hasNetFees ? formatPercent(v as number | null) : notFilledMarker)
@@ -85,7 +103,7 @@
 			field: 'max_drawdown',
 			formatter: (v) => formatPercent(v as number | null)
 		},
-		{ label: 'Volatility', field: 'volatility', formatter: (v) => formatPercent(v as number | null) },
+		{ label: '<a href="/glossary/volatility">Volatility</a>', field: 'volatility', formatter: (v) => formatPercent(v as number | null) },
 		{ label: 'TVL low', field: 'tvl_low', formatter: (v) => formatDollar(v as number | null) },
 		{ label: 'TVL high', field: 'tvl_high', formatter: (v) => formatDollar(v as number | null) },
 		{

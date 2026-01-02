@@ -52,7 +52,13 @@ export const periodMetricsSchema = z.object({
 	/** Minimum TVL in the period */
 	tvl_low: nullableNumber,
 	/** Maximum TVL in the period */
-	tvl_high: nullableNumber
+	tvl_high: nullableNumber,
+	/** Rank among all vaults (1 = best), based on CAGR */
+	ranking_overall: z.int().nullable(),
+	/** Rank among vaults on the same chain (1 = best), based on CAGR */
+	ranking_chain: z.int().nullable(),
+	/** Rank among vaults in the same protocol (1 = best), based on CAGR */
+	ranking_protocol: z.int().nullable()
 });
 export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
 
@@ -124,13 +130,7 @@ export const vaultInfoSchema = z.object({
 	lifetime_start: isoDateTime.nullable(),
 	lifetime_end: isoDateTime.nullable(),
 	lifetime_samples: z.int().nullable(),
-	period_results: periodMetricsSchema.array().optional(),
-	/** Rank among all vaults (3-month performance) */
-	ranking_overall_3m: z.int().nullable(),
-	/** Rank among vaults on the same chain (3-month performance) */
-	ranking_chain_3m: z.int().nullable(),
-	/** Rank among vaults in the same protocol (3-month performance) */
-	ranking_protocol_3m: z.int().nullable()
+	period_results: periodMetricsSchema.array().optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 

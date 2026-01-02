@@ -47,7 +47,7 @@
 
 		<VaultMetrics {vault} />
 
-		<VaultPeriodicMetrics {vault} />
+		<VaultPeriodicMetrics {vault} {chain} />
 
 		<VaultTechnicalDetailsTable {vault} {chain} />
 	</Section>

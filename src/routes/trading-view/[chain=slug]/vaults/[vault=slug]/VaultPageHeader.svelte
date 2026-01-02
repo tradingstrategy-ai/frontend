@@ -21,6 +21,10 @@
 		if (hasSupportedProtocol(vault)) return vault.protocol;
 		if (vault.link) return new URL(vault.link).host;
 	});
+
+	let period1m = $derived(vault.period_results?.find((p) => p.period === '1M'));
+
+	console.log(vault);
 </script>
 
 <PageHeader>
@@ -35,17 +39,17 @@
 
 	{#snippet subtitle()}
 		<span class="subtitle">
-			{#if vault.ranking_overall_3m != null || vault.ranking_chain_3m != null || vault.ranking_protocol_3m != null}
+			{#if period1m?.ranking_overall != null || period1m?.ranking_chain != null || period1m?.ranking_protocol != null}
 				<EntitySymbol size="1.25em" logoUrl={getLogoUrl('blockchain', chain?.slug)} />
 				<span class="ranking">
 					Top
-					{#if vault.ranking_overall_3m != null}
-						<a href={resolve('/trading-view/vaults')}>#{vault.ranking_overall_3m} overall,</a
-						>{/if}{#if vault.ranking_chain_3m != null}<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}
-							>#{vault.ranking_chain_3m} on {chain?.name},</a
-						>{/if}{#if vault.ranking_protocol_3m != null}<a
+					{#if period1m?.ranking_overall != null}
+						<a href={resolve('/trading-view/vaults')}>#{period1m.ranking_overall} overall,</a
+						>{/if}{#if period1m?.ranking_chain != null}<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}
+							>#{period1m.ranking_chain} on {chain?.name},</a
+						>{/if}{#if period1m?.ranking_protocol != null}<a
 							href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}
-							>#{vault.ranking_protocol_3m} on {vault.protocol}</a
+							>#{period1m.ranking_protocol} on {vault.protocol}</a
 						>{/if}
 				</span>
 			{:else}
