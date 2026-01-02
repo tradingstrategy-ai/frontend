@@ -40,12 +40,19 @@
 	// Check if any period has an error
 	const hasAnyError = $derived(vault.period_results?.some((p) => p.error_reason != null) ?? false);
 
+	// Check if net fee information is available
+	const hasNetFees = $derived(vault.net_fees?.fee_mode != null);
+
 	type RowDefinition = {
-		label: string;
+		label: string | (() => string);
 		field: keyof PeriodMetrics;
 		formatter: (value: unknown) => string;
 		hidden?: boolean;
 	};
+
+	function getLabel(row: RowDefinition): string {
+		return typeof row.label === 'function' ? row.label() : row.label;
+	}
 
 	// Expanded state - toggled on double-click
 	let expanded = $state(false);
@@ -55,14 +62,18 @@
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (net)',
 			field: 'cagr_net',
-			formatter: (v) => formatPercent(v as number | null)
+			formatter: (v) => (hasNetFees ? formatPercent(v as number | null) : notFilledMarker)
 		},
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (gross)',
 			field: 'cagr_gross',
 			formatter: (v) => formatPercent(v as number | null)
 		},
-		{ label: 'Returns (net)', field: 'returns_net', formatter: (v) => formatPercent(v as number | null) },
+		{
+			label: 'Returns (net)',
+			field: 'returns_net',
+			formatter: (v) => (hasNetFees ? formatPercent(v as number | null) : notFilledMarker)
+		},
 		{ label: 'Returns (gross)', field: 'returns_gross', formatter: (v) => formatPercent(v as number | null) },
 		{
 			label: '<a href="/glossary/sharpe">Sharpe</a> ratio',
@@ -77,8 +88,16 @@
 		{ label: 'Volatility', field: 'volatility', formatter: (v) => formatPercent(v as number | null) },
 		{ label: 'TVL low', field: 'tvl_low', formatter: (v) => formatDollar(v as number | null) },
 		{ label: 'TVL high', field: 'tvl_high', formatter: (v) => formatDollar(v as number | null) },
-		{ label: 'Share price start', field: 'share_price_start', formatter: formatSharePrice },
-		{ label: 'Share price end', field: 'share_price_end', formatter: formatSharePrice },
+		{
+			label: () => `Share price start (${vault.denomination})`,
+			field: 'share_price_start',
+			formatter: (v) => formatNumber(v as number | null, 4, 6)
+		},
+		{
+			label: () => `Share price end (${vault.denomination})`,
+			field: 'share_price_end',
+			formatter: (v) => formatNumber(v as number | null, 4, 6)
+		},
 		{ label: 'Period start', field: 'period_start_at', formatter: formatDate },
 		{ label: 'Period end', field: 'period_end_at', formatter: formatDate },
 		{
@@ -104,12 +123,6 @@
 		const dateStr = String(value);
 		// Extract YYYY-MM-DD from ISO datetime
 		return dateStr.split('T')[0] ?? notFilledMarker;
-	}
-
-	function formatSharePrice(value: unknown): string {
-		const formatted = formatNumber(value as number | null, 4, 6);
-		if (formatted === notFilledMarker) return formatted;
-		return `${formatted} ${vault.denomination}`;
 	}
 
 	function getValue(period: string, field: keyof PeriodMetrics): unknown {
@@ -142,7 +155,7 @@
 						{/if}
 						{#each visibleRows as row}
 							<tr>
-								<td class="label">{@html row.label}</td>
+								<td class="label">{@html getLabel(row)}</td>
 								{#each periodOrder as period}
 									<td>{row.formatter(getValue(period, row.field))}</td>
 								{/each}
