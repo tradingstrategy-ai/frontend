@@ -124,7 +124,13 @@ export const vaultInfoSchema = z.object({
 	lifetime_start: isoDateTime.nullable(),
 	lifetime_end: isoDateTime.nullable(),
 	lifetime_samples: z.int().nullable(),
-	period_results: periodMetricsSchema.array().optional()
+	period_results: periodMetricsSchema.array().optional(),
+	/** Rank among all vaults (3-month performance) */
+	ranking_overall_3m: z.int().nullable(),
+	/** Rank among vaults on the same chain (3-month performance) */
+	ranking_chain_3m: z.int().nullable(),
+	/** Rank among vaults in the same protocol (3-month performance) */
+	ranking_protocol_3m: z.int().nullable()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
