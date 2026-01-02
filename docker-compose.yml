@@ -12,6 +12,8 @@ services:
       # https://github.com/tradingstrategy-ai/proxy-server/blob/master/Caddyfile
       - '127.0.0.1:${FRONTEND_PORT:-3000}:3000'
     command: node --require dd-trace/init scripts/server.js
+    # Restart node service if it crashes
+    restart: unless-stopped
     # See https://stackoverflow.com/a/67158212/315168
     extra_hosts:
       - 'host.docker.internal:host-gateway'
@@ -55,9 +57,3 @@ services:
       - DD_VERSION=${TS_PUBLIC_FRONTEND_VERSION_TAG}
       - DD_TRACE_AGENT_URL
       - DD_DOGSTATSD_URL
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 30s
