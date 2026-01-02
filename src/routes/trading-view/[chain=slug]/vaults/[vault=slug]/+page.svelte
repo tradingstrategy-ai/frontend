@@ -10,6 +10,7 @@
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 	import VaultMetrics from './VaultMetrics.svelte';
 	import VaultTechnicalDetailsTable from './VaultTechnicalDetailsTable.svelte';
+	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 
@@ -45,6 +46,8 @@
 		<ChartWithFeaturedMetrics {vault} />
 
 		<VaultMetrics {vault} />
+
+		<VaultPeriodicMetrics {vault} />
 
 		<VaultTechnicalDetailsTable {vault} {chain} />
 	</Section>
