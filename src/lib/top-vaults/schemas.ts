@@ -52,7 +52,13 @@ export const periodMetricsSchema = z.object({
 	/** Minimum TVL in the period */
 	tvl_low: nullableNumber,
 	/** Maximum TVL in the period */
-	tvl_high: nullableNumber
+	tvl_high: nullableNumber,
+	/** Rank among all vaults (1 = best), based on CAGR */
+	ranking_overall: z.int().nullable(),
+	/** Rank among vaults on the same chain (1 = best), based on CAGR */
+	ranking_chain: z.int().nullable(),
+	/** Rank among vaults in the same protocol (1 = best), based on CAGR */
+	ranking_protocol: z.int().nullable()
 });
 export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
 

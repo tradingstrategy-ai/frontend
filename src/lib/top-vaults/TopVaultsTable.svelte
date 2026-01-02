@@ -251,7 +251,7 @@
 					)}
 					{@render sortColHeader('Lockup', 'lockup', 'asc', multiValCompare(['lockup'], Infinity))}
 					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', multiValCompare(['risk_numeric'], Infinity))}
-					<th class="sparkline">90 day price</th>
+					<th class="sparkline">3M price</th>
 				</tr>
 			</thead>
 			<tbody>

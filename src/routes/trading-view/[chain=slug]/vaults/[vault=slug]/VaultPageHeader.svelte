@@ -21,6 +21,10 @@
 		if (hasSupportedProtocol(vault)) return vault.protocol;
 		if (vault.link) return new URL(vault.link).host;
 	});
+
+	let period1m = $derived(vault.period_results?.find((p) => p.period === '1M'));
+
+	console.log(vault);
 </script>
 
 <PageHeader>
@@ -35,13 +39,28 @@
 
 	{#snippet subtitle()}
 		<span class="subtitle">
-			<span class="protocol-and-chain">
-				vault on
-				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>{vault.protocol}</a> on
-				<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
-					<a href={resolve(`/trading-view/${chain?.slug}`)}>{chain?.name}</a>
-				</EntitySymbol>
-			</span>
+			{#if period1m?.ranking_overall != null || period1m?.ranking_chain != null || period1m?.ranking_protocol != null}
+				<EntitySymbol size="1.25em" logoUrl={getLogoUrl('blockchain', chain?.slug)} />
+				<span class="ranking">
+					Top
+					{#if period1m?.ranking_overall != null}
+						<a href={resolve('/trading-view/vaults')}>#{period1m.ranking_overall} overall,</a
+						>{/if}{#if period1m?.ranking_chain != null}<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}
+							>#{period1m.ranking_chain} on {chain?.name},</a
+						>{/if}{#if period1m?.ranking_protocol != null}<a
+							href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}
+							>#{period1m.ranking_protocol} on {vault.protocol}</a
+						>{/if}
+				</span>
+			{:else}
+				<span class="protocol-and-chain">
+					vault on
+					<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>{vault.protocol}</a> on
+					<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
+						<a href={resolve(`/trading-view/${chain?.slug}`)}>{chain?.name}</a>
+					</EntitySymbol>
+				</span>
+			{/if}
 			<CryptoAddressWidget
 				size="sm"
 				class="vault-address"
@@ -98,6 +117,23 @@
 					color: var(--c-text-light);
 					--shadow-color: currentColor;
 				}
+			}
+		}
+	}
+
+	.ranking {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5ex;
+		font: var(--f-h6-medium);
+		a {
+			--shadow-color: var(--c-text-ultra-light);
+			box-shadow: inset 0px -2px var(--shadow-color);
+			transition: var(--transition-1);
+
+			&:hover {
+				color: var(--c-text-light);
+				--shadow-color: currentColor;
 			}
 		}
 	}
