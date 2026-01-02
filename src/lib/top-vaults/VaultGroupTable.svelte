@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'vault_count', 'name', 'risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -18,7 +18,9 @@
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import RiskCell from './RiskCell.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { getLogoUrl, type LogoType } from '$lib/helpers/assets';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -26,6 +28,7 @@
 		rows?: VaultGroup[];
 		groupLabel: string;
 		includeRisk?: boolean;
+		includeLogo?: LogoType;
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
@@ -36,6 +39,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
+		includeLogo,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
@@ -61,9 +65,12 @@
 	const columns = table.createColumns([
 		table.column({
 			header: groupLabel,
-			accessor: 'name',
-			cell: ({ value }) => value,
-			plugins: { sort: { invert: true } }
+			accessor: (row) => ({ name: row.name, slug: row.slug }),
+			cell: ({ value }) =>
+				includeLogo
+					? createRender(EntitySymbol, { label: value.name, logoUrl: getLogoUrl(includeLogo, value.slug) })
+					: value.name,
+			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
 		table.column({
 			id: 'risk',
@@ -81,6 +88,11 @@
 			accessor: 'vault_count',
 			header: 'Vaults',
 			cell: ({ value }) => value
+		}),
+		table.column({
+			accessor: 'avg_apy',
+			header: 'Avg. 1M APY %',
+			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
 			accessor: 'tvl',
@@ -116,7 +128,7 @@
 			}
 
 			:global(:is(th, td)) {
-				width: 25%;
+				width: 20%;
 
 				&:not(.name) {
 					text-align: right;
@@ -125,16 +137,16 @@
 
 			:global(.cta) {
 				--button-width: 10rem;
-				width: max(calc(24vw), 14rem);
+				width: max(calc(20vw), 12rem);
 			}
 
 			:global(:has(.risk)) {
 				:global(:is(th, td)) {
-					width: 20%;
+					width: 16%;
 				}
 
 				:global(.name) {
-					width: 45%;
+					width: 36%;
 				}
 
 				:global(.cta) {
