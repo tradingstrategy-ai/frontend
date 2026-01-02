@@ -44,7 +44,7 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Chain" rows={chains} {...options} {onChange} {getHref} />
+		<VaultGroupTable groupLabel="Chain" rows={chains} includeLogo="blockchain" {...options} {onChange} {getHref} />
 	</Section>
 </main>
 

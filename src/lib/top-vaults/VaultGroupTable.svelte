@@ -19,6 +19,8 @@
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { getLogoUrl, type LogoType } from '$lib/helpers/assets';
+	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -26,6 +28,7 @@
 		rows?: VaultGroup[];
 		groupLabel: string;
 		includeRisk?: boolean;
+		includeLogo?: LogoType;
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
@@ -36,6 +39,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
+		includeLogo,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
@@ -61,9 +65,12 @@
 	const columns = table.createColumns([
 		table.column({
 			header: groupLabel,
-			accessor: 'name',
-			cell: ({ value }) => value,
-			plugins: { sort: { invert: true } }
+			accessor: (row) => ({ name: row.name, slug: row.slug }),
+			cell: ({ value }) =>
+				includeLogo
+					? createRender(EntitySymbol, { label: value.name, logoUrl: getLogoUrl(includeLogo, value.slug) })
+					: value.name,
+			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
 		table.column({
 			id: 'risk',
