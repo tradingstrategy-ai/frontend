@@ -13,6 +13,7 @@
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
+	import VaultRankings from './VaultRankings.svelte';
 
 	let { data } = $props();
 	let { vault, chain } = $derived(data);
@@ -23,7 +24,7 @@
 <Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.vault_slug]: vault.name }} />
 
 <main class="vault-details ds-3">
-	<VaultPageHeader {vault} {chain} />
+	<VaultPageHeader {vault} />
 
 	<Section padding="md" --section-gap="var(--gap)">
 		{#if isBlacklisted(vault)}
@@ -42,6 +43,8 @@
 				</Button>
 			</Alert>
 		{/if}
+
+		<VaultRankings {vault} {chain} />
 
 		<ChartWithFeaturedMetrics {vault} />
 
