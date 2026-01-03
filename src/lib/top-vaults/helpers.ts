@@ -3,6 +3,9 @@ import { resolve } from '$app/paths';
 import { getChain } from '$lib/helpers/chain';
 import { isNumber } from '$lib/helpers/formatters';
 
+/** Minimum TVL threshold for vault group breakdown pages */
+export const MIN_TVL_THRESHOLD = 10_000;
+
 /**
  * Resolve path to vault datails page for a given vault
  */
@@ -20,6 +23,11 @@ export function isBlacklisted(vault: VaultInfo) {
 
 export function hasSupportedProtocol(vault: VaultInfo) {
 	return !vault.protocol.startsWith('<');
+}
+
+/** Check if vault meets minimum TVL threshold */
+export function meetsMinTvl(vault: VaultInfo, threshold = MIN_TVL_THRESHOLD) {
+	return (vault.current_nav ?? 0) >= threshold;
 }
 
 /**
