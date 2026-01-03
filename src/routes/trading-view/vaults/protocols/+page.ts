@@ -1,5 +1,9 @@
+/**
+ * Loads and aggregates vault data grouped by protocol.
+ * Used by the protocols listing page at /trading-view/vaults/protocols
+ */
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { isBlacklisted } from '$lib/top-vaults/helpers.js';
+import { isBlacklisted, minTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
@@ -9,7 +13,8 @@ export async function load({ parent, url: { searchParams } }) {
 	type ProtocolAccumulator = VaultGroup & { weighted_apy_sum: number; tvl_with_apy: number };
 
 	const protocols = topVaults.vaults.reduce<Record<string, ProtocolAccumulator>>((acc, vault) => {
-		if (isBlacklisted(vault)) return acc;
+		// Filter out blacklisted and small vaults
+		if (isBlacklisted(vault) || (vault.current_nav ?? 0) < minTvl) return acc;
 
 		const slug = vault.protocol_slug;
 
@@ -28,7 +33,7 @@ export async function load({ parent, url: { searchParams } }) {
 		acc[slug].tvl += vault.current_nav ?? 0;
 
 		// Accumulate for TVL-weighted average APY calculation
-		if (vault.one_month_cagr != null && vault.current_nav != null && vault.current_nav > 0) {
+		if (vault.one_month_cagr != null && vault.current_nav != null) {
 			acc[slug].weighted_apy_sum += vault.one_month_cagr * vault.current_nav;
 			acc[slug].tvl_with_apy += vault.current_nav;
 		}
