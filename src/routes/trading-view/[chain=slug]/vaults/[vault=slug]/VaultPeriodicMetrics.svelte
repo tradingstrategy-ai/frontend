@@ -50,7 +50,8 @@
 		label: string | (() => string);
 		field: keyof PeriodMetrics;
 		formatter: (value: unknown) => string;
-		hidden?: boolean;
+		hidden?: boolean; // hidden until expanded (double-click)
+		excluded?: boolean; // permanently excluded from display
 	};
 
 	function getLabel(row: RowDefinition): string {
@@ -75,7 +76,8 @@
 		{
 			label: `<a href="${resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}">Ranking on ${vault.protocol}</a>`,
 			field: 'ranking_protocol',
-			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
+			excluded: vault.protocol?.includes('<')
 		},
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (net)',
@@ -138,7 +140,8 @@
 		{ label: 'Samples end', field: 'samples_end_at', formatter: formatDate, hidden: true }
 	];
 
-	const visibleRows = $derived(expanded ? rows : rows.filter((r) => !r.hidden));
+	// Filter rows: exclude permanently excluded rows; show hidden rows only when expanded
+	const visibleRows = $derived(rows.filter((r) => !r.excluded && (expanded || !r.hidden)));
 
 	function formatDate(value: unknown): string {
 		if (value == null) return notFilledMarker;
