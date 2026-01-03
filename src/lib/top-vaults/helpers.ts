@@ -3,6 +3,9 @@ import { resolve } from '$app/paths';
 import { getChain } from '$lib/helpers/chain';
 import { isNumber } from '$lib/helpers/formatters';
 
+/** Minimum TVL threshold for including vaults in listings */
+export const minTvl = 10_000;
+
 /**
  * Resolve path to vault datails page for a given vault
  */
