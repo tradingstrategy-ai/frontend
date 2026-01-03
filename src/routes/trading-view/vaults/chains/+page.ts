@@ -1,5 +1,5 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { isBlacklisted } from '$lib/top-vaults/helpers.js';
+import { isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getChain } from '$lib/helpers/chain';
@@ -10,7 +10,7 @@ export async function load({ parent, url: { searchParams } }) {
 	type ChainAccumulator = VaultGroup & { weighted_apy_sum: number; tvl_with_apy: number };
 
 	const chains = topVaults.vaults.reduce<Record<string, ChainAccumulator>>((acc, vault) => {
-		if (isBlacklisted(vault)) return acc;
+		if (isBlacklisted(vault) || !meetsMinTvl(vault)) return acc;
 
 		const chain = getChain(vault.chain_id);
 		if (!chain) return acc;

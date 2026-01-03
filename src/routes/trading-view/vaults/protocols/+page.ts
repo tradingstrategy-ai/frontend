@@ -1,5 +1,5 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { isBlacklisted } from '$lib/top-vaults/helpers.js';
+import { isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
@@ -9,7 +9,7 @@ export async function load({ parent, url: { searchParams } }) {
 	type ProtocolAccumulator = VaultGroup & { weighted_apy_sum: number; tvl_with_apy: number };
 
 	const protocols = topVaults.vaults.reduce<Record<string, ProtocolAccumulator>>((acc, vault) => {
-		if (isBlacklisted(vault)) return acc;
+		if (isBlacklisted(vault) || !meetsMinTvl(vault)) return acc;
 
 		const slug = vault.protocol_slug;
 
