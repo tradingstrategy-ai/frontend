@@ -23,8 +23,8 @@
 </script>
 
 <svelte:head>
-	<title>DeFi vaults by chain | Trading Strategy</title>
-	<meta name="description" content="Top DeFi vaults across all blockchains, grouped by chain" />
+	<title>DeFi stablecoin vaults by chain</title>
+	<meta name="description" content="Top DeFi vaults, grouped by blockchain" />
 </svelte:head>
 
 <Breadcrumbs labels={{ vaults: 'Top Vaults', chains: 'Chains' }} />
