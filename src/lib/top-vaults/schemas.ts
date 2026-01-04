@@ -20,17 +20,17 @@ export const periodMetricsSchema = z.object({
 	/** Error reason if metrics could not be calculated, null if successful */
 	error_reason: z.string().nullable(),
 	/** When was start share price sampled */
-	period_start_at: isoDateTime.nullable(),
+	period_start_at: isoDateTime,
 	/** When was end share price sampled */
-	period_end_at: isoDateTime.nullable(),
+	period_end_at: isoDateTime,
 	/** Share price at beginning */
 	share_price_start: nullableNumber,
 	/** Share price at end */
 	share_price_end: nullableNumber,
 	/** Number of raw datapoints used */
 	raw_samples: z.int(),
-	samples_start_at: isoDateTime.nullable(),
-	samples_end_at: isoDateTime.nullable(),
+	samples_start_at: isoDateTime,
+	samples_end_at: isoDateTime,
 	/** Number of daily datapoints used */
 	daily_samples: z.int(),
 	/** How much absolute returns we had */
@@ -130,7 +130,7 @@ export const vaultInfoSchema = z.object({
 	lifetime_start: isoDateTime.nullable(),
 	lifetime_end: isoDateTime.nullable(),
 	lifetime_samples: z.int().nullable(),
-	period_results: periodMetricsSchema.array().optional()
+	period_results: periodMetricsSchema.array()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
