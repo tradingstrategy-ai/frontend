@@ -5,6 +5,10 @@
 - Use UK/British English instead of US English: Say things like `visualise` instead of `visualize`
 - For headings, only capitalise the first letter of heading, do not use title case
 
+## Pull requests
+
+Before opening a pull request, make sure the Prettier has been run on the code.
+
 ## Adding and updating components and pages
 
 - When you create or update a Svelte component or page in `src/lib` or `src/routes`, include a comment at the beginning of the module on the purpose of the component and where it is being used
@@ -17,10 +21,10 @@
 
 Use `pnpm` instead of `npm`.
 
-## Formatting code
+## Formatting code with prettier
 
 Run:
 
-```
+```shell
 pnpm run format
 ```
