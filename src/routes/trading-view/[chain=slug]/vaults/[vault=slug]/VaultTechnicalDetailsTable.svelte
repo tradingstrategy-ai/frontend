@@ -40,12 +40,12 @@
 			type: 'link' as const
 		},
 		{
-			label: 'Current NAV',
+			label: 'Current <a href="/glossary/total-value-locked-tvl">TVL</a>',
 			value: { amount: vault.current_nav, symbol: vault.denomination },
 			type: 'currency' as const
 		},
 		{
-			label: 'Peak NAV',
+			label: 'Peak <a href="/glossary/total-value-locked-tvl">TVL</a>',
 			value: { amount: vault.peak_nav, symbol: vault.denomination },
 			type: 'currency' as const
 		},
@@ -62,16 +62,7 @@
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
-		{ label: 'Deposit events', value: vault.event_count, type: 'number' as const },
-		{ label: 'Lifetime samples', value: vault.lifetime_samples, type: 'number' as const },
-		{ label: 'Lifetime start', value: vault.lifetime_start, type: 'date' as const },
-		{ label: 'Lifetime end', value: vault.lifetime_end, type: 'date' as const },
-		{ label: '1 month samples', value: vault.one_month_samples, type: 'number' as const },
-		{ label: '1 month start', value: vault.one_month_start, type: 'date' as const },
-		{ label: '1 month end', value: vault.one_month_end, type: 'date' as const },
-		{ label: '3 month samples', value: vault.three_months_samples, type: 'number' as const },
-		{ label: '3 month start', value: vault.three_months_start, type: 'date' as const },
-		{ label: '3 month end', value: vault.three_months_end, type: 'date' as const }
+		{ label: 'Deposit events', value: vault.event_count, type: 'number' as const }
 	]);
 
 	function formatValue(value: unknown, type?: string): string {
@@ -98,7 +89,7 @@
 			<tbody>
 				{#each rows as row}
 					<tr>
-						<td class="label">{row.label}</td>
+						<td class="label">{@html row.label}</td>
 						<td class="value">
 							{#if row.type === 'address'}
 								<span class="address-cell">
@@ -184,6 +175,11 @@
 			white-space: nowrap;
 			width: 40%;
 			padding-right: 1rem;
+
+			:global(a) {
+				text-decoration: underline;
+				text-decoration-style: dashed;
+			}
 		}
 
 		.value {

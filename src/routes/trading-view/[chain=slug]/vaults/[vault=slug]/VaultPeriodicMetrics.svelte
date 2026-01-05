@@ -110,8 +110,8 @@
 			field: 'volatility',
 			formatter: (v) => formatPercent(v as number | null)
 		},
-		{ label: 'TVL low', field: 'tvl_low', formatter: (v) => formatDollar(v as number | null) },
-		{ label: 'TVL high', field: 'tvl_high', formatter: (v) => formatDollar(v as number | null) },
+		{ label: '<a href="/glossary/total-value-locked-tvl">TVL</a> low', field: 'tvl_low', formatter: (v) => formatDollar(v as number | null) },
+		{ label: '<a href="/glossary/total-value-locked-tvl">TVL</a> high', field: 'tvl_high', formatter: (v) => formatDollar(v as number | null) },
 		{
 			label: () => `Share price start (${vault.denomination})`,
 			field: 'share_price_start',
