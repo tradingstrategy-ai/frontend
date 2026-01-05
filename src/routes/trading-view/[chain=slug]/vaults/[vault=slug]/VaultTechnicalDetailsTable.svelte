@@ -54,10 +54,10 @@
 			value: { amount: vault.last_share_price, symbol: vault.denomination },
 			type: 'currency' as const
 		},
-
-		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
 		{ label: 'Last updated', value: vault.last_updated_at, type: 'date' as const },
 		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
+
+		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
 		{ label: 'Fee mode', value: vault.fee_mode },
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },

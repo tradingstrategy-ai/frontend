@@ -7,7 +7,7 @@
 
 ## Pull requests
 
-Before opening a pull request, make sure the Prettier has been run on the code.
+Before opening or updating a pull request, make sure the Prettier has been run on the code.
 
 ## Adding and updating components and pages
 
