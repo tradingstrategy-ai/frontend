@@ -1,7 +1,12 @@
 <script lang="ts">
+	/**
+	 * Table component for displaying top DeFi vaults with sorting, filtering, and infinite scroll.
+	 * Used on /trading-view/vaults and chain-specific vault pages.
+	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { browser } from '$app/environment';
+	import { inview } from 'svelte-inview';
 	import { SvelteSet } from 'svelte/reactivity';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -17,6 +22,8 @@
 	import { getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
+	const INITIAL_ROW_COUNT = 100;
+	const ROW_BATCH_SIZE = 50;
 
 	interface SortOptions {
 		key: string;
@@ -117,10 +124,30 @@
 
 	let failedSparklines = new SvelteSet<string>();
 
-	// Limit the number of vaults renderered during SSR to 100
-	// This results in faster initial page render / lower LCP value, while still including the
-	// top 100 vaults for SEO benefits.
-	let truncatedVaults = $derived(browser ? sortedVaults : sortedVaults.slice(0, 100));
+	// Progressive loading state for infinite scroll
+	let displayedCount = $state(INITIAL_ROW_COUNT);
+
+	// Reset displayed count when filter/sort changes
+	$effect(() => {
+		// Track sortedVaults as dependency - when it changes, reset to initial count
+		sortedVaults;
+		displayedCount = INITIAL_ROW_COUNT;
+	});
+
+	// Load more rows when sentinel comes into view
+	function loadMoreRows() {
+		if (displayedCount < sortedVaults.length) {
+			displayedCount = Math.min(displayedCount + ROW_BATCH_SIZE, sortedVaults.length);
+		}
+	}
+
+	// Limit rendered vaults: SSR gets 100 for SEO, client uses progressive loading
+	let displayedVaults = $derived(
+		browser ? sortedVaults.slice(0, displayedCount) : sortedVaults.slice(0, INITIAL_ROW_COUNT)
+	);
+
+	// Check if there are more rows to load
+	let hasMoreRows = $derived(browser && displayedCount < sortedVaults.length);
 </script>
 
 {#snippet sortColHeader(
@@ -255,7 +282,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each truncatedVaults as vault (vault.id)}
+				{#each displayedVaults as vault (vault.id)}
 					{@const chain = getChain(vault.chain_id)}
 					<tr class="targetable">
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
@@ -317,6 +344,7 @@
 								chart data unavailable
 							{:else}
 								<img
+									loading="lazy"
 									src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
 									alt="{vault.name} 90 day price"
 									onerror={() => failedSparklines.add(vault.id)}
@@ -326,6 +354,15 @@
 						</td>
 					</tr>
 				{/each}
+				{#if hasMoreRows}
+					<tr class="load-more-sentinel">
+						<td colspan="16">
+							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMoreRows}>
+								Loading more vaults... ({displayedCount} of {sortedVaults.length})
+							</div>
+						</td>
+					</tr>
+				{/if}
 			</tbody>
 		</table>
 	</div>
@@ -622,6 +659,13 @@
 
 			:global(.row-link):hover {
 				background: var(--c-box-2);
+			}
+
+			.load-more-sentinel td {
+				text-align: center;
+				padding: 1.5rem;
+				color: var(--c-text-light);
+				font: var(--f-ui-sm-medium);
 			}
 		}
 	}
