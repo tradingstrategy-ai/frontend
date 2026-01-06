@@ -7,6 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	let { data } = $props();
 	let { chains, options } = $derived(data);
@@ -44,7 +45,14 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Chain" rows={chains} includeLogo="blockchain" {...options} {onChange} {getHref} />
+		<VaultGroupTable
+			groupLabel="Chain"
+			rows={chains}
+			getLogoHref={(slug) => getLogoUrl('blockchain', slug)}
+			{...options}
+			{onChange}
+			{getHref}
+		/>
 	</Section>
 </main>
 

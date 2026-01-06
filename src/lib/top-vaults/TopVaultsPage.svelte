@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
+	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
@@ -9,6 +10,7 @@
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import VaultListingsSelector from './VaultListingsSelector.svelte';
+	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
@@ -19,9 +21,19 @@
 		subtitle: string;
 		tvlThreshold?: number;
 		filterTvl?: boolean;
+		protocolMetadata?: VaultProtocolMetadata;
 	}
 
-	let { chain, topVaults, breadcrumbs, title: pageTitle, subtitle, tvlThreshold, filterTvl }: Props = $props();
+	let {
+		chain,
+		topVaults,
+		breadcrumbs,
+		title: pageTitle,
+		subtitle,
+		tvlThreshold,
+		filterTvl,
+		protocolMetadata
+	}: Props = $props();
 </script>
 
 <Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
@@ -34,6 +46,9 @@
 					{#if chain}
 						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 					{/if}
+					{#if protocolMetadata?.logos.light}
+						<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} />
+					{/if}
 					<span>{pageTitle}</span>
 					<DataBadge class="badge" status="warning">Beta</DataBadge>
 				</span>
@@ -44,6 +59,10 @@
 	<Section>
 		<div class="top-vaults-content">
 			<VaultListingsSelector />
+
+			{#if protocolMetadata}
+				<ProtocolDescription metadata={protocolMetadata} />
+			{/if}
 
 			{#if !topVaults.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
