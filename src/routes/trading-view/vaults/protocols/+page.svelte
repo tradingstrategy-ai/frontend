@@ -7,6 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
 	let { protocols, options } = $derived(data);
@@ -40,7 +41,14 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Protocol" includeRisk rows={protocols} {...options} {onChange} />
+		<VaultGroupTable
+			groupLabel="Protocol"
+			includeRisk
+			getLogoHref={getVaultProtocolLogoUrl}
+			rows={protocols}
+			{...options}
+			{onChange}
+		/>
 	</Section>
 </main>
 

@@ -1,7 +1,7 @@
 // Client functions for fetching vault protocol metadata
 import { type VaultProtocolMetadata, vaultProtocolMetadataSchema } from './schemas';
 
-const METADATA_BASE_URL = 'https://vault-protocol-metadata.tradingstrategy.ai/vault-protocol-metadata';
+export const METADATA_BASE_URL = 'https://vault-protocol-metadata.tradingstrategy.ai/vault-protocol-metadata';
 const CLIENT_TIMEOUT = 5000;
 
 /**
