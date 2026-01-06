@@ -18,14 +18,16 @@
 </script>
 
 <MetricsBox title="About {protocolMetadata.name}">
-	<div class="protocol-info">
+	<div class="protocol-info" class:has-logo={protocolMetadata.logos.light}>
 		{#if protocolMetadata.logos.light}
 			<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} class="protocol-logo" />
 		{/if}
-		<p class="description">{protocolMetadata.short_description}</p>
-		<a href={protocolPageUrl} class="view-all-link">
-			View all {protocolMetadata.name} vaults →
-		</a>
+		<div class="content">
+			<p class="description">{protocolMetadata.short_description}</p>
+			<a href={protocolPageUrl} class="view-all-link">
+				View all {protocolMetadata.name} vaults →
+			</a>
+		</div>
 	</div>
 </MetricsBox>
 
@@ -33,12 +35,21 @@
 	.protocol-info {
 		display: grid;
 		gap: var(--space-md);
+
+		&.has-logo {
+			grid-template-columns: auto 1fr;
+			align-items: start;
+		}
 	}
 
 	.protocol-logo {
-		height: 2rem;
+		height: 3rem;
 		width: auto;
-		justify-self: start;
+	}
+
+	.content {
+		display: grid;
+		gap: var(--space-sm);
 	}
 
 	.description {
