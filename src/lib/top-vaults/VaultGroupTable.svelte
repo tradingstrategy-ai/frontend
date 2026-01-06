@@ -64,6 +64,7 @@
 
 	const columns = table.createColumns([
 		table.column({
+			id: 'name',
 			header: groupLabel,
 			accessor: (row) => ({ name: row.name, slug: row.slug }),
 			cell: ({ value }) =>
@@ -130,7 +131,7 @@
 			:global(:is(th, td)) {
 				width: 20%;
 
-				&:not(.name) {
+				&:not(:is(.name, .risk)) {
 					text-align: right;
 				}
 			}
