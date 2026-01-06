@@ -2,28 +2,24 @@
 import { z } from 'zod';
 
 const logosSchema = z.object({
-	light: z.string().url().nullable(),
-	dark: z.string().url().nullable()
+	light: z.url().nullable(),
+	dark: z.url().nullable()
 });
 
-const linksSchema = z
-	.object({
-		homepage: z.string().url().nullable(),
-		twitter: z.string().url().nullable(),
-		documentation: z.string().url().nullable(),
-		github: z.string().url().nullable()
-	})
-	.passthrough();
+const linksSchema = z.object({
+	homepage: z.url().nullable(),
+	twitter: z.url().nullable(),
+	documentation: z.url().nullable(),
+	github: z.url().nullable()
+});
 
-export const vaultProtocolMetadataSchema = z
-	.object({
-		name: z.string(),
-		slug: z.string(),
-		short_description: z.string(),
-		long_description: z.string(),
-		links: linksSchema,
-		logos: logosSchema
-	})
-	.passthrough();
+export const vaultProtocolMetadataSchema = z.object({
+	name: z.string(),
+	slug: z.string(),
+	short_description: z.string(),
+	long_description: z.string(),
+	links: linksSchema,
+	logos: logosSchema
+});
 
 export type VaultProtocolMetadata = z.infer<typeof vaultProtocolMetadataSchema>;
