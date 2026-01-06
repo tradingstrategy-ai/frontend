@@ -17,12 +17,13 @@
 	const protocolPageUrl = `/trading-view/vaults/protocols/${vault.protocol_slug}`;
 </script>
 
-<MetricsBox title="About {protocolMetadata.name}">
+<MetricsBox>
 	<div class="protocol-info" class:has-logo={protocolMetadata.logos.light}>
 		{#if protocolMetadata.logos.light}
 			<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} class="protocol-logo" />
 		{/if}
 		<div class="content">
+			<h2>About {protocolMetadata.name}</h2>
 			<p class="description">{protocolMetadata.short_description}</p>
 			<a href={protocolPageUrl} class="view-all-link">
 				View all {protocolMetadata.name} vaults →
@@ -50,6 +51,19 @@
 	.content {
 		display: grid;
 		gap: var(--space-sm);
+
+		h2 {
+			margin: 0;
+			font: var(--f-heading-xs-medium);
+			font-size: 1rem;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--c-text-ultra-light);
+
+			@media (--viewport-sm-down) {
+				font-size: 0.875rem;
+			}
+		}
 	}
 
 	.description {
