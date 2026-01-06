@@ -19,6 +19,9 @@
 
 <MetricsBox title="About {protocolMetadata.name}">
 	<div class="protocol-info">
+		{#if protocolMetadata.logos.light}
+			<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} class="protocol-logo" />
+		{/if}
 		<p class="description">{protocolMetadata.short_description}</p>
 		<a href={protocolPageUrl} class="view-all-link">
 			View all {protocolMetadata.name} vaults →
@@ -30,6 +33,12 @@
 	.protocol-info {
 		display: grid;
 		gap: var(--space-md);
+	}
+
+	.protocol-logo {
+		height: 2rem;
+		width: auto;
+		justify-self: start;
 	}
 
 	.description {
