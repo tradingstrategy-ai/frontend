@@ -5,7 +5,9 @@
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
+	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		vault: VaultInfo;
@@ -14,72 +16,72 @@
 
 	let { vault, protocolMetadata }: Props = $props();
 
-	const protocolPageUrl = `/trading-view/vaults/protocols/${vault.protocol_slug}`;
+	const protocolPageUrl = resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`);
 </script>
 
 <MetricsBox>
-	<div class="protocol-info" class:has-logo={protocolMetadata.logos.light}>
+	<div class="protocol-info">
 		{#if protocolMetadata.logos.light}
 			<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} class="protocol-logo" />
 		{/if}
 		<div class="content">
 			<h2>About {protocolMetadata.name}</h2>
 			<p class="description">{protocolMetadata.short_description}</p>
-			<a href={protocolPageUrl} class="view-all-link">
-				View all {protocolMetadata.name} vaults →
-			</a>
 		</div>
+		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
+			View all {protocolMetadata.name} vaults
+		</Button>
 	</div>
 </MetricsBox>
 
 <style>
 	.protocol-info {
 		display: grid;
-		gap: var(--space-md);
+		grid-template-columns: 1fr auto;
+		gap: 1rem;
+		align-items: center;
 
-		&.has-logo {
-			grid-template-columns: auto 1fr;
-			align-items: start;
+		&:has(.protocol-logo) {
+			grid-template-columns: auto 1fr auto;
 		}
-	}
 
-	.protocol-logo {
-		height: 3rem;
-		width: auto;
-	}
+		@media (--viewport-sm-down) {
+			.content {
+				grid-column: span 2;
+			}
 
-	.content {
-		display: grid;
-		gap: var(--space-sm);
-
-		h2 {
-			margin: 0;
-			font: var(--f-heading-xs-medium);
-			font-size: 1rem;
-			letter-spacing: 0.06em;
-			text-transform: uppercase;
-			color: var(--c-text-ultra-light);
-
-			@media (--viewport-sm-down) {
-				font-size: 0.875rem;
+			:global(.view-all-btn) {
+				grid-area: 2 / span 3;
 			}
 		}
-	}
 
-	.description {
-		margin: 0;
-		font: var(--f-ui-md-roman);
-		color: var(--c-text-light);
-	}
+		.protocol-logo {
+			height: 3rem;
+			width: auto;
+		}
 
-	.view-all-link {
-		font: var(--f-ui-sm-medium);
-		color: var(--c-text-extra-light);
-		text-decoration: none;
-		transition: color var(--time-sm);
+		.content {
+			display: grid;
+			gap: 0.625rem;
 
-		&:hover {
-			color: var(--c-text);
+			h2 {
+				margin: 0;
+				font: var(--f-heading-xs-medium);
+				font-size: 1rem;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				color: var(--c-text-ultra-light);
+
+				@media (--viewport-sm-down) {
+					font-size: 0.875rem;
+				}
+			}
+		}
+
+		.description {
+			margin: 0;
+			font: var(--f-ui-md-roman);
+			color: var(--c-text-light);
 		}
 	}
 </style>
