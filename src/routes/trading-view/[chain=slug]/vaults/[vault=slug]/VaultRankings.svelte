@@ -1,16 +1,18 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import { resolve } from '$app/paths';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
 		vault: VaultInfo;
-		chain?: Chain;
+		chain: Chain | undefined;
+		protocolMetadata: VaultProtocolMetadata | undefined;
 	}
 
-	let { vault, chain }: Props = $props();
+	let { vault, chain, protocolMetadata }: Props = $props();
 
 	let period1m = $derived(vault.period_results.find((p) => p.period === '1M'))!;
 </script>
@@ -35,9 +37,11 @@
 		<li>
 			<span class="rank">#{period1m.ranking_protocol}</span>
 			on
-			<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>
-				{vault.protocol}
-			</a>
+			<EntitySymbol size="0.875em" logoUrl={protocolMetadata?.logos.light}>
+				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>
+					{vault.protocol}
+				</a>
+			</EntitySymbol>
 		</li>
 	</ul>
 </div>

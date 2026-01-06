@@ -12,9 +12,9 @@
 	import VaultTechnicalDetailsTable from './VaultTechnicalDetailsTable.svelte';
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
+	import VaultRankings from './VaultRankings.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
-	import VaultRankings from './VaultRankings.svelte';
 
 	let { data } = $props();
 	let { vault, chain, protocolMetadata } = $derived(data);
@@ -45,7 +45,7 @@
 			</Alert>
 		{/if}
 
-		<VaultRankings {vault} {chain} />
+		<VaultRankings {vault} {chain} {protocolMetadata} />
 
 		<ChartWithFeaturedMetrics {vault} />
 
