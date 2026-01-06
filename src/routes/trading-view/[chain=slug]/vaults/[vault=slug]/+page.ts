@@ -1,7 +1,8 @@
 import { resolveVaultDetails } from '$lib/top-vaults/helpers.js';
+import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ params, parent }) {
+export async function load({ params, parent, fetch }) {
 	const { topVaults } = await parent();
 
 	const vault = topVaults.vaults.find((v) => {
@@ -15,7 +16,7 @@ export async function load({ params, parent }) {
 
 	if (!vault) error(404, 'Vault not found');
 
-	console.log(vault);
+	const protocolMetadata = await fetchVaultProtocolMetadata(fetch, vault.protocol_slug);
 
-	return { vault };
+	return { vault, protocolMetadata };
 }

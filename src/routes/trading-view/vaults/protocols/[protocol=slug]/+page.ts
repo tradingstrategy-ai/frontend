@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
+import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 
-export async function load({ params, parent }) {
+export async function load({ params, parent, fetch }) {
 	const { protocol } = params;
 	const { topVaults } = await parent();
 
@@ -10,9 +11,12 @@ export async function load({ params, parent }) {
 
 	if (!vaults.length) error(404, 'Vault protocol not found');
 
+	const protocolMetadata = await fetchVaultProtocolMetadata(fetch, protocol);
+
 	return {
 		protocolSlug: protocol,
 		protocolName: vaults[0].protocol,
-		topVaults: { ...topVaults, vaults }
+		topVaults: { ...topVaults, vaults },
+		protocolMetadata
 	};
 }

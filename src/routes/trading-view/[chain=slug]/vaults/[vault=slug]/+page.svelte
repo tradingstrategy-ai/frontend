@@ -11,12 +11,13 @@
 	import VaultMetrics from './VaultMetrics.svelte';
 	import VaultTechnicalDetailsTable from './VaultTechnicalDetailsTable.svelte';
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
+	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 	import VaultRankings from './VaultRankings.svelte';
 
 	let { data } = $props();
-	let { vault, chain } = $derived(data);
+	let { vault, chain, protocolMetadata } = $derived(data);
 </script>
 
 <SocialMediaTags {vault} {chain} />
@@ -49,6 +50,10 @@
 		<ChartWithFeaturedMetrics {vault} />
 
 		<VaultMetrics {vault} />
+
+		{#if protocolMetadata}
+			<VaultProtocolInfo {vault} {protocolMetadata} />
+		{/if}
 
 		<VaultPeriodicMetrics {vault} {chain} />
 

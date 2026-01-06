@@ -2,7 +2,7 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 
 	let { data } = $props();
-	let { protocolSlug, protocolName, topVaults } = $derived(data);
+	let { protocolSlug, protocolName, topVaults, protocolMetadata } = $derived(data);
 </script>
 
 <svelte:head>
@@ -12,6 +12,7 @@
 
 <TopVaultsPage
 	{topVaults}
+	{protocolMetadata}
 	breadcrumbs={{ protocols: 'Protocols', [protocolSlug]: protocolName }}
 	title="Top {protocolName} vaults"
 	subtitle="The best performing stablecoin vaults on {protocolName} protocol with minimum $10k USD TVL"
