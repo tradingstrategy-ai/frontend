@@ -5,7 +5,6 @@
 	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
-	import { browser } from '$app/environment';
 	import { inview } from 'svelte-inview';
 	import { SvelteSet } from 'svelte/reactivity';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
@@ -93,6 +92,17 @@
 		return sorted;
 	});
 
+	// INFINITE SCROLL:
+	// - limit the displayed vaults during initial render
+	// - track sortedVaults as dependency (reset to initial count when it changes)
+	// - progressively increemnt maxVisibleRows on-scroll (see load-more-sentinel)
+	let maxVisibleRows = $derived(sortedVaults && INITIAL_ROW_COUNT);
+	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
+	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
+
+	// Keep track of sparklines that failed to load to display fallback
+	let failedSparklines = new SvelteSet<string>();
+
 	function multiValCompare(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
 		return (a: VaultInfo, b: VaultInfo) => {
 			for (const key of keys) {
@@ -121,33 +131,6 @@
 		}
 		sortOptions = { key, direction, compareFn };
 	}
-
-	let failedSparklines = new SvelteSet<string>();
-
-	// Progressive loading state for infinite scroll
-	let displayedCount = $state(INITIAL_ROW_COUNT);
-
-	// Reset displayed count when filter/sort changes
-	$effect(() => {
-		// Track sortedVaults as dependency - when it changes, reset to initial count
-		sortedVaults;
-		displayedCount = INITIAL_ROW_COUNT;
-	});
-
-	// Load more rows when sentinel comes into view
-	function loadMoreRows() {
-		if (displayedCount < sortedVaults.length) {
-			displayedCount = Math.min(displayedCount + ROW_BATCH_SIZE, sortedVaults.length);
-		}
-	}
-
-	// Limit rendered vaults: SSR gets 100 for SEO, client uses progressive loading
-	let displayedVaults = $derived(
-		browser ? sortedVaults.slice(0, displayedCount) : sortedVaults.slice(0, INITIAL_ROW_COUNT)
-	);
-
-	// Check if there are more rows to load
-	let hasMoreRows = $derived(browser && displayedCount < sortedVaults.length);
 </script>
 
 {#snippet sortColHeader(
@@ -282,7 +265,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each displayedVaults as vault (vault.id)}
+				{#each visibleVaults as vault (vault.id)}
 					{@const chain = getChain(vault.chain_id)}
 					<tr class="targetable">
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
@@ -357,8 +340,8 @@
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel">
 						<td colspan="16">
-							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMoreRows}>
-								Loading more vaults... ({displayedCount} of {sortedVaults.length})
+							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
+								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
 							</div>
 						</td>
 					</tr>
