@@ -24,7 +24,7 @@
 	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', protocols: 'Protocols' }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', protocols: 'Protocols' }} />
 
 <main class="protocol-index-page">
 	<Section tag="header" --section-padding="0">
