@@ -71,7 +71,7 @@ Brief description of the component.
 ```
 -->
 <script lang="ts">
-  // ...
+	// ...
 </script>
 ````
 
