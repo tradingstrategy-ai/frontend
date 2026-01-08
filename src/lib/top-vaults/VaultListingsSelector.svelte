@@ -1,11 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-
-	interface Props {
-		boxed?: boolean;
-	}
-
-	let { boxed = false }: Props = $props();
 
 	const links = [
 		{ href: '/trading-view/vaults', label: 'Top' },
@@ -14,21 +9,18 @@
 		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
 		{ href: '/trading-view/vaults/chains', label: 'By chain' },
 		{ href: '/trading-view/vaults/protocols', label: 'By protocol' }
-	];
+	] as const;
 
 	function isActive(href: string): boolean {
 		return page.url.pathname === href;
 	}
 </script>
 
-<nav class="vault-listings-selector" class:boxed>
+<nav class="vault-listings-selector ds-3">
 	<span class="label">All vaults by:</span>
-	{#each links as link, i}
-		{#if i > 0}
-			<span class="separator">|</span>
-		{/if}
-		<a href={link.href} class:active={isActive(link.href)}>
-			{link.label}
+	{#each links as { href, label } (href)}
+		<a href={resolve(href)} class:active={isActive(href)}>
+			{label}
 		</a>
 	{/each}
 </nav>
@@ -47,14 +39,16 @@
 		color: var(--c-text-light);
 	}
 
-	.separator {
-		color: var(--c-text-ultra-light);
-	}
-
 	a {
 		color: var(--c-text-extra-light);
 		text-decoration: none;
 		transition: color var(--time-sm);
+
+		&:not(:first-of-type)::before {
+			content: '|';
+			color: var(--c-text-ultra-light);
+			padding-right: 0.5rem;
+		}
 
 		&:hover {
 			color: var(--c-text);
@@ -63,14 +57,6 @@
 		&.active {
 			color: var(--c-text);
 			font-weight: 700;
-		}
-	}
-
-	.boxed {
-		padding: 0 var(--space-xl);
-
-		@media (--viewport-md-down) {
-			padding: var(--space-sm) var(--space-lg);
 		}
 	}
 </style>

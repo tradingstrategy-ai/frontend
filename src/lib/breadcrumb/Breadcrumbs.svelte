@@ -14,7 +14,7 @@ https://search.google.com/structured-data/testing-tool
 ```
 -->
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Section } from '$lib/components';
 
 	type Props = {
@@ -37,7 +37,7 @@ https://search.google.com/structured-data/testing-tool
 	};
 
 	let breadcrumbs = $derived.by(() => {
-		const segments = $page.url.pathname.split('/');
+		const segments = page.url.pathname.split('/');
 		return segments.slice(startAt + 1).map((segment, index) => ({
 			href: segments.slice(0, index + startAt + 2).join('/'),
 			label: labels[segment] ?? baseLabels[segment] ?? segment
@@ -68,20 +68,20 @@ https://search.google.com/structured-data/testing-tool
 <style>
 	ol {
 		list-style-type: none;
-		padding: var(--space-sl) 0;
+		padding: 0.75rem 0;
 		display: flex;
-		margin-bottom: var(--space-sl);
-		margin-left: calc(-1 * var(--space-sm));
+		margin-bottom: var(--breadcrumb-margin, 0.75rem);
+		margin-left: -0.625rem;
 		overflow: hidden;
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-xs-medium);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
 
 		@media (--viewport-md-up) {
-			gap: var(--space-xxs);
-			margin-left: calc(-1 * var(--space-sl));
-			margin-bottom: var(--space-xl);
-			padding-block: var(--space-md);
+			gap: 0.25rem;
+			margin-left: -0.75rem;
+			margin-bottom: var(--breadcrumb-margin, 2rem);
+			padding-block: 1rem;
 			font: var(--f-ui-md-medium);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 		}
@@ -91,7 +91,7 @@ https://search.google.com/structured-data/testing-tool
 		white-space: nowrap;
 
 		> * {
-			padding: var(--space-ss) var(--space-sm);
+			padding: 0.5rem 0.625rem;
 
 			&:not(:hover) {
 				background: transparent;

@@ -22,7 +22,7 @@
 
 <SocialMediaTags {vault} {chain} />
 
-<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top Vaults', [vault.vault_slug]: vault.name }} />
+<Breadcrumbs labels={{ [chain.slug]: chain.name, vaults: 'Top vaults', [vault.vault_slug]: vault.name }} />
 
 <main class="vault-details ds-3">
 	<VaultPageHeader {vault} />

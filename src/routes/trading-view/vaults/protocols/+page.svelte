@@ -24,20 +24,17 @@
 	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', protocols: 'Protocols' }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', protocols: 'Protocols' }} --breadcrumb-margin="0" />
 
 <main class="protocol-index-page">
 	<Section tag="header">
+		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
 			{#snippet title()}
 				<span>DeFi stablecoin vault protocols</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
-	</Section>
-
-	<Section --section-padding="0">
-		<VaultListingsSelector />
 	</Section>
 
 	<Section padding="sm">

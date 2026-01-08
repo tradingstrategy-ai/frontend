@@ -36,10 +36,11 @@
 	}: Props = $props();
 </script>
 
-<Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} --breadcrumb-margin="0" />
 
 <main class="top-vaults-page ds-3">
 	<Section tag="header">
+		<VaultListingsSelector />
 		<HeroBanner {subtitle}>
 			{#snippet title()}
 				<span class="page-title">
@@ -58,8 +59,6 @@
 
 	<Section>
 		<div class="top-vaults-content">
-			<VaultListingsSelector />
-
 			{#if protocolMetadata}
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}

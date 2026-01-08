@@ -23,20 +23,17 @@
 	<meta name="description" content="Top DeFi vault stablecoins across all blockchains" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', stablecoins: 'Stablecoins' }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', stablecoins: 'Stablecoins' }} --breadcrumb-margin="0" />
 
 <main class="stablecoin-index-page">
 	<Section tag="header">
+		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse supported DeFi vault stablecoins across all blockchains">
 			{#snippet title()}
 				<span>DeFi vaults by their stablecoin denomiation</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
-	</Section>
-
-	<Section --section-padding="0">
-		<VaultListingsSelector />
 	</Section>
 
 	<Section padding="sm">

@@ -28,20 +28,17 @@
 	<meta name="description" content="Top DeFi vaults, grouped by blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top Vaults', chains: 'Chains' }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', chains: 'Chains' }} --breadcrumb-margin="0" />
 
 <main class="chain-index-page">
 	<Section tag="header">
+		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse DeFi vaults grouped by blockchain">
 			{#snippet title()}
 				<span>DeFi vaults by chain</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
-	</Section>
-
-	<Section --section-padding="0">
-		<VaultListingsSelector />
 	</Section>
 
 	<Section padding="sm">
