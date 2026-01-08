@@ -17,3 +17,6 @@ vite.config.ts.timestamp-*
 # Not redistribuable
 static/fonts/NeueHaasGroteskDisplay
 static/fonts/NeueHaasGroteskText
+
+# Claude local settings
+.claude/settings.local.json
