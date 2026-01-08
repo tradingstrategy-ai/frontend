@@ -26,17 +26,14 @@
 <Breadcrumbs labels={{ vaults: 'Top Vaults', stablecoins: 'Stablecoins' }} />
 
 <main class="stablecoin-index-page">
-	<Section tag="header">
+	<Section tag="header" --section-padding="0">
+		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse supported DeFi vault stablecoins across all blockchains">
 			{#snippet title()}
 				<span>DeFi vaults by their stablecoin denomiation</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
-	</Section>
-
-	<Section --section-padding="0">
-		<VaultListingsSelector />
 	</Section>
 
 	<Section padding="sm">

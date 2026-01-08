@@ -39,7 +39,8 @@
 <Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
 
 <main class="top-vaults-page ds-3">
-	<Section tag="header">
+	<Section tag="header" --section-padding="0">
+		<VaultListingsSelector />
 		<HeroBanner {subtitle}>
 			{#snippet title()}
 				<span class="page-title">
@@ -58,7 +59,6 @@
 
 	<Section>
 		<div class="top-vaults-content">
-			<VaultListingsSelector />
 
 			{#if protocolMetadata}
 				<ProtocolDescription metadata={protocolMetadata} />

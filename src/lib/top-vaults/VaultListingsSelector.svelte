@@ -41,6 +41,11 @@
 		gap: 0.5em;
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-extra-light);
+		margin-top: calc(-1 * var(--space-xl));
+
+		@media (--viewport-md-down) {
+			margin-top: calc(-1 * var(--space-sl));
+		}
 	}
 
 	.label {
