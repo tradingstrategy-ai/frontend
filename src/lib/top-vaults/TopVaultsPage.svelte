@@ -36,7 +36,7 @@
 	}: Props = $props();
 </script>
 
-<Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} --breadcrumb-margin="0" />
 
 <main class="top-vaults-page ds-3">
 	<Section tag="header">

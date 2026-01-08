@@ -23,7 +23,7 @@
 	<meta name="description" content="Top DeFi vault stablecoins across all blockchains" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top vaults', stablecoins: 'Stablecoins' }} />
+<Breadcrumbs labels={{ vaults: 'Top vaults', stablecoins: 'Stablecoins' }} --breadcrumb-margin="0" />
 
 <main class="stablecoin-index-page">
 	<Section tag="header">

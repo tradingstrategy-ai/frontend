@@ -33,11 +33,6 @@
 		gap: 0.5em;
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-extra-light);
-		margin-top: -2rem;
-
-		@media (--viewport-sm-down) {
-			margin-top: -0.75rem;
-		}
 	}
 
 	.label {
