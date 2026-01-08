@@ -27,7 +27,7 @@
 <Breadcrumbs labels={{ vaults: 'Top vaults', protocols: 'Protocols' }} />
 
 <main class="protocol-index-page">
-	<Section tag="header" --section-padding="0">
+	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
 			{#snippet title()}

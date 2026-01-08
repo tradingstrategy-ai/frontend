@@ -26,7 +26,7 @@
 <Breadcrumbs labels={{ vaults: 'Top vaults', stablecoins: 'Stablecoins' }} />
 
 <main class="stablecoin-index-page">
-	<Section tag="header" --section-padding="0">
+	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse supported DeFi vault stablecoins across all blockchains">
 			{#snippet title()}

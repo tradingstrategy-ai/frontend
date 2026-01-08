@@ -31,7 +31,7 @@
 <Breadcrumbs labels={{ vaults: 'Top vaults', chains: 'Chains' }} />
 
 <main class="chain-index-page">
-	<Section tag="header" --section-padding="0">
+	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner subtitle="Browse DeFi vaults grouped by blockchain">
 			{#snippet title()}
