@@ -9,12 +9,12 @@ Creates a well-structured GitHub issue in tradingstrategy-ai/frontend with sensi
 
 ## Defaults
 
-| Setting | Default |
-|---------|---------|
-| Assignee | Current GH user (if write access) |
-| Issue Type | Feature |
-| Project | TicketDAO (#2), status: Todo |
-| Labels | `priority: P1`, `size: S` |
+| Setting    | Default                           |
+| ---------- | --------------------------------- |
+| Assignee   | Current GH user (if write access) |
+| Issue Type | Feature                           |
+| Project    | TicketDAO (#2), status: Todo      |
+| Labels     | `priority: P1`, `size: S`         |
 
 ## Information Gathering
 

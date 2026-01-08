@@ -14,6 +14,7 @@ This document describes the architecture and key patterns used in the Trading St
 ## Svelte 5 features
 
 This project uses Svelte 5 with experimental features enabled in `svelte.config.js`:
+
 - `async: true` - allows async components and top-level await
 - `remoteFunctions: true` - enables remote function calls feature
 
