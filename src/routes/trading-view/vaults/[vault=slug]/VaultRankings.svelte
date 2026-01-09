@@ -29,7 +29,7 @@
 			<span class="rank">#{period1m.ranking_chain}</span>
 			on
 			<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
-				<a href={resolve(`/trading-view/${chain?.slug}/vaults`)}>
+				<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}>
 					{chain?.name}
 				</a>
 			</EntitySymbol>

@@ -69,7 +69,7 @@
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
 		},
 		{
-			label: `<a href="${resolve(`/trading-view/${chain.slug}/vaults`)}">Ranking on ${chain.name}</a>`,
+			label: `<a href="${resolve(`/trading-view/vaults/chains/${chain.slug}`)}">Ranking on ${chain.name}</a>`,
 			field: 'ranking_chain',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
 		},
