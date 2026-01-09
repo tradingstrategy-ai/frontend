@@ -40,7 +40,7 @@
 					<th></th>
 					<th>1 month</th>
 					<th>3 month</th>
-					<th>1 year</th>
+					<th>Lifetime</th>
 				</tr>
 			</thead>
 			<tbody>
