@@ -90,7 +90,18 @@
 					{@render returnsCell(vault.cagr, vault.lifetime_return)}
 				</tr>
 				<tr>
-					<td>Net</td>
+					<td>
+						<Tooltip>
+							<span slot="trigger">
+								<span class="underline">Net</span>
+								<IconQuestionCircle />
+							</span>
+							<svelte:fragment slot="popup">
+								For comparing the profitability of vaults, the vault share price is reduced by the calculated net fees
+								for the investment period.
+							</svelte:fragment>
+						</Tooltip>
+					</td>
 					{@render returnsCell(vault.one_month_cagr_net, vault.one_month_returns_net)}
 					{@render returnsCell(vault.three_months_cagr_net, vault.three_months_returns_net)}
 					{@render returnsCell(vault.cagr_net, vault.lifetime_return_net)}
@@ -211,7 +222,7 @@
 		}
 
 		@media (--viewport-md-up) {
-			.fee-type-cell :global(.popup) {
+			:global(.popup) {
 				max-width: 30rem;
 			}
 		}
