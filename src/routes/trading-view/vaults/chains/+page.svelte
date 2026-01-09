@@ -29,7 +29,7 @@
 	<meta name="description" content="Top DeFi vaults, grouped by blockchain" />
 </svelte:head>
 
-<Breadcrumbs labels={{ vaults: 'Top vaults', chains: 'Chains' }} --breadcrumb-margin="0" />
+<Breadcrumbs labels={{ vaults: 'Top vaults', chains: 'By chain' }} --breadcrumb-margin="0" />
 
 <main class="chain-index-page">
 	<Section tag="header">
