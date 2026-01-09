@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
@@ -19,7 +20,7 @@
 	};
 
 	function getHref(slug: string) {
-		return `/trading-view/${slug}/vaults`;
+		return resolve(`/trading-view/vaults/chains/${slug}`);
 	}
 </script>
 

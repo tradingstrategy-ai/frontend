@@ -1,17 +1,15 @@
 import type { VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
-import { getChain } from '$lib/helpers/chain';
 import { isNumber } from '$lib/helpers/formatters';
 
 /** Minimum TVL threshold for vault group breakdown pages */
 export const MIN_TVL_THRESHOLD = 10_000;
 
 /**
- * Resolve path to vault datails page for a given vault
+ * Resolve path to vault details page for a given vault
  */
 export function resolveVaultDetails(vault: VaultInfo) {
-	const chain = getChain(vault.chain_id);
-	return resolve(`/trading-view/${chain?.slug}/vaults/${vault.vault_slug}`);
+	return resolve(`/trading-view/vaults/${vault.vault_slug}`);
 }
 
 /**

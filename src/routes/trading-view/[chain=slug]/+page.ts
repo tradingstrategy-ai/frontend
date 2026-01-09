@@ -14,7 +14,12 @@ export async function load({ parent, fetch }) {
 
 	return {
 		chainDetails: await fetchChainDetails(fetch, chain),
-		topVaults: await fetchTopVaults(fetch, { chainSlug: chain.slug }).catch(optionalDataError('top vaults')),
+		topVaults: await fetchTopVaults(fetch)
+			.then((data) => ({
+				...data,
+				vaults: data.vaults.filter((v) => v.chain_id === chain.id)
+			}))
+			.catch(optionalDataError('top vaults')),
 		entities: {
 			exchanges: fetchTopExchanges(fetch, chain.slug),
 			tokens: fetchTopTokens(fetch, chain.slug),

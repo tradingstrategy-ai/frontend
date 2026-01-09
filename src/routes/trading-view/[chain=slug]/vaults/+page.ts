@@ -1,7 +1,6 @@
 import { resolve } from '$app/paths';
 import { redirect } from '@sveltejs/kit';
 
-// Redirect to new vault details route
 export function load({ params }) {
-	redirect(301, resolve('/trading-view/vaults/[vault]', params));
+	redirect(301, resolve('/trading-view/vaults/chains/[chain]', params));
 }
