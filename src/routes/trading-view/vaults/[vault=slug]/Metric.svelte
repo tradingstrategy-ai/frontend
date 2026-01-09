@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		label: string;
+		label: string | Snippet;
 		value?: string;
 		size?: 'md' | 'lg' | 'xl';
 		children?: Snippet;
@@ -12,7 +12,13 @@
 </script>
 
 <div class={['metric', size]}>
-	<div class="label">{label}</div>
+	<div class="label">
+		{#if label instanceof Function}
+			{@render label()}
+		{:else}
+			{label}
+		{/if}
+	</div>
 	<div class="value">
 		{#if children}
 			{@render children()}

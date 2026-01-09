@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { VaultFees, VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
+	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getFormattedFeeMode, getFormattedLockup } from '$lib/top-vaults/helpers';
 	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface Props {
 		vault: VaultInfo;
@@ -39,7 +40,23 @@
 				<Risk risk={vault.risk} />
 			</Metric>
 
-			<Metric label="Fee mode">
+			<Metric>
+				{#snippet label()}
+					<Tooltip>
+						<span slot="trigger">
+							<span class="underline">Fee mode</span>
+							<IconQuestionCircle --icon-size="1.125em" />
+						</span>
+						<div slot="popup">
+							Common vault fee mechanism implementations are:
+							<ul style:margin-top="0.5em">
+								<li><strong>externalised:</strong> net fees, deducted from an investor at a redemption</li>
+								<li><strong>skimming:</strong> redirected from profits at the time of trade</li>
+								<li><strong>minting:</strong> new shares minted to the vault owner at the time of trade</li>
+							</ul>
+						</div>
+					</Tooltip>
+				{/snippet}
 				{getFormattedFeeMode(vault)}
 			</Metric>
 
@@ -98,7 +115,10 @@
 					<tr>
 						<td class="fee-type-cell">
 							<Tooltip>
-								<span slot="trigger" class="underline">{label}</span>
+								<span slot="trigger">
+									<span class="underline">{label}</span>
+									<IconQuestionCircle />
+								</span>
 								<svelte:fragment slot="popup">
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html tooltip}
@@ -194,6 +214,12 @@
 			.fee-type-cell :global(.popup) {
 				max-width: 30rem;
 			}
+		}
+
+		[slot='trigger'] {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.75ex;
 		}
 	}
 </style>
