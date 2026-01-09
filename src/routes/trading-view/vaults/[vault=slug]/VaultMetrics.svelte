@@ -5,6 +5,7 @@
 	import Metric from './Metric.svelte';
 	import { getFormattedFeeMode, getFormattedLockup } from '$lib/top-vaults/helpers';
 	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface Props {
 		vault: VaultInfo;
@@ -59,35 +60,23 @@
 				</tr>
 			</thead>
 			<tbody>
+				{#snippet returnsCell(ann: MaybeNumber, abs: MaybeNumber)}
+					<td class="returns-cell">
+						<div class="ann">{formatPercent(ann)} ann</div>
+						<div class="abs">{formatPercent(abs)} abs</div>
+					</td>
+				{/snippet}
 				<tr>
 					<td>Gross</td>
-					<td>
-						<span>{formatPercent(vault.one_month_cagr)}</span>
-						<span>{formatPercent(vault.one_month_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr)}</span>
-						<span>{formatPercent(vault.three_months_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr)}</span>
-						<span>{formatPercent(vault.lifetime_return)}</span>
-					</td>
+					{@render returnsCell(vault.one_month_cagr, vault.one_month_returns)}
+					{@render returnsCell(vault.three_months_cagr, vault.three_months_returns)}
+					{@render returnsCell(vault.cagr, vault.lifetime_return)}
 				</tr>
 				<tr>
 					<td>Net</td>
-					<td>
-						<span>{formatPercent(vault.one_month_cagr_net)}</span>
-						<span>{formatPercent(vault.one_month_returns_net)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr_net)}</span>
-						<span>{formatPercent(vault.three_months_returns_net)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr_net)}</span>
-						<span>{formatPercent(vault.lifetime_return_net)}</span>
-					</td>
+					{@render returnsCell(vault.one_month_cagr_net, vault.one_month_returns_net)}
+					{@render returnsCell(vault.three_months_cagr_net, vault.three_months_returns_net)}
+					{@render returnsCell(vault.cagr_net, vault.lifetime_return_net)}
 				</tr>
 			</tbody>
 		</table>
@@ -105,9 +94,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#snippet feeRow(label: string, fees: VaultFees | null)}
+				{#snippet feeRow(label: string, tooltip: string, fees: VaultFees | null)}
 					<tr>
-						<td>{label}</td>
+						<td class="fee-type-cell">
+							<Tooltip>
+								<span slot="trigger" class="underline">{label}</span>
+								<svelte:fragment slot="popup">
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									{@html tooltip}
+								</svelte:fragment>
+							</Tooltip>
+						</td>
 						<td>{formatPercent(fees?.management)}</td>
 						<td>{formatPercent(fees?.performance)}</td>
 						<td>{formatPercent(fees?.deposit)}</td>
@@ -115,8 +112,17 @@
 					</tr>
 				{/snippet}
 
-				{@render feeRow('Gross', vault.gross_fees)}
-				{@render feeRow('Net', vault.net_fees)}
+				{@render feeRow(
+					'Gross',
+					'<strong>Gross fees</strong> are what vaults track internally. They are not exposed to an investor, and only useful for internal profit calculations of the vault. Gross fees have already been deducted when the vault share price is updated.',
+					vault.gross_fees
+				)}
+
+				{@render feeRow(
+					'Net',
+					'<strong>Net fees</strong> are deduced at a redemption. A vault investor receives less than the value of their shares back.',
+					vault.net_fees
+				)}
 			</tbody>
 		</table>
 	</MetricsBox>
@@ -178,22 +184,15 @@
 				}
 			}
 
-			td span {
-				display: grid;
-				grid-template-columns: 1fr 3ch;
-				gap: 0.25rem;
+			.abs {
+				padding-top: 0.25em;
+				color: var(--c-text-extra-light);
+			}
+		}
 
-				&:first-child::after {
-					content: 'ann';
-				}
-
-				&:last-child {
-					padding-top: 0.25em;
-					color: var(--c-text-extra-light);
-					&::after {
-						content: 'abs';
-					}
-				}
+		@media (--viewport-md-up) {
+			.fee-type-cell :global(.popup) {
+				max-width: 30rem;
 			}
 		}
 	}
