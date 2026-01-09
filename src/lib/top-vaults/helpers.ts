@@ -1,6 +1,6 @@
 import type { VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
-import { isNumber } from '$lib/helpers/formatters';
+import { capitalize, isNumber } from '$lib/helpers/formatters';
 
 /** Minimum TVL threshold for vault group breakdown pages */
 export const MIN_TVL_THRESHOLD = 10_000;
@@ -51,4 +51,12 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 	if (parts.length === 0) parts.push('No lockup');
 
 	return parts.join(', ');
+}
+
+/**
+ * Return the formatted fee mode for a vault
+ */
+export function getFormattedFeeMode({ fee_mode }: VaultInfo): string {
+	if (fee_mode == null) return 'Unknown';
+	return capitalize(fee_mode.replaceAll('_', ' '));
 }

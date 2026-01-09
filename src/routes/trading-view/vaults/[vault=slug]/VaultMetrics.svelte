@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultFees, VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
-	import { getFormattedLockup } from '$lib/top-vaults/helpers';
-	import { formatAmount, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters';
+	import { getFormattedFeeMode, getFormattedLockup } from '$lib/top-vaults/helpers';
+	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
 
 	interface Props {
 		vault: VaultInfo;
@@ -20,21 +20,36 @@
 				<Metric size="lg" label="3M Sharpe">
 					{formatNumber(vault.three_months_sharpe, 1)}
 				</Metric>
+
 				<Metric size="lg" label="3M volatility">
 					{formatPercent(vault.three_months_volatility, 1)}
 				</Metric>
 			</div>
 
-			<Metric label="Age">{formatNumber(vault.years, 1)} years</Metric>
-			<Metric label="Deposit events">{formatAmount(vault.event_count)}</Metric>
+			<Metric label="Age">
+				{formatNumber(vault.years, 1)} years
+			</Metric>
+
+			<Metric label="Deposit events">
+				{formatAmount(vault.event_count)}
+			</Metric>
+
 			<Metric label="Protocol Technical Risk">
 				<Risk risk={vault.risk} />
+			</Metric>
+
+			<Metric label="Fee mode">
+				{getFormattedFeeMode(vault)}
+			</Metric>
+
+			<Metric label="Lockup period">
+				{getFormattedLockup(vault)}
 			</Metric>
 		</div>
 	</MetricsBox>
 
 	<MetricsBox class="returns" title="Returns">
-		<table class="returns-table">
+		<table class="vault-metrics-table">
 			<thead>
 				<tr>
 					<th></th>
@@ -76,28 +91,35 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="net-fee-info">
-			{#if isNumber(vault.mgmt_fee) && isNumber(vault.perf_fee)}
-				Net returns are calculated based on gross returns after accounting for fees.
-			{:else}
-				Net returns cannot be calculated because fee information is not yet available for this protocol.
-			{/if}
-		</div>
 	</MetricsBox>
 
-	<MetricsBox class="fees" title="Fees / lockup">
-		<div class="metrics-inner">
-			<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
-			<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
-			<Metric label="Lockup period">{getFormattedLockup(vault)}</Metric>
-		</div>
-	</MetricsBox>
+	<MetricsBox class="fees" title="Fees">
+		<table class="vault-metrics-table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Manage&shy;ment</th>
+					<th>Perform&shy;ance</th>
+					<th>Deposit</th>
+					<th>Withdraw</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#snippet feeRow(label: string, fees: VaultFees | null)}
+					<tr>
+						<td>{label}</td>
+						<td>{formatPercent(fees?.management)}</td>
+						<td>{formatPercent(fees?.performance)}</td>
+						<td>{formatPercent(fees?.deposit)}</td>
+						<td>{formatPercent(fees?.withdraw)}</td>
+					</tr>
+				{/snippet}
 
-	{#if vault.notes}
-		<MetricsBox class="notes" title="Notes">
-			<div class="notes-inner">{vault.notes}</div>
-		</MetricsBox>
-	{/if}
+				{@render feeRow('Gross', vault.gross_fees)}
+				{@render feeRow('Net', vault.net_fees)}
+			</tbody>
+		</table>
+	</MetricsBox>
 </div>
 
 <style>
@@ -110,19 +132,7 @@
 		@media (--viewport-lg-up) {
 			grid-template-columns: 1fr 1fr;
 
-			:global(.fees) {
-				grid-area: 1 / 1;
-			}
-
-			:global(.fees) {
-				grid-area: 2 / 1;
-			}
-
-			:global(.returns) {
-				grid-area: span 2 / 2;
-			}
-
-			:global(.notes) {
+			:global(:is(.other-metrics)) {
 				grid-column: span 2;
 			}
 		}
@@ -134,7 +144,7 @@
 			gap: var(--gap);
 		}
 
-		.returns-table {
+		.vault-metrics-table {
 			width: 100%;
 			border-collapse: collapse;
 			font: var(--f-ui-md-roman);
@@ -146,7 +156,10 @@
 			}
 
 			th {
+				vertical-align: bottom;
 				border-bottom: 2px solid var(--c-text-extra-light);
+				color: var(--c-text-extra-light);
+				font-size: 0.875em;
 			}
 
 			td {
@@ -182,20 +195,6 @@
 					}
 				}
 			}
-		}
-
-		.net-fee-info {
-			margin-top: 1rem;
-			font: var(--f-ui-md-roman);
-			color: var(--c-text-extra-light);
-
-			@media (--viewport-sm-down) {
-				font: var(--f-ui-sm-roman);
-			}
-		}
-
-		.notes-inner {
-			font: var(--f-ui-lg-roman);
 		}
 	}
 </style>

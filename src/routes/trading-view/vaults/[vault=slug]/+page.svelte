@@ -3,6 +3,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
@@ -51,6 +52,12 @@
 
 		<VaultMetrics {vault} />
 
+		{#if vault.notes}
+			<MetricsBox class="notes" title="Notes">
+				<div class="notes-inner">{vault.notes}</div>
+			</MetricsBox>
+		{/if}
+
 		{#if protocolMetadata}
 			<VaultProtocolInfo {vault} {protocolMetadata} />
 		{/if}
@@ -87,6 +94,10 @@
 			:global(.mobile) {
 				display: none;
 			}
+		}
+
+		.notes-inner {
+			font: var(--f-ui-lg-roman);
 		}
 	}
 </style>
