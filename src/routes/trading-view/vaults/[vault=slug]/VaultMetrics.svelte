@@ -1,10 +1,12 @@
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultFees, VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
-	import { getFormattedLockup } from '$lib/top-vaults/helpers';
-	import { formatAmount, formatNumber, formatPercent, isNumber } from '$lib/helpers/formatters';
+	import IconQuestionCircle from '~icons/local/question-circle';
+	import { getFormattedFeeMode, getFormattedLockup } from '$lib/top-vaults/helpers';
+	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
 
 	interface Props {
 		vault: VaultInfo;
@@ -20,21 +22,52 @@
 				<Metric size="lg" label="3M Sharpe">
 					{formatNumber(vault.three_months_sharpe, 1)}
 				</Metric>
+
 				<Metric size="lg" label="3M volatility">
 					{formatPercent(vault.three_months_volatility, 1)}
 				</Metric>
 			</div>
 
-			<Metric label="Age">{formatNumber(vault.years, 1)} years</Metric>
-			<Metric label="Deposit events">{formatAmount(vault.event_count)}</Metric>
+			<Metric label="Age">
+				{formatNumber(vault.years, 1)} years
+			</Metric>
+
+			<Metric label="Deposit events">
+				{formatAmount(vault.event_count)}
+			</Metric>
+
 			<Metric label="Protocol Technical Risk">
 				<Risk risk={vault.risk} />
+			</Metric>
+
+			<Metric>
+				{#snippet label()}
+					<Tooltip>
+						<span slot="trigger">
+							<span class="underline">Fee mode</span>
+							<IconQuestionCircle --icon-size="1.125em" />
+						</span>
+						<div slot="popup">
+							Common vault fee mechanism implementations are:
+							<ul style:margin-top="0.5em">
+								<li><strong>externalised:</strong> net fees, deducted from an investor at a redemption</li>
+								<li><strong>skimming:</strong> redirected from profits at the time of trade</li>
+								<li><strong>minting:</strong> new shares minted to the vault owner at the time of trade</li>
+							</ul>
+						</div>
+					</Tooltip>
+				{/snippet}
+				{getFormattedFeeMode(vault)}
+			</Metric>
+
+			<Metric label="Lockup period">
+				{getFormattedLockup(vault)}
 			</Metric>
 		</div>
 	</MetricsBox>
 
 	<MetricsBox class="returns" title="Returns">
-		<table class="returns-table">
+		<table class="vault-metrics-table">
 			<thead>
 				<tr>
 					<th></th>
@@ -44,60 +77,86 @@
 				</tr>
 			</thead>
 			<tbody>
+				{#snippet returnsCell(ann: MaybeNumber, abs: MaybeNumber)}
+					<td class="returns-cell">
+						<div class="ann">{formatPercent(ann)} ann</div>
+						<div class="abs">{formatPercent(abs)} abs</div>
+					</td>
+				{/snippet}
 				<tr>
 					<td>Gross</td>
-					<td>
-						<span>{formatPercent(vault.one_month_cagr)}</span>
-						<span>{formatPercent(vault.one_month_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr)}</span>
-						<span>{formatPercent(vault.three_months_returns)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr)}</span>
-						<span>{formatPercent(vault.lifetime_return)}</span>
-					</td>
+					{@render returnsCell(vault.one_month_cagr, vault.one_month_returns)}
+					{@render returnsCell(vault.three_months_cagr, vault.three_months_returns)}
+					{@render returnsCell(vault.cagr, vault.lifetime_return)}
 				</tr>
 				<tr>
-					<td>Net</td>
 					<td>
-						<span>{formatPercent(vault.one_month_cagr_net)}</span>
-						<span>{formatPercent(vault.one_month_returns_net)}</span>
+						<Tooltip>
+							<span slot="trigger">
+								<span class="underline">Net</span>
+								<IconQuestionCircle />
+							</span>
+							<svelte:fragment slot="popup">
+								For comparing the profitability of vaults, the vault share price is reduced by the calculated net fees
+								for the investment period.
+							</svelte:fragment>
+						</Tooltip>
 					</td>
-					<td>
-						<span>{formatPercent(vault.three_months_cagr_net)}</span>
-						<span>{formatPercent(vault.three_months_returns_net)}</span>
-					</td>
-					<td>
-						<span>{formatPercent(vault.cagr_net)}</span>
-						<span>{formatPercent(vault.lifetime_return_net)}</span>
-					</td>
+					{@render returnsCell(vault.one_month_cagr_net, vault.one_month_returns_net)}
+					{@render returnsCell(vault.three_months_cagr_net, vault.three_months_returns_net)}
+					{@render returnsCell(vault.cagr_net, vault.lifetime_return_net)}
 				</tr>
 			</tbody>
 		</table>
-		<div class="net-fee-info">
-			{#if isNumber(vault.mgmt_fee) && isNumber(vault.perf_fee)}
-				Net returns are calculated based on gross returns after accounting for fees.
-			{:else}
-				Net returns cannot be calculated because fee information is not yet available for this protocol.
-			{/if}
-		</div>
 	</MetricsBox>
 
-	<MetricsBox class="fees" title="Fees / lockup">
-		<div class="metrics-inner">
-			<Metric label="Management fee">{formatPercent(vault.mgmt_fee, 1)}</Metric>
-			<Metric label="Performance fee">{formatPercent(vault.perf_fee, 1)}</Metric>
-			<Metric label="Lockup period">{getFormattedLockup(vault)}</Metric>
-		</div>
-	</MetricsBox>
+	<MetricsBox class="fees" title="Fees">
+		<table class="vault-metrics-table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Manage&shy;ment</th>
+					<th>Perform&shy;ance</th>
+					<th>Deposit</th>
+					<th>Withdraw</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#snippet feeRow(label: string, tooltip: string, fees: VaultFees | null)}
+					<tr>
+						<td class="fee-type-cell">
+							<Tooltip>
+								<span slot="trigger">
+									<span class="underline">{label}</span>
+									<IconQuestionCircle />
+								</span>
+								<svelte:fragment slot="popup">
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									{@html tooltip}
+								</svelte:fragment>
+							</Tooltip>
+						</td>
+						<td>{formatPercent(fees?.management)}</td>
+						<td>{formatPercent(fees?.performance)}</td>
+						<td>{formatPercent(fees?.deposit)}</td>
+						<td>{formatPercent(fees?.withdraw)}</td>
+					</tr>
+				{/snippet}
 
-	{#if vault.notes}
-		<MetricsBox class="notes" title="Notes">
-			<div class="notes-inner">{vault.notes}</div>
-		</MetricsBox>
-	{/if}
+				{@render feeRow(
+					'Gross',
+					'<strong>Gross fees</strong> are what vaults track internally. They are not exposed to an investor, and only useful for internal profit calculations of the vault. Gross fees have already been deducted when the vault share price is updated.',
+					vault.gross_fees
+				)}
+
+				{@render feeRow(
+					'Net',
+					'<strong>Net fees</strong> are deduced at a redemption. A vault investor receives less than the value of their shares back.',
+					vault.net_fees
+				)}
+			</tbody>
+		</table>
+	</MetricsBox>
 </div>
 
 <style>
@@ -110,19 +169,7 @@
 		@media (--viewport-lg-up) {
 			grid-template-columns: 1fr 1fr;
 
-			:global(.fees) {
-				grid-area: 1 / 1;
-			}
-
-			:global(.fees) {
-				grid-area: 2 / 1;
-			}
-
-			:global(.returns) {
-				grid-area: span 2 / 2;
-			}
-
-			:global(.notes) {
+			:global(:is(.other-metrics)) {
 				grid-column: span 2;
 			}
 		}
@@ -134,7 +181,7 @@
 			gap: var(--gap);
 		}
 
-		.returns-table {
+		.vault-metrics-table {
 			width: 100%;
 			border-collapse: collapse;
 			font: var(--f-ui-md-roman);
@@ -146,7 +193,10 @@
 			}
 
 			th {
+				vertical-align: bottom;
 				border-bottom: 2px solid var(--c-text-extra-light);
+				color: var(--c-text-extra-light);
+				font-size: 0.875em;
 			}
 
 			td {
@@ -165,37 +215,22 @@
 				}
 			}
 
-			td span {
-				display: grid;
-				grid-template-columns: 1fr 3ch;
-				gap: 0.25rem;
-
-				&:first-child::after {
-					content: 'ann';
-				}
-
-				&:last-child {
-					padding-top: 0.25em;
-					color: var(--c-text-extra-light);
-					&::after {
-						content: 'abs';
-					}
-				}
+			.abs {
+				padding-top: 0.25em;
+				color: var(--c-text-extra-light);
 			}
 		}
 
-		.net-fee-info {
-			margin-top: 1rem;
-			font: var(--f-ui-md-roman);
-			color: var(--c-text-extra-light);
-
-			@media (--viewport-sm-down) {
-				font: var(--f-ui-sm-roman);
+		@media (--viewport-md-up) {
+			:global(.popup) {
+				max-width: 30rem;
 			}
 		}
 
-		.notes-inner {
-			font: var(--f-ui-lg-roman);
+		[slot='trigger'] {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.75ex;
 		}
 	}
 </style>

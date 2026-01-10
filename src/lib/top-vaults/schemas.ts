@@ -13,6 +13,7 @@ export const vaultFeesSchema = z.object({
 	deposit: nullableNumber,
 	withdraw: nullableNumber
 });
+export type VaultFees = z.infer<typeof vaultFeesSchema>;
 
 /** Tearsheet metrics for one period. */
 export const periodMetricsSchema = z.object({
