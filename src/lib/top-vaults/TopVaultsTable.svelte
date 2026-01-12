@@ -54,6 +54,27 @@
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
+	// Calculate total TVL from base vaults (unaffected by search filter)
+	let totalTvl = $derived(baseVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
+
+	// Calculate TVL-weighted average 1M APY (unaffected by search filter)
+	let avgTvlWeightedApy1M = $derived.by(() => {
+		let weightedSum = 0;
+		let tvlSum = 0;
+
+		for (const v of baseVaults) {
+			const tvl = v.current_nav ?? 0;
+			const apy = v.one_month_cagr_net ?? v.one_month_cagr;
+
+			if (tvl > 0 && apy !== null) {
+				weightedSum += tvl * apy;
+				tvlSum += tvl;
+			}
+		}
+
+		return tvlSum > 0 ? weightedSum / tvlSum : null;
+	});
+
 	// filter vaults matching filterValue (search string)
 	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
@@ -175,10 +196,47 @@
 <div class="top-vaults-table">
 	<div class="table-extras">
 		<div class="table-meta">
-			<span>{baseVaults.length} vaults</span>
-			<span>Min. TVL {formatDollar(tvlThreshold, 0)}</span>
-			<span>Stablecoin-only</span>
-			<span>Updated <Timestamp date={topVaults.generated_at} relative /></span>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">{baseVaults.length} vaults</svelte:fragment>
+					<svelte:fragment slot="popup">The number of vaults listed on this page.</svelte:fragment>
+				</Tooltip></span
+			>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">Combined TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
+					<svelte:fragment slot="popup">This is the sum of TVL in all listed vaults on this page.</svelte:fragment>
+				</Tooltip></span
+			>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">1M return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
+					<svelte:fragment slot="popup">This is a TVL-weighted average annualised return for one month.</svelte:fragment
+					>
+				</Tooltip></span
+			>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">Min. TVL {formatDollar(tvlThreshold, 0)}</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>The listing is limited to vaults with this much of minimum TVL deposited currently.</svelte:fragment
+					>
+				</Tooltip></span
+			>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH or BTC.</svelte:fragment
+					>
+				</Tooltip></span
+			>
+			<span
+				><Tooltip>
+					<svelte:fragment slot="trigger">Updated <Timestamp date={topVaults.generated_at} relative /></svelte:fragment>
+					<svelte:fragment slot="popup">Metrics are updated daily.</svelte:fragment>
+				</Tooltip></span
+			>
 		</div>
 		<div class="filter">
 			<TextInput
@@ -375,13 +433,15 @@
 			display: flex;
 			flex-wrap: wrap;
 			flex-grow: 1;
-			gap: 0.5rem 0;
+			gap: 0.25rem 0;
 			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 
 			span:not(:last-child)::after {
 				content: '|';
-				margin-inline: 0.75rem;
+				margin-left: 0.1rem;
+				margin-right: 0.3rem;
+				opacity: 0.5;
 			}
 		}
 
