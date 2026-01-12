@@ -54,11 +54,14 @@
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
-	// Count vaults hidden due to TVL threshold (only when filterTvl is enabled)
-	let hiddenByTvl = $derived.by(() => {
-		if (!filterTvl) return 0;
-		return baseVaults.filter((v) => (v.current_nav ?? 0) < tvlThreshold).length;
+	// Get vaults hidden due to TVL threshold (only when filterTvl is enabled)
+	let hiddenVaults = $derived.by(() => {
+		if (!filterTvl) return [];
+		return baseVaults.filter((v) => (v.current_nav ?? 0) < tvlThreshold);
 	});
+
+	// Count of hidden vaults
+	let hiddenByTvl = $derived(hiddenVaults.length);
 
 	// Vaults that pass TVL filter (used for stats display)
 	let tvlFilteredVaults = $derived.by(() => {
@@ -216,7 +219,11 @@
 							{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
 								? 'it does'
 								: 'they do'}
-							not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}.
+							not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}:
+							{hiddenVaults
+								.slice(0, 2)
+								.map((v) => v.name)
+								.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 						{:else}
 							The number of vaults listed on this page.
 						{/if}</svelte:fragment
