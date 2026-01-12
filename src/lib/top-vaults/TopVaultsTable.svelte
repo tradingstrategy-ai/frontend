@@ -212,7 +212,9 @@
 				><Tooltip>
 					<svelte:fragment slot="trigger">Avg. return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
 					<svelte:fragment slot="popup"
-						>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list.</svelte:fragment
+						>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list. Net
+						returns is used when known for the vault protocol, otherwise we assume the reported returns are
+						fee-inclusive.</svelte:fragment
 					>
 				</Tooltip></span
 			>
