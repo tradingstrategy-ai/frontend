@@ -10,7 +10,9 @@ const linksSchema = z.object({
 	homepage: z.url().nullable(),
 	twitter: z.url().nullable(),
 	documentation: z.url().nullable(),
-	github: z.url().nullable()
+	github: z.url().nullable(),
+	defillama: z.url().nullable(),
+	audits: z.url().nullable()
 });
 
 export const vaultProtocolMetadataSchema = z.object({
