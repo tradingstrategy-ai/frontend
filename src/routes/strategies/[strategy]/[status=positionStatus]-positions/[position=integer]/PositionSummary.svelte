@@ -4,7 +4,14 @@
 	import Alert from '$lib/components/Alert.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { formatDuration, formatPercent, formatPrice, formatTokenAmount } from '$lib/helpers/formatters';
+	import {
+		formatDuration,
+		formatPercent,
+		formatPrice,
+		formatTokenAmount,
+		isNumber,
+		notFilledMarker
+	} from '$lib/helpers/formatters';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import IconInfo from '~icons/local/info';
 	import IconWarning from '~icons/local/warning';
@@ -17,10 +24,9 @@
 
 	const VALUE_REALIZATION_GAP_THRESHOLD = 0.01;
 
-	const priceProp = position.stillOpen ? 'currentPrice' : 'closePrice';
-	const quantityProp = position.stillOpen ? 'currentQuantity' : 'quantityAtClose';
-	const interestRateProp = position.stillOpen ? 'currentInterestRate' : 'interestRateAtClose';
-	const valueProp = position.stillOpen ? 'currentValue' : 'valueAtClose';
+	let currentPrice = $derived(position.stillOpen ? position.currentPrice : position.closePrice);
+	let currentQuantity = $derived(position.stillOpen ? position.currentQuantity : position.quantityAtClose);
+	let currentValue = $derived(position.stillOpen ? position.currentValue : position.valueAtClose);
 
 	const changeOptions: Intl.NumberFormatOptions = { signDisplay: 'exceptZero' };
 </script>
@@ -94,16 +100,20 @@
 				<td>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatTokenAmount(position[quantityProp])}
+							{formatTokenAmount(currentQuantity)}
 							{position.pair.actionSymbol}
 						</span>
 						<span slot="popup">
-							{positionTooltips[quantityProp]}
+							{position.stillOpen ? positionTooltips.currentQuantity : positionTooltips.quantityAtClose}
 						</span>
 					</Tooltip>
 				</td>
 				<td>
-					{formatTokenAmount(position[quantityProp] - position.quantityAtOpen, undefined, undefined, changeOptions)}
+					{#if currentQuantity}
+						{formatTokenAmount(currentQuantity - position.quantityAtOpen, undefined, undefined, changeOptions)}
+					{:else}
+						{notFilledMarker}
+					{/if}
 					{position.pair.actionSymbol}
 				</td>
 			</tr>
@@ -131,17 +141,21 @@
 								{/if}
 							</span>
 							<span slot="popup">
-								{positionTooltips[interestRateProp]}
+								{position.stillOpen ? positionTooltops.currentInterestRate : positionTooltips.interestRateAtClose}
 							</span>
 						</Tooltip>
 					</td>
 					<td>
-						{formatPercent(
-							position[interestRateProp] - position.interestRateAtOpen,
-							undefined,
-							undefined,
-							changeOptions
-						)}
+						{#if position.stillOpen && isNumber(position.currentInterestRate) && isNumber(position.interestRateAtOpen)}
+							{formatPercent(
+								position.currentInterestRate - position.interestRateAtOpen,
+								undefined,
+								undefined,
+								changeOptions
+							)}
+						{:else}
+							{notFilledMarker}
+						{/if}
 					</td>
 				</tr>
 			{:else}
@@ -160,15 +174,19 @@
 					<td>
 						<Tooltip>
 							<span slot="trigger" class="underline">
-								{formatPrice(position[priceProp])}
+								{formatPrice(currentPrice)}
 							</span>
 							<span slot="popup">
-								{positionTooltips[priceProp]}
+								{position.stillOpen ? positionTooltips.currentPrice : positionTooltips.closePrice}
 							</span>
 						</Tooltip>
 					</td>
 					<td>
-						{formatPrice(position[priceProp] - position.openPrice, undefined, undefined, changeOptions)}
+						{#if isNumber(currentPrice) && isNumber(position.openPrice)}
+							{formatPrice(currentPrice - position.openPrice, undefined, undefined, changeOptions)}
+						{:else}
+							{notFilledMarker}
+						{/if}
 					</td>
 				</tr>
 			{/if}
@@ -188,10 +206,10 @@
 				<td>
 					<Tooltip>
 						<span slot="trigger" class="underline">
-							{formatPrice(position[valueProp])}
+							{formatPrice(currentValue)}
 						</span>
 						<span slot="popup">
-							{positionTooltips[valueProp]}
+							{position.stillOpen ? positionTooltips.currentValue : positionTooltips.valueAtClose}
 						</span>
 					</Tooltip>
 					<!-- value realization gap info/warning icon and tooltip -->
@@ -238,8 +256,10 @@
 							<span slot="trigger" class="underline">N/A</span>
 							<span slot="popup">𝚫 Value not currently available for multitrade positions.</span>
 						</Tooltip>
+					{:else if currentValue}
+						{formatPrice(currentValue - position.valueAtOpen, undefined, undefined, changeOptions)}
 					{:else}
-						{formatPrice(position[valueProp] - position.valueAtOpen, undefined, undefined, changeOptions)}
+						{notFilledMarker}
 					{/if}
 				</td>
 			</tr>

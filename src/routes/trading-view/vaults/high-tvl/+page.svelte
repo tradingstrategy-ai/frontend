@@ -3,7 +3,7 @@
 	import { formatDollar } from '$lib/helpers/formatters.js';
 
 	let { data } = $props();
-	let { topVaults, tvlThreshold } = data;
+	let { topVaults, tvlThreshold } = $derived(data);
 
 	let minTvlString = $derived(formatDollar(tvlThreshold, 0));
 </script>

@@ -22,8 +22,8 @@ Displays relevant user-facing error message based on the type of payment error e
 
 	let { error, symbol, transactionCopy }: Props = $props();
 
-	const causedBy = errorCausedBy.bind(null, error);
-	const state = error.state ?? 'unknown';
+	let causedBy = $derived(errorCausedBy.bind(null, error));
+	let state = $derived(error.state ?? 'unknown');
 </script>
 
 {#if causedBy('NavigationLostStateError')}

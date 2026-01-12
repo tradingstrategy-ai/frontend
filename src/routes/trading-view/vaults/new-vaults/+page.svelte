@@ -2,7 +2,7 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 
 	let { data } = $props();
-	let { topVaults, maxAgeDays } = data;
+	let { topVaults, maxAgeDays } = $derived(data);
 </script>
 
 <svelte:head>

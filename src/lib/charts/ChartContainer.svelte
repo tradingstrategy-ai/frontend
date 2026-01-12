@@ -42,6 +42,7 @@
 		...restProps
 	}: Props = $props();
 
+	// svelte-ignore state_referenced_locally
 	const timeSpans = new OptionGroup(timeSpanOptions, '3M');
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));

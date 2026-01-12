@@ -16,7 +16,8 @@
 
 	let { attrs, rows, page, targetableRows = false, children }: Props = $props();
 
-	const { pageIndex, pageSize } = page ?? {};
+	let pageIndex = $derived(page?.pageIndex);
+	let pageSize = $derived(page?.pageSize);
 
 	let offsetWidth = $state<number>();
 

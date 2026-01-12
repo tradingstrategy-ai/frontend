@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 
-	const { data } = $props();
-	const { strategy, denominationTokenInfo } = data;
+	let { data } = $props();
+	let { strategy, denominationTokenInfo } = $derived(data);
 	const wizard = getWizardContext();
 
 	wizard.toggleComplete('introduction');

@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	const { impressiveNumbers, posts, strategies } = data;
+	let { impressiveNumbers, posts, strategies } = $derived(data);
 </script>
 
 <svelte:head>

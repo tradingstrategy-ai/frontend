@@ -8,8 +8,8 @@
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { max } from 'd3-array';
 
-	const { data } = $props();
-	const { chain, chainDetails, topVaults, entities } = data;
+	let { data } = $props();
+	let { chain, chainDetails, topVaults, entities } = $derived(data);
 
 	let lastIndexedBlock = $derived.by(() => {
 		if (chainDetails) {

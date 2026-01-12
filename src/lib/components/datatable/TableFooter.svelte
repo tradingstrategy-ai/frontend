@@ -10,7 +10,7 @@
 
 	let { page, totalRowCount }: Props = $props();
 
-	const { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = page;
+	let { pageSize, pageIndex, pageCount, hasPreviousPage, hasNextPage } = $derived(page);
 
 	let firstRowIndex = $derived($pageIndex * $pageSize + 1);
 	let lastRowIndex = $derived(Math.min(firstRowIndex + $pageSize - 1, totalRowCount));

@@ -9,7 +9,7 @@
 
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { readable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
@@ -40,7 +40,14 @@
 		...restProps
 	}: Props = $props();
 
-	const tableRows = loading ? new Array(10).fill({}) : rows || [];
+	let tableRows = $derived(loading ? new Array(10).fill({}) : rows || []);
+
+	// svelte-ignore state_referenced_locally
+	const tableRowsStore = writable(tableRows);
+
+	$effect(() => {
+		tableRowsStore.set(tableRows);
+	});
 
 	// return a CompareValue object to enable "Unknown 0x…" values to be sorted last
 	function getCompareValue(row: Record<string, any>, propertyName: string) {
@@ -57,7 +64,8 @@
 		return a.nameOrder - b.nameOrder || a.value - b.value;
 	}
 
-	const table = createTable(readable(tableRows), {
+	// svelte-ignore state_referenced_locally
+	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']

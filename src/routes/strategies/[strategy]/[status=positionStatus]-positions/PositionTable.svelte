@@ -41,6 +41,7 @@
 		...restProps
 	}: Props = $props();
 
+	// svelte-ignore state_referenced_locally
 	const positionsStore = writable(positions);
 
 	const statusColumns = {
@@ -49,6 +50,7 @@
 		frozen: ['description', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
 
+	// svelte-ignore state_referenced_locally
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({
 			initialColumnIdOrder: statusColumns[status],

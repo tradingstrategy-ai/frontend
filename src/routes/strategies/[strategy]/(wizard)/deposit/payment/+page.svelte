@@ -20,12 +20,13 @@
 	// Delay (ms) between signature request and payment transaction
 	const WALLET_PAYMENT_DELAY = 500;
 
-	const { data } = $props();
-	const { chain, denominationTokenInfo, canForwardPayment, vault } = data;
+	let { data } = $props();
+	let { chain, denominationTokenInfo, canForwardPayment, vault } = $derived(data);
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 	const { denominationToken, nativeCurrency, tosHash, tosSignature } = wizard.data as Required<DepositWizardData>;
 
+	// svelte-ignore state_referenced_locally
 	const progressBar = getProgressBar(-1, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';

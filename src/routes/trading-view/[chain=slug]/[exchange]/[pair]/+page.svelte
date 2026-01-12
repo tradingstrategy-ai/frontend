@@ -44,6 +44,7 @@ Render the pair trading page
 		[summary.pair_slug]: summary.pair_name
 	});
 
+	// svelte-ignore state_referenced_locally
 	let timeBucket = new OptionGroup(timeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
 	const handleTimeBucketChange: ComponentProps<typeof PairCandleChart>['onchange'] = ({ name, value }) => {

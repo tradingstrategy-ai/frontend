@@ -12,11 +12,13 @@
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let posts = $state(data.posts);
+	// svelte-ignore state_referenced_locally
 	let pagination = $state(data.meta.pagination);
 
 	let loading = $state(false);
-	let error: any = $state();
+	let error: unknown = $state();
 
 	async function fetchNextPage() {
 		const { next: page, limit } = pagination;
@@ -28,7 +30,7 @@
 			const { posts: newPosts, meta } = await getPosts(fetch, { page, limit });
 			posts = [...posts, ...newPosts];
 			pagination = meta.pagination;
-		} catch (err: any) {
+		} catch (err) {
 			error = err;
 		} finally {
 			loading = false;

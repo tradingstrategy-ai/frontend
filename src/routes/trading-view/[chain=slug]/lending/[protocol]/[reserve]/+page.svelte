@@ -38,6 +38,7 @@
 	let showChart = $derived(borrowable && !isGhoToken);
 
 	const reserveTimeBucketEnum = timeBucketEnum.exclude(['1m', '5m', '15m']);
+	// svelte-ignore state_referenced_locally
 	let timeBucket = new OptionGroup(reserveTimeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
 	const handleTimeBucketChange: ComponentProps<typeof ReserveInterestChart>['onchange'] = ({ name, value }) => {

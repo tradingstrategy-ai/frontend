@@ -11,7 +11,7 @@
 	import type { ComponentProps } from 'svelte';
 	import type { VaultGroup } from '$lib/top-vaults/schemas';
 	import { page } from '$app/state';
-	import { readable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import { createTable } from 'svelte-headless-table';
 	import { addSortBy, addPagination, addHiddenColumns } from 'svelte-headless-table/plugins';
 	import { createRender } from '$lib/components/datatable/utils';
@@ -47,9 +47,17 @@
 		...restProps
 	}: Props = $props();
 
-	const tableRows = loading ? new Array(10).fill({}) : rows || [];
+	let tableRows = $derived(loading ? new Array(10).fill({}) : rows || []);
 
-	const table = createTable(readable(tableRows), {
+	// svelte-ignore state_referenced_locally
+	const tableRowsStore = writable(tableRows);
+
+	$effect(() => {
+		tableRowsStore.set(tableRows);
+	});
+
+	// svelte-ignore state_referenced_locally
+	const table = createTable(tableRowsStore, {
 		hide: addHiddenColumns({ initialHiddenColumnIds: includeRisk ? [''] : ['risk'] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
@@ -61,6 +69,7 @@
 		})
 	});
 
+	// svelte-ignore state_referenced_locally
 	const columns = table.createColumns([
 		table.column({
 			id: 'name',

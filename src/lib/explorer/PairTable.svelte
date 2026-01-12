@@ -50,6 +50,7 @@
 	// create stores needed by createTable - initial state is required for SSR / to prevent FOUC
 	// svelte-ignore state_referenced_locally
 	const tableRowsStore = writable(tableRows);
+	// svelte-ignore state_referenced_locally
 	const serverItemCount = writable(totalRowCount);
 
 	// update the stores when data changes
@@ -58,6 +59,7 @@
 		serverItemCount.set(totalRowCount);
 	});
 
+	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			serverSide: true,

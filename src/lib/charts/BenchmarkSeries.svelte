@@ -22,12 +22,12 @@
 		return data.find((i) => i.time === initialTs)?.value ?? 0;
 	});
 
-	const options: LineSeriesPartialOptions = {
+	let options: LineSeriesPartialOptions = $derived({
 		color: token.color,
 		lineWidth: 2,
 		priceLineVisible: false,
 		crosshairMarkerVisible: false
-	};
+	});
 
 	let benchmarkData: SimpleDataItem[] = $state([]);
 

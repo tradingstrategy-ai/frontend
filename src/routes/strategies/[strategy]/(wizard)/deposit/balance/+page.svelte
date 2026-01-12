@@ -5,12 +5,14 @@
 	import WalletBalance from '$lib/wallet/WalletBalance.svelte';
 	import { buyTokenUrl, buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 
-	const { data } = $props();
-	const { chain, nativeCurrency, denominationToken } = data;
+	let { data } = $props();
+	let { chain, nativeCurrency, denominationToken } = $derived(data);
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
-	wizard.updateData({ nativeCurrency, denominationToken });
-	wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);
+	$effect(() => {
+		wizard.updateData({ nativeCurrency, denominationToken });
+		wizard.toggleComplete('balance', nativeCurrency.value > 0n && denominationToken.value > 0n);
+	});
 </script>
 
 <div class="deposit-balance-page">

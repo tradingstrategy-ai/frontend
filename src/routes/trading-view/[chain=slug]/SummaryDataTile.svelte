@@ -13,9 +13,9 @@
 		children: Snippet;
 	}
 
-	const { count, title, buttonLabel, href, rel, children }: Props = $props();
+	let { count, title, buttonLabel, href, rel, children }: Props = $props();
 
-	const disabled = count === undefined;
+	let disabled = $derived(count === undefined);
 </script>
 
 <div class={['summary-data-tile', 'tile a', 'targetable', disabled && 'disabled']}>

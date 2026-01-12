@@ -5,14 +5,14 @@
 	import ShareBalances from '$lib/wallet/ShareBalances.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 
-	const { data } = $props();
-	const { strategy, vault } = data;
+	let { data } = $props();
+	let { strategy, vault } = $derived(data);
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 	const { transactionLogs } = wizard.data as Required<DepositWizardData>;
 
-	const requiresSettlement = vault.requiresSettlement();
-	const depositResult = vault.getDepositResult(config, transactionLogs);
+	let requiresSettlement = $derived(vault.requiresSettlement());
+	let depositResult = $derived(vault.getDepositResult(config, transactionLogs));
 </script>
 
 <div class="deposit-success">

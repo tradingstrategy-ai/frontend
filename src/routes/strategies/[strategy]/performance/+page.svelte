@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { getChartClient } from 'trade-executor/client/chart';
-	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import ChartContainer from '$lib/charts/ChartContainer.svelte';
+	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import LongShortTable from './LongShortTable.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
-	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 
 	let { data } = $props();
-
-	const { strategyState, strategy } = data;
+	let { strategyState, strategy } = $derived(data);
 
 	const dataSources = {
 		'Live trading': { table: 'live_stats', chart: 'live_trading' },
@@ -21,15 +20,13 @@
 
 	let tableData = $derived(strategyState.stats.long_short_metrics_latest?.[dataSource.table]);
 
-	let chartDataType = $derived(
-		strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
-	);
-
-	const chartClient = getChartClient(fetch, strategy.url);
+	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
 	$effect(() => {
 		chartClient.fetch({
-			type: chartDataType,
+			type: strategy.useSharePrice
+				? 'share_price_based_return'
+				: 'compounding_unrealised_trading_profitability_sampled',
 			source: dataSource.chart
 		});
 	});

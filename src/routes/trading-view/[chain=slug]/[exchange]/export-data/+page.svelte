@@ -6,11 +6,11 @@
 	import Select from '$lib/components/Select.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 
-	const { data } = $props();
-	const { exchange } = data;
+	let { data } = $props();
+	let { exchange } = $derived(data);
 
-	const isUniswapV3 = exchange.exchange_type === 'uniswap_v3';
-	const exchangeName = exchange.human_readable_name;
+	let isUniswapV3 = $derived(exchange.exchange_type === 'uniswap_v3');
+	let exchangeName = $derived(exchange.human_readable_name);
 	const downloadUrl = `${backendUrl}/pairs`;
 
 	// Download options
@@ -18,15 +18,15 @@
 	let selectedDataset = $state('top_3000_rows');
 	let selectedSort = $state('price_change_24h');
 	// Uniswap v3 does not have liquidity data available in the same format, so this cannot be used for filtering
-	let selectedFilter = $state(isUniswapV3 ? 'unfiltered' : 'min_liquidity_1M');
+	let selectedFilter = $derived(isUniswapV3 ? 'unfiltered' : 'min_liquidity_1M');
 
 	let downloadDisabled = $state(false);
 
-	const breadcrumbs = {
+	let breadcrumbs = $derived({
 		[exchange.chain_slug]: exchange.chain_name,
 		[exchange.exchange_slug]: exchangeName,
 		'export-data': 'Export data'
-	};
+	});
 
 	let downloadParams = $derived(
 		new URLSearchParams({

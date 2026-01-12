@@ -20,9 +20,16 @@
 		rightColHeader?: string;
 	}
 
-	let { type, label, title, chain, data, EntityTable, rightColHeader }: Props = $props();
-
-	label ??= type.replaceAll('-', ' ');
+	// prettier-ignore
+	let {
+		type,
+		label = type.replaceAll('-', ' '),
+		title,
+		chain,
+		data,
+		EntityTable,
+		rightColHeader,
+	}: Props = $props();
 
 	let hasData = $state(true);
 
