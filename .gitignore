@@ -20,3 +20,4 @@ static/fonts/NeueHaasGroteskText
 
 # Claude local settings
 .claude/settings.local.json
+.playwright-mcp

@@ -210,8 +210,9 @@
 			>
 			<span
 				><Tooltip>
-					<svelte:fragment slot="trigger">1M return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
-					<svelte:fragment slot="popup">This is a TVL-weighted average annualised return for one month.</svelte:fragment
+					<svelte:fragment slot="trigger">Avg. return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list.</svelte:fragment
 					>
 				</Tooltip></span
 			>
@@ -227,7 +228,8 @@
 				><Tooltip>
 					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
 					<svelte:fragment slot="popup"
-						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH or BTC.</svelte:fragment
+						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH
+						or BTC.</svelte:fragment
 					>
 				</Tooltip></span
 			>
