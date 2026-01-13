@@ -5,7 +5,7 @@
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
-	import { getFormattedFeeMode, getFormattedLockup } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup } from '$lib/top-vaults/helpers';
 	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
 
 	interface Props {
@@ -37,31 +37,19 @@
 			</Metric>
 
 			<Metric label="Protocol Technical Risk">
-				<Risk risk={vault.risk} />
-			</Metric>
-
-			<Metric>
-				{#snippet label()}
-					<Tooltip>
-						<span slot="trigger">
-							<span class="underline">Fee mode</span>
-							<IconQuestionCircle --icon-size="1.125em" />
-						</span>
-						<div slot="popup">
-							Common vault fee mechanism implementations are:
-							<ul style:margin-top="0.5em">
-								<li><strong>externalised:</strong> net fees, deducted from an investor at a redemption</li>
-								<li><strong>skimming:</strong> redirected from profits at the time of trade</li>
-								<li><strong>minting:</strong> new shares minted to the vault owner at the time of trade</li>
-							</ul>
-						</div>
-					</Tooltip>
-				{/snippet}
-				{getFormattedFeeMode(vault)}
+				<a class="risk-link" href="/blog/announcing-vault-technical-risk-framework-beta">
+					<Risk risk={vault.risk} />
+				</a>
 			</Metric>
 
 			<Metric label="Lockup period">
 				{getFormattedLockup(vault)}
+			</Metric>
+
+			<Metric label="Denomination">
+				<a class="denomination-link" href="/trading-view/vaults/stablecoins/{vault.denomination_slug}">
+					{vault.denomination}
+				</a>
 			</Metric>
 		</div>
 	</MetricsBox>
@@ -231,6 +219,12 @@
 			display: inline-flex;
 			align-items: center;
 			gap: 0.75ex;
+		}
+
+		.risk-link,
+		.denomination-link {
+			text-decoration: underline;
+			text-decoration-style: dashed;
 		}
 	}
 </style>
