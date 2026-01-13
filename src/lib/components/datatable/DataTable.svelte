@@ -60,7 +60,8 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	let table: HTMLTableElement;
 
-	let { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = $derived(tableViewModel);
+	let { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } =
+		$derived(tableViewModel);
 
 	// svelte-ignore state_referenced_locally
 	const filterValue = pluginStates.tableFilter?.filterValue;
