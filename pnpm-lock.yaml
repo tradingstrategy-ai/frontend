@@ -5,13 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  vite-plugin-simple-json-server>vite: ^7.0.5
+  '@reown/appkit-wallet>zod': ^4.0.5
+  abitype>zod: ^4.0.5
   svelte-headless-table>svelte: ^4.0.0 || ^5.0.0
+  svelte-keyed>svelte: ^5.37.1
   svelte-render>svelte: ^5.37.1
   svelte-subscribe>svelte: ^5.37.1
-  svelte-keyed>svelte: ^5.37.1
-  abitype>zod: ^4.0.5
-  '@reown/appkit-wallet>zod': ^4.0.5
 
 importers:
 
@@ -7988,7 +7987,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.1
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
