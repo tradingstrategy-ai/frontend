@@ -54,15 +54,30 @@
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
-	// Calculate total TVL from base vaults (unaffected by search filter)
-	let totalTvl = $derived(baseVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
+	// Get vaults hidden due to TVL threshold (only when filterTvl is enabled)
+	let hiddenVaults = $derived.by(() => {
+		if (!filterTvl) return [];
+		return baseVaults.filter((v) => (v.current_nav ?? 0) < tvlThreshold);
+	});
 
-	// Calculate TVL-weighted average 1M APY (unaffected by search filter)
+	// Count of hidden vaults
+	let hiddenByTvl = $derived(hiddenVaults.length);
+
+	// Vaults that pass TVL filter (used for stats display)
+	let tvlFilteredVaults = $derived.by(() => {
+		if (!filterTvl) return baseVaults;
+		return baseVaults.filter((v) => (v.current_nav ?? 0) >= tvlThreshold);
+	});
+
+	// Calculate total TVL from TVL-filtered vaults
+	let totalTvl = $derived(tvlFilteredVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
+
+	// Calculate TVL-weighted average 1M APY from TVL-filtered vaults
 	let avgTvlWeightedApy1M = $derived.by(() => {
 		let weightedSum = 0;
 		let tvlSum = 0;
 
-		for (const v of baseVaults) {
+		for (const v of tvlFilteredVaults) {
 			const tvl = v.current_nav ?? 0;
 			const apy = v.one_month_cagr_net ?? v.one_month_cagr;
 
@@ -198,13 +213,26 @@
 		<div class="table-meta">
 			<span
 				><Tooltip>
-					<svelte:fragment slot="trigger">{baseVaults.length} vaults</svelte:fragment>
-					<svelte:fragment slot="popup">The number of vaults listed on this page.</svelte:fragment>
+					<svelte:fragment slot="trigger">{tvlFilteredVaults.length} vaults</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>{#if hiddenByTvl > 0}
+							{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
+								? 'it does'
+								: 'they do'}
+							not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}:
+							{hiddenVaults
+								.slice(0, 2)
+								.map((v) => v.name)
+								.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
+						{:else}
+							The number of vaults listed on this page.
+						{/if}</svelte:fragment
+					>
 				</Tooltip></span
 			>
 			<span
 				><Tooltip>
-					<svelte:fragment slot="trigger">Combined TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
+					<svelte:fragment slot="trigger">TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
 					<svelte:fragment slot="popup">This is the sum of TVL in all listed vaults on this page.</svelte:fragment>
 				</Tooltip></span
 			>
