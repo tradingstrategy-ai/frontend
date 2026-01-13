@@ -23,21 +23,23 @@
 
 	let { admin = false, simplified = false, strategy, chartDateRange }: Props = $props();
 
-	const chain = getChain(strategy.on_chain_data?.chain_id);
+	let chain = $derived(getChain(strategy.on_chain_data?.chain_id));
 
-	const tags = strategy.tags?.filter((tag) => tag !== 'live') ?? [];
-	const isLive = strategy.tags?.includes('live');
+	let tags = $derived(strategy.tags?.filter((tag) => tag !== 'live') ?? []);
+	let isLive = $derived(strategy.tags?.includes('live'));
 
-	const launchedAt = strategy.summary_statistics?.launched_at;
-	const isNew = launchedAt ? utcDay.count(launchedAt, new Date()) < 90 : false;
+	let launchedAt = $derived(strategy.summary_statistics?.launched_at);
+	let isNew = $derived(launchedAt ? utcDay.count(launchedAt, new Date()) < 90 : false);
 
-	const href = `/strategies/${strategy.id}`;
+	let href = $derived(`/strategies/${strategy.id}`);
 
-	const rawChartData = strategy.useSharePrice
-		? strategy.summary_statistics?.share_price_returns_90_days
-		: strategy.summary_statistics?.compounding_unrealised_trading_profitability;
+	let rawChartData = $derived(
+		strategy.useSharePrice
+			? strategy.summary_statistics?.share_price_returns_90_days
+			: strategy.summary_statistics?.compounding_unrealised_trading_profitability
+	);
 
-	const chartData = resampleTimeSeries(rawChartData ?? [], utcDay);
+	let chartData = $derived(resampleTimeSeries(rawChartData ?? [], utcDay));
 </script>
 
 <div class="strategy-tile ds-3 targetable">

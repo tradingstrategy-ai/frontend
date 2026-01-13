@@ -20,9 +20,8 @@ by default. Increment the `?page=n` param to delay by n * 2 seconds.
 		<h2>You're on Page {page}</h2>
 
 		<p>
-			In this page's <code>load</code> function, we waited for {page * 2} seconds to mimick a real-world API call before
-			rendering. You can go back to the home page, which should load instantaneously because it doesn't do much server side.
-			Page {nextPage}
+			In this page's <code>load</code> function, we waited for {page * 2} seconds to mimick a real-world API call before rendering.
+			You can go back to the home page, which should load instantaneously because it doesn't do much server side. Page {nextPage}
 			will have a longer delay of {nextPage * 2} seconds.
 		</p>
 

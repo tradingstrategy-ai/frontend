@@ -29,18 +29,18 @@
 		})
 	);
 
-	const options: LineSeriesPartialOptions = {
+	let options: LineSeriesPartialOptions = $derived({
 		lineVisible: false,
 		priceLineColor: color,
 		crosshairMarkerVisible: false,
 		lastValueVisible: false
-	};
+	});
 
 	let priceScaleCalculator = $derived(alwaysVisible ? undefined : () => null);
 
 	// if setChartVisibleRange is enabled, set the visible range to the range start/end dates
 	// must be `derived()` so a new callback is generated (and called) whenever the data changes
-	const callback: SeriesCallback | undefined = $derived.by(() => {
+	let callback: SeriesCallback | undefined = $derived.by(() => {
 		if (!setChartVisibleRange) return;
 		const range = { from: data[0].time, to: data.at(-1)!.time };
 		return ({ chart }) => chart.timeScale().setVisibleRange(range);

@@ -18,16 +18,18 @@
 	import IconDownload from '~icons/local/download';
 	import IconFullscreen from '~icons/local/fullscreen';
 
-	const { data } = $props();
-	const { chain, canForwardToS, canProceed, tosContract, latestContractVersion, tosText } = data;
-	const { version, fileName, acceptanceMessage } = tosContract;
+	let { data } = $props();
+	let { chain, canForwardToS, canProceed, tosContract, latestContractVersion, tosText } = $derived(data);
+	let { version, fileName, acceptanceMessage } = $derived(tosContract);
 
 	const wizard = getWizardContext<DepositWizardDataSchema>();
 
 	const { tosHash, tosSignature } = wizard.data;
 
+	// svelte-ignore state_referenced_locally
 	const progressBar = getProgressBar(0, getExpectedBlockTime(chain.id));
 	const viewTransactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';
+	// svelte-ignore state_referenced_locally
 	const tosNotFound = `Terms of service file not found:\n${page.url.origin}/tos/${fileName}`;
 
 	let fullScreen = $state(false);
@@ -179,6 +181,7 @@
 	});
 
 	tos.validate();
+	// svelte-ignore state_referenced_locally
 	tos.restore(canProceed, tosHash, tosSignature);
 	tos.checkDeviceType(window);
 </script>

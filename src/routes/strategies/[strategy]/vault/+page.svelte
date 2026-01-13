@@ -12,7 +12,7 @@
 	import IconArrowRightUp from '~icons/local/arrow-right-up';
 
 	let { data } = $props();
-	const { chain, strategy, vault } = data;
+	let { chain, strategy, vault } = $derived(data);
 </script>
 
 <svelte:head>

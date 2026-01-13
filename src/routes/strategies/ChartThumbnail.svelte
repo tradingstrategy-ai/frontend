@@ -16,13 +16,15 @@
 
 	// `data` reflects relative profit values over time, so the current relative profit
 	// is simply the value of the last item.
-	const relativeProfit = getProfitInfo(data.at(-1)?.value);
+	let relativeProfit = $derived(getProfitInfo(data.at(-1)?.value));
 
 	// TEMPORARY HACK: filter duplicate / out-of-order items
 	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/1160
-	const tvData = data.filter(({ time }, index) => {
-		return time >= data[index - 1]?.time;
-	});
+	let tvData = $derived(
+		data.filter(({ time }, index) => {
+			return time >= data[index - 1]?.time;
+		})
+	);
 
 	const chartOptions: TvChartOptions = {
 		handleScroll: false,

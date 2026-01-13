@@ -20,10 +20,10 @@
 	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 	import { getChain } from '$lib/helpers/chain';
 
-	const { data } = $props();
-	const { admin, strategies, tvlData } = data;
+	let { data } = $props();
+	let { admin, strategies, tvlData } = $derived(data);
 
-	const chartDateRange = getStrategyChartDateRange(strategies);
+	let chartDateRange = $derived(getStrategyChartDateRange(strategies));
 
 	let { searchParams } = $derived(page.url);
 
@@ -46,7 +46,7 @@
 		return archivedFilter === archivedStrategy;
 	}
 
-	const chainOptions = getChainOptions(strategies);
+	let chainOptions = $derived(getChainOptions(strategies));
 	let selectedChain = $derived(parseChainOption(chainOptions, searchParams.get('chain')));
 
 	$effect(() => {

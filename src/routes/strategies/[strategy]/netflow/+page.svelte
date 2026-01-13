@@ -8,12 +8,12 @@
 	import { getChartClient } from 'trade-executor/client/chart';
 
 	let { data } = $props();
-	const { strategy } = data;
+	let { strategy } = $derived(data);
 
-	const startedAt = strategy.summary_statistics.key_metrics.started_at?.value;
+	let startedAt = $derived(strategy.summary_statistics.key_metrics.started_at?.value);
 
-	const tvlClient = getChartClient(fetch, strategy.url);
-	const netflowClient = getChartClient(fetch, strategy.url);
+	let tvlClient = $derived(getChartClient(fetch, strategy.url));
+	let netflowClient = $derived(getChartClient(fetch, strategy.url));
 
 	$effect(() => {
 		tvlClient.fetch({ type: 'total_equity', source: 'live_trading' });

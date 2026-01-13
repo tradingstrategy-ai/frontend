@@ -8,6 +8,7 @@
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
 
 	const { data } = $props();
+	// svelte-ignore state_referenced_locally
 	const { strategy, position, candleData, interval, start, end } = data;
 
 	const dataFeed = {

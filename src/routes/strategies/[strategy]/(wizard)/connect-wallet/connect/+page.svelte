@@ -5,8 +5,8 @@
 
 	const wizard = getWizardContext();
 
-	const { data } = $props();
-	const { chain } = data;
+	let { data } = $props();
+	let { chain } = $derived(data);
 
 	let isComplete = $derived($wallet.isConnected && $wallet.chainId === chain.id);
 

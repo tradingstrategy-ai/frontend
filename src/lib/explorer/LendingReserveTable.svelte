@@ -53,6 +53,7 @@
 		tableRowsStore.set(tableRows);
 	});
 
+	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],

@@ -25,7 +25,7 @@
 
 	let filteredStrategies = $derived(strategies.filter((s) => matchesChainOption(s, selected)));
 
-	const chartDateRange = getStrategyChartDateRange(strategies);
+	let chartDateRange = $derived(getStrategyChartDateRange(strategies));
 </script>
 
 <Section padding="md">

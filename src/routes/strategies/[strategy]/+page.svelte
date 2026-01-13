@@ -3,19 +3,18 @@
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import { isGeoBlocked } from '$lib/helpers/geo';
-	import { calculateAltCagr } from 'trade-executor/helpers/metrics';
+	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
 
 	let { data } = $props();
-	const { chain, strategy, vault, admin, ipCountry } = data;
+	let { chain, strategy, vault, admin, ipCountry } = $derived(data);
 
-	const backtestLink = `/strategies/${strategy.id}/backtest`;
-	const keyMetrics = strategy.summary_statistics.key_metrics;
+	let backtestLink = $derived(`/strategies/${strategy.id}/backtest`);
+
+	// svelte-ignore state_referenced_locally
 	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
 
-	// Temporary hack to address inaccurate CAGR metric (remove below 2 lines once this is fixed)
-	// Replace API-provided CAGR metric with alternative calculated CAGR
-	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
-	if (altCagr && !strategy.useSharePrice) keyMetrics.cagr = altCagr;
+	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
+	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));
 </script>
 
 <svelte:head>

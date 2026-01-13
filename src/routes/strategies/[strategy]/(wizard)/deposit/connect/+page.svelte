@@ -3,8 +3,8 @@
 	import { wallet } from '$lib/wallet/client';
 	import ConnectWallet from '$lib/wallet/ConnectWallet.svelte';
 
-	const { data } = $props();
-	const { chain } = data;
+	let { data } = $props();
+	let { chain } = $derived(data);
 	const wizard = getWizardContext();
 
 	$effect(() => {

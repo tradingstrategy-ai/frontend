@@ -9,14 +9,14 @@
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { data } = $props();
-	const { strategy, vault } = data;
+	let { data } = $props();
+	let { strategy, vault } = $derived(data);
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 	const { transactionLogs } = wizard.data as Required<RedeemWizardData>;
 
-	const requiresSettlement = vault.requiresSettlement();
-	const redemptionResult = vault.getRedemptionResult(config, transactionLogs);
+	let requiresSettlement = $derived(vault.requiresSettlement());
+	let redemptionResult = $derived(vault.getRedemptionResult(config, transactionLogs));
 </script>
 
 <div class="redemption-success">

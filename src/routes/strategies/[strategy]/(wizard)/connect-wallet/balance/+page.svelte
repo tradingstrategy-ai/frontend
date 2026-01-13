@@ -4,8 +4,8 @@
 
 	const wizard = getWizardContext();
 
-	const { data } = $props();
-	const { nativeCurrency, denominationToken } = data;
+	let { data } = $props();
+	let { nativeCurrency, denominationToken } = $derived(data);
 
 	wizard.toggleComplete('balance');
 </script>

@@ -10,6 +10,7 @@
 	import { relativeReturn } from '$lib/helpers/financial';
 
 	const { data } = $props();
+	// svelte-ignore state_referenced_locally
 	const { strategy, chartData, range } = data;
 
 	const first = chartData.find(({ time }) => time >= range.from);

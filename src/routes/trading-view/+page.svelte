@@ -17,8 +17,8 @@
 	import IconSearch from '~icons/local/search';
 	import IconWallet from '~icons/local/wallet';
 
-	const { data } = $props();
-	const { impressiveNumbers, topVaults } = data;
+	let { data } = $props();
+	let { impressiveNumbers, topVaults } = $derived(data);
 </script>
 
 <ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">

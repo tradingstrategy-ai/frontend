@@ -62,7 +62,7 @@
 	let expanded = $state(false);
 
 	// Row definitions in display order
-	const rows: RowDefinition[] = [
+	let rows: RowDefinition[] = $derived([
 		{
 			label: `<a href="${resolve('/trading-view/vaults')}">Ranking overall</a>`,
 			field: 'ranking_overall',
@@ -146,7 +146,7 @@
 		},
 		{ label: 'Samples start', field: 'samples_start_at', formatter: formatDate, hidden: true },
 		{ label: 'Samples end', field: 'samples_end_at', formatter: formatDate, hidden: true }
-	];
+	]);
 
 	// Filter rows: exclude permanently excluded rows; show hidden rows only when expanded
 	const visibleRows = $derived(rows.filter((r) => !r.excluded && (expanded || !r.hidden)));

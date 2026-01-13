@@ -28,7 +28,7 @@
 
 	let { strategy, chain, vault, geoBlocked, ipCountry }: Props = $props();
 
-	const isOutdated = Boolean(strategy.newVersionId);
+	let isOutdated = $derived(Boolean(strategy.newVersionId));
 
 	let connected = $derived($wallet.status === 'connected');
 	let address = $derived($wallet.address);

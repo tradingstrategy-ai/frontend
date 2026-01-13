@@ -51,6 +51,7 @@
 		serverItemCount.set(totalRowCount);
 	});
 
+	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
 		sort: addSortBy({
 			serverSide: true,

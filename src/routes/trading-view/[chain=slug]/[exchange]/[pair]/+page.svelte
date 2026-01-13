@@ -44,6 +44,7 @@ Render the pair trading page
 		[summary.pair_slug]: summary.pair_name
 	});
 
+	// svelte-ignore state_referenced_locally
 	let timeBucket = new OptionGroup(timeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
 	const handleTimeBucketChange: ComponentProps<typeof PairCandleChart>['onchange'] = ({ name, value }) => {
@@ -145,8 +146,8 @@ Render the pair trading page
 		<header>
 			<h2>Time period summary</h2>
 			<p>
-				The price {isUniswapV3 ? 'and volume' : 'and liquidity'} of {summary.base_token_symbol_friendly} in this trading
-				pair. The amounts are converted to US dollar through {summary.quote_token_symbol_friendly}/USD.
+				The price {isUniswapV3 ? 'and volume' : 'and liquidity'} of {summary.base_token_symbol_friendly} in this trading pair.
+				The amounts are converted to US dollar through {summary.quote_token_symbol_friendly}/USD.
 			</p>
 		</header>
 

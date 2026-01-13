@@ -1,6 +1,21 @@
+import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 import type { KeyMetric } from 'trade-executor/schemas/key-metric';
 import { relativeReturn, annualizedReturn } from '$lib/helpers/financial';
 import { parseDate } from '$lib/helpers/date';
+
+/**
+ * Temporary hack to address inaccurate CAGR metric. Replace API-provided CAGR
+ * metric with alternative calculated CAGR.
+ *
+ * Remove and replace with strategy.summary_statistics.key_metrics once trade-executor
+ * CAGR metric is fixed.
+ */
+export function getMetricsWithAltCAGR(strategy: StrategyInfo) {
+	const metrics = { ...strategy.summary_statistics?.key_metrics };
+	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+	if (altCagr && !strategy.useSharePrice) metrics.cagr = altCagr;
+	return metrics;
+}
 
 /**
  * Calculate "alternative" CAGR metric locally using the profit data used to

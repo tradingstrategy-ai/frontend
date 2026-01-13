@@ -16,7 +16,7 @@
 
 	let { vault, protocolMetadata }: Props = $props();
 
-	const protocolPageUrl = resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`);
+	let protocolPageUrl = $derived(resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`));
 </script>
 
 <MetricsBox>

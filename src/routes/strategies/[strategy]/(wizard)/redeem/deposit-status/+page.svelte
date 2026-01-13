@@ -10,8 +10,8 @@
 	import { buyNativeCurrencyUrl } from '$lib/wallet/helpers';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
-	const { data } = $props();
-	const { chain, tokenPromises } = data;
+	let { data } = $props();
+	let { chain, tokenPromises } = $derived(data);
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 

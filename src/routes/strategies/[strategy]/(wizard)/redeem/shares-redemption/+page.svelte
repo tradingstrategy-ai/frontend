@@ -16,12 +16,13 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatNumber } from '$lib/helpers/formatters';
 
-	const { data } = $props();
-	const { chain, vault, denominationToken } = data;
+	let { data } = $props();
+	let { chain, vault, denominationToken } = $derived(data);
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 	const { vaultShares } = wizard.data as Required<RedeemWizardData>;
 
+	// svelte-ignore state_referenced_locally
 	const progressBar = getProgressBar(0, getExpectedBlockTime(chain.id));
 
 	const transactionCopy = 'Click the transaction ID above to view the status in the blockchain explorer.';

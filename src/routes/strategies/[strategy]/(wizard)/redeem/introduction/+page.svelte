@@ -2,15 +2,17 @@
 	import type { RedeemWizardDataSchema } from '../+layout.js';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 
-	const { data } = $props();
-	const { strategy, denominationToken, vault } = data;
+	let { data } = $props();
+	let { strategy, denominationToken, vault } = $derived(data);
 
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
-	const inKind = vault.inKindRedemption;
-	const requiresSettlement = vault.requiresSettlement();
+	let inKind = $derived(vault.inKindRedemption);
+	let requiresSettlement = $derived(vault.requiresSettlement());
 
-	wizard.toggleComplete('introduction');
+	$effect(() => {
+		wizard.toggleComplete('introduction');
+	});
 </script>
 
 <div class="deposit-introduction">

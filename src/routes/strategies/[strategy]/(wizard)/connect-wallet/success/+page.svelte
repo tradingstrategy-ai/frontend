@@ -1,6 +1,6 @@
 <script lang="ts">
-	const { data } = $props();
-	const { strategy } = data;
+	let { data } = $props();
+	let { strategy } = $derived(data);
 </script>
 
 <div class="connect-wallet-success">

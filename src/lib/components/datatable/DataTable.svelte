@@ -60,12 +60,16 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	let table: HTMLTableElement;
 
-	const { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } = tableViewModel;
+	let { headerRows, pageRows, rows, tableAttrs, tableHeadAttrs, tableBodyAttrs, pluginStates } =
+		$derived(tableViewModel);
 
+	// svelte-ignore state_referenced_locally
 	const filterValue = pluginStates.tableFilter?.filterValue;
 
 	// assign real plugin stores or fallback/dummy stores if sort/pagination not enabled
+	// svelte-ignore state_referenced_locally
 	const sortKeys: Writable<SortKey[]> = pluginStates.sort?.sortKeys || writable([]);
+	// svelte-ignore state_referenced_locally
 	const pageIndex: Writable<number> = pluginStates.page?.pageIndex || writable(0);
 
 	let lastSortKey: SortKey | undefined = $sortKeys[0];
