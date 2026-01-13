@@ -136,7 +136,7 @@ export const chains = (() => {
 			slug: 'hyperliquid',
 			name: 'Hyperliquid',
 			homepage: 'https://hyperfoundation.org',
-			explorer: 'https://app.hyperliquid.xyz',
+			explorer: 'https://hyperevmscan.io',
 			nativeCurrency: 'HYPE',
 			hasBackendData: false
 		},
