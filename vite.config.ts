@@ -9,7 +9,7 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import devtoolsJson from 'vite-plugin-devtools-json';
-import jsonServer from 'vite-plugin-simple-json-server';
+import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server';
 
 const customLogger = ((logger) => {
 	return {
@@ -54,12 +54,11 @@ export default defineConfig({
 			}
 		}),
 
-		// vite plugin to create a mock JSON api for integration tests
-		// only available when using `pnpm run dev` or `pnpm run preview`
-		// https://github.com/alextim/vite-plugin-simple-json-server/
-		jsonServer({
-			logLevel: 'silent',
-			mockDir: 'tests/fixtures'
+		// vite plugin to create mock API for integration tests
+		// https://vite-plugin-mock-dev-server.netlify.app/
+		mockDevServerPlugin({
+			prefix: '^/api',
+			dir: 'tests/mocks'
 		})
 	],
 
