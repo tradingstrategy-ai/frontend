@@ -21,7 +21,7 @@
 	import { getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
-	const INITIAL_ROW_COUNT = 100;
+	const INITIAL_ROW_COUNT = 150;
 	const ROW_BATCH_SIZE = 50;
 
 	interface SortOptions {
