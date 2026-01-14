@@ -159,6 +159,15 @@ export const chains = (() => {
 			hasBackendData: false
 		},
 		{
+			id: 5000,
+			slug: 'mantle',
+			name: 'Mantle',
+			homepage: 'https://www.mantle.xyz/',
+			explorer: 'https://mantlescan.xyz',
+			nativeCurrency: 'MNT',
+			hasBackendData: false
+		},
+		{
 			id: 34443,
 			slug: 'mode',
 			name: 'Mode',
