@@ -61,7 +61,7 @@ pnpm run test:integration
 
 - runs tests in `tests/integration` folder (headlessly) and reports results
 - automatically runs `pnpm preview` to start a node preview server
-- uses mock API data found in `tests/fixtures`
+- uses mock API data found in `tests/mocks`
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
 
@@ -104,5 +104,5 @@ See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) 
 - [Playwright](https://playwright.dev/) – overall testing framework; see
   [docs](https://playwright.dev/docs/intro) and
   [API](https://playwright.dev/docs/api/class-playwright) reference for additional info.
-- [vite-plugin-simple-json-server](https://github.com/alextim/vite-plugin-simple-json-server/tree/main/packages/vite-plugin-simple-json-server)
-  – used when running `integration` tests to serving mock API data found in `tests/fixtures`.
+- [vite-plugin-mock-dev-server](https://github.com/pengzhanbo/vite-plugin-mock-dev-server)
+  – used when running `integration` tests to serve mock API data found in `tests/mocks`.

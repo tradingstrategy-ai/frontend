@@ -35,4 +35,3 @@ overrides:
   svelte-keyed>svelte: ^5.37.1
   svelte-render>svelte: ^5.37.1
   svelte-subscribe>svelte: ^5.37.1
-  vite-plugin-simple-json-server>vite: ^7.0.5

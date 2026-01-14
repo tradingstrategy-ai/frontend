@@ -54,7 +54,7 @@
     "unplugin-icons": "^22.5.0",
     "vite": "^7.3.1",
     "vite-plugin-devtools-json": "^0.3.0",
-    "vite-plugin-simple-json-server": "^0.6.2",
+    "vite-plugin-mock-dev-server": "^2.0.7",
     "vitest": "^3.2.4"
   },
   "dependencies": {

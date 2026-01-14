@@ -25,14 +25,14 @@ This document lists key dependencies used in the Trading Strategy frontend appli
 
 ## Build and dev tools
 
-| Package                          | Purpose                                      |
-| -------------------------------- | -------------------------------------------- |
-| `unplugin-icons`                 | Icon management with custom local collection |
-| `@sveltejs/enhanced-img`         | Optimised image handling                     |
-| `@sentry/sveltekit`              | Error tracking                               |
-| `vite-plugin-simple-json-server` | Integration test mocking                     |
-| `@playwright/test`               | Integration and e2e testing                  |
-| `vitest`                         | Unit testing                                 |
+| Package                       | Purpose                                      |
+| ----------------------------- | -------------------------------------------- |
+| `unplugin-icons`              | Icon management with custom local collection |
+| `@sveltejs/enhanced-img`      | Optimised image handling                     |
+| `@sentry/sveltekit`           | Error tracking                               |
+| `vite-plugin-mock-dev-server` | Integration test mocking                     |
+| `@playwright/test`            | Integration and e2e testing                  |
+| `vitest`                      | Unit testing                                 |
 
 ## Dependency management notes
 

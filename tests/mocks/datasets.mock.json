@@ -1,0 +1,38 @@
+{
+	"url": "/api/datasets",
+	"body": [
+		{
+			"designation": "exchange_universe",
+			"name": "Decentralised exchanges",
+			"size": 4992564,
+			"last_updated_at": 1741368132,
+			"entries": 7871,
+			"format": "JSON",
+			"duration": 1923.0085213184357,
+			"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.exchange.html",
+			"download_link": "http://tradingstrategy.ai/api/exchange-universe"
+		},
+		{
+			"designation": "pair_universe",
+			"name": "Trading pairs",
+			"size": 43988993,
+			"last_updated_at": 1741434331,
+			"entries": 342177,
+			"format": "Parquet",
+			"duration": 3915.5337297916412,
+			"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.pair.html",
+			"download_link": "http://tradingstrategy.ai/api/pair-universe"
+		},
+		{
+			"designation": "candles_1d",
+			"name": "OHLCV candles, daily",
+			"size": 1938520433,
+			"last_updated_at": 1741367202,
+			"entries": 22610283,
+			"format": "Parquet",
+			"duration": 0,
+			"documentation": "https://tradingstrategy.ai/docs/programming/api/client/help/tradingstrategy.candle.html",
+			"download_link": "http://tradingstrategy.ai/api/candles-all?bucket=1d"
+		}
+	]
+}
