@@ -7,6 +7,7 @@ minimumReleaseAgeExclude:
   - '@sveltejs/enhanced-img'
   - '@sveltejs/kit'
   - '@sveltejs/vite-plugin-svelte'
+  - devalue
   - prettier-plugin-svelte
   - svelte
   - svelte-check
