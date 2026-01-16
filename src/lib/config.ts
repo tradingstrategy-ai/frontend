@@ -233,3 +233,33 @@ export const announcement = config((jsonStr: string = '') => {
 		return undefined;
 	}
 }, 'ANNOUNCEMENT') as Announcement | undefined;
+
+/**
+ * Top vaults data URL
+ */
+export const topVaultsUrl = config((url: string) => {
+	if (!url) {
+		console.warn(`${prefix}TOP_VAULTS_URL not configured`);
+	}
+	return url;
+}, 'TOP_VAULTS_URL');
+
+/**
+ * Vault protocol metadata base URL
+ */
+export const vaultProtocolMetadataUrl = config((url: string) => {
+	if (!url) {
+		console.warn(`${prefix}VAULT_PROTOCOL_METADATA_URL not configured`);
+	}
+	return url;
+}, 'VAULT_PROTOCOL_METADATA_URL');
+
+/**
+ * Vault sparklines base URL
+ */
+export const vaultSparklinesUrl = config((url: string) => {
+	if (!url) {
+		console.warn(`${prefix}VAULT_SPARKLINES_URL not configured`);
+	}
+	return url;
+}, 'VAULT_SPARKLINES_URL');

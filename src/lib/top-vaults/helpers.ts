@@ -23,7 +23,9 @@ export function hasSupportedProtocol(vault: VaultInfo) {
 	return !vault.protocol.startsWith('<');
 }
 
-/** Check if vault meets minimum TVL threshold */
+/**
+ * Check if vault meets minimum TVL threshold
+ */
 export function meetsMinTvl(vault: VaultInfo, threshold = MIN_TVL_THRESHOLD) {
 	return (vault.current_nav ?? 0) >= threshold;
 }
