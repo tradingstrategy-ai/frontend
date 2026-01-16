@@ -19,4 +19,5 @@
 	title="New DeFi stablecoin vaults"
 	subtitle="The best performing DeFi stablecoin vaults that started within the last {maxAgeDays} days"
 	tvlThreshold={10_000}
+	filterTvl
 />
