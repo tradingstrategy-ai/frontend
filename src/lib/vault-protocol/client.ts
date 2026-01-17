@@ -1,7 +1,7 @@
 // Client functions for fetching vault protocol metadata
+import { vaultProtocolMetadataUrl } from '$lib/config';
 import { type VaultProtocolMetadata, vaultProtocolMetadataSchema } from './schemas';
 
-export const METADATA_BASE_URL = 'https://vault-protocol-metadata.tradingstrategy.ai/vault-protocol-metadata';
 const CLIENT_TIMEOUT = 5000;
 
 /**
@@ -15,7 +15,12 @@ export async function fetchVaultProtocolMetadata(
 	fetch: Fetch,
 	protocolSlug: string
 ): Promise<VaultProtocolMetadata | undefined> {
-	const url = `${METADATA_BASE_URL}/${protocolSlug}/metadata.json`;
+	if (!vaultProtocolMetadataUrl) {
+		console.error('Vault protocol metadata service not configured');
+		return undefined;
+	}
+
+	const url = `${vaultProtocolMetadataUrl}/${protocolSlug}/metadata.json`;
 
 	try {
 		const resp = await fetch(url, { signal: AbortSignal.timeout(CLIENT_TIMEOUT) });

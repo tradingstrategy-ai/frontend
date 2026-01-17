@@ -19,6 +19,7 @@
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import { getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
+	import { vaultSparklinesUrl } from '$lib/config';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
 	const INITIAL_ROW_COUNT = 150;
@@ -210,59 +211,48 @@
 
 <div class="top-vaults-table">
 	<div class="table-extras">
-		<div class="table-meta">
-			<span
-				><Tooltip>
-					<svelte:fragment slot="trigger">{tvlFilteredVaults.length} vaults</svelte:fragment>
-					<svelte:fragment slot="popup"
-						>{#if hiddenByTvl > 0}
-							{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
-								? 'it does'
-								: 'they do'}
-							not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}:
-							{hiddenVaults
-								.slice(0, 2)
-								.map((v) => v.name)
-								.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
-						{:else}
-							The number of vaults listed on this page.
-						{/if}</svelte:fragment
-					>
-				</Tooltip></span
-			>
-			<span
-				><Tooltip>
-					<svelte:fragment slot="trigger">TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
-					<svelte:fragment slot="popup">This is the sum of TVL in all listed vaults on this page.</svelte:fragment>
-				</Tooltip></span
-			>
-			<span
-				><Tooltip>
-					<svelte:fragment slot="trigger">Avg. return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
-					<svelte:fragment slot="popup"
-						>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list. Net
-						returns is used when known for the vault protocol, otherwise we assume the reported returns are
-						fee-inclusive.</svelte:fragment
-					>
-				</Tooltip></span
-			>
-			<span
-				><Tooltip>
-					<svelte:fragment slot="trigger">Min. TVL {formatDollar(tvlThreshold, 0)}</svelte:fragment>
-					<svelte:fragment slot="popup"
-						>The listing is limited to vaults with this much of minimum TVL deposited currently.</svelte:fragment
-					>
-				</Tooltip></span
-			>
-			<span
-				><Tooltip>
-					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
-					<svelte:fragment slot="popup"
-						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH
-						or BTC.</svelte:fragment
-					>
-				</Tooltip></span
-			>
+		<div class="table-meta" data-testid="top-vaults-meta">
+			<Tooltip>
+				<svelte:fragment slot="trigger">{tvlFilteredVaults.length} vaults</svelte:fragment>
+				<svelte:fragment slot="popup"
+					>{#if hiddenByTvl > 0}
+						{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
+							? 'it does'
+							: 'they do'}
+						not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}:
+						{hiddenVaults
+							.slice(0, 2)
+							.map((v) => v.name)
+							.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
+					{:else}
+						The number of vaults listed on this page.
+					{/if}</svelte:fragment
+				>
+			</Tooltip>
+			<Tooltip>
+				<svelte:fragment slot="trigger">TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
+				<svelte:fragment slot="popup">This is the sum of TVL in all listed vaults on this page.</svelte:fragment>
+			</Tooltip>
+			<Tooltip>
+				<svelte:fragment slot="trigger">Avg. return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
+				<svelte:fragment slot="popup"
+					>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list. Net returns
+					is used when known for the vault protocol, otherwise we assume the reported returns are fee-inclusive.</svelte:fragment
+				>
+			</Tooltip>
+			<Tooltip>
+				<svelte:fragment slot="trigger">Min. TVL {formatDollar(tvlThreshold, 0)}</svelte:fragment>
+				<svelte:fragment slot="popup"
+					>The listing is limited to vaults with this much of minimum TVL deposited currently.</svelte:fragment
+				>
+			</Tooltip>
+			<Tooltip>
+				<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
+				<svelte:fragment slot="popup"
+					>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH or
+					BTC.</svelte:fragment
+				>
+			</Tooltip>
 			<span
 				><Tooltip>
 					<svelte:fragment slot="trigger">Updated <Timestamp date={topVaults.generated_at} relative /></svelte:fragment>
@@ -275,6 +265,7 @@
 				bind:value={filterValue}
 				type="search"
 				placeholder="Search by name, protocol, chain, denomination, risk or address"
+				data-testid="vault-search"
 			/>
 		</div>
 	</div>
@@ -413,12 +404,12 @@
 							<RiskCell risk={vault.risk} />
 						</td>
 						<td class="sparkline">
-							{#if failedSparklines.has(vault.id)}
+							{#if !vaultSparklinesUrl || failedSparklines.has(vault.id)}
 								chart data unavailable
 							{:else}
 								<img
 									loading="lazy"
-									src="https://vault-sparklines.tradingstrategy.ai/sparkline-90d-{vault.id}.svg"
+									src="{vaultSparklinesUrl}/sparkline-90d-{vault.id}.svg"
 									alt="{vault.name} 90 day price"
 									onerror={() => failedSparklines.add(vault.id)}
 								/>
@@ -428,7 +419,7 @@
 					</tr>
 				{/each}
 				{#if hasMoreRows}
-					<tr class="load-more-sentinel">
+					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
 						<td colspan="16">
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
 								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
@@ -469,7 +460,7 @@
 			color: var(--c-text-extra-light);
 			font: var(--f-ui-md-medium);
 
-			span:not(:last-child)::after {
+			> :global(*):not(:last-child)::after {
 				content: '|';
 				margin-left: 0.1rem;
 				margin-right: 0.3rem;
