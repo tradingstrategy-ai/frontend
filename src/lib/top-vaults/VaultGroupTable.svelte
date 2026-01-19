@@ -64,7 +64,7 @@
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({
-			initialPageSize: 50,
+			initialPageSize: 150,
 			initialPageIndex: pageIndex
 		})
 	});
