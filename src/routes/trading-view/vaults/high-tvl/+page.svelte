@@ -16,7 +16,6 @@
 <TopVaultsPage
 	{topVaults}
 	{tvlThreshold}
-	breadcrumbs={{ 'high-tvl': `TVL > ${minTvlString}` }}
 	title="High TVL stablecoin vaults"
 	subtitle="The best performing DeFi stablecoin vaults with more than {minTvlString} TVL"
 />

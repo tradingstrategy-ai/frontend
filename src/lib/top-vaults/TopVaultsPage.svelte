@@ -2,7 +2,6 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
@@ -16,7 +15,6 @@
 	interface Props {
 		chain?: Chain;
 		topVaults: TopVaults;
-		breadcrumbs?: Record<string, string>;
 		title: string;
 		subtitle: string;
 		tvlThreshold?: number;
@@ -24,19 +22,8 @@
 		protocolMetadata?: VaultProtocolMetadata;
 	}
 
-	let {
-		chain,
-		topVaults,
-		breadcrumbs,
-		title: pageTitle,
-		subtitle,
-		tvlThreshold,
-		filterTvl,
-		protocolMetadata
-	}: Props = $props();
+	let { chain, topVaults, title: pageTitle, subtitle, tvlThreshold, filterTvl, protocolMetadata }: Props = $props();
 </script>
-
-<Breadcrumbs labels={{ vaults: 'Top vaults', ...breadcrumbs }} --breadcrumb-margin="0" />
 
 <main class="top-vaults-page ds-3">
 	<Section tag="header">

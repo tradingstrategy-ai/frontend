@@ -13,7 +13,6 @@
 <TopVaultsPage
 	{chain}
 	{topVaults}
-	breadcrumbs={{ chains: 'Chains', [chainSlug]: chainName }}
 	title="Top {chainName} vaults"
 	subtitle="The best performing stablecoin vaults on {chainName} with minimum $10k USD TVL"
 	tvlThreshold={10000}
