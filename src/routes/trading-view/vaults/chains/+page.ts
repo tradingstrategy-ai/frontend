@@ -1,5 +1,5 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
+import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getChain } from '$lib/helpers/chain';
@@ -7,11 +7,9 @@ import { getChain } from '$lib/helpers/chain';
 export async function load({ parent, url: { searchParams } }) {
 	const { topVaults } = await parent();
 
-	type ChainAccumulator = VaultGroup & { weighted_apy_sum: number; tvl_with_apy: number };
+	const eligibleVaults = topVaults.vaults.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
 
-	const chains = topVaults.vaults.reduce<Record<string, ChainAccumulator>>((acc, vault) => {
-		if (isBlacklisted(vault) || !meetsMinTvl(vault)) return acc;
-
+	const chains = eligibleVaults.reduce<Record<string, VaultGroup & { chain_id: number }>>((acc, vault) => {
 		const chain = getChain(vault.chain_id);
 		if (!chain) return acc;
 
@@ -23,25 +21,18 @@ export async function load({ parent, url: { searchParams } }) {
 			vault_count: 0,
 			tvl: 0,
 			avg_apy: null,
-			weighted_apy_sum: 0,
-			tvl_with_apy: 0
+			chain_id: vault.chain_id
 		};
 		acc[slug].vault_count++;
 		acc[slug].tvl += vault.current_nav ?? 0;
 
-		// Accumulate for TVL-weighted average APY calculation
-		if (vault.one_month_cagr != null && vault.current_nav != null && vault.current_nav > 0) {
-			acc[slug].weighted_apy_sum += vault.one_month_cagr * vault.current_nav;
-			acc[slug].tvl_with_apy += vault.current_nav;
-		}
-
 		return acc;
 	}, {});
 
-	// Calculate final TVL-weighted average APY and remove accumulator fields
-	const chainGroups: VaultGroup[] = Object.values(chains).map(({ weighted_apy_sum, tvl_with_apy, ...group }) => ({
+	// Calculate TVL-weighted average APY for each chain
+	const chainGroups: VaultGroup[] = Object.values(chains).map(({ chain_id, ...group }) => ({
 		...group,
-		avg_apy: tvl_with_apy > 0 ? weighted_apy_sum / tvl_with_apy : null
+		avg_apy: calculateTvlWeightedApy(eligibleVaults.filter((v) => v.chain_id === chain_id))
 	}));
 
 	const options = {

@@ -1,46 +1,34 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
-import { isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
+import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
 export async function load({ parent, url: { searchParams } }) {
 	const { topVaults } = await parent();
 
-	type StablecoinAccumulator = VaultGroup & { weighted_apy_sum: number; tvl_with_apy: number };
+	const eligibleVaults = topVaults.vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
 
-	const stablecoins = topVaults.vaults.reduce<Record<string, StablecoinAccumulator>>((acc, vault) => {
-		if (isBlacklisted(vault) || !vault.stablecoinish || !meetsMinTvl(vault)) return acc;
-
+	const stablecoins = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
 		const slug = vault.denomination_slug;
 
 		acc[slug] ??= {
-			slug: slug,
+			slug,
 			name: vault.normalised_denomination,
 			vault_count: 0,
 			tvl: 0,
-			avg_apy: null,
-			weighted_apy_sum: 0,
-			tvl_with_apy: 0
+			avg_apy: null
 		};
 		acc[slug].vault_count++;
 		acc[slug].tvl += vault.current_nav ?? 0;
 
-		// Accumulate for TVL-weighted average APY calculation
-		if (vault.one_month_cagr != null && vault.current_nav != null && vault.current_nav > 0) {
-			acc[slug].weighted_apy_sum += vault.one_month_cagr * vault.current_nav;
-			acc[slug].tvl_with_apy += vault.current_nav;
-		}
-
 		return acc;
 	}, {});
 
-	// Calculate final TVL-weighted average APY and remove accumulator fields
-	const stablecoinGroups: VaultGroup[] = Object.values(stablecoins).map(
-		({ weighted_apy_sum, tvl_with_apy, ...group }) => ({
-			...group,
-			avg_apy: tvl_with_apy > 0 ? weighted_apy_sum / tvl_with_apy : null
-		})
-	);
+	// Calculate TVL-weighted average APY for each stablecoin denomination
+	const stablecoinGroups: VaultGroup[] = Object.values(stablecoins).map((group) => ({
+		...group,
+		avg_apy: calculateTvlWeightedApy(eligibleVaults.filter((v) => v.denomination_slug === group.slug))
+	}));
 
 	const options = {
 		page: getNumberParam(searchParams, 'page', 0),
