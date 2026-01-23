@@ -18,7 +18,13 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { calculateTotalTvl, calculateTvlWeightedApy, getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
+	import {
+		calculateTotalTvl,
+		calculateTvlWeightedApy,
+		getFormattedLockup,
+		isBlacklisted,
+		resolveVaultDetails
+	} from './helpers';
 	import { vaultSparklinesUrl } from '$lib/config';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;

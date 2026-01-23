@@ -64,7 +64,7 @@ export function getFormattedFeeMode({ fee_mode }: VaultInfo): string {
 }
 
 /** Maximum APY to include in weighted average calculation (1000% = 10.0)
- * 
+ *
  * Consider vaults with higher APY sa broken.
  */
 const MAX_APY_THRESHOLD = 10;
