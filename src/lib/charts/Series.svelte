@@ -45,8 +45,6 @@
 
 	let visibleLogicalRange: LogicalRange | null = null;
 
-	let seriesContent: Record<string, any> | undefined = undefined;
-
 	let series: ISeriesApi<SeriesType> | undefined = $state();
 
 	// primary mount/unmount effect
@@ -73,21 +71,20 @@
 
 	// call callback (on initial load and whenever callback is updated)
 	$effect(() => {
-		let teardown: ChartCallbackReturnType = undefined;
+		if (!callback || !series) return;
 
-		// push to event loop to allow series init to complete
-		if (callback && series) {
-			setTimeout(() => {
-				if (series) {
-					teardown = callback({ chart, colors, series });
-				}
-			});
-		}
+		let teardown: ChartCallbackReturnType;
 
-		// if callback returned a teardown fn, run it and clear it
+		// use raf to allow series init to complete
+		const rafId = requestAnimationFrame(() => {
+			if (series) {
+				teardown = callback({ chart, colors, series });
+			}
+		});
+
 		return () => {
+			cancelAnimationFrame(rafId);
 			teardown?.();
-			teardown = undefined;
 		};
 	});
 
@@ -155,17 +152,23 @@
 
 	// mount/unmount SeriesContent to inject children into the series pane element
 	$effect(() => {
-		if (seriesContent) unmount(seriesContent);
-
 		if (!children || !series) return;
 
-		// Use requestAnimationFrame to push to event loop and only run when window is in foreground
-		// (allows TradingView to first create the series pane elements)
-		requestAnimationFrame(() => {
+		let seriesContent: ReturnType<typeof mount> | undefined;
+
+		// Use raf allow chart.addSeries to complete
+		const rafId = requestAnimationFrame(() => {
 			const target = series?.getPane().getHTMLElement()?.querySelector('td:nth-child(2)');
 			if (target) {
 				seriesContent = mount(SeriesContent, { target, props: { children } });
 			}
 		});
+
+		return () => {
+			cancelAnimationFrame(rafId);
+			if (seriesContent) {
+				unmount(seriesContent);
+			}
+		};
 	});
 </script>
