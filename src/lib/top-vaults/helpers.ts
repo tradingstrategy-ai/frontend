@@ -62,3 +62,40 @@ export function getFormattedFeeMode({ fee_mode }: VaultInfo): string {
 	if (fee_mode == null) return 'Unknown';
 	return capitalize(fee_mode.replaceAll('_', ' '));
 }
+
+/** Maximum APY to include in weighted average calculation (1000% = 10.0)
+ * 
+ * Consider vaults with higher APY sa broken.
+ */
+const MAX_APY_THRESHOLD = 10;
+
+/**
+ * Calculate TVL-weighted average APY for an array of vaults.
+ * Uses net returns when available, falls back to gross returns.
+ * Excludes blacklisted vaults and vaults with APY > 1000%.
+ */
+export function calculateTvlWeightedApy(vaults: VaultInfo[]): number | null {
+	let weightedSum = 0;
+	let tvlSum = 0;
+
+	for (const vault of vaults) {
+		if (isBlacklisted(vault)) continue;
+
+		const tvl = vault.current_nav ?? 0;
+		const apy = vault.one_month_cagr_net ?? vault.one_month_cagr;
+
+		if (tvl > 0 && apy != null && apy <= MAX_APY_THRESHOLD) {
+			weightedSum += tvl * apy;
+			tvlSum += tvl;
+		}
+	}
+
+	return tvlSum > 0 ? weightedSum / tvlSum : null;
+}
+
+/**
+ * Calculate total TVL for an array of vaults
+ */
+export function calculateTotalTvl(vaults: VaultInfo[]): number {
+	return vaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0);
+}

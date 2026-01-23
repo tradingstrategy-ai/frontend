@@ -18,7 +18,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
-	import { getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
+	import { calculateTotalTvl, calculateTvlWeightedApy, getFormattedLockup, isBlacklisted, resolveVaultDetails } from './helpers';
 	import { vaultSparklinesUrl } from '$lib/config';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
@@ -71,25 +71,10 @@
 	});
 
 	// Calculate total TVL from TVL-filtered vaults
-	let totalTvl = $derived(tvlFilteredVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
+	let totalTvl = $derived(calculateTotalTvl(tvlFilteredVaults));
 
 	// Calculate TVL-weighted average 1M APY from TVL-filtered vaults
-	let avgTvlWeightedApy1M = $derived.by(() => {
-		let weightedSum = 0;
-		let tvlSum = 0;
-
-		for (const v of tvlFilteredVaults) {
-			const tvl = v.current_nav ?? 0;
-			const apy = v.one_month_cagr_net ?? v.one_month_cagr;
-
-			if (tvl > 0 && apy !== null) {
-				weightedSum += tvl * apy;
-				tvlSum += tvl;
-			}
-		}
-
-		return tvlSum > 0 ? weightedSum / tvlSum : null;
-	});
+	let avgTvlWeightedApy1M = $derived(calculateTvlWeightedApy(tvlFilteredVaults));
 
 	// filter vaults matching filterValue (search string)
 	let filteredVaults = $derived.by(() => {
