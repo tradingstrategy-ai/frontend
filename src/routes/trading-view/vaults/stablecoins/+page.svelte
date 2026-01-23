@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -22,8 +21,6 @@
 	<title>DeFi vault stablecoins | Trading Strategy</title>
 	<meta name="description" content="Top DeFi vault stablecoins across all blockchains" />
 </svelte:head>
-
-<Breadcrumbs labels={{ vaults: 'Top vaults', stablecoins: 'By stablecoin' }} --breadcrumb-margin="0" />
 
 <main class="stablecoin-index-page">
 	<Section tag="header">
