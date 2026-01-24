@@ -3,6 +3,7 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Markdown from '$lib/components/Markdown.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
@@ -54,7 +55,7 @@
 
 		{#if vault.notes}
 			<MetricsBox class="notes" title="Notes">
-				<div class="notes-inner">{vault.notes}</div>
+				<Markdown content={vault.notes} />
 			</MetricsBox>
 		{/if}
 
@@ -96,8 +97,5 @@
 			}
 		}
 
-		.notes-inner {
-			font: var(--f-ui-lg-roman);
-		}
 	}
 </style>
