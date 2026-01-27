@@ -31,7 +31,7 @@
 <main class="chain-index-page">
 	<Section tag="header">
 		<VaultListingsSelector />
-		<HeroBanner subtitle="Browse DeFi vaults grouped by blockchain">
+		<HeroBanner subtitle="Browse DeFi stablecoin vaults by their blockchain">
 			{#snippet title()}
 				<span>DeFi vaults by chain</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
