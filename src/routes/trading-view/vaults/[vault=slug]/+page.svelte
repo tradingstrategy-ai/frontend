@@ -96,6 +96,5 @@
 				display: none;
 			}
 		}
-
 	}
 </style>
