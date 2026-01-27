@@ -3,8 +3,11 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import { CopyWidget, HashAddress } from '$lib/components';
+	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
 	import { formatAmount, notFilledMarker } from '$lib/helpers/formatters';
+	import { parseDate } from '$lib/helpers/date';
+
+	const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 	interface Props {
 		vault: VaultInfo;
@@ -14,6 +17,12 @@
 	let { vault, chain }: Props = $props();
 
 	let copyWidget = $state<CopyWidget>();
+
+	let lastUpdatedStale = $derived.by(() => {
+		const lastUpdated = parseDate(vault.last_updated_at);
+		if (!lastUpdated) return false;
+		return Date.now() - lastUpdated.getTime() > THREE_DAYS_MS;
+	});
 
 	const rows = $derived([
 		{ label: 'Vault name', value: vault.name },
@@ -54,7 +63,7 @@
 			value: { amount: vault.last_share_price, symbol: vault.denomination },
 			type: 'currency' as const
 		},
-		{ label: 'Last updated', value: vault.last_updated_at, type: 'date' as const },
+		{ label: 'Last updated', value: vault.last_updated_at, type: 'relativeDate' as const },
 		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
 
 		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
@@ -125,6 +134,31 @@
 									<a href={row.value.url} target="_blank" rel="noreferrer">
 										{row.value.hasProtocol ? 'View vault on protocol website' : 'View vault on blockchain explorer'}
 									</a>
+								{:else}
+									{notFilledMarker}
+								{/if}
+							{:else if row.type === 'relativeDate'}
+								{#if row.value}
+									{#if lastUpdatedStale}
+										<Tooltip>
+											<span slot="trigger" class="stale-date">
+												<Timestamp date={row.value} withTime relative>
+													{#snippet children({ dateStr, timeStr, relativeStr })}
+														{dateStr} {timeStr} UTC ({relativeStr})
+													{/snippet}
+												</Timestamp>
+											</span>
+											<svelte:fragment slot="popup">
+												Currently the vault is experiencing some issues causing the failed data reads.
+											</svelte:fragment>
+										</Tooltip>
+									{:else}
+										<Timestamp date={row.value} withTime relative>
+											{#snippet children({ dateStr, timeStr, relativeStr })}
+												{dateStr} {timeStr} UTC ({relativeStr})
+											{/snippet}
+										</Timestamp>
+									{/if}
 								{:else}
 									{notFilledMarker}
 								{/if}
@@ -203,5 +237,10 @@
 			background: none;
 			cursor: pointer;
 		}
+	}
+
+	.stale-date {
+		color: var(--c-error);
+		border-bottom: 1px dotted var(--c-error);
 	}
 </style>
