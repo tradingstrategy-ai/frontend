@@ -42,9 +42,16 @@
 		chain?: Chain;
 		tvlThreshold?: number;
 		filterTvl?: boolean;
+		includeBlacklisted?: boolean;
 	}
 
-	let { topVaults, chain, tvlThreshold = TVL_THRESHOLD_DEFAULT, filterTvl }: Props = $props();
+	let {
+		topVaults,
+		chain,
+		tvlThreshold = TVL_THRESHOLD_DEFAULT,
+		filterTvl,
+		includeBlacklisted = false
+	}: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
@@ -55,9 +62,9 @@
 
 	let filterValue = $state('');
 
-	// filter out blacklisted vaults (unless specifically searching "blacklisted")
+	// filter out blacklisted vaults (unless includeBlacklisted or specifically searching "blacklisted")
 	let baseVaults = $derived.by(() => {
-		if (filterValue.startsWith('blacklist')) return topVaults.vaults;
+		if (includeBlacklisted || filterValue.startsWith('blacklist')) return topVaults.vaults;
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 

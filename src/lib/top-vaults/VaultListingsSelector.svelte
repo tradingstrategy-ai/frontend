@@ -8,7 +8,8 @@
 		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
 		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
 		{ href: '/trading-view/vaults/chains', label: 'By chain' },
-		{ href: '/trading-view/vaults/protocols', label: 'By protocol' }
+		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
+		{ href: '/trading-view/vaults/all', label: 'All' }
 	] as const;
 
 	function isActive(href: string): boolean {

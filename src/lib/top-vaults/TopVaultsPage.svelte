@@ -19,10 +19,20 @@
 		subtitle: string;
 		tvlThreshold?: number;
 		filterTvl?: boolean;
+		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
 	}
 
-	let { chain, topVaults, title: pageTitle, subtitle, tvlThreshold, filterTvl, protocolMetadata }: Props = $props();
+	let {
+		chain,
+		topVaults,
+		title: pageTitle,
+		subtitle,
+		tvlThreshold,
+		filterTvl,
+		includeBlacklisted,
+		protocolMetadata
+	}: Props = $props();
 </script>
 
 <main class="top-vaults-page ds-3">
@@ -53,7 +63,7 @@
 			{#if !topVaults.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
 			{:else}
-				<TopVaultsTable {topVaults} {chain} {tvlThreshold} {filterTvl} />
+				<TopVaultsTable {topVaults} {chain} {tvlThreshold} {filterTvl} {includeBlacklisted} />
 			{/if}
 		</div>
 	</Section>
