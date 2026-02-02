@@ -23,7 +23,16 @@
 		protocolMetadata?: VaultProtocolMetadata;
 	}
 
-	let { chain, topVaults, title: pageTitle, subtitle, tvlThreshold, filterTvl, includeBlacklisted, protocolMetadata }: Props = $props();
+	let {
+		chain,
+		topVaults,
+		title: pageTitle,
+		subtitle,
+		tvlThreshold,
+		filterTvl,
+		includeBlacklisted,
+		protocolMetadata
+	}: Props = $props();
 </script>
 
 <main class="top-vaults-page ds-3">

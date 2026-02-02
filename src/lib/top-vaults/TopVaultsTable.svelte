@@ -45,7 +45,13 @@
 		includeBlacklisted?: boolean;
 	}
 
-	let { topVaults, chain, tvlThreshold = TVL_THRESHOLD_DEFAULT, filterTvl, includeBlacklisted = false }: Props = $props();
+	let {
+		topVaults,
+		chain,
+		tvlThreshold = TVL_THRESHOLD_DEFAULT,
+		filterTvl,
+		includeBlacklisted = false
+	}: Props = $props();
 
 	let showChainCol = $derived(!chain);
 
