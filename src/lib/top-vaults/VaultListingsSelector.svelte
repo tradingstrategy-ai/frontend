@@ -18,7 +18,7 @@
 </script>
 
 <nav class="vault-listings-selector ds-3">
-	<span class="label">All vaults by:</span>
+	<span class="label">Vaults by:</span>
 	{#each links as { href, label } (href)}
 		<a href={resolve(href)} class:active={isActive(href)}>
 			{label}
