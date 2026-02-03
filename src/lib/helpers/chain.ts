@@ -161,6 +161,15 @@ export const chains = (() => {
 			nativeCurrency: 'ETH',
 			hasBackendData: false
 		},
+		{
+			id: 957,
+			slug: 'derive',
+			name: 'Derive',
+			homepage: 'https://www.derive.xyz/',
+			explorer: 'https://explorer.derive.xyz',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
 		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,
