@@ -23,6 +23,7 @@
 		calculateTvlWeightedApy,
 		getFormattedLockup,
 		isBlacklisted,
+		isGoodVaultStatus,
 		resolveVaultDetails
 	} from './helpers';
 	import { vaultSparklinesUrl } from '$lib/config';
@@ -346,9 +347,25 @@
 			<tbody>
 				{#each visibleVaults as vault (vault.id)}
 					{@const chain = getChain(vault.chain_id)}
+					{@const badStatus = !isGoodVaultStatus(vault)}
+					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
+						.filter(Boolean)
+						.join('; ')}
 					<tr class="targetable">
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
-						<td class="index"></td>
+						<td class={['index', badStatus && 'bad-status']}>
+							{#if badStatus}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-indicator"></span>
+									</svelte:fragment>
+									<svelte:fragment slot="popup"
+										>The vault deposit or redemption may be currently closed: {statusReason}. Check the page for
+										details.</svelte:fragment
+									>
+								</Tooltip>
+							{/if}
+						</td>
 						{#if showChainCol}
 							<td class="chain">
 								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
@@ -637,6 +654,18 @@
 
 					&::before {
 						content: counter(rowNumber);
+					}
+
+					&.bad-status {
+						background-color: hsla(0, 70%, 50%, 0.3);
+
+						&::before {
+							content: none;
+						}
+
+						.status-indicator::before {
+							content: counter(rowNumber);
+						}
 					}
 				}
 			}

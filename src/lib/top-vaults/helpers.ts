@@ -24,6 +24,13 @@ export function hasSupportedProtocol(vault: VaultInfo) {
 }
 
 /**
+ * Check if vault has good operational status (deposits and redemptions are both open)
+ */
+export function isGoodVaultStatus(vault: VaultInfo): boolean {
+	return vault.deposit_closed_reason == null && vault.redemption_closed_reason == null;
+}
+
+/**
  * Check if vault meets minimum TVL threshold
  */
 export function meetsMinTvl(vault: VaultInfo, threshold = MIN_TVL_THRESHOLD) {
