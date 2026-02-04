@@ -5,7 +5,7 @@
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
-	import { getFormattedLockup } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
 
 	interface Props {
@@ -13,9 +13,33 @@
 	}
 
 	let { vault }: Props = $props();
+
+	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
 </script>
 
 <div class="additional-metrics">
+	{#if showTransactionStatus}
+		<MetricsBox class="transaction-status" title="Transaction status currently">
+			<div class="status-grid">
+				<div class="status-item">
+					<span class="status-label">Deposits</span>
+					{#if vault.deposit_closed_reason}
+						<span class="status-value closed">{vault.deposit_closed_reason}</span>
+					{:else}
+						<span class="status-value open">Open</span>
+					{/if}
+				</div>
+				<div class="status-item">
+					<span class="status-label">Redemptions</span>
+					{#if vault.redemption_closed_reason}
+						<span class="status-value closed">{vault.redemption_closed_reason}</span>
+					{:else}
+						<span class="status-value open">Open</span>
+					{/if}
+				</div>
+			</div>
+		</MetricsBox>
+	{/if}
 	<MetricsBox class="other-metrics" title="Other metrics">
 		<div class="metrics-inner">
 			<div class="mobile">
@@ -157,8 +181,37 @@
 		@media (--viewport-lg-up) {
 			grid-template-columns: 1fr 1fr;
 
-			:global(:is(.other-metrics)) {
+			:global(:is(.other-metrics, .transaction-status)) {
 				grid-column: span 2;
+			}
+		}
+
+		.status-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--gap);
+		}
+
+		.status-item {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.status-label {
+			font: var(--f-ui-sm-medium);
+			color: var(--c-text-light);
+		}
+
+		.status-value {
+			font: var(--f-ui-md-medium);
+
+			&.open {
+				color: var(--c-success);
+			}
+
+			&.closed {
+				color: var(--c-error);
 			}
 		}
 
