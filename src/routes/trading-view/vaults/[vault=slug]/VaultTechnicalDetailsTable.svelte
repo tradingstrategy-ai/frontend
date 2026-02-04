@@ -71,6 +71,8 @@
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
+		{ label: 'Deposit status', value: vault.deposit_closed_reason, type: 'closedReason' as const },
+		{ label: 'Redemption status', value: vault.redemption_closed_reason, type: 'closedReason' as const },
 		{ label: 'Deposit events', value: vault.event_count, type: 'number' as const }
 	]);
 
@@ -136,6 +138,12 @@
 									</a>
 								{:else}
 									{notFilledMarker}
+								{/if}
+							{:else if row.type === 'closedReason'}
+								{#if row.value}
+									<span class="closed-status">{row.value}</span>
+								{:else}
+									<span class="open-status">Open</span>
 								{/if}
 							{:else if row.type === 'relativeDate'}
 								{#if row.value}
@@ -242,5 +250,13 @@
 	.stale-date {
 		color: var(--c-error);
 		border-bottom: 1px dotted var(--c-error);
+	}
+
+	.closed-status {
+		color: var(--c-error);
+	}
+
+	.open-status {
+		color: var(--c-success);
 	}
 </style>
