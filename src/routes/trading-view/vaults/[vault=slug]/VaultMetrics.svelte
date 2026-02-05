@@ -19,7 +19,7 @@
 
 <div class="additional-metrics">
 	{#if showTransactionStatus}
-		<MetricsBox class="transaction-status" title="Transaction status currently">
+		<MetricsBox class="transaction-status" title="Transaction status">
 			<div class="status-grid">
 				<div class="status-item">
 					<span class="status-label">Deposits</span>
