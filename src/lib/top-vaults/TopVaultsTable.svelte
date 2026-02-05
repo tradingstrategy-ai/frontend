@@ -332,7 +332,7 @@
 						'desc',
 						multiValCompare(['current_nav', 'peak_nav'])
 					)}
-					{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
+					{@render sortColHeader('Age (y)', 'age', 'desc', multiValCompare(['years']))}
 					{@render sortColHeader(
 						'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
 						'fees',
@@ -692,7 +692,7 @@
 			}
 
 			.age {
-				width: 5%;
+				width: 3.5%;
 			}
 
 			.fees {
@@ -700,7 +700,7 @@
 			}
 
 			.lockup {
-				width: 6%;
+				width: 7.5%;
 
 				&.unknown {
 					color: var(--c-text-light);
