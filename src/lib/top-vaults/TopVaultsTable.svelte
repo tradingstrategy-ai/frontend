@@ -712,9 +712,8 @@
 
 				.status-bullet {
 					color: var(--c-warning);
-					margin-left: 0.25rem;
-					font-size: 1.125rem;
-					font-weight: 700;
+					margin-left: 0.375rem;
+					font-size: 0.875rem;
 					vertical-align: middle;
 				}
 			}
