@@ -15,6 +15,18 @@
 	let { vault }: Props = $props();
 
 	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
+
+	function getDaysUntil(dateString: string | null): number | null {
+		if (!dateString) return null;
+		const targetDate = new Date(dateString);
+		const now = new Date();
+		const diffMs = targetDate.getTime() - now.getTime();
+		const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+		return diffDays;
+	}
+
+	let depositDaysLeft = $derived(getDaysUntil(vault.deposit_next_open));
+	let redemptionDaysLeft = $derived(getDaysUntil(vault.redemption_next_open));
 </script>
 
 <div class="additional-metrics">
@@ -25,6 +37,9 @@
 					<span class="status-label">Deposits</span>
 					{#if vault.deposit_closed_reason}
 						<span class="status-value closed">{vault.deposit_closed_reason}</span>
+						{#if depositDaysLeft !== null && depositDaysLeft >= 0}
+							<span class="status-next-open">Opens in {depositDaysLeft} {depositDaysLeft === 1 ? 'day' : 'days'}</span>
+						{/if}
 					{:else}
 						<span class="status-value open">Open</span>
 					{/if}
@@ -33,6 +48,9 @@
 					<span class="status-label">Redemptions</span>
 					{#if vault.redemption_closed_reason}
 						<span class="status-value closed">{vault.redemption_closed_reason}</span>
+						{#if redemptionDaysLeft !== null && redemptionDaysLeft >= 0}
+							<span class="status-next-open">Opens in {redemptionDaysLeft} {redemptionDaysLeft === 1 ? 'day' : 'days'}</span>
+						{/if}
 					{:else}
 						<span class="status-value open">Open</span>
 					{/if}
@@ -213,6 +231,12 @@
 			&.closed {
 				color: var(--c-error);
 			}
+		}
+
+		.status-next-open {
+			font: var(--f-ui-sm-roman);
+			color: var(--c-text-light);
+			margin-top: 0.25rem;
 		}
 
 		.metrics-inner {
