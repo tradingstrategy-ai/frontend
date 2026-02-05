@@ -710,6 +710,7 @@
 					margin-left: 0.25rem;
 					font-size: 1.125rem;
 					font-weight: 700;
+					vertical-align: middle;
 				}
 			}
 
