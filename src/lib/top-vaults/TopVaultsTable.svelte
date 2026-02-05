@@ -353,19 +353,7 @@
 						.join('; ')}
 					<tr class="targetable">
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
-						<td class={['index', badStatus && 'bad-status']}>
-							{#if badStatus}
-								<Tooltip>
-									<svelte:fragment slot="trigger">
-										<span class="status-indicator"></span>
-									</svelte:fragment>
-									<svelte:fragment slot="popup"
-										>The vault deposit or redemption may be currently closed: {statusReason}. Check the page for
-										details.</svelte:fragment
-									>
-								</Tooltip>
-							{/if}
-						</td>
+						<td class="index"></td>
 						{#if showChainCol}
 							<td class="chain">
 								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
@@ -413,7 +401,20 @@
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
 						<td class={['lockup', vault.lockup === null && 'unknown']}>
-							{getFormattedLockup(vault)}
+							{#if badStatus}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-bullet">!</span>
+										{getFormattedLockup(vault)}
+									</svelte:fragment>
+									<svelte:fragment slot="popup"
+										>The vault deposit or redemption may be currently closed: {statusReason}. Check the page for
+										details.</svelte:fragment
+									>
+								</Tooltip>
+							{:else}
+								{getFormattedLockup(vault)}
+							{/if}
 						</td>
 						<td class="risk">
 							<RiskCell risk={vault.risk} />
@@ -655,18 +656,6 @@
 					&::before {
 						content: counter(rowNumber);
 					}
-
-					&.bad-status {
-						background-color: hsla(0, 70%, 50%, 0.3);
-
-						&::before {
-							content: none;
-						}
-
-						.status-indicator::before {
-							content: counter(rowNumber);
-						}
-					}
 				}
 			}
 
@@ -715,6 +704,13 @@
 
 				&.unknown {
 					color: var(--c-text-light);
+				}
+
+				.status-bullet {
+					color: var(--c-error);
+					margin-right: 0.25rem;
+					font-size: 1.125rem;
+					font-weight: 700;
 				}
 			}
 
