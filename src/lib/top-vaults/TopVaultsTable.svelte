@@ -705,6 +705,10 @@
 					color: var(--c-text-light);
 				}
 
+				&:has(.status-bullet) {
+					color: var(--c-error);
+				}
+
 				.status-bullet {
 					color: var(--c-error);
 					margin-left: 0.25rem;
