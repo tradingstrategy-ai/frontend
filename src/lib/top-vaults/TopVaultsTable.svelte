@@ -700,6 +700,7 @@
 
 			.lockup {
 				width: 6%;
+				white-space: nowrap;
 
 				&.unknown {
 					color: var(--c-text-light);
