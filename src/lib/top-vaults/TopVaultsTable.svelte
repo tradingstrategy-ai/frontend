@@ -404,7 +404,9 @@
 							{#if badStatus}
 								<Tooltip>
 									<svelte:fragment slot="trigger">
-										<span class="status-bullet">🕒</span>{getFormattedLockup(vault)}
+										<span class="status-wrapper">
+											<span class="status-bullet">🕒</span>{getFormattedLockup(vault)}
+										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
 										>The vault deposit or redemption may be currently closed: {statusReason}.</svelte:fragment
@@ -706,6 +708,10 @@
 
 				&:has(.status-bullet) {
 					color: var(--c-warning);
+				}
+
+				.status-wrapper {
+					white-space: nowrap;
 				}
 
 				.status-bullet {
