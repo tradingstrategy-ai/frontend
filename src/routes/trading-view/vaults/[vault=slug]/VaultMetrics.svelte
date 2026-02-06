@@ -49,7 +49,9 @@
 					{#if vault.redemption_closed_reason}
 						<span class="status-value closed">{vault.redemption_closed_reason}</span>
 						{#if redemptionDaysLeft !== null && redemptionDaysLeft >= 0}
-							<span class="status-next-open">Opens in {redemptionDaysLeft} {redemptionDaysLeft === 1 ? 'day' : 'days'}</span>
+							<span class="status-next-open"
+								>Opens in {redemptionDaysLeft} {redemptionDaysLeft === 1 ? 'day' : 'days'}</span
+							>
 						{/if}
 					{:else}
 						<span class="status-value open">Open</span>
