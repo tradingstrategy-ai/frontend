@@ -101,3 +101,13 @@ For detailed information on specific topics, see:
 - `docs/dependencies.md` - Frontend libraries, backend integrations, build tools
 - `docs/security.md` - CSP, geographic blocking, authentication, CAPTCHA
 - `docs/tests.md` - Test suites, frameworks, running tests
+
+## Pull requests
+
+- Never push directly to a master, and open a pull request when asked.
+- Do not include test plan in a pull request description
+- If the user ask to open a pull request as feature then start the PR title with "feat:" prefix and also add one line about the feature into `CHANGELOG.md`
+- Each changelog entry should follow the date of the PR in YYYY-MM-DD format. Example: Something was updated (2026-01-01).
+- Before opening or updating a pull request, format the code
+- When merging pull request, squash and merge commits and use the PR description as the commit message
+- After merging checkout the master
