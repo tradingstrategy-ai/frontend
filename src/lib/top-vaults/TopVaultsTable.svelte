@@ -23,6 +23,7 @@
 		calculateTvlWeightedApy,
 		getFormattedLockup,
 		isBlacklisted,
+		isGoodVaultStatus,
 		resolveVaultDetails
 	} from './helpers';
 	import { vaultSparklinesUrl } from '$lib/config';
@@ -331,7 +332,7 @@
 						'desc',
 						multiValCompare(['current_nav', 'peak_nav'])
 					)}
-					{@render sortColHeader('Age (Years)', 'age', 'desc', multiValCompare(['years']))}
+					{@render sortColHeader('Age (y)', 'age', 'desc', multiValCompare(['years']))}
 					{@render sortColHeader(
 						'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
 						'fees',
@@ -346,6 +347,10 @@
 			<tbody>
 				{#each visibleVaults as vault (vault.id)}
 					{@const chain = getChain(vault.chain_id)}
+					{@const badStatus = !isGoodVaultStatus(vault)}
+					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
+						.filter(Boolean)
+						.join('; ')}
 					<tr class="targetable">
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 						<td class="index"></td>
@@ -396,7 +401,20 @@
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
 						<td class={['lockup', vault.lockup === null && 'unknown']}>
-							{getFormattedLockup(vault)}
+							{#if badStatus}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-wrapper">
+											<span class="status-bullet">🕒</span>{getFormattedLockup(vault)}
+										</span>
+									</svelte:fragment>
+									<svelte:fragment slot="popup"
+										>The vault deposit or redemption may be currently closed: {statusReason}.</svelte:fragment
+									>
+								</Tooltip>
+							{:else}
+								{getFormattedLockup(vault)}
+							{/if}
 						</td>
 						<td class="risk">
 							<RiskCell risk={vault.risk} />
@@ -674,7 +692,7 @@
 			}
 
 			.age {
-				width: 5%;
+				width: 3.5%;
 			}
 
 			.fees {
@@ -682,10 +700,26 @@
 			}
 
 			.lockup {
-				width: 6%;
+				width: 7.5%;
 
 				&.unknown {
 					color: var(--c-text-light);
+				}
+
+				&:has(.status-bullet) {
+					color: var(--c-warning);
+				}
+
+				.status-wrapper {
+					white-space: nowrap;
+				}
+
+				.status-bullet {
+					color: var(--c-warning);
+					margin-right: 0.375rem;
+					font-size: 0.875rem;
+					vertical-align: middle;
+					display: inline-block;
 				}
 			}
 

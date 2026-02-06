@@ -119,6 +119,14 @@ export const vaultInfoSchema = z.object({
 	features: z.string().array(),
 	flags: z.string().array(),
 	notes: z.string().nullable(),
+	/** Reason deposits are closed, null if deposits are open */
+	deposit_closed_reason: z.string().nullable(),
+	/** Reason redemptions are closed, null if redemptions are open */
+	redemption_closed_reason: z.string().nullable(),
+	/** When deposits will next be open (if currently closed) */
+	deposit_next_open: isoDateTime.nullable(),
+	/** When redemptions will next be open (if currently closed) */
+	redemption_next_open: isoDateTime.nullable(),
 	link: z.url().nullish(), // deprecated – to be repaced with `deposit_ui_link` and `vault_page_link`
 	trading_strategy_link: z.url().nullish(),
 	fee_label: z.string().nullable(),
