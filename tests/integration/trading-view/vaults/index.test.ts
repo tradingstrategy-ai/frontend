@@ -45,12 +45,12 @@ test.describe('vault index page', () => {
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(200);
 
-		// scroll again - loads additional 50
+		// scroll again - loads final 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(200);
+		await expect(rows).toHaveCount(250);
 
 		// all rows loaded - no more sentinel
-		await expect(sentinel).toBeVisible();
+		await expect(sentinel).not.toBeVisible();
 	});
 
 	test('search filters displayed vaults', async ({ page }) => {
