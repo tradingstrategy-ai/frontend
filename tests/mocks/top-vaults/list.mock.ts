@@ -33,7 +33,8 @@ const belowTvl = generateMockVaults('Below TVL', 50, {
 const aboveTvl = generateMockVaults('Above TVL', 250, {
 	get current_nav() {
 		return Math.random() * 1_000_000 + 50_000;
-	}
+	},
+	one_month_returns: 0.05
 });
 
 export default defineMock({

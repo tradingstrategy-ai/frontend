@@ -1,14 +1,23 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { chain, chainSlug, chainName, topVaults } = $derived(data);
+
+	let title = $derived(`${chainName} top vaults`);
+	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
-<svelte:head>
-	<title>{chainName} top vaults</title>
-	<meta name="description" content="Top stablecoin vaults on {chainName} blockchain ranked by performance." />
-</svelte:head>
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
 
 <TopVaultsPage
 	{chain}

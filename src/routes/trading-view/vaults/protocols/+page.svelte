@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { protocols, options } = $derived(data);
@@ -16,12 +18,19 @@
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};
+
+	const title = 'DeFi stablecoin vault protocols | Trading Strategy';
+	const description = 'Top DeFi stablecoin vault protocols across all blockchains';
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
-<svelte:head>
-	<title>DeFi stablecoin vault protocols | Trading Strategy</title>
-	<meta name="description" content="Top DeFi stablecoin vault protocols across all blockchains" />
-</svelte:head>
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
 
 <main class="protocol-index-page">
 	<Section tag="header">
