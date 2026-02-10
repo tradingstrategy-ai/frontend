@@ -1,11 +1,13 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { stablecoins, options } = $derived(data);
@@ -15,12 +17,19 @@
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};
+
+	const title = 'DeFi vault stablecoins | Trading Strategy';
+	const description = 'Top DeFi vault stablecoins across all blockchains';
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
-<svelte:head>
-	<title>DeFi vault stablecoins | Trading Strategy</title>
-	<meta name="description" content="Top DeFi vault stablecoins across all blockchains" />
-</svelte:head>
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
 
 <main class="stablecoin-index-page">
 	<Section tag="header">

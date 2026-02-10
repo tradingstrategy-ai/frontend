@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { vaultSparklinesUrl } from '$lib/config';
 	import type { Chain } from '$lib/helpers/chain';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
@@ -11,9 +13,19 @@
 
 	let { vault, chain }: Props = $props();
 
-	let description = $derived(`Vault details for ${vault.name} vault on ${vault.protocol} on ${chain.name}`);
+	let description = $derived.by(() => {
+		const parts = [`${vault.name} on ${vault.protocol} on ${chain.name}`];
+		if (vault.current_nav != null) {
+			parts.push(`TVL: ${formatDollar(vault.current_nav, 0)}`);
+		}
+		if (vault.one_month_returns != null) {
+			parts.push(`1M return: ${formatPercent(vault.one_month_returns)}`);
+		}
+		return parts.join(' | ');
+	});
+
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let imageUrl = $derived(`https://vault-sparklines.tradingstrategy.ai/sparkline-90d-${vault.id}.png`);
+	let imageUrl = $derived(`${vaultSparklinesUrl}/sparkline-90d-${vault.id}.png`);
 </script>
 
 <MetaTags

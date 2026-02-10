@@ -2,6 +2,7 @@
 	Page to display vault information.
 -->
 <script lang="ts">
+	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
 	import CryptoAddressWidget from '$lib/components/CryptoAddressWidget.svelte';
 	import DataBox from '$lib/components/DataBox.svelte';
@@ -9,16 +10,24 @@
 	import SummaryBox from '$lib/components/SummaryBox.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getExplorerUrl } from '$lib/helpers/chain';
+	import { MetaTags } from 'svelte-meta-tags';
 	import IconArrowRightUp from '~icons/local/arrow-right-up';
 
 	let { data } = $props();
 	let { chain, strategy, vault } = $derived(data);
+
+	let title = $derived(`Enzyme vault | ${strategy.name} | Trading Strategy`);
+	let description = $derived(`Enzyme vault information for ${strategy.name} strategy`);
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
-<svelte:head>
-	<title>Enzyme vault | {strategy.name} | Trading Strategy</title>
-	<meta name="description" content="Enzyme vault information for {strategy.name} strategy" />
-</svelte:head>
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
 
 <section class="vault">
 	<SummaryBox title="Vault information" ctaPosition="top">

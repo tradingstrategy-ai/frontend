@@ -2,12 +2,14 @@
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { chains, options } = $derived(data);
@@ -21,12 +23,19 @@
 	function getHref(slug: string) {
 		return resolve(`/trading-view/vaults/chains/${slug}`);
 	}
+
+	const title = 'DeFi stablecoin vaults by chain';
+	const description = 'Top DeFi vaults, grouped by blockchain';
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
-<svelte:head>
-	<title>DeFi stablecoin vaults by chain</title>
-	<meta name="description" content="Top DeFi vaults, grouped by blockchain" />
-</svelte:head>
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
 
 <main class="chain-index-page">
 	<Section tag="header">
