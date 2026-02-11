@@ -36,9 +36,15 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
+	const MIN_TVL = 50_000;
+
 	let eligibleVaults = $derived(
 		vaults.filter(
-			(v) => !isBlacklisted(v) && v.current_nav != null && v.current_nav > 0 && v.three_months_returns != null
+			(v) =>
+				!isBlacklisted(v) &&
+				v.current_nav != null &&
+				v.current_nav >= MIN_TVL &&
+				v.three_months_returns != null
 		)
 	);
 
