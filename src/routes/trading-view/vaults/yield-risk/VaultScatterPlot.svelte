@@ -164,8 +164,10 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					})
 					.filter(Boolean);
 
-				// Unknown risk vaults
-				const unknownVaults = currentVaults.filter((v) => v.risk == null || !riskConfig.some((r) => r.risk === v.risk));
+				// Unknown risk vaults (exclude zero-yield unknowns)
+				const unknownVaults = currentVaults.filter(
+					(v) => (v.risk == null || !riskConfig.some((r) => r.risk === v.risk)) && v.three_months_cagr !== 0
+				);
 				if (unknownVaults.length > 0) {
 					traces.push({
 						x: unknownVaults.map((v) => v.three_months_cagr! * 100),
@@ -263,10 +265,6 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 </script>
 
 <div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
-	<div class="mobile-notice">
-		<p>This chart is best viewed on a large screen.</p>
-	</div>
-
 	<div class="controls">
 		<label>
 			Min TVL:
@@ -299,21 +297,6 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		position: relative;
 		width: 100%;
 		min-height: 500px;
-	}
-
-	.mobile-notice {
-		display: none;
-		padding: 0.75rem 1rem;
-		background: var(--c-background-accent-1);
-		border: 1px solid var(--c-border);
-		border-radius: var(--radius-md);
-		color: var(--c-text-light);
-		font: var(--f-ui-sm-medium);
-		margin-bottom: 0.75rem;
-
-		@media (max-width: 768px) {
-			display: block;
-		}
 	}
 
 	.controls {

@@ -6,6 +6,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import VaultScatterPlot from './VaultScatterPlot.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
@@ -28,6 +29,10 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 />
 
 <main class="yield-risk-page">
+	<div class="mobile-notice">
+		<Alert size="sm" status="warning">This chart is best viewed on a large screen.</Alert>
+	</div>
+
 	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner
@@ -51,6 +56,15 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 			font-size: 0.5em;
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
+		}
+	}
+
+	.mobile-notice {
+		display: none;
+
+		@media (max-width: 768px) {
+			display: block;
+			padding: 1rem var(--container-padding, 1rem);
 		}
 	}
 </style>
