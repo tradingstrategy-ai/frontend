@@ -23,7 +23,10 @@
 			"mcp__playwright__*",
 			"Bash(for i in {1..5})",
 			"Bash(do echo \"Run $i\")",
-			"Bash(done)"
+			"Bash(done)",
+			"Bash(lsof:*)",
+			"Bash(xargs kill:*)",
+			"Bash(curl:*)"
 		]
 	}
 }

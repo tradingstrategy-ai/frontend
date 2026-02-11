@@ -25,7 +25,7 @@
 <SocialMediaTags {vault} {chain} />
 
 <main class="vault-details ds-3">
-	<Section tag="header">
+	<Section tag="header" padding="xs">
 		<VaultListingsSelector />
 	</Section>
 
