@@ -38,11 +38,20 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
-	const MIN_TVL = 50_000;
+	const tvlOptions = [
+		{ value: 50_000, label: '$50k' },
+		{ value: 100_000, label: '$100k' },
+		{ value: 250_000, label: '$250k' },
+		{ value: 500_000, label: '$500k' },
+		{ value: 1_000_000, label: '$1M' },
+		{ value: 2_000_000, label: '$2M' }
+	];
+
+	let minTvl = $state(50_000);
 
 	let eligibleVaults = $derived(
 		vaults.filter(
-			(v) => !isBlacklisted(v) && v.current_nav != null && v.current_nav >= MIN_TVL && v.three_months_cagr != null
+			(v) => !isBlacklisted(v) && v.current_nav != null && v.current_nav >= minTvl && v.three_months_cagr != null
 		)
 	);
 
@@ -175,11 +184,13 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					});
 				}
 
-				// Compute initial zoom ranges (clipping outliers)
+				// Compute initial zoom ranges (clipping outliers, floored at zero)
 				const allReturns = currentVaults.map((v) => v.three_months_cagr! * 100);
 				const allTvl = currentVaults.map((v) => v.current_nav!);
 				const xRange = computeAxisRange(allReturns);
 				const yRange = computeAxisRange(allTvl, true);
+				xRange[0] = Math.max(xRange[0], 0);
+				yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
 
 				const layout = {
 					xaxis: {
@@ -251,6 +262,17 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 </script>
 
 <div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
+	<div class="controls">
+		<label>
+			Min TVL:
+			<select bind:value={minTvl}>
+				{#each tvlOptions as { value, label } (value)}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		</label>
+	</div>
+
 	{#if loading}
 		<div class="loading">
 			<Spinner size="60" />
@@ -272,6 +294,25 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		position: relative;
 		width: 100%;
 		min-height: 500px;
+	}
+
+	.controls {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		padding-bottom: 0.75rem;
+		font: var(--f-ui-md-medium);
+		color: var(--c-text-light);
+
+		select {
+			margin-left: 0.25rem;
+			padding: 0.25rem 0.5rem;
+			background: var(--c-background-accent-1);
+			color: var(--c-text);
+			border: 1px solid var(--c-border);
+			border-radius: var(--radius-md);
+			font: var(--f-ui-md-medium);
+		}
 	}
 
 	.loading {

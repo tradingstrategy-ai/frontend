@@ -15,7 +15,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 
 	const title = 'Vault yield vs risk';
 	const description =
-		'Scatter plot of DeFi vault TVL versus three-month annualised returns, grouped by risk level. Vaults with less than $50k TVL are excluded.';
+		'Scatter plot of DeFi vault TVL versus three-month annualised returns, grouped by risk level. Adjust the minimum TVL filter to focus on larger vaults.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -31,7 +31,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner
-			subtitle="Explore vault TVL versus three-month annualised returns, coloured by risk level. Vaults with less than $50k TVL are excluded."
+			subtitle="Explore vault TVL versus three-month annualised returns, coloured by risk level. Adjust the minimum TVL filter to focus on larger vaults."
 		>
 			{#snippet title()}
 				<span>Vault yield / risk scatter plot</span>
