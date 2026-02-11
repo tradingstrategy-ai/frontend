@@ -8,6 +8,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import Section from '$lib/components/Section.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import ProtocolScatterPlot from './ProtocolScatterPlot.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
@@ -49,6 +50,10 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	<Section padding="sm">
 		<ProtocolScatterPlot vaults={topVaults.vaults} />
 		<ScatterPlotSelector />
+	</Section>
+
+	<Section>
+		<TopVaultsOptIn />
 	</Section>
 </main>
 

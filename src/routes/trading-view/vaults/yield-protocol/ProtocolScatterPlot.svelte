@@ -14,12 +14,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, hasSupportedProtocol, resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { isBlacklisted, hasSupportedProtocol } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
-		computeAxisRange,
+		computeScatterRanges,
 		buildBaseHoverLines,
-		buildMarker,
+		buildTrace,
 		buildChartLayout,
 		buildChartConfig,
 		protocolPalette,
@@ -79,33 +79,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 			const [protocol] = majorProtocols[i];
 			const color = protocolPalette[i % protocolPalette.length];
 			const group = currentVaults.filter((v) => v.protocol === protocol);
-
-			traces.push({
-				x: group.map((v) => v.three_months_cagr! * 100),
-				y: group.map((v) => v.current_nav!),
-				text: group.map(formatHoverText),
-				customdata: group.map((v) => resolveVaultDetails(v)),
-				name: protocol,
-				type: 'scatter',
-				mode: 'markers',
-				marker: buildMarker(color),
-				hovertemplate: '%{text}<extra></extra>'
-			});
+			traces.push(buildTrace(group, protocol, color, formatHoverText));
 		}
 
 		const otherVaults = currentVaults.filter((v) => otherProtocols.has(v.protocol));
 		if (otherVaults.length > 0) {
-			traces.push({
-				x: otherVaults.map((v) => v.three_months_cagr! * 100),
-				y: otherVaults.map((v) => v.current_nav!),
-				text: otherVaults.map(formatHoverText),
-				customdata: otherVaults.map((v) => resolveVaultDetails(v)),
-				name: 'Other',
-				type: 'scatter',
-				mode: 'markers',
-				marker: buildMarker(greyColor),
-				hovertemplate: '%{text}<extra></extra>'
-			});
+			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText));
 		}
 
 		return traces;
@@ -131,13 +110,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 
 				const traces = buildProtocolTraces(currentVaults);
 
-				const allReturns = currentVaults.map((v) => v.three_months_cagr! * 100);
-				const allTvl = currentVaults.map((v) => v.current_nav!);
-				const xRange = computeAxisRange(allReturns);
-				const yRange = computeAxisRange(allTvl, true);
-				xRange[0] = Math.max(xRange[0], 0);
-				yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
-
+				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl);
 				const layout = buildChartLayout('Protocol', xRange, yRange);
 				// Disable default legend click — we handle it ourselves below
 				layout.legend.itemclick = false;

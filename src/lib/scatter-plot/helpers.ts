@@ -1,4 +1,5 @@
 import type { VaultInfo } from '$lib/top-vaults/schemas';
+import { resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
 
 export const tvlOptions = [
@@ -107,7 +108,7 @@ export function buildChartLayout(legendTitle: string, xRange: [number, number], 
 			y: -0.15,
 			xanchor: 'center' as const,
 			x: 0.5
-		},
+		} as Record<string, any>,
 		height: 600,
 		margin: { t: 20, r: 20, b: 100, l: 80 },
 		dragmode: 'zoom' as const,
@@ -140,6 +141,42 @@ export function buildBaseHoverLines(v: VaultInfo): string[] {
 		`1M return (ann.): ${formatReturn(v.one_month_cagr)}`,
 		`3M return (ann.): ${formatReturn(v.three_months_cagr)}`
 	];
+}
+
+/**
+ * Build a single Plotly scatter trace from a group of vaults.
+ * @param group - Vaults in this trace
+ * @param name - Legend label
+ * @param color - Marker colour
+ * @param formatHoverText - Function to build hover HTML for each vault
+ */
+export function buildTrace(group: VaultInfo[], name: string, color: string, formatHoverText: (v: VaultInfo) => string) {
+	return {
+		x: group.map((v) => v.three_months_cagr! * 100),
+		y: group.map((v) => v.current_nav!),
+		text: group.map(formatHoverText),
+		customdata: group.map((v) => resolveVaultDetails(v)),
+		name,
+		type: 'scatter' as const,
+		mode: 'markers' as const,
+		marker: buildMarker(color),
+		hovertemplate: '%{text}<extra></extra>'
+	};
+}
+
+/**
+ * Compute X and Y axis ranges from vaults, clipping outliers and flooring at sensible minimums.
+ * @param vaults - Eligible vaults with non-null three_months_cagr and current_nav
+ * @param minTvl - Minimum TVL threshold for Y axis floor
+ */
+export function computeScatterRanges(vaults: VaultInfo[], minTvl: number) {
+	const allReturns = vaults.map((v) => v.three_months_cagr! * 100);
+	const allTvl = vaults.map((v) => v.current_nav!);
+	const xRange = computeAxisRange(allReturns);
+	const yRange = computeAxisRange(allTvl, true);
+	xRange[0] = Math.max(xRange[0], 0);
+	yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
+	return { xRange, yRange };
 }
 
 /** Palette of 20 visually distinct colours for protocol grouping. */

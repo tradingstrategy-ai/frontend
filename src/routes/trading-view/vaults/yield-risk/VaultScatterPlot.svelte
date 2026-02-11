@@ -14,12 +14,12 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { isBlacklisted } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
-		computeAxisRange,
+		computeScatterRanges,
 		buildBaseHoverLines,
-		buildMarker,
+		buildTrace,
 		buildChartLayout,
 		buildChartConfig,
 		greyColor
@@ -82,17 +82,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					.map(({ risk, color }) => {
 						const group = currentVaults.filter((v) => v.risk === risk);
 						if (group.length === 0) return null;
-						return {
-							x: group.map((v) => v.three_months_cagr! * 100),
-							y: group.map((v) => v.current_nav!),
-							text: group.map(formatHoverText),
-							customdata: group.map((v) => resolveVaultDetails(v)),
-							name: risk,
-							type: 'scatter',
-							mode: 'markers',
-							marker: buildMarker(color),
-							hovertemplate: '%{text}<extra></extra>'
-						};
+						return buildTrace(group, risk, color, formatHoverText);
 					})
 					.filter(Boolean);
 
@@ -101,27 +91,10 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					(v) => (v.risk == null || !riskConfig.some((r) => r.risk === v.risk)) && v.three_months_cagr !== 0
 				);
 				if (unknownVaults.length > 0) {
-					traces.push({
-						x: unknownVaults.map((v) => v.three_months_cagr! * 100),
-						y: unknownVaults.map((v) => v.current_nav!),
-						text: unknownVaults.map(formatHoverText),
-						customdata: unknownVaults.map((v) => resolveVaultDetails(v)),
-						name: 'Unknown',
-						type: 'scatter',
-						mode: 'markers',
-						marker: buildMarker(greyColor),
-						hovertemplate: '%{text}<extra></extra>'
-					});
+					traces.push(buildTrace(unknownVaults, 'Unknown', greyColor, formatHoverText));
 				}
 
-				// Compute initial zoom ranges (clipping outliers, floored at zero)
-				const allReturns = currentVaults.map((v) => v.three_months_cagr! * 100);
-				const allTvl = currentVaults.map((v) => v.current_nav!);
-				const xRange = computeAxisRange(allReturns);
-				const yRange = computeAxisRange(allTvl, true);
-				xRange[0] = Math.max(xRange[0], 0);
-				yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
-
+				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl);
 				const layout = buildChartLayout('Technical risk', xRange, yRange);
 				const config = buildChartConfig();
 

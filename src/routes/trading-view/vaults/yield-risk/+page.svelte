@@ -9,6 +9,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import Section from '$lib/components/Section.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import VaultScatterPlot from './VaultScatterPlot.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
@@ -54,6 +55,10 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 			The vault technical risk is based on the beta version of the technical risk analysis framework.
 			<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>Read more about the methodology.</a>
 		</p>
+	</Section>
+
+	<Section>
+		<TopVaultsOptIn />
 	</Section>
 </main>
 
