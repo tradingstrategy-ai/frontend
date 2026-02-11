@@ -263,6 +263,10 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 </script>
 
 <div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
+	<div class="mobile-notice">
+		<p>This chart is best viewed on a large screen.</p>
+	</div>
+
 	<div class="controls">
 		<label>
 			Min TVL:
@@ -295,6 +299,21 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		position: relative;
 		width: 100%;
 		min-height: 500px;
+	}
+
+	.mobile-notice {
+		display: none;
+		padding: 0.75rem 1rem;
+		background: var(--c-background-accent-1);
+		border: 1px solid var(--c-border);
+		border-radius: var(--radius-md);
+		color: var(--c-text-light);
+		font: var(--f-ui-sm-medium);
+		margin-bottom: 0.75rem;
+
+		@media (max-width: 768px) {
+			display: block;
+		}
 	}
 
 	.controls {
