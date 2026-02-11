@@ -117,7 +117,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 			chainName,
 			`Risk: ${v.risk ?? 'Unknown'}`,
 			`TVL: ${tvl}`,
-			`1M return: ${formatReturn(v.one_month_returns)}`,
+			`1M return (ann.): ${formatReturn(v.one_month_cagr)}`,
 			`3M return (ann.): ${formatReturn(v.three_months_cagr)}`
 		].join('<br>');
 	}
