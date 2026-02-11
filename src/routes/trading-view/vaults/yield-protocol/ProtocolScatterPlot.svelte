@@ -139,6 +139,9 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 				yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
 
 				const layout = buildChartLayout('Protocol', xRange, yRange);
+				// Disable default legend click — we handle it ourselves below
+				layout.legend.itemclick = false;
+				layout.legend.itemdoubleclick = false;
 				const config = buildChartConfig();
 
 				if (destroyed) return;
@@ -150,6 +153,47 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 					if (point?.customdata) {
 						goto(point.customdata);
 					}
+				});
+
+				// Custom legend click: first click isolates, subsequent clicks toggle additional protocols
+				(chartContainer as any).on('plotly_legendclick', (event: any) => {
+					const traceCount = traces.length;
+					const clicked = event.curveNumber;
+					const currentData = (chartContainer as any).data;
+
+					const visibleStates: (boolean | string)[] = currentData.map((t: any) => t.visible ?? true);
+					const allVisible = visibleStates.every((v: boolean | string) => v === true);
+					const visibleCount = visibleStates.filter((v: boolean | string) => v === true).length;
+
+					const update: (boolean | string)[] = new Array(traceCount);
+
+					if (allVisible) {
+						// All visible → isolate the clicked protocol
+						for (let i = 0; i < traceCount; i++) {
+							update[i] = i === clicked ? true : 'legendonly';
+						}
+					} else if (visibleStates[clicked] === true) {
+						// Clicked one is visible → hide it; if last visible, restore all
+						if (visibleCount <= 1) {
+							update.fill(true);
+						} else {
+							for (let i = 0; i < traceCount; i++) {
+								update[i] = i === clicked ? 'legendonly' : visibleStates[i];
+							}
+						}
+					} else {
+						// Clicked one is hidden → show it too
+						for (let i = 0; i < traceCount; i++) {
+							update[i] = i === clicked ? true : visibleStates[i];
+						}
+						// If all would now be visible, just set all to true
+						if (update.every((v) => v === true)) {
+							update.fill(true);
+						}
+					}
+
+					Plotly.restyle(chartContainer, { visible: update });
+					return false;
 				});
 
 				loading = false;

@@ -142,7 +142,7 @@ export function buildBaseHoverLines(v: VaultInfo): string[] {
 	];
 }
 
-/** Palette of 12 visually distinct colours for protocol grouping. */
+/** Palette of 20 visually distinct colours for protocol grouping. */
 export const protocolPalette = [
 	'#13b1c0',
 	'#22c55e',
@@ -155,7 +155,15 @@ export const protocolPalette = [
 	'#84cc16',
 	'#f59e0b',
 	'#6366f1',
-	'#14b8a6'
+	'#14b8a6',
+	'#e879f9',
+	'#fb923c',
+	'#38bdf8',
+	'#a3e635',
+	'#f43f5e',
+	'#a78bfa',
+	'#2dd4bf',
+	'#fbbf24'
 ];
 
 /** Grey used for "Other" and "Unknown" groups. */
