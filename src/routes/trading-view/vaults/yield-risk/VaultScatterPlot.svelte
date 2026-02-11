@@ -14,7 +14,9 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
+	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { getChain } from '$lib/helpers/chain';
+	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/Spinner.svelte';
 
 	interface Props {
@@ -97,10 +99,21 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		});
 	}
 
+	function formatReturn(value: number | null | undefined): string {
+		return value != null ? `${(value * 100).toFixed(1)}%` : 'n/a';
+	}
+
 	function formatHoverText(v: VaultInfo): string {
+		const chainName = getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`;
 		const tvl = `$${v.current_nav!.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-		const ret = `${(v.three_months_returns! * 100).toFixed(1)}%`;
-		return `${v.name}<br>${v.protocol}<br>TVL: ${tvl}<br>3M return: ${ret}`;
+		return [
+			`<b>${v.name}</b>`,
+			v.protocol,
+			chainName,
+			`TVL: ${tvl}`,
+			`1M return: ${formatReturn(v.one_month_returns)}`,
+			`3M return: ${formatReturn(v.three_months_returns)}`
+		].join('<br>');
 	}
 
 	$effect(() => {
@@ -130,6 +143,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 							x: group.map((v) => v.three_months_returns! * 100),
 							y: group.map((v) => v.current_nav!),
 							text: group.map(formatHoverText),
+							customdata: group.map((v) => resolveVaultDetails(v)),
 							name: risk,
 							type: 'scatter',
 							mode: 'markers',
@@ -151,6 +165,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 						x: unknownVaults.map((v) => v.three_months_returns! * 100),
 						y: unknownVaults.map((v) => v.current_nav!),
 						text: unknownVaults.map(formatHoverText),
+						customdata: unknownVaults.map((v) => resolveVaultDetails(v)),
 						name: 'Unknown',
 						type: 'scatter',
 						mode: 'markers',
@@ -211,6 +226,14 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 				if (destroyed) return;
 
 				Plotly.newPlot(chartContainer, traces, layout, config);
+
+				chartContainer.on('plotly_click', (data: any) => {
+					const point = data.points?.[0];
+					if (point?.customdata) {
+						goto(point.customdata);
+					}
+				});
+
 				loading = false;
 			} catch (e) {
 				if (!destroyed) {
