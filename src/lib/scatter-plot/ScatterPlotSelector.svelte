@@ -13,7 +13,8 @@ Selector linking between vault scatter plot chart pages.
 
 	const charts = [
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
-		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' }
+		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
+		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' }
 	] as const;
 
 	function isActive(href: string): boolean {
