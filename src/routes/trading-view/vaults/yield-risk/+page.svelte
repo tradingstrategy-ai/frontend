@@ -68,6 +68,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 		margin-top: 1rem;
 		font: var(--f-ui-sm-roman);
 		color: var(--c-text-extra-light);
+		text-align: center;
 
 		a {
 			color: var(--c-text-light);
