@@ -42,11 +42,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 
 	let eligibleVaults = $derived(
 		vaults.filter(
-			(v) =>
-				!isBlacklisted(v) &&
-				v.current_nav != null &&
-				v.current_nav >= MIN_TVL &&
-				v.three_months_returns != null
+			(v) => !isBlacklisted(v) && v.current_nav != null && v.current_nav >= MIN_TVL && v.three_months_cagr != null
 		)
 	);
 
@@ -112,7 +108,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 			chainName,
 			`TVL: ${tvl}`,
 			`1M return: ${formatReturn(v.one_month_returns)}`,
-			`3M return: ${formatReturn(v.three_months_returns)}`
+			`3M return (ann.): ${formatReturn(v.three_months_cagr)}`
 		].join('<br>');
 	}
 
@@ -140,7 +136,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 						const group = currentVaults.filter((v) => v.risk === risk);
 						if (group.length === 0) return null;
 						return {
-							x: group.map((v) => v.three_months_returns! * 100),
+							x: group.map((v) => v.three_months_cagr! * 100),
 							y: group.map((v) => v.current_nav!),
 							text: group.map(formatHoverText),
 							customdata: group.map((v) => resolveVaultDetails(v)),
@@ -162,7 +158,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 				const unknownVaults = currentVaults.filter((v) => v.risk == null || !riskConfig.some((r) => r.risk === v.risk));
 				if (unknownVaults.length > 0) {
 					traces.push({
-						x: unknownVaults.map((v) => v.three_months_returns! * 100),
+						x: unknownVaults.map((v) => v.three_months_cagr! * 100),
 						y: unknownVaults.map((v) => v.current_nav!),
 						text: unknownVaults.map(formatHoverText),
 						customdata: unknownVaults.map((v) => resolveVaultDetails(v)),
@@ -180,14 +176,14 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 				}
 
 				// Compute initial zoom ranges (clipping outliers)
-				const allReturns = currentVaults.map((v) => v.three_months_returns! * 100);
+				const allReturns = currentVaults.map((v) => v.three_months_cagr! * 100);
 				const allTvl = currentVaults.map((v) => v.current_nav!);
 				const xRange = computeAxisRange(allReturns);
 				const yRange = computeAxisRange(allTvl, true);
 
 				const layout = {
 					xaxis: {
-						title: 'Three-month returns (%)',
+						title: 'Three-month returns, annualised (%)',
 						range: xRange,
 						zeroline: true,
 						zerolinecolor: 'rgba(255,255,255,0.2)',
@@ -207,13 +203,15 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					legend: {
 						title: { text: 'Risk level' },
 						orientation: 'h' as const,
-						yanchor: 'bottom' as const,
-						y: 1.02,
-						xanchor: 'right' as const,
-						x: 1
+						yanchor: 'top' as const,
+						y: -0.15,
+						xanchor: 'center' as const,
+						x: 0.5
 					},
-					margin: { t: 40, r: 20, b: 60, l: 80 },
-					dragmode: 'zoom' as const
+					height: 600,
+					margin: { t: 20, r: 20, b: 100, l: 80 },
+					dragmode: 'zoom' as const,
+					autosize: true
 				};
 
 				const config = {
@@ -225,7 +223,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 
 				if (destroyed) return;
 
-				Plotly.newPlot(chartContainer, traces, layout, config);
+				await Plotly.newPlot(chartContainer, traces, layout, config);
 
 				chartContainer.on('plotly_click', (data: any) => {
 					const point = data.points?.[0];
@@ -266,12 +264,13 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		</div>
 	{/if}
 
-	<div bind:this={chartContainer} class="chart-container" class:hidden={loading || !!error}></div>
+	<div bind:this={chartContainer} class="chart-container" class:obscured={loading || !!error}></div>
 </div>
 
 <style>
 	.scatter-plot-wrapper {
 		position: relative;
+		width: 100%;
 		min-height: 500px;
 	}
 
@@ -297,8 +296,10 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		width: 100%;
 		min-height: 500px;
 
-		&.hidden {
-			display: none;
+		&.obscured {
+			visibility: hidden;
+			position: absolute;
+			inset: 0;
 		}
 	}
 </style>
