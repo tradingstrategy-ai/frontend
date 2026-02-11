@@ -27,6 +27,9 @@ function generateMockVaults(prefix: string, count: number, props: TestVaultProps
 const belowTvl = generateMockVaults('Below TVL', 50, {
 	get current_nav() {
 		return Math.random() * 50_000;
+	},
+	get three_months_returns() {
+		return (Math.random() - 0.3) * 0.4;
 	}
 });
 
@@ -34,7 +37,10 @@ const aboveTvl = generateMockVaults('Above TVL', 250, {
 	get current_nav() {
 		return Math.random() * 1_000_000 + 50_000;
 	},
-	one_month_returns: 0.05
+	one_month_returns: 0.05,
+	get three_months_returns() {
+		return (Math.random() - 0.2) * 0.5;
+	}
 });
 
 export default defineMock({
