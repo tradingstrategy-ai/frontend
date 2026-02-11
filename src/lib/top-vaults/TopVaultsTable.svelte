@@ -16,6 +16,7 @@
 	import RiskCell from './RiskCell.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
+	import IconClock from '~icons/local/clock';
 	import { getChain } from '$lib/helpers/chain';
 	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
 	import {
@@ -405,7 +406,7 @@
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											<span class="status-bullet">🕒</span>{getFormattedLockup(vault)}
+											<IconClock />{getFormattedLockup(vault)}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
@@ -706,20 +707,16 @@
 					color: var(--c-text-light);
 				}
 
-				&:has(.status-bullet) {
+				&:has(:global(.icon)) {
 					color: var(--c-warning);
 				}
 
 				.status-wrapper {
+					display: inline-flex;
+					align-items: center;
+					gap: 0.25rem;
 					white-space: nowrap;
-				}
-
-				.status-bullet {
-					color: var(--c-warning);
-					margin-right: 0.375rem;
-					font-size: 0.875rem;
-					vertical-align: middle;
-					display: inline-block;
+					--icon-size: 0.875rem;
 				}
 			}
 
