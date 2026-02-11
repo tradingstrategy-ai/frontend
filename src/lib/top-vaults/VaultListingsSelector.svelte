@@ -11,7 +11,8 @@
 		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
 		{ href: '/trading-view/vaults/all', label: 'All' },
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
-		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' }
+		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
+		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' }
 	] as const;
 
 	function isActive(href: string): boolean {

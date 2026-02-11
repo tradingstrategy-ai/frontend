@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add vault yield / chain scatter plot page grouping vaults by blockchain (2026-02-11)
 - Add vault yield / protocol scatter plot page and refactor shared scatter plot components (2026-02-11)
 - Add vault yield / risk scatter plot page with Plotly.js (2026-02-11)
 - Replace vault lockup Unicode clock emoji with consistent SVG icon (2026-02-11)
