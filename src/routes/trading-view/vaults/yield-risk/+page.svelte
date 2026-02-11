@@ -2,6 +2,7 @@
 Scatter plot page showing vault TVL vs three-month annualised returns, coloured by risk level.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
@@ -47,6 +48,10 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 
 	<Section padding="sm">
 		<VaultScatterPlot vaults={topVaults.vaults} />
+		<p class="methodology">
+			The vault technical risk is based on the beta version of the technical risk analysis framework.
+			<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>Read more about the methodology.</a>
+		</p>
 	</Section>
 </main>
 
@@ -56,6 +61,17 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 			font-size: 0.5em;
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
+		}
+	}
+
+	.methodology {
+		margin-top: 1rem;
+		font: var(--f-ui-sm-roman);
+		color: var(--c-text-extra-light);
+
+		a {
+			color: var(--c-text-light);
+			text-decoration: underline;
 		}
 	}
 

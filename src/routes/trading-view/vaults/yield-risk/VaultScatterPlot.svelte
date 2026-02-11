@@ -215,7 +215,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					plot_bgcolor: 'transparent',
 					font: { color: 'rgba(255,255,255,0.7)' },
 					legend: {
-						title: { text: 'Risk level' },
+						title: { text: 'Technical risk' },
 						orientation: 'h' as const,
 						yanchor: 'top' as const,
 						y: -0.15,
