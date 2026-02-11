@@ -1,15 +1,17 @@
+<!--
+@component
+Selector linking between vault scatter plot chart pages.
+
+@example
+```svelte
+  <ScatterPlotSelector />
+```
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 
-	const links = [
-		{ href: '/trading-view/vaults', label: 'Top' },
-		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
-		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
-		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
-		{ href: '/trading-view/vaults/chains', label: 'By chain' },
-		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
-		{ href: '/trading-view/vaults/all', label: 'All' },
+	const charts = [
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' }
 	] as const;
@@ -19,21 +21,19 @@
 	}
 </script>
 
-<nav class="vault-listings-selector ds-3">
-	<span class="label">Vaults by:</span>
-	{#each links as { href, label } (href)}
-		<a href={resolve(href)} class:active={isActive(href)}>
-			{label}
-		</a>
+<nav class="scatter-plot-selector">
+	<span class="label">See charts:</span>
+	{#each charts as { href, label } (href)}
+		<a href={resolve(href)} class:active={isActive(href)}>{label}</a>
 	{/each}
 </nav>
 
 <style>
-	.vault-listings-selector {
+	.scatter-plot-selector {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+		justify-content: center;
 		gap: 0.5em;
+		padding-top: 1rem;
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-extra-light);
 	}
