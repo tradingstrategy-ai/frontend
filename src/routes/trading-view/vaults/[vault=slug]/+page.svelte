@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { discordUrl } from '$lib/config';
-	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
+	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Markdown from '$lib/components/Markdown.svelte';
@@ -24,9 +24,11 @@
 
 <SocialMediaTags {vault} {chain} />
 
-<Breadcrumbs labels={{ vaults: 'Top vaults', [vault.vault_slug]: vault.name }} />
-
 <main class="vault-details ds-3">
+	<Section tag="header">
+		<VaultListingsSelector />
+	</Section>
+
 	<VaultPageHeader {vault} />
 
 	<Section padding="md" --section-gap="var(--gap)">
