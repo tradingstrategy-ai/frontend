@@ -1,7 +1,8 @@
 <!--
 @component
-Scatter plot of vault current TVL (X, logarithmic) versus peak TVL (Y, logarithmic),
+Scatter plot of vault peak TVL (X, logarithmic) versus current TVL (Y, logarithmic),
 coloured by blockchain. A diagonal reference line marks where current equals peak.
+Vaults below the diagonal have lost TVL since their peak.
 Plotly.js is loaded dynamically from CDN.
 
 - Vaults with unrecognised chain IDs are excluded
@@ -72,8 +73,8 @@ Plotly.js is loaded dynamically from CDN.
 	/** Build a scatter trace for a group of vaults. */
 	function buildTvlTrace(group: VaultInfo[], name: string, color: string) {
 		return {
-			x: group.map((v) => v.current_nav!),
-			y: group.map((v) => v.peak_nav!),
+			x: group.map((v) => v.peak_nav!),
+			y: group.map((v) => v.current_nav!),
 			text: group.map(formatHoverText),
 			customdata: group.map((v) => resolveVaultDetails(v)),
 			name,
@@ -153,14 +154,14 @@ Plotly.js is loaded dynamically from CDN.
 
 				const layout = {
 					xaxis: {
-						title: 'Current TVL (USD)',
+						title: 'Peak TVL (USD)',
 						type: 'log' as const,
 						range: xRange,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)'
 					},
 					yaxis: {
-						title: 'Peak TVL (USD)',
+						title: 'Current TVL (USD)',
 						type: 'log' as const,
 						range: yRange,
 						gridcolor: 'rgba(255,255,255,0.1)',
