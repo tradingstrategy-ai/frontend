@@ -43,7 +43,14 @@ Plotly.js is loaded dynamically from CDN.
 
 	/** Vaults that pass base eligibility (not blacklisted, have both current and peak TVL). */
 	let baseEligible = $derived(
-		vaults.filter((v) => !isBlacklisted(v) && v.current_nav != null && v.current_nav >= minTvl && v.peak_nav != null)
+		vaults.filter(
+			(v) =>
+				!isBlacklisted(v) &&
+				v.current_nav != null &&
+				v.current_nav >= minTvl &&
+				v.peak_nav != null &&
+				v.peak_nav <= 50_000_000_000
+		)
 	);
 
 	/** Vaults excluded because chain is unrecognised. */
