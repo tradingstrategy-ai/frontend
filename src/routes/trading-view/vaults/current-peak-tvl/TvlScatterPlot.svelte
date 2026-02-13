@@ -311,7 +311,7 @@ Plotly.js is loaded dynamically from CDN.
 <ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
 	{#snippet extraControls()}
 		<label>
-			Colour by:
+			Group by:
 			<select bind:value={colourBy}>
 				<option value="chain">Chain</option>
 				<option value="protocol">Protocol</option>
