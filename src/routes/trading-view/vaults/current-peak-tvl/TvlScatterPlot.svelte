@@ -130,7 +130,7 @@ Plotly.js is loaded dynamically from CDN.
 	/**
 	 * Group vaults by protocol, assign colours by vault count descending.
 	 * Unsupported protocols (starting with '<') are excluded.
-	 * Protocols with <= 2 vaults become "Other" (grey).
+	 * Every supported protocol gets its own trace (no "Other" bucket).
 	 */
 	function buildProtocolTraces(currentVaults: VaultInfo[]): any[] {
 		const supported = currentVaults.filter((v) => hasSupportedProtocol(v));
@@ -141,21 +141,13 @@ Plotly.js is loaded dynamically from CDN.
 
 		const sortedProtocols = [...protocolCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
-		const majorProtocols = sortedProtocols.filter(([, count]) => count > 2);
-		const otherProtocols = new Set(sortedProtocols.filter(([, count]) => count <= 2).map(([name]) => name));
-
 		const traces: any[] = [];
 
-		for (let i = 0; i < majorProtocols.length; i++) {
-			const [protocol] = majorProtocols[i];
+		for (let i = 0; i < sortedProtocols.length; i++) {
+			const [protocol] = sortedProtocols[i];
 			const color = protocolPalette[i % protocolPalette.length];
 			const group = supported.filter((v) => v.protocol === protocol);
 			traces.push(buildTvlTrace(group, protocol, color));
-		}
-
-		const otherVaults = supported.filter((v) => otherProtocols.has(v.protocol));
-		if (otherVaults.length > 0) {
-			traces.push(buildTvlTrace(otherVaults, 'Other', greyColor));
 		}
 
 		return traces;
