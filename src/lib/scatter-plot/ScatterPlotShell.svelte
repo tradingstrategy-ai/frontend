@@ -25,10 +25,18 @@ loading/error states, and a Plotly chart container.
 		loading: boolean;
 		error: string | null;
 		minTvl: number;
+		extraControls?: Snippet;
 		belowChart?: Snippet;
 	}
 
-	let { chartContainer = $bindable(), loading, error, minTvl = $bindable(), belowChart }: Props = $props();
+	let {
+		chartContainer = $bindable(),
+		loading,
+		error,
+		minTvl = $bindable(),
+		extraControls,
+		belowChart
+	}: Props = $props();
 </script>
 
 <div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
@@ -41,6 +49,7 @@ loading/error states, and a Plotly chart container.
 				{/each}
 			</select>
 		</label>
+		{@render extraControls?.()}
 	</div>
 
 	{#if loading}

@@ -1,13 +1,13 @@
 <!--
 @component
 Scatter plot of vault peak TVL (X, logarithmic) versus current TVL (Y, logarithmic),
-coloured by blockchain. A diagonal reference line marks where current equals peak.
+coloured by blockchain or protocol. A diagonal reference line marks where current equals peak.
 Vaults below the diagonal have lost TVL since their peak.
 Plotly.js is loaded dynamically from CDN.
 
 - Vaults with unrecognised chain IDs are excluded
-- Chains with two or fewer vaults are grouped as "Other" in grey
-- Each supported chain is a separate Plotly trace for legend toggling
+- Groups with two or fewer vaults are grouped as "Other" in grey
+- Each group is a separate Plotly trace for legend toggling
 
 @example
 ```svelte
@@ -40,6 +40,7 @@ Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let minTvl = $state(50_000);
+	let colourBy = $state<'chain' | 'protocol'>('chain');
 
 	/** Vaults that pass base eligibility (not blacklisted, have both current and peak TVL). */
 	let baseEligible = $derived(
@@ -126,8 +127,41 @@ Plotly.js is loaded dynamically from CDN.
 		return traces;
 	}
 
+	/**
+	 * Group vaults by protocol, assign colours by vault count descending.
+	 * Protocols with <= 2 vaults become "Other" (grey).
+	 */
+	function buildProtocolTraces(currentVaults: VaultInfo[]): any[] {
+		const protocolCounts = new Map<string, number>();
+		for (const v of currentVaults) {
+			protocolCounts.set(v.protocol, (protocolCounts.get(v.protocol) ?? 0) + 1);
+		}
+
+		const sortedProtocols = [...protocolCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+		const majorProtocols = sortedProtocols.filter(([, count]) => count > 2);
+		const otherProtocols = new Set(sortedProtocols.filter(([, count]) => count <= 2).map(([name]) => name));
+
+		const traces: any[] = [];
+
+		for (let i = 0; i < majorProtocols.length; i++) {
+			const [protocol] = majorProtocols[i];
+			const color = protocolPalette[i % protocolPalette.length];
+			const group = currentVaults.filter((v) => v.protocol === protocol);
+			traces.push(buildTvlTrace(group, protocol, color));
+		}
+
+		const otherVaults = currentVaults.filter((v) => otherProtocols.has(v.protocol));
+		if (otherVaults.length > 0) {
+			traces.push(buildTvlTrace(otherVaults, 'Other', greyColor));
+		}
+
+		return traces;
+	}
+
 	$effect(() => {
 		const currentVaults = eligibleVaults;
+		const currentColourBy = colourBy;
 		let destroyed = false;
 
 		(async () => {
@@ -144,7 +178,8 @@ Plotly.js is loaded dynamically from CDN.
 					return;
 				}
 
-				const traces = buildChainTraces(currentVaults);
+				const traces =
+					currentColourBy === 'chain' ? buildChainTraces(currentVaults) : buildProtocolTraces(currentVaults);
 
 				const allCurrentTvl = currentVaults.map((v) => v.current_nav!);
 				const allPeakTvl = currentVaults.map((v) => v.peak_nav!);
@@ -190,7 +225,7 @@ Plotly.js is loaded dynamically from CDN.
 					plot_bgcolor: 'transparent',
 					font: { color: 'rgba(255,255,255,0.7)' },
 					legend: {
-						title: { text: 'Chain' },
+						title: { text: currentColourBy === 'chain' ? 'Chain' : 'Protocol' },
 						orientation: 'h' as const,
 						yanchor: 'top' as const,
 						y: -0.15,
@@ -274,6 +309,15 @@ Plotly.js is loaded dynamically from CDN.
 </script>
 
 <ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+	{#snippet extraControls()}
+		<label>
+			Colour by:
+			<select bind:value={colourBy}>
+				<option value="chain">Chain</option>
+				<option value="protocol">Protocol</option>
+			</select>
+		</label>
+	{/snippet}
 	{#snippet belowChart()}
 		{#if excludedCount > 0}
 			<p class="excluded-notice">
