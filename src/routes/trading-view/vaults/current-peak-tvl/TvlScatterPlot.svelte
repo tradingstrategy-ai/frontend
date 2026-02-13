@@ -20,7 +20,6 @@ Plotly.js is loaded dynamically from CDN.
 	import { getChain } from '$lib/helpers/chain';
 	import {
 		loadPlotly,
-		computeAxisRange,
 		buildMarker,
 		buildChartConfig,
 		protocolPalette,
@@ -141,10 +140,12 @@ Plotly.js is loaded dynamically from CDN.
 
 				const allCurrentTvl = currentVaults.map((v) => v.current_nav!);
 				const allPeakTvl = currentVaults.map((v) => v.peak_nav!);
-				const xRange = computeAxisRange(allCurrentTvl, true);
-				const yRange = computeAxisRange(allPeakTvl, true);
-				xRange[0] = Math.max(xRange[0], Math.log10(minTvl));
-				yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
+				const allValues = [...allCurrentTvl, ...allPeakTvl];
+				const logMin = Math.log10(Math.max(Math.min(...allValues), minTvl));
+				const logMax = Math.log10(Math.max(...allValues));
+				const logPadding = (logMax - logMin) * 0.05;
+				const xRange: [number, number] = [logMin - logPadding, logMax + logPadding];
+				const yRange: [number, number] = [logMin - logPadding, logMax + logPadding];
 
 				// Diagonal line bounds (in data space, not log space)
 				const diagMin = Math.min(xRange[0], yRange[0]);
