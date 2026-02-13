@@ -42,6 +42,6 @@ test.describe('vault yield / protocol scatter plot page', () => {
 	test('displays scatter plot selector with both chart links', async ({ page }) => {
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(3);
+		await expect(selector.locator('a')).toHaveCount(4);
 	});
 });

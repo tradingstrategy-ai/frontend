@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('vault yield / chain scatter plot page', () => {
+test.describe('vault current/peak TVL scatter plot page', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/trading-view/vaults/yield-chain');
+		await page.goto('/trading-view/vaults/current-peak-tvl');
 	});
 
-	test('renders scatter plot grouped by chain with navigation', async ({ page }) => {
+	test('renders scatter plot of current vs peak TVL with navigation', async ({ page }) => {
 		// Page title
 		await expect(page.locator('h1')).toContainText('scatter plot');
 
@@ -13,7 +13,7 @@ test.describe('vault yield / chain scatter plot page', () => {
 		const nav = page.locator('.vault-listings-selector');
 		await expect(nav).toBeVisible();
 		const activeLink = nav.locator('a.active');
-		await expect(activeLink).toHaveText('Yield / Chain');
+		await expect(activeLink).toHaveText('Current / Peak TVL');
 
 		// Scatter plot selector links (risk, protocol, chain, current/peak TVL)
 		const selector = page.locator('.scatter-plot-selector');
