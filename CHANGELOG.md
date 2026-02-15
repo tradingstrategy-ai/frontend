@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Hide deposit/wallet connect box on strategy page when deposits_disabled tag is set, unless user is admin (2026-02-15)
 - Add current/peak TVL scatter plot page comparing vault current TVL against historical peak (2026-02-13)
 - Add vault yield / chain scatter plot page grouping vaults by blockchain (2026-02-11)
 - Add vault yield / protocol scatter plot page and refactor shared scatter plot components (2026-02-11)

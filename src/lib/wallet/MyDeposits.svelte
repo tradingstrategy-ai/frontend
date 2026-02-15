@@ -24,9 +24,10 @@
 		vault: BaseAssetManager;
 		geoBlocked: boolean;
 		ipCountry: CountryCode | undefined;
+		adminOnly?: boolean;
 	}
 
-	let { strategy, chain, vault, geoBlocked, ipCountry }: Props = $props();
+	let { strategy, chain, vault, geoBlocked, ipCountry, adminOnly = false }: Props = $props();
 
 	let isOutdated = $derived(Boolean(strategy.newVersionId));
 
@@ -61,7 +62,10 @@
 	}
 </script>
 
-<div class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop']}>
+<div class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop', adminOnly && 'admin-only']}>
+	{#if adminOnly}
+		<div class="admin-only-label">Admin only</div>
+	{/if}
 	<header>
 		<h2 class="desktop">My deposits</h2>
 		{#if connected}
@@ -153,7 +157,23 @@
 </div>
 
 <style>
+	.admin-only-label {
+		padding: 0.375rem var(--padding);
+		background: var(--c-risk-high, hsl(0 70% 45%));
+		color: white;
+		font: var(--f-ui-xs-bold);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		text-align: center;
+		border-radius: var(--radius-md) var(--radius-md) 0 0;
+	}
+
 	.my-deposits {
+		&.admin-only {
+			border-color: var(--c-risk-high, hsl(0 70% 45%));
+			background: hsl(0 70% 45% / 0.06);
+		}
+
 		@media (--viewport-sm-down) {
 			:global(.desktop) {
 				display: none !important;

@@ -24,8 +24,12 @@ export type DepositWizardDataSchema = typeof dataSchema;
 export type DepositWizardData = z.infer<DepositWizardDataSchema>;
 
 export async function load({ parent }) {
-	const { admin, ipCountry, chain, vault } = await parent();
+	const { admin, ipCountry, chain, vault, strategy } = await parent();
 	assertNotGeoBlocked('strategies:deposit', ipCountry, admin);
+
+	if (strategy.tags?.includes('deposits_disabled') && !admin) {
+		error(403, 'Deposits are currently disabled for this strategy.');
+	}
 
 	if (!vault.internalDepositEnabled()) {
 		error(400, 'This strategy does not support deposits on Trading Strategy’s website.');
