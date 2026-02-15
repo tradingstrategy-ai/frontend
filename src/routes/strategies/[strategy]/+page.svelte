@@ -23,7 +23,9 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	<MyDeposits {strategy} {chain} {vault} {geoBlocked} {ipCountry} />
+	{#if !strategy.tags?.includes('deposits_disabled') || admin}
+		<MyDeposits {strategy} {chain} {vault} {geoBlocked} {ipCountry} />
+	{/if}
 	<StrategyPerformanceChart {strategy} />
 	<SummaryMetrics {keyMetrics} {backtestLink} />
 </div>
