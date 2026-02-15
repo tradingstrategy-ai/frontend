@@ -15,6 +15,8 @@
 
 	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
 	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));
+
+	let depositsDisabled = $derived(strategy.tags?.includes('deposits_disabled'));
 </script>
 
 <svelte:head>
@@ -23,8 +25,8 @@
 </svelte:head>
 
 <div class="strategy-overview-page">
-	{#if !strategy.tags?.includes('deposits_disabled') || admin}
-		<MyDeposits {strategy} {chain} {vault} {geoBlocked} {ipCountry} />
+	{#if !depositsDisabled || admin}
+		<MyDeposits {strategy} {chain} {vault} {geoBlocked} {ipCountry} adminOnly={!!depositsDisabled && !!admin} />
 	{/if}
 	<StrategyPerformanceChart {strategy} />
 	<SummaryMetrics {keyMetrics} {backtestLink} />
