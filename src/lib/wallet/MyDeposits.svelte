@@ -6,6 +6,7 @@
 	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { disconnect, switchChain, wallet, config } from '$lib/wallet/client';
+	import { type CountryCode, isGeoBlocked, getCountryName } from '$lib/helpers/geo';
 	import Button from '$lib/components/Button.svelte';
 	import HashAddress from '$lib/components/HashAddress.svelte';
 	import DepositWarning from './DepositWarning.svelte';
@@ -16,34 +17,39 @@
 	import IconUnlink from '~icons/local/unlink';
 	import { formatBalance } from '$lib/eth-defi/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { type CountryCode, getCountryName } from '$lib/helpers/geo';
 
 	interface Props {
 		strategy: ConnectedStrategyInfo;
 		chain: Chain;
 		vault: BaseAssetManager;
-		geoBlocked: boolean;
 		ipCountry: CountryCode | undefined;
-		adminOnly?: boolean;
+		admin?: boolean;
 	}
 
-	let { strategy, chain, vault, geoBlocked, ipCountry, adminOnly = false }: Props = $props();
+	let { strategy, chain, vault, ipCountry, admin = false }: Props = $props();
+
+	// svelte-ignore state_referenced_locally
+	const geoBlocked = !admin && isGeoBlocked('strategies:deposit', ipCountry);
+
+	let depositsDisabled = $derived(strategy.tags?.includes('deposits_disabled'));
+	let adminOnly = $derived(depositsDisabled && admin);
 
 	let isOutdated = $derived(Boolean(strategy.newVersionId));
-
 	let connected = $derived($wallet.status === 'connected');
 	let address = $derived($wallet.address);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
-	let buttonsDisabled = $derived(!vault.depositEnabled() || geoBlocked || wrongNetwork);
+	let buttonsDisabled = $derived(!vault.depositEnabled() || depositsDisabled || geoBlocked || wrongNetwork);
 
-	let depositBalancesVersion = $state(0);
-	const invalidateBalances = () => depositBalancesVersion++;
+	let depositBalancesNonce = $state(0);
+	const invalidateBalances = () => depositBalancesNonce++;
 
 	let [shareBalance, shareValue] = $derived.by(() => {
 		if (!(vault.depositEnabled() && address && !wrongNetwork)) return [undefined, undefined];
 
 		// force update to dervived values when deposit values invalidated
-		depositBalancesVersion;
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		depositBalancesNonce;
+
 		const shares = vault.getShareBalance(config, address);
 		const value = vault.getShareValueUSD(config, address);
 		return [shares, value];
@@ -104,6 +110,12 @@
 			{#if !vault.depositEnabled()}
 				<DepositWarning title="Deposits not enabled">
 					This strategy is not using smart contract-based capital management and is not accepting external investments.
+				</DepositWarning>
+			{:else if depositsDisabled && !admin}
+				<DepositWarning title="Early access beta">
+					This strategy is currently invite-only and limited to whitelisted participants.
+					<a class="body-link" href="mailto:vaults@tradingstrategy.ai">Request access</a>
+					to get started.
 				</DepositWarning>
 			{:else if geoBlocked}
 				<DepositWarning title="Unsupported country">
