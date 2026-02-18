@@ -119,6 +119,8 @@ export const vaultInfoSchema = z.object({
 	features: z.string().array(),
 	flags: z.string().array(),
 	notes: z.string().nullable(),
+	short_description: z.string().nullable().optional(),
+	description: z.string().nullable().optional(),
 	/** Reason deposits are closed, null if deposits are open */
 	deposit_closed_reason: z.string().nullable(),
 	/** Reason redemptions are closed, null if redemptions are open */

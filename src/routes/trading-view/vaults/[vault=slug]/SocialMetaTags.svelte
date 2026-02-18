@@ -13,7 +13,7 @@
 
 	let { vault, chain }: Props = $props();
 
-	let description = $derived.by(() => {
+	let generatedDescription = $derived.by(() => {
 		const parts = [`${vault.name} on ${vault.protocol} on ${chain.name}`];
 		if (vault.current_nav != null) {
 			parts.push(`TVL: ${formatDollar(vault.current_nav, 0)}`);
@@ -23,6 +23,8 @@
 		}
 		return parts.join(' | ');
 	});
+
+	let description = $derived(vault.short_description ?? generatedDescription);
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let imageUrl = $derived(`${vaultSparklinesUrl}/sparkline-90d-${vault.id}.png`);
