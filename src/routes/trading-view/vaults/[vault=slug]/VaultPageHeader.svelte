@@ -37,7 +37,17 @@
 	{/snippet}
 </PageHeader>
 
+{#if vault.short_description}
+	<p class="vault-description ds-container">{vault.short_description}</p>
+{/if}
+
 <style>
+	.vault-description {
+		margin: 0;
+		font: var(--f-ui-lg-roman);
+		color: var(--c-text-light);
+	}
+
 	.page-title {
 		display: inline-flex;
 		flex-wrap: wrap;
