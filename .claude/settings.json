@@ -26,7 +26,8 @@
 			"Bash(done)",
 			"Bash(lsof:*)",
 			"Bash(xargs kill:*)",
-			"Bash(curl:*)"
+			"Bash(curl:*)",
+			"Bash(npx playwright test:*)"
 		]
 	}
 }
