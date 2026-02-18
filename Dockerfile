@@ -31,8 +31,15 @@ FROM node:20.19-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/package.json .
-COPY --from=builder /app/node_modules ./node_modules
+# Install pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+# Install production dependencies only
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+RUN --mount=type=ssh pnpm install --prod --frozen-lockfile
+
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/scripts/server.js ./scripts/
 
