@@ -56,7 +56,7 @@
 		<VaultMetrics {vault} />
 
 		{#if vault.description}
-			<MetricsBox class="description" title="Description">
+			<MetricsBox class="description" title="About the vault">
 				<Markdown content={vault.description} />
 			</MetricsBox>
 		{/if}
