@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import DropdownMenu from '$lib/components/DropdownMenu.svelte';
 
 	const links = [
 		{ href: '/trading-view/vaults', label: 'Top' },
@@ -9,7 +10,10 @@
 		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
 		{ href: '/trading-view/vaults/chains', label: 'By chain' },
 		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
-		{ href: '/trading-view/vaults/all', label: 'All' },
+		{ href: '/trading-view/vaults/all', label: 'All' }
+	] as const;
+
+	const chartLinks = [
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
 		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
@@ -28,6 +32,13 @@
 			{label}
 		</a>
 	{/each}
+	<DropdownMenu
+		label="Charts"
+		items={chartLinks}
+		{isActive}
+		resolveHref={(href: string) => resolve(href as Parameters<typeof resolve>[0])}
+		class="charts-dropdown"
+	/>
 </nav>
 
 <style>
@@ -63,5 +74,11 @@
 			color: var(--c-text);
 			font-weight: 700;
 		}
+	}
+
+	:global(.charts-dropdown)::before {
+		content: '|';
+		color: var(--c-text-ultra-light);
+		padding-right: 0.5rem;
 	}
 </style>

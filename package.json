@@ -67,6 +67,7 @@
     "@wagmi/connectors": "^5.11.2",
     "@wagmi/core": "^2.22.1",
     "@zag-js/dialog": "^1.32.0",
+    "@zag-js/menu": "^1.32.0",
     "@zag-js/svelte": "^1.32.0",
     "bignumber.js": "^9.3.1",
     "cookie": "^1.1.1",

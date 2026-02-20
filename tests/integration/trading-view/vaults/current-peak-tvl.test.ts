@@ -9,11 +9,11 @@ test.describe('vault current/peak TVL scatter plot page', () => {
 		// Page title
 		await expect(page.locator('h1')).toContainText('scatter plot');
 
-		// Vault listings navigation with active link
+		// Vault listings navigation with active Charts dropdown
 		const nav = page.locator('.vault-listings-selector');
 		await expect(nav).toBeVisible();
-		const activeLink = nav.locator('a.active');
-		await expect(activeLink).toHaveText('Current / Peak TVL');
+		const trigger = nav.locator('button', { hasText: 'Charts' });
+		await expect(trigger).toHaveClass(/active/);
 
 		// Scatter plot selector links (risk, protocol, chain, current/peak TVL)
 		const selector = page.locator('.scatter-plot-selector');
