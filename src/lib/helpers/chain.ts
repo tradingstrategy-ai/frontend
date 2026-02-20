@@ -1,3 +1,24 @@
+/**
+ * Blockchain network metadata used for routing, display and explorer links.
+ *
+ * Multiple chains may share the same slug to appear grouped in listings and
+ * statistics. For example, HyperEVM (999) and HyperCore (9999) both use slug
+ * `'hyperliquid'` so they appear as a single "Hyperliquid" entry in chain
+ * listings, while `getChain(chainId)` still returns chain-specific details
+ * (e.g. different explorer URLs).
+ *
+ * @param id - Numeric chain ID (e.g. 1 for Ethereum, 999 for HyperEVM)
+ * @param slug - URL-friendly identifier used in routes and logo lookup; chains
+ *   sharing a slug are grouped together in listings and statistics
+ * @param name - Human-readable display name
+ * @param homepage - Chain project homepage URL
+ * @param explorer - Block explorer base URL for address/transaction links
+ * @param nativeCurrency - Symbol of the chain's native token (e.g. 'ETH', 'HYPE')
+ * @param hasBackendData - Whether the chain has full backend oracle/price data;
+ *   `false` means only indexed vaults and logos are available
+ * @param sortOrder - Optional display ordering for fully supported chains;
+ *   chains without a sortOrder are sorted alphabetically after sorted chains
+ */
 type ChainData = {
 	id: number;
 	slug: string;
@@ -131,12 +152,23 @@ export const chains = (() => {
 			nativeCurrency: 'S',
 			hasBackendData: false
 		},
+		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,
 			slug: 'hyperliquid',
 			name: 'Hyperliquid',
 			homepage: 'https://hyperfoundation.org',
 			explorer: 'https://hyperevmscan.io',
+			nativeCurrency: 'HYPE',
+			hasBackendData: false
+		},
+		// HyperCore: Synthetic chain created in eth_defi for native Hyperliquid vaults
+		{
+			id: 9999,
+			slug: 'hyperliquid',
+			name: 'Hyperliquid',
+			homepage: 'https://hyperfoundation.org',
+			explorer: 'https://hypurrscan.io',
 			nativeCurrency: 'HYPE',
 			hasBackendData: false
 		},
@@ -230,6 +262,13 @@ export type Chain = (typeof chains)[number];
  */
 export function getChain(identifier: Maybe<number | string>) {
 	return chains.find(({ id, slug }) => id === identifier || slug === identifier);
+}
+
+/**
+ * Get all chains sharing a slug (e.g. both HyperEVM and HyperCore have slug 'hyperliquid').
+ */
+export function getChainsBySlug(slug: string): ChainData[] {
+	return chains.filter((c) => c.slug === slug);
 }
 
 /**
