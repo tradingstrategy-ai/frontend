@@ -10,7 +10,7 @@
 	const indexedChains = chains.filter((c) => c.hasBackendData);
 </script>
 
-<Section gap="md" padding="lg" testId="impressive-numbers" --section-background="var(--c-background-accent-1)">
+<Section gap="md" padding="lg" testId="impressive-numbers">
 	{#if chains}
 		<h2>Trading Strategy runs on</h2>
 		<div class="chains">
