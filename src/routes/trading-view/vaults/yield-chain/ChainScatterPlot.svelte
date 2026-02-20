@@ -15,7 +15,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { getChain } from '$lib/helpers/chain';
+	import { getChain, getChainsBySlug } from '$lib/helpers/chain';
 	import {
 		loadPlotly,
 		computeScatterRanges,
@@ -65,28 +65,34 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 	 * Chains with <= 2 vaults become "Other" (grey).
 	 */
 	function buildChainTraces(currentVaults: VaultInfo[]): any[] {
-		const chainCounts = new Map<number, number>();
+		const slugCounts = new Map<string, number>();
 		for (const v of currentVaults) {
-			chainCounts.set(v.chain_id, (chainCounts.get(v.chain_id) ?? 0) + 1);
+			const chain = getChain(v.chain_id);
+			if (!chain) continue;
+			slugCounts.set(chain.slug, (slugCounts.get(chain.slug) ?? 0) + 1);
 		}
 
-		const sortedChains = [...chainCounts.entries()]
-			.map(([chainId, count]) => ({ chainId, name: getChain(chainId)!.name, count }))
+		const sortedGroups = [...slugCounts.entries()]
+			.map(([slug, count]) => ({ slug, name: getChain(slug)!.name, count }))
 			.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
-		const majorChains = sortedChains.filter(({ count }) => count > 2);
-		const otherChainIds = new Set(sortedChains.filter(({ count }) => count <= 2).map(({ chainId }) => chainId));
+		const majorGroups = sortedGroups.filter(({ count }) => count > 2);
+		const otherSlugs = new Set(sortedGroups.filter(({ count }) => count <= 2).map(({ slug }) => slug));
 
 		const traces: any[] = [];
 
-		for (let i = 0; i < majorChains.length; i++) {
-			const { chainId, name } = majorChains[i];
+		for (let i = 0; i < majorGroups.length; i++) {
+			const { slug, name } = majorGroups[i];
 			const color = protocolPalette[i % protocolPalette.length];
-			const group = currentVaults.filter((v) => v.chain_id === chainId);
+			const chainIds = new Set(getChainsBySlug(slug).map((c) => c.id));
+			const group = currentVaults.filter((v) => chainIds.has(v.chain_id));
 			traces.push(buildTrace(group, name, color, formatHoverText));
 		}
 
-		const otherVaults = currentVaults.filter((v) => otherChainIds.has(v.chain_id));
+		const otherVaults = currentVaults.filter((v) => {
+			const chain = getChain(v.chain_id);
+			return chain && otherSlugs.has(chain.slug);
+		});
 		if (otherVaults.length > 0) {
 			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText));
 		}

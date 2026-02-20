@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add HyperCore chain support and group HyperEVM and HyperCore under Hyperliquid in listings and statistics (2026-02-20)
 - Add reusable DropdownMenu component and group chart links under a "Charts" dropdown in vault listings navigation (2026-02-20)
 - Reduce Docker image size by installing only production dependencies in serve stage (2026-02-18)
 - Add short and long descriptions to vault detail pages with metadata support (2026-02-18)
