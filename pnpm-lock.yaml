@@ -43,6 +43,9 @@ importers:
       '@zag-js/dialog':
         specifier: ^1.32.0
         version: 1.32.0
+      '@zag-js/menu':
+        specifier: ^1.32.0
+        version: 1.32.0
       '@zag-js/svelte':
         specifier: ^1.32.0
         version: 1.32.0(svelte@5.46.4)
@@ -924,6 +927,15 @@ packages:
   '@ethereumjs/util@8.1.0':
     resolution: {integrity: sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA==}
     engines: {node: '>=14'}
+
+  '@floating-ui/core@1.7.4':
+    resolution: {integrity: sha512-C3HlIdsBxszvm5McXlB8PeOEWfBhcGBTZGkGlWc2U0KFY5IwG5OQEuQ8rq52DZmcHDlPLd+YFBK+cZcytwIFWg==}
+
+  '@floating-ui/dom@1.7.5':
+    resolution: {integrity: sha512-N0bD2kIPInNHUHehXhMke1rBGs1dwqvC9O9KYMyyjK7iXt7GAhnro7UlcuYcGdS/yYOlq0MAVgrow8IbWJwyqg==}
+
+  '@floating-ui/utils@0.2.10':
+    resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
   '@gemini-wallet/core@0.2.0':
     resolution: {integrity: sha512-vv9aozWnKrrPWQ3vIFcWk7yta4hQW1Ie0fsNNPeXnjAxkbXr2hqMagEptLuMxpEP2W3mnRu05VDNKzcvAuuZDw==}
@@ -2768,6 +2780,15 @@ packages:
 
   '@zag-js/interact-outside@1.32.0':
     resolution: {integrity: sha512-OwQgBxijmv9ZXFu6WzhLRULJh0FoixuP6DJV9B2CGBKJZz4hbQAqVrW9PFaPiBuWOILZpZ/iI6ZDjkGSKZ0WHw==}
+
+  '@zag-js/menu@1.32.0':
+    resolution: {integrity: sha512-vMOPYg2a6dnTu8+E2wUptYkkdGyViUvf6je4+WEc5w0AGU1sGaZE+jckPK9f8vPUhL2I2TqwiI5dg85L+JZ1uw==}
+
+  '@zag-js/popper@1.32.0':
+    resolution: {integrity: sha512-nTSdbgZKIEERNEpNhMlbATRiKhMrxo0t2206MbVhrM52TuraIc+nRmJNwWKoagalXs62/TlSpFvXmcpVyfWTMQ==}
+
+  '@zag-js/rect-utils@1.32.0':
+    resolution: {integrity: sha512-waBJL57PA90mYRMCDF7WNa3ZEfNhnWPu6lGqNB1Lh/1GMUzIto1X/Lw1oJoGig8Ui9Af9pgRG4QPyKSRULFgKQ==}
 
   '@zag-js/remove-scroll@1.32.0':
     resolution: {integrity: sha512-gWx8z/8ayNo624ibET4cNWbdVLc8A0Vyy9L9t67KT/slrBjcOA/zp9JL3Ngw/TZKgtR+wDh7P8ZoNAe0euaLSQ==}
@@ -6677,6 +6698,17 @@ snapshots:
       ethereum-cryptography: 2.2.1
       micro-ftch: 0.3.1
 
+  '@floating-ui/core@1.7.4':
+    dependencies:
+      '@floating-ui/utils': 0.2.10
+
+  '@floating-ui/dom@1.7.5':
+    dependencies:
+      '@floating-ui/core': 1.7.4
+      '@floating-ui/utils': 0.2.10
+
+  '@floating-ui/utils@0.2.10': {}
+
   '@gemini-wallet/core@0.2.0(viem@2.44.2(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))':
     dependencies:
       '@metamask/rpc-errors': 7.0.2
@@ -7042,7 +7074,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.3
       pony-cause: 2.1.11
       semver: 7.7.3
       uuid: 9.0.1
@@ -7056,7 +7088,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.3
       pony-cause: 2.1.11
       semver: 7.7.3
       uuid: 9.0.1
@@ -10082,6 +10114,25 @@ snapshots:
     dependencies:
       '@zag-js/dom-query': 1.32.0
       '@zag-js/utils': 1.32.0
+
+  '@zag-js/menu@1.32.0':
+    dependencies:
+      '@zag-js/anatomy': 1.32.0
+      '@zag-js/core': 1.32.0
+      '@zag-js/dismissable': 1.32.0
+      '@zag-js/dom-query': 1.32.0
+      '@zag-js/popper': 1.32.0
+      '@zag-js/rect-utils': 1.32.0
+      '@zag-js/types': 1.32.0
+      '@zag-js/utils': 1.32.0
+
+  '@zag-js/popper@1.32.0':
+    dependencies:
+      '@floating-ui/dom': 1.7.5
+      '@zag-js/dom-query': 1.32.0
+      '@zag-js/utils': 1.32.0
+
+  '@zag-js/rect-utils@1.32.0': {}
 
   '@zag-js/remove-scroll@1.32.0':
     dependencies:

@@ -30,11 +30,17 @@ test.describe('vault yield / risk scatter plot page', () => {
 		expect(legendText).toContain('Low');
 	});
 
-	test('has vault listings navigation with active Yield / Risk link', async ({ page }) => {
+	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
 		const nav = page.locator('.vault-listings-selector');
 		await expect(nav).toBeVisible();
 
-		const activeLink = nav.locator('a.active');
+		// Charts trigger should show active state
+		const trigger = nav.locator('button', { hasText: 'Charts' });
+		await expect(trigger).toHaveClass(/active/);
+
+		// Open dropdown and verify active link
+		await trigger.click();
+		const activeLink = page.locator('[role="menu"] a.active');
 		await expect(activeLink).toHaveText('Yield / Risk');
 	});
 

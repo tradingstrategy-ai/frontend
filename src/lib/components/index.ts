@@ -13,6 +13,7 @@ export { default as CryptoAddressWidget } from './CryptoAddressWidget.svelte';
 export { default as DataBadge } from './DataBadge.svelte';
 export { default as DataBox } from './DataBox.svelte';
 export { default as Dialog } from './Dialog.svelte';
+export { default as DropdownMenu } from './DropdownMenu.svelte';
 export { default as EntitySymbol } from './EntitySymbol.svelte';
 export { default as Footer } from './Footer.svelte';
 export { default as Grid } from './Grid.svelte';
