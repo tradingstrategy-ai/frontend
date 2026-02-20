@@ -258,6 +258,27 @@ export function formatPercent(
 	});
 }
 
+/** Cap for profit percentages (decimal form: 99.99 = 9,999%). */
+export const PROFIT_PERCENT_CAP = 99.99;
+export const PROFIT_PERCENT_CAP_LABEL = '>9,999%';
+
+/**
+ * Format a profit/return percentage, capped at 9,999%.
+ * Values exceeding the cap are displayed as ">9,999%".
+ * Used to cap abnormally high profit data from Hyperliquid native vaults.
+ */
+export function formatPercentProfit(
+	n: MaybeNumberlike,
+	minDigits = 1,
+	maxDigits = minDigits,
+	options: Intl.NumberFormatOptions = {}
+) {
+	n = toFloatingPoint(n);
+	if (!isNumber(n)) return notFilledMarker;
+	if (Math.abs(n) > PROFIT_PERCENT_CAP) return PROFIT_PERCENT_CAP_LABEL;
+	return formatPercent(n, minDigits, maxDigits, options);
+}
+
 /**
  * Format interest rate value given as percent-form value
  */

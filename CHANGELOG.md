@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Improve vault listing filters: $1M TVL minimum for HyperCore native vaults, cap displayed profit at 9,999%, and use 1 decimal point for return columns (2026-02-20)
 - Add HyperCore chain support and group HyperEVM and HyperCore under Hyperliquid in listings and statistics (2026-02-20)
 - Add reusable DropdownMenu component and group chart links under a "Charts" dropdown in vault listings navigation (2026-02-20)
 - Reduce Docker image size by installing only production dependencies in serve stage (2026-02-18)

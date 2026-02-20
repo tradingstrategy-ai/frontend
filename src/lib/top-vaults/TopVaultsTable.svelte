@@ -18,7 +18,7 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconClock from '~icons/local/clock';
 	import { getChain } from '$lib/helpers/chain';
-	import { formatDollar, formatNumber, formatPercent, formatValue } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatPercentProfit, formatValue } from '$lib/helpers/formatters';
 	import {
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
@@ -59,7 +59,7 @@
 
 	let offsetWidth = $state<number>();
 
-	const formatReturn = (v: MaybeNumber) => formatPercent(v, 2);
+	const formatReturn = (v: MaybeNumber) => formatPercentProfit(v, 1);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
 
 	let filterValue = $state('');
@@ -70,10 +70,18 @@
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
+	const HYPERCORE_CHAIN_ID = 9999;
+	const TVL_THRESHOLD_HYPERCORE = 1_000_000;
+
+	function getVaultTvlThreshold(vault: VaultInfo) {
+		if (chain) return tvlThreshold;
+		return vault.chain_id === HYPERCORE_CHAIN_ID ? TVL_THRESHOLD_HYPERCORE : tvlThreshold;
+	}
+
 	// Get vaults hidden due to TVL threshold (only when filterTvl is enabled)
 	let hiddenVaults = $derived.by(() => {
 		if (!filterTvl) return [];
-		return baseVaults.filter((v) => (v.current_nav ?? 0) < tvlThreshold);
+		return baseVaults.filter((v) => (v.current_nav ?? 0) < getVaultTvlThreshold(v));
 	});
 
 	// Count of hidden vaults
@@ -82,7 +90,7 @@
 	// Vaults that pass TVL filter (used for stats display)
 	let tvlFilteredVaults = $derived.by(() => {
 		if (!filterTvl) return baseVaults;
-		return baseVaults.filter((v) => (v.current_nav ?? 0) >= tvlThreshold);
+		return baseVaults.filter((v) => (v.current_nav ?? 0) >= getVaultTvlThreshold(v));
 	});
 
 	// Calculate total TVL from TVL-filtered vaults
@@ -98,7 +106,7 @@
 			const chain = getChain(v.chain_id);
 
 			if (filterTvl) {
-				if ((v.current_nav ?? 0) < tvlThreshold) {
+				if ((v.current_nav ?? 0) < getVaultTvlThreshold(v)) {
 					return false;
 				}
 			}
@@ -241,9 +249,12 @@
 				>
 			</Tooltip>
 			<Tooltip>
-				<svelte:fragment slot="trigger">Min. TVL {formatDollar(tvlThreshold, 0)}</svelte:fragment>
+				<svelte:fragment slot="trigger"
+					>Min {formatDollar(tvlThreshold, 0)}{#if !chain}*{/if}</svelte:fragment
+				>
 				<svelte:fragment slot="popup"
-					>The listing is limited to vaults with this much of minimum TVL deposited currently.</svelte:fragment
+					>{#if chain}The listing is limited to vaults with a minimum of {formatDollar(tvlThreshold, 0)} TVL deposited currently.{:else}Minimum
+						{formatDollar(tvlThreshold, 0)} of current TVL, except for Hyperliquid's native vaults $1M{/if}</svelte:fragment
 				>
 			</Tooltip>
 			<Tooltip>
