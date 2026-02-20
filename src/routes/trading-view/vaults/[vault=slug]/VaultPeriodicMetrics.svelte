@@ -4,6 +4,7 @@
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import {
 		formatPercent,
+		formatPercentProfit,
 		formatDollar,
 		formatKeyMetricNumber,
 		formatNumber,
@@ -82,19 +83,19 @@
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (net)',
 			field: 'cagr_net',
-			formatter: (v) => (hasNetFees ? formatPercent(v as number | null) : notFilledMarker)
+			formatter: (v) => (hasNetFees ? formatPercentProfit(v as number | null) : notFilledMarker)
 		},
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (gross)',
 			field: 'cagr_gross',
-			formatter: (v) => formatPercent(v as number | null)
+			formatter: (v) => formatPercentProfit(v as number | null)
 		},
 		{
 			label: 'Returns (net)',
 			field: 'returns_net',
-			formatter: (v) => (hasNetFees ? formatPercent(v as number | null) : notFilledMarker)
+			formatter: (v) => (hasNetFees ? formatPercentProfit(v as number | null) : notFilledMarker)
 		},
-		{ label: 'Returns (gross)', field: 'returns_gross', formatter: (v) => formatPercent(v as number | null) },
+		{ label: 'Returns (gross)', field: 'returns_gross', formatter: (v) => formatPercentProfit(v as number | null) },
 		{
 			label: '<a href="/glossary/sharpe">Sharpe</a> ratio',
 			field: 'sharpe',

@@ -6,7 +6,7 @@
 	import Metric from './Metric.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
-	import { formatAmount, formatNumber, formatPercent } from '$lib/helpers/formatters';
+	import { formatAmount, formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 
 	interface Props {
 		vault: VaultInfo;
@@ -111,8 +111,8 @@
 			<tbody>
 				{#snippet returnsCell(ann: MaybeNumber, abs: MaybeNumber)}
 					<td class="returns-cell">
-						<div class="ann">{formatPercent(ann)} ann</div>
-						<div class="abs">{formatPercent(abs)} abs</div>
+						<div class="ann">{formatPercentProfit(ann)} ann</div>
+						<div class="abs">{formatPercentProfit(abs)} abs</div>
 					</td>
 				{/snippet}
 				<tr>

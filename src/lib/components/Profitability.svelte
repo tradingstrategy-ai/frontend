@@ -28,7 +28,7 @@ using the component isn't practical.
 ```
 -->
 <script module lang="ts">
-	import { toFloatingPoint, isNumber, notFilledMarker } from '$lib/helpers/formatters';
+	import { toFloatingPoint, isNumber, notFilledMarker, formatPercentProfit } from '$lib/helpers/formatters';
 
 	export type ProfitInfo = ReturnType<typeof getProfitInfo>;
 	export type ProfitDirection = 0 | 1 | -1;
@@ -67,13 +67,8 @@ using the component isn't practical.
 
 	function formatProfitability(value: number | undefined) {
 		if (!isNumber(value)) return;
-
-		return value.toLocaleString('en-us', {
-			minimumFractionDigits: 1,
-			maximumFractionDigits: Math.abs(value) < 0.001 ? 2 : 1,
-			style: 'percent',
-			signDisplay: 'never'
-		});
+		const maxDigits = Math.abs(value) < 0.001 ? 2 : 1;
+		return formatPercentProfit(value, 1, maxDigits, { signDisplay: 'never' });
 	}
 
 	function getDirection(value: number | undefined, formatted: string | undefined) {
