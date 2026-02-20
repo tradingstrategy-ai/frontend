@@ -118,8 +118,8 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			const menu = page.locator('[role="menu"]');
 			await expect(menu).toBeVisible();
 
-			// Click outside the dropdown
-			await page.locator('h1').click();
+			// Click well below the dropdown (bottom of viewport) to avoid overlay
+			await page.mouse.click(187, 600);
 			await expect(menu).not.toBeVisible();
 		});
 	});
