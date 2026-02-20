@@ -113,6 +113,10 @@ A click-triggered dropdown menu for grouping navigation links.
 	.panel {
 		display: flex;
 		flex-direction: column;
+
+		&[hidden] {
+			display: none;
+		}
 		min-width: max-content;
 		padding: var(--space-ss) 0;
 		background: var(--c-text-inverted);
