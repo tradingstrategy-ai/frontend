@@ -40,6 +40,31 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(page).toHaveURL(/\/trading-view\/vaults\/yield-risk/);
 		});
 
+		test('clicking trigger again closes the dropdown', async ({ page }) => {
+			const nav = page.locator('.vault-listings-selector');
+			const trigger = nav.locator('button', { hasText: 'Charts' });
+			await trigger.click();
+
+			const menu = page.locator('[role="menu"]');
+			await expect(menu).toBeVisible();
+
+			await trigger.click();
+			await expect(menu).not.toBeVisible();
+		});
+
+		test('clicking outside closes the dropdown', async ({ page }) => {
+			const nav = page.locator('.vault-listings-selector');
+			const trigger = nav.locator('button', { hasText: 'Charts' });
+			await trigger.click();
+
+			const menu = page.locator('[role="menu"]');
+			await expect(menu).toBeVisible();
+
+			// Click outside the dropdown
+			await page.locator('h1').click();
+			await expect(menu).not.toBeVisible();
+		});
+
 		test('Charts trigger shows active state on a chart page', async ({ page }) => {
 			await page.goto('/trading-view/vaults/yield-risk');
 

@@ -83,6 +83,9 @@ describe('DropdownMenu component', () => {
 		expect(trigger.getAttribute('aria-expanded')).not.toBe('true');
 	});
 
+	// Note: click-outside dismiss is tested in integration tests (Playwright)
+	// because zag-js's @zag-js/interact-outside requires a real browser environment
+
 	test('trigger shows active styling when isActive returns true for any item', () => {
 		render(DropdownMenu, {
 			...defaultProps,
