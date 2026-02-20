@@ -152,6 +152,15 @@ export const chains = (() => {
 			nativeCurrency: 'S',
 			hasBackendData: false
 		},
+		{
+			id: 325,
+			slug: 'grvt',
+			name: 'GRVT',
+			homepage: 'https://grvt.io',
+			explorer: 'https://grvt.io',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
 		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,
