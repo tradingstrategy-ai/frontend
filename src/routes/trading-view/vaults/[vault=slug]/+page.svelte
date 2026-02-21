@@ -53,6 +53,13 @@
 
 		<ChartWithFeaturedMetrics {vault} />
 
+		{#if vault.chain_id === 9999}
+			<Alert size="md">
+				Due to Hyperliquid architecture, we currently have limited history of data on this vault and it
+				might not reach all the way back to the launch of the vault.
+			</Alert>
+		{/if}
+
 		<VaultMetrics {vault} />
 
 		{#if vault.description}
