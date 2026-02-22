@@ -37,4 +37,6 @@
 	{topVaults}
 	title="Top DeFi stablecoin vaults"
 	subtitle="The best performing DeFi stablecoin vaults across multiple blockchains"
+	tvlTriggerLabel="Min $50K*"
+	tvlTooltip="Minimum $50k TVL for vaults, and $1M for Hyperliquid native vaults."
 />
