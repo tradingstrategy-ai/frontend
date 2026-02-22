@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Move HyperCore native vault limited history warning from alert banner to Age tooltip (2026-02-22)
 - Cap 3M volatility display at >999% and clarify TVL threshold tooltip for Hyperliquid vaults (2026-02-22)
 - Support GRVT non-EVM vault addresses and hide internal flags from vault headings (2026-02-22)
 - Add GRVT chain support (2026-02-20)
