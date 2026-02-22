@@ -36,33 +36,35 @@
 		align-content: start;
 
 		--label-font: var(--f-ui-md-medium);
-		--value-font: var(--f-heading-lg-medium);
+		--value-font: var(--f-heading-lg-roman);
 		&.lg {
-			--value-font: var(--f-heading-xl-medium);
+			--value-font: var(--f-heading-xl-roman);
 		}
 		&.xl {
-			--value-font: var(--f-heading-xxl-medium);
+			--value-font: var(--f-heading-xxl-roman);
 		}
 
 		@media (--viewport-sm-down) {
 			--label-font: var(--f-ui-sm-medium);
-			--value-font: var(--f-heading-md-medium);
+			--value-font: var(--f-heading-md-roman);
 			&.lg {
-				--value-font: var(--f-heading-lg-medium);
+				--value-font: var(--f-heading-lg-roman);
 			}
 			&.xl {
-				--value-font: var(--f-heading-xl-medium);
+				--value-font: var(--f-heading-xl-roman);
 			}
 		}
 
 		.label {
 			margin-bottom: 0.5rem;
 			font: var(--label-font);
-			color: var(--c-text-extra-light);
+			font-weight: bold;
+			color: var(--c-text-light);
 		}
 
 		.value {
 			font: var(--value-font);
+			color: var(--c-text-extra-light);
 		}
 	}
 </style>

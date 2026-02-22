@@ -278,19 +278,22 @@
 			th {
 				vertical-align: bottom;
 				border-bottom: 2px solid var(--c-text-extra-light);
-				color: var(--c-text-extra-light);
+				color: var(--c-text);
+				font-weight: bold;
 				font-size: 0.875em;
 			}
 
 			td {
-				border-bottom: 1px solid var(--c-text-extra-light);
+				border-bottom: 1px solid var(--c-box-3);
+				color: var(--c-text-light);
 			}
 
 			:is(th, td) {
 				padding: var(--cell-padding);
 
 				&:first-child {
-					font-weight: 500;
+					font-weight: bold;
+					color: var(--c-text);
 				}
 
 				&:not(:first-child) {

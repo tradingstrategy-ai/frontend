@@ -228,8 +228,8 @@
 		}
 
 		th {
-			font-weight: 500;
-			color: var(--c-text-light);
+			font-weight: bold;
+			color: var(--c-text);
 			border-bottom: 1px solid var(--c-text-extra-light);
 		}
 
@@ -237,8 +237,12 @@
 			text-align: left;
 		}
 
+		td:not(.label) {
+			color: var(--c-text-light);
+		}
+
 		tr {
-			border-bottom: 1px solid var(--c-text-extra-light);
+			border-bottom: 1px solid var(--c-box-3);
 
 			&:last-child {
 				border-bottom: none;
@@ -246,8 +250,8 @@
 		}
 
 		.label {
-			font-weight: 500;
-			color: var(--c-text-light);
+			font-weight: bold;
+			color: var(--c-text);
 			text-align: left;
 
 			:global(a) {

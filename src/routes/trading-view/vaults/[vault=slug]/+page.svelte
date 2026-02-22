@@ -105,4 +105,8 @@
 			}
 		}
 	}
+
+	:global(:is(.description, .notes)) {
+		color: var(--c-text-extra-light);
+	}
 </style>
