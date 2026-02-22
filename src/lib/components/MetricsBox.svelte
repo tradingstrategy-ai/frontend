@@ -32,7 +32,7 @@
 			font-size: 1rem;
 			letter-spacing: 0.06em;
 			text-transform: uppercase;
-			color: var(--c-text-ultra-light);
+			color: var(--c-text-light);
 
 			@media (--viewport-sm-down) {
 				font-size: 0.875rem;

@@ -196,7 +196,7 @@
 		}
 
 		tr {
-			border-bottom: 1px solid var(--c-text-extra-light);
+			border-bottom: 1px solid var(--c-box-3);
 
 			&:last-child {
 				border-bottom: none;
@@ -212,8 +212,8 @@
 		}
 
 		.label {
-			font-weight: 500;
-			color: var(--c-text-light);
+			font-weight: bold;
+			color: var(--c-text);
 			white-space: nowrap;
 			width: 40%;
 			padding-right: 1rem;
@@ -225,6 +225,7 @@
 		}
 
 		.value {
+			color: var(--c-text-light);
 			word-break: break-word;
 
 			a {
