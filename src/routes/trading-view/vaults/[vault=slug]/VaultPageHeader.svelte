@@ -12,6 +12,10 @@
 
 	let { vault }: Props = $props();
 
+	const hiddenFlags = ['perp_dex_trading_vault'];
+
+	let visibleFlags = $derived(vault.flags.filter((f) => !hiddenFlags.includes(f)));
+
 	let externalSiteName = $derived.by(() => {
 		if (hasSupportedProtocol(vault)) return vault.protocol;
 		if (vault.link) return new URL(vault.link).host;
@@ -22,7 +26,7 @@
 	{#snippet title()}
 		<span class="page-title">
 			<span>{vault.name}</span>
-			{#each vault.flags as flag (flag)}
+			{#each visibleFlags as flag (flag)}
 				<DataBadge class="badge" status="warning">{flag}</DataBadge>
 			{/each}
 		</span>
