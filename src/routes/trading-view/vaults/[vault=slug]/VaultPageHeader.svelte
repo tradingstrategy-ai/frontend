@@ -34,9 +34,11 @@
 
 	{#snippet cta()}
 		{#if vault.link}
-			<Button href={vault.link} target="_blank" rel="noreferrer">
-				View on {externalSiteName}
-			</Button>
+			<span class="external-link">
+				<Button href={vault.link} target="_blank" rel="noreferrer">
+					View on {externalSiteName}
+				</Button>
+			</span>
 		{/if}
 	{/snippet}
 </PageHeader>
@@ -46,6 +48,12 @@
 {/if}
 
 <style>
+	.external-link {
+		@media (--viewport-sm-down) {
+			display: none;
+		}
+	}
+
 	.vault-description {
 		margin: 0;
 		font: var(--f-ui-lg-roman);
