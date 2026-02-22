@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { blockNumber, chainId, hexString } from '$lib/eth-defi/schemas/core';
+import { blockNumber, chainId, vaultAddress } from '$lib/eth-defi/schemas/core';
 import { isoDateTime } from '$lib/schemas/utility';
 
 const nullableNumber = z.number().nullable();
@@ -106,9 +106,12 @@ export const vaultInfoSchema = z.object({
 	id: z.string(),
 	start_date: isoDateTime,
 	end_date: isoDateTime,
-	address: hexString,
-	share_token_address: hexString.nullable(),
-	denomination_token_address: hexString.nullable(),
+	/** Vault address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	address: vaultAddress,
+	/** Share token address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	share_token_address: vaultAddress.nullable(),
+	/** Denomination token address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	denomination_token_address: vaultAddress.nullable(),
 	chain_id: chainId,
 	stablecoinish: z.boolean(),
 	first_updated_at: isoDateTime.nullable(),

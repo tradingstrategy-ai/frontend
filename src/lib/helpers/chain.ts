@@ -283,13 +283,13 @@ export function getChainsBySlug(slug: string): ChainData[] {
 /**
  * Extract explorer URL from Chain object and append address or transaction path
  */
-export function getExplorerUrl(chain: Maybe<Chain>, hash: Address) {
+export function getExplorerUrl(chain: Maybe<Chain>, hash: string) {
 	const baseUrl = chain?.explorer ?? 'https://blockscan.com';
 
 	let path = '';
-	if (hash.length === 42) {
+	if (hash.startsWith('0x') && hash.length === 42) {
 		path = `/address/${hash}`;
-	} else if (hash.length === 66) {
+	} else if (hash.startsWith('0x') && hash.length === 66) {
 		path = `/tx/${hash}`;
 	}
 	return `${baseUrl}${path}`;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let address: Address;
+	export let address: string;
 	export let endChars = 6;
 
 	$: sliceAt = address.length - endChars;
