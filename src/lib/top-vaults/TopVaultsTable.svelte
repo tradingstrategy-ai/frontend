@@ -18,7 +18,14 @@
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconClock from '~icons/local/clock';
 	import { getChain } from '$lib/helpers/chain';
-	import { formatDollar, formatNumber, formatPercent, formatPercentProfit, formatValue } from '$lib/helpers/formatters';
+	import {
+		formatDollar,
+		formatNumber,
+		formatPercent,
+		formatPercentProfit,
+		formatValue,
+		notFilledMarker
+	} from '$lib/helpers/formatters';
 	import {
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
@@ -43,6 +50,8 @@
 		topVaults: TopVaults;
 		chain?: Chain;
 		tvlThreshold?: number;
+		tvlTriggerLabel?: string;
+		tvlTooltip?: string;
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
 	}
@@ -51,6 +60,8 @@
 		topVaults,
 		chain,
 		tvlThreshold = TVL_THRESHOLD_DEFAULT,
+		tvlTriggerLabel,
+		tvlTooltip,
 		filterTvl,
 		includeBlacklisted = false
 	}: Props = $props();
@@ -59,8 +70,16 @@
 
 	let offsetWidth = $state<number>();
 
+	const VOLATILITY_CAP = 9.99; // 999% in decimal form
+	const VOLATILITY_CAP_LABEL = '>999%';
+
 	const formatReturn = (v: MaybeNumber) => formatPercentProfit(v, 1);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
+	const formatVolatility = (v: MaybeNumber) => {
+		if (v == null) return notFilledMarker;
+		if (Math.abs(v) > VOLATILITY_CAP) return VOLATILITY_CAP_LABEL;
+		return formatPercent(v, 1);
+	};
 
 	let filterValue = $state('');
 
@@ -244,9 +263,10 @@
 				>
 			</Tooltip>
 			<Tooltip>
-				<svelte:fragment slot="trigger">Min {formatDollar(tvlThreshold, 0)}</svelte:fragment>
+				<svelte:fragment slot="trigger">{tvlTriggerLabel ?? `Min ${formatDollar(tvlThreshold, 0)}`}</svelte:fragment>
 				<svelte:fragment slot="popup"
-					>The listing is limited to vaults with a minimum of {formatDollar(tvlThreshold, 0)} TVL deposited currently.</svelte:fragment
+					>{tvlTooltip ??
+						`The listing is limited to vaults with a minimum of ${formatDollar(tvlThreshold, 0)} TVL deposited currently.`}</svelte:fragment
 				>
 			</Tooltip>
 			<Tooltip>
@@ -388,7 +408,7 @@
 							{formatNumber(vault.three_months_sharpe, 1)}
 						</td>
 						<td class="three_months_volatility right">
-							{formatPercent(vault.three_months_volatility, 1)}
+							{formatVolatility(vault.three_months_volatility)}
 						</td>
 						<td class="denomination center">
 							{formatValue(vault.denomination)}

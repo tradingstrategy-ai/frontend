@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Cap 3M volatility display at >999% and clarify TVL threshold tooltip for Hyperliquid vaults (2026-02-22)
 - Support GRVT non-EVM vault addresses and hide internal flags from vault headings (2026-02-22)
 - Add GRVT chain support (2026-02-20)
 - Improve vault listing filters: $1M TVL minimum for HyperCore native vaults, cap displayed profit at 9,999%, and use 1 decimal point for return columns (2026-02-20)

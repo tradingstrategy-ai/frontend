@@ -18,6 +18,8 @@
 		title: string;
 		subtitle: string;
 		tvlThreshold?: number;
+		tvlTriggerLabel?: string;
+		tvlTooltip?: string;
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
@@ -29,6 +31,8 @@
 		title: pageTitle,
 		subtitle,
 		tvlThreshold,
+		tvlTriggerLabel,
+		tvlTooltip,
 		filterTvl,
 		includeBlacklisted,
 		protocolMetadata
@@ -63,7 +67,15 @@
 			{#if !topVaults.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
 			{:else}
-				<TopVaultsTable {topVaults} {chain} {tvlThreshold} {filterTvl} {includeBlacklisted} />
+				<TopVaultsTable
+					{topVaults}
+					{chain}
+					{tvlThreshold}
+					{tvlTriggerLabel}
+					{tvlTooltip}
+					{filterTvl}
+					{includeBlacklisted}
+				/>
 			{/if}
 		</div>
 	</Section>
