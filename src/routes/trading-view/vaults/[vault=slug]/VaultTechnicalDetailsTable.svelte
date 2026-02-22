@@ -215,7 +215,7 @@
 			font-weight: bold;
 			color: var(--c-text);
 			white-space: nowrap;
-			width: 40%;
+			width: 25%;
 			padding-right: 1rem;
 
 			:global(a) {
