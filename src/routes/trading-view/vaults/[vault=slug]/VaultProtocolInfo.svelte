@@ -26,6 +26,9 @@
 		{/if}
 		<div class="content">
 			<h2>About {protocolMetadata.name}</h2>
+			<p class="description">
+				This vault is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
+			</p>
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>
 		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
@@ -82,6 +85,11 @@
 			margin: 0;
 			font: var(--f-ui-md-roman);
 			color: var(--c-text-light);
+
+			a {
+				text-decoration: underline;
+				font-weight: 500;
+			}
 		}
 	}
 </style>
