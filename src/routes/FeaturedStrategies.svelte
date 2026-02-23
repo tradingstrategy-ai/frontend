@@ -21,6 +21,8 @@
 
 	let { strategies }: Props = $props();
 
+	let options = $derived(getChainOptions(strategies));
+
 	let selected: ChainOption = $state('all');
 
 	let filteredStrategies = $derived(strategies.filter((s) => matchesChainOption(s, selected)));
@@ -30,9 +32,11 @@
 
 <Section padding="md">
 	<h2>Open strategies</h2>
-	<div class="filters">
-		<ChainFilter options={getChainOptions(strategies)} bind:selected />
-	</div>
+	{#if options.length > 2}
+		<div class="filters">
+			<ChainFilter {options} bind:selected />
+		</div>
+	{/if}
 	<div class="strategies">
 		{#each filteredStrategies as strategy, idx (strategy.id)}
 			{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
@@ -96,6 +100,11 @@
 
 		> :global(*) {
 			width: var(--column-width);
+
+			&:only-child {
+				width: 100%;
+				max-width: 55rem;
+			}
 		}
 	}
 </style>
