@@ -49,6 +49,8 @@ export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) 
 				return quote.token_symbol;
 			case 'vault':
 				return this.other_data?.vault_name ?? base.token_symbol;
+			case 'exchange_account':
+				return this.exchange_name ?? this.other_data?.exchange_protocol ?? '<Unknown exchange>';
 			default:
 				return `${base.token_symbol}-${quote.token_symbol}`;
 		}
