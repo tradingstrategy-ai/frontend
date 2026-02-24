@@ -90,6 +90,15 @@ export const createTradeInfo = <T extends TradeExecution>(base: T) => ({
 			}[dir];
 		}
 
+		// Exchange account labels
+		if (this.pair.kind === 'exchange_account') {
+			return {
+				[TradeDirections.Enter]: 'Deposit',
+				[TradeDirections.Exit]: 'Withdraw',
+				[TradeDirections.Unknown]: 'Unknown'
+			}[dir];
+		}
+
 		// All other trade types
 		return {
 			[TradeDirections.Enter]: 'Buy',
