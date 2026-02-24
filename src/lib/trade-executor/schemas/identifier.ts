@@ -33,7 +33,8 @@ export const tradingPairKind = z.enum([
 	'lending_protocol_long',
 	'lending_protocol_short',
 	'vault',
-	'cash'
+	'cash',
+	'exchange_account'
 ]);
 
 // Using Zod 4's recursive types with getter syntax

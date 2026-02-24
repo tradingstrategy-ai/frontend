@@ -34,7 +34,10 @@ export const balanceUpdateSchema = z.object({
 	created_at: unixTimestamp.nullish(),
 	previous_update_at: unixTimestamp.nullish(),
 	owner_address: hexString.nullish(),
-	tx_hash: hexString.nullish(),
+	tx_hash: z
+		.string()
+		.regex(/^(0x)?[0-9a-fA-F]+$/)
+		.nullish(),
 	log_index: hexString.nullish(),
 	position_id: primaryKey.nullish(),
 	notes: z.string().nullish(),
