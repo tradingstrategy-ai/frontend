@@ -1,5 +1,13 @@
 import { describe, test, expect } from 'vitest';
-import { isBlacklisted, hasSupportedProtocol, meetsMinTvl, getFormattedLockup, getFormattedFeeMode } from './helpers';
+import {
+	isBlacklisted,
+	hasSupportedProtocol,
+	meetsMinTvl,
+	getFormattedLockup,
+	getFormattedFeeMode,
+	getFeeModeLabel,
+	getFeeModeDescription
+} from './helpers';
 import { createTestVault } from './test-utils';
 
 describe('isBlacklisted', () => {
@@ -114,5 +122,57 @@ describe('getFormattedFeeMode', () => {
 	test('handles feeless mode', () => {
 		const vault = createTestVault('Test vault', { fee_mode: 'feeless' });
 		expect(getFormattedFeeMode(vault)).toBe('Feeless');
+	});
+});
+
+describe('getFeeModeLabel', () => {
+	test('returns "Unknown" for null', () => {
+		expect(getFeeModeLabel(null)).toBe('Unknown');
+	});
+
+	test('returns "Unknown" for undefined', () => {
+		expect(getFeeModeLabel(undefined)).toBe('Unknown');
+	});
+
+	test('returns label for internalised_skimming', () => {
+		expect(getFeeModeLabel('internalised_skimming')).toBe('Internalised skimming');
+	});
+
+	test('returns label for internalised_minting', () => {
+		expect(getFeeModeLabel('internalised_minting')).toBe('Internalised minting');
+	});
+
+	test('returns label for externalised', () => {
+		expect(getFeeModeLabel('externalised')).toBe('Externalised');
+	});
+
+	test('returns label for feeless', () => {
+		expect(getFeeModeLabel('feeless')).toBe('Feeless');
+	});
+});
+
+describe('getFeeModeDescription', () => {
+	test('returns empty string for null', () => {
+		expect(getFeeModeDescription(null)).toBe('');
+	});
+
+	test('returns empty string for undefined', () => {
+		expect(getFeeModeDescription(undefined)).toBe('');
+	});
+
+	test('returns description for internalised_skimming', () => {
+		expect(getFeeModeDescription('internalised_skimming')).toContain('deducted from closed trades');
+	});
+
+	test('returns description for internalised_minting', () => {
+		expect(getFeeModeDescription('internalised_minting')).toContain('minting additional vault shares');
+	});
+
+	test('returns description for externalised', () => {
+		expect(getFeeModeDescription('externalised')).toContain('charged separately');
+	});
+
+	test('returns description for feeless', () => {
+		expect(getFeeModeDescription('feeless')).toContain('No fees');
 	});
 });
