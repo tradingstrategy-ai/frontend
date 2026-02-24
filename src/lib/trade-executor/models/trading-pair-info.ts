@@ -14,7 +14,8 @@ const kindShortLabels = {
 	lending_protocol_short: 'short',
 	lending_protocol_long: 'long',
 	vault: 'vault',
-	cash: 'cash'
+	cash: 'cash',
+	exchange_account: 'exchange'
 } as const;
 
 export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) => ({
