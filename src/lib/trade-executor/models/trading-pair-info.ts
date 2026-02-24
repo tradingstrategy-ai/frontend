@@ -58,6 +58,9 @@ export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) 
 		if (this.isCreditSupply) {
 			return this.pricingPair.quote.token_symbol;
 		}
+		if (this.kind === 'exchange_account') {
+			return 'USD';
+		}
 		return this.pricingPair.base.token_symbol;
 	},
 
