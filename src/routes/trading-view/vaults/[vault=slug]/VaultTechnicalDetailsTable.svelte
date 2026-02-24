@@ -6,6 +6,7 @@
 	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
 	import { formatAmount, notFilledMarker } from '$lib/helpers/formatters';
 	import { parseDate } from '$lib/helpers/date';
+	import { getFeeModeLabel, getFeeModeDescription } from '$lib/top-vaults/helpers';
 
 	const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -67,7 +68,11 @@
 		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
 
 		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
-		{ label: 'Fee mode', value: vault.fee_mode },
+		{
+			label: 'Fee mode',
+			value: getFeeModeLabel(vault.fee_mode),
+			tooltip: getFeeModeDescription(vault.fee_mode)
+		},
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
@@ -170,6 +175,11 @@
 								{:else}
 									{notFilledMarker}
 								{/if}
+							{:else if row.tooltip}
+								<Tooltip>
+									<span slot="trigger" class="tooltip-hint">{formatValue(row.value, row.type)}</span>
+									<svelte:fragment slot="popup">{row.tooltip}</svelte:fragment>
+								</Tooltip>
 							{:else}
 								{formatValue(row.value, row.type)}
 							{/if}
@@ -246,6 +256,12 @@
 			background: none;
 			cursor: pointer;
 		}
+	}
+
+	.tooltip-hint {
+		text-decoration: underline;
+		text-decoration-style: dashed;
+		cursor: help;
 	}
 
 	.stale-date {
