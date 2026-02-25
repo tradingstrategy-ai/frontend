@@ -72,6 +72,7 @@
 
 	const VOLATILITY_CAP = 9.99; // 999% in decimal form
 	const VOLATILITY_CAP_LABEL = '>999%';
+	const RETURN_TOOLTIP_THRESHOLD = 1; // 100% in decimal form
 
 	const formatReturn = (v: MaybeNumber) => formatPercentProfit(v, 1);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
@@ -214,9 +215,28 @@
 {/snippet}
 
 {#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>)}
-	{#if net !== null}
+	{@const value = net ?? gross}
+	{@const capped = typeof value === 'number' && Math.abs(value) > RETURN_TOOLTIP_THRESHOLD}
+	{#if value === null}
+		---
+	{:else if capped}
+		<Tooltip>
+			<span class="capped-hint" slot="trigger">{formatter(value)}</span>
+			<svelte:fragment slot="popup">
+				<p>
+					Trading vaults, like those on Hyperliquid and GRVT, are highly volatile, and their annualised short-term
+					returns may not reflect the long-term performance. For these vaults, use the longer time window to compare the
+					results.
+				</p>
+				<p>
+					Another cause for abnormal short term returns is low settlement frequency, as some vaults do not report
+					returns daily, one sees monthly spikes.
+				</p>
+			</svelte:fragment>
+		</Tooltip>
+	{:else if net !== null}
 		{formatter(net)}
-	{:else if gross !== null}
+	{:else}
 		<Tooltip>
 			<svelte:fragment slot="trigger">
 				{formatter(gross)}*
@@ -226,8 +246,6 @@
 				apply.
 			</svelte:fragment>
 		</Tooltip>
-	{:else}
-		---
 	{/if}
 {/snippet}
 
@@ -791,5 +809,11 @@
 				font: var(--f-ui-sm-medium);
 			}
 		}
+	}
+
+	.capped-hint {
+		text-decoration: underline;
+		text-decoration-style: dashed;
+		cursor: help;
 	}
 </style>
