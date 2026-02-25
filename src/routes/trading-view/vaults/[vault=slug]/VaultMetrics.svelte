@@ -6,7 +6,7 @@
 	import Metric from './Metric.svelte';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
-	import { formatAmount, formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
+	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 
 	interface Props {
 		vault: VaultInfo;
@@ -30,6 +30,10 @@
 
 	let depositDaysLeft = $derived(getDaysUntil(vault.deposit_next_open));
 	let redemptionDaysLeft = $derived(getDaysUntil(vault.redemption_next_open));
+
+	let lifetimeMaxDrawdown = $derived(
+		vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime')?.max_drawdown ?? null
+	);
 </script>
 
 <div class="additional-metrics">
@@ -79,7 +83,6 @@
 				<Tooltip>
 					<span slot="trigger">
 						<span class="underline">Age*</span>
-						<IconQuestionCircle />
 					</span>
 					<svelte:fragment slot="popup">
 						Due to Hyperliquid architecture, we currently have limited history of data on this vault and it might not
@@ -92,8 +95,17 @@
 				{formatNumber(vault.years, 1)} years
 			</Metric>
 
-			<Metric label="Deposit events">
-				{formatAmount(vault.event_count)}
+			{#snippet maxDrawdownLabel()}
+				<Tooltip>
+					<span slot="trigger">
+						<a class="glossary-link" href="/glossary/maximum-drawdown">Maximum drawdown</a>
+					</span>
+					<svelte:fragment slot="popup">Maximum drawdown over the vault lifetime.</svelte:fragment>
+				</Tooltip>
+			{/snippet}
+
+			<Metric label={maxDrawdownLabel}>
+				{formatPercent(lifetimeMaxDrawdown)}
 			</Metric>
 
 			<Metric label="Protocol Technical Risk">
@@ -320,7 +332,8 @@
 		}
 
 		.risk-link,
-		.denomination-link {
+		.denomination-link,
+		.glossary-link {
 			text-decoration: underline;
 			text-decoration-style: dashed;
 		}

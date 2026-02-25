@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Show lifetime maximum drawdown in vault other metrics instead of deposit events (2026-02-25)
 - Support exchange account trading pair kind and non-0x-prefixed transaction hashes for CeFi strategies (2026-02-24)
 - Add human-readable fee mode labels with tooltip descriptions to vault technical details (2026-02-24)
 - Move HyperCore native vault limited history warning from alert banner to Age tooltip (2026-02-22)
