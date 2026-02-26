@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Button, Logo } from '$lib/components';
-	import MaintenanceNotice from './MaintenanceNotice.svelte';
-	import ErrorPageInfo from './ErrorPageInfo.svelte';
+	import MaintenanceNotice from './_components/MaintenanceNotice.svelte';
+	import ErrorPageInfo from './_components/ErrorPageInfo.svelte';
 	import IconConsole from '~icons/local/console';
 
 	let showLogs = false;

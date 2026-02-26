@@ -2,9 +2,9 @@
 	Home page
 -->
 <script lang="ts">
-	import HomeHeroBanner from './HomeHeroBanner.svelte';
-	import FeaturedStrategies from './FeaturedStrategies.svelte';
-	import ImpressiveNumbers from './ImpressiveNumbers.svelte';
+	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
+	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
+	import ImpressiveNumbers from './_components/ImpressiveNumbers.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import BlogRoll from '$lib/components/BlogRoll.svelte';
 	import Button from '$lib/components/Button.svelte';
