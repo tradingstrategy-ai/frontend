@@ -1,24 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import type { TopVaults } from '$lib/top-vaults/schemas.js';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
-	const HYPERCORE_CHAIN_ID = 9999;
-	const TVL_THRESHOLD_DEFAULT = 50_000;
-	const TVL_THRESHOLD_HYPERCORE = 1_000_000;
-
-	function filterByMinTvl(topVaults: TopVaults) {
-		const vaults = topVaults.vaults.filter((vault) => {
-			const threshold = vault.chain_id === HYPERCORE_CHAIN_ID ? TVL_THRESHOLD_HYPERCORE : TVL_THRESHOLD_DEFAULT;
-			return (vault.current_nav ?? 0) >= threshold;
-		});
-
-		return { ...topVaults, vaults };
-	}
-
 	let { data } = $props();
-	let topVaults = $derived(filterByMinTvl(data.topVaults));
 
 	const title = 'Top DeFi stablecoin vaults';
 	const description = 'The best DeFi vaults for all blockchains.';
@@ -34,9 +19,8 @@
 />
 
 <TopVaultsPage
-	{topVaults}
+	topVaults={data.topVaults}
 	title="Top DeFi stablecoin vaults"
 	subtitle="The best performing DeFi stablecoin vaults across all blockchains"
-	tvlTriggerLabel="Min $50K*"
-	tvlTooltip="Minimum $50k TVL for vaults, and $1M for Hyperliquid native vaults."
+	showFilters
 />

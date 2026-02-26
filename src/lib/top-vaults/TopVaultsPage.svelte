@@ -23,6 +23,12 @@
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
+		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
+		showFilters?: boolean;
+		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
+		defaultTvlKey?: string;
+		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
+		defaultAgeIndex?: number;
 	}
 
 	let {
@@ -35,7 +41,10 @@
 		tvlTooltip,
 		filterTvl,
 		includeBlacklisted,
-		protocolMetadata
+		protocolMetadata,
+		showFilters,
+		defaultTvlKey,
+		defaultAgeIndex
 	}: Props = $props();
 </script>
 
@@ -75,6 +84,9 @@
 					{tvlTooltip}
 					{filterTvl}
 					{includeBlacklisted}
+					{showFilters}
+					{defaultTvlKey}
+					{defaultAgeIndex}
 				/>
 			{/if}
 		</div>

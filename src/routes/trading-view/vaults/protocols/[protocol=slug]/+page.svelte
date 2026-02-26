@@ -19,4 +19,11 @@
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
 />
 
-<TopVaultsPage {topVaults} {protocolMetadata} title="Top {protocolName} vaults" tvlThreshold={10000} filterTvl={true} />
+<TopVaultsPage
+	{topVaults}
+	{protocolMetadata}
+	title="Top {protocolName} vaults"
+	subtitle="Top stablecoin vaults on {protocolName}"
+	showFilters
+	defaultTvlKey="10k"
+/>

@@ -27,14 +27,20 @@
 		notFilledMarker
 	} from '$lib/helpers/formatters';
 	import {
+		ageFilterOptions,
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
+		DEFAULT_TVL_KEY,
 		getFormattedLockup,
 		isBlacklisted,
 		isGoodVaultStatus,
-		resolveVaultDetails
+		resolveVaultDetails,
+		riskFilterOptions,
+		tvlFilterOptions
 	} from './helpers';
+	import Select from '$lib/components/Select.svelte';
 	import { vaultSparklinesUrl } from '$lib/config';
+	import { resolve } from '$app/paths';
 
 	const TVL_THRESHOLD_DEFAULT = 50_000;
 	const INITIAL_ROW_COUNT = 150;
@@ -54,6 +60,12 @@
 		tvlTooltip?: string;
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
+		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
+		showFilters?: boolean;
+		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
+		defaultTvlKey?: string;
+		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
+		defaultAgeIndex?: number;
 	}
 
 	let {
@@ -63,8 +75,21 @@
 		tvlTriggerLabel,
 		tvlTooltip,
 		filterTvl,
-		includeBlacklisted = false
+		includeBlacklisted = false,
+		showFilters = false,
+		defaultTvlKey = DEFAULT_TVL_KEY,
+		defaultAgeIndex = 0
 	}: Props = $props();
+
+	// Interactive filter state (used when showFilters is true)
+	let selectedTvlKey = $state(defaultTvlKey); // intentionally captures initial prop value only
+	let selectedTvlOption = $derived(tvlFilterOptions.find((o) => o.key === selectedTvlKey)!);
+	let tvlDropdownOpen = $state(false);
+	let selectedAgeIndex = $state(defaultAgeIndex); // intentionally captures initial prop value only
+	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
+	let selectedRiskIndex = $state(1);
+	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
+	let riskDropdownOpen = $state(false);
 
 	let showChainCol = $derived(!chain);
 
@@ -84,46 +109,56 @@
 
 	let filterValue = $state('');
 
-	// filter out blacklisted vaults (unless includeBlacklisted or specifically searching "blacklisted")
+	// filter out blacklisted vaults (unless includeBlacklisted, searching "blacklisted",
+	// or the risk dropdown includes blacklisted level)
 	let baseVaults = $derived.by(() => {
-		if (includeBlacklisted || filterValue.startsWith('blacklist')) return topVaults.vaults;
+		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
+			return topVaults.vaults;
+		}
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
 	});
 
-	// Get vaults hidden due to TVL threshold (only when filterTvl is enabled)
+	/** Resolve the effective TVL threshold for a vault, accounting for chain overrides */
+	function getVaultTvlThreshold(vault: VaultInfo): number {
+		if (showFilters) {
+			return selectedTvlOption.chainOverrides?.[vault.chain_id] ?? selectedTvlOption.value;
+		}
+		return tvlThreshold;
+	}
+
+	// Get vaults hidden due to TVL threshold (only when filtering is enabled)
 	let hiddenVaults = $derived.by(() => {
-		if (!filterTvl) return [];
-		return baseVaults.filter((v) => (v.current_nav ?? 0) < tvlThreshold);
+		if (!filterTvl && !showFilters) return [];
+		return baseVaults.filter((v) => (v.current_nav ?? 0) < getVaultTvlThreshold(v));
 	});
 
 	// Count of hidden vaults
 	let hiddenByTvl = $derived(hiddenVaults.length);
 
-	// Vaults that pass TVL filter (used for stats display)
-	let tvlFilteredVaults = $derived.by(() => {
-		if (!filterTvl) return baseVaults;
-		return baseVaults.filter((v) => (v.current_nav ?? 0) >= tvlThreshold);
-	});
-
-	// Exclude blacklisted vaults from stats calculations
-	let statsVaults = $derived(tvlFilteredVaults.filter((v) => !isBlacklisted(v)));
-
-	// Calculate total TVL from non-blacklisted, TVL-filtered vaults
-	let totalTvl = $derived(calculateTotalTvl(statsVaults));
-
-	// Calculate TVL-weighted average 1M APY from non-blacklisted, TVL-filtered vaults
-	let avgTvlWeightedApy1M = $derived(calculateTvlWeightedApy(statsVaults));
-
-	// filter vaults matching filterValue (search string)
+	// Filter vaults matching all active filters (TVL, age, risk, search)
 	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
 		return baseVaults.filter((v) => {
 			const chain = getChain(v.chain_id);
 
-			if (filterTvl) {
-				if ((v.current_nav ?? 0) < tvlThreshold) {
+			// TVL filter (prop-driven or dropdown-driven)
+			if (filterTvl || showFilters) {
+				if ((v.current_nav ?? 0) < getVaultTvlThreshold(v)) {
 					return false;
 				}
+			}
+
+			// Age filter (dropdown-driven)
+			if (showFilters) {
+				const years = v.years ?? 0;
+				if (selectedAge.value > 0 && years < selectedAge.value) return false;
+				if (selectedAge.maxAge < Infinity && years >= selectedAge.maxAge) return false;
+			}
+
+			// Risk filter (dropdown-driven) — check both min and max bounds
+			if (showFilters && (selectedRisk.minValue > 0 || selectedRisk.maxValue < Infinity)) {
+				const risk = v.risk_numeric ?? Infinity;
+				if (risk < selectedRisk.minValue || risk > selectedRisk.maxValue) return false;
 			}
 
 			const vaultCompareStr = [
@@ -138,6 +173,16 @@
 			return vaultCompareStr.toLowerCase().includes(filterCompareStr);
 		});
 	});
+
+	// Exclude blacklisted vaults from stats calculations; uses filteredVaults so all
+	// active filters (TVL, age, risk, search) are reflected in the stats row.
+	let statsVaults = $derived(filteredVaults.filter((v) => !isBlacklisted(v)));
+
+	// Calculate total TVL from non-blacklisted, fully-filtered vaults
+	let totalTvl = $derived(calculateTotalTvl(statsVaults));
+
+	// Calculate TVL-weighted average 1M APY from non-blacklisted, fully-filtered vaults
+	let avgTvlWeightedApy1M = $derived(calculateTvlWeightedApy(statsVaults));
 
 	let sortOptions = $state<SortOptions>({
 		key: 'one_month_return_ann',
@@ -190,6 +235,21 @@
 			direction = sortOptions.direction === 'asc' ? 'desc' : 'asc';
 		}
 		sortOptions = { key, direction, compareFn };
+	}
+
+	/** Svelte action to close dropdown on outside clicks */
+	function clickOutside(node: HTMLElement, callback: () => void) {
+		function handleClick(event: MouseEvent) {
+			if (!node.contains(event.target as Node)) {
+				callback();
+			}
+		}
+		document.addEventListener('click', handleClick, true);
+		return {
+			destroy() {
+				document.removeEventListener('click', handleClick, true);
+			}
+		};
 	}
 </script>
 
@@ -251,15 +311,15 @@
 
 <div class="top-vaults-table">
 	<div class="table-extras">
-		<div class="table-meta" data-testid="top-vaults-meta">
+		<div class="table-stats" data-testid="top-vaults-meta">
 			<Tooltip>
-				<svelte:fragment slot="trigger">{tvlFilteredVaults.length} vaults</svelte:fragment>
+				<svelte:fragment slot="trigger">{filteredVaults.length} vaults</svelte:fragment>
 				<svelte:fragment slot="popup"
 					>{#if hiddenByTvl > 0}
 						{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
 							? 'it does'
 							: 'they do'}
-						not meet the minimum TVL threshold of {formatDollar(tvlThreshold, 0)}:
+						not meet the minimum TVL threshold:
 						{hiddenVaults
 							.slice(0, 2)
 							.map((v) => v.name)
@@ -280,13 +340,15 @@
 					is used when known for the vault protocol, otherwise we assume the reported returns are fee-inclusive.</svelte:fragment
 				>
 			</Tooltip>
-			<Tooltip>
-				<svelte:fragment slot="trigger">{tvlTriggerLabel ?? `Min ${formatDollar(tvlThreshold, 0)}`}</svelte:fragment>
-				<svelte:fragment slot="popup"
-					>{tvlTooltip ??
-						`The listing is limited to vaults with a minimum of ${formatDollar(tvlThreshold, 0)} TVL deposited currently.`}</svelte:fragment
-				>
-			</Tooltip>
+			{#if !showFilters}
+				<Tooltip>
+					<svelte:fragment slot="trigger">{tvlTriggerLabel ?? `Min ${formatDollar(tvlThreshold, 0)}`}</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>{tvlTooltip ??
+							`The listing is limited to vaults with a minimum of ${formatDollar(tvlThreshold, 0)} TVL deposited currently.`}</svelte:fragment
+					>
+				</Tooltip>
+			{/if}
 			<Tooltip>
 				<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
 				<svelte:fragment slot="popup"
@@ -301,14 +363,99 @@
 				</Tooltip></span
 			>
 		</div>
-		<div class="filter">
-			<TextInput
-				bind:value={filterValue}
-				type="search"
-				placeholder="Search by name, protocol, chain, denomination, risk or address"
-				data-testid="vault-search"
-			/>
-		</div>
+
+		{#if showFilters}
+			<div class="table-filters">
+				<div class="filter-group">
+					<span class="filter-label">Min TVL</span>
+					<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
+						<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
+							{selectedTvlOption.label}
+							<IconChevronDown />
+						</button>
+						{#if tvlDropdownOpen}
+							<ul class="tvl-options">
+								{#each tvlFilterOptions as option (option.key)}
+									<li>
+										<button
+											class:active={selectedTvlKey === option.key}
+											onclick={() => {
+												selectedTvlKey = option.key;
+												tvlDropdownOpen = false;
+											}}
+										>
+											{option.optionLabel}
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
+				</div>
+
+				<div class="filter-group">
+					<span class="filter-label">Age</span>
+					<Select bind:value={selectedAgeIndex}>
+						{#each ageFilterOptions as option, i (option.label)}
+							<option value={i}>{option.label}</option>
+						{/each}
+					</Select>
+				</div>
+
+				<div class="filter-group">
+					<Tooltip>
+						<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
+						<svelte:fragment slot="popup">
+							The vault technical risk framework is still in beta and we are expecting changes.
+							<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
+								>Read this blog post for more information.</a
+							>
+						</svelte:fragment>
+					</Tooltip>
+					<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
+						<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
+							{selectedRisk.label}
+							<IconChevronDown />
+						</button>
+						{#if riskDropdownOpen}
+							<ul class="tvl-options">
+								{#each riskFilterOptions as option, i (option.label)}
+									<li>
+										<button
+											class:active={selectedRiskIndex === i}
+											onclick={() => {
+												selectedRiskIndex = i;
+												riskDropdownOpen = false;
+											}}
+										>
+											{option.optionLabel}
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
+				</div>
+
+				<div class="filter">
+					<TextInput
+						bind:value={filterValue}
+						type="search"
+						placeholder="Search by name, protocol, chain, denomination, risk or address"
+						data-testid="vault-search"
+					/>
+				</div>
+			</div>
+		{:else}
+			<div class="filter">
+				<TextInput
+					bind:value={filterValue}
+					type="search"
+					placeholder="Search by name, protocol, chain, denomination, risk or address"
+					data-testid="vault-search"
+				/>
+			</div>
+		{/if}
 	</div>
 
 	<div class="table-wrapper">
@@ -511,7 +658,7 @@
 			}
 		}
 
-		.table-meta {
+		.table-stats {
 			display: flex;
 			flex-wrap: wrap;
 			flex-grow: 1;
@@ -525,6 +672,110 @@
 				margin-right: 0.3rem;
 				opacity: 0.5;
 			}
+		}
+
+		.table-filters {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem 1.5rem;
+			align-items: center;
+			width: 100%;
+			font: var(--f-ui-sm-medium);
+
+			> .filter {
+				flex: 1 12rem;
+			}
+		}
+
+		.filter-group {
+			display: flex;
+			align-items: center;
+			gap: 0.375rem;
+		}
+
+		.filter-label {
+			color: var(--c-text-extra-light);
+			white-space: nowrap;
+		}
+
+		.filter-label-hint {
+			text-decoration: underline;
+			text-decoration-style: dashed;
+			text-underline-offset: 0.2em;
+			cursor: help;
+		}
+
+		.tvl-dropdown {
+			position: relative;
+		}
+
+		.tvl-trigger {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			padding: var(--space-sl);
+			padding-right: calc(var(--space-sl) + var(--space-lg));
+			border: 1px var(--c-input-border) solid;
+			border-radius: var(--radius-sm);
+			background: var(--c-input-background);
+			color: inherit;
+			font: inherit;
+			cursor: pointer;
+			position: relative;
+
+			&:hover,
+			&:focus-within {
+				background: var(--c-input-background-focus);
+			}
+
+			:global(.icon) {
+				position: absolute;
+				right: var(--space-sl);
+				--icon-size: 0.875em;
+				pointer-events: none;
+			}
+		}
+
+		.tvl-options {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			z-index: 10;
+			margin-top: 0.25rem;
+			padding: 0.25rem 0;
+			min-width: 100%;
+			width: max-content;
+			border: 1px var(--c-input-border) solid;
+			border-radius: var(--radius-sm);
+			background: var(--c-body);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+			list-style: none;
+
+			li button {
+				display: block;
+				width: 100%;
+				padding: 0.5rem 0.75rem;
+				border: none;
+				background: transparent;
+				color: inherit;
+				font: inherit;
+				text-align: left;
+				white-space: nowrap;
+				cursor: pointer;
+
+				&:hover {
+					background: var(--c-box-2);
+				}
+
+				&.active {
+					background: var(--c-box-3);
+					font-weight: 600;
+				}
+			}
+		}
+
+		.filter-group :global(.select) {
+			font: inherit;
 		}
 
 		.filter {

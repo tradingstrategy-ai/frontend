@@ -9,6 +9,60 @@ type FeeMode = z.infer<typeof feeMode>;
 /** Minimum TVL threshold for vault group breakdown pages */
 export const MIN_TVL_THRESHOLD = 10_000;
 
+/** TVL filter option with support for chain-specific overrides */
+export interface TvlFilterOption {
+	key: string;
+	/** Short label shown when dropdown is collapsed */
+	label: string;
+	/** Full label shown in the dropdown option list */
+	optionLabel: string;
+	/** Default TVL threshold in USD */
+	value: number;
+	/** Optional per-chain threshold overrides (chain_id → threshold) */
+	chainOverrides?: Record<number, number>;
+}
+
+const HYPERCORE_CHAIN_ID = 9999;
+
+export const tvlFilterOptions: TvlFilterOption[] = [
+	{ key: '10k', label: '$10k', optionLabel: '$10k', value: 10_000 },
+	{
+		key: '50k-hl',
+		label: '$50k*',
+		optionLabel: '$50k, and >$1M for Hyperliquid vaults',
+		value: 50_000,
+		chainOverrides: { [HYPERCORE_CHAIN_ID]: 1_000_000 }
+	},
+	{ key: '50k', label: '$50k', optionLabel: '$50k', value: 50_000 },
+	{ key: '250k', label: '$250k', optionLabel: '$250k', value: 250_000 },
+	{ key: '1m', label: '$1M', optionLabel: '$1M', value: 1_000_000 },
+	{ key: '2m', label: '$2M', optionLabel: '$2M', value: 2_000_000 },
+	{ key: '10m', label: '$10M', optionLabel: '$10M', value: 10_000_000 }
+];
+
+export const DEFAULT_TVL_KEY = '50k-hl';
+
+export const ageFilterOptions = [
+	{ label: 'Any', value: 0, maxAge: Infinity },
+	{ label: 'Younger than 3 months', value: 0, maxAge: 0.25 },
+	{ label: 'Younger than 1 year', value: 0, maxAge: 1 },
+	{ label: '3 months', value: 0.25, maxAge: Infinity },
+	{ label: '6 months', value: 0.5, maxAge: Infinity },
+	{ label: '1 year', value: 1, maxAge: Infinity },
+	{ label: '2 years', value: 2, maxAge: Infinity }
+];
+
+export const riskFilterOptions = [
+	{ label: 'Blacklisted', optionLabel: 'Blacklisted or safer', minValue: 0, maxValue: 999 },
+	{ label: 'Dangerous', optionLabel: 'Dangerous or safer', minValue: 0, maxValue: 50 },
+	{ label: 'Severe', optionLabel: 'Severe or safer', minValue: 0, maxValue: 40 },
+	{ label: 'High', optionLabel: 'High or safer', minValue: 0, maxValue: 30 },
+	{ label: 'High risk only', optionLabel: 'High risk only', minValue: 30, maxValue: 50 },
+	{ label: 'Low', optionLabel: 'Low or safer', minValue: 0, maxValue: 20 },
+	{ label: 'Minimal', optionLabel: 'Minimal or safer', minValue: 0, maxValue: 10 },
+	{ label: 'Negligible', optionLabel: 'Negligible only', minValue: 0, maxValue: 1 }
+];
+
 /**
  * Resolve path to vault details page for a given vault
  */

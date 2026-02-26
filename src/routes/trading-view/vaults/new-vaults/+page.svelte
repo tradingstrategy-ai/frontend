@@ -4,12 +4,9 @@
 	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { topVaults, maxAgeDays } = $derived(data);
 
 	const title = 'New DeFi stablecoin vaults';
-	let description = $derived(
-		`The best performing DeFi stablecoin vaults that started within the last ${maxAgeDays} days.`
-	);
+	const description = 'The best performing new DeFi stablecoin vaults.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -22,9 +19,10 @@
 />
 
 <TopVaultsPage
-	{topVaults}
+	topVaults={data.topVaults}
 	title="New DeFi stablecoin vaults"
-	subtitle="The best performing DeFi stablecoin vaults that started within the last {maxAgeDays} days"
-	tvlThreshold={10_000}
-	filterTvl
+	subtitle="The best performing new DeFi stablecoin vaults"
+	showFilters
+	defaultTvlKey="10k"
+	defaultAgeIndex={1}
 />
