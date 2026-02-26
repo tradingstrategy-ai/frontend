@@ -6,7 +6,8 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import { inview } from 'svelte-inview';
-	import { SvelteSet } from 'svelte/reactivity';
+	import { resolve } from '$app/paths';
+	import Select from '$lib/components/Select.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -14,6 +15,7 @@
 	import ChainCell from './ChainCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import VaultSparkline from './VaultSparkline.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconClock from '~icons/local/clock';
@@ -40,9 +42,6 @@
 		riskFilterOptions,
 		tvlFilterOptions
 	} from './helpers';
-	import Select from '$lib/components/Select.svelte';
-	import { vaultSparklinesUrl } from '$lib/config';
-	import { resolve } from '$app/paths';
 
 	const INITIAL_ROW_COUNT = 150;
 	const ROW_BATCH_SIZE = 50;
@@ -205,9 +204,6 @@
 	let maxVisibleRows = $derived(sortedVaults && INITIAL_ROW_COUNT);
 	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
 	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
-
-	// Keep track of sparklines that failed to load to display fallback
-	let failedSparklines = new SvelteSet<string>();
 
 	function stringCompare(sortBy: (v: VaultInfo) => string) {
 		return (a: VaultInfo, b: VaultInfo) => {
@@ -599,16 +595,7 @@
 							<RiskCell risk={vault.risk} />
 						</td>
 						<td class="sparkline">
-							{#if !vaultSparklinesUrl || failedSparklines.has(vault.id)}
-								chart data unavailable
-							{:else}
-								<img
-									loading="lazy"
-									src="{vaultSparklinesUrl}/sparkline-90d-{vault.id}.svg"
-									alt="{vault.name} 90 day price"
-									onerror={() => failedSparklines.add(vault.id)}
-								/>
-							{/if}
+							<VaultSparkline {vault} />
 							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
 						</td>
 					</tr>
@@ -1026,11 +1013,6 @@
 				&:is(td) {
 					text-align: center;
 					vertical-align: middle;
-					color: var(--c-text-ultra-light);
-				}
-
-				img {
-					width: 100%;
 				}
 			}
 

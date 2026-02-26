@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { vaultSparklinesUrl } from '$lib/config';
 	import type { Chain } from '$lib/helpers/chain';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
@@ -27,7 +27,7 @@
 	let description = $derived(vault.short_description ?? generatedDescription);
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let imageUrl = $derived(`${vaultSparklinesUrl}/sparkline-90d-${vault.id}.png`);
+	let imageUrl = $derived(getVaultSparklineUrl(vault, 'png'));
 </script>
 
 <MetaTags

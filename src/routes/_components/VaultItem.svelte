@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { vaultSparklinesUrl } from '$lib/config';
 	import { formatPercentProfit } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChain } from '$lib/helpers/chain';
 	import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import VaultSparkline from '$lib/top-vaults/VaultSparkline.svelte';
 
 	interface Props {
 		vault: VaultInfo;
@@ -15,8 +15,6 @@
 	// vault is static (keyed each block)
 	// svelte-ignore state_referenced_locally
 	let chain = getChain(vault.chain_id)!;
-
-	let sparklineLoadError = $state(false);
 </script>
 
 <li class="vault-item">
@@ -38,15 +36,7 @@
 		</div>
 
 		<div class="sparkline">
-			{#if !vaultSparklinesUrl || sparklineLoadError}
-				chart unavailable
-			{:else}
-				<img
-					src="{vaultSparklinesUrl}/sparkline-90d-{vault.id}.svg"
-					alt="{vault.name} 90 day price"
-					onerror={() => (sparklineLoadError = true)}
-				/>
-			{/if}
+			<VaultSparkline {vault} />
 		</div>
 	</a>
 </li>
@@ -108,17 +98,10 @@
 
 	.sparkline {
 		margin-left: 0.5rem;
-		font: var(--f-ui-sm-roman);
-		letter-spacing: var(--ls-ui-sm, normal);
-		color: var(--c-text-ultra-light);
-		text-align: center;
+		--sparkline-width: 96px;
 
-		img {
-			scale: 1 1.25;
-
-			@media (--viewport-sm-down) {
-				scale: 1;
-			}
+		@media (--viewport-md-up) {
+			--sparkline-vertical-scale: 1.25;
 		}
 	}
 </style>

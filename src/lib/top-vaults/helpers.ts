@@ -1,5 +1,6 @@
 import type { FeeMode, VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
+import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
 
 const HYPERCORE_CHAIN_ID = 9999;
@@ -232,4 +233,13 @@ export function rankVaultsBy(keys: (keyof VaultInfo)[], defaultValue = -Infinity
 		}
 		return 0;
 	};
+}
+
+/**
+ * Get URL for vault price chart sparkline
+ */
+export function getVaultSparklineUrl(vault: VaultInfo, type: 'svg' | 'png' = 'svg') {
+	if (vaultSparklinesUrl) {
+		return `${vaultSparklinesUrl}/sparkline-90d-${vault.id}.${type}`;
+	}
 }
