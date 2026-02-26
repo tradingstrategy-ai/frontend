@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
+	import { isBlacklisted, meetsDefaultTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
 	import Section from '$lib/components/Section.svelte';
 	import VaultItem from './VaultItem.svelte';
 
@@ -10,24 +10,13 @@
 
 	let { topVaults }: Props = $props();
 
-	const HYPERCORE_CHAIN_ID = 9999;
-	const TVL_THRESHOLD_DEFAULT = 50_000;
-	const TVL_THRESHOLD_HYPERCORE = 1_000_000;
-
-	let vaults = $derived.by(() => {
-		return topVaults.vaults
-			.filter((vault) => {
-				const threshold = vault.chain_id === HYPERCORE_CHAIN_ID ? TVL_THRESHOLD_HYPERCORE : TVL_THRESHOLD_DEFAULT;
-				return (vault.current_nav ?? 0) >= threshold;
-			})
-			.filter((vault) => !isBlacklisted(vault))
-			.sort((a, b) => {
-				const cagrA = a.one_month_cagr_net ?? a.one_month_cagr ?? 0;
-				const cagrB = b.one_month_cagr_net ?? b.one_month_cagr ?? 0;
-				return cagrB - cagrA;
-			})
-			.slice(0, 5);
-	});
+	let vaults = $derived(
+		topVaults.vaults
+			.filter((vault) => !isBlacklisted(vault) && meetsDefaultTvl(vault))
+			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
+			.reverse()
+			.slice(0, 5)
+	);
 </script>
 
 <Section padding="md" --section-background="var(--c-background-accent-1)">

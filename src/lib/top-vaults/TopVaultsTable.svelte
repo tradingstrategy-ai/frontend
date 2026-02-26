@@ -27,13 +27,15 @@
 		notFilledMarker
 	} from '$lib/helpers/formatters';
 	import {
+		DEFAULT_TVL_KEY,
+		DEFAULT_TVL_THRESHOLD,
 		ageFilterOptions,
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
-		DEFAULT_TVL_KEY,
 		getFormattedLockup,
 		isBlacklisted,
 		isGoodVaultStatus,
+		rankVaultsBy,
 		resolveVaultDetails,
 		riskFilterOptions,
 		tvlFilterOptions
@@ -42,7 +44,6 @@
 	import { vaultSparklinesUrl } from '$lib/config';
 	import { resolve } from '$app/paths';
 
-	const TVL_THRESHOLD_DEFAULT = 50_000;
 	const INITIAL_ROW_COUNT = 150;
 	const ROW_BATCH_SIZE = 50;
 
@@ -71,7 +72,7 @@
 	let {
 		topVaults,
 		chain,
-		tvlThreshold = TVL_THRESHOLD_DEFAULT,
+		tvlThreshold = DEFAULT_TVL_THRESHOLD,
 		tvlTriggerLabel,
 		tvlTooltip,
 		filterTvl,
@@ -187,7 +188,7 @@
 	let sortOptions = $state<SortOptions>({
 		key: 'one_month_return_ann',
 		direction: 'desc',
-		compareFn: multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
+		compareFn: rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
 	});
 
 	// sort vaults
@@ -207,18 +208,6 @@
 
 	// Keep track of sparklines that failed to load to display fallback
 	let failedSparklines = new SvelteSet<string>();
-
-	function multiValCompare(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
-		return (a: VaultInfo, b: VaultInfo) => {
-			for (const key of keys) {
-				const aVal = a[key] as number | null;
-				const bVal = b[key] as number | null;
-				if (aVal === bVal) continue;
-				return (aVal ?? defaultValue) - (bVal ?? defaultValue);
-			}
-			return 0;
-		};
-	}
 
 	function stringCompare(sortBy: (v: VaultInfo) => string) {
 		return (a: VaultInfo, b: VaultInfo) => {
@@ -482,32 +471,32 @@
 						'1M<br/>return ann.',
 						'one_month_return_ann',
 						'desc',
-						multiValCompare(['one_month_cagr', 'one_month_cagr_net'])
+						rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
 					)}
 					{@render sortColHeader(
 						'3M<br/>return ann.',
 						'three_months_return_ann',
 						'desc',
-						multiValCompare(['three_months_cagr', 'three_months_cagr_net'])
+						rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
 					)}
 					{@render sortColHeader(
 						'Lifetime return ann.',
 						'lifetime_return_ann',
 						'desc',
-						multiValCompare(['cagr', 'cagr_net'])
+						rankVaultsBy(['cagr', 'cagr_net'])
 					)}
 					{@render sortColHeader(
 						'Lifetime return abs.',
 						'lifetime_return_abs',
 						'desc',
-						multiValCompare(['lifetime_return', 'lifetime_return_net'])
+						rankVaultsBy(['lifetime_return', 'lifetime_return_net'])
 					)}
-					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', multiValCompare(['three_months_sharpe']))}
+					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', rankVaultsBy(['three_months_sharpe']))}
 					{@render sortColHeader(
 						'3M Vola&shy;tility',
 						'three_months_volatility',
 						'asc',
-						multiValCompare(['three_months_volatility'])
+						rankVaultsBy(['three_months_volatility'])
 					)}
 					{@render sortColHeader(
 						'Denom&shy;ination',
@@ -519,17 +508,17 @@
 						'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
 						'tvl',
 						'desc',
-						multiValCompare(['current_nav', 'peak_nav'])
+						rankVaultsBy(['current_nav', 'peak_nav'])
 					)}
-					{@render sortColHeader('Age (y)', 'age', 'desc', multiValCompare(['years']))}
+					{@render sortColHeader('Age (y)', 'age', 'desc', rankVaultsBy(['years']))}
 					{@render sortColHeader(
 						'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
 						'fees',
 						'asc',
-						multiValCompare(['mgmt_fee', 'perf_fee'], Infinity)
+						rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity)
 					)}
-					{@render sortColHeader('Lockup', 'lockup', 'asc', multiValCompare(['lockup'], Infinity))}
-					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', multiValCompare(['risk_numeric'], Infinity))}
+					{@render sortColHeader('Lockup', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
+					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', rankVaultsBy(['risk_numeric'], Infinity))}
 					<th class="sparkline">3M price</th>
 				</tr>
 			</thead>

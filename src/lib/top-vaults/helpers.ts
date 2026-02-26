@@ -1,13 +1,18 @@
-import type { VaultInfo } from './schemas';
-import { feeMode } from './schemas';
+import type { FeeMode, VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
-import type { z } from 'zod';
 
-type FeeMode = z.infer<typeof feeMode>;
+const HYPERCORE_CHAIN_ID = 9999;
 
 /** Minimum TVL threshold for vault group breakdown pages */
 export const MIN_TVL_THRESHOLD = 10_000;
+
+/** Default TVL threshold - global and per-chain */
+export const DEFAULT_TVL_THRESHOLD = 50_000;
+// prettier-ignore
+const CHAIN_TVL_THRESHOLD_OVERRIDES = new Map([
+  [HYPERCORE_CHAIN_ID, 1_000_000]
+]);
 
 /** TVL filter option with support for chain-specific overrides */
 export interface TvlFilterOption {
@@ -21,8 +26,6 @@ export interface TvlFilterOption {
 	/** Optional per-chain threshold overrides (chain_id → threshold) */
 	chainOverrides?: Record<number, number>;
 }
-
-const HYPERCORE_CHAIN_ID = 9999;
 
 export const tvlFilterOptions: TvlFilterOption[] = [
 	{ key: '10k', label: '$10k', optionLabel: '$10k', value: 10_000 },
@@ -92,6 +95,14 @@ export function isGoodVaultStatus(vault: VaultInfo): boolean {
  * Check if vault meets minimum TVL threshold
  */
 export function meetsMinTvl(vault: VaultInfo, threshold = MIN_TVL_THRESHOLD) {
+	return (vault.current_nav ?? 0) >= threshold;
+}
+
+/**
+ * Check if vault meets default TVL thresholds (with custom chain overrides)
+ */
+export function meetsDefaultTvl(vault: VaultInfo) {
+	const threshold = CHAIN_TVL_THRESHOLD_OVERRIDES.get(vault.chain_id) ?? DEFAULT_TVL_THRESHOLD;
 	return (vault.current_nav ?? 0) >= threshold;
 }
 
@@ -203,4 +214,22 @@ export function calculateTvlWeightedApy(vaults: VaultInfo[]): number | null {
  */
 export function calculateTotalTvl(vaults: VaultInfo[]): number {
 	return vaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0);
+}
+
+/**
+ * Compare two vaults by one or more numeric columns. Used with vaults.sort or .toSorted.
+ *
+ * @param keys - array of numeric VaultInfo properties
+ * @maram defaultValue - fallback for null/undefined values (-Infinity to sort lowest, Infinity to sort highest)
+ */
+export function rankVaultsBy(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
+	return (a: VaultInfo, b: VaultInfo) => {
+		for (const key of keys) {
+			const aVal = a[key] as number | null;
+			const bVal = b[key] as number | null;
+			if (aVal === bVal) continue;
+			return (aVal ?? defaultValue) - (bVal ?? defaultValue);
+		}
+		return 0;
+	};
 }

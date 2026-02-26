@@ -5,6 +5,7 @@ import { isoDateTime } from '$lib/schemas/utility';
 const nullableNumber = z.number().nullable();
 
 export const feeMode = z.enum(['externalised', 'feeless', 'internalised_minting', 'internalised_skimming']);
+export type FeeMode = z.infer<typeof feeMode>;
 
 export const vaultFeesSchema = z.object({
 	fee_mode: feeMode.nullable(),
