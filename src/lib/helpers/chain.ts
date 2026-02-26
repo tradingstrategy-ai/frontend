@@ -155,7 +155,7 @@ export const chains = (() => {
 		{
 			id: 325,
 			slug: 'grvt',
-			name: 'GRVT',
+			name: 'Grvt',
 			homepage: 'https://grvt.io',
 			explorer: 'https://grvt.io',
 			nativeCurrency: 'ETH',
