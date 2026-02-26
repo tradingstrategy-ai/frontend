@@ -87,3 +87,7 @@ pnpm run format:check
 ### `dependencies` vs `devDependencies`
 
 [`adapter-node` will bundle `devDependencies`](https://github.com/sveltejs/kit/tree/master/packages/adapter-node#deploying) whereas `dependencies` must be installed when deploying to production.
+
+## Release
+
+Do not do automatic releases. Always ask user confirmation for a release.

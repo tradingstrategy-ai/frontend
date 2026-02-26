@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { formatDollar } from '$lib/helpers/formatters.js';
 	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { topVaults, tvlThreshold } = $derived(data);
-
-	let minTvlString = $derived(formatDollar(tvlThreshold, 0));
 
 	const title = 'High TVL DeFi stablecoin vaults';
-	let description = $derived(`The best performing DeFi stablecoin vaults with more than ${minTvlString} TVL.`);
+	const description = 'The best performing DeFi stablecoin vaults with more than $2M TVL.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -23,8 +19,9 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	{tvlThreshold}
+	topVaults={data.topVaults}
 	title="High TVL stablecoin vaults"
-	subtitle="The best performing DeFi stablecoin vaults with more than {minTvlString} TVL"
+	subtitle="The best performing DeFi stablecoin vaults with more than $2M TVL"
+	showFilters
+	defaultTvlKey="2m"
 />

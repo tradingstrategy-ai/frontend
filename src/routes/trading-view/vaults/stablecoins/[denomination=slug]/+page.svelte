@@ -22,7 +22,7 @@
 <TopVaultsPage
 	{topVaults}
 	title="Top {denominationName} vaults"
-	subtitle="The best performing {denominationName} DeFi vaults with minimum $10k USD TVL"
-	tvlThreshold={10000}
-	filterTvl={true}
+	subtitle="The best performing {denominationName} DeFi vaults"
+	showFilters
+	defaultTvlKey="10k"
 />

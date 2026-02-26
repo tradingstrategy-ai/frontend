@@ -23,7 +23,7 @@
 	{chain}
 	{topVaults}
 	title="Top {chainName} vaults"
-	subtitle="The best performing stablecoin vaults on {chainName} with minimum $10k USD TVL"
-	tvlThreshold={10000}
-	filterTvl={true}
+	subtitle="The best performing stablecoin vaults on {chainName}"
+	showFilters
+	defaultTvlKey="10k"
 />
