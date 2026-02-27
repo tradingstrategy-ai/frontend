@@ -28,10 +28,6 @@ const config = {
 
 		env: {
 			publicPrefix: 'TS_PUBLIC_'
-		},
-
-		experimental: {
-			remoteFunctions: true
 		}
 	},
 

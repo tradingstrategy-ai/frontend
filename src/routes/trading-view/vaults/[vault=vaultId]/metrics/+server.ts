@@ -1,10 +1,6 @@
 import type { UTCTimestamp } from 'lightweight-charts';
-import { query } from '$app/server';
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { DuckDBConnection } from '@duckdb/node-api';
-import { z } from 'zod';
-import { utcDay } from 'd3-time';
-import { dateToTs, resampleTimeSeries } from '$lib/charts/helpers';
 
 // TODO: move to env var / config
 const parquetFile = 'data/cleaned-vault-prices-1h.parquet';
@@ -33,16 +29,16 @@ async function getPriceAndTvlData(vaultId: string) {
 	}
 }
 
-export const getTimeSeries = query(z.string(), async (vaultId) => {
-	const rows = await getPriceAndTvlData(vaultId);
+export async function GET({ params }) {
+	const rows = await getPriceAndTvlData(params.vault);
 
-	const priceData: [UTCTimestamp, number][] = [];
-	const tvlData: [UTCTimestamp, number][] = [];
+	const price: [UTCTimestamp, number][] = [];
+	const tvl: [UTCTimestamp, number][] = [];
 
-	for (const [ts, price, tvl] of rows) {
-		priceData.push([ts, price]);
-		tvlData.push([ts, tvl]);
+	for (const [ts, p, t] of rows) {
+		price.push([ts, p]);
+		tvl.push([ts, t]);
 	}
 
-	return { price: priceData, tvl: tvlData };
-});
+	return json({ price, tvl });
+}
