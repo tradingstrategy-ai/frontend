@@ -23,7 +23,7 @@
 		<img class="chain-logo" src={getLogoUrl('blockchain', getChain(vault.chain_id)?.slug)} alt={chain.name} />
 
 		<div class="name">
-			<div class="vault-name">
+			<div class="vault-name truncate lines-2">
 				{vault.name}
 			</div>
 			<div class="protocol-name">
@@ -56,6 +56,11 @@
 		padding: 1rem;
 		background: var(--c-box-1);
 
+		@media (--viewport-sm-down) {
+			padding: 0.5rem 0.75rem;
+			gap: 0.75rem;
+		}
+
 		&:hover {
 			border: 1px solid var(--c-box-4);
 			background: var(--c-box-2);
@@ -65,6 +70,10 @@
 	.chain-logo {
 		width: 1.5rem;
 		aspect-ratio: 1rem;
+
+		@media (--viewport-sm-down) {
+			width: 1.25rem;
+		}
 	}
 
 	.name {
@@ -84,6 +93,10 @@
 		.protocol-name {
 			font: var(--f-ui-sm-medium);
 			color: var(--c-text-extra-light);
+
+			@media (--viewport-xs) {
+				display: none;
+			}
 		}
 	}
 
@@ -94,14 +107,27 @@
 		@media (--viewport-sm-down) {
 			font: var(--f-heading-sm-medium);
 		}
+
+		@media (--viewport-xs) {
+			font: var(--f-heading-xs-medium);
+		}
 	}
 
 	.sparkline {
 		margin-left: 0.5rem;
 		--sparkline-width: 96px;
+		--sparkline-vertical-scale: 1.25;
 
-		@media (--viewport-md-up) {
+		@media (--viewport-sm-down) {
+			margin-left: 0.25rem;
 			--sparkline-vertical-scale: 1.25;
+			--sparkline-width: 72px;
+		}
+
+		@media (--viewport-xs) {
+			margin-left: 0;
+			--sparkline-vertical-scale: 1.5;
+			--sparkline-width: 50px;
 		}
 	}
 </style>

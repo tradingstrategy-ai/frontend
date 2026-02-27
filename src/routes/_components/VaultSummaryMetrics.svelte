@@ -63,17 +63,21 @@
 		max-width: 50rem;
 		margin-inline: auto;
 		margin-block: 1.5rem;
-		display: grid;
-		grid-template-columns: repeat(3, auto);
+		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-evenly;
 		gap: 2rem;
 		text-align: center;
 
 		div {
 			display: flex;
-
 			flex-direction: column-reverse;
+			align-items: center;
 			gap: 0.5rem;
+
+			@media (--viewport-sm-down) {
+				gap: 0.25rem;
+			}
 		}
 
 		dt {
@@ -90,6 +94,12 @@
 			letter-spacing: var(--ls-heading-xxxl, normal);
 			color: var(--c-text-light);
 			line-height: 1;
+
+			@media (--viewport-sm-down) {
+				font: var(--f-heading-xxl-bold);
+				letter-spacing: var(--ls-heading-xxl, normal);
+				line-height: 1;
+			}
 
 			small {
 				font-size: 0.65em;

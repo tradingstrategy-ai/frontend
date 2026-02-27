@@ -27,8 +27,8 @@
 	<h2>Top DeFi Vaults</h2>
 
 	<div class="description ds-3">
-		The best-performing stablecoin vaults with $50K+ TVL across 21 blockchains.<br />
-		Ranked by annualised 30 day returns.
+		<span>The best-performing stablecoin vaults with $50K+ TVL across 21 blockchains.</span>
+		<span>Ranked by annualised 30 day returns.</span>
 	</div>
 
 	<VaultSummaryMetrics {baseVaults} {rankedVaults} />
@@ -55,6 +55,12 @@
 		letter-spacing: var(--ls-ui-lg);
 		line-height: 1.5;
 		color: var(--c-text-extra-light);
+
+		span {
+			@media (--viewport-md-up) {
+				display: block;
+			}
+		}
 	}
 
 	.vaults {
@@ -66,5 +72,10 @@
 		max-width: 50rem;
 		display: grid;
 		gap: 1.25rem;
+
+		@media (--viewport-sm-down) {
+			margin-top: 1rem;
+			gap: 1rem;
+		}
 	}
 </style>
