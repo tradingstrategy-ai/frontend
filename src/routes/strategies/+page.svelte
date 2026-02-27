@@ -81,7 +81,7 @@
 
 <main class="strategies-index-page ds-3">
 	<Section>
-		<PageHeading title="Strategies" description="Currently available automated trading strategies for you" />
+		<PageHeading title="Trading Strategy vaults" description="Currently available automated trading vaults for you" />
 
 		<div class="filters" class:admin>
 			<ChainFilter options={chainOptions} selected={selectedChain} onchange={handleFilterChange} />

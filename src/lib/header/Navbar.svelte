@@ -11,8 +11,8 @@
 	<div class="nav-bar" style:overflow="visible">
 		<Header>
 			<svelte:fragment slot="menu">
-				<MenuItem label="Strategies" targetUrl="/strategies" active={currentPage === '/strategies'} />
-				<MenuItem label="Vaults" targetUrl="/trading-view/vaults" active={currentPage === '/trading-view/vaults'} />
+				<MenuItem label="Our vaults" targetUrl="/strategies" active={currentPage === '/strategies'} />
+				<MenuItem label="Top vaults" targetUrl="/trading-view/vaults" active={currentPage === '/trading-view/vaults'} />
 				<MenuItem label="Data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
 				<MenuItem label="Develop" external targetUrl="https://tradingstrategy.ai/docs/index.html" />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />

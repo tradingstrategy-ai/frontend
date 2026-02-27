@@ -42,7 +42,7 @@
 		},
 		{
 			slug: 'vault',
-			label: 'Vault'
+			label: 'Vault info'
 		},
 		{
 			slug: 'fees',

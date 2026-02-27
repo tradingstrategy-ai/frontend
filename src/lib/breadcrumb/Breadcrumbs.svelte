@@ -31,7 +31,7 @@ https://search.google.com/structured-data/testing-tool
 		community: 'Community',
 		exchanges: 'Decentralised exchanges',
 		glossary: 'Trading and DeFi terminology',
-		strategies: 'Trading strategies',
+		strategies: 'Our vaults',
 		tokens: 'Tokens',
 		'trading-view': 'Trading data'
 	};
