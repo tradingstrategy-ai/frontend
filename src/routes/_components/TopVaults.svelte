@@ -1,8 +1,11 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, meetsDefaultTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
+	import { isBlacklisted, meetsDefaultTvl, meetsMinTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
 	import Section from '$lib/components/Section.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import VaultItem from './VaultItem.svelte';
+	import { resolve } from '$app/paths';
+	import VaultSummaryMetrics from './VaultSummaryMetrics.svelte';
 
 	interface Props {
 		topVaults: TopVaults;
@@ -10,28 +13,48 @@
 
 	let { topVaults }: Props = $props();
 
-	let vaults = $derived(
-		topVaults.vaults
-			.filter((vault) => !isBlacklisted(vault) && meetsDefaultTvl(vault))
+	let baseVaults = $derived(topVaults.vaults.filter((vault) => !isBlacklisted(vault) && meetsMinTvl(vault)));
+
+	let rankedVaults = $derived(
+		baseVaults
+			.filter(meetsDefaultTvl)
 			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
 			.reverse()
-			.slice(0, 5)
 	);
 </script>
 
 <Section padding="md" --section-background="var(--c-background-accent-1)">
 	<h2>Top DeFi Vaults</h2>
 
+	<div class="description ds-3">
+		The best-performing stablecoin vaults with $50K+ TVL across 21 blockchains.<br />
+		Ranked by annualised 30 day returns.
+	</div>
+
+	<VaultSummaryMetrics {baseVaults} {rankedVaults} />
+
 	<ul class="vaults ds-3">
-		{#each vaults as vault (vault.id)}
+		{#each rankedVaults.slice(0, 5) as vault (vault.id)}
 			<VaultItem {vault} />
 		{/each}
 	</ul>
+
+	<div class="cta">
+		<Button secondary label="See all DeFi vaults" href={resolve('/trading-view/vaults')} />
+	</div>
 </Section>
 
 <style>
-	h2 {
+	:is(h2, div) {
 		text-align: center;
+	}
+
+	.description {
+		margin-block: 0.5rem 1rem;
+		font: var(--f-ui-lg-medium);
+		letter-spacing: var(--ls-ui-lg);
+		line-height: 1.5;
+		color: var(--c-text-extra-light);
 	}
 
 	.vaults {
