@@ -16,6 +16,7 @@
 				<MenuItem label="Data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
 				<MenuItem label="Develop" external targetUrl="https://tradingstrategy.ai/docs/index.html" />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
+				<MenuItem label="Blog" targetUrl="/blog" active={currentPage === '/blog'} />
 			</svelte:fragment>
 
 			<svelte:fragment slot="search">

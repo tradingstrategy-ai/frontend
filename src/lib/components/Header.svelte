@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { Logo, Menu, NavPanel, TextInput } from '$lib/components';
+	import Logo from '$lib/components/Logo.svelte';
+	import Menu from '$lib/components/Menu.svelte';
+	import NavPanel from '$lib/components/NavPanel.svelte';
+	// NOTE: un-comment below line to bring back search box
+	// import TextInput from '$lib/components/TextInput.svelte';
 	import IconMenu from '~icons/local/menu';
 	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
@@ -19,11 +23,14 @@
 		</Menu>
 	</nav>
 
+	<!-- NOTE: un-comment below section to bring back search box -->
+	<!--
 	<div class="search">
 		<slot name="search">
 			<TextInput type="search" --text-input-width="100%" />
 		</slot>
 	</div>
+	-->
 
 	<div class="desktop-only">
 		<ColorModePicker />
@@ -60,7 +67,7 @@
 			[logo-start] 10.5rem
 			[logo-end-sm search-start-sm] 0.75rem
 			[logo-end-lg menu-start] 1fr
-			[menu-end search-start-lg] minmax(auto, 12rem)
+			[menu-end search-start-lg] auto /* NOTE: replace `auto` with the `minmax(auto, 12rem)` to bring back search box */
 			[search-end];
 		grid-auto-flow: column;
 		align-items: center;
@@ -86,15 +93,20 @@
 		grid-column: menu-start / menu-end;
 	}
 
+	/* NOTE: un-comment below section to bring back search box */
+	/*
 	.search {
+		display: none;
 		grid-column: search-start-lg / search-end;
 		width: 100%;
 		max-width: 14.75rem;
 		justify-self: end;
 	}
+	*/
 
 	.show-nav-panel {
 		display: flex;
+		grid-column: menu-end / search-end;
 		background: transparent;
 		border: none;
 		font-size: 24px;
@@ -116,9 +128,12 @@
 			--logo-height: 32px;
 		}
 
+		/* NOTE: un-comment below section to bring back search box */
+		/*
 		.search {
 			grid-column-start: search-start-sm;
 		}
+		*/
 	}
 
 	@media (--nav-expanded) {
