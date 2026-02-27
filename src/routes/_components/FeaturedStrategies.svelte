@@ -31,7 +31,7 @@
 </script>
 
 <Section padding="md">
-	<h2>Open strategies</h2>
+	<h2>Trading Strategy vaults</h2>
 	{#if options.length > 2}
 		<div class="filters">
 			<ChainFilter {options} bind:selected />

@@ -6,7 +6,6 @@ import { Readable } from 'stream';
 
 const pages = [
 	'',
-	'about',
 	'api/explorer/',
 	'blog',
 	'community',
