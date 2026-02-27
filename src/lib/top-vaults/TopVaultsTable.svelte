@@ -82,9 +82,11 @@
 	}: Props = $props();
 
 	// Interactive filter state (used when showFilters is true)
+	// svelte-ignore state_referenced_locally
 	let selectedTvlKey = $state(defaultTvlKey); // intentionally captures initial prop value only
 	let selectedTvlOption = $derived(tvlFilterOptions.find((o) => o.key === selectedTvlKey)!);
 	let tvlDropdownOpen = $state(false);
+	// svelte-ignore state_referenced_locally
 	let selectedAgeIndex = $state(defaultAgeIndex); // intentionally captures initial prop value only
 	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
 	let selectedRiskIndex = $state(1);

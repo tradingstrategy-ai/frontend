@@ -43,9 +43,9 @@ unknown props through to HTML input element.
 		<IconSearch />
 
 		{#if value}
-			<span class="cancel-btn" on:pointerdown|preventDefault={() => (value = '')}>
+			<button class="cancel-btn" on:pointerdown|preventDefault={() => (value = '')}>
 				<IconCancel />
-			</span>
+			</button>
 		{/if}
 	{/if}
 </span>
@@ -169,6 +169,7 @@ unknown props through to HTML input element.
 		}
 
 		.cancel-btn {
+			all: unset;
 			opacity: 0;
 			transition: opacity var(--time-sm) ease-out;
 		}
