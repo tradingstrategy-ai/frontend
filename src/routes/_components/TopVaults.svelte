@@ -21,13 +21,15 @@
 			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
 			.reverse()
 	);
+
+	let chainCount = $derived(new Set(baseVaults.map((v) => v.chain_id)).size);
 </script>
 
 <Section padding="md" --section-background="var(--c-background-accent-1)">
 	<h2>Top DeFi Vaults</h2>
 
 	<div class="description ds-3">
-		<span>The best-performing stablecoin vaults with $50K+ TVL across 21 blockchains.</span>
+		<span>The best-performing stablecoin vaults with $50K+ TVL across {chainCount} blockchains.</span>
 		<span>Ranked by annualised 30 day returns.</span>
 	</div>
 
