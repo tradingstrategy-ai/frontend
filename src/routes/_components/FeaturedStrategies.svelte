@@ -12,7 +12,7 @@
 		getChainOptions,
 		matchesChainOption
 	} from 'trade-executor/components/ChainFilter.svelte';
-	import StrategyTile from './strategies/StrategyTile.svelte';
+	import StrategyTile from 'trade-executor/components/StrategyTile.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 
 	interface Props {

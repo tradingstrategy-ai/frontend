@@ -9,8 +9,8 @@
 	import PageHeading from '$lib/components/PageHeading.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
-	import StrategyTile from './StrategyTile.svelte';
-	import StrategyTvlChart from './StrategyTvlChart.svelte';
+	import StrategyTile from 'trade-executor/components/StrategyTile.svelte';
+	import StrategyTvlChart from 'trade-executor/components/StrategyTvlChart.svelte';
 	import ChainFilter, {
 		getChainOptions,
 		parseChainOption,

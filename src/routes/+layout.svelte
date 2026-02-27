@@ -8,10 +8,10 @@
 	import { beforeNavigate } from '$app/navigation';
 	import AppHead from '$lib/header/AppHead.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
-	import AnnouncementBanner from './AnnouncementBanner.svelte';
+	import AnnouncementBanner from './_components/AnnouncementBanner.svelte';
 	import Navbar from '$lib/header/Navbar.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
-	import MaintenanceNotice from './MaintenanceNotice.svelte';
+	import MaintenanceNotice from './_components/MaintenanceNotice.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { setViewportHeight } from '$lib/actions/viewport';
 	import '$lib/components/css/index.css';
