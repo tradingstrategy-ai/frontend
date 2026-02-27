@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Header, MenuItem, Section } from '$lib/components';
 	import Search from '$lib/search/components/Search.svelte';
 
-	$: currentPage = $page.url.pathname;
-	$: showSearch = $page.url.pathname !== '/search';
+	let currentPage = $derived(page.url.pathname);
+	let showSearch = $derived(page.url.pathname !== '/search');
 </script>
 
 <Section tag="header">
@@ -16,7 +16,6 @@
 				<MenuItem label="Data" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
 				<MenuItem label="Develop" external targetUrl="https://tradingstrategy.ai/docs/index.html" />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
-				<MenuItem label="About" targetUrl="/about" active={currentPage === '/about'} />
 			</svelte:fragment>
 
 			<svelte:fragment slot="search">
