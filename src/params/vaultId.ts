@@ -1,4 +1,10 @@
-/** Match vault ID format: `${chainId}-0x${address}` (e.g., `1-0x00000000efe883b3304aff71eacf72dbc3e1b577`) */
+/**
+ * Match chain-specific vault ID formats:
+ * - EVM chains (Ethereum, Polygon, Arbitrum, Base, etc.): `${chainId}-0x${address}`
+ * - HyperCore (chain 325): `${chainId}-vlt:${id}`
+ *
+ * To add a new format, append a new alternative to the regex group.
+ */
 export function match(param: string) {
-	return /^\d+-0x[0-9a-f]+$/i.test(param);
+	return /^\d+-(0x[0-9a-f]+|vlt:[0-9a-z]+)$/i.test(param);
 }
