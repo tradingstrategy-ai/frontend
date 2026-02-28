@@ -6,7 +6,6 @@
 	import Series from '$lib/charts/Series.svelte';
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
-	import { getTimeSeries } from './metrics.remote';
 	import { formatTokenAmount } from '$lib/helpers/formatters';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
 
@@ -16,7 +15,27 @@
 
 	let { vault }: Props = $props();
 
-	let vaultData = $derived(getTimeSeries(vault.id));
+	let loading = $state(true);
+	let priceData = $state<[number, number][]>();
+	let tvlData = $state<[number, number][]>();
+
+	async function fetchMetrics(vaultId: string) {
+		loading = true;
+		priceData = undefined;
+		tvlData = undefined;
+		try {
+			const resp = await fetch(`/trading-view/vaults/${vaultId}/metrics`);
+			const data = await resp.json();
+			priceData = data.price;
+			tvlData = data.tvl;
+		} finally {
+			loading = false;
+		}
+	}
+
+	$effect(() => {
+		fetchMetrics(vault.id);
+	});
 
 	const formatValue = (v: number) => formatTokenAmount(v, 2);
 </script>
@@ -25,8 +44,8 @@
 	<ChartContainer
 		title="Share token price"
 		timeSpanOptions={['1M', '3M', 'Max']}
-		loading={vaultData.loading}
-		data={vaultData.current?.price}
+		{loading}
+		data={priceData}
 		{formatValue}
 		options={{ handleScroll: false, handleScale: false }}
 	>
@@ -39,7 +58,7 @@
 
 			<Series
 				type={HistogramSeries}
-				data={resampleTimeSeries(vaultData.current?.tvl ?? [], timeSpan.interval)}
+				data={resampleTimeSeries(tvlData ?? [], timeSpan.interval)}
 				options={{ priceLineVisible: false, color: 'transparent' }}
 				paneIndex={1}
 				priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
