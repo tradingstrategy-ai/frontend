@@ -10,7 +10,7 @@
 		formatNumber,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
-	import { resolve } from '$app/paths';
+	import { base } from '$app/paths';
 
 	interface Props {
 		vault: VaultInfo;
@@ -65,17 +65,17 @@
 	// Row definitions in display order
 	let rows: RowDefinition[] = $derived([
 		{
-			label: `<a href="${resolve('/trading-view/vaults')}">Ranking overall</a>`,
+			label: `<a href="${base}/trading-view/vaults">Ranking overall</a>`,
 			field: 'ranking_overall',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
 		},
 		{
-			label: `<a href="${resolve(`/trading-view/vaults/chains/${chain.slug}`)}">Ranking on ${chain.name}</a>`,
+			label: `<a href="${base}/trading-view/vaults/chains/${chain.slug}">Ranking on ${chain.name}</a>`,
 			field: 'ranking_chain',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
 		},
 		{
-			label: `<a href="${resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}">Ranking on ${vault.protocol}</a>`,
+			label: `<a href="${base}/trading-view/vaults/protocols/${vault.protocol_slug}">Ranking on ${vault.protocol}</a>`,
 			field: 'ranking_protocol',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
 			excluded: vault.protocol?.includes('<')
