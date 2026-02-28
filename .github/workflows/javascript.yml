@@ -128,6 +128,12 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract sourcemaps from Docker image
+        run: |
+          docker pull ${{ steps.meta.outputs.tags }}
+          docker create --name extract ${{ steps.meta.outputs.tags }}
+          docker cp extract:/app/build ./build
+          docker rm extract
       - name: Upload sourcemaps
         id: upload-sourcemaps
         continue-on-error: true
@@ -138,9 +144,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_RELEASE: ${{ vars.SENTRY_PROJECT }}@${{ steps.meta.outputs.version }}
         run: |
-          docker run --rm -e SENTRY_ORG -e SENTRY_PROJECT -e SENTRY_URL -e SENTRY_AUTH_TOKEN \
-            ${{ steps.meta.outputs.tags }} \
-            npx sentry-cli sourcemaps upload -r $SENTRY_RELEASE build/client build/server/chunks
+          npx @sentry/cli sourcemaps upload -r $SENTRY_RELEASE build/client build/server/chunks
       # GH action should still succeed even if sourcemaps upload failed
       - name: Echo failure message
         run: echo "Sourcemap upload failed"
