@@ -108,5 +108,18 @@
 
 	:global(:is(.description, .notes)) {
 		color: var(--c-text-extra-light);
+
+		:global(.markdown :is(h1, h2, h3)) {
+			font: var(--f-heading-xs-medium);
+			font-size: 1rem;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--c-text-extra-light);
+			margin-block: 1.5rem 1rem;
+
+			@media (--viewport-sm-down) {
+				font-size: 0.875rem;
+			}
+		}
 	}
 </style>
