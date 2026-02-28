@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Style markdown headings in vault about box to match box heading size (2026-02-28)
 - Add interactive filter dropdowns (Min TVL, Age, Technical risk) to all vault listing pages (2026-02-25)
 - Add tooltip for high return values exceeding 100% in vault listings (2026-02-25)
 - Show lifetime maximum drawdown in vault other metrics instead of deposit events (2026-02-25)
