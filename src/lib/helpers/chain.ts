@@ -170,6 +170,16 @@ export const chains = (() => {
 			nativeCurrency: 'ETH',
 			hasBackendData: false
 		},
+		// Lighter: Synthetic chain created for Lighter perpetual DEX vaults
+		{
+			id: 9998,
+			slug: 'lighter',
+			name: 'Lighter',
+			homepage: 'https://lighter.xyz',
+			explorer: 'https://scan.lighter.xyz',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
 		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,

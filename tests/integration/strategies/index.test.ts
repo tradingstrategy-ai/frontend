@@ -5,7 +5,7 @@ test.describe('strategy index page', () => {
 		await page.goto('/strategies');
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		await expect(rows).toHaveCount(1);
+		await expect(rows).toHaveCount(2); // 1 API live + 1 YAML live
 
 		const heading = page.getByRole('heading', { name: 'MATIC-USD breakout on Uniswap v3' });
 		await expect(heading).toBeVisible();
@@ -14,7 +14,7 @@ test.describe('strategy index page', () => {
 	test('should display all strategies to admin user', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		await expect(rows).toHaveCount(2);
+		await expect(rows).toHaveCount(3); // 2 API + 1 YAML
 	});
 
 	test('should sort strategies with higher sort_priority first', async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe('strategy index page', () => {
 		await page.locator('label:has-text("live")').click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		await expect(rows).toHaveCount(1);
+		await expect(rows).toHaveCount(2); // 1 API live + 1 YAML live
 
 		const heading = page.getByRole('heading', { name: 'MATIC-USD breakout on Uniswap v3' });
 		await expect(heading).toBeVisible();

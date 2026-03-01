@@ -1,0 +1,11 @@
+id: ichi-hyperliquid
+slug: ichi-hyperliquid
+name: ICHI Hyperliquid vault strategy
+short_description: Long/short breakout strategy on Hyperliquid
+vault_address: '0x3df9769bbbb335340872f01d8157c779d73c6ed0'
+external_url: 'https://app.hyperliquid.xyz/vaults/0x3df9769bbbb335340872f01d8157c779d73c6ed0'
+chain_id: 9999
+tags:
+  - live
+sort_priority: 0
+frontpage: false

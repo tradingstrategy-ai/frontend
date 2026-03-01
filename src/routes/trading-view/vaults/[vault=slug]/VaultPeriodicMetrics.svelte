@@ -15,9 +15,10 @@
 	interface Props {
 		vault: VaultInfo;
 		chain: Chain;
+		showRankings?: boolean;
 	}
 
-	let { vault, chain }: Props = $props();
+	let { vault, chain, showRankings = true }: Props = $props();
 
 	// Ordered list of periods to display as columns
 	const periodOrder = ['1w', '1m', '3m', '6m', '1y', 'lifetime'] as const;
@@ -67,18 +68,20 @@
 		{
 			label: `<a href="${base}/trading-view/vaults">Ranking overall</a>`,
 			field: 'ranking_overall',
-			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
+			excluded: !showRankings
 		},
 		{
 			label: `<a href="${base}/trading-view/vaults/chains/${chain.slug}">Ranking on ${chain.name}</a>`,
 			field: 'ranking_chain',
-			formatter: (v) => (v != null ? `#${v}` : notFilledMarker)
+			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
+			excluded: !showRankings
 		},
 		{
 			label: `<a href="${base}/trading-view/vaults/protocols/${vault.protocol_slug}">Ranking on ${vault.protocol}</a>`,
 			field: 'ranking_protocol',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
-			excluded: vault.protocol?.includes('<')
+			excluded: !showRankings || vault.protocol?.includes('<')
 		},
 		{
 			label: '<a href="/glossary/cagr">CAGR</a> (net)',

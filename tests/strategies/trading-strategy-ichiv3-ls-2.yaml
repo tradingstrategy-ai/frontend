@@ -1,0 +1,15 @@
+id: trading-strategy-ichiv3-ls-2
+slug: trading-strategy-ichiv3-ls-2
+name: ICHI v3 Liquidity Strategy
+short_description: Automated liquidity provision using ICHI v3 vaults
+long_description: |
+  ## How it works
+
+  This strategy provides automated liquidity using ICHI v3 vaults.
+icon_url: /avatars/master-vault.webp
+vault_address: '0x1234567890abcdef1234567890abcdef12345678'
+chain_id: 9999
+tags:
+  - live
+sort_priority: 5
+frontpage: true

@@ -44,7 +44,7 @@ See [Unit test frameworks](#unit-test-frameworks) below for additional info.
 
 ```shell
 # Build first if source files have changed since last build
-pnpm run build
+pnpm run build --mode=test
 
 # Run all integration tests
 pnpm run test:integration
@@ -60,10 +60,21 @@ pnpm run test:integration
 #### This command does the following:
 
 - runs tests in `tests/integration` folder (headlessly) and reports results
-- automatically runs `pnpm preview` to start a node preview server
+- automatically runs `pnpm preview --mode=test` to start a node preview server
 - uses mock API data found in `tests/mocks`
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
+
+#### Test build isolation
+
+Test builds (`--mode=test`) use separate output directories so they don't interfere with the dev server:
+
+- **SvelteKit output:** `.svelte-kit-test/` instead of `.svelte-kit/`
+- **Vite cache:** `node_modules/.vite-test/` instead of `node_modules/.vite/`
+
+This is configured in `vite.config.ts` (sets `cacheDir` and an env var) and `svelte.config.js` (reads the env var to set `outDir`). The env var `__SVELTEKIT_TEST_MODE` is used instead of `process.argv` because SvelteKit's postbuild analysis runs in a Worker thread that inherits `process.env` but not `process.argv`.
+
+You can safely run the dev server and test builds concurrently without cache corruption.
 
 ### End-to-end tests
 
