@@ -9,16 +9,15 @@
 	import Icon24h from '~icons/local/24h';
 	import IconBlockchain from '~icons/local/blockchain';
 	import IconBook from '~icons/local/book';
-	import IconDictionary from '~icons/local/dictionary';
-	import IconExchange from '~icons/local/exchange';
-	import IconLendingReserve from '~icons/local/lending-reserve';
-	import IconPair from '~icons/local/pair';
+
 	import IconPython from '~icons/local/python';
-	import IconSearch from '~icons/local/search';
 	import IconWallet from '~icons/local/wallet';
+	import { chains } from '$lib/helpers/chain';
 
 	let { data } = $props();
 	let { impressiveNumbers, topVaults } = $derived(data);
+
+	let chainCount = new Set(chains.map((c) => c.slug)).size;
 </script>
 
 <ContentCardsTemplate pageTitle="DEX trading view" pageDescription="DEX trading view">
@@ -33,54 +32,10 @@
 		<ContentCard title="Blockchains" href="/trading-view/blockchains">
 			<IconBlockchain slot="icon" />
 			<p>Trading Strategy provides powerful market data sets for on-chain trading on several blockchains.</p>
-			{#if impressiveNumbers}
-				<p>
-					Currently indexing data from <strong>{formatAmount(impressiveNumbers.blockchains)} blockchains</strong>.
-				</p>
-			{/if}
+			<p>
+				Currently tracking data across <strong>{chainCount} blockchains</strong>.
+			</p>
 			<Button slot="cta" label="Explore blockchains" />
-		</ContentCard>
-
-		<ContentCard title="DEXes" href="/trading-view/exchanges">
-			<IconExchange slot="icon" />
-			<p>
-				Trading Strategy provides data sets for decentralised exchanges. All market data is sourced from on-chain
-				trades, across multiple DEXs.
-			</p>
-			{#if impressiveNumbers}
-				<p>
-					Currently indexing data from <strong>{formatAmount(impressiveNumbers.exchanges)} DEXes</strong>.
-				</p>
-			{/if}
-			<Button slot="cta" label="Browse DEXes" />
-		</ContentCard>
-
-		<ContentCard title="Trading pairs" href="/trading-view/trading-pairs">
-			<IconPair slot="icon" />
-			<p>
-				Trading pairs have OHLCV candle data available between 1-minute to 30-day time frames. View historical and
-				current datasets here.
-			</p>
-			{#if impressiveNumbers}
-				<p>
-					Currently indexing data from <strong>{formatAmount(impressiveNumbers.pairs)} trading pairs</strong>.
-				</p>
-			{/if}
-			<Button slot="cta" label="Browse trading pairs" />
-		</ContentCard>
-
-		<ContentCard title="Lending reserves" href="/trading-view/lending-reserves">
-			<IconLendingReserve slot="icon" />
-			<p>
-				View current and historical interest rate data for common Aave v3 lending reserves across multiple blockchains.
-			</p>
-			{#if impressiveNumbers}
-				<p>
-					Currently indexing data from
-					<strong>{formatAmount(impressiveNumbers.lending_reserves)} lending reserves</strong>.
-				</p>
-			{/if}
-			<Button slot="cta" label="Browse reserves" />
 		</ContentCard>
 
 		<ContentCard title="Vaults" href="/trading-view/vaults">
@@ -98,23 +53,6 @@
 			<Button slot="cta" label="Compare vaults" />
 		</ContentCard>
 
-		<ContentCard title="Advanced search" href="/search">
-			<IconSearch slot="icon" />
-			<p>
-				Search tokens across multiple blockchains and exchanges. Sort and filter by liquidity, volume and/or price
-				change.
-			</p>
-			{#if impressiveNumbers}
-				<p>Explore tokens using advanced token search.</p>
-			{/if}
-			<Button slot="cta" label="Search tokens" />
-		</ContentCard>
-
-		<ContentCard title="DeFi and Trading Dictionary" href="/glossary">
-			<IconDictionary slot="icon" />
-			<p>Browse and learn DeFi, trading and technical analysis terminology.</p>
-			<Button slot="cta" label="View dictionary" />
-		</ContentCard>
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">
