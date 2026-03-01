@@ -52,7 +52,6 @@
 			{/if}
 			<Button slot="cta" label="Compare vaults" />
 		</ContentCard>
-
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">
