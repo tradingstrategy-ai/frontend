@@ -5,7 +5,7 @@
 	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
 	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
 	import TopVaults from './_components/TopVaults.svelte';
-	import ImpressiveNumbers from './_components/ImpressiveNumbers.svelte';
+
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import BlogRoll from '$lib/components/BlogRoll.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -14,7 +14,7 @@
 
 	let { data } = $props();
 
-	let { impressiveNumbers, posts, strategies, topVaults } = $derived(data);
+	let { posts, strategies, topVaults } = $derived(data);
 </script>
 
 <svelte:head>
@@ -29,9 +29,9 @@
 
 	<FeaturedStrategies {strategies} />
 
-	<TopVaults {topVaults} />
-
-	<ImpressiveNumbers {impressiveNumbers} />
+	{#if topVaults}
+		<TopVaults {topVaults} />
+	{/if}
 
 	{#if posts}
 		<Section padding="md" gap="md" --section-background="var(--c-background-accent-1)">

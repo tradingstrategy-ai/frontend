@@ -28,12 +28,6 @@
 
 <dl class="vault-summary-metrics ds-3">
 	<div>
-		<dt>Vaults tracked</dt>
-		<dd>
-			{formatAmount(baseVaults.length)}
-		</dd>
-	</div>
-	<div>
 		<dt>Total value locked</dt>
 		<dd>
 			{formattedTvl[0]}
