@@ -1,0 +1,8 @@
+id: ichi-hyperliquid
+name: ICHI Hyperliquid vault strategy
+short_description: Automated liquidity provision using ICHI vaults on Hyperliquid
+vault_slug: ichi-hyperliquid
+chain_id: '9999'
+tags: []
+sort_priority: '0'
+frontpage: 'false'

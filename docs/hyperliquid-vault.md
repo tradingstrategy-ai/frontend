@@ -22,7 +22,7 @@ The frontend fetches live data (positions, performance, trade history) from each
 
 ### YAML-configured strategies
 
-YAML strategies have no backend. They are defined by a YAML file in `src/lib/strategies/yaml/configs/` and pull live metrics (TVL, returns, fees) from the vault browsing API (`TS_PUBLIC_TOP_VAULTS_URL`). These strategies get a single overview page with vault metrics and a link to the full vault detail page.
+YAML strategies have no backend. They are defined by a YAML file in `strategies/` and pull live metrics (TVL, returns, fees) from the vault browsing API (`TS_PUBLIC_TOP_VAULTS_URL`). These strategies get a single overview page with vault metrics and a link to the full vault detail page.
 
 This is useful for vaults (e.g., Hyperliquid vaults) where there is no trade-executor instance but you still want the strategy to appear in the `/strategies` listing and optionally on the frontpage.
 
@@ -39,7 +39,12 @@ Each request to `/strategies/{id}` is checked against both matchers. Only one wi
 
 ### YAML config loading
 
-At build time, `src/lib/strategies/yaml/loader.ts` uses Vite's `import.meta.glob` to load all `.yaml` files from `src/lib/strategies/yaml/configs/`. Each file is parsed with `js-yaml` using `FAILSAFE_SCHEMA` (all values treated as strings — no implicit type coercion), then validated with Zod.
+At build time, `src/lib/strategies/yaml/loader.ts` uses Vite's `import.meta.glob` to load `.yaml` files. The source directory depends on the build mode:
+
+- **Production** (`pnpm run build`): loads from `strategies/` at the project root
+- **Test** (`pnpm run build --mode=test`): loads from `tests/strategies/`
+
+This separation ensures integration tests don't depend on production config contents. Each file is parsed with `js-yaml` using `FAILSAFE_SCHEMA` (all values treated as strings — no implicit type coercion), then validated with Zod.
 
 ### Vault data
 
@@ -70,7 +75,7 @@ The repository includes an example YAML strategy that works with the integration
 
 ### 1. YAML config file
 
-`src/lib/strategies/yaml/configs/trading-strategy-ichiv3-ls-2.yaml`:
+`tests/strategies/trading-strategy-ichiv3-ls-2.yaml`:
 
 ```yaml
 id: trading-strategy-ichiv3-ls-2
@@ -122,7 +127,7 @@ The relevant test files are:
 
 ## Adding a new YAML strategy
 
-1. Create a new YAML file in `src/lib/strategies/yaml/configs/`, e.g., `my-strategy-hyperliquid.yaml`
+1. Create a new YAML file in `strategies/`, e.g., `my-strategy-hyperliquid.yaml`
 2. Set `vault_slug` to match an existing vault in the vault browsing API
 3. Add `tags: [live]` when ready for public visibility
 4. Set `frontpage: 'true'` if it should appear on the homepage

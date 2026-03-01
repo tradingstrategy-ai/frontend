@@ -12,7 +12,12 @@ function parseYaml(raw: string): YamlStrategyConfig {
 	return yamlStrategySchema.parse(parsed);
 }
 
-const yamlFiles = import.meta.glob('./configs/*.yaml', { eager: true, query: '?raw', import: 'default' });
+// Vite resolves both globs at build time; the mode conditional selects which to use.
+// Test configs live in tests/strategies/ to avoid coupling tests to production configs.
+const yamlFiles =
+	import.meta.env.MODE === 'test'
+		? import.meta.glob('/tests/strategies/*.yaml', { eager: true, query: '?raw', import: 'default' })
+		: import.meta.glob('/strategies/*.yaml', { eager: true, query: '?raw', import: 'default' });
 
 export const yamlStrategies: Map<string, YamlStrategyConfig> = new Map();
 
