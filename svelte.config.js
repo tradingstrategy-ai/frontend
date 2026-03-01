@@ -5,6 +5,14 @@
 import node from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+/**
+ * Use a separate SvelteKit output directory for test builds so they
+ * don't interfere with the dev server. The env var is set by vite.config.ts
+ * (which has access to the Vite mode) and is inherited by Worker threads
+ * used during postbuild analysis.
+ */
+const isTestMode = process.env.__SVELTEKIT_TEST_MODE === '1';
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: vitePreprocess(),
@@ -13,6 +21,8 @@ const config = {
 		adapter: node({
 			envPrefix: 'FRONTEND_'
 		}),
+
+		outDir: isTestMode ? '.svelte-kit-test' : '.svelte-kit',
 
 		alias: {
 			'design-system-fonts': 'deps/fonts',

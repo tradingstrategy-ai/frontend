@@ -58,6 +58,19 @@ Start the SvelteKit development server:
 pnpm run dev
 ```
 
+## Running tests
+
+```shell
+# Unit tests
+pnpm run test:unit --run
+
+# Integration tests (requires test build)
+pnpm run build --mode=test
+pnpm run test:integration
+```
+
+Test builds use separate output directories (`.svelte-kit-test/`, `node_modules/.vite-test/`) so they don't interfere with the dev server. See [docs/tests.md](./docs/tests.md) for details.
+
 ## Documentation
 
 - [Testing](./docs/tests.md)

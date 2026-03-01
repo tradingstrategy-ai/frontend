@@ -14,4 +14,14 @@ test.describe('YAML strategy on frontpage', () => {
 		const link = page.locator('a[href="/strategies/trading-strategy-ichiv3-ls-2"]');
 		await expect(link.first()).toBeVisible();
 	});
+
+	test('should display vault metrics in the frontpage strategy tile', async ({ page }) => {
+		await page.goto('/');
+
+		const tile = page.locator('.strategy-tile').filter({ hasText: 'ICHI v3 Liquidity Strategy' });
+		await expect(tile).toContainText('Annual return');
+		await expect(tile).toContainText('TVL');
+		await expect(tile).toContainText('Age');
+		await expect(tile).toContainText('Sharpe');
+	});
 });

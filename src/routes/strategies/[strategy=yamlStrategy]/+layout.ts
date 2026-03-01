@@ -14,7 +14,7 @@ export async function load({ params, parent, fetch }) {
 	if (!(admin || strategy.tags.includes('live'))) error(401, 'Unauthorized');
 
 	const topVaults = await fetchTopVaults(fetch);
-	const vaultInfo = topVaults.vaults.find((v) => v.vault_slug === strategy.vault_slug);
+	const vaultInfo = topVaults.vaults.find((v) => v.address === strategy.vault_address);
 
 	const chain = getChain(strategy.chain_id);
 
