@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add YAML-configured strategies: strategy entries without a trade-executor backend, using vault API data (2026-03-01)
 - Fix price chart missing for HyperCore vaults by supporting vlt: vault ID format (2026-02-28)
 - Style markdown headings in vault about box to match box heading size (2026-02-28)
 - Add interactive filter dropdowns (Min TVL, Age, Technical risk) to all vault listing pages (2026-02-25)

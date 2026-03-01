@@ -55,10 +55,22 @@ const aboveTvl = generateMockVaults('Above TVL', 250, {
 	}
 });
 
+// Named vault for YAML strategy integration tests
+const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
+	chain: 'ethereum',
+	current_nav: 500_000,
+	peak_nav: 600_000,
+	one_month_returns: 0.03,
+	one_month_cagr: 0.42,
+	three_months_returns: 0.08,
+	three_months_cagr: 0.35,
+	three_months_sharpe: 1.5
+});
+
 export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
-		vaults: [...belowTvl, ...aboveTvl]
+		vaults: [yamlStrategyVault, ...belowTvl, ...aboveTvl]
 	}
 });
