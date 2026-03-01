@@ -14,15 +14,14 @@
 		{#if title}
 			{title}
 		{:else}
-			Want to learn more how to profit with algorithmic trading and DeFi?
+			Get notified about the best new vaults and DeFi news
 		{/if}
 	</h2>
 	<p>
 		{#if description}
 			{description}
 		{:else}
-			Subscribe to Trading Strategy newsletter for updates on strategies, cryptocurrency market insights and trading
-			opportunities.
+			Subscribe to Trading Strategy newsletter for updates on DeFi trading strategies and vaults.
 		{/if}
 	</p>
 	<SubscribeForm />

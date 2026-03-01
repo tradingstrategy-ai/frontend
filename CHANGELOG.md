@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Streamline homepage and navigation: update copy, fix Lighter vault visibility and chart data (2026-03-01)
 - Add YAML-configured strategies: strategy entries without a trade-executor backend, using vault API data (2026-03-01)
 - Fix price chart missing for HyperCore vaults by supporting vlt: vault ID format (2026-02-28)
 - Style markdown headings in vault about box to match box heading size (2026-02-28)
