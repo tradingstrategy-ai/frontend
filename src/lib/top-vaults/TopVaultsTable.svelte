@@ -158,9 +158,11 @@
 			}
 
 			// Risk filter (dropdown-driven) — check both min and max bounds
+			// Vaults with no risk score (null) are always included
 			if (showFilters && (selectedRisk.minValue > 0 || selectedRisk.maxValue < Infinity)) {
-				const risk = v.risk_numeric ?? Infinity;
-				if (risk < selectedRisk.minValue || risk > selectedRisk.maxValue) return false;
+				if (v.risk_numeric != null) {
+					if (v.risk_numeric < selectedRisk.minValue || v.risk_numeric > selectedRisk.maxValue) return false;
+				}
 			}
 
 			const vaultCompareStr = [
