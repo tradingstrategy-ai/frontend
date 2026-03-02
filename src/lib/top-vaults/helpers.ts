@@ -143,7 +143,7 @@ export function getFormattedFeeMode({ fee_mode }: VaultInfo): string {
 /** Human-readable labels and descriptions for each fee mode */
 const feeModeDetails: Record<FeeMode, { label: string; description: string }> = {
 	internalised_skimming: {
-		label: 'Internalised skimming',
+		label: 'Internalised (performance fee taken from closed positions)',
 		description: 'Fees are deducted from closed trades; net fees are reflected in the vault PnL and share price'
 	},
 	internalised_minting: {

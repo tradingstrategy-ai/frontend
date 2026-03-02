@@ -135,7 +135,7 @@ describe('getFeeModeLabel', () => {
 	});
 
 	test('returns label for internalised_skimming', () => {
-		expect(getFeeModeLabel('internalised_skimming')).toBe('Internalised skimming');
+		expect(getFeeModeLabel('internalised_skimming')).toBe('Internalised (performance fee taken from closed positions)');
 	});
 
 	test('returns label for internalised_minting', () => {
