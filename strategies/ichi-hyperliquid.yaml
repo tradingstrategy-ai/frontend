@@ -1,11 +1,44 @@
+# Interrnal id
 id: ichi-hyperliquid
+# Strategy page slug
 slug: ichi-hyperliquid
-name: ICHI Hyperliquid vault strategy
+# Strategy page title
+name: Ichimoku breakout trading vault on Hyperliquid
+# One paragraph description of the strat3egy
 short_description: Long/short breakout strategy on Hyperliquid
+# Primary key to match it to Hyperliquid vault,
+# Make sure it is string-escaped not to be hexadecimal number in JavaScript.
 vault_address: '0x3df9769bbbb335340872f01d8157c779d73c6ed0'
+# Link to the deposit page
 external_url: 'https://app.hyperliquid.xyz/vaults/0x3df9769bbbb335340872f01d8157c779d73c6ed0'
+# 9999 is our internal synthetic chain ID for Hypercore, since it doesn't have a real chain ID
 chain_id: 9999
+# See https://github.com/tradingstrategy-ai/trade-executor/blob/c27b0895eabf9b9cd190afec21c5f53f626a1a3c/tradeexecutor/strategy/tag.py#L6
 tags:
   - live
+# How far up in the listing page we displays this
 sort_priority: 0
+# Show on front page
 frontpage: false
+# Markdown description of the strategy
+long_description: |
+  This strategy is a long/short breakout strategy on Hyperliquid. It uses the ICHI protocol to determine the direction of the trade and the size of the position. The strategy will go long when the price breaks above the upper band and short when the price breaks below the lower band. 
+  The strategy will also use a trailing stop loss to protect profits.
+
+  ## Strategy description
+
+  - TODO
+
+  ## Risk management
+
+  - 1x leverage
+  - TODO
+
+  ## Trading universe 
+
+  - Volume-based
+  - TODO
+
+  ## Backtesting results
+
+  - TODO
