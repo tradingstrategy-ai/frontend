@@ -14,7 +14,7 @@ test.describe('strategy index page', () => {
 	test('should display all strategies to admin user', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		await expect(rows).toHaveCount(3); // 2 API + 1 YAML
+		await expect(rows).toHaveCount(4); // 2 API + 2 YAML
 	});
 
 	test('should sort strategies with higher sort_priority first', async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('strategy index page', () => {
 		await page.getByText('unpublished', { exact: true }).click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		await expect(rows).toHaveCount(1);
+		await expect(rows).toHaveCount(2); // 1 API + 1 YAML (no-inject)
 
 		const heading = page.getByRole('heading', { name: 'Multipair breakout strategy on Uniswap v3' });
 		await expect(heading).toBeVisible();

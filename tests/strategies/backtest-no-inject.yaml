@@ -4,8 +4,7 @@ name: Backtest No-Inject Test Strategy
 short_description: Test strategy with inject_backtest_iframe_resizer disabled
 vault_address: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
 chain_id: 9999
-tags:
-  - live
-sort_priority: 99
+tags: []
+sort_priority: 0
 frontpage: false
 inject_backtest_iframe_resizer: false
