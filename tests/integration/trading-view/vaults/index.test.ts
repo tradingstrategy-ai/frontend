@@ -54,17 +54,18 @@ test.describe('vault index page', () => {
 	});
 
 	test('search filters displayed vaults', async ({ page }) => {
-		test.skip(!!process.env.CI, 'Skipping on CI runs for now');
-
 		const vaultSearch = page.getByTestId('vault-search');
 
 		// Verify we have initial rows > 1
 		const rows = page.locator('tbody tr.targetable');
+		await expect(rows.first()).toBeVisible();
 		const initialCount = await rows.count();
 		expect(initialCount).toBeGreaterThan(1);
 
-		// Search for a unique vault name (index 42 -> "Above TVL 042")
-		await vaultSearch.fill('Above TVL 042');
+		// Use pressSequentially to simulate real keystrokes — Playwright's fill()
+		// doesn't reliably trigger Svelte's on:input handler with one-way {value} binding
+		await vaultSearch.click();
+		await vaultSearch.pressSequentially('Above TVL 042');
 		await expect(rows).toHaveCount(1);
 	});
 
