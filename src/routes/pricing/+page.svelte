@@ -31,7 +31,7 @@ Pricing page with Basic and Pro tier comparison
 
 			<div class="pro-tier">
 				<SummaryBox title="Pro" subtitle="$199/month">
-					<p class="tier-description">Quality DeFi data for fund managers and institutions</p>
+					<p class="tier-description">DeFi data for fund managers and institutions</p>
 				</SummaryBox>
 			</div>
 		</div>
