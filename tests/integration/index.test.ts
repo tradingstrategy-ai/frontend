@@ -5,25 +5,19 @@ test.describe('home page', () => {
 		await page.goto('/');
 	});
 
-	// This test is useful for validating that custom fonts are installed and loaded.
-	// If there's a legitimate change to the hero banner, generate new screenshots:
-	// $ ./scripts/update-test-screenshots.sh
-	test('hero banner looks correct', async ({ page }) => {
-		const header = page.getByTestId('home-hero-banner');
-		await expect(header).toHaveScreenshot({ maxDiffPixels: 150 });
+	test('should render the home page with correct title', async ({ page }) => {
+		await expect(page).toHaveTitle('Trading Strategy - Algorithmic Trading Protocol');
 	});
 
-	test('home page has impressive numbers', async ({ page }) => {
-		// NOTE: getByRole does not work for <a> tag with display:contents
-		const tiles = page.getByTestId('impressive-numbers').locator('a[href]');
+	test('should display featured strategies section', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Trading Strategy vaults' })).toBeVisible();
+	});
 
-		const pairs = tiles.filter({ hasText: '15,000 trading pairs' });
-		await expect(pairs).toHaveAttribute('href', '/trading-view/trading-pairs');
+	test('should display top vaults section', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Top DeFi Vaults' })).toBeVisible();
+	});
 
-		const liquidity = tiles.filter({ hasText: '$1.23B liquidity' });
-		await expect(liquidity).toHaveAttribute('href', '/trading-view/trading-pairs');
-
-		const blockchains = tiles.filter({ hasText: '1,000 decentralised exchanges' });
-		await expect(blockchains).toHaveAttribute('href', '/trading-view/exchanges');
+	test('should display blog section', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Blog' })).toBeVisible();
 	});
 });

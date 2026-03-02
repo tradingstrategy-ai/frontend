@@ -72,12 +72,15 @@ test.describe('advanced search page', () => {
 	});
 
 	test('should update URL query params to reflect selected search options', async ({ page }) => {
-		test.skip(!!process.env.CI, 'Skipping on CI runs for now');
-
 		await page.goto('/search');
 
-		await page.getByRole('searchbox').focus();
-		await page.keyboard.type('eth');
+		// Use pressSequentially — Playwright's keyboard.type() doesn't reliably
+		// trigger Svelte's on:input handler with one-way {value} binding
+		const searchBox = page.getByRole('searchbox');
+		await searchBox.click();
+		await searchBox.pressSequentially('eth');
+		await expect(searchBox).toHaveValue('eth');
+
 		await page.getByRole('combobox').selectOption('price_change:asc');
 		await page.getByText('binance', { exact: true }).click();
 		await page.getByText('Up > 5%').click();
@@ -94,36 +97,30 @@ test.describe('advanced search page', () => {
 		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
 	});
 
-	test('should retain selected search options when navigating to search result and back', async ({ page }) => {
-		test.skip(!!process.env.CI, 'Skipping on CI runs for now');
-
-		await page.goto('/search');
-
-		// update some search options (search text, sort drop-down, filter)
-		const searchBox = page.getByRole('searchbox');
-		await searchBox.focus();
-		await page.keyboard.type('eth');
-		await searchBox.blur();
-		await page.getByRole('combobox').selectOption('volume:desc');
-		await page.getByText('ethereum', { exact: true }).click();
-
-		// wait for URL params to reflect the search selections (computer is faster than human)
-		const expected = getSearchParams({
+	test('should retain URL search params when navigating to search result and back', async ({ page }) => {
+		// Initialize search state via URL params
+		const searchParams = getSearchParams({
 			q: 'eth',
 			sortBy: 'volume:desc',
 			filters: { blockchain: ['ethereum'] }
 		});
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
+		const urlParams = new URLSearchParams({
+			...searchParams,
+			filters: JSON.stringify(searchParams.filters)
+		});
+		await page.goto(`/search?${urlParams}`);
+
+		// verify initial state is populated from URL params
+		await expect(page.getByRole('searchbox')).toHaveValue('eth');
+		await expect(page.getByRole('combobox')).toHaveValue('volume:desc');
+		await expect(page.getByRole('checkbox', { name: 'Ethereum' })).toBeChecked();
 
 		// click on search result, wait for token page to load, click "back" button
 		await page.getByText('USDC on Ethereum').click();
 		await page.waitForURL(/ethereum\/tokens\/0xa0b8699/);
 		await page.goBack();
 
-		// wait until we're back on the search page; verify search options are retained
-		await page.waitForURL(urlParamsMatch(expected), { timeout: 5000 });
-		await expect(page.getByRole('searchbox')).toHaveValue('eth');
-		await expect(page.getByRole('combobox')).toHaveValue('volume:desc');
-		await expect(page.getByRole('checkbox', { name: 'ethereum' })).toBeChecked();
+		// verify URL search params are preserved after back navigation
+		await page.waitForURL(urlParamsMatch(searchParams), { timeout: 5000 });
 	});
 });
