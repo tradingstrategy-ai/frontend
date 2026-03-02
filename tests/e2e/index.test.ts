@@ -5,11 +5,10 @@ test.describe('home page', () => {
 		await page.goto('/');
 	});
 
-	test('should display impressive numbers', async ({ page }) => {
-		const impressiveSection = page.getByTestId('impressive-numbers');
-		await expect(impressiveSection).toHaveText(/[\d.,]+ trading pairs/);
-		await expect(impressiveSection).toHaveText(/\$[\d.,]+[kMB] liquidity/);
-		await expect(impressiveSection).toHaveText(/[\d.,]+ decentralised exchanges/);
+	test('should display hero banner', async ({ page }) => {
+		const hero = page.getByTestId('home-hero-banner');
+		await expect(hero).toBeVisible();
+		await expect(hero).toHaveText(/Unleash the power of automated crypto trading/);
 	});
 
 	test('should include blog roll', async ({ page }) => {

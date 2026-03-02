@@ -14,6 +14,7 @@
 				<MenuItem label="Our vaults" targetUrl="/strategies" active={currentPage === '/strategies'} />
 				<MenuItem label="Top vaults" targetUrl="/trading-view/vaults" active={currentPage === '/trading-view/vaults'} />
 				<MenuItem label="API" targetUrl="/trading-view" active={currentPage === '/trading-view'} />
+				<MenuItem label="Pricing" targetUrl="/pricing" active={currentPage === '/pricing'} />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
 				<MenuItem label="Blog" targetUrl="/blog" active={currentPage === '/blog'} />
 			</svelte:fragment>
