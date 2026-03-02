@@ -6,13 +6,20 @@ Sidebar on desktop, collapsible dropdown on mobile — same pattern as StrategyN
 but with a static set of menu items (no conditional visibility or badges).
 -->
 <script context="module" lang="ts">
-	export const menuOptions = [
+	const baseMenuOptions = [
 		{ slug: '', label: 'Overview' },
 		{ slug: 'performance', label: 'Performance' },
 		{ slug: 'description', label: 'Description' },
 		{ slug: 'vault', label: 'Vault info' },
 		{ slug: 'fees', label: 'Fees' }
 	];
+
+	export function getMenuOptions(backtestAvailable: boolean) {
+		if (!backtestAvailable) return baseMenuOptions;
+		return [...baseMenuOptions, { slug: 'backtest', label: 'Backtest results' }];
+	}
+
+	export { baseMenuOptions as menuOptions };
 </script>
 
 <script lang="ts">
@@ -22,12 +29,14 @@ but with a static set of menu items (no conditional visibility or badges).
 
 	export let basePath: string;
 	export let currentPath: string;
+	export let backtestAvailable: boolean = false;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = 'auto';
 
+	$: visibleOptions = getMenuOptions(backtestAvailable);
 	$: currentSlug = currentPath.split('/')[3] ?? '';
-	$: currentOption = menuOptions.find(({ slug }) => slug === currentSlug);
+	$: currentOption = visibleOptions.find(({ slug }) => slug === currentSlug);
 
 	function getTargetUrl(slug: string) {
 		return slug ? `${basePath}/${slug}` : basePath;
@@ -58,7 +67,7 @@ but with a static set of menu items (no conditional visibility or badges).
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
-			{#each menuOptions as { slug, label }}
+			{#each visibleOptions as { slug, label }}
 				{@const active = slug === currentOption?.slug}
 				<MenuItem targetUrl={getTargetUrl(slug)} {active}>
 					<span class="label">{label}</span>

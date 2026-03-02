@@ -55,8 +55,10 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps
       # use separate build step to avoid playwright timeout issue
+      # mode=test so the output goes to .svelte-kit-test/ which is where
+      # the integration test preview server (--mode=test) expects it
       - name: Build SvelteKit vite app
-        run: pnpm run build
+        run: pnpm run build:test
       # skip build in test step
       - name: Run Tests
         run: pnpm run test:no-build

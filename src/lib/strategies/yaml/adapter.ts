@@ -4,6 +4,7 @@
  */
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+import { backtestHtml } from './backtest-loader';
 import type { YamlStrategyConfig } from './schema';
 
 /**
@@ -37,7 +38,7 @@ export function toListingStrategy(
 		executor_running: true,
 		frozen_positions: 0,
 		error_message: null,
-		backtest_available: false,
+		backtest_available: backtestHtml.has(config.slug),
 		crashed_at: null,
 		badges: [],
 		tags: config.tags,

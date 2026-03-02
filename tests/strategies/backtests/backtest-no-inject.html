@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Backtest Report – No Inject</title>
+	</head>
+	<body>
+		<h1>Backtest report</h1>
+		<p>This report already includes its own iframe resizer snippet.</p>
+		<script>
+			(function () {
+				function postHeight() {
+					parent.postMessage({ iframeContentHeight: document.body.scrollHeight }, '*');
+				}
+				window.addEventListener('load', postHeight);
+				new ResizeObserver(postHeight).observe(document.body);
+			})();
+		</script>
+	</body>
+</html>
