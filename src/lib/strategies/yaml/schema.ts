@@ -38,7 +38,11 @@ export const yamlStrategySchema = z.object({
 	// How far up in the listing page we display this
 	sort_priority: z.coerce.number().default(0),
 	// Show on front page
-	frontpage: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).default(false)
+	frontpage: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).default(false),
+	// When true, the backtest report endpoint injects a postMessage height script and CSS reset
+	// into the served HTML so the iframe auto-resizes. Set to false for HTML files that already
+	// include their own height-reporting snippet.
+	inject_backtest_iframe_resizer: z.boolean().default(true)
 });
 
 export type YamlStrategyConfig = z.infer<typeof yamlStrategySchema>;

@@ -5,20 +5,21 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
-	import { menuOptions, default as YamlStrategyNav } from './YamlStrategyNav.svelte';
+	import { getMenuOptions, default as YamlStrategyNav } from './YamlStrategyNav.svelte';
 
 	export let data;
 
-	$: ({ strategy } = data);
+	$: ({ strategy, backtestAvailable } = data);
 
 	$: tags = strategy.tags.filter((tag: string) => tag !== 'live');
 	$: isPrivate = !strategy.tags.includes('live');
 
 	$: iconUrl = strategy.icon_url ?? `/avatars/${strategy.slug}.webp`;
 
+	$: allMenuOptions = getMenuOptions(backtestAvailable);
 	$: breadcrumbs = {
 		[strategy.slug]: strategy.name,
-		...Object.fromEntries(menuOptions.map(({ slug, label }) => [slug, label]))
+		...Object.fromEntries(allMenuOptions.map(({ slug, label }) => [slug, label]))
 	};
 </script>
 
@@ -45,7 +46,7 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 	{/if}
 
 	<div class="subpage">
-		<YamlStrategyNav basePath="/strategies/{strategy.slug}" currentPath={page.url.pathname} />
+		<YamlStrategyNav basePath="/strategies/{strategy.slug}" currentPath={page.url.pathname} {backtestAvailable} />
 		<slot />
 	</div>
 </main>

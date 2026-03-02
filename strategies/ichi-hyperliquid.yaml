@@ -20,6 +20,8 @@ tags:
 sort_priority: 0
 # Show on front page
 frontpage: false
+# Mangle HTML file input to iframe-compatible format
+inject_backtest_iframe_resizer: true
 # Markdown description of the strategy
 long_description: |
   This strategy is a long/short breakout strategy on Hyperliquid. It uses the ICHI protocol to determine the direction of the trade and the size of the position. The strategy will go long when the price breaks above the upper band and short when the price breaks below the lower band. 

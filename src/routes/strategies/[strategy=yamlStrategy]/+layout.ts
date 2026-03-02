@@ -2,6 +2,7 @@
  * Load YAML strategy config and vault data from the top-vaults API.
  */
 import { error } from '@sveltejs/kit';
+import { backtestHtml } from '$lib/strategies/yaml/backtest-loader';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getChain } from '$lib/helpers/chain';
@@ -18,5 +19,7 @@ export async function load({ params, parent, fetch }) {
 
 	const chain = getChain(strategy.chain_id);
 
-	return { strategy, vaultInfo, chain };
+	const backtestAvailable = backtestHtml.has(params.strategy);
+
+	return { strategy, vaultInfo, chain, backtestAvailable };
 }
