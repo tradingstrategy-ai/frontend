@@ -12,7 +12,8 @@ This application includes three test suites:
 See below to run each suite separately, or run all test suites sequentially with:
 
 ```shell
-pnpm run test # use pnpm run test:no-build to save time if you have already run `pnpm build`
+pnpm run test # runs unit, integration (with test build), and e2e (with production build)
+pnpm run test:no-build # runs unit + integration only (skips e2e, requires prior test build)
 ```
 
 ## Running Tests
@@ -78,8 +79,12 @@ You can safely run the dev server and test builds concurrently without cache cor
 
 ### End-to-end tests
 
+E2e tests are smoke tests that run against the **live production API**. They require a **production
+build** (not a test build), because the preview server runs with `--mode=production` and expects the
+output in `.svelte-kit/` (the default output directory).
+
 ```shell
-# Build first if source files have changed since last build
+# Production build is required (not build:test)
 pnpm run build
 
 # Run all e2e tests
@@ -93,8 +98,19 @@ pnpm run test:e2e
 #### This command does the following:
 
 - runs tests in `tests/e2e` folder (headlessly) and reports results
-- automatically runs `pnpm preview` to start a node preview server
-- uses real production backend API
+- automatically runs `pnpm preview --mode=production` to start a node preview server
+- uses real production backend API (not mock data)
+
+#### CI setup
+
+E2e tests run in a **separate CI job** (`test-e2e`) from unit/integration tests because they need a
+different build:
+
+- **Unit + integration** (`test` job): uses `pnpm run build:test` (test mode, output in `.svelte-kit-test/`)
+- **E2e** (`test-e2e` job): uses `pnpm run build` (production mode, output in `.svelte-kit/`)
+
+The `test:no-build` script only runs unit and integration tests. E2e tests are not included because
+they require the production build.
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
 

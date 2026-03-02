@@ -7,16 +7,18 @@
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
+	import { getChain } from '$lib/helpers/chain';
 
 	interface Props {
 		vault: VaultInfo;
 	}
 
-	const HYPERCORE_CHAIN_ID = 9999;
+	const LIMITED_HISTORY_CHAINS = [9999, 9998];
 
 	let { vault }: Props = $props();
 
-	let isHyperCore = $derived(vault.chain_id === HYPERCORE_CHAIN_ID);
+	let chain = $derived(getChain(vault.chain_id));
+	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
 
 	function getDaysUntil(dateString: string | null): number | null {
@@ -85,13 +87,13 @@
 						<span class="underline">Age*</span>
 					</span>
 					<svelte:fragment slot="popup">
-						Due to Hyperliquid architecture, we currently have limited history of data on this vault and it might not
-						reach all the way back to the launch of the vault.
+						Due to {chain?.name} architecture, we currently have limited history of data on this vault and it might not reach
+						all the way back to the launch of the vault.
 					</svelte:fragment>
 				</Tooltip>
 			{/snippet}
 
-			<Metric label={isHyperCore ? ageLabel : 'Age'}>
+			<Metric label={hasLimitedHistory ? ageLabel : 'Age'}>
 				{formatNumber(vault.years, 1)} years
 			</Metric>
 
