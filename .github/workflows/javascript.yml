@@ -57,10 +57,9 @@ jobs:
       # use separate build step to avoid playwright timeout issue
       # mode=test so the output goes to .svelte-kit-test/ which is where
       # the integration test preview server (--mode=test) expects it
-      - name: Build SvelteKit vite app
+      - name: Build SvelteKit vite app (test mode)
         run: pnpm run build:test
-      # skip build in test step
-      - name: Run Tests
+      - name: Run unit and integration tests
         run: pnpm run test:no-build
       - name: Upload Test Results
         if: failure()
@@ -72,6 +71,42 @@ jobs:
             tests/integration/**/*-snapshots/
           retention-days: 7
           compression-level: 0 # Skip compression since PNGs are already compressed
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH deploy key for fonts
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY_FONTS }}
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Setup submodules
+        run: bash scripts/build-deps.sh
+      - name: Install Playwright
+        run: pnpm exec playwright install chromium --with-deps
+      # e2e tests need a production build (--mode=production preview server)
+      - name: Build SvelteKit vite app (production mode)
+        run: pnpm run build
+      - name: Run e2e tests
+        run: pnpm run test:e2e
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-results
+          path: test-results/
+          retention-days: 7
+          compression-level: 0
 
   build:
     runs-on: ubuntu-latest
