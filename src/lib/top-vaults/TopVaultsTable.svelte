@@ -5,8 +5,13 @@
 	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
+	import type { ParamSchema } from '$lib/helpers/url-search-state';
+	import { untrack } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
 	import { resolve } from '$app/paths';
+	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import Select from '$lib/components/Select.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
@@ -81,17 +86,111 @@
 		defaultAgeIndex = 0
 	}: Props = $props();
 
-	// Interactive filter state (used when showFilters is true)
-	// svelte-ignore state_referenced_locally
-	let selectedTvlKey = $state(defaultTvlKey); // intentionally captures initial prop value only
+	// --- Sort column registry (key → compareFn + default direction) ---
+
+	function stringCompare(fn: (v: VaultInfo) => string) {
+		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
+	}
+
+	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
+		chain: {
+			defaultDirection: 'asc',
+			compareFn: stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+		},
+		vault: { defaultDirection: 'asc', compareFn: stringCompare((v) => `${v.name.trim()} ${v.protocol}`) },
+		one_month_return_ann: {
+			defaultDirection: 'desc',
+			compareFn: rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
+		},
+		three_months_return_ann: {
+			defaultDirection: 'desc',
+			compareFn: rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
+		},
+		lifetime_return_ann: { defaultDirection: 'desc', compareFn: rankVaultsBy(['cagr', 'cagr_net']) },
+		lifetime_return_abs: {
+			defaultDirection: 'desc',
+			compareFn: rankVaultsBy(['lifetime_return', 'lifetime_return_net'])
+		},
+		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
+		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
+		denomination: { defaultDirection: 'asc', compareFn: stringCompare((v) => v.denomination) },
+		tvl: { defaultDirection: 'desc', compareFn: rankVaultsBy(['current_nav', 'peak_nav']) },
+		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
+		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
+		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
+		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) }
+	};
+
+	// --- URL search state schema ---
+
+	const searchParamsSchema = {
+		tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
+		age: { type: 'number', defaultValue: defaultAgeIndex },
+		risk: { type: 'number', defaultValue: 1 },
+		sort: { type: 'string', defaultValue: 'one_month_return_ann', options: Object.keys(sortColumnMap) },
+		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
+		q: { type: 'string', defaultValue: '' }
+	} as const satisfies ParamSchema;
+
+	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
+
+	/** Update URL search params, merging overrides with current state */
+	function updateSearchParams(overrides: Partial<typeof urlState>) {
+		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
+		const updated = { ...current, ...overrides };
+		const queryString = serialiseSearchParams(updated, searchParamsSchema);
+		goto('?' + queryString, { replaceState: true, noScroll: true, keepFocus: true });
+	}
+
+	// --- Filter state (derived from URL) ---
+
+	let selectedTvlKey = $derived(urlState.tvl);
 	let selectedTvlOption = $derived(tvlFilterOptions.find((o) => o.key === selectedTvlKey)!);
 	let tvlDropdownOpen = $state(false);
-	// svelte-ignore state_referenced_locally
-	let selectedAgeIndex = $state(defaultAgeIndex); // intentionally captures initial prop value only
+
+	let selectedAgeIndex = $derived(urlState.age);
 	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
-	let selectedRiskIndex = $state(1);
+
+	let selectedRiskIndex = $derived(urlState.risk);
 	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	let riskDropdownOpen = $state(false);
+
+	// Text search: local state for responsive typing, synced to/from URL
+	let filterValue = $state('');
+
+	// Sync filterValue from URL (handles initial load and popstate/back navigation)
+	$effect(() => {
+		const urlQ = urlState.q;
+		const current = untrack(() => filterValue);
+		if (urlQ !== current) {
+			filterValue = urlQ;
+		}
+	});
+
+	// Debounce text search → URL sync
+	$effect(() => {
+		const value = filterValue;
+		const timer = setTimeout(() => {
+			if (value !== untrack(() => urlState.q)) {
+				updateSearchParams({ q: value });
+			}
+		}, 300);
+		return () => clearTimeout(timer);
+	});
+
+	// --- Sort state (derived from URL) ---
+
+	let sortOptions: SortOptions = $derived.by(() => {
+		const column = sortColumnMap[urlState.sort];
+		if (!column) {
+			return {
+				key: 'one_month_return_ann',
+				direction: 'desc' as const,
+				compareFn: sortColumnMap['one_month_return_ann'].compareFn
+			};
+		}
+		return { key: urlState.sort, direction: urlState.direction as 'asc' | 'desc', compareFn: column.compareFn };
+	});
 
 	let showChainCol = $derived(!chain);
 
@@ -108,8 +207,6 @@
 		if (Math.abs(v) > VOLATILITY_CAP) return VOLATILITY_CAP_LABEL;
 		return formatPercent(v, 1);
 	};
-
-	let filterValue = $state('');
 
 	// filter out blacklisted vaults (unless includeBlacklisted, searching "blacklisted",
 	// or the risk dropdown includes blacklisted level)
@@ -188,12 +285,6 @@
 	// Calculate TVL-weighted average 1M APY from non-blacklisted, fully-filtered vaults
 	let avgTvlWeightedApy1M = $derived(calculateTvlWeightedApy(statsVaults));
 
-	let sortOptions = $state<SortOptions>({
-		key: 'one_month_return_ann',
-		direction: 'desc',
-		compareFn: rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
-	});
-
 	// sort vaults
 	let sortedVaults = $derived.by(() => {
 		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
@@ -209,21 +300,16 @@
 	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
 	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
 
-	function stringCompare(sortBy: (v: VaultInfo) => string) {
-		return (a: VaultInfo, b: VaultInfo) => {
-			return sortBy(a).localeCompare(sortBy(b));
-		};
-	}
-
 	function sortBy(
 		key: SortOptions['key'],
-		direction: SortOptions['direction'],
-		compareFn: (a: VaultInfo, b: VaultInfo) => number
+		defaultDirection: SortOptions['direction'],
+		_compareFn: SortOptions['compareFn']
 	) {
+		let direction = defaultDirection;
 		if (sortOptions.key === key) {
 			direction = sortOptions.direction === 'asc' ? 'desc' : 'asc';
 		}
-		sortOptions = { key, direction, compareFn };
+		updateSearchParams({ sort: key, direction });
 	}
 
 	/** Svelte action to close dropdown on outside clicks */
@@ -369,7 +455,7 @@
 										<button
 											class:active={selectedTvlKey === option.key}
 											onclick={() => {
-												selectedTvlKey = option.key;
+												updateSearchParams({ tvl: option.key });
 												tvlDropdownOpen = false;
 											}}
 										>
@@ -384,7 +470,10 @@
 
 				<div class="filter-group">
 					<span class="filter-label">Age</span>
-					<Select bind:value={selectedAgeIndex}>
+					<Select
+						value={selectedAgeIndex}
+						onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
+					>
 						{#each ageFilterOptions as option, i (option.label)}
 							<option value={i}>{option.label}</option>
 						{/each}
@@ -413,7 +502,7 @@
 										<button
 											class:active={selectedRiskIndex === i}
 											onclick={() => {
-												selectedRiskIndex = i;
+												updateSearchParams({ risk: i });
 												riskDropdownOpen = false;
 											}}
 										>
