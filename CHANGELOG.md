@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Serialise vault listing search config in URL for copy-paste and back navigation support (2026-03-03)
 - Add pricing page with Basic and Pro tier comparison table (2026-03-02)
 - Add backtesting support for YAML-configured strategies with iframe rendering and configurable script injection (2026-03-02)
 - Streamline homepage and navigation: update copy, fix Lighter vault visibility and chart data (2026-03-01)

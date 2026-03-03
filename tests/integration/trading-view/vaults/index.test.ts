@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+/** Check that a URL contains all expected search param key/value pairs */
+function urlParamsMatch(expected: Record<string, string>) {
+	return (url: URL) => Object.entries(expected).every(([key, value]) => url.searchParams.get(key) === value);
+}
+
 test.describe('vault index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/trading-view/vaults');
@@ -73,5 +78,26 @@ test.describe('vault index page', () => {
 		// Wait for first sparkline to be visible
 		const firstSparkline = page.locator('td.sparkline img').first();
 		await expect(firstSparkline).toBeVisible();
+	});
+
+	test('retains URL search params when navigating to vault detail and back', async ({ page }) => {
+		const searchParams = { tvl: '1m', sort: 'tvl', direction: 'desc' };
+
+		// Navigate with custom search params
+		await page.goto(`/trading-view/vaults?${new URLSearchParams(searchParams)}`);
+
+		// Wait for rows to render
+		const rows = page.locator('tbody tr.targetable');
+		await expect(rows.first()).toBeVisible();
+
+		// Click the first vault row link to navigate to vault detail
+		await page.locator('a.row-link').first().click();
+		await page.waitForURL(/\/trading-view\/vaults\/[^/]+$/);
+
+		// Navigate back
+		await page.goBack();
+
+		// Verify URL search params are preserved
+		await page.waitForURL(urlParamsMatch(searchParams), { timeout: 5000 });
 	});
 });
