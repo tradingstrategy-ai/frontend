@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { Tooltip } from '$lib/components';
 	import IconSuccess from '~icons/local/success';
-	import IconQuestionCircle from '~icons/local/question-circle';
-
 	export let title: string;
 	export let details: string;
 </script>
@@ -11,7 +9,6 @@
 	<span slot="trigger">
 		<IconSuccess />
 		{title}
-		<IconQuestionCircle />
 	</span>
 	<div slot="popup">
 		{details}
@@ -32,10 +29,6 @@
 			:global(path) {
 				stroke-width: 2.5px;
 			}
-		}
-
-		:global(.icon.question-circle) {
-			opacity: 0.8;
 		}
 	}
 
