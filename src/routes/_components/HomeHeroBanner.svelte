@@ -5,35 +5,34 @@
 <section class="home-hero-banner" data-testid="home-hero-banner">
 	<div class="inner ds-container">
 		<header>
-			<h1>
-				<span>Unleash the power of</span>
-				<span>automated crypto trading</span>
-			</h1>
-			<div class="differentiators">
-				<StrategyDifferentiator
-					title="100% transparent"
-					details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
-				/>
-				<StrategyDifferentiator
-					title="Self-custodial"
-					details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
-				/>
-				<StrategyDifferentiator
-					title="No fixed fees"
-					details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
-				/>
-			</div>
+			<h1>The best DeFi vaults and trading strategies</h1>
 		</header>
 
 		<div class="content">
 			<enhanced:img class="media" src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
 
-			<ol>
-				<li>Select a professional-grade strategy aligned with your goals.</li>
-				<li>Connect your wallet and deposit funds to the strategy’s vault.</li>
-				<li>Track your returns as the strategy trades automatically.</li>
-				<li>Adjust your portfolio or withdraw anytime.</li>
-			</ol>
+			<div class="text">
+				<p>
+					<a href="/blog/announcing-master-vault-strategy">Allocate to the best-performing vaults</a> with automated
+					Vault-of-Vaults strategies. <a href="/trading-view/vaults">Find and compare</a> the most profitable vaults across
+					all blockchains.
+				</p>
+
+				<div class="differentiators">
+					<StrategyDifferentiator
+						title="100% transparent"
+						details="All trades, all transactions, 100% transparently visible on the blockchains for you to verify. Building trust through openness."
+					/>
+					<StrategyDifferentiator
+						title="Self-custodial"
+						details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
+					/>
+					<StrategyDifferentiator
+						title="No fixed fees"
+						details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
+					/>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -72,10 +71,6 @@
 		font: var(--f-heading-xxxl-medium);
 		letter-spacing: var(--f-heading-xxxl-spacing, normal);
 
-		span {
-			white-space: nowrap;
-		}
-
 		@media (--viewport-lg-down) {
 			font: var(--f-heading-xxl-medium);
 			letter-spacing: var(--f-heading-xxl-spacing, normal);
@@ -90,6 +85,11 @@
 			font: var(--f-heading-lg-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
 		}
+	}
+
+	.text {
+		display: grid;
+		gap: 2rem;
 	}
 
 	.differentiators {
@@ -109,11 +109,17 @@
 		}
 	}
 
+	.media {
+		max-width: 420px;
+		height: auto;
+	}
+
 	.content {
 		display: grid;
-		grid-template-columns: 3fr 4fr;
+		grid-template-columns: 2fr 4fr;
 		gap: 3rem;
-		place-items: center;
+		align-items: start;
+		justify-items: center;
 
 		@media (--viewport-lg-down) {
 			grid-template-columns: auto auto;
@@ -130,12 +136,8 @@
 		}
 	}
 
-	ol {
-		list-style: none;
-		counter-reset: item;
-		display: grid;
-		gap: 1.25em;
-		padding: 0;
+	p {
+		color: var(--c-text-light);
 		font: var(--f-heading-md-roman);
 		letter-spacing: var(--f-heading-md-spacing, normal);
 
@@ -155,24 +157,9 @@
 		}
 	}
 
-	li {
-		counter-increment: item;
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 0.625em;
-	}
-
-	li:before {
-		content: counter(item);
-		height: 1.625em;
-		aspect-ratio: 1;
-		display: grid;
-		align-items: center;
-		justify-content: center;
-		border-radius: 50%;
-		background: color-mix(in srgb, transparent, var(--c-success) 35%);
-		color: color-mix(in srgb, var(--c-text), var(--c-success) 70%);
-		font-size: 0.9em;
+	p a {
+		text-decoration: underline;
 		font-weight: bold;
+		color: var(--c-text);
 	}
 </style>
