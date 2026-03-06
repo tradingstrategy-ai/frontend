@@ -47,6 +47,9 @@ const aboveTvl = generateMockVaults('Above TVL', 249, {
 		return Math.random() * 1_500_000 + 50_000;
 	},
 	one_month_returns: 0.05,
+	get one_month_cagr() {
+		return Math.random() * 0.5 + 0.02;
+	},
 	get three_months_returns() {
 		return (Math.random() - 0.2) * 0.5;
 	},

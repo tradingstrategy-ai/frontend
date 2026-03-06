@@ -12,7 +12,7 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(trigger).toBeVisible();
 		});
 
-		test('clicking Charts opens dropdown with 4 chart links', async ({ page }) => {
+		test('clicking Charts opens dropdown with 5 chart links', async ({ page }) => {
 			const nav = page.locator('.vault-listings-selector');
 			const trigger = nav.locator('button', { hasText: 'Charts' });
 			await trigger.click();
@@ -21,12 +21,13 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(menu).toBeVisible();
 
 			const items = menu.locator('[role="menuitem"]');
-			await expect(items).toHaveCount(4);
+			await expect(items).toHaveCount(5);
 
 			await expect(menu).toContainText('Yield / Risk');
 			await expect(menu).toContainText('Yield / Protocol');
 			await expect(menu).toContainText('Yield / Chain');
 			await expect(menu).toContainText('Current / Peak TVL');
+			await expect(menu).toContainText('Cumulative TVL / APY');
 		});
 
 		test('clicking a chart link navigates to the chart page', async ({ page }) => {
