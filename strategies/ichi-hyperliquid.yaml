@@ -3,7 +3,7 @@ id: ichi-hyperliquid
 # Strategy page slug
 slug: ichi-hyperliquid
 # Strategy page title
-name: Ichimoku trend-following vault on Hyperliquid
+name: Ichimoku trend-follower
 # One paragraph description of the strategy
 short_description: Dual long/short Ichimoku trend-following strategy trading the top perpetual futures on Hyperliquid by volume.
 # Primary key to match it to Hyperliquid vault,
@@ -19,7 +19,7 @@ tags:
 # How far up in the listing page we displays this
 sort_priority: 0
 # Show on front page
-frontpage: false
+frontpage: true
 # Mangle HTML file input to iframe-compatible format
 inject_backtest_iframe_resizer: true
 # Markdown description of the strategy

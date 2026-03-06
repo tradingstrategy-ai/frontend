@@ -114,20 +114,23 @@
 		gap: inherit;
 		align-items: flex-start;
 
+		@media (--viewport-md-up) {
+			--padding: 1.25rem 2rem;
+		}
+
 		.metric-group {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 1rem 1.5rem;
-			justify-content: space-between;
 
-			&.primary > :global(*) {
-				flex: 1;
-			}
-
-			@media (--viewport-xs) {
+			&.primary {
 				> :global(*) {
 					flex: 1;
 				}
+			}
+
+			&.secondary > :global(*) {
+				flex: 1;
 			}
 		}
 
