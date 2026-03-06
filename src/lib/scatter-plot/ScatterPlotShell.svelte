@@ -25,6 +25,7 @@ loading/error states, and a Plotly chart container.
 		loading: boolean;
 		error: string | null;
 		minTvl: number;
+		onMinTvlChange?: (value: number) => void;
 		extraControls?: Snippet;
 		belowChart?: Snippet;
 	}
@@ -34,18 +35,28 @@ loading/error states, and a Plotly chart container.
 		loading,
 		error,
 		minTvl = $bindable(),
+		onMinTvlChange,
 		extraControls,
 		belowChart
 	}: Props = $props();
+
+	function handleMinTvlChange(e: Event) {
+		const value = Number((e.target as HTMLSelectElement).value);
+		if (onMinTvlChange) {
+			onMinTvlChange(value);
+		} else {
+			minTvl = value;
+		}
+	}
 </script>
 
 <div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
 	<div class="controls">
 		<label>
 			Min TVL:
-			<select bind:value={minTvl}>
+			<select value={minTvl} onchange={handleMinTvlChange}>
 				{#each tvlOptions as { value, label } (value)}
-					<option {value}>{label}</option>
+					<option {value} selected={value === minTvl}>{label}</option>
 				{/each}
 			</select>
 		</label>
