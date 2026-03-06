@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('vault yield / protocol scatter plot page', () => {
+test.describe('cumulative TVL/APY chart page', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/trading-view/vaults/yield-protocol');
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
 	});
 
-	test('renders the scatter plot chart', async ({ page }) => {
+	test('renders the Plotly line chart', async ({ page }) => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 
@@ -13,41 +13,45 @@ test.describe('vault yield / protocol scatter plot page', () => {
 		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
 	});
 
-	test('displays protocol legend entries', async ({ page }) => {
+	test('renders APY vs cumulative TVL line chart', async ({ page }) => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 
 		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
 		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
 
-		const legend = plotWrapper.locator('.legend');
-		await expect(legend).toBeVisible();
-
-		const legendText = await legend.textContent();
-		// Legend should contain at least one protocol name (mock data may not produce "Other")
-		expect(legendText?.length).toBeGreaterThan(0);
+		// Chart should have scatter trace with line
+		const traces = plotlyChart.locator('.scatter');
+		await expect(traces.first()).toBeVisible();
 	});
 
 	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
 		const nav = page.locator('.vault-listings-selector');
 		await expect(nav).toBeVisible();
 
-		// Charts trigger should show active state
 		const trigger = nav.locator('button', { hasText: 'Charts' });
 		await expect(trigger).toHaveClass(/active/);
 
-		// Open dropdown and verify active link
 		await trigger.click();
 		const activeLink = page.locator('[role="menu"] a.active');
-		await expect(activeLink).toHaveText('Yield / Protocol');
+		await expect(activeLink).toHaveText('Cumulative TVL / APY');
 	});
 
-	test('displays page title and hero banner', async ({ page }) => {
-		await expect(page.locator('h1')).toContainText('scatter plot');
-	});
-
-	test('displays scatter plot selector with both chart links', async ({ page }) => {
+	test('displays scatter plot selector with all chart links', async ({ page }) => {
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
 		await expect(selector.locator('a')).toHaveCount(5);
+	});
+
+	test('page has no JavaScript errors', async ({ page }) => {
+		const errors: string[] = [];
+		page.on('pageerror', (err) => errors.push(err.message));
+
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
+		const plotWrapper = page.getByTestId('vault-scatter-plot');
+		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
+		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
+
+		expect(errors).toHaveLength(0);
 	});
 });

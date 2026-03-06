@@ -84,7 +84,7 @@ loading/error states, and a Plotly chart container.
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-light);
 
-		select {
+		:global(select) {
 			margin-left: 0.25rem;
 			padding: 0.25rem 0.5rem;
 			background: var(--c-background-accent-1);
