@@ -11,9 +11,12 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
 	import { loadPlotly, buildChartConfig } from '$lib/scatter-plot/helpers';
+	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
 	const MAX_APY_THRESHOLD = 10; // 1000%
@@ -28,7 +31,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
-	let minTvl = $state(50_000);
 
 	const vaultLimitOptions = [
 		{ value: 25, label: '25' },
@@ -37,8 +39,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		{ value: 200, label: '200' },
 		{ value: 0, label: 'All' }
 	] as const;
-
-	let maxVaults = $state(0);
 
 	const timeWindows = [
 		{ value: '1m', label: '1 month' },
@@ -50,7 +50,26 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 	type TimeWindow = (typeof timeWindows)[number]['value'];
 
-	let selectedWindow = $state<TimeWindow>('1m');
+	const searchParamsSchema = {
+		tvl: { type: 'number', defaultValue: 50_000 },
+		top: { type: 'number', defaultValue: 0 },
+		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((w) => w.value) },
+		protocols: { type: 'string', defaultValue: '' }
+	} as const satisfies ParamSchema;
+
+	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
+
+	let minTvl = $derived(urlState.tvl);
+	let maxVaults = $derived(urlState.top);
+	let selectedWindow = $derived(urlState.window as TimeWindow);
+	let selectedProtocols = $derived(new Set(urlState.protocols ? urlState.protocols.split(',') : []));
+
+	function updateUrl(overrides: Partial<typeof urlState>) {
+		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
+		const updated = { ...current, ...overrides };
+		const qs = serialiseSearchParams(updated, searchParamsSchema);
+		goto('?' + qs, { replaceState: true, noScroll: true, keepFocus: true });
+	}
 
 	/**
 	 * Get the CAGR value for a vault based on the selected time window.
@@ -91,8 +110,43 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			})
 	);
 
+	/** Unique protocols with vault counts, sorted by count desc then name. */
+	let protocolOptions = $derived(() => {
+		const counts = new Map<string, number>();
+		for (const v of allEligible) {
+			const p = v.protocol ?? 'Unknown';
+			counts.set(p, (counts.get(p) ?? 0) + 1);
+		}
+		return [...counts.entries()]
+			.toSorted(([aName, aCount], [bName, bCount]) => bCount - aCount || aName.localeCompare(bName))
+			.map(([name, count]) => ({ name, count }));
+	});
+
+	/** Toggle a protocol in the selection set. */
+	function toggleProtocol(name: string) {
+		const allActive = selectedProtocols.size === 0;
+		const next = new Set(selectedProtocols);
+
+		if (allActive) {
+			next.add(name);
+		} else if (next.has(name)) {
+			next.delete(name);
+		} else {
+			next.add(name);
+		}
+
+		updateUrl({ protocols: [...next].join(',') });
+	}
+
+	/** Vaults filtered by selected protocols. */
+	let protocolFiltered = $derived(
+		selectedProtocols.size === 0
+			? allEligible
+			: allEligible.filter((v) => selectedProtocols.has(v.protocol ?? 'Unknown'))
+	);
+
 	/** Displayed vaults (limited to maxVaults). */
-	let displayedVaults = $derived(maxVaults > 0 ? allEligible.slice(0, maxVaults) : allEligible);
+	let displayedVaults = $derived(maxVaults > 0 ? protocolFiltered.slice(0, maxVaults) : protocolFiltered);
 
 	/**
 	 * Compute X (APY%) and Y (cumulative TVL) for the chart.
@@ -241,26 +295,37 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	});
 </script>
 
-<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+<ScatterPlotShell bind:chartContainer {loading} {error} {minTvl} onMinTvlChange={(v) => updateUrl({ tvl: v })}>
 	{#snippet extraControls()}
 		<label>
 			Show top:
-			<select bind:value={maxVaults}>
+			<select value={maxVaults} onchange={(e) => updateUrl({ top: Number(e.currentTarget.value) })}>
 				{#each vaultLimitOptions as { value, label } (value)}
-					<option {value}>{label}</option>
+					<option {value} selected={value === maxVaults}>{label}</option>
 				{/each}
 			</select>
 		</label>
 		<label>
 			CAGR window:
-			<select bind:value={selectedWindow}>
+			<select value={selectedWindow} onchange={(e) => updateUrl({ window: e.currentTarget.value })}>
 				{#each timeWindows as { value, label } (value)}
-					<option {value}>{label}</option>
+					<option {value} selected={value === selectedWindow}>{label}</option>
 				{/each}
 			</select>
 		</label>
 	{/snippet}
 	{#snippet belowChart()}
+		<div class="protocol-chips">
+			{#each protocolOptions() as { name, count } (name)}
+				<button
+					class="chip"
+					class:active={selectedProtocols.size === 0 || selectedProtocols.has(name)}
+					onclick={() => toggleProtocol(name)}
+				>
+					{name} ({count})
+				</button>
+			{/each}
+		</div>
 		<p class="vault-count">
 			Showing {displayedVaults.length} of {allEligible.length} vault{allEligible.length === 1 ? '' : 's'}
 		</p>
@@ -268,6 +333,36 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 </ScatterPlotShell>
 
 <style>
+	.protocol-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+		justify-content: center;
+		margin-top: 0.75rem;
+	}
+
+	.chip {
+		padding: 0.25rem 0.625rem;
+		border: 1px solid var(--c-border);
+		border-radius: var(--radius-md);
+		background: transparent;
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-xs-roman);
+		cursor: pointer;
+		transition: all 0.15s ease;
+		opacity: 0.4;
+
+		&.active {
+			background: var(--c-box-3);
+			color: var(--c-text);
+			opacity: 1;
+		}
+
+		&:hover {
+			border-color: var(--c-text-light);
+		}
+	}
+
 	.vault-count {
 		text-align: center;
 		font: var(--f-ui-sm-roman);
