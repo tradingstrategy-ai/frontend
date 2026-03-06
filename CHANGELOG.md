@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add cumulative TVL/APY chart showing how vault TVL is distributed across yield tiers (2026-03-06)
 - Update homepage hero banner with new heading, slogan, and layout (2026-03-04)
 - Serialise vault listing search config in URL for copy-paste and back navigation support (2026-03-03)
 - Add pricing page with Basic and Pro tier comparison table (2026-03-02)
