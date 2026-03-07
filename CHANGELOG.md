@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add US Treasury note rate reference line to cumulative TVL/APY chart with hover tooltip showing TVL earning better/less than risk-free rate (2026-03-07)
 - Add protocol filter chips and URL-persisted controls to cumulative TVL/APY chart (2026-03-06)
 - Add cumulative TVL/APY chart showing how vault TVL is distributed across yield tiers (2026-03-06)
 - Update homepage hero banner with new heading, slogan, and layout (2026-03-04)

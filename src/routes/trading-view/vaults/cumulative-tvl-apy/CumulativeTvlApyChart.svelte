@@ -20,7 +20,23 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
 	const MAX_APY_THRESHOLD = 10; // 1000%
-	const MIN_APY_THRESHOLD = 0.001; // 0.1%
+	const MIN_APY_CHART_VALUE = 0.01; // Floor for log axis: 0.01% (used for display only)
+
+	const TREASURY_RATES_URL =
+		'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/avg_interest_rates?sort=-record_date&page[size]=1&filter=security_desc:eq:Treasury Notes';
+
+	/** Fetch the latest US Treasury note average interest rate. Returns null on failure. */
+	async function fetchTreasuryRate(): Promise<number | null> {
+		try {
+			const resp = await fetch(TREASURY_RATES_URL);
+			if (!resp.ok) return null;
+			const json = await resp.json();
+			const rate = parseFloat(json.data?.[0]?.avg_interest_rate_amt);
+			return Number.isFinite(rate) ? rate : null;
+		} catch {
+			return null;
+		}
+	}
 
 	interface Props {
 		vaults: VaultInfo[];
@@ -101,7 +117,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 				if (isBlacklisted(v)) return false;
 				if (v.current_nav == null || v.current_nav < minTvl) return false;
 				const apy = getVaultCagr(v, selectedWindow);
-				return apy != null && apy >= MIN_APY_THRESHOLD && apy <= MAX_APY_THRESHOLD;
+				return apy != null && apy <= MAX_APY_THRESHOLD;
 			})
 			.toSorted((a, b) => {
 				const apyA = getVaultCagr(a, selectedWindow) ?? 0;
@@ -154,6 +170,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	 */
 	function computeChartData(displayed: VaultInfo[], window: TimeWindow) {
 		const apyValues: number[] = [];
+		const realApyValues: number[] = [];
 		const cumulativeTvl: number[] = [];
 		const labels: string[] = [];
 		const vaultSlugs: string[] = [];
@@ -165,10 +182,12 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 		for (const v of displayed) {
 			const apy = getVaultCagr(v, window)!;
+			const apyPct = apy * 100;
 			const tvl = v.current_nav!;
 			runningTvl += tvl;
 
-			apyValues.push(apy * 100);
+			apyValues.push(Math.max(apyPct, MIN_APY_CHART_VALUE));
+			realApyValues.push(apyPct);
 			cumulativeTvl.push(runningTvl);
 			labels.push(v.name);
 			individualTvl.push(tvl);
@@ -177,7 +196,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			protocols.push(v.protocol ?? 'Unknown');
 		}
 
-		return { apyValues, cumulativeTvl, labels, vaultSlugs, individualTvl, chains, protocols };
+		return { apyValues, realApyValues, cumulativeTvl, labels, vaultSlugs, individualTvl, chains, protocols };
 	}
 
 	function formatUsd(value: number): string {
@@ -197,7 +216,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 				loading = true;
 				error = null;
 
-				const Plotly = await loadPlotly();
+				const [Plotly, treasuryRate] = await Promise.all([loadPlotly(), fetchTreasuryRate()]);
 				if (destroyed) return;
 
 				if (currentDisplayed.length === 0) {
@@ -206,10 +225,8 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					return;
 				}
 
-				const { apyValues, cumulativeTvl, labels, vaultSlugs, individualTvl, chains, protocols } = computeChartData(
-					currentDisplayed,
-					timeWindow
-				);
+				const { apyValues, realApyValues, cumulativeTvl, labels, vaultSlugs, individualTvl, chains, protocols } =
+					computeChartData(currentDisplayed, timeWindow);
 
 				const windowLabel = timeWindows.find((w) => w.value === timeWindow)!.label;
 
@@ -225,12 +242,14 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					fillcolor: 'rgba(34,197,94,0.15)',
 					customdata: vaultSlugs.map((slug) => `/trading-view/vaults/${slug}`),
 					hovertemplate: labels.map((name, i) => {
+						const tvlEarningBetter = cumulativeTvl[i] - individualTvl[i];
 						return [
 							`<b>${name}</b>`,
 							`${chains[i]} · ${protocols[i]}`,
-							`CAGR (${windowLabel}): ${apyValues[i].toFixed(1)}%`,
+							`CAGR (${windowLabel}): ${realApyValues[i].toFixed(1)}%`,
 							`TVL: ${formatUsd(individualTvl[i])}`,
 							`Cumulative TVL: ${formatUsd(cumulativeTvl[i])}`,
+							`TVL earning better than this: ${formatUsd(tvlEarningBetter)}`,
 							'<extra></extra>'
 						].join('<br>');
 					})
@@ -253,6 +272,20 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
 						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B']
 					},
+					shapes: treasuryRate
+						? [
+								{
+									type: 'line' as const,
+									x0: treasuryRate,
+									x1: treasuryRate,
+									y0: 0,
+									y1: 1,
+									xref: 'x' as const,
+									yref: 'paper' as const,
+									line: { color: 'red', width: 1.5, dash: 'dash' }
+								}
+							]
+						: [],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
 					font: { color: 'rgba(255,255,255,0.7)' },
@@ -264,11 +297,56 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					hovermode: 'closest' as const
 				};
 
+				const traces: any[] = [trace];
+
+				if (treasuryRate) {
+					let tvlBetter = 0;
+					let tvlWorse = 0;
+					for (let i = 0; i < realApyValues.length; i++) {
+						if (realApyValues[i] > treasuryRate) {
+							tvlBetter += individualTvl[i];
+						} else {
+							tvlWorse += individualTvl[i];
+						}
+					}
+					const totalTvl = tvlBetter + tvlWorse;
+					const pctBetter = totalTvl > 0 ? ((tvlBetter / totalTvl) * 100).toFixed(1) : '0.0';
+					const pctWorse = totalTvl > 0 ? ((tvlWorse / totalTvl) * 100).toFixed(1) : '0.0';
+
+					const yMin = Math.min(...cumulativeTvl);
+					const yMax = Math.max(...cumulativeTvl);
+					const hoverPoints = 20;
+					const logMin = Math.log10(yMin);
+					const logMax = Math.log10(yMax);
+					const yPoints = Array.from({ length: hoverPoints }, (_, i) =>
+						Math.pow(10, logMin + ((logMax - logMin) * i) / (hoverPoints - 1))
+					);
+					traces.push({
+						x: yPoints.map(() => treasuryRate),
+						y: yPoints,
+						mode: 'markers' as const,
+						marker: { size: 1, color: 'rgba(0,0,0,0)', opacity: 0 },
+						customdata: yPoints.map(() => '/glossary/risk-free-rate'),
+						hovertemplate: [
+							`<b>US Treasury note rate (${treasuryRate.toFixed(1)}%)</b>`,
+							`The risk-free benchmark.`,
+							``,
+							`Earning better: ${formatUsd(tvlBetter)} (${pctBetter}%)`,
+							`Earning less: ${formatUsd(tvlWorse)} (${pctWorse}%)`,
+							``,
+							`<i>Click for more information</i>`,
+							`<extra></extra>`
+						].join('<br>'),
+						hoverlabel: { bgcolor: 'red', font: { color: 'white', size: 12 }, bordercolor: 'darkred' },
+						showlegend: false
+					});
+				}
+
 				const config = buildChartConfig();
 
 				if (destroyed) return;
 
-				await Plotly.newPlot(chartContainer, [trace], layout, config);
+				await Plotly.newPlot(chartContainer, traces, layout, config);
 
 				(chartContainer as any).on('plotly_click', (data: any) => {
 					const point = data.points?.[0];
