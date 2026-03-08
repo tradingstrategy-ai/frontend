@@ -13,9 +13,10 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import CumulativeTvlApyChart from './CumulativeTvlApyChart.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
-	let { topVaults, savingsRate } = $derived(data);
+	let { topVaults, savingsRate, treasuryRate } = $derived(data);
 
 	const title = 'Cumulative TVL/APY';
 	const description =
@@ -38,9 +39,12 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 
 	<Section tag="header">
 		<VaultListingsSelector />
-		<HeroBanner
-			subtitle="Each point is a vault plotted by its APY. The line shows cumulative TVL — most capital sits in lower-yield vaults on the left, while high-yield vaults on the right hold less TVL."
-		>
+		<HeroBanner>
+			{#snippet subtitle()}
+				How much yield DeFi stablecoin vaults are earning and the size of the ecosystem.
+				<a href={resolve('/glossary/risk-free-rate')}>US Treasury note</a> and
+				<a href={resolve('/glossary/fdic-national-rate')}>National Savings Rate</a> marked.
+			{/snippet}
 			{#snippet title()}
 				<span>Cumulative TVL / APY</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
@@ -49,7 +53,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	</Section>
 
 	<Section padding="sm">
-		<CumulativeTvlApyChart vaults={topVaults.vaults} {savingsRate} />
+		<CumulativeTvlApyChart vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
 		<ScatterPlotSelector />
 	</Section>
 
@@ -64,6 +68,10 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 			font-size: 0.5em;
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
+		}
+
+		:global(.subtitle a) {
+			text-decoration: underline;
 		}
 	}
 

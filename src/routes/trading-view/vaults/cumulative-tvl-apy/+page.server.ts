@@ -1,7 +1,6 @@
-import { fetchLatestFredValue } from '$lib/fred';
+import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
 export async function load() {
-	return {
-		savingsRate: await fetchLatestFredValue('SNDR')
-	};
+	const [savingsRate, treasuryRate] = await Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()]);
+	return { savingsRate, treasuryRate };
 }

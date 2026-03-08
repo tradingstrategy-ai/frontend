@@ -6,7 +6,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 @example
 ```svelte
-  <CumulativeTvlApyChart vaults={topVaults.vaults} />
+  <CumulativeTvlApyChart vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
 ```
 -->
 <script lang="ts">
@@ -23,40 +23,17 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	const LINEAR_APY_CAP = 15; // Cap X axis at 15% in linear mode for readability
 	const MIN_APY_CHART_VALUE = 0.01; // Floor for log axis: 0.01% (used for display only)
 
-	const TREASURY_RATES_URL =
-		'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/avg_interest_rates?sort=-record_date&page[size]=1&filter=security_desc:eq:Treasury Notes';
-
-	/** Fetch the latest US Treasury note average interest rate. Returns null on failure. */
-	async function fetchTreasuryRate(): Promise<number | null> {
-		try {
-			const resp = await fetch(TREASURY_RATES_URL);
-			if (!resp.ok) return null;
-			const json = await resp.json();
-			const rate = parseFloat(json.data?.[0]?.avg_interest_rate_amt);
-			return Number.isFinite(rate) ? rate : null;
-		} catch {
-			return null;
-		}
-	}
-
 	interface Props {
 		vaults: VaultInfo[];
 		savingsRate: number | null;
+		treasuryRate: number | null;
 	}
 
-	let { vaults, savingsRate }: Props = $props();
+	let { vaults, savingsRate, treasuryRate }: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
-
-	const vaultLimitOptions = [
-		{ value: 25, label: '25' },
-		{ value: 50, label: '50' },
-		{ value: 100, label: '100' },
-		{ value: 200, label: '200' },
-		{ value: 0, label: 'All' }
-	] as const;
 
 	const timeWindows = [
 		{ value: '1m', label: '1 month' },
@@ -70,7 +47,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 	const searchParamsSchema = {
 		tvl: { type: 'number', defaultValue: 50_000 },
-		top: { type: 'number', defaultValue: 0 },
 		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((w) => w.value) },
 		protocols: { type: 'string', defaultValue: '' },
 		log: { type: 'string', defaultValue: '1', options: ['0', '1'] }
@@ -79,7 +55,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
 
 	let minTvl = $derived(urlState.tvl);
-	let maxVaults = $derived(urlState.top);
 	let selectedWindow = $derived(urlState.window as TimeWindow);
 	let selectedProtocols = $derived(new Set(urlState.protocols ? urlState.protocols.split(',') : []));
 	let logAxes = $derived(urlState.log === '1');
@@ -165,8 +140,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			: allEligible.filter((v) => selectedProtocols.has(v.protocol ?? 'Unknown'))
 	);
 
-	/** Displayed vaults (limited to maxVaults). */
-	let displayedVaults = $derived(maxVaults > 0 ? protocolFiltered.slice(0, maxVaults) : protocolFiltered);
+	let displayedVaults = $derived(protocolFiltered);
 
 	/** Total TVL across displayed vaults. */
 	let totalTvl = $derived(displayedVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
@@ -224,7 +198,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 				loading = true;
 				error = null;
 
-				const [Plotly, treasuryRate] = await Promise.all([loadPlotly(), fetchTreasuryRate()]);
+				const Plotly = await loadPlotly();
 				if (destroyed) return;
 
 				if (currentDisplayed.length === 0) {
@@ -238,6 +212,8 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 				const windowLabel = timeWindows.find((w) => w.value === timeWindow)!.label;
 
+				const chartTotalTvl = cumulativeTvl.at(-1) ?? 0;
+
 				const trace = {
 					x: apyValues,
 					y: cumulativeTvl,
@@ -248,16 +224,17 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					marker: { color: '#22c55e', size: 4 },
 					fill: 'tozeroy' as const,
 					fillcolor: 'rgba(34,197,94,0.15)',
+					hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 					customdata: vaultSlugs.map((slug) => `/trading-view/vaults/${slug}`),
 					hovertemplate: labels.map((name, i) => {
 						const tvlEarningBetter = cumulativeTvl[i] - individualTvl[i];
+						const tvlEarningLess = chartTotalTvl - cumulativeTvl[i];
 						return [
 							`<b>${name}</b>`,
 							`${chains[i]} · ${protocols[i]}`,
-							`CAGR (${windowLabel}): ${realApyValues[i].toFixed(1)}%`,
-							`TVL: ${formatUsd(individualTvl[i])}`,
-							`Cumulative TVL: ${formatUsd(cumulativeTvl[i])}`,
-							`TVL earning better than this: ${formatUsd(tvlEarningBetter)}`,
+							`Returns annualised (${windowLabel}): ${realApyValues[i].toFixed(1)}%`,
+							`TVL earning less than this: ${formatUsd(tvlEarningLess)} (${chartTotalTvl > 0 ? ((tvlEarningLess / chartTotalTvl) * 100).toFixed(1) : '0.0'}%)`,
+							`TVL earning better than this: ${formatUsd(tvlEarningBetter)} (${chartTotalTvl > 0 ? ((tvlEarningBetter / chartTotalTvl) * 100).toFixed(1) : '0.0'}%)`,
 							'<extra></extra>'
 						].join('<br>');
 					})
@@ -267,18 +244,26 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 				const layout = {
 					xaxis: {
-						title: `CAGR % (${windowLabel})`,
+						title: 'Returns (annualised)',
 						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
 						ticksuffix: '%',
-						...(useLogAxes ? { autorange: true as const } : { range: [0, LINEAR_APY_CAP] })
+						showline: true,
+						linecolor: 'rgba(255,255,255,0.2)',
+						linewidth: 3,
+						mirror: true,
+						...(useLogAxes ? { autorange: true as const, dtick: 1 } : { range: [0, LINEAR_APY_CAP] })
 					},
 					yaxis: {
-						title: 'Cumulative TVL (USD)',
+						title: 'TVL',
 						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: '#22c55e',
+						showline: true,
+						linecolor: 'rgba(255,255,255,0.2)',
+						linewidth: 3,
+						mirror: true,
 						...(useLogAxes
 							? {
 									tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
@@ -297,7 +282,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 										y1: 1,
 										xref: 'x' as const,
 										yref: 'paper' as const,
-										line: { color: 'rgba(255,100,100,0.8)', width: 3, dash: 'dash' }
+										line: { color: 'rgba(200,120,0,0.8)', width: 3 }
 									}
 								]
 							: []),
@@ -311,7 +296,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 										y1: 1,
 										xref: 'x' as const,
 										yref: 'paper' as const,
-										line: { color: 'rgba(100,160,255,0.8)', width: 3, dash: 'dash' }
+										line: { color: 'rgba(200,120,0,0.8)', width: 3 }
 									}
 								]
 							: [])
@@ -374,7 +359,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 							`<i>Click for more information</i>`,
 							`<extra></extra>`
 						].join('<br>'),
-						hoverlabel: { bgcolor: 'red', font: { color: 'white', size: 12 }, bordercolor: 'darkred' },
+						hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 						showlegend: false
 					});
 				}
@@ -401,15 +386,18 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 						y: yPoints,
 						mode: 'markers' as const,
 						marker: { size: 1, color: 'rgba(0,0,0,0)', opacity: 0 },
+						customdata: yPoints.map(() => '/glossary/fdic-national-rate'),
 						hovertemplate: [
 							`<b>US bank savings rate (${savingsRate.toFixed(2)}%)</b>`,
 							`Average yield on a US bank savings account.`,
 							``,
 							`Earning better: ${formatUsd(tvlBetter)} (${pctBetter}%)`,
 							`Earning less: ${formatUsd(tvlWorse)} (${pctWorse}%)`,
+							``,
+							`<i>Click for more information</i>`,
 							`<extra></extra>`
 						].join('<br>'),
-						hoverlabel: { bgcolor: '#3b82f6', font: { color: 'white', size: 12 }, bordercolor: '#1e3a8a' },
+						hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 						showlegend: false
 					});
 				}
@@ -448,14 +436,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 <ScatterPlotShell bind:chartContainer {loading} {error} {minTvl} onMinTvlChange={(v) => updateUrl({ tvl: v })}>
 	{#snippet extraControls()}
 		<label>
-			Show top:
-			<select value={maxVaults} onchange={(e) => updateUrl({ top: Number(e.currentTarget.value) })}>
-				{#each vaultLimitOptions as { value, label } (value)}
-					<option {value} selected={value === maxVaults}>{label}</option>
-				{/each}
-			</select>
-		</label>
-		<label>
 			Returns lookback:
 			<select value={selectedWindow} onchange={(e) => updateUrl({ window: e.currentTarget.value })}>
 				{#each timeWindows as { value, label } (value)}
@@ -469,6 +449,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		</label>
 	{/snippet}
 	{#snippet belowChart()}
+		<p class="protocol-label">Select vault protocols</p>
 		<div class="protocol-chips">
 			{#each protocolOptions() as { name, count } (name)}
 				<button
@@ -488,12 +469,19 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 </ScatterPlotShell>
 
 <style>
+	.protocol-label {
+		text-align: center;
+		font: var(--f-ui-sm-roman);
+		color: var(--c-text-extra-light);
+		margin-bottom: 0.25rem;
+		margin-top: 0.75rem;
+	}
+
 	.protocol-chips {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.375rem;
 		justify-content: center;
-		margin-top: 0.75rem;
 	}
 
 	.chip {

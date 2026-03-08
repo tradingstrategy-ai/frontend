@@ -3,6 +3,7 @@ import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
+import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
 export async function load({ fetch }) {
 	const strategies = await getCachedStrategies(fetch);
@@ -26,5 +27,7 @@ export async function load({ fetch }) {
 		}
 	}
 
-	return { strategies: frontpageStrategies };
+	const [savingsRate, treasuryRate] = await Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()]);
+
+	return { strategies: frontpageStrategies, savingsRate, treasuryRate };
 }
