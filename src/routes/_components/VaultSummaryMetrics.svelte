@@ -15,12 +15,12 @@
 	let totalTvl = $derived(calculateTotalTvl(baseVaults));
 	let formattedTvl = $derived(formatDollar(totalTvl).split(/(?=[KMBT])/));
 
-	let top100Apy = $derived.by(() => {
-		const top100Vaults = rankedVaults.slice(0, 100);
-		const top100Tvl = calculateTotalTvl(top100Vaults);
+	let avgApy = $derived.by(() => {
+		const tvl = calculateTotalTvl(rankedVaults);
+		if (tvl === 0) return 0;
 
-		return top100Vaults.reduce((acc, v) => {
-			const weight = v.current_nav! / top100Tvl;
+		return rankedVaults.reduce((acc, v) => {
+			const weight = v.current_nav! / tvl;
 			return acc + weight * (v.one_month_cagr_net ?? v.one_month_cagr ?? 0);
 		}, 0);
 	});
@@ -41,11 +41,11 @@
 					Avg. 1M APY
 					<IconQuestionCircle />
 				</span>
-				<span slot="popup"> Weighted averaged of the top 100 vaults with minumum $50k TVL.</span>
+				<span slot="popup">TVL-weighted average of {rankedVaults.length} vaults with minimum $50k TVL.</span>
 			</Tooltip>
 		</dt>
 		<dd>
-			{formatPercent(top100Apy).slice(0, -1)}
+			{formatPercent(avgApy).slice(0, -1)}
 			<small>%</small>
 		</dd>
 	</div>

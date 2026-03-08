@@ -53,7 +53,7 @@ describe('fetchFredCsvLatest', () => {
 // --- US Treasury Fiscal Data API ---
 
 const TREASURY_RATES_URL =
-	'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/avg_interest_rates?sort=-record_date&page[size]=1&filter=security_desc:eq:Treasury Notes';
+	'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/avg_interest_rates?sort=-record_date&page%5Bsize%5D=1&filter=security_desc:eq:Treasury%20Notes';
 
 async function fetchTreasuryNoteRate(): Promise<number | null> {
 	try {
