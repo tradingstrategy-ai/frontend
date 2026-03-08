@@ -305,7 +305,7 @@ loaded dynamically from CDN.
 	.ecosystem-chart {
 		position: relative;
 		min-height: 400px;
-		max-width: 768px;
+		max-width: 960px;
 		margin-inline: auto;
 	}
 
