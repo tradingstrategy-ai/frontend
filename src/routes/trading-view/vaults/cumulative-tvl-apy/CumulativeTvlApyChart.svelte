@@ -49,7 +49,6 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
-	let logAxes = $state(true);
 
 	const vaultLimitOptions = [
 		{ value: 25, label: '25' },
@@ -73,7 +72,8 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		tvl: { type: 'number', defaultValue: 50_000 },
 		top: { type: 'number', defaultValue: 0 },
 		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((w) => w.value) },
-		protocols: { type: 'string', defaultValue: '' }
+		protocols: { type: 'string', defaultValue: '' },
+		log: { type: 'string', defaultValue: '1', options: ['0', '1'] }
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
@@ -82,6 +82,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let maxVaults = $derived(urlState.top);
 	let selectedWindow = $derived(urlState.window as TimeWindow);
 	let selectedProtocols = $derived(new Set(urlState.protocols ? urlState.protocols.split(',') : []));
+	let logAxes = $derived(urlState.log === '1');
 
 	function updateUrl(overrides: Partial<typeof urlState>) {
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
@@ -463,7 +464,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			</select>
 		</label>
 		<label class="checkbox-label">
-			<input type="checkbox" bind:checked={logAxes} />
+			<input type="checkbox" checked={logAxes} onchange={() => updateUrl({ log: logAxes ? '0' : '1' })} />
 			Logarithmic axes
 		</label>
 	{/snippet}
