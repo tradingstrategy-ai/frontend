@@ -122,6 +122,7 @@ loaded dynamically from CDN.
 
 				const layout = {
 					xaxis: {
+						title: { text: '<b>Returns (last month annualised)</b>', font: { color: 'rgba(255,255,255,0.7)' } },
 						type: 'log' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
@@ -134,9 +135,10 @@ loaded dynamically from CDN.
 						mirror: true
 					},
 					yaxis: {
+						title: { text: '<b>TVL</b>', font: { color: 'rgba(255,255,255,0.7)' } },
 						type: 'log' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
-						color: '#22c55e',
+						color: 'rgba(255,255,255,0.7)',
 						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
 						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B'],
 						showline: true,
