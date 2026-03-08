@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add US bank savings rate reference line to cumulative TVL/APY chart fetched from FRED CSV export with server-side SWR caching (2026-03-08)
 - Add US Treasury note rate reference line to cumulative TVL/APY chart with hover tooltip showing TVL earning better/less than risk-free rate (2026-03-07)
 - Add protocol filter chips and URL-persisted controls to cumulative TVL/APY chart (2026-03-06)
 - Add cumulative TVL/APY chart showing how vault TVL is distributed across yield tiers (2026-03-06)
