@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add axis labels to frontpage cumulative TVL/APY chart (2026-03-08)
 - Add DeFi vault ecosystem section to frontpage with simplified cumulative TVL/APY chart and reference rate lines (2026-03-08)
 - Add US bank savings rate reference line to cumulative TVL/APY chart fetched from FRED CSV export with server-side SWR caching (2026-03-08)
 - Add US Treasury note rate reference line to cumulative TVL/APY chart with hover tooltip showing TVL earning better/less than risk-free rate (2026-03-07)
