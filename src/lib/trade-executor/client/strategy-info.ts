@@ -4,8 +4,19 @@
  */
 import { type StrategyConfiguration, configuredStrategies } from '../schemas/configuration';
 import { strategySummarySchema } from '../schemas/summary';
-import { createConnectedStrategyInfo, createDisconnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+import { type StrategyInfo, createConnectedStrategyInfo, createDisconnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 import swrCache from '$lib/swrCache';
+
+/** Executor IDs that should retain their original archived status */
+const activeExecutors = new Set(['vega', 'master-vault']);
+
+/** Force-add 'archived' tag to all API executors except those in activeExecutors */
+function overrideArchivedStatus(strategy: StrategyInfo): StrategyInfo {
+	if (activeExecutors.has(strategy.id)) return strategy;
+	if (strategy.tags?.includes('archived')) return strategy;
+	const tags = [...(strategy.tags ?? []), 'archived'];
+	return { ...strategy, tags };
+}
 
 // use 5 second timeout when fetching strategy metadata
 const CLIENT_TIMEOUT = 5000;
@@ -31,7 +42,7 @@ export async function getAllStrategies(fetch: Fetch) {
 	});
 
 	const strategies = await Promise.all(strategyPromises);
-	return strategies.sort((a, b) => b.sort_priority - a.sort_priority);
+	return strategies.map(overrideArchivedStatus).sort((a, b) => b.sort_priority - a.sort_priority);
 }
 
 // Create a SWR cache for strategies with 1 minute TTL
