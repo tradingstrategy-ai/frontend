@@ -20,6 +20,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
 	const MAX_APY_THRESHOLD = 10; // 1000%
+	const LINEAR_APY_CAP = 15; // Cap X axis at 15% in linear mode for readability
 	const MIN_APY_CHART_VALUE = 0.01; // Floor for log axis: 0.01% (used for display only)
 
 	const TREASURY_RATES_URL =
@@ -40,9 +41,10 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 	interface Props {
 		vaults: VaultInfo[];
+		savingsRate: number | null;
 	}
 
-	let { vaults }: Props = $props();
+	let { vaults, savingsRate }: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
@@ -70,7 +72,8 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		tvl: { type: 'number', defaultValue: 50_000 },
 		top: { type: 'number', defaultValue: 0 },
 		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((w) => w.value) },
-		protocols: { type: 'string', defaultValue: '' }
+		protocols: { type: 'string', defaultValue: '' },
+		log: { type: 'string', defaultValue: '1', options: ['0', '1'] }
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
@@ -79,6 +82,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let maxVaults = $derived(urlState.top);
 	let selectedWindow = $derived(urlState.window as TimeWindow);
 	let selectedProtocols = $derived(new Set(urlState.protocols ? urlState.protocols.split(',') : []));
+	let logAxes = $derived(urlState.log === '1');
 
 	function updateUrl(overrides: Partial<typeof urlState>) {
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
@@ -164,6 +168,9 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	/** Displayed vaults (limited to maxVaults). */
 	let displayedVaults = $derived(maxVaults > 0 ? protocolFiltered.slice(0, maxVaults) : protocolFiltered);
 
+	/** Total TVL across displayed vaults. */
+	let totalTvl = $derived(displayedVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
+
 	/**
 	 * Compute X (APY%) and Y (cumulative TVL) for the chart.
 	 * Vaults are already sorted by APY descending, so cumulative TVL rises left→right.
@@ -209,6 +216,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	$effect(() => {
 		const currentDisplayed = displayedVaults;
 		const timeWindow = selectedWindow;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -255,37 +263,59 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					})
 				};
 
+				const axisType = useLogAxes ? ('log' as const) : ('linear' as const);
+
 				const layout = {
 					xaxis: {
 						title: `CAGR % (${windowLabel})`,
-						type: 'log' as const,
+						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
 						ticksuffix: '%',
-						autorange: true as const
+						...(useLogAxes ? { autorange: true as const } : { range: [0, LINEAR_APY_CAP] })
 					},
 					yaxis: {
 						title: 'Cumulative TVL (USD)',
-						type: 'log' as const,
+						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: '#22c55e',
-						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
-						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B']
-					},
-					shapes: treasuryRate
-						? [
-								{
-									type: 'line' as const,
-									x0: treasuryRate,
-									x1: treasuryRate,
-									y0: 0,
-									y1: 1,
-									xref: 'x' as const,
-									yref: 'paper' as const,
-									line: { color: 'red', width: 1.5, dash: 'dash' }
+						...(useLogAxes
+							? {
+									tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
+									ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B']
 								}
-							]
-						: [],
+							: {})
+					},
+					shapes: [
+						...(treasuryRate
+							? [
+									{
+										type: 'line' as const,
+										x0: treasuryRate,
+										x1: treasuryRate,
+										y0: 0,
+										y1: 1,
+										xref: 'x' as const,
+										yref: 'paper' as const,
+										line: { color: 'rgba(255,100,100,0.8)', width: 3, dash: 'dash' }
+									}
+								]
+							: []),
+						...(savingsRate
+							? [
+									{
+										type: 'line' as const,
+										x0: savingsRate,
+										x1: savingsRate,
+										y0: 0,
+										y1: 1,
+										xref: 'x' as const,
+										yref: 'paper' as const,
+										line: { color: 'rgba(100,160,255,0.8)', width: 3, dash: 'dash' }
+									}
+								]
+							: [])
+					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
 					font: { color: 'rgba(255,255,255,0.7)' },
@@ -298,6 +328,18 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 				};
 
 				const traces: any[] = [trace];
+
+				/** Distribute N points along the Y range (log or linear). */
+				function distributeYPoints(yMin: number, yMax: number, count: number): number[] {
+					if (useLogAxes) {
+						const logMin = Math.log10(yMin);
+						const logMax = Math.log10(yMax);
+						return Array.from({ length: count }, (_, i) =>
+							Math.pow(10, logMin + ((logMax - logMin) * i) / (count - 1))
+						);
+					}
+					return Array.from({ length: count }, (_, i) => yMin + ((yMax - yMin) * i) / (count - 1));
+				}
 
 				if (treasuryRate) {
 					let tvlBetter = 0;
@@ -315,12 +357,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 					const yMin = Math.min(...cumulativeTvl);
 					const yMax = Math.max(...cumulativeTvl);
-					const hoverPoints = 20;
-					const logMin = Math.log10(yMin);
-					const logMax = Math.log10(yMax);
-					const yPoints = Array.from({ length: hoverPoints }, (_, i) =>
-						Math.pow(10, logMin + ((logMax - logMin) * i) / (hoverPoints - 1))
-					);
+					const yPoints = distributeYPoints(yMin, yMax, 20);
 					traces.push({
 						x: yPoints.map(() => treasuryRate),
 						y: yPoints,
@@ -338,6 +375,41 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 							`<extra></extra>`
 						].join('<br>'),
 						hoverlabel: { bgcolor: 'red', font: { color: 'white', size: 12 }, bordercolor: 'darkred' },
+						showlegend: false
+					});
+				}
+
+				if (savingsRate) {
+					let tvlBetter = 0;
+					let tvlWorse = 0;
+					for (let i = 0; i < realApyValues.length; i++) {
+						if (realApyValues[i] > savingsRate) {
+							tvlBetter += individualTvl[i];
+						} else {
+							tvlWorse += individualTvl[i];
+						}
+					}
+					const total = tvlBetter + tvlWorse;
+					const pctBetter = total > 0 ? ((tvlBetter / total) * 100).toFixed(1) : '0.0';
+					const pctWorse = total > 0 ? ((tvlWorse / total) * 100).toFixed(1) : '0.0';
+
+					const yMin = Math.min(...cumulativeTvl);
+					const yMax = Math.max(...cumulativeTvl);
+					const yPoints = distributeYPoints(yMin, yMax, 20);
+					traces.push({
+						x: yPoints.map(() => savingsRate),
+						y: yPoints,
+						mode: 'markers' as const,
+						marker: { size: 1, color: 'rgba(0,0,0,0)', opacity: 0 },
+						hovertemplate: [
+							`<b>US bank savings rate (${savingsRate.toFixed(2)}%)</b>`,
+							`Average yield on a US bank savings account.`,
+							``,
+							`Earning better: ${formatUsd(tvlBetter)} (${pctBetter}%)`,
+							`Earning less: ${formatUsd(tvlWorse)} (${pctWorse}%)`,
+							`<extra></extra>`
+						].join('<br>'),
+						hoverlabel: { bgcolor: '#3b82f6', font: { color: 'white', size: 12 }, bordercolor: '#1e3a8a' },
 						showlegend: false
 					});
 				}
@@ -384,12 +456,16 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			</select>
 		</label>
 		<label>
-			CAGR window:
+			Returns lookback:
 			<select value={selectedWindow} onchange={(e) => updateUrl({ window: e.currentTarget.value })}>
 				{#each timeWindows as { value, label } (value)}
 					<option {value} selected={value === selectedWindow}>{label}</option>
 				{/each}
 			</select>
+		</label>
+		<label class="checkbox-label">
+			<input type="checkbox" checked={logAxes} onchange={() => updateUrl({ log: logAxes ? '0' : '1' })} />
+			Logarithmic axes
 		</label>
 	{/snippet}
 	{#snippet belowChart()}
@@ -406,6 +482,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		</div>
 		<p class="vault-count">
 			Showing {displayedVaults.length} of {allEligible.length} vault{allEligible.length === 1 ? '' : 's'}
+			· Total TVL: {formatUsd(totalTvl)}
 		</p>
 	{/snippet}
 </ScatterPlotShell>
@@ -439,6 +516,13 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		&:hover {
 			border-color: var(--c-text-light);
 		}
+	}
+
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
 	}
 
 	.vault-count {
