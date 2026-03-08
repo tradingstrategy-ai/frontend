@@ -110,6 +110,7 @@
 	}
 
 	.media {
+		width: 100%;
 		max-width: 420px;
 		height: auto;
 	}
