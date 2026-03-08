@@ -11,6 +11,8 @@ export async function load({ fetch, setHeaders, data }) {
 
 	return {
 		strategies: data.strategies,
+		savingsRate: data.savingsRate,
+		treasuryRate: data.treasuryRate,
 		topVaults: await fetchTopVaults(fetch).catch(optionalDataError('top vaults')),
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
 		posts: await getPosts(fetch, { limit: 4 })

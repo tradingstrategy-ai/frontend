@@ -5,6 +5,7 @@
 	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
 	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
 	import TopVaults from './_components/TopVaults.svelte';
+	import VaultEcosystem from './_components/VaultEcosystem.svelte';
 
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import BlogRoll from '$lib/components/BlogRoll.svelte';
@@ -14,7 +15,7 @@
 
 	let { data } = $props();
 
-	let { posts, strategies, topVaults } = $derived(data);
+	let { posts, strategies, topVaults, savingsRate, treasuryRate } = $derived(data);
 </script>
 
 <svelte:head>
@@ -31,6 +32,7 @@
 
 	{#if topVaults}
 		<TopVaults {topVaults} />
+		<VaultEcosystem vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
 	{/if}
 
 	{#if posts}
