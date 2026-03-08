@@ -122,7 +122,7 @@ loaded dynamically from CDN.
 
 				const layout = {
 					xaxis: {
-						title: { text: '<b>Returns</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+						title: { text: '<b>Returns (last month annualised)</b>', font: { color: 'rgba(255,255,255,0.7)' } },
 						type: 'log' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
