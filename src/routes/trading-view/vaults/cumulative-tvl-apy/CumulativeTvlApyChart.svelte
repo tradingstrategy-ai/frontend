@@ -20,6 +20,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
 	const MAX_APY_THRESHOLD = 10; // 1000%
+	const LINEAR_APY_CAP = 15; // Cap X axis at 15% in linear mode for readability
 	const MIN_APY_CHART_VALUE = 0.01; // Floor for log axis: 0.01% (used for display only)
 
 	const TREASURY_RATES_URL =
@@ -48,6 +49,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
+	let logAxes = $state(true);
 
 	const vaultLimitOptions = [
 		{ value: 25, label: '25' },
@@ -213,6 +215,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	$effect(() => {
 		const currentDisplayed = displayedVaults;
 		const timeWindow = selectedWindow;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -259,22 +262,28 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					})
 				};
 
+				const axisType = useLogAxes ? ('log' as const) : ('linear' as const);
+
 				const layout = {
 					xaxis: {
 						title: `CAGR % (${windowLabel})`,
-						type: 'log' as const,
+						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
 						ticksuffix: '%',
-						autorange: true as const
+						...(useLogAxes ? { autorange: true as const } : { range: [0, LINEAR_APY_CAP] })
 					},
 					yaxis: {
 						title: 'Cumulative TVL (USD)',
-						type: 'log' as const,
+						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: '#22c55e',
-						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
-						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B']
+						...(useLogAxes
+							? {
+									tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
+									ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B']
+								}
+							: {})
 					},
 					shapes: [
 						...(treasuryRate
@@ -287,7 +296,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 										y1: 1,
 										xref: 'x' as const,
 										yref: 'paper' as const,
-										line: { color: 'red', width: 1.5, dash: 'dash' }
+										line: { color: 'rgba(255,100,100,0.8)', width: 3, dash: 'dash' }
 									}
 								]
 							: []),
@@ -301,7 +310,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 										y1: 1,
 										xref: 'x' as const,
 										yref: 'paper' as const,
-										line: { color: '#3b82f6', width: 1.5, dash: 'dash' }
+										line: { color: 'rgba(100,160,255,0.8)', width: 3, dash: 'dash' }
 									}
 								]
 							: [])
@@ -319,6 +328,18 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 				const traces: any[] = [trace];
 
+				/** Distribute N points along the Y range (log or linear). */
+				function distributeYPoints(yMin: number, yMax: number, count: number): number[] {
+					if (useLogAxes) {
+						const logMin = Math.log10(yMin);
+						const logMax = Math.log10(yMax);
+						return Array.from({ length: count }, (_, i) =>
+							Math.pow(10, logMin + ((logMax - logMin) * i) / (count - 1))
+						);
+					}
+					return Array.from({ length: count }, (_, i) => yMin + ((yMax - yMin) * i) / (count - 1));
+				}
+
 				if (treasuryRate) {
 					let tvlBetter = 0;
 					let tvlWorse = 0;
@@ -335,12 +356,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 					const yMin = Math.min(...cumulativeTvl);
 					const yMax = Math.max(...cumulativeTvl);
-					const hoverPoints = 20;
-					const logMin = Math.log10(yMin);
-					const logMax = Math.log10(yMax);
-					const yPoints = Array.from({ length: hoverPoints }, (_, i) =>
-						Math.pow(10, logMin + ((logMax - logMin) * i) / (hoverPoints - 1))
-					);
+					const yPoints = distributeYPoints(yMin, yMax, 20);
 					traces.push({
 						x: yPoints.map(() => treasuryRate),
 						y: yPoints,
@@ -378,12 +394,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 					const yMin = Math.min(...cumulativeTvl);
 					const yMax = Math.max(...cumulativeTvl);
-					const hoverPoints = 20;
-					const logMin = Math.log10(yMin);
-					const logMax = Math.log10(yMax);
-					const yPoints = Array.from({ length: hoverPoints }, (_, i) =>
-						Math.pow(10, logMin + ((logMax - logMin) * i) / (hoverPoints - 1))
-					);
+					const yPoints = distributeYPoints(yMin, yMax, 20);
 					traces.push({
 						x: yPoints.map(() => savingsRate),
 						y: yPoints,
@@ -444,12 +455,16 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 			</select>
 		</label>
 		<label>
-			CAGR window:
+			Returns lookback:
 			<select value={selectedWindow} onchange={(e) => updateUrl({ window: e.currentTarget.value })}>
 				{#each timeWindows as { value, label } (value)}
 					<option {value} selected={value === selectedWindow}>{label}</option>
 				{/each}
 			</select>
+		</label>
+		<label class="checkbox-label">
+			<input type="checkbox" bind:checked={logAxes} />
+			Logarithmic axes
 		</label>
 	{/snippet}
 	{#snippet belowChart()}
@@ -500,6 +515,13 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		&:hover {
 			border-color: var(--c-text-light);
 		}
+	}
+
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
 	}
 
 	.vault-count {
