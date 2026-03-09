@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Logo, Menu, Footer } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
-	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
+	// NOTE: un-comment below line to bring back color mode picker
+	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 	import { disableScroll } from '$lib/actions/scroll';
 
 	export let open = false;
@@ -21,9 +22,12 @@
 	<Menu align="center" on:click={close}>
 		<slot />
 	</Menu>
+	<!-- NOTE: un-comment below section to bring back color mode picker -->
+	<!--
 	<div class="color-mode-picker">
 		<ColorModePicker showLabel />
 	</div>
+	-->
 	<Footer small />
 </nav>
 
@@ -69,8 +73,10 @@
 		cursor: pointer;
 	}
 
+	/* NOTE: un-comment below section to bring back color mode picker
 	.color-mode-picker {
 		margin-top: var(--space-lg);
 		display: grid;
 	}
+	*/
 </style>

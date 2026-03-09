@@ -5,7 +5,8 @@
 	// NOTE: un-comment below line to bring back search box
 	// import TextInput from '$lib/components/TextInput.svelte';
 	import IconMenu from '~icons/local/menu';
-	import ColorModePicker from '$lib/header/ColorModePicker.svelte';
+	// NOTE: un-comment below line to bring back color mode picker
+	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
 	let panelOpen = false;
 </script>
@@ -32,9 +33,12 @@
 	</div>
 	-->
 
+	<!-- NOTE: un-comment below section to bring back color mode picker -->
+	<!--
 	<div class="desktop-only">
 		<ColorModePicker />
 	</div>
+	-->
 
 	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" on:click={() => (panelOpen = true)}>
 		<IconMenu />
