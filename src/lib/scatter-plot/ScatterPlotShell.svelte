@@ -95,6 +95,12 @@ loading/error states, and a Plotly chart container.
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-light);
 
+		@media (--viewport-sm-down) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
 		:global(select) {
 			margin-left: 0.25rem;
 			padding: 0.25rem 0.5rem;

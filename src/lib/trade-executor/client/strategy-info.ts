@@ -4,7 +4,11 @@
  */
 import { type StrategyConfiguration, configuredStrategies } from '../schemas/configuration';
 import { strategySummarySchema } from '../schemas/summary';
-import { type StrategyInfo, createConnectedStrategyInfo, createDisconnectedStrategyInfo } from 'trade-executor/models/strategy-info';
+import {
+	type StrategyInfo,
+	createConnectedStrategyInfo,
+	createDisconnectedStrategyInfo
+} from 'trade-executor/models/strategy-info';
 import swrCache from '$lib/swrCache';
 
 /** Executor IDs that should retain their original archived status */

@@ -194,16 +194,18 @@ Plotly.js is loaded dynamically from CDN.
 				const diagMin = Math.min(xRange[0], yRange[0]);
 				const diagMax = Math.max(xRange[1], yRange[1]);
 
+				const isMobile = window.innerWidth <= 768;
+
 				const layout = {
 					xaxis: {
-						title: 'Peak TVL (USD)',
+						title: isMobile ? undefined : 'Peak TVL (USD)',
 						type: 'log' as const,
 						range: xRange,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)'
 					},
 					yaxis: {
-						title: 'Current TVL (USD)',
+						title: isMobile ? undefined : 'Current TVL (USD)',
 						type: 'log' as const,
 						range: yRange,
 						gridcolor: 'rgba(255,255,255,0.1)',
@@ -235,8 +237,8 @@ Plotly.js is loaded dynamically from CDN.
 						itemdoubleclick: false
 					},
 					height: 600,
-					margin: { t: 20, r: 20, b: 100, l: 80 },
-					dragmode: 'zoom' as const,
+					margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
+					dragmode: isMobile ? (false as const) : ('zoom' as const),
 					autosize: true
 				};
 
