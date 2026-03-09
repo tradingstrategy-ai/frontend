@@ -13,7 +13,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { loadPlotly, buildChartConfig } from '$lib/scatter-plot/helpers';
+	import { loadPlotly, buildChartConfig, chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -305,7 +305,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
 					showlegend: false,
 					height: 600,
 					margin: isMobile ? { t: 5, r: 50, b: 30, l: 5 } : { t: 20, r: 100, b: 80, l: 40 },

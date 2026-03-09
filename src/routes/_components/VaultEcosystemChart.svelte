@@ -7,7 +7,7 @@ loaded dynamically from CDN.
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { loadPlotly } from '$lib/scatter-plot/helpers';
+	import { loadPlotly, chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/Spinner.svelte';
 
@@ -183,7 +183,7 @@ loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
 					showlegend: false,
 					height: 400,
 					margin: isMobile ? { t: 5, r: 40, b: 30, l: 5 } : { t: 10, r: 80, b: 60, l: 30 },

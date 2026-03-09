@@ -23,6 +23,7 @@ Plotly.js is loaded dynamically from CDN.
 		loadPlotly,
 		buildMarker,
 		buildChartConfig,
+		chartFontFamily,
 		protocolPalette,
 		greyColor,
 		formatReturn
@@ -225,7 +226,7 @@ Plotly.js is loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
 					legend: {
 						title: { text: currentColourBy === 'chain' ? 'Chain' : 'Protocol' },
 						orientation: 'h' as const,

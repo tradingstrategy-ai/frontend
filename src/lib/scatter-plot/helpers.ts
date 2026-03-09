@@ -44,6 +44,9 @@ export function computeAxisRange(values: number[], isLog = false): [number, numb
 	return [p2 - padding, p98 + padding];
 }
 
+/** Font stack matching the site's --ff-ui custom property, with Open Sans fallback. */
+export const chartFontFamily = "'Neue Haas Grotesk Text', 'Open Sans', system-ui, sans-serif";
+
 /** Load Plotly.js from CDN by injecting a script tag. Idempotent. */
 export function loadPlotly(): Promise<any> {
 	return new Promise((resolve, reject) => {
@@ -101,7 +104,7 @@ export function buildChartLayout(legendTitle: string, xRange: [number, number], 
 		},
 		paper_bgcolor: 'transparent',
 		plot_bgcolor: 'transparent',
-		font: { color: 'rgba(255,255,255,0.7)' },
+		font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
 		legend: {
 			title: { text: legendTitle },
 			orientation: 'h' as const,
