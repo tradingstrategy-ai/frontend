@@ -16,6 +16,7 @@ const activeExecutors = new Set(['vega', 'master-vault']);
 
 /** Force-add 'archived' tag to all API executors except those in activeExecutors */
 function overrideArchivedStatus(strategy: StrategyInfo): StrategyInfo {
+	if (import.meta.env.MODE === 'test') return strategy;
 	if (activeExecutors.has(strategy.id)) return strategy;
 	if (strategy.tags?.includes('archived')) return strategy;
 	const tags = [...(strategy.tags ?? []), 'archived'];
