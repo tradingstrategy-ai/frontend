@@ -404,7 +404,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					});
 				}
 
-				const config = { ...buildChartConfig(), ...(isMobile ? { displayModeBar: false, scrollZoom: false } : {}) };
+				const config = buildChartConfig();
 
 				if (destroyed) return;
 

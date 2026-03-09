@@ -82,9 +82,10 @@ export function buildMarker(color: string) {
  * @param yRange - Pre-computed Y axis range (log10)
  */
 export function buildChartLayout(legendTitle: string, xRange: [number, number], yRange: [number, number]) {
+	const isMobile = window.innerWidth <= 768;
 	return {
 		xaxis: {
-			title: 'Three-month returns, annualised (%)',
+			title: isMobile ? undefined : 'Three-month returns, annualised (%)',
 			range: xRange,
 			zeroline: true,
 			zerolinecolor: 'rgba(255,255,255,0.2)',
@@ -92,7 +93,7 @@ export function buildChartLayout(legendTitle: string, xRange: [number, number], 
 			color: 'rgba(255,255,255,0.7)'
 		},
 		yaxis: {
-			title: 'TVL (USD)',
+			title: isMobile ? undefined : 'TVL (USD)',
 			type: 'log' as const,
 			range: yRange,
 			gridcolor: 'rgba(255,255,255,0.1)',
@@ -110,19 +111,20 @@ export function buildChartLayout(legendTitle: string, xRange: [number, number], 
 			x: 0.5
 		} as Record<string, any>,
 		height: 600,
-		margin: { t: 20, r: 20, b: 100, l: 80 },
-		dragmode: 'zoom' as const,
+		margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
+		dragmode: isMobile ? (false as const) : ('zoom' as const),
 		autosize: true
 	};
 }
 
-/** Build the standard Plotly config object. */
+/** Build the standard Plotly config object. Hides mode bar and scroll zoom on mobile. */
 export function buildChartConfig() {
+	const isMobile = window.innerWidth <= 768;
 	return {
 		responsive: true,
-		displayModeBar: true,
-		scrollZoom: true,
-		modeBarButtonsToRemove: ['lasso2d', 'select2d']
+		displayModeBar: !isMobile,
+		scrollZoom: !isMobile,
+		modeBarButtonsToRemove: ['lasso2d', 'select2d'] as string[]
 	};
 }
 
