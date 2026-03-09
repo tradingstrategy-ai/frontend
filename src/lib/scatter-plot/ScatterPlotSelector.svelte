@@ -39,6 +39,12 @@ Selector linking between vault scatter plot chart pages.
 		padding-top: 1rem;
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-extra-light);
+
+		@media (--viewport-sm-down) {
+			flex-direction: column;
+			align-items: center;
+			gap: 0.25em;
+		}
 	}
 
 	.label {
@@ -54,6 +60,10 @@ Selector linking between vault scatter plot chart pages.
 			content: '|';
 			color: var(--c-text-ultra-light);
 			padding-right: 0.5rem;
+
+			@media (--viewport-sm-down) {
+				content: none;
+			}
 		}
 
 		&:hover {

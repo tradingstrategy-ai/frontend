@@ -241,10 +241,11 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 				};
 
 				const axisType = useLogAxes ? ('log' as const) : ('linear' as const);
+				const isMobile = window.innerWidth <= 768;
 
 				const layout = {
 					xaxis: {
-						title: 'Returns (annualised)',
+						title: isMobile ? undefined : 'Returns (annualised)',
 						type: axisType,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
@@ -253,11 +254,12 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 						linecolor: 'rgba(255,255,255,0.2)',
 						linewidth: 3,
 						mirror: true,
-						...(useLogAxes ? { autorange: true as const, dtick: 1 } : { range: [0, LINEAR_APY_CAP] })
+						...(useLogAxes ? { autorange: 'reversed' as const, dtick: 1 } : { range: [LINEAR_APY_CAP, 0] })
 					},
 					yaxis: {
-						title: 'TVL',
+						title: isMobile ? undefined : 'TVL',
 						type: axisType,
+						side: 'right' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: '#22c55e',
 						showline: true,
@@ -306,8 +308,8 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					font: { color: 'rgba(255,255,255,0.7)' },
 					showlegend: false,
 					height: 600,
-					margin: { t: 20, r: 40, b: 80, l: 100 },
-					dragmode: 'zoom' as const,
+					margin: isMobile ? { t: 5, r: 50, b: 30, l: 5 } : { t: 20, r: 100, b: 80, l: 40 },
+					dragmode: isMobile ? (false as const) : ('zoom' as const),
 					autosize: true,
 					hovermode: 'closest' as const
 				};
@@ -402,7 +404,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					});
 				}
 
-				const config = buildChartConfig();
+				const config = { ...buildChartConfig(), ...(isMobile ? { displayModeBar: false, scrollZoom: false } : {}) };
 
 				if (destroyed) return;
 

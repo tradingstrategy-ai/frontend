@@ -120,22 +120,27 @@ loaded dynamically from CDN.
 					})
 				};
 
+				const isMobile = window.innerWidth <= 768;
+
 				const layout = {
 					xaxis: {
-						title: { text: '<b>Returns (last month annualised)</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+						title: isMobile
+							? undefined
+							: { text: '<b>Returns (last month annualised)</b>', font: { color: 'rgba(255,255,255,0.7)' } },
 						type: 'log' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
 						ticksuffix: '%',
 						dtick: 1,
-						autorange: true as const,
+						autorange: 'reversed' as const,
 						showline: true,
 						linecolor: 'rgba(255,255,255,0.2)',
 						linewidth: 3,
 						mirror: true
 					},
 					yaxis: {
-						title: { text: '<b>TVL</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+						title: isMobile ? undefined : { text: '<b>TVL</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+						side: 'right' as const,
 						type: 'log' as const,
 						gridcolor: 'rgba(255,255,255,0.1)',
 						color: 'rgba(255,255,255,0.7)',
@@ -181,7 +186,7 @@ loaded dynamically from CDN.
 					font: { color: 'rgba(255,255,255,0.7)' },
 					showlegend: false,
 					height: 400,
-					margin: { t: 10, r: 30, b: 60, l: 80 },
+					margin: isMobile ? { t: 5, r: 40, b: 30, l: 5 } : { t: 10, r: 80, b: 60, l: 30 },
 					dragmode: false as const,
 					autosize: true,
 					hovermode: 'closest' as const
