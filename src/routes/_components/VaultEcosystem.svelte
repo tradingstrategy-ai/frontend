@@ -34,7 +34,7 @@ chart component + Plotly.js only when needed.
 <Section padding="md">
 	<h2>Stablecoin vault earnings</h2>
 	<div class="description ds-3">
-		<span>What kind of returns stablecoin vaults are currently making</span>
+		<span>What kind of returns stablecoin vault TVL is making</span>
 	</div>
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
 		{#if ChartComponent}
