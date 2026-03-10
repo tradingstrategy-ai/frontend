@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add "Hide closed" filter checkbox to vault listing pages to hide vaults not accepting deposits (2026-03-10)
 - Add vault address redirect endpoint to resolve vaults by contract address (2026-03-10)
 - Flip cumulative TVL/APY chart x-axis, move y-axis labels right, and improve mobile responsiveness (2026-03-09)
 - Add axis labels to frontpage cumulative TVL/APY chart (2026-03-08)

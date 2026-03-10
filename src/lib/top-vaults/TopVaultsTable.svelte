@@ -129,7 +129,8 @@
 		risk: { type: 'number', defaultValue: 1 },
 		sort: { type: 'string', defaultValue: 'one_month_return_ann', options: Object.keys(sortColumnMap) },
 		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
-		q: { type: 'string', defaultValue: '' }
+		q: { type: 'string', defaultValue: '' },
+		closed: { type: 'number', defaultValue: 0 }
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
@@ -154,6 +155,8 @@
 	let selectedRiskIndex = $derived(urlState.risk);
 	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	let riskDropdownOpen = $state(false);
+
+	let hideClosed = $derived(urlState.closed === 1);
 
 	// Text search: local state for responsive typing, synced to/from URL
 	let filterValue = $state('');
@@ -261,6 +264,9 @@
 					if (v.risk_numeric < selectedRisk.minValue || v.risk_numeric > selectedRisk.maxValue) return false;
 				}
 			}
+
+			// Hide closed filter (checkbox-driven)
+			if (hideClosed && v.deposit_closed_reason != null) return false;
 
 			const vaultCompareStr = [
 				v.chain_id,
@@ -513,6 +519,22 @@
 							</ul>
 						{/if}
 					</div>
+				</div>
+
+				<div class="filter-group">
+					<Tooltip>
+						<label class="checkbox-filter" slot="trigger">
+							<span class="filter-label filter-label-hint">Hide closed</span>
+							<input
+								type="checkbox"
+								checked={hideClosed}
+								onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
+							/>
+						</label>
+						<svelte:fragment slot="popup">
+							Hide vaults that are not currently accepting deposits from the listing
+						</svelte:fragment>
+					</Tooltip>
 				</div>
 
 				<div class="filter">
@@ -772,6 +794,19 @@
 			text-decoration-style: dashed;
 			text-underline-offset: 0.2em;
 			cursor: help;
+		}
+
+		.checkbox-filter {
+			display: flex;
+			align-items: center;
+			gap: 0.375rem;
+			cursor: pointer;
+
+			input[type='checkbox'] {
+				width: 1.125rem;
+				height: 1.125rem;
+				cursor: pointer;
+			}
 		}
 
 		.tvl-dropdown {
