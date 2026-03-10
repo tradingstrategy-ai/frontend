@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add vault address redirect endpoint to resolve vaults by contract address (2026-03-10)
 - Flip cumulative TVL/APY chart x-axis, move y-axis labels right, and improve mobile responsiveness (2026-03-09)
 - Add axis labels to frontpage cumulative TVL/APY chart (2026-03-08)
 - Add DeFi vault ecosystem section to frontpage with simplified cumulative TVL/APY chart and reference rate lines (2026-03-08)
