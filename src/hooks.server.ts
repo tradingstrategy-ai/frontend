@@ -99,7 +99,13 @@ const fontPreloadLinks = [
 	'</fonts/fonts5.css>; rel=preload; as=style',
 	'</fonts/NeueHaasGroteskDisplay/45.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
 	'</fonts/NeueHaasGroteskDisplay/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskText/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
+	'</fonts/NeueHaasGroteskDisplay/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-400-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-600-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-700-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
 ].join(', ');
 
 const handleFontPreload: Handle = async ({ event, resolve }) => {
