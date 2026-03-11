@@ -5,7 +5,7 @@ fixed defaults (1-month window, $50k min TVL, log axes). Plotly.js is
 loaded dynamically from CDN.
 -->
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
@@ -22,7 +22,7 @@ loaded dynamically from CDN.
 	const MIN_APY_CHART_VALUE = 0.01;
 
 	interface Props {
-		vaults: VaultInfo[];
+		vaults: SlimVaultInfo[];
 		savingsRate: number | null;
 		treasuryRate: number | null;
 	}
@@ -34,7 +34,7 @@ loaded dynamically from CDN.
 	let error = $state<string | null>(null);
 
 	/** Get 1-month CAGR for a vault. */
-	function getCagr(v: VaultInfo): number | null {
+	function getCagr(v: SlimVaultInfo): number | null {
 		return v.one_month_cagr_net ?? v.one_month_cagr;
 	}
 

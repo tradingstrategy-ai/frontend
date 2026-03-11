@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import type { SlimTopVaults } from '$lib/top-vaults/schemas';
 	import { isBlacklisted, meetsDefaultTvl, meetsMinTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
 	import Section from '$lib/components/Section.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -8,7 +8,7 @@
 	import VaultSummaryMetrics from './VaultSummaryMetrics.svelte';
 
 	interface Props {
-		topVaults: TopVaults;
+		topVaults: SlimTopVaults;
 	}
 
 	let { topVaults }: Props = $props();

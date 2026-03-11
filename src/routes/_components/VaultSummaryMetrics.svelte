@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { formatAmount, formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { calculateTotalTvl } from '$lib/top-vaults/helpers';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface Props {
-		baseVaults: VaultInfo[];
-		rankedVaults: VaultInfo[];
+		baseVaults: SlimVaultInfo[];
+		rankedVaults: SlimVaultInfo[];
 	}
 
 	let { baseVaults, rankedVaults }: Props = $props();

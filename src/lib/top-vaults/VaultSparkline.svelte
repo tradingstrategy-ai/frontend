@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { VaultInfo } from './schemas';
+	import type { SlimVaultInfo } from './schemas';
 	import { getVaultSparklineUrl } from './helpers';
 
 	interface Props {
-		vault: VaultInfo;
+		vault: SlimVaultInfo;
 	}
 
 	let { vault }: Props = $props();
