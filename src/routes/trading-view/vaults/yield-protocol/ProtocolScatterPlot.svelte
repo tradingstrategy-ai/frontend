@@ -22,6 +22,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 		buildTrace,
 		buildChartLayout,
 		buildChartConfig,
+		minReturnLog,
 		protocolPalette,
 		greyColor
 	} from '$lib/scatter-plot/helpers';
@@ -38,6 +39,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let minTvl = $state(50_000);
+	let logAxes = $state(true);
 
 	/** Vaults that pass base eligibility (not blacklisted, have TVL + 3-month return). */
 	let baseEligible = $derived(
@@ -62,7 +64,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 	 * Group vaults by protocol, assign colours by vault count descending.
 	 * Protocols with <= 2 vaults become "Other" (grey).
 	 */
-	function buildProtocolTraces(currentVaults: VaultInfo[]): any[] {
+	function buildProtocolTraces(currentVaults: VaultInfo[], minX?: number): any[] {
 		const protocolCounts = new Map<string, number>();
 		for (const v of currentVaults) {
 			protocolCounts.set(v.protocol, (protocolCounts.get(v.protocol) ?? 0) + 1);
@@ -79,12 +81,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 			const [protocol] = majorProtocols[i];
 			const color = protocolPalette[i % protocolPalette.length];
 			const group = currentVaults.filter((v) => v.protocol === protocol);
-			traces.push(buildTrace(group, protocol, color, formatHoverText));
+			traces.push(buildTrace(group, protocol, color, formatHoverText, minX));
 		}
 
 		const otherVaults = currentVaults.filter((v) => otherProtocols.has(v.protocol));
 		if (otherVaults.length > 0) {
-			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText));
+			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText, minX));
 		}
 
 		return traces;
@@ -92,6 +94,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 
 	$effect(() => {
 		const currentVaults = eligibleVaults;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -108,10 +111,10 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 					return;
 				}
 
-				const traces = buildProtocolTraces(currentVaults);
+				const traces = buildProtocolTraces(currentVaults, useLogAxes ? minReturnLog : undefined);
 
-				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl);
-				const layout = buildChartLayout('Protocol', xRange, yRange);
+				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl, useLogAxes);
+				const layout = buildChartLayout('Protocol', xRange, yRange, useLogAxes);
 				// Disable default legend click — we handle it ourselves below
 				layout.legend.itemclick = false;
 				layout.legend.itemdoubleclick = false;
@@ -188,6 +191,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 </script>
 
 <ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+	{#snippet extraControls()}
+		<label class="checkbox-label">
+			<input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} />
+			Logarithmic axes
+		</label>
+	{/snippet}
 	{#snippet belowChart()}
 		{#if excludedCount > 0}
 			<p class="excluded-notice">
@@ -198,6 +207,13 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 </ScatterPlotShell>
 
 <style>
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
+	}
+
 	.excluded-notice {
 		text-align: center;
 		font: var(--f-ui-sm-roman);

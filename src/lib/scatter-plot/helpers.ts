@@ -47,6 +47,26 @@ export function computeAxisRange(values: number[], isLog = false): [number, numb
 /** Font stack matching the site's --ff-ui custom property, with Open Sans fallback. */
 export const chartFontFamily = "'Neue Haas Grotesk Text', 'Open Sans', system-ui, sans-serif";
 
+/** Colour for axis tick labels and general chart text. */
+export const chartTextColor = 'rgba(255,255,255,0.95)';
+
+/** Colour for axis lines / chart border. */
+export const chartLineColor = 'rgba(255,255,255,0.2)';
+
+/** Colour for grid lines. */
+export const chartGridColor = 'rgba(255,255,255,0.1)';
+
+/** Floor value for returns on a log axis (0.01%). Non-positive returns are clamped here. */
+export const minReturnLog = 0.01;
+
+/** Shared axis border properties (showline + linewidth + mirror). */
+export const chartAxisBorder = {
+	showline: true,
+	linecolor: chartLineColor,
+	linewidth: 3,
+	mirror: true
+} as const;
+
 /** Load Plotly.js from CDN by injecting a script tag. Idempotent. */
 export function loadPlotly(): Promise<any> {
 	return new Promise((resolve, reject) => {
@@ -82,29 +102,38 @@ export function buildMarker(color: string) {
  * Build the Plotly layout object for a vault scatter plot.
  * @param legendTitle - Title for the legend (e.g. "Technical risk" or "Protocol")
  * @param xRange - Pre-computed X axis range
- * @param yRange - Pre-computed Y axis range (log10)
+ * @param yRange - Pre-computed Y axis range (log10 when logAxes is true)
+ * @param logAxes - Whether axes use logarithmic scale
  */
-export function buildChartLayout(legendTitle: string, xRange: [number, number], yRange: [number, number]) {
+export function buildChartLayout(
+	legendTitle: string,
+	xRange: [number, number],
+	yRange: [number, number],
+	logAxes = true
+) {
 	const isMobile = window.innerWidth <= 768;
+	const axisType = logAxes ? ('log' as const) : ('linear' as const);
 	return {
 		xaxis: {
-			title: isMobile ? undefined : 'Three-month returns, annualised (%)',
+			title: isMobile ? undefined : '<b>Three-month returns, annualised (%)</b>',
+			type: axisType,
 			range: xRange,
-			zeroline: true,
-			zerolinecolor: 'rgba(255,255,255,0.2)',
-			gridcolor: 'rgba(255,255,255,0.1)',
-			color: 'rgba(255,255,255,0.7)'
+			...(logAxes ? {} : { zeroline: true, zerolinecolor: chartLineColor }),
+			gridcolor: chartGridColor,
+			color: chartTextColor,
+			...chartAxisBorder
 		},
 		yaxis: {
-			title: isMobile ? undefined : 'TVL (USD)',
-			type: 'log' as const,
+			title: isMobile ? undefined : '<b>TVL (USD)</b>',
+			type: axisType,
 			range: yRange,
-			gridcolor: 'rgba(255,255,255,0.1)',
-			color: 'rgba(255,255,255,0.7)'
+			gridcolor: chartGridColor,
+			color: chartTextColor,
+			...chartAxisBorder
 		},
 		paper_bgcolor: 'transparent',
 		plot_bgcolor: 'transparent',
-		font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
+		font: { family: chartFontFamily, color: chartTextColor },
 		legend: {
 			title: { text: legendTitle },
 			orientation: 'h' as const,
@@ -154,10 +183,20 @@ export function buildBaseHoverLines(v: VaultInfo): string[] {
  * @param name - Legend label
  * @param color - Marker colour
  * @param formatHoverText - Function to build hover HTML for each vault
+ * @param minX - Optional floor for X values (used to clamp non-positive returns on log axes)
  */
-export function buildTrace(group: VaultInfo[], name: string, color: string, formatHoverText: (v: VaultInfo) => string) {
+export function buildTrace(
+	group: VaultInfo[],
+	name: string,
+	color: string,
+	formatHoverText: (v: VaultInfo) => string,
+	minX?: number
+) {
 	return {
-		x: group.map((v) => v.three_months_cagr! * 100),
+		x: group.map((v) => {
+			const val = v.three_months_cagr! * 100;
+			return minX != null ? Math.max(val, minX) : val;
+		}),
 		y: group.map((v) => v.current_nav!),
 		text: group.map(formatHoverText),
 		customdata: group.map((v) => resolveVaultDetails(v)),
@@ -173,14 +212,18 @@ export function buildTrace(group: VaultInfo[], name: string, color: string, form
  * Compute X and Y axis ranges from vaults, clipping outliers and flooring at sensible minimums.
  * @param vaults - Eligible vaults with non-null three_months_cagr and current_nav
  * @param minTvl - Minimum TVL threshold for Y axis floor
+ * @param logAxes - Whether axes use logarithmic scale
  */
-export function computeScatterRanges(vaults: VaultInfo[], minTvl: number) {
-	const allReturns = vaults.map((v) => v.three_months_cagr! * 100);
+export function computeScatterRanges(vaults: VaultInfo[], minTvl: number, logAxes = true) {
+	const allReturns = vaults.map((v) => {
+		const val = v.three_months_cagr! * 100;
+		return logAxes ? Math.max(val, minReturnLog) : val;
+	});
 	const allTvl = vaults.map((v) => v.current_nav!);
-	const xRange = computeAxisRange(allReturns);
-	const yRange = computeAxisRange(allTvl, true);
-	xRange[0] = Math.max(xRange[0], 0);
-	yRange[0] = Math.max(yRange[0], Math.log10(minTvl));
+	const xRange = computeAxisRange(allReturns, logAxes);
+	const yRange = computeAxisRange(allTvl, logAxes);
+	if (!logAxes) xRange[0] = Math.max(xRange[0], 0);
+	yRange[0] = Math.max(yRange[0], logAxes ? Math.log10(minTvl) : minTvl);
 	return { xRange, yRange };
 }
 

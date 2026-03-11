@@ -7,7 +7,13 @@ loaded dynamically from CDN.
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { loadPlotly, chartFontFamily } from '$lib/scatter-plot/helpers';
+	import {
+		loadPlotly,
+		chartFontFamily,
+		chartTextColor,
+		chartGridColor,
+		chartAxisBorder
+	} from '$lib/scatter-plot/helpers';
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/Spinner.svelte';
 
@@ -126,30 +132,24 @@ loaded dynamically from CDN.
 					xaxis: {
 						title: isMobile
 							? undefined
-							: { text: '<b>Returns (last month annualised)</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+							: { text: '<b>Returns (last month annualised)</b>', font: { color: chartTextColor } },
 						type: 'log' as const,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: 'rgba(255,255,255,0.7)',
+						gridcolor: chartGridColor,
+						color: chartTextColor,
 						ticksuffix: '%',
 						dtick: 1,
 						autorange: 'reversed' as const,
-						showline: true,
-						linecolor: 'rgba(255,255,255,0.2)',
-						linewidth: 3,
-						mirror: true
+						...chartAxisBorder
 					},
 					yaxis: {
-						title: isMobile ? undefined : { text: '<b>TVL</b>', font: { color: 'rgba(255,255,255,0.7)' } },
+						title: isMobile ? undefined : { text: '<b>TVL</b>', font: { color: chartTextColor } },
 						side: 'right' as const,
 						type: 'log' as const,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: 'rgba(255,255,255,0.7)',
+						gridcolor: chartGridColor,
+						color: chartTextColor,
 						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
 						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B'],
-						showline: true,
-						linecolor: 'rgba(255,255,255,0.2)',
-						linewidth: 3,
-						mirror: true
+						...chartAxisBorder
 					},
 					shapes: [
 						...(treasuryRate
@@ -183,7 +183,7 @@ loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: chartTextColor },
 					showlegend: false,
 					height: 400,
 					margin: isMobile ? { t: 5, r: 40, b: 30, l: 5 } : { t: 10, r: 80, b: 60, l: 30 },

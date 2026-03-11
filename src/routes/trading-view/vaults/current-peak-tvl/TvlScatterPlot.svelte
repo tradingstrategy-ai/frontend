@@ -24,6 +24,9 @@ Plotly.js is loaded dynamically from CDN.
 		buildMarker,
 		buildChartConfig,
 		chartFontFamily,
+		chartTextColor,
+		chartGridColor,
+		chartAxisBorder,
 		protocolPalette,
 		greyColor,
 		formatReturn
@@ -42,6 +45,7 @@ Plotly.js is loaded dynamically from CDN.
 	let error = $state<string | null>(null);
 	let minTvl = $state(50_000);
 	let colourBy = $state<'chain' | 'protocol'>('chain');
+	let logAxes = $state(true);
 
 	/** Vaults that pass base eligibility (not blacklisted, have both current and peak TVL). */
 	let baseEligible = $derived(
@@ -163,6 +167,7 @@ Plotly.js is loaded dynamically from CDN.
 	$effect(() => {
 		const currentVaults = eligibleVaults;
 		const currentColourBy = colourBy;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -185,40 +190,65 @@ Plotly.js is loaded dynamically from CDN.
 				const allCurrentTvl = currentVaults.map((v) => v.current_nav!);
 				const allPeakTvl = currentVaults.map((v) => v.peak_nav!);
 				const allValues = [...allCurrentTvl, ...allPeakTvl];
-				const logMin = Math.log10(Math.max(Math.min(...allValues), minTvl));
-				const logMax = Math.log10(Math.max(...allValues));
-				const logPadding = (logMax - logMin) * 0.05;
-				const xRange: [number, number] = [logMin - logPadding, logMax + logPadding];
-				const yRange: [number, number] = [logMin - logPadding, logMax + logPadding];
 
-				// Diagonal line bounds (in data space, not log space)
-				const diagMin = Math.min(xRange[0], yRange[0]);
-				const diagMax = Math.max(xRange[1], yRange[1]);
+				const axisType = useLogAxes ? ('log' as const) : ('linear' as const);
+				let xRange: [number, number];
+				let yRange: [number, number];
+				let diagX0: number;
+				let diagY0: number;
+				let diagX1: number;
+				let diagY1: number;
+
+				if (useLogAxes) {
+					const logMin = Math.log10(Math.max(Math.min(...allValues), minTvl));
+					const logMax = Math.log10(Math.max(...allValues));
+					const logPadding = (logMax - logMin) * 0.05;
+					xRange = [logMin - logPadding, logMax + logPadding];
+					yRange = [logMin - logPadding, logMax + logPadding];
+					const diagMin = Math.min(xRange[0], yRange[0]);
+					const diagMax = Math.max(xRange[1], yRange[1]);
+					diagX0 = Math.pow(10, diagMin);
+					diagY0 = Math.pow(10, diagMin);
+					diagX1 = Math.pow(10, diagMax);
+					diagY1 = Math.pow(10, diagMax);
+				} else {
+					const min = Math.max(Math.min(...allValues), minTvl);
+					const max = Math.max(...allValues);
+					const padding = (max - min) * 0.05;
+					xRange = [min - padding, max + padding];
+					yRange = [min - padding, max + padding];
+					diagX0 = xRange[0];
+					diagY0 = yRange[0];
+					diagX1 = xRange[1];
+					diagY1 = yRange[1];
+				}
 
 				const isMobile = window.innerWidth <= 768;
 
 				const layout = {
 					xaxis: {
-						title: isMobile ? undefined : 'Peak TVL (USD)',
-						type: 'log' as const,
+						title: isMobile ? undefined : '<b>Peak TVL (USD)</b>',
+						type: axisType,
 						range: xRange,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: 'rgba(255,255,255,0.7)'
+						gridcolor: chartGridColor,
+						color: chartTextColor,
+						...chartAxisBorder
 					},
 					yaxis: {
-						title: isMobile ? undefined : 'Current TVL (USD)',
-						type: 'log' as const,
+						title: isMobile ? undefined : '<b>Current TVL (USD)</b>',
+						type: axisType,
 						range: yRange,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: 'rgba(255,255,255,0.7)'
+						gridcolor: chartGridColor,
+						color: chartTextColor,
+						...chartAxisBorder
 					},
 					shapes: [
 						{
 							type: 'line' as const,
-							x0: Math.pow(10, diagMin),
-							y0: Math.pow(10, diagMin),
-							x1: Math.pow(10, diagMax),
-							y1: Math.pow(10, diagMax),
+							x0: diagX0,
+							y0: diagY0,
+							x1: diagX1,
+							y1: diagY1,
 							xref: 'x' as const,
 							yref: 'y' as const,
 							line: { color: 'rgba(255,255,255,0.3)', width: 1, dash: 'dash' }
@@ -226,7 +256,7 @@ Plotly.js is loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: chartTextColor },
 					legend: {
 						title: { text: currentColourBy === 'chain' ? 'Chain' : 'Protocol' },
 						orientation: 'h' as const,
@@ -320,6 +350,10 @@ Plotly.js is loaded dynamically from CDN.
 				<option value="protocol">Protocol</option>
 			</select>
 		</label>
+		<label class="checkbox-label">
+			<input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} />
+			Logarithmic axes
+		</label>
 	{/snippet}
 	{#snippet belowChart()}
 		{#if excludedCount > 0}
@@ -331,6 +365,13 @@ Plotly.js is loaded dynamically from CDN.
 </ScatterPlotShell>
 
 <style>
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
+	}
+
 	.excluded-notice {
 		text-align: center;
 		font: var(--f-ui-sm-roman);
