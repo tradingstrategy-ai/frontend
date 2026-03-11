@@ -23,6 +23,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 		buildTrace,
 		buildChartLayout,
 		buildChartConfig,
+		minReturnLog,
 		protocolPalette,
 		greyColor
 	} from '$lib/scatter-plot/helpers';
@@ -39,6 +40,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let minTvl = $state(50_000);
+	let logAxes = $state(true);
 
 	/** Vaults that pass base eligibility (not blacklisted, have TVL + 3-month return). */
 	let baseEligible = $derived(
@@ -64,7 +66,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 	 * Group vaults by chain, assign colours by vault count descending.
 	 * Chains with <= 2 vaults become "Other" (grey).
 	 */
-	function buildChainTraces(currentVaults: VaultInfo[]): any[] {
+	function buildChainTraces(currentVaults: VaultInfo[], minX?: number): any[] {
 		const slugCounts = new Map<string, number>();
 		for (const v of currentVaults) {
 			const chain = getChain(v.chain_id);
@@ -86,7 +88,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 			const color = protocolPalette[i % protocolPalette.length];
 			const chainIds = new Set(getChainsBySlug(slug).map((c) => c.id));
 			const group = currentVaults.filter((v) => chainIds.has(v.chain_id));
-			traces.push(buildTrace(group, name, color, formatHoverText));
+			traces.push(buildTrace(group, name, color, formatHoverText, minX));
 		}
 
 		const otherVaults = currentVaults.filter((v) => {
@@ -94,7 +96,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 			return chain && otherSlugs.has(chain.slug);
 		});
 		if (otherVaults.length > 0) {
-			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText));
+			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText, minX));
 		}
 
 		return traces;
@@ -102,6 +104,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 
 	$effect(() => {
 		const currentVaults = eligibleVaults;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -118,10 +121,10 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 					return;
 				}
 
-				const traces = buildChainTraces(currentVaults);
+				const traces = buildChainTraces(currentVaults, useLogAxes ? minReturnLog : undefined);
 
-				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl);
-				const layout = buildChartLayout('Chain', xRange, yRange);
+				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl, useLogAxes);
+				const layout = buildChartLayout('Chain', xRange, yRange, useLogAxes);
 				// Disable default legend click — we handle it ourselves below
 				layout.legend.itemclick = false;
 				layout.legend.itemdoubleclick = false;
@@ -198,6 +201,12 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 </script>
 
 <ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+	{#snippet extraControls()}
+		<label class="checkbox-label">
+			<input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} />
+			Logarithmic axes
+		</label>
+	{/snippet}
 	{#snippet belowChart()}
 		{#if excludedCount > 0}
 			<p class="excluded-notice">
@@ -208,6 +217,13 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 </ScatterPlotShell>
 
 <style>
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
+	}
+
 	.excluded-notice {
 		text-align: center;
 		font: var(--f-ui-sm-roman);

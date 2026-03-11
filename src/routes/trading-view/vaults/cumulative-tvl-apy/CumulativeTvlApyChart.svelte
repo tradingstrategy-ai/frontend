@@ -13,7 +13,14 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { loadPlotly, buildChartConfig, chartFontFamily } from '$lib/scatter-plot/helpers';
+	import {
+		loadPlotly,
+		buildChartConfig,
+		chartFontFamily,
+		chartTextColor,
+		chartGridColor,
+		chartAxisBorder
+	} from '$lib/scatter-plot/helpers';
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -245,27 +252,21 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 
 				const layout = {
 					xaxis: {
-						title: isMobile ? undefined : 'Returns (annualised)',
+						title: isMobile ? undefined : '<b>Returns (annualised)</b>',
 						type: axisType,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: 'rgba(255,255,255,0.7)',
+						gridcolor: chartGridColor,
+						color: chartTextColor,
 						ticksuffix: '%',
-						showline: true,
-						linecolor: 'rgba(255,255,255,0.2)',
-						linewidth: 3,
-						mirror: true,
+						...chartAxisBorder,
 						...(useLogAxes ? { autorange: 'reversed' as const, dtick: 1 } : { range: [LINEAR_APY_CAP, 0] })
 					},
 					yaxis: {
-						title: isMobile ? undefined : 'TVL',
+						title: isMobile ? undefined : '<b>TVL</b>',
 						type: axisType,
 						side: 'right' as const,
-						gridcolor: 'rgba(255,255,255,0.1)',
-						color: '#22c55e',
-						showline: true,
-						linecolor: 'rgba(255,255,255,0.2)',
-						linewidth: 3,
-						mirror: true,
+						gridcolor: chartGridColor,
+						color: chartTextColor,
+						...chartAxisBorder,
 						...(useLogAxes
 							? {
 									tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
@@ -305,7 +306,7 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 					],
 					paper_bgcolor: 'transparent',
 					plot_bgcolor: 'transparent',
-					font: { family: chartFontFamily, color: 'rgba(255,255,255,0.7)' },
+					font: { family: chartFontFamily, color: chartTextColor },
 					showlegend: false,
 					height: 600,
 					margin: isMobile ? { t: 5, r: 50, b: 30, l: 5 } : { t: 20, r: 100, b: 80, l: 40 },

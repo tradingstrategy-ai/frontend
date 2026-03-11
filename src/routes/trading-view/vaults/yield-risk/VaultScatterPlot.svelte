@@ -22,6 +22,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 		buildTrace,
 		buildChartLayout,
 		buildChartConfig,
+		minReturnLog,
 		greyColor
 	} from '$lib/scatter-plot/helpers';
 	import { goto } from '$app/navigation';
@@ -46,6 +47,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let minTvl = $state(50_000);
+	let logAxes = $state(true);
 
 	let eligibleVaults = $derived(
 		vaults.filter(
@@ -61,6 +63,7 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 
 	$effect(() => {
 		const currentVaults = eligibleVaults;
+		const useLogAxes = logAxes;
 		let destroyed = false;
 
 		(async () => {
@@ -77,12 +80,14 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					return;
 				}
 
+				const minX = useLogAxes ? minReturnLog : undefined;
+
 				// One trace per risk group
 				const traces: any[] = riskConfig
 					.map(({ risk, color }) => {
 						const group = currentVaults.filter((v) => v.risk === risk);
 						if (group.length === 0) return null;
-						return buildTrace(group, risk, color, formatHoverText);
+						return buildTrace(group, risk, color, formatHoverText, minX);
 					})
 					.filter(Boolean);
 
@@ -91,11 +96,11 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 					(v) => (v.risk == null || !riskConfig.some((r) => r.risk === v.risk)) && v.three_months_cagr !== 0
 				);
 				if (unknownVaults.length > 0) {
-					traces.push(buildTrace(unknownVaults, 'Unknown', greyColor, formatHoverText));
+					traces.push(buildTrace(unknownVaults, 'Unknown', greyColor, formatHoverText, minX));
 				}
 
-				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl);
-				const layout = buildChartLayout('Technical risk', xRange, yRange);
+				const { xRange, yRange } = computeScatterRanges(currentVaults, minTvl, useLogAxes);
+				const layout = buildChartLayout('Technical risk', xRange, yRange, useLogAxes);
 				const config = buildChartConfig();
 
 				if (destroyed) return;
@@ -127,4 +132,20 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 	});
 </script>
 
-<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl />
+<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+	{#snippet extraControls()}
+		<label class="checkbox-label">
+			<input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} />
+			Logarithmic axes
+		</label>
+	{/snippet}
+</ScatterPlotShell>
+
+<style>
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
+	}
+</style>
