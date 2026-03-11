@@ -86,6 +86,35 @@ const handleAnnouncement: Handle = async ({ event, resolve }) => {
 };
 
 /**
+ * Add Link headers for font preloading.
+ *
+ * Cloudflare caches these Link headers and serves them as HTTP 103 Early Hints
+ * on subsequent requests, allowing the browser to start fetching fonts before
+ * the full response arrives from the origin.
+ *
+ * @see https://developers.cloudflare.com/cache/advanced-configuration/early-hints/
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Link
+ */
+const fontPreloadLinks = [
+	'</fonts/fonts5.css>; rel=preload; as=style',
+	'</fonts/NeueHaasGroteskDisplay/45.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskDisplay/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskDisplay/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/NeueHaasGroteskText/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-400-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-600-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+	'</fonts/SourceSerifPro/latin-700-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
+].join(', ');
+
+const handleFontPreload: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+	response.headers.append('Link', fontPreloadLinks);
+	return response;
+};
+
+/**
  * Set ipCounry local based on Cloudflare request header
  */
 const handleIpCountry: Handle = async ({ event, resolve }) => {
@@ -107,5 +136,6 @@ export const handle = sequence(
 	handleColorMode,
 	handleAdminRole,
 	handleAnnouncement,
-	handleIpCountry
+	handleIpCountry,
+	handleFontPreload
 );
