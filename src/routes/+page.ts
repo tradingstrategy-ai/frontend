@@ -1,5 +1,4 @@
 import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
-import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getPosts } from '$lib/blog/client';
 
 export async function load({ fetch, setHeaders, data }) {
@@ -13,7 +12,7 @@ export async function load({ fetch, setHeaders, data }) {
 		strategies: data.strategies,
 		savingsRate: data.savingsRate,
 		treasuryRate: data.treasuryRate,
-		topVaults: await fetchTopVaults(fetch).catch(optionalDataError('top vaults')),
+		topVaults: data.topVaults,
 		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
 		posts: await getPosts(fetch, { limit: 4 })
 			.then((r) => r.posts)

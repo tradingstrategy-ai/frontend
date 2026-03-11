@@ -149,6 +149,44 @@ export const vaultInfoSchema = z.object({
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
+/** Slim vault info with only the fields needed for listing/summary views (e.g., landing page). */
+export type SlimVaultInfo = Pick<
+	VaultInfo,
+	| 'id'
+	| 'name'
+	| 'vault_slug'
+	| 'protocol_slug'
+	| 'protocol'
+	| 'chain'
+	| 'chain_id'
+	| 'current_nav'
+	| 'one_month_cagr'
+	| 'one_month_cagr_net'
+	| 'risk_numeric'
+	| 'stablecoinish'
+>;
+
+export interface SlimTopVaults {
+	generated_at: Date | string;
+	vaults: SlimVaultInfo[];
+}
+
+/** Keys included in SlimVaultInfo — used to strip full vault objects at runtime. */
+export const slimVaultKeys = [
+	'id',
+	'name',
+	'vault_slug',
+	'protocol_slug',
+	'protocol',
+	'chain',
+	'chain_id',
+	'current_nav',
+	'one_month_cagr',
+	'one_month_cagr_net',
+	'risk_numeric',
+	'stablecoinish'
+] as const satisfies readonly (keyof SlimVaultInfo)[];
+
 export const topVaultsSchema = z.object({
 	generated_at: isoDateTime,
 	vaults: vaultInfoSchema.array()

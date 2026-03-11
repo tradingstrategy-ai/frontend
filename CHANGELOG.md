@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Slim landing page vault data from 24 MB to 1.3 MB by stripping unused fields before serialisation (2026-03-11)
 - Replace font loading hack with standard stylesheet and server-side early hints for Cloudflare (2026-03-11)
 - Unify Plotly chart styling with shared constants, bold axis labels, and add logarithmic axes toggle to all scatter plots (2026-03-11)
 - Add "Hide closed" filter checkbox to vault listing pages to hide vaults not accepting deposits (2026-03-10)

@@ -5,14 +5,14 @@ Lazily loaded "DeFi vault ecosystem" section for the frontpage. Uses
 chart component + Plotly.js only when needed.
 -->
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { inview } from 'svelte-inview';
 	import Section from '$lib/components/Section.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { resolve } from '$app/paths';
 
 	interface Props {
-		vaults: VaultInfo[];
+		vaults: SlimVaultInfo[];
 		savingsRate: number | null;
 		treasuryRate: number | null;
 	}

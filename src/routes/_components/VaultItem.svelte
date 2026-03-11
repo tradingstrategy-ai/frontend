@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { formatPercentProfit } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChain } from '$lib/helpers/chain';
@@ -7,7 +7,7 @@
 	import VaultSparkline from '$lib/top-vaults/VaultSparkline.svelte';
 
 	interface Props {
-		vault: VaultInfo;
+		vault: SlimVaultInfo;
 	}
 
 	let { vault }: Props = $props();

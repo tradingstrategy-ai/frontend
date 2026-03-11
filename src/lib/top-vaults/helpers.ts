@@ -1,4 +1,4 @@
-import type { FeeMode, VaultInfo } from './schemas';
+import type { FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
@@ -70,18 +70,18 @@ export const riskFilterOptions = [
 /**
  * Resolve path to vault details page for a given vault
  */
-export function resolveVaultDetails(vault: VaultInfo) {
+export function resolveVaultDetails(vault: Pick<VaultInfo, 'vault_slug'>) {
 	return resolve(`/trading-view/vaults/${vault.vault_slug}`);
 }
 
 /**
  * Determine if vault is blacklisted
  */
-export function isBlacklisted(vault: VaultInfo) {
+export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'>) {
 	return vault.risk_numeric === 999;
 }
 
-export function hasSupportedProtocol(vault: VaultInfo) {
+export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'>) {
 	return !vault.protocol.startsWith('<');
 }
 
@@ -95,14 +95,14 @@ export function isGoodVaultStatus(vault: VaultInfo): boolean {
 /**
  * Check if vault meets minimum TVL threshold
  */
-export function meetsMinTvl(vault: VaultInfo, threshold = MIN_TVL_THRESHOLD) {
+export function meetsMinTvl(vault: Pick<VaultInfo, 'current_nav'>, threshold = MIN_TVL_THRESHOLD) {
 	return (vault.current_nav ?? 0) >= threshold;
 }
 
 /**
  * Check if vault meets default TVL thresholds (with custom chain overrides)
  */
-export function meetsDefaultTvl(vault: VaultInfo) {
+export function meetsDefaultTvl(vault: Pick<VaultInfo, 'current_nav' | 'chain_id'>) {
 	const threshold = CHAIN_TVL_THRESHOLD_OVERRIDES.get(vault.chain_id) ?? DEFAULT_TVL_THRESHOLD;
 	return (vault.current_nav ?? 0) >= threshold;
 }
@@ -191,7 +191,7 @@ const MAX_APY_THRESHOLD = 10;
  * Uses net returns when available, falls back to gross returns.
  * Excludes blacklisted vaults and vaults with APY > 1000%.
  */
-export function calculateTvlWeightedApy(vaults: VaultInfo[]): number | null {
+export function calculateTvlWeightedApy(vaults: SlimVaultInfo[]): number | null {
 	let weightedSum = 0;
 	let tvlSum = 0;
 
@@ -213,7 +213,7 @@ export function calculateTvlWeightedApy(vaults: VaultInfo[]): number | null {
 /**
  * Calculate total TVL for an array of vaults
  */
-export function calculateTotalTvl(vaults: VaultInfo[]): number {
+export function calculateTotalTvl(vaults: Pick<VaultInfo, 'current_nav'>[]): number {
 	return vaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0);
 }
 
@@ -223,8 +223,8 @@ export function calculateTotalTvl(vaults: VaultInfo[]): number {
  * @param keys - array of numeric VaultInfo properties
  * @maram defaultValue - fallback for null/undefined values (-Infinity to sort lowest, Infinity to sort highest)
  */
-export function rankVaultsBy(keys: (keyof VaultInfo)[], defaultValue = -Infinity) {
-	return (a: VaultInfo, b: VaultInfo) => {
+export function rankVaultsBy<V extends Record<string, unknown>>(keys: (keyof V)[], defaultValue = -Infinity) {
+	return (a: V, b: V) => {
 		for (const key of keys) {
 			const aVal = a[key] as number | null;
 			const bVal = b[key] as number | null;
@@ -238,7 +238,7 @@ export function rankVaultsBy(keys: (keyof VaultInfo)[], defaultValue = -Infinity
 /**
  * Get URL for vault price chart sparkline
  */
-export function getVaultSparklineUrl(vault: VaultInfo, type: 'svg' | 'png' = 'svg') {
+export function getVaultSparklineUrl(vault: Pick<VaultInfo, 'id'>, type: 'svg' | 'png' = 'svg') {
 	if (vaultSparklinesUrl) {
 		return `${vaultSparklinesUrl}/sparkline-90d-${vault.id}.${type}`;
 	}
