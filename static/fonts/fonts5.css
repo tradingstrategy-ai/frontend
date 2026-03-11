@@ -226,7 +226,7 @@
   font-display: swap;
   font-family: 'Source Code Pro';
   font-weight: 200 900;
-	src: url("./SourceCodePro/latin-normal.woff") format("woff");
+	src: url("./SourceCodePro/latin-normal.woff2") format("woff2");
 }
 
 @font-face {
@@ -234,5 +234,5 @@
   font-family: 'Source Code Pro';
   font-style: italic;
   font-weight: 200 900;
-	src: url("./SourceCodePro/latin-italic.woff") format("woff");
+	src: url("./SourceCodePro/latin-italic.woff2") format("woff2");
 }
