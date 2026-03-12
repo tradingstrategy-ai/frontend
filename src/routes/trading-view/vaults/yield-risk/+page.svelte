@@ -14,8 +14,24 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import VaultScatterPlot from './VaultScatterPlot.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
-	let { data } = $props();
-	let { topVaults } = $derived(data);
+	import type { VaultInfo } from '$lib/top-vaults/schemas';
+
+	let vaults = $state<VaultInfo[]>([]);
+
+	async function loadVaults() {
+		try {
+			const resp = await fetch('/top-vaults/all-data');
+			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
+			const data = await resp.json();
+			vaults = data.vaults;
+		} catch (e) {
+			console.error('Failed to load vault data:', e);
+		}
+	}
+
+	$effect(() => {
+		loadVaults();
+	});
 
 	const title = 'Vault yield vs risk';
 	const description =
@@ -49,7 +65,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	</Section>
 
 	<Section padding="sm">
-		<VaultScatterPlot vaults={topVaults.vaults} />
+		<VaultScatterPlot {vaults} />
 		<ScatterPlotSelector />
 		<p class="methodology">
 			The vault technical risk is based on the beta version of the technical risk analysis framework.

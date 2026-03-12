@@ -1,7 +1,6 @@
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
 export async function load({ fetch }) {
-	return {
-		topVaults: await fetchTopVaults(fetch)
-	};
+	const { generated_at } = await getCachedTopVaults(fetch);
+	return { generatedAt: generated_at };
 }

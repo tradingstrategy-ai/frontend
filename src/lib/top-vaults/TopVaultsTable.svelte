@@ -58,7 +58,7 @@
 	}
 
 	interface Props {
-		topVaults: TopVaults;
+		topVaults?: TopVaults;
 		chain?: Chain;
 		tvlThreshold?: number;
 		tvlTriggerLabel?: string;
@@ -71,10 +71,15 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Show skeleton loading state while vault data is being fetched */
+		loading?: boolean;
 	}
 
+	const emptyTopVaults: TopVaults = { generated_at: new Date().toISOString(), vaults: [] };
+	const SKELETON_ROW_COUNT = 10;
+
 	let {
-		topVaults,
+		topVaults = emptyTopVaults,
 		chain,
 		tvlThreshold = DEFAULT_TVL_THRESHOLD,
 		tvlTriggerLabel,
@@ -83,7 +88,8 @@
 		includeBlacklisted = false,
 		showFilters = false,
 		defaultTvlKey = DEFAULT_TVL_KEY,
-		defaultAgeIndex = 0
+		defaultAgeIndex = 0,
+		loading = false
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -392,7 +398,7 @@
 
 <div class="top-vaults-table">
 	<div class="table-extras">
-		<div class="table-stats" data-testid="top-vaults-meta">
+		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger">{filteredVaults.length} vaults</svelte:fragment>
 				<svelte:fragment slot="popup"
@@ -560,7 +566,7 @@
 
 	<div class="table-wrapper">
 		<!-- --table-width needed for proper tr.targetable styling  -->
-		<table bind:offsetWidth style:--table-width="{offsetWidth}px">
+		<table bind:offsetWidth style:--table-width="{offsetWidth}px" class:loading>
 			<thead>
 				<tr>
 					<th class="index"></th>
@@ -634,6 +640,28 @@
 				</tr>
 			</thead>
 			<tbody>
+				{#if loading}
+					{#each { length: SKELETON_ROW_COUNT } as _}
+						<tr>
+							<td class="index"></td>
+							{#if showChainCol}<td class="chain"></td>{/if}
+							<td class="vault"></td>
+							<td class="one_month_return_ann right"></td>
+							<td class="three_months_return_ann right"></td>
+							<td class="lifetime_return_ann right"></td>
+							<td class="lifetime_return_abs right"></td>
+							<td class="three_months_sharpe right"></td>
+							<td class="three_months_volatility right"></td>
+							<td class="denomination center"></td>
+							<td class="tvl right"></td>
+							<td class="age right"></td>
+							<td class="fees right"></td>
+							<td class="lockup"></td>
+							<td class="risk"></td>
+							<td class="sparkline"></td>
+						</tr>
+					{/each}
+				{/if}
 				{#each visibleVaults as vault (vault.id)}
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
@@ -1158,7 +1186,30 @@
 				color: var(--c-text-light);
 				font: var(--f-ui-sm-medium);
 			}
+
+			&.loading tbody tr td {
+				position: relative;
+				color: transparent;
+				height: 2rem;
+
+				> * {
+					opacity: 0;
+				}
+
+				&::before {
+					content: '';
+					position: absolute;
+					inset: var(--space-sm);
+					border-radius: var(--radius-sm);
+					background: var(--c-box-3);
+					animation: pulse-opacity 1s infinite ease-out;
+				}
+			}
 		}
+	}
+
+	.hidden {
+		visibility: hidden;
 	}
 
 	.capped-hint {

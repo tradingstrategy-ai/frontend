@@ -1,9 +1,27 @@
 <script lang="ts">
+	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
-	let { data } = $props();
+	let topVaults = $state<TopVaults>();
+	let loading = $state(true);
+
+	async function loadVaults() {
+		try {
+			const resp = await fetch('/top-vaults/all-data');
+			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
+			topVaults = await resp.json();
+		} catch (e) {
+			console.error('Failed to load vault data:', e);
+		} finally {
+			loading = false;
+		}
+	}
+
+	$effect(() => {
+		loadVaults();
+	});
 
 	const title = 'High TVL DeFi stablecoin vaults';
 	const description = 'The best performing DeFi stablecoin vaults with more than $2M TVL.';
@@ -19,7 +37,8 @@
 />
 
 <TopVaultsPage
-	topVaults={data.topVaults}
+	{topVaults}
+	{loading}
 	title="High TVL stablecoin vaults"
 	subtitle="The best performing DeFi stablecoin vaults with more than $2M TVL"
 	showFilters

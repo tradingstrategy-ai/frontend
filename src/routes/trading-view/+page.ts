@@ -1,5 +1,5 @@
 import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
-import { fetchTopVaults } from '$lib/top-vaults/client.js';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
 export async function load({ fetch, setHeaders }) {
 	setHeaders({
@@ -10,6 +10,6 @@ export async function load({ fetch, setHeaders }) {
 		impressiveNumbers: await fetchPublicApi<Record<string, MaybeNumber>>(fetch, 'impressive-numbers').catch(
 			optionalDataError('impressive-numbers')
 		),
-		topVaults: await fetchTopVaults(fetch).catch(optionalDataError('top-vaults'))
+		topVaults: await getCachedTopVaults(fetch).catch(optionalDataError('top-vaults'))
 	};
 }

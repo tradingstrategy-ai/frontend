@@ -15,8 +15,27 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	import { MetaTags } from 'svelte-meta-tags';
 	import { resolve } from '$app/paths';
 
+	import type { VaultInfo } from '$lib/top-vaults/schemas';
+
 	let { data } = $props();
-	let { topVaults, savingsRate, treasuryRate } = $derived(data);
+	let { savingsRate, treasuryRate } = $derived(data);
+
+	let vaults = $state<VaultInfo[]>([]);
+
+	async function loadVaults() {
+		try {
+			const resp = await fetch('/top-vaults/all-data');
+			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
+			const allData = await resp.json();
+			vaults = allData.vaults;
+		} catch (e) {
+			console.error('Failed to load vault data:', e);
+		}
+	}
+
+	$effect(() => {
+		loadVaults();
+	});
 
 	const title = 'Cumulative TVL/APY';
 	const description =
@@ -53,7 +72,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	</Section>
 
 	<Section padding="sm">
-		<CumulativeTvlApyChart vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
+		<CumulativeTvlApyChart {vaults} {savingsRate} {treasuryRate} />
 		<ScatterPlotSelector />
 	</Section>
 
