@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
-const TIMEOUT = 20_000;
+const TIMEOUT = 30_000;
 
 /**
  * Integration tests for reference rate fetchers.
@@ -34,12 +34,12 @@ describe('fetchFredCsvLatest', () => {
 		expect(typeof value).toBe('number');
 		expect(value).toBeGreaterThan(0);
 		expect(value).toBeLessThan(15);
-	}, 30_000);
+	}, 45_000);
 
 	test('should return null for an invalid series ID', async () => {
 		const value = await fetchFredCsvLatest('INVALID_SERIES_XXXXXXXXX');
 		expect(value).toBeNull();
-	}, 30_000);
+	}, 45_000);
 
 	test('should fetch DGS10 (10-year Treasury rate) and return a number', async () => {
 		const value = await fetchFredCsvLatest('DGS10');
@@ -47,7 +47,7 @@ describe('fetchFredCsvLatest', () => {
 		expect(typeof value).toBe('number');
 		expect(value).toBeGreaterThan(0);
 		expect(value).toBeLessThan(20);
-	}, 30_000);
+	}, 45_000);
 });
 
 // --- US Treasury Fiscal Data API ---
@@ -77,5 +77,5 @@ describe('fetchTreasuryNoteRate', () => {
 		// Treasury note rate is typically between 0 and 10 (percent)
 		expect(value).toBeGreaterThan(0);
 		expect(value).toBeLessThan(10);
-	}, 30_000);
+	}, 45_000);
 });
