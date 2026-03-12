@@ -44,7 +44,7 @@
 				return;
 			}
 		} catch (e) {
-			error = e.message;
+			error = (e as Error).message;
 		} finally {
 			submitting = false;
 		}

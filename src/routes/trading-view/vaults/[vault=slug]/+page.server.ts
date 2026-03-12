@@ -1,12 +1,13 @@
 import { getChain } from '$lib/helpers/chain';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { resolveVaultDetails } from '$lib/top-vaults/helpers.js';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ params, parent, fetch }) {
-	const { topVaults } = await parent();
+export async function load({ params, fetch }) {
+	const { vaults } = await getCachedTopVaults(fetch);
 
-	const vault = topVaults.vaults.find((v) => {
+	const vault = vaults.find((v) => {
 		// redirect to canonical vault path if someone tries old vault id URL
 		if (v.id === params.vault) {
 			redirect(301, resolveVaultDetails(v));

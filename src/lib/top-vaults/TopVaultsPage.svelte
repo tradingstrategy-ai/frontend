@@ -14,7 +14,8 @@
 
 	interface Props {
 		chain?: Chain;
-		topVaults: TopVaults;
+		/** Vault dataset to display; may be undefined while loading */
+		topVaults?: TopVaults;
 		title: string;
 		subtitle: string;
 		tvlThreshold?: number;
@@ -29,6 +30,8 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Show skeleton loading state while vault data is being fetched */
+		loading?: boolean;
 	}
 
 	let {
@@ -44,7 +47,8 @@
 		protocolMetadata,
 		showFilters,
 		defaultTvlKey,
-		defaultAgeIndex
+		defaultAgeIndex,
+		loading = false
 	}: Props = $props();
 </script>
 
@@ -73,7 +77,9 @@
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}
 
-			{#if !topVaults.vaults.length}
+			{#if loading}
+				<TopVaultsTable {chain} loading {showFilters} />
+			{:else if !topVaults?.vaults.length}
 				<Alert title="Error">No vault data available.</Alert>
 			{:else}
 				<TopVaultsTable

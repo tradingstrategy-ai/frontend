@@ -4,7 +4,7 @@
 	import IconWarning from '~icons/local/warning';
 	import { formatSwapFee } from '$lib/helpers/formatters';
 
-	export let document: ComponentProps<SearchHit>['document'];
+	export let document: NonNullable<ComponentProps<SearchHit>['document']>;
 	export let isLowQuality: boolean;
 	export let showWarningIcon = false;
 </script>

@@ -283,7 +283,7 @@ export function formatPercentProfit(
  * Format interest rate value given as percent-form value
  */
 export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxPrecision = minDigits) {
-	return formatPercent(n / 100, minDigits, maxPrecision);
+	return formatPercent(n != null ? n / 100 : n, minDigits, maxPrecision);
 }
 
 /**

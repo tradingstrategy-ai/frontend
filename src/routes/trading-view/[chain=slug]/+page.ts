@@ -6,7 +6,7 @@ import { chainDetailsSchema } from '$lib/schemas/chain.js';
 import { fetchTokens } from '$lib/explorer/token-client';
 import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
 
 export async function load({ parent, fetch }) {
@@ -14,7 +14,7 @@ export async function load({ parent, fetch }) {
 
 	return {
 		chainDetails: await fetchChainDetails(fetch, chain),
-		topVaults: await fetchTopVaults(fetch)
+		topVaults: await getCachedTopVaults(fetch)
 			.then((data) => ({
 				...data,
 				vaults: data.vaults.filter((v) => v.chain_id === chain.id)
@@ -64,7 +64,7 @@ async function fetchTopTokens(fetch: Fetch, chainSlug: string): Promise<EntityDa
 		});
 		return { rows: data?.rows.slice(0, 5) ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }
 
@@ -76,7 +76,7 @@ async function fetchTopPairs(fetch: Fetch, chainSlug: string): Promise<EntityDat
 		});
 		return { rows: data?.rows ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }
 
@@ -98,6 +98,6 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string): Promise<Entity
 
 		return { rows: rows?.slice(0, 5) ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }

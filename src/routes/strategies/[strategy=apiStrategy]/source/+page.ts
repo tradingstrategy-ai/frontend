@@ -13,7 +13,7 @@ export async function load({ params, fetch }) {
 	try {
 		resp = await fetch(`${strategy.url}/source`);
 	} catch (e) {
-		const stack = [`Error loading data from URL: ${strategy.url}/source`, e.message];
+		const stack = [`Error loading data from URL: ${strategy.url}/source`, (e as Error).message];
 		error(503, { message: 'Service Unavailable', stack });
 	}
 

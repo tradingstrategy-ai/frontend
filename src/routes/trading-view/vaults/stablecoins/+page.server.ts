@@ -1,12 +1,13 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
-export async function load({ parent, url: { searchParams } }) {
-	const { topVaults } = await parent();
+export async function load({ fetch, url: { searchParams } }) {
+	const { vaults } = await getCachedTopVaults(fetch);
 
-	const eligibleVaults = topVaults.vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
+	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
 
 	const stablecoins = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
 		const slug = vault.denomination_slug;

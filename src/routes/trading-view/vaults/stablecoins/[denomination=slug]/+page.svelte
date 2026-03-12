@@ -1,10 +1,27 @@
 <script lang="ts">
+	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { denominationSlug, denominationName, topVaults } = $derived(data);
+	let { denominationSlug, denominationName } = $derived(data);
+
+	let topVaults = $state<TopVaults>();
+	let loading = $state(!hasVaultCache());
+
+	$effect(() => {
+		fetchAllVaultData()
+			.then((allData) => {
+				topVaults = {
+					...allData,
+					vaults: allData.vaults.filter((v) => v.denomination_slug === denominationSlug)
+				};
+			})
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
+	});
 
 	let title = $derived(`${denominationName} top vaults | Trading Strategy`);
 	let description = $derived(`Top ${denominationName} DeFi vaults ranked by performance.`);
@@ -21,6 +38,7 @@
 
 <TopVaultsPage
 	{topVaults}
+	{loading}
 	title="Top {denominationName} vaults"
 	subtitle="The best performing {denominationName} DeFi vaults"
 	showFilters

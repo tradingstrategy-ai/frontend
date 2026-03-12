@@ -27,7 +27,7 @@
 	let description = $derived(vault.short_description ?? generatedDescription);
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let imageUrl = $derived(getVaultSparklineUrl(vault, 'png'));
+	let imageUrl = $derived(getVaultSparklineUrl(vault, 'png') ?? '');
 </script>
 
 <MetaTags

@@ -68,7 +68,7 @@
 			</div>
 		{:else if error}
 			<Alert title="Error loading blog posts">
-				<pre>{error.message ?? String(error)}</pre>
+				<pre>{(error as Error)?.message ?? String(error)}</pre>
 			</Alert>
 		{:else if pagination.next}
 			<div use:inview={{ rootMargin: '500px' }} oninview_enter={fetchNextPage}></div>

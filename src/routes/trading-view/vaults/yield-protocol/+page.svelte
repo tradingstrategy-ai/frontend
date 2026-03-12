@@ -13,8 +13,18 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import ProtocolScatterPlot from './ProtocolScatterPlot.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
-	let { data } = $props();
-	let { topVaults } = $derived(data);
+	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
+
+	let vaults = $state<VaultInfo[]>([]);
+	let vaultsLoading = $state(!hasVaultCache());
+
+	$effect(() => {
+		fetchAllVaultData()
+			.then((data) => (vaults = data.vaults))
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (vaultsLoading = false));
+	});
 
 	const title = 'Vault yield vs protocol';
 	const description =
@@ -48,7 +58,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	</Section>
 
 	<Section padding="sm">
-		<ProtocolScatterPlot vaults={topVaults.vaults} />
+		<ProtocolScatterPlot {vaults} dataLoading={vaultsLoading} />
 		<ScatterPlotSelector />
 	</Section>
 

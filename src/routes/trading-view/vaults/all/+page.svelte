@@ -2,11 +2,21 @@
 All vaults listing including problematic/blacklisted vaults
 -->
 <script lang="ts">
+	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
-	let { data } = $props();
+	let topVaults = $state<TopVaults>();
+	let loading = $state(!hasVaultCache());
+
+	$effect(() => {
+		fetchAllVaultData()
+			.then((data) => (topVaults = data))
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
+	});
 
 	const title = 'All DeFi stablecoin vaults';
 	const description = 'All stablecoin vaults, including ones with stuck funds and oracle problems.';
@@ -22,7 +32,8 @@ All vaults listing including problematic/blacklisted vaults
 />
 
 <TopVaultsPage
-	topVaults={data.topVaults}
+	{topVaults}
+	{loading}
 	includeBlacklisted
 	title="All stablecoin vaults"
 	subtitle="All stablecoin vaults, including ones with stuck funds and oracle problems"

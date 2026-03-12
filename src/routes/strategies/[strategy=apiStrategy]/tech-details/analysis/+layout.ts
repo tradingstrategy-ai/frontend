@@ -9,7 +9,7 @@ async function fetchChartEndpoint<T extends z.ZodTypeAny>(fetch: Fetch, url: str
 		if (!resp.ok) throw await publicApiError(resp);
 		return schema.parse(await resp.json());
 	} catch (e) {
-		const stack = [`Error loading data from URL: ${url}`, e.message];
+		const stack = [`Error loading data from URL: ${url}`, (e as Error).message];
 		error(503, { message: 'Service Unavailable', stack });
 	}
 }

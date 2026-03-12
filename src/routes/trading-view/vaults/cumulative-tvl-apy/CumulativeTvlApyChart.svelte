@@ -34,9 +34,10 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 		vaults: VaultInfo[];
 		savingsRate: number | null;
 		treasuryRate: number | null;
+		dataLoading?: boolean;
 	}
 
-	let { vaults, savingsRate, treasuryRate }: Props = $props();
+	let { vaults, savingsRate, treasuryRate, dataLoading = false }: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
@@ -195,6 +196,12 @@ cumulative TVL grows. Plotly.js is loaded dynamically from CDN.
 	}
 
 	$effect(() => {
+		if (dataLoading) {
+			loading = true;
+			error = null;
+			return;
+		}
+
 		const currentDisplayed = displayedVaults;
 		const timeWindow = selectedWindow;
 		const useLogAxes = logAxes;

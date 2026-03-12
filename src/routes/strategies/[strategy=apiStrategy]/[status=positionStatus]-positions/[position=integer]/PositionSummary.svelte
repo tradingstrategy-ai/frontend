@@ -141,7 +141,7 @@
 								{/if}
 							</span>
 							<span slot="popup">
-								{position.stillOpen ? positionTooltops.currentInterestRate : positionTooltips.interestRateAtClose}
+								{position.stillOpen ? positionTooltips.currentInterestRate : positionTooltips.interestRateAtClose}
 							</span>
 						</Tooltip>
 					</td>

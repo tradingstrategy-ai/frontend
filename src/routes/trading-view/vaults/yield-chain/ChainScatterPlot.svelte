@@ -32,9 +32,10 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 
 	interface Props {
 		vaults: VaultInfo[];
+		dataLoading?: boolean;
 	}
 
-	let { vaults }: Props = $props();
+	let { vaults, dataLoading = false }: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
 	let loading = $state(true);
@@ -103,6 +104,12 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 	}
 
 	$effect(() => {
+		if (dataLoading) {
+			loading = true;
+			error = null;
+			return;
+		}
+
 		const currentVaults = eligibleVaults;
 		const useLogAxes = logAxes;
 		let destroyed = false;

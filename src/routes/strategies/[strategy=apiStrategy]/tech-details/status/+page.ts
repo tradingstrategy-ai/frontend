@@ -16,7 +16,7 @@ export async function load({ params, fetch }) {
 		if (!resp.ok) throw await publicApiError(resp);
 		runState = runStateSchema.parse(await resp.json());
 	} catch (e) {
-		const stack = [`Error loading data from URL: ${strategy.url}/status`, e.message];
+		const stack = [`Error loading data from URL: ${strategy.url}/status`, (e as Error).message];
 		error(503, { message: 'Service Unavailable', stack });
 	}
 

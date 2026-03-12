@@ -12,7 +12,7 @@ export async function getRawStrategyState(fetch: Fetch, strategyId: string) {
 	try {
 		resp = await fetch(url);
 	} catch (e) {
-		const stack = [`Error loading data from URL: ${url}`, e.message];
+		const stack = [`Error loading data from URL: ${url}`, (e as Error).message];
 		error(503, { message: 'Service Unavailable', stack });
 	}
 

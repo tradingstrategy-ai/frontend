@@ -30,9 +30,10 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 
 	interface Props {
 		vaults: VaultInfo[];
+		dataLoading?: boolean;
 	}
 
-	let { vaults }: Props = $props();
+	let { vaults, dataLoading = false }: Props = $props();
 
 	const riskConfig = [
 		{ risk: 'Negligible', color: '#13b1c0' },
@@ -62,6 +63,12 @@ coloured by risk level. Plotly.js is loaded dynamically from CDN.
 	}
 
 	$effect(() => {
+		if (dataLoading) {
+			loading = true;
+			error = null;
+			return;
+		}
+
 		const currentVaults = eligibleVaults;
 		const useLogAxes = logAxes;
 		let destroyed = false;

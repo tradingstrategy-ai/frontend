@@ -1,10 +1,27 @@
 <script lang="ts">
+	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { protocolSlug, protocolName, topVaults, protocolMetadata } = $derived(data);
+	let { protocolSlug, protocolName, protocolMetadata } = $derived(data);
+
+	let topVaults = $state<TopVaults>();
+	let loading = $state(!hasVaultCache());
+
+	$effect(() => {
+		fetchAllVaultData()
+			.then((allData) => {
+				topVaults = {
+					...allData,
+					vaults: allData.vaults.filter((v) => v.protocol_slug === protocolSlug)
+				};
+			})
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
+	});
 
 	let title = $derived(`${protocolName} top vaults`);
 	let description = $derived(`Top stablecoin vaults on ${protocolName}`);
@@ -21,6 +38,7 @@
 
 <TopVaultsPage
 	{topVaults}
+	{loading}
 	{protocolMetadata}
 	title="Top {protocolName} vaults"
 	subtitle="Top stablecoin vaults on {protocolName}"

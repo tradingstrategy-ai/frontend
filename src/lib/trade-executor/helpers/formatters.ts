@@ -13,7 +13,7 @@ import { formatNumber, formatPercent, toFloatingPoint, isNumber, notFilledMarker
  * @param n - decimal value to format as basis points
  */
 export function formatBPS(n: MaybeNumber) {
-	return formatNumber(n * 10_000, 0);
+	return formatNumber(n != null ? n * 10_000 : n, 0);
 }
 
 /**
