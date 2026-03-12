@@ -64,7 +64,7 @@ async function fetchTopTokens(fetch: Fetch, chainSlug: string): Promise<EntityDa
 		});
 		return { rows: data?.rows.slice(0, 5) ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }
 
@@ -76,7 +76,7 @@ async function fetchTopPairs(fetch: Fetch, chainSlug: string): Promise<EntityDat
 		});
 		return { rows: data?.rows ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }
 
@@ -98,6 +98,6 @@ async function fetchTopReserves(fetch: Fetch, chainSlug: string): Promise<Entity
 
 		return { rows: rows?.slice(0, 5) ?? [] };
 	} catch (error) {
-		return { error };
+		return { error: error as Error };
 	}
 }

@@ -8,11 +8,11 @@ export async function GET({ params }) {
 	const resp = await fetch(`${ghostConfig.apiUrl}/${params.file}`);
 	const image = await resp.arrayBuffer();
 
-	const headers = {
-		'content-type': resp.headers.get('content-type'),
-		'cache-control': resp.headers.get('cache-control'),
-		etag: resp.headers.get('etag')
-	};
+	const headers = new Headers();
+	for (const key of ['content-type', 'cache-control', 'etag']) {
+		const value = resp.headers.get(key);
+		if (value) headers.set(key, value);
+	}
 
 	return new Response(image, { headers });
 }

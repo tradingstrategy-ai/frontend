@@ -33,7 +33,7 @@
 	<Section tag="header">
 		<HeroBanner title="{chain.name} trading pairs">
 			{#snippet subtitle()}
-				Browse {formatAmount(pairs.totalRowCount)} trading pairs on
+				Browse {formatAmount(pairs?.totalRowCount)} trading pairs on
 				<a class="body-link" href=".">{chain.name} blockchain</a>.
 			{/snippet}
 		</HeroBanner>
