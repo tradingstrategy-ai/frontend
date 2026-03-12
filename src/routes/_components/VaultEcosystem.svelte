@@ -12,22 +12,25 @@ chart component + Plotly.js only when needed.
 	import { resolve } from '$app/paths';
 
 	interface Props {
-		vaults: SlimVaultInfo[];
 		savingsRate: number | null;
 		treasuryRate: number | null;
 	}
 
-	let { vaults, savingsRate, treasuryRate }: Props = $props();
+	let { savingsRate, treasuryRate }: Props = $props();
 
 	let visible = $state(false);
 	let ChartComponent = $state<typeof import('./VaultEcosystemChart.svelte').default>();
+	let chartVaults = $state<SlimVaultInfo[]>();
 
 	function onEnter() {
 		if (visible) return;
 		visible = true;
-		import('./VaultEcosystemChart.svelte').then((m) => {
-			ChartComponent = m.default;
-		});
+		Promise.all([import('./VaultEcosystemChart.svelte'), fetch('/top-vaults/chart-data')]).then(
+			async ([module, response]) => {
+				ChartComponent = module.default;
+				chartVaults = (await response.json()).vaults;
+			}
+		);
 	}
 </script>
 
@@ -37,8 +40,8 @@ chart component + Plotly.js only when needed.
 		<span>What kind of returns stablecoin vault TVL is making</span>
 	</div>
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
-		{#if ChartComponent}
-			<ChartComponent {vaults} {savingsRate} {treasuryRate} />
+		{#if ChartComponent && chartVaults}
+			<ChartComponent vaults={chartVaults} {savingsRate} {treasuryRate} />
 		{:else}
 			<div class="skeleton-chart"></div>
 		{/if}

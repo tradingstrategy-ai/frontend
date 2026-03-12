@@ -31,8 +31,8 @@
 	<FeaturedStrategies {strategies} />
 
 	{#if topVaults}
-		<TopVaults {topVaults} />
-		<VaultEcosystem vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
+		<TopVaults vaults={topVaults.vaults} aggregates={topVaults.aggregates} />
+		<VaultEcosystem {savingsRate} {treasuryRate} />
 	{/if}
 
 	{#if posts}

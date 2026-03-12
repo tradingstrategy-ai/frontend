@@ -2,7 +2,8 @@ import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { type SlimVaultInfo, slimVaultKeys } from '$lib/top-vaults/schemas';
+import { type SlimVaultInfo, type VaultAggregates, slimVaultKeys } from '$lib/top-vaults/schemas';
+import { calculateTotalTvl, isBlacklisted, meetsDefaultTvl, meetsMinTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
@@ -53,12 +54,42 @@ export async function load({ fetch }) {
 
 	const [savingsRate, treasuryRate] = ratesResult;
 
+	let topVaults: { generated_at: Date | string; vaults: SlimVaultInfo[]; aggregates: VaultAggregates } | undefined;
+
+	if (topVaultsResult) {
+		const allSlim = topVaultsResult.vaults.map(slimVault);
+		const baseVaults = allSlim.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
+		const rankedVaults = baseVaults
+			.filter(meetsDefaultTvl)
+			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
+			.reverse();
+
+		const totalTvl = calculateTotalTvl(baseVaults);
+		const rankedTvl = calculateTotalTvl(rankedVaults);
+		const weightedAvgApy =
+			rankedTvl > 0
+				? rankedVaults.reduce((acc, v) => {
+						const weight = (v.current_nav ?? 0) / rankedTvl;
+						return acc + weight * (v.one_month_cagr_net ?? v.one_month_cagr ?? 0);
+					}, 0)
+				: 0;
+
+		topVaults = {
+			generated_at: topVaultsResult.generated_at,
+			vaults: rankedVaults.slice(0, 30),
+			aggregates: {
+				totalTvl,
+				weightedAvgApy,
+				rankedVaultCount: rankedVaults.length,
+				chainCount: new Set(baseVaults.map((v) => v.chain_id)).size
+			}
+		};
+	}
+
 	return {
 		strategies: frontpageStrategies,
 		savingsRate,
 		treasuryRate,
-		topVaults: topVaultsResult
-			? { generated_at: topVaultsResult.generated_at, vaults: topVaultsResult.vaults.map(slimVault) }
-			: undefined
+		topVaults
 	};
 }

@@ -76,6 +76,30 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 npx wrangler cache purge --zone {zone_id} --everything
 ```
 
+## Cloudflare cache rule requirement
+
+By default, Cloudflare marks HTML pages as `cf-cache-status: DYNAMIC` and does **not** cache them at the edge, even if the origin sends a `Cache-Control: public, max-age=N` header. This applies to all SvelteKit-rendered pages.
+
+To enable edge caching, a **Cache Rule** must be configured in the Cloudflare dashboard:
+
+1. Go to **Caching** → **Cache Rules**
+2. Create a rule, e.g.:
+   - **When**: hostname = `tradingstrategy.ai` AND URI path = `/`
+   - **Then**: **Eligible for cache**, Edge TTL override = 1800s (or "Respect origin")
+3. Repeat for other routes as needed
+
+Without this rule, every request goes to the origin regardless of the `Cache-Control` header.
+
+### Verifying cache status
+
+```bash
+curl -sI https://tradingstrategy.ai/ | grep -i cf-cache-status
+```
+
+- `HIT` — served from Cloudflare edge cache
+- `MISS` — fetched from origin, now cached for subsequent requests
+- `DYNAMIC` — not cached (no cache rule in place)
+
 ## How caching works
 
 1. Browser requests a page → hits **Cloudflare edge**
