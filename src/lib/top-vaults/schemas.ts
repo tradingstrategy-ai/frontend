@@ -171,6 +171,13 @@ export interface SlimTopVaults {
 	vaults: SlimVaultInfo[];
 }
 
+/** Pre-computed aggregate metrics for the landing page. */
+export interface VaultAggregates {
+	totalTvl: number;
+	weightedAvgApy: number;
+	rankedVaultCount: number;
+}
+
 /** Keys included in SlimVaultInfo — used to strip full vault objects at runtime. */
 export const slimVaultKeys = [
 	'id',

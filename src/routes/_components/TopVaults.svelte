@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { SlimTopVaults } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, meetsDefaultTvl, meetsMinTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
+	import type { SlimVaultInfo, VaultAggregates } from '$lib/top-vaults/schemas';
 	import Section from '$lib/components/Section.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import VaultItem from './VaultItem.svelte';
@@ -8,21 +7,11 @@
 	import VaultSummaryMetrics from './VaultSummaryMetrics.svelte';
 
 	interface Props {
-		topVaults: SlimTopVaults;
+		vaults: SlimVaultInfo[];
+		aggregates: VaultAggregates;
 	}
 
-	let { topVaults }: Props = $props();
-
-	let baseVaults = $derived(topVaults.vaults.filter((vault) => !isBlacklisted(vault) && meetsMinTvl(vault)));
-
-	let rankedVaults = $derived(
-		baseVaults
-			.filter(meetsDefaultTvl)
-			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
-			.reverse()
-	);
-
-	let chainCount = $derived(new Set(baseVaults.map((v) => v.chain_id)).size);
+	let { vaults, aggregates }: Props = $props();
 </script>
 
 <Section padding="md" --section-background="var(--c-background-accent-1)">
@@ -32,10 +21,10 @@
 		<span>The best-performing stablecoin vaults based on one month returns.</span>
 	</div>
 
-	<VaultSummaryMetrics {baseVaults} {rankedVaults} />
+	<VaultSummaryMetrics {aggregates} />
 
 	<ul class="vaults ds-3">
-		{#each rankedVaults.slice(0, 5) as vault (vault.id)}
+		{#each vaults.slice(0, 5) as vault (vault.id)}
 			<VaultItem {vault} />
 		{/each}
 	</ul>

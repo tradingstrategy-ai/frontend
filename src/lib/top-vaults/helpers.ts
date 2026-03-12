@@ -1,7 +1,19 @@
 import type { FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
+
+/**
+ * Strip a full vault object to only the fields needed for listing/summary views.
+ */
+export function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
+	const slim = {} as Record<string, unknown>;
+	for (const key of slimVaultKeys) {
+		slim[key] = vault[key as string];
+	}
+	return slim as SlimVaultInfo;
+}
 
 const HYPERCORE_CHAIN_ID = 9999;
 

@@ -1,29 +1,16 @@
 <script lang="ts">
-	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
-	import { formatAmount, formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { calculateTotalTvl } from '$lib/top-vaults/helpers';
+	import type { VaultAggregates } from '$lib/top-vaults/schemas';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	interface Props {
-		baseVaults: SlimVaultInfo[];
-		rankedVaults: SlimVaultInfo[];
+		aggregates: VaultAggregates;
 	}
 
-	let { baseVaults, rankedVaults }: Props = $props();
+	let { aggregates }: Props = $props();
 
-	let totalTvl = $derived(calculateTotalTvl(baseVaults));
-	let formattedTvl = $derived(formatDollar(totalTvl).split(/(?=[KMBT])/));
-
-	let avgApy = $derived.by(() => {
-		const tvl = calculateTotalTvl(rankedVaults);
-		if (tvl === 0) return 0;
-
-		return rankedVaults.reduce((acc, v) => {
-			const weight = v.current_nav! / tvl;
-			return acc + weight * (v.one_month_cagr_net ?? v.one_month_cagr ?? 0);
-		}, 0);
-	});
+	let formattedTvl = $derived(formatDollar(aggregates.totalTvl).split(/(?=[KMBT])/));
 </script>
 
 <dl class="vault-summary-metrics ds-3">
@@ -41,11 +28,11 @@
 					Avg. 1M APY
 					<IconQuestionCircle />
 				</span>
-				<span slot="popup">TVL-weighted average of {rankedVaults.length} vaults with minimum $50k TVL.</span>
+				<span slot="popup">TVL-weighted average of {aggregates.rankedVaultCount} vaults with minimum $50k TVL.</span>
 			</Tooltip>
 		</dt>
 		<dd>
-			{formatPercent(avgApy).slice(0, -1)}
+			{formatPercent(aggregates.weightedAvgApy).slice(0, -1)}
 			<small>%</small>
 		</dd>
 	</div>
