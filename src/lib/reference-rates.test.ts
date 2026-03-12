@@ -1,15 +1,20 @@
 import { describe, test, expect } from 'vitest';
 
 const TIMEOUT = 30_000;
+const DELAY_BETWEEN_REQUESTS = 2_000;
 
 /**
  * Integration tests for reference rate fetchers.
  * These hit real endpoints — requires network access.
+ * FRED rate-limits requests from CI (GitHub Actions IPs),
+ * so we add delays between requests and retry on failure.
  */
 
 // --- FRED CSV export ---
 
 const FRED_CSV_BASE = 'https://fred.stlouisfed.org/graph/fredgraph.csv';
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	try {
@@ -28,26 +33,40 @@ async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 }
 
 describe('fetchFredCsvLatest', () => {
-	test('should fetch SNDR (national savings rate) and return a number', async () => {
-		const value = await fetchFredCsvLatest('SNDR');
-		expect(value).not.toBeNull();
-		expect(typeof value).toBe('number');
-		expect(value).toBeGreaterThan(0);
-		expect(value).toBeLessThan(15);
-	}, 45_000);
+	test(
+		'should fetch SNDR (national savings rate) and return a number',
+		async () => {
+			const value = await fetchFredCsvLatest('SNDR');
+			expect(value).not.toBeNull();
+			expect(typeof value).toBe('number');
+			expect(value).toBeGreaterThan(0);
+			expect(value).toBeLessThan(15);
+		},
+		{ timeout: 45_000, retry: 2 }
+	);
 
-	test('should return null for an invalid series ID', async () => {
-		const value = await fetchFredCsvLatest('INVALID_SERIES_XXXXXXXXX');
-		expect(value).toBeNull();
-	}, 45_000);
+	test(
+		'should return null for an invalid series ID',
+		async () => {
+			await sleep(DELAY_BETWEEN_REQUESTS);
+			const value = await fetchFredCsvLatest('INVALID_SERIES_XXXXXXXXX');
+			expect(value).toBeNull();
+		},
+		{ timeout: 45_000 }
+	);
 
-	test('should fetch DGS10 (10-year Treasury rate) and return a number', async () => {
-		const value = await fetchFredCsvLatest('DGS10');
-		expect(value).not.toBeNull();
-		expect(typeof value).toBe('number');
-		expect(value).toBeGreaterThan(0);
-		expect(value).toBeLessThan(20);
-	}, 45_000);
+	test(
+		'should fetch DGS10 (10-year Treasury rate) and return a number',
+		async () => {
+			await sleep(DELAY_BETWEEN_REQUESTS);
+			const value = await fetchFredCsvLatest('DGS10');
+			expect(value).not.toBeNull();
+			expect(typeof value).toBe('number');
+			expect(value).toBeGreaterThan(0);
+			expect(value).toBeLessThan(20);
+		},
+		{ timeout: 45_000, retry: 2 }
+	);
 });
 
 // --- US Treasury Fiscal Data API ---
@@ -70,12 +89,16 @@ async function fetchTreasuryNoteRate(): Promise<number | null> {
 }
 
 describe('fetchTreasuryNoteRate', () => {
-	test('should fetch Treasury note rate and return a number', async () => {
-		const value = await fetchTreasuryNoteRate();
-		expect(value).not.toBeNull();
-		expect(typeof value).toBe('number');
-		// Treasury note rate is typically between 0 and 10 (percent)
-		expect(value).toBeGreaterThan(0);
-		expect(value).toBeLessThan(10);
-	}, 45_000);
+	test(
+		'should fetch Treasury note rate and return a number',
+		async () => {
+			const value = await fetchTreasuryNoteRate();
+			expect(value).not.toBeNull();
+			expect(typeof value).toBe('number');
+			// Treasury note rate is typically between 0 and 10 (percent)
+			expect(value).toBeGreaterThan(0);
+			expect(value).toBeLessThan(10);
+		},
+		{ timeout: 45_000 }
+	);
 });
