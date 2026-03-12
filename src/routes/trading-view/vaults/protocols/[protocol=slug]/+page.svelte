@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
@@ -8,26 +9,18 @@
 	let { protocolSlug, protocolName, protocolMetadata } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(true);
-
-	async function loadVaults() {
-		try {
-			const resp = await fetch('/top-vaults/all-data');
-			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
-			const allData: TopVaults = await resp.json();
-			topVaults = {
-				...allData,
-				vaults: allData.vaults.filter((v) => v.protocol_slug === protocolSlug)
-			};
-		} catch (e) {
-			console.error('Failed to load vault data:', e);
-		} finally {
-			loading = false;
-		}
-	}
+	let loading = $state(!hasVaultCache());
 
 	$effect(() => {
-		loadVaults();
+		fetchAllVaultData()
+			.then((allData) => {
+				topVaults = {
+					...allData,
+					vaults: allData.vaults.filter((v) => v.protocol_slug === protocolSlug)
+				};
+			})
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
 	});
 
 	let title = $derived(`${protocolName} top vaults`);

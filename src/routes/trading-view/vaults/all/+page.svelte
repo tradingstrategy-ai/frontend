@@ -3,27 +3,19 @@ All vaults listing including problematic/blacklisted vaults
 -->
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags } from 'svelte-meta-tags';
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(true);
-
-	async function loadVaults() {
-		try {
-			const resp = await fetch('/top-vaults/all-data');
-			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
-			topVaults = await resp.json();
-		} catch (e) {
-			console.error('Failed to load vault data:', e);
-		} finally {
-			loading = false;
-		}
-	}
+	let loading = $state(!hasVaultCache());
 
 	$effect(() => {
-		loadVaults();
+		fetchAllVaultData()
+			.then((data) => (topVaults = data))
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
 	});
 
 	const title = 'All DeFi stablecoin vaults';

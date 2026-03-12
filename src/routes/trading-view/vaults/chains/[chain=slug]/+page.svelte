@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { getChainsBySlug } from '$lib/helpers/chain';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -9,28 +10,20 @@
 	let { chain, chainSlug, chainName } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(true);
-
-	async function loadVaults() {
-		try {
-			const resp = await fetch('/top-vaults/all-data');
-			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
-			const allData: TopVaults = await resp.json();
-			// Include vaults from all chains sharing this slug (e.g. HyperEVM + HyperCore)
-			const chainIds = new Set(getChainsBySlug(chainSlug).map((c) => c.id));
-			topVaults = {
-				...allData,
-				vaults: allData.vaults.filter((v) => chainIds.has(v.chain_id))
-			};
-		} catch (e) {
-			console.error('Failed to load vault data:', e);
-		} finally {
-			loading = false;
-		}
-	}
+	let loading = $state(!hasVaultCache());
 
 	$effect(() => {
-		loadVaults();
+		fetchAllVaultData()
+			.then((allData) => {
+				// Include vaults from all chains sharing this slug (e.g. HyperEVM + HyperCore)
+				const chainIds = new Set(getChainsBySlug(chainSlug).map((c) => c.id));
+				topVaults = {
+					...allData,
+					vaults: allData.vaults.filter((v) => chainIds.has(v.chain_id))
+				};
+			})
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (loading = false));
 	});
 
 	let title = $derived(`${chainName} top vaults`);

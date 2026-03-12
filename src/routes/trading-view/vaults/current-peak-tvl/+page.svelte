@@ -14,22 +14,16 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	import { MetaTags } from 'svelte-meta-tags';
 
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 
 	let vaults = $state<VaultInfo[]>([]);
-
-	async function loadVaults() {
-		try {
-			const resp = await fetch('/top-vaults/all-data');
-			if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
-			const data = await resp.json();
-			vaults = data.vaults;
-		} catch (e) {
-			console.error('Failed to load vault data:', e);
-		}
-	}
+	let vaultsLoading = $state(!hasVaultCache());
 
 	$effect(() => {
-		loadVaults();
+		fetchAllVaultData()
+			.then((data) => (vaults = data.vaults))
+			.catch((e) => console.error('Failed to load vault data:', e))
+			.finally(() => (vaultsLoading = false));
 	});
 
 	const title = 'Vault current/peak TVL';
@@ -64,7 +58,7 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	</Section>
 
 	<Section padding="sm">
-		<TvlScatterPlot {vaults} />
+		<TvlScatterPlot {vaults} dataLoading={vaultsLoading} />
 		<ScatterPlotSelector />
 	</Section>
 
