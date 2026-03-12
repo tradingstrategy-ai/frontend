@@ -55,7 +55,9 @@ describe('fetchFredCsvLatest', () => {
 		{ timeout: 45_000 }
 	);
 
-	test(
+	// DGS10 is consistently blocked by FRED from GitHub Actions IPs;
+	// skip in CI to avoid flaky failures. SNDR above covers the same code path.
+	test.skipIf(!!process.env.CI)(
 		'should fetch DGS10 (10-year Treasury rate) and return a number',
 		async () => {
 			await sleep(DELAY_BETWEEN_REQUESTS);
@@ -65,7 +67,7 @@ describe('fetchFredCsvLatest', () => {
 			expect(value).toBeGreaterThan(0);
 			expect(value).toBeLessThan(20);
 		},
-		{ timeout: 45_000, retry: 2 }
+		{ timeout: 45_000 }
 	);
 });
 
