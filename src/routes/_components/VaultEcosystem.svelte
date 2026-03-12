@@ -21,16 +21,23 @@ chart component + Plotly.js only when needed.
 	let visible = $state(false);
 	let ChartComponent = $state<typeof import('./VaultEcosystemChart.svelte').default>();
 	let chartVaults = $state<SlimVaultInfo[]>();
+	let loadError = $state(false);
 
-	function onEnter() {
+	async function onEnter() {
 		if (visible) return;
 		visible = true;
-		Promise.all([import('./VaultEcosystemChart.svelte'), fetch('/top-vaults/chart-data')]).then(
-			async ([module, response]) => {
-				ChartComponent = module.default;
-				chartVaults = (await response.json()).vaults;
-			}
-		);
+		try {
+			const [module, response] = await Promise.all([
+				import('./VaultEcosystemChart.svelte'),
+				fetch('/top-vaults/chart-data')
+			]);
+			if (!response.ok) throw new Error(`Chart data request failed: ${response.status}`);
+			ChartComponent = module.default;
+			chartVaults = (await response.json()).vaults;
+		} catch (e) {
+			console.error('Failed to load vault ecosystem chart data:', e);
+			loadError = true;
+		}
 	}
 </script>
 
@@ -42,6 +49,8 @@ chart component + Plotly.js only when needed.
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
 		{#if ChartComponent && chartVaults}
 			<ChartComponent vaults={chartVaults} {savingsRate} {treasuryRate} />
+		{:else if loadError}
+			<p class="load-error">Data failed to load</p>
 		{:else}
 			<div class="skeleton-chart"></div>
 		{/if}
@@ -68,6 +77,17 @@ chart component + Plotly.js only when needed.
 				display: block;
 			}
 		}
+	}
+
+	.load-error {
+		height: 400px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--radius-xs);
+		background: var(--c-box-3);
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-lg-medium);
 	}
 
 	.skeleton-chart {

@@ -2,22 +2,17 @@ import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { type SlimVaultInfo, type VaultAggregates, slimVaultKeys } from '$lib/top-vaults/schemas';
-import { calculateTotalTvl, isBlacklisted, meetsDefaultTvl, meetsMinTvl, rankVaultsBy } from '$lib/top-vaults/helpers';
+import { type SlimVaultInfo, type VaultAggregates } from '$lib/top-vaults/schemas';
+import {
+	calculateTotalTvl,
+	isBlacklisted,
+	meetsDefaultTvl,
+	meetsMinTvl,
+	rankVaultsBy,
+	slimVault
+} from '$lib/top-vaults/helpers';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
-
-/**
- * Strip full VaultInfo objects to only the fields needed by landing page components.
- * Reduces serialised page size from ~24 MB to ~1.3 MB (3,516 vaults × 80+ → 12 fields).
- */
-function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
-	const slim = {} as Record<string, unknown>;
-	for (const key of slimVaultKeys) {
-		slim[key] = vault[key as string];
-	}
-	return slim as SlimVaultInfo;
-}
 
 export async function load({ fetch }) {
 	const [strategies, topVaultsResult, ratesResult] = await Promise.all([
@@ -80,8 +75,7 @@ export async function load({ fetch }) {
 			aggregates: {
 				totalTvl,
 				weightedAvgApy,
-				rankedVaultCount: rankedVaults.length,
-				chainCount: new Set(baseVaults.map((v) => v.chain_id)).size
+				rankedVaultCount: rankedVaults.length
 			}
 		};
 	}

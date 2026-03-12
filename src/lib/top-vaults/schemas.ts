@@ -176,7 +176,6 @@ export interface VaultAggregates {
 	totalTvl: number;
 	weightedAvgApy: number;
 	rankedVaultCount: number;
-	chainCount: number;
 }
 
 /** Keys included in SlimVaultInfo — used to strip full vault objects at runtime. */
