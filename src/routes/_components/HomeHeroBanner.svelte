@@ -1,22 +1,22 @@
 <script lang="ts">
 	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import heroBackground from '$lib/assets/misc/home-hero-yield-discovery.svg';
 </script>
 
-<section class="home-hero-banner" data-testid="home-hero-banner">
+<section class="home-hero-banner" data-testid="home-hero-banner" style={`--hero-background-image: url(${heroBackground})`}>
 	<div class="inner ds-container">
 		<header>
-			<h1>The best DeFi vaults and trading strategies</h1>
+			<h1>Find the Best Vaults.<br />Risk-Scored. Verified Onchain.</h1>
 		</header>
 
 		<div class="content">
-			<enhanced:img class="media" src="$lib/assets/misc/mbp-15.webp" sizes="min(1144px, 100vw)" alt="Trading Data" />
-
 			<div class="text">
 				<p>
-					<a href="/blog/announcing-master-vault-strategy">Allocate to the best-performing vaults</a> with automated
-					Vault-of-Vaults strategies. <a href="/trading-view/vaults">Find and compare</a> the most profitable vaults across
-					all blockchains.
+					3000+ risk-scored vaults across 20+ blockchains — professional metrics, rankings, and quantitative research
+					tools.
 				</p>
+				<Button size="lg" label="See top vaults today" href="/trading-view/vaults" --button-padding="1rem 2.5rem" />
 
 				<div class="differentiators">
 					<StrategyDifferentiator
@@ -39,37 +39,87 @@
 
 <style>
 	.home-hero-banner {
+		padding: clamp(2rem, 3vw, 3rem);
 		background: var(--c-background-accent-1);
-		padding: 5rem 2rem;
 
 		@media (--viewport-sm-down) {
-			padding: 3rem 0;
+			padding: 1rem 0;
 		}
 
 		@media (--viewport-xs) {
-			padding: 2rem 0;
+			padding: 0;
 		}
 	}
 
+	.inner::before,
+	.inner::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		border-radius: inherit;
+	}
+
+	.inner::before {
+		z-index: -2;
+		background-image: var(--hero-background-image);
+		background-position: center right;
+		background-repeat: no-repeat;
+		background-size: cover;
+		transform: scale(1.02);
+	}
+
+	.inner::after {
+		z-index: -1;
+		background:
+			linear-gradient(90deg, hsl(208 59% 7% / 0.94) 0%, hsl(208 59% 7% / 0.9) 26%, hsl(208 59% 7% / 0.65) 48%, hsl(208 59% 7% / 0.3) 74%, hsl(208 59% 7% / 0.16) 100%),
+			linear-gradient(180deg, hsl(208 59% 7% / 0.16) 0%, hsl(208 59% 7% / 0.4) 100%);
+	}
+
 	.inner {
+		position: relative;
+		overflow: clip;
+		isolation: isolate;
 		display: grid;
-		gap: 4rem;
+		gap: clamp(2rem, 4vw, 3.5rem);
+		min-height: min(48rem, 78vh);
+		align-content: center;
+		padding: clamp(2.5rem, 4vw, 4.5rem) clamp(1.5rem, 4vw, 3rem);
+		border: 1px solid hsl(191 57% 69% / 12%);
+		border-radius: clamp(1.75rem, 2.5vw, 2.5rem);
+		background:
+			linear-gradient(180deg, hsl(209 61% 10% / 0.14), hsl(209 61% 10% / 0.28)),
+			radial-gradient(circle at top right, hsl(171 73% 45% / 18%), transparent 36%),
+			var(--c-background-accent-1);
+		box-shadow: inset 0 1px 0 hsl(191 57% 69% / 10%);
 
 		@media (--viewport-sm-down) {
-			gap: 2.5rem;
+			min-height: min(42rem, 82vh);
+			padding: 2.25rem 1.25rem;
+			gap: 2rem;
+			border-radius: 1.5rem;
+		}
+
+		@media (--viewport-xs) {
+			min-height: auto;
+			padding: 2rem 1rem;
+			border-radius: 0;
+			border-inline: 0;
 		}
 	}
 
 	header {
 		display: grid;
 		gap: 0.5rem;
-		justify-items: center;
+		justify-items: start;
+		max-width: 44rem;
 	}
 
 	h1 {
-		text-align: center;
+		text-wrap: balance;
 		font: var(--f-heading-xxxl-medium);
 		letter-spacing: var(--f-heading-xxxl-spacing, normal);
+		text-shadow: 0 0.1rem 1.6rem hsl(208 59% 7% / 0.32);
 
 		@media (--viewport-lg-down) {
 			font: var(--f-heading-xxl-medium);
@@ -89,12 +139,19 @@
 
 	.text {
 		display: grid;
-		gap: 2rem;
+		gap: 1.75rem;
+		max-width: 42rem;
+
+		:global(.button) {
+			justify-self: start;
+			box-shadow: 0 1.1rem 2.6rem hsl(208 59% 7% / 0.28);
+		}
 	}
 
 	.differentiators {
 		display: flex;
-		gap: 2em;
+		flex-wrap: wrap;
+		gap: 1rem 2rem;
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing);
 
@@ -109,31 +166,15 @@
 		}
 	}
 
-	.media {
-		width: 100%;
-		max-width: 420px;
-		height: auto;
-	}
-
 	.content {
 		display: grid;
-		grid-template-columns: 2fr 4fr;
-		gap: 3rem;
+		max-width: 44rem;
+		gap: 0;
 		align-items: start;
-		justify-items: center;
+		justify-items: start;
 
 		@media (--viewport-lg-down) {
-			grid-template-columns: auto auto;
-		}
-
-		@media (--viewport-md-down) {
-			grid-template-columns: auto;
-		}
-
-		@media (--viewport-md-down) {
-			> * {
-				max-width: 80vw;
-			}
+			max-width: 40rem;
 		}
 	}
 
@@ -141,6 +182,9 @@
 		color: var(--c-text-light);
 		font: var(--f-heading-md-roman);
 		letter-spacing: var(--f-heading-md-spacing, normal);
+		max-width: 38rem;
+		text-wrap: pretty;
+		text-shadow: 0 0.1rem 1.4rem hsl(208 59% 7% / 0.3);
 
 		@media (--viewport-xl-down) {
 			font: var(--f-heading-sm-roman);
@@ -158,9 +202,37 @@
 		}
 	}
 
-	p a {
-		text-decoration: underline;
-		font-weight: bold;
-		color: var(--c-text);
+	@media (--viewport-md-down) {
+		.inner::before {
+			background-position: 68% center;
+			transform: scale(1.06);
+		}
+
+		.inner::after {
+			background:
+				linear-gradient(180deg, hsl(208 59% 7% / 0.9) 0%, hsl(208 59% 7% / 0.72) 38%, hsl(208 59% 7% / 0.44) 100%),
+				linear-gradient(90deg, hsl(208 59% 7% / 0.72) 0%, hsl(208 59% 7% / 0.28) 100%);
+		}
+
+		header,
+		.content,
+		.text,
+		p {
+			max-width: min(100%, 34rem);
+		}
+	}
+
+	@media (--viewport-sm-down) {
+		.inner::before {
+			background-position: 70% center;
+			transform: scale(1.1);
+		}
+
+		header,
+		.content,
+		.text,
+		p {
+			max-width: 100%;
+		}
 	}
 </style>
