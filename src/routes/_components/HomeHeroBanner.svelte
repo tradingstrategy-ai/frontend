@@ -103,7 +103,11 @@
 		border: 1px solid var(--c-box-3);
 		border-radius: clamp(1.75rem, 2.5vw, 2.5rem);
 		background:
-			linear-gradient(180deg, color-mix(in srgb, var(--c-box-1), transparent 10%), color-mix(in srgb, var(--c-box-1), transparent 0%)),
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-box-1), transparent 10%),
+				color-mix(in srgb, var(--c-box-1), transparent 0%)
+			),
 			radial-gradient(circle at top right, color-mix(in srgb, var(--c-bullish), transparent 88%), transparent 38%),
 			var(--c-box-1);
 		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 88%);
