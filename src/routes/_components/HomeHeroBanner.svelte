@@ -4,7 +4,11 @@
 	import heroBackground from '$lib/assets/misc/home-hero-yield-discovery.svg';
 </script>
 
-<section class="home-hero-banner" data-testid="home-hero-banner" style={`--hero-background-image: url(${heroBackground})`}>
+<section
+	class="home-hero-banner"
+	data-testid="home-hero-banner"
+	style={`--hero-background-image: url(${heroBackground})`}
+>
 	<div class="inner ds-container">
 		<header>
 			<h1>Find the Best Vaults.<br />Risk-Scored. Verified Onchain.</h1>
@@ -72,8 +76,19 @@
 	.inner::after {
 		z-index: -1;
 		background:
-			linear-gradient(90deg, hsl(208 59% 7% / 0.94) 0%, hsl(208 59% 7% / 0.9) 26%, hsl(208 59% 7% / 0.65) 48%, hsl(208 59% 7% / 0.3) 74%, hsl(208 59% 7% / 0.16) 100%),
-			linear-gradient(180deg, hsl(208 59% 7% / 0.16) 0%, hsl(208 59% 7% / 0.4) 100%);
+			linear-gradient(
+				90deg,
+				color-mix(in srgb, var(--c-text-inverted), transparent 8%) 0%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 12%) 26%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 34%) 48%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 64%) 74%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 80%) 100%
+			),
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-text-inverted), transparent 82%) 0%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 58%) 100%
+			);
 	}
 
 	.inner {
@@ -85,13 +100,13 @@
 		min-height: min(48rem, 78vh);
 		align-content: center;
 		padding: clamp(2.5rem, 4vw, 4.5rem) clamp(1.5rem, 4vw, 3rem);
-		border: 1px solid hsl(191 57% 69% / 12%);
+		border: 1px solid var(--c-box-3);
 		border-radius: clamp(1.75rem, 2.5vw, 2.5rem);
 		background:
-			linear-gradient(180deg, hsl(209 61% 10% / 0.14), hsl(209 61% 10% / 0.28)),
-			radial-gradient(circle at top right, hsl(171 73% 45% / 18%), transparent 36%),
-			var(--c-background-accent-1);
-		box-shadow: inset 0 1px 0 hsl(191 57% 69% / 10%);
+			linear-gradient(180deg, color-mix(in srgb, var(--c-box-1), transparent 10%), color-mix(in srgb, var(--c-box-1), transparent 0%)),
+			radial-gradient(circle at top right, color-mix(in srgb, var(--c-bullish), transparent 88%), transparent 38%),
+			var(--c-box-1);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 88%);
 
 		@media (--viewport-sm-down) {
 			min-height: min(42rem, 82vh);
@@ -210,8 +225,17 @@
 
 		.inner::after {
 			background:
-				linear-gradient(180deg, hsl(208 59% 7% / 0.9) 0%, hsl(208 59% 7% / 0.72) 38%, hsl(208 59% 7% / 0.44) 100%),
-				linear-gradient(90deg, hsl(208 59% 7% / 0.72) 0%, hsl(208 59% 7% / 0.28) 100%);
+				linear-gradient(
+					180deg,
+					color-mix(in srgb, var(--c-text-inverted), transparent 10%) 0%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 28%) 38%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 52%) 100%
+				),
+				linear-gradient(
+					90deg,
+					color-mix(in srgb, var(--c-text-inverted), transparent 28%) 0%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 68%) 100%
+				);
 		}
 
 		header,
