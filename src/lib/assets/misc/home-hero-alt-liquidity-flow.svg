@@ -1,0 +1,58 @@
+<svg width="2400" height="1400" viewBox="0 0 2400 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="120" x2="2280" y2="1320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#110F0C" />
+      <stop offset="0.52" stop-color="#191611" />
+      <stop offset="1" stop-color="#15120F" />
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="700" x2="1240" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#080705" stop-opacity="0.94" />
+      <stop offset="0.56" stop-color="#0D0B08" stop-opacity="0.44" />
+      <stop offset="1" stop-color="#0D0B08" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="flowA" x1="1320" y1="316" x2="2208" y2="812" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7A126" stop-opacity="0.82" />
+      <stop offset="1" stop-color="#23985D" stop-opacity="0.82" />
+    </linearGradient>
+    <linearGradient id="flowB" x1="1440" y1="610" x2="2260" y2="1110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DDD5CC" stop-opacity="0.72" />
+      <stop offset="1" stop-color="#23985D" stop-opacity="0.62" />
+    </linearGradient>
+  </defs>
+
+  <rect width="2400" height="1400" fill="url(#bg)" />
+  <rect width="1240" height="1400" fill="url(#fade)" />
+
+  <g opacity="0.14">
+    <path d="M1280 278C1418 250 1538 254 1654 322C1756 382 1826 470 1930 530C2038 594 2164 610 2336 562" stroke="#B6AEA5" stroke-width="2" stroke-dasharray="8 14" />
+    <path d="M1322 1014C1456 952 1578 938 1708 970C1830 1000 1938 1064 2044 1086C2148 1106 2244 1092 2334 1040" stroke="#B6AEA5" stroke-width="2" stroke-dasharray="8 14" />
+  </g>
+
+  <path d="M1330 392C1464 330 1586 314 1718 362C1842 408 1934 506 2042 574C2148 640 2248 666 2334 648" stroke="url(#flowA)" stroke-width="20" stroke-linecap="round" opacity="0.86" />
+  <path d="M1406 734C1522 680 1634 676 1744 724C1846 770 1936 850 2036 896C2132 940 2218 950 2308 928" stroke="url(#flowB)" stroke-width="16" stroke-linecap="round" opacity="0.72" />
+
+  <circle cx="1718" cy="362" r="14" fill="#D7A126" />
+  <circle cx="2042" cy="574" r="14" fill="#23985D" />
+  <circle cx="1744" cy="724" r="14" fill="#DDD5CC" />
+  <circle cx="2036" cy="896" r="14" fill="#23985D" />
+
+  <rect x="1506" y="332" width="614" height="732" rx="42" fill="#1A1713" fill-opacity="0.82" stroke="#6A6056" stroke-opacity="0.46" />
+  <rect x="1560" y="388" width="214" height="14" rx="7" fill="#F3EEE8" fill-opacity="0.82" />
+  <rect x="1560" y="418" width="154" height="10" rx="5" fill="#B6AEA5" fill-opacity="0.58" />
+
+  <rect x="1560" y="518" width="520" height="190" rx="28" fill="#211D18" fill-opacity="0.9" />
+  <rect x="1560" y="752" width="520" height="250" rx="28" fill="#1E1A16" fill-opacity="0.9" />
+
+  <path d="M1602 644C1674 630 1738 620 1800 592C1864 562 1912 506 1980 470" stroke="#23985D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="1602" cy="644" r="11" fill="#DDD5CC" />
+  <circle cx="1800" cy="592" r="11" fill="#D7A126" />
+  <circle cx="1980" cy="470" r="13" fill="#23985D" />
+  <path d="M1592 678H2040" stroke="#6A6056" stroke-width="2" />
+
+  <rect x="2124" y="386" width="92" height="92" rx="24" fill="#31382B" />
+  <text x="2152" y="446" fill="#D7A126" font-size="46" font-family="Arial, sans-serif" font-weight="700">#1</text>
+  <rect x="2124" y="506" width="92" height="92" rx="24" fill="#382F27" />
+  <text x="2152" y="566" fill="#DDD5CC" font-size="46" font-family="Arial, sans-serif" font-weight="700">#2</text>
+  <rect x="2124" y="626" width="92" height="92" rx="24" fill="#302A24" />
+  <text x="2152" y="686" fill="#B6AEA5" font-size="46" font-family="Arial, sans-serif" font-weight="700">#3</text>
+</svg>

@@ -10,7 +10,6 @@ Display a blog post tile - e.g., on main blog roll or home page preview
  -->
 <script lang="ts">
 	import type { BlogPostIndexItem } from '$lib/blog/schemas';
-	import Button from '$lib/components/Button.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 
 	type Props = {
@@ -20,8 +19,10 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 	let { post }: Props = $props();
 </script>
 
-<a class="blog-post-tile tile a" href="/blog/{post.slug}">
-	<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} />
+<article class="blog-post-tile tile a">
+	<a class="image-link" href="/blog/{post.slug}" aria-label={`Read blog post: ${post.title}`}>
+		<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} />
+	</a>
 
 	<div class="content">
 		<div class="info">
@@ -31,16 +32,18 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 				{/snippet}
 			</Timestamp>
 
-			<h3 class="truncate lines-3">{post.title}</h3>
+			<h3 class="truncate lines-3">
+				<a class="title-link" href="/blog/{post.slug}">{post.title}</a>
+			</h3>
 
 			<p class="truncate lines-3">{post.excerpt}</p>
 		</div>
 
 		<div class="cta">
-			<Button label="Read article" />
+			<a class="body-link read-post-link" href="/blog/{post.slug}">Read post</a>
 		</div>
 	</div>
-</a>
+</article>
 
 <style>
 	.blog-post-tile {
@@ -49,6 +52,10 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 		grid-auto-rows: auto 1fr;
 		overflow: hidden;
 		place-content: stretch;
+	}
+
+	.image-link {
+		display: block;
 	}
 
 	img {
@@ -98,6 +105,11 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
+		.title-link {
+			color: inherit;
+			text-decoration: none;
+		}
+
 		p {
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
@@ -108,5 +120,16 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 	.cta {
 		margin-top: var(--space-sm);
 		display: grid;
+		justify-items: end;
+	}
+
+	.read-post-link {
+		justify-self: end;
+		color: var(--c-text-light);
+	}
+
+	.read-post-link:is(:hover, :focus),
+	.title-link:is(:hover, :focus) {
+		color: var(--c-text);
 	}
 </style>

@@ -48,6 +48,7 @@
     "postcss-preset-env": "^10.6.1",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.5.0",
+    "puppeteer-core": "^24.39.0",
     "svelte": "^5.53.2",
     "svelte-check": "^4.4.3",
     "typescript": "^5.9.3",
@@ -57,7 +58,8 @@
     "vite": "^7.3.1",
     "vite-plugin-devtools-json": "^0.3.0",
     "vite-plugin-mock-dev-server": "^2.0.7",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "wscat": "^6.1.0"
   },
   "dependencies": {
     "@aave/math-utils": "^1.37.1",

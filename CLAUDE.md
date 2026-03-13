@@ -93,6 +93,29 @@ Functions should include multiline JSDoc comments with `@param` tags when warran
 
 See `docs/tests.md` for detailed testing documentation.
 
+## Browser automation
+
+Prefer Playwright for browser-based validation in this repo when it is sufficient for the task.
+
+Use it for:
+
+- opening the local app
+- taking screenshots
+- checking rendered content
+- reproducing layout and interaction issues
+
+Typical local target:
+
+```text
+http://127.0.0.1:5173/
+```
+
+Use Chrome remote debugging MCP only when you specifically need to attach to an already running Chrome session, inspect the live DevTools state, or reuse a signed-in/manual browser context.
+
+## Chrome remote debugging MCP
+
+Does not work properly yet.
+
 ## Additional documentation
 
 For detailed information on specific topics, see:
