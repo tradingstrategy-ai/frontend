@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Hide unknown-risk vaults from vault listing unless risk filter is set to Dangerous or Blacklisted (2026-03-13)
 - Serve vault listing data via Brotli-compressed endpoint, removing ~24 MB from HTML and adding skeleton loading (2026-03-12)
 - Pre-compute vault aggregates server-side and lazy-load chart data, reducing HTML payload from 1.3 MB to ~15 KB (2026-03-12)
 - Slim landing page vault data from 24 MB to 1.3 MB by stripping unused fields before serialisation (2026-03-11)

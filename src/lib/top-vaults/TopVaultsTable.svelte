@@ -264,10 +264,12 @@
 			}
 
 			// Risk filter (dropdown-driven) — check both min and max bounds
-			// Vaults with no risk score (null) are always included
 			if (showFilters && (selectedRisk.minValue > 0 || selectedRisk.maxValue < Infinity)) {
 				if (v.risk_numeric != null) {
 					if (v.risk_numeric < selectedRisk.minValue || v.risk_numeric > selectedRisk.maxValue) return false;
+				} else {
+					// Hide unknown-risk vaults unless filter is Dangerous or Blacklisted
+					if (!(selectedRisk.minValue === 0 && selectedRisk.maxValue >= 50)) return false;
 				}
 			}
 
