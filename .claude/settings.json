@@ -29,5 +29,6 @@
 			"Bash(curl:*)",
 			"Bash(npx playwright test:*)"
 		]
-	}
+	},
+	"effortLevel": "high"
 }
