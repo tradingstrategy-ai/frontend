@@ -280,6 +280,9 @@
 				background: var(--c-text);
 				color: var(--c-text-inverted);
 			}
+			.actions :global(.button)::before {
+				display: none;
+			}
 
 			.chart :global(figcaption) {
 				opacity: 1;
