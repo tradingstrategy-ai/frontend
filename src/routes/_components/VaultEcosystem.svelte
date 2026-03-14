@@ -56,7 +56,7 @@ chart component only when needed.
 		{/if}
 	</div>
 	<div class="cta">
-		<Button secondary label="Compare vault ecosystems" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
+		<Button secondary label="Compare yields" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
 	</div>
 </Section>
 
