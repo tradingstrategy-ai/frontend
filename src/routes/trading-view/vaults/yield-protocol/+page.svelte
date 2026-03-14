@@ -52,7 +52,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 		>
 			{#snippet title()}
 				<span>Vault yield / protocol scatter plot</span>
-				<DataBadge class="badge" status="warning">Beta</DataBadge>
+				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>

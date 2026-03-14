@@ -43,7 +43,7 @@
 		<HeroBanner subtitle="Browse DeFi stablecoin vaults by their blockchain">
 			{#snippet title()}
 				<span>DeFi vaults by chain</span>
-				<DataBadge class="badge" status="warning">Beta</DataBadge>
+				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>

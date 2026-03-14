@@ -15,7 +15,7 @@ The color and background color may be overridden with CSS props.
 
 	interface Props {
 		class?: string;
-		status?: 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default';
+		status?: 'beta' | 'bullish' | 'bearish' | 'error' | 'success' | 'warning' | 'default';
 		children: Snippet<[]>;
 	}
 
@@ -63,6 +63,11 @@ The color and background color may be overridden with CSS props.
 		}
 
 		&.success {
+			color: color-mix(in srgb, var(--c-text), var(--c-success) 25%);
+			background: color-mix(in srgb, transparent, var(--c-success) 35%);
+		}
+
+		&.beta {
 			color: color-mix(in srgb, var(--c-text), var(--c-success) 25%);
 			background: color-mix(in srgb, transparent, var(--c-success) 35%);
 		}

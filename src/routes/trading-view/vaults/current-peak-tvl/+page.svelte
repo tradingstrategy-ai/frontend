@@ -52,7 +52,7 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 		>
 			{#snippet title()}
 				<span>Vault current/peak TVL scatter plot</span>
-				<DataBadge class="badge" status="warning">Beta</DataBadge>
+				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>

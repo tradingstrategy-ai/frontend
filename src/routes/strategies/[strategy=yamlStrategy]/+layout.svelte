@@ -8,6 +8,7 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 	import { getMenuOptions, default as YamlStrategyNav } from './YamlStrategyNav.svelte';
 
 	export let data;
+	const isBetaTag = (tag: string) => tag.toLowerCase() === 'beta';
 
 	$: ({ strategy, backtestAvailable } = data);
 
@@ -34,7 +35,7 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 			{strategy.name}
 
 			{#each tags as tag}
-				<DataBadge class="badge" status="warning">{tag}</DataBadge>
+				<DataBadge class="badge" status={isBetaTag(tag) ? 'beta' : 'warning'}>{tag}</DataBadge>
 			{/each}
 		</svelte:fragment>
 	</PageHeading>

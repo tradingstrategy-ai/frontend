@@ -65,7 +65,7 @@
 						<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} />
 					{/if}
 					<span>{pageTitle}</span>
-					<DataBadge class="badge" status="warning">Beta</DataBadge>
+					<DataBadge class="badge" status="beta">Beta</DataBadge>
 				</span>
 			{/snippet}
 		</HeroBanner>

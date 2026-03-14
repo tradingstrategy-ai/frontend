@@ -59,7 +59,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 			{/snippet}
 			{#snippet title()}
 				<span>Total vault earnings</span>
-				<DataBadge class="badge" status="warning">Beta</DataBadge>
+				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>

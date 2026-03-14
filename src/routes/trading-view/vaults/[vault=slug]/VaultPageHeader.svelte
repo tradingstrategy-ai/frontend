@@ -13,6 +13,7 @@
 	let { vault }: Props = $props();
 
 	const hiddenFlags = ['perp_dex_trading_vault'];
+	const isBetaFlag = (flag: string) => flag.toLowerCase() === 'beta';
 
 	let visibleFlags = $derived(vault.flags.filter((f) => !hiddenFlags.includes(f)));
 
@@ -27,7 +28,7 @@
 		<span class="page-title">
 			<span>{vault.name}</span>
 			{#each visibleFlags as flag (flag)}
-				<DataBadge class="badge" status="warning">{flag}</DataBadge>
+				<DataBadge class="badge" status={isBetaFlag(flag) ? 'beta' : 'warning'}>{flag}</DataBadge>
 			{/each}
 		</span>
 	{/snippet}
