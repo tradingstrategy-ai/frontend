@@ -8,7 +8,7 @@ test.describe('home page', () => {
 	test('should display hero banner', async ({ page }) => {
 		const hero = page.getByTestId('home-hero-banner');
 		await expect(hero).toBeVisible();
-		await expect(hero).toHaveText(/Data-driven DeFi vault investing/);
+		await expect(hero).toHaveText(/Data-driven DeFi vault opportunities/);
 	});
 
 	test('should include blog roll', async ({ page }) => {

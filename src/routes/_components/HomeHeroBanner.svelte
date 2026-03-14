@@ -13,12 +13,12 @@
 >
 	<div class="inner ds-container">
 		<header>
-			<h1>Data-driven DeFi vault investing</h1>
+			<h1>Data-driven DeFi vault opportunities</h1>
 		</header>
 
 		<div class="content">
 			<div class="text">
-				<p>Compare and invest in 3000+ risk-scored vaults using professional metrics and strategies.</p>
+				<p>Compare and allocate in 3000+ risk-scored vaults using professional metrics and strategies.</p>
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
@@ -84,6 +84,7 @@
 			0 1.75rem 3.5rem color-mix(in srgb, var(--c-text-inverted), transparent 76%),
 			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 76%),
 			inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 94%);
+		backdrop-filter: blur(0.3rem) saturate(1.04);
 
 		@media (--viewport-sm-down) {
 			min-height: min(33rem, 66vh);
@@ -121,6 +122,7 @@
 	.inner::after {
 		z-index: -1;
 		background:
+			radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--c-text-light), transparent 88%) 0%, transparent 30%),
 			radial-gradient(
 				circle at 22% 34%,
 				color-mix(in srgb, var(--c-text-inverted), transparent 10%) 0%,
@@ -137,8 +139,8 @@
 			),
 			linear-gradient(
 				180deg,
-				color-mix(in srgb, var(--c-text-inverted), transparent 84%) 0%,
-				color-mix(in srgb, var(--c-text-inverted), transparent 64%) 100%
+				color-mix(in srgb, var(--c-text-inverted), transparent 76%) 0%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 58%) 100%
 			);
 	}
 
@@ -153,7 +155,21 @@
 		text-wrap: balance;
 		font: var(--f-heading-xxxl-medium);
 		letter-spacing: var(--f-heading-xxxl-spacing, normal);
-		text-shadow: 0 0.1rem 1.6rem color-mix(in srgb, var(--c-text-inverted), transparent 62%);
+		color: color-mix(in srgb, var(--c-text) 94%, var(--c-text-light) 6%);
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, white, var(--c-text-light) 26%) 0%,
+			color-mix(in srgb, var(--c-text) 92%, var(--c-text-light) 8%) 38%,
+			color-mix(in srgb, var(--c-text-light) 80%, transparent 20%) 100%
+		);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		-webkit-text-stroke: 1px color-mix(in srgb, var(--c-text-light), transparent 82%);
+		text-shadow:
+			0 1px 0 color-mix(in srgb, white, transparent 60%),
+			0 0.1rem 0.65rem color-mix(in srgb, var(--c-text-light), transparent 88%),
+			0 0.45rem 1.6rem color-mix(in srgb, var(--c-text-inverted), transparent 68%);
 
 		@media (--viewport-lg-down) {
 			font: var(--f-heading-xxl-medium);
@@ -200,7 +216,9 @@
 		letter-spacing: var(--f-heading-md-spacing, normal);
 		max-width: 38rem;
 		text-wrap: pretty;
-		text-shadow: 0 0.1rem 1.4rem color-mix(in srgb, var(--c-text-inverted), transparent 68%);
+		text-shadow:
+			0 1px 0 color-mix(in srgb, white, transparent 84%),
+			0 0.1rem 1rem color-mix(in srgb, var(--c-text-inverted), transparent 72%);
 
 		@media (--viewport-xl-down) {
 			font: var(--f-heading-sm-roman);
@@ -320,6 +338,7 @@
 		gap: 1rem 2rem;
 		font: var(--f-ui-md-medium);
 		letter-spacing: var(--f-ui-md-spacing);
+		padding-top: 0.15rem;
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-medium);
