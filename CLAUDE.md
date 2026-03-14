@@ -134,3 +134,4 @@ For detailed information on specific topics, see:
 - Before opening or updating a pull request, format the code
 - When merging pull request, squash and merge commits and use the PR description as the commit message
 - After merging checkout the master
+- If the CI jobs are not triggered after a push that if there is a merge conflict or if the PR is already closed

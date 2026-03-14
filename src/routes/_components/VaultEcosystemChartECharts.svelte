@@ -63,6 +63,9 @@ Homepage adapter around the shared ECharts cumulative TVL / APY renderer.
 	{savingsRate}
 	{treasuryRate}
 	{benchmarkUrls}
+	showVaultSymbols={false}
+	invisibleVaultHoverSymbolSize={18}
+	enhanceGlassLines={true}
 	returnsAxisLabel="Returns (last month annualised)"
 	returnsTooltipLabel="Returns annualised"
 	chartHeightDesktop={500}

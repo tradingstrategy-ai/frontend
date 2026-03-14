@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
-	import heroBackground from '$lib/assets/misc/home-hero-alt-onchain-atlas.svg';
-	import heroBackgroundMobile from '$lib/assets/misc/broken-hero.png';
+	import heroBackground from '$lib/assets/misc/hero-new.png';
+	import heroBackgroundMobile from '$lib/assets/misc/hero-new.png';
 	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 </script>
 
@@ -35,7 +35,7 @@
 						details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
 					/>
 					<StrategyDifferentiator
-						title="No fixed fees"
+						title="Onchain"
 						details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
 					/>
 				</div>
@@ -76,7 +76,7 @@
 			linear-gradient(
 				180deg,
 				color-mix(in srgb, var(--c-box-1), transparent 2%),
-				color-mix(in srgb, var(--c-box-1), transparent 0%)
+				color-mix(in srgb, var(--c-box-1), transparent 20%)
 			),
 			radial-gradient(circle at top right, color-mix(in srgb, var(--c-bullish), transparent 92%), transparent 42%),
 			linear-gradient(135deg, color-mix(in srgb, var(--c-text-light), transparent 94%), transparent 34%), var(--c-box-1);
@@ -116,7 +116,6 @@
 		background-repeat: no-repeat;
 		background-size: cover;
 		transform: scale(1.01);
-		filter: saturate(1.06) brightness(1.1);
 	}
 
 	.inner::after {
@@ -131,15 +130,12 @@
 			),
 			linear-gradient(
 				90deg,
-				color-mix(in srgb, var(--c-text-inverted), transparent 1%) 0%,
-				color-mix(in srgb, var(--c-text-inverted), transparent 6%) 22%,
-				color-mix(in srgb, var(--c-text-inverted), transparent 20%) 44%,
-				color-mix(in srgb, var(--c-text-inverted), transparent 54%) 74%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 54%) 0%,
 				color-mix(in srgb, var(--c-text-inverted), transparent 78%) 100%
 			),
 			linear-gradient(
 				180deg,
-				color-mix(in srgb, var(--c-text-inverted), transparent 76%) 0%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 99%) 0%,
 				color-mix(in srgb, var(--c-text-inverted), transparent 58%) 100%
 			);
 	}
@@ -184,7 +180,6 @@
 		@media (--viewport-sm-down) {
 			font: var(--f-heading-xl-medium);
 			letter-spacing: var(--f-heading-lg-spacing, normal);
-			margin-bottom: 60px;
 		}
 	}
 
@@ -321,17 +316,6 @@
 			inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 90%);
 	}
 
-	@media (--viewport-sm-down) {
-		.ctas {
-			display: grid;
-			width: 100%;
-		}
-
-		:global(.home-hero-banner .ctas .button) {
-			width: 100%;
-		}
-	}
-
 	.differentiators {
 		display: flex;
 		flex-wrap: wrap;
@@ -344,37 +328,12 @@
 			font: var(--f-ui-sm-medium);
 			letter-spacing: var(--f-ui-sm-spacing);
 		}
-
-		@media (--viewport-xs) {
-			display: grid;
-			gap: 0.875em;
-		}
 	}
 
 	@media (--viewport-md-down) {
 		.inner::before {
 			background-position: 68% center;
 			transform: scale(1.04);
-		}
-
-		.inner::after {
-			background:
-				radial-gradient(
-					circle at 24% 22%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 18%) 0%,
-					transparent 56%
-				),
-				linear-gradient(
-					180deg,
-					color-mix(in srgb, var(--c-text-inverted), transparent 4%) 0%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 18%) 38%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 42%) 100%
-				),
-				linear-gradient(
-					90deg,
-					color-mix(in srgb, var(--c-text-inverted), transparent 12%) 0%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 62%) 100%
-				);
 		}
 
 		header,
@@ -388,43 +347,40 @@
 	@media (--viewport-sm-down) {
 		.inner {
 			min-height: min(31rem, 62vh);
-			padding: 2rem 1.25rem 3rem;
+			padding: 2rem 1.25rem 3.25rem;
 			gap: 2.125rem;
 		}
 
 		.inner::before {
-			content: '';
-			inset: 0;
 			background-image: var(--hero-background-image-mobile);
-			background-position: center;
-			background-size: contain;
-			/*
-			background-position: center top;
+			background-position: 70% center;
 			background-repeat: no-repeat;
-			background-size: 200% auto;
-			transform: none;*/
-			/*filter: saturate(1.1) brightness(1.22);*/
+			background-size: cover;
+			transform: scale(1.03);
 		}
 
 		.inner::after {
 			background:
 				radial-gradient(
-					circle at 28% 18%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 12%) 0%,
-					transparent 48%
+					circle at 20% 20%,
+					color-mix(in srgb, var(--c-text-light), transparent 90%) 0%,
+					transparent 32%
 				),
-				linear-gradient(
-					180deg,
-					color-mix(in srgb, var(--c-text-inverted), transparent 8%) 0%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 14%) 18%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 36%) 42%,
-					color-mix(in srgb, var(--c-box-1), transparent 8%) 70%,
-					var(--c-box-1) 100%
+				radial-gradient(
+					circle at 22% 32%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 12%) 0%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 34%) 30%,
+					transparent 60%
 				),
 				linear-gradient(
 					90deg,
-					color-mix(in srgb, var(--c-text-inverted), transparent 6%) 0%,
-					color-mix(in srgb, var(--c-text-inverted), transparent 28%) 100%
+					color-mix(in srgb, var(--c-text-inverted), transparent 42%) 0%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 72%) 100%
+				),
+				linear-gradient(
+					180deg,
+					color-mix(in srgb, var(--c-text-inverted), transparent 92%) 0%,
+					color-mix(in srgb, var(--c-text-inverted), transparent 42%) 100%
 				);
 		}
 
@@ -441,18 +397,7 @@
 
 		.ctas {
 			margin-top: 0.5rem;
-		}
-
-		.differentiators {
-			display: grid;
-			grid-template-columns: repeat(2, max-content);
-			justify-content: center;
-			gap: 0.5rem 0.875rem;
-		}
-
-		:global(.home-hero-banner .differentiators > :last-child) {
-			grid-column: 1 / -1;
-			justify-self: center;
+			justify-content: flex-start;
 		}
 	}
 

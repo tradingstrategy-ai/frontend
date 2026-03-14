@@ -60,6 +60,10 @@ reuse the same rendering core.
 		tooltipFontSize?: number;
 		gridDesktop?: GridPadding;
 		gridMobile?: GridPadding;
+		showVaultSymbols?: boolean;
+		vaultSymbolSize?: number;
+		invisibleVaultHoverSymbolSize?: number;
+		enhanceGlassLines?: boolean;
 		variant?: 'glass' | 'plain';
 		maxWidth?: string;
 		className?: string;
@@ -88,6 +92,10 @@ reuse the same rendering core.
 		tooltipFontSize = 13,
 		gridDesktop = { top: 64, right: 68, bottom: 64, left: 68 },
 		gridMobile = { top: 46, right: 48, bottom: 48, left: 48 },
+		showVaultSymbols = true,
+		vaultSymbolSize = 8,
+		invisibleVaultHoverSymbolSize = 0,
+		enhanceGlassLines = false,
 		variant = 'glass',
 		maxWidth = '960px',
 		className = ''
@@ -230,6 +238,34 @@ reuse the same rendering core.
 		const isSinglePoint = points.length === 1;
 		const grid = isMobile ? gridMobile : gridDesktop;
 		const axisNameVisible = !isMobile || showAxisNamesOnMobile;
+		const computedStyles = getComputedStyle(document.documentElement);
+		const themeSuccessGreen = computedStyles.getPropertyValue('--c-success').trim() || 'hsl(149 64% 44%)';
+		const themeBullishGreen = computedStyles.getPropertyValue('--c-bullish').trim() || themeSuccessGreen;
+		const glassLineGradient = enhanceGlassLines
+			? new echartsApi.graphic.LinearGradient(0, 0, 1, 0, [
+					{ offset: 0, color: themeBullishGreen },
+					{ offset: 0.45, color: themeSuccessGreen },
+					{ offset: 1, color: themeSuccessGreen }
+				])
+			: '#22c55e';
+		const glassAreaGradient = enhanceGlassLines
+			? new echartsApi.graphic.LinearGradient(0, 0, 0, 1, [
+					{ offset: 0, color: 'rgba(186, 255, 230, 0.22)' },
+					{ offset: 0.5, color: 'rgba(74, 222, 128, 0.11)' },
+					{ offset: 1, color: 'rgba(22, 163, 74, 0.02)' }
+				])
+			: {
+					type: 'linear',
+					x: 0,
+					y: 0,
+					x2: 0,
+					y2: 1,
+					colorStops: [
+						{ offset: 0, color: 'rgba(74, 222, 128, 0.34)' },
+						{ offset: 0.45, color: 'rgba(34, 197, 94, 0.18)' },
+						{ offset: 1, color: 'rgba(22, 163, 74, 0.03)' }
+					]
+				};
 		const benchmarkSeries = [
 			...(treasuryRate != null
 				? [
@@ -248,6 +284,89 @@ reuse the same rendering core.
 					]
 				: [])
 		];
+		const cumulativeLineSeries = {
+			name: 'Cumulative TVL',
+			type: 'line',
+			smooth: false,
+			showSymbol: isSinglePoint || showVaultSymbols,
+			symbol: 'circle',
+			symbolSize: isSinglePoint ? 48 : vaultSymbolSize,
+			lineStyle: {
+				color: glassLineGradient,
+				width: isSinglePoint ? 0 : enhanceGlassLines ? 3.5 : 3,
+				opacity: isSinglePoint ? 0 : 1,
+				shadowBlur: enhanceGlassLines ? 18 : 0,
+				shadowColor: enhanceGlassLines ? themeSuccessGreen : 'transparent'
+			},
+			itemStyle: {
+				color: enhanceGlassLines ? themeSuccessGreen : '#22c55e',
+				opacity: enhanceGlassLines ? 0.34 : 0.5
+			},
+			areaStyle: isSinglePoint
+				? undefined
+				: {
+						color: glassAreaGradient
+					},
+			emphasis: {
+				focus: 'none',
+				scale: isSinglePoint ? 1.4 : 4,
+				lineStyle: {
+					color: glassLineGradient,
+					shadowBlur: enhanceGlassLines ? 24 : 0,
+					shadowColor: enhanceGlassLines ? themeBullishGreen : 'transparent'
+				},
+				itemStyle: { color: THEME_RED_HOVER, opacity: 0.5 }
+			},
+			z: 4,
+			data: points
+		};
+		const cumulativeGlowSeries =
+			enhanceGlassLines && !isSinglePoint
+				? [
+						{
+							name: 'Cumulative TVL glow',
+							type: 'line',
+							smooth: false,
+							silent: true,
+							showSymbol: false,
+							lineStyle: {
+								color: themeBullishGreen,
+								width: 11,
+								opacity: 0.18,
+								shadowBlur: 26,
+								shadowColor: themeSuccessGreen
+							},
+							tooltip: { show: false },
+							animation: false,
+							z: 3,
+							data: points
+						}
+					]
+				: [];
+		const invisibleHoverSeries =
+			!showVaultSymbols && invisibleVaultHoverSymbolSize > 0
+				? [
+						{
+							name: 'Cumulative TVL hover targets',
+							type: 'scatter',
+							symbol: 'circle',
+							symbolSize: invisibleVaultHoverSymbolSize,
+							itemStyle: {
+								color: 'rgba(255,255,255,0)',
+								opacity: 0
+							},
+							emphasis: {
+								scale: false,
+								itemStyle: {
+									color: 'rgba(255,255,255,0)',
+									opacity: 0
+								}
+							},
+							z: 6,
+							data: points
+						}
+					]
+				: [];
 
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
@@ -338,46 +457,7 @@ reuse the same rendering core.
 				},
 				splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.18)' } }
 			},
-			series: [
-				{
-					name: 'Cumulative TVL',
-					type: 'line',
-					smooth: false,
-					showSymbol: true,
-					symbol: 'circle',
-					symbolSize: isSinglePoint ? 48 : 8,
-					lineStyle: {
-						color: '#22c55e',
-						width: isSinglePoint ? 0 : 3,
-						opacity: isSinglePoint ? 0 : 1
-					},
-					itemStyle: { color: '#22c55e', opacity: 0.5 },
-					areaStyle: isSinglePoint
-						? undefined
-						: {
-								color: {
-									type: 'linear',
-									x: 0,
-									y: 0,
-									x2: 0,
-									y2: 1,
-									colorStops: [
-										{ offset: 0, color: 'rgba(74, 222, 128, 0.34)' },
-										{ offset: 0.45, color: 'rgba(34, 197, 94, 0.18)' },
-										{ offset: 1, color: 'rgba(22, 163, 74, 0.03)' }
-									]
-								}
-							},
-					emphasis: {
-						focus: 'none',
-						scale: isSinglePoint ? 1.4 : 4,
-						itemStyle: { color: THEME_RED_HOVER, opacity: 0.5 }
-					},
-					z: 4,
-					data: points
-				},
-				...benchmarkSeries
-			]
+			series: [...cumulativeGlowSeries, cumulativeLineSeries, ...invisibleHoverSeries, ...benchmarkSeries]
 		});
 
 		chartInstance.on('click', (params) => {

@@ -27,7 +27,7 @@ test.describe('home page', () => {
 
 		await page.goto('/');
 
-		const widgetHeading = page.getByRole('heading', { name: 'See where stablecoin capital earns more' });
+		const widgetHeading = page.getByRole('heading', { name: 'See where capital earns most' });
 		await widgetHeading.scrollIntoViewIfNeeded();
 		await expect(widgetHeading).toBeVisible();
 

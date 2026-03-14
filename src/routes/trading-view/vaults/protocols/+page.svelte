@@ -38,7 +38,7 @@
 		<HeroBanner subtitle="Browse supported DeFi stablecoin vault protocols across all blockchains">
 			{#snippet title()}
 				<span>DeFi stablecoin vault protocols</span>
-				<DataBadge class="badge" status="warning">Beta</DataBadge>
+				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>

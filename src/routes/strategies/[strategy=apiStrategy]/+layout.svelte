@@ -13,6 +13,7 @@
 	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 
 	export let data;
+	const isBetaTag = (tag: string) => tag.toLowerCase() === 'beta';
 
 	$: ({ admin, strategy, vault, deferred } = data);
 
@@ -52,7 +53,7 @@
 				{strategy.name}
 
 				{#each tags as tag}
-					<DataBadge class="badge" status="warning">{tag}</DataBadge>
+					<DataBadge class="badge" status={isBetaTag(tag) ? 'beta' : 'warning'}>{tag}</DataBadge>
 				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
