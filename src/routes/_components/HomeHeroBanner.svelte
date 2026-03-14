@@ -13,12 +13,12 @@
 >
 	<div class="inner ds-container">
 		<header>
-			<h1>Data-driven DeFi vault investing</h1>
+			<h1>Data-driven DeFi vault opportunities</h1>
 		</header>
 
 		<div class="content">
 			<div class="text">
-				<p>Compare and invest in 3000+ risk-scored vaults using professional metrics and strategies.</p>
+				<p>Compare and allocate in</p>
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
