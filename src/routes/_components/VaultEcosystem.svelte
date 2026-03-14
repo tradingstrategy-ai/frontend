@@ -42,9 +42,9 @@ chart component only when needed.
 </script>
 
 <Section padding="md" --section-background="var(--c-background-accent-1)">
-	<h2>See where stablecoin capital earns more</h2>
+	<h2>See where capital earns most</h2>
 	<div class="description ds-3">
-		<span>Compare yields, TVL and momentum across the biggest stablecoin vault ecosystems</span>
+		<span>Compare yields, TVL and momentum across the DeFi ecosystems</span>
 	</div>
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
 		{#if ChartComponent && chartVaults}
