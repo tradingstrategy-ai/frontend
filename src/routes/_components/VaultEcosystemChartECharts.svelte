@@ -7,9 +7,12 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
+	import { getChain } from '$lib/helpers/chain';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { onMount, tick } from 'svelte';
 
 	const ECHARTS_CDN = 'https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
@@ -17,6 +20,7 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 	const MAX_APY_THRESHOLD = 10;
 	const MIN_APY_CHART_VALUE = 0.01;
 	const MAX_X_AXIS_RETURN = 750;
+	const Y_AXIS_TOP_PADDING_RATIO = 0.1;
 	const TREASURY_URL = resolve('/glossary/risk-free-rate');
 	const SAVINGS_URL = resolve('/glossary/fdic-national-rate');
 	const BENCHMARK_ORANGE = '#fbbf24';
@@ -41,7 +45,9 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 		value: [number, number];
 		name: string;
 		chain: string;
+		chainLogoUrl?: string;
 		protocol: string;
+		protocolLogoUrl?: string;
 		realApy: number;
 		individualTvl: number;
 		cumulativeTvl: number;
@@ -128,6 +134,25 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 		return `${value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}%`;
 	}
 
+	function renderTooltipLogo(url: string | undefined, alt: string, size = 18): string {
+		if (!url) return '';
+		const safeAlt = escapeHtml(alt);
+		return `<img src="${escapeHtml(url)}" alt="${safeAlt}" width="${size}" height="${size}" style="width: ${size}px; height: ${size}px; border-radius: 999px; object-fit: contain; flex: 0 0 auto;" onerror="this.style.display='none'">`;
+	}
+
+	function buildVaultTooltipMeta(point: VaultPoint): string {
+		const chainLogo = renderTooltipLogo(point.chainLogoUrl, `${point.chain} logo`);
+		const protocolLogo = renderTooltipLogo(point.protocolLogoUrl, `${point.protocol} logo`);
+		const chainLabel = chainLogo
+			? `<span style="display: inline-flex; align-items: center; gap: 0.45rem; vertical-align: middle;">${chainLogo}<span>${escapeHtml(point.chain)}</span></span>`
+			: `<span>${escapeHtml(point.chain)}</span>`;
+		const protocolLabel = protocolLogo
+			? `<span style="display: inline-flex; align-items: center; gap: 0.45rem; vertical-align: middle;">${protocolLogo}<span>${escapeHtml(point.protocol)}</span></span>`
+			: `<span>${escapeHtml(point.protocol)}</span>`;
+
+		return `<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">${chainLabel}<span aria-hidden="true">·</span>${protocolLabel}</div>`;
+	}
+
 	function getEligibleVaults(sourceVaults: SlimVaultInfo[]): SlimVaultInfo[] {
 		return sourceVaults
 			.filter((vault) => {
@@ -143,7 +168,7 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 	function buildVaultTooltip(point: VaultPoint): string {
 		return [
 			`<div class="tooltip-title" style="${TOOLTIP_TITLE_STYLE}">${escapeHtml(point.name)}</div>`,
-			`<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}">${escapeHtml(point.chain)} · ${escapeHtml(point.protocol)}</div>`,
+			buildVaultTooltipMeta(point),
 			`<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}"><strong>Returns annualised:</strong> ${formatRate(point.realApy)}</div>`,
 			`<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}"><strong>Vault TVL:</strong> ${formatUsd(point.individualTvl)}</div>`,
 			`<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}"><strong>TVL earning less than this:</strong> ${point.totalTvl > 0 ? ((point.tvlLess / point.totalTvl) * 100).toFixed(1) : '0.0'}% (${formatUsd(point.tvlLess)})</div>`,
@@ -303,13 +328,16 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 			const rawApy = getCagr(vault);
 			const realApy = (rawApy ?? 0) * 100;
 			const vaultTvl = vault.current_nav ?? 0;
+			const chain = getChain(vault.chain_id);
 			runningTvl += vaultTvl;
 
 			points.push({
 				value: [Math.max(realApy, MIN_APY_CHART_VALUE), runningTvl],
 				name: vault.name,
 				chain: vault.chain ?? 'Unknown',
+				chainLogoUrl: getLogoUrl('blockchain', chain?.slug),
 				protocol: vault.protocol ?? 'Unknown',
+				protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
 				realApy,
 				individualTvl: vaultTvl,
 				cumulativeTvl: runningTvl,
@@ -331,7 +359,12 @@ by the parent section and fetches the ECharts runtime from CDN only when needed.
 		const yValues = points.map((point) => point.value[1]);
 		const xAxisMax = Math.min(Math.max(...xValues, treasuryRate ?? 0, savingsRate ?? 0, 0.1), MAX_X_AXIS_RETURN);
 		const yAxisMin = Math.min(...yValues);
-		const yAxisMax = Math.max(...yValues);
+		const highestYValue = Math.max(...yValues);
+		const visibleChartRatio = 1 - Y_AXIS_TOP_PADDING_RATIO;
+		const yAxisMax =
+			highestYValue > yAxisMin
+				? yAxisMin * Math.pow(highestYValue / yAxisMin, 1 / visibleChartRatio)
+				: highestYValue * 1.1;
 
 		const mainSeries = {
 			name: 'Cumulative TVL',
