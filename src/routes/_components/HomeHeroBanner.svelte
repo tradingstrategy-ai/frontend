@@ -18,7 +18,7 @@
 
 		<div class="content">
 			<div class="text">
-				<p>Compare and allocate in</p>
+				<p>Compare and allocate in 3000+ risk-scored vaults using professional metrics and strategies.</p>
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
