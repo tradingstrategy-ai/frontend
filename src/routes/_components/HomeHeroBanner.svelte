@@ -122,11 +122,7 @@
 	.inner::after {
 		z-index: -1;
 		background:
-			radial-gradient(
-				circle at 18% 18%,
-				color-mix(in srgb, var(--c-text-light), transparent 88%) 0%,
-				transparent 30%
-			),
+			radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--c-text-light), transparent 88%) 0%, transparent 30%),
 			radial-gradient(
 				circle at 22% 34%,
 				color-mix(in srgb, var(--c-text-inverted), transparent 10%) 0%,
@@ -160,13 +156,12 @@
 		font: var(--f-heading-xxxl-medium);
 		letter-spacing: var(--f-heading-xxxl-spacing, normal);
 		color: color-mix(in srgb, var(--c-text) 94%, var(--c-text-light) 6%);
-		background:
-			linear-gradient(
-				180deg,
-				color-mix(in srgb, white, var(--c-text-light) 26%) 0%,
-				color-mix(in srgb, var(--c-text) 92%, var(--c-text-light) 8%) 38%,
-				color-mix(in srgb, var(--c-text-light) 80%, transparent 20%) 100%
-			);
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, white, var(--c-text-light) 26%) 0%,
+			color-mix(in srgb, var(--c-text) 92%, var(--c-text-light) 8%) 38%,
+			color-mix(in srgb, var(--c-text-light) 80%, transparent 20%) 100%
+		);
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
