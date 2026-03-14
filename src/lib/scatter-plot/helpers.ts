@@ -56,6 +56,12 @@ export const chartLineColor = 'rgba(255,255,255,0.2)';
 /** Colour for grid lines. */
 export const chartGridColor = 'rgba(255,255,255,0.1)';
 
+/** Colour for chart panel borders and legend outlines. */
+export const chartPanelBorderColor = 'rgba(255,255,255,0.14)';
+
+/** Shared hover label background for Plotly charts. */
+export const chartHoverBackground = 'rgba(7,12,20,0.94)';
+
 /** Floor value for returns on a log axis (0.01%). Non-positive returns are clamped here. */
 export const minReturnLog = 0.01;
 
@@ -66,6 +72,42 @@ export const chartAxisBorder = {
 	linewidth: 3,
 	mirror: true
 } as const;
+
+/** Build shared Plotly chrome settings used across chart variants. */
+export function buildPlotlyChrome(options?: { showLegend?: boolean }) {
+	const { showLegend = true } = options ?? {};
+
+	return {
+		paper_bgcolor: 'transparent',
+		plot_bgcolor: 'transparent',
+		font: { family: chartFontFamily, color: chartTextColor },
+		hoverlabel: {
+			align: 'left' as const,
+			bgcolor: chartHoverBackground,
+			bordercolor: chartPanelBorderColor,
+			font: {
+				family: chartFontFamily,
+				color: chartTextColor,
+				size: 13
+			}
+		},
+		modebar: {
+			bgcolor: 'rgba(7,12,20,0.2)',
+			color: 'rgba(255,255,255,0.7)',
+			activecolor: '#f8fafc'
+		},
+		...(showLegend
+			? {
+					legend: {
+						bgcolor: 'rgba(7,12,20,0.22)',
+						bordercolor: chartPanelBorderColor,
+						borderwidth: 1,
+						font: { family: chartFontFamily, color: chartTextColor, size: 12 }
+					}
+				}
+			: {})
+	};
+}
 
 /** Load Plotly.js from CDN by injecting a script tag. Idempotent. */
 export function loadPlotly(): Promise<any> {
@@ -113,6 +155,7 @@ export function buildChartLayout(
 ) {
 	const isMobile = window.innerWidth <= 768;
 	const axisType = logAxes ? ('log' as const) : ('linear' as const);
+	const chrome = buildPlotlyChrome();
 	return {
 		xaxis: {
 			title: isMobile ? undefined : '<b>Three-month returns, annualised (%)</b>',
@@ -131,17 +174,16 @@ export function buildChartLayout(
 			color: chartTextColor,
 			...chartAxisBorder
 		},
-		paper_bgcolor: 'transparent',
-		plot_bgcolor: 'transparent',
-		font: { family: chartFontFamily, color: chartTextColor },
+			...chrome,
 		legend: {
+				...(chrome.legend as Record<string, any>),
 			title: { text: legendTitle },
 			orientation: 'h' as const,
 			yanchor: 'top' as const,
 			y: -0.15,
 			xanchor: 'center' as const,
 			x: 0.5
-		} as Record<string, any>,
+			} as Record<string, any>,
 		height: 600,
 		margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
 		dragmode: isMobile ? (false as const) : ('zoom' as const),
@@ -154,9 +196,10 @@ export function buildChartConfig() {
 	const isMobile = window.innerWidth <= 768;
 	return {
 		responsive: true,
+		displaylogo: false,
 		displayModeBar: !isMobile,
 		scrollZoom: !isMobile,
-		modeBarButtonsToRemove: ['lasso2d', 'select2d'] as string[]
+		modeBarButtonsToRemove: ['lasso2d', 'select2d', 'toImage'] as string[]
 	};
 }
 
