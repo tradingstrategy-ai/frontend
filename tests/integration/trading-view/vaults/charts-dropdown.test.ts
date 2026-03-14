@@ -27,7 +27,7 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(menu).toContainText('Yield / Protocol');
 			await expect(menu).toContainText('Yield / Chain');
 			await expect(menu).toContainText('Current / Peak TVL');
-			await expect(menu).toContainText('Cumulative TVL / APY');
+			await expect(menu).toContainText('Total vault earnings');
 		});
 
 		test('clicking a chart link navigates to the chart page', async ({ page }) => {

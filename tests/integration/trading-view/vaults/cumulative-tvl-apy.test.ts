@@ -29,7 +29,7 @@ test.describe('cumulative TVL/APY chart page', () => {
 
 		await trigger.click();
 		const activeLink = page.locator('[role="menu"] a.active');
-		await expect(activeLink).toHaveText('Cumulative TVL / APY');
+		await expect(activeLink).toHaveText('Total vault earnings');
 	});
 
 	test('displays scatter plot selector with all chart links', async ({ page }) => {
