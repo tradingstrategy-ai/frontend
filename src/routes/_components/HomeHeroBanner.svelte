@@ -35,7 +35,7 @@
 						details="Withdraw your crypto whenever you want; Trading Strategy does not have access to your money."
 					/>
 					<StrategyDifferentiator
-						title="No fixed fees"
+						title="Onchain"
 						details="No fixed monthly fees; strategies collect performance fees only if they generate profits."
 					/>
 				</div>
