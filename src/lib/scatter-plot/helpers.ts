@@ -174,16 +174,16 @@ export function buildChartLayout(
 			color: chartTextColor,
 			...chartAxisBorder
 		},
-			...chrome,
+		...chrome,
 		legend: {
-				...(chrome.legend as Record<string, any>),
+			...(chrome.legend as Record<string, any>),
 			title: { text: legendTitle },
 			orientation: 'h' as const,
 			yanchor: 'top' as const,
 			y: -0.15,
 			xanchor: 'center' as const,
 			x: 0.5
-			} as Record<string, any>,
+		} as Record<string, any>,
 		height: 600,
 		margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
 		dragmode: isMobile ? (false as const) : ('zoom' as const),
