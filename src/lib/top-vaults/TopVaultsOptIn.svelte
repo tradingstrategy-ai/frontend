@@ -1,9 +1,11 @@
 <script lang="ts">
 	import SubscribeForm from '$lib/newsletter/SubscribeForm.svelte';
+	import { newsletterBannerDescription, newsletterBannerTitle } from '$lib/newsletter/copy';
 </script>
 
 <div class="top-vaults-opt-in">
-	<p class="cta-text">Get notified about the best new vaults and DeFi news</p>
+	<h2 class="cta-title">{newsletterBannerTitle}</h2>
+	<p class="cta-text">{newsletterBannerDescription}</p>
 	<SubscribeForm inputSize="md" buttonSize="sm" />
 </div>
 
@@ -32,9 +34,17 @@
 		}
 	}
 
+	.cta-title {
+		margin-bottom: 0.5rem;
+		font: var(--f-heading-sm-medium);
+		letter-spacing: var(--f-heading-sm-spacing, normal);
+		color: var(--c-text);
+	}
+
 	.cta-text {
-		font: var(--f-ui-lg-roman);
-		letter-spacing: var(--f-ui-lg-spacing, normal);
+		margin-bottom: 0;
+		font: var(--f-ui-md-roman);
+		letter-spacing: var(--f-ui-md-spacing, normal);
 		color: var(--c-text);
 	}
 </style>

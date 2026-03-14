@@ -36,6 +36,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 	let { vaults, savingsRate, treasuryRate, dataLoading = false }: Props = $props();
 
 	let error = $state<string | null>(null);
+	let brokenProtocolLogos = $state<Record<string, true>>({});
 
 	const timeWindows = [
 		{ value: '1m', label: '1 month' },
@@ -72,6 +73,14 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 
 	function isProtocolSelected(name: string) {
 		return selectedProtocols.length === 0 || selectedProtocols.includes(name);
+	}
+
+	function hasUsableProtocolLogo(name: string, logoUrl: string | undefined) {
+		return !!logoUrl && !brokenProtocolLogos[name];
+	}
+
+	function markProtocolLogoBroken(name: string) {
+		brokenProtocolLogos = { ...brokenProtocolLogos, [name]: true };
 	}
 
 	/**
@@ -229,8 +238,10 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 			{#each protocolOptions() as { name, count, tvl, logoUrl } (name)}
 				<button class="chip" class:active={isProtocolSelected(name)} onclick={() => toggleProtocol(name)}>
 					<span class="chip-header">
-						{#if logoUrl}
-							<img class="chip-logo" src={logoUrl} alt="" loading="lazy" />
+						{#if hasUsableProtocolLogo(name, logoUrl)}
+							<img class="chip-logo" src={logoUrl} alt="" loading="lazy" onerror={() => markProtocolLogoBroken(name)} />
+						{:else}
+							<span class="chip-logo chip-logo-fallback" aria-hidden="true"></span>
 						{/if}
 						<span class="chip-name">{name}</span>
 					</span>
@@ -311,6 +322,12 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		border-radius: 999px;
 		object-fit: contain;
 		flex: 0 0 auto;
+	}
+
+	.chip-logo-fallback {
+		display: inline-block;
+		background: color-mix(in srgb, var(--c-text-ultra-light), var(--c-box-3) 55%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 82%);
 	}
 
 	.chip-meta {

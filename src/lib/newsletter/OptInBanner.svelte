@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SubscribeForm from './SubscribeForm.svelte';
+	import { newsletterBannerDescription, newsletterBannerTitle } from './copy';
 
 	type Props = {
 		title?: string;
@@ -14,14 +15,14 @@
 		{#if title}
 			{title}
 		{:else}
-			Stay ahead with the best new vaults and essential DeFi updates.
+			{newsletterBannerTitle}
 		{/if}
 	</h2>
 	<p>
 		{#if description}
 			{description}
 		{:else}
-			Subscribe to Trading Strategy newsletter
+			{newsletterBannerDescription}
 		{/if}
 	</p>
 	<SubscribeForm />
