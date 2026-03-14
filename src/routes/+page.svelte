@@ -2,6 +2,7 @@
 	Home page
 -->
 <script lang="ts">
+	import { page } from '$app/state';
 	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
 	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
 	import TopVaults from './_components/TopVaults.svelte';
@@ -12,15 +13,26 @@
 	import Button from '$lib/components/Button.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	let { data } = $props();
 
 	let { posts, strategies, topVaults, savingsRate, treasuryRate } = $derived(data);
+
+	const title = 'Trading Strategy';
+	const description = 'Data-driven DeFi vault opportunities';
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
+<MetaTags
+	{title}
+	{description}
+	canonical={pageUrl}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
+
 <svelte:head>
-	<title>Trading Strategy - Algorithmic Trading Protocol</title>
-	<meta name="description" content="AI-driven best profitable automated trading strategies" />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html sitelinksSearchBox()}
 </svelte:head>
