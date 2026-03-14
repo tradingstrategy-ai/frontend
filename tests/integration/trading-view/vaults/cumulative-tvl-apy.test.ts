@@ -5,23 +5,19 @@ test.describe('cumulative TVL/APY chart page', () => {
 		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
 	});
 
-	test('renders the Plotly line chart', async ({ page }) => {
+	test('renders the ECharts line chart', async ({ page }) => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 
-		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
-		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
+		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
+		await expect(chart).toBeVisible({ timeout: 15000 });
 	});
 
 	test('renders APY vs cumulative TVL line chart', async ({ page }) => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 
-		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
-		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
-
-		// Chart should have scatter trace with line
-		const traces = plotlyChart.locator('.scatter');
-		await expect(traces.first()).toBeVisible();
+		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
+		await expect(chart).toBeVisible({ timeout: 15000 });
 	});
 
 	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
@@ -49,8 +45,8 @@ test.describe('cumulative TVL/APY chart page', () => {
 		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
 
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
-		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
-		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
+		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
+		await expect(chart).toBeVisible({ timeout: 15000 });
 
 		expect(errors).toHaveLength(0);
 	});

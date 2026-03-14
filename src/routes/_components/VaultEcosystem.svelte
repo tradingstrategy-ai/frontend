@@ -80,7 +80,7 @@ chart component only when needed.
 	}
 
 	.load-error {
-		height: 400px;
+		height: 500px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -88,13 +88,21 @@ chart component only when needed.
 		background: var(--c-box-3);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-lg-medium);
+
+		@media (--viewport-md-down) {
+			height: 400px;
+		}
 	}
 
 	.skeleton-chart {
-		height: 400px;
+		height: 500px;
 		border-radius: var(--radius-xs);
 		background: var(--c-box-3);
 		animation: pulse-opacity 1s infinite ease-out;
+
+		@media (--viewport-md-down) {
+			height: 400px;
+		}
 	}
 
 	.cta {

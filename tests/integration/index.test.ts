@@ -20,4 +20,20 @@ test.describe('home page', () => {
 	test('should display blog section', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Blog' })).toBeVisible();
 	});
+
+	test('should lazy-load the vault ecosystem widget without crashing', async ({ page }) => {
+		const errors: string[] = [];
+		page.on('pageerror', (err) => errors.push(err.message));
+
+		await page.goto('/');
+
+		const widgetHeading = page.getByRole('heading', { name: 'See where stablecoin capital earns more' });
+		await widgetHeading.scrollIntoViewIfNeeded();
+		await expect(widgetHeading).toBeVisible();
+
+		const chart = page.locator('.echarts-ecosystem-chart canvas');
+		await expect(chart).toBeVisible({ timeout: 15000 });
+		await expect(page.getByText('Data failed to load')).toHaveCount(0);
+		expect(errors).toHaveLength(0);
+	});
 });

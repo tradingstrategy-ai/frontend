@@ -21,12 +21,14 @@ loading/error states, and a Plotly chart container.
 	import Spinner from '$lib/components/Spinner.svelte';
 
 	interface Props {
-		chartContainer: HTMLDivElement;
+		chartContainer?: HTMLDivElement;
 		loading: boolean;
 		error: string | null;
 		minTvl: number;
 		onMinTvlChange?: (value: number) => void;
+		className?: string;
 		extraControls?: Snippet;
+		chartContent?: Snippet;
 		belowChart?: Snippet;
 	}
 
@@ -36,7 +38,9 @@ loading/error states, and a Plotly chart container.
 		error,
 		minTvl = $bindable(),
 		onMinTvlChange,
+		className = '',
 		extraControls,
+		chartContent,
 		belowChart
 	}: Props = $props();
 
@@ -50,7 +54,7 @@ loading/error states, and a Plotly chart container.
 	}
 </script>
 
-<div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
+<div class={`scatter-plot-wrapper ${className}`} data-testid="vault-scatter-plot">
 	<div class="controls">
 		<label>
 			Min TVL:
@@ -77,7 +81,13 @@ loading/error states, and a Plotly chart container.
 			</div>
 		{/if}
 
-		<div bind:this={chartContainer} class="chart-container" class:obscured={loading || !!error}></div>
+		{#if chartContent}
+			<div class="chart-content" class:obscured={loading || !!error}>
+				{@render chartContent()}
+			</div>
+		{:else}
+			<div bind:this={chartContainer} class="chart-container" class:obscured={loading || !!error}></div>
+		{/if}
 	</div>
 	{@render belowChart?.()}
 </div>
@@ -212,6 +222,15 @@ loading/error states, and a Plotly chart container.
 			border-radius: calc(var(--radius-md) - 0.125rem);
 			backdrop-filter: blur(0.65rem) saturate(1.08);
 		}
+
+		&.obscured {
+			visibility: hidden;
+		}
+	}
+
+	.chart-content {
+		position: relative;
+		z-index: 0;
 
 		&.obscured {
 			visibility: hidden;
