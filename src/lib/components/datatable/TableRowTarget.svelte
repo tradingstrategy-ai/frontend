@@ -1,16 +1,25 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
-	import Button from '../Button.svelte';
 	import TargetableLink from '../TargetableLink.svelte';
 
 	interface Props {
-		size?: ComponentProps<Button>['size'];
 		label?: string;
 		href: string;
 	}
 
-	let { size = 'sm', label = 'Details', href }: Props = $props();
+	let { label = 'Details', href }: Props = $props();
 </script>
 
-<Button {size} {label} {href} />
+<a class="row-link" {href}>{label}</a>
 <TargetableLink {href} {label} />
+
+<style>
+	.row-link {
+		color: var(--c-text);
+		text-decoration: underline;
+		font: var(--table-font, var(--f-ui-md-medium));
+		letter-spacing: var(--table-letter-spacing, var(--f-ui-md-spacing, normal));
+		padding-right: var(--space-md);
+		position: relative;
+		z-index: 2;
+	}
+</style>

@@ -35,5 +35,8 @@
 			background: var(--c-text) !important;
 			color: var(--c-text-inverted) !important;
 		}
+		.button::before {
+			display: none;
+		}
 	}
 }

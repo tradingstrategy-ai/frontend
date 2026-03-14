@@ -65,7 +65,7 @@
 
 	tbody tr {
 		td {
-			background: var(--c-box-2);
+			background: var(--c-box-1);
 			height: var(--body-cell-height);
 			font: var(--table-font);
 			letter-spacing: var(--table-letter-spacing, normal);
@@ -87,14 +87,21 @@
 			}
 		}
 
+		&:nth-child(even) td {
+			background: var(--c-box-5);
+		}
+
 		&:is(:hover, :focus, :focus-within) {
 			td {
 				background: var(--c-box-4);
 			}
 
 			.button {
-				--c-accent: var(--c-text);
+				background: var(--c-text);
 				color: var(--c-text-inverted);
+			}
+			.button::before {
+				display: none;
 			}
 
 			.profitability.boxed {

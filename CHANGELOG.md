@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Update button styles to glassmorphic look, replace datatable row buttons with links, and add zebra-striped table rows (2026-03-14)
 - Fix FRED reference rate fetching by adding User-Agent header and file-based cache fallback (2026-03-14)
 - Hide unknown-risk vaults from vault listing unless risk filter is set to Dangerous or Blacklisted (2026-03-13)
 - Serve vault listing data via Brotli-compressed endpoint, removing ~24 MB from HTML and adding skeleton loading (2026-03-12)
