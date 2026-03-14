@@ -1,18 +1,16 @@
 <!--
-ECharts diagnostics page for experimenting with the vault ecosystem chart.
+@component
+ECharts-based cumulative TVL/APY chart variant for the front page. Loaded lazily
+by the parent section and fetches the ECharts runtime from CDN only when needed.
 -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import Alert from '$lib/components/Alert.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import HeroBanner from '$lib/components/HeroBanner.svelte';
-	import Section from '$lib/components/Section.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { onMount, tick } from 'svelte';
-	import type { PageData } from './$types';
 
 	const ECHARTS_CDN = 'https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
 	const MIN_TVL = 50_000;
@@ -33,12 +31,10 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 
 	type BenchmarkKind = 'treasury' | 'savings';
 
-	interface DiagnosticsSummary {
-		totalVaultCount: number;
-		eligibleVaultCount: number;
-		totalTvl: number;
-		highestApy: number | null;
-		lowestApy: number | null;
+	interface Props {
+		vaults: SlimVaultInfo[];
+		savingsRate: number | null;
+		treasuryRate: number | null;
 	}
 
 	interface VaultPoint {
@@ -89,15 +85,11 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 
 	let echartsPromise: Promise<EChartsStatic> | null = null;
 
-	let { data }: { data: PageData } = $props();
+	let { vaults, savingsRate, treasuryRate }: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
-	let vaults = $state<SlimVaultInfo[]>([]);
 	let loading = $state(true);
-	let loadingMessage = $state('Loading ECharts and vault data…');
 	let error = $state<string | null>(null);
-	let fetchedAt = $state<string | null>(null);
-	let summary = $state<DiagnosticsSummary | null>(null);
 
 	let chartInstance: EChartsInstance | null = null;
 	let echartsApi: EChartsStatic | null = null;
@@ -220,24 +212,6 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		return echartsPromise;
 	}
 
-	async function fetchChartData(signal?: AbortSignal): Promise<SlimVaultInfo[]> {
-		const response = await fetch(resolve('/top-vaults/chart-data'), {
-			headers: { accept: 'application/json' },
-			signal
-		});
-
-		if (!response.ok) {
-			throw new Error(`Chart data request failed with ${response.status}`);
-		}
-
-		const payload = (await response.json()) as { vaults?: SlimVaultInfo[] };
-		if (!Array.isArray(payload.vaults)) {
-			throw new Error('Chart data payload did not include vaults.');
-		}
-
-		return payload.vaults;
-	}
-
 	function buildBenchmarkSeries(kind: BenchmarkKind, rate: number, points: VaultPoint[], yMin: number, yMax: number) {
 		let betterTvl = 0;
 		let worseTvl = 0;
@@ -303,7 +277,6 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 					opacity: 1
 				}
 			},
-			emphasisDisabled: false,
 			blur: {
 				lineStyle: {
 					color: BENCHMARK_ORANGE,
@@ -320,7 +293,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 	function buildChartOption(sourceVaults: SlimVaultInfo[]) {
 		const eligibleVaults = getEligibleVaults(sourceVaults);
 		if (eligibleVaults.length === 0) {
-			throw new Error('No vaults matched the diagnostics filters.');
+			throw new Error('No vault data available.');
 		}
 
 		const points: VaultPoint[] = [];
@@ -356,20 +329,9 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 
 		const xValues = points.map((point) => point.value[0]);
 		const yValues = points.map((point) => point.value[1]);
-		const xAxisMax = Math.min(
-			Math.max(...xValues, data.treasuryRate ?? 0, data.savingsRate ?? 0, 0.1),
-			MAX_X_AXIS_RETURN
-		);
+		const xAxisMax = Math.min(Math.max(...xValues, treasuryRate ?? 0, savingsRate ?? 0, 0.1), MAX_X_AXIS_RETURN);
 		const yAxisMin = Math.min(...yValues);
 		const yAxisMax = Math.max(...yValues);
-
-		summary = {
-			totalVaultCount: sourceVaults.length,
-			eligibleVaultCount: eligibleVaults.length,
-			totalTvl,
-			highestApy: points[0]?.realApy ?? null,
-			lowestApy: points.at(-1)?.realApy ?? null
-		};
 
 		const mainSeries = {
 			name: 'Cumulative TVL',
@@ -413,11 +375,11 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		};
 
 		const series: unknown[] = [mainSeries];
-		if (data.treasuryRate != null) {
-			series.push(buildBenchmarkSeries('treasury', data.treasuryRate, points, yAxisMin, yAxisMax));
+		if (treasuryRate != null) {
+			series.push(buildBenchmarkSeries('treasury', treasuryRate, points, yAxisMin, yAxisMax));
 		}
-		if (data.savingsRate != null) {
-			series.push(buildBenchmarkSeries('savings', data.savingsRate, points, yAxisMin, yAxisMax));
+		if (savingsRate != null) {
+			series.push(buildBenchmarkSeries('savings', savingsRate, points, yAxisMin, yAxisMax));
 		}
 
 		return {
@@ -453,6 +415,8 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		existingInstance?.dispose();
 		destroyChart();
 
+		const isMobile = window.innerWidth <= 768;
+
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
 			animationDuration: 450,
@@ -460,10 +424,10 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			backgroundColor: 'transparent',
 			grid: {
 				show: true,
-				top: 84,
-				right: 80,
-				bottom: 84,
-				left: 80,
+				top: isMobile ? 46 : 64,
+				right: isMobile ? 48 : 68,
+				bottom: isMobile ? 48 : 64,
+				left: isMobile ? 48 : 68,
 				borderColor: '#64748b',
 				borderWidth: 1,
 				containLabel: true
@@ -489,14 +453,15 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			},
 			xAxis: {
 				type: 'log',
-				name: 'Returns (last month annualised)',
+				name: isMobile ? '' : 'Returns (last month annualised)',
 				nameLocation: 'middle',
-				nameGap: 44,
+				nameGap: 40,
 				nameTextStyle: {
 					color: '#ffffff',
 					fontFamily: ECHARTS_AXIS_FONT_STACK,
-					fontSize: 18,
-					fontWeight: 600
+					fontSize: 13,
+					fontWeight: 600,
+					align: 'center'
 				},
 				inverse: true,
 				min: MIN_APY_CHART_VALUE,
@@ -509,7 +474,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 				axisLabel: {
 					color: '#e2e8f0',
 					fontFamily: ECHARTS_AXIS_FONT_STACK,
-					fontSize: 15,
+					fontSize: 11,
 					fontWeight: 600,
 					align: 'left',
 					margin: 10,
@@ -526,13 +491,14 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			},
 			yAxis: {
 				type: 'log',
-				name: 'TVL',
-				nameLocation: 'middle',
-				nameGap: 60,
+				name: isMobile ? '' : 'TVL',
+				nameLocation: 'end',
+				nameRotate: 0,
+				nameGap: 16,
 				nameTextStyle: {
 					color: '#ffffff',
 					fontFamily: ECHARTS_AXIS_FONT_STACK,
-					fontSize: 18,
+					fontSize: 13,
 					fontWeight: 600
 				},
 				position: 'right',
@@ -546,7 +512,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 				axisLabel: {
 					color: '#e2e8f0',
 					fontFamily: ECHARTS_AXIS_FONT_STACK,
-					fontSize: 15,
+					fontSize: 11,
 					fontWeight: 600,
 					formatter: (value: number) => formatUsd(value)
 				},
@@ -568,27 +534,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		loading = false;
 	}
 
-	async function refreshDiagnostics() {
-		loading = true;
-		loadingMessage = 'Refreshing chart data…';
-		error = null;
-
-		try {
-			const [nextEcharts, nextVaults] = await Promise.all([loadECharts(), fetchChartData()]);
-			echartsApi = nextEcharts;
-			vaults = nextVaults;
-			fetchedAt = new Date().toLocaleString('en-GB');
-			await tick();
-			await renderChart();
-		} catch (loadError) {
-			error = loadError instanceof Error ? loadError.message : 'Failed to refresh diagnostics chart.';
-			loading = false;
-			destroyChart();
-		}
-	}
-
 	onMount(() => {
-		const abortController = new AbortController();
 		let disposed = false;
 
 		const handleWindowResize = () => chartInstance?.resize();
@@ -596,21 +542,17 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 
 		(async () => {
 			try {
-				const [nextEcharts, nextVaults] = await Promise.all([loadECharts(), fetchChartData(abortController.signal)]);
-
+				echartsApi = await loadECharts();
 				if (disposed) return;
 
-				echartsApi = nextEcharts;
-				vaults = nextVaults;
-				fetchedAt = new Date().toLocaleString('en-GB');
 				await tick();
 				if (disposed) return;
 
 				await renderChart();
 			} catch (loadError) {
-				if (disposed || abortController.signal.aborted) return;
+				if (disposed) return;
 
-				error = loadError instanceof Error ? loadError.message : 'Failed to initialise diagnostics chart.';
+				error = loadError instanceof Error ? loadError.message : 'Failed to initialise chart.';
 				loading = false;
 				destroyChart();
 			}
@@ -618,182 +560,33 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 
 		return () => {
 			disposed = true;
-			abortController.abort();
 			window.removeEventListener('resize', handleWindowResize);
 			destroyChart();
 		};
 	});
 </script>
 
-<svelte:head>
-	<title>ECharts vault ecosystem diagnostics</title>
-	<meta
-		name="description"
-		content="Standalone ECharts diagnostics page for comparing the vault ecosystem chart against the current site behaviour."
-	/>
-	<meta name="robots" content="noindex,nofollow" />
-</svelte:head>
-
-<main class="diagnostics-page">
-	<Section tag="header" padding="sm">
-		<HeroBanner>
-			{#snippet title()}
-				<span>ECharts vault ecosystem diagnostics</span>
-			{/snippet}
-			{#snippet subtitle()}
-				Standalone rendering of the front-page vault ecosystem chart with
-				<a href={TREASURY_URL}>US Treasury note</a> and <a href={SAVINGS_URL}>National Savings Rate</a>
-				benchmarks for visual experimentation.
-			{/snippet}
-		</HeroBanner>
-	</Section>
-
-	<Section padding="xs" gap="xs">
-		<div class="toolbar">
-			<div class="summary-copy">
-				<p>
-					Uses the same filters as the front page: blacklisted vaults removed, minimum TVL of {formatUsd(MIN_TVL)}, APY
-					capped at {formatRate(MAX_APY_THRESHOLD * 100, 0)}, and one-month net CAGR preferred when available.
-				</p>
-				{#if fetchedAt}
-					<p class="fetched-at">Last fetched: {fetchedAt}</p>
-				{/if}
-			</div>
-			<div class="actions">
-				<Button secondary size="sm" label="Reload chart data" on:click={refreshDiagnostics} />
-			</div>
+<div class="ecosystem-chart echarts-ecosystem-chart">
+	{#if loading}
+		<div class="loading-overlay">
+			<Spinner size="48" />
 		</div>
-
-		{#if data.treasuryRate == null || data.savingsRate == null}
-			<Alert status="warning" size="sm">
-				One or more server-side benchmark rates were unavailable, so the corresponding reference line is omitted.
-			</Alert>
-		{/if}
-
-		{#if summary}
-			<div class="stats-grid">
-				<div class="stat-card">
-					<span class="stat-label">Eligible vaults</span>
-					<strong>{summary.eligibleVaultCount}</strong>
-					<span>from {summary.totalVaultCount} fetched vaults</span>
-				</div>
-				<div class="stat-card">
-					<span class="stat-label">Cumulative TVL</span>
-					<strong>{formatUsd(summary.totalTvl)}</strong>
-					<span>after diagnostics filtering</span>
-				</div>
-				<div class="stat-card">
-					<span class="stat-label">Displayed APY span</span>
-					<strong>{formatRate(summary.highestApy)} to {formatRate(summary.lowestApy)}</strong>
-					<span>using last-month annualised returns</span>
-				</div>
-			</div>
-		{/if}
-
-		{#if error}
-			<Alert status="error" size="sm">{error}</Alert>
-		{/if}
-
-		<div class="chart-shell">
-			{#if loading}
-				<div class="chart-overlay" aria-live="polite">
-					<div>
-						<p>{loadingMessage}</p>
-						<span>Fetching vault data and preparing the ECharts render.</span>
-					</div>
-				</div>
-			{/if}
-
-			<div bind:this={chartContainer} class="chart-canvas" class:chart-hidden={!!error && !loading}></div>
-		</div>
-	</Section>
-</main>
+	{/if}
+	{#if error}
+		<p class="error">{error}</p>
+	{/if}
+	<div bind:this={chartContainer} class="chart" class:obscured={loading || !!error}></div>
+</div>
 
 <style>
-	.diagnostics-page {
-		display: grid;
-		gap: var(--space-sm);
-
-		:global(.subtitle a) {
-			text-decoration: underline;
-		}
-	}
-
-	.toolbar {
-		display: flex;
-		gap: var(--space-md);
-		justify-content: space-between;
-		align-items: end;
-
-		@media (--viewport-sm-down) {
-			flex-direction: column;
-			align-items: stretch;
-		}
-	}
-
-	.summary-copy {
-		display: grid;
-		gap: 0.35rem;
-		max-width: 68rem;
-
-		p {
-			margin: 0;
-			font: var(--f-ui-md-roman);
-			color: var(--c-text-extra-light);
-		}
-	}
-
-	.fetched-at {
-		font: var(--f-ui-sm-roman);
-	}
-
-	.actions {
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.stats-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: var(--space-md);
-
-		@media (--viewport-md-down) {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	.stat-card {
-		display: grid;
-		gap: 0.35rem;
-		padding: 1rem 1.125rem;
-		border: 1px solid color-mix(in srgb, var(--c-text-light), transparent 82%);
-		border-radius: var(--radius-lg);
-		background:
-			linear-gradient(180deg, color-mix(in srgb, var(--c-box-2), transparent 8%), transparent),
-			color-mix(in srgb, var(--c-box-2), transparent 22%);
-
-		strong {
-			font: var(--f-heading-sm-medium);
-			letter-spacing: var(--f-heading-sm-spacing, normal);
-		}
-
-		span {
-			color: var(--c-text-extra-light);
-			font: var(--f-ui-sm-roman);
-		}
-	}
-
-	.stat-label {
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-	}
-
-	.chart-shell {
+	.ecosystem-chart {
 		position: relative;
-		min-height: 640px;
+		min-height: 400px;
+		max-width: 960px;
+		margin-inline: auto;
 		padding: clamp(0.75rem, 1.8vw, 1rem);
-		border-radius: var(--radius-xl);
-		border: 1px solid color-mix(in srgb, var(--c-text-light), transparent 84%);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
 		isolation: isolate;
 		background:
 			linear-gradient(
@@ -815,7 +608,6 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			0 1.5rem 3.5rem color-mix(in srgb, var(--c-text-inverted), transparent 72%),
 			0 0.5rem 1.5rem color-mix(in srgb, var(--c-bullish), transparent 96%),
 			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 78%);
-		overflow: hidden;
 
 		&::before,
 		&::after {
@@ -844,56 +636,36 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			);
 			opacity: 0.9;
 		}
-
-		@media (--viewport-sm-down) {
-			min-height: 520px;
-		}
 	}
 
-	.chart-canvas {
+	.loading-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--c-box-1), transparent 2%),
+			color-mix(in srgb, var(--c-box-1), transparent 16%)
+		);
+	}
+
+	.chart {
 		width: 100%;
-		height: 640px;
+		height: 400px;
 		position: relative;
 		z-index: 0;
 
-		@media (--viewport-sm-down) {
-			height: 520px;
+		&.obscured {
+			visibility: hidden;
 		}
 	}
 
-	.chart-hidden {
-		visibility: hidden;
-		pointer-events: none;
-	}
-
-	.chart-overlay {
-		position: absolute;
-		inset: 0;
-		z-index: 2;
-		display: grid;
-		place-items: center;
-		padding: 1.5rem;
-		background: color-mix(in srgb, var(--c-body), transparent 18%);
-		backdrop-filter: blur(0.35rem);
-
-		div {
-			display: grid;
-			gap: 0.35rem;
-			text-align: center;
-			padding: 1rem 1.25rem;
-			border-radius: var(--radius-lg);
-			border: 1px solid color-mix(in srgb, var(--c-text-light), transparent 82%);
-			background: color-mix(in srgb, var(--c-box-1), transparent 8%);
-		}
-
-		p {
-			margin: 0;
-			font: var(--f-ui-lg-medium);
-		}
-
-		span {
-			color: var(--c-text-extra-light);
-			font: var(--f-ui-sm-roman);
-		}
+	.error {
+		text-align: center;
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-sm-roman);
 	}
 </style>

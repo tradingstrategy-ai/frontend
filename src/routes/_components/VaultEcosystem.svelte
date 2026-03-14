@@ -2,7 +2,7 @@
 @component
 Lazily loaded "DeFi vault ecosystem" section for the frontpage. Uses
 `svelte-inview` to detect scroll visibility and dynamically imports the
-chart component + Plotly.js only when needed.
+chart component only when needed.
 -->
 <script lang="ts">
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
@@ -19,7 +19,7 @@ chart component + Plotly.js only when needed.
 	let { savingsRate, treasuryRate }: Props = $props();
 
 	let visible = $state(false);
-	let ChartComponent = $state<typeof import('./VaultEcosystemChart.svelte').default>();
+	let ChartComponent = $state<typeof import('./VaultEcosystemChartECharts.svelte').default>();
 	let chartVaults = $state<SlimVaultInfo[]>();
 	let loadError = $state(false);
 
@@ -28,7 +28,7 @@ chart component + Plotly.js only when needed.
 		visible = true;
 		try {
 			const [module, response] = await Promise.all([
-				import('./VaultEcosystemChart.svelte'),
+				import('./VaultEcosystemChartECharts.svelte'),
 				fetch('/top-vaults/chart-data')
 			]);
 			if (!response.ok) throw new Error(`Chart data request failed: ${response.status}`);
