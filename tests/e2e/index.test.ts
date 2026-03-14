@@ -8,11 +8,11 @@ test.describe('home page', () => {
 	test('should display hero banner', async ({ page }) => {
 		const hero = page.getByTestId('home-hero-banner');
 		await expect(hero).toBeVisible();
-		await expect(hero).toHaveText(/The best DeFi vaults and trading strategies/);
+		await expect(hero).toHaveText(/Data-driven DeFi vault investing/);
 	});
 
 	test('should include blog roll', async ({ page }) => {
 		const blogRoll = page.locator('[data-testid="blog-roll"]:visible');
-		await expect(blogRoll.getByRole('link', { name: 'Read article' })).toHaveCount(3);
+		await expect(blogRoll.getByRole('link', { name: 'Read post' })).toHaveCount(3);
 	});
 });
