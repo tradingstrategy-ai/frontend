@@ -14,12 +14,17 @@ const DELAY_BETWEEN_REQUESTS = 2_000;
 
 const FRED_CSV_BASE = 'https://fred.stlouisfed.org/graph/fredgraph.csv';
 
+// FRED drops connections without a User-Agent header (Node.js fetch sends none).
+// Chrome-style UAs are blocked (TLS fingerprint mismatch); Firefox UAs work.
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0';
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	try {
 		const resp = await fetch(`${FRED_CSV_BASE}?id=${encodeURIComponent(seriesId)}`, {
-			signal: AbortSignal.timeout(TIMEOUT)
+			signal: AbortSignal.timeout(TIMEOUT),
+			headers: { 'User-Agent': USER_AGENT }
 		});
 		if (!resp.ok) return null;
 		const text = await resp.text();
@@ -55,9 +60,7 @@ describe('fetchFredCsvLatest', () => {
 		{ timeout: 45_000 }
 	);
 
-	// DGS10 is consistently blocked by FRED from GitHub Actions IPs;
-	// skip in CI to avoid flaky failures. SNDR above covers the same code path.
-	test.skipIf(!!process.env.CI)(
+	test(
 		'should fetch DGS10 (10-year Treasury rate) and return a number',
 		async () => {
 			await sleep(DELAY_BETWEEN_REQUESTS);
