@@ -62,6 +62,9 @@ export const chartPanelBorderColor = 'rgba(255,255,255,0.14)';
 /** Shared hover label background for Plotly charts. */
 export const chartHoverBackground = 'rgba(7,12,20,0.94)';
 
+/** Subtle grey tint for the inner Plotly plotting area. */
+export const chartPlotBackground = 'rgba(148,163,184,0.06)';
+
 /** Floor value for returns on a log axis (0.01%). Non-positive returns are clamped here. */
 export const minReturnLog = 0.01;
 
@@ -79,7 +82,7 @@ export function buildPlotlyChrome(options?: { showLegend?: boolean }) {
 
 	return {
 		paper_bgcolor: 'transparent',
-		plot_bgcolor: 'transparent',
+		plot_bgcolor: chartPlotBackground,
 		font: { family: chartFontFamily, color: chartTextColor },
 		hoverlabel: {
 			align: 'left' as const,
@@ -99,9 +102,8 @@ export function buildPlotlyChrome(options?: { showLegend?: boolean }) {
 		...(showLegend
 			? {
 					legend: {
-						bgcolor: 'rgba(7,12,20,0.22)',
-						bordercolor: chartPanelBorderColor,
-						borderwidth: 1,
+						bgcolor: 'rgba(0,0,0,0)',
+						borderwidth: 0,
 						font: { family: chartFontFamily, color: chartTextColor, size: 12 }
 					}
 				}
