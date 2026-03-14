@@ -5,7 +5,7 @@ slug: ichi-hyperliquid
 # Strategy page title
 name: Ichimoku trend-follower
 # One paragraph description of the strategy
-short_description: Dual long/short Ichimoku trend-following strategy trading the top perpetual futures on Hyperliquid by volume.
+short_description: Systematic long/short strategy for Hyperliquid perpetual futures, powered by multi-timeframe Ichimoku regime detection to align with prevailing trend structure and capture extended moves in both directions.
 # Primary key to match it to Hyperliquid vault,
 # Make sure it is string-escaped not to be hexadecimal number in JavaScript.
 vault_address: '0x3df9769bbbb335340872f01d8157c779d73c6ed0'
@@ -24,44 +24,35 @@ frontpage: true
 inject_backtest_iframe_resizer: true
 # Markdown description of the strategy
 long_description: |
-  IchiV3 is a systematic long/short trend-following strategy running on
-  Hyperliquid perpetual futures. It uses Ichimoku cloud analysis across
-  multiple timeframes to identify trend changes and ride established trends
-  in both directions.
+  IchiV3 is a systematic long/short strategy for Hyperliquid perpetual futures,
+  powered by multi-timeframe Ichimoku regime detection to align with prevailing
+  trend structure and capture extended moves in both directions.
 
-  ## Strategy description
+  ## How it works
 
-  The strategy goes long when the Ichimoku cloud signals a bullish trend
-  flip, confirmed by momentum indicators. It goes short when bearish trends
-  reassert themselves after failed price retests of key cloud levels.
-  Positions are evaluated on a 1-hour timeframe with signals derived from
-  4-hour price structure.
+  The strategy combines higher-timeframe regime assessment with 1-hour execution.
+  Long exposure is deployed when conditions transition into supportive trend
+  regimes. Short exposure is deployed when bearish structure reasserts following
+  failed upside recovery attempts.
 
-  Longs are exited when momentum reverses. Shorts are exited when selling
-  pressure is exhausted.
+  Exit logic is fully rules-driven and momentum-sensitive, with protective
+  mechanisms that adapt as trades progress.
 
-  Position sizes are tiered by market capitalisation — larger, more liquid
-  assets receive bigger allocations while smaller coins get reduced exposure.
+  The allocation engine is market-cap aware, scaling exposure toward deeper,
+  more liquid assets while reducing sizing in smaller, riskier assets.
 
-  While the strategy trades both directions, the short side is the primary
-  profit driver — generating roughly 3x the returns of the long side in
-  backtesting. The strategy is particularly effective at identifying and
-  riding extended bearish moves in crypto markets.
-
-  ## Risk management
+  ## Risk framework
 
   - 1x leverage
-  - Up to 10 concurrent positions
-  - Dynamic stop losses based on market volatility (ATR)
-  - Trailing stops on short positions to lock in profits
-  - Market cap-weighted position sizing to limit exposure to volatile small caps
-  - Stop losses placed on exchange for execution safety
+  - Max 10 concurrent positions
+  - Dynamic, volatility-aware stop logic
+  - Short-side trailing protection
+  - Systematic position sizing to balance opportunity and downside risk
 
   ## Trading universe
 
-  - Top 75 Hyperliquid perpetual futures by 7-day trading volume
-  - Minimum $100,000 volume threshold
-  - Universe refreshed daily
+  - Top 75 Hyperliquid perpetual futures by rolling 7-day traded volume
+  - Universe refreshes daily
 
   ## Backtesting results
 
@@ -69,8 +60,9 @@ long_description: |
 
   - Total return: 725% | CAGR: 328%
   - Sharpe: 2.54 | Sortino: 4.95 | Calmar: 30.76
-  - Max drawdown: 10.7%
-  - 898 trades (215 long / 683 short), 33.3% win rate
+  - Maximum drawdown: 10.7%
+  - 898 total trades (215 long / 683 short), 33.3% win rate
   - Profit factor: 1.60 | SQN: 3.39
 
-  Backtests are not indicative of future performance.
+  *Metrics are based on a specific historical simulation setup and period,
+  and should not be interpreted as a guarantee of future outcomes.
