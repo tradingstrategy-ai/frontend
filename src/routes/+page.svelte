@@ -40,7 +40,7 @@
 			<h2>Blog</h2>
 			<BlogRoll {posts} />
 			<div style:text-align="center">
-				<Button label="Read all posts" href="/blog" />
+				<Button secondary label="Read all posts" href="/blog" />
 			</div>
 		</Section>
 	{/if}
