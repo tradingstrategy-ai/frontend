@@ -29,6 +29,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	export let href: string | undefined = undefined;
 	export let label: string = '';
 	export let ghost = false;
+	export let primaryHeroBanner = false;
 	export let quarternary = false;
 	export let secondary = false;
 	export let tertiary = false;
@@ -41,7 +42,7 @@ using flags: primary (default), secondary, ternary, quarternary.
 	$: tag = href && !disabled ? 'a' : 'button';
 	$: role = tag === 'a' ? 'link' : 'button';
 	$: hasLabel = $$slots.default || label;
-	$: kind = ghost ? 'ghost' : quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : 'primary';
+	$: kind = ghost ? 'ghost' : quarternary ? 'quarternary' : tertiary ? 'tertiary' : secondary ? 'secondary' : primaryHeroBanner ? 'primary-hero-banner' : 'primary';
 	$: allClasses = `button ${kind} ${size} ${classes}`;
 
 	$: linkAttrs = {
@@ -130,6 +131,70 @@ using flags: primary (default), secondary, ternary, quarternary.
 		&:is(:hover, :focus):not([disabled]) {
 			--c-accent: var(--c-text);
 			color: var(--c-text-inverted);
+		}
+	}
+
+	.primary-hero-banner {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+		color: var(--c-text-inverted);
+		border-color: color-mix(in srgb, var(--c-text-light), transparent 26%);
+		backdrop-filter: blur(0.9rem) saturate(1.18);
+		background:
+			radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--c-text-light), transparent 12%) 0%, transparent 34%),
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-text-light), transparent 8%),
+				color-mix(in srgb, var(--c-text-light), transparent 22%) 46%,
+				color-mix(in srgb, var(--c-box-1), transparent 18%) 100%
+			),
+			linear-gradient(
+				135deg,
+				color-mix(in srgb, var(--c-text-light), transparent 18%),
+				color-mix(in srgb, var(--c-text-light), transparent 38%)
+			),
+			color-mix(in srgb, var(--c-text-light), var(--c-box-1) 28%);
+		box-shadow:
+			0 1.4rem 3rem color-mix(in srgb, var(--c-text-inverted), transparent 80%),
+			0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 72%),
+			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 14%),
+			inset 0 -1.2rem 2.4rem color-mix(in srgb, var(--c-text-inverted), transparent 90%);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				linear-gradient(
+					115deg,
+					transparent 0%,
+					color-mix(in srgb, var(--c-text-light), transparent 76%) 28%,
+					transparent 54%
+				),
+				radial-gradient(circle at top left, color-mix(in srgb, var(--c-text-light), transparent 72%) 0%, transparent 42%);
+			opacity: 0.75;
+			pointer-events: none;
+			mix-blend-mode: screen;
+		}
+
+		&:is(:hover, :focus):not([disabled]) {
+			color: var(--c-text-inverted);
+			border-color: color-mix(in srgb, var(--c-text-light), transparent 18%);
+			background:
+				radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--c-text-light), transparent 6%) 0%, transparent 36%),
+				linear-gradient(
+					180deg,
+					color-mix(in srgb, var(--c-text-light), transparent 4%),
+					color-mix(in srgb, var(--c-text-light), transparent 18%) 46%,
+					color-mix(in srgb, var(--c-box-1), transparent 10%) 100%
+				),
+				linear-gradient(
+					135deg,
+					color-mix(in srgb, var(--c-text-light), transparent 14%),
+					color-mix(in srgb, var(--c-text-light), transparent 32%)
+				),
+				color-mix(in srgb, var(--c-text-light), var(--c-box-1) 20%);
 		}
 	}
 
