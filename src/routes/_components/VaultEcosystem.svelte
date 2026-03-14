@@ -41,7 +41,7 @@ chart component + Plotly.js only when needed.
 	}
 </script>
 
-<Section padding="md">
+<Section padding="md" --section-background="var(--c-background-accent-1)">
 	<h2>See where stablecoin capital earns more</h2>
 	<div class="description ds-3">
 		<span>Compare yields, TVL and momentum across the biggest stablecoin vault ecosystems</span>
