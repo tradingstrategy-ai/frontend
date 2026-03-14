@@ -12,11 +12,11 @@ Selector linking between vault scatter plot chart pages.
 	import { page } from '$app/state';
 
 	const charts = [
+		{ href: '/trading-view/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
 		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
-		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/trading-view/vaults/cumulative-tvl-apy', label: 'Cumulative TVL / APY' }
+		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' }
 	] as const;
 
 	function isActive(href: string): boolean {

@@ -14,15 +14,19 @@
 	] as const;
 
 	const chartLinks = [
+		{ href: '/trading-view/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
 		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
 		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
-		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/trading-view/vaults/cumulative-tvl-apy', label: 'Cumulative TVL / APY' }
+		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' }
 	] as const;
 
 	function isActive(href: string): boolean {
 		return page.url.pathname === href;
+	}
+
+	function resolveChartHref(href: string): string {
+		return (resolve as (path: string) => string)(href);
 	}
 </script>
 
@@ -33,13 +37,7 @@
 			{label}
 		</a>
 	{/each}
-	<DropdownMenu
-		label="Charts"
-		items={chartLinks}
-		{isActive}
-		resolveHref={(href: string) => resolve(href as Parameters<typeof resolve>[0])}
-		class="charts-dropdown"
-	/>
+	<DropdownMenu label="Charts" items={chartLinks} {isActive} resolveHref={resolveChartHref} class="charts-dropdown" />
 </nav>
 
 <style>

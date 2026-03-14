@@ -9,6 +9,7 @@ loaded dynamically from CDN.
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
+		buildPlotlyChrome,
 		chartFontFamily,
 		chartTextColor,
 		chartGridColor,
@@ -110,7 +111,6 @@ loaded dynamically from CDN.
 					marker: { color: '#22c55e', size: 3 },
 					fill: 'tozeroy' as const,
 					fillcolor: 'rgba(34,197,94,0.15)',
-					hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 					customdata: vaultSlugs.map((slug) => `/trading-view/vaults/${slug}`),
 					hovertemplate: labels.map((name, i) => {
 						const tvlEarningBetter = cumulativeTvl[i] - individualTvl[i];
@@ -127,6 +127,7 @@ loaded dynamically from CDN.
 				};
 
 				const isMobile = window.innerWidth <= 768;
+				const chrome = buildPlotlyChrome({ showLegend: false });
 
 				const layout = {
 					xaxis: {
@@ -139,7 +140,9 @@ loaded dynamically from CDN.
 						ticksuffix: '%',
 						dtick: 1,
 						autorange: 'reversed' as const,
-						...chartAxisBorder
+						...chartAxisBorder,
+						showline: false,
+						mirror: false
 					},
 					yaxis: {
 						title: isMobile ? undefined : { text: '<b>TVL</b>', font: { color: chartTextColor } },
@@ -149,7 +152,9 @@ loaded dynamically from CDN.
 						color: chartTextColor,
 						tickvals: [100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000],
 						ticktext: ['$100k', '$1M', '$10M', '$100M', '$1B', '$10B'],
-						...chartAxisBorder
+						...chartAxisBorder,
+						showline: false,
+						mirror: false
 					},
 					shapes: [
 						...(treasuryRate
@@ -181,9 +186,7 @@ loaded dynamically from CDN.
 								]
 							: [])
 					],
-					paper_bgcolor: 'transparent',
-					plot_bgcolor: 'transparent',
-					font: { family: chartFontFamily, color: chartTextColor },
+					...chrome,
 					showlegend: false,
 					height: 400,
 					margin: isMobile ? { t: 5, r: 40, b: 30, l: 5 } : { t: 10, r: 80, b: 60, l: 30 },
@@ -227,7 +230,6 @@ loaded dynamically from CDN.
 							`<i>Click for more information</i>`,
 							`<extra></extra>`
 						].join('<br>'),
-						hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 						showlegend: false
 					});
 				}
@@ -259,7 +261,6 @@ loaded dynamically from CDN.
 							`<i>Click for more information</i>`,
 							`<extra></extra>`
 						].join('<br>'),
-						hoverlabel: { bgcolor: '#b45309', font: { color: 'white', size: 14 }, bordercolor: '#92400e' },
 						showlegend: false
 					});
 				}
@@ -314,6 +315,58 @@ loaded dynamically from CDN.
 		min-height: 400px;
 		max-width: 960px;
 		margin-inline: auto;
+		padding: clamp(0.75rem, 1.8vw, 1rem);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		isolation: isolate;
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-text-inverted), transparent 16%) 0%,
+				color-mix(in srgb, var(--c-box-1), transparent 6%) 42%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 10%) 100%
+			),
+			radial-gradient(circle at 14% 10%, color-mix(in srgb, var(--c-bullish), transparent 89%) 0%, transparent 34%),
+			radial-gradient(
+				circle at top right,
+				color-mix(in srgb, var(--c-text-light), transparent 96%) 0%,
+				transparent 28%
+			),
+			linear-gradient(135deg, color-mix(in srgb, var(--c-text-light), transparent 98%), transparent 52%),
+			color-mix(in srgb, var(--c-text-inverted), var(--c-box-1) 22%);
+		backdrop-filter: blur(0.8rem) saturate(1.08);
+		box-shadow:
+			0 1.5rem 3.5rem color-mix(in srgb, var(--c-text-inverted), transparent 72%),
+			0 0.5rem 1.5rem color-mix(in srgb, var(--c-bullish), transparent 96%),
+			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 78%);
+
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			border-radius: inherit;
+		}
+
+		&::before {
+			background: radial-gradient(
+				circle at top,
+				color-mix(in srgb, var(--c-text-light), transparent 88%) 0%,
+				transparent 50%
+			);
+			opacity: 0.7;
+		}
+
+		&::after {
+			background: linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-text-inverted), transparent 92%) 0%,
+				transparent 24%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 88%) 100%
+			);
+			opacity: 0.9;
+		}
 	}
 
 	.loading-overlay {
@@ -323,10 +376,30 @@ loaded dynamically from CDN.
 		align-items: center;
 		justify-content: center;
 		z-index: 1;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--c-box-1), transparent 2%),
+			color-mix(in srgb, var(--c-box-1), transparent 16%)
+		);
 	}
 
 	.chart {
 		width: 100%;
+		position: relative;
+		z-index: 0;
+
+		:global(.js-plotly-plot),
+		:global(.plot-container),
+		:global(.svg-container) {
+			border-radius: calc(var(--radius-lg) - 0.25rem);
+		}
+
+		:global(.modebar) {
+			top: 0.35rem;
+			right: 0.35rem;
+			border-radius: calc(var(--radius-md) - 0.125rem);
+			backdrop-filter: blur(0.65rem) saturate(1.08);
+		}
 
 		&.obscured {
 			visibility: hidden;

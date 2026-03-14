@@ -21,12 +21,14 @@ loading/error states, and a Plotly chart container.
 	import Spinner from '$lib/components/Spinner.svelte';
 
 	interface Props {
-		chartContainer: HTMLDivElement;
+		chartContainer?: HTMLDivElement;
 		loading: boolean;
 		error: string | null;
 		minTvl: number;
 		onMinTvlChange?: (value: number) => void;
+		className?: string;
 		extraControls?: Snippet;
+		chartContent?: Snippet;
 		belowChart?: Snippet;
 	}
 
@@ -36,7 +38,9 @@ loading/error states, and a Plotly chart container.
 		error,
 		minTvl = $bindable(),
 		onMinTvlChange,
+		className = '',
 		extraControls,
+		chartContent,
 		belowChart
 	}: Props = $props();
 
@@ -50,7 +54,7 @@ loading/error states, and a Plotly chart container.
 	}
 </script>
 
-<div class="scatter-plot-wrapper" data-testid="vault-scatter-plot">
+<div class={`scatter-plot-wrapper ${className}`} data-testid="vault-scatter-plot">
 	<div class="controls">
 		<label>
 			Min TVL:
@@ -63,28 +67,36 @@ loading/error states, and a Plotly chart container.
 		{@render extraControls?.()}
 	</div>
 
-	{#if loading}
-		<div class="loading">
-			<Spinner size="60" />
-			<p>Loading chart...</p>
-		</div>
-	{/if}
+	<div class="chart-surface">
+		{#if loading}
+			<div class="loading surface-overlay">
+				<Spinner size="60" />
+				<p>Loading chart...</p>
+			</div>
+		{/if}
 
-	{#if error}
-		<div class="error">
-			<p>{error}</p>
-		</div>
-	{/if}
+		{#if error}
+			<div class="error surface-overlay">
+				<p>{error}</p>
+			</div>
+		{/if}
 
-	<div bind:this={chartContainer} class="chart-container" class:obscured={loading || !!error}></div>
+		{#if chartContent}
+			<div class="chart-content" class:obscured={loading || !!error}>
+				{@render chartContent()}
+			</div>
+		{:else}
+			<div bind:this={chartContainer} class="chart-container" class:obscured={loading || !!error}></div>
+		{/if}
+	</div>
 	{@render belowChart?.()}
 </div>
 
 <style>
 	.scatter-plot-wrapper {
-		position: relative;
+		display: grid;
+		gap: 1rem;
 		width: 100%;
-		min-height: 500px;
 	}
 
 	.controls {
@@ -112,13 +124,64 @@ loading/error states, and a Plotly chart container.
 		}
 	}
 
+	.chart-surface {
+		position: relative;
+		isolation: isolate;
+		min-height: 500px;
+		padding: clamp(0.75rem, 1.8vw, 1.1rem);
+		border: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 18%);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-box-1), transparent 4%),
+				color-mix(in srgb, var(--c-box-2), transparent 10%)
+			),
+			radial-gradient(circle at top left, color-mix(in srgb, var(--c-bullish), transparent 93%) 0%, transparent 38%),
+			linear-gradient(135deg, color-mix(in srgb, var(--c-text-light), transparent 97%), transparent 48%),
+			color-mix(in srgb, var(--c-box-1), transparent 12%);
+		backdrop-filter: blur(0.8rem) saturate(1.08);
+		box-shadow:
+			0 1.25rem 2.5rem color-mix(in srgb, var(--c-text-inverted), transparent 84%),
+			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 72%),
+			inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 94%);
+
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			border-radius: inherit;
+		}
+
+		&::before {
+			background: radial-gradient(
+				circle at top,
+				color-mix(in srgb, var(--c-text-light), transparent 88%) 0%,
+				transparent 50%
+			);
+			opacity: 0.7;
+		}
+
+		&::after {
+			background: linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--c-text-inverted), transparent 96%) 0%,
+				transparent 28%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 94%) 100%
+			);
+			opacity: 0.9;
+		}
+	}
+
 	.loading {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: 1rem;
-		min-height: 500px;
 		color: var(--c-text-light);
 	}
 
@@ -126,18 +189,51 @@ loading/error states, and a Plotly chart container.
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 500px;
 		color: var(--c-error);
+	}
+
+	.surface-overlay {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		padding: inherit;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--c-box-1), transparent 2%),
+			color-mix(in srgb, var(--c-box-1), transparent 16%)
+		);
 	}
 
 	.chart-container {
 		width: 100%;
 		min-height: 500px;
+		position: relative;
+		z-index: 0;
+
+		:global(.js-plotly-plot),
+		:global(.plot-container),
+		:global(.svg-container) {
+			border-radius: calc(var(--radius-lg) - 0.25rem);
+		}
+
+		:global(.modebar) {
+			top: 0.35rem;
+			right: 0.35rem;
+			border-radius: calc(var(--radius-md) - 0.125rem);
+			backdrop-filter: blur(0.65rem) saturate(1.08);
+		}
 
 		&.obscured {
 			visibility: hidden;
-			position: absolute;
-			inset: 0;
+		}
+	}
+
+	.chart-content {
+		position: relative;
+		z-index: 0;
+
+		&.obscured {
+			visibility: hidden;
 		}
 	}
 </style>

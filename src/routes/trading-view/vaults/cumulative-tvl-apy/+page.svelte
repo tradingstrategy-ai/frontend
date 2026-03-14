@@ -31,9 +31,8 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 			.finally(() => (vaultsLoading = false));
 	});
 
-	const title = 'Cumulative TVL/APY';
-	const description =
-		'Line chart plotting DeFi vaults by APY with cumulative TVL on the Y-axis. Most capital sits in lower-yield vaults, while high-yield vaults hold less TVL.';
+	const title = 'Total vault earnings';
+	const description = 'Total stablecoin vault earnings across DeFi, shown against cumulative TVL.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -54,12 +53,12 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 		<VaultListingsSelector />
 		<HeroBanner>
 			{#snippet subtitle()}
-				How much yield DeFi stablecoin vaults are earning and the size of the ecosystem.
+				Total stablecoin vault earnings across DeFi, shown against cumulative TVL.
 				<a href={resolve('/glossary/risk-free-rate')}>US Treasury note</a> and
 				<a href={resolve('/glossary/fdic-national-rate')}>National Savings Rate</a> marked.
 			{/snippet}
 			{#snippet title()}
-				<span>Cumulative TVL / APY</span>
+				<span>Total vault earnings</span>
 				<DataBadge class="badge" status="warning">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>

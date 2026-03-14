@@ -2,7 +2,7 @@
 @component
 Lazily loaded "DeFi vault ecosystem" section for the frontpage. Uses
 `svelte-inview` to detect scroll visibility and dynamically imports the
-chart component + Plotly.js only when needed.
+chart component only when needed.
 -->
 <script lang="ts">
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
@@ -19,7 +19,7 @@ chart component + Plotly.js only when needed.
 	let { savingsRate, treasuryRate }: Props = $props();
 
 	let visible = $state(false);
-	let ChartComponent = $state<typeof import('./VaultEcosystemChart.svelte').default>();
+	let ChartComponent = $state<typeof import('./VaultEcosystemChartECharts.svelte').default>();
 	let chartVaults = $state<SlimVaultInfo[]>();
 	let loadError = $state(false);
 
@@ -28,7 +28,7 @@ chart component + Plotly.js only when needed.
 		visible = true;
 		try {
 			const [module, response] = await Promise.all([
-				import('./VaultEcosystemChart.svelte'),
+				import('./VaultEcosystemChartECharts.svelte'),
 				fetch('/top-vaults/chart-data')
 			]);
 			if (!response.ok) throw new Error(`Chart data request failed: ${response.status}`);
@@ -41,10 +41,10 @@ chart component + Plotly.js only when needed.
 	}
 </script>
 
-<Section padding="md">
-	<h2>Stablecoin vault earnings</h2>
+<Section padding="md" --section-background="var(--c-background-accent-1)">
+	<h2>See where stablecoin capital earns more</h2>
 	<div class="description ds-3">
-		<span>What kind of returns stablecoin vault TVL is making</span>
+		<span>Compare yields, TVL and momentum across the biggest stablecoin vault ecosystems</span>
 	</div>
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
 		{#if ChartComponent && chartVaults}
@@ -56,7 +56,7 @@ chart component + Plotly.js only when needed.
 		{/if}
 	</div>
 	<div class="cta">
-		<Button secondary label="Explore vault data" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
+		<Button secondary label="Compare vault ecosystems" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
 	</div>
 </Section>
 
@@ -80,7 +80,7 @@ chart component + Plotly.js only when needed.
 	}
 
 	.load-error {
-		height: 400px;
+		height: 500px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -88,13 +88,21 @@ chart component + Plotly.js only when needed.
 		background: var(--c-box-3);
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-lg-medium);
+
+		@media (--viewport-md-down) {
+			height: 400px;
+		}
 	}
 
 	.skeleton-chart {
-		height: 400px;
+		height: 500px;
 		border-radius: var(--radius-xs);
 		background: var(--c-box-3);
 		animation: pulse-opacity 1s infinite ease-out;
+
+		@media (--viewport-md-down) {
+			height: 400px;
+		}
 	}
 
 	.cta {
