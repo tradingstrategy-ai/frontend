@@ -129,22 +129,22 @@ loading/error states, and a Plotly chart container.
 		isolation: isolate;
 		min-height: 500px;
 		padding: clamp(0.75rem, 1.8vw, 1.1rem);
-		border: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 18%);
+		border: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 14%);
 		border-radius: var(--radius-lg);
 		overflow: hidden;
 		background:
 			linear-gradient(
 				180deg,
-				color-mix(in srgb, var(--c-box-1), transparent 4%),
-				color-mix(in srgb, var(--c-box-2), transparent 10%)
+				color-mix(in srgb, var(--c-box-1), transparent 60%),
+				color-mix(in srgb, var(--c-box-2), var(--c-text-inverted) 76%)
 			),
-			radial-gradient(circle at top left, color-mix(in srgb, var(--c-bullish), transparent 93%) 0%, transparent 38%),
-			linear-gradient(135deg, color-mix(in srgb, var(--c-text-light), transparent 97%), transparent 48%),
-			color-mix(in srgb, var(--c-box-1), transparent 12%);
+			radial-gradient(circle at top left, color-mix(in srgb, var(--c-bullish), transparent 90%) 0%, transparent 20%),
+			linear-gradient(145deg, color-mix(in srgb, var(--c-text-light), transparent 96%), transparent 20%),
+			color-mix(in srgb, var(--c-box-1), var(--c-text-inverted) 18%);
 		backdrop-filter: blur(0.8rem) saturate(1.08);
 		box-shadow:
-			0 1.25rem 2.5rem color-mix(in srgb, var(--c-text-inverted), transparent 84%),
-			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 72%),
+			0 1.5rem 3rem color-mix(in srgb, var(--c-text-inverted), transparent 82%),
+			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 78%),
 			inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 94%);
 
 		&::before,
@@ -159,20 +159,20 @@ loading/error states, and a Plotly chart container.
 		&::before {
 			background: radial-gradient(
 				circle at top,
-				color-mix(in srgb, var(--c-text-light), transparent 88%) 0%,
-				transparent 50%
+				color-mix(in srgb, var(--c-text-light), transparent 90%) 0%,
+				transparent 52%
 			);
-			opacity: 0.7;
+			opacity: 0.58;
 		}
 
 		&::after {
 			background: linear-gradient(
 				180deg,
-				color-mix(in srgb, var(--c-text-inverted), transparent 96%) 0%,
-				transparent 28%,
-				color-mix(in srgb, var(--c-text-inverted), transparent 94%) 100%
+				color-mix(in srgb, var(--c-text-inverted), transparent 94%) 0%,
+				transparent 24%,
+				color-mix(in srgb, var(--c-text-inverted), transparent 90%) 100%
 			);
-			opacity: 0.9;
+			opacity: 0.92;
 		}
 	}
 
