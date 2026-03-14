@@ -42,9 +42,9 @@ chart component + Plotly.js only when needed.
 </script>
 
 <Section padding="md">
-	<h2>Stablecoin vault earnings</h2>
+	<h2>See where stablecoin capital earns more</h2>
 	<div class="description ds-3">
-		<span>What kind of returns stablecoin vault TVL is making</span>
+		<span>Compare yields, TVL and momentum across the biggest stablecoin vault ecosystems</span>
 	</div>
 	<div use:inview={{ rootMargin: '200px' }} oninview_enter={onEnter}>
 		{#if ChartComponent && chartVaults}
@@ -56,7 +56,7 @@ chart component + Plotly.js only when needed.
 		{/if}
 	</div>
 	<div class="cta">
-		<Button secondary label="Explore vault data" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
+		<Button secondary label="Compare vault ecosystems" href={resolve('/trading-view/vaults/cumulative-tvl-apy')} />
 	</div>
 </Section>
 

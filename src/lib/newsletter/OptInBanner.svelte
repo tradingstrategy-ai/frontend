@@ -14,14 +14,14 @@
 		{#if title}
 			{title}
 		{:else}
-			Get notified about the best new vaults and DeFi news
+			Stay ahead with the best new vaults and essential DeFi updates.
 		{/if}
 	</h2>
 	<p>
 		{#if description}
 			{description}
 		{:else}
-			Subscribe to Trading Strategy newsletter for updates on DeFi trading strategies and vaults.
+			Subscribe to Trading Strategy newsletter
 		{/if}
 	</p>
 	<SubscribeForm />
