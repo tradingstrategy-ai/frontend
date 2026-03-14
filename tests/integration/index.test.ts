@@ -6,7 +6,7 @@ test.describe('home page', () => {
 	});
 
 	test('should render the home page with correct title', async ({ page }) => {
-		await expect(page).toHaveTitle('Trading Strategy - Algorithmic Trading Protocol');
+		await expect(page).toHaveTitle('Trading Strategy');
 	});
 
 	test('should display featured strategies section', async ({ page }) => {
