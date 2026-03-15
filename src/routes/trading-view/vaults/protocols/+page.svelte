@@ -8,7 +8,7 @@
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
-	import { MetaTags } from 'svelte-meta-tags';
+	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { protocols, options } = $derived(data);
@@ -30,6 +30,21 @@
 	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
+
+<JsonLd
+	schema={{
+		'@context': 'http://schema.org',
+		'@type': 'CollectionPage',
+		name: title,
+		description,
+		url: pageUrl,
+		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		mainEntity: {
+			'@type': 'ItemList',
+			numberOfItems: protocols.length
+		}
+	}}
 />
 
 <main class="protocol-index-page">

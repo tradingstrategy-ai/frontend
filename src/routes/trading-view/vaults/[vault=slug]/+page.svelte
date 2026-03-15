@@ -22,7 +22,7 @@
 	let { vault, chain, protocolMetadata } = $derived(data);
 </script>
 
-<SocialMediaTags {vault} {chain} />
+<SocialMediaTags {vault} {chain} {protocolMetadata} />
 
 <main class="vault-details ds-3">
 	<Section tag="header" padding="xs">
