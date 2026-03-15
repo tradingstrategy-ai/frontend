@@ -11,7 +11,7 @@
 
 <style>
 	.top-vaults-opt-in {
-		max-width: 600px;
+		max-width: 900px;
 		margin: 1rem auto 0;
 		padding: var(--space-ml);
 		background: var(--c-box-1);
