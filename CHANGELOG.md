@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Widen newsletter subscription box on vault pages (2026-03-15)
 - Move Top vaults to the leftmost position in the navigation bar (2026-03-14)
 - Update button styles to glassmorphic look, replace datatable row buttons with links, and add zebra-striped table rows (2026-03-14)
 - Fix FRED reference rate fetching by adding User-Agent header and file-based cache fallback (2026-03-14)
