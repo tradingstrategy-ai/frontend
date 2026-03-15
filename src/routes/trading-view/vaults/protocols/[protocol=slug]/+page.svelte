@@ -3,7 +3,7 @@
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags } from 'svelte-meta-tags';
+	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata } = $derived(data);
@@ -23,17 +23,47 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${protocolName} top vaults`);
+	let title = $derived(`${protocolName} vault comparison`);
 	let description = $derived(`Top stablecoin vaults on ${protocolName}`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	let logoUrl = $derived(protocolMetadata?.logos.light);
 </script>
 
 <MetaTags
 	{title}
 	{description}
 	canonical={pageUrl}
-	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+	openGraph={{
+		siteName: 'Trading Strategy',
+		url: pageUrl,
+		title,
+		description,
+		images: logoUrl ? [{ url: logoUrl }] : [],
+		type: 'website'
+	}}
+	twitter={{
+		site: '@TradingProtocol',
+		cardType: logoUrl ? 'summary_large_image' : 'summary',
+		title,
+		description,
+		image: logoUrl ?? undefined
+	}}
+/>
+
+<JsonLd
+	schema={{
+		'@context': 'http://schema.org',
+		'@type': 'CollectionPage',
+		name: title,
+		description,
+		url: pageUrl,
+		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		image: logoUrl ?? undefined,
+		mainEntity: {
+			'@type': 'ItemList',
+			numberOfItems: topVaults?.vaults.length ?? 0
+		}
+	}}
 />
 
 <TopVaultsPage

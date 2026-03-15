@@ -6,7 +6,7 @@ All vaults listing including problematic/blacklisted vaults
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags } from 'svelte-meta-tags';
+	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache());
@@ -29,6 +29,21 @@ All vaults listing including problematic/blacklisted vaults
 	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
+
+<JsonLd
+	schema={{
+		'@context': 'http://schema.org',
+		'@type': 'CollectionPage',
+		name: title,
+		description,
+		url: pageUrl,
+		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		mainEntity: {
+			'@type': 'ItemList',
+			numberOfItems: topVaults?.vaults.length ?? 0
+		}
+	}}
 />
 
 <TopVaultsPage

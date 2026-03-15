@@ -12,7 +12,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import CumulativeTvlApyChart from './CumulativeTvlApyChart.svelte';
-	import { MetaTags } from 'svelte-meta-tags';
+	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import { resolve } from '$app/paths';
 
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
@@ -42,6 +42,21 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
+
+<JsonLd
+	schema={{
+		'@context': 'http://schema.org',
+		'@type': 'CollectionPage',
+		name: title,
+		description,
+		url: pageUrl,
+		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		mainEntity: {
+			'@type': 'ItemList',
+			numberOfItems: vaults.length
+		}
+	}}
 />
 
 <main class="cumulative-tvl-apy-page">

@@ -9,7 +9,7 @@
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { MetaTags } from 'svelte-meta-tags';
+	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
 	let { chains, options } = $derived(data);
@@ -35,6 +35,21 @@
 	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+/>
+
+<JsonLd
+	schema={{
+		'@context': 'http://schema.org',
+		'@type': 'CollectionPage',
+		name: title,
+		description,
+		url: pageUrl,
+		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		mainEntity: {
+			'@type': 'ItemList',
+			numberOfItems: chains.length
+		}
+	}}
 />
 
 <main class="chain-index-page">
