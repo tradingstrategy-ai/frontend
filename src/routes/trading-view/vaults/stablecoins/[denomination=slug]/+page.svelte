@@ -61,6 +61,17 @@
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		image: logoUrl ?? undefined,
+		about: stablecoinMetadata
+			? {
+					'@type': 'FinancialProduct',
+					name: `${stablecoinMetadata.name} (${stablecoinMetadata.symbol})`,
+					description: stablecoinMetadata.description,
+					image: stablecoinMetadata.logos.light ?? undefined,
+					url: stablecoinMetadata.links.homepage ?? undefined,
+					category: stablecoinMetadata.category,
+					sameAs: [stablecoinMetadata.links.coingecko, stablecoinMetadata.links.defillama].filter(Boolean)
+				}
+			: undefined,
 		mainEntity: {
 			'@type': 'ItemList',
 			numberOfItems: topVaults?.vaults.length ?? 0

@@ -98,13 +98,18 @@ test.describe('vault social meta tags', () => {
 			await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /stablecoin-metadata\/usdc/);
 		});
 
-		test('has JSON-LD structured data with image', async ({ page }) => {
+		test('has JSON-LD structured data with FinancialProduct about block', async ({ page }) => {
 			const jsonLd = page.locator('script[type="application/ld+json"]');
 			const content = await jsonLd.textContent();
 			expect(content).toBeTruthy();
 			const data = JSON.parse(content!);
 			expect(data['@type']).toBe('CollectionPage');
 			expect(data.image).toContain('stablecoin-metadata/usdc');
+			expect(data.about).toBeTruthy();
+			expect(data.about['@type']).toBe('FinancialProduct');
+			expect(data.about.name).toContain('USDC');
+			expect(data.about.category).toBe('stablecoin');
+			expect(data.about.sameAs).toEqual(expect.arrayContaining([expect.stringContaining('coingecko')]));
 		});
 
 		test('renders stablecoin description box', async ({ page }) => {
