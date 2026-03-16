@@ -99,7 +99,7 @@
 		</div>
 
 		<a class="chart targetable-above" {href}>
-			<ChartThumbnail data={chartData} dateRange={chartDateRange} />
+			<ChartThumbnail data={chartData} dateRange={chartDateRange} directionMode={strategy.tileChartDirection} />
 		</a>
 	</div>
 

@@ -5,6 +5,7 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { AlertList, DataBadge, PageHeading } from '$lib/components';
+	import DebugFreshnessData from '$lib/components/DebugFreshnessData.svelte';
 	import { getMenuOptions, default as YamlStrategyNav } from './YamlStrategyNav.svelte';
 
 	export let data;
@@ -27,6 +28,8 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 <Breadcrumbs labels={breadcrumbs} />
 
 <main class="yaml-strategy-layout ds-container ds-3">
+	<DebugFreshnessData label={`yaml-strategy:${strategy.slug}`} data={data.debugFreshness} />
+
 	<PageHeading description={strategy.short_description}>
 		<svelte:fragment slot="icon">
 			<img src={iconUrl} alt="{strategy.name} icon" />

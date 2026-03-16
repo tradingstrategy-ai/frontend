@@ -11,7 +11,12 @@ export const strategyConfigurationSchema = z.object({
 	frontpage: z.boolean().default(false),
 	microsite: z.boolean().default(false),
 	depositExternal: z.boolean().default(false),
-	useSharePrice: z.boolean().default(false)
+	useSharePrice: z.boolean().default(false),
+	// How the tile chart determines green/red colour:
+	// - "absolute": direction from the last data point's value (positive = green, negative = red)
+	// - "relative": direction from the change across the series — (last - first) / (1 + first) —
+	//   so a chart that dips then recovers shows green even if the final value is still negative
+	tileChartDirection: z.enum(['absolute', 'relative']).default('absolute')
 });
 export type StrategyConfiguration = z.infer<typeof strategyConfigurationSchema>;
 

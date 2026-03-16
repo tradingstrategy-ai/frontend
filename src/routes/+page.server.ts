@@ -14,6 +14,17 @@ import {
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
+const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
+
+function getAgeSeconds(dateValue: Date | string | null | undefined) {
+	if (!dateValue) return null;
+
+	const parsed = new Date(dateValue);
+	if (Number.isNaN(parsed.valueOf())) return null;
+
+	return Math.max(0, Math.floor((Date.now() - parsed.valueOf()) / 1000));
+}
+
 export async function load({ fetch }) {
 	const [strategies, topVaultsResult, ratesResult] = await Promise.all([
 		getCachedStrategies(fetch),
@@ -25,6 +36,13 @@ export async function load({ fetch }) {
 	]);
 
 	const frontpageStrategies = strategies.filter((s) => s.frontpage && s.connected);
+	const yamlTileFreshness: {
+		strategyId: string;
+		vaultId: string | null;
+		sharePriceCacheAgeSeconds: number | null;
+		sharePriceCacheTtlSeconds: number;
+		sharePriceSeriesEndAt: string | null;
+	}[] = [];
 
 	// Add YAML strategies with frontpage flag
 	const yamlFrontpage = [...yamlStrategies.values()].filter((c) => c.frontpage);
@@ -33,6 +51,15 @@ export async function load({ fetch }) {
 			for (const config of yamlFrontpage) {
 				const vault = topVaultsResult.vaults.find((v) => v.address === config.vault_address);
 				const sharePriceReturns = vault ? await getCachedSharePriceReturns(fetch, vault.id) : undefined;
+				yamlTileFreshness.push({
+					strategyId: config.slug,
+					vaultId: vault?.id ?? null,
+					sharePriceCacheAgeSeconds: vault ? getCachedSharePriceReturns.getAge(fetch, vault.id) : null,
+					sharePriceCacheTtlSeconds: getCachedSharePriceReturns.ttl,
+					sharePriceSeriesEndAt: sharePriceReturns?.length
+						? new Date(sharePriceReturns.at(-1)![0] * 1000).toISOString()
+						: null
+				});
 				frontpageStrategies.push(toListingStrategy(config, vault, sharePriceReturns));
 			}
 		} catch (e) {
@@ -81,6 +108,24 @@ export async function load({ fetch }) {
 	}
 
 	return {
+		debugFreshness: {
+			renderedAt: new Date().toISOString(),
+			httpEdgeCacheTtlSeconds: HOME_PAGE_EDGE_CACHE_TTL_SECONDS,
+			apiStrategiesCache: {
+				ttlSeconds: getCachedStrategies.ttl,
+				ageSeconds: getCachedStrategies.getAge(fetch)
+			},
+			topVaultsFeed: topVaultsResult
+				? {
+						generatedAt: new Date(topVaultsResult.generated_at).toISOString(),
+						ageSeconds: getAgeSeconds(topVaultsResult.generated_at)
+					}
+				: null,
+			yamlTileSharePriceCache: {
+				ttlSeconds: getCachedSharePriceReturns.ttl,
+				strategies: yamlTileFreshness
+			}
+		},
 		strategies: frontpageStrategies,
 		savingsRate,
 		treasuryRate,

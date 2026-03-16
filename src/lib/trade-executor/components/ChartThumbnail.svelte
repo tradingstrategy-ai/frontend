@@ -6,17 +6,23 @@
 	import BaselineSeries from '$lib/charts/BaselineSeries.svelte';
 	import { utcDay } from 'd3-time';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
+	import { relativeReturn } from '$lib/helpers/financial';
 
 	interface Props {
 		data: AreaData<UTCTimestamp>[];
 		dateRange: [Date, Date];
+		directionMode?: 'absolute' | 'relative';
 	}
 
-	let { data, dateRange }: Props = $props();
+	let { data, dateRange, directionMode = 'absolute' }: Props = $props();
 
 	// `data` reflects relative profit values over time, so the current relative profit
-	// is simply the value of the last item.
-	let relativeProfit = $derived(getProfitInfo(data.at(-1)?.value));
+	// is simply the value of the last item (absolute) or the change across the series (relative).
+	let relativeProfit = $derived(
+		getProfitInfo(
+			directionMode === 'relative' ? relativeReturn(data[0]?.value, data.at(-1)?.value) : data.at(-1)?.value
+		)
+	);
 
 	// TEMPORARY HACK: filter duplicate / out-of-order items
 	// see: https://github.com/tradingstrategy-ai/trade-executor/issues/1160

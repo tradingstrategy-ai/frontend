@@ -22,6 +22,8 @@ sort_priority: 0
 frontpage: true
 # Mangle HTML file input to iframe-compatible format
 inject_backtest_iframe_resizer: true
+# Use relative direction for the tile chart (matches vault detail page)
+tile_chart_direction: relative
 # Markdown description of the strategy
 long_description: |
   IchiV3 is a systematic long/short strategy for Hyperliquid perpetual futures,
