@@ -23,8 +23,7 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		symbol: 'USDT',
 		slug: 'usdt',
 		name: 'Tether USD',
-		description:
-			'Tether (USDT) is the largest stablecoin by market capitalisation, pegged 1:1 to the US Dollar.',
+		description: 'Tether (USDT) is the largest stablecoin by market capitalisation, pegged 1:1 to the US Dollar.',
 		category: 'stablecoin',
 		links: {
 			homepage: 'https://tether.to/',
@@ -40,8 +39,7 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		symbol: 'DAI',
 		slug: 'dai',
 		name: 'Dai Stablecoin',
-		description:
-			'Dai is a decentralised stablecoin soft-pegged to the US Dollar, generated through MakerDAO.',
+		description: 'Dai is a decentralised stablecoin soft-pegged to the US Dollar, generated through MakerDAO.',
 		category: 'stablecoin',
 		links: {
 			homepage: 'https://makerdao.com/',

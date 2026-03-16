@@ -33,20 +33,22 @@ description and external links (homepage, Twitter, CoinGecko, DefiLlama).
 
 <div class="stablecoin-description">
 	<MetricsBox title="About {metadata.name}">
-		<div class="description-text">
-			<p>{metadata.description}</p>
-		</div>
-
-		{#if links.length > 0}
-			<div class="links">
-				{#each links as { href, label, Icon } (label)}
-					<a {href} target="_blank" rel="noreferrer">
-						<Icon --icon-size="1rem" />
-						<span>{label}</span>
-					</a>
-				{/each}
+		<div class="content">
+			<div class="description-text">
+				<p>{metadata.description}</p>
 			</div>
-		{/if}
+
+			{#if links.length > 0}
+				<div class="links">
+					{#each links as { href, label, Icon } (label)}
+						<a {href} target="_blank" rel="noreferrer">
+							<Icon --icon-size="1rem" />
+							<span>{label}</span>
+						</a>
+					{/each}
+				</div>
+			{/if}
+		</div>
 	</MetricsBox>
 </div>
 
@@ -55,6 +57,11 @@ description and external links (homepage, Twitter, CoinGecko, DefiLlama).
 		display: contents;
 		font: var(--f-ui-md-roman);
 		color: var(--c-text-light);
+
+		.content {
+			display: grid;
+			gap: 1rem;
+		}
 
 		.description-text {
 			p {
