@@ -89,13 +89,13 @@ Open the page source and search for:
 Example for the homepage:
 
 ```js
-JSON.parse(document.querySelector('[data-debug-freshness="home-page"]')?.textContent ?? 'null')
+JSON.parse(document.querySelector('[data-debug-freshness="home-page"]')?.textContent ?? 'null');
 ```
 
 Example for a YAML strategy page:
 
 ```js
-JSON.parse(document.querySelector('[data-debug-freshness="yaml-strategy:ichi-hyperliquid"]')?.textContent ?? 'null')
+JSON.parse(document.querySelector('[data-debug-freshness="yaml-strategy:ichi-hyperliquid"]')?.textContent ?? 'null');
 ```
 
 ## Interpreting mismatches
